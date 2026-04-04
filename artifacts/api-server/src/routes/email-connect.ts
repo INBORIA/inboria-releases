@@ -11,6 +11,10 @@ const MICROSOFT_CLIENT_ID = process.env["MICROSOFT_CLIENT_ID"] || "";
 const MICROSOFT_CLIENT_SECRET = process.env["MICROSOFT_CLIENT_SECRET"] || "";
 
 function getRedirectUri(provider: string) {
+  const customDomain = process.env["APP_DOMAIN"];
+  if (customDomain) {
+    return `https://${customDomain}/api/email/callback/${provider}`;
+  }
   const domain = process.env["REPLIT_DEV_DOMAIN"] || process.env["REPLIT_DOMAINS"] || "localhost";
   const protocol = domain.includes("localhost") ? "http" : "https";
   return `${protocol}://${domain}/api/email/callback/${provider}`;
