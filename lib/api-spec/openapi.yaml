@@ -3,13 +3,27 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: NCV Mail API specification
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: auth
+    description: Authentication operations
+  - name: emails
+    description: Email operations
+  - name: categories
+    description: Category operations
+  - name: tasks
+    description: Task operations
+  - name: profile
+    description: User profile operations
+  - name: dashboard
+    description: Dashboard summary operations
+  - name: ai
+    description: AI operations
 paths:
   /healthz:
     get:
@@ -24,6 +38,375 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterBody"
+      responses:
+        "201":
+          description: User registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "400":
+          description: Invalid input
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginBody"
+      responses:
+        "200":
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+        "401":
+          description: Invalid credentials
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+
+  /auth/me:
+    get:
+      operationId: getMe
+      tags: [auth]
+      summary: Get current user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+        "401":
+          description: Not authenticated
+
+  /profile:
+    get:
+      operationId: getProfile
+      tags: [profile]
+      summary: Get user profile
+      responses:
+        "200":
+          description: User profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+    patch:
+      operationId: updateProfile
+      tags: [profile]
+      summary: Update profile
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProfileBody"
+      responses:
+        "200":
+          description: Updated profile
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserProfile"
+
+  /emails:
+    get:
+      operationId: listEmails
+      tags: [emails]
+      summary: List emails
+      parameters:
+        - name: priority
+          in: query
+          schema:
+            type: string
+            enum: [urgent, moyen, faible]
+        - name: categoryId
+          in: query
+          schema:
+            type: integer
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of emails
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Email"
+
+  /emails/{id}:
+    get:
+      operationId: getEmail
+      tags: [emails]
+      summary: Get single email
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Email detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Email"
+        "404":
+          description: Not found
+
+    patch:
+      operationId: updateEmail
+      tags: [emails]
+      summary: Update email category or status
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateEmailBody"
+      responses:
+        "200":
+          description: Updated email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Email"
+
+  /categories:
+    get:
+      operationId: listCategories
+      tags: [categories]
+      summary: List categories
+      responses:
+        "200":
+          description: List of categories
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Category"
+
+    post:
+      operationId: createCategory
+      tags: [categories]
+      summary: Create category
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateCategoryBody"
+      responses:
+        "201":
+          description: Created category
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+
+  /categories/{id}:
+    patch:
+      operationId: updateCategory
+      tags: [categories]
+      summary: Update category
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateCategoryBody"
+      responses:
+        "200":
+          description: Updated category
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+
+    delete:
+      operationId: deleteCategory
+      tags: [categories]
+      summary: Delete category
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "204":
+          description: Deleted
+
+  /tasks:
+    get:
+      operationId: listTasks
+      tags: [tasks]
+      summary: List tasks
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [all, pending, done]
+      responses:
+        "200":
+          description: List of tasks
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Task"
+
+  /tasks/{id}:
+    patch:
+      operationId: updateTask
+      tags: [tasks]
+      summary: Update task (toggle done)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTaskBody"
+      responses:
+        "200":
+          description: Updated task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Dashboard summary stats
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+
+  /dashboard/inbox-health:
+    get:
+      operationId: getInboxHealth
+      tags: [dashboard]
+      summary: Inbox health score
+      responses:
+        "200":
+          description: Inbox health
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InboxHealth"
+
+  /dashboard/category-counts:
+    get:
+      operationId: getCategoryCounts
+      tags: [dashboard]
+      summary: Email counts per category
+      responses:
+        "200":
+          description: Category counts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/CategoryCount"
+
+  /ai/daily-summary:
+    post:
+      operationId: generateDailySummary
+      tags: [ai]
+      summary: Generate daily summary via AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DailySummaryRequest"
+      responses:
+        "200":
+          description: Daily summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DailySummary"
+
+  /ai/triage:
+    post:
+      operationId: triageEmail
+      tags: [ai]
+      summary: AI triage a single email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TriageEmailBody"
+      responses:
+        "200":
+          description: Triage result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TriageResult"
+
 components:
   schemas:
     HealthStatus:
@@ -34,3 +417,353 @@ components:
       required:
         - status
 
+    RegisterBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 6
+        fullName:
+          type: string
+      required:
+        - email
+        - password
+        - fullName
+
+    LoginBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+      required:
+        - email
+        - password
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/UserProfile"
+      required:
+        - user
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+        fullName:
+          type: string
+        plan:
+          type: string
+        seats:
+          type: integer
+        emailsUsed:
+          type: integer
+        emailsQuota:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - fullName
+        - plan
+        - seats
+        - emailsUsed
+        - emailsQuota
+        - createdAt
+
+    UpdateProfileBody:
+      type: object
+      properties:
+        fullName:
+          type: string
+        plan:
+          type: string
+        seats:
+          type: integer
+
+    Email:
+      type: object
+      properties:
+        id:
+          type: integer
+        sender:
+          type: string
+        senderEmail:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        status:
+          type: string
+        priority:
+          type: string
+        summary:
+          type: ["string", "null"]
+        categoryId:
+          type: ["integer", "null"]
+        categoryName:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - sender
+        - senderEmail
+        - subject
+        - body
+        - status
+        - priority
+        - createdAt
+
+    UpdateEmailBody:
+      type: object
+      properties:
+        categoryId:
+          type: ["integer", "null"]
+        status:
+          type: string
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        description:
+          type: ["string", "null"]
+        emailCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - createdAt
+
+    CreateCategoryBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+      required:
+        - name
+
+    UpdateCategoryBody:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+
+    Task:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        done:
+          type: boolean
+        dueDate:
+          type: ["string", "null"]
+          format: date
+        emailId:
+          type: ["integer", "null"]
+        emailSubject:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - done
+        - createdAt
+
+    UpdateTaskBody:
+      type: object
+      properties:
+        done:
+          type: boolean
+        title:
+          type: string
+
+    DashboardSummary:
+      type: object
+      properties:
+        totalEmails:
+          type: integer
+        urgentCount:
+          type: integer
+        moyenCount:
+          type: integer
+        faibleCount:
+          type: integer
+        pendingTasks:
+          type: integer
+        emailsUsed:
+          type: integer
+        emailsQuota:
+          type: integer
+        plan:
+          type: string
+      required:
+        - totalEmails
+        - urgentCount
+        - moyenCount
+        - faibleCount
+        - pendingTasks
+        - emailsUsed
+        - emailsQuota
+        - plan
+
+    InboxHealth:
+      type: object
+      properties:
+        score:
+          type: integer
+        label:
+          type: string
+        urgentUnread:
+          type: integer
+        oldestUnanswered:
+          type: ["string", "null"]
+      required:
+        - score
+        - label
+        - urgentUnread
+
+    CategoryCount:
+      type: object
+      properties:
+        categoryId:
+          type: integer
+        categoryName:
+          type: string
+        count:
+          type: integer
+      required:
+        - categoryId
+        - categoryName
+        - count
+
+    DailySummaryRequest:
+      type: object
+      properties:
+        language:
+          type: string
+          default: fr
+
+    DailySummary:
+      type: object
+      properties:
+        score:
+          type: integer
+        summary:
+          type: string
+        keyEmails:
+          type: array
+          items:
+            $ref: "#/components/schemas/KeyEmail"
+        stats:
+          $ref: "#/components/schemas/DailySummaryStats"
+        advice:
+          type: string
+      required:
+        - score
+        - summary
+        - keyEmails
+        - stats
+        - advice
+
+    KeyEmail:
+      type: object
+      properties:
+        id:
+          type: integer
+        sender:
+          type: string
+        subject:
+          type: string
+        priority:
+          type: string
+        summary:
+          type: string
+      required:
+        - id
+        - sender
+        - subject
+        - priority
+        - summary
+
+    DailySummaryStats:
+      type: object
+      properties:
+        total:
+          type: integer
+        urgent:
+          type: integer
+        moyen:
+          type: integer
+        faible:
+          type: integer
+        pending:
+          type: integer
+      required:
+        - total
+        - urgent
+        - moyen
+        - faible
+        - pending
+
+    TriageEmailBody:
+      type: object
+      properties:
+        sender:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+      required:
+        - sender
+        - subject
+        - body
+
+    TriageResult:
+      type: object
+      properties:
+        category:
+          type: string
+        priority:
+          type: string
+        summary:
+          type: string
+        tasks:
+          type: array
+          items:
+            type: string
+      required:
+        - category
+        - priority
+        - summary
+        - tasks
