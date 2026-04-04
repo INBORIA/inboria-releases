@@ -1,0 +1,30 @@
+nformations sur l'application
+Ces informations apparaissent dans l'écran de consentement, et permettent aux utilisateurs finaux de vous identifier et de vous contacter.
+
+Nom de l'application
+NCV Mail
+Le nom de l'application demandant l'autorisation
+Adresse e-mail d'assistance utilisateur
+jj.neybergh@gmail.com
+Permet aux utilisateurs de vous contacter s'ils ont des questions concernant leur consentement. En savoir plus 
+Logo de l'application
+Ceci est votre logo. Il permet aux utilisateurs de reconnaître votre application et figure sur l'écran de consentement OAuth.
+Après avoir importé un logo, vous devrez faire valider votre application, sauf si celle-ci est configurée uniquement pour une utilisation interne ou si son état de publication est "Test". En savoir plus 
+
+Fichier de logo à importer
+Pour aider les utilisateurs à reconnaître votre application, importez une image ne dépassant pas 1 Mo et affichez-la sur l'écran de consentement. Les formats d'image autorisés sont JPG, PNG et BMP. Pour des résultats optimaux, les logos doivent être au format carré et d'une dimension de 120 px par 120 px.
+Domaine de l'application
+Pour garantir votre protection et celle de vos utilisateurs, Google limite l'utilisation de domaines autorisés aux applications qui utilisent OAuth. Les informations suivantes seront présentées à vos utilisateurs dans l'écran de consentement.
+
+Page d'accueil de l'application
+Fournissez un lien vers votre page d'accueil aux utilisateurs
+Lien vers les règles de confidentialité de l'application
+Fournissez un lien vers vos règles de confidentialité publiques aux utilisateurs
+Lien vers les conditions d'utilisation de l'application
+Fournissez un lien vers vos conditions d'utilisation publiques aux utilisateurs
+
+Domaines autorisés
+Lorsqu'un domaine est utilisé sur l'écran de consentement ou dans la configuration d'un client OAuth, il doit être pré-enregistré ici. Si votre application doit être validée, accédez à Google Search Console pour vérifier si vos domaines sont autorisés. En savoir plus  sur le nombre maximal de domaines autorisés.
+Coordonnées du développeur
+Adresses e-mail 
+Ces adresses e-mail sont utilisées par Google pour vous informer de toute modification apportée à votre projet.
