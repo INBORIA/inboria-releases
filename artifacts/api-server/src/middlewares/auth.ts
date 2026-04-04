@@ -1,34 +1,33 @@
 import type { Request, Response, NextFunction } from "express";
-import { eq } from "drizzle-orm";
-import { db, usersTable } from "@workspace/db";
+import { supabaseAdmin } from "../lib/supabase";
 
 declare global {
   namespace Express {
     interface Request {
-      userId?: number;
+      userId?: string;
     }
   }
 }
 
 export async function requireAuth(req: Request, res: Response, next: NextFunction): Promise<void> {
-  const userId = req.signedCookies?.userId;
-  if (!userId) {
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
     res.status(401).json({ error: "Not authenticated" });
     return;
   }
 
-  const id = parseInt(userId, 10);
-  if (isNaN(id)) {
-    res.status(401).json({ error: "Invalid session" });
-    return;
-  }
+  const token = authHeader.slice(7);
 
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, id));
-  if (!user) {
-    res.status(401).json({ error: "User not found" });
-    return;
-  }
+  try {
+    const { data, error } = await supabaseAdmin.auth.getUser(token);
+    if (error || !data.user) {
+      res.status(401).json({ error: "Invalid or expired token" });
+      return;
+    }
 
-  req.userId = id;
-  next();
+    req.userId = data.user.id;
+    next();
+  } catch {
+    res.status(401).json({ error: "Authentication failed" });
+  }
 }

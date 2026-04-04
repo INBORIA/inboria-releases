@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useLogin } from "@workspace/api-client-react";
+import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import { AuthLayout } from "@/components/layout/auth-layout";
 import { Button } from "@/components/ui/button";
@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 const loginSchema = z.object({
   email: z.string().email("Email invalide"),
@@ -26,7 +27,8 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 export default function Login() {
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
-  const loginMutation = useLogin();
+  const { signIn } = useAuth();
+  const [isPending, setIsPending] = useState(false);
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -36,29 +38,27 @@ export default function Login() {
     },
   });
 
-  function onSubmit(data: LoginFormValues) {
-    loginMutation.mutate(
-      { data },
-      {
-        onSuccess: () => {
-          setLocation("/dashboard");
-        },
-        onError: (error: any) => {
-          toast({
-            variant: "destructive",
-            title: "Erreur de connexion",
-            description: error?.message || "Veuillez vérifier vos identifiants.",
-          });
-        },
-      }
-    );
+  async function onSubmit(data: LoginFormValues) {
+    setIsPending(true);
+    const { error } = await signIn(data.email, data.password);
+    setIsPending(false);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Erreur de connexion",
+        description: error || "Veuillez verifier vos identifiants.",
+      });
+    } else {
+      setLocation("/dashboard");
+    }
   }
 
   return (
     <AuthLayout>
       <div className="mb-6 text-center">
         <h1 className="text-2xl font-bold text-gray-900">Bienvenue</h1>
-        <p className="text-gray-500 mt-2 text-sm">Connectez-vous à votre compte NCV Mail</p>
+        <p className="text-gray-500 mt-2 text-sm">Connectez-vous a votre compte NCV Mail</p>
       </div>
 
       <Form {...form}>
@@ -85,18 +85,18 @@ export default function Login() {
                   <FormLabel>Mot de passe</FormLabel>
                 </div>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} />
+                  <Input type="password" placeholder="" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={loginMutation.isPending}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending}
           >
-            {loginMutation.isPending ? "Connexion..." : "Se connecter"}
+            {isPending ? "Connexion..." : "Se connecter"}
           </Button>
         </form>
       </Form>
@@ -104,7 +104,7 @@ export default function Login() {
       <div className="mt-6 text-center text-sm text-gray-500">
         Pas encore de compte ?{" "}
         <Link href="/signup" className="font-semibold text-primary hover:text-primary/80">
-          Créer un compte
+          Creer un compte
         </Link>
       </div>
     </AuthLayout>

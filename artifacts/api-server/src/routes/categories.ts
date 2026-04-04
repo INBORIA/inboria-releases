@@ -1,109 +1,124 @@
 import { Router, type IRouter } from "express";
-import { eq, and, sql } from "drizzle-orm";
-import { db, categoriesTable, emailsTable } from "@workspace/db";
-import { CreateCategoryBody, UpdateCategoryParams, UpdateCategoryBody, DeleteCategoryParams } from "@workspace/api-zod";
+import { supabaseAdmin } from "../lib/supabase";
+import { CreateCategoryBody, UpdateCategoryBody } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
 router.get("/categories", requireAuth, async (req, res): Promise<void> => {
-  const categories = await db
-    .select({
-      id: categoriesTable.id,
-      name: categoriesTable.name,
-      description: categoriesTable.description,
-      createdAt: categoriesTable.createdAt,
-      emailCount: sql<number>`COALESCE(COUNT(${emailsTable.id}), 0)::int`,
-    })
-    .from(categoriesTable)
-    .leftJoin(emailsTable, eq(emailsTable.categoryId, categoriesTable.id))
-    .where(eq(categoriesTable.userId, req.userId!))
-    .groupBy(categoriesTable.id)
-    .orderBy(categoriesTable.name);
+  try {
+    const { data: categories, error } = await supabaseAdmin
+      .from("categories")
+      .select("*, emails(count)")
+      .eq("user_id", req.userId!)
+      .order("name");
 
-  res.json(categories.map(c => ({
-    ...c,
-    createdAt: c.createdAt.toISOString(),
-  })));
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json((categories || []).map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      description: c.description || "",
+      emailCount: c.emails?.[0]?.count || 0,
+      createdAt: c.created_at,
+    })));
+  } catch {
+    res.status(500).json({ error: "Failed to list categories" });
+  }
 });
 
 router.post("/categories", requireAuth, async (req, res): Promise<void> => {
-  const parsed = CreateCategoryBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
+  try {
+    const parsed = CreateCategoryBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.message });
+      return;
+    }
+
+    const { data: category, error } = await supabaseAdmin
+      .from("categories")
+      .insert({
+        user_id: req.userId!,
+        name: parsed.data.name,
+        description: parsed.data.description || "",
+      })
+      .select()
+      .single();
+
+    if (error) {
+      res.status(400).json({ error: error.message });
+      return;
+    }
+
+    res.status(201).json({
+      id: category.id,
+      name: category.name,
+      description: category.description,
+      emailCount: 0,
+      createdAt: category.created_at,
+    });
+  } catch {
+    res.status(500).json({ error: "Failed to create category" });
   }
-
-  const [category] = await db.insert(categoriesTable).values({
-    userId: req.userId!,
-    name: parsed.data.name,
-    description: parsed.data.description,
-  }).returning();
-
-  res.status(201).json({
-    id: category.id,
-    name: category.name,
-    description: category.description,
-    emailCount: 0,
-    createdAt: category.createdAt.toISOString(),
-  });
 });
 
 router.patch("/categories/:id", requireAuth, async (req, res): Promise<void> => {
-  const params = UpdateCategoryParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
+  try {
+    const parsed = UpdateCategoryBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.message });
+      return;
+    }
+
+    const updates: Record<string, unknown> = {};
+    if (parsed.data.name !== undefined) updates.name = parsed.data.name;
+    if (parsed.data.description !== undefined) updates.description = parsed.data.description;
+
+    const { data: category, error } = await supabaseAdmin
+      .from("categories")
+      .update(updates)
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .select()
+      .single();
+
+    if (error || !category) {
+      res.status(404).json({ error: "Category not found" });
+      return;
+    }
+
+    res.json({
+      id: category.id,
+      name: category.name,
+      description: category.description,
+      emailCount: 0,
+      createdAt: category.created_at,
+    });
+  } catch {
+    res.status(500).json({ error: "Failed to update category" });
   }
-
-  const parsed = UpdateCategoryBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
-
-  const updates: Record<string, unknown> = {};
-  if (parsed.data.name !== undefined) updates.name = parsed.data.name;
-  if (parsed.data.description !== undefined) updates.description = parsed.data.description;
-
-  const [category] = await db
-    .update(categoriesTable)
-    .set(updates)
-    .where(and(eq(categoriesTable.id, params.data.id), eq(categoriesTable.userId, req.userId!)))
-    .returning();
-
-  if (!category) {
-    res.status(404).json({ error: "Category not found" });
-    return;
-  }
-
-  res.json({
-    id: category.id,
-    name: category.name,
-    description: category.description,
-    emailCount: 0,
-    createdAt: category.createdAt.toISOString(),
-  });
 });
 
 router.delete("/categories/:id", requireAuth, async (req, res): Promise<void> => {
-  const params = DeleteCategoryParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
+  try {
+    const { error } = await supabaseAdmin
+      .from("categories")
+      .delete()
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!);
+
+    if (error) {
+      res.status(404).json({ error: "Category not found" });
+      return;
+    }
+
+    res.sendStatus(204);
+  } catch {
+    res.status(500).json({ error: "Failed to delete category" });
   }
-
-  const [category] = await db
-    .delete(categoriesTable)
-    .where(and(eq(categoriesTable.id, params.data.id), eq(categoriesTable.userId, req.userId!)))
-    .returning();
-
-  if (!category) {
-    res.status(404).json({ error: "Category not found" });
-    return;
-  }
-
-  res.sendStatus(204);
 });
 
 export default router;

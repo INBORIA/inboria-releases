@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useRegister } from "@workspace/api-client-react";
+import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import { AuthLayout } from "@/components/layout/auth-layout";
 import { Button } from "@/components/ui/button";
@@ -15,11 +15,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useState } from "react";
 
 const signupSchema = z.object({
   fullName: z.string().min(2, "Nom complet requis"),
   email: z.string().email("Email invalide"),
-  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caractères"),
+  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caracteres"),
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -27,7 +28,8 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 export default function Signup() {
   const [_, setLocation] = useLocation();
   const { toast } = useToast();
-  const registerMutation = useRegister();
+  const { signUp } = useAuth();
+  const [isPending, setIsPending] = useState(false);
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -38,29 +40,31 @@ export default function Signup() {
     },
   });
 
-  function onSubmit(data: SignupFormValues) {
-    registerMutation.mutate(
-      { data },
-      {
-        onSuccess: () => {
-          setLocation("/dashboard");
-        },
-        onError: (error: any) => {
-          toast({
-            variant: "destructive",
-            title: "Erreur d'inscription",
-            description: error?.message || "Une erreur est survenue lors de l'inscription.",
-          });
-        },
-      }
-    );
+  async function onSubmit(data: SignupFormValues) {
+    setIsPending(true);
+    const { error } = await signUp(data.email, data.password, data.fullName);
+    setIsPending(false);
+
+    if (error) {
+      toast({
+        variant: "destructive",
+        title: "Erreur d'inscription",
+        description: error,
+      });
+    } else {
+      toast({
+        title: "Compte cree",
+        description: "Votre compte a ete cree avec succes.",
+      });
+      setLocation("/dashboard");
+    }
   }
 
   return (
     <AuthLayout>
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Créer un compte</h1>
-        <p className="text-gray-500 mt-2 text-sm">Rejoignez NCV Mail pour organiser votre boîte de réception</p>
+        <h1 className="text-2xl font-bold text-gray-900">Creer un compte</h1>
+        <p className="text-gray-500 mt-2 text-sm">Rejoignez NCV Mail pour organiser votre boite de reception</p>
       </div>
 
       <Form {...form}>
@@ -98,24 +102,24 @@ export default function Signup() {
               <FormItem>
                 <FormLabel>Mot de passe</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="••••••••" {...field} />
+                  <Input type="password" placeholder="" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
-          <Button 
-            type="submit" 
-            className="w-full" 
-            disabled={registerMutation.isPending}
+          <Button
+            type="submit"
+            className="w-full"
+            disabled={isPending}
           >
-            {registerMutation.isPending ? "Création..." : "Créer mon compte"}
+            {isPending ? "Creation..." : "Creer mon compte"}
           </Button>
         </form>
       </Form>
 
       <div className="mt-6 text-center text-sm text-gray-500">
-        Déjà un compte ?{" "}
+        Deja un compte ?{" "}
         <Link href="/login" className="font-semibold text-primary hover:text-primary/80">
           Se connecter
         </Link>

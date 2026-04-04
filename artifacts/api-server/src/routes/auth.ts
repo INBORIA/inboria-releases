@@ -1,121 +1,135 @@
 import { Router, type IRouter } from "express";
-import { eq } from "drizzle-orm";
-import { db, usersTable } from "@workspace/db";
+import { supabaseAdmin } from "../lib/supabase";
 import { RegisterBody, LoginBody } from "@workspace/api-zod";
-import { hashPassword, verifyPassword } from "../lib/password";
 import { requireAuth } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
 router.post("/auth/register", async (req, res): Promise<void> => {
-  const parsed = RegisterBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
+  try {
+    const parsed = RegisterBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.message });
+      return;
+    }
+
+    const { email, password, fullName } = parsed.data;
+
+    const { data, error } = await supabaseAdmin.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: fullName },
+      },
+    });
+
+    if (error) {
+      res.status(400).json({ error: error.message });
+      return;
+    }
+
+    if (data.user) {
+      await supabaseAdmin.from("profiles").upsert({
+        id: data.user.id,
+        full_name: fullName,
+        plan: "gratuit",
+        seats: 1,
+        emails_used: 0,
+        emails_quota: 50,
+      });
+    }
+
+    res.status(201).json({
+      user: {
+        id: data.user?.id,
+        email: data.user?.email,
+        fullName,
+        plan: "gratuit",
+        seats: 1,
+        emailsUsed: 0,
+        emailsQuota: 50,
+        createdAt: data.user?.created_at,
+      },
+      session: data.session,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Registration failed" });
   }
-
-  const { email, password, fullName } = parsed.data;
-
-  const [existing] = await db.select().from(usersTable).where(eq(usersTable.email, email));
-  if (existing) {
-    res.status(400).json({ error: "Email already registered" });
-    return;
-  }
-
-  const passwordHash = hashPassword(password);
-  const [user] = await db.insert(usersTable).values({
-    email,
-    passwordHash,
-    fullName,
-    plan: "gratuit",
-    seats: 1,
-    emailsUsed: 0,
-    emailsQuota: 50,
-  }).returning();
-
-  res.cookie("userId", String(user.id), {
-    httpOnly: true,
-    signed: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    path: "/",
-  });
-
-  res.status(201).json({
-    user: {
-      id: user.id,
-      email: user.email,
-      fullName: user.fullName,
-      plan: user.plan,
-      seats: user.seats,
-      emailsUsed: user.emailsUsed,
-      emailsQuota: user.emailsQuota,
-      createdAt: user.createdAt.toISOString(),
-    },
-  });
 });
 
 router.post("/auth/login", async (req, res): Promise<void> => {
-  const parsed = LoginBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
+  try {
+    const parsed = LoginBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.message });
+      return;
+    }
+
+    const { email, password } = parsed.data;
+
+    const { data, error } = await supabaseAdmin.auth.signInWithPassword({
+      email,
+      password,
+    });
+
+    if (error) {
+      res.status(401).json({ error: "Email ou mot de passe invalide" });
+      return;
+    }
+
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("*")
+      .eq("id", data.user.id)
+      .single();
+
+    res.json({
+      user: {
+        id: data.user.id,
+        email: data.user.email,
+        fullName: profile?.full_name || "",
+        plan: profile?.plan || "gratuit",
+        seats: profile?.seats || 1,
+        emailsUsed: profile?.emails_used || 0,
+        emailsQuota: profile?.emails_quota || 50,
+        createdAt: data.user.created_at,
+      },
+      session: data.session,
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Login failed" });
   }
-
-  const { email, password } = parsed.data;
-
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
-  if (!user || !verifyPassword(password, user.passwordHash)) {
-    res.status(401).json({ error: "Invalid email or password" });
-    return;
-  }
-
-  res.cookie("userId", String(user.id), {
-    httpOnly: true,
-    signed: true,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
-    maxAge: 30 * 24 * 60 * 60 * 1000,
-    path: "/",
-  });
-
-  res.json({
-    user: {
-      id: user.id,
-      email: user.email,
-      fullName: user.fullName,
-      plan: user.plan,
-      seats: user.seats,
-      emailsUsed: user.emailsUsed,
-      emailsQuota: user.emailsQuota,
-      createdAt: user.createdAt.toISOString(),
-    },
-  });
 });
 
 router.post("/auth/logout", (_req, res): void => {
-  res.clearCookie("userId", { path: "/" });
   res.json({ success: true });
 });
 
 router.get("/auth/me", requireAuth, async (req, res): Promise<void> => {
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.userId!));
-  if (!user) {
-    res.status(401).json({ error: "User not found" });
-    return;
-  }
+  try {
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("*")
+      .eq("id", req.userId!)
+      .single();
 
-  res.json({
-    id: user.id,
-    email: user.email,
-    fullName: user.fullName,
-    plan: user.plan,
-    seats: user.seats,
-    emailsUsed: user.emailsUsed,
-    emailsQuota: user.emailsQuota,
-    createdAt: user.createdAt.toISOString(),
-  });
+    const authHeader = req.headers.authorization!;
+    const token = authHeader.slice(7);
+    const { data: userData } = await supabaseAdmin.auth.getUser(token);
+
+    res.json({
+      id: req.userId,
+      email: userData.user?.email || "",
+      fullName: profile?.full_name || "",
+      plan: profile?.plan || "gratuit",
+      seats: profile?.seats || 1,
+      emailsUsed: profile?.emails_used || 0,
+      emailsQuota: profile?.emails_quota || 50,
+      createdAt: userData.user?.created_at || "",
+    });
+  } catch (err) {
+    res.status(500).json({ error: "Failed to get user info" });
+  }
 });
 
 export default router;

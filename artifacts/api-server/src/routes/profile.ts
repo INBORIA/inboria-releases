@@ -1,67 +1,91 @@
 import { Router, type IRouter } from "express";
-import { eq } from "drizzle-orm";
-import { db, usersTable } from "@workspace/db";
+import { supabaseAdmin } from "../lib/supabase";
 import { UpdateProfileBody } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
 router.get("/profile", requireAuth, async (req, res): Promise<void> => {
-  const [user] = await db.select().from(usersTable).where(eq(usersTable.id, req.userId!));
-  if (!user) {
-    res.status(404).json({ error: "Profile not found" });
-    return;
-  }
+  try {
+    const { data: profile, error } = await supabaseAdmin
+      .from("profiles")
+      .select("*")
+      .eq("id", req.userId!)
+      .single();
 
-  res.json({
-    id: user.id,
-    email: user.email,
-    fullName: user.fullName,
-    plan: user.plan,
-    seats: user.seats,
-    emailsUsed: user.emailsUsed,
-    emailsQuota: user.emailsQuota,
-    createdAt: user.createdAt.toISOString(),
-  });
+    if (error || !profile) {
+      res.status(404).json({ error: "Profile not found" });
+      return;
+    }
+
+    const token = req.headers.authorization!.slice(7);
+    const { data: userData } = await supabaseAdmin.auth.getUser(token);
+
+    res.json({
+      id: profile.id,
+      email: userData.user?.email || "",
+      fullName: profile.full_name || "",
+      plan: profile.plan || "gratuit",
+      seats: profile.seats || 1,
+      emailsUsed: profile.emails_used || 0,
+      emailsQuota: profile.emails_quota || 50,
+      createdAt: profile.created_at,
+    });
+  } catch {
+    res.status(500).json({ error: "Failed to get profile" });
+  }
 });
 
 router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
-  const parsed = UpdateProfileBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
+  try {
+    const parsed = UpdateProfileBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: parsed.error.message });
+      return;
+    }
 
-  const updates: Record<string, unknown> = {};
-  if (parsed.data.fullName !== undefined) updates.fullName = parsed.data.fullName;
-  if (parsed.data.plan !== undefined) {
-    updates.plan = parsed.data.plan;
-    const quotaMap: Record<string, number> = {
-      gratuit: 50,
-      solo: 3000,
-      pro: 10000,
-      business: 10000,
-    };
-    updates.emailsQuota = quotaMap[parsed.data.plan] ?? 50;
-  }
-  if (parsed.data.seats !== undefined) updates.seats = parsed.data.seats;
+    const updates: Record<string, unknown> = {};
+    if (parsed.data.fullName !== undefined) updates.full_name = parsed.data.fullName;
+    if (parsed.data.plan !== undefined) {
+      updates.plan = parsed.data.plan;
+      const quotaMap: Record<string, number> = {
+        gratuit: 50,
+        solo: 3000,
+        pro: 10000,
+        business: 10000,
+      };
+      updates.emails_quota = quotaMap[parsed.data.plan] ?? 50;
+    }
+    if (parsed.data.seats !== undefined) updates.seats = parsed.data.seats;
 
-  const [user] = await db.update(usersTable).set(updates).where(eq(usersTable.id, req.userId!)).returning();
-  if (!user) {
-    res.status(404).json({ error: "Profile not found" });
-    return;
-  }
+    const { data: profile, error } = await supabaseAdmin
+      .from("profiles")
+      .update(updates)
+      .eq("id", req.userId!)
+      .select()
+      .single();
 
-  res.json({
-    id: user.id,
-    email: user.email,
-    fullName: user.fullName,
-    plan: user.plan,
-    seats: user.seats,
-    emailsUsed: user.emailsUsed,
-    emailsQuota: user.emailsQuota,
-    createdAt: user.createdAt.toISOString(),
-  });
+    if (error || !profile) {
+      res.status(404).json({ error: "Profile not found" });
+      return;
+    }
+
+    const token = req.headers.authorization!.slice(7);
+    const { data: userData } = await supabaseAdmin.auth.getUser(token);
+
+    res.json({
+      id: profile.id,
+      email: userData.user?.email || "",
+      fullName: profile.full_name || "",
+      plan: profile.plan || "gratuit",
+      seats: profile.seats || 1,
+      emailsUsed: profile.emails_used || 0,
+      emailsQuota: profile.emails_quota || 50,
+      createdAt: profile.created_at,
+    });
+  } catch {
+    res.status(500).json({ error: "Failed to update profile" });
+  }
 });
 
 export default router;

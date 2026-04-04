@@ -1,91 +1,78 @@
 import { Router, type IRouter } from "express";
-import { eq, and } from "drizzle-orm";
-import { db, tasksTable, emailsTable } from "@workspace/db";
-import { ListTasksQueryParams, UpdateTaskParams, UpdateTaskBody } from "@workspace/api-zod";
+import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
 router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
-  const params = ListTasksQueryParams.safeParse(req.query);
+  try {
+    let query = supabaseAdmin
+      .from("tasks")
+      .select("*, emails(subject)")
+      .eq("user_id", req.userId!)
+      .order("created_at");
 
-  const conditions = [eq(tasksTable.userId, req.userId!)];
-
-  if (params.success && params.data.status && params.data.status !== "all") {
-    if (params.data.status === "done") {
-      conditions.push(eq(tasksTable.done, true));
-    } else if (params.data.status === "pending") {
-      conditions.push(eq(tasksTable.done, false));
+    const status = req.query.status as string | undefined;
+    if (status && status !== "all") {
+      if (status === "done") {
+        query = query.eq("done", true);
+      } else if (status === "pending") {
+        query = query.eq("done", false);
+      }
     }
+
+    const { data: tasks, error } = await query;
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json((tasks || []).map((t: any) => ({
+      id: t.id,
+      title: t.title,
+      done: t.done,
+      dueDate: t.due_date,
+      emailId: t.email_id,
+      emailSubject: t.emails?.subject || null,
+      createdAt: t.created_at,
+    })));
+  } catch {
+    res.status(500).json({ error: "Failed to list tasks" });
   }
-
-  const tasks = await db
-    .select({
-      id: tasksTable.id,
-      title: tasksTable.title,
-      done: tasksTable.done,
-      dueDate: tasksTable.dueDate,
-      emailId: tasksTable.emailId,
-      emailSubject: emailsTable.subject,
-      createdAt: tasksTable.createdAt,
-    })
-    .from(tasksTable)
-    .leftJoin(emailsTable, eq(tasksTable.emailId, emailsTable.id))
-    .where(and(...conditions))
-    .orderBy(tasksTable.createdAt);
-
-  res.json(tasks.map(t => ({
-    ...t,
-    createdAt: t.createdAt.toISOString(),
-  })));
 });
 
 router.patch("/tasks/:id", requireAuth, async (req, res): Promise<void> => {
-  const params = UpdateTaskParams.safeParse(req.params);
-  if (!params.success) {
-    res.status(400).json({ error: params.error.message });
-    return;
+  try {
+    const updates: Record<string, unknown> = {};
+    if (req.body.done !== undefined) updates.done = req.body.done;
+    if (req.body.title !== undefined) updates.title = req.body.title;
+
+    const { data: task, error } = await supabaseAdmin
+      .from("tasks")
+      .update(updates)
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .select("*, emails(subject)")
+      .single();
+
+    if (error || !task) {
+      res.status(404).json({ error: "Task not found" });
+      return;
+    }
+
+    res.json({
+      id: task.id,
+      title: task.title,
+      done: task.done,
+      dueDate: task.due_date,
+      emailId: task.email_id,
+      emailSubject: task.emails?.subject || null,
+      createdAt: task.created_at,
+    });
+  } catch {
+    res.status(500).json({ error: "Failed to update task" });
   }
-
-  const parsed = UpdateTaskBody.safeParse(req.body);
-  if (!parsed.success) {
-    res.status(400).json({ error: parsed.error.message });
-    return;
-  }
-
-  const updates: Record<string, unknown> = {};
-  if (parsed.data.done !== undefined) updates.done = parsed.data.done;
-  if (parsed.data.title !== undefined) updates.title = parsed.data.title;
-
-  const [task] = await db
-    .update(tasksTable)
-    .set(updates)
-    .where(and(eq(tasksTable.id, params.data.id), eq(tasksTable.userId, req.userId!)))
-    .returning();
-
-  if (!task) {
-    res.status(404).json({ error: "Task not found" });
-    return;
-  }
-
-  const [result] = await db
-    .select({
-      id: tasksTable.id,
-      title: tasksTable.title,
-      done: tasksTable.done,
-      dueDate: tasksTable.dueDate,
-      emailId: tasksTable.emailId,
-      emailSubject: emailsTable.subject,
-      createdAt: tasksTable.createdAt,
-    })
-    .from(tasksTable)
-    .leftJoin(emailsTable, eq(tasksTable.emailId, emailsTable.id))
-    .where(eq(tasksTable.id, task.id));
-
-  res.json({
-    ...result,
-    createdAt: result!.createdAt.toISOString(),
-  });
 });
 
 export default router;

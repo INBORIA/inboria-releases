@@ -1,4 +1,5 @@
-import { useGetMe, useLogout } from "@workspace/api-client-react";
+import { useGetProfile } from "@workspace/api-client-react";
+import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import {
   Inbox,
@@ -12,36 +13,25 @@ import {
   Menu
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Progress } from "@/components/ui/progress";
 
 const navigation = [
-  { name: "Boîte prioritaire", href: "/dashboard", icon: Inbox },
+  { name: "Boite prioritaire", href: "/dashboard", icon: Inbox },
   { name: "Bilan quotidien", href: "/dashboard/bilan", icon: LayoutDashboard },
-  { name: "Tâches", href: "/dashboard/taches", icon: CheckSquare },
-  { name: "Catégories", href: "/dashboard/categories", icon: Tags },
-  { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
+  { name: "Taches", href: "/dashboard/taches", icon: CheckSquare },
+  { name: "Categories", href: "/dashboard/categories", icon: Tags },
+  { name: "Parametres", href: "/dashboard/parametres", icon: Settings },
   { name: "Abonnement", href: "/dashboard/abonnement", icon: CreditCard },
 ];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
-  const { data: user, isLoading, isError } = useGetMe({
-    query: {
-      retry: false,
-    },
-  });
-
-  const logoutMutation = useLogout();
+  const { signOut } = useAuth();
+  const { data: profile, isLoading } = useGetProfile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
-  useEffect(() => {
-    if (isError) {
-      setLocation("/login");
-    }
-  }, [isError, setLocation]);
 
   if (isLoading) {
     return (
@@ -51,21 +41,16 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  if (!user) {
-    return null;
-  }
+  const user = profile || { fullName: "", plan: "gratuit", emailsUsed: 0, emailsQuota: 50 };
 
-  const handleLogout = () => {
-    logoutMutation.mutate(undefined, {
-      onSuccess: () => {
-        setLocation("/login");
-      },
-    });
+  const handleLogout = async () => {
+    await signOut();
+    setLocation("/login");
   };
 
   const usagePercent = Math.min(
     100,
-    (user.emailsUsed / Math.max(1, user.emailsQuota)) * 100
+    ((user as any).emailsUsed / Math.max(1, (user as any).emailsQuota)) * 100
   );
 
   const SidebarContent = () => (
@@ -114,23 +99,23 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               Quota emails
             </span>
             <span className="text-xs font-medium text-sidebar-foreground">
-              {user.emailsUsed} / {user.emailsQuota}
+              {(user as any).emailsUsed} / {(user as any).emailsQuota}
             </span>
           </div>
-          <Progress value={usagePercent} className="h-1.5 bg-sidebar-border" indicatorClassName={usagePercent > 90 ? "bg-destructive" : "bg-primary"} />
+          <Progress value={usagePercent} className="h-1.5 bg-sidebar-border" />
         </div>
         
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="h-9 w-9 rounded-full bg-sidebar-border flex items-center justify-center text-sm font-medium text-sidebar-foreground">
-              {user.fullName.charAt(0).toUpperCase()}
+              {((user as any).fullName || "U").charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-medium text-sidebar-foreground truncate max-w-[120px]">
-                {user.fullName}
+                {(user as any).fullName || "Utilisateur"}
               </span>
               <span className="text-xs text-sidebar-foreground/70 truncate max-w-[120px]">
-                Plan {user.plan}
+                Plan {(user as any).plan}
               </span>
             </div>
           </div>
@@ -139,7 +124,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             size="icon"
             className="text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
             onClick={handleLogout}
-            disabled={logoutMutation.isPending}
           >
             <LogOut className="h-4 w-4" />
           </Button>
@@ -150,14 +134,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-secondary flex">
-      {/* Desktop Sidebar */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-[260px] lg:flex-col">
         <div className="flex grow flex-col overflow-y-auto bg-sidebar shadow-xl z-10">
           <SidebarContent />
         </div>
       </div>
 
-      {/* Mobile Sidebar & Header */}
       <div className="lg:pl-[260px] flex flex-col flex-1 min-w-0">
         <div className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:hidden">
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
