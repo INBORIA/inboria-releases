@@ -40,25 +40,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   async function signUp(email: string, password: string, fullName: string) {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: { data: { full_name: fullName } },
-    });
-    if (error) return { error: error.message };
-
-    if (data.user) {
-      await supabase.from("profiles").upsert({
-        id: data.user.id,
-        full_name: fullName,
-        plan: "gratuit",
-        seats: 1,
-        emails_used: 0,
-        emails_quota: 50,
+    try {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const res = await fetch(`${baseUrl}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, fullName }),
       });
-    }
+      const result = await res.json();
+      if (!res.ok) return { error: result.error || "Erreur d'inscription" };
 
-    return { error: null };
+      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+      if (signInError) return { error: signInError.message };
+
+      return { error: null };
+    } catch {
+      return { error: "Erreur de connexion au serveur" };
+    }
   }
 
   async function signOut() {

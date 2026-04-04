@@ -15,12 +15,11 @@ router.post("/auth/register", async (req, res): Promise<void> => {
 
     const { email, password, fullName } = parsed.data;
 
-    const { data, error } = await supabaseAdmin.auth.signUp({
+    const { data, error } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
-      options: {
-        data: { full_name: fullName },
-      },
+      email_confirm: true,
+      user_metadata: { full_name: fullName },
     });
 
     if (error) {
