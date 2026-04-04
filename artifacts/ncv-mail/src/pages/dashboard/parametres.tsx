@@ -84,7 +84,7 @@ export default function Parametres() {
       });
       const data = await res.json();
       if (data.url) {
-        window.location.href = data.url;
+        window.open(data.url, '_blank');
       } else {
         toast({ variant: "destructive", title: "Erreur", description: data.error || "Impossible de se connecter" });
       }
