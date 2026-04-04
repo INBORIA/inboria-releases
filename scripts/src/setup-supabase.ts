@@ -5,41 +5,29 @@ const key = process.env["SUPABASE_SECRET_KEY"]!;
 const supabase = createClient(url, key);
 
 async function main() {
-  // Test signup with admin client (bypasses email confirmation)
-  const testEmail = "testncv@gmail.com";
   const { data, error } = await supabase.auth.admin.createUser({
-    email: testEmail,
-    password: "Test1234!",
+    email: "jj.neybergh@gmail.com",
+    password: "cAROLINE19820458..",
     email_confirm: true,
-    user_metadata: { full_name: "Test User" }
+    user_metadata: { full_name: "JJ Neybergh" }
   });
-  
+
   if (error) {
-    console.log("Create user error:", error.message);
-  } else {
-    console.log("User created:", data.user?.id);
-    
-    // Create profile
-    const { error: profileErr } = await supabase.from("profiles").upsert({
-      id: data.user!.id,
-      full_name: "Test User",
-      plan: "gratuit",
-      seats: 1,
-      emails_used: 0,
-      emails_quota: 50,
-    });
-    console.log("Profile:", profileErr ? profileErr.message : "OK");
-    
-    // Try login
-    const { data: loginData, error: loginErr } = await supabase.auth.signInWithPassword({
-      email: testEmail,
-      password: "Test1234!"
-    });
-    console.log("Login:", loginErr ? loginErr.message : "OK, session:", !!loginData.session);
-    
-    // Cleanup
-    await supabase.auth.admin.deleteUser(data.user!.id);
-    console.log("Cleaned up");
+    console.log("Erreur:", error.message);
+    return;
   }
+
+  console.log("Compte cree! User ID:", data.user?.id);
+
+  const { error: profileErr } = await supabase.from("profiles").upsert({
+    id: data.user!.id,
+    full_name: "JJ Neybergh",
+    plan: "gratuit",
+    seats: 1,
+    emails_used: 0,
+    emails_quota: 50,
+  });
+
+  console.log("Profil:", profileErr ? profileErr.message : "OK");
 }
 main();
