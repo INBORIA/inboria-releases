@@ -29,3 +29,5 @@ timeoutMs = 20000
 
 [userenv.shared]
 VITE_SUPABASE_URL = "https://ecdwevvisbrcsomdiqop.supabase.co"
+GOOGLE_CLIENT_ID = "850619978612-ql893tqnpkm7vn32brf42d3bg3len5fo.apps.googleusercontent.com"
+GOOGLE_CLIENT_SECRET = "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"
