@@ -21,6 +21,8 @@
     "drizzle-orm": "catalog:",
     "express": "^5",
     "googleapis": "^171.4.0",
+    "imapflow": "^1.2.18",
+    "nodemailer": "^8.0.4",
     "openai": "^6.33.0",
     "pino": "^9",
     "pino-http": "^10",
