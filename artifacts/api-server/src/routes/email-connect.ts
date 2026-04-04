@@ -291,74 +291,89 @@ router.post("/email/sync", requireAuth, async (req, res): Promise<void> => {
 });
 
 async function syncGmail(conn: any, userId: string): Promise<number> {
-  const oauth2Client = getGoogleOAuth2Client();
-  oauth2Client.setCredentials({
-    access_token: conn.access_token,
-    refresh_token: conn.refresh_token,
-  });
+  try {
+    console.log("syncGmail: starting for", conn.email_address);
+    const oauth2Client = getGoogleOAuth2Client();
+    oauth2Client.setCredentials({
+      access_token: conn.access_token,
+      refresh_token: conn.refresh_token,
+    });
 
-  oauth2Client.on("tokens", async (tokens) => {
-    if (tokens.access_token) {
-      await supabaseAdmin.from("email_connections").update({
-        access_token: tokens.access_token,
-        token_expires_at: tokens.expiry_date ? new Date(tokens.expiry_date).toISOString() : null,
-      }).eq("id", conn.id);
-    }
-  });
+    oauth2Client.on("tokens", async (tokens) => {
+      if (tokens.access_token) {
+        await supabaseAdmin.from("email_connections").update({
+          access_token: tokens.access_token,
+          token_expires_at: tokens.expiry_date ? new Date(tokens.expiry_date).toISOString() : null,
+        }).eq("id", conn.id);
+      }
+    });
 
-  const gmail = google.gmail({ version: "v1", auth: oauth2Client });
+    const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 
-  const { data: messageList } = await gmail.users.messages.list({
-    userId: "me",
-    maxResults: 20,
-    q: "is:inbox",
-  });
-
-  if (!messageList.messages) return 0;
-
-  let synced = 0;
-
-  for (const msg of messageList.messages) {
-    const { data: existing } = await supabaseAdmin
-      .from("emails")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("external_id", msg.id!)
-      .single();
-
-    if (existing) continue;
-
-    const { data: fullMsg } = await gmail.users.messages.get({
+    const { data: messageList } = await gmail.users.messages.list({
       userId: "me",
-      id: msg.id!,
-      format: "metadata",
-      metadataHeaders: ["From", "Subject", "Date"],
+      maxResults: 20,
+      q: "is:inbox",
     });
 
-    const headers = fullMsg.payload?.headers || [];
-    const from = headers.find(h => h.name === "From")?.value || "Inconnu";
-    const subject = headers.find(h => h.name === "Subject")?.value || "(pas de sujet)";
-    const snippet = fullMsg.snippet || "";
+    console.log("syncGmail: found", messageList.messages?.length || 0, "messages");
 
-    await supabaseAdmin.from("emails").insert({
-      user_id: userId,
-      external_id: msg.id,
-      sender: from,
-      subject,
-      body: snippet,
-      status: "non_lu",
-      priority: "moyen",
-      created_at: new Date(parseInt(fullMsg.internalDate || "0")).toISOString(),
-    });
+    if (!messageList.messages) return 0;
 
-    synced++;
+    let synced = 0;
+
+    for (const msg of messageList.messages) {
+      const { data: existing } = await supabaseAdmin
+        .from("emails")
+        .select("id")
+        .eq("user_id", userId)
+        .eq("external_id", msg.id!)
+        .single();
+
+      if (existing) continue;
+
+      const { data: fullMsg } = await gmail.users.messages.get({
+        userId: "me",
+        id: msg.id!,
+        format: "metadata",
+        metadataHeaders: ["From", "Subject", "Date"],
+      });
+
+      const headers = fullMsg.payload?.headers || [];
+      const from = headers.find(h => h.name === "From")?.value || "Inconnu";
+      const subject = headers.find(h => h.name === "Subject")?.value || "(pas de sujet)";
+      const snippet = fullMsg.snippet || "";
+
+      const { error: insertError } = await supabaseAdmin.from("emails").insert({
+        user_id: userId,
+        external_id: msg.id,
+        sender: from,
+        subject,
+        body: snippet,
+        status: "non_lu",
+        priority: "moyen",
+        created_at: new Date(parseInt(fullMsg.internalDate || "0")).toISOString(),
+      });
+
+      if (insertError) {
+        console.error("syncGmail: insert error for msg", msg.id, insertError);
+        continue;
+      }
+
+      synced++;
+    }
+
+    console.log("syncGmail: synced", synced, "new emails");
+
+    await supabaseAdmin.from("email_connections").update({
+      last_synced_at: new Date().toISOString(),
+    }).eq("id", conn.id);
+
+    return synced;
+  } catch (err: any) {
+    console.error("syncGmail error:", err.message, err.response?.data || "");
+    return 0;
   }
-
-  await supabaseAdmin.from("email_connections").update({
-    last_synced_at: new Date().toISOString(),
-  }).eq("id", conn.id);
-
-  return synced;
 }
 
 async function syncOutlook(conn: any, userId: string): Promise<number> {
