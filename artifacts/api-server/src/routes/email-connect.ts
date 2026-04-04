@@ -35,6 +35,10 @@ router.get("/email/connect/gmail", requireAuth, async (req, res): Promise<void> 
       return;
     }
 
+    const redirectUri = getRedirectUri("gmail");
+    console.log("DEBUG Gmail OAuth - Client ID:", GOOGLE_CLIENT_ID.substring(0, 20) + "...");
+    console.log("DEBUG Gmail OAuth - Redirect URI:", redirectUri);
+
     const oauth2Client = getGoogleOAuth2Client();
     const url = oauth2Client.generateAuthUrl({
       access_type: "offline",
@@ -46,8 +50,10 @@ router.get("/email/connect/gmail", requireAuth, async (req, res): Promise<void> 
       state: req.userId,
     });
 
+    console.log("DEBUG Gmail OAuth - Full URL:", url);
     res.json({ url });
-  } catch {
+  } catch (err) {
+    console.error("DEBUG Gmail OAuth error:", err);
     res.status(500).json({ error: "Failed to generate Gmail auth URL" });
   }
 });
