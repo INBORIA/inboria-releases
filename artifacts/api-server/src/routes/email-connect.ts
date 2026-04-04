@@ -351,7 +351,6 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
         subject,
         body: snippet,
         status: "non_lu",
-        priority: "moyen",
         created_at: new Date(parseInt(fullMsg.internalDate || "0")).toISOString(),
       });
 
@@ -432,7 +431,6 @@ async function syncOutlook(conn: any, userId: string): Promise<number> {
       subject: msg.subject || "(pas de sujet)",
       body: msg.bodyPreview || "",
       status: "non_lu",
-      priority: "moyen",
       created_at: msg.receivedDateTime,
     });
 
@@ -482,7 +480,7 @@ async function syncImap(conn: any, userId: string): Promise<number> {
         await supabaseAdmin.from("emails").insert({
           user_id: userId, external_id: externalId, sender,
           subject: envelope.subject || "(pas de sujet)", body: "",
-          status: "non_lu", priority: "moyen",
+          status: "non_lu",
           created_at: envelope.date ? new Date(envelope.date).toISOString() : new Date().toISOString(),
         });
         synced++;
