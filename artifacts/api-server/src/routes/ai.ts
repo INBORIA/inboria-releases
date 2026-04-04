@@ -1,8 +1,12 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { GenerateDailySummaryBody, TriageEmailBody } from "@workspace/api-zod";
-import { openai } from "@workspace/integrations-openai-ai-server";
+import OpenAI from "openai";
 import { requireAuth } from "../middlewares/auth";
+
+const openai = new OpenAI({
+  apiKey: process.env["OPENAI_API_KEY"],
+});
 
 const router: IRouter = Router();
 
