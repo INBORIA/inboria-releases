@@ -1,56 +1,175 @@
 import { Router, type IRouter } from "express";
+import { google } from "googleapis";
 import { ImapFlow } from "imapflow";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
+const GOOGLE_CLIENT_ID = process.env["GOOGLE_CLIENT_ID"] || "";
+const GOOGLE_CLIENT_SECRET = process.env["GOOGLE_CLIENT_SECRET"] || "";
+
+function getRedirectUri(provider: string) {
+  const domain = process.env["REPLIT_DEV_DOMAIN"] || process.env["REPLIT_DOMAINS"] || "localhost";
+  const protocol = domain.includes("localhost") ? "http" : "https";
+  return `${protocol}://${domain}/api/email/callback/${provider}`;
+}
+
+function getGoogleOAuth2Client() {
+  return new google.auth.OAuth2(
+    GOOGLE_CLIENT_ID,
+    GOOGLE_CLIENT_SECRET,
+    getRedirectUri("gmail")
+  );
+}
+
 const IMAP_PROVIDERS: Record<string, { host: string; port: number }> = {
-  "gmail.com": { host: "imap.gmail.com", port: 993 },
-  "googlemail.com": { host: "imap.gmail.com", port: 993 },
-  "outlook.com": { host: "outlook.office365.com", port: 993 },
-  "hotmail.com": { host: "outlook.office365.com", port: 993 },
-  "hotmail.fr": { host: "outlook.office365.com", port: 993 },
-  "live.com": { host: "outlook.office365.com", port: 993 },
-  "live.fr": { host: "outlook.office365.com", port: 993 },
-  "yahoo.com": { host: "imap.mail.yahoo.com", port: 993 },
-  "yahoo.fr": { host: "imap.mail.yahoo.com", port: 993 },
   "orange.fr": { host: "imap.orange.fr", port: 993 },
   "wanadoo.fr": { host: "imap.orange.fr", port: 993 },
   "free.fr": { host: "imap.free.fr", port: 993 },
   "sfr.fr": { host: "imap.sfr.fr", port: 993 },
   "laposte.net": { host: "imap.laposte.net", port: 993 },
+  "yahoo.com": { host: "imap.mail.yahoo.com", port: 993 },
+  "yahoo.fr": { host: "imap.mail.yahoo.com", port: 993 },
   "icloud.com": { host: "imap.mail.me.com", port: 993 },
   "me.com": { host: "imap.mail.me.com", port: 993 },
   "ovh.net": { host: "ssl0.ovh.net", port: 993 },
 };
 
-function detectImapSettings(email: string): { host: string; port: number } | null {
-  const domain = email.split("@")[1]?.toLowerCase();
-  if (!domain) return null;
-  return IMAP_PROVIDERS[domain] || null;
-}
-
-async function testImapConnection(email: string, password: string, host: string, port: number): Promise<boolean> {
-  const client = new ImapFlow({
-    host,
-    port,
-    secure: true,
-    auth: { user: email, pass: password },
-    logger: false,
-  });
-
+router.get("/email/connect/gmail", requireAuth, async (req, res): Promise<void> => {
   try {
-    await client.connect();
-    await client.logout();
-    return true;
-  } catch (err: any) {
-    console.error("IMAP test failed:", err.message);
-    return false;
-  }
-}
+    if (!GOOGLE_CLIENT_ID || !GOOGLE_CLIENT_SECRET) {
+      res.status(500).json({ error: "Google OAuth non configure" });
+      return;
+    }
 
-router.post("/email/connect", requireAuth, async (req, res): Promise<void> => {
+    const oauth2Client = getGoogleOAuth2Client();
+    const url = oauth2Client.generateAuthUrl({
+      access_type: "offline",
+      prompt: "consent",
+      scope: [
+        "https://www.googleapis.com/auth/gmail.readonly",
+        "https://www.googleapis.com/auth/userinfo.email",
+      ],
+      state: req.userId,
+    });
+
+    res.json({ url });
+  } catch {
+    res.status(500).json({ error: "Erreur lors de la generation de l'URL Gmail" });
+  }
+});
+
+router.get("/email/callback/gmail", async (req, res): Promise<void> => {
+  try {
+    const code = req.query.code as string;
+    const userId = req.query.state as string;
+
+    if (!code || !userId) {
+      res.status(400).send("Parametres manquants");
+      return;
+    }
+
+    const oauth2Client = getGoogleOAuth2Client();
+    const { tokens } = await oauth2Client.getToken(code);
+    oauth2Client.setCredentials(tokens);
+
+    const oauth2 = google.oauth2({ version: "v2", auth: oauth2Client });
+    const { data: userInfo } = await oauth2.userinfo.get();
+
+    await supabaseAdmin.from("email_connections").upsert({
+      user_id: userId,
+      provider: "gmail",
+      email_address: userInfo.email,
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+      token_expires_at: tokens.expiry_date ? new Date(tokens.expiry_date).toISOString() : null,
+    }, { onConflict: "user_id,provider" });
+
+    const domain = process.env["REPLIT_DEV_DOMAIN"] || process.env["REPLIT_DOMAINS"] || "localhost";
+    const protocol = domain.includes("localhost") ? "http" : "https";
+    res.send(`<html><body><script>window.opener?.postMessage({type:'email-connected',provider:'gmail'},'*');window.close();</script><p>Gmail connecte ! Vous pouvez fermer cette fenetre.</p></body></html>`);
+  } catch (err: any) {
+    console.error("Gmail callback error:", err);
+    res.status(500).send("Connexion Gmail echouee: " + (err.message || "Erreur inconnue"));
+  }
+});
+
+router.get("/email/connect/outlook", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const MICROSOFT_CLIENT_ID = process.env["MICROSOFT_CLIENT_ID"] || "";
+    const MICROSOFT_CLIENT_SECRET = process.env["MICROSOFT_CLIENT_SECRET"] || "";
+
+    if (!MICROSOFT_CLIENT_ID || !MICROSOFT_CLIENT_SECRET) {
+      res.status(500).json({ error: "Microsoft OAuth non configure" });
+      return;
+    }
+
+    const redirectUri = getRedirectUri("outlook");
+    const scope = encodeURIComponent("openid email Mail.Read offline_access");
+    const url = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${MICROSOFT_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${req.userId}&response_mode=query`;
+
+    res.json({ url });
+  } catch {
+    res.status(500).json({ error: "Erreur lors de la generation de l'URL Outlook" });
+  }
+});
+
+router.get("/email/callback/outlook", async (req, res): Promise<void> => {
+  try {
+    const code = req.query.code as string;
+    const userId = req.query.state as string;
+    const MICROSOFT_CLIENT_ID = process.env["MICROSOFT_CLIENT_ID"] || "";
+    const MICROSOFT_CLIENT_SECRET = process.env["MICROSOFT_CLIENT_SECRET"] || "";
+
+    if (!code || !userId) {
+      res.status(400).send("Parametres manquants");
+      return;
+    }
+
+    const redirectUri = getRedirectUri("outlook");
+    const tokenResponse = await fetch("https://login.microsoftonline.com/common/oauth2/v2.0/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: MICROSOFT_CLIENT_ID,
+        client_secret: MICROSOFT_CLIENT_SECRET,
+        code,
+        redirect_uri: redirectUri,
+        grant_type: "authorization_code",
+        scope: "openid email Mail.Read offline_access",
+      }),
+    });
+
+    const tokens = await tokenResponse.json() as any;
+
+    if (tokens.error) {
+      res.status(400).send("Connexion Outlook echouee: " + tokens.error_description);
+      return;
+    }
+
+    const profileResponse = await fetch("https://graph.microsoft.com/v1.0/me", {
+      headers: { Authorization: `Bearer ${tokens.access_token}` },
+    });
+    const profile = await profileResponse.json() as any;
+
+    await supabaseAdmin.from("email_connections").upsert({
+      user_id: userId,
+      provider: "outlook",
+      email_address: profile.mail || profile.userPrincipalName,
+      access_token: tokens.access_token,
+      refresh_token: tokens.refresh_token,
+      token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
+    }, { onConflict: "user_id,provider" });
+
+    res.send(`<html><body><script>window.opener?.postMessage({type:'email-connected',provider:'outlook'},'*');window.close();</script><p>Outlook connecte ! Vous pouvez fermer cette fenetre.</p></body></html>`);
+  } catch (err: any) {
+    console.error("Outlook callback error:", err);
+    res.status(500).send("Connexion Outlook echouee: " + (err.message || "Erreur inconnue"));
+  }
+});
+
+router.post("/email/connect/imap", requireAuth, async (req, res): Promise<void> => {
   try {
     const { email, password, imapHost, imapPort } = req.body;
 
@@ -59,11 +178,12 @@ router.post("/email/connect", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
+    const domain = email.split("@")[1]?.toLowerCase() || "";
     let host = imapHost;
     let port = imapPort || 993;
 
     if (!host) {
-      const detected = detectImapSettings(email);
+      const detected = IMAP_PROVIDERS[domain];
       if (!detected) {
         res.status(400).json({
           error: "Fournisseur non reconnu. Veuillez entrer le serveur IMAP manuellement.",
@@ -75,40 +195,34 @@ router.post("/email/connect", requireAuth, async (req, res): Promise<void> => {
       port = detected.port;
     }
 
-    const connected = await testImapConnection(email, password, host, port);
-    if (!connected) {
-      const domain = email.split("@")[1]?.toLowerCase();
-      let hint = "";
-      if (domain === "gmail.com" || domain === "googlemail.com") {
-        hint = " Pour Gmail, utilisez un 'Mot de passe d'application' (Compte Google > Securite > Mots de passe des applications).";
-      } else if (["outlook.com", "hotmail.com", "hotmail.fr", "live.com", "live.fr"].includes(domain || "")) {
-        hint = " Pour Outlook/Hotmail, activez l'acces IMAP dans les parametres et utilisez votre mot de passe habituel.";
-      }
-      res.status(401).json({
-        error: `Connexion echouee. Verifiez vos identifiants.${hint}`,
-      });
+    const client = new ImapFlow({
+      host, port, secure: true,
+      auth: { user: email, pass: password },
+      logger: false,
+    });
+
+    try {
+      await client.connect();
+      await client.logout();
+    } catch {
+      res.status(401).json({ error: "Connexion echouee. Verifiez vos identifiants." });
       return;
     }
-
-    const domain = email.split("@")[1]?.toLowerCase() || "";
-    const provider = domain.includes("gmail") || domain.includes("googlemail") ? "gmail"
-      : ["outlook.com", "hotmail.com", "hotmail.fr", "live.com", "live.fr"].includes(domain) ? "outlook"
-      : "imap";
 
     const imapConfig = JSON.stringify({ host, port });
 
     await supabaseAdmin.from("email_connections").upsert({
       user_id: req.userId,
-      provider,
+      provider: "imap",
       email_address: email,
       access_token: password,
       refresh_token: imapConfig,
       token_expires_at: null,
     }, { onConflict: "user_id,provider" });
 
-    res.json({ success: true, provider, email });
+    res.json({ success: true, provider: "imap", email });
   } catch (err: any) {
-    console.error("Email connect error:", err);
+    console.error("IMAP connect error:", err);
     res.status(500).json({ error: "Erreur lors de la connexion" });
   }
 });
@@ -127,7 +241,7 @@ router.get("/email/connections", requireAuth, async (req, res): Promise<void> =>
 
     res.json(data || []);
   } catch {
-    res.status(500).json({ error: "Failed to list connections" });
+    res.status(500).json({ error: "Erreur lors de la recuperation des connexions" });
   }
 });
 
@@ -141,7 +255,7 @@ router.delete("/email/connections/:provider", requireAuth, async (req, res): Pro
 
     res.json({ success: true });
   } catch {
-    res.status(500).json({ error: "Failed to disconnect" });
+    res.status(500).json({ error: "Erreur lors de la deconnexion" });
   }
 });
 
@@ -160,7 +274,13 @@ router.post("/email/sync", requireAuth, async (req, res): Promise<void> => {
     let totalSynced = 0;
 
     for (const conn of connections) {
-      totalSynced += await syncImap(conn, req.userId!);
+      if (conn.provider === "gmail") {
+        totalSynced += await syncGmail(conn, req.userId!);
+      } else if (conn.provider === "outlook") {
+        totalSynced += await syncOutlook(conn, req.userId!);
+      } else {
+        totalSynced += await syncImap(conn, req.userId!);
+      }
     }
 
     res.json({ synced: totalSynced });
@@ -170,12 +290,151 @@ router.post("/email/sync", requireAuth, async (req, res): Promise<void> => {
   }
 });
 
+async function syncGmail(conn: any, userId: string): Promise<number> {
+  const oauth2Client = getGoogleOAuth2Client();
+  oauth2Client.setCredentials({
+    access_token: conn.access_token,
+    refresh_token: conn.refresh_token,
+  });
+
+  oauth2Client.on("tokens", async (tokens) => {
+    if (tokens.access_token) {
+      await supabaseAdmin.from("email_connections").update({
+        access_token: tokens.access_token,
+        token_expires_at: tokens.expiry_date ? new Date(tokens.expiry_date).toISOString() : null,
+      }).eq("id", conn.id);
+    }
+  });
+
+  const gmail = google.gmail({ version: "v1", auth: oauth2Client });
+
+  const { data: messageList } = await gmail.users.messages.list({
+    userId: "me",
+    maxResults: 20,
+    q: "is:inbox",
+  });
+
+  if (!messageList.messages) return 0;
+
+  let synced = 0;
+
+  for (const msg of messageList.messages) {
+    const { data: existing } = await supabaseAdmin
+      .from("emails")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("external_id", msg.id!)
+      .single();
+
+    if (existing) continue;
+
+    const { data: fullMsg } = await gmail.users.messages.get({
+      userId: "me",
+      id: msg.id!,
+      format: "metadata",
+      metadataHeaders: ["From", "Subject", "Date"],
+    });
+
+    const headers = fullMsg.payload?.headers || [];
+    const from = headers.find(h => h.name === "From")?.value || "Inconnu";
+    const subject = headers.find(h => h.name === "Subject")?.value || "(pas de sujet)";
+    const snippet = fullMsg.snippet || "";
+
+    await supabaseAdmin.from("emails").insert({
+      user_id: userId,
+      external_id: msg.id,
+      sender: from,
+      subject,
+      body: snippet,
+      status: "non_lu",
+      priority: "moyen",
+      created_at: new Date(parseInt(fullMsg.internalDate || "0")).toISOString(),
+    });
+
+    synced++;
+  }
+
+  await supabaseAdmin.from("email_connections").update({
+    last_synced_at: new Date().toISOString(),
+  }).eq("id", conn.id);
+
+  return synced;
+}
+
+async function syncOutlook(conn: any, userId: string): Promise<number> {
+  let accessToken = conn.access_token;
+  const MICROSOFT_CLIENT_ID = process.env["MICROSOFT_CLIENT_ID"] || "";
+  const MICROSOFT_CLIENT_SECRET = process.env["MICROSOFT_CLIENT_SECRET"] || "";
+
+  if (conn.token_expires_at && new Date(conn.token_expires_at) < new Date()) {
+    const tokenResponse = await fetch("https://login.microsoftonline.com/common/oauth2/v2.0/token", {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        client_id: MICROSOFT_CLIENT_ID,
+        client_secret: MICROSOFT_CLIENT_SECRET,
+        refresh_token: conn.refresh_token,
+        grant_type: "refresh_token",
+        scope: "Mail.Read offline_access",
+      }),
+    });
+    const tokens = await tokenResponse.json() as any;
+    if (tokens.access_token) {
+      accessToken = tokens.access_token;
+      await supabaseAdmin.from("email_connections").update({
+        access_token: tokens.access_token,
+        token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
+      }).eq("id", conn.id);
+    }
+  }
+
+  const response = await fetch("https://graph.microsoft.com/v1.0/me/messages?$top=20&$orderby=receivedDateTime desc&$select=id,from,subject,bodyPreview,receivedDateTime", {
+    headers: { Authorization: `Bearer ${accessToken}` },
+  });
+  const data = await response.json() as any;
+
+  if (!data.value) return 0;
+
+  let synced = 0;
+
+  for (const msg of data.value) {
+    const { data: existing } = await supabaseAdmin
+      .from("emails")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("external_id", msg.id)
+      .single();
+
+    if (existing) continue;
+
+    const senderEmail = msg.from?.emailAddress?.address || "Inconnu";
+    const senderName = msg.from?.emailAddress?.name || senderEmail;
+
+    await supabaseAdmin.from("emails").insert({
+      user_id: userId,
+      external_id: msg.id,
+      sender: `${senderName} <${senderEmail}>`,
+      subject: msg.subject || "(pas de sujet)",
+      body: msg.bodyPreview || "",
+      status: "non_lu",
+      priority: "moyen",
+      created_at: msg.receivedDateTime,
+    });
+
+    synced++;
+  }
+
+  await supabaseAdmin.from("email_connections").update({
+    last_synced_at: new Date().toISOString(),
+  }).eq("id", conn.id);
+
+  return synced;
+}
+
 async function syncImap(conn: any, userId: string): Promise<number> {
   let imapConfig = { host: "imap.gmail.com", port: 993 };
   try {
-    if (conn.refresh_token) {
-      imapConfig = JSON.parse(conn.refresh_token);
-    }
+    if (conn.refresh_token) imapConfig = JSON.parse(conn.refresh_token);
   } catch {}
 
   const client = new ImapFlow({
@@ -188,64 +447,35 @@ async function syncImap(conn: any, userId: string): Promise<number> {
 
   try {
     await client.connect();
-
     const lock = await client.getMailboxLock("INBOX");
     let synced = 0;
 
     try {
-      const messages = client.fetch("1:*", {
-        envelope: true,
-        uid: true,
-      }, { uid: true });
-
+      const messages = client.fetch("1:*", { envelope: true, uid: true }, { uid: true });
       const msgList: any[] = [];
-      for await (const msg of messages) {
-        msgList.push(msg);
-      }
+      for await (const msg of messages) msgList.push(msg);
 
-      const recentMessages = msgList.slice(-20);
-
-      for (const msg of recentMessages) {
-        const externalId = `${conn.provider}_${msg.uid}`;
-
-        const { data: existing } = await supabaseAdmin
-          .from("emails")
-          .select("id")
-          .eq("user_id", userId)
-          .eq("external_id", externalId)
-          .single();
-
+      for (const msg of msgList.slice(-20)) {
+        const externalId = `imap_${msg.uid}`;
+        const { data: existing } = await supabaseAdmin.from("emails").select("id").eq("user_id", userId).eq("external_id", externalId).single();
         if (existing) continue;
 
         const envelope = msg.envelope;
         const from = envelope.from?.[0];
-        const senderName = from?.name || "";
-        const senderAddress = from?.address || "inconnu";
-        const sender = senderName ? `${senderName} <${senderAddress}>` : senderAddress;
+        const sender = from?.name ? `${from.name} <${from.address}>` : (from?.address || "inconnu");
 
         await supabaseAdmin.from("emails").insert({
-          user_id: userId,
-          external_id: externalId,
-          sender,
-          subject: envelope.subject || "(pas de sujet)",
-          body: "",
-          status: "non_lu",
-          priority: "moyen",
+          user_id: userId, external_id: externalId, sender,
+          subject: envelope.subject || "(pas de sujet)", body: "",
+          status: "non_lu", priority: "moyen",
           created_at: envelope.date ? new Date(envelope.date).toISOString() : new Date().toISOString(),
         });
-
         synced++;
       }
-    } finally {
-      lock.release();
-    }
+    } finally { lock.release(); }
 
     await client.logout();
-
-    await supabaseAdmin.from("email_connections").update({
-      last_synced_at: new Date().toISOString(),
-    }).eq("id", conn.id);
-
+    await supabaseAdmin.from("email_connections").update({ last_synced_at: new Date().toISOString() }).eq("id", conn.id);
     return synced;
   } catch (err: any) {
     console.error(`IMAP sync error for ${conn.email_address}:`, err.message);

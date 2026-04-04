@@ -7,7 +7,7 @@ import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Mail, User, Bell, BrainCircuit, CheckCircle2, RefreshCw, Trash2, Eye, EyeOff, AlertCircle } from "lucide-react";
 import { useState, useEffect } from "react";
@@ -47,9 +47,9 @@ export default function Parametres() {
 
   const [fullName, setFullName] = useState("");
   const [syncing, setSyncing] = useState(false);
-  const [showConnectForm, setShowConnectForm] = useState(false);
-  const [connectEmail, setConnectEmail] = useState("");
-  const [connectPassword, setConnectPassword] = useState("");
+  const [showImapForm, setShowImapForm] = useState(false);
+  const [imapEmail, setImapEmail] = useState("");
+  const [imapPassword, setImapPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [imapHost, setImapHost] = useState("");
@@ -58,10 +58,19 @@ export default function Parametres() {
   const [connectError, setConnectError] = useState("");
 
   useEffect(() => {
-    if (profile) {
-      setFullName(profile.fullName);
-    }
+    if (profile) setFullName(profile.fullName);
   }, [profile]);
+
+  useEffect(() => {
+    const handler = (e: MessageEvent) => {
+      if (e.data?.type === "email-connected") {
+        toast({ title: `${e.data.provider === "gmail" ? "Gmail" : "Outlook"} connecte avec succes !` });
+        queryClient.invalidateQueries({ queryKey: ["email-connections"] });
+      }
+    };
+    window.addEventListener("message", handler);
+    return () => window.removeEventListener("message", handler);
+  }, []);
 
   const handleSaveProfile = () => {
     updateProfile.mutate(
@@ -75,47 +84,57 @@ export default function Parametres() {
     );
   };
 
-  const handleConnect = async () => {
-    if (!connectEmail || !connectPassword) {
+  const handleOAuthConnect = async (provider: "gmail" | "outlook") => {
+    try {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const res = await fetch(`${baseUrl}/api/email/connect/${provider}`, {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.open(data.url, "_blank", "width=600,height=700,left=200,top=100");
+      } else {
+        toast({ variant: "destructive", title: "Erreur", description: data.error || "Impossible de se connecter" });
+      }
+    } catch {
+      toast({ variant: "destructive", title: "Erreur de connexion" });
+    }
+  };
+
+  const handleImapConnect = async () => {
+    if (!imapEmail || !imapPassword) {
       setConnectError("Veuillez remplir tous les champs");
       return;
     }
-
     setConnecting(true);
     setConnectError("");
-
     try {
       const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
-      const res = await fetch(`${baseUrl}/api/email/connect`, {
+      const res = await fetch(`${baseUrl}/api/email/connect/imap`, {
         method: "POST",
         headers: {
           Authorization: `Bearer ${session?.access_token}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          email: connectEmail,
-          password: connectPassword,
+          email: imapEmail,
+          password: imapPassword,
           imapHost: imapHost || undefined,
           imapPort: imapPort ? parseInt(imapPort) : undefined,
         }),
       });
-
       const data = await res.json();
-
       if (res.ok) {
-        toast({ title: `${connectEmail} connecte avec succes !` });
+        toast({ title: `${imapEmail} connecte avec succes !` });
         queryClient.invalidateQueries({ queryKey: ["email-connections"] });
-        setShowConnectForm(false);
-        setConnectEmail("");
-        setConnectPassword("");
+        setShowImapForm(false);
+        setImapEmail("");
+        setImapPassword("");
         setImapHost("");
         setImapPort("");
-        setShowAdvanced(false);
       } else {
         setConnectError(data.error || "Connexion echouee");
-        if (data.needsManualConfig) {
-          setShowAdvanced(true);
-        }
+        if (data.needsManualConfig) setShowAdvanced(true);
       }
     } catch {
       setConnectError("Erreur de connexion au serveur");
@@ -160,6 +179,9 @@ export default function Parametres() {
     }
   };
 
+  const gmailConnected = connections?.find(c => c.provider === "gmail");
+  const outlookConnected = connections?.find(c => c.provider === "outlook");
+  const imapConnected = connections?.find(c => c.provider === "imap");
   const hasConnections = connections && connections.length > 0;
 
   return (
@@ -220,19 +242,50 @@ export default function Parametres() {
                       </div>
                     ))}
 
-                    {!showConnectForm ? (
-                      <Button
-                        variant="outline"
-                        className="w-full border-dashed"
-                        onClick={() => setShowConnectForm(true)}
+                    {!gmailConnected && (
+                      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border border-border rounded-lg bg-secondary/30">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center text-red-600 font-bold text-xl">G</div>
+                          <div>
+                            <h4 className="font-medium text-gray-900">Gmail / Google Workspace</h4>
+                            <p className="text-sm text-gray-500">Connectez votre compte Google en un clic.</p>
+                          </div>
+                        </div>
+                        <Button variant="outline" className="w-full sm:w-auto" onClick={() => handleOAuthConnect("gmail")}>
+                          Se connecter avec Google
+                        </Button>
+                      </div>
+                    )}
+
+                    {!outlookConnected && (
+                      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 p-4 border border-border rounded-lg bg-secondary/30">
+                        <div className="flex items-center gap-4">
+                          <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center text-blue-600 font-bold text-xl">O</div>
+                          <div>
+                            <h4 className="font-medium text-gray-900">Microsoft Outlook</h4>
+                            <p className="text-sm text-gray-500">Connectez votre compte Microsoft en un clic.</p>
+                          </div>
+                        </div>
+                        <Button variant="outline" className="w-full sm:w-auto" onClick={() => handleOAuthConnect("outlook")}>
+                          Se connecter avec Microsoft
+                        </Button>
+                      </div>
+                    )}
+
+                    {!imapConnected && !showImapForm && (
+                      <button
+                        className="w-full text-sm text-gray-500 hover:text-primary py-2 text-center"
+                        onClick={() => setShowImapForm(true)}
                       >
-                        + Ajouter un compte email
-                      </Button>
-                    ) : (
+                        Autre fournisseur (Orange, Free, SFR, Yahoo...)
+                      </button>
+                    )}
+
+                    {showImapForm && (
                       <div className="p-4 border border-primary/30 rounded-lg bg-primary/5 space-y-4">
-                        <h4 className="font-medium text-gray-900">Connecter un compte email</h4>
+                        <h4 className="font-medium text-gray-900">Connecter un autre compte email</h4>
                         <p className="text-sm text-gray-500">
-                          Entrez vos identifiants. Le serveur IMAP est detecte automatiquement pour Gmail, Outlook, Yahoo, Orange, Free, SFR, etc.
+                          Pour Orange, Free, SFR, Yahoo, La Poste, OVH et autres fournisseurs.
                         </p>
 
                         {connectError && (
@@ -245,40 +298,19 @@ export default function Parametres() {
                         <div className="space-y-3">
                           <div className="space-y-1">
                             <Label>Adresse email</Label>
-                            <Input
-                              type="email"
-                              placeholder="votre@email.com"
-                              value={connectEmail}
-                              onChange={(e) => setConnectEmail(e.target.value)}
-                            />
+                            <Input type="email" placeholder="votre@email.com" value={imapEmail} onChange={(e) => setImapEmail(e.target.value)} />
                           </div>
                           <div className="space-y-1">
-                            <Label>Mot de passe / Mot de passe d'application</Label>
+                            <Label>Mot de passe</Label>
                             <div className="relative">
-                              <Input
-                                type={showPassword ? "text" : "password"}
-                                placeholder="Mot de passe"
-                                value={connectPassword}
-                                onChange={(e) => setConnectPassword(e.target.value)}
-                              />
-                              <button
-                                type="button"
-                                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                                onClick={() => setShowPassword(!showPassword)}
-                              >
+                              <Input type={showPassword ? "text" : "password"} placeholder="Mot de passe" value={imapPassword} onChange={(e) => setImapPassword(e.target.value)} />
+                              <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600" onClick={() => setShowPassword(!showPassword)}>
                                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                               </button>
                             </div>
-                            <p className="text-xs text-gray-400">
-                              Pour Gmail : utilisez un Mot de passe d'application (Compte Google &gt; Securite &gt; Mots de passe des applications)
-                            </p>
                           </div>
 
-                          <button
-                            type="button"
-                            className="text-sm text-primary hover:underline"
-                            onClick={() => setShowAdvanced(!showAdvanced)}
-                          >
+                          <button type="button" className="text-sm text-primary hover:underline" onClick={() => setShowAdvanced(!showAdvanced)}>
                             {showAdvanced ? "Masquer" : "Configuration avancee (serveur IMAP personnalise)"}
                           </button>
 
@@ -286,35 +318,21 @@ export default function Parametres() {
                             <div className="grid grid-cols-2 gap-3">
                               <div className="space-y-1">
                                 <Label>Serveur IMAP</Label>
-                                <Input
-                                  placeholder="imap.exemple.com"
-                                  value={imapHost}
-                                  onChange={(e) => setImapHost(e.target.value)}
-                                />
+                                <Input placeholder="imap.exemple.com" value={imapHost} onChange={(e) => setImapHost(e.target.value)} />
                               </div>
                               <div className="space-y-1">
                                 <Label>Port</Label>
-                                <Input
-                                  type="number"
-                                  placeholder="993"
-                                  value={imapPort}
-                                  onChange={(e) => setImapPort(e.target.value)}
-                                />
+                                <Input type="number" placeholder="993" value={imapPort} onChange={(e) => setImapPort(e.target.value)} />
                               </div>
                             </div>
                           )}
                         </div>
 
                         <div className="flex gap-3">
-                          <Button onClick={handleConnect} disabled={connecting} className="bg-[#1877F2] hover:bg-[#1565c0]">
+                          <Button onClick={handleImapConnect} disabled={connecting} className="bg-[#1877F2] hover:bg-[#1565c0]">
                             {connecting ? "Connexion en cours..." : "Connecter"}
                           </Button>
-                          <Button variant="outline" onClick={() => {
-                            setShowConnectForm(false);
-                            setConnectError("");
-                            setConnectEmail("");
-                            setConnectPassword("");
-                          }}>
+                          <Button variant="outline" onClick={() => { setShowImapForm(false); setConnectError(""); }}>
                             Annuler
                           </Button>
                         </div>
@@ -387,15 +405,9 @@ export default function Parametres() {
                     </div>
                     <div className="space-y-2">
                       <Label>Nom complet</Label>
-                      <Input 
-                        value={fullName} 
-                        onChange={(e) => setFullName(e.target.value)} 
-                      />
+                      <Input value={fullName} onChange={(e) => setFullName(e.target.value)} />
                     </div>
-                    <Button 
-                      onClick={handleSaveProfile} 
-                      disabled={updateProfile.isPending || fullName === profile?.fullName}
-                    >
+                    <Button onClick={handleSaveProfile} disabled={updateProfile.isPending || fullName === profile?.fullName}>
                       {updateProfile.isPending ? "Enregistrement..." : "Enregistrer les modifications"}
                     </Button>
                   </div>
@@ -428,7 +440,6 @@ export default function Parametres() {
               </CardContent>
             </Card>
           </section>
-
         </div>
       </div>
     </DashboardLayout>
