@@ -1,0 +1,22 @@
+Mettre à jour les champs d'application sélectionnés
+Seuls les niveaux d'accès associés aux API activées sont répertoriés ci-dessous. Pour ajouter un niveau d'accès manquant à cet écran, localisez et activez l'API dans la Bibliothèque des API Google ou utilisez la zone de texte "Niveaux d'accèss collés" ci-dessous. Actualisez la page pour afficher toutes les nouvelles API activées depuis la bibliothèque.
+Filtrer
+API
+Champ d'application
+Description visible par l'utilisateur
+.../auth/userinfo.email	Afficher l'adresse e-mail principale associée à votre compte Google
+.../auth/userinfo.profile	Consulter vos informations personnelles, y compris celles que vous avez choisi de rendre disponibles publiquement
+openid	Créer une relation entre vous et vos informations personnelles sur Google
+Analytics Hub API	.../auth/bigquery	View and manage your data in Google BigQuery and see the email address for your Google Account
+Analytics Hub API	.../auth/cloud-platform	Voir, modifier, configurer et supprimer vos données Google Cloud, et voir l'adresse e-mail de votre compte Google
+BigQuery API	.../auth/bigquery.readonly	Afficher vos données dans Google BigQuery
+BigQuery API	.../auth/cloud-platform.read-only	Consulter vos données dans les services Google Cloud et voir l'adresse e-mail de votre compte Google
+BigQuery API	.../auth/devstorage.full_control	Manage your data and permissions in Cloud Storage and see the email address for your Google Account
+BigQuery API	.../auth/devstorage.read_only	Afficher vos données dans Google Cloud Storage
+BigQuery API	.../auth/devstorage.read_write	Gérer vos données dans Cloud Storage et voir l'adresse e-mail de votre compte Google
+Lignes par page:
+10
+1 – 10 sur 43
+Ajouter manuellement des niveaux d'accès
+Si les niveaux d'accès que vous souhaitez ajouter n'apparaissent pas dans le tableau ci-dessus, vous pouvez les saisir ici. Les niveaux d'accès doivent être saisis séparément sur plusieurs lignes ou séparés par des virgules. Veuillez indiquer la chaîne complète du niveau d'accès (en commençant par "https://"). Lorsque vous avez terminé, cliquez sur "Ajouter au tableau".
+
