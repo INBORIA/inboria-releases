@@ -35,7 +35,7 @@ const plans = [
       "Brouillons IA proactifs",
       "Extraction automatique des taches",
       "Support prioritaire",
-      "Depassement : 0,002\u20AC/email",
+      "Depassement : 0,002€/email",
     ],
     icon: Zap,
     badge: "Nouveau",
@@ -55,7 +55,7 @@ const plans = [
       "Integrations avancees (Slack, Notion)",
       "Statistiques detaillees",
       "Support prioritaire",
-      "Depassement : 0,001\u20AC/email",
+      "Depassement : 0,001€/email",
     ],
     icon: Sparkles,
     popular: true,
@@ -75,7 +75,7 @@ const plans = [
       "Assignation de taches entre membres",
       "API dediee",
       "Support prioritaire",
-      "Depassement : 0,001\u20AC / email",
+      "Depassement : 0,001€ / email",
     ],
     icon: Users,
     hasSeats: true,
@@ -104,8 +104,6 @@ export default function Abonnement() {
       }
     );
   };
-
-  const currentPlanIndex = plans.findIndex((p) => p.id === profile?.plan);
 
   return (
     <DashboardLayout>
@@ -155,9 +153,8 @@ export default function Abonnement() {
         ) : null}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
-          {plans.map((plan, idx) => {
+          {plans.map((plan) => {
             const isCurrentPlan = profile?.plan === plan.id;
-            const isUpgrade = idx > currentPlanIndex;
             const isBusiness = plan.hasSeats;
             const price = isBusiness
               ? parseInt(plan.price) * businessSeats
@@ -206,7 +203,7 @@ export default function Abonnement() {
                 <div className="mb-4">
                   <div className="flex items-baseline gap-0.5">
                     <span className="text-3xl font-extrabold text-white">
-                      {price}\u20AC
+                      {price}€
                     </span>
                     <span className="text-[#8b9cb3] text-[13px]">
                       {isBusiness ? "/ mois" : "/mois"}
@@ -214,7 +211,7 @@ export default function Abonnement() {
                   </div>
                   {isBusiness && (
                     <p className="text-[11px] text-[#8b9cb3] mt-0.5">
-                      Soit 9\u20AC par siege / mois
+                      Soit 9€ par siege / mois
                     </p>
                   )}
                 </div>
@@ -241,7 +238,7 @@ export default function Abonnement() {
                     </div>
                     <p className="text-[11px] text-primary mt-2">
                       {businessSeats} collaborateur{businessSeats > 1 ? "s" : ""} ={" "}
-                      {businessSeats * 9}\u20AC/mois
+                      {businessSeats * 9}€/mois
                     </p>
                   </div>
                 )}
@@ -259,7 +256,16 @@ export default function Abonnement() {
                   ))}
                 </ul>
 
-                {isCurrentPlan ? null : isUpgrade ? (
+                {isCurrentPlan ? (
+                  <Button
+                    variant="ghost"
+                    className="w-full text-primary hover:text-primary hover:bg-primary/10"
+                    size="sm"
+                    disabled
+                  >
+                    Plan actuel
+                  </Button>
+                ) : (
                   <Button
                     className="w-full"
                     size="sm"
@@ -271,16 +277,7 @@ export default function Abonnement() {
                       );
                     }}
                   >
-                    {isBusiness ? "Commencer" : "Passer a ce plan"}
-                  </Button>
-                ) : (
-                  <Button
-                    variant="ghost"
-                    className="w-full text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
-                    size="sm"
-                    disabled
-                  >
-                    Plan inferieur
+                    Commencer
                   </Button>
                 )}
               </div>
@@ -290,14 +287,14 @@ export default function Abonnement() {
 
         <div className="mt-6 text-center">
           <p className="text-[12px] text-[#8b9cb3] leading-relaxed">
-            Exemple : 3 collaborateurs = 27\u20AC/mois — modifiable a tout moment depuis votre espace.
+            Exemple : 3 collaborateurs = 27€/mois — modifiable a tout moment depuis votre espace.
           </p>
         </div>
 
         <div className="mt-6 bg-card rounded-lg border border-border p-5">
           <div className="flex items-start gap-3">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-amber-500/10 text-amber-400 shrink-0">
-              <CreditCard className="w-4.5 h-4.5" />
+              <CreditCard className="w-4 h-4" />
             </div>
             <div>
               <h3 className="text-[14px] font-semibold text-white mb-1">
@@ -313,7 +310,7 @@ export default function Abonnement() {
         <div className="mt-3 bg-card rounded-lg border border-border p-5">
           <div className="flex items-start gap-3">
             <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-blue-500/10 text-blue-400 shrink-0">
-              <Info className="w-4.5 h-4.5" />
+              <Info className="w-4 h-4" />
             </div>
             <div>
               <h3 className="text-[14px] font-semibold text-white mb-1">
