@@ -18,6 +18,7 @@ export * from "./dailySummaryStats";
 export * from "./dashboardSummary";
 export * from "./deleteEmail200";
 export * from "./deleteProject200";
+export * from "./deleteTask200";
 export * from "./email";
 export * from "./healthStatus";
 export * from "./inboxHealth";

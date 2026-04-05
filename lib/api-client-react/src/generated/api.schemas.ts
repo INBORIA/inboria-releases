@@ -306,6 +306,10 @@ export const ListTasksStatus = {
   done: "done",
 } as const;
 
+export type DeleteTask200 = {
+  success?: boolean;
+};
+
 export type DeleteProject200 = {
   success?: boolean;
 };

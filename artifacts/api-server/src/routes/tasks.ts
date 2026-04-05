@@ -79,4 +79,23 @@ router.patch("/tasks/:id", requireAuth, async (req, res): Promise<void> => {
   }
 });
 
+router.delete("/tasks/:id", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { error } = await supabaseAdmin
+      .from("tasks")
+      .delete()
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!);
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Failed to delete task" });
+  }
+});
+
 export default router;

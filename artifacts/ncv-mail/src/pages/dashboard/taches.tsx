@@ -1,14 +1,15 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useListTasks, useUpdateTask, getListTasksQueryKey } from "@workspace/api-client-react";
+import { useListTasks, useUpdateTask, useDeleteTask, getListTasksQueryKey } from "@workspace/api-client-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Calendar, Mail, CheckSquare, Clock } from "lucide-react";
+import { Calendar, Mail, CheckSquare, Clock, Trash2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
 
 export default function Taches() {
   const [filter, setFilter] = useState<string>("pending");
@@ -18,7 +19,9 @@ export default function Taches() {
     status: filter as any,
   });
 
+  const { toast } = useToast();
   const updateTask = useUpdateTask();
+  const deleteTask = useDeleteTask();
 
   const handleToggleTask = (id: number, currentDone: boolean) => {
     updateTask.mutate(
@@ -26,6 +29,21 @@ export default function Taches() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+        },
+      }
+    );
+  };
+
+  const handleDeleteTask = (id: number) => {
+    deleteTask.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+          toast({ title: "Tache supprimee" });
+        },
+        onError: () => {
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible de supprimer la tache." });
         },
       }
     );
@@ -107,11 +125,20 @@ export default function Taches() {
                     )}
                   </div>
                 </div>
-                {task.done && (
-                  <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[11px] shrink-0 hidden sm:inline-flex">
-                    Terminee
-                  </Badge>
-                )}
+                <div className="flex items-center gap-2 shrink-0">
+                  {task.done && (
+                    <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[11px] hidden sm:inline-flex">
+                      Terminee
+                    </Badge>
+                  )}
+                  <button
+                    onClick={() => handleDeleteTask(task.id)}
+                    className="p-1.5 rounded-md text-[#8b9cb3] hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                    title="Supprimer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
               </div>
             ))
           )}

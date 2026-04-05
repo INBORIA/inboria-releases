@@ -303,6 +303,17 @@ export const UpdateTaskResponse = zod.object({
 });
 
 /**
+ * @summary Delete a task
+ */
+export const DeleteTaskParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const DeleteTaskResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
  * @summary Dashboard summary stats
  */
 export const GetDashboardSummaryResponse = zod.object({
