@@ -57,7 +57,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     <div className="flex h-full flex-col">
       <div className="flex h-16 shrink-0 items-center px-5">
         <div className="flex items-center gap-2.5">
-          <img src={ncvLogo} alt="NCV" className="h-9 w-9 rounded-lg object-cover" />
+          <img src={ncvLogo} alt="NCV" className="h-11 w-11 rounded-lg object-cover" />
           <span className="font-semibold text-[15px] tracking-tight text-white">NCV Mail</span>
         </div>
       </div>
