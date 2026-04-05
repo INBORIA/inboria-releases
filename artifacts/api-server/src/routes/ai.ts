@@ -237,13 +237,7 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
       .eq("id", req.userId!)
       .single();
 
-    const userName = profile?.full_name || "l'utilisateur";
-    const lang = profile?.ai_language || "fr";
-    const langInstruction = lang === "fr"
-      ? "Redige la reponse en francais."
-      : lang === "nl"
-      ? "Schrijf het antwoord in het Nederlands."
-      : "Write the reply in English.";
+    const userName = (profile?.full_name || "").split(" ")[0] || "Cordialement";
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -251,7 +245,7 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
       messages: [
         {
           role: "system",
-          content: `Tu es un assistant de redaction d'emails professionnels. ${langInstruction} Tu rediges des reponses claires, polies et professionnelles. Signe avec le prenom "${userName}".`,
+          content: `Tu es un assistant de redaction d'emails professionnels. Redige la reponse en francais avec un ton professionnel. Tu rediges des reponses claires, polies et professionnelles. Signe avec le prenom "${userName}".`,
         },
         {
           role: "user",
