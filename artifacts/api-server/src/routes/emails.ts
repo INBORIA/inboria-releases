@@ -35,7 +35,7 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     if (req.query.q) {
       const raw = (req.query.q as string).trim();
       if (raw) {
-        const escaped = raw.replace(/[%_\\]/g, (c) => `\\${c}`);
+        const escaped = raw.replace(/[%_\\,()."']/g, (c) => `\\${c}`);
         const term = `%${escaped}%`;
         query = query.or(`subject.ilike.${term},sender.ilike.${term},summary.ilike.${term}`);
       }
