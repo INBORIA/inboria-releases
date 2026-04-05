@@ -48,7 +48,7 @@ function extractGmailBody(payload: any): string {
   return "";
 }
 
-async function triageEmail(sender: string, subject: string, body: string, userId: string): Promise<{ priority: string; summary: string; category: string }> {
+async function triageEmail(sender: string, subject: string, body: string, userId: string): Promise<{ priority: string; summary: string; category: string; tasks: string[] }> {
   try {
     const { data: categories } = await supabaseAdmin
       .from("categories")
@@ -56,12 +56,28 @@ async function triageEmail(sender: string, subject: string, body: string, userId
       .eq("user_id", userId);
     const categoryNames = (categories || []).map((c: any) => c.name);
 
+    const { data: rules } = await supabaseAdmin
+      .from("ai_rules")
+      .select("sender_pattern, forced_priority, forced_category")
+      .eq("user_id", userId);
+
+    let rulesContext = "";
+    if (rules && rules.length > 0) {
+      rulesContext = "\n\nRegles apprises (respecte-les en priorite):\n" +
+        rules.map((r: any) => {
+          const parts = [`- Si expediteur contient "${r.sender_pattern}"`];
+          if (r.forced_priority) parts.push(`alors priorite="${r.forced_priority}"`);
+          if (r.forced_category) parts.push(`et categorie="${r.forced_category}"`);
+          return parts.join(" ");
+        }).join("\n");
+    }
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
-      max_completion_tokens: 256,
+      max_completion_tokens: 512,
       messages: [
-        { role: "system", content: "Tu es un assistant de tri d'emails professionnel. Reponds uniquement en JSON valide." },
-        { role: "user", content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${body.slice(0, 500)}\n\nCategories: ${categoryNames.join(", ") || "Aucune"}\n\nJSON: {"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom ou Non classe"}` },
+        { role: "system", content: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide." },
+        { role: "user", content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${body.slice(0, 800)}\n\nCategories disponibles: ${categoryNames.join(", ") || "Aucune"}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom exact ou Non classe","tasks":["tache 1","tache 2"]}` },
       ],
     });
     const content = completion.choices[0]?.message?.content ?? "{}";
@@ -71,10 +87,11 @@ async function triageEmail(sender: string, subject: string, body: string, userId
       priority: result.priority || "faible",
       summary: result.summary || "",
       category: result.category || "Non classe",
+      tasks: Array.isArray(result.tasks) ? result.tasks : [],
     };
   } catch (err: any) {
     console.error("triageEmail error:", err.message);
-    return { priority: "faible", summary: "", category: "Non classe" };
+    return { priority: "faible", summary: "", category: "Non classe", tasks: [] };
   }
 }
 
@@ -494,7 +511,7 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
         sender: from,
         subject,
         body: emailBody,
-        status: triage.priority === "faible" ? "notification" : "non_lu",
+        status: "non_lu",
         priority: triage.priority,
         summary: triage.summary,
         category_id: categoryId,
@@ -504,6 +521,25 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
       if (insertError) {
         console.error("syncGmail: insert error for msg", msg.id, insertError);
         continue;
+      }
+
+      if (triage.tasks && triage.tasks.length > 0) {
+        const { data: insertedEmail } = await supabaseAdmin
+          .from("emails")
+          .select("id")
+          .eq("user_id", userId)
+          .eq("external_id", msg.id!)
+          .single();
+        if (insertedEmail) {
+          await supabaseAdmin.from("tasks").insert(
+            triage.tasks.map((title: string) => ({
+              user_id: userId,
+              email_id: insertedEmail.id,
+              title,
+              done: false,
+            }))
+          );
+        }
       }
 
       synced++;

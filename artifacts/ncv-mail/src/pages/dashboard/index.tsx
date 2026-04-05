@@ -82,7 +82,7 @@ const triageSchema = z.object({
   body: z.string().min(1, "Contenu requis"),
 });
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, categories }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; categories: any[] }) {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
 
@@ -140,44 +140,75 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete }: { email
           </p>
         </div>
 
-        <div className="px-5 py-4 border-t border-border flex items-center gap-2">
-          <Button
-            size="sm"
-            className="gap-1.5"
-            onClick={() => setReplyOpen(!replyOpen)}
-          >
-            <Reply className="w-3.5 h-3.5" />
-            Repondre
-          </Button>
-          {email.status === "unread" && (
+        <div className="px-5 py-4 border-t border-border">
+          <div className="flex items-center gap-2 mb-3">
+            <Button
+              size="sm"
+              className="gap-1.5"
+              onClick={() => setReplyOpen(!replyOpen)}
+            >
+              <Reply className="w-3.5 h-3.5" />
+              Repondre
+            </Button>
+            {email.status === "unread" && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1.5 bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                onClick={() => onMarkRead(email.id)}
+              >
+                <CheckCircle2 className="w-3.5 h-3.5" />
+                Marquer lu
+              </Button>
+            )}
             <Button
               variant="outline"
               size="sm"
               className="gap-1.5 bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
-              onClick={() => onMarkRead(email.id)}
+              onClick={() => onArchive(email.id)}
             >
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              Marquer lu
+              <Archive className="w-3.5 h-3.5" />
+              Archiver
             </Button>
-          )}
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5 bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
-            onClick={() => onArchive(email.id)}
-          >
-            <Archive className="w-3.5 h-3.5" />
-            Archiver
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            className="gap-1.5 bg-transparent border-border text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.08]"
-            onClick={() => onDelete(email.id)}
-          >
-            <Trash2 className="w-3.5 h-3.5" />
-            Supprimer
-          </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 bg-transparent border-border text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.08]"
+              onClick={() => onDelete(email.id)}
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              Supprimer
+            </Button>
+          </div>
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-[#8b9cb3] uppercase tracking-wider">Priorite:</span>
+              <Select value={email.priority} onValueChange={(val) => onUpdatePriority(email.id, val)}>
+                <SelectTrigger className="w-[110px] h-7 bg-card border-border text-[12px] text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  <SelectItem value="urgent">Urgent</SelectItem>
+                  <SelectItem value="moyen">Moyen</SelectItem>
+                  <SelectItem value="faible">Faible</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-[#8b9cb3] uppercase tracking-wider">Categorie:</span>
+              <Select value={email.categoryId?.toString() || "none"} onValueChange={(val) => onUpdateCategory(email.id, val)}>
+                <SelectTrigger className="w-[140px] h-7 bg-card border-border text-[12px] text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  <SelectItem value="none">Non classe</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.categoryId} value={cat.categoryId.toString()}>{cat.categoryName}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
         </div>
 
         {replyOpen && (
@@ -227,7 +258,14 @@ export default function Dashboard() {
   const deleteEmail = useDeleteEmail();
   const triageEmail = useTriageEmail();
 
-  const activeEmails = emails?.filter((e) => e.status !== "archived" && e.status !== "notification");
+  const [filterCategory, setFilterCategory] = useState<string>("all");
+  const activeEmails = emails
+    ?.filter((e) => e.status !== "archived")
+    ?.filter((e) => filterCategory === "all" || e.categoryName === filterCategory)
+    ?.sort((a, b) => {
+      const pOrder: Record<string, number> = { urgent: 0, moyen: 1, faible: 2 };
+      return (pOrder[a.priority] ?? 2) - (pOrder[b.priority] ?? 2);
+    });
   const selectedEmail = emails?.find((e) => e.id === selectedEmailId);
 
   const invalidateAll = () => {
@@ -273,6 +311,30 @@ export default function Dashboard() {
     );
   };
 
+  const handleUpdatePriority = (id: number, priority: string) => {
+    updateEmail.mutate(
+      { id, data: { priority } },
+      {
+        onSuccess: () => {
+          invalidateAll();
+          toast({ title: `Priorite changee en ${priority}`, description: "L'IA retiendra ce choix pour cet expediteur." });
+        },
+      }
+    );
+  };
+
+  const handleUpdateCategory = (id: number, categoryId: string) => {
+    updateEmail.mutate(
+      { id, data: { categoryId: categoryId === "none" ? null : parseInt(categoryId) } },
+      {
+        onSuccess: () => {
+          invalidateAll();
+          toast({ title: "Categorie mise a jour", description: "L'IA retiendra ce choix pour cet expediteur." });
+        },
+      }
+    );
+  };
+
   const form = useForm<z.infer<typeof triageSchema>>({
     resolver: zodResolver(triageSchema),
     defaultValues: { sender: "", subject: "", body: "" },
@@ -311,6 +373,9 @@ export default function Dashboard() {
             onMarkRead={handleMarkAsRead}
             onArchive={handleArchive}
             onDelete={handleDelete}
+            onUpdatePriority={handleUpdatePriority}
+            onUpdateCategory={handleUpdateCategory}
+            categories={categoryCounts || []}
           />
         </div>
       </DashboardLayout>
@@ -377,14 +442,25 @@ export default function Dashboard() {
               </Dialog>
 
               <Select value={filterPriority} onValueChange={setFilterPriority}>
-                <SelectTrigger className="w-[160px] bg-card border-border text-[#8b9cb3] text-[13px]">
-                  <SelectValue placeholder="Toutes" />
+                <SelectTrigger className="w-[150px] bg-card border-border text-[#8b9cb3] text-[13px]">
+                  <SelectValue placeholder="Priorite" />
                 </SelectTrigger>
                 <SelectContent className="bg-card border-border">
-                  <SelectItem value="all">Toutes les priorites</SelectItem>
+                  <SelectItem value="all">Toutes priorites</SelectItem>
                   <SelectItem value="urgent">Urgents</SelectItem>
                   <SelectItem value="moyen">Moyens</SelectItem>
                   <SelectItem value="faible">Faibles</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={filterCategory} onValueChange={setFilterCategory}>
+                <SelectTrigger className="w-[150px] bg-card border-border text-[#8b9cb3] text-[13px]">
+                  <SelectValue placeholder="Categorie" />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  <SelectItem value="all">Toutes categories</SelectItem>
+                  {categoryCounts?.map((cat) => (
+                    <SelectItem key={cat.categoryId} value={cat.categoryName}>{cat.categoryName}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>

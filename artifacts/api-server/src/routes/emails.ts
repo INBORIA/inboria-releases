@@ -93,6 +93,13 @@ router.get("/emails/:id", requireAuth, async (req, res): Promise<void> => {
 
 router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
   try {
+    const { data: oldEmail } = await supabaseAdmin
+      .from("emails")
+      .select("sender, priority, category_id")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .single();
+
     const updates: Record<string, unknown> = {};
     if (req.body.categoryId !== undefined) updates.category_id = req.body.categoryId;
     if (req.body.status !== undefined) updates.status = req.body.status;
@@ -109,6 +116,40 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
     if (error || !email) {
       res.status(404).json({ error: "Email not found" });
       return;
+    }
+
+    if (oldEmail && (req.body.priority || req.body.categoryId !== undefined)) {
+      const senderRaw = oldEmail.sender || "";
+      const emailMatch = senderRaw.match(/<(.+?)>/);
+      const senderDomain = emailMatch ? emailMatch[1].split("@")[1] : senderRaw.split("@")[1] || senderRaw;
+
+      if (senderDomain) {
+        const ruleUpdate: Record<string, unknown> = {
+          user_id: req.userId!,
+          sender_pattern: senderDomain,
+        };
+        if (req.body.priority) ruleUpdate.forced_priority = req.body.priority;
+        if (req.body.categoryId !== undefined) {
+          const catName = email.categories?.name || null;
+          if (catName) ruleUpdate.forced_category = catName;
+        }
+
+        const { data: existingRule } = await supabaseAdmin
+          .from("ai_rules")
+          .select("id")
+          .eq("user_id", req.userId!)
+          .eq("sender_pattern", senderDomain)
+          .maybeSingle();
+
+        if (existingRule) {
+          const ruleFields: Record<string, unknown> = {};
+          if (ruleUpdate.forced_priority) ruleFields.forced_priority = ruleUpdate.forced_priority;
+          if (ruleUpdate.forced_category) ruleFields.forced_category = ruleUpdate.forced_category;
+          await supabaseAdmin.from("ai_rules").update(ruleFields).eq("id", existingRule.id);
+        } else {
+          await supabaseAdmin.from("ai_rules").insert(ruleUpdate);
+        }
+      }
     }
 
     const s = parseSender(email.sender || "");

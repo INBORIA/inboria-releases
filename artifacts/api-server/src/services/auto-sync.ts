@@ -122,6 +122,22 @@ async function triageEmailAI(
       .eq("user_id", userId);
     const categoryNames = (categories || []).map((c: any) => c.name);
 
+    const { data: rules } = await supabaseAdmin
+      .from("ai_rules")
+      .select("sender_pattern, forced_priority, forced_category")
+      .eq("user_id", userId);
+
+    let rulesContext = "";
+    if (rules && rules.length > 0) {
+      rulesContext = "\n\nRegles apprises (respecte-les en priorite):\n" +
+        rules.map((r: any) => {
+          const parts = [`- Si expediteur contient "${r.sender_pattern}"`];
+          if (r.forced_priority) parts.push(`alors priorite="${r.forced_priority}"`);
+          if (r.forced_category) parts.push(`et categorie="${r.forced_category}"`);
+          return parts.join(" ");
+        }).join("\n");
+    }
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       max_completion_tokens: 512,
@@ -132,7 +148,7 @@ async function triageEmailAI(
         },
         {
           role: "user",
-          content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${(body || "").slice(0, 800)}\n\nCategories disponibles: ${categoryNames.join(", ") || "Aucune"}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom exact ou Non classe","tasks":["tache 1","tache 2"]}`,
+          content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${(body || "").slice(0, 800)}\n\nCategories disponibles: ${categoryNames.join(", ") || "Aucune"}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom exact ou Non classe","tasks":["tache 1","tache 2"]}`,
         },
       ],
     });
@@ -205,7 +221,7 @@ async function saveEmailWithTriage(
       sender,
       subject,
       body,
-      status: triage.priority === "faible" ? "notification" : "non_lu",
+      status: "non_lu",
       priority: triage.priority,
       summary: triage.summary,
       category_id: categoryId,

@@ -18,11 +18,11 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
       .eq("user_id", req.userId!);
 
     const allEmails = emails || [];
-    const inboxEmails = allEmails.filter(e => e.status !== "archived" && e.status !== "notification");
+    const inboxEmails = allEmails.filter(e => e.status !== "archived");
     const urgent = inboxEmails.filter(e => e.priority === "urgent").length;
     const moyen = inboxEmails.filter(e => e.priority === "moyen").length;
     const faible = inboxEmails.filter(e => e.priority === "faible").length;
-    const notificationCount = allEmails.filter(e => e.status === "notification").length;
+    const notificationCount = 0;
 
     const { count: pendingTasks } = await supabaseAdmin
       .from("tasks")
