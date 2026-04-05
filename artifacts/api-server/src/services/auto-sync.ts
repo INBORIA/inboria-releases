@@ -205,7 +205,7 @@ async function saveEmailWithTriage(
       sender,
       subject,
       body,
-      status: "non_lu",
+      status: triage.priority === "faible" ? "notification" : "non_lu",
       priority: triage.priority,
       summary: triage.summary,
       category_id: categoryId,

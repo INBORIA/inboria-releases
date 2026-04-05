@@ -1,4 +1,4 @@
-import { useGetProfile } from "@workspace/api-client-react";
+import { useGetProfile, useGetDashboardSummary } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import {
@@ -11,6 +11,7 @@ import {
   LogOut,
   Loader2,
   Menu,
+  Bell,
   Archive,
 } from "lucide-react";
 import ncvLogo from "@assets/image_1775392688923.png";
@@ -21,6 +22,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navigation = [
   { name: "Inbox", href: "/dashboard", icon: Inbox },
+  { name: "Notifications", href: "/dashboard/notifications", icon: Bell },
   { name: "Archives", href: "/dashboard/archives", icon: Archive },
   { name: "Bilan quotidien", href: "/dashboard/bilan", icon: LayoutDashboard },
   { name: "Taches", href: "/dashboard/taches", icon: CheckSquare },
@@ -33,6 +35,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [location, setLocation] = useLocation();
   const { signOut } = useAuth();
   const { data: profile, isLoading } = useGetProfile();
+  const { data: summary } = useGetDashboardSummary();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   if (isLoading) {
@@ -87,6 +90,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 aria-hidden="true"
               />
               {item.name}
+              {item.name === "Notifications" && (summary?.notificationCount ?? 0) > 0 && (
+                <span className="ml-auto text-[10px] font-semibold bg-primary/20 text-primary px-1.5 py-0.5 rounded-full min-w-[20px] text-center">
+                  {summary?.notificationCount}
+                </span>
+              )}
             </Link>
           );
         })}

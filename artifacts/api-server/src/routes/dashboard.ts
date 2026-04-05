@@ -18,9 +18,11 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
       .eq("user_id", req.userId!);
 
     const allEmails = emails || [];
-    const urgent = allEmails.filter(e => e.priority === "urgent").length;
-    const moyen = allEmails.filter(e => e.priority === "moyen").length;
-    const faible = allEmails.filter(e => e.priority === "faible").length;
+    const inboxEmails = allEmails.filter(e => e.status !== "archived" && e.status !== "notification");
+    const urgent = inboxEmails.filter(e => e.priority === "urgent").length;
+    const moyen = inboxEmails.filter(e => e.priority === "moyen").length;
+    const faible = inboxEmails.filter(e => e.priority === "faible").length;
+    const notificationCount = allEmails.filter(e => e.status === "notification").length;
 
     const { count: pendingTasks } = await supabaseAdmin
       .from("tasks")
@@ -33,6 +35,7 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
       urgentCount: urgent,
       moyenCount: moyen,
       faibleCount: faible,
+      notificationCount,
       pendingTasks: pendingTasks || 0,
       emailsUsed: profile?.emails_used || 0,
       emailsQuota: profile?.emails_quota || 50,

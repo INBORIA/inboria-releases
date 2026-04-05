@@ -11,6 +11,7 @@ export interface DashboardSummary {
   urgentCount: number;
   moyenCount: number;
   faibleCount: number;
+  notificationCount: number;
   pendingTasks: number;
   emailsUsed: number;
   emailsQuota: number;

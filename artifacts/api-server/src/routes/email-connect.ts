@@ -494,7 +494,7 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
         sender: from,
         subject,
         body: emailBody,
-        status: "non_lu",
+        status: triage.priority === "faible" ? "notification" : "non_lu",
         priority: triage.priority,
         summary: triage.summary,
         category_id: categoryId,

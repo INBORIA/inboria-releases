@@ -1,7 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { startAutoSync } from "./services/auto-sync";
-
 const rawPort = process.env["PORT"];
 
 if (!rawPort) {

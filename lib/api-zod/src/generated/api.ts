@@ -272,6 +272,7 @@ export const GetDashboardSummaryResponse = zod.object({
   urgentCount: zod.number(),
   moyenCount: zod.number(),
   faibleCount: zod.number(),
+  notificationCount: zod.number(),
   pendingTasks: zod.number(),
   emailsUsed: zod.number(),
   emailsQuota: zod.number(),

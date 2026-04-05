@@ -639,6 +639,8 @@ components:
           type: integer
         faibleCount:
           type: integer
+        notificationCount:
+          type: integer
         pendingTasks:
           type: integer
         emailsUsed:
@@ -652,6 +654,7 @@ components:
         - urgentCount
         - moyenCount
         - faibleCount
+        - notificationCount
         - pendingTasks
         - emailsUsed
         - emailsQuota
