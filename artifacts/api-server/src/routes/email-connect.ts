@@ -48,13 +48,20 @@ function extractGmailBody(payload: any): string {
   return "";
 }
 
-async function triageEmail(sender: string, subject: string, body: string, userId: string): Promise<{ priority: string; summary: string; category: string; tasks: string[] }> {
+async function triageEmail(sender: string, subject: string, body: string, userId: string): Promise<{ priority: string; summary: string; category: string; tasks: string[]; project: string }> {
   try {
     const { data: categories } = await supabaseAdmin
       .from("categories")
       .select("name")
       .eq("user_id", userId);
     const categoryNames = (categories || []).map((c: any) => c.name);
+
+    const { data: userProjects } = await supabaseAdmin
+      .from("projects")
+      .select("name, reference")
+      .eq("user_id", userId)
+      .eq("status", "actif");
+    const projectList = (userProjects || []).map((p: any) => `${p.reference} (${p.name})`);
 
     const { data: rules } = await supabaseAdmin
       .from("ai_rules")
@@ -72,12 +79,17 @@ async function triageEmail(sender: string, subject: string, body: string, userId
         }).join("\n");
     }
 
+    let projectContext = "";
+    if (projectList.length > 0) {
+      projectContext = `\n\nProjets actifs: ${projectList.join(", ")}\nSi l'email semble concerner un de ces projets, indique son nom exact dans "project". Sinon, mets "Aucun".`;
+    }
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       max_completion_tokens: 512,
       messages: [
         { role: "system", content: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide." },
-        { role: "user", content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${body.slice(0, 800)}\n\nCategories disponibles: ${categoryNames.join(", ") || "Aucune"}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom exact ou Non classe","tasks":["tache 1","tache 2"]}` },
+        { role: "user", content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${body.slice(0, 800)}\n\nCategories disponibles: ${categoryNames.join(", ") || "Aucune"}${rulesContext}${projectContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom exact ou Non classe","tasks":["tache 1","tache 2"],"project":"nom du projet ou Aucun"}` },
       ],
     });
     const content = completion.choices[0]?.message?.content ?? "{}";
@@ -88,10 +100,11 @@ async function triageEmail(sender: string, subject: string, body: string, userId
       summary: result.summary || "",
       category: result.category || "Non classe",
       tasks: Array.isArray(result.tasks) ? result.tasks : [],
+      project: result.project || "Aucun",
     };
   } catch (err: any) {
     console.error("triageEmail error:", err.message);
-    return { priority: "faible", summary: "", category: "Non classe", tasks: [] };
+    return { priority: "faible", summary: "", category: "Non classe", tasks: [], project: "Aucun" };
   }
 }
 
@@ -505,6 +518,17 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
         categoryId = cat?.id || null;
       }
 
+      let projectId = null;
+      if (triage.project && triage.project !== "Aucun") {
+        const { data: proj } = await supabaseAdmin
+          .from("projects")
+          .select("id")
+          .eq("user_id", userId)
+          .eq("name", triage.project)
+          .single();
+        projectId = proj?.id || null;
+      }
+
       const { error: insertError } = await supabaseAdmin.from("emails").insert({
         user_id: userId,
         external_id: msg.id,
@@ -515,6 +539,7 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
         priority: triage.priority,
         summary: triage.summary,
         category_id: categoryId,
+        project_id: projectId,
         created_at: new Date(parseInt(fullMsg.internalDate || "0")).toISOString(),
       });
 

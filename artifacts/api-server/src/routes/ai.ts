@@ -116,6 +116,18 @@ router.post("/ai/triage", requireAuth, async (req, res): Promise<void> => {
 
     const categoryNames = (categories || []).map((c: any) => c.name);
 
+    const { data: userProjects } = await supabaseAdmin
+      .from("projects")
+      .select("name, reference")
+      .eq("user_id", req.userId!)
+      .eq("status", "actif");
+    const projectList = (userProjects || []).map((p: any) => `${p.reference} (${p.name})`);
+
+    let projectContext = "";
+    if (projectList.length > 0) {
+      projectContext = `\n\nProjets actifs: ${projectList.join(", ")}\nSi l'email semble concerner un de ces projets, indique son nom exact dans "project". Sinon, mets "Aucun".`;
+    }
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       max_completion_tokens: 1024,
@@ -131,20 +143,21 @@ Expediteur: ${parsed.data.sender}
 Sujet: ${parsed.data.subject}
 Corps: ${parsed.data.body}
 
-Categories disponibles: ${categoryNames.join(", ") || "Aucune categorie"}
+Categories disponibles: ${categoryNames.join(", ") || "Aucune categorie"}${projectContext}
 
 Reponds en JSON:
 {
   "category": "nom exact de la categorie ou 'Non classe'",
   "priority": "urgent" | "moyen" | "faible",
   "summary": "resume en 1 phrase",
-  "tasks": ["tache 1", "tache 2"]
+  "tasks": ["tache 1", "tache 2"],
+  "project": "nom du projet ou Aucun"
 }`,
         },
       ],
     });
 
-    let triageResult: { category: string; priority: string; summary: string; tasks: string[] };
+    let triageResult: { category: string; priority: string; summary: string; tasks: string[]; project: string };
     try {
       const content = completion.choices[0]?.message?.content ?? "{}";
       const jsonMatch = content.match(/\{[\s\S]*\}/);
@@ -155,6 +168,7 @@ Reponds en JSON:
         priority: "moyen",
         summary: "Email en cours d'analyse",
         tasks: [],
+        project: "Aucun",
       };
     }
 
@@ -163,6 +177,7 @@ Reponds en JSON:
       priority: triageResult.priority || "moyen",
       summary: triageResult.summary || "Email en cours d'analyse",
       tasks: triageResult.tasks || [],
+      project: triageResult.project || "Aucun",
     });
   } catch {
     res.status(500).json({ error: "Failed to triage email" });

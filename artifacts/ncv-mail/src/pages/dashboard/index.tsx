@@ -10,6 +10,7 @@ import {
   getGetDashboardSummaryQueryKey,
   getGetCategoryCountsQueryKey,
   getGetInboxHealthQueryKey,
+  useListProjects,
 } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -64,6 +65,11 @@ function EmailRow({ email, onClick }: { email: any; onClick: () => void }) {
           </div>
         </div>
         <div className="flex items-center gap-3 shrink-0">
+          {email.projectReference && (
+            <Badge className="bg-blue-500/15 text-blue-400 border-blue-500/20 text-[10px] font-medium px-1.5 py-0">
+              {email.projectReference}
+            </Badge>
+          )}
           <PriorityBadge priority={email.priority} />
           <span className="text-[11px] text-[#8b9cb3] whitespace-nowrap flex items-center gap-1">
             <Clock className="w-3 h-3" />
@@ -82,7 +88,7 @@ const triageSchema = z.object({
   body: z.string().min(1, "Contenu requis"),
 });
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, categories }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; categories: any[] }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, categories, projects }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; categories: any[]; projects: any[] }) {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
 
@@ -208,6 +214,20 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 </SelectContent>
               </Select>
             </div>
+            <div className="flex items-center gap-2">
+              <span className="text-[11px] text-[#8b9cb3] uppercase tracking-wider">Projet:</span>
+              <Select value={email.projectId || "none"} onValueChange={(val) => onUpdateProject(email.id, val)}>
+                <SelectTrigger className="w-[160px] h-7 bg-card border-border text-[12px] text-white">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent className="bg-card border-border">
+                  <SelectItem value="none">Aucun projet</SelectItem>
+                  {projects.map((p: any) => (
+                    <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
 
@@ -253,6 +273,7 @@ export default function Dashboard() {
 
   const { data: categoryCounts, isLoading: categoriesLoading } = useGetCategoryCounts();
   const { data: summary, isLoading: summaryLoading } = useGetDashboardSummary();
+  const { data: projects } = useListProjects();
 
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
@@ -335,6 +356,18 @@ export default function Dashboard() {
     );
   };
 
+  const handleUpdateProject = (id: number, projectId: string) => {
+    updateEmail.mutate(
+      { id, data: { projectId: projectId === "none" ? null : projectId } as any },
+      {
+        onSuccess: () => {
+          invalidateAll();
+          toast({ title: "Projet mis a jour", description: "L'email a ete lie au projet." });
+        },
+      }
+    );
+  };
+
   const form = useForm<z.infer<typeof triageSchema>>({
     resolver: zodResolver(triageSchema),
     defaultValues: { sender: "", subject: "", body: "" },
@@ -375,7 +408,9 @@ export default function Dashboard() {
             onDelete={handleDelete}
             onUpdatePriority={handleUpdatePriority}
             onUpdateCategory={handleUpdateCategory}
+            onUpdateProject={handleUpdateProject}
             categories={categoryCounts || []}
+            projects={projects || []}
           />
         </div>
       </DashboardLayout>

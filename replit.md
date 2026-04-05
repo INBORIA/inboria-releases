@@ -82,10 +82,12 @@ Optional webhook for external integrations. Flow: External source -> Webhook NCV
 ## Supabase Tables
 
 - `categories` (id uuid, created_at, user_id, name, description) — EXISTS
-- `emails` (id uuid, created_at, user_id, category_id, sender, subject, body, status, priority TEXT DEFAULT 'faible', summary TEXT, external_id) — EXISTS
+- `emails` (id uuid, created_at, user_id, category_id, project_id, sender, subject, body, status, priority TEXT DEFAULT 'faible', summary TEXT, external_id) — EXISTS
 - `email_connections` (id uuid, user_id, provider, email_address, access_token, refresh_token, created_at, last_synced_at) — EXISTS
 - `profiles` (id uuid, created_at, full_name, plan, seats, emails_used, emails_quota, stripe_*) — EXISTS
-- `tasks` (id uuid, created_at, user_id, email_id, title, done, due_date) — EXISTS
+- `projects` (id uuid, created_at, user_id, name, reference, description, status, color) — EXISTS
+- `tasks` (id uuid, created_at, user_id, email_id, project_id, title, done, due_date) — EXISTS
+- `ai_rules` (id uuid, user_id, sender_pattern, forced_priority, forced_category) — EXISTS
 
 ## Pages (all French, dark theme)
 
@@ -94,6 +96,7 @@ Optional webhook for external integrations. Flow: External source -> Webhook NCV
 - `/dashboard/bilan` — Daily AI summary with score, urgencies, key emails, advice
 - `/dashboard/taches` — Tasks extracted from emails, with tabs (A faire/Terminees/Toutes)
 - `/dashboard/categories` — Category management with create/edit/delete
+- `/dashboard/projets` — Project management: create/edit/delete projects, view linked emails/tasks
 - `/dashboard/parametres` — Settings: email connections, AI preferences, profile, notifications
 - `/dashboard/abonnement` — Subscription plans (Gratuit 0€ / Solo 9€ / Pro 19€ / Business 9€/seat)
 - 404 page — Dark themed "Page introuvable"
