@@ -38,7 +38,6 @@ const plans = [
       "Depassement : 0,002€/email",
     ],
     icon: Zap,
-    badge: "Nouveau",
   },
   {
     id: "pro",
@@ -58,7 +57,6 @@ const plans = [
       "Depassement : 0,001€/email",
     ],
     icon: Sparkles,
-    popular: true,
   },
   {
     id: "business",
@@ -166,18 +164,8 @@ export default function Abonnement() {
                   isCurrentPlan
                     ? "border-primary bg-primary/5"
                     : "border-border bg-card"
-                } ${plan.popular && !isCurrentPlan ? "lg:-mt-2 lg:mb-2" : ""}`}
+                }`}
               >
-                {plan.popular && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-primary text-white px-2.5 py-0.5 text-[10px] font-semibold rounded-full">
-                    Populaire
-                  </div>
-                )}
-                {plan.badge && !plan.popular && (
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-emerald-500 text-white px-2.5 py-0.5 text-[10px] font-semibold rounded-full">
-                    {plan.badge}
-                  </div>
-                )}
                 {isCurrentPlan && (
                   <div className="absolute top-3 right-3">
                     <div className="bg-primary/20 text-primary text-[10px] font-semibold px-2 py-0.5 rounded-full">
