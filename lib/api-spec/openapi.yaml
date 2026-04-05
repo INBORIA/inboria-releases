@@ -592,6 +592,10 @@ components:
           type: integer
         emailsQuota:
           type: integer
+        aiLanguage:
+          type: string
+          enum: [fr, en, nl]
+          default: fr
         createdAt:
           type: string
           format: date-time
@@ -614,6 +618,9 @@ components:
           type: string
         seats:
           type: integer
+        aiLanguage:
+          type: string
+          enum: [fr, en, nl]
 
     Email:
       type: object

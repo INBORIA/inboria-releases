@@ -21,6 +21,15 @@ export interface LoginBody {
   password: string;
 }
 
+export type UserProfileAiLanguage =
+  (typeof UserProfileAiLanguage)[keyof typeof UserProfileAiLanguage];
+
+export const UserProfileAiLanguage = {
+  fr: "fr",
+  en: "en",
+  nl: "nl",
+} as const;
+
 export interface UserProfile {
   id: number;
   email: string;
@@ -29,6 +38,7 @@ export interface UserProfile {
   seats: number;
   emailsUsed: number;
   emailsQuota: number;
+  aiLanguage?: UserProfileAiLanguage;
   createdAt: string;
 }
 
@@ -36,10 +46,20 @@ export interface AuthResponse {
   user: UserProfile;
 }
 
+export type UpdateProfileBodyAiLanguage =
+  (typeof UpdateProfileBodyAiLanguage)[keyof typeof UpdateProfileBodyAiLanguage];
+
+export const UpdateProfileBodyAiLanguage = {
+  fr: "fr",
+  en: "en",
+  nl: "nl",
+} as const;
+
 export interface UpdateProfileBody {
   fullName?: string;
   plan?: string;
   seats?: number;
+  aiLanguage?: UpdateProfileBodyAiLanguage;
 }
 
 export interface Email {

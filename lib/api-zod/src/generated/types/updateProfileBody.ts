@@ -5,9 +5,11 @@
  * NCV Mail API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { UpdateProfileBodyAiLanguage } from "./updateProfileBodyAiLanguage";
 
 export interface UpdateProfileBody {
   fullName?: string;
   plan?: string;
   seats?: number;
+  aiLanguage?: UpdateProfileBodyAiLanguage;
 }

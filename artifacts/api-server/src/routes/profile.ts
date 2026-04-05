@@ -29,6 +29,7 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       seats: profile.seats || 1,
       emailsUsed: profile.emails_used || 0,
       emailsQuota: profile.emails_quota || 50,
+      aiLanguage: profile.ai_language || "fr",
       createdAt: profile.created_at,
     });
   } catch {
@@ -46,6 +47,7 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
 
     const updates: Record<string, unknown> = {};
     if (parsed.data.fullName !== undefined) updates.full_name = parsed.data.fullName;
+    if (parsed.data.aiLanguage !== undefined) updates.ai_language = parsed.data.aiLanguage;
     if (parsed.data.plan !== undefined) {
       updates.plan = parsed.data.plan;
       const quotaMap: Record<string, number> = {
@@ -81,6 +83,7 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
       seats: profile.seats || 1,
       emailsUsed: profile.emails_used || 0,
       emailsQuota: profile.emails_quota || 50,
+      aiLanguage: profile.ai_language || "fr",
       createdAt: profile.created_at,
     });
   } catch {

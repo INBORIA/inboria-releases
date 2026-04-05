@@ -48,7 +48,7 @@ function extractGmailBody(payload: any): string {
   return "";
 }
 
-async function triageEmail(sender: string, subject: string, body: string, userId: string): Promise<{ priority: string; summary: string; category: string; tasks: string[]; project: string }> {
+async function triageEmail(sender: string, subject: string, body: string, userId: string, language: string = "fr"): Promise<{ priority: string; summary: string; category: string; tasks: string[]; project: string }> {
   try {
     const { data: categories } = await supabaseAdmin
       .from("categories")
@@ -84,12 +84,19 @@ async function triageEmail(sender: string, subject: string, body: string, userId
       projectContext = `\n\nProjets actifs: ${projectList.join(", ")}\nSi l'email semble concerner un de ces projets, indique son nom exact dans "project". Sinon, mets "Aucun".`;
     }
 
+    const langInstructions: Record<string, { system: string; summaryHint: string; noneProject: string; uncategorized: string }> = {
+      fr: { system: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide.", summaryHint: "resume 1 phrase", noneProject: "Aucun", uncategorized: "Non classe" },
+      en: { system: "You are a professional email sorting assistant for an SME. Respond only in valid JSON.", summaryHint: "1-sentence summary", noneProject: "None", uncategorized: "Uncategorized" },
+      nl: { system: "Je bent een professionele e-mail sorteerassistent voor een KMO. Antwoord alleen in geldige JSON.", summaryHint: "samenvatting in 1 zin", noneProject: "Geen", uncategorized: "Niet geclassificeerd" },
+    };
+    const lang = langInstructions[language] || langInstructions.fr;
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       max_completion_tokens: 512,
       messages: [
-        { role: "system", content: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide." },
-        { role: "user", content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${body.slice(0, 800)}\n\nCategories disponibles: ${categoryNames.join(", ") || "Aucune"}${rulesContext}${projectContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom exact ou Non classe","tasks":["tache 1","tache 2"],"project":"nom du projet ou Aucun"}` },
+        { role: "system", content: lang.system },
+        { role: "user", content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${body.slice(0, 800)}\n\nCategories disponibles: ${categoryNames.join(", ") || lang.uncategorized}${rulesContext}${projectContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"${lang.summaryHint}","category":"nom exact ou ${lang.uncategorized}","tasks":["tache 1","tache 2"],"project":"nom du projet ou ${lang.noneProject}"}` },
       ],
     });
     const content = completion.choices[0]?.message?.content ?? "{}";
@@ -472,6 +479,13 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
 
     const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 
+    const { data: userProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("ai_language")
+      .eq("id", userId)
+      .single();
+    const userLang = userProfile?.ai_language || "fr";
+
     const { data: messageList } = await gmail.users.messages.list({
       userId: "me",
       maxResults: 20,
@@ -505,7 +519,7 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
       const subject = headers.find(h => h.name === "Subject")?.value || "(pas de sujet)";
       const emailBody = extractGmailBody(fullMsg.payload) || fullMsg.snippet || "";
 
-      const triage = await triageEmail(from, subject, emailBody, userId);
+      const triage = await triageEmail(from, subject, emailBody, userId, userLang);
 
       let categoryId = null;
       if (triage.category && triage.category !== "Non classe") {

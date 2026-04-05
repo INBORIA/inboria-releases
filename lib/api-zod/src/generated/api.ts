@@ -34,6 +34,8 @@ export const LoginBody = zod.object({
   password: zod.string(),
 });
 
+export const loginResponseUserAiLanguageDefault = `fr`;
+
 export const LoginResponse = zod.object({
   user: zod.object({
     id: zod.number(),
@@ -43,6 +45,9 @@ export const LoginResponse = zod.object({
     seats: zod.number(),
     emailsUsed: zod.number(),
     emailsQuota: zod.number(),
+    aiLanguage: zod
+      .enum(["fr", "en", "nl"])
+      .default(loginResponseUserAiLanguageDefault),
     createdAt: zod.coerce.date(),
   }),
 });
@@ -50,6 +55,8 @@ export const LoginResponse = zod.object({
 /**
  * @summary Get current user
  */
+export const getMeResponseAiLanguageDefault = `fr`;
+
 export const GetMeResponse = zod.object({
   id: zod.number(),
   email: zod.string(),
@@ -58,12 +65,17 @@ export const GetMeResponse = zod.object({
   seats: zod.number(),
   emailsUsed: zod.number(),
   emailsQuota: zod.number(),
+  aiLanguage: zod
+    .enum(["fr", "en", "nl"])
+    .default(getMeResponseAiLanguageDefault),
   createdAt: zod.coerce.date(),
 });
 
 /**
  * @summary Get user profile
  */
+export const getProfileResponseAiLanguageDefault = `fr`;
+
 export const GetProfileResponse = zod.object({
   id: zod.number(),
   email: zod.string(),
@@ -72,6 +84,9 @@ export const GetProfileResponse = zod.object({
   seats: zod.number(),
   emailsUsed: zod.number(),
   emailsQuota: zod.number(),
+  aiLanguage: zod
+    .enum(["fr", "en", "nl"])
+    .default(getProfileResponseAiLanguageDefault),
   createdAt: zod.coerce.date(),
 });
 
@@ -82,7 +97,10 @@ export const UpdateProfileBody = zod.object({
   fullName: zod.string().optional(),
   plan: zod.string().optional(),
   seats: zod.number().optional(),
+  aiLanguage: zod.enum(["fr", "en", "nl"]).optional(),
 });
+
+export const updateProfileResponseAiLanguageDefault = `fr`;
 
 export const UpdateProfileResponse = zod.object({
   id: zod.number(),
@@ -92,6 +110,9 @@ export const UpdateProfileResponse = zod.object({
   seats: zod.number(),
   emailsUsed: zod.number(),
   emailsQuota: zod.number(),
+  aiLanguage: zod
+    .enum(["fr", "en", "nl"])
+    .default(updateProfileResponseAiLanguageDefault),
   createdAt: zod.coerce.date(),
 });
 
