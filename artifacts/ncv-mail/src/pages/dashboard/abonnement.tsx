@@ -1,12 +1,12 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useGetProfile, useCreateCheckoutSession, useGetStripePortal, getGetProfileQueryKey } from "@workspace/api-client-react";
+import { useGetProfile, useCreateCheckoutSession, getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Check, Users, Shield, Zap, Sparkles, Info, CreditCard, ExternalLink, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { useSearchParams } from "react-router-dom";
+import { useSearch, useLocation } from "wouter";
 
 const plans = [
   {
@@ -83,31 +83,33 @@ const plans = [
 export default function Abonnement() {
   const { data: profile, isLoading } = useGetProfile();
   const checkout = useCreateCheckoutSession();
-  const portal = useGetStripePortal();
+  const [portalLoading, setPortalLoading] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const [searchParams, setSearchParams] = useSearchParams();
+  const searchString = useSearch();
+  const [, navigate] = useLocation();
 
   const [businessSeats, setBusinessSeats] = useState(1);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   useEffect(() => {
-    if (searchParams.get("success") === "true") {
+    const params = new URLSearchParams(searchString);
+    if (params.get("success") === "true") {
       queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
       toast({
         title: "Paiement reussi",
         description: "Votre abonnement a ete mis a jour avec succes.",
       });
-      setSearchParams({}, { replace: true });
-    } else if (searchParams.get("cancelled") === "true") {
+      navigate("/dashboard/abonnement", { replace: true });
+    } else if (params.get("cancelled") === "true") {
       toast({
         title: "Paiement annule",
         description: "Vous n'avez pas ete debite.",
         variant: "destructive",
       });
-      setSearchParams({}, { replace: true });
+      navigate("/dashboard/abonnement", { replace: true });
     }
-  }, [searchParams, queryClient, toast, setSearchParams]);
+  }, [searchString, queryClient, toast, navigate]);
 
   const handleSubscribe = (planId: string, seats?: number) => {
     if (planId === "gratuit") return;
@@ -134,21 +136,32 @@ export default function Abonnement() {
     );
   };
 
-  const handlePortal = () => {
-    portal.mutate(undefined, {
-      onSuccess: (data) => {
-        if (data.url) {
-          window.location.href = data.url;
-        }
-      },
-      onError: () => {
-        toast({
-          title: "Erreur",
-          description: "Impossible d'acceder au portail de gestion.",
-          variant: "destructive",
-        });
-      },
-    });
+  const handlePortal = async () => {
+    setPortalLoading(true);
+    try {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const token = (await import("@/lib/supabase")).supabase.auth.getSession();
+      const session = await token;
+      const accessToken = session.data.session?.access_token;
+
+      const res = await fetch(`${baseUrl}/api/stripe/portal`, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const data = await res.json();
+      if (data.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error(data.error || "Erreur");
+      }
+    } catch {
+      toast({
+        title: "Erreur",
+        description: "Impossible d'acceder au portail de gestion.",
+        variant: "destructive",
+      });
+    } finally {
+      setPortalLoading(false);
+    }
   };
 
   const hasPaidPlan = profile?.plan && profile.plan !== "gratuit";
@@ -204,9 +217,9 @@ export default function Abonnement() {
                   size="sm"
                   className="shrink-0"
                   onClick={handlePortal}
-                  disabled={portal.isPending}
+                  disabled={portalLoading}
                 >
-                  {portal.isPending ? (
+                  {portalLoading ? (
                     <Loader2 className="w-4 h-4 animate-spin mr-1" />
                   ) : (
                     <ExternalLink className="w-3.5 h-3.5 mr-1" />

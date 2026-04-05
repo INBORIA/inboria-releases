@@ -119,9 +119,19 @@ Optional webhook for external integrations. Flow: External source -> Webhook NCV
 - **Frontend**: "Nouveau" compose button + dialog in inbox toolbar, Reply button in email detail view
 - **OpenAPI**: `sendEmail` operation, `SendEmailBody` schema, `useSendEmail` React hook
 
+## Stripe Integration
+
+- **Checkout**: `POST /api/stripe/checkout` accepts `{planId, seats?}`, creates Stripe Checkout session, returns `{url}`
+- **Webhook**: `POST /api/stripe/webhook` handles `checkout.session.completed`, `invoice.paid`, `customer.subscription.deleted`, `customer.subscription.updated`
+- **Portal**: `GET /api/stripe/portal` returns `{url}` for Stripe Customer Portal (manage subscription, cancel, update card)
+- **Lazy init**: Stripe SDK initialized on first call (server runs without STRIPE_SECRET_KEY)
+- **Raw body**: `express.json` verify callback saves raw body for webhook signature verification
+- **Frontend**: Subscription page redirects to Stripe Checkout, shows "Gerer l'abonnement" button for paid plans
+- **OpenAPI**: `createCheckoutSession`, `getStripePortal` operations, `CheckoutBody`/`CheckoutResponse`/`PortalResponse` schemas
+
 ## API Routes (prefix: /api)
 
-Auth, profile, emails (CRUD + send), categories, tasks, dashboard stats, AI triage/summary, email connections/sync, webhook
+Auth, profile, emails (CRUD + send), categories, tasks, dashboard stats, AI triage/summary, email connections/sync, webhook, stripe (checkout/webhook/portal)
 
 ## Environment Variables
 
@@ -132,6 +142,11 @@ Auth, profile, emails (CRUD + send), categories, tasks, dashboard stats, AI tria
 - `MICROSOFT_CLIENT_ID` / `MICROSOFT_CLIENT_SECRET` — Outlook OAuth2 (PENDING)
 - `WEBHOOK_SECRET` — Secret key for Make.com webhook authentication
 - `AI_INTEGRATIONS_OPENAI_*` — Auto-provisioned by Replit
+- `STRIPE_SECRET_KEY` — Stripe secret API key
+- `STRIPE_WEBHOOK_SECRET` — Stripe webhook signing secret
+- `STRIPE_PRICE_SOLO` — Stripe Price ID for Solo plan (9€/mois)
+- `STRIPE_PRICE_PRO` — Stripe Price ID for Pro plan (19€/mois)
+- `STRIPE_PRICE_BUSINESS` — Stripe Price ID for Business plan (9€/siege/mois)
 
 ## Key Commands
 

@@ -3,9 +3,17 @@ import Stripe from "stripe";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 
-const stripe = new Stripe(process.env["STRIPE_SECRET_KEY"] || "", {
-  apiVersion: "2025-04-30.basil",
-});
+let _stripe: Stripe | null = null;
+function getStripe(): Stripe {
+  if (!_stripe) {
+    const key = process.env["STRIPE_SECRET_KEY"];
+    if (!key) {
+      throw new Error("STRIPE_SECRET_KEY is not configured");
+    }
+    _stripe = new Stripe(key);
+  }
+  return _stripe;
+}
 
 const PRICE_MAP: Record<string, string> = {
   solo: process.env["STRIPE_PRICE_SOLO"] || "",
@@ -45,7 +53,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
     let customerId = profile.stripe_customer_id;
 
     if (!customerId) {
-      const customer = await stripe.customers.create({
+      const customer = await getStripe().customers.create({
         email: profile.email,
         metadata: { userId: profile.id },
       });
@@ -59,7 +67,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
 
     const quantity = planId === "business" ? (seats || 1) : 1;
 
-    const session = await stripe.checkout.sessions.create({
+    const session = await getStripe().checkout.sessions.create({
       customer: customerId,
       mode: "subscription",
       line_items: [
@@ -87,7 +95,7 @@ router.post("/stripe/webhook", async (req, res): Promise<void> => {
 
     let event: Stripe.Event;
     try {
-      event = stripe.webhooks.constructEvent(
+      event = getStripe().webhooks.constructEvent(
         (req as any).rawBody,
         sig,
         webhookSecret
@@ -184,7 +192,7 @@ router.get("/stripe/portal", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
-    const portalSession = await stripe.billingPortal.sessions.create({
+    const portalSession = await getStripe().billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
       return_url: `${req.headers.origin || process.env["FRONTEND_URL"] || ""}/dashboard/abonnement`,
     });
