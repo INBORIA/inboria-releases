@@ -167,16 +167,40 @@ function getGoogleOAuth2Client() {
 }
 
 const IMAP_PROVIDERS: Record<string, { host: string; port: number }> = {
+  "outlook.com": { host: "outlook.office365.com", port: 993 },
+  "outlook.fr": { host: "outlook.office365.com", port: 993 },
+  "outlook.be": { host: "outlook.office365.com", port: 993 },
+  "hotmail.com": { host: "outlook.office365.com", port: 993 },
+  "hotmail.fr": { host: "outlook.office365.com", port: 993 },
+  "hotmail.be": { host: "outlook.office365.com", port: 993 },
+  "live.com": { host: "outlook.office365.com", port: 993 },
+  "live.fr": { host: "outlook.office365.com", port: 993 },
+  "live.be": { host: "outlook.office365.com", port: 993 },
+  "msn.com": { host: "outlook.office365.com", port: 993 },
   "orange.fr": { host: "imap.orange.fr", port: 993 },
   "wanadoo.fr": { host: "imap.orange.fr", port: 993 },
   "free.fr": { host: "imap.free.fr", port: 993 },
   "sfr.fr": { host: "imap.sfr.fr", port: 993 },
+  "neuf.fr": { host: "imap.sfr.fr", port: 993 },
+  "bbox.fr": { host: "imap.bbox.fr", port: 993 },
+  "bouygtel.fr": { host: "imap.bbox.fr", port: 993 },
   "laposte.net": { host: "imap.laposte.net", port: 993 },
   "yahoo.com": { host: "imap.mail.yahoo.com", port: 993 },
   "yahoo.fr": { host: "imap.mail.yahoo.com", port: 993 },
   "icloud.com": { host: "imap.mail.me.com", port: 993 },
   "me.com": { host: "imap.mail.me.com", port: 993 },
+  "mac.com": { host: "imap.mail.me.com", port: 993 },
+  "proximus.be": { host: "imap.proximus.be", port: 993 },
+  "skynet.be": { host: "imap.skynet.be", port: 993 },
+  "voo.be": { host: "imap.voo.be", port: 993 },
+  "telenet.be": { host: "imap.telenet.be", port: 993 },
   "ovh.net": { host: "ssl0.ovh.net", port: 993 },
+  "ovh.com": { host: "ssl0.ovh.net", port: 993 },
+  "gmx.com": { host: "imap.gmx.com", port: 993 },
+  "gmx.fr": { host: "imap.gmx.com", port: 993 },
+  "infomaniak.ch": { host: "mail.infomaniak.com", port: 993 },
+  "ionos.fr": { host: "imap.ionos.fr", port: 993 },
+  "ionos.com": { host: "imap.ionos.com", port: 993 },
 };
 
 router.get("/email/connect/gmail", requireAuth, async (req, res): Promise<void> => {
@@ -352,13 +376,24 @@ router.post("/email/connect/imap", requireAuth, async (req, res): Promise<void> 
       host, port, secure: true,
       auth: { user: email, pass: password },
       logger: false,
+      emitLogs: false,
     });
+    client.on("error", () => {});
 
     try {
-      await client.connect();
-      await client.logout();
-    } catch {
-      res.status(401).json({ error: "Connexion echouee. Verifiez vos identifiants." });
+      await Promise.race([
+        client.connect(),
+        new Promise((_, reject) => setTimeout(() => reject(new Error("timeout")), 15000)),
+      ]);
+      await client.logout().catch(() => {});
+    } catch (connErr: any) {
+      try { await client.logout(); } catch {}
+      const msg = connErr?.message || "";
+      if (msg.includes("timeout")) {
+        res.status(408).json({ error: "Connexion trop lente. Verifiez le serveur IMAP ou reessayez.", needsManualConfig: true });
+      } else {
+        res.status(401).json({ error: "Connexion echouee. Verifiez vos identifiants ou le serveur IMAP.", needsManualConfig: true });
+      }
       return;
     }
 
@@ -678,10 +713,17 @@ async function syncImap(conn: any, userId: string): Promise<number> {
     secure: true,
     auth: { user: conn.email_address, pass: conn.access_token },
     logger: false,
+    emitLogs: false,
+  });
+  client.on("error", (err: any) => {
+    console.error(`IMAP client error for ${conn.email_address}:`, err.message);
   });
 
   try {
-    await client.connect();
+    await Promise.race([
+      client.connect(),
+      new Promise((_, reject) => setTimeout(() => reject(new Error("IMAP connect timeout")), 20000)),
+    ]);
     const lock = await client.getMailboxLock("INBOX");
     let synced = 0;
 
