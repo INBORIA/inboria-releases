@@ -11,9 +11,9 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
-import { Tags, Plus, MoreVertical, Edit2, Trash2 } from "lucide-react";
+import { Tags, Plus, MoreVertical, Edit2, Trash2, Sparkles, Check, Receipt, Headphones, TrendingUp, FileText, Mail, Users, Briefcase, ShieldCheck, Wrench, BookOpen } from "lucide-react";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -21,6 +21,19 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+
+const SUGGESTED_CATEGORIES = [
+  { name: "Facturation", description: "Factures, devis, bons de commande, relances de paiement", icon: Receipt, color: "text-amber-400 bg-amber-500/10" },
+  { name: "Support client", description: "Demandes d'aide, reclamations, questions des clients", icon: Headphones, color: "text-blue-400 bg-blue-500/10" },
+  { name: "Commercial", description: "Prospects, propositions commerciales, negociations, ventes", icon: TrendingUp, color: "text-emerald-400 bg-emerald-500/10" },
+  { name: "Administratif", description: "Contrats, documents officiels, courriers juridiques", icon: FileText, color: "text-purple-400 bg-purple-500/10" },
+  { name: "Newsletter", description: "Newsletters, promotions, emails marketing", icon: Mail, color: "text-cyan-400 bg-cyan-500/10" },
+  { name: "RH / Equipe", description: "Conges, recrutement, gestion du personnel, notes internes", icon: Users, color: "text-pink-400 bg-pink-500/10" },
+  { name: "Fournisseurs", description: "Commandes, livraisons, relations fournisseurs", icon: Briefcase, color: "text-orange-400 bg-orange-500/10" },
+  { name: "Juridique", description: "Mises en demeure, RGPD, conformite, contentieux", icon: ShieldCheck, color: "text-red-400 bg-red-500/10" },
+  { name: "Technique", description: "Bugs, maintenance, serveurs, IT, demandes techniques", icon: Wrench, color: "text-indigo-400 bg-indigo-500/10" },
+  { name: "Formation", description: "Webinaires, certifications, e-learning, invitations", icon: BookOpen, color: "text-teal-400 bg-teal-500/10" },
+];
 
 const categorySchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caracteres"),
@@ -51,6 +64,38 @@ export default function Categories() {
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editCategory, setEditCategory] = useState<any>(null);
+  const [showSuggestions, setShowSuggestions] = useState(true);
+  const [addingNames, setAddingNames] = useState<Set<string>>(new Set());
+
+  const existingNames = useMemo(() => {
+    return new Set((categories || []).map((c: any) => c.name.toLowerCase()));
+  }, [categories]);
+
+  const availableSuggestions = useMemo(() => {
+    return SUGGESTED_CATEGORIES.filter(s => !existingNames.has(s.name.toLowerCase()));
+  }, [existingNames]);
+
+  const handleAddSuggestion = (suggestion: typeof SUGGESTED_CATEGORIES[0]) => {
+    setAddingNames(prev => new Set(prev).add(suggestion.name));
+    createCategory.mutate(
+      { data: { name: suggestion.name, description: suggestion.description } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
+          setAddingNames(prev => { const next = new Set(prev); next.delete(suggestion.name); return next; });
+          toast({ title: `"${suggestion.name}" ajoutee` });
+        },
+        onError: () => {
+          setAddingNames(prev => { const next = new Set(prev); next.delete(suggestion.name); return next; });
+          toast({ variant: "destructive", title: "Erreur", description: `Impossible d'ajouter "${suggestion.name}".` });
+        },
+      }
+    );
+  };
+
+  const handleAddAllSuggestions = () => {
+    availableSuggestions.forEach((s) => handleAddSuggestion(s));
+  };
 
   const createForm = useForm<CategoryFormValues>({
     resolver: zodResolver(categorySchema),
@@ -214,6 +259,77 @@ export default function Categories() {
             </Form>
           </DialogContent>
         </Dialog>
+
+        {showSuggestions && availableSuggestions.length > 0 && (
+          <div className="mb-6 rounded-lg border border-primary/20 bg-primary/[0.03] p-5">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <h3 className="text-[14px] font-semibold text-white">Categories suggerees</h3>
+                  <p className="text-[12px] text-[#8b9cb3]">Cliquez pour ajouter, l'IA les utilisera pour classer vos emails</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  className="text-[12px] border-primary/30 text-primary hover:bg-primary/10"
+                  onClick={handleAddAllSuggestions}
+                  disabled={addingNames.size > 0}
+                >
+                  Tout ajouter
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  className="text-[12px] text-[#8b9cb3] hover:text-white"
+                  onClick={() => setShowSuggestions(false)}
+                >
+                  Masquer
+                </Button>
+              </div>
+            </div>
+            <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+              {availableSuggestions.map((s) => {
+                const Icon = s.icon;
+                const isAdding = addingNames.has(s.name);
+                return (
+                  <button
+                    key={s.name}
+                    onClick={() => handleAddSuggestion(s)}
+                    disabled={isAdding}
+                    className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border bg-card hover:border-primary/40 hover:bg-primary/[0.04] transition-all text-center group disabled:opacity-50"
+                  >
+                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${s.color} group-hover:scale-110 transition-transform`}>
+                      {isAdding ? <Check className="w-4 h-4 animate-pulse" /> : <Icon className="w-4 h-4" />}
+                    </div>
+                    <div>
+                      <p className="text-[12px] font-medium text-white">{s.name}</p>
+                      <p className="text-[10px] text-[#8b9cb3] line-clamp-1 mt-0.5">{s.description}</p>
+                    </div>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {!showSuggestions && availableSuggestions.length > 0 && (
+          <div className="mb-4 flex justify-end">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-[12px] text-[#8b9cb3] hover:text-white gap-1.5"
+              onClick={() => setShowSuggestions(true)}
+            >
+              <Sparkles className="w-3 h-3" />
+              Afficher les suggestions
+            </Button>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {isLoading ? (
