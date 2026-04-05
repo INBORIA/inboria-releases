@@ -167,7 +167,19 @@ Auth, profile, emails (CRUD + send), categories, tasks, dashboard stats, AI tria
 - `NOTION_CLIENT_ID` / `NOTION_CLIENT_SECRET` — Notion OAuth2 integration credentials
 - `FRONTEND_URL` — Frontend URL for OAuth redirect (defaults to REPLIT_DEV_DOMAIN)
 
+## Mobile App (Expo)
+
+- **Artifact**: `artifacts/ncv-mail-mobile` (slug: ncv-mail-mobile, previewPath: /ncv-mail-mobile/)
+- **Auth**: Supabase Auth via `expo-secure-store` (native) / localStorage (web)
+- **API**: Uses same `@workspace/api-client-react` hooks, `setBaseUrl` + `setAuthTokenGetter` in `_layout.tsx`
+- **Env vars**: `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` passed from VITE_* in dev script
+- **Tabs**: Boite de reception (inbox), Taches, Projets, Parametres
+- **Screens**: Login/Register, Email detail (`/email/[id]`)
+- **Theme**: Dark-only matching web (#0d1117 bg, #141c2b card, #2d7dd2 primary)
+- **Navigation**: expo-router with NativeTabs (iOS 26+) / classic Tabs fallback
+
 ## Key Commands
 
 - `pnpm --filter @workspace/api-spec run codegen` — Regenerate API hooks
 - `pnpm --filter @workspace/api-server run dev` — Run API server
+- `pnpm --filter @workspace/ncv-mail-mobile run dev` — Run Expo mobile dev server
