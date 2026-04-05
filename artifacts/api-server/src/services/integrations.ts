@@ -11,6 +11,15 @@ interface Integration {
   enabled: boolean;
 }
 
+async function isProPlan(userId: string): Promise<boolean> {
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("plan")
+    .eq("id", userId)
+    .single();
+  return !!profile && profile.plan !== "gratuit" && profile.plan !== "solo";
+}
+
 export async function sendSlackNotification(
   userId: string,
   sender: string,
@@ -18,6 +27,8 @@ export async function sendSlackNotification(
   summary: string
 ): Promise<void> {
   try {
+    if (!(await isProPlan(userId))) return;
+
     const { data: integration } = await supabaseAdmin
       .from("integrations")
       .select("*")
@@ -76,6 +87,8 @@ export async function createNotionTask(
   emailSender: string
 ): Promise<void> {
   try {
+    if (!(await isProPlan(userId))) return;
+
     const { data: integration } = await supabaseAdmin
       .from("integrations")
       .select("*")

@@ -36,11 +36,11 @@ const IMAP_PROVIDERS = [
 interface Integration {
   id: string;
   provider: string;
-  workspace_name: string | null;
-  channel_id: string | null;
-  database_id: string | null;
+  workspaceName: string | null;
+  channelId: string | null;
+  databaseId: string | null;
   enabled: boolean;
-  created_at: string;
+  createdAt: string;
 }
 
 interface EmailConnection {
@@ -457,7 +457,7 @@ export default function Parametres() {
                         {slackIntegration ? (
                           <p className="text-[11px] text-emerald-400 flex items-center gap-1">
                             <CheckCircle2 className="w-3 h-3" />
-                            Connecte — {slackIntegration.workspace_name || "Workspace"}
+                            Connecte — {slackIntegration.workspaceName || "Workspace"}
                           </p>
                         ) : (
                           <p className="text-[11px] text-[#8b9cb3]">Notifications emails urgents dans votre channel.</p>
@@ -498,7 +498,7 @@ export default function Parametres() {
                         {notionIntegration ? (
                           <p className="text-[11px] text-emerald-400 flex items-center gap-1">
                             <CheckCircle2 className="w-3 h-3" />
-                            Connecte — {notionIntegration.workspace_name || "Workspace"}
+                            Connecte — {notionIntegration.workspaceName || "Workspace"}
                           </p>
                         ) : (
                           <p className="text-[11px] text-[#8b9cb3]">Creation automatique de taches dans votre base Notion.</p>

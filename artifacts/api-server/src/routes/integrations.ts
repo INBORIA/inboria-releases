@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { createHmac, randomBytes } from "crypto";
 
 const router: IRouter = Router();
 
@@ -8,6 +9,31 @@ const SLACK_CLIENT_ID = process.env["SLACK_CLIENT_ID"] || "";
 const SLACK_CLIENT_SECRET = process.env["SLACK_CLIENT_SECRET"] || "";
 const NOTION_CLIENT_ID = process.env["NOTION_CLIENT_ID"] || "";
 const NOTION_CLIENT_SECRET = process.env["NOTION_CLIENT_SECRET"] || "";
+
+function getStateSecret(): string {
+  return process.env["SESSION_SECRET"] || process.env["SUPABASE_SECRET_KEY"] || "ncvmail-integration-state-key";
+}
+
+function createSignedState(userId: string): string {
+  const nonce = randomBytes(16).toString("hex");
+  const payload = JSON.stringify({ userId, nonce, ts: Date.now() });
+  const signature = createHmac("sha256", getStateSecret()).update(payload).digest("hex");
+  return Buffer.from(JSON.stringify({ payload, signature })).toString("base64url");
+}
+
+function verifySignedState(state: string): string | null {
+  try {
+    const { payload, signature } = JSON.parse(Buffer.from(state, "base64url").toString());
+    const expected = createHmac("sha256", getStateSecret()).update(payload).digest("hex");
+    if (signature !== expected) return null;
+    const data = JSON.parse(payload);
+    const age = Date.now() - data.ts;
+    if (age > 10 * 60 * 1000) return null;
+    return data.userId;
+  } catch {
+    return null;
+  }
+}
 
 function getFrontendUrl(): string {
   return process.env["FRONTEND_URL"] || `https://${process.env["REPLIT_DEV_DOMAIN"] || "localhost"}`;
@@ -19,6 +45,27 @@ function getRedirectUri(provider: string): string {
   return `${protocol}://${domain}/api/integrations/${provider}/callback`;
 }
 
+function toCamelCase(row: any) {
+  return {
+    id: row.id,
+    provider: row.provider,
+    workspaceName: row.workspace_name ?? null,
+    channelId: row.channel_id ?? null,
+    databaseId: row.database_id ?? null,
+    enabled: row.enabled,
+    createdAt: row.created_at,
+  };
+}
+
+async function requireProPlan(userId: string): Promise<boolean> {
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("plan")
+    .eq("id", userId)
+    .single();
+  return !!profile && profile.plan !== "gratuit" && profile.plan !== "solo";
+}
+
 router.get("/integrations", requireAuth, async (req, res): Promise<void> => {
   try {
     const { data } = await supabaseAdmin
@@ -26,7 +73,7 @@ router.get("/integrations", requireAuth, async (req, res): Promise<void> => {
       .select("id, provider, workspace_name, channel_id, database_id, enabled, created_at")
       .eq("user_id", req.userId!);
 
-    res.json(data || []);
+    res.json((data || []).map(toCamelCase));
   } catch {
     res.status(500).json({ error: "Failed to fetch integrations" });
   }
@@ -38,18 +85,13 @@ router.get("/integrations/slack/connect", requireAuth, async (req, res): Promise
     return;
   }
 
-  const { data: profile } = await supabaseAdmin
-    .from("profiles")
-    .select("plan")
-    .eq("id", req.userId!)
-    .single();
-
-  if (!profile || profile.plan === "gratuit" || profile.plan === "solo") {
+  const isPro = await requireProPlan(req.userId!);
+  if (!isPro) {
     res.status(403).json({ error: "Integration reservee au plan Pro ou superieur" });
     return;
   }
 
-  const state = Buffer.from(JSON.stringify({ userId: req.userId })).toString("base64");
+  const state = createSignedState(req.userId!);
   const params = new URLSearchParams({
     client_id: SLACK_CLIENT_ID,
     scope: "chat:write,channels:read",
@@ -68,12 +110,9 @@ router.get("/integrations/slack/callback", async (req, res): Promise<void> => {
       return;
     }
 
-    let userId: string;
-    try {
-      const decoded = JSON.parse(Buffer.from(state as string, "base64").toString());
-      userId = decoded.userId;
-    } catch {
-      res.status(400).send("Invalid state");
+    const userId = verifySignedState(state as string);
+    if (!userId) {
+      res.status(400).send("Invalid or expired state");
       return;
     }
 
@@ -143,18 +182,13 @@ router.get("/integrations/notion/connect", requireAuth, async (req, res): Promis
     return;
   }
 
-  const { data: profile } = await supabaseAdmin
-    .from("profiles")
-    .select("plan")
-    .eq("id", req.userId!)
-    .single();
-
-  if (!profile || profile.plan === "gratuit" || profile.plan === "solo") {
+  const isPro = await requireProPlan(req.userId!);
+  if (!isPro) {
     res.status(403).json({ error: "Integration reservee au plan Pro ou superieur" });
     return;
   }
 
-  const state = Buffer.from(JSON.stringify({ userId: req.userId })).toString("base64");
+  const state = createSignedState(req.userId!);
   const params = new URLSearchParams({
     client_id: NOTION_CLIENT_ID,
     redirect_uri: getRedirectUri("notion"),
@@ -174,12 +208,9 @@ router.get("/integrations/notion/callback", async (req, res): Promise<void> => {
       return;
     }
 
-    let userId: string;
-    try {
-      const decoded = JSON.parse(Buffer.from(state as string, "base64").toString());
-      userId = decoded.userId;
-    } catch {
-      res.status(400).send("Invalid state");
+    const userId = verifySignedState(state as string);
+    if (!userId) {
+      res.status(400).send("Invalid or expired state");
       return;
     }
 
@@ -252,12 +283,20 @@ router.get("/integrations/notion/callback", async (req, res): Promise<void> => {
 router.patch("/integrations/:provider", requireAuth, async (req, res): Promise<void> => {
   try {
     const { provider } = req.params;
-    const { enabled, channel_id, database_id } = req.body;
+    const { enabled, channelId, databaseId } = req.body;
+
+    if (typeof enabled === "boolean" && enabled) {
+      const isPro = await requireProPlan(req.userId!);
+      if (!isPro) {
+        res.status(403).json({ error: "Integration reservee au plan Pro ou superieur" });
+        return;
+      }
+    }
 
     const updates: Record<string, any> = {};
     if (typeof enabled === "boolean") updates.enabled = enabled;
-    if (channel_id !== undefined) updates.channel_id = channel_id;
-    if (database_id !== undefined) updates.database_id = database_id;
+    if (channelId !== undefined) updates.channel_id = channelId;
+    if (databaseId !== undefined) updates.database_id = databaseId;
 
     if (Object.keys(updates).length === 0) {
       res.status(400).json({ error: "No fields to update" });
@@ -269,7 +308,7 @@ router.patch("/integrations/:provider", requireAuth, async (req, res): Promise<v
       .update(updates)
       .eq("user_id", req.userId!)
       .eq("provider", provider)
-      .select("id, provider, workspace_name, channel_id, database_id, enabled")
+      .select("id, provider, workspace_name, channel_id, database_id, enabled, created_at")
       .single();
 
     if (error || !data) {
@@ -277,7 +316,7 @@ router.patch("/integrations/:provider", requireAuth, async (req, res): Promise<v
       return;
     }
 
-    res.json(data);
+    res.json(toCamelCase(data));
   } catch {
     res.status(500).json({ error: "Failed to update integration" });
   }
