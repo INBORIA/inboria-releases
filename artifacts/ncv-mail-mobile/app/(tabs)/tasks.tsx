@@ -10,7 +10,7 @@ import {
   Platform,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { useListTasks, useUpdateTask } from "@workspace/api-client-react";
+import { useListTasks, useUpdateTask, getListTasksQueryKey } from "@workspace/api-client-react";
 import type { Task } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
@@ -34,21 +34,32 @@ export default function TasksScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await queryClient.invalidateQueries({ queryKey: ["listTasks"] });
+    await queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
     setRefreshing(false);
   }, [queryClient]);
 
-  const toggleTask = (id: number, currentDone: boolean) => {
+  const toggleTask = (id: string, currentDone: boolean) => {
     if (Platform.OS !== "web" && Haptics) {
       try {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       } catch {}
     }
+
+    const queryKey = getListTasksQueryKey({ status: filter });
+    const previousTasks = queryClient.getQueryData<Task[]>(queryKey);
+
+    queryClient.setQueryData<Task[]>(queryKey, (old) =>
+      old?.map((t) => (t.id === id ? { ...t, done: !currentDone } : t))
+    );
+
     updateTask.mutate(
       { id, data: { done: !currentDone } },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: ["listTasks"] });
+          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+        },
+        onError: () => {
+          queryClient.setQueryData(queryKey, previousTasks);
         },
       }
     );

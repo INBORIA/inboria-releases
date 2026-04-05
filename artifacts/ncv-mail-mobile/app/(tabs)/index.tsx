@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
-import { useListEmails, useListCategories } from "@workspace/api-client-react";
+import { useListEmails, useListCategories, useGetDashboardSummary, useDeleteEmail, getListEmailsQueryKey, getListCategoriesQueryKey, getGetDashboardSummaryQueryKey } from "@workspace/api-client-react";
 import type { Email } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
@@ -57,6 +57,8 @@ export default function InboxScreen() {
   });
 
   const { data: categories } = useListCategories();
+  const { data: summary } = useGetDashboardSummary();
+  const deleteEmail = useDeleteEmail();
 
   const activeEmails = emails
     ?.filter((e) => e.status !== "archived")
@@ -68,10 +70,23 @@ export default function InboxScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await queryClient.invalidateQueries({ queryKey: ["listEmails"] });
-    await queryClient.invalidateQueries({ queryKey: ["listCategories"] });
+    await queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+    await queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
+    await queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
     setRefreshing(false);
   }, [queryClient]);
+
+  const handleDeleteEmail = (id: number) => {
+    deleteEmail.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+        },
+      }
+    );
+  };
 
   const priorityFilters = [
     { key: "all", label: "Tous" },
@@ -125,12 +140,44 @@ export default function InboxScreen() {
           {formatDate(item.createdAt)}
         </Text>
         <PriorityDot priority={item.priority ?? "faible"} />
+        <TouchableOpacity
+          onPress={(e) => {
+            e.stopPropagation();
+            handleDeleteEmail(item.id);
+          }}
+          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+          style={styles.deleteButton}
+          testID={`delete-email-${item.id}`}
+        >
+          <Feather name="trash-2" size={16} color={colors.destructive} />
+        </TouchableOpacity>
       </View>
     </TouchableOpacity>
   );
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background, paddingTop: isWeb ? 67 : 0 }]}>
+      <View style={styles.priorityCardsRow}>
+        <View style={[styles.priorityCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.priorityCardLabel, { color: colors.urgent }]}>Urgents</Text>
+          <Text style={[styles.priorityCardCount, { color: colors.foreground }]}>
+            {summary?.urgentCount ?? 0}
+          </Text>
+        </View>
+        <View style={[styles.priorityCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.priorityCardLabel, { color: colors.moyen }]}>Moyens</Text>
+          <Text style={[styles.priorityCardCount, { color: colors.foreground }]}>
+            {summary?.moyenCount ?? 0}
+          </Text>
+        </View>
+        <View style={[styles.priorityCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <Text style={[styles.priorityCardLabel, { color: colors.faible }]}>Faibles</Text>
+          <Text style={[styles.priorityCardCount, { color: colors.foreground }]}>
+            {summary?.faibleCount ?? 0}
+          </Text>
+        </View>
+      </View>
+
       <View style={[styles.searchContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <Feather name="search" size={16} color={colors.mutedForeground} />
         <TextInput
@@ -296,4 +343,29 @@ const styles = StyleSheet.create({
   emailRight: { alignItems: "flex-end", gap: 6, marginLeft: 8 },
   dateText: { fontSize: 11, fontFamily: "Inter_400Regular" },
   priorityDot: { width: 8, height: 8, borderRadius: 4 },
+  deleteButton: { padding: 4 },
+  priorityCardsRow: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    gap: 8,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  priorityCard: {
+    flex: 1,
+    borderRadius: 10,
+    borderWidth: 1,
+    padding: 12,
+  },
+  priorityCardLabel: {
+    fontSize: 11,
+    fontFamily: "Inter_600SemiBold",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 4,
+  },
+  priorityCardCount: {
+    fontSize: 22,
+    fontFamily: "Inter_700Bold",
+  },
 });

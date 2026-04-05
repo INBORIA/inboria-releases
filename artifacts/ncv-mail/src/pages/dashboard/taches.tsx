@@ -23,7 +23,7 @@ export default function Taches() {
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
 
-  const handleToggleTask = (id: number, currentDone: boolean) => {
+  const handleToggleTask = (id: string, currentDone: boolean) => {
     updateTask.mutate(
       { id, data: { done: !currentDone } },
       {
@@ -34,7 +34,7 @@ export default function Taches() {
     );
   };
 
-  const handleDeleteTask = (id: number) => {
+  const handleDeleteTask = (id: string) => {
     deleteTask.mutate(
       { id },
       {
