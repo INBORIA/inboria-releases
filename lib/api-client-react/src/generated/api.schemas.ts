@@ -290,6 +290,29 @@ export interface UpdateProjectBody {
   color?: string;
 }
 
+export type CheckoutBodyPlanId =
+  (typeof CheckoutBodyPlanId)[keyof typeof CheckoutBodyPlanId];
+
+export const CheckoutBodyPlanId = {
+  solo: "solo",
+  pro: "pro",
+  business: "business",
+} as const;
+
+export interface CheckoutBody {
+  planId: CheckoutBodyPlanId;
+  /** @minimum 1 */
+  seats?: number;
+}
+
+export interface CheckoutResponse {
+  url: string;
+}
+
+export interface PortalResponse {
+  url: string;
+}
+
 export type ListEmailsParams = {
   priority?: ListEmailsPriority;
   categoryId?: number;

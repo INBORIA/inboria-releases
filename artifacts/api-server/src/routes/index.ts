@@ -10,6 +10,7 @@ import aiRouter from "./ai";
 import emailConnectRouter from "./email-connect";
 import webhookRouter from "./webhook";
 import projectsRouter from "./projects";
+import stripeRouter from "./stripe";
 
 const router: IRouter = Router();
 
@@ -24,5 +25,6 @@ router.use(aiRouter);
 router.use(emailConnectRouter);
 router.use(webhookRouter);
 router.use(projectsRouter);
+router.use(stripeRouter);
 
 export default router;

@@ -527,6 +527,27 @@ export const GenerateDraftResponse = zod.object({
 });
 
 /**
+ * @summary Create a Stripe Checkout session
+ */
+export const createCheckoutSessionBodySeatsDefault = 1;
+
+export const CreateCheckoutSessionBody = zod.object({
+  planId: zod.enum(["solo", "pro", "business"]),
+  seats: zod.number().min(1).default(createCheckoutSessionBodySeatsDefault),
+});
+
+export const CreateCheckoutSessionResponse = zod.object({
+  url: zod.string(),
+});
+
+/**
+ * @summary Get Stripe customer portal URL
+ */
+export const GetStripePortalResponse = zod.object({
+  url: zod.string(),
+});
+
+/**
  * @summary AI triage a single email
  */
 export const TriageEmailBody = zod.object({

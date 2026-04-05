@@ -9,6 +9,9 @@
 export * from "./authResponse";
 export * from "./category";
 export * from "./categoryCount";
+export * from "./checkoutBody";
+export * from "./checkoutBodyPlanId";
+export * from "./checkoutResponse";
 export * from "./createCategoryBody";
 export * from "./createProjectBody";
 export * from "./createProjectBodyStatus";
@@ -30,6 +33,7 @@ export * from "./listEmailsPriority";
 export * from "./listTasksParams";
 export * from "./listTasksStatus";
 export * from "./loginBody";
+export * from "./portalResponse";
 export * from "./project";
 export * from "./projectDetail";
 export * from "./projectStatus";

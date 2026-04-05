@@ -1,11 +1,12 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useGetProfile, useUpdateProfile, getGetProfileQueryKey } from "@workspace/api-client-react";
+import { useGetProfile, useCreateCheckoutSession, useGetStripePortal, getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { Check, Users, Shield, Zap, Sparkles, Info, CreditCard } from "lucide-react";
+import { Check, Users, Shield, Zap, Sparkles, Info, CreditCard, ExternalLink, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSearchParams } from "react-router-dom";
 
 const plans = [
   {
@@ -81,26 +82,76 @@ const plans = [
 
 export default function Abonnement() {
   const { data: profile, isLoading } = useGetProfile();
-  const updateProfile = useUpdateProfile();
+  const checkout = useCreateCheckoutSession();
+  const portal = useGetStripePortal();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [businessSeats, setBusinessSeats] = useState(1);
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (searchParams.get("success") === "true") {
+      queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+      toast({
+        title: "Paiement reussi",
+        description: "Votre abonnement a ete mis a jour avec succes.",
+      });
+      setSearchParams({}, { replace: true });
+    } else if (searchParams.get("cancelled") === "true") {
+      toast({
+        title: "Paiement annule",
+        description: "Vous n'avez pas ete debite.",
+        variant: "destructive",
+      });
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, queryClient, toast, setSearchParams]);
 
   const handleSubscribe = (planId: string, seats?: number) => {
-    updateProfile.mutate(
-      { data: { plan: planId, seats: seats || 1 } },
+    if (planId === "gratuit") return;
+
+    setLoadingPlan(planId);
+    checkout.mutate(
+      { data: { planId: planId as "solo" | "pro" | "business", seats: seats || 1 } },
       {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+        onSuccess: (data) => {
+          setLoadingPlan(null);
+          if (data.url) {
+            window.location.href = data.url;
+          }
+        },
+        onError: () => {
+          setLoadingPlan(null);
           toast({
-            title: "Abonnement mis a jour",
-            description: `Vous etes maintenant sur le plan ${planId.toUpperCase()}`,
+            title: "Erreur",
+            description: "Impossible de creer la session de paiement.",
+            variant: "destructive",
           });
         },
       }
     );
   };
+
+  const handlePortal = () => {
+    portal.mutate(undefined, {
+      onSuccess: (data) => {
+        if (data.url) {
+          window.location.href = data.url;
+        }
+      },
+      onError: () => {
+        toast({
+          title: "Erreur",
+          description: "Impossible d'acceder au portail de gestion.",
+          variant: "destructive",
+        });
+      },
+    });
+  };
+
+  const hasPaidPlan = profile?.plan && profile.plan !== "gratuit";
 
   return (
     <DashboardLayout>
@@ -130,21 +181,39 @@ export default function Abonnement() {
                 ).toLocaleDateString("fr-FR")}
               </p>
             </div>
-            <div className="w-full md:w-1/2">
-              <div className="flex justify-between text-[12px] font-medium mb-1.5">
-                <span className="text-[#8b9cb3]">Consommation IA</span>
-                <span className="text-white">
-                  {profile.emailsUsed} / {profile.emailsQuota}
-                </span>
+            <div className="flex items-center gap-3">
+              <div className="w-full md:w-64">
+                <div className="flex justify-between text-[12px] font-medium mb-1.5">
+                  <span className="text-[#8b9cb3]">Consommation IA</span>
+                  <span className="text-white">
+                    {profile.emailsUsed} / {profile.emailsQuota}
+                  </span>
+                </div>
+                <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                  <div
+                    className="h-full bg-primary rounded-full transition-all"
+                    style={{
+                      width: `${Math.min(100, (profile.emailsUsed / Math.max(1, profile.emailsQuota)) * 100)}%`,
+                    }}
+                  />
+                </div>
               </div>
-              <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-                <div
-                  className="h-full bg-primary rounded-full transition-all"
-                  style={{
-                    width: `${Math.min(100, (profile.emailsUsed / Math.max(1, profile.emailsQuota)) * 100)}%`,
-                  }}
-                />
-              </div>
+              {hasPaidPlan && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="shrink-0"
+                  onClick={handlePortal}
+                  disabled={portal.isPending}
+                >
+                  {portal.isPending ? (
+                    <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                  ) : (
+                    <ExternalLink className="w-3.5 h-3.5 mr-1" />
+                  )}
+                  Gerer l'abonnement
+                </Button>
+              )}
             </div>
           </div>
         ) : null}
@@ -156,6 +225,7 @@ export default function Abonnement() {
             const price = isBusiness
               ? parseInt(plan.price) * businessSeats
               : plan.price;
+            const isLoading = loadingPlan === plan.id;
 
             return (
               <div
@@ -252,11 +322,20 @@ export default function Abonnement() {
                   >
                     Plan actuel
                   </Button>
+                ) : plan.id === "gratuit" ? (
+                  <Button
+                    variant="ghost"
+                    className="w-full"
+                    size="sm"
+                    disabled
+                  >
+                    Plan de base
+                  </Button>
                 ) : (
                   <Button
                     className="w-full"
                     size="sm"
-                    disabled={updateProfile.isPending}
+                    disabled={isLoading || loadingPlan !== null}
                     onClick={() => {
                       handleSubscribe(
                         plan.id,
@@ -264,7 +343,10 @@ export default function Abonnement() {
                       );
                     }}
                   >
-                    Changer de plan
+                    {isLoading ? (
+                      <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                    ) : null}
+                    {isLoading ? "Redirection..." : "Changer de plan"}
                   </Button>
                 )}
               </div>

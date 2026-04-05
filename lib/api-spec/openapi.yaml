@@ -26,6 +26,8 @@ tags:
     description: Project management operations
   - name: ai
     description: AI operations
+  - name: stripe
+    description: Stripe payment operations
 paths:
   /healthz:
     get:
@@ -582,6 +584,42 @@ paths:
         "404":
           description: Email not found
 
+  /stripe/checkout:
+    post:
+      operationId: createCheckoutSession
+      tags: [stripe]
+      summary: Create a Stripe Checkout session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CheckoutBody"
+      responses:
+        "200":
+          description: Checkout session URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CheckoutResponse"
+        "400":
+          description: Invalid plan
+
+  /stripe/portal:
+    get:
+      operationId: getStripePortal
+      tags: [stripe]
+      summary: Get Stripe customer portal URL
+      responses:
+        "200":
+          description: Portal session URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PortalResponse"
+        "400":
+          description: No Stripe subscription found
+
   /ai/triage:
     post:
       operationId: triageEmail
@@ -1123,3 +1161,32 @@ components:
           enum: [actif, termine, en_pause]
         color:
           type: string
+
+    CheckoutBody:
+      type: object
+      properties:
+        planId:
+          type: string
+          enum: [solo, pro, business]
+        seats:
+          type: integer
+          minimum: 1
+          default: 1
+      required:
+        - planId
+
+    CheckoutResponse:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+        - url
+
+    PortalResponse:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+        - url
