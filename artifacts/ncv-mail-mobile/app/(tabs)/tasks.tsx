@@ -82,14 +82,13 @@ export default function TasksScreen() {
               textDecorationLine: item.done ? "line-through" : "none",
             },
           ]}
-          numberOfLines={2}
         >
           {item.title}
         </Text>
         {item.emailSubject ? (
           <View style={styles.taskMeta}>
             <Feather name="mail" size={11} color={colors.mutedForeground} />
-            <Text style={[styles.taskMetaText, { color: colors.mutedForeground }]} numberOfLines={1}>
+            <Text style={[styles.taskMetaText, { color: colors.mutedForeground }]} numberOfLines={2}>
               {item.emailSubject}
             </Text>
           </View>
@@ -97,7 +96,7 @@ export default function TasksScreen() {
         {item.projectName ? (
           <View style={styles.taskMeta}>
             <Feather name="folder" size={11} color={colors.primary} />
-            <Text style={[styles.taskMetaText, { color: colors.primary }]} numberOfLines={1}>
+            <Text style={[styles.taskMetaText, { color: colors.primary }]} numberOfLines={2}>
               {item.projectReference ? `${item.projectReference} - ` : ""}{item.projectName}
             </Text>
           </View>

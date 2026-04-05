@@ -95,18 +95,18 @@ export default function InboxScreen() {
         </View>
         <View style={styles.emailContent}>
           <View style={styles.emailHeader}>
-            <Text style={[styles.senderName, { color: colors.foreground }]} numberOfLines={1}>
+            <Text style={[styles.senderName, { color: colors.foreground }]} numberOfLines={2}>
               {item.sender}
             </Text>
             {item.status === "unread" && (
               <View style={[styles.unreadDot, { backgroundColor: colors.primary }]} />
             )}
           </View>
-          <Text style={[styles.subject, { color: colors.foreground + "CC" }]} numberOfLines={1}>
+          <Text style={[styles.subject, { color: colors.foreground + "CC" }]} numberOfLines={2}>
             {item.subject}
           </Text>
           {item.summary ? (
-            <Text style={[styles.summary, { color: colors.mutedForeground }]} numberOfLines={1}>
+            <Text style={[styles.summary, { color: colors.mutedForeground }]} numberOfLines={2}>
               {item.summary}
             </Text>
           ) : null}
