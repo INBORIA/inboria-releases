@@ -10,7 +10,11 @@ import {
   Platform,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
-import { useListTasks, useUpdateTask, getListTasksQueryKey } from "@workspace/api-client-react";
+import {
+  useListTasks,
+  useUpdateTask,
+  getListTasksQueryKey,
+} from "@workspace/api-client-react";
 import type { Task } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
@@ -72,15 +76,16 @@ export default function TasksScreen() {
   ];
 
   const renderTask = ({ item }: { item: Task }) => (
-    <View style={[styles.taskRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+    <View style={[s.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <TouchableOpacity
         onPress={() => toggleTask(item.id, item.done)}
         activeOpacity={0.6}
-        style={styles.checkboxTouchable}
+        hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+        style={s.checkArea}
       >
         <View
           style={[
-            styles.checkbox,
+            s.checkbox,
             {
               borderColor: item.done ? colors.success : colors.mutedForeground,
               backgroundColor: item.done ? colors.success : "transparent",
@@ -90,10 +95,11 @@ export default function TasksScreen() {
           {item.done && <Feather name="check" size={14} color="#fff" />}
         </View>
       </TouchableOpacity>
-      <View style={styles.taskContent}>
+
+      <View style={s.cardBody}>
         <Text
           style={[
-            styles.taskTitle,
+            s.taskTitle,
             {
               color: item.done ? colors.mutedForeground : colors.foreground,
               textDecorationLine: item.done ? "line-through" : "none",
@@ -102,19 +108,22 @@ export default function TasksScreen() {
         >
           {item.title}
         </Text>
+
         {item.emailSubject ? (
-          <View style={styles.taskMeta}>
-            <Feather name="mail" size={11} color={colors.mutedForeground} />
-            <Text style={[styles.taskMetaText, { color: colors.mutedForeground }]}>
+          <View style={s.metaRow}>
+            <Feather name="mail" size={11} color={colors.mutedForeground} style={s.metaIcon} />
+            <Text style={[s.metaText, { color: colors.mutedForeground }]}>
               {item.emailSubject}
             </Text>
           </View>
         ) : null}
+
         {item.projectName ? (
-          <View style={styles.taskMeta}>
-            <Feather name="folder" size={11} color={colors.primary} />
-            <Text style={[styles.taskMetaText, { color: colors.primary }]}>
-              {item.projectReference ? `${item.projectReference} - ` : ""}{item.projectName}
+          <View style={s.metaRow}>
+            <Feather name="folder" size={11} color={colors.primary} style={s.metaIcon} />
+            <Text style={[s.metaText, { color: colors.primary }]}>
+              {item.projectReference ? `${item.projectReference} - ` : ""}
+              {item.projectName}
             </Text>
           </View>
         ) : null}
@@ -123,49 +132,47 @@ export default function TasksScreen() {
   );
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background, paddingTop: isWeb ? 67 : 0 }]}>
-      <View style={styles.filterRow}>
-        {filters.map((f) => (
-          <TouchableOpacity
-            key={f.key}
-            style={[
-              styles.filterChip,
-              {
-                backgroundColor: filter === f.key ? colors.primary + "20" : colors.card,
-                borderColor: filter === f.key ? colors.primary + "40" : colors.border,
-              },
-            ]}
-            onPress={() => setFilter(f.key)}
-          >
-            <Text
+    <View style={[s.container, { backgroundColor: colors.background, paddingTop: isWeb ? 67 : 0 }]}>
+      <View style={s.filterRow}>
+        {filters.map((f) => {
+          const active = filter === f.key;
+          return (
+            <TouchableOpacity
+              key={f.key}
               style={[
-                styles.filterText,
-                { color: filter === f.key ? colors.primary : colors.mutedForeground },
+                s.filterChip,
+                {
+                  backgroundColor: active ? colors.primary + "20" : colors.card,
+                  borderColor: active ? colors.primary + "40" : colors.border,
+                },
               ]}
+              onPress={() => setFilter(f.key)}
             >
-              {f.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Text
+                style={[s.filterText, { color: active ? colors.primary : colors.mutedForeground }]}
+              >
+                {f.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </View>
 
       {isLoading ? (
-        <View style={styles.centered}>
+        <View style={s.center}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : !tasks?.length ? (
-        <View style={styles.centered}>
+        <View style={s.center}>
           <Feather name="check-circle" size={48} color={colors.mutedForeground + "40"} />
-          <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
-            Aucune tache
-          </Text>
+          <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>Aucune tache</Text>
         </View>
       ) : (
         <FlatList
           data={tasks}
           keyExtractor={(item) => String(item.id)}
           renderItem={renderTask}
-          contentContainerStyle={[styles.listContent, { paddingBottom: isWeb ? 84 : 90 }]}
+          contentContainerStyle={[s.list, { paddingBottom: isWeb ? 84 : 100 }]}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
           }
@@ -176,24 +183,40 @@ export default function TasksScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   container: { flex: 1 },
-  filterRow: { flexDirection: "row", paddingHorizontal: 16, gap: 8, marginTop: 8, marginBottom: 8 },
-  filterChip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 8, borderWidth: 1 },
-  filterText: { fontSize: 12, fontFamily: "Inter_500Medium" },
-  centered: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12 },
-  emptyText: { fontSize: 15, fontFamily: "Inter_400Regular" },
-  listContent: { paddingHorizontal: 16, gap: 8 },
-  taskRow: {
+
+  filterRow: {
     flexDirection: "row",
-    alignItems: "flex-start",
+    paddingHorizontal: 16,
+    gap: 8,
+    marginTop: 8,
+    marginBottom: 8,
+  },
+  filterChip: {
+    paddingHorizontal: 14,
+    paddingVertical: 7,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  filterText: { fontSize: 13, fontFamily: "Inter_500Medium" },
+
+  center: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12 },
+  emptyLabel: { fontSize: 15, fontFamily: "Inter_400Regular" },
+
+  list: { paddingHorizontal: 16, gap: 10 },
+
+  card: {
+    flexDirection: "row",
     padding: 14,
     borderRadius: 12,
     borderWidth: 1,
     gap: 12,
+    alignItems: "flex-start",
   },
-  checkboxTouchable: {
-    paddingTop: 2,
+
+  checkArea: {
+    paddingTop: 1,
   },
   checkbox: {
     width: 24,
@@ -203,8 +226,30 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
   },
-  taskContent: { flex: 1 },
-  taskTitle: { fontSize: 14, fontFamily: "Inter_500Medium", lineHeight: 20 },
-  taskMeta: { flexDirection: "row", alignItems: "flex-start", gap: 4, marginTop: 6 },
-  taskMetaText: { fontSize: 12, fontFamily: "Inter_400Regular", flex: 1, lineHeight: 18 },
+
+  cardBody: {
+    flex: 1,
+    minWidth: 0,
+  },
+  taskTitle: {
+    fontSize: 14,
+    fontFamily: "Inter_500Medium",
+    lineHeight: 20,
+  },
+
+  metaRow: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    marginTop: 6,
+    gap: 6,
+  },
+  metaIcon: {
+    marginTop: 2,
+  },
+  metaText: {
+    fontSize: 12,
+    fontFamily: "Inter_400Regular",
+    lineHeight: 17,
+    flex: 1,
+  },
 });

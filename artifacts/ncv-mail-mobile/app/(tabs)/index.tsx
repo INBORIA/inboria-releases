@@ -13,22 +13,18 @@ import {
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
-import { useListEmails, useListCategories, useGetDashboardSummary, useDeleteEmail, getListEmailsQueryKey, getListCategoriesQueryKey, getGetDashboardSummaryQueryKey } from "@workspace/api-client-react";
+import {
+  useListEmails,
+  useListCategories,
+  useGetDashboardSummary,
+  useDeleteEmail,
+  getListEmailsQueryKey,
+  getListCategoriesQueryKey,
+  getGetDashboardSummaryQueryKey,
+} from "@workspace/api-client-react";
 import type { Email } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
-import { useSafeAreaInsets } from "react-native-safe-area-context";
-
-function PriorityDot({ priority }: { priority: string }) {
-  const colors = useColors();
-  const c =
-    priority === "urgent"
-      ? colors.urgent
-      : priority === "moyen"
-        ? colors.moyen
-        : colors.faible;
-  return <View style={[styles.priorityDot, { backgroundColor: c }]} />;
-}
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -44,7 +40,6 @@ export default function InboxScreen() {
   const colors = useColors();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterPriority, setFilterPriority] = useState<string>("all");
   const [filterCategory, setFilterCategory] = useState<number | null>(null);
@@ -52,7 +47,10 @@ export default function InboxScreen() {
   const isWeb = Platform.OS === "web";
 
   const { data: emails, isLoading } = useListEmails({
-    priority: filterPriority !== "all" ? (filterPriority as "urgent" | "moyen" | "faible") : undefined,
+    priority:
+      filterPriority !== "all"
+        ? (filterPriority as "urgent" | "moyen" | "faible")
+        : undefined,
     q: searchQuery || undefined,
   });
 
@@ -95,98 +93,105 @@ export default function InboxScreen() {
     { key: "faible", label: "Faible" },
   ];
 
-  const renderEmail = ({ item }: { item: Email }) => (
-    <TouchableOpacity
-      style={[styles.emailRow, { backgroundColor: colors.card, borderColor: colors.border }]}
-      onPress={() => router.push(`/email/${item.id}`)}
-      activeOpacity={0.7}
-      testID={`email-${item.id}`}
-    >
-      <View style={styles.emailLeft}>
-        <View style={[styles.avatar, { backgroundColor: colors.primary + "25" }]}>
-          <Text style={[styles.avatarText, { color: colors.primary }]}>
+  const priorityDotColor = (p: string) =>
+    p === "urgent" ? colors.urgent : p === "moyen" ? colors.moyen : colors.faible;
+
+  const renderEmail = ({ item }: { item: Email }) => {
+    const priority = item.priority ?? "faible";
+    return (
+      <TouchableOpacity
+        style={[s.emailCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+        onPress={() => router.push(`/email/${item.id}`)}
+        activeOpacity={0.7}
+      >
+        <View style={[s.avatar, { backgroundColor: colors.primary + "25" }]}>
+          <Text style={[s.avatarLetter, { color: colors.primary }]}>
             {(item.sender || "?")[0].toUpperCase()}
           </Text>
         </View>
-        <View style={styles.emailContent}>
-          <View style={styles.emailHeader}>
-            <Text style={[styles.senderName, { color: colors.foreground }]}>
+
+        <View style={s.emailBody}>
+          <View style={s.emailTopRow}>
+            <Text style={[s.senderText, { color: colors.foreground }]} numberOfLines={1}>
               {item.sender}
             </Text>
-            {item.status === "unread" && (
-              <View style={[styles.unreadDot, { backgroundColor: colors.primary }]} />
-            )}
+            <Text style={[s.dateText, { color: colors.mutedForeground }]}>
+              {formatDate(item.createdAt)}
+            </Text>
           </View>
-          <Text style={[styles.subject, { color: colors.foreground + "CC" }]}>
+
+          <Text style={[s.subjectText, { color: colors.foreground + "DD" }]}>
             {item.subject}
           </Text>
+
           {item.summary ? (
-            <Text style={[styles.summary, { color: colors.mutedForeground }]}>
+            <Text style={[s.summaryText, { color: colors.mutedForeground }]}>
               {item.summary}
             </Text>
           ) : null}
-          {item.categoryName ? (
-            <View style={styles.categoryRow}>
-              <View style={[styles.categoryChip, { backgroundColor: colors.primary + "15" }]}>
-                <Feather name="tag" size={10} color={colors.primary} />
-                <Text style={[styles.categoryText, { color: colors.primary }]}>{item.categoryName}</Text>
-              </View>
+
+          <View style={s.emailBottomRow}>
+            <View style={s.emailChips}>
+              {item.status === "unread" && (
+                <View style={[s.unreadBadge, { backgroundColor: colors.primary + "20" }]}>
+                  <View style={[s.unreadDot, { backgroundColor: colors.primary }]} />
+                  <Text style={[s.chipLabel, { color: colors.primary }]}>Nouveau</Text>
+                </View>
+              )}
+              {item.categoryName ? (
+                <View style={[s.categoryBadge, { backgroundColor: colors.primary + "12" }]}>
+                  <Feather name="tag" size={10} color={colors.primary} />
+                  <Text style={[s.chipLabel, { color: colors.primary }]}>
+                    {item.categoryName}
+                  </Text>
+                </View>
+              ) : null}
             </View>
-          ) : null}
+
+            <View style={s.emailActions}>
+              <View style={[s.priorityDot, { backgroundColor: priorityDotColor(priority) }]} />
+              <TouchableOpacity
+                onPress={(e) => {
+                  e.stopPropagation();
+                  handleDeleteEmail(item.id);
+                }}
+                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+              >
+                <Feather name="trash-2" size={14} color={colors.destructive + "80"} />
+              </TouchableOpacity>
+            </View>
+          </View>
         </View>
-      </View>
-      <View style={styles.emailRight}>
-        <Text style={[styles.dateText, { color: colors.mutedForeground }]}>
-          {formatDate(item.createdAt)}
-        </Text>
-        <PriorityDot priority={item.priority ?? "faible"} />
-        <TouchableOpacity
-          onPress={(e) => {
-            e.stopPropagation();
-            handleDeleteEmail(item.id);
-          }}
-          hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-          style={styles.deleteButton}
-          testID={`delete-email-${item.id}`}
-        >
-          <Feather name="trash-2" size={16} color={colors.destructive} />
-        </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
-  );
+      </TouchableOpacity>
+    );
+  };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background, paddingTop: isWeb ? 67 : 0 }]}>
-      <View style={styles.priorityCardsRow}>
-        <View style={[styles.priorityCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.priorityCardLabel, { color: colors.urgent }]}>Urgents</Text>
-          <Text style={[styles.priorityCardCount, { color: colors.foreground }]}>
-            {summary?.urgentCount ?? 0}
-          </Text>
-        </View>
-        <View style={[styles.priorityCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.priorityCardLabel, { color: colors.moyen }]}>Moyens</Text>
-          <Text style={[styles.priorityCardCount, { color: colors.foreground }]}>
-            {summary?.moyenCount ?? 0}
-          </Text>
-        </View>
-        <View style={[styles.priorityCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-          <Text style={[styles.priorityCardLabel, { color: colors.faible }]}>Faibles</Text>
-          <Text style={[styles.priorityCardCount, { color: colors.foreground }]}>
-            {summary?.faibleCount ?? 0}
-          </Text>
-        </View>
+    <View style={[s.container, { backgroundColor: colors.background, paddingTop: isWeb ? 67 : 0 }]}>
+      <View style={s.summaryRow}>
+        {[
+          { label: "Urgents", count: summary?.urgentCount ?? 0, color: colors.urgent },
+          { label: "Moyens", count: summary?.moyenCount ?? 0, color: colors.moyen },
+          { label: "Faibles", count: summary?.faibleCount ?? 0, color: colors.faible },
+        ].map((card) => (
+          <View
+            key={card.label}
+            style={[s.summaryCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+          >
+            <Text style={[s.summaryLabel, { color: card.color }]}>{card.label}</Text>
+            <Text style={[s.summaryCount, { color: colors.foreground }]}>{card.count}</Text>
+          </View>
+        ))}
       </View>
 
-      <View style={[styles.searchContainer, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <View style={[s.searchBar, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <Feather name="search" size={16} color={colors.mutedForeground} />
         <TextInput
-          style={[styles.searchInput, { color: colors.foreground }]}
+          style={[s.searchInput, { color: colors.foreground }]}
           placeholder="Rechercher..."
           placeholderTextColor={colors.mutedForeground + "80"}
           value={searchQuery}
           onChangeText={setSearchQuery}
-          testID="search-input"
         />
         {searchQuery ? (
           <TouchableOpacity onPress={() => setSearchQuery("")}>
@@ -195,36 +200,44 @@ export default function InboxScreen() {
         ) : null}
       </View>
 
-      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll} contentContainerStyle={styles.filterRow}>
-        {priorityFilters.map((f) => (
-          <TouchableOpacity
-            key={f.key}
-            style={[
-              styles.filterChip,
-              {
-                backgroundColor: filterPriority === f.key ? colors.primary + "20" : colors.card,
-                borderColor: filterPriority === f.key ? colors.primary + "40" : colors.border,
-              },
-            ]}
-            onPress={() => setFilterPriority(f.key)}
-          >
-            <Text
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={s.filtersScroll}
+        contentContainerStyle={s.filtersContent}
+      >
+        {priorityFilters.map((f) => {
+          const active = filterPriority === f.key;
+          return (
+            <TouchableOpacity
+              key={f.key}
               style={[
-                styles.filterText,
-                { color: filterPriority === f.key ? colors.primary : colors.mutedForeground },
+                s.chip,
+                {
+                  backgroundColor: active ? colors.primary + "20" : colors.card,
+                  borderColor: active ? colors.primary + "40" : colors.border,
+                },
               ]}
+              onPress={() => setFilterPriority(f.key)}
             >
-              {f.label}
-            </Text>
-          </TouchableOpacity>
-        ))}
+              <Text style={[s.chipText, { color: active ? colors.primary : colors.mutedForeground }]}>
+                {f.label}
+              </Text>
+            </TouchableOpacity>
+          );
+        })}
       </ScrollView>
 
       {categories && categories.length > 0 && (
-        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll} contentContainerStyle={styles.filterRow}>
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          style={s.filtersScroll}
+          contentContainerStyle={s.filtersContent}
+        >
           <TouchableOpacity
             style={[
-              styles.filterChip,
+              s.chip,
               {
                 backgroundColor: filterCategory === null ? colors.primary + "20" : colors.card,
                 borderColor: filterCategory === null ? colors.primary + "40" : colors.border,
@@ -232,57 +245,62 @@ export default function InboxScreen() {
             ]}
             onPress={() => setFilterCategory(null)}
           >
-            <Feather name="layers" size={12} color={filterCategory === null ? colors.primary : colors.mutedForeground} />
-            <Text style={[styles.filterText, { color: filterCategory === null ? colors.primary : colors.mutedForeground }]}>
+            <Feather
+              name="layers"
+              size={12}
+              color={filterCategory === null ? colors.primary : colors.mutedForeground}
+            />
+            <Text
+              style={[
+                s.chipText,
+                { color: filterCategory === null ? colors.primary : colors.mutedForeground },
+              ]}
+            >
               Toutes
             </Text>
           </TouchableOpacity>
-          {categories.map((cat) => (
-            <TouchableOpacity
-              key={cat.id}
-              style={[
-                styles.filterChip,
-                {
-                  backgroundColor: filterCategory === cat.id ? colors.primary + "20" : colors.card,
-                  borderColor: filterCategory === cat.id ? colors.primary + "40" : colors.border,
-                },
-              ]}
-              onPress={() => setFilterCategory(filterCategory === cat.id ? null : cat.id)}
-            >
-              <Feather name="tag" size={12} color={filterCategory === cat.id ? colors.primary : colors.mutedForeground} />
-              <Text style={[styles.filterText, { color: filterCategory === cat.id ? colors.primary : colors.mutedForeground }]}>
-                {cat.name}
-              </Text>
-            </TouchableOpacity>
-          ))}
+          {categories.map((cat) => {
+            const active = filterCategory === cat.id;
+            return (
+              <TouchableOpacity
+                key={cat.id}
+                style={[
+                  s.chip,
+                  {
+                    backgroundColor: active ? colors.primary + "20" : colors.card,
+                    borderColor: active ? colors.primary + "40" : colors.border,
+                  },
+                ]}
+                onPress={() => setFilterCategory(active ? null : cat.id)}
+              >
+                <Feather name="tag" size={12} color={active ? colors.primary : colors.mutedForeground} />
+                <Text style={[s.chipText, { color: active ? colors.primary : colors.mutedForeground }]}>
+                  {cat.name}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
         </ScrollView>
       )}
 
       {isLoading ? (
-        <View style={styles.centered}>
+        <View style={s.center}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : !activeEmails?.length ? (
-        <View style={styles.centered}>
+        <View style={s.center}>
           <Feather name="inbox" size={48} color={colors.mutedForeground + "40"} />
-          <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
-            Aucun email
-          </Text>
+          <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>Aucun email</Text>
         </View>
       ) : (
         <FlatList
           data={activeEmails}
           keyExtractor={(item) => String(item.id)}
           renderItem={renderEmail}
-          contentContainerStyle={[styles.listContent, { paddingBottom: isWeb ? 84 : 90 }]}
+          contentContainerStyle={[s.list, { paddingBottom: isWeb ? 84 : 100 }]}
           refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={colors.primary}
-            />
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
           }
-          scrollEnabled={!!activeEmails?.length}
           showsVerticalScrollIndicator={false}
         />
       )}
@@ -290,25 +308,57 @@ export default function InboxScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   container: { flex: 1 },
-  searchContainer: {
+
+  summaryRow: {
+    flexDirection: "row",
+    paddingHorizontal: 16,
+    gap: 8,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  summaryCard: {
+    flex: 1,
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  summaryLabel: {
+    fontSize: 11,
+    fontFamily: "Inter_600SemiBold",
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+    marginBottom: 2,
+  },
+  summaryCount: {
+    fontSize: 22,
+    fontFamily: "Inter_700Bold",
+  },
+
+  searchBar: {
     flexDirection: "row",
     alignItems: "center",
     marginHorizontal: 16,
     marginTop: 8,
-    marginBottom: 8,
+    marginBottom: 6,
     paddingHorizontal: 12,
     height: 40,
     borderRadius: 10,
     borderWidth: 1,
     gap: 8,
   },
-  searchInput: { flex: 1, fontSize: 14, fontFamily: "Inter_400Regular" },
-  filterScroll: { flexGrow: 0, marginBottom: 4 },
-  categoryScroll: { flexGrow: 0, marginBottom: 8 },
-  filterRow: { paddingHorizontal: 16, gap: 8 },
-  filterChip: {
+  searchInput: {
+    flex: 1,
+    fontSize: 14,
+    fontFamily: "Inter_400Regular",
+    padding: 0,
+  },
+
+  filtersScroll: { flexGrow: 0, marginBottom: 4 },
+  filtersContent: { paddingHorizontal: 16, gap: 8 },
+  chip: {
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 12,
@@ -317,55 +367,88 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: 4,
   },
-  filterText: { fontSize: 12, fontFamily: "Inter_500Medium" },
-  centered: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12 },
-  emptyText: { fontSize: 15, fontFamily: "Inter_400Regular" },
-  listContent: { paddingHorizontal: 16, gap: 8 },
-  emailRow: {
+  chipText: { fontSize: 12, fontFamily: "Inter_500Medium" },
+
+  center: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12 },
+  emptyLabel: { fontSize: 15, fontFamily: "Inter_400Regular" },
+
+  list: { paddingHorizontal: 16, gap: 10 },
+
+  emailCard: {
     flexDirection: "row",
-    alignItems: "flex-start",
     padding: 14,
     borderRadius: 12,
     borderWidth: 1,
+    gap: 12,
   },
-  emailLeft: { flex: 1, flexDirection: "row", alignItems: "flex-start", gap: 12 },
-  avatar: { width: 40, height: 40, borderRadius: 20, alignItems: "center", justifyContent: "center" },
-  avatarText: { fontSize: 16, fontFamily: "Inter_600SemiBold" },
-  emailContent: { flex: 1 },
-  emailHeader: { flexDirection: "row", alignItems: "center", gap: 6 },
-  senderName: { fontSize: 14, fontFamily: "Inter_600SemiBold", flexShrink: 1 },
-  unreadDot: { width: 7, height: 7, borderRadius: 4 },
-  subject: { fontSize: 13, fontFamily: "Inter_400Regular", marginTop: 2 },
-  summary: { fontSize: 12, fontFamily: "Inter_400Regular", marginTop: 2 },
-  categoryRow: { flexDirection: "row", marginTop: 4 },
-  categoryChip: { flexDirection: "row", alignItems: "center", gap: 3, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
-  categoryText: { fontSize: 10, fontFamily: "Inter_500Medium" },
-  emailRight: { alignItems: "flex-end", gap: 6, marginLeft: 8 },
-  dateText: { fontSize: 11, fontFamily: "Inter_400Regular" },
-  priorityDot: { width: 8, height: 8, borderRadius: 4 },
-  deleteButton: { padding: 4 },
-  priorityCardsRow: {
-    flexDirection: "row",
-    paddingHorizontal: 16,
-    gap: 8,
-    marginTop: 8,
-    marginBottom: 4,
+  avatar: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
   },
-  priorityCard: {
+  avatarLetter: { fontSize: 16, fontFamily: "Inter_600SemiBold" },
+
+  emailBody: {
     flex: 1,
-    borderRadius: 10,
-    borderWidth: 1,
-    padding: 12,
+    minWidth: 0,
   },
-  priorityCardLabel: {
-    fontSize: 11,
+
+  emailTopRow: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    gap: 8,
+    marginBottom: 2,
+  },
+  senderText: {
+    fontSize: 14,
     fontFamily: "Inter_600SemiBold",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginBottom: 4,
+    flex: 1,
   },
-  priorityCardCount: {
-    fontSize: 22,
-    fontFamily: "Inter_700Bold",
+  dateText: { fontSize: 11, fontFamily: "Inter_400Regular", flexShrink: 0 },
+
+  subjectText: {
+    fontSize: 13,
+    fontFamily: "Inter_400Regular",
+    lineHeight: 18,
+    marginBottom: 2,
   },
+  summaryText: {
+    fontSize: 12,
+    fontFamily: "Inter_400Regular",
+    lineHeight: 17,
+    marginBottom: 2,
+  },
+
+  emailBottomRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginTop: 6,
+  },
+  emailChips: { flexDirection: "row", gap: 6, flexShrink: 1, flexWrap: "wrap" },
+  emailActions: { flexDirection: "row", alignItems: "center", gap: 10, flexShrink: 0 },
+
+  unreadBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  unreadDot: { width: 6, height: 6, borderRadius: 3 },
+  categoryBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 4,
+  },
+  chipLabel: { fontSize: 10, fontFamily: "Inter_500Medium" },
+  priorityDot: { width: 8, height: 8, borderRadius: 4 },
 });

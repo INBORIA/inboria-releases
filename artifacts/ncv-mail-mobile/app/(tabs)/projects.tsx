@@ -11,10 +11,22 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
-import { useListProjects } from "@workspace/api-client-react";
+import { useListProjects, getListProjectsQueryKey } from "@workspace/api-client-react";
 import type { Project } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
+
+const STATUS_COLORS: Record<string, string> = {
+  actif: "#22c55e",
+  termine: "#8b9cb3",
+  en_pause: "#f59e0b",
+};
+
+const STATUS_LABELS: Record<string, string> = {
+  actif: "Actif",
+  termine: "Termine",
+  en_pause: "En pause",
+};
 
 export default function ProjectsScreen() {
   const colors = useColors();
@@ -27,70 +39,60 @@ export default function ProjectsScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await queryClient.invalidateQueries({ queryKey: ["listProjects"] });
+    await queryClient.invalidateQueries({ queryKey: getListProjectsQueryKey() });
     setRefreshing(false);
   }, [queryClient]);
 
-  const statusColors: Record<string, string> = {
-    actif: "#22c55e",
-    termine: "#8b9cb3",
-    en_pause: "#f59e0b",
-  };
-
-  const statusLabels: Record<string, string> = {
-    actif: "Actif",
-    termine: "Termine",
-    en_pause: "En pause",
-  };
-
   const renderProject = ({ item }: { item: Project }) => {
-    const sc = statusColors[item.status] || colors.mutedForeground;
+    const sc = STATUS_COLORS[item.status] || colors.mutedForeground;
     return (
       <TouchableOpacity
-        style={[styles.projectRow, { backgroundColor: colors.card, borderColor: colors.border }]}
+        style={[s.card, { backgroundColor: colors.card, borderColor: colors.border }]}
         activeOpacity={0.7}
         onPress={() => router.push(`/project/${item.id}`)}
       >
-        <View style={styles.projectHeader}>
-          <View style={[styles.refBadge, { backgroundColor: colors.primary + "20" }]}>
-            <Text style={[styles.refText, { color: colors.primary }]}>{item.reference}</Text>
+        <View style={s.cardTop}>
+          <View style={[s.refBadge, { backgroundColor: colors.primary + "20" }]}>
+            <Text style={[s.refLabel, { color: colors.primary }]}>{item.reference}</Text>
           </View>
-          <View style={[styles.statusBadge, { backgroundColor: sc + "20" }]}>
-            <View style={[styles.statusDot, { backgroundColor: sc }]} />
-            <Text style={[styles.statusText, { color: sc }]}>
-              {statusLabels[item.status] || item.status}
+          <View style={[s.statusBadge, { backgroundColor: sc + "20" }]}>
+            <View style={[s.statusDot, { backgroundColor: sc }]} />
+            <Text style={[s.statusLabel, { color: sc }]}>
+              {STATUS_LABELS[item.status] || item.status}
             </Text>
           </View>
         </View>
-        <Text style={[styles.projectName, { color: colors.foreground }]}>{item.name}</Text>
+
+        <Text style={[s.projectName, { color: colors.foreground }]}>{item.name}</Text>
+
         {item.description ? (
-          <Text style={[styles.projectDesc, { color: colors.mutedForeground }]}>
+          <Text style={[s.projectDesc, { color: colors.mutedForeground }]}>
             {item.description}
           </Text>
         ) : null}
-        <View style={styles.projectStats}>
-          <View style={styles.statItem}>
+
+        <View style={s.statsRow}>
+          <View style={s.stat}>
             <Feather name="mail" size={13} color={colors.mutedForeground} />
-            <Text style={[styles.statText, { color: colors.mutedForeground }]}>
+            <Text style={[s.statText, { color: colors.mutedForeground }]}>
               {item.emailCount ?? 0}
             </Text>
           </View>
-          <View style={styles.statItem}>
+          <View style={s.stat}>
             <Feather name="check-square" size={13} color={colors.mutedForeground} />
-            <Text style={[styles.statText, { color: colors.mutedForeground }]}>
+            <Text style={[s.statText, { color: colors.mutedForeground }]}>
               {item.taskCount ?? 0}
             </Text>
           </View>
           {(item.pendingTaskCount ?? 0) > 0 && (
-            <View style={styles.statItem}>
+            <View style={s.stat}>
               <Feather name="clock" size={13} color={colors.warning} />
-              <Text style={[styles.statText, { color: colors.warning }]}>
+              <Text style={[s.statText, { color: colors.warning }]}>
                 {item.pendingTaskCount} en cours
               </Text>
             </View>
           )}
-        </View>
-        <View style={styles.arrowRow}>
+          <View style={{ flex: 1 }} />
           <Feather name="chevron-right" size={16} color={colors.mutedForeground} />
         </View>
       </TouchableOpacity>
@@ -98,18 +100,16 @@ export default function ProjectsScreen() {
   };
 
   return (
-    <View style={[styles.container, { backgroundColor: colors.background, paddingTop: isWeb ? 67 : 0 }]}>
+    <View style={[s.container, { backgroundColor: colors.background, paddingTop: isWeb ? 67 : 0 }]}>
       {isLoading ? (
-        <View style={styles.centered}>
+        <View style={s.center}>
           <ActivityIndicator size="large" color={colors.primary} />
         </View>
       ) : !projects?.length ? (
-        <View style={styles.centered}>
+        <View style={s.center}>
           <Feather name="folder" size={48} color={colors.mutedForeground + "40"} />
-          <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
-            Aucun projet
-          </Text>
-          <Text style={[styles.emptySubtext, { color: colors.mutedForeground }]}>
+          <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>Aucun projet</Text>
+          <Text style={[s.emptyHint, { color: colors.mutedForeground }]}>
             Les projets sont crees automatiquement par l'IA
           </Text>
         </View>
@@ -118,11 +118,10 @@ export default function ProjectsScreen() {
           data={projects}
           keyExtractor={(item) => item.id}
           renderItem={renderProject}
-          contentContainerStyle={[styles.listContent, { paddingBottom: isWeb ? 84 : 90 }]}
+          contentContainerStyle={[s.list, { paddingBottom: isWeb ? 84 : 100 }]}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
           }
-          scrollEnabled={!!projects?.length}
           showsVerticalScrollIndicator={false}
         />
       )}
@@ -130,23 +129,63 @@ export default function ProjectsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   container: { flex: 1 },
-  centered: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12, paddingHorizontal: 32 },
-  emptyText: { fontSize: 15, fontFamily: "Inter_400Regular" },
-  emptySubtext: { fontSize: 13, fontFamily: "Inter_400Regular", textAlign: "center" },
-  listContent: { paddingHorizontal: 16, paddingTop: 8, gap: 10 },
-  projectRow: { padding: 16, borderRadius: 12, borderWidth: 1 },
-  projectHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 },
+  center: {
+    flex: 1,
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 12,
+    paddingHorizontal: 32,
+  },
+  emptyLabel: { fontSize: 15, fontFamily: "Inter_400Regular" },
+  emptyHint: { fontSize: 13, fontFamily: "Inter_400Regular", textAlign: "center" },
+
+  list: { paddingHorizontal: 16, paddingTop: 8, gap: 12 },
+
+  card: {
+    padding: 16,
+    borderRadius: 12,
+    borderWidth: 1,
+  },
+  cardTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 10,
+  },
   refBadge: { paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
-  refText: { fontSize: 11, fontFamily: "Inter_600SemiBold" },
-  statusBadge: { flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 8, paddingVertical: 3, borderRadius: 6 },
+  refLabel: { fontSize: 11, fontFamily: "Inter_600SemiBold" },
+  statusBadge: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 5,
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 6,
+  },
   statusDot: { width: 6, height: 6, borderRadius: 3 },
-  statusText: { fontSize: 11, fontFamily: "Inter_500Medium" },
-  projectName: { fontSize: 15, fontFamily: "Inter_600SemiBold", marginBottom: 4 },
-  projectDesc: { fontSize: 13, fontFamily: "Inter_400Regular", lineHeight: 18, marginBottom: 8 },
-  projectStats: { flexDirection: "row", gap: 16 },
-  statItem: { flexDirection: "row", alignItems: "center", gap: 4 },
+  statusLabel: { fontSize: 11, fontFamily: "Inter_500Medium" },
+
+  projectName: {
+    fontSize: 16,
+    fontFamily: "Inter_600SemiBold",
+    marginBottom: 4,
+    lineHeight: 22,
+  },
+  projectDesc: {
+    fontSize: 13,
+    fontFamily: "Inter_400Regular",
+    lineHeight: 19,
+    marginBottom: 10,
+  },
+
+  statsRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 16,
+    marginTop: 4,
+  },
+  stat: { flexDirection: "row", alignItems: "center", gap: 4 },
   statText: { fontSize: 12, fontFamily: "Inter_400Regular" },
-  arrowRow: { position: "absolute", right: 16, top: "50%", marginTop: -8 },
 });

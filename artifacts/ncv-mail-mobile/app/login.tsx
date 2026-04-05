@@ -25,6 +25,7 @@ export default function LoginScreen() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const isWeb = Platform.OS === "web";
 
   const handleSubmit = async () => {
     if (!email.trim() || !password.trim()) {
@@ -41,18 +42,14 @@ export default function LoginScreen() {
       mode === "login"
         ? await signIn(email.trim(), password)
         : await signUp(email.trim(), password, fullName.trim());
-    if (result.error) {
-      setError(result.error);
-    }
+    if (result.error) setError(result.error);
     setLoading(false);
   };
-
-  const isWeb = Platform.OS === "web";
 
   return (
     <View
       style={[
-        styles.container,
+        s.container,
         {
           backgroundColor: colors.background,
           paddingTop: isWeb ? 67 : insets.top,
@@ -63,44 +60,45 @@ export default function LoginScreen() {
       <KeyboardAwareScrollViewCompat
         bottomOffset={20}
         keyboardShouldPersistTaps="handled"
-        contentContainerStyle={styles.scrollContent}
+        contentContainerStyle={s.scrollContent}
       >
-        <View style={styles.logoContainer}>
-          <View style={[styles.logoCircle, { backgroundColor: colors.primary + "20" }]}>
+        <View style={s.logoBox}>
+          <View style={[s.logoCircle, { backgroundColor: colors.primary + "20" }]}>
             <Feather name="mail" size={32} color={colors.primary} />
           </View>
-          <Text style={[styles.appName, { color: colors.foreground }]}>NCV Mail</Text>
-          <Text style={[styles.subtitle, { color: colors.mutedForeground }]}>
+          <Text style={[s.appTitle, { color: colors.foreground }]}>NCV Mail</Text>
+          <Text style={[s.subtitle, { color: colors.mutedForeground }]}>
             {mode === "login" ? "Connectez-vous a votre compte" : "Creez votre compte"}
           </Text>
         </View>
 
         {error ? (
-          <View style={[styles.errorBox, { backgroundColor: colors.destructive + "15", borderColor: colors.destructive + "30" }]}>
+          <View
+            style={[s.errorBox, { backgroundColor: colors.destructive + "15", borderColor: colors.destructive + "30" }]}
+          >
             <Feather name="alert-circle" size={14} color={colors.destructive} />
-            <Text style={[styles.errorText, { color: colors.destructive }]}>{error}</Text>
+            <Text style={[s.errorText, { color: colors.destructive }]}>{error}</Text>
           </View>
         ) : null}
 
         {mode === "register" && (
-          <View style={styles.inputGroup}>
-            <Text style={[styles.label, { color: colors.mutedForeground }]}>Nom complet</Text>
+          <View style={s.field}>
+            <Text style={[s.label, { color: colors.mutedForeground }]}>Nom complet</Text>
             <TextInput
-              style={[styles.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground }]}
+              style={[s.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground }]}
               placeholder="Jean Dupont"
               placeholderTextColor={colors.mutedForeground + "80"}
               value={fullName}
               onChangeText={setFullName}
               autoCapitalize="words"
-              testID="fullname-input"
             />
           </View>
         )}
 
-        <View style={styles.inputGroup}>
-          <Text style={[styles.label, { color: colors.mutedForeground }]}>Email</Text>
+        <View style={s.field}>
+          <Text style={[s.label, { color: colors.mutedForeground }]}>Email</Text>
           <TextInput
-            style={[styles.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground }]}
+            style={[s.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground }]}
             placeholder="votre@email.com"
             placeholderTextColor={colors.mutedForeground + "80"}
             value={email}
@@ -108,56 +106,54 @@ export default function LoginScreen() {
             autoCapitalize="none"
             keyboardType="email-address"
             textContentType="emailAddress"
-            testID="email-input"
           />
         </View>
 
-        <View style={styles.inputGroup}>
-          <Text style={[styles.label, { color: colors.mutedForeground }]}>Mot de passe</Text>
-          <View style={styles.passwordContainer}>
+        <View style={s.field}>
+          <Text style={[s.label, { color: colors.mutedForeground }]}>Mot de passe</Text>
+          <View style={s.passwordWrap}>
             <TextInput
-              style={[styles.input, styles.passwordInput, { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground }]}
+              style={[
+                s.input,
+                s.passwordInput,
+                { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground },
+              ]}
               placeholder="••••••••"
               placeholderTextColor={colors.mutedForeground + "80"}
               value={password}
               onChangeText={setPassword}
               secureTextEntry={!showPassword}
               textContentType="password"
-              testID="password-input"
             />
-            <TouchableOpacity
-              style={styles.eyeButton}
-              onPress={() => setShowPassword(!showPassword)}
-            >
+            <TouchableOpacity style={s.eyeBtn} onPress={() => setShowPassword(!showPassword)}>
               <Feather name={showPassword ? "eye-off" : "eye"} size={18} color={colors.mutedForeground} />
             </TouchableOpacity>
           </View>
         </View>
 
         <TouchableOpacity
-          style={[styles.submitButton, { backgroundColor: colors.primary, opacity: loading ? 0.7 : 1 }]}
+          style={[s.submitBtn, { backgroundColor: colors.primary, opacity: loading ? 0.7 : 1 }]}
           onPress={handleSubmit}
           disabled={loading}
           activeOpacity={0.8}
-          testID="submit-button"
         >
           {loading ? (
             <ActivityIndicator color="#fff" size="small" />
           ) : (
-            <Text style={styles.submitText}>
+            <Text style={s.submitLabel}>
               {mode === "login" ? "Se connecter" : "Creer un compte"}
             </Text>
           )}
         </TouchableOpacity>
 
         <TouchableOpacity
-          style={styles.switchMode}
+          style={s.switchBtn}
           onPress={() => {
             setMode(mode === "login" ? "register" : "login");
             setError("");
           }}
         >
-          <Text style={[styles.switchText, { color: colors.mutedForeground }]}>
+          <Text style={[s.switchText, { color: colors.mutedForeground }]}>
             {mode === "login" ? "Pas encore de compte ? " : "Deja un compte ? "}
             <Text style={{ color: colors.primary }}>
               {mode === "login" ? "S'inscrire" : "Se connecter"}
@@ -169,23 +165,62 @@ export default function LoginScreen() {
   );
 }
 
-const styles = StyleSheet.create({
+const s = StyleSheet.create({
   container: { flex: 1 },
   scrollContent: { padding: 24, justifyContent: "center", flexGrow: 1 },
-  logoContainer: { alignItems: "center", marginBottom: 40 },
-  logoCircle: { width: 72, height: 72, borderRadius: 36, alignItems: "center", justifyContent: "center", marginBottom: 16 },
-  appName: { fontSize: 28, fontFamily: "Inter_700Bold", letterSpacing: -0.5 },
+
+  logoBox: { alignItems: "center", marginBottom: 40 },
+  logoCircle: {
+    width: 72,
+    height: 72,
+    borderRadius: 36,
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 16,
+  },
+  appTitle: { fontSize: 28, fontFamily: "Inter_700Bold", letterSpacing: -0.5 },
   subtitle: { fontSize: 14, fontFamily: "Inter_400Regular", marginTop: 6 },
-  errorBox: { flexDirection: "row", alignItems: "center", gap: 8, padding: 12, borderRadius: 10, borderWidth: 1, marginBottom: 16 },
+
+  errorBox: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    padding: 12,
+    borderRadius: 10,
+    borderWidth: 1,
+    marginBottom: 16,
+  },
   errorText: { fontSize: 13, fontFamily: "Inter_400Regular", flex: 1 },
-  inputGroup: { marginBottom: 16 },
-  label: { fontSize: 12, fontFamily: "Inter_500Medium", marginBottom: 6, textTransform: "uppercase", letterSpacing: 0.5 },
-  input: { height: 48, borderRadius: 10, borderWidth: 1, paddingHorizontal: 14, fontSize: 15, fontFamily: "Inter_400Regular" },
-  passwordContainer: { position: "relative" },
+
+  field: { marginBottom: 16 },
+  label: {
+    fontSize: 12,
+    fontFamily: "Inter_500Medium",
+    marginBottom: 6,
+    textTransform: "uppercase",
+    letterSpacing: 0.5,
+  },
+  input: {
+    height: 48,
+    borderRadius: 10,
+    borderWidth: 1,
+    paddingHorizontal: 14,
+    fontSize: 15,
+    fontFamily: "Inter_400Regular",
+  },
+  passwordWrap: { position: "relative" },
   passwordInput: { paddingRight: 48 },
-  eyeButton: { position: "absolute", right: 14, top: 14 },
-  submitButton: { height: 48, borderRadius: 10, alignItems: "center", justifyContent: "center", marginTop: 8 },
-  submitText: { color: "#fff", fontSize: 15, fontFamily: "Inter_600SemiBold" },
-  switchMode: { alignItems: "center", marginTop: 20 },
+  eyeBtn: { position: "absolute", right: 14, top: 14 },
+
+  submitBtn: {
+    height: 48,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: 8,
+  },
+  submitLabel: { color: "#fff", fontSize: 15, fontFamily: "Inter_600SemiBold" },
+
+  switchBtn: { alignItems: "center", marginTop: 20 },
   switchText: { fontSize: 14, fontFamily: "Inter_400Regular" },
 });
