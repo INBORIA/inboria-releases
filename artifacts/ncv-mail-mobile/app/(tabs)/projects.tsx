@@ -10,6 +10,7 @@ import {
   Platform,
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
+import { useRouter } from "expo-router";
 import { useListProjects } from "@workspace/api-client-react";
 import type { Project } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -17,6 +18,7 @@ import { useColors } from "@/hooks/useColors";
 
 export default function ProjectsScreen() {
   const colors = useColors();
+  const router = useRouter();
   const queryClient = useQueryClient();
   const [refreshing, setRefreshing] = useState(false);
   const isWeb = Platform.OS === "web";
@@ -47,6 +49,7 @@ export default function ProjectsScreen() {
       <TouchableOpacity
         style={[styles.projectRow, { backgroundColor: colors.card, borderColor: colors.border }]}
         activeOpacity={0.7}
+        onPress={() => router.push(`/project/${item.id}`)}
       >
         <View style={styles.projectHeader}>
           <View style={[styles.refBadge, { backgroundColor: colors.primary + "20" }]}>
@@ -78,6 +81,17 @@ export default function ProjectsScreen() {
               {item.taskCount ?? 0}
             </Text>
           </View>
+          {(item.pendingTaskCount ?? 0) > 0 && (
+            <View style={styles.statItem}>
+              <Feather name="clock" size={13} color={colors.warning} />
+              <Text style={[styles.statText, { color: colors.warning }]}>
+                {item.pendingTaskCount} en cours
+              </Text>
+            </View>
+          )}
+        </View>
+        <View style={styles.arrowRow}>
+          <Feather name="chevron-right" size={16} color={colors.mutedForeground} />
         </View>
       </TouchableOpacity>
     );
@@ -94,6 +108,9 @@ export default function ProjectsScreen() {
           <Feather name="folder" size={48} color={colors.mutedForeground + "40"} />
           <Text style={[styles.emptyText, { color: colors.mutedForeground }]}>
             Aucun projet
+          </Text>
+          <Text style={[styles.emptySubtext, { color: colors.mutedForeground }]}>
+            Les projets sont crees automatiquement par l'IA
           </Text>
         </View>
       ) : (
@@ -115,8 +132,9 @@ export default function ProjectsScreen() {
 
 const styles = StyleSheet.create({
   container: { flex: 1 },
-  centered: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12 },
+  centered: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12, paddingHorizontal: 32 },
   emptyText: { fontSize: 15, fontFamily: "Inter_400Regular" },
+  emptySubtext: { fontSize: 13, fontFamily: "Inter_400Regular", textAlign: "center" },
   listContent: { paddingHorizontal: 16, paddingTop: 8, gap: 10 },
   projectRow: { padding: 16, borderRadius: 12, borderWidth: 1 },
   projectHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 8 },
@@ -130,4 +148,5 @@ const styles = StyleSheet.create({
   projectStats: { flexDirection: "row", gap: 16 },
   statItem: { flexDirection: "row", alignItems: "center", gap: 4 },
   statText: { fontSize: 12, fontFamily: "Inter_400Regular" },
+  arrowRow: { position: "absolute", right: 16, top: "50%", marginTop: -8 },
 });

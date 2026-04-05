@@ -9,10 +9,11 @@ import {
   ActivityIndicator,
   TextInput,
   Platform,
+  ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
-import { useListEmails } from "@workspace/api-client-react";
+import { useListEmails, useListCategories } from "@workspace/api-client-react";
 import type { Email } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
@@ -46,6 +47,7 @@ export default function InboxScreen() {
   const insets = useSafeAreaInsets();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterPriority, setFilterPriority] = useState<string>("all");
+  const [filterCategory, setFilterCategory] = useState<number | null>(null);
   const [refreshing, setRefreshing] = useState(false);
   const isWeb = Platform.OS === "web";
 
@@ -54,8 +56,11 @@ export default function InboxScreen() {
     q: searchQuery || undefined,
   });
 
+  const { data: categories } = useListCategories();
+
   const activeEmails = emails
     ?.filter((e) => e.status !== "archived")
+    ?.filter((e) => filterCategory === null || e.categoryId === filterCategory)
     ?.sort((a, b) => {
       const pOrder: Record<string, number> = { urgent: 0, moyen: 1, faible: 2 };
       return (pOrder[a.priority ?? "faible"] ?? 2) - (pOrder[b.priority ?? "faible"] ?? 2);
@@ -64,10 +69,11 @@ export default function InboxScreen() {
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
     await queryClient.invalidateQueries({ queryKey: ["listEmails"] });
+    await queryClient.invalidateQueries({ queryKey: ["listCategories"] });
     setRefreshing(false);
   }, [queryClient]);
 
-  const filters = [
+  const priorityFilters = [
     { key: "all", label: "Tous" },
     { key: "urgent", label: "Urgent" },
     { key: "moyen", label: "Moyen" },
@@ -142,8 +148,8 @@ export default function InboxScreen() {
         ) : null}
       </View>
 
-      <View style={styles.filterRow}>
-        {filters.map((f) => (
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.filterScroll} contentContainerStyle={styles.filterRow}>
+        {priorityFilters.map((f) => (
           <TouchableOpacity
             key={f.key}
             style={[
@@ -165,7 +171,45 @@ export default function InboxScreen() {
             </Text>
           </TouchableOpacity>
         ))}
-      </View>
+      </ScrollView>
+
+      {categories && categories.length > 0 && (
+        <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryScroll} contentContainerStyle={styles.filterRow}>
+          <TouchableOpacity
+            style={[
+              styles.filterChip,
+              {
+                backgroundColor: filterCategory === null ? colors.primary + "20" : colors.card,
+                borderColor: filterCategory === null ? colors.primary + "40" : colors.border,
+              },
+            ]}
+            onPress={() => setFilterCategory(null)}
+          >
+            <Feather name="layers" size={12} color={filterCategory === null ? colors.primary : colors.mutedForeground} />
+            <Text style={[styles.filterText, { color: filterCategory === null ? colors.primary : colors.mutedForeground }]}>
+              Toutes
+            </Text>
+          </TouchableOpacity>
+          {categories.map((cat) => (
+            <TouchableOpacity
+              key={cat.id}
+              style={[
+                styles.filterChip,
+                {
+                  backgroundColor: filterCategory === cat.id ? colors.primary + "20" : colors.card,
+                  borderColor: filterCategory === cat.id ? colors.primary + "40" : colors.border,
+                },
+              ]}
+              onPress={() => setFilterCategory(filterCategory === cat.id ? null : cat.id)}
+            >
+              <Feather name="tag" size={12} color={filterCategory === cat.id ? colors.primary : colors.mutedForeground} />
+              <Text style={[styles.filterText, { color: filterCategory === cat.id ? colors.primary : colors.mutedForeground }]}>
+                {cat.name}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      )}
 
       {isLoading ? (
         <View style={styles.centered}>
@@ -214,12 +258,17 @@ const styles = StyleSheet.create({
     gap: 8,
   },
   searchInput: { flex: 1, fontSize: 14, fontFamily: "Inter_400Regular" },
-  filterRow: { flexDirection: "row", paddingHorizontal: 16, gap: 8, marginBottom: 8 },
+  filterScroll: { flexGrow: 0, marginBottom: 4 },
+  categoryScroll: { flexGrow: 0, marginBottom: 8 },
+  filterRow: { paddingHorizontal: 16, gap: 8 },
   filterChip: {
+    flexDirection: "row",
+    alignItems: "center",
     paddingHorizontal: 12,
     paddingVertical: 6,
     borderRadius: 8,
     borderWidth: 1,
+    gap: 4,
   },
   filterText: { fontSize: 12, fontFamily: "Inter_500Medium" },
   centered: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12 },

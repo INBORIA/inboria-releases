@@ -14,7 +14,13 @@ import { useListTasks, useUpdateTask } from "@workspace/api-client-react";
 import type { Task } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
-import * as Haptics from "expo-haptics";
+
+let Haptics: typeof import("expo-haptics") | null = null;
+try {
+  Haptics = require("expo-haptics");
+} catch {
+  Haptics = null;
+}
 
 export default function TasksScreen() {
   const colors = useColors();
@@ -33,8 +39,10 @@ export default function TasksScreen() {
   }, [queryClient]);
 
   const toggleTask = (id: number, currentDone: boolean) => {
-    if (Platform.OS !== "web") {
-      Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (Platform.OS !== "web" && Haptics) {
+      try {
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+      } catch {}
     }
     updateTask.mutate(
       { id, data: { done: !currentDone } },
@@ -86,6 +94,21 @@ export default function TasksScreen() {
             </Text>
           </View>
         ) : null}
+        {item.projectName ? (
+          <View style={styles.taskMeta}>
+            <Feather name="folder" size={11} color={colors.primary} />
+            <Text style={[styles.taskMetaText, { color: colors.primary }]} numberOfLines={1}>
+              {item.projectReference ? `${item.projectReference} - ` : ""}{item.projectName}
+            </Text>
+          </View>
+        ) : null}
+      </View>
+      <View style={[styles.statusIcon, { backgroundColor: item.done ? colors.success + "15" : colors.warning + "15" }]}>
+        <Feather
+          name={item.done ? "check-circle" : "clock"}
+          size={16}
+          color={item.done ? colors.success : colors.warning}
+        />
       </View>
     </TouchableOpacity>
   );
@@ -174,4 +197,5 @@ const styles = StyleSheet.create({
   taskTitle: { fontSize: 14, fontFamily: "Inter_500Medium", lineHeight: 20 },
   taskMeta: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
   taskMetaText: { fontSize: 12, fontFamily: "Inter_400Regular", flex: 1 },
+  statusIcon: { width: 32, height: 32, borderRadius: 8, alignItems: "center", justifyContent: "center" },
 });
