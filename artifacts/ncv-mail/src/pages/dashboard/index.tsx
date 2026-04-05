@@ -40,7 +40,7 @@ function PriorityBadge({ priority }: { priority: string }) {
   return <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/20 text-[11px] font-medium px-2 py-0.5">Faible</Badge>;
 }
 
-function EmailRow({ email, onClick }: { email: any; onClick: () => void }) {
+function EmailRow({ email, onClick, onArchive }: { email: any; onClick: () => void; onArchive: (id: number) => void }) {
   return (
     <div
       className="group bg-card hover:bg-[#1a2235] rounded-lg border border-border p-4 transition-colors cursor-pointer"
@@ -75,6 +75,13 @@ function EmailRow({ email, onClick }: { email: any; onClick: () => void }) {
             <Clock className="w-3 h-3" />
             {format(new Date(email.createdAt), "d MMM HH:mm", { locale: fr })}
           </span>
+          <button
+            onClick={(e) => { e.stopPropagation(); onArchive(email.id); }}
+            className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-white/[0.08] text-[#8b9cb3] hover:text-white"
+            title="Archiver"
+          >
+            <Archive className="w-4 h-4" />
+          </button>
           <ChevronRight className="w-4 h-4 text-[#8b9cb3]/40 group-hover:text-[#8b9cb3] transition-colors" />
         </div>
       </div>
@@ -538,7 +545,7 @@ export default function Dashboard() {
               </div>
             ) : (
               activeEmails?.map((email) => (
-                <EmailRow key={email.id} email={email} onClick={() => setSelectedEmailId(email.id)} />
+                <EmailRow key={email.id} email={email} onClick={() => setSelectedEmailId(email.id)} onArchive={handleArchive} />
               ))
             )}
           </div>
