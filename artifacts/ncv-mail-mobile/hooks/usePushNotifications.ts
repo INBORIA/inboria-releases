@@ -2,15 +2,16 @@ import { useEffect, useRef, useState, useCallback } from "react";
 import { Platform } from "react-native";
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
+import type { EventSubscription } from "expo-notifications";
 import Constants from "expo-constants";
 import { useRouter } from "expo-router";
 
 Notifications.setNotificationHandler({
   handleNotification: async () => ({
-    shouldShowAlert: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
-    shouldShowInForeground: true,
   }),
 });
 
@@ -63,8 +64,8 @@ export function usePushNotifications() {
   const [expoPushToken, setExpoPushToken] = useState<string | null>(null);
   const [notification, setNotification] =
     useState<Notifications.Notification | null>(null);
-  const notificationListener = useRef<Notifications.EventSubscription | null>(null);
-  const responseListener = useRef<Notifications.EventSubscription | null>(null);
+  const notificationListener = useRef<EventSubscription | null>(null);
+  const responseListener = useRef<EventSubscription | null>(null);
   const router = useRouter();
 
   const handleNotificationResponse = useCallback(
@@ -92,10 +93,10 @@ export function usePushNotifications() {
 
     return () => {
       if (notificationListener.current) {
-        Notifications.removeNotificationSubscription(notificationListener.current);
+        notificationListener.current.remove();
       }
       if (responseListener.current) {
-        Notifications.removeNotificationSubscription(responseListener.current);
+        responseListener.current.remove();
       }
     };
   }, [handleNotificationResponse]);
