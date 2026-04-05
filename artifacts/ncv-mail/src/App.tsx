@@ -10,6 +10,7 @@ import NotFound from "@/pages/not-found";
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
 import Dashboard from "@/pages/dashboard/index";
+import Archives from "@/pages/dashboard/archives";
 import BilanQuotidien from "@/pages/dashboard/bilan";
 import Taches from "@/pages/dashboard/taches";
 import Categories from "@/pages/dashboard/categories";
@@ -49,6 +50,7 @@ function Router() {
       <Route path="/login" component={() => session ? <Redirect to="/dashboard" /> : <Login />} />
       <Route path="/signup" component={() => session ? <Redirect to="/dashboard" /> : <Signup />} />
       <Route path="/dashboard" component={() => <ProtectedRoute component={Dashboard} />} />
+      <Route path="/dashboard/archives" component={() => <ProtectedRoute component={Archives} />} />
       <Route path="/dashboard/bilan" component={() => <ProtectedRoute component={BilanQuotidien} />} />
       <Route path="/dashboard/taches" component={() => <ProtectedRoute component={Taches} />} />
       <Route path="/dashboard/categories" component={() => <ProtectedRoute component={Categories} />} />

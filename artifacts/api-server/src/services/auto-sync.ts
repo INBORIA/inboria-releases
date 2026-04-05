@@ -197,6 +197,8 @@ async function saveEmailWithTriage(
     categoryId = cat?.id || null;
   }
 
+  const autoArchive = triage.priority === "faible";
+
   const { data: inserted, error: insertErr } = await supabaseAdmin
     .from("emails")
     .insert({
@@ -205,7 +207,7 @@ async function saveEmailWithTriage(
       sender,
       subject,
       body,
-      status: "non_lu",
+      status: autoArchive ? "archived" : "non_lu",
       priority: triage.priority,
       summary: triage.summary,
       category_id: categoryId,

@@ -11,6 +11,7 @@ import {
   LogOut,
   Loader2,
   Menu,
+  Archive,
 } from "lucide-react";
 import ncvLogo from "@assets/image_1775392688923.png";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,7 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navigation = [
   { name: "Inbox", href: "/dashboard", icon: Inbox },
+  { name: "Archives", href: "/dashboard/archives", icon: Archive },
   { name: "Bilan quotidien", href: "/dashboard/bilan", icon: LayoutDashboard },
   { name: "Taches", href: "/dashboard/taches", icon: CheckSquare },
   { name: "Categories", href: "/dashboard/categories", icon: Tags },
