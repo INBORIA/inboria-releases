@@ -12,7 +12,7 @@ import {
   Loader2,
   Menu,
 } from "lucide-react";
-import ncvLogo from "@assets/Logo-NCV-Instagram_1775391389822.jpg";
+import ncvLogo from "@assets/image_1775392688923.png";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -57,7 +57,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     <div className="flex h-full flex-col">
       <div className="flex h-20 shrink-0 items-center px-5">
         <div className="flex items-center gap-3">
-          <img src={ncvLogo} alt="NCV" className="h-16 w-16 rounded-lg object-cover" />
+          <img src={ncvLogo} alt="NCV" className="h-16 w-16 object-contain" />
           <span className="font-semibold text-[15px] tracking-tight text-white">NCV Mail</span>
         </div>
       </div>
@@ -157,7 +157,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </SheetContent>
           </Sheet>
           <div className="flex flex-1 items-center gap-2">
-            <img src={ncvLogo} alt="NCV Management" className="h-6 w-6 rounded object-cover" />
+            <img src={ncvLogo} alt="NCV" className="h-6 w-6 object-contain" />
             <span className="font-semibold text-[15px] text-white">NCV Mail</span>
           </div>
         </div>
