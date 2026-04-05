@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Bell, BrainCircuit, CheckCircle2, RefreshCw, Trash2, Eye, EyeOff, AlertCircle } from "lucide-react";
+import { Mail, User, Bell, BrainCircuit, CheckCircle2, RefreshCw, Trash2, Eye, EyeOff, AlertCircle, Shield } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 
@@ -386,6 +386,44 @@ export default function Parametres() {
                   </div>
                   <Switch defaultChecked />
                 </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-[13px] text-white">Detection de projets</Label>
+                    <p className="text-[11px] text-[#8b9cb3]">Associer automatiquement les emails a vos projets actifs.</p>
+                  </div>
+                  <Switch defaultChecked />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
+              <Shield className="w-4 h-4 text-primary" />
+              Mode de gestion
+            </h2>
+            <div className="bg-card rounded-lg border border-border p-5 space-y-4">
+              <p className="text-[12px] text-[#8b9cb3]">
+                Choisissez le niveau d'autonomie de l'IA dans la gestion de vos emails.
+              </p>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-[13px] text-white">Archivage automatique</Label>
+                  <p className="text-[11px] text-[#8b9cb3]">L'IA archive les emails a faible priorite (newsletters, pubs, notifications). Les emails urgents et moyens restent dans l'inbox.</p>
+                </div>
+                <Switch />
+              </div>
+              <div className="flex items-center justify-between">
+                <div className="space-y-0.5">
+                  <Label className="text-[13px] text-white">Marquage automatique</Label>
+                  <p className="text-[11px] text-[#8b9cb3]">Marquer comme lu les emails faible priorite deja resumes par l'IA.</p>
+                </div>
+                <Switch />
+              </div>
+              <div className="p-3 bg-primary/[0.06] rounded-lg border border-primary/10">
+                <p className="text-[11px] text-primary">
+                  En mode manuel (par defaut), l'IA trie et classe vos emails mais ne prend aucune action automatique. Activez les options ci-dessus pour passer en mode autopilote.
+                </p>
               </div>
             </div>
           </section>
