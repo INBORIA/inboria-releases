@@ -89,6 +89,7 @@ Optional webhook for external integrations. Flow: External source -> Webhook NCV
 - `tasks` (id uuid, created_at, user_id, email_id, project_id, title, done, due_date) — EXISTS
 - `ai_rules` (id uuid, user_id, sender_pattern, forced_priority, forced_category) — EXISTS
 - `integrations` (id uuid, user_id, provider, access_token, workspace_name, channel_id, database_id, enabled, created_at) — NEEDS CREATION
+- `profiles` columns for push: `push_token TEXT`, `push_platform TEXT` — NEEDS ADDING (for mobile push notifications)
 
 ## Pages (all French, dark theme)
 

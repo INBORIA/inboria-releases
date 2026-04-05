@@ -108,6 +108,11 @@ router.post("/profile/push-token", requireAuth, async (req, res): Promise<void> 
       .eq("id", req.userId!);
 
     if (error) {
+      if (error.code === "PGRST204" || error.message?.includes("column")) {
+        console.warn("[push-token] push_token/push_platform columns not yet added to profiles table — skipping save");
+        res.json({ success: true });
+        return;
+      }
       res.status(500).json({ error: "Failed to save push token" });
       return;
     }
