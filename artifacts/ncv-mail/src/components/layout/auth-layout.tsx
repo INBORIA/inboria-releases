@@ -6,7 +6,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
       <div className="w-full max-w-md bg-card rounded-xl border border-border overflow-hidden shadow-lg">
         <div className="p-8">
           <div className="flex justify-center mb-8">
-            <img src={ncvLogo} alt="NCV" className="h-48 w-48 object-contain" />
+            <img src={ncvLogo} alt="NCV" className="h-60 w-60 object-contain" />
           </div>
           {children}
         </div>
