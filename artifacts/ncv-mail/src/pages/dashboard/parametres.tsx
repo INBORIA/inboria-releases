@@ -13,6 +13,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 
 const IMAP_PROVIDERS = [
+  { id: "outlook", name: "Outlook", color: "bg-blue-500/10 text-blue-400", letter: "Ol", host: "outlook.office365.com", port: "993" },
+  { id: "hotmail", name: "Hotmail", color: "bg-blue-500/10 text-blue-400", letter: "Hm", host: "outlook.office365.com", port: "993" },
   { id: "orange", name: "Orange", color: "bg-orange-500/10 text-orange-400", letter: "Or", host: "imap.orange.fr", port: "993" },
   { id: "free", name: "Free", color: "bg-red-500/10 text-red-400", letter: "Fr", host: "imap.free.fr", port: "993" },
   { id: "sfr", name: "SFR", color: "bg-green-500/10 text-green-400", letter: "SF", host: "imap.sfr.fr", port: "993" },
@@ -175,7 +177,6 @@ export default function Parametres() {
   };
 
   const gmailConnected = connections?.find(c => c.provider === "gmail");
-  const outlookConnected = connections?.find(c => c.provider === "outlook");
   const imapConnected = connections?.find(c => c.provider === "imap");
 
   return (
@@ -242,20 +243,6 @@ export default function Parametres() {
                     </div>
                   )}
 
-                  {!outlookConnected && (
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 font-bold text-sm">O</div>
-                        <div>
-                          <h4 className="font-medium text-[13px] text-white">Microsoft Outlook</h4>
-                          <p className="text-[11px] text-[#8b9cb3]">Connexion OAuth en un clic.</p>
-                        </div>
-                      </div>
-                      <Button variant="outline" size="sm" className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]" onClick={() => handleOAuthConnect("outlook")}>
-                        Connecter Microsoft
-                      </Button>
-                    </div>
-                  )}
 
                   {!imapConnected && !selectedProvider && (
                     <>
