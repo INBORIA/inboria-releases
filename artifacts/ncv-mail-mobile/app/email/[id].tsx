@@ -14,7 +14,12 @@ import { useGetEmail, useUpdateEmail } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
-import * as Haptics from "expo-haptics";
+let Haptics: typeof import("expo-haptics") | null = null;
+try {
+  Haptics = require("expo-haptics");
+} catch {
+  Haptics = null;
+}
 
 function PriorityBadge({ priority }: { priority: string }) {
   const config: Record<string, { bg: string; text: string; label: string }> = {
@@ -42,7 +47,7 @@ export default function EmailDetailScreen() {
   const updateEmail = useUpdateEmail();
 
   const handleMarkRead = () => {
-    if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+    if (Platform.OS !== "web" && Haptics) try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } catch {}
     updateEmail.mutate(
       { id: Number(id), data: { status: "read" } },
       { onSuccess: () => queryClient.invalidateQueries({ queryKey: ["listEmails"] }) }
@@ -50,7 +55,7 @@ export default function EmailDetailScreen() {
   };
 
   const handleArchive = () => {
-    if (Platform.OS !== "web") Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
+    if (Platform.OS !== "web" && Haptics) try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); } catch {}
     updateEmail.mutate(
       { id: Number(id), data: { status: "archived" } },
       {

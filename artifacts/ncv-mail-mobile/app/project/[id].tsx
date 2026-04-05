@@ -132,10 +132,10 @@ export default function ProjectDetailScreen() {
                   </Text>
                 </View>
                 <View style={styles.emailContent}>
-                  <Text style={[styles.emailSender, { color: colors.foreground }]} numberOfLines={1}>
+                  <Text style={[styles.emailSender, { color: colors.foreground }]}>
                     {email.sender}
                   </Text>
-                  <Text style={[styles.emailSubject, { color: colors.mutedForeground }]} numberOfLines={1}>
+                  <Text style={[styles.emailSubject, { color: colors.mutedForeground }]}>
                     {email.subject}
                   </Text>
                 </View>
@@ -165,7 +165,7 @@ export default function ProjectDetailScreen() {
                     textDecorationLine: task.done ? "line-through" : "none",
                   },
                 ]}
-                numberOfLines={2}
+              
               >
                 {task.title}
               </Text>

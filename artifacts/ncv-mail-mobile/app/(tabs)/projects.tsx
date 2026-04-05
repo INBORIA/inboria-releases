@@ -64,7 +64,7 @@ export default function ProjectsScreen() {
         </View>
         <Text style={[styles.projectName, { color: colors.foreground }]}>{item.name}</Text>
         {item.description ? (
-          <Text style={[styles.projectDesc, { color: colors.mutedForeground }]} numberOfLines={2}>
+          <Text style={[styles.projectDesc, { color: colors.mutedForeground }]}>
             {item.description}
           </Text>
         ) : null}
