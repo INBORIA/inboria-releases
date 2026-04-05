@@ -104,9 +104,9 @@ Optional webhook for external integrations. Flow: External source -> Webhook NCV
 ## AI Draft Reply
 
 - **Endpoint**: `POST /api/ai/draft` accepts `{emailId}`, returns `{draft}`
-- Uses gpt-4o-mini to generate professional reply drafts in user's preferred language (fr/en/nl)
+- Uses gpt-4o-mini to generate professional reply drafts in French (professional tone)
 - Context-aware: includes linked project name/ref/description and category
-- Signs with user's full name from profile
+- Signs with user's first name from profile
 - **Frontend**: "Reponse IA" button (Wand2 icon) in email detail view, opens reply form and pre-fills with AI-generated draft
 - **OpenAPI**: `generateDraft` operation, `GenerateDraftBody`/`DraftResponse` schemas, `useGenerateDraft` React hook
 

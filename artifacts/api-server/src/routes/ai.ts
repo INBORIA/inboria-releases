@@ -233,7 +233,7 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
 
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("full_name, ai_language")
+      .select("full_name")
       .eq("id", req.userId!)
       .single();
 
