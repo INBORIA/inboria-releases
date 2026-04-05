@@ -1,0 +1,26 @@
+Comment fonctionne NCV Mail
+1. Inscription et connexion
+L'utilisateur crée un compte sur app.ncvmail.com. Supabase Auth gère l'authentification (email/mot de passe, ou OAuth Google/Microsoft). À l'inscription, un profil est automatiquement créé dans la table profiles avec le plan Gratuit (50 emails/mois).
+2. Connexion de la boîte mail
+L'utilisateur connecte sa boîte Gmail, Outlook ou IMAP. C'est la partie la plus technique : on utilise une API tierce (Unipile ou EmailEngine) qui se connecte à la boîte et nous envoie les emails via webhook. L'utilisateur autorise l'accès une seule fois, puis c'est automatique.
+3. L'IA trie les emails en arrière-plan
+Dès qu'un email arrive, Make.com déclenche un scénario automatique :
+L'email est reçu via webhook
+Il est envoyé à OpenAI GPT-4o mini avec les instructions de l'utilisateur
+L'IA décide : quelle catégorie, quelle priorité, s'il y a une tâche à extraire
+L'email est sauvegardé dans Supabase (table emails) avec sa catégorie et sa priorité
+Si une tâche est détectée, elle est ajoutée dans la table tasks
+Coût : environ 0,13€ pour 1000 emails.
+4. Le dashboard — ce que voit l'utilisateur
+Quand l'utilisateur ouvre l'app, il voit :
+Inbox Prioritaire : les emails importants en premier, déjà triés
+Bilan Quotidien : un résumé IA de sa journée ("3 emails urgents, 2 tâches à faire, 1 réunion demain")
+Mes Tâches : toutes les tâches extraites automatiquement des emails
+Catégories : ses rubriques personnalisées (ex: "Clients", "Fournisseurs", "Administratif")
+Paramètres : connexion boîte mail, abonnement, profil
+5. Personnalisation
+L'utilisateur crée ses propres catégories (table categories). Il peut dire à l'IA : "Tout email de mon comptable va dans Administratif" ou "Les emails avec le mot Facture sont prioritaires". L'IA apprend ses règles.
+6. Abonnement et quotas
+Chaque email traité par l'IA consomme 1 unité du quota mensuel. Quand l'utilisateur approche 80% de son quota, il reçoit une alerte. S'il dépasse, Stripe facture automatiquement le surplus en Pay-as-you-go. Il peut changer de plan à tout moment depuis son espace.
+Résumé du flux en une ligne
+Email reçu → Make.com → GPT-4o mini → Supabase → Dashboard utilisateur
