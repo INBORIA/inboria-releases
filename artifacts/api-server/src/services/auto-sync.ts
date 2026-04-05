@@ -1,6 +1,7 @@
 import { google } from "googleapis";
 import { ImapFlow } from "imapflow";
 import OpenAI from "openai";
+import { simpleParser } from "mailparser";
 import { supabaseAdmin } from "../lib/supabase";
 import * as net from "net";
 import { sendSlackNotification, createNotionTask } from "./integrations";
@@ -28,8 +29,7 @@ function extractGmailBody(payload: any): string {
 
     const htmlPart = payload.parts.find((p: any) => p.mimeType === "text/html");
     if (htmlPart?.body?.data) {
-      const html = decodeBase64(htmlPart.body.data);
-      return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+      return decodeBase64(htmlPart.body.data);
     }
 
     for (const part of payload.parts) {
@@ -149,7 +149,7 @@ async function triageEmailAI(
         },
         {
           role: "user",
-          content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${(body || "").slice(0, 800)}\n\nCategories disponibles: ${categoryNames.join(", ") || "Aucune"}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom exact ou Non classe","tasks":["tache 1","tache 2"]}`,
+          content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${(body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800)}\n\nCategories disponibles: ${categoryNames.join(", ") || "Aucune"}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom exact ou Non classe","tasks":["tache 1","tache 2"]}`,
         },
       ],
     });
@@ -497,12 +497,20 @@ async function syncImapForUser(conn: any): Promise<number> {
         let bodyText = "";
         if (msg.source) {
           try {
-            const raw = msg.source.toString("utf-8");
-            const bodyStart = raw.indexOf("\r\n\r\n");
-            if (bodyStart !== -1) {
-              bodyText = raw.slice(bodyStart + 4).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 5000);
-            }
-          } catch {}
+            const parsed = await simpleParser(msg.source);
+            bodyText = parsed.html
+              ? (typeof parsed.html === "string" ? parsed.html : "")
+              : parsed.text || "";
+            bodyText = bodyText.slice(0, 10000);
+          } catch {
+            try {
+              const raw = msg.source.toString("utf-8");
+              const bodyStart = raw.indexOf("\r\n\r\n");
+              if (bodyStart !== -1) {
+                bodyText = raw.slice(bodyStart + 4).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 5000);
+              }
+            } catch {}
+          }
         }
 
         const saved = await saveEmailWithTriage(

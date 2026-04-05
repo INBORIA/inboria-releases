@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { google } from "googleapis";
 import { ImapFlow } from "imapflow";
 import OpenAI from "openai";
+import { simpleParser } from "mailparser";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { triggerSyncForConnection } from "../services/auto-sync";
@@ -33,8 +34,7 @@ function extractGmailBody(payload: any): string {
 
     const htmlPart = payload.parts.find((p: any) => p.mimeType === "text/html");
     if (htmlPart?.body?.data) {
-      const html = decodeBase64(htmlPart.body.data);
-      return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+      return decodeBase64(htmlPart.body.data);
     }
 
     for (const part of payload.parts) {
@@ -748,12 +748,20 @@ async function syncImap(conn: any, userId: string): Promise<number> {
         let bodyText = "";
         if (msg.source) {
           try {
-            const raw = msg.source.toString("utf-8");
-            const bodyStart = raw.indexOf("\r\n\r\n");
-            if (bodyStart !== -1) {
-              bodyText = raw.slice(bodyStart + 4).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 5000);
-            }
-          } catch {}
+            const parsed = await simpleParser(msg.source);
+            bodyText = parsed.html
+              ? (typeof parsed.html === "string" ? parsed.html : "")
+              : parsed.text || "";
+            bodyText = bodyText.slice(0, 10000);
+          } catch {
+            try {
+              const raw = msg.source.toString("utf-8");
+              const bodyStart = raw.indexOf("\r\n\r\n");
+              if (bodyStart !== -1) {
+                bodyText = raw.slice(bodyStart + 4).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 5000);
+              }
+            } catch {}
+          }
         }
 
         await supabaseAdmin.from("emails").insert({
