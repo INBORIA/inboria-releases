@@ -98,6 +98,8 @@ const triageSchema = z.object({
 
 function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, categories, projects }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; categories: any[]; projects: any[] }) {
   const [replyOpen, setReplyOpen] = useState(false);
+  const [replyTo, setReplyTo] = useState("");
+  const [replySubject, setReplySubject] = useState("");
   const [replyText, setReplyText] = useState("");
 
   return (
@@ -159,7 +161,14 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
             <Button
               size="sm"
               className="gap-1.5"
-              onClick={() => setReplyOpen(!replyOpen)}
+              onClick={() => {
+                if (!replyOpen) {
+                  setReplyTo(email.senderEmail || "");
+                  setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
+                  setReplyText("");
+                }
+                setReplyOpen(!replyOpen);
+              }}
             >
               <Reply className="w-3.5 h-3.5" />
               Repondre
@@ -240,18 +249,39 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
         </div>
 
         {replyOpen && (
-          <div className="px-5 pb-5 border-t border-border pt-4">
-            <Textarea
-              value={replyText}
-              onChange={(e) => setReplyText(e.target.value)}
-              placeholder="Ecrivez votre reponse..."
-              className="h-28 bg-background border-border text-white mb-3 resize-none"
-            />
+          <div className="px-5 pb-5 border-t border-border pt-4 space-y-3">
+            <div>
+              <label className="text-[11px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Destinataire</label>
+              <Input
+                value={replyTo}
+                onChange={(e) => setReplyTo(e.target.value)}
+                placeholder="email@exemple.com"
+                className="bg-background border-border text-white text-[13px]"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Sujet</label>
+              <Input
+                value={replySubject}
+                onChange={(e) => setReplySubject(e.target.value)}
+                placeholder="Sujet"
+                className="bg-background border-border text-white text-[13px]"
+              />
+            </div>
+            <div>
+              <label className="text-[11px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Message</label>
+              <Textarea
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                placeholder="Ecrivez votre reponse..."
+                className="h-28 bg-background border-border text-white resize-none"
+              />
+            </div>
             <div className="flex items-center gap-2 justify-end">
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => { setReplyOpen(false); setReplyText(""); }}
+                onClick={() => { setReplyOpen(false); setReplyText(""); setReplyTo(""); setReplySubject(""); }}
                 className="text-[#8b9cb3] hover:text-white"
               >
                 Annuler
@@ -259,11 +289,12 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
               <Button
                 size="sm"
                 className="gap-1.5"
-                disabled={isSending || !replyText.trim()}
+                disabled={isSending || !replyTo.trim() || !replySubject.trim() || !replyText.trim()}
                 onClick={() => {
-                  const replySubject = email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`;
-                  onSendReply(email.senderEmail, replySubject, replyText, email.id);
+                  onSendReply(replyTo, replySubject, replyText, email.id);
                   setReplyText("");
+                  setReplyTo("");
+                  setReplySubject("");
                   setReplyOpen(false);
                 }}
               >
