@@ -62,16 +62,6 @@ export default function SettingsScreen() {
         </View>
       </View>
 
-      <View style={[styles.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <Text style={[styles.sectionTitle, { color: colors.mutedForeground }]}>Preferences</Text>
-        <View style={styles.row}>
-          <Text style={[styles.rowLabel, { color: colors.foreground }]}>Langue IA</Text>
-          <Text style={[styles.rowValue, { color: colors.mutedForeground }]}>
-            {profile?.aiLanguage === "en" ? "Anglais" : profile?.aiLanguage === "nl" ? "Neerlandais" : "Francais"}
-          </Text>
-        </View>
-      </View>
-
       <TouchableOpacity
         style={[styles.logoutButton, { backgroundColor: colors.destructive + "15", borderColor: colors.destructive + "30" }]}
         onPress={signOut}
