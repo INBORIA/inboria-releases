@@ -1,6 +1,20 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { startAutoSync } from "./services/auto-sync";
+import { supabaseAdmin } from "./lib/supabase";
+
+async function ensureProjectsTable() {
+  try {
+    const { error } = await supabaseAdmin.from("projects").select("id").limit(1);
+    if (error && error.message.includes("does not exist")) {
+      logger.info("projects table not found — please create it in Supabase dashboard");
+    } else {
+      logger.info("projects table OK");
+    }
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "projects table check failed (non-fatal)");
+  }
+}
 
 const rawPort = process.env["PORT"];
 
@@ -24,5 +38,6 @@ app.listen(port, (err) => {
 
   logger.info({ port }, "Server listening");
 
+  ensureProjectsTable();
   startAutoSync();
 });

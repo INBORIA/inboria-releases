@@ -6,9 +6,6 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface UpdateTaskBody {
-  done?: boolean;
-  title?: string;
-  /** @nullable */
-  projectId?: string | null;
-}
+export type DeleteProject200 = {
+  success?: boolean;
+};

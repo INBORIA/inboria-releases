@@ -16,7 +16,7 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
   try {
     let query = supabaseAdmin
       .from("emails")
-      .select("*, categories(name)")
+      .select("*, categories(name), projects(name, reference)")
       .eq("user_id", req.userId!)
       .order("created_at", { ascending: false });
 
@@ -28,6 +28,9 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     }
     if (req.query.status) {
       query = query.eq("status", req.query.status as string);
+    }
+    if (req.query.projectId) {
+      query = query.eq("project_id", req.query.projectId as string);
     }
 
     const { data: emails, error } = await query;
@@ -50,6 +53,9 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
         summary: e.summary,
         categoryId: e.category_id,
         categoryName: e.categories?.name || null,
+        projectId: e.project_id,
+        projectName: e.projects?.name || null,
+        projectReference: e.projects?.reference || null,
         createdAt: e.created_at,
       };
     }));
@@ -62,7 +68,7 @@ router.get("/emails/:id", requireAuth, async (req, res): Promise<void> => {
   try {
     const { data: email, error } = await supabaseAdmin
       .from("emails")
-      .select("*, categories(name)")
+      .select("*, categories(name), projects(name, reference)")
       .eq("id", req.params.id)
       .eq("user_id", req.userId!)
       .single();
@@ -84,6 +90,9 @@ router.get("/emails/:id", requireAuth, async (req, res): Promise<void> => {
       summary: email.summary,
       categoryId: email.category_id,
       categoryName: email.categories?.name || null,
+      projectId: email.project_id,
+      projectName: email.projects?.name || null,
+      projectReference: email.projects?.reference || null,
       createdAt: email.created_at,
     });
   } catch {
@@ -104,6 +113,7 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
     if (req.body.categoryId !== undefined) updates.category_id = req.body.categoryId;
     if (req.body.status !== undefined) updates.status = req.body.status;
     if (req.body.priority !== undefined) updates.priority = req.body.priority;
+    if (req.body.projectId !== undefined) updates.project_id = req.body.projectId;
 
     const { data: email, error } = await supabaseAdmin
       .from("emails")

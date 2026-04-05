@@ -115,6 +115,9 @@ export const ListEmailsResponseItem = zod.object({
   summary: zod.string().nullish(),
   categoryId: zod.number().nullish(),
   categoryName: zod.string().nullish(),
+  projectId: zod.string().nullish(),
+  projectName: zod.string().nullish(),
+  projectReference: zod.string().nullish(),
   createdAt: zod.coerce.date(),
 });
 export const ListEmailsResponse = zod.array(ListEmailsResponseItem);
@@ -137,6 +140,9 @@ export const GetEmailResponse = zod.object({
   summary: zod.string().nullish(),
   categoryId: zod.number().nullish(),
   categoryName: zod.string().nullish(),
+  projectId: zod.string().nullish(),
+  projectName: zod.string().nullish(),
+  projectReference: zod.string().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -150,6 +156,7 @@ export const UpdateEmailParams = zod.object({
 export const UpdateEmailBody = zod.object({
   categoryId: zod.number().nullish(),
   status: zod.string().optional(),
+  projectId: zod.string().nullish(),
 });
 
 export const UpdateEmailResponse = zod.object({
@@ -163,6 +170,9 @@ export const UpdateEmailResponse = zod.object({
   summary: zod.string().nullish(),
   categoryId: zod.number().nullish(),
   categoryName: zod.string().nullish(),
+  projectId: zod.string().nullish(),
+  projectName: zod.string().nullish(),
+  projectReference: zod.string().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -238,6 +248,9 @@ export const ListTasksResponseItem = zod.object({
   dueDate: zod.coerce.date().nullish(),
   emailId: zod.number().nullish(),
   emailSubject: zod.string().nullish(),
+  projectId: zod.string().nullish(),
+  projectName: zod.string().nullish(),
+  projectReference: zod.string().nullish(),
   createdAt: zod.coerce.date(),
 });
 export const ListTasksResponse = zod.array(ListTasksResponseItem);
@@ -252,6 +265,7 @@ export const UpdateTaskParams = zod.object({
 export const UpdateTaskBody = zod.object({
   done: zod.boolean().optional(),
   title: zod.string().optional(),
+  projectId: zod.string().nullish(),
 });
 
 export const UpdateTaskResponse = zod.object({
@@ -261,6 +275,9 @@ export const UpdateTaskResponse = zod.object({
   dueDate: zod.coerce.date().nullish(),
   emailId: zod.number().nullish(),
   emailSubject: zod.string().nullish(),
+  projectId: zod.string().nullish(),
+  projectName: zod.string().nullish(),
+  projectReference: zod.string().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -300,6 +317,122 @@ export const GetCategoryCountsResponseItem = zod.object({
 export const GetCategoryCountsResponse = zod.array(
   GetCategoryCountsResponseItem,
 );
+
+/**
+ * @summary List projects
+ */
+export const ListProjectsResponseItem = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  reference: zod.string(),
+  description: zod.string().nullish(),
+  status: zod.enum(["actif", "termine", "en_pause"]),
+  color: zod.string(),
+  emailCount: zod.number(),
+  taskCount: zod.number(),
+  pendingTaskCount: zod.number(),
+  createdAt: zod.coerce.date(),
+});
+export const ListProjectsResponse = zod.array(ListProjectsResponseItem);
+
+/**
+ * @summary Create project
+ */
+export const CreateProjectBody = zod.object({
+  name: zod.string(),
+  reference: zod.string().optional(),
+  description: zod.string().optional(),
+  status: zod.enum(["actif", "termine", "en_pause"]).optional(),
+  color: zod.string().optional(),
+});
+
+/**
+ * @summary Get project with emails and tasks
+ */
+export const GetProjectParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const GetProjectResponse = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  reference: zod.string(),
+  description: zod.string().nullish(),
+  status: zod.string(),
+  color: zod.string(),
+  createdAt: zod.coerce.date(),
+  emails: zod.array(
+    zod.object({
+      id: zod.number(),
+      sender: zod.string(),
+      senderEmail: zod.string(),
+      subject: zod.string(),
+      body: zod.string(),
+      status: zod.string(),
+      priority: zod.string(),
+      summary: zod.string().nullish(),
+      categoryId: zod.number().nullish(),
+      categoryName: zod.string().nullish(),
+      projectId: zod.string().nullish(),
+      projectName: zod.string().nullish(),
+      projectReference: zod.string().nullish(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+  tasks: zod.array(
+    zod.object({
+      id: zod.number(),
+      title: zod.string(),
+      done: zod.boolean(),
+      dueDate: zod.coerce.date().nullish(),
+      emailId: zod.number().nullish(),
+      emailSubject: zod.string().nullish(),
+      projectId: zod.string().nullish(),
+      projectName: zod.string().nullish(),
+      projectReference: zod.string().nullish(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary Update project
+ */
+export const UpdateProjectParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateProjectBody = zod.object({
+  name: zod.string().optional(),
+  reference: zod.string().optional(),
+  description: zod.string().optional(),
+  status: zod.enum(["actif", "termine", "en_pause"]).optional(),
+  color: zod.string().optional(),
+});
+
+export const UpdateProjectResponse = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  reference: zod.string(),
+  description: zod.string().nullish(),
+  status: zod.enum(["actif", "termine", "en_pause"]),
+  color: zod.string(),
+  emailCount: zod.number(),
+  taskCount: zod.number(),
+  pendingTaskCount: zod.number(),
+  createdAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete project
+ */
+export const DeleteProjectParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const DeleteProjectResponse = zod.object({
+  success: zod.boolean().optional(),
+});
 
 /**
  * @summary Generate daily summary via AI

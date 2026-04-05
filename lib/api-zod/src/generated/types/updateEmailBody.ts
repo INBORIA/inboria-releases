@@ -10,4 +10,6 @@ export interface UpdateEmailBody {
   /** @nullable */
   categoryId?: number | null;
   status?: string;
+  /** @nullable */
+  projectId?: string | null;
 }

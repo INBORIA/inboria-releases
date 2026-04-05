@@ -56,6 +56,12 @@ export interface Email {
   categoryId?: number | null;
   /** @nullable */
   categoryName?: string | null;
+  /** @nullable */
+  projectId?: string | null;
+  /** @nullable */
+  projectName?: string | null;
+  /** @nullable */
+  projectReference?: string | null;
   createdAt: string;
 }
 
@@ -63,6 +69,8 @@ export interface UpdateEmailBody {
   /** @nullable */
   categoryId?: number | null;
   status?: string;
+  /** @nullable */
+  projectId?: string | null;
 }
 
 export interface Category {
@@ -94,12 +102,20 @@ export interface Task {
   emailId?: number | null;
   /** @nullable */
   emailSubject?: string | null;
+  /** @nullable */
+  projectId?: string | null;
+  /** @nullable */
+  projectName?: string | null;
+  /** @nullable */
+  projectReference?: string | null;
   createdAt: string;
 }
 
 export interface UpdateTaskBody {
   done?: boolean;
   title?: string;
+  /** @nullable */
+  projectId?: string | null;
 }
 
 export interface DashboardSummary {
@@ -169,6 +185,75 @@ export interface TriageResult {
   tasks: string[];
 }
 
+export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus];
+
+export const ProjectStatus = {
+  actif: "actif",
+  termine: "termine",
+  en_pause: "en_pause",
+} as const;
+
+export interface Project {
+  id: string;
+  name: string;
+  reference: string;
+  /** @nullable */
+  description?: string | null;
+  status: ProjectStatus;
+  color: string;
+  emailCount: number;
+  taskCount: number;
+  pendingTaskCount: number;
+  createdAt: string;
+}
+
+export interface ProjectDetail {
+  id: string;
+  name: string;
+  reference: string;
+  /** @nullable */
+  description?: string | null;
+  status: string;
+  color: string;
+  createdAt: string;
+  emails: Email[];
+  tasks: Task[];
+}
+
+export type CreateProjectBodyStatus =
+  (typeof CreateProjectBodyStatus)[keyof typeof CreateProjectBodyStatus];
+
+export const CreateProjectBodyStatus = {
+  actif: "actif",
+  termine: "termine",
+  en_pause: "en_pause",
+} as const;
+
+export interface CreateProjectBody {
+  name: string;
+  reference?: string;
+  description?: string;
+  status?: CreateProjectBodyStatus;
+  color?: string;
+}
+
+export type UpdateProjectBodyStatus =
+  (typeof UpdateProjectBodyStatus)[keyof typeof UpdateProjectBodyStatus];
+
+export const UpdateProjectBodyStatus = {
+  actif: "actif",
+  termine: "termine",
+  en_pause: "en_pause",
+} as const;
+
+export interface UpdateProjectBody {
+  name?: string;
+  reference?: string;
+  description?: string;
+  status?: UpdateProjectBodyStatus;
+  color?: string;
+}
+
 export type ListEmailsParams = {
   priority?: ListEmailsPriority;
   categoryId?: number;
@@ -200,3 +285,7 @@ export const ListTasksStatus = {
   pending: "pending",
   done: "done",
 } as const;
+
+export type DeleteProject200 = {
+  success?: boolean;
+};

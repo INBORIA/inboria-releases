@@ -16,6 +16,7 @@ import Taches from "@/pages/dashboard/taches";
 import Categories from "@/pages/dashboard/categories";
 import Parametres from "@/pages/dashboard/parametres";
 import Abonnement from "@/pages/dashboard/abonnement";
+import Projets from "@/pages/dashboard/projets";
 
 setAuthTokenGetter(async () => {
   const { data } = await supabase.auth.getSession();
@@ -54,6 +55,7 @@ function Router() {
       <Route path="/dashboard/bilan" component={() => <ProtectedRoute component={BilanQuotidien} />} />
       <Route path="/dashboard/taches" component={() => <ProtectedRoute component={Taches} />} />
       <Route path="/dashboard/categories" component={() => <ProtectedRoute component={Categories} />} />
+      <Route path="/dashboard/projets" component={() => <ProtectedRoute component={Projets} />} />
       <Route path="/dashboard/parametres" component={() => <ProtectedRoute component={Parametres} />} />
       <Route path="/dashboard/abonnement" component={() => <ProtectedRoute component={Abonnement} />} />
       <Route component={NotFound} />

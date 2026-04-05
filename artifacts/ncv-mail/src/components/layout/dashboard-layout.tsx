@@ -12,6 +12,7 @@ import {
   Loader2,
   Menu,
   Archive,
+  FolderKanban,
 } from "lucide-react";
 import ncvLogo from "@assets/image_1775392688923.png";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,7 @@ const navigation = [
   { name: "Archives", href: "/dashboard/archives", icon: Archive },
   { name: "Bilan quotidien", href: "/dashboard/bilan", icon: LayoutDashboard },
   { name: "Taches", href: "/dashboard/taches", icon: CheckSquare },
+  { name: "Projets", href: "/dashboard/projets", icon: FolderKanban },
   { name: "Categories", href: "/dashboard/categories", icon: Tags },
   { name: "Parametres", href: "/dashboard/parametres", icon: Settings },
   { name: "Abonnement", href: "/dashboard/abonnement", icon: CreditCard },

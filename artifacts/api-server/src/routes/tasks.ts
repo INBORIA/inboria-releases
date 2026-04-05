@@ -8,7 +8,7 @@ router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
   try {
     let query = supabaseAdmin
       .from("tasks")
-      .select("*, emails(subject)")
+      .select("*, emails(subject), projects(name, reference)")
       .eq("user_id", req.userId!)
       .order("created_at");
 
@@ -35,6 +35,9 @@ router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
       dueDate: t.due_date,
       emailId: t.email_id,
       emailSubject: t.emails?.subject || null,
+      projectId: t.project_id,
+      projectName: t.projects?.name || null,
+      projectReference: t.projects?.reference || null,
       createdAt: t.created_at,
     })));
   } catch {
@@ -47,6 +50,7 @@ router.patch("/tasks/:id", requireAuth, async (req, res): Promise<void> => {
     const updates: Record<string, unknown> = {};
     if (req.body.done !== undefined) updates.done = req.body.done;
     if (req.body.title !== undefined) updates.title = req.body.title;
+    if (req.body.projectId !== undefined) updates.project_id = req.body.projectId;
 
     const { data: task, error } = await supabaseAdmin
       .from("tasks")

@@ -9,6 +9,7 @@ import dashboardRouter from "./dashboard";
 import aiRouter from "./ai";
 import emailConnectRouter from "./email-connect";
 import webhookRouter from "./webhook";
+import projectsRouter from "./projects";
 
 const router: IRouter = Router();
 
@@ -22,5 +23,6 @@ router.use(dashboardRouter);
 router.use(aiRouter);
 router.use(emailConnectRouter);
 router.use(webhookRouter);
+router.use(projectsRouter);
 
 export default router;

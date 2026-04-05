@@ -20,5 +20,11 @@ export interface Email {
   categoryId?: number | null;
   /** @nullable */
   categoryName?: string | null;
+  /** @nullable */
+  projectId?: string | null;
+  /** @nullable */
+  projectName?: string | null;
+  /** @nullable */
+  projectReference?: string | null;
   createdAt: Date;
 }

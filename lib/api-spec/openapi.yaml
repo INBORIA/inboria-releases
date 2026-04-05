@@ -22,6 +22,8 @@ tags:
     description: User profile operations
   - name: dashboard
     description: Dashboard summary operations
+  - name: projects
+    description: Project management operations
   - name: ai
     description: AI operations
 paths:
@@ -390,6 +392,105 @@ paths:
                 items:
                   $ref: "#/components/schemas/CategoryCount"
 
+  /projects:
+    get:
+      operationId: listProjects
+      tags: [projects]
+      summary: List projects
+      responses:
+        "200":
+          description: List of projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Project"
+
+    post:
+      operationId: createProject
+      tags: [projects]
+      summary: Create project
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectBody"
+      responses:
+        "201":
+          description: Created project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+  /projects/{id}:
+    get:
+      operationId: getProject
+      tags: [projects]
+      summary: Get project with emails and tasks
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Project detail
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectDetail"
+        "404":
+          description: Not found
+
+    patch:
+      operationId: updateProject
+      tags: [projects]
+      summary: Update project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateProjectBody"
+      responses:
+        "200":
+          description: Updated project
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Project"
+
+    delete:
+      operationId: deleteProject
+      tags: [projects]
+      summary: Delete project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
   /ai/daily-summary:
     post:
       operationId: generateDailySummary
@@ -537,6 +638,12 @@ components:
           type: ["integer", "null"]
         categoryName:
           type: ["string", "null"]
+        projectId:
+          type: ["string", "null"]
+        projectName:
+          type: ["string", "null"]
+        projectReference:
+          type: ["string", "null"]
         createdAt:
           type: string
           format: date-time
@@ -557,6 +664,8 @@ components:
           type: ["integer", "null"]
         status:
           type: string
+        projectId:
+          type: ["string", "null"]
 
     Category:
       type: object
@@ -611,6 +720,12 @@ components:
           type: ["integer", "null"]
         emailSubject:
           type: ["string", "null"]
+        projectId:
+          type: ["string", "null"]
+        projectName:
+          type: ["string", "null"]
+        projectReference:
+          type: ["string", "null"]
         createdAt:
           type: string
           format: date-time
@@ -627,6 +742,8 @@ components:
           type: boolean
         title:
           type: string
+        projectId:
+          type: ["string", "null"]
 
     DashboardSummary:
       type: object
@@ -791,3 +908,107 @@ components:
         - priority
         - summary
         - tasks
+
+    Project:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        reference:
+          type: string
+        description:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [actif, termine, en_pause]
+        color:
+          type: string
+        emailCount:
+          type: integer
+        taskCount:
+          type: integer
+        pendingTaskCount:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - reference
+        - status
+        - color
+        - emailCount
+        - taskCount
+        - pendingTaskCount
+        - createdAt
+
+    ProjectDetail:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        reference:
+          type: string
+        description:
+          type: ["string", "null"]
+        status:
+          type: string
+        color:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        emails:
+          type: array
+          items:
+            $ref: "#/components/schemas/Email"
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/Task"
+      required:
+        - id
+        - name
+        - reference
+        - status
+        - color
+        - createdAt
+        - emails
+        - tasks
+
+    CreateProjectBody:
+      type: object
+      properties:
+        name:
+          type: string
+        reference:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [actif, termine, en_pause]
+        color:
+          type: string
+      required:
+        - name
+
+    UpdateProjectBody:
+      type: object
+      properties:
+        name:
+          type: string
+        reference:
+          type: string
+        description:
+          type: string
+        status:
+          type: string
+          enum: [actif, termine, en_pause]
+        color:
+          type: string

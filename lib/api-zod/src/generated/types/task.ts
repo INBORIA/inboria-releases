@@ -16,5 +16,11 @@ export interface Task {
   emailId?: number | null;
   /** @nullable */
   emailSubject?: string | null;
+  /** @nullable */
+  projectId?: string | null;
+  /** @nullable */
+  projectName?: string | null;
+  /** @nullable */
+  projectReference?: string | null;
   createdAt: Date;
 }
