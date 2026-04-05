@@ -11,7 +11,11 @@ const NOTION_CLIENT_ID = process.env["NOTION_CLIENT_ID"] || "";
 const NOTION_CLIENT_SECRET = process.env["NOTION_CLIENT_SECRET"] || "";
 
 function getStateSecret(): string {
-  return process.env["SESSION_SECRET"] || process.env["SUPABASE_SECRET_KEY"] || "ncvmail-integration-state-key";
+  const secret = process.env["SESSION_SECRET"] || process.env["SUPABASE_SECRET_KEY"];
+  if (!secret) {
+    throw new Error("SESSION_SECRET or SUPABASE_SECRET_KEY must be set for OAuth state signing");
+  }
+  return secret;
 }
 
 function createSignedState(userId: string): string {
@@ -167,7 +171,7 @@ router.get("/integrations/slack/callback", async (req, res): Promise<void> => {
     const frontendUrl = getFrontendUrl();
     res.send(`<html><body><script>
       window.opener?.postMessage({ type: "integration-connected", provider: "slack" }, "*");
-      window.location.href = "${frontendUrl}/parametres?integration=slack&status=success";
+      window.location.href = "${frontendUrl}/dashboard/parametres?integration=slack&status=success";
     </script><p>Slack connecte ! Redirection...</p></body></html>`);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
@@ -271,7 +275,7 @@ router.get("/integrations/notion/callback", async (req, res): Promise<void> => {
     const frontendUrl = getFrontendUrl();
     res.send(`<html><body><script>
       window.opener?.postMessage({ type: "integration-connected", provider: "notion" }, "*");
-      window.location.href = "${frontendUrl}/parametres?integration=notion&status=success";
+      window.location.href = "${frontendUrl}/dashboard/parametres?integration=notion&status=success";
     </script><p>Notion connecte ! Redirection...</p></body></html>`);
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";

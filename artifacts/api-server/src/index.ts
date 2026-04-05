@@ -16,6 +16,19 @@ async function ensureProjectsTable() {
   }
 }
 
+async function ensureIntegrationsTable() {
+  try {
+    const { error } = await supabaseAdmin.from("integrations").select("id").limit(1);
+    if (error && error.message.includes("does not exist")) {
+      logger.warn("integrations table not found — please create it in Supabase dashboard with: CREATE TABLE integrations (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE, provider text NOT NULL, access_token text NOT NULL, workspace_name text, channel_id text, database_id text, enabled boolean DEFAULT true, created_at timestamptz DEFAULT now(), UNIQUE(user_id, provider)); ALTER TABLE integrations ENABLE ROW LEVEL SECURITY;");
+    } else {
+      logger.info("integrations table OK");
+    }
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "integrations table check failed (non-fatal)");
+  }
+}
+
 const rawPort = process.env["PORT"];
 
 if (!rawPort) {
@@ -39,5 +52,6 @@ app.listen(port, (err) => {
   logger.info({ port }, "Server listening");
 
   ensureProjectsTable();
+  ensureIntegrationsTable();
   startAutoSync();
 });
