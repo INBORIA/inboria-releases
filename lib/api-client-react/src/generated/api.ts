@@ -37,6 +37,8 @@ import type {
   Project,
   ProjectDetail,
   RegisterBody,
+  SendEmail200,
+  SendEmailBody,
   Task,
   TriageEmailBody,
   TriageResult,
@@ -2197,6 +2199,92 @@ export const useDeleteProject = <
   TContext
 > => {
   return useMutation(getDeleteProjectMutationOptions(options));
+};
+
+/**
+ * @summary Send an email
+ */
+export const getSendEmailUrl = () => {
+  return `/api/emails/send`;
+};
+
+export const sendEmail = async (
+  sendEmailBody: SendEmailBody,
+  options?: RequestInit,
+): Promise<SendEmail200> => {
+  return customFetch<SendEmail200>(getSendEmailUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(sendEmailBody),
+  });
+};
+
+export const getSendEmailMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof sendEmail>>,
+    TError,
+    { data: BodyType<SendEmailBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof sendEmail>>,
+  TError,
+  { data: BodyType<SendEmailBody> },
+  TContext
+> => {
+  const mutationKey = ["sendEmail"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof sendEmail>>,
+    { data: BodyType<SendEmailBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return sendEmail(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SendEmailMutationResult = NonNullable<
+  Awaited<ReturnType<typeof sendEmail>>
+>;
+export type SendEmailMutationBody = BodyType<SendEmailBody>;
+export type SendEmailMutationError = ErrorType<void>;
+
+/**
+ * @summary Send an email
+ */
+export const useSendEmail = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof sendEmail>>,
+    TError,
+    { data: BodyType<SendEmailBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof sendEmail>>,
+  TError,
+  { data: BodyType<SendEmailBody> },
+  TContext
+> => {
+  return useMutation(getSendEmailMutationOptions(options));
 };
 
 /**

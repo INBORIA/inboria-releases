@@ -85,6 +85,14 @@ export interface Email {
   createdAt: string;
 }
 
+export interface SendEmailBody {
+  to: string;
+  subject: string;
+  body: string;
+  /** @nullable */
+  replyToEmailId?: number | null;
+}
+
 export interface UpdateEmailBody {
   /** @nullable */
   categoryId?: number | null;
@@ -315,5 +323,9 @@ export type DeleteTask200 = {
 };
 
 export type DeleteProject200 = {
+  success?: boolean;
+};
+
+export type SendEmail200 = {
   success?: boolean;
 };

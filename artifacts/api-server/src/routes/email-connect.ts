@@ -217,6 +217,7 @@ router.get("/email/connect/gmail", requireAuth, async (req, res): Promise<void> 
       prompt: "consent",
       scope: [
         "https://www.googleapis.com/auth/gmail.readonly",
+        "https://www.googleapis.com/auth/gmail.send",
         "https://www.googleapis.com/auth/userinfo.email",
       ],
       state: req.userId,
@@ -278,7 +279,7 @@ router.get("/email/connect/outlook", requireAuth, async (req, res): Promise<void
     }
 
     const redirectUri = getRedirectUri("outlook");
-    const scope = encodeURIComponent("openid email Mail.Read offline_access");
+    const scope = encodeURIComponent("openid email Mail.Read Mail.Send offline_access");
     const url = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${MICROSOFT_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${req.userId}&response_mode=query`;
 
     res.json({ url });
@@ -309,7 +310,7 @@ router.get("/email/callback/outlook", async (req, res): Promise<void> => {
         code,
         redirect_uri: redirectUri,
         grant_type: "authorization_code",
-        scope: "openid email Mail.Read offline_access",
+        scope: "openid email Mail.Read Mail.Send offline_access",
       }),
     });
 

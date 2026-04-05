@@ -4,6 +4,7 @@ import {
   useGetCategoryCounts,
   useUpdateEmail,
   useDeleteEmail,
+  useSendEmail,
   getListEmailsQueryKey,
   useGetDashboardSummary,
   useTriageEmail,
@@ -17,7 +18,7 @@ import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -95,7 +96,7 @@ const triageSchema = z.object({
   body: z.string().min(1, "Contenu requis"),
 });
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, categories, projects }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; categories: any[]; projects: any[] }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, categories, projects }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; categories: any[]; projects: any[] }) {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
 
@@ -255,9 +256,19 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
               >
                 Annuler
               </Button>
-              <Button size="sm" className="gap-1.5">
-                <Reply className="w-3.5 h-3.5" />
-                Envoyer
+              <Button
+                size="sm"
+                className="gap-1.5"
+                disabled={isSending || !replyText.trim()}
+                onClick={() => {
+                  const replySubject = email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`;
+                  onSendReply(email.senderEmail, replySubject, replyText, email.id);
+                  setReplyText("");
+                  setReplyOpen(false);
+                }}
+              >
+                <Send className="w-3.5 h-3.5" />
+                {isSending ? "Envoi..." : "Envoyer"}
               </Button>
             </div>
           </div>
@@ -298,6 +309,11 @@ export default function Dashboard() {
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
   const triageEmail = useTriageEmail();
+  const sendEmailMut = useSendEmail();
+  const [isComposeOpen, setIsComposeOpen] = useState(false);
+  const [composeTo, setComposeTo] = useState("");
+  const [composeSubject, setComposeSubject] = useState("");
+  const [composeBody, setComposeBody] = useState("");
 
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const activeEmails = emails
@@ -388,6 +404,41 @@ export default function Dashboard() {
     );
   };
 
+  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number) => {
+    sendEmailMut.mutate(
+      { data: { to, subject, body, replyToEmailId: replyToEmailId ?? null } },
+      {
+        onSuccess: () => {
+          invalidateAll();
+          toast({ title: "Email envoye" });
+        },
+        onError: () => {
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible d'envoyer l'email." });
+        },
+      }
+    );
+  };
+
+  const handleComposeSend = () => {
+    if (!composeTo.trim() || !composeSubject.trim() || !composeBody.trim()) return;
+    sendEmailMut.mutate(
+      { data: { to: composeTo, subject: composeSubject, body: composeBody, replyToEmailId: null } },
+      {
+        onSuccess: () => {
+          invalidateAll();
+          setIsComposeOpen(false);
+          setComposeTo("");
+          setComposeSubject("");
+          setComposeBody("");
+          toast({ title: "Email envoye" });
+        },
+        onError: () => {
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible d'envoyer l'email." });
+        },
+      }
+    );
+  };
+
   const handleSync = async () => {
     setIsSyncing(true);
     try {
@@ -456,6 +507,8 @@ export default function Dashboard() {
             onUpdatePriority={handleUpdatePriority}
             onUpdateCategory={handleUpdateCategory}
             onUpdateProject={handleUpdateProject}
+            onSendReply={handleSendReply}
+            isSending={sendEmailMut.isPending}
             categories={categoryCounts || []}
             projects={projects || []}
           />
@@ -482,6 +535,41 @@ export default function Dashboard() {
                 <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin" : ""}`} />
                 {isSyncing ? "Sync..." : "Rafraichir"}
               </Button>
+              <Dialog open={isComposeOpen} onOpenChange={(open) => { setIsComposeOpen(open); if (!open) { setComposeTo(""); setComposeSubject(""); setComposeBody(""); } }}>
+                <DialogTrigger asChild>
+                  <Button size="sm" className="gap-2 bg-primary hover:bg-primary/90 text-white">
+                    <PenSquare className="w-3.5 h-3.5" />
+                    Nouveau
+                  </Button>
+                </DialogTrigger>
+                <DialogContent className="bg-card border-border">
+                  <DialogHeader>
+                    <DialogTitle className="text-white">Nouveau message</DialogTitle>
+                  </DialogHeader>
+                  <div className="space-y-4">
+                    <div>
+                      <label className="text-[13px] text-[#8b9cb3] mb-1.5 block">Destinataire</label>
+                      <Input value={composeTo} onChange={(e) => setComposeTo(e.target.value)} placeholder="email@exemple.com" className="bg-background border-border text-white" />
+                    </div>
+                    <div>
+                      <label className="text-[13px] text-[#8b9cb3] mb-1.5 block">Sujet</label>
+                      <Input value={composeSubject} onChange={(e) => setComposeSubject(e.target.value)} placeholder="Sujet de votre email" className="bg-background border-border text-white" />
+                    </div>
+                    <div>
+                      <label className="text-[13px] text-[#8b9cb3] mb-1.5 block">Message</label>
+                      <Textarea value={composeBody} onChange={(e) => setComposeBody(e.target.value)} placeholder="Redigez votre message..." className="h-40 bg-background border-border text-white" />
+                    </div>
+                    <Button
+                      className="w-full gap-2"
+                      disabled={sendEmailMut.isPending || !composeTo.trim() || !composeSubject.trim() || !composeBody.trim()}
+                      onClick={handleComposeSend}
+                    >
+                      <Send className="w-4 h-4" />
+                      {sendEmailMut.isPending ? "Envoi en cours..." : "Envoyer"}
+                    </Button>
+                  </div>
+                </DialogContent>
+              </Dialog>
               <Dialog open={isSimulateOpen} onOpenChange={setIsSimulateOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="sm" className="hidden sm:flex gap-2 bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]">

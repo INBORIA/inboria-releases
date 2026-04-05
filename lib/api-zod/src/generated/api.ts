@@ -471,6 +471,20 @@ export const DeleteProjectResponse = zod.object({
 });
 
 /**
+ * @summary Send an email
+ */
+export const SendEmailBody = zod.object({
+  to: zod.string(),
+  subject: zod.string(),
+  body: zod.string(),
+  replyToEmailId: zod.number().nullish(),
+});
+
+export const SendEmailResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
  * @summary Generate daily summary via AI
  */
 export const generateDailySummaryBodyLanguageDefault = `fr`;

@@ -1,4 +1,6 @@
 import { Router, type IRouter } from "express";
+import { google } from "googleapis";
+import nodemailer from "nodemailer";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 
@@ -186,6 +188,161 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
     });
   } catch {
     res.status(500).json({ error: "Failed to update email" });
+  }
+});
+
+router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { to, subject, body, replyToEmailId } = req.body;
+    if (!to || !subject || !body) {
+      res.status(400).json({ error: "Destinataire, sujet et corps requis" });
+      return;
+    }
+
+    const { data: connections } = await supabaseAdmin
+      .from("email_connections")
+      .select("*")
+      .eq("user_id", req.userId!);
+
+    if (!connections || connections.length === 0) {
+      res.status(400).json({ error: "Aucun compte email connecte" });
+      return;
+    }
+
+    const conn = connections[0];
+    let fromAddress = conn.email_address;
+
+    if (conn.provider === "gmail") {
+      const oauth2Client = new google.auth.OAuth2(
+        process.env["GOOGLE_CLIENT_ID"],
+        process.env["GOOGLE_CLIENT_SECRET"]
+      );
+      oauth2Client.setCredentials({
+        access_token: conn.access_token,
+        refresh_token: conn.refresh_token,
+      });
+
+      const gmail = google.gmail({ version: "v1", auth: oauth2Client });
+
+      const messageParts = [
+        `To: ${to}`,
+        `From: ${fromAddress}`,
+        `Subject: ${subject}`,
+        `Content-Type: text/plain; charset=utf-8`,
+        "",
+        body,
+      ];
+
+      if (replyToEmailId) {
+        const { data: origEmail } = await supabaseAdmin
+          .from("emails")
+          .select("external_id")
+          .eq("id", replyToEmailId)
+          .eq("user_id", req.userId!)
+          .single();
+        if (origEmail?.external_id) {
+          messageParts.splice(3, 0, `In-Reply-To: ${origEmail.external_id}`);
+          messageParts.splice(4, 0, `References: ${origEmail.external_id}`);
+        }
+      }
+
+      const raw = Buffer.from(messageParts.join("\r\n"))
+        .toString("base64")
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
+
+      await gmail.users.messages.send({
+        userId: "me",
+        requestBody: { raw },
+      });
+    } else if (conn.provider === "outlook") {
+      let accessToken = conn.access_token;
+
+      if (conn.token_expires_at && new Date(conn.token_expires_at) < new Date()) {
+        const tokenResp = await fetch("https://login.microsoftonline.com/common/oauth2/v2.0/token", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            client_id: process.env["MICROSOFT_CLIENT_ID"] || "",
+            client_secret: process.env["MICROSOFT_CLIENT_SECRET"] || "",
+            refresh_token: conn.refresh_token,
+            grant_type: "refresh_token",
+            scope: "openid email Mail.Read Mail.Send offline_access",
+          }),
+        });
+        const newTokens = await tokenResp.json() as any;
+        if (newTokens.access_token) {
+          accessToken = newTokens.access_token;
+          await supabaseAdmin.from("email_connections").update({
+            access_token: newTokens.access_token,
+            token_expires_at: new Date(Date.now() + newTokens.expires_in * 1000).toISOString(),
+          }).eq("id", conn.id);
+        }
+      }
+
+      const mailBody: any = {
+        message: {
+          subject,
+          body: { contentType: "Text", content: body },
+          toRecipients: [{ emailAddress: { address: to } }],
+        },
+        saveToSentItems: true,
+      };
+
+      const graphResp = await fetch("https://graph.microsoft.com/v1.0/me/sendMail", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(mailBody),
+      });
+
+      if (!graphResp.ok) {
+        const errBody = await graphResp.text();
+        console.error("Outlook send error:", errBody);
+        res.status(500).json({ error: "Echec de l'envoi via Outlook" });
+        return;
+      }
+    } else {
+      let imapConfig: { host: string; port: number } = { host: "", port: 993 };
+      try {
+        imapConfig = JSON.parse(conn.refresh_token);
+      } catch {}
+
+      const smtpHost = imapConfig.host.replace(/^imap\./, "smtp.");
+      const transporter = nodemailer.createTransport({
+        host: smtpHost,
+        port: 587,
+        secure: false,
+        auth: { user: conn.email_address, pass: conn.access_token },
+        tls: { rejectUnauthorized: true },
+      });
+
+      await transporter.sendMail({
+        from: conn.email_address,
+        to,
+        subject,
+        text: body,
+      });
+    }
+
+    await supabaseAdmin.from("emails").insert({
+      user_id: req.userId!,
+      sender: fromAddress,
+      sender_email: fromAddress,
+      subject,
+      body,
+      status: "sent",
+      priority: "faible",
+      external_id: null,
+    });
+
+    res.json({ success: true });
+  } catch (err: any) {
+    console.error("Send email error:", err);
+    res.status(500).json({ error: "Echec de l'envoi: " + (err.message || "Erreur inconnue") });
   }
 });
 

@@ -101,9 +101,18 @@ Optional webhook for external integrations. Flow: External source -> Webhook NCV
 - `/dashboard/abonnement` — Subscription plans (Gratuit 0€ / Solo 9€ / Pro 19€ / Business 9€/seat)
 - 404 page — Dark themed "Page introuvable"
 
+## Email Send/Reply
+
+- **Send endpoint**: `POST /api/emails/send` accepts `{to, subject, body, replyToEmailId?}`
+- **Gmail**: Sends via Gmail API (raw MIME), supports reply threading via In-Reply-To header
+- **Outlook**: Sends via Microsoft Graph sendMail endpoint with auto token refresh
+- **IMAP**: Sends via SMTP (nodemailer), host auto-derived from IMAP host
+- **Frontend**: "Nouveau" compose button + dialog in inbox toolbar, Reply button in email detail view
+- **OpenAPI**: `sendEmail` operation, `SendEmailBody` schema, `useSendEmail` React hook
+
 ## API Routes (prefix: /api)
 
-Auth, profile, emails, categories, tasks, dashboard stats, AI triage/summary, email connections/sync, webhook
+Auth, profile, emails (CRUD + send), categories, tasks, dashboard stats, AI triage/summary, email connections/sync, webhook
 
 ## Environment Variables
 

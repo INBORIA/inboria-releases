@@ -516,6 +516,30 @@ paths:
                   success:
                     type: boolean
 
+  /emails/send:
+    post:
+      operationId: sendEmail
+      tags: [emails]
+      summary: Send an email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SendEmailBody"
+      responses:
+        "200":
+          description: Email sent
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        "400":
+          description: Missing fields or no connected account
+
   /ai/daily-summary:
     post:
       operationId: generateDailySummary
@@ -688,6 +712,22 @@ components:
         - status
         - priority
         - createdAt
+
+    SendEmailBody:
+      type: object
+      properties:
+        to:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        replyToEmailId:
+          type: ["integer", "null"]
+      required:
+        - to
+        - subject
+        - body
 
     UpdateEmailBody:
       type: object
