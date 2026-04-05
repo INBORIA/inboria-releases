@@ -46,7 +46,11 @@ export default function TasksScreen() {
     }
     updateTask.mutate(
       { id, data: { done: !currentDone } },
-      { onSuccess: () => queryClient.invalidateQueries({ queryKey: ["listTasks"] }) }
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: ["listTasks"] });
+        },
+      }
     );
   };
 
@@ -57,22 +61,24 @@ export default function TasksScreen() {
   ];
 
   const renderTask = ({ item }: { item: Task }) => (
-    <TouchableOpacity
-      style={[styles.taskRow, { backgroundColor: colors.card, borderColor: colors.border }]}
-      onPress={() => toggleTask(item.id, item.done)}
-      activeOpacity={0.7}
-    >
-      <View
-        style={[
-          styles.checkbox,
-          {
-            borderColor: item.done ? colors.success : colors.border,
-            backgroundColor: item.done ? colors.success + "20" : "transparent",
-          },
-        ]}
+    <View style={[styles.taskRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
+      <TouchableOpacity
+        onPress={() => toggleTask(item.id, item.done)}
+        activeOpacity={0.6}
+        style={styles.checkboxTouchable}
       >
-        {item.done && <Feather name="check" size={14} color={colors.success} />}
-      </View>
+        <View
+          style={[
+            styles.checkbox,
+            {
+              borderColor: item.done ? colors.success : colors.mutedForeground,
+              backgroundColor: item.done ? colors.success : "transparent",
+            },
+          ]}
+        >
+          {item.done && <Feather name="check" size={14} color="#fff" />}
+        </View>
+      </TouchableOpacity>
       <View style={styles.taskContent}>
         <Text
           style={[
@@ -102,14 +108,7 @@ export default function TasksScreen() {
           </View>
         ) : null}
       </View>
-      <View style={[styles.statusIcon, { backgroundColor: item.done ? colors.success + "15" : colors.warning + "15" }]}>
-        <Feather
-          name={item.done ? "check-circle" : "clock"}
-          size={16}
-          color={item.done ? colors.success : colors.warning}
-        />
-      </View>
-    </TouchableOpacity>
+    </View>
   );
 
   return (
@@ -159,7 +158,6 @@ export default function TasksScreen() {
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
           }
-          scrollEnabled={!!tasks?.length}
           showsVerticalScrollIndicator={false}
         />
       )}
@@ -183,18 +181,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     gap: 12,
   },
+  checkboxTouchable: {
+    paddingTop: 2,
+  },
   checkbox: {
     width: 24,
     height: 24,
-    borderRadius: 6,
+    borderRadius: 12,
     borderWidth: 2,
     alignItems: "center",
     justifyContent: "center",
-    marginTop: 2,
   },
   taskContent: { flex: 1 },
   taskTitle: { fontSize: 14, fontFamily: "Inter_500Medium", lineHeight: 20 },
-  taskMeta: { flexDirection: "row", alignItems: "center", gap: 4, marginTop: 4 },
-  taskMetaText: { fontSize: 12, fontFamily: "Inter_400Regular", flex: 1 },
-  statusIcon: { width: 32, height: 32, borderRadius: 8, alignItems: "center", justifyContent: "center" },
+  taskMeta: { flexDirection: "row", alignItems: "flex-start", gap: 4, marginTop: 6 },
+  taskMetaText: { fontSize: 12, fontFamily: "Inter_400Regular", flex: 1, lineHeight: 18 },
 });
