@@ -31,3 +31,4 @@ timeoutMs = 20000
 VITE_SUPABASE_URL = "https://ecdwevvisbrcsomdiqop.supabase.co"
 GOOGLE_CLIENT_ID = "850619978612-ql893tqnpkm7vn32brf42d3bg3len5fo.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET = "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"
+WEBHOOK_SECRET = "8537408a9e971fd41757ce113a12d8eed6bd48460364cad0341b025eb845a832"

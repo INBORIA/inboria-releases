@@ -8,6 +8,7 @@ import tasksRouter from "./tasks";
 import dashboardRouter from "./dashboard";
 import aiRouter from "./ai";
 import emailConnectRouter from "./email-connect";
+import webhookRouter from "./webhook";
 
 const router: IRouter = Router();
 
@@ -20,5 +21,6 @@ router.use(tasksRouter);
 router.use(dashboardRouter);
 router.use(aiRouter);
 router.use(emailConnectRouter);
+router.use(webhookRouter);
 
 export default router;

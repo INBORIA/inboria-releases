@@ -53,6 +53,19 @@ Dark-only theme inspired by Linear/Superhuman:
 - **Force re-sync**: Deletes all emails then re-downloads with AI triage
 - **Sender parsing**: `parseSender()` helper splits "Name <email>" format
 
+## Webhook (Make.com integration)
+
+Real-time email processing via webhook. Flow: Email recu -> Make.com -> Webhook NCV Mail -> GPT-4o mini -> Supabase
+
+- **Single email**: `POST /api/webhook/email` — processes one email with AI triage + task extraction
+- **Batch**: `POST /api/webhook/email/batch` — processes up to 50 emails at once
+- **Test**: `GET /api/webhook/test` — verify webhook is active
+- **Auth**: Header `x-webhook-secret` or `Authorization: Bearer <secret>` with WEBHOOK_SECRET env var
+- **Payload**: `{ sender, subject, body, user_email, external_id?, received_at? }`
+- **Response**: `{ status, emailId, priority, category, summary, tasksCreated }`
+- **Features**: duplicate detection (via external_id), quota enforcement, auto task extraction, quota increment
+- **File**: `artifacts/api-server/src/routes/webhook.ts`
+
 ## Supabase Tables
 
 - `categories` (id uuid, created_at, user_id, name, description) — EXISTS
@@ -74,7 +87,7 @@ Dark-only theme inspired by Linear/Superhuman:
 
 ## API Routes (prefix: /api)
 
-Auth, profile, emails, categories, tasks, dashboard stats, AI triage/summary, email connections/sync
+Auth, profile, emails, categories, tasks, dashboard stats, AI triage/summary, email connections/sync, webhook
 
 ## Environment Variables
 
@@ -83,6 +96,7 @@ Auth, profile, emails, categories, tasks, dashboard stats, AI triage/summary, em
 - `SUPABASE_SECRET_KEY` — Supabase service role key (secret)
 - `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — Gmail OAuth2
 - `MICROSOFT_CLIENT_ID` / `MICROSOFT_CLIENT_SECRET` — Outlook OAuth2 (PENDING)
+- `WEBHOOK_SECRET` — Secret key for Make.com webhook authentication
 - `AI_INTEGRATIONS_OPENAI_*` — Auto-provisioned by Replit
 
 ## Key Commands
