@@ -25,7 +25,7 @@ const IMAP_PROVIDERS = [
   { id: "skynet", name: "Skynet", color: "bg-sky-500/10 text-sky-400", letter: "Sk", host: "imap.skynet.be", port: "993" },
   { id: "voo", name: "VOO", color: "bg-amber-500/10 text-amber-400", letter: "VO", host: "imap.voo.be", port: "993" },
   { id: "telenet", name: "Telenet", color: "bg-teal-500/10 text-teal-400", letter: "Te", host: "imap.telenet.be", port: "993" },
-  { id: "ovh", name: "OVH", color: "bg-blue-500/10 text-blue-400", letter: "OV", host: "ssl0.ovh.net", port: "993" },
+  { id: "ovh", name: "OVH", color: "bg-blue-500/10 text-blue-400", letter: "OV", host: "", port: "993" },
   { id: "ionos", name: "IONOS", color: "bg-indigo-500/10 text-indigo-400", letter: "IO", host: "imap.ionos.fr", port: "993" },
   { id: "infomaniak", name: "Infomaniak", color: "bg-lime-500/10 text-lime-400", letter: "IM", host: "mail.infomaniak.com", port: "993" },
   { id: "gmx", name: "GMX", color: "bg-blue-500/10 text-blue-400", letter: "Gx", host: "imap.gmx.com", port: "993" },
