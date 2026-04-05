@@ -244,7 +244,7 @@ export default function Parametres() {
                   )}
 
 
-                  {!imapConnected && !selectedProvider && (
+                  {!selectedProvider && (
                     <>
                       <div className="pt-2 border-t border-border">
                         <p className="text-[12px] text-[#8b9cb3] mb-3">Autres fournisseurs</p>
