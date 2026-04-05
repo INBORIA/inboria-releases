@@ -63,8 +63,8 @@ export default function Signup() {
   return (
     <AuthLayout>
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Creer un compte</h1>
-        <p className="text-gray-500 mt-2 text-sm">Rejoignez NCV Mail pour organiser votre boite de reception</p>
+        <h1 className="text-2xl font-bold text-white">Creer un compte</h1>
+        <p className="text-[#8b9cb3] mt-2 text-sm">Rejoignez NCV Mail pour organiser votre boite de reception</p>
       </div>
 
       <Form {...form}>
@@ -74,9 +74,9 @@ export default function Signup() {
             name="fullName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Nom complet</FormLabel>
+                <FormLabel className="text-[#8b9cb3]">Nom complet</FormLabel>
                 <FormControl>
-                  <Input placeholder="Jean Dupont" {...field} />
+                  <Input placeholder="Jean Dupont" className="bg-background border-border text-white" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -87,9 +87,9 @@ export default function Signup() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email professionnel</FormLabel>
+                <FormLabel className="text-[#8b9cb3]">Email professionnel</FormLabel>
                 <FormControl>
-                  <Input placeholder="jean@entreprise.com" type="email" {...field} />
+                  <Input placeholder="jean@entreprise.com" type="email" className="bg-background border-border text-white" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -100,9 +100,9 @@ export default function Signup() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Mot de passe</FormLabel>
+                <FormLabel className="text-[#8b9cb3]">Mot de passe</FormLabel>
                 <FormControl>
-                  <Input type="password" placeholder="" {...field} />
+                  <Input type="password" placeholder="" className="bg-background border-border text-white" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -118,7 +118,7 @@ export default function Signup() {
         </form>
       </Form>
 
-      <div className="mt-6 text-center text-sm text-gray-500">
+      <div className="mt-6 text-center text-sm text-[#8b9cb3]">
         Deja un compte ?{" "}
         <Link href="/login" className="font-semibold text-primary hover:text-primary/80">
           Se connecter

@@ -1,0 +1,32 @@
+Refais entièrement le design de l'application. Ne touche pas à la logique, aux données, ni aux connexions Supabase. Uniquement le visuel.
+Thème général :
+Dark theme obligatoire — fond principal #0f0f0f ou #0f1624
+Accent bleu : #2d7dd2
+Texte principal : blanc #ffffff, texte secondaire : gris #8b9cb3
+Police : Inter ou Geist, pas de serif
+Inspiré de Linear et Superhuman — sobre, dense, professionnel
+Sidebar :
+Fond #111827, bordure droite subtile #1f2937
+Logo NCV Mail en haut avec icône
+Items de navigation avec icône + texte, item actif surligné avec fond #1e3a5f et texte bleu #2d7dd2
+En bas : nom de l'utilisateur, plan actuel, quota emails avec barre de progression fine
+Boîte prioritaire :
+Supprimer le widget "Santé de la boîte 100/100" — inutile
+Les 3 cartes Urgents / Moyens / Faibles : fond sombre #1a1f2e, chiffre en grand, couleur rouge/orange/vert selon priorité
+Chaque email dans la liste : fond #111827, hover #1a2235, expéditeur en blanc gras, sujet en gris, badge priorité coloré à droite, heure en petit gris
+Pas de fond blanc, pas de fond gris clair
+Bilan quotidien :
+Ne pas laisser la page vide — afficher un état vide stylé avec une icône et le texte "Cliquez sur Régénérer pour obtenir votre bilan du jour"
+Quand le bilan existe : le présenter dans une carte sombre avec sections (Résumé, Emails urgents, Tâches du jour)
+Tâches :
+État vide avec illustration ou icône grande, texte encourageant
+Quand des tâches existent : liste avec checkbox stylée, date d'échéance, email source cliquable
+Catégories :
+Cartes en dark #1a1f2e, icône colorée par catégorie, compteur emails en badge
+Bouton "+ Nouvelle catégorie" en accent bleu
+Abonnement :
+L'utilisateur voit son plan actuel mis en évidence (bordure bleue, badge "Plan actuel")
+Les autres plans sont affichés en grisé avec un bouton "Passer à ce plan" uniquement sur les plans supérieurs
+Ne pas afficher de bouton sur le plan actuel
+Slider sièges Business uniquement visible si l'utilisateur clique sur la carte Business
+Règle générale : Aucun fond blanc ou gris clair. Tout est dark. Les seules couleurs vives sont l'accent bleu et les badges de priorité (rouge, orange, vert).

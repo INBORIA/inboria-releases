@@ -7,9 +7,7 @@ import {
   getListCategoriesQueryKey
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
@@ -25,11 +23,22 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 const categorySchema = z.object({
-  name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+  name: z.string().min(2, "Le nom doit contenir au moins 2 caracteres"),
   description: z.string().optional(),
 });
 
 type CategoryFormValues = z.infer<typeof categorySchema>;
+
+const categoryColors = [
+  "bg-blue-500/10 text-blue-400",
+  "bg-purple-500/10 text-purple-400",
+  "bg-emerald-500/10 text-emerald-400",
+  "bg-amber-500/10 text-amber-400",
+  "bg-red-500/10 text-red-400",
+  "bg-cyan-500/10 text-cyan-400",
+  "bg-pink-500/10 text-pink-400",
+  "bg-indigo-500/10 text-indigo-400",
+];
 
 export default function Categories() {
   const queryClient = useQueryClient();
@@ -68,7 +77,7 @@ export default function Categories() {
           queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
           setIsCreateOpen(false);
           createForm.reset();
-          toast({ title: "Catégorie créée" });
+          toast({ title: "Categorie creee" });
         },
       }
     );
@@ -82,7 +91,7 @@ export default function Categories() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
           setEditCategory(null);
-          toast({ title: "Catégorie modifiée" });
+          toast({ title: "Categorie modifiee" });
         },
       }
     );
@@ -94,7 +103,7 @@ export default function Categories() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
-          toast({ title: "Catégorie supprimée" });
+          toast({ title: "Categorie supprimee" });
         },
       }
     );
@@ -103,22 +112,22 @@ export default function Categories() {
   return (
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto w-full">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 tracking-tight">Catégories de classement</h1>
-            <p className="text-gray-500 mt-1">Gérez les dossiers dans lesquels l'IA classe vos emails.</p>
+            <h1 className="text-xl font-semibold text-white tracking-tight">Categories de classement</h1>
+            <p className="text-[13px] text-[#8b9cb3] mt-1">Gerez les dossiers dans lesquels l'IA classe vos emails.</p>
           </div>
           
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
-              <Button className="shrink-0 gap-2">
-                <Plus className="w-4 h-4" />
-                Nouvelle catégorie
+              <Button size="sm" className="shrink-0 gap-2">
+                <Plus className="w-3.5 h-3.5" />
+                Nouvelle categorie
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="bg-card border-border">
               <DialogHeader>
-                <DialogTitle>Créer une catégorie</DialogTitle>
+                <DialogTitle className="text-white">Creer une categorie</DialogTitle>
               </DialogHeader>
               <Form {...createForm}>
                 <form onSubmit={createForm.handleSubmit(onSubmitCreate)} className="space-y-4">
@@ -127,9 +136,9 @@ export default function Categories() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Nom</FormLabel>
+                        <FormLabel className="text-[#8b9cb3]">Nom</FormLabel>
                         <FormControl>
-                          <Input placeholder="Ex: Factures, Fournisseurs..." {...field} />
+                          <Input placeholder="Ex: Factures, Fournisseurs..." className="bg-background border-border text-white" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -140,11 +149,11 @@ export default function Categories() {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Description (pour aider l'IA)</FormLabel>
+                        <FormLabel className="text-[#8b9cb3]">Description (pour aider l'IA)</FormLabel>
                         <FormControl>
                           <Textarea 
-                            placeholder="Ex: Tous les emails contenant des factures, devis ou reçus." 
-                            className="resize-none h-24"
+                            placeholder="Ex: Tous les emails contenant des factures, devis ou recus." 
+                            className="resize-none h-24 bg-background border-border text-white"
                             {...field} 
                           />
                         </FormControl>
@@ -154,7 +163,7 @@ export default function Categories() {
                   />
                   <DialogFooter>
                     <Button type="submit" disabled={createCategory.isPending}>
-                      {createCategory.isPending ? "Création..." : "Créer"}
+                      {createCategory.isPending ? "Creation..." : "Creer"}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -163,11 +172,10 @@ export default function Categories() {
           </Dialog>
         </div>
 
-        {/* Edit Dialog */}
         <Dialog open={!!editCategory} onOpenChange={(open) => !open && setEditCategory(null)}>
-          <DialogContent>
+          <DialogContent className="bg-card border-border">
             <DialogHeader>
-              <DialogTitle>Modifier la catégorie</DialogTitle>
+              <DialogTitle className="text-white">Modifier la categorie</DialogTitle>
             </DialogHeader>
             <Form {...editForm}>
               <form onSubmit={editForm.handleSubmit(onSubmitEdit)} className="space-y-4">
@@ -176,9 +184,9 @@ export default function Categories() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Nom</FormLabel>
+                      <FormLabel className="text-[#8b9cb3]">Nom</FormLabel>
                       <FormControl>
-                        <Input {...field} />
+                        <Input className="bg-background border-border text-white" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -189,9 +197,9 @@ export default function Categories() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Description</FormLabel>
+                      <FormLabel className="text-[#8b9cb3]">Description</FormLabel>
                       <FormControl>
-                        <Textarea className="resize-none h-24" {...field} />
+                        <Textarea className="resize-none h-24 bg-background border-border text-white" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -207,85 +215,80 @@ export default function Categories() {
           </DialogContent>
         </Dialog>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {isLoading ? (
             Array(6).fill(0).map((_, i) => (
-              <Card key={i} className="shadow-sm">
-                <CardContent className="p-5">
-                  <div className="flex justify-between items-start mb-4">
-                    <Skeleton className="w-8 h-8 rounded bg-primary/10" />
-                    <Skeleton className="w-6 h-6 rounded-full" />
-                  </div>
-                  <Skeleton className="h-6 w-3/4 mb-2" />
-                  <Skeleton className="h-4 w-full mb-4" />
-                  <Skeleton className="h-4 w-1/4" />
-                </CardContent>
-              </Card>
+              <div key={i} className="bg-card rounded-lg border border-border p-5">
+                <Skeleton className="w-8 h-8 rounded-lg bg-white/5 mb-3" />
+                <Skeleton className="h-5 w-3/4 mb-2 bg-white/5" />
+                <Skeleton className="h-4 w-full bg-white/5" />
+              </div>
             ))
           ) : categories?.length === 0 ? (
-            <div className="col-span-full text-center py-16 bg-white rounded-lg border border-border border-dashed">
-              <Tags className="mx-auto h-12 w-12 text-gray-300 mb-3" />
-              <h3 className="text-lg font-medium text-gray-900">Aucune catégorie</h3>
-              <p className="text-gray-500 mt-1 mb-4">Commencez par créer des catégories pour organiser votre boîte.</p>
-              <Button onClick={() => setIsCreateOpen(true)} variant="outline">Créer la première catégorie</Button>
+            <div className="col-span-full text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
+              <Tags className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
+              <h3 className="text-sm font-medium text-white mb-1">Aucune categorie</h3>
+              <p className="text-[13px] text-[#8b9cb3] mb-4">Creez des categories pour organiser votre boite.</p>
+              <Button onClick={() => setIsCreateOpen(true)} size="sm">
+                <Plus className="w-3.5 h-3.5 mr-2" />
+                Creer la premiere
+              </Button>
             </div>
           ) : (
-            categories?.map((cat) => (
-              <Card key={cat.id} className="shadow-sm hover:border-primary/50 transition-colors group">
-                <CardContent className="p-5">
-                  <div className="flex justify-between items-start mb-3">
-                    <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
-                      <Tags className="w-5 h-5" />
-                    </div>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity focus:opacity-100">
-                          <MoreVertical className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleOpenEdit(cat)} className="gap-2 cursor-pointer">
-                          <Edit2 className="h-4 w-4" /> Modifier
-                        </DropdownMenuItem>
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="gap-2 text-destructive cursor-pointer">
-                              <Trash2 className="h-4 w-4" /> Supprimer
-                            </DropdownMenuItem>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Êtes-vous absolument sûr ?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Cette action supprimera la catégorie "{cat.name}". Les emails associés perdront cette catégorie.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Annuler</AlertDialogCancel>
-                              <AlertDialogAction 
-                                onClick={() => handleDelete(cat.id)}
-                                className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                              >
-                                Supprimer
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
+            categories?.map((cat, i) => (
+              <div key={cat.id} className="bg-card rounded-lg border border-border p-5 hover:border-primary/30 transition-colors group">
+                <div className="flex justify-between items-start mb-3">
+                  <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${categoryColors[i % categoryColors.length]}`}>
+                    <Tags className="w-4 h-4" />
                   </div>
-                  
-                  <h3 className="text-lg font-semibold text-gray-900 mb-1">{cat.name}</h3>
-                  <p className="text-sm text-gray-500 line-clamp-2 h-10 mb-4">
-                    {cat.description || <span className="italic opacity-50">Aucune description</span>}
-                  </p>
-                  
-                  <div className="flex items-center text-sm font-medium text-gray-700 bg-secondary px-3 py-1.5 rounded-md inline-flex w-fit">
-                    <span className="text-primary mr-1.5">{cat.emailCount || 0}</span> 
-                    emails classés
-                  </div>
-                </CardContent>
-              </Card>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/[0.06]">
+                        <MoreVertical className="h-3.5 w-3.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="bg-card border-border">
+                      <DropdownMenuItem onClick={() => handleOpenEdit(cat)} className="gap-2 cursor-pointer text-[#8b9cb3] hover:text-white">
+                        <Edit2 className="h-3.5 w-3.5" /> Modifier
+                      </DropdownMenuItem>
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="gap-2 text-red-400 cursor-pointer">
+                            <Trash2 className="h-3.5 w-3.5" /> Supprimer
+                          </DropdownMenuItem>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent className="bg-card border-border">
+                          <AlertDialogHeader>
+                            <AlertDialogTitle className="text-white">Supprimer cette categorie ?</AlertDialogTitle>
+                            <AlertDialogDescription className="text-[#8b9cb3]">
+                              La categorie "{cat.name}" sera supprimee. Les emails associes perdront cette categorie.
+                            </AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">Annuler</AlertDialogCancel>
+                            <AlertDialogAction 
+                              onClick={() => handleDelete(cat.id)}
+                              className="bg-red-500 text-white hover:bg-red-600"
+                            >
+                              Supprimer
+                            </AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+                
+                <h3 className="text-[14px] font-semibold text-white mb-1">{cat.name}</h3>
+                <p className="text-[12px] text-[#8b9cb3] line-clamp-2 h-9 mb-3">
+                  {cat.description || <span className="italic opacity-50">Aucune description</span>}
+                </p>
+                
+                <div className="flex items-center text-[12px] text-[#8b9cb3] bg-white/[0.04] px-2.5 py-1 rounded-md inline-flex w-fit">
+                  <span className="text-primary font-medium mr-1">{cat.emailCount || 0}</span> 
+                  emails
+                </div>
+              </div>
             ))
           )}
         </div>

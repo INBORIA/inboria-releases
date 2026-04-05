@@ -10,13 +10,13 @@ import {
   CreditCard,
   LogOut,
   Loader2,
-  Menu
+  Menu,
+  Mail
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-import { Progress } from "@/components/ui/progress";
 
 const navigation = [
   { name: "Boite prioritaire", href: "/dashboard", icon: Inbox },
@@ -35,7 +35,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-secondary flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
@@ -55,16 +55,16 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
-      <div className="flex h-16 shrink-0 items-center px-6">
-        <div className="flex items-center gap-3 text-sidebar-foreground">
-          <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center font-bold shadow-sm">
-            N
+      <div className="flex h-16 shrink-0 items-center px-5">
+        <div className="flex items-center gap-2.5">
+          <div className="h-8 w-8 bg-primary rounded-lg flex items-center justify-center">
+            <Mail className="h-4 w-4 text-white" />
           </div>
-          <span className="font-semibold text-lg tracking-tight">NCV Mail</span>
+          <span className="font-semibold text-[15px] tracking-tight text-white">NCV Mail</span>
         </div>
       </div>
       
-      <nav className="flex-1 space-y-1 px-4 py-4">
+      <nav className="flex-1 px-3 py-3 space-y-0.5">
         {navigation.map((item) => {
           const isActive = location === item.href;
           return (
@@ -73,16 +73,16 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               href={item.href}
               className={cn(
                 isActive
-                  ? "bg-sidebar-accent text-sidebar-accent-foreground"
-                  : "text-sidebar-foreground/70 hover:bg-sidebar-accent/50 hover:text-sidebar-foreground",
-                "group flex items-center gap-x-3 rounded-md px-3 py-2 text-sm font-medium transition-colors"
+                  ? "bg-[#1e3a5f] text-primary"
+                  : "text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]",
+                "group flex items-center gap-x-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors"
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
               <item.icon
                 className={cn(
-                  isActive ? "text-sidebar-accent-foreground" : "text-sidebar-foreground/70 group-hover:text-sidebar-foreground",
-                  "h-5 w-5 shrink-0 transition-colors"
+                  isActive ? "text-primary" : "text-[#8b9cb3] group-hover:text-white",
+                  "h-[18px] w-[18px] shrink-0 transition-colors"
                 )}
                 aria-hidden="true"
               />
@@ -92,37 +92,42 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         })}
       </nav>
 
-      <div className="p-4 mt-auto">
-        <div className="bg-sidebar-accent rounded-lg p-4 mb-4">
+      <div className="p-3 mt-auto border-t border-[#1f2937]">
+        <div className="px-3 py-2.5 mb-3">
           <div className="flex justify-between items-center mb-2">
-            <span className="text-xs font-medium text-sidebar-foreground/70">
+            <span className="text-[11px] font-medium text-[#8b9cb3] uppercase tracking-wider">
               Quota emails
             </span>
-            <span className="text-xs font-medium text-sidebar-foreground">
-              {(user as any).emailsUsed} / {(user as any).emailsQuota}
+            <span className="text-[11px] font-medium text-white">
+              {(user as any).emailsUsed}/{(user as any).emailsQuota}
             </span>
           </div>
-          <Progress value={usagePercent} className="h-1.5 bg-sidebar-border" />
+          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
+            <div
+              className="h-full bg-primary rounded-full transition-all"
+              style={{ width: `${usagePercent}%` }}
+            />
+          </div>
         </div>
         
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="h-9 w-9 rounded-full bg-sidebar-border flex items-center justify-center text-sm font-medium text-sidebar-foreground">
+        <div className="flex items-center justify-between px-2">
+          <div className="flex items-center gap-2.5">
+            <div className="h-8 w-8 rounded-full bg-[#1e3a5f] flex items-center justify-center text-xs font-semibold text-primary">
               {((user as any).fullName || "U").charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col">
-              <span className="text-sm font-medium text-sidebar-foreground truncate max-w-[120px]">
+              <span className="text-[13px] font-medium text-white truncate max-w-[120px]">
                 {(user as any).fullName || "Utilisateur"}
               </span>
-              <span className="text-xs text-sidebar-foreground/70 truncate max-w-[120px]">
-                Plan {(user as any).plan}
+              <span className="text-[11px] text-[#8b9cb3] capitalize">
+                {(user as any).plan}
               </span>
             </div>
           </div>
           <Button
             variant="ghost"
             size="icon"
-            className="text-sidebar-foreground/70 hover:text-sidebar-foreground hover:bg-sidebar-accent"
+            className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] h-8 w-8"
             onClick={handleLogout}
           >
             <LogOut className="h-4 w-4" />
@@ -133,28 +138,29 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <div className="min-h-screen bg-secondary flex">
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-[260px] lg:flex-col">
-        <div className="flex grow flex-col overflow-y-auto bg-sidebar shadow-xl z-10">
+    <div className="min-h-screen bg-background flex">
+      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-[240px] lg:flex-col">
+        <div className="flex grow flex-col overflow-y-auto bg-sidebar border-r border-[#1f2937]">
           <SidebarContent />
         </div>
       </div>
 
-      <div className="lg:pl-[260px] flex flex-col flex-1 min-w-0">
-        <div className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:hidden">
+      <div className="lg:pl-[240px] flex flex-col flex-1 min-w-0">
+        <div className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4 lg:hidden">
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="-m-2.5 p-2.5 text-foreground">
+              <Button variant="ghost" size="icon" className="text-white">
                 <span className="sr-only">Ouvrir le menu</span>
-                <Menu className="h-6 w-6" aria-hidden="true" />
+                <Menu className="h-5 w-5" aria-hidden="true" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 bg-sidebar w-72 border-r-0">
+            <SheetContent side="left" className="p-0 bg-sidebar w-[240px] border-r border-[#1f2937]">
               <SidebarContent />
             </SheetContent>
           </Sheet>
-          <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6 items-center">
-            <span className="font-semibold text-lg tracking-tight">NCV Mail</span>
+          <div className="flex flex-1 items-center gap-2">
+            <Mail className="h-4 w-4 text-primary" />
+            <span className="font-semibold text-[15px] text-white">NCV Mail</span>
           </div>
         </div>
 

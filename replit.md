@@ -30,42 +30,59 @@ Replit connects TO Supabase. No local database.
 - API server validates token via `supabaseAdmin.auth.getUser(token)`
 - Token getter set via `setAuthTokenGetter()` in custom-fetch
 
-## Brand Colors
+## Design System — Dark Theme
 
-- Sidebar: `#1A3A5C` (navy)
-- CTA: `#1877F2` (blue)
-- Background: `#FFFFFF`
-- Secondary: `#F8FAFC`
-- Text: `#2C3E50`
-- Urgent: `#EF4444`, Medium: `#F59E0B`, Low: `#10B981`
-- Font: Inter
+Dark-only theme inspired by Linear/Superhuman:
+- **Background**: `#0d1117` (HSL 220 40% 7%)
+- **Card**: `#141c2b` (HSL 225 25% 12%)
+- **Sidebar**: `#0f1623` (HSL 220 33% 11%)
+- **Primary blue**: `#2d7dd2` (HSL 210 65% 50%)
+- **Muted text**: `#8b9cb3` (HSL 216 18% 62%)
+- **Border**: `#1f2937` (HSL 217 25% 18%)
+- **Hover card**: `#1a2235` (HSL 222 34% 15%)
+- **Active sidebar**: `#1e3a5f` (HSL 215 45% 18%)
+- **Font**: Inter
+- Priority badges: Red (urgent), Amber (moyen), Emerald (faible)
+
+## Email Integration
+
+- **Gmail**: OAuth2 flow via Google APIs, popup-based auth
+- **Outlook**: OAuth2 flow via Microsoft Graph API (needs MICROSOFT_CLIENT_ID/SECRET)
+- **IMAP**: Generic provider support (Orange, Free, SFR, Yahoo, etc.)
+- **AI Triage**: GPT-4o-mini classifies each email during sync (priority + summary + category)
+- **Force re-sync**: Deletes all emails then re-downloads with AI triage
+- **Sender parsing**: `parseSender()` helper splits "Name <email>" format
 
 ## Supabase Tables
 
 - `categories` (id uuid, created_at, user_id, name, description) — EXISTS
-- `emails` (id uuid, created_at, user_id, category_id, sender, subject, body, status, priority, summary) — EXISTS
-- `profiles` (id uuid, created_at, full_name, plan, seats, emails_used, emails_quota, stripe_*) — NEEDS CREATION
-- `tasks` (id uuid, created_at, user_id, email_id, title, done, due_date) — NEEDS CREATION
+- `emails` (id uuid, created_at, user_id, category_id, sender, subject, body, status, priority TEXT DEFAULT 'faible', summary TEXT, external_id) — EXISTS
+- `email_connections` (id uuid, user_id, provider, email_address, access_token, refresh_token, created_at, last_synced_at) — EXISTS
+- `profiles` (id uuid, created_at, full_name, plan, seats, emails_used, emails_quota, stripe_*) — EXISTS
+- `tasks` (id uuid, created_at, user_id, email_id, title, done, due_date) — EXISTS
 
-## Pages (all French)
+## Pages (all French, dark theme)
 
-- `/login`, `/signup` — Auth pages
-- `/dashboard` — Priority inbox
-- `/dashboard/bilan` — Daily AI summary
-- `/dashboard/taches` — Tasks
-- `/dashboard/categories` — Category management
-- `/dashboard/parametres` — Settings
-- `/dashboard/abonnement` — Subscription (Gratuit/Solo/Pro/Business)
+- `/login`, `/signup` — Auth pages (dark card on dark background)
+- `/dashboard` — Priority inbox with email cards, priority badges, categories sidebar
+- `/dashboard/bilan` — Daily AI summary with score, urgencies, key emails, advice
+- `/dashboard/taches` — Tasks extracted from emails, with tabs (A faire/Terminees/Toutes)
+- `/dashboard/categories` — Category management with create/edit/delete
+- `/dashboard/parametres` — Settings: email connections, AI preferences, profile, notifications
+- `/dashboard/abonnement` — Subscription plans (Gratuit 0€ / Solo 9€ / Pro 19€ / Business 9€/seat)
+- 404 page — Dark themed "Page introuvable"
 
 ## API Routes (prefix: /api)
 
-Auth, profile, emails, categories, tasks, dashboard stats, AI triage/summary
+Auth, profile, emails, categories, tasks, dashboard stats, AI triage/summary, email connections/sync
 
 ## Environment Variables
 
 - `VITE_SUPABASE_URL` — Supabase project URL
 - `VITE_SUPABASE_PUBLISHABLE_KEY` — Supabase anon key (secret)
 - `SUPABASE_SECRET_KEY` — Supabase service role key (secret)
+- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — Gmail OAuth2
+- `MICROSOFT_CLIENT_ID` / `MICROSOFT_CLIENT_SECRET` — Outlook OAuth2 (PENDING)
 - `AI_INTEGRATIONS_OPENAI_*` — Auto-provisioned by Replit
 
 ## Key Commands

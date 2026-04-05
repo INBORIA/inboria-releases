@@ -57,8 +57,8 @@ export default function Login() {
   return (
     <AuthLayout>
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold text-gray-900">Bienvenue</h1>
-        <p className="text-gray-500 mt-2 text-sm">Connectez-vous a votre compte NCV Mail</p>
+        <h1 className="text-2xl font-bold text-white">Bienvenue</h1>
+        <p className="text-[#8b9cb3] mt-2 text-sm">Connectez-vous a votre compte NCV Mail</p>
       </div>
 
       <Form {...form}>
@@ -68,9 +68,9 @@ export default function Login() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel className="text-[#8b9cb3]">Email</FormLabel>
                 <FormControl>
-                  <Input placeholder="nom@entreprise.com" type="email" {...field} />
+                  <Input placeholder="nom@entreprise.com" type="email" className="bg-background border-border text-white" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -82,10 +82,10 @@ export default function Login() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center justify-between">
-                  <FormLabel>Mot de passe</FormLabel>
+                  <FormLabel className="text-[#8b9cb3]">Mot de passe</FormLabel>
                 </div>
                 <FormControl>
-                  <Input type="password" placeholder="" {...field} />
+                  <Input type="password" placeholder="" className="bg-background border-border text-white" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -101,7 +101,7 @@ export default function Login() {
         </form>
       </Form>
 
-      <div className="mt-6 text-center text-sm text-gray-500">
+      <div className="mt-6 text-center text-sm text-[#8b9cb3]">
         Pas encore de compte ?{" "}
         <Link href="/signup" className="font-semibold text-primary hover:text-primary/80">
           Creer un compte
