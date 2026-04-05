@@ -36,6 +36,13 @@ const PLAN_QUOTAS: Record<string, number> = {
   business: 10000,
 };
 
+function getPlanFromPriceId(priceId: string): string | null {
+  for (const [plan, price] of Object.entries(PRICE_MAP)) {
+    if (price && price === priceId) return plan;
+  }
+  return null;
+}
+
 const router: IRouter = Router();
 
 router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => {
@@ -49,13 +56,48 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
 
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("id, stripe_customer_id")
+      .select("id, stripe_customer_id, stripe_subscription_id")
       .eq("id", req.userId!)
       .single();
 
     if (!profile) {
       res.status(404).json({ error: "Profil introuvable" });
       return;
+    }
+
+    const quantity = planId === "business" ? (seats || 1) : 1;
+
+    if (profile.stripe_subscription_id) {
+      const subscription = await getStripe().subscriptions.retrieve(profile.stripe_subscription_id);
+
+      if (subscription.status === "active" || subscription.status === "trialing") {
+        const subscriptionItem = subscription.items.data[0];
+        if (!subscriptionItem) {
+          res.status(500).json({ error: "Abonnement Stripe invalide" });
+          return;
+        }
+
+        await getStripe().subscriptions.update(profile.stripe_subscription_id, {
+          items: [
+            {
+              id: subscriptionItem.id,
+              price: PRICE_MAP[planId],
+              quantity,
+            },
+          ],
+          metadata: { planId },
+          proration_behavior: "create_prorations",
+        });
+
+        const quota = PLAN_QUOTAS[planId] || 50;
+        await supabaseAdmin
+          .from("profiles")
+          .update({ plan: planId, emails_quota: quota, seats: quantity })
+          .eq("id", req.userId!);
+
+        res.json({ url: null, updated: true });
+        return;
+      }
     }
 
     let customerId = profile.stripe_customer_id;
@@ -77,7 +119,6 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
         .eq("id", req.userId!);
     }
 
-    const quantity = planId === "business" ? (seats || 1) : 1;
     const frontendUrl = getFrontendUrl();
 
     const session = await getStripe().checkout.sessions.create({
@@ -183,10 +224,20 @@ router.post("/stripe/webhook", async (req: RawBodyRequest, res): Promise<void> =
         const customerId = subscription.customer as string;
 
         if (subscription.status === "active") {
-          const quantity = subscription.items.data[0]?.quantity || 1;
+          const subscriptionItem = subscription.items.data[0];
+          const quantity = subscriptionItem?.quantity || 1;
+          const priceId = subscriptionItem?.price?.id || "";
+          const derivedPlan = getPlanFromPriceId(priceId);
+
+          const updates: Record<string, unknown> = { seats: quantity };
+          if (derivedPlan) {
+            updates.plan = derivedPlan;
+            updates.emails_quota = PLAN_QUOTAS[derivedPlan] || 50;
+          }
+
           await supabaseAdmin
             .from("profiles")
-            .update({ seats: quantity })
+            .update(updates)
             .eq("stripe_customer_id", customerId);
         }
         break;

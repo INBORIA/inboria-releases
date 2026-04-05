@@ -306,7 +306,9 @@ export interface CheckoutBody {
 }
 
 export interface CheckoutResponse {
-  url: string;
+  /** @nullable */
+  url?: string | null;
+  updated?: boolean;
 }
 
 export interface PortalResponse {

@@ -537,7 +537,8 @@ export const CreateCheckoutSessionBody = zod.object({
 });
 
 export const CreateCheckoutSessionResponse = zod.object({
-  url: zod.string(),
+  url: zod.string().nullish(),
+  updated: zod.boolean().optional(),
 });
 
 /**

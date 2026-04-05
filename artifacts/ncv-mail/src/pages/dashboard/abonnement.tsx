@@ -120,7 +120,13 @@ export default function Abonnement() {
       {
         onSuccess: (data) => {
           setLoadingPlan(null);
-          if (data.url) {
+          if (data.updated) {
+            queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+            toast({
+              title: "Plan mis a jour",
+              description: "Votre abonnement a ete modifie avec succes.",
+            });
+          } else if (data.url) {
             window.location.href = data.url;
           }
         },

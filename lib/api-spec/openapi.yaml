@@ -1203,9 +1203,9 @@ components:
       type: object
       properties:
         url:
-          type: string
-      required:
-        - url
+          type: ["string", "null"]
+        updated:
+          type: boolean
 
     PortalResponse:
       type: object
