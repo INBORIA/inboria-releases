@@ -49,7 +49,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
 
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("id, email, stripe_customer_id")
+      .select("id, stripe_customer_id")
       .eq("id", req.userId!)
       .single();
 
@@ -61,8 +61,12 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
     let customerId = profile.stripe_customer_id;
 
     if (!customerId) {
+      const token = req.headers.authorization!.slice(7);
+      const { data: userData } = await supabaseAdmin.auth.getUser(token);
+      const userEmail = userData.user?.email || "";
+
       const customer = await getStripe().customers.create({
-        email: profile.email,
+        email: userEmail,
         metadata: { userId: profile.id },
       });
       customerId = customer.id;
@@ -127,14 +131,22 @@ router.post("/stripe/webhook", async (req: RawBodyRequest, res): Promise<void> =
         if (planId && customerId) {
           const quota = PLAN_QUOTAS[planId] || 50;
 
+          const updates: Record<string, unknown> = {
+            plan: planId,
+            stripe_customer_id: customerId,
+            stripe_subscription_id: subscriptionId,
+            emails_quota: quota,
+          };
+
+          if (subscriptionId) {
+            const subscription = await getStripe().subscriptions.retrieve(subscriptionId as string);
+            const quantity = subscription.items.data[0]?.quantity || 1;
+            updates.seats = quantity;
+          }
+
           await supabaseAdmin
             .from("profiles")
-            .update({
-              plan: planId,
-              stripe_customer_id: customerId,
-              stripe_subscription_id: subscriptionId,
-              emails_quota: quota,
-            })
+            .update(updates)
             .eq("stripe_customer_id", customerId);
         }
         break;
