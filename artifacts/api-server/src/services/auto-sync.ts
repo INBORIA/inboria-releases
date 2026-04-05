@@ -42,7 +42,10 @@ function extractGmailBody(payload: any): string {
   return "";
 }
 
-const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
+const openai = new OpenAI({
+  apiKey: process.env["AI_INTEGRATIONS_OPENAI_API_KEY"] || process.env["OPENAI_API_KEY"],
+  baseURL: process.env["AI_INTEGRATIONS_OPENAI_BASE_URL"] || undefined,
+});
 
 const SYNC_INTERVAL_MS = 5 * 60 * 1000;
 const GOOGLE_CLIENT_ID = process.env["GOOGLE_CLIENT_ID"] || "";

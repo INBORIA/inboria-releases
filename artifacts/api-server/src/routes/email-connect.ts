@@ -5,7 +5,10 @@ import OpenAI from "openai";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 
-const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
+const openai = new OpenAI({
+  apiKey: process.env["AI_INTEGRATIONS_OPENAI_API_KEY"] || process.env["OPENAI_API_KEY"],
+  baseURL: process.env["AI_INTEGRATIONS_OPENAI_BASE_URL"] || undefined,
+});
 
 function extractGmailBody(payload: any): string {
   if (!payload) return "";
