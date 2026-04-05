@@ -96,6 +96,7 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
     const updates: Record<string, unknown> = {};
     if (req.body.categoryId !== undefined) updates.category_id = req.body.categoryId;
     if (req.body.status !== undefined) updates.status = req.body.status;
+    if (req.body.priority !== undefined) updates.priority = req.body.priority;
 
     const { data: email, error } = await supabaseAdmin
       .from("emails")
@@ -126,6 +127,25 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
     });
   } catch {
     res.status(500).json({ error: "Failed to update email" });
+  }
+});
+
+router.delete("/emails/:id", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { error } = await supabaseAdmin
+      .from("emails")
+      .delete()
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!);
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Failed to delete email" });
   }
 });
 

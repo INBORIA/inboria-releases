@@ -183,6 +183,10 @@ export const ListEmailsPriority = {
   faible: "faible",
 } as const;
 
+export type DeleteEmail200 = {
+  success?: boolean;
+};
+
 export type ListTasksParams = {
   status?: ListTasksStatus;
 };

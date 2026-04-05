@@ -167,6 +167,17 @@ export const UpdateEmailResponse = zod.object({
 });
 
 /**
+ * @summary Delete an email
+ */
+export const DeleteEmailParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const DeleteEmailResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
  * @summary List categories
  */
 export const ListCategoriesResponseItem = zod.object({

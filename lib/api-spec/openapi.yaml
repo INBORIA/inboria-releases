@@ -210,6 +210,27 @@ paths:
               schema:
                 $ref: "#/components/schemas/Email"
 
+    delete:
+      operationId: deleteEmail
+      tags: [emails]
+      summary: Delete an email
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Email deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
   /categories:
     get:
       operationId: listCategories

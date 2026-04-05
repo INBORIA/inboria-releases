@@ -3,6 +3,7 @@ import {
   useListEmails,
   useGetCategoryCounts,
   useUpdateEmail,
+  useDeleteEmail,
   getListEmailsQueryKey,
   useGetDashboardSummary,
   useTriageEmail,
@@ -15,7 +16,7 @@ import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -44,7 +45,7 @@ const triageSchema = z.object({
   body: z.string().min(1, "Contenu requis"),
 });
 
-function EmailDetail({ email, onBack, onMarkRead }: { email: any; onBack: () => void; onMarkRead: (id: number) => void }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void }) {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyText, setReplyText] = useState("");
 
@@ -126,9 +127,19 @@ function EmailDetail({ email, onBack, onMarkRead }: { email: any; onBack: () => 
             variant="outline"
             size="sm"
             className="gap-1.5 bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+            onClick={() => onArchive(email.id)}
           >
             <Archive className="w-3.5 h-3.5" />
             Archiver
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5 bg-transparent border-border text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.08]"
+            onClick={() => onDelete(email.id)}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            Supprimer
           </Button>
         </div>
 
@@ -176,18 +187,50 @@ export default function Dashboard() {
   const { data: summary, isLoading: summaryLoading } = useGetDashboardSummary();
 
   const updateEmail = useUpdateEmail();
+  const deleteEmail = useDeleteEmail();
   const triageEmail = useTriageEmail();
 
+  const activeEmails = emails?.filter((e) => e.status !== "archived");
   const selectedEmail = emails?.find((e) => e.id === selectedEmailId);
+
+  const invalidateAll = () => {
+    queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+    queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
+    queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
+    queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+  };
 
   const handleMarkAsRead = (id: number) => {
     updateEmail.mutate(
       { id, data: { status: "read" } },
+      { onSuccess: invalidateAll }
+    );
+  };
+
+  const handleArchive = (id: number) => {
+    updateEmail.mutate(
+      { id, data: { status: "archived" } },
       {
         onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+          setSelectedEmailId(null);
+          invalidateAll();
+          toast({ title: "Email archive" });
+        },
+      }
+    );
+  };
+
+  const handleDelete = (id: number) => {
+    deleteEmail.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          setSelectedEmailId(null);
+          invalidateAll();
+          toast({ title: "Email supprime" });
+        },
+        onError: () => {
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible de supprimer l'email." });
         },
       }
     );
@@ -229,6 +272,8 @@ export default function Dashboard() {
             email={selectedEmail}
             onBack={() => setSelectedEmailId(null)}
             onMarkRead={handleMarkAsRead}
+            onArchive={handleArchive}
+            onDelete={handleDelete}
           />
         </div>
       </DashboardLayout>
@@ -337,14 +382,14 @@ export default function Dashboard() {
                   <Skeleton className="h-4 w-1/2 bg-white/5" />
                 </div>
               ))
-            ) : emails?.length === 0 ? (
+            ) : activeEmails?.length === 0 ? (
               <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
                 <Inbox className="mx-auto h-10 w-10 text-[#8b9cb3]/40 mb-3" />
                 <h3 className="text-sm font-medium text-white">Inbox Zero</h3>
                 <p className="text-[13px] text-[#8b9cb3] mt-1">Tous vos emails ont ete traites.</p>
               </div>
             ) : (
-              emails?.map((email) => (
+              activeEmails?.map((email) => (
                 <div
                   key={email.id}
                   className="group bg-card hover:bg-[#1a2235] rounded-lg border border-border p-4 transition-colors cursor-pointer"
