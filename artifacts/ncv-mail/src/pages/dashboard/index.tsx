@@ -17,7 +17,7 @@ import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2 } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -271,6 +271,7 @@ export default function Dashboard() {
   const [filterPriority, setFilterPriority] = useState<string>("all");
   const [isSimulateOpen, setIsSimulateOpen] = useState(false);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
+  const [isSyncing, setIsSyncing] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -375,6 +376,33 @@ export default function Dashboard() {
     );
   };
 
+  const handleSync = async () => {
+    setIsSyncing(true);
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res = await fetch(`${import.meta.env.BASE_URL}api/email/sync`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      const data = await res.json();
+      if (res.ok) {
+        invalidateAll();
+        toast({ title: "Synchronisation terminee", description: `${data.synced || 0} nouveau(x) email(s) importe(s).` });
+      } else {
+        toast({ variant: "destructive", title: "Erreur", description: data.error || "Echec de la synchronisation." });
+      }
+    } catch {
+      toast({ variant: "destructive", title: "Erreur", description: "Impossible de synchroniser." });
+    } finally {
+      setIsSyncing(false);
+    }
+  };
+
   const form = useForm<z.infer<typeof triageSchema>>({
     resolver: zodResolver(triageSchema),
     defaultValues: { sender: "", subject: "", body: "" },
@@ -432,6 +460,16 @@ export default function Dashboard() {
           <div className="flex items-center justify-between mb-5">
             <h1 className="text-xl font-semibold text-white tracking-tight">Inbox</h1>
             <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-2 bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                onClick={handleSync}
+                disabled={isSyncing}
+              >
+                <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin" : ""}`} />
+                {isSyncing ? "Sync..." : "Rafraichir"}
+              </Button>
               <Dialog open={isSimulateOpen} onOpenChange={setIsSimulateOpen}>
                 <DialogTrigger asChild>
                   <Button variant="outline" size="sm" className="hidden sm:flex gap-2 bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]">
