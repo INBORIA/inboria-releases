@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Bell, BrainCircuit, CheckCircle2, RefreshCw, Trash2, Eye, EyeOff, AlertCircle, Shield } from "lucide-react";
+import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 
@@ -45,7 +45,6 @@ export default function Parametres() {
   const { data: connections, isLoading: connectionsLoading } = useEmailConnections();
 
   const [fullName, setFullName] = useState("");
-  const [syncing, setSyncing] = useState(false);
   const [showImapForm, setShowImapForm] = useState(false);
   const [imapEmail, setImapEmail] = useState("");
   const [imapPassword, setImapPassword] = useState("");
@@ -156,36 +155,9 @@ export default function Parametres() {
     }
   };
 
-  const handleSync = async (force = false) => {
-    setSyncing(true);
-    try {
-      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
-      const res = await fetch(`${baseUrl}/api/email/sync`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${session?.access_token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ force }),
-      });
-      const data = await res.json();
-      if (res.ok) {
-        toast({ title: `${data.synced} emails synchronises${force ? " (re-sync complet)" : ""}` });
-        queryClient.invalidateQueries({ queryKey: ["email-connections"] });
-      } else {
-        toast({ variant: "destructive", title: "Erreur", description: data.error });
-      }
-    } catch {
-      toast({ variant: "destructive", title: "Erreur de synchronisation" });
-    } finally {
-      setSyncing(false);
-    }
-  };
-
   const gmailConnected = connections?.find(c => c.provider === "gmail");
   const outlookConnected = connections?.find(c => c.provider === "outlook");
   const imapConnected = connections?.find(c => c.provider === "imap");
-  const hasConnections = connections && connections.length > 0;
 
   return (
     <DashboardLayout>
@@ -197,24 +169,10 @@ export default function Parametres() {
 
         <div className="space-y-6">
           <section>
-            <div className="flex items-center justify-between mb-3">
-              <h2 className="text-[14px] font-semibold text-white flex items-center gap-2">
-                <Mail className="w-4 h-4 text-primary" />
-                Connexion Email
-              </h2>
-              {hasConnections && (
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="sm" className="h-8 text-[12px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]" onClick={() => handleSync(false)} disabled={syncing}>
-                    <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${syncing ? "animate-spin" : ""}`} />
-                    {syncing ? "Sync..." : "Synchroniser"}
-                  </Button>
-                  <Button variant="ghost" size="sm" className="h-8 text-[12px] text-amber-400 hover:text-amber-300 hover:bg-amber-500/10" onClick={() => handleSync(true)} disabled={syncing}>
-                    <RefreshCw className={`w-3.5 h-3.5 mr-1.5 ${syncing ? "animate-spin" : ""}`} />
-                    Re-sync + tri IA
-                  </Button>
-                </div>
-              )}
-            </div>
+            <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
+              <Mail className="w-4 h-4 text-primary" />
+              Connexion Email
+            </h2>
             <div className="bg-card rounded-lg border border-border p-5 space-y-3">
               {connectionsLoading ? (
                 <Skeleton className="h-16 w-full bg-white/5" />
