@@ -8,15 +8,17 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import React, { useEffect } from "react";
+import React, { useEffect, useRef } from "react";
+import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { KeyboardProvider } from "react-native-keyboard-controller";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { setBaseUrl } from "@workspace/api-client-react";
+import { setBaseUrl, useRegisterPushToken } from "@workspace/api-client-react";
 
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { useColors } from "@/hooks/useColors";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 
 SplashScreen.preventAutoHideAsync();
 
@@ -31,6 +33,9 @@ function AuthGate({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth();
   const segments = useSegments();
   const router = useRouter();
+  const { expoPushToken } = usePushNotifications();
+  const registerPushToken = useRegisterPushToken();
+  const tokenRegistered = useRef<string | null>(null);
 
   useEffect(() => {
     if (loading) return;
@@ -41,6 +46,15 @@ function AuthGate({ children }: { children: React.ReactNode }) {
       router.replace("/");
     }
   }, [session, loading, segments]);
+
+  useEffect(() => {
+    if (expoPushToken && session && tokenRegistered.current !== expoPushToken) {
+      tokenRegistered.current = expoPushToken;
+      registerPushToken.mutate({
+        data: { token: expoPushToken, platform: Platform.OS },
+      });
+    }
+  }, [expoPushToken, session]);
 
   return <>{children}</>;
 }

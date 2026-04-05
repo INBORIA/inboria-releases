@@ -117,6 +117,18 @@ export const UpdateProfileResponse = zod.object({
 });
 
 /**
+ * @summary Register push notification token
+ */
+export const RegisterPushTokenBody = zod.object({
+  token: zod.string(),
+  platform: zod.string().optional(),
+});
+
+export const RegisterPushTokenResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
  * @summary List emails
  */
 export const ListEmailsQueryParams = zod.object({

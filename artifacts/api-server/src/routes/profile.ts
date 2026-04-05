@@ -91,4 +91,31 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
   }
 });
 
+router.post("/profile/push-token", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { token: pushToken, platform } = req.body as { token?: string; platform?: string };
+    if (!pushToken || typeof pushToken !== "string") {
+      res.status(400).json({ error: "Missing push token" });
+      return;
+    }
+
+    const { error } = await supabaseAdmin
+      .from("profiles")
+      .update({
+        push_token: pushToken,
+        push_platform: platform || "unknown",
+      })
+      .eq("id", req.userId!);
+
+    if (error) {
+      res.status(500).json({ error: "Failed to save push token" });
+      return;
+    }
+
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Failed to register push token" });
+  }
+});
+
 export default router;

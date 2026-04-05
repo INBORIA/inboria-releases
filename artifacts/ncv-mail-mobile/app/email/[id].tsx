@@ -16,7 +16,7 @@ import { useColors } from "@/hooks/useColors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import * as Haptics from "expo-haptics";
 
-function PriorityBadge({ priority, colors }: { priority: string; colors: any }) {
+function PriorityBadge({ priority }: { priority: string }) {
   const config: Record<string, { bg: string; text: string; label: string }> = {
     urgent: { bg: "#ef444420", text: "#ef4444", label: "Urgent" },
     moyen: { bg: "#f59e0b20", text: "#f59e0b", label: "Moyen" },
@@ -98,7 +98,7 @@ export default function EmailDetailScreen() {
         <View style={[styles.emailCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <View style={styles.subjectRow}>
             <Text style={[styles.subject, { color: colors.foreground }]}>{email.subject}</Text>
-            <PriorityBadge priority={email.priority ?? "faible"} colors={colors} />
+            <PriorityBadge priority={email.priority ?? "faible"} />
           </View>
 
           <View style={styles.senderRow}>

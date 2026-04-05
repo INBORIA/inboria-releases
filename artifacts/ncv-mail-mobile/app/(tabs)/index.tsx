@@ -13,6 +13,7 @@ import {
 import { useRouter } from "expo-router";
 import { Feather } from "@expo/vector-icons";
 import { useListEmails } from "@workspace/api-client-react";
+import type { Email } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -73,7 +74,7 @@ export default function InboxScreen() {
     { key: "faible", label: "Faible" },
   ];
 
-  const renderEmail = ({ item }: { item: any }) => (
+  const renderEmail = ({ item }: { item: Email }) => (
     <TouchableOpacity
       style={[styles.emailRow, { backgroundColor: colors.card, borderColor: colors.border }]}
       onPress={() => router.push(`/email/${item.id}`)}
@@ -102,6 +103,14 @@ export default function InboxScreen() {
             <Text style={[styles.summary, { color: colors.mutedForeground }]} numberOfLines={1}>
               {item.summary}
             </Text>
+          ) : null}
+          {item.categoryName ? (
+            <View style={styles.categoryRow}>
+              <View style={[styles.categoryChip, { backgroundColor: colors.primary + "15" }]}>
+                <Feather name="tag" size={10} color={colors.primary} />
+                <Text style={[styles.categoryText, { color: colors.primary }]}>{item.categoryName}</Text>
+              </View>
+            </View>
           ) : null}
         </View>
       </View>
@@ -232,6 +241,9 @@ const styles = StyleSheet.create({
   unreadDot: { width: 7, height: 7, borderRadius: 4 },
   subject: { fontSize: 13, fontFamily: "Inter_400Regular", marginTop: 2 },
   summary: { fontSize: 12, fontFamily: "Inter_400Regular", marginTop: 2 },
+  categoryRow: { flexDirection: "row", marginTop: 4 },
+  categoryChip: { flexDirection: "row", alignItems: "center", gap: 3, paddingHorizontal: 6, paddingVertical: 2, borderRadius: 4 },
+  categoryText: { fontSize: 10, fontFamily: "Inter_500Medium" },
   emailRight: { alignItems: "flex-end", gap: 6, marginLeft: 8 },
   dateText: { fontSize: 11, fontFamily: "Inter_400Regular" },
   priorityDot: { width: 8, height: 8, borderRadius: 4 },

@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useListProjects } from "@workspace/api-client-react";
+import type { Project } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 
@@ -40,7 +41,7 @@ export default function ProjectsScreen() {
     en_pause: "En pause",
   };
 
-  const renderProject = ({ item }: { item: any }) => {
+  const renderProject = ({ item }: { item: Project }) => {
     const sc = statusColors[item.status] || colors.mutedForeground;
     return (
       <TouchableOpacity

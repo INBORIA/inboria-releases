@@ -42,6 +42,8 @@ export * from "./project";
 export * from "./projectDetail";
 export * from "./projectStatus";
 export * from "./registerBody";
+export * from "./registerPushToken200";
+export * from "./registerPushTokenBody";
 export * from "./sendEmail200";
 export * from "./sendEmailBody";
 export * from "./stripeWebhook200";

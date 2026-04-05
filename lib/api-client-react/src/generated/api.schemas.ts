@@ -62,6 +62,11 @@ export interface UpdateProfileBody {
   aiLanguage?: UpdateProfileBodyAiLanguage;
 }
 
+export interface RegisterPushTokenBody {
+  token: string;
+  platform?: string;
+}
+
 export interface Email {
   id: number;
   sender: string;
@@ -347,6 +352,10 @@ export interface CheckoutResponse {
 export interface PortalResponse {
   url: string;
 }
+
+export type RegisterPushToken200 = {
+  success?: boolean;
+};
 
 export type ListEmailsParams = {
   priority?: ListEmailsPriority;

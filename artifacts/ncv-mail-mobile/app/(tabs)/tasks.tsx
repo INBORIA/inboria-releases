@@ -11,6 +11,7 @@ import {
 } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useListTasks, useUpdateTask } from "@workspace/api-client-react";
+import type { Task } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import * as Haptics from "expo-haptics";
@@ -47,7 +48,7 @@ export default function TasksScreen() {
     { key: "all" as const, label: "Toutes" },
   ];
 
-  const renderTask = ({ item }: { item: any }) => (
+  const renderTask = ({ item }: { item: Task }) => (
     <TouchableOpacity
       style={[styles.taskRow, { backgroundColor: colors.card, borderColor: colors.border }]}
       onPress={() => toggleTask(item.id, item.done)}
