@@ -43,8 +43,7 @@ function extractGmailBody(payload: any): string {
 }
 
 const openai = new OpenAI({
-  apiKey: process.env["AI_INTEGRATIONS_OPENAI_API_KEY"] || process.env["OPENAI_API_KEY"],
-  baseURL: process.env["AI_INTEGRATIONS_OPENAI_BASE_URL"] || undefined,
+  apiKey: process.env["OPENAI_API_KEY"],
 });
 
 const SYNC_INTERVAL_MS = 5 * 60 * 1000;
@@ -562,14 +561,39 @@ async function runAutoSync() {
     }
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-    if (totalSynced > 0) {
-      console.log(`[auto-sync] Done: ${totalSynced} new email(s) in ${elapsed}s`);
-    }
+    console.log(`[auto-sync] Done: ${totalSynced} new email(s) in ${elapsed}s`);
   } catch (err: any) {
     console.error("[auto-sync] Fatal error:", err.message);
   } finally {
     syncRunning = false;
   }
+}
+
+export async function triggerSyncForConnection(connectionId: string) {
+  const { data: conn, error } = await supabaseAdmin
+    .from("email_connections")
+    .select("*")
+    .eq("id", connectionId)
+    .single();
+
+  if (error || !conn) {
+    console.error("[auto-sync] triggerSync: connection not found", connectionId);
+    return 0;
+  }
+
+  console.log(`[auto-sync] Immediate sync triggered for ${conn.email_address}`);
+
+  let synced = 0;
+  if (conn.provider === "gmail") {
+    synced = await syncGmailForUser(conn);
+  } else if (conn.provider === "outlook") {
+    synced = await syncOutlookForUser(conn);
+  } else if (conn.provider === "imap") {
+    synced = await syncImapForUser(conn);
+  }
+
+  console.log(`[auto-sync] Immediate sync done: ${synced} email(s) for ${conn.email_address}`);
+  return synced;
 }
 
 export function startAutoSync() {

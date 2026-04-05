@@ -4,10 +4,10 @@ import { ImapFlow } from "imapflow";
 import OpenAI from "openai";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { triggerSyncForConnection } from "../services/auto-sync";
 
 const openai = new OpenAI({
-  apiKey: process.env["AI_INTEGRATIONS_OPENAI_API_KEY"] || process.env["OPENAI_API_KEY"],
-  baseURL: process.env["AI_INTEGRATIONS_OPENAI_BASE_URL"] || undefined,
+  apiKey: process.env["OPENAI_API_KEY"],
 });
 
 function extractGmailBody(payload: any): string {
@@ -183,18 +183,22 @@ router.get("/email/callback/gmail", async (req, res): Promise<void> => {
     const oauth2 = google.oauth2({ version: "v2", auth: oauth2Client });
     const { data: userInfo } = await oauth2.userinfo.get();
 
-    await supabaseAdmin.from("email_connections").upsert({
+    const { data: connData } = await supabaseAdmin.from("email_connections").upsert({
       user_id: userId,
       provider: "gmail",
       email_address: userInfo.email,
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       token_expires_at: tokens.expiry_date ? new Date(tokens.expiry_date).toISOString() : null,
-    }, { onConflict: "user_id,provider" });
+    }, { onConflict: "user_id,provider" }).select("id").single();
 
-    const domain = process.env["REPLIT_DEV_DOMAIN"] || process.env["REPLIT_DOMAINS"] || "localhost";
-    const protocol = domain.includes("localhost") ? "http" : "https";
-    res.send(`<html><body><script>window.opener?.postMessage({type:'email-connected',provider:'gmail'},'*');window.close();</script><p>Gmail connecte ! Vous pouvez fermer cette fenetre.</p></body></html>`);
+    if (connData?.id) {
+      triggerSyncForConnection(connData.id).catch((e) =>
+        console.error("[email-connect] Gmail auto-sync trigger failed:", e.message)
+      );
+    }
+
+    res.send(`<html><body><script>window.opener?.postMessage({type:'email-connected',provider:'gmail'},'*');window.close();</script><p>Gmail connecte ! Synchronisation en cours...</p></body></html>`);
   } catch (err: any) {
     console.error("Gmail callback error:", err);
     res.status(500).send("Connexion Gmail echouee: " + (err.message || "Erreur inconnue"));
@@ -259,16 +263,22 @@ router.get("/email/callback/outlook", async (req, res): Promise<void> => {
     });
     const profile = await profileResponse.json() as any;
 
-    await supabaseAdmin.from("email_connections").upsert({
+    const { data: outlookConn } = await supabaseAdmin.from("email_connections").upsert({
       user_id: userId,
       provider: "outlook",
       email_address: profile.mail || profile.userPrincipalName,
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
-    }, { onConflict: "user_id,provider" });
+    }, { onConflict: "user_id,provider" }).select("id").single();
 
-    res.send(`<html><body><script>window.opener?.postMessage({type:'email-connected',provider:'outlook'},'*');window.close();</script><p>Outlook connecte ! Vous pouvez fermer cette fenetre.</p></body></html>`);
+    if (outlookConn?.id) {
+      triggerSyncForConnection(outlookConn.id).catch((e) =>
+        console.error("[email-connect] Outlook auto-sync trigger failed:", e.message)
+      );
+    }
+
+    res.send(`<html><body><script>window.opener?.postMessage({type:'email-connected',provider:'outlook'},'*');window.close();</script><p>Outlook connecte ! Synchronisation en cours...</p></body></html>`);
   } catch (err: any) {
     console.error("Outlook callback error:", err);
     res.status(500).send("Connexion Outlook echouee: " + (err.message || "Erreur inconnue"));
@@ -317,14 +327,20 @@ router.post("/email/connect/imap", requireAuth, async (req, res): Promise<void> 
 
     const imapConfig = JSON.stringify({ host, port });
 
-    await supabaseAdmin.from("email_connections").upsert({
+    const { data: imapConn } = await supabaseAdmin.from("email_connections").upsert({
       user_id: req.userId,
       provider: "imap",
       email_address: email,
       access_token: password,
       refresh_token: imapConfig,
       token_expires_at: null,
-    }, { onConflict: "user_id,provider" });
+    }, { onConflict: "user_id,provider" }).select("id").single();
+
+    if (imapConn?.id) {
+      triggerSyncForConnection(imapConn.id).catch((e) =>
+        console.error("[email-connect] IMAP auto-sync trigger failed:", e.message)
+      );
+    }
 
     res.json({ success: true, provider: "imap", email });
   } catch (err: any) {
