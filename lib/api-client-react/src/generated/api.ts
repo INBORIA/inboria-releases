@@ -44,6 +44,8 @@ import type {
   RegisterBody,
   SendEmail200,
   SendEmailBody,
+  StripeWebhook200,
+  StripeWebhookBody,
   Task,
   TriageEmailBody,
   TriageResult,
@@ -2548,6 +2550,92 @@ export const useCreateCheckoutSession = <
   TContext
 > => {
   return useMutation(getCreateCheckoutSessionMutationOptions(options));
+};
+
+/**
+ * @summary Stripe webhook handler (called by Stripe, not by frontend)
+ */
+export const getStripeWebhookUrl = () => {
+  return `/api/stripe/webhook`;
+};
+
+export const stripeWebhook = async (
+  stripeWebhookBody: StripeWebhookBody,
+  options?: RequestInit,
+): Promise<StripeWebhook200> => {
+  return customFetch<StripeWebhook200>(getStripeWebhookUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(stripeWebhookBody),
+  });
+};
+
+export const getStripeWebhookMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof stripeWebhook>>,
+    TError,
+    { data: BodyType<StripeWebhookBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof stripeWebhook>>,
+  TError,
+  { data: BodyType<StripeWebhookBody> },
+  TContext
+> => {
+  const mutationKey = ["stripeWebhook"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof stripeWebhook>>,
+    { data: BodyType<StripeWebhookBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return stripeWebhook(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type StripeWebhookMutationResult = NonNullable<
+  Awaited<ReturnType<typeof stripeWebhook>>
+>;
+export type StripeWebhookMutationBody = BodyType<StripeWebhookBody>;
+export type StripeWebhookMutationError = ErrorType<void>;
+
+/**
+ * @summary Stripe webhook handler (called by Stripe, not by frontend)
+ */
+export const useStripeWebhook = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof stripeWebhook>>,
+    TError,
+    { data: BodyType<StripeWebhookBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof stripeWebhook>>,
+  TError,
+  { data: BodyType<StripeWebhookBody> },
+  TContext
+> => {
+  return useMutation(getStripeWebhookMutationOptions(options));
 };
 
 /**

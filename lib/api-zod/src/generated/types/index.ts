@@ -40,6 +40,8 @@ export * from "./projectStatus";
 export * from "./registerBody";
 export * from "./sendEmail200";
 export * from "./sendEmailBody";
+export * from "./stripeWebhook200";
+export * from "./stripeWebhookBody";
 export * from "./task";
 export * from "./triageEmailBody";
 export * from "./triageResult";

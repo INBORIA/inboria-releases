@@ -360,3 +360,9 @@ export type DeleteProject200 = {
 export type SendEmail200 = {
   success?: boolean;
 };
+
+export type StripeWebhookBody = { [key: string]: unknown };
+
+export type StripeWebhook200 = {
+  received?: boolean;
+};

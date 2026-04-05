@@ -605,6 +605,30 @@ paths:
         "400":
           description: Invalid plan
 
+  /stripe/webhook:
+    post:
+      operationId: stripeWebhook
+      tags: [stripe]
+      summary: Stripe webhook handler (called by Stripe, not by frontend)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+      responses:
+        "200":
+          description: Webhook processed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  received:
+                    type: boolean
+        "400":
+          description: Invalid signature
+
   /stripe/portal:
     get:
       operationId: getStripePortal

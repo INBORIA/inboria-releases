@@ -541,6 +541,15 @@ export const CreateCheckoutSessionResponse = zod.object({
 });
 
 /**
+ * @summary Stripe webhook handler (called by Stripe, not by frontend)
+ */
+export const StripeWebhookBody = zod.object({}).passthrough();
+
+export const StripeWebhookResponse = zod.object({
+  received: zod.boolean().optional(),
+});
+
+/**
  * @summary Get Stripe customer portal URL
  */
 export const GetStripePortalResponse = zod.object({
