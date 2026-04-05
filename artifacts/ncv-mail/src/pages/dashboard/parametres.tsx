@@ -157,17 +157,21 @@ export default function Parametres() {
     }
   };
 
-  const handleSync = async () => {
+  const handleSync = async (force = false) => {
     setSyncing(true);
     try {
       const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
       const res = await fetch(`${baseUrl}/api/email/sync`, {
         method: "POST",
-        headers: { Authorization: `Bearer ${session?.access_token}` },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ force }),
       });
       const data = await res.json();
       if (res.ok) {
-        toast({ title: `${data.synced} nouveaux emails synchronises` });
+        toast({ title: `${data.synced} emails synchronises${force ? " (re-sync complet)" : ""}` });
         queryClient.invalidateQueries({ queryKey: ["email-connections"] });
       } else {
         toast({ variant: "destructive", title: "Erreur", description: data.error });
@@ -200,10 +204,16 @@ export default function Parametres() {
                 Connexion Email
               </h2>
               {hasConnections && (
-                <Button variant="outline" size="sm" onClick={handleSync} disabled={syncing}>
-                  <RefreshCw className={`w-4 h-4 mr-2 ${syncing ? "animate-spin" : ""}`} />
-                  {syncing ? "Synchronisation..." : "Synchroniser"}
-                </Button>
+                <div className="flex gap-2">
+                  <Button variant="outline" size="sm" onClick={() => handleSync(false)} disabled={syncing}>
+                    <RefreshCw className={`w-4 h-4 mr-2 ${syncing ? "animate-spin" : ""}`} />
+                    {syncing ? "Sync..." : "Synchroniser"}
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => handleSync(true)} disabled={syncing} className="text-orange-600 border-orange-300 hover:bg-orange-50">
+                    <RefreshCw className={`w-4 h-4 mr-2 ${syncing ? "animate-spin" : ""}`} />
+                    Re-sync + tri IA
+                  </Button>
+                </div>
               )}
             </div>
             <Card>
