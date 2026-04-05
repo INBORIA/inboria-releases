@@ -17,9 +17,9 @@ import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -267,16 +267,28 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
   );
 }
 
+function useDebounce(value: string, delay: number) {
+  const [debounced, setDebounced] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setDebounced(value), delay);
+    return () => clearTimeout(t);
+  }, [value, delay]);
+  return debounced;
+}
+
 export default function Dashboard() {
   const [filterPriority, setFilterPriority] = useState<string>("all");
   const [isSimulateOpen, setIsSimulateOpen] = useState(false);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const searchQuery = useDebounce(searchInput, 300);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
   const { data: emails, isLoading: emailsLoading } = useListEmails({
     priority: filterPriority !== "all" ? (filterPriority as any) : undefined,
+    q: searchQuery || undefined,
   });
 
   const { data: categoryCounts, isLoading: categoriesLoading } = useGetCategoryCounts();
@@ -457,7 +469,7 @@ export default function Dashboard() {
       <div className="p-6 max-w-[1200px] mx-auto w-full flex flex-col lg:flex-row gap-6">
         
         <div className="flex-1 min-w-0">
-          <div className="flex items-center justify-between mb-5">
+          <div className="flex items-center justify-between mb-4">
             <h1 className="text-xl font-semibold text-white tracking-tight">Inbox</h1>
             <div className="flex items-center gap-2">
               <Button
@@ -544,6 +556,24 @@ export default function Dashboard() {
                 </SelectContent>
               </Select>
             </div>
+          </div>
+
+          <div className="relative mb-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8b9cb3]" />
+            <Input
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              placeholder="Rechercher par sujet, expediteur ou resume..."
+              className="pl-10 bg-card border-border text-white placeholder:text-[#8b9cb3]/50 h-9 text-[13px]"
+            />
+            {searchInput && (
+              <button
+                onClick={() => setSearchInput("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white"
+              >
+                <X className="w-3.5 h-3.5" />
+              </button>
+            )}
           </div>
 
           <div className="grid grid-cols-3 gap-3 mb-5">

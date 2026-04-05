@@ -123,6 +123,10 @@ export const ListEmailsQueryParams = zod.object({
   priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
   categoryId: zod.coerce.number().optional(),
   status: zod.coerce.string().optional(),
+  q: zod.coerce
+    .string()
+    .optional()
+    .describe("Search term to filter emails by subject, sender or summary"),
 });
 
 export const ListEmailsResponseItem = zod.object({

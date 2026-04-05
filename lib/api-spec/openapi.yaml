@@ -157,6 +157,11 @@ paths:
           in: query
           schema:
             type: string
+        - name: q
+          in: query
+          schema:
+            type: string
+          description: Search term to filter emails by subject, sender or summary
       responses:
         "200":
           description: List of emails

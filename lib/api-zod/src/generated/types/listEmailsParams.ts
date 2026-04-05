@@ -11,4 +11,8 @@ export type ListEmailsParams = {
   priority?: ListEmailsPriority;
   categoryId?: number;
   status?: string;
+  /**
+   * Search term to filter emails by subject, sender or summary
+   */
+  q?: string;
 };
