@@ -3,6 +3,7 @@ import { ImapFlow } from "imapflow";
 import OpenAI from "openai";
 import { supabaseAdmin } from "../lib/supabase";
 import * as net from "net";
+import { sendSlackNotification, createNotionTask } from "./integrations";
 
 function extractGmailBody(payload: any): string {
   if (!payload) return "";
@@ -238,6 +239,10 @@ async function saveEmailWithTriage(
 
   if (!inserted) return false;
 
+  if (triage.priority === "urgent") {
+    sendSlackNotification(userId, sender, subject, triage.summary).catch(() => {});
+  }
+
   if (triage.tasks.length > 0) {
     const { error: taskErr } = await supabaseAdmin.from("tasks").insert(
       triage.tasks.map((title) => ({
@@ -249,6 +254,10 @@ async function saveEmailWithTriage(
     );
     if (taskErr) {
       console.error("[auto-sync] task insert error:", taskErr.message);
+    }
+
+    for (const title of triage.tasks) {
+      createNotionTask(userId, title, subject, sender).catch(() => {});
     }
   }
 

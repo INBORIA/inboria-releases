@@ -290,6 +290,39 @@ export interface UpdateProjectBody {
   color?: string;
 }
 
+export type IntegrationProvider =
+  (typeof IntegrationProvider)[keyof typeof IntegrationProvider];
+
+export const IntegrationProvider = {
+  slack: "slack",
+  notion: "notion",
+} as const;
+
+export interface Integration {
+  id: string;
+  provider: IntegrationProvider;
+  /** @nullable */
+  workspaceName?: string | null;
+  /** @nullable */
+  channelId?: string | null;
+  /** @nullable */
+  databaseId?: string | null;
+  enabled: boolean;
+  createdAt?: string;
+}
+
+export interface OAuthUrlResponse {
+  url: string;
+}
+
+export interface UpdateIntegrationBody {
+  enabled?: boolean;
+  /** @nullable */
+  channelId?: string | null;
+  /** @nullable */
+  databaseId?: string | null;
+}
+
 export type CheckoutBodyPlanId =
   (typeof CheckoutBodyPlanId)[keyof typeof CheckoutBodyPlanId];
 
@@ -367,4 +400,8 @@ export type StripeWebhookBody = { [key: string]: unknown };
 
 export type StripeWebhook200 = {
   received?: boolean;
+};
+
+export type DeleteIntegration200 = {
+  success?: boolean;
 };

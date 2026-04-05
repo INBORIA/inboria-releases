@@ -28,6 +28,8 @@ tags:
     description: AI operations
   - name: stripe
     description: Stripe payment operations
+  - name: integrations
+    description: Slack and Notion integration operations
 paths:
   /healthz:
     get:
@@ -644,6 +646,101 @@ paths:
         "400":
           description: No Stripe subscription found
 
+  /integrations:
+    get:
+      operationId: listIntegrations
+      tags: [integrations]
+      summary: List user integrations (Slack, Notion)
+      responses:
+        "200":
+          description: List of integrations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Integration"
+
+  /integrations/slack/connect:
+    get:
+      operationId: connectSlack
+      tags: [integrations]
+      summary: Get Slack OAuth URL
+      responses:
+        "200":
+          description: OAuth URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthUrlResponse"
+        "403":
+          description: Plan not eligible
+
+  /integrations/notion/connect:
+    get:
+      operationId: connectNotion
+      tags: [integrations]
+      summary: Get Notion OAuth URL
+      responses:
+        "200":
+          description: OAuth URL
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OAuthUrlResponse"
+        "403":
+          description: Plan not eligible
+
+  /integrations/{provider}:
+    patch:
+      operationId: updateIntegration
+      tags: [integrations]
+      summary: Update integration settings (toggle enabled, change channel/database)
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [slack, notion]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateIntegrationBody"
+      responses:
+        "200":
+          description: Updated integration
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Integration"
+        "404":
+          description: Integration not found
+
+    delete:
+      operationId: deleteIntegration
+      tags: [integrations]
+      summary: Disconnect an integration
+      parameters:
+        - name: provider
+          in: path
+          required: true
+          schema:
+            type: string
+            enum: [slack, notion]
+      responses:
+        "200":
+          description: Integration disconnected
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
   /ai/triage:
     post:
       operationId: triageEmail
@@ -1185,6 +1282,48 @@ components:
           enum: [actif, termine, en_pause]
         color:
           type: string
+
+    Integration:
+      type: object
+      properties:
+        id:
+          type: string
+        provider:
+          type: string
+          enum: [slack, notion]
+        workspaceName:
+          type: ["string", "null"]
+        channelId:
+          type: ["string", "null"]
+        databaseId:
+          type: ["string", "null"]
+        enabled:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - provider
+        - enabled
+
+    OAuthUrlResponse:
+      type: object
+      properties:
+        url:
+          type: string
+      required:
+        - url
+
+    UpdateIntegrationBody:
+      type: object
+      properties:
+        enabled:
+          type: boolean
+        channelId:
+          type: ["string", "null"]
+        databaseId:
+          type: ["string", "null"]
 
     CheckoutBody:
       type: object

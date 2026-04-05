@@ -558,6 +558,68 @@ export const GetStripePortalResponse = zod.object({
 });
 
 /**
+ * @summary List user integrations (Slack, Notion)
+ */
+export const ListIntegrationsResponseItem = zod.object({
+  id: zod.string(),
+  provider: zod.enum(["slack", "notion"]),
+  workspaceName: zod.string().nullish(),
+  channelId: zod.string().nullish(),
+  databaseId: zod.string().nullish(),
+  enabled: zod.boolean(),
+  createdAt: zod.coerce.date().optional(),
+});
+export const ListIntegrationsResponse = zod.array(ListIntegrationsResponseItem);
+
+/**
+ * @summary Get Slack OAuth URL
+ */
+export const ConnectSlackResponse = zod.object({
+  url: zod.string(),
+});
+
+/**
+ * @summary Get Notion OAuth URL
+ */
+export const ConnectNotionResponse = zod.object({
+  url: zod.string(),
+});
+
+/**
+ * @summary Update integration settings (toggle enabled, change channel/database)
+ */
+export const UpdateIntegrationParams = zod.object({
+  provider: zod.enum(["slack", "notion"]),
+});
+
+export const UpdateIntegrationBody = zod.object({
+  enabled: zod.boolean().optional(),
+  channelId: zod.string().nullish(),
+  databaseId: zod.string().nullish(),
+});
+
+export const UpdateIntegrationResponse = zod.object({
+  id: zod.string(),
+  provider: zod.enum(["slack", "notion"]),
+  workspaceName: zod.string().nullish(),
+  channelId: zod.string().nullish(),
+  databaseId: zod.string().nullish(),
+  enabled: zod.boolean(),
+  createdAt: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary Disconnect an integration
+ */
+export const DeleteIntegrationParams = zod.object({
+  provider: zod.enum(["slack", "notion"]),
+});
+
+export const DeleteIntegrationResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
  * @summary AI triage a single email
  */
 export const TriageEmailBody = zod.object({

@@ -88,6 +88,7 @@ Optional webhook for external integrations. Flow: External source -> Webhook NCV
 - `projects` (id uuid, created_at, user_id, name, reference, description, status, color) — EXISTS
 - `tasks` (id uuid, created_at, user_id, email_id, project_id, title, done, due_date) — EXISTS
 - `ai_rules` (id uuid, user_id, sender_pattern, forced_priority, forced_category) — EXISTS
+- `integrations` (id uuid, user_id, provider, access_token, workspace_name, channel_id, database_id, enabled, created_at) — NEEDS CREATION
 
 ## Pages (all French, dark theme)
 
@@ -97,7 +98,7 @@ Optional webhook for external integrations. Flow: External source -> Webhook NCV
 - `/dashboard/taches` — Tasks extracted from emails, with tabs (A faire/Terminees/Toutes)
 - `/dashboard/categories` — Category management with create/edit/delete
 - `/dashboard/projets` — Project management: create/edit/delete projects, view linked emails/tasks
-- `/dashboard/parametres` — Settings: email connections, AI preferences, profile, notifications
+- `/dashboard/parametres` — Settings: email connections, Slack/Notion integrations, AI preferences, profile, notifications
 - `/dashboard/abonnement` — Subscription plans (Gratuit 0€ / Solo 9€ / Pro 19€ / Business 9€/seat)
 - 404 page — Dark themed "Page introuvable"
 
@@ -129,9 +130,24 @@ Optional webhook for external integrations. Flow: External source -> Webhook NCV
 - **Frontend**: Subscription page redirects to Stripe Checkout, shows "Gerer l'abonnement" button for paid plans
 - **OpenAPI**: `createCheckoutSession`, `getStripePortal` operations, `CheckoutBody`/`CheckoutResponse`/`PortalResponse` schemas
 
+## Slack & Notion Integrations (Pro plan)
+
+- **Slack**: OAuth2 connect via `GET /api/integrations/slack/connect`, callback at `/api/integrations/slack/callback`
+  - Sends formatted notification to configured Slack channel when urgent email detected by AI during auto-sync
+  - Uses `chat:write`, `channels:read` scopes
+- **Notion**: OAuth2 connect via `GET /api/integrations/notion/connect`, callback at `/api/integrations/notion/callback`
+  - Creates task pages in configured Notion database when AI extracts tasks during auto-sync
+  - Uses Notion API v2022-06-28, auto-discovers first database
+- **CRUD**: `GET /api/integrations` (list), `PATCH /api/integrations/:provider` (toggle/update), `DELETE /api/integrations/:provider` (disconnect)
+- **Plan gate**: Pro or Business plan required to connect integrations
+- **Frontend**: Integrations section in Parametres page with connect/disconnect buttons and enable/disable toggles
+- **Table**: `integrations` (id, user_id, provider, access_token, workspace_name, channel_id, database_id, enabled, created_at) — unique on (user_id, provider)
+- **Env vars**: SLACK_CLIENT_ID, SLACK_CLIENT_SECRET, NOTION_CLIENT_ID, NOTION_CLIENT_SECRET
+- **Files**: `artifacts/api-server/src/routes/integrations.ts`, `artifacts/api-server/src/services/integrations.ts`
+
 ## API Routes (prefix: /api)
 
-Auth, profile, emails (CRUD + send), categories, tasks, dashboard stats, AI triage/summary, email connections/sync, webhook, stripe (checkout/webhook/portal)
+Auth, profile, emails (CRUD + send), categories, tasks, dashboard stats, AI triage/summary, email connections/sync, webhook, stripe (checkout/webhook/portal), integrations (Slack/Notion OAuth + CRUD)
 
 ## Environment Variables
 
@@ -147,6 +163,9 @@ Auth, profile, emails (CRUD + send), categories, tasks, dashboard stats, AI tria
 - `STRIPE_PRICE_SOLO` — Stripe Price ID for Solo plan (9€/mois)
 - `STRIPE_PRICE_PRO` — Stripe Price ID for Pro plan (19€/mois)
 - `STRIPE_PRICE_BUSINESS` — Stripe Price ID for Business plan (9€/siege/mois)
+- `SLACK_CLIENT_ID` / `SLACK_CLIENT_SECRET` — Slack OAuth2 app credentials
+- `NOTION_CLIENT_ID` / `NOTION_CLIENT_SECRET` — Notion OAuth2 integration credentials
+- `FRONTEND_URL` — Frontend URL for OAuth redirect (defaults to REPLIT_DEV_DOMAIN)
 
 ## Key Commands
 

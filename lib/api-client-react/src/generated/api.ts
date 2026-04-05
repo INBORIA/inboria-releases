@@ -28,6 +28,7 @@ import type {
   DailySummaryRequest,
   DashboardSummary,
   DeleteEmail200,
+  DeleteIntegration200,
   DeleteProject200,
   DeleteTask200,
   DraftResponse,
@@ -35,9 +36,11 @@ import type {
   GenerateDraftBody,
   HealthStatus,
   InboxHealth,
+  Integration,
   ListEmailsParams,
   ListTasksParams,
   LoginBody,
+  OAuthUrlResponse,
   PortalResponse,
   Project,
   ProjectDetail,
@@ -51,6 +54,7 @@ import type {
   TriageResult,
   UpdateCategoryBody,
   UpdateEmailBody,
+  UpdateIntegrationBody,
   UpdateProfileBody,
   UpdateProjectBody,
   UpdateTaskBody,
@@ -2712,6 +2716,402 @@ export function useGetStripePortal<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary List user integrations (Slack, Notion)
+ */
+export const getListIntegrationsUrl = () => {
+  return `/api/integrations`;
+};
+
+export const listIntegrations = async (
+  options?: RequestInit,
+): Promise<Integration[]> => {
+  return customFetch<Integration[]>(getListIntegrationsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListIntegrationsQueryKey = () => {
+  return [`/api/integrations`] as const;
+};
+
+export const getListIntegrationsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listIntegrations>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listIntegrations>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListIntegrationsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listIntegrations>>
+  > = ({ signal }) => listIntegrations({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listIntegrations>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListIntegrationsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listIntegrations>>
+>;
+export type ListIntegrationsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List user integrations (Slack, Notion)
+ */
+
+export function useListIntegrations<
+  TData = Awaited<ReturnType<typeof listIntegrations>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listIntegrations>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListIntegrationsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get Slack OAuth URL
+ */
+export const getConnectSlackUrl = () => {
+  return `/api/integrations/slack/connect`;
+};
+
+export const connectSlack = async (
+  options?: RequestInit,
+): Promise<OAuthUrlResponse> => {
+  return customFetch<OAuthUrlResponse>(getConnectSlackUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getConnectSlackQueryKey = () => {
+  return [`/api/integrations/slack/connect`] as const;
+};
+
+export const getConnectSlackQueryOptions = <
+  TData = Awaited<ReturnType<typeof connectSlack>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof connectSlack>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getConnectSlackQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof connectSlack>>> = ({
+    signal,
+  }) => connectSlack({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof connectSlack>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ConnectSlackQueryResult = NonNullable<
+  Awaited<ReturnType<typeof connectSlack>>
+>;
+export type ConnectSlackQueryError = ErrorType<void>;
+
+/**
+ * @summary Get Slack OAuth URL
+ */
+
+export function useConnectSlack<
+  TData = Awaited<ReturnType<typeof connectSlack>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof connectSlack>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getConnectSlackQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get Notion OAuth URL
+ */
+export const getConnectNotionUrl = () => {
+  return `/api/integrations/notion/connect`;
+};
+
+export const connectNotion = async (
+  options?: RequestInit,
+): Promise<OAuthUrlResponse> => {
+  return customFetch<OAuthUrlResponse>(getConnectNotionUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getConnectNotionQueryKey = () => {
+  return [`/api/integrations/notion/connect`] as const;
+};
+
+export const getConnectNotionQueryOptions = <
+  TData = Awaited<ReturnType<typeof connectNotion>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof connectNotion>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getConnectNotionQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof connectNotion>>> = ({
+    signal,
+  }) => connectNotion({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof connectNotion>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ConnectNotionQueryResult = NonNullable<
+  Awaited<ReturnType<typeof connectNotion>>
+>;
+export type ConnectNotionQueryError = ErrorType<void>;
+
+/**
+ * @summary Get Notion OAuth URL
+ */
+
+export function useConnectNotion<
+  TData = Awaited<ReturnType<typeof connectNotion>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof connectNotion>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getConnectNotionQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Update integration settings (toggle enabled, change channel/database)
+ */
+export const getUpdateIntegrationUrl = (provider: "slack" | "notion") => {
+  return `/api/integrations/${provider}`;
+};
+
+export const updateIntegration = async (
+  provider: "slack" | "notion",
+  updateIntegrationBody: UpdateIntegrationBody,
+  options?: RequestInit,
+): Promise<Integration> => {
+  return customFetch<Integration>(getUpdateIntegrationUrl(provider), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateIntegrationBody),
+  });
+};
+
+export const getUpdateIntegrationMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateIntegration>>,
+    TError,
+    { provider: "slack" | "notion"; data: BodyType<UpdateIntegrationBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateIntegration>>,
+  TError,
+  { provider: "slack" | "notion"; data: BodyType<UpdateIntegrationBody> },
+  TContext
+> => {
+  const mutationKey = ["updateIntegration"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateIntegration>>,
+    { provider: "slack" | "notion"; data: BodyType<UpdateIntegrationBody> }
+  > = (props) => {
+    const { provider, data } = props ?? {};
+
+    return updateIntegration(provider, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateIntegrationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateIntegration>>
+>;
+export type UpdateIntegrationMutationBody = BodyType<UpdateIntegrationBody>;
+export type UpdateIntegrationMutationError = ErrorType<void>;
+
+/**
+ * @summary Update integration settings (toggle enabled, change channel/database)
+ */
+export const useUpdateIntegration = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateIntegration>>,
+    TError,
+    { provider: "slack" | "notion"; data: BodyType<UpdateIntegrationBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateIntegration>>,
+  TError,
+  { provider: "slack" | "notion"; data: BodyType<UpdateIntegrationBody> },
+  TContext
+> => {
+  return useMutation(getUpdateIntegrationMutationOptions(options));
+};
+
+/**
+ * @summary Disconnect an integration
+ */
+export const getDeleteIntegrationUrl = (provider: "slack" | "notion") => {
+  return `/api/integrations/${provider}`;
+};
+
+export const deleteIntegration = async (
+  provider: "slack" | "notion",
+  options?: RequestInit,
+): Promise<DeleteIntegration200> => {
+  return customFetch<DeleteIntegration200>(getDeleteIntegrationUrl(provider), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteIntegrationMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteIntegration>>,
+    TError,
+    { provider: "slack" | "notion" },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteIntegration>>,
+  TError,
+  { provider: "slack" | "notion" },
+  TContext
+> => {
+  const mutationKey = ["deleteIntegration"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteIntegration>>,
+    { provider: "slack" | "notion" }
+  > = (props) => {
+    const { provider } = props ?? {};
+
+    return deleteIntegration(provider, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteIntegrationMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteIntegration>>
+>;
+
+export type DeleteIntegrationMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Disconnect an integration
+ */
+export const useDeleteIntegration = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteIntegration>>,
+    TError,
+    { provider: "slack" | "notion" },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteIntegration>>,
+  TError,
+  { provider: "slack" | "notion" },
+  TContext
+> => {
+  return useMutation(getDeleteIntegrationMutationOptions(options));
+};
 
 /**
  * @summary AI triage a single email

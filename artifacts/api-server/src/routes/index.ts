@@ -11,6 +11,7 @@ import emailConnectRouter from "./email-connect";
 import webhookRouter from "./webhook";
 import projectsRouter from "./projects";
 import stripeRouter from "./stripe";
+import integrationsRouter from "./integrations";
 
 const router: IRouter = Router();
 
@@ -26,5 +27,6 @@ router.use(emailConnectRouter);
 router.use(webhookRouter);
 router.use(projectsRouter);
 router.use(stripeRouter);
+router.use(integrationsRouter);
 
 export default router;

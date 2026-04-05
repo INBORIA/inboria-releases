@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield } from "lucide-react";
+import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Plug, Lock } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 
@@ -32,6 +32,16 @@ const IMAP_PROVIDERS = [
   { id: "icloud", name: "iCloud", color: "bg-gray-400/10 text-gray-300", letter: "iC", host: "imap.mail.me.com", port: "993" },
   { id: "autre", name: "Autre", color: "bg-white/[0.06] text-[#8b9cb3]", letter: "@", host: "", port: "993" },
 ];
+
+interface Integration {
+  id: string;
+  provider: string;
+  workspace_name: string | null;
+  channel_id: string | null;
+  database_id: string | null;
+  enabled: boolean;
+  created_at: string;
+}
 
 interface EmailConnection {
   id: string;
@@ -57,6 +67,22 @@ function useEmailConnections() {
   });
 }
 
+function useIntegrations() {
+  const { session } = useAuth();
+  return useQuery<Integration[]>({
+    queryKey: ["integrations"],
+    queryFn: async () => {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const res = await fetch(`${baseUrl}/api/integrations`, {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      if (!res.ok) throw new Error("Failed to fetch integrations");
+      return res.json();
+    },
+    enabled: !!session,
+  });
+}
+
 export default function Parametres() {
   const { data: profile, isLoading } = useGetProfile();
   const updateProfile = useUpdateProfile();
@@ -64,6 +90,7 @@ export default function Parametres() {
   const { toast } = useToast();
   const { session } = useAuth();
   const { data: connections, isLoading: connectionsLoading } = useEmailConnections();
+  const { data: integrations, isLoading: integrationsLoading } = useIntegrations();
 
   const [fullName, setFullName] = useState("");
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
@@ -85,6 +112,10 @@ export default function Parametres() {
       if (e.data?.type === "email-connected") {
         toast({ title: `${e.data.provider === "gmail" ? "Gmail" : "Outlook"} connecte avec succes !` });
         queryClient.invalidateQueries({ queryKey: ["email-connections"] });
+      }
+      if (e.data?.type === "integration-connected") {
+        toast({ title: `${e.data.provider === "slack" ? "Slack" : "Notion"} connecte avec succes !` });
+        queryClient.invalidateQueries({ queryKey: ["integrations"] });
       }
     };
     window.addEventListener("message", handler);
@@ -176,8 +207,63 @@ export default function Parametres() {
     }
   };
 
+  const handleIntegrationConnect = async (provider: "slack" | "notion") => {
+    try {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const res = await fetch(`${baseUrl}/api/integrations/${provider}/connect`, {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      const data = await res.json();
+      if (res.status === 403) {
+        toast({ variant: "destructive", title: "Plan Pro requis", description: "Les integrations sont reservees au plan Pro ou superieur." });
+        return;
+      }
+      if (data.url) {
+        window.open(data.url, "_blank", "width=600,height=700,left=200,top=100");
+      } else {
+        toast({ variant: "destructive", title: "Erreur", description: data.error || "Impossible de se connecter" });
+      }
+    } catch {
+      toast({ variant: "destructive", title: "Erreur de connexion" });
+    }
+  };
+
+  const handleIntegrationDisconnect = async (provider: string) => {
+    try {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      await fetch(`${baseUrl}/api/integrations/${provider}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      queryClient.invalidateQueries({ queryKey: ["integrations"] });
+      toast({ title: `${provider === "slack" ? "Slack" : "Notion"} deconnecte` });
+    } catch {
+      toast({ variant: "destructive", title: "Erreur" });
+    }
+  };
+
+  const handleIntegrationToggle = async (provider: string, enabled: boolean) => {
+    try {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      await fetch(`${baseUrl}/api/integrations/${provider}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ enabled }),
+      });
+      queryClient.invalidateQueries({ queryKey: ["integrations"] });
+    } catch {
+      toast({ variant: "destructive", title: "Erreur" });
+    }
+  };
+
   const gmailConnected = connections?.find(c => c.provider === "gmail");
   const imapConnected = connections?.find(c => c.provider === "imap");
+  const slackIntegration = integrations?.find(i => i.provider === "slack");
+  const notionIntegration = integrations?.find(i => i.provider === "notion");
+  const isPro = profile?.plan === "pro" || profile?.plan === "business";
 
   return (
     <DashboardLayout>
@@ -339,6 +425,120 @@ export default function Parametres() {
                     </div>
                   )}
                 </>
+              )}
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
+              <Plug className="w-4 h-4 text-primary" />
+              Integrations
+            </h2>
+            <div className="bg-card rounded-lg border border-border p-5 space-y-3">
+              {!isPro && (
+                <div className="flex items-start gap-2 p-3 bg-yellow-500/10 border border-yellow-500/20 rounded-lg">
+                  <Lock className="w-4 h-4 text-yellow-400 mt-0.5 flex-shrink-0" />
+                  <div>
+                    <p className="text-[13px] text-yellow-400 font-medium">Plan Pro requis</p>
+                    <p className="text-[11px] text-[#8b9cb3] mt-0.5">Les integrations Slack et Notion sont disponibles a partir du plan Pro.</p>
+                  </div>
+                </div>
+              )}
+
+              {integrationsLoading ? (
+                <Skeleton className="h-16 w-full bg-white/5" />
+              ) : (
+                <>
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 bg-purple-500/10 rounded-lg flex items-center justify-center font-bold text-sm text-purple-400">S</div>
+                      <div>
+                        <h4 className="font-medium text-[13px] text-white">Slack</h4>
+                        {slackIntegration ? (
+                          <p className="text-[11px] text-emerald-400 flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" />
+                            Connecte — {slackIntegration.workspace_name || "Workspace"}
+                          </p>
+                        ) : (
+                          <p className="text-[11px] text-[#8b9cb3]">Notifications emails urgents dans votre channel.</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {slackIntegration ? (
+                        <>
+                          <Switch
+                            checked={slackIntegration.enabled}
+                            onCheckedChange={(checked) => handleIntegrationToggle("slack", checked)}
+                          />
+                          <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 text-[12px]" onClick={() => handleIntegrationDisconnect("slack")}>
+                            <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                            Deconnecter
+                          </Button>
+                        </>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]"
+                          onClick={() => handleIntegrationConnect("slack")}
+                          disabled={!isPro}
+                        >
+                          Connecter Slack
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 bg-white/[0.08] rounded-lg flex items-center justify-center font-bold text-sm text-white">N</div>
+                      <div>
+                        <h4 className="font-medium text-[13px] text-white">Notion</h4>
+                        {notionIntegration ? (
+                          <p className="text-[11px] text-emerald-400 flex items-center gap-1">
+                            <CheckCircle2 className="w-3 h-3" />
+                            Connecte — {notionIntegration.workspace_name || "Workspace"}
+                          </p>
+                        ) : (
+                          <p className="text-[11px] text-[#8b9cb3]">Creation automatique de taches dans votre base Notion.</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {notionIntegration ? (
+                        <>
+                          <Switch
+                            checked={notionIntegration.enabled}
+                            onCheckedChange={(checked) => handleIntegrationToggle("notion", checked)}
+                          />
+                          <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 text-[12px]" onClick={() => handleIntegrationDisconnect("notion")}>
+                            <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                            Deconnecter
+                          </Button>
+                        </>
+                      ) : (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]"
+                          onClick={() => handleIntegrationConnect("notion")}
+                          disabled={!isPro}
+                        >
+                          Connecter Notion
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {isPro && (
+                <div className="p-3 bg-primary/[0.06] rounded-lg border border-primary/10">
+                  <p className="text-[11px] text-primary">
+                    Slack: recevez une alerte dans votre channel quand un email urgent est detecte. Notion: les taches extraites par l'IA sont automatiquement creees dans votre base.
+                  </p>
+                </div>
               )}
             </div>
           </section>
