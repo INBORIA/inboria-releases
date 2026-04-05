@@ -64,7 +64,6 @@ const plans = [
     id: "business",
     name: "Business",
     price: "9",
-    priceUnit: "/ siege / mois",
     quota: 10000,
     description: "Pour les equipes",
     features: [
