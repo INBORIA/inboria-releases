@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import {
   useListEmails,
   useGetCategoryCounts,
@@ -152,9 +153,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
         )}
 
         <div className="p-5">
-          <p className="text-[13px] text-white/80 leading-relaxed whitespace-pre-wrap">
-            {email.body || "(Aucun contenu disponible)"}
-          </p>
+          <EmailBodyRenderer body={email.body} />
         </div>
 
         <div className="px-5 py-4 border-t border-border">
