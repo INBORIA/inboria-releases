@@ -53,9 +53,22 @@ Dark-only theme inspired by Linear/Superhuman:
 - **Force re-sync**: Deletes all emails then re-downloads with AI triage
 - **Sender parsing**: `parseSender()` helper splits "Name <email>" format
 
-## Webhook (Make.com integration)
+## Auto-Sync (background email sync)
 
-Real-time email processing via webhook. Flow: Email recu -> Make.com -> Webhook NCV Mail -> GPT-4o mini -> Supabase
+Automatic email synchronization built into the server — no external service needed (Make.com not required).
+
+- **Interval**: Every 5 minutes, checks all connected email accounts for new emails
+- **Providers**: Gmail (OAuth2), Outlook (Microsoft Graph), IMAP (generic)
+- **Processing**: Each new email → AI triage (GPT-4o-mini) → priority + category + summary + task extraction
+- **Deduplication**: via external_id (Gmail message ID, Outlook message ID, IMAP UID)
+- **Token refresh**: Automatic refresh of expired OAuth tokens (Google + Microsoft)
+- **Quota**: Respects user email quota (emails_used vs emails_quota)
+- **Startup**: Runs 10s after server boot, then every 5 minutes
+- **File**: `artifacts/api-server/src/services/auto-sync.ts`
+
+## Webhook (supplementary real-time ingestion)
+
+Optional webhook for external integrations. Flow: External source -> Webhook NCV Mail -> GPT-4o mini -> Supabase
 
 - **Single email**: `POST /api/webhook/email` — processes one email with AI triage + task extraction
 - **Batch**: `POST /api/webhook/email/batch` — processes up to 50 emails at once
