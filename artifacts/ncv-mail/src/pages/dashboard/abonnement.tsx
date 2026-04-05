@@ -264,7 +264,7 @@ export default function Abonnement() {
                       );
                     }}
                   >
-                    Commencer
+                    Changer de plan
                   </Button>
                 )}
               </div>
