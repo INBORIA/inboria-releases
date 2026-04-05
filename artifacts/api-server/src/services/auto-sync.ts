@@ -4,6 +4,44 @@ import OpenAI from "openai";
 import { supabaseAdmin } from "../lib/supabase";
 import * as net from "net";
 
+function extractGmailBody(payload: any): string {
+  if (!payload) return "";
+
+  function decodeBase64(data: string): string {
+    try {
+      return Buffer.from(data.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf-8");
+    } catch {
+      return "";
+    }
+  }
+
+  if (payload.body?.data) {
+    return decodeBase64(payload.body.data);
+  }
+
+  if (payload.parts) {
+    const textPart = payload.parts.find((p: any) => p.mimeType === "text/plain");
+    if (textPart?.body?.data) {
+      return decodeBase64(textPart.body.data);
+    }
+
+    const htmlPart = payload.parts.find((p: any) => p.mimeType === "text/html");
+    if (htmlPart?.body?.data) {
+      const html = decodeBase64(htmlPart.body.data);
+      return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+    }
+
+    for (const part of payload.parts) {
+      if (part.parts) {
+        const nested = extractGmailBody(part);
+        if (nested) return nested;
+      }
+    }
+  }
+
+  return "";
+}
+
 const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 
 const SYNC_INTERVAL_MS = 5 * 60 * 1000;
@@ -250,21 +288,20 @@ async function syncGmailForUser(conn: any): Promise<number> {
       const { data: fullMsg } = await gmail.users.messages.get({
         userId: "me",
         id: msg.id!,
-        format: "metadata",
-        metadataHeaders: ["From", "Subject", "Date"],
+        format: "full",
       });
 
       const headers = fullMsg.payload?.headers || [];
       const from = headers.find((h) => h.name === "From")?.value || "Inconnu";
       const subject = headers.find((h) => h.name === "Subject")?.value || "(pas de sujet)";
-      const snippet = fullMsg.snippet || "";
+      const emailBody = extractGmailBody(fullMsg.payload) || fullMsg.snippet || "";
 
       const saved = await saveEmailWithTriage(
         conn.user_id,
         msg.id!,
         from,
         subject,
-        snippet,
+        emailBody,
         new Date(parseInt(fullMsg.internalDate || "0")).toISOString()
       );
 
@@ -424,18 +461,29 @@ async function syncImapForUser(conn: any): Promise<number> {
       const startSeq = Math.max(1, totalMessages - 9);
       const range = `${startSeq}:*`;
 
-      for await (const msg of client.fetch(range, { envelope: true, uid: true })) {
+      for await (const msg of client.fetch(range, { envelope: true, uid: true, source: true })) {
         const externalId = `imap_${msg.uid}`;
         const envelope = msg.envelope;
         const from = envelope.from?.[0];
         const sender = from?.name ? `${from.name} <${from.address}>` : from?.address || "inconnu";
+
+        let bodyText = "";
+        if (msg.source) {
+          try {
+            const raw = msg.source.toString("utf-8");
+            const bodyStart = raw.indexOf("\r\n\r\n");
+            if (bodyStart !== -1) {
+              bodyText = raw.slice(bodyStart + 4).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 5000);
+            }
+          } catch {}
+        }
 
         const saved = await saveEmailWithTriage(
           conn.user_id,
           externalId,
           sender,
           envelope.subject || "(pas de sujet)",
-          "",
+          bodyText,
           envelope.date ? new Date(envelope.date).toISOString() : new Date().toISOString()
         );
 
