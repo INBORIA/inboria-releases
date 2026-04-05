@@ -15,7 +15,7 @@ import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -44,9 +44,127 @@ const triageSchema = z.object({
   body: z.string().min(1, "Contenu requis"),
 });
 
+function EmailDetail({ email, onBack, onMarkRead }: { email: any; onBack: () => void; onMarkRead: (id: number) => void }) {
+  const [replyOpen, setReplyOpen] = useState(false);
+  const [replyText, setReplyText] = useState("");
+
+  return (
+    <div className="flex flex-col h-full">
+      <div className="flex items-center gap-3 mb-5">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onBack}
+          className="h-8 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
+        >
+          <ArrowLeft className="w-4 h-4 mr-1" />
+          Retour
+        </Button>
+        <div className="flex-1" />
+        <PriorityBadge priority={email.priority} />
+      </div>
+
+      <div className="bg-card rounded-lg border border-border overflow-hidden">
+        <div className="p-5 border-b border-border">
+          <h2 className="text-lg font-semibold text-white mb-3">{email.subject}</h2>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">
+                {(email.sender || "?")[0].toUpperCase()}
+              </div>
+              <div>
+                <div className="text-[13px] font-medium text-white">{email.sender}</div>
+                {email.senderEmail && (
+                  <div className="text-[11px] text-[#8b9cb3]">{email.senderEmail}</div>
+                )}
+              </div>
+            </div>
+            <span className="text-[11px] text-[#8b9cb3] flex items-center gap-1">
+              <Clock className="w-3 h-3" />
+              {format(new Date(email.createdAt), "d MMMM yyyy a HH:mm", { locale: fr })}
+            </span>
+          </div>
+        </div>
+
+        {email.summary && (
+          <div className="px-5 py-3 bg-primary/[0.06] border-b border-border">
+            <div className="flex items-center gap-2 mb-1">
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span className="text-[11px] font-medium text-primary uppercase tracking-wider">Resume IA</span>
+            </div>
+            <p className="text-[13px] text-[#8b9cb3] leading-relaxed">{email.summary}</p>
+          </div>
+        )}
+
+        <div className="p-5">
+          <p className="text-[13px] text-white/80 leading-relaxed whitespace-pre-wrap">
+            {email.body || "(Aucun contenu disponible)"}
+          </p>
+        </div>
+
+        <div className="px-5 py-4 border-t border-border flex items-center gap-2">
+          <Button
+            size="sm"
+            className="gap-1.5"
+            onClick={() => setReplyOpen(!replyOpen)}
+          >
+            <Reply className="w-3.5 h-3.5" />
+            Repondre
+          </Button>
+          {email.status === "unread" && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+              onClick={() => onMarkRead(email.id)}
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              Marquer lu
+            </Button>
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5 bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+          >
+            <Archive className="w-3.5 h-3.5" />
+            Archiver
+          </Button>
+        </div>
+
+        {replyOpen && (
+          <div className="px-5 pb-5 border-t border-border pt-4">
+            <Textarea
+              value={replyText}
+              onChange={(e) => setReplyText(e.target.value)}
+              placeholder="Ecrivez votre reponse..."
+              className="h-28 bg-background border-border text-white mb-3 resize-none"
+            />
+            <div className="flex items-center gap-2 justify-end">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => { setReplyOpen(false); setReplyText(""); }}
+                className="text-[#8b9cb3] hover:text-white"
+              >
+                Annuler
+              </Button>
+              <Button size="sm" className="gap-1.5">
+                <Reply className="w-3.5 h-3.5" />
+                Envoyer
+              </Button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const [filterPriority, setFilterPriority] = useState<string>("all");
   const [isSimulateOpen, setIsSimulateOpen] = useState(false);
+  const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -59,6 +177,8 @@ export default function Dashboard() {
 
   const updateEmail = useUpdateEmail();
   const triageEmail = useTriageEmail();
+
+  const selectedEmail = emails?.find((e) => e.id === selectedEmailId);
 
   const handleMarkAsRead = (id: number) => {
     updateEmail.mutate(
@@ -100,6 +220,20 @@ export default function Dashboard() {
       }
     );
   };
+
+  if (selectedEmail) {
+    return (
+      <DashboardLayout>
+        <div className="p-6 max-w-[900px] mx-auto w-full">
+          <EmailDetail
+            email={selectedEmail}
+            onBack={() => setSelectedEmailId(null)}
+            onMarkRead={handleMarkAsRead}
+          />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -214,21 +348,29 @@ export default function Dashboard() {
                 <div
                   key={email.id}
                   className="group bg-card hover:bg-[#1a2235] rounded-lg border border-border p-4 transition-colors cursor-pointer"
+                  onClick={() => setSelectedEmailId(email.id)}
                 >
                   <div className="flex items-start justify-between gap-4">
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-1">
-                        <span className="font-semibold text-[13px] text-white truncate">{email.sender}</span>
-                        <span className="text-[11px] text-[#8b9cb3] hidden sm:inline truncate">{email.senderEmail}</span>
+                    <div className="flex items-center gap-3 flex-1 min-w-0">
+                      <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
+                        {(email.sender || "?")[0].toUpperCase()}
                       </div>
-                      <h3 className="text-[13px] text-[#8b9cb3] truncate">
-                        {email.subject}
-                      </h3>
-                      {email.summary && (
-                        <p className="text-[12px] text-primary/70 mt-1.5 line-clamp-1">
-                          {email.summary}
-                        </p>
-                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="font-semibold text-[13px] text-white truncate">{email.sender}</span>
+                          {email.status === "unread" && (
+                            <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
+                          )}
+                        </div>
+                        <h3 className="text-[13px] text-white/80 truncate">
+                          {email.subject}
+                        </h3>
+                        {email.summary && (
+                          <p className="text-[12px] text-[#8b9cb3] mt-1 line-clamp-1">
+                            {email.summary}
+                          </p>
+                        )}
+                      </div>
                     </div>
                     <div className="flex items-center gap-3 shrink-0">
                       <PriorityBadge priority={email.priority} />
@@ -236,27 +378,8 @@ export default function Dashboard() {
                         <Clock className="w-3 h-3" />
                         {format(new Date(email.createdAt), "d MMM HH:mm", { locale: fr })}
                       </span>
+                      <ChevronRight className="w-4 h-4 text-[#8b9cb3]/40 group-hover:text-[#8b9cb3] transition-colors" />
                     </div>
-                  </div>
-                  <div className="flex justify-end gap-2 mt-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    {email.status === 'unread' && (
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="h-7 text-[12px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
-                        onClick={() => handleMarkAsRead(email.id)}
-                        disabled={updateEmail.isPending}
-                      >
-                        <CheckCircle2 className="w-3 h-3 mr-1" />
-                        Marquer lu
-                      </Button>
-                    )}
-                    <Button
-                      size="sm"
-                      className="h-7 text-[12px]"
-                    >
-                      Repondre
-                    </Button>
                   </div>
                 </div>
               ))
