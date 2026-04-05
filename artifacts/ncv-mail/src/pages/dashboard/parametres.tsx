@@ -362,35 +362,7 @@ export default function Parametres() {
               Preferences IA
             </h2>
             <div className="bg-card rounded-lg border border-border p-5 space-y-5">
-              <div className="space-y-1.5">
-                <Label className="text-[13px] text-white">Langue des resumes</Label>
-                <Select
-                  value={profile?.aiLanguage || "fr"}
-                  onValueChange={(value) => {
-                    updateProfile.mutate(
-                      { data: { aiLanguage: value as "fr" | "en" | "nl" } },
-                      {
-                        onSuccess: () => {
-                          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
-                          toast({ title: "Langue mise a jour" });
-                        }
-                      }
-                    );
-                  }}
-                >
-                  <SelectTrigger className="max-w-md bg-background border-border text-white h-9 text-[13px]">
-                    <SelectValue placeholder="Selectionnez" />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border">
-                    <SelectItem value="fr">Francais</SelectItem>
-                    <SelectItem value="en">Anglais</SelectItem>
-                    <SelectItem value="nl">Neerlandais</SelectItem>
-                  </SelectContent>
-                </Select>
-                <p className="text-[11px] text-[#8b9cb3]">Langue des resumes et taches generes par l'IA. S'applique aux nouveaux emails recus apres le changement.</p>
-              </div>
-
-              <div className="space-y-4 pt-4 border-t border-border">
+              <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
                     <Label className="text-[13px] text-white">Facturation urgente</Label>
