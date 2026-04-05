@@ -39,16 +39,20 @@ export default function EmailDetailScreen() {
   const { data: email, isLoading } = useGetEmail(Number(id));
   const updateEmail = useUpdateEmail();
 
-  const hapticFeedback = () => {
+  const hapticLight = () => {
     if (Platform.OS !== "web" && Haptics) {
-      try {
-        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-      } catch {}
+      try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light); } catch {}
+    }
+  };
+
+  const hapticMedium = () => {
+    if (Platform.OS !== "web" && Haptics) {
+      try { Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium); } catch {}
     }
   };
 
   const handleMarkRead = () => {
-    hapticFeedback();
+    hapticLight();
     updateEmail.mutate(
       { id: Number(id), data: { status: "read" } },
       { onSuccess: () => queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() }) }
@@ -56,7 +60,7 @@ export default function EmailDetailScreen() {
   };
 
   const handleArchive = () => {
-    hapticFeedback();
+    hapticMedium();
     updateEmail.mutate(
       { id: Number(id), data: { status: "archived" } },
       {
