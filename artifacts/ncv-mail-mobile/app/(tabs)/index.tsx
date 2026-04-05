@@ -112,7 +112,7 @@ export default function InboxScreen() {
 
         <View style={s.emailBody}>
           <View style={s.emailTopRow}>
-            <Text style={[s.senderText, { color: colors.foreground }]} numberOfLines={1}>
+            <Text style={[s.senderText, { color: colors.foreground }]}>
               {item.sender}
             </Text>
             <Text style={[s.dateText, { color: colors.mutedForeground }]}>

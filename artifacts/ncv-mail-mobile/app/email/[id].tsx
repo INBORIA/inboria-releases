@@ -39,16 +39,16 @@ export default function EmailDetailScreen() {
   const { data: email, isLoading } = useGetEmail(Number(id));
   const updateEmail = useUpdateEmail();
 
-  const hapticFeedback = (style: any) => {
+  const hapticFeedback = () => {
     if (Platform.OS !== "web" && Haptics) {
       try {
-        Haptics.impactAsync(style);
+        Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
       } catch {}
     }
   };
 
   const handleMarkRead = () => {
-    hapticFeedback(Haptics?.ImpactFeedbackStyle?.Light);
+    hapticFeedback();
     updateEmail.mutate(
       { id: Number(id), data: { status: "read" } },
       { onSuccess: () => queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() }) }
@@ -56,7 +56,7 @@ export default function EmailDetailScreen() {
   };
 
   const handleArchive = () => {
-    hapticFeedback(Haptics?.ImpactFeedbackStyle?.Medium);
+    hapticFeedback();
     updateEmail.mutate(
       { id: Number(id), data: { status: "archived" } },
       {

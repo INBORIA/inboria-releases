@@ -14,6 +14,8 @@ import { useGetProject } from "@workspace/api-client-react";
 import type { Email, Task } from "@workspace/api-client-react";
 import { useColors } from "@/hooks/useColors";
 
+type AppColors = ReturnType<typeof useColors>;
+
 const STATUS_COLORS: Record<string, string> = {
   actif: "#22c55e",
   termine: "#8b9cb3",
@@ -25,7 +27,7 @@ const STATUS_LABELS: Record<string, string> = {
   en_pause: "En pause",
 };
 
-function EmailItem({ email, colors, onPress }: { email: Email; colors: any; onPress: () => void }) {
+function EmailItem({ email, colors, onPress }: { email: Email; colors: AppColors; onPress: () => void }) {
   const dotColor =
     email.priority === "urgent"
       ? colors.urgent
@@ -52,7 +54,7 @@ function EmailItem({ email, colors, onPress }: { email: Email; colors: any; onPr
   );
 }
 
-function TaskItem({ task, colors }: { task: Task; colors: any }) {
+function TaskItem({ task, colors }: { task: Task; colors: AppColors }) {
   return (
     <View style={[s.taskRow, { backgroundColor: colors.card, borderColor: colors.border }]}>
       <View
