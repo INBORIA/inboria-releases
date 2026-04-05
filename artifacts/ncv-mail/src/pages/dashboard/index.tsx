@@ -16,7 +16,7 @@ import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2 } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, ChevronDown, ChevronUp, AlertTriangle, Bell } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -37,6 +37,43 @@ function PriorityBadge({ priority }: { priority: string }) {
     return <Badge className="bg-amber-500/15 text-amber-400 border-amber-500/20 text-[11px] font-medium px-2 py-0.5">Moyen</Badge>;
   }
   return <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/20 text-[11px] font-medium px-2 py-0.5">Faible</Badge>;
+}
+
+function EmailRow({ email, onClick }: { email: any; onClick: () => void }) {
+  return (
+    <div
+      className="group bg-card hover:bg-[#1a2235] rounded-lg border border-border p-4 transition-colors cursor-pointer"
+      onClick={onClick}
+    >
+      <div className="flex items-start justify-between gap-4">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
+            {(email.sender || "?")[0].toUpperCase()}
+          </div>
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-0.5">
+              <span className="font-semibold text-[13px] text-white truncate">{email.sender}</span>
+              {email.status === "unread" && (
+                <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
+              )}
+            </div>
+            <h3 className="text-[13px] text-white/80 truncate">{email.subject}</h3>
+            {email.summary && (
+              <p className="text-[12px] text-[#8b9cb3] mt-1 line-clamp-1">{email.summary}</p>
+            )}
+          </div>
+        </div>
+        <div className="flex items-center gap-3 shrink-0">
+          <PriorityBadge priority={email.priority} />
+          <span className="text-[11px] text-[#8b9cb3] whitespace-nowrap flex items-center gap-1">
+            <Clock className="w-3 h-3" />
+            {format(new Date(email.createdAt), "d MMM HH:mm", { locale: fr })}
+          </span>
+          <ChevronRight className="w-4 h-4 text-[#8b9cb3]/40 group-hover:text-[#8b9cb3] transition-colors" />
+        </div>
+      </div>
+    </div>
+  );
 }
 
 const triageSchema = z.object({
@@ -190,7 +227,10 @@ export default function Dashboard() {
   const deleteEmail = useDeleteEmail();
   const triageEmail = useTriageEmail();
 
+  const [othersCollapsed, setOthersCollapsed] = useState(false);
   const activeEmails = emails?.filter((e) => e.status !== "archived");
+  const importantEmails = activeEmails?.filter((e) => e.priority === "urgent" || e.priority === "moyen") || [];
+  const otherEmails = activeEmails?.filter((e) => e.priority === "faible") || [];
   const selectedEmail = emails?.find((e) => e.id === selectedEmailId);
 
   const invalidateAll = () => {
@@ -374,62 +414,74 @@ export default function Dashboard() {
             </div>
           </div>
 
-          <div className="space-y-1">
-            {emailsLoading ? (
-              Array(5).fill(0).map((_, i) => (
+          {emailsLoading ? (
+            <div className="space-y-1">
+              {Array(5).fill(0).map((_, i) => (
                 <div key={i} className="bg-card rounded-lg border border-border p-4">
                   <Skeleton className="h-5 w-3/4 mb-2 bg-white/5" />
                   <Skeleton className="h-4 w-1/2 bg-white/5" />
                 </div>
-              ))
-            ) : activeEmails?.length === 0 ? (
-              <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
-                <Inbox className="mx-auto h-10 w-10 text-[#8b9cb3]/40 mb-3" />
-                <h3 className="text-sm font-medium text-white">Inbox Zero</h3>
-                <p className="text-[13px] text-[#8b9cb3] mt-1">Tous vos emails ont ete traites.</p>
-              </div>
-            ) : (
-              activeEmails?.map((email) => (
-                <div
-                  key={email.id}
-                  className="group bg-card hover:bg-[#1a2235] rounded-lg border border-border p-4 transition-colors cursor-pointer"
-                  onClick={() => setSelectedEmailId(email.id)}
-                >
-                  <div className="flex items-start justify-between gap-4">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
-                        {(email.sender || "?")[0].toUpperCase()}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="font-semibold text-[13px] text-white truncate">{email.sender}</span>
-                          {email.status === "unread" && (
-                            <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
-                          )}
-                        </div>
-                        <h3 className="text-[13px] text-white/80 truncate">
-                          {email.subject}
-                        </h3>
-                        {email.summary && (
-                          <p className="text-[12px] text-[#8b9cb3] mt-1 line-clamp-1">
-                            {email.summary}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-3 shrink-0">
-                      <PriorityBadge priority={email.priority} />
-                      <span className="text-[11px] text-[#8b9cb3] whitespace-nowrap flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {format(new Date(email.createdAt), "d MMM HH:mm", { locale: fr })}
-                      </span>
-                      <ChevronRight className="w-4 h-4 text-[#8b9cb3]/40 group-hover:text-[#8b9cb3] transition-colors" />
-                    </div>
+              ))}
+            </div>
+          ) : activeEmails?.length === 0 ? (
+            <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
+              <Inbox className="mx-auto h-10 w-10 text-[#8b9cb3]/40 mb-3" />
+              <h3 className="text-sm font-medium text-white">Inbox Zero</h3>
+              <p className="text-[13px] text-[#8b9cb3] mt-1">Tous vos emails ont ete traites.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filterPriority === "all" && importantEmails.length > 0 && (
+                <div>
+                  <div className="flex items-center gap-2 mb-2 px-1">
+                    <AlertTriangle className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="text-[11px] font-semibold text-amber-400 uppercase tracking-wider">A traiter</span>
+                    <span className="text-[11px] text-[#8b9cb3] bg-white/[0.06] px-1.5 py-0.5 rounded">{importantEmails.length}</span>
+                  </div>
+                  <div className="space-y-1">
+                    {importantEmails.map((email) => (
+                      <EmailRow key={email.id} email={email} onClick={() => setSelectedEmailId(email.id)} />
+                    ))}
                   </div>
                 </div>
-              ))
-            )}
-          </div>
+              )}
+
+              {filterPriority === "all" && otherEmails.length > 0 && (
+                <div>
+                  <button
+                    onClick={() => setOthersCollapsed(!othersCollapsed)}
+                    className="flex items-center gap-2 mb-2 px-1 w-full text-left group/section"
+                  >
+                    <Bell className="w-3.5 h-3.5 text-[#8b9cb3]" />
+                    <span className="text-[11px] font-semibold text-[#8b9cb3] uppercase tracking-wider">Autres</span>
+                    <span className="text-[11px] text-[#8b9cb3] bg-white/[0.06] px-1.5 py-0.5 rounded">{otherEmails.length}</span>
+                    <span className="text-[11px] text-[#8b9cb3]/50 ml-1">newsletters, notifications...</span>
+                    <div className="flex-1" />
+                    {othersCollapsed ? (
+                      <ChevronDown className="w-3.5 h-3.5 text-[#8b9cb3] group-hover/section:text-white transition-colors" />
+                    ) : (
+                      <ChevronUp className="w-3.5 h-3.5 text-[#8b9cb3] group-hover/section:text-white transition-colors" />
+                    )}
+                  </button>
+                  {!othersCollapsed && (
+                    <div className="space-y-1">
+                      {otherEmails.map((email) => (
+                        <EmailRow key={email.id} email={email} onClick={() => setSelectedEmailId(email.id)} />
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {filterPriority !== "all" && (
+                <div className="space-y-1">
+                  {activeEmails?.map((email) => (
+                    <EmailRow key={email.id} email={email} onClick={() => setSelectedEmailId(email.id)} />
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
 
         <div className="w-full lg:w-[240px] shrink-0 space-y-4">
