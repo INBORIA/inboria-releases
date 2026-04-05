@@ -12,6 +12,17 @@ import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, Aler
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 
+const IMAP_PROVIDERS = [
+  { id: "orange", name: "Orange", color: "bg-orange-500/10 text-orange-400", letter: "Or", host: "imap.orange.fr", port: "993" },
+  { id: "free", name: "Free", color: "bg-red-500/10 text-red-400", letter: "Fr", host: "imap.free.fr", port: "993" },
+  { id: "sfr", name: "SFR", color: "bg-green-500/10 text-green-400", letter: "SF", host: "imap.sfr.fr", port: "993" },
+  { id: "yahoo", name: "Yahoo", color: "bg-purple-500/10 text-purple-400", letter: "Y!", host: "imap.mail.yahoo.com", port: "993" },
+  { id: "laposte", name: "La Poste", color: "bg-yellow-500/10 text-yellow-400", letter: "LP", host: "imap.laposte.net", port: "993" },
+  { id: "ovh", name: "OVH", color: "bg-blue-500/10 text-blue-400", letter: "OV", host: "ssl0.ovh.net", port: "993" },
+  { id: "ionos", name: "IONOS", color: "bg-blue-500/10 text-blue-400", letter: "IO", host: "imap.ionos.fr", port: "993" },
+  { id: "autre", name: "Autre", color: "bg-white/[0.06] text-[#8b9cb3]", letter: "@", host: "", port: "993" },
+];
+
 interface EmailConnection {
   id: string;
   provider: string;
@@ -45,7 +56,7 @@ export default function Parametres() {
   const { data: connections, isLoading: connectionsLoading } = useEmailConnections();
 
   const [fullName, setFullName] = useState("");
-  const [showImapForm, setShowImapForm] = useState(false);
+  const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
   const [imapEmail, setImapEmail] = useState("");
   const [imapPassword, setImapPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -125,7 +136,7 @@ export default function Parametres() {
       if (res.ok) {
         toast({ title: `${imapEmail} connecte avec succes !` });
         queryClient.invalidateQueries({ queryKey: ["email-connections"] });
-        setShowImapForm(false);
+        setSelectedProvider(null);
         setImapEmail("");
         setImapPassword("");
         setImapHost("");
@@ -238,21 +249,47 @@ export default function Parametres() {
                     </div>
                   )}
 
-                  {!imapConnected && !showImapForm && (
-                    <button
-                      className="w-full text-[12px] text-[#8b9cb3] hover:text-primary py-2 text-center transition-colors"
-                      onClick={() => setShowImapForm(true)}
-                    >
-                      Autre fournisseur (Orange, Free, SFR, Yahoo...)
-                    </button>
+                  {!imapConnected && !selectedProvider && (
+                    <>
+                      <div className="pt-2 border-t border-border">
+                        <p className="text-[12px] text-[#8b9cb3] mb-3">Autres fournisseurs</p>
+                        <div className="grid grid-cols-4 gap-2">
+                          {IMAP_PROVIDERS.map((provider) => (
+                            <button
+                              key={provider.id}
+                              className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-border bg-background hover:border-primary/30 hover:bg-primary/[0.04] transition-all group"
+                              onClick={() => {
+                                setSelectedProvider(provider.id);
+                                setImapHost(provider.host);
+                                setImapPort(provider.port);
+                                setShowAdvanced(provider.id === "autre");
+                                setConnectError("");
+                              }}
+                            >
+                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[11px] ${provider.color}`}>
+                                {provider.letter}
+                              </div>
+                              <span className="text-[11px] text-[#8b9cb3] group-hover:text-white transition-colors">{provider.name}</span>
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    </>
                   )}
 
-                  {showImapForm && (
+                  {selectedProvider && (
                     <div className="p-4 border border-primary/20 rounded-lg bg-primary/5 space-y-3">
-                      <h4 className="font-medium text-[13px] text-white">Connecter un autre compte email</h4>
-                      <p className="text-[11px] text-[#8b9cb3]">
-                        Orange, Free, SFR, Yahoo, La Poste, OVH et autres.
-                      </p>
+                      <div className="flex items-center gap-2">
+                        {(() => {
+                          const prov = IMAP_PROVIDERS.find(p => p.id === selectedProvider);
+                          return prov ? (
+                            <>
+                              <div className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-[10px] ${prov.color}`}>{prov.letter}</div>
+                              <h4 className="font-medium text-[13px] text-white">Connecter {prov.name}</h4>
+                            </>
+                          ) : null;
+                        })()}
+                      </div>
 
                       {connectError && (
                         <div className="flex items-start gap-2 p-2.5 bg-red-500/10 border border-red-500/20 rounded-lg text-[12px] text-red-400">
@@ -276,11 +313,7 @@ export default function Parametres() {
                           </div>
                         </div>
 
-                        <button type="button" className="text-[12px] text-primary hover:underline" onClick={() => setShowAdvanced(!showAdvanced)}>
-                          {showAdvanced ? "Masquer" : "Configuration avancee"}
-                        </button>
-
-                        {showAdvanced && (
+                        {(selectedProvider === "autre" || showAdvanced) && (
                           <div className="grid grid-cols-2 gap-2.5">
                             <div className="space-y-1">
                               <Label className="text-[12px] text-[#8b9cb3]">Serveur IMAP</Label>
@@ -292,13 +325,19 @@ export default function Parametres() {
                             </div>
                           </div>
                         )}
+
+                        {selectedProvider !== "autre" && (
+                          <button type="button" className="text-[12px] text-primary hover:underline" onClick={() => setShowAdvanced(!showAdvanced)}>
+                            {showAdvanced ? "Masquer la config avancee" : "Configuration avancee"}
+                          </button>
+                        )}
                       </div>
 
                       <div className="flex gap-2">
                         <Button onClick={handleImapConnect} disabled={connecting} size="sm">
                           {connecting ? "Connexion..." : "Connecter"}
                         </Button>
-                        <Button variant="ghost" size="sm" className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]" onClick={() => { setShowImapForm(false); setConnectError(""); }}>
+                        <Button variant="ghost" size="sm" className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]" onClick={() => { setSelectedProvider(null); setConnectError(""); setImapEmail(""); setImapPassword(""); setImapHost(""); setImapPort(""); }}>
                           Annuler
                         </Button>
                       </div>
