@@ -19,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const navigation = [
-  { name: "Boite prioritaire", href: "/dashboard", icon: Inbox },
+  { name: "Inbox", href: "/dashboard", icon: Inbox },
   { name: "Bilan quotidien", href: "/dashboard/bilan", icon: LayoutDashboard },
   { name: "Taches", href: "/dashboard/taches", icon: CheckSquare },
   { name: "Categories", href: "/dashboard/categories", icon: Tags },

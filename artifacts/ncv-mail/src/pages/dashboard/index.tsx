@@ -107,7 +107,7 @@ export default function Dashboard() {
         
         <div className="flex-1 min-w-0">
           <div className="flex items-center justify-between mb-5">
-            <h1 className="text-xl font-semibold text-white tracking-tight">Boite prioritaire</h1>
+            <h1 className="text-xl font-semibold text-white tracking-tight">Inbox</h1>
             <div className="flex items-center gap-2">
               <Dialog open={isSimulateOpen} onOpenChange={setIsSimulateOpen}>
                 <DialogTrigger asChild>
