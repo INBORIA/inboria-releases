@@ -196,6 +196,7 @@ const IMAP_PROVIDERS: Record<string, { host: string; port: number }> = {
   "telenet.be": { host: "imap.telenet.be", port: 993 },
   "ovh.net": { host: "ssl0.ovh.net", port: 993 },
   "ovh.com": { host: "ssl0.ovh.net", port: 993 },
+  "xchangesuite.com": { host: "pro3.mail.ovh.net", port: 993 },
   "gmx.com": { host: "imap.gmx.com", port: 993 },
   "gmx.fr": { host: "imap.gmx.com", port: 993 },
   "infomaniak.ch": { host: "mail.infomaniak.com", port: 993 },
