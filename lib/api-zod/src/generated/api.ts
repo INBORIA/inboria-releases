@@ -516,6 +516,17 @@ export const GenerateDailySummaryResponse = zod.object({
 });
 
 /**
+ * @summary Generate AI draft reply for an email
+ */
+export const GenerateDraftBody = zod.object({
+  emailId: zod.number(),
+});
+
+export const GenerateDraftResponse = zod.object({
+  draft: zod.string(),
+});
+
+/**
  * @summary AI triage a single email
  */
 export const TriageEmailBody = zod.object({

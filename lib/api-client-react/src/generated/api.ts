@@ -28,7 +28,9 @@ import type {
   DeleteEmail200,
   DeleteProject200,
   DeleteTask200,
+  DraftResponse,
   Email,
+  GenerateDraftBody,
   HealthStatus,
   InboxHealth,
   ListEmailsParams,
@@ -2371,6 +2373,92 @@ export const useGenerateDailySummary = <
   TContext
 > => {
   return useMutation(getGenerateDailySummaryMutationOptions(options));
+};
+
+/**
+ * @summary Generate AI draft reply for an email
+ */
+export const getGenerateDraftUrl = () => {
+  return `/api/ai/draft`;
+};
+
+export const generateDraft = async (
+  generateDraftBody: GenerateDraftBody,
+  options?: RequestInit,
+): Promise<DraftResponse> => {
+  return customFetch<DraftResponse>(getGenerateDraftUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(generateDraftBody),
+  });
+};
+
+export const getGenerateDraftMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generateDraft>>,
+    TError,
+    { data: BodyType<GenerateDraftBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof generateDraft>>,
+  TError,
+  { data: BodyType<GenerateDraftBody> },
+  TContext
+> => {
+  const mutationKey = ["generateDraft"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof generateDraft>>,
+    { data: BodyType<GenerateDraftBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return generateDraft(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type GenerateDraftMutationResult = NonNullable<
+  Awaited<ReturnType<typeof generateDraft>>
+>;
+export type GenerateDraftMutationBody = BodyType<GenerateDraftBody>;
+export type GenerateDraftMutationError = ErrorType<void>;
+
+/**
+ * @summary Generate AI draft reply for an email
+ */
+export const useGenerateDraft = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generateDraft>>,
+    TError,
+    { data: BodyType<GenerateDraftBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof generateDraft>>,
+  TError,
+  { data: BodyType<GenerateDraftBody> },
+  TContext
+> => {
+  return useMutation(getGenerateDraftMutationOptions(options));
 };
 
 /**

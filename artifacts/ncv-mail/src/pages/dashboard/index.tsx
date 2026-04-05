@@ -5,6 +5,7 @@ import {
   useUpdateEmail,
   useDeleteEmail,
   useSendEmail,
+  useGenerateDraft,
   getListEmailsQueryKey,
   useGetDashboardSummary,
   useTriageEmail,
@@ -18,7 +19,7 @@ import { fr } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -96,7 +97,7 @@ const triageSchema = z.object({
   body: z.string().min(1, "Contenu requis"),
 });
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, categories, projects }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; categories: any[]; projects: any[] }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[] }) {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyTo, setReplyTo] = useState("");
   const [replySubject, setReplySubject] = useState("");
@@ -172,6 +173,23 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
             >
               <Reply className="w-3.5 h-3.5" />
               Repondre
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              className="gap-1.5 bg-transparent border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+              disabled={isDrafting}
+              onClick={() => {
+                setReplyTo(email.senderEmail || "");
+                setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
+                setReplyOpen(true);
+                onGenerateDraft(email.id, (draft) => {
+                  setReplyText(draft);
+                });
+              }}
+            >
+              {isDrafting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Wand2 className="w-3.5 h-3.5" />}
+              {isDrafting ? "Generation..." : "Reponse IA"}
             </Button>
             {email.status === "unread" && (
               <Button
@@ -341,6 +359,7 @@ export default function Dashboard() {
   const deleteEmail = useDeleteEmail();
   const triageEmail = useTriageEmail();
   const sendEmailMut = useSendEmail();
+  const generateDraftMut = useGenerateDraft();
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [composeTo, setComposeTo] = useState("");
   const [composeSubject, setComposeSubject] = useState("");
@@ -470,6 +489,21 @@ export default function Dashboard() {
     );
   };
 
+  const handleGenerateDraft = (emailId: number, callback: (draft: string) => void) => {
+    generateDraftMut.mutate(
+      { data: { emailId } },
+      {
+        onSuccess: (data) => {
+          callback(data.draft);
+          toast({ title: "Brouillon IA genere", description: "Le brouillon a ete insere dans le formulaire." });
+        },
+        onError: () => {
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible de generer le brouillon IA." });
+        },
+      }
+    );
+  };
+
   const handleSync = async () => {
     setIsSyncing(true);
     try {
@@ -540,6 +574,8 @@ export default function Dashboard() {
             onUpdateProject={handleUpdateProject}
             onSendReply={handleSendReply}
             isSending={sendEmailMut.isPending}
+            onGenerateDraft={handleGenerateDraft}
+            isDrafting={generateDraftMut.isPending}
             categories={categoryCounts || []}
             projects={projects || []}
           />

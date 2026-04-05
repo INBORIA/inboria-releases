@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
-import { GenerateDailySummaryBody, TriageEmailBody } from "@workspace/api-zod";
+import { GenerateDailySummaryBody, TriageEmailBody, GenerateDraftBody } from "@workspace/api-zod";
 import OpenAI from "openai";
 import { requireAuth } from "../middlewares/auth";
 
@@ -181,6 +181,98 @@ Reponds en JSON:
     });
   } catch {
     res.status(500).json({ error: "Failed to triage email" });
+  }
+});
+
+router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const parsed = GenerateDraftBody.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: "emailId requis (entier)" });
+      return;
+    }
+    const { emailId } = parsed.data;
+
+    const { data: email, error: emailErr } = await supabaseAdmin
+      .from("emails")
+      .select("id, sender, sender_email, subject, body, category_id, project_id")
+      .eq("id", emailId)
+      .eq("user_id", req.userId!)
+      .single();
+
+    if (emailErr || !email) {
+      res.status(404).json({ error: "Email introuvable" });
+      return;
+    }
+
+    let projectContext = "";
+    if (email.project_id) {
+      const { data: project } = await supabaseAdmin
+        .from("projects")
+        .select("name, reference, description")
+        .eq("id", email.project_id)
+        .eq("user_id", req.userId!)
+        .single();
+      if (project) {
+        projectContext = `\nCet email est lie au projet "${project.name}" (ref: ${project.reference})${project.description ? `. Description: ${project.description}` : ""}.`;
+      }
+    }
+
+    let categoryContext = "";
+    if (email.category_id) {
+      const { data: category } = await supabaseAdmin
+        .from("categories")
+        .select("name")
+        .eq("id", email.category_id)
+        .eq("user_id", req.userId!)
+        .single();
+      if (category) {
+        categoryContext = `\nCategorie de l'email: ${category.name}.`;
+      }
+    }
+
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("full_name, ai_language")
+      .eq("id", req.userId!)
+      .single();
+
+    const userName = profile?.full_name || "l'utilisateur";
+    const lang = profile?.ai_language || "fr";
+    const langInstruction = lang === "fr"
+      ? "Redige la reponse en francais."
+      : lang === "nl"
+      ? "Schrijf het antwoord in het Nederlands."
+      : "Write the reply in English.";
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      max_completion_tokens: 1024,
+      messages: [
+        {
+          role: "system",
+          content: `Tu es un assistant de redaction d'emails professionnels. ${langInstruction} Tu rediges des reponses claires, polies et professionnelles. Signe avec le prenom "${userName}".`,
+        },
+        {
+          role: "user",
+          content: `Voici un email recu auquel il faut repondre:
+
+Expediteur: ${email.sender} (${email.sender_email || ""})
+Sujet: ${email.subject}
+Corps:
+${email.body}${projectContext}${categoryContext}
+
+Redige une reponse professionnelle et adaptee au contexte. Reponds uniquement avec le texte du brouillon, sans explication supplementaire.`,
+        },
+      ],
+    });
+
+    const draft = completion.choices[0]?.message?.content?.trim() || "";
+
+    res.json({ draft });
+  } catch (err: any) {
+    console.error("AI draft error:", err);
+    res.status(500).json({ error: "Echec de la generation du brouillon" });
   }
 });
 

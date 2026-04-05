@@ -559,6 +559,29 @@ paths:
               schema:
                 $ref: "#/components/schemas/DailySummary"
 
+  /ai/draft:
+    post:
+      operationId: generateDraft
+      tags: [ai]
+      summary: Generate AI draft reply for an email
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateDraftBody"
+      responses:
+        "200":
+          description: AI-generated draft reply
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DraftResponse"
+        "400":
+          description: Missing emailId
+        "404":
+          description: Email not found
+
   /ai/triage:
     post:
       operationId: triageEmail
@@ -947,6 +970,22 @@ components:
         - moyen
         - faible
         - pending
+
+    GenerateDraftBody:
+      type: object
+      properties:
+        emailId:
+          type: integer
+      required:
+        - emailId
+
+    DraftResponse:
+      type: object
+      properties:
+        draft:
+          type: string
+      required:
+        - draft
 
     TriageEmailBody:
       type: object

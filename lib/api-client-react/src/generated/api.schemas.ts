@@ -200,6 +200,14 @@ export interface DailySummary {
   advice: string;
 }
 
+export interface GenerateDraftBody {
+  emailId: number;
+}
+
+export interface DraftResponse {
+  draft: string;
+}
+
 export interface TriageEmailBody {
   sender: string;
   subject: string;
