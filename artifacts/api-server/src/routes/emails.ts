@@ -2,6 +2,14 @@ import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 
+function parseSender(raw: string) {
+  const match = raw.match(/^(.+?)\s*<(.+?)>$/);
+  return {
+    name: match ? match[1].trim().replace(/^"|"$/g, "") : raw,
+    email: match ? match[2].trim() : raw,
+  };
+}
+
 const router: IRouter = Router();
 
 router.get("/emails", requireAuth, async (req, res): Promise<void> => {
@@ -29,19 +37,22 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
-    res.json((emails || []).map((e: any) => ({
-      id: e.id,
-      sender: e.sender,
-      senderEmail: e.sender_email || e.sender,
-      subject: e.subject,
-      body: e.body,
-      status: e.status,
-      priority: e.priority,
-      summary: e.summary,
-      categoryId: e.category_id,
-      categoryName: e.categories?.name || null,
-      createdAt: e.created_at,
-    })));
+    res.json((emails || []).map((e: any) => {
+      const s = parseSender(e.sender || "");
+      return {
+        id: e.id,
+        sender: s.name,
+        senderEmail: s.email,
+        subject: e.subject,
+        body: e.body,
+        status: e.status,
+        priority: e.priority || "faible",
+        summary: e.summary,
+        categoryId: e.category_id,
+        categoryName: e.categories?.name || null,
+        createdAt: e.created_at,
+      };
+    }));
   } catch {
     res.status(500).json({ error: "Failed to list emails" });
   }
@@ -61,14 +72,15 @@ router.get("/emails/:id", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
+    const s = parseSender(email.sender || "");
     res.json({
       id: email.id,
-      sender: email.sender,
-      senderEmail: email.sender_email || email.sender,
+      sender: s.name,
+      senderEmail: s.email,
       subject: email.subject,
       body: email.body,
       status: email.status,
-      priority: email.priority,
+      priority: email.priority || "faible",
       summary: email.summary,
       categoryId: email.category_id,
       categoryName: email.categories?.name || null,
@@ -98,14 +110,15 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
+    const s = parseSender(email.sender || "");
     res.json({
       id: email.id,
-      sender: email.sender,
-      senderEmail: email.sender_email || email.sender,
+      sender: s.name,
+      senderEmail: s.email,
       subject: email.subject,
       body: email.body,
       status: email.status,
-      priority: email.priority,
+      priority: email.priority || "faible",
       summary: email.summary,
       categoryId: email.category_id,
       categoryName: email.categories?.name || null,

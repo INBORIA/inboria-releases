@@ -1,10 +1,75 @@
 import { Router, type IRouter } from "express";
 import { google } from "googleapis";
 import { ImapFlow } from "imapflow";
+import OpenAI from "openai";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 
+const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
+
+async function triageEmail(sender: string, subject: string, body: string, userId: string): Promise<{ priority: string; summary: string; category: string }> {
+  try {
+    const { data: categories } = await supabaseAdmin
+      .from("categories")
+      .select("name")
+      .eq("user_id", userId);
+    const categoryNames = (categories || []).map((c: any) => c.name);
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      max_completion_tokens: 256,
+      messages: [
+        { role: "system", content: "Tu es un assistant de tri d'emails professionnel. Reponds uniquement en JSON valide." },
+        { role: "user", content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${body.slice(0, 500)}\n\nCategories: ${categoryNames.join(", ") || "Aucune"}\n\nJSON: {"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom ou Non classe"}` },
+      ],
+    });
+    const content = completion.choices[0]?.message?.content ?? "{}";
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    const result = JSON.parse(jsonMatch ? jsonMatch[0] : "{}");
+    return {
+      priority: result.priority || "faible",
+      summary: result.summary || "",
+      category: result.category || "Non classe",
+    };
+  } catch (err: any) {
+    console.error("triageEmail error:", err.message);
+    return { priority: "faible", summary: "", category: "Non classe" };
+  }
+}
+
 const router: IRouter = Router();
+
+router.post("/email/migrate", requireAuth, async (_req, res): Promise<void> => {
+  try {
+    const supabaseUrl = process.env["VITE_SUPABASE_URL"];
+    const serviceKey = process.env["SUPABASE_SECRET_KEY"];
+    if (!supabaseUrl || !serviceKey) {
+      res.status(500).json({ error: "Missing Supabase config" });
+      return;
+    }
+    const queries = [
+      "ALTER TABLE emails ADD COLUMN IF NOT EXISTS priority TEXT DEFAULT 'faible'",
+      "ALTER TABLE emails ADD COLUMN IF NOT EXISTS summary TEXT",
+    ];
+    for (const sql of queries) {
+      const resp = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+        method: "POST",
+        headers: {
+          "apikey": serviceKey,
+          "Authorization": `Bearer ${serviceKey}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ query: sql }),
+      });
+      if (!resp.ok) {
+        console.log("migrate: SQL via RPC failed, trying direct...", await resp.text());
+      }
+    }
+    res.json({ ok: true, message: "Migration attempted. If columns don't exist yet, add them manually in Supabase SQL editor:\nALTER TABLE emails ADD COLUMN IF NOT EXISTS priority TEXT DEFAULT 'faible';\nALTER TABLE emails ADD COLUMN IF NOT EXISTS summary TEXT;" });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
 
 const GOOGLE_CLIENT_ID = process.env["GOOGLE_CLIENT_ID"] || "";
 const GOOGLE_CLIENT_SECRET = process.env["GOOGLE_CLIENT_SECRET"] || "";
@@ -261,6 +326,16 @@ router.delete("/email/connections/:provider", requireAuth, async (req, res): Pro
 
 router.post("/email/sync", requireAuth, async (req, res): Promise<void> => {
   try {
+    const force = req.body?.force === true;
+
+    if (force) {
+      await supabaseAdmin
+        .from("emails")
+        .delete()
+        .eq("user_id", req.userId!);
+      console.log("syncEmails: force=true, cleared all emails for user");
+    }
+
     const { data: connections } = await supabaseAdmin
       .from("email_connections")
       .select("*")
@@ -344,6 +419,19 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
       const subject = headers.find(h => h.name === "Subject")?.value || "(pas de sujet)";
       const snippet = fullMsg.snippet || "";
 
+      const triage = await triageEmail(from, subject, snippet, userId);
+
+      let categoryId = null;
+      if (triage.category && triage.category !== "Non classe") {
+        const { data: cat } = await supabaseAdmin
+          .from("categories")
+          .select("id")
+          .eq("user_id", userId)
+          .eq("name", triage.category)
+          .single();
+        categoryId = cat?.id || null;
+      }
+
       const { error: insertError } = await supabaseAdmin.from("emails").insert({
         user_id: userId,
         external_id: msg.id,
@@ -351,6 +439,9 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
         subject,
         body: snippet,
         status: "non_lu",
+        priority: triage.priority,
+        summary: triage.summary,
+        category_id: categoryId,
         created_at: new Date(parseInt(fullMsg.internalDate || "0")).toISOString(),
       });
 
