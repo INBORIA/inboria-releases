@@ -174,8 +174,11 @@ Auth, profile, emails (CRUD + send), categories, tasks, dashboard stats, AI tria
 - **Auth**: Supabase Auth via `expo-secure-store` (native) / localStorage (web)
 - **API**: Uses same `@workspace/api-client-react` hooks, `setBaseUrl` + `setAuthTokenGetter` in `_layout.tsx`
 - **Env vars**: `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` passed from VITE_* in dev script
-- **Tabs**: Boite de reception (inbox), Taches, Projets, Parametres
-- **Screens**: Login/Register, Email detail (`/email/[id]`)
+- **Tabs**: Reception (inbox), Bilan (daily AI summary), Taches, Projets, Menu
+- **Menu tab**: Profile card + quota bar + links to Archives, Categories, Abonnement + logout
+- **Screens**: Login/Register, Email detail (`/email/[id]`), Project detail (`/project/[id]`), Archives, Categories, Abonnement
+- **Icons**: ONLY `MaterialCommunityIcons` from `@expo/vector-icons` — never Feather. Font loaded in root `_layout.tsx` via `...MaterialCommunityIcons.font`
+- **Emoji handling**: `cleanEmailBody.ts` does proper byte-level UTF-8 decoding of quoted-printable for emoji support
 - **Theme**: Dark-only matching web (#0d1117 bg, #141c2b card, #2d7dd2 primary)
 - **Navigation**: expo-router with NativeTabs (iOS 26+) / classic Tabs fallback
 

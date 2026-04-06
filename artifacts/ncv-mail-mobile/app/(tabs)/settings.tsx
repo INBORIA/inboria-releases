@@ -11,18 +11,45 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGetProfile } from "@workspace/api-client-react";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
+import { useRouter } from "expo-router";
 
-const PLAN_LABELS: Record<string, string> = {
-  free: "Gratuit",
-  pro: "Pro",
-  business: "Business",
-};
+const MENU_ITEMS = [
+  {
+    key: "archives",
+    label: "Archives",
+    desc: "Emails archives par l'IA",
+    icon: "archive-outline" as const,
+    route: "/archives",
+    color: "#6366f1",
+  },
+  {
+    key: "categories",
+    label: "Categories",
+    desc: "Gerer les dossiers de classement",
+    icon: "tag-outline" as const,
+    route: "/categories",
+    color: "#22c55e",
+  },
+  {
+    key: "abonnement",
+    label: "Abonnement",
+    desc: "Plan et quotas emails",
+    icon: "credit-card-outline" as const,
+    route: "/abonnement",
+    color: "#f59e0b",
+  },
+];
 
-export default function SettingsScreen() {
+export default function MenuScreen() {
   const colors = useColors();
   const { signOut } = useAuth();
   const { data: profile } = useGetProfile();
+  const router = useRouter();
   const isWeb = Platform.OS === "web";
+
+  const quotaPercent = profile
+    ? Math.min(100, (profile.emailsUsed / Math.max(1, profile.emailsQuota)) * 100)
+    : 0;
 
   return (
     <ScrollView
@@ -40,26 +67,55 @@ export default function SettingsScreen() {
           <Text style={[s.profileEmail, { color: colors.mutedForeground }]}>
             {profile?.email || "..."}
           </Text>
-        </View>
-      </View>
-
-      <View style={[s.section, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <Text style={[s.sectionTitle, { color: colors.mutedForeground }]}>Abonnement</Text>
-        <View style={s.row}>
-          <Text style={[s.rowLabel, { color: colors.foreground }]}>Plan</Text>
           <View style={[s.planBadge, { backgroundColor: colors.primary + "20" }]}>
             <Text style={[s.planText, { color: colors.primary }]}>
-              {PLAN_LABELS[profile?.plan || "free"] || profile?.plan}
+              {profile?.plan?.charAt(0).toUpperCase() + (profile?.plan?.slice(1) || "") || "Gratuit"}
             </Text>
           </View>
         </View>
-        <View style={[s.divider, { backgroundColor: colors.border }]} />
-        <View style={s.row}>
-          <Text style={[s.rowLabel, { color: colors.foreground }]}>Emails utilises</Text>
-          <Text style={[s.rowValue, { color: colors.mutedForeground }]}>
+      </View>
+
+      <View style={[s.quotaCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <View style={s.quotaHeader}>
+          <View style={s.quotaLeft}>
+            <MaterialCommunityIcons name="email-check-outline" size={16} color={colors.primary} />
+            <Text style={[s.quotaLabel, { color: colors.mutedForeground }]}>Quota emails IA</Text>
+          </View>
+          <Text style={[s.quotaValue, { color: colors.foreground }]}>
             {profile?.emailsUsed ?? 0} / {profile?.emailsQuota ?? 0}
           </Text>
         </View>
+        <View style={[s.progressBg, { backgroundColor: colors.foreground + "15" }]}>
+          <View
+            style={[
+              s.progressFill,
+              {
+                backgroundColor: quotaPercent > 80 ? "#ef4444" : colors.primary,
+                width: `${quotaPercent}%`,
+              },
+            ]}
+          />
+        </View>
+      </View>
+
+      <View style={s.menuSection}>
+        {MENU_ITEMS.map((item) => (
+          <TouchableOpacity
+            key={item.key}
+            style={[s.menuItem, { backgroundColor: colors.card, borderColor: colors.border }]}
+            onPress={() => router.push(item.route as any)}
+            activeOpacity={0.7}
+          >
+            <View style={[s.menuIcon, { backgroundColor: item.color + "15" }]}>
+              <MaterialCommunityIcons name={item.icon} size={20} color={item.color} />
+            </View>
+            <View style={s.menuText}>
+              <Text style={[s.menuLabel, { color: colors.foreground }]}>{item.label}</Text>
+              <Text style={[s.menuDesc, { color: colors.mutedForeground }]}>{item.desc}</Text>
+            </View>
+            <MaterialCommunityIcons name="chevron-right" size={20} color={colors.mutedForeground + "60"} />
+          </TouchableOpacity>
+        ))}
       </View>
 
       <TouchableOpacity
@@ -76,7 +132,7 @@ export default function SettingsScreen() {
 
 const s = StyleSheet.create({
   scroll: { flex: 1 },
-  content: { padding: 16, gap: 16 },
+  content: { padding: 16, gap: 12 },
 
   profileCard: {
     flexDirection: "row",
@@ -97,26 +153,46 @@ const s = StyleSheet.create({
   profileInfo: { flex: 1, minWidth: 0 },
   profileName: { fontSize: 16, fontFamily: "Inter_600SemiBold" },
   profileEmail: { fontSize: 13, fontFamily: "Inter_400Regular", marginTop: 2 },
+  planBadge: { paddingHorizontal: 8, paddingVertical: 2, borderRadius: 6, alignSelf: "flex-start", marginTop: 6 },
+  planText: { fontSize: 11, fontFamily: "Inter_600SemiBold" },
 
-  section: { borderRadius: 12, borderWidth: 1, padding: 16 },
-  sectionTitle: {
-    fontSize: 11,
-    fontFamily: "Inter_600SemiBold",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginBottom: 12,
+  quotaCard: {
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    gap: 8,
   },
-  row: {
+  quotaHeader: {
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingVertical: 4,
   },
-  rowLabel: { fontSize: 14, fontFamily: "Inter_500Medium" },
-  rowValue: { fontSize: 14, fontFamily: "Inter_400Regular" },
-  divider: { height: 1, marginVertical: 10 },
-  planBadge: { paddingHorizontal: 10, paddingVertical: 3, borderRadius: 6 },
-  planText: { fontSize: 12, fontFamily: "Inter_600SemiBold" },
+  quotaLeft: { flexDirection: "row", alignItems: "center", gap: 6 },
+  quotaLabel: { fontSize: 12, fontFamily: "Inter_500Medium" },
+  quotaValue: { fontSize: 13, fontFamily: "Inter_600SemiBold" },
+  progressBg: { height: 6, borderRadius: 3, overflow: "hidden" },
+  progressFill: { height: 6, borderRadius: 3 },
+
+  menuSection: { gap: 8 },
+  menuItem: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 14,
+    borderRadius: 12,
+    borderWidth: 1,
+    gap: 12,
+  },
+  menuIcon: {
+    width: 40,
+    height: 40,
+    borderRadius: 10,
+    alignItems: "center",
+    justifyContent: "center",
+    flexShrink: 0,
+  },
+  menuText: { flex: 1, minWidth: 0 },
+  menuLabel: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
+  menuDesc: { fontSize: 12, fontFamily: "Inter_400Regular", marginTop: 2 },
 
   logoutBtn: {
     flexDirection: "row",

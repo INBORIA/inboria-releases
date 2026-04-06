@@ -75,6 +75,9 @@ function RootLayoutNav() {
       <Stack.Screen name="login" options={{ headerShown: false }} />
       <Stack.Screen name="email/[id]" options={{ title: "Email" }} />
       <Stack.Screen name="project/[id]" options={{ title: "Projet" }} />
+      <Stack.Screen name="archives" options={{ title: "Archives", headerShown: false }} />
+      <Stack.Screen name="categories" options={{ title: "Categories", headerShown: false }} />
+      <Stack.Screen name="abonnement" options={{ title: "Abonnement", headerShown: false }} />
     </Stack>
   );
 }

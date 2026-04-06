@@ -4,29 +4,53 @@ function hasMimeArtifacts(text: string): boolean {
     /Content-Transfer-Encoding:\s*(quoted-printable|base64)/i.test(text);
 }
 
-function decodeQuotedPrintableTokens(text: string): string {
-  return text
-    .replace(/=\r?\n/g, "")
-    .replace(/= /g, "")
-    .replace(/=([0-9A-Fa-f]{2})/g, (_, hex: string) => {
-      const code = parseInt(hex, 16);
-      return String.fromCharCode(code);
-    });
-}
+function decodeQuotedPrintable(text: string): string {
+  const lines = text.replace(/=\r?\n/g, "").replace(/= /g, "");
 
-function decodeUtf8Bytes(text: string): string {
-  try {
-    const bytes: number[] = [];
-    for (let i = 0; i < text.length; i++) {
-      const code = text.charCodeAt(i);
-      if (code < 256) {
-        bytes.push(code);
-      } else {
-        return text;
+  const bytes: number[] = [];
+  let i = 0;
+  while (i < lines.length) {
+    if (lines[i] === "=" && i + 2 < lines.length) {
+      const hex = lines.substring(i + 1, i + 3);
+      if (/^[0-9A-Fa-f]{2}$/.test(hex)) {
+        bytes.push(parseInt(hex, 16));
+        i += 3;
+        continue;
       }
     }
-    const decoder = new TextDecoder("utf-8");
+    const code = lines.charCodeAt(i);
+    if (code < 128) {
+      bytes.push(code);
+    } else {
+      if (bytes.length > 0) {
+        // flush
+      }
+      bytes.push(code & 0xff);
+    }
+    i++;
+  }
+
+  try {
+    const decoder = new TextDecoder("utf-8", { fatal: false });
     return decoder.decode(new Uint8Array(bytes));
+  } catch {
+    return text;
+  }
+}
+
+function decodeBase64Segment(text: string): string {
+  try {
+    const cleaned = text.replace(/[^A-Za-z0-9+/=]/g, "");
+    if (cleaned.length < 4) return text;
+    if (typeof atob === "function") {
+      const raw = atob(cleaned);
+      const bytes = new Uint8Array(raw.length);
+      for (let i = 0; i < raw.length; i++) {
+        bytes[i] = raw.charCodeAt(i);
+      }
+      return new TextDecoder("utf-8", { fatal: false }).decode(bytes);
+    }
+    return text;
   } catch {
     return text;
   }
@@ -48,8 +72,7 @@ function stripMimeArtifacts(raw: string): string {
 
   text = text.replace(/--\s*$/g, "");
 
-  let decoded = decodeQuotedPrintableTokens(text);
-  decoded = decodeUtf8Bytes(decoded);
+  let decoded = decodeQuotedPrintable(text);
 
   decoded = decoded.replace(/<[^>]+>/g, " ");
 
