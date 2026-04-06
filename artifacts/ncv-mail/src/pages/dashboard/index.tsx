@@ -699,7 +699,7 @@ export default function Dashboard() {
                 </SelectContent>
               </Select>
               <Select value={filterCategory} onValueChange={setFilterCategory}>
-                <SelectTrigger className="w-[150px] bg-card border-border text-[#8b9cb3] text-[13px]">
+                <SelectTrigger className="w-auto min-w-[160px] bg-card border-border text-[#8b9cb3] text-[13px]">
                   <SelectValue placeholder="Categorie" />
                 </SelectTrigger>
                 <SelectContent className="bg-card border-border">
