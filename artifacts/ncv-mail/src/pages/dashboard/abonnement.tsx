@@ -67,7 +67,7 @@ const plans = [
     features: [
       "10 000 emails tries / siege / mois",
       "Tout du plan Pro inclus",
-      "Nombre d'utilisateurs configurable",
+      "Minimum 3 sieges, jusqu'a 50",
       "Boites partagees entre collegues",
       "Assignation de taches entre membres",
       "API dediee",
@@ -88,7 +88,7 @@ export default function Abonnement() {
   const searchString = useSearch();
   const [, navigate] = useLocation();
 
-  const [businessSeats, setBusinessSeats] = useState(1);
+  const [businessSeats, setBusinessSeats] = useState(3);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
 
   useEffect(() => {
@@ -286,7 +286,7 @@ export default function Abonnement() {
                   </div>
                   {isBusiness && (
                     <p className="text-[11px] text-[#8b9cb3] mt-0.5">
-                      Soit 9€ par siege / mois
+                      Soit 9€ par siege / mois (minimum 3 sieges)
                     </p>
                   )}
                 </div>
@@ -299,7 +299,7 @@ export default function Abonnement() {
                     <div className="flex items-center gap-3">
                       <input
                         type="range"
-                        min="1"
+                        min="3"
                         max="50"
                         value={businessSeats}
                         onChange={(e) =>
