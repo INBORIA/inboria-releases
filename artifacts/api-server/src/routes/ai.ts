@@ -10,8 +10,24 @@ const openai = new OpenAI({
 
 const router: IRouter = Router();
 
+async function checkEntitlement(userId: string): Promise<{ blocked: boolean; reason?: string }> {
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("plan, emails_used, emails_quota")
+    .eq("id", userId)
+    .single();
+
+  if (!profile) return { blocked: true, reason: "Profil introuvable" };
+  if (profile.plan === "expired") return { blocked: true, reason: "Votre abonnement a expire. Reabonnez-vous pour continuer." };
+  if (profile.emails_used >= profile.emails_quota) return { blocked: true, reason: "Quota d'emails atteint. Passez a un plan superieur pour continuer." };
+  return { blocked: false };
+}
+
 router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> => {
   try {
+    const entitlement = await checkEntitlement(req.userId!);
+    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
+
     const parsed = GenerateDailySummaryBody.safeParse(req.body);
     const language = parsed.success && parsed.data.language ? parsed.data.language : "fr";
 
@@ -103,6 +119,9 @@ Genere un JSON avec:
 
 router.post("/ai/triage", requireAuth, async (req, res): Promise<void> => {
   try {
+    const entitlement = await checkEntitlement(req.userId!);
+    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
+
     const parsed = TriageEmailBody.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({ error: parsed.error.message });
@@ -186,6 +205,9 @@ Reponds en JSON:
 
 router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
   try {
+    const entitlement = await checkEntitlement(req.userId!);
+    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
+
     const parsed = GenerateDraftBody.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({ error: "emailId requis (entier)" });

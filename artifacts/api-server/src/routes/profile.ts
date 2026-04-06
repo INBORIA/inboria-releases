@@ -25,10 +25,10 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       id: profile.id,
       email: userData.user?.email || "",
       fullName: profile.full_name || "",
-      plan: profile.plan || "essai",
-      seats: profile.seats || 1,
-      emailsUsed: profile.emails_used || 0,
-      emailsQuota: profile.emails_quota || 100,
+      plan: profile.plan ?? "essai",
+      seats: profile.seats ?? 1,
+      emailsUsed: profile.emails_used ?? 0,
+      emailsQuota: profile.emails_quota ?? 100,
       aiLanguage: profile.ai_language || "fr",
       signature: profile.signature || "",
       createdAt: profile.created_at,
@@ -51,6 +51,10 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
     if (parsed.data.aiLanguage !== undefined) updates.ai_language = parsed.data.aiLanguage;
     if (parsed.data.signature !== undefined) updates.signature = parsed.data.signature;
     if (parsed.data.plan !== undefined) {
+      if (parsed.data.plan === "essai") {
+        res.status(403).json({ error: "Impossible de revenir au plan Essai" });
+        return;
+      }
       updates.plan = parsed.data.plan;
       const quotaMap: Record<string, number> = {
         essai: 100,
@@ -81,10 +85,10 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
       id: profile.id,
       email: userData.user?.email || "",
       fullName: profile.full_name || "",
-      plan: profile.plan || "essai",
-      seats: profile.seats || 1,
-      emailsUsed: profile.emails_used || 0,
-      emailsQuota: profile.emails_quota || 100,
+      plan: profile.plan ?? "essai",
+      seats: profile.seats ?? 1,
+      emailsUsed: profile.emails_used ?? 0,
+      emailsQuota: profile.emails_quota ?? 100,
       aiLanguage: profile.ai_language || "fr",
       signature: profile.signature || "",
       createdAt: profile.created_at,

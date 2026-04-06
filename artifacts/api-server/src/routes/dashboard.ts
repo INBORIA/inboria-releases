@@ -37,9 +37,9 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
       faibleCount: faible,
       notificationCount,
       pendingTasks: pendingTasks || 0,
-      emailsUsed: profile?.emails_used || 0,
-      emailsQuota: profile?.emails_quota || 100,
-      plan: profile?.plan || "essai",
+      emailsUsed: profile?.emails_used ?? 0,
+      emailsQuota: profile?.emails_quota ?? 100,
+      plan: profile?.plan ?? "essai",
     });
   } catch {
     res.status(500).json({ error: "Failed to get dashboard summary" });

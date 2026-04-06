@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 import ncvLogo from "@assets/image_1775392688923.png";
 import { cn } from "@/lib/utils";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -57,6 +57,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const isExpired = (user as any).plan === "expired";
   const isTrialExhausted = (user as any).plan === "essai" && (user as any).emailsUsed >= (user as any).emailsQuota;
   const isBlocked = isExpired || isTrialExhausted;
+
+  const allowedWhenBlocked = ["/dashboard/abonnement", "/dashboard/parametres"];
+
+  useEffect(() => {
+    if (isBlocked && !allowedWhenBlocked.includes(location)) {
+      setLocation("/dashboard/abonnement");
+    }
+  }, [isBlocked, location, setLocation]);
 
   const usagePercent = Math.min(
     100,

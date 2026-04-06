@@ -1,7 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useGetProfile, useCreateCheckoutSession, getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { Check, Users, Shield, Zap, Sparkles, Info, CreditCard, ExternalLink, Loader2 } from "lucide-react";
+import { Check, Users, Shield, Zap, Sparkles, Info, CreditCard, ExternalLink, Loader2, AlertTriangle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -182,6 +182,24 @@ export default function Abonnement() {
             Choisissez le plan adapte a votre volume d'emails.
           </p>
         </div>
+
+        {!isLoading && profile && (profile.plan === "expired" || (profile.plan === "essai" && profile.emailsUsed >= profile.emailsQuota)) && (
+          <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-5 mb-6 flex items-center gap-3">
+            <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
+            <div>
+              <p className="text-[14px] font-semibold text-red-400">
+                {profile.plan === "expired"
+                  ? "Votre abonnement a expire"
+                  : "Votre essai gratuit est termine"}
+              </p>
+              <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+                {profile.plan === "expired"
+                  ? "Reabonnez-vous a un plan payant pour continuer a utiliser NCV Mail."
+                  : "Vous avez utilise vos 100 emails gratuits. Choisissez un plan ci-dessous pour continuer."}
+              </p>
+            </div>
+          </div>
+        )}
 
         {isLoading ? (
           <Skeleton className="h-20 w-full mb-8 rounded-lg bg-white/5" />
