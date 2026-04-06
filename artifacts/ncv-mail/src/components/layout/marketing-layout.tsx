@@ -43,7 +43,7 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
                   Se connecter
                 </button>
               </Link>
-              <Link href="/signup">
+              <Link href="/tarifs">
                 <button className="px-4 py-2 text-[13px] font-medium text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
                   S'inscrire
                 </button>
@@ -78,7 +78,7 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
                     Se connecter
                   </button>
                 </Link>
-                <Link href="/signup" className="flex-1">
+                <Link href="/tarifs" className="flex-1">
                   <button className="w-full px-4 py-2 text-[13px] font-medium text-white bg-[#2d7dd2] rounded-lg" onClick={() => setMobileOpen(false)}>
                     S'inscrire
                   </button>
