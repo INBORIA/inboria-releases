@@ -62,10 +62,38 @@ function stripMimeArtifacts(raw: string): string {
   return decoded;
 }
 
+function cleanPlainText(text: string): string {
+  let cleaned = text;
+
+  cleaned = cleaned.replace(/https?:\/\/[^\s)>\]]{80,}/g, "[lien]");
+
+  cleaned = cleaned.replace(/(\[lien\]\s*){3,}/g, "[lien]\n");
+
+  cleaned = cleaned.replace(/^[-_=]{3,}\s*$/gm, "---");
+
+  cleaned = cleaned.replace(/\b[A-Za-z0-9+/=]{60,}\b/g, "");
+
+  cleaned = cleaned.replace(/(&[a-z]+;|&#\d+;)/gi, (match) => {
+    const el = document.createElement("span");
+    el.innerHTML = match;
+    return el.textContent || match;
+  });
+
+  cleaned = cleaned.replace(/(Se désabonner|Unsubscribe|Manage notification|View online|Voir en ligne)\s*:?\s*(https?:\/\/\S+|\[lien\])/gi, "");
+
+  cleaned = cleaned.replace(/\n{4,}/g, "\n\n\n");
+  cleaned = cleaned.trim();
+
+  return cleaned;
+}
+
 export function cleanEmailBody(raw: string): string {
   if (!raw) return "";
   if (hasMimeArtifacts(raw)) {
-    return stripMimeArtifacts(raw);
+    return cleanPlainText(stripMimeArtifacts(raw));
+  }
+  if (!isHtml(raw)) {
+    return cleanPlainText(raw);
   }
   return raw;
 }

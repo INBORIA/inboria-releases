@@ -1,0 +1,81 @@
+Retour
+Urgent
+[Action required] Privacy policy and T&C URLs required for A2P 10DLC campaigns by June 30, 2026
+T
+Twilio Notifications
+twilio-notifications@twilio.com
+6 avril 2026 PM 20:30
+Resume IA
+Action required to update campaign creation requests with privacy policy and T&C URLs by June 30, 2026.
+
+Update your campaign creation requests before June 30 to keep new campaigns moving through review without interruption.
+
+Regulatory and Compliance Alerts
+
+Was this email helpful?
+
+Yes ( https://surveys.twilio.com/jfe/form/SV_6ApcHDyDHys7d4x?Helpful=Yes&advisory=COMM-4643&customer_email=jj.neybergh@gmail.com&customer_type=&email_subject=[Action required] Privacy policy and T&C URLs required for A2P 10DLC campaigns by June 30, 2026&product=A2P 10DLC&reason_for_com=Regulatory and Compliance ) No ( https://surveys.twilio.com/jfe/form/SV_6ApcHDyDHys7d4x?Helpful=No&advisory=COMM-4643&customer_email=jj.neybergh@gmail.com&customer_type=&email_subject=[Action required] Privacy policy and T&C URLs required for A2P 10DLC campaigns by June 30, 2026&product=A2P 10DLC&reason_for_com=Regulatory and Compliance )
+
+Ahoy!
+
+We're reaching out because your account registers A2P 10DLC campaigns through the Twilio Messaging REST API, and there's an upcoming change you'll want to plan for. Share this with your development team if you're not the one working directly in the API.
+
+*Starting June 30, 2026, PrivacyPolicyUrl and TermsAndConditionsUrl will be required fields when creating a new A2P 10DLC campaign via the API. Campaigns submitted without these fields will be rejected during the review process. If you're already including both fields in your requests, you're all set and no action is needed.*
+
+After June 30, campaign creation requests that don't include both PrivacyPolicyUrl and TermsAndConditionsUrl will be rejected. This applies only to new campaign submissions made after June 30. Your existing registered campaigns are not required to be updated, but carriers may audit campaigns and request more information in some cases.
+
+When a campaign is rejected for a missing PrivacyPolicyUrl or TermsAndConditionsUrl field, you'll see one of these new error codes in the API response:
+
+* Error code 30908 – Privacy Policy URL Required ( https://www.twilio.com/docs/api/errors/30908 )
+* Error code 30934 – Terms and Conditions URL Required ( https://www.twilio.com/docs/api/errors/30934 )
+
+Every A2P 10DLC campaign registration requires a privacy policy and terms and conditions, and campaigns need to include this information. Both URLs must be publicly accessible and point to pages with content that's relevant to the business registering the campaign. URLs that are broken, behind a login, or unrelated to the registered brand will also cause a campaign to be rejected. Read the A2P 10DLC Campaign Onboarding Guide ( https://help.twilio.com/articles/11847054539547-A2P-10DLC-Campaign-Approval-Requirements#h_01KGNGR2MSVFT20XRE1HF4QW29 ) for more information.
+
+How to prepare for the new fields
+
+Before June 30, 2026, update your campaign registration code to include both fields in every POST /v1/Services/{MessagingServiceSid}/Compliance/Usa2p request:
+
+1
+
+Add PrivacyPolicyUrl pointing to your end user's privacy policy
+
+2
+
+Add TermsAndConditionsUrl pointing to your end user's terms and conditions
+
+Once you've updated your requests, be sure to test your updated setup before the June 30 deadline.
+
+*💡 Pro tip:* To see privacy_policy_url and terms_and_conditions_url confirmed in API responses, include the X-Twilio-Api-Version: v1.2 header in your request. It's optional, but it's a helpful way to verify that your fields were received correctly.
+
+Need a hand?
+
+These resources will help you get your integration updated:
+
+* A2P 10DLC API Onboarding Guide ( https://www.twilio.com/docs/messaging/compliance/a2p-10dlc/onboarding-isv-api )
+* A2P 10DLC Campaign API Reference ( https://www.twilio.com/docs/messaging/api/usapptoperson-resource )
+* A2P 10DLC Campaign Requirements ( https://help.twilio.com/articles/11847054539547-A2P-10DLC-Campaign-Approval-Requirements )
+
+Thanks for building with Twilio!
+
+–Team Twilio
+
+This email is mandatory and shares critical information about your account.
+
+© 2026 Twilio. All rights reserved.
+101 Spear Street, United States
+
+Help Center ( https://help.twilio.com/ ) | Manage notification preferences ( https://help.twilio.com/articles/8129113686171-How-to-Manage-Your-Own-Notification-Preferences-on-Twilio ) | Privacy policy ( https://www.twilio.com/legal/privacy ) | View online ( https://cdn.mc-weblink.sg-mktg.com/weblink/MTc3NTUwMDIxOHxzZk9FSTZ1WVFmT2gyQUZjdDBWbWptdHdFWjNJWWF4Z2tEZjVuUWdXSi15MXBubFdpZWMyTTdNZTI3XzJ0VEg0eFZjckpfemtSN25lbzBPcm94Z0YzRUZhdFZodHJEeFQ4ODVvdmRwOUpkdlhucC1PYlJRTTBhcFQ3dWVMVnpmQTROOEVZc3hPYktoU3F0cnNGcmd5NGFBdjNKWGREUFoxLUZJWHdpYTlNRjIwUDZaWTJCX0QxelZQTkdzX2RuTDMzSjJsVnYtTWxFSWFxT3FlRjF1alBNd3JZU082d25MTHdDUFYzZ3RKem1RWXBKUDhQOG9PVFhLOE4xVm53eHdLaFpyMGRWNlItRmlDX0NtYW5RX1Bka01idGxFeHZFdm5YVFlmdzBmTUpHNjlPTUxIV1lVOFpXUWFqeTd2b0lrTlVzTnAtMGFVdEw4NzB1OEFaRHFJUEdZZjZXV0RuVGExWFdPMkluTVN5N3ZIWmFZWGJkQ1JYT2RaN1k3cHVncW1fcDdYYXVmN2lQUmRuVHV5QllYWGcwSEhwLTd1R1A2UDdvNVVJSE04Z2x0ZEE0MDhrb1kxSkF6OENvLVhSenFMMXhPZWRTalFpcXNGUUgtekdlQTl89p-wIJmN_8H01E_9TXsxKkbZ-chGI_p6t1B81cJ8esY= )
+
+Repondre
+Reponse IA
+Archiver
+Supprimer
+Priorite:
+
+Urgent
+Categorie:
+
+Juridique
+Projet:
+
+Aucun projet

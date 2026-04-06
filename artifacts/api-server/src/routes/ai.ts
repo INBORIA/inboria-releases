@@ -334,8 +334,8 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
           model: "gpt-4o-mini",
           max_completion_tokens: 128,
           messages: [
-            { role: "system", content: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide." },
-            { role: "user", content: `Email:\nDe: ${email.sender}\nSujet: ${email.subject}\nCorps: ${(email.body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 500)}\n\nCategories existantes: ${categoryNames.join(", ") || "Aucune"}\n\nReponds en JSON:\n{"category":"nom de categorie existante OU propose un nouveau nom pertinent (court, professionnel). Utilise 'Non classe' uniquement si vraiment inclassable."}` },
+            { role: "system", content: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide. Classe TOUJOURS les emails dans une categorie pertinente. Exemples: LinkedIn/reseaux sociaux → 'Reseaux sociaux', newsletters → 'Newsletters', codes de verification/securite → 'Notifications', factures/paiements → 'Facturation', hebergement/domaines → 'Hebergement'. N'utilise JAMAIS 'Non classe'." },
+            { role: "user", content: `Email:\nDe: ${email.sender}\nSujet: ${email.subject}\nCorps: ${(email.body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 500)}\n\nCategories existantes: ${categoryNames.join(", ") || "Aucune"}\n\nReponds en JSON:\n{"category":"nom de categorie existante OU propose un nouveau nom pertinent (court, professionnel). Ne reponds JAMAIS 'Non classe'."}` },
           ],
         });
 

@@ -145,7 +145,7 @@ async function triageEmailAI(
       messages: [
         {
           role: "system",
-          content: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide.",
+          content: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide. Classe TOUJOURS les emails dans une categorie pertinente. Exemples: LinkedIn/reseaux sociaux → 'Reseaux sociaux', newsletters → 'Newsletters', codes de verification/securite → 'Notifications', factures/paiements → 'Facturation', hebergement/domaines → 'Hebergement'. N'utilise JAMAIS 'Non classe'.",
         },
         {
           role: "user",

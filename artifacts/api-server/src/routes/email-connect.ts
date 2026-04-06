@@ -85,9 +85,9 @@ async function triageEmail(sender: string, subject: string, body: string, userId
     }
 
     const langInstructions: Record<string, { system: string; summaryHint: string; noneProject: string; uncategorized: string }> = {
-      fr: { system: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide.", summaryHint: "resume 1 phrase", noneProject: "Aucun", uncategorized: "Non classe" },
-      en: { system: "You are a professional email sorting assistant for an SME. Respond only in valid JSON.", summaryHint: "1-sentence summary", noneProject: "None", uncategorized: "Uncategorized" },
-      nl: { system: "Je bent een professionele e-mail sorteerassistent voor een KMO. Antwoord alleen in geldige JSON.", summaryHint: "samenvatting in 1 zin", noneProject: "Geen", uncategorized: "Niet geclassificeerd" },
+      fr: { system: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide. Classe TOUJOURS les emails dans une categorie pertinente. Exemples: LinkedIn/reseaux sociaux → 'Reseaux sociaux', newsletters → 'Newsletters', codes de verification/securite → 'Notifications', factures/paiements → 'Facturation', hebergement/domaines → 'Hebergement'. N'utilise JAMAIS 'Non classe'.", summaryHint: "resume 1 phrase", noneProject: "Aucun", uncategorized: "Non classe" },
+      en: { system: "You are a professional email sorting assistant for an SME. Respond only in valid JSON. ALWAYS classify emails into a relevant category. Examples: LinkedIn/social media → 'Social Media', newsletters → 'Newsletters', verification codes/security → 'Notifications', invoices/payments → 'Billing', hosting/domains → 'Hosting'. NEVER use 'Uncategorized'.", summaryHint: "1-sentence summary", noneProject: "None", uncategorized: "Uncategorized" },
+      nl: { system: "Je bent een professionele e-mail sorteerassistent voor een KMO. Antwoord alleen in geldige JSON. Classificeer ALTIJD e-mails in een relevante categorie. Voorbeelden: LinkedIn/sociale media → 'Sociale media', nieuwsbrieven → 'Nieuwsbrieven', verificatiecodes/beveiliging → 'Meldingen', facturen/betalingen → 'Facturatie', hosting/domeinen → 'Hosting'. Gebruik NOOIT 'Niet geclassificeerd'.", summaryHint: "samenvatting in 1 zin", noneProject: "Geen", uncategorized: "Niet geclassificeerd" },
     };
     const lang = langInstructions[language] || langInstructions.fr;
 
