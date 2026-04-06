@@ -188,24 +188,22 @@ export default function InboxScreen() {
           toggleSelect(item.id);
         }}
       >
-        <Pressable
-          onPress={(e) => {
-            e.stopPropagation();
-            longPressedRef.current = false;
-            toggleSelect(item.id);
-          }}
-          style={[
-            s.avatar,
-            {
-              backgroundColor: selectionMode || isSelected
-                ? "transparent"
-                : colors.primary + "25",
-              borderWidth: selectionMode || isSelected ? 2 : 0,
-              borderColor: isSelected ? colors.primary : colors.mutedForeground + "40",
-            },
-          ]}
-        >
-          {selectionMode || isSelected ? (
+        {selectionMode ? (
+          <Pressable
+            onPress={(e) => {
+              e.stopPropagation();
+              longPressedRef.current = false;
+              toggleSelect(item.id);
+            }}
+            style={[
+              s.avatar,
+              {
+                backgroundColor: "transparent",
+                borderWidth: 2,
+                borderColor: isSelected ? colors.primary : colors.mutedForeground + "40",
+              },
+            ]}
+          >
             <View
               style={[
                 s.checkbox,
@@ -219,12 +217,14 @@ export default function InboxScreen() {
                 <MaterialCommunityIcons name="check" size={14} color="#fff" />
               )}
             </View>
-          ) : (
+          </Pressable>
+        ) : (
+          <View style={[s.avatar, { backgroundColor: colors.primary + "25" }]}>
             <Text style={[s.avatarLetter, { color: colors.primary }]}>
               {(item.sender || "?")[0].toUpperCase()}
             </Text>
-          )}
-        </Pressable>
+          </View>
+        )}
 
         <View style={s.emailBody}>
           <View style={s.emailTopRow}>
