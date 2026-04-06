@@ -20,7 +20,16 @@ import Projets from "@/pages/dashboard/projets";
 
 setAuthTokenGetter(async () => {
   const { data } = await supabase.auth.getSession();
-  return data.session?.access_token ?? null;
+  if (data.session?.access_token) {
+    const expiresAt = data.session.expires_at ?? 0;
+    const nowSec = Math.floor(Date.now() / 1000);
+    if (expiresAt > nowSec + 60) {
+      return data.session.access_token;
+    }
+    const { data: refreshed } = await supabase.auth.refreshSession();
+    return refreshed.session?.access_token ?? null;
+  }
+  return null;
 });
 
 const queryClient = new QueryClient({
