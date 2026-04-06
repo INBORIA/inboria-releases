@@ -9,6 +9,7 @@ import {
   ActivityIndicator,
   Alert,
   Platform,
+  Switch,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -53,6 +54,12 @@ const AI_LANGUAGES: { id: UpdateProfileBodyAiLanguage; label: string }[] = [
   { id: UpdateProfileBodyAiLanguage.nl, label: "Nederlands" },
 ];
 
+const SORT_LEVELS = [
+  { id: "strict", label: "Strict" },
+  { id: "normal", label: "Normal" },
+  { id: "souple", label: "Souple" },
+];
+
 export default function ParametresScreen() {
   const colors = useColors();
   const router = useRouter();
@@ -65,6 +72,9 @@ export default function ParametresScreen() {
 
   const [fullName, setFullName] = useState("");
   const [aiLanguage, setAiLanguage] = useState<UpdateProfileBodyAiLanguage>(UpdateProfileBodyAiLanguage.fr);
+  const [sortLevel, setSortLevel] = useState("normal");
+  const [notifUrgent, setNotifUrgent] = useState(true);
+  const [notifDaily, setNotifDaily] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
@@ -270,7 +280,62 @@ export default function ParametresScreen() {
                 </View>
               </View>
 
-              
+              <View style={s.fieldGroup}>
+                <Text style={[s.fieldLabel, { color: colors.mutedForeground }]}>Niveau de tri</Text>
+                <View style={s.optionRow}>
+                  {SORT_LEVELS.map((level) => (
+                    <TouchableOpacity
+                      key={level.id}
+                      style={[
+                        s.optionBtn,
+                        {
+                          backgroundColor: sortLevel === level.id ? colors.primary + "20" : colors.background,
+                          borderColor: sortLevel === level.id ? colors.primary : colors.border,
+                        },
+                      ]}
+                      onPress={() => setSortLevel(level.id)}
+                      activeOpacity={0.7}
+                    >
+                      <Text
+                        style={[
+                          s.optionText,
+                          { color: sortLevel === level.id ? colors.primary : colors.mutedForeground },
+                        ]}
+                      >
+                        {level.label}
+                      </Text>
+                    </TouchableOpacity>
+                  ))}
+                </View>
+              </View>
+
+              <View style={s.toggleGroup}>
+                <View style={s.toggleRow}>
+                  <View style={s.toggleInfo}>
+                    <MaterialCommunityIcons name="bell-ring-outline" size={16} color={colors.mutedForeground} />
+                    <Text style={[s.toggleLabel, { color: colors.foreground }]}>Alertes emails urgents</Text>
+                  </View>
+                  <Switch
+                    value={notifUrgent}
+                    onValueChange={setNotifUrgent}
+                    trackColor={{ false: colors.border, true: colors.primary + "60" }}
+                    thumbColor={notifUrgent ? colors.primary : colors.mutedForeground}
+                  />
+                </View>
+                <View style={[s.toggleDivider, { backgroundColor: colors.border }]} />
+                <View style={s.toggleRow}>
+                  <View style={s.toggleInfo}>
+                    <MaterialCommunityIcons name="calendar-check-outline" size={16} color={colors.mutedForeground} />
+                    <Text style={[s.toggleLabel, { color: colors.foreground }]}>Brief quotidien</Text>
+                  </View>
+                  <Switch
+                    value={notifDaily}
+                    onValueChange={setNotifDaily}
+                    trackColor={{ false: colors.border, true: colors.primary + "60" }}
+                    thumbColor={notifDaily ? colors.primary : colors.mutedForeground}
+                  />
+                </View>
+              </View>
             </View>
 
             <TouchableOpacity
@@ -391,6 +456,17 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   optionText: { fontSize: 13, fontFamily: "Inter_600SemiBold" },
+
+  toggleGroup: { gap: 0 },
+  toggleRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    paddingVertical: 8,
+  },
+  toggleInfo: { flexDirection: "row", alignItems: "center", gap: 8, flex: 1 },
+  toggleLabel: { fontSize: 13, fontFamily: "Inter_500Medium" },
+  toggleDivider: { height: 1 },
 
   saveBtn: {
     flexDirection: "row",
