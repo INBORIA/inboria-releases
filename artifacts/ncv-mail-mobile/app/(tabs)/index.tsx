@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useRef } from "react";
+import React, { useState, useCallback } from "react";
 import {
   View,
   Text,
@@ -96,6 +96,8 @@ export default function InboxScreen() {
   const priorityDotColor = (p: string) =>
     p === "urgent" ? colors.urgent : p === "moyen" ? colors.moyen : colors.faible;
 
+  const hasActiveFilters = filterPriority !== "all" || filterCategory !== null;
+
   const renderEmail = ({ item }: { item: Email }) => {
     const priority = item.priority ?? "faible";
     return (
@@ -166,89 +168,6 @@ export default function InboxScreen() {
     );
   };
 
-  const renderFooter = () => (
-    <View style={s.footerFilters}>
-      <Text style={[s.filterSectionTitle, { color: colors.mutedForeground }]}>Filtrer par priorite</Text>
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={s.filtersContent}
-      >
-        {priorityFilters.map((f) => {
-          const active = filterPriority === f.key;
-          return (
-            <TouchableOpacity
-              key={f.key}
-              style={[
-                s.chip,
-                {
-                  backgroundColor: active ? colors.primary + "20" : colors.card,
-                  borderColor: active ? colors.primary + "40" : colors.border,
-                },
-              ]}
-              onPress={() => setFilterPriority(f.key)}
-            >
-              <Text style={[s.chipText, { color: active ? colors.primary : colors.mutedForeground }]}>
-                {f.label}
-              </Text>
-            </TouchableOpacity>
-          );
-        })}
-      </ScrollView>
-
-      {categories && categories.length > 0 && (
-        <>
-          <Text style={[s.filterSectionTitle, { color: colors.mutedForeground, marginTop: 12 }]}>Filtrer par categorie</Text>
-          <ScrollView
-            horizontal
-            showsHorizontalScrollIndicator={false}
-            contentContainerStyle={s.filtersContent}
-          >
-            <TouchableOpacity
-              style={[
-                s.chip,
-                {
-                  backgroundColor: filterCategory === null ? colors.primary + "20" : colors.card,
-                  borderColor: filterCategory === null ? colors.primary + "40" : colors.border,
-                },
-              ]}
-              onPress={() => setFilterCategory(null)}
-            >
-              <Text
-                style={[
-                  s.chipText,
-                  { color: filterCategory === null ? colors.primary : colors.mutedForeground },
-                ]}
-              >
-                Toutes
-              </Text>
-            </TouchableOpacity>
-            {categories.map((cat) => {
-              const active = filterCategory === cat.id;
-              return (
-                <TouchableOpacity
-                  key={cat.id}
-                  style={[
-                    s.chip,
-                    {
-                      backgroundColor: active ? colors.primary + "20" : colors.card,
-                      borderColor: active ? colors.primary + "40" : colors.border,
-                    },
-                  ]}
-                  onPress={() => setFilterCategory(active ? null : cat.id)}
-                >
-                  <Text style={[s.chipText, { color: active ? colors.primary : colors.mutedForeground }]}>
-                    {cat.name}
-                  </Text>
-                </TouchableOpacity>
-              );
-            })}
-          </ScrollView>
-        </>
-      )}
-    </View>
-  );
-
   return (
     <View style={[s.container, { backgroundColor: colors.background, paddingTop: isWeb ? 67 : 0 }]}>
       <View style={s.summaryRow}>
@@ -297,14 +216,96 @@ export default function InboxScreen() {
           data={activeEmails}
           keyExtractor={(item) => String(item.id)}
           renderItem={renderEmail}
-          ListFooterComponent={renderFooter}
-          contentContainerStyle={[s.list, { paddingBottom: isWeb ? 84 : 100 }]}
+          contentContainerStyle={[s.list, { paddingBottom: isWeb ? 150 : 170 }]}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
           }
           showsVerticalScrollIndicator={false}
         />
       )}
+
+      <View style={[s.fixedFilters, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
+        {hasActiveFilters && (
+          <TouchableOpacity
+            style={s.clearBtn}
+            onPress={() => { setFilterPriority("all"); setFilterCategory(null); }}
+          >
+            <Feather name="x-circle" size={12} color={colors.mutedForeground} />
+            <Text style={[s.clearText, { color: colors.mutedForeground }]}>Reset</Text>
+          </TouchableOpacity>
+        )}
+        <ScrollView
+          horizontal
+          showsHorizontalScrollIndicator={false}
+          contentContainerStyle={s.filtersContent}
+        >
+          {priorityFilters.map((f) => {
+            const active = filterPriority === f.key;
+            return (
+              <TouchableOpacity
+                key={f.key}
+                style={[
+                  s.chip,
+                  {
+                    backgroundColor: active ? colors.primary + "20" : colors.card,
+                    borderColor: active ? colors.primary + "40" : colors.border,
+                  },
+                ]}
+                onPress={() => setFilterPriority(f.key)}
+              >
+                <Text style={[s.chipText, { color: active ? colors.primary : colors.mutedForeground }]}>
+                  {f.label}
+                </Text>
+              </TouchableOpacity>
+            );
+          })}
+
+          {categories && categories.length > 0 && (
+            <>
+              <View style={[s.divider, { backgroundColor: colors.border }]} />
+              <TouchableOpacity
+                style={[
+                  s.chip,
+                  {
+                    backgroundColor: filterCategory === null ? colors.primary + "20" : colors.card,
+                    borderColor: filterCategory === null ? colors.primary + "40" : colors.border,
+                  },
+                ]}
+                onPress={() => setFilterCategory(null)}
+              >
+                <Text
+                  style={[
+                    s.chipText,
+                    { color: filterCategory === null ? colors.primary : colors.mutedForeground },
+                  ]}
+                >
+                  Toutes
+                </Text>
+              </TouchableOpacity>
+              {categories.map((cat) => {
+                const active = filterCategory === cat.id;
+                return (
+                  <TouchableOpacity
+                    key={cat.id}
+                    style={[
+                      s.chip,
+                      {
+                        backgroundColor: active ? colors.primary + "20" : colors.card,
+                        borderColor: active ? colors.primary + "40" : colors.border,
+                      },
+                    ]}
+                    onPress={() => setFilterCategory(active ? null : cat.id)}
+                  >
+                    <Text style={[s.chipText, { color: active ? colors.primary : colors.mutedForeground }]}>
+                      {cat.name}
+                    </Text>
+                  </TouchableOpacity>
+                );
+              })}
+            </>
+          )}
+        </ScrollView>
+      </View>
     </View>
   );
 }
@@ -357,35 +358,41 @@ const s = StyleSheet.create({
     padding: 0,
   },
 
-  footerFilters: {
-    marginTop: 20,
-    paddingTop: 16,
-    borderTopWidth: 1,
-    borderTopColor: "#1f293730",
-  },
-  filterSectionTitle: {
-    fontSize: 11,
-    fontFamily: "Inter_600SemiBold",
-    textTransform: "uppercase",
-    letterSpacing: 0.5,
-    marginBottom: 8,
-  },
-  filtersContent: { gap: 8 },
-  chip: {
-    flexDirection: "row",
-    alignItems: "center",
-    paddingHorizontal: 12,
-    paddingVertical: 6,
-    borderRadius: 8,
-    borderWidth: 1,
-    gap: 4,
-  },
-  chipText: { fontSize: 12, fontFamily: "Inter_500Medium" },
-
   center: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12 },
   emptyLabel: { fontSize: 15, fontFamily: "Inter_400Regular" },
 
   list: { paddingHorizontal: 16, gap: 10 },
+
+  fixedFilters: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    borderTopWidth: 1,
+    paddingTop: 8,
+    paddingBottom: 8,
+    paddingHorizontal: 16,
+  },
+  clearBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    marginBottom: 6,
+    alignSelf: "flex-start",
+  },
+  clearText: { fontSize: 11, fontFamily: "Inter_500Medium" },
+  filtersContent: { gap: 6, alignItems: "center" },
+  divider: { width: 1, height: 20, marginHorizontal: 2 },
+  chip: {
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+    gap: 4,
+  },
+  chipText: { fontSize: 11, fontFamily: "Inter_500Medium" },
 
   emailCard: {
     flexDirection: "row",
