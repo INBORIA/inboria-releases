@@ -47,8 +47,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Boite de reception",
-          tabBarLabel: "Reception",
+          title: "Reception",
           tabBarIcon: ({ color }) => <Feather name="mail" size={20} color={color} />,
         }}
       />
