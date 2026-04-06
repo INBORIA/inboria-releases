@@ -1,0 +1,217 @@
+import { Link } from "wouter";
+import { MarketingLayout } from "@/components/layout/marketing-layout";
+import { Check, Users, Zap, Sparkles, Shield, CreditCard } from "lucide-react";
+import { useState } from "react";
+
+const plans = [
+  {
+    id: "essai",
+    name: "Essai",
+    price: "gratuit",
+    description: "100 emails offerts pour decouvrir NCV Mail",
+    features: [
+      "100 emails offerts (usage unique)",
+      "3 rubriques personnalisees",
+      "Support par email",
+      "Brouillons IA inclus",
+    ],
+    icon: Check,
+    cta: "Commencer",
+    href: "/signup",
+  },
+  {
+    id: "solo",
+    name: "Solo",
+    price: "9",
+    description: "Pour les independants",
+    features: [
+      "3 000 emails par mois",
+      "Rubriques illimitees",
+      "Brief quotidien",
+      "Brouillons IA proactifs",
+      "Extraction automatique des taches",
+      "Support prioritaire",
+      "Depassement : 0,002€/email",
+    ],
+    icon: Zap,
+    cta: "Commencer",
+    href: "/signup",
+  },
+  {
+    id: "pro",
+    name: "Pro",
+    price: "19",
+    description: "Ideal pour les professionnels",
+    features: [
+      "10 000 emails par mois",
+      "Rubriques illimitees",
+      "Brief quotidien",
+      "Brouillons IA proactifs",
+      "Extraction automatique des taches",
+      "Statistiques detaillees",
+      "Support prioritaire",
+      "Depassement : 0,001€/email",
+    ],
+    icon: Sparkles,
+    cta: "Commencer",
+    href: "/signup",
+    recommended: true,
+  },
+  {
+    id: "business",
+    name: "Business",
+    price: "9",
+    description: "Pour les equipes",
+    features: [
+      "10 000 emails tries / siege / mois",
+      "Tout du plan Pro inclus",
+      "Nombre d'utilisateurs configurable",
+      "Boites partagees entre collegues",
+      "Assignation de taches entre membres",
+      "API dediee",
+      "Support prioritaire",
+      "Depassement : 0,001€ / email",
+    ],
+    icon: Users,
+    cta: "Commencer",
+    href: "/signup",
+    hasSeats: true,
+  },
+];
+
+export default function Tarifs() {
+  const [businessSeats, setBusinessSeats] = useState(3);
+
+  return (
+    <MarketingLayout>
+      <section className="relative overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#2d7dd2]/10 to-transparent" />
+        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative">
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
+            Des tarifs simples, sans surprise
+          </h1>
+          <p className="mt-4 text-[16px] text-[#8b9cb3] max-w-2xl mx-auto">
+            Choisissez le plan qui correspond a vos besoins. Changez ou annulez a tout moment.
+          </p>
+        </div>
+      </section>
+
+      <section className="border-t border-[#1f2937]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            {plans.map((plan) => {
+              const isBusiness = plan.hasSeats;
+              const price = isBusiness ? businessSeats * 9 : plan.price;
+
+              return (
+                <div
+                  key={plan.id}
+                  className={`relative rounded-xl border p-6 flex flex-col ${
+                    plan.recommended
+                      ? "border-[#2d7dd2] bg-[#2d7dd2]/5"
+                      : "border-[#1f2937] bg-[#141c2b]"
+                  }`}
+                >
+                  {plan.recommended && (
+                    <div className="absolute top-3 right-3">
+                      <span className="bg-[#2d7dd2] text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">
+                        Recommande
+                      </span>
+                    </div>
+                  )}
+
+                  <h3 className="text-[16px] font-bold text-white">{plan.name}</h3>
+                  <p className="text-[12px] text-[#8b9cb3] mb-4 h-8">{plan.description}</p>
+
+                  <div className="mb-4">
+                    <div className="flex items-baseline gap-0.5">
+                      {plan.id === "essai" ? (
+                        <span className="text-3xl font-extrabold text-white">Gratuit</span>
+                      ) : (
+                        <>
+                          <span className="text-3xl font-extrabold text-white">{price}€</span>
+                          <span className="text-[#8b9cb3] text-[13px]">
+                            {isBusiness ? "/siege/mois" : "/mois"}
+                          </span>
+                        </>
+                      )}
+                    </div>
+                    {isBusiness && (
+                      <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+                        Soit 9€ par siege/mois
+                      </p>
+                    )}
+                  </div>
+
+                  {isBusiness && (
+                    <div className="mb-4 p-3 bg-[#0d1117] rounded-lg border border-[#1f2937]">
+                      <label className="text-[12px] font-medium text-[#8b9cb3] block mb-2">
+                        Nombre de collaborateurs
+                      </label>
+                      <div className="flex items-center gap-3">
+                        <input
+                          type="range"
+                          min="3"
+                          max="50"
+                          value={businessSeats}
+                          onChange={(e) => setBusinessSeats(parseInt(e.target.value))}
+                          className="w-full accent-[#2d7dd2]"
+                        />
+                        <span className="font-bold text-sm text-white w-8 text-center">
+                          {businessSeats}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-[#8b9cb3] mt-1">
+                        <span className="font-medium">Total : </span>
+                        <span className="text-[#2d7dd2] font-bold">{businessSeats * 9}€</span> /mois
+                      </p>
+                      <p className="text-[10px] text-[#8b9cb3] mt-1">
+                        Exemple : 3 collaborateurs = 27€/mois — modifiable a tout moment depuis votre espace.
+                      </p>
+                    </div>
+                  )}
+
+                  <ul className="space-y-2.5 mb-6 flex-1">
+                    {plan.features.map((feature, i) => (
+                      <li key={i} className="flex items-start gap-2">
+                        <Check className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${plan.recommended ? "text-[#2d7dd2]" : "text-emerald-400"}`} />
+                        <span className="text-[12px] text-[#8b9cb3]">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+
+                  <Link href={plan.href}>
+                    <button
+                      className={`w-full py-2.5 text-[13px] font-semibold rounded-lg transition-colors ${
+                        plan.recommended
+                          ? "bg-[#2d7dd2] text-white hover:bg-[#2563b1]"
+                          : "bg-white/5 text-white border border-[#1f2937] hover:bg-white/10"
+                      }`}
+                    >
+                      {plan.cta}
+                    </button>
+                  </Link>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-[13px] text-[#8b9cb3]">
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              <span>Sans engagement, resiliable a tout moment</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <CreditCard className="w-4 h-4" />
+              <span>Paiement securise par Stripe</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4" />
+              <span>Conforme RGPD</span>
+            </div>
+          </div>
+        </div>
+      </section>
+    </MarketingLayout>
+  );
+}

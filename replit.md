@@ -4,13 +4,12 @@
 
 NCV Mail is a B2B SaaS "Email Autopilot" for SMEs, freelancers, and professionals in Belgium/France. The AI automatically reads, sorts, prioritizes, and categorizes emails.
 
-## Architecture (3 systems)
+## Architecture (2 systems)
 
-1. **Hostinger** (ncvmail.com) — Marketing site vitrine (already done, don't touch)
-2. **Replit** (app.ncvmail.com) — Application dashboard (React + Express API)
-3. **Supabase** (ecdwevvisbrcsomdiqop.supabase.co) — Database + Authentication
+1. **Replit** (ncvmail.com) — Marketing site vitrine + Application dashboard (React + Express API)
+2. **Supabase** (ecdwevvisbrcsomdiqop.supabase.co) — Database + Authentication
 
-Replit connects TO Supabase. No local database.
+Replit connects TO Supabase. No local database. Domain ncvmail.com registered at Hostinger (DNS only).
 
 ## Stack
 
@@ -93,6 +92,15 @@ Optional webhook for external integrations. Flow: External source -> Webhook NCV
 
 ## Pages (all French, dark theme)
 
+### Marketing Site (public, MarketingLayout)
+- `/` — Landing page (hero, "comment ca marche", benefits, CTA). Redirects to /dashboard if authenticated.
+- `/fonctionnalites` — 12 features grid (tri IA, resumes, brouillons IA, brief, taches, projets, multi-boites, signature, archivage, priorite, mobile, securite)
+- `/tarifs` — 4 plan cards (Essai/Solo/Pro/Business) with seat slider, links to signup
+- `/mentions-legales` — NCV Management SRL legal info (BCE BE0439.327.747, Rixensart)
+- `/confidentialite` — Privacy policy (RGPD)
+- `/conditions` — Terms of service
+
+### Application (auth required)
 - `/login`, `/signup` — Auth pages (dark card on dark background)
 - `/dashboard` — Priority inbox with email cards, priority badges, categories sidebar
 - `/dashboard/bilan` — Daily AI summary with score, urgencies, key emails, advice

@@ -18,6 +18,13 @@ import Parametres from "@/pages/dashboard/parametres";
 import Abonnement from "@/pages/dashboard/abonnement";
 import Projets from "@/pages/dashboard/projets";
 
+import Accueil from "@/pages/marketing/accueil";
+import Fonctionnalites from "@/pages/marketing/fonctionnalites";
+import Tarifs from "@/pages/marketing/tarifs";
+import MentionsLegales from "@/pages/marketing/mentions-legales";
+import Confidentialite from "@/pages/marketing/confidentialite";
+import Conditions from "@/pages/marketing/conditions";
+
 setAuthTokenGetter(async () => {
   const { data } = await supabase.auth.getSession();
   if (data.session?.access_token) {
@@ -56,7 +63,12 @@ function Router() {
 
   return (
     <Switch>
-      <Route path="/" component={() => session ? <Redirect to="/dashboard" /> : <Redirect to="/login" />} />
+      <Route path="/" component={() => session ? <Redirect to="/dashboard" /> : <Accueil />} />
+      <Route path="/fonctionnalites" component={Fonctionnalites} />
+      <Route path="/tarifs" component={Tarifs} />
+      <Route path="/mentions-legales" component={MentionsLegales} />
+      <Route path="/confidentialite" component={Confidentialite} />
+      <Route path="/conditions" component={Conditions} />
       <Route path="/login" component={() => session ? <Redirect to="/dashboard" /> : <Login />} />
       <Route path="/signup" component={() => session ? <Redirect to="/dashboard" /> : <Signup />} />
       <Route path="/dashboard" component={() => <ProtectedRoute component={Dashboard} />} />
