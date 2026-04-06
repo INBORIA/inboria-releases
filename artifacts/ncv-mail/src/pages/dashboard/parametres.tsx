@@ -541,19 +541,7 @@ export default function Parametres() {
             <div className="bg-card rounded-lg border border-border p-5">
               <div className="space-y-3 max-w-md">
                 <div className="space-y-1.5">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-[12px] text-[#8b9cb3]">Mot de passe actuel</Label>
-                    <button
-                      type="button"
-                      className="text-[11px] text-primary hover:text-primary/80 font-medium"
-                      onClick={async () => {
-                        await signOut();
-                        window.location.href = `${import.meta.env.BASE_URL.replace(/\/$/, "")}/mot-de-passe-oublie`;
-                      }}
-                    >
-                      Mot de passe oublie ?
-                    </button>
-                  </div>
+                  <Label className="text-[12px] text-[#8b9cb3]">Mot de passe actuel</Label>
                   <div className="relative">
                     <Input
                       type={showCurrentPwd ? "text" : "password"}
