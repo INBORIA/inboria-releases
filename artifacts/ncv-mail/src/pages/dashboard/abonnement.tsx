@@ -12,14 +12,14 @@ const plans = [
   {
     id: "essai",
     name: "Essai",
-    price: "0",
+    price: "gratuit",
     quota: 100,
     description: "100 emails offerts pour decouvrir NCV Mail",
     features: [
       "100 emails offerts (usage unique)",
       "3 rubriques personnalisees",
       "Support par email",
-      "Integration Gmail & Outlook",
+      "Compatible tous fournisseurs email",
     ],
     icon: Check,
   },
@@ -297,12 +297,18 @@ export default function Abonnement() {
 
                 <div className="mb-4">
                   <div className="flex items-baseline gap-0.5">
-                    <span className="text-3xl font-extrabold text-white">
-                      {price}€
-                    </span>
-                    <span className="text-[#8b9cb3] text-[13px]">
-                      {isBusiness ? "/ mois" : "/mois"}
-                    </span>
+                    {plan.id === "essai" ? (
+                      <span className="text-3xl font-extrabold text-white">Gratuit</span>
+                    ) : (
+                      <>
+                        <span className="text-3xl font-extrabold text-white">
+                          {price}€
+                        </span>
+                        <span className="text-[#8b9cb3] text-[13px]">
+                          {isBusiness ? "/ mois" : "/mois"}
+                        </span>
+                      </>
+                    )}
                   </div>
                   {isBusiness && (
                     <p className="text-[11px] text-[#8b9cb3] mt-0.5">

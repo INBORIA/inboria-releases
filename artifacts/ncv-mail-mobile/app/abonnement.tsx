@@ -16,14 +16,14 @@ const plans = [
   {
     id: "essai",
     name: "Essai",
-    price: "0",
+    price: "gratuit",
     quota: 100,
     description: "100 emails offerts pour decouvrir NCV Mail",
     features: [
       "100 emails offerts (usage unique)",
       "3 rubriques personnalisees",
       "Support par email",
-      "Integration Gmail & Outlook",
+      "Compatible tous fournisseurs email",
     ],
     icon: "check" as const,
   },
@@ -173,8 +173,8 @@ export default function AbonnementScreen() {
                   <Text style={[s.planDesc, { color: colors.mutedForeground }]}>{plan.description}</Text>
                 </View>
                 <View>
-                  <Text style={[s.planPrice, { color: colors.foreground }]}>{plan.price}EUR</Text>
-                  <Text style={[s.planPeriod, { color: colors.mutedForeground }]}>/mois</Text>
+                  <Text style={[s.planPrice, { color: colors.foreground }]}>{plan.id === "essai" ? "Gratuit" : `${plan.price}€`}</Text>
+                  {plan.id !== "essai" && <Text style={[s.planPeriod, { color: colors.mutedForeground }]}>/mois</Text>}
                 </View>
               </View>
 
