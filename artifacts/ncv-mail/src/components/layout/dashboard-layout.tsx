@@ -73,9 +73,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
-      <div className="flex h-24 shrink-0 flex-col items-center justify-center px-4 border-b border-[#1f2937]">
-        <img src={ncvLogo} alt="NCV" className="h-28 w-28 object-contain -mb-2 -mt-4" />
-        <span className="text-[13px] font-semibold tracking-tight text-white">NCV Mail</span>
+      <div className="flex h-28 shrink-0 flex-col items-center justify-center px-4 border-b border-[#1f2937]">
+        <img src={ncvLogo} alt="NCV" className="h-24 w-24 object-contain" />
+        <span className="text-[13px] font-semibold tracking-tight text-white -mt-2">NCV Mail</span>
       </div>
       
       <nav className="flex-1 px-2 py-2.5 space-y-0.5">
@@ -180,7 +180,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             </SheetContent>
           </Sheet>
           <div className="flex flex-1 items-center gap-2">
-            <img src={ncvLogo} alt="NCV" className="h-16 w-16 object-contain" />
+            <img src={ncvLogo} alt="NCV" className="h-20 w-20 object-contain" />
             <span className="font-semibold text-[15px] text-white">NCV Mail</span>
           </div>
         </div>

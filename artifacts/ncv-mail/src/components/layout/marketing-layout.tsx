@@ -15,12 +15,12 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-white flex flex-col">
-      <header className="sticky top-0 z-50 bg-[#0d1117]/95 backdrop-blur-sm border-b border-[#1f2937] overflow-hidden">
+      <header className="sticky top-0 z-50 bg-[#0d1117]/95 backdrop-blur-sm border-b border-[#1f2937]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-20">
-            <Link href="/" className="flex flex-col items-center py-1">
-              <img src={ncvLogo} alt="NCV Mail" className="h-14 w-14 object-contain" />
-              <span className="font-bold text-xs tracking-tight text-white -mt-0.5">NCV Mail</span>
+          <div className="flex items-center justify-between h-28">
+            <Link href="/" className="flex flex-col items-center">
+              <img src={ncvLogo} alt="NCV Mail" className="h-24 w-24 object-contain" />
+              <span className="font-bold text-sm tracking-tight text-white -mt-2">NCV Mail</span>
             </Link>
 
             <nav className="hidden md:flex items-center gap-6">
