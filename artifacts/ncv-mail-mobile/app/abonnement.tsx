@@ -23,7 +23,7 @@ const plans = [
       "100 emails offerts (usage unique)",
       "3 rubriques personnalisees",
       "Support par email",
-      "Compatible tous fournisseurs email",
+      "Brouillons IA inclus",
     ],
     icon: "check" as const,
   },
