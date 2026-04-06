@@ -12,7 +12,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useRouter } from "expo-router";
-import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   useListEmails,
   useListCategories,
@@ -142,7 +142,7 @@ export default function InboxScreen() {
               )}
               {item.categoryName ? (
                 <View style={[s.categoryBadge, { backgroundColor: colors.primary + "12" }]}>
-                  <Feather name="tag" size={10} color={colors.primary} />
+                  <MaterialCommunityIcons name="tag-outline" size={10} color={colors.primary} />
                   <Text style={[s.chipLabel, { color: colors.primary }]}>
                     {item.categoryName}
                   </Text>
@@ -159,7 +159,7 @@ export default function InboxScreen() {
                 }}
                 hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
               >
-                <Feather name="trash-2" size={14} color={colors.destructive + "80"} />
+                <MaterialCommunityIcons name="trash-can-outline" size={14} color={colors.destructive + "80"} />
               </TouchableOpacity>
             </View>
           </View>
@@ -187,7 +187,7 @@ export default function InboxScreen() {
       </View>
 
       <View style={[s.searchBar, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <Feather name="search" size={16} color={colors.mutedForeground} />
+        <MaterialCommunityIcons name="magnify" size={16} color={colors.mutedForeground} />
         <TextInput
           style={[s.searchInput, { color: colors.foreground }]}
           placeholder="Rechercher..."
@@ -197,41 +197,43 @@ export default function InboxScreen() {
         />
         {searchQuery ? (
           <TouchableOpacity onPress={() => setSearchQuery("")}>
-            <Feather name="x" size={16} color={colors.mutedForeground} />
+            <MaterialCommunityIcons name="close" size={16} color={colors.mutedForeground} />
           </TouchableOpacity>
         ) : null}
       </View>
 
-      {isLoading ? (
-        <View style={s.center}>
-          <ActivityIndicator size="large" color={colors.primary} />
-        </View>
-      ) : !activeEmails?.length ? (
-        <View style={s.center}>
-          <Feather name="inbox" size={48} color={colors.mutedForeground + "40"} />
-          <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>Aucun email</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={activeEmails}
-          keyExtractor={(item) => String(item.id)}
-          renderItem={renderEmail}
-          contentContainerStyle={[s.list, { paddingBottom: isWeb ? 150 : 170 }]}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
-          }
-          showsVerticalScrollIndicator={false}
-        />
-      )}
+      <View style={s.emailArea}>
+        {isLoading ? (
+          <View style={s.center}>
+            <ActivityIndicator size="large" color={colors.primary} />
+          </View>
+        ) : !activeEmails?.length ? (
+          <View style={s.center}>
+            <MaterialCommunityIcons name="email-open-outline" size={48} color={colors.mutedForeground + "40"} />
+            <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>Aucun email</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={activeEmails}
+            keyExtractor={(item) => String(item.id)}
+            renderItem={renderEmail}
+            contentContainerStyle={s.list}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
+            }
+            showsVerticalScrollIndicator={false}
+          />
+        )}
+      </View>
 
-      <View style={[s.fixedFilters, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
+      <View style={[s.filterBar, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
         {hasActiveFilters && (
           <TouchableOpacity
             style={s.clearBtn}
             onPress={() => { setFilterPriority("all"); setFilterCategory(null); }}
+            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
           >
-            <Feather name="x-circle" size={12} color={colors.mutedForeground} />
-            <Text style={[s.clearText, { color: colors.mutedForeground }]}>Reset</Text>
+            <MaterialCommunityIcons name="close-circle-outline" size={14} color={colors.mutedForeground} />
           </TouchableOpacity>
         )}
         <ScrollView
@@ -358,29 +360,27 @@ const s = StyleSheet.create({
     padding: 0,
   },
 
+  emailArea: {
+    flex: 1,
+    minHeight: 0,
+  },
+
   center: { flex: 1, alignItems: "center", justifyContent: "center", gap: 12 },
   emptyLabel: { fontSize: 15, fontFamily: "Inter_400Regular" },
 
-  list: { paddingHorizontal: 16, gap: 10 },
+  list: { paddingHorizontal: 16, gap: 10, paddingBottom: 8 },
 
-  fixedFilters: {
-    position: "absolute",
-    bottom: 0,
-    left: 0,
-    right: 0,
-    borderTopWidth: 1,
-    paddingTop: 8,
-    paddingBottom: 8,
-    paddingHorizontal: 16,
-  },
-  clearBtn: {
+  filterBar: {
     flexDirection: "row",
     alignItems: "center",
-    gap: 4,
-    marginBottom: 6,
-    alignSelf: "flex-start",
+    borderTopWidth: 1,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    gap: 8,
   },
-  clearText: { fontSize: 11, fontFamily: "Inter_500Medium" },
+  clearBtn: {
+    padding: 4,
+  },
   filtersContent: { gap: 6, alignItems: "center" },
   divider: { width: 1, height: 20, marginHorizontal: 2 },
   chip: {
