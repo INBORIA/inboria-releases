@@ -23,11 +23,16 @@ Replit connects TO Supabase. No local database. Domain ncvmail.com registered at
 
 ## Auth Flow
 
-- Frontend uses `@supabase/supabase-js` for login/signup directly
+- **Signup**: Frontend calls `supabase.auth.signUp()` (client SDK) → sends verification email → redirects to `/verifier-email`
+- **Email verification**: User clicks link → redirected to `/auth/callback` → session established → redirect to dashboard (or Stripe checkout if paid plan selected)
+- **Profile creation**: Separate `/api/auth/setup-profile` endpoint creates profile row after signup
+- **Plan selection persistence**: Selected plan stored in localStorage (`ncv_pending_plan`, `ncv_pending_seats`) during signup, consumed after email verification
+- **Login**: Frontend uses `supabase.auth.signInWithPassword()` directly
 - Supabase session provides JWT access_token
 - Frontend sends `Authorization: Bearer <token>` to API server
 - API server validates token via `supabaseAdmin.auth.getUser(token)`
 - Token getter set via `setAuthTokenGetter()` in custom-fetch
+- **Legacy register**: `/api/auth/register` still exists (used by mobile app) — creates user with `email_confirm: true` (auto-confirmed)
 
 ## Design System — Dark Theme
 
@@ -100,8 +105,12 @@ Optional webhook for external integrations. Flow: External source -> Webhook NCV
 - `/confidentialite` — Privacy policy (RGPD)
 - `/conditions` — Terms of service
 
+### Auth Flow Pages
+- `/login`, `/signup` — Auth pages (dark card on dark background, signup shows plan context if `?plan=X`)
+- `/verifier-email` — "Verifiez votre email" page with resend button (shown after signup)
+- `/auth/callback` — Email verification callback handler (exchanges token, redirects to dashboard or Stripe)
+
 ### Application (auth required)
-- `/login`, `/signup` — Auth pages (dark card on dark background)
 - `/dashboard` — Priority inbox with email cards, priority badges, categories sidebar
 - `/dashboard/bilan` — Daily AI summary with score, urgencies, key emails, advice
 - `/dashboard/taches` — Tasks extracted from emails, with tabs (A faire/Terminees/Toutes)

@@ -56,6 +56,29 @@ router.post("/auth/register", async (req, res): Promise<void> => {
   }
 });
 
+router.post("/auth/setup-profile", async (req, res): Promise<void> => {
+  try {
+    const { userId, fullName } = req.body;
+    if (!userId) {
+      res.status(400).json({ error: "userId requis" });
+      return;
+    }
+
+    await supabaseAdmin.from("profiles").upsert({
+      id: userId,
+      full_name: fullName || "",
+      plan: "essai",
+      seats: 1,
+      emails_used: 0,
+      emails_quota: 100,
+    });
+
+    res.status(201).json({ ok: true });
+  } catch (err) {
+    res.status(500).json({ error: "Profile setup failed" });
+  }
+});
+
 router.post("/auth/login", async (req, res): Promise<void> => {
   try {
     const parsed = LoginBody.safeParse(req.body);

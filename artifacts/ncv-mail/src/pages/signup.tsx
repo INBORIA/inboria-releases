@@ -34,6 +34,9 @@ export default function Signup() {
   const [isPending, setIsPending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
+  const params = new URLSearchParams(searchString);
+  const selectedPlan = params.get("plan");
+
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -45,7 +48,7 @@ export default function Signup() {
 
   async function onSubmit(data: SignupFormValues) {
     setIsPending(true);
-    const { error } = await signUp(data.email, data.password, data.fullName);
+    const { error, needsVerification } = await signUp(data.email, data.password, data.fullName);
     setIsPending(false);
 
     if (error) {
@@ -54,17 +57,22 @@ export default function Signup() {
         title: "Erreur d'inscription",
         description: error,
       });
+    } else if (needsVerification) {
+      if (selectedPlan) {
+        localStorage.setItem("ncv_pending_plan", selectedPlan);
+        const seats = params.get("seats");
+        if (seats) localStorage.setItem("ncv_pending_seats", seats);
+      }
+      setLocation(`/verifier-email?email=${encodeURIComponent(data.email)}`);
     } else {
       toast({
         title: "Compte cree",
         description: "Votre compte a ete cree avec succes.",
       });
-      const params = new URLSearchParams(searchString);
-      const plan = params.get("plan");
-      const seats = params.get("seats");
-      if (plan && plan !== "essai") {
+      if (selectedPlan && selectedPlan !== "essai") {
         const redirect = new URLSearchParams();
-        redirect.set("plan", plan);
+        redirect.set("plan", selectedPlan);
+        const seats = params.get("seats");
         if (seats) redirect.set("seats", seats);
         setLocation(`/dashboard/abonnement?${redirect.toString()}`);
       } else {
@@ -77,7 +85,11 @@ export default function Signup() {
     <AuthLayout>
       <div className="mb-6 text-center">
         <h1 className="text-2xl font-bold text-white">Creer un compte</h1>
-        <p className="text-[#8b9cb3] mt-2 text-sm">Rejoignez NCV Mail pour organiser votre boite de reception</p>
+        <p className="text-[#8b9cb3] mt-2 text-sm">
+          {selectedPlan && selectedPlan !== "essai"
+            ? `Inscrivez-vous pour activer le plan ${selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)}`
+            : "Rejoignez NCV Mail pour organiser votre boite de reception"}
+        </p>
       </div>
 
       <Form {...form}>
@@ -141,7 +153,18 @@ export default function Signup() {
         </form>
       </Form>
 
-      <div className="mt-6 text-center text-sm text-[#8b9cb3]">
+      <div className="mt-4 text-center text-[10px] text-[#8b9cb3] leading-relaxed">
+        En creant un compte, vous acceptez nos{" "}
+        <Link href="/conditions" className="text-[#2d7dd2] hover:underline">
+          conditions d'utilisation
+        </Link>{" "}
+        et notre{" "}
+        <Link href="/confidentialite" className="text-[#2d7dd2] hover:underline">
+          politique de confidentialite
+        </Link>
+      </div>
+
+      <div className="mt-4 text-center text-sm text-[#8b9cb3]">
         Deja un compte ?{" "}
         <Link href={`/login${searchString ? `?${searchString}` : ""}`} className="font-semibold text-primary hover:text-primary/80">
           Se connecter

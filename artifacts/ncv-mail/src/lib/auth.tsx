@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null }>;
+  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null; needsVerification: boolean }>;
   signOut: () => Promise<void>;
 }
 
@@ -41,21 +41,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signUp(email: string, password: string, fullName: string) {
     try {
-      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
-      const res = await fetch(`${baseUrl}/api/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password, fullName }),
+      const origin = window.location.origin;
+      const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: { full_name: fullName },
+          emailRedirectTo: `${origin}${basePath}/auth/callback`,
+        },
       });
-      const result = await res.json();
-      if (!res.ok) return { error: result.error || "Erreur d'inscription" };
 
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-      if (signInError) return { error: signInError.message };
+      if (error) return { error: error.message, needsVerification: false };
 
-      return { error: null };
+      if (data.user) {
+        const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+        await fetch(`${baseUrl}/api/auth/setup-profile`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ userId: data.user.id, fullName }),
+        });
+      }
+
+      const needsVerification = !data.session;
+      if (data.session) {
+        setSession(data.session);
+        setUser(data.user ?? null);
+      }
+
+      return { error: null, needsVerification };
     } catch {
-      return { error: "Erreur de connexion au serveur" };
+      return { error: "Erreur de connexion au serveur", needsVerification: false };
     }
   }
 
