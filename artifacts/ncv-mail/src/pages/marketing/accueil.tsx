@@ -7,20 +7,20 @@ const steps = [
   {
     num: "01",
     icon: Mail,
-    title: "Connectez votre boite mail",
-    desc: "Integration simple et securisee avec votre messagerie existante en quelques clics.",
+    title: "Connectez votre boîte mail",
+    desc: "Intégration simple et sécurisée avec votre messagerie existante en quelques clics.",
   },
   {
     num: "02",
     icon: Tags,
-    title: "Creez vos rubriques personnalisees",
-    desc: "Definissez vos propres categories selon votre metier et vos besoins specifiques.",
+    title: "Créez vos rubriques personnalisées",
+    desc: "Définissez vos propres catégories selon votre métier et vos besoins spécifiques.",
   },
   {
     num: "03",
     icon: Zap,
-    title: "L'IA gere votre inbox en autopilot",
-    desc: "Notre intelligence artificielle trie, priorise, prepare des reponses et extrait vos taches automatiquement. Votre inbox est deja geree quand vous arrivez le matin.",
+    title: "L'IA gère votre inbox en autopilot",
+    desc: "Notre intelligence artificielle trie, priorise, prépare des réponses et extrait vos tâches automatiquement. Votre inbox est déjà gérée quand vous arrivez le matin.",
   },
 ];
 
@@ -28,22 +28,22 @@ const benefits = [
   {
     icon: Clock,
     title: "Gain de temps",
-    desc: "Economisez plusieurs heures par semaine en automatisant le tri de vos emails.",
+    desc: "Économisez plusieurs heures par semaine en automatisant le tri de vos emails.",
   },
   {
     icon: Tags,
     title: "Personnalisation totale",
-    desc: "Creez des regles de tri adaptees a votre activite et vos priorites.",
+    desc: "Créez des règles de tri adaptées à votre activité et vos priorités.",
   },
   {
     icon: Shield,
-    title: "Securite des donnees",
-    desc: "Vos donnees restent confidentielles et securisees avec un chiffrement de bout en bout.",
+    title: "Sécurité des données",
+    desc: "Vos données restent confidentielles et sécurisées avec un chiffrement de bout en bout.",
   },
   {
     icon: Eye,
     title: "Vision claire",
-    desc: "Retrouvez instantanement vos emails importants grace a une organisation optimale.",
+    desc: "Retrouvez instantanément vos emails importants grâce à une organisation optimale.",
   },
 ];
 
@@ -54,12 +54,12 @@ export default function Accueil() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#2d7dd2]/10 to-transparent" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 text-center relative">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
-            <span className="text-white">Votre inbox est deja geree</span><br />
+            <span className="text-white">Votre inbox est déjà gérée</span><br />
             <span className="text-white">quand vous arrivez le matin.</span><br />
             <span className="text-[#2d7dd2]">NCV Mail — l'Email Autopilot.</span>
           </h1>
           <p className="mt-6 text-[16px] sm:text-[18px] text-[#8b9cb3] max-w-2xl mx-auto leading-relaxed">
-            NCV Mail lit, analyse et classe automatiquement vos emails selon VOS propres regles.
+            NCV Mail lit, analyse et classe automatiquement vos emails selon VOS propres règles.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/signup">
@@ -76,9 +76,9 @@ export default function Accueil() {
       <section className="border-t border-[#1f2937] bg-[#0a0e14]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">Comment ca marche</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">Comment ça marche</h2>
             <p className="text-[14px] text-[#8b9cb3] mt-2">
-              Trois etapes simples pour transformer votre gestion d'emails
+              Trois étapes simples pour transformer votre gestion d'emails
             </p>
           </div>
           <div className="space-y-8">
@@ -104,7 +104,7 @@ export default function Accueil() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
             <p className="text-[14px] text-[#8b9cb3]">
-              Decouvrez pourquoi des milliers de professionnels nous font confiance
+              Découvrez pourquoi des milliers de professionnels nous font confiance
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -123,9 +123,9 @@ export default function Accueil() {
 
       <section className="border-t border-[#1f2937] bg-[#0a0e14]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white">Pret a gagner 2h par jour ?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">Prêt à gagner 2h par jour ?</h2>
           <p className="text-[14px] text-[#8b9cb3] mt-3">
-            100 emails offerts pour decouvrir NCV Mail. Aucune carte bancaire requise.
+            100 emails offerts pour découvrir NCV Mail. Aucune carte bancaire requise.
           </p>
           <Link href="/signup">
             <button className="mt-6 px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">

@@ -57,7 +57,7 @@ export default function Tarifs() {
             Des tarifs simples, sans surprise
           </h1>
           <p className="mt-4 text-[16px] text-[#8b9cb3] max-w-2xl mx-auto">
-            Choisissez le plan qui correspond a vos besoins. Changez ou annulez a tout moment.
+            Choisissez le plan qui correspond à vos besoins. Changez ou annulez à tout moment.
           </p>
         </div>
       </section>
@@ -82,7 +82,7 @@ export default function Tarifs() {
                   {isRecommended && (
                     <div className="absolute top-3 right-3">
                       <span className="bg-[#2d7dd2] text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">
-                        Recommande
+                        Recommandé
                       </span>
                     </div>
                   )}
@@ -98,14 +98,14 @@ export default function Tarifs() {
                         <>
                           <span className="text-3xl font-extrabold text-white">{price}€</span>
                           <span className="text-[#8b9cb3] text-[13px]">
-                            {isBusiness ? "/siege/mois" : "/mois"}
+                            {isBusiness ? "/siège/mois" : "/mois"}
                           </span>
                         </>
                       )}
                     </div>
                     {isBusiness && (
                       <p className="text-[11px] text-[#8b9cb3] mt-0.5">
-                        Soit 9€ par siege/mois
+                        Soit 9€ par siège/mois
                       </p>
                     )}
                   </div>
@@ -133,7 +133,7 @@ export default function Tarifs() {
                         <span className="text-[#2d7dd2] font-bold">{businessSeats * 9}€</span> /mois
                       </p>
                       <p className="text-[10px] text-[#8b9cb3] mt-1">
-                        Exemple : 3 collaborateurs = 27€/mois — modifiable a tout moment depuis votre espace.
+                        Exemple : 3 collaborateurs = 27€/mois — modifiable à tout moment depuis votre espace.
                       </p>
                     </div>
                   )}
@@ -166,11 +166,11 @@ export default function Tarifs() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-[13px] text-[#8b9cb3]">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4" />
-              <span>Sans engagement, resiliable a tout moment</span>
+              <span>Sans engagement, résiliable à tout moment</span>
             </div>
             <div className="flex items-center gap-2">
               <CreditCard className="w-4 h-4" />
-              <span>Paiement securise par Stripe</span>
+              <span>Paiement sécurisé par Stripe</span>
             </div>
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4" />

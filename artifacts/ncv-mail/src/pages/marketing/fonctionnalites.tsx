@@ -18,63 +18,63 @@ import {
 const features = [
   {
     icon: Tags,
-    title: "Tri intelligent par categories",
-    desc: "L'intelligence artificielle analyse le contenu de vos emails et les classe automatiquement dans les dossiers appropries pour garder une boite de reception propre.",
+    title: "Tri intelligent par catégories",
+    desc: "L'intelligence artificielle analyse le contenu de vos emails et les classe automatiquement dans les dossiers appropriés pour garder une boîte de réception propre.",
   },
   {
     icon: FileText,
-    title: "Resumes automatiques",
-    desc: "Gagnez un temps precieux en lisant un resume concis genere par l'IA pour les longs fils de discussion et les newsletters interminables.",
+    title: "Résumés automatiques",
+    desc: "Gagnez un temps précieux en lisant un résumé concis généré par l'IA pour les longs fils de discussion et les newsletters interminables.",
   },
   {
     icon: PenLine,
-    title: "Brouillons IA personnalises",
-    desc: "NCV Mail prepare des reponses adaptees au contexte et a votre ton habituel. Il ne vous reste plus qu'a relire et envoyer.",
+    title: "Brouillons IA personnalisés",
+    desc: "NCV Mail prépare des réponses adaptées au contexte et à votre ton habituel. Il ne vous reste plus qu'à relire et envoyer.",
   },
   {
     icon: BarChart3,
     title: "Brief quotidien",
-    desc: "Recevez chaque matin un recapitulatif clair des emails urgents, des reunions du jour et des suivis en attente.",
+    desc: "Recevez chaque matin un récapitulatif clair des emails urgents, des réunions du jour et des suivis en attente.",
   },
   {
     icon: CheckSquare,
-    title: "Extraction automatique des taches",
-    desc: "Les actions a realiser mentionnees dans vos echanges sont automatiquement detectees et ajoutees a votre gestionnaire de taches.",
+    title: "Extraction automatique des tâches",
+    desc: "Les actions à réaliser mentionnées dans vos échanges sont automatiquement détectées et ajoutées à votre gestionnaire de tâches.",
   },
   {
     icon: FolderKanban,
     title: "Gestion de projets",
-    desc: "Regroupez intelligemment tous les echanges, pieces jointes et intervenants lies a un meme projet dans un espace dedie.",
+    desc: "Regroupez intelligemment tous les échanges, pièces jointes et intervenants liés à un même projet dans un espace dédié.",
   },
   {
     icon: Inbox,
-    title: "Connexion multi-boites",
-    desc: "Centralisez tous vos comptes (Gmail, Outlook, iCloud, IMAP) dans une interface unique et unifiee sans friction.",
+    title: "Connexion multi-boîtes",
+    desc: "Centralisez tous vos comptes (Gmail, Outlook, iCloud, IMAP) dans une interface unique et unifiée sans friction.",
   },
   {
     icon: Signature,
-    title: "Signature email personnalisee",
-    desc: "Creez, gerez et deployez des signatures professionnelles dynamiques et harmonisees pour vous ou toute votre equipe.",
+    title: "Signature email personnalisée",
+    desc: "Créez, gérez et déployez des signatures professionnelles dynamiques et harmonisées pour vous ou toute votre équipe.",
   },
   {
     icon: Archive,
     title: "Archivage intelligent",
-    desc: "Nettoyage proactif de votre boite : les newsletters lues et les notifications obsoletes sont archivees ou supprimees selon vos regles.",
+    desc: "Nettoyage proactif de votre boîte : les newsletters lues et les notifications obsolètes sont archivées ou supprimées selon vos règles.",
   },
   {
     icon: AlertTriangle,
-    title: "Detection de priorite",
-    desc: "Ne manquez plus l'essentiel. Les emails de vos clients importants ou contenant des urgences sont mis en evidence instantanement.",
+    title: "Détection de priorité",
+    desc: "Ne manquez plus l'essentiel. Les emails de vos clients importants ou contenant des urgences sont mis en évidence instantanément.",
   },
   {
     icon: Smartphone,
     title: "Application mobile",
-    desc: "Restez productif en deplacement avec notre application iOS et Android optimisee pour une consultation rapide et efficace.",
+    desc: "Restez productif en déplacement avec notre application iOS et Android optimisée pour une consultation rapide et efficace.",
   },
   {
     icon: Shield,
-    title: "Securite et confidentialite",
-    desc: "Vos donnees sont protegees par un chiffrement de bout en bout. Nous respectons strictement le RGPD et ne vendons jamais vos informations.",
+    title: "Sécurité et confidentialité",
+    desc: "Vos données sont protégées par un chiffrement de bout en bout. Nous respectons strictement le RGPD et ne vendons jamais vos informations.",
   },
 ];
 
@@ -85,10 +85,10 @@ export default function Fonctionnalites() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#2d7dd2]/10 to-transparent" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
-            Tout ce dont vous avez besoin pour reprendre le controle de vos emails
+            Tout ce dont vous avez besoin pour reprendre le contrôle de vos emails
           </h1>
           <p className="mt-4 text-[16px] text-[#8b9cb3] max-w-2xl mx-auto">
-            NCV Mail utilise l'intelligence artificielle pour trier, resumer et repondre a vos emails automatiquement.
+            NCV Mail utilise l'intelligence artificielle pour trier, résumer et répondre à vos emails automatiquement.
           </p>
         </div>
       </section>
@@ -114,9 +114,9 @@ export default function Fonctionnalites() {
 
       <section className="border-t border-[#1f2937] bg-[#0a0e14]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white">Pret a gagner 2h par jour ?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">Prêt à gagner 2h par jour ?</h2>
           <p className="text-[14px] text-[#8b9cb3] mt-3">
-            100 emails offerts pour decouvrir NCV Mail. Aucune carte bancaire requise.
+            100 emails offerts pour découvrir NCV Mail. Aucune carte bancaire requise.
           </p>
           <Link href="/signup">
             <button className="mt-6 px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
