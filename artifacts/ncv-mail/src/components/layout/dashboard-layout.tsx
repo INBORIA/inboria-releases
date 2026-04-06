@@ -73,8 +73,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
-      <div className="flex h-20 shrink-0 items-center justify-center px-4 border-b border-[#1f2937]">
-        <img src={ncvLogo} alt="NCV" className="h-32 w-32 object-contain -my-6" />
+      <div className="flex h-24 shrink-0 flex-col items-center justify-center px-4 border-b border-[#1f2937]">
+        <img src={ncvLogo} alt="NCV" className="h-28 w-28 object-contain -mb-2 -mt-4" />
+        <span className="text-[13px] font-semibold tracking-tight text-white">NCV Mail</span>
       </div>
       
       <nav className="flex-1 px-2 py-2.5 space-y-0.5">
