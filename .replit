@@ -33,6 +33,9 @@ VITE_SUPABASE_URL = "https://ecdwevvisbrcsomdiqop.supabase.co"
 GOOGLE_CLIENT_ID = "850619978612-ql893tqnpkm7vn32brf42d3bg3len5fo.apps.googleusercontent.com"
 GOOGLE_CLIENT_SECRET = "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"
 WEBHOOK_SECRET = "8537408a9e971fd41757ce113a12d8eed6bd48460364cad0341b025eb845a832"
+STRIPE_PRICE_SOLO = "price_1TJFkhA7juG5DM5rcMtC72Bn"
+STRIPE_PRICE_PRO = "price_1TJFkhA7juG5DM5r7FSz1wBZ"
+STRIPE_PRICE_BUSINESS = "price_1TJFkiA7juG5DM5rMPsRMDom"
 
 [nix]
 channel = "stable-25_05"
