@@ -149,7 +149,7 @@ async function triageEmailAI(
         },
         {
           role: "user",
-          content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${(body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800)}\n\nCategories disponibles: ${categoryNames.join(", ") || "Aucune"}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom exact ou Non classe","tasks":["tache 1","tache 2"]}`,
+          content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${(body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800)}\n\nCategories existantes: ${categoryNames.join(", ") || "Aucune"}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom de categorie existante OU propose un nouveau nom pertinent (court, professionnel). Utilise 'Non classe' uniquement si vraiment inclassable.","tasks":["tache 1","tache 2"]}`,
         },
       ],
     });
@@ -211,7 +211,27 @@ async function saveEmailWithTriage(
       .eq("user_id", userId)
       .eq("name", triage.category)
       .maybeSingle();
-    categoryId = cat?.id || null;
+    if (cat?.id) {
+      categoryId = cat.id;
+    } else {
+      const { data: newCat, error: newCatErr } = await supabaseAdmin
+        .from("categories")
+        .insert({ user_id: userId, name: triage.category })
+        .select("id")
+        .single();
+      if (newCat?.id) {
+        categoryId = newCat.id;
+        console.log(`[auto-sync] Auto-created category "${triage.category}" for user ${userId}`);
+      } else if (newCatErr?.code === "23505") {
+        const { data: existing } = await supabaseAdmin
+          .from("categories")
+          .select("id")
+          .eq("user_id", userId)
+          .eq("name", triage.category)
+          .maybeSingle();
+        categoryId = existing?.id || null;
+      }
+    }
   }
 
   const { data: inserted, error: insertErr } = await supabaseAdmin

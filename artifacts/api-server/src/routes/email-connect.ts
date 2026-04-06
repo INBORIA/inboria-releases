@@ -96,7 +96,7 @@ async function triageEmail(sender: string, subject: string, body: string, userId
       max_completion_tokens: 512,
       messages: [
         { role: "system", content: lang.system },
-        { role: "user", content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${body.slice(0, 800)}\n\nCategories disponibles: ${categoryNames.join(", ") || lang.uncategorized}${rulesContext}${projectContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"${lang.summaryHint}","category":"nom exact ou ${lang.uncategorized}","tasks":["tache 1","tache 2"],"project":"nom du projet ou ${lang.noneProject}"}` },
+        { role: "user", content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${body.slice(0, 800)}\n\nCategories existantes: ${categoryNames.join(", ") || lang.uncategorized}${rulesContext}${projectContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"${lang.summaryHint}","category":"nom de categorie existante OU propose un nouveau nom pertinent (court, professionnel). Utilise '${lang.uncategorized}' uniquement si vraiment inclassable.","tasks":["tache 1","tache 2"],"project":"nom du projet ou ${lang.noneProject}"}` },
       ],
     });
     const content = completion.choices[0]?.message?.content ?? "{}";
@@ -565,8 +565,24 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
           .select("id")
           .eq("user_id", userId)
           .eq("name", triage.category)
-          .single();
-        categoryId = cat?.id || null;
+          .maybeSingle();
+        if (cat?.id) {
+          categoryId = cat.id;
+        } else {
+          const { data: newCat, error: newCatErr } = await supabaseAdmin
+            .from("categories")
+            .insert({ user_id: userId, name: triage.category })
+            .select("id")
+            .single();
+          if (newCat?.id) {
+            categoryId = newCat.id;
+          } else if (newCatErr?.code === "23505") {
+            const { data: existing } = await supabaseAdmin
+              .from("categories").select("id")
+              .eq("user_id", userId).eq("name", triage.category).maybeSingle();
+            categoryId = existing?.id || null;
+          }
+        }
       }
 
       let projectId = null;
