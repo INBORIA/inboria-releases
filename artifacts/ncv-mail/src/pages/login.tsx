@@ -96,6 +96,9 @@ export default function Login() {
               <FormItem>
                 <div className="flex items-center justify-between">
                   <FormLabel className="text-[#8b9cb3]">Mot de passe</FormLabel>
+                  <Link href="/mot-de-passe-oublie" className="text-xs text-primary hover:text-primary/80 font-medium" tabIndex={-1}>
+                    Mot de passe oublie ?
+                  </Link>
                 </div>
                 <FormControl>
                   <div className="relative">

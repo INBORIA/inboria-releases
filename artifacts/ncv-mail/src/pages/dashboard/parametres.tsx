@@ -8,10 +8,11 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Pen } from "lucide-react";
+import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Pen, Lock } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 
 const IMAP_PROVIDERS = [
   { id: "outlook", name: "Outlook", color: "bg-blue-500/10 text-blue-400", letter: "Ol", host: "outlook.office365.com", port: "993" },
@@ -77,6 +78,12 @@ export default function Parametres() {
   const [imapPort, setImapPort] = useState("");
   const [connecting, setConnecting] = useState(false);
   const [connectError, setConnectError] = useState("");
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [showCurrentPwd, setShowCurrentPwd] = useState(false);
+  const [showNewPwd, setShowNewPwd] = useState(false);
+  const [changingPassword, setChangingPassword] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -106,6 +113,42 @@ export default function Parametres() {
         }
       }
     );
+  };
+
+  const handleChangePassword = async () => {
+    if (newPassword.length < 6) {
+      toast({ variant: "destructive", title: "Mot de passe trop court", description: "Minimum 6 caracteres." });
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      toast({ variant: "destructive", title: "Erreur", description: "Les mots de passe ne correspondent pas." });
+      return;
+    }
+    setChangingPassword(true);
+    try {
+      const email = profile?.email;
+      if (email && currentPassword) {
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password: currentPassword });
+        if (signInError) {
+          toast({ variant: "destructive", title: "Mot de passe actuel incorrect", description: "Veuillez verifier votre mot de passe actuel." });
+          setChangingPassword(false);
+          return;
+        }
+      }
+      const { error } = await supabase.auth.updateUser({ password: newPassword });
+      if (error) {
+        toast({ variant: "destructive", title: "Erreur", description: error.message });
+      } else {
+        toast({ title: "Mot de passe modifie avec succes" });
+        setCurrentPassword("");
+        setNewPassword("");
+        setConfirmNewPassword("");
+      }
+    } catch {
+      toast({ variant: "destructive", title: "Erreur", description: "Impossible de modifier le mot de passe." });
+    } finally {
+      setChangingPassword(false);
+    }
   };
 
   const handleSaveSignature = () => {
@@ -487,6 +530,64 @@ export default function Parametres() {
                   </Button>
                 </div>
               )}
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
+              <Lock className="w-4 h-4 text-primary" />
+              Modifier le mot de passe
+            </h2>
+            <div className="bg-card rounded-lg border border-border p-5">
+              <div className="space-y-3 max-w-md">
+                <div className="space-y-1.5">
+                  <Label className="text-[12px] text-[#8b9cb3]">Mot de passe actuel</Label>
+                  <div className="relative">
+                    <Input
+                      type={showCurrentPwd ? "text" : "password"}
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      className="bg-background border-border text-white h-9 text-[13px] pr-10"
+                      placeholder="Votre mot de passe actuel"
+                    />
+                    <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white" onClick={() => setShowCurrentPwd(!showCurrentPwd)}>
+                      {showCurrentPwd ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-[12px] text-[#8b9cb3]">Nouveau mot de passe</Label>
+                  <div className="relative">
+                    <Input
+                      type={showNewPwd ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      className="bg-background border-border text-white h-9 text-[13px] pr-10"
+                      placeholder="Minimum 6 caracteres"
+                    />
+                    <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white" onClick={() => setShowNewPwd(!showNewPwd)}>
+                      {showNewPwd ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
+                    </button>
+                  </div>
+                </div>
+                <div className="space-y-1.5">
+                  <Label className="text-[12px] text-[#8b9cb3]">Confirmer le nouveau mot de passe</Label>
+                  <Input
+                    type={showNewPwd ? "text" : "password"}
+                    value={confirmNewPassword}
+                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    className="bg-background border-border text-white h-9 text-[13px]"
+                    placeholder="Retapez le nouveau mot de passe"
+                  />
+                </div>
+                <Button
+                  onClick={handleChangePassword}
+                  disabled={changingPassword || !currentPassword || !newPassword || !confirmNewPassword}
+                  size="sm"
+                >
+                  {changingPassword ? "Modification..." : "Modifier le mot de passe"}
+                </Button>
+              </div>
             </div>
           </section>
           
