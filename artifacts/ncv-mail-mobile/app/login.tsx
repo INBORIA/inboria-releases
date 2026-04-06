@@ -12,7 +12,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
-import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 export default function LoginScreen() {
   const colors = useColors();
@@ -64,7 +64,7 @@ export default function LoginScreen() {
       >
         <View style={s.logoBox}>
           <View style={[s.logoCircle, { backgroundColor: colors.primary + "20" }]}>
-            <Feather name="mail" size={32} color={colors.primary} />
+            <MaterialCommunityIcons name="email-outline" size={32} color={colors.primary} />
           </View>
           <Text style={[s.appTitle, { color: colors.foreground }]}>NCV Mail</Text>
           <Text style={[s.subtitle, { color: colors.mutedForeground }]}>
@@ -76,7 +76,7 @@ export default function LoginScreen() {
           <View
             style={[s.errorBox, { backgroundColor: colors.destructive + "15", borderColor: colors.destructive + "30" }]}
           >
-            <Feather name="alert-circle" size={14} color={colors.destructive} />
+            <MaterialCommunityIcons name="alert-circle-outline" size={14} color={colors.destructive} />
             <Text style={[s.errorText, { color: colors.destructive }]}>{error}</Text>
           </View>
         ) : null}
@@ -126,7 +126,7 @@ export default function LoginScreen() {
               textContentType="password"
             />
             <TouchableOpacity style={s.eyeBtn} onPress={() => setShowPassword(!showPassword)}>
-              <Feather name={showPassword ? "eye-off" : "eye"} size={18} color={colors.mutedForeground} />
+              <MaterialCommunityIcons name={showPassword ? "eye-off-outline" : "eye-outline"} size={20} color={colors.mutedForeground} />
             </TouchableOpacity>
           </View>
         </View>
