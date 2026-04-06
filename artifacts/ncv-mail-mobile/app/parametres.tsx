@@ -17,7 +17,6 @@ import {
   useGetProfile,
   useUpdateProfile,
   getGetProfileQueryKey,
-  UpdateProfileBodyAiLanguage,
 } from "@workspace/api-client-react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
