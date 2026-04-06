@@ -108,7 +108,7 @@ export default function AbonnementScreen() {
               <Text style={[s.planLabel, { color: colors.foreground }]}>Plan actuel</Text>
               <View style={[s.planBadge, { backgroundColor: colors.primary + "20" }]}>
                 <Text style={[s.planBadgeText, { color: colors.primary }]}>
-                  {profile.plan?.charAt(0).toUpperCase() + profile.plan?.slice(1) || "Gratuit"}
+                  {profile.plan?.charAt(0).toUpperCase() + profile.plan?.slice(1) || "Essai"}
                 </Text>
               </View>
             </View>
