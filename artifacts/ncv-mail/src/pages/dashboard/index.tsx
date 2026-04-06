@@ -497,7 +497,7 @@ export default function Dashboard() {
           toast({ title: "Brouillon IA genere", description: "Le brouillon a ete insere dans le formulaire." });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible de generer le brouillon IA." });
+          toast({ title: "Brouillon indisponible", description: "L'IA n'a pas pu generer de brouillon pour cet email. Essayez a nouveau." });
         },
       }
     );
