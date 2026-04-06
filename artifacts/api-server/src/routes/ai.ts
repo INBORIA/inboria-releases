@@ -171,7 +171,9 @@ Reponds en JSON:
   "summary": "resume en 1 phrase",
   "tasks": ["tache 1", "tache 2"],
   "project": "nom du projet ou Aucun"
-}`,
+}
+
+IMPORTANT pour les taches: Chaque tache doit etre explicite et auto-suffisante. Inclus toujours QUI (expediteur/service) et QUOI. Exemples: au lieu de "Verifier l'adresse email" → "Confirmer l'inscription sur Replit (email de verification)", au lieu de "Utiliser le code" → "Saisir le code de verification LinkedIn dans les 15 min". Ne genere PAS de tache pour les emails purement informatifs (newsletters, notifications automatiques, confirmations de lecture). Genere des taches uniquement quand une ACTION concrete est requise.`,
         },
       ],
     });
