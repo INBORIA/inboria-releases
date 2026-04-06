@@ -39,20 +39,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: profile, isLoading } = useGetProfile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  if (isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, emailsQuota: 100 };
-
-  const handleLogout = async () => {
-    await signOut();
-    setLocation("/login");
-  };
 
   const isExpired = (user as any).plan === "expired";
   const isTrialExhausted = (user as any).plan === "essai" && (user as any).emailsUsed >= (user as any).emailsQuota;
@@ -61,10 +48,23 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const allowedWhenBlocked = ["/dashboard/abonnement", "/dashboard/parametres"];
 
   useEffect(() => {
-    if (isBlocked && !allowedWhenBlocked.includes(location)) {
+    if (!isLoading && isBlocked && !allowedWhenBlocked.includes(location)) {
       setLocation("/dashboard/abonnement");
     }
-  }, [isBlocked, location, setLocation]);
+  }, [isBlocked, isLoading, location, setLocation]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  const handleLogout = async () => {
+    await signOut();
+    setLocation("/login");
+  };
 
   const usagePercent = Math.min(
     100,
