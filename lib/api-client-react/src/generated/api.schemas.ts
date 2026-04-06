@@ -382,6 +382,25 @@ export type DeleteEmail200 = {
   success?: boolean;
 };
 
+export type BulkUpdateEmailsBodyAction =
+  (typeof BulkUpdateEmailsBodyAction)[keyof typeof BulkUpdateEmailsBodyAction];
+
+export const BulkUpdateEmailsBodyAction = {
+  delete: "delete",
+  archive: "archive",
+  read: "read",
+} as const;
+
+export type BulkUpdateEmailsBody = {
+  ids: number[];
+  action: BulkUpdateEmailsBodyAction;
+};
+
+export type BulkUpdateEmails200 = {
+  success?: boolean;
+  affected?: number;
+};
+
 export type ListTasksParams = {
   status?: ListTasksStatus;
 };

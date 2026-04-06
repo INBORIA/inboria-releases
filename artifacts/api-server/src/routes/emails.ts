@@ -346,6 +346,63 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
   }
 });
 
+router.post("/emails/bulk", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { ids, action } = req.body;
+    if (!Array.isArray(ids) || ids.length === 0 || !["delete", "archive", "read"].includes(action)) {
+      res.status(400).json({ error: "ids (array) et action (delete|archive|read) requis" });
+      return;
+    }
+
+    const sanitizedIds = [...new Set(ids.map(Number).filter((n: number) => Number.isInteger(n) && n > 0))].slice(0, 500);
+    if (sanitizedIds.length === 0) {
+      res.status(400).json({ error: "Aucun identifiant valide fourni" });
+      return;
+    }
+
+    let affected = 0;
+    let error: any = null;
+
+    if (action === "delete") {
+      const result = await supabaseAdmin
+        .from("emails")
+        .delete()
+        .in("id", sanitizedIds)
+        .eq("user_id", req.userId!)
+        .select("id");
+      error = result.error;
+      affected = result.data?.length || 0;
+    } else if (action === "archive") {
+      const result = await supabaseAdmin
+        .from("emails")
+        .update({ status: "archived" })
+        .in("id", sanitizedIds)
+        .eq("user_id", req.userId!)
+        .select("id");
+      error = result.error;
+      affected = result.data?.length || 0;
+    } else if (action === "read") {
+      const result = await supabaseAdmin
+        .from("emails")
+        .update({ status: "read" })
+        .in("id", sanitizedIds)
+        .eq("user_id", req.userId!)
+        .select("id");
+      error = result.error;
+      affected = result.data?.length || 0;
+    }
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json({ success: true, affected });
+  } catch {
+    res.status(500).json({ error: "Erreur lors de l'action groupée" });
+  }
+});
+
 router.delete("/emails/:id", requireAuth, async (req, res): Promise<void> => {
   try {
     const { error } = await supabaseAdmin

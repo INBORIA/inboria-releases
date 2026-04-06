@@ -264,6 +264,41 @@ paths:
                   success:
                     type: boolean
 
+  /emails/bulk:
+    post:
+      operationId: bulkUpdateEmails
+      tags: [emails]
+      summary: Bulk update emails (archive, mark read, delete)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - ids
+                - action
+              properties:
+                ids:
+                  type: array
+                  items:
+                    type: integer
+                action:
+                  type: string
+                  enum: [delete, archive, read]
+      responses:
+        "200":
+          description: Bulk action result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  affected:
+                    type: integer
+
   /categories:
     get:
       operationId: listCategories

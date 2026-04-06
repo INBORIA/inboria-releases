@@ -16,12 +16,13 @@ import {
   useListProjects,
   useGetProfile,
   useRecategorizeUncategorized,
+  useBulkUpdateEmails,
 } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -55,18 +56,27 @@ function PriorityBadge({ priority }: { priority: string }) {
   );
 }
 
-function EmailRow({ email, onClick, onArchive, onCategoryClick }: { email: any; onClick: () => void; onArchive: (id: number) => void; onCategoryClick?: (name: string) => void }) {
+function EmailRow({ email, onClick, onArchive, onCategoryClick, isSelected, onToggleSelect, selectionMode }: { email: any; onClick: () => void; onArchive: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean }) {
   const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
 
   return (
     <div
-      className="group flex items-stretch rounded-lg border border-border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden"
+      className={`group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden ${isSelected ? "border-primary/50 bg-primary/[0.06]" : "border-border"}`}
       onClick={onClick}
     >
       <div className={`w-1 shrink-0 ${barColor}`} />
       <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
-        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-[12px] shrink-0 mt-0.5">
-          {(email.sender || "?")[0].toUpperCase()}
+        <div
+          className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${selectionMode || isSelected ? "bg-transparent border-2 border-primary/40 hover:border-primary" : "bg-primary/20"}`}
+          onClick={(e) => { e.stopPropagation(); onToggleSelect(email.id); }}
+        >
+          {selectionMode || isSelected ? (
+            <div className={`w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors ${isSelected ? "bg-primary border-primary" : "border-[#8b9cb3]/40 hover:border-primary"}`}>
+              {isSelected && <Check className="w-3 h-3 text-white" />}
+            </div>
+          ) : (
+            <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
+          )}
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
@@ -403,10 +413,12 @@ export default function Dashboard() {
   const sendEmailMut = useSendEmail();
   const generateDraftMut = useGenerateDraft();
   const recategorizeMut = useRecategorizeUncategorized();
+  const bulkUpdateMut = useBulkUpdateEmails();
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [composeTo, setComposeTo] = useState("");
   const [composeSubject, setComposeSubject] = useState("");
   const [composeBody, setComposeBody] = useState("");
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const activeEmails = emails
@@ -417,6 +429,45 @@ export default function Dashboard() {
       return (pOrder[a.priority] ?? 2) - (pOrder[b.priority] ?? 2);
     });
   const selectedEmail = emails?.find((e) => e.id === selectedEmailId);
+
+  const selectionMode = selectedIds.size > 0;
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (!activeEmails) return;
+    if (selectedIds.size === activeEmails.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(activeEmails.map((e) => e.id)));
+    }
+  };
+
+  const handleBulkAction = (action: "delete" | "archive" | "read") => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+    bulkUpdateMut.mutate(
+      { data: { ids, action } },
+      {
+        onSuccess: (result) => {
+          setSelectedIds(new Set());
+          invalidateAll();
+          const labels = { delete: "supprimé(s)", archive: "archivé(s)", read: "marqué(s) comme lu(s)" };
+          toast({ title: `${result.affected} email(s) ${labels[action]}` });
+        },
+        onError: () => {
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible d'effectuer l'action groupée." });
+        },
+      }
+    );
+  };
 
   const invalidateAll = () => {
     queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
@@ -825,6 +876,60 @@ export default function Dashboard() {
                 </div>
               </div>
 
+              {selectionMode && (
+                <div className="flex items-center gap-2 mb-2 p-2.5 rounded-lg bg-primary/[0.08] border border-primary/20">
+                  <button
+                    onClick={toggleSelectAll}
+                    className="flex items-center gap-1.5 text-[11px] text-primary hover:text-white transition-colors"
+                  >
+                    {selectedIds.size === (activeEmails?.length || 0) ? <CheckSquare className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />}
+                    {selectedIds.size === (activeEmails?.length || 0) ? "Tout désélectionner" : "Tout sélectionner"}
+                  </button>
+                  <span className="text-[11px] text-[#8b9cb3]">
+                    {selectedIds.size} sélectionné(s)
+                  </span>
+                  <div className="flex-1" />
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                    onClick={() => handleBulkAction("read")}
+                    disabled={bulkUpdateMut.isPending}
+                  >
+                    <CheckCircle2 className="w-3 h-3" />
+                    Lu
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                    onClick={() => handleBulkAction("archive")}
+                    disabled={bulkUpdateMut.isPending}
+                  >
+                    <Archive className="w-3 h-3" />
+                    Archiver
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.08]"
+                    onClick={() => handleBulkAction("delete")}
+                    disabled={bulkUpdateMut.isPending}
+                  >
+                    <Trash2 className="w-3 h-3" />
+                    Supprimer
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    className="h-7 px-2 text-[#8b9cb3] hover:text-white"
+                    onClick={() => setSelectedIds(new Set())}
+                  >
+                    <X className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
+              )}
+
               <div className="space-y-1">
                 {emailsLoading ? (
                   Array(5).fill(0).map((_, i) => (
@@ -837,11 +942,20 @@ export default function Dashboard() {
                   <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                     <Inbox className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
                     <h3 className="text-[13px] font-medium text-white">Inbox Zero</h3>
-                    <p className="text-[12px] text-[#8b9cb3] mt-1">Tous vos emails ont ete traites.</p>
+                    <p className="text-[12px] text-[#8b9cb3] mt-1">Tous vos emails ont été traités.</p>
                   </div>
                 ) : (
                   activeEmails?.map((email) => (
-                    <EmailRow key={email.id} email={email} onClick={() => setSelectedEmailId(email.id)} onArchive={handleArchive} onCategoryClick={(name) => setFilterCategory(name)} />
+                    <EmailRow
+                      key={email.id}
+                      email={email}
+                      onClick={() => { if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(email.id); } }}
+                      onArchive={handleArchive}
+                      onCategoryClick={(name) => setFilterCategory(name)}
+                      isSelected={selectedIds.has(email.id)}
+                      onToggleSelect={toggleSelect}
+                      selectionMode={selectionMode}
+                    />
                   ))
                 )}
               </div>

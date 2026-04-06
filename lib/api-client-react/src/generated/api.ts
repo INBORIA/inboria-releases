@@ -18,6 +18,8 @@ import type {
 
 import type {
   AuthResponse,
+  BulkUpdateEmails200,
+  BulkUpdateEmailsBody,
   Category,
   CategoryCount,
   CheckoutBody,
@@ -1058,6 +1060,92 @@ export const useDeleteEmail = <
   TContext
 > => {
   return useMutation(getDeleteEmailMutationOptions(options));
+};
+
+/**
+ * @summary Bulk update emails (archive, mark read, delete)
+ */
+export const getBulkUpdateEmailsUrl = () => {
+  return `/api/emails/bulk`;
+};
+
+export const bulkUpdateEmails = async (
+  bulkUpdateEmailsBody: BulkUpdateEmailsBody,
+  options?: RequestInit,
+): Promise<BulkUpdateEmails200> => {
+  return customFetch<BulkUpdateEmails200>(getBulkUpdateEmailsUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(bulkUpdateEmailsBody),
+  });
+};
+
+export const getBulkUpdateEmailsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof bulkUpdateEmails>>,
+    TError,
+    { data: BodyType<BulkUpdateEmailsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof bulkUpdateEmails>>,
+  TError,
+  { data: BodyType<BulkUpdateEmailsBody> },
+  TContext
+> => {
+  const mutationKey = ["bulkUpdateEmails"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof bulkUpdateEmails>>,
+    { data: BodyType<BulkUpdateEmailsBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return bulkUpdateEmails(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type BulkUpdateEmailsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof bulkUpdateEmails>>
+>;
+export type BulkUpdateEmailsMutationBody = BodyType<BulkUpdateEmailsBody>;
+export type BulkUpdateEmailsMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Bulk update emails (archive, mark read, delete)
+ */
+export const useBulkUpdateEmails = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof bulkUpdateEmails>>,
+    TError,
+    { data: BodyType<BulkUpdateEmailsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof bulkUpdateEmails>>,
+  TError,
+  { data: BodyType<BulkUpdateEmailsBody> },
+  TContext
+> => {
+  return useMutation(getBulkUpdateEmailsMutationOptions(options));
 };
 
 /**

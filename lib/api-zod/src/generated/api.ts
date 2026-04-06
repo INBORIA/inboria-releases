@@ -234,6 +234,19 @@ export const DeleteEmailResponse = zod.object({
 });
 
 /**
+ * @summary Bulk update emails (archive, mark read, delete)
+ */
+export const BulkUpdateEmailsBody = zod.object({
+  ids: zod.array(zod.number()),
+  action: zod.enum(["delete", "archive", "read"]),
+});
+
+export const BulkUpdateEmailsResponse = zod.object({
+  success: zod.boolean().optional(),
+  affected: zod.number().optional(),
+});
+
+/**
  * @summary List categories
  */
 export const ListCategoriesResponseItem = zod.object({

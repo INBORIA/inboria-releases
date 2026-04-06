@@ -7,6 +7,9 @@
  */
 
 export * from "./authResponse";
+export * from "./bulkUpdateEmails200";
+export * from "./bulkUpdateEmailsBody";
+export * from "./bulkUpdateEmailsBodyAction";
 export * from "./category";
 export * from "./categoryCount";
 export * from "./checkoutBody";
