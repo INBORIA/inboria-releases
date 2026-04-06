@@ -1,15 +1,17 @@
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useRef } from "react";
 import {
   View,
   Text,
   FlatList,
   TouchableOpacity,
+  Pressable,
   StyleSheet,
   RefreshControl,
   ActivityIndicator,
   TextInput,
   Platform,
   ScrollView,
+  Alert,
 } from "react-native";
 import { useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -18,9 +20,12 @@ import {
   useListCategories,
   useGetDashboardSummary,
   useDeleteEmail,
+  useBulkUpdateEmails,
   getListEmailsQueryKey,
   getListCategoriesQueryKey,
   getGetDashboardSummaryQueryKey,
+  getGetCategoryCountsQueryKey,
+  getGetInboxHealthQueryKey,
 } from "@workspace/api-client-react";
 import type { Email } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
@@ -44,6 +49,8 @@ export default function InboxScreen() {
   const [filterPriority, setFilterPriority] = useState<string>("all");
   const [filterCategory, setFilterCategory] = useState<number | null>(null);
   const [refreshing, setRefreshing] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const longPressedRef = useRef(false);
   const isWeb = Platform.OS === "web";
 
   const { data: emails, isLoading } = useListEmails({
@@ -57,6 +64,7 @@ export default function InboxScreen() {
   const { data: categories } = useListCategories();
   const { data: summary } = useGetDashboardSummary();
   const deleteEmail = useDeleteEmail();
+  const bulkUpdate = useBulkUpdateEmails();
 
   const activeEmails = emails
     ?.filter((e) => e.status !== "archived")
@@ -66,23 +74,76 @@ export default function InboxScreen() {
       return (pOrder[a.priority ?? "faible"] ?? 2) - (pOrder[b.priority ?? "faible"] ?? 2);
     });
 
+  const selectionMode = selectedIds.size > 0;
+
+  const invalidateAll = useCallback(async () => {
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() }),
+      queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() }),
+      queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() }),
+      queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() }),
+      queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() }),
+    ]);
+  }, [queryClient]);
+
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-    await queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
-    await queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+    await invalidateAll();
     setRefreshing(false);
-  }, [queryClient]);
+  }, [invalidateAll]);
+
+  const toggleSelect = (id: number) => {
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+
+  const toggleSelectAll = () => {
+    if (!activeEmails) return;
+    if (selectedIds.size === activeEmails.length) {
+      setSelectedIds(new Set());
+    } else {
+      setSelectedIds(new Set(activeEmails.map((e) => e.id)));
+    }
+  };
+
+  const handleBulkAction = (action: "delete" | "archive" | "read") => {
+    const ids = Array.from(selectedIds);
+    if (ids.length === 0) return;
+
+    const doAction = () => {
+      bulkUpdate.mutate(
+        { data: { ids, action } },
+        {
+          onSuccess: () => {
+            setSelectedIds(new Set());
+            invalidateAll();
+          },
+        }
+      );
+    };
+
+    if (action === "delete") {
+      Alert.alert(
+        "Supprimer",
+        `Supprimer ${ids.length} email(s) définitivement ?`,
+        [
+          { text: "Annuler", style: "cancel" },
+          { text: "Supprimer", style: "destructive", onPress: doAction },
+        ]
+      );
+    } else {
+      doAction();
+    }
+  };
 
   const handleDeleteEmail = (id: number) => {
     deleteEmail.mutate(
       { id },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
-        },
-      }
+      { onSuccess: invalidateAll }
     );
   };
 
@@ -100,17 +161,70 @@ export default function InboxScreen() {
 
   const renderEmail = ({ item }: { item: Email }) => {
     const priority = item.priority ?? "faible";
+    const isSelected = selectedIds.has(item.id);
+
     return (
-      <TouchableOpacity
-        style={[s.emailCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-        onPress={() => router.push(`/email/${item.id}`)}
-        activeOpacity={0.7}
+      <Pressable
+        style={[
+          s.emailCard,
+          {
+            backgroundColor: isSelected ? colors.primary + "12" : colors.card,
+            borderColor: isSelected ? colors.primary + "50" : colors.border,
+          },
+        ]}
+        onPress={() => {
+          if (longPressedRef.current) {
+            longPressedRef.current = false;
+            return;
+          }
+          if (selectionMode) {
+            toggleSelect(item.id);
+          } else {
+            router.push(`/email/${item.id}`);
+          }
+        }}
+        onLongPress={() => {
+          longPressedRef.current = true;
+          toggleSelect(item.id);
+        }}
       >
-        <View style={[s.avatar, { backgroundColor: colors.primary + "25" }]}>
-          <Text style={[s.avatarLetter, { color: colors.primary }]}>
-            {(item.sender || "?")[0].toUpperCase()}
-          </Text>
-        </View>
+        <Pressable
+          onPress={(e) => {
+            e.stopPropagation();
+            longPressedRef.current = false;
+            toggleSelect(item.id);
+          }}
+          style={[
+            s.avatar,
+            {
+              backgroundColor: selectionMode || isSelected
+                ? "transparent"
+                : colors.primary + "25",
+              borderWidth: selectionMode || isSelected ? 2 : 0,
+              borderColor: isSelected ? colors.primary : colors.mutedForeground + "40",
+            },
+          ]}
+        >
+          {selectionMode || isSelected ? (
+            <View
+              style={[
+                s.checkbox,
+                {
+                  backgroundColor: isSelected ? colors.primary : "transparent",
+                  borderColor: isSelected ? colors.primary : colors.mutedForeground + "60",
+                },
+              ]}
+            >
+              {isSelected && (
+                <MaterialCommunityIcons name="check" size={14} color="#fff" />
+              )}
+            </View>
+          ) : (
+            <Text style={[s.avatarLetter, { color: colors.primary }]}>
+              {(item.sender || "?")[0].toUpperCase()}
+            </Text>
+          )}
+        </Pressable>
 
         <View style={s.emailBody}>
           <View style={s.emailTopRow}>
@@ -152,55 +266,108 @@ export default function InboxScreen() {
 
             <View style={s.emailActions}>
               <View style={[s.priorityDot, { backgroundColor: priorityDotColor(priority) }]} />
-              <TouchableOpacity
-                onPress={(e) => {
-                  e.stopPropagation();
-                  handleDeleteEmail(item.id);
-                }}
-                hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-              >
-                <MaterialCommunityIcons name="trash-can-outline" size={14} color={colors.destructive + "80"} />
-              </TouchableOpacity>
+              {!selectionMode && (
+                <TouchableOpacity
+                  onPress={(e) => {
+                    e.stopPropagation();
+                    handleDeleteEmail(item.id);
+                  }}
+                  hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+                >
+                  <MaterialCommunityIcons name="trash-can-outline" size={14} color={colors.destructive + "80"} />
+                </TouchableOpacity>
+              )}
             </View>
           </View>
         </View>
-      </TouchableOpacity>
+      </Pressable>
     );
   };
 
   return (
     <View style={[s.container, { backgroundColor: colors.background, paddingTop: isWeb ? 67 : 0 }]}>
-      <View style={s.summaryRow}>
-        {[
-          { label: "Urgents", count: summary?.urgentCount ?? 0, color: colors.urgent },
-          { label: "Moyens", count: summary?.moyenCount ?? 0, color: colors.moyen },
-          { label: "Faibles", count: summary?.faibleCount ?? 0, color: colors.faible },
-        ].map((card) => (
-          <View
-            key={card.label}
-            style={[s.summaryCard, { backgroundColor: colors.card, borderColor: colors.border }]}
-          >
-            <Text style={[s.summaryLabel, { color: card.color }]}>{card.label}</Text>
-            <Text style={[s.summaryCount, { color: colors.foreground }]}>{card.count}</Text>
+      {selectionMode ? (
+        <View style={[s.bulkBar, { backgroundColor: colors.primary + "10", borderBottomColor: colors.primary + "30" }]}>
+          <View style={s.bulkBarTop}>
+            <TouchableOpacity onPress={toggleSelectAll} style={s.bulkSelectAll}>
+              <MaterialCommunityIcons
+                name={selectedIds.size === (activeEmails?.length || 0) ? "checkbox-marked" : "checkbox-blank-outline"}
+                size={18}
+                color={colors.primary}
+              />
+              <Text style={[s.bulkLabel, { color: colors.primary }]}>
+                {selectedIds.size} sélectionné(s)
+              </Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setSelectedIds(new Set())} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
+              <MaterialCommunityIcons name="close" size={20} color={colors.mutedForeground} />
+            </TouchableOpacity>
           </View>
-        ))}
-      </View>
+          <View style={s.bulkActions}>
+            <TouchableOpacity
+              style={[s.bulkBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+              onPress={() => handleBulkAction("read")}
+              disabled={bulkUpdate.isPending}
+            >
+              <MaterialCommunityIcons name="email-check-outline" size={16} color={colors.primary} />
+              <Text style={[s.bulkBtnText, { color: colors.foreground }]}>Lu</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[s.bulkBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+              onPress={() => handleBulkAction("archive")}
+              disabled={bulkUpdate.isPending}
+            >
+              <MaterialCommunityIcons name="archive-outline" size={16} color={colors.moyen} />
+              <Text style={[s.bulkBtnText, { color: colors.foreground }]}>Archiver</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[s.bulkBtn, { backgroundColor: colors.destructive + "15", borderColor: colors.destructive + "30" }]}
+              onPress={() => handleBulkAction("delete")}
+              disabled={bulkUpdate.isPending}
+            >
+              <MaterialCommunityIcons name="trash-can-outline" size={16} color={colors.destructive} />
+              <Text style={[s.bulkBtnText, { color: colors.destructive }]}>Supprimer</Text>
+            </TouchableOpacity>
+          </View>
+          {bulkUpdate.isPending && (
+            <ActivityIndicator size="small" color={colors.primary} style={{ marginTop: 4 }} />
+          )}
+        </View>
+      ) : (
+        <>
+          <View style={s.summaryRow}>
+            {[
+              { label: "Urgents", count: summary?.urgentCount ?? 0, color: colors.urgent },
+              { label: "Moyens", count: summary?.moyenCount ?? 0, color: colors.moyen },
+              { label: "Faibles", count: summary?.faibleCount ?? 0, color: colors.faible },
+            ].map((card) => (
+              <View
+                key={card.label}
+                style={[s.summaryCard, { backgroundColor: colors.card, borderColor: colors.border }]}
+              >
+                <Text style={[s.summaryLabel, { color: card.color }]}>{card.label}</Text>
+                <Text style={[s.summaryCount, { color: colors.foreground }]}>{card.count}</Text>
+              </View>
+            ))}
+          </View>
 
-      <View style={[s.searchBar, { backgroundColor: colors.card, borderColor: colors.border }]}>
-        <MaterialCommunityIcons name="magnify" size={16} color={colors.mutedForeground} />
-        <TextInput
-          style={[s.searchInput, { color: colors.foreground }]}
-          placeholder="Rechercher..."
-          placeholderTextColor={colors.mutedForeground + "80"}
-          value={searchQuery}
-          onChangeText={setSearchQuery}
-        />
-        {searchQuery ? (
-          <TouchableOpacity onPress={() => setSearchQuery("")}>
-            <MaterialCommunityIcons name="close" size={16} color={colors.mutedForeground} />
-          </TouchableOpacity>
-        ) : null}
-      </View>
+          <View style={[s.searchBar, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <MaterialCommunityIcons name="magnify" size={16} color={colors.mutedForeground} />
+            <TextInput
+              style={[s.searchInput, { color: colors.foreground }]}
+              placeholder="Rechercher..."
+              placeholderTextColor={colors.mutedForeground + "80"}
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            {searchQuery ? (
+              <TouchableOpacity onPress={() => setSearchQuery("")}>
+                <MaterialCommunityIcons name="close" size={16} color={colors.mutedForeground} />
+              </TouchableOpacity>
+            ) : null}
+          </View>
+        </>
+      )}
 
       <View style={s.emailArea}>
         {isLoading ? (
@@ -217,6 +384,7 @@ export default function InboxScreen() {
             data={activeEmails}
             keyExtractor={(item) => String(item.id)}
             renderItem={renderEmail}
+            extraData={selectedIds}
             contentContainerStyle={s.list}
             refreshControl={
               <RefreshControl refreshing={refreshing} onRefresh={onRefresh} tintColor={colors.primary} />
@@ -226,94 +394,135 @@ export default function InboxScreen() {
         )}
       </View>
 
-      <View style={[s.filterBar, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
-        {hasActiveFilters && (
-          <TouchableOpacity
-            style={s.clearBtn}
-            onPress={() => { setFilterPriority("all"); setFilterCategory(null); }}
-            hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
-          >
-            <MaterialCommunityIcons name="close-circle-outline" size={14} color={colors.mutedForeground} />
-          </TouchableOpacity>
-        )}
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={s.filtersContent}
-        >
-          {priorityFilters.map((f) => {
-            const active = filterPriority === f.key;
-            return (
-              <TouchableOpacity
-                key={f.key}
-                style={[
-                  s.chip,
-                  {
-                    backgroundColor: active ? colors.primary + "20" : colors.card,
-                    borderColor: active ? colors.primary + "40" : colors.border,
-                  },
-                ]}
-                onPress={() => setFilterPriority(f.key)}
-              >
-                <Text style={[s.chipText, { color: active ? colors.primary : colors.mutedForeground }]}>
-                  {f.label}
-                </Text>
-              </TouchableOpacity>
-            );
-          })}
-
-          {categories && categories.length > 0 && (
-            <>
-              <View style={[s.divider, { backgroundColor: colors.border }]} />
-              <TouchableOpacity
-                style={[
-                  s.chip,
-                  {
-                    backgroundColor: filterCategory === null ? colors.primary + "20" : colors.card,
-                    borderColor: filterCategory === null ? colors.primary + "40" : colors.border,
-                  },
-                ]}
-                onPress={() => setFilterCategory(null)}
-              >
-                <Text
-                  style={[
-                    s.chipText,
-                    { color: filterCategory === null ? colors.primary : colors.mutedForeground },
-                  ]}
-                >
-                  Toutes
-                </Text>
-              </TouchableOpacity>
-              {categories.map((cat) => {
-                const active = filterCategory === cat.id;
-                return (
-                  <TouchableOpacity
-                    key={cat.id}
-                    style={[
-                      s.chip,
-                      {
-                        backgroundColor: active ? colors.primary + "20" : colors.card,
-                        borderColor: active ? colors.primary + "40" : colors.border,
-                      },
-                    ]}
-                    onPress={() => setFilterCategory(active ? null : cat.id)}
-                  >
-                    <Text style={[s.chipText, { color: active ? colors.primary : colors.mutedForeground }]}>
-                      {cat.name}
-                    </Text>
-                  </TouchableOpacity>
-                );
-              })}
-            </>
+      {!selectionMode && (
+        <View style={[s.filterBar, { backgroundColor: colors.background, borderTopColor: colors.border }]}>
+          {hasActiveFilters && (
+            <TouchableOpacity
+              style={s.clearBtn}
+              onPress={() => { setFilterPriority("all"); setFilterCategory(null); }}
+              hitSlop={{ top: 6, bottom: 6, left: 6, right: 6 }}
+            >
+              <MaterialCommunityIcons name="close-circle-outline" size={14} color={colors.mutedForeground} />
+            </TouchableOpacity>
           )}
-        </ScrollView>
-      </View>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={s.filtersContent}
+          >
+            {priorityFilters.map((f) => {
+              const active = filterPriority === f.key;
+              return (
+                <TouchableOpacity
+                  key={f.key}
+                  style={[
+                    s.chip,
+                    {
+                      backgroundColor: active ? colors.primary + "20" : colors.card,
+                      borderColor: active ? colors.primary + "40" : colors.border,
+                    },
+                  ]}
+                  onPress={() => setFilterPriority(f.key)}
+                >
+                  <Text style={[s.chipText, { color: active ? colors.primary : colors.mutedForeground }]}>
+                    {f.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+
+            {categories && categories.length > 0 && (
+              <>
+                <View style={[s.divider, { backgroundColor: colors.border }]} />
+                <TouchableOpacity
+                  style={[
+                    s.chip,
+                    {
+                      backgroundColor: filterCategory === null ? colors.primary + "20" : colors.card,
+                      borderColor: filterCategory === null ? colors.primary + "40" : colors.border,
+                    },
+                  ]}
+                  onPress={() => setFilterCategory(null)}
+                >
+                  <Text
+                    style={[
+                      s.chipText,
+                      { color: filterCategory === null ? colors.primary : colors.mutedForeground },
+                    ]}
+                  >
+                    Toutes
+                  </Text>
+                </TouchableOpacity>
+                {categories.map((cat) => {
+                  const active = filterCategory === cat.id;
+                  return (
+                    <TouchableOpacity
+                      key={cat.id}
+                      style={[
+                        s.chip,
+                        {
+                          backgroundColor: active ? colors.primary + "20" : colors.card,
+                          borderColor: active ? colors.primary + "40" : colors.border,
+                        },
+                      ]}
+                      onPress={() => setFilterCategory(active ? null : cat.id)}
+                    >
+                      <Text style={[s.chipText, { color: active ? colors.primary : colors.mutedForeground }]}>
+                        {cat.name}
+                      </Text>
+                    </TouchableOpacity>
+                  );
+                })}
+              </>
+            )}
+          </ScrollView>
+        </View>
+      )}
     </View>
   );
 }
 
 const s = StyleSheet.create({
   container: { flex: 1 },
+
+  bulkBar: {
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+  },
+  bulkBarTop: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 8,
+  },
+  bulkSelectAll: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+  },
+  bulkLabel: {
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
+  },
+  bulkActions: {
+    flexDirection: "row",
+    gap: 8,
+  },
+  bulkBtn: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 6,
+    paddingVertical: 10,
+    borderRadius: 10,
+    borderWidth: 1,
+  },
+  bulkBtnText: {
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
+  },
 
   summaryRow: {
     flexDirection: "row",
@@ -410,6 +619,14 @@ const s = StyleSheet.create({
     flexShrink: 0,
   },
   avatarLetter: { fontSize: 16, fontFamily: "Inter_600SemiBold" },
+  checkbox: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    borderWidth: 2,
+    alignItems: "center",
+    justifyContent: "center",
+  },
 
   emailBody: {
     flex: 1,
