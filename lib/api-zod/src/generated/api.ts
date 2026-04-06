@@ -35,6 +35,7 @@ export const LoginBody = zod.object({
 });
 
 export const loginResponseUserAiLanguageDefault = `fr`;
+export const loginResponseUserSignatureDefault = ``;
 
 export const LoginResponse = zod.object({
   user: zod.object({
@@ -48,6 +49,7 @@ export const LoginResponse = zod.object({
     aiLanguage: zod
       .enum(["fr", "en", "nl"])
       .default(loginResponseUserAiLanguageDefault),
+    signature: zod.string().default(loginResponseUserSignatureDefault),
     createdAt: zod.coerce.date(),
   }),
 });
@@ -56,6 +58,7 @@ export const LoginResponse = zod.object({
  * @summary Get current user
  */
 export const getMeResponseAiLanguageDefault = `fr`;
+export const getMeResponseSignatureDefault = ``;
 
 export const GetMeResponse = zod.object({
   id: zod.number(),
@@ -68,6 +71,7 @@ export const GetMeResponse = zod.object({
   aiLanguage: zod
     .enum(["fr", "en", "nl"])
     .default(getMeResponseAiLanguageDefault),
+  signature: zod.string().default(getMeResponseSignatureDefault),
   createdAt: zod.coerce.date(),
 });
 
@@ -75,6 +79,7 @@ export const GetMeResponse = zod.object({
  * @summary Get user profile
  */
 export const getProfileResponseAiLanguageDefault = `fr`;
+export const getProfileResponseSignatureDefault = ``;
 
 export const GetProfileResponse = zod.object({
   id: zod.number(),
@@ -87,6 +92,7 @@ export const GetProfileResponse = zod.object({
   aiLanguage: zod
     .enum(["fr", "en", "nl"])
     .default(getProfileResponseAiLanguageDefault),
+  signature: zod.string().default(getProfileResponseSignatureDefault),
   createdAt: zod.coerce.date(),
 });
 
@@ -98,9 +104,11 @@ export const UpdateProfileBody = zod.object({
   plan: zod.string().optional(),
   seats: zod.number().optional(),
   aiLanguage: zod.enum(["fr", "en", "nl"]).optional(),
+  signature: zod.string().optional(),
 });
 
 export const updateProfileResponseAiLanguageDefault = `fr`;
+export const updateProfileResponseSignatureDefault = ``;
 
 export const UpdateProfileResponse = zod.object({
   id: zod.number(),
@@ -113,6 +121,7 @@ export const UpdateProfileResponse = zod.object({
   aiLanguage: zod
     .enum(["fr", "en", "nl"])
     .default(updateProfileResponseAiLanguageDefault),
+  signature: zod.string().default(updateProfileResponseSignatureDefault),
   createdAt: zod.coerce.date(),
 });
 

@@ -16,5 +16,6 @@ export interface UserProfile {
   emailsUsed: number;
   emailsQuota: number;
   aiLanguage?: UserProfileAiLanguage;
+  signature?: string;
   createdAt: Date;
 }

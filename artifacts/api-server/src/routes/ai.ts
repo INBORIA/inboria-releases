@@ -233,11 +233,16 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
 
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("full_name")
+      .select("full_name, signature")
       .eq("id", req.userId!)
       .single();
 
     const userName = (profile?.full_name || "").split(" ")[0] || "Cordialement";
+    const userSignature = profile?.signature || "";
+
+    const signatureInstruction = userSignature
+      ? `Termine le brouillon avec la signature suivante (telle quelle, ne la modifie pas):\n\n${userSignature}`
+      : `Signe avec le prenom "${userName}".`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -245,7 +250,7 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
       messages: [
         {
           role: "system",
-          content: `Tu es un assistant de redaction d'emails professionnels. Redige la reponse en francais avec un ton professionnel. Tu rediges des reponses claires, polies et professionnelles. Signe avec le prenom "${userName}".`,
+          content: `Tu es un assistant de redaction d'emails professionnels. Redige la reponse en francais avec un ton professionnel. Tu rediges des reponses claires, polies et professionnelles. ${signatureInstruction}`,
         },
         {
           role: "user",

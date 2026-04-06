@@ -849,6 +849,9 @@ components:
           type: string
           enum: [fr, en, nl]
           default: fr
+        signature:
+          type: string
+          default: ""
         createdAt:
           type: string
           format: date-time
@@ -874,6 +877,8 @@ components:
         aiLanguage:
           type: string
           enum: [fr, en, nl]
+        signature:
+          type: string
 
     RegisterPushTokenBody:
       type: object

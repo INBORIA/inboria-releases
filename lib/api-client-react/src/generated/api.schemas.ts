@@ -39,6 +39,7 @@ export interface UserProfile {
   emailsUsed: number;
   emailsQuota: number;
   aiLanguage?: UserProfileAiLanguage;
+  signature?: string;
   createdAt: string;
 }
 
@@ -60,6 +61,7 @@ export interface UpdateProfileBody {
   plan?: string;
   seats?: number;
   aiLanguage?: UpdateProfileBodyAiLanguage;
+  signature?: string;
 }
 
 export interface RegisterPushTokenBody {
@@ -126,7 +128,7 @@ export interface UpdateCategoryBody {
 }
 
 export interface Task {
-  id: string;
+  id: number;
   title: string;
   done: boolean;
   /** @nullable */

@@ -8,7 +8,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Plug, Lock } from "lucide-react";
+import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Plug, Lock, Pen } from "lucide-react";
+import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 
@@ -93,6 +94,7 @@ export default function Parametres() {
   const { data: integrations, isLoading: integrationsLoading } = useIntegrations();
 
   const [fullName, setFullName] = useState("");
+  const [signature, setSignature] = useState("");
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
   const [imapEmail, setImapEmail] = useState("");
   const [imapPassword, setImapPassword] = useState("");
@@ -104,7 +106,10 @@ export default function Parametres() {
   const [connectError, setConnectError] = useState("");
 
   useEffect(() => {
-    if (profile) setFullName(profile.fullName);
+    if (profile) {
+      setFullName(profile.fullName);
+      setSignature((profile as any).signature || "");
+    }
   }, [profile]);
 
   useEffect(() => {
@@ -129,6 +134,18 @@ export default function Parametres() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
           toast({ title: "Profil mis a jour" });
+        }
+      }
+    );
+  };
+
+  const handleSaveSignature = () => {
+    updateProfile.mutate(
+      { data: { signature } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+          toast({ title: "Signature enregistree", description: "Votre signature sera utilisee dans les brouillons IA et les reponses." });
         }
       }
     );
@@ -572,6 +589,43 @@ export default function Parametres() {
                   <Switch defaultChecked />
                 </div>
               </div>
+            </div>
+          </section>
+
+          <section>
+            <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
+              <Pen className="w-4 h-4 text-primary" />
+              Signature email
+            </h2>
+            <div className="bg-card rounded-lg border border-border p-5 space-y-4">
+              <p className="text-[12px] text-[#8b9cb3]">
+                Cette signature sera automatiquement ajoutee aux brouillons generes par l'IA et a vos reponses manuelles.
+              </p>
+              {isLoading ? (
+                <Skeleton className="h-32 w-full bg-white/5" />
+              ) : (
+                <div className="space-y-3">
+                  <Textarea
+                    value={signature}
+                    onChange={(e) => setSignature(e.target.value)}
+                    placeholder={"Cordialement,\n\nJean Neybergh\nGerant — NCV Management\njean@ncvmanagement.com\n+32 470 00 00 00"}
+                    className="bg-background border-border text-white text-[13px] min-h-[140px] resize-y font-mono"
+                  />
+                  {signature && (
+                    <div className="p-3 bg-background rounded-lg border border-border">
+                      <p className="text-[11px] text-[#8b9cb3] mb-2">Apercu :</p>
+                      <div className="text-[13px] text-white whitespace-pre-line">{signature}</div>
+                    </div>
+                  )}
+                  <Button
+                    onClick={handleSaveSignature}
+                    disabled={updateProfile.isPending || signature === ((profile as any)?.signature || "")}
+                    size="sm"
+                  >
+                    {updateProfile.isPending ? "Enregistrement..." : "Enregistrer la signature"}
+                  </Button>
+                </div>
+              )}
             </div>
           </section>
 

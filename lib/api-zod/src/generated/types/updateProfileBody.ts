@@ -12,4 +12,5 @@ export interface UpdateProfileBody {
   plan?: string;
   seats?: number;
   aiLanguage?: UpdateProfileBodyAiLanguage;
+  signature?: string;
 }

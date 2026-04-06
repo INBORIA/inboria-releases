@@ -14,6 +14,7 @@ import {
   getGetCategoryCountsQueryKey,
   getGetInboxHealthQueryKey,
   useListProjects,
+  useGetProfile,
 } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
@@ -98,7 +99,7 @@ const triageSchema = z.object({
   body: z.string().min(1, "Contenu requis"),
 });
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[] }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string }) {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyTo, setReplyTo] = useState("");
   const [replySubject, setReplySubject] = useState("");
@@ -165,7 +166,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 if (!replyOpen) {
                   setReplyTo(email.senderEmail || "");
                   setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
-                  setReplyText("");
+                  setReplyText(userSignature ? `\n\n${userSignature}` : "");
                 }
                 setReplyOpen(!replyOpen);
               }}
@@ -353,6 +354,7 @@ export default function Dashboard() {
   const { data: categoryCounts, isLoading: categoriesLoading } = useGetCategoryCounts();
   const { data: summary, isLoading: summaryLoading } = useGetDashboardSummary();
   const { data: projects } = useListProjects();
+  const { data: profile } = useGetProfile();
 
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
@@ -577,6 +579,7 @@ export default function Dashboard() {
             isDrafting={generateDraftMut.isPending}
             categories={categoryCounts || []}
             projects={projects || []}
+            userSignature={(profile as any)?.signature || ""}
           />
         </div>
       </DashboardLayout>
