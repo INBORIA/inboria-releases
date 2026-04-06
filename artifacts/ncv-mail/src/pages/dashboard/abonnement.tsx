@@ -52,7 +52,6 @@ const plans = [
       "Brief quotidien",
       "Brouillons IA proactifs",
       "Extraction automatique des taches",
-      "Integrations avancees (Slack, Notion)",
       "Statistiques detaillees",
       "Support prioritaire",
       "Depassement : 0,001€/email",
