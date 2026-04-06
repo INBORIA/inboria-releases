@@ -15,10 +15,6 @@ export default function MentionsLegales() {
             <p>Email de contact : <a href="mailto:contact@ncvmail.com" className="text-[#2d7dd2] hover:underline">contact@ncvmail.com</a></p>
           </div>
 
-          <div>
-            <h2 className="text-[16px] font-semibold text-white mb-2">Hebergeur</h2>
-            <p>Fournisseur d'hebergement : Replit, Inc.</p>
-          </div>
         </div>
       </div>
     </MarketingLayout>

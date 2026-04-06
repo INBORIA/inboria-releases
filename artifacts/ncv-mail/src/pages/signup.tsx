@@ -15,13 +15,32 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { Eye, EyeOff } from "lucide-react";
+
+function getPasswordStrength(password: string): { score: number; label: string; color: string; checks: { label: string; passed: boolean }[] } {
+  const checks = [
+    { label: "8 caracteres minimum", passed: password.length >= 8 },
+    { label: "Une lettre majuscule", passed: /[A-Z]/.test(password) },
+    { label: "Une lettre minuscule", passed: /[a-z]/.test(password) },
+    { label: "Un chiffre", passed: /[0-9]/.test(password) },
+    { label: "Un caractere special (!@#$...)", passed: /[^A-Za-z0-9]/.test(password) },
+  ];
+  const score = checks.filter(c => c.passed).length;
+  const label = score <= 1 ? "Tres faible" : score === 2 ? "Faible" : score === 3 ? "Moyen" : score === 4 ? "Fort" : "Excellent";
+  const color = score <= 1 ? "bg-red-500" : score === 2 ? "bg-orange-500" : score === 3 ? "bg-yellow-500" : score === 4 ? "bg-lime-500" : "bg-emerald-500";
+  return { score, label, color, checks };
+}
 
 const signupSchema = z.object({
   fullName: z.string().min(2, "Nom complet requis"),
   email: z.string().email("Email invalide"),
-  password: z.string().min(6, "Le mot de passe doit contenir au moins 6 caracteres"),
+  password: z.string()
+    .min(8, "Minimum 8 caracteres")
+    .regex(/[A-Z]/, "Au moins une majuscule")
+    .regex(/[a-z]/, "Au moins une minuscule")
+    .regex(/[0-9]/, "Au moins un chiffre")
+    .regex(/[^A-Za-z0-9]/, "Au moins un caractere special"),
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -45,6 +64,9 @@ export default function Signup() {
       password: "",
     },
   });
+
+  const watchedPassword = form.watch("password");
+  const strength = useMemo(() => getPasswordStrength(watchedPassword || ""), [watchedPassword]);
 
   async function onSubmit(data: SignupFormValues) {
     setIsPending(true);
@@ -139,6 +161,25 @@ export default function Signup() {
                     </button>
                   </div>
                 </FormControl>
+                {watchedPassword && watchedPassword.length > 0 && (
+                  <div className="space-y-2 mt-2">
+                    <div className="flex gap-1">
+                      {[1, 2, 3, 4, 5].map((i) => (
+                        <div key={i} className={`h-1.5 flex-1 rounded-full transition-all ${i <= strength.score ? strength.color : "bg-white/10"}`} />
+                      ))}
+                    </div>
+                    <p className={`text-[11px] font-medium ${strength.score <= 1 ? "text-red-400" : strength.score === 2 ? "text-orange-400" : strength.score === 3 ? "text-yellow-400" : strength.score === 4 ? "text-lime-400" : "text-emerald-400"}`}>
+                      {strength.label}
+                    </p>
+                    <div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
+                      {strength.checks.map((check) => (
+                        <p key={check.label} className={`text-[10px] ${check.passed ? "text-emerald-400" : "text-[#8b9cb3]"}`}>
+                          {check.passed ? "✓" : "○"} {check.label}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                )}
                 <FormMessage />
               </FormItem>
             )}
