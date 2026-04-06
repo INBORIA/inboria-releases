@@ -131,7 +131,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
 
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center gap-3 mb-4">
+      <div className="sticky top-0 z-10 flex items-center gap-3 mb-4 pb-2 pt-1 bg-[#0d1117]">
         <Button
           variant="ghost"
           size="sm"
