@@ -1,86 +1,52 @@
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { MarketingLayout } from "@/components/layout/marketing-layout";
-import { Check, Users, Zap, Sparkles, Shield, CreditCard } from "lucide-react";
+import { Check, Shield, CreditCard } from "lucide-react";
 import { useState } from "react";
-
-const plans = [
-  {
-    id: "essai",
-    name: "Essai",
-    price: "gratuit",
-    description: "100 emails offerts pour decouvrir NCV Mail",
-    features: [
-      "100 emails offerts (usage unique)",
-      "3 rubriques personnalisees",
-      "Support par email",
-      "Brouillons IA inclus",
-    ],
-    icon: Check,
-    cta: "Commencer",
-    href: "/signup",
-  },
-  {
-    id: "solo",
-    name: "Solo",
-    price: "9",
-    description: "Pour les independants",
-    features: [
-      "3 000 emails par mois",
-      "Rubriques illimitees",
-      "Brief quotidien",
-      "Brouillons IA proactifs",
-      "Extraction automatique des taches",
-      "Support prioritaire",
-      "Depassement : 0,002€/email",
-    ],
-    icon: Zap,
-    cta: "Commencer",
-    href: "/signup",
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    price: "19",
-    description: "Ideal pour les professionnels",
-    features: [
-      "10 000 emails par mois",
-      "Rubriques illimitees",
-      "Brief quotidien",
-      "Brouillons IA proactifs",
-      "Extraction automatique des taches",
-      "Statistiques detaillees",
-      "Support prioritaire",
-      "Depassement : 0,001€/email",
-    ],
-    icon: Sparkles,
-    cta: "Commencer",
-    href: "/signup",
-    recommended: true,
-  },
-  {
-    id: "business",
-    name: "Business",
-    price: "9",
-    description: "Pour les equipes",
-    features: [
-      "10 000 emails tries / siege / mois",
-      "Tout du plan Pro inclus",
-      "Nombre d'utilisateurs configurable",
-      "Boites partagees entre collegues",
-      "Assignation de taches entre membres",
-      "API dediee",
-      "Support prioritaire",
-      "Depassement : 0,001€ / email",
-    ],
-    icon: Users,
-    cta: "Commencer",
-    href: "/signup",
-    hasSeats: true,
-  },
-];
+import { plans } from "@/lib/plans";
+import { useAuth } from "@/lib/auth";
+import { useCreateCheckoutSession } from "@workspace/api-client-react";
 
 export default function Tarifs() {
   const [businessSeats, setBusinessSeats] = useState(3);
+  const { session } = useAuth();
+  const checkout = useCreateCheckoutSession();
+  const [, navigate] = useLocation();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+
+  const handleCta = (planId: string, seats?: number) => {
+    if (!session) {
+      const params = new URLSearchParams();
+      params.set("plan", planId);
+      if (planId === "business" && seats) {
+        params.set("seats", String(seats));
+      }
+      navigate(`/signup?${params.toString()}`);
+      return;
+    }
+
+    if (planId === "essai") {
+      navigate("/dashboard");
+      return;
+    }
+
+    setLoadingPlan(planId);
+    checkout.mutate(
+      { data: { planId: planId as "solo" | "pro" | "business", seats: seats || 1 } },
+      {
+        onSuccess: (data) => {
+          setLoadingPlan(null);
+          if (data.url) {
+            window.location.href = data.url;
+          } else {
+            navigate("/dashboard/abonnement");
+          }
+        },
+        onError: () => {
+          setLoadingPlan(null);
+        },
+      }
+    );
+  };
 
   return (
     <MarketingLayout>
@@ -100,19 +66,20 @@ export default function Tarifs() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {plans.map((plan) => {
-              const isBusiness = plan.hasSeats;
+              const isBusiness = "hasSeats" in plan && plan.hasSeats;
+              const isRecommended = plan.id === "pro";
               const price = isBusiness ? businessSeats * 9 : plan.price;
 
               return (
                 <div
                   key={plan.id}
                   className={`relative rounded-xl border p-6 flex flex-col ${
-                    plan.recommended
+                    isRecommended
                       ? "border-[#2d7dd2] bg-[#2d7dd2]/5"
                       : "border-[#1f2937] bg-[#141c2b]"
                   }`}
                 >
-                  {plan.recommended && (
+                  {isRecommended && (
                     <div className="absolute top-3 right-3">
                       <span className="bg-[#2d7dd2] text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">
                         Recommande
@@ -174,23 +141,23 @@ export default function Tarifs() {
                   <ul className="space-y-2.5 mb-6 flex-1">
                     {plan.features.map((feature, i) => (
                       <li key={i} className="flex items-start gap-2">
-                        <Check className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${plan.recommended ? "text-[#2d7dd2]" : "text-emerald-400"}`} />
+                        <Check className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isRecommended ? "text-[#2d7dd2]" : "text-emerald-400"}`} />
                         <span className="text-[12px] text-[#8b9cb3]">{feature}</span>
                       </li>
                     ))}
                   </ul>
 
-                  <Link href={plan.href}>
-                    <button
-                      className={`w-full py-2.5 text-[13px] font-semibold rounded-lg transition-colors ${
-                        plan.recommended
-                          ? "bg-[#2d7dd2] text-white hover:bg-[#2563b1]"
-                          : "bg-white/5 text-white border border-[#1f2937] hover:bg-white/10"
-                      }`}
-                    >
-                      {plan.cta}
-                    </button>
-                  </Link>
+                  <button
+                    onClick={() => handleCta(plan.id, isBusiness ? businessSeats : undefined)}
+                    disabled={loadingPlan === plan.id}
+                    className={`w-full py-2.5 text-[13px] font-semibold rounded-lg transition-colors ${
+                      isRecommended
+                        ? "bg-[#2d7dd2] text-white hover:bg-[#2563b1]"
+                        : "bg-white/5 text-white border border-[#1f2937] hover:bg-white/10"
+                    } disabled:opacity-50`}
+                  >
+                    {loadingPlan === plan.id ? "Redirection..." : "Commencer"}
+                  </button>
                 </div>
               );
             })}

@@ -2,7 +2,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/lib/auth";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useSearch } from "wouter";
 import { AuthLayout } from "@/components/layout/auth-layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -28,6 +28,7 @@ type SignupFormValues = z.infer<typeof signupSchema>;
 
 export default function Signup() {
   const [_, setLocation] = useLocation();
+  const searchString = useSearch();
   const { toast } = useToast();
   const { signUp } = useAuth();
   const [isPending, setIsPending] = useState(false);
@@ -58,7 +59,17 @@ export default function Signup() {
         title: "Compte cree",
         description: "Votre compte a ete cree avec succes.",
       });
-      setLocation("/dashboard");
+      const params = new URLSearchParams(searchString);
+      const plan = params.get("plan");
+      const seats = params.get("seats");
+      if (plan && plan !== "essai") {
+        const redirect = new URLSearchParams();
+        redirect.set("plan", plan);
+        if (seats) redirect.set("seats", seats);
+        setLocation(`/dashboard/abonnement?${redirect.toString()}`);
+      } else {
+        setLocation("/dashboard");
+      }
     }
   }
 
@@ -132,7 +143,7 @@ export default function Signup() {
 
       <div className="mt-6 text-center text-sm text-[#8b9cb3]">
         Deja un compte ?{" "}
-        <Link href="/login" className="font-semibold text-primary hover:text-primary/80">
+        <Link href={`/login${searchString ? `?${searchString}` : ""}`} className="font-semibold text-primary hover:text-primary/80">
           Se connecter
         </Link>
       </div>

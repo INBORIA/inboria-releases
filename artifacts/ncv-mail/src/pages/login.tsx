@@ -2,7 +2,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/lib/auth";
-import { Link, useLocation } from "wouter";
+import { Link, useLocation, useSearch } from "wouter";
 import { AuthLayout } from "@/components/layout/auth-layout";
 import { Button } from "@/components/ui/button";
 import {
@@ -27,6 +27,7 @@ type LoginFormValues = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const [_, setLocation] = useLocation();
+  const searchString = useSearch();
   const { toast } = useToast();
   const { signIn } = useAuth();
   const [isPending, setIsPending] = useState(false);
@@ -52,7 +53,17 @@ export default function Login() {
         description: error || "Veuillez verifier vos identifiants.",
       });
     } else {
-      setLocation("/dashboard");
+      const params = new URLSearchParams(searchString);
+      const plan = params.get("plan");
+      const seats = params.get("seats");
+      if (plan) {
+        const redirect = new URLSearchParams();
+        redirect.set("plan", plan);
+        if (seats) redirect.set("seats", seats);
+        setLocation(`/dashboard/abonnement?${redirect.toString()}`);
+      } else {
+        setLocation("/dashboard");
+      }
     }
   }
 
@@ -115,7 +126,7 @@ export default function Login() {
 
       <div className="mt-6 text-center text-sm text-[#8b9cb3]">
         Pas encore de compte ?{" "}
-        <Link href="/signup" className="font-semibold text-primary hover:text-primary/80">
+        <Link href={`/signup${searchString ? `?${searchString}` : ""}`} className="font-semibold text-primary hover:text-primary/80">
           Creer un compte
         </Link>
       </div>

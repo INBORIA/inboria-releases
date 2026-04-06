@@ -1,83 +1,13 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useGetProfile, useCreateCheckoutSession, getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { Check, Users, Shield, Zap, Sparkles, Info, CreditCard, ExternalLink, Loader2, AlertTriangle } from "lucide-react";
+import { Check, Shield, Info, CreditCard, ExternalLink, Loader2, AlertTriangle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSearch, useLocation } from "wouter";
-
-const plans = [
-  {
-    id: "essai",
-    name: "Essai",
-    price: "gratuit",
-    quota: 100,
-    description: "100 emails offerts pour decouvrir NCV Mail",
-    features: [
-      "100 emails offerts (usage unique)",
-      "3 rubriques personnalisees",
-      "Support par email",
-      "Brouillons IA inclus",
-    ],
-    icon: Check,
-  },
-  {
-    id: "solo",
-    name: "Solo",
-    price: "9",
-    quota: 3000,
-    description: "Pour les independants",
-    features: [
-      "3 000 emails par mois",
-      "Rubriques illimitees",
-      "Brief quotidien",
-      "Brouillons IA proactifs",
-      "Extraction automatique des taches",
-      "Support prioritaire",
-      "Depassement : 0,002€/email",
-    ],
-    icon: Zap,
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    price: "19",
-    quota: 10000,
-    description: "Ideal pour les professionnels",
-    features: [
-      "10 000 emails par mois",
-      "Rubriques illimitees",
-      "Brief quotidien",
-      "Brouillons IA proactifs",
-      "Extraction automatique des taches",
-      "Statistiques detaillees",
-      "Support prioritaire",
-      "Depassement : 0,001€/email",
-    ],
-    icon: Sparkles,
-  },
-  {
-    id: "business",
-    name: "Business",
-    price: "9",
-    quota: 10000,
-    description: "Pour les equipes",
-    features: [
-      "10 000 emails tries / siege / mois",
-      "Tout du plan Pro inclus",
-      "Minimum 3 sieges, jusqu'a 50",
-      "Boites partagees entre collegues",
-      "Assignation de taches entre membres",
-      "API dediee",
-      "Support prioritaire",
-      "Depassement : 0,001€ / email",
-    ],
-    icon: Users,
-    hasSeats: true,
-  },
-];
+import { plans } from "@/lib/plans";
 
 export default function Abonnement() {
   const { data: profile, isLoading } = useGetProfile();
@@ -109,6 +39,20 @@ export default function Abonnement() {
       navigate("/dashboard/abonnement", { replace: true });
     }
   }, [searchString, queryClient, toast, navigate]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(searchString);
+    const pendingPlan = params.get("plan");
+    const pendingSeats = params.get("seats");
+    if (pendingPlan && pendingPlan !== "essai" && profile && !isLoading) {
+      const seats = pendingSeats ? parseInt(pendingSeats, 10) : undefined;
+      if (pendingPlan === "business") {
+        setBusinessSeats(seats || 3);
+      }
+      navigate("/dashboard/abonnement", { replace: true });
+      handleSubscribe(pendingPlan, seats);
+    }
+  }, [searchString, profile, isLoading]);
 
   const handleSubscribe = (planId: string, seats?: number) => {
     if (planId === "essai") return;
