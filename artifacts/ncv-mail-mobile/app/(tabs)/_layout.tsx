@@ -1,10 +1,35 @@
 import { Tabs } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { Image, Platform, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useColors } from "@/hooks/useColors";
+
+const logoSource = require("@/assets/images/logo-ncv.webp");
+
+function AppHeader() {
+  const colors = useColors();
+  return (
+    <View style={[hStyles.row, { borderBottomColor: colors.border }]}>
+      <Image source={logoSource} style={hStyles.logo} resizeMode="contain" />
+      <Text style={[hStyles.appName, { color: colors.foreground }]}>NCV Mail</Text>
+    </View>
+  );
+}
+
+const hStyles = StyleSheet.create({
+  row: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderBottomWidth: 1,
+  },
+  logo: { width: 28, height: 28 },
+  appName: { fontSize: 17, fontFamily: "Inter_700Bold" },
+});
 
 export default function TabLayout() {
   const colors = useColors();
@@ -22,6 +47,7 @@ export default function TabLayout() {
         headerStyle: { backgroundColor: colors.background },
         headerTintColor: colors.foreground,
         headerTitleStyle: { fontFamily: "Inter_600SemiBold", fontSize: 17 },
+        header: () => <AppHeader />,
         tabBarStyle: {
           backgroundColor: colors.background,
           borderTopWidth: 1,

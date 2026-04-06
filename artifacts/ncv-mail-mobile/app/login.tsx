@@ -7,12 +7,15 @@ import {
   StyleSheet,
   ActivityIndicator,
   Platform,
+  Image,
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollViewCompat";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+
+const logoSource = require("@/assets/images/logo-ncv.webp");
 
 export default function LoginScreen() {
   const colors = useColors();
@@ -63,9 +66,7 @@ export default function LoginScreen() {
         contentContainerStyle={s.scrollContent}
       >
         <View style={s.logoBox}>
-          <View style={[s.logoCircle, { backgroundColor: colors.primary + "20" }]}>
-            <MaterialCommunityIcons name="email-outline" size={32} color={colors.primary} />
-          </View>
+          <Image source={logoSource} style={s.logoImg} resizeMode="contain" />
           <Text style={[s.appTitle, { color: colors.foreground }]}>NCV Mail</Text>
           <Text style={[s.subtitle, { color: colors.mutedForeground }]}>
             {mode === "login" ? "Connectez-vous a votre compte" : "Creez votre compte"}
@@ -177,14 +178,7 @@ const s = StyleSheet.create({
   scrollContent: { padding: 24, justifyContent: "center", flexGrow: 1 },
 
   logoBox: { alignItems: "center", marginBottom: 40 },
-  logoCircle: {
-    width: 72,
-    height: 72,
-    borderRadius: 36,
-    alignItems: "center",
-    justifyContent: "center",
-    marginBottom: 16,
-  },
+  logoImg: { width: 80, height: 80, marginBottom: 16 },
   appTitle: { fontSize: 28, fontFamily: "Inter_700Bold", letterSpacing: -0.5 },
   subtitle: { fontSize: 14, fontFamily: "Inter_400Regular", marginTop: 6 },
 
