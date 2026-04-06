@@ -20,7 +20,7 @@ function getStripe(): Stripe {
 }
 
 function getFrontendUrl(): string {
-  return process.env["FRONTEND_URL"] || "https://app.ncvmail.com";
+  return process.env["FRONTEND_URL"] || `https://${process.env["REPLIT_DEV_DOMAIN"] || "ncvmail.com"}`;
 }
 
 const PRICE_MAP: Record<string, string> = {
