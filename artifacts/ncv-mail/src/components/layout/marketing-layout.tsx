@@ -17,9 +17,9 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
     <div className="min-h-screen bg-[#0d1117] text-white flex flex-col">
       <header className="sticky top-0 z-50 bg-[#0d1117]/95 backdrop-blur-sm border-b border-[#1f2937]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex items-center justify-between h-28">
-            <Link href="/" className="flex items-center gap-4">
-              <img src={ncvLogo} alt="NCV Mail" className="h-36 w-36 object-contain" />
+          <div className="flex items-center justify-between h-20">
+            <Link href="/" className="flex items-center gap-3">
+              <img src={ncvLogo} alt="NCV Mail" className="h-44 w-44 object-contain -my-12" />
               <span className="font-bold text-2xl tracking-tight text-white hidden sm:block">NCV Mail</span>
             </Link>
 
@@ -95,8 +95,8 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <div className="flex items-center gap-2 mb-3">
-                <img src={ncvLogo} alt="NCV Mail" className="h-36 w-36 object-contain" />
+              <div className="flex items-center gap-3 mb-3">
+                <img src={ncvLogo} alt="NCV Mail" className="h-24 w-24 object-contain" />
                 <span className="font-semibold text-[15px] text-white">NCV Mail</span>
               </div>
               <p className="text-[13px] text-[#8b9cb3]">Une solution NCV Management</p>
