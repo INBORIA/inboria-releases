@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useMemo } from "react";
 import {
   View,
   Text,
@@ -14,6 +14,7 @@ import { useGetEmail, useUpdateEmail, getListEmailsQueryKey } from "@workspace/a
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { cleanEmailBody } from "@/utils/cleanEmailBody";
 
 let Haptics: typeof import("expo-haptics") | null = null;
 try {
@@ -99,6 +100,7 @@ export default function EmailDetailScreen() {
   }
 
   const pConfig = PRIORITY_CONFIG[email.priority ?? "faible"] || PRIORITY_CONFIG.faible;
+  const cleanedBody = useMemo(() => cleanEmailBody(email.body), [email.body]);
 
   return (
     <View style={[s.container, { backgroundColor: colors.background }]}>
@@ -176,7 +178,7 @@ export default function EmailDetailScreen() {
 
         <View style={[s.bodyCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <Text style={[s.bodyText, { color: colors.foreground + "CC" }]}>
-            {email.body || "(Aucun contenu disponible)"}
+            {cleanedBody || "(Aucun contenu disponible)"}
           </Text>
         </View>
 

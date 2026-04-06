@@ -33,7 +33,7 @@ export default function TabLayout() {
         },
         tabBarLabelStyle: {
           fontFamily: "Inter_500Medium",
-          fontSize: 11,
+          fontSize: 10,
           marginTop: 2,
         },
         tabBarIconStyle: {
@@ -48,6 +48,7 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Boite de reception",
+          tabBarLabel: "Reception",
           tabBarIcon: ({ color }) => <Feather name="mail" size={20} color={color} />,
         }}
       />
@@ -69,6 +70,7 @@ export default function TabLayout() {
         name="settings"
         options={{
           title: "Parametres",
+          tabBarLabel: "Params",
           tabBarIcon: ({ color }) => <Feather name="settings" size={20} color={color} />,
         }}
       />

@@ -13,6 +13,7 @@ function hasMimeArtifacts(text: string): boolean {
 function decodeQuotedPrintableTokens(text: string): string {
   return text
     .replace(/=\r?\n/g, "")
+    .replace(/= /g, "")
     .replace(/=([0-9A-Fa-f]{2})/g, (_, hex: string) => {
       const code = parseInt(hex, 16);
       return String.fromCharCode(code);
@@ -42,6 +43,7 @@ function stripMimeArtifacts(raw: string): string {
   text = text.replace(/------=_Part_[^\s]*/g, "");
 
   text = text.replace(/Content-Type:\s*text\/[^;]*;\s*charset=[^\s]*/gi, "");
+  text = text.replace(/Content-Type:\s*multipart\/[^;]*;\s*/gi, "");
   text = text.replace(/Content-Type:\s*\S+/gi, "");
   text = text.replace(/Content-Transfer-Encoding:\s*\S+/gi, "");
   text = text.replace(/Content-Disposition:\s*\S+/gi, "");
@@ -60,7 +62,7 @@ function stripMimeArtifacts(raw: string): string {
   return decoded;
 }
 
-function cleanContent(raw: string): string {
+export function cleanEmailBody(raw: string): string {
   if (!raw) return "";
   if (hasMimeArtifacts(raw)) {
     return stripMimeArtifacts(raw);
@@ -72,7 +74,7 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeHeight, setIframeHeight] = useState(200);
 
-  const content = useMemo(() => cleanContent(body || ""), [body]);
+  const content = useMemo(() => cleanEmailBody(body || ""), [body]);
   const html = isHtml(content);
 
   useEffect(() => {
