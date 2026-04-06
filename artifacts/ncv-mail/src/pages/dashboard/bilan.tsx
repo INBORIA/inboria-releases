@@ -1,7 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useGenerateDailySummary } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
 import { Sparkles, ArrowRight, AlertTriangle, TrendingUp, RefreshCw, CheckSquare, BarChart3 } from "lucide-react";
 import { useState, useEffect } from "react";
 
