@@ -1,5 +1,6 @@
 import { Link } from "wouter";
 import { MarketingLayout } from "@/components/layout/marketing-layout";
+import { AnimatedDemo } from "@/components/marketing/animated-demo";
 import { Mail, Tags, Zap, Clock, Eye, Shield } from "lucide-react";
 
 const steps = [
@@ -66,12 +67,9 @@ export default function Accueil() {
                 Commencer gratuitement
               </button>
             </Link>
-            <Link href="/fonctionnalites">
-              <button className="px-6 py-3 text-[14px] font-semibold text-[#8b9cb3] border border-[#1f2937] rounded-lg hover:text-white hover:border-[#8b9cb3] transition-colors">
-                Voir les fonctionnalites
-              </button>
-            </Link>
           </div>
+
+          <AnimatedDemo />
         </div>
       </section>
 
