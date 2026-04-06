@@ -38,6 +38,14 @@ const MENU_ITEMS = [
     route: "/abonnement",
     color: "#f59e0b",
   },
+  {
+    key: "parametres",
+    label: "Parametres",
+    desc: "Profil, comptes email, preferences IA",
+    icon: "cog-outline" as const,
+    route: "/parametres",
+    color: "#8b5cf6",
+  },
 ];
 
 export default function MenuScreen() {
