@@ -353,7 +353,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
         </div>
       </div>
 
-      <div className="flex justify-center mt-4">
+      <div className="flex justify-start mt-4">
         <Button
           variant="outline"
           size="sm"
