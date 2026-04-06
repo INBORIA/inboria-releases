@@ -352,6 +352,18 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
           </div>
         </div>
       </div>
+
+      <div className="flex justify-center mt-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onBack}
+          className="gap-1.5 h-8 text-[12px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          Retour a l'inbox
+        </Button>
+      </div>
     </div>
   );
 }
