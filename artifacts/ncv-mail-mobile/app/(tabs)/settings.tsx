@@ -7,7 +7,7 @@ import {
   ScrollView,
   Platform,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGetProfile } from "@workspace/api-client-react";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
@@ -31,7 +31,7 @@ export default function SettingsScreen() {
     >
       <View style={[s.profileCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
         <View style={[s.avatar, { backgroundColor: colors.primary + "25" }]}>
-          <Feather name="user" size={24} color={colors.primary} />
+          <MaterialCommunityIcons name="account-outline" size={24} color={colors.primary} />
         </View>
         <View style={s.profileInfo}>
           <Text style={[s.profileName, { color: colors.foreground }]}>
@@ -67,7 +67,7 @@ export default function SettingsScreen() {
         onPress={signOut}
         activeOpacity={0.7}
       >
-        <Feather name="log-out" size={18} color={colors.destructive} />
+        <MaterialCommunityIcons name="logout" size={18} color={colors.destructive} />
         <Text style={[s.logoutLabel, { color: colors.destructive }]}>Se deconnecter</Text>
       </TouchableOpacity>
     </ScrollView>

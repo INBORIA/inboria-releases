@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   useListTasks,
   useUpdateTask,
@@ -92,7 +92,7 @@ export default function TasksScreen() {
             },
           ]}
         >
-          {item.done && <Feather name="check" size={14} color="#fff" />}
+          {item.done && <MaterialCommunityIcons name="check" size={14} color="#fff" />}
         </View>
       </TouchableOpacity>
 
@@ -111,7 +111,7 @@ export default function TasksScreen() {
 
         {item.emailSubject ? (
           <View style={s.metaRow}>
-            <Feather name="mail" size={11} color={colors.mutedForeground} style={s.metaIcon} />
+            <MaterialCommunityIcons name="email-outline" size={11} color={colors.mutedForeground} style={s.metaIcon} />
             <Text style={[s.metaText, { color: colors.mutedForeground }]}>
               {item.emailSubject}
             </Text>
@@ -120,7 +120,7 @@ export default function TasksScreen() {
 
         {item.projectName ? (
           <View style={s.metaRow}>
-            <Feather name="folder" size={11} color={colors.primary} style={s.metaIcon} />
+            <MaterialCommunityIcons name="folder-outline" size={11} color={colors.primary} style={s.metaIcon} />
             <Text style={[s.metaText, { color: colors.primary }]}>
               {item.projectReference ? `${item.projectReference} - ` : ""}
               {item.projectName}
@@ -164,7 +164,7 @@ export default function TasksScreen() {
         </View>
       ) : !tasks?.length ? (
         <View style={s.center}>
-          <Feather name="check-circle" size={48} color={colors.mutedForeground + "40"} />
+          <MaterialCommunityIcons name="check-circle-outline" size={48} color={colors.mutedForeground + "40"} />
           <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>Aucune tache</Text>
         </View>
       ) : (

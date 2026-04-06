@@ -9,7 +9,7 @@ import {
   ScrollView,
 } from "react-native";
 import { useLocalSearchParams, useRouter, Stack } from "expo-router";
-import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGetProject } from "@workspace/api-client-react";
 import type { Email, Task } from "@workspace/api-client-react";
 import { useColors } from "@/hooks/useColors";
@@ -66,7 +66,7 @@ function TaskItem({ task, colors }: { task: Task; colors: AppColors }) {
           },
         ]}
       >
-        {task.done && <Feather name="check" size={12} color="#fff" />}
+        {task.done && <MaterialCommunityIcons name="check" size={12} color="#fff" />}
       </View>
       <Text
         style={[
@@ -102,7 +102,7 @@ export default function ProjectDetailScreen() {
   if (!project) {
     return (
       <View style={[s.full, { backgroundColor: colors.background }]}>
-        <Feather name="alert-circle" size={48} color={colors.mutedForeground + "40"} />
+        <MaterialCommunityIcons name="alert-circle-outline" size={48} color={colors.mutedForeground + "40"} />
         <Text style={[s.emptyLabel, { color: colors.mutedForeground, marginTop: 12 }]}>
           Projet introuvable
         </Text>
@@ -191,7 +191,7 @@ export default function ProjectDetailScreen() {
 
         {emails.length === 0 && tasks.length === 0 && (
           <View style={[s.full, { paddingTop: 40 }]}>
-            <Feather name="inbox" size={40} color={colors.mutedForeground + "40"} />
+            <MaterialCommunityIcons name="email-open-outline" size={40} color={colors.mutedForeground + "40"} />
             <Text style={[s.emptyLabel, { color: colors.mutedForeground, marginTop: 8 }]}>
               Aucun email ni tache
             </Text>

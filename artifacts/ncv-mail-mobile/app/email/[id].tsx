@@ -9,7 +9,7 @@ import {
   Platform,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
-import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGetEmail, useUpdateEmail, getListEmailsQueryKey } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
@@ -93,7 +93,7 @@ export default function EmailDetailScreen() {
   if (!email) {
     return (
       <View style={[s.full, { backgroundColor: colors.background }]}>
-        <Feather name="alert-circle" size={48} color={colors.mutedForeground + "40"} />
+        <MaterialCommunityIcons name="alert-circle-outline" size={48} color={colors.mutedForeground + "40"} />
         <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>Email introuvable</Text>
       </View>
     );
@@ -144,7 +144,7 @@ export default function EmailDetailScreen() {
             ]}
           >
             <View style={s.summaryHeader}>
-              <Feather name="zap" size={14} color={colors.primary} />
+              <MaterialCommunityIcons name="lightning-bolt" size={14} color={colors.primary} />
               <Text style={[s.summaryTitle, { color: colors.primary }]}>Resume IA</Text>
             </View>
             <Text style={[s.summaryBody, { color: colors.mutedForeground }]}>
@@ -157,7 +157,7 @@ export default function EmailDetailScreen() {
           <View style={s.chipRow}>
             {email.categoryName ? (
               <View style={[s.chip, { backgroundColor: colors.card, borderColor: colors.border }]}>
-                <Feather name="tag" size={12} color={colors.mutedForeground} />
+                <MaterialCommunityIcons name="tag-outline" size={12} color={colors.mutedForeground} />
                 <Text style={[s.chipText, { color: colors.mutedForeground }]}>
                   {email.categoryName}
                 </Text>
@@ -167,7 +167,7 @@ export default function EmailDetailScreen() {
               <View
                 style={[s.chip, { backgroundColor: colors.primary + "15", borderColor: colors.primary + "30" }]}
               >
-                <Feather name="folder" size={12} color={colors.primary} />
+                <MaterialCommunityIcons name="folder-outline" size={12} color={colors.primary} />
                 <Text style={[s.chipText, { color: colors.primary }]}>
                   {email.projectReference}
                 </Text>
@@ -189,7 +189,7 @@ export default function EmailDetailScreen() {
               onPress={handleMarkRead}
               activeOpacity={0.7}
             >
-              <Feather name="check" size={18} color={colors.primary} />
+              <MaterialCommunityIcons name="check" size={18} color={colors.primary} />
               <Text style={[s.actionLabel, { color: colors.primary }]}>Marquer lu</Text>
             </TouchableOpacity>
           )}
@@ -198,7 +198,7 @@ export default function EmailDetailScreen() {
             onPress={handleArchive}
             activeOpacity={0.7}
           >
-            <Feather name="archive" size={18} color={colors.mutedForeground} />
+            <MaterialCommunityIcons name="archive-outline" size={18} color={colors.mutedForeground} />
             <Text style={[s.actionLabel, { color: colors.mutedForeground }]}>Archiver</Text>
           </TouchableOpacity>
         </View>

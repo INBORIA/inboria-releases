@@ -9,7 +9,7 @@ import {
   ActivityIndicator,
   Platform,
 } from "react-native";
-import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useListProjects, getListProjectsQueryKey } from "@workspace/api-client-react";
 import type { Project } from "@workspace/api-client-react";
@@ -73,27 +73,27 @@ export default function ProjectsScreen() {
 
         <View style={s.statsRow}>
           <View style={s.stat}>
-            <Feather name="mail" size={13} color={colors.mutedForeground} />
+            <MaterialCommunityIcons name="email-outline" size={13} color={colors.mutedForeground} />
             <Text style={[s.statText, { color: colors.mutedForeground }]}>
               {item.emailCount ?? 0}
             </Text>
           </View>
           <View style={s.stat}>
-            <Feather name="check-square" size={13} color={colors.mutedForeground} />
+            <MaterialCommunityIcons name="checkbox-marked-outline" size={13} color={colors.mutedForeground} />
             <Text style={[s.statText, { color: colors.mutedForeground }]}>
               {item.taskCount ?? 0}
             </Text>
           </View>
           {(item.pendingTaskCount ?? 0) > 0 && (
             <View style={s.stat}>
-              <Feather name="clock" size={13} color={colors.warning} />
+              <MaterialCommunityIcons name="clock-outline" size={13} color={colors.warning} />
               <Text style={[s.statText, { color: colors.warning }]}>
                 {item.pendingTaskCount} en cours
               </Text>
             </View>
           )}
           <View style={{ flex: 1 }} />
-          <Feather name="chevron-right" size={16} color={colors.mutedForeground} />
+          <MaterialCommunityIcons name="chevron-right" size={16} color={colors.mutedForeground} />
         </View>
       </TouchableOpacity>
     );
@@ -107,7 +107,7 @@ export default function ProjectsScreen() {
         </View>
       ) : !projects?.length ? (
         <View style={s.center}>
-          <Feather name="folder" size={48} color={colors.mutedForeground + "40"} />
+          <MaterialCommunityIcons name="folder-outline" size={48} color={colors.mutedForeground + "40"} />
           <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>Aucun projet</Text>
           <Text style={[s.emptyHint, { color: colors.mutedForeground }]}>
             Les projets sont crees automatiquement par l'IA
