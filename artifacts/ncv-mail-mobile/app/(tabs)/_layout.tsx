@@ -1,7 +1,7 @@
 import { Tabs } from "expo-router";
-import { Feather } from "@expo/vector-icons";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { Platform, StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View, Text } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { useColors } from "@/hooks/useColors";
@@ -11,7 +11,7 @@ export default function TabLayout() {
   const isWeb = Platform.OS === "web";
   const insets = useSafeAreaInsets();
 
-  const tabBarHeight = isWeb ? 84 : Math.max(60, 50 + insets.bottom);
+  const tabBarHeight = isWeb ? 84 : Math.max(64, 54 + insets.bottom);
 
   return (
     <Tabs
@@ -48,29 +48,36 @@ export default function TabLayout() {
         name="index"
         options={{
           title: "Reception",
-          tabBarIcon: ({ color }) => <Feather name="mail" size={20} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="email-outline" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="tasks"
         options={{
           title: "Taches",
-          tabBarIcon: ({ color }) => <Feather name="check-circle" size={20} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="check-circle-outline" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="projects"
         options={{
           title: "Projets",
-          tabBarIcon: ({ color }) => <Feather name="folder" size={20} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="folder-outline" size={size} color={color} />
+          ),
         }}
       />
       <Tabs.Screen
         name="settings"
         options={{
           title: "Parametres",
-          tabBarLabel: "Params",
-          tabBarIcon: ({ color }) => <Feather name="settings" size={20} color={color} />,
+          tabBarIcon: ({ color, size }) => (
+            <MaterialCommunityIcons name="cog-outline" size={size} color={color} />
+          ),
         }}
       />
     </Tabs>
