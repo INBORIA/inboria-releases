@@ -280,6 +280,13 @@ export default function ParametresScreen() {
                 </View>
               </View>
 
+              <View style={[s.comingSoonNotice, { backgroundColor: colors.foreground + "06" }]}>
+                <MaterialCommunityIcons name="information-outline" size={12} color={colors.mutedForeground + "80"} />
+                <Text style={[s.comingSoonText, { color: colors.mutedForeground + "80" }]}>
+                  Tri et notifications : bientot sauvegardables. Gerez-les sur l'app web en attendant.
+                </Text>
+              </View>
+
               <View style={s.fieldGroup}>
                 <Text style={[s.fieldLabel, { color: colors.mutedForeground }]}>Niveau de tri</Text>
                 <View style={s.optionRow}>
@@ -456,6 +463,15 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   optionText: { fontSize: 13, fontFamily: "Inter_600SemiBold" },
+
+  comingSoonNotice: {
+    flexDirection: "row",
+    alignItems: "flex-start",
+    gap: 6,
+    padding: 8,
+    borderRadius: 6,
+  },
+  comingSoonText: { fontSize: 11, fontFamily: "Inter_400Regular", flex: 1, lineHeight: 15 },
 
   toggleGroup: { gap: 0 },
   toggleRow: {
