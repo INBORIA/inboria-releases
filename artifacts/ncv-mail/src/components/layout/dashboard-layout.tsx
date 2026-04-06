@@ -19,6 +19,7 @@ import { cn } from "@/lib/utils";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const navigation = [
   { name: "Inbox", href: "/dashboard", icon: Inbox },
@@ -126,14 +127,21 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               </span>
             </div>
           </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] h-8 w-8"
-            onClick={handleLogout}
-          >
-            <LogOut className="h-4 w-4" />
-          </Button>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] h-8 w-8"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-4 w-4" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>Se déconnecter</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </div>
