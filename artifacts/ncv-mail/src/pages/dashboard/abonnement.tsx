@@ -10,13 +10,13 @@ import { useSearch, useLocation } from "wouter";
 
 const plans = [
   {
-    id: "gratuit",
-    name: "Gratuit",
+    id: "essai",
+    name: "Essai",
     price: "0",
-    quota: 50,
-    description: "Parfait pour decouvrir NCV Mail",
+    quota: 100,
+    description: "100 emails offerts pour decouvrir NCV Mail",
     features: [
-      "50 emails par mois",
+      "100 emails offerts (usage unique)",
       "3 rubriques personnalisees",
       "Support par email",
       "Integration Gmail & Outlook",
@@ -111,7 +111,7 @@ export default function Abonnement() {
   }, [searchString, queryClient, toast, navigate]);
 
   const handleSubscribe = (planId: string, seats?: number) => {
-    if (planId === "gratuit") return;
+    if (planId === "essai") return;
 
     setLoadingPlan(planId);
     checkout.mutate(
@@ -169,7 +169,7 @@ export default function Abonnement() {
     }
   };
 
-  const hasPaidPlan = profile?.plan && profile.plan !== "gratuit";
+  const hasPaidPlan = profile?.plan && profile.plan !== "essai" && profile.plan !== "expired";
 
   return (
     <DashboardLayout>
@@ -190,7 +190,9 @@ export default function Abonnement() {
             <div>
               <h3 className="text-[14px] font-semibold text-white mb-0.5">
                 Plan actuel :{" "}
-                <span className="text-primary capitalize">{profile.plan}</span>
+                <span className={`capitalize ${profile.plan === "expired" ? "text-red-400" : "text-primary"}`}>
+                  {profile.plan === "expired" ? "Expire" : profile.plan}
+                </span>
               </h3>
               <p className="text-[12px] text-[#8b9cb3]">
                 Renouvellement le{" "}
@@ -340,14 +342,14 @@ export default function Abonnement() {
                   >
                     Plan actuel
                   </Button>
-                ) : plan.id === "gratuit" ? (
+                ) : plan.id === "essai" ? (
                   <Button
                     variant="ghost"
                     className="w-full"
                     size="sm"
                     disabled
                   >
-                    Plan de base
+                    {profile?.plan === "essai" ? "Essai en cours" : "Essai termine"}
                   </Button>
                 ) : (
                   <Button

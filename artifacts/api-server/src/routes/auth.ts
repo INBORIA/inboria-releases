@@ -31,10 +31,10 @@ router.post("/auth/register", async (req, res): Promise<void> => {
       await supabaseAdmin.from("profiles").upsert({
         id: data.user.id,
         full_name: fullName,
-        plan: "gratuit",
+        plan: "essai",
         seats: 1,
         emails_used: 0,
-        emails_quota: 50,
+        emails_quota: 100,
       });
     }
 
@@ -43,10 +43,10 @@ router.post("/auth/register", async (req, res): Promise<void> => {
         id: data.user?.id,
         email: data.user?.email,
         fullName,
-        plan: "gratuit",
+        plan: "essai",
         seats: 1,
         emailsUsed: 0,
-        emailsQuota: 50,
+        emailsQuota: 100,
         createdAt: data.user?.created_at,
       },
       session: data.session,
@@ -87,10 +87,10 @@ router.post("/auth/login", async (req, res): Promise<void> => {
         id: data.user.id,
         email: data.user.email,
         fullName: profile?.full_name || "",
-        plan: profile?.plan || "gratuit",
+        plan: profile?.plan || "essai",
         seats: profile?.seats || 1,
         emailsUsed: profile?.emails_used || 0,
-        emailsQuota: profile?.emails_quota || 50,
+        emailsQuota: profile?.emails_quota || 100,
         createdAt: data.user.created_at,
       },
       session: data.session,
@@ -120,10 +120,10 @@ router.get("/auth/me", requireAuth, async (req, res): Promise<void> => {
       id: req.userId,
       email: userData.user?.email || "",
       fullName: profile?.full_name || "",
-      plan: profile?.plan || "gratuit",
+      plan: profile?.plan || "essai",
       seats: profile?.seats || 1,
       emailsUsed: profile?.emails_used || 0,
-      emailsQuota: profile?.emails_quota || 50,
+      emailsQuota: profile?.emails_quota || 100,
       createdAt: userData.user?.created_at || "",
     });
   } catch (err) {

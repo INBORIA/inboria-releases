@@ -17,7 +17,7 @@ async function isProPlan(userId: string): Promise<boolean> {
     .select("plan")
     .eq("id", userId)
     .single();
-  return !!profile && profile.plan !== "gratuit" && profile.plan !== "solo";
+  return !!profile && profile.plan !== "essai" && profile.plan !== "expired" && profile.plan !== "solo";
 }
 
 export async function sendSlackNotification(

@@ -13,6 +13,7 @@ import {
   Menu,
   Archive,
   FolderKanban,
+  AlertTriangle,
 } from "lucide-react";
 import ncvLogo from "@assets/image_1775392688923.png";
 import { cn } from "@/lib/utils";
@@ -46,12 +47,16 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     );
   }
 
-  const user = profile || { fullName: "", plan: "gratuit", emailsUsed: 0, emailsQuota: 50 };
+  const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, emailsQuota: 100 };
 
   const handleLogout = async () => {
     await signOut();
     setLocation("/login");
   };
+
+  const isExpired = (user as any).plan === "expired";
+  const isTrialExhausted = (user as any).plan === "essai" && (user as any).emailsUsed >= (user as any).emailsQuota;
+  const isBlocked = isExpired || isTrialExhausted;
 
   const usagePercent = Math.min(
     100,
@@ -175,6 +180,30 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </div>
 
         <main className="flex-1">
+          {isBlocked && location !== "/dashboard/abonnement" && (
+            <div className="bg-red-500/10 border-b border-red-500/20 px-6 py-4">
+              <div className="flex items-center gap-3 max-w-4xl mx-auto">
+                <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
+                <div className="flex-1">
+                  <p className="text-[13px] font-medium text-red-400">
+                    {isExpired
+                      ? "Votre abonnement a expire"
+                      : "Votre essai gratuit est termine"}
+                  </p>
+                  <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+                    {isExpired
+                      ? "Reabonnez-vous pour continuer a utiliser NCV Mail."
+                      : "Vous avez utilise vos 100 emails gratuits. Choisissez un plan pour continuer."}
+                  </p>
+                </div>
+                <Link href="/dashboard/abonnement">
+                  <Button size="sm" className="shrink-0">
+                    Choisir un plan
+                  </Button>
+                </Link>
+              </div>
+            </div>
+          )}
           {children}
         </main>
       </div>

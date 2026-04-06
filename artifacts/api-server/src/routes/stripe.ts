@@ -30,7 +30,7 @@ const PRICE_MAP: Record<string, string> = {
 };
 
 const PLAN_QUOTAS: Record<string, number> = {
-  gratuit: 50,
+  essai: 100,
   solo: 3000,
   pro: 10000,
   business: 10000,
@@ -89,7 +89,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
           proration_behavior: "create_prorations",
         });
 
-        const quota = PLAN_QUOTAS[planId] || 50;
+        const quota = PLAN_QUOTAS[planId] || 100;
         await supabaseAdmin
           .from("profiles")
           .update({ plan: planId, emails_quota: quota, seats: quantity })
@@ -170,7 +170,7 @@ router.post("/stripe/webhook", async (req: RawBodyRequest, res): Promise<void> =
         const subscriptionId = session.subscription as string;
 
         if (planId && customerId) {
-          const quota = PLAN_QUOTAS[planId] || 50;
+          const quota = PLAN_QUOTAS[planId] || 100;
 
           const updates: Record<string, unknown> = {
             plan: planId,
@@ -211,9 +211,9 @@ router.post("/stripe/webhook", async (req: RawBodyRequest, res): Promise<void> =
         await supabaseAdmin
           .from("profiles")
           .update({
-            plan: "gratuit",
+            plan: "expired",
             stripe_subscription_id: null,
-            emails_quota: 50,
+            emails_quota: 0,
           })
           .eq("stripe_customer_id", customerId);
         break;
@@ -232,7 +232,7 @@ router.post("/stripe/webhook", async (req: RawBodyRequest, res): Promise<void> =
           const updates: Record<string, unknown> = { seats: quantity };
           if (derivedPlan) {
             updates.plan = derivedPlan;
-            updates.emails_quota = PLAN_QUOTAS[derivedPlan] || 50;
+            updates.emails_quota = PLAN_QUOTAS[derivedPlan] || 100;
           }
 
           await supabaseAdmin

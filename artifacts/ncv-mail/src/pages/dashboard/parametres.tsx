@@ -91,10 +91,6 @@ export default function Parametres() {
         toast({ title: `${e.data.provider === "gmail" ? "Gmail" : "Outlook"} connecte avec succes !` });
         queryClient.invalidateQueries({ queryKey: ["email-connections"] });
       }
-      if (e.data?.type === "integration-connected") {
-        toast({ title: `${e.data.provider === "slack" ? "Slack" : "Notion"} connecte avec succes !` });
-        queryClient.invalidateQueries({ queryKey: ["integrations"] });
-      }
     };
     window.addEventListener("message", handler);
     return () => window.removeEventListener("message", handler);

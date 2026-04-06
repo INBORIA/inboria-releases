@@ -14,13 +14,13 @@ import { useColors } from "@/hooks/useColors";
 
 const plans = [
   {
-    id: "gratuit",
-    name: "Gratuit",
+    id: "essai",
+    name: "Essai",
     price: "0",
-    quota: 50,
-    description: "Parfait pour decouvrir NCV Mail",
+    quota: 100,
+    description: "100 emails offerts pour decouvrir NCV Mail",
     features: [
-      "50 emails par mois",
+      "100 emails offerts (usage unique)",
       "3 rubriques personnalisees",
       "Support par email",
       "Integration Gmail & Outlook",
@@ -54,7 +54,6 @@ const plans = [
       "Rubriques illimitees",
       "Brief quotidien",
       "Brouillons IA proactifs",
-      "Integrations (Slack, Notion)",
       "Statistiques detaillees",
       "Support prioritaire",
     ],
@@ -69,7 +68,7 @@ const plans = [
     features: [
       "10 000 emails / siege / mois",
       "Tout du plan Pro inclus",
-      "Nombre d'utilisateurs configurable",
+      "Minimum 3 sieges, jusqu'a 50",
       "Boites partagees",
       "Assignation de taches",
       "API dediee",

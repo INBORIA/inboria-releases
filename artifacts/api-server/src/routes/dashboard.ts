@@ -38,8 +38,8 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
       notificationCount,
       pendingTasks: pendingTasks || 0,
       emailsUsed: profile?.emails_used || 0,
-      emailsQuota: profile?.emails_quota || 50,
-      plan: profile?.plan || "gratuit",
+      emailsQuota: profile?.emails_quota || 100,
+      plan: profile?.plan || "essai",
     });
   } catch {
     res.status(500).json({ error: "Failed to get dashboard summary" });
