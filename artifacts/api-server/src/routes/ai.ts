@@ -195,7 +195,7 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
 
     const { data: email, error: emailErr } = await supabaseAdmin
       .from("emails")
-      .select("id, sender, sender_email, subject, body, category_id, project_id")
+      .select("id, sender, subject, body, category_id, project_id")
       .eq("id", emailId)
       .eq("user_id", req.userId!)
       .single();
@@ -251,7 +251,7 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
           role: "user",
           content: `Voici un email recu auquel il faut repondre:
 
-Expediteur: ${email.sender} (${email.sender_email || ""})
+Expediteur: ${email.sender}
 Sujet: ${email.subject}
 Corps:
 ${email.body}${projectContext}${categoryContext}
