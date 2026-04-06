@@ -8,10 +8,10 @@ import { useColors } from "@/hooks/useColors";
 
 const logoSource = require("@/assets/images/logo-ncv.webp");
 
-function AppHeader() {
+function LogoBrand() {
   const colors = useColors();
   return (
-    <View style={[hStyles.row, { borderBottomColor: colors.border }]}>
+    <View style={hStyles.brand}>
       <Image source={logoSource} style={hStyles.logo} resizeMode="contain" />
       <Text style={[hStyles.appName, { color: colors.foreground }]}>NCV Mail</Text>
     </View>
@@ -19,16 +19,14 @@ function AppHeader() {
 }
 
 const hStyles = StyleSheet.create({
-  row: {
+  brand: {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderBottomWidth: 1,
+    marginLeft: 4,
   },
-  logo: { width: 28, height: 28 },
-  appName: { fontSize: 17, fontFamily: "Inter_700Bold" },
+  logo: { width: 26, height: 26 },
+  appName: { fontSize: 15, fontFamily: "Inter_700Bold" },
 });
 
 export default function TabLayout() {
@@ -44,10 +42,12 @@ export default function TabLayout() {
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.mutedForeground,
         headerShown: true,
-        headerStyle: { backgroundColor: colors.background },
+        headerStyle: {
+          backgroundColor: colors.background,
+        },
         headerTintColor: colors.foreground,
         headerTitleStyle: { fontFamily: "Inter_600SemiBold", fontSize: 17 },
-        header: () => <AppHeader />,
+        headerLeft: () => <LogoBrand />,
         tabBarStyle: {
           backgroundColor: colors.background,
           borderTopWidth: 1,
