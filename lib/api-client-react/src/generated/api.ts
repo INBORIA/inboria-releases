@@ -44,6 +44,7 @@ import type {
   PortalResponse,
   Project,
   ProjectDetail,
+  RecategorizeUncategorized200,
   RegisterBody,
   RegisterPushToken200,
   RegisterPushTokenBody,
@@ -2470,6 +2471,90 @@ export const useGenerateDailySummary = <
   TContext
 > => {
   return useMutation(getGenerateDailySummaryMutationOptions(options));
+};
+
+/**
+ * @summary Re-categorize all uncategorized emails using AI
+ */
+export const getRecategorizeUncategorizedUrl = () => {
+  return `/api/ai/recategorize-uncategorized`;
+};
+
+export const recategorizeUncategorized = async (
+  options?: RequestInit,
+): Promise<RecategorizeUncategorized200> => {
+  return customFetch<RecategorizeUncategorized200>(
+    getRecategorizeUncategorizedUrl(),
+    {
+      ...options,
+      method: "POST",
+    },
+  );
+};
+
+export const getRecategorizeUncategorizedMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof recategorizeUncategorized>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof recategorizeUncategorized>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["recategorizeUncategorized"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof recategorizeUncategorized>>,
+    void
+  > = () => {
+    return recategorizeUncategorized(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RecategorizeUncategorizedMutationResult = NonNullable<
+  Awaited<ReturnType<typeof recategorizeUncategorized>>
+>;
+
+export type RecategorizeUncategorizedMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Re-categorize all uncategorized emails using AI
+ */
+export const useRecategorizeUncategorized = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof recategorizeUncategorized>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof recategorizeUncategorized>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getRecategorizeUncategorizedMutationOptions(options));
 };
 
 /**

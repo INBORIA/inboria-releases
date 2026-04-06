@@ -585,6 +585,29 @@ paths:
               schema:
                 $ref: "#/components/schemas/DailySummary"
 
+  /ai/recategorize-uncategorized:
+    post:
+      operationId: recategorizeUncategorized
+      tags: [ai]
+      summary: Re-categorize all uncategorized emails using AI
+      responses:
+        "200":
+          description: Recategorization results
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  recategorized:
+                    type: integer
+                  created:
+                    type: array
+                    items:
+                      type: string
+                required:
+                  - recategorized
+                  - created
+
   /ai/draft:
     post:
       operationId: generateDraft

@@ -537,6 +537,14 @@ export const GenerateDailySummaryResponse = zod.object({
 });
 
 /**
+ * @summary Re-categorize all uncategorized emails using AI
+ */
+export const RecategorizeUncategorizedResponse = zod.object({
+  recategorized: zod.number(),
+  created: zod.array(zod.string()),
+});
+
+/**
  * @summary Generate AI draft reply for an email
  */
 export const GenerateDraftBody = zod.object({

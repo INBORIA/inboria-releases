@@ -15,12 +15,13 @@ import {
   getGetInboxHealthQueryKey,
   useListProjects,
   useGetProfile,
+  useRecategorizeUncategorized,
 } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,7 @@ function PriorityBadge({ priority }: { priority: string }) {
   );
 }
 
-function EmailRow({ email, onClick, onArchive }: { email: any; onClick: () => void; onArchive: (id: number) => void }) {
+function EmailRow({ email, onClick, onArchive, onCategoryClick }: { email: any; onClick: () => void; onArchive: (id: number) => void; onCategoryClick?: (name: string) => void }) {
   const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
 
   return (
@@ -84,7 +85,10 @@ function EmailRow({ email, onClick, onArchive }: { email: any; onClick: () => vo
         </div>
         <div className="flex items-center gap-2 shrink-0 self-center">
           {email.categoryName && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-blue-500/15 text-blue-400 border border-blue-500/20 hidden sm:inline-flex">
+            <span
+              className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-blue-500/15 text-blue-400 border border-blue-500/20 hidden sm:inline-flex hover:bg-blue-500/25 transition-colors"
+              onClick={(e) => { e.stopPropagation(); onCategoryClick?.(email.categoryName); }}
+            >
               {email.categoryName}
             </span>
           )}
@@ -386,6 +390,7 @@ export default function Dashboard() {
   const triageEmail = useTriageEmail();
   const sendEmailMut = useSendEmail();
   const generateDraftMut = useGenerateDraft();
+  const recategorizeMut = useRecategorizeUncategorized();
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [composeTo, setComposeTo] = useState("");
   const [composeSubject, setComposeSubject] = useState("");
@@ -824,7 +829,7 @@ export default function Dashboard() {
                   </div>
                 ) : (
                   activeEmails?.map((email) => (
-                    <EmailRow key={email.id} email={email} onClick={() => setSelectedEmailId(email.id)} onArchive={handleArchive} />
+                    <EmailRow key={email.id} email={email} onClick={() => setSelectedEmailId(email.id)} onArchive={handleArchive} onCategoryClick={(name) => setFilterCategory(name)} />
                   ))
                 )}
               </div>
@@ -832,9 +837,43 @@ export default function Dashboard() {
 
             <div className="w-full lg:w-[200px] shrink-0 space-y-3">
               <div className="bg-card rounded-lg border border-border p-3">
-                <h3 className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider mb-2.5">
-                  Categories
-                </h3>
+                <div className="flex items-center justify-between mb-2.5">
+                  <h3 className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">
+                    Categories
+                  </h3>
+                  {(() => {
+                    const uncategorizedCount = (emails || []).filter((e) => e.status !== "archived" && !e.categoryName).length;
+                    if (uncategorizedCount === 0) return null;
+                    return (
+                      <button
+                        onClick={() => {
+                          recategorizeMut.mutate(undefined as any, {
+                            onSuccess: (data: any) => {
+                              invalidateAll();
+                              toast({
+                                title: `${data.recategorized} email(s) re-categorise(s)`,
+                                description: data.created?.length > 0 ? `Categories creees: ${data.created.join(", ")}` : undefined,
+                              });
+                            },
+                            onError: () => {
+                              toast({ title: "Erreur", description: "Echec de la re-categorisation", variant: "destructive" });
+                            },
+                          });
+                        }}
+                        disabled={recategorizeMut.isPending}
+                        className="flex items-center gap-1 text-[9px] text-primary hover:text-white transition-colors disabled:opacity-50"
+                        title="Re-categoriser les emails sans categorie"
+                      >
+                        {recategorizeMut.isPending ? (
+                          <Loader2 className="w-3 h-3 animate-spin" />
+                        ) : (
+                          <Tags className="w-3 h-3" />
+                        )}
+                        <span>{uncategorizedCount} non classes</span>
+                      </button>
+                    );
+                  })()}
+                </div>
                 {categoriesLoading ? (
                   <div className="space-y-1.5">
                     <Skeleton className="h-5 w-full bg-white/5" />
@@ -842,8 +881,21 @@ export default function Dashboard() {
                   </div>
                 ) : (
                   <div className="space-y-0.5">
+                    <div
+                      className={`flex items-center justify-between py-1 px-1.5 rounded transition-colors cursor-pointer ${filterCategory === "all" ? "bg-primary/10 text-primary" : "hover:bg-white/[0.04]"}`}
+                      onClick={() => setFilterCategory("all")}
+                    >
+                      <span className="text-[11px]">Toutes</span>
+                      <span className="text-[10px] bg-white/[0.06] px-1.5 py-0.5 rounded">
+                        {activeEmails?.length || 0}
+                      </span>
+                    </div>
                     {categoryCounts?.map((cat) => (
-                      <div key={cat.categoryId} className="flex items-center justify-between py-1 px-1.5 rounded hover:bg-white/[0.04] transition-colors cursor-pointer">
+                      <div
+                        key={cat.categoryId}
+                        className={`flex items-center justify-between py-1 px-1.5 rounded transition-colors cursor-pointer ${filterCategory === cat.categoryName ? "bg-primary/10 text-primary" : "hover:bg-white/[0.04]"}`}
+                        onClick={() => setFilterCategory(filterCategory === cat.categoryName ? "all" : cat.categoryName)}
+                      >
                         <div className="flex items-center gap-1.5">
                           <div className="w-1.5 h-1.5 rounded-full bg-primary" />
                           <span className="text-[11px] text-[#8b9cb3]">{cat.categoryName}</span>

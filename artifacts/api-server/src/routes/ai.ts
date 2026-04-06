@@ -297,4 +297,94 @@ Redige une reponse professionnelle et adaptee au contexte. Reponds uniquement av
   }
 });
 
+router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const userId = req.userId!;
+
+    const entitlement = await checkEntitlement(userId);
+    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
+
+    const { data: emails } = await supabaseAdmin
+      .from("emails")
+      .select("id, sender, subject, body")
+      .eq("user_id", userId)
+      .is("category_id", null)
+      .neq("status", "archived")
+      .order("created_at", { ascending: false })
+      .limit(50);
+
+    if (!emails || emails.length === 0) {
+      res.json({ recategorized: 0, created: [] });
+      return;
+    }
+
+    const { data: categories } = await supabaseAdmin
+      .from("categories")
+      .select("id, name")
+      .eq("user_id", userId);
+    const categoryMap = new Map((categories || []).map((c: any) => [c.name, c.id]));
+    const categoryNames = Array.from(categoryMap.keys());
+
+    let recategorized = 0;
+    const createdCategories: string[] = [];
+
+    for (const email of emails) {
+      try {
+        const completion = await openai.chat.completions.create({
+          model: "gpt-4o-mini",
+          max_completion_tokens: 128,
+          messages: [
+            { role: "system", content: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide." },
+            { role: "user", content: `Email:\nDe: ${email.sender}\nSujet: ${email.subject}\nCorps: ${(email.body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 500)}\n\nCategories existantes: ${categoryNames.join(", ") || "Aucune"}\n\nReponds en JSON:\n{"category":"nom de categorie existante OU propose un nouveau nom pertinent (court, professionnel). Utilise 'Non classe' uniquement si vraiment inclassable."}` },
+          ],
+        });
+
+        const content = completion.choices[0]?.message?.content ?? "{}";
+        const jsonMatch = content.match(/\{[\s\S]*\}/);
+        const result = JSON.parse(jsonMatch ? jsonMatch[0] : "{}");
+        const catName = result.category || "Non classe";
+
+        if (catName === "Non classe") continue;
+
+        let categoryId = categoryMap.get(catName) || null;
+        if (!categoryId) {
+          const { data: newCat, error: newCatErr } = await supabaseAdmin
+            .from("categories")
+            .insert({ user_id: userId, name: catName })
+            .select("id")
+            .single();
+          if (newCat?.id) {
+            categoryId = newCat.id;
+            categoryMap.set(catName, categoryId);
+            categoryNames.push(catName);
+            createdCategories.push(catName);
+          } else if (newCatErr?.code === "23505") {
+            const { data: existing } = await supabaseAdmin
+              .from("categories").select("id")
+              .eq("user_id", userId).eq("name", catName).maybeSingle();
+            categoryId = existing?.id || null;
+            if (categoryId) categoryMap.set(catName, categoryId);
+          }
+        }
+
+        if (categoryId) {
+          await supabaseAdmin
+            .from("emails")
+            .update({ category_id: categoryId })
+            .eq("id", email.id)
+            .eq("user_id", userId);
+          recategorized++;
+        }
+      } catch (err: any) {
+        console.error(`[recategorize] Error for email ${email.id}:`, err.message);
+      }
+    }
+
+    res.json({ recategorized, created: createdCategories });
+  } catch (err: any) {
+    console.error("[recategorize] Error:", err);
+    res.status(500).json({ error: "Echec de la re-categorisation" });
+  }
+});
+
 export default router;

@@ -407,6 +407,11 @@ export type SendEmail200 = {
   success?: boolean;
 };
 
+export type RecategorizeUncategorized200 = {
+  recategorized: number;
+  created: string[];
+};
+
 export type StripeWebhookBody = { [key: string]: unknown };
 
 export type StripeWebhook200 = {

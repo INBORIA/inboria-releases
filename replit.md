@@ -124,6 +124,12 @@ Optional webhook for external integrations. Flow: External source -> Webhook NCV
 - `/dashboard/abonnement` — Subscription plans (Gratuit 0€ / Solo 9€ / Pro 19€ / Business 9€/seat)
 - 404 page — Dark themed "Page introuvable"
 
+## AI Recategorize Uncategorized
+
+- **Endpoint**: `POST /api/ai/recategorize-uncategorized` — re-analyzes up to 50 uncategorized emails with GPT-4o-mini, assigns categories (creating new ones if needed), returns `{recategorized, created}`
+- **Frontend**: Conditional button in inbox category sidebar — only shows when uncategorized emails exist, displays count (e.g. "3 non classes"), triggers recategorization with loading state and toast feedback
+- **OpenAPI**: `recategorizeUncategorized` operation, `useRecategorizeUncategorized` React hook
+
 ## AI Draft Reply
 
 - **Endpoint**: `POST /api/ai/draft` accepts `{emailId}`, returns `{draft}`

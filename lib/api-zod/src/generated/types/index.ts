@@ -41,6 +41,7 @@ export * from "./portalResponse";
 export * from "./project";
 export * from "./projectDetail";
 export * from "./projectStatus";
+export * from "./recategorizeUncategorized200";
 export * from "./registerBody";
 export * from "./registerPushToken200";
 export * from "./registerPushTokenBody";
