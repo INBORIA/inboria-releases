@@ -47,12 +47,6 @@ function useEmailConnections() {
   });
 }
 
-const AI_LANGUAGES: { id: UpdateProfileBodyAiLanguage; label: string }[] = [
-  { id: UpdateProfileBodyAiLanguage.fr, label: "Francais" },
-  { id: UpdateProfileBodyAiLanguage.en, label: "English" },
-  { id: UpdateProfileBodyAiLanguage.nl, label: "Nederlands" },
-];
-
 const SORT_LEVELS = [
   { id: "strict", label: "Strict" },
   { id: "normal", label: "Normal" },
@@ -70,7 +64,6 @@ export default function ParametresScreen() {
   const { data: connections, isLoading: connectionsLoading, isError: connectionsError } = useEmailConnections();
 
   const [fullName, setFullName] = useState("");
-  const [aiLanguage, setAiLanguage] = useState<UpdateProfileBodyAiLanguage>(UpdateProfileBodyAiLanguage.fr);
   const [sortLevel, setSortLevel] = useState("normal");
   const [notifUrgent, setNotifUrgent] = useState(true);
   const [notifDaily, setNotifDaily] = useState(true);
@@ -80,7 +73,6 @@ export default function ParametresScreen() {
   useEffect(() => {
     if (profile) {
       setFullName(profile.fullName || "");
-      if (profile.aiLanguage) setAiLanguage(profile.aiLanguage as UpdateProfileBodyAiLanguage);
     }
   }, [profile]);
 
@@ -91,7 +83,6 @@ export default function ParametresScreen() {
       {
         data: {
           fullName,
-          aiLanguage,
         },
       },
       {
@@ -248,42 +239,6 @@ export default function ParametresScreen() {
                   <MaterialCommunityIcons name="brain" size={18} color="#f59e0b" />
                 </View>
                 <Text style={[s.sectionTitle, { color: colors.foreground }]}>Preferences IA</Text>
-              </View>
-
-              <View style={s.fieldGroup}>
-                <Text style={[s.fieldLabel, { color: colors.mutedForeground }]}>Langue de l'IA</Text>
-                <View style={s.optionRow}>
-                  {AI_LANGUAGES.map((lang) => (
-                    <TouchableOpacity
-                      key={lang.id}
-                      style={[
-                        s.optionBtn,
-                        {
-                          backgroundColor: aiLanguage === lang.id ? colors.primary + "20" : colors.background,
-                          borderColor: aiLanguage === lang.id ? colors.primary : colors.border,
-                        },
-                      ]}
-                      onPress={() => setAiLanguage(lang.id)}
-                      activeOpacity={0.7}
-                    >
-                      <Text
-                        style={[
-                          s.optionText,
-                          { color: aiLanguage === lang.id ? colors.primary : colors.mutedForeground },
-                        ]}
-                      >
-                        {lang.label}
-                      </Text>
-                    </TouchableOpacity>
-                  ))}
-                </View>
-              </View>
-
-              <View style={[s.comingSoonNotice, { backgroundColor: colors.foreground + "06" }]}>
-                <MaterialCommunityIcons name="information-outline" size={12} color={colors.mutedForeground + "80"} />
-                <Text style={[s.comingSoonText, { color: colors.mutedForeground + "80" }]}>
-                  Tri et notifications : bientot sauvegardables. Gerez-les sur l'app web en attendant.
-                </Text>
               </View>
 
               <View style={s.fieldGroup}>
@@ -462,15 +417,6 @@ const s = StyleSheet.create({
     alignItems: "center",
   },
   optionText: { fontSize: 13, fontFamily: "Inter_600SemiBold" },
-
-  comingSoonNotice: {
-    flexDirection: "row",
-    alignItems: "flex-start",
-    gap: 6,
-    padding: 8,
-    borderRadius: 6,
-  },
-  comingSoonText: { fontSize: 11, fontFamily: "Inter_400Regular", flex: 1, lineHeight: 15 },
 
   toggleGroup: { gap: 0 },
   toggleRow: {
