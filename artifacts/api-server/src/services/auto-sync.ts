@@ -121,7 +121,8 @@ async function triageEmailAI(
       .from("categories")
       .select("name")
       .eq("user_id", userId);
-    const categoryNames = (categories || []).map((c: any) => c.name);
+    const JUNK_CATS = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
+    const categoryNames = (categories || []).map((c: any) => c.name).filter((n: string) => !JUNK_CATS.includes(n.toLowerCase()));
 
     const { data: rules } = await supabaseAdmin
       .from("ai_rules")

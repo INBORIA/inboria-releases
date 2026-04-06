@@ -842,7 +842,8 @@ export default function Dashboard() {
                     Categories
                   </h3>
                   {(() => {
-                    const uncategorizedCount = (emails || []).filter((e) => e.status !== "archived" && !e.categoryName).length;
+                    const JUNK = ["non classé", "non classe", "uncategorized"];
+                    const uncategorizedCount = (emails || []).filter((e) => e.status !== "archived" && (!e.categoryName || JUNK.includes(e.categoryName.toLowerCase()))).length;
                     if (uncategorizedCount === 0) return null;
                     return (
                       <button

@@ -304,7 +304,17 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
     const entitlement = await checkEntitlement(userId);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
-    const { data: emails } = await supabaseAdmin
+    const { data: categories } = await supabaseAdmin
+      .from("categories")
+      .select("id, name")
+      .eq("user_id", userId);
+
+    const JUNK_NAMES = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
+    const junkCategoryIds = (categories || [])
+      .filter((c: any) => JUNK_NAMES.includes(c.name.toLowerCase()))
+      .map((c: any) => c.id);
+
+    const { data: nullEmails } = await supabaseAdmin
       .from("emails")
       .select("id, sender, subject, body")
       .eq("user_id", userId)
@@ -313,16 +323,28 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
       .order("created_at", { ascending: false })
       .limit(50);
 
-    if (!emails || emails.length === 0) {
+    let junkEmails: any[] = [];
+    if (junkCategoryIds.length > 0) {
+      const { data } = await supabaseAdmin
+        .from("emails")
+        .select("id, sender, subject, body")
+        .eq("user_id", userId)
+        .in("category_id", junkCategoryIds)
+        .neq("status", "archived")
+        .order("created_at", { ascending: false })
+        .limit(50);
+      junkEmails = data || [];
+    }
+
+    const emails = [...(nullEmails || []), ...junkEmails].slice(0, 50);
+
+    if (emails.length === 0) {
       res.json({ recategorized: 0, created: [] });
       return;
     }
 
-    const { data: categories } = await supabaseAdmin
-      .from("categories")
-      .select("id, name")
-      .eq("user_id", userId);
-    const categoryMap = new Map((categories || []).map((c: any) => [c.name, c.id]));
+    const realCategories = (categories || []).filter((c: any) => !JUNK_NAMES.includes(c.name.toLowerCase()));
+    const categoryMap = new Map(realCategories.map((c: any) => [c.name, c.id]));
     const categoryNames = Array.from(categoryMap.keys());
 
     let recategorized = 0;
@@ -377,6 +399,19 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
         }
       } catch (err: any) {
         console.error(`[recategorize] Error for email ${email.id}:`, err.message);
+      }
+    }
+
+    if (recategorized > 0 && junkCategoryIds.length > 0) {
+      for (const junkId of junkCategoryIds) {
+        const { count } = await supabaseAdmin
+          .from("emails")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", userId)
+          .eq("category_id", junkId);
+        if (count === 0) {
+          await supabaseAdmin.from("categories").delete().eq("id", junkId).eq("user_id", userId);
+        }
       }
     }
 
