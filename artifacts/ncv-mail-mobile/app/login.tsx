@@ -125,8 +125,15 @@ export default function LoginScreen() {
               secureTextEntry={!showPassword}
               textContentType="password"
             />
-            <TouchableOpacity style={s.eyeBtn} onPress={() => setShowPassword(!showPassword)}>
-              <MaterialCommunityIcons name={showPassword ? "eye-off-outline" : "eye-outline"} size={20} color={colors.mutedForeground} />
+            <TouchableOpacity
+              style={[s.eyeBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
+              onPress={() => setShowPassword(!showPassword)}
+              activeOpacity={0.7}
+            >
+              <MaterialCommunityIcons name={showPassword ? "eye-off-outline" : "eye-outline"} size={18} color={colors.primary} />
+              <Text style={[s.eyeLabel, { color: colors.primary }]}>
+                {showPassword ? "Cacher" : "Voir"}
+              </Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -209,8 +216,20 @@ const s = StyleSheet.create({
     fontFamily: "Inter_400Regular",
   },
   passwordWrap: { position: "relative" },
-  passwordInput: { paddingRight: 48 },
-  eyeBtn: { position: "absolute", right: 14, top: 14 },
+  passwordInput: { paddingRight: 80 },
+  eyeBtn: {
+    position: "absolute",
+    right: 6,
+    top: 6,
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  eyeLabel: { fontSize: 12, fontFamily: "Inter_600SemiBold" },
 
   submitBtn: {
     height: 48,
