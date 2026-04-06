@@ -96,7 +96,7 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
               <div className="flex items-center gap-2 mb-3">
-                <img src={ncvLogo} alt="NCV Mail" className="h-24 w-24 object-contain" />
+                <img src={ncvLogo} alt="NCV Mail" className="h-36 w-36 object-contain" />
                 <span className="font-semibold text-[15px] text-white">NCV Mail</span>
               </div>
               <p className="text-[13px] text-[#8b9cb3]">Une solution NCV Management</p>
