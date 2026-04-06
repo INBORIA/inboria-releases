@@ -113,9 +113,9 @@ function ProjectDetailView({
   if (isLoading) {
     return (
       <DashboardLayout>
-        <div className="p-6 max-w-5xl mx-auto w-full">
-          <Skeleton className="h-8 w-48 bg-white/5 mb-4" />
-          <Skeleton className="h-64 w-full bg-white/5" />
+        <div className="p-5 max-w-5xl mx-auto w-full">
+          <Skeleton className="h-6 w-48 bg-white/5 mb-3" />
+          <Skeleton className="h-48 w-full bg-white/5" />
         </div>
       </DashboardLayout>
     );
@@ -124,16 +124,16 @@ function ProjectDetailView({
   if (!project) {
     return (
       <DashboardLayout>
-        <div className="p-6 max-w-5xl mx-auto w-full">
+        <div className="p-5 max-w-5xl mx-auto w-full">
           <Button
             variant="ghost"
             size="sm"
             onClick={onBack}
-            className="text-[#8b9cb3] hover:text-white mb-4 gap-2"
+            className="text-[#8b9cb3] hover:text-white mb-3 gap-1.5 h-7 text-[12px]"
           >
-            <ArrowLeft className="w-4 h-4" /> Retour
+            <ArrowLeft className="w-3.5 h-3.5" /> Retour
           </Button>
-          <p className="text-[#8b9cb3]">Projet introuvable.</p>
+          <p className="text-[12px] text-[#8b9cb3]">Projet introuvable.</p>
         </div>
       </DashboardLayout>
     );
@@ -147,36 +147,36 @@ function ProjectDetailView({
 
   return (
     <DashboardLayout>
-      <div className="p-6 max-w-5xl mx-auto w-full">
+      <div className="p-5 max-w-5xl mx-auto w-full">
         <Button
           variant="ghost"
           size="sm"
           onClick={onBack}
-          className="text-[#8b9cb3] hover:text-white mb-4 gap-2"
+          className="text-[#8b9cb3] hover:text-white mb-3 gap-1.5 h-7 text-[12px]"
         >
-          <ArrowLeft className="w-4 h-4" /> Retour aux projets
+          <ArrowLeft className="w-3.5 h-3.5" /> Retour aux projets
         </Button>
 
-        <div className="flex items-start gap-4 mb-6">
+        <div className="flex items-start gap-3 mb-5">
           <div
-            className={`w-12 h-12 rounded-xl ${getColorClass(project.color)} flex items-center justify-center text-white font-bold text-lg shrink-0`}
+            className={`w-10 h-10 rounded-lg ${getColorClass(project.color)} flex items-center justify-center text-white font-bold text-[15px] shrink-0`}
           >
             {project.name.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3 mb-1">
-              <h1 className="text-xl font-semibold text-white truncate">
+            <div className="flex items-center gap-2 mb-0.5">
+              <h1 className="text-[16px] font-semibold text-white truncate">
                 {project.name}
               </h1>
               <span
-                className={`text-[11px] font-medium px-2 py-0.5 rounded-full ${statusInfo.class}`}
+                className={`text-[10px] font-medium px-1.5 py-0.5 rounded-full ${statusInfo.class}`}
               >
                 {statusInfo.label}
               </span>
             </div>
-            <div className="flex items-center gap-3 text-[13px] text-[#8b9cb3]">
+            <div className="flex items-center gap-2.5 text-[12px] text-[#8b9cb3]">
               <span className="flex items-center gap-1">
-                <Hash className="w-3.5 h-3.5" /> {project.reference}
+                <Hash className="w-3 h-3" /> {project.reference}
               </span>
               {project.description && (
                 <span className="truncate">{project.description}</span>
@@ -185,68 +185,61 @@ function ProjectDetailView({
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 mb-6">
-          <div className="bg-card rounded-lg border border-border p-4">
-            <div className="flex items-center gap-2 text-[#8b9cb3] mb-1">
-              <Mail className="w-4 h-4" />
-              <span className="text-[12px]">Emails</span>
+        <div className="grid grid-cols-3 gap-2 mb-5">
+          <div className="bg-card rounded-lg border border-border p-3">
+            <div className="flex items-center gap-1.5 text-[#8b9cb3] mb-0.5">
+              <Mail className="w-3.5 h-3.5" />
+              <span className="text-[11px]">Emails</span>
             </div>
-            <p className="text-2xl font-semibold text-white">
+            <p className="text-xl font-semibold text-white">
               {(project.emails || []).length}
             </p>
           </div>
-          <div className="bg-card rounded-lg border border-border p-4">
-            <div className="flex items-center gap-2 text-[#8b9cb3] mb-1">
-              <CheckSquare className="w-4 h-4" />
-              <span className="text-[12px]">Taches terminees</span>
+          <div className="bg-card rounded-lg border border-border p-3">
+            <div className="flex items-center gap-1.5 text-[#8b9cb3] mb-0.5">
+              <CheckSquare className="w-3.5 h-3.5" />
+              <span className="text-[11px]">Taches terminees</span>
             </div>
-            <p className="text-2xl font-semibold text-white">
+            <p className="text-xl font-semibold text-white">
               {doneTasks}/{(project.tasks || []).length}
             </p>
           </div>
-          <div className="bg-card rounded-lg border border-border p-4">
-            <div className="flex items-center gap-2 text-amber-400 mb-1">
-              <Clock className="w-4 h-4" />
-              <span className="text-[12px]">En attente</span>
+          <div className="bg-card rounded-lg border border-border p-3">
+            <div className="flex items-center gap-1.5 text-amber-400 mb-0.5">
+              <Clock className="w-3.5 h-3.5" />
+              <span className="text-[11px]">En attente</span>
             </div>
-            <p className="text-2xl font-semibold text-white">{pendingTasks}</p>
+            <p className="text-xl font-semibold text-white">{pendingTasks}</p>
           </div>
         </div>
 
         {(project.emails || []).length > 0 && (
-          <div className="mb-6">
-            <h2 className="text-[14px] font-semibold text-white mb-3 flex items-center gap-2">
-              <Mail className="w-4 h-4 text-primary" /> Emails lies (
-              {project.emails.length})
+          <div className="mb-4">
+            <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
+              <Mail className="w-3.5 h-3.5 text-primary" /> Emails lies ({project.emails.length})
             </h2>
             <div className="space-y-1">
               {project.emails.map((email: any) => {
-                const priorityColors: Record<string, string> = {
-                  urgent: "bg-red-500/10 text-red-400",
-                  moyen: "bg-amber-500/10 text-amber-400",
-                  faible: "bg-emerald-500/10 text-emerald-400",
+                const barColors: Record<string, string> = {
+                  urgent: "bg-red-500",
+                  moyen: "bg-amber-500",
+                  faible: "bg-emerald-500",
                 };
                 return (
                   <div
                     key={email.id}
-                    className="bg-card border border-border rounded-lg px-4 py-3 flex items-center gap-3"
+                    className="flex items-stretch bg-card border border-border rounded-lg overflow-hidden"
                   >
-                    <span
-                      className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${priorityColors[email.priority] || priorityColors.faible}`}
-                    >
-                      {email.priority}
-                    </span>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-[13px] text-white truncate">
-                        {email.subject}
-                      </p>
-                      <p className="text-[11px] text-[#8b9cb3]">
-                        {email.sender}
-                      </p>
+                    <div className={`w-1 shrink-0 ${barColors[email.priority] || barColors.faible}`} />
+                    <div className="flex items-center gap-2.5 flex-1 min-w-0 px-3 py-2">
+                      <div className="flex-1 min-w-0">
+                        <p className="text-[12px] text-white truncate">{email.subject}</p>
+                        <p className="text-[10px] text-[#8b9cb3]">{email.sender}</p>
+                      </div>
+                      <span className="text-[10px] text-[#8b9cb3] shrink-0">
+                        {new Date(email.createdAt).toLocaleDateString("fr-FR")}
+                      </span>
                     </div>
-                    <span className="text-[11px] text-[#8b9cb3] shrink-0">
-                      {new Date(email.createdAt).toLocaleDateString("fr-FR")}
-                    </span>
                   </div>
                 );
               })}
@@ -256,30 +249,29 @@ function ProjectDetailView({
 
         {(project.tasks || []).length > 0 && (
           <div>
-            <h2 className="text-[14px] font-semibold text-white mb-3 flex items-center gap-2">
-              <CheckSquare className="w-4 h-4 text-primary" /> Taches (
-              {project.tasks.length})
+            <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
+              <CheckSquare className="w-3.5 h-3.5 text-primary" /> Taches ({project.tasks.length})
             </h2>
             <div className="space-y-1">
               {project.tasks.map((task: any) => (
                 <div
                   key={task.id}
-                  className="bg-card border border-border rounded-lg px-4 py-3 flex items-center gap-3"
+                  className="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2.5"
                 >
                   <div
-                    className={`w-5 h-5 rounded border-2 flex items-center justify-center shrink-0 ${task.done ? "bg-primary border-primary" : "border-[#8b9cb3]/30"}`}
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${task.done ? "bg-primary border-primary" : "border-[#8b9cb3]/30"}`}
                   >
                     {task.done && (
-                      <CheckSquare className="w-3 h-3 text-white" />
+                      <CheckSquare className="w-2.5 h-2.5 text-white" />
                     )}
                   </div>
                   <p
-                    className={`text-[13px] flex-1 ${task.done ? "line-through text-[#8b9cb3]" : "text-white"}`}
+                    className={`text-[12px] flex-1 ${task.done ? "line-through text-[#8b9cb3]" : "text-white"}`}
                   >
                     {task.title}
                   </p>
                   {task.emailSubject && (
-                    <span className="text-[11px] text-[#8b9cb3] truncate max-w-[200px]">
+                    <span className="text-[10px] text-[#8b9cb3] truncate max-w-[180px]">
                       {task.emailSubject}
                     </span>
                   )}
@@ -291,12 +283,12 @@ function ProjectDetailView({
 
         {(project.emails || []).length === 0 &&
           (project.tasks || []).length === 0 && (
-            <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
-              <FolderKanban className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
-              <p className="text-[13px] text-[#8b9cb3]">
+            <div className="text-center py-12 rounded-lg border border-border border-dashed bg-card/50">
+              <FolderKanban className="mx-auto h-8 w-8 text-[#8b9cb3]/20 mb-2" />
+              <p className="text-[12px] text-[#8b9cb3]">
                 Aucun email ou tache lie a ce projet pour le moment.
               </p>
-              <p className="text-[12px] text-[#8b9cb3]/60 mt-1">
+              <p className="text-[11px] text-[#8b9cb3]/60 mt-0.5">
                 Attribuez des emails a ce projet depuis la boite de reception.
               </p>
             </div>
@@ -431,13 +423,13 @@ export default function Projets() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 max-w-5xl mx-auto w-full">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div className="p-5 max-w-5xl mx-auto w-full">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
-            <h1 className="text-xl font-semibold text-white tracking-tight">
+            <h1 className="text-[16px] font-semibold text-white tracking-tight">
               Gestion de projets
             </h1>
-            <p className="text-[13px] text-[#8b9cb3] mt-1">
+            <p className="text-[12px] text-[#8b9cb3] mt-0.5">
               Organisez vos emails et taches par projet avec une reference
               unique.
             </p>

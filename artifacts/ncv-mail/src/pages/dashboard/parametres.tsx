@@ -241,10 +241,10 @@ export default function Parametres() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 max-w-4xl mx-auto w-full">
-        <div className="mb-6">
-          <h1 className="text-xl font-semibold text-white tracking-tight">Parametres</h1>
-          <p className="text-[13px] text-[#8b9cb3] mt-1">Gerez votre compte et les preferences de l'IA.</p>
+      <div className="p-5 max-w-4xl mx-auto w-full">
+        <div className="mb-5">
+          <h1 className="text-[16px] font-semibold text-white tracking-tight">Parametres</h1>
+          <p className="text-[12px] text-[#8b9cb3] mt-0.5">Gerez votre compte et les preferences de l'IA.</p>
         </div>
 
         <div className="space-y-6">

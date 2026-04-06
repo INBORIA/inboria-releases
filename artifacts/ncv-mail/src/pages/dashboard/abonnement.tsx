@@ -117,12 +117,12 @@ export default function Abonnement() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 max-w-6xl mx-auto w-full">
-        <div className="mb-8 text-center max-w-2xl mx-auto">
-          <h1 className="text-2xl font-bold text-white tracking-tight mb-2">
+      <div className="p-5 max-w-6xl mx-auto w-full">
+        <div className="mb-6 text-center max-w-2xl mx-auto">
+          <h1 className="text-xl font-bold text-white tracking-tight mb-1.5">
             Gerez votre abonnement
           </h1>
-          <p className="text-[14px] text-[#8b9cb3]">
+          <p className="text-[12px] text-[#8b9cb3]">
             Choisissez le plan adapte a votre volume d'emails.
           </p>
         </div>

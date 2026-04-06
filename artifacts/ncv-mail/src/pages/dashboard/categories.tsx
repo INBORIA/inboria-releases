@@ -156,11 +156,11 @@ export default function Categories() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 max-w-5xl mx-auto w-full">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+      <div className="p-5 max-w-5xl mx-auto w-full">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
-            <h1 className="text-xl font-semibold text-white tracking-tight">Categories de classement</h1>
-            <p className="text-[13px] text-[#8b9cb3] mt-1">Gerez les dossiers dans lesquels l'IA classe vos emails.</p>
+            <h1 className="text-[16px] font-semibold text-white tracking-tight">Categories de classement</h1>
+            <p className="text-[12px] text-[#8b9cb3] mt-0.5">Gerez les dossiers dans lesquels l'IA classe vos emails.</p>
           </div>
           
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>

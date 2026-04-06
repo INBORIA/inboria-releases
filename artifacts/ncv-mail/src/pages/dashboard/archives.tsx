@@ -13,23 +13,33 @@ import {
 } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Archive, Clock, Inbox, ArrowLeft, Trash2, RotateCcw, ChevronRight, FolderOpen, Sparkles } from "lucide-react";
+import { Archive, Clock, ArrowLeft, Trash2, RotateCcw, ChevronRight, FolderOpen, Sparkles } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
+const PRIORITY_BAR_COLORS: Record<string, string> = {
+  urgent: "bg-red-500",
+  moyen: "bg-amber-500",
+  faible: "bg-emerald-500",
+};
+
+const PRIORITY_BADGE_STYLES: Record<string, { bg: string; text: string; border: string; label: string }> = {
+  urgent: { bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/20", label: "Urgent" },
+  moyen: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/20", label: "Moyen" },
+  faible: { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/20", label: "Faible" },
+};
+
 function PriorityBadge({ priority }: { priority: string }) {
-  if (priority === "urgent") {
-    return <Badge className="bg-red-500/15 text-red-400 border-red-500/20 text-[11px] font-medium px-2 py-0.5">Urgent</Badge>;
-  }
-  if (priority === "moyen") {
-    return <Badge className="bg-amber-500/15 text-amber-400 border-amber-500/20 text-[11px] font-medium px-2 py-0.5">Moyen</Badge>;
-  }
-  return <Badge className="bg-emerald-500/15 text-emerald-400 border-emerald-500/20 text-[11px] font-medium px-2 py-0.5">Faible</Badge>;
+  const ps = PRIORITY_BADGE_STYLES[priority] || PRIORITY_BADGE_STYLES.faible;
+  return (
+    <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border ${ps.bg} ${ps.text} ${ps.border}`}>
+      {ps.label}
+    </span>
+  );
 }
 
 const categoryColors = [
@@ -54,16 +64,18 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
   categories: any[];
   projects: any[];
 }) {
+  const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
+
   return (
     <div className="flex flex-col h-full">
-      <div className="flex items-center gap-3 mb-5">
+      <div className="flex items-center gap-3 mb-4">
         <Button
           variant="ghost"
           size="sm"
           onClick={onBack}
-          className="h-8 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
+          className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
         >
-          <ArrowLeft className="w-4 h-4 mr-1" />
+          <ArrowLeft className="w-3.5 h-3.5 mr-1" />
           Retour
         </Button>
         <div className="flex-1" />
@@ -71,102 +83,107 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
       </div>
 
       <div className="bg-card rounded-lg border border-border overflow-hidden">
-        <div className="p-5 border-b border-border">
-          <h2 className="text-lg font-semibold text-white mb-3">{email.subject}</h2>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm">
-                {(email.sender || "?")[0].toUpperCase()}
+        <div className="flex">
+          <div className={`w-1 shrink-0 ${barColor}`} />
+          <div className="flex-1 min-w-0">
+            <div className="p-4 border-b border-border">
+              <h2 className="text-[15px] font-semibold text-white mb-2.5">{email.subject}</h2>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-[12px]">
+                    {(email.sender || "?")[0].toUpperCase()}
+                  </div>
+                  <div>
+                    <div className="text-[12px] font-medium text-white">{email.sender}</div>
+                    {email.senderEmail && (
+                      <div className="text-[10px] text-[#8b9cb3]">{email.senderEmail}</div>
+                    )}
+                  </div>
+                </div>
+                <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1">
+                  <Clock className="w-3 h-3" />
+                  {format(new Date(email.createdAt), "d MMMM yyyy a HH:mm", { locale: fr })}
+                </span>
               </div>
-              <div>
-                <div className="text-[13px] font-medium text-white">{email.sender}</div>
-                {email.senderEmail && (
-                  <div className="text-[11px] text-[#8b9cb3]">{email.senderEmail}</div>
-                )}
+            </div>
+
+            {email.summary && (
+              <div className="px-4 py-2.5 bg-primary/[0.06] border-b border-border">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <Sparkles className="w-3 h-3 text-primary" />
+                  <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Resume IA</span>
+                </div>
+                <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{email.summary}</p>
               </div>
-            </div>
-            <span className="text-[11px] text-[#8b9cb3] flex items-center gap-1">
-              <Clock className="w-3 h-3" />
-              {format(new Date(email.createdAt), "d MMMM yyyy a HH:mm", { locale: fr })}
-            </span>
-          </div>
-        </div>
+            )}
 
-        {email.summary && (
-          <div className="px-5 py-3 bg-primary/[0.06] border-b border-border">
-            <div className="flex items-center gap-2 mb-1">
-              <Sparkles className="w-3.5 h-3.5 text-primary" />
-              <span className="text-[11px] font-medium text-primary uppercase tracking-wider">Resume IA</span>
+            <div className="p-4">
+              <EmailBodyRenderer body={email.body} />
             </div>
-            <p className="text-[13px] text-[#8b9cb3] leading-relaxed">{email.summary}</p>
-          </div>
-        )}
 
-        <div className="p-5">
-          <EmailBodyRenderer body={email.body} />
-        </div>
-
-        <div className="px-5 py-4 border-t border-border">
-          <div className="flex items-center gap-2 mb-3">
-            <Button
-              size="sm"
-              className="gap-1.5"
-              onClick={() => onRestore(email.id)}
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              Restaurer dans l'inbox
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-1.5 bg-transparent border-border text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.08]"
-              onClick={() => onDelete(email.id)}
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              Supprimer
-            </Button>
-          </div>
-          <div className="flex items-center gap-3 flex-wrap">
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] text-[#8b9cb3] uppercase tracking-wider">Priorite:</span>
-              <Select value={email.priority} onValueChange={(val) => onUpdatePriority(email.id, val)}>
-                <SelectTrigger className="w-[110px] h-7 bg-card border-border text-[12px] text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-border">
-                  <SelectItem value="urgent">Urgent</SelectItem>
-                  <SelectItem value="moyen">Moyen</SelectItem>
-                  <SelectItem value="faible">Faible</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] text-[#8b9cb3] uppercase tracking-wider">Categorie:</span>
-              <Select value={email.categoryId?.toString() || "none"} onValueChange={(val) => onUpdateCategory(email.id, val)}>
-                <SelectTrigger className="w-[140px] h-7 bg-card border-border text-[12px] text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-border">
-                  <SelectItem value="none">Non classe</SelectItem>
-                  {categories.map((cat: any) => (
-                    <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[11px] text-[#8b9cb3] uppercase tracking-wider">Projet:</span>
-              <Select value={email.projectId || "none"} onValueChange={(val) => onUpdateProject(email.id, val)}>
-                <SelectTrigger className="w-[160px] h-7 bg-card border-border text-[12px] text-white">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-border">
-                  <SelectItem value="none">Aucun projet</SelectItem>
-                  {projects.map((p: any) => (
-                    <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="px-4 py-3 border-t border-border">
+              <div className="flex items-center gap-1.5 mb-2.5">
+                <Button
+                  size="sm"
+                  className="gap-1.5 h-7 text-[11px]"
+                  onClick={() => onRestore(email.id)}
+                >
+                  <RotateCcw className="w-3 h-3" />
+                  Restaurer dans l'inbox
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.08]"
+                  onClick={() => onDelete(email.id)}
+                >
+                  <Trash2 className="w-3 h-3" />
+                  Supprimer
+                </Button>
+              </div>
+              <div className="flex items-center gap-2.5 flex-wrap">
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Priorite:</span>
+                  <Select value={email.priority} onValueChange={(val) => onUpdatePriority(email.id, val)}>
+                    <SelectTrigger className="w-[100px] h-6 bg-card border-border text-[11px] text-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border">
+                      <SelectItem value="urgent">Urgent</SelectItem>
+                      <SelectItem value="moyen">Moyen</SelectItem>
+                      <SelectItem value="faible">Faible</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Categorie:</span>
+                  <Select value={email.categoryId?.toString() || "none"} onValueChange={(val) => onUpdateCategory(email.id, val)}>
+                    <SelectTrigger className="w-[130px] h-6 bg-card border-border text-[11px] text-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border">
+                      <SelectItem value="none">Non classe</SelectItem>
+                      {categories.map((cat: any) => (
+                        <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Projet:</span>
+                  <Select value={email.projectId || "none"} onValueChange={(val) => onUpdateProject(email.id, val)}>
+                    <SelectTrigger className="w-[140px] h-6 bg-card border-border text-[11px] text-white">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border">
+                      <SelectItem value="none">Aucun projet</SelectItem>
+                      {projects.map((p: any) => (
+                        <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -276,7 +293,7 @@ export default function Archives() {
   if (selectedEmail) {
     return (
       <DashboardLayout>
-        <div className="p-6 max-w-[900px] mx-auto w-full">
+        <div className="p-5 max-w-[900px] mx-auto w-full">
           <ArchivedEmailDetail
             email={selectedEmail}
             onBack={() => setSelectedEmailId(null)}
@@ -305,69 +322,74 @@ export default function Archives() {
   if (selectedCategory && selectedEmails) {
     return (
       <DashboardLayout>
-        <div className="p-6 max-w-[900px] mx-auto w-full">
-          <div className="flex items-center gap-3 mb-5">
+        <div className="p-5 max-w-[900px] mx-auto w-full">
+          <div className="flex items-center gap-3 mb-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => setSelectedCategory(null)}
-              className="h-8 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
+              className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
             >
-              <ArrowLeft className="w-4 h-4 mr-1" />
+              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
               Archives
             </Button>
             <div className="flex-1" />
-            <span className="text-[13px] text-[#8b9cb3]">{selectedEmails.length} email(s)</span>
+            <span className="text-[11px] text-[#8b9cb3]">{selectedEmails.length} email(s)</span>
           </div>
 
-          <h2 className="text-lg font-semibold text-white mb-4">{selectedCategory}</h2>
+          <h2 className="text-[15px] font-semibold text-white mb-3">{selectedCategory}</h2>
 
-          <div className="space-y-2">
+          <div className="space-y-1">
             {selectedEmails.length === 0 ? (
               <div className="text-center py-12 rounded-lg border border-border border-dashed bg-card/50">
-                <FolderOpen className="mx-auto h-10 w-10 text-[#8b9cb3]/40 mb-3" />
-                <p className="text-[13px] text-[#8b9cb3]">Aucun email dans cette categorie</p>
+                <FolderOpen className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
+                <p className="text-[12px] text-[#8b9cb3]">Aucun email dans cette categorie</p>
               </div>
             ) : (
-              selectedEmails.map((email) => (
-                <div
-                  key={email.id}
-                  className="group bg-card rounded-lg border border-border p-4 hover:border-primary/30 transition-colors cursor-pointer"
-                  onClick={() => setSelectedEmailId(email.id)}
-                >
-                  <div className="flex items-start justify-between gap-3">
-                    <div className="flex items-center gap-3 flex-1 min-w-0">
-                      <div className="w-9 h-9 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-sm shrink-0">
+              selectedEmails.map((email) => {
+                const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
+                return (
+                  <div
+                    key={email.id}
+                    className="group flex items-stretch rounded-lg border border-border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden"
+                    onClick={() => setSelectedEmailId(email.id)}
+                  >
+                    <div className={`w-1 shrink-0 ${barColor}`} />
+                    <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
+                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-[12px] shrink-0 mt-0.5">
                         {(email.sender || "?")[0].toUpperCase()}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
-                          <span className="font-semibold text-[13px] text-white truncate">{email.sender}</span>
-                          <PriorityBadge priority={email.priority} />
+                          <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>
                         </div>
-                        <h3 className="text-[13px] text-white/80 truncate">{email.subject}</h3>
+                        <h3 className="text-[12px] text-white/80 truncate">{email.subject}</h3>
                         {email.summary && (
-                          <p className="text-[12px] text-[#8b9cb3] mt-1 line-clamp-1">{email.summary}</p>
+                          <div className="flex items-center gap-1 mt-0.5">
+                            <Sparkles className="w-3 h-3 text-primary shrink-0" />
+                            <p className="text-[11px] text-[#8b9cb3] line-clamp-1">{email.summary}</p>
+                          </div>
                         )}
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2 shrink-0">
-                      <span className="text-[11px] text-[#8b9cb3] flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {format(new Date(email.createdAt), "d MMM HH:mm", { locale: fr })}
-                      </span>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleRestore(email.id); }}
-                        className="opacity-0 group-hover:opacity-100 transition-opacity p-1.5 rounded-md hover:bg-white/[0.08] text-[#8b9cb3] hover:text-white"
-                        title="Restaurer"
-                      >
-                        <RotateCcw className="w-4 h-4" />
-                      </button>
-                      <ChevronRight className="w-4 h-4 text-[#8b9cb3]/40 group-hover:text-[#8b9cb3] transition-colors" />
+                      <div className="flex items-center gap-2 shrink-0 self-center">
+                        <PriorityBadge priority={email.priority} />
+                        <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1 hidden sm:flex">
+                          <Clock className="w-3 h-3" />
+                          {format(new Date(email.createdAt), "d MMM HH:mm", { locale: fr })}
+                        </span>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleRestore(email.id); }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-white/[0.08] text-[#8b9cb3] hover:text-white"
+                          title="Restaurer"
+                        >
+                          <RotateCcw className="w-3.5 h-3.5" />
+                        </button>
+                        <ChevronRight className="w-3.5 h-3.5 text-[#8b9cb3]/40 group-hover:text-[#8b9cb3] transition-colors" />
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))
+                );
+              })
             )}
           </div>
         </div>
@@ -377,48 +399,48 @@ export default function Archives() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 max-w-5xl mx-auto w-full">
-        <div className="mb-6">
-          <h1 className="text-xl font-semibold text-white tracking-tight">Archives</h1>
-          <p className="text-[13px] text-[#8b9cb3] mt-1">
+      <div className="p-5 max-w-5xl mx-auto w-full">
+        <div className="mb-5">
+          <h1 className="text-[16px] font-semibold text-white tracking-tight">Archives</h1>
+          <p className="text-[12px] text-[#8b9cb3] mt-0.5">
             Emails classes automatiquement par l'IA. {archivedEmails.length} email(s) archives.
           </p>
         </div>
 
         {emailsLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             {Array(6).fill(0).map((_, i) => (
-              <div key={i} className="bg-card rounded-lg border border-border p-5">
-                <Skeleton className="w-8 h-8 rounded-lg bg-white/5 mb-3" />
-                <Skeleton className="h-5 w-3/4 mb-2 bg-white/5" />
-                <Skeleton className="h-4 w-1/2 bg-white/5" />
+              <div key={i} className="bg-card rounded-lg border border-border p-4">
+                <Skeleton className="w-7 h-7 rounded-lg bg-white/5 mb-2" />
+                <Skeleton className="h-4 w-3/4 mb-1.5 bg-white/5" />
+                <Skeleton className="h-3 w-1/2 bg-white/5" />
               </div>
             ))}
           </div>
         ) : archivedEmails.length === 0 ? (
-          <div className="text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
-            <Archive className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
-            <h3 className="text-sm font-medium text-white mb-1">Aucune archive</h3>
-            <p className="text-[13px] text-[#8b9cb3]">Les emails archives apparaitront ici.</p>
+          <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
+            <Archive className="mx-auto h-8 w-8 text-[#8b9cb3]/20 mb-2" />
+            <h3 className="text-[13px] font-medium text-white mb-1">Aucune archive</h3>
+            <p className="text-[12px] text-[#8b9cb3]">Les emails archives apparaitront ici.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
             {categoryList.map((catName, i) => {
               const count = catName === "Non classe" ? uncategorized.length : emailsByCategory[catName]?.length || 0;
               return (
                 <div
                   key={catName}
-                  className="bg-card rounded-lg border border-border p-5 hover:border-primary/30 transition-colors cursor-pointer group"
+                  className="bg-card rounded-lg border border-border p-4 hover:border-primary/30 transition-colors cursor-pointer group"
                   onClick={() => setSelectedCategory(catName)}
                 >
-                  <div className="flex justify-between items-start mb-3">
-                    <div className={`w-9 h-9 rounded-lg flex items-center justify-center ${categoryColors[i % categoryColors.length]}`}>
-                      <FolderOpen className="w-4 h-4" />
+                  <div className="flex justify-between items-start mb-2">
+                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${categoryColors[i % categoryColors.length]}`}>
+                      <FolderOpen className="w-3.5 h-3.5" />
                     </div>
-                    <ChevronRight className="w-4 h-4 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <ChevronRight className="w-3.5 h-3.5 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity" />
                   </div>
-                  <h3 className="text-[14px] font-semibold text-white mb-1">{catName}</h3>
-                  <div className="flex items-center text-[12px] text-[#8b9cb3] bg-white/[0.04] px-2.5 py-1 rounded-md inline-flex w-fit">
+                  <h3 className="text-[13px] font-semibold text-white mb-0.5">{catName}</h3>
+                  <div className="flex items-center text-[11px] text-[#8b9cb3] bg-white/[0.04] px-2 py-0.5 rounded-md inline-flex w-fit">
                     <span className="text-primary font-medium mr-1">{count}</span>
                     email{count !== 1 ? "s" : ""}
                   </div>

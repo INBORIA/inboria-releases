@@ -33,10 +33,10 @@ const CYCLE_TIME = DONE_TIME + 3000;
 
 type Phase = "inbox" | "sorting" | "done";
 
-const PRIORITY_STYLES = {
-  urgent: { bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/20", label: "Urgent" },
-  moyen: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/20", label: "Moyen" },
-  faible: { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/20", label: "Faible" },
+const PRIORITY_BAR_COLORS = {
+  urgent: "bg-red-500",
+  moyen: "bg-amber-500",
+  faible: "bg-emerald-500",
 };
 
 function useReducedMotion() {
@@ -235,24 +235,25 @@ export function AnimatedDemo() {
               </div>
             </div>
 
-            <div className="flex-1 px-3 sm:px-4 py-2 space-y-1.5 overflow-hidden">
+            <div className="flex-1 px-3 sm:px-4 py-2 space-y-1 overflow-hidden">
               {DEMO_EMAILS.map((email, i) => {
                 const visible = i < visibleEmails;
                 const sorted = i < sortedCount;
-                const ps = PRIORITY_STYLES[email.priority];
+                const barColor = PRIORITY_BAR_COLORS[email.priority];
 
                 return (
                   <div
                     key={i}
-                    className={`group rounded-lg border transition-all duration-500 ${
+                    className={`flex items-stretch rounded-lg border overflow-hidden transition-all duration-500 ${
                       !visible
                         ? "opacity-0 translate-y-4 border-transparent"
                         : sorted
                         ? "opacity-100 bg-[#141c2b] border-[#1f2937]/60"
                         : "opacity-100 bg-[#141c2b]/40 border-[#1f2937]/30"
-                    } px-3 py-2.5`}
+                    }`}
                   >
-                    <div className="flex items-start gap-2.5">
+                    <div className={`w-1 shrink-0 transition-all duration-500 ${sorted ? barColor : "bg-transparent"}`} />
+                    <div className="flex items-start gap-2 flex-1 min-w-0 px-2.5 py-2">
                       <div className="w-7 h-7 rounded-full bg-[#2d7dd2]/20 flex items-center justify-center text-[#2d7dd2] font-semibold text-[11px] shrink-0 mt-0.5">
                         {email.sender[0]}
                       </div>
@@ -271,12 +272,7 @@ export function AnimatedDemo() {
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
-                        {sorted && (
-                          <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium border ${ps.bg} ${ps.text} ${ps.border} transition-all duration-300`}>
-                            {ps.label}
-                          </span>
-                        )}
+                      <div className="flex items-center gap-1.5 shrink-0">
                         <span className="text-[9px] text-[#8b9cb3] whitespace-nowrap items-center gap-0.5 hidden sm:flex">
                           <Clock className="w-2.5 h-2.5" />
                           {i < 2 ? "Auj." : i < 4 ? "Hier" : "3 avr."}
@@ -293,11 +289,11 @@ export function AnimatedDemo() {
               <div className="px-3 sm:px-4 pb-3 pt-1">
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { label: "Urgents", count: "2", color: "text-red-400", bg: "bg-red-500/10 border-red-500/20" },
-                    { label: "Tries par IA", count: String(EMAIL_COUNT), color: "text-emerald-400", bg: "bg-emerald-500/10 border-emerald-500/20" },
-                    { label: "Temps epargne", count: "12 min", color: "text-[#2d7dd2]", bg: "bg-[#2d7dd2]/10 border-[#2d7dd2]/20" },
+                    { label: "Urgents", count: "2", color: "text-red-400", borderColor: "border-l-red-500" },
+                    { label: "Tries par IA", count: String(EMAIL_COUNT), color: "text-emerald-400", borderColor: "border-l-emerald-500" },
+                    { label: "Temps epargne", count: "12 min", color: "text-[#2d7dd2]", borderColor: "border-l-[#2d7dd2]" },
                   ].map((stat) => (
-                    <div key={stat.label} className={`text-center py-2 px-1 rounded-lg border ${stat.bg}`}>
+                    <div key={stat.label} className={`text-center py-2 px-1 rounded-lg border border-[#1f2937] border-l-2 ${stat.borderColor} bg-[#141c2b]`}>
                       <div className={`text-[13px] font-bold ${stat.color}`}>{stat.count}</div>
                       <div className="text-[9px] text-[#8b9cb3]">{stat.label}</div>
                     </div>

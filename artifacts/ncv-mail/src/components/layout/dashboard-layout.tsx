@@ -73,14 +73,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
-      <div className="flex h-20 shrink-0 items-center px-5">
-        <div className="flex items-center gap-3">
-          <img src={ncvLogo} alt="NCV" className="h-28 w-28 object-contain" />
-          <span className="font-semibold text-[15px] tracking-tight text-white">NCV Mail</span>
+      <div className="flex h-14 shrink-0 items-center px-4 border-b border-[#1f2937]">
+        <div className="flex items-center gap-2.5">
+          <img src={ncvLogo} alt="NCV" className="h-8 w-8 object-contain" />
+          <span className="font-semibold text-[13px] tracking-tight text-white">NCV Mail</span>
         </div>
       </div>
       
-      <nav className="flex-1 px-3 py-3 space-y-0.5">
+      <nav className="flex-1 px-2 py-2.5 space-y-0.5">
         {navigation.map((item) => {
           const isActive = location === item.href;
           return (
@@ -91,14 +91,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 isActive
                   ? "bg-[#1e3a5f] text-primary"
                   : "text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]",
-                "group flex items-center gap-x-3 rounded-lg px-3 py-2 text-[13px] font-medium transition-colors"
+                "group flex items-center gap-x-2.5 rounded-md px-2.5 py-[7px] text-[12px] font-medium transition-colors"
               )}
               onClick={() => setMobileMenuOpen(false)}
             >
               <item.icon
                 className={cn(
                   isActive ? "text-primary" : "text-[#8b9cb3] group-hover:text-white",
-                  "h-[18px] w-[18px] shrink-0 transition-colors"
+                  "h-4 w-4 shrink-0 transition-colors"
                 )}
                 aria-hidden="true"
               />
@@ -108,13 +108,13 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         })}
       </nav>
 
-      <div className="p-3 mt-auto border-t border-[#1f2937]">
-        <div className="px-3 py-2.5 mb-3">
-          <div className="flex justify-between items-center mb-2">
-            <span className="text-[11px] font-medium text-[#8b9cb3] uppercase tracking-wider">
+      <div className="p-2.5 mt-auto border-t border-[#1f2937]">
+        <div className="px-2.5 py-2 mb-2">
+          <div className="flex justify-between items-center mb-1.5">
+            <span className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">
               Quota emails
             </span>
-            <span className="text-[11px] font-medium text-white">
+            <span className="text-[10px] font-medium text-white">
               {(user as any).emailsUsed}/{(user as any).emailsQuota}
             </span>
           </div>
@@ -127,15 +127,15 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </div>
         
         <div className="flex items-center justify-between px-2">
-          <div className="flex items-center gap-2.5">
-            <div className="h-8 w-8 rounded-full bg-[#1e3a5f] flex items-center justify-center text-xs font-semibold text-primary">
+          <div className="flex items-center gap-2">
+            <div className="h-7 w-7 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[11px] font-semibold text-primary">
               {((user as any).fullName || "U").charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col">
-              <span className="text-[13px] font-medium text-white truncate max-w-[120px]">
+              <span className="text-[12px] font-medium text-white truncate max-w-[100px]">
                 {(user as any).fullName || "Utilisateur"}
               </span>
-              <span className="text-[11px] text-[#8b9cb3] capitalize">
+              <span className="text-[10px] text-[#8b9cb3] capitalize">
                 {(user as any).plan}
               </span>
             </div>
@@ -145,10 +145,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] h-8 w-8"
+                className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] h-7 w-7"
                 onClick={handleLogout}
               >
-                <LogOut className="h-4 w-4" />
+                <LogOut className="h-3.5 w-3.5" />
               </Button>
             </TooltipTrigger>
             <TooltipContent side="top">
@@ -162,38 +162,38 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-background flex">
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-[240px] lg:flex-col">
+      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-[200px] lg:flex-col">
         <div className="flex grow flex-col overflow-y-auto bg-sidebar border-r border-[#1f2937]">
           <SidebarContent />
         </div>
       </div>
 
-      <div className="lg:pl-[240px] flex flex-col flex-1 min-w-0">
-        <div className="sticky top-0 z-10 flex h-14 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4 lg:hidden">
+      <div className="lg:pl-[200px] flex flex-col flex-1 min-w-0">
+        <div className="sticky top-0 z-10 flex h-12 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4 lg:hidden">
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-white">
+              <Button variant="ghost" size="icon" className="text-white h-8 w-8">
                 <span className="sr-only">Ouvrir le menu</span>
                 <Menu className="h-5 w-5" aria-hidden="true" />
               </Button>
             </SheetTrigger>
-            <SheetContent side="left" className="p-0 bg-sidebar w-[240px] border-r border-[#1f2937]">
+            <SheetContent side="left" className="p-0 bg-sidebar w-[200px] border-r border-[#1f2937]">
               <SidebarContent />
             </SheetContent>
           </Sheet>
           <div className="flex flex-1 items-center gap-2">
-            <img src={ncvLogo} alt="NCV" className="h-8 w-8 object-contain" />
-            <span className="font-semibold text-[15px] text-white">NCV Mail</span>
+            <img src={ncvLogo} alt="NCV" className="h-7 w-7 object-contain" />
+            <span className="font-semibold text-[13px] text-white">NCV Mail</span>
           </div>
         </div>
 
         <main className="flex-1">
           {isBlocked && location !== "/dashboard/abonnement" && (
-            <div className="bg-red-500/10 border-b border-red-500/20 px-6 py-4">
+            <div className="bg-red-500/10 border-b border-red-500/20 px-5 py-3">
               <div className="flex items-center gap-3 max-w-4xl mx-auto">
-                <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
+                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
                 <div className="flex-1">
-                  <p className="text-[13px] font-medium text-red-400">
+                  <p className="text-[12px] font-medium text-red-400">
                     {isExpired
                       ? "Votre abonnement a expire"
                       : "Votre essai gratuit est termine"}
@@ -205,7 +205,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   </p>
                 </div>
                 <Link href="/dashboard/abonnement">
-                  <Button size="sm" className="shrink-0">
+                  <Button size="sm" className="shrink-0 h-7 text-[12px]">
                     Choisir un plan
                   </Button>
                 </Link>

@@ -47,6 +47,10 @@ Dark-only theme inspired by Linear/Superhuman:
 - **Active sidebar**: `#1e3a5f` (HSL 215 45% 18%)
 - **Font**: Inter
 - Priority badges: Red (urgent), Amber (moyen), Emerald (faible)
+- **Sidebar**: Compact 200px width, 12px nav items, subtle active highlight
+- **Email rows**: Left color bar (1px wide, priority color), circular blue avatar, Sparkles AI summary line, inline category/project badges
+- **Inbox header**: Search bar + Autopilot status indicator + priority filter buttons (pill-style)
+- **Stats cards**: Colored borders matching priority (red/amber/emerald)
 
 ## Email Integration
 
