@@ -2,21 +2,10 @@ import { Router, type IRouter, type Request } from "express";
 import Stripe from "stripe";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { getStripeClient } from "../lib/stripe";
 
 interface RawBodyRequest extends Request {
   rawBody?: Buffer;
-}
-
-let _stripe: Stripe | null = null;
-function getStripe(): Stripe {
-  if (!_stripe) {
-    const key = process.env["STRIPE_SECRET_KEY"];
-    if (!key) {
-      throw new Error("STRIPE_SECRET_KEY is not configured");
-    }
-    _stripe = new Stripe(key);
-  }
-  return _stripe;
 }
 
 function getFrontendUrl(): string {
@@ -54,6 +43,8 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
       return;
     }
 
+    const stripe = await getStripeClient();
+
     const { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("id, stripe_customer_id, stripe_subscription_id")
@@ -68,7 +59,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
     const quantity = planId === "business" ? (seats || 1) : 1;
 
     if (profile.stripe_subscription_id) {
-      const subscription = await getStripe().subscriptions.retrieve(profile.stripe_subscription_id);
+      const subscription = await stripe.subscriptions.retrieve(profile.stripe_subscription_id);
 
       if (subscription.status === "active" || subscription.status === "trialing") {
         const subscriptionItem = subscription.items.data[0];
@@ -77,7 +68,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
           return;
         }
 
-        await getStripe().subscriptions.update(profile.stripe_subscription_id, {
+        await stripe.subscriptions.update(profile.stripe_subscription_id, {
           items: [
             {
               id: subscriptionItem.id,
@@ -107,7 +98,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
       const { data: userData } = await supabaseAdmin.auth.getUser(token);
       const userEmail = userData.user?.email || "";
 
-      const customer = await getStripe().customers.create({
+      const customer = await stripe.customers.create({
         email: userEmail,
         metadata: { userId: profile.id },
       });
@@ -121,7 +112,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
 
     const frontendUrl = getFrontendUrl();
 
-    const session = await getStripe().checkout.sessions.create({
+    const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: "subscription",
       line_items: [
@@ -148,9 +139,11 @@ router.post("/stripe/webhook", async (req: RawBodyRequest, res): Promise<void> =
     const sig = req.headers["stripe-signature"] as string;
     const webhookSecret = process.env["STRIPE_WEBHOOK_SECRET"] || "";
 
+    const stripe = await getStripeClient();
+
     let event: Stripe.Event;
     try {
-      event = getStripe().webhooks.constructEvent(
+      event = stripe.webhooks.constructEvent(
         req.rawBody!,
         sig,
         webhookSecret
@@ -180,7 +173,7 @@ router.post("/stripe/webhook", async (req: RawBodyRequest, res): Promise<void> =
           };
 
           if (subscriptionId) {
-            const subscription = await getStripe().subscriptions.retrieve(subscriptionId as string);
+            const subscription = await stripe.subscriptions.retrieve(subscriptionId as string);
             const quantity = subscription.items.data[0]?.quantity || 1;
             updates.seats = quantity;
           }
@@ -254,6 +247,8 @@ router.post("/stripe/webhook", async (req: RawBodyRequest, res): Promise<void> =
 
 router.get("/stripe/portal", requireAuth, async (req, res): Promise<void> => {
   try {
+    const stripe = await getStripeClient();
+
     const { data: profile } = await supabaseAdmin
       .from("profiles")
       .select("stripe_customer_id")
@@ -266,7 +261,7 @@ router.get("/stripe/portal", requireAuth, async (req, res): Promise<void> => {
     }
 
     const frontendUrl = getFrontendUrl();
-    const portalSession = await getStripe().billingPortal.sessions.create({
+    const portalSession = await stripe.billingPortal.sessions.create({
       customer: profile.stripe_customer_id,
       return_url: `${frontendUrl}/dashboard/abonnement`,
     });
