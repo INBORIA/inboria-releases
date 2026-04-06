@@ -202,6 +202,15 @@ export default function EmailDetailScreen() {
             <Text style={[s.actionLabel, { color: colors.mutedForeground }]}>Archiver</Text>
           </TouchableOpacity>
         </View>
+
+        <TouchableOpacity
+          style={[s.backBottomBtn, { borderColor: colors.border }]}
+          onPress={() => router.back()}
+          activeOpacity={0.7}
+        >
+          <MaterialCommunityIcons name="arrow-left" size={16} color={colors.mutedForeground} />
+          <Text style={[s.backBottomLabel, { color: colors.mutedForeground }]}>Retour</Text>
+        </TouchableOpacity>
       </ScrollView>
     </View>
   );
@@ -283,4 +292,17 @@ const s = StyleSheet.create({
     borderWidth: 1,
   },
   actionLabel: { fontSize: 13, fontFamily: "Inter_500Medium" },
+
+  backBottomBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+    marginTop: 16,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    borderWidth: 1,
+    alignSelf: "flex-start",
+  },
+  backBottomLabel: { fontSize: 13, fontFamily: "Inter_500Medium" },
 });
