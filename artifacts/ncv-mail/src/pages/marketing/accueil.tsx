@@ -1,6 +1,5 @@
 import { Link } from "wouter";
 import { MarketingLayout } from "@/components/layout/marketing-layout";
-import { AnimatedDemo } from "@/components/marketing/animated-demo";
 import { Mail, Tags, Zap, Clock, Eye, Shield } from "lucide-react";
 
 const steps = [
@@ -83,7 +82,6 @@ export default function Accueil() {
             <div className="absolute -inset-px rounded-xl bg-gradient-to-b from-[#2d7dd2]/10 via-transparent to-transparent pointer-events-none" />
           </div>
 
-          <AnimatedDemo />
         </div>
       </section>
 
