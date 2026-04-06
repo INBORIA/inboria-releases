@@ -16,6 +16,7 @@ import {
   useGetProfile,
   useUpdateProfile,
   getGetProfileQueryKey,
+  UpdateProfileBodyAiLanguage,
 } from "@workspace/api-client-react";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
@@ -46,10 +47,10 @@ function useEmailConnections() {
   });
 }
 
-const AI_LANGUAGES = [
-  { id: "fr", label: "Francais" },
-  { id: "en", label: "English" },
-  { id: "nl", label: "Nederlands" },
+const AI_LANGUAGES: { id: UpdateProfileBodyAiLanguage; label: string }[] = [
+  { id: UpdateProfileBodyAiLanguage.fr, label: "Francais" },
+  { id: UpdateProfileBodyAiLanguage.en, label: "English" },
+  { id: UpdateProfileBodyAiLanguage.nl, label: "Nederlands" },
 ];
 
 export default function ParametresScreen() {
@@ -63,14 +64,14 @@ export default function ParametresScreen() {
   const { data: connections, isLoading: connectionsLoading, isError: connectionsError } = useEmailConnections();
 
   const [fullName, setFullName] = useState("");
-  const [aiLanguage, setAiLanguage] = useState("fr");
+  const [aiLanguage, setAiLanguage] = useState<UpdateProfileBodyAiLanguage>(UpdateProfileBodyAiLanguage.fr);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
     if (profile) {
       setFullName(profile.fullName || "");
-      if (profile.aiLanguage) setAiLanguage(profile.aiLanguage);
+      if (profile.aiLanguage) setAiLanguage(profile.aiLanguage as UpdateProfileBodyAiLanguage);
     }
   }, [profile]);
 
@@ -81,7 +82,7 @@ export default function ParametresScreen() {
       {
         data: {
           fullName,
-          aiLanguage: aiLanguage as any,
+          aiLanguage,
         },
       },
       {
