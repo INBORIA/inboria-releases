@@ -139,7 +139,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
           className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-          Retour a l'inbox
+          Retour
         </Button>
         <div className="flex-1" />
         <PriorityBadge priority={email.priority} />
@@ -361,7 +361,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
           className="gap-1.5 h-8 text-[12px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          Retour a l'inbox
+          Retour
         </Button>
       </div>
     </div>
