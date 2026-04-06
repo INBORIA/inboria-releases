@@ -15,7 +15,7 @@ function LogoIcon() {
 }
 
 const hStyles = StyleSheet.create({
-  logo: { width: 38, height: 38, marginLeft: 8 },
+  logo: { width: 48, height: 48, marginLeft: 8 },
 });
 
 export default function TabLayout() {
