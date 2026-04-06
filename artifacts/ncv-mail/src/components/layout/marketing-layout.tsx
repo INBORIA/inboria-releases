@@ -5,7 +5,7 @@ import { Menu, X } from "lucide-react";
 
 const navLinks = [
   { label: "Accueil", href: "/" },
-  { label: "Fonctionnalites", href: "/fonctionnalites" },
+  { label: "Fonctionnalités", href: "/fonctionnalites" },
   { label: "Tarifs", href: "/tarifs" },
 ];
 
@@ -103,19 +103,19 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
             </div>
 
             <div>
-              <h4 className="text-[13px] font-semibold text-white mb-3">Informations legales</h4>
+              <h4 className="text-[13px] font-semibold text-white mb-3">Informations légales</h4>
               <div className="space-y-2">
                 <Link href="/mentions-legales" className="block text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
-                  Mentions legales
+                  Mentions légales
                 </Link>
                 <Link href="/confidentialite" className="block text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
-                  Politique de confidentialite
+                  Politique de confidentialité
                 </Link>
                 <Link href="/conditions" className="block text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
                   Conditions d'utilisation
                 </Link>
                 <Link href="/login" className="block text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
-                  Acceder a mon compte
+                  Accéder à mon compte
                 </Link>
               </div>
             </div>
@@ -129,7 +129,7 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="mt-8 pt-6 border-t border-[#1f2937] text-center">
-            <p className="text-[12px] text-[#8b9cb3]">&copy; 2026 NCV Mail. Tous droits reserves.</p>
+            <p className="text-[12px] text-[#8b9cb3]">&copy; 2026 NCV Mail. Tous droits réservés.</p>
           </div>
         </div>
       </footer>
