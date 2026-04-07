@@ -350,9 +350,10 @@ async function syncGmailForUser(conn: any): Promise<number> {
       const subject = headers.find((h) => h.name === "Subject")?.value || "(pas de sujet)";
       const emailBody = extractGmailBody(fullMsg.payload) || fullMsg.snippet || "";
 
+      const scopedExternalId = `${conn.id}:${msg.id!}`;
       const saved = await saveEmailWithTriage(
         conn.user_id,
-        msg.id!,
+        scopedExternalId,
         from,
         subject,
         emailBody,
@@ -447,9 +448,10 @@ async function syncOutlookForUser(conn: any): Promise<number> {
       const senderEmail = msg.from?.emailAddress?.address || "Inconnu";
       const senderName = msg.from?.emailAddress?.name || senderEmail;
 
+      const scopedExternalId = `${conn.id}:${msg.id}`;
       const saved = await saveEmailWithTriage(
         conn.user_id,
-        msg.id,
+        scopedExternalId,
         `${senderName} <${senderEmail}>`,
         msg.subject || "(pas de sujet)",
         msg.bodyPreview || "",
@@ -518,7 +520,7 @@ async function syncImapForUser(conn: any): Promise<number> {
       const range = `${startSeq}:*`;
 
       for await (const msg of client.fetch(range, { envelope: true, uid: true, source: true })) {
-        const externalId = `imap_${msg.uid}`;
+        const externalId = `${conn.id}:imap_${msg.uid}`;
         const envelope = msg.envelope;
         const from = envelope.from?.[0];
         const sender = from?.name ? `${from.name} <${from.address}>` : from?.address || "inconnu";

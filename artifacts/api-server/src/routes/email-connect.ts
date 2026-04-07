@@ -536,11 +536,12 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
     let synced = 0;
 
     for (const msg of messageList.messages) {
+      const scopedExternalId = `${conn.id}:${msg.id!}`;
       const { data: existing } = await supabaseAdmin
         .from("emails")
         .select("id")
         .eq("user_id", userId)
-        .eq("external_id", msg.id!)
+        .eq("external_id", scopedExternalId)
         .single();
 
       if (existing) continue;
@@ -598,7 +599,7 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
 
       const { error: insertError } = await supabaseAdmin.from("emails").insert({
         user_id: userId,
-        external_id: msg.id,
+        external_id: scopedExternalId,
         sender: from,
         subject,
         body: emailBody,
@@ -620,7 +621,7 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
           .from("emails")
           .select("id")
           .eq("user_id", userId)
-          .eq("external_id", msg.id!)
+          .eq("external_id", scopedExternalId)
           .single();
         if (insertedEmail) {
           await supabaseAdmin.from("tasks").insert(
@@ -687,11 +688,12 @@ async function syncOutlook(conn: any, userId: string): Promise<number> {
   let synced = 0;
 
   for (const msg of data.value) {
+    const scopedExternalId = `${conn.id}:${msg.id}`;
     const { data: existing } = await supabaseAdmin
       .from("emails")
       .select("id")
       .eq("user_id", userId)
-      .eq("external_id", msg.id)
+      .eq("external_id", scopedExternalId)
       .single();
 
     if (existing) continue;
@@ -701,7 +703,7 @@ async function syncOutlook(conn: any, userId: string): Promise<number> {
 
     await supabaseAdmin.from("emails").insert({
       user_id: userId,
-      external_id: msg.id,
+      external_id: scopedExternalId,
       sender: `${senderName} <${senderEmail}>`,
       subject: msg.subject || "(pas de sujet)",
       body: msg.body?.content ? msg.body.content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() : (msg.bodyPreview || ""),
@@ -753,7 +755,7 @@ async function syncImap(conn: any, userId: string): Promise<number> {
       const range = `${startSeq}:*`;
 
       for await (const msg of client.fetch(range, { envelope: true, uid: true, source: true })) {
-        const externalId = `imap_${msg.uid}`;
+        const externalId = `${conn.id}:imap_${msg.uid}`;
         const { data: existing } = await supabaseAdmin.from("emails").select("id").eq("user_id", userId).eq("external_id", externalId).single();
         if (existing) continue;
 
