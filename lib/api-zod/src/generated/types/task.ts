@@ -7,7 +7,7 @@
  */
 
 export interface Task {
-  id: string;
+  id: number;
   title: string;
   done: boolean;
   /** @nullable */
@@ -16,22 +16,6 @@ export interface Task {
   emailId?: number | null;
   /** @nullable */
   emailSubject?: string | null;
-  /** @nullable */
-  emailSender?: string | null;
-  /** @nullable */
-  emailSenderEmail?: string | null;
-  /** @nullable */
-  emailBody?: string | null;
-  /** @nullable */
-  emailSummary?: string | null;
-  /** @nullable */
-  emailPriority?: string | null;
-  /** @nullable */
-  emailStatus?: string | null;
-  /** @nullable */
-  emailCategoryName?: string | null;
-  /** @nullable */
-  emailCreatedAt?: string | null;
   /** @nullable */
   projectId?: string | null;
   /** @nullable */

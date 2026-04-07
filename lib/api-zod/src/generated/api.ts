@@ -399,6 +399,15 @@ export const ListTasksResponseItem = zod.object({
 export const ListTasksResponse = zod.array(ListTasksResponseItem);
 
 /**
+ * @summary Create a task
+ */
+export const CreateTaskBody = zod.object({
+  title: zod.string(),
+  emailId: zod.number().optional(),
+  projectId: zod.string().optional(),
+});
+
+/**
  * @summary Update task (toggle done)
  */
 export const UpdateTaskParams = zod.object({
@@ -588,6 +597,44 @@ export const DeleteProjectParams = zod.object({
 });
 
 export const DeleteProjectResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary List notes for a project
+ */
+export const ListProjectNotesParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const ListProjectNotesResponseItem = zod.object({
+  id: zod.string(),
+  content: zod.string(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date().optional(),
+});
+export const ListProjectNotesResponse = zod.array(ListProjectNotesResponseItem);
+
+/**
+ * @summary Create a note for a project
+ */
+export const CreateProjectNoteParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const CreateProjectNoteBody = zod.object({
+  content: zod.string(),
+});
+
+/**
+ * @summary Delete a project note
+ */
+export const DeleteProjectNoteParams = zod.object({
+  id: zod.coerce.string(),
+  noteId: zod.coerce.string(),
+});
+
+export const DeleteProjectNoteResponse = zod.object({
   success: zod.boolean().optional(),
 });
 
@@ -1047,6 +1094,19 @@ export const UnclaimSharedEmailParams = zod.object({
 
 export const UnclaimSharedEmailResponse = zod.object({
   success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Trigger an immediate IMAP sync for a shared mailbox
+ */
+export const ForceSharedMailboxSyncParams = zod.object({
+  mailboxId: zod.coerce.string(),
+});
+
+export const ForceSharedMailboxSyncResponse = zod.object({
+  success: zod.boolean().optional(),
+  synced: zod.number().optional(),
+  error: zod.string().nullish(),
 });
 
 /**

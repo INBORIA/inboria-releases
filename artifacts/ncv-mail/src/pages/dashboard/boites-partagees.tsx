@@ -9,6 +9,7 @@ import {
   useGetSharedMailboxEmails,
   useClaimSharedEmail,
   useUnclaimSharedEmail,
+  useForceSharedMailboxSync,
   useGetOrganisationMembers,
   useGetMyOrganisation,
   useGetProfile,
@@ -39,6 +40,7 @@ import {
   Share2,
   CheckCircle2,
   Link,
+  RefreshCw,
 } from "lucide-react";
 
 type ViewMode = "list" | "detail" | "emails";
@@ -435,6 +437,28 @@ function MailboxEmails({
   onUnclaim: (emailId: string) => void;
 }) {
   const { data: emails, isLoading } = useGetSharedMailboxEmails(mailboxId, { filter: filter as any });
+  const forceSync = useForceSharedMailboxSync();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [syncing, setSyncing] = useState(false);
+
+  async function handleForceSync() {
+    setSyncing(true);
+    try {
+      const result = await forceSync.mutateAsync({ mailboxId });
+      if (result.success) {
+        const count = result.synced ?? 0;
+        toast({ title: count > 0 ? `${count} nouveau(x) email(s) synchronisé(s)` : "Synchronisation terminée, aucun nouvel email" });
+        queryClient.invalidateQueries({ queryKey: getGetSharedMailboxEmailsQueryKey(mailboxId, { filter: filter as any }) });
+      } else {
+        toast({ title: result.error || "La synchronisation a échoué", variant: "destructive" });
+      }
+    } catch (e: any) {
+      toast({ title: e?.response?.data?.error || "Erreur de synchronisation", variant: "destructive" });
+    } finally {
+      setSyncing(false);
+    }
+  }
 
   const filterOptions = [
     { value: "all" as const, label: "Tous" },
@@ -444,17 +468,23 @@ function MailboxEmails({
 
   return (
     <div className="space-y-4">
-      <div className="flex gap-2">
-        {filterOptions.map((f) => (
-          <Button
-            key={f.value}
-            variant={filter === f.value ? "default" : "outline"}
-            size="sm"
-            onClick={() => setFilter(f.value)}
-          >
-            {f.label}
-          </Button>
-        ))}
+      <div className="flex items-center justify-between">
+        <div className="flex gap-2">
+          {filterOptions.map((f) => (
+            <Button
+              key={f.value}
+              variant={filter === f.value ? "default" : "outline"}
+              size="sm"
+              onClick={() => setFilter(f.value)}
+            >
+              {f.label}
+            </Button>
+          ))}
+        </div>
+        <Button variant="outline" size="sm" onClick={handleForceSync} disabled={syncing}>
+          {syncing ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <RefreshCw className="h-4 w-4 mr-1" />}
+          Synchroniser
+        </Button>
       </div>
 
       {isLoading ? (

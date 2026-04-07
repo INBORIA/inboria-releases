@@ -1,8 +1,9 @@
 import { google } from "googleapis";
-import { ImapFlow } from "imapflow";
+import { ImapFlow, type MailboxLockObject } from "imapflow";
 import OpenAI from "openai";
 import { simpleParser } from "mailparser";
 import { supabaseAdmin } from "../lib/supabase";
+import { logger } from "../lib/logger";
 import * as net from "net";
 import { sendSlackNotification, createNotionTask } from "./integrations";
 
@@ -477,20 +478,27 @@ async function syncOutlookForUser(conn: any): Promise<number> {
 }
 
 async function syncImapForUser(conn: any): Promise<number> {
-  let imapConfig = { host: "imap.gmail.com", port: 993 };
+  const log = logger.child({ service: "imap-sync", email: conn.email_address, connId: conn.id });
+
+  let imapConfig: { host: string; port: number } = { host: "imap.gmail.com", port: 993 };
   try {
     if (conn.refresh_token) imapConfig = JSON.parse(conn.refresh_token);
-  } catch {}
+  } catch (parseErr: any) {
+    log.error(`IMAP config parse failed: ${parseErr.message}`);
+    return -1;
+  }
+
+  log.info({ host: imapConfig.host, port: imapConfig.port }, "Starting IMAP sync");
 
   if (!isValidImapHost(imapConfig.host)) {
-    console.error(`[auto-sync] IMAP blocked: invalid host "${imapConfig.host}"`);
-    return 0;
+    log.error({ host: imapConfig.host }, "IMAP blocked: invalid host");
+    return -1;
   }
 
   const port = Number(imapConfig.port);
-  if (!port || port < 1 || port > 65535 || port === 993 ? false : port < 100) {
-    console.error(`[auto-sync] IMAP blocked: invalid port ${imapConfig.port}`);
-    return 0;
+  if (!port || port < 1 || port > 65535) {
+    log.error({ port: imapConfig.port }, "IMAP blocked: invalid port");
+    return -1;
   }
 
   const client = new ImapFlow({
@@ -502,81 +510,118 @@ async function syncImapForUser(conn: any): Promise<number> {
   });
 
   try {
-    await client.connect();
-    const lock = await client.getMailboxLock("INBOX");
-    let synced = 0;
+    let timeoutId: ReturnType<typeof setTimeout>;
+    await Promise.race([
+      client.connect(),
+      new Promise((_, reject) => {
+        timeoutId = setTimeout(() => reject(new Error("IMAP connect timeout after 20s")), 20_000);
+      }),
+    ]);
+    clearTimeout(timeoutId!);
+    log.info("IMAP connected successfully");
+  } catch (connErr: any) {
+    log.error({ error: connErr.message }, "IMAP connection failed");
+    try { await client.logout(); } catch {}
+    return -1;
+  }
 
-    try {
-      const mailboxStatus = client.mailbox;
-      const totalMessages = mailboxStatus?.exists || 0;
+  let lock: MailboxLockObject;
+  try {
+    lock = await client.getMailboxLock("INBOX");
+    log.info("INBOX lock acquired");
+  } catch (lockErr: any) {
+    log.error({ error: lockErr.message }, "Failed to lock INBOX");
+    try { await client.logout(); } catch {}
+    return -1;
+  }
 
-      if (totalMessages === 0) {
-        lock.release();
-        await client.logout();
-        return 0;
-      }
+  let synced = 0;
+  let fetchSucceeded = false;
+  let lockReleased = false;
+  try {
+    const mailboxStatus = client.mailbox;
+    const totalMessages = mailboxStatus ? mailboxStatus.exists : 0;
+    log.info({ totalMessages }, "Mailbox status");
 
-      const startSeq = Math.max(1, totalMessages - 9);
-      const range = `${startSeq}:*`;
-
-      for await (const msg of client.fetch(range, { envelope: true, uid: true, source: true })) {
-        const externalId = `${conn.id}:imap_${msg.uid}`;
-        const envelope = msg.envelope;
-        const from = envelope.from?.[0];
-        const sender = from?.name ? `${from.name} <${from.address}>` : from?.address || "inconnu";
-
-        let bodyText = "";
-        if (msg.source) {
-          try {
-            const parsed = await simpleParser(msg.source);
-            bodyText = parsed.html
-              ? (typeof parsed.html === "string" ? parsed.html : "")
-              : parsed.text || "";
-            bodyText = bodyText.slice(0, 10000);
-          } catch {
-            try {
-              const raw = msg.source.toString("utf-8");
-              const bodyStart = raw.indexOf("\r\n\r\n");
-              if (bodyStart !== -1) {
-                bodyText = raw.slice(bodyStart + 4).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 5000);
-              }
-            } catch {}
-          }
-        }
-
-        const saved = await saveEmailWithTriage(
-          conn.user_id,
-          externalId,
-          sender,
-          envelope.subject || "(pas de sujet)",
-          bodyText,
-          envelope.date ? new Date(envelope.date).toISOString() : new Date().toISOString(),
-          (conn as any)._sharedMailboxId
-        );
-
-        if (saved) synced++;
-      }
-    } finally {
+    if (totalMessages === 0) {
+      log.info("Mailbox empty, nothing to fetch");
+      fetchSucceeded = true;
       lock.release();
-    }
-
-    await client.logout();
-
-    if (synced > 0) {
+      lockReleased = true;
+      await client.logout();
       await supabaseAdmin
         .from("email_connections")
         .update({ last_synced_at: new Date().toISOString() })
         .eq("id", conn.id);
+      return 0;
     }
 
-    return synced;
-  } catch (err: any) {
-    console.error(`[auto-sync] IMAP error for ${conn.email_address}:`, err.message);
-    try {
-      await client.logout();
-    } catch {}
-    return 0;
+    const startSeq = Math.max(1, totalMessages - 9);
+    const range = `${startSeq}:*`;
+    let fetchedCount = 0;
+
+    for await (const msg of client.fetch(range, { envelope: true, uid: true, source: true })) {
+      fetchedCount++;
+      const externalId = `${conn.id}:imap_${msg.uid}`;
+      const envelope = msg.envelope!;
+      const from = envelope?.from?.[0];
+      const sender = from?.name ? `${from.name} <${from.address}>` : from?.address || "inconnu";
+
+      let bodyText = "";
+      if (msg.source) {
+        try {
+          const parsed = await simpleParser(msg.source);
+          bodyText = parsed.html
+            ? (typeof parsed.html === "string" ? parsed.html : "")
+            : parsed.text || "";
+          bodyText = bodyText.slice(0, 10000);
+        } catch (parseErr: any) {
+          log.warn({ uid: msg.uid, error: parseErr.message }, "simpleParser failed, using raw fallback");
+          try {
+            const raw = msg.source.toString("utf-8");
+            const bodyStart = raw.indexOf("\r\n\r\n");
+            if (bodyStart !== -1) {
+              bodyText = raw.slice(bodyStart + 4).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 5000);
+            }
+          } catch (rawErr: any) {
+            log.warn({ uid: msg.uid, error: rawErr.message }, "Raw body extraction also failed");
+          }
+        }
+      }
+
+      const saved = await saveEmailWithTriage(
+        conn.user_id,
+        externalId,
+        sender,
+        envelope?.subject || "(pas de sujet)",
+        bodyText,
+        envelope?.date ? new Date(envelope.date).toISOString() : new Date().toISOString(),
+        (conn as any)._sharedMailboxId
+      );
+
+      if (saved) synced++;
+    }
+
+    fetchSucceeded = true;
+    log.info({ fetched: fetchedCount, newEmails: synced, duplicatesSkipped: fetchedCount - synced }, "IMAP fetch complete");
+  } catch (fetchErr: any) {
+    log.error({ error: fetchErr.message }, "Error during IMAP fetch/parse");
+  } finally {
+    if (!lockReleased) lock.release();
   }
+
+  try {
+    await client.logout();
+  } catch {}
+
+  if (fetchSucceeded) {
+    await supabaseAdmin
+      .from("email_connections")
+      .update({ last_synced_at: new Date().toISOString() })
+      .eq("id", conn.id);
+  }
+
+  return fetchSucceeded ? synced : -1;
 }
 
 async function runAutoSync() {
@@ -629,9 +674,11 @@ async function runAutoSync() {
         } else if (conn.provider === "imap") {
           synced = await syncImapForUser(conn);
         }
-        totalSynced += synced;
-        if (synced > 0) {
-          console.log(`[auto-sync] ${conn.email_address}: ${synced} new email(s)`);
+        if (synced < 0) {
+          console.error(`[auto-sync] ${conn.email_address} (${conn.provider}): sync failed`);
+        } else {
+          totalSynced += synced;
+          console.log(`[auto-sync] ${conn.email_address} (${conn.provider}): ${synced} new email(s)`);
         }
       } catch (err: any) {
         console.error(`[auto-sync] Error for ${conn.email_address}:`, err.message);
@@ -647,7 +694,7 @@ async function runAutoSync() {
   }
 }
 
-export async function triggerSyncForConnection(connectionId: string) {
+export async function triggerSyncForConnection(connectionId: string): Promise<{ synced: number; success: boolean; error?: string }> {
   const { data: conn, error } = await supabaseAdmin
     .from("email_connections")
     .select("*")
@@ -655,8 +702,8 @@ export async function triggerSyncForConnection(connectionId: string) {
     .single();
 
   if (error || !conn) {
-    console.error("[auto-sync] triggerSync: connection not found", connectionId);
-    return 0;
+    logger.error({ connectionId }, "triggerSync: connection not found");
+    return { synced: 0, success: false, error: "Connection not found" };
   }
 
   const { data: sharedMb } = await supabaseAdmin
@@ -666,19 +713,29 @@ export async function triggerSyncForConnection(connectionId: string) {
     .maybeSingle();
   (conn as any)._sharedMailboxId = sharedMb?.id || null;
 
-  console.log(`[auto-sync] Immediate sync triggered for ${conn.email_address}`);
+  logger.info({ email: conn.email_address, provider: conn.provider }, "Immediate sync triggered");
 
   let synced = 0;
-  if (conn.provider === "gmail") {
-    synced = await syncGmailForUser(conn);
-  } else if (conn.provider === "outlook") {
-    synced = await syncOutlookForUser(conn);
-  } else if (conn.provider === "imap") {
-    synced = await syncImapForUser(conn);
+  try {
+    if (conn.provider === "gmail") {
+      synced = await syncGmailForUser(conn);
+    } else if (conn.provider === "outlook") {
+      synced = await syncOutlookForUser(conn);
+    } else if (conn.provider === "imap") {
+      synced = await syncImapForUser(conn);
+    }
+  } catch (err: any) {
+    logger.error({ email: conn.email_address, error: err.message }, "Immediate sync failed");
+    return { synced: 0, success: false, error: err.message };
   }
 
-  console.log(`[auto-sync] Immediate sync done: ${synced} email(s) for ${conn.email_address}`);
-  return synced;
+  if (synced < 0) {
+    logger.error({ email: conn.email_address }, "Immediate sync returned error status");
+    return { synced: 0, success: false, error: "IMAP connection or mailbox lock failed" };
+  }
+
+  logger.info({ email: conn.email_address, synced }, "Immediate sync done");
+  return { synced, success: true };
 }
 
 export function startAutoSync() {

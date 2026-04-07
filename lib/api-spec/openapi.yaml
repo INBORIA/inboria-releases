@@ -437,6 +437,23 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/Task"
+    post:
+      operationId: createTask
+      tags: [tasks]
+      summary: Create a task
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaskBody"
+      responses:
+        "201":
+          description: Created task
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
 
   /tasks/{id}:
     patch:
@@ -608,6 +625,77 @@ paths:
       summary: Delete project
       parameters:
         - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /projects/{id}/notes:
+    get:
+      operationId: listProjectNotes
+      tags: [projects]
+      summary: List notes for a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of project notes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ProjectNote"
+    post:
+      operationId: createProjectNote
+      tags: [projects]
+      summary: Create a note for a project
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateProjectNoteBody"
+      responses:
+        "201":
+          description: Created note
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ProjectNote"
+
+  /projects/{id}/notes/{noteId}:
+    delete:
+      operationId: deleteProjectNote
+      tags: [projects]
+      summary: Delete a project note
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: noteId
           in: path
           required: true
           schema:
@@ -1312,6 +1400,33 @@ paths:
                   success:
                     type: boolean
 
+  /shared-mailboxes/{mailboxId}/force-sync:
+    post:
+      operationId: forceSharedMailboxSync
+      tags: [organisations]
+      summary: Trigger an immediate IMAP sync for a shared mailbox
+      parameters:
+        - name: mailboxId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Sync result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  synced:
+                    type: integer
+                  error:
+                    type: string
+                    nullable: true
+
   /emails/{emailId}/comments:
     get:
       operationId: getEmailComments
@@ -1939,6 +2054,44 @@ components:
           type: string
         projectId:
           type: ["string", "null"]
+
+    CreateTaskBody:
+      type: object
+      required:
+        - title
+      properties:
+        title:
+          type: string
+        emailId:
+          type: integer
+        projectId:
+          type: string
+
+    ProjectNote:
+      type: object
+      required:
+        - id
+        - content
+        - createdAt
+      properties:
+        id:
+          type: string
+        content:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+
+    CreateProjectNoteBody:
+      type: object
+      required:
+        - content
+      properties:
+        content:
+          type: string
 
     DashboardSummary:
       type: object

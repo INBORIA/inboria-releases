@@ -55,6 +55,7 @@ import type {
   DraftResponse,
   Email,
   EmailComment,
+  ForceSharedMailboxSync200,
   GenerateDraftBody,
   GeneratePackBody,
   GeneratePackResponse,
@@ -1794,6 +1795,92 @@ export function useListTasks<
 }
 
 /**
+ * @summary Create a task
+ */
+export const getCreateTaskUrl = () => {
+  return `/api/tasks`;
+};
+
+export const createTask = async (
+  createTaskBody: CreateTaskBody,
+  options?: RequestInit,
+): Promise<Task> => {
+  return customFetch<Task>(getCreateTaskUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createTaskBody),
+  });
+};
+
+export const getCreateTaskMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createTask>>,
+    TError,
+    { data: BodyType<CreateTaskBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createTask>>,
+  TError,
+  { data: BodyType<CreateTaskBody> },
+  TContext
+> => {
+  const mutationKey = ["createTask"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createTask>>,
+    { data: BodyType<CreateTaskBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createTask(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateTaskMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createTask>>
+>;
+export type CreateTaskMutationBody = BodyType<CreateTaskBody>;
+export type CreateTaskMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create a task
+ */
+export const useCreateTask = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createTask>>,
+    TError,
+    { data: BodyType<CreateTaskBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createTask>>,
+  TError,
+  { data: BodyType<CreateTaskBody> },
+  TContext
+> => {
+  return useMutation(getCreateTaskMutationOptions(options));
+};
+
+/**
  * @summary Update task (toggle done)
  */
 export const getUpdateTaskUrl = (id: number) => {
@@ -2606,6 +2693,268 @@ export const useDeleteProject = <
   TContext
 > => {
   return useMutation(getDeleteProjectMutationOptions(options));
+};
+
+/**
+ * @summary List notes for a project
+ */
+export const getListProjectNotesUrl = (id: string) => {
+  return `/api/projects/${id}/notes`;
+};
+
+export const listProjectNotes = async (
+  id: string,
+  options?: RequestInit,
+): Promise<ProjectNote[]> => {
+  return customFetch<ProjectNote[]>(getListProjectNotesUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListProjectNotesQueryKey = (id: string) => {
+  return [`/api/projects/${id}/notes`] as const;
+};
+
+export const getListProjectNotesQueryOptions = <
+  TData = Awaited<ReturnType<typeof listProjectNotes>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listProjectNotes>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListProjectNotesQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listProjectNotes>>
+  > = ({ signal }) => listProjectNotes(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof listProjectNotes>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListProjectNotesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listProjectNotes>>
+>;
+export type ListProjectNotesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List notes for a project
+ */
+
+export function useListProjectNotes<
+  TData = Awaited<ReturnType<typeof listProjectNotes>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listProjectNotes>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListProjectNotesQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Create a note for a project
+ */
+export const getCreateProjectNoteUrl = (id: string) => {
+  return `/api/projects/${id}/notes`;
+};
+
+export const createProjectNote = async (
+  id: string,
+  createProjectNoteBody: CreateProjectNoteBody,
+  options?: RequestInit,
+): Promise<ProjectNote> => {
+  return customFetch<ProjectNote>(getCreateProjectNoteUrl(id), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createProjectNoteBody),
+  });
+};
+
+export const getCreateProjectNoteMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createProjectNote>>,
+    TError,
+    { id: string; data: BodyType<CreateProjectNoteBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createProjectNote>>,
+  TError,
+  { id: string; data: BodyType<CreateProjectNoteBody> },
+  TContext
+> => {
+  const mutationKey = ["createProjectNote"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createProjectNote>>,
+    { id: string; data: BodyType<CreateProjectNoteBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return createProjectNote(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateProjectNoteMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createProjectNote>>
+>;
+export type CreateProjectNoteMutationBody = BodyType<CreateProjectNoteBody>;
+export type CreateProjectNoteMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create a note for a project
+ */
+export const useCreateProjectNote = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createProjectNote>>,
+    TError,
+    { id: string; data: BodyType<CreateProjectNoteBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createProjectNote>>,
+  TError,
+  { id: string; data: BodyType<CreateProjectNoteBody> },
+  TContext
+> => {
+  return useMutation(getCreateProjectNoteMutationOptions(options));
+};
+
+/**
+ * @summary Delete a project note
+ */
+export const getDeleteProjectNoteUrl = (id: string, noteId: string) => {
+  return `/api/projects/${id}/notes/${noteId}`;
+};
+
+export const deleteProjectNote = async (
+  id: string,
+  noteId: string,
+  options?: RequestInit,
+): Promise<DeleteProjectNote200> => {
+  return customFetch<DeleteProjectNote200>(
+    getDeleteProjectNoteUrl(id, noteId),
+    {
+      ...options,
+      method: "DELETE",
+    },
+  );
+};
+
+export const getDeleteProjectNoteMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteProjectNote>>,
+    TError,
+    { id: string; noteId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteProjectNote>>,
+  TError,
+  { id: string; noteId: string },
+  TContext
+> => {
+  const mutationKey = ["deleteProjectNote"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteProjectNote>>,
+    { id: string; noteId: string }
+  > = (props) => {
+    const { id, noteId } = props ?? {};
+
+    return deleteProjectNote(id, noteId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteProjectNoteMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteProjectNote>>
+>;
+
+export type DeleteProjectNoteMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a project note
+ */
+export const useDeleteProjectNote = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteProjectNote>>,
+    TError,
+    { id: string; noteId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteProjectNote>>,
+  TError,
+  { id: string; noteId: string },
+  TContext
+> => {
+  return useMutation(getDeleteProjectNoteMutationOptions(options));
 };
 
 /**
@@ -5405,6 +5754,93 @@ export const useUnclaimSharedEmail = <
 };
 
 /**
+ * @summary Trigger an immediate IMAP sync for a shared mailbox
+ */
+export const getForceSharedMailboxSyncUrl = (mailboxId: string) => {
+  return `/api/shared-mailboxes/${mailboxId}/force-sync`;
+};
+
+export const forceSharedMailboxSync = async (
+  mailboxId: string,
+  options?: RequestInit,
+): Promise<ForceSharedMailboxSync200> => {
+  return customFetch<ForceSharedMailboxSync200>(
+    getForceSharedMailboxSyncUrl(mailboxId),
+    {
+      ...options,
+      method: "POST",
+    },
+  );
+};
+
+export const getForceSharedMailboxSyncMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof forceSharedMailboxSync>>,
+    TError,
+    { mailboxId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof forceSharedMailboxSync>>,
+  TError,
+  { mailboxId: string },
+  TContext
+> => {
+  const mutationKey = ["forceSharedMailboxSync"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof forceSharedMailboxSync>>,
+    { mailboxId: string }
+  > = (props) => {
+    const { mailboxId } = props ?? {};
+
+    return forceSharedMailboxSync(mailboxId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ForceSharedMailboxSyncMutationResult = NonNullable<
+  Awaited<ReturnType<typeof forceSharedMailboxSync>>
+>;
+
+export type ForceSharedMailboxSyncMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Trigger an immediate IMAP sync for a shared mailbox
+ */
+export const useForceSharedMailboxSync = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof forceSharedMailboxSync>>,
+    TError,
+    { mailboxId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof forceSharedMailboxSync>>,
+  TError,
+  { mailboxId: string },
+  TContext
+> => {
+  return useMutation(getForceSharedMailboxSyncMutationOptions(options));
+};
+
+/**
  * @summary List comments on an email
  */
 export const getGetEmailCommentsUrl = (emailId: number) => {
@@ -6604,288 +7040,4 @@ export const useTriageEmail = <
   TContext
 > => {
   return useMutation(getTriageEmailMutationOptions(options));
-};
-
-export const getCreateTaskUrl = () => {
-  return `/api/tasks`;
-};
-
-export const createTask = async (
-  createTaskBody: CreateTaskBody,
-  options?: RequestInit,
-): Promise<Task> => {
-  return customFetch<Task>(getCreateTaskUrl(), {
-    ...options,
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(createTaskBody),
-  });
-};
-
-export const getCreateTaskMutationOptions = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createTask>>,
-    TError,
-    { data: BodyType<CreateTaskBody> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof createTask>>,
-  TError,
-  { data: BodyType<CreateTaskBody> },
-  TContext
-> => {
-  const mutationKey = ["createTask"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof createTask>>,
-    { data: BodyType<CreateTaskBody> }
-  > = (props) => {
-    const { data } = props ?? {};
-    return createTask(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export const useCreateTask = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createTask>>,
-    TError,
-    { data: BodyType<CreateTaskBody> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationResult<
-  Awaited<ReturnType<typeof createTask>>,
-  TError,
-  { data: BodyType<CreateTaskBody> },
-  TContext
-> => {
-  return useMutation(getCreateTaskMutationOptions(options));
-};
-
-export const getListProjectNotesUrl = (projectId: string) => {
-  return `/api/projects/${projectId}/notes`;
-};
-
-export const listProjectNotes = async (
-  projectId: string,
-  options?: RequestInit,
-): Promise<ProjectNote[]> => {
-  return customFetch<ProjectNote[]>(getListProjectNotesUrl(projectId), {
-    ...options,
-    method: "GET",
-  });
-};
-
-export const getListProjectNotesQueryKey = (projectId: string) => {
-  return [`/api/projects/${projectId}/notes`] as const;
-};
-
-export const getListProjectNotesQueryOptions = <
-  TData = Awaited<ReturnType<typeof listProjectNotes>>,
-  TError = ErrorType<unknown>,
->(
-  projectId: string,
-  options?: {
-    query?: UseQueryOptions<
-      Awaited<ReturnType<typeof listProjectNotes>>,
-      TError,
-      TData
-    >;
-    request?: SecondParameter<typeof customFetch>;
-  },
-) => {
-  const { query: queryOptions, request: requestOptions } = options ?? {};
-  const queryKey = queryOptions?.queryKey ?? getListProjectNotesQueryKey(projectId);
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof listProjectNotes>>> = ({
-    signal,
-  }) => listProjectNotes(projectId, { signal, ...requestOptions });
-  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof listProjectNotes>>,
-    TError,
-    TData
-  > & { queryKey: QueryKey };
-};
-
-export function useListProjectNotes<
-  TData = Awaited<ReturnType<typeof listProjectNotes>>,
-  TError = ErrorType<unknown>,
->(
-  projectId: string,
-  options?: {
-    query?: UseQueryOptions<
-      Awaited<ReturnType<typeof listProjectNotes>>,
-      TError,
-      TData
-    >;
-    request?: SecondParameter<typeof customFetch>;
-  },
-): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions = getListProjectNotesQueryOptions(projectId, options);
-  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
-    queryKey: QueryKey;
-  };
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-export const getCreateProjectNoteUrl = (projectId: string) => {
-  return `/api/projects/${projectId}/notes`;
-};
-
-export const createProjectNote = async (
-  projectId: string,
-  createProjectNoteBody: CreateProjectNoteBody,
-  options?: RequestInit,
-): Promise<ProjectNote> => {
-  return customFetch<ProjectNote>(getCreateProjectNoteUrl(projectId), {
-    ...options,
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(createProjectNoteBody),
-  });
-};
-
-export const getCreateProjectNoteMutationOptions = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createProjectNote>>,
-    TError,
-    { projectId: string; data: BodyType<CreateProjectNoteBody> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof createProjectNote>>,
-  TError,
-  { projectId: string; data: BodyType<CreateProjectNoteBody> },
-  TContext
-> => {
-  const mutationKey = ["createProjectNote"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof createProjectNote>>,
-    { projectId: string; data: BodyType<CreateProjectNoteBody> }
-  > = (props) => {
-    const { projectId, data } = props ?? {};
-    return createProjectNote(projectId, data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export const useCreateProjectNote = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof createProjectNote>>,
-    TError,
-    { projectId: string; data: BodyType<CreateProjectNoteBody> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationResult<
-  Awaited<ReturnType<typeof createProjectNote>>,
-  TError,
-  { projectId: string; data: BodyType<CreateProjectNoteBody> },
-  TContext
-> => {
-  return useMutation(getCreateProjectNoteMutationOptions(options));
-};
-
-export const getDeleteProjectNoteUrl = (projectId: string, noteId: string) => {
-  return `/api/projects/${projectId}/notes/${noteId}`;
-};
-
-export const deleteProjectNote = async (
-  projectId: string,
-  noteId: string,
-  options?: RequestInit,
-): Promise<DeleteProjectNote200> => {
-  return customFetch<DeleteProjectNote200>(getDeleteProjectNoteUrl(projectId, noteId), {
-    ...options,
-    method: "DELETE",
-  });
-};
-
-export const getDeleteProjectNoteMutationOptions = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteProjectNote>>,
-    TError,
-    { projectId: string; noteId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof deleteProjectNote>>,
-  TError,
-  { projectId: string; noteId: string },
-  TContext
-> => {
-  const mutationKey = ["deleteProjectNote"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof deleteProjectNote>>,
-    { projectId: string; noteId: string }
-  > = (props) => {
-    const { projectId, noteId } = props ?? {};
-    return deleteProjectNote(projectId, noteId, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export const useDeleteProjectNote = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof deleteProjectNote>>,
-    TError,
-    { projectId: string; noteId: string },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationResult<
-  Awaited<ReturnType<typeof deleteProjectNote>>,
-  TError,
-  { projectId: string; noteId: string },
-  TContext
-> => {
-  return useMutation(getDeleteProjectNoteMutationOptions(options));
 };

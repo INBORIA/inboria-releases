@@ -119,7 +119,6 @@ export interface Email {
   assignedToName?: string | null;
   /** @nullable */
   assignedAt?: string | null;
-  taskCount?: number;
   createdAt: string;
 }
 
@@ -191,7 +190,7 @@ export interface GeneratePackResponse {
 }
 
 export interface Task {
-  id: string;
+  id: number;
   title: string;
   done: boolean;
   /** @nullable */
@@ -201,22 +200,6 @@ export interface Task {
   /** @nullable */
   emailSubject?: string | null;
   /** @nullable */
-  emailSender?: string | null;
-  /** @nullable */
-  emailSenderEmail?: string | null;
-  /** @nullable */
-  emailBody?: string | null;
-  /** @nullable */
-  emailSummary?: string | null;
-  /** @nullable */
-  emailPriority?: string | null;
-  /** @nullable */
-  emailStatus?: string | null;
-  /** @nullable */
-  emailCategoryName?: string | null;
-  /** @nullable */
-  emailCreatedAt?: string | null;
-  /** @nullable */
   projectId?: string | null;
   /** @nullable */
   projectName?: string | null;
@@ -225,34 +208,28 @@ export interface Task {
   createdAt: string;
 }
 
-export interface CreateTaskBody {
-  title: string;
-  /** @nullable */
-  emailId?: number | null;
+export interface UpdateTaskBody {
+  done?: boolean;
+  title?: string;
   /** @nullable */
   projectId?: string | null;
+}
+
+export interface CreateTaskBody {
+  title: string;
+  emailId?: number;
+  projectId?: string;
 }
 
 export interface ProjectNote {
   id: string;
   content: string;
   createdAt: string;
-  updatedAt: string;
+  updatedAt?: string;
 }
 
 export interface CreateProjectNoteBody {
   content: string;
-}
-
-export interface DeleteProjectNote200 {
-  success: boolean;
-}
-
-export interface UpdateTaskBody {
-  done?: boolean;
-  title?: string;
-  /** @nullable */
-  projectId?: string | null;
 }
 
 export interface DashboardSummary {
@@ -738,6 +715,10 @@ export type DeleteProject200 = {
   success?: boolean;
 };
 
+export type DeleteProjectNote200 = {
+  success?: boolean;
+};
+
 export type SendEmail200 = {
   success?: boolean;
 };
@@ -825,6 +806,12 @@ export type ClaimSharedEmail200 = {
 
 export type UnclaimSharedEmail200 = {
   success?: boolean;
+};
+
+export type ForceSharedMailboxSync200 = {
+  success?: boolean;
+  synced?: number;
+  error?: string | null;
 };
 
 export type UpdateEmailComment200 = {

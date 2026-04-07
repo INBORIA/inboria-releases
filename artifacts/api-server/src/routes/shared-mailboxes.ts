@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { triggerSyncForConnection } from "../services/auto-sync";
 
 const router: IRouter = Router();
 
@@ -543,6 +544,49 @@ router.post("/shared-mailboxes/emails/:emailId/unclaim", requireAuth, async (req
     res.json({ success: true });
   } catch {
     res.status(500).json({ error: "Erreur" });
+  }
+});
+
+router.post("/shared-mailboxes/:mailboxId/force-sync", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const orgId = await getOrgIdForMember(req.userId!);
+    if (!orgId) {
+      res.status(403).json({ error: "Aucune organisation" });
+      return;
+    }
+
+    const { data: mailbox } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("id, connection_id, organisation_id")
+      .eq("id", req.params.mailboxId)
+      .single();
+
+    if (!mailbox || mailbox.organisation_id !== orgId) {
+      res.status(404).json({ error: "Boîte partagée introuvable" });
+      return;
+    }
+
+    const { data: isMember } = await supabaseAdmin
+      .from("shared_mailbox_members")
+      .select("id")
+      .eq("shared_mailbox_id", mailbox.id)
+      .eq("user_id", req.userId!)
+      .single();
+
+    if (!isMember) {
+      res.status(403).json({ error: "Vous n'avez pas accès à cette boîte" });
+      return;
+    }
+
+    if (!mailbox.connection_id) {
+      res.status(400).json({ error: "Aucune connexion email liée à cette boîte" });
+      return;
+    }
+
+    const result = await triggerSyncForConnection(mailbox.connection_id);
+    res.json({ success: result.success, synced: result.synced, error: result.error || null });
+  } catch {
+    res.status(500).json({ error: "Erreur lors de la synchronisation" });
   }
 });
 
