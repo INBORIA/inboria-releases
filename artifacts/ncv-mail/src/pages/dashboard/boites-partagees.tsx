@@ -46,9 +46,12 @@ type ViewMode = "list" | "detail" | "emails";
 export default function BoitesPartagees() {
   const { data: profile } = useGetProfile();
   const { data: org } = useGetMyOrganisation();
+  const isAdmin = (org as any)?.myRole === "admin";
+  const plan = (profile as any)?.plan;
+
   const { data: mailboxes, isLoading } = useGetSharedMailboxes();
   const { data: orgMembers } = useGetOrganisationMembers();
-  const { data: adminConnections } = useGetAdminConnections({ query: { enabled: isAdmin } });
+  const { data: adminConnections } = useGetAdminConnections({ query: { enabled: !!isAdmin } });
 
   const createMailbox = useCreateSharedMailbox();
   const deleteMailbox = useDeleteSharedMailbox();
@@ -66,9 +69,6 @@ export default function BoitesPartagees() {
   const [addMemberUserId, setAddMemberUserId] = useState("");
   const [shareName, setShareName] = useState("");
   const [sharingConnectionId, setSharingConnectionId] = useState<string | null>(null);
-
-  const isAdmin = (org as any)?.myRole === "admin";
-  const plan = (profile as any)?.plan;
 
   if (plan !== "business") {
     return (

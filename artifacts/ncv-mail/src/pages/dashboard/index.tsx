@@ -22,12 +22,16 @@ import {
   useGetOrganisationMembers,
   useAssignEmail,
   useUnassignEmail,
+  useGetSharedMailboxes,
+  useGetSharedMailboxEmails,
+  useClaimSharedEmail,
+  useUnclaimSharedEmail,
 } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -427,6 +431,8 @@ function useDebounce(value: string, delay: number) {
   return debounced;
 }
 
+type InboxMode = "personal" | "shared";
+
 export default function Dashboard() {
   const [filterPriority, setFilterPriority] = useState<string>("all");
   const [isSimulateOpen, setIsSimulateOpen] = useState(false);
@@ -436,6 +442,9 @@ export default function Dashboard() {
   const searchQuery = useDebounce(searchInput, 300);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+
+  const [inboxMode, setInboxMode] = useState<InboxMode>("personal");
+  const [selectedSharedMailboxId, setSelectedSharedMailboxId] = useState<string | null>(null);
 
   const { data: emails, isLoading: emailsLoading } = useListEmails({
     priority: filterPriority !== "all" ? (filterPriority as any) : undefined,
@@ -451,6 +460,15 @@ export default function Dashboard() {
   const { data: orgMembers } = useGetOrganisationMembers({ query: { enabled: !!(myOrg as any)?.id } });
   const assignEmailMut = useAssignEmail();
   const unassignEmailMut = useUnassignEmail();
+
+  const plan = (profile as any)?.plan;
+  const { data: sharedMailboxes } = useGetSharedMailboxes({ query: { enabled: plan === "business" } });
+  const { data: sharedEmails, isLoading: sharedEmailsLoading } = useGetSharedMailboxEmails(
+    selectedSharedMailboxId || "",
+    { query: { enabled: !!selectedSharedMailboxId && inboxMode === "shared" } }
+  );
+  const claimEmailMut = useClaimSharedEmail();
+  const unclaimEmailMut = useUnclaimSharedEmail();
 
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
@@ -728,6 +746,38 @@ export default function Dashboard() {
     );
   };
 
+  const handleClaimEmail = (emailId: number) => {
+    claimEmailMut.mutate(
+      { emailId: emailId.toString() },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries();
+          toast({ title: "Email pris en charge" });
+        },
+        onError: () => {
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible de prendre en charge cet email." });
+        },
+      }
+    );
+  };
+
+  const handleUnclaimEmail = (emailId: number) => {
+    unclaimEmailMut.mutate(
+      { emailId: emailId.toString() },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries();
+          toast({ title: "Email libéré" });
+        },
+        onError: () => {
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible de libérer cet email." });
+        },
+      }
+    );
+  };
+
+  const hasSharedMailboxes = plan === "business" && sharedMailboxes && (sharedMailboxes as any[]).length > 0;
+
   if (selectedEmail) {
     return (
       <DashboardLayout>
@@ -896,6 +946,51 @@ export default function Dashboard() {
             </Dialog>
           </div>
 
+          {hasSharedMailboxes && (
+            <div className="flex items-center gap-1 max-w-[1200px] mx-auto mb-1.5">
+              <button
+                onClick={() => { setInboxMode("personal"); setSelectedSharedMailboxId(null); }}
+                className={`flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
+                  inboxMode === "personal"
+                    ? "bg-primary/15 text-primary border border-primary/20"
+                    : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                }`}
+              >
+                <Inbox className="w-3 h-3" />
+                Ma boîte
+              </button>
+              <button
+                onClick={() => {
+                  setInboxMode("shared");
+                  const mbs = sharedMailboxes as any[];
+                  if (mbs?.length > 0 && !selectedSharedMailboxId) {
+                    setSelectedSharedMailboxId(mbs[0].id);
+                  }
+                }}
+                className={`flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
+                  inboxMode === "shared"
+                    ? "bg-primary/15 text-primary border border-primary/20"
+                    : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                }`}
+              >
+                <Users className="w-3 h-3" />
+                Boîtes partagées
+              </button>
+              {inboxMode === "shared" && (sharedMailboxes as any[])?.length > 1 && (
+                <Select value={selectedSharedMailboxId || ""} onValueChange={setSelectedSharedMailboxId}>
+                  <SelectTrigger className="w-auto min-w-[120px] h-6 bg-card border-border text-[#8b9cb3] text-[10px] ml-1">
+                    <SelectValue placeholder="Choisir une boîte" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    {(sharedMailboxes as any[])?.map((mb: any) => (
+                      <SelectItem key={mb.id} value={mb.id}>{mb.name}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            </div>
+          )}
+
           <div className="flex items-center gap-1.5 max-w-[1200px] mx-auto">
             <span className="text-[10px] text-[#8b9cb3] mr-1">Priorite:</span>
             {[
@@ -934,110 +1029,202 @@ export default function Dashboard() {
         <div className="flex-1 overflow-auto">
           <div className="p-5 max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-5">
             <div className="flex-1 min-w-0">
-              <div className="grid grid-cols-3 gap-2 mb-4">
-                <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
-                  <div className="text-[10px] font-medium text-red-400 uppercase tracking-wider mb-0.5">Urgents</div>
-                  <div className="text-xl font-bold text-white">
-                    {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.urgentCount || 0}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3">
-                  <div className="text-[10px] font-medium text-amber-400 uppercase tracking-wider mb-0.5">Moyens</div>
-                  <div className="text-xl font-bold text-white">
-                    {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.moyenCount || 0}
-                  </div>
-                </div>
-                <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
-                  <div className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider mb-0.5">Faibles</div>
-                  <div className="text-xl font-bold text-white">
-                    {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.faibleCount || 0}
-                  </div>
-                </div>
-              </div>
-
-              {selectionMode && (
-                <div className="flex items-center gap-2 mb-2 p-2.5 rounded-lg bg-primary/[0.08] border border-primary/20">
-                  <button
-                    onClick={toggleSelectAll}
-                    className="flex items-center gap-1.5 text-[11px] text-primary hover:text-white transition-colors"
-                  >
-                    {selectedIds.size === (activeEmails?.length || 0) ? <CheckSquare className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />}
-                    {selectedIds.size === (activeEmails?.length || 0) ? "Tout désélectionner" : "Tout sélectionner"}
-                  </button>
-                  <span className="text-[11px] text-[#8b9cb3]">
-                    {selectedIds.size} sélectionné(s)
-                  </span>
-                  <div className="flex-1" />
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
-                    onClick={() => handleBulkAction("read")}
-                    disabled={bulkUpdateMut.isPending}
-                  >
-                    <CheckCircle2 className="w-3 h-3" />
-                    Lu
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
-                    onClick={() => handleBulkAction("archive")}
-                    disabled={bulkUpdateMut.isPending}
-                  >
-                    <Archive className="w-3 h-3" />
-                    Archiver
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="outline"
-                    className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.08]"
-                    onClick={() => handleBulkAction("delete")}
-                    disabled={bulkUpdateMut.isPending}
-                  >
-                    <Trash2 className="w-3 h-3" />
-                    Supprimer
-                  </Button>
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="h-7 px-2 text-[#8b9cb3] hover:text-white"
-                    onClick={() => setSelectedIds(new Set())}
-                  >
-                    <X className="w-3.5 h-3.5" />
-                  </Button>
-                </div>
-              )}
-
-              <div className="space-y-1">
-                {emailsLoading ? (
-                  Array(5).fill(0).map((_, i) => (
-                    <div key={i} className="bg-card rounded-lg border border-border p-3">
-                      <Skeleton className="h-4 w-3/4 mb-2 bg-white/5" />
-                      <Skeleton className="h-3 w-1/2 bg-white/5" />
+              {inboxMode === "shared" ? (
+                <>
+                  {sharedEmailsLoading ? (
+                    Array(3).fill(0).map((_, i) => (
+                      <div key={i} className="bg-card rounded-lg border border-border p-3 mb-1">
+                        <Skeleton className="h-4 w-3/4 mb-2 bg-white/5" />
+                        <Skeleton className="h-3 w-1/2 bg-white/5" />
+                      </div>
+                    ))
+                  ) : !selectedSharedMailboxId ? (
+                    <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
+                      <Users className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
+                      <h3 className="text-[13px] font-medium text-white">Sélectionnez une boîte partagée</h3>
                     </div>
-                  ))
-                ) : activeEmails?.length === 0 ? (
-                  <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
-                    <Inbox className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
-                    <h3 className="text-[13px] font-medium text-white">Boîte vide</h3>
-                    <p className="text-[12px] text-[#8b9cb3] mt-1">Tous vos emails ont été traités.</p>
+                  ) : (sharedEmails as any[])?.length === 0 ? (
+                    <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
+                      <Inbox className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
+                      <h3 className="text-[13px] font-medium text-white">Aucun email partagé</h3>
+                      <p className="text-[12px] text-[#8b9cb3] mt-1">Pas encore d'emails dans cette boîte partagée.</p>
+                    </div>
+                  ) : (
+                    <div className="space-y-1">
+                      {(sharedEmails as any[])?.map((email: any) => {
+                        const isClaimed = !!email.claimedBy;
+                        const isClaimedByMe = email.claimedBy === (profile as any)?.id;
+                        return (
+                          <div
+                            key={email.id}
+                            className="group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors overflow-hidden border-border"
+                          >
+                            <div className={`w-1 shrink-0 ${PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible}`} />
+                            <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
+                              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-primary/20">
+                                <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
+                              </div>
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-0.5">
+                                  <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>
+                                  <PriorityBadge priority={email.priority} />
+                                  {isClaimed && (
+                                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${isClaimedByMe ? "bg-primary/15 text-primary" : "bg-white/[0.06] text-[#8b9cb3]"}`}>
+                                      {isClaimedByMe ? "Pris par moi" : "Pris en charge"}
+                                    </span>
+                                  )}
+                                </div>
+                                <h3 className="text-[12px] text-white/80 truncate">{email.subject}</h3>
+                                {email.summary && (
+                                  <div className="flex items-center gap-1 mt-0.5">
+                                    <Sparkles className="w-3 h-3 text-primary shrink-0" />
+                                    <p className="text-[11px] text-[#8b9cb3] line-clamp-1">{email.summary}</p>
+                                  </div>
+                                )}
+                              </div>
+                              <div className="flex items-center gap-1 shrink-0">
+                                {!isClaimed ? (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-1 h-7 text-[10px] bg-transparent border-border text-primary hover:text-white hover:bg-primary/10"
+                                    onClick={() => handleClaimEmail(email.id)}
+                                    disabled={claimEmailMut.isPending}
+                                  >
+                                    <UserPlus className="w-3 h-3" />
+                                    Prendre
+                                  </Button>
+                                ) : isClaimedByMe ? (
+                                  <Button
+                                    size="sm"
+                                    variant="outline"
+                                    className="gap-1 h-7 text-[10px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                                    onClick={() => handleUnclaimEmail(email.id)}
+                                    disabled={unclaimEmailMut.isPending}
+                                  >
+                                    <UserX className="w-3 h-3" />
+                                    Libérer
+                                  </Button>
+                                ) : null}
+                                <span className="text-[10px] text-[#8b9cb3] ml-1">
+                                  {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: fr }) : ""}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </>
+              ) : (
+                <>
+                  <div className="grid grid-cols-3 gap-2 mb-4">
+                    <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
+                      <div className="text-[10px] font-medium text-red-400 uppercase tracking-wider mb-0.5">Urgents</div>
+                      <div className="text-xl font-bold text-white">
+                        {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.urgentCount || 0}
+                      </div>
+                    </div>
+                    <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3">
+                      <div className="text-[10px] font-medium text-amber-400 uppercase tracking-wider mb-0.5">Moyens</div>
+                      <div className="text-xl font-bold text-white">
+                        {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.moyenCount || 0}
+                      </div>
+                    </div>
+                    <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
+                      <div className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider mb-0.5">Faibles</div>
+                      <div className="text-xl font-bold text-white">
+                        {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.faibleCount || 0}
+                      </div>
+                    </div>
                   </div>
-                ) : (
-                  activeEmails?.map((email) => (
-                    <EmailRow
-                      key={email.id}
-                      email={email}
-                      onClick={() => { if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(email.id); } }}
-                      onArchive={handleArchive}
-                      onCategoryClick={(name) => setFilterCategory(name)}
-                      isSelected={selectedIds.has(email.id)}
-                      onToggleSelect={toggleSelect}
-                      selectionMode={selectionMode}
-                    />
-                  ))
-                )}
-              </div>
+
+                  {selectionMode && (
+                    <div className="flex items-center gap-2 mb-2 p-2.5 rounded-lg bg-primary/[0.08] border border-primary/20">
+                      <button
+                        onClick={toggleSelectAll}
+                        className="flex items-center gap-1.5 text-[11px] text-primary hover:text-white transition-colors"
+                      >
+                        {selectedIds.size === (activeEmails?.length || 0) ? <CheckSquare className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />}
+                        {selectedIds.size === (activeEmails?.length || 0) ? "Tout désélectionner" : "Tout sélectionner"}
+                      </button>
+                      <span className="text-[11px] text-[#8b9cb3]">
+                        {selectedIds.size} sélectionné(s)
+                      </span>
+                      <div className="flex-1" />
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                        onClick={() => handleBulkAction("read")}
+                        disabled={bulkUpdateMut.isPending}
+                      >
+                        <CheckCircle2 className="w-3 h-3" />
+                        Lu
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                        onClick={() => handleBulkAction("archive")}
+                        disabled={bulkUpdateMut.isPending}
+                      >
+                        <Archive className="w-3 h-3" />
+                        Archiver
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.08]"
+                        onClick={() => handleBulkAction("delete")}
+                        disabled={bulkUpdateMut.isPending}
+                      >
+                        <Trash2 className="w-3 h-3" />
+                        Supprimer
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        className="h-7 px-2 text-[#8b9cb3] hover:text-white"
+                        onClick={() => setSelectedIds(new Set())}
+                      >
+                        <X className="w-3.5 h-3.5" />
+                      </Button>
+                    </div>
+                  )}
+
+                  <div className="space-y-1">
+                    {emailsLoading ? (
+                      Array(5).fill(0).map((_, i) => (
+                        <div key={i} className="bg-card rounded-lg border border-border p-3">
+                          <Skeleton className="h-4 w-3/4 mb-2 bg-white/5" />
+                          <Skeleton className="h-3 w-1/2 bg-white/5" />
+                        </div>
+                      ))
+                    ) : activeEmails?.length === 0 ? (
+                      <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
+                        <Inbox className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
+                        <h3 className="text-[13px] font-medium text-white">Boîte vide</h3>
+                        <p className="text-[12px] text-[#8b9cb3] mt-1">Tous vos emails ont été traités.</p>
+                      </div>
+                    ) : (
+                      activeEmails?.map((email) => (
+                        <EmailRow
+                          key={email.id}
+                          email={email}
+                          onClick={() => { if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(email.id); } }}
+                          onArchive={handleArchive}
+                          onCategoryClick={(name) => setFilterCategory(name)}
+                          isSelected={selectedIds.has(email.id)}
+                          onToggleSelect={toggleSelect}
+                          selectionMode={selectionMode}
+                        />
+                      ))
+                    )}
+                  </div>
+                </>
+              )}
             </div>
 
             <div className="w-full lg:w-[200px] shrink-0 space-y-3">

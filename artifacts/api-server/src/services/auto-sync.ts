@@ -176,7 +176,8 @@ async function saveEmailWithTriage(
   sender: string,
   subject: string,
   body: string,
-  createdAt: string
+  createdAt: string,
+  sharedMailboxId?: string | null
 ): Promise<boolean> {
   const { data: existing } = await supabaseAdmin
     .from("emails")
@@ -235,20 +236,25 @@ async function saveEmailWithTriage(
     }
   }
 
+  const insertPayload: Record<string, any> = {
+    user_id: userId,
+    external_id: externalId,
+    sender,
+    subject,
+    body,
+    status: "non_lu",
+    priority: triage.priority,
+    summary: triage.summary,
+    category_id: categoryId,
+    created_at: createdAt,
+  };
+  if (sharedMailboxId) {
+    insertPayload.shared_mailbox_id = sharedMailboxId;
+  }
+
   const { data: inserted, error: insertErr } = await supabaseAdmin
     .from("emails")
-    .insert({
-      user_id: userId,
-      external_id: externalId,
-      sender,
-      subject,
-      body,
-      status: "non_lu",
-      priority: triage.priority,
-      summary: triage.summary,
-      category_id: categoryId,
-      created_at: createdAt,
-    })
+    .insert(insertPayload)
     .select("id")
     .single();
 
@@ -350,7 +356,8 @@ async function syncGmailForUser(conn: any): Promise<number> {
         from,
         subject,
         emailBody,
-        new Date(parseInt(fullMsg.internalDate || "0")).toISOString()
+        new Date(parseInt(fullMsg.internalDate || "0")).toISOString(),
+        (conn as any)._sharedMailboxId
       );
 
       if (saved) synced++;
@@ -446,7 +453,8 @@ async function syncOutlookForUser(conn: any): Promise<number> {
         `${senderName} <${senderEmail}>`,
         msg.subject || "(pas de sujet)",
         msg.bodyPreview || "",
-        msg.receivedDateTime
+        msg.receivedDateTime,
+        (conn as any)._sharedMailboxId
       );
 
       if (saved) synced++;
@@ -540,7 +548,8 @@ async function syncImapForUser(conn: any): Promise<number> {
           sender,
           envelope.subject || "(pas de sujet)",
           bodyText,
-          envelope.date ? new Date(envelope.date).toISOString() : new Date().toISOString()
+          envelope.date ? new Date(envelope.date).toISOString() : new Date().toISOString(),
+          (conn as any)._sharedMailboxId
         );
 
         if (saved) synced++;
@@ -593,10 +602,23 @@ async function runAutoSync() {
 
     console.log(`[auto-sync] Starting sync for ${connections.length} connection(s)`);
 
+    const { data: sharedMailboxes } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("id, connection_id");
+    const connToSharedMailbox: Record<string, string> = {};
+    if (sharedMailboxes) {
+      for (const sm of sharedMailboxes) {
+        if (sm.connection_id) {
+          connToSharedMailbox[sm.connection_id] = sm.id;
+        }
+      }
+    }
+
     let totalSynced = 0;
 
     for (const conn of connections) {
       try {
+        (conn as any)._sharedMailboxId = connToSharedMailbox[conn.id] || null;
         let synced = 0;
         if (conn.provider === "gmail") {
           synced = await syncGmailForUser(conn);
@@ -634,6 +656,13 @@ export async function triggerSyncForConnection(connectionId: string) {
     console.error("[auto-sync] triggerSync: connection not found", connectionId);
     return 0;
   }
+
+  const { data: sharedMb } = await supabaseAdmin
+    .from("shared_mailboxes")
+    .select("id")
+    .eq("connection_id", connectionId)
+    .maybeSingle();
+  (conn as any)._sharedMailboxId = sharedMb?.id || null;
 
   console.log(`[auto-sync] Immediate sync triggered for ${conn.email_address}`);
 
