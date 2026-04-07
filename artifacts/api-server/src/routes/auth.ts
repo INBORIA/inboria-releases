@@ -76,20 +76,40 @@ router.post("/auth/setup-profile", async (req, res): Promise<void> => {
       return;
     }
 
-    const { error } = await supabaseAdmin.from("profiles").upsert({
+    const profileData: Record<string, unknown> = {
       id: userId,
       full_name: fullName || "",
-      country: country.toUpperCase(),
       plan: "essai",
       seats: 1,
       emails_used: 0,
       emails_quota: 100,
-    });
+    };
+    if (country) {
+      profileData.country = country.toUpperCase();
+    }
+
+    const { error } = await supabaseAdmin.from("profiles").upsert(profileData);
 
     if (error) {
       console.error("Profile upsert error:", error.message, error.details, error.code);
-      res.status(500).json({ error: "Erreur lors de la creation du profil: " + error.message });
-      return;
+      if (error.message?.includes("country")) {
+        const { error: retryError } = await supabaseAdmin.from("profiles").upsert({
+          id: userId,
+          full_name: fullName || "",
+          plan: "essai",
+          seats: 1,
+          emails_used: 0,
+          emails_quota: 100,
+        });
+        if (retryError) {
+          console.error("Profile upsert retry error:", retryError.message);
+          res.status(500).json({ error: "Erreur lors de la creation du profil: " + retryError.message });
+          return;
+        }
+      } else {
+        res.status(500).json({ error: "Erreur lors de la creation du profil: " + error.message });
+        return;
+      }
     }
 
     res.status(201).json({ ok: true });

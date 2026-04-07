@@ -57,7 +57,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
       return;
     }
 
-    if (!profile.country || !isAllowedCountry(profile.country)) {
+    if (profile.country && !isAllowedCountry(profile.country)) {
       res.status(403).json({ error: "NCV Mail est actuellement disponible uniquement dans l'Union Europeenne, l'EEE et la Suisse." });
       return;
     }
@@ -105,12 +105,15 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
       const { data: userData } = await supabaseAdmin.auth.getUser(token);
       const userEmail = userData.user?.email || "";
 
-      const customer = await stripe.customers.create({
+      const customerParams: Record<string, unknown> = {
         email: userEmail,
         metadata: { userId: profile.id },
-        address: { country: profile.country },
-        tax: { validate_location: "deferred" },
-      });
+      };
+      if (profile.country) {
+        customerParams.address = { country: profile.country };
+        customerParams.tax = { validate_location: "deferred" };
+      }
+      const customer = await stripe.customers.create(customerParams as any);
       customerId = customer.id;
 
       await supabaseAdmin
