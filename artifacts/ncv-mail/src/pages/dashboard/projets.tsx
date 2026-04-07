@@ -8,6 +8,7 @@ import {
   getListProjectsQueryKey,
   getGetProjectQueryKey,
   useCreateTask,
+  useUpdateTask,
   getListTasksQueryKey,
   useListProjectNotes,
   useCreateProjectNote,
@@ -207,6 +208,19 @@ function ProjectDetailView({
   const { toast } = useToast();
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const createTaskMut = useCreateTask();
+  const updateTaskMut = useUpdateTask();
+
+  const handleToggleTask = (taskId: string, currentDone: boolean) => {
+    updateTaskMut.mutate(
+      { id: taskId, data: { done: !currentDone } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+        },
+      }
+    );
+  };
 
   const handleAddTask = () => {
     if (!newTaskTitle.trim()) return;
@@ -396,13 +410,14 @@ function ProjectDetailView({
                   key={task.id}
                   className="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2.5"
                 >
-                  <div
-                    className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 ${task.done ? "bg-primary border-primary" : "border-[#8b9cb3]/30"}`}
+                  <button
+                    onClick={() => handleToggleTask(String(task.id), task.done)}
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 cursor-pointer transition-colors ${task.done ? "bg-emerald-500 border-emerald-500" : "border-[#8b9cb3]/30 hover:border-primary/60"}`}
                   >
                     {task.done && (
                       <CheckSquare className="w-2.5 h-2.5 text-white" />
                     )}
-                  </div>
+                  </button>
                   <p
                     className={`text-[12px] flex-1 ${task.done ? "line-through text-[#8b9cb3]" : "text-white"}`}
                   >
