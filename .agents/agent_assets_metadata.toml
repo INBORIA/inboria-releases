@@ -1,8 +1,13 @@
 uploads = []
-outputs = []
 
 [[generated]]
 id = "rv28JxkXIUZvu6W5GF7jD"
 uri = "file://artifacts/ncv-mail-mobile/assets/images/icon.png"
 type = "image"
 title = "generated_image"
+
+[[outputs]]
+id = "T1RHy0MwJctRmBHsjtlgG"
+uri = "file://NCV_Mail_Descriptif.md"
+type = "text"
+title = "NCV Mail — Descriptif complet de l'application"
