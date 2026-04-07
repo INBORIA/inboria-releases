@@ -16,6 +16,8 @@ import organisationsRouter from "./organisations";
 import sharedMailboxesRouter from "./shared-mailboxes";
 import commentsRouter from "./comments";
 import assignmentsRouter from "./assignments";
+import notificationsRouter from "./notifications";
+import teamDashboardRouter from "./team-dashboard";
 
 const router: IRouter = Router();
 
@@ -36,5 +38,7 @@ router.use(integrationsRouter);
 router.use(organisationsRouter);
 router.use(sharedMailboxesRouter);
 router.use(commentsRouter);
+router.use(notificationsRouter);
+router.use(teamDashboardRouter);
 
 export default router;

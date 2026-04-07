@@ -34,6 +34,10 @@ tags:
     description: Organisation and team management operations
   - name: shared-mailboxes
     description: Shared mailbox operations
+  - name: notifications
+    description: Notification operations
+  - name: team
+    description: Team dashboard operations
 paths:
   /healthz:
     get:
@@ -1357,6 +1361,110 @@ paths:
                   success:
                     type: boolean
 
+  /notifications:
+    get:
+      operationId: getNotifications
+      tags: [notifications]
+      summary: List notifications for the current user
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of notifications
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+
+  /notifications/unread-count:
+    get:
+      operationId: getUnreadNotificationCount
+      tags: [notifications]
+      summary: Get unread notification count
+      responses:
+        "200":
+          description: Unread count
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UnreadCount"
+
+  /notifications/{id}/read:
+    patch:
+      operationId: markNotificationRead
+      tags: [notifications]
+      summary: Mark a notification as read
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /notifications/mark-all-read:
+    post:
+      operationId: markAllNotificationsRead
+      tags: [notifications]
+      summary: Mark all notifications as read
+      responses:
+        "200":
+          description: All marked as read
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /team/dashboard:
+    get:
+      operationId: getTeamDashboard
+      tags: [team]
+      summary: Get team dashboard with member stats and recent activity
+      responses:
+        "200":
+          description: Team dashboard data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeamDashboard"
+
+  /team/activity:
+    get:
+      operationId: getTeamActivity
+      tags: [team]
+      summary: Get team activity log
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Activity log entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityLog"
+
   /emails/{emailId}/assign:
     post:
       operationId: assignEmail
@@ -2305,6 +2413,108 @@ components:
           type: string
       required:
         - body
+
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+        type:
+          type: string
+        title:
+          type: string
+        message:
+          type: ["string", "null"]
+        emailId:
+          type: ["integer", "null"]
+        triggeredBy:
+          type: ["string", "null"]
+        triggeredByName:
+          type: ["string", "null"]
+        read:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - type
+        - title
+        - read
+        - createdAt
+
+    UnreadCount:
+      type: object
+      properties:
+        count:
+          type: integer
+      required:
+        - count
+
+    TeamDashboard:
+      type: object
+      properties:
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/TeamMemberStats"
+        recentActivity:
+          type: array
+          items:
+            $ref: "#/components/schemas/ActivityLog"
+      required:
+        - members
+        - recentActivity
+
+    TeamMemberStats:
+      type: object
+      properties:
+        userId:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        assignedEmails:
+          type: integer
+        archivedEmails:
+          type: integer
+        commentsCount:
+          type: integer
+      required:
+        - userId
+        - fullName
+        - role
+        - assignedEmails
+
+    ActivityLog:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        userName:
+          type: string
+        action:
+          type: string
+        entityType:
+          type: string
+        entityId:
+          type: ["string", "null"]
+        details:
+          type: object
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - userId
+        - action
+        - entityType
+        - createdAt
 
     AssignEmailBody:
       type: object

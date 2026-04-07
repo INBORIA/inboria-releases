@@ -16,6 +16,7 @@ import {
   AlertTriangle,
   Users,
   MailPlus,
+  Activity,
 } from "lucide-react";
 import ncvLogo from "@assets/image_1775392688923.png";
 import { cn } from "@/lib/utils";
@@ -23,6 +24,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { NotificationBell } from "@/components/notifications/notification-bell";
 
 const baseNavigation = [
   { name: "Réception", href: "/dashboard", icon: Inbox },
@@ -49,6 +51,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         ...baseNavigation.slice(0, 6),
         { name: "Mon équipe", href: "/dashboard/equipe", icon: Users },
         { name: "Boîtes partagées", href: "/dashboard/boites-partagees", icon: MailPlus },
+        { name: "Activité équipe", href: "/dashboard/activite-equipe", icon: Activity },
         ...baseNavigation.slice(6),
       ]
     : baseNavigation;
@@ -117,6 +120,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           );
         })}
       </nav>
+
+      <div className="px-2 pb-1">
+        <NotificationBell />
+      </div>
 
       <div className="p-2.5 mt-auto border-t border-[#1f2937]">
         <div className="px-2.5 py-2 mb-2">

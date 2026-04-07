@@ -1037,6 +1037,99 @@ export const DeleteEmailCommentResponse = zod.object({
 });
 
 /**
+ * @summary List notifications for the current user
+ */
+export const GetNotificationsQueryParams = zod.object({
+  limit: zod.coerce.number().optional(),
+});
+
+export const GetNotificationsResponseItem = zod.object({
+  id: zod.string(),
+  type: zod.string(),
+  title: zod.string(),
+  message: zod.string().nullish(),
+  emailId: zod.number().nullish(),
+  triggeredBy: zod.string().nullish(),
+  triggeredByName: zod.string().nullish(),
+  read: zod.boolean(),
+  createdAt: zod.coerce.date(),
+});
+export const GetNotificationsResponse = zod.array(GetNotificationsResponseItem);
+
+/**
+ * @summary Get unread notification count
+ */
+export const GetUnreadNotificationCountResponse = zod.object({
+  count: zod.number(),
+});
+
+/**
+ * @summary Mark a notification as read
+ */
+export const MarkNotificationReadParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const MarkNotificationReadResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Mark all notifications as read
+ */
+export const MarkAllNotificationsReadResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Get team dashboard with member stats and recent activity
+ */
+export const GetTeamDashboardResponse = zod.object({
+  members: zod.array(
+    zod.object({
+      userId: zod.string(),
+      fullName: zod.string(),
+      email: zod.string().optional(),
+      role: zod.string(),
+      assignedEmails: zod.number(),
+      archivedEmails: zod.number().optional(),
+      commentsCount: zod.number().optional(),
+    }),
+  ),
+  recentActivity: zod.array(
+    zod.object({
+      id: zod.string(),
+      userId: zod.string(),
+      userName: zod.string().optional(),
+      action: zod.string(),
+      entityType: zod.string(),
+      entityId: zod.string().nullish(),
+      details: zod.object({}).passthrough().optional(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary Get team activity log
+ */
+export const GetTeamActivityQueryParams = zod.object({
+  limit: zod.coerce.number().optional(),
+});
+
+export const GetTeamActivityResponseItem = zod.object({
+  id: zod.string(),
+  userId: zod.string(),
+  userName: zod.string().optional(),
+  action: zod.string(),
+  entityType: zod.string(),
+  entityId: zod.string().nullish(),
+  details: zod.object({}).passthrough().optional(),
+  createdAt: zod.coerce.date(),
+});
+export const GetTeamActivityResponse = zod.array(GetTeamActivityResponseItem);
+
+/**
  * @summary Assign an email to a colleague
  */
 export const AssignEmailParams = zod.object({

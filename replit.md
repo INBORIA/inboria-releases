@@ -71,6 +71,16 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - Assignment selector in EmailDetail (visible only for Business plan users with an organisation).
     - "Assigné" badge in email list for assigned emails.
     - Security: only org members can assign, unassign restricted to assignee/owner/admin.
+- **Notifications & Activity (Phase 5)**:
+    - Tables: `notifications`, `activity_logs` (SQL: `attached_assets/sql_phase5_notifications_activity.sql` — must be run in Supabase dashboard).
+    - API routes: GET /notifications, GET /notifications/unread-count, PATCH /notifications/:id/read, POST /notifications/mark-all-read.
+    - Team dashboard routes: GET /team/dashboard, GET /team/activity.
+    - Helper module: `artifacts/api-server/src/lib/activity.ts` (createNotification, logActivity, getOrgIdForUser, getUserName).
+    - Auto-notifications on: email assignment (to assignee), new comment (to email owner + assignee).
+    - Activity logging on: assign, comment (for org members).
+    - NotificationBell component in sidebar with dropdown, unread count badge, real-time polling (30s).
+    - Team dashboard page at `/dashboard/activite-equipe` (Business plan only): member stats, recent activity feed.
+    - Sidebar link "Activité équipe" visible only for Business plan users.
 
 ## External Dependencies
 

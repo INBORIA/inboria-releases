@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { createNotification, logActivity, getOrgIdForUser, getUserName } from "../lib/activity";
 
 const router: IRouter = Router();
 
@@ -84,7 +85,7 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
 
     const { data: email } = await supabaseAdmin
       .from("emails")
-      .select("id, user_id, shared_mailbox_id")
+      .select("id, user_id, shared_mailbox_id, assigned_to")
       .eq("id", emailId)
       .single();
 
@@ -120,6 +121,42 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
       .select("full_name")
       .eq("id", req.userId!)
       .single();
+
+    const commenterName = profile?.full_name || await getUserName(req.userId!);
+    const orgId = await getOrgIdForUser(req.userId!);
+
+    if (email.user_id !== req.userId!) {
+      createNotification({
+        userId: email.user_id,
+        type: "comment_added",
+        title: "Nouveau commentaire",
+        message: `${commenterName} a commenté un email: "${body.trim().slice(0, 80)}"`,
+        emailId,
+        triggeredBy: req.userId!,
+      });
+    }
+
+    if (email.assigned_to && email.assigned_to !== req.userId! && email.assigned_to !== email.user_id) {
+      createNotification({
+        userId: email.assigned_to,
+        type: "comment_added",
+        title: "Nouveau commentaire",
+        message: `${commenterName} a commenté un email qui vous est assigné`,
+        emailId,
+        triggeredBy: req.userId!,
+      });
+    }
+
+    if (orgId && (email.shared_mailbox_id || email.assigned_to)) {
+      logActivity({
+        organisationId: orgId,
+        userId: req.userId!,
+        action: "add_comment",
+        entityType: "email",
+        entityId: String(emailId),
+        details: { commentId: comment.id },
+      });
+    }
 
     res.status(201).json({
       id: comment.id,

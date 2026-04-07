@@ -524,6 +524,55 @@ export interface AddCommentBody {
   body: string;
 }
 
+export interface Notification {
+  id: string;
+  type: string;
+  title: string;
+  /** @nullable */
+  message?: string | null;
+  /** @nullable */
+  emailId?: number | null;
+  /** @nullable */
+  triggeredBy?: string | null;
+  /** @nullable */
+  triggeredByName?: string | null;
+  read: boolean;
+  createdAt: string;
+}
+
+export interface UnreadCount {
+  count: number;
+}
+
+export interface TeamMemberStats {
+  userId: string;
+  fullName: string;
+  email?: string;
+  role: string;
+  assignedEmails: number;
+  archivedEmails?: number;
+  commentsCount?: number;
+}
+
+export type ActivityLogDetails = { [key: string]: unknown };
+
+export interface ActivityLog {
+  id: string;
+  userId: string;
+  userName?: string;
+  action: string;
+  entityType: string;
+  /** @nullable */
+  entityId?: string | null;
+  details?: ActivityLogDetails;
+  createdAt: string;
+}
+
+export interface TeamDashboard {
+  members: TeamMemberStats[];
+  recentActivity: ActivityLog[];
+}
+
 export interface AssignEmailBody {
   assignTo: string;
 }
@@ -697,6 +746,22 @@ export type UpdateEmailComment200 = {
 
 export type DeleteEmailComment200 = {
   success?: boolean;
+};
+
+export type GetNotificationsParams = {
+  limit?: number;
+};
+
+export type MarkNotificationRead200 = {
+  success?: boolean;
+};
+
+export type MarkAllNotificationsRead200 = {
+  success?: boolean;
+};
+
+export type GetTeamActivityParams = {
+  limit?: number;
 };
 
 export type UnassignEmail200 = {

@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { createNotification, logActivity, getOrgIdForUser, getUserName } from "../lib/activity";
 
 const router: IRouter = Router();
 
@@ -90,6 +91,31 @@ router.post("/emails/:emailId/assign", requireAuth, async (req, res): Promise<vo
       .select("full_name")
       .eq("id", assignTo)
       .single();
+
+    const assignerName = await getUserName(req.userId!);
+    const { data: emailSubject } = await supabaseAdmin
+      .from("emails")
+      .select("subject")
+      .eq("id", emailId)
+      .single();
+
+    createNotification({
+      userId: assignTo,
+      type: "email_assigned",
+      title: "Email assigné",
+      message: `${assignerName} vous a assigné: "${emailSubject?.subject || "Sans sujet"}"`,
+      emailId,
+      triggeredBy: req.userId!,
+    });
+
+    logActivity({
+      organisationId: orgId,
+      userId: req.userId!,
+      action: "assign_email",
+      entityType: "email",
+      entityId: String(emailId),
+      details: { assignedTo: assignTo, assignedToName: assigneeProfile?.full_name || "" },
+    });
 
     res.json({
       success: true,
