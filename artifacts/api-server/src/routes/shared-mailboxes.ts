@@ -80,7 +80,7 @@ router.get("/shared-mailboxes", requireAuth, async (req, res): Promise<void> => 
         .select("id", { count: "exact", head: true })
         .eq("shared_mailbox_id", mb.id)
         .is("claimed_by", null)
-        .eq("status", "classe");
+        .neq("status", "supprime");
 
       enriched.push({
         id: mb.id,
@@ -199,6 +199,20 @@ router.post("/shared-mailboxes", requireAuth, async (req, res): Promise<void> =>
         user_id: req.userId!,
         can_reply: true,
       });
+
+    const { data: backfilledRows, error: bfErr } = await supabaseAdmin
+      .from("emails")
+      .update({ shared_mailbox_id: mailbox.id })
+      .eq("user_id", req.userId!)
+      .like("external_id", `${conn.id}:%`)
+      .is("shared_mailbox_id", null)
+      .select("id");
+
+    if (bfErr) {
+      console.error(`[shared-mailboxes] Backfill error:`, bfErr.message);
+    } else if (backfilledRows && backfilledRows.length > 0) {
+      console.log(`[shared-mailboxes] Backfilled ${backfilledRows.length} existing email(s) for shared mailbox ${mailbox.id}`);
+    }
 
     res.status(201).json({
       id: mailbox.id,
@@ -583,8 +597,21 @@ router.post("/shared-mailboxes/:mailboxId/force-sync", requireAuth, async (req, 
       return;
     }
 
+    const { data: backfilledRows, error: bfErr } = await supabaseAdmin
+      .from("emails")
+      .update({ shared_mailbox_id: mailbox.id })
+      .like("external_id", `${mailbox.connection_id}:%`)
+      .is("shared_mailbox_id", null)
+      .select("id");
+
+    if (bfErr) {
+      console.error(`[shared-mailboxes] Force-sync backfill error:`, bfErr.message);
+    } else if (backfilledRows && backfilledRows.length > 0) {
+      console.log(`[shared-mailboxes] Force-sync backfilled ${backfilledRows.length} email(s) for mailbox ${mailbox.id}`);
+    }
+
     const result = await triggerSyncForConnection(mailbox.connection_id);
-    res.json({ success: result.success, synced: result.synced, error: result.error || null });
+    res.json({ success: result.success, synced: result.synced, backfilled: backfilledRows?.length || 0, error: result.error || null });
   } catch {
     res.status(500).json({ error: "Erreur lors de la synchronisation" });
   }

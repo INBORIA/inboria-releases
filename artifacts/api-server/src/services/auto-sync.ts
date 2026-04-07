@@ -661,6 +661,23 @@ async function runAutoSync() {
       }
     }
 
+    for (const connId of Object.keys(connToSharedMailbox)) {
+      const sharedMbId = connToSharedMailbox[connId];
+      const { data: backfilledRows, error: bfError } = await supabaseAdmin
+        .from("emails")
+        .update({ shared_mailbox_id: sharedMbId })
+        .like("external_id", `${connId}:%`)
+        .is("shared_mailbox_id", null)
+        .select("id");
+      if (bfError) {
+        console.error(`[auto-sync] Backfill error for ${connId}:`, bfError.message);
+      } else if (backfilledRows && backfilledRows.length > 0) {
+        console.log(`[auto-sync] Backfilled ${backfilledRows.length} email(s) for shared mailbox ${sharedMbId}`);
+      } else {
+        console.log(`[auto-sync] Backfill check for conn ${connId}: 0 emails to update`);
+      }
+    }
+
     let totalSynced = 0;
 
     for (const conn of connections) {
