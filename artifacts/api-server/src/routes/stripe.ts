@@ -84,6 +84,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
           ],
           metadata: { planId },
           proration_behavior: "create_prorations",
+          automatic_tax: { enabled: true },
         });
 
         const quota = PLAN_QUOTAS[planId] || 100;
@@ -107,6 +108,8 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
       const customer = await stripe.customers.create({
         email: userEmail,
         metadata: { userId: profile.id },
+        address: { country: profile.country },
+        tax: { validate_location: "deferred" },
       });
       customerId = customer.id;
 
@@ -121,12 +124,22 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: "subscription",
+      currency: "eur",
       line_items: [
         {
           price: PRICE_MAP[planId],
           quantity,
         },
       ],
+      automatic_tax: { enabled: true },
+      tax_id_collection: { enabled: true },
+      billing_address_collection: "required",
+      customer_update: {
+        address: "auto",
+        name: "auto",
+      },
+      locale: "fr",
+      payment_method_types: ["card", "sepa_debit"],
       metadata: { planId, userId: req.userId! },
       success_url: `${frontendUrl}/dashboard/abonnement?success=true`,
       cancel_url: `${frontendUrl}/dashboard/abonnement?cancelled=true`,
