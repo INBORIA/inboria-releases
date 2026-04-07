@@ -147,15 +147,15 @@ export default function Entreprise() {
             tandis que votre équipe collabore via boîtes partagées, assignation et commentaires internes.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-            <Link href="/signup">
+            <Link href="/tarifs">
               <button className="px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors flex items-center gap-2">
-                Démarrer avec mon équipe
+                Choisir le plan Business
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
             <Link href="/tarifs">
               <button className="px-8 py-3 text-[14px] font-semibold text-[#8b9cb3] border border-[#1f2937] rounded-lg hover:text-white hover:border-[#2d7dd2]/30 transition-colors">
-                Voir les tarifs
+                Comparer les plans
               </button>
             </Link>
           </div>
@@ -254,9 +254,9 @@ export default function Entreprise() {
               pour une collaboration plus fluide et une productivité décuplée.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <Link href="/signup">
+              <Link href="/tarifs">
                 <button className="px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
-                  Essayer gratuitement
+                  Découvrir le plan Business
                 </button>
               </Link>
               <Link href="/tarifs">
@@ -266,7 +266,7 @@ export default function Entreprise() {
               </Link>
             </div>
             <p className="mt-4 text-[11px] text-[#8b9cb3]/60">
-              100 emails offerts • Aucune carte bancaire requise • Configuration en 2 minutes
+              Plan Business à partir de 49€/mois • Sièges extensibles • Configuration en 2 minutes
             </p>
           </div>
         </div>
