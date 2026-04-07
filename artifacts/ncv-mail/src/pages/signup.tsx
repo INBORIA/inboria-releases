@@ -63,12 +63,13 @@ export default function Signup() {
 
   const params = new URLSearchParams(searchString);
   const selectedPlan = params.get("plan");
+  const prefillEmail = params.get("email") || "";
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
       fullName: "",
-      email: "",
+      email: prefillEmail,
       country: "" as any,
       password: "",
       confirmPassword: "",
@@ -94,7 +95,10 @@ export default function Signup() {
         title: "Compte cree",
         description: "Votre compte a ete cree avec succes.",
       });
-      if (selectedPlan && selectedPlan !== "essai") {
+      const redirectPath = params.get("redirect");
+      if (redirectPath) {
+        setLocation(redirectPath);
+      } else if (selectedPlan && selectedPlan !== "essai") {
         const redirect = new URLSearchParams();
         redirect.set("plan", selectedPlan);
         const seats = params.get("seats");

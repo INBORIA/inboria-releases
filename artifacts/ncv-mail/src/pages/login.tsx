@@ -54,9 +54,12 @@ export default function Login() {
       });
     } else {
       const params = new URLSearchParams(searchString);
+      const redirectPath = params.get("redirect");
       const plan = params.get("plan");
       const seats = params.get("seats");
-      if (plan) {
+      if (redirectPath) {
+        setLocation(redirectPath);
+      } else if (plan) {
         const redirect = new URLSearchParams();
         redirect.set("plan", plan);
         if (seats) redirect.set("seats", seats);

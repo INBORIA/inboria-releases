@@ -1,15 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useLocation } from "wouter";
 import { useAuth } from "@/lib/auth";
+import { supabase } from "@/lib/supabase";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Loader2, CheckCircle, XCircle } from "lucide-react";
+import { Loader2, CheckCircle, XCircle, Mail } from "lucide-react";
 
 export default function AcceptInvite() {
-  const { session } = useAuth();
+  const { session, signOut } = useAuth();
   const [, navigate] = useLocation();
-  const [status, setStatus] = useState<"loading" | "success" | "error" | "login-required">("loading");
+  const [status, setStatus] = useState<"loading" | "success" | "error" | "wrong-account" | "login-required">("loading");
   const [message, setMessage] = useState("");
+  const [inviteEmail, setInviteEmail] = useState("");
+  const attemptedRef = useRef(false);
 
   const params = new URLSearchParams(window.location.search);
   const token = params.get("token");
@@ -25,6 +28,9 @@ export default function AcceptInvite() {
       setStatus("login-required");
       return;
     }
+
+    if (attemptedRef.current) return;
+    attemptedRef.current = true;
 
     const acceptInvite = async () => {
       try {
@@ -43,6 +49,12 @@ export default function AcceptInvite() {
         if (res.ok) {
           setStatus("success");
           setMessage("Vous avez rejoint l'organisation avec succès !");
+        } else if (res.status === 403 && data.error?.includes("destinée à")) {
+          const emailMatch = data.error.match(/destinée à ([^\s.]+)/);
+          const targetEmail = emailMatch ? emailMatch[1] : "";
+          setInviteEmail(targetEmail);
+          setStatus("wrong-account");
+          setMessage(data.error);
         } else {
           setStatus("error");
           setMessage(data.error || "Erreur lors de l'acceptation de l'invitation.");
@@ -55,6 +67,14 @@ export default function AcceptInvite() {
 
     acceptInvite();
   }, [token, session]);
+
+  const handleSignOutAndRedirect = async () => {
+    await supabase.auth.signOut();
+    const redirectPath = `/accept-invite?token=${token}`;
+    window.location.href = import.meta.env.BASE_URL + `signup?redirect=${encodeURIComponent(redirectPath)}&email=${encodeURIComponent(inviteEmail)}`;
+  };
+
+  const encodedRedirect = encodeURIComponent(`/accept-invite?token=${token}`);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#0d1117] p-4">
@@ -70,24 +90,52 @@ export default function AcceptInvite() {
             </>
           )}
 
-          {status === "login-required" && (
+          {status === "wrong-account" && (
             <>
-              <XCircle className="h-8 w-8 text-yellow-500" />
+              <Mail className="h-8 w-8 text-yellow-500" />
               <p className="text-[#8b9cb3] text-center">
-                Vous devez vous connecter pour accepter cette invitation.
+                Cette invitation est destinée à <strong className="text-white">{inviteEmail}</strong>.
+              </p>
+              <p className="text-[#8b9cb3] text-center text-sm">
+                Vous êtes actuellement connecté(e) avec un autre compte. Pour accepter l'invitation, vous devez vous connecter avec le bon compte.
               </p>
               <Button
-                onClick={() => navigate(`/login?redirect=/accept-invite?token=${token}`)}
-                className="bg-[#2d7dd2] hover:bg-[#2d7dd2]/90"
+                onClick={handleSignOutAndRedirect}
+                className="bg-[#2d7dd2] hover:bg-[#2d7dd2]/90 w-full"
               >
-                Se connecter
+                Créer un compte avec {inviteEmail}
               </Button>
               <Button
                 variant="outline"
-                onClick={() => navigate(`/signup?redirect=/accept-invite?token=${token}`)}
-                className="border-[#1f2937] text-[#8b9cb3]"
+                onClick={async () => {
+                  await supabase.auth.signOut();
+                  window.location.href = import.meta.env.BASE_URL + `login?redirect=${encodedRedirect}`;
+                }}
+                className="border-[#1f2937] text-[#8b9cb3] w-full"
+              >
+                Se connecter avec {inviteEmail}
+              </Button>
+            </>
+          )}
+
+          {status === "login-required" && (
+            <>
+              <Mail className="h-8 w-8 text-[#2d7dd2]" />
+              <p className="text-[#8b9cb3] text-center">
+                Connectez-vous ou créez un compte pour accepter cette invitation.
+              </p>
+              <Button
+                onClick={() => navigate(`/signup?redirect=${encodedRedirect}`)}
+                className="bg-[#2d7dd2] hover:bg-[#2d7dd2]/90 w-full"
               >
                 Créer un compte
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => navigate(`/login?redirect=${encodedRedirect}`)}
+                className="border-[#1f2937] text-[#8b9cb3] w-full"
+              >
+                J'ai déjà un compte
               </Button>
             </>
           )}
@@ -98,7 +146,7 @@ export default function AcceptInvite() {
               <p className="text-white text-center">{message}</p>
               <Button
                 onClick={() => navigate("/dashboard")}
-                className="bg-[#2d7dd2] hover:bg-[#2d7dd2]/90"
+                className="bg-[#2d7dd2] hover:bg-[#2d7dd2]/90 w-full"
               >
                 Accéder au tableau de bord
               </Button>
@@ -111,7 +159,7 @@ export default function AcceptInvite() {
               <p className="text-red-400 text-center">{message}</p>
               <Button
                 onClick={() => navigate("/")}
-                className="bg-[#2d7dd2] hover:bg-[#2d7dd2]/90"
+                className="bg-[#2d7dd2] hover:bg-[#2d7dd2]/90 w-full"
               >
                 Retour à l'accueil
               </Button>
