@@ -45,6 +45,10 @@ const signupSchema = z.object({
     .regex(/[a-z]/, "Au moins une minuscule")
     .regex(/[0-9]/, "Au moins un chiffre")
     .regex(/[^A-Za-z0-9]/, "Au moins un caractere special"),
+  confirmPassword: z.string().min(1, "Veuillez confirmer votre mot de passe"),
+}).refine((data) => data.password === data.confirmPassword, {
+  message: "Les mots de passe ne correspondent pas",
+  path: ["confirmPassword"],
 });
 
 type SignupFormValues = z.infer<typeof signupSchema>;
@@ -67,6 +71,7 @@ export default function Signup() {
       email: "",
       country: "" as any,
       password: "",
+      confirmPassword: "",
     },
   });
 
@@ -214,6 +219,19 @@ export default function Signup() {
                     </div>
                   </div>
                 )}
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="confirmPassword"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-[#8b9cb3]">Confirmer le mot de passe</FormLabel>
+                <FormControl>
+                  <Input type="password" placeholder="" className="bg-background border-border text-white" {...field} />
+                </FormControl>
                 <FormMessage />
               </FormItem>
             )}
