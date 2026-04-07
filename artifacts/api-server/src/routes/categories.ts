@@ -173,25 +173,47 @@ router.post("/categories/apply-pack", requireAuth, async (req, res): Promise<voi
     const addedCategories: any[] = [];
 
     for (const cat of toInsert) {
-      const { data: created, error } = await supabaseAdmin
+      let created: any = null;
+      let insertError: any = null;
+
+      const fullRow = {
+        user_id: req.userId!,
+        name: cat.name.trim(),
+        description: (cat.description || "").trim(),
+        source_pack: packName.trim(),
+      };
+
+      const result = await supabaseAdmin
         .from("categories")
-        .insert({
-          user_id: req.userId!,
-          name: cat.name.trim(),
-          description: (cat.description || "").trim(),
-          source_pack: packName.trim(),
-        })
+        .insert(fullRow)
         .select()
         .single();
 
-      if (!error && created) {
+      if (result.error) {
+        const fallbackResult = await supabaseAdmin
+          .from("categories")
+          .insert({
+            user_id: req.userId!,
+            name: cat.name.trim(),
+            description: (cat.description || "").trim(),
+          })
+          .select()
+          .single();
+        created = fallbackResult.data;
+        insertError = fallbackResult.error;
+      } else {
+        created = result.data;
+        insertError = result.error;
+      }
+
+      if (!insertError && created) {
         added++;
         addedCategories.push({
           id: created.id,
           name: created.name,
           description: created.description,
           emailCount: 0,
-          sourcePack: created.source_pack,
+          sourcePack: created.source_pack || null,
           createdAt: created.created_at,
         });
       }
