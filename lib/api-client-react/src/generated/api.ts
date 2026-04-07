@@ -22,6 +22,8 @@ import type {
   AddCommentBody,
   AddSharedMailboxMember200,
   AddSharedMailboxMemberBody,
+  ApplyPackBody,
+  ApplyPackResponse,
   AssignEmailBody,
   AssignEmailResult,
   AuthResponse,
@@ -50,6 +52,8 @@ import type {
   Email,
   EmailComment,
   GenerateDraftBody,
+  GeneratePackBody,
+  GeneratePackResponse,
   GetInvitationByToken200,
   GetNotificationsParams,
   GetSharedMailboxEmailsParams,
@@ -1516,6 +1520,178 @@ export const useDeleteCategory = <
   TContext
 > => {
   return useMutation(getDeleteCategoryMutationOptions(options));
+};
+
+/**
+ * @summary Apply a profession pack (bulk insert categories)
+ */
+export const getApplyPackUrl = () => {
+  return `/api/categories/apply-pack`;
+};
+
+export const applyPack = async (
+  applyPackBody: ApplyPackBody,
+  options?: RequestInit,
+): Promise<ApplyPackResponse> => {
+  return customFetch<ApplyPackResponse>(getApplyPackUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(applyPackBody),
+  });
+};
+
+export const getApplyPackMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof applyPack>>,
+    TError,
+    { data: BodyType<ApplyPackBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof applyPack>>,
+  TError,
+  { data: BodyType<ApplyPackBody> },
+  TContext
+> => {
+  const mutationKey = ["applyPack"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof applyPack>>,
+    { data: BodyType<ApplyPackBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return applyPack(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ApplyPackMutationResult = NonNullable<
+  Awaited<ReturnType<typeof applyPack>>
+>;
+export type ApplyPackMutationBody = BodyType<ApplyPackBody>;
+export type ApplyPackMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Apply a profession pack (bulk insert categories)
+ */
+export const useApplyPack = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof applyPack>>,
+    TError,
+    { data: BodyType<ApplyPackBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof applyPack>>,
+  TError,
+  { data: BodyType<ApplyPackBody> },
+  TContext
+> => {
+  return useMutation(getApplyPackMutationOptions(options));
+};
+
+/**
+ * @summary Generate a custom pack via AI
+ */
+export const getGeneratePackUrl = () => {
+  return `/api/categories/generate-pack`;
+};
+
+export const generatePack = async (
+  generatePackBody: GeneratePackBody,
+  options?: RequestInit,
+): Promise<GeneratePackResponse> => {
+  return customFetch<GeneratePackResponse>(getGeneratePackUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(generatePackBody),
+  });
+};
+
+export const getGeneratePackMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generatePack>>,
+    TError,
+    { data: BodyType<GeneratePackBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof generatePack>>,
+  TError,
+  { data: BodyType<GeneratePackBody> },
+  TContext
+> => {
+  const mutationKey = ["generatePack"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof generatePack>>,
+    { data: BodyType<GeneratePackBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return generatePack(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type GeneratePackMutationResult = NonNullable<
+  Awaited<ReturnType<typeof generatePack>>
+>;
+export type GeneratePackMutationBody = BodyType<GeneratePackBody>;
+export type GeneratePackMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Generate a custom pack via AI
+ */
+export const useGeneratePack = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generatePack>>,
+    TError,
+    { data: BodyType<GeneratePackBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof generatePack>>,
+  TError,
+  { data: BodyType<GeneratePackBody> },
+  TContext
+> => {
+  return useMutation(getGeneratePackMutationOptions(options));
 };
 
 /**

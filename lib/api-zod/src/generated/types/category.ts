@@ -12,5 +12,7 @@ export interface Category {
   /** @nullable */
   description?: string | null;
   emailCount?: number;
+  /** @nullable */
+  sourcePack?: string | null;
   createdAt: Date;
 }

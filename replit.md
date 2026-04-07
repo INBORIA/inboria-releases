@@ -39,7 +39,7 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - `/dashboard`: Priority inbox with email cards and category sidebar.
     - `/dashboard/bilan`: Daily AI summary.
     - `/dashboard/taches`: Task management from extracted emails.
-    - `/dashboard/categories`: Category management.
+    - `/dashboard/classement`: Classification page with 56 profession packs (8 families) + AI custom pack generation + category management. Old `/dashboard/categories` redirects here.
     - `/dashboard/projets`: Project management.
     - `/dashboard/equipe`: Organisation/team management (Business plan only). Members list, invite, role management.
     - `/dashboard/parametres`: Settings for email connections, integrations, AI preferences, profile, and notifications.

@@ -283,6 +283,7 @@ export const ListCategoriesResponseItem = zod.object({
   name: zod.string(),
   description: zod.string().nullish(),
   emailCount: zod.number().optional(),
+  sourcePack: zod.string().nullish(),
   createdAt: zod.coerce.date(),
 });
 export const ListCategoriesResponse = zod.array(ListCategoriesResponseItem);
@@ -312,6 +313,7 @@ export const UpdateCategoryResponse = zod.object({
   name: zod.string(),
   description: zod.string().nullish(),
   emailCount: zod.number().optional(),
+  sourcePack: zod.string().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -320,6 +322,51 @@ export const UpdateCategoryResponse = zod.object({
  */
 export const DeleteCategoryParams = zod.object({
   id: zod.coerce.number(),
+});
+
+/**
+ * @summary Apply a profession pack (bulk insert categories)
+ */
+export const ApplyPackBody = zod.object({
+  packName: zod.string(),
+  categories: zod.array(
+    zod.object({
+      name: zod.string(),
+      description: zod.string().optional(),
+    }),
+  ),
+});
+
+export const ApplyPackResponse = zod.object({
+  added: zod.number(),
+  skipped: zod.number(),
+  categories: zod.array(
+    zod.object({
+      id: zod.number(),
+      name: zod.string(),
+      description: zod.string().nullish(),
+      emailCount: zod.number().optional(),
+      sourcePack: zod.string().nullish(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary Generate a custom pack via AI
+ */
+export const GeneratePackBody = zod.object({
+  description: zod.string(),
+});
+
+export const GeneratePackResponse = zod.object({
+  packName: zod.string(),
+  categories: zod.array(
+    zod.object({
+      name: zod.string(),
+      description: zod.string(),
+    }),
+  ),
 });
 
 /**

@@ -379,6 +379,44 @@ paths:
         "204":
           description: Deleted
 
+  /categories/apply-pack:
+    post:
+      operationId: applyPack
+      tags: [categories]
+      summary: Apply a profession pack (bulk insert categories)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ApplyPackBody"
+      responses:
+        "200":
+          description: Pack applied
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ApplyPackResponse"
+
+  /categories/generate-pack:
+    post:
+      operationId: generatePack
+      tags: [categories]
+      summary: Generate a custom pack via AI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GeneratePackBody"
+      responses:
+        "200":
+          description: Generated pack
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GeneratePackResponse"
+
   /tasks:
     get:
       operationId: listTasks
@@ -1747,6 +1785,8 @@ components:
           type: ["string", "null"]
         emailCount:
           type: integer
+        sourcePack:
+          type: ["string", "null"]
         createdAt:
           type: string
           format: date-time
@@ -1772,6 +1812,71 @@ components:
           type: string
         description:
           type: string
+
+    ApplyPackBody:
+      type: object
+      properties:
+        packName:
+          type: string
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+            required:
+              - name
+      required:
+        - packName
+        - categories
+
+    ApplyPackResponse:
+      type: object
+      properties:
+        added:
+          type: integer
+        skipped:
+          type: integer
+        categories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Category"
+      required:
+        - added
+        - skipped
+        - categories
+
+    GeneratePackBody:
+      type: object
+      properties:
+        description:
+          type: string
+      required:
+        - description
+
+    GeneratePackResponse:
+      type: object
+      properties:
+        packName:
+          type: string
+        categories:
+          type: array
+          items:
+            type: object
+            properties:
+              name:
+                type: string
+              description:
+                type: string
+            required:
+              - name
+              - description
+      required:
+        - packName
+        - categories
 
     Task:
       type: object

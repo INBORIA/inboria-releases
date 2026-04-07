@@ -8,6 +8,7 @@ export const categoriesTable = pgTable("categories", {
   userId: integer("user_id").notNull().references(() => usersTable.id, { onDelete: "cascade" }),
   name: text("name").notNull(),
   description: text("description"),
+  sourcePack: text("source_pack"),
   createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow().$onUpdate(() => new Date()),
 });

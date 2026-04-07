@@ -32,7 +32,7 @@ const baseNavigation = [
   { name: "Bilan quotidien", href: "/dashboard/bilan", icon: LayoutDashboard },
   { name: "Tâches", href: "/dashboard/taches", icon: CheckSquare },
   { name: "Projets", href: "/dashboard/projets", icon: FolderKanban },
-  { name: "Catégories", href: "/dashboard/categories", icon: Tags },
+  { name: "Classement", href: "/dashboard/classement", icon: Tags },
   { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
   { name: "Abonnement", href: "/dashboard/abonnement", icon: CreditCard },
 ];

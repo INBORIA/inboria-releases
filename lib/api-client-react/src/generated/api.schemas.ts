@@ -138,6 +138,8 @@ export interface Category {
   /** @nullable */
   description?: string | null;
   emailCount?: number;
+  /** @nullable */
+  sourcePack?: string | null;
   createdAt: string;
 }
 
@@ -149,6 +151,36 @@ export interface CreateCategoryBody {
 export interface UpdateCategoryBody {
   name?: string;
   description?: string;
+}
+
+export type ApplyPackBodyCategoriesItem = {
+  name: string;
+  description?: string;
+};
+
+export interface ApplyPackBody {
+  packName: string;
+  categories: ApplyPackBodyCategoriesItem[];
+}
+
+export interface ApplyPackResponse {
+  added: number;
+  skipped: number;
+  categories: Category[];
+}
+
+export interface GeneratePackBody {
+  description: string;
+}
+
+export type GeneratePackResponseCategoriesItem = {
+  name: string;
+  description: string;
+};
+
+export interface GeneratePackResponse {
+  packName: string;
+  categories: GeneratePackResponseCategoriesItem[];
 }
 
 export interface Task {
