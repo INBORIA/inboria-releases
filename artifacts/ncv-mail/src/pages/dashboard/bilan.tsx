@@ -33,7 +33,7 @@ export default function BilanQuotidien() {
               <Sparkles className="w-4 h-4 text-primary" />
               Bilan Quotidien IA
             </h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">Votre resume personnalise pour demarrer la journee.</p>
+            <p className="text-[12px] text-[#8b9cb3] mt-0.5">Votre résumé personnalisé pour démarrer la journée.</p>
           </div>
           <Button 
             onClick={fetchSummary} 
@@ -42,24 +42,24 @@ export default function BilanQuotidien() {
             className="shrink-0 h-8 text-[12px]"
           >
             <RefreshCw className={`w-3 h-3 mr-1.5 ${generateSummary.isPending ? 'animate-spin' : ''}`} />
-            Regenerer
+            Régénérer
           </Button>
         </div>
 
         {generateSummary.isPending && !summaryData ? (
           <div className="bg-card rounded-lg border border-border p-8 flex flex-col items-center justify-center text-center">
             <RefreshCw className="w-8 h-8 text-primary animate-spin mb-3" />
-            <h3 className="text-[13px] font-medium text-white">L'IA analyse votre boite mail...</h3>
+            <h3 className="text-[13px] font-medium text-white">L'IA analyse votre boîte mail...</h3>
             <p className="text-[12px] text-[#8b9cb3] mt-1 max-w-md">Lecture, tri et extraction des informations importantes.</p>
           </div>
         ) : !summaryData ? (
           <div className="bg-card rounded-lg border border-border border-dashed p-12 flex flex-col items-center justify-center text-center">
             <BarChart3 className="w-8 h-8 text-[#8b9cb3]/30 mb-3" />
             <h3 className="text-[13px] font-medium text-white mb-1">Aucun bilan disponible</h3>
-            <p className="text-[12px] text-[#8b9cb3] mb-3">Cliquez sur Regenerer pour obtenir votre bilan du jour.</p>
+            <p className="text-[12px] text-[#8b9cb3] mb-3">Cliquez sur Régénérer pour obtenir votre bilan du jour.</p>
             <Button onClick={fetchSummary} size="sm" className="h-7 text-[11px]">
               <Sparkles className="w-3 h-3 mr-1.5" />
-              Generer le bilan
+              Générer le bilan
             </Button>
           </div>
         ) : (
@@ -69,7 +69,7 @@ export default function BilanQuotidien() {
                 <div className="absolute right-0 top-0 opacity-10 scale-110 translate-x-3 -translate-y-3">
                   <Sparkles className="w-16 h-16 text-primary" />
                 </div>
-                <p className="text-[10px] font-medium text-primary uppercase tracking-wider mb-0.5">Score serenite</p>
+                <p className="text-[10px] font-medium text-primary uppercase tracking-wider mb-0.5">Score sérénité</p>
                 <div className="flex items-end gap-1">
                   <span className="text-2xl font-bold text-white tracking-tighter">{summaryData.score}</span>
                   <span className="text-[12px] text-[#8b9cb3] mb-0.5">/100</span>
@@ -85,14 +85,14 @@ export default function BilanQuotidien() {
                   <span className="text-[10px] font-medium text-red-400 uppercase tracking-wider">Urgences</span>
                 </div>
                 <div className="text-xl font-bold text-white">
-                  {summaryData.stats.urgent} <span className="text-[11px] font-normal text-[#8b9cb3]">a traiter</span>
+                  {summaryData.stats.urgent} <span className="text-[11px] font-normal text-[#8b9cb3]">à traiter</span>
                 </div>
               </div>
 
               <div className="bg-card rounded-lg border border-primary/20 bg-primary/5 p-3.5">
                 <div className="flex items-center gap-1.5 mb-1">
                   <CheckSquare className="w-3.5 h-3.5 text-primary" />
-                  <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Taches</span>
+                  <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Tâches</span>
                 </div>
                 <div className="text-xl font-bold text-white">
                   {summaryData.stats.pending} <span className="text-[11px] font-normal text-[#8b9cb3]">nouvelles</span>
@@ -111,7 +111,7 @@ export default function BilanQuotidien() {
               <div className="lg:col-span-2 space-y-2">
                 <h3 className="text-[12px] font-semibold text-white flex items-center gap-1.5">
                   <ArrowRight className="w-3.5 h-3.5 text-primary" />
-                  Emails cles a traiter
+                  Emails clés à traiter
                 </h3>
                 {summaryData.keyEmails.length > 0 ? (
                   summaryData.keyEmails.map((email: any) => (
@@ -132,7 +132,7 @@ export default function BilanQuotidien() {
                   ))
                 ) : (
                   <div className="bg-card rounded-lg border border-border border-dashed p-6 text-center">
-                    <p className="text-[12px] text-[#8b9cb3]">Aucun email critique detecte.</p>
+                    <p className="text-[12px] text-[#8b9cb3]">Aucun email critique détecté.</p>
                   </div>
                 )}
               </div>

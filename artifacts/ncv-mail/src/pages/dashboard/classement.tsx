@@ -87,13 +87,13 @@ const SUGGESTED_CATEGORIES = [
   },
   {
     name: "Support client",
-    description: "Demandes d'aide, reclamations, questions des clients",
+    description: "Demandes d'aide, réclamations, questions des clients",
     icon: Headphones,
     color: "text-blue-400 bg-blue-500/10",
   },
   {
     name: "Commercial",
-    description: "Prospects, propositions commerciales, negociations, ventes",
+    description: "Prospects, propositions commerciales, négociations, ventes",
     icon: TrendingUp,
     color: "text-emerald-400 bg-emerald-500/10",
   },
@@ -110,8 +110,8 @@ const SUGGESTED_CATEGORIES = [
     color: "text-cyan-400 bg-cyan-500/10",
   },
   {
-    name: "RH / Equipe",
-    description: "Conges, recrutement, gestion du personnel, notes internes",
+    name: "RH / Équipe",
+    description: "Congés, recrutement, gestion du personnel, notes internes",
     icon: Users,
     color: "text-pink-400 bg-pink-500/10",
   },
@@ -123,7 +123,7 @@ const SUGGESTED_CATEGORIES = [
   },
   {
     name: "Juridique",
-    description: "Mises en demeure, RGPD, conformite, contentieux",
+    description: "Mises en demeure, RGPD, conformité, contentieux",
     icon: ShieldCheck,
     color: "text-red-400 bg-red-500/10",
   },
@@ -142,7 +142,7 @@ const SUGGESTED_CATEGORIES = [
 ];
 
 const categorySchema = z.object({
-  name: z.string().min(2, "Le nom doit contenir au moins 2 caracteres"),
+  name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
   description: z.string().optional(),
 });
 
@@ -229,7 +229,7 @@ export default function Classement() {
             next.delete(suggestion.name);
             return next;
           });
-          toast({ title: `"${suggestion.name}" ajoutee` });
+          toast({ title: `"${suggestion.name}" ajoutée` });
         },
         onError: () => {
           setAddingNames((prev) => {
@@ -278,7 +278,7 @@ export default function Classement() {
           });
           setIsCreateOpen(false);
           createForm.reset();
-          toast({ title: "Categorie creee" });
+          toast({ title: "Catégorie créée" });
         },
       }
     );
@@ -294,7 +294,7 @@ export default function Classement() {
             queryKey: getListCategoriesQueryKey(),
           });
           setEditCategory(null);
-          toast({ title: "Categorie modifiee" });
+          toast({ title: "Catégorie modifiée" });
         },
       }
     );
@@ -308,7 +308,7 @@ export default function Classement() {
           queryClient.invalidateQueries({
             queryKey: getListCategoriesQueryKey(),
           });
-          toast({ title: "Categorie supprimee" });
+          toast({ title: "Catégorie supprimée" });
         },
       }
     );
@@ -345,8 +345,8 @@ export default function Classement() {
           setIsApplyDialogOpen(false);
           setSelectedPack(null);
           toast({
-            title: `Pack "${selectedPack.name}" applique`,
-            description: `${data.added} categorie(s) ajoutee(s), ${data.skipped} deja existante(s).`,
+            title: `Pack "${selectedPack.name}" appliqué`,
+            description: `${data.added} catégorie(s) ajoutée(s), ${data.skipped} déjà existante(s).`,
           });
         },
         onError: () => {
@@ -376,7 +376,7 @@ export default function Classement() {
             variant: "destructive",
             title: "Erreur",
             description:
-              "Impossible de generer le pack. Reessayez.",
+              "Impossible de générer le pack. Réessayez.",
           });
         },
       }
@@ -401,8 +401,8 @@ export default function Classement() {
           setAiGeneratedPack(null);
           setAiDescription("");
           toast({
-            title: `Pack "${aiGeneratedPack.packName}" applique`,
-            description: `${data.added} categorie(s) ajoutee(s), ${data.skipped} deja existante(s).`,
+            title: `Pack "${aiGeneratedPack.packName}" appliqué`,
+            description: `${data.added} catégorie(s) ajoutée(s), ${data.skipped} déjà existante(s).`,
           });
         },
         onError: () => {
@@ -434,7 +434,7 @@ export default function Classement() {
               Classement
             </h1>
             <p className="text-[12px] text-[#8b9cb3] mt-0.5">
-              Packs metiers et categories pour organiser vos emails avec l'IA.
+              Packs métiers et catégories pour organiser vos emails avec l'IA.
             </p>
           </div>
 
@@ -442,13 +442,13 @@ export default function Classement() {
             <DialogTrigger asChild>
               <Button size="sm" className="shrink-0 gap-2">
                 <Plus className="w-3.5 h-3.5" />
-                Nouvelle categorie
+                Nouvelle catégorie
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-card border-border">
               <DialogHeader>
                 <DialogTitle className="text-white">
-                  Creer une categorie
+                  Créer une catégorie
                 </DialogTitle>
               </DialogHeader>
               <Form {...createForm}>
@@ -483,7 +483,7 @@ export default function Classement() {
                         </FormLabel>
                         <FormControl>
                           <Textarea
-                            placeholder="Ex: Tous les emails contenant des factures, devis ou recus."
+                            placeholder="Ex: Tous les emails contenant des factures, devis ou reçus."
                             className="resize-none h-24 bg-background border-border text-white"
                             {...field}
                           />
@@ -497,7 +497,7 @@ export default function Classement() {
                       type="submit"
                       disabled={createCategory.isPending}
                     >
-                      {createCategory.isPending ? "Creation..." : "Creer"}
+                      {createCategory.isPending ? "Création..." : "Créer"}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -513,7 +513,7 @@ export default function Classement() {
           <DialogContent className="bg-card border-border">
             <DialogHeader>
               <DialogTitle className="text-white">
-                Modifier la categorie
+                Modifier la catégorie
               </DialogTitle>
             </DialogHeader>
             <Form {...editForm}>
@@ -578,11 +578,11 @@ export default function Classement() {
               </div>
               <div>
                 <h2 className="text-[14px] font-semibold text-white">
-                  Packs metiers
+                  Packs métiers
                 </h2>
                 <p className="text-[12px] text-[#8b9cb3]">
-                  Ajoutez des categories pre-configurees adaptees a votre
-                  activite
+                  Ajoutez des catégories pré-configurées adaptées à votre
+                  activité
                 </p>
               </div>
             </div>
@@ -593,14 +593,14 @@ export default function Classement() {
               onClick={() => setIsAiDialogOpen(true)}
             >
               <Wand2 className="w-3.5 h-3.5" />
-              Mon metier n'est pas liste
+              Mon métier n'est pas listé
             </Button>
           </div>
 
           <div className="relative mb-4">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8b9cb3]" />
             <Input
-              placeholder="Rechercher un metier..."
+              placeholder="Rechercher un métier..."
               value={packSearch}
               onChange={(e) => setPackSearch(e.target.value)}
               className="pl-10 bg-background border-border text-white text-[13px]"
@@ -610,12 +610,12 @@ export default function Classement() {
           {filteredFamilles.length === 0 && (
             <div className="text-center py-8">
               <p className="text-[13px] text-[#8b9cb3]">
-                Aucun metier trouve.{" "}
+                Aucun métier trouvé.{" "}
                 <button
                   onClick={() => setIsAiDialogOpen(true)}
                   className="text-primary hover:underline"
                 >
-                  Generez un pack personnalise avec l'IA
+                  Générez un pack personnalisé avec l'IA
                 </button>
               </p>
             </div>
@@ -660,7 +660,7 @@ export default function Classement() {
                                 {pack.name}
                               </p>
                               <p className="text-[10px] text-[#8b9cb3]">
-                                {pack.categories.length} categories
+                                {pack.categories.length} catégories
                                 {newCount < pack.categories.length && (
                                   <span className="text-primary ml-1">
                                     ({newCount} nouvelles)
@@ -702,8 +702,8 @@ export default function Classement() {
                   <span className="text-white font-medium">
                     {getNewCategoriesCount(selectedPack)}
                   </span>{" "}
-                  categorie(s) a votre classement. Vos categories actuelles ne
-                  seront ni modifiees ni supprimees.
+                  catégorie(s) à votre classement. Vos catégories actuelles ne
+                  seront ni modifiées ni supprimées.
                 </p>
                 {selectedPack.categories.length -
                   getNewCategoriesCount(selectedPack) >
@@ -711,7 +711,7 @@ export default function Classement() {
                   <p className="text-[12px] text-amber-400/80">
                     {selectedPack.categories.length -
                       getNewCategoriesCount(selectedPack)}{" "}
-                    categorie(s) existe(nt) deja et seront ignoree(s).
+                    catégorie(s) existe(nt) déjà et seront ignorée(s).
                   </p>
                 )}
                 <div className="max-h-60 overflow-y-auto space-y-1.5 pr-1">
@@ -733,7 +733,7 @@ export default function Classement() {
                           </span>
                           {exists && (
                             <span className="text-amber-400 ml-1 no-underline">
-                              (existe deja)
+                              (existe déjà)
                             </span>
                           )}
                           <p className="text-[#8b9cb3] text-[11px]">
@@ -769,7 +769,7 @@ export default function Classement() {
                       <>
                         <Check className="w-3.5 h-3.5" />
                         Appliquer ({getNewCategoriesCount(selectedPack)}{" "}
-                        categories)
+                        catégories)
                       </>
                     )}
                   </Button>
@@ -793,18 +793,18 @@ export default function Classement() {
             <DialogHeader>
               <DialogTitle className="text-white flex items-center gap-2">
                 <Wand2 className="w-4 h-4 text-primary" />
-                Generer un pack personnalise
+                Générer un pack personnalisé
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               {!aiGeneratedPack ? (
                 <>
                   <p className="text-[13px] text-[#8b9cb3]">
-                    Decrivez votre metier ou activite, et l'IA generera des
-                    categories adaptees.
+                    Décrivez votre métier ou activité, et l'IA générera des
+                    catégories adaptées.
                   </p>
                   <Textarea
-                    placeholder="Ex: Cabinet d'osteopathie specialise dans le sport, avec gestion de rendez-vous patients, contacts medecins et clubs sportifs..."
+                    placeholder="Ex: Cabinet d'ostéopathie spécialisé dans le sport, avec gestion de rendez-vous patients, contacts médecins et clubs sportifs..."
                     value={aiDescription}
                     onChange={(e) => setAiDescription(e.target.value)}
                     className="resize-none h-28 bg-background border-border text-white text-[13px]"
@@ -827,12 +827,12 @@ export default function Classement() {
                       {generatePack.isPending ? (
                         <>
                           <Loader2 className="w-3.5 h-3.5 animate-spin" />
-                          Generation...
+                          Génération...
                         </>
                       ) : (
                         <>
                           <Sparkles className="w-3.5 h-3.5" />
-                          Generer
+                          Générer
                         </>
                       )}
                     </Button>
@@ -841,8 +841,8 @@ export default function Classement() {
               ) : (
                 <>
                   <p className="text-[13px] text-[#8b9cb3]">
-                    Pack "{aiGeneratedPack.packName}" genere avec{" "}
-                    {aiGeneratedPack.categories.length} categories :
+                    Pack "{aiGeneratedPack.packName}" généré avec{" "}
+                    {aiGeneratedPack.categories.length} catégories :
                   </p>
                   <div className="max-h-60 overflow-y-auto space-y-1.5 pr-1">
                     {aiGeneratedPack.categories.map((cat) => {
@@ -865,7 +865,7 @@ export default function Classement() {
                             </span>
                             {exists && (
                               <span className="text-amber-400 ml-1 no-underline">
-                                (existe deja)
+                                (existe déjà)
                               </span>
                             )}
                             <p className="text-[#8b9cb3] text-[11px]">
@@ -882,7 +882,7 @@ export default function Classement() {
                       onClick={() => setAiGeneratedPack(null)}
                       className="text-[#8b9cb3]"
                     >
-                      Regenerer
+                      Régénérer
                     </Button>
                     <Button
                       onClick={handleApplyAiPack}
@@ -916,10 +916,10 @@ export default function Classement() {
               </div>
               <div>
                 <h2 className="text-[14px] font-semibold text-white">
-                  Mes categories
+                  Mes catégories
                 </h2>
                 <p className="text-[12px] text-[#8b9cb3]">
-                  Gerez les dossiers dans lesquels l'IA classe vos emails
+                  Gérez les dossiers dans lesquels l'IA classe vos emails
                 </p>
               </div>
             </div>
@@ -934,7 +934,7 @@ export default function Classement() {
                   </div>
                   <div>
                     <h3 className="text-[14px] font-semibold text-white">
-                      Categories suggerees
+                      Catégories suggérées
                     </h3>
                     <p className="text-[12px] text-[#8b9cb3]">
                       Cliquez pour ajouter, l'IA les utilisera pour classer vos
@@ -1029,15 +1029,15 @@ export default function Classement() {
               <div className="col-span-full text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
                 <Tags className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
                 <h3 className="text-sm font-medium text-white mb-1">
-                  Aucune categorie
+                  Aucune catégorie
                 </h3>
                 <p className="text-[13px] text-[#8b9cb3] mb-4">
-                  Choisissez un pack metier ci-dessus ou creez vos propres
-                  categories.
+                  Choisissez un pack métier ci-dessus ou créez vos propres
+                  catégories.
                 </p>
                 <Button onClick={() => setIsCreateOpen(true)} size="sm">
                   <Plus className="w-3.5 h-3.5 mr-2" />
-                  Creer la premiere
+                  Créer la première
                 </Button>
               </div>
             ) : (
@@ -1090,11 +1090,11 @@ export default function Classement() {
                             <AlertDialogContent className="bg-card border-border">
                               <AlertDialogHeader>
                                 <AlertDialogTitle className="text-white">
-                                  Supprimer cette categorie ?
+                                  Supprimer cette catégorie ?
                                 </AlertDialogTitle>
                                 <AlertDialogDescription className="text-[#8b9cb3]">
-                                  La categorie "{cat.name}" sera supprimee. Les
-                                  emails associes perdront cette categorie.
+                                  La catégorie "{cat.name}" sera supprimée. Les
+                                  emails associés perdront cette catégorie.
                                 </AlertDialogDescription>
                               </AlertDialogHeader>
                               <AlertDialogFooter>

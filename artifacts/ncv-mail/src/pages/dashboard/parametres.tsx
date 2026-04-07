@@ -109,7 +109,7 @@ export default function Parametres() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
-          toast({ title: "Profil mis a jour" });
+          toast({ title: "Profil mis à jour" });
         }
       }
     );
@@ -139,7 +139,7 @@ export default function Parametres() {
       if (error) {
         toast({ variant: "destructive", title: "Erreur", description: error.message });
       } else {
-        toast({ title: "Mot de passe modifie avec succes" });
+        toast({ title: "Mot de passe modifié avec succès" });
         setCurrentPassword("");
         setNewPassword("");
         setConfirmNewPassword("");
@@ -157,7 +157,7 @@ export default function Parametres() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
-          toast({ title: "Signature enregistree", description: "Votre signature sera utilisee dans les brouillons IA et les reponses." });
+          toast({ title: "Signature enregistrée", description: "Votre signature sera utilisée dans les brouillons IA et les réponses." });
         }
       }
     );
@@ -212,7 +212,7 @@ export default function Parametres() {
         setImapHost("");
         setImapPort("");
       } else {
-        setConnectError(data.error || "Connexion echouee");
+        setConnectError(data.error || "Connexion échouée");
         if (data.needsManualConfig) setShowAdvanced(true);
       }
     } catch {
@@ -240,8 +240,8 @@ export default function Parametres() {
     <DashboardLayout>
       <div className="p-5 max-w-4xl mx-auto w-full">
         <div className="mb-5">
-          <h1 className="text-[16px] font-semibold text-white tracking-tight">Parametres</h1>
-          <p className="text-[12px] text-[#8b9cb3] mt-0.5">Gerez votre compte et les preferences de l'IA.</p>
+          <h1 className="text-[16px] font-semibold text-white tracking-tight">Paramètres</h1>
+          <p className="text-[12px] text-[#8b9cb3] mt-0.5">Gérez votre compte et les préférences de l'IA.</p>
         </div>
 
         <div className="space-y-6">
@@ -280,7 +280,7 @@ export default function Parametres() {
                       </div>
                       <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 text-[12px]" onClick={() => handleDisconnect(conn.id)}>
                         <Trash2 className="w-3.5 h-3.5 mr-1.5" />
-                        Deconnecter
+                        Déconnecter
                       </Button>
                     </div>
                   ))}
@@ -402,7 +402,7 @@ export default function Parametres() {
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
               <BrainCircuit className="w-4 h-4 text-primary" />
-              Preferences IA
+              Préférences IA
             </h2>
             <div className="bg-card rounded-lg border border-border p-5 space-y-5">
               <div className="space-y-4">
@@ -438,7 +438,7 @@ export default function Parametres() {
             </h2>
             <div className="bg-card rounded-lg border border-border p-5 space-y-4">
               <p className="text-[12px] text-[#8b9cb3]">
-                Cette signature sera automatiquement ajoutee aux brouillons generes par l'IA et a vos reponses manuelles.
+                Cette signature sera automatiquement ajoutée aux brouillons générés par l'IA et à vos réponses manuelles.
               </p>
               {isLoading ? (
                 <Skeleton className="h-32 w-full bg-white/5" />

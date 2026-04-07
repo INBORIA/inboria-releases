@@ -24,19 +24,19 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 
 const SUGGESTED_CATEGORIES = [
   { name: "Facturation", description: "Factures, devis, bons de commande, relances de paiement", icon: Receipt, color: "text-amber-400 bg-amber-500/10" },
-  { name: "Support client", description: "Demandes d'aide, reclamations, questions des clients", icon: Headphones, color: "text-blue-400 bg-blue-500/10" },
-  { name: "Commercial", description: "Prospects, propositions commerciales, negociations, ventes", icon: TrendingUp, color: "text-emerald-400 bg-emerald-500/10" },
+  { name: "Support client", description: "Demandes d'aide, réclamations, questions des clients", icon: Headphones, color: "text-blue-400 bg-blue-500/10" },
+  { name: "Commercial", description: "Prospects, propositions commerciales, négociations, ventes", icon: TrendingUp, color: "text-emerald-400 bg-emerald-500/10" },
   { name: "Administratif", description: "Contrats, documents officiels, courriers juridiques", icon: FileText, color: "text-purple-400 bg-purple-500/10" },
   { name: "Newsletter", description: "Newsletters, promotions, emails marketing", icon: Mail, color: "text-cyan-400 bg-cyan-500/10" },
-  { name: "RH / Equipe", description: "Conges, recrutement, gestion du personnel, notes internes", icon: Users, color: "text-pink-400 bg-pink-500/10" },
+  { name: "RH / Équipe", description: "Congés, recrutement, gestion du personnel, notes internes", icon: Users, color: "text-pink-400 bg-pink-500/10" },
   { name: "Fournisseurs", description: "Commandes, livraisons, relations fournisseurs", icon: Briefcase, color: "text-orange-400 bg-orange-500/10" },
-  { name: "Juridique", description: "Mises en demeure, RGPD, conformite, contentieux", icon: ShieldCheck, color: "text-red-400 bg-red-500/10" },
+  { name: "Juridique", description: "Mises en demeure, RGPD, conformité, contentieux", icon: ShieldCheck, color: "text-red-400 bg-red-500/10" },
   { name: "Technique", description: "Bugs, maintenance, serveurs, IT, demandes techniques", icon: Wrench, color: "text-indigo-400 bg-indigo-500/10" },
   { name: "Formation", description: "Webinaires, certifications, e-learning, invitations", icon: BookOpen, color: "text-teal-400 bg-teal-500/10" },
 ];
 
 const categorySchema = z.object({
-  name: z.string().min(2, "Le nom doit contenir au moins 2 caracteres"),
+  name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
   description: z.string().optional(),
 });
 
@@ -83,7 +83,7 @@ export default function Categories() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
           setAddingNames(prev => { const next = new Set(prev); next.delete(suggestion.name); return next; });
-          toast({ title: `"${suggestion.name}" ajoutee` });
+          toast({ title: `"${suggestion.name}" ajoutée` });
         },
         onError: () => {
           setAddingNames(prev => { const next = new Set(prev); next.delete(suggestion.name); return next; });
@@ -122,7 +122,7 @@ export default function Categories() {
           queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
           setIsCreateOpen(false);
           createForm.reset();
-          toast({ title: "Categorie creee" });
+          toast({ title: "Catégorie créée" });
         },
       }
     );
@@ -136,7 +136,7 @@ export default function Categories() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
           setEditCategory(null);
-          toast({ title: "Categorie modifiee" });
+          toast({ title: "Catégorie modifiée" });
         },
       }
     );
@@ -148,7 +148,7 @@ export default function Categories() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
-          toast({ title: "Categorie supprimee" });
+          toast({ title: "Catégorie supprimée" });
         },
       }
     );
@@ -159,20 +159,20 @@ export default function Categories() {
       <div className="p-5 max-w-5xl mx-auto w-full">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
-            <h1 className="text-[16px] font-semibold text-white tracking-tight">Categories de classement</h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">Gerez les dossiers dans lesquels l'IA classe vos emails.</p>
+            <h1 className="text-[16px] font-semibold text-white tracking-tight">Catégories de classement</h1>
+            <p className="text-[12px] text-[#8b9cb3] mt-0.5">Gérez les dossiers dans lesquels l'IA classe vos emails.</p>
           </div>
           
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
               <Button size="sm" className="shrink-0 gap-2">
                 <Plus className="w-3.5 h-3.5" />
-                Nouvelle categorie
+                Nouvelle catégorie
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-card border-border">
               <DialogHeader>
-                <DialogTitle className="text-white">Creer une categorie</DialogTitle>
+                <DialogTitle className="text-white">Créer une catégorie</DialogTitle>
               </DialogHeader>
               <Form {...createForm}>
                 <form onSubmit={createForm.handleSubmit(onSubmitCreate)} className="space-y-4">
@@ -197,7 +197,7 @@ export default function Categories() {
                         <FormLabel className="text-[#8b9cb3]">Description (pour aider l'IA)</FormLabel>
                         <FormControl>
                           <Textarea 
-                            placeholder="Ex: Tous les emails contenant des factures, devis ou recus." 
+                            placeholder="Ex: Tous les emails contenant des factures, devis ou reçus." 
                             className="resize-none h-24 bg-background border-border text-white"
                             {...field} 
                           />
@@ -208,7 +208,7 @@ export default function Categories() {
                   />
                   <DialogFooter>
                     <Button type="submit" disabled={createCategory.isPending}>
-                      {createCategory.isPending ? "Creation..." : "Creer"}
+                      {createCategory.isPending ? "Création..." : "Créer"}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -220,7 +220,7 @@ export default function Categories() {
         <Dialog open={!!editCategory} onOpenChange={(open) => !open && setEditCategory(null)}>
           <DialogContent className="bg-card border-border">
             <DialogHeader>
-              <DialogTitle className="text-white">Modifier la categorie</DialogTitle>
+              <DialogTitle className="text-white">Modifier la catégorie</DialogTitle>
             </DialogHeader>
             <Form {...editForm}>
               <form onSubmit={editForm.handleSubmit(onSubmitEdit)} className="space-y-4">
@@ -268,7 +268,7 @@ export default function Categories() {
                   <Sparkles className="w-4 h-4 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-[14px] font-semibold text-white">Categories suggerees</h3>
+                  <h3 className="text-[14px] font-semibold text-white">Catégories suggérées</h3>
                   <p className="text-[12px] text-[#8b9cb3]">Cliquez pour ajouter, l'IA les utilisera pour classer vos emails</p>
                 </div>
               </div>
@@ -343,11 +343,11 @@ export default function Categories() {
           ) : categories?.length === 0 ? (
             <div className="col-span-full text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
               <Tags className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
-              <h3 className="text-sm font-medium text-white mb-1">Aucune categorie</h3>
-              <p className="text-[13px] text-[#8b9cb3] mb-4">Creez des categories pour organiser votre boite.</p>
+              <h3 className="text-sm font-medium text-white mb-1">Aucune catégorie</h3>
+              <p className="text-[13px] text-[#8b9cb3] mb-4">Créez des catégories pour organiser votre boîte.</p>
               <Button onClick={() => setIsCreateOpen(true)} size="sm">
                 <Plus className="w-3.5 h-3.5 mr-2" />
-                Creer la premiere
+                Créer la première
               </Button>
             </div>
           ) : (
@@ -375,9 +375,9 @@ export default function Categories() {
                         </AlertDialogTrigger>
                         <AlertDialogContent className="bg-card border-border">
                           <AlertDialogHeader>
-                            <AlertDialogTitle className="text-white">Supprimer cette categorie ?</AlertDialogTitle>
+                            <AlertDialogTitle className="text-white">Supprimer cette catégorie ?</AlertDialogTitle>
                             <AlertDialogDescription className="text-[#8b9cb3]">
-                              La categorie "{cat.name}" sera supprimee. Les emails associes perdront cette categorie.
+                              La catégorie "{cat.name}" sera supprimée. Les emails associés perdront cette catégorie.
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>

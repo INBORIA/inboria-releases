@@ -219,7 +219,7 @@ function ProjectDetailView({
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
           queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
-          toast({ title: "Tache supprimee" });
+          toast({ title: "Tâche supprimée" });
         },
       }
     );
@@ -246,10 +246,10 @@ function ProjectDetailView({
           queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
           queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
           setNewTaskTitle("");
-          toast({ title: "Tache ajoutee" });
+          toast({ title: "Tâche ajoutée" });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible de creer la tache." });
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible de créer la tâche." });
         },
       }
     );
@@ -343,7 +343,7 @@ function ProjectDetailView({
           <div className="bg-card rounded-lg border border-border p-3">
             <div className="flex items-center gap-1.5 text-[#8b9cb3] mb-0.5">
               <CheckSquare className="w-3.5 h-3.5" />
-              <span className="text-[11px]">Taches terminees</span>
+              <span className="text-[11px]">Tâches terminées</span>
             </div>
             <p className="text-xl font-semibold text-white">
               {doneTasks}/{(project.tasks || []).length}
@@ -400,7 +400,7 @@ function ProjectDetailView({
             <Input
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
-              placeholder="Ajouter une tache..."
+              placeholder="Ajouter une tâche..."
               className="bg-background border-border text-white text-[12px] h-8 flex-1"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && newTaskTitle.trim()) {
@@ -454,7 +454,7 @@ function ProjectDetailView({
               ))}
             </div>
           ) : (
-            <p className="text-[11px] text-[#8b9cb3]/60 italic">Aucune tache pour le moment.</p>
+            <p className="text-[11px] text-[#8b9cb3]/60 italic">Aucune tâche pour le moment.</p>
           )}
         </div>
 
@@ -467,10 +467,10 @@ function ProjectDetailView({
             <div className="text-center py-12 rounded-lg border border-border border-dashed bg-card/50">
               <FolderKanban className="mx-auto h-8 w-8 text-[#8b9cb3]/20 mb-2" />
               <p className="text-[12px] text-[#8b9cb3]">
-                Aucun email ou tache lie a ce projet pour le moment.
+                Aucun email ou tâche lié à ce projet pour le moment.
               </p>
               <p className="text-[11px] text-[#8b9cb3]/60 mt-0.5">
-                Attribuez des emails a ce projet depuis la boite de reception.
+                Attribuez des emails à ce projet depuis la boîte de réception.
               </p>
             </div>
           )}
@@ -538,7 +538,7 @@ export default function Projets() {
           });
           setIsCreateOpen(false);
           createForm.reset();
-          toast({ title: "Projet cree" });
+          toast({ title: "Projet créé" });
         },
       }
     );
@@ -580,7 +580,7 @@ export default function Projets() {
           queryClient.invalidateQueries({
             queryKey: getListProjectsQueryKey(),
           });
-          toast({ title: "Projet supprime" });
+          toast({ title: "Projet supprimé" });
         },
       }
     );
@@ -638,7 +638,7 @@ export default function Projets() {
           <DialogContent className="bg-card border-border">
             <DialogHeader>
               <DialogTitle className="text-white">
-                Creer un projet
+                Créer un projet
               </DialogTitle>
             </DialogHeader>
             <Form {...createForm}>
@@ -765,7 +765,7 @@ export default function Projets() {
                 </div>
                 <DialogFooter>
                   <Button type="submit" disabled={createProject.isPending}>
-                    {createProject.isPending ? "Creation..." : "Creer"}
+                    {createProject.isPending ? "Création..." : "Créer"}
                   </Button>
                 </DialogFooter>
               </form>
@@ -939,7 +939,7 @@ export default function Projets() {
               className="gap-2"
             >
               <Plus className="w-3.5 h-3.5" />
-              Creer le premier projet
+              Créer le premier projet
             </Button>
           </div>
         ) : (
@@ -1035,8 +1035,8 @@ export default function Projets() {
                         Supprimer ce projet ?
                       </AlertDialogTitle>
                       <AlertDialogDescription className="text-[#8b9cb3]">
-                        Le projet "{project.name}" sera supprime. Les emails
-                        et taches associes seront delies.
+                        Le projet "{project.name}" sera supprimé. Les emails
+                        et tâches associés seront déliés.
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
@@ -1082,7 +1082,7 @@ export default function Projets() {
             <span className="text-primary font-medium">
               {project.pendingTaskCount}
             </span>{" "}
-            taches
+            tâches
           </span>
         </div>
       </div>

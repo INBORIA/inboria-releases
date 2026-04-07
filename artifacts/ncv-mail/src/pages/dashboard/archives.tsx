@@ -156,7 +156,7 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
                   </Select>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Categorie:</span>
+                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Catégorie:</span>
                   <Select value={email.categoryId?.toString() || "none"} onValueChange={(val) => onUpdateCategory(email.id, val)}>
                     <SelectTrigger className="w-[130px] h-6 bg-card border-border text-[11px] text-white">
                       <SelectValue />
@@ -258,7 +258,7 @@ export default function Archives() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: `Priorite changee en ${priority}` });
+          toast({ title: `Priorité changée en ${priority}` });
         },
       }
     );
@@ -270,7 +270,7 @@ export default function Archives() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Categorie mise a jour" });
+          toast({ title: "Catégorie mise à jour" });
         },
       }
     );
@@ -282,7 +282,7 @@ export default function Archives() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Projet mis a jour" });
+          toast({ title: "Projet mis à jour" });
         },
       }
     );
@@ -343,7 +343,7 @@ export default function Archives() {
             {selectedEmails.length === 0 ? (
               <div className="text-center py-12 rounded-lg border border-border border-dashed bg-card/50">
                 <FolderOpen className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
-                <p className="text-[12px] text-[#8b9cb3]">Aucun email dans cette categorie</p>
+                <p className="text-[12px] text-[#8b9cb3]">Aucun email dans cette catégorie</p>
               </div>
             ) : (
               selectedEmails.map((email) => {
@@ -403,7 +403,7 @@ export default function Archives() {
         <div className="mb-5">
           <h1 className="text-[16px] font-semibold text-white tracking-tight">Archives</h1>
           <p className="text-[12px] text-[#8b9cb3] mt-0.5">
-            Emails classes automatiquement par l'IA. {archivedEmails.length} email(s) archives.
+            Emails classés automatiquement par l'IA. {archivedEmails.length} email(s) archivés.
           </p>
         </div>
 

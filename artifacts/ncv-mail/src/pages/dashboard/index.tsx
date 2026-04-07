@@ -150,7 +150,7 @@ function EmailRow({ email, onClick, onArchive, onCategoryClick, isSelected, onTo
 }
 
 const triageSchema = z.object({
-  sender: z.string().min(1, "Expediteur requis"),
+  sender: z.string().min(1, "Expéditeur requis"),
   subject: z.string().min(1, "Sujet requis"),
   body: z.string().min(1, "Contenu requis"),
 });
@@ -210,7 +210,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
               <div className="px-4 py-2.5 bg-primary/[0.06] border-b border-border">
                 <div className="flex items-center gap-1.5 mb-0.5">
                   <Sparkles className="w-3 h-3 text-primary" />
-                  <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Resume IA</span>
+                  <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Résumé IA</span>
                 </div>
                 <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{email.summary}</p>
               </div>
@@ -235,7 +235,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   }}
                 >
                   <Reply className="w-3 h-3" />
-                  Repondre
+                  Répondre
                 </Button>
                 <Button
                   size="sm"
@@ -252,7 +252,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   }}
                 >
                   {isDrafting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
-                  {isDrafting ? "Generation..." : "Reponse IA"}
+                  {isDrafting ? "Génération..." : "Réponse IA"}
                 </Button>
                 {email.status === "unread" && (
                   <Button
@@ -296,12 +296,12 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   }}
                 >
                   <ListTodo className="w-3 h-3" />
-                  Creer une tache
+                  Créer une tâche
                 </Button>
               </div>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Priorite:</span>
+                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Priorité:</span>
                   <Select value={email.priority} onValueChange={(val) => onUpdatePriority(email.id, val)}>
                     <SelectTrigger className="w-[100px] h-6 bg-card border-border text-[11px] text-white">
                       <SelectValue />
@@ -314,13 +314,13 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   </Select>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Categorie:</span>
+                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Catégorie:</span>
                   <Select value={email.categoryId?.toString() || "none"} onValueChange={(val) => onUpdateCategory(email.id, val)}>
                     <SelectTrigger className="w-[130px] h-6 bg-card border-border text-[11px] text-white">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="none">Non classe</SelectItem>
+                      <SelectItem value="none">Non classé</SelectItem>
                       {categories.map((cat) => (
                         <SelectItem key={cat.categoryId} value={cat.categoryId.toString()}>{cat.categoryName}</SelectItem>
                       ))}
@@ -343,7 +343,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 </div>
                 {orgMembers && orgMembers.length > 0 && (
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Assigne:</span>
+                    <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Assigné:</span>
                     <Select
                       value={email.assignedTo || "none"}
                       onValueChange={(val) => {
@@ -377,14 +377,14 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
                 <div className="flex items-center gap-1.5 mb-1">
                   <ListTodo className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="text-[11px] font-medium text-cyan-400 uppercase tracking-wider">Nouvelle tache</span>
+                  <span className="text-[11px] font-medium text-cyan-400 uppercase tracking-wider">Nouvelle tâche</span>
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Titre de la tache</label>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Titre de la tâche</label>
                   <Input
                     value={taskTitle}
                     onChange={(e) => setTaskTitle(e.target.value)}
-                    placeholder="Ex: Repondre au devis, Envoyer le contrat..."
+                    placeholder="Ex: Répondre au devis, Envoyer le contrat..."
                     className="bg-background border-border text-white text-[12px] h-8"
                   />
                 </div>
@@ -423,7 +423,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     }}
                   >
                     <ListTodo className="w-3 h-3" />
-                    Creer
+                    Créer
                   </Button>
                 </div>
               </div>
@@ -454,7 +454,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   <Textarea
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Ecrivez votre reponse..."
+                    placeholder="Écrivez votre réponse..."
                     className="h-24 bg-background border-border text-white text-[12px] resize-none"
                   />
                 </div>
@@ -636,7 +636,7 @@ export default function Dashboard() {
         onSuccess: () => {
           setSelectedEmailId(null);
           invalidateAll();
-          toast({ title: "Email archive" });
+          toast({ title: "Email archivé" });
         },
       }
     );
@@ -649,7 +649,7 @@ export default function Dashboard() {
         onSuccess: () => {
           setSelectedEmailId(null);
           invalidateAll();
-          toast({ title: "Email supprime" });
+          toast({ title: "Email supprimé" });
         },
         onError: () => {
           toast({ variant: "destructive", title: "Erreur", description: "Impossible de supprimer l'email." });
@@ -664,7 +664,7 @@ export default function Dashboard() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: `Priorite changee en ${priority}`, description: "L'IA retiendra ce choix pour cet expediteur." });
+          toast({ title: `Priorité changée en ${priority}`, description: "L'IA retiendra ce choix pour cet expéditeur." });
         },
       }
     );
@@ -676,7 +676,7 @@ export default function Dashboard() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Categorie mise a jour", description: "L'IA retiendra ce choix pour cet expediteur." });
+          toast({ title: "Catégorie mise à jour", description: "L'IA retiendra ce choix pour cet expéditeur." });
         },
       }
     );
@@ -688,7 +688,7 @@ export default function Dashboard() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Projet mis a jour", description: "L'email a ete lie au projet." });
+          toast({ title: "Projet mis à jour", description: "L'email a été lié au projet." });
         },
       }
     );
@@ -739,10 +739,10 @@ export default function Dashboard() {
             invalidateAll();
           }
           queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
-          toast({ title: "Tache creee", description: "La tache a ete ajoutee depuis cet email." });
+          toast({ title: "Tâche créée", description: "La tâche a été ajoutée depuis cet email." });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible de creer la tache." });
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible de créer la tâche." });
         },
       }
     );
@@ -754,7 +754,7 @@ export default function Dashboard() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Email envoye" });
+          toast({ title: "Email envoyé" });
         },
         onError: () => {
           toast({ variant: "destructive", title: "Erreur", description: "Impossible d'envoyer l'email." });
@@ -774,7 +774,7 @@ export default function Dashboard() {
           setComposeTo("");
           setComposeSubject("");
           setComposeBody("");
-          toast({ title: "Email envoye" });
+          toast({ title: "Email envoyé" });
         },
         onError: () => {
           toast({ variant: "destructive", title: "Erreur", description: "Impossible d'envoyer l'email." });
@@ -789,10 +789,10 @@ export default function Dashboard() {
       {
         onSuccess: (data) => {
           callback(data.draft);
-          toast({ title: "Brouillon IA genere", description: "Le brouillon a ete insere dans le formulaire." });
+          toast({ title: "Brouillon IA généré", description: "Le brouillon a été inséré dans le formulaire." });
         },
         onError: () => {
-          toast({ title: "Brouillon indisponible", description: "L'IA n'a pas pu generer de brouillon pour cet email. Essayez a nouveau." });
+          toast({ title: "Brouillon indisponible", description: "L'IA n'a pas pu générer de brouillon pour cet email. Essayez à nouveau." });
         },
       }
     );
@@ -814,9 +814,9 @@ export default function Dashboard() {
       const data = await res.json();
       if (res.ok) {
         invalidateAll();
-        toast({ title: "Synchronisation terminee", description: `${data.synced || 0} nouveau(x) email(s) importe(s).` });
+        toast({ title: "Synchronisation terminée", description: `${data.synced || 0} nouveau(x) email(s) importé(s).` });
       } else {
-        toast({ variant: "destructive", title: "Erreur", description: data.error || "Echec de la synchronisation." });
+        toast({ variant: "destructive", title: "Erreur", description: data.error || "Échec de la synchronisation." });
       }
     } catch {
       toast({ variant: "destructive", title: "Erreur", description: "Impossible de synchroniser." });
@@ -1100,7 +1100,7 @@ export default function Dashboard() {
           )}
 
           <div className="flex items-center gap-1.5 max-w-[1200px] mx-auto">
-            <span className="text-[10px] text-[#8b9cb3] mr-1">Priorite:</span>
+            <span className="text-[10px] text-[#8b9cb3] mr-1">Priorité:</span>
             {[
               { value: "all", label: "Tous" },
               { value: "urgent", label: "Urgent" },
@@ -1122,10 +1122,10 @@ export default function Dashboard() {
             <div className="w-px h-4 bg-[#1f2937] mx-1" />
             <Select value={filterCategory} onValueChange={setFilterCategory}>
               <SelectTrigger className="w-auto min-w-[130px] h-6 bg-card border-border text-[#8b9cb3] text-[10px]">
-                <SelectValue placeholder="Categorie" />
+                <SelectValue placeholder="Catégorie" />
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
-                <SelectItem value="all">Toutes categories</SelectItem>
+                <SelectItem value="all">Toutes catégories</SelectItem>
                 {categoryCounts?.map((cat) => (
                   <SelectItem key={cat.categoryId} value={cat.categoryName}>{cat.categoryName}</SelectItem>
                 ))}
@@ -1339,7 +1339,7 @@ export default function Dashboard() {
               <div className="bg-card rounded-lg border border-border p-3">
                 <div className="flex items-center justify-between mb-2.5">
                   <h3 className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">
-                    Categories
+                    Catégories
                   </h3>
                   {(() => {
                     const JUNK = ["non classé", "non classe", "uncategorized"];
@@ -1352,25 +1352,25 @@ export default function Dashboard() {
                             onSuccess: (data: any) => {
                               invalidateAll();
                               toast({
-                                title: `${data.recategorized} email(s) re-categorise(s)`,
-                                description: data.created?.length > 0 ? `Categories creees: ${data.created.join(", ")}` : undefined,
+                                title: `${data.recategorized} email(s) re-catégorisé(s)`,
+                                description: data.created?.length > 0 ? `Catégories créées: ${data.created.join(", ")}` : undefined,
                               });
                             },
                             onError: () => {
-                              toast({ title: "Erreur", description: "Echec de la re-categorisation", variant: "destructive" });
+                              toast({ title: "Erreur", description: "Échec de la re-catégorisation", variant: "destructive" });
                             },
                           });
                         }}
                         disabled={recategorizeMut.isPending}
                         className="flex items-center gap-1 text-[9px] text-primary hover:text-white transition-colors disabled:opacity-50"
-                        title="Re-categoriser les emails sans categorie"
+                        title="Re-catégoriser les emails sans catégorie"
                       >
                         {recategorizeMut.isPending ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
                         ) : (
                           <Tags className="w-3 h-3" />
                         )}
-                        <span>{uncategorizedCount} non classes</span>
+                        <span>{uncategorizedCount} non classés</span>
                       </button>
                     );
                   })()}
@@ -1407,7 +1407,7 @@ export default function Dashboard() {
                       </div>
                     ))}
                     {categoryCounts?.length === 0 && (
-                      <p className="text-[11px] text-[#8b9cb3]/60 italic py-1.5">Aucune categorie</p>
+                      <p className="text-[11px] text-[#8b9cb3]/60 italic py-1.5">Aucune catégorie</p>
                     )}
                   </div>
                 )}

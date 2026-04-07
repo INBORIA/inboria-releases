@@ -96,7 +96,7 @@ export default function BoitesPartagees() {
   async function handleShareConnection(connectionId: string) {
     try {
       await createMailbox.mutateAsync({ data: { connectionId, name: shareName.trim() || undefined } });
-      toast({ title: "Adresse partagee avec l'equipe" });
+      toast({ title: "Adresse partagée avec l'équipe" });
       setShareName("");
       setSharingConnectionId(null);
       invalidateAll();
@@ -203,10 +203,10 @@ export default function BoitesPartagees() {
               <div className="bg-card border border-border rounded-xl p-5 space-y-4">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                   <Share2 className="h-5 w-5 text-primary" />
-                  Partager une adresse avec l'equipe
+                  Partager une adresse avec l'équipe
                 </h2>
                 <p className="text-xs text-muted-foreground">
-                  Selectionnez une adresse connectee dans vos Parametres pour la partager avec les membres de votre equipe.
+                  Sélectionnez une adresse connectée dans vos Paramètres pour la partager avec les membres de votre équipe.
                 </p>
                 <div className="space-y-2">
                   {availableConnections.map((conn: any) => (
@@ -258,8 +258,8 @@ export default function BoitesPartagees() {
                   <div>
                     <p className="text-sm text-muted-foreground">
                       {((adminConnections as any[]) || []).length === 0
-                        ? "Aucune adresse email connectee. Connectez d'abord une adresse dans Parametres pour pouvoir la partager."
-                        : "Toutes vos adresses connectees sont deja partagees."}
+                        ? "Aucune adresse email connectée. Connectez d'abord une adresse dans Paramètres pour pouvoir la partager."
+                        : "Toutes vos adresses connectées sont déjà partagées."}
                     </p>
                   </div>
                 </div>
@@ -273,8 +273,8 @@ export default function BoitesPartagees() {
             ) : !mailboxes || (mailboxes as any[]).length === 0 ? (
               <div className="bg-card border border-border rounded-xl p-8 text-center">
                 <Inbox className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                <p className="text-muted-foreground">Aucune boite partagee pour le moment.</p>
-                {isAdmin && <p className="text-sm text-muted-foreground mt-1">Partagez une adresse connectee ci-dessus pour commencer.</p>}
+                <p className="text-muted-foreground">Aucune boîte partagée pour le moment.</p>
+                {isAdmin && <p className="text-sm text-muted-foreground mt-1">Partagez une adresse connectée ci-dessus pour commencer.</p>}
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -295,7 +295,7 @@ export default function BoitesPartagees() {
                       <span className="flex items-center gap-1"><Users className="h-4 w-4" />{mb.memberCount || 0} membre{(mb.memberCount || 0) > 1 ? "s" : ""}</span>
                       {mb.connectionId && (
                         <span className="flex items-center gap-1 text-emerald-400">
-                          <CheckCircle2 className="h-3.5 w-3.5" /> Connectee
+                          <CheckCircle2 className="h-3.5 w-3.5" /> Connectée
                         </span>
                       )}
                       {(mb.unclaimedCount || 0) > 0 && (
@@ -372,7 +372,7 @@ function MailboxDetail({
               value={addMemberUserId}
               onChange={(e) => setAddMemberUserId(e.target.value)}
             >
-              <option value="">Selectionner un collegue...</option>
+              <option value="">Sélectionner un collègue...</option>
               {availableMembers.map((om: any) => (
                 <option key={om.userId} value={om.userId}>
                   {om.fullName || om.email || om.userId}

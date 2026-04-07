@@ -49,10 +49,10 @@ export default function Taches() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
-          toast({ title: "Tache supprimee" });
+          toast({ title: "Tâche supprimée" });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible de supprimer la tache." });
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible de supprimer la tâche." });
         },
       }
     );
@@ -63,15 +63,15 @@ export default function Taches() {
       <div className="p-5 max-w-4xl mx-auto w-full">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
-            <h1 className="text-[16px] font-semibold text-white tracking-tight">Taches extraites</h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">Actions identifiees automatiquement depuis vos emails.</p>
+            <h1 className="text-[16px] font-semibold text-white tracking-tight">Tâches extraites</h1>
+            <p className="text-[12px] text-[#8b9cb3] mt-0.5">Actions identifiées automatiquement depuis vos emails.</p>
           </div>
         </div>
 
         <Tabs defaultValue={filter} onValueChange={setFilter} className="mb-5">
           <TabsList className="bg-card border border-border p-0.5 h-9">
-            <TabsTrigger value="pending" className="data-[state=active]:bg-primary data-[state=active]:text-white text-[#8b9cb3] text-[13px] h-7 px-3">A faire</TabsTrigger>
-            <TabsTrigger value="done" className="data-[state=active]:bg-primary data-[state=active]:text-white text-[#8b9cb3] text-[13px] h-7 px-3">Terminees</TabsTrigger>
+            <TabsTrigger value="pending" className="data-[state=active]:bg-primary data-[state=active]:text-white text-[#8b9cb3] text-[13px] h-7 px-3">À faire</TabsTrigger>
+            <TabsTrigger value="done" className="data-[state=active]:bg-primary data-[state=active]:text-white text-[#8b9cb3] text-[13px] h-7 px-3">Terminées</TabsTrigger>
             <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-white text-[#8b9cb3] text-[13px] h-7 px-3">Toutes</TabsTrigger>
           </TabsList>
         </Tabs>
@@ -90,8 +90,8 @@ export default function Taches() {
           ) : tasks?.length === 0 ? (
             <div className="text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
               <CheckSquare className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
-              <h3 className="text-sm font-medium text-white mb-1">Aucune tache</h3>
-              <p className="text-[13px] text-[#8b9cb3]">Les taches seront creees automatiquement a partir de vos emails.</p>
+              <h3 className="text-sm font-medium text-white mb-1">Aucune tâche</h3>
+              <p className="text-[13px] text-[#8b9cb3]">Les tâches seront créées automatiquement à partir de vos emails.</p>
             </div>
           ) : (
             tasks?.map((task) => (
@@ -146,7 +146,7 @@ export default function Taches() {
                     {!task.dueDate && !task.emailSubject && (
                       <div className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        <span>Creee le {format(new Date(task.createdAt), "dd/MM/yyyy")}</span>
+                        <span>Créée le {format(new Date(task.createdAt), "dd/MM/yyyy")}</span>
                       </div>
                     )}
                   </div>
@@ -154,7 +154,7 @@ export default function Taches() {
                 <div className="flex items-center gap-2 shrink-0">
                   {task.done && (
                     <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[11px] hidden sm:inline-flex">
-                      Terminee
+                      Terminée
                     </Badge>
                   )}
                   <button
@@ -212,7 +212,7 @@ export default function Taches() {
                 <div className="px-3 py-2 bg-primary/[0.06] rounded-lg border border-primary/10">
                   <div className="flex items-center gap-1.5 mb-0.5">
                     <Sparkles className="w-3 h-3 text-primary" />
-                    <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Resume IA</span>
+                    <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Résumé IA</span>
                   </div>
                   <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{emailDetailTask.emailSummary}</p>
                 </div>

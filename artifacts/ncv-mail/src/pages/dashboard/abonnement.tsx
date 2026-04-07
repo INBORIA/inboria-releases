@@ -26,14 +26,14 @@ export default function Abonnement() {
     if (params.get("success") === "true") {
       queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
       toast({
-        title: "Paiement reussi",
-        description: "Votre abonnement a ete mis a jour avec succes.",
+        title: "Paiement réussi",
+        description: "Votre abonnement a été mis à jour avec succès.",
       });
       navigate("/dashboard/abonnement", { replace: true });
     } else if (params.get("cancelled") === "true") {
       toast({
-        title: "Paiement annule",
-        description: "Vous n'avez pas ete debite.",
+        title: "Paiement annulé",
+        description: "Vous n'avez pas été débité.",
         variant: "destructive",
       });
       navigate("/dashboard/abonnement", { replace: true });
@@ -66,8 +66,8 @@ export default function Abonnement() {
           if (data.updated) {
             queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
             toast({
-              title: "Plan mis a jour",
-              description: "Votre abonnement a ete modifie avec succes.",
+              title: "Plan mis à jour",
+              description: "Votre abonnement a été modifié avec succès.",
             });
           } else if (data.url) {
             window.location.href = data.url;
@@ -77,7 +77,7 @@ export default function Abonnement() {
           setLoadingPlan(null);
           toast({
             title: "Erreur",
-            description: "Impossible de creer la session de paiement.",
+            description: "Impossible de créer la session de paiement.",
             variant: "destructive",
           });
         },
@@ -105,7 +105,7 @@ export default function Abonnement() {
     } catch {
       toast({
         title: "Erreur",
-        description: "Impossible d'acceder au portail de gestion.",
+        description: "Impossible d'accéder au portail de gestion.",
         variant: "destructive",
       });
     } finally {
@@ -120,10 +120,10 @@ export default function Abonnement() {
       <div className="p-5 max-w-6xl mx-auto w-full">
         <div className="mb-6 text-center max-w-2xl mx-auto">
           <h1 className="text-xl font-bold text-white tracking-tight mb-1.5">
-            Gerez votre abonnement
+            Gérez votre abonnement
           </h1>
           <p className="text-[12px] text-[#8b9cb3]">
-            Choisissez le plan adapte a votre volume d'emails.
+            Choisissez le plan adapté à votre volume d'emails.
           </p>
         </div>
 
@@ -133,13 +133,13 @@ export default function Abonnement() {
             <div>
               <p className="text-[14px] font-semibold text-red-400">
                 {profile.plan === "expired"
-                  ? "Votre abonnement a expire"
-                  : "Votre essai gratuit est termine"}
+                  ? "Votre abonnement a expiré"
+                  : "Votre essai gratuit est terminé"}
               </p>
               <p className="text-[12px] text-[#8b9cb3] mt-0.5">
                 {profile.plan === "expired"
-                  ? "Reabonnez-vous a un plan payant pour continuer a utiliser NCV Mail."
-                  : "Vous avez utilise vos 100 emails gratuits. Choisissez un plan ci-dessous pour continuer."}
+                  ? "Réabonnez-vous à un plan payant pour continuer à utiliser NCV Mail."
+                  : "Vous avez utilisé vos 100 emails gratuits. Choisissez un plan ci-dessous pour continuer."}
               </p>
             </div>
           </div>
@@ -153,7 +153,7 @@ export default function Abonnement() {
               <h3 className="text-[14px] font-semibold text-white mb-0.5">
                 Plan actuel :{" "}
                 <span className={`capitalize ${profile.plan === "expired" ? "text-red-400" : "text-primary"}`}>
-                  {profile.plan === "expired" ? "Expire" : profile.plan}
+                  {profile.plan === "expired" ? "Expiré" : profile.plan}
                 </span>
               </h3>
               <p className="text-[12px] text-[#8b9cb3]">
@@ -193,7 +193,7 @@ export default function Abonnement() {
                   ) : (
                     <ExternalLink className="w-3.5 h-3.5 mr-1" />
                   )}
-                  Gerer l'abonnement
+                  Gérer l'abonnement
                 </Button>
               )}
             </div>
@@ -256,7 +256,7 @@ export default function Abonnement() {
                   </div>
                   {isBusiness && (
                     <p className="text-[11px] text-[#8b9cb3] mt-0.5">
-                      Soit 9€ par siege / mois (minimum 3 sieges)
+                      Soit 9€ par siège / mois (minimum 3 sièges)
                     </p>
                   )}
                 </div>
@@ -264,7 +264,7 @@ export default function Abonnement() {
                 {isBusiness && (
                   <div className="mb-4 p-3 bg-background rounded-lg border border-border">
                     <label className="text-[12px] font-medium text-[#8b9cb3] block mb-2">
-                      Nombre de sieges
+                      Nombre de sièges
                     </label>
                     <div className="flex items-center gap-3">
                       <input
@@ -317,7 +317,7 @@ export default function Abonnement() {
                     size="sm"
                     disabled
                   >
-                    {profile?.plan === "essai" ? "Essai en cours" : "Essai termine"}
+                    {profile?.plan === "essai" ? "Essai en cours" : "Essai terminé"}
                   </Button>
                 ) : (
                   <Button
@@ -344,7 +344,7 @@ export default function Abonnement() {
 
         <div className="mt-6 text-center">
           <p className="text-[12px] text-[#8b9cb3] leading-relaxed">
-            Exemple : 3 collaborateurs = 27€/mois — modifiable a tout moment depuis votre espace.
+            Exemple : 3 collaborateurs = 27€/mois — modifiable à tout moment depuis votre espace.
           </p>
         </div>
 
@@ -355,10 +355,10 @@ export default function Abonnement() {
             </div>
             <div>
               <h3 className="text-[14px] font-semibold text-white mb-1">
-                Depassement de quota
+                Dépassement de quota
               </h3>
               <p className="text-[12px] text-[#8b9cb3] leading-relaxed">
-                Facturation automatique Pay-as-you-go. Aucune surprise — vous etes notifie a 80% de votre quota mensuel.
+                Facturation automatique Pay-as-you-go. Aucune surprise — vous êtes notifié à 80% de votre quota mensuel.
               </p>
             </div>
           </div>
@@ -374,7 +374,7 @@ export default function Abonnement() {
                 Sans engagement
               </h3>
               <p className="text-[12px] text-[#8b9cb3] leading-relaxed">
-                Tous les plans sont sans engagement. Vous pouvez ajouter ou retirer des sieges, changer de plan ou annuler a tout moment depuis votre espace personnel.
+                Tous les plans sont sans engagement. Vous pouvez ajouter ou retirer des sièges, changer de plan ou annuler à tout moment depuis votre espace personnel.
               </p>
             </div>
           </div>
@@ -384,11 +384,11 @@ export default function Abonnement() {
           <div>
             <h3 className="text-[14px] font-semibold text-white mb-1 flex items-center gap-2">
               <Shield className="w-4 h-4 text-primary" />
-              Securite et confidentialite
+              Sécurité et confidentialité
             </h3>
             <p className="text-[12px] text-[#8b9cb3] max-w-2xl">
-              Vos emails ne sont jamais stockes pour entrainer nos modeles. IA
-              en temps reel uniquement. Donnees hebergees en Europe (RGPD).
+              Vos emails ne sont jamais stockés pour entraîner nos modèles. IA
+              en temps réel uniquement. Données hébergées en Europe (RGPD).
             </p>
           </div>
         </div>
