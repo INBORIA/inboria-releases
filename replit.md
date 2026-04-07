@@ -2,215 +2,54 @@
 
 ## Overview
 
-NCV Mail is a B2B SaaS "Email Autopilot" for SMEs, freelancers, and professionals in Belgium/France. The AI automatically reads, sorts, prioritizes, and categorizes emails.
+NCV Mail is a B2B SaaS "Email Autopilot" designed for SMEs, freelancers, and professionals in Belgium/France. Its core purpose is to automate email management by using AI to read, sort, prioritize, and categorize emails, streamlining communication and enhancing productivity for its users.
 
-## Architecture (2 systems)
+## User Preferences
 
-1. **Replit** (ncvmail.com) — Marketing site vitrine + Application dashboard (React + Express API)
-2. **Supabase** (ecdwevvisbrcsomdiqop.supabase.co) — Database + Authentication
+I prefer simple language and detailed explanations. I want iterative development and will provide feedback at each stage. Ask before making major changes.
 
-Replit connects TO Supabase. No local database. Domain ncvmail.com registered at Hostinger (DNS only).
+## System Architecture
 
-## Stack
+The project employs a monorepo structure utilizing pnpm workspaces and TypeScript 5.9. The frontend is built with React, Vite, Tailwind CSS, and shadcn/ui, featuring wouter for routing. The backend is an Express 5 API server that acts as a proxy to Supabase.
 
-- **Monorepo**: pnpm workspaces, TypeScript 5.9
-- **Frontend**: React + Vite + Tailwind CSS + shadcn/ui, wouter routing
-- **Backend**: Express 5 API server (proxy to Supabase)
-- **Database**: Supabase PostgreSQL (external)
-- **Auth**: Supabase Auth (email+password)
-- **AI**: OpenAI gpt-4o-mini via Replit AI Integration
-- **API codegen**: Orval from OpenAPI spec
+### UI/UX Decisions
 
-## Auth Flow
+The design system is dark-only, inspired by Linear/Superhuman. It uses Inter font and a specific color palette including `#0d1117` for background, `#141c2b` for cards, and `#2d7dd2` as the primary blue. Priority badges are visually represented with Red (urgent), Amber (moyen), and Emerald (faible). The sidebar is compact (200px wide) with 12px navigation items and subtle active highlights. Email rows feature a left color bar indicating priority, circular blue avatars, Sparkles AI summary lines, and inline category/project badges. The inbox header includes a search bar, Autopilot status indicator, and pill-style priority filter buttons.
 
-- **Signup**: Frontend calls `supabase.auth.signUp()` (client SDK) → sends verification email → redirects to `/verifier-email`
-- **Email verification**: User clicks link → redirected to `/auth/callback` → session established → redirect to dashboard (or Stripe checkout if paid plan selected)
-- **Profile creation**: Separate `/api/auth/setup-profile` endpoint creates profile row after signup
-- **Plan selection persistence**: Selected plan stored in localStorage (`ncv_pending_plan`, `ncv_pending_seats`) during signup, consumed after email verification
-- **Login**: Frontend uses `supabase.auth.signInWithPassword()` directly
-- Supabase session provides JWT access_token
-- Frontend sends `Authorization: Bearer <token>` to API server
-- API server validates token via `supabaseAdmin.auth.getUser(token)`
-- Token getter set via `setAuthTokenGetter()` in custom-fetch
-- **Legacy register**: `/api/auth/register` still exists (used by mobile app) — creates user with `email_confirm: true` (auto-confirmed)
+### Technical Implementations
 
-## Design System — Dark Theme
+- **Authentication**: Supabase Auth handles email+password signup and login. The frontend interacts directly with `supabase.auth.signUp()` and `supabase.auth.signInWithPassword()`. Email verification redirects through `/auth/callback`. The API server validates JWTs via `supabaseAdmin.auth.getUser()`.
+- **Email Integration**: Supports Gmail (OAuth2 via Google APIs), Outlook (OAuth2 via Microsoft Graph API), and generic IMAP providers. AI Triage, powered by GPT-4o-mini, classifies emails during sync, assigning priority, summary, and category.
+- **Auto-Sync**: An internal server-side process automatically synchronizes emails every 5 minutes across connected accounts, performing AI triage, deduplication, and OAuth token refreshing.
+- **Webhook**: Provides `POST /api/webhook/email` and `POST /api/webhook/email/batch` for real-time ingestion of single or batched emails, with AI processing and duplicate detection.
+- **AI Features**:
+    - **Recategorize Uncategorized**: `POST /api/ai/recategorize-uncategorized` re-analyzes uncategorized emails using GPT-4o-mini.
+    - **Draft Reply**: `POST /api/ai/draft` generates context-aware, professional email replies in French using GPT-4o-mini.
+- **Email Sending**: `POST /api/emails/send` handles sending emails, supporting threading for Gmail and utilizing Microsoft Graph for Outlook, and SMTP for IMAP.
+- **Stripe Integration**: Manages subscriptions via Stripe Checkout sessions (`POST /api/stripe/checkout`), webhooks for `checkout.session.completed`, `invoice.paid`, `customer.subscription.deleted`, `customer.subscription.updated`, and a customer portal (`GET /api/stripe/portal`).
+- **Integrations (Pro plan)**:
+    - **Slack**: OAuth2 integration to send urgent email notifications to a configured channel.
+    - **Notion**: OAuth2 integration to create task pages in Notion databases from AI-extracted tasks.
+- **Mobile App**: Developed with Expo, utilizing the same `@workspace/api-client-react` hooks and Supabase Auth. It features a dark-only theme, tab-based navigation (Reception, Bilan, Taches, Projets, Menu), and screens for login, register, email detail, project detail, archives, categories, and subscription.
 
-Dark-only theme inspired by Linear/Superhuman:
-- **Background**: `#0d1117` (HSL 220 40% 7%)
-- **Card**: `#141c2b` (HSL 225 25% 12%)
-- **Sidebar**: `#0f1623` (HSL 220 33% 11%)
-- **Primary blue**: `#2d7dd2` (HSL 210 65% 50%)
-- **Muted text**: `#8b9cb3` (HSL 216 18% 62%)
-- **Border**: `#1f2937` (HSL 217 25% 18%)
-- **Hover card**: `#1a2235` (HSL 222 34% 15%)
-- **Active sidebar**: `#1e3a5f` (HSL 215 45% 18%)
-- **Font**: Inter
-- Priority badges: Red (urgent), Amber (moyen), Emerald (faible)
-- **Sidebar**: Compact 200px width, 12px nav items, subtle active highlight
-- **Email rows**: Left color bar (1px wide, priority color), circular blue avatar, Sparkles AI summary line, inline category/project badges
-- **Inbox header**: Search bar + Autopilot status indicator + priority filter buttons (pill-style)
-- **Stats cards**: Colored borders matching priority (red/amber/emerald)
+### Feature Specifications
 
-## Email Integration
+- **Marketing Site**: Includes a landing page, features overview, pricing, legal mentions, privacy policy, and terms of service.
+- **Application Pages**:
+    - `/dashboard`: Priority inbox with email cards and category sidebar.
+    - `/dashboard/bilan`: Daily AI summary.
+    - `/dashboard/taches`: Task management from extracted emails.
+    - `/dashboard/categories`: Category management.
+    - `/dashboard/projets`: Project management.
+    - `/dashboard/parametres`: Settings for email connections, integrations, AI preferences, profile, and notifications.
+    - `/dashboard/abonnement`: Subscription management.
 
-- **Gmail**: OAuth2 flow via Google APIs, popup-based auth
-- **Outlook**: OAuth2 flow via Microsoft Graph API (needs MICROSOFT_CLIENT_ID/SECRET)
-- **IMAP**: Generic provider support (Orange, Free, SFR, Yahoo, etc.)
-- **AI Triage**: GPT-4o-mini classifies each email during sync (priority + summary + category)
-- **Force re-sync**: Deletes all emails then re-downloads with AI triage
-- **Sender parsing**: `parseSender()` helper splits "Name <email>" format
+## External Dependencies
 
-## Auto-Sync (background email sync)
-
-Automatic email synchronization built into the server — no external service needed (Make.com not required).
-
-- **Interval**: Every 5 minutes, checks all connected email accounts for new emails
-- **Providers**: Gmail (OAuth2), Outlook (Microsoft Graph), IMAP (generic)
-- **Processing**: Each new email → AI triage (GPT-4o-mini) → priority + category + summary + task extraction
-- **Deduplication**: via external_id (Gmail message ID, Outlook message ID, IMAP UID)
-- **Token refresh**: Automatic refresh of expired OAuth tokens (Google + Microsoft)
-- **Quota**: Respects user email quota (emails_used vs emails_quota)
-- **Startup**: Runs 10s after server boot, then every 5 minutes
-- **File**: `artifacts/api-server/src/services/auto-sync.ts`
-
-## Webhook (supplementary real-time ingestion)
-
-Optional webhook for external integrations. Flow: External source -> Webhook NCV Mail -> GPT-4o mini -> Supabase
-
-- **Single email**: `POST /api/webhook/email` — processes one email with AI triage + task extraction
-- **Batch**: `POST /api/webhook/email/batch` — processes up to 50 emails at once
-- **Test**: `GET /api/webhook/test` — verify webhook is active
-- **Auth**: Header `x-webhook-secret` or `Authorization: Bearer <secret>` with WEBHOOK_SECRET env var
-- **Payload**: `{ sender, subject, body, user_email, external_id?, received_at? }`
-- **Response**: `{ status, emailId, priority, category, summary, tasksCreated }`
-- **Features**: duplicate detection (via external_id), quota enforcement, auto task extraction, quota increment
-- **File**: `artifacts/api-server/src/routes/webhook.ts`
-
-## Supabase Tables
-
-- `categories` (id uuid, created_at, user_id, name, description) — EXISTS
-- `emails` (id uuid, created_at, user_id, category_id, project_id, sender, subject, body, status, priority TEXT DEFAULT 'faible', summary TEXT, external_id) — EXISTS
-- `email_connections` (id uuid, user_id, provider, email_address, access_token, refresh_token, created_at, last_synced_at) — EXISTS
-- `profiles` (id uuid, created_at, full_name, plan, seats, emails_used, emails_quota, stripe_*) — EXISTS
-- `projects` (id uuid, created_at, user_id, name, reference, description, status, color) — EXISTS
-- `tasks` (id uuid, created_at, user_id, email_id, project_id, title, done, due_date) — EXISTS
-- `ai_rules` (id uuid, user_id, sender_pattern, forced_priority, forced_category) — EXISTS
-- `integrations` (id uuid, user_id, provider, access_token, workspace_name, channel_id, database_id, enabled, created_at) — NEEDS CREATION
-- `profiles` columns for push: `push_token TEXT`, `push_platform TEXT` — NEEDS ADDING (for mobile push notifications)
-
-## Pages (all French, dark theme)
-
-### Marketing Site (public, MarketingLayout)
-- `/` — Landing page (hero, "comment ca marche", benefits, CTA). Redirects to /dashboard if authenticated.
-- `/fonctionnalites` — 12 features grid (tri IA, resumes, brouillons IA, brief, taches, projets, multi-boites, signature, archivage, priorite, mobile, securite)
-- `/tarifs` — 4 plan cards (Essai/Solo/Pro/Business) with seat slider, links to signup
-- `/mentions-legales` — NCV Management SRL legal info (BCE BE0439.327.747, Rixensart)
-- `/confidentialite` — Privacy policy (RGPD)
-- `/conditions` — Terms of service
-
-### Auth Flow Pages
-- `/login`, `/signup` — Auth pages (dark card on dark background, signup shows plan context if `?plan=X`)
-- `/verifier-email` — "Verifiez votre email" page with resend button (shown after signup)
-- `/auth/callback` — Email verification callback handler (exchanges token, redirects to dashboard or Stripe)
-
-### Application (auth required)
-- `/dashboard` — Priority inbox with email cards, priority badges, categories sidebar
-- `/dashboard/bilan` — Daily AI summary with score, urgencies, key emails, advice
-- `/dashboard/taches` — Tasks extracted from emails, with tabs (A faire/Terminees/Toutes)
-- `/dashboard/categories` — Category management with create/edit/delete
-- `/dashboard/projets` — Project management: create/edit/delete projects, view linked emails/tasks
-- `/dashboard/parametres` — Settings: email connections, Slack/Notion integrations, AI preferences, profile, notifications
-- `/dashboard/abonnement` — Subscription plans (Gratuit 0€ / Solo 9€ / Pro 19€ / Business 9€/seat)
-- 404 page — Dark themed "Page introuvable"
-
-## AI Recategorize Uncategorized
-
-- **Endpoint**: `POST /api/ai/recategorize-uncategorized` — re-analyzes up to 50 uncategorized emails with GPT-4o-mini, assigns categories (creating new ones if needed), returns `{recategorized, created}`
-- **Frontend**: Conditional button in inbox category sidebar — only shows when uncategorized emails exist, displays count (e.g. "3 non classes"), triggers recategorization with loading state and toast feedback
-- **OpenAPI**: `recategorizeUncategorized` operation, `useRecategorizeUncategorized` React hook
-
-## AI Draft Reply
-
-- **Endpoint**: `POST /api/ai/draft` accepts `{emailId}`, returns `{draft}`
-- Uses gpt-4o-mini to generate professional reply drafts in French (professional tone)
-- Context-aware: includes linked project name/ref/description and category
-- Signs with user's first name from profile
-- **Frontend**: "Reponse IA" button (Wand2 icon) in email detail view, opens reply form and pre-fills with AI-generated draft
-- **OpenAPI**: `generateDraft` operation, `GenerateDraftBody`/`DraftResponse` schemas, `useGenerateDraft` React hook
-
-## Email Send/Reply
-
-- **Send endpoint**: `POST /api/emails/send` accepts `{to, subject, body, replyToEmailId?}`
-- **Gmail**: Sends via Gmail API (raw MIME), supports reply threading via In-Reply-To header
-- **Outlook**: Sends via Microsoft Graph sendMail endpoint with auto token refresh
-- **IMAP**: Sends via SMTP (nodemailer), host auto-derived from IMAP host
-- **Frontend**: "Nouveau" compose button + dialog in inbox toolbar, Reply button in email detail view
-- **OpenAPI**: `sendEmail` operation, `SendEmailBody` schema, `useSendEmail` React hook
-
-## Stripe Integration
-
-- **Checkout**: `POST /api/stripe/checkout` accepts `{planId, seats?}`, creates Stripe Checkout session, returns `{url}`
-- **Webhook**: `POST /api/stripe/webhook` handles `checkout.session.completed`, `invoice.paid`, `customer.subscription.deleted`, `customer.subscription.updated`
-- **Portal**: `GET /api/stripe/portal` returns `{url}` for Stripe Customer Portal (manage subscription, cancel, update card)
-- **Lazy init**: Stripe SDK initialized on first call (server runs without STRIPE_SECRET_KEY)
-- **Raw body**: `express.json` verify callback saves raw body for webhook signature verification
-- **Frontend**: Subscription page redirects to Stripe Checkout, shows "Gerer l'abonnement" button for paid plans
-- **OpenAPI**: `createCheckoutSession`, `getStripePortal` operations, `CheckoutBody`/`CheckoutResponse`/`PortalResponse` schemas
-
-## Slack & Notion Integrations (Pro plan)
-
-- **Slack**: OAuth2 connect via `GET /api/integrations/slack/connect`, callback at `/api/integrations/slack/callback`
-  - Sends formatted notification to configured Slack channel when urgent email detected by AI during auto-sync
-  - Uses `chat:write`, `channels:read` scopes
-- **Notion**: OAuth2 connect via `GET /api/integrations/notion/connect`, callback at `/api/integrations/notion/callback`
-  - Creates task pages in configured Notion database when AI extracts tasks during auto-sync
-  - Uses Notion API v2022-06-28, auto-discovers first database
-- **CRUD**: `GET /api/integrations` (list), `PATCH /api/integrations/:provider` (toggle/update), `DELETE /api/integrations/:provider` (disconnect)
-- **Plan gate**: Pro or Business plan required to connect integrations
-- **Frontend**: Integrations section in Parametres page with connect/disconnect buttons and enable/disable toggles
-- **Table**: `integrations` (id, user_id, provider, access_token, workspace_name, channel_id, database_id, enabled, created_at) — unique on (user_id, provider)
-- **Env vars**: SLACK_CLIENT_ID, SLACK_CLIENT_SECRET, NOTION_CLIENT_ID, NOTION_CLIENT_SECRET
-- **Files**: `artifacts/api-server/src/routes/integrations.ts`, `artifacts/api-server/src/services/integrations.ts`
-
-## API Routes (prefix: /api)
-
-Auth, profile, emails (CRUD + send), categories, tasks, dashboard stats, AI triage/summary, email connections/sync, webhook, stripe (checkout/webhook/portal), integrations (Slack/Notion OAuth + CRUD)
-
-## Environment Variables
-
-- `VITE_SUPABASE_URL` — Supabase project URL
-- `VITE_SUPABASE_PUBLISHABLE_KEY` — Supabase anon key (secret)
-- `SUPABASE_SECRET_KEY` — Supabase service role key (secret)
-- `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` — Gmail OAuth2
-- `MICROSOFT_CLIENT_ID` / `MICROSOFT_CLIENT_SECRET` — Outlook OAuth2 (PENDING)
-- `WEBHOOK_SECRET` — Secret key for Make.com webhook authentication
-- `AI_INTEGRATIONS_OPENAI_*` — Auto-provisioned by Replit
-- `STRIPE_SECRET_KEY` — Stripe secret API key
-- `STRIPE_WEBHOOK_SECRET` — Stripe webhook signing secret
-- `STRIPE_PRICE_SOLO` — Stripe Price ID for Solo plan (9€/mois)
-- `STRIPE_PRICE_PRO` — Stripe Price ID for Pro plan (19€/mois)
-- `STRIPE_PRICE_BUSINESS` — Stripe Price ID for Business plan (9€/siege/mois)
-- `SLACK_CLIENT_ID` / `SLACK_CLIENT_SECRET` — Slack OAuth2 app credentials
-- `NOTION_CLIENT_ID` / `NOTION_CLIENT_SECRET` — Notion OAuth2 integration credentials
-- `FRONTEND_URL` — Frontend URL for OAuth redirect (defaults to REPLIT_DEV_DOMAIN)
-
-## Mobile App (Expo)
-
-- **Artifact**: `artifacts/ncv-mail-mobile` (slug: ncv-mail-mobile, previewPath: /ncv-mail-mobile/)
-- **Auth**: Supabase Auth via `expo-secure-store` (native) / localStorage (web)
-- **API**: Uses same `@workspace/api-client-react` hooks, `setBaseUrl` + `setAuthTokenGetter` in `_layout.tsx`
-- **Env vars**: `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` passed from VITE_* in dev script
-- **Tabs**: Reception (inbox), Bilan (daily AI summary), Taches, Projets, Menu
-- **Menu tab**: Profile card + quota bar + links to Archives, Categories, Abonnement + logout
-- **Screens**: Login/Register, Email detail (`/email/[id]`), Project detail (`/project/[id]`), Archives, Categories, Abonnement
-- **Icons**: ONLY `MaterialCommunityIcons` from `@expo/vector-icons` — never Feather. Font loaded in root `_layout.tsx` via `...MaterialCommunityIcons.font`
-- **Emoji handling**: `cleanEmailBody.ts` does proper byte-level UTF-8 decoding of quoted-printable for emoji support
-- **Theme**: Dark-only matching web (#0d1117 bg, #141c2b card, #2d7dd2 primary)
-- **Navigation**: expo-router with NativeTabs (iOS 26+) / classic Tabs fallback
-
-## Key Commands
-
-- `pnpm --filter @workspace/api-spec run codegen` — Regenerate API hooks
-- `pnpm --filter @workspace/api-server run dev` — Run API server
-- `pnpm --filter @workspace/ncv-mail-mobile run dev` — Run Expo mobile dev server
+- **Supabase**: Primary database (PostgreSQL) and authentication service.
+- **OpenAI**: GPT-4o-mini via Replit AI Integration for all AI-powered email triage, summarization, categorization, and drafting functionalities.
+- **Google APIs**: For Gmail OAuth2 integration and sending emails.
+- **Microsoft Graph API**: For Outlook OAuth2 integration and sending emails.
+- **Stripe**: For subscription management, payment processing, and customer portal.
+- **Slack API**: For integrating Slack notifications.
+- **Notion API**: For integrating Notion task management.

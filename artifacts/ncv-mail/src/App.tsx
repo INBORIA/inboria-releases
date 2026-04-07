@@ -6,6 +6,7 @@ import { AuthProvider, useAuth } from "@/lib/auth";
 import { setAuthTokenGetter } from "@workspace/api-client-react";
 import { supabase } from "@/lib/supabase";
 import NotFound from "@/pages/not-found";
+import { CookieBanner } from "@/components/cookie-banner";
 
 import Login from "@/pages/login";
 import Signup from "@/pages/signup";
@@ -99,6 +100,7 @@ function App() {
         <TooltipProvider>
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
             <Router />
+            <CookieBanner />
           </WouterRouter>
           <Toaster />
         </TooltipProvider>
