@@ -14,6 +14,7 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       .single();
 
     if (error || !profile) {
+      console.error("Profile GET error:", { userId: req.userId, error: error?.message, code: error?.code, details: error?.details });
       res.status(404).json({ error: "Profile not found" });
       return;
     }
