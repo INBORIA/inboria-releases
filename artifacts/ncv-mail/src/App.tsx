@@ -14,6 +14,7 @@ import VerifierEmail from "@/pages/verifier-email";
 import AuthCallback from "@/pages/auth-callback";
 import MotDePasseOublie from "@/pages/mot-de-passe-oublie";
 import ResetPassword from "@/pages/reset-password";
+import AcceptInvite from "@/pages/accept-invite";
 import Dashboard from "@/pages/dashboard/index";
 import Archives from "@/pages/dashboard/archives";
 import BilanQuotidien from "@/pages/dashboard/bilan";
@@ -121,6 +122,7 @@ function Router() {
       <Route path="/auth/callback" component={AuthCallback} />
       <Route path="/mot-de-passe-oublie" component={() => session ? <Redirect to="/dashboard" /> : <MotDePasseOublie />} />
       <Route path="/reset-password" component={ResetPassword} />
+      <Route path="/accept-invite" component={AcceptInvite} />
       <Route path="/dashboard" component={() => <ProtectedRoute component={Dashboard} />} />
       <Route path="/dashboard/archives" component={() => <ProtectedRoute component={Archives} />} />
       <Route path="/dashboard/bilan" component={() => <ProtectedRoute component={BilanQuotidien} />} />

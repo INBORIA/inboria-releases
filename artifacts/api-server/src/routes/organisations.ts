@@ -420,6 +420,38 @@ router.post("/organisations/invite", requireAuth, async (req, res): Promise<void
       return;
     }
 
+    const { data: orgData } = await supabaseAdmin
+      .from("organisations")
+      .select("name")
+      .eq("id", adminMembership.organisation_id)
+      .single();
+    const orgName = orgData?.name || "votre organisation";
+
+    const frontendUrl = process.env["FRONTEND_URL"] || `https://${process.env["REPLIT_DEV_DOMAIN"] || "ncvmail.com"}`;
+    const acceptUrl = `${frontendUrl}/accept-invite?token=${token}`;
+
+    try {
+      const { data: existingUser } = await supabaseAdmin.auth.admin.listUsers();
+      const userExists = existingUser?.users?.some(
+        (u: any) => u.email?.toLowerCase() === email.toLowerCase().trim()
+      );
+
+      if (!userExists) {
+        await supabaseAdmin.auth.admin.inviteUserByEmail(email.toLowerCase().trim(), {
+          redirectTo: acceptUrl,
+          data: { invitation_token: token, org_name: orgName },
+        });
+      } else {
+        await supabaseAdmin.auth.admin.generateLink({
+          type: "magiclink",
+          email: email.toLowerCase().trim(),
+          options: { redirectTo: acceptUrl },
+        });
+      }
+    } catch (emailErr) {
+      console.error("Failed to send invitation email (invitation saved):", emailErr);
+    }
+
     res.status(201).json({
       id: invitation.id,
       email: invitation.email,
