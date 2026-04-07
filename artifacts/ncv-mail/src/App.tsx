@@ -29,6 +29,8 @@ import TeamActivite from "@/pages/dashboard/team-activite";
 import Accueil from "@/pages/marketing/accueil";
 import Fonctionnalites from "@/pages/marketing/fonctionnalites";
 import Entreprise from "@/pages/marketing/entreprise";
+import ClassementMarketing from "@/pages/marketing/classement";
+import IntelligenceArtificielle from "@/pages/marketing/intelligence-artificielle";
 import Tarifs from "@/pages/marketing/tarifs";
 import MentionsLegales from "@/pages/marketing/mentions-legales";
 import Confidentialite from "@/pages/marketing/confidentialite";
@@ -75,6 +77,8 @@ function Router() {
       <Route path="/" component={() => session ? <Redirect to="/dashboard" /> : <Accueil />} />
       <Route path="/fonctionnalites" component={Fonctionnalites} />
       <Route path="/entreprise" component={Entreprise} />
+      <Route path="/classement" component={ClassementMarketing} />
+      <Route path="/intelligence-artificielle" component={IntelligenceArtificielle} />
       <Route path="/tarifs" component={Tarifs} />
       <Route path="/mentions-legales" component={MentionsLegales} />
       <Route path="/confidentialite" component={Confidentialite} />

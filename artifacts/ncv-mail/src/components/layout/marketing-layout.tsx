@@ -6,6 +6,8 @@ import { Menu, X } from "lucide-react";
 const navLinks = [
   { label: "Accueil", href: "/" },
   { label: "Fonctionnalités", href: "/fonctionnalites" },
+  { label: "Classement", href: "/classement" },
+  { label: "IA", href: "/intelligence-artificielle" },
   { label: "Entreprise", href: "/entreprise" },
   { label: "Tarifs", href: "/tarifs" },
 ];
