@@ -135,7 +135,7 @@ export default function BoitesPartagees() {
   async function handleRemoveMember(mailboxId: string, memberId: string) {
     try {
       await removeMember.mutateAsync({ mailboxId, memberId });
-      toast({ title: "Membre retire" });
+      toast({ title: "Membre retiré" });
       invalidateMembers(mailboxId);
       invalidateAll();
     } catch (e: any) {
@@ -157,7 +157,7 @@ export default function BoitesPartagees() {
   async function handleUnclaim(emailId: string) {
     try {
       await unclaimEmail.mutateAsync({ emailId });
-      toast({ title: "Email relache" });
+      toast({ title: "Email relâché" });
       if (selectedMailboxId) invalidateEmails(selectedMailboxId);
       invalidateAll();
     } catch (e: any) {
@@ -191,8 +191,8 @@ export default function BoitesPartagees() {
           )}
           <MailPlus className="h-7 w-7 text-primary" />
           <h1 className="text-2xl font-bold">
-            {viewMode === "list" && "Boites partagees"}
-            {viewMode === "detail" && (selectedMailbox?.name || "Details")}
+            {viewMode === "list" && "Boîtes partagées"}
+            {viewMode === "detail" && (selectedMailbox?.name || "Détails")}
             {viewMode === "emails" && `${selectedMailbox?.name || ""} — Emails`}
           </h1>
         </div>
@@ -438,7 +438,7 @@ function MailboxEmails({
 
   const filterOptions = [
     { value: "all" as const, label: "Tous" },
-    { value: "unclaimed" as const, label: "Non pris en charge" },
+    { value: "unclaimed" as const, label: "Non attribués" },
     { value: "mine" as const, label: "Mes emails" },
   ];
 
