@@ -430,7 +430,7 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
 
     let query = supabaseAdmin
       .from("emails")
-      .select("id, sender, sender_email, subject, body, status, priority, summary, category_id, claimed_by, claimed_at, created_at")
+      .select("id, sender, subject, body, status, priority, summary, category_id, claimed_by, claimed_at, created_at")
       .eq("shared_mailbox_id", req.params.mailboxId)
       .neq("status", "supprime")
       .order("created_at", { ascending: false })
@@ -461,21 +461,32 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
       if (p) profileMap.set(uid, p.full_name || "");
     }
 
-    const enriched = emails.map(e => ({
-      id: e.id,
-      sender: e.sender,
-      senderEmail: e.sender_email,
-      subject: e.subject,
-      body: e.body,
-      status: e.status,
-      priority: e.priority,
-      summary: e.summary,
-      categoryId: e.category_id,
-      claimedBy: e.claimed_by,
-      claimedByName: e.claimed_by ? profileMap.get(e.claimed_by) || "" : null,
-      claimedAt: e.claimed_at,
-      createdAt: e.created_at,
-    }));
+    function parseSenderField(raw: string) {
+      const match = raw.match(/^(.+?)\s*<(.+?)>$/);
+      return {
+        name: match ? match[1].trim().replace(/^"|"$/g, "") : raw,
+        email: match ? match[2].trim() : raw,
+      };
+    }
+
+    const enriched = emails.map(e => {
+      const s = parseSenderField(e.sender || "");
+      return {
+        id: e.id,
+        sender: s.name,
+        senderEmail: s.email,
+        subject: e.subject,
+        body: e.body,
+        status: e.status,
+        priority: e.priority,
+        summary: e.summary,
+        categoryId: e.category_id,
+        claimedBy: e.claimed_by,
+        claimedByName: e.claimed_by ? profileMap.get(e.claimed_by) || "" : null,
+        claimedAt: e.claimed_at,
+        createdAt: e.created_at,
+      };
+    });
 
     res.json(enriched);
   } catch {
@@ -616,5 +627,6 @@ router.post("/shared-mailboxes/:mailboxId/force-sync", requireAuth, async (req, 
     res.status(500).json({ error: "Erreur lors de la synchronisation" });
   }
 });
+
 
 export default router;
