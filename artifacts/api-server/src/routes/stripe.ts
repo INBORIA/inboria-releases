@@ -46,11 +46,23 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
 
     const stripe = await getStripeClient();
 
-    const { data: profile } = await supabaseAdmin
+    let profile: any = null;
+    const { data: profileData, error: profileError } = await supabaseAdmin
       .from("profiles")
       .select("id, stripe_customer_id, stripe_subscription_id, country")
       .eq("id", req.userId!)
       .single();
+
+    if (profileError && profileError.message?.includes("country")) {
+      const { data: fallback } = await supabaseAdmin
+        .from("profiles")
+        .select("id, stripe_customer_id, stripe_subscription_id")
+        .eq("id", req.userId!)
+        .single();
+      profile = fallback;
+    } else {
+      profile = profileData;
+    }
 
     if (!profile) {
       res.status(404).json({ error: "Profil introuvable" });
