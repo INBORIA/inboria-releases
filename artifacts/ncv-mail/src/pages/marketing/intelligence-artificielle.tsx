@@ -19,41 +19,41 @@ import {
 } from "lucide-react";
 
 const heroStats = [
-  { value: "IA avancee", label: "derniere generation" },
+  { value: "IA avancée", label: "dernière génération" },
   { value: "<3s", label: "temps de traitement" },
-  { value: "RGPD", label: "conforme et securise" },
+  { value: "RGPD", label: "conforme et sécurisé" },
 ];
 
 const aiFeatures = [
   {
     icon: Tags,
-    title: "Tri automatique par categories",
-    desc: "Chaque email entrant est analyse par l'IA qui identifie son sujet, son expediteur et son contexte pour le classer automatiquement dans la bonne categorie. Finis les emails non tries qui s'accumulent.",
+    title: "Tri automatique par catégories",
+    desc: "Chaque email entrant est analysé par l'IA qui identifie son sujet, son expéditeur et son contexte pour le classer automatiquement dans la bonne catégorie. Finis les emails non triés qui s'accumulent.",
     highlights: [
-      "Analyse semantique du contenu",
-      "Reconnaissance des expediteurs recurrents",
-      "Classement en temps reel a la reception",
-      "Apprentissage de vos preferences",
+      "Analyse sémantique du contenu",
+      "Reconnaissance des expéditeurs récurrents",
+      "Classement en temps réel à la réception",
+      "Apprentissage de vos préférences",
     ],
   },
   {
     icon: FileText,
-    title: "Resumes intelligents",
-    desc: "Les longs fils de discussion, les newsletters interminables et les echanges complexes sont resumes en quelques lignes claires. Vous comprenez l'essentiel sans tout lire.",
+    title: "Résumés intelligents",
+    desc: "Les longs fils de discussion, les newsletters interminables et les échanges complexes sont résumés en quelques lignes claires. Vous comprenez l'essentiel sans tout lire.",
     highlights: [
-      "Resume en une phrase ou un paragraphe",
-      "Extraction des points cles",
-      "Identification des actions demandees",
-      "Synthese des fils de 10+ emails",
+      "Résumé en une phrase ou un paragraphe",
+      "Extraction des points clés",
+      "Identification des actions demandées",
+      "Synthèse des fils de 10+ emails",
     ],
   },
   {
     icon: PenLine,
-    title: "Brouillons de reponse IA",
-    desc: "NCV Mail prepare des reponses pertinentes et contextuelles que vous n'avez qu'a relire et valider. L'IA s'adapte a votre ton et a votre style d'ecriture.",
+    title: "Brouillons de réponse IA",
+    desc: "NCV Mail prépare des réponses pertinentes et contextuelles que vous n'avez qu'à relire et valider. L'IA s'adapte à votre ton et à votre style d'écriture.",
     highlights: [
-      "Reponses adaptees au contexte",
-      "Ton professionnel personnalise",
+      "Réponses adaptées au contexte",
+      "Ton professionnel personnalisé",
       "Suggestions de formulations",
       "Un clic pour envoyer",
     ],
@@ -61,33 +61,33 @@ const aiFeatures = [
   {
     icon: BarChart3,
     title: "Brief quotidien",
-    desc: "Chaque matin, recevez un recapitulatif intelligent : emails urgents, reunions du jour, suivis en attente et taches extraites. Commencez votre journee avec une vue claire.",
+    desc: "Chaque matin, recevez un récapitulatif intelligent : emails urgents, réunions du jour, suivis en attente et tâches extraites. Commencez votre journée avec une vue claire.",
     highlights: [
-      "Recap matinal automatique",
-      "Priorites mises en evidence",
-      "Reunions et deadlines du jour",
-      "Suivi des emails sans reponse",
+      "Récap matinal automatique",
+      "Priorités mises en évidence",
+      "Réunions et deadlines du jour",
+      "Suivi des emails sans réponse",
     ],
   },
   {
     icon: AlertTriangle,
-    title: "Detection de priorite",
-    desc: "L'IA identifie automatiquement les emails urgents, les demandes de clients importants et les messages necessitant une action rapide. Ils sont mis en evidence dans votre boite.",
+    title: "Détection de priorité",
+    desc: "L'IA identifie automatiquement les emails urgents, les demandes de clients importants et les messages nécessitant une action rapide. Ils sont mis en évidence dans votre boîte.",
     highlights: [
-      "Emails urgents signales",
-      "VIP et clients importants detectes",
+      "Emails urgents signalés",
+      "VIP et clients importants détectés",
       "Deadlines extraites automatiquement",
-      "Notifications de priorite haute",
+      "Notifications de priorité haute",
     ],
   },
   {
     icon: FolderKanban,
-    title: "Packs metiers generes par IA",
-    desc: "Votre metier n'est pas dans nos 56 packs pre-configures ? Decrivez simplement votre activite et l'IA genere un pack de categories sur mesure, parfaitement adapte a vos besoins.",
+    title: "Packs métiers générés par IA",
+    desc: "Votre métier n'est pas dans nos 56 packs pré-configurés ? Décrivez simplement votre activité et l'IA génère un pack de catégories sur mesure, parfaitement adapté à vos besoins.",
     highlights: [
-      "Generation en langage naturel",
-      "Entre 6 et 12 categories pertinentes",
-      "Noms et descriptions generes",
+      "Génération en langage naturel",
+      "Entre 6 et 12 catégories pertinentes",
+      "Noms et descriptions générés",
       "Application en un clic",
     ],
   },
@@ -97,45 +97,45 @@ const principles = [
   {
     icon: Eye,
     title: "Transparence totale",
-    desc: "Chaque action de l'IA est visible et explicable. Vous voyez pourquoi un email a ete classe dans telle categorie et pouvez toujours corriger.",
+    desc: "Chaque action de l'IA est visible et explicable. Vous voyez pourquoi un email a été classé dans telle catégorie et pouvez toujours corriger.",
   },
   {
     icon: Lock,
-    title: "Vos donnees restent les votres",
-    desc: "Aucun email n'est utilise pour entrainer des modeles. Vos donnees sont traitees en temps reel et ne sont jamais stockees par les fournisseurs d'IA.",
+    title: "Vos données restent les vôtres",
+    desc: "Aucun email n'est utilisé pour entraîner des modèles. Vos données sont traitées en temps réel et ne sont jamais stockées par les fournisseurs d'IA.",
   },
   {
     icon: ShieldCheck,
     title: "Conforme RGPD",
-    desc: "NCV Mail respecte strictement le Reglement General sur la Protection des Donnees. Hebergement en Europe, chiffrement et droit a l'effacement garanti.",
+    desc: "NCV Mail respecte strictement le Règlement Général sur la Protection des Données. Hébergement en Europe, chiffrement et droit à l'effacement garanti.",
   },
   {
     icon: Server,
-    title: "Infrastructure securisee",
-    desc: "Chiffrement en transit et au repos. Authentification renforcee. Aucune donnee sensible n'est jamais exposee dans les logs ou les reponses IA.",
+    title: "Infrastructure sécurisée",
+    desc: "Chiffrement en transit et au repos. Authentification renforcée. Aucune donnée sensible n'est jamais exposée dans les logs ou les réponses IA.",
   },
 ];
 
 const howItWorks = [
   {
     step: "1",
-    title: "Email recu",
-    desc: "Un email arrive dans votre boite de reception NCV Mail.",
+    title: "Email reçu",
+    desc: "Un email arrive dans votre boîte de réception NCV Mail.",
   },
   {
     step: "2",
     title: "Analyse IA",
-    desc: "L'IA analyse le contenu, l'expediteur, le sujet et le contexte en moins de 3 secondes.",
+    desc: "L'IA analyse le contenu, l'expéditeur, le sujet et le contexte en moins de 3 secondes.",
   },
   {
     step: "3",
     title: "Actions automatiques",
-    desc: "L'email est classe, resume, et un brouillon de reponse est prepare si necessaire.",
+    desc: "L'email est classé, résumé, et un brouillon de réponse est préparé si nécessaire.",
   },
   {
     step: "4",
     title: "Vous validez",
-    desc: "Vous retrouvez tout organise. Un clic pour valider les suggestions de l'IA.",
+    desc: "Vous retrouvez tout organisé. Un clic pour valider les suggestions de l'IA.",
   },
 ];
 
@@ -150,12 +150,12 @@ export default function IntelligenceArtificielle() {
             <span className="text-[12px] font-medium text-[#2d7dd2]">Intelligence Artificielle</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
-            L'IA qui gere vos emails<br className="hidden sm:block" /> pendant que vous travaillez
+            L'IA qui gère vos emails<br className="hidden sm:block" /> pendant que vous travaillez
           </h1>
           <p className="mt-5 text-[15px] sm:text-[16px] text-[#8b9cb3] max-w-2xl mx-auto leading-relaxed">
-            NCV Mail integre une intelligence artificielle avancee qui trie, resume,
-            categorise et prepare vos reponses automatiquement. Vous gardez le controle,
-            l'IA fait le travail repetitif.
+            NCV Mail intègre une intelligence artificielle avancée qui trie, résume,
+            catégorise et prépare vos réponses automatiquement. Vous gardez le contrôle,
+            l'IA fait le travail répétitif.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/signup">
@@ -166,7 +166,7 @@ export default function IntelligenceArtificielle() {
             </Link>
             <Link href="/fonctionnalites">
               <button className="px-8 py-3 text-[14px] font-semibold text-[#8b9cb3] border border-[#1f2937] rounded-lg hover:text-white hover:border-[#2d7dd2]/30 transition-colors">
-                Toutes les fonctionnalites
+                Toutes les fonctionnalités
               </button>
             </Link>
           </div>
@@ -189,7 +189,7 @@ export default function IntelligenceArtificielle() {
               Ce que fait l'IA pour vous
             </h2>
             <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
-              Six fonctionnalites d'IA integrees qui transforment votre gestion des emails au quotidien.
+              Six fonctionnalités d'IA intégrées qui transforment votre gestion des emails au quotidien.
             </p>
           </div>
 
@@ -233,7 +233,7 @@ export default function IntelligenceArtificielle() {
               Comment fonctionne l'IA ?
             </h2>
             <p className="mt-3 text-[14px] text-[#8b9cb3]">
-              Du mail recu a l'action validee, en 4 etapes transparentes.
+              Du mail reçu à l'action validée, en 4 étapes transparentes.
             </p>
           </div>
 
@@ -255,10 +255,10 @@ export default function IntelligenceArtificielle() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              Securite et confidentialite de l'IA
+              Sécurité et confidentialité de l'IA
             </h2>
             <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
-              Nous prenons la protection de vos donnees aussi serieusement que la performance de notre IA.
+              Nous prenons la protection de vos données aussi sérieusement que la performance de notre IA.
             </p>
           </div>
 
@@ -285,30 +285,30 @@ export default function IntelligenceArtificielle() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              Questions frequentes sur l'IA
+              Questions fréquentes sur l'IA
             </h2>
           </div>
           <div className="space-y-4">
             {[
               {
                 q: "L'IA lit-elle vraiment tous mes emails ?",
-                a: "L'IA analyse le contenu de vos emails uniquement pour les trier et les resumer. Aucun email n'est stocke par le fournisseur d'IA ni utilise pour entrainer des modeles. Le traitement est ephemere et en temps reel.",
+                a: "L'IA analyse le contenu de vos emails uniquement pour les trier et les résumer. Aucun email n'est stocké par le fournisseur d'IA ni utilisé pour entraîner des modèles. Le traitement est éphémère et en temps réel.",
               },
               {
-                q: "Puis-je desactiver l'IA ?",
-                a: "Oui, chaque fonctionnalite IA (tri, resumes, brouillons) peut etre desactivee individuellement depuis vos parametres. Vous gardez toujours le controle total.",
+                q: "Puis-je désactiver l'IA ?",
+                a: "Oui, chaque fonctionnalité IA (tri, résumés, brouillons) peut être désactivée individuellement depuis vos paramètres. Vous gardez toujours le contrôle total.",
               },
               {
-                q: "L'IA fonctionne-t-elle en francais ?",
-                a: "Absolument. NCV Mail est concu pour les PME francophones en Belgique et en France. L'IA comprend et repond en francais, neerlandais et anglais.",
+                q: "L'IA fonctionne-t-elle en français ?",
+                a: "Absolument. NCV Mail est conçu pour les PME francophones en Belgique et en France. L'IA comprend et répond en français, néerlandais et anglais.",
               },
               {
                 q: "L'IA se trompe-t-elle parfois ?",
-                a: "Comme toute IA, des erreurs sont possibles. C'est pourquoi chaque suggestion est presentee pour validation. Vous pouvez corriger un classement en un clic et l'IA apprend de vos corrections.",
+                a: "Comme toute IA, des erreurs sont possibles. C'est pourquoi chaque suggestion est présentée pour validation. Vous pouvez corriger un classement en un clic et l'IA apprend de vos corrections.",
               },
               {
-                q: "Quel modele d'IA est utilise ?",
-                a: "NCV Mail utilise des modeles de langage de derniere generation, reconnus pour leur fiabilite et leur performance en traitement du langage naturel. Nous selectionnons et optimisons en permanence les meilleurs modeles disponibles pour garantir des resultats de qualite.",
+                q: "Quel modèle d'IA est utilisé ?",
+                a: "NCV Mail utilise des modèles de langage de dernière génération, reconnus pour leur fiabilité et leur performance en traitement du langage naturel. Nous sélectionnons et optimisons en permanence les meilleurs modèles disponibles pour garantir des résultats de qualité.",
               },
             ].map((faq) => (
               <div
@@ -333,7 +333,7 @@ export default function IntelligenceArtificielle() {
               Laissez l'IA travailler pour vous
             </h2>
             <p className="mt-4 text-[14px] text-[#8b9cb3] max-w-lg mx-auto">
-              Rejoignez les PME qui gagnent 2 heures par jour grace a
+              Rejoignez les PME qui gagnent 2 heures par jour grâce à
               l'intelligence artificielle de NCV Mail.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">

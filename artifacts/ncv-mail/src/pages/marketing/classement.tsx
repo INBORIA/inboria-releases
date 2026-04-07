@@ -21,130 +21,130 @@ import {
 } from "lucide-react";
 
 const heroStats = [
-  { value: "56+", label: "packs metiers disponibles" },
+  { value: "56+", label: "packs métiers disponibles" },
   { value: "9", label: "familles de secteurs" },
-  { value: "IA", label: "generation personnalisee" },
+  { value: "IA", label: "génération personnalisée" },
 ];
 
 const familles = [
   {
     icon: Briefcase,
     name: "Services professionnels",
-    desc: "Avocats, comptables, notaires, consultants, architectes, courtiers... Des categories adaptees aux echanges juridiques, financiers et de conseil.",
+    desc: "Avocats, comptables, notaires, consultants, architectes, courtiers... Des catégories adaptées aux échanges juridiques, financiers et de conseil.",
     packs: ["Avocat", "Comptable", "Notaire", "Consultant", "Architecte", "Courtier en assurances"],
   },
   {
     icon: Heart,
-    name: "Sante",
-    desc: "Medecins, dentistes, kinesitherapeutes, pharmaciens, veterinaires, psychologues. Gestion des rendez-vous, ordonnances, laboratoires et mutuelles.",
-    packs: ["Medecin generaliste", "Dentiste", "Kinesitherapeute", "Pharmacien", "Veterinaire", "Psychologue"],
+    name: "Santé",
+    desc: "Médecins, dentistes, kinésithérapeutes, pharmaciens, vétérinaires, psychologues. Gestion des rendez-vous, ordonnances, laboratoires et mutuelles.",
+    packs: ["Médecin généraliste", "Dentiste", "Kinésithérapeute", "Pharmacien", "Vétérinaire", "Psychologue"],
   },
   {
     icon: ShoppingCart,
     name: "Commerce & Distribution",
     desc: "Boutiques, e-commerce, grossistes, fleuristes, cavistes. Commandes, fournisseurs, logistique et relation client au quotidien.",
-    packs: ["Boutique / Commerce de detail", "E-commerce", "Grossiste", "Fleuriste", "Caviste"],
+    packs: ["Boutique / Commerce de détail", "E-commerce", "Grossiste", "Fleuriste", "Caviste"],
   },
   {
     icon: Building,
     name: "Immobilier & Construction",
-    desc: "Agences immobilieres, syndics, entreprises de construction, promoteurs. Mandats, visites, chantiers, devis et appels d'offres.",
-    packs: ["Agence immobiliere", "Syndic de copropriete", "Entreprise de construction", "Promoteur immobilier"],
+    desc: "Agences immobilières, syndics, entreprises de construction, promoteurs. Mandats, visites, chantiers, devis et appels d'offres.",
+    packs: ["Agence immobilière", "Syndic de copropriété", "Entreprise de construction", "Promoteur immobilier"],
   },
   {
     icon: Calculator,
     name: "Services aux entreprises",
-    desc: "Agences marketing, cabinets RH, bureaux d'etudes, societes IT, experts-comptables. Projets, reporting, facturation et collaboration client.",
-    packs: ["Agence de communication", "Cabinet RH", "Bureau d'etudes", "Societe IT", "Expert-comptable"],
+    desc: "Agences marketing, cabinets RH, bureaux d'études, sociétés IT, experts-comptables. Projets, reporting, facturation et collaboration client.",
+    packs: ["Agence de communication", "Cabinet RH", "Bureau d'études", "Société IT", "Expert-comptable"],
   },
   {
     icon: Wrench,
-    name: "Artisanat & Metiers techniques",
-    desc: "Electriciens, plombiers, menuisiers, garagistes, paysagistes. Devis, interventions, SAV et gestion des sous-traitants.",
-    packs: ["Electricien", "Plombier", "Menuisier", "Garagiste", "Paysagiste"],
+    name: "Artisanat & Métiers techniques",
+    desc: "Électriciens, plombiers, menuisiers, garagistes, paysagistes. Devis, interventions, SAV et gestion des sous-traitants.",
+    packs: ["Électricien", "Plombier", "Menuisier", "Garagiste", "Paysagiste"],
   },
   {
     icon: GraduationCap,
     name: "Enseignement & Formation",
-    desc: "Ecoles privees, centres de formation, coachs, auto-ecoles. Inscriptions, plannings, certifications et communication parents/eleves.",
-    packs: ["Ecole privee", "Centre de formation", "Coach / Formateur independant", "Auto-ecole"],
+    desc: "Écoles privées, centres de formation, coachs, auto-écoles. Inscriptions, plannings, certifications et communication parents/élèves.",
+    packs: ["École privée", "Centre de formation", "Coach / Formateur indépendant", "Auto-école"],
   },
   {
     icon: UtensilsCrossed,
     name: "Restauration & Tourisme",
-    desc: "Restaurants, hotels, traiteurs, agences de voyage, gites. Reservations, fournisseurs, evenements et avis clients.",
-    packs: ["Restaurant", "Hotel / B&B", "Traiteur", "Agence de voyage"],
+    desc: "Restaurants, hôtels, traiteurs, agences de voyage, gîtes. Réservations, fournisseurs, événements et avis clients.",
+    packs: ["Restaurant", "Hôtel / B&B", "Traiteur", "Agence de voyage"],
   },
   {
     icon: Sparkles,
     name: "Autres services",
-    desc: "Associations, createurs de contenu, mode, transport, nettoyage, salons de beaute... Tous les metiers qui ne rentrent pas dans une seule case.",
-    packs: ["Association / ONG", "Createur de contenu", "Mode / Textile", "Transport / Logistique", "Nettoyage / Entretien", "Salon de coiffure / Beaute"],
+    desc: "Associations, créateurs de contenu, mode, transport, nettoyage, salons de beauté... Tous les métiers qui ne rentrent pas dans une seule case.",
+    packs: ["Association / ONG", "Créateur de contenu", "Mode / Textile", "Transport / Logistique", "Nettoyage / Entretien", "Salon de coiffure / Beauté"],
   },
 ];
 
 const howItWorks = [
   {
     step: "1",
-    title: "Choisissez votre metier",
-    desc: "Parcourez les 9 familles de secteurs et trouvez le pack qui correspond a votre activite.",
+    title: "Choisissez votre métier",
+    desc: "Parcourez les 9 familles de secteurs et trouvez le pack qui correspond à votre activité.",
   },
   {
     step: "2",
     title: "Appliquez le pack",
-    desc: "En un clic, les categories du pack sont ajoutees a votre compte sans ecraser vos categories existantes.",
+    desc: "En un clic, les catégories du pack sont ajoutées à votre compte sans écraser vos catégories existantes.",
   },
   {
     step: "3",
     title: "L'IA prend le relais",
-    desc: "NCV Mail utilise vos categories pour trier automatiquement chaque email entrant dans le bon dossier.",
+    desc: "NCV Mail utilise vos catégories pour trier automatiquement chaque email entrant dans le bon dossier.",
   },
   {
     step: "4",
     title: "Affinez au fil du temps",
-    desc: "Ajoutez, modifiez ou supprimez des categories. Generez un pack IA personnalise si votre metier est unique.",
+    desc: "Ajoutez, modifiez ou supprimez des catégories. Générez un pack IA personnalisé si votre métier est unique.",
   },
 ];
 
 const advantages = [
   {
     icon: Zap,
-    title: "Operationnel en 30 secondes",
-    desc: "Pas besoin de creer vos categories une par une. Un pack metier pre-configure vous fait gagner des heures de parametrage.",
+    title: "Opérationnel en 30 secondes",
+    desc: "Pas besoin de créer vos catégories une par une. Un pack métier pré-configuré vous fait gagner des heures de paramétrage.",
     highlights: [
-      "56 packs pour les metiers les plus courants",
-      "Categories optimisees par secteur d'activite",
+      "56 packs pour les métiers les plus courants",
+      "Catégories optimisées par secteur d'activité",
       "Application en un seul clic",
     ],
   },
   {
     icon: Sparkles,
     title: "IA sur mesure",
-    desc: "Votre metier n'est pas dans la liste ? Decrivez votre activite et l'IA genere un pack de categories parfaitement adapte a vos besoins.",
+    desc: "Votre métier n'est pas dans la liste ? Décrivez votre activité et l'IA génère un pack de catégories parfaitement adapté à vos besoins.",
     highlights: [
-      "Generation intelligente par IA",
-      "Entre 6 et 12 categories sur mesure",
-      "Nom et description pour chaque categorie",
+      "Génération intelligente par IA",
+      "Entre 6 et 12 catégories sur mesure",
+      "Nom et description pour chaque catégorie",
     ],
   },
   {
     icon: ShieldCheck,
-    title: "Fusion sans ecrasement",
-    desc: "Appliquer un pack n'efface jamais vos categories existantes. Les doublons sont detectes automatiquement et ignores.",
+    title: "Fusion sans écrasement",
+    desc: "Appliquer un pack n'efface jamais vos catégories existantes. Les doublons sont détectés automatiquement et ignorés.",
     highlights: [
-      "Detection de doublons intelligente",
-      "Vos categories personnelles preservees",
-      "Tracabilite de l'origine (pack ou manuelle)",
+      "Détection de doublons intelligente",
+      "Vos catégories personnelles préservées",
+      "Traçabilité de l'origine (pack ou manuelle)",
     ],
   },
   {
     icon: Search,
     title: "Recherche et navigation intuitive",
-    desc: "Trouvez instantanement le pack ideal grace a la recherche par mot-cle et aux familles de secteurs depliables.",
+    desc: "Trouvez instantanément le pack idéal grâce à la recherche par mot-clé et aux familles de secteurs dépliables.",
     highlights: [
-      "Recherche en temps reel",
-      "9 familles organisees par secteur",
-      "Apercu du contenu avant application",
+      "Recherche en temps réel",
+      "9 familles organisées par secteur",
+      "Aperçu du contenu avant application",
     ],
   },
 ];
@@ -160,11 +160,11 @@ export default function ClassementMarketing() {
             <span className="text-[12px] font-medium text-[#2d7dd2]">Classement intelligent</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
-            56 packs metiers pour organiser<br className="hidden sm:block" /> vos emails en un clic
+            56 packs métiers pour organiser<br className="hidden sm:block" /> vos emails en un clic
           </h1>
           <p className="mt-5 text-[15px] sm:text-[16px] text-[#8b9cb3] max-w-2xl mx-auto leading-relaxed">
-            NCV Mail propose des packs de categories pre-configures pour chaque profession.
-            Avocat, medecin, restaurateur, e-commerce... Appliquez le votre
+            NCV Mail propose des packs de catégories pré-configurés pour chaque profession.
+            Avocat, médecin, restaurateur, e-commerce... Appliquez le vôtre
             et laissez l'IA trier vos emails automatiquement.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -196,10 +196,10 @@ export default function ClassementMarketing() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              9 familles de secteurs, 56 packs metiers
+              9 familles de secteurs, 56 packs métiers
             </h2>
             <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
-              Chaque pack contient entre 6 et 12 categories optimisees pour votre activite.
+              Chaque pack contient entre 6 et 12 catégories optimisées pour votre activité.
             </p>
           </div>
 
@@ -243,7 +243,7 @@ export default function ClassementMarketing() {
               Les avantages du classement NCV Mail
             </h2>
             <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
-              Un systeme concu pour que chaque email arrive au bon endroit, sans effort.
+              Un système conçu pour que chaque email arrive au bon endroit, sans effort.
             </p>
           </div>
 
@@ -284,10 +284,10 @@ export default function ClassementMarketing() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              Comment ca marche ?
+              Comment ça marche ?
             </h2>
             <p className="mt-3 text-[14px] text-[#8b9cb3]">
-              Du choix du pack a l'automatisation complete, en 4 etapes simples.
+              Du choix du pack à l'automatisation complète, en 4 étapes simples.
             </p>
           </div>
 
@@ -312,11 +312,11 @@ export default function ClassementMarketing() {
               <Layers className="w-7 h-7 text-[#2d7dd2]" />
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              Votre boite mail organisee en 30 secondes
+              Votre boîte mail organisée en 30 secondes
             </h2>
             <p className="mt-4 text-[14px] text-[#8b9cb3] max-w-lg mx-auto">
-              Choisissez votre pack metier, appliquez-le, et laissez NCV Mail
-              trier vos emails automatiquement. C'est aussi simple que ca.
+              Choisissez votre pack métier, appliquez-le, et laissez NCV Mail
+              trier vos emails automatiquement. C'est aussi simple que ça.
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link href="/signup">
