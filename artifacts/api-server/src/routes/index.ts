@@ -13,6 +13,7 @@ import projectsRouter from "./projects";
 import stripeRouter from "./stripe";
 import integrationsRouter from "./integrations";
 import organisationsRouter from "./organisations";
+import sharedMailboxesRouter from "./shared-mailboxes";
 
 const router: IRouter = Router();
 
@@ -30,5 +31,6 @@ router.use(projectsRouter);
 router.use(stripeRouter);
 router.use(integrationsRouter);
 router.use(organisationsRouter);
+router.use(sharedMailboxesRouter);
 
 export default router;

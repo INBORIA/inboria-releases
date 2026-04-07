@@ -18,6 +18,8 @@ import type {
 
 import type {
   AcceptInvitation200,
+  AddSharedMailboxMember200,
+  AddSharedMailboxMemberBody,
   AuthResponse,
   BulkUpdateEmails200,
   BulkUpdateEmailsBody,
@@ -26,20 +28,24 @@ import type {
   CategoryCount,
   CheckoutBody,
   CheckoutResponse,
+  ClaimSharedEmail200,
   CreateCategoryBody,
   CreateOrganisationBody,
   CreateProjectBody,
+  CreateSharedMailboxBody,
   DailySummary,
   DailySummaryRequest,
   DashboardSummary,
   DeleteEmail200,
   DeleteIntegration200,
   DeleteProject200,
+  DeleteSharedMailbox200,
   DeleteTask200,
   DraftResponse,
   Email,
   GenerateDraftBody,
   GetInvitationByToken200,
+  GetSharedMailboxEmailsParams,
   HealthStatus,
   InboxHealth,
   Integration,
@@ -59,13 +65,18 @@ import type {
   RegisterPushToken200,
   RegisterPushTokenBody,
   RemoveOrganisationMember200,
+  RemoveSharedMailboxMember200,
   SendEmail200,
   SendEmailBody,
+  SharedMailbox,
+  SharedMailboxEmail,
+  SharedMailboxMember,
   StripeWebhook200,
   StripeWebhookBody,
   Task,
   TriageEmailBody,
   TriageResult,
+  UnclaimSharedEmail200,
   UpdateCategoryBody,
   UpdateEmailBody,
   UpdateIntegrationBody,
@@ -4306,6 +4317,820 @@ export const useAcceptInvitation = <
   TContext
 > => {
   return useMutation(getAcceptInvitationMutationOptions(options));
+};
+
+/**
+ * @summary List shared mailboxes for user's organisation
+ */
+export const getGetSharedMailboxesUrl = () => {
+  return `/api/shared-mailboxes`;
+};
+
+export const getSharedMailboxes = async (
+  options?: RequestInit,
+): Promise<SharedMailbox[]> => {
+  return customFetch<SharedMailbox[]>(getGetSharedMailboxesUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetSharedMailboxesQueryKey = () => {
+  return [`/api/shared-mailboxes`] as const;
+};
+
+export const getGetSharedMailboxesQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSharedMailboxes>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getSharedMailboxes>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetSharedMailboxesQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getSharedMailboxes>>
+  > = ({ signal }) => getSharedMailboxes({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getSharedMailboxes>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetSharedMailboxesQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSharedMailboxes>>
+>;
+export type GetSharedMailboxesQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List shared mailboxes for user's organisation
+ */
+
+export function useGetSharedMailboxes<
+  TData = Awaited<ReturnType<typeof getSharedMailboxes>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getSharedMailboxes>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetSharedMailboxesQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Create a shared mailbox (admin only)
+ */
+export const getCreateSharedMailboxUrl = () => {
+  return `/api/shared-mailboxes`;
+};
+
+export const createSharedMailbox = async (
+  createSharedMailboxBody: CreateSharedMailboxBody,
+  options?: RequestInit,
+): Promise<SharedMailbox> => {
+  return customFetch<SharedMailbox>(getCreateSharedMailboxUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createSharedMailboxBody),
+  });
+};
+
+export const getCreateSharedMailboxMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createSharedMailbox>>,
+    TError,
+    { data: BodyType<CreateSharedMailboxBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createSharedMailbox>>,
+  TError,
+  { data: BodyType<CreateSharedMailboxBody> },
+  TContext
+> => {
+  const mutationKey = ["createSharedMailbox"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createSharedMailbox>>,
+    { data: BodyType<CreateSharedMailboxBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createSharedMailbox(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateSharedMailboxMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createSharedMailbox>>
+>;
+export type CreateSharedMailboxMutationBody = BodyType<CreateSharedMailboxBody>;
+export type CreateSharedMailboxMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create a shared mailbox (admin only)
+ */
+export const useCreateSharedMailbox = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createSharedMailbox>>,
+    TError,
+    { data: BodyType<CreateSharedMailboxBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createSharedMailbox>>,
+  TError,
+  { data: BodyType<CreateSharedMailboxBody> },
+  TContext
+> => {
+  return useMutation(getCreateSharedMailboxMutationOptions(options));
+};
+
+/**
+ * @summary Delete a shared mailbox (admin only)
+ */
+export const getDeleteSharedMailboxUrl = (mailboxId: string) => {
+  return `/api/shared-mailboxes/${mailboxId}`;
+};
+
+export const deleteSharedMailbox = async (
+  mailboxId: string,
+  options?: RequestInit,
+): Promise<DeleteSharedMailbox200> => {
+  return customFetch<DeleteSharedMailbox200>(
+    getDeleteSharedMailboxUrl(mailboxId),
+    {
+      ...options,
+      method: "DELETE",
+    },
+  );
+};
+
+export const getDeleteSharedMailboxMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteSharedMailbox>>,
+    TError,
+    { mailboxId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteSharedMailbox>>,
+  TError,
+  { mailboxId: string },
+  TContext
+> => {
+  const mutationKey = ["deleteSharedMailbox"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteSharedMailbox>>,
+    { mailboxId: string }
+  > = (props) => {
+    const { mailboxId } = props ?? {};
+
+    return deleteSharedMailbox(mailboxId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteSharedMailboxMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteSharedMailbox>>
+>;
+
+export type DeleteSharedMailboxMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a shared mailbox (admin only)
+ */
+export const useDeleteSharedMailbox = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteSharedMailbox>>,
+    TError,
+    { mailboxId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteSharedMailbox>>,
+  TError,
+  { mailboxId: string },
+  TContext
+> => {
+  return useMutation(getDeleteSharedMailboxMutationOptions(options));
+};
+
+/**
+ * @summary List members of a shared mailbox
+ */
+export const getGetSharedMailboxMembersUrl = (mailboxId: string) => {
+  return `/api/shared-mailboxes/${mailboxId}/members`;
+};
+
+export const getSharedMailboxMembers = async (
+  mailboxId: string,
+  options?: RequestInit,
+): Promise<SharedMailboxMember[]> => {
+  return customFetch<SharedMailboxMember[]>(
+    getGetSharedMailboxMembersUrl(mailboxId),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getGetSharedMailboxMembersQueryKey = (mailboxId: string) => {
+  return [`/api/shared-mailboxes/${mailboxId}/members`] as const;
+};
+
+export const getGetSharedMailboxMembersQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSharedMailboxMembers>>,
+  TError = ErrorType<unknown>,
+>(
+  mailboxId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getSharedMailboxMembers>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetSharedMailboxMembersQueryKey(mailboxId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getSharedMailboxMembers>>
+  > = ({ signal }) =>
+    getSharedMailboxMembers(mailboxId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!mailboxId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getSharedMailboxMembers>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetSharedMailboxMembersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSharedMailboxMembers>>
+>;
+export type GetSharedMailboxMembersQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List members of a shared mailbox
+ */
+
+export function useGetSharedMailboxMembers<
+  TData = Awaited<ReturnType<typeof getSharedMailboxMembers>>,
+  TError = ErrorType<unknown>,
+>(
+  mailboxId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getSharedMailboxMembers>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetSharedMailboxMembersQueryOptions(
+    mailboxId,
+    options,
+  );
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Add a member to a shared mailbox (admin only)
+ */
+export const getAddSharedMailboxMemberUrl = (mailboxId: string) => {
+  return `/api/shared-mailboxes/${mailboxId}/members`;
+};
+
+export const addSharedMailboxMember = async (
+  mailboxId: string,
+  addSharedMailboxMemberBody: AddSharedMailboxMemberBody,
+  options?: RequestInit,
+): Promise<AddSharedMailboxMember200> => {
+  return customFetch<AddSharedMailboxMember200>(
+    getAddSharedMailboxMemberUrl(mailboxId),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(addSharedMailboxMemberBody),
+    },
+  );
+};
+
+export const getAddSharedMailboxMemberMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addSharedMailboxMember>>,
+    TError,
+    { mailboxId: string; data: BodyType<AddSharedMailboxMemberBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof addSharedMailboxMember>>,
+  TError,
+  { mailboxId: string; data: BodyType<AddSharedMailboxMemberBody> },
+  TContext
+> => {
+  const mutationKey = ["addSharedMailboxMember"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof addSharedMailboxMember>>,
+    { mailboxId: string; data: BodyType<AddSharedMailboxMemberBody> }
+  > = (props) => {
+    const { mailboxId, data } = props ?? {};
+
+    return addSharedMailboxMember(mailboxId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AddSharedMailboxMemberMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addSharedMailboxMember>>
+>;
+export type AddSharedMailboxMemberMutationBody =
+  BodyType<AddSharedMailboxMemberBody>;
+export type AddSharedMailboxMemberMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Add a member to a shared mailbox (admin only)
+ */
+export const useAddSharedMailboxMember = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addSharedMailboxMember>>,
+    TError,
+    { mailboxId: string; data: BodyType<AddSharedMailboxMemberBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof addSharedMailboxMember>>,
+  TError,
+  { mailboxId: string; data: BodyType<AddSharedMailboxMemberBody> },
+  TContext
+> => {
+  return useMutation(getAddSharedMailboxMemberMutationOptions(options));
+};
+
+/**
+ * @summary Remove a member from a shared mailbox (admin only)
+ */
+export const getRemoveSharedMailboxMemberUrl = (
+  mailboxId: string,
+  memberId: string,
+) => {
+  return `/api/shared-mailboxes/${mailboxId}/members/${memberId}`;
+};
+
+export const removeSharedMailboxMember = async (
+  mailboxId: string,
+  memberId: string,
+  options?: RequestInit,
+): Promise<RemoveSharedMailboxMember200> => {
+  return customFetch<RemoveSharedMailboxMember200>(
+    getRemoveSharedMailboxMemberUrl(mailboxId, memberId),
+    {
+      ...options,
+      method: "DELETE",
+    },
+  );
+};
+
+export const getRemoveSharedMailboxMemberMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof removeSharedMailboxMember>>,
+    TError,
+    { mailboxId: string; memberId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof removeSharedMailboxMember>>,
+  TError,
+  { mailboxId: string; memberId: string },
+  TContext
+> => {
+  const mutationKey = ["removeSharedMailboxMember"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof removeSharedMailboxMember>>,
+    { mailboxId: string; memberId: string }
+  > = (props) => {
+    const { mailboxId, memberId } = props ?? {};
+
+    return removeSharedMailboxMember(mailboxId, memberId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RemoveSharedMailboxMemberMutationResult = NonNullable<
+  Awaited<ReturnType<typeof removeSharedMailboxMember>>
+>;
+
+export type RemoveSharedMailboxMemberMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Remove a member from a shared mailbox (admin only)
+ */
+export const useRemoveSharedMailboxMember = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof removeSharedMailboxMember>>,
+    TError,
+    { mailboxId: string; memberId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof removeSharedMailboxMember>>,
+  TError,
+  { mailboxId: string; memberId: string },
+  TContext
+> => {
+  return useMutation(getRemoveSharedMailboxMemberMutationOptions(options));
+};
+
+/**
+ * @summary List emails in a shared mailbox
+ */
+export const getGetSharedMailboxEmailsUrl = (
+  mailboxId: string,
+  params?: GetSharedMailboxEmailsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/shared-mailboxes/${mailboxId}/emails?${stringifiedParams}`
+    : `/api/shared-mailboxes/${mailboxId}/emails`;
+};
+
+export const getSharedMailboxEmails = async (
+  mailboxId: string,
+  params?: GetSharedMailboxEmailsParams,
+  options?: RequestInit,
+): Promise<SharedMailboxEmail[]> => {
+  return customFetch<SharedMailboxEmail[]>(
+    getGetSharedMailboxEmailsUrl(mailboxId, params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getGetSharedMailboxEmailsQueryKey = (
+  mailboxId: string,
+  params?: GetSharedMailboxEmailsParams,
+) => {
+  return [
+    `/api/shared-mailboxes/${mailboxId}/emails`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetSharedMailboxEmailsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSharedMailboxEmails>>,
+  TError = ErrorType<unknown>,
+>(
+  mailboxId: string,
+  params?: GetSharedMailboxEmailsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getSharedMailboxEmails>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetSharedMailboxEmailsQueryKey(mailboxId, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getSharedMailboxEmails>>
+  > = ({ signal }) =>
+    getSharedMailboxEmails(mailboxId, params, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!mailboxId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getSharedMailboxEmails>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetSharedMailboxEmailsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSharedMailboxEmails>>
+>;
+export type GetSharedMailboxEmailsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List emails in a shared mailbox
+ */
+
+export function useGetSharedMailboxEmails<
+  TData = Awaited<ReturnType<typeof getSharedMailboxEmails>>,
+  TError = ErrorType<unknown>,
+>(
+  mailboxId: string,
+  params?: GetSharedMailboxEmailsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getSharedMailboxEmails>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetSharedMailboxEmailsQueryOptions(
+    mailboxId,
+    params,
+    options,
+  );
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Claim a shared email
+ */
+export const getClaimSharedEmailUrl = (emailId: string) => {
+  return `/api/shared-mailboxes/emails/${emailId}/claim`;
+};
+
+export const claimSharedEmail = async (
+  emailId: string,
+  options?: RequestInit,
+): Promise<ClaimSharedEmail200> => {
+  return customFetch<ClaimSharedEmail200>(getClaimSharedEmailUrl(emailId), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getClaimSharedEmailMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof claimSharedEmail>>,
+    TError,
+    { emailId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof claimSharedEmail>>,
+  TError,
+  { emailId: string },
+  TContext
+> => {
+  const mutationKey = ["claimSharedEmail"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof claimSharedEmail>>,
+    { emailId: string }
+  > = (props) => {
+    const { emailId } = props ?? {};
+
+    return claimSharedEmail(emailId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ClaimSharedEmailMutationResult = NonNullable<
+  Awaited<ReturnType<typeof claimSharedEmail>>
+>;
+
+export type ClaimSharedEmailMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Claim a shared email
+ */
+export const useClaimSharedEmail = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof claimSharedEmail>>,
+    TError,
+    { emailId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof claimSharedEmail>>,
+  TError,
+  { emailId: string },
+  TContext
+> => {
+  return useMutation(getClaimSharedEmailMutationOptions(options));
+};
+
+/**
+ * @summary Release a claimed shared email
+ */
+export const getUnclaimSharedEmailUrl = (emailId: string) => {
+  return `/api/shared-mailboxes/emails/${emailId}/unclaim`;
+};
+
+export const unclaimSharedEmail = async (
+  emailId: string,
+  options?: RequestInit,
+): Promise<UnclaimSharedEmail200> => {
+  return customFetch<UnclaimSharedEmail200>(getUnclaimSharedEmailUrl(emailId), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getUnclaimSharedEmailMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unclaimSharedEmail>>,
+    TError,
+    { emailId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof unclaimSharedEmail>>,
+  TError,
+  { emailId: string },
+  TContext
+> => {
+  const mutationKey = ["unclaimSharedEmail"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof unclaimSharedEmail>>,
+    { emailId: string }
+  > = (props) => {
+    const { emailId } = props ?? {};
+
+    return unclaimSharedEmail(emailId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UnclaimSharedEmailMutationResult = NonNullable<
+  Awaited<ReturnType<typeof unclaimSharedEmail>>
+>;
+
+export type UnclaimSharedEmailMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Release a claimed shared email
+ */
+export const useUnclaimSharedEmail = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unclaimSharedEmail>>,
+    TError,
+    { emailId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof unclaimSharedEmail>>,
+  TError,
+  { emailId: string },
+  TContext
+> => {
+  return useMutation(getUnclaimSharedEmailMutationOptions(options));
 };
 
 /**

@@ -833,6 +833,141 @@ export const AcceptInvitationResponse = zod.object({
 });
 
 /**
+ * @summary List shared mailboxes for user's organisation
+ */
+export const GetSharedMailboxesResponseItem = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  emailAddress: zod.string(),
+  connectionId: zod.string().nullish(),
+  createdAt: zod.coerce.date().optional(),
+  memberCount: zod.number().optional(),
+  unclaimedCount: zod.number().optional(),
+});
+export const GetSharedMailboxesResponse = zod.array(
+  GetSharedMailboxesResponseItem,
+);
+
+/**
+ * @summary Create a shared mailbox (admin only)
+ */
+export const CreateSharedMailboxBody = zod.object({
+  name: zod.string(),
+  emailAddress: zod.string().email(),
+});
+
+/**
+ * @summary Delete a shared mailbox (admin only)
+ */
+export const DeleteSharedMailboxParams = zod.object({
+  mailboxId: zod.coerce.string(),
+});
+
+export const DeleteSharedMailboxResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary List members of a shared mailbox
+ */
+export const GetSharedMailboxMembersParams = zod.object({
+  mailboxId: zod.coerce.string(),
+});
+
+export const GetSharedMailboxMembersResponseItem = zod.object({
+  id: zod.string(),
+  userId: zod.string(),
+  fullName: zod.string().optional(),
+  email: zod.string().optional(),
+  canReply: zod.boolean().optional(),
+});
+export const GetSharedMailboxMembersResponse = zod.array(
+  GetSharedMailboxMembersResponseItem,
+);
+
+/**
+ * @summary Add a member to a shared mailbox (admin only)
+ */
+export const AddSharedMailboxMemberParams = zod.object({
+  mailboxId: zod.coerce.string(),
+});
+
+export const addSharedMailboxMemberBodyCanReplyDefault = true;
+
+export const AddSharedMailboxMemberBody = zod.object({
+  userId: zod.string(),
+  canReply: zod.boolean().default(addSharedMailboxMemberBodyCanReplyDefault),
+});
+
+export const AddSharedMailboxMemberResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Remove a member from a shared mailbox (admin only)
+ */
+export const RemoveSharedMailboxMemberParams = zod.object({
+  mailboxId: zod.coerce.string(),
+  memberId: zod.coerce.string(),
+});
+
+export const RemoveSharedMailboxMemberResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary List emails in a shared mailbox
+ */
+export const GetSharedMailboxEmailsParams = zod.object({
+  mailboxId: zod.coerce.string(),
+});
+
+export const GetSharedMailboxEmailsQueryParams = zod.object({
+  filter: zod.enum(["all", "unclaimed", "mine"]).optional(),
+});
+
+export const GetSharedMailboxEmailsResponseItem = zod.object({
+  id: zod.string(),
+  sender: zod.string(),
+  senderEmail: zod.string().optional(),
+  subject: zod.string(),
+  body: zod.string().optional(),
+  status: zod.string().optional(),
+  priority: zod.string().optional(),
+  summary: zod.string().optional(),
+  categoryId: zod.string().nullish(),
+  claimedBy: zod.string().nullish(),
+  claimedByName: zod.string().nullish(),
+  claimedAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date().optional(),
+});
+export const GetSharedMailboxEmailsResponse = zod.array(
+  GetSharedMailboxEmailsResponseItem,
+);
+
+/**
+ * @summary Claim a shared email
+ */
+export const ClaimSharedEmailParams = zod.object({
+  emailId: zod.coerce.string(),
+});
+
+export const ClaimSharedEmailResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Release a claimed shared email
+ */
+export const UnclaimSharedEmailParams = zod.object({
+  emailId: zod.coerce.string(),
+});
+
+export const UnclaimSharedEmailResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
  * @summary AI triage a single email
  */
 export const TriageEmailBody = zod.object({

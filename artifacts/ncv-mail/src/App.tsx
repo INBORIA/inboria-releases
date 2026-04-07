@@ -23,6 +23,7 @@ import Parametres from "@/pages/dashboard/parametres";
 import Abonnement from "@/pages/dashboard/abonnement";
 import Projets from "@/pages/dashboard/projets";
 import Equipe from "@/pages/dashboard/equipe";
+import BoitesPartagees from "@/pages/dashboard/boites-partagees";
 
 import Accueil from "@/pages/marketing/accueil";
 import Fonctionnalites from "@/pages/marketing/fonctionnalites";
@@ -90,6 +91,7 @@ function Router() {
       <Route path="/dashboard/parametres" component={() => <ProtectedRoute component={Parametres} />} />
       <Route path="/dashboard/abonnement" component={() => <ProtectedRoute component={Abonnement} />} />
       <Route path="/dashboard/equipe" component={() => <ProtectedRoute component={Equipe} />} />
+      <Route path="/dashboard/boites-partagees" component={() => <ProtectedRoute component={BoitesPartagees} />} />
       <Route component={NotFound} />
     </Switch>
   );

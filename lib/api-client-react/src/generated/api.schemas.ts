@@ -460,6 +460,50 @@ export interface Invitation {
   expiresAt?: string;
 }
 
+export interface SharedMailbox {
+  id: string;
+  name: string;
+  emailAddress: string;
+  connectionId?: string | null;
+  createdAt?: string;
+  memberCount?: number;
+  unclaimedCount?: number;
+}
+
+export interface CreateSharedMailboxBody {
+  name: string;
+  emailAddress: string;
+}
+
+export interface SharedMailboxMember {
+  id: string;
+  userId: string;
+  fullName?: string;
+  email?: string;
+  canReply?: boolean;
+}
+
+export interface AddSharedMailboxMemberBody {
+  userId: string;
+  canReply?: boolean;
+}
+
+export interface SharedMailboxEmail {
+  id: string;
+  sender: string;
+  senderEmail?: string;
+  subject: string;
+  body?: string;
+  status?: string;
+  priority?: string;
+  summary?: string;
+  categoryId?: string | null;
+  claimedBy?: string | null;
+  claimedByName?: string | null;
+  claimedAt?: string | null;
+  createdAt?: string;
+}
+
 export type RegisterPushToken200 = {
   success?: boolean;
 };
@@ -581,4 +625,37 @@ export type GetInvitationByToken200 = {
 export type AcceptInvitation200 = {
   success?: boolean;
   organisationId?: string;
+};
+
+export type DeleteSharedMailbox200 = {
+  success?: boolean;
+};
+
+export type AddSharedMailboxMember200 = {
+  success?: boolean;
+};
+
+export type RemoveSharedMailboxMember200 = {
+  success?: boolean;
+};
+
+export type GetSharedMailboxEmailsParams = {
+  filter?: GetSharedMailboxEmailsFilter;
+};
+
+export type GetSharedMailboxEmailsFilter =
+  (typeof GetSharedMailboxEmailsFilter)[keyof typeof GetSharedMailboxEmailsFilter];
+
+export const GetSharedMailboxEmailsFilter = {
+  all: "all",
+  unclaimed: "unclaimed",
+  mine: "mine",
+} as const;
+
+export type ClaimSharedEmail200 = {
+  success?: boolean;
+};
+
+export type UnclaimSharedEmail200 = {
+  success?: boolean;
 };

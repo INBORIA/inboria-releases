@@ -49,7 +49,13 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - API routes: CRUD org, invite members, accept/cancel invitations, manage roles.
     - SQL setup: `attached_assets/sql_organisations_setup.sql` (must be run in Supabase dashboard).
     - Stripe webhook auto-creates org on Business plan checkout.
-    - Sidebar shows "Mon équipe" nav item only for Business plan users.
+    - Sidebar shows "Mon équipe" and "Boîtes partagées" nav items only for Business plan users.
+- **Shared Mailboxes (Phase 2)**:
+    - Tables: `shared_mailboxes`, `shared_mailbox_members` + `shared_mailbox_id`, `claimed_by`, `claimed_at` columns on `emails`.
+    - SQL setup: `attached_assets/sql_shared_mailboxes.sql` (must be run in Supabase dashboard).
+    - API routes: CRUD shared mailboxes, add/remove members, list emails, claim/unclaim emails.
+    - Dashboard page at `/dashboard/boites-partagees` with mailbox cards, member management, email list with claim/unclaim.
+    - Admins can create/delete mailboxes and manage members. All members can view emails and claim/unclaim.
 
 ## External Dependencies
 

@@ -32,6 +32,8 @@ tags:
     description: Slack and Notion integration operations
   - name: organisations
     description: Organisation and team management operations
+  - name: shared-mailboxes
+    description: Shared mailbox operations
 paths:
   /healthz:
     get:
@@ -1054,6 +1056,205 @@ paths:
                   organisationId:
                     type: string
 
+  /shared-mailboxes:
+    get:
+      operationId: getSharedMailboxes
+      tags: [organisations]
+      summary: List shared mailboxes for user's organisation
+      responses:
+        "200":
+          description: List of shared mailboxes
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SharedMailbox"
+    post:
+      operationId: createSharedMailbox
+      tags: [organisations]
+      summary: Create a shared mailbox (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateSharedMailboxBody"
+      responses:
+        "201":
+          description: Shared mailbox created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SharedMailbox"
+
+  /shared-mailboxes/{mailboxId}:
+    delete:
+      operationId: deleteSharedMailbox
+      tags: [organisations]
+      summary: Delete a shared mailbox (admin only)
+      parameters:
+        - name: mailboxId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /shared-mailboxes/{mailboxId}/members:
+    get:
+      operationId: getSharedMailboxMembers
+      tags: [organisations]
+      summary: List members of a shared mailbox
+      parameters:
+        - name: mailboxId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SharedMailboxMember"
+    post:
+      operationId: addSharedMailboxMember
+      tags: [organisations]
+      summary: Add a member to a shared mailbox (admin only)
+      parameters:
+        - name: mailboxId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddSharedMailboxMemberBody"
+      responses:
+        "200":
+          description: Member added
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /shared-mailboxes/{mailboxId}/members/{memberId}:
+    delete:
+      operationId: removeSharedMailboxMember
+      tags: [organisations]
+      summary: Remove a member from a shared mailbox (admin only)
+      parameters:
+        - name: mailboxId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Member removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /shared-mailboxes/{mailboxId}/emails:
+    get:
+      operationId: getSharedMailboxEmails
+      tags: [organisations]
+      summary: List emails in a shared mailbox
+      parameters:
+        - name: mailboxId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: filter
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [all, unclaimed, mine]
+      responses:
+        "200":
+          description: List of emails
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/SharedMailboxEmail"
+
+  /shared-mailboxes/emails/{emailId}/claim:
+    post:
+      operationId: claimSharedEmail
+      tags: [organisations]
+      summary: Claim a shared email
+      parameters:
+        - name: emailId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Email claimed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /shared-mailboxes/emails/{emailId}/unclaim:
+    post:
+      operationId: unclaimSharedEmail
+      tags: [organisations]
+      summary: Release a claimed shared email
+      parameters:
+        - name: emailId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Email released
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
   /ai/triage:
     post:
       operationId: triageEmail
@@ -1796,3 +1997,107 @@ components:
         - email
         - role
         - status
+
+    SharedMailbox:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        emailAddress:
+          type: string
+        connectionId:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        memberCount:
+          type: integer
+        unclaimedCount:
+          type: integer
+      required:
+        - id
+        - name
+        - emailAddress
+
+    CreateSharedMailboxBody:
+      type: object
+      properties:
+        name:
+          type: string
+        emailAddress:
+          type: string
+          format: email
+      required:
+        - name
+        - emailAddress
+
+    SharedMailboxMember:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+        canReply:
+          type: boolean
+      required:
+        - id
+        - userId
+
+    AddSharedMailboxMemberBody:
+      type: object
+      properties:
+        userId:
+          type: string
+        canReply:
+          type: boolean
+          default: true
+      required:
+        - userId
+
+    SharedMailboxEmail:
+      type: object
+      properties:
+        id:
+          type: string
+        sender:
+          type: string
+        senderEmail:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        status:
+          type: string
+        priority:
+          type: string
+        summary:
+          type: string
+        categoryId:
+          type: string
+          nullable: true
+        claimedBy:
+          type: string
+          nullable: true
+        claimedByName:
+          type: string
+          nullable: true
+        claimedAt:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - sender
+        - subject

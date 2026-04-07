@@ -15,6 +15,7 @@ import {
   FolderKanban,
   AlertTriangle,
   Users,
+  MailPlus,
 } from "lucide-react";
 import ncvLogo from "@assets/image_1775392688923.png";
 import { cn } from "@/lib/utils";
@@ -47,6 +48,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     ? [
         ...baseNavigation.slice(0, 6),
         { name: "Mon équipe", href: "/dashboard/equipe", icon: Users },
+        { name: "Boîtes partagées", href: "/dashboard/boites-partagees", icon: MailPlus },
         ...baseNavigation.slice(6),
       ]
     : baseNavigation;
