@@ -485,7 +485,7 @@ export default function Parametres() {
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
                   <Label className="text-[13px] text-white">Archivage automatique</Label>
-                  <p className="text-[11px] text-[#8b9cb3]">L'IA archive les emails a faible priorite (newsletters, pubs, notifications). Les emails urgents et moyens restent dans l'inbox.</p>
+                  <p className="text-[11px] text-[#8b9cb3]">L'IA archive les emails à faible priorité (newsletters, pubs, notifications). Les emails urgents et moyens restent dans la boîte de réception.</p>
                 </div>
                 <Switch />
               </div>

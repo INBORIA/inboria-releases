@@ -5,7 +5,7 @@ import {
 } from "lucide-react";
 
 const NAV_ITEMS = [
-  { name: "Inbox", icon: Inbox, active: true },
+  { name: "Réception", icon: Inbox, active: true },
   { name: "Archives", icon: Archive },
   { name: "Bilan quotidien", icon: LayoutDashboard },
   { name: "Tâches", icon: CheckSquare },
@@ -156,13 +156,13 @@ export function AnimatedDemo() {
   const statusText = phase === "sorting"
     ? `IA en cours de tri — ${sortedCount}/${EMAIL_COUNT} classés`
     : phase === "done"
-    ? `Inbox organisée — ${EMAIL_COUNT} emails triés automatiquement`
+    ? `Boîte organisée — ${EMAIL_COUNT} emails triés automatiquement`
     : phase === "selecting"
     ? `${selectedJunk} newsletter(s) sélectionnée(s)`
     : phase === "deleting"
     ? `${JUNK_COUNT} email(s) supprimé(s) !`
     : phase === "clean"
-    ? `Inbox propre — ${EMAIL_COUNT - JUNK_COUNT} emails importants`
+    ? `Boîte propre — ${EMAIL_COUNT - JUNK_COUNT} emails importants`
     : `${visibleEmails} email${visibleEmails !== 1 ? "s" : ""} reçu${visibleEmails !== 1 ? "s" : ""}`;
 
   return (

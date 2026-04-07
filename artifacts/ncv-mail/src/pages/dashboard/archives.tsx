@@ -129,7 +129,7 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
                   onClick={() => onRestore(email.id)}
                 >
                   <RotateCcw className="w-3 h-3" />
-                  Restaurer dans l'inbox
+                  Restaurer dans la réception
                 </Button>
                 <Button
                   variant="outline"
@@ -233,7 +233,7 @@ export default function Archives() {
         onSuccess: () => {
           setSelectedEmailId(null);
           invalidateAll();
-          toast({ title: "Email restaure dans l'inbox" });
+          toast({ title: "Email restauré dans la réception" });
         },
       }
     );

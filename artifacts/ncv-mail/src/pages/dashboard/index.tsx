@@ -941,7 +941,7 @@ export default function Dashboard() {
                 ) : activeEmails?.length === 0 ? (
                   <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                     <Inbox className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
-                    <h3 className="text-[13px] font-medium text-white">Inbox Zero</h3>
+                    <h3 className="text-[13px] font-medium text-white">Boîte vide</h3>
                     <p className="text-[12px] text-[#8b9cb3] mt-1">Tous vos emails ont été traités.</p>
                   </div>
                 ) : (

@@ -23,13 +23,13 @@ import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 const navigation = [
-  { name: "Inbox", href: "/dashboard", icon: Inbox },
+  { name: "Réception", href: "/dashboard", icon: Inbox },
   { name: "Archives", href: "/dashboard/archives", icon: Archive },
   { name: "Bilan quotidien", href: "/dashboard/bilan", icon: LayoutDashboard },
-  { name: "Taches", href: "/dashboard/taches", icon: CheckSquare },
+  { name: "Tâches", href: "/dashboard/taches", icon: CheckSquare },
   { name: "Projets", href: "/dashboard/projets", icon: FolderKanban },
-  { name: "Categories", href: "/dashboard/categories", icon: Tags },
-  { name: "Parametres", href: "/dashboard/parametres", icon: Settings },
+  { name: "Catégories", href: "/dashboard/categories", icon: Tags },
+  { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
   { name: "Abonnement", href: "/dashboard/abonnement", icon: CreditCard },
 ];
 

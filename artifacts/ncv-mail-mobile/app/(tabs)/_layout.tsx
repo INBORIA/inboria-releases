@@ -62,7 +62,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Reception",
+          title: "Réception",
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="email-outline" size={size} color={color} />
           ),

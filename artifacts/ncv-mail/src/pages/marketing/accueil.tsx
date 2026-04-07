@@ -19,8 +19,8 @@ const steps = [
   {
     num: "03",
     icon: Zap,
-    title: "L'IA gère votre inbox en autopilot",
-    desc: "Notre intelligence artificielle trie, priorise, prépare des réponses et extrait vos tâches automatiquement. Votre inbox est déjà gérée quand vous arrivez le matin.",
+    title: "L'IA gère votre boîte en autopilot",
+    desc: "Notre intelligence artificielle trie, priorise, prépare des réponses et extrait vos tâches automatiquement. Votre boîte de réception est déjà gérée quand vous arrivez le matin.",
   },
 ];
 
@@ -54,7 +54,7 @@ export default function Accueil() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#2d7dd2]/10 to-transparent" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 text-center relative">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
-            <span className="text-white">Votre inbox est déjà gérée</span><br />
+            <span className="text-white">Votre boîte est déjà gérée</span><br />
             <span className="text-white">quand vous arrivez le matin.</span><br />
             <span className="text-[#2d7dd2]">NCV Mail — l'Email Autopilot.</span>
           </h1>
