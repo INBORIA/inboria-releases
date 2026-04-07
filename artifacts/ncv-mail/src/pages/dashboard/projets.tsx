@@ -9,6 +9,7 @@ import {
   getGetProjectQueryKey,
   useCreateTask,
   useUpdateTask,
+  useDeleteTask,
   getListTasksQueryKey,
   useListProjectNotes,
   useCreateProjectNote,
@@ -209,6 +210,20 @@ function ProjectDetailView({
   const [newTaskTitle, setNewTaskTitle] = useState("");
   const createTaskMut = useCreateTask();
   const updateTaskMut = useUpdateTask();
+  const deleteTaskMut = useDeleteTask();
+
+  const handleDeleteTask = (taskId: string) => {
+    deleteTaskMut.mutate(
+      { id: taskId },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+          toast({ title: "Tache supprimee" });
+        },
+      }
+    );
+  };
 
   const handleToggleTask = (taskId: string, currentDone: boolean) => {
     updateTaskMut.mutate(
@@ -408,7 +423,7 @@ function ProjectDetailView({
               {project.tasks.map((task: any) => (
                 <div
                   key={task.id}
-                  className="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2.5"
+                  className="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2.5 group"
                 >
                   <button
                     onClick={() => handleToggleTask(String(task.id), task.done)}
@@ -428,6 +443,13 @@ function ProjectDetailView({
                       {task.emailSubject}
                     </span>
                   )}
+                  <button
+                    onClick={() => handleDeleteTask(String(task.id))}
+                    className="p-1.5 rounded-md text-[#8b9cb3]/40 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                    title="Supprimer"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </button>
                 </div>
               ))}
             </div>
