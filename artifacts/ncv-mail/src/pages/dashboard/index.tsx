@@ -155,11 +155,14 @@ const triageSchema = z.object({
   body: z.string().min(1, "Contenu requis"),
 });
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number) => void }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string) => void }) {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyTo, setReplyTo] = useState("");
   const [replySubject, setReplySubject] = useState("");
   const [replyText, setReplyText] = useState("");
+  const [taskFormOpen, setTaskFormOpen] = useState(false);
+  const [taskTitle, setTaskTitle] = useState("");
+  const [taskProjectId, setTaskProjectId] = useState("none");
   const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
 
   return (
@@ -284,7 +287,13 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   variant="outline"
                   size="sm"
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-300"
-                  onClick={() => onCreateTask?.(email.id)}
+                  onClick={() => {
+                    if (!taskFormOpen) {
+                      setTaskTitle(`Traiter: ${email.subject}`);
+                      setTaskProjectId(email.projectId || "none");
+                    }
+                    setTaskFormOpen(!taskFormOpen);
+                  }}
                 >
                   <ListTodo className="w-3 h-3" />
                   Creer une tache
@@ -363,6 +372,62 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
             </div>
 
             <EmailComments emailId={email.id} currentUserId={currentUserId} />
+
+            {taskFormOpen && (
+              <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <ListTodo className="w-3.5 h-3.5 text-cyan-400" />
+                  <span className="text-[11px] font-medium text-cyan-400 uppercase tracking-wider">Nouvelle tache</span>
+                </div>
+                <div>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Titre de la tache</label>
+                  <Input
+                    value={taskTitle}
+                    onChange={(e) => setTaskTitle(e.target.value)}
+                    placeholder="Ex: Repondre au devis, Envoyer le contrat..."
+                    className="bg-background border-border text-white text-[12px] h-8"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Projet (optionnel)</label>
+                  <Select value={taskProjectId} onValueChange={setTaskProjectId}>
+                    <SelectTrigger className="w-full h-8 bg-background border-border text-[12px] text-white">
+                      <SelectValue placeholder="Aucun projet" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border">
+                      <SelectItem value="none">Aucun projet</SelectItem>
+                      {projects.map((p: any) => (
+                        <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="flex items-center gap-2 justify-end">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => { setTaskFormOpen(false); setTaskTitle(""); setTaskProjectId("none"); }}
+                    className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
+                  >
+                    Annuler
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="gap-1.5 h-7 text-[11px]"
+                    disabled={!taskTitle.trim()}
+                    onClick={() => {
+                      onCreateTask?.(email.id, taskTitle.trim(), taskProjectId !== "none" ? taskProjectId : undefined);
+                      setTaskFormOpen(false);
+                      setTaskTitle("");
+                      setTaskProjectId("none");
+                    }}
+                  >
+                    <ListTodo className="w-3 h-3" />
+                    Creer
+                  </Button>
+                </div>
+              </div>
+            )}
 
             {replyOpen && (
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
@@ -660,10 +725,9 @@ export default function Dashboard() {
   };
 
   const createTaskMut = useCreateTask();
-  const handleCreateTask = (emailId: number) => {
-    const email = emails?.find((e) => e.id === emailId);
+  const handleCreateTask = (emailId: number, title: string, projectId?: string) => {
     createTaskMut.mutate(
-      { data: { title: email ? `Traiter: ${email.subject}` : "Nouvelle tache", emailId } },
+      { data: { title, emailId, projectId: projectId || null } },
       {
         onSuccess: () => {
           invalidateAll();
