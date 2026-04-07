@@ -16,12 +16,23 @@ import {
 } from "lucide-react";
 
 const heroStats = [
-  { value: "3 à 10", label: "membres par équipe" },
-  { value: "∞", label: "boîtes partagées" },
-  { value: "Temps réel", label: "notifications" },
+  { value: "Illimité", label: "membres d'équipe" },
+  { value: "IA intégrée", label: "tri & résumés automatiques" },
+  { value: "Temps réel", label: "collaboration & notifications" },
 ];
 
 const capabilities = [
+  {
+    icon: Zap,
+    title: "Intelligence artificielle au service de l'équipe",
+    desc: "L'IA de NCV Mail travaille pour toute votre équipe : elle trie automatiquement les emails entrants, génère des résumés instantanés, détecte les priorités et prépare des brouillons de réponse. Que ce soit dans vos boîtes personnelles ou partagées, chaque email est analysé et catégorisé avant même que vous n'ouvriez votre messagerie.",
+    highlights: [
+      "Tri et catégorisation automatiques par IA",
+      "Résumés intelligents des longs échanges",
+      "Brouillons de réponse contextuels",
+      "Détection de priorité et extraction de tâches",
+    ],
+  },
   {
     icon: Building2,
     title: "Organisation centralisée",
@@ -131,9 +142,9 @@ export default function Entreprise() {
             Votre équipe, une seule<br className="hidden sm:block" /> boîte de réception
           </h1>
           <p className="mt-5 text-[15px] sm:text-[16px] text-[#8b9cb3] max-w-2xl mx-auto leading-relaxed">
-            NCV Mail réunit votre équipe autour d'une gestion collaborative des emails. 
-            Boîtes partagées, assignation, commentaires internes et suivi d'activité — 
-            tout ce qu'il faut pour que rien ne passe entre les mailles.
+            NCV Mail combine intelligence artificielle et collaboration d'équipe 
+            pour une gestion des emails sans effort. L'IA trie, résume et prépare vos réponses 
+            tandis que votre équipe collabore via boîtes partagées, assignation et commentaires internes.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/signup">
@@ -272,7 +283,7 @@ export default function Entreprise() {
             {[
               {
                 q: "Combien de membres puis-je ajouter à mon équipe ?",
-                a: "Le plan Business inclut 3 sièges par défaut. Vous pouvez ajouter des sièges supplémentaires directement depuis votre portail d'abonnement.",
+                a: "Le plan Business inclut des sièges de base, et vous pouvez en ajouter autant que nécessaire directement depuis votre portail d'abonnement. Il n'y a pas de limite imposée.",
               },
               {
                 q: "Mes collaborateurs ont-ils accès à tous mes emails ?",
