@@ -477,9 +477,20 @@ router.post("/email/sync", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
+    const { data: sharedMailboxes } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("id, connection_id");
+    const connToSharedMailbox: Record<string, string> = {};
+    if (sharedMailboxes) {
+      for (const sm of sharedMailboxes) {
+        if (sm.connection_id) connToSharedMailbox[sm.connection_id] = sm.id;
+      }
+    }
+
     let totalSynced = 0;
 
     for (const conn of connections) {
+      (conn as any)._sharedMailboxId = connToSharedMailbox[conn.id] || null;
       if (conn.provider === "gmail") {
         totalSynced += await syncGmail(conn, req.userId!);
       } else if (conn.provider === "outlook") {
@@ -597,7 +608,7 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
         projectId = proj?.id || null;
       }
 
-      const { error: insertError } = await supabaseAdmin.from("emails").insert({
+      const gmailInsert: Record<string, any> = {
         user_id: userId,
         external_id: scopedExternalId,
         sender: from,
@@ -609,7 +620,11 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
         category_id: categoryId,
         project_id: projectId,
         created_at: new Date(parseInt(fullMsg.internalDate || "0")).toISOString(),
-      });
+      };
+      if ((conn as any)._sharedMailboxId) {
+        gmailInsert.shared_mailbox_id = (conn as any)._sharedMailboxId;
+      }
+      const { error: insertError } = await supabaseAdmin.from("emails").insert(gmailInsert);
 
       if (insertError) {
         console.error("syncGmail: insert error for msg", msg.id, insertError);
@@ -701,7 +716,7 @@ async function syncOutlook(conn: any, userId: string): Promise<number> {
     const senderEmail = msg.from?.emailAddress?.address || "Inconnu";
     const senderName = msg.from?.emailAddress?.name || senderEmail;
 
-    await supabaseAdmin.from("emails").insert({
+    const outlookInsert: Record<string, any> = {
       user_id: userId,
       external_id: scopedExternalId,
       sender: `${senderName} <${senderEmail}>`,
@@ -709,7 +724,11 @@ async function syncOutlook(conn: any, userId: string): Promise<number> {
       body: msg.body?.content ? msg.body.content.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim() : (msg.bodyPreview || ""),
       status: "non_lu",
       created_at: msg.receivedDateTime,
-    });
+    };
+    if ((conn as any)._sharedMailboxId) {
+      outlookInsert.shared_mailbox_id = (conn as any)._sharedMailboxId;
+    }
+    await supabaseAdmin.from("emails").insert(outlookInsert);
 
     synced++;
   }
@@ -782,12 +801,16 @@ async function syncImap(conn: any, userId: string): Promise<number> {
           }
         }
 
-        await supabaseAdmin.from("emails").insert({
+        const imapInsert: Record<string, any> = {
           user_id: userId, external_id: externalId, sender,
           subject: envelope.subject || "(pas de sujet)", body: bodyText,
           status: "non_lu",
           created_at: envelope.date ? new Date(envelope.date).toISOString() : new Date().toISOString(),
-        });
+        };
+        if ((conn as any)._sharedMailboxId) {
+          imapInsert.shared_mailbox_id = (conn as any)._sharedMailboxId;
+        }
+        await supabaseAdmin.from("emails").insert(imapInsert);
         synced++;
       }
     } finally { lock.release(); }

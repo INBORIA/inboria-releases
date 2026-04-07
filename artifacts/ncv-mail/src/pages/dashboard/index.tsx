@@ -465,6 +465,7 @@ export default function Dashboard() {
   const { data: sharedMailboxes } = useGetSharedMailboxes({ query: { enabled: plan === "business" } });
   const { data: sharedEmails, isLoading: sharedEmailsLoading } = useGetSharedMailboxEmails(
     selectedSharedMailboxId || "",
+    undefined,
     { query: { enabled: !!selectedSharedMailboxId && inboxMode === "shared" } }
   );
   const claimEmailMut = useClaimSharedEmail();
