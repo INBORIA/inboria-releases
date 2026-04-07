@@ -20,6 +20,7 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       .from("emails")
       .select("*, categories(name), projects(name, reference)")
       .eq("user_id", req.userId!)
+      .is("shared_mailbox_id", null)
       .order("created_at", { ascending: false });
 
     if (req.query.priority) {

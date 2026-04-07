@@ -15,7 +15,8 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
     const { data: emails } = await supabaseAdmin
       .from("emails")
       .select("priority, status")
-      .eq("user_id", req.userId!);
+      .eq("user_id", req.userId!)
+      .is("shared_mailbox_id", null);
 
     const allEmails = emails || [];
     const inboxEmails = allEmails.filter(e => e.status !== "archived");
@@ -51,7 +52,8 @@ router.get("/dashboard/inbox-health", requireAuth, async (req, res): Promise<voi
     const { data: emails } = await supabaseAdmin
       .from("emails")
       .select("priority, status")
-      .eq("user_id", req.userId!);
+      .eq("user_id", req.userId!)
+      .is("shared_mailbox_id", null);
 
     const allEmails = emails || [];
     const total = allEmails.length;
