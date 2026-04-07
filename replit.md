@@ -26,7 +26,7 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - **Recategorize Uncategorized**: `POST /api/ai/recategorize-uncategorized` re-analyzes uncategorized emails using GPT-4o-mini.
     - **Draft Reply**: `POST /api/ai/draft` generates context-aware, professional email replies in French using GPT-4o-mini.
 - **Email Sending**: `POST /api/emails/send` handles sending emails, supporting threading for Gmail and utilizing Microsoft Graph for Outlook, and SMTP for IMAP.
-- **Stripe Integration**: Manages subscriptions via Stripe Checkout sessions (`POST /api/stripe/checkout`), webhooks for `checkout.session.completed`, `invoice.paid`, `customer.subscription.deleted`, `customer.subscription.updated`, and a customer portal (`GET /api/stripe/portal`).
+- **Stripe Integration**: Manages subscriptions via Stripe Checkout sessions (`POST /api/stripe/checkout`), webhooks for `checkout.session.completed`, `invoice.paid`, `customer.subscription.deleted`, `customer.subscription.updated`, and a customer portal (`GET /api/stripe/portal`). Geographic restriction enforced: only EU/EEE + Switzerland countries are allowed. Country is collected at signup, stored in `profiles.country`, and validated before Stripe checkout.
 - **Integrations (Pro plan)**:
     - **Slack**: OAuth2 integration to send urgent email notifications to a configured channel.
     - **Notion**: OAuth2 integration to create task pages in Notion databases from AI-extracted tasks.
@@ -34,7 +34,7 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
 
 ### Feature Specifications
 
-- **Marketing Site**: Includes a landing page, features overview, pricing, legal mentions, privacy policy, and terms of service.
+- **Marketing Site**: Includes a landing page, features overview, classement (packs metiers), intelligence artificielle (AI explanation), enterprise, pricing, legal mentions, privacy policy, and terms of service.
 - **Application Pages**:
     - `/dashboard`: Priority inbox with email cards and category sidebar.
     - `/dashboard/bilan`: Daily AI summary.

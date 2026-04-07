@@ -3,6 +3,7 @@ import Stripe from "stripe";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { getStripeClient } from "../lib/stripe";
+import { isAllowedCountry } from "../lib/eu-countries";
 
 interface RawBodyRequest extends Request {
   rawBody?: Buffer;
@@ -47,12 +48,17 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
 
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("id, stripe_customer_id, stripe_subscription_id")
+      .select("id, stripe_customer_id, stripe_subscription_id, country")
       .eq("id", req.userId!)
       .single();
 
     if (!profile) {
       res.status(404).json({ error: "Profil introuvable" });
+      return;
+    }
+
+    if (!profile.country || !isAllowedCountry(profile.country)) {
+      res.status(403).json({ error: "NCV Mail est actuellement disponible uniquement dans l'Union Europeenne, l'EEE et la Suisse." });
       return;
     }
 

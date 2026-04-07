@@ -1605,10 +1605,16 @@ components:
           minLength: 6
         fullName:
           type: string
+        country:
+          type: string
+          minLength: 2
+          maxLength: 2
+          description: ISO 3166-1 alpha-2 country code (EU/EEE + CH only)
       required:
         - email
         - password
         - fullName
+        - country
 
     LoginBody:
       type: object

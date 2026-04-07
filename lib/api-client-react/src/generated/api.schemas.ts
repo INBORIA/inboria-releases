@@ -14,6 +14,12 @@ export interface RegisterBody {
   /** @minLength 6 */
   password: string;
   fullName: string;
+  /**
+   * ISO 3166-1 alpha-2 country code (EU/EEE + CH only)
+   * @minLength 2
+   * @maxLength 2
+   */
+  country: string;
 }
 
 export interface LoginBody {

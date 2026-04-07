@@ -7,7 +7,7 @@ interface AuthContextType {
   user: User | null;
   loading: boolean;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
-  signUp: (email: string, password: string, fullName: string) => Promise<{ error: string | null; needsVerification: boolean }>;
+  signUp: (email: string, password: string, fullName: string, country: string) => Promise<{ error: string | null; needsVerification: boolean }>;
   signOut: () => Promise<void>;
 }
 
@@ -39,7 +39,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return { error: null };
   }
 
-  async function signUp(email: string, password: string, fullName: string) {
+  async function signUp(email: string, password: string, fullName: string, country: string) {
     try {
       const origin = window.location.origin;
       const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -48,7 +48,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         email,
         password,
         options: {
-          data: { full_name: fullName },
+          data: { full_name: fullName, country: country.toUpperCase() },
           emailRedirectTo: `${origin}${basePath}/auth/callback`,
         },
       });
@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         await fetch(`${baseUrl}/api/auth/setup-profile`, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: data.user.id, fullName }),
+          body: JSON.stringify({ userId: data.user.id, fullName, country: country.toUpperCase() }),
         });
       }
 

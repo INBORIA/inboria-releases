@@ -20,10 +20,18 @@ export const HealthCheckResponse = zod.object({
  */
 export const registerBodyPasswordMin = 6;
 
+export const registerBodyCountryMin = 2;
+export const registerBodyCountryMax = 2;
+
 export const RegisterBody = zod.object({
   email: zod.string().email(),
   password: zod.string().min(registerBodyPasswordMin),
   fullName: zod.string(),
+  country: zod
+    .string()
+    .min(registerBodyCountryMin)
+    .max(registerBodyCountryMax)
+    .describe("ISO 3166-1 alpha-2 country code (EU\/EEE + CH only)"),
 });
 
 /**

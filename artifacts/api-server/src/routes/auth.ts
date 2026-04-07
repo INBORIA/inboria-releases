@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { RegisterBody, LoginBody } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/auth";
+import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
@@ -13,13 +14,18 @@ router.post("/auth/register", async (req, res): Promise<void> => {
       return;
     }
 
-    const { email, password, fullName } = parsed.data;
+    const { email, password, fullName, country } = parsed.data;
+
+    if (!country || !isAllowedCountry(country)) {
+      res.status(400).json({ error: "NCV Mail est actuellement disponible uniquement dans l'Union Europeenne, l'EEE et la Suisse." });
+      return;
+    }
 
     const { data, error } = await supabaseAdmin.auth.admin.createUser({
       email,
       password,
       email_confirm: true,
-      user_metadata: { full_name: fullName },
+      user_metadata: { full_name: fullName, country: country.toUpperCase() },
     });
 
     if (error) {
@@ -31,6 +37,7 @@ router.post("/auth/register", async (req, res): Promise<void> => {
       await supabaseAdmin.from("profiles").upsert({
         id: data.user.id,
         full_name: fullName,
+        country: country.toUpperCase(),
         plan: "essai",
         seats: 1,
         emails_used: 0,
@@ -58,15 +65,21 @@ router.post("/auth/register", async (req, res): Promise<void> => {
 
 router.post("/auth/setup-profile", async (req, res): Promise<void> => {
   try {
-    const { userId, fullName } = req.body;
+    const { userId, fullName, country } = req.body;
     if (!userId) {
       res.status(400).json({ error: "userId requis" });
+      return;
+    }
+
+    if (!country || !isAllowedCountry(country)) {
+      res.status(400).json({ error: "Pays requis (UE/EEE/Suisse uniquement)." });
       return;
     }
 
     await supabaseAdmin.from("profiles").upsert({
       id: userId,
       full_name: fullName || "",
+      country: country.toUpperCase(),
       plan: "essai",
       seats: 1,
       emails_used: 0,

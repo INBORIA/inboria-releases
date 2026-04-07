@@ -16,7 +16,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useState, useMemo } from "react";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, Globe } from "lucide-react";
+import { EU_EEE_COUNTRIES } from "@/data/eu-countries";
 
 function getPasswordStrength(password: string): { score: number; label: string; color: string; checks: { label: string; passed: boolean }[] } {
   const checks = [
@@ -32,9 +33,12 @@ function getPasswordStrength(password: string): { score: number; label: string; 
   return { score, label, color, checks };
 }
 
+const allowedCodes = EU_EEE_COUNTRIES.map((c) => c.code) as unknown as [string, ...string[]];
+
 const signupSchema = z.object({
   fullName: z.string().min(2, "Nom complet requis"),
   email: z.string().email("Email invalide"),
+  country: z.enum(allowedCodes, { errorMap: () => ({ message: "Veuillez selectionner votre pays" }) }),
   password: z.string()
     .min(8, "Minimum 8 caracteres")
     .regex(/[A-Z]/, "Au moins une majuscule")
@@ -61,6 +65,7 @@ export default function Signup() {
     defaultValues: {
       fullName: "",
       email: "",
+      country: "" as any,
       password: "",
     },
   });
@@ -70,7 +75,7 @@ export default function Signup() {
 
   async function onSubmit(data: SignupFormValues) {
     setIsPending(true);
-    const { error, needsVerification } = await signUp(data.email, data.password, data.fullName);
+    const { error, needsVerification } = await signUp(data.email, data.password, data.fullName, data.country);
     setIsPending(false);
 
     if (error) {
@@ -138,6 +143,35 @@ export default function Signup() {
                 <FormControl>
                   <Input placeholder="jean@entreprise.com" type="email" className="bg-background border-border text-white" {...field} />
                 </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="country"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel className="text-[#8b9cb3]">Pays</FormLabel>
+                <FormControl>
+                  <div className="relative">
+                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8b9cb3] pointer-events-none" />
+                    <select
+                      {...field}
+                      className="w-full h-10 pl-9 pr-3 rounded-md border border-border bg-background text-white text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
+                    >
+                      <option value="" disabled className="text-[#8b9cb3]">Selectionnez votre pays</option>
+                      {EU_EEE_COUNTRIES.map((c) => (
+                        <option key={c.code} value={c.code} className="bg-[#141c2b] text-white">
+                          {c.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </FormControl>
+                <p className="text-[10px] text-[#8b9cb3]/60 mt-1">
+                  NCV Mail est disponible dans l'Union Europeenne, l'EEE et la Suisse.
+                </p>
                 <FormMessage />
               </FormItem>
             )}

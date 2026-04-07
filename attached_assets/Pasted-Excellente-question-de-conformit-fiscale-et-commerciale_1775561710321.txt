@@ -1,0 +1,50 @@
+Excellente question de conformité fiscale et commerciale ! C'est un point critique souvent négligé par les startups SaaS. Voici ce qu'il faut savoir et faire concrètement avec Stripe :
+Stripe, TVA et Restriction Géographique pour NCVMail
+Ce que Stripe gère automatiquement
+Stripe propose un module appelé Stripe Tax qui calcule et collecte automatiquement la TVA selon les règles en vigueur dans chaque pays. Pour l'Europe, il gère notamment :
+La TVA belge (21 % standard) et française (20 % standard) sur les services numériques B2C.
+Le mécanisme OSS (One Stop Shop) de l'UE, qui permet à une entreprise belge de collecter la TVA de tous les pays UE via une seule déclaration en Belgique — ce qui est exactement le cas de NCV Management SRL.
+La règle B2B avec autoliquidation (reverse charge) : si un client professionnel européen fournit son numéro de TVA intracommunautaire, Stripe applique automatiquement l'autoliquidation (0 % facturé, le client déclare lui-même).
+Le problème avec le Canada et l'Afrique
+Vous avez parfaitement raison de soulever ce point. Si NCVMail est accessible mondialement sans restriction :
+Canada : TVA fédérale (GST/HST) et provinciale (QST au Québec) s'appliquent aux services numériques vendus à des Canadiens. Les règles sont différentes et nécessitent une inscription fiscale au Canada.
+Afrique : Chaque pays a ses propres règles (TVA au Maroc, en Tunisie, en Côte d'Ivoire, etc.), souvent mal supportées par Stripe Tax.
+Risque légal : Vendre sans collecter la taxe locale expose NCV Management à des redressements fiscaux dans ces pays.
+La solution technique dans Stripe
+Il existe deux niveaux de protection à configurer :
+1. Restriction géographique des paiements (Stripe Radar / Payment Methods)
+Dans le tableau de bord Stripe, il est possible de configurer des règles pour bloquer les cartes émises hors de la zone cible. Par exemple : n'accepter que les cartes émises dans les pays de l'UE + EEE. Cela se fait via les règles Stripe Radar :
+Plain Text
+block if :card_country: != 'BE' and :card_country: != 'FR' and :card_country: != 'LU' and :card_country: != 'CH' ...
+Ou plus simplement, en définissant une liste blanche des pays UE/EEE autorisés.
+2. Restriction au niveau de l'application (recommandé en priorité)
+La meilleure pratique est de gérer la restriction en amont dans l'application NCVMail elle-même, avant même d'arriver à Stripe :
+Lors de l'inscription, demander le pays de résidence / pays de l'entreprise.
+Si le pays n'est pas dans la liste autorisée (UE/EEE + Suisse), afficher un message : "NCVMail est actuellement disponible uniquement en France, Belgique et dans l'Union Européenne."
+Ne pas afficher le formulaire de paiement Stripe pour les pays non autorisés.
+3. Stripe Tax pour la TVA européenne
+Activer Stripe Tax avec la configuration suivante :
+Pays d'origine : Belgique (TVA belge 21 %)
+Activation du mécanisme OSS pour tous les pays UE
+Validation automatique des numéros de TVA intracommunautaires (via VIES)
+Recommandation concrète pour NCVMail
+Action
+Priorité
+Où configurer
+Activer Stripe Tax avec OSS UE
+Critique
+Dashboard Stripe → Tax
+Restreindre l'inscription aux pays UE/EEE dans l'app
+Critique
+Backend NCVMail (liste pays autorisés)
+Ajouter règle Stripe Radar anti-cartes hors-UE
+Recommandé
+Dashboard Stripe → Radar
+Valider les numéros TVA intracommunautaires (B2B)
+Recommandé
+Stripe Tax (automatique)
+Prévoir une extension future vers Suisse/Luxembourg
+Optionnel
+Liste blanche à élargir
+En synthèse
+Stripe ne restreint pas automatiquement la vente à certains pays — c'est à NCVMail de le faire. La combinaison restriction dans l'app (liste pays) + Stripe Tax (OSS UE) est la solution la plus propre, la plus sécurisée juridiquement, et la plus simple à maintenir. Elle protège NCV Management SRL contre tout risque fiscal hors-UE tout en restant parfaitement conforme aux obligations TVA européennes.
