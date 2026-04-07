@@ -21,6 +21,8 @@ import type {
   AddCommentBody,
   AddSharedMailboxMember200,
   AddSharedMailboxMemberBody,
+  AssignEmailBody,
+  AssignEmailResult,
   AuthResponse,
   BulkUpdateEmails200,
   BulkUpdateEmailsBody,
@@ -79,6 +81,7 @@ import type {
   Task,
   TriageEmailBody,
   TriageResult,
+  UnassignEmail200,
   UnclaimSharedEmail200,
   UpdateCategoryBody,
   UpdateEmailBody,
@@ -5496,6 +5499,252 @@ export const useDeleteEmailComment = <
 > => {
   return useMutation(getDeleteEmailCommentMutationOptions(options));
 };
+
+/**
+ * @summary Assign an email to a colleague
+ */
+export const getAssignEmailUrl = (emailId: number) => {
+  return `/api/emails/${emailId}/assign`;
+};
+
+export const assignEmail = async (
+  emailId: number,
+  assignEmailBody: AssignEmailBody,
+  options?: RequestInit,
+): Promise<AssignEmailResult> => {
+  return customFetch<AssignEmailResult>(getAssignEmailUrl(emailId), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(assignEmailBody),
+  });
+};
+
+export const getAssignEmailMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof assignEmail>>,
+    TError,
+    { emailId: number; data: BodyType<AssignEmailBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof assignEmail>>,
+  TError,
+  { emailId: number; data: BodyType<AssignEmailBody> },
+  TContext
+> => {
+  const mutationKey = ["assignEmail"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof assignEmail>>,
+    { emailId: number; data: BodyType<AssignEmailBody> }
+  > = (props) => {
+    const { emailId, data } = props ?? {};
+
+    return assignEmail(emailId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AssignEmailMutationResult = NonNullable<
+  Awaited<ReturnType<typeof assignEmail>>
+>;
+export type AssignEmailMutationBody = BodyType<AssignEmailBody>;
+export type AssignEmailMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Assign an email to a colleague
+ */
+export const useAssignEmail = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof assignEmail>>,
+    TError,
+    { emailId: number; data: BodyType<AssignEmailBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof assignEmail>>,
+  TError,
+  { emailId: number; data: BodyType<AssignEmailBody> },
+  TContext
+> => {
+  return useMutation(getAssignEmailMutationOptions(options));
+};
+
+/**
+ * @summary Remove assignment from an email
+ */
+export const getUnassignEmailUrl = (emailId: number) => {
+  return `/api/emails/${emailId}/unassign`;
+};
+
+export const unassignEmail = async (
+  emailId: number,
+  options?: RequestInit,
+): Promise<UnassignEmail200> => {
+  return customFetch<UnassignEmail200>(getUnassignEmailUrl(emailId), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getUnassignEmailMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unassignEmail>>,
+    TError,
+    { emailId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof unassignEmail>>,
+  TError,
+  { emailId: number },
+  TContext
+> => {
+  const mutationKey = ["unassignEmail"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof unassignEmail>>,
+    { emailId: number }
+  > = (props) => {
+    const { emailId } = props ?? {};
+
+    return unassignEmail(emailId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UnassignEmailMutationResult = NonNullable<
+  Awaited<ReturnType<typeof unassignEmail>>
+>;
+
+export type UnassignEmailMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Remove assignment from an email
+ */
+export const useUnassignEmail = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unassignEmail>>,
+    TError,
+    { emailId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof unassignEmail>>,
+  TError,
+  { emailId: number },
+  TContext
+> => {
+  return useMutation(getUnassignEmailMutationOptions(options));
+};
+
+/**
+ * @summary Get emails assigned to the current user
+ */
+export const getGetAssignedToMeUrl = () => {
+  return `/api/emails/assigned-to-me`;
+};
+
+export const getAssignedToMe = async (
+  options?: RequestInit,
+): Promise<Email[]> => {
+  return customFetch<Email[]>(getGetAssignedToMeUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetAssignedToMeQueryKey = () => {
+  return [`/api/emails/assigned-to-me`] as const;
+};
+
+export const getGetAssignedToMeQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAssignedToMe>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getAssignedToMe>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetAssignedToMeQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getAssignedToMe>>> = ({
+    signal,
+  }) => getAssignedToMe({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAssignedToMe>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetAssignedToMeQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAssignedToMe>>
+>;
+export type GetAssignedToMeQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get emails assigned to the current user
+ */
+
+export function useGetAssignedToMe<
+  TData = Awaited<ReturnType<typeof getAssignedToMe>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getAssignedToMe>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetAssignedToMeQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * @summary AI triage a single email

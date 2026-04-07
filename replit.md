@@ -63,6 +63,14 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - Reusable `EmailComments` component (`src/components/email-comments.tsx`) integrated in email detail view.
     - Access control: own emails + shared mailbox emails + same-org emails.
     - Users can add, edit, delete their own notes. Ctrl+Enter shortcut to send.
+- **Email Assignment (Phase 4)**:
+    - Columns: `assigned_to` (uuid FK to auth.users), `assigned_at` on `emails` table.
+    - SQL setup: `attached_assets/sql_email_assignments.sql` (must be run in Supabase dashboard).
+    - API routes: POST /emails/:emailId/assign, POST /emails/:emailId/unassign, GET /emails/assigned-to-me.
+    - Route file: `artifacts/api-server/src/routes/assignments.ts`.
+    - Assignment selector in EmailDetail (visible only for Business plan users with an organisation).
+    - "Assigné" badge in email list for assigned emails.
+    - Security: only org members can assign, unassign restricted to assignee/owner/admin.
 
 ## External Dependencies
 

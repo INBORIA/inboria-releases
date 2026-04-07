@@ -15,12 +15,14 @@ import integrationsRouter from "./integrations";
 import organisationsRouter from "./organisations";
 import sharedMailboxesRouter from "./shared-mailboxes";
 import commentsRouter from "./comments";
+import assignmentsRouter from "./assignments";
 
 const router: IRouter = Router();
 
 router.use(healthRouter);
 router.use(authRouter);
 router.use(profileRouter);
+router.use(assignmentsRouter);
 router.use(emailsRouter);
 router.use(categoriesRouter);
 router.use(tasksRouter);

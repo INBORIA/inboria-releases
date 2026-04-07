@@ -66,6 +66,8 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
         projectId: e.project_id,
         projectName: e.projects?.name || null,
         projectReference: e.projects?.reference || null,
+        assignedTo: e.assigned_to || null,
+        assignedAt: e.assigned_at || null,
         createdAt: e.created_at,
       };
     }));
@@ -89,6 +91,17 @@ router.get("/emails/:id", requireAuth, async (req, res): Promise<void> => {
     }
 
     const s = parseSender(email.sender || "");
+
+    let assignedToName: string | null = null;
+    if (email.assigned_to) {
+      const { data: ap } = await supabaseAdmin
+        .from("profiles")
+        .select("full_name")
+        .eq("id", email.assigned_to)
+        .single();
+      assignedToName = ap?.full_name || null;
+    }
+
     res.json({
       id: email.id,
       sender: s.name,
@@ -103,6 +116,9 @@ router.get("/emails/:id", requireAuth, async (req, res): Promise<void> => {
       projectId: email.project_id,
       projectName: email.projects?.name || null,
       projectReference: email.projects?.reference || null,
+      assignedTo: email.assigned_to || null,
+      assignedToName,
+      assignedAt: email.assigned_at || null,
       createdAt: email.created_at,
     });
   } catch {
@@ -184,6 +200,8 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
       summary: email.summary,
       categoryId: email.category_id,
       categoryName: email.categories?.name || null,
+      assignedTo: email.assigned_to || null,
+      assignedAt: email.assigned_at || null,
       createdAt: email.created_at,
     });
   } catch {

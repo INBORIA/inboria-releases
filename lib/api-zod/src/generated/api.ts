@@ -184,6 +184,9 @@ export const ListEmailsResponseItem = zod.object({
   projectId: zod.string().nullish(),
   projectName: zod.string().nullish(),
   projectReference: zod.string().nullish(),
+  assignedTo: zod.string().nullish(),
+  assignedToName: zod.string().nullish(),
+  assignedAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
 export const ListEmailsResponse = zod.array(ListEmailsResponseItem);
@@ -209,6 +212,9 @@ export const GetEmailResponse = zod.object({
   projectId: zod.string().nullish(),
   projectName: zod.string().nullish(),
   projectReference: zod.string().nullish(),
+  assignedTo: zod.string().nullish(),
+  assignedToName: zod.string().nullish(),
+  assignedAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -239,6 +245,9 @@ export const UpdateEmailResponse = zod.object({
   projectId: zod.string().nullish(),
   projectName: zod.string().nullish(),
   projectReference: zod.string().nullish(),
+  assignedTo: zod.string().nullish(),
+  assignedToName: zod.string().nullish(),
+  assignedAt: zod.coerce.date().nullish(),
   createdAt: zod.coerce.date(),
 });
 
@@ -466,6 +475,9 @@ export const GetProjectResponse = zod.object({
       projectId: zod.string().nullish(),
       projectName: zod.string().nullish(),
       projectReference: zod.string().nullish(),
+      assignedTo: zod.string().nullish(),
+      assignedToName: zod.string().nullish(),
+      assignedAt: zod.coerce.date().nullish(),
       createdAt: zod.coerce.date(),
     }),
   ),
@@ -1023,6 +1035,59 @@ export const DeleteEmailCommentParams = zod.object({
 export const DeleteEmailCommentResponse = zod.object({
   success: zod.boolean().optional(),
 });
+
+/**
+ * @summary Assign an email to a colleague
+ */
+export const AssignEmailParams = zod.object({
+  emailId: zod.coerce.number(),
+});
+
+export const AssignEmailBody = zod.object({
+  assignTo: zod.string(),
+});
+
+export const AssignEmailResponse = zod.object({
+  success: zod.boolean(),
+  assignedTo: zod.string(),
+  assignedToName: zod.string(),
+  assignedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Remove assignment from an email
+ */
+export const UnassignEmailParams = zod.object({
+  emailId: zod.coerce.number(),
+});
+
+export const UnassignEmailResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Get emails assigned to the current user
+ */
+export const GetAssignedToMeResponseItem = zod.object({
+  id: zod.number(),
+  sender: zod.string(),
+  senderEmail: zod.string(),
+  subject: zod.string(),
+  body: zod.string(),
+  status: zod.string(),
+  priority: zod.string(),
+  summary: zod.string().nullish(),
+  categoryId: zod.number().nullish(),
+  categoryName: zod.string().nullish(),
+  projectId: zod.string().nullish(),
+  projectName: zod.string().nullish(),
+  projectReference: zod.string().nullish(),
+  assignedTo: zod.string().nullish(),
+  assignedToName: zod.string().nullish(),
+  assignedAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+});
+export const GetAssignedToMeResponse = zod.array(GetAssignedToMeResponseItem);
 
 /**
  * @summary AI triage a single email

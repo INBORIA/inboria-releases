@@ -26,5 +26,11 @@ export interface Email {
   projectName?: string | null;
   /** @nullable */
   projectReference?: string | null;
+  /** @nullable */
+  assignedTo?: string | null;
+  /** @nullable */
+  assignedToName?: string | null;
+  /** @nullable */
+  assignedAt?: Date | null;
   createdAt: Date;
 }

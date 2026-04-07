@@ -1357,6 +1357,68 @@ paths:
                   success:
                     type: boolean
 
+  /emails/{emailId}/assign:
+    post:
+      operationId: assignEmail
+      tags: [emails]
+      summary: Assign an email to a colleague
+      parameters:
+        - name: emailId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssignEmailBody"
+      responses:
+        "200":
+          description: Email assigned
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AssignEmailResult"
+
+  /emails/{emailId}/unassign:
+    post:
+      operationId: unassignEmail
+      tags: [emails]
+      summary: Remove assignment from an email
+      parameters:
+        - name: emailId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Assignment removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /emails/assigned-to-me:
+    get:
+      operationId: getAssignedToMe
+      tags: [emails]
+      summary: Get emails assigned to the current user
+      responses:
+        "200":
+          description: List of assigned emails
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Email"
+
   /ai/triage:
     post:
       operationId: triageEmail
@@ -1520,6 +1582,13 @@ components:
           type: ["string", "null"]
         projectReference:
           type: ["string", "null"]
+        assignedTo:
+          type: ["string", "null"]
+        assignedToName:
+          type: ["string", "null"]
+        assignedAt:
+          type: ["string", "null"]
+          format: date-time
         createdAt:
           type: string
           format: date-time
@@ -2236,3 +2305,29 @@ components:
           type: string
       required:
         - body
+
+    AssignEmailBody:
+      type: object
+      properties:
+        assignTo:
+          type: string
+      required:
+        - assignTo
+
+    AssignEmailResult:
+      type: object
+      properties:
+        success:
+          type: boolean
+        assignedTo:
+          type: string
+        assignedToName:
+          type: string
+        assignedAt:
+          type: string
+          format: date-time
+      required:
+        - success
+        - assignedTo
+        - assignedToName
+        - assignedAt

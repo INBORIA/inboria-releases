@@ -107,6 +107,12 @@ export interface Email {
   projectName?: string | null;
   /** @nullable */
   projectReference?: string | null;
+  /** @nullable */
+  assignedTo?: string | null;
+  /** @nullable */
+  assignedToName?: string | null;
+  /** @nullable */
+  assignedAt?: string | null;
   createdAt: string;
 }
 
@@ -518,6 +524,17 @@ export interface AddCommentBody {
   body: string;
 }
 
+export interface AssignEmailBody {
+  assignTo: string;
+}
+
+export interface AssignEmailResult {
+  success: boolean;
+  assignedTo: string;
+  assignedToName: string;
+  assignedAt: string;
+}
+
 export type RegisterPushToken200 = {
   success?: boolean;
 };
@@ -679,5 +696,9 @@ export type UpdateEmailComment200 = {
 };
 
 export type DeleteEmailComment200 = {
+  success?: boolean;
+};
+
+export type UnassignEmail200 = {
   success?: boolean;
 };
