@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import crypto from "crypto";
+import nodemailer from "nodemailer";
 
 const router: IRouter = Router();
 
@@ -431,23 +432,49 @@ router.post("/organisations/invite", requireAuth, async (req, res): Promise<void
     const acceptUrl = `${frontendUrl}/accept-invite?token=${token}`;
 
     try {
-      const { data: existingUser } = await supabaseAdmin.auth.admin.listUsers();
-      const userExists = existingUser?.users?.some(
-        (u: any) => u.email?.toLowerCase() === email.toLowerCase().trim()
-      );
+      const { data: inviter } = await supabaseAdmin.auth.admin.getUserById(req.userId!);
+      const inviterName = inviter.user?.user_metadata?.full_name || inviter.user?.email || "Un administrateur";
 
-      if (!userExists) {
-        await supabaseAdmin.auth.admin.inviteUserByEmail(email.toLowerCase().trim(), {
-          redirectTo: acceptUrl,
-          data: { invitation_token: token, org_name: orgName },
-        });
-      } else {
-        await supabaseAdmin.auth.admin.generateLink({
-          type: "magiclink",
-          email: email.toLowerCase().trim(),
-          options: { redirectTo: acceptUrl },
-        });
-      }
+      const transporter = nodemailer.createTransport({
+        host: "smtp-relay.brevo.com",
+        port: 587,
+        secure: false,
+        auth: {
+          user: "a74939001@smtp-brevo.com",
+          pass: process.env["BREVO_SMTP_PASSWORD"] || "",
+        },
+      });
+
+      await transporter.sendMail({
+        from: '"NCV Mail" <noreply@ncvmail.com>',
+        to: email.toLowerCase().trim(),
+        subject: `${inviterName} vous invite à rejoindre ${orgName} sur NCV Mail`,
+        html: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0d1117; color: #ffffff; border-radius: 8px;">
+            <div style="text-align: center; margin-bottom: 30px;">
+              <h1 style="color: #2d7dd2; margin: 0;">NCV Mail</h1>
+              <p style="color: #8b9cb3; margin-top: 5px;">Email Autopilot pour PME</p>
+            </div>
+            <h2 style="color: #ffffff; text-align: center;">Vous avez été invité(e) !</h2>
+            <p style="color: #c9d1d9; line-height: 1.6;">
+              <strong>${inviterName}</strong> vous invite à rejoindre l'équipe <strong>${orgName}</strong> sur NCV Mail en tant que <strong>${inviteRole === "admin" ? "administrateur" : "membre"}</strong>.
+            </p>
+            <div style="text-align: center; margin: 30px 0;">
+              <a href="${acceptUrl}" style="background: #2d7dd2; color: #ffffff; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">
+                Accepter l'invitation
+              </a>
+            </div>
+            <p style="color: #8b9cb3; font-size: 14px; text-align: center;">
+              Si vous n'avez pas encore de compte, vous pourrez en créer un en cliquant sur le lien ci-dessus.
+            </p>
+            <hr style="border: none; border-top: 1px solid #1f2937; margin: 20px 0;" />
+            <p style="color: #6e7681; font-size: 12px; text-align: center;">
+              Cette invitation expire dans 7 jours. Si vous n'avez pas demandé cette invitation, ignorez cet email.
+            </p>
+          </div>
+        `,
+      });
+      console.log(`Invitation email sent to ${email.toLowerCase().trim()}`);
     } catch (emailErr) {
       console.error("Failed to send invitation email (invitation saved):", emailErr);
     }
