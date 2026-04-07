@@ -41,36 +41,36 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   async function signUp(email: string, password: string, fullName: string, country: string) {
     try {
-      const origin = window.location.origin;
-      const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: { full_name: fullName, country: country.toUpperCase() },
-          emailRedirectTo: `${origin}${basePath}/auth/callback`,
-        },
+      const registerRes = await fetch(`${baseUrl}/api/auth/register`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, password, fullName, country: country.toUpperCase() }),
       });
 
-      if (error) return { error: error.message, needsVerification: false };
+      const registerData = await registerRes.json();
 
-      if (data.user) {
-        const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
-        await fetch(`${baseUrl}/api/auth/setup-profile`, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ userId: data.user.id, fullName, country: country.toUpperCase() }),
-        });
+      if (!registerRes.ok) {
+        return { error: registerData.error || "Erreur lors de l'inscription", needsVerification: false };
       }
 
-      const needsVerification = !data.session;
-      if (data.session) {
-        setSession(data.session);
-        setUser(data.user ?? null);
+      const { error: signInError } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (signInError) {
+        return { error: signInError.message, needsVerification: false };
       }
 
-      return { error: null, needsVerification };
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (sessionData.session) {
+        setSession(sessionData.session);
+        setUser(sessionData.session.user ?? null);
+      }
+
+      return { error: null, needsVerification: false };
     } catch {
       return { error: "Erreur de connexion au serveur", needsVerification: false };
     }

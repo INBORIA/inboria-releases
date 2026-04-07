@@ -89,13 +89,6 @@ export default function Signup() {
         title: "Erreur d'inscription",
         description: error,
       });
-    } else if (needsVerification) {
-      if (selectedPlan) {
-        localStorage.setItem("ncv_pending_plan", selectedPlan);
-        const seats = params.get("seats");
-        if (seats) localStorage.setItem("ncv_pending_seats", seats);
-      }
-      setLocation(`/verifier-email?email=${encodeURIComponent(data.email)}`);
     } else {
       toast({
         title: "Compte cree",

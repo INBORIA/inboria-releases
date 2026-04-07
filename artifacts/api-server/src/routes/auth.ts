@@ -34,15 +34,22 @@ router.post("/auth/register", async (req, res): Promise<void> => {
     }
 
     if (data.user) {
-      await supabaseAdmin.from("profiles").upsert({
+      const profileData: Record<string, unknown> = {
         id: data.user.id,
         full_name: fullName,
-        country: country.toUpperCase(),
         plan: "essai",
         seats: 1,
         emails_used: 0,
         emails_quota: 100,
-      });
+      };
+      if (country) {
+        profileData.country = country.toUpperCase();
+      }
+      const { error: profileError } = await supabaseAdmin.from("profiles").upsert(profileData);
+      if (profileError && profileError.message?.includes("country")) {
+        delete profileData.country;
+        await supabaseAdmin.from("profiles").upsert(profileData);
+      }
     }
 
     res.status(201).json({
