@@ -30,6 +30,8 @@ tags:
     description: Stripe payment operations
   - name: integrations
     description: Slack and Notion integration operations
+  - name: organisations
+    description: Organisation and team management operations
 paths:
   /healthz:
     get:
@@ -821,6 +823,237 @@ paths:
                   success:
                     type: boolean
 
+  /organisations/mine:
+    get:
+      operationId: getMyOrganisation
+      tags: [organisations]
+      summary: Get current user's organisation
+      responses:
+        "200":
+          description: Organisation or null
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organisation"
+
+  /organisations:
+    post:
+      operationId: createOrganisation
+      tags: [organisations]
+      summary: Create an organisation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateOrganisationBody"
+      responses:
+        "201":
+          description: Organisation created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organisation"
+
+    patch:
+      operationId: updateOrganisation
+      tags: [organisations]
+      summary: Update organisation (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateOrganisationBody"
+      responses:
+        "200":
+          description: Organisation updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Organisation"
+
+  /organisations/members:
+    get:
+      operationId: getOrganisationMembers
+      tags: [organisations]
+      summary: List organisation members
+      responses:
+        "200":
+          description: List of members
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/OrganisationMember"
+
+  /organisations/members/{memberId}:
+    delete:
+      operationId: removeOrganisationMember
+      tags: [organisations]
+      summary: Remove a member (admin only)
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Member removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /organisations/members/{memberId}/role:
+    patch:
+      operationId: updateMemberRole
+      tags: [organisations]
+      summary: Update member role (admin only)
+      parameters:
+        - name: memberId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                role:
+                  type: string
+                  enum: [admin, member]
+              required:
+                - role
+      responses:
+        "200":
+          description: Role updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  role:
+                    type: string
+
+  /organisations/invite:
+    post:
+      operationId: inviteToOrganisation
+      tags: [organisations]
+      summary: Invite a user to the organisation (admin only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InviteBody"
+      responses:
+        "201":
+          description: Invitation sent
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invitation"
+
+  /organisations/invitations:
+    get:
+      operationId: getOrganisationInvitations
+      tags: [organisations]
+      summary: List pending invitations
+      responses:
+        "200":
+          description: List of invitations
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Invitation"
+
+  /organisations/invitations/{invitationId}:
+    delete:
+      operationId: cancelInvitation
+      tags: [organisations]
+      summary: Cancel an invitation (admin only)
+      parameters:
+        - name: invitationId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Invitation cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /invitations/{token}:
+    get:
+      operationId: getInvitationByToken
+      tags: [organisations]
+      summary: Verify invitation token (public)
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Invitation details
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  email:
+                    type: string
+                  role:
+                    type: string
+                  organisationName:
+                    type: string
+
+  /invitations/{token}/accept:
+    post:
+      operationId: acceptInvitation
+      tags: [organisations]
+      summary: Accept an invitation
+      parameters:
+        - name: token
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Invitation accepted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  organisationId:
+                    type: string
+
   /ai/triage:
     post:
       operationId: triageEmail
@@ -913,6 +1146,13 @@ components:
         createdAt:
           type: string
           format: date-time
+        organisationId:
+          type: ["string", "null"]
+        organisationName:
+          type: ["string", "null"]
+        organisationRole:
+          type: ["string", "null"]
+          enum: [admin, member, null]
       required:
         - id
         - email
@@ -1448,3 +1688,111 @@ components:
           type: string
       required:
         - url
+
+    Organisation:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        slug:
+          type: string
+        plan:
+          type: string
+        seatsTotal:
+          type: integer
+        emailsQuota:
+          type: integer
+        emailsUsed:
+          type: integer
+        myRole:
+          type: string
+          enum: [admin, member]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - name
+        - slug
+
+    CreateOrganisationBody:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 2
+      required:
+        - name
+
+    UpdateOrganisationBody:
+      type: object
+      properties:
+        name:
+          type: string
+
+    OrganisationMember:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        role:
+          type: string
+          enum: [admin, member]
+        status:
+          type: string
+          enum: [active, disabled]
+        joinedAt:
+          type: string
+          format: date-time
+        fullName:
+          type: string
+        email:
+          type: string
+      required:
+        - id
+        - userId
+        - role
+        - status
+
+    InviteBody:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        role:
+          type: string
+          enum: [admin, member]
+          default: member
+      required:
+        - email
+
+    Invitation:
+      type: object
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        status:
+          type: string
+          enum: [pending, accepted, expired]
+        token:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        expiresAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - email
+        - role
+        - status

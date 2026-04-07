@@ -51,6 +51,11 @@ export const LoginResponse = zod.object({
       .default(loginResponseUserAiLanguageDefault),
     signature: zod.string().default(loginResponseUserSignatureDefault),
     createdAt: zod.coerce.date(),
+    organisationId: zod.string().nullish(),
+    organisationName: zod.string().nullish(),
+    organisationRole: zod
+      .union([zod.literal("admin"), zod.literal("member"), zod.literal(null)])
+      .nullish(),
   }),
 });
 
@@ -73,6 +78,11 @@ export const GetMeResponse = zod.object({
     .default(getMeResponseAiLanguageDefault),
   signature: zod.string().default(getMeResponseSignatureDefault),
   createdAt: zod.coerce.date(),
+  organisationId: zod.string().nullish(),
+  organisationName: zod.string().nullish(),
+  organisationRole: zod
+    .union([zod.literal("admin"), zod.literal("member"), zod.literal(null)])
+    .nullish(),
 });
 
 /**
@@ -94,6 +104,11 @@ export const GetProfileResponse = zod.object({
     .default(getProfileResponseAiLanguageDefault),
   signature: zod.string().default(getProfileResponseSignatureDefault),
   createdAt: zod.coerce.date(),
+  organisationId: zod.string().nullish(),
+  organisationName: zod.string().nullish(),
+  organisationRole: zod
+    .union([zod.literal("admin"), zod.literal("member"), zod.literal(null)])
+    .nullish(),
 });
 
 /**
@@ -123,6 +138,11 @@ export const UpdateProfileResponse = zod.object({
     .default(updateProfileResponseAiLanguageDefault),
   signature: zod.string().default(updateProfileResponseSignatureDefault),
   createdAt: zod.coerce.date(),
+  organisationId: zod.string().nullish(),
+  organisationName: zod.string().nullish(),
+  organisationRole: zod
+    .union([zod.literal("admin"), zod.literal("member"), zod.literal(null)])
+    .nullish(),
 });
 
 /**
@@ -659,6 +679,157 @@ export const DeleteIntegrationParams = zod.object({
 
 export const DeleteIntegrationResponse = zod.object({
   success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Get current user's organisation
+ */
+export const GetMyOrganisationResponse = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  slug: zod.string(),
+  plan: zod.string().optional(),
+  seatsTotal: zod.number().optional(),
+  emailsQuota: zod.number().optional(),
+  emailsUsed: zod.number().optional(),
+  myRole: zod.enum(["admin", "member"]).optional(),
+  createdAt: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary Create an organisation
+ */
+export const createOrganisationBodyNameMin = 2;
+
+export const CreateOrganisationBody = zod.object({
+  name: zod.string().min(createOrganisationBodyNameMin),
+});
+
+/**
+ * @summary Update organisation (admin only)
+ */
+export const UpdateOrganisationBody = zod.object({
+  name: zod.string().optional(),
+});
+
+export const UpdateOrganisationResponse = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  slug: zod.string(),
+  plan: zod.string().optional(),
+  seatsTotal: zod.number().optional(),
+  emailsQuota: zod.number().optional(),
+  emailsUsed: zod.number().optional(),
+  myRole: zod.enum(["admin", "member"]).optional(),
+  createdAt: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary List organisation members
+ */
+export const GetOrganisationMembersResponseItem = zod.object({
+  id: zod.string(),
+  userId: zod.string(),
+  role: zod.enum(["admin", "member"]),
+  status: zod.enum(["active", "disabled"]),
+  joinedAt: zod.coerce.date().optional(),
+  fullName: zod.string().optional(),
+  email: zod.string().optional(),
+});
+export const GetOrganisationMembersResponse = zod.array(
+  GetOrganisationMembersResponseItem,
+);
+
+/**
+ * @summary Remove a member (admin only)
+ */
+export const RemoveOrganisationMemberParams = zod.object({
+  memberId: zod.coerce.string(),
+});
+
+export const RemoveOrganisationMemberResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Update member role (admin only)
+ */
+export const UpdateMemberRoleParams = zod.object({
+  memberId: zod.coerce.string(),
+});
+
+export const UpdateMemberRoleBody = zod.object({
+  role: zod.enum(["admin", "member"]),
+});
+
+export const UpdateMemberRoleResponse = zod.object({
+  id: zod.string().optional(),
+  role: zod.string().optional(),
+});
+
+/**
+ * @summary Invite a user to the organisation (admin only)
+ */
+export const inviteToOrganisationBodyRoleDefault = `member`;
+
+export const InviteToOrganisationBody = zod.object({
+  email: zod.string().email(),
+  role: zod
+    .enum(["admin", "member"])
+    .default(inviteToOrganisationBodyRoleDefault),
+});
+
+/**
+ * @summary List pending invitations
+ */
+export const GetOrganisationInvitationsResponseItem = zod.object({
+  id: zod.string(),
+  email: zod.string(),
+  role: zod.string(),
+  status: zod.enum(["pending", "accepted", "expired"]),
+  token: zod.string().optional(),
+  createdAt: zod.coerce.date().optional(),
+  expiresAt: zod.coerce.date().optional(),
+});
+export const GetOrganisationInvitationsResponse = zod.array(
+  GetOrganisationInvitationsResponseItem,
+);
+
+/**
+ * @summary Cancel an invitation (admin only)
+ */
+export const CancelInvitationParams = zod.object({
+  invitationId: zod.coerce.string(),
+});
+
+export const CancelInvitationResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Verify invitation token (public)
+ */
+export const GetInvitationByTokenParams = zod.object({
+  token: zod.coerce.string(),
+});
+
+export const GetInvitationByTokenResponse = zod.object({
+  id: zod.string().optional(),
+  email: zod.string().optional(),
+  role: zod.string().optional(),
+  organisationName: zod.string().optional(),
+});
+
+/**
+ * @summary Accept an invitation
+ */
+export const AcceptInvitationParams = zod.object({
+  token: zod.coerce.string(),
+});
+
+export const AcceptInvitationResponse = zod.object({
+  success: zod.boolean().optional(),
+  organisationId: zod.string().optional(),
 });
 
 /**

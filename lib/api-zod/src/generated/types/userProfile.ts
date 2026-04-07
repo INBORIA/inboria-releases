@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { UserProfileAiLanguage } from "./userProfileAiLanguage";
+import type { UserProfileOrganisationRole } from "./userProfileOrganisationRole";
 
 export interface UserProfile {
   id: number;
@@ -18,4 +19,10 @@ export interface UserProfile {
   aiLanguage?: UserProfileAiLanguage;
   signature?: string;
   createdAt: Date;
+  /** @nullable */
+  organisationId?: string | null;
+  /** @nullable */
+  organisationName?: string | null;
+  /** @nullable */
+  organisationRole?: UserProfileOrganisationRole;
 }

@@ -41,8 +41,15 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - `/dashboard/taches`: Task management from extracted emails.
     - `/dashboard/categories`: Category management.
     - `/dashboard/projets`: Project management.
+    - `/dashboard/equipe`: Organisation/team management (Business plan only). Members list, invite, role management.
     - `/dashboard/parametres`: Settings for email connections, integrations, AI preferences, profile, and notifications.
     - `/dashboard/abonnement`: Subscription management.
+- **Organisation Layer (Business plan)**:
+    - Tables: `organisations`, `organisation_members`, `invitations` + `organisation_id` on `profiles`.
+    - API routes: CRUD org, invite members, accept/cancel invitations, manage roles.
+    - SQL setup: `attached_assets/sql_organisations_setup.sql` (must be run in Supabase dashboard).
+    - Stripe webhook auto-creates org on Business plan checkout.
+    - Sidebar shows "Mon équipe" nav item only for Business plan users.
 
 ## External Dependencies
 

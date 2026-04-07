@@ -14,6 +14,7 @@ import {
   Archive,
   FolderKanban,
   AlertTriangle,
+  Users,
 } from "lucide-react";
 import ncvLogo from "@assets/image_1775392688923.png";
 import { cn } from "@/lib/utils";
@@ -22,7 +23,7 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
-const navigation = [
+const baseNavigation = [
   { name: "Réception", href: "/dashboard", icon: Inbox },
   { name: "Archives", href: "/dashboard/archives", icon: Archive },
   { name: "Bilan quotidien", href: "/dashboard/bilan", icon: LayoutDashboard },
@@ -40,6 +41,15 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, emailsQuota: 100 };
+
+  const isBusiness = (user as any).plan === "business";
+  const navigation = isBusiness
+    ? [
+        ...baseNavigation.slice(0, 6),
+        { name: "Mon équipe", href: "/dashboard/equipe", icon: Users },
+        ...baseNavigation.slice(6),
+      ]
+    : baseNavigation;
 
   const isExpired = (user as any).plan === "expired";
   const isTrialExhausted = (user as any).plan === "essai" && (user as any).emailsUsed >= (user as any).emailsQuota;

@@ -30,6 +30,18 @@ export const UserProfileAiLanguage = {
   nl: "nl",
 } as const;
 
+/**
+ * @nullable
+ */
+export type UserProfileOrganisationRole =
+  | (typeof UserProfileOrganisationRole)[keyof typeof UserProfileOrganisationRole]
+  | null;
+
+export const UserProfileOrganisationRole = {
+  admin: "admin",
+  member: "member",
+} as const;
+
 export interface UserProfile {
   id: number;
   email: string;
@@ -41,6 +53,12 @@ export interface UserProfile {
   aiLanguage?: UserProfileAiLanguage;
   signature?: string;
   createdAt: string;
+  /** @nullable */
+  organisationId?: string | null;
+  /** @nullable */
+  organisationName?: string | null;
+  /** @nullable */
+  organisationRole?: UserProfileOrganisationRole;
 }
 
 export interface AuthResponse {
@@ -355,6 +373,93 @@ export interface PortalResponse {
   url: string;
 }
 
+export type OrganisationMyRole =
+  (typeof OrganisationMyRole)[keyof typeof OrganisationMyRole];
+
+export const OrganisationMyRole = {
+  admin: "admin",
+  member: "member",
+} as const;
+
+export interface Organisation {
+  id: string;
+  name: string;
+  slug: string;
+  plan?: string;
+  seatsTotal?: number;
+  emailsQuota?: number;
+  emailsUsed?: number;
+  myRole?: OrganisationMyRole;
+  createdAt?: string;
+}
+
+export interface CreateOrganisationBody {
+  /** @minLength 2 */
+  name: string;
+}
+
+export interface UpdateOrganisationBody {
+  name?: string;
+}
+
+export type OrganisationMemberRole =
+  (typeof OrganisationMemberRole)[keyof typeof OrganisationMemberRole];
+
+export const OrganisationMemberRole = {
+  admin: "admin",
+  member: "member",
+} as const;
+
+export type OrganisationMemberStatus =
+  (typeof OrganisationMemberStatus)[keyof typeof OrganisationMemberStatus];
+
+export const OrganisationMemberStatus = {
+  active: "active",
+  disabled: "disabled",
+} as const;
+
+export interface OrganisationMember {
+  id: string;
+  userId: string;
+  role: OrganisationMemberRole;
+  status: OrganisationMemberStatus;
+  joinedAt?: string;
+  fullName?: string;
+  email?: string;
+}
+
+export type InviteBodyRole =
+  (typeof InviteBodyRole)[keyof typeof InviteBodyRole];
+
+export const InviteBodyRole = {
+  admin: "admin",
+  member: "member",
+} as const;
+
+export interface InviteBody {
+  email: string;
+  role?: InviteBodyRole;
+}
+
+export type InvitationStatus =
+  (typeof InvitationStatus)[keyof typeof InvitationStatus];
+
+export const InvitationStatus = {
+  pending: "pending",
+  accepted: "accepted",
+  expired: "expired",
+} as const;
+
+export interface Invitation {
+  id: string;
+  email: string;
+  role: string;
+  status: InvitationStatus;
+  token?: string;
+  createdAt?: string;
+  expiresAt?: string;
+}
+
 export type RegisterPushToken200 = {
   success?: boolean;
 };
@@ -439,4 +544,41 @@ export type StripeWebhook200 = {
 
 export type DeleteIntegration200 = {
   success?: boolean;
+};
+
+export type RemoveOrganisationMember200 = {
+  success?: boolean;
+};
+
+export type UpdateMemberRoleBodyRole =
+  (typeof UpdateMemberRoleBodyRole)[keyof typeof UpdateMemberRoleBodyRole];
+
+export const UpdateMemberRoleBodyRole = {
+  admin: "admin",
+  member: "member",
+} as const;
+
+export type UpdateMemberRoleBody = {
+  role: UpdateMemberRoleBodyRole;
+};
+
+export type UpdateMemberRole200 = {
+  id?: string;
+  role?: string;
+};
+
+export type CancelInvitation200 = {
+  success?: boolean;
+};
+
+export type GetInvitationByToken200 = {
+  id?: string;
+  email?: string;
+  role?: string;
+  organisationName?: string;
+};
+
+export type AcceptInvitation200 = {
+  success?: boolean;
+  organisationId?: string;
 };

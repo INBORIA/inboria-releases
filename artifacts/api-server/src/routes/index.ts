@@ -12,6 +12,7 @@ import webhookRouter from "./webhook";
 import projectsRouter from "./projects";
 import stripeRouter from "./stripe";
 import integrationsRouter from "./integrations";
+import organisationsRouter from "./organisations";
 
 const router: IRouter = Router();
 
@@ -28,5 +29,6 @@ router.use(webhookRouter);
 router.use(projectsRouter);
 router.use(stripeRouter);
 router.use(integrationsRouter);
+router.use(organisationsRouter);
 
 export default router;

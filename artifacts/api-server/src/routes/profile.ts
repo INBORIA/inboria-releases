@@ -21,6 +21,32 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
     const token = req.headers.authorization!.slice(7);
     const { data: userData } = await supabaseAdmin.auth.getUser(token);
 
+    let organisationId = profile.organisation_id || null;
+    let organisationName = null;
+    let organisationRole = null;
+
+    if (organisationId) {
+      const { data: membership } = await supabaseAdmin
+        .from("organisation_members")
+        .select("role")
+        .eq("user_id", req.userId!)
+        .eq("organisation_id", organisationId)
+        .eq("status", "active")
+        .single();
+
+      if (membership) {
+        organisationRole = membership.role;
+        const { data: org } = await supabaseAdmin
+          .from("organisations")
+          .select("name")
+          .eq("id", organisationId)
+          .single();
+        organisationName = org?.name || null;
+      } else {
+        organisationId = null;
+      }
+    }
+
     res.json({
       id: profile.id,
       email: userData.user?.email || "",
@@ -32,6 +58,9 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       aiLanguage: profile.ai_language || "fr",
       signature: profile.signature || "",
       createdAt: profile.created_at,
+      organisationId,
+      organisationName,
+      organisationRole,
     });
   } catch {
     res.status(500).json({ error: "Failed to get profile" });

@@ -159,23 +159,84 @@ router.post("/stripe/webhook", async (req: RawBodyRequest, res): Promise<void> =
       case "checkout.session.completed": {
         const session = event.data.object as Stripe.Checkout.Session;
         const planId = session.metadata?.planId;
+        const userId = session.metadata?.userId;
         const customerId = session.customer as string;
         const subscriptionId = session.subscription as string;
 
         if (planId && customerId) {
           const quota = PLAN_QUOTAS[planId] || 100;
+          let quantity = 1;
+
+          if (subscriptionId) {
+            const subscription = await stripe.subscriptions.retrieve(subscriptionId as string);
+            quantity = subscription.items.data[0]?.quantity || 1;
+          }
 
           const updates: Record<string, unknown> = {
             plan: planId,
             stripe_customer_id: customerId,
             stripe_subscription_id: subscriptionId,
             emails_quota: quota,
+            seats: quantity,
           };
 
-          if (subscriptionId) {
-            const subscription = await stripe.subscriptions.retrieve(subscriptionId as string);
-            const quantity = subscription.items.data[0]?.quantity || 1;
-            updates.seats = quantity;
+          if (planId === "business" && userId) {
+            const { data: existingMembership } = await supabaseAdmin
+              .from("organisation_members")
+              .select("organisation_id")
+              .eq("user_id", userId)
+              .eq("status", "active")
+              .single();
+
+            if (!existingMembership) {
+              const { data: profile } = await supabaseAdmin
+                .from("profiles")
+                .select("full_name")
+                .eq("stripe_customer_id", customerId)
+                .single();
+
+              const orgName = profile?.full_name ? `Équipe de ${profile.full_name}` : "Mon organisation";
+              const slug = `org-${Date.now().toString(36)}`;
+
+              const { data: org } = await supabaseAdmin
+                .from("organisations")
+                .insert({
+                  name: orgName,
+                  slug,
+                  plan: "business",
+                  seats_total: quantity,
+                  emails_quota: quota * quantity,
+                  emails_used: 0,
+                  stripe_customer_id: customerId,
+                  stripe_subscription_id: subscriptionId,
+                  created_by: userId,
+                })
+                .select()
+                .single();
+
+              if (org) {
+                await supabaseAdmin
+                  .from("organisation_members")
+                  .insert({
+                    organisation_id: org.id,
+                    user_id: userId,
+                    role: "admin",
+                    status: "active",
+                  });
+
+                updates.organisation_id = org.id;
+              }
+            } else {
+              await supabaseAdmin
+                .from("organisations")
+                .update({
+                  seats_total: quantity,
+                  emails_quota: quota * quantity,
+                  stripe_customer_id: customerId,
+                  stripe_subscription_id: subscriptionId,
+                })
+                .eq("id", existingMembership.organisation_id);
+            }
           }
 
           await supabaseAdmin
@@ -232,6 +293,17 @@ router.post("/stripe/webhook", async (req: RawBodyRequest, res): Promise<void> =
             .from("profiles")
             .update(updates)
             .eq("stripe_customer_id", customerId);
+
+          if (derivedPlan === "business") {
+            const quota = PLAN_QUOTAS["business"] || 10000;
+            await supabaseAdmin
+              .from("organisations")
+              .update({
+                seats_total: quantity,
+                emails_quota: quota * quantity,
+              })
+              .eq("stripe_customer_id", customerId);
+          }
         }
         break;
       }

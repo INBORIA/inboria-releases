@@ -16,6 +16,19 @@ async function ensureProjectsTable() {
   }
 }
 
+async function ensureOrganisationsTable() {
+  try {
+    const { error } = await supabaseAdmin.from("organisations").select("id").limit(1);
+    if (error && error.message.includes("does not exist")) {
+      logger.warn("organisations table not found — please run the SQL script from attached_assets/sql_organisations_setup.sql in Supabase dashboard");
+    } else {
+      logger.info("organisations table OK");
+    }
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "organisations table check failed (non-fatal)");
+  }
+}
+
 async function ensureIntegrationsTable() {
   try {
     const { error } = await supabaseAdmin.from("integrations").select("id").limit(1);
@@ -53,5 +66,6 @@ app.listen(port, (err) => {
 
   ensureProjectsTable();
   ensureIntegrationsTable();
+  ensureOrganisationsTable();
   startAutoSync();
 });
