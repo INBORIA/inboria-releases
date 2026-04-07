@@ -96,7 +96,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
           ],
           metadata: { planId },
           proration_behavior: "create_prorations",
-          automatic_tax: { enabled: true },
+          automatic_tax: { enabled: false },
         });
 
         const quota = PLAN_QUOTAS[planId] || 100;
@@ -146,7 +146,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
           quantity,
         },
       ],
-      automatic_tax: { enabled: true },
+      automatic_tax: { enabled: false },
       tax_id_collection: { enabled: true },
       billing_address_collection: "required",
       customer_update: {
