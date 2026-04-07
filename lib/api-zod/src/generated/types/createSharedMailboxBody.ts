@@ -7,6 +7,6 @@
  */
 
 export interface CreateSharedMailboxBody {
-  name: string;
-  emailAddress: string;
+  connectionId: string;
+  name?: string;
 }

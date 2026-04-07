@@ -50,12 +50,14 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - SQL setup: `attached_assets/sql_organisations_setup.sql` (must be run in Supabase dashboard).
     - Stripe webhook auto-creates org on Business plan checkout.
     - Sidebar shows "Mon équipe" and "Boîtes partagées" nav items only for Business plan users.
-- **Shared Mailboxes (Phase 2)**:
-    - Tables: `shared_mailboxes`, `shared_mailbox_members` + `shared_mailbox_id`, `claimed_by`, `claimed_at` columns on `emails`.
-    - SQL setup: `attached_assets/sql_shared_mailboxes.sql` (must be run in Supabase dashboard).
-    - API routes: CRUD shared mailboxes, add/remove members, list emails, claim/unclaim emails.
-    - Dashboard page at `/dashboard/boites-partagees` with mailbox cards, member management, email list with claim/unclaim.
-    - Admins can create/delete mailboxes and manage members. All members can view emails and claim/unclaim.
+- **Shared Mailboxes (Phase 2, refactored)**:
+    - Tables: `shared_mailboxes` (with `connection_id` FK to `email_connections`), `shared_mailbox_members` + `shared_mailbox_id`, `claimed_by`, `claimed_at` columns on `emails`.
+    - SQL setup: `attached_assets/sql_shared_mailboxes.sql` + migration `sql_multi_email_connections.sql` (must be run in Supabase dashboard).
+    - `email_connections` table: UNIQUE constraint changed from `(user_id, provider)` to `(user_id, email_address)` to allow multiple connections per provider.
+    - API routes: CRUD shared mailboxes, add/remove members, list emails, claim/unclaim emails. New: `GET /shared-mailboxes/admin-connections` returns admin's connected addresses with shared status.
+    - Creating a shared mailbox now requires a `connectionId` (pointing to an existing email connection) instead of manual name/email entry.
+    - Dashboard page at `/dashboard/boites-partagees`: admin sees their connected addresses and can "Partager" them with the team. Member management and email claim/unclaim unchanged.
+    - `/dashboard/parametres`: disconnect now uses connection ID. Multiple connections of same provider allowed (e.g. 2 Gmail accounts).
 - **Internal Comments (Phase 3)**:
     - Table: `email_comments` (linked to emails, with user_id author).
     - SQL setup: `attached_assets/sql_email_comments.sql` (must be run in Supabase dashboard).

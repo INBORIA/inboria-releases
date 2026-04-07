@@ -12,9 +12,11 @@ import {
   useGetOrganisationMembers,
   useGetMyOrganisation,
   useGetProfile,
+  useGetAdminConnections,
   getGetSharedMailboxesQueryKey,
   getGetSharedMailboxMembersQueryKey,
   getGetSharedMailboxEmailsQueryKey,
+  getGetAdminConnectionsQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -34,6 +36,9 @@ import {
   Clock,
   User,
   X,
+  Share2,
+  CheckCircle2,
+  Link,
 } from "lucide-react";
 
 type ViewMode = "list" | "detail" | "emails";
@@ -43,6 +48,7 @@ export default function BoitesPartagees() {
   const { data: org } = useGetMyOrganisation();
   const { data: mailboxes, isLoading } = useGetSharedMailboxes();
   const { data: orgMembers } = useGetOrganisationMembers();
+  const { data: adminConnections } = useGetAdminConnections({ query: { enabled: isAdmin } });
 
   const createMailbox = useCreateSharedMailbox();
   const deleteMailbox = useDeleteSharedMailbox();
@@ -56,10 +62,10 @@ export default function BoitesPartagees() {
 
   const [viewMode, setViewMode] = useState<ViewMode>("list");
   const [selectedMailboxId, setSelectedMailboxId] = useState<string | null>(null);
-  const [newName, setNewName] = useState("");
-  const [newEmail, setNewEmail] = useState("");
   const [emailFilter, setEmailFilter] = useState<"all" | "unclaimed" | "mine">("all");
   const [addMemberUserId, setAddMemberUserId] = useState("");
+  const [shareName, setShareName] = useState("");
+  const [sharingConnectionId, setSharingConnectionId] = useState<string | null>(null);
 
   const isAdmin = (org as any)?.myRole === "admin";
   const plan = (profile as any)?.plan;
@@ -74,8 +80,9 @@ export default function BoitesPartagees() {
     );
   }
 
-  function invalidateMailboxes() {
+  function invalidateAll() {
     queryClient.invalidateQueries({ queryKey: getGetSharedMailboxesQueryKey() });
+    queryClient.invalidateQueries({ queryKey: getGetAdminConnectionsQueryKey() });
   }
 
   function invalidateMembers(mailboxId: string) {
@@ -86,14 +93,13 @@ export default function BoitesPartagees() {
     queryClient.invalidateQueries({ queryKey: getGetSharedMailboxEmailsQueryKey(mailboxId, { filter: emailFilter as any }) });
   }
 
-  async function handleCreateMailbox() {
-    if (!newName.trim() || !newEmail.trim()) return;
+  async function handleShareConnection(connectionId: string) {
     try {
-      await createMailbox.mutateAsync({ data: { name: newName.trim(), emailAddress: newEmail.trim() } });
-      toast({ title: "Boîte partagée créée" });
-      setNewName("");
-      setNewEmail("");
-      invalidateMailboxes();
+      await createMailbox.mutateAsync({ data: { connectionId, name: shareName.trim() || undefined } });
+      toast({ title: "Adresse partagee avec l'equipe" });
+      setShareName("");
+      setSharingConnectionId(null);
+      invalidateAll();
     } catch (e: any) {
       toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
     }
@@ -102,8 +108,8 @@ export default function BoitesPartagees() {
   async function handleDeleteMailbox(id: string) {
     try {
       await deleteMailbox.mutateAsync({ mailboxId: id });
-      toast({ title: "Boîte supprimée" });
-      invalidateMailboxes();
+      toast({ title: "Partage supprime" });
+      invalidateAll();
       if (selectedMailboxId === id) {
         setViewMode("list");
         setSelectedMailboxId(null);
@@ -117,10 +123,10 @@ export default function BoitesPartagees() {
     if (!addMemberUserId) return;
     try {
       await addMember.mutateAsync({ mailboxId, data: { userId: addMemberUserId, canReply: true } });
-      toast({ title: "Membre ajouté" });
+      toast({ title: "Membre ajoute" });
       setAddMemberUserId("");
       invalidateMembers(mailboxId);
-      invalidateMailboxes();
+      invalidateAll();
     } catch (e: any) {
       toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
     }
@@ -129,9 +135,9 @@ export default function BoitesPartagees() {
   async function handleRemoveMember(mailboxId: string, memberId: string) {
     try {
       await removeMember.mutateAsync({ mailboxId, memberId });
-      toast({ title: "Membre retiré" });
+      toast({ title: "Membre retire" });
       invalidateMembers(mailboxId);
-      invalidateMailboxes();
+      invalidateAll();
     } catch (e: any) {
       toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
     }
@@ -142,7 +148,7 @@ export default function BoitesPartagees() {
       await claimEmail.mutateAsync({ emailId });
       toast({ title: "Email pris en charge" });
       if (selectedMailboxId) invalidateEmails(selectedMailboxId);
-      invalidateMailboxes();
+      invalidateAll();
     } catch (e: any) {
       toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
     }
@@ -151,9 +157,9 @@ export default function BoitesPartagees() {
   async function handleUnclaim(emailId: string) {
     try {
       await unclaimEmail.mutateAsync({ emailId });
-      toast({ title: "Email relâché" });
+      toast({ title: "Email relache" });
       if (selectedMailboxId) invalidateEmails(selectedMailboxId);
-      invalidateMailboxes();
+      invalidateAll();
     } catch (e: any) {
       toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
     }
@@ -172,6 +178,8 @@ export default function BoitesPartagees() {
 
   const selectedMailbox = (mailboxes as any[])?.find((m: any) => m.id === selectedMailboxId);
 
+  const availableConnections = ((adminConnections as any[]) || []).filter((c: any) => !c.alreadyShared);
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
@@ -183,26 +191,133 @@ export default function BoitesPartagees() {
           )}
           <MailPlus className="h-7 w-7 text-primary" />
           <h1 className="text-2xl font-bold">
-            {viewMode === "list" && "Boîtes partagées"}
-            {viewMode === "detail" && (selectedMailbox?.name || "Détails")}
+            {viewMode === "list" && "Boites partagees"}
+            {viewMode === "detail" && (selectedMailbox?.name || "Details")}
             {viewMode === "emails" && `${selectedMailbox?.name || ""} — Emails`}
           </h1>
         </div>
 
-        {viewMode === "list" && <MailboxList
-          mailboxes={mailboxes as any[]}
-          isLoading={isLoading}
-          isAdmin={isAdmin}
-          newName={newName}
-          newEmail={newEmail}
-          setNewName={setNewName}
-          setNewEmail={setNewEmail}
-          onCreate={handleCreateMailbox}
-          onDelete={handleDeleteMailbox}
-          onOpenDetail={openDetail}
-          onOpenEmails={openEmails}
-          creating={createMailbox.isPending}
-        />}
+        {viewMode === "list" && (
+          <>
+            {isAdmin && availableConnections.length > 0 && (
+              <div className="bg-card border border-border rounded-xl p-5 space-y-4">
+                <h2 className="text-lg font-semibold flex items-center gap-2">
+                  <Share2 className="h-5 w-5 text-primary" />
+                  Partager une adresse avec l'equipe
+                </h2>
+                <p className="text-xs text-muted-foreground">
+                  Selectionnez une adresse connectee dans vos Parametres pour la partager avec les membres de votre equipe.
+                </p>
+                <div className="space-y-2">
+                  {availableConnections.map((conn: any) => (
+                    <div key={conn.id} className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm ${
+                          conn.provider === "gmail" ? "bg-red-500/10 text-red-400" :
+                          conn.provider === "outlook" ? "bg-blue-500/10 text-blue-400" :
+                          "bg-white/[0.06] text-[#8b9cb3]"
+                        }`}>
+                          {conn.provider === "gmail" ? "G" : conn.provider === "outlook" ? "O" : "@"}
+                        </div>
+                        <div>
+                          <h4 className="font-medium text-[13px] text-white">{conn.emailAddress}</h4>
+                          <p className="text-[11px] text-[#8b9cb3]">{conn.provider === "gmail" ? "Gmail" : conn.provider === "outlook" ? "Outlook" : "IMAP"}</p>
+                        </div>
+                      </div>
+                      {sharingConnectionId === conn.id ? (
+                        <div className="flex items-center gap-2">
+                          <Input
+                            placeholder="Nom (optionnel, ex: Support)"
+                            value={shareName}
+                            onChange={(e) => setShareName(e.target.value)}
+                            className="bg-background h-8 text-[12px] w-48"
+                          />
+                          <Button size="sm" onClick={() => handleShareConnection(conn.id)} disabled={createMailbox.isPending}>
+                            {createMailbox.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : "Confirmer"}
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => { setSharingConnectionId(null); setShareName(""); }}>
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button variant="outline" size="sm" className="h-8 text-[12px]" onClick={() => setSharingConnectionId(conn.id)}>
+                          <Share2 className="h-3.5 w-3.5 mr-1.5" />
+                          Partager
+                        </Button>
+                      )}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {isAdmin && availableConnections.length === 0 && !isLoading && (
+              <div className="bg-card border border-border rounded-xl p-5">
+                <div className="flex items-start gap-3">
+                  <Link className="h-5 w-5 text-muted-foreground mt-0.5" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">
+                      {((adminConnections as any[]) || []).length === 0
+                        ? "Aucune adresse email connectee. Connectez d'abord une adresse dans Parametres pour pouvoir la partager."
+                        : "Toutes vos adresses connectees sont deja partagees."}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {isLoading ? (
+              <div className="flex justify-center py-12">
+                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
+              </div>
+            ) : !mailboxes || (mailboxes as any[]).length === 0 ? (
+              <div className="bg-card border border-border rounded-xl p-8 text-center">
+                <Inbox className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
+                <p className="text-muted-foreground">Aucune boite partagee pour le moment.</p>
+                {isAdmin && <p className="text-sm text-muted-foreground mt-1">Partagez une adresse connectee ci-dessus pour commencer.</p>}
+              </div>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                {(mailboxes as any[]).map((mb: any) => (
+                  <div key={mb.id} className="bg-card border border-border rounded-xl p-5 space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <h3 className="font-semibold text-lg">{mb.name}</h3>
+                        <p className="text-sm text-muted-foreground">{mb.emailAddress}</p>
+                      </div>
+                      {isAdmin && (
+                        <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => handleDeleteMailbox(mb.id)}>
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <span className="flex items-center gap-1"><Users className="h-4 w-4" />{mb.memberCount || 0} membre{(mb.memberCount || 0) > 1 ? "s" : ""}</span>
+                      {mb.connectionId && (
+                        <span className="flex items-center gap-1 text-emerald-400">
+                          <CheckCircle2 className="h-3.5 w-3.5" /> Connectee
+                        </span>
+                      )}
+                      {(mb.unclaimedCount || 0) > 0 && (
+                        <span className="flex items-center gap-1 text-orange-400">
+                          <Mail className="h-4 w-4" />{mb.unclaimedCount} non traite{mb.unclaimedCount > 1 ? "s" : ""}
+                        </span>
+                      )}
+                    </div>
+                    <div className="flex gap-2">
+                      <Button variant="outline" size="sm" className="flex-1" onClick={() => openEmails(mb.id)}>
+                        <Mail className="h-4 w-4 mr-1" /> Emails
+                      </Button>
+                      <Button variant="outline" size="sm" className="flex-1" onClick={() => openDetail(mb.id)}>
+                        <Users className="h-4 w-4 mr-1" /> Membres
+                      </Button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </>
+        )}
 
         {viewMode === "detail" && selectedMailboxId && <MailboxDetail
           mailboxId={selectedMailboxId}
@@ -224,103 +339,6 @@ export default function BoitesPartagees() {
         />}
       </div>
     </DashboardLayout>
-  );
-}
-
-function MailboxList({
-  mailboxes, isLoading, isAdmin, newName, newEmail, setNewName, setNewEmail, onCreate, onDelete, onOpenDetail, onOpenEmails, creating,
-}: {
-  mailboxes: any[];
-  isLoading: boolean;
-  isAdmin: boolean;
-  newName: string;
-  newEmail: string;
-  setNewName: (v: string) => void;
-  setNewEmail: (v: string) => void;
-  onCreate: () => void;
-  onDelete: (id: string) => void;
-  onOpenDetail: (id: string) => void;
-  onOpenEmails: (id: string) => void;
-  creating: boolean;
-}) {
-  return (
-    <>
-      {isAdmin && (
-        <div className="bg-card border border-border rounded-xl p-5 space-y-4">
-          <h2 className="text-lg font-semibold flex items-center gap-2">
-            <MailPlus className="h-5 w-5 text-primary" />
-            Ajouter une boîte partagée
-          </h2>
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Input
-              placeholder="Nom (ex: Support)"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              className="bg-background"
-            />
-            <Input
-              placeholder="Adresse email (ex: support@dupont.be)"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-              className="bg-background"
-              type="email"
-            />
-            <Button onClick={onCreate} disabled={creating || !newName.trim() || !newEmail.trim()}>
-              {creating ? <Loader2 className="h-4 w-4 animate-spin" /> : "Créer"}
-            </Button>
-          </div>
-          <p className="text-xs text-muted-foreground">
-            Créez une boîte partagée pour que votre équipe puisse gérer les emails reçus sur une adresse commune (info@, support@, contact@...).
-          </p>
-        </div>
-      )}
-
-      {isLoading ? (
-        <div className="flex justify-center py-12">
-          <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-        </div>
-      ) : !mailboxes || mailboxes.length === 0 ? (
-        <div className="bg-card border border-border rounded-xl p-8 text-center">
-          <Inbox className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-          <p className="text-muted-foreground">Aucune boîte partagée pour le moment.</p>
-          {isAdmin && <p className="text-sm text-muted-foreground mt-1">Utilisez le formulaire ci-dessus pour en créer une.</p>}
-        </div>
-      ) : (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {mailboxes.map((mb: any) => (
-            <div key={mb.id} className="bg-card border border-border rounded-xl p-5 space-y-3">
-              <div className="flex items-start justify-between">
-                <div>
-                  <h3 className="font-semibold text-lg">{mb.name}</h3>
-                  <p className="text-sm text-muted-foreground">{mb.emailAddress}</p>
-                </div>
-                {isAdmin && (
-                  <Button variant="ghost" size="icon" className="text-destructive hover:text-destructive" onClick={() => onDelete(mb.id)}>
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                )}
-              </div>
-              <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                <span className="flex items-center gap-1"><Users className="h-4 w-4" />{mb.memberCount || 0} membre{(mb.memberCount || 0) > 1 ? "s" : ""}</span>
-                {(mb.unclaimedCount || 0) > 0 && (
-                  <span className="flex items-center gap-1 text-orange-400">
-                    <Mail className="h-4 w-4" />{mb.unclaimedCount} non traité{mb.unclaimedCount > 1 ? "s" : ""}
-                  </span>
-                )}
-              </div>
-              <div className="flex gap-2">
-                <Button variant="outline" size="sm" className="flex-1" onClick={() => onOpenEmails(mb.id)}>
-                  <Mail className="h-4 w-4 mr-1" /> Emails
-                </Button>
-                <Button variant="outline" size="sm" className="flex-1" onClick={() => onOpenDetail(mb.id)}>
-                  <Users className="h-4 w-4 mr-1" /> Membres
-                </Button>
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
-    </>
   );
 }
 
@@ -354,7 +372,7 @@ function MailboxDetail({
               value={addMemberUserId}
               onChange={(e) => setAddMemberUserId(e.target.value)}
             >
-              <option value="">Sélectionner un collègue...</option>
+              <option value="">Selectionner un collegue...</option>
               {availableMembers.map((om: any) => (
                 <option key={om.userId} value={om.userId}>
                   {om.fullName || om.email || om.userId}
@@ -472,11 +490,11 @@ function MailboxEmails({
                   {email.claimedBy ? (
                     email.claimedBy === userId ? (
                       <Button variant="outline" size="sm" onClick={() => onUnclaim(email.id)} className="text-orange-400 border-orange-400/30">
-                        <Hand className="h-3 w-3 mr-1" /> Relâcher
+                        <Hand className="h-3 w-3 mr-1" /> Relacher
                       </Button>
                     ) : (
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <User className="h-3 w-3" /> {email.claimedByName || "Collègue"}
+                        <User className="h-3 w-3" /> {email.claimedByName || "Collegue"}
                       </span>
                     )
                   ) : (

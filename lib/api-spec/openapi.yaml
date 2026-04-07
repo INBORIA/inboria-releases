@@ -1115,7 +1115,7 @@ paths:
     post:
       operationId: createSharedMailbox
       tags: [organisations]
-      summary: Create a shared mailbox (admin only)
+      summary: Create a shared mailbox from a connected email (admin only)
       requestBody:
         required: true
         content:
@@ -1129,6 +1129,21 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SharedMailbox"
+
+  /shared-mailboxes/admin-connections:
+    get:
+      operationId: getAdminConnections
+      tags: [organisations]
+      summary: List admin's email connections with shared status
+      responses:
+        "200":
+          description: List of admin email connections
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdminConnection"
 
   /shared-mailboxes/{mailboxId}:
     delete:
@@ -2415,13 +2430,34 @@ components:
     CreateSharedMailboxBody:
       type: object
       properties:
+        connectionId:
+          type: string
         name:
+          type: string
+      required:
+        - connectionId
+
+    AdminConnection:
+      type: object
+      properties:
+        id:
+          type: string
+        provider:
           type: string
         emailAddress:
           type: string
-          format: email
+        createdAt:
+          type: string
+          format: date-time
+        lastSyncedAt:
+          type: string
+          format: date-time
+          nullable: true
+        alreadyShared:
+          type: boolean
       required:
-        - name
+        - id
+        - provider
         - emailAddress
 
     SharedMailboxMember:

@@ -253,7 +253,7 @@ router.get("/email/callback/gmail", async (req, res): Promise<void> => {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       token_expires_at: tokens.expiry_date ? new Date(tokens.expiry_date).toISOString() : null,
-    }, { onConflict: "user_id,provider" }).select("id").single();
+    }, { onConflict: "user_id,email_address" }).select("id").single();
 
     if (connData?.id) {
       triggerSyncForConnection(connData.id).catch((e) =>
@@ -333,7 +333,7 @@ router.get("/email/callback/outlook", async (req, res): Promise<void> => {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
-    }, { onConflict: "user_id,provider" }).select("id").single();
+    }, { onConflict: "user_id,email_address" }).select("id").single();
 
     if (outlookConn?.id) {
       triggerSyncForConnection(outlookConn.id).catch((e) =>
@@ -408,7 +408,7 @@ router.post("/email/connect/imap", requireAuth, async (req, res): Promise<void> 
       access_token: password,
       refresh_token: imapConfig,
       token_expires_at: null,
-    }, { onConflict: "user_id,provider" }).select("id").single();
+    }, { onConflict: "user_id,email_address" }).select("id").single();
 
     if (imapConn?.id) {
       triggerSyncForConnection(imapConn.id).catch((e) =>
@@ -441,13 +441,13 @@ router.get("/email/connections", requireAuth, async (req, res): Promise<void> =>
   }
 });
 
-router.delete("/email/connections/:provider", requireAuth, async (req, res): Promise<void> => {
+router.delete("/email/connections/:connectionId", requireAuth, async (req, res): Promise<void> => {
   try {
     await supabaseAdmin
       .from("email_connections")
       .delete()
       .eq("user_id", req.userId!)
-      .eq("provider", req.params.provider);
+      .eq("id", req.params.connectionId);
 
     res.json({ success: true });
   } catch {

@@ -22,6 +22,7 @@ import type {
   AddCommentBody,
   AddSharedMailboxMember200,
   AddSharedMailboxMemberBody,
+  AdminConnection,
   ApplyPackBody,
   ApplyPackResponse,
   AssignEmailBody,
@@ -4586,7 +4587,7 @@ export function useGetSharedMailboxes<
 }
 
 /**
- * @summary Create a shared mailbox (admin only)
+ * @summary Create a shared mailbox from a connected email (admin only)
  */
 export const getCreateSharedMailboxUrl = () => {
   return `/api/shared-mailboxes`;
@@ -4649,7 +4650,7 @@ export type CreateSharedMailboxMutationBody = BodyType<CreateSharedMailboxBody>;
 export type CreateSharedMailboxMutationError = ErrorType<unknown>;
 
 /**
- * @summary Create a shared mailbox (admin only)
+ * @summary Create a shared mailbox from a connected email (admin only)
  */
 export const useCreateSharedMailbox = <
   TError = ErrorType<unknown>,
@@ -4670,6 +4671,81 @@ export const useCreateSharedMailbox = <
 > => {
   return useMutation(getCreateSharedMailboxMutationOptions(options));
 };
+
+/**
+ * @summary List admin's email connections with shared status
+ */
+export const getGetAdminConnectionsUrl = () => {
+  return `/api/shared-mailboxes/admin-connections`;
+};
+
+export const getAdminConnections = async (
+  options?: RequestInit,
+): Promise<AdminConnection[]> => {
+  return customFetch<AdminConnection[]>(getGetAdminConnectionsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetAdminConnectionsQueryKey = () => {
+  return [`/api/shared-mailboxes/admin-connections`] as const;
+};
+
+export const getGetAdminConnectionsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAdminConnections>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminConnections>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetAdminConnectionsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAdminConnections>>
+  > = ({ signal }) => getAdminConnections({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminConnections>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetAdminConnectionsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAdminConnections>>
+>;
+export type GetAdminConnectionsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List admin's email connections with shared status
+ */
+
+export function useGetAdminConnections<
+  TData = Awaited<ReturnType<typeof getAdminConnections>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getAdminConnections>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetAdminConnectionsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * @summary Delete a shared mailbox (admin only)

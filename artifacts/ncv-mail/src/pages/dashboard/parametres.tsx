@@ -222,10 +222,10 @@ export default function Parametres() {
     }
   };
 
-  const handleDisconnect = async (provider: string) => {
+  const handleDisconnect = async (connectionId: string) => {
     try {
       const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
-      await fetch(`${baseUrl}/api/email/connections/${provider}`, {
+      await fetch(`${baseUrl}/api/email/connections/${connectionId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${session?.access_token}` },
       });
@@ -235,9 +235,6 @@ export default function Parametres() {
       toast({ variant: "destructive", title: "Erreur" });
     }
   };
-
-  const gmailConnected = connections?.find(c => c.provider === "gmail");
-  const imapConnected = connections?.find(c => c.provider === "imap");
 
   return (
     <DashboardLayout>
@@ -281,27 +278,25 @@ export default function Parametres() {
                           </p>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 text-[12px]" onClick={() => handleDisconnect(conn.provider)}>
+                      <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 text-[12px]" onClick={() => handleDisconnect(conn.id)}>
                         <Trash2 className="w-3.5 h-3.5 mr-1.5" />
                         Deconnecter
                       </Button>
                     </div>
                   ))}
 
-                  {!gmailConnected && (
-                    <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 bg-red-500/10 rounded-lg flex items-center justify-center text-red-400 font-bold text-sm">G</div>
-                        <div>
-                          <h4 className="font-medium text-[13px] text-white">Gmail / Google Workspace</h4>
-                          <p className="text-[11px] text-[#8b9cb3]">Connexion OAuth en un clic.</p>
-                        </div>
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 bg-red-500/10 rounded-lg flex items-center justify-center text-red-400 font-bold text-sm">G</div>
+                      <div>
+                        <h4 className="font-medium text-[13px] text-white">Gmail / Google Workspace</h4>
+                        <p className="text-[11px] text-[#8b9cb3]">Ajouter un compte Google (OAuth).</p>
                       </div>
-                      <Button variant="outline" size="sm" className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]" onClick={() => handleOAuthConnect("gmail")}>
-                        Connecter Google
-                      </Button>
                     </div>
-                  )}
+                    <Button variant="outline" size="sm" className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]" onClick={() => handleOAuthConnect("gmail")}>
+                      Connecter Google
+                    </Button>
+                  </div>
 
 
                   {!selectedProvider && (

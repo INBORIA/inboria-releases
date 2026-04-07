@@ -916,12 +916,27 @@ export const GetSharedMailboxesResponse = zod.array(
 );
 
 /**
- * @summary Create a shared mailbox (admin only)
+ * @summary Create a shared mailbox from a connected email (admin only)
  */
 export const CreateSharedMailboxBody = zod.object({
-  name: zod.string(),
-  emailAddress: zod.string().email(),
+  connectionId: zod.string(),
+  name: zod.string().optional(),
 });
+
+/**
+ * @summary List admin's email connections with shared status
+ */
+export const GetAdminConnectionsResponseItem = zod.object({
+  id: zod.string(),
+  provider: zod.string(),
+  emailAddress: zod.string(),
+  createdAt: zod.coerce.date().optional(),
+  lastSyncedAt: zod.coerce.date().nullish(),
+  alreadyShared: zod.boolean().optional(),
+});
+export const GetAdminConnectionsResponse = zod.array(
+  GetAdminConnectionsResponseItem,
+);
 
 /**
  * @summary Delete a shared mailbox (admin only)

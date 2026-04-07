@@ -12,6 +12,7 @@ export * from "./activityLogDetails";
 export * from "./addCommentBody";
 export * from "./addSharedMailboxMember200";
 export * from "./addSharedMailboxMemberBody";
+export * from "./adminConnection";
 export * from "./applyPackBody";
 export * from "./applyPackBodyCategoriesItem";
 export * from "./applyPackResponse";

@@ -75,6 +75,41 @@ router.get("/shared-mailboxes", requireAuth, async (req, res): Promise<void> => 
   }
 });
 
+router.get("/shared-mailboxes/admin-connections", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const orgId = await getOrgIdForAdmin(req.userId!);
+    if (!orgId) {
+      res.json([]);
+      return;
+    }
+
+    const { data: connections } = await supabaseAdmin
+      .from("email_connections")
+      .select("id, provider, email_address, created_at, last_synced_at")
+      .eq("user_id", req.userId!);
+
+    const { data: existingMailboxes } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("connection_id")
+      .eq("organisation_id", orgId);
+
+    const sharedConnectionIds = new Set((existingMailboxes || []).map((m: any) => m.connection_id).filter(Boolean));
+
+    const enriched = (connections || []).map((c: any) => ({
+      id: c.id,
+      provider: c.provider,
+      emailAddress: c.email_address,
+      createdAt: c.created_at,
+      lastSyncedAt: c.last_synced_at,
+      alreadyShared: sharedConnectionIds.has(c.id),
+    }));
+
+    res.json(enriched);
+  } catch {
+    res.status(500).json({ error: "Erreur lors de la récupération des connexions" });
+  }
+});
+
 router.post("/shared-mailboxes", requireAuth, async (req, res): Promise<void> => {
   try {
     const orgId = await getOrgIdForAdmin(req.userId!);
@@ -83,18 +118,45 @@ router.post("/shared-mailboxes", requireAuth, async (req, res): Promise<void> =>
       return;
     }
 
-    const { name, emailAddress } = req.body;
-    if (!name || !emailAddress) {
-      res.status(400).json({ error: "Nom et adresse email requis" });
+    const { connectionId, name } = req.body;
+    if (!connectionId) {
+      res.status(400).json({ error: "connectionId requis" });
       return;
     }
+
+    const { data: conn } = await supabaseAdmin
+      .from("email_connections")
+      .select("id, email_address, provider")
+      .eq("id", connectionId)
+      .eq("user_id", req.userId!)
+      .single();
+
+    if (!conn) {
+      res.status(404).json({ error: "Connexion email introuvable" });
+      return;
+    }
+
+    const { data: existing } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("id")
+      .eq("organisation_id", orgId)
+      .eq("connection_id", connectionId)
+      .maybeSingle();
+
+    if (existing) {
+      res.status(409).json({ error: "Cette adresse est déjà partagée" });
+      return;
+    }
+
+    const mailboxName = name?.trim() || conn.email_address.split("@")[0];
 
     const { data: mailbox, error } = await supabaseAdmin
       .from("shared_mailboxes")
       .insert({
         organisation_id: orgId,
-        name: name.trim(),
-        email_address: emailAddress.trim().toLowerCase(),
+        name: mailboxName,
+        email_address: conn.email_address,
+        connection_id: conn.id,
         created_by: req.userId!,
       })
       .select()

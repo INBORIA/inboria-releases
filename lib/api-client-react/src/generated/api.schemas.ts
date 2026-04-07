@@ -515,8 +515,17 @@ export interface SharedMailbox {
 }
 
 export interface CreateSharedMailboxBody {
-  name: string;
+  connectionId: string;
+  name?: string;
+}
+
+export interface AdminConnection {
+  id: string;
+  provider: string;
   emailAddress: string;
+  createdAt?: string;
+  lastSyncedAt?: string | null;
+  alreadyShared?: boolean;
 }
 
 export interface SharedMailboxMember {
