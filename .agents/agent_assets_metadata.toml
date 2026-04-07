@@ -11,3 +11,9 @@ id = "T1RHy0MwJctRmBHsjtlgG"
 uri = "file://NCV_Mail_Descriptif.md"
 type = "text"
 title = "NCV Mail — Descriptif complet de l'application"
+
+[[outputs]]
+id = "ioqGUvEkw2UWpK2ddwGQH"
+uri = "file://NCV_Mail_Plan_Business_V2.md"
+type = "text"
+title = "Plan complet V2 — Organisation & Collaboration Business"
