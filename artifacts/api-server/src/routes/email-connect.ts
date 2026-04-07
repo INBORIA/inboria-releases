@@ -246,14 +246,21 @@ router.get("/email/callback/gmail", async (req, res): Promise<void> => {
     const oauth2 = google.oauth2({ version: "v2", auth: oauth2Client });
     const { data: userInfo } = await oauth2.userinfo.get();
 
-    const { data: connData } = await supabaseAdmin.from("email_connections").upsert({
+    const gmailRow = {
       user_id: userId,
       provider: "gmail",
       email_address: userInfo.email,
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       token_expires_at: tokens.expiry_date ? new Date(tokens.expiry_date).toISOString() : null,
-    }, { onConflict: "user_id,email_address" }).select("id").single();
+    };
+    let { data: connData, error: connErr } = await supabaseAdmin.from("email_connections").upsert(gmailRow, { onConflict: "user_id,email_address" }).select("id").single();
+    if (connErr) {
+      console.error("[email-connect] Gmail upsert failed, trying insert:", connErr.message);
+      const ins = await supabaseAdmin.from("email_connections").insert(gmailRow).select("id").single();
+      connData = ins.data;
+      if (ins.error) console.error("[email-connect] Gmail insert also failed:", ins.error.message);
+    }
 
     if (connData?.id) {
       triggerSyncForConnection(connData.id).catch((e) =>
@@ -326,14 +333,21 @@ router.get("/email/callback/outlook", async (req, res): Promise<void> => {
     });
     const profile = await profileResponse.json() as any;
 
-    const { data: outlookConn } = await supabaseAdmin.from("email_connections").upsert({
+    const outlookRow = {
       user_id: userId,
       provider: "outlook",
       email_address: profile.mail || profile.userPrincipalName,
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
-    }, { onConflict: "user_id,email_address" }).select("id").single();
+    };
+    let { data: outlookConn, error: outlookErr } = await supabaseAdmin.from("email_connections").upsert(outlookRow, { onConflict: "user_id,email_address" }).select("id").single();
+    if (outlookErr) {
+      console.error("[email-connect] Outlook upsert failed, trying insert:", outlookErr.message);
+      const ins = await supabaseAdmin.from("email_connections").insert(outlookRow).select("id").single();
+      outlookConn = ins.data;
+      if (ins.error) console.error("[email-connect] Outlook insert also failed:", ins.error.message);
+    }
 
     if (outlookConn?.id) {
       triggerSyncForConnection(outlookConn.id).catch((e) =>
@@ -401,7 +415,9 @@ router.post("/email/connect/imap", requireAuth, async (req, res): Promise<void> 
 
     const imapConfig = JSON.stringify({ host, port });
 
-    const { data: imapConn } = await supabaseAdmin.from("email_connections").upsert({
+    let savedConnId: string | null = null;
+
+    const { data: upsertData, error: upsertError } = await supabaseAdmin.from("email_connections").upsert({
       user_id: req.userId,
       provider: "imap",
       email_address: email,
@@ -410,8 +426,29 @@ router.post("/email/connect/imap", requireAuth, async (req, res): Promise<void> 
       token_expires_at: null,
     }, { onConflict: "user_id,email_address" }).select("id").single();
 
-    if (imapConn?.id) {
-      triggerSyncForConnection(imapConn.id).catch((e) =>
+    if (upsertError) {
+      console.error("[email-connect] Upsert failed, trying insert:", upsertError.message);
+      const { data: insertData, error: insertError } = await supabaseAdmin.from("email_connections").insert({
+        user_id: req.userId,
+        provider: "imap",
+        email_address: email,
+        access_token: password,
+        refresh_token: imapConfig,
+        token_expires_at: null,
+      }).select("id").single();
+
+      if (insertError) {
+        console.error("[email-connect] Insert also failed:", insertError.message);
+        res.status(500).json({ error: "Connexion IMAP réussie mais impossible de sauvegarder. Contactez le support." });
+        return;
+      }
+      savedConnId = insertData?.id || null;
+    } else {
+      savedConnId = upsertData?.id || null;
+    }
+
+    if (savedConnId) {
+      triggerSyncForConnection(savedConnId).catch((e) =>
         console.error("[email-connect] IMAP auto-sync trigger failed:", e.message)
       );
     }
@@ -435,6 +472,7 @@ router.get("/email/connections", requireAuth, async (req, res): Promise<void> =>
       return;
     }
 
+    res.set("Cache-Control", "no-store");
     res.json(data || []);
   } catch {
     res.status(500).json({ error: "Erreur lors de la recuperation des connexions" });

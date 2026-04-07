@@ -29,6 +29,44 @@ async function ensureOrganisationsTable() {
   }
 }
 
+async function ensureEmailConnectionsConstraint() {
+  try {
+    const { error } = await supabaseAdmin.rpc("exec_sql" as any, {
+      query: `
+        DO $$
+        BEGIN
+          IF EXISTS (
+            SELECT 1 FROM information_schema.table_constraints
+            WHERE table_name = 'email_connections'
+            AND constraint_type = 'UNIQUE'
+            AND constraint_name = 'email_connections_user_id_provider_key'
+          ) THEN
+            ALTER TABLE email_connections DROP CONSTRAINT email_connections_user_id_provider_key;
+          END IF;
+        END $$;
+        DO $$
+        BEGIN
+          IF NOT EXISTS (
+            SELECT 1 FROM information_schema.table_constraints
+            WHERE table_name = 'email_connections'
+            AND constraint_type = 'UNIQUE'
+            AND constraint_name = 'email_connections_user_id_email_address_key'
+          ) THEN
+            ALTER TABLE email_connections ADD CONSTRAINT email_connections_user_id_email_address_key UNIQUE (user_id, email_address);
+          END IF;
+        END $$;
+      `
+    });
+    if (error) {
+      logger.warn({ error: error.message }, "email_connections constraint migration via RPC failed (run sql_multi_email_connections.sql manually)");
+    } else {
+      logger.info("email_connections unique constraint OK (user_id, email_address)");
+    }
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "email_connections constraint check failed (non-fatal)");
+  }
+}
+
 async function ensureIntegrationsTable() {
   try {
     const { error } = await supabaseAdmin.from("integrations").select("id").limit(1);
@@ -67,5 +105,6 @@ app.listen(port, (err) => {
   ensureProjectsTable();
   ensureIntegrationsTable();
   ensureOrganisationsTable();
+  ensureEmailConnectionsConstraint();
   startAutoSync();
 });
