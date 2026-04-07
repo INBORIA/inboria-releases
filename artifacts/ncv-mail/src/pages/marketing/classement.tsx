@@ -122,7 +122,7 @@ const advantages = [
     title: "IA sur mesure",
     desc: "Votre metier n'est pas dans la liste ? Decrivez votre activite et l'IA genere un pack de categories parfaitement adapte a vos besoins.",
     highlights: [
-      "Generation intelligente par GPT",
+      "Generation intelligente par IA",
       "Entre 6 et 12 categories sur mesure",
       "Nom et description pour chaque categorie",
     ],

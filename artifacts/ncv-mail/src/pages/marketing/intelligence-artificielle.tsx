@@ -19,7 +19,7 @@ import {
 } from "lucide-react";
 
 const heroStats = [
-  { value: "GPT-4o", label: "modele d'IA avance" },
+  { value: "IA avancee", label: "derniere generation" },
   { value: "<3s", label: "temps de traitement" },
   { value: "RGPD", label: "conforme et securise" },
 ];
@@ -308,7 +308,7 @@ export default function IntelligenceArtificielle() {
               },
               {
                 q: "Quel modele d'IA est utilise ?",
-                a: "NCV Mail utilise les modeles GPT d'OpenAI (GPT-4o-mini pour les taches rapides, GPT-4o pour les analyses complexes), reconnus pour leur fiabilite et leur performance en traitement du langage naturel.",
+                a: "NCV Mail utilise des modeles de langage de derniere generation, reconnus pour leur fiabilite et leur performance en traitement du langage naturel. Nous selectionnons et optimisons en permanence les meilleurs modeles disponibles pour garantir des resultats de qualite.",
               },
             ].map((faq) => (
               <div
