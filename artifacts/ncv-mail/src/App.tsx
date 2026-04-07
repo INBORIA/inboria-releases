@@ -26,6 +26,7 @@ import Projets from "@/pages/dashboard/projets";
 import Equipe from "@/pages/dashboard/equipe";
 import BoitesPartagees from "@/pages/dashboard/boites-partagees";
 import TeamActivite from "@/pages/dashboard/team-activite";
+import Manuel from "@/pages/dashboard/manuel";
 
 import Accueil from "@/pages/marketing/accueil";
 import Fonctionnalites from "@/pages/marketing/fonctionnalites";
@@ -135,6 +136,7 @@ function Router() {
       <Route path="/dashboard/equipe" component={() => <ProtectedRoute component={Equipe} />} />
       <Route path="/dashboard/boites-partagees" component={() => <ProtectedRoute component={BoitesPartagees} />} />
       <Route path="/dashboard/activite-equipe" component={() => <ProtectedRoute component={TeamActivite} />} />
+      <Route path="/dashboard/manuel" component={() => <ProtectedRoute component={Manuel} />} />
       <Route component={NotFound} />
     </Switch>
   );

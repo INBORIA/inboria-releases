@@ -17,6 +17,7 @@ import {
   Users,
   MailPlus,
   Activity,
+  BookOpen,
 } from "lucide-react";
 import ncvLogo from "@assets/image_1775392688923.png";
 import { cn } from "@/lib/utils";
@@ -35,6 +36,7 @@ const baseNavigation = [
   { name: "Classement", href: "/dashboard/classement", icon: Tags },
   { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
   { name: "Abonnement", href: "/dashboard/abonnement", icon: CreditCard },
+  { name: "Manuel", href: "/dashboard/manuel", icon: BookOpen },
 ];
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -60,7 +62,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const isTrialExhausted = (user as any).plan === "essai" && (user as any).emailsUsed >= (user as any).emailsQuota;
   const isBlocked = isExpired || isTrialExhausted;
 
-  const allowedWhenBlocked = ["/dashboard/abonnement", "/dashboard/parametres"];
+  const allowedWhenBlocked = ["/dashboard/abonnement", "/dashboard/parametres", "/dashboard/manuel"];
 
   useEffect(() => {
     if (!isLoading && isBlocked && !allowedWhenBlocked.includes(location)) {
