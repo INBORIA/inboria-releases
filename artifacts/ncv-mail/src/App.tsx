@@ -36,7 +36,19 @@ import MentionsLegales from "@/pages/marketing/mentions-legales";
 import Confidentialite from "@/pages/marketing/confidentialite";
 import Conditions from "@/pages/marketing/conditions";
 
+let _clearingSession = false;
+let _consecutiveAuthFailures = 0;
+
 setAuthTokenGetter(async () => {
+  if (_clearingSession) return null;
+  if (_consecutiveAuthFailures >= 3) {
+    _clearingSession = true;
+    _consecutiveAuthFailures = 0;
+    await supabase.auth.signOut();
+    _clearingSession = false;
+    window.location.href = import.meta.env.BASE_URL + "login";
+    return null;
+  }
   const { data } = await supabase.auth.getSession();
   if (data.session?.access_token) {
     const expiresAt = data.session.expires_at ?? 0;
@@ -44,7 +56,13 @@ setAuthTokenGetter(async () => {
     if (expiresAt > nowSec + 60) {
       return data.session.access_token;
     }
-    const { data: refreshed } = await supabase.auth.refreshSession();
+    const { data: refreshed, error } = await supabase.auth.refreshSession();
+    if (error || !refreshed.session) {
+      _clearingSession = true;
+      await supabase.auth.signOut();
+      _clearingSession = false;
+      return null;
+    }
     return refreshed.session?.access_token ?? null;
   }
   return null;
@@ -53,7 +71,21 @@ setAuthTokenGetter(async () => {
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      retry: 1,
+      retry: (failureCount, error: any) => {
+        if (error?.status === 401) {
+          _consecutiveAuthFailures++;
+          if (_consecutiveAuthFailures >= 3 && !_clearingSession) {
+            _clearingSession = true;
+            _consecutiveAuthFailures = 0;
+            supabase.auth.signOut().then(() => {
+              _clearingSession = false;
+              window.location.href = import.meta.env.BASE_URL + "login";
+            });
+          }
+          return false;
+        }
+        return failureCount < 1;
+      },
       refetchOnWindowFocus: false,
     },
   },
