@@ -26,12 +26,14 @@ import {
   useGetSharedMailboxEmails,
   useClaimSharedEmail,
   useUnclaimSharedEmail,
+  useCreateTask,
+  getListTasksQueryKey,
 } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -116,6 +118,12 @@ function EmailRow({ email, onClick, onArchive, onCategoryClick, isSelected, onTo
               {email.projectReference}
             </span>
           )}
+          {(email.taskCount ?? 0) > 0 && (
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-cyan-500/15 text-cyan-400 border border-cyan-500/20 hidden sm:inline-flex items-center gap-1">
+              <ListTodo className="w-2.5 h-2.5" />
+              {email.taskCount}
+            </span>
+          )}
           {email.assignedTo && (
             <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 hidden sm:inline-flex items-center gap-1">
               <UserPlus className="w-2.5 h-2.5" />
@@ -147,7 +155,7 @@ const triageSchema = z.object({
   body: z.string().min(1, "Contenu requis"),
 });
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number) => void }) {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyTo, setReplyTo] = useState("");
   const [replySubject, setReplySubject] = useState("");
@@ -271,6 +279,15 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 >
                   <Trash2 className="w-3 h-3" />
                   Supprimer
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-300"
+                  onClick={() => onCreateTask?.(email.id)}
+                >
+                  <ListTodo className="w-3 h-3" />
+                  Creer une tache
                 </Button>
               </div>
               <div className="flex items-center gap-2.5 flex-wrap">
@@ -642,6 +659,24 @@ export default function Dashboard() {
     );
   };
 
+  const createTaskMut = useCreateTask();
+  const handleCreateTask = (emailId: number) => {
+    const email = emails?.find((e) => e.id === emailId);
+    createTaskMut.mutate(
+      { data: { title: email ? `Traiter: ${email.subject}` : "Nouvelle tache", emailId } },
+      {
+        onSuccess: () => {
+          invalidateAll();
+          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+          toast({ title: "Tache creee", description: "La tache a ete ajoutee depuis cet email." });
+        },
+        onError: () => {
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible de creer la tache." });
+        },
+      }
+    );
+  };
+
   const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number) => {
     sendEmailMut.mutate(
       { data: { to, subject, body, replyToEmailId: replyToEmailId ?? null } },
@@ -803,6 +838,7 @@ export default function Dashboard() {
             orgMembers={(orgMembers as any[]) || []}
             onAssign={handleAssign}
             onUnassign={handleUnassign}
+            onCreateTask={handleCreateTask}
           />
         </div>
       </DashboardLayout>

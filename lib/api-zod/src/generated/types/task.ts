@@ -17,6 +17,22 @@ export interface Task {
   /** @nullable */
   emailSubject?: string | null;
   /** @nullable */
+  emailSender?: string | null;
+  /** @nullable */
+  emailSenderEmail?: string | null;
+  /** @nullable */
+  emailBody?: string | null;
+  /** @nullable */
+  emailSummary?: string | null;
+  /** @nullable */
+  emailPriority?: string | null;
+  /** @nullable */
+  emailStatus?: string | null;
+  /** @nullable */
+  emailCategoryName?: string | null;
+  /** @nullable */
+  emailCreatedAt?: string | null;
+  /** @nullable */
   projectId?: string | null;
   /** @nullable */
   projectName?: string | null;

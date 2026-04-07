@@ -251,4 +251,120 @@ router.delete("/projects/:id", requireAuth, async (req, res): Promise<void> => {
   }
 });
 
+router.get("/projects/:id/notes", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data: project } = await supabaseAdmin
+      .from("projects")
+      .select("id")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .single();
+
+    if (!project) {
+      res.status(404).json({ error: "Project not found" });
+      return;
+    }
+
+    const { data: notes, error } = await supabaseAdmin
+      .from("project_notes")
+      .select("*")
+      .eq("project_id", req.params.id)
+      .eq("user_id", req.userId!)
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json((notes || []).map((n: any) => ({
+      id: n.id,
+      content: n.content,
+      createdAt: n.created_at,
+      updatedAt: n.updated_at,
+    })));
+  } catch {
+    res.status(500).json({ error: "Failed to list project notes" });
+  }
+});
+
+router.post("/projects/:id/notes", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { content } = req.body;
+
+    if (!content || typeof content !== "string" || content.trim().length < 1) {
+      res.status(400).json({ error: "Le contenu de la note est requis" });
+      return;
+    }
+
+    const { data: project } = await supabaseAdmin
+      .from("projects")
+      .select("id")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .single();
+
+    if (!project) {
+      res.status(404).json({ error: "Project not found" });
+      return;
+    }
+
+    const { data: note, error } = await supabaseAdmin
+      .from("project_notes")
+      .insert({
+        project_id: parseInt(req.params.id),
+        user_id: req.userId!,
+        content: content.trim(),
+      })
+      .select()
+      .single();
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.status(201).json({
+      id: note.id,
+      content: note.content,
+      createdAt: note.created_at,
+      updatedAt: note.updated_at,
+    });
+  } catch {
+    res.status(500).json({ error: "Failed to create project note" });
+  }
+});
+
+router.delete("/projects/:id/notes/:noteId", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data: project } = await supabaseAdmin
+      .from("projects")
+      .select("id")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .single();
+
+    if (!project) {
+      res.status(404).json({ error: "Project not found" });
+      return;
+    }
+
+    const { error } = await supabaseAdmin
+      .from("project_notes")
+      .delete()
+      .eq("id", req.params.noteId)
+      .eq("project_id", req.params.id)
+      .eq("user_id", req.userId!);
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Failed to delete project note" });
+  }
+});
+
 export default router;

@@ -39,7 +39,9 @@ import type {
   CreateCategoryBody,
   CreateOrganisationBody,
   CreateProjectBody,
+  CreateProjectNoteBody,
   CreateSharedMailboxBody,
+  CreateTaskBody,
   DailySummary,
   DailySummaryRequest,
   DashboardSummary,
@@ -47,6 +49,7 @@ import type {
   DeleteEmailComment200,
   DeleteIntegration200,
   DeleteProject200,
+  DeleteProjectNote200,
   DeleteSharedMailbox200,
   DeleteTask200,
   DraftResponse,
@@ -76,6 +79,7 @@ import type {
   PortalResponse,
   Project,
   ProjectDetail,
+  ProjectNote,
   RecategorizeUncategorized200,
   RegisterBody,
   RegisterPushToken200,
@@ -6600,4 +6604,288 @@ export const useTriageEmail = <
   TContext
 > => {
   return useMutation(getTriageEmailMutationOptions(options));
+};
+
+export const getCreateTaskUrl = () => {
+  return `/api/tasks`;
+};
+
+export const createTask = async (
+  createTaskBody: CreateTaskBody,
+  options?: RequestInit,
+): Promise<Task> => {
+  return customFetch<Task>(getCreateTaskUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createTaskBody),
+  });
+};
+
+export const getCreateTaskMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createTask>>,
+    TError,
+    { data: BodyType<CreateTaskBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createTask>>,
+  TError,
+  { data: BodyType<CreateTaskBody> },
+  TContext
+> => {
+  const mutationKey = ["createTask"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createTask>>,
+    { data: BodyType<CreateTaskBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+    return createTask(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export const useCreateTask = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createTask>>,
+    TError,
+    { data: BodyType<CreateTaskBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createTask>>,
+  TError,
+  { data: BodyType<CreateTaskBody> },
+  TContext
+> => {
+  return useMutation(getCreateTaskMutationOptions(options));
+};
+
+export const getListProjectNotesUrl = (projectId: string) => {
+  return `/api/projects/${projectId}/notes`;
+};
+
+export const listProjectNotes = async (
+  projectId: string,
+  options?: RequestInit,
+): Promise<ProjectNote[]> => {
+  return customFetch<ProjectNote[]>(getListProjectNotesUrl(projectId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListProjectNotesQueryKey = (projectId: string) => {
+  return [`/api/projects/${projectId}/notes`] as const;
+};
+
+export const getListProjectNotesQueryOptions = <
+  TData = Awaited<ReturnType<typeof listProjectNotes>>,
+  TError = ErrorType<unknown>,
+>(
+  projectId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listProjectNotes>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+  const queryKey = queryOptions?.queryKey ?? getListProjectNotesQueryKey(projectId);
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listProjectNotes>>> = ({
+    signal,
+  }) => listProjectNotes(projectId, { signal, ...requestOptions });
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listProjectNotes>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export function useListProjectNotes<
+  TData = Awaited<ReturnType<typeof listProjectNotes>>,
+  TError = ErrorType<unknown>,
+>(
+  projectId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listProjectNotes>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListProjectNotesQueryOptions(projectId, options);
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+export const getCreateProjectNoteUrl = (projectId: string) => {
+  return `/api/projects/${projectId}/notes`;
+};
+
+export const createProjectNote = async (
+  projectId: string,
+  createProjectNoteBody: CreateProjectNoteBody,
+  options?: RequestInit,
+): Promise<ProjectNote> => {
+  return customFetch<ProjectNote>(getCreateProjectNoteUrl(projectId), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createProjectNoteBody),
+  });
+};
+
+export const getCreateProjectNoteMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createProjectNote>>,
+    TError,
+    { projectId: string; data: BodyType<CreateProjectNoteBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createProjectNote>>,
+  TError,
+  { projectId: string; data: BodyType<CreateProjectNoteBody> },
+  TContext
+> => {
+  const mutationKey = ["createProjectNote"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createProjectNote>>,
+    { projectId: string; data: BodyType<CreateProjectNoteBody> }
+  > = (props) => {
+    const { projectId, data } = props ?? {};
+    return createProjectNote(projectId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export const useCreateProjectNote = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createProjectNote>>,
+    TError,
+    { projectId: string; data: BodyType<CreateProjectNoteBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createProjectNote>>,
+  TError,
+  { projectId: string; data: BodyType<CreateProjectNoteBody> },
+  TContext
+> => {
+  return useMutation(getCreateProjectNoteMutationOptions(options));
+};
+
+export const getDeleteProjectNoteUrl = (projectId: string, noteId: number) => {
+  return `/api/projects/${projectId}/notes/${noteId}`;
+};
+
+export const deleteProjectNote = async (
+  projectId: string,
+  noteId: number,
+  options?: RequestInit,
+): Promise<DeleteProjectNote200> => {
+  return customFetch<DeleteProjectNote200>(getDeleteProjectNoteUrl(projectId, noteId), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteProjectNoteMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteProjectNote>>,
+    TError,
+    { projectId: string; noteId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteProjectNote>>,
+  TError,
+  { projectId: string; noteId: number },
+  TContext
+> => {
+  const mutationKey = ["deleteProjectNote"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteProjectNote>>,
+    { projectId: string; noteId: number }
+  > = (props) => {
+    const { projectId, noteId } = props ?? {};
+    return deleteProjectNote(projectId, noteId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export const useDeleteProjectNote = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteProjectNote>>,
+    TError,
+    { projectId: string; noteId: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteProjectNote>>,
+  TError,
+  { projectId: string; noteId: number },
+  TContext
+> => {
+  return useMutation(getDeleteProjectNoteMutationOptions(options));
 };

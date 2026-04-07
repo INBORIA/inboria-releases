@@ -119,6 +119,7 @@ export interface Email {
   assignedToName?: string | null;
   /** @nullable */
   assignedAt?: string | null;
+  taskCount?: number;
   createdAt: string;
 }
 
@@ -200,12 +201,51 @@ export interface Task {
   /** @nullable */
   emailSubject?: string | null;
   /** @nullable */
+  emailSender?: string | null;
+  /** @nullable */
+  emailSenderEmail?: string | null;
+  /** @nullable */
+  emailBody?: string | null;
+  /** @nullable */
+  emailSummary?: string | null;
+  /** @nullable */
+  emailPriority?: string | null;
+  /** @nullable */
+  emailStatus?: string | null;
+  /** @nullable */
+  emailCategoryName?: string | null;
+  /** @nullable */
+  emailCreatedAt?: string | null;
+  /** @nullable */
   projectId?: string | null;
   /** @nullable */
   projectName?: string | null;
   /** @nullable */
   projectReference?: string | null;
   createdAt: string;
+}
+
+export interface CreateTaskBody {
+  title: string;
+  /** @nullable */
+  emailId?: number | null;
+  /** @nullable */
+  projectId?: string | null;
+}
+
+export interface ProjectNote {
+  id: number;
+  content: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateProjectNoteBody {
+  content: string;
+}
+
+export interface DeleteProjectNote200 {
+  success: boolean;
 }
 
 export interface UpdateTaskBody {

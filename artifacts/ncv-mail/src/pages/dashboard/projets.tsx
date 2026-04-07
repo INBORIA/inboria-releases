@@ -7,6 +7,12 @@ import {
   useGetProject,
   getListProjectsQueryKey,
   getGetProjectQueryKey,
+  useCreateTask,
+  getListTasksQueryKey,
+  useListProjectNotes,
+  useCreateProjectNote,
+  useDeleteProjectNote,
+  getListProjectNotesQueryKey,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,6 +53,9 @@ import {
   CheckSquare,
   Clock,
   Hash,
+  ListTodo,
+  StickyNote,
+  Send,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -101,6 +110,91 @@ function getColorClass(color: string) {
   return PROJECT_COLORS.find((c) => c.value === color)?.class || "bg-blue-500";
 }
 
+function ProjectNotes({ projectId }: { projectId: string }) {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [noteText, setNoteText] = useState("");
+  const { data: notes, isLoading } = useListProjectNotes(projectId);
+  const createNote = useCreateProjectNote();
+  const deleteNote = useDeleteProjectNote();
+
+  const handleAddNote = () => {
+    if (!noteText.trim()) return;
+    createNote.mutate(
+      { projectId, data: { content: noteText.trim() } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListProjectNotesQueryKey(projectId) });
+          setNoteText("");
+        },
+        onError: () => {
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible d'ajouter la note." });
+        },
+      }
+    );
+  };
+
+  const handleDeleteNote = (noteId: number) => {
+    deleteNote.mutate(
+      { projectId, noteId },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListProjectNotesQueryKey(projectId) });
+        },
+      }
+    );
+  };
+
+  return (
+    <div>
+      <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
+        <StickyNote className="w-3.5 h-3.5 text-amber-400" /> Notes
+      </h2>
+      <div className="flex gap-2 mb-3">
+        <Textarea
+          value={noteText}
+          onChange={(e) => setNoteText(e.target.value)}
+          placeholder="Ajouter une note..."
+          className="resize-none h-16 bg-background border-border text-white text-[12px] flex-1"
+        />
+        <Button
+          size="sm"
+          className="h-16 px-3 shrink-0"
+          disabled={!noteText.trim() || createNote.isPending}
+          onClick={handleAddNote}
+        >
+          <Send className="w-3.5 h-3.5" />
+        </Button>
+      </div>
+      {isLoading ? (
+        <Skeleton className="h-12 w-full bg-white/5" />
+      ) : (notes || []).length === 0 ? (
+        <p className="text-[11px] text-[#8b9cb3]/60 italic">Aucune note pour le moment.</p>
+      ) : (
+        <div className="space-y-1.5">
+          {(notes || []).map((note: any) => (
+            <div key={note.id} className="bg-card border border-border rounded-lg px-3 py-2 flex items-start gap-2 group">
+              <p className="text-[12px] text-[#8b9cb3] flex-1 whitespace-pre-wrap">{note.content}</p>
+              <div className="flex items-center gap-2 shrink-0">
+                <span className="text-[10px] text-[#8b9cb3]/50">
+                  {new Date(note.createdAt).toLocaleDateString("fr-FR")}
+                </span>
+                <button
+                  onClick={() => handleDeleteNote(note.id)}
+                  className="p-1 rounded-md text-[#8b9cb3]/40 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                  title="Supprimer"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function ProjectDetailView({
   projectId,
   onBack,
@@ -109,6 +203,28 @@ function ProjectDetailView({
   onBack: () => void;
 }) {
   const { data: project, isLoading } = useGetProject(projectId);
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const [newTaskTitle, setNewTaskTitle] = useState("");
+  const createTaskMut = useCreateTask();
+
+  const handleAddTask = () => {
+    if (!newTaskTitle.trim()) return;
+    createTaskMut.mutate(
+      { data: { title: newTaskTitle.trim(), projectId } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+          setNewTaskTitle("");
+          toast({ title: "Tache ajoutee" });
+        },
+        onError: () => {
+          toast({ variant: "destructive", title: "Erreur", description: "Impossible de creer la tache." });
+        },
+      }
+    );
+  };
 
   if (isLoading) {
     return (
@@ -247,11 +363,33 @@ function ProjectDetailView({
           </div>
         )}
 
-        {(project.tasks || []).length > 0 && (
-          <div>
-            <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
-              <CheckSquare className="w-3.5 h-3.5 text-primary" /> Taches ({project.tasks.length})
-            </h2>
+        <div className="mb-4">
+          <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
+            <CheckSquare className="w-3.5 h-3.5 text-primary" /> Taches ({(project.tasks || []).length})
+          </h2>
+          <div className="flex gap-2 mb-2">
+            <Input
+              value={newTaskTitle}
+              onChange={(e) => setNewTaskTitle(e.target.value)}
+              placeholder="Ajouter une tache..."
+              className="bg-background border-border text-white text-[12px] h-8 flex-1"
+              onKeyDown={(e) => {
+                if (e.key === "Enter" && newTaskTitle.trim()) {
+                  handleAddTask();
+                }
+              }}
+            />
+            <Button
+              size="sm"
+              className="h-8 px-3 gap-1.5 shrink-0"
+              disabled={!newTaskTitle.trim() || createTaskMut.isPending}
+              onClick={handleAddTask}
+            >
+              <Plus className="w-3 h-3" />
+              Ajouter
+            </Button>
+          </div>
+          {(project.tasks || []).length > 0 ? (
             <div className="space-y-1">
               {project.tasks.map((task: any) => (
                 <div
@@ -278,8 +416,14 @@ function ProjectDetailView({
                 </div>
               ))}
             </div>
-          </div>
-        )}
+          ) : (
+            <p className="text-[11px] text-[#8b9cb3]/60 italic">Aucune tache pour le moment.</p>
+          )}
+        </div>
+
+        <div className="mb-4">
+          <ProjectNotes projectId={projectId} />
+        </div>
 
         {(project.emails || []).length === 0 &&
           (project.tasks || []).length === 0 && (

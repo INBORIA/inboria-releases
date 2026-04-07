@@ -50,6 +50,19 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
+    const emailIds = (emails || []).map((e: any) => e.id);
+    let taskCountMap: Record<number, number> = {};
+    if (emailIds.length > 0) {
+      const { data: taskRows } = await supabaseAdmin
+        .from("tasks")
+        .select("email_id")
+        .in("email_id", emailIds)
+        .eq("user_id", req.userId!);
+      (taskRows || []).forEach((t: any) => {
+        taskCountMap[t.email_id] = (taskCountMap[t.email_id] || 0) + 1;
+      });
+    }
+
     res.json((emails || []).map((e: any) => {
       const s = parseSender(e.sender || "");
       return {
@@ -68,6 +81,7 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
         projectReference: e.projects?.reference || null,
         assignedTo: e.assigned_to || null,
         assignedAt: e.assigned_at || null,
+        taskCount: taskCountMap[e.id] || 0,
         createdAt: e.created_at,
       };
     }));
