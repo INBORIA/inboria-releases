@@ -134,7 +134,7 @@ function ProjectNotes({ projectId }: { projectId: string }) {
     );
   };
 
-  const handleDeleteNote = (noteId: number) => {
+  const handleDeleteNote = (noteId: string) => {
     deleteNote.mutate(
       { projectId, noteId },
       {

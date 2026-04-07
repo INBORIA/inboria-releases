@@ -6818,13 +6818,13 @@ export const useCreateProjectNote = <
   return useMutation(getCreateProjectNoteMutationOptions(options));
 };
 
-export const getDeleteProjectNoteUrl = (projectId: string, noteId: number) => {
+export const getDeleteProjectNoteUrl = (projectId: string, noteId: string) => {
   return `/api/projects/${projectId}/notes/${noteId}`;
 };
 
 export const deleteProjectNote = async (
   projectId: string,
-  noteId: number,
+  noteId: string,
   options?: RequestInit,
 ): Promise<DeleteProjectNote200> => {
   return customFetch<DeleteProjectNote200>(getDeleteProjectNoteUrl(projectId, noteId), {
@@ -6840,14 +6840,14 @@ export const getDeleteProjectNoteMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof deleteProjectNote>>,
     TError,
-    { projectId: string; noteId: number },
+    { projectId: string; noteId: string },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof deleteProjectNote>>,
   TError,
-  { projectId: string; noteId: number },
+  { projectId: string; noteId: string },
   TContext
 > => {
   const mutationKey = ["deleteProjectNote"];
@@ -6861,7 +6861,7 @@ export const getDeleteProjectNoteMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof deleteProjectNote>>,
-    { projectId: string; noteId: number }
+    { projectId: string; noteId: string }
   > = (props) => {
     const { projectId, noteId } = props ?? {};
     return deleteProjectNote(projectId, noteId, requestOptions);
@@ -6877,14 +6877,14 @@ export const useDeleteProjectNote = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof deleteProjectNote>>,
     TError,
-    { projectId: string; noteId: number },
+    { projectId: string; noteId: string },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof deleteProjectNote>>,
   TError,
-  { projectId: string; noteId: number },
+  { projectId: string; noteId: string },
   TContext
 > => {
   return useMutation(getDeleteProjectNoteMutationOptions(options));

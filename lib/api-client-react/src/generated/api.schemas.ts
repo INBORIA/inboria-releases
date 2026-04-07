@@ -234,7 +234,7 @@ export interface CreateTaskBody {
 }
 
 export interface ProjectNote {
-  id: number;
+  id: string;
   content: string;
   createdAt: string;
   updatedAt: string;

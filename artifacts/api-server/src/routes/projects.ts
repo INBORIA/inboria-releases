@@ -312,7 +312,7 @@ router.post("/projects/:id/notes", requireAuth, async (req, res): Promise<void> 
     const { data: note, error } = await supabaseAdmin
       .from("project_notes")
       .insert({
-        project_id: parseInt(req.params.id),
+        project_id: req.params.id,
         user_id: req.userId!,
         content: content.trim(),
       })
