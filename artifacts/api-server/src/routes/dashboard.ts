@@ -87,13 +87,27 @@ router.get("/dashboard/category-counts", requireAuth, async (req, res): Promise<
   try {
     const { data: categories } = await supabaseAdmin
       .from("categories")
-      .select("id, name, emails(count)")
+      .select("id, name")
       .eq("user_id", req.userId!);
+
+    const { data: emails } = await supabaseAdmin
+      .from("emails")
+      .select("category_id")
+      .eq("user_id", req.userId!)
+      .is("shared_mailbox_id", null)
+      .neq("status", "archived");
+
+    const countMap: Record<number, number> = {};
+    (emails || []).forEach((e: any) => {
+      if (e.category_id) {
+        countMap[e.category_id] = (countMap[e.category_id] || 0) + 1;
+      }
+    });
 
     res.json((categories || []).map((c: any) => ({
       categoryId: c.id,
       categoryName: c.name,
-      count: c.emails?.[0]?.count || 0,
+      count: countMap[c.id] || 0,
     })));
   } catch {
     res.status(500).json({ error: "Failed to get category counts" });

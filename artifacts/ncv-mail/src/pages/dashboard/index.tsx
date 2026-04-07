@@ -567,8 +567,8 @@ export default function Dashboard() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   const [filterCategory, setFilterCategory] = useState<string>("all");
-  const activeEmails = emails
-    ?.filter((e) => e.status !== "archived")
+  const allActiveEmails = emails?.filter((e) => e.status !== "archived");
+  const activeEmails = allActiveEmails
     ?.filter((e) => filterCategory === "all" || e.categoryName === filterCategory)
     ?.sort((a, b) => {
       const pOrder: Record<string, number> = { urgent: 0, moyen: 1, faible: 2 };
@@ -1388,7 +1388,7 @@ export default function Dashboard() {
                     >
                       <span className="text-[11px]">Toutes</span>
                       <span className="text-[10px] bg-white/[0.06] px-1.5 py-0.5 rounded">
-                        {activeEmails?.length || 0}
+                        {allActiveEmails?.length || 0}
                       </span>
                     </div>
                     {categoryCounts?.map((cat) => (
