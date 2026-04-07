@@ -310,6 +310,16 @@ export default function Classement() {
           });
           toast({ title: "Catégorie supprimée" });
         },
+        onError: () => {
+          queryClient.invalidateQueries({
+            queryKey: getListCategoriesQueryKey(),
+          });
+          toast({
+            title: "Erreur",
+            description: "Impossible de supprimer cette catégorie",
+            variant: "destructive",
+          });
+        },
       }
     );
   };

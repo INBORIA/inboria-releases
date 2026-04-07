@@ -112,14 +112,37 @@ router.patch("/categories/:id", requireAuth, async (req, res): Promise<void> => 
 
 router.delete("/categories/:id", requireAuth, async (req, res): Promise<void> => {
   try {
+    const catId = parseInt(req.params.id, 10);
+    if (isNaN(catId)) {
+      res.status(400).json({ error: "ID invalide" });
+      return;
+    }
+
+    const { data: existing } = await supabaseAdmin
+      .from("categories")
+      .select("id")
+      .eq("id", catId)
+      .eq("user_id", req.userId!)
+      .maybeSingle();
+
+    if (!existing) {
+      res.status(404).json({ error: "Catégorie introuvable" });
+      return;
+    }
+
+    await supabaseAdmin
+      .from("emails")
+      .update({ category_id: null })
+      .eq("category_id", catId);
+
     const { error } = await supabaseAdmin
       .from("categories")
       .delete()
-      .eq("id", req.params.id)
+      .eq("id", catId)
       .eq("user_id", req.userId!);
 
     if (error) {
-      res.status(404).json({ error: "Category not found" });
+      res.status(500).json({ error: "Impossible de supprimer cette catégorie: " + error.message });
       return;
     }
 
