@@ -730,7 +730,14 @@ export default function Dashboard() {
       { data: { title, emailId, projectId: projectId || null } },
       {
         onSuccess: () => {
-          invalidateAll();
+          if (projectId) {
+            updateEmail.mutate(
+              { id: emailId, data: { projectId } },
+              { onSuccess: () => invalidateAll() }
+            );
+          } else {
+            invalidateAll();
+          }
           queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
           toast({ title: "Tache creee", description: "La tache a ete ajoutee depuis cet email." });
         },

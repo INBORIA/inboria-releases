@@ -102,7 +102,7 @@ export default function Taches() {
                 <div className="mt-0.5">
                   <Checkbox 
                     checked={task.done} 
-                    onCheckedChange={() => handleToggleTask(String(task.id), task.done)}
+                    onCheckedChange={() => handleToggleTask(task.id, task.done)}
                     className="w-4 h-4 border-[#8b9cb3]/40 data-[state=checked]:bg-emerald-500 data-[state=checked]:border-emerald-500"
                   />
                 </div>
@@ -158,7 +158,7 @@ export default function Taches() {
                     </Badge>
                   )}
                   <button
-                    onClick={() => handleDeleteTask(String(task.id))}
+                    onClick={() => handleDeleteTask(task.id)}
                     className="p-1.5 rounded-md text-[#8b9cb3] hover:text-red-400 hover:bg-red-500/10 transition-colors"
                     title="Supprimer"
                   >

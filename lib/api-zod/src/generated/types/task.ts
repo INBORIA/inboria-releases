@@ -7,7 +7,7 @@
  */
 
 export interface Task {
-  id: number;
+  id: string;
   title: string;
   done: boolean;
   /** @nullable */
