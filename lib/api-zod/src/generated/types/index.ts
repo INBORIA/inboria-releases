@@ -7,6 +7,7 @@
  */
 
 export * from "./acceptInvitation200";
+export * from "./addCommentBody";
 export * from "./addSharedMailboxMember200";
 export * from "./addSharedMailboxMemberBody";
 export * from "./authResponse";
@@ -30,12 +31,14 @@ export * from "./dailySummaryRequest";
 export * from "./dailySummaryStats";
 export * from "./dashboardSummary";
 export * from "./deleteEmail200";
+export * from "./deleteEmailComment200";
 export * from "./deleteIntegration200";
 export * from "./deleteProject200";
 export * from "./deleteSharedMailbox200";
 export * from "./deleteTask200";
 export * from "./draftResponse";
 export * from "./email";
+export * from "./emailComment";
 export * from "./generateDraftBody";
 export * from "./getInvitationByToken200";
 export * from "./getSharedMailboxEmailsFilter";
@@ -83,6 +86,7 @@ export * from "./triageResult";
 export * from "./unclaimSharedEmail200";
 export * from "./updateCategoryBody";
 export * from "./updateEmailBody";
+export * from "./updateEmailComment200";
 export * from "./updateIntegrationBody";
 export * from "./updateMemberRole200";
 export * from "./updateMemberRoleBody";

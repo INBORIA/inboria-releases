@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
+import { EmailComments } from "@/components/email-comments";
 import {
   useListEmails,
   useGetCategoryCounts,
@@ -132,7 +133,7 @@ const triageSchema = z.object({
   body: z.string().min(1, "Contenu requis"),
 });
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string }) {
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyTo, setReplyTo] = useState("");
   const [replySubject, setReplySubject] = useState("");
@@ -302,6 +303,8 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 </div>
               </div>
             </div>
+
+            <EmailComments emailId={email.id} currentUserId={currentUserId} />
 
             {replyOpen && (
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
@@ -673,6 +676,7 @@ export default function Dashboard() {
             categories={categoryCounts || []}
             projects={projects || []}
             userSignature={(profile as any)?.signature || ""}
+            currentUserId={(profile as any)?.id}
           />
         </div>
       </DashboardLayout>

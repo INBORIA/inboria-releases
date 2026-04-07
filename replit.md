@@ -56,6 +56,13 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - API routes: CRUD shared mailboxes, add/remove members, list emails, claim/unclaim emails.
     - Dashboard page at `/dashboard/boites-partagees` with mailbox cards, member management, email list with claim/unclaim.
     - Admins can create/delete mailboxes and manage members. All members can view emails and claim/unclaim.
+- **Internal Comments (Phase 3)**:
+    - Table: `email_comments` (linked to emails, with user_id author).
+    - SQL setup: `attached_assets/sql_email_comments.sql` (must be run in Supabase dashboard).
+    - API routes: GET/POST /emails/:id/comments, PUT/DELETE /emails/:id/comments/:commentId.
+    - Reusable `EmailComments` component (`src/components/email-comments.tsx`) integrated in email detail view.
+    - Access control: own emails + shared mailbox emails + same-org emails.
+    - Users can add, edit, delete their own notes. Ctrl+Enter shortcut to send.
 
 ## External Dependencies
 

@@ -968,6 +968,63 @@ export const UnclaimSharedEmailResponse = zod.object({
 });
 
 /**
+ * @summary List comments on an email
+ */
+export const GetEmailCommentsParams = zod.object({
+  emailId: zod.coerce.number(),
+});
+
+export const GetEmailCommentsResponseItem = zod.object({
+  id: zod.string(),
+  emailId: zod.number(),
+  userId: zod.string(),
+  authorName: zod.string().optional(),
+  body: zod.string(),
+  createdAt: zod.coerce.date().optional(),
+  updatedAt: zod.coerce.date().optional(),
+});
+export const GetEmailCommentsResponse = zod.array(GetEmailCommentsResponseItem);
+
+/**
+ * @summary Add a comment to an email
+ */
+export const AddEmailCommentParams = zod.object({
+  emailId: zod.coerce.number(),
+});
+
+export const AddEmailCommentBody = zod.object({
+  body: zod.string(),
+});
+
+/**
+ * @summary Edit your own comment
+ */
+export const UpdateEmailCommentParams = zod.object({
+  emailId: zod.coerce.number(),
+  commentId: zod.coerce.string(),
+});
+
+export const UpdateEmailCommentBody = zod.object({
+  body: zod.string(),
+});
+
+export const UpdateEmailCommentResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Delete your own comment
+ */
+export const DeleteEmailCommentParams = zod.object({
+  emailId: zod.coerce.number(),
+  commentId: zod.coerce.string(),
+});
+
+export const DeleteEmailCommentResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
  * @summary AI triage a single email
  */
 export const TriageEmailBody = zod.object({

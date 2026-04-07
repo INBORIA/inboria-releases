@@ -1255,6 +1255,108 @@ paths:
                   success:
                     type: boolean
 
+  /emails/{emailId}/comments:
+    get:
+      operationId: getEmailComments
+      tags: [emails]
+      summary: List comments on an email
+      parameters:
+        - name: emailId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of comments
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmailComment"
+    post:
+      operationId: addEmailComment
+      tags: [emails]
+      summary: Add a comment to an email
+      parameters:
+        - name: emailId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddCommentBody"
+      responses:
+        "201":
+          description: Comment created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmailComment"
+
+  /emails/{emailId}/comments/{commentId}:
+    put:
+      operationId: updateEmailComment
+      tags: [emails]
+      summary: Edit your own comment
+      parameters:
+        - name: emailId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AddCommentBody"
+      responses:
+        "200":
+          description: Comment updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+    delete:
+      operationId: deleteEmailComment
+      tags: [emails]
+      summary: Delete your own comment
+      parameters:
+        - name: emailId
+          in: path
+          required: true
+          schema:
+            type: integer
+        - name: commentId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Comment deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
   /ai/triage:
     post:
       operationId: triageEmail
@@ -2101,3 +2203,36 @@ components:
         - id
         - sender
         - subject
+
+    EmailComment:
+      type: object
+      properties:
+        id:
+          type: string
+        emailId:
+          type: integer
+        userId:
+          type: string
+        authorName:
+          type: string
+        body:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - emailId
+        - userId
+        - body
+
+    AddCommentBody:
+      type: object
+      properties:
+        body:
+          type: string
+      required:
+        - body

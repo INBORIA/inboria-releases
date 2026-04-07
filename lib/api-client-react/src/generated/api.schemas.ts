@@ -504,6 +504,20 @@ export interface SharedMailboxEmail {
   createdAt?: string;
 }
 
+export interface EmailComment {
+  id: string;
+  emailId: number;
+  userId: string;
+  authorName?: string;
+  body: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface AddCommentBody {
+  body: string;
+}
+
 export type RegisterPushToken200 = {
   success?: boolean;
 };
@@ -657,5 +671,13 @@ export type ClaimSharedEmail200 = {
 };
 
 export type UnclaimSharedEmail200 = {
+  success?: boolean;
+};
+
+export type UpdateEmailComment200 = {
+  success?: boolean;
+};
+
+export type DeleteEmailComment200 = {
   success?: boolean;
 };

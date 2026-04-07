@@ -18,6 +18,7 @@ import type {
 
 import type {
   AcceptInvitation200,
+  AddCommentBody,
   AddSharedMailboxMember200,
   AddSharedMailboxMemberBody,
   AuthResponse,
@@ -37,12 +38,14 @@ import type {
   DailySummaryRequest,
   DashboardSummary,
   DeleteEmail200,
+  DeleteEmailComment200,
   DeleteIntegration200,
   DeleteProject200,
   DeleteSharedMailbox200,
   DeleteTask200,
   DraftResponse,
   Email,
+  EmailComment,
   GenerateDraftBody,
   GetInvitationByToken200,
   GetSharedMailboxEmailsParams,
@@ -79,6 +82,7 @@ import type {
   UnclaimSharedEmail200,
   UpdateCategoryBody,
   UpdateEmailBody,
+  UpdateEmailComment200,
   UpdateIntegrationBody,
   UpdateMemberRole200,
   UpdateMemberRoleBody,
@@ -5131,6 +5135,366 @@ export const useUnclaimSharedEmail = <
   TContext
 > => {
   return useMutation(getUnclaimSharedEmailMutationOptions(options));
+};
+
+/**
+ * @summary List comments on an email
+ */
+export const getGetEmailCommentsUrl = (emailId: number) => {
+  return `/api/emails/${emailId}/comments`;
+};
+
+export const getEmailComments = async (
+  emailId: number,
+  options?: RequestInit,
+): Promise<EmailComment[]> => {
+  return customFetch<EmailComment[]>(getGetEmailCommentsUrl(emailId), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetEmailCommentsQueryKey = (emailId: number) => {
+  return [`/api/emails/${emailId}/comments`] as const;
+};
+
+export const getGetEmailCommentsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getEmailComments>>,
+  TError = ErrorType<unknown>,
+>(
+  emailId: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getEmailComments>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetEmailCommentsQueryKey(emailId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getEmailComments>>
+  > = ({ signal }) => getEmailComments(emailId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!emailId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getEmailComments>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetEmailCommentsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getEmailComments>>
+>;
+export type GetEmailCommentsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List comments on an email
+ */
+
+export function useGetEmailComments<
+  TData = Awaited<ReturnType<typeof getEmailComments>>,
+  TError = ErrorType<unknown>,
+>(
+  emailId: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getEmailComments>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetEmailCommentsQueryOptions(emailId, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Add a comment to an email
+ */
+export const getAddEmailCommentUrl = (emailId: number) => {
+  return `/api/emails/${emailId}/comments`;
+};
+
+export const addEmailComment = async (
+  emailId: number,
+  addCommentBody: AddCommentBody,
+  options?: RequestInit,
+): Promise<EmailComment> => {
+  return customFetch<EmailComment>(getAddEmailCommentUrl(emailId), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(addCommentBody),
+  });
+};
+
+export const getAddEmailCommentMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addEmailComment>>,
+    TError,
+    { emailId: number; data: BodyType<AddCommentBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof addEmailComment>>,
+  TError,
+  { emailId: number; data: BodyType<AddCommentBody> },
+  TContext
+> => {
+  const mutationKey = ["addEmailComment"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof addEmailComment>>,
+    { emailId: number; data: BodyType<AddCommentBody> }
+  > = (props) => {
+    const { emailId, data } = props ?? {};
+
+    return addEmailComment(emailId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AddEmailCommentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof addEmailComment>>
+>;
+export type AddEmailCommentMutationBody = BodyType<AddCommentBody>;
+export type AddEmailCommentMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Add a comment to an email
+ */
+export const useAddEmailComment = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof addEmailComment>>,
+    TError,
+    { emailId: number; data: BodyType<AddCommentBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof addEmailComment>>,
+  TError,
+  { emailId: number; data: BodyType<AddCommentBody> },
+  TContext
+> => {
+  return useMutation(getAddEmailCommentMutationOptions(options));
+};
+
+/**
+ * @summary Edit your own comment
+ */
+export const getUpdateEmailCommentUrl = (
+  emailId: number,
+  commentId: string,
+) => {
+  return `/api/emails/${emailId}/comments/${commentId}`;
+};
+
+export const updateEmailComment = async (
+  emailId: number,
+  commentId: string,
+  addCommentBody: AddCommentBody,
+  options?: RequestInit,
+): Promise<UpdateEmailComment200> => {
+  return customFetch<UpdateEmailComment200>(
+    getUpdateEmailCommentUrl(emailId, commentId),
+    {
+      ...options,
+      method: "PUT",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(addCommentBody),
+    },
+  );
+};
+
+export const getUpdateEmailCommentMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateEmailComment>>,
+    TError,
+    { emailId: number; commentId: string; data: BodyType<AddCommentBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateEmailComment>>,
+  TError,
+  { emailId: number; commentId: string; data: BodyType<AddCommentBody> },
+  TContext
+> => {
+  const mutationKey = ["updateEmailComment"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateEmailComment>>,
+    { emailId: number; commentId: string; data: BodyType<AddCommentBody> }
+  > = (props) => {
+    const { emailId, commentId, data } = props ?? {};
+
+    return updateEmailComment(emailId, commentId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateEmailCommentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateEmailComment>>
+>;
+export type UpdateEmailCommentMutationBody = BodyType<AddCommentBody>;
+export type UpdateEmailCommentMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Edit your own comment
+ */
+export const useUpdateEmailComment = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateEmailComment>>,
+    TError,
+    { emailId: number; commentId: string; data: BodyType<AddCommentBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateEmailComment>>,
+  TError,
+  { emailId: number; commentId: string; data: BodyType<AddCommentBody> },
+  TContext
+> => {
+  return useMutation(getUpdateEmailCommentMutationOptions(options));
+};
+
+/**
+ * @summary Delete your own comment
+ */
+export const getDeleteEmailCommentUrl = (
+  emailId: number,
+  commentId: string,
+) => {
+  return `/api/emails/${emailId}/comments/${commentId}`;
+};
+
+export const deleteEmailComment = async (
+  emailId: number,
+  commentId: string,
+  options?: RequestInit,
+): Promise<DeleteEmailComment200> => {
+  return customFetch<DeleteEmailComment200>(
+    getDeleteEmailCommentUrl(emailId, commentId),
+    {
+      ...options,
+      method: "DELETE",
+    },
+  );
+};
+
+export const getDeleteEmailCommentMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteEmailComment>>,
+    TError,
+    { emailId: number; commentId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteEmailComment>>,
+  TError,
+  { emailId: number; commentId: string },
+  TContext
+> => {
+  const mutationKey = ["deleteEmailComment"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteEmailComment>>,
+    { emailId: number; commentId: string }
+  > = (props) => {
+    const { emailId, commentId } = props ?? {};
+
+    return deleteEmailComment(emailId, commentId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteEmailCommentMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteEmailComment>>
+>;
+
+export type DeleteEmailCommentMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete your own comment
+ */
+export const useDeleteEmailComment = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteEmailComment>>,
+    TError,
+    { emailId: number; commentId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteEmailComment>>,
+  TError,
+  { emailId: number; commentId: string },
+  TContext
+> => {
+  return useMutation(getDeleteEmailCommentMutationOptions(options));
 };
 
 /**

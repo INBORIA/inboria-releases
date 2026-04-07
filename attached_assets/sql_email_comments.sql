@@ -1,0 +1,15 @@
+DROP POLICY IF EXISTS "comments_select" ON public.email_comments;
+DROP POLICY IF EXISTS "comments_insert" ON public.email_comments;
+DROP POLICY IF EXISTS "comments_update" ON public.email_comments;
+DROP POLICY IF EXISTS "comments_delete" ON public.email_comments;
+DROP INDEX IF EXISTS idx_email_comments_email;
+DROP INDEX IF EXISTS idx_email_comments_user;
+DROP TABLE IF EXISTS public.email_comments;
+CREATE TABLE public.email_comments (id uuid DEFAULT gen_random_uuid() PRIMARY KEY, email_id integer NOT NULL, user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE, body text NOT NULL, created_at timestamptz DEFAULT now(), updated_at timestamptz DEFAULT now());
+ALTER TABLE public.email_comments ENABLE ROW LEVEL SECURITY;
+CREATE POLICY "comments_select" ON public.email_comments FOR SELECT USING (user_id = auth.uid() OR email_id IN (SELECT e.id FROM public.emails AS e WHERE e.shared_mailbox_id IN (SELECT sm.shared_mailbox_id FROM public.shared_mailbox_members AS sm WHERE sm.user_id = auth.uid())) OR email_id IN (SELECT e.id FROM public.emails AS e WHERE e.user_id = auth.uid()));
+CREATE POLICY "comments_insert" ON public.email_comments FOR INSERT WITH CHECK (user_id = auth.uid());
+CREATE POLICY "comments_update" ON public.email_comments FOR UPDATE USING (user_id = auth.uid());
+CREATE POLICY "comments_delete" ON public.email_comments FOR DELETE USING (user_id = auth.uid());
+CREATE INDEX idx_email_comments_email ON public.email_comments(email_id);
+CREATE INDEX idx_email_comments_user ON public.email_comments(user_id);
