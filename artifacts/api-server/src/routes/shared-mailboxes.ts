@@ -33,11 +33,34 @@ router.get("/shared-mailboxes", requireAuth, async (req, res): Promise<void> => 
       return;
     }
 
-    const { data: mailboxes } = await supabaseAdmin
-      .from("shared_mailboxes")
-      .select("id, name, email_address, connection_id, created_at")
-      .eq("organisation_id", orgId)
-      .order("created_at", { ascending: true });
+    const isAdmin = !!(await getOrgIdForAdmin(req.userId!));
+
+    let mailboxes: any[] | null;
+    if (isAdmin) {
+      const result = await supabaseAdmin
+        .from("shared_mailboxes")
+        .select("id, name, email_address, connection_id, created_at")
+        .eq("organisation_id", orgId)
+        .order("created_at", { ascending: true });
+      mailboxes = result.data;
+    } else {
+      const { data: memberEntries } = await supabaseAdmin
+        .from("shared_mailbox_members")
+        .select("shared_mailbox_id")
+        .eq("user_id", req.userId!);
+      const memberMailboxIds = (memberEntries || []).map((m: any) => m.shared_mailbox_id);
+      if (memberMailboxIds.length === 0) {
+        res.json([]);
+        return;
+      }
+      const result = await supabaseAdmin
+        .from("shared_mailboxes")
+        .select("id, name, email_address, connection_id, created_at")
+        .eq("organisation_id", orgId)
+        .in("id", memberMailboxIds)
+        .order("created_at", { ascending: true });
+      mailboxes = result.data;
+    }
 
     if (!mailboxes || mailboxes.length === 0) {
       res.json([]);
