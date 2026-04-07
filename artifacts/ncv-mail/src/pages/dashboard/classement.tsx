@@ -647,9 +647,8 @@ export default function Classement() {
                       const Icon = pack.icon;
                       const newCount = getNewCategoriesCount(pack);
                       return (
-                        <button
+                        <div
                           key={pack.id}
-                          onClick={() => handleSelectPack(pack)}
                           className="flex flex-col items-start gap-2 p-3 rounded-lg border border-border bg-background hover:border-primary/40 hover:bg-primary/[0.04] transition-all text-left group"
                         >
                           <div className="flex items-center gap-2 w-full">
@@ -670,7 +669,16 @@ export default function Classement() {
                               </p>
                             </div>
                           </div>
-                        </button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="w-full text-[11px] h-7 border-primary/30 text-primary hover:bg-primary/10 mt-1"
+                            onClick={() => handleSelectPack(pack)}
+                          >
+                            <Plus className="w-3 h-3 mr-1" />
+                            Appliquer
+                          </Button>
+                        </div>
                       );
                     })}
                   </div>
