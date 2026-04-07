@@ -76,7 +76,7 @@ router.post("/auth/setup-profile", async (req, res): Promise<void> => {
       return;
     }
 
-    await supabaseAdmin.from("profiles").upsert({
+    const { error } = await supabaseAdmin.from("profiles").upsert({
       id: userId,
       full_name: fullName || "",
       country: country.toUpperCase(),
@@ -85,6 +85,12 @@ router.post("/auth/setup-profile", async (req, res): Promise<void> => {
       emails_used: 0,
       emails_quota: 100,
     });
+
+    if (error) {
+      console.error("Profile upsert error:", error.message, error.details, error.code);
+      res.status(500).json({ error: "Erreur lors de la creation du profil: " + error.message });
+      return;
+    }
 
     res.status(201).json({ ok: true });
   } catch (err) {
