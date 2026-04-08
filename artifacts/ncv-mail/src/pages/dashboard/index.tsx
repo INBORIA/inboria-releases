@@ -851,8 +851,9 @@ export default function Dashboard() {
           invalidateAll();
           toast({ title: "Email envoyé" });
         },
-        onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible d'envoyer l'email." });
+        onError: (err: any) => {
+          const msg = err?.data?.error || err?.message || "Impossible d'envoyer l'email.";
+          toast({ variant: "destructive", title: "Erreur", description: msg });
         },
       }
     );
@@ -871,8 +872,9 @@ export default function Dashboard() {
           setComposeBody("");
           toast({ title: "Email envoyé" });
         },
-        onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible d'envoyer l'email." });
+        onError: (err: any) => {
+          const msg = err?.data?.error || err?.message || "Impossible d'envoyer l'email.";
+          toast({ variant: "destructive", title: "Erreur", description: msg });
         },
       }
     );

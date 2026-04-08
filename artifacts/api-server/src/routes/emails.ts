@@ -266,6 +266,12 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(to.trim())) {
+      res.status(400).json({ error: "Adresse email destinataire invalide. Vérifiez le format (ex: nom@domaine.com)" });
+      return;
+    }
+
     const { data: connections } = await supabaseAdmin
       .from("email_connections")
       .select("*")
