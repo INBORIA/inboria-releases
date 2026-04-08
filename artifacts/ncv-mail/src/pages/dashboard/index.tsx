@@ -37,7 +37,7 @@ import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, Eye, CalendarDays } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, Eye, CalendarDays, Download } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
@@ -328,6 +328,23 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 >
                   <Eye className="w-3 h-3" />
                   Suivre
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                  onClick={async () => {
+                    try {
+                      const { downloadExport } = await import("@/lib/export-utils");
+                      await downloadExport(`export/emails?id=${email.id}`, `email_${email.id}.csv`);
+                      toast({ title: "Email exporté" });
+                    } catch {
+                      toast({ title: "Erreur lors de l'export", variant: "destructive" });
+                    }
+                  }}
+                >
+                  <Download className="w-3 h-3" />
+                  Exporter
                 </Button>
               </div>
               <div className="flex items-center gap-2.5 flex-wrap">

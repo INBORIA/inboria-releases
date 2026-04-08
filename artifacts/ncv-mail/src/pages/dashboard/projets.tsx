@@ -294,14 +294,33 @@ function ProjectDetailView({
   return (
     <DashboardLayout>
       <div className="p-5 max-w-5xl mx-auto w-full">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onBack}
-          className="text-[#8b9cb3] hover:text-white mb-3 gap-1.5 h-7 text-[12px]"
-        >
-          <ArrowLeft className="w-3.5 h-3.5" /> Retour aux projets
-        </Button>
+        <div className="flex items-center justify-between mb-3">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onBack}
+            className="text-[#8b9cb3] hover:text-white gap-1.5 h-7 text-[12px]"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" /> Retour aux projets
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={async () => {
+              try {
+                const { downloadExport } = await import("@/lib/export-utils");
+                await downloadExport(`export/projects?id=${projectId}`, `projet_${project.reference || projectId}.csv`);
+                toast({ title: "Projet exporté" });
+              } catch {
+                toast({ title: "Erreur lors de l'export", variant: "destructive" });
+              }
+            }}
+            className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
+          >
+            <Download className="w-3 h-3" />
+            Exporter
+          </Button>
+        </div>
 
         <div className="flex items-start gap-3 mb-5">
           <div
@@ -624,7 +643,10 @@ export default function Projets() {
                 try {
                   const { downloadExport } = await import("@/lib/export-utils");
                   await downloadExport("export/projects", `projets_${new Date().toISOString().split("T")[0]}.csv`);
-                } catch {}
+                  toast({ title: "Projets exportés" });
+                } catch {
+                  toast({ title: "Erreur lors de l'export", variant: "destructive" });
+                }
               }}
               className="gap-1 text-[11px] h-8 bg-transparent border-border text-[#8b9cb3] hover:text-white"
             >

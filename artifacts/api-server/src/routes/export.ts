@@ -88,11 +88,18 @@ router.get("/export/emails", requireAuth, async (req, res): Promise<void> => {
 
 router.get("/export/projects", requireAuth, async (req, res): Promise<void> => {
   try {
-    const { data: projects, error } = await supabaseAdmin
+    const projectId = req.query.id as string | undefined;
+    let projectQuery = supabaseAdmin
       .from("projects")
       .select("id, name, reference, description, status, color, created_at")
       .eq("user_id", req.userId!)
       .order("created_at", { ascending: false });
+
+    if (projectId) {
+      projectQuery = projectQuery.eq("id", projectId);
+    }
+
+    const { data: projects, error } = await projectQuery;
 
     if (error) { res.status(500).json({ error: error.message }); return; }
 
@@ -134,11 +141,18 @@ router.get("/export/projects", requireAuth, async (req, res): Promise<void> => {
 
 router.get("/export/followups", requireAuth, async (req, res): Promise<void> => {
   try {
-    const { data, error } = await supabaseAdmin
+    const followupId = req.query.id as string | undefined;
+    let query = supabaseAdmin
       .from("followups")
       .select("*, emails(sender, subject), projects(name, reference)")
       .eq("user_id", req.userId!)
       .order("created_at", { ascending: false });
+
+    if (followupId) {
+      query = query.eq("id", followupId);
+    }
+
+    const { data, error } = await query;
 
     if (error) { res.status(500).json({ error: error.message }); return; }
 
@@ -171,11 +185,18 @@ router.get("/export/followups", requireAuth, async (req, res): Promise<void> => 
 
 router.get("/export/tasks", requireAuth, async (req, res): Promise<void> => {
   try {
-    const { data, error } = await supabaseAdmin
+    const taskId = req.query.id as string | undefined;
+    let query = supabaseAdmin
       .from("tasks")
       .select("*, emails(sender, subject), projects(name, reference)")
       .eq("user_id", req.userId!)
       .order("created_at", { ascending: false });
+
+    if (taskId) {
+      query = query.eq("id", taskId);
+    }
+
+    const { data, error } = await query;
 
     if (error) { res.status(500).json({ error: error.message }); return; }
 

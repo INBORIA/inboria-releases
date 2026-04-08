@@ -176,6 +176,21 @@ export default function Taches() {
                     </Badge>
                   )}
                   <button
+                    onClick={async () => {
+                      try {
+                        const { downloadExport } = await import("@/lib/export-utils");
+                        await downloadExport(`export/tasks?id=${task.id}`, `tache_${task.id}.csv`);
+                        toast({ title: "Tâche exportée" });
+                      } catch {
+                        toast({ title: "Erreur lors de l'export", variant: "destructive" });
+                      }
+                    }}
+                    className="p-1.5 rounded-md text-[#8b9cb3] hover:text-primary hover:bg-primary/10 transition-colors"
+                    title="Exporter"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                  </button>
+                  <button
                     onClick={() => handleDeleteTask(task.id)}
                     className="p-1.5 rounded-md text-[#8b9cb3] hover:text-red-400 hover:bg-red-500/10 transition-colors"
                     title="Supprimer"

@@ -302,6 +302,25 @@ function ConversationView({
           {loadingSummary ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
           Résumé IA
         </Button>
+        {email && (
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={async () => {
+              try {
+                const { downloadExport } = await import("@/lib/export-utils");
+                await downloadExport(`export/emails?id=${email.id}`, `email_${email.id}.csv`);
+                toast({ title: "Email exporté" });
+              } catch {
+                toast({ title: "Erreur lors de l'export", variant: "destructive" });
+              }
+            }}
+            className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
+          >
+            <Download className="w-3 h-3" />
+            Exporter
+          </Button>
+        )}
       </div>
 
       {email && (

@@ -313,6 +313,7 @@ function FollowupRow({
 }) {
   const cfg = STATUS_CONFIG[f.status] || STATUS_CONFIG.en_attente;
   const StatusIcon = cfg.icon;
+  const { toast } = useToast();
 
   return (
     <div
@@ -359,6 +360,22 @@ function FollowupRow({
             <SelectItem value="termine" className="text-[11px]">Terminé</SelectItem>
           </SelectContent>
         </Select>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={async () => {
+            try {
+              await downloadExport(`export/followups?id=${f.id}`, `suivi_${f.id}.csv`);
+              toast({ title: "Suivi exporté" });
+            } catch {
+              toast({ title: "Erreur lors de l'export", variant: "destructive" });
+            }
+          }}
+          className="h-7 w-7 p-0 text-[#8b9cb3] hover:text-primary"
+          title="Exporter"
+        >
+          <Download className="w-3 h-3" />
+        </Button>
         <Button
           variant="ghost"
           size="sm"
