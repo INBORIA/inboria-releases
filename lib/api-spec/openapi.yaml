@@ -2157,8 +2157,6 @@ components:
           type: integer
         sender:
           type: string
-        senderEmail:
-          type: string
         recipient:
           type: ["string", "null"]
         subject:
@@ -2196,7 +2194,6 @@ components:
       required:
         - id
         - sender
-        - senderEmail
         - subject
         - body
         - status
@@ -3080,8 +3077,6 @@ components:
         id:
           type: string
         sender:
-          type: string
-        senderEmail:
           type: string
         subject:
           type: string

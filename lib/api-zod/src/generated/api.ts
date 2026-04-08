@@ -199,7 +199,6 @@ export const ListEmailsResponse = zod.object({
     zod.object({
       id: zod.number(),
       sender: zod.string(),
-      senderEmail: zod.string(),
       recipient: zod.string().nullish(),
       subject: zod.string(),
       body: zod.string(),
@@ -233,7 +232,6 @@ export const GetEmailParams = zod.object({
 export const GetEmailResponse = zod.object({
   id: zod.number(),
   sender: zod.string(),
-  senderEmail: zod.string(),
   recipient: zod.string().nullish(),
   subject: zod.string(),
   body: zod.string(),
@@ -268,7 +266,6 @@ export const UpdateEmailBody = zod.object({
 export const UpdateEmailResponse = zod.object({
   id: zod.number(),
   sender: zod.string(),
-  senderEmail: zod.string(),
   recipient: zod.string().nullish(),
   subject: zod.string(),
   body: zod.string(),
@@ -556,7 +553,6 @@ export const GetProjectResponse = zod.object({
     zod.object({
       id: zod.number(),
       sender: zod.string(),
-      senderEmail: zod.string(),
       recipient: zod.string().nullish(),
       subject: zod.string(),
       body: zod.string(),
@@ -744,7 +740,6 @@ export const GetEmailConversationResponse = zod.object({
     .object({
       id: zod.number(),
       sender: zod.string(),
-      senderEmail: zod.string(),
       recipient: zod.string().nullish(),
       subject: zod.string(),
       body: zod.string(),
@@ -769,7 +764,6 @@ export const GetEmailConversationResponse = zod.object({
         .object({
           id: zod.number(),
           sender: zod.string(),
-          senderEmail: zod.string(),
           recipient: zod.string().nullish(),
           subject: zod.string(),
           body: zod.string(),
@@ -1326,7 +1320,6 @@ export const GetSharedMailboxEmailsResponse = zod.object({
     zod.object({
       id: zod.string(),
       sender: zod.string(),
-      senderEmail: zod.string().optional(),
       subject: zod.string(),
       body: zod.string().optional(),
       status: zod.string().optional(),
@@ -1564,7 +1557,6 @@ export const UnassignEmailResponse = zod.object({
 export const GetAssignedToMeResponseItem = zod.object({
   id: zod.number(),
   sender: zod.string(),
-  senderEmail: zod.string(),
   recipient: zod.string().nullish(),
   subject: zod.string(),
   body: zod.string(),

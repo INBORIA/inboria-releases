@@ -9,7 +9,6 @@
 export interface Email {
   id: number;
   sender: string;
-  senderEmail: string;
   /** @nullable */
   recipient?: string | null;
   subject: string;

@@ -23,7 +23,7 @@ router.get("/export/emails", requireAuth, async (req, res): Promise<void> => {
     const status = req.query.status as string | undefined;
     let query = supabaseAdmin
       .from("emails")
-      .select("id, sender, sender_email, recipient, subject, body, summary, status, priority, created_at, categories(name), projects(name, reference)")
+      .select("id, sender, recipient, subject, body, summary, status, priority, created_at, categories(name), projects(name, reference)")
       .eq("user_id", req.userId!)
       .is("shared_mailbox_id", null)
       .order("created_at", { ascending: false })

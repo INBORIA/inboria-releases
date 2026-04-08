@@ -195,8 +195,8 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   </div>
                   <div>
                     <div className="text-[12px] font-medium text-white">{email.sender}</div>
-                    {email.senderEmail && (
-                      <div className="text-[10px] text-[#8b9cb3]">{email.senderEmail}</div>
+                    {email.sender && email.sender !== email.sender.split("@")[0] && (
+                      <div className="text-[10px] text-[#8b9cb3]">{email.sender}</div>
                     )}
                   </div>
                 </div>
@@ -228,7 +228,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   className="gap-1.5 h-7 text-[11px]"
                   onClick={() => {
                     if (!replyOpen) {
-                      setReplyTo(email.senderEmail || "");
+                      setReplyTo(email.sender || "");
                       setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
                       setReplyText(userSignature ? `\n\n${userSignature}` : "");
                     }
@@ -244,7 +244,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
                   disabled={isDrafting}
                   onClick={() => {
-                    setReplyTo(email.senderEmail || "");
+                    setReplyTo(email.sender || "");
                     setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
                     setReplyOpen(true);
                     onGenerateDraft(email.id, (draft) => {

@@ -11,7 +11,7 @@ router.get("/followups", requireAuth, async (req, res): Promise<void> => {
 
     let query = supabaseAdmin
       .from("followups")
-      .select("*, emails(id, sender, sender_email, subject, summary, status, priority, created_at, recipient, reply_to_email_id), projects(id, name, reference, color)")
+      .select("*, emails(id, sender, subject, summary, status, priority, created_at, recipient, reply_to_email_id), projects(id, name, reference, color)")
       .eq("user_id", req.userId!)
       .order("created_at", { ascending: false });
 

@@ -96,7 +96,6 @@ export interface RegisterPushTokenBody {
 export interface Email {
   id: number;
   sender: string;
-  senderEmail: string;
   /** @nullable */
   recipient?: string | null;
   subject: string;
@@ -640,7 +639,6 @@ export interface AddSharedMailboxMemberBody {
 export interface SharedMailboxEmail {
   id: string;
   sender: string;
-  senderEmail?: string;
   subject: string;
   body?: string;
   status?: string;

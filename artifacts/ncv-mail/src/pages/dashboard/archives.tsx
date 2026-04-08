@@ -96,8 +96,8 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
                   </div>
                   <div>
                     <div className="text-[12px] font-medium text-white">{email.sender}</div>
-                    {email.senderEmail && (
-                      <div className="text-[10px] text-[#8b9cb3]">{email.senderEmail}</div>
+                    {email.sender && (
+                      <div className="text-[10px] text-[#8b9cb3]">{email.sender}</div>
                     )}
                   </div>
                 </div>

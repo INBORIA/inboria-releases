@@ -9,7 +9,6 @@
 export interface SharedMailboxEmail {
   id: string;
   sender: string;
-  senderEmail?: string;
   subject: string;
   body?: string;
   status?: string;

@@ -401,10 +401,9 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       });
     }
 
-    const { data: sentEmail } = await supabaseAdmin.from("emails").insert({
+    const { data: sentEmail, error: insertError } = await supabaseAdmin.from("emails").insert({
       user_id: req.userId!,
       sender: fromAddress,
-      sender_email: fromAddress,
       recipient: to,
       subject,
       body,
@@ -413,6 +412,10 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       external_id: null,
       reply_to_email_id: replyToEmailId || null,
     }).select("id").single();
+
+    if (insertError) {
+      console.error("Failed to save sent email to DB:", insertError.message);
+    }
 
     res.json({ success: true, emailId: sentEmail?.id });
   } catch (err: any) {
