@@ -25,7 +25,7 @@ function isPdf(contentType: string): boolean {
   return contentType === "application/pdf";
 }
 
-export function AttachmentList({ attachments }: { attachments: Attachment[] }) {
+export function AttachmentList({ attachments, disableDownload }: { attachments: Attachment[]; disableDownload?: boolean }) {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewType, setPreviewType] = useState<string>("");
   const [downloading, setDownloading] = useState<string | null>(null);
@@ -87,39 +87,42 @@ export function AttachmentList({ attachments }: { attachments: Attachment[] }) {
           return (
             <div
               key={att.id}
-              className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs group cursor-pointer transition-colors"
+              className="flex items-center gap-2 rounded-lg px-3 py-2 text-xs group transition-colors"
               style={{
                 background: "#1a2332",
                 border: "1px solid #1f2937",
                 color: "#c9d1d9",
                 maxWidth: 240,
+                cursor: disableDownload ? "default" : "pointer",
               }}
-              onClick={() => downloadAttachment(att, canPreview)}
+              onClick={disableDownload ? undefined : () => downloadAttachment(att, canPreview)}
             >
               <Icon size={16} style={{ color: "#2d7dd2", flexShrink: 0 }} />
               <div className="flex-1 min-w-0">
                 <div className="truncate font-medium">{att.filename}</div>
                 <div style={{ color: "#8b9cb3" }}>{formatSize(att.size)}</div>
               </div>
-              <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                {canPreview && (
+              {!disableDownload && (
+                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  {canPreview && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); downloadAttachment(att, true); }}
+                      className="p-1 rounded hover:bg-white/10"
+                      title="Aperçu"
+                    >
+                      <Eye size={14} />
+                    </button>
+                  )}
                   <button
-                    onClick={(e) => { e.stopPropagation(); downloadAttachment(att, true); }}
+                    onClick={(e) => { e.stopPropagation(); downloadAttachment(att, false); }}
                     className="p-1 rounded hover:bg-white/10"
-                    title="Aperçu"
+                    title="Télécharger"
+                    disabled={isLoading}
                   >
-                    <Eye size={14} />
+                    <Download size={14} />
                   </button>
-                )}
-                <button
-                  onClick={(e) => { e.stopPropagation(); downloadAttachment(att, false); }}
-                  className="p-1 rounded hover:bg-white/10"
-                  title="Télécharger"
-                  disabled={isLoading}
-                >
-                  <Download size={14} />
-                </button>
-              </div>
+                </div>
+              )}
               {isLoading && (
                 <div className="animate-spin rounded-full h-3 w-3 border border-t-transparent" style={{ borderColor: "#2d7dd2", borderTopColor: "transparent" }} />
               )}

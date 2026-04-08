@@ -496,7 +496,7 @@ function ConversationView({
             <div className="text-[12px] text-[#8b9cb3] max-h-[300px] overflow-y-auto">
               <EmailBodyRenderer body={msg.body || ""} />
               {msg.attachments && msg.attachments.length > 0 && (
-                <AttachmentList attachments={msg.attachments} />
+                <AttachmentList attachments={msg.attachments} disableDownload={msg.role === "sent"} />
               )}
             </div>
           </div>
