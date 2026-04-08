@@ -16,7 +16,8 @@ import { fr } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import { Archive, Clock, ArrowLeft, Trash2, RotateCcw, ChevronRight, FolderOpen, Sparkles } from "lucide-react";
-import { useState } from "react";
+import { useState, useCallback, useEffect } from "react";
+import type { PaginatedEmails, Email } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
@@ -198,14 +199,39 @@ export default function Archives() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
 
-  const { data: allEmailsData, isLoading: emailsLoading } = useListEmails({ status: "archived", limit: 100 });
+  const [archivePage, setArchivePage] = useState(1);
+  const [accumulatedArchived, setAccumulatedArchived] = useState<Email[]>([]);
+
+  const { data: archiveData, isLoading: emailsLoading, isFetching: archiveFetching } = useListEmails({ status: "archived", limit: 50, page: archivePage });
   const { data: categories } = useListCategories();
   const { data: projects } = useListProjects();
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
 
-  const allEmails = (allEmailsData as any)?.emails || [];
-  const archivedEmails = allEmails || [];
+  const paged = archiveData as PaginatedEmails | undefined;
+  const archiveHasMore = archivePage < (paged?.totalPages || 0);
+
+  const loadMoreArchives = useCallback(() => {
+    if (archiveHasMore && !archiveFetching) {
+      setArchivePage((p) => p + 1);
+    }
+  }, [archiveHasMore, archiveFetching]);
+
+  useEffect(() => {
+    if (paged) {
+      if (archivePage === 1) {
+        setAccumulatedArchived(paged.emails || []);
+      } else {
+        setAccumulatedArchived((prev) => {
+          const existingIds = new Set(prev.map((e) => e.id));
+          const unique = (paged.emails || []).filter((e) => !existingIds.has(e.id));
+          return [...prev, ...unique];
+        });
+      }
+    }
+  }, [paged, archivePage]);
+
+  const archivedEmails = accumulatedArchived;
 
   const emailsByCategory: Record<string, typeof archivedEmails> = {};
   const uncategorized: typeof archivedEmails = [];
@@ -221,6 +247,8 @@ export default function Archives() {
   });
 
   const invalidateAll = () => {
+    setArchivePage(1);
+    setAccumulatedArchived([]);
     queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
@@ -404,7 +432,7 @@ export default function Archives() {
         <div className="mb-5">
           <h1 className="text-[16px] font-semibold text-white tracking-tight">Archives</h1>
           <p className="text-[12px] text-[#8b9cb3] mt-0.5">
-            Emails classés automatiquement par l'IA. {archivedEmails.length} email(s) archivés.
+            Emails classés automatiquement par l'IA. {paged?.total || archivedEmails.length} email(s) archivés.
           </p>
         </div>
 
@@ -425,30 +453,43 @@ export default function Archives() {
             <p className="text-[12px] text-[#8b9cb3]">Les emails archives apparaitront ici.</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            {categoryList.map((catName, i) => {
-              const count = catName === "Non classe" ? uncategorized.length : emailsByCategory[catName]?.length || 0;
-              return (
-                <div
-                  key={catName}
-                  className="bg-card rounded-lg border border-border p-4 hover:border-primary/30 transition-colors cursor-pointer group"
-                  onClick={() => setSelectedCategory(catName)}
-                >
-                  <div className="flex justify-between items-start mb-2">
-                    <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${categoryColors[i % categoryColors.length]}`}>
-                      <FolderOpen className="w-3.5 h-3.5" />
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+              {categoryList.map((catName, i) => {
+                const count = catName === "Non classe" ? uncategorized.length : emailsByCategory[catName]?.length || 0;
+                return (
+                  <div
+                    key={catName}
+                    className="bg-card rounded-lg border border-border p-4 hover:border-primary/30 transition-colors cursor-pointer group"
+                    onClick={() => setSelectedCategory(catName)}
+                  >
+                    <div className="flex justify-between items-start mb-2">
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${categoryColors[i % categoryColors.length]}`}>
+                        <FolderOpen className="w-3.5 h-3.5" />
+                      </div>
+                      <ChevronRight className="w-3.5 h-3.5 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                    <ChevronRight className="w-3.5 h-3.5 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity" />
+                    <h3 className="text-[13px] font-semibold text-white mb-0.5">{catName}</h3>
+                    <div className="flex items-center text-[11px] text-[#8b9cb3] bg-white/[0.04] px-2 py-0.5 rounded-md inline-flex w-fit">
+                      <span className="text-primary font-medium mr-1">{count}</span>
+                      email{count !== 1 ? "s" : ""}
+                    </div>
                   </div>
-                  <h3 className="text-[13px] font-semibold text-white mb-0.5">{catName}</h3>
-                  <div className="flex items-center text-[11px] text-[#8b9cb3] bg-white/[0.04] px-2 py-0.5 rounded-md inline-flex w-fit">
-                    <span className="text-primary font-medium mr-1">{count}</span>
-                    email{count !== 1 ? "s" : ""}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
+                );
+              })}
+            </div>
+            {archiveHasMore && (
+              <div className="flex items-center justify-center py-4 mt-3">
+                <button
+                  onClick={loadMoreArchives}
+                  disabled={archiveFetching}
+                  className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40 disabled:opacity-50"
+                >
+                  {archiveFetching ? "Chargement..." : "Charger plus d'archives"}
+                </button>
+              </div>
+            )}
+          </>
         )}
       </div>
     </DashboardLayout>

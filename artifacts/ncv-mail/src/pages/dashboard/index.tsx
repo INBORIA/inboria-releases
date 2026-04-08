@@ -29,6 +29,7 @@ import {
   useCreateTask,
   getListTasksQueryKey,
 } from "@workspace/api-client-react";
+import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -527,49 +528,7 @@ export default function Dashboard() {
 
   const [inboxMode, setInboxMode] = useState<InboxMode>("personal");
   const [selectedSharedMailboxId, setSelectedSharedMailboxId] = useState<string | null>(null);
-
-  const [emailPage, setEmailPage] = useState(1);
-  const [accumulatedEmails, setAccumulatedEmails] = useState<any[]>([]);
-  const [totalEmails, setTotalEmails] = useState(0);
-  const [totalPages, setTotalPages] = useState(0);
-
-  const prevFilterKey = useRef("");
-  const currentFilterKey = `${filterPriority}|${searchQuery}`;
-  useEffect(() => {
-    if (prevFilterKey.current !== currentFilterKey) {
-      prevFilterKey.current = currentFilterKey;
-      setEmailPage(1);
-      setAccumulatedEmails([]);
-    }
-  }, [currentFilterKey]);
-
-  const { data: emailsData, isLoading: emailsLoading, isFetching: emailsFetching } = useListEmails({
-    priority: filterPriority !== "all" ? (filterPriority as any) : undefined,
-    q: searchQuery || undefined,
-    page: emailPage,
-    limit: 50,
-  });
-
-  useEffect(() => {
-    if (emailsData) {
-      const paged = emailsData as any;
-      const newEmails = paged.emails || [];
-      setTotalEmails(paged.total || 0);
-      setTotalPages(paged.totalPages || 0);
-      if (emailPage === 1) {
-        setAccumulatedEmails(newEmails);
-      } else {
-        setAccumulatedEmails((prev) => {
-          const existingIds = new Set(prev.map((e: any) => e.id));
-          const unique = newEmails.filter((e: any) => !existingIds.has(e.id));
-          return [...prev, ...unique];
-        });
-      }
-    }
-  }, [emailsData, emailPage]);
-
-  const emails = accumulatedEmails;
-  const hasMorePages = emailPage < totalPages;
+  const [filterCategory, setFilterCategory] = useState<string>("all");
 
   const { data: categoryCounts, isLoading: categoriesLoading } = useGetCategoryCounts();
   const { data: summary, isLoading: summaryLoading } = useGetDashboardSummary();
@@ -588,9 +547,57 @@ export default function Dashboard() {
     undefined,
     { query: { enabled: !!selectedSharedMailboxId && inboxMode === "shared" } }
   );
-  const sharedEmails = (sharedEmailsData as any)?.emails || sharedEmailsData;
+  const sharedEmailsList = (sharedEmailsData as PaginatedSharedMailboxEmails | undefined)?.emails ?? [];
   const claimEmailMut = useClaimSharedEmail();
   const unclaimEmailMut = useUnclaimSharedEmail();
+
+  const selectedCategoryId = filterCategory !== "all"
+    ? categoryCounts?.find((c) => c.categoryName === filterCategory)?.categoryId
+    : undefined;
+
+  const [emailPage, setEmailPage] = useState(1);
+  const [accumulatedEmails, setAccumulatedEmails] = useState<Email[]>([]);
+  const [totalEmails, setTotalEmails] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const prevFilterKey = useRef("");
+  const currentFilterKey = `${filterPriority}|${searchQuery}|${filterCategory}`;
+  useEffect(() => {
+    if (prevFilterKey.current !== currentFilterKey) {
+      prevFilterKey.current = currentFilterKey;
+      setEmailPage(1);
+      setAccumulatedEmails([]);
+    }
+  }, [currentFilterKey]);
+
+  const { data: emailsData, isLoading: emailsLoading, isFetching: emailsFetching } = useListEmails({
+    priority: filterPriority !== "all" ? (filterPriority as "urgent" | "moyen" | "faible") : undefined,
+    categoryId: selectedCategoryId,
+    q: searchQuery || undefined,
+    page: emailPage,
+    limit: 50,
+  });
+
+  useEffect(() => {
+    if (emailsData) {
+      const paged = emailsData as PaginatedEmails;
+      const newEmails = paged.emails || [];
+      setTotalEmails(paged.total || 0);
+      setTotalPages(paged.totalPages || 0);
+      if (emailPage === 1) {
+        setAccumulatedEmails(newEmails);
+      } else {
+        setAccumulatedEmails((prev) => {
+          const existingIds = new Set(prev.map((e) => e.id));
+          const unique = newEmails.filter((e) => !existingIds.has(e.id));
+          return [...prev, ...unique];
+        });
+      }
+    }
+  }, [emailsData, emailPage]);
+
+  const emails = accumulatedEmails;
+  const hasMorePages = emailPage < totalPages;
 
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
@@ -605,15 +612,13 @@ export default function Dashboard() {
   const [composeBody, setComposeBody] = useState("");
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
-  const [filterCategory, setFilterCategory] = useState<string>("all");
-  const allActiveEmails = emails?.filter((e: any) => e.status !== "archived");
-  const activeEmails = allActiveEmails
-    ?.filter((e: any) => filterCategory === "all" || e.categoryName === filterCategory)
-    ?.sort((a: any, b: any) => {
+  const activeEmails = emails
+    ?.filter((e) => e.status !== "archived")
+    ?.sort((a, b) => {
       const pOrder: Record<string, number> = { urgent: 0, moyen: 1, faible: 2 };
       return (pOrder[a.priority] ?? 2) - (pOrder[b.priority] ?? 2);
     });
-  const selectedEmail = emails?.find((e: any) => e.id === selectedEmailId);
+  const selectedEmail = emails?.find((e) => e.id === selectedEmailId);
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const loadMore = useCallback(() => {
@@ -1212,7 +1217,7 @@ export default function Dashboard() {
                       <Users className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
                       <h3 className="text-[13px] font-medium text-white">Sélectionnez une boîte partagée</h3>
                     </div>
-                  ) : (sharedEmails as any[])?.length === 0 ? (
+                  ) : sharedEmailsList.length === 0 ? (
                     <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                       <Inbox className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
                       <h3 className="text-[13px] font-medium text-white">Aucun email partagé</h3>
@@ -1220,7 +1225,7 @@ export default function Dashboard() {
                     </div>
                   ) : (
                     <div className="space-y-1">
-                      {(sharedEmails as any[])?.map((email: any) => {
+                      {sharedEmailsList.map((email) => {
                         const isClaimed = !!email.claimedBy;
                         const isClaimedByMe = email.claimedBy === (profile as any)?.id;
                         return (
@@ -1428,7 +1433,11 @@ export default function Dashboard() {
                   </h3>
                   {(() => {
                     const JUNK = ["non classé", "non classe", "uncategorized"];
-                    const uncategorizedCount = (emails || []).filter((e) => e.status !== "archived" && (!e.categoryName || JUNK.includes(e.categoryName.toLowerCase()))).length;
+                    const summaryData = summary as { urgentCount?: number; moyenCount?: number; faibleCount?: number } | undefined;
+                    const serverInboxTotal = (summaryData?.urgentCount || 0) + (summaryData?.moyenCount || 0) + (summaryData?.faibleCount || 0);
+                    const categorizedTotal = (categoryCounts || []).reduce((sum, c) => sum + c.count, 0);
+                    const junkTotal = (categoryCounts || []).filter((c) => JUNK.includes(c.categoryName.toLowerCase())).reduce((sum, c) => sum + c.count, 0);
+                    const uncategorizedCount = Math.max(0, serverInboxTotal - categorizedTotal + junkTotal);
                     if (uncategorizedCount === 0) return null;
                     return (
                       <button
@@ -1473,7 +1482,10 @@ export default function Dashboard() {
                     >
                       <span className="text-[11px]">Toutes</span>
                       <span className="text-[10px] bg-white/[0.06] px-1.5 py-0.5 rounded">
-                        {totalEmails || allActiveEmails?.length || 0}
+                        {(() => {
+                          const s = summary as { urgentCount?: number; moyenCount?: number; faibleCount?: number } | undefined;
+                          return (s?.urgentCount || 0) + (s?.moyenCount || 0) + (s?.faibleCount || 0);
+                        })()}
                       </span>
                     </div>
                     {categoryCounts?.map((cat) => (

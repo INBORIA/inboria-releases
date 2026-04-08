@@ -20,7 +20,8 @@ import {
   getGetAdminConnectionsQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { useState } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import type { PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
@@ -436,8 +437,38 @@ function MailboxEmails({
   onClaim: (emailId: string) => void;
   onUnclaim: (emailId: string) => void;
 }) {
-  const { data: emailsData, isLoading } = useGetSharedMailboxEmails(mailboxId, { filter: filter as any });
-  const emails = (emailsData as any)?.emails || emailsData;
+  const [page, setPage] = useState(1);
+  const [accumulatedEmails, setAccumulatedEmails] = useState<PaginatedSharedMailboxEmails["emails"]>([]);
+  const { data: emailsData, isLoading, isFetching } = useGetSharedMailboxEmails(mailboxId, { filter: filter as "all" | "unclaimed" | "mine", page: String(page), limit: "50" });
+  const paged = emailsData as PaginatedSharedMailboxEmails | undefined;
+  const hasMore = paged ? page < (paged.totalPages ?? 1) : false;
+
+  useEffect(() => {
+    if (paged) {
+      if (page === 1) {
+        setAccumulatedEmails(paged.emails || []);
+      } else {
+        setAccumulatedEmails((prev) => {
+          const existingIds = new Set(prev.map((e) => e.id));
+          const unique = (paged.emails || []).filter((e) => !existingIds.has(e.id));
+          return [...prev, ...unique];
+        });
+      }
+    }
+  }, [paged, page]);
+
+  useEffect(() => {
+    setPage(1);
+    setAccumulatedEmails([]);
+  }, [filter, mailboxId]);
+
+  const loadMore = useCallback(() => {
+    if (hasMore && !isFetching) {
+      setPage((p) => p + 1);
+    }
+  }, [hasMore, isFetching]);
+
+  const emails = accumulatedEmails;
   const forceSync = useForceSharedMailboxSync();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -450,7 +481,9 @@ function MailboxEmails({
       if (result.success) {
         const count = result.synced ?? 0;
         toast({ title: count > 0 ? `${count} nouveau(x) email(s) synchronisé(s)` : "Synchronisation terminée, aucun nouvel email" });
-        queryClient.invalidateQueries({ queryKey: getGetSharedMailboxEmailsQueryKey(mailboxId, { filter: filter as any }) });
+        setPage(1);
+        setAccumulatedEmails([]);
+        queryClient.invalidateQueries({ queryKey: getGetSharedMailboxEmailsQueryKey(mailboxId) });
       } else {
         toast({ title: result.error || "La synchronisation a échoué", variant: "destructive" });
       }
@@ -492,14 +525,14 @@ function MailboxEmails({
         <div className="flex justify-center py-12">
           <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
         </div>
-      ) : !emails || (emails as any[]).length === 0 ? (
+      ) : emails.length === 0 ? (
         <div className="bg-card border border-border rounded-xl p-8 text-center">
           <Inbox className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
           <p className="text-muted-foreground">Aucun email dans cette vue.</p>
         </div>
       ) : (
         <div className="space-y-3">
-          {(emails as any[]).map((email: any) => (
+          {emails.map((email) => (
             <div key={email.id} className="bg-card border border-border rounded-xl p-4 space-y-2">
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
@@ -549,6 +582,17 @@ function MailboxEmails({
               </div>
             </div>
           ))}
+          {hasMore && (
+            <div className="flex items-center justify-center py-4">
+              <button
+                onClick={loadMore}
+                disabled={isFetching}
+                className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40 disabled:opacity-50"
+              >
+                {isFetching ? "Chargement..." : "Charger plus d'emails"}
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>
