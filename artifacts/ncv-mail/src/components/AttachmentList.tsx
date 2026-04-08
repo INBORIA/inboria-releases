@@ -17,8 +17,12 @@ function getFileIcon(contentType: string) {
   return File;
 }
 
-function isPreviewable(contentType: string): boolean {
-  return contentType.startsWith("image/") || contentType === "application/pdf";
+function isInlinePreviewable(contentType: string): boolean {
+  return contentType.startsWith("image/");
+}
+
+function isPdf(contentType: string): boolean {
+  return contentType === "application/pdf";
 }
 
 export function AttachmentList({ attachments }: { attachments: Attachment[] }) {
@@ -44,7 +48,10 @@ export function AttachmentList({ attachments }: { attachments: Attachment[] }) {
 
       const blob = await response.blob();
 
-      if (preview && isPreviewable(att.content_type)) {
+      if (preview && isPdf(att.content_type)) {
+        const objectUrl = URL.createObjectURL(blob);
+        window.open(objectUrl, "_blank");
+      } else if (preview && isInlinePreviewable(att.content_type)) {
         const objectUrl = URL.createObjectURL(blob);
         setPreviewUrl(objectUrl);
         setPreviewType(att.content_type);
@@ -74,7 +81,7 @@ export function AttachmentList({ attachments }: { attachments: Attachment[] }) {
       <div className="flex flex-wrap gap-2">
         {attachments.map((att) => {
           const Icon = getFileIcon(att.content_type);
-          const canPreview = isPreviewable(att.content_type);
+          const canPreview = isInlinePreviewable(att.content_type) || isPdf(att.content_type);
           const isLoading = downloading === att.id;
 
           return (
@@ -130,8 +137,6 @@ export function AttachmentList({ attachments }: { attachments: Attachment[] }) {
           <div className="max-w-4xl max-h-[90vh] overflow-auto rounded-lg" onClick={(e) => e.stopPropagation()}>
             {previewType.startsWith("image/") ? (
               <img src={previewUrl} alt="Aperçu" className="max-w-full max-h-[85vh] object-contain" />
-            ) : previewType === "application/pdf" ? (
-              <iframe src={previewUrl} className="w-[800px] h-[85vh]" title="PDF Preview" />
             ) : null}
           </div>
           <button

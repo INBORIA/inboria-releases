@@ -188,6 +188,9 @@ export default function Envoyes() {
                             {email.projectReference || email.projectName}
                           </span>
                         )}
+                        {(email as any).attachmentCount > 0 && (
+                          <AttachmentBadge count={(email as any).attachmentCount} />
+                        )}
                         <span className="text-[10px] text-[#8b9cb3]">
                           {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: fr }) : ""}
                         </span>

@@ -1003,7 +1003,7 @@ export default function Dashboard() {
   const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[]) => {
     const uploadIds = attachments?.map((a) => a.uploadId).filter(Boolean);
     sendEmailMut.mutate(
-      { data: { to, subject, body, replyToEmailId: replyToEmailId ?? null, attachments: uploadIds && uploadIds.length > 0 ? uploadIds : undefined } as any },
+      { data: { to, subject, body, replyToEmailId: replyToEmailId ?? null, attachments: uploadIds && uploadIds.length > 0 ? uploadIds : undefined } },
       {
         onSuccess: () => {
           invalidateAll();
@@ -1020,7 +1020,7 @@ export default function Dashboard() {
   const handleComposeSend = () => {
     if (!composeTo.trim() || !composeSubject.trim() || !composeBody.trim()) return;
     sendEmailMut.mutate(
-      { data: { to: composeTo, subject: composeSubject, body: composeBody, replyToEmailId: null, attachments: composeAttachments.length > 0 ? composeAttachments.map((a) => a.uploadId) : undefined } as any },
+      { data: { to: composeTo, subject: composeSubject, body: composeBody, replyToEmailId: null, attachments: composeAttachments.length > 0 ? composeAttachments.map((a) => a.uploadId) : undefined } },
       {
         onSuccess: () => {
           invalidateAll();
