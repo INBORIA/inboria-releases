@@ -28,13 +28,16 @@ import {
   useUnclaimSharedEmail,
   useCreateTask,
   getListTasksQueryKey,
+  useCreateFollowup,
+  getListFollowupsQueryKey,
+  getGetFollowupStatsQueryKey,
 } from "@workspace/api-client-react";
 import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, Eye, CalendarDays } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
@@ -164,6 +167,14 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
   const [taskFormOpen, setTaskFormOpen] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskProjectId, setTaskProjectId] = useState("none");
+  const [followupFormOpen, setFollowupFormOpen] = useState(false);
+  const [followupTitle, setFollowupTitle] = useState("");
+  const [followupDueDate, setFollowupDueDate] = useState("");
+  const [followupNotes, setFollowupNotes] = useState("");
+  const [followupProjectId, setFollowupProjectId] = useState("none");
+  const createFollowup = useCreateFollowup();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
   const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
 
   return (
@@ -299,6 +310,25 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   <ListTodo className="w-3 h-3" />
                   Créer une tâche
                 </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-amber-500/30 text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
+                  onClick={() => {
+                    if (!followupFormOpen) {
+                      setFollowupTitle(`Suivi: ${email.subject}`);
+                      setFollowupProjectId(email.projectId || "none");
+                      setFollowupNotes("");
+                      const defaultDate = new Date();
+                      defaultDate.setDate(defaultDate.getDate() + 3);
+                      setFollowupDueDate(defaultDate.toISOString().split("T")[0]);
+                    }
+                    setFollowupFormOpen(!followupFormOpen);
+                  }}
+                >
+                  <Eye className="w-3 h-3" />
+                  Suivre
+                </Button>
               </div>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <div className="flex items-center gap-1.5">
@@ -425,6 +455,102 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   >
                     <ListTodo className="w-3 h-3" />
                     Créer
+                  </Button>
+                </div>
+              </div>
+            )}
+
+            {followupFormOpen && (
+              <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Eye className="w-3.5 h-3.5 text-amber-400" />
+                  <span className="text-[11px] font-medium text-amber-400 uppercase tracking-wider">Créer un suivi</span>
+                </div>
+                <div>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Titre du suivi</label>
+                  <Input
+                    value={followupTitle}
+                    onChange={(e) => setFollowupTitle(e.target.value)}
+                    placeholder="Ex: Relancer pour le devis, Attendre confirmation..."
+                    className="bg-background border-border text-white text-[12px] h-8"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Date d'échéance</label>
+                  <Input
+                    type="date"
+                    value={followupDueDate}
+                    onChange={(e) => setFollowupDueDate(e.target.value)}
+                    className="bg-background border-border text-white text-[12px] h-8"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Projet (optionnel)</label>
+                  <Select value={followupProjectId} onValueChange={setFollowupProjectId}>
+                    <SelectTrigger className="w-full h-8 bg-background border-border text-[12px] text-white">
+                      <SelectValue placeholder="Aucun projet" />
+                    </SelectTrigger>
+                    <SelectContent className="bg-card border-border">
+                      <SelectItem value="none">Aucun projet</SelectItem>
+                      {projects.map((p: any) => (
+                        <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Notes (optionnel)</label>
+                  <Textarea
+                    value={followupNotes}
+                    onChange={(e) => setFollowupNotes(e.target.value)}
+                    placeholder="Notes sur ce suivi..."
+                    className="bg-background border-border text-white text-[12px] h-16 resize-none"
+                  />
+                </div>
+                <div className="flex items-center gap-2 justify-end">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => { setFollowupFormOpen(false); setFollowupTitle(""); setFollowupDueDate(""); setFollowupNotes(""); setFollowupProjectId("none"); }}
+                    className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
+                  >
+                    Annuler
+                  </Button>
+                  <Button
+                    size="sm"
+                    className="gap-1.5 h-7 text-[11px] bg-amber-600 hover:bg-amber-700"
+                    disabled={!followupTitle.trim() || createFollowup.isPending}
+                    onClick={() => {
+                      createFollowup.mutate(
+                        {
+                          data: {
+                            title: followupTitle.trim(),
+                            emailId: email.id,
+                            dueDate: followupDueDate || undefined,
+                            notes: followupNotes || undefined,
+                            projectId: followupProjectId !== "none" ? followupProjectId : undefined,
+                          } as any,
+                        },
+                        {
+                          onSuccess: () => {
+                            queryClient.invalidateQueries({ queryKey: getListFollowupsQueryKey() });
+                            queryClient.invalidateQueries({ queryKey: getGetFollowupStatsQueryKey() });
+                            toast({ title: "Suivi créé avec succès" });
+                            setFollowupFormOpen(false);
+                            setFollowupTitle("");
+                            setFollowupDueDate("");
+                            setFollowupNotes("");
+                            setFollowupProjectId("none");
+                          },
+                          onError: () => {
+                            toast({ title: "Erreur lors de la création du suivi", variant: "destructive" });
+                          },
+                        }
+                      );
+                    }}
+                  >
+                    {createFollowup.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
+                    Créer le suivi
                   </Button>
                 </div>
               </div>
