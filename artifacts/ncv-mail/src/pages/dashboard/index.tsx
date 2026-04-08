@@ -542,12 +542,42 @@ export default function Dashboard() {
 
   const plan = (profile as any)?.plan;
   const { data: sharedMailboxes } = useGetSharedMailboxes({ query: { enabled: plan === "business" } });
-  const { data: sharedEmailsData, isLoading: sharedEmailsLoading } = useGetSharedMailboxEmails(
+  const [sharedPage, setSharedPage] = useState(1);
+  const [accumulatedSharedEmails, setAccumulatedSharedEmails] = useState<PaginatedSharedMailboxEmails["emails"]>([]);
+  const { data: sharedEmailsData, isLoading: sharedEmailsLoading, isFetching: sharedFetching } = useGetSharedMailboxEmails(
     selectedSharedMailboxId || "",
-    undefined,
+    { page: sharedPage, limit: 50 },
     { query: { enabled: !!selectedSharedMailboxId && inboxMode === "shared" } }
   );
-  const sharedEmailsList = (sharedEmailsData as PaginatedSharedMailboxEmails | undefined)?.emails ?? [];
+  const sharedPaged = sharedEmailsData as PaginatedSharedMailboxEmails | undefined;
+  const sharedHasMore = sharedPaged ? sharedPage < (sharedPaged.totalPages ?? 1) : false;
+
+  useEffect(() => {
+    if (sharedPaged) {
+      if (sharedPage === 1) {
+        setAccumulatedSharedEmails(sharedPaged.emails || []);
+      } else {
+        setAccumulatedSharedEmails((prev) => {
+          const existingIds = new Set(prev.map((e) => e.id));
+          const unique = (sharedPaged.emails || []).filter((e) => !existingIds.has(e.id));
+          return [...prev, ...unique];
+        });
+      }
+    }
+  }, [sharedPaged, sharedPage]);
+
+  useEffect(() => {
+    setSharedPage(1);
+    setAccumulatedSharedEmails([]);
+  }, [selectedSharedMailboxId]);
+
+  const loadMoreShared = useCallback(() => {
+    if (sharedHasMore && !sharedFetching) {
+      setSharedPage((p) => p + 1);
+    }
+  }, [sharedHasMore, sharedFetching]);
+
+  const sharedEmailsList = accumulatedSharedEmails;
   const claimEmailMut = useClaimSharedEmail();
   const unclaimEmailMut = useUnclaimSharedEmail();
 
@@ -1288,6 +1318,17 @@ export default function Dashboard() {
                           </div>
                         );
                       })}
+                      {sharedHasMore && (
+                        <div className="flex items-center justify-center py-4">
+                          <button
+                            onClick={loadMoreShared}
+                            disabled={sharedFetching}
+                            className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40 disabled:opacity-50"
+                          >
+                            {sharedFetching ? "Chargement..." : "Charger plus d'emails partagés"}
+                          </button>
+                        </div>
+                      )}
                     </div>
                   )}
                 </>
@@ -1384,7 +1425,7 @@ export default function Dashboard() {
                       </div>
                     ) : (
                       <>
-                        {activeEmails?.map((email: any) => (
+                        {activeEmails?.map((email) => (
                           <EmailRow
                             key={email.id}
                             email={email}

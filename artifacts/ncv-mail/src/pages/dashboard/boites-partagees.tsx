@@ -439,7 +439,7 @@ function MailboxEmails({
 }) {
   const [page, setPage] = useState(1);
   const [accumulatedEmails, setAccumulatedEmails] = useState<PaginatedSharedMailboxEmails["emails"]>([]);
-  const { data: emailsData, isLoading, isFetching } = useGetSharedMailboxEmails(mailboxId, { filter: filter as "all" | "unclaimed" | "mine", page: String(page), limit: "50" });
+  const { data: emailsData, isLoading, isFetching } = useGetSharedMailboxEmails(mailboxId, { filter, page, limit: 50 });
   const paged = emailsData as PaginatedSharedMailboxEmails | undefined;
   const hasMore = paged ? page < (paged.totalPages ?? 1) : false;
 
