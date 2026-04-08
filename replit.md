@@ -91,6 +91,16 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - Team dashboard page at `/dashboard/activite-equipe` (Business plan only): member stats, recent activity feed.
     - Sidebar link "Activité équipe" visible only for Business plan users.
 
+- **Email Attachments (Phase 7)**:
+    - Table: `email_attachments` (id uuid PK, email_id int FK→emails, filename, content_type, size, provider, provider_attachment_id, connection_id uuid, message_uid, created_at). Auto-created via `ensureEmailAttachmentsTable()` in index.ts.
+    - Gmail sync: `extractGmailAttachments()` walks payload.parts, stores attachmentId for on-demand retrieval via `gmail.users.messages.attachments.get()`.
+    - IMAP sync: `simpleParser` attachments metadata saved, message UID stored for re-fetch.
+    - API routes (`routes/attachments.ts`): `GET /attachments/email/:emailId` (list), `GET /attachments/:id/download` (proxy download from Gmail/IMAP), `POST /attachments/upload` (multer temp), `DELETE /attachments/upload/cleanup`.
+    - Email sending (`POST /emails/send`) supports attachments: Gmail uses MIME multipart/mixed, Outlook uses Graph API fileAttachment, IMAP/SMTP uses nodemailer attachments. Temp files cleaned after send.
+    - Email list includes `attachmentCount`. Email detail includes `attachments[]` array. Conversation endpoint includes attachments per message.
+    - Frontend: `AttachmentList` component (file icons, size, download, inline preview for images/PDF), `AttachmentBadge` (paperclip icon in email rows), `FileAttachInput` (upload button + file list with remove, used in reply & compose forms).
+    - No permanent file storage — attachments fetched on-demand from provider.
+
 - **Email Pagination (Phase 6)**:
     - Backend: `/api/emails` and `/api/shared-mailboxes/:mailboxId/emails` return paginated responses `{ emails, total, page, totalPages }` instead of plain arrays.
     - Query params: `page` (1-indexed, default 1) and `limit` (default 50, max 100).

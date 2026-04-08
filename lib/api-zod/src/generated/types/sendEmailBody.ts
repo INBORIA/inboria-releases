@@ -12,4 +12,5 @@ export interface SendEmailBody {
   body: string;
   /** @nullable */
   replyToEmailId?: number | null;
+  attachments?: string[];
 }

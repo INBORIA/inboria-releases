@@ -1,8 +1,12 @@
 import { Router, type IRouter } from "express";
 import { google } from "googleapis";
 import nodemailer from "nodemailer";
+import * as fs from "fs";
+import * as path from "path";
+import * as os from "os";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { resolveUploadedFiles, cleanupUploadIds } from "./attachments";
 
 function parseSender(raw: string) {
   const match = raw.match(/^(.+?)\s*<(.+?)>$/);
@@ -78,14 +82,24 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
 
     const emailIds = (emails || []).map((e: any) => e.id);
     let taskCountMap: Record<number, number> = {};
+    let attachmentCountMap: Record<number, number> = {};
     if (emailIds.length > 0) {
-      const { data: taskRows } = await supabaseAdmin
-        .from("tasks")
-        .select("email_id")
-        .in("email_id", emailIds)
-        .eq("user_id", req.userId!);
+      const [{ data: taskRows }, { data: attachRows }] = await Promise.all([
+        supabaseAdmin
+          .from("tasks")
+          .select("email_id")
+          .in("email_id", emailIds)
+          .eq("user_id", req.userId!),
+        supabaseAdmin
+          .from("email_attachments")
+          .select("email_id")
+          .in("email_id", emailIds),
+      ]);
       (taskRows || []).forEach((t: any) => {
         taskCountMap[t.email_id] = (taskCountMap[t.email_id] || 0) + 1;
+      });
+      (attachRows || []).forEach((a: any) => {
+        attachmentCountMap[a.email_id] = (attachmentCountMap[a.email_id] || 0) + 1;
       });
     }
 
@@ -113,6 +127,7 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
           assignedTo: e.assigned_to || null,
           assignedAt: e.assigned_at || null,
           taskCount: taskCountMap[e.id] || 0,
+          attachmentCount: attachmentCountMap[e.id] || 0,
           createdAt: e.created_at,
         };
       }),
@@ -151,6 +166,11 @@ router.get("/emails/:id", requireAuth, async (req, res): Promise<void> => {
       assignedToName = ap?.full_name || null;
     }
 
+    const { data: attachments } = await supabaseAdmin
+      .from("email_attachments")
+      .select("id, filename, content_type, size, created_at")
+      .eq("email_id", email.id);
+
     res.json({
       id: email.id,
       sender: s.name,
@@ -168,6 +188,8 @@ router.get("/emails/:id", requireAuth, async (req, res): Promise<void> => {
       assignedTo: email.assigned_to || null,
       assignedToName,
       assignedAt: email.assigned_at || null,
+      attachments: attachments || [],
+      attachmentCount: (attachments || []).length,
       createdAt: email.created_at,
     });
   } catch {
@@ -258,9 +280,75 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
   }
 });
 
+interface ResolvedAttachment {
+  serverPath: string;
+  filename: string;
+  contentType: string;
+  size: number;
+}
+
+function sanitizeMimeHeader(value: string): string {
+  return value.replace(/[\r\n]/g, "");
+}
+
+function rfc2047Encode(value: string): string {
+  if (/^[\x20-\x7E]*$/.test(value)) return sanitizeMimeHeader(value);
+  return `=?UTF-8?B?${Buffer.from(value, "utf-8").toString("base64")}?=`;
+}
+
+function sanitizeFilename(name: string): string {
+  return name.replace(/[\r\n"\\]/g, "_");
+}
+
+function buildMimeWithAttachments(
+  to: string,
+  from: string,
+  subject: string,
+  bodyText: string,
+  attachments: ResolvedAttachment[],
+  extraHeaders: string[] = []
+): string {
+  const boundary = `----=_Part_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  const lines: string[] = [
+    `To: ${sanitizeMimeHeader(to)}`,
+    `From: ${sanitizeMimeHeader(from)}`,
+    `Subject: ${rfc2047Encode(subject)}`,
+    `MIME-Version: 1.0`,
+    ...extraHeaders.map(sanitizeMimeHeader),
+    `Content-Type: multipart/mixed; boundary="${boundary}"`,
+    "",
+    `--${boundary}`,
+    `Content-Type: text/plain; charset=utf-8`,
+    `Content-Transfer-Encoding: base64`,
+    "",
+    Buffer.from(bodyText, "utf-8").toString("base64"),
+  ];
+
+  for (const att of attachments) {
+    const safeName = sanitizeFilename(att.filename);
+    const content = fs.readFileSync(att.serverPath);
+    lines.push(
+      `--${boundary}`,
+      `Content-Type: ${sanitizeMimeHeader(att.contentType)}; name="${safeName}"`,
+      `Content-Disposition: attachment; filename="${safeName}"`,
+      `Content-Transfer-Encoding: base64`,
+      "",
+      content.toString("base64")
+    );
+  }
+
+  lines.push(`--${boundary}--`);
+  return lines.join("\r\n");
+}
+
 router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
+  const uploadIds: string[] = [];
   try {
-    const { to, subject, body, replyToEmailId } = req.body;
+    const { to, subject, body, replyToEmailId, attachments: rawUploadIds } = req.body;
+
+    const ids: string[] = Array.isArray(rawUploadIds) ? rawUploadIds.filter((x: any) => typeof x === "string") : [];
+    uploadIds.push(...ids);
+
     if (!to || !subject || !body) {
       res.status(400).json({ error: "Destinataire, sujet et corps requis" });
       return;
@@ -270,6 +358,16 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
     if (!emailRegex.test(to.trim())) {
       res.status(400).json({ error: "Adresse email destinataire invalide. Vérifiez le format (ex: nom@domaine.com)" });
       return;
+    }
+
+    let attachments: ResolvedAttachment[] = [];
+    if (ids.length > 0) {
+      const resolved = resolveUploadedFiles(ids, req.userId!);
+      if (!resolved) {
+        res.status(400).json({ error: "Un ou plusieurs fichiers joints sont invalides ou expirés" });
+        return;
+      }
+      attachments = resolved;
     }
 
     const { data: connections } = await supabaseAdmin
@@ -297,15 +395,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
 
       const gmail = google.gmail({ version: "v1", auth: oauth2Client });
 
-      const messageParts = [
-        `To: ${to}`,
-        `From: ${fromAddress}`,
-        `Subject: ${subject}`,
-        `Content-Type: text/plain; charset=utf-8`,
-        "",
-        body,
-      ];
-
+      const extraHeaders: string[] = [];
       if (replyToEmailId) {
         const { data: origEmail } = await supabaseAdmin
           .from("emails")
@@ -314,16 +404,35 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
           .eq("user_id", req.userId!)
           .single();
         if (origEmail?.external_id) {
-          messageParts.splice(3, 0, `In-Reply-To: ${origEmail.external_id}`);
-          messageParts.splice(4, 0, `References: ${origEmail.external_id}`);
+          extraHeaders.push(`In-Reply-To: ${origEmail.external_id}`);
+          extraHeaders.push(`References: ${origEmail.external_id}`);
         }
       }
 
-      const raw = Buffer.from(messageParts.join("\r\n"))
-        .toString("base64")
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=+$/, "");
+      let raw: string;
+      if (attachments.length > 0) {
+        const mimeMessage = buildMimeWithAttachments(to, fromAddress, subject, body, attachments, extraHeaders);
+        raw = Buffer.from(mimeMessage)
+          .toString("base64")
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=+$/, "");
+      } else {
+        const messageParts = [
+          `To: ${to}`,
+          `From: ${fromAddress}`,
+          `Subject: ${subject}`,
+          ...extraHeaders,
+          `Content-Type: text/plain; charset=utf-8`,
+          "",
+          body,
+        ];
+        raw = Buffer.from(messageParts.join("\r\n"))
+          .toString("base64")
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=+$/, "");
+      }
 
       await gmail.users.messages.send({
         userId: "me",
@@ -359,6 +468,12 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
           subject,
           body: { contentType: "Text", content: body },
           toRecipients: [{ emailAddress: { address: to } }],
+          attachments: attachments.map((att) => ({
+            "@odata.type": "#microsoft.graph.fileAttachment",
+            name: att.filename,
+            contentType: att.contentType,
+            contentBytes: fs.readFileSync(att.serverPath).toString("base64"),
+          })),
         },
         saveToSentItems: true,
       };
@@ -398,6 +513,11 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
         to,
         subject,
         text: body,
+        attachments: attachments.map((att) => ({
+          filename: att.filename,
+          path: att.serverPath,
+          contentType: att.contentType,
+        })),
       });
     }
 
@@ -417,10 +537,31 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       console.error("Failed to save sent email to DB:", insertError.message);
     }
 
+    if (sentEmail?.id && attachments.length > 0) {
+      const attachRows = attachments.map((att) => ({
+        email_id: sentEmail.id,
+        filename: att.filename,
+        content_type: att.contentType,
+        size: att.size,
+        provider: "sent",
+        provider_attachment_id: null,
+        connection_id: conn.id,
+        message_uid: null,
+      }));
+      const { error: attErr } = await supabaseAdmin.from("email_attachments").insert(attachRows);
+      if (attErr) {
+        console.error("Failed to save sent attachment metadata:", attErr.message);
+      }
+    }
+
     res.json({ success: true, emailId: sentEmail?.id });
   } catch (err: any) {
     console.error("Send email error:", err);
     res.status(500).json({ error: "Echec de l'envoi: " + (err.message || "Erreur inconnue") });
+  } finally {
+    if (uploadIds.length > 0) {
+      cleanupUploadIds(uploadIds);
+    }
   }
 });
 
@@ -483,6 +624,25 @@ router.get("/emails/:id/conversation", requireAuth, async (req, res): Promise<vo
 
     thread.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
 
+    const threadIds = thread.map((t) => t.id);
+    let attachmentMap: Record<number, any[]> = {};
+    if (threadIds.length > 0) {
+      const { data: allAttachments } = await supabaseAdmin
+        .from("email_attachments")
+        .select("id, email_id, filename, content_type, size, created_at")
+        .in("email_id", threadIds);
+      for (const att of allAttachments || []) {
+        if (!attachmentMap[att.email_id]) attachmentMap[att.email_id] = [];
+        attachmentMap[att.email_id].push({
+          id: att.id,
+          filename: att.filename,
+          content_type: att.content_type,
+          size: att.size,
+          created_at: att.created_at,
+        });
+      }
+    }
+
     const mapEmail = (e: any) => {
       const s = parseSender(e.sender || "");
       return {
@@ -501,6 +661,8 @@ router.get("/emails/:id/conversation", requireAuth, async (req, res): Promise<vo
         projectName: e.projects?.name || null,
         projectReference: e.projects?.reference || null,
         replyToEmailId: e.reply_to_email_id || null,
+        attachments: attachmentMap[e.id] || [],
+        attachmentCount: (attachmentMap[e.id] || []).length,
         createdAt: e.created_at,
         role: e.role,
       };

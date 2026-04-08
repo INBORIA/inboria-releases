@@ -93,6 +93,14 @@ export interface RegisterPushTokenBody {
   platform?: string;
 }
 
+export interface Attachment {
+  id: string;
+  filename: string;
+  content_type: string;
+  size: number;
+  created_at?: string;
+}
+
 export interface Email {
   id: number;
   sender: string;
@@ -122,6 +130,8 @@ export interface Email {
   assignedToName?: string | null;
   /** @nullable */
   assignedAt?: string | null;
+  attachmentCount?: number;
+  attachments?: Attachment[];
   createdAt: string;
 }
 
@@ -206,6 +216,14 @@ export interface SendEmailBody {
   body: string;
   /** @nullable */
   replyToEmailId?: number | null;
+  attachments?: string[];
+}
+
+export interface UploadedFileInfo {
+  uploadId: string;
+  filename: string;
+  contentType: string;
+  size: number;
 }
 
 export interface UpdateEmailBody {
@@ -909,6 +927,18 @@ export type GenerateRelance200 = {
 
 export type ExportEmailsParams = {
   status?: string;
+};
+
+export type GetEmailAttachments200 = {
+  attachments?: Attachment[];
+};
+
+export type UploadAttachmentsBody = {
+  files?: Blob[];
+};
+
+export type UploadAttachments200 = {
+  files?: UploadedFileInfo[];
 };
 
 export type StripeWebhookBody = { [key: string]: unknown };

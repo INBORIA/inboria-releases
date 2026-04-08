@@ -7,6 +7,40 @@ import { logger } from "../lib/logger";
 import * as net from "net";
 import { sendSlackNotification, createNotionTask } from "./integrations";
 
+interface AttachmentMeta {
+  filename: string;
+  contentType: string;
+  size: number;
+  providerAttachmentId: string;
+}
+
+function extractGmailAttachments(payload: any): AttachmentMeta[] {
+  const attachments: AttachmentMeta[] = [];
+  if (!payload) return attachments;
+
+  function walk(parts: any[]) {
+    for (const part of parts) {
+      if (part.filename && part.filename.length > 0 && part.body) {
+        attachments.push({
+          filename: part.filename,
+          contentType: part.mimeType || "application/octet-stream",
+          size: part.body.size || 0,
+          providerAttachmentId: part.body.attachmentId || "",
+        });
+      }
+      if (part.parts) {
+        walk(part.parts);
+      }
+    }
+  }
+
+  if (payload.parts) {
+    walk(payload.parts);
+  }
+
+  return attachments;
+}
+
 function extractGmailBody(payload: any): string {
   if (!payload) return "";
 
@@ -179,7 +213,7 @@ async function saveEmailWithTriage(
   body: string,
   createdAt: string,
   sharedMailboxId?: string | null
-): Promise<boolean> {
+): Promise<number | null> {
   const { data: existing } = await supabaseAdmin
     .from("emails")
     .select("id")
@@ -187,7 +221,7 @@ async function saveEmailWithTriage(
     .eq("external_id", externalId)
     .maybeSingle();
 
-  if (existing) return false;
+  if (existing) return null;
 
   const { data: profile, error: profileErr } = await supabaseAdmin
     .from("profiles")
@@ -197,11 +231,11 @@ async function saveEmailWithTriage(
 
   if (profileErr || !profile) {
     console.error("[auto-sync] Profile fetch error:", profileErr?.message);
-    return false;
+    return null;
   }
 
   if (profile.emails_used >= profile.emails_quota) {
-    return false;
+    return null;
   }
 
   const triage = await triageEmailAI(sender, subject, body, userId);
@@ -260,12 +294,12 @@ async function saveEmailWithTriage(
     .single();
 
   if (insertErr) {
-    if (insertErr.code === "23505") return false;
+    if (insertErr.code === "23505") return null;
     console.error("[auto-sync] insert error:", insertErr.message);
-    return false;
+    return null;
   }
 
-  if (!inserted) return false;
+  if (!inserted) return null;
 
   if (triage.priority === "urgent") {
     sendSlackNotification(userId, sender, subject, triage.summary).catch(() => {});
@@ -303,7 +337,31 @@ async function saveEmailWithTriage(
     }
   }
 
-  return true;
+  return inserted.id;
+}
+
+async function saveAttachmentsMeta(
+  emailId: number,
+  attachments: AttachmentMeta[],
+  provider: string,
+  connectionId: string,
+  messageUid?: string
+) {
+  if (attachments.length === 0) return;
+  const rows = attachments.map((a) => ({
+    email_id: emailId,
+    filename: a.filename,
+    content_type: a.contentType,
+    size: a.size,
+    provider,
+    provider_attachment_id: a.providerAttachmentId,
+    connection_id: connectionId,
+    message_uid: messageUid || null,
+  }));
+  const { error } = await supabaseAdmin.from("email_attachments").insert(rows);
+  if (error) {
+    console.error("[auto-sync] attachment meta insert error:", error.message);
+  }
 }
 
 async function syncGmailForUser(conn: any): Promise<number> {
@@ -352,7 +410,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
       const emailBody = extractGmailBody(fullMsg.payload) || fullMsg.snippet || "";
 
       const scopedExternalId = `${conn.id}:${msg.id!}`;
-      const saved = await saveEmailWithTriage(
+      const savedId = await saveEmailWithTriage(
         conn.user_id,
         scopedExternalId,
         from,
@@ -362,7 +420,13 @@ async function syncGmailForUser(conn: any): Promise<number> {
         (conn as any)._sharedMailboxId
       );
 
-      if (saved) synced++;
+      if (savedId) {
+        synced++;
+        const gmailAttachments = extractGmailAttachments(fullMsg.payload);
+        if (gmailAttachments.length > 0) {
+          await saveAttachmentsMeta(savedId, gmailAttachments, "gmail", conn.id, msg.id!);
+        }
+      }
     }
 
     if (synced > 0) {
@@ -450,7 +514,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
       const senderName = msg.from?.emailAddress?.name || senderEmail;
 
       const scopedExternalId = `${conn.id}:${msg.id}`;
-      const saved = await saveEmailWithTriage(
+      const savedId = await saveEmailWithTriage(
         conn.user_id,
         scopedExternalId,
         `${senderName} <${senderEmail}>`,
@@ -460,7 +524,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
         (conn as any)._sharedMailboxId
       );
 
-      if (saved) synced++;
+      if (savedId) synced++;
     }
 
     if (synced > 0) {
@@ -589,7 +653,22 @@ async function syncImapForUser(conn: any): Promise<number> {
         }
       }
 
-      const saved = await saveEmailWithTriage(
+      let imapAttachments: AttachmentMeta[] = [];
+      if (msg.source) {
+        try {
+          const parsedForAttach = await simpleParser(msg.source);
+          if (parsedForAttach.attachments && parsedForAttach.attachments.length > 0) {
+            imapAttachments = parsedForAttach.attachments.map((a) => ({
+              filename: a.filename || "attachment",
+              contentType: a.contentType || "application/octet-stream",
+              size: a.size || 0,
+              providerAttachmentId: a.contentId || a.checksum || "",
+            }));
+          }
+        } catch {}
+      }
+
+      const savedId = await saveEmailWithTriage(
         conn.user_id,
         externalId,
         sender,
@@ -599,7 +678,12 @@ async function syncImapForUser(conn: any): Promise<number> {
         (conn as any)._sharedMailboxId
       );
 
-      if (saved) synced++;
+      if (savedId) {
+        synced++;
+        if (imapAttachments.length > 0) {
+          await saveAttachmentsMeta(savedId, imapAttachments, "imap", conn.id, String(msg.uid));
+        }
+      }
     }
 
     fetchSucceeded = true;

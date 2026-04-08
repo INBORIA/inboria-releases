@@ -5,6 +5,7 @@
  * NCV Mail API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { Attachment } from "./attachment";
 
 export interface Email {
   id: number;
@@ -35,5 +36,7 @@ export interface Email {
   assignedToName?: string | null;
   /** @nullable */
   assignedAt?: Date | null;
+  attachmentCount?: number;
+  attachments?: Attachment[];
   createdAt: Date;
 }

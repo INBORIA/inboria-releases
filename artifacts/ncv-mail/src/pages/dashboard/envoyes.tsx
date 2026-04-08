@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
+import { AttachmentList, AttachmentBadge } from "@/components/AttachmentList";
 import {
   useListEmails,
   useListProjects,
@@ -491,6 +492,9 @@ function ConversationView({
             </div>
             <div className="text-[12px] text-[#8b9cb3] max-h-[300px] overflow-y-auto">
               <EmailBodyRenderer body={msg.body || ""} />
+              {msg.attachments && msg.attachments.length > 0 && (
+                <AttachmentList attachments={msg.attachments} />
+              )}
             </div>
           </div>
         ))}

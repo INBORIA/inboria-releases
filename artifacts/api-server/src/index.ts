@@ -29,6 +29,41 @@ async function ensureOrganisationsTable() {
   }
 }
 
+async function ensureEmailAttachmentsTable() {
+  try {
+    const { error } = await supabaseAdmin.from("email_attachments").select("id").limit(1);
+    if (error && error.message.includes("does not exist")) {
+      const { error: createErr } = await supabaseAdmin.rpc("exec_sql" as any, {
+        query: `
+          CREATE TABLE IF NOT EXISTS email_attachments (
+            id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+            email_id integer REFERENCES emails(id) ON DELETE CASCADE,
+            filename text NOT NULL DEFAULT 'attachment',
+            content_type text NOT NULL DEFAULT 'application/octet-stream',
+            size integer DEFAULT 0,
+            provider text NOT NULL DEFAULT 'gmail',
+            provider_attachment_id text,
+            connection_id uuid,
+            message_uid text,
+            created_at timestamptz DEFAULT now()
+          );
+          CREATE INDEX IF NOT EXISTS idx_email_attachments_email_id ON email_attachments(email_id);
+          ALTER TABLE email_attachments ENABLE ROW LEVEL SECURITY;
+        `
+      });
+      if (createErr) {
+        logger.warn({ error: createErr.message }, "email_attachments table creation via RPC failed — create manually");
+      } else {
+        logger.info("email_attachments table created");
+      }
+    } else {
+      logger.info("email_attachments table OK");
+    }
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "email_attachments table check failed (non-fatal)");
+  }
+}
+
 async function ensureEmailConnectionsConstraint() {
   try {
     const { error } = await supabaseAdmin.rpc("exec_sql" as any, {
@@ -106,5 +141,6 @@ app.listen(port, (err) => {
   ensureIntegrationsTable();
   ensureOrganisationsTable();
   ensureEmailConnectionsConstraint();
+  ensureEmailAttachmentsTable();
   startAutoSync();
 });

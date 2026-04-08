@@ -1104,6 +1104,84 @@ paths:
               schema:
                 type: string
 
+  /attachments/email/{emailId}:
+    get:
+      operationId: getEmailAttachments
+      tags: [emails]
+      summary: Get attachments for an email
+      parameters:
+        - name: emailId
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of attachments
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  attachments:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/Attachment"
+        "404":
+          description: Email not found
+
+  /attachments/{id}/download:
+    get:
+      operationId: downloadAttachment
+      tags: [emails]
+      summary: Download an attachment file
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Attachment file content
+          content:
+            application/octet-stream:
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Attachment not found
+
+  /attachments/upload:
+    post:
+      operationId: uploadAttachments
+      tags: [emails]
+      summary: Upload files for sending as attachments
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                files:
+                  type: array
+                  items:
+                    type: string
+                    format: binary
+      responses:
+        "200":
+          description: Uploaded file info
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  files:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/UploadedFileInfo"
+
   /stripe/checkout:
     post:
       operationId: createCheckoutSession
@@ -2188,6 +2266,12 @@ components:
         assignedAt:
           type: ["string", "null"]
           format: date-time
+        attachmentCount:
+          type: integer
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/Attachment"
         createdAt:
           type: string
           format: date-time
@@ -2306,10 +2390,51 @@ components:
           type: string
         replyToEmailId:
           type: ["integer", "null"]
+        attachments:
+          type: array
+          items:
+            type: string
       required:
         - to
         - subject
         - body
+
+    UploadedFileInfo:
+      type: object
+      properties:
+        uploadId:
+          type: string
+        filename:
+          type: string
+        contentType:
+          type: string
+        size:
+          type: integer
+      required:
+        - uploadId
+        - filename
+        - contentType
+        - size
+
+    Attachment:
+      type: object
+      properties:
+        id:
+          type: string
+        filename:
+          type: string
+        content_type:
+          type: string
+        size:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+      required:
+        - id
+        - filename
+        - content_type
+        - size
 
     UpdateEmailBody:
       type: object

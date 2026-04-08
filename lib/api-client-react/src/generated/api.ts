@@ -69,6 +69,7 @@ import type {
   GenerateRelanceBody,
   GetConversationSummary200,
   GetConversationSummaryBody,
+  GetEmailAttachments200,
   GetEmailConversation200,
   GetFollowupStats200,
   GetInvitationByToken200,
@@ -126,6 +127,8 @@ import type {
   UpdateProfileBody,
   UpdateProjectBody,
   UpdateTaskBody,
+  UploadAttachments200,
+  UploadAttachmentsBody,
   UserProfile,
 } from "./api.schemas";
 
@@ -4333,6 +4336,277 @@ export function useExportFollowups<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary Get attachments for an email
+ */
+export const getGetEmailAttachmentsUrl = (emailId: number) => {
+  return `/api/attachments/email/${emailId}`;
+};
+
+export const getEmailAttachments = async (
+  emailId: number,
+  options?: RequestInit,
+): Promise<GetEmailAttachments200> => {
+  return customFetch<GetEmailAttachments200>(
+    getGetEmailAttachmentsUrl(emailId),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getGetEmailAttachmentsQueryKey = (emailId: number) => {
+  return [`/api/attachments/email/${emailId}`] as const;
+};
+
+export const getGetEmailAttachmentsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getEmailAttachments>>,
+  TError = ErrorType<void>,
+>(
+  emailId: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getEmailAttachments>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetEmailAttachmentsQueryKey(emailId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getEmailAttachments>>
+  > = ({ signal }) =>
+    getEmailAttachments(emailId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!emailId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getEmailAttachments>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetEmailAttachmentsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getEmailAttachments>>
+>;
+export type GetEmailAttachmentsQueryError = ErrorType<void>;
+
+/**
+ * @summary Get attachments for an email
+ */
+
+export function useGetEmailAttachments<
+  TData = Awaited<ReturnType<typeof getEmailAttachments>>,
+  TError = ErrorType<void>,
+>(
+  emailId: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getEmailAttachments>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetEmailAttachmentsQueryOptions(emailId, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Download an attachment file
+ */
+export const getDownloadAttachmentUrl = (id: string) => {
+  return `/api/attachments/${id}/download`;
+};
+
+export const downloadAttachment = async (
+  id: string,
+  options?: RequestInit,
+): Promise<Blob> => {
+  return customFetch<Blob>(getDownloadAttachmentUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getDownloadAttachmentQueryKey = (id: string) => {
+  return [`/api/attachments/${id}/download`] as const;
+};
+
+export const getDownloadAttachmentQueryOptions = <
+  TData = Awaited<ReturnType<typeof downloadAttachment>>,
+  TError = ErrorType<void>,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof downloadAttachment>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getDownloadAttachmentQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof downloadAttachment>>
+  > = ({ signal }) => downloadAttachment(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof downloadAttachment>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type DownloadAttachmentQueryResult = NonNullable<
+  Awaited<ReturnType<typeof downloadAttachment>>
+>;
+export type DownloadAttachmentQueryError = ErrorType<void>;
+
+/**
+ * @summary Download an attachment file
+ */
+
+export function useDownloadAttachment<
+  TData = Awaited<ReturnType<typeof downloadAttachment>>,
+  TError = ErrorType<void>,
+>(
+  id: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof downloadAttachment>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getDownloadAttachmentQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Upload files for sending as attachments
+ */
+export const getUploadAttachmentsUrl = () => {
+  return `/api/attachments/upload`;
+};
+
+export const uploadAttachments = async (
+  uploadAttachmentsBody: UploadAttachmentsBody,
+  options?: RequestInit,
+): Promise<UploadAttachments200> => {
+  const formData = new FormData();
+  if (uploadAttachmentsBody.files !== undefined) {
+    uploadAttachmentsBody.files.forEach((value) =>
+      formData.append(`files`, value),
+    );
+  }
+
+  return customFetch<UploadAttachments200>(getUploadAttachmentsUrl(), {
+    ...options,
+    method: "POST",
+    body: formData,
+  });
+};
+
+export const getUploadAttachmentsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof uploadAttachments>>,
+    TError,
+    { data: BodyType<UploadAttachmentsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof uploadAttachments>>,
+  TError,
+  { data: BodyType<UploadAttachmentsBody> },
+  TContext
+> => {
+  const mutationKey = ["uploadAttachments"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof uploadAttachments>>,
+    { data: BodyType<UploadAttachmentsBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return uploadAttachments(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UploadAttachmentsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof uploadAttachments>>
+>;
+export type UploadAttachmentsMutationBody = BodyType<UploadAttachmentsBody>;
+export type UploadAttachmentsMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Upload files for sending as attachments
+ */
+export const useUploadAttachments = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof uploadAttachments>>,
+    TError,
+    { data: BodyType<UploadAttachmentsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof uploadAttachments>>,
+  TError,
+  { data: BodyType<UploadAttachmentsBody> },
+  TContext
+> => {
+  return useMutation(getUploadAttachmentsMutationOptions(options));
+};
 
 /**
  * @summary Create a Stripe Checkout session

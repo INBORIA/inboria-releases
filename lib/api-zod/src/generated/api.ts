@@ -214,6 +214,18 @@ export const ListEmailsResponse = zod.object({
       assignedTo: zod.string().nullish(),
       assignedToName: zod.string().nullish(),
       assignedAt: zod.coerce.date().nullish(),
+      attachmentCount: zod.number().optional(),
+      attachments: zod
+        .array(
+          zod.object({
+            id: zod.string(),
+            filename: zod.string(),
+            content_type: zod.string(),
+            size: zod.number(),
+            created_at: zod.coerce.date().optional(),
+          }),
+        )
+        .optional(),
       createdAt: zod.coerce.date(),
     }),
   ),
@@ -247,6 +259,18 @@ export const GetEmailResponse = zod.object({
   assignedTo: zod.string().nullish(),
   assignedToName: zod.string().nullish(),
   assignedAt: zod.coerce.date().nullish(),
+  attachmentCount: zod.number().optional(),
+  attachments: zod
+    .array(
+      zod.object({
+        id: zod.string(),
+        filename: zod.string(),
+        content_type: zod.string(),
+        size: zod.number(),
+        created_at: zod.coerce.date().optional(),
+      }),
+    )
+    .optional(),
   createdAt: zod.coerce.date(),
 });
 
@@ -281,6 +305,18 @@ export const UpdateEmailResponse = zod.object({
   assignedTo: zod.string().nullish(),
   assignedToName: zod.string().nullish(),
   assignedAt: zod.coerce.date().nullish(),
+  attachmentCount: zod.number().optional(),
+  attachments: zod
+    .array(
+      zod.object({
+        id: zod.string(),
+        filename: zod.string(),
+        content_type: zod.string(),
+        size: zod.number(),
+        created_at: zod.coerce.date().optional(),
+      }),
+    )
+    .optional(),
   createdAt: zod.coerce.date(),
 });
 
@@ -568,6 +604,18 @@ export const GetProjectResponse = zod.object({
       assignedTo: zod.string().nullish(),
       assignedToName: zod.string().nullish(),
       assignedAt: zod.coerce.date().nullish(),
+      attachmentCount: zod.number().optional(),
+      attachments: zod
+        .array(
+          zod.object({
+            id: zod.string(),
+            filename: zod.string(),
+            content_type: zod.string(),
+            size: zod.number(),
+            created_at: zod.coerce.date().optional(),
+          }),
+        )
+        .optional(),
       createdAt: zod.coerce.date(),
     }),
   ),
@@ -672,6 +720,7 @@ export const SendEmailBody = zod.object({
   subject: zod.string(),
   body: zod.string(),
   replyToEmailId: zod.number().nullish(),
+  attachments: zod.array(zod.string()).optional(),
 });
 
 export const SendEmailResponse = zod.object({
@@ -755,6 +804,18 @@ export const GetEmailConversationResponse = zod.object({
       assignedTo: zod.string().nullish(),
       assignedToName: zod.string().nullish(),
       assignedAt: zod.coerce.date().nullish(),
+      attachmentCount: zod.number().optional(),
+      attachments: zod
+        .array(
+          zod.object({
+            id: zod.string(),
+            filename: zod.string(),
+            content_type: zod.string(),
+            size: zod.number(),
+            created_at: zod.coerce.date().optional(),
+          }),
+        )
+        .optional(),
       createdAt: zod.coerce.date(),
     })
     .optional(),
@@ -779,6 +840,18 @@ export const GetEmailConversationResponse = zod.object({
           assignedTo: zod.string().nullish(),
           assignedToName: zod.string().nullish(),
           assignedAt: zod.coerce.date().nullish(),
+          attachmentCount: zod.number().optional(),
+          attachments: zod
+            .array(
+              zod.object({
+                id: zod.string(),
+                filename: zod.string(),
+                content_type: zod.string(),
+                size: zod.number(),
+                created_at: zod.coerce.date().optional(),
+              }),
+            )
+            .optional(),
           createdAt: zod.coerce.date(),
         })
         .and(
@@ -946,6 +1019,54 @@ export const GenerateRelanceResponse = zod.object({
  */
 export const ExportEmailsQueryParams = zod.object({
   status: zod.coerce.string().optional(),
+});
+
+/**
+ * @summary Get attachments for an email
+ */
+export const GetEmailAttachmentsParams = zod.object({
+  emailId: zod.coerce.number(),
+});
+
+export const GetEmailAttachmentsResponse = zod.object({
+  attachments: zod
+    .array(
+      zod.object({
+        id: zod.string(),
+        filename: zod.string(),
+        content_type: zod.string(),
+        size: zod.number(),
+        created_at: zod.coerce.date().optional(),
+      }),
+    )
+    .optional(),
+});
+
+/**
+ * @summary Download an attachment file
+ */
+export const DownloadAttachmentParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+/**
+ * @summary Upload files for sending as attachments
+ */
+export const UploadAttachmentsBody = zod.object({
+  files: zod.array(zod.instanceof(File)).optional(),
+});
+
+export const UploadAttachmentsResponse = zod.object({
+  files: zod
+    .array(
+      zod.object({
+        uploadId: zod.string(),
+        filename: zod.string(),
+        contentType: zod.string(),
+        size: zod.number(),
+      }),
+    )
+    .optional(),
 });
 
 /**
@@ -1572,6 +1693,18 @@ export const GetAssignedToMeResponseItem = zod.object({
   assignedTo: zod.string().nullish(),
   assignedToName: zod.string().nullish(),
   assignedAt: zod.coerce.date().nullish(),
+  attachmentCount: zod.number().optional(),
+  attachments: zod
+    .array(
+      zod.object({
+        id: zod.string(),
+        filename: zod.string(),
+        content_type: zod.string(),
+        size: zod.number(),
+        created_at: zod.coerce.date().optional(),
+      }),
+    )
+    .optional(),
   createdAt: zod.coerce.date(),
 });
 export const GetAssignedToMeResponse = zod.array(GetAssignedToMeResponseItem);

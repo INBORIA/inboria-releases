@@ -1,6 +1,8 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
+import { AttachmentList, AttachmentBadge } from "@/components/AttachmentList";
+import { FileAttachInput, type UploadedFile } from "@/components/FileAttachInput";
 import {
   useListEmails,
   useGetCategoryCounts,
@@ -122,6 +124,9 @@ function EmailRow({ email, onClick, onArchive, onCategoryClick, isSelected, onTo
               {email.projectReference}
             </span>
           )}
+          {(email.attachmentCount ?? 0) > 0 && (
+            <AttachmentBadge count={email.attachmentCount} />
+          )}
           {(email.taskCount ?? 0) > 0 && (
             <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-cyan-500/15 text-cyan-400 border border-cyan-500/20 hidden sm:inline-flex items-center gap-1">
               <ListTodo className="w-2.5 h-2.5" />
@@ -159,8 +164,9 @@ const triageSchema = z.object({
   body: z.string().min(1, "Contenu requis"),
 });
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string) => void }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[]) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string) => void }) {
   const [replyOpen, setReplyOpen] = useState(false);
+  const [replyAttachments, setReplyAttachments] = useState<UploadedFile[]>([]);
   const [replyTo, setReplyTo] = useState("");
   const [replySubject, setReplySubject] = useState("");
   const [replyText, setReplyText] = useState("");
@@ -230,6 +236,9 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
 
             <div className="p-4">
               <EmailBodyRenderer body={email.body} />
+              {email.attachments && email.attachments.length > 0 && (
+                <AttachmentList attachments={email.attachments} />
+              )}
             </div>
 
             <div className="px-4 py-3 border-t border-border">
@@ -602,30 +611,34 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     className="h-24 bg-background border-border text-white text-[12px] resize-none"
                   />
                 </div>
-                <div className="flex items-center gap-2 justify-end">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => { setReplyOpen(false); setReplyText(""); setReplyTo(""); setReplySubject(""); }}
-                    className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
-                  >
-                    Annuler
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="gap-1.5 h-7 text-[11px]"
-                    disabled={isSending || !replyTo.trim() || !replySubject.trim() || !replyText.trim()}
-                    onClick={() => {
-                      onSendReply(replyTo, replySubject, replyText, email.id);
-                      setReplyText("");
-                      setReplyTo("");
-                      setReplySubject("");
-                      setReplyOpen(false);
-                    }}
-                  >
-                    <Send className="w-3 h-3" />
-                    {isSending ? "Envoi..." : "Envoyer"}
-                  </Button>
+                <div className="flex items-center gap-2 justify-between">
+                  <FileAttachInput files={replyAttachments} onChange={setReplyAttachments} />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => { setReplyOpen(false); setReplyText(""); setReplyTo(""); setReplySubject(""); setReplyAttachments([]); }}
+                      className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
+                    >
+                      Annuler
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="gap-1.5 h-7 text-[11px]"
+                      disabled={isSending || !replyTo.trim() || !replySubject.trim() || !replyText.trim()}
+                      onClick={() => {
+                        onSendReply(replyTo, replySubject, replyText, email.id, replyAttachments);
+                        setReplyText("");
+                        setReplyTo("");
+                        setReplySubject("");
+                        setReplyAttachments([]);
+                        setReplyOpen(false);
+                      }}
+                    >
+                      <Send className="w-3 h-3" />
+                      {isSending ? "Envoi..." : "Envoyer"}
+                    </Button>
+                  </div>
                 </div>
               </div>
             )}
@@ -783,6 +796,7 @@ export default function Dashboard() {
   const [composeTo, setComposeTo] = useState("");
   const [composeSubject, setComposeSubject] = useState("");
   const [composeBody, setComposeBody] = useState("");
+  const [composeAttachments, setComposeAttachments] = useState<UploadedFile[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   const activeEmails = emails
@@ -986,9 +1000,10 @@ export default function Dashboard() {
     );
   };
 
-  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number) => {
+  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[]) => {
+    const uploadIds = attachments?.map((a) => a.uploadId).filter(Boolean);
     sendEmailMut.mutate(
-      { data: { to, subject, body, replyToEmailId: replyToEmailId ?? null } },
+      { data: { to, subject, body, replyToEmailId: replyToEmailId ?? null, attachments: uploadIds && uploadIds.length > 0 ? uploadIds : undefined } as any },
       {
         onSuccess: () => {
           invalidateAll();
@@ -1005,7 +1020,7 @@ export default function Dashboard() {
   const handleComposeSend = () => {
     if (!composeTo.trim() || !composeSubject.trim() || !composeBody.trim()) return;
     sendEmailMut.mutate(
-      { data: { to: composeTo, subject: composeSubject, body: composeBody, replyToEmailId: null } },
+      { data: { to: composeTo, subject: composeSubject, body: composeBody, replyToEmailId: null, attachments: composeAttachments.length > 0 ? composeAttachments.map((a) => a.uploadId) : undefined } as any },
       {
         onSuccess: () => {
           invalidateAll();
@@ -1013,6 +1028,7 @@ export default function Dashboard() {
           setComposeTo("");
           setComposeSubject("");
           setComposeBody("");
+          setComposeAttachments([]);
           toast({ title: "Email envoyé" });
         },
         onError: (err: any) => {
@@ -1230,6 +1246,7 @@ export default function Dashboard() {
                     <label className="text-[11px] text-[#8b9cb3] mb-1 block">Message</label>
                     <Textarea value={composeBody} onChange={(e) => setComposeBody(e.target.value)} placeholder="Redigez votre message..." className="h-32 bg-background border-border text-white text-[12px]" />
                   </div>
+                  <FileAttachInput files={composeAttachments} onChange={setComposeAttachments} />
                   <Button
                     className="w-full gap-2 h-8 text-[12px]"
                     disabled={sendEmailMut.isPending || !composeTo.trim() || !composeSubject.trim() || !composeBody.trim()}
