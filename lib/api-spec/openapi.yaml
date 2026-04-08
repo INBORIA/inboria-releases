@@ -196,15 +196,28 @@ paths:
           schema:
             type: string
           description: Search term to filter emails by subject, sender or summary
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+          description: Page number (1-indexed)
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            minimum: 1
+            maximum: 100
+          description: Number of emails per page
       responses:
         "200":
-          description: List of emails
+          description: Paginated list of emails
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/Email"
+                $ref: "#/components/schemas/PaginatedEmails"
 
   /emails/{id}:
     get:
@@ -1346,15 +1359,26 @@ paths:
           schema:
             type: string
             enum: [all, unclaimed, mine]
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+            minimum: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+            minimum: 1
+            maximum: 100
       responses:
         "200":
-          description: List of emails
+          description: Paginated list of shared mailbox emails
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/SharedMailboxEmail"
+                $ref: "#/components/schemas/PaginatedSharedMailboxEmails"
 
   /shared-mailboxes/emails/{emailId}/claim:
     post:
@@ -1883,6 +1907,25 @@ components:
         - status
         - priority
         - createdAt
+
+    PaginatedEmails:
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            $ref: "#/components/schemas/Email"
+        total:
+          type: integer
+        page:
+          type: integer
+        totalPages:
+          type: integer
+      required:
+        - emails
+        - total
+        - page
+        - totalPages
 
     SendEmailBody:
       type: object

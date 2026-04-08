@@ -410,7 +410,7 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
   try {
     const orgId = await getOrgIdForMember(req.userId!);
     if (!orgId) {
-      res.json([]);
+      res.json({ emails: [], total: 0, page: 1, totalPages: 0 });
       return;
     }
 
@@ -426,26 +426,42 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
       return;
     }
 
+    const page = Math.max(1, parseInt(req.query.page as string, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string, 10) || 50));
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
     const filter = req.query.filter as string;
+
+    let countQuery = supabaseAdmin
+      .from("emails")
+      .select("id", { count: "exact", head: true })
+      .eq("shared_mailbox_id", req.params.mailboxId)
+      .neq("status", "supprime");
 
     let query = supabaseAdmin
       .from("emails")
       .select("id, sender, subject, body, status, priority, summary, category_id, claimed_by, claimed_at, created_at")
       .eq("shared_mailbox_id", req.params.mailboxId)
       .neq("status", "supprime")
-      .order("created_at", { ascending: false })
-      .limit(50);
+      .order("created_at", { ascending: false });
 
     if (filter === "unclaimed") {
       query = query.is("claimed_by", null);
+      countQuery = countQuery.is("claimed_by", null);
     } else if (filter === "mine") {
       query = query.eq("claimed_by", req.userId!);
+      countQuery = countQuery.eq("claimed_by", req.userId!);
     }
 
-    const { data: emails } = await query;
+    query = query.range(from, to);
+
+    const [{ count: total }, { data: emails }] = await Promise.all([
+      countQuery,
+      query,
+    ]);
 
     if (!emails || emails.length === 0) {
-      res.json([]);
+      res.json({ emails: [], total: total || 0, page, totalPages: Math.ceil((total || 0) / limit) });
       return;
     }
 
@@ -469,6 +485,8 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
       };
     }
 
+    const totalCount = total || 0;
+
     const enriched = emails.map(e => {
       const s = parseSenderField(e.sender || "");
       return {
@@ -488,7 +506,12 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
       };
     });
 
-    res.json(enriched);
+    res.json({
+      emails: enriched,
+      total: totalCount,
+      page,
+      totalPages: Math.ceil(totalCount / limit),
+    });
   } catch {
     res.status(500).json({ error: "Erreur lors de la récupération des emails" });
   }

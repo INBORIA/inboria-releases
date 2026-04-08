@@ -16,6 +16,17 @@ const router: IRouter = Router();
 
 router.get("/emails", requireAuth, async (req, res): Promise<void> => {
   try {
+    const page = Math.max(1, parseInt(req.query.page as string, 10) || 1);
+    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string, 10) || 50));
+    const from = (page - 1) * limit;
+    const to = from + limit - 1;
+
+    let countQuery = supabaseAdmin
+      .from("emails")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", req.userId!)
+      .is("shared_mailbox_id", null);
+
     let query = supabaseAdmin
       .from("emails")
       .select("*, categories(name), projects(name, reference)")
@@ -25,26 +36,37 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
 
     if (req.query.priority) {
       query = query.eq("priority", req.query.priority as string);
+      countQuery = countQuery.eq("priority", req.query.priority as string);
     }
     if (req.query.categoryId) {
       query = query.eq("category_id", req.query.categoryId as string);
+      countQuery = countQuery.eq("category_id", req.query.categoryId as string);
     }
     if (req.query.status) {
       query = query.eq("status", req.query.status as string);
+      countQuery = countQuery.eq("status", req.query.status as string);
     }
     if (req.query.projectId) {
       query = query.eq("project_id", req.query.projectId as string);
+      countQuery = countQuery.eq("project_id", req.query.projectId as string);
     }
     if (req.query.q) {
       const raw = (req.query.q as string).trim();
       if (raw) {
         const escaped = raw.replace(/[%_\\,()."']/g, (c) => `\\${c}`);
         const term = `%${escaped}%`;
-        query = query.or(`subject.ilike.${term},sender.ilike.${term},summary.ilike.${term}`);
+        const orFilter = `subject.ilike.${term},sender.ilike.${term},summary.ilike.${term}`;
+        query = query.or(orFilter);
+        countQuery = countQuery.or(orFilter);
       }
     }
 
-    const { data: emails, error } = await query;
+    query = query.range(from, to);
+
+    const [{ count: total }, { data: emails, error }] = await Promise.all([
+      countQuery,
+      query,
+    ]);
 
     if (error) {
       res.status(500).json({ error: error.message });
@@ -64,28 +86,35 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       });
     }
 
-    res.json((emails || []).map((e: any) => {
-      const s = parseSender(e.sender || "");
-      return {
-        id: e.id,
-        sender: s.name,
-        senderEmail: s.email,
-        subject: e.subject,
-        body: e.body,
-        status: e.status,
-        priority: e.priority || "faible",
-        summary: e.summary,
-        categoryId: e.category_id,
-        categoryName: e.categories?.name || null,
-        projectId: e.project_id,
-        projectName: e.projects?.name || null,
-        projectReference: e.projects?.reference || null,
-        assignedTo: e.assigned_to || null,
-        assignedAt: e.assigned_at || null,
-        taskCount: taskCountMap[e.id] || 0,
-        createdAt: e.created_at,
-      };
-    }));
+    const totalCount = total || 0;
+
+    res.json({
+      emails: (emails || []).map((e: any) => {
+        const s = parseSender(e.sender || "");
+        return {
+          id: e.id,
+          sender: s.name,
+          senderEmail: s.email,
+          subject: e.subject,
+          body: e.body,
+          status: e.status,
+          priority: e.priority || "faible",
+          summary: e.summary,
+          categoryId: e.category_id,
+          categoryName: e.categories?.name || null,
+          projectId: e.project_id,
+          projectName: e.projects?.name || null,
+          projectReference: e.projects?.reference || null,
+          assignedTo: e.assigned_to || null,
+          assignedAt: e.assigned_at || null,
+          taskCount: taskCountMap[e.id] || 0,
+          createdAt: e.created_at,
+        };
+      }),
+      total: totalCount,
+      page,
+      totalPages: Math.ceil(totalCount / limit),
+    });
   } catch {
     res.status(500).json({ error: "Failed to list emails" });
   }
