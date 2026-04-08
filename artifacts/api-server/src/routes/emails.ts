@@ -45,6 +45,9 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     if (req.query.status) {
       query = query.eq("status", req.query.status as string);
       countQuery = countQuery.eq("status", req.query.status as string);
+    } else {
+      query = query.neq("status", "archived");
+      countQuery = countQuery.neq("status", "archived");
     }
     if (req.query.projectId) {
       query = query.eq("project_id", req.query.projectId as string);

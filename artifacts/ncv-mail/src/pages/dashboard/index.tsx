@@ -643,7 +643,6 @@ export default function Dashboard() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   const activeEmails = emails
-    ?.filter((e) => e.status !== "archived")
     ?.sort((a, b) => {
       const pOrder: Record<string, number> = { urgent: 0, moyen: 1, faible: 2 };
       return (pOrder[a.priority] ?? 2) - (pOrder[b.priority] ?? 2);
