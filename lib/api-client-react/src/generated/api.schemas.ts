@@ -122,6 +122,13 @@ export interface Email {
   createdAt: string;
 }
 
+export interface PaginatedEmails {
+  emails: Email[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
 export interface SendEmailBody {
   to: string;
   subject: string;
@@ -574,6 +581,13 @@ export interface SharedMailboxEmail {
   createdAt?: string;
 }
 
+export interface PaginatedSharedMailboxEmails {
+  emails: SharedMailboxEmail[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
 export interface EmailComment {
   id: string;
   emailId: number;
@@ -660,6 +674,17 @@ export type ListEmailsParams = {
    * Search term to filter emails by subject, sender or summary
    */
   q?: string;
+  /**
+   * Page number (1-indexed)
+   * @minimum 1
+   */
+  page?: number;
+  /**
+   * Number of emails per page
+   * @minimum 1
+   * @maximum 100
+   */
+  limit?: number;
 };
 
 export type ListEmailsPriority =
@@ -789,6 +814,15 @@ export type RemoveSharedMailboxMember200 = {
 
 export type GetSharedMailboxEmailsParams = {
   filter?: GetSharedMailboxEmailsFilter;
+  /**
+   * @minimum 1
+   */
+  page?: number;
+  /**
+   * @minimum 1
+   * @maximum 100
+   */
+  limit?: number;
 };
 
 export type GetSharedMailboxEmailsFilter =

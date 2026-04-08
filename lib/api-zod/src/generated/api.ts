@@ -168,6 +168,11 @@ export const RegisterPushTokenResponse = zod.object({
 /**
  * @summary List emails
  */
+export const listEmailsQueryPageDefault = 1;
+
+export const listEmailsQueryLimitDefault = 50;
+export const listEmailsQueryLimitMax = 100;
+
 export const ListEmailsQueryParams = zod.object({
   priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
   categoryId: zod.coerce.number().optional(),
@@ -176,28 +181,45 @@ export const ListEmailsQueryParams = zod.object({
     .string()
     .optional()
     .describe("Search term to filter emails by subject, sender or summary"),
+  page: zod.coerce
+    .number()
+    .min(1)
+    .default(listEmailsQueryPageDefault)
+    .describe("Page number (1-indexed)"),
+  limit: zod.coerce
+    .number()
+    .min(1)
+    .max(listEmailsQueryLimitMax)
+    .default(listEmailsQueryLimitDefault)
+    .describe("Number of emails per page"),
 });
 
-export const ListEmailsResponseItem = zod.object({
-  id: zod.number(),
-  sender: zod.string(),
-  senderEmail: zod.string(),
-  subject: zod.string(),
-  body: zod.string(),
-  status: zod.string(),
-  priority: zod.string(),
-  summary: zod.string().nullish(),
-  categoryId: zod.number().nullish(),
-  categoryName: zod.string().nullish(),
-  projectId: zod.string().nullish(),
-  projectName: zod.string().nullish(),
-  projectReference: zod.string().nullish(),
-  assignedTo: zod.string().nullish(),
-  assignedToName: zod.string().nullish(),
-  assignedAt: zod.coerce.date().nullish(),
-  createdAt: zod.coerce.date(),
+export const ListEmailsResponse = zod.object({
+  emails: zod.array(
+    zod.object({
+      id: zod.number(),
+      sender: zod.string(),
+      senderEmail: zod.string(),
+      subject: zod.string(),
+      body: zod.string(),
+      status: zod.string(),
+      priority: zod.string(),
+      summary: zod.string().nullish(),
+      categoryId: zod.number().nullish(),
+      categoryName: zod.string().nullish(),
+      projectId: zod.string().nullish(),
+      projectName: zod.string().nullish(),
+      projectReference: zod.string().nullish(),
+      assignedTo: zod.string().nullish(),
+      assignedToName: zod.string().nullish(),
+      assignedAt: zod.coerce.date().nullish(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+  total: zod.number(),
+  page: zod.number(),
+  totalPages: zod.number(),
 });
-export const ListEmailsResponse = zod.array(ListEmailsResponseItem);
 
 /**
  * @summary Get single email
@@ -1051,28 +1073,46 @@ export const GetSharedMailboxEmailsParams = zod.object({
   mailboxId: zod.coerce.string(),
 });
 
+export const getSharedMailboxEmailsQueryPageDefault = 1;
+
+export const getSharedMailboxEmailsQueryLimitDefault = 50;
+export const getSharedMailboxEmailsQueryLimitMax = 100;
+
 export const GetSharedMailboxEmailsQueryParams = zod.object({
   filter: zod.enum(["all", "unclaimed", "mine"]).optional(),
+  page: zod.coerce
+    .number()
+    .min(1)
+    .default(getSharedMailboxEmailsQueryPageDefault),
+  limit: zod.coerce
+    .number()
+    .min(1)
+    .max(getSharedMailboxEmailsQueryLimitMax)
+    .default(getSharedMailboxEmailsQueryLimitDefault),
 });
 
-export const GetSharedMailboxEmailsResponseItem = zod.object({
-  id: zod.string(),
-  sender: zod.string(),
-  senderEmail: zod.string().optional(),
-  subject: zod.string(),
-  body: zod.string().optional(),
-  status: zod.string().optional(),
-  priority: zod.string().optional(),
-  summary: zod.string().optional(),
-  categoryId: zod.string().nullish(),
-  claimedBy: zod.string().nullish(),
-  claimedByName: zod.string().nullish(),
-  claimedAt: zod.coerce.date().nullish(),
-  createdAt: zod.coerce.date().optional(),
+export const GetSharedMailboxEmailsResponse = zod.object({
+  emails: zod.array(
+    zod.object({
+      id: zod.string(),
+      sender: zod.string(),
+      senderEmail: zod.string().optional(),
+      subject: zod.string(),
+      body: zod.string().optional(),
+      status: zod.string().optional(),
+      priority: zod.string().optional(),
+      summary: zod.string().optional(),
+      categoryId: zod.string().nullish(),
+      claimedBy: zod.string().nullish(),
+      claimedByName: zod.string().nullish(),
+      claimedAt: zod.coerce.date().nullish(),
+      createdAt: zod.coerce.date().optional(),
+    }),
+  ),
+  total: zod.number(),
+  page: zod.number(),
+  totalPages: zod.number(),
 });
-export const GetSharedMailboxEmailsResponse = zod.array(
-  GetSharedMailboxEmailsResponseItem,
-);
 
 /**
  * @summary Claim a shared email

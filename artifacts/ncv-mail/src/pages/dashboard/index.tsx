@@ -35,7 +35,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -528,10 +528,48 @@ export default function Dashboard() {
   const [inboxMode, setInboxMode] = useState<InboxMode>("personal");
   const [selectedSharedMailboxId, setSelectedSharedMailboxId] = useState<string | null>(null);
 
-  const { data: emails, isLoading: emailsLoading } = useListEmails({
+  const [emailPage, setEmailPage] = useState(1);
+  const [accumulatedEmails, setAccumulatedEmails] = useState<any[]>([]);
+  const [totalEmails, setTotalEmails] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+
+  const prevFilterKey = useRef("");
+  const currentFilterKey = `${filterPriority}|${searchQuery}`;
+  useEffect(() => {
+    if (prevFilterKey.current !== currentFilterKey) {
+      prevFilterKey.current = currentFilterKey;
+      setEmailPage(1);
+      setAccumulatedEmails([]);
+    }
+  }, [currentFilterKey]);
+
+  const { data: emailsData, isLoading: emailsLoading, isFetching: emailsFetching } = useListEmails({
     priority: filterPriority !== "all" ? (filterPriority as any) : undefined,
     q: searchQuery || undefined,
+    page: emailPage,
+    limit: 50,
   });
+
+  useEffect(() => {
+    if (emailsData) {
+      const paged = emailsData as any;
+      const newEmails = paged.emails || [];
+      setTotalEmails(paged.total || 0);
+      setTotalPages(paged.totalPages || 0);
+      if (emailPage === 1) {
+        setAccumulatedEmails(newEmails);
+      } else {
+        setAccumulatedEmails((prev) => {
+          const existingIds = new Set(prev.map((e: any) => e.id));
+          const unique = newEmails.filter((e: any) => !existingIds.has(e.id));
+          return [...prev, ...unique];
+        });
+      }
+    }
+  }, [emailsData, emailPage]);
+
+  const emails = accumulatedEmails;
+  const hasMorePages = emailPage < totalPages;
 
   const { data: categoryCounts, isLoading: categoriesLoading } = useGetCategoryCounts();
   const { data: summary, isLoading: summaryLoading } = useGetDashboardSummary();
@@ -545,11 +583,12 @@ export default function Dashboard() {
 
   const plan = (profile as any)?.plan;
   const { data: sharedMailboxes } = useGetSharedMailboxes({ query: { enabled: plan === "business" } });
-  const { data: sharedEmails, isLoading: sharedEmailsLoading } = useGetSharedMailboxEmails(
+  const { data: sharedEmailsData, isLoading: sharedEmailsLoading } = useGetSharedMailboxEmails(
     selectedSharedMailboxId || "",
     undefined,
     { query: { enabled: !!selectedSharedMailboxId && inboxMode === "shared" } }
   );
+  const sharedEmails = (sharedEmailsData as any)?.emails || sharedEmailsData;
   const claimEmailMut = useClaimSharedEmail();
   const unclaimEmailMut = useUnclaimSharedEmail();
 
@@ -567,14 +606,34 @@ export default function Dashboard() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
 
   const [filterCategory, setFilterCategory] = useState<string>("all");
-  const allActiveEmails = emails?.filter((e) => e.status !== "archived");
+  const allActiveEmails = emails?.filter((e: any) => e.status !== "archived");
   const activeEmails = allActiveEmails
-    ?.filter((e) => filterCategory === "all" || e.categoryName === filterCategory)
-    ?.sort((a, b) => {
+    ?.filter((e: any) => filterCategory === "all" || e.categoryName === filterCategory)
+    ?.sort((a: any, b: any) => {
       const pOrder: Record<string, number> = { urgent: 0, moyen: 1, faible: 2 };
       return (pOrder[a.priority] ?? 2) - (pOrder[b.priority] ?? 2);
     });
-  const selectedEmail = emails?.find((e) => e.id === selectedEmailId);
+  const selectedEmail = emails?.find((e: any) => e.id === selectedEmailId);
+
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+  const loadMore = useCallback(() => {
+    if (hasMorePages && !emailsFetching) {
+      setEmailPage((p) => p + 1);
+    }
+  }, [hasMorePages, emailsFetching]);
+
+  useEffect(() => {
+    const el = loadMoreRef.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore();
+      },
+      { threshold: 0.1 }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   const selectionMode = selectedIds.size > 0;
 
@@ -616,6 +675,8 @@ export default function Dashboard() {
   };
 
   const invalidateAll = () => {
+    setEmailPage(1);
+    setAccumulatedEmails([]);
     queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
@@ -916,8 +977,8 @@ export default function Dashboard() {
     );
   }
 
-  const totalEmails = activeEmails?.length || 0;
-  const autopilotActive = totalEmails > 0;
+  const displayedEmailCount = activeEmails?.length || 0;
+  const autopilotActive = displayedEmailCount > 0;
 
   return (
     <DashboardLayout>
@@ -1317,18 +1378,42 @@ export default function Dashboard() {
                         <p className="text-[12px] text-[#8b9cb3] mt-1">Tous vos emails ont été traités.</p>
                       </div>
                     ) : (
-                      activeEmails?.map((email) => (
-                        <EmailRow
-                          key={email.id}
-                          email={email}
-                          onClick={() => { if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(email.id); } }}
-                          onArchive={handleArchive}
-                          onCategoryClick={(name) => setFilterCategory(name)}
-                          isSelected={selectedIds.has(email.id)}
-                          onToggleSelect={toggleSelect}
-                          selectionMode={selectionMode}
-                        />
-                      ))
+                      <>
+                        {activeEmails?.map((email: any) => (
+                          <EmailRow
+                            key={email.id}
+                            email={email}
+                            onClick={() => { if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(email.id); } }}
+                            onArchive={handleArchive}
+                            onCategoryClick={(name: string) => setFilterCategory(name)}
+                            isSelected={selectedIds.has(email.id)}
+                            onToggleSelect={toggleSelect}
+                            selectionMode={selectionMode}
+                          />
+                        ))}
+                        {hasMorePages && (
+                          <div ref={loadMoreRef} className="flex items-center justify-center py-4">
+                            {emailsFetching ? (
+                              <div className="flex items-center gap-2 text-[#8b9cb3]">
+                                <Loader2 className="w-4 h-4 animate-spin" />
+                                <span className="text-[11px]">Chargement...</span>
+                              </div>
+                            ) : (
+                              <button
+                                onClick={loadMore}
+                                className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40"
+                              >
+                                Charger plus d'emails
+                              </button>
+                            )}
+                          </div>
+                        )}
+                        {!hasMorePages && emails.length > 50 && (
+                          <div className="text-center py-3">
+                            <span className="text-[10px] text-[#8b9cb3]/60">Tous les emails chargés ({totalEmails})</span>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </>
@@ -1388,7 +1473,7 @@ export default function Dashboard() {
                     >
                       <span className="text-[11px]">Toutes</span>
                       <span className="text-[10px] bg-white/[0.06] px-1.5 py-0.5 rounded">
-                        {allActiveEmails?.length || 0}
+                        {totalEmails || allActiveEmails?.length || 0}
                       </span>
                     </div>
                     {categoryCounts?.map((cat) => (

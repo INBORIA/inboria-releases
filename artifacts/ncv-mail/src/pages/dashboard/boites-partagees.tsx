@@ -436,7 +436,8 @@ function MailboxEmails({
   onClaim: (emailId: string) => void;
   onUnclaim: (emailId: string) => void;
 }) {
-  const { data: emails, isLoading } = useGetSharedMailboxEmails(mailboxId, { filter: filter as any });
+  const { data: emailsData, isLoading } = useGetSharedMailboxEmails(mailboxId, { filter: filter as any });
+  const emails = (emailsData as any)?.emails || emailsData;
   const forceSync = useForceSharedMailboxSync();
   const queryClient = useQueryClient();
   const { toast } = useToast();

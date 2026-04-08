@@ -84,6 +84,15 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - Team dashboard page at `/dashboard/activite-equipe` (Business plan only): member stats, recent activity feed.
     - Sidebar link "Activité équipe" visible only for Business plan users.
 
+- **Email Pagination (Phase 6)**:
+    - Backend: `/api/emails` and `/api/shared-mailboxes/:mailboxId/emails` return paginated responses `{ emails, total, page, totalPages }` instead of plain arrays.
+    - Query params: `page` (1-indexed, default 1) and `limit` (default 50, max 100).
+    - Count query runs in parallel with data query for performance.
+    - Frontend: Infinite scroll with IntersectionObserver. Emails accumulate in state as user scrolls. Filters/search reset to page 1.
+    - Sidebar counters use server-provided `total` count, not loaded email count.
+    - Archives page uses `status=archived` filter with limit 100.
+    - OpenAPI schemas: `PaginatedEmails`, `PaginatedSharedMailboxEmails`.
+
 ## External Dependencies
 
 - **Supabase**: Primary database (PostgreSQL) and authentication service.

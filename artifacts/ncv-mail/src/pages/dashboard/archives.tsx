@@ -198,13 +198,14 @@ export default function Archives() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
 
-  const { data: allEmails, isLoading: emailsLoading } = useListEmails();
+  const { data: allEmailsData, isLoading: emailsLoading } = useListEmails({ status: "archived", limit: 100 });
   const { data: categories } = useListCategories();
   const { data: projects } = useListProjects();
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
 
-  const archivedEmails = allEmails?.filter((e) => e.status === "archived") || [];
+  const allEmails = (allEmailsData as any)?.emails || [];
+  const archivedEmails = allEmails || [];
 
   const emailsByCategory: Record<string, typeof archivedEmails> = {};
   const uncategorized: typeof archivedEmails = [];

@@ -15,4 +15,15 @@ export type ListEmailsParams = {
    * Search term to filter emails by subject, sender or summary
    */
   q?: string;
+  /**
+   * Page number (1-indexed)
+   * @minimum 1
+   */
+  page?: number;
+  /**
+   * Number of emails per page
+   * @minimum 1
+   * @maximum 100
+   */
+  limit?: number;
 };

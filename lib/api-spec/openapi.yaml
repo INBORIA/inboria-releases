@@ -2684,6 +2684,25 @@ components:
       required:
         - userId
 
+    PaginatedSharedMailboxEmails:
+      type: object
+      properties:
+        emails:
+          type: array
+          items:
+            $ref: "#/components/schemas/SharedMailboxEmail"
+        total:
+          type: integer
+        page:
+          type: integer
+        totalPages:
+          type: integer
+      required:
+        - emails
+        - total
+        - page
+        - totalPages
+
     SharedMailboxEmail:
       type: object
       properties:

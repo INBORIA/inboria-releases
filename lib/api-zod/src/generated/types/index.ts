@@ -83,6 +83,8 @@ export * from "./organisationMember";
 export * from "./organisationMemberRole";
 export * from "./organisationMemberStatus";
 export * from "./organisationMyRole";
+export * from "./paginatedEmails";
+export * from "./paginatedSharedMailboxEmails";
 export * from "./portalResponse";
 export * from "./project";
 export * from "./projectDetail";

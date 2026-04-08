@@ -77,6 +77,8 @@ import type {
   OAuthUrlResponse,
   Organisation,
   OrganisationMember,
+  PaginatedEmails,
+  PaginatedSharedMailboxEmails,
   PortalResponse,
   Project,
   ProjectDetail,
@@ -90,7 +92,6 @@ import type {
   SendEmail200,
   SendEmailBody,
   SharedMailbox,
-  SharedMailboxEmail,
   SharedMailboxMember,
   StripeWebhook200,
   StripeWebhookBody,
@@ -782,8 +783,8 @@ export const getListEmailsUrl = (params?: ListEmailsParams) => {
 export const listEmails = async (
   params?: ListEmailsParams,
   options?: RequestInit,
-): Promise<Email[]> => {
-  return customFetch<Email[]>(getListEmailsUrl(params), {
+): Promise<PaginatedEmails> => {
+  return customFetch<PaginatedEmails>(getListEmailsUrl(params), {
     ...options,
     method: "GET",
   });
@@ -5490,8 +5491,8 @@ export const getSharedMailboxEmails = async (
   mailboxId: string,
   params?: GetSharedMailboxEmailsParams,
   options?: RequestInit,
-): Promise<SharedMailboxEmail[]> => {
-  return customFetch<SharedMailboxEmail[]>(
+): Promise<PaginatedSharedMailboxEmails> => {
+  return customFetch<PaginatedSharedMailboxEmails>(
     getGetSharedMailboxEmailsUrl(mailboxId, params),
     {
       ...options,
