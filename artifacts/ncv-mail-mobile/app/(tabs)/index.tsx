@@ -27,7 +27,7 @@ import {
   getGetCategoryCountsQueryKey,
   getGetInboxHealthQueryKey,
 } from "@workspace/api-client-react";
-import type { Email } from "@workspace/api-client-react";
+import type { Email, PaginatedEmails } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 
@@ -53,13 +53,16 @@ export default function InboxScreen() {
   const longPressedRef = useRef(false);
   const isWeb = Platform.OS === "web";
 
-  const { data: emails, isLoading } = useListEmails({
+  const { data: emailsData, isLoading } = useListEmails({
     priority:
       filterPriority !== "all"
         ? (filterPriority as "urgent" | "moyen" | "faible")
         : undefined,
     q: searchQuery || undefined,
+    categoryId: filterCategory ?? undefined,
+    limit: 50,
   });
+  const emails = (emailsData as PaginatedEmails | undefined)?.emails ?? [];
 
   const { data: categories } = useListCategories();
   const { data: summary } = useGetDashboardSummary();
@@ -67,8 +70,6 @@ export default function InboxScreen() {
   const bulkUpdate = useBulkUpdateEmails();
 
   const activeEmails = emails
-    ?.filter((e) => e.status !== "archived")
-    ?.filter((e) => filterCategory === null || e.categoryId === filterCategory)
     ?.sort((a, b) => {
       const pOrder: Record<string, number> = { urgent: 0, moyen: 1, faible: 2 };
       return (pOrder[a.priority ?? "faible"] ?? 2) - (pOrder[b.priority ?? "faible"] ?? 2);

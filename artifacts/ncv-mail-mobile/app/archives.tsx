@@ -19,6 +19,7 @@ import {
   getListEmailsQueryKey,
   getGetDashboardSummaryQueryKey,
 } from "@workspace/api-client-react";
+import type { PaginatedEmails } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -47,12 +48,12 @@ export default function ArchivesScreen() {
   const isWeb = Platform.OS === "web";
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const { data: allEmails, isLoading } = useListEmails();
+  const { data: archiveData, isLoading } = useListEmails({ status: "archived", limit: 50 });
   const { data: categories } = useListCategories();
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
 
-  const archivedEmails = allEmails?.filter((e) => e.status === "archived") || [];
+  const archivedEmails = (archiveData as PaginatedEmails | undefined)?.emails ?? [];
 
   const emailsByCategory: Record<string, typeof archivedEmails> = {};
   const uncategorized: typeof archivedEmails = [];
