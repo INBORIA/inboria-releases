@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import {
   useListFollowups,
   useCreateFollowup,
@@ -8,8 +9,13 @@ import {
   useListProjects,
   useDetectFollowups,
   useListEmails,
+  useGetEmailConversation,
+  useGetConversationSummary,
+  useSendEmail,
+  useGenerateDraft,
   getListFollowupsQueryKey,
   getGetFollowupStatsQueryKey,
+  getListEmailsQueryKey,
 } from "@workspace/api-client-react";
 import type { PaginatedEmails } from "@workspace/api-client-react";
 import { format } from "date-fns";
@@ -30,6 +36,12 @@ import {
   CalendarDays,
   X,
   Eye,
+  ArrowLeft,
+  Send,
+  User,
+  Reply,
+  Wand2,
+  MessageSquare,
 } from "lucide-react";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -37,6 +49,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+import { downloadExport } from "@/lib/export-utils";
 
 const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
   en_attente: { label: "En attente", color: "text-amber-400", bg: "bg-amber-500/15", icon: Clock },
@@ -50,6 +63,7 @@ export default function Suivi() {
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [showCreate, setShowCreate] = useState(false);
   const [showAiDetect, setShowAiDetect] = useState(false);
+  const [selectedFollowup, setSelectedFollowup] = useState<any>(null);
 
   const { data: followups, isLoading } = useListFollowups({
     status: filterStatus !== "all" ? filterStatus as any : undefined,
@@ -102,8 +116,13 @@ export default function Suivi() {
     );
   };
 
-  const handleExport = () => {
-    window.open(`${import.meta.env.BASE_URL}api/export/followups`, "_blank");
+  const handleExport = async () => {
+    try {
+      await downloadExport("export/followups", `suivis_${new Date().toISOString().split("T")[0]}.csv`);
+      toast({ title: "Export téléchargé" });
+    } catch {
+      toast({ title: "Erreur lors de l'export", variant: "destructive" });
+    }
   };
 
   const today = new Date().toISOString().split("T")[0];
@@ -112,6 +131,28 @@ export default function Suivi() {
   const overdue = followupsList.filter((f) => f.due_date && f.due_date < today && f.status !== "termine");
   const active = followupsList.filter((f) => f.status !== "termine" && !(f.due_date && f.due_date < today));
   const completed = followupsList.filter((f) => f.status === "termine");
+
+  if (selectedFollowup) {
+    return (
+      <DashboardLayout>
+        <div className="p-5 max-w-[900px] mx-auto w-full">
+          <FollowupDetail
+            followup={selectedFollowup}
+            onBack={() => setSelectedFollowup(null)}
+            onStatusChange={(status) => {
+              handleStatusChange(selectedFollowup.id, status);
+              setSelectedFollowup({ ...selectedFollowup, status });
+            }}
+            onDelete={() => {
+              handleDelete(selectedFollowup.id);
+              setSelectedFollowup(null);
+            }}
+            projects={(projects as any[]) || []}
+          />
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout>
@@ -198,7 +239,7 @@ export default function Suivi() {
                 </h3>
                 <div className="space-y-1">
                   {overdue.map((f) => (
-                    <FollowupRow key={f.id} followup={f} onStatusChange={handleStatusChange} onDelete={handleDelete} isOverdue />
+                    <FollowupRow key={f.id} followup={f} onStatusChange={handleStatusChange} onDelete={handleDelete} onClick={() => setSelectedFollowup(f)} isOverdue />
                   ))}
                 </div>
               </div>
@@ -208,7 +249,7 @@ export default function Suivi() {
                 <h3 className="text-[12px] font-medium text-white mb-2">Actifs ({active.length})</h3>
                 <div className="space-y-1">
                   {active.map((f) => (
-                    <FollowupRow key={f.id} followup={f} onStatusChange={handleStatusChange} onDelete={handleDelete} />
+                    <FollowupRow key={f.id} followup={f} onStatusChange={handleStatusChange} onDelete={handleDelete} onClick={() => setSelectedFollowup(f)} />
                   ))}
                 </div>
               </div>
@@ -218,7 +259,7 @@ export default function Suivi() {
                 <h3 className="text-[12px] font-medium text-[#8b9cb3] mb-2">Terminés ({completed.length})</h3>
                 <div className="space-y-1">
                   {completed.map((f) => (
-                    <FollowupRow key={f.id} followup={f} onStatusChange={handleStatusChange} onDelete={handleDelete} />
+                    <FollowupRow key={f.id} followup={f} onStatusChange={handleStatusChange} onDelete={handleDelete} onClick={() => setSelectedFollowup(f)} />
                   ))}
                 </div>
               </div>
@@ -261,18 +302,23 @@ function FollowupRow({
   followup: f,
   onStatusChange,
   onDelete,
+  onClick,
   isOverdue,
 }: {
   followup: any;
   onStatusChange: (id: string, status: string) => void;
   onDelete: (id: string) => void;
+  onClick: () => void;
   isOverdue?: boolean;
 }) {
   const cfg = STATUS_CONFIG[f.status] || STATUS_CONFIG.en_attente;
   const StatusIcon = cfg.icon;
 
   return (
-    <div className={`flex items-center gap-3 rounded-lg border p-3 ${isOverdue ? "border-red-500/30 bg-red-500/5" : "border-border bg-card"}`}>
+    <div
+      className={`flex items-center gap-3 rounded-lg border p-3 cursor-pointer hover:bg-[#1a2235] transition-colors ${isOverdue ? "border-red-500/30 bg-red-500/5" : "border-border bg-card"}`}
+      onClick={onClick}
+    >
       <div className={`w-7 h-7 rounded-full flex items-center justify-center ${cfg.bg}`}>
         <StatusIcon className={`w-3.5 h-3.5 ${cfg.color}`} />
       </div>
@@ -302,7 +348,7 @@ function FollowupRow({
         </div>
         {f.notes && <p className="text-[10px] text-[#8b9cb3] mt-0.5 line-clamp-1">{f.notes}</p>}
       </div>
-      <div className="flex items-center gap-1">
+      <div className="flex items-center gap-1" onClick={(e) => e.stopPropagation()}>
         <Select value={f.status} onValueChange={(v) => onStatusChange(f.id, v)}>
           <SelectTrigger className="w-[110px] h-7 text-[10px] bg-transparent border-border">
             <SelectValue />
@@ -322,6 +368,378 @@ function FollowupRow({
           <Trash2 className="w-3 h-3" />
         </Button>
       </div>
+    </div>
+  );
+}
+
+function FollowupDetail({
+  followup: f,
+  onBack,
+  onStatusChange,
+  onDelete,
+  projects,
+}: {
+  followup: any;
+  onBack: () => void;
+  onStatusChange: (status: string) => void;
+  onDelete: () => void;
+  projects: any[];
+}) {
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const emailId = f.email_id;
+  const { data: convoData, isLoading: loadingConvo } = useGetEmailConversation(emailId!, { query: { enabled: !!emailId } });
+  const summaryMut = useGetConversationSummary();
+  const sendEmailMut = useSendEmail();
+  const generateDraftMut = useGenerateDraft();
+  const updateFollowup = useUpdateFollowup();
+
+  const [aiSummary, setAiSummary] = useState<string | null>(null);
+  const [loadingSummary, setLoadingSummary] = useState(false);
+  const [replyOpen, setReplyOpen] = useState(false);
+  const [replyTo, setReplyTo] = useState("");
+  const [replySubject, setReplySubject] = useState("");
+  const [replyText, setReplyText] = useState("");
+  const [editNotes, setEditNotes] = useState(f.notes || "");
+  const [notesChanged, setNotesChanged] = useState(false);
+
+  const thread = (convoData as any)?.thread || [];
+  const email = (convoData as any)?.email;
+  const cfg = STATUS_CONFIG[f.status] || STATUS_CONFIG.en_attente;
+  const StatusIcon = cfg.icon;
+  const today = new Date().toISOString().split("T")[0];
+  const isOverdue = f.due_date && f.due_date < today && f.status !== "termine";
+
+  const handleGenerateSummary = async () => {
+    if (thread.length === 0) return;
+    setLoadingSummary(true);
+    try {
+      const result = await summaryMut.mutateAsync({ data: { thread } });
+      setAiSummary((result as any)?.summary || "");
+    } catch {
+      setAiSummary("Erreur lors de la génération du résumé.");
+    }
+    setLoadingSummary(false);
+  };
+
+  const handleSendReply = () => {
+    if (!replyTo.trim() || !replySubject.trim() || !replyText.trim()) return;
+    sendEmailMut.mutate(
+      { data: { to: replyTo, subject: replySubject, body: replyText, replyToEmailId: emailId ?? null } },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          toast({ title: "Réponse envoyée" });
+          setReplyOpen(false);
+          setReplyText("");
+        },
+        onError: (err: any) => {
+          toast({ variant: "destructive", title: "Erreur", description: err?.data?.error || "Impossible d'envoyer." });
+        },
+      }
+    );
+  };
+
+  const handleGenerateDraft = () => {
+    if (!emailId) return;
+    generateDraftMut.mutate(
+      { data: { emailId } },
+      {
+        onSuccess: (data: any) => {
+          setReplyText(data.draft);
+          toast({ title: "Brouillon IA généré" });
+        },
+        onError: () => {
+          toast({ title: "Brouillon indisponible", variant: "destructive" });
+        },
+      }
+    );
+  };
+
+  const handleSaveNotes = () => {
+    updateFollowup.mutate(
+      { id: f.id, data: { notes: editNotes } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListFollowupsQueryKey() });
+          toast({ title: "Notes mises à jour" });
+          setNotesChanged(false);
+        },
+      }
+    );
+  };
+
+  const handleExportConversation = async () => {
+    if (!emailId) return;
+    try {
+      await downloadExport(`export/emails?id=${emailId}`, `conversation_${emailId}.csv`);
+      toast({ title: "Conversation exportée" });
+    } catch {
+      toast({ title: "Erreur lors de l'export", variant: "destructive" });
+    }
+  };
+
+  return (
+    <div>
+      <div className="flex items-center gap-3 mb-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={onBack}
+          className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
+        >
+          <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+          Suivi
+        </Button>
+        <div className="flex-1" />
+        {emailId && (
+          <>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleExportConversation}
+              className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
+            >
+              <Download className="w-3 h-3" />
+              Exporter
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleGenerateSummary}
+              disabled={loadingSummary || thread.length === 0}
+              className="gap-1 text-[11px] h-7 bg-transparent border-border text-primary hover:text-white"
+            >
+              {loadingSummary ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
+              Résumé IA
+            </Button>
+          </>
+        )}
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={onDelete}
+          className="gap-1 text-[11px] h-7 bg-transparent border-red-500/30 text-red-400 hover:bg-red-500/10"
+        >
+          <Trash2 className="w-3 h-3" />
+        </Button>
+      </div>
+
+      <div className={`rounded-lg border p-4 mb-4 ${isOverdue ? "border-red-500/30 bg-red-500/5" : "border-border bg-card"}`}>
+        <div className="flex items-start gap-3">
+          <div className={`w-9 h-9 rounded-full flex items-center justify-center ${cfg.bg} shrink-0`}>
+            <StatusIcon className={`w-4 h-4 ${cfg.color}`} />
+          </div>
+          <div className="flex-1 min-w-0">
+            <h2 className="text-[15px] font-semibold text-white mb-1">{f.title}</h2>
+            <div className="flex items-center gap-3 flex-wrap">
+              {f.due_date && (
+                <span className={`text-[11px] flex items-center gap-1 ${isOverdue ? "text-red-400" : "text-[#8b9cb3]"}`}>
+                  <CalendarDays className="w-3.5 h-3.5" />
+                  {format(new Date(f.due_date), "dd MMMM yyyy", { locale: fr })}
+                  {isOverdue && <span className="text-red-400 font-medium ml-1">En retard</span>}
+                </span>
+              )}
+              {f.projects?.name && (
+                <span className="text-[11px] text-[#8b9cb3] flex items-center gap-1">
+                  <FolderKanban className="w-3.5 h-3.5" />
+                  {f.projects.reference} — {f.projects.name}
+                </span>
+              )}
+              {f.emails?.subject && (
+                <span className="text-[11px] text-[#8b9cb3] flex items-center gap-1">
+                  <Mail className="w-3.5 h-3.5" />
+                  {f.emails.subject}
+                </span>
+              )}
+            </div>
+          </div>
+          <div onClick={(e) => e.stopPropagation()}>
+            <Select value={f.status} onValueChange={onStatusChange}>
+              <SelectTrigger className="w-[120px] h-8 text-[11px] bg-transparent border-border">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en_attente" className="text-[11px]">En attente</SelectItem>
+                <SelectItem value="relance" className="text-[11px]">Relance</SelectItem>
+                <SelectItem value="termine" className="text-[11px]">Terminé</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
+
+        <div className="mt-3 pt-3 border-t border-border/50">
+          <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Notes</label>
+          <Textarea
+            value={editNotes}
+            onChange={(e) => { setEditNotes(e.target.value); setNotesChanged(true); }}
+            placeholder="Ajouter des notes sur ce suivi..."
+            className="bg-background border-border text-white text-[12px] h-16 resize-none"
+          />
+          {notesChanged && (
+            <div className="flex justify-end mt-1">
+              <Button size="sm" onClick={handleSaveNotes} className="text-[10px] h-6">
+                Sauvegarder
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {aiSummary && (
+        <div className="mb-4 p-3 rounded-lg border border-primary/20 bg-primary/5">
+          <div className="flex items-center gap-1 mb-1">
+            <Sparkles className="w-3 h-3 text-primary" />
+            <span className="text-[11px] font-medium text-primary">Résumé IA de la conversation</span>
+          </div>
+          <p className="text-[12px] text-[#8b9cb3] whitespace-pre-wrap">{aiSummary}</p>
+        </div>
+      )}
+
+      {!emailId ? (
+        <div className="text-center py-12 rounded-lg border border-border border-dashed bg-card/50">
+          <MessageSquare className="mx-auto h-8 w-8 text-[#8b9cb3]/20 mb-2" />
+          <h3 className="text-[13px] font-medium text-white mb-1">Aucun email lié</h3>
+          <p className="text-[12px] text-[#8b9cb3]">Ce suivi n'est pas lié à un email. La conversation n'est pas disponible.</p>
+        </div>
+      ) : loadingConvo ? (
+        <div className="flex justify-center py-12">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </div>
+      ) : (
+        <>
+          <div className="flex items-center justify-between mb-3">
+            <h3 className="text-[13px] font-medium text-white flex items-center gap-1.5">
+              <MessageSquare className="w-3.5 h-3.5 text-primary" />
+              Conversation ({thread.length} message{thread.length > 1 ? "s" : ""})
+            </h3>
+            <div className="flex items-center gap-1">
+              <Button
+                size="sm"
+                className="gap-1 h-7 text-[11px]"
+                onClick={() => {
+                  if (!replyOpen && email) {
+                    const sender = email.sender || "";
+                    const recipient = email.recipient || "";
+                    const lastReceived = [...thread].reverse().find((m: any) => m.role === "received");
+                    setReplyTo(lastReceived?.sender || sender || recipient);
+                    setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
+                    setReplyText("");
+                  }
+                  setReplyOpen(!replyOpen);
+                }}
+              >
+                <Reply className="w-3 h-3" />
+                Répondre
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="gap-1 h-7 text-[11px] bg-transparent border-primary/30 text-primary hover:bg-primary/10"
+                disabled={generateDraftMut.isPending}
+                onClick={() => {
+                  if (email) {
+                    const sender = email.sender || "";
+                    const lastReceived = [...thread].reverse().find((m: any) => m.role === "received");
+                    setReplyTo(lastReceived?.sender || sender);
+                    setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
+                    setReplyOpen(true);
+                    handleGenerateDraft();
+                  }
+                }}
+              >
+                {generateDraftMut.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
+                Réponse IA
+              </Button>
+            </div>
+          </div>
+
+          {replyOpen && (
+            <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-2">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[11px] font-medium text-primary uppercase tracking-wider flex items-center gap-1">
+                  <Reply className="w-3.5 h-3.5" /> Répondre
+                </span>
+                <button onClick={() => setReplyOpen(false)} className="text-[#8b9cb3] hover:text-white"><X className="w-4 h-4" /></button>
+              </div>
+              <Input
+                placeholder="Destinataire"
+                value={replyTo}
+                onChange={(e) => setReplyTo(e.target.value)}
+                className="bg-background border-border text-white text-[12px] h-8"
+              />
+              <Input
+                placeholder="Objet"
+                value={replySubject}
+                onChange={(e) => setReplySubject(e.target.value)}
+                className="bg-background border-border text-white text-[12px] h-8"
+              />
+              <Textarea
+                placeholder="Votre réponse..."
+                value={replyText}
+                onChange={(e) => setReplyText(e.target.value)}
+                className="bg-background border-border text-white text-[12px] min-h-[120px]"
+              />
+              <div className="flex justify-end gap-2">
+                <Button variant="ghost" size="sm" onClick={() => setReplyOpen(false)} className="text-[#8b9cb3] h-7 text-[11px]">
+                  Annuler
+                </Button>
+                <Button
+                  size="sm"
+                  className="gap-1 h-7 text-[11px]"
+                  disabled={sendEmailMut.isPending || !replyTo.trim() || !replyText.trim()}
+                  onClick={handleSendReply}
+                >
+                  {sendEmailMut.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
+                  Envoyer
+                </Button>
+              </div>
+            </div>
+          )}
+
+          <div className="space-y-3">
+            {thread.map((msg: any, idx: number) => (
+              <div
+                key={msg.id || idx}
+                className={`rounded-lg border p-4 ${
+                  msg.role === "sent"
+                    ? "border-primary/20 bg-primary/5 ml-8"
+                    : "border-border bg-card mr-8"
+                }`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold ${
+                    msg.role === "sent" ? "bg-primary/20 text-primary" : "bg-white/[0.06] text-[#8b9cb3]"
+                  }`}>
+                    {msg.role === "sent" ? <Send className="w-3 h-3" /> : <User className="w-3 h-3" />}
+                  </div>
+                  <span className="text-[11px] font-medium text-white">
+                    {msg.role === "sent" ? "Vous" : msg.sender || "?"}
+                  </span>
+                  <span className="text-[10px] text-[#8b9cb3]">
+                    {msg.role === "sent" ? `→ ${msg.recipient || "?"}` : ""}
+                  </span>
+                  <span className="text-[10px] text-[#8b9cb3] ml-auto">
+                    {msg.createdAt ? format(new Date(msg.createdAt), "dd MMM HH:mm", { locale: fr }) : ""}
+                  </span>
+                </div>
+                {msg.summary && (
+                  <div className="mb-2 px-2 py-1.5 rounded bg-primary/[0.06]">
+                    <div className="flex items-center gap-1 mb-0.5">
+                      <Sparkles className="w-2.5 h-2.5 text-primary" />
+                      <span className="text-[9px] font-medium text-primary uppercase">Résumé IA</span>
+                    </div>
+                    <p className="text-[11px] text-[#8b9cb3]">{msg.summary}</p>
+                  </div>
+                )}
+                <div className="text-[12px] text-[#8b9cb3] max-h-[300px] overflow-y-auto">
+                  <EmailBodyRenderer body={msg.body || ""} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </>
+      )}
     </div>
   );
 }

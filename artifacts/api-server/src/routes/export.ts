@@ -21,9 +21,11 @@ function toCsv(headers: string[], rows: Record<string, any>[], keys: string[]): 
 router.get("/export/emails", requireAuth, async (req, res): Promise<void> => {
   try {
     const status = req.query.status as string | undefined;
+    const emailId = req.query.id as string | undefined;
+
     let query = supabaseAdmin
       .from("emails")
-      .select("id, sender, recipient, subject, body, summary, status, priority, created_at, categories(name), projects(name, reference)")
+      .select("id, sender, recipient, subject, body, summary, status, priority, created_at, reply_to_email_id, categories(name), projects(name, reference)")
       .eq("user_id", req.userId!)
       .is("shared_mailbox_id", null)
       .order("created_at", { ascending: false })
@@ -31,6 +33,25 @@ router.get("/export/emails", requireAuth, async (req, res): Promise<void> => {
 
     if (status) {
       query = query.eq("status", status);
+    }
+
+    if (emailId) {
+      const rootId = parseInt(emailId, 10);
+      const { data: threadEmails } = await supabaseAdmin
+        .from("emails")
+        .select("id")
+        .eq("user_id", req.userId!)
+        .or(`id.eq.${rootId},reply_to_email_id.eq.${rootId}`);
+
+      const threadIds = (threadEmails || []).map((e: any) => e.id);
+      if (threadIds.length > 0) {
+        query = supabaseAdmin
+          .from("emails")
+          .select("id, sender, recipient, subject, body, summary, status, priority, created_at, reply_to_email_id, categories(name), projects(name, reference)")
+          .eq("user_id", req.userId!)
+          .in("id", threadIds)
+          .order("created_at", { ascending: true });
+      }
     }
 
     const { data, error } = await query;
@@ -142,6 +163,40 @@ router.get("/export/followups", requireAuth, async (req, res): Promise<void> => 
 
     res.setHeader("Content-Type", "text/csv; charset=utf-8");
     res.setHeader("Content-Disposition", `attachment; filename="suivis_${new Date().toISOString().split("T")[0]}.csv"`);
+    res.send("\uFEFF" + csv);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/export/tasks", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("tasks")
+      .select("*, emails(sender, subject), projects(name, reference)")
+      .eq("user_id", req.userId!)
+      .order("created_at", { ascending: false });
+
+    if (error) { res.status(500).json({ error: error.message }); return; }
+
+    const rows = (data || []).map((t: any) => ({
+      titre: t.title || "",
+      statut: t.done ? "Terminée" : "À faire",
+      date_echeance: t.due_date || "",
+      email_objet: t.emails?.subject || "",
+      email_expediteur: t.emails?.sender || "",
+      projet: t.projects ? `${t.projects.reference} - ${t.projects.name}` : "",
+      date_creation: t.created_at ? new Date(t.created_at).toLocaleDateString("fr-FR") : "",
+    }));
+
+    const csv = toCsv(
+      ["Titre", "Statut", "Date échéance", "Email objet", "Email expéditeur", "Projet", "Date création"],
+      rows,
+      ["titre", "statut", "date_echeance", "email_objet", "email_expediteur", "projet", "date_creation"]
+    );
+
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="taches_${new Date().toISOString().split("T")[0]}.csv"`);
     res.send("\uFEFF" + csv);
   } catch (err: any) {
     res.status(500).json({ error: err.message });

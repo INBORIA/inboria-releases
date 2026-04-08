@@ -81,9 +81,14 @@ export default function Envoyes() {
     );
   };
 
-  const handleExport = () => {
-    const token = document.cookie.split(";").find((c) => c.trim().startsWith("sb-"))?.split("=")[1];
-    window.open(`${import.meta.env.BASE_URL}api/export/emails?status=sent`, "_blank");
+  const handleExport = async () => {
+    try {
+      const { downloadExport } = await import("@/lib/export-utils");
+      await downloadExport("export/emails?status=sent", `emails_envoyes_${new Date().toISOString().split("T")[0]}.csv`);
+      toast({ title: "Export téléchargé" });
+    } catch {
+      toast({ title: "Erreur lors de l'export", variant: "destructive" });
+    }
   };
 
   if (selectedEmailId) {

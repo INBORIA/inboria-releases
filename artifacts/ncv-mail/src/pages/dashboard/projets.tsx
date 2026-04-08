@@ -620,7 +620,12 @@ export default function Projets() {
             <Button
               variant="outline"
               size="sm"
-              onClick={() => window.open(`${import.meta.env.BASE_URL}api/export/projects`, "_blank")}
+              onClick={async () => {
+                try {
+                  const { downloadExport } = await import("@/lib/export-utils");
+                  await downloadExport("export/projects", `projets_${new Date().toISOString().split("T")[0]}.csv`);
+                } catch {}
+              }}
               className="gap-1 text-[11px] h-8 bg-transparent border-border text-[#8b9cb3] hover:text-white"
             >
               <Download className="w-3 h-3" />

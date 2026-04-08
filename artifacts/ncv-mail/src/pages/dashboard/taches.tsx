@@ -4,8 +4,9 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
-import { Calendar, Mail, CheckSquare, Clock, Trash2, X, User, Sparkles, Tag } from "lucide-react";
+import { Calendar, Mail, CheckSquare, Clock, Trash2, X, User, Sparkles, Tag, Download } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -66,6 +67,23 @@ export default function Taches() {
             <h1 className="text-[16px] font-semibold text-white tracking-tight">Tâches extraites</h1>
             <p className="text-[12px] text-[#8b9cb3] mt-0.5">Actions identifiées automatiquement depuis vos emails.</p>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={async () => {
+              try {
+                const { downloadExport } = await import("@/lib/export-utils");
+                await downloadExport("export/tasks", `taches_${new Date().toISOString().split("T")[0]}.csv`);
+                toast({ title: "Export téléchargé" });
+              } catch {
+                toast({ title: "Erreur lors de l'export", variant: "destructive" });
+              }
+            }}
+            className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
+          >
+            <Download className="w-3 h-3" />
+            Exporter
+          </Button>
         </div>
 
         <Tabs defaultValue={filter} onValueChange={setFilter} className="mb-5">
