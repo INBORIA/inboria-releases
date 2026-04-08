@@ -108,6 +108,8 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
           projectId: e.project_id,
           projectName: e.projects?.name || null,
           projectReference: e.projects?.reference || null,
+          replyToEmailId: e.reply_to_email_id || null,
+          recipient: e.recipient || null,
           assignedTo: e.assigned_to || null,
           assignedAt: e.assigned_at || null,
           taskCount: taskCountMap[e.id] || 0,
@@ -410,6 +412,97 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
   } catch (err: any) {
     console.error("Send email error:", err);
     res.status(500).json({ error: "Echec de l'envoi: " + (err.message || "Erreur inconnue") });
+  }
+});
+
+router.get("/emails/:id/conversation", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const emailId = parseInt(req.params.id, 10);
+    if (isNaN(emailId)) { res.status(400).json({ error: "ID invalide" }); return; }
+
+    const { data: email, error } = await supabaseAdmin
+      .from("emails")
+      .select("*, categories(name), projects(name, reference)")
+      .eq("id", emailId)
+      .eq("user_id", req.userId!)
+      .single();
+
+    if (error || !email) { res.status(404).json({ error: "Email non trouve" }); return; }
+
+    const thread: any[] = [];
+
+    if (email.status === "sent" && email.reply_to_email_id) {
+      const { data: original } = await supabaseAdmin
+        .from("emails")
+        .select("*, categories(name), projects(name, reference)")
+        .eq("id", email.reply_to_email_id)
+        .eq("user_id", req.userId!)
+        .single();
+      if (original) thread.push({ ...original, role: "received" });
+      thread.push({ ...email, role: "sent" });
+    } else {
+      thread.push({ ...email, role: email.status === "sent" ? "sent" : "received" });
+    }
+
+    const { data: replies } = await supabaseAdmin
+      .from("emails")
+      .select("*, categories(name), projects(name, reference)")
+      .eq("reply_to_email_id", emailId)
+      .eq("user_id", req.userId!)
+      .order("created_at", { ascending: true });
+
+    for (const reply of replies || []) {
+      if (!thread.find((t) => t.id === reply.id)) {
+        thread.push({ ...reply, role: reply.status === "sent" ? "sent" : "received" });
+      }
+    }
+
+    if (email.status !== "sent") {
+      const { data: sentReplies } = await supabaseAdmin
+        .from("emails")
+        .select("*, categories(name), projects(name, reference)")
+        .eq("reply_to_email_id", emailId)
+        .eq("user_id", req.userId!)
+        .eq("status", "sent")
+        .order("created_at", { ascending: true });
+      for (const r of sentReplies || []) {
+        if (!thread.find((t) => t.id === r.id)) {
+          thread.push({ ...r, role: "sent" });
+        }
+      }
+    }
+
+    thread.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+    const mapEmail = (e: any) => {
+      const s = parseSender(e.sender || "");
+      return {
+        id: e.id,
+        sender: s.name,
+        senderEmail: s.email,
+        recipient: e.recipient || null,
+        subject: e.subject,
+        body: e.body,
+        status: e.status,
+        priority: e.priority || "faible",
+        summary: e.summary,
+        categoryId: e.category_id,
+        categoryName: e.categories?.name || null,
+        projectId: e.project_id,
+        projectName: e.projects?.name || null,
+        projectReference: e.projects?.reference || null,
+        replyToEmailId: e.reply_to_email_id || null,
+        createdAt: e.created_at,
+        role: e.role,
+      };
+    };
+
+    res.json({
+      email: mapEmail({ ...email, role: email.status === "sent" ? "sent" : "received" }),
+      thread: thread.map(mapEmail),
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
   }
 });
 

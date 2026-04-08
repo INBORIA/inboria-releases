@@ -97,6 +97,8 @@ export interface Email {
   id: number;
   sender: string;
   senderEmail: string;
+  /** @nullable */
+  recipient?: string | null;
   subject: string;
   body: string;
   status: string;
@@ -114,12 +116,82 @@ export interface Email {
   /** @nullable */
   projectReference?: string | null;
   /** @nullable */
+  replyToEmailId?: number | null;
+  /** @nullable */
   assignedTo?: string | null;
   /** @nullable */
   assignedToName?: string | null;
   /** @nullable */
   assignedAt?: string | null;
   createdAt: string;
+}
+
+export type FollowupStatus =
+  (typeof FollowupStatus)[keyof typeof FollowupStatus];
+
+export const FollowupStatus = {
+  en_attente: "en_attente",
+  relance: "relance",
+  termine: "termine",
+} as const;
+
+export type FollowupEmails = { [key: string]: unknown } | null;
+
+export type FollowupProjects = { [key: string]: unknown } | null;
+
+export interface Followup {
+  id: string;
+  userId?: string;
+  /** @nullable */
+  emailId?: number | null;
+  /** @nullable */
+  projectId?: string | null;
+  title: string;
+  status: FollowupStatus;
+  /** @nullable */
+  dueDate?: string | null;
+  /** @nullable */
+  notes?: string | null;
+  aiSuggestion?: boolean;
+  emails?: FollowupEmails;
+  projects?: FollowupProjects;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type CreateFollowupBodyStatus =
+  (typeof CreateFollowupBodyStatus)[keyof typeof CreateFollowupBodyStatus];
+
+export const CreateFollowupBodyStatus = {
+  en_attente: "en_attente",
+  relance: "relance",
+  termine: "termine",
+} as const;
+
+export interface CreateFollowupBody {
+  title: string;
+  emailId?: number;
+  projectId?: string;
+  status?: CreateFollowupBodyStatus;
+  dueDate?: string;
+  notes?: string;
+}
+
+export type UpdateFollowupBodyStatus =
+  (typeof UpdateFollowupBodyStatus)[keyof typeof UpdateFollowupBodyStatus];
+
+export const UpdateFollowupBodyStatus = {
+  en_attente: "en_attente",
+  relance: "relance",
+  termine: "termine",
+} as const;
+
+export interface UpdateFollowupBody {
+  title?: string;
+  status?: UpdateFollowupBodyStatus;
+  dueDate?: string;
+  notes?: string;
+  projectId?: string;
 }
 
 export interface PaginatedEmails {
@@ -751,6 +823,94 @@ export type SendEmail200 = {
 export type RecategorizeUncategorized200 = {
   recategorized: number;
   created: string[];
+};
+
+export type GetEmailConversation200ThreadItemRole =
+  (typeof GetEmailConversation200ThreadItemRole)[keyof typeof GetEmailConversation200ThreadItemRole];
+
+export const GetEmailConversation200ThreadItemRole = {
+  sent: "sent",
+  received: "received",
+} as const;
+
+export type GetEmailConversation200ThreadItem = Email & {
+  role?: GetEmailConversation200ThreadItemRole;
+};
+
+export type GetEmailConversation200 = {
+  email?: Email;
+  thread?: GetEmailConversation200ThreadItem[];
+};
+
+export type ListFollowupsParams = {
+  status?: ListFollowupsStatus;
+  projectId?: string;
+};
+
+export type ListFollowupsStatus =
+  (typeof ListFollowupsStatus)[keyof typeof ListFollowupsStatus];
+
+export const ListFollowupsStatus = {
+  all: "all",
+  en_attente: "en_attente",
+  relance: "relance",
+  termine: "termine",
+} as const;
+
+export type GetFollowupStats200 = {
+  en_attente?: number;
+  relance?: number;
+  termine?: number;
+  overdue?: number;
+};
+
+export type DeleteFollowup200 = {
+  success?: boolean;
+};
+
+export type GetConversationSummaryBodyThreadItem = { [key: string]: unknown };
+
+export type GetConversationSummaryBody = {
+  thread: GetConversationSummaryBodyThreadItem[];
+};
+
+export type GetConversationSummary200 = {
+  summary?: string;
+};
+
+export type DetectFollowupsBodyEmailsItem = { [key: string]: unknown };
+
+export type DetectFollowupsBody = {
+  emails: DetectFollowupsBodyEmailsItem[];
+};
+
+export type DetectFollowups200FollowupsItem = {
+  emailId?: number;
+  title?: string;
+  reason?: string;
+  suggestedDueDate?: string | null;
+  urgency?: string;
+};
+
+export type DetectFollowups200 = {
+  followups?: DetectFollowups200FollowupsItem[];
+};
+
+export type GenerateRelanceBodyOriginalEmail = { [key: string]: unknown };
+
+export type GenerateRelanceBody = {
+  originalEmail: GenerateRelanceBodyOriginalEmail;
+  context?: string;
+  signature?: string;
+};
+
+export type GenerateRelance200 = {
+  subject?: string;
+  body?: string;
+};
+
+export type ExportEmailsParams = {
+  status?: string;
 };
 
 export type StripeWebhookBody = { [key: string]: unknown };

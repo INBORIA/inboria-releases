@@ -424,4 +424,109 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
   }
 });
 
+router.post("/ai/conversation-summary", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const entitlement = await checkEntitlement(req.userId!);
+    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
+
+    const { thread } = req.body;
+    if (!thread || !Array.isArray(thread) || thread.length === 0) {
+      res.status(400).json({ error: "thread (array) requis" }); return;
+    }
+
+    const conversation = thread.map((msg: any) =>
+      `[${msg.role === "sent" ? "ENVOYÉ" : "REÇU"}] De: ${msg.sender || "?"} | Objet: ${msg.subject || ""}\n${(msg.body || "").substring(0, 1000)}`
+    ).join("\n---\n");
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.3,
+      messages: [
+        { role: "system", content: "Tu es un assistant professionnel. Résume cette conversation email en français en 2-3 phrases. Identifie: le sujet principal, les décisions prises, et les actions en suspens." },
+        { role: "user", content: conversation },
+      ],
+    });
+
+    res.json({ summary: completion.choices[0]?.message?.content || "" });
+  } catch (err: any) {
+    res.status(500).json({ error: "Erreur de résumé: " + err.message });
+  }
+});
+
+router.post("/ai/detect-followups", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const entitlement = await checkEntitlement(req.userId!);
+    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
+
+    const { emails } = req.body;
+    if (!emails || !Array.isArray(emails)) {
+      res.status(400).json({ error: "emails (array) requis" }); return;
+    }
+
+    const emailSummaries = emails.slice(0, 20).map((e: any) =>
+      `ID: ${e.id} | De: ${e.sender || "?"} | Objet: ${e.subject || ""} | Résumé: ${e.summary || (e.body || "").substring(0, 300)}`
+    ).join("\n");
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.3,
+      messages: [
+        { role: "system", content: `Tu analyses des emails professionnels. Pour chaque email qui nécessite un suivi (attente de réponse, action promise, deadline mentionnée, relance nécessaire), crée une suggestion de suivi.
+
+Réponds en JSON strict:
+{
+  "followups": [
+    {
+      "emailId": <number>,
+      "title": "<titre du suivi>",
+      "reason": "<pourquoi un suivi est nécessaire>",
+      "suggestedDueDate": "<YYYY-MM-DD ou null>",
+      "urgency": "haute" | "moyenne" | "basse"
+    }
+  ]
+}
+
+Si aucun suivi n'est nécessaire, retourne {"followups": []}.` },
+        { role: "user", content: emailSummaries },
+      ],
+      response_format: { type: "json_object" },
+    });
+
+    const parsed = JSON.parse(completion.choices[0]?.message?.content || '{"followups":[]}');
+    res.json(parsed);
+  } catch (err: any) {
+    res.status(500).json({ error: "Erreur de détection: " + err.message });
+  }
+});
+
+router.post("/ai/generate-relance", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const entitlement = await checkEntitlement(req.userId!);
+    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
+
+    const { originalEmail, context, signature } = req.body;
+    if (!originalEmail) {
+      res.status(400).json({ error: "originalEmail requis" }); return;
+    }
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.5,
+      messages: [
+        { role: "system", content: `Tu es un assistant professionnel. Génère un email de relance poli et professionnel en français.
+Le ton doit être courtois mais ferme. Mentionne le sujet original et demande une mise à jour.
+${signature ? `\nSignature à utiliser:\n${signature}` : ""}` },
+        { role: "user", content: `Email original:\nDe: ${originalEmail.sender || "?"}\nObjet: ${originalEmail.subject || ""}\nContenu: ${(originalEmail.body || "").substring(0, 1500)}\n${context ? `\nContexte supplémentaire: ${context}` : ""}` },
+      ],
+    });
+
+    res.json({
+      subject: `Relance: ${originalEmail.subject || ""}`,
+      body: completion.choices[0]?.message?.content || "",
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: "Erreur de génération: " + err.message });
+  }
+});
+
 export default router;

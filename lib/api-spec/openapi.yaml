@@ -26,6 +26,10 @@ tags:
     description: Project management operations
   - name: ai
     description: AI operations
+  - name: followups
+    description: Follow-up tracking operations
+  - name: export
+    description: Data export operations
   - name: stripe
     description: Stripe payment operations
   - name: integrations
@@ -812,6 +816,293 @@ paths:
           description: Missing emailId
         "404":
           description: Email not found
+
+  /emails/{id}/conversation:
+    get:
+      operationId: getEmailConversation
+      tags: [emails]
+      summary: Get email conversation thread
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Email with conversation thread
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  email:
+                    $ref: "#/components/schemas/Email"
+                  thread:
+                    type: array
+                    items:
+                      allOf:
+                        - $ref: "#/components/schemas/Email"
+                        - type: object
+                          properties:
+                            role:
+                              type: string
+                              enum: [sent, received]
+
+  /followups:
+    get:
+      operationId: listFollowups
+      tags: [followups]
+      summary: List user followups
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [all, en_attente, relance, termine]
+        - name: projectId
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: List of followups
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Followup"
+    post:
+      operationId: createFollowup
+      tags: [followups]
+      summary: Create a new followup
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFollowupBody"
+      responses:
+        "200":
+          description: Created followup
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Followup"
+
+  /followups/stats:
+    get:
+      operationId: getFollowupStats
+      tags: [followups]
+      summary: Get followup statistics
+      responses:
+        "200":
+          description: Followup stats
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  en_attente:
+                    type: integer
+                  relance:
+                    type: integer
+                  termine:
+                    type: integer
+                  overdue:
+                    type: integer
+
+  /followups/{id}:
+    patch:
+      operationId: updateFollowup
+      tags: [followups]
+      summary: Update a followup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFollowupBody"
+      responses:
+        "200":
+          description: Updated followup
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Followup"
+    delete:
+      operationId: deleteFollowup
+      tags: [followups]
+      summary: Delete a followup
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /ai/conversation-summary:
+    post:
+      operationId: getConversationSummary
+      tags: [ai]
+      summary: Generate AI summary of email conversation
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                thread:
+                  type: array
+                  items:
+                    type: object
+              required: [thread]
+      responses:
+        "200":
+          description: Conversation summary
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  summary:
+                    type: string
+
+  /ai/detect-followups:
+    post:
+      operationId: detectFollowups
+      tags: [ai]
+      summary: AI detects emails needing followups
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                emails:
+                  type: array
+                  items:
+                    type: object
+              required: [emails]
+      responses:
+        "200":
+          description: Detected followups
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  followups:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        emailId:
+                          type: integer
+                        title:
+                          type: string
+                        reason:
+                          type: string
+                        suggestedDueDate:
+                          type: string
+                          nullable: true
+                        urgency:
+                          type: string
+
+  /ai/generate-relance:
+    post:
+      operationId: generateRelance
+      tags: [ai]
+      summary: Generate AI follow-up email draft
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                originalEmail:
+                  type: object
+                context:
+                  type: string
+                signature:
+                  type: string
+              required: [originalEmail]
+      responses:
+        "200":
+          description: Generated follow-up draft
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  subject:
+                    type: string
+                  body:
+                    type: string
+
+  /export/emails:
+    get:
+      operationId: exportEmails
+      tags: [export]
+      summary: Export emails as CSV
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: CSV file
+          content:
+            text/csv:
+              schema:
+                type: string
+
+  /export/projects:
+    get:
+      operationId: exportProjects
+      tags: [export]
+      summary: Export projects as CSV
+      responses:
+        "200":
+          description: CSV file
+          content:
+            text/csv:
+              schema:
+                type: string
+
+  /export/followups:
+    get:
+      operationId: exportFollowups
+      tags: [export]
+      summary: Export followups as CSV
+      responses:
+        "200":
+          description: CSV file
+          content:
+            text/csv:
+              schema:
+                type: string
 
   /stripe/checkout:
     post:
@@ -1868,6 +2159,8 @@ components:
           type: string
         senderEmail:
           type: string
+        recipient:
+          type: ["string", "null"]
         subject:
           type: string
         body:
@@ -1888,6 +2181,8 @@ components:
           type: ["string", "null"]
         projectReference:
           type: ["string", "null"]
+        replyToEmailId:
+          type: ["integer", "null"]
         assignedTo:
           type: ["string", "null"]
         assignedToName:
@@ -1907,6 +2202,82 @@ components:
         - status
         - priority
         - createdAt
+
+    Followup:
+      type: object
+      properties:
+        id:
+          type: string
+        userId:
+          type: string
+        emailId:
+          type: ["integer", "null"]
+        projectId:
+          type: ["string", "null"]
+        title:
+          type: string
+        status:
+          type: string
+          enum: [en_attente, relance, termine]
+        dueDate:
+          type: ["string", "null"]
+          format: date
+        notes:
+          type: ["string", "null"]
+        aiSuggestion:
+          type: boolean
+        emails:
+          type: object
+          nullable: true
+        projects:
+          type: object
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - status
+
+    CreateFollowupBody:
+      type: object
+      properties:
+        title:
+          type: string
+        emailId:
+          type: integer
+        projectId:
+          type: string
+        status:
+          type: string
+          enum: [en_attente, relance, termine]
+        dueDate:
+          type: string
+          format: date
+        notes:
+          type: string
+      required:
+        - title
+
+    UpdateFollowupBody:
+      type: object
+      properties:
+        title:
+          type: string
+        status:
+          type: string
+          enum: [en_attente, relance, termine]
+        dueDate:
+          type: string
+          format: date
+        notes:
+          type: string
+        projectId:
+          type: string
 
     PaginatedEmails:
       type: object

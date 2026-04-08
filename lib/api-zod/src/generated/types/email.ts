@@ -10,6 +10,8 @@ export interface Email {
   id: number;
   sender: string;
   senderEmail: string;
+  /** @nullable */
+  recipient?: string | null;
   subject: string;
   body: string;
   status: string;
@@ -26,6 +28,8 @@ export interface Email {
   projectName?: string | null;
   /** @nullable */
   projectReference?: string | null;
+  /** @nullable */
+  replyToEmailId?: number | null;
   /** @nullable */
   assignedTo?: string | null;
   /** @nullable */

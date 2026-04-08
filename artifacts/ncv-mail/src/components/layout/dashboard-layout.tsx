@@ -18,6 +18,8 @@ import {
   MailPlus,
   Activity,
   BookOpen,
+  Send,
+  Eye,
 } from "lucide-react";
 import ncvLogo from "@assets/image_1775392688923.png";
 import { cn } from "@/lib/utils";
@@ -29,7 +31,9 @@ import { NotificationBell } from "@/components/notifications/notification-bell";
 
 const baseNavigation = [
   { name: "Réception", href: "/dashboard", icon: Inbox },
+  { name: "Envoyés", href: "/dashboard/envoyes", icon: Send },
   { name: "Archives", href: "/dashboard/archives", icon: Archive },
+  { name: "Suivi", href: "/dashboard/suivi", icon: Eye },
   { name: "Bilan quotidien", href: "/dashboard/bilan", icon: LayoutDashboard },
   { name: "Tâches", href: "/dashboard/taches", icon: CheckSquare },
   { name: "Projets", href: "/dashboard/projets", icon: FolderKanban },

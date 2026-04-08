@@ -58,6 +58,7 @@ import {
   ListTodo,
   StickyNote,
   Send,
+  Download,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -615,23 +616,34 @@ export default function Projets() {
               unique.
             </p>
           </div>
-          <Button
-            size="sm"
-            className="shrink-0 gap-2"
-            onClick={() => {
-              createForm.reset({
-                name: "",
-                reference: "",
-                description: "",
-                status: "actif",
-                color: "blue",
-              });
-              setIsCreateOpen(true);
-            }}
-          >
-            <Plus className="w-3.5 h-3.5" />
-            Nouveau projet
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(`${import.meta.env.BASE_URL}api/export/projects`, "_blank")}
+              className="gap-1 text-[11px] h-8 bg-transparent border-border text-[#8b9cb3] hover:text-white"
+            >
+              <Download className="w-3 h-3" />
+              Exporter
+            </Button>
+            <Button
+              size="sm"
+              className="shrink-0 gap-2"
+              onClick={() => {
+                createForm.reset({
+                  name: "",
+                  reference: "",
+                  description: "",
+                  status: "actif",
+                  color: "blue",
+                });
+                setIsCreateOpen(true);
+              }}
+            >
+              <Plus className="w-3.5 h-3.5" />
+              Nouveau projet
+            </Button>
+          </div>
         </div>
 
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>

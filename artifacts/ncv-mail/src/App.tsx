@@ -17,6 +17,8 @@ import ResetPassword from "@/pages/reset-password";
 import AcceptInvite from "@/pages/accept-invite";
 import Dashboard from "@/pages/dashboard/index";
 import Archives from "@/pages/dashboard/archives";
+import Envoyes from "@/pages/dashboard/envoyes";
+import Suivi from "@/pages/dashboard/suivi";
 import BilanQuotidien from "@/pages/dashboard/bilan";
 import Taches from "@/pages/dashboard/taches";
 import Classement from "@/pages/dashboard/classement";
@@ -125,6 +127,8 @@ function Router() {
       <Route path="/reset-password" component={ResetPassword} />
       <Route path="/accept-invite" component={AcceptInvite} />
       <Route path="/dashboard" component={() => <ProtectedRoute component={Dashboard} />} />
+      <Route path="/dashboard/envoyes" component={() => <ProtectedRoute component={Envoyes} />} />
+      <Route path="/dashboard/suivi" component={() => <ProtectedRoute component={Suivi} />} />
       <Route path="/dashboard/archives" component={() => <ProtectedRoute component={Archives} />} />
       <Route path="/dashboard/bilan" component={() => <ProtectedRoute component={BilanQuotidien} />} />
       <Route path="/dashboard/taches" component={() => <ProtectedRoute component={Taches} />} />

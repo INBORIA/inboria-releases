@@ -25,6 +25,11 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
 - **AI Features**:
     - **Recategorize Uncategorized**: `POST /api/ai/recategorize-uncategorized` re-analyzes uncategorized emails using GPT-4o-mini.
     - **Draft Reply**: `POST /api/ai/draft` generates context-aware, professional email replies in French using GPT-4o-mini.
+    - **Conversation Summary**: `POST /api/ai/conversation-summary` generates summaries of email threads.
+    - **Detect Followups**: `POST /api/ai/detect-followups` analyzes emails to suggest needed follow-ups.
+    - **Generate Relance**: `POST /api/ai/generate-relance` generates follow-up email drafts.
+- **Follow-ups**: `followups` table with statuses (en_attente, relance, termine), linked to emails and projects. CRUD endpoints at `/api/followups`.
+- **CSV Export**: `/api/export/emails`, `/api/export/projects`, `/api/export/followups` endpoints for data export.
 - **Email Sending**: `POST /api/emails/send` handles sending emails, supporting threading for Gmail and utilizing Microsoft Graph for Outlook, and SMTP for IMAP.
 - **Stripe Integration**: Manages subscriptions via Stripe Checkout sessions (`POST /api/stripe/checkout`), webhooks for `checkout.session.completed`, `invoice.paid`, `customer.subscription.deleted`, `customer.subscription.updated`, and a customer portal (`GET /api/stripe/portal`). Geographic restriction enforced: only EU/EEE + Switzerland countries are allowed. Country is collected at signup, stored in `profiles.country`, and validated before Stripe checkout. Checkout includes: automatic_tax enabled, tax_id_collection for B2B VAT, billing_address_collection required, customer_update for address/name sync, EUR currency, French locale, card + SEPA debit payment methods. Customer creation includes country address from profile.
 - **Integrations (Pro plan)**:
@@ -40,7 +45,9 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - `/dashboard/bilan`: Daily AI summary.
     - `/dashboard/taches`: Task management from extracted emails.
     - `/dashboard/classement`: Classification page with 56 profession packs (8 families) + AI custom pack generation + category management. Old `/dashboard/categories` redirects here.
-    - `/dashboard/projets`: Project management.
+    - `/dashboard/envoyes`: Sent emails page with conversation threading, AI conversation summary, project assignment, and CSV export.
+    - `/dashboard/suivi`: Follow-up tracking with status management (en_attente, relance, termine), AI-detected followup suggestions, overdue indicators, and CSV export.
+    - `/dashboard/projets`: Project management with CSV export.
     - `/dashboard/equipe`: Organisation/team management (Business plan only). Members list, invite, role management.
     - `/dashboard/parametres`: Settings for email connections, integrations, AI preferences, profile, and notifications.
     - `/dashboard/abonnement`: Subscription management.

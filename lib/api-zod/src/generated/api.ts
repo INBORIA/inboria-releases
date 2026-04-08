@@ -200,6 +200,7 @@ export const ListEmailsResponse = zod.object({
       id: zod.number(),
       sender: zod.string(),
       senderEmail: zod.string(),
+      recipient: zod.string().nullish(),
       subject: zod.string(),
       body: zod.string(),
       status: zod.string(),
@@ -210,6 +211,7 @@ export const ListEmailsResponse = zod.object({
       projectId: zod.string().nullish(),
       projectName: zod.string().nullish(),
       projectReference: zod.string().nullish(),
+      replyToEmailId: zod.number().nullish(),
       assignedTo: zod.string().nullish(),
       assignedToName: zod.string().nullish(),
       assignedAt: zod.coerce.date().nullish(),
@@ -232,6 +234,7 @@ export const GetEmailResponse = zod.object({
   id: zod.number(),
   sender: zod.string(),
   senderEmail: zod.string(),
+  recipient: zod.string().nullish(),
   subject: zod.string(),
   body: zod.string(),
   status: zod.string(),
@@ -242,6 +245,7 @@ export const GetEmailResponse = zod.object({
   projectId: zod.string().nullish(),
   projectName: zod.string().nullish(),
   projectReference: zod.string().nullish(),
+  replyToEmailId: zod.number().nullish(),
   assignedTo: zod.string().nullish(),
   assignedToName: zod.string().nullish(),
   assignedAt: zod.coerce.date().nullish(),
@@ -265,6 +269,7 @@ export const UpdateEmailResponse = zod.object({
   id: zod.number(),
   sender: zod.string(),
   senderEmail: zod.string(),
+  recipient: zod.string().nullish(),
   subject: zod.string(),
   body: zod.string(),
   status: zod.string(),
@@ -275,6 +280,7 @@ export const UpdateEmailResponse = zod.object({
   projectId: zod.string().nullish(),
   projectName: zod.string().nullish(),
   projectReference: zod.string().nullish(),
+  replyToEmailId: zod.number().nullish(),
   assignedTo: zod.string().nullish(),
   assignedToName: zod.string().nullish(),
   assignedAt: zod.coerce.date().nullish(),
@@ -551,6 +557,7 @@ export const GetProjectResponse = zod.object({
       id: zod.number(),
       sender: zod.string(),
       senderEmail: zod.string(),
+      recipient: zod.string().nullish(),
       subject: zod.string(),
       body: zod.string(),
       status: zod.string(),
@@ -561,6 +568,7 @@ export const GetProjectResponse = zod.object({
       projectId: zod.string().nullish(),
       projectName: zod.string().nullish(),
       projectReference: zod.string().nullish(),
+      replyToEmailId: zod.number().nullish(),
       assignedTo: zod.string().nullish(),
       assignedToName: zod.string().nullish(),
       assignedAt: zod.coerce.date().nullish(),
@@ -722,6 +730,228 @@ export const GenerateDraftBody = zod.object({
 
 export const GenerateDraftResponse = zod.object({
   draft: zod.string(),
+});
+
+/**
+ * @summary Get email conversation thread
+ */
+export const GetEmailConversationParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const GetEmailConversationResponse = zod.object({
+  email: zod
+    .object({
+      id: zod.number(),
+      sender: zod.string(),
+      senderEmail: zod.string(),
+      recipient: zod.string().nullish(),
+      subject: zod.string(),
+      body: zod.string(),
+      status: zod.string(),
+      priority: zod.string(),
+      summary: zod.string().nullish(),
+      categoryId: zod.number().nullish(),
+      categoryName: zod.string().nullish(),
+      projectId: zod.string().nullish(),
+      projectName: zod.string().nullish(),
+      projectReference: zod.string().nullish(),
+      replyToEmailId: zod.number().nullish(),
+      assignedTo: zod.string().nullish(),
+      assignedToName: zod.string().nullish(),
+      assignedAt: zod.coerce.date().nullish(),
+      createdAt: zod.coerce.date(),
+    })
+    .optional(),
+  thread: zod
+    .array(
+      zod
+        .object({
+          id: zod.number(),
+          sender: zod.string(),
+          senderEmail: zod.string(),
+          recipient: zod.string().nullish(),
+          subject: zod.string(),
+          body: zod.string(),
+          status: zod.string(),
+          priority: zod.string(),
+          summary: zod.string().nullish(),
+          categoryId: zod.number().nullish(),
+          categoryName: zod.string().nullish(),
+          projectId: zod.string().nullish(),
+          projectName: zod.string().nullish(),
+          projectReference: zod.string().nullish(),
+          replyToEmailId: zod.number().nullish(),
+          assignedTo: zod.string().nullish(),
+          assignedToName: zod.string().nullish(),
+          assignedAt: zod.coerce.date().nullish(),
+          createdAt: zod.coerce.date(),
+        })
+        .and(
+          zod.object({
+            role: zod.enum(["sent", "received"]).optional(),
+          }),
+        ),
+    )
+    .optional(),
+});
+
+/**
+ * @summary List user followups
+ */
+export const ListFollowupsQueryParams = zod.object({
+  status: zod.enum(["all", "en_attente", "relance", "termine"]).optional(),
+  projectId: zod.coerce.string().optional(),
+});
+
+export const ListFollowupsResponseItem = zod.object({
+  id: zod.string(),
+  userId: zod.string().optional(),
+  emailId: zod.number().nullish(),
+  projectId: zod.string().nullish(),
+  title: zod.string(),
+  status: zod.enum(["en_attente", "relance", "termine"]),
+  dueDate: zod.coerce.date().nullish(),
+  notes: zod.string().nullish(),
+  aiSuggestion: zod.boolean().optional(),
+  emails: zod.object({}).passthrough().nullish(),
+  projects: zod.object({}).passthrough().nullish(),
+  createdAt: zod.coerce.date().optional(),
+  updatedAt: zod.coerce.date().optional(),
+});
+export const ListFollowupsResponse = zod.array(ListFollowupsResponseItem);
+
+/**
+ * @summary Create a new followup
+ */
+export const CreateFollowupBody = zod.object({
+  title: zod.string(),
+  emailId: zod.number().optional(),
+  projectId: zod.string().optional(),
+  status: zod.enum(["en_attente", "relance", "termine"]).optional(),
+  dueDate: zod.coerce.date().optional(),
+  notes: zod.string().optional(),
+});
+
+export const CreateFollowupResponse = zod.object({
+  id: zod.string(),
+  userId: zod.string().optional(),
+  emailId: zod.number().nullish(),
+  projectId: zod.string().nullish(),
+  title: zod.string(),
+  status: zod.enum(["en_attente", "relance", "termine"]),
+  dueDate: zod.coerce.date().nullish(),
+  notes: zod.string().nullish(),
+  aiSuggestion: zod.boolean().optional(),
+  emails: zod.object({}).passthrough().nullish(),
+  projects: zod.object({}).passthrough().nullish(),
+  createdAt: zod.coerce.date().optional(),
+  updatedAt: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary Get followup statistics
+ */
+export const GetFollowupStatsResponse = zod.object({
+  en_attente: zod.number().optional(),
+  relance: zod.number().optional(),
+  termine: zod.number().optional(),
+  overdue: zod.number().optional(),
+});
+
+/**
+ * @summary Update a followup
+ */
+export const UpdateFollowupParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateFollowupBody = zod.object({
+  title: zod.string().optional(),
+  status: zod.enum(["en_attente", "relance", "termine"]).optional(),
+  dueDate: zod.coerce.date().optional(),
+  notes: zod.string().optional(),
+  projectId: zod.string().optional(),
+});
+
+export const UpdateFollowupResponse = zod.object({
+  id: zod.string(),
+  userId: zod.string().optional(),
+  emailId: zod.number().nullish(),
+  projectId: zod.string().nullish(),
+  title: zod.string(),
+  status: zod.enum(["en_attente", "relance", "termine"]),
+  dueDate: zod.coerce.date().nullish(),
+  notes: zod.string().nullish(),
+  aiSuggestion: zod.boolean().optional(),
+  emails: zod.object({}).passthrough().nullish(),
+  projects: zod.object({}).passthrough().nullish(),
+  createdAt: zod.coerce.date().optional(),
+  updatedAt: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary Delete a followup
+ */
+export const DeleteFollowupParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const DeleteFollowupResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Generate AI summary of email conversation
+ */
+export const GetConversationSummaryBody = zod.object({
+  thread: zod.array(zod.object({}).passthrough()),
+});
+
+export const GetConversationSummaryResponse = zod.object({
+  summary: zod.string().optional(),
+});
+
+/**
+ * @summary AI detects emails needing followups
+ */
+export const DetectFollowupsBody = zod.object({
+  emails: zod.array(zod.object({}).passthrough()),
+});
+
+export const DetectFollowupsResponse = zod.object({
+  followups: zod
+    .array(
+      zod.object({
+        emailId: zod.number().optional(),
+        title: zod.string().optional(),
+        reason: zod.string().optional(),
+        suggestedDueDate: zod.string().nullish(),
+        urgency: zod.string().optional(),
+      }),
+    )
+    .optional(),
+});
+
+/**
+ * @summary Generate AI follow-up email draft
+ */
+export const GenerateRelanceBody = zod.object({
+  originalEmail: zod.object({}).passthrough(),
+  context: zod.string().optional(),
+  signature: zod.string().optional(),
+});
+
+export const GenerateRelanceResponse = zod.object({
+  subject: zod.string().optional(),
+  body: zod.string().optional(),
+});
+
+/**
+ * @summary Export emails as CSV
+ */
+export const ExportEmailsQueryParams = zod.object({
+  status: zod.coerce.string().optional(),
 });
 
 /**
@@ -1335,6 +1565,7 @@ export const GetAssignedToMeResponseItem = zod.object({
   id: zod.number(),
   sender: zod.string(),
   senderEmail: zod.string(),
+  recipient: zod.string().nullish(),
   subject: zod.string(),
   body: zod.string(),
   status: zod.string(),
@@ -1345,6 +1576,7 @@ export const GetAssignedToMeResponseItem = zod.object({
   projectId: zod.string().nullish(),
   projectName: zod.string().nullish(),
   projectReference: zod.string().nullish(),
+  replyToEmailId: zod.number().nullish(),
   assignedTo: zod.string().nullish(),
   assignedToName: zod.string().nullish(),
   assignedAt: zod.coerce.date().nullish(),

@@ -37,6 +37,7 @@ import type {
   CheckoutResponse,
   ClaimSharedEmail200,
   CreateCategoryBody,
+  CreateFollowupBody,
   CreateOrganisationBody,
   CreateProjectBody,
   CreateProjectNoteBody,
@@ -47,18 +48,29 @@ import type {
   DashboardSummary,
   DeleteEmail200,
   DeleteEmailComment200,
+  DeleteFollowup200,
   DeleteIntegration200,
   DeleteProject200,
   DeleteProjectNote200,
   DeleteSharedMailbox200,
   DeleteTask200,
+  DetectFollowups200,
+  DetectFollowupsBody,
   DraftResponse,
   Email,
   EmailComment,
+  ExportEmailsParams,
+  Followup,
   ForceSharedMailboxSync200,
   GenerateDraftBody,
   GeneratePackBody,
   GeneratePackResponse,
+  GenerateRelance200,
+  GenerateRelanceBody,
+  GetConversationSummary200,
+  GetConversationSummaryBody,
+  GetEmailConversation200,
+  GetFollowupStats200,
   GetInvitationByToken200,
   GetNotificationsParams,
   GetSharedMailboxEmailsParams,
@@ -69,6 +81,7 @@ import type {
   Invitation,
   InviteBody,
   ListEmailsParams,
+  ListFollowupsParams,
   ListTasksParams,
   LoginBody,
   MarkAllNotificationsRead200,
@@ -105,6 +118,7 @@ import type {
   UpdateCategoryBody,
   UpdateEmailBody,
   UpdateEmailComment200,
+  UpdateFollowupBody,
   UpdateIntegrationBody,
   UpdateMemberRole200,
   UpdateMemberRoleBody,
@@ -3299,6 +3313,1026 @@ export const useGenerateDraft = <
 > => {
   return useMutation(getGenerateDraftMutationOptions(options));
 };
+
+/**
+ * @summary Get email conversation thread
+ */
+export const getGetEmailConversationUrl = (id: number) => {
+  return `/api/emails/${id}/conversation`;
+};
+
+export const getEmailConversation = async (
+  id: number,
+  options?: RequestInit,
+): Promise<GetEmailConversation200> => {
+  return customFetch<GetEmailConversation200>(getGetEmailConversationUrl(id), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetEmailConversationQueryKey = (id: number) => {
+  return [`/api/emails/${id}/conversation`] as const;
+};
+
+export const getGetEmailConversationQueryOptions = <
+  TData = Awaited<ReturnType<typeof getEmailConversation>>,
+  TError = ErrorType<unknown>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getEmailConversation>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetEmailConversationQueryKey(id);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getEmailConversation>>
+  > = ({ signal }) => getEmailConversation(id, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getEmailConversation>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetEmailConversationQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getEmailConversation>>
+>;
+export type GetEmailConversationQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get email conversation thread
+ */
+
+export function useGetEmailConversation<
+  TData = Awaited<ReturnType<typeof getEmailConversation>>,
+  TError = ErrorType<unknown>,
+>(
+  id: number,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getEmailConversation>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetEmailConversationQueryOptions(id, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary List user followups
+ */
+export const getListFollowupsUrl = (params?: ListFollowupsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/followups?${stringifiedParams}`
+    : `/api/followups`;
+};
+
+export const listFollowups = async (
+  params?: ListFollowupsParams,
+  options?: RequestInit,
+): Promise<Followup[]> => {
+  return customFetch<Followup[]>(getListFollowupsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListFollowupsQueryKey = (params?: ListFollowupsParams) => {
+  return [`/api/followups`, ...(params ? [params] : [])] as const;
+};
+
+export const getListFollowupsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listFollowups>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListFollowupsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listFollowups>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListFollowupsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listFollowups>>> = ({
+    signal,
+  }) => listFollowups(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listFollowups>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListFollowupsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listFollowups>>
+>;
+export type ListFollowupsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List user followups
+ */
+
+export function useListFollowups<
+  TData = Awaited<ReturnType<typeof listFollowups>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListFollowupsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listFollowups>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListFollowupsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Create a new followup
+ */
+export const getCreateFollowupUrl = () => {
+  return `/api/followups`;
+};
+
+export const createFollowup = async (
+  createFollowupBody: CreateFollowupBody,
+  options?: RequestInit,
+): Promise<Followup> => {
+  return customFetch<Followup>(getCreateFollowupUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createFollowupBody),
+  });
+};
+
+export const getCreateFollowupMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createFollowup>>,
+    TError,
+    { data: BodyType<CreateFollowupBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createFollowup>>,
+  TError,
+  { data: BodyType<CreateFollowupBody> },
+  TContext
+> => {
+  const mutationKey = ["createFollowup"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createFollowup>>,
+    { data: BodyType<CreateFollowupBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createFollowup(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateFollowupMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createFollowup>>
+>;
+export type CreateFollowupMutationBody = BodyType<CreateFollowupBody>;
+export type CreateFollowupMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create a new followup
+ */
+export const useCreateFollowup = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createFollowup>>,
+    TError,
+    { data: BodyType<CreateFollowupBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createFollowup>>,
+  TError,
+  { data: BodyType<CreateFollowupBody> },
+  TContext
+> => {
+  return useMutation(getCreateFollowupMutationOptions(options));
+};
+
+/**
+ * @summary Get followup statistics
+ */
+export const getGetFollowupStatsUrl = () => {
+  return `/api/followups/stats`;
+};
+
+export const getFollowupStats = async (
+  options?: RequestInit,
+): Promise<GetFollowupStats200> => {
+  return customFetch<GetFollowupStats200>(getGetFollowupStatsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetFollowupStatsQueryKey = () => {
+  return [`/api/followups/stats`] as const;
+};
+
+export const getGetFollowupStatsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getFollowupStats>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getFollowupStats>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetFollowupStatsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getFollowupStats>>
+  > = ({ signal }) => getFollowupStats({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getFollowupStats>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetFollowupStatsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getFollowupStats>>
+>;
+export type GetFollowupStatsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get followup statistics
+ */
+
+export function useGetFollowupStats<
+  TData = Awaited<ReturnType<typeof getFollowupStats>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getFollowupStats>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetFollowupStatsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Update a followup
+ */
+export const getUpdateFollowupUrl = (id: string) => {
+  return `/api/followups/${id}`;
+};
+
+export const updateFollowup = async (
+  id: string,
+  updateFollowupBody: UpdateFollowupBody,
+  options?: RequestInit,
+): Promise<Followup> => {
+  return customFetch<Followup>(getUpdateFollowupUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateFollowupBody),
+  });
+};
+
+export const getUpdateFollowupMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateFollowup>>,
+    TError,
+    { id: string; data: BodyType<UpdateFollowupBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateFollowup>>,
+  TError,
+  { id: string; data: BodyType<UpdateFollowupBody> },
+  TContext
+> => {
+  const mutationKey = ["updateFollowup"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateFollowup>>,
+    { id: string; data: BodyType<UpdateFollowupBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateFollowup(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateFollowupMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateFollowup>>
+>;
+export type UpdateFollowupMutationBody = BodyType<UpdateFollowupBody>;
+export type UpdateFollowupMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update a followup
+ */
+export const useUpdateFollowup = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateFollowup>>,
+    TError,
+    { id: string; data: BodyType<UpdateFollowupBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateFollowup>>,
+  TError,
+  { id: string; data: BodyType<UpdateFollowupBody> },
+  TContext
+> => {
+  return useMutation(getUpdateFollowupMutationOptions(options));
+};
+
+/**
+ * @summary Delete a followup
+ */
+export const getDeleteFollowupUrl = (id: string) => {
+  return `/api/followups/${id}`;
+};
+
+export const deleteFollowup = async (
+  id: string,
+  options?: RequestInit,
+): Promise<DeleteFollowup200> => {
+  return customFetch<DeleteFollowup200>(getDeleteFollowupUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteFollowupMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteFollowup>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteFollowup>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ["deleteFollowup"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteFollowup>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteFollowup(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteFollowupMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteFollowup>>
+>;
+
+export type DeleteFollowupMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a followup
+ */
+export const useDeleteFollowup = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteFollowup>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteFollowup>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getDeleteFollowupMutationOptions(options));
+};
+
+/**
+ * @summary Generate AI summary of email conversation
+ */
+export const getGetConversationSummaryUrl = () => {
+  return `/api/ai/conversation-summary`;
+};
+
+export const getConversationSummary = async (
+  getConversationSummaryBody: GetConversationSummaryBody,
+  options?: RequestInit,
+): Promise<GetConversationSummary200> => {
+  return customFetch<GetConversationSummary200>(
+    getGetConversationSummaryUrl(),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(getConversationSummaryBody),
+    },
+  );
+};
+
+export const getGetConversationSummaryMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof getConversationSummary>>,
+    TError,
+    { data: BodyType<GetConversationSummaryBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof getConversationSummary>>,
+  TError,
+  { data: BodyType<GetConversationSummaryBody> },
+  TContext
+> => {
+  const mutationKey = ["getConversationSummary"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof getConversationSummary>>,
+    { data: BodyType<GetConversationSummaryBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return getConversationSummary(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type GetConversationSummaryMutationResult = NonNullable<
+  Awaited<ReturnType<typeof getConversationSummary>>
+>;
+export type GetConversationSummaryMutationBody =
+  BodyType<GetConversationSummaryBody>;
+export type GetConversationSummaryMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Generate AI summary of email conversation
+ */
+export const useGetConversationSummary = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof getConversationSummary>>,
+    TError,
+    { data: BodyType<GetConversationSummaryBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof getConversationSummary>>,
+  TError,
+  { data: BodyType<GetConversationSummaryBody> },
+  TContext
+> => {
+  return useMutation(getGetConversationSummaryMutationOptions(options));
+};
+
+/**
+ * @summary AI detects emails needing followups
+ */
+export const getDetectFollowupsUrl = () => {
+  return `/api/ai/detect-followups`;
+};
+
+export const detectFollowups = async (
+  detectFollowupsBody: DetectFollowupsBody,
+  options?: RequestInit,
+): Promise<DetectFollowups200> => {
+  return customFetch<DetectFollowups200>(getDetectFollowupsUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(detectFollowupsBody),
+  });
+};
+
+export const getDetectFollowupsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof detectFollowups>>,
+    TError,
+    { data: BodyType<DetectFollowupsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof detectFollowups>>,
+  TError,
+  { data: BodyType<DetectFollowupsBody> },
+  TContext
+> => {
+  const mutationKey = ["detectFollowups"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof detectFollowups>>,
+    { data: BodyType<DetectFollowupsBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return detectFollowups(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DetectFollowupsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof detectFollowups>>
+>;
+export type DetectFollowupsMutationBody = BodyType<DetectFollowupsBody>;
+export type DetectFollowupsMutationError = ErrorType<unknown>;
+
+/**
+ * @summary AI detects emails needing followups
+ */
+export const useDetectFollowups = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof detectFollowups>>,
+    TError,
+    { data: BodyType<DetectFollowupsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof detectFollowups>>,
+  TError,
+  { data: BodyType<DetectFollowupsBody> },
+  TContext
+> => {
+  return useMutation(getDetectFollowupsMutationOptions(options));
+};
+
+/**
+ * @summary Generate AI follow-up email draft
+ */
+export const getGenerateRelanceUrl = () => {
+  return `/api/ai/generate-relance`;
+};
+
+export const generateRelance = async (
+  generateRelanceBody: GenerateRelanceBody,
+  options?: RequestInit,
+): Promise<GenerateRelance200> => {
+  return customFetch<GenerateRelance200>(getGenerateRelanceUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(generateRelanceBody),
+  });
+};
+
+export const getGenerateRelanceMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generateRelance>>,
+    TError,
+    { data: BodyType<GenerateRelanceBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof generateRelance>>,
+  TError,
+  { data: BodyType<GenerateRelanceBody> },
+  TContext
+> => {
+  const mutationKey = ["generateRelance"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof generateRelance>>,
+    { data: BodyType<GenerateRelanceBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return generateRelance(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type GenerateRelanceMutationResult = NonNullable<
+  Awaited<ReturnType<typeof generateRelance>>
+>;
+export type GenerateRelanceMutationBody = BodyType<GenerateRelanceBody>;
+export type GenerateRelanceMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Generate AI follow-up email draft
+ */
+export const useGenerateRelance = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generateRelance>>,
+    TError,
+    { data: BodyType<GenerateRelanceBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof generateRelance>>,
+  TError,
+  { data: BodyType<GenerateRelanceBody> },
+  TContext
+> => {
+  return useMutation(getGenerateRelanceMutationOptions(options));
+};
+
+/**
+ * @summary Export emails as CSV
+ */
+export const getExportEmailsUrl = (params?: ExportEmailsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/export/emails?${stringifiedParams}`
+    : `/api/export/emails`;
+};
+
+export const exportEmails = async (
+  params?: ExportEmailsParams,
+  options?: RequestInit,
+): Promise<string> => {
+  return customFetch<string>(getExportEmailsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getExportEmailsQueryKey = (params?: ExportEmailsParams) => {
+  return [`/api/export/emails`, ...(params ? [params] : [])] as const;
+};
+
+export const getExportEmailsQueryOptions = <
+  TData = Awaited<ReturnType<typeof exportEmails>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ExportEmailsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof exportEmails>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getExportEmailsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof exportEmails>>> = ({
+    signal,
+  }) => exportEmails(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof exportEmails>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ExportEmailsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof exportEmails>>
+>;
+export type ExportEmailsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Export emails as CSV
+ */
+
+export function useExportEmails<
+  TData = Awaited<ReturnType<typeof exportEmails>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ExportEmailsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof exportEmails>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getExportEmailsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Export projects as CSV
+ */
+export const getExportProjectsUrl = () => {
+  return `/api/export/projects`;
+};
+
+export const exportProjects = async (
+  options?: RequestInit,
+): Promise<string> => {
+  return customFetch<string>(getExportProjectsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getExportProjectsQueryKey = () => {
+  return [`/api/export/projects`] as const;
+};
+
+export const getExportProjectsQueryOptions = <
+  TData = Awaited<ReturnType<typeof exportProjects>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof exportProjects>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getExportProjectsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof exportProjects>>> = ({
+    signal,
+  }) => exportProjects({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof exportProjects>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ExportProjectsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof exportProjects>>
+>;
+export type ExportProjectsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Export projects as CSV
+ */
+
+export function useExportProjects<
+  TData = Awaited<ReturnType<typeof exportProjects>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof exportProjects>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getExportProjectsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Export followups as CSV
+ */
+export const getExportFollowupsUrl = () => {
+  return `/api/export/followups`;
+};
+
+export const exportFollowups = async (
+  options?: RequestInit,
+): Promise<string> => {
+  return customFetch<string>(getExportFollowupsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getExportFollowupsQueryKey = () => {
+  return [`/api/export/followups`] as const;
+};
+
+export const getExportFollowupsQueryOptions = <
+  TData = Awaited<ReturnType<typeof exportFollowups>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof exportFollowups>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getExportFollowupsQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof exportFollowups>>> = ({
+    signal,
+  }) => exportFollowups({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof exportFollowups>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ExportFollowupsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof exportFollowups>>
+>;
+export type ExportFollowupsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Export followups as CSV
+ */
+
+export function useExportFollowups<
+  TData = Awaited<ReturnType<typeof exportFollowups>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof exportFollowups>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getExportFollowupsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * @summary Create a Stripe Checkout session

@@ -18,6 +18,8 @@ import commentsRouter from "./comments";
 import assignmentsRouter from "./assignments";
 import notificationsRouter from "./notifications";
 import teamDashboardRouter from "./team-dashboard";
+import followupsRouter from "./followups";
+import exportRouter from "./export";
 
 const router: IRouter = Router();
 
@@ -40,5 +42,7 @@ router.use(sharedMailboxesRouter);
 router.use(commentsRouter);
 router.use(notificationsRouter);
 router.use(teamDashboardRouter);
+router.use(followupsRouter);
+router.use(exportRouter);
 
 export default router;
