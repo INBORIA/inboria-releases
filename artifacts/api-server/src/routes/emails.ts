@@ -393,18 +393,20 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       });
     }
 
-    await supabaseAdmin.from("emails").insert({
+    const { data: sentEmail } = await supabaseAdmin.from("emails").insert({
       user_id: req.userId!,
       sender: fromAddress,
       sender_email: fromAddress,
+      recipient: to,
       subject,
       body,
       status: "sent",
       priority: "faible",
       external_id: null,
-    });
+      reply_to_email_id: replyToEmailId || null,
+    }).select("id").single();
 
-    res.json({ success: true });
+    res.json({ success: true, emailId: sentEmail?.id });
   } catch (err: any) {
     console.error("Send email error:", err);
     res.status(500).json({ error: "Echec de l'envoi: " + (err.message || "Erreur inconnue") });
