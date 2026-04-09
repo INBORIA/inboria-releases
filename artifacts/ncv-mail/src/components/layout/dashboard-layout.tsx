@@ -130,10 +130,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         })}
       </nav>
 
-      <div className="px-2 pb-1">
-        <NotificationBell />
-      </div>
-
       <div className="p-2.5 mt-auto border-t border-[#1f2937]">
         <div className="px-2.5 py-2 mb-2">
           <div className="flex justify-between items-center mb-1.5">
@@ -170,21 +166,24 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               </span>
             </div>
           </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] h-7 w-7"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-3.5 w-3.5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p>{t("nav.logout")}</p>
-            </TooltipContent>
-          </Tooltip>
+          <div className="flex items-center gap-0.5">
+            <NotificationBell />
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] h-7 w-7"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="h-3.5 w-3.5" />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent side="top">
+                <p>{t("nav.logout")}</p>
+              </TooltipContent>
+            </Tooltip>
+          </div>
         </div>
       </div>
     </div>
