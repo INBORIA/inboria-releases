@@ -702,15 +702,13 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
       </div>
 
       <div className="flex justify-start mt-4">
-        <Button
-          variant="outline"
-          size="sm"
+        <button
           onClick={onBack}
-          className="gap-1.5 h-8 text-[12px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
+          className="flex items-center gap-1 text-[11px] px-3 py-1.5 rounded-md font-medium transition-colors bg-primary/15 text-primary border border-primary/20 hover:bg-primary/25"
         >
-          <ArrowLeft className="w-3.5 h-3.5" />
-          {t("common.back")}
-        </Button>
+          <Inbox className="w-3.5 h-3.5" />
+          {t("inbox.title")}
+        </button>
       </div>
     </div>
   );
