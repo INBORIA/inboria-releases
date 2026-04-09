@@ -40,6 +40,7 @@
     "followup": "Suivi",
     "dailyBrief": "Bilan quotidien",
     "tasks": "Tâches",
+    "tasksAndFollowup": "Tâches & Suivi",
     "projects": "Projets",
     "classification": "Classement",
     "settings": "Paramètres",
@@ -473,6 +474,12 @@
     "viewEmail": "Voir l'email",
     "sourceEmail": "Email source",
     "fromEmail": "depuis un email"
+  },
+  "tasksAndFollowup": {
+    "title": "Tâches & Suivi",
+    "subtitle": "Gérez vos actions et relances depuis un seul endroit.",
+    "actions": "Actions",
+    "followups": "Relances"
   },
   "projects": {
     "title": "Projets",

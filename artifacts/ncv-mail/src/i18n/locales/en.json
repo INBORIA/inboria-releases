@@ -40,6 +40,7 @@
     "followup": "Follow-up",
     "dailyBrief": "Daily brief",
     "tasks": "Tasks",
+    "tasksAndFollowup": "Tasks & Follow-up",
     "projects": "Projects",
     "classification": "Classification",
     "settings": "Settings",
@@ -473,6 +474,12 @@
     "viewEmail": "View email",
     "sourceEmail": "Source email",
     "fromEmail": "from an email"
+  },
+  "tasksAndFollowup": {
+    "title": "Tasks & Follow-up",
+    "subtitle": "Manage your actions and follow-ups from one place.",
+    "actions": "Actions",
+    "followups": "Follow-ups"
   },
   "projects": {
     "title": "Projects",

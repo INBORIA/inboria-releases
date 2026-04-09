@@ -19,7 +19,6 @@ import {
   Activity,
   BookOpen,
   Send,
-  Eye,
   CalendarDays,
 } from "lucide-react";
 import ncvLogo from "@assets/image_1775392688923.png";
@@ -44,8 +43,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const baseNavigation = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
-    { name: t("sidebar.tasks"), href: "/dashboard/taches", icon: CheckSquare },
-    { name: t("sidebar.followup"), href: "/dashboard/suivi", icon: Eye },
+    { name: t("sidebar.tasksAndFollowup"), href: "/dashboard/taches", icon: CheckSquare },
     { name: t("sidebar.projects"), href: "/dashboard/projets", icon: FolderKanban },
     { name: t("sidebar.agenda"), href: "/dashboard/agenda", icon: CalendarDays },
     { name: t("sidebar.archives"), href: "/dashboard/archives", icon: Archive },
@@ -57,7 +55,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   ];
 
   const isBusiness = (user as any).plan === "business";
-  const archivesIndex = 6;
+  const archivesIndex = 5;
   const navigation = isBusiness
     ? [
         ...baseNavigation.slice(0, archivesIndex + 1),

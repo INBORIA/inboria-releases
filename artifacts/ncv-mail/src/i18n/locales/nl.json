@@ -40,6 +40,7 @@
     "followup": "Opvolging",
     "dailyBrief": "Dagelijks overzicht",
     "tasks": "Taken",
+    "tasksAndFollowup": "Taken & Opvolging",
     "projects": "Projecten",
     "classification": "Classificatie",
     "settings": "Instellingen",
@@ -473,6 +474,12 @@
     "viewEmail": "E-mail bekijken",
     "sourceEmail": "Bron e-mail",
     "fromEmail": "vanuit een e-mail"
+  },
+  "tasksAndFollowup": {
+    "title": "Taken & Opvolging",
+    "subtitle": "Beheer uw acties en opvolgingen op één plek.",
+    "actions": "Acties",
+    "followups": "Opvolgingen"
   },
   "projects": {
     "title": "Projecten",
