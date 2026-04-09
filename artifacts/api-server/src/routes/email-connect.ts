@@ -683,7 +683,6 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
               email_id: insertedEmail.id,
               title,
               done: false,
-              source: "ai",
             }))
           );
         }

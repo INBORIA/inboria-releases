@@ -17,7 +17,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import {
   Calendar, Mail, CheckSquare, Clock, Trash2, User, Sparkles, Tag, Download,
-  Reply, Send, Wand2, Loader2, Plus, Eye, ArrowRight, RotateCcw, CheckCircle2,
+  Reply, Send, Wand2, Loader2, Plus, ArrowRight, RotateCcw, CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -38,7 +38,6 @@ const PRIORITY_BADGE_STYLES: Record<string, { bg: string; text: string; border: 
 
 const STATUS_STYLES = {
   todo: { color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20", icon: CheckSquare },
-  followup: { color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20", icon: Eye },
   done: { color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: CheckCircle2 },
 };
 
@@ -69,25 +68,13 @@ export default function Taches() {
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
 
-  const handleStatusChange = (id: string, newStatus: "todo" | "followup" | "done") => {
-    const updates: any = {};
-    if (newStatus === "done") {
-      updates.done = true;
-      updates.inFollowup = false;
-    } else if (newStatus === "followup") {
-      updates.done = false;
-      updates.inFollowup = true;
-    } else {
-      updates.done = false;
-      updates.inFollowup = false;
-    }
+  const handleToggleDone = (id: string, currentDone: boolean) => {
     updateTask.mutate(
-      { id, data: updates },
+      { id, data: { done: !currentDone } },
       {
         onSuccess: () => {
           invalidate();
-          const msgKey = newStatus === "done" ? "tasks.movedToDone" : newStatus === "followup" ? "tasks.movedToFollowup" : "tasks.movedToTodo";
-          toast({ title: t(msgKey) });
+          toast({ title: t(!currentDone ? "tasks.movedToDone" : "tasks.movedToTodo") });
         },
       }
     );
@@ -152,10 +139,9 @@ export default function Taches() {
   const taskList = (tasks as any[]) || [];
 
   const filters = [
-    { key: "todo", label: t("tasks.todo"), count: null },
-    { key: "followup", label: t("tasks.followup"), count: null },
-    { key: "done", label: t("tasks.done"), count: null },
-    { key: "all", label: t("tasks.all"), count: null },
+    { key: "all", label: t("tasks.all") },
+    { key: "todo", label: t("tasks.todo") },
+    { key: "done", label: t("tasks.done") },
   ];
 
   return (
@@ -251,7 +237,7 @@ export default function Taches() {
                     </p>
                     <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#8b9cb3]">
                       <Badge className={`text-[10px] px-1.5 py-0 h-[18px] font-medium border ${statusStyle.bg} ${statusStyle.color} ${statusStyle.border}`}>
-                        {taskStatus === "todo" ? t("tasks.todo") : taskStatus === "followup" ? t("tasks.followup") : t("tasks.done")}
+                        {taskStatus === "done" ? t("tasks.done") : t("tasks.todo")}
                       </Badge>
                       {task.source === "ai" && (
                         <Badge className="text-[10px] px-1.5 py-0 h-[18px] font-medium border bg-violet-500/15 text-violet-400 border-violet-500/25">
@@ -295,45 +281,17 @@ export default function Taches() {
                   </div>
 
                   <div className="flex items-center gap-1 shrink-0">
-                    {taskStatus === "todo" && (
-                      <>
-                        <button
-                          onClick={() => handleStatusChange(task.id, "followup")}
-                          className="p-1.5 rounded-md text-[#8b9cb3] hover:text-amber-400 hover:bg-amber-500/10 transition-colors"
-                          title={t("tasks.markFollowup")}
-                        >
-                          <Eye className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleStatusChange(task.id, "done")}
-                          className="p-1.5 rounded-md text-[#8b9cb3] hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
-                          title={t("tasks.markDone")}
-                        >
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                        </button>
-                      </>
-                    )}
-                    {taskStatus === "followup" && (
-                      <>
-                        <button
-                          onClick={() => handleStatusChange(task.id, "todo")}
-                          className="p-1.5 rounded-md text-[#8b9cb3] hover:text-blue-400 hover:bg-blue-500/10 transition-colors"
-                          title={t("tasks.markTodo")}
-                        >
-                          <RotateCcw className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          onClick={() => handleStatusChange(task.id, "done")}
-                          className="p-1.5 rounded-md text-[#8b9cb3] hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
-                          title={t("tasks.markDone")}
-                        >
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                        </button>
-                      </>
-                    )}
-                    {taskStatus === "done" && (
+                    {taskStatus !== "done" ? (
                       <button
-                        onClick={() => handleStatusChange(task.id, "todo")}
+                        onClick={() => handleToggleDone(task.id, false)}
+                        className="p-1.5 rounded-md text-[#8b9cb3] hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
+                        title={t("tasks.markDone")}
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5" />
+                      </button>
+                    ) : (
+                      <button
+                        onClick={() => handleToggleDone(task.id, true)}
                         className="p-1.5 rounded-md text-[#8b9cb3] hover:text-blue-400 hover:bg-blue-500/10 transition-colors"
                         title={t("tasks.markTodo")}
                       >

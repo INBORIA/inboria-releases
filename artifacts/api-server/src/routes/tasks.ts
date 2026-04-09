@@ -10,16 +10,14 @@ function mapTask(t: any) {
   const senderName = senderMatch ? senderMatch[1].trim().replace(/^"|"$/g, "") : senderRaw;
   const senderEmail = senderMatch ? senderMatch[2].trim() : senderRaw;
 
-  let status = "todo";
-  if (t.done) status = "done";
-  else if (t.in_followup) status = "followup";
+  const source = t.email_id ? "ai" : "manual";
 
   return {
     id: t.id,
     title: t.title,
     done: t.done,
-    status,
-    source: t.source || "manual",
+    status: t.done ? "done" : "todo",
+    source,
     dueDate: t.due_date,
     emailId: t.email_id,
     emailSubject: t.emails?.subject || null,
@@ -51,9 +49,7 @@ router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
       if (status === "done") {
         query = query.eq("done", true);
       } else if (status === "pending" || status === "todo") {
-        query = query.eq("done", false).eq("in_followup", false);
-      } else if (status === "followup") {
-        query = query.eq("done", false).eq("in_followup", true);
+        query = query.eq("done", false);
       }
     }
 
@@ -127,11 +123,6 @@ router.patch("/tasks/:id", requireAuth, async (req, res): Promise<void> => {
     if (req.body.done !== undefined) updates.done = req.body.done;
     if (req.body.title !== undefined) updates.title = req.body.title;
     if (req.body.projectId !== undefined) updates.project_id = req.body.projectId;
-    if (req.body.inFollowup !== undefined) updates.in_followup = req.body.inFollowup;
-
-    if (req.body.done === true) {
-      updates.in_followup = false;
-    }
 
     const { data: task, error } = await supabaseAdmin
       .from("tasks")
