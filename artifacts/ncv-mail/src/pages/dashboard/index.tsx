@@ -204,16 +204,14 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
 
   return (
     <div className="flex flex-col h-full">
-      <div className="sticky top-0 z-10 flex items-center gap-3 mb-4 pb-2 pt-1 bg-[#0d1117]">
-        <Button
-          variant="ghost"
-          size="sm"
+      <div className="sticky top-0 z-10 flex items-center gap-2 mb-4 pb-2 pt-1 bg-[#0d1117]">
+        <button
           onClick={onBack}
-          className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
+          className="flex items-center gap-1 text-[11px] px-3 py-1.5 rounded-md font-medium transition-colors bg-primary/15 text-primary border border-primary/20"
         >
-          <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-          {t("common.back")}
-        </Button>
+          <Inbox className="w-3.5 h-3.5" />
+          {t("inbox.title")}
+        </button>
         <div className="flex-1" />
         <PriorityBadge priority={email.priority} />
       </div>
