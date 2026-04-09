@@ -64,14 +64,39 @@ export default function Agenda() {
     const params = new URLSearchParams(window.location.search);
     if (params.get("create") === "1") {
       const title = params.get("title") || "";
-      const emailId = params.get("emailId") || "";
       const participants = params.get("participants") || "";
+      const location = params.get("location") || "";
+      const description = params.get("description") || "";
+      const startAt = params.get("startAt") || "";
+      const endAt = params.get("endAt") || "";
+
       setFormTitle(title);
-      if (emailId) setFormProjectId("");
       setFormParticipants(participants);
-      const d = format(new Date(), "yyyy-MM-dd");
-      setFormStartAt(`${d}T09:00`);
-      setFormEndAt(`${d}T10:00`);
+      setFormLocation(location);
+      setFormDescription(description);
+
+      if (startAt) {
+        try {
+          const startDate = new Date(startAt);
+          setFormStartAt(format(startDate, "yyyy-MM-dd'T'HH:mm"));
+          if (endAt) {
+            const endDate = new Date(endAt);
+            setFormEndAt(format(endDate, "yyyy-MM-dd'T'HH:mm"));
+          } else {
+            const endDate = new Date(startDate.getTime() + 3600000);
+            setFormEndAt(format(endDate, "yyyy-MM-dd'T'HH:mm"));
+          }
+        } catch {
+          const d = format(new Date(), "yyyy-MM-dd");
+          setFormStartAt(`${d}T09:00`);
+          setFormEndAt(`${d}T10:00`);
+        }
+      } else {
+        const d = format(new Date(), "yyyy-MM-dd");
+        setFormStartAt(`${d}T09:00`);
+        setFormEndAt(`${d}T10:00`);
+      }
+
       setShowForm(true);
       window.history.replaceState({}, "", window.location.pathname);
     }

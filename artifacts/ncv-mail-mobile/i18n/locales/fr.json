@@ -1,0 +1,16 @@
+{
+  "agenda": {
+    "title": "Agenda",
+    "allDay": "Journée entière",
+    "suggestion": "Suggestion IA",
+    "deleteAppointment": "Supprimer",
+    "deleteConfirm": "Supprimer ce rendez-vous ?",
+    "cancel": "Annuler",
+    "newAppointment": "Nouveau RDV",
+    "appointmentTitlePlaceholder": "Titre du RDV...",
+    "locationPlaceholder": "Lieu...",
+    "participantsPlaceholder": "Participants...",
+    "descriptionPlaceholder": "Description...",
+    "noRdv": "Aucun RDV"
+  }
+}

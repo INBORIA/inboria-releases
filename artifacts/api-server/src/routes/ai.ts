@@ -44,9 +44,48 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
     const faible = allEmails.filter(e => e.priority === "faible").length;
     const pending = allEmails.filter(e => e.status === "classe").length;
 
+    const now = new Date();
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+    const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
+    const tomorrowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString();
+    const tomorrowEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 59).toISOString();
+
+    const { data: todayAppts } = await supabaseAdmin
+      .from("appointments")
+      .select("id, title, start_at, end_at, location, all_day, confirmed, participants")
+      .eq("user_id", req.userId!)
+      .gte("start_at", todayStart)
+      .lte("start_at", todayEnd)
+      .order("start_at", { ascending: true });
+
+    const { data: tomorrowAppts } = await supabaseAdmin
+      .from("appointments")
+      .select("id, title, start_at, end_at, location, all_day, confirmed, participants")
+      .eq("user_id", req.userId!)
+      .gte("start_at", tomorrowStart)
+      .lte("start_at", tomorrowEnd)
+      .order("start_at", { ascending: true });
+
+    const mapAppt = (a: any) => ({
+      id: a.id,
+      title: a.title,
+      startAt: a.start_at,
+      endAt: a.end_at,
+      location: a.location,
+      allDay: a.all_day,
+      confirmed: a.confirmed,
+      participants: a.participants,
+    });
+    const todayAppointments = (todayAppts || []).map(mapAppt);
+    const tomorrowAppointments = (tomorrowAppts || []).map(mapAppt);
+
     const langInstruction = language === "fr"
       ? "Reponds en francais."
       : "Respond in English.";
+
+    const appointmentContext = todayAppointments.length > 0 || tomorrowAppointments.length > 0
+      ? `\n\nRendez-vous aujourd'hui (${todayAppointments.length}): ${todayAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "aucun"}\nRendez-vous demain (${tomorrowAppointments.length}): ${tomorrowAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "aucun"}`
+      : "";
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -54,19 +93,19 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
       messages: [
         {
           role: "system",
-          content: `Tu es un assistant de gestion d'emails. ${langInstruction} Genere un bilan quotidien structure.`,
+          content: `Tu es un assistant de gestion d'emails et d'agenda. ${langInstruction} Genere un bilan quotidien structure incluant les rendez-vous.`,
         },
         {
           role: "user",
           content: `Voici les ${allEmails.length} derniers emails de l'utilisateur:
 ${allEmails.map(e => `- [${e.priority}] ${e.sender}: ${e.subject} ${e.summary ? `(${e.summary})` : ""}`).join("\n")}
 
-Statistiques: ${urgent} urgents, ${moyen} moyens, ${faible} faibles, ${pending} en attente.
+Statistiques: ${urgent} urgents, ${moyen} moyens, ${faible} faibles, ${pending} en attente.${appointmentContext}
 
 Genere un JSON avec:
 {
-  "summary": "resume general de la journee en 2-3 phrases",
-  "advice": "un conseil personnalise pour ameliorer la gestion des emails",
+  "summary": "resume general de la journee en 2-3 phrases (incluant les RDV si pertinent)",
+  "advice": "un conseil personnalise pour ameliorer la gestion des emails et de l'agenda",
   "keyEmailIds": [liste des 5 IDs les plus importants]
 }`,
         },
@@ -111,6 +150,8 @@ Genere un JSON avec:
         pending,
       },
       advice: aiResponse.advice || "Continuez a bien gerer vos emails.",
+      todayAppointments,
+      tomorrowAppointments,
     });
   } catch {
     res.status(500).json({ error: "Failed to generate daily summary" });
@@ -570,6 +611,68 @@ ${signature ? `\nSignature à utiliser:\n${signature}` : ""}` },
   }
 });
 
+router.post("/ai/extract-appointment", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const entitlement = await checkEntitlement(req.userId!);
+    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
+
+    const { emailId } = req.body;
+    if (!emailId) { res.status(400).json({ error: "emailId requis" }); return; }
+
+    const { data: email, error: emailErr } = await supabaseAdmin
+      .from("emails")
+      .select("id, sender, subject, body, summary")
+      .eq("id", emailId)
+      .eq("user_id", req.userId!)
+      .single();
+
+    if (emailErr || !email) { res.status(404).json({ error: "Email introuvable" }); return; }
+
+    const cleanBody = (email.body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 1500);
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.2,
+      max_completion_tokens: 512,
+      messages: [
+        {
+          role: "system",
+          content: `Tu analyses un email pour extraire les informations d'un rendez-vous potentiel. Réponds en JSON strict:
+{
+  "title": "titre du RDV (utilise le sujet de l'email si pas de titre explicite)",
+  "description": "description ou contexte du RDV",
+  "location": "lieu mentionné ou null",
+  "startAt": "ISO datetime ou null",
+  "endAt": "ISO datetime ou null",
+  "participants": "noms/emails des participants",
+  "hasAppointment": true/false
+}
+Extrais le maximum d'informations structurées même si une date exacte n'est pas mentionnée.`,
+        },
+        {
+          role: "user",
+          content: `De: ${email.sender}\nObjet: ${email.subject}\nCorps: ${cleanBody}`,
+        },
+      ],
+      response_format: { type: "json_object" },
+    });
+
+    const content = completion.choices[0]?.message?.content ?? "{}";
+    const result = JSON.parse(content);
+
+    res.json({
+      title: result.title || email.subject || "",
+      description: result.description || "",
+      location: result.location || "",
+      startAt: result.startAt || null,
+      endAt: result.endAt || null,
+      participants: result.participants || email.sender || "",
+      hasAppointment: result.hasAppointment ?? false,
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: "Erreur d'extraction: " + err.message });
+  }
+});
+
 router.post("/ai/detect-appointments", requireAuth, async (req, res): Promise<void> => {
   try {
     const entitlement = await checkEntitlement(req.userId!);
@@ -628,6 +731,17 @@ Si aucune date/heure exacte n'est trouvée, utilise une estimation raisonnable. 
     const created: any[] = [];
     for (const apt of detected) {
       if (!apt.title || !apt.startAt) continue;
+
+      if (apt.emailId) {
+        const { data: existingApt } = await supabaseAdmin
+          .from("appointments")
+          .select("id")
+          .eq("user_id", req.userId!)
+          .eq("email_id", apt.emailId)
+          .maybeSingle();
+        if (existingApt) continue;
+      }
+
       const endAt = apt.endAt || new Date(new Date(apt.startAt).getTime() + 3600000).toISOString();
       const { data, error } = await supabaseAdmin
         .from("appointments")

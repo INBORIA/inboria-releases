@@ -145,6 +145,72 @@ function getGoogleOAuth2Client() {
   );
 }
 
+async function detectAppointmentFromEmail(
+  emailId: number,
+  sender: string,
+  subject: string,
+  body: string,
+  userId: string
+): Promise<void> {
+  try {
+    const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
+    const cleanBody = (body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800);
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.2,
+      max_completion_tokens: 512,
+      messages: [
+        {
+          role: "system",
+          content: `Tu analyses un email professionnel pour détecter si un rendez-vous, une réunion ou un événement est mentionné avec une date/heure concrète. Réponds en JSON strict:
+{ "hasAppointment": false }
+OU
+{ "hasAppointment": true, "title": "...", "description": "...", "location": "...", "startAt": "ISO datetime", "endAt": "ISO datetime", "allDay": false, "participants": "..." }
+N'invente PAS de RDV. Détecte uniquement si une date/heure précise est mentionnée (ex: "réunion le 15 mars à 14h", "call mardi 10h").`,
+        },
+        {
+          role: "user",
+          content: `De: ${sender}\nObjet: ${subject}\nCorps: ${cleanBody}`,
+        },
+      ],
+      response_format: { type: "json_object" },
+    });
+
+    const content = completion.choices[0]?.message?.content ?? "{}";
+    const result = JSON.parse(content);
+
+    if (!result.hasAppointment || !result.title || !result.startAt) return;
+
+    const { data: existing } = await supabaseAdmin
+      .from("appointments")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("email_id", emailId)
+      .maybeSingle();
+
+    if (existing) return;
+
+    const endAt = result.endAt || new Date(new Date(result.startAt).getTime() + 3600000).toISOString();
+    await supabaseAdmin.from("appointments").insert({
+      user_id: userId,
+      title: result.title,
+      description: result.description || null,
+      location: result.location || null,
+      start_at: result.startAt,
+      end_at: endAt,
+      all_day: result.allDay || false,
+      email_id: emailId,
+      reminder_minutes: 30,
+      confirmed: false,
+      participants: result.participants || sender || null,
+    });
+
+    logger.info({ emailId, title: result.title }, "[auto-sync] Appointment suggestion created");
+  } catch (err: any) {
+    logger.error({ err: err.message, emailId }, "[auto-sync] detectAppointmentFromEmail error");
+  }
+}
+
 async function triageEmailAI(
   sender: string,
   subject: string,
@@ -304,6 +370,8 @@ async function saveEmailWithTriage(
   if (triage.priority === "urgent") {
     sendSlackNotification(userId, sender, subject, triage.summary).catch(() => {});
   }
+
+  detectAppointmentFromEmail(inserted.id, sender, subject, body, userId).catch(() => {});
 
   if (triage.tasks.length > 0) {
     const { error: taskErr } = await supabaseAdmin.from("tasks").insert(

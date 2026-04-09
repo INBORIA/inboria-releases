@@ -22,24 +22,12 @@ import {
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
+import { useTranslation } from "react-i18next";
 import { format, parseISO, startOfMonth, endOfMonth, addMonths, subMonths, isToday, isSameDay } from "date-fns";
-
-const T = {
-  allDay: "Journée entière",
-  suggestion: "Suggestion IA",
-  deleteAppointment: "Supprimer",
-  deleteConfirm: "Supprimer ce rendez-vous ?",
-  cancel: "Annuler",
-  newAppointment: "Nouveau RDV",
-  appointmentTitlePlaceholder: "Titre du RDV...",
-  locationPlaceholder: "Lieu...",
-  participantsPlaceholder: "Participants...",
-  descriptionPlaceholder: "Description...",
-  noRdv: "Aucun RDV",
-};
 
 export default function AgendaScreen() {
   const colors = useColors();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<Date>(new Date());
@@ -75,12 +63,12 @@ export default function AgendaScreen() {
 
   const handleDelete = (id: string, title: string) => {
     Alert.alert(
-      T.deleteAppointment,
-      T.deleteConfirm,
+      t("agenda.deleteAppointment"),
+      t("agenda.deleteConfirm"),
       [
-        { text: T.cancel, style: "cancel" },
+        { text: t("agenda.cancel"), style: "cancel" },
         {
-          text: T.deleteAppointment,
+          text: t("agenda.deleteAppointment"),
           style: "destructive",
           onPress: () => {
             deleteAppointment.mutate(
@@ -154,14 +142,14 @@ export default function AgendaScreen() {
             <Text style={[s.cardTitle, { color: colors.foreground }]}>{item.title}</Text>
             {item.confirmed === false && (
               <View style={{ backgroundColor: "#f59e0b20", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4 }}>
-                <Text style={{ color: "#f59e0b", fontSize: 9, fontFamily: "Inter_500Medium" }}>{T.suggestion}</Text>
+                <Text style={{ color: "#f59e0b", fontSize: 9, fontFamily: "Inter_500Medium" }}>{t("agenda.suggestion")}</Text>
               </View>
             )}
           </View>
           <View style={s.timeRow}>
             <MaterialCommunityIcons name="clock-outline" size={12} color={colors.mutedForeground} />
             <Text style={[s.timeText, { color: colors.mutedForeground }]}>
-              {item.allDay ? T.allDay : `${format(parseISO(item.startAt), "HH:mm")} - ${format(parseISO(item.endAt), "HH:mm")}`}
+              {item.allDay ? t("agenda.allDay") : `${format(parseISO(item.startAt), "HH:mm")} - ${format(parseISO(item.endAt), "HH:mm")}`}
             </Text>
           </View>
           {item.location ? (
@@ -259,28 +247,28 @@ export default function AgendaScreen() {
           <View style={[s.createForm, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <TextInput
               style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
-              placeholder={T.appointmentTitlePlaceholder}
+              placeholder={t("agenda.appointmentTitlePlaceholder")}
               placeholderTextColor={colors.mutedForeground}
               value={formTitle}
               onChangeText={setFormTitle}
             />
             <TextInput
               style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
-              placeholder={T.locationPlaceholder}
+              placeholder={t("agenda.locationPlaceholder")}
               placeholderTextColor={colors.mutedForeground}
               value={formLocation}
               onChangeText={setFormLocation}
             />
             <TextInput
               style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
-              placeholder={T.participantsPlaceholder}
+              placeholder={t("agenda.participantsPlaceholder")}
               placeholderTextColor={colors.mutedForeground}
               value={formParticipants}
               onChangeText={setFormParticipants}
             />
             <TextInput
               style={[s.input, s.textArea, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
-              placeholder={T.descriptionPlaceholder}
+              placeholder={t("agenda.descriptionPlaceholder")}
               placeholderTextColor={colors.mutedForeground}
               value={formDescription}
               onChangeText={setFormDescription}
@@ -295,7 +283,7 @@ export default function AgendaScreen() {
               {createAppointment.isPending ? (
                 <ActivityIndicator size="small" color="#fff" />
               ) : (
-                <Text style={s.createBtnText}>{T.newAppointment}</Text>
+                <Text style={s.createBtnText}>{t("agenda.newAppointment")}</Text>
               )}
             </TouchableOpacity>
           </View>
@@ -309,7 +297,7 @@ export default function AgendaScreen() {
       ) : dayAppointments.length === 0 ? (
         <View style={s.center}>
           <MaterialCommunityIcons name="calendar-blank-outline" size={40} color={colors.mutedForeground + "40"} />
-          <Text style={[s.emptyText, { color: colors.mutedForeground }]}>{T.noRdv}</Text>
+          <Text style={[s.emptyText, { color: colors.mutedForeground }]}>{t("agenda.noRdv")}</Text>
         </View>
       ) : (
         <FlatList

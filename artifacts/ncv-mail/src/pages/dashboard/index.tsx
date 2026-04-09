@@ -351,12 +351,34 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   variant="outline"
                   size="sm"
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
-                  onClick={() => {
-                    const params = new URLSearchParams();
-                    params.set("title", email.subject || "");
-                    params.set("emailId", String(email.id));
-                    if (email.sender) params.set("participants", email.sender);
-                    window.location.href = `/dashboard/agenda?create=1&${params.toString()}`;
+                  onClick={async () => {
+                    try {
+                      const { supabase } = await import("@/lib/supabase");
+                      const { data: sessionData } = await supabase.auth.getSession();
+                      const token = sessionData?.session?.access_token || "";
+                      const baseUrl = import.meta.env.VITE_API_URL || `https://${window.location.host}`;
+                      const resp = await fetch(`${baseUrl}/api/ai/extract-appointment`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                        body: JSON.stringify({ emailId: email.id }),
+                      });
+                      const extracted = resp.ok ? await resp.json() : null;
+                      const params = new URLSearchParams();
+                      params.set("title", extracted?.title || email.subject || "");
+                      params.set("emailId", String(email.id));
+                      params.set("participants", extracted?.participants || email.sender || "");
+                      if (extracted?.location) params.set("location", extracted.location);
+                      if (extracted?.description) params.set("description", extracted.description);
+                      if (extracted?.startAt) params.set("startAt", extracted.startAt);
+                      if (extracted?.endAt) params.set("endAt", extracted.endAt);
+                      window.location.href = `/dashboard/agenda?create=1&${params.toString()}`;
+                    } catch {
+                      const params = new URLSearchParams();
+                      params.set("title", email.subject || "");
+                      params.set("emailId", String(email.id));
+                      if (email.sender) params.set("participants", email.sender);
+                      window.location.href = `/dashboard/agenda?create=1&${params.toString()}`;
+                    }
                   }}
                 >
                   <CalendarDays className="w-3 h-3" />

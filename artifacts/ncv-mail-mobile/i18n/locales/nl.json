@@ -1,0 +1,16 @@
+{
+  "agenda": {
+    "title": "Agenda",
+    "allDay": "Hele dag",
+    "suggestion": "AI-suggestie",
+    "deleteAppointment": "Verwijderen",
+    "deleteConfirm": "Deze afspraak verwijderen?",
+    "cancel": "Annuleren",
+    "newAppointment": "Nieuwe afspraak",
+    "appointmentTitlePlaceholder": "Titel van de afspraak...",
+    "locationPlaceholder": "Locatie...",
+    "participantsPlaceholder": "Deelnemers...",
+    "descriptionPlaceholder": "Beschrijving...",
+    "noRdv": "Geen afspraken"
+  }
+}

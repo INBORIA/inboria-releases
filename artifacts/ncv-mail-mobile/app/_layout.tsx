@@ -15,6 +15,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 import { setBaseUrl, useRegisterPushToken } from "@workspace/api-client-react";
 
+import "@/i18n";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { AuthProvider, useAuth } from "@/contexts/AuthContext";
 import { useColors } from "@/hooks/useColors";
