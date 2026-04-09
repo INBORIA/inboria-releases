@@ -157,8 +157,12 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
 export function AttachmentBadge({ count }: { count: number }) {
   if (!count || count <= 0) return null;
   return (
-    <span className="inline-flex items-center gap-0.5 text-xs" style={{ color: "#8b9cb3" }} title={`${count} pièce${count > 1 ? "s" : ""} jointe${count > 1 ? "s" : ""}`}>
-      <Paperclip size={12} />
+    <span
+      className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium hidden sm:inline-flex"
+      style={{ background: "rgba(139,156,179,0.12)", color: "#8b9cb3", border: "1px solid rgba(139,156,179,0.15)" }}
+      title={`${count} pièce${count > 1 ? "s" : ""} jointe${count > 1 ? "s" : ""}`}
+    >
+      <Paperclip size={10} />
       <span>{count}</span>
     </span>
   );
