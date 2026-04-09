@@ -574,7 +574,7 @@ export default function Parametres() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button onClick={handleSaveProfile} disabled={updateProfile.isPending || (fullName === profile?.fullName && timezone === ((profile as any)?.timezone || "Europe/Brussels"))} size="sm">
+                  <Button onClick={handleSaveProfile} disabled={updateProfile.isPending || (fullName === (profile?.fullName ?? "") && timezone === ((profile as any)?.timezone ?? "Europe/Brussels"))} size="sm">
                     {updateProfile.isPending ? t("settings.saving") : t("common.save")}
                   </Button>
                 </div>
