@@ -223,16 +223,15 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
           <div className={`w-1 shrink-0 ${barColor}`} />
           <div className="flex-1 min-w-0">
             <div className="p-4 border-b border-border">
-              <h2 className="text-[15px] font-semibold text-white mb-2.5">{email.subject}</h2>
-              <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-[12px]">
                     {(email.sender || "?")[0].toUpperCase()}
                   </div>
                   <div>
-                    <div className="text-[12px] font-medium text-white">{email.sender}</div>
-                    {email.sender && email.sender !== email.sender.split("@")[0] && (
-                      <div className="text-[10px] text-[#8b9cb3]">{email.sender}</div>
+                    <div className="text-[13px] font-medium text-white">{email.sender}</div>
+                    {email.senderEmail && email.senderEmail !== email.sender && (
+                      <div className="text-[11px] text-[#8b9cb3]">{email.senderEmail}</div>
                     )}
                   </div>
                 </div>
@@ -241,6 +240,8 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   {format(new Date(email.createdAt), "d MMMM yyyy a HH:mm", { locale: dateFnsLocale })}
                 </span>
               </div>
+              <div className="text-[10px] uppercase tracking-wider text-[#8b9cb3] font-medium mb-1">{t("inbox.subjectLabel")}</div>
+              <h2 className="text-[16px] font-bold text-white leading-snug">{email.subject || "(Sans objet)"}</h2>
             </div>
 
             {email.summary && (

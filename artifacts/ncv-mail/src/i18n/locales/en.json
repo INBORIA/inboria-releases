@@ -258,6 +258,7 @@
     "syncComplete": "Sync complete",
     "syncNewEmails": "{{count}} new email(s)",
     "syncNoNew": "No new emails",
+    "subjectLabel": "Subject",
     "sharedMailbox": "Shared mailbox",
     "claim": "Claim",
     "unclaim": "Release",

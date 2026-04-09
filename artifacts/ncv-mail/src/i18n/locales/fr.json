@@ -258,6 +258,7 @@
     "syncComplete": "Synchronisation terminée",
     "syncNewEmails": "{{count}} nouveau(x) email(s)",
     "syncNoNew": "Aucun nouvel email",
+    "subjectLabel": "Objet",
     "sharedMailbox": "Boîte partagée",
     "claim": "Revendiquer",
     "unclaim": "Libérer",
