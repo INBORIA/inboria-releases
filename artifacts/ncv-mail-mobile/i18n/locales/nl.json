@@ -11,6 +11,15 @@
     "locationPlaceholder": "Locatie...",
     "participantsPlaceholder": "Deelnemers...",
     "descriptionPlaceholder": "Beschrijving...",
-    "noRdv": "Geen afspraken"
+    "noRdv": "Geen afspraken",
+    "upcoming": "Binnenkort",
+    "noUpcoming": "Geen komende afspraken",
+    "dayMon": "M",
+    "dayTue": "D",
+    "dayWed": "W",
+    "dayThu": "D",
+    "dayFri": "V",
+    "daySat": "Z",
+    "daySun": "Z"
   }
 }

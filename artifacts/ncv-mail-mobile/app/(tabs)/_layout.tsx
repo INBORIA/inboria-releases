@@ -3,6 +3,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
 import { Image, Platform, StyleSheet, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 import { useColors } from "@/hooks/useColors";
 
@@ -20,6 +21,7 @@ const hStyles = StyleSheet.create({
 
 export default function TabLayout() {
   const colors = useColors();
+  const { t } = useTranslation();
   const isWeb = Platform.OS === "web";
   const insets = useSafeAreaInsets();
 
@@ -80,7 +82,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="agenda"
         options={{
-          title: "Agenda",
+          title: t("agenda.title"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="calendar-month-outline" size={size} color={color} />
           ),

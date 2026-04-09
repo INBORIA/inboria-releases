@@ -11,6 +11,15 @@
     "locationPlaceholder": "Lieu...",
     "participantsPlaceholder": "Participants...",
     "descriptionPlaceholder": "Description...",
-    "noRdv": "Aucun RDV"
+    "noRdv": "Aucun RDV",
+    "upcoming": "À venir",
+    "noUpcoming": "Aucun RDV à venir",
+    "dayMon": "L",
+    "dayTue": "M",
+    "dayWed": "M",
+    "dayThu": "J",
+    "dayFri": "V",
+    "daySat": "S",
+    "daySun": "D"
   }
 }

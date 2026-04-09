@@ -679,15 +679,29 @@ router.post("/ai/detect-appointments", requireAuth, async (req, res): Promise<vo
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
     const lang = req.body?.lang || "fr";
+    const emailId = req.body?.emailId;
 
-    const { data: emails } = await supabaseAdmin
-      .from("emails")
-      .select("id, sender, subject, body, summary, created_at")
-      .eq("user_id", req.userId!)
-      .order("created_at", { ascending: false })
-      .limit(30);
+    let emails: any[];
+    if (emailId) {
+      const { data: email, error: emailErr } = await supabaseAdmin
+        .from("emails")
+        .select("id, sender, subject, body, summary, created_at")
+        .eq("id", emailId)
+        .eq("user_id", req.userId!)
+        .single();
+      if (emailErr || !email) { res.status(404).json({ error: "Email introuvable" }); return; }
+      emails = [email];
+    } else {
+      const { data } = await supabaseAdmin
+        .from("emails")
+        .select("id, sender, subject, body, summary, created_at")
+        .eq("user_id", req.userId!)
+        .order("created_at", { ascending: false })
+        .limit(30);
+      emails = data || [];
+    }
 
-    if (!emails || emails.length === 0) {
+    if (emails.length === 0) {
       res.json({ appointments: [], count: 0 });
       return;
     }
@@ -708,12 +722,12 @@ router.post("/ai/detect-appointments", requireAuth, async (req, res): Promise<vo
           content: `Tu es un assistant qui détecte les rendez-vous, réunions et événements mentionnés dans des emails. ${langInstruction}
 Analyse les emails et identifie les rendez-vous avec date, heure, lieu et description.
 Renvoie un JSON avec le format:
-{ "appointments": [{ "title": "...", "description": "...", "location": "...", "startAt": "ISO datetime", "endAt": "ISO datetime", "allDay": false, "emailId": email_id_number }] }
-Si aucune date/heure exacte n'est trouvée, utilise une estimation raisonnable. Si pas de rendez-vous, renvoie un tableau vide.`,
+{ "appointments": [{ "title": "...", "description": "...", "location": "...", "startAt": "ISO datetime", "endAt": "ISO datetime", "allDay": false, "emailId": email_id_number, "participants": "..." }] }
+N'invente PAS de RDV. Détecte uniquement si une date/heure concrète est mentionnée. Si pas de rendez-vous, renvoie un tableau vide.`,
         },
         {
           role: "user",
-          content: `Voici les derniers emails:\n${emails.map(e => `[ID:${e.id}] De: ${e.sender} | Objet: ${e.subject}\n${(e.body || e.summary || "").substring(0, 500)}`).join("\n---\n")}`,
+          content: `Voici ${emails.length === 1 ? "l'email" : "les derniers emails"}:\n${emails.map(e => `[ID:${e.id}] De: ${e.sender} | Objet: ${e.subject}\n${(e.body || e.summary || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().substring(0, 500)}`).join("\n---\n")}`,
         },
       ],
     });

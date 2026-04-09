@@ -12,6 +12,7 @@ import {
   Alert,
   KeyboardAvoidingView,
   Platform,
+  SectionList,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
@@ -23,11 +24,17 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useTranslation } from "react-i18next";
-import { format, parseISO, startOfMonth, endOfMonth, addMonths, subMonths, isToday, isSameDay } from "date-fns";
+import { format, parseISO, startOfMonth, endOfMonth, addMonths, subMonths, addDays, isToday, isSameDay } from "date-fns";
+import { fr, enUS, nl } from "date-fns/locale";
+
+const dateLocales: Record<string, Locale> = { fr, en: enUS, nl };
+
+type ViewMode = "calendar" | "upcoming";
 
 export default function AgendaScreen() {
   const colors = useColors();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const locale = dateLocales[i18n.language] || fr;
   const queryClient = useQueryClient();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<Date>(new Date());
@@ -37,13 +44,16 @@ export default function AgendaScreen() {
   const [formDescription, setFormDescription] = useState("");
   const [formLocation, setFormLocation] = useState("");
   const [formParticipants, setFormParticipants] = useState("");
+  const [viewMode, setViewMode] = useState<ViewMode>("calendar");
 
   const rangeStart = startOfMonth(currentDate);
   const rangeEnd = endOfMonth(currentDate);
 
+  const upcomingEnd = addDays(new Date(), 30);
+
   const { data: appointments = [], isLoading } = useListAppointments({
-    from: rangeStart.toISOString(),
-    to: rangeEnd.toISOString(),
+    from: viewMode === "calendar" ? rangeStart.toISOString() : new Date().toISOString(),
+    to: viewMode === "calendar" ? rangeEnd.toISOString() : upcomingEnd.toISOString(),
   });
 
   const createAppointment = useCreateAppointment();
@@ -60,6 +70,20 @@ export default function AgendaScreen() {
       return isSameDay(parseISO(apt.startAt), selectedDay);
     });
   }, [appointments, selectedDay]);
+
+  const upcomingSections = useMemo(() => {
+    if (viewMode !== "upcoming") return [];
+    const sorted = [...(appointments as any[])].sort(
+      (a: any, b: any) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime()
+    );
+    const groups: Record<string, any[]> = {};
+    for (const apt of sorted) {
+      const key = format(parseISO(apt.startAt), "EEEE d MMMM", { locale });
+      if (!groups[key]) groups[key] = [];
+      groups[key].push(apt);
+    }
+    return Object.entries(groups).map(([title, data]) => ({ title, data }));
+  }, [appointments, viewMode, locale]);
 
   const handleDelete = (id: string, title: string) => {
     Alert.alert(
@@ -116,7 +140,9 @@ export default function AgendaScreen() {
     );
   };
 
-  const monthLabel = format(currentDate, "MMMM yyyy");
+  const monthLabel = format(currentDate, "MMMM yyyy", { locale });
+
+  const weekDayKeys = ["dayMon", "dayTue", "dayWed", "dayThu", "dayFri", "daySat", "daySun"] as const;
 
   const daysInMonth = useMemo(() => {
     const days: Date[] = [];
@@ -134,7 +160,7 @@ export default function AgendaScreen() {
     return (appointments as any[]).filter((apt: any) => isSameDay(parseISO(apt.startAt), day)).length;
   };
 
-  const renderAppointment = ({ item }: { item: any }) => (
+  const renderAppointment = (item: any) => (
     <View style={[s.card, { backgroundColor: colors.card, borderColor: item.confirmed === false ? "#f59e0b30" : colors.border }]}>
       <View style={s.cardHeader}>
         <View style={{ flex: 1 }}>
@@ -179,140 +205,197 @@ export default function AgendaScreen() {
 
   return (
     <View style={[s.container, { backgroundColor: colors.background }]}>
-      <View style={[s.monthHeader, { borderBottomColor: colors.border }]}>
-        <TouchableOpacity onPress={() => setCurrentDate(subMonths(currentDate, 1))}>
-          <MaterialCommunityIcons name="chevron-left" size={24} color={colors.foreground} />
+      <View style={[s.viewToggle, { borderBottomColor: colors.border }]}>
+        <TouchableOpacity
+          style={[s.toggleBtn, viewMode === "calendar" && { backgroundColor: colors.primary + "20" }]}
+          onPress={() => setViewMode("calendar")}
+        >
+          <MaterialCommunityIcons name="calendar-month" size={16} color={viewMode === "calendar" ? colors.primary : colors.mutedForeground} />
+          <Text style={[s.toggleText, { color: viewMode === "calendar" ? colors.primary : colors.mutedForeground }]}>
+            {t("agenda.title")}
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => setCurrentDate(new Date())}>
-          <Text style={[s.monthTitle, { color: colors.foreground }]}>{monthLabel}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity onPress={() => setCurrentDate(addMonths(currentDate, 1))}>
-          <MaterialCommunityIcons name="chevron-right" size={24} color={colors.foreground} />
+        <TouchableOpacity
+          style={[s.toggleBtn, viewMode === "upcoming" && { backgroundColor: colors.primary + "20" }]}
+          onPress={() => setViewMode("upcoming")}
+        >
+          <MaterialCommunityIcons name="format-list-bulleted" size={16} color={viewMode === "upcoming" ? colors.primary : colors.mutedForeground} />
+          <Text style={[s.toggleText, { color: viewMode === "upcoming" ? colors.primary : colors.mutedForeground }]}>
+            {t("agenda.upcoming")}
+          </Text>
         </TouchableOpacity>
       </View>
 
-      <View style={[s.daysRow, { borderBottomColor: colors.border }]}>
-        {["L", "M", "M", "J", "V", "S", "D"].map((d, i) => (
-          <View key={i} style={s.dayHeader}>
-            <Text style={[s.dayHeaderText, { color: colors.mutedForeground }]}>{d}</Text>
-          </View>
-        ))}
-      </View>
-
-      <View style={s.calendarGrid}>
-        {Array.from({ length: (daysInMonth[0]?.getDay() || 7) - 1 }).map((_, i) => (
-          <View key={`empty-${i}`} style={s.dayCell} />
-        ))}
-        {daysInMonth.map((day) => {
-          const count = getApptCountForDay(day);
-          const selected = isSameDay(day, selectedDay);
-          const today = isToday(day);
-          return (
-            <TouchableOpacity
-              key={day.getTime()}
-              style={[
-                s.dayCell,
-                selected && { backgroundColor: colors.primary + "30", borderRadius: 8 },
-              ]}
-              onPress={() => setSelectedDay(day)}
-            >
-              <Text
-                style={[
-                  s.dayCellText,
-                  { color: today ? colors.primary : colors.foreground },
-                  today && s.todayText,
-                ]}
-              >
-                {format(day, "d")}
-              </Text>
-              {count > 0 && (
-                <View style={[s.dot, { backgroundColor: colors.primary }]} />
-              )}
+      {viewMode === "calendar" ? (
+        <>
+          <View style={[s.monthHeader, { borderBottomColor: colors.border }]}>
+            <TouchableOpacity onPress={() => setCurrentDate(subMonths(currentDate, 1))}>
+              <MaterialCommunityIcons name="chevron-left" size={24} color={colors.foreground} />
             </TouchableOpacity>
-          );
-        })}
-      </View>
-
-      <View style={[s.listHeader, { borderTopColor: colors.border }]}>
-        <Text style={[s.listTitle, { color: colors.foreground }]}>
-          {format(selectedDay, "d MMMM")} ({dayAppointments.length})
-        </Text>
-        <TouchableOpacity onPress={() => setShowCreate(!showCreate)} style={[s.addBtn, { backgroundColor: colors.primary }]}>
-          <MaterialCommunityIcons name={showCreate ? "close" : "plus"} size={18} color="#fff" />
-        </TouchableOpacity>
-      </View>
-
-      {showCreate && (
-        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined}>
-          <View style={[s.createForm, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <TextInput
-              style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
-              placeholder={t("agenda.appointmentTitlePlaceholder")}
-              placeholderTextColor={colors.mutedForeground}
-              value={formTitle}
-              onChangeText={setFormTitle}
-            />
-            <TextInput
-              style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
-              placeholder={t("agenda.locationPlaceholder")}
-              placeholderTextColor={colors.mutedForeground}
-              value={formLocation}
-              onChangeText={setFormLocation}
-            />
-            <TextInput
-              style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
-              placeholder={t("agenda.participantsPlaceholder")}
-              placeholderTextColor={colors.mutedForeground}
-              value={formParticipants}
-              onChangeText={setFormParticipants}
-            />
-            <TextInput
-              style={[s.input, s.textArea, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
-              placeholder={t("agenda.descriptionPlaceholder")}
-              placeholderTextColor={colors.mutedForeground}
-              value={formDescription}
-              onChangeText={setFormDescription}
-              multiline
-              numberOfLines={2}
-            />
-            <TouchableOpacity
-              style={[s.createBtn, { backgroundColor: colors.primary, opacity: !formTitle.trim() || createAppointment.isPending ? 0.5 : 1 }]}
-              onPress={handleCreate}
-              disabled={!formTitle.trim() || createAppointment.isPending}
-            >
-              {createAppointment.isPending ? (
-                <ActivityIndicator size="small" color="#fff" />
-              ) : (
-                <Text style={s.createBtnText}>{t("agenda.newAppointment")}</Text>
-              )}
+            <TouchableOpacity onPress={() => setCurrentDate(new Date())}>
+              <Text style={[s.monthTitle, { color: colors.foreground }]}>{monthLabel}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => setCurrentDate(addMonths(currentDate, 1))}>
+              <MaterialCommunityIcons name="chevron-right" size={24} color={colors.foreground} />
             </TouchableOpacity>
           </View>
-        </KeyboardAvoidingView>
-      )}
 
-      {isLoading ? (
-        <View style={s.center}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      ) : dayAppointments.length === 0 ? (
-        <View style={s.center}>
-          <MaterialCommunityIcons name="calendar-blank-outline" size={40} color={colors.mutedForeground + "40"} />
-          <Text style={[s.emptyText, { color: colors.mutedForeground }]}>{t("agenda.noRdv")}</Text>
-        </View>
+          <View style={[s.daysRow, { borderBottomColor: colors.border }]}>
+            {weekDayKeys.map((key, i) => (
+              <View key={i} style={s.dayHeader}>
+                <Text style={[s.dayHeaderText, { color: colors.mutedForeground }]}>{t(`agenda.${key}`)}</Text>
+              </View>
+            ))}
+          </View>
+
+          <View style={s.calendarGrid}>
+            {Array.from({ length: (daysInMonth[0]?.getDay() || 7) - 1 }).map((_, i) => (
+              <View key={`empty-${i}`} style={s.dayCell} />
+            ))}
+            {daysInMonth.map((day) => {
+              const count = getApptCountForDay(day);
+              const selected = isSameDay(day, selectedDay);
+              const today = isToday(day);
+              return (
+                <TouchableOpacity
+                  key={day.getTime()}
+                  style={[
+                    s.dayCell,
+                    selected && { backgroundColor: colors.primary + "30", borderRadius: 8 },
+                  ]}
+                  onPress={() => setSelectedDay(day)}
+                >
+                  <Text
+                    style={[
+                      s.dayCellText,
+                      { color: today ? colors.primary : colors.foreground },
+                      today && s.todayText,
+                    ]}
+                  >
+                    {format(day, "d")}
+                  </Text>
+                  {count > 0 && (
+                    <View style={[s.dot, { backgroundColor: colors.primary }]} />
+                  )}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
+          <View style={[s.listHeader, { borderTopColor: colors.border }]}>
+            <Text style={[s.listTitle, { color: colors.foreground }]}>
+              {format(selectedDay, "d MMMM", { locale })} ({dayAppointments.length})
+            </Text>
+            <TouchableOpacity onPress={() => setShowCreate(!showCreate)} style={[s.addBtn, { backgroundColor: colors.primary }]}>
+              <MaterialCommunityIcons name={showCreate ? "close" : "plus"} size={18} color="#fff" />
+            </TouchableOpacity>
+          </View>
+
+          {showCreate && (
+            <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined}>
+              <View style={[s.createForm, { backgroundColor: colors.card, borderColor: colors.border }]}>
+                <TextInput
+                  style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
+                  placeholder={t("agenda.appointmentTitlePlaceholder")}
+                  placeholderTextColor={colors.mutedForeground}
+                  value={formTitle}
+                  onChangeText={setFormTitle}
+                />
+                <TextInput
+                  style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
+                  placeholder={t("agenda.locationPlaceholder")}
+                  placeholderTextColor={colors.mutedForeground}
+                  value={formLocation}
+                  onChangeText={setFormLocation}
+                />
+                <TextInput
+                  style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
+                  placeholder={t("agenda.participantsPlaceholder")}
+                  placeholderTextColor={colors.mutedForeground}
+                  value={formParticipants}
+                  onChangeText={setFormParticipants}
+                />
+                <TextInput
+                  style={[s.input, s.textArea, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
+                  placeholder={t("agenda.descriptionPlaceholder")}
+                  placeholderTextColor={colors.mutedForeground}
+                  value={formDescription}
+                  onChangeText={setFormDescription}
+                  multiline
+                  numberOfLines={2}
+                />
+                <TouchableOpacity
+                  style={[s.createBtnStyle, { backgroundColor: colors.primary, opacity: !formTitle.trim() || createAppointment.isPending ? 0.5 : 1 }]}
+                  onPress={handleCreate}
+                  disabled={!formTitle.trim() || createAppointment.isPending}
+                >
+                  {createAppointment.isPending ? (
+                    <ActivityIndicator size="small" color="#fff" />
+                  ) : (
+                    <Text style={s.createBtnText}>{t("agenda.newAppointment")}</Text>
+                  )}
+                </TouchableOpacity>
+              </View>
+            </KeyboardAvoidingView>
+          )}
+
+          {isLoading ? (
+            <View style={s.center}>
+              <ActivityIndicator color={colors.primary} />
+            </View>
+          ) : dayAppointments.length === 0 ? (
+            <View style={s.center}>
+              <MaterialCommunityIcons name="calendar-blank-outline" size={40} color={colors.mutedForeground + "40"} />
+              <Text style={[s.emptyText, { color: colors.mutedForeground }]}>{t("agenda.noRdv")}</Text>
+            </View>
+          ) : (
+            <FlatList
+              data={dayAppointments}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => renderAppointment(item)}
+              contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  tintColor={colors.primary}
+                />
+              }
+            />
+          )}
+        </>
       ) : (
-        <FlatList
-          data={dayAppointments}
-          keyExtractor={(item) => item.id}
-          renderItem={renderAppointment}
-          contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
-          refreshControl={
-            <RefreshControl
-              refreshing={refreshing}
-              onRefresh={onRefresh}
-              tintColor={colors.primary}
+        <>
+          {isLoading ? (
+            <View style={s.center}>
+              <ActivityIndicator color={colors.primary} />
+            </View>
+          ) : upcomingSections.length === 0 ? (
+            <View style={s.center}>
+              <MaterialCommunityIcons name="calendar-blank-outline" size={40} color={colors.mutedForeground + "40"} />
+              <Text style={[s.emptyText, { color: colors.mutedForeground }]}>{t("agenda.noUpcoming")}</Text>
+            </View>
+          ) : (
+            <SectionList
+              sections={upcomingSections}
+              keyExtractor={(item) => item.id}
+              renderItem={({ item }) => renderAppointment(item)}
+              renderSectionHeader={({ section: { title } }) => (
+                <View style={[s.sectionHeader, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
+                  <Text style={[s.sectionHeaderText, { color: colors.foreground }]}>{title}</Text>
+                </View>
+              )}
+              contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
+              refreshControl={
+                <RefreshControl
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  tintColor={colors.primary}
+                />
+              }
             />
-          }
-        />
+          )}
+        </>
       )}
     </View>
   );
@@ -320,6 +403,25 @@ export default function AgendaScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1 },
+  viewToggle: {
+    flexDirection: "row",
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    gap: 8,
+    borderBottomWidth: 1,
+  },
+  toggleBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+  },
+  toggleText: {
+    fontSize: 13,
+    fontFamily: "Inter_500Medium",
+  },
   monthHeader: {
     flexDirection: "row",
     alignItems: "center",
@@ -453,7 +555,7 @@ const s = StyleSheet.create({
     minHeight: 60,
     textAlignVertical: "top",
   },
-  createBtn: {
+  createBtnStyle: {
     borderRadius: 8,
     paddingVertical: 10,
     alignItems: "center",
@@ -462,5 +564,17 @@ const s = StyleSheet.create({
     color: "#fff",
     fontSize: 13,
     fontFamily: "Inter_600SemiBold",
+  },
+  sectionHeader: {
+    paddingVertical: 8,
+    paddingHorizontal: 4,
+    borderBottomWidth: StyleSheet.hairlineWidth,
+    marginTop: 8,
+    marginBottom: 4,
+  },
+  sectionHeaderText: {
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
+    textTransform: "capitalize",
   },
 });
