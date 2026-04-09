@@ -134,9 +134,9 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
             <AttachmentBadge count={email.attachmentCount} />
           )}
           {(email.taskCount ?? 0) > 0 && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-cyan-500/15 text-cyan-400 border border-cyan-500/20 hidden sm:inline-flex items-center gap-1">
-              <ListTodo className="w-2.5 h-2.5" />
-              {email.taskCount}
+            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-violet-500/15 text-violet-400 border border-violet-500/20 inline-flex items-center gap-1">
+              <Sparkles className="w-2.5 h-2.5" />
+              {email.taskCount} {email.taskCount === 1 ? t("inbox.taskBadgeSingular") : t("inbox.taskBadgePlural")}
             </span>
           )}
           {email.assignedTo && (

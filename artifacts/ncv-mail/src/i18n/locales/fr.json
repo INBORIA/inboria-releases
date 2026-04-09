@@ -271,6 +271,8 @@
     "handlePrefix": "Traiter:",
     "followPrefix": "Suivi:",
     "assignedBadge": "Assigné",
+    "taskBadgeSingular": "tâche",
+    "taskBadgePlural": "tâches",
     "emailArchived": "Email archivé",
     "emailDeleted": "Email mis à la corbeille",
     "emailRestoredToInbox": "Email restauré dans la réception",
