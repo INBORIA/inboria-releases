@@ -91,156 +91,37 @@ import {
 } from "@/components/ui/form";
 import { FAMILLES_METIERS, type PackMetier } from "@/data/packs-metiers";
 import { useTranslation } from 'react-i18next';
+import { translateCategoryName } from "@/lib/category-translations";
 
-const SUGGESTED_CATEGORIES = [
-  {
-    name: "Facturation",
-    description: "Factures, devis, bons de commande, relances de paiement",
-    icon: Receipt,
-    color: "text-amber-400 bg-amber-500/10",
-  },
-  {
-    name: "Support client",
-    description: "Demandes d'aide, réclamations, questions des clients",
-    icon: Headphones,
-    color: "text-blue-400 bg-blue-500/10",
-  },
-  {
-    name: "Commercial",
-    description: "Prospects, propositions commerciales, négociations, ventes",
-    icon: TrendingUp,
-    color: "text-emerald-400 bg-emerald-500/10",
-  },
-  {
-    name: "Administratif",
-    description: "Contrats, documents officiels, courriers juridiques",
-    icon: FileText,
-    color: "text-purple-400 bg-purple-500/10",
-  },
-  {
-    name: "Newsletter / Marketing",
-    description: "Newsletters, promotions, campagnes marketing, publicités",
-    icon: Mail,
-    color: "text-cyan-400 bg-cyan-500/10",
-  },
-  {
-    name: "RH / Équipe",
-    description: "Congés, recrutement, gestion du personnel, notes internes",
-    icon: Users,
-    color: "text-pink-400 bg-pink-500/10",
-  },
-  {
-    name: "Fournisseurs",
-    description: "Commandes, livraisons, relations fournisseurs, achats",
-    icon: Briefcase,
-    color: "text-orange-400 bg-orange-500/10",
-  },
-  {
-    name: "Juridique / Conformité",
-    description: "Mises en demeure, RGPD, conformité, contentieux, contrats",
-    icon: ShieldCheck,
-    color: "text-red-400 bg-red-500/10",
-  },
-  {
-    name: "Technique / IT",
-    description: "Bugs, maintenance, serveurs, IT, demandes techniques",
-    icon: Wrench,
-    color: "text-indigo-400 bg-indigo-500/10",
-  },
-  {
-    name: "Formation",
-    description: "Webinaires, certifications, e-learning, invitations",
-    icon: BookOpen,
-    color: "text-teal-400 bg-teal-500/10",
-  },
-  {
-    name: "Banque / Finance",
-    description: "Relevés bancaires, virements, prêts, assurances",
-    icon: Landmark,
-    color: "text-green-400 bg-green-500/10",
-  },
-  {
-    name: "Logistique / Livraisons",
-    description: "Suivi de colis, transporteurs, bons de livraison",
-    icon: Truck,
-    color: "text-sky-400 bg-sky-500/10",
-  },
-  {
-    name: "Rendez-vous / Planning",
-    description: "Confirmations, annulations, rappels de réunions",
-    icon: CalendarCheck,
-    color: "text-violet-400 bg-violet-500/10",
-  },
-  {
-    name: "International / Export",
-    description: "Douanes, clients étrangers, traductions, incoterms",
-    icon: Globe,
-    color: "text-blue-300 bg-blue-400/10",
-  },
-  {
-    name: "Urgent / Prioritaire",
-    description: "Emails nécessitant une action immédiate, alertes critiques",
-    icon: AlertTriangle,
-    color: "text-red-500 bg-red-600/10",
-  },
-  {
-    name: "Comptabilité",
-    description: "Écritures comptables, bilans, TVA, déclarations fiscales",
-    icon: BarChart3,
-    color: "text-lime-400 bg-lime-500/10",
-  },
-  {
-    name: "Paiements / Encaissements",
-    description: "Confirmations de paiement, retards, rappels, remboursements",
-    icon: CreditCard,
-    color: "text-yellow-400 bg-yellow-500/10",
-  },
-  {
-    name: "Partenaires / Sous-traitants",
-    description: "Collaborations, accords, échanges avec partenaires externes",
-    icon: HandshakeIcon,
-    color: "text-emerald-300 bg-emerald-400/10",
-  },
-  {
-    name: "Projets",
-    description: "Suivi de projet, livrables, deadlines, rapports d'avancement",
-    icon: ClipboardList,
-    color: "text-fuchsia-400 bg-fuchsia-500/10",
-  },
-  {
-    name: "Communication interne",
-    description: "Mémos, annonces, comptes-rendus, circulaires",
-    icon: MessageSquare,
-    color: "text-rose-400 bg-rose-500/10",
-  },
-  {
-    name: "Immobilier / Locaux",
-    description: "Baux, loyers, maintenance bâtiment, charges",
-    icon: Building2,
-    color: "text-stone-400 bg-stone-500/10",
-  },
-  {
-    name: "Abonnements / SaaS",
-    description: "Licences logiciels, renouvellements, factures outils",
-    icon: Settings,
-    color: "text-slate-400 bg-slate-500/10",
-  },
-  {
-    name: "Devis / Négociations",
-    description: "Demandes de devis, comparatifs, contre-propositions",
-    icon: ArrowLeftRight,
-    color: "text-amber-300 bg-amber-400/10",
-  },
-  {
-    name: "Spam / À supprimer",
-    description: "Emails indésirables, démarchage non sollicité",
-    icon: Trash2,
-    color: "text-gray-400 bg-gray-500/10",
-  },
+const SUGGESTED_CATEGORY_KEYS = [
+  { key: "facturation", icon: Receipt, color: "text-amber-400 bg-amber-500/10" },
+  { key: "support_client", icon: Headphones, color: "text-blue-400 bg-blue-500/10" },
+  { key: "commercial", icon: TrendingUp, color: "text-emerald-400 bg-emerald-500/10" },
+  { key: "administratif", icon: FileText, color: "text-purple-400 bg-purple-500/10" },
+  { key: "newsletter_marketing", icon: Mail, color: "text-cyan-400 bg-cyan-500/10" },
+  { key: "rh_equipe", icon: Users, color: "text-pink-400 bg-pink-500/10" },
+  { key: "fournisseurs", icon: Briefcase, color: "text-orange-400 bg-orange-500/10" },
+  { key: "juridique_conformite", icon: ShieldCheck, color: "text-red-400 bg-red-500/10" },
+  { key: "technique_it", icon: Wrench, color: "text-indigo-400 bg-indigo-500/10" },
+  { key: "formation", icon: BookOpen, color: "text-teal-400 bg-teal-500/10" },
+  { key: "banque_finance", icon: Landmark, color: "text-green-400 bg-green-500/10" },
+  { key: "logistique_livraisons", icon: Truck, color: "text-sky-400 bg-sky-500/10" },
+  { key: "rendez_vous_planning", icon: CalendarCheck, color: "text-violet-400 bg-violet-500/10" },
+  { key: "international_export", icon: Globe, color: "text-blue-300 bg-blue-400/10" },
+  { key: "urgent_prioritaire", icon: AlertTriangle, color: "text-red-500 bg-red-600/10" },
+  { key: "comptabilite", icon: BarChart3, color: "text-lime-400 bg-lime-500/10" },
+  { key: "paiements_encaissements", icon: CreditCard, color: "text-yellow-400 bg-yellow-500/10" },
+  { key: "partenaires_sous_traitants", icon: HandshakeIcon, color: "text-emerald-300 bg-emerald-400/10" },
+  { key: "projets", icon: ClipboardList, color: "text-fuchsia-400 bg-fuchsia-500/10" },
+  { key: "communication_interne", icon: MessageSquare, color: "text-rose-400 bg-rose-500/10" },
+  { key: "immobilier_locaux", icon: Building2, color: "text-stone-400 bg-stone-500/10" },
+  { key: "abonnements_saas", icon: Settings, color: "text-slate-400 bg-slate-500/10" },
+  { key: "devis_negociations", icon: ArrowLeftRight, color: "text-amber-300 bg-amber-400/10" },
+  { key: "spam_a_supprimer", icon: Trash2, color: "text-gray-400 bg-gray-500/10" },
 ];
 
 const categorySchema = z.object({
-  name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+  name: z.string().min(2),
   description: z.string().optional(),
 });
 
@@ -258,7 +139,8 @@ const categoryColors = [
 ];
 
 export default function Classement() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -287,6 +169,14 @@ export default function Classement() {
     categories: { name: string; description: string }[];
   } | null>(null);
 
+  const suggestedCategories = useMemo(() => {
+    return SUGGESTED_CATEGORY_KEYS.map((s) => ({
+      ...s,
+      name: t(`classification.suggestedCats.${s.key}.name`),
+      description: t(`classification.suggestedCats.${s.key}.desc`),
+    }));
+  }, [t]);
+
   const existingNames = useMemo(() => {
     return new Set(
       (categories || []).map((c: any) => c.name.toLowerCase())
@@ -294,10 +184,10 @@ export default function Classement() {
   }, [categories]);
 
   const availableSuggestions = useMemo(() => {
-    return SUGGESTED_CATEGORIES.filter(
+    return suggestedCategories.filter(
       (s) => !existingNames.has(s.name.toLowerCase())
     );
-  }, [existingNames]);
+  }, [existingNames, suggestedCategories]);
 
   const filteredFamilles = useMemo(() => {
     if (!packSearch.trim()) return FAMILLES_METIERS;
@@ -313,9 +203,9 @@ export default function Classement() {
   }, [packSearch]);
 
   const handleAddSuggestion = (
-    suggestion: (typeof SUGGESTED_CATEGORIES)[0]
+    suggestion: { name: string; description: string; key: string }
   ) => {
-    setAddingNames((prev) => new Set(prev).add(suggestion.name));
+    setAddingNames((prev) => new Set(prev).add(suggestion.key));
     createCategory.mutate(
       { data: { name: suggestion.name, description: suggestion.description } },
       {
@@ -325,7 +215,7 @@ export default function Classement() {
           });
           setAddingNames((prev) => {
             const next = new Set(prev);
-            next.delete(suggestion.name);
+            next.delete(suggestion.key);
             return next;
           });
           toast({ title: `"${suggestion.name}" ${t("classification.added")}` });
@@ -333,7 +223,7 @@ export default function Classement() {
         onError: () => {
           setAddingNames((prev) => {
             const next = new Set(prev);
-            next.delete(suggestion.name);
+            next.delete(suggestion.key);
             return next;
           });
           toast({
@@ -1061,10 +951,10 @@ export default function Classement() {
               <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
                 {availableSuggestions.map((s) => {
                   const Icon = s.icon;
-                  const isAdding = addingNames.has(s.name);
+                  const isAdding = addingNames.has(s.key);
                   return (
                     <button
-                      key={s.name}
+                      key={s.key}
                       onClick={() => handleAddSuggestion(s)}
                       disabled={isAdding}
                       className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border bg-card hover:border-primary/40 hover:bg-primary/[0.04] transition-all text-center group disabled:opacity-50"
@@ -1210,7 +1100,7 @@ export default function Classement() {
                   </div>
 
                   <h3 className="text-[14px] font-semibold text-white mb-1">
-                    {cat.name}
+                    {translateCategoryName(cat.name, lang)}
                   </h3>
                   <p className="text-[12px] text-[#8b9cb3] line-clamp-2 h-9 mb-3">
                     {cat.description || (

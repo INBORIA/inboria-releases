@@ -22,22 +22,23 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useTranslation } from "react-i18next";
+import { translateCategoryName } from "@/lib/category-translations";
 
-const SUGGESTED_CATEGORIES = [
-  { name: "Facturation", description: "Factures, devis, bons de commande, relances de paiement", icon: Receipt, color: "text-amber-400 bg-amber-500/10" },
-  { name: "Support client", description: "Demandes d'aide, réclamations, questions des clients", icon: Headphones, color: "text-blue-400 bg-blue-500/10" },
-  { name: "Commercial", description: "Prospects, propositions commerciales, négociations, ventes", icon: TrendingUp, color: "text-emerald-400 bg-emerald-500/10" },
-  { name: "Administratif", description: "Contrats, documents officiels, courriers juridiques", icon: FileText, color: "text-purple-400 bg-purple-500/10" },
-  { name: "Newsletter", description: "Newsletters, promotions, emails marketing", icon: Mail, color: "text-cyan-400 bg-cyan-500/10" },
-  { name: "RH / Équipe", description: "Congés, recrutement, gestion du personnel, notes internes", icon: Users, color: "text-pink-400 bg-pink-500/10" },
-  { name: "Fournisseurs", description: "Commandes, livraisons, relations fournisseurs", icon: Briefcase, color: "text-orange-400 bg-orange-500/10" },
-  { name: "Juridique", description: "Mises en demeure, RGPD, conformité, contentieux", icon: ShieldCheck, color: "text-red-400 bg-red-500/10" },
-  { name: "Technique", description: "Bugs, maintenance, serveurs, IT, demandes techniques", icon: Wrench, color: "text-indigo-400 bg-indigo-500/10" },
-  { name: "Formation", description: "Webinaires, certifications, e-learning, invitations", icon: BookOpen, color: "text-teal-400 bg-teal-500/10" },
+const SUGGESTED_CATEGORY_KEYS = [
+  { key: "facturation", icon: Receipt, color: "text-amber-400 bg-amber-500/10" },
+  { key: "support_client", icon: Headphones, color: "text-blue-400 bg-blue-500/10" },
+  { key: "commercial", icon: TrendingUp, color: "text-emerald-400 bg-emerald-500/10" },
+  { key: "administratif", icon: FileText, color: "text-purple-400 bg-purple-500/10" },
+  { key: "newsletter", icon: Mail, color: "text-cyan-400 bg-cyan-500/10" },
+  { key: "rh_equipe", icon: Users, color: "text-pink-400 bg-pink-500/10" },
+  { key: "fournisseurs", icon: Briefcase, color: "text-orange-400 bg-orange-500/10" },
+  { key: "juridique", icon: ShieldCheck, color: "text-red-400 bg-red-500/10" },
+  { key: "technique", icon: Wrench, color: "text-indigo-400 bg-indigo-500/10" },
+  { key: "formation", icon: BookOpen, color: "text-teal-400 bg-teal-500/10" },
 ];
 
 const categorySchema = z.object({
-  name: z.string().min(2, "Le nom doit contenir au moins 2 caractères"),
+  name: z.string().min(2),
   description: z.string().optional(),
 });
 
@@ -55,7 +56,8 @@ const categoryColors = [
 ];
 
 export default function Categories() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
@@ -69,26 +71,34 @@ export default function Categories() {
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [addingNames, setAddingNames] = useState<Set<string>>(new Set());
 
+  const suggestedCategories = useMemo(() => {
+    return SUGGESTED_CATEGORY_KEYS.map((s) => ({
+      ...s,
+      name: t(`classification.suggestedCats.${s.key}.name`),
+      description: t(`classification.suggestedCats.${s.key}.desc`),
+    }));
+  }, [t]);
+
   const existingNames = useMemo(() => {
     return new Set((categories || []).map((c: any) => c.name.toLowerCase()));
   }, [categories]);
 
   const availableSuggestions = useMemo(() => {
-    return SUGGESTED_CATEGORIES.filter(s => !existingNames.has(s.name.toLowerCase()));
-  }, [existingNames]);
+    return suggestedCategories.filter(s => !existingNames.has(s.name.toLowerCase()));
+  }, [existingNames, suggestedCategories]);
 
-  const handleAddSuggestion = (suggestion: typeof SUGGESTED_CATEGORIES[0]) => {
-    setAddingNames(prev => new Set(prev).add(suggestion.name));
+  const handleAddSuggestion = (suggestion: { name: string; description: string; key: string }) => {
+    setAddingNames(prev => new Set(prev).add(suggestion.key));
     createCategory.mutate(
       { data: { name: suggestion.name, description: suggestion.description } },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
-          setAddingNames(prev => { const next = new Set(prev); next.delete(suggestion.name); return next; });
+          setAddingNames(prev => { const next = new Set(prev); next.delete(suggestion.key); return next; });
           toast({ title: t("classification.categoryCreated") });
         },
         onError: () => {
-          setAddingNames(prev => { const next = new Set(prev); next.delete(suggestion.name); return next; });
+          setAddingNames(prev => { const next = new Set(prev); next.delete(suggestion.key); return next; });
           toast({ variant: "destructive", title: t("common.error"), description: t("classification.addErrorDesc", { name: suggestion.name }) });
         },
       }
@@ -297,10 +307,10 @@ export default function Categories() {
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
               {availableSuggestions.map((s) => {
                 const Icon = s.icon;
-                const isAdding = addingNames.has(s.name);
+                const isAdding = addingNames.has(s.key);
                 return (
                   <button
-                    key={s.name}
+                    key={s.key}
                     onClick={() => handleAddSuggestion(s)}
                     disabled={isAdding}
                     className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border bg-card hover:border-primary/40 hover:bg-primary/[0.04] transition-all text-center group disabled:opacity-50"
@@ -397,7 +407,7 @@ export default function Categories() {
                   </DropdownMenu>
                 </div>
                 
-                <h3 className="text-[14px] font-semibold text-white mb-1">{cat.name}</h3>
+                <h3 className="text-[14px] font-semibold text-white mb-1">{translateCategoryName(cat.name, lang)}</h3>
                 <p className="text-[12px] text-[#8b9cb3] line-clamp-2 h-9 mb-3">
                   {cat.description || <span className="italic opacity-50">{t("classification.noDescription")}</span>}
                 </p>

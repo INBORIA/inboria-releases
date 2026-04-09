@@ -394,6 +394,8 @@ export interface TriageEmailBody {
   sender: string;
   subject: string;
   body: string;
+  /** User language code (fr, en, nl) */
+  lang?: string;
 }
 
 export interface TriageResult {
@@ -834,6 +836,11 @@ export type DeleteProjectNote200 = {
 
 export type SendEmail200 = {
   success?: boolean;
+};
+
+export type RecategorizeUncategorizedBody = {
+  /** User language code (fr, en, nl) */
+  lang?: string;
 };
 
 export type RecategorizeUncategorized200 = {

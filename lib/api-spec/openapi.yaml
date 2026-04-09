@@ -776,6 +776,15 @@ paths:
       operationId: recategorizeUncategorized
       tags: [ai]
       summary: Re-categorize all uncategorized emails using AI
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                lang:
+                  type: string
+                  description: User language code (fr, en, nl)
       responses:
         "200":
           description: Recategorization results
@@ -2785,6 +2794,9 @@ components:
           type: string
         body:
           type: string
+        lang:
+          type: string
+          description: User language code (fr, en, nl)
       required:
         - sender
         - subject

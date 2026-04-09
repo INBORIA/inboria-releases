@@ -117,6 +117,7 @@ export * from "./projectDetail";
 export * from "./projectNote";
 export * from "./projectStatus";
 export * from "./recategorizeUncategorized200";
+export * from "./recategorizeUncategorizedBody";
 export * from "./registerBody";
 export * from "./registerPushToken200";
 export * from "./registerPushTokenBody";

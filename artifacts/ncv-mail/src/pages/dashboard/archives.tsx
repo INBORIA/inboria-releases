@@ -14,6 +14,7 @@ import {
 import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
+import { translateCategoryName } from "@/lib/category-translations";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import { Archive, Clock, ArrowLeft, Trash2, RotateCcw, ChevronRight, FolderOpen, Sparkles } from "lucide-react";
@@ -199,6 +200,7 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
 
 export default function Archives() {
   const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -345,10 +347,11 @@ export default function Archives() {
     );
   }
 
+  const UNCATEGORIZED_KEY = "__uncategorized__";
   const categoryList = Object.keys(emailsByCategory).sort();
-  if (uncategorized.length > 0) categoryList.push("Non classe");
+  if (uncategorized.length > 0) categoryList.push(UNCATEGORIZED_KEY);
 
-  const selectedEmails = selectedCategory === "Non classe"
+  const selectedEmails = selectedCategory === UNCATEGORIZED_KEY
     ? uncategorized
     : selectedCategory
       ? emailsByCategory[selectedCategory] || []
@@ -372,7 +375,9 @@ export default function Archives() {
             <span className="text-[11px] text-[#8b9cb3]">{t("archives.emailCount", { count: selectedEmails.length })}</span>
           </div>
 
-          <h2 className="text-[15px] font-semibold text-white mb-3">{selectedCategory}</h2>
+          <h2 className="text-[15px] font-semibold text-white mb-3">
+            {selectedCategory === UNCATEGORIZED_KEY ? t("inbox.uncategorized") : translateCategoryName(selectedCategory!, lang)}
+          </h2>
 
           <div className="space-y-1">
             {selectedEmails.length === 0 ? (
@@ -462,7 +467,8 @@ export default function Archives() {
           <>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
               {categoryList.map((catName, i) => {
-                const count = catName === "Non classe" ? uncategorized.length : emailsByCategory[catName]?.length || 0;
+                const count = catName === UNCATEGORIZED_KEY ? uncategorized.length : emailsByCategory[catName]?.length || 0;
+                const displayName = catName === UNCATEGORIZED_KEY ? t("inbox.uncategorized") : translateCategoryName(catName, lang);
                 return (
                   <div
                     key={catName}
@@ -475,10 +481,10 @@ export default function Archives() {
                       </div>
                       <ChevronRight className="w-3.5 h-3.5 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
-                    <h3 className="text-[13px] font-semibold text-white mb-0.5">{catName}</h3>
+                    <h3 className="text-[13px] font-semibold text-white mb-0.5">{displayName}</h3>
                     <div className="flex items-center text-[11px] text-[#8b9cb3] bg-white/[0.04] px-2 py-0.5 rounded-md inline-flex w-fit">
                       <span className="text-primary font-medium mr-1">{count}</span>
-                      email{count !== 1 ? "s" : ""}
+                      {t("classification.emailsLabel")}
                     </div>
                   </div>
                 );

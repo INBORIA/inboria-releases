@@ -6,10 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export interface TriageEmailBody {
-  sender: string;
-  subject: string;
-  body: string;
+export type RecategorizeUncategorizedBody = {
   /** User language code (fr, en, nl) */
   lang?: string;
-}
+};

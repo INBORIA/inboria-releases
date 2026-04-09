@@ -98,6 +98,7 @@ import type {
   ProjectDetail,
   ProjectNote,
   RecategorizeUncategorized200,
+  RecategorizeUncategorizedBody,
   RegisterBody,
   RegisterPushToken200,
   RegisterPushTokenBody,
@@ -3155,6 +3156,7 @@ export const getRecategorizeUncategorizedUrl = () => {
 };
 
 export const recategorizeUncategorized = async (
+  recategorizeUncategorizedBody: RecategorizeUncategorizedBody,
   options?: RequestInit,
 ): Promise<RecategorizeUncategorized200> => {
   return customFetch<RecategorizeUncategorized200>(
@@ -3162,6 +3164,8 @@ export const recategorizeUncategorized = async (
     {
       ...options,
       method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(recategorizeUncategorizedBody),
     },
   );
 };
@@ -3173,14 +3177,14 @@ export const getRecategorizeUncategorizedMutationOptions = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof recategorizeUncategorized>>,
     TError,
-    void,
+    { data: BodyType<RecategorizeUncategorizedBody> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationOptions<
   Awaited<ReturnType<typeof recategorizeUncategorized>>,
   TError,
-  void,
+  { data: BodyType<RecategorizeUncategorizedBody> },
   TContext
 > => {
   const mutationKey = ["recategorizeUncategorized"];
@@ -3194,9 +3198,11 @@ export const getRecategorizeUncategorizedMutationOptions = <
 
   const mutationFn: MutationFunction<
     Awaited<ReturnType<typeof recategorizeUncategorized>>,
-    void
-  > = () => {
-    return recategorizeUncategorized(requestOptions);
+    { data: BodyType<RecategorizeUncategorizedBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return recategorizeUncategorized(data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
@@ -3205,7 +3211,8 @@ export const getRecategorizeUncategorizedMutationOptions = <
 export type RecategorizeUncategorizedMutationResult = NonNullable<
   Awaited<ReturnType<typeof recategorizeUncategorized>>
 >;
-
+export type RecategorizeUncategorizedMutationBody =
+  BodyType<RecategorizeUncategorizedBody>;
 export type RecategorizeUncategorizedMutationError = ErrorType<unknown>;
 
 /**
@@ -3218,14 +3225,14 @@ export const useRecategorizeUncategorized = <
   mutation?: UseMutationOptions<
     Awaited<ReturnType<typeof recategorizeUncategorized>>,
     TError,
-    void,
+    { data: BodyType<RecategorizeUncategorizedBody> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationResult<
   Awaited<ReturnType<typeof recategorizeUncategorized>>,
   TError,
-  void,
+  { data: BodyType<RecategorizeUncategorizedBody> },
   TContext
 > => {
   return useMutation(getRecategorizeUncategorizedMutationOptions(options));

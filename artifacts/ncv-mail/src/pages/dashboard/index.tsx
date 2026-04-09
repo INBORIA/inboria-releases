@@ -36,6 +36,7 @@ import {
 } from "@workspace/api-client-react";
 import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
 import { useTranslation } from 'react-i18next';
+import { translateCategoryName } from "@/lib/category-translations";
 import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -77,6 +78,7 @@ function PriorityBadge({ priority }: { priority: string }) {
 
 function EmailRow({ email, onClick, onArchive, onCategoryClick, isSelected, onToggleSelect, selectionMode }: { email: any; onClick: () => void; onArchive: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean }) {
   const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
 
@@ -120,7 +122,7 @@ function EmailRow({ email, onClick, onArchive, onCategoryClick, isSelected, onTo
               className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-blue-500/15 text-blue-400 border border-blue-500/20 hidden sm:inline-flex hover:bg-blue-500/25 transition-colors"
               onClick={(e) => { e.stopPropagation(); onCategoryClick?.(email.categoryName); }}
             >
-              {email.categoryName}
+              {translateCategoryName(email.categoryName, lang)}
             </span>
           )}
           {email.projectReference && (
@@ -170,6 +172,7 @@ const triageSchema = z.object({
 
 function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[]) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string) => void }) {
   const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyAttachments, setReplyAttachments] = useState<UploadedFile[]>([]);
@@ -385,7 +388,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     <SelectContent className="bg-card border-border">
                       <SelectItem value="none">{t("inbox.uncategorized")}</SelectItem>
                       {categories.map((cat) => (
-                        <SelectItem key={cat.categoryId} value={cat.categoryId.toString()}>{cat.categoryName}</SelectItem>
+                        <SelectItem key={cat.categoryId} value={cat.categoryId.toString()}>{translateCategoryName(cat.categoryName, lang)}</SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
@@ -680,6 +683,7 @@ type InboxMode = "personal" | "shared";
 
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
+  const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const [filterPriority, setFilterPriority] = useState<string>("all");
   const [isSimulateOpen, setIsSimulateOpen] = useState(false);
@@ -1096,7 +1100,7 @@ export default function Dashboard() {
 
   const onSubmitTriage = (data: z.infer<typeof triageSchema>) => {
     triageEmail.mutate(
-      { data },
+      { data: { ...data, lang } },
       {
         onSuccess: (result) => {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
@@ -1392,7 +1396,7 @@ export default function Dashboard() {
               <SelectContent className="bg-card border-border">
                 <SelectItem value="all">{t("inbox.allCategories")}</SelectItem>
                 {categoryCounts?.map((cat) => (
-                  <SelectItem key={cat.categoryId} value={cat.categoryName}>{cat.categoryName}</SelectItem>
+                  <SelectItem key={cat.categoryId} value={cat.categoryName}>{translateCategoryName(cat.categoryName, lang)}</SelectItem>
                 ))}
               </SelectContent>
             </Select>
@@ -1652,7 +1656,7 @@ export default function Dashboard() {
                     return (
                       <button
                         onClick={() => {
-                          recategorizeMut.mutate(undefined as any, {
+                          recategorizeMut.mutate({ data: { lang } }, {
                             onSuccess: (data: any) => {
                               invalidateAll();
                               toast({
@@ -1706,7 +1710,7 @@ export default function Dashboard() {
                       >
                         <div className="flex items-center gap-1.5">
                           <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                          <span className="text-[11px] text-[#8b9cb3]">{cat.categoryName}</span>
+                          <span className="text-[11px] text-[#8b9cb3]">{translateCategoryName(cat.categoryName, lang)}</span>
                         </div>
                         <span className="text-[10px] text-[#8b9cb3] bg-white/[0.06] px-1.5 py-0.5 rounded">
                           {cat.count}

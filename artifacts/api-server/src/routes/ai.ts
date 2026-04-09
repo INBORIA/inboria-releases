@@ -117,6 +117,36 @@ Genere un JSON avec:
   }
 });
 
+const LANG_PROMPTS: Record<string, { system: string; uncategorized: string; noCategory: string; noProject: string; analyzing: string; projectIntro: string; projectNote: string }> = {
+  fr: {
+    system: "Tu es un assistant de gestion d'emails. Reponds uniquement en JSON valide.",
+    uncategorized: "Non classe",
+    noCategory: "Aucune categorie",
+    noProject: "Aucun",
+    analyzing: "Email en cours d'analyse",
+    projectIntro: "Projets actifs",
+    projectNote: "Si l'email semble concerner un de ces projets, indique son nom exact dans \"project\". Sinon, mets \"Aucun\".",
+  },
+  en: {
+    system: "You are an email management assistant. Respond only in valid JSON.",
+    uncategorized: "Uncategorized",
+    noCategory: "No category",
+    noProject: "None",
+    analyzing: "Email being analyzed",
+    projectIntro: "Active projects",
+    projectNote: "If the email seems related to one of these projects, indicate its exact name in \"project\". Otherwise, put \"None\".",
+  },
+  nl: {
+    system: "Je bent een e-mailbeheerassistent. Antwoord alleen in geldige JSON.",
+    uncategorized: "Niet geclassificeerd",
+    noCategory: "Geen categorie",
+    noProject: "Geen",
+    analyzing: "E-mail wordt geanalyseerd",
+    projectIntro: "Actieve projecten",
+    projectNote: "Als de e-mail betrekking lijkt te hebben op een van deze projecten, geef dan de exacte naam op in \"project\". Anders, vul \"Geen\" in.",
+  },
+};
+
 router.post("/ai/triage", requireAuth, async (req, res): Promise<void> => {
   try {
     const entitlement = await checkEntitlement(req.userId!);
@@ -127,6 +157,9 @@ router.post("/ai/triage", requireAuth, async (req, res): Promise<void> => {
       res.status(400).json({ error: parsed.error.message });
       return;
     }
+
+    const userLang = (req.body.lang || "fr").substring(0, 2).toLowerCase();
+    const lp = LANG_PROMPTS[userLang] || LANG_PROMPTS.fr;
 
     const { data: categories } = await supabaseAdmin
       .from("categories")
@@ -144,7 +177,7 @@ router.post("/ai/triage", requireAuth, async (req, res): Promise<void> => {
 
     let projectContext = "";
     if (projectList.length > 0) {
-      projectContext = `\n\nProjets actifs: ${projectList.join(", ")}\nSi l'email semble concerner un de ces projets, indique son nom exact dans "project". Sinon, mets "Aucun".`;
+      projectContext = `\n\n${lp.projectIntro}: ${projectList.join(", ")}\n${lp.projectNote}`;
     }
 
     const completion = await openai.chat.completions.create({
@@ -153,27 +186,27 @@ router.post("/ai/triage", requireAuth, async (req, res): Promise<void> => {
       messages: [
         {
           role: "system",
-          content: "Tu es un assistant de gestion d'emails. Reponds uniquement en JSON valide.",
+          content: lp.system,
         },
         {
           role: "user",
-          content: `Voici un email:
-Expediteur: ${parsed.data.sender}
-Sujet: ${parsed.data.subject}
-Corps: ${parsed.data.body}
+          content: `Email:
+From: ${parsed.data.sender}
+Subject: ${parsed.data.subject}
+Body: ${parsed.data.body}
 
-Categories disponibles: ${categoryNames.join(", ") || "Aucune categorie"}${projectContext}
+Available categories: ${categoryNames.join(", ") || lp.noCategory}${projectContext}
 
-Reponds en JSON:
+Respond in JSON:
 {
-  "category": "nom exact de la categorie ou 'Non classe'",
+  "category": "exact category name or '${lp.uncategorized}'",
   "priority": "urgent" | "moyen" | "faible",
-  "summary": "resume en 1 phrase",
-  "tasks": ["tache 1", "tache 2"],
-  "project": "nom du projet ou Aucun"
+  "summary": "1-sentence summary in ${userLang}",
+  "tasks": ["task 1", "task 2"],
+  "project": "project name or ${lp.noProject}"
 }
 
-IMPORTANT pour les taches: Chaque tache doit etre explicite et auto-suffisante. Inclus toujours QUI (expediteur/service) et QUOI. Exemples: au lieu de "Verifier l'adresse email" → "Confirmer l'inscription sur Replit (email de verification)", au lieu de "Utiliser le code" → "Saisir le code de verification LinkedIn dans les 15 min". Ne genere PAS de tache pour les emails purement informatifs (newsletters, notifications automatiques, confirmations de lecture). Genere des taches uniquement quand une ACTION concrete est requise.`,
+IMPORTANT for tasks: Each task must be explicit and self-contained. Always include WHO (sender/service) and WHAT. Do NOT generate tasks for purely informational emails (newsletters, automatic notifications, read confirmations). Generate tasks only when a concrete ACTION is required. Write tasks in ${userLang}.`,
         },
       ],
     });
@@ -185,20 +218,20 @@ IMPORTANT pour les taches: Chaque tache doit etre explicite et auto-suffisante. 
       triageResult = JSON.parse(jsonMatch ? jsonMatch[0] : "{}");
     } catch {
       triageResult = {
-        category: "Non classe",
+        category: lp.uncategorized,
         priority: "moyen",
-        summary: "Email en cours d'analyse",
+        summary: lp.analyzing,
         tasks: [],
-        project: "Aucun",
+        project: lp.noProject,
       };
     }
 
     res.json({
-      category: triageResult.category || "Non classe",
+      category: triageResult.category || lp.uncategorized,
       priority: triageResult.priority || "moyen",
-      summary: triageResult.summary || "Email en cours d'analyse",
+      summary: triageResult.summary || lp.analyzing,
       tasks: triageResult.tasks || [],
-      project: triageResult.project || "Aucun",
+      project: triageResult.project || lp.noProject,
     });
   } catch {
     res.status(500).json({ error: "Failed to triage email" });
@@ -302,6 +335,8 @@ Redige une reponse professionnelle et adaptee au contexte. Reponds uniquement av
 router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Promise<void> => {
   try {
     const userId = req.userId!;
+    const userLang = (req.body?.lang || "fr").substring(0, 2).toLowerCase();
+    const lp = LANG_PROMPTS[userLang] || LANG_PROMPTS.fr;
 
     const entitlement = await checkEntitlement(userId);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
@@ -352,23 +387,29 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
     let recategorized = 0;
     const createdCategories: string[] = [];
 
+    const recatSystemPrompts: Record<string, string> = {
+      fr: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide. Classe TOUJOURS les emails dans une categorie pertinente. N'utilise JAMAIS 'Non classe'.",
+      en: "You are a professional email sorting assistant for an SME. Respond only in valid JSON. ALWAYS classify emails into a relevant category. NEVER use 'Uncategorized'.",
+      nl: "Je bent een professionele e-mailsorteerassistent voor een KMO. Antwoord alleen in geldige JSON. Classificeer e-mails ALTIJD in een relevante categorie. Gebruik NOOIT 'Niet geclassificeerd'.",
+    };
+
     for (const email of emails) {
       try {
         const completion = await openai.chat.completions.create({
           model: "gpt-4o-mini",
           max_completion_tokens: 128,
           messages: [
-            { role: "system", content: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide. Classe TOUJOURS les emails dans une categorie pertinente. Exemples: LinkedIn/reseaux sociaux → 'Reseaux sociaux', newsletters → 'Newsletters', codes de verification/securite → 'Notifications', factures/paiements → 'Facturation', hebergement/domaines → 'Hebergement'. N'utilise JAMAIS 'Non classe'." },
-            { role: "user", content: `Email:\nDe: ${email.sender}\nSujet: ${email.subject}\nCorps: ${(email.body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 500)}\n\nCategories existantes: ${categoryNames.join(", ") || "Aucune"}\n\nReponds en JSON:\n{"category":"nom de categorie existante OU propose un nouveau nom pertinent (court, professionnel). Ne reponds JAMAIS 'Non classe'."}` },
+            { role: "system", content: recatSystemPrompts[userLang] || recatSystemPrompts.fr },
+            { role: "user", content: `Email:\nFrom: ${email.sender}\nSubject: ${email.subject}\nBody: ${(email.body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 500)}\n\nExisting categories: ${categoryNames.join(", ") || lp.noCategory}\n\nRespond in JSON:\n{"category":"existing category name OR propose a new relevant name (short, professional, in ${userLang}). NEVER respond '${lp.uncategorized}'."}` },
           ],
         });
 
         const content = completion.choices[0]?.message?.content ?? "{}";
         const jsonMatch = content.match(/\{[\s\S]*\}/);
         const result = JSON.parse(jsonMatch ? jsonMatch[0] : "{}");
-        const catName = result.category || "Non classe";
+        const catName = result.category || lp.uncategorized;
 
-        if (catName === "Non classe") continue;
+        if (JUNK_NAMES.includes(catName.toLowerCase())) continue;
 
         let categoryId = categoryMap.get(catName) || null;
         if (!categoryId) {

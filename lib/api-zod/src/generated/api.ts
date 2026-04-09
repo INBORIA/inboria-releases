@@ -761,6 +761,10 @@ export const GenerateDailySummaryResponse = zod.object({
 /**
  * @summary Re-categorize all uncategorized emails using AI
  */
+export const RecategorizeUncategorizedBody = zod.object({
+  lang: zod.string().optional().describe("User language code (fr, en, nl)"),
+});
+
 export const RecategorizeUncategorizedResponse = zod.object({
   recategorized: zod.number(),
   created: zod.array(zod.string()),
@@ -1716,6 +1720,7 @@ export const TriageEmailBody = zod.object({
   sender: zod.string(),
   subject: zod.string(),
   body: zod.string(),
+  lang: zod.string().optional().describe("User language code (fr, en, nl)"),
 });
 
 export const TriageEmailResponse = zod.object({
