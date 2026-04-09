@@ -79,7 +79,7 @@ function PriorityBadge({ priority }: { priority: string }) {
   );
 }
 
-function EmailRow({ email, onClick, onArchive, onCategoryClick, isSelected, onToggleSelect, selectionMode }: { email: any; onClick: () => void; onArchive: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean }) {
+function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
@@ -159,6 +159,13 @@ function EmailRow({ email, onClick, onArchive, onCategoryClick, isSelected, onTo
             title={t("inbox.archive")}
           >
             <Archive className="w-3.5 h-3.5" />
+          </button>
+          <button
+            onClick={(e) => { e.stopPropagation(); onDelete(email.id); }}
+            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-red-500/[0.08] text-[#8b9cb3] hover:text-red-400"
+            title={t("inbox.deleteEmail")}
+          >
+            <Trash2 className="w-3.5 h-3.5" />
           </button>
           <ChevronRight className="w-3.5 h-3.5 text-[#8b9cb3]/40 group-hover:text-[#8b9cb3] transition-colors" />
         </div>
@@ -1839,6 +1846,7 @@ export default function Dashboard() {
                             email={email}
                             onClick={() => { if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(email.id); } }}
                             onArchive={handleArchive}
+                            onDelete={handleDelete}
                             onCategoryClick={(name: string) => setFilterCategory(name)}
                             isSelected={selectedIds.has(email.id)}
                             onToggleSelect={toggleSelect}
