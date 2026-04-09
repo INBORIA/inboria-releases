@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
+import { EmailComments } from "@/components/email-comments";
 import {
   useListFollowups,
   useCreateFollowup,
@@ -13,6 +14,7 @@ import {
   useGetConversationSummary,
   useSendEmail,
   useGenerateDraft,
+  useGetProfile,
   getListFollowupsQueryKey,
   getGetFollowupStatsQueryKey,
   getListEmailsQueryKey,
@@ -416,6 +418,7 @@ function FollowupDetail({
   const STATUS_CONFIG = getStatusConfig(t);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const { data: profile } = useGetProfile();
   const emailId = f.email_id;
   const { data: convoData, isLoading: loadingConvo } = useGetEmailConversation(emailId!, { query: { enabled: !!emailId } });
   const summaryMut = useGetConversationSummary();
@@ -613,6 +616,12 @@ function FollowupDetail({
             </div>
           )}
         </div>
+
+        {emailId && (
+          <div className="mt-3 pt-3 border-t border-border/50 rounded-lg overflow-hidden">
+            <EmailComments emailId={emailId} currentUserId={(profile as any)?.id} />
+          </div>
+        )}
       </div>
 
       {aiSummary && (

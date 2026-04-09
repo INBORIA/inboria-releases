@@ -13,6 +13,8 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
+import { EmailComments } from "@/components/email-comments";
+import { useGetProfile } from "@workspace/api-client-react";
 import { useTranslation } from "react-i18next";
 
 const PRIORITY_BADGE_STYLES: Record<string, { bg: string; text: string; border: string; labelKey: string }> = {
@@ -27,6 +29,7 @@ export default function Taches() {
   const [filter, setFilter] = useState<string>("pending");
   const [emailDetailTask, setEmailDetailTask] = useState<any>(null);
   const queryClient = useQueryClient();
+  const { data: profile } = useGetProfile();
 
   const { data: tasks, isLoading } = useListTasks({
     status: filter as any,
@@ -257,6 +260,12 @@ export default function Taches() {
               {emailDetailTask.emailBody && (
                 <div className="border border-border rounded-lg p-3">
                   <EmailBodyRenderer body={emailDetailTask.emailBody} />
+                </div>
+              )}
+
+              {emailDetailTask.emailId && (
+                <div className="rounded-lg border border-border overflow-hidden">
+                  <EmailComments emailId={emailDetailTask.emailId} currentUserId={(profile as any)?.id} />
                 </div>
               )}
             </div>
