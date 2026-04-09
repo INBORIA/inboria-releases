@@ -135,6 +135,10 @@ function cleanPlainText(text: string): string {
 export function cleanEmailBody(raw: string): string {
   if (!raw) return "";
 
+  if (isHtml(raw) && !raw.trimStart().startsWith("Content-Type:") && !raw.trimStart().startsWith("MIME-Version:")) {
+    return raw;
+  }
+
   if (hasMimeArtifacts(raw)) {
     const extracted = extractMimePart(raw);
     if (extracted) {
