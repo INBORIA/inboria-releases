@@ -752,6 +752,62 @@ export interface AssignEmailResult {
   assignedAt: string;
 }
 
+/**
+ * @nullable
+ */
+export type AppointmentProjects = {
+  id?: number;
+  name?: string;
+  reference?: string;
+  color?: string;
+} | null;
+
+export interface Appointment {
+  id: string;
+  userId?: string;
+  title: string;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  location?: string | null;
+  startAt: string;
+  endAt: string;
+  allDay?: boolean;
+  /** @nullable */
+  emailId?: number | null;
+  /** @nullable */
+  projectId?: number | null;
+  reminderMinutes?: number;
+  /** @nullable */
+  projects?: AppointmentProjects;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface CreateAppointmentBody {
+  title: string;
+  description?: string;
+  location?: string;
+  startAt: string;
+  endAt: string;
+  allDay?: boolean;
+  emailId?: number;
+  projectId?: number;
+  reminderMinutes?: number;
+}
+
+export interface UpdateAppointmentBody {
+  title?: string;
+  description?: string;
+  location?: string;
+  startAt?: string;
+  endAt?: string;
+  allDay?: boolean;
+  emailId?: number;
+  projectId?: number;
+  reminderMinutes?: number;
+}
+
 export type RegisterPushToken200 = {
   success?: boolean;
 };
@@ -1068,5 +1124,33 @@ export type GetTeamActivityParams = {
 };
 
 export type UnassignEmail200 = {
+  success?: boolean;
+};
+
+export type DetectAppointmentsBody = {
+  lang?: string;
+};
+
+export type DetectAppointments200 = {
+  appointments?: Appointment[];
+  count?: number;
+};
+
+export type ListAppointmentsParams = {
+  /**
+   * Filter appointments starting from this date
+   */
+  from?: string;
+  /**
+   * Filter appointments up to this date
+   */
+  to?: string;
+  /**
+   * Filter by project ID
+   */
+  projectId?: string;
+};
+
+export type DeleteAppointment200 = {
   success?: boolean;
 };

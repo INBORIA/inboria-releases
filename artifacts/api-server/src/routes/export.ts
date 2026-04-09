@@ -224,4 +224,40 @@ router.get("/export/tasks", requireAuth, async (req, res): Promise<void> => {
   }
 });
 
+router.get("/export/appointments", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("appointments")
+      .select("*, projects(name, reference)")
+      .eq("user_id", req.userId!)
+      .order("start_at", { ascending: true });
+
+    if (error) { res.status(500).json({ error: error.message }); return; }
+
+    const rows = (data || []).map((a: any) => ({
+      titre: a.title || "",
+      description: a.description || "",
+      lieu: a.location || "",
+      debut: a.start_at ? new Date(a.start_at).toLocaleString("fr-FR") : "",
+      fin: a.end_at ? new Date(a.end_at).toLocaleString("fr-FR") : "",
+      journee_entiere: a.all_day ? "Oui" : "Non",
+      projet: a.projects ? `${a.projects.reference} - ${a.projects.name}` : "",
+      rappel: a.reminder_minutes ? `${a.reminder_minutes} min` : "",
+      date_creation: a.created_at ? new Date(a.created_at).toLocaleDateString("fr-FR") : "",
+    }));
+
+    const csv = toCsv(
+      ["Titre", "Description", "Lieu", "Début", "Fin", "Journée entière", "Projet", "Rappel", "Date création"],
+      rows,
+      ["titre", "description", "lieu", "debut", "fin", "journee_entiere", "projet", "rappel", "date_creation"]
+    );
+
+    res.setHeader("Content-Type", "text/csv; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="rdv_${new Date().toISOString().split("T")[0]}.csv"`);
+    res.send("\uFEFF" + csv);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
 export default router;

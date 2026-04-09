@@ -21,6 +21,7 @@ import teamDashboardRouter from "./team-dashboard";
 import followupsRouter from "./followups";
 import exportRouter from "./export";
 import attachmentsRouter from "./attachments";
+import appointmentsRouter from "./appointments";
 
 const router: IRouter = Router();
 
@@ -46,5 +47,6 @@ router.use(teamDashboardRouter);
 router.use(followupsRouter);
 router.use(exportRouter);
 router.use(attachmentsRouter);
+router.use(appointmentsRouter);
 
 export default router;

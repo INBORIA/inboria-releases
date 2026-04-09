@@ -1729,3 +1729,180 @@ export const TriageEmailResponse = zod.object({
   summary: zod.string(),
   tasks: zod.array(zod.string()),
 });
+
+/**
+ * @summary AI detect appointments from emails
+ */
+export const detectAppointmentsBodyLangDefault = `fr`;
+
+export const DetectAppointmentsBody = zod.object({
+  lang: zod.string().default(detectAppointmentsBodyLangDefault),
+});
+
+export const DetectAppointmentsResponse = zod.object({
+  appointments: zod
+    .array(
+      zod.object({
+        id: zod.string(),
+        userId: zod.string().optional(),
+        title: zod.string(),
+        description: zod.string().nullish(),
+        location: zod.string().nullish(),
+        startAt: zod.coerce.date(),
+        endAt: zod.coerce.date(),
+        allDay: zod.boolean().optional(),
+        emailId: zod.number().nullish(),
+        projectId: zod.number().nullish(),
+        reminderMinutes: zod.number().optional(),
+        projects: zod
+          .object({
+            id: zod.number().optional(),
+            name: zod.string().optional(),
+            reference: zod.string().optional(),
+            color: zod.string().optional(),
+          })
+          .nullish(),
+        createdAt: zod.coerce.date().optional(),
+        updatedAt: zod.coerce.date().optional(),
+      }),
+    )
+    .optional(),
+  count: zod.number().optional(),
+});
+
+/**
+ * @summary List appointments
+ */
+export const ListAppointmentsQueryParams = zod.object({
+  from: zod
+    .date()
+    .optional()
+    .describe("Filter appointments starting from this date"),
+  to: zod.date().optional().describe("Filter appointments up to this date"),
+  projectId: zod.coerce.string().optional().describe("Filter by project ID"),
+});
+
+export const ListAppointmentsResponseItem = zod.object({
+  id: zod.string(),
+  userId: zod.string().optional(),
+  title: zod.string(),
+  description: zod.string().nullish(),
+  location: zod.string().nullish(),
+  startAt: zod.coerce.date(),
+  endAt: zod.coerce.date(),
+  allDay: zod.boolean().optional(),
+  emailId: zod.number().nullish(),
+  projectId: zod.number().nullish(),
+  reminderMinutes: zod.number().optional(),
+  projects: zod
+    .object({
+      id: zod.number().optional(),
+      name: zod.string().optional(),
+      reference: zod.string().optional(),
+      color: zod.string().optional(),
+    })
+    .nullish(),
+  createdAt: zod.coerce.date().optional(),
+  updatedAt: zod.coerce.date().optional(),
+});
+export const ListAppointmentsResponse = zod.array(ListAppointmentsResponseItem);
+
+/**
+ * @summary Create an appointment
+ */
+export const CreateAppointmentBody = zod.object({
+  title: zod.string(),
+  description: zod.string().optional(),
+  location: zod.string().optional(),
+  startAt: zod.coerce.date(),
+  endAt: zod.coerce.date(),
+  allDay: zod.boolean().optional(),
+  emailId: zod.number().optional(),
+  projectId: zod.number().optional(),
+  reminderMinutes: zod.number().optional(),
+});
+
+/**
+ * @summary Get a single appointment
+ */
+export const GetAppointmentParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const GetAppointmentResponse = zod.object({
+  id: zod.string(),
+  userId: zod.string().optional(),
+  title: zod.string(),
+  description: zod.string().nullish(),
+  location: zod.string().nullish(),
+  startAt: zod.coerce.date(),
+  endAt: zod.coerce.date(),
+  allDay: zod.boolean().optional(),
+  emailId: zod.number().nullish(),
+  projectId: zod.number().nullish(),
+  reminderMinutes: zod.number().optional(),
+  projects: zod
+    .object({
+      id: zod.number().optional(),
+      name: zod.string().optional(),
+      reference: zod.string().optional(),
+      color: zod.string().optional(),
+    })
+    .nullish(),
+  createdAt: zod.coerce.date().optional(),
+  updatedAt: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary Update an appointment
+ */
+export const UpdateAppointmentParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateAppointmentBody = zod.object({
+  title: zod.string().optional(),
+  description: zod.string().optional(),
+  location: zod.string().optional(),
+  startAt: zod.coerce.date().optional(),
+  endAt: zod.coerce.date().optional(),
+  allDay: zod.boolean().optional(),
+  emailId: zod.number().optional(),
+  projectId: zod.number().optional(),
+  reminderMinutes: zod.number().optional(),
+});
+
+export const UpdateAppointmentResponse = zod.object({
+  id: zod.string(),
+  userId: zod.string().optional(),
+  title: zod.string(),
+  description: zod.string().nullish(),
+  location: zod.string().nullish(),
+  startAt: zod.coerce.date(),
+  endAt: zod.coerce.date(),
+  allDay: zod.boolean().optional(),
+  emailId: zod.number().nullish(),
+  projectId: zod.number().nullish(),
+  reminderMinutes: zod.number().optional(),
+  projects: zod
+    .object({
+      id: zod.number().optional(),
+      name: zod.string().optional(),
+      reference: zod.string().optional(),
+      color: zod.string().optional(),
+    })
+    .nullish(),
+  createdAt: zod.coerce.date().optional(),
+  updatedAt: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary Delete an appointment
+ */
+export const DeleteAppointmentParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const DeleteAppointmentResponse = zod.object({
+  success: zod.boolean().optional(),
+});

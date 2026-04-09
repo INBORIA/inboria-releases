@@ -1,14 +1,26 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useGenerateDailySummary } from "@workspace/api-client-react";
+import { useGenerateDailySummary, useListAppointments } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { Sparkles, ArrowRight, AlertTriangle, TrendingUp, RefreshCw, CheckSquare, BarChart3 } from "lucide-react";
+import { Sparkles, ArrowRight, AlertTriangle, TrendingUp, RefreshCw, CheckSquare, BarChart3, CalendarDays, Clock, MapPin } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { format, parseISO, startOfDay, endOfDay } from "date-fns";
+import { fr, enUS, nl } from "date-fns/locale";
+import { Link } from "wouter";
+
+const dateLocales: Record<string, Locale> = { fr, en: enUS, nl };
 
 export default function BilanQuotidien() {
   const { t, i18n } = useTranslation();
+  const locale = dateLocales[i18n.language] || fr;
   const generateSummary = useGenerateDailySummary();
   const [summaryData, setSummaryData] = useState<any>(null);
+
+  const now = new Date();
+  const { data: todayAppointments = [] } = useListAppointments({
+    from: startOfDay(now).toISOString(),
+    to: endOfDay(now).toISOString(),
+  });
 
   const fetchSummary = () => {
     generateSummary.mutate(
@@ -101,6 +113,32 @@ export default function BilanQuotidien() {
                 </div>
               </div>
             </div>
+
+            {(todayAppointments as any[]).length > 0 && (
+              <div className="bg-card rounded-lg border border-border border-l-2 border-l-amber-400 p-4">
+                <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
+                  <CalendarDays className="w-3.5 h-3.5 text-amber-400" />
+                  {t("agenda.todayAppointments")} ({(todayAppointments as any[]).length})
+                </h2>
+                <div className="space-y-1.5">
+                  {(todayAppointments as any[]).map((apt: any) => (
+                    <Link key={apt.id} href="/dashboard/agenda" className="flex items-center gap-3 text-[12px] p-2 rounded hover:bg-[#1a2235] transition-colors">
+                      <div className="flex items-center gap-1 text-amber-400 shrink-0 w-24">
+                        <Clock className="w-3 h-3" />
+                        {apt.allDay ? t("agenda.allDay") : `${format(parseISO(apt.startAt), "HH:mm")} - ${format(parseISO(apt.endAt), "HH:mm")}`}
+                      </div>
+                      <span className="text-white font-medium truncate">{apt.title}</span>
+                      {apt.location && (
+                        <span className="text-[#8b9cb3] flex items-center gap-1 shrink-0">
+                          <MapPin className="w-3 h-3" />
+                          {apt.location}
+                        </span>
+                      )}
+                    </Link>
+                  ))}
+                </div>
+              </div>
+            )}
 
             <div className="bg-card rounded-lg border border-border border-l-2 border-l-primary p-4">
               <h2 className="text-[13px] font-semibold text-white mb-2">{t("brief.overview")}</h2>

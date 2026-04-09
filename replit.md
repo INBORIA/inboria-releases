@@ -91,6 +91,16 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - Team dashboard page at `/dashboard/activite-equipe` (Business plan only): member stats, recent activity feed.
     - Sidebar link "Activité équipe" visible only for Business plan users.
 
+- **Agenda/Calendar (Task #21)**:
+    - Table: `appointments` (id uuid PK, user_id, title, description, location, start_at, end_at, all_day, email_id, project_id, reminder_minutes, created_at, updated_at). SQL setup: `attached_assets/sql_appointments_setup.sql` (must be run in Supabase dashboard). Proper user-scoped RLS policies.
+    - API routes (`routes/appointments.ts`): CRUD at `/appointments`, with `?from=&to=&projectId=` query filters. All responses mapped to camelCase.
+    - AI detection: `POST /ai/detect-appointments` scans last 30 emails with GPT-4o-mini, extracts appointments, inserts them, returns camelCase.
+    - CSV export: `GET /export/appointments` exports all user appointments.
+    - Web dashboard: `/dashboard/agenda` with month/week/day views, create/edit/delete modals, AI detection button, CSV export. Sidebar link with CalendarDays icon.
+    - Bilan integration: Today's appointments shown in bilan page with amber-bordered card and link to agenda.
+    - Mobile: `app/(tabs)/agenda.tsx` tab with calendar grid and day appointment list. Registered in `_layout.tsx`.
+    - i18n: `agenda` section with 35+ keys in all 3 locales (fr/en/nl).
+
 - **Email Attachments (Phase 7)**:
     - Table: `email_attachments` (id uuid PK, email_id int FK→emails, filename, content_type, size, provider, provider_attachment_id, connection_id uuid, message_uid, created_at). Auto-created via `ensureEmailAttachmentsTable()` in index.ts.
     - Gmail sync: `extractGmailAttachments()` walks payload.parts, stores attachmentId for on-demand retrieval via `gmail.users.messages.attachments.get()`.

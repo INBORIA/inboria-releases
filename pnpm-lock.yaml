@@ -654,6 +654,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.101.1
         version: 2.101.1
+      date-fns:
+        specifier: ^3.6.0
+        version: 3.6.0
       expo-device:
         specifier: ^55.0.12
         version: 55.0.12(expo@54.0.33)

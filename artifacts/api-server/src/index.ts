@@ -115,6 +115,19 @@ async function ensureIntegrationsTable() {
   }
 }
 
+async function ensureAppointmentsTable() {
+  try {
+    const { error } = await supabaseAdmin.from("appointments").select("id").limit(1);
+    if (error && error.code === "42P01") {
+      logger.warn("appointments table not found — please create it in Supabase dashboard. See attached_assets/sql_appointments_setup.sql");
+    } else {
+      logger.info("appointments table OK");
+    }
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "appointments table check failed (non-fatal)");
+  }
+}
+
 const rawPort = process.env["PORT"];
 
 if (!rawPort) {
@@ -142,5 +155,6 @@ app.listen(port, (err) => {
   ensureOrganisationsTable();
   ensureEmailConnectionsConstraint();
   ensureEmailAttachmentsTable();
+  ensureAppointmentsTable();
   startAutoSync();
 });

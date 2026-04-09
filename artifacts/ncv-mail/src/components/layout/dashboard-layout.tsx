@@ -20,6 +20,7 @@ import {
   BookOpen,
   Send,
   Eye,
+  CalendarDays,
 } from "lucide-react";
 import ncvLogo from "@assets/image_1775392688923.png";
 import { cn } from "@/lib/utils";
@@ -48,6 +49,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     { name: t("sidebar.dailyBrief"), href: "/dashboard/bilan", icon: LayoutDashboard },
     { name: t("sidebar.tasks"), href: "/dashboard/taches", icon: CheckSquare },
     { name: t("sidebar.projects"), href: "/dashboard/projets", icon: FolderKanban },
+    { name: t("sidebar.agenda"), href: "/dashboard/agenda", icon: CalendarDays },
     { name: t("sidebar.classification"), href: "/dashboard/classement", icon: Tags },
     { name: t("sidebar.settings"), href: "/dashboard/parametres", icon: Settings },
     { name: t("sidebar.subscription"), href: "/dashboard/abonnement", icon: CreditCard },

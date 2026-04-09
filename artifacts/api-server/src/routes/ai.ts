@@ -570,4 +570,102 @@ ${signature ? `\nSignature à utiliser:\n${signature}` : ""}` },
   }
 });
 
+router.post("/ai/detect-appointments", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const entitlement = await checkEntitlement(req.userId!);
+    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
+
+    const lang = req.body?.lang || "fr";
+
+    const { data: emails } = await supabaseAdmin
+      .from("emails")
+      .select("id, sender, subject, body, summary, created_at")
+      .eq("user_id", req.userId!)
+      .order("created_at", { ascending: false })
+      .limit(30);
+
+    if (!emails || emails.length === 0) {
+      res.json({ appointments: [], count: 0 });
+      return;
+    }
+
+    const langInstruction = lang === "fr"
+      ? "Réponds en français."
+      : lang === "nl"
+        ? "Antwoord in het Nederlands."
+        : "Respond in English.";
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      temperature: 0.3,
+      max_completion_tokens: 2048,
+      messages: [
+        {
+          role: "system",
+          content: `Tu es un assistant qui détecte les rendez-vous, réunions et événements mentionnés dans des emails. ${langInstruction}
+Analyse les emails et identifie les rendez-vous avec date, heure, lieu et description.
+Renvoie un JSON avec le format:
+{ "appointments": [{ "title": "...", "description": "...", "location": "...", "startAt": "ISO datetime", "endAt": "ISO datetime", "allDay": false, "emailId": email_id_number }] }
+Si aucune date/heure exacte n'est trouvée, utilise une estimation raisonnable. Si pas de rendez-vous, renvoie un tableau vide.`,
+        },
+        {
+          role: "user",
+          content: `Voici les derniers emails:\n${emails.map(e => `[ID:${e.id}] De: ${e.sender} | Objet: ${e.subject}\n${(e.body || e.summary || "").substring(0, 500)}`).join("\n---\n")}`,
+        },
+      ],
+    });
+
+    let detected: any[] = [];
+    try {
+      const content = completion.choices[0]?.message?.content ?? "{}";
+      const jsonMatch = content.match(/\{[\s\S]*\}/);
+      const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : "{}");
+      detected = parsed.appointments || [];
+    } catch {
+      detected = [];
+    }
+
+    const created: any[] = [];
+    for (const apt of detected) {
+      if (!apt.title || !apt.startAt) continue;
+      const endAt = apt.endAt || new Date(new Date(apt.startAt).getTime() + 3600000).toISOString();
+      const { data, error } = await supabaseAdmin
+        .from("appointments")
+        .insert({
+          user_id: req.userId!,
+          title: apt.title,
+          description: apt.description || null,
+          location: apt.location || null,
+          start_at: apt.startAt,
+          end_at: endAt,
+          all_day: apt.allDay || false,
+          email_id: apt.emailId || null,
+          reminder_minutes: 30,
+        })
+        .select()
+        .single();
+
+      if (!error && data) created.push({
+        id: data.id,
+        userId: data.user_id,
+        title: data.title,
+        description: data.description,
+        location: data.location,
+        startAt: data.start_at,
+        endAt: data.end_at,
+        allDay: data.all_day,
+        emailId: data.email_id,
+        projectId: data.project_id,
+        reminderMinutes: data.reminder_minutes,
+        createdAt: data.created_at,
+        updatedAt: data.updated_at,
+      });
+    }
+
+    res.json({ appointments: created, count: created.length });
+  } catch (err: any) {
+    res.status(500).json({ error: "Erreur de détection: " + err.message });
+  }
+});
+
 export default router;
