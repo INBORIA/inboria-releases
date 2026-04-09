@@ -377,20 +377,30 @@ async function saveEmailWithTriage(
   detectAppointmentFromEmail(inserted.id, sender, subject, body, userId).catch(() => {});
 
   if (triage.tasks.length > 0) {
-    const { error: taskErr } = await supabaseAdmin.from("tasks").insert(
-      triage.tasks.map((title) => ({
-        user_id: userId,
-        email_id: inserted.id,
-        title,
-        done: false,
-      }))
-    );
-    if (taskErr) {
-      console.error("[auto-sync] task insert error:", taskErr.message);
-    }
+    const { data: existingTasks } = await supabaseAdmin
+      .from("tasks")
+      .select("id")
+      .eq("email_id", inserted.id)
+      .limit(1);
 
-    for (const title of triage.tasks) {
-      createNotionTask(userId, title, subject, sender).catch(() => {});
+    if (!existingTasks || existingTasks.length === 0) {
+      const { error: taskErr } = await supabaseAdmin.from("tasks").insert(
+        triage.tasks.map((title) => ({
+          user_id: userId,
+          email_id: inserted.id,
+          title,
+          done: false,
+        }))
+      );
+      if (taskErr) {
+        console.error("[auto-sync] task insert error:", taskErr.message);
+      }
+
+      for (const title of triage.tasks) {
+        createNotionTask(userId, title, subject, sender).catch(() => {});
+      }
+    } else {
+      console.log(`[auto-sync] tasks already exist for email ${inserted.id}, skipping`);
     }
   }
 

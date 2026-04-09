@@ -181,13 +181,21 @@ router.post("/webhook/email", async (req, res): Promise<void> => {
     }
 
     if (triage.tasks.length > 0) {
-      const taskInserts = triage.tasks.map((title) => ({
-        user_id: userId,
-        email_id: insertedEmail.id,
-        title,
-        done: false,
-      }));
-      await supabaseAdmin.from("tasks").insert(taskInserts);
+      const { data: existingTasks } = await supabaseAdmin
+        .from("tasks")
+        .select("id")
+        .eq("email_id", insertedEmail.id)
+        .limit(1);
+
+      if (!existingTasks || existingTasks.length === 0) {
+        const taskInserts = triage.tasks.map((title) => ({
+          user_id: userId,
+          email_id: insertedEmail.id,
+          title,
+          done: false,
+        }));
+        await supabaseAdmin.from("tasks").insert(taskInserts);
+      }
     }
 
     await supabaseAdmin
@@ -293,14 +301,22 @@ router.post("/webhook/email/batch", async (req, res): Promise<void> => {
           .single();
 
         if (triage.tasks.length > 0 && inserted) {
-          await supabaseAdmin.from("tasks").insert(
-            triage.tasks.map((title) => ({
-              user_id: connection.user_id,
-              email_id: inserted.id,
-              title,
-              done: false,
-            }))
-          );
+          const { data: existingTasks } = await supabaseAdmin
+            .from("tasks")
+            .select("id")
+            .eq("email_id", inserted.id)
+            .limit(1);
+
+          if (!existingTasks || existingTasks.length === 0) {
+            await supabaseAdmin.from("tasks").insert(
+              triage.tasks.map((title) => ({
+                user_id: connection.user_id,
+                email_id: inserted.id,
+                title,
+                done: false,
+              }))
+            );
+          }
         }
 
         results.push({ status: "ok", subject: email.subject, priority: triage.priority });

@@ -229,6 +229,21 @@ async function ensureProfileTimezone() {
   }
 }
 
+async function logTaskStats() {
+  try {
+    const { count, error } = await supabaseAdmin
+      .from("tasks")
+      .select("id", { count: "exact", head: true })
+      .not("email_id", "is", null);
+
+    if (!error) {
+      logger.info(`AI tasks count: ${count}`);
+    }
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "Task stats check failed (non-fatal)");
+  }
+}
+
 const rawPort = process.env["PORT"];
 
 if (!rawPort) {
@@ -258,5 +273,6 @@ app.listen(port, (err) => {
   ensureEmailAttachmentsTable();
   ensureAppointmentsTable();
   ensureProfileTimezone();
+  logTaskStats();
   startAutoSync();
 });

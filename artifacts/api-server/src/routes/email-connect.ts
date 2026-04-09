@@ -677,14 +677,22 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
           .eq("external_id", scopedExternalId)
           .single();
         if (insertedEmail) {
-          await supabaseAdmin.from("tasks").insert(
-            triage.tasks.map((title: string) => ({
-              user_id: userId,
-              email_id: insertedEmail.id,
-              title,
-              done: false,
-            }))
-          );
+          const { data: existingTasks } = await supabaseAdmin
+            .from("tasks")
+            .select("id")
+            .eq("email_id", insertedEmail.id)
+            .limit(1);
+
+          if (!existingTasks || existingTasks.length === 0) {
+            await supabaseAdmin.from("tasks").insert(
+              triage.tasks.map((title: string) => ({
+                user_id: userId,
+                email_id: insertedEmail.id,
+                title,
+                done: false,
+              }))
+            );
+          }
         }
       }
 
