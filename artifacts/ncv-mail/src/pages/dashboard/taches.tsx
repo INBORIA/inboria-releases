@@ -49,7 +49,7 @@ export default function Taches() {
   const { data: profile } = useGetProfile();
   const { toast } = useToast();
 
-  const [filter, setFilter] = useState<string>("todo");
+  const [filter, setFilter] = useState<string>("all");
   const [emailDetailTask, setEmailDetailTask] = useState<any>(null);
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -167,7 +167,7 @@ export default function Taches() {
               <CheckSquare className="w-4 h-4 text-primary" />
               {t("tasks.title")}
             </h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("tasks.subtitle")}</p>
+            
           </div>
           <div className="flex items-center gap-2">
             <Button
@@ -253,9 +253,11 @@ export default function Taches() {
                       <Badge className={`text-[10px] px-1.5 py-0 h-[18px] font-medium border ${statusStyle.bg} ${statusStyle.color} ${statusStyle.border}`}>
                         {taskStatus === "todo" ? t("tasks.todo") : taskStatus === "followup" ? t("tasks.followup") : t("tasks.done")}
                       </Badge>
-                      <Badge className={`text-[10px] px-1.5 py-0 h-[18px] font-medium border ${task.source === "ai" ? "bg-violet-500/15 text-violet-400 border-violet-500/25" : "bg-sky-500/15 text-sky-400 border-sky-500/25"}`}>
-                        {task.source === "ai" ? <><Sparkles className="w-2.5 h-2.5 mr-0.5" />{t("tasks.sourceAi")}</> : t("tasks.sourceManual")}
-                      </Badge>
+                      {task.source === "ai" && (
+                        <Badge className="text-[10px] px-1.5 py-0 h-[18px] font-medium border bg-violet-500/15 text-violet-400 border-violet-500/25">
+                          <Sparkles className="w-2.5 h-2.5 mr-0.5" />{t("tasks.sourceAi")}
+                        </Badge>
+                      )}
                       {task.dueDate && (
                         <div className={`flex items-center gap-1 ${new Date(task.dueDate) < new Date() && taskStatus !== "done" ? "text-red-400" : ""}`}>
                           <Calendar className="w-3 h-3" />
