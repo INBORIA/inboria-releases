@@ -429,9 +429,32 @@ async function saveAttachmentsMeta(
     connection_id: connectionId,
     message_uid: messageUid || null,
   }));
+
   const { error } = await supabaseAdmin.from("email_attachments").insert(rows);
   if (error) {
-    console.error("[auto-sync] attachment meta insert error:", error.message);
+    console.warn("[auto-sync] attachment meta insert via client failed, trying direct REST:", error.message);
+    try {
+      const supabaseUrl = process.env["VITE_SUPABASE_URL"];
+      const supabaseKey = process.env["SUPABASE_SECRET_KEY"];
+      const resp = await fetch(`${supabaseUrl}/rest/v1/email_attachments`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "apikey": supabaseKey!,
+          "Authorization": `Bearer ${supabaseKey}`,
+          "Prefer": "return=minimal",
+        },
+        body: JSON.stringify(rows),
+      });
+      if (!resp.ok) {
+        const errText = await resp.text();
+        console.error("[auto-sync] attachment meta direct REST insert also failed:", resp.status, errText);
+      } else {
+        console.log(`[auto-sync] attachment meta saved via direct REST for email #${emailId}`);
+      }
+    } catch (restErr: any) {
+      console.error("[auto-sync] attachment meta direct REST error:", restErr.message);
+    }
   }
 }
 
@@ -549,6 +572,53 @@ async function syncGmailForUser(conn: any): Promise<number> {
       }
     } catch (bfErr: any) {
       console.error("[auto-sync] Gmail body backfill error:", bfErr.message);
+    }
+
+    try {
+      const { data: gmailEmails } = await supabaseAdmin
+        .from("emails")
+        .select("id, external_id")
+        .eq("user_id", conn.user_id)
+        .like("external_id", `${conn.id}:%`)
+        .not("status", "eq", "sent")
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      if (gmailEmails && gmailEmails.length > 0) {
+        const emailIds = gmailEmails.map((e: any) => e.id);
+        const { data: existingAttachments } = await supabaseAdmin
+          .from("email_attachments")
+          .select("email_id")
+          .in("email_id", emailIds);
+
+        const withAttachIds = new Set((existingAttachments || []).map((a: any) => a.email_id));
+        const toCheck = gmailEmails.filter((e: any) => !withAttachIds.has(e.id));
+
+        if (toCheck.length > 0) {
+          console.log(`[auto-sync] Gmail attachment backfill: checking ${toCheck.length} emails`);
+          for (const email of toCheck.slice(0, 15)) {
+            const gmailMsgId = (email as any).external_id?.split(":")[1];
+            if (!gmailMsgId || gmailMsgId.startsWith("imap_")) continue;
+
+            try {
+              const { data: fullMsg } = await gmail.users.messages.get({
+                userId: "me",
+                id: gmailMsgId,
+                format: "full",
+              });
+              const gmailAttachments = extractGmailAttachments(fullMsg.payload);
+              if (gmailAttachments.length > 0) {
+                await saveAttachmentsMeta(email.id, gmailAttachments, "gmail", conn.id, gmailMsgId);
+                console.log(`[auto-sync] Backfilled ${gmailAttachments.length} attachment(s) for Gmail email #${email.id}`);
+              }
+            } catch (fetchErr: any) {
+              console.error(`[auto-sync] Gmail attachment backfill error for #${email.id}:`, fetchErr.message);
+            }
+          }
+        }
+      }
+    } catch (abfErr: any) {
+      console.error("[auto-sync] Gmail attachment backfill error:", abfErr.message);
     }
 
     return synced;

@@ -32,7 +32,7 @@ async function ensureOrganisationsTable() {
 async function ensureEmailAttachmentsTable() {
   try {
     const { error } = await supabaseAdmin.from("email_attachments").select("id").limit(1);
-    if (error && error.message.includes("does not exist")) {
+    if (error && (error.message.includes("does not exist") || error.message.includes("schema cache"))) {
       const { error: createErr } = await supabaseAdmin.rpc("exec_sql" as any, {
         query: `
           CREATE TABLE IF NOT EXISTS email_attachments (
