@@ -135,7 +135,7 @@ async function ensureAppointmentsTable() {
             end_at timestamptz NOT NULL,
             all_day boolean DEFAULT false,
             email_id integer REFERENCES emails(id) ON DELETE SET NULL,
-            project_id integer REFERENCES projects(id) ON DELETE SET NULL,
+            project_id uuid REFERENCES projects(id) ON DELETE SET NULL,
             reminder_minutes integer DEFAULT 30,
             confirmed boolean DEFAULT true,
             participants text,
