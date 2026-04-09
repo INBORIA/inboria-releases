@@ -637,13 +637,17 @@ router.post("/ai/extract-appointment", requireAuth, async (req, res): Promise<vo
       messages: [
         {
           role: "system",
-          content: `Tu analyses un email pour extraire les informations d'un rendez-vous potentiel. Réponds en JSON strict:
+          content: `Tu analyses un email pour extraire les informations d'un rendez-vous potentiel.
+La date actuelle est le ${new Date().toISOString().split("T")[0]} (année ${new Date().getFullYear()}).
+Le fuseau horaire est Europe/Brussels (UTC+1 en hiver, UTC+2 en été).
+IMPORTANT: Utilise l'année ${new Date().getFullYear()} si aucune année n'est précisée. Inclus le décalage UTC dans les dates ISO (ex: "2026-04-10T11:00:00+02:00").
+Réponds en JSON strict:
 {
   "title": "titre du RDV (utilise le sujet de l'email si pas de titre explicite)",
   "description": "description ou contexte du RDV",
   "location": "lieu mentionné ou null",
-  "startAt": "ISO datetime ou null",
-  "endAt": "ISO datetime ou null",
+  "startAt": "ISO datetime with offset ou null",
+  "endAt": "ISO datetime with offset ou null",
   "participants": "noms/emails des participants",
   "hasAppointment": true/false
 }
@@ -740,10 +744,12 @@ router.post("/ai/detect-appointments", requireAuth, async (req, res): Promise<vo
           role: "system",
           content: `Tu es un assistant qui détecte les rendez-vous, réunions et événements mentionnés dans des emails. ${langInstruction}
 La date actuelle est le ${new Date().toISOString().split("T")[0]} (année ${new Date().getFullYear()}).
+Le fuseau horaire de l'utilisateur est Europe/Brussels (UTC+1 en hiver, UTC+2 en été).
 Analyse les emails et identifie les rendez-vous avec date, heure, lieu et description.
 IMPORTANT: Utilise l'année ${new Date().getFullYear()} pour les dates si aucune année n'est précisée dans l'email.
+IMPORTANT: Les heures dans les emails sont en heure locale belge (Europe/Brussels). Tu DOIS inclure le décalage UTC dans les dates ISO. Par exemple: "2026-04-10T11:00:00+02:00" pour 11h en été (CEST).
 Renvoie un JSON avec le format:
-{ "appointments": [{ "title": "...", "description": "...", "location": "...", "startAt": "ISO datetime", "endAt": "ISO datetime", "allDay": false, "emailId": email_id_number, "participants": "..." }] }
+{ "appointments": [{ "title": "...", "description": "...", "location": "...", "startAt": "ISO datetime with offset", "endAt": "ISO datetime with offset", "allDay": false, "emailId": email_id_number, "participants": "..." }] }
 N'invente PAS de RDV. Détecte uniquement si une date/heure concrète est mentionnée. Si pas de rendez-vous, renvoie un tableau vide.`,
         },
         {
