@@ -779,8 +779,11 @@ async function syncImapForUser(conn: any): Promise<number> {
               size: a.size || 0,
               providerAttachmentId: a.contentId || a.checksum || "",
             }));
+            log.info({ uid: msg.uid, attachmentCount: imapAttachments.length }, "Attachments detected");
           }
-        } catch {}
+        } catch (attachErr: any) {
+          log.warn({ uid: msg.uid, error: attachErr.message }, "Attachment parsing failed");
+        }
       }
 
       const savedId = await saveEmailWithTriage(
@@ -803,6 +806,59 @@ async function syncImapForUser(conn: any): Promise<number> {
 
     fetchSucceeded = true;
     log.info({ fetched: fetchedCount, newEmails: synced, duplicatesSkipped: fetchedCount - synced }, "IMAP fetch complete");
+
+    try {
+      const { data: emailsWithoutAttachments } = await supabaseAdmin
+        .from("emails")
+        .select("id, external_id")
+        .eq("user_id", conn.user_id)
+        .like("external_id", `${conn.id}:imap_%`)
+        .not("status", "eq", "sent")
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      if (emailsWithoutAttachments && emailsWithoutAttachments.length > 0) {
+        const emailIds = emailsWithoutAttachments.map((e: any) => e.id);
+        const { data: existingAttachments } = await supabaseAdmin
+          .from("email_attachments")
+          .select("email_id")
+          .in("email_id", emailIds);
+
+        const emailsWithAttachmentIds = new Set((existingAttachments || []).map((a: any) => a.email_id));
+        const emailsToCheck = emailsWithoutAttachments.filter((e: any) => !emailsWithAttachmentIds.has(e.id));
+
+        if (emailsToCheck.length > 0) {
+          log.info({ count: emailsToCheck.length }, "Backfill: checking emails for missing attachments");
+
+          for (const email of emailsToCheck.slice(0, 10)) {
+            const uidStr = (email as any).external_id?.split("imap_")[1];
+            const uid = parseInt(uidStr || "0", 10);
+            if (!uid) continue;
+
+            try {
+              const bfMsg = await client.fetchOne(String(uid), { source: true }, { uid: true }) as any;
+              if (!bfMsg?.source) continue;
+
+              const parsed = await simpleParser(bfMsg.source);
+              if (parsed.attachments && parsed.attachments.length > 0) {
+                const attachMeta: AttachmentMeta[] = parsed.attachments.map((a) => ({
+                  filename: a.filename || "attachment",
+                  contentType: a.contentType || "application/octet-stream",
+                  size: a.size || 0,
+                  providerAttachmentId: a.contentId || a.checksum || "",
+                }));
+                await saveAttachmentsMeta(email.id, attachMeta, "imap", conn.id, String(uid));
+                log.info({ emailId: email.id, attachmentCount: attachMeta.length }, "Backfilled attachments");
+              }
+            } catch (bfErr: any) {
+              log.warn({ emailId: email.id, error: bfErr.message }, "Attachment backfill failed for email");
+            }
+          }
+        }
+      }
+    } catch (bfErr: any) {
+      log.warn({ error: bfErr.message }, "IMAP attachment backfill error");
+    }
   } catch (fetchErr: any) {
     log.error({ error: fetchErr.message }, "Error during IMAP fetch/parse");
   } finally {
