@@ -932,6 +932,12 @@ export default function Dashboard() {
     ? { ...selectedEmailFromList, ...emailDetailData }
     : selectedEmailFromList;
 
+  useEffect(() => {
+    if (selectedEmailId) {
+      window.scrollTo({ top: 0 });
+    }
+  }, [selectedEmailId]);
+
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const loadMore = useCallback(() => {
     if (hasMorePages && !emailsFetching) {
