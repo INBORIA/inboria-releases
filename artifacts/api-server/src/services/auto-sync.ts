@@ -57,14 +57,14 @@ function extractGmailBody(payload: any): string {
   }
 
   if (payload.parts) {
-    const textPart = payload.parts.find((p: any) => p.mimeType === "text/plain");
-    if (textPart?.body?.data) {
-      return decodeBase64(textPart.body.data);
-    }
-
     const htmlPart = payload.parts.find((p: any) => p.mimeType === "text/html");
     if (htmlPart?.body?.data) {
       return decodeBase64(htmlPart.body.data);
+    }
+
+    const textPart = payload.parts.find((p: any) => p.mimeType === "text/plain");
+    if (textPart?.body?.data) {
+      return decodeBase64(textPart.body.data);
     }
 
     for (const part of payload.parts) {
