@@ -1199,7 +1199,10 @@ export default function Dashboard() {
       const data = await res.json();
       if (res.ok) {
         invalidateAll();
-        toast({ title: t("inbox.emailSent"), description: `${data.synced || 0}` });
+        const count = data.synced || 0;
+        if (count > 0) {
+          toast({ title: t("inbox.syncComplete"), description: t("inbox.syncNewEmails", { count }) });
+        }
       } else {
         toast({ variant: "destructive", title: t("common.error"), description: data.error });
       }
