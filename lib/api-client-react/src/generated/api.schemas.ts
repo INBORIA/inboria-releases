@@ -1135,6 +1135,8 @@ export type UnassignEmail200 = {
 
 export type DetectAppointmentsBody = {
   lang?: string;
+  emailId?: number;
+  forceRescan?: boolean;
 };
 
 export type DetectAppointments200 = {

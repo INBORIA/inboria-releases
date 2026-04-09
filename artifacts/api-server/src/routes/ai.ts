@@ -3,6 +3,7 @@ import { supabaseAdmin } from "../lib/supabase";
 import { GenerateDailySummaryBody, TriageEmailBody, GenerateDraftBody } from "@workspace/api-zod";
 import OpenAI from "openai";
 import { requireAuth } from "../middlewares/auth";
+import { logger } from "../lib/logger";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -683,12 +684,20 @@ router.post("/ai/detect-appointments", requireAuth, async (req, res): Promise<vo
     const forceRescan = req.body?.forceRescan || false;
 
     if (forceRescan) {
-      await supabaseAdmin
-        .from("appointments")
-        .delete()
-        .eq("user_id", req.userId!)
-        .eq("confirmed", false);
-      logger.info("[detect-appointments] Purged unconfirmed appointments for rescan");
+      try {
+        const { error: delErr } = await supabaseAdmin
+          .from("appointments")
+          .delete()
+          .eq("user_id", req.userId!)
+          .eq("confirmed", false);
+        if (delErr) {
+          logger.warn({ err: delErr.message }, "[detect-appointments] Purge failed (non-fatal)");
+        } else {
+          logger.info("[detect-appointments] Purged unconfirmed appointments for rescan");
+        }
+      } catch (purgeErr: any) {
+        logger.warn({ err: purgeErr.message }, "[detect-appointments] Purge exception (non-fatal)");
+      }
     }
 
     let emails: any[];
@@ -817,6 +826,7 @@ N'invente PAS de RDV. Détecte uniquement si une date/heure concrète est mentio
 
     res.json({ appointments: created, count: created.length });
   } catch (err: any) {
+    logger.error({ err: err.message, stack: err.stack }, "[detect-appointments] Unhandled error");
     res.status(500).json({ error: "Erreur de détection: " + err.message });
   }
 });

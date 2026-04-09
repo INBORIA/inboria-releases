@@ -8,4 +8,6 @@
 
 export type DetectAppointmentsBody = {
   lang?: string;
+  emailId?: number;
+  forceRescan?: boolean;
 };

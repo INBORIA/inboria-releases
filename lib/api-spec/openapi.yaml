@@ -2133,6 +2133,11 @@ paths:
                 lang:
                   type: string
                   default: fr
+                emailId:
+                  type: integer
+                forceRescan:
+                  type: boolean
+                  default: false
       responses:
         "200":
           description: Detected appointments

@@ -1734,9 +1734,12 @@ export const TriageEmailResponse = zod.object({
  * @summary AI detect appointments from emails
  */
 export const detectAppointmentsBodyLangDefault = `fr`;
+export const detectAppointmentsBodyForceRescanDefault = false;
 
 export const DetectAppointmentsBody = zod.object({
   lang: zod.string().default(detectAppointmentsBodyLangDefault),
+  emailId: zod.number().optional(),
+  forceRescan: zod.boolean().default(detectAppointmentsBodyForceRescanDefault),
 });
 
 export const DetectAppointmentsResponse = zod.object({
