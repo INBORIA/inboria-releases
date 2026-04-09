@@ -11,4 +11,5 @@ export interface UpdateTaskBody {
   title?: string;
   /** @nullable */
   projectId?: string | null;
+  inFollowup?: boolean;
 }

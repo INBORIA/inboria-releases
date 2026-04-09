@@ -43,7 +43,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const baseNavigation = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
-    { name: t("sidebar.tasksAndFollowup"), href: "/dashboard/taches", icon: CheckSquare },
+    { name: t("tasks.title"), href: "/dashboard/taches", icon: CheckSquare },
     { name: t("sidebar.projects"), href: "/dashboard/projets", icon: FolderKanban },
     { name: t("sidebar.agenda"), href: "/dashboard/agenda", icon: CalendarDays },
     { name: t("sidebar.archives"), href: "/dashboard/archives", icon: Archive },

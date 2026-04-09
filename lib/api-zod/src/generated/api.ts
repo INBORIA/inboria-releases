@@ -487,6 +487,7 @@ export const ListTasksResponseItem = zod.object({
   id: zod.number(),
   title: zod.string(),
   done: zod.boolean(),
+  status: zod.enum(["todo", "followup", "done"]).optional(),
   source: zod.enum(["ai", "manual"]).optional(),
   dueDate: zod.coerce.date().nullish(),
   emailId: zod.number().nullish(),
@@ -518,12 +519,14 @@ export const UpdateTaskBody = zod.object({
   done: zod.boolean().optional(),
   title: zod.string().optional(),
   projectId: zod.string().nullish(),
+  inFollowup: zod.boolean().optional(),
 });
 
 export const UpdateTaskResponse = zod.object({
   id: zod.number(),
   title: zod.string(),
   done: zod.boolean(),
+  status: zod.enum(["todo", "followup", "done"]).optional(),
   source: zod.enum(["ai", "manual"]).optional(),
   dueDate: zod.coerce.date().nullish(),
   emailId: zod.number().nullish(),
@@ -664,6 +667,7 @@ export const GetProjectResponse = zod.object({
       id: zod.number(),
       title: zod.string(),
       done: zod.boolean(),
+      status: zod.enum(["todo", "followup", "done"]).optional(),
       source: zod.enum(["ai", "manual"]).optional(),
       dueDate: zod.coerce.date().nullish(),
       emailId: zod.number().nullish(),

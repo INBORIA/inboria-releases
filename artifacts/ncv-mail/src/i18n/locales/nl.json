@@ -19,7 +19,8 @@
     "redirecting": "Doorsturen...",
     "export": "Exporteren",
     "emailExported": "E-mail geëxporteerd",
-    "exportError": "Fout bij exporteren"
+    "exportError": "Fout bij exporteren",
+    "add": "Toevoegen"
   },
   "nav": {
     "home": "Start",
@@ -450,38 +451,33 @@
     "dailyAdvice": "Dagelijks advies"
   },
   "tasks": {
-    "title": "Taken",
+    "title": "Mijn taken",
+    "subtitle": "Beheer uw taken en opvolgingen op één plek.",
     "noTasks": "Geen taken",
-    "noTasksDesc": "Maak een taak aan vanuit een e-mail of handmatig.",
+    "noTasksDesc": "Uw taken verschijnen hier — aangemaakt door AI of door u.",
     "addTask": "Taak toevoegen",
-    "completed": "Voltooid",
-    "pending": "In afwachting",
-    "inProgress": "In uitvoering",
-    "markComplete": "Als voltooid markeren",
-    "markIncomplete": "Als niet voltooid markeren",
-    "extractedTasks": "Geëxtraheerde taken",
-    "autoIdentified": "Acties automatisch geïdentificeerd uit uw e-mails.",
     "todo": "Te doen",
-    "done": "Klaar",
+    "followup": "In opvolging",
+    "done": "Voltooid",
     "all": "Alle",
+    "completed": "Voltooid",
     "deleted": "Taak verwijderd",
     "deleteError": "Kan taak niet verwijderen.",
     "createdOn": "Aangemaakt op",
     "exportDownloaded": "Export gedownload",
     "exportError": "Fout bij exporteren",
     "export": "Exporteren",
-    "autoCreatedDesc": "Taken worden automatisch aangemaakt vanuit uw e-mails.",
     "viewEmail": "E-mail bekijken",
-    "sourceEmail": "Bron e-mail",
-    "fromEmail": "vanuit een e-mail",
     "sourceAi": "AI",
-    "sourceManual": "Handmatig"
-  },
-  "tasksAndFollowup": {
-    "title": "Taken & Opvolging",
-    "subtitle": "Beheer uw acties en opvolgingen op één plek.",
-    "actions": "Acties",
-    "followups": "Opvolgingen"
+    "sourceManual": "Handmatig",
+    "markFollowup": "In opvolging zetten",
+    "markDone": "Als voltooid markeren",
+    "markTodo": "Terug naar te doen",
+    "movedToFollowup": "Taak in opvolging gezet",
+    "movedToDone": "Taak voltooid",
+    "movedToTodo": "Taak terug naar te doen",
+    "statusUpdated": "Status bijgewerkt",
+    "taskCreated": "Taak aangemaakt"
   },
   "projects": {
     "title": "Projecten",

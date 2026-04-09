@@ -19,7 +19,8 @@
     "redirecting": "Redirecting...",
     "export": "Export",
     "emailExported": "Email exported",
-    "exportError": "Error exporting"
+    "exportError": "Error exporting",
+    "add": "Add"
   },
   "nav": {
     "home": "Home",
@@ -450,38 +451,33 @@
     "dailyAdvice": "Daily advice"
   },
   "tasks": {
-    "title": "Tasks",
+    "title": "My tasks",
+    "subtitle": "Manage your tasks and follow-ups from one place.",
     "noTasks": "No tasks",
-    "noTasksDesc": "Create a task from an email or manually.",
+    "noTasksDesc": "Your tasks will appear here — created by AI or by you.",
     "addTask": "Add a task",
-    "completed": "Completed",
-    "pending": "Pending",
-    "inProgress": "In progress",
-    "markComplete": "Mark complete",
-    "markIncomplete": "Mark incomplete",
-    "extractedTasks": "Extracted tasks",
-    "autoIdentified": "Actions automatically identified from your emails.",
     "todo": "To do",
+    "followup": "Follow-up",
     "done": "Done",
     "all": "All",
+    "completed": "Completed",
     "deleted": "Task deleted",
     "deleteError": "Unable to delete task.",
     "createdOn": "Created on",
     "exportDownloaded": "Export downloaded",
     "exportError": "Error exporting",
     "export": "Export",
-    "autoCreatedDesc": "Tasks will be automatically created from your emails.",
     "viewEmail": "View email",
-    "sourceEmail": "Source email",
-    "fromEmail": "from an email",
     "sourceAi": "AI",
-    "sourceManual": "Manual"
-  },
-  "tasksAndFollowup": {
-    "title": "Tasks & Follow-up",
-    "subtitle": "Manage your actions and follow-ups from one place.",
-    "actions": "Actions",
-    "followups": "Follow-ups"
+    "sourceManual": "Manual",
+    "markFollowup": "Set as follow-up",
+    "markDone": "Mark as done",
+    "markTodo": "Back to do",
+    "movedToFollowup": "Task set to follow-up",
+    "movedToDone": "Task completed",
+    "movedToTodo": "Task moved back to do",
+    "statusUpdated": "Status updated",
+    "taskCreated": "Task created"
   },
   "projects": {
     "title": "Projects",

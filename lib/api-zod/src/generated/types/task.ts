@@ -6,11 +6,13 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { TaskSource } from "./taskSource";
+import type { TaskStatus } from "./taskStatus";
 
 export interface Task {
   id: number;
   title: string;
   done: boolean;
+  status?: TaskStatus;
   source?: TaskSource;
   /** @nullable */
   dueDate?: Date | null;

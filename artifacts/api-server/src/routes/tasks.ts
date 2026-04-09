@@ -4,20 +4,56 @@ import { requireAuth } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
+function mapTask(t: any) {
+  const senderRaw = t.emails?.sender || "";
+  const senderMatch = senderRaw.match(/^(.+?)\s*<(.+?)>$/);
+  const senderName = senderMatch ? senderMatch[1].trim().replace(/^"|"$/g, "") : senderRaw;
+  const senderEmail = senderMatch ? senderMatch[2].trim() : senderRaw;
+
+  let status = "todo";
+  if (t.done) status = "done";
+  else if (t.in_followup) status = "followup";
+
+  return {
+    id: t.id,
+    title: t.title,
+    done: t.done,
+    status,
+    source: t.source || "manual",
+    dueDate: t.due_date,
+    emailId: t.email_id,
+    emailSubject: t.emails?.subject || null,
+    emailSender: senderName || null,
+    emailSenderEmail: senderEmail || null,
+    emailBody: t.emails?.body || null,
+    emailSummary: t.emails?.summary || null,
+    emailPriority: t.emails?.priority || null,
+    emailStatus: t.emails?.status || null,
+    emailCategoryName: t.emails?.categories?.name || null,
+    emailCreatedAt: t.emails?.created_at || null,
+    projectId: t.project_id,
+    projectName: t.projects?.name || null,
+    projectReference: t.projects?.reference || null,
+    createdAt: t.created_at,
+  };
+}
+
 router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
   try {
     let query = supabaseAdmin
       .from("tasks")
       .select("*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)")
       .eq("user_id", req.userId!)
-      .order("created_at");
+      .order("created_at", { ascending: false });
 
     const status = req.query.status as string | undefined;
     if (status && status !== "all") {
       if (status === "done") {
         query = query.eq("done", true);
-      } else if (status === "pending") {
-        query = query.eq("done", false);
+      } else if (status === "pending" || status === "todo") {
+        query = query.eq("done", false).eq("in_followup", false);
+      } else if (status === "followup") {
+        query = query.eq("done", false).eq("in_followup", true);
       }
     }
 
@@ -28,33 +64,7 @@ router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
-    res.json((tasks || []).map((t: any) => {
-      const senderRaw = t.emails?.sender || "";
-      const senderMatch = senderRaw.match(/^(.+?)\s*<(.+?)>$/);
-      const senderName = senderMatch ? senderMatch[1].trim().replace(/^"|"$/g, "") : senderRaw;
-      const senderEmail = senderMatch ? senderMatch[2].trim() : senderRaw;
-      return {
-        id: t.id,
-        title: t.title,
-        done: t.done,
-        dueDate: t.due_date,
-        source: t.source || "manual",
-        emailId: t.email_id,
-        emailSubject: t.emails?.subject || null,
-        emailSender: senderName || null,
-        emailSenderEmail: senderEmail || null,
-        emailBody: t.emails?.body || null,
-        emailSummary: t.emails?.summary || null,
-        emailPriority: t.emails?.priority || null,
-        emailStatus: t.emails?.status || null,
-        emailCategoryName: t.emails?.categories?.name || null,
-        emailCreatedAt: t.emails?.created_at || null,
-        projectId: t.project_id,
-        projectName: t.projects?.name || null,
-        projectReference: t.projects?.reference || null,
-        createdAt: t.created_at,
-      };
-    }));
+    res.json((tasks || []).map(mapTask));
   } catch {
     res.status(500).json({ error: "Failed to list tasks" });
   }
@@ -97,7 +107,7 @@ router.post("/tasks", requireAuth, async (req, res): Promise<void> => {
     const { data: task, error } = await supabaseAdmin
       .from("tasks")
       .insert(insertData)
-      .select("*, emails(subject, sender), projects(name, reference)")
+      .select("*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)")
       .single();
 
     if (error) {
@@ -105,24 +115,7 @@ router.post("/tasks", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
-    const senderRaw = task.emails?.sender || "";
-    const senderMatch = senderRaw.match(/^(.+?)\s*<(.+?)>$/);
-    const senderName = senderMatch ? senderMatch[1].trim().replace(/^"|"$/g, "") : senderRaw;
-
-    res.status(201).json({
-      id: task.id,
-      title: task.title,
-      done: task.done,
-      dueDate: task.due_date,
-      source: task.source || "manual",
-      emailId: task.email_id,
-      emailSubject: task.emails?.subject || null,
-      emailSender: senderName || null,
-      projectId: task.project_id,
-      projectName: task.projects?.name || null,
-      projectReference: task.projects?.reference || null,
-      createdAt: task.created_at,
-    });
+    res.status(201).json(mapTask(task));
   } catch {
     res.status(500).json({ error: "Failed to create task" });
   }
@@ -134,13 +127,18 @@ router.patch("/tasks/:id", requireAuth, async (req, res): Promise<void> => {
     if (req.body.done !== undefined) updates.done = req.body.done;
     if (req.body.title !== undefined) updates.title = req.body.title;
     if (req.body.projectId !== undefined) updates.project_id = req.body.projectId;
+    if (req.body.inFollowup !== undefined) updates.in_followup = req.body.inFollowup;
+
+    if (req.body.done === true) {
+      updates.in_followup = false;
+    }
 
     const { data: task, error } = await supabaseAdmin
       .from("tasks")
       .update(updates)
       .eq("id", req.params.id)
       .eq("user_id", req.userId!)
-      .select("*, emails(subject)")
+      .select("*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)")
       .single();
 
     if (error || !task) {
@@ -148,16 +146,7 @@ router.patch("/tasks/:id", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
-    res.json({
-      id: task.id,
-      title: task.title,
-      done: task.done,
-      dueDate: task.due_date,
-      source: task.source || "manual",
-      emailId: task.email_id,
-      emailSubject: task.emails?.subject || null,
-      createdAt: task.created_at,
-    });
+    res.json(mapTask(task));
   } catch {
     res.status(500).json({ error: "Failed to update task" });
   }

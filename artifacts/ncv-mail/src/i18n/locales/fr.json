@@ -19,7 +19,8 @@
     "redirecting": "Redirection...",
     "export": "Exporter",
     "emailExported": "Email exporté",
-    "exportError": "Erreur lors de l'export"
+    "exportError": "Erreur lors de l'export",
+    "add": "Ajouter"
   },
   "nav": {
     "home": "Accueil",
@@ -450,38 +451,33 @@
     "dailyAdvice": "Conseil du jour"
   },
   "tasks": {
-    "title": "Tâches",
+    "title": "Mes tâches",
+    "subtitle": "Gérez vos tâches et suivis depuis un seul endroit.",
     "noTasks": "Aucune tâche",
-    "noTasksDesc": "Créez une tâche depuis un email ou manuellement.",
+    "noTasksDesc": "Vos tâches apparaîtront ici — créées par l'IA ou par vous.",
     "addTask": "Ajouter une tâche",
-    "completed": "Terminée",
-    "pending": "En attente",
-    "inProgress": "En cours",
-    "markComplete": "Marquer terminée",
-    "markIncomplete": "Marquer non terminée",
-    "extractedTasks": "Tâches extraites",
-    "autoIdentified": "Actions identifiées automatiquement depuis vos emails.",
     "todo": "À faire",
+    "followup": "En suivi",
     "done": "Terminées",
     "all": "Toutes",
+    "completed": "Terminée",
     "deleted": "Tâche supprimée",
     "deleteError": "Impossible de supprimer la tâche.",
     "createdOn": "Créée le",
     "exportDownloaded": "Export téléchargé",
     "exportError": "Erreur lors de l'export",
     "export": "Exporter",
-    "autoCreatedDesc": "Les tâches seront créées automatiquement à partir de vos emails.",
     "viewEmail": "Voir l'email",
-    "sourceEmail": "Email source",
-    "fromEmail": "depuis un email",
     "sourceAi": "IA",
-    "sourceManual": "Manuel"
-  },
-  "tasksAndFollowup": {
-    "title": "Tâches & Suivi",
-    "subtitle": "Gérez vos actions et relances depuis un seul endroit.",
-    "actions": "Actions",
-    "followups": "Relances"
+    "sourceManual": "Manuel",
+    "markFollowup": "Mettre en suivi",
+    "markDone": "Marquer terminée",
+    "markTodo": "Remettre à faire",
+    "movedToFollowup": "Tâche mise en suivi",
+    "movedToDone": "Tâche terminée",
+    "movedToTodo": "Tâche remise à faire",
+    "statusUpdated": "Statut mis à jour",
+    "taskCreated": "Tâche créée"
   },
   "projects": {
     "title": "Projets",

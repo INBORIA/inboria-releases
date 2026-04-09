@@ -287,6 +287,14 @@ export interface GeneratePackResponse {
   categories: GeneratePackResponseCategoriesItem[];
 }
 
+export type TaskStatus = (typeof TaskStatus)[keyof typeof TaskStatus];
+
+export const TaskStatus = {
+  todo: "todo",
+  followup: "followup",
+  done: "done",
+} as const;
+
 export type TaskSource = (typeof TaskSource)[keyof typeof TaskSource];
 
 export const TaskSource = {
@@ -298,6 +306,7 @@ export interface Task {
   id: number;
   title: string;
   done: boolean;
+  status?: TaskStatus;
   source?: TaskSource;
   /** @nullable */
   dueDate?: string | null;
@@ -319,6 +328,7 @@ export interface UpdateTaskBody {
   title?: string;
   /** @nullable */
   projectId?: string | null;
+  inFollowup?: boolean;
 }
 
 export interface CreateTaskBody {

@@ -2800,6 +2800,9 @@ components:
           type: string
         done:
           type: boolean
+        status:
+          type: string
+          enum: [todo, followup, done]
         source:
           type: string
           enum: [ai, manual]
@@ -2834,6 +2837,8 @@ components:
           type: string
         projectId:
           type: ["string", "null"]
+        inFollowup:
+          type: boolean
 
     CreateTaskBody:
       type: object
