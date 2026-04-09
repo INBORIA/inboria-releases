@@ -30,9 +30,6 @@ import {
   useUnclaimSharedEmail,
   useCreateTask,
   getListTasksQueryKey,
-  useCreateFollowup,
-  getListFollowupsQueryKey,
-  getGetFollowupStatsQueryKey,
   useRestoreEmail,
   usePermanentDeleteEmail,
   useEmptyTrash,
@@ -44,7 +41,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, Eye, CalendarDays, Download } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
@@ -192,12 +189,6 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
   const [taskFormOpen, setTaskFormOpen] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskProjectId, setTaskProjectId] = useState("none");
-  const [followupFormOpen, setFollowupFormOpen] = useState(false);
-  const [followupTitle, setFollowupTitle] = useState("");
-  const [followupDueDate, setFollowupDueDate] = useState("");
-  const [followupNotes, setFollowupNotes] = useState("");
-  const [followupProjectId, setFollowupProjectId] = useState("none");
-  const createFollowup = useCreateFollowup();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
@@ -336,25 +327,6 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 >
                   <ListTodo className="w-3 h-3" />
                   {t("inbox.createTask")}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 h-7 text-[11px] bg-transparent border-amber-500/30 text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
-                  onClick={() => {
-                    if (!followupFormOpen) {
-                      setFollowupTitle(`${t("inbox.followPrefix")} ${email.subject}`);
-                      setFollowupProjectId(email.projectId || "none");
-                      setFollowupNotes("");
-                      const defaultDate = new Date();
-                      defaultDate.setDate(defaultDate.getDate() + 3);
-                      setFollowupDueDate(defaultDate.toISOString().split("T")[0]);
-                    }
-                    setFollowupFormOpen(!followupFormOpen);
-                  }}
-                >
-                  <Eye className="w-3 h-3" />
-                  {t("inbox.follow")}
                 </Button>
                 <Button
                   variant="outline"
@@ -541,101 +513,6 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
               </div>
             )}
 
-            {followupFormOpen && (
-              <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
-                <div className="flex items-center gap-1.5 mb-1">
-                  <Eye className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="text-[11px] font-medium text-amber-400 uppercase tracking-wider">{t("inbox.newFollowup")}</span>
-                </div>
-                <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.followupTitle")}</label>
-                  <Input
-                    value={followupTitle}
-                    onChange={(e) => setFollowupTitle(e.target.value)}
-                    placeholder={t("inbox.followupTitlePlaceholder")}
-                    className="bg-background border-border text-white text-[12px] h-8"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.followupDueDate")}</label>
-                  <Input
-                    type="date"
-                    value={followupDueDate}
-                    onChange={(e) => setFollowupDueDate(e.target.value)}
-                    className="bg-background border-border text-white text-[12px] h-8"
-                  />
-                </div>
-                <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.taskProjectOptional")}</label>
-                  <Select value={followupProjectId} onValueChange={setFollowupProjectId}>
-                    <SelectTrigger className="w-full h-8 bg-background border-border text-[12px] text-white">
-                      <SelectValue placeholder={t("inbox.noProject")} />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-border">
-                      <SelectItem value="none">{t("inbox.noProject")}</SelectItem>
-                      {projects.map((p: any) => (
-                        <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.followupNotes")}</label>
-                  <Textarea
-                    value={followupNotes}
-                    onChange={(e) => setFollowupNotes(e.target.value)}
-                    placeholder={t("inbox.followupNotesPlaceholder")}
-                    className="bg-background border-border text-white text-[12px] h-16 resize-none"
-                  />
-                </div>
-                <div className="flex items-center gap-2 justify-end">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => { setFollowupFormOpen(false); setFollowupTitle(""); setFollowupDueDate(""); setFollowupNotes(""); setFollowupProjectId("none"); }}
-                    className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
-                  >
-                    {t("common.cancel")}
-                  </Button>
-                  <Button
-                    size="sm"
-                    className="gap-1.5 h-7 text-[11px] bg-amber-600 hover:bg-amber-700"
-                    disabled={!followupTitle.trim() || createFollowup.isPending}
-                    onClick={() => {
-                      createFollowup.mutate(
-                        {
-                          data: {
-                            title: followupTitle.trim(),
-                            emailId: email.id,
-                            dueDate: followupDueDate || undefined,
-                            notes: followupNotes || undefined,
-                            projectId: followupProjectId !== "none" ? followupProjectId : undefined,
-                          } as any,
-                        },
-                        {
-                          onSuccess: () => {
-                            queryClient.invalidateQueries({ queryKey: getListFollowupsQueryKey() });
-                            queryClient.invalidateQueries({ queryKey: getGetFollowupStatsQueryKey() });
-                            toast({ title: t("inbox.followupCreated") });
-                            setFollowupFormOpen(false);
-                            setFollowupTitle("");
-                            setFollowupDueDate("");
-                            setFollowupNotes("");
-                            setFollowupProjectId("none");
-                          },
-                          onError: () => {
-                            toast({ title: t("inbox.followupCreateError"), variant: "destructive" });
-                          },
-                        }
-                      );
-                    }}
-                  >
-                    {createFollowup.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
-                    {t("followup.create")}
-                  </Button>
-                </div>
-              </div>
-            )}
 
             {replyOpen && (
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
