@@ -118,8 +118,79 @@ async function ensureIntegrationsTable() {
 async function ensureAppointmentsTable() {
   try {
     const { error } = await supabaseAdmin.from("appointments").select("id").limit(1);
-    if (error && error.code === "42P01") {
-      logger.warn("appointments table not found — please create it in Supabase dashboard. See attached_assets/sql_appointments_setup.sql");
+    if (error) {
+      logger.warn({ code: error.code, msg: error.message }, "appointments table may not exist — attempting auto-create");
+
+      const supabaseUrl = process.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"] || "";
+      const serviceKey = process.env["SUPABASE_SECRET_KEY"] || "";
+      if (supabaseUrl && serviceKey) {
+        const sql = `
+          CREATE TABLE IF NOT EXISTS appointments (
+            id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+            user_id uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+            title text NOT NULL,
+            description text,
+            location text,
+            start_at timestamptz NOT NULL,
+            end_at timestamptz NOT NULL,
+            all_day boolean DEFAULT false,
+            email_id integer REFERENCES emails(id) ON DELETE SET NULL,
+            project_id integer REFERENCES projects(id) ON DELETE SET NULL,
+            reminder_minutes integer DEFAULT 30,
+            confirmed boolean DEFAULT true,
+            participants text,
+            created_at timestamptz DEFAULT now(),
+            updated_at timestamptz DEFAULT now()
+          );
+          ALTER TABLE appointments ENABLE ROW LEVEL SECURITY;
+          DO $$ BEGIN
+            IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'appointments' AND policyname = 'appointments_select_own') THEN
+              CREATE POLICY "appointments_select_own" ON appointments FOR SELECT USING (user_id = auth.uid());
+            END IF;
+            IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'appointments' AND policyname = 'appointments_insert_own') THEN
+              CREATE POLICY "appointments_insert_own" ON appointments FOR INSERT WITH CHECK (user_id = auth.uid());
+            END IF;
+            IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'appointments' AND policyname = 'appointments_update_own') THEN
+              CREATE POLICY "appointments_update_own" ON appointments FOR UPDATE USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
+            END IF;
+            IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'appointments' AND policyname = 'appointments_delete_own') THEN
+              CREATE POLICY "appointments_delete_own" ON appointments FOR DELETE USING (user_id = auth.uid());
+            END IF;
+          END $$;
+          CREATE INDEX IF NOT EXISTS idx_appointments_user ON appointments(user_id);
+          CREATE INDEX IF NOT EXISTS idx_appointments_start ON appointments(start_at);
+        `;
+
+        const resp = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "apikey": serviceKey,
+            "Authorization": `Bearer ${serviceKey}`,
+          },
+          body: JSON.stringify({ query: sql }),
+        });
+
+        if (resp.ok) {
+          logger.info("appointments table auto-created via exec_sql RPC");
+        } else {
+          const sqlDirect = await fetch(`${supabaseUrl}/sql`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              "Authorization": `Bearer ${serviceKey}`,
+            },
+            body: JSON.stringify({ query: sql }),
+          });
+          if (sqlDirect.ok) {
+            logger.info("appointments table auto-created via /sql endpoint");
+          } else {
+            logger.warn("Auto-create failed — please run sql_appointments_setup.sql manually in Supabase SQL Editor");
+          }
+        }
+      } else {
+        logger.warn("appointments table not found — please create it in Supabase dashboard. See attached_assets/sql_appointments_setup.sql");
+      }
     } else {
       logger.info("appointments table OK");
     }
