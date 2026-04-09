@@ -1,10 +1,11 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useGenerateDailySummary, useListAppointments } from "@workspace/api-client-react";
+import type { Appointment } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Sparkles, ArrowRight, AlertTriangle, TrendingUp, RefreshCw, CheckSquare, BarChart3, CalendarDays, Clock, MapPin } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
-import { format, parseISO, startOfDay, endOfDay, addDays } from "date-fns";
+import { format, parseISO, startOfDay, endOfDay, addDays, type Locale } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Link } from "wouter";
 
@@ -119,14 +120,14 @@ export default function BilanQuotidien() {
               </div>
             </div>
 
-            {(todayAppointments as any[]).length > 0 && (
+            {todayAppointments.length > 0 && (
               <div className="bg-card rounded-lg border border-border border-l-2 border-l-amber-400 p-4">
                 <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
                   <CalendarDays className="w-3.5 h-3.5 text-amber-400" />
-                  {t("agenda.todayAppointments")} ({(todayAppointments as any[]).length})
+                  {t("agenda.todayAppointments")} ({todayAppointments.length})
                 </h2>
                 <div className="space-y-1.5">
-                  {(todayAppointments as any[]).map((apt: any) => (
+                  {todayAppointments.map((apt) => (
                     <Link key={apt.id} href="/dashboard/agenda" className="flex items-center gap-3 text-[12px] p-2 rounded hover:bg-[#1a2235] transition-colors">
                       <div className="flex items-center gap-1 text-amber-400 shrink-0 w-24">
                         <Clock className="w-3 h-3" />
@@ -145,14 +146,14 @@ export default function BilanQuotidien() {
               </div>
             )}
 
-            {(tomorrowAppointments as any[]).length > 0 && (
+            {tomorrowAppointments.length > 0 && (
               <div className="bg-card rounded-lg border border-border border-l-2 border-l-blue-400 p-4">
                 <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
                   <CalendarDays className="w-3.5 h-3.5 text-blue-400" />
-                  {t("agenda.tomorrowAppointments")} ({(tomorrowAppointments as any[]).length})
+                  {t("agenda.tomorrowAppointments")} ({tomorrowAppointments.length})
                 </h2>
                 <div className="space-y-1.5">
-                  {(tomorrowAppointments as any[]).map((apt: any) => (
+                  {tomorrowAppointments.map((apt) => (
                     <Link key={apt.id} href="/dashboard/agenda" className="flex items-center gap-3 text-[12px] p-2 rounded hover:bg-[#1a2235] transition-colors">
                       <div className="flex items-center gap-1 text-blue-400 shrink-0 w-24">
                         <Clock className="w-3 h-3" />

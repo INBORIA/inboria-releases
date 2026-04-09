@@ -10,8 +10,9 @@ import {
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
-import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, subMonths, addWeeks, subWeeks, isSameDay, isSameMonth, parseISO, isToday } from "date-fns";
+import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, subMonths, addWeeks, subWeeks, isSameDay, isSameMonth, parseISO, isToday, type Locale } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
+import type { Appointment, Project } from "@workspace/api-client-react";
 import {
   CalendarDays,
   Plus,
@@ -48,7 +49,7 @@ export default function Agenda() {
   const [viewMode, setViewMode] = useState<ViewMode>("month");
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
-  const [selectedAppointment, setSelectedAppointment] = useState<any>(null);
+  const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
 
   const [formTitle, setFormTitle] = useState("");
   const [formDescription, setFormDescription] = useState("");
@@ -149,7 +150,7 @@ export default function Agenda() {
     setShowForm(true);
   };
 
-  const openEditForm = (apt: any) => {
+  const openEditForm = (apt: Appointment) => {
     setEditingId(apt.id);
     setFormTitle(apt.title || "");
     setFormDescription(apt.description || "");
@@ -244,15 +245,15 @@ export default function Agenda() {
   };
 
   const suggestions = useMemo(() => {
-    return (appointments as any[]).filter((apt: any) => apt.confirmed === false);
+    return appointments.filter((apt) => apt.confirmed === false);
   }, [appointments]);
 
   const handleDetect = () => {
     detectAppointments.mutate(
       { data: { lang: i18n.language } },
       {
-        onSuccess: (data: any) => {
-          const count = data?.count || 0;
+        onSuccess: (data) => {
+          const count = (data as { count?: number })?.count || 0;
           toast({ title: count > 0 ? t("agenda.detectedCount", { count }) : t("agenda.noDetected") });
           invalidate();
         },
@@ -285,7 +286,7 @@ export default function Agenda() {
   const goToToday = () => setCurrentDate(new Date());
 
   const getAppointmentsForDay = (day: Date) => {
-    return (appointments as any[]).filter((apt: any) => {
+    return appointments.filter((apt) => {
       const start = parseISO(apt.startAt);
       return isSameDay(start, day);
     });
@@ -380,7 +381,7 @@ export default function Agenda() {
               {t("agenda.suggestionsDetected", { count: suggestions.length })}
             </h3>
             <div className="space-y-1.5">
-              {suggestions.map((apt: any) => (
+              {suggestions.map((apt) => (
                 <div key={apt.id} className="flex items-center justify-between gap-2 bg-card/50 rounded px-3 py-2 border border-border">
                   <div className="flex-1 min-w-0">
                     <span className="text-[12px] font-medium text-white truncate block">{apt.title}</span>
@@ -434,15 +435,20 @@ export default function Agenda() {
                     }`}>
                       {format(day, "d")}
                     </div>
-                    {dayAppts.slice(0, 3).map((apt: any) => (
+                    {dayAppts.slice(0, 3).map((apt) => {
+                      const projectColor = apt.projects?.color;
+                      return (
                       <div
                         key={apt.id}
                         onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                        className="text-[10px] px-1 py-0.5 rounded bg-primary/20 text-primary truncate mb-0.5 cursor-pointer hover:bg-primary/30"
+                        className={`text-[10px] px-1 py-0.5 rounded truncate mb-0.5 cursor-pointer ${apt.confirmed === false ? "bg-amber-500/20 text-amber-400" : ""}`}
+                        style={apt.confirmed !== false ? { backgroundColor: projectColor ? `${projectColor}20` : undefined, color: projectColor || undefined } : undefined}
                       >
+                        {projectColor && <span className="inline-block w-1.5 h-1.5 rounded-full mr-0.5" style={{ backgroundColor: projectColor }} />}
                         {apt.allDay ? "" : format(parseISO(apt.startAt), "HH:mm") + " "}{apt.title}
                       </div>
-                    ))}
+                      );
+                    })}
                     {dayAppts.length > 3 && (
                       <div className="text-[9px] text-[#8b9cb3] pl-1">+{dayAppts.length - 3}</div>
                     )}
@@ -469,7 +475,7 @@ export default function Agenda() {
                     {String(hour).padStart(2, "0")}:00
                   </div>
                   {weekDays.map((d, i) => {
-                    const dayAppts = getAppointmentsForDay(d).filter((apt: any) => {
+                    const dayAppts = getAppointmentsForDay(d).filter((apt) => {
                       const h = parseISO(apt.startAt).getHours();
                       return h === hour;
                     });
@@ -483,15 +489,19 @@ export default function Agenda() {
                         }}
                         className={`border-r border-border last:border-r-0 min-h-[40px] p-0.5 cursor-pointer hover:bg-[#1a2235] ${isToday(d) ? "bg-primary/5" : ""}`}
                       >
-                        {dayAppts.map((apt: any) => (
+                        {dayAppts.map((apt) => {
+                          const pc = apt.projects?.color;
+                          return (
                           <div
                             key={apt.id}
                             onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                            className="text-[10px] px-1 py-0.5 rounded bg-primary/20 text-primary truncate cursor-pointer hover:bg-primary/30"
+                            className={`text-[10px] px-1 py-0.5 rounded truncate cursor-pointer ${apt.confirmed === false ? "bg-amber-500/20 text-amber-400" : "bg-primary/20 text-primary hover:bg-primary/30"}`}
+                            style={pc && apt.confirmed !== false ? { backgroundColor: `${pc}20`, color: pc } : undefined}
                           >
                             {format(parseISO(apt.startAt), "HH:mm")} {apt.title}
                           </div>
-                        ))}
+                          );
+                        })}
                       </div>
                     );
                   })}
@@ -508,7 +518,7 @@ export default function Agenda() {
             </div>
             <div className="max-h-[500px] overflow-y-auto">
               {hours.map((hour) => {
-                const hourAppts = getAppointmentsForDay(currentDate).filter((apt: any) => {
+                const hourAppts = getAppointmentsForDay(currentDate).filter((apt) => {
                   const h = parseISO(apt.startAt).getHours();
                   return h === hour;
                 });
@@ -525,11 +535,14 @@ export default function Agenda() {
                         openCreateForm(date);
                       }}
                     >
-                      {hourAppts.map((apt: any) => (
+                      {hourAppts.map((apt) => {
+                        const pc = apt.projects?.color;
+                        return (
                         <div
                           key={apt.id}
                           onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                          className="bg-primary/15 border border-primary/30 rounded px-2 py-1.5 cursor-pointer hover:bg-primary/25 mb-1"
+                          className={`rounded px-2 py-1.5 cursor-pointer mb-1 border ${apt.confirmed === false ? "bg-amber-500/10 border-amber-500/30" : "bg-primary/15 border-primary/30 hover:bg-primary/25"}`}
+                          style={pc && apt.confirmed !== false ? { backgroundColor: `${pc}15`, borderColor: `${pc}30` } : undefined}
                         >
                           <div className="text-[12px] font-medium text-white">{apt.title}</div>
                           <div className="flex items-center gap-3 mt-0.5">
@@ -545,7 +558,8 @@ export default function Agenda() {
                             )}
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 );
@@ -579,7 +593,7 @@ export default function Agenda() {
                 )}
                 {selectedAppointment.projects && (
                   <div className="flex items-center gap-2 text-[12px] text-[#8b9cb3]">
-                    <Calendar className="w-3.5 h-3.5" />
+                    <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: selectedAppointment.projects.color || '#2d7dd2' }} />
                     {selectedAppointment.projects.name}
                   </div>
                 )}
@@ -689,7 +703,7 @@ export default function Agenda() {
                       className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-white"
                     >
                       <option value="">{t("agenda.noProject")}</option>
-                      {(projects as any[]).map((p: any) => (
+                      {(projects as Project[]).map((p) => (
                         <option key={p.id} value={p.id}>{p.reference} - {p.name}</option>
                       ))}
                     </select>

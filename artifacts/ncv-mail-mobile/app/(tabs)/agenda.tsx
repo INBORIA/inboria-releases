@@ -24,8 +24,9 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useTranslation } from "react-i18next";
-import { format, parseISO, startOfMonth, endOfMonth, addMonths, subMonths, addDays, isToday, isSameDay } from "date-fns";
+import { format, parseISO, startOfMonth, endOfMonth, addMonths, subMonths, addDays, isToday, isSameDay, type Locale } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
+import type { Appointment } from "@workspace/api-client-react";
 
 const dateLocales: Record<string, Locale> = { fr, en: enUS, nl };
 
@@ -66,17 +67,17 @@ export default function AgendaScreen() {
   }, [queryClient]);
 
   const dayAppointments = useMemo(() => {
-    return (appointments as any[]).filter((apt: any) => {
+    return appointments.filter((apt) => {
       return isSameDay(parseISO(apt.startAt), selectedDay);
     });
   }, [appointments, selectedDay]);
 
   const upcomingSections = useMemo(() => {
     if (viewMode !== "upcoming") return [];
-    const sorted = [...(appointments as any[])].sort(
-      (a: any, b: any) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime()
+    const sorted = [...appointments].sort(
+      (a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime()
     );
-    const groups: Record<string, any[]> = {};
+    const groups: Record<string, Appointment[]> = {};
     for (const apt of sorted) {
       const key = format(parseISO(apt.startAt), "EEEE d MMMM", { locale });
       if (!groups[key]) groups[key] = [];
@@ -157,11 +158,13 @@ export default function AgendaScreen() {
   }, [currentDate]);
 
   const getApptCountForDay = (day: Date) => {
-    return (appointments as any[]).filter((apt: any) => isSameDay(parseISO(apt.startAt), day)).length;
+    return appointments.filter((apt) => isSameDay(parseISO(apt.startAt), day)).length;
   };
 
-  const renderAppointment = (item: any) => (
-    <View style={[s.card, { backgroundColor: colors.card, borderColor: item.confirmed === false ? "#f59e0b30" : colors.border }]}>
+  const renderAppointment = (item: Appointment) => {
+    const projectColor = item.projects?.color;
+    return (
+    <View style={[s.card, { backgroundColor: colors.card, borderColor: item.confirmed === false ? "#f59e0b30" : projectColor ? `${projectColor}30` : colors.border, borderLeftWidth: projectColor ? 3 : 1, borderLeftColor: projectColor || (item.confirmed === false ? "#f59e0b30" : colors.border) }]}>
       <View style={s.cardHeader}>
         <View style={{ flex: 1 }}>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
@@ -201,7 +204,8 @@ export default function AgendaScreen() {
         </TouchableOpacity>
       </View>
     </View>
-  );
+    );
+  };
 
   return (
     <View style={[s.container, { backgroundColor: colors.background }]}>
