@@ -199,6 +199,36 @@ async function ensureAppointmentsTable() {
   }
 }
 
+async function ensureProfileTimezone() {
+  try {
+    const { data, error } = await supabaseAdmin.from("profiles").select("timezone").limit(1);
+    if (error && error.message.includes("timezone")) {
+      const supabaseUrl = process.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"] || "";
+      const serviceKey = process.env["SUPABASE_SECRET_KEY"] || "";
+      if (supabaseUrl && serviceKey) {
+        const sql = `ALTER TABLE profiles ADD COLUMN IF NOT EXISTS timezone text DEFAULT 'Europe/Brussels';`;
+        const { error: rpcErr } = await supabaseAdmin.rpc("exec_sql", { query: sql });
+        if (!rpcErr) {
+          logger.info("profiles.timezone column added via RPC");
+        } else {
+          await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${serviceKey}`, "apikey": serviceKey },
+            body: JSON.stringify({ query: sql }),
+          });
+          logger.info("profiles.timezone column add attempted");
+        }
+      } else {
+        logger.warn("profiles.timezone column missing — run: ALTER TABLE profiles ADD COLUMN IF NOT EXISTS timezone text DEFAULT 'Europe/Brussels';");
+      }
+    } else {
+      logger.info("profiles.timezone column OK");
+    }
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "profiles.timezone check failed (non-fatal)");
+  }
+}
+
 const rawPort = process.env["PORT"];
 
 if (!rawPort) {
@@ -227,5 +257,6 @@ app.listen(port, (err) => {
   ensureEmailConnectionsConstraint();
   ensureEmailAttachmentsTable();
   ensureAppointmentsTable();
+  ensureProfileTimezone();
   startAutoSync();
 });

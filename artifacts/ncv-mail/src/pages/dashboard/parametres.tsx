@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Pen, Lock } from "lucide-react";
+import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Pen, Lock, Globe } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
@@ -86,11 +86,13 @@ export default function Parametres() {
   const [showCurrentPwd, setShowCurrentPwd] = useState(false);
   const [showNewPwd, setShowNewPwd] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
+  const [timezone, setTimezone] = useState("Europe/Brussels");
 
   useEffect(() => {
     if (profile) {
       setFullName(profile.fullName);
       setSignature((profile as any).signature || "");
+      setTimezone((profile as any).timezone || "Europe/Brussels");
     }
   }, [profile]);
 
@@ -107,7 +109,7 @@ export default function Parametres() {
 
   const handleSaveProfile = () => {
     updateProfile.mutate(
-      { data: { fullName } },
+      { data: { fullName, timezone } as any },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
@@ -522,7 +524,57 @@ export default function Parametres() {
                     <Label className="text-[12px] text-[#8b9cb3]">{t("settings.fullName")}</Label>
                     <Input value={fullName} onChange={(e) => setFullName(e.target.value)} className="bg-background border-border text-white h-9 text-[13px]" />
                   </div>
-                  <Button onClick={handleSaveProfile} disabled={updateProfile.isPending || fullName === profile?.fullName} size="sm">
+                  <div className="space-y-1.5">
+                    <Label className="text-[12px] text-[#8b9cb3] flex items-center gap-1.5">
+                      <Globe className="w-3 h-3" />
+                      {t("settings.timezone")}
+                    </Label>
+                    <Select value={timezone} onValueChange={setTimezone}>
+                      <SelectTrigger className="bg-background border-border text-white h-9 text-[13px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="bg-card border-border max-h-[300px]">
+                        {[
+                          { value: "Europe/Brussels", label: "Europe/Brussels (CET/CEST)" },
+                          { value: "Europe/Paris", label: "Europe/Paris (CET/CEST)" },
+                          { value: "Europe/London", label: "Europe/London (GMT/BST)" },
+                          { value: "Europe/Amsterdam", label: "Europe/Amsterdam (CET/CEST)" },
+                          { value: "Europe/Berlin", label: "Europe/Berlin (CET/CEST)" },
+                          { value: "Europe/Zurich", label: "Europe/Zurich (CET/CEST)" },
+                          { value: "Europe/Luxembourg", label: "Europe/Luxembourg (CET/CEST)" },
+                          { value: "Europe/Madrid", label: "Europe/Madrid (CET/CEST)" },
+                          { value: "Europe/Rome", label: "Europe/Rome (CET/CEST)" },
+                          { value: "Europe/Lisbon", label: "Europe/Lisbon (WET/WEST)" },
+                          { value: "Europe/Warsaw", label: "Europe/Warsaw (CET/CEST)" },
+                          { value: "Europe/Bucharest", label: "Europe/Bucharest (EET/EEST)" },
+                          { value: "Europe/Athens", label: "Europe/Athens (EET/EEST)" },
+                          { value: "Europe/Helsinki", label: "Europe/Helsinki (EET/EEST)" },
+                          { value: "Europe/Moscow", label: "Europe/Moscow (MSK)" },
+                          { value: "America/New_York", label: "America/New_York (EST/EDT)" },
+                          { value: "America/Chicago", label: "America/Chicago (CST/CDT)" },
+                          { value: "America/Denver", label: "America/Denver (MST/MDT)" },
+                          { value: "America/Los_Angeles", label: "America/Los_Angeles (PST/PDT)" },
+                          { value: "America/Toronto", label: "America/Toronto (EST/EDT)" },
+                          { value: "America/Montreal", label: "America/Montreal (EST/EDT)" },
+                          { value: "America/Sao_Paulo", label: "America/Sao_Paulo (BRT)" },
+                          { value: "Asia/Dubai", label: "Asia/Dubai (GST)" },
+                          { value: "Asia/Kolkata", label: "Asia/Kolkata (IST)" },
+                          { value: "Asia/Singapore", label: "Asia/Singapore (SGT)" },
+                          { value: "Asia/Tokyo", label: "Asia/Tokyo (JST)" },
+                          { value: "Asia/Shanghai", label: "Asia/Shanghai (CST)" },
+                          { value: "Australia/Sydney", label: "Australia/Sydney (AEST/AEDT)" },
+                          { value: "Pacific/Auckland", label: "Pacific/Auckland (NZST/NZDT)" },
+                          { value: "Africa/Casablanca", label: "Africa/Casablanca (WET/WEST)" },
+                          { value: "Africa/Johannesburg", label: "Africa/Johannesburg (SAST)" },
+                        ].map((tz) => (
+                          <SelectItem key={tz.value} value={tz.value} className="text-[13px]">
+                            {tz.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <Button onClick={handleSaveProfile} disabled={updateProfile.isPending || (fullName === profile?.fullName && timezone === ((profile as any)?.timezone || "Europe/Brussels"))} size="sm">
                     {updateProfile.isPending ? t("settings.saving") : t("common.save")}
                   </Button>
                 </div>

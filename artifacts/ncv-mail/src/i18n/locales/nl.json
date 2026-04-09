@@ -715,6 +715,7 @@
     "urgentAlertsDesc": "Melding voor kritieke e-mails.",
     "accountInfo": "Accountinformatie",
     "fullName": "Volledige naam",
+    "timezone": "Tijdzone",
     "email": "E-mail",
     "autoArchive": "Automatische archivering",
     "autoArchiveDesc": "AI archiveert e-mails met lage prioriteit (nieuwsbrieven, advertenties, meldingen). Dringende en gemiddelde e-mails blijven in de inbox.",

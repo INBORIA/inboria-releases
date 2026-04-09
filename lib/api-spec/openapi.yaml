@@ -2359,6 +2359,9 @@ components:
         signature:
           type: string
           default: ""
+        timezone:
+          type: string
+          default: "Europe/Brussels"
         createdAt:
           type: string
           format: date-time
@@ -2392,6 +2395,8 @@ components:
           type: string
           enum: [fr, en, nl]
         signature:
+          type: string
+        timezone:
           type: string
 
     RegisterPushTokenBody:

@@ -13,4 +13,5 @@ export interface UpdateProfileBody {
   seats?: number;
   aiLanguage?: UpdateProfileBodyAiLanguage;
   signature?: string;
+  timezone?: string;
 }

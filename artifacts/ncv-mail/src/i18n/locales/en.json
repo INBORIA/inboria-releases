@@ -715,6 +715,7 @@
     "urgentAlertsDesc": "Notification for critical emails.",
     "accountInfo": "Account information",
     "fullName": "Full name",
+    "timezone": "Timezone",
     "email": "Email",
     "autoArchive": "Auto-archive",
     "autoArchiveDesc": "AI archives low-priority emails (newsletters, ads, notifications). Urgent and medium emails stay in inbox.",

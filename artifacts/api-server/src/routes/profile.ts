@@ -58,6 +58,7 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       emailsQuota: profile.emails_quota ?? 100,
       aiLanguage: profile.ai_language || "fr",
       signature: profile.signature || "",
+      timezone: profile.timezone || "Europe/Brussels",
       createdAt: profile.created_at,
       organisationId,
       organisationName,
@@ -80,6 +81,7 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
     if (parsed.data.fullName !== undefined) updates.full_name = parsed.data.fullName;
     if (parsed.data.aiLanguage !== undefined) updates.ai_language = parsed.data.aiLanguage;
     if (parsed.data.signature !== undefined) updates.signature = parsed.data.signature;
+    if ((parsed.data as any).timezone !== undefined) updates.timezone = (parsed.data as any).timezone;
     if (parsed.data.plan !== undefined) {
       if (parsed.data.plan === "essai") {
         res.status(403).json({ error: "Impossible de revenir au plan Essai" });
@@ -121,6 +123,7 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
       emailsQuota: profile.emails_quota ?? 100,
       aiLanguage: profile.ai_language || "fr",
       signature: profile.signature || "",
+      timezone: profile.timezone || "Europe/Brussels",
       createdAt: profile.created_at,
     });
   } catch {

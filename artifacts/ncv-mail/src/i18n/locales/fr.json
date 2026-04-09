@@ -715,6 +715,7 @@
     "urgentAlertsDesc": "Notification pour les emails critiques.",
     "accountInfo": "Informations du compte",
     "fullName": "Nom complet",
+    "timezone": "Fuseau horaire",
     "email": "Email",
     "autoArchive": "Archivage automatique",
     "autoArchiveDesc": "L'IA archive les emails à faible priorité (newsletters, pubs, notifications). Les emails urgents et moyens restent dans la boîte de réception.",

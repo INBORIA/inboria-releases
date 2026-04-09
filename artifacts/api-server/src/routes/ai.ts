@@ -620,6 +620,13 @@ router.post("/ai/extract-appointment", requireAuth, async (req, res): Promise<vo
     const { emailId } = req.body;
     if (!emailId) { res.status(400).json({ error: "emailId requis" }); return; }
 
+    const { data: extractProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("timezone")
+      .eq("id", req.userId!)
+      .single();
+    const extractTimezone = extractProfile?.timezone || "Europe/Brussels";
+
     const { data: email, error: emailErr } = await supabaseAdmin
       .from("emails")
       .select("id, sender, subject, body, summary")
@@ -639,8 +646,8 @@ router.post("/ai/extract-appointment", requireAuth, async (req, res): Promise<vo
           role: "system",
           content: `Tu analyses un email pour extraire les informations d'un rendez-vous potentiel.
 La date actuelle est le ${new Date().toISOString().split("T")[0]} (année ${new Date().getFullYear()}).
-Le fuseau horaire est Europe/Brussels (UTC+1 en hiver, UTC+2 en été).
-IMPORTANT: Utilise l'année ${new Date().getFullYear()} si aucune année n'est précisée. Inclus le décalage UTC dans les dates ISO (ex: "2026-04-10T11:00:00+02:00").
+Le fuseau horaire de l'utilisateur est ${extractTimezone}.
+IMPORTANT: Utilise l'année ${new Date().getFullYear()} si aucune année n'est précisée. Inclus le décalage UTC correct pour le fuseau ${extractTimezone} dans les dates ISO (ex: "2026-04-10T11:00:00+02:00" pour CEST).
 Réponds en JSON strict:
 {
   "title": "titre du RDV (utilise le sujet de l'email si pas de titre explicite)",
@@ -686,6 +693,13 @@ router.post("/ai/detect-appointments", requireAuth, async (req, res): Promise<vo
     const lang = req.body?.lang || "fr";
     const emailId = req.body?.emailId;
     const forceRescan = req.body?.forceRescan || false;
+
+    const { data: userProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("timezone")
+      .eq("id", req.userId!)
+      .single();
+    const userTimezone = userProfile?.timezone || "Europe/Brussels";
 
     if (forceRescan) {
       try {
@@ -744,10 +758,10 @@ router.post("/ai/detect-appointments", requireAuth, async (req, res): Promise<vo
           role: "system",
           content: `Tu es un assistant qui détecte les rendez-vous, réunions et événements mentionnés dans des emails. ${langInstruction}
 La date actuelle est le ${new Date().toISOString().split("T")[0]} (année ${new Date().getFullYear()}).
-Le fuseau horaire de l'utilisateur est Europe/Brussels (UTC+1 en hiver, UTC+2 en été).
+Le fuseau horaire de l'utilisateur est ${userTimezone}.
 Analyse les emails et identifie les rendez-vous avec date, heure, lieu et description.
 IMPORTANT: Utilise l'année ${new Date().getFullYear()} pour les dates si aucune année n'est précisée dans l'email.
-IMPORTANT: Les heures dans les emails sont en heure locale belge (Europe/Brussels). Tu DOIS inclure le décalage UTC dans les dates ISO. Par exemple: "2026-04-10T11:00:00+02:00" pour 11h en été (CEST).
+IMPORTANT: Les heures dans les emails sont en heure locale de l'utilisateur (${userTimezone}). Tu DOIS inclure le décalage UTC correct dans les dates ISO. Par exemple pour CEST: "2026-04-10T11:00:00+02:00".
 Renvoie un JSON avec le format:
 { "appointments": [{ "title": "...", "description": "...", "location": "...", "startAt": "ISO datetime with offset", "endAt": "ISO datetime with offset", "allDay": false, "emailId": email_id_number, "participants": "..." }] }
 N'invente PAS de RDV. Détecte uniquement si une date/heure concrète est mentionnée. Si pas de rendez-vous, renvoie un tableau vide.`,

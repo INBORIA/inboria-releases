@@ -58,6 +58,7 @@ export interface UserProfile {
   emailsQuota: number;
   aiLanguage?: UserProfileAiLanguage;
   signature?: string;
+  timezone?: string;
   createdAt: string;
   /** @nullable */
   organisationId?: string | null;
@@ -86,6 +87,7 @@ export interface UpdateProfileBody {
   seats?: number;
   aiLanguage?: UpdateProfileBodyAiLanguage;
   signature?: string;
+  timezone?: string;
 }
 
 export interface RegisterPushTokenBody {

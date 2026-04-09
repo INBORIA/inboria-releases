@@ -18,6 +18,7 @@ export interface UserProfile {
   emailsQuota: number;
   aiLanguage?: UserProfileAiLanguage;
   signature?: string;
+  timezone?: string;
   createdAt: Date;
   /** @nullable */
   organisationId?: string | null;

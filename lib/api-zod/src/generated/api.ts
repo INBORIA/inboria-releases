@@ -44,6 +44,7 @@ export const LoginBody = zod.object({
 
 export const loginResponseUserAiLanguageDefault = `fr`;
 export const loginResponseUserSignatureDefault = ``;
+export const loginResponseUserTimezoneDefault = `Europe/Brussels`;
 
 export const LoginResponse = zod.object({
   user: zod.object({
@@ -58,6 +59,7 @@ export const LoginResponse = zod.object({
       .enum(["fr", "en", "nl"])
       .default(loginResponseUserAiLanguageDefault),
     signature: zod.string().default(loginResponseUserSignatureDefault),
+    timezone: zod.string().default(loginResponseUserTimezoneDefault),
     createdAt: zod.coerce.date(),
     organisationId: zod.string().nullish(),
     organisationName: zod.string().nullish(),
@@ -72,6 +74,7 @@ export const LoginResponse = zod.object({
  */
 export const getMeResponseAiLanguageDefault = `fr`;
 export const getMeResponseSignatureDefault = ``;
+export const getMeResponseTimezoneDefault = `Europe/Brussels`;
 
 export const GetMeResponse = zod.object({
   id: zod.number(),
@@ -85,6 +88,7 @@ export const GetMeResponse = zod.object({
     .enum(["fr", "en", "nl"])
     .default(getMeResponseAiLanguageDefault),
   signature: zod.string().default(getMeResponseSignatureDefault),
+  timezone: zod.string().default(getMeResponseTimezoneDefault),
   createdAt: zod.coerce.date(),
   organisationId: zod.string().nullish(),
   organisationName: zod.string().nullish(),
@@ -98,6 +102,7 @@ export const GetMeResponse = zod.object({
  */
 export const getProfileResponseAiLanguageDefault = `fr`;
 export const getProfileResponseSignatureDefault = ``;
+export const getProfileResponseTimezoneDefault = `Europe/Brussels`;
 
 export const GetProfileResponse = zod.object({
   id: zod.number(),
@@ -111,6 +116,7 @@ export const GetProfileResponse = zod.object({
     .enum(["fr", "en", "nl"])
     .default(getProfileResponseAiLanguageDefault),
   signature: zod.string().default(getProfileResponseSignatureDefault),
+  timezone: zod.string().default(getProfileResponseTimezoneDefault),
   createdAt: zod.coerce.date(),
   organisationId: zod.string().nullish(),
   organisationName: zod.string().nullish(),
@@ -128,10 +134,12 @@ export const UpdateProfileBody = zod.object({
   seats: zod.number().optional(),
   aiLanguage: zod.enum(["fr", "en", "nl"]).optional(),
   signature: zod.string().optional(),
+  timezone: zod.string().optional(),
 });
 
 export const updateProfileResponseAiLanguageDefault = `fr`;
 export const updateProfileResponseSignatureDefault = ``;
+export const updateProfileResponseTimezoneDefault = `Europe/Brussels`;
 
 export const UpdateProfileResponse = zod.object({
   id: zod.number(),
@@ -145,6 +153,7 @@ export const UpdateProfileResponse = zod.object({
     .enum(["fr", "en", "nl"])
     .default(updateProfileResponseAiLanguageDefault),
   signature: zod.string().default(updateProfileResponseSignatureDefault),
+  timezone: zod.string().default(updateProfileResponseTimezoneDefault),
   createdAt: zod.coerce.date(),
   organisationId: zod.string().nullish(),
   organisationName: zod.string().nullish(),
