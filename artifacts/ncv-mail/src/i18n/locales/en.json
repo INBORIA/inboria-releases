@@ -473,7 +473,9 @@
     "autoCreatedDesc": "Tasks will be automatically created from your emails.",
     "viewEmail": "View email",
     "sourceEmail": "Source email",
-    "fromEmail": "from an email"
+    "fromEmail": "from an email",
+    "sourceAi": "AI",
+    "sourceManual": "Manual"
   },
   "tasksAndFollowup": {
     "title": "Tasks & Follow-up",

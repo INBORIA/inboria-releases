@@ -473,7 +473,9 @@
     "autoCreatedDesc": "Les tâches seront créées automatiquement à partir de vos emails.",
     "viewEmail": "Voir l'email",
     "sourceEmail": "Email source",
-    "fromEmail": "depuis un email"
+    "fromEmail": "depuis un email",
+    "sourceAi": "IA",
+    "sourceManual": "Manuel"
   },
   "tasksAndFollowup": {
     "title": "Tâches & Suivi",

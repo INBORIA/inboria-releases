@@ -141,6 +141,7 @@ export * from "./sharedMailboxMember";
 export * from "./stripeWebhook200";
 export * from "./stripeWebhookBody";
 export * from "./task";
+export * from "./taskSource";
 export * from "./teamDashboard";
 export * from "./teamMemberStats";
 export * from "./triageEmailBody";

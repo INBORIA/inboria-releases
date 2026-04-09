@@ -186,6 +186,7 @@ router.post("/webhook/email", async (req, res): Promise<void> => {
         email_id: insertedEmail.id,
         title,
         done: false,
+        source: "ai",
       }));
       await supabaseAdmin.from("tasks").insert(taskInserts);
     }
@@ -299,6 +300,7 @@ router.post("/webhook/email/batch", async (req, res): Promise<void> => {
               email_id: inserted.id,
               title,
               done: false,
+              source: "ai",
             }))
           );
         }

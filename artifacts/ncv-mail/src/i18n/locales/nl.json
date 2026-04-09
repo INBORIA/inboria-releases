@@ -473,7 +473,9 @@
     "autoCreatedDesc": "Taken worden automatisch aangemaakt vanuit uw e-mails.",
     "viewEmail": "E-mail bekijken",
     "sourceEmail": "Bron e-mail",
-    "fromEmail": "vanuit een e-mail"
+    "fromEmail": "vanuit een e-mail",
+    "sourceAi": "AI",
+    "sourceManual": "Handmatig"
   },
   "tasksAndFollowup": {
     "title": "Taken & Opvolging",

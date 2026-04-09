@@ -318,6 +318,9 @@ export default function Taches() {
                         {task.title}
                       </p>
                       <div className="flex flex-wrap items-center gap-3 text-[11px] text-[#8b9cb3]">
+                        <Badge className={`text-[10px] px-1.5 py-0 h-[18px] font-medium border ${task.source === "ai" ? "bg-violet-500/15 text-violet-400 border-violet-500/25" : "bg-sky-500/15 text-sky-400 border-sky-500/25"}`}>
+                          {task.source === "ai" ? <><Sparkles className="w-2.5 h-2.5 mr-0.5" />{t("tasks.sourceAi")}</> : t("tasks.sourceManual")}
+                        </Badge>
                         {task.dueDate && (
                           <div className={`flex items-center gap-1 ${new Date(task.dueDate) < new Date() && !task.done ? "text-red-400" : ""}`}>
                             <Calendar className="w-3 h-3" />

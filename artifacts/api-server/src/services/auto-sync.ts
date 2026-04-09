@@ -383,6 +383,7 @@ async function saveEmailWithTriage(
         email_id: inserted.id,
         title,
         done: false,
+        source: "ai",
       }))
     );
     if (taskErr) {

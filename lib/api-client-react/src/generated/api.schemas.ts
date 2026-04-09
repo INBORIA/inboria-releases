@@ -287,10 +287,18 @@ export interface GeneratePackResponse {
   categories: GeneratePackResponseCategoriesItem[];
 }
 
+export type TaskSource = (typeof TaskSource)[keyof typeof TaskSource];
+
+export const TaskSource = {
+  ai: "ai",
+  manual: "manual",
+} as const;
+
 export interface Task {
   id: number;
   title: string;
   done: boolean;
+  source?: TaskSource;
   /** @nullable */
   dueDate?: string | null;
   /** @nullable */

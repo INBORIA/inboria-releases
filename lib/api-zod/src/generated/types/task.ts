@@ -5,11 +5,13 @@
  * NCV Mail API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { TaskSource } from "./taskSource";
 
 export interface Task {
   id: number;
   title: string;
   done: boolean;
+  source?: TaskSource;
   /** @nullable */
   dueDate?: Date | null;
   /** @nullable */
