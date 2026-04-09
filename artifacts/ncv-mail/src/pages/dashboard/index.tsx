@@ -43,7 +43,7 @@ import { translateCategoryName } from "@/lib/category-translations";
 import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, Eye, CalendarDays, Download } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect, useRef, useCallback } from "react";
@@ -911,7 +911,29 @@ export default function Dashboard() {
       const pOrder: Record<string, number> = { urgent: 0, moyen: 1, faible: 2 };
       return (pOrder[a.priority] ?? 2) - (pOrder[b.priority] ?? 2);
     });
-  const selectedEmail = emails?.find((e) => e.id === selectedEmailId);
+  const selectedEmailFromList = emails?.find((e) => e.id === selectedEmailId);
+
+  const { data: emailDetailData } = useQuery({
+    queryKey: ["email-detail", selectedEmailId],
+    queryFn: async () => {
+      if (!selectedEmailId) return null;
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) return null;
+      const resp = await fetch(`${import.meta.env.BASE_URL}api/emails/${selectedEmailId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!resp.ok) return null;
+      return resp.json();
+    },
+    enabled: !!selectedEmailId,
+    staleTime: 30_000,
+  });
+
+  const selectedEmail = emailDetailData
+    ? { ...selectedEmailFromList, ...emailDetailData }
+    : selectedEmailFromList;
 
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const loadMore = useCallback(() => {
