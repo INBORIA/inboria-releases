@@ -1,12 +1,14 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useListTasks, useUpdateTask, useDeleteTask, getListTasksQueryKey } from "@workspace/api-client-react";
+import { useListTasks, useUpdateTask, useDeleteTask, getListTasksQueryKey, useSendEmail, useGenerateDraft, useGetProfile } from "@workspace/api-client-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
-import { Calendar, Mail, CheckSquare, Clock, Trash2, X, User, Sparkles, Tag, Download } from "lucide-react";
+import { Calendar, Mail, CheckSquare, Clock, Trash2, X, User, Sparkles, Tag, Download, Reply, Send, Wand2, Loader2 } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,7 +16,7 @@ import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
-import { useGetProfile } from "@workspace/api-client-react";
+import { FileAttachInput, type UploadedFile } from "@/components/FileAttachInput";
 import { useTranslation } from "react-i18next";
 
 const PRIORITY_BADGE_STYLES: Record<string, { bg: string; text: string; border: string; labelKey: string }> = {
@@ -36,6 +38,55 @@ export default function Taches() {
   });
 
   const { toast } = useToast();
+  const sendEmailMut = useSendEmail();
+  const generateDraftMut = useGenerateDraft();
+  const [replyOpen, setReplyOpen] = useState(false);
+  const [replyTo, setReplyTo] = useState("");
+  const [replySubject, setReplySubject] = useState("");
+  const [replyText, setReplyText] = useState("");
+  const [replyAttachments, setReplyAttachments] = useState<UploadedFile[]>([]);
+
+  const handleSendReply = () => {
+    if (!replyTo.trim() || !replySubject.trim() || !replyText.trim()) return;
+    const uploadIds = replyAttachments.map((a) => a.uploadId).filter(Boolean);
+    sendEmailMut.mutate(
+      { data: { to: replyTo, subject: replySubject, body: replyText, replyToEmailId: emailDetailTask?.emailId ?? null, attachments: uploadIds.length > 0 ? uploadIds : undefined } },
+      {
+        onSuccess: () => {
+          toast({ title: t("inbox.emailSent") });
+          setReplyOpen(false);
+          setReplyTo("");
+          setReplySubject("");
+          setReplyText("");
+          setReplyAttachments([]);
+        },
+        onError: (err: any) => {
+          const msg = err?.data?.error || err?.message || t("inbox.sendError");
+          toast({ variant: "destructive", title: t("common.error"), description: msg });
+        },
+      }
+    );
+  };
+
+  const handleGenerateDraft = () => {
+    if (!emailDetailTask?.emailId) return;
+    setReplyTo(emailDetailTask.emailSenderEmail || emailDetailTask.emailSender || "");
+    setReplySubject(emailDetailTask.emailSubject?.startsWith("Re:") ? emailDetailTask.emailSubject : `Re: ${emailDetailTask.emailSubject}`);
+    setReplyOpen(true);
+    generateDraftMut.mutate(
+      { data: { emailId: emailDetailTask.emailId } },
+      {
+        onSuccess: (data) => {
+          setReplyText((data as any).draft);
+          toast({ title: t("inbox.draftGenerated") });
+        },
+        onError: () => {
+          toast({ title: t("inbox.draftError") });
+        },
+      }
+    );
+  };
+
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
 
@@ -210,7 +261,7 @@ export default function Taches() {
         </div>
       </div>
 
-      <Dialog open={!!emailDetailTask} onOpenChange={(open) => !open && setEmailDetailTask(null)}>
+      <Dialog open={!!emailDetailTask} onOpenChange={(open) => { if (!open) { setEmailDetailTask(null); setReplyOpen(false); setReplyTo(""); setReplySubject(""); setReplyText(""); setReplyAttachments([]); } }}>
         <DialogContent className="bg-card border-border max-w-2xl max-h-[80vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-white text-[14px] pr-6">
@@ -260,6 +311,88 @@ export default function Taches() {
               {emailDetailTask.emailBody && (
                 <div className="border border-border rounded-lg p-3">
                   <EmailBodyRenderer body={emailDetailTask.emailBody} />
+                </div>
+              )}
+
+              <div className="flex items-center gap-1.5 pt-1">
+                <Button
+                  size="sm"
+                  className="gap-1.5 h-7 text-[11px]"
+                  onClick={() => {
+                    if (!replyOpen) {
+                      setReplyTo(emailDetailTask.emailSenderEmail || emailDetailTask.emailSender || "");
+                      setReplySubject(emailDetailTask.emailSubject?.startsWith("Re:") ? emailDetailTask.emailSubject : `Re: ${emailDetailTask.emailSubject}`);
+                      setReplyText((profile as any)?.signature ? `\n\n${(profile as any).signature}` : "");
+                    }
+                    setReplyOpen(!replyOpen);
+                  }}
+                >
+                  <Reply className="w-3 h-3" />
+                  {t("inbox.reply")}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+                  disabled={generateDraftMut.isPending}
+                  onClick={handleGenerateDraft}
+                >
+                  {generateDraftMut.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
+                  {generateDraftMut.isPending ? t("inbox.generating") : t("inbox.aiReply")}
+                </Button>
+              </div>
+
+              {replyOpen && (
+                <div className="space-y-2.5 border-t border-border pt-3">
+                  <div>
+                    <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
+                    <Input
+                      value={replyTo}
+                      onChange={(e) => setReplyTo(e.target.value)}
+                      placeholder="email@exemple.com"
+                      className="bg-background border-border text-white text-[12px] h-8"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.subject")}</label>
+                    <Input
+                      value={replySubject}
+                      onChange={(e) => setReplySubject(e.target.value)}
+                      placeholder={t("inbox.subject")}
+                      className="bg-background border-border text-white text-[12px] h-8"
+                    />
+                  </div>
+                  <div>
+                    <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
+                    <Textarea
+                      value={replyText}
+                      onChange={(e) => setReplyText(e.target.value)}
+                      placeholder={t("inbox.replyPlaceholder")}
+                      className="h-24 bg-background border-border text-white text-[12px] resize-none"
+                    />
+                  </div>
+                  <div className="flex items-center gap-2 justify-between">
+                    <FileAttachInput files={replyAttachments} onChange={setReplyAttachments} />
+                    <div className="flex items-center gap-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => { setReplyOpen(false); setReplyText(""); setReplyTo(""); setReplySubject(""); setReplyAttachments([]); }}
+                        className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
+                      >
+                        {t("common.cancel")}
+                      </Button>
+                      <Button
+                        size="sm"
+                        className="gap-1.5 h-7 text-[11px]"
+                        disabled={sendEmailMut.isPending || !replyTo.trim() || !replySubject.trim() || !replyText.trim()}
+                        onClick={handleSendReply}
+                      >
+                        <Send className="w-3 h-3" />
+                        {sendEmailMut.isPending ? t("inbox.sending") : t("inbox.send")}
+                      </Button>
+                    </div>
+                  </div>
                 </div>
               )}
 
