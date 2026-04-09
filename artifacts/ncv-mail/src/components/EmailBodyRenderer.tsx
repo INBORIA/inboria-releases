@@ -213,6 +213,13 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
     );
   }
 
+  const hasDarkTextColors = /color\s*:\s*#[0-4][0-9a-f]{2}[0-9a-f]{3}\b/i.test(content) ||
+    /color\s*:\s*#[0-4][0-9a-f]{2}\b/i.test(content) ||
+    /color\s*:\s*(?:black|#000|rgb\s*\(\s*0)/i.test(content) ||
+    /color\s*:\s*#[0-4][0-9a-f]{5}\b/i.test(content);
+
+  const useWhiteBg = hasDarkTextColors || /<!DOCTYPE/i.test(content);
+
   const wrappedHtml = `
     <!DOCTYPE html>
     <html>
@@ -223,12 +230,12 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
         * { box-sizing: border-box; }
         body {
           margin: 0;
-          padding: 0;
+          padding: ${useWhiteBg ? "12px" : "0"};
           font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
           font-size: 13px;
           line-height: 1.6;
-          color: rgba(255,255,255,0.8);
-          background: transparent;
+          color: ${useWhiteBg ? "#222" : "rgba(255,255,255,0.8)"};
+          background: ${useWhiteBg ? "#ffffff" : "transparent"};
           word-wrap: break-word;
           overflow-wrap: break-word;
         }
@@ -250,8 +257,9 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
       style={{
         width: "100%",
         height: iframeHeight,
-        border: "none",
-        background: "transparent",
+        border: useWhiteBg ? "1px solid rgba(255,255,255,0.1)" : "none",
+        borderRadius: useWhiteBg ? "6px" : "0",
+        background: useWhiteBg ? "#ffffff" : "transparent",
         display: "block",
       }}
       title="Contenu de l'email"
