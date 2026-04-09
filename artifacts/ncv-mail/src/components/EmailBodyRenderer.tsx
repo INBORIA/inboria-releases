@@ -7,10 +7,12 @@ function isHtml(text: string): boolean {
 function hasMimeArtifacts(text: string): boolean {
   return /------=_Part_/i.test(text) ||
     /Content-Type:\s*text\//i.test(text) ||
-    /Content-Transfer-Encoding:\s*(quoted-printable|base64)/i.test(text);
+    /Content-Transfer-Encoding:\s*(quoted-printable|base64)/i.test(text) ||
+    /^MIME-Version:/im.test(text) ||
+    /boundary=/i.test(text);
 }
 
-function decodeQuotedPrintableTokens(text: string): string {
+function decodeQuotedPrintable(text: string): string {
   return text
     .replace(/=\r?\n/g, "")
     .replace(/= /g, "")
@@ -18,6 +20,14 @@ function decodeQuotedPrintableTokens(text: string): string {
       const code = parseInt(hex, 16);
       return String.fromCharCode(code);
     });
+}
+
+function decodeBase64Content(text: string): string {
+  try {
+    return atob(text.replace(/\s/g, ""));
+  } catch {
+    return text;
+  }
 }
 
 function decodeUtf8Bytes(text: string): string {
@@ -37,40 +47,75 @@ function decodeUtf8Bytes(text: string): string {
   }
 }
 
-function stripMimeArtifacts(raw: string): string {
-  let text = raw;
+function extractMimePart(raw: string): string {
+  const boundaryMatch = raw.match(/boundary="?([^"\s;]+)"?/i);
+  if (!boundaryMatch) {
+    const ctMatch = raw.match(/Content-Type:\s*text\/(html|plain)[^]*?(?:\r?\n\r?\n)([\s\S]*)/i);
+    if (ctMatch) {
+      const encoding = raw.match(/Content-Transfer-Encoding:\s*(\S+)/i)?.[1]?.toLowerCase();
+      let content = ctMatch[2];
+      if (encoding === "quoted-printable") {
+        content = decodeQuotedPrintable(content);
+        content = decodeUtf8Bytes(content);
+      } else if (encoding === "base64") {
+        content = decodeBase64Content(content);
+      }
+      return content.trim();
+    }
+    return "";
+  }
 
-  text = text.replace(/------=_Part_[^\s]*/g, "");
+  const boundary = boundaryMatch[1];
+  const parts = raw.split(new RegExp(`--${boundary.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}`, "g"));
 
-  text = text.replace(/Content-Type:\s*text\/[^;]*;\s*charset=[^\s]*/gi, "");
-  text = text.replace(/Content-Type:\s*multipart\/[^;]*;\s*/gi, "");
-  text = text.replace(/Content-Type:\s*\S+/gi, "");
-  text = text.replace(/Content-Transfer-Encoding:\s*\S+/gi, "");
-  text = text.replace(/Content-Disposition:\s*\S+/gi, "");
+  let htmlPart = "";
+  let textPart = "";
 
-  text = text.replace(/MIME-Version:\s*[\d.]+/gi, "");
-  text = text.replace(/boundary="?[^\s"]*"?/gi, "");
+  for (const part of parts) {
+    if (part.trim() === "--" || !part.trim()) continue;
 
-  text = text.replace(/--\s*$/g, "");
+    const ctypeMatch = part.match(/Content-Type:\s*text\/(html|plain)\b/i);
+    if (!ctypeMatch) {
+      const nestedBoundary = part.match(/boundary="?([^"\s;]+)"?/i);
+      if (nestedBoundary) {
+        const nested = extractMimePart(part);
+        if (nested) return nested;
+      }
+      continue;
+    }
 
-  let decoded = decodeQuotedPrintableTokens(text);
-  decoded = decodeUtf8Bytes(decoded);
+    const type = ctypeMatch[1].toLowerCase();
+    const encoding = part.match(/Content-Transfer-Encoding:\s*(\S+)/i)?.[1]?.toLowerCase();
 
-  decoded = decoded.replace(/\s{3,}/g, "\n\n");
-  decoded = decoded.trim();
+    const headerEnd = part.search(/\r?\n\r?\n/);
+    if (headerEnd === -1) continue;
+    let content = part.slice(headerEnd).replace(/^\r?\n\r?\n/, "");
 
-  return decoded;
+    content = content.replace(/--\s*$/, "").trim();
+
+    if (encoding === "quoted-printable") {
+      content = decodeQuotedPrintable(content);
+      content = decodeUtf8Bytes(content);
+    } else if (encoding === "base64") {
+      content = decodeBase64Content(content);
+    }
+
+    if (type === "html" && content.trim()) {
+      htmlPart = content.trim();
+    } else if (type === "plain" && content.trim()) {
+      textPart = content.trim();
+    }
+  }
+
+  return htmlPart || textPart;
 }
 
 function cleanPlainText(text: string): string {
   let cleaned = text;
 
   cleaned = cleaned.replace(/https?:\/\/[^\s)>\]]{80,}/g, "[lien]");
-
   cleaned = cleaned.replace(/(\[lien\]\s*){3,}/g, "[lien]\n");
-
   cleaned = cleaned.replace(/^[-_=]{3,}\s*$/gm, "---");
-
   cleaned = cleaned.replace(/\b[A-Za-z0-9+/=]{60,}\b/g, "");
 
   cleaned = cleaned.replace(/(&[a-z]+;|&#\d+;)/gi, (match) => {
@@ -89,12 +134,32 @@ function cleanPlainText(text: string): string {
 
 export function cleanEmailBody(raw: string): string {
   if (!raw) return "";
+
   if (hasMimeArtifacts(raw)) {
-    return cleanPlainText(stripMimeArtifacts(raw));
+    const extracted = extractMimePart(raw);
+    if (extracted) {
+      if (isHtml(extracted)) return extracted;
+      return cleanPlainText(extracted);
+    }
+    let fallback = raw;
+    fallback = fallback.replace(/------=_Part_[^\s]*/g, "");
+    fallback = fallback.replace(/Content-Type:\s*[^\r\n]*/gi, "");
+    fallback = fallback.replace(/Content-Transfer-Encoding:\s*\S+/gi, "");
+    fallback = fallback.replace(/Content-Disposition:\s*\S+/gi, "");
+    fallback = fallback.replace(/MIME-Version:\s*[\d.]+/gi, "");
+    fallback = fallback.replace(/boundary="?[^\s"]*"?/gi, "");
+    fallback = fallback.replace(/--\s*$/g, "");
+    fallback = decodeQuotedPrintable(fallback);
+    fallback = decodeUtf8Bytes(fallback);
+    fallback = fallback.replace(/\s{3,}/g, "\n\n");
+    fallback = fallback.trim();
+    return cleanPlainText(fallback);
   }
+
   if (!isHtml(raw)) {
     return cleanPlainText(raw);
   }
+
   return raw;
 }
 
