@@ -1366,56 +1366,6 @@ export default function Dashboard() {
               </DialogContent>
             </Dialog>
 
-            <Dialog open={isSimulateOpen} onOpenChange={setIsSimulateOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" size="sm" className="hidden sm:flex gap-1.5 h-8 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]">
-                  <Sparkles className="w-3 h-3 text-primary" />
-                  {t("inbox.quickTriage")}
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="bg-card border-border">
-                <DialogHeader>
-                  <DialogTitle className="text-white text-[14px]">{t("inbox.quickTriage")}</DialogTitle>
-                </DialogHeader>
-                <Form {...form}>
-                  <form onSubmit={form.handleSubmit(onSubmitTriage)} className="space-y-3">
-                    <FormField
-                      control={form.control}
-                      name="sender"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-[#8b9cb3] text-[11px]">{t("inbox.sender")}</FormLabel>
-                          <FormControl><Input placeholder="client@entreprise.com" className="bg-background border-border text-white text-[12px] h-8" {...field} /></FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="subject"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-[#8b9cb3] text-[11px]">{t("inbox.subject")}</FormLabel>
-                          <FormControl><Input placeholder={t("inbox.subject")} className="bg-background border-border text-white text-[12px] h-8" {...field} /></FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <FormField
-                      control={form.control}
-                      name="body"
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="text-[#8b9cb3] text-[11px]">{t("inbox.message")}</FormLabel>
-                          <FormControl><Textarea className="h-28 bg-background border-border text-white text-[12px]" placeholder={t("inbox.message")} {...field} /></FormControl>
-                        </FormItem>
-                      )}
-                    />
-                    <Button type="submit" className="w-full h-8 text-[12px]" disabled={triageEmail.isPending}>
-                      {triageEmail.isPending ? t("inbox.generating") : t("inbox.send")}
-                    </Button>
-                  </form>
-                </Form>
-              </DialogContent>
-            </Dialog>
           </div>
 
           <div className="flex items-center gap-1 max-w-[1200px] mx-auto mb-1.5">
