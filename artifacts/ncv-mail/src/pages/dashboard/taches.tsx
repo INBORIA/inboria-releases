@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import {
-  Calendar, Mail, CheckSquare, Clock, Trash2, User, Sparkles, Tag, Download,
+  Calendar, Mail, Clock, Trash2, User, Sparkles, Tag, Download,
   Reply, Send, Wand2, Loader2, Plus, ArrowRight, RotateCcw, CheckCircle2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -37,8 +37,8 @@ const PRIORITY_BADGE_STYLES: Record<string, { bg: string; text: string; border: 
 };
 
 const STATUS_STYLES = {
-  todo: { color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20", icon: CheckSquare },
-  done: { color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20", icon: CheckCircle2 },
+  todo: { color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
+  done: { color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
 };
 
 export default function Taches() {
@@ -149,8 +149,7 @@ export default function Taches() {
       <div className="p-5 max-w-5xl mx-auto w-full">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
-            <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
-              <CheckSquare className="w-4 h-4 text-primary" />
+            <h1 className="text-[16px] font-semibold text-white tracking-tight">
               {t("tasks.title")}
             </h1>
             
@@ -212,7 +211,7 @@ export default function Taches() {
             ))
           ) : taskList.length === 0 ? (
             <div className="text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
-              <CheckSquare className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
+              <Plus className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
               <h3 className="text-sm font-medium text-white mb-1">{t("tasks.noTasks")}</h3>
               <p className="text-[13px] text-[#8b9cb3]">{t("tasks.noTasksDesc")}</p>
             </div>
@@ -220,17 +219,12 @@ export default function Taches() {
             taskList.map((task: any) => {
               const taskStatus = task.status || "todo";
               const statusStyle = STATUS_STYLES[taskStatus as keyof typeof STATUS_STYLES] || STATUS_STYLES.todo;
-              const StatusIcon = statusStyle.icon;
 
               return (
                 <div
                   key={task.id}
                   className={`bg-card rounded-lg border border-border p-4 flex items-start gap-3 transition-all hover:bg-[#1a2235] ${taskStatus === "done" ? "opacity-60" : ""}`}
                 >
-                  <div className={`mt-0.5 p-1 rounded ${statusStyle.bg}`}>
-                    <StatusIcon className={`w-3.5 h-3.5 ${statusStyle.color}`} />
-                  </div>
-
                   <div className="flex-1 min-w-0">
                     <p className={`text-[13px] font-medium text-white mb-1.5 ${taskStatus === "done" ? "line-through text-[#8b9cb3]" : ""}`}>
                       {task.title}
