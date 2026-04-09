@@ -23,6 +23,9 @@ export interface Appointment {
   /** @nullable */
   projectId?: number | null;
   reminderMinutes?: number;
+  confirmed?: boolean;
+  /** @nullable */
+  participants?: string | null;
   /** @nullable */
   projects?: AppointmentProjects;
   createdAt?: Date;

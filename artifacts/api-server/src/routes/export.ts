@@ -241,15 +241,17 @@ router.get("/export/appointments", requireAuth, async (req, res): Promise<void> 
       debut: a.start_at ? new Date(a.start_at).toLocaleString("fr-FR") : "",
       fin: a.end_at ? new Date(a.end_at).toLocaleString("fr-FR") : "",
       journee_entiere: a.all_day ? "Oui" : "Non",
+      participants: a.participants || "",
       projet: a.projects ? `${a.projects.reference} - ${a.projects.name}` : "",
       rappel: a.reminder_minutes ? `${a.reminder_minutes} min` : "",
+      statut: a.confirmed === false ? "Suggestion" : "Confirmé",
       date_creation: a.created_at ? new Date(a.created_at).toLocaleDateString("fr-FR") : "",
     }));
 
     const csv = toCsv(
-      ["Titre", "Description", "Lieu", "Début", "Fin", "Journée entière", "Projet", "Rappel", "Date création"],
+      ["Titre", "Description", "Lieu", "Début", "Fin", "Journée entière", "Participants", "Projet", "Rappel", "Statut", "Date création"],
       rows,
-      ["titre", "description", "lieu", "debut", "fin", "journee_entiere", "projet", "rappel", "date_creation"]
+      ["titre", "description", "lieu", "debut", "fin", "journee_entiere", "participants", "projet", "rappel", "statut", "date_creation"]
     );
 
     res.setHeader("Content-Type", "text/csv; charset=utf-8");

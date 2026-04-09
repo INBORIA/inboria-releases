@@ -16,4 +16,6 @@ export interface UpdateAppointmentBody {
   emailId?: number;
   projectId?: number;
   reminderMinutes?: number;
+  confirmed?: boolean;
+  participants?: string;
 }

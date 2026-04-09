@@ -7,11 +7,16 @@ import {
   StyleSheet,
   RefreshControl,
   ActivityIndicator,
+  TextInput,
+  ScrollView,
+  Alert,
+  KeyboardAvoidingView,
   Platform,
 } from "react-native";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import {
   useListAppointments,
+  useCreateAppointment,
   useDeleteAppointment,
   getListAppointmentsQueryKey,
 } from "@workspace/api-client-react";
@@ -19,12 +24,31 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { format, parseISO, startOfMonth, endOfMonth, addMonths, subMonths, isToday, isSameDay } from "date-fns";
 
+const T = {
+  allDay: "Journée entière",
+  suggestion: "Suggestion IA",
+  deleteAppointment: "Supprimer",
+  deleteConfirm: "Supprimer ce rendez-vous ?",
+  cancel: "Annuler",
+  newAppointment: "Nouveau RDV",
+  appointmentTitlePlaceholder: "Titre du RDV...",
+  locationPlaceholder: "Lieu...",
+  participantsPlaceholder: "Participants...",
+  descriptionPlaceholder: "Description...",
+  noRdv: "Aucun RDV",
+};
+
 export default function AgendaScreen() {
   const colors = useColors();
   const queryClient = useQueryClient();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<Date>(new Date());
   const [refreshing, setRefreshing] = useState(false);
+  const [showCreate, setShowCreate] = useState(false);
+  const [formTitle, setFormTitle] = useState("");
+  const [formDescription, setFormDescription] = useState("");
+  const [formLocation, setFormLocation] = useState("");
+  const [formParticipants, setFormParticipants] = useState("");
 
   const rangeStart = startOfMonth(currentDate);
   const rangeEnd = endOfMonth(currentDate);
@@ -34,6 +58,7 @@ export default function AgendaScreen() {
     to: rangeEnd.toISOString(),
   });
 
+  const createAppointment = useCreateAppointment();
   const deleteAppointment = useDeleteAppointment();
 
   const onRefresh = useCallback(async () => {
@@ -48,12 +73,56 @@ export default function AgendaScreen() {
     });
   }, [appointments, selectedDay]);
 
-  const handleDelete = (id: string) => {
-    deleteAppointment.mutate(
-      { id },
+  const handleDelete = (id: string, title: string) => {
+    Alert.alert(
+      T.deleteAppointment,
+      T.deleteConfirm,
+      [
+        { text: T.cancel, style: "cancel" },
+        {
+          text: T.deleteAppointment,
+          style: "destructive",
+          onPress: () => {
+            deleteAppointment.mutate(
+              { id },
+              {
+                onSuccess: () => {
+                  queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
+                },
+              }
+            );
+          },
+        },
+      ]
+    );
+  };
+
+  const handleCreate = () => {
+    if (!formTitle.trim()) return;
+    const startAt = new Date(selectedDay);
+    startAt.setHours(9, 0, 0, 0);
+    const endAt = new Date(selectedDay);
+    endAt.setHours(10, 0, 0, 0);
+    createAppointment.mutate(
+      {
+        data: {
+          title: formTitle,
+          description: formDescription || undefined,
+          location: formLocation || undefined,
+          startAt: startAt.toISOString(),
+          endAt: endAt.toISOString(),
+          allDay: false,
+          participants: formParticipants || undefined,
+        },
+      },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
+          setShowCreate(false);
+          setFormTitle("");
+          setFormDescription("");
+          setFormLocation("");
+          setFormParticipants("");
         },
       }
     );
@@ -78,14 +147,21 @@ export default function AgendaScreen() {
   };
 
   const renderAppointment = ({ item }: { item: any }) => (
-    <View style={[s.card, { backgroundColor: colors.card, borderColor: colors.border }]}>
+    <View style={[s.card, { backgroundColor: colors.card, borderColor: item.confirmed === false ? "#f59e0b30" : colors.border }]}>
       <View style={s.cardHeader}>
         <View style={{ flex: 1 }}>
-          <Text style={[s.cardTitle, { color: colors.foreground }]}>{item.title}</Text>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6, marginBottom: 4 }}>
+            <Text style={[s.cardTitle, { color: colors.foreground }]}>{item.title}</Text>
+            {item.confirmed === false && (
+              <View style={{ backgroundColor: "#f59e0b20", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4 }}>
+                <Text style={{ color: "#f59e0b", fontSize: 9, fontFamily: "Inter_500Medium" }}>{T.suggestion}</Text>
+              </View>
+            )}
+          </View>
           <View style={s.timeRow}>
             <MaterialCommunityIcons name="clock-outline" size={12} color={colors.mutedForeground} />
             <Text style={[s.timeText, { color: colors.mutedForeground }]}>
-              {item.allDay ? "Journee entiere" : `${format(parseISO(item.startAt), "HH:mm")} - ${format(parseISO(item.endAt), "HH:mm")}`}
+              {item.allDay ? T.allDay : `${format(parseISO(item.startAt), "HH:mm")} - ${format(parseISO(item.endAt), "HH:mm")}`}
             </Text>
           </View>
           {item.location ? (
@@ -94,13 +170,19 @@ export default function AgendaScreen() {
               <Text style={[s.timeText, { color: colors.mutedForeground }]}>{item.location}</Text>
             </View>
           ) : null}
+          {item.participants ? (
+            <View style={s.timeRow}>
+              <MaterialCommunityIcons name="account-group-outline" size={12} color={colors.mutedForeground} />
+              <Text style={[s.timeText, { color: colors.mutedForeground }]}>{item.participants}</Text>
+            </View>
+          ) : null}
           {item.description ? (
             <Text style={[s.descText, { color: colors.mutedForeground }]} numberOfLines={2}>
               {item.description}
             </Text>
           ) : null}
         </View>
-        <TouchableOpacity onPress={() => handleDelete(item.id)} style={s.deleteBtn}>
+        <TouchableOpacity onPress={() => handleDelete(item.id, item.title)} style={s.deleteBtn}>
           <MaterialCommunityIcons name="delete-outline" size={18} color="#ef4444" />
         </TouchableOpacity>
       </View>
@@ -167,7 +249,58 @@ export default function AgendaScreen() {
         <Text style={[s.listTitle, { color: colors.foreground }]}>
           {format(selectedDay, "d MMMM")} ({dayAppointments.length})
         </Text>
+        <TouchableOpacity onPress={() => setShowCreate(!showCreate)} style={[s.addBtn, { backgroundColor: colors.primary }]}>
+          <MaterialCommunityIcons name={showCreate ? "close" : "plus"} size={18} color="#fff" />
+        </TouchableOpacity>
       </View>
+
+      {showCreate && (
+        <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : undefined}>
+          <View style={[s.createForm, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <TextInput
+              style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
+              placeholder={T.appointmentTitlePlaceholder}
+              placeholderTextColor={colors.mutedForeground}
+              value={formTitle}
+              onChangeText={setFormTitle}
+            />
+            <TextInput
+              style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
+              placeholder={T.locationPlaceholder}
+              placeholderTextColor={colors.mutedForeground}
+              value={formLocation}
+              onChangeText={setFormLocation}
+            />
+            <TextInput
+              style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
+              placeholder={T.participantsPlaceholder}
+              placeholderTextColor={colors.mutedForeground}
+              value={formParticipants}
+              onChangeText={setFormParticipants}
+            />
+            <TextInput
+              style={[s.input, s.textArea, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
+              placeholder={T.descriptionPlaceholder}
+              placeholderTextColor={colors.mutedForeground}
+              value={formDescription}
+              onChangeText={setFormDescription}
+              multiline
+              numberOfLines={2}
+            />
+            <TouchableOpacity
+              style={[s.createBtn, { backgroundColor: colors.primary, opacity: !formTitle.trim() || createAppointment.isPending ? 0.5 : 1 }]}
+              onPress={handleCreate}
+              disabled={!formTitle.trim() || createAppointment.isPending}
+            >
+              {createAppointment.isPending ? (
+                <ActivityIndicator size="small" color="#fff" />
+              ) : (
+                <Text style={s.createBtnText}>{T.newAppointment}</Text>
+              )}
+            </TouchableOpacity>
+          </View>
+        </KeyboardAvoidingView>
+      )}
 
       {isLoading ? (
         <View style={s.center}>
@@ -176,7 +309,7 @@ export default function AgendaScreen() {
       ) : dayAppointments.length === 0 ? (
         <View style={s.center}>
           <MaterialCommunityIcons name="calendar-blank-outline" size={40} color={colors.mutedForeground + "40"} />
-          <Text style={[s.emptyText, { color: colors.mutedForeground }]}>Aucun RDV</Text>
+          <Text style={[s.emptyText, { color: colors.mutedForeground }]}>{T.noRdv}</Text>
         </View>
       ) : (
         <FlatList
@@ -254,10 +387,20 @@ const s = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 10,
     borderTopWidth: 1,
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   listTitle: {
     fontSize: 14,
     fontFamily: "Inter_600SemiBold",
+  },
+  addBtn: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    alignItems: "center",
+    justifyContent: "center",
   },
   center: {
     flex: 1,
@@ -283,7 +426,6 @@ const s = StyleSheet.create({
   cardTitle: {
     fontSize: 14,
     fontFamily: "Inter_600SemiBold",
-    marginBottom: 4,
   },
   timeRow: {
     flexDirection: "row",
@@ -302,5 +444,35 @@ const s = StyleSheet.create({
   },
   deleteBtn: {
     padding: 6,
+  },
+  createForm: {
+    marginHorizontal: 16,
+    marginVertical: 8,
+    borderWidth: 1,
+    borderRadius: 10,
+    padding: 12,
+    gap: 8,
+  },
+  input: {
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingHorizontal: 10,
+    paddingVertical: 8,
+    fontSize: 13,
+    fontFamily: "Inter_400Regular",
+  },
+  textArea: {
+    minHeight: 60,
+    textAlignVertical: "top",
+  },
+  createBtn: {
+    borderRadius: 8,
+    paddingVertical: 10,
+    alignItems: "center",
+  },
+  createBtnText: {
+    color: "#fff",
+    fontSize: 13,
+    fontFamily: "Inter_600SemiBold",
   },
 });

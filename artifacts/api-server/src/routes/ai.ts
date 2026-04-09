@@ -641,6 +641,8 @@ Si aucune date/heure exacte n'est trouvée, utilise une estimation raisonnable. 
           all_day: apt.allDay || false,
           email_id: apt.emailId || null,
           reminder_minutes: 30,
+          confirmed: false,
+          participants: apt.participants || null,
         })
         .select()
         .single();
@@ -657,6 +659,8 @@ Si aucune date/heure exacte n'est trouvée, utilise une estimation raisonnable. 
         emailId: data.email_id,
         projectId: data.project_id,
         reminderMinutes: data.reminder_minutes,
+        confirmed: data.confirmed,
+        participants: data.participants,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
       });

@@ -1647,6 +1647,18 @@
     "exportDownloaded": "Export downloaded",
     "exportError": "Error exporting",
     "todayAppointments": "Today's appointments",
-    "upcomingAppointments": "Upcoming appointments"
+    "tomorrowAppointments": "Tomorrow's appointments",
+    "upcomingAppointments": "Upcoming appointments",
+    "confirmed": "Confirmed",
+    "suggestion": "AI Suggestion",
+    "confirmAppointment": "Confirm",
+    "dismissAppointment": "Dismiss",
+    "suggestionsDetected": "{{count}} suggestion(s) to confirm",
+    "participants": "Participants",
+    "participantsPlaceholder": "E.g. John, Mary, contact@email.com",
+    "createFromEmail": "Create appointment",
+    "appointmentConfirmed": "Appointment confirmed",
+    "appointmentDismissed": "Suggestion dismissed",
+    "noRdv": "No appointments"
   }
 }

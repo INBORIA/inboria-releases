@@ -350,6 +350,21 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 <Button
                   variant="outline"
                   size="sm"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
+                  onClick={() => {
+                    const params = new URLSearchParams();
+                    params.set("title", email.subject || "");
+                    params.set("emailId", String(email.id));
+                    if (email.sender) params.set("participants", email.sender);
+                    window.location.href = `/dashboard/agenda?create=1&${params.toString()}`;
+                  }}
+                >
+                  <CalendarDays className="w-3 h-3" />
+                  {t("agenda.createFromEmail")}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
                   onClick={async () => {
                     try {

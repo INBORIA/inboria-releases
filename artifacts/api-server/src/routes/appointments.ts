@@ -18,6 +18,8 @@ function mapAppointment(row: any) {
     emailId: row.email_id,
     projectId: row.project_id,
     reminderMinutes: row.reminder_minutes,
+    confirmed: row.confirmed ?? true,
+    participants: row.participants,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     projects: row.projects,
@@ -72,7 +74,7 @@ router.get("/appointments/:id", requireAuth, async (req, res): Promise<void> => 
 
 router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
   try {
-    const { title, description, location, startAt, endAt, allDay, emailId, projectId, reminderMinutes } = req.body;
+    const { title, description, location, startAt, endAt, allDay, emailId, projectId, reminderMinutes, participants } = req.body;
     if (!title || !startAt || !endAt) {
       res.status(400).json({ error: "title, startAt and endAt are required" });
       return;
@@ -91,6 +93,7 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
         email_id: emailId || null,
         project_id: projectId || null,
         reminder_minutes: reminderMinutes ?? 30,
+        participants: participants || null,
       })
       .select("*, projects(id, name, reference, color)")
       .single();
@@ -114,6 +117,8 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
     if (req.body.emailId !== undefined) updates.email_id = req.body.emailId || null;
     if (req.body.projectId !== undefined) updates.project_id = req.body.projectId || null;
     if (req.body.reminderMinutes !== undefined) updates.reminder_minutes = req.body.reminderMinutes;
+    if (req.body.confirmed !== undefined) updates.confirmed = req.body.confirmed;
+    if (req.body.participants !== undefined) updates.participants = req.body.participants || null;
     updates.updated_at = new Date().toISOString();
 
     const { data, error } = await supabaseAdmin

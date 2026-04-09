@@ -3596,6 +3596,10 @@ components:
           type: ["integer", "null"]
         reminderMinutes:
           type: integer
+        confirmed:
+          type: boolean
+        participants:
+          type: ["string", "null"]
         projects:
           type: ["object", "null"]
           properties:
@@ -3642,6 +3646,8 @@ components:
           type: integer
         reminderMinutes:
           type: integer
+        participants:
+          type: string
       required:
         - title
         - startAt
@@ -3670,3 +3676,7 @@ components:
           type: integer
         reminderMinutes:
           type: integer
+        confirmed:
+          type: boolean
+        participants:
+          type: string

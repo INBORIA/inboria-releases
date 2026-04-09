@@ -1754,6 +1754,8 @@ export const DetectAppointmentsResponse = zod.object({
         emailId: zod.number().nullish(),
         projectId: zod.number().nullish(),
         reminderMinutes: zod.number().optional(),
+        confirmed: zod.boolean().optional(),
+        participants: zod.string().nullish(),
         projects: zod
           .object({
             id: zod.number().optional(),
@@ -1794,6 +1796,8 @@ export const ListAppointmentsResponseItem = zod.object({
   emailId: zod.number().nullish(),
   projectId: zod.number().nullish(),
   reminderMinutes: zod.number().optional(),
+  confirmed: zod.boolean().optional(),
+  participants: zod.string().nullish(),
   projects: zod
     .object({
       id: zod.number().optional(),
@@ -1820,6 +1824,7 @@ export const CreateAppointmentBody = zod.object({
   emailId: zod.number().optional(),
   projectId: zod.number().optional(),
   reminderMinutes: zod.number().optional(),
+  participants: zod.string().optional(),
 });
 
 /**
@@ -1841,6 +1846,8 @@ export const GetAppointmentResponse = zod.object({
   emailId: zod.number().nullish(),
   projectId: zod.number().nullish(),
   reminderMinutes: zod.number().optional(),
+  confirmed: zod.boolean().optional(),
+  participants: zod.string().nullish(),
   projects: zod
     .object({
       id: zod.number().optional(),
@@ -1870,6 +1877,8 @@ export const UpdateAppointmentBody = zod.object({
   emailId: zod.number().optional(),
   projectId: zod.number().optional(),
   reminderMinutes: zod.number().optional(),
+  confirmed: zod.boolean().optional(),
+  participants: zod.string().optional(),
 });
 
 export const UpdateAppointmentResponse = zod.object({
@@ -1884,6 +1893,8 @@ export const UpdateAppointmentResponse = zod.object({
   emailId: zod.number().nullish(),
   projectId: zod.number().nullish(),
   reminderMinutes: zod.number().optional(),
+  confirmed: zod.boolean().optional(),
+  participants: zod.string().nullish(),
   projects: zod
     .object({
       id: zod.number().optional(),

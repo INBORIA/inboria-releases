@@ -27,11 +27,12 @@ import {
   X,
   Calendar,
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { Users } from "lucide-react";
 
 type ViewMode = "month" | "week" | "day";
 
@@ -57,6 +58,24 @@ export default function Agenda() {
   const [formAllDay, setFormAllDay] = useState(false);
   const [formProjectId, setFormProjectId] = useState<string>("");
   const [formReminder, setFormReminder] = useState("30");
+  const [formParticipants, setFormParticipants] = useState("");
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    if (params.get("create") === "1") {
+      const title = params.get("title") || "";
+      const emailId = params.get("emailId") || "";
+      const participants = params.get("participants") || "";
+      setFormTitle(title);
+      if (emailId) setFormProjectId("");
+      setFormParticipants(participants);
+      const d = format(new Date(), "yyyy-MM-dd");
+      setFormStartAt(`${d}T09:00`);
+      setFormEndAt(`${d}T10:00`);
+      setShowForm(true);
+      window.history.replaceState({}, "", window.location.pathname);
+    }
+  }, []);
 
   const rangeStart = useMemo(() => {
     if (viewMode === "month") return startOfWeek(startOfMonth(currentDate), { weekStartsOn: 1 });
@@ -90,6 +109,7 @@ export default function Agenda() {
     setFormAllDay(false);
     setFormProjectId("");
     setFormReminder("30");
+    setFormParticipants("");
     setEditingId(null);
     setShowForm(false);
   };
@@ -114,6 +134,7 @@ export default function Agenda() {
     setFormAllDay(apt.allDay || false);
     setFormProjectId(apt.projectId ? String(apt.projectId) : "");
     setFormReminder(String(apt.reminderMinutes ?? 30));
+    setFormParticipants(apt.participants || "");
     setShowForm(true);
     setSelectedAppointment(null);
   };
@@ -129,6 +150,7 @@ export default function Agenda() {
       allDay: formAllDay,
       projectId: formProjectId ? parseInt(formProjectId) : undefined,
       reminderMinutes: parseInt(formReminder) || 30,
+      participants: formParticipants || undefined,
     };
 
     if (editingId) {
@@ -171,6 +193,34 @@ export default function Agenda() {
       }
     );
   };
+
+  const handleConfirm = (id: string) => {
+    updateAppointment.mutate(
+      { id, data: { confirmed: true } },
+      {
+        onSuccess: () => {
+          toast({ title: t("agenda.appointmentConfirmed") });
+          invalidate();
+        },
+      }
+    );
+  };
+
+  const handleDismiss = (id: string) => {
+    deleteAppointment.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          toast({ title: t("agenda.appointmentDismissed") });
+          invalidate();
+        },
+      }
+    );
+  };
+
+  const suggestions = useMemo(() => {
+    return (appointments as any[]).filter((apt: any) => apt.confirmed === false);
+  }, [appointments]);
 
   const handleDetect = () => {
     detectAppointments.mutate(
@@ -297,6 +347,36 @@ export default function Agenda() {
             ))}
           </div>
         </div>
+
+        {suggestions.length > 0 && (
+          <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 mb-4">
+            <h3 className="text-[12px] font-semibold text-amber-400 mb-2 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5" />
+              {t("agenda.suggestionsDetected", { count: suggestions.length })}
+            </h3>
+            <div className="space-y-1.5">
+              {suggestions.map((apt: any) => (
+                <div key={apt.id} className="flex items-center justify-between gap-2 bg-card/50 rounded px-3 py-2 border border-border">
+                  <div className="flex-1 min-w-0">
+                    <span className="text-[12px] font-medium text-white truncate block">{apt.title}</span>
+                    <span className="text-[10px] text-[#8b9cb3]">
+                      {format(parseISO(apt.startAt), "dd/MM/yyyy HH:mm", { locale })}
+                      {apt.location && ` · ${apt.location}`}
+                    </span>
+                  </div>
+                  <div className="flex gap-1.5 shrink-0">
+                    <Button size="sm" className="h-6 text-[10px] px-2" onClick={() => handleConfirm(apt.id)}>
+                      {t("agenda.confirmAppointment")}
+                    </Button>
+                    <Button size="sm" variant="outline" className="h-6 text-[10px] px-2" onClick={() => handleDismiss(apt.id)}>
+                      {t("agenda.dismissAppointment")}
+                    </Button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {isLoading ? (
           <div className="flex items-center justify-center py-20">
@@ -603,6 +683,16 @@ export default function Agenda() {
                       <option value="60">{t("agenda.reminderMinutes", { minutes: 60 })}</option>
                     </select>
                   </div>
+                </div>
+
+                <div>
+                  <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("agenda.participants")}</label>
+                  <Input
+                    value={formParticipants}
+                    onChange={(e) => setFormParticipants(e.target.value)}
+                    placeholder={t("agenda.participantsPlaceholder")}
+                    className="h-8 text-[12px]"
+                  />
                 </div>
 
                 <div className="flex justify-end gap-2 pt-2">

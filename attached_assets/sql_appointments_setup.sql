@@ -10,6 +10,8 @@ CREATE TABLE IF NOT EXISTS appointments (
   email_id integer REFERENCES emails(id) ON DELETE SET NULL,
   project_id integer REFERENCES projects(id) ON DELETE SET NULL,
   reminder_minutes integer DEFAULT 30,
+  confirmed boolean DEFAULT true,
+  participants text,
   created_at timestamptz DEFAULT now(),
   updated_at timestamptz DEFAULT now()
 );

@@ -1647,6 +1647,18 @@
     "exportDownloaded": "Export téléchargé",
     "exportError": "Erreur lors de l'export",
     "todayAppointments": "RDV du jour",
-    "upcomingAppointments": "RDV à venir"
+    "tomorrowAppointments": "RDV de demain",
+    "upcomingAppointments": "RDV à venir",
+    "confirmed": "Confirmé",
+    "suggestion": "Suggestion IA",
+    "confirmAppointment": "Confirmer",
+    "dismissAppointment": "Ignorer",
+    "suggestionsDetected": "{{count}} suggestion(s) à confirmer",
+    "participants": "Participants",
+    "participantsPlaceholder": "Ex: Jean, Marie, contact@email.com",
+    "createFromEmail": "Créer un RDV",
+    "appointmentConfirmed": "RDV confirmé",
+    "appointmentDismissed": "Suggestion supprimée",
+    "noRdv": "Aucun RDV"
   }
 }

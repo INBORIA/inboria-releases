@@ -778,6 +778,9 @@ export interface Appointment {
   /** @nullable */
   projectId?: number | null;
   reminderMinutes?: number;
+  confirmed?: boolean;
+  /** @nullable */
+  participants?: string | null;
   /** @nullable */
   projects?: AppointmentProjects;
   createdAt?: string;
@@ -794,6 +797,7 @@ export interface CreateAppointmentBody {
   emailId?: number;
   projectId?: number;
   reminderMinutes?: number;
+  participants?: string;
 }
 
 export interface UpdateAppointmentBody {
@@ -806,6 +810,8 @@ export interface UpdateAppointmentBody {
   emailId?: number;
   projectId?: number;
   reminderMinutes?: number;
+  confirmed?: boolean;
+  participants?: string;
 }
 
 export type RegisterPushToken200 = {

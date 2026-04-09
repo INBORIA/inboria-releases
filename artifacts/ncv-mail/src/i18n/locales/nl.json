@@ -1647,6 +1647,18 @@
     "exportDownloaded": "Export gedownload",
     "exportError": "Fout bij exporteren",
     "todayAppointments": "Afspraken van vandaag",
-    "upcomingAppointments": "Komende afspraken"
+    "tomorrowAppointments": "Afspraken van morgen",
+    "upcomingAppointments": "Komende afspraken",
+    "confirmed": "Bevestigd",
+    "suggestion": "AI-suggestie",
+    "confirmAppointment": "Bevestigen",
+    "dismissAppointment": "Negeren",
+    "suggestionsDetected": "{{count}} suggestie(s) te bevestigen",
+    "participants": "Deelnemers",
+    "participantsPlaceholder": "Bv. Jan, Marie, contact@email.com",
+    "createFromEmail": "Afspraak maken",
+    "appointmentConfirmed": "Afspraak bevestigd",
+    "appointmentDismissed": "Suggestie verwijderd",
+    "noRdv": "Geen afspraken"
   }
 }

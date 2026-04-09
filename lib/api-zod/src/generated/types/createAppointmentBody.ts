@@ -16,4 +16,5 @@ export interface CreateAppointmentBody {
   emailId?: number;
   projectId?: number;
   reminderMinutes?: number;
+  participants?: string;
 }
