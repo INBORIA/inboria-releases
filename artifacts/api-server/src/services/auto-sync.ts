@@ -436,6 +436,50 @@ async function syncGmailForUser(conn: any): Promise<number> {
         .eq("id", conn.id);
     }
 
+    try {
+      const { data: allUserEmails } = await supabaseAdmin
+        .from("emails")
+        .select("id, body, external_id")
+        .eq("user_id", conn.user_id)
+        .not("status", "eq", "sent")
+        .order("created_at", { ascending: false })
+        .limit(50);
+
+      const toBackfill = (allUserEmails || []).filter((e: any) => {
+        const b = e.body || "";
+        const extId = e.external_id || "";
+        if (!extId.startsWith(conn.id + ":")) return false;
+        if (b.length < 30) return false;
+        if (/<html/i.test(b) || /<div/i.test(b) || /<table/i.test(b)) return false;
+        return true;
+      });
+
+      for (const email of toBackfill.slice(0, 15)) {
+        const gmailMsgId = (email as any).external_id.split(":")[1];
+        if (!gmailMsgId) continue;
+
+        try {
+          const { data: fullMsg } = await gmail.users.messages.get({
+            userId: "me",
+            id: gmailMsgId,
+            format: "full",
+          });
+          const htmlBody = extractGmailBody(fullMsg.payload) || "";
+          if (htmlBody && /<[a-z][\s\S]*>/i.test(htmlBody) && htmlBody !== email.body) {
+            await supabaseAdmin
+              .from("emails")
+              .update({ body: htmlBody })
+              .eq("id", email.id);
+            console.log(`[auto-sync] Backfilled HTML body for email #${email.id}`);
+          }
+        } catch (fetchErr: any) {
+          console.error(`[auto-sync] Gmail body backfill error for #${email.id}:`, fetchErr.message);
+        }
+      }
+    } catch (bfErr: any) {
+      console.error("[auto-sync] Gmail body backfill error:", bfErr.message);
+    }
+
     return synced;
   } catch (err: any) {
     console.error(`[auto-sync] Gmail error for ${conn.email_address}:`, err.message);
