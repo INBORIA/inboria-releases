@@ -27,7 +27,7 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { NotificationBell } from "@/components/notifications/notification-bell";
+
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
@@ -212,7 +212,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           <div className="flex-1" />
           <div className="flex items-center gap-2">
             <LanguageSwitcher />
-            <NotificationBell />
           </div>
         </div>
 
