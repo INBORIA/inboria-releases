@@ -44,12 +44,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const baseNavigation = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
-    { name: t("sidebar.archives"), href: "/dashboard/archives", icon: Archive },
-    { name: t("sidebar.followup"), href: "/dashboard/suivi", icon: Eye },
-    { name: t("sidebar.dailyBrief"), href: "/dashboard/bilan", icon: LayoutDashboard },
     { name: t("sidebar.tasks"), href: "/dashboard/taches", icon: CheckSquare },
+    { name: t("sidebar.followup"), href: "/dashboard/suivi", icon: Eye },
     { name: t("sidebar.projects"), href: "/dashboard/projets", icon: FolderKanban },
     { name: t("sidebar.agenda"), href: "/dashboard/agenda", icon: CalendarDays },
+    { name: t("sidebar.archives"), href: "/dashboard/archives", icon: Archive },
+    { name: t("sidebar.dailyBrief"), href: "/dashboard/bilan", icon: LayoutDashboard },
     { name: t("sidebar.classification"), href: "/dashboard/classement", icon: Tags },
     { name: t("sidebar.settings"), href: "/dashboard/parametres", icon: Settings },
     { name: t("sidebar.subscription"), href: "/dashboard/abonnement", icon: CreditCard },
@@ -57,13 +57,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   ];
 
   const isBusiness = (user as any).plan === "business";
+  const archivesIndex = 6;
   const navigation = isBusiness
     ? [
-        ...baseNavigation.slice(0, 6),
-        { name: t("sidebar.myTeam"), href: "/dashboard/equipe", icon: Users },
+        ...baseNavigation.slice(0, archivesIndex + 1),
         { name: t("sidebar.sharedMailboxes"), href: "/dashboard/boites-partagees", icon: MailPlus },
+        { name: t("sidebar.myTeam"), href: "/dashboard/equipe", icon: Users },
         { name: t("sidebar.teamActivity"), href: "/dashboard/activite-equipe", icon: Activity },
-        ...baseNavigation.slice(6),
+        ...baseNavigation.slice(archivesIndex + 1),
       ]
     : baseNavigation;
 
