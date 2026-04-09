@@ -17,3 +17,9 @@ id = "ioqGUvEkw2UWpK2ddwGQH"
 uri = "file://NCV_Mail_Plan_Business_V2.md"
 type = "text"
 title = "Plan complet V2 — Organisation & Collaboration Business"
+
+[[outputs]]
+id = "UWiKD15E8ujov5-inRfL-"
+uri = "file://NCV_Mail_Descriptif_Complet.md"
+type = "text"
+title = "NCV Mail — Descriptif complet de l'application"
