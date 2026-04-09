@@ -60,6 +60,7 @@ export default function Agenda() {
   const [formProjectId, setFormProjectId] = useState<string>("");
   const [formReminder, setFormReminder] = useState("30");
   const [formParticipants, setFormParticipants] = useState("");
+  const [formEmailId, setFormEmailId] = useState<number | undefined>(undefined);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -70,11 +71,13 @@ export default function Agenda() {
       const description = params.get("description") || "";
       const startAt = params.get("startAt") || "";
       const endAt = params.get("endAt") || "";
+      const emailIdParam = params.get("emailId");
 
       setFormTitle(title);
       setFormParticipants(participants);
       setFormLocation(location);
       setFormDescription(description);
+      if (emailIdParam) setFormEmailId(parseInt(emailIdParam));
 
       if (startAt) {
         try {
@@ -136,6 +139,7 @@ export default function Agenda() {
     setFormProjectId("");
     setFormReminder("30");
     setFormParticipants("");
+    setFormEmailId(undefined);
     setEditingId(null);
     setShowForm(false);
   };
@@ -177,6 +181,7 @@ export default function Agenda() {
       projectId: formProjectId ? parseInt(formProjectId) : undefined,
       reminderMinutes: parseInt(formReminder) || 30,
       participants: formParticipants || undefined,
+      emailId: formEmailId,
     };
 
     if (editingId) {
