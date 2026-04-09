@@ -148,10 +148,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        <div className="px-2.5 mb-2">
-          <LanguageSwitcher />
-        </div>
-        
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-2">
             <div className="h-7 w-7 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[11px] font-semibold text-primary">
@@ -166,24 +162,21 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               </span>
             </div>
           </div>
-          <div className="flex items-center gap-0.5">
-            <NotificationBell />
-            <Tooltip>
-              <TooltipTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] h-7 w-7"
-                  onClick={handleLogout}
-                >
-                  <LogOut className="h-3.5 w-3.5" />
-                </Button>
-              </TooltipTrigger>
-              <TooltipContent side="top">
-                <p>{t("nav.logout")}</p>
-              </TooltipContent>
-            </Tooltip>
-          </div>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] h-7 w-7"
+                onClick={handleLogout}
+              >
+                <LogOut className="h-3.5 w-3.5" />
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent side="top">
+              <p>{t("nav.logout")}</p>
+            </TooltipContent>
+          </Tooltip>
         </div>
       </div>
     </div>
@@ -198,21 +191,28 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       </div>
 
       <div className="lg:pl-[200px] flex flex-col flex-1 min-w-0">
-        <div className="sticky top-0 z-10 flex h-12 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4 lg:hidden">
-          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
-            <SheetTrigger asChild>
-              <Button variant="ghost" size="icon" className="text-white h-8 w-8">
-                <span className="sr-only">{t("nav.openMenu")}</span>
-                <Menu className="h-5 w-5" aria-hidden="true" />
-              </Button>
-            </SheetTrigger>
-            <SheetContent side="left" className="p-0 bg-sidebar w-[200px] border-r border-[#1f2937]">
-              <SidebarContent />
-            </SheetContent>
-          </Sheet>
-          <div className="flex flex-1 items-center gap-2">
-            <img src={ncvLogo} alt="NCV" className="h-20 w-20 object-contain" />
-            <span className="font-semibold text-[15px] text-white">NCV Mail</span>
+        <div className="sticky top-0 z-10 flex h-12 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4">
+          <div className="lg:hidden flex items-center">
+            <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="text-white h-8 w-8">
+                  <span className="sr-only">{t("nav.openMenu")}</span>
+                  <Menu className="h-5 w-5" aria-hidden="true" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="p-0 bg-sidebar w-[200px] border-r border-[#1f2937]">
+                <SidebarContent />
+              </SheetContent>
+            </Sheet>
+            <div className="flex items-center gap-2 ml-2">
+              <img src={ncvLogo} alt="NCV" className="h-20 w-20 object-contain" />
+              <span className="font-semibold text-[15px] text-white">NCV Mail</span>
+            </div>
+          </div>
+          <div className="flex-1" />
+          <div className="flex items-center gap-2">
+            <LanguageSwitcher />
+            <NotificationBell />
           </div>
         </div>
 
