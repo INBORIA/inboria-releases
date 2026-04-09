@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Paperclip, Download, Eye, File, FileText, Image, FileSpreadsheet, Archive } from "lucide-react";
 import { supabase } from "../lib/supabase";
 import type { Attachment } from "@workspace/api-client-react";
+import { useTranslation } from "react-i18next";
 
 function formatSize(bytes: number): string {
   if (bytes < 1024) return `${bytes} o`;
@@ -26,6 +27,7 @@ function isPdf(contentType: string): boolean {
 }
 
 export function AttachmentList({ attachments, disableDownload }: { attachments: Attachment[]; disableDownload?: boolean }) {
+  const { t } = useTranslation();
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [previewType, setPreviewType] = useState<string>("");
   const [downloading, setDownloading] = useState<string | null>(null);
@@ -76,7 +78,7 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
     <div className="mt-3">
       <div className="flex items-center gap-1.5 text-xs font-medium mb-2" style={{ color: "#8b9cb3" }}>
         <Paperclip size={13} />
-        <span>{attachments.length} pièce{attachments.length > 1 ? "s" : ""} jointe{attachments.length > 1 ? "s" : ""}</span>
+        <span>{t("attachments.count", { count: attachments.length })}</span>
       </div>
       <div className="flex flex-wrap gap-2">
         {attachments.map((att) => {
@@ -108,7 +110,7 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
                     <button
                       onClick={(e) => { e.stopPropagation(); downloadAttachment(att, true); }}
                       className="p-1 rounded hover:bg-white/10"
-                      title="Aperçu"
+                      title={t("attachments.preview")}
                     >
                       <Eye size={14} />
                     </button>
@@ -116,7 +118,7 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
                   <button
                     onClick={(e) => { e.stopPropagation(); downloadAttachment(att, false); }}
                     className="p-1 rounded hover:bg-white/10"
-                    title="Télécharger"
+                    title={t("attachments.download")}
                     disabled={isLoading}
                   >
                     <Download size={14} />
@@ -139,7 +141,7 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
         >
           <div className="max-w-4xl max-h-[90vh] overflow-auto rounded-lg" onClick={(e) => e.stopPropagation()}>
             {previewType.startsWith("image/") ? (
-              <img src={previewUrl} alt="Aperçu" className="max-w-full max-h-[85vh] object-contain" />
+              <img src={previewUrl} alt={t("attachments.preview")} className="max-w-full max-h-[85vh] object-contain" />
             ) : null}
           </div>
           <button
@@ -155,12 +157,13 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
 }
 
 export function AttachmentBadge({ count }: { count: number }) {
+  const { t } = useTranslation();
   if (!count || count <= 0) return null;
   return (
     <span
       className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium hidden sm:inline-flex"
       style={{ background: "rgba(139,156,179,0.12)", color: "#8b9cb3", border: "1px solid rgba(139,156,179,0.15)" }}
-      title={`${count} pièce${count > 1 ? "s" : ""} jointe${count > 1 ? "s" : ""}`}
+      title={t("attachments.count", { count })}
     >
       <Paperclip size={10} />
       <span>{count}</span>

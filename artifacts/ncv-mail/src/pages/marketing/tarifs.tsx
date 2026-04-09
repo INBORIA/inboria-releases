@@ -5,8 +5,17 @@ import { useState } from "react";
 import { plans } from "@/lib/plans";
 import { useAuth } from "@/lib/auth";
 import { useCreateCheckoutSession } from "@workspace/api-client-react";
+import { useTranslation } from "react-i18next";
+
+const planFeatureKeys: Record<string, string[]> = {
+  essai: ["f1", "f2", "f3", "f4"],
+  solo: ["f1", "f2", "f3", "f4", "f5", "f6", "f7"],
+  pro: ["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8"],
+  business: ["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8"],
+};
 
 export default function Tarifs() {
+  const { t } = useTranslation();
   const [businessSeats, setBusinessSeats] = useState(3);
   const { session } = useAuth();
   const checkout = useCreateCheckoutSession();
@@ -54,10 +63,10 @@ export default function Tarifs() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#2d7dd2]/10 to-transparent" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
-            Des tarifs simples, sans surprise
+            {t("marketing.pricing.heroTitle")}
           </h1>
           <p className="mt-4 text-[16px] text-[#8b9cb3] max-w-2xl mx-auto">
-            Choisissez le plan qui correspond à vos besoins. Changez ou annulez à tout moment.
+            {t("marketing.pricing.heroDesc")}
           </p>
         </div>
       </section>
@@ -69,6 +78,7 @@ export default function Tarifs() {
               const isBusiness = "hasSeats" in plan && plan.hasSeats;
               const isRecommended = plan.id === "pro";
               const price = isBusiness ? businessSeats * 9 : plan.price;
+              const featureKeys = planFeatureKeys[plan.id] || [];
 
               return (
                 <div
@@ -82,30 +92,30 @@ export default function Tarifs() {
                   {isRecommended && (
                     <div className="absolute top-3 right-3">
                       <span className="bg-[#2d7dd2] text-white text-[10px] font-semibold px-2.5 py-1 rounded-full">
-                        Recommandé
+                        {t("plans.recommended")}
                       </span>
                     </div>
                   )}
 
-                  <h3 className="text-[16px] font-bold text-white">{plan.name}</h3>
-                  <p className="text-[12px] text-[#8b9cb3] mb-4 h-8">{plan.description}</p>
+                  <h3 className="text-[16px] font-bold text-white">{t(`plans.${plan.id}`)}</h3>
+                  <p className="text-[12px] text-[#8b9cb3] mb-4 h-8">{t(`plans.${plan.id}Desc`)}</p>
 
                   <div className="mb-4">
                     <div className="flex items-baseline gap-0.5">
                       {plan.id === "essai" ? (
-                        <span className="text-3xl font-extrabold text-white">Gratuit</span>
+                        <span className="text-3xl font-extrabold text-white">{t("plans.free")}</span>
                       ) : (
                         <>
                           <span className="text-3xl font-extrabold text-white">{price}€</span>
                           <span className="text-[#8b9cb3] text-[13px]">
-                            {isBusiness ? "/siège/mois" : "/mois"}
+                            {isBusiness ? t("plans.perSeatMonth") : t("plans.perMonth")}
                           </span>
                         </>
                       )}
                     </div>
                     {isBusiness && (
                       <p className="text-[11px] text-[#8b9cb3] mt-0.5">
-                        Soit 9€ par siège/mois
+                        {t("plans.perSeatDetail")}
                       </p>
                     )}
                   </div>
@@ -113,7 +123,7 @@ export default function Tarifs() {
                   {isBusiness && (
                     <div className="mb-4 p-3 bg-[#0d1117] rounded-lg border border-[#1f2937]">
                       <label className="text-[12px] font-medium text-[#8b9cb3] block mb-2">
-                        Nombre de collaborateurs
+                        {t("plans.numberOfCollaborators")}
                       </label>
                       <div className="flex items-center gap-3">
                         <input
@@ -129,20 +139,20 @@ export default function Tarifs() {
                         </span>
                       </div>
                       <p className="text-[11px] text-[#8b9cb3] mt-1">
-                        <span className="font-medium">Total : </span>
-                        <span className="text-[#2d7dd2] font-bold">{businessSeats * 9}€</span> /mois
+                        <span className="font-medium">{t("plans.total")} : </span>
+                        <span className="text-[#2d7dd2] font-bold">{businessSeats * 9}€</span> {t("plans.perMonth")}
                       </p>
                       <p className="text-[10px] text-[#8b9cb3] mt-1">
-                        Exemple : 3 collaborateurs = 27€/mois — modifiable à tout moment depuis votre espace.
+                        {t("plans.seatsExample")}
                       </p>
                     </div>
                   )}
 
                   <ul className="space-y-2.5 mb-6 flex-1">
-                    {plan.features.map((feature, i) => (
-                      <li key={i} className="flex items-start gap-2">
+                    {featureKeys.map((fKey) => (
+                      <li key={fKey} className="flex items-start gap-2">
                         <Check className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isRecommended ? "text-[#2d7dd2]" : "text-emerald-400"}`} />
-                        <span className="text-[12px] text-[#8b9cb3]">{feature}</span>
+                        <span className="text-[12px] text-[#8b9cb3]">{t(`plans.${plan.id}Features.${fKey}`)}</span>
                       </li>
                     ))}
                   </ul>
@@ -156,7 +166,7 @@ export default function Tarifs() {
                         : "bg-white/5 text-white border border-[#1f2937] hover:bg-white/10"
                     } disabled:opacity-50`}
                   >
-                    {loadingPlan === plan.id ? "Redirection..." : "Commencer"}
+                    {loadingPlan === plan.id ? t("plans.redirecting") : t("plans.start")}
                   </button>
                 </div>
               );
@@ -166,15 +176,15 @@ export default function Tarifs() {
           <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-[13px] text-[#8b9cb3]">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4" />
-              <span>Sans engagement, résiliable à tout moment</span>
+              <span>{t("marketing.pricing.noCommitment")}</span>
             </div>
             <div className="flex items-center gap-2">
               <CreditCard className="w-4 h-4" />
-              <span>Paiement sécurisé par Stripe</span>
+              <span>{t("marketing.pricing.securePayment")}</span>
             </div>
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4" />
-              <span>Conforme RGPD</span>
+              <span>{t("marketing.pricing.gdprCompliant")}</span>
             </div>
           </div>
         </div>

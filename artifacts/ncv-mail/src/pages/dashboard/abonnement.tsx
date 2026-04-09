@@ -8,8 +8,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSearch, useLocation } from "wouter";
 import { plans } from "@/lib/plans";
+import { useTranslation } from "react-i18next";
 
 export default function Abonnement() {
+  const { t, i18n } = useTranslation();
   const { data: profile, isLoading } = useGetProfile();
   const checkout = useCreateCheckoutSession();
   const [portalLoading, setPortalLoading] = useState(false);
@@ -26,14 +28,14 @@ export default function Abonnement() {
     if (params.get("success") === "true") {
       queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
       toast({
-        title: "Paiement réussi",
-        description: "Votre abonnement a été mis à jour avec succès.",
+        title: t("subscription.paymentSuccess"),
+        description: t("subscription.paymentSuccessDesc"),
       });
       navigate("/dashboard/abonnement", { replace: true });
     } else if (params.get("cancelled") === "true") {
       toast({
-        title: "Paiement annulé",
-        description: "Vous n'avez pas été débité.",
+        title: t("subscription.paymentCancelled"),
+        description: t("subscription.paymentCancelledDesc"),
         variant: "destructive",
       });
       navigate("/dashboard/abonnement", { replace: true });
@@ -66,8 +68,8 @@ export default function Abonnement() {
           if (data.updated) {
             queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
             toast({
-              title: "Plan mis à jour",
-              description: "Votre abonnement a été modifié avec succès.",
+              title: t("subscription.planUpdated"),
+              description: t("subscription.planUpdatedDesc"),
             });
           } else if (data.url) {
             window.location.href = data.url;
@@ -76,8 +78,8 @@ export default function Abonnement() {
         onError: () => {
           setLoadingPlan(null);
           toast({
-            title: "Erreur",
-            description: "Impossible de créer la session de paiement.",
+            title: t("common.error"),
+            description: t("subscription.paymentError"),
             variant: "destructive",
           });
         },
@@ -104,8 +106,8 @@ export default function Abonnement() {
       }
     } catch {
       toast({
-        title: "Erreur",
-        description: "Impossible d'accéder au portail de gestion.",
+        title: t("common.error"),
+        description: t("subscription.portalError"),
         variant: "destructive",
       });
     } finally {
@@ -120,10 +122,10 @@ export default function Abonnement() {
       <div className="p-5 max-w-6xl mx-auto w-full">
         <div className="mb-6 text-center max-w-2xl mx-auto">
           <h1 className="text-xl font-bold text-white tracking-tight mb-1.5">
-            Gérez votre abonnement
+            {t("subscription.title")}
           </h1>
           <p className="text-[12px] text-[#8b9cb3]">
-            Choisissez le plan adapté à votre volume d'emails.
+            {t("subscription.subtitle")}
           </p>
         </div>
 
@@ -133,13 +135,13 @@ export default function Abonnement() {
             <div>
               <p className="text-[14px] font-semibold text-red-400">
                 {profile.plan === "expired"
-                  ? "Votre abonnement a expiré"
-                  : "Votre essai gratuit est terminé"}
+                  ? t("dashboard.expiredSubscription")
+                  : t("dashboard.trialEnded")}
               </p>
               <p className="text-[12px] text-[#8b9cb3] mt-0.5">
                 {profile.plan === "expired"
-                  ? "Réabonnez-vous à un plan payant pour continuer à utiliser NCV Mail."
-                  : "Vous avez utilisé vos 100 emails gratuits. Choisissez un plan ci-dessous pour continuer."}
+                  ? t("dashboard.resubscribe")
+                  : t("dashboard.trialUsed")}
               </p>
             </div>
           </div>
@@ -151,22 +153,22 @@ export default function Abonnement() {
           <div className="bg-card rounded-lg border border-border p-5 mb-8 flex flex-col md:flex-row items-center justify-between gap-4">
             <div>
               <h3 className="text-[14px] font-semibold text-white mb-0.5">
-                Plan actuel :{" "}
+                {t("subscription.currentPlan")} :{" "}
                 <span className={`capitalize ${profile.plan === "expired" ? "text-red-400" : "text-primary"}`}>
-                  {profile.plan === "expired" ? "Expiré" : profile.plan}
+                  {profile.plan === "expired" ? t("subscription.expired") : profile.plan}
                 </span>
               </h3>
               <p className="text-[12px] text-[#8b9cb3]">
-                Renouvellement le{" "}
+                {t("subscription.renewalDate")}{" "}
                 {new Date(
                   new Date().setMonth(new Date().getMonth() + 1)
-                ).toLocaleDateString("fr-FR")}
+                ).toLocaleDateString(i18n.language)}
               </p>
             </div>
             <div className="flex items-center gap-3">
               <div className="w-full md:w-64">
                 <div className="flex justify-between text-[12px] font-medium mb-1.5">
-                  <span className="text-[#8b9cb3]">Consommation IA</span>
+                  <span className="text-[#8b9cb3]">{t("subscription.aiConsumption")}</span>
                   <span className="text-white">
                     {profile.emailsUsed} / {profile.emailsQuota}
                   </span>
@@ -193,7 +195,7 @@ export default function Abonnement() {
                   ) : (
                     <ExternalLink className="w-3.5 h-3.5 mr-1" />
                   )}
-                  Gérer l'abonnement
+                  {t("subscription.manageSubscription")}
                 </Button>
               )}
             </div>
@@ -221,7 +223,7 @@ export default function Abonnement() {
                 {isCurrentPlan && (
                   <div className="absolute top-3 right-3">
                     <div className="bg-primary/20 text-primary text-[10px] font-semibold px-2 py-0.5 rounded-full">
-                      Plan actuel
+                      {t("subscription.currentPlanBadge")}
                     </div>
                   </div>
                 )}
@@ -242,7 +244,7 @@ export default function Abonnement() {
                 <div className="mb-4">
                   <div className="flex items-baseline gap-0.5">
                     {plan.id === "essai" ? (
-                      <span className="text-3xl font-extrabold text-white">Gratuit</span>
+                      <span className="text-3xl font-extrabold text-white">{t("common.free")}</span>
                     ) : (
                       <>
                         <span className="text-3xl font-extrabold text-white">
@@ -256,7 +258,7 @@ export default function Abonnement() {
                   </div>
                   {isBusiness && (
                     <p className="text-[11px] text-[#8b9cb3] mt-0.5">
-                      Soit 9€ par siège / mois (minimum 3 sièges)
+                      {t("subscription.perSeatPerMonth")}
                     </p>
                   )}
                 </div>
@@ -264,7 +266,7 @@ export default function Abonnement() {
                 {isBusiness && (
                   <div className="mb-4 p-3 bg-background rounded-lg border border-border">
                     <label className="text-[12px] font-medium text-[#8b9cb3] block mb-2">
-                      Nombre de sièges
+                      {t("subscription.seatCount")}
                     </label>
                     <div className="flex items-center gap-3">
                       <input
@@ -282,8 +284,8 @@ export default function Abonnement() {
                       </span>
                     </div>
                     <p className="text-[11px] text-primary mt-2">
-                      {businessSeats} collaborateur{businessSeats > 1 ? "s" : ""} ={" "}
-                      {businessSeats * 9}€/mois
+                      {businessSeats} {businessSeats > 1 ? t("subscription.collaborators") : t("subscription.collaborator")} ={" "}
+                      {businessSeats * 9}€/{t("common.perMonth").replace("/", "")}
                     </p>
                   </div>
                 )}
@@ -308,7 +310,7 @@ export default function Abonnement() {
                     size="sm"
                     disabled
                   >
-                    Plan actuel
+                    {t("subscription.currentPlanBadge")}
                   </Button>
                 ) : plan.id === "essai" ? (
                   <Button
@@ -317,7 +319,7 @@ export default function Abonnement() {
                     size="sm"
                     disabled
                   >
-                    {profile?.plan === "essai" ? "Essai en cours" : "Essai terminé"}
+                    {profile?.plan === "essai" ? t("subscription.trialInProgress") : t("subscription.trialEnded")}
                   </Button>
                 ) : (
                   <Button
@@ -334,7 +336,7 @@ export default function Abonnement() {
                     {isLoading ? (
                       <Loader2 className="w-4 h-4 animate-spin mr-1" />
                     ) : null}
-                    {isLoading ? "Redirection..." : "Changer de plan"}
+                    {isLoading ? t("common.redirecting") : t("subscription.changePlan")}
                   </Button>
                 )}
               </div>
@@ -344,7 +346,7 @@ export default function Abonnement() {
 
         <div className="mt-6 text-center">
           <p className="text-[12px] text-[#8b9cb3] leading-relaxed">
-            Exemple : 3 collaborateurs = 27€/mois — modifiable à tout moment depuis votre espace.
+            {t("subscription.seatsExample")}
           </p>
         </div>
 
@@ -355,10 +357,10 @@ export default function Abonnement() {
             </div>
             <div>
               <h3 className="text-[14px] font-semibold text-white mb-1">
-                Dépassement de quota
+                {t("subscription.quotaOverage")}
               </h3>
               <p className="text-[12px] text-[#8b9cb3] leading-relaxed">
-                Facturation automatique Pay-as-you-go. Aucune surprise — vous êtes notifié à 80% de votre quota mensuel.
+                {t("subscription.quotaOverageDesc")}
               </p>
             </div>
           </div>
@@ -371,10 +373,10 @@ export default function Abonnement() {
             </div>
             <div>
               <h3 className="text-[14px] font-semibold text-white mb-1">
-                Sans engagement
+                {t("subscription.noCommitment")}
               </h3>
               <p className="text-[12px] text-[#8b9cb3] leading-relaxed">
-                Tous les plans sont sans engagement. Vous pouvez ajouter ou retirer des sièges, changer de plan ou annuler à tout moment depuis votre espace personnel.
+                {t("subscription.noCommitmentDesc")}
               </p>
             </div>
           </div>
@@ -384,11 +386,10 @@ export default function Abonnement() {
           <div>
             <h3 className="text-[14px] font-semibold text-white mb-1 flex items-center gap-2">
               <Shield className="w-4 h-4 text-primary" />
-              Sécurité et confidentialité
+              {t("subscription.securityTitle")}
             </h3>
             <p className="text-[12px] text-[#8b9cb3] max-w-2xl">
-              Vos emails ne sont jamais stockés pour entraîner nos modèles. IA
-              en temps réel uniquement. Données hébergées en Europe (RGPD).
+              {t("subscription.securityDesc")}
             </p>
           </div>
         </div>

@@ -2,69 +2,72 @@ import { Link } from "wouter";
 import { MarketingLayout } from "@/components/layout/marketing-layout";
 import { AnimatedDemo } from "@/components/marketing/animated-demo";
 import { Mail, Tags, Zap, Clock, Eye, Shield } from "lucide-react";
-
-const steps = [
-  {
-    num: "01",
-    icon: Mail,
-    title: "Connectez votre boîte mail",
-    desc: "Intégration simple et sécurisée avec votre messagerie existante en quelques clics.",
-  },
-  {
-    num: "02",
-    icon: Tags,
-    title: "Créez vos rubriques personnalisées",
-    desc: "Définissez vos propres catégories selon votre métier et vos besoins spécifiques.",
-  },
-  {
-    num: "03",
-    icon: Zap,
-    title: "L'IA gère votre boîte en autopilot",
-    desc: "Notre intelligence artificielle trie, priorise, prépare des réponses et extrait vos tâches automatiquement. Votre boîte de réception est déjà gérée quand vous arrivez le matin.",
-  },
-];
-
-const benefits = [
-  {
-    icon: Clock,
-    title: "Gain de temps",
-    desc: "Économisez plusieurs heures par semaine en automatisant le tri de vos emails.",
-  },
-  {
-    icon: Tags,
-    title: "Personnalisation totale",
-    desc: "Créez des règles de tri adaptées à votre activité et vos priorités.",
-  },
-  {
-    icon: Shield,
-    title: "Sécurité des données",
-    desc: "Vos données restent confidentielles et sécurisées avec un chiffrement de bout en bout.",
-  },
-  {
-    icon: Eye,
-    title: "Vision claire",
-    desc: "Retrouvez instantanément vos emails importants grâce à une organisation optimale.",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export default function Accueil() {
+  const { t } = useTranslation();
+
+  const steps = [
+    {
+      num: "01",
+      icon: Mail,
+      title: t("marketing.home.step1Title"),
+      desc: t("marketing.home.step1Desc"),
+    },
+    {
+      num: "02",
+      icon: Tags,
+      title: t("marketing.home.step2Title"),
+      desc: t("marketing.home.step2Desc"),
+    },
+    {
+      num: "03",
+      icon: Zap,
+      title: t("marketing.home.step3Title"),
+      desc: t("marketing.home.step3Desc"),
+    },
+  ];
+
+  const benefits = [
+    {
+      icon: Clock,
+      title: t("marketing.home.timeSaving"),
+      desc: t("marketing.home.timeSavingDesc"),
+    },
+    {
+      icon: Tags,
+      title: t("marketing.home.customization"),
+      desc: t("marketing.home.customizationDesc"),
+    },
+    {
+      icon: Shield,
+      title: t("marketing.home.dataSecurity"),
+      desc: t("marketing.home.dataSecurityDesc"),
+    },
+    {
+      icon: Eye,
+      title: t("marketing.home.clearVision"),
+      desc: t("marketing.home.clearVisionDesc"),
+    },
+  ];
+
   return (
     <MarketingLayout>
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#2d7dd2]/10 to-transparent" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 text-center relative">
           <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight tracking-tight">
-            <span className="text-white">Votre boîte est déjà gérée</span><br />
-            <span className="text-white">quand vous arrivez le matin.</span><br />
-            <span className="text-[#2d7dd2]">NCV Mail — l'Email Autopilot.</span>
+            <span className="text-white">{t("marketing.home.heroTitle1")}</span><br />
+            <span className="text-white">{t("marketing.home.heroTitle2")}</span><br />
+            <span className="text-[#2d7dd2]">{t("marketing.home.heroTitle3")}</span>
           </h1>
           <p className="mt-6 text-[16px] sm:text-[18px] text-[#8b9cb3] max-w-2xl mx-auto leading-relaxed">
-            NCV Mail lit, analyse et classe automatiquement vos emails selon VOS propres règles.
+            {t("marketing.home.heroDesc")}
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/signup">
               <button className="px-6 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
-                Commencer gratuitement
+                {t("marketing.home.startFree")}
               </button>
             </Link>
           </div>
@@ -76,9 +79,9 @@ export default function Accueil() {
       <section className="border-t border-[#1f2937] bg-[#0a0e14]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white">Comment ça marche</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">{t("marketing.home.howItWorks")}</h2>
             <p className="text-[14px] text-[#8b9cb3] mt-2">
-              Trois étapes simples pour transformer votre gestion d'emails
+              {t("marketing.home.howItWorksDesc")}
             </p>
           </div>
           <div className="space-y-8">
@@ -104,12 +107,12 @@ export default function Accueil() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
             <p className="text-[14px] text-[#8b9cb3]">
-              Découvrez pourquoi des milliers de professionnels nous font confiance
+              {t("marketing.home.trustTitle")}
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {benefits.map((b) => (
-              <div key={b.title} className="rounded-xl border border-[#1f2937] bg-[#141c2b] p-6 hover:border-[#2d7dd2]/30 transition-colors">
+            {benefits.map((b, i) => (
+              <div key={i} className="rounded-xl border border-[#1f2937] bg-[#141c2b] p-6 hover:border-[#2d7dd2]/30 transition-colors">
                 <div className="w-10 h-10 rounded-lg bg-[#2d7dd2]/10 flex items-center justify-center mb-4">
                   <b.icon className="w-5 h-5 text-[#2d7dd2]" />
                 </div>
@@ -123,13 +126,13 @@ export default function Accueil() {
 
       <section className="border-t border-[#1f2937] bg-[#0a0e14]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white">Prêt à gagner 2h par jour ?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">{t("marketing.home.ctaTitle")}</h2>
           <p className="text-[14px] text-[#8b9cb3] mt-3">
-            100 emails offerts pour découvrir NCV Mail. Aucune carte bancaire requise.
+            {t("marketing.home.ctaDesc")}
           </p>
           <Link href="/signup">
             <button className="mt-6 px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
-              Essayer gratuitement
+              {t("marketing.home.tryFree")}
             </button>
           </Link>
         </div>

@@ -22,8 +22,15 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { fr } from "date-fns/locale";
+import { enUS } from "date-fns/locale";
+import { nl } from "date-fns/locale";
+import type { Locale } from "date-fns";
+import { useTranslation } from "react-i18next";
+
+const dateFnsLocales: Record<string, Locale> = { fr, en: enUS, nl };
 
 export function EmailComments({ emailId, currentUserId }: { emailId: number; currentUserId?: string }) {
+  const { t, i18n } = useTranslation();
   const { data: comments, isLoading } = useGetEmailComments(emailId);
   const addComment = useAddEmailComment();
   const updateComment = useUpdateEmailComment();
@@ -36,6 +43,9 @@ export function EmailComments({ emailId, currentUserId }: { emailId: number; cur
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingText, setEditingText] = useState("");
 
+  const langKey = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
+  const dateLocale = dateFnsLocales[langKey] || fr;
+
   function invalidate() {
     queryClient.invalidateQueries({ queryKey: getGetEmailCommentsQueryKey(emailId) });
   }
@@ -47,7 +57,7 @@ export function EmailComments({ emailId, currentUserId }: { emailId: number; cur
       setNewComment("");
       invalidate();
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
     }
   }
 
@@ -59,7 +69,7 @@ export function EmailComments({ emailId, currentUserId }: { emailId: number; cur
       setEditingText("");
       invalidate();
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
     }
   }
 
@@ -68,7 +78,7 @@ export function EmailComments({ emailId, currentUserId }: { emailId: number; cur
       await deleteComment.mutateAsync({ emailId, commentId });
       invalidate();
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
     }
   }
 
@@ -80,7 +90,7 @@ export function EmailComments({ emailId, currentUserId }: { emailId: number; cur
         <div className="flex items-center gap-1.5 mb-3">
           <MessageSquare className="w-3.5 h-3.5 text-primary" />
           <span className="text-[11px] font-medium text-primary uppercase tracking-wider">
-            Notes internes ({commentList.length})
+            {t("comments.title")} ({commentList.length})
           </span>
         </div>
 
@@ -102,13 +112,13 @@ export function EmailComments({ emailId, currentUserId }: { emailId: number; cur
                         <User className="w-3 h-3 text-primary" />
                       </div>
                       <span className="text-[11px] font-medium text-white">
-                        {comment.authorName || "Anonyme"}
+                        {comment.authorName || t("comments.anonymous")}
                       </span>
                       <span className="text-[10px] text-[#8b9cb3]">
-                        {format(new Date(comment.createdAt), "d MMM yyyy HH:mm", { locale: fr })}
+                        {format(new Date(comment.createdAt), "d MMM yyyy HH:mm", { locale: dateLocale })}
                       </span>
                       {comment.updatedAt !== comment.createdAt && (
-                        <span className="text-[9px] text-[#8b9cb3] italic">(modifié)</span>
+                        <span className="text-[9px] text-[#8b9cb3] italic">{t("comments.edited")}</span>
                       )}
                     </div>
                     {isOwn && !isEditing && (
@@ -143,7 +153,7 @@ export function EmailComments({ emailId, currentUserId }: { emailId: number; cur
                           onClick={() => { setEditingId(null); setEditingText(""); }}
                           className="h-6 text-[10px] text-[#8b9cb3]"
                         >
-                          <X className="w-3 h-3 mr-0.5" /> Annuler
+                          <X className="w-3 h-3 mr-0.5" /> {t("comments.cancel")}
                         </Button>
                         <Button
                           size="sm"
@@ -151,7 +161,7 @@ export function EmailComments({ emailId, currentUserId }: { emailId: number; cur
                           disabled={!editingText.trim() || updateComment.isPending}
                           className="h-6 text-[10px]"
                         >
-                          <Check className="w-3 h-3 mr-0.5" /> Sauver
+                          <Check className="w-3 h-3 mr-0.5" /> {t("comments.save")}
                         </Button>
                       </div>
                     </div>
@@ -168,7 +178,7 @@ export function EmailComments({ emailId, currentUserId }: { emailId: number; cur
           <Textarea
             value={newComment}
             onChange={(e) => setNewComment(e.target.value)}
-            placeholder="Ajouter une note interne..."
+            placeholder={t("comments.placeholder")}
             className="h-14 bg-background border-border text-white text-[12px] resize-none flex-1"
             onKeyDown={(e) => {
               if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
@@ -186,7 +196,7 @@ export function EmailComments({ emailId, currentUserId }: { emailId: number; cur
             {addComment.isPending ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Send className="w-3.5 h-3.5" />}
           </Button>
         </div>
-        <p className="text-[9px] text-[#8b9cb3] mt-1">Ctrl+Entrée pour envoyer</p>
+        <p className="text-[9px] text-[#8b9cb3] mt-1">{t("comments.ctrlEnter")}</p>
       </div>
     </div>
   );

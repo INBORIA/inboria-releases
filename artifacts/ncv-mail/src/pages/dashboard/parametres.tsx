@@ -13,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
+import { useTranslation } from 'react-i18next';
 
 const IMAP_PROVIDERS = [
   { id: "outlook", name: "Outlook", color: "bg-blue-500/10 text-blue-400", letter: "Ol", host: "outlook.office365.com", port: "993" },
@@ -60,6 +61,7 @@ function useEmailConnections() {
 }
 
 export default function Parametres() {
+  const { t } = useTranslation();
   const { data: profile, isLoading } = useGetProfile();
   const updateProfile = useUpdateProfile();
   const queryClient = useQueryClient();
@@ -95,7 +97,7 @@ export default function Parametres() {
   useEffect(() => {
     const handler = (e: MessageEvent) => {
       if (e.data?.type === "email-connected") {
-        toast({ title: `${e.data.provider === "gmail" ? "Gmail" : "Outlook"} connecte avec succes !` });
+        toast({ title: `${e.data.provider === "gmail" ? "Gmail" : "Outlook"} ${t("settings.connectedSuccess")}` });
         queryClient.invalidateQueries({ queryKey: ["email-connections"] });
       }
     };
@@ -109,7 +111,7 @@ export default function Parametres() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
-          toast({ title: "Profil mis à jour" });
+          toast({ title: t("settings.profileUpdated") });
         }
       }
     );
@@ -117,11 +119,11 @@ export default function Parametres() {
 
   const handleChangePassword = async () => {
     if (newPassword.length < 6) {
-      toast({ variant: "destructive", title: "Mot de passe trop court", description: "Minimum 6 caracteres." });
+      toast({ variant: "destructive", title: t("settings.passwordTooShort"), description: t("settings.passwordMinChars") });
       return;
     }
     if (newPassword !== confirmNewPassword) {
-      toast({ variant: "destructive", title: "Erreur", description: "Les mots de passe ne correspondent pas." });
+      toast({ variant: "destructive", title: t("common.error"), description: t("settings.passwordsNoMatch") });
       return;
     }
     setChangingPassword(true);
@@ -130,22 +132,22 @@ export default function Parametres() {
       if (email && currentPassword) {
         const { error: signInError } = await supabase.auth.signInWithPassword({ email, password: currentPassword });
         if (signInError) {
-          toast({ variant: "destructive", title: "Mot de passe actuel incorrect", description: "Veuillez verifier votre mot de passe actuel." });
+          toast({ variant: "destructive", title: t("settings.wrongCurrentPassword"), description: t("settings.verifyCurrentPassword") });
           setChangingPassword(false);
           return;
         }
       }
       const { error } = await supabase.auth.updateUser({ password: newPassword });
       if (error) {
-        toast({ variant: "destructive", title: "Erreur", description: error.message });
+        toast({ variant: "destructive", title: t("common.error"), description: error.message });
       } else {
-        toast({ title: "Mot de passe modifié avec succès" });
+        toast({ title: t("settings.passwordChanged") });
         setCurrentPassword("");
         setNewPassword("");
         setConfirmNewPassword("");
       }
     } catch {
-      toast({ variant: "destructive", title: "Erreur", description: "Impossible de modifier le mot de passe." });
+      toast({ variant: "destructive", title: t("common.error"), description: t("settings.passwordChangeError") });
     } finally {
       setChangingPassword(false);
     }
@@ -157,7 +159,7 @@ export default function Parametres() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
-          toast({ title: "Signature enregistrée", description: "Votre signature sera utilisée dans les brouillons IA et les réponses." });
+          toast({ title: t("settings.signatureSaved"), description: t("settings.signatureSavedDesc") });
         }
       }
     );
@@ -173,16 +175,16 @@ export default function Parametres() {
       if (data.url) {
         window.open(data.url, "_blank", "width=600,height=700,left=200,top=100");
       } else {
-        toast({ variant: "destructive", title: "Erreur", description: data.error || "Impossible de se connecter" });
+        toast({ variant: "destructive", title: t("common.error"), description: data.error || t("settings.connectionFailed") });
       }
     } catch {
-      toast({ variant: "destructive", title: "Erreur de connexion" });
+      toast({ variant: "destructive", title: t("settings.connectionError") });
     }
   };
 
   const handleImapConnect = async () => {
     if (!imapEmail || !imapPassword) {
-      setConnectError("Veuillez remplir tous les champs");
+      setConnectError(t("settings.fillAllFields"));
       return;
     }
     setConnecting(true);
@@ -204,7 +206,7 @@ export default function Parametres() {
       });
       const data = await res.json();
       if (res.ok) {
-        toast({ title: `${imapEmail} connecte avec succes !` });
+        toast({ title: `${imapEmail} ${t("settings.connectedSuccess")}` });
         queryClient.invalidateQueries({ queryKey: ["email-connections"] });
         setSelectedProvider(null);
         setImapEmail("");
@@ -212,11 +214,11 @@ export default function Parametres() {
         setImapHost("");
         setImapPort("");
       } else {
-        setConnectError(data.error || "Connexion échouée");
+        setConnectError(data.error || t("settings.connectionFailed"));
         if (data.needsManualConfig) setShowAdvanced(true);
       }
     } catch {
-      setConnectError("Erreur de connexion au serveur");
+      setConnectError(t("settings.connectionError"));
     } finally {
       setConnecting(false);
     }
@@ -230,9 +232,9 @@ export default function Parametres() {
         headers: { Authorization: `Bearer ${session?.access_token}` },
       });
       queryClient.invalidateQueries({ queryKey: ["email-connections"] });
-      toast({ title: "Compte email deconnecte" });
+      toast({ title: t("settings.disconnected") });
     } catch {
-      toast({ variant: "destructive", title: "Erreur" });
+      toast({ variant: "destructive", title: t("common.error") });
     }
   };
 
@@ -240,15 +242,15 @@ export default function Parametres() {
     <DashboardLayout>
       <div className="p-5 max-w-4xl mx-auto w-full">
         <div className="mb-5">
-          <h1 className="text-[16px] font-semibold text-white tracking-tight">Paramètres</h1>
-          <p className="text-[12px] text-[#8b9cb3] mt-0.5">Gérez votre compte et les préférences de l'IA.</p>
+          <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("settings.title")}</h1>
+          <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("settings.subtitle")}</p>
         </div>
 
         <div className="space-y-6">
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
               <Mail className="w-4 h-4 text-primary" />
-              Connexion Email
+              {t("settings.emailConnection")}
             </h2>
             <div className="bg-card rounded-lg border border-border p-5 space-y-3">
               {connectionsLoading ? (
@@ -269,10 +271,10 @@ export default function Parametres() {
                           <h4 className="font-medium text-[13px] text-white">{conn.email_address}</h4>
                           <p className="text-[11px] text-emerald-400 flex items-center gap-1">
                             <CheckCircle2 className="w-3 h-3" />
-                            Connecte
+                            {t("settings.connected")}
                             {conn.last_synced_at && (
                               <span className="text-[#8b9cb3] ml-1.5">
-                                — Sync : {new Date(conn.last_synced_at).toLocaleString("fr-FR")}
+                                — {t("settings.sync")} : {new Date(conn.last_synced_at).toLocaleString()}
                               </span>
                             )}
                           </p>
@@ -280,7 +282,7 @@ export default function Parametres() {
                       </div>
                       <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 text-[12px]" onClick={() => handleDisconnect(conn.id)}>
                         <Trash2 className="w-3.5 h-3.5 mr-1.5" />
-                        Déconnecter
+                        {t("settings.disconnect")}
                       </Button>
                     </div>
                   ))}
@@ -290,11 +292,11 @@ export default function Parametres() {
                       <div className="w-9 h-9 bg-red-500/10 rounded-lg flex items-center justify-center text-red-400 font-bold text-sm">G</div>
                       <div>
                         <h4 className="font-medium text-[13px] text-white">Gmail / Google Workspace</h4>
-                        <p className="text-[11px] text-[#8b9cb3]">Ajouter un compte Google (OAuth).</p>
+                        <p className="text-[11px] text-[#8b9cb3]">{t("settings.addGoogleAccount")}</p>
                       </div>
                     </div>
                     <Button variant="outline" size="sm" className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]" onClick={() => handleOAuthConnect("gmail")}>
-                      Connecter Google
+                      {t("settings.connectGoogle")}
                     </Button>
                   </div>
 
@@ -302,7 +304,7 @@ export default function Parametres() {
                   {!selectedProvider && (
                     <>
                       <div className="pt-2 border-t border-border">
-                        <p className="text-[12px] text-[#8b9cb3] mb-3">Autres fournisseurs</p>
+                        <p className="text-[12px] text-[#8b9cb3] mb-3">{t("settings.otherProviders")}</p>
                         <div className="grid grid-cols-4 gap-2">
                           {IMAP_PROVIDERS.map((provider) => (
                             <button
@@ -319,7 +321,7 @@ export default function Parametres() {
                               <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[11px] ${provider.color}`}>
                                 {provider.letter}
                               </div>
-                              <span className="text-[11px] text-[#8b9cb3] group-hover:text-white transition-colors">{provider.name}</span>
+                              <span className="text-[11px] text-[#8b9cb3] group-hover:text-white transition-colors">{provider.id === "autre" ? t("settings.other") : provider.name}</span>
                             </button>
                           ))}
                         </div>
@@ -335,7 +337,7 @@ export default function Parametres() {
                           return prov ? (
                             <>
                               <div className={`w-7 h-7 rounded-lg flex items-center justify-center font-bold text-[10px] ${prov.color}`}>{prov.letter}</div>
-                              <h4 className="font-medium text-[13px] text-white">Connecter {prov.name}</h4>
+                              <h4 className="font-medium text-[13px] text-white">{t("settings.connectProvider", { name: prov.id === "autre" ? t("settings.other") : prov.name })}</h4>
                             </>
                           ) : null;
                         })()}
@@ -350,13 +352,13 @@ export default function Parametres() {
 
                       <div className="space-y-2.5">
                         <div className="space-y-1">
-                          <Label className="text-[12px] text-[#8b9cb3]">Adresse email</Label>
+                          <Label className="text-[12px] text-[#8b9cb3]">{t("settings.emailAddress")}</Label>
                           <Input type="email" placeholder="votre@email.com" className="bg-background border-border text-white h-9 text-[13px]" value={imapEmail} onChange={(e) => setImapEmail(e.target.value)} />
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-[12px] text-[#8b9cb3]">Mot de passe</Label>
+                          <Label className="text-[12px] text-[#8b9cb3]">{t("settings.appPassword")}</Label>
                           <div className="relative">
-                            <Input type={showPassword ? "text" : "password"} placeholder="Mot de passe" className="bg-background border-border text-white h-9 text-[13px] pr-10" value={imapPassword} onChange={(e) => setImapPassword(e.target.value)} />
+                            <Input type={showPassword ? "text" : "password"} placeholder={t("settings.appPassword")} className="bg-background border-border text-white h-9 text-[13px] pr-10" value={imapPassword} onChange={(e) => setImapPassword(e.target.value)} />
                             <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white" onClick={() => setShowPassword(!showPassword)}>
                               {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                             </button>
@@ -366,11 +368,11 @@ export default function Parametres() {
                         {(selectedProvider === "autre" || showAdvanced) && (
                           <div className="grid grid-cols-2 gap-2.5">
                             <div className="space-y-1">
-                              <Label className="text-[12px] text-[#8b9cb3]">Serveur IMAP</Label>
+                              <Label className="text-[12px] text-[#8b9cb3]">{t("settings.imapServer")}</Label>
                               <Input placeholder="imap.exemple.com" className="bg-background border-border text-white h-9 text-[13px]" value={imapHost} onChange={(e) => setImapHost(e.target.value)} />
                             </div>
                             <div className="space-y-1">
-                              <Label className="text-[12px] text-[#8b9cb3]">Port</Label>
+                              <Label className="text-[12px] text-[#8b9cb3]">{t("settings.port")}</Label>
                               <Input type="number" placeholder="993" className="bg-background border-border text-white h-9 text-[13px]" value={imapPort} onChange={(e) => setImapPort(e.target.value)} />
                             </div>
                           </div>
@@ -378,17 +380,17 @@ export default function Parametres() {
 
                         {selectedProvider !== "autre" && (
                           <button type="button" className="text-[12px] text-primary hover:underline" onClick={() => setShowAdvanced(!showAdvanced)}>
-                            {showAdvanced ? "Masquer la config avancee" : "Configuration avancee"}
+                            {showAdvanced ? t("settings.hideAdvancedConfig") : t("settings.advancedConfig")}
                           </button>
                         )}
                       </div>
 
                       <div className="flex gap-2">
                         <Button onClick={handleImapConnect} disabled={connecting} size="sm">
-                          {connecting ? "Connexion..." : "Connecter"}
+                          {connecting ? t("settings.connecting") : t("settings.connect")}
                         </Button>
                         <Button variant="ghost" size="sm" className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]" onClick={() => { setSelectedProvider(null); setConnectError(""); setImapEmail(""); setImapPassword(""); setImapHost(""); setImapPort(""); }}>
-                          Annuler
+                          {t("common.cancel")}
                         </Button>
                       </div>
                     </div>
@@ -402,28 +404,28 @@ export default function Parametres() {
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
               <BrainCircuit className="w-4 h-4 text-primary" />
-              Préférences IA
+              {t("settings.aiPreferences")}
             </h2>
             <div className="bg-card rounded-lg border border-border p-5 space-y-5">
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-[13px] text-white">Facturation urgente</Label>
-                    <p className="text-[11px] text-[#8b9cb3]">Detecter les factures impayees comme urgentes.</p>
+                    <Label className="text-[13px] text-white">{t("settings.urgentBilling")}</Label>
+                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.urgentBillingDesc")}</p>
                   </div>
                   <Switch defaultChecked />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-[13px] text-white">Extraction de taches</Label>
-                    <p className="text-[11px] text-[#8b9cb3]">Convertir les requetes clients en taches.</p>
+                    <Label className="text-[13px] text-white">{t("settings.taskExtraction")}</Label>
+                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.taskExtractionDesc")}</p>
                   </div>
                   <Switch defaultChecked />
                 </div>
                 <div className="flex items-center justify-between">
                   <div className="space-y-0.5">
-                    <Label className="text-[13px] text-white">Detection de projets</Label>
-                    <p className="text-[11px] text-[#8b9cb3]">Associer automatiquement les emails a vos projets actifs.</p>
+                    <Label className="text-[13px] text-white">{t("settings.projectDetection")}</Label>
+                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.projectDetectionDesc")}</p>
                   </div>
                   <Switch defaultChecked />
                 </div>
@@ -434,11 +436,11 @@ export default function Parametres() {
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
               <Pen className="w-4 h-4 text-primary" />
-              Signature email
+              {t("settings.emailSignature")}
             </h2>
             <div className="bg-card rounded-lg border border-border p-5 space-y-4">
               <p className="text-[12px] text-[#8b9cb3]">
-                Cette signature sera automatiquement ajoutée aux brouillons générés par l'IA et à vos réponses manuelles.
+                {t("settings.signatureDesc")}
               </p>
               {isLoading ? (
                 <Skeleton className="h-32 w-full bg-white/5" />
@@ -452,7 +454,7 @@ export default function Parametres() {
                   />
                   {signature && (
                     <div className="p-3 bg-background rounded-lg border border-border">
-                      <p className="text-[11px] text-[#8b9cb3] mb-2">Apercu :</p>
+                      <p className="text-[11px] text-[#8b9cb3] mb-2">{t("settings.preview")} :</p>
                       <div className="text-[13px] text-white whitespace-pre-line">{signature}</div>
                     </div>
                   )}
@@ -461,7 +463,7 @@ export default function Parametres() {
                     disabled={updateProfile.isPending || signature === ((profile as any)?.signature || "")}
                     size="sm"
                   >
-                    {updateProfile.isPending ? "Enregistrement..." : "Enregistrer la signature"}
+                    {updateProfile.isPending ? t("settings.saving") : t("settings.saveSignature")}
                   </Button>
                 </div>
               )}
@@ -471,29 +473,29 @@ export default function Parametres() {
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
               <Shield className="w-4 h-4 text-primary" />
-              Mode de gestion
+              {t("settings.managementMode")}
             </h2>
             <div className="bg-card rounded-lg border border-border p-5 space-y-4">
               <p className="text-[12px] text-[#8b9cb3]">
-                Choisissez le niveau d'autonomie de l'IA dans la gestion de vos emails.
+                {t("settings.managementModeDesc")}
               </p>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-[13px] text-white">Archivage automatique</Label>
-                  <p className="text-[11px] text-[#8b9cb3]">L'IA archive les emails à faible priorité (newsletters, pubs, notifications). Les emails urgents et moyens restent dans la boîte de réception.</p>
+                  <Label className="text-[13px] text-white">{t("settings.autoArchive")}</Label>
+                  <p className="text-[11px] text-[#8b9cb3]">{t("settings.autoArchiveDesc")}</p>
                 </div>
                 <Switch />
               </div>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-[13px] text-white">Marquage automatique</Label>
-                  <p className="text-[11px] text-[#8b9cb3]">Marquer comme lu les emails faible priorite deja resumes par l'IA.</p>
+                  <Label className="text-[13px] text-white">{t("settings.autoMark")}</Label>
+                  <p className="text-[11px] text-[#8b9cb3]">{t("settings.autoMarkDesc")}</p>
                 </div>
                 <Switch />
               </div>
               <div className="p-3 bg-primary/[0.06] rounded-lg border border-primary/10">
                 <p className="text-[11px] text-primary">
-                  En mode manuel (par defaut), l'IA trie et classe vos emails mais ne prend aucune action automatique. Activez les options ci-dessus pour passer en mode autopilote.
+                  {t("settings.manualModeInfo")}
                 </p>
               </div>
             </div>
@@ -502,7 +504,7 @@ export default function Parametres() {
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
               <User className="w-4 h-4 text-primary" />
-              Informations du compte
+              {t("settings.accountInfo")}
             </h2>
             <div className="bg-card rounded-lg border border-border p-5">
               {isLoading ? (
@@ -513,15 +515,15 @@ export default function Parametres() {
               ) : (
                 <div className="space-y-3 max-w-md">
                   <div className="space-y-1.5">
-                    <Label className="text-[12px] text-[#8b9cb3]">Email</Label>
+                    <Label className="text-[12px] text-[#8b9cb3]">{t("settings.email")}</Label>
                     <Input value={profile?.email} disabled className="bg-background border-border text-[#8b9cb3] h-9 text-[13px]" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[12px] text-[#8b9cb3]">Nom complet</Label>
+                    <Label className="text-[12px] text-[#8b9cb3]">{t("settings.fullName")}</Label>
                     <Input value={fullName} onChange={(e) => setFullName(e.target.value)} className="bg-background border-border text-white h-9 text-[13px]" />
                   </div>
                   <Button onClick={handleSaveProfile} disabled={updateProfile.isPending || fullName === profile?.fullName} size="sm">
-                    {updateProfile.isPending ? "Enregistrement..." : "Enregistrer"}
+                    {updateProfile.isPending ? t("settings.saving") : t("common.save")}
                   </Button>
                 </div>
               )}
@@ -531,19 +533,19 @@ export default function Parametres() {
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
               <Lock className="w-4 h-4 text-primary" />
-              Modifier le mot de passe
+              {t("settings.changePassword")}
             </h2>
             <div className="bg-card rounded-lg border border-border p-5">
               <div className="space-y-3 max-w-md">
                 <div className="space-y-1.5">
-                  <Label className="text-[12px] text-[#8b9cb3]">Mot de passe actuel</Label>
+                  <Label className="text-[12px] text-[#8b9cb3]">{t("settings.currentPassword")}</Label>
                   <div className="relative">
                     <Input
                       type={showCurrentPwd ? "text" : "password"}
                       value={currentPassword}
                       onChange={(e) => setCurrentPassword(e.target.value)}
                       className="bg-background border-border text-white h-9 text-[13px] pr-10"
-                      placeholder="Votre mot de passe actuel"
+                      placeholder={t("settings.currentPasswordPlaceholder")}
                     />
                     <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white" onClick={() => setShowCurrentPwd(!showCurrentPwd)}>
                       {showCurrentPwd ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -551,14 +553,14 @@ export default function Parametres() {
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[12px] text-[#8b9cb3]">Nouveau mot de passe</Label>
+                  <Label className="text-[12px] text-[#8b9cb3]">{t("settings.newPassword")}</Label>
                   <div className="relative">
                     <Input
                       type={showNewPwd ? "text" : "password"}
                       value={newPassword}
                       onChange={(e) => setNewPassword(e.target.value)}
                       className="bg-background border-border text-white h-9 text-[13px] pr-10"
-                      placeholder="Minimum 6 caracteres"
+                      placeholder={t("settings.newPasswordPlaceholder")}
                     />
                     <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white" onClick={() => setShowNewPwd(!showNewPwd)}>
                       {showNewPwd ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
@@ -566,13 +568,13 @@ export default function Parametres() {
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[12px] text-[#8b9cb3]">Confirmer le nouveau mot de passe</Label>
+                  <Label className="text-[12px] text-[#8b9cb3]">{t("settings.confirmNewPassword")}</Label>
                   <Input
                     type={showNewPwd ? "text" : "password"}
                     value={confirmNewPassword}
                     onChange={(e) => setConfirmNewPassword(e.target.value)}
                     className="bg-background border-border text-white h-9 text-[13px]"
-                    placeholder="Retapez le nouveau mot de passe"
+                    placeholder={t("settings.confirmNewPasswordPlaceholder")}
                   />
                 </div>
                 <Button
@@ -580,7 +582,7 @@ export default function Parametres() {
                   disabled={changingPassword || !currentPassword || !newPassword || !confirmNewPassword}
                   size="sm"
                 >
-                  {changingPassword ? "Modification..." : "Modifier le mot de passe"}
+                  {changingPassword ? t("settings.changingPassword") : t("settings.changePasswordButton")}
                 </Button>
               </div>
             </div>
@@ -589,20 +591,20 @@ export default function Parametres() {
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
               <Bell className="w-4 h-4 text-primary" />
-              Notifications
+              {t("settings.notifications")}
             </h2>
             <div className="bg-card rounded-lg border border-border p-5 space-y-4">
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-[13px] text-white">Bilan matinal</Label>
-                  <p className="text-[11px] text-[#8b9cb3]">Resume IA par email tous les matins a 8h.</p>
+                  <Label className="text-[13px] text-white">{t("settings.morningBrief")}</Label>
+                  <p className="text-[11px] text-[#8b9cb3]">{t("settings.morningBriefDesc")}</p>
                 </div>
                 <Switch defaultChecked />
               </div>
               <div className="flex items-center justify-between">
                 <div className="space-y-0.5">
-                  <Label className="text-[13px] text-white">Alertes urgentes</Label>
-                  <p className="text-[11px] text-[#8b9cb3]">Notification pour les emails critiques.</p>
+                  <Label className="text-[13px] text-white">{t("settings.urgentAlerts")}</Label>
+                  <p className="text-[11px] text-[#8b9cb3]">{t("settings.urgentAlertsDesc")}</p>
                 </div>
                 <Switch defaultChecked />
               </div>

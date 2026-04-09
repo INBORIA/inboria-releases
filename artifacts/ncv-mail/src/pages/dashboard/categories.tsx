@@ -21,6 +21,7 @@ import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { useTranslation } from "react-i18next";
 
 const SUGGESTED_CATEGORIES = [
   { name: "Facturation", description: "Factures, devis, bons de commande, relances de paiement", icon: Receipt, color: "text-amber-400 bg-amber-500/10" },
@@ -54,6 +55,7 @@ const categoryColors = [
 ];
 
 export default function Categories() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   
@@ -83,11 +85,11 @@ export default function Categories() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
           setAddingNames(prev => { const next = new Set(prev); next.delete(suggestion.name); return next; });
-          toast({ title: `"${suggestion.name}" ajoutée` });
+          toast({ title: t("classification.categoryCreated") });
         },
         onError: () => {
           setAddingNames(prev => { const next = new Set(prev); next.delete(suggestion.name); return next; });
-          toast({ variant: "destructive", title: "Erreur", description: `Impossible d'ajouter "${suggestion.name}".` });
+          toast({ variant: "destructive", title: t("common.error"), description: t("classification.addErrorDesc", { name: suggestion.name }) });
         },
       }
     );
@@ -122,7 +124,7 @@ export default function Categories() {
           queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
           setIsCreateOpen(false);
           createForm.reset();
-          toast({ title: "Catégorie créée" });
+          toast({ title: t("classification.categoryCreated") });
         },
       }
     );
@@ -136,7 +138,7 @@ export default function Categories() {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
           setEditCategory(null);
-          toast({ title: "Catégorie modifiée" });
+          toast({ title: t("classification.categoryModified") });
         },
       }
     );
@@ -148,7 +150,7 @@ export default function Categories() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
-          toast({ title: "Catégorie supprimée" });
+          toast({ title: t("classification.categoryDeleted") });
         },
       }
     );
@@ -159,20 +161,20 @@ export default function Categories() {
       <div className="p-5 max-w-5xl mx-auto w-full">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
-            <h1 className="text-[16px] font-semibold text-white tracking-tight">Catégories de classement</h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">Gérez les dossiers dans lesquels l'IA classe vos emails.</p>
+            <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("classification.title")}</h1>
+            <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("classification.manageCategoriesDesc")}</p>
           </div>
           
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
               <Button size="sm" className="shrink-0 gap-2">
                 <Plus className="w-3.5 h-3.5" />
-                Nouvelle catégorie
+                {t("classification.newCategory")}
               </Button>
             </DialogTrigger>
             <DialogContent className="bg-card border-border">
               <DialogHeader>
-                <DialogTitle className="text-white">Créer une catégorie</DialogTitle>
+                <DialogTitle className="text-white">{t("classification.createCategory")}</DialogTitle>
               </DialogHeader>
               <Form {...createForm}>
                 <form onSubmit={createForm.handleSubmit(onSubmitCreate)} className="space-y-4">
@@ -181,9 +183,9 @@ export default function Categories() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#8b9cb3]">Nom</FormLabel>
+                        <FormLabel className="text-[#8b9cb3]">{t("classification.nameLabel")}</FormLabel>
                         <FormControl>
-                          <Input placeholder="Ex: Factures, Fournisseurs..." className="bg-background border-border text-white" {...field} />
+                          <Input placeholder={t("classification.namePlaceholder")} className="bg-background border-border text-white" {...field} />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -194,10 +196,10 @@ export default function Categories() {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#8b9cb3]">Description (pour aider l'IA)</FormLabel>
+                        <FormLabel className="text-[#8b9cb3]">{t("classification.descriptionHelp")}</FormLabel>
                         <FormControl>
                           <Textarea 
-                            placeholder="Ex: Tous les emails contenant des factures, devis ou reçus." 
+                            placeholder={t("classification.descriptionPlaceholder")} 
                             className="resize-none h-24 bg-background border-border text-white"
                             {...field} 
                           />
@@ -208,7 +210,7 @@ export default function Categories() {
                   />
                   <DialogFooter>
                     <Button type="submit" disabled={createCategory.isPending}>
-                      {createCategory.isPending ? "Création..." : "Créer"}
+                      {createCategory.isPending ? t("classification.creating") : t("common.save")}
                     </Button>
                   </DialogFooter>
                 </form>
@@ -220,7 +222,7 @@ export default function Categories() {
         <Dialog open={!!editCategory} onOpenChange={(open) => !open && setEditCategory(null)}>
           <DialogContent className="bg-card border-border">
             <DialogHeader>
-              <DialogTitle className="text-white">Modifier la catégorie</DialogTitle>
+              <DialogTitle className="text-white">{t("classification.editCategory")}</DialogTitle>
             </DialogHeader>
             <Form {...editForm}>
               <form onSubmit={editForm.handleSubmit(onSubmitEdit)} className="space-y-4">
@@ -229,7 +231,7 @@ export default function Categories() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">Nom</FormLabel>
+                      <FormLabel className="text-[#8b9cb3]">{t("classification.nameLabel")}</FormLabel>
                       <FormControl>
                         <Input className="bg-background border-border text-white" {...field} />
                       </FormControl>
@@ -242,7 +244,7 @@ export default function Categories() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">Description</FormLabel>
+                      <FormLabel className="text-[#8b9cb3]">{t("classification.descriptionLabel")}</FormLabel>
                       <FormControl>
                         <Textarea className="resize-none h-24 bg-background border-border text-white" {...field} />
                       </FormControl>
@@ -252,7 +254,7 @@ export default function Categories() {
                 />
                 <DialogFooter>
                   <Button type="submit" disabled={updateCategory.isPending}>
-                    {updateCategory.isPending ? "Enregistrement..." : "Enregistrer"}
+                    {updateCategory.isPending ? t("classification.saving") : t("common.save")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -268,8 +270,8 @@ export default function Categories() {
                   <Sparkles className="w-4 h-4 text-primary" />
                 </div>
                 <div>
-                  <h3 className="text-[14px] font-semibold text-white">Catégories suggérées</h3>
-                  <p className="text-[12px] text-[#8b9cb3]">Cliquez pour ajouter, l'IA les utilisera pour classer vos emails</p>
+                  <h3 className="text-[14px] font-semibold text-white">{t("classification.suggestedCategoriesTitle")}</h3>
+                  <p className="text-[12px] text-[#8b9cb3]">{t("classification.suggestedCategoriesDesc")}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -280,7 +282,7 @@ export default function Categories() {
                   onClick={handleAddAllSuggestions}
                   disabled={addingNames.size > 0}
                 >
-                  Tout ajouter
+                  {t("classification.addAll")}
                 </Button>
                 <Button 
                   variant="ghost" 
@@ -288,7 +290,7 @@ export default function Categories() {
                   className="text-[12px] text-[#8b9cb3] hover:text-white"
                   onClick={() => setShowSuggestions(false)}
                 >
-                  Masquer
+                  {t("classification.hide")}
                 </Button>
               </div>
             </div>
@@ -326,7 +328,7 @@ export default function Categories() {
               onClick={() => setShowSuggestions(true)}
             >
               <Sparkles className="w-3 h-3" />
-              Afficher les suggestions
+              {t("classification.showSuggestions")}
             </Button>
           </div>
         )}
@@ -343,11 +345,11 @@ export default function Categories() {
           ) : categories?.length === 0 ? (
             <div className="col-span-full text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
               <Tags className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
-              <h3 className="text-sm font-medium text-white mb-1">Aucune catégorie</h3>
-              <p className="text-[13px] text-[#8b9cb3] mb-4">Créez des catégories pour organiser votre boîte.</p>
+              <h3 className="text-sm font-medium text-white mb-1">{t("classification.noCategories")}</h3>
+              <p className="text-[13px] text-[#8b9cb3] mb-4">{t("classification.noCategoriesAltDesc")}</p>
               <Button onClick={() => setIsCreateOpen(true)} size="sm">
                 <Plus className="w-3.5 h-3.5 mr-2" />
-                Créer la première
+                {t("classification.createFirst")}
               </Button>
             </div>
           ) : (
@@ -365,28 +367,28 @@ export default function Categories() {
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="bg-card border-border">
                       <DropdownMenuItem onClick={() => handleOpenEdit(cat)} className="gap-2 cursor-pointer text-[#8b9cb3] hover:text-white">
-                        <Edit2 className="h-3.5 w-3.5" /> Modifier
+                        <Edit2 className="h-3.5 w-3.5" /> {t("classification.editCategory")}
                       </DropdownMenuItem>
                       <AlertDialog>
                         <AlertDialogTrigger asChild>
                           <DropdownMenuItem onSelect={(e) => e.preventDefault()} className="gap-2 text-red-400 cursor-pointer">
-                            <Trash2 className="h-3.5 w-3.5" /> Supprimer
+                            <Trash2 className="h-3.5 w-3.5" /> {t("common.delete")}
                           </DropdownMenuItem>
                         </AlertDialogTrigger>
                         <AlertDialogContent className="bg-card border-border">
                           <AlertDialogHeader>
-                            <AlertDialogTitle className="text-white">Supprimer cette catégorie ?</AlertDialogTitle>
+                            <AlertDialogTitle className="text-white">{t("classification.deleteConfirmTitle")}</AlertDialogTitle>
                             <AlertDialogDescription className="text-[#8b9cb3]">
-                              La catégorie "{cat.name}" sera supprimée. Les emails associés perdront cette catégorie.
+                              {t("classification.deleteConfirmCatDesc", { name: cat.name })}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">Annuler</AlertDialogCancel>
+                            <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">{t("common.cancel")}</AlertDialogCancel>
                             <AlertDialogAction 
                               onClick={() => handleDelete(cat.id)}
                               className="bg-red-500 text-white hover:bg-red-600"
                             >
-                              Supprimer
+                              {t("common.delete")}
                             </AlertDialogAction>
                           </AlertDialogFooter>
                         </AlertDialogContent>
@@ -397,12 +399,12 @@ export default function Categories() {
                 
                 <h3 className="text-[14px] font-semibold text-white mb-1">{cat.name}</h3>
                 <p className="text-[12px] text-[#8b9cb3] line-clamp-2 h-9 mb-3">
-                  {cat.description || <span className="italic opacity-50">Aucune description</span>}
+                  {cat.description || <span className="italic opacity-50">{t("classification.noDescription")}</span>}
                 </p>
                 
                 <div className="flex items-center text-[12px] text-[#8b9cb3] bg-white/[0.04] px-2.5 py-1 rounded-md inline-flex w-fit">
                   <span className="text-primary font-medium mr-1">{cat.emailCount || 0}</span> 
-                  emails
+                  {t("classification.emailsLabel")}
                 </div>
               </div>
             ))

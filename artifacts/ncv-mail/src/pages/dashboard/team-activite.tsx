@@ -1,27 +1,29 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useGetTeamDashboard } from "@workspace/api-client-react";
 import { Loader2, Users, MessageSquare, Mail, Archive } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 function ActionLabel({ action }: { action: string }) {
+  const { t } = useTranslation();
   const labels: Record<string, string> = {
-    assign_email: "a assigné un email",
-    add_comment: "a ajouté un commentaire",
-    unassign_email: "a désassigné un email",
-    create_shared_mailbox: "a créé une boîte partagée",
-    archive_email: "a archivé un email",
+    assign_email: t("teamActivity.actions.assign_email"),
+    add_comment: t("teamActivity.actions.add_comment"),
+    unassign_email: t("teamActivity.actions.unassign_email"),
+    create_shared_mailbox: t("teamActivity.actions.create_shared_mailbox"),
+    archive_email: t("teamActivity.actions.archive_email"),
   };
   return <span>{labels[action] || action}</span>;
 }
 
-function formatTime(dateStr: string) {
+function formatTime(dateStr: string, t: (key: string, opts?: any) => string) {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
-  if (mins < 1) return "à l'instant";
-  if (mins < 60) return `il y a ${mins}min`;
+  if (mins < 1) return t("teamActivity.time.justNow");
+  if (mins < 60) return t("teamActivity.time.minutesAgo", { count: mins });
   const hours = Math.floor(mins / 60);
-  if (hours < 24) return `il y a ${hours}h`;
+  if (hours < 24) return t("teamActivity.time.hoursAgo", { count: hours });
   const days = Math.floor(hours / 24);
-  return `il y a ${days}j`;
+  return t("teamActivity.time.daysAgo", { count: days });
 }
 
 function StatCard({ label, value, icon }: { label: string; value: number; icon: React.ReactNode }) {
@@ -37,6 +39,7 @@ function StatCard({ label, value, icon }: { label: string; value: number; icon: 
 }
 
 export default function TeamActivitePage() {
+  const { t } = useTranslation();
   const { data, isLoading } = useGetTeamDashboard();
 
   if (isLoading) {
@@ -57,30 +60,30 @@ export default function TeamActivitePage() {
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto space-y-6">
         <div>
-          <h1 className="text-xl font-bold text-white">Tableau de bord équipe</h1>
+          <h1 className="text-xl font-bold text-white">{t("teamActivity.title")}</h1>
           <p className="text-[12px] text-[#8b9cb3] mt-1">
-            Vue d'ensemble de l'activité de votre équipe
+            {t("teamActivity.subtitle")}
           </p>
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
           <StatCard
-            label="Membres"
+            label={t("teamActivity.members")}
             value={members.length}
             icon={<Users className="h-4 w-4 text-primary" />}
           />
           <StatCard
-            label="Emails assignés"
+            label={t("teamActivity.assignedEmails")}
             value={members.reduce((s: number, m: any) => s + (m.assignedEmails || 0), 0)}
             icon={<Mail className="h-4 w-4 text-blue-400" />}
           />
           <StatCard
-            label="Emails archivés"
+            label={t("teamActivity.archivedEmails")}
             value={members.reduce((s: number, m: any) => s + (m.archivedEmails || 0), 0)}
             icon={<Archive className="h-4 w-4 text-green-400" />}
           />
           <StatCard
-            label="Commentaires"
+            label={t("teamActivity.comments")}
             value={members.reduce((s: number, m: any) => s + (m.commentsCount || 0), 0)}
             icon={<MessageSquare className="h-4 w-4 text-yellow-400" />}
           />
@@ -88,11 +91,11 @@ export default function TeamActivitePage() {
 
         <div className="bg-[#141c2b] border border-[#1f2937] rounded-lg overflow-hidden">
           <div className="px-4 py-3 border-b border-[#1f2937]">
-            <h2 className="text-[13px] font-semibold text-white">Performance par membre</h2>
+            <h2 className="text-[13px] font-semibold text-white">{t("teamActivity.performance")}</h2>
           </div>
           {members.length === 0 ? (
             <div className="p-8 text-center text-[12px] text-[#8b9cb3]">
-              Aucun membre dans votre organisation
+              {t("teamActivity.noMembers")}
             </div>
           ) : (
             <div className="divide-y divide-[#1f2937]">
@@ -103,7 +106,7 @@ export default function TeamActivitePage() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <p className="text-[12px] font-medium text-white truncate">
-                      {m.fullName || "Sans nom"}
+                      {m.fullName || t("teamActivity.noName")}
                     </p>
                     <p className="text-[10px] text-[#8b9cb3]">{m.email || ""}</p>
                   </div>
@@ -111,9 +114,9 @@ export default function TeamActivitePage() {
                     {m.role}
                   </span>
                   <div className="flex gap-4 text-[10px] text-[#8b9cb3]">
-                    <span>{m.assignedEmails} assignés</span>
-                    <span>{m.archivedEmails} archivés</span>
-                    <span>{m.commentsCount} commentaires</span>
+                    <span>{m.assignedEmails} {t("teamActivity.assigned")}</span>
+                    <span>{m.archivedEmails} {t("teamActivity.archived")}</span>
+                    <span>{m.commentsCount} {t("teamActivity.comments").toLowerCase()}</span>
                   </div>
                 </div>
               ))}
@@ -123,11 +126,11 @@ export default function TeamActivitePage() {
 
         <div className="bg-[#141c2b] border border-[#1f2937] rounded-lg overflow-hidden">
           <div className="px-4 py-3 border-b border-[#1f2937]">
-            <h2 className="text-[13px] font-semibold text-white">Activité récente</h2>
+            <h2 className="text-[13px] font-semibold text-white">{t("teamActivity.recentActivity")}</h2>
           </div>
           {recentActivity.length === 0 ? (
             <div className="p-8 text-center text-[12px] text-[#8b9cb3]">
-              Aucune activité récente
+              {t("teamActivity.noActivity")}
             </div>
           ) : (
             <div className="divide-y divide-[#1f2937]">
@@ -143,7 +146,7 @@ export default function TeamActivitePage() {
                     </p>
                   </div>
                   <span className="text-[9px] text-[#8b9cb3] shrink-0">
-                    {formatTime(a.createdAt)}
+                    {formatTime(a.createdAt, t)}
                   </span>
                 </div>
               ))}

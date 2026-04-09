@@ -18,42 +18,10 @@ import { useToast } from "@/hooks/use-toast";
 import { useState, useMemo } from "react";
 import { Eye, EyeOff, Globe } from "lucide-react";
 import { EU_EEE_COUNTRIES } from "@/data/eu-countries";
-
-function getPasswordStrength(password: string): { score: number; label: string; color: string; checks: { label: string; passed: boolean }[] } {
-  const checks = [
-    { label: "8 caracteres minimum", passed: password.length >= 8 },
-    { label: "Une lettre majuscule", passed: /[A-Z]/.test(password) },
-    { label: "Une lettre minuscule", passed: /[a-z]/.test(password) },
-    { label: "Un chiffre", passed: /[0-9]/.test(password) },
-    { label: "Un caractere special (!@#$...)", passed: /[^A-Za-z0-9]/.test(password) },
-  ];
-  const score = checks.filter(c => c.passed).length;
-  const label = score <= 1 ? "Tres faible" : score === 2 ? "Faible" : score === 3 ? "Moyen" : score === 4 ? "Fort" : "Excellent";
-  const color = score <= 1 ? "bg-red-500" : score === 2 ? "bg-orange-500" : score === 3 ? "bg-yellow-500" : score === 4 ? "bg-lime-500" : "bg-emerald-500";
-  return { score, label, color, checks };
-}
-
-const allowedCodes = EU_EEE_COUNTRIES.map((c) => c.code) as unknown as [string, ...string[]];
-
-const signupSchema = z.object({
-  fullName: z.string().min(2, "Nom complet requis"),
-  email: z.string().email("Email invalide"),
-  country: z.enum(allowedCodes, { errorMap: () => ({ message: "Veuillez selectionner votre pays" }) }),
-  password: z.string()
-    .min(8, "Minimum 8 caracteres")
-    .regex(/[A-Z]/, "Au moins une majuscule")
-    .regex(/[a-z]/, "Au moins une minuscule")
-    .regex(/[0-9]/, "Au moins un chiffre")
-    .regex(/[^A-Za-z0-9]/, "Au moins un caractere special"),
-  confirmPassword: z.string().min(1, "Veuillez confirmer votre mot de passe"),
-}).refine((data) => data.password === data.confirmPassword, {
-  message: "Les mots de passe ne correspondent pas",
-  path: ["confirmPassword"],
-});
-
-type SignupFormValues = z.infer<typeof signupSchema>;
+import { useTranslation } from "react-i18next";
 
 export default function Signup() {
+  const { t } = useTranslation();
   const [_, setLocation] = useLocation();
   const searchString = useSearch();
   const { toast } = useToast();
@@ -64,6 +32,40 @@ export default function Signup() {
   const params = new URLSearchParams(searchString);
   const selectedPlan = params.get("plan");
   const prefillEmail = params.get("email") || "";
+
+  function getPasswordStrength(password: string) {
+    const checks = [
+      { label: t("auth.passwordStrength.min8"), passed: password.length >= 8 },
+      { label: t("auth.passwordStrength.uppercase"), passed: /[A-Z]/.test(password) },
+      { label: t("auth.passwordStrength.lowercase"), passed: /[a-z]/.test(password) },
+      { label: t("auth.passwordStrength.digit"), passed: /[0-9]/.test(password) },
+      { label: t("auth.passwordStrength.special"), passed: /[^A-Za-z0-9]/.test(password) },
+    ];
+    const score = checks.filter(c => c.passed).length;
+    const label = score <= 1 ? t("auth.passwordStrength.veryWeak") : score === 2 ? t("auth.passwordStrength.weak") : score === 3 ? t("auth.passwordStrength.medium") : score === 4 ? t("auth.passwordStrength.strong") : t("auth.passwordStrength.excellent");
+    const color = score <= 1 ? "bg-red-500" : score === 2 ? "bg-orange-500" : score === 3 ? "bg-yellow-500" : score === 4 ? "bg-lime-500" : "bg-emerald-500";
+    return { score, label, color, checks };
+  }
+
+  const allowedCodes = EU_EEE_COUNTRIES.map((c) => c.code) as unknown as [string, ...string[]];
+
+  const signupSchema = z.object({
+    fullName: z.string().min(2, t("auth.fullNameRequired")),
+    email: z.string().email(t("auth.invalidEmail")),
+    country: z.enum(allowedCodes, { errorMap: () => ({ message: t("auth.selectCountry") }) }),
+    password: z.string()
+      .min(8, t("auth.passwordValidation.min8"))
+      .regex(/[A-Z]/, t("auth.passwordValidation.uppercase"))
+      .regex(/[a-z]/, t("auth.passwordValidation.lowercase"))
+      .regex(/[0-9]/, t("auth.passwordValidation.digit"))
+      .regex(/[^A-Za-z0-9]/, t("auth.passwordValidation.special")),
+    confirmPassword: z.string().min(1, t("auth.confirmPasswordRequired")),
+  }).refine((data) => data.password === data.confirmPassword, {
+    message: t("auth.passwordsNoMatch"),
+    path: ["confirmPassword"],
+  });
+
+  type SignupFormValues = z.infer<typeof signupSchema>;
 
   const form = useForm<SignupFormValues>({
     resolver: zodResolver(signupSchema),
@@ -77,7 +79,7 @@ export default function Signup() {
   });
 
   const watchedPassword = form.watch("password");
-  const strength = useMemo(() => getPasswordStrength(watchedPassword || ""), [watchedPassword]);
+  const strength = useMemo(() => getPasswordStrength(watchedPassword || ""), [watchedPassword, t]);
 
   async function onSubmit(data: SignupFormValues) {
     setIsPending(true);
@@ -87,13 +89,13 @@ export default function Signup() {
     if (error) {
       toast({
         variant: "destructive",
-        title: "Erreur d'inscription",
+        title: t("auth.signupError"),
         description: error,
       });
     } else {
       toast({
-        title: "Compte cree",
-        description: "Votre compte a ete cree avec succes.",
+        title: t("auth.accountCreated"),
+        description: t("auth.accountCreatedDesc"),
       });
       const redirectPath = params.get("redirect");
       if (redirectPath) {
@@ -113,11 +115,11 @@ export default function Signup() {
   return (
     <AuthLayout>
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold text-white">Creer un compte</h1>
+        <h1 className="text-2xl font-bold text-white">{t("auth.signupTitle")}</h1>
         <p className="text-[#8b9cb3] mt-2 text-sm">
           {selectedPlan && selectedPlan !== "essai"
-            ? `Inscrivez-vous pour activer le plan ${selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)}`
-            : "Rejoignez NCV Mail pour organiser votre boite de reception"}
+            ? t("auth.signupForPlan", { plan: selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1) })
+            : t("auth.signupSubtitle")}
         </p>
       </div>
 
@@ -128,9 +130,9 @@ export default function Signup() {
             name="fullName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[#8b9cb3]">Nom complet</FormLabel>
+                <FormLabel className="text-[#8b9cb3]">{t("auth.fullName")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="Jean Dupont" className="bg-background border-border text-white" {...field} />
+                  <Input placeholder={t("auth.fullNamePlaceholder")} className="bg-background border-border text-white" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -141,9 +143,9 @@ export default function Signup() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[#8b9cb3]">Email professionnel</FormLabel>
+                <FormLabel className="text-[#8b9cb3]">{t("auth.professionalEmail")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="jean@entreprise.com" type="email" className="bg-background border-border text-white" {...field} />
+                  <Input placeholder={t("auth.professionalEmailPlaceholder")} type="email" className="bg-background border-border text-white" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -154,7 +156,7 @@ export default function Signup() {
             name="country"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[#8b9cb3]">Pays</FormLabel>
+                <FormLabel className="text-[#8b9cb3]">{t("auth.country")}</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8b9cb3] pointer-events-none" />
@@ -162,7 +164,7 @@ export default function Signup() {
                       {...field}
                       className="w-full h-10 pl-9 pr-3 rounded-md border border-border bg-background text-white text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
                     >
-                      <option value="" disabled className="text-[#8b9cb3]">Selectionnez votre pays</option>
+                      <option value="" disabled className="text-[#8b9cb3]">{t("auth.selectCountry")}</option>
                       {EU_EEE_COUNTRIES.map((c) => (
                         <option key={c.code} value={c.code} className="bg-[#141c2b] text-white">
                           {c.name}
@@ -172,7 +174,7 @@ export default function Signup() {
                   </div>
                 </FormControl>
                 <p className="text-[10px] text-[#8b9cb3]/60 mt-1">
-                  NCV Mail est disponible dans l'Union Europeenne, l'EEE et la Suisse.
+                  {t("auth.countryAvailability")}
                 </p>
                 <FormMessage />
               </FormItem>
@@ -183,7 +185,7 @@ export default function Signup() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[#8b9cb3]">Mot de passe</FormLabel>
+                <FormLabel className="text-[#8b9cb3]">{t("auth.password")}</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input type={showPassword ? "text" : "password"} placeholder="" className="bg-background border-border text-white pr-10" {...field} />
@@ -225,7 +227,7 @@ export default function Signup() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[#8b9cb3]">Confirmer le mot de passe</FormLabel>
+                <FormLabel className="text-[#8b9cb3]">{t("auth.confirmPassword")}</FormLabel>
                 <FormControl>
                   <Input type="password" placeholder="" className="bg-background border-border text-white" {...field} />
                 </FormControl>
@@ -238,26 +240,26 @@ export default function Signup() {
             className="w-full"
             disabled={isPending}
           >
-            {isPending ? "Creation..." : "Creer mon compte"}
+            {isPending ? t("auth.creatingAccount") : t("auth.createMyAccount")}
           </Button>
         </form>
       </Form>
 
       <div className="mt-4 text-center text-[10px] text-[#8b9cb3] leading-relaxed">
-        En creant un compte, vous acceptez nos{" "}
+        {t("auth.termsAccept")}{" "}
         <Link href="/conditions" className="text-[#2d7dd2] hover:underline">
-          conditions d'utilisation
+          {t("auth.termsLink")}
         </Link>{" "}
-        et notre{" "}
+        {t("auth.andOur")}{" "}
         <Link href="/confidentialite" className="text-[#2d7dd2] hover:underline">
-          politique de confidentialite
+          {t("auth.privacyLink")}
         </Link>
       </div>
 
       <div className="mt-4 text-center text-sm text-[#8b9cb3]">
-        Deja un compte ?{" "}
+        {t("auth.alreadyAccount")}{" "}
         <Link href={`/login${searchString ? `?${searchString}` : ""}`} className="font-semibold text-primary hover:text-primary/80">
-          Se connecter
+          {t("auth.loginButton")}
         </Link>
       </div>
     </AuthLayout>

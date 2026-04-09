@@ -3,46 +3,41 @@ import {
   Inbox, Archive, LayoutDashboard, CheckSquare, FolderKanban, Tags, Settings, CreditCard,
   LogOut, Search, Clock, ChevronRight, Sparkles, Zap, CheckCircle, RefreshCw, Trash2, Check, Square,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-const NAV_ITEMS = [
-  { name: "Réception", icon: Inbox, active: true },
-  { name: "Archives", icon: Archive },
-  { name: "Bilan quotidien", icon: LayoutDashboard },
-  { name: "Tâches", icon: CheckSquare },
-  { name: "Projets", icon: FolderKanban },
-  { name: "Catégories", icon: Tags },
-  { name: "Paramètres", icon: Settings },
-  { name: "Abonnement", icon: CreditCard },
+const NAV_KEYS = [
+  { key: "demo.nav.reception", icon: Inbox, active: true },
+  { key: "demo.nav.archives", icon: Archive },
+  { key: "demo.nav.dailyBrief", icon: LayoutDashboard },
+  { key: "demo.nav.tasks", icon: CheckSquare },
+  { key: "demo.nav.projects", icon: FolderKanban },
+  { key: "demo.nav.categories", icon: Tags },
+  { key: "demo.nav.settings", icon: Settings },
+  { key: "demo.nav.subscription", icon: CreditCard },
 ];
 
-const DEMO_EMAILS = [
-  { sender: "Pierre Martin", subject: "Contrat Q2 — signature requise", summary: "Contrat de prestation Q2 à signer avant vendredi. Montant : 12 400 €.", priority: "urgent" as const, isJunk: false },
-  { sender: "Marie Laurent", subject: "Réunion client demain 9h", summary: "Confirmation réunion avec Dupont SA demain à 9h. Ordre du jour joint.", priority: "urgent" as const, isJunk: false },
-  { sender: "Sophie Dubois", subject: "Rapport mensuel Mars 2026", summary: "Le rapport comptable de mars est prêt pour validation. CA en hausse de 8%.", priority: "moyen" as const, isJunk: false },
-  { sender: "Thomas Bernard", subject: "Devis site web — retour client", summary: "Le client a approuvé le devis de 4 800 €. Demande de démarrage lundi.", priority: "moyen" as const, isJunk: false },
-  { sender: "LinkedIn", subject: "3 nouvelles connexions cette semaine", summary: "Nouveaux contacts : Jean Leroy (CEO), Anne Petit (RH), Marc Faure (CTO).", priority: "faible" as const, isJunk: true },
-  { sender: "Newsletter Tech", subject: "Les tendances IA en 2026", summary: "Dossier spécial : automatisation email, GPT-5, et l'avenir du SaaS B2B.", priority: "faible" as const, isJunk: true },
-];
-
-const EMAIL_COUNT = DEMO_EMAILS.length;
+const JUNK_INDICES = [4, 5];
+const EMAIL_COUNT = 6;
+const JUNK_COUNT = JUNK_INDICES.length;
 const ARRIVAL_DELAY = 350;
 const SORT_START = EMAIL_COUNT * ARRIVAL_DELAY + 1400;
 const SORT_INTERVAL = 450;
 const SORT_DONE = SORT_START + EMAIL_COUNT * SORT_INTERVAL;
 const SELECT_START = SORT_DONE + 1200;
 const SELECT_INTERVAL = 500;
-const JUNK_COUNT = DEMO_EMAILS.filter((e) => e.isJunk).length;
 const DELETE_TIME = SELECT_START + JUNK_COUNT * SELECT_INTERVAL + 800;
 const CLEAN_TIME = DELETE_TIME + 1000;
 const CYCLE_TIME = CLEAN_TIME + 3500;
 
 type Phase = "inbox" | "sorting" | "done" | "selecting" | "deleting" | "clean";
 
-const PRIORITY_BAR_COLORS = {
+const PRIORITY_KEYS = ["urgent", "urgent", "moyen", "moyen", "faible", "faible"] as const;
+const PRIORITY_BAR_COLORS: Record<string, string> = {
   urgent: "bg-red-500",
   moyen: "bg-amber-500",
   faible: "bg-emerald-500",
 };
+const IS_JUNK = [false, false, false, false, true, true];
 
 function useReducedMotion() {
   const [reduced, setReduced] = useState(() => {
@@ -59,6 +54,7 @@ function useReducedMotion() {
 }
 
 export function AnimatedDemo() {
+  const { t } = useTranslation();
   const reducedMotion = useReducedMotion();
   const [phase, setPhase] = useState<Phase>(reducedMotion ? "clean" : "inbox");
   const [visibleEmails, setVisibleEmails] = useState(reducedMotion ? EMAIL_COUNT : 0);
@@ -69,6 +65,8 @@ export function AnimatedDemo() {
   const mountedRef = useRef(true);
   const visibleRef = useRef(true);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const emails = t("demo.emails", { returnObjects: true }) as Array<{ sender: string; subject: string; summary: string }>;
 
   const clearTimers = useCallback(() => {
     timersRef.current.forEach(clearTimeout);
@@ -144,8 +142,7 @@ export function AnimatedDemo() {
   const isSelectingOrAfter = phase === "selecting" || phase === "deleting" || phase === "clean";
   const isDeleting = phase === "deleting";
 
-  const junkIndices = DEMO_EMAILS.map((e, i) => e.isJunk ? i : -1).filter((i) => i >= 0);
-  const junkSelectedSet = new Set(junkIndices.slice(0, selectedJunk));
+  const junkSelectedSet = new Set(JUNK_INDICES.slice(0, selectedJunk));
 
   const inboxCount = isSelectingOrAfter && deletedJunk
     ? EMAIL_COUNT - JUNK_COUNT
@@ -154,19 +151,26 @@ export function AnimatedDemo() {
     : unreadCount;
 
   const statusText = phase === "sorting"
-    ? `IA en cours de tri — ${sortedCount}/${EMAIL_COUNT} classés`
+    ? t("demo.status.sorting", { sorted: sortedCount, total: EMAIL_COUNT })
     : phase === "done"
-    ? `Boîte organisée — ${EMAIL_COUNT} emails triés automatiquement`
+    ? t("demo.status.organized", { count: EMAIL_COUNT })
     : phase === "selecting"
-    ? `${selectedJunk} newsletter(s) sélectionnée(s)`
+    ? t("demo.status.selecting", { count: selectedJunk })
     : phase === "deleting"
-    ? `${JUNK_COUNT} email(s) supprimé(s) !`
+    ? t("demo.status.deleted", { count: JUNK_COUNT })
     : phase === "clean"
-    ? `Boîte propre — ${EMAIL_COUNT - JUNK_COUNT} emails importants`
-    : `${visibleEmails} email${visibleEmails !== 1 ? "s" : ""} reçu${visibleEmails !== 1 ? "s" : ""}`;
+    ? t("demo.status.clean", { count: EMAIL_COUNT - JUNK_COUNT })
+    : t("demo.status.received", { count: visibleEmails });
+
+  const priorityFilters = [
+    t("demo.priorityAll"),
+    t("demo.priorityUrgent"),
+    t("demo.priorityMedium"),
+    t("demo.priorityLow"),
+  ];
 
   return (
-    <div ref={containerRef} className="relative max-w-5xl mx-auto mt-12" aria-label="Démo animée du dashboard NCV Mail" role="img">
+    <div ref={containerRef} className="relative max-w-5xl mx-auto mt-12" aria-label={t("demo.ariaLabel")} role="img">
       <span className="sr-only" aria-live="polite" aria-atomic="true">{statusText}</span>
       <div aria-hidden="true" className="rounded-xl border border-[#1f2937] bg-[#0d1117] overflow-hidden shadow-2xl shadow-[#2d7dd2]/8">
         <div className="flex items-center gap-2 px-4 py-2 bg-[#141c2b] border-b border-[#1f2937]">
@@ -190,9 +194,9 @@ export function AnimatedDemo() {
             </div>
 
             <nav className="flex-1 px-2 py-2 space-y-0.5">
-              {NAV_ITEMS.map((item) => (
+              {NAV_KEYS.map((item) => (
                 <div
-                  key={item.name}
+                  key={item.key}
                   className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[11px] font-medium ${
                     item.active
                       ? "bg-[#1e3a5f] text-[#2d7dd2]"
@@ -200,7 +204,7 @@ export function AnimatedDemo() {
                   }`}
                 >
                   <item.icon className={`w-3.5 h-3.5 shrink-0 ${item.active ? "text-[#2d7dd2]" : "text-[#8b9cb3]"}`} />
-                  <span className="truncate">{item.name}</span>
+                  <span className="truncate">{t(item.key)}</span>
                   {item.active && (
                     <span className="ml-auto text-[9px] bg-[#2d7dd2]/20 text-[#2d7dd2] px-1.5 py-0.5 rounded-full font-medium">
                       {inboxCount}
@@ -213,7 +217,7 @@ export function AnimatedDemo() {
             <div className="p-2 mt-auto border-t border-[#1f2937]">
               <div className="px-2.5 py-2">
                 <div className="flex justify-between items-center mb-1.5">
-                  <span className="text-[9px] font-medium text-[#8b9cb3] uppercase tracking-wider">Quota</span>
+                  <span className="text-[9px] font-medium text-[#8b9cb3] uppercase tracking-wider">{t("demo.quota")}</span>
                   <span className="text-[9px] font-medium text-white">24/3000</span>
                 </div>
                 <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
@@ -238,7 +242,7 @@ export function AnimatedDemo() {
               <div className="flex items-center gap-2 mb-2.5">
                 <div className="flex-1 flex items-center gap-2 bg-[#141c2b] border border-[#1f2937] rounded-lg px-3 py-1.5">
                   <Search className="w-3.5 h-3.5 text-[#8b9cb3]" />
-                  <span className="text-[11px] text-[#8b9cb3]">Rechercher des emails...</span>
+                  <span className="text-[11px] text-[#8b9cb3]">{t("demo.search")}</span>
                 </div>
                 <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] font-medium transition-all duration-500 ${
                   phase === "sorting"
@@ -259,24 +263,24 @@ export function AnimatedDemo() {
                     <Zap className="w-3 h-3" />
                   )}
                   <span className="hidden sm:inline">
-                    {phase === "sorting" ? "IA en cours..." : phase === "done" ? "Trié !" : phase === "selecting" ? `${selectedJunk} sélec.` : phase === "deleting" ? "Supprimé !" : phase === "clean" ? "Propre !" : "Autopilot"}
+                    {phase === "sorting" ? t("demo.badge.sorting") : phase === "done" ? t("demo.badge.sorted") : phase === "selecting" ? t("demo.badge.selecting", { count: selectedJunk }) : phase === "deleting" ? t("demo.badge.deleted") : phase === "clean" ? t("demo.badge.clean") : t("demo.badge.autopilot")}
                   </span>
                 </div>
               </div>
 
               {(phase === "selecting" || phase === "deleting") && !deletedJunk ? (
                 <div className="flex items-center gap-2 py-1 px-2.5 rounded-lg bg-[#2d7dd2]/[0.08] border border-[#2d7dd2]/20 transition-all duration-300">
-                  <span className="text-[10px] text-[#2d7dd2] font-medium">{selectedJunk} sélectionné(s)</span>
+                  <span className="text-[10px] text-[#2d7dd2] font-medium">{t("demo.selected", { count: selectedJunk })}</span>
                   <div className="flex-1" />
                   <div className="flex items-center gap-1 text-[10px] text-red-400 font-medium px-2 py-0.5 rounded bg-red-500/10 border border-red-500/20">
                     <Trash2 className="w-2.5 h-2.5" />
-                    Supprimer
+                    {t("demo.deleteBtn")}
                   </div>
                 </div>
               ) : (
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] mr-1">Priorité :</span>
-                  {["Tous", "Urgent", "Moyen", "Faible"].map((f, i) => (
+                  <span className="text-[10px] text-[#8b9cb3] mr-1">{t("demo.priority")}</span>
+                  {priorityFilters.map((f, i) => (
                     <div
                       key={f}
                       className={`text-[10px] px-2 py-0.5 rounded-md font-medium ${
@@ -293,12 +297,14 @@ export function AnimatedDemo() {
             </div>
 
             <div className="flex-1 px-3 sm:px-4 py-2 space-y-1 overflow-hidden">
-              {DEMO_EMAILS.map((email, i) => {
+              {Array.isArray(emails) && emails.map((email, i) => {
                 const visible = i < visibleEmails;
                 const sorted = i < sortedCount;
-                const barColor = PRIORITY_BAR_COLORS[email.priority];
+                const priority = PRIORITY_KEYS[i];
+                const barColor = PRIORITY_BAR_COLORS[priority];
+                const isJunk = IS_JUNK[i];
                 const isJunkSelected = isSelectingOrAfter && junkSelectedSet.has(i);
-                const isHidden = deletedJunk && email.isJunk;
+                const isHidden = deletedJunk && isJunk;
 
                 return (
                   <div
@@ -318,7 +324,7 @@ export function AnimatedDemo() {
                   >
                     <div className={`w-1 shrink-0 transition-all duration-500 ${isJunkSelected ? "bg-red-500" : sorted ? barColor : "bg-transparent"}`} />
                     <div className="flex items-start gap-2 flex-1 min-w-0 px-2.5 py-2">
-                      {isSelectingOrAfter && email.isJunk && !isHidden ? (
+                      {isSelectingOrAfter && isJunk && !isHidden ? (
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all duration-300 ${
                           isJunkSelected ? "bg-red-500" : "border-2 border-[#8b9cb3]/30"
                         }`}>
@@ -351,7 +357,7 @@ export function AnimatedDemo() {
                       <div className="flex items-center gap-1.5 shrink-0">
                         <span className="text-[9px] text-[#8b9cb3] whitespace-nowrap items-center gap-0.5 hidden sm:flex">
                           <Clock className="w-2.5 h-2.5" />
-                          {i < 2 ? "Auj." : i < 4 ? "Hier" : "3 avr."}
+                          {i < 2 ? t("demo.today") : i < 4 ? t("demo.yesterday") : t("demo.olderDate")}
                         </span>
                         <ChevronRight className={`w-3.5 h-3.5 transition-colors ${visible ? "text-[#8b9cb3]/40" : "text-transparent"}`} />
                       </div>
@@ -365,14 +371,14 @@ export function AnimatedDemo() {
               <div className="px-3 sm:px-4 pb-3 pt-1">
                 <div className="grid grid-cols-3 gap-2">
                   {[
-                    { label: "Urgents", count: "2", color: "text-red-400", borderColor: "border-l-red-500" },
+                    { label: t("demo.stats.urgent"), count: "2", color: "text-red-400", borderColor: "border-l-red-500" },
                     {
-                      label: phase === "clean" ? "Nettoyés" : "Triés par IA",
+                      label: phase === "clean" ? t("demo.stats.cleaned") : t("demo.stats.sortedByAI"),
                       count: phase === "clean" ? String(JUNK_COUNT) : String(EMAIL_COUNT),
                       color: phase === "clean" ? "text-red-400" : "text-emerald-400",
                       borderColor: phase === "clean" ? "border-l-red-500" : "border-l-emerald-500",
                     },
-                    { label: "Temps épargné", count: phase === "clean" ? "14 min" : "12 min", color: "text-[#2d7dd2]", borderColor: "border-l-[#2d7dd2]" },
+                    { label: t("demo.stats.timeSaved"), count: phase === "clean" ? "14 min" : "12 min", color: "text-[#2d7dd2]", borderColor: "border-l-[#2d7dd2]" },
                   ].map((stat) => (
                     <div key={stat.label} className={`text-center py-2 px-1 rounded-lg border border-[#1f2937] border-l-2 ${stat.borderColor} bg-[#141c2b]`}>
                       <div className={`text-[13px] font-bold ${stat.color}`}>{stat.count}</div>

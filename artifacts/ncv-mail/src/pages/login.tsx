@@ -17,21 +17,23 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useState } from "react";
 import { Eye, EyeOff } from "lucide-react";
-
-const loginSchema = z.object({
-  email: z.string().email("Email invalide"),
-  password: z.string().min(1, "Le mot de passe est requis"),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
+import { useTranslation } from "react-i18next";
 
 export default function Login() {
+  const { t } = useTranslation();
   const [_, setLocation] = useLocation();
   const searchString = useSearch();
   const { toast } = useToast();
   const { signIn } = useAuth();
   const [isPending, setIsPending] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+
+  const loginSchema = z.object({
+    email: z.string().email(t("auth.invalidEmail")),
+    password: z.string().min(1, t("auth.passwordRequired")),
+  });
+
+  type LoginFormValues = z.infer<typeof loginSchema>;
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -49,8 +51,8 @@ export default function Login() {
     if (error) {
       toast({
         variant: "destructive",
-        title: "Erreur de connexion",
-        description: error || "Veuillez verifier vos identifiants.",
+        title: t("auth.loginError"),
+        description: error || t("auth.checkCredentials"),
       });
     } else {
       const params = new URLSearchParams(searchString);
@@ -73,8 +75,8 @@ export default function Login() {
   return (
     <AuthLayout>
       <div className="mb-6 text-center">
-        <h1 className="text-2xl font-bold text-white">Bienvenue</h1>
-        <p className="text-[#8b9cb3] mt-2 text-sm">Connectez-vous a votre compte NCV Mail</p>
+        <h1 className="text-2xl font-bold text-white">{t("auth.welcome")}</h1>
+        <p className="text-[#8b9cb3] mt-2 text-sm">{t("auth.loginSubtitle")}</p>
       </div>
 
       <Form {...form}>
@@ -84,9 +86,9 @@ export default function Login() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[#8b9cb3]">Email</FormLabel>
+                <FormLabel className="text-[#8b9cb3]">{t("auth.email")}</FormLabel>
                 <FormControl>
-                  <Input placeholder="nom@entreprise.com" type="email" className="bg-background border-border text-white" {...field} />
+                  <Input placeholder={t("auth.emailPlaceholder")} type="email" className="bg-background border-border text-white" {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -98,9 +100,9 @@ export default function Login() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center justify-between">
-                  <FormLabel className="text-[#8b9cb3]">Mot de passe</FormLabel>
+                  <FormLabel className="text-[#8b9cb3]">{t("auth.password")}</FormLabel>
                   <Link href="/mot-de-passe-oublie" className="text-xs text-primary hover:text-primary/80 font-medium" tabIndex={-1}>
-                    Mot de passe oublie ?
+                    {t("auth.forgotPassword")}
                   </Link>
                 </div>
                 <FormControl>
@@ -125,15 +127,15 @@ export default function Login() {
             className="w-full"
             disabled={isPending}
           >
-            {isPending ? "Connexion..." : "Se connecter"}
+            {isPending ? t("auth.loggingIn") : t("auth.loginButton")}
           </Button>
         </form>
       </Form>
 
       <div className="mt-6 text-center text-sm text-[#8b9cb3]">
-        Pas encore de compte ?{" "}
+        {t("auth.noAccount")}{" "}
         <Link href={`/signup${searchString ? `?${searchString}` : ""}`} className="font-semibold text-primary hover:text-primary/80">
-          Creer un compte
+          {t("auth.createAccount")}
         </Link>
       </div>
     </AuthLayout>

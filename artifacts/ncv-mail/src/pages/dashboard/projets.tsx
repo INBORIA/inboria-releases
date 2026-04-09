@@ -81,6 +81,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { useTranslation } from 'react-i18next';
 
 const projectSchema = z.object({
   name: z.string().min(2, "Le nom doit contenir au moins 2 caracteres"),
@@ -92,28 +93,33 @@ const projectSchema = z.object({
 
 type ProjectFormValues = z.infer<typeof projectSchema>;
 
-const PROJECT_COLORS = [
-  { value: "blue", label: "Bleu", class: "bg-blue-500" },
-  { value: "green", label: "Vert", class: "bg-emerald-500" },
-  { value: "purple", label: "Violet", class: "bg-purple-500" },
-  { value: "amber", label: "Ambre", class: "bg-amber-500" },
-  { value: "red", label: "Rouge", class: "bg-red-500" },
-  { value: "cyan", label: "Cyan", class: "bg-cyan-500" },
-  { value: "pink", label: "Rose", class: "bg-pink-500" },
-  { value: "indigo", label: "Indigo", class: "bg-indigo-500" },
-];
+function getProjectColors(t: (key: string) => string) {
+  return [
+    { value: "blue", label: t("projects.colors.blue"), class: "bg-blue-500" },
+    { value: "green", label: t("projects.colors.green"), class: "bg-emerald-500" },
+    { value: "purple", label: t("projects.colors.purple"), class: "bg-purple-500" },
+    { value: "amber", label: t("projects.colors.amber"), class: "bg-amber-500" },
+    { value: "red", label: t("projects.colors.red"), class: "bg-red-500" },
+    { value: "cyan", label: t("projects.colors.cyan"), class: "bg-cyan-500" },
+    { value: "pink", label: t("projects.colors.pink"), class: "bg-pink-500" },
+    { value: "indigo", label: t("projects.colors.indigo"), class: "bg-indigo-500" },
+  ];
+}
 
-const STATUS_LABELS: Record<string, { label: string; class: string }> = {
-  actif: { label: "Actif", class: "bg-emerald-500/10 text-emerald-400" },
-  termine: { label: "Termine", class: "bg-[#8b9cb3]/10 text-[#8b9cb3]" },
-  en_pause: { label: "En pause", class: "bg-amber-500/10 text-amber-400" },
-};
+function getStatusLabels(t: (key: string) => string) {
+  return {
+    actif: { label: t("projects.statusActive"), class: "bg-emerald-500/10 text-emerald-400" },
+    termine: { label: t("projects.statusComplete"), class: "bg-[#8b9cb3]/10 text-[#8b9cb3]" },
+    en_pause: { label: t("projects.statusPaused"), class: "bg-amber-500/10 text-amber-400" },
+  };
+}
 
-function getColorClass(color: string) {
+function getColorClass(color: string, PROJECT_COLORS: { value: string; class: string }[]) {
   return PROJECT_COLORS.find((c) => c.value === color)?.class || "bg-blue-500";
 }
 
 function ProjectNotes({ projectId }: { projectId: string }) {
+  const { t, i18n } = useTranslation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [noteText, setNoteText] = useState("");
@@ -131,7 +137,7 @@ function ProjectNotes({ projectId }: { projectId: string }) {
           setNoteText("");
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible d'ajouter la note." });
+          toast({ variant: "destructive", title: t("common.error"), description: t("projects.noteError") });
         },
       }
     );
@@ -151,13 +157,13 @@ function ProjectNotes({ projectId }: { projectId: string }) {
   return (
     <div>
       <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
-        <StickyNote className="w-3.5 h-3.5 text-amber-400" /> Notes
+        <StickyNote className="w-3.5 h-3.5 text-amber-400" /> {t("projects.notesLabel")}
       </h2>
       <div className="flex gap-2 mb-3">
         <Textarea
           value={noteText}
           onChange={(e) => setNoteText(e.target.value)}
-          placeholder="Ajouter une note..."
+          placeholder={t("projects.addNote")}
           className="resize-none h-16 bg-background border-border text-white text-[12px] flex-1"
         />
         <Button
@@ -172,7 +178,7 @@ function ProjectNotes({ projectId }: { projectId: string }) {
       {isLoading ? (
         <Skeleton className="h-12 w-full bg-white/5" />
       ) : (notes || []).length === 0 ? (
-        <p className="text-[11px] text-[#8b9cb3]/60 italic">Aucune note pour le moment.</p>
+        <p className="text-[11px] text-[#8b9cb3]/60 italic">{t("projects.noNotes")}</p>
       ) : (
         <div className="space-y-1.5">
           {(notes || []).map((note: any) => (
@@ -180,12 +186,12 @@ function ProjectNotes({ projectId }: { projectId: string }) {
               <p className="text-[12px] text-[#8b9cb3] flex-1 whitespace-pre-wrap">{note.content}</p>
               <div className="flex items-center gap-2 shrink-0">
                 <span className="text-[10px] text-[#8b9cb3]/50">
-                  {new Date(note.createdAt).toLocaleDateString("fr-FR")}
+                  {new Date(note.createdAt).toLocaleDateString(i18n.language)}
                 </span>
                 <button
                   onClick={() => handleDeleteNote(note.id)}
                   className="p-1 rounded-md text-[#8b9cb3]/40 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
-                  title="Supprimer"
+                  title={t("common.delete")}
                 >
                   <Trash2 className="w-3 h-3" />
                 </button>
@@ -205,6 +211,9 @@ function ProjectDetailView({
   projectId: string;
   onBack: () => void;
 }) {
+  const { t, i18n } = useTranslation();
+  const PROJECT_COLORS = getProjectColors(t);
+  const STATUS_LABELS: Record<string, { label: string; class: string }> = getStatusLabels(t);
   const { data: project, isLoading } = useGetProject(projectId);
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -220,7 +229,7 @@ function ProjectDetailView({
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
           queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
-          toast({ title: "Tâche supprimée" });
+          toast({ title: t("projects.taskDeleted") });
         },
       }
     );
@@ -247,10 +256,10 @@ function ProjectDetailView({
           queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
           queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
           setNewTaskTitle("");
-          toast({ title: "Tâche ajoutée" });
+          toast({ title: t("projects.taskCreated") });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible de créer la tâche." });
+          toast({ variant: "destructive", title: t("common.error"), description: t("projects.taskError") });
         },
       }
     );
@@ -277,7 +286,7 @@ function ProjectDetailView({
             onClick={onBack}
             className="text-[#8b9cb3] hover:text-white mb-3 gap-1.5 h-7 text-[12px]"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> Retour
+            <ArrowLeft className="w-3.5 h-3.5" /> {t("common.back")}
           </Button>
           <p className="text-[12px] text-[#8b9cb3]">Projet introuvable.</p>
         </div>
@@ -301,7 +310,7 @@ function ProjectDetailView({
             onClick={onBack}
             className="text-[#8b9cb3] hover:text-white gap-1.5 h-7 text-[12px]"
           >
-            <ArrowLeft className="w-3.5 h-3.5" /> Retour aux projets
+            <ArrowLeft className="w-3.5 h-3.5" /> {t("common.back")}
           </Button>
           <Button
             variant="outline"
@@ -310,21 +319,21 @@ function ProjectDetailView({
               try {
                 const { downloadExport } = await import("@/lib/export-utils");
                 await downloadExport(`export/projects?id=${projectId}`, `projet_${project.reference || projectId}.csv`);
-                toast({ title: "Projet exporté" });
+                toast({ title: t("projects.exportDownloaded") });
               } catch {
-                toast({ title: "Erreur lors de l'export", variant: "destructive" });
+                toast({ title: t("projects.exportError"), variant: "destructive" });
               }
             }}
             className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
           >
             <Download className="w-3 h-3" />
-            Exporter
+            {t("projects.export")}
           </Button>
         </div>
 
         <div className="flex items-start gap-3 mb-5">
           <div
-            className={`w-10 h-10 rounded-lg ${getColorClass(project.color)} flex items-center justify-center text-white font-bold text-[15px] shrink-0`}
+            className={`w-10 h-10 rounded-lg ${getColorClass(project.color, PROJECT_COLORS)} flex items-center justify-center text-white font-bold text-[15px] shrink-0`}
           >
             {project.name.charAt(0).toUpperCase()}
           </div>
@@ -354,7 +363,7 @@ function ProjectDetailView({
           <div className="bg-card rounded-lg border border-border p-3">
             <div className="flex items-center gap-1.5 text-[#8b9cb3] mb-0.5">
               <Mail className="w-3.5 h-3.5" />
-              <span className="text-[11px]">Emails</span>
+              <span className="text-[11px]">{t("projects.emails")}</span>
             </div>
             <p className="text-xl font-semibold text-white">
               {(project.emails || []).length}
@@ -363,7 +372,7 @@ function ProjectDetailView({
           <div className="bg-card rounded-lg border border-border p-3">
             <div className="flex items-center gap-1.5 text-[#8b9cb3] mb-0.5">
               <CheckSquare className="w-3.5 h-3.5" />
-              <span className="text-[11px]">Tâches terminées</span>
+              <span className="text-[11px]">{t("projects.tasks")}</span>
             </div>
             <p className="text-xl font-semibold text-white">
               {doneTasks}/{(project.tasks || []).length}
@@ -372,7 +381,7 @@ function ProjectDetailView({
           <div className="bg-card rounded-lg border border-border p-3">
             <div className="flex items-center gap-1.5 text-amber-400 mb-0.5">
               <Clock className="w-3.5 h-3.5" />
-              <span className="text-[11px]">En attente</span>
+              <span className="text-[11px]">{t("projects.statusPaused")}</span>
             </div>
             <p className="text-xl font-semibold text-white">{pendingTasks}</p>
           </div>
@@ -381,7 +390,7 @@ function ProjectDetailView({
         {(project.emails || []).length > 0 && (
           <div className="mb-4">
             <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
-              <Mail className="w-3.5 h-3.5 text-primary" /> Emails lies ({project.emails.length})
+              <Mail className="w-3.5 h-3.5 text-primary" /> {t("projects.emails")} ({project.emails.length})
             </h2>
             <div className="space-y-1">
               {project.emails.map((email: any) => {
@@ -402,7 +411,7 @@ function ProjectDetailView({
                         <p className="text-[10px] text-[#8b9cb3]">{email.sender}</p>
                       </div>
                       <span className="text-[10px] text-[#8b9cb3] shrink-0">
-                        {new Date(email.createdAt).toLocaleDateString("fr-FR")}
+                        {new Date(email.createdAt).toLocaleDateString(i18n.language)}
                       </span>
                     </div>
                   </div>
@@ -414,13 +423,13 @@ function ProjectDetailView({
 
         <div className="mb-4">
           <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
-            <CheckSquare className="w-3.5 h-3.5 text-primary" /> Taches ({(project.tasks || []).length})
+            <CheckSquare className="w-3.5 h-3.5 text-primary" /> {t("projects.tasks")} ({(project.tasks || []).length})
           </h2>
           <div className="flex gap-2 mb-2">
             <Input
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
-              placeholder="Ajouter une tâche..."
+              placeholder={t("projects.addTaskPlaceholder")}
               className="bg-background border-border text-white text-[12px] h-8 flex-1"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && newTaskTitle.trim()) {
@@ -435,7 +444,7 @@ function ProjectDetailView({
               onClick={handleAddTask}
             >
               <Plus className="w-3 h-3" />
-              Ajouter
+              {t("projects.addProject").split(" ")[0]}
             </Button>
           </div>
           {(project.tasks || []).length > 0 ? (
@@ -466,7 +475,7 @@ function ProjectDetailView({
                   <button
                     onClick={() => handleDeleteTask(String(task.id))}
                     className="p-1.5 rounded-md text-[#8b9cb3]/40 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
-                    title="Supprimer"
+                    title={t("common.delete")}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -474,7 +483,7 @@ function ProjectDetailView({
               ))}
             </div>
           ) : (
-            <p className="text-[11px] text-[#8b9cb3]/60 italic">Aucune tâche pour le moment.</p>
+            <p className="text-[11px] text-[#8b9cb3]/60 italic">{t("projects.noTasksInProject")}</p>
           )}
         </div>
 
@@ -487,10 +496,10 @@ function ProjectDetailView({
             <div className="text-center py-12 rounded-lg border border-border border-dashed bg-card/50">
               <FolderKanban className="mx-auto h-8 w-8 text-[#8b9cb3]/20 mb-2" />
               <p className="text-[12px] text-[#8b9cb3]">
-                Aucun email ou tâche lié à ce projet pour le moment.
+                {t("projects.noEmailsInProject")}
               </p>
               <p className="text-[11px] text-[#8b9cb3]/60 mt-0.5">
-                Attribuez des emails à ce projet depuis la boîte de réception.
+                {t("projects.noProjectsDesc")}
               </p>
             </div>
           )}
@@ -500,6 +509,9 @@ function ProjectDetailView({
 }
 
 export default function Projets() {
+  const { t, i18n } = useTranslation();
+  const PROJECT_COLORS = getProjectColors(t);
+  const STATUS_LABELS: Record<string, { label: string; class: string }> = getStatusLabels(t);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -558,7 +570,7 @@ export default function Projets() {
           });
           setIsCreateOpen(false);
           createForm.reset();
-          toast({ title: "Projet créé" });
+          toast({ title: t("projects.created") });
         },
       }
     );
@@ -586,7 +598,7 @@ export default function Projets() {
             queryKey: getGetProjectQueryKey(editProject.id),
           });
           setEditProject(null);
-          toast({ title: "Projet modifie" });
+          toast({ title: t("projects.updated") });
         },
       }
     );
@@ -600,7 +612,7 @@ export default function Projets() {
           queryClient.invalidateQueries({
             queryKey: getListProjectsQueryKey(),
           });
-          toast({ title: "Projet supprimé" });
+          toast({ title: t("projects.deleted") });
         },
       }
     );
@@ -628,11 +640,10 @@ export default function Projets() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
             <h1 className="text-[16px] font-semibold text-white tracking-tight">
-              Gestion de projets
+              {t("projects.title")}
             </h1>
             <p className="text-[12px] text-[#8b9cb3] mt-0.5">
-              Organisez vos emails et taches par projet avec une reference
-              unique.
+              {t("projects.noProjectsDesc")}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -643,15 +654,15 @@ export default function Projets() {
                 try {
                   const { downloadExport } = await import("@/lib/export-utils");
                   await downloadExport("export/projects", `projets_${new Date().toISOString().split("T")[0]}.csv`);
-                  toast({ title: "Projets exportés" });
+                  toast({ title: t("projects.exportDownloaded") });
                 } catch {
-                  toast({ title: "Erreur lors de l'export", variant: "destructive" });
+                  toast({ title: t("projects.exportError"), variant: "destructive" });
                 }
               }}
               className="gap-1 text-[11px] h-8 bg-transparent border-border text-[#8b9cb3] hover:text-white"
             >
               <Download className="w-3 h-3" />
-              Exporter
+              {t("projects.export")}
             </Button>
             <Button
               size="sm"
@@ -668,7 +679,7 @@ export default function Projets() {
               }}
             >
               <Plus className="w-3.5 h-3.5" />
-              Nouveau projet
+              {t("projects.addProject")}
             </Button>
           </div>
         </div>
@@ -677,7 +688,7 @@ export default function Projets() {
           <DialogContent className="bg-card border-border">
             <DialogHeader>
               <DialogTitle className="text-white">
-                Créer un projet
+                {t("projects.createProject")}
               </DialogTitle>
             </DialogHeader>
             <Form {...createForm}>
@@ -691,7 +702,7 @@ export default function Projets() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-[#8b9cb3]">
-                        Nom du projet
+                        {t("projects.name")}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -710,7 +721,7 @@ export default function Projets() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-[#8b9cb3]">
-                        Reference (optionnel)
+                        {t("projects.reference")}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -731,7 +742,7 @@ export default function Projets() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-[#8b9cb3]">
-                        Description
+                        {t("projects.description")}
                       </FormLabel>
                       <FormControl>
                         <Textarea
@@ -750,7 +761,7 @@ export default function Projets() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-[#8b9cb3]">
-                          Couleur
+                          {t("projects.color")}
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
@@ -782,7 +793,7 @@ export default function Projets() {
                     name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#8b9cb3]">Statut</FormLabel>
+                        <FormLabel className="text-[#8b9cb3]">{t("projects.status")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
@@ -793,9 +804,9 @@ export default function Projets() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="bg-card border-border">
-                            <SelectItem value="actif">Actif</SelectItem>
-                            <SelectItem value="en_pause">En pause</SelectItem>
-                            <SelectItem value="termine">Termine</SelectItem>
+                            <SelectItem value="actif">{t("projects.statusActive")}</SelectItem>
+                            <SelectItem value="en_pause">{t("projects.statusPaused")}</SelectItem>
+                            <SelectItem value="termine">{t("projects.statusComplete")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormItem>
@@ -804,7 +815,7 @@ export default function Projets() {
                 </div>
                 <DialogFooter>
                   <Button type="submit" disabled={createProject.isPending}>
-                    {createProject.isPending ? "Création..." : "Créer"}
+                    {createProject.isPending ? "..." : t("projects.createProject")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -819,7 +830,7 @@ export default function Projets() {
           <DialogContent className="bg-card border-border">
             <DialogHeader>
               <DialogTitle className="text-white">
-                Modifier le projet
+                {t("projects.editProject")}
               </DialogTitle>
             </DialogHeader>
             <Form {...editForm}>
@@ -832,7 +843,7 @@ export default function Projets() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">Nom</FormLabel>
+                      <FormLabel className="text-[#8b9cb3]">{t("projects.name")}</FormLabel>
                       <FormControl>
                         <Input
                           className="bg-background border-border text-white"
@@ -849,7 +860,7 @@ export default function Projets() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-[#8b9cb3]">
-                        Reference
+                        {t("projects.reference")}
                       </FormLabel>
                       <FormControl>
                         <Input
@@ -866,7 +877,7 @@ export default function Projets() {
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-[#8b9cb3]">
-                        Description
+                        {t("projects.description")}
                       </FormLabel>
                       <FormControl>
                         <Textarea
@@ -884,7 +895,7 @@ export default function Projets() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel className="text-[#8b9cb3]">
-                          Couleur
+                          {t("projects.color")}
                         </FormLabel>
                         <Select
                           onValueChange={field.onChange}
@@ -916,7 +927,7 @@ export default function Projets() {
                     name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#8b9cb3]">Statut</FormLabel>
+                        <FormLabel className="text-[#8b9cb3]">{t("projects.status")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
@@ -927,9 +938,9 @@ export default function Projets() {
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent className="bg-card border-border">
-                            <SelectItem value="actif">Actif</SelectItem>
-                            <SelectItem value="en_pause">En pause</SelectItem>
-                            <SelectItem value="termine">Termine</SelectItem>
+                            <SelectItem value="actif">{t("projects.statusActive")}</SelectItem>
+                            <SelectItem value="en_pause">{t("projects.statusPaused")}</SelectItem>
+                            <SelectItem value="termine">{t("projects.statusComplete")}</SelectItem>
                           </SelectContent>
                         </Select>
                       </FormItem>
@@ -939,8 +950,8 @@ export default function Projets() {
                 <DialogFooter>
                   <Button type="submit" disabled={updateProject.isPending}>
                     {updateProject.isPending
-                      ? "Enregistrement..."
-                      : "Enregistrer"}
+                      ? "..."
+                      : t("common.save")}
                   </Button>
                 </DialogFooter>
               </form>
@@ -967,10 +978,10 @@ export default function Projets() {
           <div className="text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
             <FolderKanban className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
             <h3 className="text-sm font-medium text-white mb-1">
-              Aucun projet
+              {t("projects.noProjects")}
             </h3>
             <p className="text-[13px] text-[#8b9cb3] mb-4">
-              Creez des projets pour organiser vos emails et taches par dossier.
+              {t("projects.noProjectsDesc")}
             </p>
             <Button
               onClick={() => setIsCreateOpen(true)}
@@ -978,7 +989,7 @@ export default function Projets() {
               className="gap-2"
             >
               <Plus className="w-3.5 h-3.5" />
-              Créer le premier projet
+              {t("projects.createProject")}
             </Button>
           </div>
         ) : (
@@ -986,7 +997,7 @@ export default function Projets() {
             {activeProjects.length > 0 && (
               <div className="mb-6">
                 <h2 className="text-[13px] font-medium text-[#8b9cb3] uppercase tracking-wider mb-3">
-                  Projets actifs ({activeProjects.length})
+                  {t("projects.statusActive")} ({activeProjects.length})
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {activeProjects.map((project: any) =>
@@ -998,7 +1009,7 @@ export default function Projets() {
             {otherProjects.length > 0 && (
               <div>
                 <h2 className="text-[13px] font-medium text-[#8b9cb3] uppercase tracking-wider mb-3">
-                  Autres ({otherProjects.length})
+                  {t("projects.statusComplete")} ({otherProjects.length})
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
                   {otherProjects.map((project: any) =>
@@ -1024,7 +1035,7 @@ export default function Projets() {
       >
         <div className="flex justify-between items-start mb-3">
           <div
-            className={`w-10 h-10 rounded-xl ${getColorClass(project.color)} flex items-center justify-center text-white font-bold text-sm`}
+            className={`w-10 h-10 rounded-xl ${getColorClass(project.color, PROJECT_COLORS)} flex items-center justify-center text-white font-bold text-sm`}
           >
             {project.name.charAt(0).toUpperCase()}
           </div>
@@ -1053,7 +1064,7 @@ export default function Projets() {
                   }}
                   className="gap-2 cursor-pointer text-[#8b9cb3] hover:text-white"
                 >
-                  <Edit2 className="h-3.5 w-3.5" /> Modifier
+                  <Edit2 className="h-3.5 w-3.5" /> {t("classification.edit")}
                 </DropdownMenuItem>
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
@@ -1062,7 +1073,7 @@ export default function Projets() {
                       onClick={(e) => e.stopPropagation()}
                       className="gap-2 text-red-400 cursor-pointer"
                     >
-                      <Trash2 className="h-3.5 w-3.5" /> Supprimer
+                      <Trash2 className="h-3.5 w-3.5" /> {t("common.delete")}
                     </DropdownMenuItem>
                   </AlertDialogTrigger>
                   <AlertDialogContent
@@ -1071,22 +1082,21 @@ export default function Projets() {
                   >
                     <AlertDialogHeader>
                       <AlertDialogTitle className="text-white">
-                        Supprimer ce projet ?
+                        {t("projects.deleteConfirmTitle")}
                       </AlertDialogTitle>
                       <AlertDialogDescription className="text-[#8b9cb3]">
-                        Le projet "{project.name}" sera supprimé. Les emails
-                        et tâches associés seront déliés.
+                        {t("projects.deleteConfirmDesc")}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                       <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">
-                        Annuler
+                        {t("common.cancel")}
                       </AlertDialogCancel>
                       <AlertDialogAction
                         onClick={() => handleDelete(project.id)}
                         className="bg-red-500 text-white hover:bg-red-600"
                       >
-                        Supprimer
+                        {t("common.delete")}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>
@@ -1114,14 +1124,14 @@ export default function Projets() {
             <span className="text-primary font-medium">
               {project.emailCount}
             </span>{" "}
-            emails
+            {t("projects.emails").toLowerCase()}
           </span>
           <span className="flex items-center gap-1 text-[#8b9cb3] bg-white/[0.04] px-2 py-1 rounded-md">
             <CheckSquare className="w-3 h-3" />
             <span className="text-primary font-medium">
               {project.pendingTaskCount}
             </span>{" "}
-            tâches
+            {t("projects.tasks").toLowerCase()}
           </span>
         </div>
       </div>

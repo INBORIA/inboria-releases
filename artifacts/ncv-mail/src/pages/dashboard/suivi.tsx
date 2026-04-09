@@ -19,8 +19,9 @@ import {
 } from "@workspace/api-client-react";
 import type { PaginatedEmails } from "@workspace/api-client-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS, nl } from "date-fns/locale";
 import { useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from 'react-i18next';
 import {
   Clock,
   Plus,
@@ -51,13 +52,18 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { downloadExport } from "@/lib/export-utils";
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; bg: string; icon: any }> = {
-  en_attente: { label: "En attente", color: "text-amber-400", bg: "bg-amber-500/15", icon: Clock },
-  relance: { label: "Relance", color: "text-orange-400", bg: "bg-orange-500/15", icon: RotateCcw },
-  termine: { label: "Terminé", color: "text-emerald-400", bg: "bg-emerald-500/15", icon: CheckCircle2 },
-};
+function getStatusConfig(t: (key: string) => string) {
+  return {
+    en_attente: { label: t("followup.pending"), color: "text-amber-400", bg: "bg-amber-500/15", icon: Clock },
+    relance: { label: t("followup.relance"), color: "text-orange-400", bg: "bg-orange-500/15", icon: RotateCcw },
+    termine: { label: t("followup.completed"), color: "text-emerald-400", bg: "bg-emerald-500/15", icon: CheckCircle2 },
+  };
+}
 
 export default function Suivi() {
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
+  const STATUS_CONFIG = getStatusConfig(t);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [filterStatus, setFilterStatus] = useState<string>("all");
@@ -85,7 +91,7 @@ export default function Suivi() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Suivi créé" });
+          toast({ title: t("followup.created") });
           setShowCreate(false);
         },
       }
@@ -98,7 +104,7 @@ export default function Suivi() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: `Suivi mis à jour: ${STATUS_CONFIG[status]?.label || status}` });
+          toast({ title: `${t("followup.statusUpdated")}: ${STATUS_CONFIG[status]?.label || status}` });
         },
       }
     );
@@ -110,7 +116,7 @@ export default function Suivi() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Suivi supprimé" });
+          toast({ title: t("followup.deleted") });
         },
       }
     );
@@ -119,9 +125,9 @@ export default function Suivi() {
   const handleExport = async () => {
     try {
       await downloadExport("export/followups", `suivis_${new Date().toISOString().split("T")[0]}.csv`);
-      toast({ title: "Export téléchargé" });
+      toast({ title: t("followup.exportDownloaded") });
     } catch {
-      toast({ title: "Erreur lors de l'export", variant: "destructive" });
+      toast({ title: t("followup.exportError"), variant: "destructive" });
     }
   };
 
@@ -161,10 +167,10 @@ export default function Suivi() {
           <div>
             <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
               <Eye className="w-4 h-4 text-primary" />
-              Suivi
+              {t("followup.title")}
             </h1>
             <p className="text-[12px] text-[#8b9cb3] mt-0.5">
-              Gérez vos suivis et relances
+              {t("followup.subtitle")}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -175,7 +181,7 @@ export default function Suivi() {
               className="gap-1 text-[11px] h-7 bg-transparent border-border text-primary hover:text-white"
             >
               <Sparkles className="w-3 h-3" />
-              Détection IA
+              {t("followup.aiDetection")}
             </Button>
             <Button
               variant="outline"
@@ -184,7 +190,7 @@ export default function Suivi() {
               className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
             >
               <Download className="w-3 h-3" />
-              Exporter
+              {t("common.export")}
             </Button>
             <Button
               size="sm"
@@ -192,17 +198,17 @@ export default function Suivi() {
               className="gap-1 text-[11px] h-7"
             >
               <Plus className="w-3 h-3" />
-              Nouveau suivi
+              {t("followup.newFollowup")}
             </Button>
           </div>
         </div>
 
         {stats && (
           <div className="grid grid-cols-4 gap-2 mb-5">
-            <StatCard label="En attente" value={(stats as any).en_attente || 0} color="text-amber-400" bg="bg-amber-500/10" icon={Clock} />
-            <StatCard label="Relance" value={(stats as any).relance || 0} color="text-orange-400" bg="bg-orange-500/10" icon={RotateCcw} />
-            <StatCard label="En retard" value={(stats as any).overdue || 0} color="text-red-400" bg="bg-red-500/10" icon={AlertTriangle} />
-            <StatCard label="Terminé" value={(stats as any).termine || 0} color="text-emerald-400" bg="bg-emerald-500/10" icon={CheckCircle2} />
+            <StatCard label={t("followup.pending")} value={(stats as any).en_attente || 0} color="text-amber-400" bg="bg-amber-500/10" icon={Clock} />
+            <StatCard label={t("followup.relance")} value={(stats as any).relance || 0} color="text-orange-400" bg="bg-orange-500/10" icon={RotateCcw} />
+            <StatCard label={t("followup.overdue")} value={(stats as any).overdue || 0} color="text-red-400" bg="bg-red-500/10" icon={AlertTriangle} />
+            <StatCard label={t("followup.completed")} value={(stats as any).termine || 0} color="text-emerald-400" bg="bg-emerald-500/10" icon={CheckCircle2} />
           </div>
         )}
 
@@ -215,7 +221,7 @@ export default function Suivi() {
               onClick={() => setFilterStatus(s)}
               className="text-[11px] h-7"
             >
-              {s === "all" ? "Tous" : STATUS_CONFIG[s]?.label || s}
+              {s === "all" ? t("followup.all") : STATUS_CONFIG[s]?.label || s}
             </Button>
           ))}
         </div>
@@ -227,15 +233,15 @@ export default function Suivi() {
         ) : followupsList.length === 0 ? (
           <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
             <Eye className="mx-auto h-8 w-8 text-[#8b9cb3]/20 mb-2" />
-            <h3 className="text-[13px] font-medium text-white mb-1">Aucun suivi</h3>
-            <p className="text-[12px] text-[#8b9cb3]">Créez votre premier suivi ou utilisez la détection IA.</p>
+            <h3 className="text-[13px] font-medium text-white mb-1">{t("followup.noFollowups")}</h3>
+            <p className="text-[12px] text-[#8b9cb3]">{t("followup.noFollowupsAlt")}</p>
           </div>
         ) : (
           <div className="space-y-4">
             {overdue.length > 0 && (
               <div>
                 <h3 className="text-[12px] font-medium text-red-400 mb-2 flex items-center gap-1">
-                  <AlertTriangle className="w-3 h-3" /> En retard ({overdue.length})
+                  <AlertTriangle className="w-3 h-3" /> {t("followup.overdue")} ({overdue.length})
                 </h3>
                 <div className="space-y-1">
                   {overdue.map((f) => (
@@ -246,7 +252,7 @@ export default function Suivi() {
             )}
             {active.length > 0 && (
               <div>
-                <h3 className="text-[12px] font-medium text-white mb-2">Actifs ({active.length})</h3>
+                <h3 className="text-[12px] font-medium text-white mb-2">{t("followup.active")} ({active.length})</h3>
                 <div className="space-y-1">
                   {active.map((f) => (
                     <FollowupRow key={f.id} followup={f} onStatusChange={handleStatusChange} onDelete={handleDelete} onClick={() => setSelectedFollowup(f)} />
@@ -256,7 +262,7 @@ export default function Suivi() {
             )}
             {completed.length > 0 && (
               <div>
-                <h3 className="text-[12px] font-medium text-[#8b9cb3] mb-2">Terminés ({completed.length})</h3>
+                <h3 className="text-[12px] font-medium text-[#8b9cb3] mb-2">{t("followup.completed")} ({completed.length})</h3>
                 <div className="space-y-1">
                   {completed.map((f) => (
                     <FollowupRow key={f.id} followup={f} onStatusChange={handleStatusChange} onDelete={handleDelete} onClick={() => setSelectedFollowup(f)} />
@@ -311,6 +317,9 @@ function FollowupRow({
   onClick: () => void;
   isOverdue?: boolean;
 }) {
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
+  const STATUS_CONFIG = getStatusConfig(t);
   const cfg = STATUS_CONFIG[f.status] || STATUS_CONFIG.en_attente;
   const StatusIcon = cfg.icon;
   const { toast } = useToast();
@@ -331,7 +340,7 @@ function FollowupRow({
           {f.due_date && (
             <span className={`text-[10px] flex items-center gap-0.5 ${isOverdue ? "text-red-400" : "text-[#8b9cb3]"}`}>
               <CalendarDays className="w-3 h-3" />
-              {format(new Date(f.due_date), "dd MMM yyyy", { locale: fr })}
+              {format(new Date(f.due_date), "dd MMM yyyy", { locale: dateFnsLocale })}
             </span>
           )}
           {f.emails?.subject && (
@@ -355,9 +364,9 @@ function FollowupRow({
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="en_attente" className="text-[11px]">En attente</SelectItem>
-            <SelectItem value="relance" className="text-[11px]">Relance</SelectItem>
-            <SelectItem value="termine" className="text-[11px]">Terminé</SelectItem>
+            <SelectItem value="en_attente" className="text-[11px]">{t("followup.pending")}</SelectItem>
+            <SelectItem value="relance" className="text-[11px]">{t("followup.relance")}</SelectItem>
+            <SelectItem value="termine" className="text-[11px]">{t("followup.completed")}</SelectItem>
           </SelectContent>
         </Select>
         <Button
@@ -366,13 +375,13 @@ function FollowupRow({
           onClick={async () => {
             try {
               await downloadExport(`export/followups?id=${f.id}`, `suivi_${f.id}.csv`);
-              toast({ title: "Suivi exporté" });
+              toast({ title: t("followup.exportDownloaded") });
             } catch {
-              toast({ title: "Erreur lors de l'export", variant: "destructive" });
+              toast({ title: t("followup.exportError"), variant: "destructive" });
             }
           }}
           className="h-7 w-7 p-0 text-[#8b9cb3] hover:text-primary"
-          title="Exporter"
+          title={t("common.export")}
         >
           <Download className="w-3 h-3" />
         </Button>
@@ -402,6 +411,9 @@ function FollowupDetail({
   onDelete: () => void;
   projects: any[];
 }) {
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
+  const STATUS_CONFIG = getStatusConfig(t);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const emailId = f.email_id;
@@ -434,7 +446,7 @@ function FollowupDetail({
       const result = await summaryMut.mutateAsync({ data: { thread } });
       setAiSummary((result as any)?.summary || "");
     } catch {
-      setAiSummary("Erreur lors de la génération du résumé.");
+      setAiSummary(t("followup.summaryError"));
     }
     setLoadingSummary(false);
   };
@@ -446,12 +458,12 @@ function FollowupDetail({
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-          toast({ title: "Réponse envoyée" });
+          toast({ title: t("followup.replySent") });
           setReplyOpen(false);
           setReplyText("");
         },
         onError: (err: any) => {
-          toast({ variant: "destructive", title: "Erreur", description: err?.data?.error || "Impossible d'envoyer." });
+          toast({ variant: "destructive", title: t("common.error"), description: err?.data?.error || t("followup.replyError") });
         },
       }
     );
@@ -464,10 +476,10 @@ function FollowupDetail({
       {
         onSuccess: (data: any) => {
           setReplyText(data.draft);
-          toast({ title: "Brouillon IA généré" });
+          toast({ title: t("followup.draftGenerated") });
         },
         onError: () => {
-          toast({ title: "Brouillon indisponible", variant: "destructive" });
+          toast({ title: t("followup.draftError"), variant: "destructive" });
         },
       }
     );
@@ -479,7 +491,7 @@ function FollowupDetail({
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListFollowupsQueryKey() });
-          toast({ title: "Notes mises à jour" });
+          toast({ title: t("followup.notesUpdated") });
           setNotesChanged(false);
         },
       }
@@ -490,9 +502,9 @@ function FollowupDetail({
     if (!emailId) return;
     try {
       await downloadExport(`export/emails?id=${emailId}`, `conversation_${emailId}.csv`);
-      toast({ title: "Conversation exportée" });
+      toast({ title: t("followup.conversationExported") });
     } catch {
-      toast({ title: "Erreur lors de l'export", variant: "destructive" });
+      toast({ title: t("followup.exportError"), variant: "destructive" });
     }
   };
 
@@ -506,7 +518,7 @@ function FollowupDetail({
           className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-          Suivi
+          {t("followup.title")}
         </Button>
         <div className="flex-1" />
         {emailId && (
@@ -518,7 +530,7 @@ function FollowupDetail({
               className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
             >
               <Download className="w-3 h-3" />
-              Exporter
+              {t("common.export")}
             </Button>
             <Button
               variant="outline"
@@ -528,7 +540,7 @@ function FollowupDetail({
               className="gap-1 text-[11px] h-7 bg-transparent border-border text-primary hover:text-white"
             >
               {loadingSummary ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-              Résumé IA
+              {t("followup.aiSummary")}
             </Button>
           </>
         )}
@@ -553,8 +565,8 @@ function FollowupDetail({
               {f.due_date && (
                 <span className={`text-[11px] flex items-center gap-1 ${isOverdue ? "text-red-400" : "text-[#8b9cb3]"}`}>
                   <CalendarDays className="w-3.5 h-3.5" />
-                  {format(new Date(f.due_date), "dd MMMM yyyy", { locale: fr })}
-                  {isOverdue && <span className="text-red-400 font-medium ml-1">En retard</span>}
+                  {format(new Date(f.due_date), "dd MMMM yyyy", { locale: dateFnsLocale })}
+                  {isOverdue && <span className="text-red-400 font-medium ml-1">{t("followup.overdue")}</span>}
                 </span>
               )}
               {f.projects?.name && (
@@ -577,26 +589,26 @@ function FollowupDetail({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="en_attente" className="text-[11px]">En attente</SelectItem>
-                <SelectItem value="relance" className="text-[11px]">Relance</SelectItem>
-                <SelectItem value="termine" className="text-[11px]">Terminé</SelectItem>
+                <SelectItem value="en_attente" className="text-[11px]">{t("followup.pending")}</SelectItem>
+                <SelectItem value="relance" className="text-[11px]">{t("followup.relance")}</SelectItem>
+                <SelectItem value="termine" className="text-[11px]">{t("followup.completed")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
         </div>
 
         <div className="mt-3 pt-3 border-t border-border/50">
-          <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Notes</label>
+          <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("followup.notes")}</label>
           <Textarea
             value={editNotes}
             onChange={(e) => { setEditNotes(e.target.value); setNotesChanged(true); }}
-            placeholder="Ajouter des notes sur ce suivi..."
+            placeholder={t("followup.notesPlaceholder")}
             className="bg-background border-border text-white text-[12px] h-16 resize-none"
           />
           {notesChanged && (
             <div className="flex justify-end mt-1">
               <Button size="sm" onClick={handleSaveNotes} className="text-[10px] h-6">
-                Sauvegarder
+                {t("followup.save")}
               </Button>
             </div>
           )}
@@ -607,7 +619,7 @@ function FollowupDetail({
         <div className="mb-4 p-3 rounded-lg border border-primary/20 bg-primary/5">
           <div className="flex items-center gap-1 mb-1">
             <Sparkles className="w-3 h-3 text-primary" />
-            <span className="text-[11px] font-medium text-primary">Résumé IA de la conversation</span>
+            <span className="text-[11px] font-medium text-primary">{t("followup.aiSummary")}</span>
           </div>
           <p className="text-[12px] text-[#8b9cb3] whitespace-pre-wrap">{aiSummary}</p>
         </div>
@@ -616,8 +628,8 @@ function FollowupDetail({
       {!emailId ? (
         <div className="text-center py-12 rounded-lg border border-border border-dashed bg-card/50">
           <MessageSquare className="mx-auto h-8 w-8 text-[#8b9cb3]/20 mb-2" />
-          <h3 className="text-[13px] font-medium text-white mb-1">Aucun email lié</h3>
-          <p className="text-[12px] text-[#8b9cb3]">Ce suivi n'est pas lié à un email. La conversation n'est pas disponible.</p>
+          <h3 className="text-[13px] font-medium text-white mb-1">{t("followup.noFollowups")}</h3>
+          <p className="text-[12px] text-[#8b9cb3]">{t("followup.noFollowupsAlt")}</p>
         </div>
       ) : loadingConvo ? (
         <div className="flex justify-center py-12">
@@ -628,7 +640,7 @@ function FollowupDetail({
           <div className="flex items-center justify-between mb-3">
             <h3 className="text-[13px] font-medium text-white flex items-center gap-1.5">
               <MessageSquare className="w-3.5 h-3.5 text-primary" />
-              Conversation ({thread.length} message{thread.length > 1 ? "s" : ""})
+              {t("followup.conversationWith")} ({thread.length} message{thread.length > 1 ? "s" : ""})
             </h3>
             <div className="flex items-center gap-1">
               <Button
@@ -647,7 +659,7 @@ function FollowupDetail({
                 }}
               >
                 <Reply className="w-3 h-3" />
-                Répondre
+                {t("followup.reply")}
               </Button>
               <Button
                 variant="outline"
@@ -666,7 +678,7 @@ function FollowupDetail({
                 }}
               >
                 {generateDraftMut.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
-                Réponse IA
+                {t("followup.aiReply")}
               </Button>
             </div>
           </div>
@@ -675,31 +687,31 @@ function FollowupDetail({
             <div className="mb-4 rounded-lg border border-primary/20 bg-primary/5 p-4 space-y-2">
               <div className="flex items-center justify-between mb-1">
                 <span className="text-[11px] font-medium text-primary uppercase tracking-wider flex items-center gap-1">
-                  <Reply className="w-3.5 h-3.5" /> Répondre
+                  <Reply className="w-3.5 h-3.5" /> {t("followup.reply")}
                 </span>
                 <button onClick={() => setReplyOpen(false)} className="text-[#8b9cb3] hover:text-white"><X className="w-4 h-4" /></button>
               </div>
               <Input
-                placeholder="Destinataire"
+                placeholder={t("followup.replyTo")}
                 value={replyTo}
                 onChange={(e) => setReplyTo(e.target.value)}
                 className="bg-background border-border text-white text-[12px] h-8"
               />
               <Input
-                placeholder="Objet"
+                placeholder={t("followup.replySubject")}
                 value={replySubject}
                 onChange={(e) => setReplySubject(e.target.value)}
                 className="bg-background border-border text-white text-[12px] h-8"
               />
               <Textarea
-                placeholder="Votre réponse..."
+                placeholder={t("followup.replyMessage")}
                 value={replyText}
                 onChange={(e) => setReplyText(e.target.value)}
                 className="bg-background border-border text-white text-[12px] min-h-[120px]"
               />
               <div className="flex justify-end gap-2">
                 <Button variant="ghost" size="sm" onClick={() => setReplyOpen(false)} className="text-[#8b9cb3] h-7 text-[11px]">
-                  Annuler
+                  {t("common.cancel")}
                 </Button>
                 <Button
                   size="sm"
@@ -708,7 +720,7 @@ function FollowupDetail({
                   onClick={handleSendReply}
                 >
                   {sendEmailMut.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Send className="w-3 h-3" />}
-                  Envoyer
+                  {sendEmailMut.isPending ? t("followup.sending") : t("followup.send")}
                 </Button>
               </div>
             </div>
@@ -737,14 +749,14 @@ function FollowupDetail({
                     {msg.role === "sent" ? `→ ${msg.recipient || "?"}` : ""}
                   </span>
                   <span className="text-[10px] text-[#8b9cb3] ml-auto">
-                    {msg.createdAt ? format(new Date(msg.createdAt), "dd MMM HH:mm", { locale: fr }) : ""}
+                    {msg.createdAt ? format(new Date(msg.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
                   </span>
                 </div>
                 {msg.summary && (
                   <div className="mb-2 px-2 py-1.5 rounded bg-primary/[0.06]">
                     <div className="flex items-center gap-1 mb-0.5">
                       <Sparkles className="w-2.5 h-2.5 text-primary" />
-                      <span className="text-[9px] font-medium text-primary uppercase">Résumé IA</span>
+                      <span className="text-[9px] font-medium text-primary uppercase">{t("followup.aiSummary")}</span>
                     </div>
                     <p className="text-[11px] text-[#8b9cb3]">{msg.summary}</p>
                   </div>
@@ -770,6 +782,7 @@ function CreateFollowupModal({
   onCreate: (data: any) => void;
   projects: any[];
 }) {
+  const { t } = useTranslation();
   const [title, setTitle] = useState("");
   const [dueDate, setDueDate] = useState("");
   const [notes, setNotes] = useState("");
@@ -779,12 +792,12 @@ function CreateFollowupModal({
     <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50" onClick={onClose}>
       <div className="bg-[#141c2b] rounded-xl border border-border p-5 w-full max-w-md" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-[14px] font-semibold text-white">Nouveau suivi</h3>
+          <h3 className="text-[14px] font-semibold text-white">{t("followup.newFollowup")}</h3>
           <button onClick={onClose} className="text-[#8b9cb3] hover:text-white"><X className="w-4 h-4" /></button>
         </div>
         <div className="space-y-3">
           <Input
-            placeholder="Titre du suivi"
+            placeholder={t("followup.titlePlaceholder")}
             value={title}
             onChange={(e) => setTitle(e.target.value)}
             className="bg-card border-border text-[12px]"
@@ -797,10 +810,10 @@ function CreateFollowupModal({
           />
           <Select value={projectId} onValueChange={setProjectId}>
             <SelectTrigger className="bg-card border-border text-[12px]">
-              <SelectValue placeholder="Projet (optionnel)" />
+              <SelectValue placeholder={t("followup.projectOptional")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="none" className="text-[11px]">Aucun projet</SelectItem>
+              <SelectItem value="none" className="text-[11px]">{t("followup.noProject")}</SelectItem>
               {projects.map((p: any) => (
                 <SelectItem key={p.id} value={p.id} className="text-[11px]">
                   {p.reference} - {p.name}
@@ -809,7 +822,7 @@ function CreateFollowupModal({
             </SelectContent>
           </Select>
           <Textarea
-            placeholder="Notes (optionnel)"
+            placeholder={t("followup.notes")}
             value={notes}
             onChange={(e) => setNotes(e.target.value)}
             className="bg-card border-border text-[12px] min-h-[60px]"
@@ -824,7 +837,7 @@ function CreateFollowupModal({
             disabled={!title.trim()}
             className="w-full text-[12px]"
           >
-            Créer le suivi
+            {t("followup.create")}
           </Button>
         </div>
       </div>
@@ -839,6 +852,7 @@ function AiDetectModal({
   onClose: () => void;
   onCreate: (data: any) => void;
 }) {
+  const { t } = useTranslation();
   const { data: emailsData, isLoading: loadingEmails } = useListEmails({ limit: 20 });
   const emails = (emailsData as PaginatedEmails | undefined)?.emails ?? [];
   const detectMut = useDetectFollowups();
@@ -857,7 +871,7 @@ function AiDetectModal({
       setSuggestions((result as any)?.followups || []);
       setDetected(true);
     } catch {
-      toast({ title: "Erreur lors de la détection", variant: "destructive" });
+      toast({ title: t("followup.exportError"), variant: "destructive" });
     }
     setDetecting(false);
   };
@@ -878,7 +892,7 @@ function AiDetectModal({
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-[14px] font-semibold text-white flex items-center gap-2">
             <Sparkles className="w-4 h-4 text-primary" />
-            Détection IA de suivis
+            {t("followup.aiDetection")}
           </h3>
           <button onClick={onClose} className="text-[#8b9cb3] hover:text-white"><X className="w-4 h-4" /></button>
         </div>
@@ -886,21 +900,21 @@ function AiDetectModal({
         {!detected ? (
           <div className="text-center py-6">
             <p className="text-[12px] text-[#8b9cb3] mb-4">
-              L'IA va analyser vos {emails.length} derniers emails pour détecter ceux qui nécessitent un suivi.
+              {t("followup.aiDetectionDesc")}
             </p>
             <Button onClick={handleDetect} disabled={detecting || loadingEmails} className="gap-1">
               {detecting ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
-              {detecting ? "Analyse en cours..." : "Lancer la détection"}
+              {detecting ? t("followup.detecting") : t("followup.aiDetection")}
             </Button>
           </div>
         ) : suggestions.length === 0 ? (
           <div className="text-center py-6">
             <CheckCircle2 className="mx-auto h-8 w-8 text-emerald-400 mb-2" />
-            <p className="text-[12px] text-[#8b9cb3]">Aucun suivi nécessaire détecté. Tout est en ordre !</p>
+            <p className="text-[12px] text-[#8b9cb3]">{t("followup.noFollowupsAlt")}</p>
           </div>
         ) : (
           <div className="space-y-2">
-            <p className="text-[11px] text-[#8b9cb3] mb-3">{suggestions.length} suivi(s) suggéré(s)</p>
+            <p className="text-[11px] text-[#8b9cb3] mb-3">{t("followup.detectedCount", { count: suggestions.length })}</p>
             {suggestions.map((s, i) => (
               <div key={i} className="rounded-lg border border-primary/20 bg-primary/5 p-3">
                 <p className="text-[12px] font-medium text-white mb-1">{s.title}</p>
@@ -921,7 +935,7 @@ function AiDetectModal({
                   </span>
                   <div className="flex-1" />
                   <Button size="sm" onClick={() => handleAccept(s)} className="text-[10px] h-6 gap-1">
-                    <Plus className="w-3 h-3" /> Créer
+                    <Plus className="w-3 h-3" /> {t("followup.create")}
                   </Button>
                 </div>
               </div>

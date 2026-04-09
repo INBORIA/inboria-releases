@@ -25,6 +25,7 @@ import type { PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from 'react-i18next';
 import {
   MailPlus,
   Trash2,
@@ -47,6 +48,7 @@ import {
 type ViewMode = "list" | "detail" | "emails";
 
 export default function BoitesPartagees() {
+  const { t } = useTranslation();
   const { data: profile } = useGetProfile();
   const { data: org } = useGetMyOrganisation();
   const isAdmin = (org as any)?.myRole === "admin";
@@ -77,7 +79,7 @@ export default function BoitesPartagees() {
     return (
       <DashboardLayout>
         <div className="flex items-center justify-center h-full">
-          <p className="text-muted-foreground">Disponible avec le plan Business uniquement.</p>
+          <p className="text-muted-foreground">{t("sharedMailboxes.businessOnly")}</p>
         </div>
       </DashboardLayout>
     );
@@ -99,26 +101,26 @@ export default function BoitesPartagees() {
   async function handleShareConnection(connectionId: string) {
     try {
       await createMailbox.mutateAsync({ data: { connectionId, name: shareName.trim() || undefined } });
-      toast({ title: "Adresse partagée avec l'équipe" });
+      toast({ title: t("sharedMailboxes.sharedSuccess") });
       setShareName("");
       setSharingConnectionId(null);
       invalidateAll();
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
     }
   }
 
   async function handleDeleteMailbox(id: string) {
     try {
       await deleteMailbox.mutateAsync({ mailboxId: id });
-      toast({ title: "Partage supprime" });
+      toast({ title: t("sharedMailboxes.mailboxDeleted") });
       invalidateAll();
       if (selectedMailboxId === id) {
         setViewMode("list");
         setSelectedMailboxId(null);
       }
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
     }
   }
 
@@ -126,45 +128,45 @@ export default function BoitesPartagees() {
     if (!addMemberUserId) return;
     try {
       await addMember.mutateAsync({ mailboxId, data: { userId: addMemberUserId, canReply: true } });
-      toast({ title: "Membre ajoute" });
+      toast({ title: t("sharedMailboxes.memberAdded") });
       setAddMemberUserId("");
       invalidateMembers(mailboxId);
       invalidateAll();
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
     }
   }
 
   async function handleRemoveMember(mailboxId: string, memberId: string) {
     try {
       await removeMember.mutateAsync({ mailboxId, memberId });
-      toast({ title: "Membre retiré" });
+      toast({ title: t("sharedMailboxes.memberRemoved") });
       invalidateMembers(mailboxId);
       invalidateAll();
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
     }
   }
 
   async function handleClaim(emailId: string) {
     try {
       await claimEmail.mutateAsync({ emailId });
-      toast({ title: "Email pris en charge" });
+      toast({ title: t("sharedMailboxes.emailClaimed") });
       if (selectedMailboxId) invalidateEmails(selectedMailboxId);
       invalidateAll();
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
     }
   }
 
   async function handleUnclaim(emailId: string) {
     try {
       await unclaimEmail.mutateAsync({ emailId });
-      toast({ title: "Email relâché" });
+      toast({ title: t("sharedMailboxes.emailUnclaimed") });
       if (selectedMailboxId) invalidateEmails(selectedMailboxId);
       invalidateAll();
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
     }
   }
 
@@ -194,9 +196,9 @@ export default function BoitesPartagees() {
           )}
           <MailPlus className="h-7 w-7 text-primary" />
           <h1 className="text-2xl font-bold">
-            {viewMode === "list" && "Boîtes partagées"}
-            {viewMode === "detail" && (selectedMailbox?.name || "Détails")}
-            {viewMode === "emails" && `${selectedMailbox?.name || ""} — Emails`}
+            {viewMode === "list" && t("sharedMailboxes.title")}
+            {viewMode === "detail" && (selectedMailbox?.name || t("sharedMailboxes.details"))}
+            {viewMode === "emails" && `${selectedMailbox?.name || ""} — ${t("sharedMailboxes.emails")}`}
           </h1>
         </div>
 
@@ -206,10 +208,10 @@ export default function BoitesPartagees() {
               <div className="bg-card border border-border rounded-xl p-5 space-y-4">
                 <h2 className="text-lg font-semibold flex items-center gap-2">
                   <Share2 className="h-5 w-5 text-primary" />
-                  Partager une adresse avec l'équipe
+                  {t("sharedMailboxes.shareTitle")}
                 </h2>
                 <p className="text-xs text-muted-foreground">
-                  Sélectionnez une adresse connectée dans vos Paramètres pour la partager avec les membres de votre équipe.
+                  {t("sharedMailboxes.shareDesc")}
                 </p>
                 <div className="space-y-2">
                   {availableConnections.map((conn: any) => (
@@ -230,13 +232,13 @@ export default function BoitesPartagees() {
                       {sharingConnectionId === conn.id ? (
                         <div className="flex items-center gap-2">
                           <Input
-                            placeholder="Nom (optionnel, ex: Support)"
+                            placeholder={t("sharedMailboxes.namePlaceholder")}
                             value={shareName}
                             onChange={(e) => setShareName(e.target.value)}
                             className="bg-background h-8 text-[12px] w-48"
                           />
                           <Button size="sm" onClick={() => handleShareConnection(conn.id)} disabled={createMailbox.isPending}>
-                            {createMailbox.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : "Confirmer"}
+                            {createMailbox.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : t("common.confirm")}
                           </Button>
                           <Button variant="ghost" size="sm" onClick={() => { setSharingConnectionId(null); setShareName(""); }}>
                             <X className="h-3 w-3" />
@@ -245,7 +247,7 @@ export default function BoitesPartagees() {
                       ) : (
                         <Button variant="outline" size="sm" className="h-8 text-[12px]" onClick={() => setSharingConnectionId(conn.id)}>
                           <Share2 className="h-3.5 w-3.5 mr-1.5" />
-                          Partager
+                          {t("sharedMailboxes.share")}
                         </Button>
                       )}
                     </div>
@@ -261,8 +263,8 @@ export default function BoitesPartagees() {
                   <div>
                     <p className="text-sm text-muted-foreground">
                       {((adminConnections as any[]) || []).length === 0
-                        ? "Aucune adresse email connectée. Connectez d'abord une adresse dans Paramètres pour pouvoir la partager."
-                        : "Toutes vos adresses connectées sont déjà partagées."}
+                        ? t("sharedMailboxes.noConnectionsDesc")
+                        : t("sharedMailboxes.allShared")}
                     </p>
                   </div>
                 </div>
@@ -276,8 +278,8 @@ export default function BoitesPartagees() {
             ) : !mailboxes || (mailboxes as any[]).length === 0 ? (
               <div className="bg-card border border-border rounded-xl p-8 text-center">
                 <Inbox className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-                <p className="text-muted-foreground">Aucune boîte partagée pour le moment.</p>
-                {isAdmin && <p className="text-sm text-muted-foreground mt-1">Partagez une adresse connectée ci-dessus pour commencer.</p>}
+                <p className="text-muted-foreground">{t("sharedMailboxes.noMailboxes")}</p>
+                {isAdmin && <p className="text-sm text-muted-foreground mt-1">{t("sharedMailboxes.shareToStart")}</p>}
               </div>
             ) : (
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
@@ -295,24 +297,24 @@ export default function BoitesPartagees() {
                       )}
                     </div>
                     <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <span className="flex items-center gap-1"><Users className="h-4 w-4" />{mb.memberCount || 0} membre{(mb.memberCount || 0) > 1 ? "s" : ""}</span>
+                      <span className="flex items-center gap-1"><Users className="h-4 w-4" />{mb.memberCount || 0} {(mb.memberCount || 0) > 1 ? t("sharedMailboxes.membersPlural") : t("sharedMailboxes.member")}</span>
                       {mb.connectionId && (
                         <span className="flex items-center gap-1 text-emerald-400">
-                          <CheckCircle2 className="h-3.5 w-3.5" /> Connectée
+                          <CheckCircle2 className="h-3.5 w-3.5" /> {t("sharedMailboxes.connected")}
                         </span>
                       )}
                       {(mb.unclaimedCount || 0) > 0 && (
                         <span className="flex items-center gap-1 text-orange-400">
-                          <Mail className="h-4 w-4" />{mb.unclaimedCount} non traite{mb.unclaimedCount > 1 ? "s" : ""}
+                          <Mail className="h-4 w-4" />{t("sharedMailboxes.unprocessedCount", { count: mb.unclaimedCount })}
                         </span>
                       )}
                     </div>
                     <div className="flex gap-2">
                       <Button variant="outline" size="sm" className="flex-1" onClick={() => openEmails(mb.id)}>
-                        <Mail className="h-4 w-4 mr-1" /> Emails
+                        <Mail className="h-4 w-4 mr-1" /> {t("sharedMailboxes.emails")}
                       </Button>
                       <Button variant="outline" size="sm" className="flex-1" onClick={() => openDetail(mb.id)}>
-                        <Users className="h-4 w-4 mr-1" /> Membres
+                        <Users className="h-4 w-4 mr-1" /> {t("sharedMailboxes.members")}
                       </Button>
                     </div>
                   </div>
@@ -356,6 +358,7 @@ function MailboxDetail({
   onAddMember: (mailboxId: string) => void;
   onRemoveMember: (mailboxId: string, memberId: string) => void;
 }) {
+  const { t } = useTranslation();
   const { data: members, isLoading } = useGetSharedMailboxMembers(mailboxId);
 
   const memberUserIds = new Set((members as any[])?.map((m: any) => m.userId) || []);
@@ -367,7 +370,7 @@ function MailboxDetail({
         <div className="bg-card border border-border rounded-xl p-5 space-y-4">
           <h2 className="text-lg font-semibold flex items-center gap-2">
             <UserPlus className="h-5 w-5 text-primary" />
-            Ajouter un membre
+            {t("sharedMailboxes.addMember")}
           </h2>
           <div className="flex gap-3">
             <select
@@ -375,7 +378,7 @@ function MailboxDetail({
               value={addMemberUserId}
               onChange={(e) => setAddMemberUserId(e.target.value)}
             >
-              <option value="">Sélectionner un collègue...</option>
+              <option value="">{t("sharedMailboxes.selectColleague")}</option>
               {availableMembers.map((om: any) => (
                 <option key={om.userId} value={om.userId}>
                   {om.fullName || om.email || om.userId}
@@ -383,7 +386,7 @@ function MailboxDetail({
               ))}
             </select>
             <Button onClick={() => onAddMember(mailboxId)} disabled={!addMemberUserId}>
-              Ajouter
+              {t("sharedMailboxes.add")}
             </Button>
           </div>
         </div>
@@ -392,14 +395,14 @@ function MailboxDetail({
       <div className="bg-card border border-border rounded-xl p-5">
         <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <Users className="h-5 w-5 text-primary" />
-          Membres ({(members as any[])?.length || 0})
+          {t("sharedMailboxes.members")} ({(members as any[])?.length || 0})
         </h2>
         {isLoading ? (
           <div className="flex justify-center py-8">
             <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
           </div>
         ) : !members || (members as any[]).length === 0 ? (
-          <p className="text-muted-foreground text-center py-6">Aucun membre.</p>
+          <p className="text-muted-foreground text-center py-6">{t("sharedMailboxes.noMembers")}</p>
         ) : (
           <div className="space-y-3">
             {(members as any[]).map((m: any) => (
@@ -409,7 +412,7 @@ function MailboxDetail({
                     <User className="h-4 w-4 text-primary" />
                   </div>
                   <div>
-                    <p className="font-medium text-sm">{m.fullName || "Sans nom"}</p>
+                    <p className="font-medium text-sm">{m.fullName || t("sharedMailboxes.noName")}</p>
                     <p className="text-xs text-muted-foreground">{m.email}</p>
                   </div>
                 </div>
@@ -437,6 +440,7 @@ function MailboxEmails({
   onClaim: (emailId: string) => void;
   onUnclaim: (emailId: string) => void;
 }) {
+  const { t } = useTranslation();
   const [page, setPage] = useState(1);
   const [accumulatedEmails, setAccumulatedEmails] = useState<PaginatedSharedMailboxEmails["emails"]>([]);
   const { data: emailsData, isLoading, isFetching } = useGetSharedMailboxEmails(mailboxId, { filter, page, limit: 50 });
@@ -480,24 +484,24 @@ function MailboxEmails({
       const result = await forceSync.mutateAsync({ mailboxId });
       if (result.success) {
         const count = result.synced ?? 0;
-        toast({ title: count > 0 ? `${count} nouveau(x) email(s) synchronisé(s)` : "Synchronisation terminée, aucun nouvel email" });
+        toast({ title: count > 0 ? t("sharedMailboxes.syncedCount", { count }) : t("sharedMailboxes.syncNoNew") });
         setPage(1);
         setAccumulatedEmails([]);
         queryClient.invalidateQueries({ queryKey: getGetSharedMailboxEmailsQueryKey(mailboxId) });
       } else {
-        toast({ title: result.error || "La synchronisation a échoué", variant: "destructive" });
+        toast({ title: result.error || t("sharedMailboxes.syncFailed"), variant: "destructive" });
       }
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur de synchronisation", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("sharedMailboxes.syncError"), variant: "destructive" });
     } finally {
       setSyncing(false);
     }
   }
 
   const filterOptions = [
-    { value: "all" as const, label: "Tous" },
-    { value: "unclaimed" as const, label: "Non attribués" },
-    { value: "mine" as const, label: "Mes emails" },
+    { value: "all" as const, label: t("sharedMailboxes.allEmails") },
+    { value: "unclaimed" as const, label: t("sharedMailboxes.unclaimed") },
+    { value: "mine" as const, label: t("sharedMailboxes.mine") },
   ];
 
   return (
@@ -517,7 +521,7 @@ function MailboxEmails({
         </div>
         <Button variant="outline" size="sm" onClick={handleForceSync} disabled={syncing}>
           {syncing ? <Loader2 className="h-4 w-4 animate-spin mr-1" /> : <RefreshCw className="h-4 w-4 mr-1" />}
-          Synchroniser
+          {t("sharedMailboxes.sync")}
         </Button>
       </div>
 
@@ -528,7 +532,7 @@ function MailboxEmails({
       ) : emails.length === 0 ? (
         <div className="bg-card border border-border rounded-xl p-8 text-center">
           <Inbox className="h-12 w-12 text-muted-foreground mx-auto mb-3" />
-          <p className="text-muted-foreground">Aucun email dans cette vue.</p>
+          <p className="text-muted-foreground">{t("sharedMailboxes.noEmailsInView")}</p>
         </div>
       ) : (
         <div className="space-y-3">
@@ -539,10 +543,10 @@ function MailboxEmails({
                   <div className="flex items-center gap-2">
                     <span className="font-semibold text-sm truncate">{email.sender}</span>
                     {email.priority === "urgent" && (
-                      <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full">Urgent</span>
+                      <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full">{t("inbox.priorities.urgent")}</span>
                     )}
                     {email.priority === "moyen" && (
-                      <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">Moyen</span>
+                      <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">{t("inbox.priorities.medium")}</span>
                     )}
                   </div>
                   <p className="text-sm font-medium mt-0.5">{email.subject}</p>
@@ -554,16 +558,16 @@ function MailboxEmails({
                   {email.claimedBy ? (
                     email.claimedBy === userId ? (
                       <Button variant="outline" size="sm" onClick={() => onUnclaim(email.id)} className="text-orange-400 border-orange-400/30">
-                        <Hand className="h-3 w-3 mr-1" /> Relacher
+                        <Hand className="h-3 w-3 mr-1" /> {t("sharedMailboxes.release")}
                       </Button>
                     ) : (
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <User className="h-3 w-3" /> {email.claimedByName || "Collegue"}
+                        <User className="h-3 w-3" /> {email.claimedByName || t("sharedMailboxes.colleague")}
                       </span>
                     )
                   ) : (
                     <Button variant="outline" size="sm" onClick={() => onClaim(email.id)} className="text-green-400 border-green-400/30">
-                      <Hand className="h-3 w-3 mr-1" /> Prendre
+                      <Hand className="h-3 w-3 mr-1" /> {t("sharedMailboxes.take")}
                     </Button>
                   )}
                 </div>
@@ -576,7 +580,7 @@ function MailboxEmails({
                 {email.claimedAt && email.claimedByName && (
                   <span className="flex items-center gap-1">
                     <User className="h-3 w-3" />
-                    Pris par {email.claimedByName} le {new Date(email.claimedAt).toLocaleDateString("fr-FR", { day: "numeric", month: "short" })}
+                    {t("sharedMailboxes.claimedByOn", { name: email.claimedByName, date: new Date(email.claimedAt).toLocaleDateString("fr-FR", { day: "numeric", month: "short" }) })}
                   </span>
                 )}
               </div>
@@ -589,7 +593,7 @@ function MailboxEmails({
                 disabled={isFetching}
                 className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40 disabled:opacity-50"
               >
-                {isFetching ? "Chargement..." : "Charger plus d'emails"}
+                {isFetching ? t("common.loading") : t("sharedMailboxes.loadMoreEmails")}
               </button>
             </div>
           )}

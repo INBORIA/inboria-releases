@@ -19,137 +19,43 @@ import {
   Zap,
   ShieldCheck,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
-const heroStats = [
-  { value: "56+", label: "packs métiers disponibles" },
-  { value: "9", label: "familles de secteurs" },
-  { value: "IA", label: "génération personnalisée" },
+const familleKeys = [
+  { icon: Briefcase, key: "professionalServices", packs: ["Avocat", "Comptable", "Notaire", "Consultant", "Architecte", "Courtier en assurances"] },
+  { icon: Heart, key: "health", packs: ["Médecin généraliste", "Dentiste", "Kinésithérapeute", "Pharmacien", "Vétérinaire", "Psychologue"] },
+  { icon: ShoppingCart, key: "commerce", packs: ["Boutique / Commerce de détail", "E-commerce", "Grossiste", "Fleuriste", "Caviste"] },
+  { icon: Building, key: "realEstate", packs: ["Agence immobilière", "Syndic de copropriété", "Entreprise de construction", "Promoteur immobilier"] },
+  { icon: Calculator, key: "businessServices", packs: ["Agence de communication", "Cabinet RH", "Bureau d'études", "Société IT", "Expert-comptable"] },
+  { icon: Wrench, key: "crafts", packs: ["Électricien", "Plombier", "Menuisier", "Garagiste", "Paysagiste"] },
+  { icon: GraduationCap, key: "education", packs: ["École privée", "Centre de formation", "Coach / Formateur indépendant", "Auto-école"] },
+  { icon: UtensilsCrossed, key: "hospitality", packs: ["Restaurant", "Hôtel / B&B", "Traiteur", "Agence de voyage"] },
+  { icon: Sparkles, key: "otherServices", packs: ["Association / ONG", "Créateur de contenu", "Mode / Textile", "Transport / Logistique", "Nettoyage / Entretien", "Salon de coiffure / Beauté"] },
 ];
 
-const familles = [
-  {
-    icon: Briefcase,
-    name: "Services professionnels",
-    desc: "Avocats, comptables, notaires, consultants, architectes, courtiers... Des catégories adaptées aux échanges juridiques, financiers et de conseil.",
-    packs: ["Avocat", "Comptable", "Notaire", "Consultant", "Architecte", "Courtier en assurances"],
-  },
-  {
-    icon: Heart,
-    name: "Santé",
-    desc: "Médecins, dentistes, kinésithérapeutes, pharmaciens, vétérinaires, psychologues. Gestion des rendez-vous, ordonnances, laboratoires et mutuelles.",
-    packs: ["Médecin généraliste", "Dentiste", "Kinésithérapeute", "Pharmacien", "Vétérinaire", "Psychologue"],
-  },
-  {
-    icon: ShoppingCart,
-    name: "Commerce & Distribution",
-    desc: "Boutiques, e-commerce, grossistes, fleuristes, cavistes. Commandes, fournisseurs, logistique et relation client au quotidien.",
-    packs: ["Boutique / Commerce de détail", "E-commerce", "Grossiste", "Fleuriste", "Caviste"],
-  },
-  {
-    icon: Building,
-    name: "Immobilier & Construction",
-    desc: "Agences immobilières, syndics, entreprises de construction, promoteurs. Mandats, visites, chantiers, devis et appels d'offres.",
-    packs: ["Agence immobilière", "Syndic de copropriété", "Entreprise de construction", "Promoteur immobilier"],
-  },
-  {
-    icon: Calculator,
-    name: "Services aux entreprises",
-    desc: "Agences marketing, cabinets RH, bureaux d'études, sociétés IT, experts-comptables. Projets, reporting, facturation et collaboration client.",
-    packs: ["Agence de communication", "Cabinet RH", "Bureau d'études", "Société IT", "Expert-comptable"],
-  },
-  {
-    icon: Wrench,
-    name: "Artisanat & Métiers techniques",
-    desc: "Électriciens, plombiers, menuisiers, garagistes, paysagistes. Devis, interventions, SAV et gestion des sous-traitants.",
-    packs: ["Électricien", "Plombier", "Menuisier", "Garagiste", "Paysagiste"],
-  },
-  {
-    icon: GraduationCap,
-    name: "Enseignement & Formation",
-    desc: "Écoles privées, centres de formation, coachs, auto-écoles. Inscriptions, plannings, certifications et communication parents/élèves.",
-    packs: ["École privée", "Centre de formation", "Coach / Formateur indépendant", "Auto-école"],
-  },
-  {
-    icon: UtensilsCrossed,
-    name: "Restauration & Tourisme",
-    desc: "Restaurants, hôtels, traiteurs, agences de voyage, gîtes. Réservations, fournisseurs, événements et avis clients.",
-    packs: ["Restaurant", "Hôtel / B&B", "Traiteur", "Agence de voyage"],
-  },
-  {
-    icon: Sparkles,
-    name: "Autres services",
-    desc: "Associations, créateurs de contenu, mode, transport, nettoyage, salons de beauté... Tous les métiers qui ne rentrent pas dans une seule case.",
-    packs: ["Association / ONG", "Créateur de contenu", "Mode / Textile", "Transport / Logistique", "Nettoyage / Entretien", "Salon de coiffure / Beauté"],
-  },
-];
-
-const howItWorks = [
-  {
-    step: "1",
-    title: "Choisissez votre métier",
-    desc: "Parcourez les 9 familles de secteurs et trouvez le pack qui correspond à votre activité.",
-  },
-  {
-    step: "2",
-    title: "Appliquez le pack",
-    desc: "En un clic, les catégories du pack sont ajoutées à votre compte sans écraser vos catégories existantes.",
-  },
-  {
-    step: "3",
-    title: "L'IA prend le relais",
-    desc: "NCV Mail utilise vos catégories pour trier automatiquement chaque email entrant dans le bon dossier.",
-  },
-  {
-    step: "4",
-    title: "Affinez au fil du temps",
-    desc: "Ajoutez, modifiez ou supprimez des catégories. Générez un pack IA personnalisé si votre métier est unique.",
-  },
-];
-
-const advantages = [
-  {
-    icon: Zap,
-    title: "Opérationnel en 30 secondes",
-    desc: "Pas besoin de créer vos catégories une par une. Un pack métier pré-configuré vous fait gagner des heures de paramétrage.",
-    highlights: [
-      "56 packs pour les métiers les plus courants",
-      "Catégories optimisées par secteur d'activité",
-      "Application en un seul clic",
-    ],
-  },
-  {
-    icon: Sparkles,
-    title: "IA sur mesure",
-    desc: "Votre métier n'est pas dans la liste ? Décrivez votre activité et l'IA génère un pack de catégories parfaitement adapté à vos besoins.",
-    highlights: [
-      "Génération intelligente par IA",
-      "Entre 6 et 12 catégories sur mesure",
-      "Nom et description pour chaque catégorie",
-    ],
-  },
-  {
-    icon: ShieldCheck,
-    title: "Fusion sans écrasement",
-    desc: "Appliquer un pack n'efface jamais vos catégories existantes. Les doublons sont détectés automatiquement et ignorés.",
-    highlights: [
-      "Détection de doublons intelligente",
-      "Vos catégories personnelles préservées",
-      "Traçabilité de l'origine (pack ou manuelle)",
-    ],
-  },
-  {
-    icon: Search,
-    title: "Recherche et navigation intuitive",
-    desc: "Trouvez instantanément le pack idéal grâce à la recherche par mot-clé et aux familles de secteurs dépliables.",
-    highlights: [
-      "Recherche en temps réel",
-      "9 familles organisées par secteur",
-      "Aperçu du contenu avant application",
-    ],
-  },
+const advantageKeys = [
+  { icon: Zap, key: "operational30s", highlights: ["operational30sH1", "operational30sH2", "operational30sH3"] },
+  { icon: Sparkles, key: "customAI", highlights: ["customAIH1", "customAIH2", "customAIH3"] },
+  { icon: ShieldCheck, key: "mergeNoOverwrite", highlights: ["mergeNoOverwriteH1", "mergeNoOverwriteH2", "mergeNoOverwriteH3"] },
+  { icon: Search, key: "intuitiveSearch", highlights: ["intuitiveSearchH1", "intuitiveSearchH2", "intuitiveSearchH3"] },
 ];
 
 export default function ClassementMarketing() {
+  const { t } = useTranslation();
+
+  const heroStats = [
+    { value: "56+", label: t("marketing.classification.stats.packsAvailable") },
+    { value: "9", label: t("marketing.classification.stats.sectorFamilies") },
+    { value: "IA", label: t("marketing.classification.stats.aiGeneration") },
+  ];
+
+  const howItWorks = [
+    { step: "1", key: "step1" },
+    { step: "2", key: "step2" },
+    { step: "3", key: "step3" },
+    { step: "4", key: "step4" },
+  ];
+
   return (
     <MarketingLayout>
       <section className="relative overflow-hidden">
@@ -157,26 +63,24 @@ export default function ClassementMarketing() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#2d7dd2]/10 border border-[#2d7dd2]/20 mb-6">
             <FolderKanban className="w-3.5 h-3.5 text-[#2d7dd2]" />
-            <span className="text-[12px] font-medium text-[#2d7dd2]">Classement intelligent</span>
+            <span className="text-[12px] font-medium text-[#2d7dd2]">{t("marketing.classification.badge")}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
-            56 packs métiers pour organiser<br className="hidden sm:block" /> vos emails en un clic
+            {t("marketing.classification.heroTitle")}
           </h1>
           <p className="mt-5 text-[15px] sm:text-[16px] text-[#8b9cb3] max-w-2xl mx-auto leading-relaxed">
-            NCV Mail propose des packs de catégories pré-configurés pour chaque profession.
-            Avocat, médecin, restaurateur, e-commerce... Appliquez le vôtre
-            et laissez l'IA trier vos emails automatiquement.
+            {t("marketing.classification.heroDesc")}
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/signup">
               <button className="px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors flex items-center gap-2">
-                Essayer gratuitement
+                {t("marketing.classification.tryFree")}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
             <Link href="/tarifs">
               <button className="px-8 py-3 text-[14px] font-semibold text-[#8b9cb3] border border-[#1f2937] rounded-lg hover:text-white hover:border-[#2d7dd2]/30 transition-colors">
-                Voir les tarifs
+                {t("marketing.classification.seePricing")}
               </button>
             </Link>
           </div>
@@ -196,17 +100,17 @@ export default function ClassementMarketing() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              9 familles de secteurs, 56 packs métiers
+              {t("marketing.classification.familiesTitle")}
             </h2>
             <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
-              Chaque pack contient entre 6 et 12 catégories optimisées pour votre activité.
+              {t("marketing.classification.familiesDesc")}
             </p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {familles.map((f) => (
+            {familleKeys.map((f) => (
               <div
-                key={f.name}
+                key={f.key}
                 className="rounded-xl border border-[#1f2937] bg-[#141c2b] p-6 hover:border-[#2d7dd2]/30 transition-colors"
               >
                 <div className="flex items-center gap-3 mb-3">
@@ -214,11 +118,11 @@ export default function ClassementMarketing() {
                     <f.icon className="w-5 h-5 text-[#2d7dd2]" />
                   </div>
                   <div>
-                    <h3 className="text-[15px] font-semibold text-white">{f.name}</h3>
-                    <p className="text-[11px] text-[#8b9cb3]">{f.packs.length} packs</p>
+                    <h3 className="text-[15px] font-semibold text-white">{t(`marketing.classification.${f.key}`)}</h3>
+                    <p className="text-[11px] text-[#8b9cb3]">{t("marketing.classification.packsCount", { count: f.packs.length })}</p>
                   </div>
                 </div>
-                <p className="text-[13px] text-[#8b9cb3] leading-relaxed mb-4">{f.desc}</p>
+                <p className="text-[13px] text-[#8b9cb3] leading-relaxed mb-4">{t(`marketing.classification.${f.key}Desc`)}</p>
                 <div className="flex flex-wrap gap-2">
                   {f.packs.map((p) => (
                     <span
@@ -240,17 +144,17 @@ export default function ClassementMarketing() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              Les avantages du classement NCV Mail
+              {t("marketing.classification.advantagesTitle")}
             </h2>
             <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
-              Un système conçu pour que chaque email arrive au bon endroit, sans effort.
+              {t("marketing.classification.advantagesDesc")}
             </p>
           </div>
 
           <div className="space-y-6">
-            {advantages.map((adv) => (
+            {advantageKeys.map((adv) => (
               <div
-                key={adv.title}
+                key={adv.key}
                 className="rounded-xl border border-[#1f2937] bg-[#141c2b] p-6 sm:p-8 hover:border-[#2d7dd2]/30 transition-colors"
               >
                 <div className="flex flex-col lg:flex-row lg:items-start gap-6">
@@ -259,16 +163,16 @@ export default function ClassementMarketing() {
                       <div className="w-10 h-10 rounded-lg bg-[#2d7dd2]/10 flex items-center justify-center shrink-0">
                         <adv.icon className="w-5 h-5 text-[#2d7dd2]" />
                       </div>
-                      <h3 className="text-[16px] font-semibold text-white">{adv.title}</h3>
+                      <h3 className="text-[16px] font-semibold text-white">{t(`marketing.classification.${adv.key}`)}</h3>
                     </div>
-                    <p className="text-[13px] text-[#8b9cb3] leading-relaxed">{adv.desc}</p>
+                    <p className="text-[13px] text-[#8b9cb3] leading-relaxed">{t(`marketing.classification.${adv.key}Desc`)}</p>
                   </div>
                   <div className="lg:w-64 shrink-0">
                     <ul className="space-y-2">
                       {adv.highlights.map((h) => (
                         <li key={h} className="flex items-start gap-2">
                           <CheckCircle2 className="w-4 h-4 text-[#2d7dd2] mt-0.5 shrink-0" />
-                          <span className="text-[12px] text-[#8b9cb3]">{h}</span>
+                          <span className="text-[12px] text-[#8b9cb3]">{t(`marketing.classification.${h}`)}</span>
                         </li>
                       ))}
                     </ul>
@@ -284,10 +188,10 @@ export default function ClassementMarketing() {
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              Comment ça marche ?
+              {t("marketing.classification.howItWorksTitle")}
             </h2>
             <p className="mt-3 text-[14px] text-[#8b9cb3]">
-              Du choix du pack à l'automatisation complète, en 4 étapes simples.
+              {t("marketing.classification.howItWorksDesc")}
             </p>
           </div>
 
@@ -297,8 +201,8 @@ export default function ClassementMarketing() {
                 <div className="w-12 h-12 rounded-full bg-[#2d7dd2]/10 border border-[#2d7dd2]/20 flex items-center justify-center mx-auto mb-4">
                   <span className="text-[16px] font-bold text-[#2d7dd2]">{w.step}</span>
                 </div>
-                <h3 className="text-[14px] font-semibold text-white mb-2">{w.title}</h3>
-                <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{w.desc}</p>
+                <h3 className="text-[14px] font-semibold text-white mb-2">{t(`marketing.classification.${w.key}`)}</h3>
+                <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{t(`marketing.classification.${w.key}Desc`)}</p>
               </div>
             ))}
           </div>
@@ -312,26 +216,25 @@ export default function ClassementMarketing() {
               <Layers className="w-7 h-7 text-[#2d7dd2]" />
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              Votre boîte mail organisée en 30 secondes
+              {t("marketing.classification.ctaTitle")}
             </h2>
             <p className="mt-4 text-[14px] text-[#8b9cb3] max-w-lg mx-auto">
-              Choisissez votre pack métier, appliquez-le, et laissez NCV Mail
-              trier vos emails automatiquement. C'est aussi simple que ça.
+              {t("marketing.classification.ctaDesc")}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link href="/signup">
                 <button className="px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
-                  Commencer gratuitement
+                  {t("marketing.classification.startFree")}
                 </button>
               </Link>
               <Link href="/tarifs">
                 <button className="px-8 py-3 text-[14px] font-semibold text-[#8b9cb3] border border-[#1f2937] rounded-lg hover:text-white transition-colors">
-                  Voir les tarifs
+                  {t("marketing.classification.seePricingAlt")}
                 </button>
               </Link>
             </div>
             <p className="mt-4 text-[11px] text-[#8b9cb3]/60">
-              100 emails offerts pour essayer • Aucune carte bancaire requise
+              {t("marketing.classification.ctaFooter")}
             </p>
           </div>
         </div>

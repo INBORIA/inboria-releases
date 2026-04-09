@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Lock, Eye, EyeOff, CheckCircle, Loader2 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function ResetPassword() {
+  const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -79,8 +81,8 @@ export default function ResetPassword() {
     if (password.length < 6) {
       toast({
         variant: "destructive",
-        title: "Mot de passe trop court",
-        description: "Le mot de passe doit contenir au moins 6 caracteres.",
+        title: t("auth.passwordTooShort"),
+        description: t("auth.passwordMin6"),
       });
       return;
     }
@@ -88,8 +90,8 @@ export default function ResetPassword() {
     if (password !== confirmPassword) {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Les mots de passe ne correspondent pas.",
+        title: t("common.error"),
+        description: t("auth.passwordsNoMatch"),
       });
       return;
     }
@@ -101,7 +103,7 @@ export default function ResetPassword() {
       if (error) {
         toast({
           variant: "destructive",
-          title: "Erreur",
+          title: t("common.error"),
           description: error.message,
         });
       } else {
@@ -111,8 +113,8 @@ export default function ResetPassword() {
     } catch {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Impossible de mettre a jour le mot de passe.",
+        title: t("common.error"),
+        description: t("auth.passwordUpdateError"),
       });
     } finally {
       setIsPending(false);
@@ -126,12 +128,12 @@ export default function ResetPassword() {
           <div className="w-14 h-14 rounded-full bg-red-500/10 flex items-center justify-center mx-auto">
             <Lock className="w-7 h-7 text-red-400" />
           </div>
-          <h1 className="text-xl font-bold text-white">Lien expire</h1>
+          <h1 className="text-xl font-bold text-white">{t("auth.linkExpired")}</h1>
           <p className="text-sm text-[#8b9cb3]">
-            Ce lien de reinitialisation n'est plus valide. Veuillez en demander un nouveau.
+            {t("auth.linkExpiredDesc")}
           </p>
           <a href="/mot-de-passe-oublie" className="inline-block text-sm text-primary hover:text-primary/80 font-semibold">
-            Demander un nouveau lien
+            {t("auth.requestNewLink")}
           </a>
         </div>
       </AuthLayout>
@@ -143,8 +145,8 @@ export default function ResetPassword() {
       <AuthLayout>
         <div className="text-center space-y-4">
           <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto" />
-          <h1 className="text-xl font-bold text-white">Verification...</h1>
-          <p className="text-sm text-[#8b9cb3]">Nous verifions votre lien de reinitialisation</p>
+          <h1 className="text-xl font-bold text-white">{t("auth.verifying")}</h1>
+          <p className="text-sm text-[#8b9cb3]">{t("auth.verifyingLink")}</p>
         </div>
       </AuthLayout>
     );
@@ -157,9 +159,9 @@ export default function ResetPassword() {
           <div className="w-14 h-14 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto">
             <CheckCircle className="w-7 h-7 text-emerald-400" />
           </div>
-          <h1 className="text-xl font-bold text-white">Mot de passe modifie !</h1>
+          <h1 className="text-xl font-bold text-white">{t("auth.passwordChanged")}</h1>
           <p className="text-sm text-[#8b9cb3]">
-            Redirection vers votre espace...
+            {t("auth.redirectingToSpace")}
           </p>
         </div>
       </AuthLayout>
@@ -172,22 +174,22 @@ export default function ResetPassword() {
         <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
           <Lock className="w-7 h-7 text-primary" />
         </div>
-        <h1 className="text-2xl font-bold text-white">Nouveau mot de passe</h1>
+        <h1 className="text-2xl font-bold text-white">{t("auth.resetPasswordTitle")}</h1>
         <p className="text-[#8b9cb3] mt-2 text-sm">
-          Choisissez un nouveau mot de passe pour votre compte.
+          {t("auth.resetPasswordSubtitle")}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
-          <Label className="text-[12px] text-[#8b9cb3]">Nouveau mot de passe</Label>
+          <Label className="text-[12px] text-[#8b9cb3]">{t("auth.newPassword")}</Label>
           <div className="relative">
             <Input
               type={showPassword ? "text" : "password"}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="bg-background border-border text-white pr-10"
-              placeholder="Minimum 6 caracteres"
+              placeholder={t("auth.min6Chars")}
               required
             />
             <button
@@ -201,18 +203,18 @@ export default function ResetPassword() {
           </div>
         </div>
         <div className="space-y-1.5">
-          <Label className="text-[12px] text-[#8b9cb3]">Confirmer le mot de passe</Label>
+          <Label className="text-[12px] text-[#8b9cb3]">{t("auth.confirmPassword")}</Label>
           <Input
             type={showPassword ? "text" : "password"}
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
             className="bg-background border-border text-white"
-            placeholder="Retapez le mot de passe"
+            placeholder={t("auth.retypePassword")}
             required
           />
         </div>
         <Button type="submit" className="w-full" disabled={isPending || !password || !confirmPassword}>
-          {isPending ? "Mise a jour..." : "Reinitialiser le mot de passe"}
+          {isPending ? t("auth.updating") : t("auth.resetButton")}
         </Button>
       </form>
     </AuthLayout>

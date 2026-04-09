@@ -28,22 +28,11 @@ import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { NotificationBell } from "@/components/notifications/notification-bell";
-
-const baseNavigation = [
-  { name: "Réception", href: "/dashboard", icon: Inbox },
-  { name: "Envoyés", href: "/dashboard/envoyes", icon: Send },
-  { name: "Archives", href: "/dashboard/archives", icon: Archive },
-  { name: "Suivi", href: "/dashboard/suivi", icon: Eye },
-  { name: "Bilan quotidien", href: "/dashboard/bilan", icon: LayoutDashboard },
-  { name: "Tâches", href: "/dashboard/taches", icon: CheckSquare },
-  { name: "Projets", href: "/dashboard/projets", icon: FolderKanban },
-  { name: "Classement", href: "/dashboard/classement", icon: Tags },
-  { name: "Paramètres", href: "/dashboard/parametres", icon: Settings },
-  { name: "Abonnement", href: "/dashboard/abonnement", icon: CreditCard },
-  { name: "Manuel", href: "/dashboard/manuel", icon: BookOpen },
-];
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   const [location, setLocation] = useLocation();
   const { signOut } = useAuth();
   const { data: profile, isLoading } = useGetProfile();
@@ -51,13 +40,27 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, emailsQuota: 100 };
 
+  const baseNavigation = [
+    { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
+    { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
+    { name: t("sidebar.archives"), href: "/dashboard/archives", icon: Archive },
+    { name: t("sidebar.followup"), href: "/dashboard/suivi", icon: Eye },
+    { name: t("sidebar.dailyBrief"), href: "/dashboard/bilan", icon: LayoutDashboard },
+    { name: t("sidebar.tasks"), href: "/dashboard/taches", icon: CheckSquare },
+    { name: t("sidebar.projects"), href: "/dashboard/projets", icon: FolderKanban },
+    { name: t("sidebar.classification"), href: "/dashboard/classement", icon: Tags },
+    { name: t("sidebar.settings"), href: "/dashboard/parametres", icon: Settings },
+    { name: t("sidebar.subscription"), href: "/dashboard/abonnement", icon: CreditCard },
+    { name: t("sidebar.manual"), href: "/dashboard/manuel", icon: BookOpen },
+  ];
+
   const isBusiness = (user as any).plan === "business";
   const navigation = isBusiness
     ? [
         ...baseNavigation.slice(0, 6),
-        { name: "Mon équipe", href: "/dashboard/equipe", icon: Users },
-        { name: "Boîtes partagées", href: "/dashboard/boites-partagees", icon: MailPlus },
-        { name: "Activité équipe", href: "/dashboard/activite-equipe", icon: Activity },
+        { name: t("sidebar.myTeam"), href: "/dashboard/equipe", icon: Users },
+        { name: t("sidebar.sharedMailboxes"), href: "/dashboard/boites-partagees", icon: MailPlus },
+        { name: t("sidebar.teamActivity"), href: "/dashboard/activite-equipe", icon: Activity },
         ...baseNavigation.slice(6),
       ]
     : baseNavigation;
@@ -104,7 +107,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           const isActive = location === item.href;
           return (
             <Link
-              key={item.name}
+              key={item.href}
               href={item.href}
               className={cn(
                 isActive
@@ -135,7 +138,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <div className="px-2.5 py-2 mb-2">
           <div className="flex justify-between items-center mb-1.5">
             <span className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">
-              Quota emails
+              {t("sidebar.emailQuota")}
             </span>
             <span className="text-[10px] font-medium text-white">
               {(user as any).emailsUsed}/{(user as any).emailsQuota}
@@ -148,15 +151,19 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             />
           </div>
         </div>
+
+        <div className="px-2.5 mb-2">
+          <LanguageSwitcher />
+        </div>
         
         <div className="flex items-center justify-between px-2">
           <div className="flex items-center gap-2">
             <div className="h-7 w-7 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[11px] font-semibold text-primary">
-              {((user as any).fullName || "U").charAt(0).toUpperCase()}
+              {((user as any).fullName || t("sidebar.user")).charAt(0).toUpperCase()}
             </div>
             <div className="flex flex-col">
               <span className="text-[12px] font-medium text-white truncate max-w-[100px]">
-                {(user as any).fullName || "Utilisateur"}
+                {(user as any).fullName || t("sidebar.user")}
               </span>
               <span className="text-[10px] text-[#8b9cb3] capitalize">
                 {(user as any).plan}
@@ -175,7 +182,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               </Button>
             </TooltipTrigger>
             <TooltipContent side="top">
-              <p>Se déconnecter</p>
+              <p>{t("nav.logout")}</p>
             </TooltipContent>
           </Tooltip>
         </div>
@@ -196,7 +203,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="text-white h-8 w-8">
-                <span className="sr-only">Ouvrir le menu</span>
+                <span className="sr-only">{t("nav.openMenu")}</span>
                 <Menu className="h-5 w-5" aria-hidden="true" />
               </Button>
             </SheetTrigger>
@@ -218,18 +225,18 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <div className="flex-1">
                   <p className="text-[12px] font-medium text-red-400">
                     {isExpired
-                      ? "Votre abonnement a expire"
-                      : "Votre essai gratuit est termine"}
+                      ? t("dashboard.expiredSubscription")
+                      : t("dashboard.trialEnded")}
                   </p>
                   <p className="text-[11px] text-[#8b9cb3] mt-0.5">
                     {isExpired
-                      ? "Reabonnez-vous pour continuer a utiliser NCV Mail."
-                      : "Vous avez utilise vos 100 emails gratuits. Choisissez un plan pour continuer."}
+                      ? t("dashboard.resubscribe")
+                      : t("dashboard.trialUsed")}
                   </p>
                 </div>
                 <Link href="/dashboard/abonnement">
                   <Button size="sm" className="shrink-0 h-7 text-[12px]">
-                    Choisir un plan
+                    {t("dashboard.choosePlan")}
                   </Button>
                 </Link>
               </div>

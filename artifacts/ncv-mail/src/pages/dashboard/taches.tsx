@@ -3,7 +3,7 @@ import { useListTasks, useUpdateTask, useDeleteTask, getListTasksQueryKey } from
 import { Checkbox } from "@/components/ui/checkbox";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS, nl } from "date-fns/locale";
 import { Calendar, Mail, CheckSquare, Clock, Trash2, X, User, Sparkles, Tag, Download } from "lucide-react";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
@@ -13,14 +13,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
+import { useTranslation } from "react-i18next";
 
-const PRIORITY_BADGE_STYLES: Record<string, { bg: string; text: string; border: string; label: string }> = {
-  urgent: { bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/20", label: "Urgent" },
-  moyen: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/20", label: "Moyen" },
-  faible: { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/20", label: "Faible" },
+const PRIORITY_BADGE_STYLES: Record<string, { bg: string; text: string; border: string; labelKey: string }> = {
+  urgent: { bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/20", labelKey: "inbox.priorities.urgent" },
+  moyen: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/20", labelKey: "inbox.priorities.medium" },
+  faible: { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/20", labelKey: "inbox.priorities.low" },
 };
 
 export default function Taches() {
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const [filter, setFilter] = useState<string>("pending");
   const [emailDetailTask, setEmailDetailTask] = useState<any>(null);
   const queryClient = useQueryClient();
@@ -50,10 +53,10 @@ export default function Taches() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
-          toast({ title: "Tâche supprimée" });
+          toast({ title: t("tasks.deleted") });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible de supprimer la tâche." });
+          toast({ variant: "destructive", title: t("common.error"), description: t("tasks.deleteError") });
         },
       }
     );
@@ -64,8 +67,8 @@ export default function Taches() {
       <div className="p-5 max-w-4xl mx-auto w-full">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
-            <h1 className="text-[16px] font-semibold text-white tracking-tight">Tâches extraites</h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">Actions identifiées automatiquement depuis vos emails.</p>
+            <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("tasks.extractedTasks")}</h1>
+            <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("tasks.autoIdentified")}</p>
           </div>
           <Button
             variant="outline"
@@ -74,23 +77,23 @@ export default function Taches() {
               try {
                 const { downloadExport } = await import("@/lib/export-utils");
                 await downloadExport("export/tasks", `taches_${new Date().toISOString().split("T")[0]}.csv`);
-                toast({ title: "Export téléchargé" });
+                toast({ title: t("tasks.exportDownloaded") });
               } catch {
-                toast({ title: "Erreur lors de l'export", variant: "destructive" });
+                toast({ title: t("tasks.exportError"), variant: "destructive" });
               }
             }}
             className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
           >
             <Download className="w-3 h-3" />
-            Exporter
+            {t("tasks.export")}
           </Button>
         </div>
 
         <Tabs defaultValue={filter} onValueChange={setFilter} className="mb-5">
           <TabsList className="bg-card border border-border p-0.5 h-9">
-            <TabsTrigger value="pending" className="data-[state=active]:bg-primary data-[state=active]:text-white text-[#8b9cb3] text-[13px] h-7 px-3">À faire</TabsTrigger>
-            <TabsTrigger value="done" className="data-[state=active]:bg-primary data-[state=active]:text-white text-[#8b9cb3] text-[13px] h-7 px-3">Terminées</TabsTrigger>
-            <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-white text-[#8b9cb3] text-[13px] h-7 px-3">Toutes</TabsTrigger>
+            <TabsTrigger value="pending" className="data-[state=active]:bg-primary data-[state=active]:text-white text-[#8b9cb3] text-[13px] h-7 px-3">{t("tasks.todo")}</TabsTrigger>
+            <TabsTrigger value="done" className="data-[state=active]:bg-primary data-[state=active]:text-white text-[#8b9cb3] text-[13px] h-7 px-3">{t("tasks.done")}</TabsTrigger>
+            <TabsTrigger value="all" className="data-[state=active]:bg-primary data-[state=active]:text-white text-[#8b9cb3] text-[13px] h-7 px-3">{t("tasks.all")}</TabsTrigger>
           </TabsList>
         </Tabs>
 
@@ -108,8 +111,8 @@ export default function Taches() {
           ) : tasks?.length === 0 ? (
             <div className="text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
               <CheckSquare className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
-              <h3 className="text-sm font-medium text-white mb-1">Aucune tâche</h3>
-              <p className="text-[13px] text-[#8b9cb3]">Les tâches seront créées automatiquement à partir de vos emails.</p>
+              <h3 className="text-sm font-medium text-white mb-1">{t("tasks.noTasks")}</h3>
+              <p className="text-[13px] text-[#8b9cb3]">{t("tasks.autoCreatedDesc")}</p>
             </div>
           ) : (
             tasks?.map((task) => (
@@ -133,7 +136,7 @@ export default function Taches() {
                     {task.dueDate && (
                       <div className={`flex items-center gap-1 ${new Date(task.dueDate) < new Date() && !task.done ? 'text-red-400' : ''}`}>
                         <Calendar className="w-3 h-3" />
-                        <span>{format(new Date(task.dueDate), "dd MMM yyyy", { locale: fr })}</span>
+                        <span>{format(new Date(task.dueDate), "dd MMM yyyy", { locale: dateFnsLocale })}</span>
                       </div>
                     )}
                     
@@ -164,7 +167,7 @@ export default function Taches() {
                     {!task.dueDate && !task.emailSubject && (
                       <div className="flex items-center gap-1">
                         <Clock className="w-3 h-3" />
-                        <span>Créée le {format(new Date(task.createdAt), "dd/MM/yyyy")}</span>
+                        <span>{t("tasks.createdOn")} {format(new Date(task.createdAt), "dd/MM/yyyy")}</span>
                       </div>
                     )}
                   </div>
@@ -172,7 +175,7 @@ export default function Taches() {
                 <div className="flex items-center gap-2 shrink-0">
                   {task.done && (
                     <Badge className="bg-emerald-500/10 text-emerald-400 border-emerald-500/20 text-[11px] hidden sm:inline-flex">
-                      Terminée
+                      {t("tasks.completed")}
                     </Badge>
                   )}
                   <button
@@ -180,20 +183,20 @@ export default function Taches() {
                       try {
                         const { downloadExport } = await import("@/lib/export-utils");
                         await downloadExport(`export/tasks?id=${task.id}`, `tache_${task.id}.csv`);
-                        toast({ title: "Tâche exportée" });
+                        toast({ title: t("tasks.exportDownloaded") });
                       } catch {
-                        toast({ title: "Erreur lors de l'export", variant: "destructive" });
+                        toast({ title: t("tasks.exportError"), variant: "destructive" });
                       }
                     }}
                     className="p-1.5 rounded-md text-[#8b9cb3] hover:text-primary hover:bg-primary/10 transition-colors"
-                    title="Exporter"
+                    title={t("tasks.export")}
                   >
                     <Download className="w-3.5 h-3.5" />
                   </button>
                   <button
                     onClick={() => handleDeleteTask(task.id)}
                     className="p-1.5 rounded-md text-[#8b9cb3] hover:text-red-400 hover:bg-red-500/10 transition-colors"
-                    title="Supprimer"
+                    title={t("common.delete")}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
@@ -228,14 +231,14 @@ export default function Taches() {
                     const ps = PRIORITY_BADGE_STYLES[emailDetailTask.emailPriority] || PRIORITY_BADGE_STYLES.faible;
                     return (
                       <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border ${ps.bg} ${ps.text} ${ps.border}`}>
-                        {ps.label}
+                        {t(ps.labelKey)}
                       </span>
                     );
                   })()}
                   {emailDetailTask.emailCreatedAt && (
                     <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1">
                       <Clock className="w-3 h-3" />
-                      {format(new Date(emailDetailTask.emailCreatedAt), "d MMM yyyy HH:mm", { locale: fr })}
+                      {format(new Date(emailDetailTask.emailCreatedAt), "d MMM yyyy HH:mm", { locale: dateFnsLocale })}
                     </span>
                   )}
                 </div>
@@ -245,7 +248,7 @@ export default function Taches() {
                 <div className="px-3 py-2 bg-primary/[0.06] rounded-lg border border-primary/10">
                   <div className="flex items-center gap-1.5 mb-0.5">
                     <Sparkles className="w-3 h-3 text-primary" />
-                    <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Résumé IA</span>
+                    <span className="text-[10px] font-medium text-primary uppercase tracking-wider">{t("inbox.aiSummary")}</span>
                   </div>
                   <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{emailDetailTask.emailSummary}</p>
                 </div>

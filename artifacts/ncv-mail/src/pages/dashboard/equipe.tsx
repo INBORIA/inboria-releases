@@ -34,8 +34,10 @@ import {
   ChevronDown,
   X,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function Equipe() {
+  const { t } = useTranslation();
   const { data: profile } = useGetProfile();
   const { data: org, isLoading: orgLoading } = useGetMyOrganisation();
   const { data: members } = useGetOrganisationMembers();
@@ -71,11 +73,11 @@ export default function Equipe() {
     if (!orgName.trim()) return;
     try {
       await createOrg.mutateAsync({ data: { name: orgName.trim() } });
-      toast({ title: "Organisation créée" });
+      toast({ title: t("team.orgCreated") });
       setOrgName("");
       invalidateAll();
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("team.error"), variant: "destructive" });
     }
   }
 
@@ -85,43 +87,43 @@ export default function Equipe() {
       const result = await inviteMutation.mutateAsync({
         data: { email: inviteEmail.trim(), role: inviteRole },
       });
-      toast({ title: `Invitation envoyée à ${inviteEmail.trim()}` });
+      toast({ title: t("team.inviteSent", { email: inviteEmail.trim() }) });
       setInviteEmail("");
       invalidateAll();
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur lors de l'envoi", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("team.inviteError"), variant: "destructive" });
     }
   }
 
   async function handleCancelInvite(id: string) {
     try {
       await cancelInvite.mutateAsync({ invitationId: id });
-      toast({ title: "Invitation annulée" });
+      toast({ title: t("team.inviteCancelled") });
       invalidateAll();
     } catch {
-      toast({ title: "Erreur", variant: "destructive" });
+      toast({ title: t("team.error"), variant: "destructive" });
     }
   }
 
   async function handleRemoveMember(id: string, name: string) {
-    if (!confirm(`Retirer ${name || "ce membre"} de l'organisation ?`)) return;
+    if (!confirm(t("team.removeConfirm"))) return;
     try {
       await removeMember.mutateAsync({ memberId: id });
-      toast({ title: "Membre retiré" });
+      toast({ title: t("team.memberRemoved") });
       invalidateAll();
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("team.error"), variant: "destructive" });
     }
   }
 
   async function handleChangeRole(memberId: string, newRole: "admin" | "member") {
     try {
       await updateRole.mutateAsync({ memberId, data: { role: newRole } });
-      toast({ title: `Rôle mis à jour` });
+      toast({ title: t("team.roleUpdated") });
       setShowRoleDropdown(null);
       invalidateAll();
     } catch (e: any) {
-      toast({ title: e?.response?.data?.error || "Erreur", variant: "destructive" });
+      toast({ title: e?.response?.data?.error || t("team.error"), variant: "destructive" });
     }
   }
 
@@ -149,16 +151,16 @@ export default function Equipe() {
         <div className="max-w-xl mx-auto px-4 py-12">
           <div className="bg-[#141c2b] rounded-xl border border-[#1f2937] p-8 text-center">
             <Building2 className="mx-auto h-12 w-12 text-[#8b9cb3]/40 mb-4" />
-            <h2 className="text-lg font-semibold text-white mb-2">Créer votre organisation</h2>
+            <h2 className="text-lg font-semibold text-white mb-2">{t("team.createOrg")}</h2>
             <p className="text-[13px] text-[#8b9cb3] mb-6">
               {isBusinessPlan
-                ? "Créez votre organisation pour inviter vos collègues et collaborer."
-                : "Le plan Business est requis pour créer une organisation. Passez au plan Business depuis la page Abonnement."}
+                ? t("team.subtitle")
+                : t("team.businessRequiredDesc")}
             </p>
             {isBusinessPlan && (
               <div className="flex gap-2 max-w-sm mx-auto">
                 <Input
-                  placeholder="Nom de l'entreprise"
+                  placeholder={t("team.orgNamePlaceholder")}
                   value={orgName}
                   onChange={(e) => setOrgName(e.target.value)}
                   onKeyDown={(e) => e.key === "Enter" && handleCreateOrg()}
@@ -172,7 +174,7 @@ export default function Equipe() {
                   {createOrg.isPending ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
                   ) : (
-                    "Créer"
+                    t("team.createOrg")
                   )}
                 </Button>
               </div>
@@ -198,14 +200,14 @@ export default function Equipe() {
               {(org as any)?.name}
             </h1>
             <p className="text-[12px] text-[#8b9cb3] mt-0.5">
-              Plan {(org as any)?.plan} — {seatsUsed}/{seatsTotal} sièges utilisés
+              {(org as any)?.plan} — {seatsUsed}/{seatsTotal}
             </p>
           </div>
           {isAdmin && (
             <div className="text-right">
               <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary/10 text-primary text-[11px] font-medium">
                 <Crown className="h-3 w-3" />
-                Administrateur
+                {t("team.admin")}
               </span>
             </div>
           )}
@@ -215,7 +217,7 @@ export default function Equipe() {
           <div className="px-5 py-3 border-b border-[#1f2937] flex items-center justify-between">
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2">
               <Users className="h-4 w-4 text-[#8b9cb3]" />
-              Membres ({seatsUsed})
+              {t("team.members")} ({seatsUsed})
             </h2>
           </div>
 
@@ -232,7 +234,7 @@ export default function Equipe() {
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-[13px] font-medium text-white">
-                        {member.fullName || "Sans nom"}
+                        {member.fullName || t("teamActivity.noName")}
                       </span>
                       {member.role === "admin" && (
                         <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded bg-primary/10 text-primary text-[10px] font-medium">
@@ -241,7 +243,7 @@ export default function Equipe() {
                         </span>
                       )}
                       {member.userId === (profile as any)?.id && (
-                        <span className="text-[10px] text-[#8b9cb3]">(vous)</span>
+                        <span className="text-[10px] text-[#8b9cb3]">{t("team.you")}</span>
                       )}
                     </div>
                     <span className="text-[11px] text-[#8b9cb3]">{member.email}</span>
@@ -260,7 +262,7 @@ export default function Equipe() {
                         className="flex items-center gap-1 px-2 py-1 rounded text-[11px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] transition-colors"
                       >
                         <Shield className="h-3 w-3" />
-                        {member.role === "admin" ? "Admin" : "Membre"}
+                        {member.role === "admin" ? t("team.admin") : t("team.member")}
                         <ChevronDown className="h-3 w-3" />
                       </button>
                       {showRoleDropdown === member.id && (
@@ -270,14 +272,14 @@ export default function Equipe() {
                             className="w-full text-left px-3 py-1.5 text-[11px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
                           >
                             <Crown className="inline h-3 w-3 mr-1.5" />
-                            Admin
+                            {t("team.admin")}
                           </button>
                           <button
                             onClick={() => handleChangeRole(member.id, "member")}
                             className="w-full text-left px-3 py-1.5 text-[11px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
                           >
                             <Shield className="inline h-3 w-3 mr-1.5" />
-                            Membre
+                            {t("team.member")}
                           </button>
                         </div>
                       )}
@@ -285,7 +287,7 @@ export default function Equipe() {
                     <button
                       onClick={() => handleRemoveMember(member.id, member.fullName)}
                       className="p-1 rounded text-[#8b9cb3] hover:text-red-400 hover:bg-red-400/10 transition-colors"
-                      title="Retirer ce membre"
+                      title={t("team.removeMember")}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
                     </button>
@@ -301,20 +303,19 @@ export default function Equipe() {
             <div className="px-5 py-3 border-b border-[#1f2937]">
               <h2 className="text-[14px] font-semibold text-white flex items-center gap-2">
                 <UserPlus className="h-4 w-4 text-[#8b9cb3]" />
-                Inviter un collègue
+                {t("team.invite")}
               </h2>
             </div>
             <div className="p-5">
               {seatsUsed >= seatsTotal ? (
                 <p className="text-[12px] text-[#8b9cb3]">
-                  Tous les sièges sont occupés ({seatsUsed}/{seatsTotal}).
-                  Augmentez votre nombre de sièges depuis le portail Stripe dans la page Abonnement.
+                  {t("team.businessRequired")}
                 </p>
               ) : (
                 <div className="flex gap-2">
                   <Input
                     type="email"
-                    placeholder="Email du collègue"
+                    placeholder={t("team.inviteEmailPlaceholder")}
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
                     onKeyDown={(e) => e.key === "Enter" && handleInvite()}
@@ -325,8 +326,8 @@ export default function Equipe() {
                     onChange={(e) => setInviteRole(e.target.value as "member" | "admin")}
                     className="bg-[#0d1117] border border-[#1f2937] text-white text-[12px] rounded-md px-2"
                   >
-                    <option value="member">Membre</option>
-                    <option value="admin">Admin</option>
+                    <option value="member">{t("team.member")}</option>
+                    <option value="admin">{t("team.admin")}</option>
                   </select>
                   <Button
                     onClick={handleInvite}
@@ -338,7 +339,7 @@ export default function Equipe() {
                     ) : (
                       <>
                         <Mail className="h-3.5 w-3.5 mr-1.5" />
-                        Inviter
+                        {t("team.invite")}
                       </>
                     )}
                   </Button>
@@ -353,7 +354,7 @@ export default function Equipe() {
             <div className="px-5 py-3 border-b border-[#1f2937]">
               <h2 className="text-[14px] font-semibold text-white flex items-center gap-2">
                 <Clock className="h-4 w-4 text-[#8b9cb3]" />
-                Invitations en attente ({pendingInvitations.length})
+                {t("team.invitations")} ({pendingInvitations.length})
               </h2>
             </div>
             <div className="divide-y divide-[#1f2937]">
@@ -369,7 +370,7 @@ export default function Equipe() {
                     <div>
                       <span className="text-[13px] text-white">{inv.email}</span>
                       <span className="text-[11px] text-[#8b9cb3] ml-2">
-                        {inv.role === "admin" ? "Admin" : "Membre"}
+                        {inv.role === "admin" ? t("team.admin") : t("team.member")}
                       </span>
                     </div>
                   </div>
@@ -378,17 +379,17 @@ export default function Equipe() {
                       <button
                         onClick={() => copyInviteLink(inv.token!)}
                         className="flex items-center gap-1 px-2 py-1 rounded text-[11px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] transition-colors"
-                        title="Copier le lien d'invitation"
+                        title={t("team.copyInviteLink")}
                       >
                         {copiedToken === inv.token ? (
                           <>
                             <Check className="h-3 w-3 text-green-400" />
-                            <span className="text-green-400">Copié</span>
+                            <span className="text-green-400">{t("team.linkCopied")}</span>
                           </>
                         ) : (
                           <>
                             <Copy className="h-3 w-3" />
-                            Copier le lien
+                            {t("team.copyInviteLink")}
                           </>
                         )}
                       </button>
@@ -397,7 +398,7 @@ export default function Equipe() {
                       <button
                         onClick={() => handleCancelInvite(inv.id)}
                         className="p-1 rounded text-[#8b9cb3] hover:text-red-400 hover:bg-red-400/10 transition-colors"
-                        title="Annuler l'invitation"
+                        title={t("team.cancelInvite")}
                       >
                         <X className="h-3.5 w-3.5" />
                       </button>

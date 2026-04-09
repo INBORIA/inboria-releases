@@ -35,8 +35,9 @@ import {
   getGetFollowupStatsQueryKey,
 } from "@workspace/api-client-react";
 import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
+import { useTranslation } from 'react-i18next';
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, Eye, CalendarDays, Download } from "lucide-react";
@@ -58,22 +59,25 @@ const PRIORITY_BAR_COLORS: Record<string, string> = {
   faible: "bg-emerald-500",
 };
 
-const PRIORITY_BADGE_STYLES: Record<string, { bg: string; text: string; border: string; label: string }> = {
-  urgent: { bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/20", label: "Urgent" },
-  moyen: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/20", label: "Moyen" },
-  faible: { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/20", label: "Faible" },
+const PRIORITY_BADGE_STYLES: Record<string, { bg: string; text: string; border: string; labelKey: string }> = {
+  urgent: { bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/20", labelKey: "inbox.priorities.urgent" },
+  moyen: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/20", labelKey: "inbox.priorities.medium" },
+  faible: { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/20", labelKey: "inbox.priorities.low" },
 };
 
 function PriorityBadge({ priority }: { priority: string }) {
+  const { t } = useTranslation();
   const ps = PRIORITY_BADGE_STYLES[priority] || PRIORITY_BADGE_STYLES.faible;
   return (
     <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border ${ps.bg} ${ps.text} ${ps.border}`}>
-      {ps.label}
+      {t(ps.labelKey)}
     </span>
   );
 }
 
 function EmailRow({ email, onClick, onArchive, onCategoryClick, isSelected, onToggleSelect, selectionMode }: { email: any; onClick: () => void; onArchive: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean }) {
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
 
   return (
@@ -136,18 +140,18 @@ function EmailRow({ email, onClick, onArchive, onCategoryClick, isSelected, onTo
           {email.assignedTo && (
             <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 hidden sm:inline-flex items-center gap-1">
               <UserPlus className="w-2.5 h-2.5" />
-              Assigné
+              {t("inbox.assignedBadge")}
             </span>
           )}
           <PriorityBadge priority={email.priority} />
           <span className="text-[10px] text-[#8b9cb3] whitespace-nowrap items-center gap-1 hidden sm:flex">
             <Clock className="w-3 h-3" />
-            {format(new Date(email.createdAt), "d MMM HH:mm", { locale: fr })}
+            {format(new Date(email.createdAt), "d MMM HH:mm", { locale: dateFnsLocale })}
           </span>
           <button
             onClick={(e) => { e.stopPropagation(); onArchive(email.id); }}
             className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-white/[0.08] text-[#8b9cb3] hover:text-white"
-            title="Archiver"
+            title={t("inbox.archive")}
           >
             <Archive className="w-3.5 h-3.5" />
           </button>
@@ -165,6 +169,8 @@ const triageSchema = z.object({
 });
 
 function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[]) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string) => void }) {
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const [replyOpen, setReplyOpen] = useState(false);
   const [replyAttachments, setReplyAttachments] = useState<UploadedFile[]>([]);
   const [replyTo, setReplyTo] = useState("");
@@ -193,7 +199,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
           className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-          Retour
+          {t("common.back")}
         </Button>
         <div className="flex-1" />
         <PriorityBadge priority={email.priority} />
@@ -219,7 +225,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 </div>
                 <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1">
                   <Clock className="w-3 h-3" />
-                  {format(new Date(email.createdAt), "d MMMM yyyy a HH:mm", { locale: fr })}
+                  {format(new Date(email.createdAt), "d MMMM yyyy a HH:mm", { locale: dateFnsLocale })}
                 </span>
               </div>
             </div>
@@ -228,7 +234,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
               <div className="px-4 py-2.5 bg-primary/[0.06] border-b border-border">
                 <div className="flex items-center gap-1.5 mb-0.5">
                   <Sparkles className="w-3 h-3 text-primary" />
-                  <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Résumé IA</span>
+                  <span className="text-[10px] font-medium text-primary uppercase tracking-wider">{t("inbox.aiSummary")}</span>
                 </div>
                 <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{email.summary}</p>
               </div>
@@ -256,7 +262,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   }}
                 >
                   <Reply className="w-3 h-3" />
-                  Répondre
+                  {t("inbox.reply")}
                 </Button>
                 <Button
                   size="sm"
@@ -273,7 +279,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   }}
                 >
                   {isDrafting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
-                  {isDrafting ? "Génération..." : "Réponse IA"}
+                  {isDrafting ? t("inbox.generating") : t("inbox.aiReply")}
                 </Button>
                 {email.status === "unread" && (
                   <Button
@@ -283,7 +289,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     onClick={() => onMarkRead(email.id)}
                   >
                     <CheckCircle2 className="w-3 h-3" />
-                    Lu
+                    {t("inbox.markRead")}
                   </Button>
                 )}
                 <Button
@@ -293,7 +299,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   onClick={() => onArchive(email.id)}
                 >
                   <Archive className="w-3 h-3" />
-                  Archiver
+                  {t("inbox.archive")}
                 </Button>
                 <Button
                   variant="outline"
@@ -302,7 +308,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   onClick={() => onDelete(email.id)}
                 >
                   <Trash2 className="w-3 h-3" />
-                  Supprimer
+                  {t("inbox.deleteEmail")}
                 </Button>
                 <Button
                   variant="outline"
@@ -310,14 +316,14 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-300"
                   onClick={() => {
                     if (!taskFormOpen) {
-                      setTaskTitle(`Traiter: ${email.subject}`);
+                      setTaskTitle(`${t("inbox.handlePrefix")} ${email.subject}`);
                       setTaskProjectId(email.projectId || "none");
                     }
                     setTaskFormOpen(!taskFormOpen);
                   }}
                 >
                   <ListTodo className="w-3 h-3" />
-                  Créer une tâche
+                  {t("inbox.createTask")}
                 </Button>
                 <Button
                   variant="outline"
@@ -325,7 +331,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-amber-500/30 text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
                   onClick={() => {
                     if (!followupFormOpen) {
-                      setFollowupTitle(`Suivi: ${email.subject}`);
+                      setFollowupTitle(`${t("inbox.followPrefix")} ${email.subject}`);
                       setFollowupProjectId(email.projectId || "none");
                       setFollowupNotes("");
                       const defaultDate = new Date();
@@ -336,7 +342,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   }}
                 >
                   <Eye className="w-3 h-3" />
-                  Suivre
+                  {t("inbox.follow")}
                 </Button>
                 <Button
                   variant="outline"
@@ -346,38 +352,38 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     try {
                       const { downloadExport } = await import("@/lib/export-utils");
                       await downloadExport(`export/emails?id=${email.id}`, `email_${email.id}.csv`);
-                      toast({ title: "Email exporté" });
+                      toast({ title: t("inbox.exportDownloaded") });
                     } catch {
-                      toast({ title: "Erreur lors de l'export", variant: "destructive" });
+                      toast({ title: t("inbox.exportError"), variant: "destructive" });
                     }
                   }}
                 >
                   <Download className="w-3 h-3" />
-                  Exporter
+                  {t("common.export")}
                 </Button>
               </div>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Priorité:</span>
+                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.priority")}:</span>
                   <Select value={email.priority} onValueChange={(val) => onUpdatePriority(email.id, val)}>
                     <SelectTrigger className="w-[100px] h-6 bg-card border-border text-[11px] text-white">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="urgent">Urgent</SelectItem>
-                      <SelectItem value="moyen">Moyen</SelectItem>
-                      <SelectItem value="faible">Faible</SelectItem>
+                      <SelectItem value="urgent">{t("inbox.priorities.urgent")}</SelectItem>
+                      <SelectItem value="moyen">{t("inbox.priorities.medium")}</SelectItem>
+                      <SelectItem value="faible">{t("inbox.priorities.low")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Catégorie:</span>
+                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.category")}:</span>
                   <Select value={email.categoryId?.toString() || "none"} onValueChange={(val) => onUpdateCategory(email.id, val)}>
                     <SelectTrigger className="w-[130px] h-6 bg-card border-border text-[11px] text-white">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="none">Non classé</SelectItem>
+                      <SelectItem value="none">{t("inbox.uncategorized")}</SelectItem>
                       {categories.map((cat) => (
                         <SelectItem key={cat.categoryId} value={cat.categoryId.toString()}>{cat.categoryName}</SelectItem>
                       ))}
@@ -385,13 +391,13 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   </Select>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Projet:</span>
+                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.project")}:</span>
                   <Select value={email.projectId || "none"} onValueChange={(val) => onUpdateProject(email.id, val)}>
                     <SelectTrigger className="w-[140px] h-6 bg-card border-border text-[11px] text-white">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="none">Aucun projet</SelectItem>
+                      <SelectItem value="none">{t("inbox.noProject")}</SelectItem>
                       {projects.map((p: any) => (
                         <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
                       ))}
@@ -400,7 +406,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 </div>
                 {orgMembers && orgMembers.length > 0 && (
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Assigné:</span>
+                    <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.assignedTo")}:</span>
                     <Select
                       value={email.assignedTo || "none"}
                       onValueChange={(val) => {
@@ -412,10 +418,10 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                       }}
                     >
                       <SelectTrigger className="w-[150px] h-6 bg-card border-border text-[11px] text-white">
-                        <SelectValue placeholder="Non assigné" />
+                        <SelectValue placeholder={t("inbox.notAssigned")} />
                       </SelectTrigger>
                       <SelectContent className="bg-card border-border">
-                        <SelectItem value="none">Non assigné</SelectItem>
+                        <SelectItem value="none">{t("inbox.notAssigned")}</SelectItem>
                         {orgMembers.map((m: any) => (
                           <SelectItem key={m.userId} value={m.userId}>
                             {m.fullName || m.email}
@@ -434,25 +440,25 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
                 <div className="flex items-center gap-1.5 mb-1">
                   <ListTodo className="w-3.5 h-3.5 text-cyan-400" />
-                  <span className="text-[11px] font-medium text-cyan-400 uppercase tracking-wider">Nouvelle tâche</span>
+                  <span className="text-[11px] font-medium text-cyan-400 uppercase tracking-wider">{t("inbox.newTask")}</span>
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Titre de la tâche</label>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.taskTitle")}</label>
                   <Input
                     value={taskTitle}
                     onChange={(e) => setTaskTitle(e.target.value)}
-                    placeholder="Ex: Répondre au devis, Envoyer le contrat..."
+                    placeholder={t("inbox.taskTitlePlaceholder")}
                     className="bg-background border-border text-white text-[12px] h-8"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Projet (optionnel)</label>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.taskProjectOptional")}</label>
                   <Select value={taskProjectId} onValueChange={setTaskProjectId}>
                     <SelectTrigger className="w-full h-8 bg-background border-border text-[12px] text-white">
-                      <SelectValue placeholder="Aucun projet" />
+                      <SelectValue placeholder={t("inbox.noProject")} />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="none">Aucun projet</SelectItem>
+                      <SelectItem value="none">{t("inbox.noProject")}</SelectItem>
                       {projects.map((p: any) => (
                         <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
                       ))}
@@ -466,7 +472,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     onClick={() => { setTaskFormOpen(false); setTaskTitle(""); setTaskProjectId("none"); }}
                     className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
                   >
-                    Annuler
+                    {t("common.cancel")}
                   </Button>
                   <Button
                     size="sm"
@@ -480,7 +486,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     }}
                   >
                     <ListTodo className="w-3 h-3" />
-                    Créer
+                    {t("followup.create")}
                   </Button>
                 </div>
               </div>
@@ -490,19 +496,19 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
                 <div className="flex items-center gap-1.5 mb-1">
                   <Eye className="w-3.5 h-3.5 text-amber-400" />
-                  <span className="text-[11px] font-medium text-amber-400 uppercase tracking-wider">Créer un suivi</span>
+                  <span className="text-[11px] font-medium text-amber-400 uppercase tracking-wider">{t("inbox.newFollowup")}</span>
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Titre du suivi</label>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.followupTitle")}</label>
                   <Input
                     value={followupTitle}
                     onChange={(e) => setFollowupTitle(e.target.value)}
-                    placeholder="Ex: Relancer pour le devis, Attendre confirmation..."
+                    placeholder={t("inbox.followupTitlePlaceholder")}
                     className="bg-background border-border text-white text-[12px] h-8"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Date d'échéance</label>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.followupDueDate")}</label>
                   <Input
                     type="date"
                     value={followupDueDate}
@@ -511,13 +517,13 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Projet (optionnel)</label>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.taskProjectOptional")}</label>
                   <Select value={followupProjectId} onValueChange={setFollowupProjectId}>
                     <SelectTrigger className="w-full h-8 bg-background border-border text-[12px] text-white">
-                      <SelectValue placeholder="Aucun projet" />
+                      <SelectValue placeholder={t("inbox.noProject")} />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="none">Aucun projet</SelectItem>
+                      <SelectItem value="none">{t("inbox.noProject")}</SelectItem>
                       {projects.map((p: any) => (
                         <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
                       ))}
@@ -525,11 +531,11 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   </Select>
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Notes (optionnel)</label>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.followupNotes")}</label>
                   <Textarea
                     value={followupNotes}
                     onChange={(e) => setFollowupNotes(e.target.value)}
-                    placeholder="Notes sur ce suivi..."
+                    placeholder={t("inbox.followupNotesPlaceholder")}
                     className="bg-background border-border text-white text-[12px] h-16 resize-none"
                   />
                 </div>
@@ -540,7 +546,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     onClick={() => { setFollowupFormOpen(false); setFollowupTitle(""); setFollowupDueDate(""); setFollowupNotes(""); setFollowupProjectId("none"); }}
                     className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
                   >
-                    Annuler
+                    {t("common.cancel")}
                   </Button>
                   <Button
                     size="sm"
@@ -561,7 +567,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                           onSuccess: () => {
                             queryClient.invalidateQueries({ queryKey: getListFollowupsQueryKey() });
                             queryClient.invalidateQueries({ queryKey: getGetFollowupStatsQueryKey() });
-                            toast({ title: "Suivi créé avec succès" });
+                            toast({ title: t("inbox.followupCreated") });
                             setFollowupFormOpen(false);
                             setFollowupTitle("");
                             setFollowupDueDate("");
@@ -569,14 +575,14 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                             setFollowupProjectId("none");
                           },
                           onError: () => {
-                            toast({ title: "Erreur lors de la création du suivi", variant: "destructive" });
+                            toast({ title: t("inbox.followupCreateError"), variant: "destructive" });
                           },
                         }
                       );
                     }}
                   >
                     {createFollowup.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
-                    Créer le suivi
+                    {t("followup.create")}
                   </Button>
                 </div>
               </div>
@@ -585,7 +591,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
             {replyOpen && (
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Destinataire</label>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
                   <Input
                     value={replyTo}
                     onChange={(e) => setReplyTo(e.target.value)}
@@ -594,20 +600,20 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Sujet</label>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.subject")}</label>
                   <Input
                     value={replySubject}
                     onChange={(e) => setReplySubject(e.target.value)}
-                    placeholder="Sujet"
+                    placeholder={t("inbox.subject")}
                     className="bg-background border-border text-white text-[12px] h-8"
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Message</label>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
                   <Textarea
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
-                    placeholder="Écrivez votre réponse..."
+                    placeholder={t("inbox.replyPlaceholder")}
                     className="h-24 bg-background border-border text-white text-[12px] resize-none"
                   />
                 </div>
@@ -620,7 +626,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                       onClick={() => { setReplyOpen(false); setReplyText(""); setReplyTo(""); setReplySubject(""); setReplyAttachments([]); }}
                       className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
                     >
-                      Annuler
+                      {t("common.cancel")}
                     </Button>
                     <Button
                       size="sm"
@@ -636,7 +642,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                       }}
                     >
                       <Send className="w-3 h-3" />
-                      {isSending ? "Envoi..." : "Envoyer"}
+                      {isSending ? t("inbox.sending") : t("inbox.send")}
                     </Button>
                   </div>
                 </div>
@@ -654,7 +660,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
           className="gap-1.5 h-8 text-[12px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
         >
           <ArrowLeft className="w-3.5 h-3.5" />
-          Retour
+          {t("common.back")}
         </Button>
       </div>
     </div>
@@ -673,6 +679,8 @@ function useDebounce(value: string, delay: number) {
 type InboxMode = "personal" | "shared";
 
 export default function Dashboard() {
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const [filterPriority, setFilterPriority] = useState<string>("all");
   const [isSimulateOpen, setIsSimulateOpen] = useState(false);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
@@ -855,11 +863,11 @@ export default function Dashboard() {
         onSuccess: (result) => {
           setSelectedIds(new Set());
           invalidateAll();
-          const labels = { delete: "supprimé(s)", archive: "archivé(s)", read: "marqué(s) comme lu(s)" };
-          toast({ title: `${result.affected} email(s) ${labels[action]}` });
+          const labels: Record<string, string> = { delete: t("inbox.bulkDeleted", { count: result.affected }), archive: t("inbox.bulkArchived", { count: result.affected }), read: t("inbox.bulkRead", { count: result.affected }) };
+          toast({ title: labels[action] });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible d'effectuer l'action groupée." });
+          toast({ variant: "destructive", title: t("common.error") });
         },
       }
     );
@@ -888,7 +896,7 @@ export default function Dashboard() {
         onSuccess: () => {
           setSelectedEmailId(null);
           invalidateAll();
-          toast({ title: "Email archivé" });
+          toast({ title: t("inbox.emailArchived") });
         },
       }
     );
@@ -901,10 +909,10 @@ export default function Dashboard() {
         onSuccess: () => {
           setSelectedEmailId(null);
           invalidateAll();
-          toast({ title: "Email supprimé" });
+          toast({ title: t("inbox.emailDeleted") });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible de supprimer l'email." });
+          toast({ variant: "destructive", title: t("common.error"), description: t("inbox.sendError") });
         },
       }
     );
@@ -916,7 +924,7 @@ export default function Dashboard() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: `Priorité changée en ${priority}`, description: "L'IA retiendra ce choix pour cet expéditeur." });
+          toast({ title: t("inbox.priorityChanged") });
         },
       }
     );
@@ -928,7 +936,7 @@ export default function Dashboard() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Catégorie mise à jour", description: "L'IA retiendra ce choix pour cet expéditeur." });
+          toast({ title: t("inbox.categoryUpdated") });
         },
       }
     );
@@ -940,7 +948,7 @@ export default function Dashboard() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Projet mis à jour", description: "L'email a été lié au projet." });
+          toast({ title: t("inbox.projectUpdated") });
         },
       }
     );
@@ -952,10 +960,10 @@ export default function Dashboard() {
       {
         onSuccess: (result) => {
           invalidateAll();
-          toast({ title: "Email assigné", description: `Assigné à ${(result as any).assignedToName || "un collègue"}.` });
+          toast({ title: t("inbox.assignSuccess"), description: `${(result as any).assignedToName || ""}` });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible d'assigner l'email." });
+          toast({ variant: "destructive", title: t("common.error") });
         },
       }
     );
@@ -967,10 +975,10 @@ export default function Dashboard() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Assignation retirée" });
+          toast({ title: t("inbox.unassignSuccess") });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible de retirer l'assignation." });
+          toast({ variant: "destructive", title: t("common.error") });
         },
       }
     );
@@ -991,10 +999,10 @@ export default function Dashboard() {
             invalidateAll();
           }
           queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
-          toast({ title: "Tâche créée", description: "La tâche a été ajoutée depuis cet email." });
+          toast({ title: t("inbox.taskCreated") });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible de créer la tâche." });
+          toast({ variant: "destructive", title: t("common.error"), description: t("inbox.taskCreateError") });
         },
       }
     );
@@ -1007,11 +1015,11 @@ export default function Dashboard() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Email envoyé" });
+          toast({ title: t("inbox.emailSent") });
         },
         onError: (err: any) => {
-          const msg = err?.data?.error || err?.message || "Impossible d'envoyer l'email.";
-          toast({ variant: "destructive", title: "Erreur", description: msg });
+          const msg = err?.data?.error || err?.message || t("inbox.sendError");
+          toast({ variant: "destructive", title: t("common.error"), description: msg });
         },
       }
     );
@@ -1029,11 +1037,11 @@ export default function Dashboard() {
           setComposeSubject("");
           setComposeBody("");
           setComposeAttachments([]);
-          toast({ title: "Email envoyé" });
+          toast({ title: t("inbox.emailSent") });
         },
         onError: (err: any) => {
-          const msg = err?.data?.error || err?.message || "Impossible d'envoyer l'email.";
-          toast({ variant: "destructive", title: "Erreur", description: msg });
+          const msg = err?.data?.error || err?.message || t("inbox.sendError");
+          toast({ variant: "destructive", title: t("common.error"), description: msg });
         },
       }
     );
@@ -1045,10 +1053,10 @@ export default function Dashboard() {
       {
         onSuccess: (data) => {
           callback(data.draft);
-          toast({ title: "Brouillon IA généré", description: "Le brouillon a été inséré dans le formulaire." });
+          toast({ title: t("inbox.draftGenerated") });
         },
         onError: () => {
-          toast({ title: "Brouillon indisponible", description: "L'IA n'a pas pu générer de brouillon pour cet email. Essayez à nouveau." });
+          toast({ title: t("inbox.draftError") });
         },
       }
     );
@@ -1070,12 +1078,12 @@ export default function Dashboard() {
       const data = await res.json();
       if (res.ok) {
         invalidateAll();
-        toast({ title: "Synchronisation terminée", description: `${data.synced || 0} nouveau(x) email(s) importé(s).` });
+        toast({ title: t("inbox.emailSent"), description: `${data.synced || 0}` });
       } else {
-        toast({ variant: "destructive", title: "Erreur", description: data.error || "Échec de la synchronisation." });
+        toast({ variant: "destructive", title: t("common.error"), description: data.error });
       }
     } catch {
-      toast({ variant: "destructive", title: "Erreur", description: "Impossible de synchroniser." });
+      toast({ variant: "destructive", title: t("common.error") });
     } finally {
       setIsSyncing(false);
     }
@@ -1098,12 +1106,12 @@ export default function Dashboard() {
           setIsSimulateOpen(false);
           form.reset();
           toast({ 
-            title: "Email analyse", 
-            description: `Classe comme ${result.priority} dans ${result.category}.` 
+            title: t("inbox.triageSuccess"), 
+            description: `${result.priority} — ${result.category}` 
           });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible d'analyser l'email." });
+          toast({ variant: "destructive", title: t("common.error") });
         }
       }
     );
@@ -1115,10 +1123,10 @@ export default function Dashboard() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries();
-          toast({ title: "Email pris en charge" });
+          toast({ title: t("inbox.claim") });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible de prendre en charge cet email." });
+          toast({ variant: "destructive", title: t("common.error") });
         },
       }
     );
@@ -1130,10 +1138,10 @@ export default function Dashboard() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries();
-          toast({ title: "Email libéré" });
+          toast({ title: t("inbox.unclaim") });
         },
         onError: () => {
-          toast({ variant: "destructive", title: "Erreur", description: "Impossible de libérer cet email." });
+          toast({ variant: "destructive", title: t("common.error") });
         },
       }
     );
@@ -1185,7 +1193,7 @@ export default function Dashboard() {
               <Input
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
-                placeholder="Rechercher des emails..."
+                placeholder={t("inbox.searchPlaceholder")}
                 className="pl-9 bg-card border-border text-white placeholder:text-[#8b9cb3]/50 h-8 text-[12px]"
               />
               {searchInput && (
@@ -1219,32 +1227,32 @@ export default function Dashboard() {
               disabled={isSyncing}
             >
               <RefreshCw className={`w-3 h-3 ${isSyncing ? "animate-spin" : ""}`} />
-              <span className="hidden sm:inline">{isSyncing ? "Sync..." : "Sync"}</span>
+              <span className="hidden sm:inline">{isSyncing ? t("inbox.refreshing") : t("inbox.refresh")}</span>
             </Button>
 
             <Dialog open={isComposeOpen} onOpenChange={(open) => { setIsComposeOpen(open); if (!open) { setComposeTo(""); setComposeSubject(""); setComposeBody(""); } }}>
               <DialogTrigger asChild>
                 <Button size="sm" className="gap-1.5 h-8 text-[11px]">
                   <PenSquare className="w-3 h-3" />
-                  <span className="hidden sm:inline">Nouveau</span>
+                  <span className="hidden sm:inline">{t("inbox.newEmail")}</span>
                 </Button>
               </DialogTrigger>
               <DialogContent className="bg-card border-border">
                 <DialogHeader>
-                  <DialogTitle className="text-white text-[14px]">Nouveau message</DialogTitle>
+                  <DialogTitle className="text-white text-[14px]">{t("inbox.composeTitle")}</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-3">
                   <div>
-                    <label className="text-[11px] text-[#8b9cb3] mb-1 block">Destinataire</label>
+                    <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.to")}</label>
                     <Input value={composeTo} onChange={(e) => setComposeTo(e.target.value)} placeholder="email@exemple.com" className="bg-background border-border text-white text-[12px] h-8" />
                   </div>
                   <div>
-                    <label className="text-[11px] text-[#8b9cb3] mb-1 block">Sujet</label>
-                    <Input value={composeSubject} onChange={(e) => setComposeSubject(e.target.value)} placeholder="Sujet de votre email" className="bg-background border-border text-white text-[12px] h-8" />
+                    <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.subject")}</label>
+                    <Input value={composeSubject} onChange={(e) => setComposeSubject(e.target.value)} placeholder={t("inbox.subject")} className="bg-background border-border text-white text-[12px] h-8" />
                   </div>
                   <div>
-                    <label className="text-[11px] text-[#8b9cb3] mb-1 block">Message</label>
-                    <Textarea value={composeBody} onChange={(e) => setComposeBody(e.target.value)} placeholder="Redigez votre message..." className="h-32 bg-background border-border text-white text-[12px]" />
+                    <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.message")}</label>
+                    <Textarea value={composeBody} onChange={(e) => setComposeBody(e.target.value)} placeholder={t("inbox.message")} className="h-32 bg-background border-border text-white text-[12px]" />
                   </div>
                   <FileAttachInput files={composeAttachments} onChange={setComposeAttachments} />
                   <Button
@@ -1253,7 +1261,7 @@ export default function Dashboard() {
                     onClick={handleComposeSend}
                   >
                     <Send className="w-3.5 h-3.5" />
-                    {sendEmailMut.isPending ? "Envoi en cours..." : "Envoyer"}
+                    {sendEmailMut.isPending ? t("inbox.sending") : t("inbox.send")}
                   </Button>
                 </div>
               </DialogContent>
@@ -1263,12 +1271,12 @@ export default function Dashboard() {
               <DialogTrigger asChild>
                 <Button variant="outline" size="sm" className="hidden sm:flex gap-1.5 h-8 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]">
                   <Sparkles className="w-3 h-3 text-primary" />
-                  Simuler
+                  {t("inbox.quickTriage")}
                 </Button>
               </DialogTrigger>
               <DialogContent className="bg-card border-border">
                 <DialogHeader>
-                  <DialogTitle className="text-white text-[14px]">Simuler la reception d'un email</DialogTitle>
+                  <DialogTitle className="text-white text-[14px]">{t("inbox.quickTriage")}</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
                   <form onSubmit={form.handleSubmit(onSubmitTriage)} className="space-y-3">
@@ -1277,7 +1285,7 @@ export default function Dashboard() {
                       name="sender"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-[#8b9cb3] text-[11px]">Expediteur</FormLabel>
+                          <FormLabel className="text-[#8b9cb3] text-[11px]">{t("inbox.sender")}</FormLabel>
                           <FormControl><Input placeholder="client@entreprise.com" className="bg-background border-border text-white text-[12px] h-8" {...field} /></FormControl>
                         </FormItem>
                       )}
@@ -1287,8 +1295,8 @@ export default function Dashboard() {
                       name="subject"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-[#8b9cb3] text-[11px]">Sujet</FormLabel>
-                          <FormControl><Input placeholder="Urgent: Probleme de facturation" className="bg-background border-border text-white text-[12px] h-8" {...field} /></FormControl>
+                          <FormLabel className="text-[#8b9cb3] text-[11px]">{t("inbox.subject")}</FormLabel>
+                          <FormControl><Input placeholder={t("inbox.subject")} className="bg-background border-border text-white text-[12px] h-8" {...field} /></FormControl>
                         </FormItem>
                       )}
                     />
@@ -1297,13 +1305,13 @@ export default function Dashboard() {
                       name="body"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="text-[#8b9cb3] text-[11px]">Corps du message</FormLabel>
-                          <FormControl><Textarea className="h-28 bg-background border-border text-white text-[12px]" placeholder="Bonjour, je n'arrive pas a payer..." {...field} /></FormControl>
+                          <FormLabel className="text-[#8b9cb3] text-[11px]">{t("inbox.message")}</FormLabel>
+                          <FormControl><Textarea className="h-28 bg-background border-border text-white text-[12px]" placeholder={t("inbox.message")} {...field} /></FormControl>
                         </FormItem>
                       )}
                     />
                     <Button type="submit" className="w-full h-8 text-[12px]" disabled={triageEmail.isPending}>
-                      {triageEmail.isPending ? "Analyse en cours..." : "Envoyer a l'IA"}
+                      {triageEmail.isPending ? t("inbox.generating") : t("inbox.send")}
                     </Button>
                   </form>
                 </Form>
@@ -1322,7 +1330,7 @@ export default function Dashboard() {
                 }`}
               >
                 <Inbox className="w-3 h-3" />
-                Ma boîte
+                {t("inbox.title")}
               </button>
               <button
                 onClick={() => {
@@ -1339,12 +1347,12 @@ export default function Dashboard() {
                 }`}
               >
                 <Users className="w-3 h-3" />
-                Boîtes partagées
+                {t("inbox.sharedMailbox")}
               </button>
               {inboxMode === "shared" && (sharedMailboxes as any[])?.length > 1 && (
                 <Select value={selectedSharedMailboxId || ""} onValueChange={setSelectedSharedMailboxId}>
                   <SelectTrigger className="w-auto min-w-[120px] h-6 bg-card border-border text-[#8b9cb3] text-[10px] ml-1">
-                    <SelectValue placeholder="Choisir une boîte" />
+                    <SelectValue placeholder={t("inbox.sharedMailbox")} />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
                     {(sharedMailboxes as any[])?.map((mb: any) => (
@@ -1357,12 +1365,12 @@ export default function Dashboard() {
           )}
 
           <div className="flex items-center gap-1.5 max-w-[1200px] mx-auto">
-            <span className="text-[10px] text-[#8b9cb3] mr-1">Priorité:</span>
+            <span className="text-[10px] text-[#8b9cb3] mr-1">{t("inbox.priority")}:</span>
             {[
-              { value: "all", label: "Tous" },
-              { value: "urgent", label: "Urgent" },
-              { value: "moyen", label: "Moyen" },
-              { value: "faible", label: "Faible" },
+              { value: "all", label: t("inbox.allCategories") },
+              { value: "urgent", label: t("inbox.priorities.urgent") },
+              { value: "moyen", label: t("inbox.priorities.medium") },
+              { value: "faible", label: t("inbox.priorities.low") },
             ].map((f) => (
               <button
                 key={f.value}
@@ -1379,10 +1387,10 @@ export default function Dashboard() {
             <div className="w-px h-4 bg-[#1f2937] mx-1" />
             <Select value={filterCategory} onValueChange={setFilterCategory}>
               <SelectTrigger className="w-auto min-w-[130px] h-6 bg-card border-border text-[#8b9cb3] text-[10px]">
-                <SelectValue placeholder="Catégorie" />
+                <SelectValue placeholder={t("inbox.category")} />
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
-                <SelectItem value="all">Toutes catégories</SelectItem>
+                <SelectItem value="all">{t("inbox.allCategories")}</SelectItem>
                 {categoryCounts?.map((cat) => (
                   <SelectItem key={cat.categoryId} value={cat.categoryName}>{cat.categoryName}</SelectItem>
                 ))}
@@ -1406,13 +1414,13 @@ export default function Dashboard() {
                   ) : !selectedSharedMailboxId ? (
                     <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                       <Users className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
-                      <h3 className="text-[13px] font-medium text-white">Sélectionnez une boîte partagée</h3>
+                      <h3 className="text-[13px] font-medium text-white">{t("inbox.sharedMailbox")}</h3>
                     </div>
                   ) : sharedEmailsList.length === 0 ? (
                     <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                       <Inbox className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
-                      <h3 className="text-[13px] font-medium text-white">Aucun email partagé</h3>
-                      <p className="text-[12px] text-[#8b9cb3] mt-1">Pas encore d'emails dans cette boîte partagée.</p>
+                      <h3 className="text-[13px] font-medium text-white">{t("inbox.noEmails")}</h3>
+                      <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.noEmailsDesc")}</p>
                     </div>
                   ) : (
                     <div className="space-y-1">
@@ -1435,7 +1443,7 @@ export default function Dashboard() {
                                   <PriorityBadge priority={email.priority} />
                                   {isClaimed && (
                                     <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${isClaimedByMe ? "bg-primary/15 text-primary" : "bg-white/[0.06] text-[#8b9cb3]"}`}>
-                                      {isClaimedByMe ? "Pris par moi" : "Pris en charge"}
+                                      {isClaimedByMe ? t("inbox.claimedBy") : t("inbox.claim")}
                                     </span>
                                   )}
                                 </div>
@@ -1457,7 +1465,7 @@ export default function Dashboard() {
                                     disabled={claimEmailMut.isPending}
                                   >
                                     <UserPlus className="w-3 h-3" />
-                                    Prendre
+                                    {t("inbox.claim")}
                                   </Button>
                                 ) : isClaimedByMe ? (
                                   <Button
@@ -1468,11 +1476,11 @@ export default function Dashboard() {
                                     disabled={unclaimEmailMut.isPending}
                                   >
                                     <UserX className="w-3 h-3" />
-                                    Libérer
+                                    {t("inbox.unclaim")}
                                   </Button>
                                 ) : null}
                                 <span className="text-[10px] text-[#8b9cb3] ml-1">
-                                  {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: fr }) : ""}
+                                  {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
                                 </span>
                               </div>
                             </div>
@@ -1486,7 +1494,7 @@ export default function Dashboard() {
                             disabled={sharedFetching}
                             className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40 disabled:opacity-50"
                           >
-                            {sharedFetching ? "Chargement..." : "Charger plus d'emails partagés"}
+                            {sharedFetching ? t("common.loading") : t("inbox.loadMore")}
                           </button>
                         </div>
                       )}
@@ -1497,19 +1505,19 @@ export default function Dashboard() {
                 <>
                   <div className="grid grid-cols-3 gap-2 mb-4">
                     <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
-                      <div className="text-[10px] font-medium text-red-400 uppercase tracking-wider mb-0.5">Urgents</div>
+                      <div className="text-[10px] font-medium text-red-400 uppercase tracking-wider mb-0.5">{t("inbox.priorities.urgentPlural")}</div>
                       <div className="text-xl font-bold text-white">
                         {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.urgentCount || 0}
                       </div>
                     </div>
                     <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3">
-                      <div className="text-[10px] font-medium text-amber-400 uppercase tracking-wider mb-0.5">Moyens</div>
+                      <div className="text-[10px] font-medium text-amber-400 uppercase tracking-wider mb-0.5">{t("inbox.priorities.mediumPlural")}</div>
                       <div className="text-xl font-bold text-white">
                         {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.moyenCount || 0}
                       </div>
                     </div>
                     <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
-                      <div className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider mb-0.5">Faibles</div>
+                      <div className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider mb-0.5">{t("inbox.priorities.lowPlural")}</div>
                       <div className="text-xl font-bold text-white">
                         {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.faibleCount || 0}
                       </div>
@@ -1523,10 +1531,10 @@ export default function Dashboard() {
                         className="flex items-center gap-1.5 text-[11px] text-primary hover:text-white transition-colors"
                       >
                         {selectedIds.size === (activeEmails?.length || 0) ? <CheckSquare className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />}
-                        {selectedIds.size === (activeEmails?.length || 0) ? "Tout désélectionner" : "Tout sélectionner"}
+                        {selectedIds.size === (activeEmails?.length || 0) ? t("inbox.deselectAll") : t("inbox.selectAll")}
                       </button>
                       <span className="text-[11px] text-[#8b9cb3]">
-                        {selectedIds.size} sélectionné(s)
+                        {t("inbox.selectedCount", { count: selectedIds.size })}
                       </span>
                       <div className="flex-1" />
                       <Button
@@ -1537,7 +1545,7 @@ export default function Dashboard() {
                         disabled={bulkUpdateMut.isPending}
                       >
                         <CheckCircle2 className="w-3 h-3" />
-                        Lu
+                        {t("inbox.bulkMarkRead")}
                       </Button>
                       <Button
                         size="sm"
@@ -1547,7 +1555,7 @@ export default function Dashboard() {
                         disabled={bulkUpdateMut.isPending}
                       >
                         <Archive className="w-3 h-3" />
-                        Archiver
+                        {t("inbox.bulkArchive")}
                       </Button>
                       <Button
                         size="sm"
@@ -1557,7 +1565,7 @@ export default function Dashboard() {
                         disabled={bulkUpdateMut.isPending}
                       >
                         <Trash2 className="w-3 h-3" />
-                        Supprimer
+                        {t("inbox.deleteEmail")}
                       </Button>
                       <Button
                         size="sm"
@@ -1581,8 +1589,8 @@ export default function Dashboard() {
                     ) : activeEmails?.length === 0 ? (
                       <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                         <Inbox className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
-                        <h3 className="text-[13px] font-medium text-white">Boîte vide</h3>
-                        <p className="text-[12px] text-[#8b9cb3] mt-1">Tous vos emails ont été traités.</p>
+                        <h3 className="text-[13px] font-medium text-white">{t("inbox.noEmails")}</h3>
+                        <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.noEmailsDesc")}</p>
                       </div>
                     ) : (
                       <>
@@ -1603,14 +1611,14 @@ export default function Dashboard() {
                             {emailsFetching ? (
                               <div className="flex items-center gap-2 text-[#8b9cb3]">
                                 <Loader2 className="w-4 h-4 animate-spin" />
-                                <span className="text-[11px]">Chargement...</span>
+                                <span className="text-[11px]">{t("common.loading")}</span>
                               </div>
                             ) : (
                               <button
                                 onClick={loadMore}
                                 className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40"
                               >
-                                Charger plus d'emails
+                                {t("inbox.loadMore")}
                               </button>
                             )}
                           </div>
@@ -1631,7 +1639,7 @@ export default function Dashboard() {
               <div className="bg-card rounded-lg border border-border p-3">
                 <div className="flex items-center justify-between mb-2.5">
                   <h3 className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">
-                    Catégories
+                    {t("inbox.category")}
                   </h3>
                   {(() => {
                     const JUNK = ["non classé", "non classe", "uncategorized"];
@@ -1648,25 +1656,25 @@ export default function Dashboard() {
                             onSuccess: (data: any) => {
                               invalidateAll();
                               toast({
-                                title: `${data.recategorized} email(s) re-catégorisé(s)`,
-                                description: data.created?.length > 0 ? `Catégories créées: ${data.created.join(", ")}` : undefined,
+                                title: t("inbox.recategorizeSuccess", { count: data.recategorized }),
+                                description: data.created?.length > 0 ? data.created.join(", ") : undefined,
                               });
                             },
                             onError: () => {
-                              toast({ title: "Erreur", description: "Échec de la re-catégorisation", variant: "destructive" });
+                              toast({ title: t("common.error"), variant: "destructive" });
                             },
                           });
                         }}
                         disabled={recategorizeMut.isPending}
                         className="flex items-center gap-1 text-[9px] text-primary hover:text-white transition-colors disabled:opacity-50"
-                        title="Re-catégoriser les emails sans catégorie"
+                        title={t("inbox.recategorize")}
                       >
                         {recategorizeMut.isPending ? (
                           <Loader2 className="w-3 h-3 animate-spin" />
                         ) : (
                           <Tags className="w-3 h-3" />
                         )}
-                        <span>{uncategorizedCount} non classés</span>
+                        <span>{uncategorizedCount} {t("inbox.uncategorized")}</span>
                       </button>
                     );
                   })()}
@@ -1682,7 +1690,7 @@ export default function Dashboard() {
                       className={`flex items-center justify-between py-1 px-1.5 rounded transition-colors cursor-pointer ${filterCategory === "all" ? "bg-primary/10 text-primary" : "hover:bg-white/[0.04]"}`}
                       onClick={() => setFilterCategory("all")}
                     >
-                      <span className="text-[11px]">Toutes</span>
+                      <span className="text-[11px]">{t("inbox.allCategories")}</span>
                       <span className="text-[10px] bg-white/[0.06] px-1.5 py-0.5 rounded">
                         {(() => {
                           const s = summary as { urgentCount?: number; moyenCount?: number; faibleCount?: number } | undefined;
@@ -1706,7 +1714,7 @@ export default function Dashboard() {
                       </div>
                     ))}
                     {categoryCounts?.length === 0 && (
-                      <p className="text-[11px] text-[#8b9cb3]/60 italic py-1.5">Aucune catégorie</p>
+                      <p className="text-[11px] text-[#8b9cb3]/60 italic py-1.5">{t("inbox.noEmails")}</p>
                     )}
                   </div>
                 )}

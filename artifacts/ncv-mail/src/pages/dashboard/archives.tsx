@@ -12,7 +12,8 @@ import {
   getGetDashboardSummaryQueryKey,
 } from "@workspace/api-client-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS, nl } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import { Archive, Clock, ArrowLeft, Trash2, RotateCcw, ChevronRight, FolderOpen, Sparkles } from "lucide-react";
@@ -28,17 +29,18 @@ const PRIORITY_BAR_COLORS: Record<string, string> = {
   faible: "bg-emerald-500",
 };
 
-const PRIORITY_BADGE_STYLES: Record<string, { bg: string; text: string; border: string; label: string }> = {
-  urgent: { bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/20", label: "Urgent" },
-  moyen: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/20", label: "Moyen" },
-  faible: { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/20", label: "Faible" },
+const PRIORITY_BADGE_STYLES: Record<string, { bg: string; text: string; border: string; labelKey: string }> = {
+  urgent: { bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/20", labelKey: "inbox.priorities.urgent" },
+  moyen: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/20", labelKey: "inbox.priorities.medium" },
+  faible: { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/20", labelKey: "inbox.priorities.low" },
 };
 
 function PriorityBadge({ priority }: { priority: string }) {
+  const { t } = useTranslation();
   const ps = PRIORITY_BADGE_STYLES[priority] || PRIORITY_BADGE_STYLES.faible;
   return (
     <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border ${ps.bg} ${ps.text} ${ps.border}`}>
-      {ps.label}
+      {t(ps.labelKey)}
     </span>
   );
 }
@@ -65,6 +67,8 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
   categories: any[];
   projects: any[];
 }) {
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
 
   return (
@@ -77,7 +81,7 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
           className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-          Retour
+          {t("common.back")}
         </Button>
         <div className="flex-1" />
         <PriorityBadge priority={email.priority} />
@@ -103,7 +107,7 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
                 </div>
                 <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1">
                   <Clock className="w-3 h-3" />
-                  {format(new Date(email.createdAt), "d MMMM yyyy a HH:mm", { locale: fr })}
+                  {format(new Date(email.createdAt), "d MMMM yyyy HH:mm", { locale: dateFnsLocale })}
                 </span>
               </div>
             </div>
@@ -112,7 +116,7 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
               <div className="px-4 py-2.5 bg-primary/[0.06] border-b border-border">
                 <div className="flex items-center gap-1.5 mb-0.5">
                   <Sparkles className="w-3 h-3 text-primary" />
-                  <span className="text-[10px] font-medium text-primary uppercase tracking-wider">Resume IA</span>
+                  <span className="text-[10px] font-medium text-primary uppercase tracking-wider">{t("inbox.aiSummary")}</span>
                 </div>
                 <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{email.summary}</p>
               </div>
@@ -130,7 +134,7 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
                   onClick={() => onRestore(email.id)}
                 >
                   <RotateCcw className="w-3 h-3" />
-                  Restaurer dans la réception
+                  {t("archives.restoreToInbox")}
                 </Button>
                 <Button
                   variant="outline"
@@ -139,31 +143,31 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
                   onClick={() => onDelete(email.id)}
                 >
                   <Trash2 className="w-3 h-3" />
-                  Supprimer
+                  {t("common.delete")}
                 </Button>
               </div>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Priorite:</span>
+                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.priority")}:</span>
                   <Select value={email.priority} onValueChange={(val) => onUpdatePriority(email.id, val)}>
                     <SelectTrigger className="w-[100px] h-6 bg-card border-border text-[11px] text-white">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="urgent">Urgent</SelectItem>
-                      <SelectItem value="moyen">Moyen</SelectItem>
-                      <SelectItem value="faible">Faible</SelectItem>
+                      <SelectItem value="urgent">{t("inbox.priorities.urgent")}</SelectItem>
+                      <SelectItem value="moyen">{t("inbox.priorities.medium")}</SelectItem>
+                      <SelectItem value="faible">{t("inbox.priorities.low")}</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Catégorie:</span>
+                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.category")}:</span>
                   <Select value={email.categoryId?.toString() || "none"} onValueChange={(val) => onUpdateCategory(email.id, val)}>
                     <SelectTrigger className="w-[130px] h-6 bg-card border-border text-[11px] text-white">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="none">Non classe</SelectItem>
+                      <SelectItem value="none">{t("inbox.uncategorized")}</SelectItem>
                       {categories.map((cat: any) => (
                         <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>
                       ))}
@@ -171,13 +175,13 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
                   </Select>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">Projet:</span>
+                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.project")}:</span>
                   <Select value={email.projectId || "none"} onValueChange={(val) => onUpdateProject(email.id, val)}>
                     <SelectTrigger className="w-[140px] h-6 bg-card border-border text-[11px] text-white">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="bg-card border-border">
-                      <SelectItem value="none">Aucun projet</SelectItem>
+                      <SelectItem value="none">{t("inbox.noProject")}</SelectItem>
                       {projects.map((p: any) => (
                         <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
                       ))}
@@ -194,6 +198,8 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
 }
 
 export default function Archives() {
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
@@ -262,7 +268,7 @@ export default function Archives() {
         onSuccess: () => {
           setSelectedEmailId(null);
           invalidateAll();
-          toast({ title: "Email restauré dans la réception" });
+          toast({ title: t("archives.restored") });
         },
       }
     );
@@ -275,7 +281,7 @@ export default function Archives() {
         onSuccess: () => {
           setSelectedEmailId(null);
           invalidateAll();
-          toast({ title: "Email supprime" });
+          toast({ title: t("archives.emailDeleted") });
         },
       }
     );
@@ -287,7 +293,7 @@ export default function Archives() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: `Priorité changée en ${priority}` });
+          toast({ title: t("archives.priorityChanged") });
         },
       }
     );
@@ -299,7 +305,7 @@ export default function Archives() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Catégorie mise à jour" });
+          toast({ title: t("archives.categoryUpdated") });
         },
       }
     );
@@ -311,7 +317,7 @@ export default function Archives() {
       {
         onSuccess: () => {
           invalidateAll();
-          toast({ title: "Projet mis à jour" });
+          toast({ title: t("archives.projectUpdated") });
         },
       }
     );
@@ -360,10 +366,10 @@ export default function Archives() {
               className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
             >
               <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              Archives
+              {t("archives.title")}
             </Button>
             <div className="flex-1" />
-            <span className="text-[11px] text-[#8b9cb3]">{selectedEmails.length} email(s)</span>
+            <span className="text-[11px] text-[#8b9cb3]">{t("archives.emailCount", { count: selectedEmails.length })}</span>
           </div>
 
           <h2 className="text-[15px] font-semibold text-white mb-3">{selectedCategory}</h2>
@@ -372,7 +378,7 @@ export default function Archives() {
             {selectedEmails.length === 0 ? (
               <div className="text-center py-12 rounded-lg border border-border border-dashed bg-card/50">
                 <FolderOpen className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
-                <p className="text-[12px] text-[#8b9cb3]">Aucun email dans cette catégorie</p>
+                <p className="text-[12px] text-[#8b9cb3]">{t("inbox.noEmails")}</p>
               </div>
             ) : (
               selectedEmails.map((email) => {
@@ -404,7 +410,7 @@ export default function Archives() {
                         <PriorityBadge priority={email.priority} />
                         <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1 hidden sm:flex">
                           <Clock className="w-3 h-3" />
-                          {format(new Date(email.createdAt), "d MMM HH:mm", { locale: fr })}
+                          {format(new Date(email.createdAt), "d MMM HH:mm", { locale: dateFnsLocale })}
                         </span>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleRestore(email.id); }}
@@ -430,9 +436,9 @@ export default function Archives() {
     <DashboardLayout>
       <div className="p-5 max-w-5xl mx-auto w-full">
         <div className="mb-5">
-          <h1 className="text-[16px] font-semibold text-white tracking-tight">Archives</h1>
+          <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("archives.title")}</h1>
           <p className="text-[12px] text-[#8b9cb3] mt-0.5">
-            Emails classés automatiquement par l'IA. {paged?.total || archivedEmails.length} email(s) archivés.
+            {t("archives.archivedByAI")} {t("archives.emailCount", { count: paged?.total || archivedEmails.length })}
           </p>
         </div>
 
@@ -449,8 +455,8 @@ export default function Archives() {
         ) : archivedEmails.length === 0 ? (
           <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
             <Archive className="mx-auto h-8 w-8 text-[#8b9cb3]/20 mb-2" />
-            <h3 className="text-[13px] font-medium text-white mb-1">Aucune archive</h3>
-            <p className="text-[12px] text-[#8b9cb3]">Les emails archives apparaitront ici.</p>
+            <h3 className="text-[13px] font-medium text-white mb-1">{t("archives.noEmails")}</h3>
+            <p className="text-[12px] text-[#8b9cb3]">{t("archives.noEmailsDesc")}</p>
           </div>
         ) : (
           <>
@@ -485,7 +491,7 @@ export default function Archives() {
                   disabled={archiveFetching}
                   className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40 disabled:opacity-50"
                 >
-                  {archiveFetching ? "Chargement..." : "Charger plus d'archives"}
+                  {archiveFetching ? t("common.loading") : t("archives.loadMore")}
                 </button>
               </div>
             )}

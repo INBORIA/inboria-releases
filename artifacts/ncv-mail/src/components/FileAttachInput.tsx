@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { Paperclip, X, File, Loader2 } from "lucide-react";
 import { supabase } from "../lib/supabase";
+import { useTranslation } from "react-i18next";
 
 export interface UploadedFile {
   uploadId: string;
@@ -23,6 +24,7 @@ interface Props {
 }
 
 export function FileAttachInput({ files, onChange, maxFiles = 10, maxSizeMb = 10 }: Props) {
+  const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -32,14 +34,14 @@ export function FileAttachInput({ files, onChange, maxFiles = 10, maxSizeMb = 10
 
     const remaining = maxFiles - files.length;
     if (remaining <= 0) {
-      setError(`Maximum ${maxFiles} fichiers`);
+      setError(t("attachments.maxFiles", { count: maxFiles }));
       return;
     }
 
     const toUpload = Array.from(selected).slice(0, remaining);
     const oversized = toUpload.filter((f) => f.size > maxSizeMb * 1024 * 1024);
     if (oversized.length > 0) {
-      setError(`Fichier trop volumineux (max ${maxSizeMb} Mo)`);
+      setError(t("attachments.fileTooLarge", { size: maxSizeMb }));
       return;
     }
 
@@ -49,7 +51,7 @@ export function FileAttachInput({ files, onChange, maxFiles = 10, maxSizeMb = 10
     try {
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData?.session?.access_token;
-      if (!token) { setError("Non authentifié"); return; }
+      if (!token) { setError(t("attachments.notAuthenticated")); return; }
 
       const formData = new FormData();
       for (const f of toUpload) {
@@ -64,7 +66,7 @@ export function FileAttachInput({ files, onChange, maxFiles = 10, maxSizeMb = 10
 
       if (!response.ok) {
         const err = await response.json().catch(() => ({}));
-        setError((err as any).error || "Erreur lors de l'upload");
+        setError((err as any).error || t("attachments.uploadError"));
         return;
       }
 
@@ -78,7 +80,7 @@ export function FileAttachInput({ files, onChange, maxFiles = 10, maxSizeMb = 10
 
       onChange([...files, ...uploaded]);
     } catch (err: any) {
-      setError(err.message || "Erreur lors de l'upload");
+      setError(err.message || t("attachments.uploadError"));
     } finally {
       setUploading(false);
       if (inputRef.current) inputRef.current.value = "";
@@ -111,10 +113,10 @@ export function FileAttachInput({ files, onChange, maxFiles = 10, maxSizeMb = 10
           background: "transparent",
           border: "1px solid #1f2937",
         }}
-        title="Joindre un fichier"
+        title={t("attachments.attachFile")}
       >
         {uploading ? <Loader2 size={14} className="animate-spin" /> : <Paperclip size={14} />}
-        <span>Joindre</span>
+        <span>{t("attachments.attachFile")}</span>
       </button>
 
       {error && (
@@ -136,7 +138,7 @@ export function FileAttachInput({ files, onChange, maxFiles = 10, maxSizeMb = 10
                 type="button"
                 onClick={() => removeFile(i)}
                 className="ml-0.5 p-0.5 rounded hover:bg-white/10"
-                title="Retirer"
+                title={t("attachments.remove")}
               >
                 <X size={12} />
               </button>

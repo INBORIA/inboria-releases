@@ -7,8 +7,10 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function MotDePasseOublie() {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -30,7 +32,7 @@ export default function MotDePasseOublie() {
       if (error) {
         toast({
           variant: "destructive",
-          title: "Erreur",
+          title: t("common.error"),
           description: error.message,
         });
       } else {
@@ -39,8 +41,8 @@ export default function MotDePasseOublie() {
     } catch {
       toast({
         variant: "destructive",
-        title: "Erreur",
-        description: "Impossible d'envoyer l'email de reinitialisation.",
+        title: t("common.error"),
+        description: t("auth.resetEmailSentDesc"),
       });
     } finally {
       setIsPending(false);
@@ -54,17 +56,16 @@ export default function MotDePasseOublie() {
           <div className="w-14 h-14 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto">
             <CheckCircle className="w-7 h-7 text-emerald-400" />
           </div>
-          <h1 className="text-xl font-bold text-white">Email envoye !</h1>
+          <h1 className="text-xl font-bold text-white">{t("auth.resetEmailSent")}</h1>
           <p className="text-sm text-[#8b9cb3] leading-relaxed">
-            Si un compte existe avec l'adresse <span className="text-white font-medium">{email}</span>, 
-            vous recevrez un lien de reinitialisation dans quelques instants.
+            {t("auth.resetEmailSentIfExists", { email }).replace(/<1>|<\/1>/g, "")}
           </p>
           <p className="text-xs text-[#8b9cb3]">
-            Pensez a verifier vos spams si vous ne trouvez pas l'email.
+            {t("auth.checkSpam")}
           </p>
           <div className="pt-2">
             <Link href="/login" className="text-sm text-primary hover:text-primary/80 font-semibold">
-              Retour a la connexion
+              {t("auth.backToLogin")}
             </Link>
           </div>
         </div>
@@ -78,18 +79,18 @@ export default function MotDePasseOublie() {
         <div className="w-14 h-14 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
           <Mail className="w-7 h-7 text-primary" />
         </div>
-        <h1 className="text-2xl font-bold text-white">Mot de passe oublie ?</h1>
+        <h1 className="text-2xl font-bold text-white">{t("auth.forgotPasswordTitle")}</h1>
         <p className="text-[#8b9cb3] mt-2 text-sm">
-          Entrez votre adresse email et nous vous enverrons un lien pour reinitialiser votre mot de passe.
+          {t("auth.forgotPasswordSubtitle")}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
-          <Label className="text-[12px] text-[#8b9cb3]">Adresse email</Label>
+          <Label className="text-[12px] text-[#8b9cb3]">{t("auth.emailAddress")}</Label>
           <Input
             type="email"
-            placeholder="nom@entreprise.com"
+            placeholder={t("auth.emailPlaceholder")}
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             className="bg-background border-border text-white"
@@ -97,14 +98,14 @@ export default function MotDePasseOublie() {
           />
         </div>
         <Button type="submit" className="w-full" disabled={isPending || !email}>
-          {isPending ? "Envoi en cours..." : "Envoyer le lien"}
+          {isPending ? t("auth.sending") : t("auth.sendResetLink")}
         </Button>
       </form>
 
       <div className="mt-6 text-center">
         <Link href="/login" className="text-sm text-[#8b9cb3] hover:text-white inline-flex items-center gap-1.5 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" />
-          Retour a la connexion
+          {t("auth.backToLogin")}
         </Link>
       </div>
     </AuthLayout>

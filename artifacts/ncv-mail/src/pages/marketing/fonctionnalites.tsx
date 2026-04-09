@@ -14,81 +14,36 @@ import {
   Smartphone,
   Shield,
 } from "lucide-react";
-
-const features = [
-  {
-    icon: Tags,
-    title: "Tri intelligent par catégories",
-    desc: "L'intelligence artificielle analyse le contenu de vos emails et les classe automatiquement dans les dossiers appropriés pour garder une boîte de réception propre.",
-  },
-  {
-    icon: FileText,
-    title: "Résumés automatiques",
-    desc: "Gagnez un temps précieux en lisant un résumé concis généré par l'IA pour les longs fils de discussion et les newsletters interminables.",
-  },
-  {
-    icon: PenLine,
-    title: "Brouillons IA personnalisés",
-    desc: "NCV Mail prépare des réponses adaptées au contexte et à votre ton habituel. Il ne vous reste plus qu'à relire et envoyer.",
-  },
-  {
-    icon: BarChart3,
-    title: "Brief quotidien",
-    desc: "Recevez chaque matin un récapitulatif clair des emails urgents, des réunions du jour et des suivis en attente.",
-  },
-  {
-    icon: CheckSquare,
-    title: "Extraction automatique des tâches",
-    desc: "Les actions à réaliser mentionnées dans vos échanges sont automatiquement détectées et ajoutées à votre gestionnaire de tâches.",
-  },
-  {
-    icon: FolderKanban,
-    title: "Gestion de projets",
-    desc: "Regroupez intelligemment tous les échanges, pièces jointes et intervenants liés à un même projet dans un espace dédié.",
-  },
-  {
-    icon: Inbox,
-    title: "Connexion multi-boîtes",
-    desc: "Centralisez tous vos comptes (Gmail, Outlook, iCloud, IMAP) dans une interface unique et unifiée sans friction.",
-  },
-  {
-    icon: Signature,
-    title: "Signature email personnalisée",
-    desc: "Créez, gérez et déployez des signatures professionnelles dynamiques et harmonisées pour vous ou toute votre équipe.",
-  },
-  {
-    icon: Archive,
-    title: "Archivage intelligent",
-    desc: "Nettoyage proactif de votre boîte : les newsletters lues et les notifications obsolètes sont archivées ou supprimées selon vos règles.",
-  },
-  {
-    icon: AlertTriangle,
-    title: "Détection de priorité",
-    desc: "Ne manquez plus l'essentiel. Les emails de vos clients importants ou contenant des urgences sont mis en évidence instantanément.",
-  },
-  {
-    icon: Smartphone,
-    title: "Application mobile",
-    desc: "Restez productif en déplacement avec notre application iOS et Android optimisée pour une consultation rapide et efficace.",
-  },
-  {
-    icon: Shield,
-    title: "Sécurité et confidentialité",
-    desc: "Vos données sont protégées par un chiffrement de bout en bout. Nous respectons strictement le RGPD et ne vendons jamais vos informations.",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export default function Fonctionnalites() {
+  const { t } = useTranslation();
+
+  const features = [
+    { icon: Tags, key: "smartSort" },
+    { icon: FileText, key: "autoSummary" },
+    { icon: PenLine, key: "aiDrafts" },
+    { icon: BarChart3, key: "dailyBrief" },
+    { icon: CheckSquare, key: "taskExtraction" },
+    { icon: FolderKanban, key: "projectManagement" },
+    { icon: Inbox, key: "multiMailbox" },
+    { icon: Signature, key: "emailSignature" },
+    { icon: Archive, key: "smartArchive" },
+    { icon: AlertTriangle, key: "priorityDetection" },
+    { icon: Smartphone, key: "mobileApp" },
+    { icon: Shield, key: "security" },
+  ];
+
   return (
     <MarketingLayout>
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-[#2d7dd2]/10 to-transparent" />
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative">
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
-            Tout ce dont vous avez besoin pour reprendre le contrôle de vos emails
+            {t("marketing.features.heroTitle")}
           </h1>
           <p className="mt-4 text-[16px] text-[#8b9cb3] max-w-2xl mx-auto">
-            NCV Mail utilise l'intelligence artificielle pour trier, résumer et répondre à vos emails automatiquement.
+            {t("marketing.features.heroDesc")}
           </p>
         </div>
       </section>
@@ -98,14 +53,14 @@ export default function Fonctionnalites() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {features.map((f) => (
               <div
-                key={f.title}
+                key={f.key}
                 className="rounded-xl border border-[#1f2937] bg-[#141c2b] p-6 hover:border-[#2d7dd2]/30 transition-colors"
               >
                 <div className="w-10 h-10 rounded-lg bg-[#2d7dd2]/10 flex items-center justify-center mb-4">
                   <f.icon className="w-5 h-5 text-[#2d7dd2]" />
                 </div>
-                <h3 className="text-[15px] font-semibold text-white mb-2">{f.title}</h3>
-                <p className="text-[13px] text-[#8b9cb3] leading-relaxed">{f.desc}</p>
+                <h3 className="text-[15px] font-semibold text-white mb-2">{t(`marketing.features.${f.key}`)}</h3>
+                <p className="text-[13px] text-[#8b9cb3] leading-relaxed">{t(`marketing.features.${f.key}Desc`)}</p>
               </div>
             ))}
           </div>
@@ -114,13 +69,13 @@ export default function Fonctionnalites() {
 
       <section className="border-t border-[#1f2937] bg-[#0a0e14]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
-          <h2 className="text-2xl sm:text-3xl font-bold text-white">Prêt à gagner 2h par jour ?</h2>
+          <h2 className="text-2xl sm:text-3xl font-bold text-white">{t("marketing.features.ctaTitle")}</h2>
           <p className="text-[14px] text-[#8b9cb3] mt-3">
-            100 emails offerts pour découvrir NCV Mail. Aucune carte bancaire requise.
+            {t("marketing.features.ctaDesc")}
           </p>
           <Link href="/signup">
             <button className="mt-6 px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
-              Essayer gratuitement
+              {t("marketing.features.tryFree")}
             </button>
           </Link>
         </div>

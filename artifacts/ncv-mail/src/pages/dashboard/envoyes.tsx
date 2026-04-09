@@ -14,7 +14,8 @@ import {
 } from "@workspace/api-client-react";
 import type { PaginatedEmails } from "@workspace/api-client-react";
 import { format } from "date-fns";
-import { fr } from "date-fns/locale";
+import { fr, enUS, nl } from "date-fns/locale";
+import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
 import {
@@ -39,6 +40,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 
 export default function Envoyes() {
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
@@ -76,7 +79,7 @@ export default function Envoyes() {
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-          toast({ title: "Projet mis à jour" });
+          toast({ title: t("sent.projectUpdated") });
         },
       }
     );
@@ -86,9 +89,9 @@ export default function Envoyes() {
     try {
       const { downloadExport } = await import("@/lib/export-utils");
       await downloadExport("export/emails?status=sent", `emails_envoyes_${new Date().toISOString().split("T")[0]}.csv`);
-      toast({ title: "Export téléchargé" });
+      toast({ title: t("sent.exportDownloaded") });
     } catch {
-      toast({ title: "Erreur lors de l'export", variant: "destructive" });
+      toast({ title: t("sent.exportError"), variant: "destructive" });
     }
   };
 
@@ -114,10 +117,10 @@ export default function Envoyes() {
           <div>
             <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
               <Send className="w-4 h-4 text-primary" />
-              Envoyés
+              {t("sent.title")}
             </h1>
             <p className="text-[12px] text-[#8b9cb3] mt-0.5">
-              {paged?.total || sentEmails.length} email(s) envoyés
+              {t("sent.emailsSentCount", { count: paged?.total || sentEmails.length })}
             </p>
           </div>
           <Button
@@ -127,7 +130,7 @@ export default function Envoyes() {
             className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
           >
             <Download className="w-3 h-3" />
-            Exporter CSV
+            {t("sent.exportCSV")}
           </Button>
         </div>
 
@@ -143,8 +146,8 @@ export default function Envoyes() {
         ) : sentEmails.length === 0 ? (
           <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
             <Send className="mx-auto h-8 w-8 text-[#8b9cb3]/20 mb-2" />
-            <h3 className="text-[13px] font-medium text-white mb-1">Aucun email envoyé</h3>
-            <p className="text-[12px] text-[#8b9cb3]">Vos emails envoyés et réponses apparaîtront ici.</p>
+            <h3 className="text-[13px] font-medium text-white mb-1">{t("sent.noEmails")}</h3>
+            <p className="text-[12px] text-[#8b9cb3]">{t("sent.noEmailsDesc")}</p>
           </div>
         ) : (
           <>
@@ -166,11 +169,11 @@ export default function Envoyes() {
                         <div className="flex items-center gap-2 mb-0.5">
                           <span className="font-semibold text-[12px] text-white truncate flex items-center gap-1">
                             <ArrowRight className="w-3 h-3 text-primary" />
-                            {email.recipient || "Destinataire inconnu"}
+                            {email.recipient || t("sent.unknownRecipient")}
                           </span>
                           {isReply && (
                             <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium bg-primary/15 text-primary">
-                              Réponse
+                              {t("sent.reply")}
                             </span>
                           )}
                         </div>
@@ -192,7 +195,7 @@ export default function Envoyes() {
                           <AttachmentBadge count={(email as any).attachmentCount} />
                         )}
                         <span className="text-[10px] text-[#8b9cb3]">
-                          {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: fr }) : ""}
+                          {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
                         </span>
                       </div>
                     </div>
@@ -207,7 +210,7 @@ export default function Envoyes() {
                   disabled={isFetching}
                   className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40 disabled:opacity-50"
                 >
-                  {isFetching ? "Chargement..." : "Charger plus"}
+                  {isFetching ? t("common.loading") : t("sent.loadMore")}
                 </button>
               </div>
             )}
@@ -229,6 +232,8 @@ function ConversationView({
   projects: any[];
   onUpdateProject: (id: number, projectId: string) => void;
 }) {
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { data: convoData, isLoading } = useGetEmailConversation(emailId);
@@ -252,7 +257,7 @@ function ConversationView({
       const result = await summaryMut.mutateAsync({ data: { thread } });
       setAiSummary((result as any)?.summary || "");
     } catch {
-      setAiSummary("Erreur lors de la génération du résumé.");
+      setAiSummary(t("sent.summaryError"));
     }
     setLoadingSummary(false);
   };
@@ -275,7 +280,7 @@ function ConversationView({
           className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-          Envoyés
+          {t("sent.title")}
         </Button>
         <div className="flex-1" />
         <Button
@@ -294,7 +299,7 @@ function ConversationView({
           className="gap-1 text-[11px] h-7 bg-transparent border-amber-500/30 text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
         >
           <Eye className="w-3 h-3" />
-          Suivre
+          {t("sent.createFollowupTask")}
         </Button>
         <Button
           variant="outline"
@@ -304,7 +309,7 @@ function ConversationView({
           className="gap-1 text-[11px] h-7 bg-transparent border-border text-primary hover:text-white"
         >
           {loadingSummary ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-          Résumé IA
+          {t("sent.aiSummary")}
         </Button>
         {email && (
           <Button
@@ -314,15 +319,15 @@ function ConversationView({
               try {
                 const { downloadExport } = await import("@/lib/export-utils");
                 await downloadExport(`export/emails?id=${email.id}`, `email_${email.id}.csv`);
-                toast({ title: "Email exporté" });
+                toast({ title: t("common.emailExported") });
               } catch {
-                toast({ title: "Erreur lors de l'export", variant: "destructive" });
+                toast({ title: t("common.exportError"), variant: "destructive" });
               }
             }}
             className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
           >
             <Download className="w-3 h-3" />
-            Exporter
+            {t("common.export")}
           </Button>
         )}
       </div>
@@ -331,9 +336,9 @@ function ConversationView({
         <div className="mb-4">
           <h2 className="text-[15px] font-semibold text-white mb-1">{email.subject}</h2>
           <div className="flex items-center gap-2 text-[11px] text-[#8b9cb3]">
-            <span>Vers: {email.recipient || "?"}</span>
+            <span>{t("sent.to")}: {email.recipient || "?"}</span>
             <span>•</span>
-            <span>{email.createdAt ? format(new Date(email.createdAt), "dd MMMM yyyy HH:mm", { locale: fr }) : ""}</span>
+            <span>{email.createdAt ? format(new Date(email.createdAt), "dd MMMM yyyy HH:mm", { locale: dateFnsLocale }) : ""}</span>
           </div>
           {email.projectName && (
             <span className="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-[#8b9cb3]">
@@ -348,7 +353,7 @@ function ConversationView({
         <div className="mb-4 p-3 rounded-lg border border-primary/20 bg-primary/5">
           <div className="flex items-center gap-1 mb-1">
             <Sparkles className="w-3 h-3 text-primary" />
-            <span className="text-[11px] font-medium text-primary">Résumé IA de la conversation</span>
+            <span className="text-[11px] font-medium text-primary">{t("sent.aiSummary")}</span>
           </div>
           <p className="text-[12px] text-[#8b9cb3]">{aiSummary}</p>
         </div>
@@ -356,10 +361,10 @@ function ConversationView({
 
       {email && !email.projectId && (
         <div className="mb-4 flex items-center gap-2">
-          <span className="text-[11px] text-[#8b9cb3]">Projet:</span>
+          <span className="text-[11px] text-[#8b9cb3]">{t("inbox.project")}:</span>
           <Select onValueChange={(v) => onUpdateProject(email.id, v)}>
             <SelectTrigger className="w-[180px] h-7 text-[11px] bg-card border-border">
-              <SelectValue placeholder="Assigner un projet" />
+              <SelectValue placeholder={t("sent.assignProject")} />
             </SelectTrigger>
             <SelectContent>
               {(projects || []).map((p: any) => (
@@ -377,21 +382,21 @@ function ConversationView({
           <div className="flex items-center justify-between mb-1">
             <div className="flex items-center gap-1.5">
               <Eye className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-[11px] font-medium text-amber-400 uppercase tracking-wider">Créer un suivi</span>
+              <span className="text-[11px] font-medium text-amber-400 uppercase tracking-wider">{t("sent.createFollowup")}</span>
             </div>
             <button onClick={() => setFollowupOpen(false)} className="text-[#8b9cb3] hover:text-white"><X className="w-4 h-4" /></button>
           </div>
           <div>
-            <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Titre du suivi</label>
+            <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("sent.followupTitleLabel")}</label>
             <Input
               value={followupTitle}
               onChange={(e) => setFollowupTitle(e.target.value)}
-              placeholder="Ex: Relancer pour le devis..."
+              placeholder={t("sent.followupTitlePlaceholder")}
               className="bg-background border-border text-white text-[12px] h-8"
             />
           </div>
           <div>
-            <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Date d'échéance</label>
+            <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("sent.followupDueDate")}</label>
             <Input
               type="date"
               value={followupDueDate}
@@ -400,13 +405,13 @@ function ConversationView({
             />
           </div>
           <div>
-            <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Projet (optionnel)</label>
+            <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("followup.projectOptional")}</label>
             <Select value={followupProjectId} onValueChange={setFollowupProjectId}>
               <SelectTrigger className="w-full h-8 bg-background border-border text-[12px] text-white">
-                <SelectValue placeholder="Aucun projet" />
+                <SelectValue placeholder={t("sent.noProject")} />
               </SelectTrigger>
               <SelectContent className="bg-card border-border">
-                <SelectItem value="none">Aucun projet</SelectItem>
+                <SelectItem value="none">{t("sent.noProject")}</SelectItem>
                 {projects.map((p: any) => (
                   <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
                 ))}
@@ -414,7 +419,7 @@ function ConversationView({
             </Select>
           </div>
           <div>
-            <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">Notes (optionnel)</label>
+            <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("sent.followupNotes")}</label>
             <Textarea
               value={followupNotes}
               onChange={(e) => setFollowupNotes(e.target.value)}
@@ -429,7 +434,7 @@ function ConversationView({
               onClick={() => setFollowupOpen(false)}
               className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
             >
-              Annuler
+              {t("common.cancel")}
             </Button>
             <Button
               size="sm"
@@ -450,18 +455,18 @@ function ConversationView({
                     onSuccess: () => {
                       queryClient.invalidateQueries({ queryKey: getListFollowupsQueryKey() });
                       queryClient.invalidateQueries({ queryKey: getGetFollowupStatsQueryKey() });
-                      toast({ title: "Suivi créé avec succès" });
+                      toast({ title: t("sent.followupCreated") });
                       setFollowupOpen(false);
                     },
                     onError: () => {
-                      toast({ title: "Erreur lors de la création du suivi", variant: "destructive" });
+                      toast({ title: t("sent.followupError"), variant: "destructive" });
                     },
                   }
                 );
               }}
             >
               {createFollowup.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
-              Créer le suivi
+              {t("sent.createFollowupBtn")}
             </Button>
           </div>
         </div>
@@ -484,13 +489,13 @@ function ConversationView({
                 {msg.role === "sent" ? <Send className="w-3 h-3" /> : <User className="w-3 h-3" />}
               </div>
               <span className="text-[11px] font-medium text-white">
-                {msg.role === "sent" ? "Vous" : msg.sender || "?"}
+                {msg.role === "sent" ? t("sent.you") : msg.sender || "?"}
               </span>
               <span className="text-[10px] text-[#8b9cb3]">
                 {msg.role === "sent" ? `→ ${msg.recipient || "?"}` : ""}
               </span>
               <span className="text-[10px] text-[#8b9cb3] ml-auto">
-                {msg.createdAt ? format(new Date(msg.createdAt), "dd MMM HH:mm", { locale: fr }) : ""}
+                {msg.createdAt ? format(new Date(msg.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
               </span>
             </div>
             <div className="text-[12px] text-[#8b9cb3] max-h-[300px] overflow-y-auto">

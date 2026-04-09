@@ -2,19 +2,22 @@ import { Link, useLocation } from "wouter";
 import ncvLogo from "@assets/image_1775392688923.png";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
-
-const navLinks = [
-  { label: "Accueil", href: "/" },
-  { label: "Fonctionnalités", href: "/fonctionnalites" },
-  { label: "Classement", href: "/classement" },
-  { label: "IA", href: "/intelligence-artificielle" },
-  { label: "Entreprise", href: "/entreprise" },
-  { label: "Tarifs", href: "/tarifs" },
-];
+import { useTranslation } from "react-i18next";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 export function MarketingLayout({ children }: { children: React.ReactNode }) {
+  const { t } = useTranslation();
   const [location] = useLocation();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  const navLinks = [
+    { label: t("nav.home"), href: "/" },
+    { label: t("nav.features"), href: "/fonctionnalites" },
+    { label: t("nav.classification"), href: "/classement" },
+    { label: t("nav.ai"), href: "/intelligence-artificielle" },
+    { label: t("nav.enterprise"), href: "/entreprise" },
+    { label: t("nav.pricing"), href: "/tarifs" },
+  ];
 
   return (
     <div className="min-h-screen bg-[#0d1117] text-white flex flex-col">
@@ -41,14 +44,15 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
             </nav>
 
             <div className="hidden md:flex items-center gap-3">
+              <LanguageSwitcher />
               <Link href="/login">
                 <button className="px-4 py-2 text-[13px] font-medium text-[#2d7dd2] border border-[#2d7dd2] rounded-lg hover:bg-[#2d7dd2]/10 transition-colors">
-                  Se connecter
+                  {t("nav.login")}
                 </button>
               </Link>
               <Link href="/tarifs">
                 <button className="px-4 py-2 text-[13px] font-medium text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
-                  S'inscrire
+                  {t("nav.signup")}
                 </button>
               </Link>
             </div>
@@ -75,15 +79,18 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
                   {link.label}
                 </Link>
               ))}
+              <div className="px-2 pt-1">
+                <LanguageSwitcher />
+              </div>
               <div className="flex gap-3 pt-2">
                 <Link href="/login" className="flex-1">
                   <button className="w-full px-4 py-2 text-[13px] font-medium text-[#2d7dd2] border border-[#2d7dd2] rounded-lg" onClick={() => setMobileOpen(false)}>
-                    Se connecter
+                    {t("nav.login")}
                   </button>
                 </Link>
                 <Link href="/tarifs" className="flex-1">
                   <button className="w-full px-4 py-2 text-[13px] font-medium text-white bg-[#2d7dd2] rounded-lg" onClick={() => setMobileOpen(false)}>
-                    S'inscrire
+                    {t("nav.signup")}
                   </button>
                 </Link>
               </div>
@@ -102,29 +109,29 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
                 <img src={ncvLogo} alt="NCV Mail" className="h-20 w-20 object-contain -mb-1" />
                 <span className="font-semibold text-[15px] text-white">NCV Mail</span>
               </div>
-              <p className="text-[13px] text-[#8b9cb3]">Une solution NCV Management</p>
+              <p className="text-[13px] text-[#8b9cb3]">{t("footer.solution")}</p>
             </div>
 
             <div>
-              <h4 className="text-[13px] font-semibold text-white mb-3">Informations légales</h4>
+              <h4 className="text-[13px] font-semibold text-white mb-3">{t("footer.legalInfo")}</h4>
               <div className="space-y-2">
                 <Link href="/mentions-legales" className="block text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
-                  Mentions légales
+                  {t("footer.legalNotice")}
                 </Link>
                 <Link href="/confidentialite" className="block text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
-                  Politique de confidentialité
+                  {t("footer.privacyPolicy")}
                 </Link>
                 <Link href="/conditions" className="block text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
-                  Conditions d'utilisation
+                  {t("footer.termsOfUse")}
                 </Link>
                 <Link href="/login" className="block text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
-                  Accéder à mon compte
+                  {t("footer.accessAccount")}
                 </Link>
               </div>
             </div>
 
             <div>
-              <h4 className="text-[13px] font-semibold text-white mb-3">Contact</h4>
+              <h4 className="text-[13px] font-semibold text-white mb-3">{t("footer.contact")}</h4>
               <a href="mailto:contact@ncvmail.com" className="text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
                 contact@ncvmail.com
               </a>
@@ -132,7 +139,7 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
           </div>
 
           <div className="mt-8 pt-6 border-t border-[#1f2937] text-center">
-            <p className="text-[12px] text-[#8b9cb3]">&copy; 2026 NCV Mail. Tous droits réservés.</p>
+            <p className="text-[12px] text-[#8b9cb3]">{t("footer.allRightsReserved")}</p>
           </div>
         </div>
       </footer>
