@@ -341,6 +341,35 @@ export const DeleteEmailResponse = zod.object({
 });
 
 /**
+ * @summary Restore a trashed email to inbox
+ */
+export const RestoreEmailParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const RestoreEmailResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Permanently delete a trashed email
+ */
+export const PermanentDeleteEmailParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const PermanentDeleteEmailResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Permanently delete all trashed emails
+ */
+export const EmptyTrashResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
  * @summary Bulk update emails (archive, mark read, delete)
  */
 export const BulkUpdateEmailsBody = zod.object({

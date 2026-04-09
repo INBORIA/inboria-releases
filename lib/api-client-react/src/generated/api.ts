@@ -64,6 +64,7 @@ import type {
   DraftResponse,
   Email,
   EmailComment,
+  EmptyTrash200,
   ExportEmailsParams,
   Followup,
   ForceSharedMailboxSync200,
@@ -99,6 +100,7 @@ import type {
   OrganisationMember,
   PaginatedEmails,
   PaginatedSharedMailboxEmails,
+  PermanentDeleteEmail200,
   PortalResponse,
   Project,
   ProjectDetail,
@@ -110,6 +112,7 @@ import type {
   RegisterPushTokenBody,
   RemoveOrganisationMember200,
   RemoveSharedMailboxMember200,
+  RestoreEmail200,
   SendEmail200,
   SendEmailBody,
   SharedMailbox,
@@ -1134,6 +1137,255 @@ export const useDeleteEmail = <
   TContext
 > => {
   return useMutation(getDeleteEmailMutationOptions(options));
+};
+
+/**
+ * @summary Restore a trashed email to inbox
+ */
+export const getRestoreEmailUrl = (id: number) => {
+  return `/api/emails/${id}/restore`;
+};
+
+export const restoreEmail = async (
+  id: number,
+  options?: RequestInit,
+): Promise<RestoreEmail200> => {
+  return customFetch<RestoreEmail200>(getRestoreEmailUrl(id), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getRestoreEmailMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof restoreEmail>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof restoreEmail>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["restoreEmail"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof restoreEmail>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return restoreEmail(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type RestoreEmailMutationResult = NonNullable<
+  Awaited<ReturnType<typeof restoreEmail>>
+>;
+
+export type RestoreEmailMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Restore a trashed email to inbox
+ */
+export const useRestoreEmail = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof restoreEmail>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof restoreEmail>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getRestoreEmailMutationOptions(options));
+};
+
+/**
+ * @summary Permanently delete a trashed email
+ */
+export const getPermanentDeleteEmailUrl = (id: number) => {
+  return `/api/emails/${id}/permanent`;
+};
+
+export const permanentDeleteEmail = async (
+  id: number,
+  options?: RequestInit,
+): Promise<PermanentDeleteEmail200> => {
+  return customFetch<PermanentDeleteEmail200>(getPermanentDeleteEmailUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getPermanentDeleteEmailMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof permanentDeleteEmail>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof permanentDeleteEmail>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["permanentDeleteEmail"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof permanentDeleteEmail>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return permanentDeleteEmail(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type PermanentDeleteEmailMutationResult = NonNullable<
+  Awaited<ReturnType<typeof permanentDeleteEmail>>
+>;
+
+export type PermanentDeleteEmailMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Permanently delete a trashed email
+ */
+export const usePermanentDeleteEmail = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof permanentDeleteEmail>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof permanentDeleteEmail>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getPermanentDeleteEmailMutationOptions(options));
+};
+
+/**
+ * @summary Permanently delete all trashed emails
+ */
+export const getEmptyTrashUrl = () => {
+  return `/api/emails/trash/empty`;
+};
+
+export const emptyTrash = async (
+  options?: RequestInit,
+): Promise<EmptyTrash200> => {
+  return customFetch<EmptyTrash200>(getEmptyTrashUrl(), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getEmptyTrashMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof emptyTrash>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof emptyTrash>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["emptyTrash"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof emptyTrash>>,
+    void
+  > = () => {
+    return emptyTrash(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type EmptyTrashMutationResult = NonNullable<
+  Awaited<ReturnType<typeof emptyTrash>>
+>;
+
+export type EmptyTrashMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Permanently delete all trashed emails
+ */
+export const useEmptyTrash = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof emptyTrash>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof emptyTrash>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getEmptyTrashMutationOptions(options));
 };
 
 /**

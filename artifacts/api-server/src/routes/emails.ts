@@ -50,8 +50,8 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       query = query.eq("status", req.query.status as string);
       countQuery = countQuery.eq("status", req.query.status as string);
     } else {
-      query = query.neq("status", "archived");
-      countQuery = countQuery.neq("status", "archived");
+      query = query.neq("status", "archived").neq("status", "trashed");
+      countQuery = countQuery.neq("status", "archived").neq("status", "trashed");
     }
     if (req.query.projectId) {
       query = query.eq("project_id", req.query.projectId as string);
@@ -697,7 +697,7 @@ router.post("/emails/bulk", requireAuth, async (req, res): Promise<void> => {
     if (action === "delete") {
       const result = await supabaseAdmin
         .from("emails")
-        .delete()
+        .update({ status: "trashed" })
         .in("id", sanitizedIds)
         .eq("user_id", req.userId!)
         .select("id");
@@ -734,11 +734,52 @@ router.post("/emails/bulk", requireAuth, async (req, res): Promise<void> => {
   }
 });
 
+router.delete("/emails/trash/empty", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data: trashedEmails } = await supabaseAdmin
+      .from("emails")
+      .select("id")
+      .eq("user_id", req.userId!)
+      .eq("status", "trashed");
+
+    if (trashedEmails && trashedEmails.length > 0) {
+      const trashedIds = trashedEmails.map((e: any) => e.id);
+
+      await supabaseAdmin
+        .from("tasks")
+        .delete()
+        .in("email_id", trashedIds)
+        .eq("user_id", req.userId!);
+
+      await supabaseAdmin
+        .from("appointments")
+        .delete()
+        .in("email_id", trashedIds)
+        .eq("user_id", req.userId!);
+    }
+
+    const { error } = await supabaseAdmin
+      .from("emails")
+      .delete()
+      .eq("user_id", req.userId!)
+      .eq("status", "trashed");
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Failed to empty trash" });
+  }
+});
+
 router.delete("/emails/:id", requireAuth, async (req, res): Promise<void> => {
   try {
     const { error } = await supabaseAdmin
       .from("emails")
-      .delete()
+      .update({ status: "trashed" })
       .eq("id", req.params.id)
       .eq("user_id", req.userId!);
 
@@ -749,7 +790,59 @@ router.delete("/emails/:id", requireAuth, async (req, res): Promise<void> => {
 
     res.json({ success: true });
   } catch {
-    res.status(500).json({ error: "Failed to delete email" });
+    res.status(500).json({ error: "Failed to trash email" });
+  }
+});
+
+router.post("/emails/:id/restore", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { error } = await supabaseAdmin
+      .from("emails")
+      .update({ status: "inbox" })
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .eq("status", "trashed");
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Failed to restore email" });
+  }
+});
+
+router.delete("/emails/:id/permanent", requireAuth, async (req, res): Promise<void> => {
+  try {
+    await supabaseAdmin
+      .from("tasks")
+      .delete()
+      .eq("email_id", req.params.id)
+      .eq("user_id", req.userId!);
+
+    await supabaseAdmin
+      .from("appointments")
+      .delete()
+      .eq("email_id", req.params.id)
+      .eq("user_id", req.userId!);
+
+    const { error } = await supabaseAdmin
+      .from("emails")
+      .delete()
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .eq("status", "trashed");
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Failed to permanently delete email" });
   }
 });
 

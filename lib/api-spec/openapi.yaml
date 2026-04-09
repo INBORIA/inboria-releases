@@ -291,6 +291,66 @@ paths:
                   success:
                     type: boolean
 
+  /emails/{id}/restore:
+    post:
+      operationId: restoreEmail
+      tags: [emails]
+      summary: Restore a trashed email to inbox
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Email restored
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /emails/{id}/permanent:
+    delete:
+      operationId: permanentDeleteEmail
+      tags: [emails]
+      summary: Permanently delete a trashed email
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Email permanently deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /emails/trash/empty:
+    delete:
+      operationId: emptyTrash
+      tags: [emails]
+      summary: Permanently delete all trashed emails
+      responses:
+        "200":
+          description: Trash emptied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
   /emails/bulk:
     post:
       operationId: bulkUpdateEmails

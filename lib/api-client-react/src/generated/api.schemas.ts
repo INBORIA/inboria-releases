@@ -854,6 +854,18 @@ export type DeleteEmail200 = {
   success?: boolean;
 };
 
+export type RestoreEmail200 = {
+  success?: boolean;
+};
+
+export type PermanentDeleteEmail200 = {
+  success?: boolean;
+};
+
+export type EmptyTrash200 = {
+  success?: boolean;
+};
+
 export type BulkUpdateEmailsBodyAction =
   (typeof BulkUpdateEmailsBodyAction)[keyof typeof BulkUpdateEmailsBodyAction];
 
