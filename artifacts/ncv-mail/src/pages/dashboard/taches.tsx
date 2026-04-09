@@ -138,10 +138,19 @@ export default function Taches() {
 
   const taskList = (tasks as any[]) || [];
 
+  const aiCount = taskList.filter((t: any) => t.source === "ai").length;
+  const todoCount = taskList.filter((t: any) => t.status !== "done").length;
+  const doneCount = taskList.filter((t: any) => t.status === "done").length;
+
+  const filteredTasks = filter === "ai"
+    ? taskList.filter((t: any) => t.source === "ai")
+    : taskList;
+
   const filters = [
-    { key: "all", label: t("tasks.all") },
-    { key: "todo", label: t("tasks.todo") },
-    { key: "done", label: t("tasks.done") },
+    { key: "all", label: t("tasks.all"), count: taskList.length },
+    { key: "todo", label: t("tasks.todo"), count: todoCount },
+    { key: "done", label: t("tasks.done"), count: doneCount },
+    { key: "ai", label: "IA", count: aiCount },
   ];
 
   return (
@@ -187,13 +196,15 @@ export default function Taches() {
             <button
               key={f.key}
               onClick={() => setFilter(f.key)}
-              className={`text-[12px] px-3 py-1.5 rounded-md transition-all ${
+              className={`text-[12px] px-3 py-1.5 rounded-md transition-all inline-flex items-center gap-1.5 ${
                 filter === f.key
-                  ? "bg-primary text-white font-medium"
+                  ? f.key === "ai" ? "bg-violet-600 text-white font-medium" : "bg-primary text-white font-medium"
                   : "bg-card text-[#8b9cb3] hover:bg-[#1a2235] hover:text-white border border-border"
               }`}
             >
+              {f.key === "ai" && <Sparkles className="w-3 h-3" />}
               {f.label}
+              {!isLoading && <span className="text-[10px] opacity-70">({f.count})</span>}
             </button>
           ))}
         </div>
@@ -209,14 +220,14 @@ export default function Taches() {
                 </div>
               </div>
             ))
-          ) : taskList.length === 0 ? (
+          ) : filteredTasks.length === 0 ? (
             <div className="text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
               <Plus className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
               <h3 className="text-sm font-medium text-white mb-1">{t("tasks.noTasks")}</h3>
               <p className="text-[13px] text-[#8b9cb3]">{t("tasks.noTasksDesc")}</p>
             </div>
           ) : (
-            taskList.map((task: any) => {
+            filteredTasks.map((task: any) => {
               const taskStatus = task.status || "todo";
               const statusStyle = STATUS_STYLES[taskStatus as keyof typeof STATUS_STYLES] || STATUS_STYLES.todo;
 
