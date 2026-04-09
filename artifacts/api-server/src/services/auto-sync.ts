@@ -162,7 +162,10 @@ async function detectAppointmentFromEmail(
       messages: [
         {
           role: "system",
-          content: `Tu analyses un email professionnel pour détecter si un rendez-vous, une réunion ou un événement est mentionné avec une date/heure concrète. Réponds en JSON strict:
+          content: `Tu analyses un email professionnel pour détecter si un rendez-vous, une réunion ou un événement est mentionné avec une date/heure concrète.
+La date actuelle est le ${new Date().toISOString().split("T")[0]} (année ${new Date().getFullYear()}).
+IMPORTANT: Utilise l'année ${new Date().getFullYear()} pour les dates si aucune année n'est précisée.
+Réponds en JSON strict:
 { "hasAppointment": false }
 OU
 { "hasAppointment": true, "title": "...", "description": "...", "location": "...", "startAt": "ISO datetime", "endAt": "ISO datetime", "allDay": false, "participants": "..." }

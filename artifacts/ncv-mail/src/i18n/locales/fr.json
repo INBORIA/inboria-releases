@@ -1659,6 +1659,8 @@
     "createFromEmail": "Créer un RDV",
     "appointmentConfirmed": "RDV confirmé",
     "appointmentDismissed": "Suggestion supprimée",
-    "noRdv": "Aucun RDV"
+    "noRdv": "Aucun RDV",
+    "viewSourceEmail": "Voir l'email source",
+    "aiSuggestion": "Suggestion détectée par l'IA"
   }
 }

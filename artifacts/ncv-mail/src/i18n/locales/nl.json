@@ -1659,6 +1659,8 @@
     "createFromEmail": "Afspraak maken",
     "appointmentConfirmed": "Afspraak bevestigd",
     "appointmentDismissed": "Suggestie verwijderd",
-    "noRdv": "Geen afspraken"
+    "noRdv": "Geen afspraken",
+    "viewSourceEmail": "Bronmail bekijken",
+    "aiSuggestion": "AI-gedetecteerde suggestie"
   }
 }

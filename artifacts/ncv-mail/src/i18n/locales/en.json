@@ -1659,6 +1659,8 @@
     "createFromEmail": "Create appointment",
     "appointmentConfirmed": "Appointment confirmed",
     "appointmentDismissed": "Suggestion dismissed",
-    "noRdv": "No appointments"
+    "noRdv": "No appointments",
+    "viewSourceEmail": "View source email",
+    "aiSuggestion": "AI-detected suggestion"
   }
 }

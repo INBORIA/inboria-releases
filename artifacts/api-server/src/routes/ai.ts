@@ -680,6 +680,16 @@ router.post("/ai/detect-appointments", requireAuth, async (req, res): Promise<vo
 
     const lang = req.body?.lang || "fr";
     const emailId = req.body?.emailId;
+    const forceRescan = req.body?.forceRescan || false;
+
+    if (forceRescan) {
+      await supabaseAdmin
+        .from("appointments")
+        .delete()
+        .eq("user_id", req.userId!)
+        .eq("confirmed", false);
+      logger.info("[detect-appointments] Purged unconfirmed appointments for rescan");
+    }
 
     let emails: any[];
     if (emailId) {
@@ -720,7 +730,9 @@ router.post("/ai/detect-appointments", requireAuth, async (req, res): Promise<vo
         {
           role: "system",
           content: `Tu es un assistant qui détecte les rendez-vous, réunions et événements mentionnés dans des emails. ${langInstruction}
+La date actuelle est le ${new Date().toISOString().split("T")[0]} (année ${new Date().getFullYear()}).
 Analyse les emails et identifie les rendez-vous avec date, heure, lieu et description.
+IMPORTANT: Utilise l'année ${new Date().getFullYear()} pour les dates si aucune année n'est précisée dans l'email.
 Renvoie un JSON avec le format:
 { "appointments": [{ "title": "...", "description": "...", "location": "...", "startAt": "ISO datetime", "endAt": "ISO datetime", "allDay": false, "emailId": email_id_number, "participants": "..." }] }
 N'invente PAS de RDV. Détecte uniquement si une date/heure concrète est mentionnée. Si pas de rendez-vous, renvoie un tableau vide.`,
@@ -735,12 +747,15 @@ N'invente PAS de RDV. Détecte uniquement si une date/heure concrète est mentio
     let detected: any[] = [];
     try {
       const content = completion.choices[0]?.message?.content ?? "{}";
+      logger.info({ rawContent: content }, "[detect-appointments] OpenAI response");
       const jsonMatch = content.match(/\{[\s\S]*\}/);
       const parsed = JSON.parse(jsonMatch ? jsonMatch[0] : "{}");
       detected = parsed.appointments || [];
     } catch {
       detected = [];
     }
+
+    logger.info({ detectedCount: detected.length, detected: detected.map((a: any) => ({ title: a.title, startAt: a.startAt, emailId: a.emailId })) }, "[detect-appointments] Parsed results");
 
     const created: any[] = [];
     for (const apt of detected) {
@@ -753,7 +768,10 @@ N'invente PAS de RDV. Détecte uniquement si une date/heure concrète est mentio
           .eq("user_id", req.userId!)
           .eq("email_id", apt.emailId)
           .maybeSingle();
-        if (existingApt) continue;
+        if (existingApt) {
+          logger.info({ emailId: apt.emailId, existingId: existingApt.id }, "[detect-appointments] Duplicate skipped");
+          continue;
+        }
       }
 
       const endAt = apt.endAt || new Date(new Date(apt.startAt).getTime() + 3600000).toISOString();
@@ -775,6 +793,9 @@ N'invente PAS de RDV. Détecte uniquement si une date/heure concrète est mentio
         .select()
         .single();
 
+      if (error) {
+        logger.error({ err: error.message, code: error.code, title: apt.title, emailId: apt.emailId }, "[detect-appointments] Insert failed");
+      }
       if (!error && data) created.push({
         id: data.id,
         userId: data.user_id,

@@ -27,6 +27,8 @@ import {
   Download,
   X,
   Calendar,
+  Mail,
+  ExternalLink,
 } from "lucide-react";
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -255,7 +257,7 @@ export default function Agenda() {
 
   const handleDetect = () => {
     detectAppointments.mutate(
-      { data: { lang: i18n.language } },
+      { data: { lang: i18n.language, forceRescan: true } },
       {
         onSuccess: (data) => {
           const count = (data as { count?: number })?.count || 0;
@@ -602,14 +604,41 @@ export default function Agenda() {
                     {selectedAppointment.projects.name}
                   </div>
                 )}
+                {selectedAppointment.participants && (
+                  <div className="flex items-center gap-2 text-[12px] text-[#8b9cb3]">
+                    <Users className="w-3.5 h-3.5" />
+                    {selectedAppointment.participants}
+                  </div>
+                )}
                 {selectedAppointment.description && (
                   <p className="text-[12px] text-[#8b9cb3] bg-background rounded p-2 border border-border mt-2">
                     {selectedAppointment.description}
                   </p>
                 )}
+                {selectedAppointment.emailId && (
+                  <a
+                    href={`/inbox?emailId=${selectedAppointment.emailId}`}
+                    className="flex items-center gap-2 text-[12px] text-primary hover:text-primary/80 mt-1"
+                  >
+                    <Mail className="w-3.5 h-3.5" />
+                    {t("agenda.viewSourceEmail")}
+                    <ExternalLink className="w-3 h-3" />
+                  </a>
+                )}
+                {selectedAppointment.confirmed === false && (
+                  <div className="flex items-center gap-1.5 mt-1">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <span className="text-[11px] text-amber-400 font-medium">{t("agenda.aiSuggestion")}</span>
+                  </div>
+                )}
               </div>
 
               <div className="flex gap-2">
+                {selectedAppointment.confirmed === false && (
+                  <Button size="sm" className="h-7 text-[11px]" onClick={() => { handleConfirm(selectedAppointment.id); setSelectedAppointment(null); }}>
+                    {t("agenda.confirmAppointment")}
+                  </Button>
+                )}
                 <Button size="sm" variant="outline" className="h-7 text-[11px]" onClick={() => openEditForm(selectedAppointment)}>
                   <Pencil className="w-3 h-3 mr-1" />
                   {t("agenda.editAppointment")}
