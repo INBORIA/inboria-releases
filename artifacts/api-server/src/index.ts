@@ -229,18 +229,54 @@ async function ensureProfileTimezone() {
   }
 }
 
-async function logTaskStats() {
+async function cleanupDuplicateTasks() {
   try {
-    const { count, error } = await supabaseAdmin
+    const { data: aiTasks, error: fetchErr } = await supabaseAdmin
       .from("tasks")
-      .select("id", { count: "exact", head: true })
-      .not("email_id", "is", null);
+      .select("id, email_id, title")
+      .not("email_id", "is", null)
+      .order("id", { ascending: true });
 
-    if (!error) {
-      logger.info(`AI tasks count: ${count}`);
+    if (fetchErr || !aiTasks || aiTasks.length === 0) {
+      logger.info("No AI tasks to deduplicate");
+      return;
     }
+
+    const seen = new Map<string, number>();
+    const toDelete: number[] = [];
+
+    for (const task of aiTasks) {
+      const key = `${task.email_id}::${task.title}`;
+      if (seen.has(key)) {
+        toDelete.push(task.id);
+      } else {
+        seen.set(key, task.id);
+      }
+    }
+
+    if (toDelete.length === 0) {
+      logger.info(`No duplicate tasks found (${aiTasks.length} AI tasks, all unique)`);
+      return;
+    }
+
+    const batchSize = 50;
+    let deleted = 0;
+    for (let i = 0; i < toDelete.length; i += batchSize) {
+      const batch = toDelete.slice(i, i + batchSize);
+      const { error: delErr } = await supabaseAdmin
+        .from("tasks")
+        .delete()
+        .in("id", batch);
+      if (delErr) {
+        logger.warn({ error: delErr.message }, "Error deleting duplicate tasks batch");
+      } else {
+        deleted += batch.length;
+      }
+    }
+
+    logger.info(`Cleaned up ${deleted} duplicate tasks (kept ${aiTasks.length - deleted})`);
   } catch (e: any) {
-    logger.warn({ error: e.message }, "Task stats check failed (non-fatal)");
+    logger.warn({ error: e.message }, "Duplicate task cleanup failed (non-fatal)");
   }
 }
 
@@ -273,6 +309,6 @@ app.listen(port, (err) => {
   ensureEmailAttachmentsTable();
   ensureAppointmentsTable();
   ensureProfileTimezone();
-  logTaskStats();
+  cleanupDuplicateTasks();
   startAutoSync();
 });
