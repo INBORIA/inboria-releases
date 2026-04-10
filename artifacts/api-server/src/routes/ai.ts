@@ -890,7 +890,8 @@ router.post("/ai/support-chat", requireAuth, async (req, res): Promise<void> => 
       return;
     }
 
-    const lang = (language === "en" || language === "nl" ? language : "fr") as "fr" | "en" | "nl";
+    const langCode = typeof language === "string" ? language.substring(0, 2).toLowerCase() : "fr";
+    const lang = (langCode === "en" || langCode === "nl" ? langCode : "fr") as "fr" | "en" | "nl";
     const kb = getKnowledgeBase(lang);
     const systemPrompt = getSystemPrompt(lang);
 

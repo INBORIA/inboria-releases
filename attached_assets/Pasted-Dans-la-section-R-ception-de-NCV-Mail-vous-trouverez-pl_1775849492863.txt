@@ -1,0 +1,35 @@
+Dans la section Réception de NCV Mail, vous trouverez plusieurs fonctionnalités conçues pour faciliter la gestion de vos emails entrants :
+
+1. **Tri par priorité** : Chaque email est automatiquement classé par l'IA avec une priorité (Urgent 🔴, Moyen 🟡, Faible 🟢), vous permettant de vous concentrer sur les messages les plus importants.
+
+2. **Résumé IA** : Un résumé court de chaque email est généré par l'IA, visible sans avoir à ouvrir l'email, ce qui vous fait gagner du temps.
+
+3. **Catégorisation automatique** : Les emails sont classés dans des catégories prédéfinies (comme Factures, Support client, Commercial, etc.) pour une meilleure organisation.
+
+4. **Fonctionnalités supplémentaires** : Vous pouvez rechercher des emails, filtrer par catégorie ou priorité, et effectuer des actions sur les emails (répondre, archiver, supprimer, etc.). De plus, l'IA peut générer des brouillons de réponse et vous pouvez ajouter des commentaires internes sur chaque email.
+
+Ces outils vous aident à gérer efficacement votre boîte de réception et à rester organisé. Si vous avez d'autres questions, n'hésitez pas à demander !
+Et comment gérer mon équipe ??
+Pour gérer votre équipe dans NCV Mail, vous devez être abonné au plan Business. Voici les principales fonctionnalités disponibles :
+
+1. **Inviter des membres** : Vous pouvez inviter des membres de votre équipe par email pour qu'ils rejoignent votre organisation sur NCV Mail.
+
+2. **Définir les rôles** : Vous avez la possibilité de définir des rôles pour chaque membre, soit en tant qu'Admin, soit en tant que Membre, ce qui vous permet de contrôler les accès et les permissions.
+
+3. **Suivi de l'activité** : Vous pouvez voir l'activité de chaque membre, y compris le nombre d'emails traités et les tâches complétées, ce qui vous aide à évaluer la performance de votre équipe.
+
+4. **Retirer un membre** : Si nécessaire, vous pouvez retirer un membre de l'équipe à tout moment.
+
+Ces outils vous permettent de gérer efficacement votre équipe et d'assurer une bonne collaboration. Si vous avez d'autres questions ou besoin d'assistance, n'hésitez pas à me le faire savoir !
+Et comment gérer mon équipe
+Pour gérer votre équipe dans NCV Mail, vous devez être abonné au plan Business. Voici les fonctionnalités clés disponibles :
+
+1. **Inviter des membres** : Vous pouvez inviter des membres de votre équipe par email pour qu'ils rejoignent votre organisation sur NCV Mail.
+
+2. **Définir les rôles** : Vous pouvez attribuer des rôles à chaque membre, soit en tant qu'Admin, soit en tant que Membre, ce qui permet de gérer les accès et les permissions.
+
+3. **Suivi de l'activité** : Vous avez la possibilité de suivre l'activité de chaque membre, notamment le nombre d'emails traités et les tâches complétées, ce qui vous aide à évaluer la performance de votre équipe.
+
+4. **Retirer un membre** : Si nécessaire, vous pouvez retirer un membre de l'équipe à tout moment.
+
+Ces outils vous permettent de gérer efficacement votre équipe et d'assurer une bonne collaboration. Si vous avez d'autres questions ou besoin d'assistance, n'hésitez pas à me le faire savoir !

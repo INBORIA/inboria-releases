@@ -32,6 +32,11 @@ export function SupportChatWidget() {
     }
   }, [isOpen]);
 
+  const currentLang = i18n.resolvedLanguage || i18n.language?.substring(0, 2) || "fr";
+  useEffect(() => {
+    setMessages([]);
+  }, [currentLang]);
+
   const sendMessage = async () => {
     const trimmed = input.trim();
     if (!trimmed || isLoading || !session?.access_token) return;
@@ -51,7 +56,7 @@ export function SupportChatWidget() {
         },
         body: JSON.stringify({
           message: trimmed,
-          language: i18n.language,
+          language: i18n.resolvedLanguage || i18n.language?.substring(0, 2) || "fr",
           history: messages.slice(-6),
         }),
       });
