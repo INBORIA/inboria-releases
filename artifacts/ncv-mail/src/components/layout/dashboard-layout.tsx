@@ -21,7 +21,7 @@ import {
   Send,
   CalendarDays,
 } from "lucide-react";
-import ncvLogo from "@assets/image_1775392688923.png";
+import mailopsLogo from "@assets/mailops_logo_white_transparent_v1_1775861214478.png";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -100,8 +100,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
       <div className="flex h-36 shrink-0 flex-col items-center justify-center px-4 border-b border-[#1f2937]">
-        <img src={ncvLogo} alt="NCV" className="h-28 w-28 object-contain" />
-        <span className="text-sm font-semibold tracking-tight text-white -mt-3">NCV Mail</span>
+        <img src={mailopsLogo} alt="MailOps" className="h-24 w-24 object-contain" />
+        <span className="text-sm font-semibold tracking-tight text-white -mt-1">MailOps</span>
       </div>
       
       <nav className="flex-1 px-2 py-2.5 space-y-0.5">
@@ -207,8 +207,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               </SheetContent>
             </Sheet>
             <div className="flex items-center gap-2 ml-2">
-              <img src={ncvLogo} alt="NCV" className="h-20 w-20 object-contain" />
-              <span className="font-semibold text-[15px] text-white">NCV Mail</span>
+              <img src={mailopsLogo} alt="MailOps" className="h-16 w-16 object-contain" />
+              <span className="font-semibold text-[15px] text-white">MailOps</span>
             </div>
           </div>
           <div className="flex-1" />

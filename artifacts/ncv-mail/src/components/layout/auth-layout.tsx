@@ -1,4 +1,4 @@
-import ncvLogo from "@assets/image_1775392688923.png";
+import mailopsLogo from "@assets/mailops_logo_white_transparent_v1_1775861214478.png";
 import { Link } from "wouter";
 import { ArrowLeft } from "lucide-react";
 
@@ -12,7 +12,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
       <div className="w-full max-w-md bg-card rounded-xl border border-border overflow-hidden shadow-lg">
         <div className="p-8">
           <div className="flex justify-center mb-8">
-            <img src={ncvLogo} alt="NCV" className="h-60 w-60 object-contain" />
+            <img src={mailopsLogo} alt="MailOps" className="h-48 w-48 object-contain" />
           </div>
           {children}
         </div>
