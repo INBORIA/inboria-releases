@@ -16,6 +16,7 @@ import {
   Send,
   Bell,
   Paperclip,
+  CalendarDays,
 } from "lucide-react";
 import { Link } from "wouter";
 import { useGetProfile, useGetMyOrganisation } from "@workspace/api-client-react";
@@ -83,6 +84,16 @@ const sectionConfigs: ManualSection[] = [
     color: "text-emerald-400",
     bgColor: "bg-emerald-500/10",
     borderColor: "border-emerald-500/20",
+  },
+  {
+    icon: CalendarDays,
+    nameKey: "manual.sections.agenda",
+    descKey: "manual.sections.agendaDesc",
+    featuresKey: "manual.sections.agendaFeatures",
+    href: "/dashboard/agenda",
+    color: "text-purple-400",
+    bgColor: "bg-purple-500/10",
+    borderColor: "border-purple-500/20",
   },
   {
     icon: CheckSquare,

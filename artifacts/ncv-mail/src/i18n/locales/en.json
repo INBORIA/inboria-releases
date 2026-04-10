@@ -1468,7 +1468,6 @@
         "Visual distinction between new messages and replies",
         "Conversation view: full exchange history in one place",
         "Attachment indicator on sent emails",
-        "Create a follow-up task from a sent email",
         "Access to AI summary of each email"
       ],
       "archives": "Archives",
@@ -1488,6 +1487,19 @@
         "Email volume trends over time",
         "Overview to prioritize your day"
       ],
+      "agenda": "Agenda",
+      "agendaDesc": "Your built-in calendar with automatic appointment detection from your emails. Manage appointments, meetings and events.",
+      "agendaFeatures": [
+        "Automatic appointment detection by AI from your emails",
+        "Month, week and day views",
+        "Create, edit and delete appointments",
+        "Link an appointment to a project",
+        "Link to the source email of the appointment",
+        "Location, participants and configurable reminder",
+        "All-day event option",
+        "CSV export of appointments",
+        "Smooth navigation between dates"
+      ],
       "tasks": "Tasks",
       "tasksDesc": "Manage tasks automatically extracted from your emails by AI. Each email with a concrete action generates a task.",
       "tasksFeatures": [
@@ -1495,8 +1507,11 @@
         "Direct link to source email for each task",
         "Check/uncheck a task as done",
         "Delete completed or unneeded tasks",
-        "Create a follow-up task from a sent email",
-        "Track your productivity"
+        "AI filter to view only auto-generated tasks",
+        "Count badges on each filter (All, To do, Done, AI)",
+        "Create a manual task",
+        "Reply directly to the source email from a task",
+        "CSV export of tasks"
       ],
       "projects": "Projects",
       "projectsDesc": "Group your emails by project to better organize your work. Create projects and associate emails.",

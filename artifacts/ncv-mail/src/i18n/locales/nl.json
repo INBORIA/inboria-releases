@@ -1468,7 +1468,6 @@
         "Visueel onderscheid tussen nieuwe berichten en antwoorden",
         "Gespreksweergave: volledige uitwisselingsgeschiedenis op één plek",
         "Bijlage-indicator op verzonden e-mails",
-        "Een opvolgtaak aanmaken vanuit een verzonden e-mail",
         "Toegang tot AI-samenvatting van elke e-mail"
       ],
       "archives": "Archief",
@@ -1488,6 +1487,19 @@
         "E-mailvolume-trends in de tijd",
         "Overzicht om uw dag te prioriteren"
       ],
+      "agenda": "Agenda",
+      "agendaDesc": "Uw ingebouwde kalender met automatische afspraakdetectie uit uw e-mails. Beheer afspraken, vergaderingen en evenementen.",
+      "agendaFeatures": [
+        "Automatische afspraakdetectie door AI vanuit uw e-mails",
+        "Maand-, week- en dagweergave",
+        "Afspraken aanmaken, bewerken en verwijderen",
+        "Een afspraak koppelen aan een project",
+        "Link naar de bron-e-mail van de afspraak",
+        "Locatie, deelnemers en configureerbare herinnering",
+        "Optie voor hele dag",
+        "CSV-export van afspraken",
+        "Soepele navigatie tussen datums"
+      ],
       "tasks": "Taken",
       "tasksDesc": "Beheer van taken die automatisch door AI uit uw e-mails worden geëxtraheerd. Elke e-mail met een concrete actie genereert een taak.",
       "tasksFeatures": [
@@ -1495,8 +1507,11 @@
         "Directe link naar de bron-e-mail van elke taak",
         "Een taak aan-/uitvinken als voltooid",
         "Voltooide of onnodige taken verwijderen",
-        "Een opvolgtaak aanmaken vanuit een verzonden e-mail",
-        "Uw productiviteit bijhouden"
+        "AI-filter om alleen automatisch gegenereerde taken te bekijken",
+        "Telbadges op elk filter (Alles, Te doen, Voltooid, AI)",
+        "Handmatig een taak aanmaken",
+        "Direct antwoorden op de bron-e-mail vanuit een taak",
+        "CSV-export van taken"
       ],
       "projects": "Projecten",
       "projectsDesc": "Groepeer uw e-mails per project om uw werk beter te organiseren. Maak projecten aan en koppel e-mails.",

@@ -1468,7 +1468,6 @@
         "Distinction visuelle entre nouveaux messages et réponses",
         "Vue conversation : tout l'historique d'un échange en un seul endroit",
         "Indicateur de pièces jointes sur les emails envoyés",
-        "Créer une tâche de suivi depuis un email envoyé",
         "Accès au résumé IA de chaque email"
       ],
       "archives": "Archives",
@@ -1488,6 +1487,19 @@
         "Évolution du volume d'emails dans le temps",
         "Vue d'ensemble pour prioriser votre journée"
       ],
+      "agenda": "Agenda",
+      "agendaDesc": "Votre calendrier intégré avec détection automatique des rendez-vous depuis vos emails. Gérez vos rendez-vous, réunions et événements.",
+      "agendaFeatures": [
+        "Détection automatique des rendez-vous par l'IA depuis vos emails",
+        "Vues mois, semaine et jour",
+        "Créer, modifier et supprimer des rendez-vous",
+        "Associer un rendez-vous à un projet",
+        "Lien vers l'email source du rendez-vous",
+        "Lieu, participants et rappel configurable",
+        "Option journée entière",
+        "Export CSV des rendez-vous",
+        "Navigation fluide entre les dates"
+      ],
       "tasks": "Tâches",
       "tasksDesc": "Gestion des tâches extraites automatiquement de vos emails par l'IA. Chaque email contenant une action concrète génère une tâche.",
       "tasksFeatures": [
@@ -1495,8 +1507,11 @@
         "Lien direct vers l'email source de chaque tâche",
         "Cocher / décocher une tâche comme faite",
         "Supprimer les tâches terminées ou inutiles",
-        "Créer une tâche de suivi depuis un email envoyé",
-        "Suivi de votre productivité"
+        "Filtre IA pour voir uniquement les tâches générées automatiquement",
+        "Badges de compteur sur chaque filtre (Tout, À faire, Fait, IA)",
+        "Créer une tâche manuelle",
+        "Répondre directement à l'email source depuis une tâche",
+        "Export CSV des tâches"
       ],
       "projects": "Projets",
       "projectsDesc": "Regroupez vos emails par projet pour mieux organiser votre travail. Créez des projets et associez-y des emails.",
