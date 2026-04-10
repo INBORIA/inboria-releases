@@ -237,7 +237,12 @@ async function cleanupDuplicateTasks() {
       .not("email_id", "is", null)
       .order("id", { ascending: true });
 
-    if (fetchErr || !aiTasks || aiTasks.length === 0) {
+    if (fetchErr) {
+      logger.warn({ error: fetchErr.message }, "Failed to fetch AI tasks for dedup check");
+      return;
+    }
+
+    if (!aiTasks || aiTasks.length === 0) {
       logger.info("No AI tasks to deduplicate");
       return;
     }
