@@ -30,6 +30,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { SupportChatWidget } from "@/components/SupportChatWidget";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
@@ -244,6 +245,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           {children}
         </main>
       </div>
+      <SupportChatWidget />
     </div>
   );
 }

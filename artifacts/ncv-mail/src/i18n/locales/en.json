@@ -1699,5 +1699,14 @@
     "noRdv": "No appointments",
     "viewSourceEmail": "View source email",
     "aiSuggestion": "AI-detected suggestion"
+  },
+  "supportChat": {
+    "title": "NCV Mail Assistant",
+    "subtitle": "AI Support • Available 24/7",
+    "welcomeTitle": "How can I help you?",
+    "welcomeMessage": "Ask me anything about NCV Mail: features, settings, subscription, and more.",
+    "placeholder": "Type your question...",
+    "poweredBy": "Powered by NCV Mail AI",
+    "errorMessage": "Sorry, an error occurred. Please try again or contact support@ncvmail.be."
   }
 }

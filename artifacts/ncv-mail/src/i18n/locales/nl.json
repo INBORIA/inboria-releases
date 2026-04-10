@@ -1699,5 +1699,14 @@
     "noRdv": "Geen afspraken",
     "viewSourceEmail": "Bronmail bekijken",
     "aiSuggestion": "AI-gedetecteerde suggestie"
+  },
+  "supportChat": {
+    "title": "NCV Mail Assistent",
+    "subtitle": "AI-ondersteuning • 24/7 beschikbaar",
+    "welcomeTitle": "Hoe kan ik u helpen?",
+    "welcomeMessage": "Stel mij elke vraag over NCV Mail: functies, instellingen, abonnement en meer.",
+    "placeholder": "Typ uw vraag...",
+    "poweredBy": "Aangedreven door NCV Mail AI",
+    "errorMessage": "Sorry, er is een fout opgetreden. Probeer het opnieuw of neem contact op met support@ncvmail.be."
   }
 }

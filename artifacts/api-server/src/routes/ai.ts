@@ -4,6 +4,7 @@ import { GenerateDailySummaryBody, TriageEmailBody, GenerateDraftBody } from "@w
 import OpenAI from "openai";
 import { requireAuth } from "../middlewares/auth";
 import { logger } from "../lib/logger";
+import { getKnowledgeBase, getSystemPrompt } from "../services/knowledge-base";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -848,6 +849,85 @@ N'invente PAS de RDV. Détecte uniquement si une date/heure concrète est mentio
   } catch (err: any) {
     logger.error({ err: err.message, stack: err.stack }, "[detect-appointments] Unhandled error");
     res.status(500).json({ error: "Erreur de détection: " + err.message });
+  }
+});
+
+const supportChatRateLimit = new Map<string, number[]>();
+
+router.post("/ai/support-chat", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const userId = req.userId!;
+
+    const entitlement = await checkEntitlement(userId);
+    if (entitlement.blocked) {
+      res.status(403).json({ error: entitlement.reason });
+      return;
+    }
+
+    const now = Date.now();
+    const userRequests = supportChatRateLimit.get(userId) || [];
+    const recentRequests = userRequests.filter((t) => now - t < 60_000);
+    if (recentRequests.length >= 10) {
+      res.status(429).json({ error: "Too many requests. Please wait a moment." });
+      return;
+    }
+    recentRequests.push(now);
+    supportChatRateLimit.set(userId, recentRequests);
+
+    const { message, language, history } = req.body as {
+      message?: string;
+      language?: string;
+      history?: Array<{ role: "user" | "assistant"; content: string }>;
+    };
+
+    if (!message || typeof message !== "string" || message.trim().length === 0) {
+      res.status(400).json({ error: "Message is required" });
+      return;
+    }
+
+    if (message.trim().length > 2000) {
+      res.status(400).json({ error: "Message too long (max 2000 characters)" });
+      return;
+    }
+
+    const lang = (language === "en" || language === "nl" ? language : "fr") as "fr" | "en" | "nl";
+    const kb = getKnowledgeBase(lang);
+    const systemPrompt = getSystemPrompt(lang);
+
+    const conversationHistory: Array<{ role: "user" | "assistant"; content: string }> = [];
+    if (Array.isArray(history)) {
+      const recentHistory = history.slice(-6);
+      for (const msg of recentHistory) {
+        if (msg.role === "user" || msg.role === "assistant") {
+          conversationHistory.push({ role: msg.role, content: String(msg.content).slice(0, 2000) });
+        }
+      }
+    }
+
+    const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
+      {
+        role: "system",
+        content: `${systemPrompt}\n\n--- KNOWLEDGE BASE ---\n${kb}`,
+      },
+      ...conversationHistory,
+      { role: "user", content: message.trim() },
+    ];
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages,
+      max_tokens: 800,
+      temperature: 0.3,
+    });
+
+    const reply = completion.choices[0]?.message?.content || "";
+
+    logger.info({ userId, language: lang }, "[support-chat] Reply generated");
+
+    res.json({ reply });
+  } catch (err: any) {
+    logger.error({ err: err.message, stack: err.stack }, "[support-chat] Error");
+    res.status(500).json({ error: "An error occurred. Please try again." });
   }
 });
 

@@ -35,6 +35,7 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
 - **Email Assignment (Phase 4)**: Allows assigning emails to specific users within an organization, with associated API routes and UI elements.
 - **Notifications & Activity (Phase 5)**: Implements a notification system and activity logging for events like email assignment and comments, with a team dashboard.
 - **Agenda/Calendar (Task #21)**: Provides appointment management with CRUD operations, AI detection of appointments from emails, and integration with the dashboard and mobile app.
+- **AI Support Chatbot**: Floating chat widget ("?") in bottom-right of all dashboard pages. Uses GPT-4o-mini with a comprehensive knowledge base covering all 14 dashboard pages in FR/EN/NL. Endpoint: `POST /api/ai/support-chat` with entitlement check and per-user rate limiting (10 req/min). Knowledge base defined in `api-server/src/services/knowledge-base.ts`.
 - **Email Attachments (Phase 7)**: Supports handling email attachments during sync and sending, with on-demand retrieval from providers (no permanent storage).
 - **Email Pagination (Phase 6)**: Implements server-side pagination for email lists and infinite scroll on the frontend for improved performance and user experience.
 

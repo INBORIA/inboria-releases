@@ -1699,5 +1699,14 @@
     "noRdv": "Aucun RDV",
     "viewSourceEmail": "Voir l'email source",
     "aiSuggestion": "Suggestion détectée par l'IA"
+  },
+  "supportChat": {
+    "title": "Assistant NCV Mail",
+    "subtitle": "Support IA • Disponible 24h/24",
+    "welcomeTitle": "Comment puis-je vous aider ?",
+    "welcomeMessage": "Posez-moi n'importe quelle question sur NCV Mail : fonctionnalités, paramètres, abonnement, et plus encore.",
+    "placeholder": "Tapez votre question...",
+    "poweredBy": "Propulsé par l'IA NCV Mail",
+    "errorMessage": "Désolé, une erreur est survenue. Veuillez réessayer ou contactez support@ncvmail.be."
   }
 }
