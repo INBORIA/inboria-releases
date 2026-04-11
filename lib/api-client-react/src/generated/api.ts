@@ -98,6 +98,8 @@ import type {
   OAuthUrlResponse,
   Organisation,
   OrganisationMember,
+  PaddleWebhook200,
+  PaddleWebhookBody,
   PaginatedEmails,
   PaginatedSharedMailboxEmails,
   PermanentDeleteEmail200,
@@ -117,8 +119,6 @@ import type {
   SendEmailBody,
   SharedMailbox,
   SharedMailboxMember,
-  StripeWebhook200,
-  StripeWebhookBody,
   Task,
   TeamDashboard,
   TriageEmailBody,
@@ -4875,10 +4875,10 @@ export const useUploadAttachments = <
 };
 
 /**
- * @summary Create a Stripe Checkout session
+ * @summary Create a Paddle Checkout session
  */
 export const getCreateCheckoutSessionUrl = () => {
-  return `/api/stripe/checkout`;
+  return `/api/paddle/checkout`;
 };
 
 export const createCheckoutSession = async (
@@ -4938,7 +4938,7 @@ export type CreateCheckoutSessionMutationBody = BodyType<CheckoutBody>;
 export type CreateCheckoutSessionMutationError = ErrorType<void>;
 
 /**
- * @summary Create a Stripe Checkout session
+ * @summary Create a Paddle Checkout session
  */
 export const useCreateCheckoutSession = <
   TError = ErrorType<void>,
@@ -4961,42 +4961,42 @@ export const useCreateCheckoutSession = <
 };
 
 /**
- * @summary Stripe webhook handler (called by Stripe, not by frontend)
+ * @summary Paddle webhook handler (called by Paddle, not by frontend)
  */
-export const getStripeWebhookUrl = () => {
-  return `/api/stripe/webhook`;
+export const getPaddleWebhookUrl = () => {
+  return `/api/paddle/webhook`;
 };
 
-export const stripeWebhook = async (
-  stripeWebhookBody: StripeWebhookBody,
+export const paddleWebhook = async (
+  paddleWebhookBody: PaddleWebhookBody,
   options?: RequestInit,
-): Promise<StripeWebhook200> => {
-  return customFetch<StripeWebhook200>(getStripeWebhookUrl(), {
+): Promise<PaddleWebhook200> => {
+  return customFetch<PaddleWebhook200>(getPaddleWebhookUrl(), {
     ...options,
     method: "POST",
     headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(stripeWebhookBody),
+    body: JSON.stringify(paddleWebhookBody),
   });
 };
 
-export const getStripeWebhookMutationOptions = <
+export const getPaddleWebhookMutationOptions = <
   TError = ErrorType<void>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof stripeWebhook>>,
+    Awaited<ReturnType<typeof paddleWebhook>>,
     TError,
-    { data: BodyType<StripeWebhookBody> },
+    { data: BodyType<PaddleWebhookBody> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationOptions<
-  Awaited<ReturnType<typeof stripeWebhook>>,
+  Awaited<ReturnType<typeof paddleWebhook>>,
   TError,
-  { data: BodyType<StripeWebhookBody> },
+  { data: BodyType<PaddleWebhookBody> },
   TContext
 > => {
-  const mutationKey = ["stripeWebhook"];
+  const mutationKey = ["paddleWebhook"];
   const { mutation: mutationOptions, request: requestOptions } = options
     ? options.mutation &&
       "mutationKey" in options.mutation &&
@@ -5006,72 +5006,72 @@ export const getStripeWebhookMutationOptions = <
     : { mutation: { mutationKey }, request: undefined };
 
   const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof stripeWebhook>>,
-    { data: BodyType<StripeWebhookBody> }
+    Awaited<ReturnType<typeof paddleWebhook>>,
+    { data: BodyType<PaddleWebhookBody> }
   > = (props) => {
     const { data } = props ?? {};
 
-    return stripeWebhook(data, requestOptions);
+    return paddleWebhook(data, requestOptions);
   };
 
   return { mutationFn, ...mutationOptions };
 };
 
-export type StripeWebhookMutationResult = NonNullable<
-  Awaited<ReturnType<typeof stripeWebhook>>
+export type PaddleWebhookMutationResult = NonNullable<
+  Awaited<ReturnType<typeof paddleWebhook>>
 >;
-export type StripeWebhookMutationBody = BodyType<StripeWebhookBody>;
-export type StripeWebhookMutationError = ErrorType<void>;
+export type PaddleWebhookMutationBody = BodyType<PaddleWebhookBody>;
+export type PaddleWebhookMutationError = ErrorType<void>;
 
 /**
- * @summary Stripe webhook handler (called by Stripe, not by frontend)
+ * @summary Paddle webhook handler (called by Paddle, not by frontend)
  */
-export const useStripeWebhook = <
+export const usePaddleWebhook = <
   TError = ErrorType<void>,
   TContext = unknown,
 >(options?: {
   mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof stripeWebhook>>,
+    Awaited<ReturnType<typeof paddleWebhook>>,
     TError,
-    { data: BodyType<StripeWebhookBody> },
+    { data: BodyType<PaddleWebhookBody> },
     TContext
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseMutationResult<
-  Awaited<ReturnType<typeof stripeWebhook>>,
+  Awaited<ReturnType<typeof paddleWebhook>>,
   TError,
-  { data: BodyType<StripeWebhookBody> },
+  { data: BodyType<PaddleWebhookBody> },
   TContext
 > => {
-  return useMutation(getStripeWebhookMutationOptions(options));
+  return useMutation(getPaddleWebhookMutationOptions(options));
 };
 
 /**
- * @summary Get Stripe customer portal URL
+ * @summary Get Paddle customer portal URL
  */
-export const getGetStripePortalUrl = () => {
-  return `/api/stripe/portal`;
+export const getGetPaddlePortalUrl = () => {
+  return `/api/paddle/portal`;
 };
 
-export const getStripePortal = async (
+export const getPaddlePortal = async (
   options?: RequestInit,
 ): Promise<PortalResponse> => {
-  return customFetch<PortalResponse>(getGetStripePortalUrl(), {
+  return customFetch<PortalResponse>(getGetPaddlePortalUrl(), {
     ...options,
     method: "GET",
   });
 };
 
-export const getGetStripePortalQueryKey = () => {
-  return [`/api/stripe/portal`] as const;
+export const getGetPaddlePortalQueryKey = () => {
+  return [`/api/paddle/portal`] as const;
 };
 
-export const getGetStripePortalQueryOptions = <
-  TData = Awaited<ReturnType<typeof getStripePortal>>,
+export const getGetPaddlePortalQueryOptions = <
+  TData = Awaited<ReturnType<typeof getPaddlePortal>>,
   TError = ErrorType<void>,
 >(options?: {
   query?: UseQueryOptions<
-    Awaited<ReturnType<typeof getStripePortal>>,
+    Awaited<ReturnType<typeof getPaddlePortal>>,
     TError,
     TData
   >;
@@ -5079,40 +5079,40 @@ export const getGetStripePortalQueryOptions = <
 }) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetStripePortalQueryKey();
+  const queryKey = queryOptions?.queryKey ?? getGetPaddlePortalQueryKey();
 
-  const queryFn: QueryFunction<Awaited<ReturnType<typeof getStripePortal>>> = ({
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getPaddlePortal>>> = ({
     signal,
-  }) => getStripePortal({ signal, ...requestOptions });
+  }) => getPaddlePortal({ signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
-    Awaited<ReturnType<typeof getStripePortal>>,
+    Awaited<ReturnType<typeof getPaddlePortal>>,
     TError,
     TData
   > & { queryKey: QueryKey };
 };
 
-export type GetStripePortalQueryResult = NonNullable<
-  Awaited<ReturnType<typeof getStripePortal>>
+export type GetPaddlePortalQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getPaddlePortal>>
 >;
-export type GetStripePortalQueryError = ErrorType<void>;
+export type GetPaddlePortalQueryError = ErrorType<void>;
 
 /**
- * @summary Get Stripe customer portal URL
+ * @summary Get Paddle customer portal URL
  */
 
-export function useGetStripePortal<
-  TData = Awaited<ReturnType<typeof getStripePortal>>,
+export function useGetPaddlePortal<
+  TData = Awaited<ReturnType<typeof getPaddlePortal>>,
   TError = ErrorType<void>,
 >(options?: {
   query?: UseQueryOptions<
-    Awaited<ReturnType<typeof getStripePortal>>,
+    Awaited<ReturnType<typeof getPaddlePortal>>,
     TError,
     TData
   >;
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions = getGetStripePortalQueryOptions(options);
+  const queryOptions = getGetPaddlePortalQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

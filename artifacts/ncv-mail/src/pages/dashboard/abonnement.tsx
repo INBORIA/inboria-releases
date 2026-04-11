@@ -3,12 +3,18 @@ import { useGetProfile, useCreateCheckoutSession, getGetProfileQueryKey } from "
 import { Button } from "@/components/ui/button";
 import { Check, Shield, Info, CreditCard, ExternalLink, Loader2, AlertTriangle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
 import { useSearch, useLocation } from "wouter";
 import { plans } from "@/lib/plans";
 import { useTranslation } from "react-i18next";
+
+declare global {
+  interface Window {
+    Paddle?: any;
+  }
+}
 
 export default function Abonnement() {
   const { t, i18n } = useTranslation();
@@ -22,6 +28,28 @@ export default function Abonnement() {
 
   const [businessSeats, setBusinessSeats] = useState(3);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [paddleReady, setPaddleReady] = useState(false);
+
+  useEffect(() => {
+    const initPaddle = () => {
+      if (window.Paddle) {
+        window.Paddle.Setup({ seller: undefined });
+        setPaddleReady(true);
+      }
+    };
+
+    if (window.Paddle) {
+      initPaddle();
+    } else {
+      const interval = setInterval(() => {
+        if (window.Paddle) {
+          initPaddle();
+          clearInterval(interval);
+        }
+      }, 500);
+      return () => clearInterval(interval);
+    }
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(searchString);
@@ -56,6 +84,37 @@ export default function Abonnement() {
     }
   }, [searchString, profile, isLoading]);
 
+  const openPaddleCheckout = useCallback((data: any) => {
+    if (!window.Paddle) {
+      toast({
+        title: t("common.error"),
+        description: "Paddle is not loaded. Please refresh the page.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    window.Paddle.Initialize({
+      token: data.clientToken,
+    });
+
+    window.Paddle.Checkout.open({
+      items: [
+        {
+          priceId: data.priceId,
+          quantity: data.quantity,
+        },
+      ],
+      customer: {
+        id: data.customerId,
+      },
+      settings: {
+        successUrl: data.successUrl,
+        locale: i18n.language === "nl" ? "nl" : i18n.language === "en" ? "en" : "fr",
+      },
+    });
+  }, [i18n.language, toast, t]);
+
   const handleSubscribe = (planId: string, seats?: number) => {
     if (planId === "essai") return;
 
@@ -71,8 +130,8 @@ export default function Abonnement() {
               title: t("subscription.planUpdated"),
               description: t("subscription.planUpdatedDesc"),
             });
-          } else if (data.url) {
-            window.location.href = data.url;
+          } else if (data.clientToken && data.priceId) {
+            openPaddleCheckout(data);
           }
         },
         onError: () => {
@@ -95,12 +154,12 @@ export default function Abonnement() {
       const session = await token;
       const accessToken = session.data.session?.access_token;
 
-      const res = await fetch(`${baseUrl}/api/stripe/portal`, {
+      const res = await fetch(`${baseUrl}/api/paddle/portal`, {
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       const data = await res.json();
       if (data.url) {
-        window.location.href = data.url;
+        window.open(data.url, "_blank");
       } else {
         throw new Error(data.error || "Erreur");
       }

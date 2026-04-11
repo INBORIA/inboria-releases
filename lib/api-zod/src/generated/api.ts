@@ -1119,7 +1119,7 @@ export const UploadAttachmentsResponse = zod.object({
 });
 
 /**
- * @summary Create a Stripe Checkout session
+ * @summary Create a Paddle Checkout session
  */
 export const createCheckoutSessionBodySeatsDefault = 1;
 
@@ -1131,21 +1131,27 @@ export const CreateCheckoutSessionBody = zod.object({
 export const CreateCheckoutSessionResponse = zod.object({
   url: zod.string().nullish(),
   updated: zod.boolean().optional(),
+  clientToken: zod.string().optional(),
+  customerId: zod.string().optional(),
+  priceId: zod.string().optional(),
+  quantity: zod.number().optional(),
+  planId: zod.string().optional(),
+  successUrl: zod.string().optional(),
 });
 
 /**
- * @summary Stripe webhook handler (called by Stripe, not by frontend)
+ * @summary Paddle webhook handler (called by Paddle, not by frontend)
  */
-export const StripeWebhookBody = zod.object({}).passthrough();
+export const PaddleWebhookBody = zod.object({}).passthrough();
 
-export const StripeWebhookResponse = zod.object({
+export const PaddleWebhookResponse = zod.object({
   received: zod.boolean().optional(),
 });
 
 /**
- * @summary Get Stripe customer portal URL
+ * @summary Get Paddle customer portal URL
  */
-export const GetStripePortalResponse = zod.object({
+export const GetPaddlePortalResponse = zod.object({
   url: zod.string(),
 });
 

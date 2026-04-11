@@ -172,6 +172,9 @@ importers:
       '@microsoft/microsoft-graph-client':
         specifier: ^3.0.7
         version: 3.0.7(@azure/identity@4.13.1)
+      '@paddle/paddle-node-sdk':
+        specifier: ^3.7.0
+        version: 3.7.0
       '@supabase/supabase-js':
         specifier: ^2.101.1
         version: 2.101.1
@@ -1769,6 +1772,10 @@ packages:
 
   '@orval/zod@8.5.3':
     resolution: {integrity: sha512-qcbnpGE0VrgCDm0hNWQSOmzbfgdnr1xo+PYQ3PJjxfLuk3kGdJmFANTr53/1lI3sZUvWZwX5nKJCLWVxvwJEgg==}
+
+  '@paddle/paddle-node-sdk@3.7.0':
+    resolution: {integrity: sha512-VUlmBCGmCJU7mv1H/t7PDVg2GvnPy9tt3rnqbkf4BqpxL6zxKtgFxxXT/B7k6QX//L5lW6fC58ax/a86DJ/zcw==}
+    engines: {node: '>=20'}
 
   '@pinojs/redact@0.4.0':
     resolution: {integrity: sha512-k2ENnmBugE/rzQfEcdWHcCY+/FM3VLzH9cYEsbdsoqrvzAKRhUZeRNhAZvB8OitQJ1TBed3yqWtdjzS6wJKBwg==}
@@ -7823,6 +7830,8 @@ snapshots:
       - '@faker-js/faker'
       - supports-color
       - typescript
+
+  '@paddle/paddle-node-sdk@3.7.0': {}
 
   '@pinojs/redact@0.4.0': {}
 

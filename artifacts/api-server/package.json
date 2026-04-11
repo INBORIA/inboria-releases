@@ -12,6 +12,7 @@
   "dependencies": {
     "@azure/identity": "^4.13.1",
     "@microsoft/microsoft-graph-client": "^3.0.7",
+    "@paddle/paddle-node-sdk": "^3.7.0",
     "@supabase/supabase-js": "^2.101.1",
     "@workspace/api-zod": "workspace:*",
     "@workspace/db": "workspace:*",

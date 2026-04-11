@@ -30,8 +30,8 @@ tags:
     description: Follow-up tracking operations
   - name: export
     description: Data export operations
-  - name: stripe
-    description: Stripe payment operations
+  - name: paddle
+    description: Paddle payment operations
   - name: integrations
     description: Slack and Notion integration operations
   - name: organisations
@@ -1253,11 +1253,11 @@ paths:
                     items:
                       $ref: "#/components/schemas/UploadedFileInfo"
 
-  /stripe/checkout:
+  /paddle/checkout:
     post:
       operationId: createCheckoutSession
-      tags: [stripe]
-      summary: Create a Stripe Checkout session
+      tags: [paddle]
+      summary: Create a Paddle Checkout session
       requestBody:
         required: true
         content:
@@ -1266,7 +1266,7 @@ paths:
               $ref: "#/components/schemas/CheckoutBody"
       responses:
         "200":
-          description: Checkout session URL
+          description: Checkout session data
           content:
             application/json:
               schema:
@@ -1274,11 +1274,11 @@ paths:
         "400":
           description: Invalid plan
 
-  /stripe/webhook:
+  /paddle/webhook:
     post:
-      operationId: stripeWebhook
-      tags: [stripe]
-      summary: Stripe webhook handler (called by Stripe, not by frontend)
+      operationId: paddleWebhook
+      tags: [paddle]
+      summary: Paddle webhook handler (called by Paddle, not by frontend)
       requestBody:
         required: true
         content:
@@ -1298,11 +1298,11 @@ paths:
         "400":
           description: Invalid signature
 
-  /stripe/portal:
+  /paddle/portal:
     get:
-      operationId: getStripePortal
-      tags: [stripe]
-      summary: Get Stripe customer portal URL
+      operationId: getPaddlePortal
+      tags: [paddle]
+      summary: Get Paddle customer portal URL
       responses:
         "200":
           description: Portal session URL
@@ -1311,7 +1311,7 @@ paths:
               schema:
                 $ref: "#/components/schemas/PortalResponse"
         "400":
-          description: No Stripe subscription found
+          description: No Paddle subscription found
 
   /integrations:
     get:
@@ -3227,6 +3227,18 @@ components:
           type: ["string", "null"]
         updated:
           type: boolean
+        clientToken:
+          type: string
+        customerId:
+          type: string
+        priceId:
+          type: string
+        quantity:
+          type: integer
+        planId:
+          type: string
+        successUrl:
+          type: string
 
     PortalResponse:
       type: object

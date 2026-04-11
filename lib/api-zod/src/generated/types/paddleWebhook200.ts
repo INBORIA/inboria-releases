@@ -6,4 +6,6 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type StripeWebhookBody = { [key: string]: unknown };
+export type PaddleWebhook200 = {
+  received?: boolean;
+};

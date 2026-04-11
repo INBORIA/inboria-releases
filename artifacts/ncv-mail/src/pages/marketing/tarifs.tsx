@@ -44,9 +44,14 @@ export default function Tarifs() {
       {
         onSuccess: (data) => {
           setLoadingPlan(null);
-          if (data.url) {
-            window.location.href = data.url;
-          } else {
+          if (data.clientToken && data.priceId && (window as any).Paddle) {
+            (window as any).Paddle.Initialize({ token: data.clientToken });
+            (window as any).Paddle.Checkout.open({
+              items: [{ priceId: data.priceId, quantity: data.quantity }],
+              customer: { id: data.customerId },
+              settings: { successUrl: data.successUrl },
+            });
+          } else if (data.updated) {
             navigate("/dashboard/abonnement");
           }
         },

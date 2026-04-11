@@ -546,6 +546,12 @@ export interface CheckoutResponse {
   /** @nullable */
   url?: string | null;
   updated?: boolean;
+  clientToken?: string;
+  customerId?: string;
+  priceId?: string;
+  quantity?: number;
+  planId?: string;
+  successUrl?: string;
 }
 
 export interface PortalResponse {
@@ -1042,9 +1048,9 @@ export type UploadAttachments200 = {
   files?: UploadedFileInfo[];
 };
 
-export type StripeWebhookBody = { [key: string]: unknown };
+export type PaddleWebhookBody = { [key: string]: unknown };
 
-export type StripeWebhook200 = {
+export type PaddleWebhook200 = {
   received?: boolean;
 };
 

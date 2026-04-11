@@ -10,4 +10,10 @@ export interface CheckoutResponse {
   /** @nullable */
   url?: string | null;
   updated?: boolean;
+  clientToken?: string;
+  customerId?: string;
+  priceId?: string;
+  quantity?: number;
+  planId?: string;
+  successUrl?: string;
 }
