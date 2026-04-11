@@ -948,7 +948,9 @@ export default function Dashboard() {
       { data: { ids, action } },
       {
         onSuccess: (result) => {
-          setSelectedIds(new Set());
+          if (action !== "read" && action !== "unread") {
+            setSelectedIds(new Set());
+          }
           if (action === "read" || action === "unread") {
             const newStatus = action === "read" ? "read" : "unread";
             const idSet = new Set(ids);
