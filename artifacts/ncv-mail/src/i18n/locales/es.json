@@ -229,6 +229,8 @@
     "generating": "Generando...",
     "markRead": "Leído",
     "markAsReadAction": "Marcar como leído",
+    "markAsUnreadAction": "Marcar como no leído",
+    "bulkUnread": "{{count}} correo(s) marcado(s) como no leído(s)",
     "archive": "Archivar",
     "deleteEmail": "Eliminar",
     "openEmail": "Abrir",

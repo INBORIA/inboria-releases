@@ -680,8 +680,8 @@ router.get("/emails/:id/conversation", requireAuth, async (req, res): Promise<vo
 router.post("/emails/bulk", requireAuth, async (req, res): Promise<void> => {
   try {
     const { ids, action } = req.body;
-    if (!Array.isArray(ids) || ids.length === 0 || !["delete", "archive", "read"].includes(action)) {
-      res.status(400).json({ error: "ids (array) et action (delete|archive|read) requis" });
+    if (!Array.isArray(ids) || ids.length === 0 || !["delete", "archive", "read", "unread"].includes(action)) {
+      res.status(400).json({ error: "ids (array) et action (delete|archive|read|unread) requis" });
       return;
     }
 
@@ -716,6 +716,15 @@ router.post("/emails/bulk", requireAuth, async (req, res): Promise<void> => {
       const result = await supabaseAdmin
         .from("emails")
         .update({ status: "read" })
+        .in("id", sanitizedIds)
+        .eq("user_id", req.userId!)
+        .select("id");
+      error = result.error;
+      affected = result.data?.length || 0;
+    } else if (action === "unread") {
+      const result = await supabaseAdmin
+        .from("emails")
+        .update({ status: "unread" })
         .in("id", sanitizedIds)
         .eq("user_id", req.userId!)
         .select("id");
