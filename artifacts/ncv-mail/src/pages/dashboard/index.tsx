@@ -76,7 +76,7 @@ function PriorityBadge({ priority }: { priority: string }) {
   );
 }
 
-function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean }) {
+function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
@@ -86,6 +86,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
     <div
       className={`group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden ${isSelected ? "border-primary/50 bg-primary/[0.06]" : "border-border"}`}
       onClick={onClick}
+      onContextMenu={(e) => { e.preventDefault(); onContextMenu?.(e, email.id); }}
     >
       <div className={`w-1 shrink-0 ${barColor}`} />
       <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
@@ -779,6 +780,31 @@ export default function Dashboard() {
   const [composeBody, setComposeBody] = useState("");
   const [composeAttachments, setComposeAttachments] = useState<UploadedFile[]>([]);
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
+  const contextMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    const handler = (e: MouseEvent) => {
+      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+        setContextMenu(null);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [contextMenu]);
+
+  const handleContextMenu = useCallback((e: React.MouseEvent, emailId: number) => {
+    setSelectedIds((prev) => {
+      if (prev.size > 0 && !prev.has(emailId)) {
+        return new Set(prev).add(emailId);
+      } else if (prev.size === 0) {
+        return new Set([emailId]);
+      }
+      return prev;
+    });
+    setContextMenu({ x: e.clientX, y: e.clientY, emailId });
+  }, []);
 
   const activeEmails = emails
     ?.sort((a, b) => {
@@ -1706,6 +1732,7 @@ export default function Dashboard() {
                             isSelected={selectedIds.has(email.id)}
                             onToggleSelect={toggleSelect}
                             selectionMode={selectionMode}
+                            onContextMenu={handleContextMenu}
                           />
                         ))}
                         {hasMorePages && (
@@ -1825,6 +1852,56 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      {contextMenu && (
+        <div
+          ref={contextMenuRef}
+          className="fixed z-[9999] min-w-[200px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+          style={{ top: Math.min(contextMenu.y, window.innerHeight - 260), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
+        >
+          <div className="px-3 py-2 border-b border-[#1f2937]">
+            <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider font-medium">
+              {selectedIds.size > 1
+                ? t("inbox.selectedCount", { count: selectedIds.size })
+                : activeEmails?.find(e => e.id === contextMenu.emailId)?.subject?.substring(0, 30) + "..."
+              }
+            </span>
+          </div>
+          <div className="py-1">
+            {selectedIds.size <= 1 && (
+              <button
+                onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+                {t("inbox.openEmail")}
+              </button>
+            )}
+            <button
+              onClick={() => { handleBulkAction("read"); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              {t("inbox.bulkMarkRead")}
+            </button>
+            <button
+              onClick={() => { handleBulkAction("archive"); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Archive className="w-3.5 h-3.5" />
+              {t("inbox.bulkArchive")}
+            </button>
+            <div className="border-t border-[#1f2937] my-1" />
+            <button
+              onClick={() => { handleBulkAction("delete"); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              {t("inbox.deleteEmail")}
+              {selectedIds.size > 1 && ` (${selectedIds.size})`}
+            </button>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }

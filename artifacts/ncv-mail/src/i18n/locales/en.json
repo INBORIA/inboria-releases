@@ -230,6 +230,7 @@
     "markRead": "Read",
     "archive": "Archive",
     "deleteEmail": "Delete",
+    "openEmail": "Open",
     "createTask": "Create task",
     "follow": "Follow up",
     "aiSummary": "AI Summary",
