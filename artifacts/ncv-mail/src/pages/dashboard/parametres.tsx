@@ -451,7 +451,7 @@ export default function Parametres() {
                   <Textarea
                     value={signature}
                     onChange={(e) => setSignature(e.target.value)}
-                    placeholder={"Cordialement,\n\nJean Neybergh\nGerant — NCV Management\njean@ncvmanagement.com\n+32 470 00 00 00"}
+                    placeholder={"Cordialement,\n\nJean Dupont\nGérant — Inboria\njean@inboria.com\n+32 470 00 00 00"}
                     className="bg-background border-border text-white text-[13px] min-h-[140px] resize-y font-mono"
                   />
                   {signature && (
