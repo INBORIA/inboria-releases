@@ -31,6 +31,13 @@ import type { Email, PaginatedEmails } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useTranslation } from "react-i18next";
+import { changeLanguage } from "@/i18n";
+
+const LANGUAGES = [
+  { code: "fr", label: "FR", flag: "🇫🇷" },
+  { code: "en", label: "EN", flag: "🇬🇧" },
+  { code: "nl", label: "NL", flag: "🇳🇱" },
+];
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -46,7 +53,8 @@ export default function InboxScreen() {
   const colors = useColors();
   const router = useRouter();
   const queryClient = useQueryClient();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const currentLangCode = (i18n.resolvedLanguage || i18n.language || "fr").substring(0, 2);
   const [searchQuery, setSearchQuery] = useState("");
   const [filterPriority, setFilterPriority] = useState<string>("all");
   const [filterCategory, setFilterCategory] = useState<number | null>(null);
@@ -338,6 +346,31 @@ export default function InboxScreen() {
         </View>
       ) : (
         <>
+          <View style={s.langSwitcherRow}>
+            {LANGUAGES.map((lang) => {
+              const isActive = currentLangCode === lang.code;
+              return (
+                <TouchableOpacity
+                  key={lang.code}
+                  style={[
+                    s.langBtn,
+                    {
+                      backgroundColor: isActive ? colors.primary + "20" : colors.card,
+                      borderColor: isActive ? colors.primary + "50" : colors.border,
+                    },
+                  ]}
+                  onPress={() => changeLanguage(lang.code)}
+                  activeOpacity={0.7}
+                >
+                  <Text style={s.langFlag}>{lang.flag}</Text>
+                  <Text style={[s.langLabel, { color: isActive ? colors.primary : colors.mutedForeground }]}>
+                    {lang.label}
+                  </Text>
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+
           <View style={s.summaryRow}>
             {[
               { label: t("inbox.urgent"), count: summary?.urgentCount ?? 0, color: colors.urgent },
@@ -487,6 +520,25 @@ export default function InboxScreen() {
 
 const s = StyleSheet.create({
   container: { flex: 1 },
+
+  langSwitcherRow: {
+    flexDirection: "row",
+    justifyContent: "flex-end",
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    gap: 6,
+  },
+  langBtn: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 4,
+    paddingHorizontal: 10,
+    paddingVertical: 5,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  langFlag: { fontSize: 14 },
+  langLabel: { fontSize: 11, fontFamily: "Inter_600SemiBold" },
 
   bulkBar: {
     paddingHorizontal: 16,
