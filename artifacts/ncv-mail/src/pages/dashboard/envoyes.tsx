@@ -224,7 +224,7 @@ export default function Envoyes() {
                     <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
                       <button
                         onClick={(e) => { e.stopPropagation(); setSelectedIds((prev) => { const next = new Set(prev); if (next.has(email.id)) next.delete(email.id); else next.add(email.id); return next; }); }}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${selectionMode || isSelected ? "bg-transparent border-2 border-primary/40 hover:border-primary" : "bg-primary/20"}`}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all cursor-pointer ${selectionMode || isSelected ? "bg-transparent border-2 border-primary/40 hover:border-primary" : "bg-primary/20 hover:ring-2 hover:ring-primary/30"}`}
                       >
                         {selectionMode || isSelected ? (
                           isSelected ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-[#8b9cb3]" />

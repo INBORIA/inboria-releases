@@ -90,8 +90,8 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
     >
       <div className={`w-1 shrink-0 ${barColor}`} />
       <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
-        <div
-          className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${selectionMode || isSelected ? "bg-transparent border-2 border-primary/40 hover:border-primary" : "bg-primary/20"}`}
+        <button
+          className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all cursor-pointer ${selectionMode || isSelected ? "bg-transparent border-2 border-primary/40 hover:border-primary" : "bg-primary/20 hover:ring-2 hover:ring-primary/30"}`}
           onClick={(e) => { e.stopPropagation(); onToggleSelect(email.id); }}
         >
           {selectionMode || isSelected ? (
@@ -101,7 +101,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
           ) : (
             <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
           )}
-        </div>
+        </button>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
             <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>
