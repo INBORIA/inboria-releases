@@ -1,4 +1,4 @@
-import appLogo from "@assets/inboria_logo_premium_transparent_v2_1775914256376.png";
+import appLogo from "@assets/inboria_logo_variant_a_1775914682558.png";
 import { Link } from "wouter";
 import { ArrowLeft } from "lucide-react";
 
