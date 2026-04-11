@@ -91,23 +91,34 @@ export default function Taches() {
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
   const dragStartIdRef = useRef<string | null>(null);
+  const dragTrailRef = useRef<string[]>([]);
+  const preSelectRef = useRef<Set<string>>(new Set());
 
   const handleDragSelectStart = useCallback((id: string) => {
     isDraggingRef.current = true;
     didDragRef.current = false;
     dragStartIdRef.current = id;
-    const handleMouseUp = () => { isDraggingRef.current = false; document.removeEventListener("mouseup", handleMouseUp); };
+    dragTrailRef.current = [id];
+    setSelectedTaskIds((prev) => { preSelectRef.current = new Set(prev); return prev; });
+    const handleMouseUp = () => { isDraggingRef.current = false; dragTrailRef.current = []; document.removeEventListener("mouseup", handleMouseUp); };
     document.addEventListener("mouseup", handleMouseUp);
   }, []);
 
   const handleDragSelectEnter = useCallback((id: string) => {
     if (!isDraggingRef.current) return;
     if (id !== dragStartIdRef.current) {
-      if (!didDragRef.current) {
-        didDragRef.current = true;
-        setSelectedTaskIds((prev) => new Set(prev).add(dragStartIdRef.current!));
+      if (!didDragRef.current) didDragRef.current = true;
+      const trail = dragTrailRef.current;
+      const idx = trail.indexOf(id);
+      if (idx !== -1) {
+        trail.splice(idx + 1);
+        const keep = new Set(preSelectRef.current);
+        trail.forEach((tid) => keep.add(tid));
+        setSelectedTaskIds(keep);
+      } else {
+        trail.push(id);
+        setSelectedTaskIds((prev) => new Set(prev).add(id));
       }
-      setSelectedTaskIds((prev) => new Set(prev).add(id));
     }
   }, []);
 

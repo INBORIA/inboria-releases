@@ -818,13 +818,18 @@ export default function Dashboard() {
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
   const dragStartIdRef = useRef<number | null>(null);
+  const dragTrailRef = useRef<number[]>([]);
+  const preSelectRef = useRef<Set<number>>(new Set());
 
   const handleDragSelectStart = useCallback((id: number) => {
     isDraggingRef.current = true;
     didDragRef.current = false;
     dragStartIdRef.current = id;
+    dragTrailRef.current = [id];
+    setSelectedIds((prev) => { preSelectRef.current = new Set(prev); return prev; });
     const handleMouseUp = () => {
       isDraggingRef.current = false;
+      dragTrailRef.current = [];
       document.removeEventListener("mouseup", handleMouseUp);
     };
     document.addEventListener("mouseup", handleMouseUp);
@@ -835,9 +840,18 @@ export default function Dashboard() {
     if (id !== dragStartIdRef.current) {
       if (!didDragRef.current) {
         didDragRef.current = true;
-        setSelectedIds((prev) => new Set(prev).add(dragStartIdRef.current!));
       }
-      setSelectedIds((prev) => new Set(prev).add(id));
+      const trail = dragTrailRef.current;
+      const idx = trail.indexOf(id);
+      if (idx !== -1) {
+        const removed = trail.splice(idx + 1);
+        const keep = new Set(preSelectRef.current);
+        trail.forEach((tid) => keep.add(tid));
+        setSelectedIds(keep);
+      } else {
+        trail.push(id);
+        setSelectedIds((prev) => new Set(prev).add(id));
+      }
     }
   }, []);
 
