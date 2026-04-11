@@ -1,0 +1,297 @@
+Services professionnels(10)
+Comptable / Expert-comptable
+
+8 categories(7 new)
+
+Apply
+Avocat / Juriste
+
+7 categories(5 new)
+
+Apply
+Notaire
+
+7 categories(6 new)
+
+Apply
+Consultant / Coach
+
+6 categories(3 new)
+
+Apply
+Architecte
+
+7 categories(4 new)
+
+Apply
+Geometre
+
+6 categories(4 new)
+
+Apply
+Huissier de justice
+
+6 categories(5 new)
+
+Apply
+Traducteur / Interprete
+
+6 categories(3 new)
+
+Apply
+Expert en sinistres
+
+6 categories(5 new)
+
+Apply
+Commissaire aux comptes
+
+6 categories(4 new)
+
+Apply
+
+Sante(8)
+Medecin / Cabinet medical
+
+7 categories(5 new)
+
+Apply
+Dentiste
+
+6 categories(4 new)
+
+Apply
+Kinesitherapeute
+
+6 categories(3 new)
+
+Apply
+Pharmacien
+
+6 categories(4 new)
+
+Apply
+Veterinaire
+
+6 categories(4 new)
+
+Apply
+Psychologue / Therapeute
+
+5 categories(2 new)
+
+Apply
+Infirmier(ere) liberal(e)
+
+5 categories(3 new)
+
+Apply
+Opticien / Audioprothesiste
+
+5 categories(4 new)
+
+Apply
+
+Commerce & Distribution(6)
+E-commerce
+
+7 categories(6 new)
+
+Apply
+Commerce de detail
+
+6 categories(3 new)
+
+Apply
+Grossiste / Import-Export
+
+6 categories(3 new)
+
+Apply
+Franchise / Reseau de magasins
+
+6 categories(5 new)
+
+Apply
+Marches publics / Appels d'offres
+
+6 categories(4 new)
+
+Apply
+Concessionnaire automobile
+
+6 categories(5 new)
+
+Apply
+
+Immobilier & Construction(5)
+Agent immobilier
+
+7 categories(5 new)
+
+Apply
+Syndic / Gestion locative
+
+6 categories
+
+Apply
+Entrepreneur en construction
+
+7 categories(4 new)
+
+Apply
+Promoteur immobilier
+
+6 categories(4 new)
+
+Apply
+Architecte d'interieur / Decorateur
+
+5 categories(4 new)
+
+Apply
+
+Services aux entreprises(7)
+Agence marketing / Communication
+
+7 categories(5 new)
+
+Apply
+Agence web / IT
+
+7 categories(5 new)
+
+Apply
+Ressources humaines / Recrutement
+
+6 categories(4 new)
+
+Apply
+Bureau d'assurances
+
+6 categories(5 new)
+
+Apply
+Courtier financier
+
+6 categories(5 new)
+
+Apply
+Expert en cybersecurite
+
+6 categories(4 new)
+
+Apply
+Cabinet de conseil en gestion
+
+6 categories(5 new)
+
+Apply
+
+Artisanat & Metiers techniques(6)
+Artisan (plombier, electricien...)
+
+6 categories(3 new)
+
+Apply
+Garagiste / Carrossier
+
+6 categories(5 new)
+
+Apply
+Photographe / Vidéaste
+
+6 categories(4 new)
+
+Apply
+Imprimeur / Graphiste
+
+5 categories(3 new)
+
+Apply
+Paysagiste / Jardinier
+
+5 categories(3 new)
+
+Apply
+Serrurier / Vitrier
+
+5 categories(3 new)
+
+Apply
+
+Enseignement & Formation(3)
+Formateur / Centre de formation
+
+6 categories(4 new)
+
+Apply
+Ecole / Institution
+
+6 categories(5 new)
+
+Apply
+Auto-ecole
+
+5 categories(4 new)
+
+Apply
+
+Restauration & Tourisme(3)
+Restaurant / Traiteur
+
+7 categories(4 new)
+
+Apply
+Hotel / Gite / B&B
+
+6 categories(4 new)
+
+Apply
+Agence de voyage
+
+6 categories(5 new)
+
+Apply
+
+Autres services(8)
+Association / ONG
+
+6 categories
+
+Apply
+Createur de contenu / Influenceur
+
+6 categories(5 new)
+
+Apply
+Mode / Textile
+
+6 categories(5 new)
+
+Apply
+Salon de beaute / Bien-etre
+
+5 categories(3 new)
+
+Apply
+Entreprise de nettoyage
+
+5 categories(3 new)
+
+Apply
+Transport / Logistique
+
+6 categories(5 new)
+
+Apply
+Industrie / Production
+
+6 categories(4 new)
+
+Apply
+Organisateur d'evenements
+
+6 categories(5 new)
+
+Apply

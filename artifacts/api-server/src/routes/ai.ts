@@ -33,7 +33,6 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
     const parsed = GenerateDailySummaryBody.safeParse(req.body);
     const rawLang = parsed.success && parsed.data.language ? parsed.data.language : "fr";
     const language = rawLang.substring(0, 2).toLowerCase();
-    logger.info({ rawLang, language, body: req.body }, "[daily-summary] Language detection");
 
     const { data: emails } = await supabaseAdmin
       .from("emails")

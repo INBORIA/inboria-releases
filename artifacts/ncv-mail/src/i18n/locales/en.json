@@ -634,33 +634,114 @@
     "deleteErrorDesc": "Unable to delete this category",
     "saving": "Saving...",
     "suggestedCats": {
-      "facturation": { "name": "Billing", "desc": "Invoices, quotes, purchase orders, payment reminders" },
-      "support_client": { "name": "Customer Support", "desc": "Help requests, complaints, customer questions" },
-      "commercial": { "name": "Sales", "desc": "Prospects, sales proposals, negotiations, deals" },
-      "administratif": { "name": "Administrative", "desc": "Contracts, official documents, legal correspondence" },
-      "newsletter": { "name": "Newsletter", "desc": "Newsletters, promotions, marketing emails" },
-      "newsletter_marketing": { "name": "Newsletter / Marketing", "desc": "Newsletters, promotions, marketing campaigns, ads" },
-      "rh_equipe": { "name": "HR / Team", "desc": "Leave, recruitment, staff management, internal notes" },
-      "fournisseurs": { "name": "Suppliers", "desc": "Orders, deliveries, supplier relations, purchases" },
-      "juridique": { "name": "Legal", "desc": "Formal notices, GDPR, compliance, litigation" },
-      "juridique_conformite": { "name": "Legal / Compliance", "desc": "Formal notices, GDPR, compliance, litigation, contracts" },
-      "technique": { "name": "Technical", "desc": "Bugs, maintenance, servers, IT, technical requests" },
-      "technique_it": { "name": "Technical / IT", "desc": "Bugs, maintenance, servers, IT, technical requests" },
-      "formation": { "name": "Training", "desc": "Webinars, certifications, e-learning, invitations" },
-      "banque_finance": { "name": "Banking / Finance", "desc": "Bank statements, transfers, loans, insurance" },
-      "logistique_livraisons": { "name": "Logistics / Deliveries", "desc": "Package tracking, carriers, delivery notes" },
-      "rendez_vous_planning": { "name": "Appointments / Planning", "desc": "Confirmations, cancellations, meeting reminders" },
-      "international_export": { "name": "International / Export", "desc": "Customs, foreign clients, translations, incoterms" },
-      "urgent_prioritaire": { "name": "Urgent / Priority", "desc": "Emails requiring immediate action, critical alerts" },
-      "comptabilite": { "name": "Accounting", "desc": "Accounting entries, balance sheets, VAT, tax returns" },
-      "paiements_encaissements": { "name": "Payments / Collections", "desc": "Payment confirmations, delays, reminders, refunds" },
-      "partenaires_sous_traitants": { "name": "Partners / Subcontractors", "desc": "Collaborations, agreements, exchanges with external partners" },
-      "projets": { "name": "Projects", "desc": "Project tracking, deliverables, deadlines, progress reports" },
-      "communication_interne": { "name": "Internal Communication", "desc": "Memos, announcements, meeting minutes, circulars" },
-      "immobilier_locaux": { "name": "Real Estate / Premises", "desc": "Leases, rent, building maintenance, charges" },
-      "abonnements_saas": { "name": "Subscriptions / SaaS", "desc": "Software licenses, renewals, tool invoices" },
-      "devis_negociations": { "name": "Quotes / Negotiations", "desc": "Quote requests, comparisons, counter-proposals" },
-      "spam_a_supprimer": { "name": "Spam / To Delete", "desc": "Unwanted emails, unsolicited marketing" },
+      "facturation": {
+        "name": "Billing",
+        "desc": "Invoices, quotes, purchase orders, payment reminders"
+      },
+      "support_client": {
+        "name": "Customer Support",
+        "desc": "Help requests, complaints, customer questions"
+      },
+      "commercial": {
+        "name": "Sales",
+        "desc": "Prospects, sales proposals, negotiations, deals"
+      },
+      "administratif": {
+        "name": "Administrative",
+        "desc": "Contracts, official documents, legal correspondence"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "desc": "Newsletters, promotions, marketing emails"
+      },
+      "newsletter_marketing": {
+        "name": "Newsletter / Marketing",
+        "desc": "Newsletters, promotions, marketing campaigns, ads"
+      },
+      "rh_equipe": {
+        "name": "HR / Team",
+        "desc": "Leave, recruitment, staff management, internal notes"
+      },
+      "fournisseurs": {
+        "name": "Suppliers",
+        "desc": "Orders, deliveries, supplier relations, purchases"
+      },
+      "juridique": {
+        "name": "Legal",
+        "desc": "Formal notices, GDPR, compliance, litigation"
+      },
+      "juridique_conformite": {
+        "name": "Legal / Compliance",
+        "desc": "Formal notices, GDPR, compliance, litigation, contracts"
+      },
+      "technique": {
+        "name": "Technical",
+        "desc": "Bugs, maintenance, servers, IT, technical requests"
+      },
+      "technique_it": {
+        "name": "Technical / IT",
+        "desc": "Bugs, maintenance, servers, IT, technical requests"
+      },
+      "formation": {
+        "name": "Training",
+        "desc": "Webinars, certifications, e-learning, invitations"
+      },
+      "banque_finance": {
+        "name": "Banking / Finance",
+        "desc": "Bank statements, transfers, loans, insurance"
+      },
+      "logistique_livraisons": {
+        "name": "Logistics / Deliveries",
+        "desc": "Package tracking, carriers, delivery notes"
+      },
+      "rendez_vous_planning": {
+        "name": "Appointments / Planning",
+        "desc": "Confirmations, cancellations, meeting reminders"
+      },
+      "international_export": {
+        "name": "International / Export",
+        "desc": "Customs, foreign clients, translations, incoterms"
+      },
+      "urgent_prioritaire": {
+        "name": "Urgent / Priority",
+        "desc": "Emails requiring immediate action, critical alerts"
+      },
+      "comptabilite": {
+        "name": "Accounting",
+        "desc": "Accounting entries, balance sheets, VAT, tax returns"
+      },
+      "paiements_encaissements": {
+        "name": "Payments / Collections",
+        "desc": "Payment confirmations, delays, reminders, refunds"
+      },
+      "partenaires_sous_traitants": {
+        "name": "Partners / Subcontractors",
+        "desc": "Collaborations, agreements, exchanges with external partners"
+      },
+      "projets": {
+        "name": "Projects",
+        "desc": "Project tracking, deliverables, deadlines, progress reports"
+      },
+      "communication_interne": {
+        "name": "Internal Communication",
+        "desc": "Memos, announcements, meeting minutes, circulars"
+      },
+      "immobilier_locaux": {
+        "name": "Real Estate / Premises",
+        "desc": "Leases, rent, building maintenance, charges"
+      },
+      "abonnements_saas": {
+        "name": "Subscriptions / SaaS",
+        "desc": "Software licenses, renewals, tool invoices"
+      },
+      "devis_negociations": {
+        "name": "Quotes / Negotiations",
+        "desc": "Quote requests, comparisons, counter-proposals"
+      },
+      "spam_a_supprimer": {
+        "name": "Spam / To Delete",
+        "desc": "Unwanted emails, unsolicited marketing"
+      },
       "namePlaceholder": "E.g.: Invoices, Suppliers...",
       "descPlaceholder": "E.g.: All emails containing invoices, quotes or receipts."
     }
@@ -1635,12 +1716,36 @@
     "yesterday": "Yesterday",
     "olderDate": "Apr 3",
     "emails": [
-      { "sender": "Peter Martin", "subject": "Q2 Contract — signature required", "summary": "Q2 service contract to sign by Friday. Amount: €12,400." },
-      { "sender": "Marie Laurent", "subject": "Client meeting tomorrow 9am", "summary": "Meeting confirmed with Dupont SA tomorrow at 9am. Agenda attached." },
-      { "sender": "Sophie Dubois", "subject": "March 2026 monthly report", "summary": "March accounting report ready for review. Revenue up 8%." },
-      { "sender": "Thomas Bernard", "subject": "Website quote — client feedback", "summary": "Client approved the €4,800 quote. Requests to start Monday." },
-      { "sender": "LinkedIn", "subject": "3 new connections this week", "summary": "New contacts: Jean Leroy (CEO), Anne Petit (HR), Marc Faure (CTO)." },
-      { "sender": "Tech Newsletter", "subject": "AI trends in 2026", "summary": "Special report: email automation, GPT-5, and the future of B2B SaaS." }
+      {
+        "sender": "Peter Martin",
+        "subject": "Q2 Contract — signature required",
+        "summary": "Q2 service contract to sign by Friday. Amount: €12,400."
+      },
+      {
+        "sender": "Marie Laurent",
+        "subject": "Client meeting tomorrow 9am",
+        "summary": "Meeting confirmed with Dupont SA tomorrow at 9am. Agenda attached."
+      },
+      {
+        "sender": "Sophie Dubois",
+        "subject": "March 2026 monthly report",
+        "summary": "March accounting report ready for review. Revenue up 8%."
+      },
+      {
+        "sender": "Thomas Bernard",
+        "subject": "Website quote — client feedback",
+        "summary": "Client approved the €4,800 quote. Requests to start Monday."
+      },
+      {
+        "sender": "LinkedIn",
+        "subject": "3 new connections this week",
+        "summary": "New contacts: Jean Leroy (CEO), Anne Petit (HR), Marc Faure (CTO)."
+      },
+      {
+        "sender": "Tech Newsletter",
+        "subject": "AI trends in 2026",
+        "summary": "Special report: email automation, GPT-5, and the future of B2B SaaS."
+      }
     ]
   },
   "agenda": {
@@ -1708,5 +1813,1652 @@
     "placeholder": "Type your question...",
     "poweredBy": "Powered by Inboria AI",
     "errorMessage": "Sorry, an error occurred. Please try again or contact support@inboria.com."
+  },
+  "packs": {
+    "families": {
+      "services_professionnels": "Professional Services",
+      "sante": "Healthcare",
+      "commerce_distribution": "Commerce & Distribution",
+      "immobilier_construction": "Real Estate & Construction",
+      "services_entreprises": "Business Services",
+      "artisanat_techniques": "Crafts & Technical Trades",
+      "enseignement_formation": "Education & Training",
+      "restauration_tourisme": "Food & Tourism",
+      "autres_services": "Other Services"
+    },
+    "items": {
+      "comptable": {
+        "name": "Accountant / Chartered Accountant",
+        "cats": {
+          "0": {
+            "n": "Tax Returns",
+            "d": "VAT, taxes, quarterly and annual returns"
+          },
+          "1": {
+            "n": "Client Invoicing",
+            "d": "Invoices, fees, payment reminders"
+          },
+          "2": {
+            "n": "Suppliers",
+            "d": "Supplier invoices, orders, deliveries"
+          },
+          "3": {
+            "n": "Accounting",
+            "d": "Accounting entries, balance sheets, journals"
+          },
+          "4": {
+            "n": "Payroll / HR",
+            "d": "Payslips, social security, contributions"
+          },
+          "5": {
+            "n": "Clients",
+            "d": "Client correspondence, requests, appointments"
+          },
+          "6": {
+            "n": "Legal",
+            "d": "Contracts, statutes, legal compliance"
+          },
+          "7": {
+            "n": "Banking",
+            "d": "Bank statements, transfers, transactions"
+          }
+        }
+      },
+      "avocat": {
+        "name": "Lawyer / Legal Counsel",
+        "cats": {
+          "0": {
+            "n": "Client Files",
+            "d": "Client correspondence, procedural documents"
+          },
+          "1": {
+            "n": "Courts",
+            "d": "Summons, judgments, conclusions"
+          },
+          "2": {
+            "n": "Fellow Lawyers",
+            "d": "Exchanges between lawyers, negotiations"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Fees, retainers, expense statements"
+          },
+          "4": {
+            "n": "Legal",
+            "d": "Legislation, case law, legal monitoring"
+          },
+          "5": {
+            "n": "Bailiffs / Experts",
+            "d": "Service of process, expert reports"
+          },
+          "6": {
+            "n": "Administrative",
+            "d": "Bar association, mandatory training"
+          }
+        }
+      },
+      "notaire": {
+        "name": "Notary",
+        "cats": {
+          "0": {
+            "n": "Real Estate Deeds",
+            "d": "Preliminary contracts, deeds of sale, mortgages"
+          },
+          "1": {
+            "n": "Estates",
+            "d": "Estate declarations, divisions"
+          },
+          "2": {
+            "n": "Family Law",
+            "d": "Marriages, donations, prenuptial agreements"
+          },
+          "3": {
+            "n": "Companies",
+            "d": "Incorporations, statutory amendments"
+          },
+          "4": {
+            "n": "Clients",
+            "d": "Client correspondence, appointments, documents"
+          },
+          "5": {
+            "n": "Administration",
+            "d": "Tax office, registry, registration"
+          },
+          "6": {
+            "n": "Billing",
+            "d": "Fees, retainers, settlements"
+          }
+        }
+      },
+      "consultant": {
+        "name": "Consultant / Coach",
+        "cats": {
+          "0": {
+            "n": "Assignments",
+            "d": "Proposals, assignment contracts, deliverables"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Client follow-up, feedback, appointments"
+          },
+          "2": {
+            "n": "Billing",
+            "d": "Invoices, quotes, reminders"
+          },
+          "3": {
+            "n": "Prospecting",
+            "d": "Prospects, incoming requests, networking"
+          },
+          "4": {
+            "n": "Training",
+            "d": "Content, materials, certifications"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Contracts, insurance, official documents"
+          }
+        }
+      },
+      "architecte": {
+        "name": "Architect",
+        "cats": {
+          "0": {
+            "n": "Projects",
+            "d": "Plans, specifications, building permits"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Client correspondence, appointments, approvals"
+          },
+          "2": {
+            "n": "Contractors",
+            "d": "Bids, contracts, site monitoring"
+          },
+          "3": {
+            "n": "Administration",
+            "d": "Municipality, urban planning, permits"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Fees, settlements, progress reports"
+          },
+          "5": {
+            "n": "Suppliers",
+            "d": "Materials, catalogs, technical quotes"
+          },
+          "6": {
+            "n": "Architects' Association",
+            "d": "Fees, training, obligations"
+          }
+        }
+      },
+      "geometre": {
+        "name": "Land Surveyor",
+        "cats": {
+          "0": {
+            "n": "Field Missions",
+            "d": "Boundary markers, surveys, cadastral plans"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Requests, quotes, reports"
+          },
+          "2": {
+            "n": "Land Registry",
+            "d": "Cadastral plans, transfers, divisions"
+          },
+          "3": {
+            "n": "Notaries",
+            "d": "Certificates, subdivision plans, surveys"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, quotes, reminders"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Government, municipality, official documents"
+          }
+        }
+      },
+      "huissier": {
+        "name": "Bailiff",
+        "cats": {
+          "0": {
+            "n": "Service of Process",
+            "d": "Writs, summons, formal notices"
+          },
+          "1": {
+            "n": "Debt Collection",
+            "d": "Debts, payment plans, seizures"
+          },
+          "2": {
+            "n": "Official Reports",
+            "d": "Official reports, on-site observations"
+          },
+          "3": {
+            "n": "Courts",
+            "d": "Decisions, judgments, enforcements"
+          },
+          "4": {
+            "n": "Clients / Lawyers",
+            "d": "Instructions, correspondence, reports"
+          },
+          "5": {
+            "n": "Billing",
+            "d": "Costs, retainers, settlements"
+          }
+        }
+      },
+      "traducteur": {
+        "name": "Translator / Interpreter",
+        "cats": {
+          "0": {
+            "n": "Translation Projects",
+            "d": "Texts to translate, deliverables, deadlines"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Requests, quotes, feedback"
+          },
+          "2": {
+            "n": "Agencies",
+            "d": "Agency assignments, rates, scheduling"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, purchase orders, reminders"
+          },
+          "4": {
+            "n": "Training",
+            "d": "Glossaries, tools, certifications"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Sworn translator, court, legalization"
+          }
+        }
+      },
+      "expert-sinistres": {
+        "name": "Claims Expert",
+        "cats": {
+          "0": {
+            "n": "Claims Files",
+            "d": "Declarations, reports, photos"
+          },
+          "1": {
+            "n": "Insurance",
+            "d": "Companies, policies, compensations"
+          },
+          "2": {
+            "n": "Policyholders",
+            "d": "Correspondence, appointments, documents"
+          },
+          "3": {
+            "n": "Experts / Counter-experts",
+            "d": "Reports, adversarial meetings"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Fees, expense notes, settlements"
+          },
+          "5": {
+            "n": "Legal",
+            "d": "Judicial expertise, courts"
+          }
+        }
+      },
+      "commissaire-comptes": {
+        "name": "Statutory Auditor",
+        "cats": {
+          "0": {
+            "n": "Audit Assignments",
+            "d": "Audit plans, reports, annual accounts"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Correspondence, document requests"
+          },
+          "2": {
+            "n": "Standards / Regulations",
+            "d": "ISA, accounting standards, monitoring"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Fees, engagement letters"
+          },
+          "4": {
+            "n": "Institute",
+            "d": "IRE/IBR, training, fees"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Commercial courts, NBB, publications"
+          }
+        }
+      },
+      "medecin": {
+        "name": "Doctor / Medical Practice",
+        "cats": {
+          "0": {
+            "n": "Patients",
+            "d": "Patient correspondence, appointments, follow-ups"
+          },
+          "1": {
+            "n": "Fellow Doctors",
+            "d": "Medical exchanges, specialist opinions, transfers"
+          },
+          "2": {
+            "n": "Laboratories",
+            "d": "Test results, prescriptions"
+          },
+          "3": {
+            "n": "Health Insurance",
+            "d": "Reimbursements, certificates, agreements"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Fees, fee statements, third-party payment"
+          },
+          "5": {
+            "n": "Continuing Education",
+            "d": "Conferences, accreditations, publications"
+          },
+          "6": {
+            "n": "Administrative",
+            "d": "Medical association, insurance, on-call duty"
+          }
+        }
+      },
+      "dentiste": {
+        "name": "Dentist",
+        "cats": {
+          "0": {
+            "n": "Patients",
+            "d": "Appointments, follow-ups, reminders"
+          },
+          "1": {
+            "n": "Dental Suppliers",
+            "d": "Materials, equipment, orders"
+          },
+          "2": {
+            "n": "Prosthetics Lab",
+            "d": "Prosthetics, crowns, implants"
+          },
+          "3": {
+            "n": "Health Insurance",
+            "d": "Nomenclature, reimbursements"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Fee statements, settlements"
+          },
+          "5": {
+            "n": "Training",
+            "d": "Continuing education, dental conferences"
+          }
+        }
+      },
+      "kinesitherapeute": {
+        "name": "Physiotherapist",
+        "cats": {
+          "0": {
+            "n": "Patients",
+            "d": "Prescriptions, appointments, treatment follow-ups"
+          },
+          "1": {
+            "n": "Referring Doctors",
+            "d": "Reports, agreement requests, assessments"
+          },
+          "2": {
+            "n": "Health Insurance",
+            "d": "Certificates, agreements, reimbursements"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Fee statements, third-party payment"
+          },
+          "4": {
+            "n": "Suppliers",
+            "d": "Equipment, supplies, orders"
+          },
+          "5": {
+            "n": "Training",
+            "d": "Training, specializations, conferences"
+          }
+        }
+      },
+      "pharmacien": {
+        "name": "Pharmacist",
+        "cats": {
+          "0": {
+            "n": "Suppliers / Wholesalers",
+            "d": "Orders, deliveries, stock shortages"
+          },
+          "1": {
+            "n": "Patients",
+            "d": "Prescriptions, follow-ups, advice"
+          },
+          "2": {
+            "n": "Health / Drug Agency",
+            "d": "Regulations, reimbursements, pharmacovigilance"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Supplier invoices, pricing, margins"
+          },
+          "4": {
+            "n": "Team",
+            "d": "Scheduling, recruitment, training"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Pharmacists' association, inspections, on-call"
+          }
+        }
+      },
+      "veterinaire": {
+        "name": "Veterinarian",
+        "cats": {
+          "0": {
+            "n": "Clients / Pet Owners",
+            "d": "Appointments, follow-ups, vaccine reminders"
+          },
+          "1": {
+            "n": "Suppliers",
+            "d": "Medications, equipment, food"
+          },
+          "2": {
+            "n": "Colleagues / Specialists",
+            "d": "Transfers, specialist opinions"
+          },
+          "3": {
+            "n": "Food Safety Agency",
+            "d": "Inspections, regulations, traceability"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, surgery quotes, reminders"
+          },
+          "5": {
+            "n": "Laboratories",
+            "d": "Analyses, biopsies, results"
+          }
+        }
+      },
+      "psychologue": {
+        "name": "Psychologist / Therapist",
+        "cats": {
+          "0": {
+            "n": "Patients",
+            "d": "Appointments, therapeutic follow-ups, correspondence"
+          },
+          "1": {
+            "n": "Colleagues",
+            "d": "Supervisions, referrals, exchanges"
+          },
+          "2": {
+            "n": "Billing",
+            "d": "Fees, certificates, agreements"
+          },
+          "3": {
+            "n": "Training",
+            "d": "Continuing education, symposia, publications"
+          },
+          "4": {
+            "n": "Administrative",
+            "d": "Psychology board, insurance"
+          }
+        }
+      },
+      "infirmier": {
+        "name": "Independent Nurse",
+        "cats": {
+          "0": {
+            "n": "Patients",
+            "d": "Care plans, rounds, appointments"
+          },
+          "1": {
+            "n": "Doctors",
+            "d": "Prescriptions, reports, coordination"
+          },
+          "2": {
+            "n": "Health Insurance",
+            "d": "Certificates, agreements, reimbursements"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Care statements, third-party payment, nomenclature"
+          },
+          "4": {
+            "n": "Suppliers",
+            "d": "Care supplies, orders"
+          }
+        }
+      },
+      "opticien": {
+        "name": "Optician / Hearing Aid Specialist",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Orders, fittings, complaints"
+          },
+          "1": {
+            "n": "Suppliers / Lens Makers",
+            "d": "Lens/frame orders, catalogs"
+          },
+          "2": {
+            "n": "Health Insurance",
+            "d": "Reimbursements, certificates, prescriptions"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, quotes, reminders"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Promotions, loyalty, events"
+          }
+        }
+      },
+      "ecommerce": {
+        "name": "E-commerce",
+        "cats": {
+          "0": {
+            "n": "Orders",
+            "d": "Confirmations, tracking, order modifications"
+          },
+          "1": {
+            "n": "Customer Service",
+            "d": "Complaints, returns, refunds, after-sales"
+          },
+          "2": {
+            "n": "Suppliers",
+            "d": "Sourcing, negotiations, deliveries"
+          },
+          "3": {
+            "n": "Logistics",
+            "d": "Carriers, tracking, warehouse"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Campaigns, newsletters, partnerships, affiliates"
+          },
+          "5": {
+            "n": "Payments",
+            "d": "Transactions, disputes, chargebacks"
+          },
+          "6": {
+            "n": "Technical",
+            "d": "Platform, bugs, updates, hosting"
+          }
+        }
+      },
+      "commerce-detail": {
+        "name": "Retail",
+        "cats": {
+          "0": {
+            "n": "Suppliers",
+            "d": "Orders, deliveries, catalogs"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Loyalty, complaints, special requests"
+          },
+          "2": {
+            "n": "Billing",
+            "d": "Invoices, purchase orders, reminders"
+          },
+          "3": {
+            "n": "Team",
+            "d": "Scheduling, recruitment, training"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Promotions, window displays, events"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Lease, insurance, regulations"
+          }
+        }
+      },
+      "grossiste": {
+        "name": "Wholesaler / Import-Export",
+        "cats": {
+          "0": {
+            "n": "B2B Clients",
+            "d": "Orders, quotes, negotiations"
+          },
+          "1": {
+            "n": "Suppliers",
+            "d": "Purchasing, sourcing, imports"
+          },
+          "2": {
+            "n": "Logistics",
+            "d": "Shipping, customs, transit, containers"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, credits, reminders"
+          },
+          "4": {
+            "n": "Customs / Export",
+            "d": "Customs documents, certificates of origin"
+          },
+          "5": {
+            "n": "Sales",
+            "d": "Prospecting, trade shows, catalog"
+          }
+        }
+      },
+      "franchise": {
+        "name": "Franchise / Retail Chain",
+        "cats": {
+          "0": {
+            "n": "Franchisor",
+            "d": "Guidelines, reports, royalties"
+          },
+          "1": {
+            "n": "Operations",
+            "d": "Sourcing, logistics, procedures"
+          },
+          "2": {
+            "n": "Team",
+            "d": "Recruitment, training, scheduling"
+          },
+          "3": {
+            "n": "Marketing",
+            "d": "Local campaigns, events, communication"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Royalties, invoices, revenue"
+          },
+          "5": {
+            "n": "Clients",
+            "d": "Loyalty, complaints, satisfaction"
+          }
+        }
+      },
+      "marches-publics": {
+        "name": "Public Procurement / Tenders",
+        "cats": {
+          "0": {
+            "n": "Tenders",
+            "d": "Specifications, publications, submissions"
+          },
+          "1": {
+            "n": "Active Cases",
+            "d": "Submitted offers, negotiations, awards"
+          },
+          "2": {
+            "n": "Execution",
+            "d": "Contracts, amendments, work acceptance"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Settlements, progress payments, retention"
+          },
+          "4": {
+            "n": "Subcontractors",
+            "d": "Partners, agreements, coordination"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Accreditation, certificates, social security"
+          }
+        }
+      },
+      "concessionnaire": {
+        "name": "Car Dealership",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Inquiries, test drives, after-sales follow-up"
+          },
+          "1": {
+            "n": "Manufacturer",
+            "d": "Stock, targets, programs, incentives"
+          },
+          "2": {
+            "n": "Workshop / After-sales",
+            "d": "Appointments, recalls, warranties"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Sales, financing, leasing"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Promotions, open days, digital"
+          },
+          "5": {
+            "n": "Parts Suppliers",
+            "d": "Parts orders, tires, accessories"
+          }
+        }
+      },
+      "agent-immobilier": {
+        "name": "Real Estate Agent",
+        "cats": {
+          "0": {
+            "n": "Listings",
+            "d": "Properties for sale/rent, valuations, exclusives"
+          },
+          "1": {
+            "n": "Buyers / Tenants",
+            "d": "Viewings, offers, negotiations"
+          },
+          "2": {
+            "n": "Owners",
+            "d": "Listing follow-up, reports, renewals"
+          },
+          "3": {
+            "n": "Notaries",
+            "d": "Preliminary contracts, deeds, documents"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Ads, photos, real estate portals"
+          },
+          "5": {
+            "n": "Billing",
+            "d": "Commissions, fees, invoices"
+          },
+          "6": {
+            "n": "Administrative",
+            "d": "Professional body, training, energy certificates"
+          }
+        }
+      },
+      "syndic": {
+        "name": "Property Manager / Rental Management",
+        "cats": {
+          "0": {
+            "n": "Co-owners",
+            "d": "Meetings, decisions, complaints"
+          },
+          "1": {
+            "n": "Tenants",
+            "d": "Leases, inspections, complaints"
+          },
+          "2": {
+            "n": "Suppliers / Maintenance",
+            "d": "Works, quotes, maintenance contracts"
+          },
+          "3": {
+            "n": "Accounting",
+            "d": "Charges, settlements, fund calls"
+          },
+          "4": {
+            "n": "Legal",
+            "d": "Disputes, arrears, procedures"
+          },
+          "5": {
+            "n": "Insurance",
+            "d": "Claims, policies, appraisals"
+          }
+        }
+      },
+      "entrepreneur-construction": {
+        "name": "Construction Contractor",
+        "cats": {
+          "0": {
+            "n": "Construction Sites",
+            "d": "Scheduling, site meetings, minutes"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Quotes, contracts, handovers"
+          },
+          "2": {
+            "n": "Subcontractors",
+            "d": "Agreements, coordination, invoices"
+          },
+          "3": {
+            "n": "Suppliers",
+            "d": "Materials, orders, deliveries"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Progress payments, settlements, retention"
+          },
+          "5": {
+            "n": "Safety",
+            "d": "Safety coordinator, plans, accidents"
+          },
+          "6": {
+            "n": "Administrative",
+            "d": "Accreditation, insurance, site social security"
+          }
+        }
+      },
+      "promoteur": {
+        "name": "Property Developer",
+        "cats": {
+          "0": {
+            "n": "Projects",
+            "d": "Feasibility studies, permits, plans"
+          },
+          "1": {
+            "n": "Sales",
+            "d": "Off-plan sales, reservations, options"
+          },
+          "2": {
+            "n": "Contractors",
+            "d": "Tenders, work monitoring, minutes"
+          },
+          "3": {
+            "n": "Financing",
+            "d": "Banks, loans, guarantees"
+          },
+          "4": {
+            "n": "Notaries / Legal",
+            "d": "Deeds, easements, co-ownership"
+          },
+          "5": {
+            "n": "Billing",
+            "d": "Fund calls, final settlements"
+          }
+        }
+      },
+      "architecte-interieur": {
+        "name": "Interior Designer / Decorator",
+        "cats": {
+          "0": {
+            "n": "Client Projects",
+            "d": "Briefs, moodboards, plans, approvals"
+          },
+          "1": {
+            "n": "Suppliers / Craftsmen",
+            "d": "Quotes, orders, samples"
+          },
+          "2": {
+            "n": "Clients",
+            "d": "Correspondence, appointments, follow-up"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Quotes, fees, invoices"
+          },
+          "4": {
+            "n": "Inspiration",
+            "d": "Trends, fairs, publications"
+          }
+        }
+      },
+      "agence-marketing": {
+        "name": "Marketing / Communications Agency",
+        "cats": {
+          "0": {
+            "n": "Clients / Accounts",
+            "d": "Briefs, approvals, monthly reports"
+          },
+          "1": {
+            "n": "Creative Projects",
+            "d": "Mockups, content, campaigns"
+          },
+          "2": {
+            "n": "Media / Advertising",
+            "d": "Media plans, buying, performance"
+          },
+          "3": {
+            "n": "Prospecting",
+            "d": "New clients, pitches, proposals"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Quotes, invoices, budgets"
+          },
+          "5": {
+            "n": "Team",
+            "d": "Scheduling, freelancers, internal briefs"
+          },
+          "6": {
+            "n": "Suppliers",
+            "d": "Printers, photographers, SaaS tools"
+          }
+        }
+      },
+      "agence-web": {
+        "name": "Web / IT Agency",
+        "cats": {
+          "0": {
+            "n": "Client Projects",
+            "d": "Specifications, sprints, deliverables"
+          },
+          "1": {
+            "n": "Support / Tickets",
+            "d": "Bugs, requests, maintenance"
+          },
+          "2": {
+            "n": "Hosting",
+            "d": "Servers, domains, SSL, monitoring"
+          },
+          "3": {
+            "n": "Clients",
+            "d": "Correspondence, approvals, feedback"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Quotes, invoices, SLA contracts"
+          },
+          "5": {
+            "n": "Team / Dev",
+            "d": "Recruitment, code reviews, training"
+          },
+          "6": {
+            "n": "Tech Watch",
+            "d": "New technologies, updates, security"
+          }
+        }
+      },
+      "rh-recrutement": {
+        "name": "Human Resources / Recruitment",
+        "cats": {
+          "0": {
+            "n": "Applications",
+            "d": "CVs, cover letters, interviews"
+          },
+          "1": {
+            "n": "Clients / Companies",
+            "d": "Mandates, profiles sought, feedback"
+          },
+          "2": {
+            "n": "Active Candidates",
+            "d": "Follow-up, outreach, proposals"
+          },
+          "3": {
+            "n": "Contracts",
+            "d": "Offers, terms, signatures"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Fees, success fees, invoices"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Temp work, labor law, training"
+          }
+        }
+      },
+      "assurances": {
+        "name": "Insurance Office",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Inquiries, appointments, policies"
+          },
+          "1": {
+            "n": "Companies",
+            "d": "Underwriting, rates, commissions"
+          },
+          "2": {
+            "n": "Claims",
+            "d": "Declarations, appraisals, compensations"
+          },
+          "3": {
+            "n": "Renewals",
+            "d": "Due dates, amendments, cancellations"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Premiums, commissions, reminders"
+          },
+          "5": {
+            "n": "Compliance",
+            "d": "FSMA, training, anti-money laundering"
+          }
+        }
+      },
+      "courtier-financier": {
+        "name": "Financial Broker",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Files, simulations, appointments"
+          },
+          "1": {
+            "n": "Banks / Institutions",
+            "d": "Loan applications, offers, terms"
+          },
+          "2": {
+            "n": "Active Cases",
+            "d": "Follow-up, missing documents, signatures"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Commissions, brokerage, invoices"
+          },
+          "4": {
+            "n": "Compliance",
+            "d": "FSMA, MiFID, training"
+          },
+          "5": {
+            "n": "Market Watch",
+            "d": "Rates, products, financial news"
+          }
+        }
+      },
+      "cybersecurite": {
+        "name": "Cybersecurity Expert",
+        "cats": {
+          "0": {
+            "n": "Assignments / Audits",
+            "d": "Pentests, reports, recommendations"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Requests, contracts, follow-up"
+          },
+          "2": {
+            "n": "Security Alerts",
+            "d": "Vulnerabilities, incidents, patches"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Quotes, invoices, contracts"
+          },
+          "4": {
+            "n": "Watch",
+            "d": "CVEs, threats, new attacks"
+          },
+          "5": {
+            "n": "Training",
+            "d": "Certifications, conferences, publications"
+          }
+        }
+      },
+      "conseil-gestion": {
+        "name": "Management Consulting Firm",
+        "cats": {
+          "0": {
+            "n": "Assignments",
+            "d": "Proposals, methodology, deliverables"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Follow-up, meetings, steering committees"
+          },
+          "2": {
+            "n": "Billing",
+            "d": "Fees, expenses, timesheets"
+          },
+          "3": {
+            "n": "Prospecting",
+            "d": "Networking, tenders, references"
+          },
+          "4": {
+            "n": "Team",
+            "d": "Consultants, scheduling, evaluations"
+          },
+          "5": {
+            "n": "Watch",
+            "d": "Industry trends, benchmarks, studies"
+          }
+        }
+      },
+      "artisan": {
+        "name": "Craftsman (plumber, electrician...)",
+        "cats": {
+          "0": {
+            "n": "Jobs / Interventions",
+            "d": "Scheduling, appointments, emergencies"
+          },
+          "1": {
+            "n": "Quotes / Orders",
+            "d": "Quote requests, estimates, acceptances"
+          },
+          "2": {
+            "n": "Clients",
+            "d": "Correspondence, complaints, satisfaction"
+          },
+          "3": {
+            "n": "Suppliers",
+            "d": "Materials, orders, deliveries"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, deposits, reminders"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Accreditation, insurance, inspections"
+          }
+        }
+      },
+      "garagiste": {
+        "name": "Mechanic / Body Shop",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Appointments, diagnostics, repair quotes"
+          },
+          "1": {
+            "n": "Parts Suppliers",
+            "d": "Orders, catalogs, returns"
+          },
+          "2": {
+            "n": "Insurance",
+            "d": "Appraisals, approvals, claims"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, warranties, reminders"
+          },
+          "4": {
+            "n": "Vehicle Inspection",
+            "d": "Appointments, results, re-inspections"
+          },
+          "5": {
+            "n": "Team",
+            "d": "Workshop scheduling, training, mechanics"
+          }
+        }
+      },
+      "photographe": {
+        "name": "Photographer / Videographer",
+        "cats": {
+          "0": {
+            "n": "Clients / Bookings",
+            "d": "Inquiries, reservations, briefs"
+          },
+          "1": {
+            "n": "Deliveries",
+            "d": "Galleries, edits, retouching"
+          },
+          "2": {
+            "n": "Billing",
+            "d": "Quotes, invoices, deposits"
+          },
+          "3": {
+            "n": "Suppliers",
+            "d": "Equipment, studio rental, printing"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Portfolio, social media, website"
+          },
+          "5": {
+            "n": "Copyright",
+            "d": "Licenses, assignments, contracts"
+          }
+        }
+      },
+      "imprimeur": {
+        "name": "Printer / Graphic Designer",
+        "cats": {
+          "0": {
+            "n": "Orders",
+            "d": "Quotes, proofs, approvals, production"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Briefs, correspondence, complaints"
+          },
+          "2": {
+            "n": "Suppliers",
+            "d": "Paper, inks, finishing, subcontracting"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, purchase orders, reminders"
+          },
+          "4": {
+            "n": "Deliveries",
+            "d": "Shipping, scheduling, dispatches"
+          }
+        }
+      },
+      "paysagiste": {
+        "name": "Landscaper / Gardener",
+        "cats": {
+          "0": {
+            "n": "Projects",
+            "d": "Scheduling, landscaping, maintenance"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Quotes, appointments, projects"
+          },
+          "2": {
+            "n": "Suppliers",
+            "d": "Nurseries, materials, equipment rental"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, maintenance contracts, reminders"
+          },
+          "4": {
+            "n": "Team",
+            "d": "Team scheduling, seasonal workers, training"
+          }
+        }
+      },
+      "serrurier": {
+        "name": "Locksmith / Glazier",
+        "cats": {
+          "0": {
+            "n": "Emergency Calls",
+            "d": "Repairs, lockouts, emergencies"
+          },
+          "1": {
+            "n": "Quotes / Works",
+            "d": "Installations, replacements, security upgrades"
+          },
+          "2": {
+            "n": "Clients",
+            "d": "Individuals, property managers, businesses"
+          },
+          "3": {
+            "n": "Suppliers",
+            "d": "Locks, glass, hardware"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, quotes, reminders"
+          }
+        }
+      },
+      "formateur": {
+        "name": "Trainer / Training Center",
+        "cats": {
+          "0": {
+            "n": "Participants",
+            "d": "Registrations, confirmations, evaluations"
+          },
+          "1": {
+            "n": "Clients / Companies",
+            "d": "Requests, agreements, scheduling"
+          },
+          "2": {
+            "n": "Content",
+            "d": "Materials, presentations, exercises"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, grants, training vouchers"
+          },
+          "4": {
+            "n": "Administrative",
+            "d": "Accreditations, certifications, quality"
+          },
+          "5": {
+            "n": "Marketing",
+            "d": "Catalog, website, promotions"
+          }
+        }
+      },
+      "ecole": {
+        "name": "School / Institution",
+        "cats": {
+          "0": {
+            "n": "Parents / Students",
+            "d": "Correspondence, report cards, absences"
+          },
+          "1": {
+            "n": "Teachers",
+            "d": "Meetings, scheduling, teaching materials"
+          },
+          "2": {
+            "n": "Administration",
+            "d": "Ministry, inspections, subsidies"
+          },
+          "3": {
+            "n": "Suppliers",
+            "d": "Textbooks, equipment, canteen"
+          },
+          "4": {
+            "n": "Activities",
+            "d": "Field trips, events, shows"
+          },
+          "5": {
+            "n": "Accounting",
+            "d": "Budget, school fees, invoices"
+          }
+        }
+      },
+      "auto-ecole": {
+        "name": "Driving School",
+        "cats": {
+          "0": {
+            "n": "Students",
+            "d": "Registrations, scheduling, exams"
+          },
+          "1": {
+            "n": "Instructors",
+            "d": "Scheduling, evaluations, availability"
+          },
+          "2": {
+            "n": "Administration",
+            "d": "Transport authority, accreditations, regulations"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Lessons, packages, reminders"
+          },
+          "4": {
+            "n": "Vehicles",
+            "d": "Maintenance, insurance, vehicle inspection"
+          }
+        }
+      },
+      "restaurant": {
+        "name": "Restaurant / Caterer",
+        "cats": {
+          "0": {
+            "n": "Reservations",
+            "d": "Tables, events, groups"
+          },
+          "1": {
+            "n": "Suppliers",
+            "d": "Food, beverages, equipment"
+          },
+          "2": {
+            "n": "Clients",
+            "d": "Inquiries, complaints, loyalty"
+          },
+          "3": {
+            "n": "Team",
+            "d": "Scheduling, recruitment, training"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Supplier invoices, accounting"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Food safety, licenses, insurance"
+          },
+          "6": {
+            "n": "Marketing",
+            "d": "Social media, reviews, events"
+          }
+        }
+      },
+      "hotel": {
+        "name": "Hotel / B&B / Guesthouse",
+        "cats": {
+          "0": {
+            "n": "Reservations",
+            "d": "Booking, confirmation, cancellations"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Special requests, complaints, reviews"
+          },
+          "2": {
+            "n": "OTA / Platforms",
+            "d": "Booking.com, Airbnb, channel manager"
+          },
+          "3": {
+            "n": "Suppliers",
+            "d": "Linen, housekeeping, maintenance, breakfast"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, commissions, tourist tax"
+          },
+          "5": {
+            "n": "Marketing",
+            "d": "Website, promotions, social media"
+          }
+        }
+      },
+      "agence-voyage": {
+        "name": "Travel Agency",
+        "cats": {
+          "0": {
+            "n": "Clients / Travelers",
+            "d": "Inquiries, quotes, confirmations"
+          },
+          "1": {
+            "n": "Tour Operators",
+            "d": "Availability, bookings, contracts"
+          },
+          "2": {
+            "n": "Airlines",
+            "d": "Tickets, changes, cancellations"
+          },
+          "3": {
+            "n": "Hotels / Transfers",
+            "d": "Bookings, vouchers, confirmations"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, commissions, travel insurance"
+          },
+          "5": {
+            "n": "Complaints",
+            "d": "Complaints, refunds, disputes"
+          }
+        }
+      },
+      "association": {
+        "name": "Association / NGO",
+        "cats": {
+          "0": {
+            "n": "Members / Donors",
+            "d": "Memberships, donations, acknowledgments"
+          },
+          "1": {
+            "n": "Projects / Actions",
+            "d": "Programs, partnerships, reports"
+          },
+          "2": {
+            "n": "Grants",
+            "d": "Calls for projects, supporting docs, reports"
+          },
+          "3": {
+            "n": "Volunteers",
+            "d": "Recruitment, scheduling, coordination"
+          },
+          "4": {
+            "n": "Communication",
+            "d": "Newsletter, events, media"
+          },
+          "5": {
+            "n": "Accounting",
+            "d": "Budget, accounts, auditor"
+          }
+        }
+      },
+      "createur-contenu": {
+        "name": "Content Creator / Influencer",
+        "cats": {
+          "0": {
+            "n": "Brands / Sponsors",
+            "d": "Proposals, contracts, briefs"
+          },
+          "1": {
+            "n": "Agencies",
+            "d": "Collaborations, negotiations, scheduling"
+          },
+          "2": {
+            "n": "Community",
+            "d": "Fan messages, creator collaborations"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, quotes, royalties"
+          },
+          "4": {
+            "n": "Platforms",
+            "d": "YouTube, TikTok, Instagram, monetization"
+          },
+          "5": {
+            "n": "Legal",
+            "d": "Contracts, GDPR, image rights"
+          }
+        }
+      },
+      "mode-textile": {
+        "name": "Fashion / Textile",
+        "cats": {
+          "0": {
+            "n": "Suppliers / Workshops",
+            "d": "Fabrics, manufacturing, samples"
+          },
+          "1": {
+            "n": "B2B Clients",
+            "d": "Orders, showrooms, restocks"
+          },
+          "2": {
+            "n": "E-commerce",
+            "d": "Online orders, returns, after-sales"
+          },
+          "3": {
+            "n": "Logistics",
+            "d": "Shipping, stock, customs"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Lookbooks, influencers, press"
+          },
+          "5": {
+            "n": "Billing",
+            "d": "Invoices, purchase orders, reminders"
+          }
+        }
+      },
+      "salon-beaute": {
+        "name": "Beauty Salon / Wellness",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Appointments, loyalty, preferences"
+          },
+          "1": {
+            "n": "Suppliers",
+            "d": "Products, equipment, orders"
+          },
+          "2": {
+            "n": "Team",
+            "d": "Scheduling, recruitment, training"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, payments, accounting"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Promotions, social media, reviews"
+          }
+        }
+      },
+      "nettoyage": {
+        "name": "Cleaning Company",
+        "cats": {
+          "0": {
+            "n": "Clients / Contracts",
+            "d": "Specifications, scheduling, inspections"
+          },
+          "1": {
+            "n": "Team",
+            "d": "Scheduling, replacements, recruitment"
+          },
+          "2": {
+            "n": "Suppliers",
+            "d": "Products, equipment, supplies"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, contracts, reminders"
+          },
+          "4": {
+            "n": "Quality",
+            "d": "Inspections, complaints, certifications"
+          }
+        }
+      },
+      "transport-logistique": {
+        "name": "Transport / Logistics",
+        "cats": {
+          "0": {
+            "n": "Clients / Shippers",
+            "d": "Transport orders, tracking, deliveries"
+          },
+          "1": {
+            "n": "Drivers",
+            "d": "Scheduling, CMR, onboard documents"
+          },
+          "2": {
+            "n": "Subcontractors",
+            "d": "Chartering, rates, availability"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, rates, disputes"
+          },
+          "4": {
+            "n": "Vehicles",
+            "d": "Maintenance, vehicle inspection, insurance"
+          },
+          "5": {
+            "n": "Regulations",
+            "d": "Licenses, ADR, tachograph, customs"
+          }
+        }
+      },
+      "industrie-production": {
+        "name": "Industry / Manufacturing",
+        "cats": {
+          "0": {
+            "n": "Clients / Orders",
+            "d": "Purchase orders, deliveries, specifications"
+          },
+          "1": {
+            "n": "Suppliers",
+            "d": "Raw materials, components, tooling"
+          },
+          "2": {
+            "n": "Production",
+            "d": "Scheduling, quality, maintenance"
+          },
+          "3": {
+            "n": "Logistics",
+            "d": "Shipping, stock, transport"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, quotes, reminders"
+          },
+          "5": {
+            "n": "HR / Safety",
+            "d": "Staff, training, workplace accidents"
+          }
+        }
+      },
+      "event-planning": {
+        "name": "Event Planner",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Briefs, quotes, approvals"
+          },
+          "1": {
+            "n": "Vendors",
+            "d": "Caterers, DJs, decor, tech"
+          },
+          "2": {
+            "n": "Venues",
+            "d": "Bookings, quotes, contracts"
+          },
+          "3": {
+            "n": "Logistics",
+            "d": "Scheduling, setup, coordination"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Quotes, invoices, deposits"
+          },
+          "5": {
+            "n": "Marketing",
+            "d": "Invitations, ticketing, communication"
+          }
+        }
+      }
+    }
   }
 }

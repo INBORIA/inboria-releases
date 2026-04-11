@@ -634,33 +634,114 @@
     "deleteErrorDesc": "Kan deze categorie niet verwijderen",
     "saving": "Opslaan...",
     "suggestedCats": {
-      "facturation": { "name": "Facturatie", "desc": "Facturen, offertes, bestelbonnen, betalingsherinneringen" },
-      "support_client": { "name": "Klantenservice", "desc": "Hulpvragen, klachten, vragen van klanten" },
-      "commercial": { "name": "Commercieel", "desc": "Prospects, commerciële voorstellen, onderhandelingen, verkoop" },
-      "administratif": { "name": "Administratief", "desc": "Contracten, officiële documenten, juridische correspondentie" },
-      "newsletter": { "name": "Nieuwsbrief", "desc": "Nieuwsbrieven, promoties, marketing e-mails" },
-      "newsletter_marketing": { "name": "Nieuwsbrief / Marketing", "desc": "Nieuwsbrieven, promoties, marketingcampagnes, advertenties" },
-      "rh_equipe": { "name": "HR / Team", "desc": "Verlof, werving, personeelsbeheer, interne notities" },
-      "fournisseurs": { "name": "Leveranciers", "desc": "Bestellingen, leveringen, leveranciersrelaties, aankopen" },
-      "juridique": { "name": "Juridisch", "desc": "Ingebrekestellingen, AVG, compliance, geschillen" },
-      "juridique_conformite": { "name": "Juridisch / Compliance", "desc": "Ingebrekestellingen, AVG, compliance, geschillen, contracten" },
-      "technique": { "name": "Technisch", "desc": "Bugs, onderhoud, servers, IT, technische verzoeken" },
-      "technique_it": { "name": "Technisch / IT", "desc": "Bugs, onderhoud, servers, IT, technische verzoeken" },
-      "formation": { "name": "Opleiding", "desc": "Webinars, certificeringen, e-learning, uitnodigingen" },
-      "banque_finance": { "name": "Bank / Financiën", "desc": "Bankafschriften, overschrijvingen, leningen, verzekeringen" },
-      "logistique_livraisons": { "name": "Logistiek / Leveringen", "desc": "Pakketopvolging, transporteurs, leveringsbonnen" },
-      "rendez_vous_planning": { "name": "Afspraken / Planning", "desc": "Bevestigingen, annuleringen, vergaderherinneringen" },
-      "international_export": { "name": "Internationaal / Export", "desc": "Douane, buitenlandse klanten, vertalingen, incoterms" },
-      "urgent_prioritaire": { "name": "Urgent / Prioriteit", "desc": "E-mails die onmiddellijke actie vereisen, kritieke waarschuwingen" },
-      "comptabilite": { "name": "Boekhouding", "desc": "Boekingen, balansen, BTW, belastingaangiften" },
-      "paiements_encaissements": { "name": "Betalingen / Incasso's", "desc": "Betalingsbevestigingen, vertragingen, herinneringen, terugbetalingen" },
-      "partenaires_sous_traitants": { "name": "Partners / Onderaannemers", "desc": "Samenwerkingen, overeenkomsten, uitwisselingen met externe partners" },
-      "projets": { "name": "Projecten", "desc": "Projectopvolging, deliverables, deadlines, voortgangsrapporten" },
-      "communication_interne": { "name": "Interne Communicatie", "desc": "Memo's, aankondigingen, verslagen, circulaires" },
-      "immobilier_locaux": { "name": "Vastgoed / Kantoren", "desc": "Huurcontracten, huur, gebouwonderhoud, kosten" },
-      "abonnements_saas": { "name": "Abonnementen / SaaS", "desc": "Softwarelicenties, verlengingen, toolfacturen" },
-      "devis_negociations": { "name": "Offertes / Onderhandelingen", "desc": "Offerteaanvragen, vergelijkingen, tegenvoorstellen" },
-      "spam_a_supprimer": { "name": "Spam / Te Verwijderen", "desc": "Ongewenste e-mails, ongevraagde reclame" },
+      "facturation": {
+        "name": "Facturatie",
+        "desc": "Facturen, offertes, bestelbonnen, betalingsherinneringen"
+      },
+      "support_client": {
+        "name": "Klantenservice",
+        "desc": "Hulpvragen, klachten, vragen van klanten"
+      },
+      "commercial": {
+        "name": "Commercieel",
+        "desc": "Prospects, commerciële voorstellen, onderhandelingen, verkoop"
+      },
+      "administratif": {
+        "name": "Administratief",
+        "desc": "Contracten, officiële documenten, juridische correspondentie"
+      },
+      "newsletter": {
+        "name": "Nieuwsbrief",
+        "desc": "Nieuwsbrieven, promoties, marketing e-mails"
+      },
+      "newsletter_marketing": {
+        "name": "Nieuwsbrief / Marketing",
+        "desc": "Nieuwsbrieven, promoties, marketingcampagnes, advertenties"
+      },
+      "rh_equipe": {
+        "name": "HR / Team",
+        "desc": "Verlof, werving, personeelsbeheer, interne notities"
+      },
+      "fournisseurs": {
+        "name": "Leveranciers",
+        "desc": "Bestellingen, leveringen, leveranciersrelaties, aankopen"
+      },
+      "juridique": {
+        "name": "Juridisch",
+        "desc": "Ingebrekestellingen, AVG, compliance, geschillen"
+      },
+      "juridique_conformite": {
+        "name": "Juridisch / Compliance",
+        "desc": "Ingebrekestellingen, AVG, compliance, geschillen, contracten"
+      },
+      "technique": {
+        "name": "Technisch",
+        "desc": "Bugs, onderhoud, servers, IT, technische verzoeken"
+      },
+      "technique_it": {
+        "name": "Technisch / IT",
+        "desc": "Bugs, onderhoud, servers, IT, technische verzoeken"
+      },
+      "formation": {
+        "name": "Opleiding",
+        "desc": "Webinars, certificeringen, e-learning, uitnodigingen"
+      },
+      "banque_finance": {
+        "name": "Bank / Financiën",
+        "desc": "Bankafschriften, overschrijvingen, leningen, verzekeringen"
+      },
+      "logistique_livraisons": {
+        "name": "Logistiek / Leveringen",
+        "desc": "Pakketopvolging, transporteurs, leveringsbonnen"
+      },
+      "rendez_vous_planning": {
+        "name": "Afspraken / Planning",
+        "desc": "Bevestigingen, annuleringen, vergaderherinneringen"
+      },
+      "international_export": {
+        "name": "Internationaal / Export",
+        "desc": "Douane, buitenlandse klanten, vertalingen, incoterms"
+      },
+      "urgent_prioritaire": {
+        "name": "Urgent / Prioriteit",
+        "desc": "E-mails die onmiddellijke actie vereisen, kritieke waarschuwingen"
+      },
+      "comptabilite": {
+        "name": "Boekhouding",
+        "desc": "Boekingen, balansen, BTW, belastingaangiften"
+      },
+      "paiements_encaissements": {
+        "name": "Betalingen / Incasso's",
+        "desc": "Betalingsbevestigingen, vertragingen, herinneringen, terugbetalingen"
+      },
+      "partenaires_sous_traitants": {
+        "name": "Partners / Onderaannemers",
+        "desc": "Samenwerkingen, overeenkomsten, uitwisselingen met externe partners"
+      },
+      "projets": {
+        "name": "Projecten",
+        "desc": "Projectopvolging, deliverables, deadlines, voortgangsrapporten"
+      },
+      "communication_interne": {
+        "name": "Interne Communicatie",
+        "desc": "Memo's, aankondigingen, verslagen, circulaires"
+      },
+      "immobilier_locaux": {
+        "name": "Vastgoed / Kantoren",
+        "desc": "Huurcontracten, huur, gebouwonderhoud, kosten"
+      },
+      "abonnements_saas": {
+        "name": "Abonnementen / SaaS",
+        "desc": "Softwarelicenties, verlengingen, toolfacturen"
+      },
+      "devis_negociations": {
+        "name": "Offertes / Onderhandelingen",
+        "desc": "Offerteaanvragen, vergelijkingen, tegenvoorstellen"
+      },
+      "spam_a_supprimer": {
+        "name": "Spam / Te Verwijderen",
+        "desc": "Ongewenste e-mails, ongevraagde reclame"
+      },
       "namePlaceholder": "Bijv.: Facturen, Leveranciers...",
       "descPlaceholder": "Bijv.: Alle e-mails met facturen, offertes of bonnen."
     }
@@ -1635,12 +1716,36 @@
     "yesterday": "Gisteren",
     "olderDate": "3 apr.",
     "emails": [
-      { "sender": "Peter Martin", "subject": "Q2-contract — handtekening vereist", "summary": "Q2-servicecontract te ondertekenen vóór vrijdag. Bedrag: € 12.400." },
-      { "sender": "Marie Laurent", "subject": "Klantbespreking morgen 9u", "summary": "Bevestiging bespreking met Dupont SA morgen om 9u. Agenda bijgevoegd." },
-      { "sender": "Sophie Dubois", "subject": "Maandrapport maart 2026", "summary": "Het boekhoudrapport van maart is klaar voor validatie. Omzet +8%." },
-      { "sender": "Thomas Bernard", "subject": "Offerte website — klantfeedback", "summary": "Klant heeft de offerte van € 4.800 goedgekeurd. Vraagt om maandag te starten." },
-      { "sender": "LinkedIn", "subject": "3 nieuwe connecties deze week", "summary": "Nieuwe contacten: Jean Leroy (CEO), Anne Petit (HR), Marc Faure (CTO)." },
-      { "sender": "Tech Nieuwsbrief", "subject": "AI-trends in 2026", "summary": "Speciaal dossier: e-mailautomatisering, GPT-5 en de toekomst van B2B SaaS." }
+      {
+        "sender": "Peter Martin",
+        "subject": "Q2-contract — handtekening vereist",
+        "summary": "Q2-servicecontract te ondertekenen vóór vrijdag. Bedrag: € 12.400."
+      },
+      {
+        "sender": "Marie Laurent",
+        "subject": "Klantbespreking morgen 9u",
+        "summary": "Bevestiging bespreking met Dupont SA morgen om 9u. Agenda bijgevoegd."
+      },
+      {
+        "sender": "Sophie Dubois",
+        "subject": "Maandrapport maart 2026",
+        "summary": "Het boekhoudrapport van maart is klaar voor validatie. Omzet +8%."
+      },
+      {
+        "sender": "Thomas Bernard",
+        "subject": "Offerte website — klantfeedback",
+        "summary": "Klant heeft de offerte van € 4.800 goedgekeurd. Vraagt om maandag te starten."
+      },
+      {
+        "sender": "LinkedIn",
+        "subject": "3 nieuwe connecties deze week",
+        "summary": "Nieuwe contacten: Jean Leroy (CEO), Anne Petit (HR), Marc Faure (CTO)."
+      },
+      {
+        "sender": "Tech Nieuwsbrief",
+        "subject": "AI-trends in 2026",
+        "summary": "Speciaal dossier: e-mailautomatisering, GPT-5 en de toekomst van B2B SaaS."
+      }
     ]
   },
   "agenda": {
@@ -1708,5 +1813,1652 @@
     "placeholder": "Typ uw vraag...",
     "poweredBy": "Aangedreven door Inboria AI",
     "errorMessage": "Sorry, er is een fout opgetreden. Probeer het opnieuw of neem contact op met support@inboria.com."
+  },
+  "packs": {
+    "families": {
+      "services_professionnels": "Professionele diensten",
+      "sante": "Gezondheidszorg",
+      "commerce_distribution": "Handel & Distributie",
+      "immobilier_construction": "Vastgoed & Bouw",
+      "services_entreprises": "Zakelijke diensten",
+      "artisanat_techniques": "Ambachten & Technische beroepen",
+      "enseignement_formation": "Onderwijs & Opleiding",
+      "restauration_tourisme": "Horeca & Toerisme",
+      "autres_services": "Overige diensten"
+    },
+    "items": {
+      "comptable": {
+        "name": "Boekhouder / Accountant",
+        "cats": {
+          "0": {
+            "n": "Belastingaangiften",
+            "d": "BTW, belastingen, driemaandelijkse en jaarlijkse aangiften"
+          },
+          "1": {
+            "n": "Klantfacturatie",
+            "d": "Facturen, honoraria, betalingsherinneringen"
+          },
+          "2": {
+            "n": "Leveranciers",
+            "d": "Leveranciersfacturen, bestellingen, leveringen"
+          },
+          "3": {
+            "n": "Boekhouding",
+            "d": "Boekingen, balansen, dagboeken"
+          },
+          "4": {
+            "n": "Sociaal / Loon",
+            "d": "Loonfiches, RSZ, sociale zekerheid"
+          },
+          "5": {
+            "n": "Klanten",
+            "d": "Klantcorrespondentie, verzoeken, afspraken"
+          },
+          "6": {
+            "n": "Juridisch",
+            "d": "Contracten, statuten, juridische naleving"
+          },
+          "7": {
+            "n": "Bank",
+            "d": "Bankafschriften, overschrijvingen, verrichtingen"
+          }
+        }
+      },
+      "avocat": {
+        "name": "Advocaat / Jurist",
+        "cats": {
+          "0": {
+            "n": "Klantdossiers",
+            "d": "Klantcorrespondentie, procedurestukken"
+          },
+          "1": {
+            "n": "Rechtbanken",
+            "d": "Dagvaardingen, vonnissen, conclusies"
+          },
+          "2": {
+            "n": "Confraters",
+            "d": "Uitwisselingen tussen advocaten, onderhandelingen"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Honoraria, provisies, kostenstaten"
+          },
+          "4": {
+            "n": "Juridisch",
+            "d": "Wetgeving, rechtspraak, juridische opvolging"
+          },
+          "5": {
+            "n": "Deurwaarders / Deskundigen",
+            "d": "Betekeningen, expertiseverslagen"
+          },
+          "6": {
+            "n": "Administratief",
+            "d": "Balie, orde, verplichte vormingen"
+          }
+        }
+      },
+      "notaire": {
+        "name": "Notaris",
+        "cats": {
+          "0": {
+            "n": "Vastgoedakten",
+            "d": "Compromissen, verkoopakten, hypotheken"
+          },
+          "1": {
+            "n": "Nalatenschappen",
+            "d": "Successieaangiften, verdelingen"
+          },
+          "2": {
+            "n": "Familierecht",
+            "d": "Huwelijken, schenkingen, huwelijkscontracten"
+          },
+          "3": {
+            "n": "Vennootschappen",
+            "d": "Oprichtingen, statutenwijzigingen"
+          },
+          "4": {
+            "n": "Klanten",
+            "d": "Klantcorrespondentie, afspraken, documenten"
+          },
+          "5": {
+            "n": "Administratie",
+            "d": "FOD Financien, register, registratie"
+          },
+          "6": {
+            "n": "Facturatie",
+            "d": "Honoraria, provisies, afrekeningen"
+          }
+        }
+      },
+      "consultant": {
+        "name": "Consultant / Coach",
+        "cats": {
+          "0": {
+            "n": "Opdrachten",
+            "d": "Voorstellen, opdrachtcontracten, deliverables"
+          },
+          "1": {
+            "n": "Klanten",
+            "d": "Klantopvolging, feedback, afspraken"
+          },
+          "2": {
+            "n": "Facturatie",
+            "d": "Facturen, offertes, herinneringen"
+          },
+          "3": {
+            "n": "Prospectie",
+            "d": "Prospecten, inkomende verzoeken, netwerken"
+          },
+          "4": {
+            "n": "Opleiding",
+            "d": "Inhoud, materialen, certificeringen"
+          },
+          "5": {
+            "n": "Administratief",
+            "d": "Contracten, verzekeringen, officiele documenten"
+          }
+        }
+      },
+      "architecte": {
+        "name": "Architect",
+        "cats": {
+          "0": {
+            "n": "Projecten",
+            "d": "Plannen, bestekken, bouwvergunningen"
+          },
+          "1": {
+            "n": "Klanten",
+            "d": "Klantcorrespondentie, afspraken, goedkeuringen"
+          },
+          "2": {
+            "n": "Aannemers",
+            "d": "Offertes, aanbestedingen, werfopvolging"
+          },
+          "3": {
+            "n": "Administratie",
+            "d": "Gemeente, stedenbouw, vergunningen"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Honoraria, afrekeningen, vorderingsstaten"
+          },
+          "5": {
+            "n": "Leveranciers",
+            "d": "Materialen, catalogi, technische offertes"
+          },
+          "6": {
+            "n": "Orde van Architecten",
+            "d": "Bijdragen, opleidingen, verplichtingen"
+          }
+        }
+      },
+      "geometre": {
+        "name": "Landmeter",
+        "cats": {
+          "0": {
+            "n": "Terreinopdrachten",
+            "d": "Grenspalen, opmetingen, kadasterplannen"
+          },
+          "1": {
+            "n": "Klanten",
+            "d": "Verzoeken, offertes, rapporten"
+          },
+          "2": {
+            "n": "Kadaster",
+            "d": "Kadasterplannen, mutaties, verdelingen"
+          },
+          "3": {
+            "n": "Notarissen",
+            "d": "Attesten, verdelingsplannen, expertises"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Facturen, offertes, herinneringen"
+          },
+          "5": {
+            "n": "Administratief",
+            "d": "FOD, gemeente, officiele documenten"
+          }
+        }
+      },
+      "huissier": {
+        "name": "Gerechtsdeurwaarder",
+        "cats": {
+          "0": {
+            "n": "Betekeningen",
+            "d": "Akten, dagvaardingen, aanmaningen"
+          },
+          "1": {
+            "n": "Invorderingen",
+            "d": "Schuldvorderingen, betalingsplannen, beslagen"
+          },
+          "2": {
+            "n": "Vaststellingen",
+            "d": "Processen-verbaal, vaststellingen ter plaatse"
+          },
+          "3": {
+            "n": "Rechtbanken",
+            "d": "Beslissingen, vonnissen, uitvoeringen"
+          },
+          "4": {
+            "n": "Klanten / Advocaten",
+            "d": "Instructies, correspondentie, rapporten"
+          },
+          "5": {
+            "n": "Facturatie",
+            "d": "Kosten, provisies, afrekeningen"
+          }
+        }
+      },
+      "traducteur": {
+        "name": "Vertaler / Tolk",
+        "cats": {
+          "0": {
+            "n": "Vertaalprojecten",
+            "d": "Te vertalen teksten, deliverables, deadlines"
+          },
+          "1": {
+            "n": "Klanten",
+            "d": "Verzoeken, offertes, feedback"
+          },
+          "2": {
+            "n": "Agentschappen",
+            "d": "Agentschapopdrachten, tarieven, planning"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Facturen, bestelbonnen, herinneringen"
+          },
+          "4": {
+            "n": "Opleiding",
+            "d": "Woordenlijsten, tools, certificeringen"
+          },
+          "5": {
+            "n": "Administratief",
+            "d": "Beeedigd vertaler, rechtbank, legalisatie"
+          }
+        }
+      },
+      "expert-sinistres": {
+        "name": "Schade-expert",
+        "cats": {
+          "0": {
+            "n": "Schadedossiers",
+            "d": "Aangiften, rapporten, foto's"
+          },
+          "1": {
+            "n": "Verzekeringen",
+            "d": "Maatschappijen, polissen, vergoedingen"
+          },
+          "2": {
+            "n": "Verzekerden",
+            "d": "Correspondentie, afspraken, documenten"
+          },
+          "3": {
+            "n": "Experten / Tegenexperten",
+            "d": "Rapporten, tegensprekelijke vergaderingen"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Honoraria, onkostennota's, afrekeningen"
+          },
+          "5": {
+            "n": "Juridisch",
+            "d": "Gerechtelijke expertises, rechtbanken"
+          }
+        }
+      },
+      "commissaire-comptes": {
+        "name": "Commissaris-revisor",
+        "cats": {
+          "0": {
+            "n": "Auditopdrachten",
+            "d": "Auditplannen, rapporten, jaarrekeningen"
+          },
+          "1": {
+            "n": "Klanten",
+            "d": "Correspondentie, documentverzoeken"
+          },
+          "2": {
+            "n": "Normen / Regelgeving",
+            "d": "ISA, boekhoudnormen, opvolging"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Honoraria, opdrachtbrieven"
+          },
+          "4": {
+            "n": "Instituut",
+            "d": "IRE/IBR, opleidingen, bijdragen"
+          },
+          "5": {
+            "n": "Administratief",
+            "d": "Ondernemingsrechtbanken, NBB, publicaties"
+          }
+        }
+      },
+      "medecin": {
+        "name": "Arts / Medische praktijk",
+        "cats": {
+          "0": {
+            "n": "Patienten",
+            "d": "Patientencorrespondentie, afspraken, opvolgingen"
+          },
+          "1": {
+            "n": "Collega's",
+            "d": "Medische uitwisselingen, specialistenadviezen, doorverwijzingen"
+          },
+          "2": {
+            "n": "Laboratoria",
+            "d": "Analyseresultaten, voorschriften"
+          },
+          "3": {
+            "n": "RIZIV / Mutualiteit",
+            "d": "Terugbetalingen, attesten, conventies"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Honoraria, ereloonbriefjes, derdebetalersregeling"
+          },
+          "5": {
+            "n": "Bijscholing",
+            "d": "Congressen, accreditaties, publicaties"
+          },
+          "6": {
+            "n": "Administratief",
+            "d": "Orde der artsen, verzekeringen, wachtdienst"
+          }
+        }
+      },
+      "dentiste": {
+        "name": "Tandarts",
+        "cats": {
+          "0": {
+            "n": "Patienten",
+            "d": "Afspraken, opvolgingen, herinneringen"
+          },
+          "1": {
+            "n": "Tandheelkundige leveranciers",
+            "d": "Materialen, apparatuur, bestellingen"
+          },
+          "2": {
+            "n": "Protheselaboratorium",
+            "d": "Prothesen, kronen, implantaten"
+          },
+          "3": {
+            "n": "RIZIV / Mutualiteit",
+            "d": "Nomenclatuur, terugbetalingen"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Ereloonbriefjes, afrekeningen"
+          },
+          "5": {
+            "n": "Opleiding",
+            "d": "Bijscholingen, tandheelkundige congressen"
+          }
+        }
+      },
+      "kinesitherapeute": {
+        "name": "Kinesitherapeut",
+        "cats": {
+          "0": {
+            "n": "Patienten",
+            "d": "Voorschriften, afspraken, behandelopvolgingen"
+          },
+          "1": {
+            "n": "Voorschrijvende artsen",
+            "d": "Rapporten, akkoordverzoeken, balansen"
+          },
+          "2": {
+            "n": "Mutualiteiten",
+            "d": "Attesten, akkoorden, terugbetalingen"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Ereloonbriefjes, derdebetalersregeling"
+          },
+          "4": {
+            "n": "Leveranciers",
+            "d": "Materiaal, apparatuur, bestellingen"
+          },
+          "5": {
+            "n": "Opleiding",
+            "d": "Opleidingen, specialisaties, congressen"
+          }
+        }
+      },
+      "pharmacien": {
+        "name": "Apotheker",
+        "cats": {
+          "0": {
+            "n": "Leveranciers / Groothandels",
+            "d": "Bestellingen, leveringen, voorraadtekorten"
+          },
+          "1": {
+            "n": "Patienten",
+            "d": "Voorschriften, opvolgingen, adviezen"
+          },
+          "2": {
+            "n": "RIZIV / FAGG",
+            "d": "Regelgeving, terugbetalingen, farmacovigilantie"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Leveranciersfacturen, tarifering, marges"
+          },
+          "4": {
+            "n": "Team",
+            "d": "Planning, rekrutering, opleiding"
+          },
+          "5": {
+            "n": "Administratief",
+            "d": "Orde der apothekers, inspecties, wachtdienst"
+          }
+        }
+      },
+      "veterinaire": {
+        "name": "Dierenarts",
+        "cats": {
+          "0": {
+            "n": "Klanten / Eigenaars",
+            "d": "Afspraken, opvolgingen, vaccinatieherinneringen"
+          },
+          "1": {
+            "n": "Leveranciers",
+            "d": "Medicijnen, materiaal, voeding"
+          },
+          "2": {
+            "n": "Collega's / Specialisten",
+            "d": "Doorverwijzingen, specialistenadviezen"
+          },
+          "3": {
+            "n": "FAVV",
+            "d": "Inspecties, regelgeving, traceerbaarheid"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Facturen, chirurgieoffertes, herinneringen"
+          },
+          "5": {
+            "n": "Laboratoria",
+            "d": "Analyses, biopsies, resultaten"
+          }
+        }
+      },
+      "psychologue": {
+        "name": "Psycholoog / Therapeut",
+        "cats": {
+          "0": {
+            "n": "Patienten",
+            "d": "Afspraken, therapeutische opvolgingen, correspondentie"
+          },
+          "1": {
+            "n": "Collega's",
+            "d": "Supervisies, doorverwijzingen, uitwisselingen"
+          },
+          "2": {
+            "n": "Facturatie",
+            "d": "Honoraria, attesten, conventies"
+          },
+          "3": {
+            "n": "Opleiding",
+            "d": "Bijscholingen, colloquia, publicaties"
+          },
+          "4": {
+            "n": "Administratief",
+            "d": "Psychologencommissie, verzekeringen"
+          }
+        }
+      },
+      "infirmier": {
+        "name": "Zelfstandig verpleegkundige",
+        "cats": {
+          "0": {
+            "n": "Patienten",
+            "d": "Zorgplannen, rondes, afspraken"
+          },
+          "1": {
+            "n": "Artsen",
+            "d": "Voorschriften, rapporten, coordinatie"
+          },
+          "2": {
+            "n": "Mutualiteiten / RIZIV",
+            "d": "Attesten, akkoorden, terugbetalingen"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Zorgbriefjes, derdebetalersregeling, nomenclatuur"
+          },
+          "4": {
+            "n": "Leveranciers",
+            "d": "Zorgmateriaal, bestellingen"
+          }
+        }
+      },
+      "opticien": {
+        "name": "Opticien / Audicien",
+        "cats": {
+          "0": {
+            "n": "Klanten",
+            "d": "Bestellingen, aanpassingen, klachten"
+          },
+          "1": {
+            "n": "Leveranciers / Glasmakers",
+            "d": "Bestellingen glazen/monturen, catalogi"
+          },
+          "2": {
+            "n": "Mutualiteiten",
+            "d": "Terugbetalingen, attesten, voorschriften"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Facturen, offertes, herinneringen"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Promoties, loyaliteit, evenementen"
+          }
+        }
+      },
+      "ecommerce": {
+        "name": "E-commerce",
+        "cats": {
+          "0": {
+            "n": "Bestellingen",
+            "d": "Bevestigingen, opvolging, wijzigingen"
+          },
+          "1": {
+            "n": "Klantenservice",
+            "d": "Klachten, retours, terugbetalingen, nazorg"
+          },
+          "2": {
+            "n": "Leveranciers",
+            "d": "Bevoorrading, onderhandelingen, leveringen"
+          },
+          "3": {
+            "n": "Logistiek",
+            "d": "Transporteurs, tracking, magazijn"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Campagnes, nieuwsbrieven, partnerschappen, affiliatie"
+          },
+          "5": {
+            "n": "Betalingen",
+            "d": "Transacties, geschillen, chargebacks"
+          },
+          "6": {
+            "n": "Technisch",
+            "d": "Platform, bugs, updates, hosting"
+          }
+        }
+      },
+      "commerce-detail": {
+        "name": "Detailhandel",
+        "cats": {
+          "0": {
+            "n": "Leveranciers",
+            "d": "Bestellingen, leveringen, catalogi"
+          },
+          "1": {
+            "n": "Klanten",
+            "d": "Loyaliteit, klachten, speciale verzoeken"
+          },
+          "2": {
+            "n": "Facturatie",
+            "d": "Facturen, bestelbonnen, herinneringen"
+          },
+          "3": {
+            "n": "Team",
+            "d": "Planning, rekrutering, opleiding"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Promoties, etalage, evenementen"
+          },
+          "5": {
+            "n": "Administratief",
+            "d": "Huur, verzekeringen, regelgeving"
+          }
+        }
+      },
+      "grossiste": {
+        "name": "Groothandel / Import-Export",
+        "cats": {
+          "0": {
+            "n": "B2B-klanten",
+            "d": "Bestellingen, offertes, onderhandelingen"
+          },
+          "1": {
+            "n": "Leveranciers",
+            "d": "Aankopen, bevoorrading, import"
+          },
+          "2": {
+            "n": "Logistiek",
+            "d": "Transport, douane, transit, containers"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Facturen, kredieten, herinneringen"
+          },
+          "4": {
+            "n": "Douane / Export",
+            "d": "Douanedocumenten, certificaten van oorsprong"
+          },
+          "5": {
+            "n": "Commercieel",
+            "d": "Prospectie, beurzen, catalogus"
+          }
+        }
+      },
+      "franchise": {
+        "name": "Franchise / Winkelketen",
+        "cats": {
+          "0": {
+            "n": "Franchisegever",
+            "d": "Richtlijnen, rapporten, royalties"
+          },
+          "1": {
+            "n": "Operaties",
+            "d": "Bevoorrading, logistiek, procedures"
+          },
+          "2": {
+            "n": "Team",
+            "d": "Rekrutering, opleiding, planning"
+          },
+          "3": {
+            "n": "Marketing",
+            "d": "Lokale campagnes, evenementen, communicatie"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Royalties, facturen, omzet"
+          },
+          "5": {
+            "n": "Klanten",
+            "d": "Loyaliteit, klachten, tevredenheid"
+          }
+        }
+      },
+      "marches-publics": {
+        "name": "Overheidsopdrachten / Aanbestedingen",
+        "cats": {
+          "0": {
+            "n": "Aanbestedingen",
+            "d": "Bestekken, publicaties, inschrijvingen"
+          },
+          "1": {
+            "n": "Lopende dossiers",
+            "d": "Ingediende offertes, onderhandelingen, toewijzingen"
+          },
+          "2": {
+            "n": "Uitvoering",
+            "d": "Contracten, bijlagen, oplevering"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Afrekeningen, vorderingsstaten, borgstellingen"
+          },
+          "4": {
+            "n": "Onderaannemers",
+            "d": "Partners, overeenkomsten, coordinatie"
+          },
+          "5": {
+            "n": "Administratief",
+            "d": "Erkenning, attesten, RSZ"
+          }
+        }
+      },
+      "concessionnaire": {
+        "name": "Autodealer",
+        "cats": {
+          "0": {
+            "n": "Klanten",
+            "d": "Verzoeken, proefritten, naverkoop"
+          },
+          "1": {
+            "n": "Constructeur",
+            "d": "Stocks, doelstellingen, programma's, incentives"
+          },
+          "2": {
+            "n": "Atelier / Nazorg",
+            "d": "Afspraken, terugroepingen, garanties"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Verkoop, financiering, leasing"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Promoties, opendeur, digitaal"
+          },
+          "5": {
+            "n": "Onderdelenleveranciers",
+            "d": "Bestellingen onderdelen, banden, accessoires"
+          }
+        }
+      },
+      "agent-immobilier": {
+        "name": "Vastgoedmakelaar",
+        "cats": {
+          "0": {
+            "n": "Mandaten",
+            "d": "Te koop/huur, schattingen, exclusiviteiten"
+          },
+          "1": {
+            "n": "Kopers / Huurders",
+            "d": "Bezichtigingen, biedingen, onderhandelingen"
+          },
+          "2": {
+            "n": "Eigenaars",
+            "d": "Mandaatopvolging, rapporten, verlengingen"
+          },
+          "3": {
+            "n": "Notarissen",
+            "d": "Compromissen, akten, documenten"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Advertenties, foto's, vastgoedportalen"
+          },
+          "5": {
+            "n": "Facturatie",
+            "d": "Commissies, honoraria, facturen"
+          },
+          "6": {
+            "n": "Administratief",
+            "d": "BIV, opleidingen, EPC-certificaten"
+          }
+        }
+      },
+      "syndic": {
+        "name": "Syndicus / Vastgoedbeheer",
+        "cats": {
+          "0": {
+            "n": "Mede-eigenaars",
+            "d": "Vergaderingen, beslissingen, klachten"
+          },
+          "1": {
+            "n": "Huurders",
+            "d": "Huurcontracten, plaatsbeschrijvingen, klachten"
+          },
+          "2": {
+            "n": "Leveranciers / Onderhoud",
+            "d": "Werken, offertes, onderhoudscontracten"
+          },
+          "3": {
+            "n": "Boekhouding",
+            "d": "Lasten, afrekeningen, kapitaaloproepen"
+          },
+          "4": {
+            "n": "Juridisch",
+            "d": "Geschillen, wanbetalingen, procedures"
+          },
+          "5": {
+            "n": "Verzekeringen",
+            "d": "Schadegevallen, polissen, expertises"
+          }
+        }
+      },
+      "entrepreneur-construction": {
+        "name": "Bouwondernemer",
+        "cats": {
+          "0": {
+            "n": "Werven",
+            "d": "Planning, werfvergaderingen, PV"
+          },
+          "1": {
+            "n": "Klanten",
+            "d": "Offertes, contracten, opleveringen"
+          },
+          "2": {
+            "n": "Onderaannemers",
+            "d": "Overeenkomsten, coordinatie, facturen"
+          },
+          "3": {
+            "n": "Leveranciers",
+            "d": "Materialen, bestellingen, leveringen"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Vorderingsstaten, afrekeningen, inhoudingen"
+          },
+          "5": {
+            "n": "Veiligheid",
+            "d": "Veiligheidscoordinator, plannen, ongevallen"
+          },
+          "6": {
+            "n": "Administratief",
+            "d": "Erkenning, verzekeringen, RSZ werf"
+          }
+        }
+      },
+      "promoteur": {
+        "name": "Projectontwikkelaar",
+        "cats": {
+          "0": {
+            "n": "Projecten",
+            "d": "Haalbaarheidsstudies, vergunningen, plannen"
+          },
+          "1": {
+            "n": "Commercialisatie",
+            "d": "Verkoop op plan, reservaties, opties"
+          },
+          "2": {
+            "n": "Aannemers",
+            "d": "Aanbestedingen, werfopvolging, PV"
+          },
+          "3": {
+            "n": "Financiering",
+            "d": "Banken, kredieten, garanties"
+          },
+          "4": {
+            "n": "Notarissen / Juridisch",
+            "d": "Akten, erfdienstbaarheden, mede-eigendom"
+          },
+          "5": {
+            "n": "Facturatie",
+            "d": "Kapitaaloproepen, eindafrekeningen"
+          }
+        }
+      },
+      "architecte-interieur": {
+        "name": "Interieurarchitect / Decorator",
+        "cats": {
+          "0": {
+            "n": "Klantprojecten",
+            "d": "Briefings, moodboards, plannen, goedkeuringen"
+          },
+          "1": {
+            "n": "Leveranciers / Ambachtslieden",
+            "d": "Offertes, bestellingen, stalen"
+          },
+          "2": {
+            "n": "Klanten",
+            "d": "Correspondentie, afspraken, opvolging"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Offertes, honoraria, facturen"
+          },
+          "4": {
+            "n": "Inspiratie",
+            "d": "Trends, beurzen, publicaties"
+          }
+        }
+      },
+      "agence-marketing": {
+        "name": "Marketing- / Communicatiebureau",
+        "cats": {
+          "0": {
+            "n": "Klanten / Accounts",
+            "d": "Briefings, goedkeuringen, maandrapporten"
+          },
+          "1": {
+            "n": "Creatieve projecten",
+            "d": "Ontwerpen, inhoud, campagnes"
+          },
+          "2": {
+            "n": "Media / Reclame",
+            "d": "Mediaplannen, aankopen, prestaties"
+          },
+          "3": {
+            "n": "Prospectie",
+            "d": "Nieuwe klanten, pitches, voorstellen"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Offertes, facturen, budgetten"
+          },
+          "5": {
+            "n": "Team",
+            "d": "Planning, freelancers, interne briefings"
+          },
+          "6": {
+            "n": "Leveranciers",
+            "d": "Drukkers, fotografen, SaaS-tools"
+          }
+        }
+      },
+      "agence-web": {
+        "name": "Web- / IT-bureau",
+        "cats": {
+          "0": {
+            "n": "Klantprojecten",
+            "d": "Bestekken, sprints, deliverables"
+          },
+          "1": {
+            "n": "Support / Tickets",
+            "d": "Bugs, verzoeken, onderhoud"
+          },
+          "2": {
+            "n": "Hosting",
+            "d": "Servers, domeinen, SSL, monitoring"
+          },
+          "3": {
+            "n": "Klanten",
+            "d": "Correspondentie, goedkeuringen, feedback"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Offertes, facturen, SLA-contracten"
+          },
+          "5": {
+            "n": "Team / Dev",
+            "d": "Rekrutering, code reviews, opleiding"
+          },
+          "6": {
+            "n": "Tech watch",
+            "d": "Nieuwe technologieen, updates, beveiliging"
+          }
+        }
+      },
+      "rh-recrutement": {
+        "name": "HR / Werving & Selectie",
+        "cats": {
+          "0": {
+            "n": "Sollicitaties",
+            "d": "CV's, motivatiebrieven, gesprekken"
+          },
+          "1": {
+            "n": "Klanten / Bedrijven",
+            "d": "Mandaten, gezochte profielen, feedback"
+          },
+          "2": {
+            "n": "Actieve kandidaten",
+            "d": "Opvolging, outreach, voorstellen"
+          },
+          "3": {
+            "n": "Contracten",
+            "d": "Aanbiedingen, voorwaarden, handtekeningen"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Honoraria, success fees, facturen"
+          },
+          "5": {
+            "n": "Administratief",
+            "d": "Interim, sociale wetgeving, opleidingen"
+          }
+        }
+      },
+      "assurances": {
+        "name": "Verzekeringskantoor",
+        "cats": {
+          "0": {
+            "n": "Klanten",
+            "d": "Verzoeken, afspraken, polissen"
+          },
+          "1": {
+            "n": "Maatschappijen",
+            "d": "Onderschrijvingen, tarieven, commissies"
+          },
+          "2": {
+            "n": "Schadegevallen",
+            "d": "Aangiften, expertises, vergoedingen"
+          },
+          "3": {
+            "n": "Verlengingen",
+            "d": "Vervaldagen, bijlagen, opzeggingen"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Premies, commissies, herinneringen"
+          },
+          "5": {
+            "n": "Compliance",
+            "d": "FSMA, opleidingen, antiwitwas"
+          }
+        }
+      },
+      "courtier-financier": {
+        "name": "Financieel makelaar",
+        "cats": {
+          "0": {
+            "n": "Klanten",
+            "d": "Dossiers, simulaties, afspraken"
+          },
+          "1": {
+            "n": "Banken / Instellingen",
+            "d": "Kredietaanvragen, aanbiedingen, voorwaarden"
+          },
+          "2": {
+            "n": "Lopende dossiers",
+            "d": "Opvolging, ontbrekende documenten, handtekeningen"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Commissies, makelaardij, facturen"
+          },
+          "4": {
+            "n": "Compliance",
+            "d": "FSMA, MiFID, opleidingen"
+          },
+          "5": {
+            "n": "Marktopvolging",
+            "d": "Tarieven, producten, financieel nieuws"
+          }
+        }
+      },
+      "cybersecurite": {
+        "name": "Cybersecurity-expert",
+        "cats": {
+          "0": {
+            "n": "Opdrachten / Audits",
+            "d": "Pentests, rapporten, aanbevelingen"
+          },
+          "1": {
+            "n": "Klanten",
+            "d": "Verzoeken, contracten, opvolging"
+          },
+          "2": {
+            "n": "Beveiligingsmeldingen",
+            "d": "Kwetsbaarheden, incidenten, patches"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Offertes, facturen, contracten"
+          },
+          "4": {
+            "n": "Opvolging",
+            "d": "CVE's, bedreigingen, nieuwe aanvallen"
+          },
+          "5": {
+            "n": "Opleiding",
+            "d": "Certificeringen, conferenties, publicaties"
+          }
+        }
+      },
+      "conseil-gestion": {
+        "name": "Managementadviesbureau",
+        "cats": {
+          "0": {
+            "n": "Opdrachten",
+            "d": "Voorstellen, methodologie, deliverables"
+          },
+          "1": {
+            "n": "Klanten",
+            "d": "Opvolging, vergaderingen, stuurgroepen"
+          },
+          "2": {
+            "n": "Facturatie",
+            "d": "Honoraria, onkosten, timesheets"
+          },
+          "3": {
+            "n": "Prospectie",
+            "d": "Netwerken, aanbestedingen, referenties"
+          },
+          "4": {
+            "n": "Team",
+            "d": "Consultants, planning, evaluaties"
+          },
+          "5": {
+            "n": "Opvolging",
+            "d": "Sectortrends, benchmarks, studies"
+          }
+        }
+      },
+      "artisan": {
+        "name": "Ambachtsman (loodgieter, elektricien...)",
+        "cats": {
+          "0": {
+            "n": "Werven / Interventies",
+            "d": "Planning, afspraken, noodgevallen"
+          },
+          "1": {
+            "n": "Offertes / Bestellingen",
+            "d": "Offerteaanvragen, ramingen, acceptaties"
+          },
+          "2": {
+            "n": "Klanten",
+            "d": "Correspondentie, klachten, tevredenheid"
+          },
+          "3": {
+            "n": "Leveranciers",
+            "d": "Materialen, bestellingen, leveringen"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Facturen, voorschotten, herinneringen"
+          },
+          "5": {
+            "n": "Administratief",
+            "d": "Erkenning, verzekeringen, controles"
+          }
+        }
+      },
+      "garagiste": {
+        "name": "Garage / Carrosserie",
+        "cats": {
+          "0": {
+            "n": "Klanten",
+            "d": "Afspraken, diagnoses, herstellingsoffertes"
+          },
+          "1": {
+            "n": "Onderdelenleveranciers",
+            "d": "Bestellingen, catalogi, retours"
+          },
+          "2": {
+            "n": "Verzekeringen",
+            "d": "Expertises, akkoorden, schadegevallen"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Facturen, garanties, herinneringen"
+          },
+          "4": {
+            "n": "Technische keuring",
+            "d": "Afspraken, resultaten, herkeuring"
+          },
+          "5": {
+            "n": "Team",
+            "d": "Atelierplanning, opleiding, mecaniciens"
+          }
+        }
+      },
+      "photographe": {
+        "name": "Fotograaf / Videograaf",
+        "cats": {
+          "0": {
+            "n": "Klanten / Boekingen",
+            "d": "Verzoeken, reservaties, briefings"
+          },
+          "1": {
+            "n": "Leveringen",
+            "d": "Galerijen, montages, retouches"
+          },
+          "2": {
+            "n": "Facturatie",
+            "d": "Offertes, facturen, voorschotten"
+          },
+          "3": {
+            "n": "Leveranciers",
+            "d": "Materiaal, studioverhuur, drukwerk"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Portfolio, sociale media, website"
+          },
+          "5": {
+            "n": "Auteursrecht",
+            "d": "Licenties, overdrachten, contracten"
+          }
+        }
+      },
+      "imprimeur": {
+        "name": "Drukkerij / Grafisch ontwerper",
+        "cats": {
+          "0": {
+            "n": "Bestellingen",
+            "d": "Offertes, proefdrukken, goedkeuringen, productie"
+          },
+          "1": {
+            "n": "Klanten",
+            "d": "Briefings, correspondentie, klachten"
+          },
+          "2": {
+            "n": "Leveranciers",
+            "d": "Papier, inkten, afwerking, uitbesteding"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Facturen, bestelbonnen, herinneringen"
+          },
+          "4": {
+            "n": "Leveringen",
+            "d": "Transport, planning, verzendingen"
+          }
+        }
+      },
+      "paysagiste": {
+        "name": "Tuinaanlegger / Hovenier",
+        "cats": {
+          "0": {
+            "n": "Werven",
+            "d": "Planning, aanleg, onderhoud"
+          },
+          "1": {
+            "n": "Klanten",
+            "d": "Offertes, afspraken, projecten"
+          },
+          "2": {
+            "n": "Leveranciers",
+            "d": "Kwekerijen, materialen, materieelverhuur"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Facturen, onderhoudscontracten, herinneringen"
+          },
+          "4": {
+            "n": "Team",
+            "d": "Teamplanning, seizoensarbeiders, opleiding"
+          }
+        }
+      },
+      "serrurier": {
+        "name": "Slotenmaker / Glaszetter",
+        "cats": {
+          "0": {
+            "n": "Dringende interventies",
+            "d": "Herstellingen, openingen, noodgevallen"
+          },
+          "1": {
+            "n": "Offertes / Werken",
+            "d": "Installaties, vervangingen, beveiliging"
+          },
+          "2": {
+            "n": "Klanten",
+            "d": "Particulieren, syndici, bedrijven"
+          },
+          "3": {
+            "n": "Leveranciers",
+            "d": "Sloten, glas, ijzerwaren"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Facturen, offertes, herinneringen"
+          }
+        }
+      },
+      "formateur": {
+        "name": "Trainer / Opleidingscentrum",
+        "cats": {
+          "0": {
+            "n": "Deelnemers",
+            "d": "Inschrijvingen, bevestigingen, evaluaties"
+          },
+          "1": {
+            "n": "Klanten / Bedrijven",
+            "d": "Verzoeken, overeenkomsten, planning"
+          },
+          "2": {
+            "n": "Inhoud",
+            "d": "Materialen, presentaties, oefeningen"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Facturen, subsidies, opleidingscheques"
+          },
+          "4": {
+            "n": "Administratief",
+            "d": "Erkenningen, certificeringen, kwaliteit"
+          },
+          "5": {
+            "n": "Marketing",
+            "d": "Catalogus, website, promoties"
+          }
+        }
+      },
+      "ecole": {
+        "name": "School / Instelling",
+        "cats": {
+          "0": {
+            "n": "Ouders / Leerlingen",
+            "d": "Correspondentie, rapporten, afwezigheden"
+          },
+          "1": {
+            "n": "Leerkrachten",
+            "d": "Vergaderingen, planning, lesmateriaal"
+          },
+          "2": {
+            "n": "Administratie",
+            "d": "Ministerie, inspecties, subsidies"
+          },
+          "3": {
+            "n": "Leveranciers",
+            "d": "Handboeken, materiaal, kantine"
+          },
+          "4": {
+            "n": "Activiteiten",
+            "d": "Uitstappen, evenementen, voorstellingen"
+          },
+          "5": {
+            "n": "Boekhouding",
+            "d": "Budget, schoolkosten, facturen"
+          }
+        }
+      },
+      "auto-ecole": {
+        "name": "Rijschool",
+        "cats": {
+          "0": {
+            "n": "Leerlingen",
+            "d": "Inschrijvingen, planning, examens"
+          },
+          "1": {
+            "n": "Instructeurs",
+            "d": "Planning, evaluaties, beschikbaarheid"
+          },
+          "2": {
+            "n": "Administratie",
+            "d": "FOD Mobiliteit, erkenningen, regelgeving"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Lessen, pakketten, herinneringen"
+          },
+          "4": {
+            "n": "Voertuigen",
+            "d": "Onderhoud, verzekeringen, technische keuring"
+          }
+        }
+      },
+      "restaurant": {
+        "name": "Restaurant / Traiteur",
+        "cats": {
+          "0": {
+            "n": "Reserveringen",
+            "d": "Tafels, evenementen, groepen"
+          },
+          "1": {
+            "n": "Leveranciers",
+            "d": "Voeding, dranken, materiaal"
+          },
+          "2": {
+            "n": "Klanten",
+            "d": "Verzoeken, klachten, loyaliteit"
+          },
+          "3": {
+            "n": "Team",
+            "d": "Planning, rekrutering, opleiding"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Leveranciersfacturen, boekhouding"
+          },
+          "5": {
+            "n": "Administratief",
+            "d": "FAVV, vergunningen, verzekeringen"
+          },
+          "6": {
+            "n": "Marketing",
+            "d": "Sociale media, recensies, evenementen"
+          }
+        }
+      },
+      "hotel": {
+        "name": "Hotel / B&B / Gastenverblijf",
+        "cats": {
+          "0": {
+            "n": "Reserveringen",
+            "d": "Boeking, bevestiging, annuleringen"
+          },
+          "1": {
+            "n": "Klanten",
+            "d": "Speciale verzoeken, klachten, recensies"
+          },
+          "2": {
+            "n": "OTA / Platforms",
+            "d": "Booking.com, Airbnb, channel manager"
+          },
+          "3": {
+            "n": "Leveranciers",
+            "d": "Linnen, schoonmaak, onderhoud, ontbijt"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Facturen, commissies, toeristenbelasting"
+          },
+          "5": {
+            "n": "Marketing",
+            "d": "Website, promoties, sociale media"
+          }
+        }
+      },
+      "agence-voyage": {
+        "name": "Reisbureau",
+        "cats": {
+          "0": {
+            "n": "Klanten / Reizigers",
+            "d": "Verzoeken, offertes, bevestigingen"
+          },
+          "1": {
+            "n": "Touroperators",
+            "d": "Beschikbaarheid, boekingen, contracten"
+          },
+          "2": {
+            "n": "Luchtvaartmaatschappijen",
+            "d": "Tickets, wijzigingen, annuleringen"
+          },
+          "3": {
+            "n": "Hotels / Transfers",
+            "d": "Boekingen, vouchers, bevestigingen"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Facturen, commissies, reisverzekeringen"
+          },
+          "5": {
+            "n": "Klachten",
+            "d": "Klachten, terugbetalingen, geschillen"
+          }
+        }
+      },
+      "association": {
+        "name": "Vereniging / NGO",
+        "cats": {
+          "0": {
+            "n": "Leden / Donateurs",
+            "d": "Lidmaatschappen, giften, bedankingen"
+          },
+          "1": {
+            "n": "Projecten / Acties",
+            "d": "Programma's, partnerschappen, rapporten"
+          },
+          "2": {
+            "n": "Subsidies",
+            "d": "Projectoproepen, bewijsstukken, rapporten"
+          },
+          "3": {
+            "n": "Vrijwilligers",
+            "d": "Rekrutering, planning, coordinatie"
+          },
+          "4": {
+            "n": "Communicatie",
+            "d": "Nieuwsbrief, evenementen, media"
+          },
+          "5": {
+            "n": "Boekhouding",
+            "d": "Budget, rekeningen, commissaris"
+          }
+        }
+      },
+      "createur-contenu": {
+        "name": "Contentmaker / Influencer",
+        "cats": {
+          "0": {
+            "n": "Merken / Sponsors",
+            "d": "Voorstellen, contracten, briefings"
+          },
+          "1": {
+            "n": "Agentschappen",
+            "d": "Samenwerkingen, onderhandelingen, planning"
+          },
+          "2": {
+            "n": "Community",
+            "d": "Fanberichten, creatorsamenwerkingen"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Facturen, offertes, auteursrechten"
+          },
+          "4": {
+            "n": "Platforms",
+            "d": "YouTube, TikTok, Instagram, monetisatie"
+          },
+          "5": {
+            "n": "Juridisch",
+            "d": "Contracten, AVG, beeldrechten"
+          }
+        }
+      },
+      "mode-textile": {
+        "name": "Mode / Textiel",
+        "cats": {
+          "0": {
+            "n": "Leveranciers / Ateliers",
+            "d": "Stoffen, confectie, stalen"
+          },
+          "1": {
+            "n": "B2B-klanten",
+            "d": "Bestellingen, showrooms, herbevoorrading"
+          },
+          "2": {
+            "n": "E-commerce",
+            "d": "Online bestellingen, retours, nazorg"
+          },
+          "3": {
+            "n": "Logistiek",
+            "d": "Verzendingen, voorraad, douane"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Lookbooks, influencers, pers"
+          },
+          "5": {
+            "n": "Facturatie",
+            "d": "Facturen, bestelbonnen, herinneringen"
+          }
+        }
+      },
+      "salon-beaute": {
+        "name": "Schoonheidssalon / Wellness",
+        "cats": {
+          "0": {
+            "n": "Klanten",
+            "d": "Afspraken, loyaliteit, voorkeuren"
+          },
+          "1": {
+            "n": "Leveranciers",
+            "d": "Producten, materiaal, bestellingen"
+          },
+          "2": {
+            "n": "Team",
+            "d": "Planning, rekrutering, opleiding"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Facturen, betalingen, boekhouding"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Promoties, sociale media, recensies"
+          }
+        }
+      },
+      "nettoyage": {
+        "name": "Schoonmaakbedrijf",
+        "cats": {
+          "0": {
+            "n": "Klanten / Contracten",
+            "d": "Bestekken, planning, inspecties"
+          },
+          "1": {
+            "n": "Team",
+            "d": "Planning, vervangingen, rekrutering"
+          },
+          "2": {
+            "n": "Leveranciers",
+            "d": "Producten, materiaal, uitrusting"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Facturen, contracten, herinneringen"
+          },
+          "4": {
+            "n": "Kwaliteit",
+            "d": "Controles, klachten, certificeringen"
+          }
+        }
+      },
+      "transport-logistique": {
+        "name": "Transport / Logistiek",
+        "cats": {
+          "0": {
+            "n": "Klanten / Verzenders",
+            "d": "Transportopdrachten, tracking, leveringen"
+          },
+          "1": {
+            "n": "Chauffeurs",
+            "d": "Planning, CMR, boorddocumenten"
+          },
+          "2": {
+            "n": "Onderaannemers",
+            "d": "Bevrachting, tarieven, beschikbaarheid"
+          },
+          "3": {
+            "n": "Facturatie",
+            "d": "Facturen, tarieven, geschillen"
+          },
+          "4": {
+            "n": "Voertuigen",
+            "d": "Onderhoud, technische keuring, verzekeringen"
+          },
+          "5": {
+            "n": "Regelgeving",
+            "d": "Vergunningen, ADR, tachograaf, douane"
+          }
+        }
+      },
+      "industrie-production": {
+        "name": "Industrie / Productie",
+        "cats": {
+          "0": {
+            "n": "Klanten / Bestellingen",
+            "d": "Bestelbonnen, leveringen, specificaties"
+          },
+          "1": {
+            "n": "Leveranciers",
+            "d": "Grondstoffen, componenten, gereedschap"
+          },
+          "2": {
+            "n": "Productie",
+            "d": "Planning, kwaliteit, onderhoud"
+          },
+          "3": {
+            "n": "Logistiek",
+            "d": "Verzendingen, voorraad, transport"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Facturen, offertes, herinneringen"
+          },
+          "5": {
+            "n": "HR / Veiligheid",
+            "d": "Personeel, opleidingen, arbeidsongevallen"
+          }
+        }
+      },
+      "event-planning": {
+        "name": "Evenementenorganisator",
+        "cats": {
+          "0": {
+            "n": "Klanten",
+            "d": "Briefings, offertes, goedkeuringen"
+          },
+          "1": {
+            "n": "Dienstverleners",
+            "d": "Traiteurs, DJ's, decoratie, techniek"
+          },
+          "2": {
+            "n": "Locaties / Zalen",
+            "d": "Reserveringen, offertes, contracten"
+          },
+          "3": {
+            "n": "Logistiek",
+            "d": "Planning, opbouw, coordinatie"
+          },
+          "4": {
+            "n": "Facturatie",
+            "d": "Offertes, facturen, voorschotten"
+          },
+          "5": {
+            "n": "Marketing",
+            "d": "Uitnodigingen, ticketing, communicatie"
+          }
+        }
+      }
+    }
   }
 }

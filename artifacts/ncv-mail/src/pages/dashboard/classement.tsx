@@ -89,9 +89,32 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { FAMILLES_METIERS, type PackMetier } from "@/data/packs-metiers";
+import { FAMILLES_METIERS, type PackMetier, type FamilleMetier } from "@/data/packs-metiers";
 import { useTranslation } from 'react-i18next';
 import { translateCategoryName } from "@/lib/category-translations";
+
+function useTranslatedPacks(t: any, lang: string): FamilleMetier[] {
+  return useMemo(() => {
+    if (lang === "fr") {
+      return FAMILLES_METIERS.map((f) => ({
+        ...f,
+        name: t(`packs.families.${f.key}`, f.name),
+      }));
+    }
+    return FAMILLES_METIERS.map((f) => ({
+      ...f,
+      name: t(`packs.families.${f.key}`, f.name),
+      packs: f.packs.map((p) => ({
+        ...p,
+        name: t(`packs.items.${p.id}.name`, p.name),
+        categories: p.categories.map((c, idx) => ({
+          name: t(`packs.items.${p.id}.cats.${idx}.n`, c.name),
+          description: t(`packs.items.${p.id}.cats.${idx}.d`, c.description),
+        })),
+      })),
+    }));
+  }, [t, lang]);
+}
 
 const SUGGESTED_CATEGORY_KEYS = [
   { key: "facturation", icon: Receipt, color: "text-amber-400 bg-amber-500/10" },
@@ -140,7 +163,8 @@ const categoryColors = [
 
 export default function Classement() {
   const { t, i18n } = useTranslation();
-  const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
+  const lang = (i18n.resolvedLanguage ?? i18n.language.split("-")[0]).substring(0, 2);
+  const translatedFamilles = useTranslatedPacks(t, lang);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
@@ -158,7 +182,7 @@ export default function Classement() {
 
   const [packSearch, setPackSearch] = useState("");
   const [expandedFamilles, setExpandedFamilles] = useState<Set<string>>(
-    new Set(FAMILLES_METIERS.map((f) => f.name))
+    new Set(FAMILLES_METIERS.map((f) => f.key))
   );
   const [selectedPack, setSelectedPack] = useState<PackMetier | null>(null);
   const [isApplyDialogOpen, setIsApplyDialogOpen] = useState(false);
@@ -190,9 +214,9 @@ export default function Classement() {
   }, [existingNames, suggestedCategories]);
 
   const filteredFamilles = useMemo(() => {
-    if (!packSearch.trim()) return FAMILLES_METIERS;
+    if (!packSearch.trim()) return translatedFamilles;
     const q = packSearch.toLowerCase();
-    return FAMILLES_METIERS.map((f) => ({
+    return translatedFamilles.map((f) => ({
       ...f,
       packs: f.packs.filter(
         (p) =>
@@ -200,7 +224,7 @@ export default function Classement() {
           p.categories.some((c) => c.name.toLowerCase().includes(q))
       ),
     })).filter((f) => f.packs.length > 0);
-  }, [packSearch]);
+  }, [packSearch, translatedFamilles]);
 
   const handleAddSuggestion = (
     suggestion: { name: string; description: string; key: string }
@@ -414,11 +438,11 @@ export default function Classement() {
     );
   };
 
-  const toggleFamille = (name: string) => {
+  const toggleFamille = (key: string) => {
     setExpandedFamilles((prev) => {
       const next = new Set(prev);
-      if (next.has(name)) next.delete(name);
-      else next.add(name);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
       return next;
     });
   };
@@ -620,9 +644,9 @@ export default function Classement() {
 
           <div className="space-y-3">
             {filteredFamilles.map((famille) => (
-              <div key={famille.name} className="rounded-lg border border-border overflow-hidden">
+              <div key={famille.key} className="rounded-lg border border-border overflow-hidden">
                 <button
-                  onClick={() => toggleFamille(famille.name)}
+                  onClick={() => toggleFamille(famille.key)}
                   className="w-full flex items-center justify-between px-4 py-2.5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
                 >
                   <span className="text-[13px] font-medium text-white">
@@ -631,14 +655,14 @@ export default function Classement() {
                       ({famille.packs.length})
                     </span>
                   </span>
-                  {expandedFamilles.has(famille.name) ? (
+                  {expandedFamilles.has(famille.key) ? (
                     <ChevronUp className="w-4 h-4 text-[#8b9cb3]" />
                   ) : (
                     <ChevronDown className="w-4 h-4 text-[#8b9cb3]" />
                   )}
                 </button>
 
-                {expandedFamilles.has(famille.name) && (
+                {expandedFamilles.has(famille.key) && (
                   <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 p-3">
                     {famille.packs.map((pack) => {
                       const Icon = pack.icon;

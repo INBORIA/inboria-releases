@@ -27,12 +27,14 @@ export interface PackMetier {
 }
 
 export interface FamilleMetier {
+  key: string;
   name: string;
   packs: PackMetier[];
 }
 
 export const FAMILLES_METIERS: FamilleMetier[] = [
   {
+    key: "services_professionnels",
     name: "Services professionnels",
     packs: [
       {
@@ -173,6 +175,7 @@ export const FAMILLES_METIERS: FamilleMetier[] = [
     ],
   },
   {
+    key: "sante",
     name: "Sante",
     packs: [
       {
@@ -280,6 +283,7 @@ export const FAMILLES_METIERS: FamilleMetier[] = [
     ],
   },
   {
+    key: "commerce_distribution",
     name: "Commerce & Distribution",
     packs: [
       {
@@ -364,6 +368,7 @@ export const FAMILLES_METIERS: FamilleMetier[] = [
     ],
   },
   {
+    key: "immobilier_construction",
     name: "Immobilier & Construction",
     packs: [
       {
@@ -435,6 +440,7 @@ export const FAMILLES_METIERS: FamilleMetier[] = [
     ],
   },
   {
+    key: "services_entreprises",
     name: "Services aux entreprises",
     packs: [
       {
@@ -533,6 +539,7 @@ export const FAMILLES_METIERS: FamilleMetier[] = [
     ],
   },
   {
+    key: "artisanat_techniques",
     name: "Artisanat & Metiers techniques",
     packs: [
       {
@@ -613,6 +620,7 @@ export const FAMILLES_METIERS: FamilleMetier[] = [
     ],
   },
   {
+    key: "enseignement_formation",
     name: "Enseignement & Formation",
     packs: [
       {
@@ -656,6 +664,7 @@ export const FAMILLES_METIERS: FamilleMetier[] = [
     ],
   },
   {
+    key: "restauration_tourisme",
     name: "Restauration & Tourisme",
     packs: [
       {
@@ -701,6 +710,7 @@ export const FAMILLES_METIERS: FamilleMetier[] = [
     ],
   },
   {
+    key: "autres_services",
     name: "Autres services",
     packs: [
       {

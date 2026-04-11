@@ -634,33 +634,114 @@
     "deleteErrorDesc": "Impossible de supprimer cette catégorie",
     "saving": "Enregistrement...",
     "suggestedCats": {
-      "facturation": { "name": "Facturation", "desc": "Factures, devis, bons de commande, relances de paiement" },
-      "support_client": { "name": "Support client", "desc": "Demandes d'aide, réclamations, questions des clients" },
-      "commercial": { "name": "Commercial", "desc": "Prospects, propositions commerciales, négociations, ventes" },
-      "administratif": { "name": "Administratif", "desc": "Contrats, documents officiels, courriers juridiques" },
-      "newsletter": { "name": "Newsletter", "desc": "Newsletters, promotions, emails marketing" },
-      "newsletter_marketing": { "name": "Newsletter / Marketing", "desc": "Newsletters, promotions, campagnes marketing, publicités" },
-      "rh_equipe": { "name": "RH / Équipe", "desc": "Congés, recrutement, gestion du personnel, notes internes" },
-      "fournisseurs": { "name": "Fournisseurs", "desc": "Commandes, livraisons, relations fournisseurs, achats" },
-      "juridique": { "name": "Juridique", "desc": "Mises en demeure, RGPD, conformité, contentieux" },
-      "juridique_conformite": { "name": "Juridique / Conformité", "desc": "Mises en demeure, RGPD, conformité, contentieux, contrats" },
-      "technique": { "name": "Technique", "desc": "Bugs, maintenance, serveurs, IT, demandes techniques" },
-      "technique_it": { "name": "Technique / IT", "desc": "Bugs, maintenance, serveurs, IT, demandes techniques" },
-      "formation": { "name": "Formation", "desc": "Webinaires, certifications, e-learning, invitations" },
-      "banque_finance": { "name": "Banque / Finance", "desc": "Relevés bancaires, virements, prêts, assurances" },
-      "logistique_livraisons": { "name": "Logistique / Livraisons", "desc": "Suivi de colis, transporteurs, bons de livraison" },
-      "rendez_vous_planning": { "name": "Rendez-vous / Planning", "desc": "Confirmations, annulations, rappels de réunions" },
-      "international_export": { "name": "International / Export", "desc": "Douanes, clients étrangers, traductions, incoterms" },
-      "urgent_prioritaire": { "name": "Urgent / Prioritaire", "desc": "Emails nécessitant une action immédiate, alertes critiques" },
-      "comptabilite": { "name": "Comptabilité", "desc": "Écritures comptables, bilans, TVA, déclarations fiscales" },
-      "paiements_encaissements": { "name": "Paiements / Encaissements", "desc": "Confirmations de paiement, retards, rappels, remboursements" },
-      "partenaires_sous_traitants": { "name": "Partenaires / Sous-traitants", "desc": "Collaborations, accords, échanges avec partenaires externes" },
-      "projets": { "name": "Projets", "desc": "Suivi de projet, livrables, deadlines, rapports d'avancement" },
-      "communication_interne": { "name": "Communication interne", "desc": "Mémos, annonces, comptes-rendus, circulaires" },
-      "immobilier_locaux": { "name": "Immobilier / Locaux", "desc": "Baux, loyers, maintenance bâtiment, charges" },
-      "abonnements_saas": { "name": "Abonnements / SaaS", "desc": "Licences logiciels, renouvellements, factures outils" },
-      "devis_negociations": { "name": "Devis / Négociations", "desc": "Demandes de devis, comparatifs, contre-propositions" },
-      "spam_a_supprimer": { "name": "Spam / À supprimer", "desc": "Emails indésirables, démarchage non sollicité" },
+      "facturation": {
+        "name": "Facturation",
+        "desc": "Factures, devis, bons de commande, relances de paiement"
+      },
+      "support_client": {
+        "name": "Support client",
+        "desc": "Demandes d'aide, réclamations, questions des clients"
+      },
+      "commercial": {
+        "name": "Commercial",
+        "desc": "Prospects, propositions commerciales, négociations, ventes"
+      },
+      "administratif": {
+        "name": "Administratif",
+        "desc": "Contrats, documents officiels, courriers juridiques"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "desc": "Newsletters, promotions, emails marketing"
+      },
+      "newsletter_marketing": {
+        "name": "Newsletter / Marketing",
+        "desc": "Newsletters, promotions, campagnes marketing, publicités"
+      },
+      "rh_equipe": {
+        "name": "RH / Équipe",
+        "desc": "Congés, recrutement, gestion du personnel, notes internes"
+      },
+      "fournisseurs": {
+        "name": "Fournisseurs",
+        "desc": "Commandes, livraisons, relations fournisseurs, achats"
+      },
+      "juridique": {
+        "name": "Juridique",
+        "desc": "Mises en demeure, RGPD, conformité, contentieux"
+      },
+      "juridique_conformite": {
+        "name": "Juridique / Conformité",
+        "desc": "Mises en demeure, RGPD, conformité, contentieux, contrats"
+      },
+      "technique": {
+        "name": "Technique",
+        "desc": "Bugs, maintenance, serveurs, IT, demandes techniques"
+      },
+      "technique_it": {
+        "name": "Technique / IT",
+        "desc": "Bugs, maintenance, serveurs, IT, demandes techniques"
+      },
+      "formation": {
+        "name": "Formation",
+        "desc": "Webinaires, certifications, e-learning, invitations"
+      },
+      "banque_finance": {
+        "name": "Banque / Finance",
+        "desc": "Relevés bancaires, virements, prêts, assurances"
+      },
+      "logistique_livraisons": {
+        "name": "Logistique / Livraisons",
+        "desc": "Suivi de colis, transporteurs, bons de livraison"
+      },
+      "rendez_vous_planning": {
+        "name": "Rendez-vous / Planning",
+        "desc": "Confirmations, annulations, rappels de réunions"
+      },
+      "international_export": {
+        "name": "International / Export",
+        "desc": "Douanes, clients étrangers, traductions, incoterms"
+      },
+      "urgent_prioritaire": {
+        "name": "Urgent / Prioritaire",
+        "desc": "Emails nécessitant une action immédiate, alertes critiques"
+      },
+      "comptabilite": {
+        "name": "Comptabilité",
+        "desc": "Écritures comptables, bilans, TVA, déclarations fiscales"
+      },
+      "paiements_encaissements": {
+        "name": "Paiements / Encaissements",
+        "desc": "Confirmations de paiement, retards, rappels, remboursements"
+      },
+      "partenaires_sous_traitants": {
+        "name": "Partenaires / Sous-traitants",
+        "desc": "Collaborations, accords, échanges avec partenaires externes"
+      },
+      "projets": {
+        "name": "Projets",
+        "desc": "Suivi de projet, livrables, deadlines, rapports d'avancement"
+      },
+      "communication_interne": {
+        "name": "Communication interne",
+        "desc": "Mémos, annonces, comptes-rendus, circulaires"
+      },
+      "immobilier_locaux": {
+        "name": "Immobilier / Locaux",
+        "desc": "Baux, loyers, maintenance bâtiment, charges"
+      },
+      "abonnements_saas": {
+        "name": "Abonnements / SaaS",
+        "desc": "Licences logiciels, renouvellements, factures outils"
+      },
+      "devis_negociations": {
+        "name": "Devis / Négociations",
+        "desc": "Demandes de devis, comparatifs, contre-propositions"
+      },
+      "spam_a_supprimer": {
+        "name": "Spam / À supprimer",
+        "desc": "Emails indésirables, démarchage non sollicité"
+      },
       "namePlaceholder": "Ex: Factures, Fournisseurs...",
       "descPlaceholder": "Ex: Tous les emails contenant des factures, devis ou reçus."
     }
@@ -1635,12 +1716,36 @@
     "yesterday": "Hier",
     "olderDate": "3 avr.",
     "emails": [
-      { "sender": "Pierre Martin", "subject": "Contrat Q2 — signature requise", "summary": "Contrat de prestation Q2 à signer avant vendredi. Montant : 12 400 €." },
-      { "sender": "Marie Laurent", "subject": "Réunion client demain 9h", "summary": "Confirmation réunion avec Dupont SA demain à 9h. Ordre du jour joint." },
-      { "sender": "Sophie Dubois", "subject": "Rapport mensuel Mars 2026", "summary": "Le rapport comptable de mars est prêt pour validation. CA en hausse de 8%." },
-      { "sender": "Thomas Bernard", "subject": "Devis site web — retour client", "summary": "Le client a approuvé le devis de 4 800 €. Demande de démarrage lundi." },
-      { "sender": "LinkedIn", "subject": "3 nouvelles connexions cette semaine", "summary": "Nouveaux contacts : Jean Leroy (CEO), Anne Petit (RH), Marc Faure (CTO)." },
-      { "sender": "Newsletter Tech", "subject": "Les tendances IA en 2026", "summary": "Dossier spécial : automatisation email, GPT-5, et l'avenir du SaaS B2B." }
+      {
+        "sender": "Pierre Martin",
+        "subject": "Contrat Q2 — signature requise",
+        "summary": "Contrat de prestation Q2 à signer avant vendredi. Montant : 12 400 €."
+      },
+      {
+        "sender": "Marie Laurent",
+        "subject": "Réunion client demain 9h",
+        "summary": "Confirmation réunion avec Dupont SA demain à 9h. Ordre du jour joint."
+      },
+      {
+        "sender": "Sophie Dubois",
+        "subject": "Rapport mensuel Mars 2026",
+        "summary": "Le rapport comptable de mars est prêt pour validation. CA en hausse de 8%."
+      },
+      {
+        "sender": "Thomas Bernard",
+        "subject": "Devis site web — retour client",
+        "summary": "Le client a approuvé le devis de 4 800 €. Demande de démarrage lundi."
+      },
+      {
+        "sender": "LinkedIn",
+        "subject": "3 nouvelles connexions cette semaine",
+        "summary": "Nouveaux contacts : Jean Leroy (CEO), Anne Petit (RH), Marc Faure (CTO)."
+      },
+      {
+        "sender": "Newsletter Tech",
+        "subject": "Les tendances IA en 2026",
+        "summary": "Dossier spécial : automatisation email, GPT-5, et l'avenir du SaaS B2B."
+      }
     ]
   },
   "agenda": {
@@ -1708,5 +1813,18 @@
     "placeholder": "Tapez votre question...",
     "poweredBy": "Propulsé par l'IA Inboria",
     "errorMessage": "Désolé, une erreur est survenue. Veuillez réessayer ou contactez support@inboria.com."
+  },
+  "packs": {
+    "families": {
+      "services_professionnels": "Services professionnels",
+      "sante": "Sante",
+      "commerce_distribution": "Commerce & Distribution",
+      "immobilier_construction": "Immobilier & Construction",
+      "services_entreprises": "Services aux entreprises",
+      "artisanat_techniques": "Artisanat & Metiers techniques",
+      "enseignement_formation": "Enseignement & Formation",
+      "restauration_tourisme": "Restauration & Tourisme",
+      "autres_services": "Autres services"
+    }
   }
 }
