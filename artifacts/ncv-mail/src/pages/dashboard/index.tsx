@@ -949,7 +949,15 @@ export default function Dashboard() {
       {
         onSuccess: (result) => {
           setSelectedIds(new Set());
-          invalidateAll();
+          if (action === "read" || action === "unread") {
+            const newStatus = action === "read" ? "read" : "unread";
+            const idSet = new Set(ids);
+            setAccumulatedEmails((prev) => prev.map((e) => idSet.has(e.id) ? { ...e, status: newStatus } : e));
+            queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
+            queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+          } else {
+            invalidateAll();
+          }
           const labels: Record<string, string> = { delete: t("inbox.bulkDeleted", { count: result.affected }), archive: t("inbox.bulkArchived", { count: result.affected }), read: t("inbox.bulkRead", { count: result.affected }), unread: t("inbox.bulkUnread", { count: result.affected }) };
           toast({ title: labels[action] });
         },
