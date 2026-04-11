@@ -228,6 +228,7 @@
     "aiReply": "AI Reply",
     "generating": "Generating...",
     "markRead": "Read",
+    "markAsReadAction": "Mark as read",
     "archive": "Archive",
     "deleteEmail": "Delete",
     "openEmail": "Open",

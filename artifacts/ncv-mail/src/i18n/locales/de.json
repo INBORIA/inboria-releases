@@ -228,6 +228,7 @@
     "aiReply": "KI-Antwort",
     "generating": "Generiere...",
     "markRead": "Gelesen",
+    "markAsReadAction": "Als gelesen markieren",
     "archive": "Archivieren",
     "deleteEmail": "Löschen",
     "openEmail": "Öffnen",

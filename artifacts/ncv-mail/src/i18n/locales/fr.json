@@ -228,6 +228,7 @@
     "aiReply": "Réponse IA",
     "generating": "Génération...",
     "markRead": "Lu",
+    "markAsReadAction": "Marquer comme lu",
     "archive": "Archiver",
     "deleteEmail": "Supprimer",
     "openEmail": "Ouvrir",

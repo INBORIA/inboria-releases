@@ -228,6 +228,7 @@
     "aiReply": "AI-antwoord",
     "generating": "Genereren...",
     "markRead": "Gelezen",
+    "markAsReadAction": "Markeren als gelezen",
     "archive": "Archiveren",
     "deleteEmail": "Verwijderen",
     "openEmail": "Openen",
