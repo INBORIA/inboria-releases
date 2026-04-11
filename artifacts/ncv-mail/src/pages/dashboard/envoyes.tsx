@@ -133,19 +133,17 @@ export default function Envoyes() {
 
   const handleDragSelectEnter = useCallback((id: number) => {
     if (!isDraggingRef.current) return;
-    if (id !== dragStartIdRef.current) {
-      if (!didDragRef.current) didDragRef.current = true;
-      const trail = dragTrailRef.current;
-      const idx = trail.indexOf(id);
-      if (idx !== -1) {
-        trail.splice(idx + 1);
-      } else {
-        trail.push(id);
-      }
-      const keep = new Set(preSelectRef.current);
-      trail.forEach((tid) => keep.add(tid));
-      setSelectedIds(keep);
+    if (!didDragRef.current) didDragRef.current = true;
+    const trail = dragTrailRef.current;
+    const idx = trail.indexOf(id);
+    if (idx !== -1) {
+      trail.splice(idx + 1);
+    } else {
+      trail.push(id);
     }
+    const keep = new Set(preSelectRef.current);
+    trail.forEach((tid) => keep.add(tid));
+    setSelectedIds(keep);
   }, []);
 
   const handleContextMenu = useCallback((e: React.MouseEvent, emailId: number) => {
