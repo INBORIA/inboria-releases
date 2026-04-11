@@ -21,7 +21,7 @@ import {
   Send,
   CalendarDays,
 } from "lucide-react";
-import appLogo from "@assets/inboria_logo_variant_a_1775914682558.png";
+import appLogo from "@assets/inboria_logo_transparent_fix_v2_1775915678516.png";
 import { cn } from "@/lib/utils";
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
