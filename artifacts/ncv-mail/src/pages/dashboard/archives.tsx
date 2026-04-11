@@ -446,18 +446,16 @@ export default function Archives() {
                   >
                     <div className={`w-1 shrink-0 ${barColor}`} />
                     <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
-                      {selectionMode ? (
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setSelectedIds((prev) => { const next = new Set(prev); if (next.has(email.id)) next.delete(email.id); else next.add(email.id); return next; }); }}
-                          className="mt-1 shrink-0"
-                        >
-                          {isSelected ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-[#8b9cb3]" />}
-                        </button>
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-[12px] shrink-0 mt-0.5">
-                          {(email.sender || "?")[0].toUpperCase()}
-                        </div>
-                      )}
+                      <button
+                        onClick={(e) => { e.stopPropagation(); setSelectedIds((prev) => { const next = new Set(prev); if (next.has(email.id)) next.delete(email.id); else next.add(email.id); return next; }); }}
+                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all ${selectionMode || isSelected ? "bg-transparent border-2 border-primary/40 hover:border-primary" : "bg-primary/20"}`}
+                      >
+                        {selectionMode || isSelected ? (
+                          isSelected ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-[#8b9cb3]" />
+                        ) : (
+                          <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
+                        )}
+                      </button>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
                           <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>

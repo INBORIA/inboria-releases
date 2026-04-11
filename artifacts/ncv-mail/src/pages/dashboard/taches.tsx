@@ -286,14 +286,16 @@ export default function Taches() {
                   }}
                   onContextMenu={(e) => handleTaskContextMenu(e, task.id)}
                 >
-                  {taskSelectionMode && (
-                    <button
-                      onClick={(e) => { e.stopPropagation(); setSelectedTaskIds((prev) => { const next = new Set(prev); if (next.has(task.id)) next.delete(task.id); else next.add(task.id); return next; }); }}
-                      className="mt-0.5 shrink-0"
-                    >
-                      {isTaskSelected ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-[#8b9cb3]" />}
-                    </button>
-                  )}
+                  <button
+                    onClick={(e) => { e.stopPropagation(); setSelectedTaskIds((prev) => { const next = new Set(prev); if (next.has(task.id)) next.delete(task.id); else next.add(task.id); return next; }); }}
+                    className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 mt-0.5 transition-all ${taskSelectionMode || isTaskSelected ? "bg-transparent border border-primary/40 hover:border-primary" : "bg-primary/10 hover:bg-primary/20"}`}
+                  >
+                    {taskSelectionMode || isTaskSelected ? (
+                      isTaskSelected ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-[#8b9cb3]" />
+                    ) : (
+                      <CheckCircle2 className="w-3.5 h-3.5 text-primary/60" />
+                    )}
+                  </button>
                   <div className="flex-1 min-w-0">
                     <p className={`text-[13px] font-medium text-white mb-1.5 ${taskStatus === "done" ? "line-through text-[#8b9cb3]" : ""}`}>
                       {task.title}
