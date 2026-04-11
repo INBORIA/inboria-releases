@@ -97,9 +97,13 @@ export default function Envoyes() {
   }, [contextMenu]);
 
   const isDraggingRef = useRef(false);
+  const didDragRef = useRef(false);
+  const dragStartIdRef = useRef<number | null>(null);
 
   const handleDragSelectStart = useCallback((id: number) => {
     isDraggingRef.current = true;
+    didDragRef.current = false;
+    dragStartIdRef.current = id;
     setSelectedIds((prev) => new Set(prev).add(id));
     const handleMouseUp = () => { isDraggingRef.current = false; document.removeEventListener("mouseup", handleMouseUp); };
     document.addEventListener("mouseup", handleMouseUp);
@@ -107,6 +111,7 @@ export default function Envoyes() {
 
   const handleDragSelectEnter = useCallback((id: number) => {
     if (!isDraggingRef.current) return;
+    if (id !== dragStartIdRef.current) didDragRef.current = true;
     setSelectedIds((prev) => new Set(prev).add(id));
   }, []);
 
@@ -221,8 +226,9 @@ export default function Envoyes() {
                 return (
                   <div
                     key={email.id}
-                    className={`group flex items-stretch rounded-lg border transition-colors cursor-pointer overflow-hidden ${isSelected ? "border-primary/50 bg-primary/[0.08]" : "border-border bg-card hover:bg-[#1a2235]"}`}
+                    className={`group flex items-stretch rounded-lg border transition-colors cursor-pointer overflow-hidden select-none ${isSelected ? "border-primary/50 bg-primary/[0.08]" : "border-border bg-card hover:bg-[#1a2235]"}`}
                     onClick={() => {
+                      if (didDragRef.current) return;
                       if (selectionMode) {
                         setSelectedIds((prev) => {
                           const next = new Set(prev);
@@ -233,6 +239,8 @@ export default function Envoyes() {
                         setSelectedEmailId(email.id);
                       }
                     }}
+                    onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); handleDragSelectStart(email.id); } }}
+                    onMouseEnter={() => handleDragSelectEnter(email.id)}
                     onContextMenu={(e) => handleContextMenu(e, email.id)}
                   >
                     <div className="w-1 shrink-0 bg-primary" />

@@ -70,9 +70,13 @@ export default function Taches() {
   }, [contextMenu]);
 
   const isDraggingRef = useRef(false);
+  const didDragRef = useRef(false);
+  const dragStartIdRef = useRef<string | null>(null);
 
   const handleDragSelectStart = useCallback((id: string) => {
     isDraggingRef.current = true;
+    didDragRef.current = false;
+    dragStartIdRef.current = id;
     setSelectedTaskIds((prev) => new Set(prev).add(id));
     const handleMouseUp = () => { isDraggingRef.current = false; document.removeEventListener("mouseup", handleMouseUp); };
     document.addEventListener("mouseup", handleMouseUp);
@@ -80,6 +84,7 @@ export default function Taches() {
 
   const handleDragSelectEnter = useCallback((id: string) => {
     if (!isDraggingRef.current) return;
+    if (id !== dragStartIdRef.current) didDragRef.current = true;
     setSelectedTaskIds((prev) => new Set(prev).add(id));
   }, []);
 
@@ -288,8 +293,9 @@ export default function Taches() {
               return (
                 <div
                   key={task.id}
-                  className={`group rounded-lg border p-4 flex items-start gap-3 transition-all cursor-pointer ${isTaskSelected ? "border-primary/50 bg-primary/[0.08]" : `bg-card border-border hover:bg-[#1a2235]`} ${taskStatus === "done" ? "opacity-60" : ""}`}
+                  className={`group rounded-lg border p-4 flex items-start gap-3 transition-all cursor-pointer select-none ${isTaskSelected ? "border-primary/50 bg-primary/[0.08]" : `bg-card border-border hover:bg-[#1a2235]`} ${taskStatus === "done" ? "opacity-60" : ""}`}
                   onClick={() => {
+                    if (didDragRef.current) return;
                     if (taskSelectionMode) {
                       setSelectedTaskIds((prev) => {
                         const next = new Set(prev);
@@ -298,6 +304,8 @@ export default function Taches() {
                       });
                     }
                   }}
+                  onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); handleDragSelectStart(task.id); } }}
+                  onMouseEnter={() => handleDragSelectEnter(task.id)}
                   onContextMenu={(e) => handleTaskContextMenu(e, task.id)}
                 >
                   <button

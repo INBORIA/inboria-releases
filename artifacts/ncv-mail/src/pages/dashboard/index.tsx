@@ -84,9 +84,11 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
 
   return (
     <div
-      className={`group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden ${isSelected ? "border-primary/50 bg-primary/[0.06]" : "border-border"}`}
+      className={`group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden select-none ${isSelected ? "border-primary/50 bg-primary/[0.06]" : "border-border"}`}
       onClick={onClick}
       onContextMenu={(e) => { e.preventDefault(); onContextMenu?.(e, email.id); }}
+      onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); onDragSelectStart?.(email.id); } }}
+      onMouseEnter={() => { onDragSelectEnter?.(email.id); }}
     >
       <div className={`w-1 shrink-0 ${barColor}`} />
       <div className="flex items-center gap-2 flex-1 min-w-0 p-3">
@@ -794,9 +796,13 @@ export default function Dashboard() {
   }, [contextMenu]);
 
   const isDraggingRef = useRef(false);
+  const didDragRef = useRef(false);
+  const dragStartIdRef = useRef<number | null>(null);
 
   const handleDragSelectStart = useCallback((id: number) => {
     isDraggingRef.current = true;
+    didDragRef.current = false;
+    dragStartIdRef.current = id;
     setSelectedIds((prev) => {
       const next = new Set(prev);
       next.add(id);
@@ -811,6 +817,7 @@ export default function Dashboard() {
 
   const handleDragSelectEnter = useCallback((id: number) => {
     if (!isDraggingRef.current) return;
+    if (id !== dragStartIdRef.current) didDragRef.current = true;
     setSelectedIds((prev) => {
       const next = new Set(prev);
       next.add(id);
@@ -1749,7 +1756,7 @@ export default function Dashboard() {
                           <EmailRow
                             key={email.id}
                             email={email}
-                            onClick={() => { if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(email.id); } }}
+                            onClick={() => { if (didDragRef.current) return; if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(email.id); } }}
                             onArchive={handleArchive}
                             onDelete={handleDelete}
                             onCategoryClick={(name: string) => setFilterCategory(name)}
