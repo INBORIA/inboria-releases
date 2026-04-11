@@ -841,7 +841,11 @@ export default function Dashboard() {
     const trail = dragTrailRef.current;
     const idx = trail.indexOf(id);
     if (idx !== -1) {
-      trail.splice(idx + 1);
+      if (idx === 0) {
+        trail.length = 0;
+      } else {
+        trail.splice(idx + 1);
+      }
     } else {
       trail.push(id);
     }
