@@ -1719,7 +1719,7 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  <div data-selection-bar className={`flex items-center gap-2 mb-2 p-2.5 rounded-lg border ${selectionMode ? "bg-primary/[0.08] border-primary/20" : "bg-card/50 border-border"}`}>
+                  <div data-selection-bar className={`flex items-center gap-2 mb-2 p-2.5 rounded-lg border h-[40px] ${selectionMode ? "bg-primary/[0.08] border-primary/20" : "bg-card/50 border-border"}`}>
                     <button
                       onClick={toggleSelectAll}
                       className="flex items-center gap-1.5 text-[11px] text-primary hover:text-white transition-colors"
