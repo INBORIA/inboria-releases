@@ -106,12 +106,12 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
         </div>
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-0.5">
-            <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>
             {email.status === "unread" && (
-              <div className="w-1.5 h-1.5 rounded-full bg-primary shrink-0" />
+              <div className="w-2 h-2 rounded-full bg-primary shrink-0" />
             )}
+            <span className={`text-[12px] truncate ${email.status === "unread" ? "font-bold text-white" : "font-medium text-[#8b9cb3]"}`}>{email.sender}</span>
           </div>
-          <h3 className="text-[12px] text-white/80 truncate">{email.subject}</h3>
+          <h3 className={`text-[12px] truncate ${email.status === "unread" ? "text-white" : "text-white/50"}`}>{email.subject}</h3>
           {email.summary && (
             <div className="flex items-center gap-1 mt-0.5">
               <Sparkles className="w-3 h-3 text-primary shrink-0" />
