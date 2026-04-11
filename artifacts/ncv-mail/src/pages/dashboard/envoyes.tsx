@@ -222,19 +222,16 @@ export default function Envoyes() {
                     onContextMenu={(e) => handleContextMenu(e, email.id)}
                   >
                     <div className="w-1 shrink-0 bg-primary" />
-                    <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
+                    <div className="flex items-center gap-2 flex-1 min-w-0 p-3">
                       <button
                         onClick={(e) => { e.stopPropagation(); setSelectedIds((prev) => { const next = new Set(prev); if (next.has(email.id)) next.delete(email.id); else next.add(email.id); return next; }); }}
-                        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all cursor-pointer relative bg-primary/20 group-hover:bg-transparent group-hover:border-2 group-hover:border-primary/40 hover:!border-primary data-[selected=true]:bg-transparent data-[selected=true]:border-2 data-[selected=true]:border-primary/40"
-                        data-selected={selectionMode || isSelected}
+                        className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all cursor-pointer border border-[#2a3441] hover:border-primary"
                       >
-                        <span className={`${selectionMode || isSelected ? "hidden" : "block group-hover:hidden"}`}>
-                          {isReply ? <Reply className="w-3.5 h-3.5 text-primary" /> : <Send className="w-3.5 h-3.5 text-primary" />}
-                        </span>
-                        <div className={`w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors ${isSelected ? "bg-primary border-primary" : "border-[#8b9cb3]/40 hover:border-primary"} ${selectionMode || isSelected ? "block" : "hidden group-hover:block"}`}>
-                          {isSelected && <Check className="w-3 h-3 text-white" />}
-                        </div>
+                        {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
                       </button>
+                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
+                        {isReply ? <Reply className="w-3.5 h-3.5 text-primary" /> : <Send className="w-3.5 h-3.5 text-primary" />}
+                      </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
                           <span className="font-semibold text-[12px] text-white truncate flex items-center gap-1">

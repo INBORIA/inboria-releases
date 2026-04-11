@@ -288,15 +288,9 @@ export default function Taches() {
                 >
                   <button
                     onClick={(e) => { e.stopPropagation(); setSelectedTaskIds((prev) => { const next = new Set(prev); if (next.has(task.id)) next.delete(task.id); else next.add(task.id); return next; }); }}
-                    className="w-7 h-7 rounded-md flex items-center justify-center shrink-0 mt-0.5 transition-all cursor-pointer bg-primary/10 group-hover:bg-transparent group-hover:border group-hover:border-primary/40 hover:!border-primary data-[selected=true]:bg-transparent data-[selected=true]:border data-[selected=true]:border-primary/40"
-                    data-selected={taskSelectionMode || isTaskSelected}
+                    className="w-5 h-5 rounded flex items-center justify-center shrink-0 mt-0.5 transition-all cursor-pointer border border-[#2a3441] hover:border-primary"
                   >
-                    <span className={`${taskSelectionMode || isTaskSelected ? "hidden" : "block group-hover:hidden"}`}>
-                      <CheckCircle2 className="w-3.5 h-3.5 text-primary/60" />
-                    </span>
-                    <div className={`w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors ${isTaskSelected ? "bg-primary border-primary" : "border-[#8b9cb3]/40 hover:border-primary"} ${taskSelectionMode || isTaskSelected ? "block" : "hidden group-hover:block"}`}>
-                      {isTaskSelected && <Check className="w-3 h-3 text-white" />}
-                    </div>
+                    {isTaskSelected && <Check className="w-3.5 h-3.5 text-primary" />}
                   </button>
                   <div className="flex-1 min-w-0">
                     <p className={`text-[13px] font-medium text-white mb-1.5 ${taskStatus === "done" ? "line-through text-[#8b9cb3]" : ""}`}>
