@@ -12,7 +12,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
       <div className="w-full max-w-md bg-card rounded-xl border border-border overflow-hidden shadow-lg">
         <div className="p-8">
           <div className="flex justify-center mb-8">
-            <img src={appLogo} alt="Inboria" className="h-28 w-auto object-contain" />
+            <img src={appLogo} alt="Inboria" className="h-44 w-auto object-contain" />
           </div>
           {children}
         </div>
