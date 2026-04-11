@@ -76,7 +76,7 @@ function PriorityBadge({ priority }: { priority: string }) {
   );
 }
 
-function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void }) {
+function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, onDragSelectEnter }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; onDragSelectEnter?: (id: number) => void }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
@@ -91,8 +91,10 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
       <div className={`w-1 shrink-0 ${barColor}`} />
       <div className="flex items-center gap-2 flex-1 min-w-0 p-3">
         <button
-          className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all cursor-pointer border border-[#2a3441] hover:border-primary"
+          className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all cursor-pointer border border-[#2a3441] hover:border-primary select-none"
           onClick={(e) => { e.stopPropagation(); onToggleSelect(email.id); }}
+          onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onDragSelectStart?.(email.id); }}
+          onMouseEnter={() => { onDragSelectEnter?.(email.id); }}
         >
           {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
         </button>
@@ -790,6 +792,31 @@ export default function Dashboard() {
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, [contextMenu]);
+
+  const isDraggingRef = useRef(false);
+
+  const handleDragSelectStart = useCallback((id: number) => {
+    isDraggingRef.current = true;
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+    const handleMouseUp = () => {
+      isDraggingRef.current = false;
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+    document.addEventListener("mouseup", handleMouseUp);
+  }, []);
+
+  const handleDragSelectEnter = useCallback((id: number) => {
+    if (!isDraggingRef.current) return;
+    setSelectedIds((prev) => {
+      const next = new Set(prev);
+      next.add(id);
+      return next;
+    });
+  }, []);
 
   const handleContextMenu = useCallback((e: React.MouseEvent, emailId: number) => {
     setSelectedIds((prev) => {
@@ -1730,6 +1757,8 @@ export default function Dashboard() {
                             onToggleSelect={toggleSelect}
                             selectionMode={selectionMode}
                             onContextMenu={handleContextMenu}
+                            onDragSelectStart={handleDragSelectStart}
+                            onDragSelectEnter={handleDragSelectEnter}
                           />
                         ))}
                         {hasMorePages && (

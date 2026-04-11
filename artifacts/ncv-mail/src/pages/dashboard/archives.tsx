@@ -222,6 +222,20 @@ export default function Archives() {
     return () => document.removeEventListener("mousedown", handler);
   }, [contextMenu]);
 
+  const isDraggingRef = useRef(false);
+
+  const handleDragSelectStart = useCallback((id: number) => {
+    isDraggingRef.current = true;
+    setSelectedIds((prev) => new Set(prev).add(id));
+    const handleMouseUp = () => { isDraggingRef.current = false; document.removeEventListener("mouseup", handleMouseUp); };
+    document.addEventListener("mouseup", handleMouseUp);
+  }, []);
+
+  const handleDragSelectEnter = useCallback((id: number) => {
+    if (!isDraggingRef.current) return;
+    setSelectedIds((prev) => new Set(prev).add(id));
+  }, []);
+
   const handleContextMenuArchive = useCallback((e: React.MouseEvent, emailId: number) => {
     e.preventDefault();
     setSelectedIds((prev) => {
@@ -448,7 +462,9 @@ export default function Archives() {
                     <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
                       <button
                         onClick={(e) => { e.stopPropagation(); setSelectedIds((prev) => { const next = new Set(prev); if (next.has(email.id)) next.delete(email.id); else next.add(email.id); return next; }); }}
-                        className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all cursor-pointer border border-[#2a3441] hover:border-primary"
+                        onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); handleDragSelectStart(email.id); }}
+                        onMouseEnter={() => handleDragSelectEnter(email.id)}
+                        className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all cursor-pointer border border-[#2a3441] hover:border-primary select-none"
                       >
                         {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
                       </button>
