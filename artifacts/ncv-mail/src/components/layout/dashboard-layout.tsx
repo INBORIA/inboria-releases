@@ -100,8 +100,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
       <div className="flex h-36 shrink-0 flex-col items-center justify-center px-4 border-b border-[#1f2937]">
-        <img src={mailopsLogo} alt="MailOps" className="h-24 w-24 object-contain" />
-        <span className="text-sm font-semibold tracking-tight text-white -mt-1">MailOps</span>
+        <img src={mailopsLogo} alt="MailOps" className="h-32 w-32 object-contain" />
       </div>
       
       <nav className="flex-1 px-2 py-2.5 space-y-0.5">
@@ -207,8 +206,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               </SheetContent>
             </Sheet>
             <div className="flex items-center gap-2 ml-2">
-              <img src={mailopsLogo} alt="MailOps" className="h-16 w-16 object-contain" />
-              <span className="font-semibold text-[15px] text-white">MailOps</span>
+              <img src={mailopsLogo} alt="MailOps" className="h-20 w-20 object-contain" />
             </div>
           </div>
           <div className="flex-1" />
