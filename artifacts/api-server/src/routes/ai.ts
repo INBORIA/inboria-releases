@@ -81,9 +81,21 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
     const todayAppointments = (todayAppts || []).map(mapAppt);
     const tomorrowAppointments = (tomorrowAppts || []).map(mapAppt);
 
-    const langInstruction = language === "fr"
-      ? "Reponds en francais."
-      : "Respond in English.";
+    const langInstructions: Record<string, { system: string; userLang: string }> = {
+      fr: {
+        system: "Tu es un assistant de gestion d'emails et d'agenda pour Inboria. Tu DOIS répondre UNIQUEMENT en français. Même si les emails sont en anglais, ton résumé, ton conseil et toutes tes réponses doivent être rédigés entièrement en français. Aucun mot en anglais dans ta réponse.",
+        userLang: "Réponds UNIQUEMENT en français. Tous les champs du JSON doivent être en français.",
+      },
+      en: {
+        system: "You are an email and calendar management assistant for Inboria. You MUST respond ONLY in English. Generate a structured daily briefing including appointments.",
+        userLang: "Respond ONLY in English. All JSON fields must be in English.",
+      },
+      nl: {
+        system: "Je bent een e-mail- en agendabeheerassistent voor Inboria. Je MOET UITSLUITEND in het Nederlands antwoorden. Zelfs als de e-mails in het Engels zijn, moeten je samenvatting, advies en alle antwoorden volledig in het Nederlands zijn geschreven.",
+        userLang: "Antwoord UITSLUITEND in het Nederlands. Alle JSON-velden moeten in het Nederlands zijn.",
+      },
+    };
+    const lang = langInstructions[language] || langInstructions.fr;
 
     const appointmentContext = todayAppointments.length > 0 || tomorrowAppointments.length > 0
       ? `\n\nRendez-vous aujourd'hui (${todayAppointments.length}): ${todayAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "aucun"}\nRendez-vous demain (${tomorrowAppointments.length}): ${tomorrowAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "aucun"}`
@@ -95,7 +107,7 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
       messages: [
         {
           role: "system",
-          content: `Tu es un assistant de gestion d'emails et d'agenda. ${langInstruction} Genere un bilan quotidien structure incluant les rendez-vous.`,
+          content: lang.system,
         },
         {
           role: "user",
@@ -103,6 +115,8 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
 ${allEmails.map(e => `- [${e.priority}] ${e.sender}: ${e.subject} ${e.summary ? `(${e.summary})` : ""}`).join("\n")}
 
 Statistiques: ${urgent} urgents, ${moyen} moyens, ${faible} faibles, ${pending} en attente.${appointmentContext}
+
+${lang.userLang}
 
 Genere un JSON avec:
 {
