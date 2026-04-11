@@ -994,7 +994,7 @@
       "heroTitle": "Precios simples, sin sorpresas",
       "heroDesc": "Elige el plan que se adapte a tus necesidades. Cambia o cancela en cualquier momento.",
       "noCommitment": "Sin compromiso, cancela en cualquier momento",
-      "securePayment": "Pago seguro a través de Stripe",
+      "securePayment": "Pago seguro a través de Paddle",
       "gdprCompliant": "Cumple con el RGPD"
     },
     "classification": {
@@ -1639,7 +1639,7 @@
       "subscriptionFeatures": [
         "3 planes: Solo (€9/mes), Pro (€29/mes), Empresarial (€59/mes)",
         "Prueba gratuita de 100 correos electrónicos incluida",
-        "Pago seguro a través de Stripe",
+        "Pago seguro a través de Paddle",
         "Ver tu cuota y consumo actual",
         "Cambiar de plan en cualquier momento"
       ],

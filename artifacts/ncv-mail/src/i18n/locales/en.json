@@ -994,7 +994,7 @@
       "heroTitle": "Simple pricing, no surprises",
       "heroDesc": "Choose the plan that fits your needs. Change or cancel anytime.",
       "noCommitment": "No commitment, cancel anytime",
-      "securePayment": "Secure payment via Stripe",
+      "securePayment": "Secure payment via Paddle",
       "gdprCompliant": "GDPR compliant"
     },
     "classification": {
@@ -1639,7 +1639,7 @@
       "subscriptionFeatures": [
         "3 plans: Solo (€9/mo), Pro (€29/mo), Business (€59/mo)",
         "Free trial of 100 emails included",
-        "Secure payment via Stripe",
+        "Secure payment via Paddle",
         "View your quota and current consumption",
         "Change plans anytime"
       ],

@@ -994,7 +994,7 @@
       "heroTitle": "Des tarifs simples, sans surprise",
       "heroDesc": "Choisissez le plan qui correspond à vos besoins. Changez ou annulez à tout moment.",
       "noCommitment": "Sans engagement, résiliable à tout moment",
-      "securePayment": "Paiement sécurisé par Stripe",
+      "securePayment": "Paiement sécurisé par Paddle",
       "gdprCompliant": "Conforme RGPD"
     },
     "classification": {
@@ -1639,7 +1639,7 @@
       "subscriptionFeatures": [
         "3 plans : Solo (9€/mois), Pro (29€/mois), Business (59€/mois)",
         "Essai gratuit de 100 emails inclus",
-        "Paiement sécurisé via Stripe",
+        "Paiement sécurisé via Paddle",
         "Voir votre quota et votre consommation actuelle",
         "Changer de plan à tout moment"
       ],

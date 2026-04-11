@@ -132,7 +132,7 @@ Gestion de votre plan et paiement.
 ### Fonctionnalités :
 - Voir votre plan actuel et utilisation (emails utilisés / quota).
 - Changer de plan (upgrade/downgrade).
-- Paiement sécurisé via Stripe (carte bancaire).
+- Paiement sécurisé via Paddle (carte bancaire).
 - Annuler l'abonnement.
 - Historique de facturation.
 
@@ -204,7 +204,7 @@ Ouvrez un email, puis cliquez sur l'icône baguette magique (✨). L'IA génère
 Allez dans Tâches, cliquez sur le bouton "Exporter CSV" en haut. Un fichier CSV sera téléchargé avec toutes vos tâches.
 
 ### Comment annuler mon abonnement ?
-Allez dans Abonnement, vous verrez votre plan actuel. Cliquez sur "Gérer l'abonnement" pour accéder au portail de facturation Stripe où vous pouvez annuler.
+Allez dans Abonnement, vous verrez votre plan actuel. Cliquez sur "Gérer l'abonnement" pour accéder au portail de facturation Paddle où vous pouvez annuler.
 
 ### Qu'est-ce qu'un Pack Métier ?
 Un Pack Métier est un ensemble de catégories prédéfinies adaptées à votre secteur d'activité. Par exemple, le pack "Comptable" inclut des catégories comme Factures clients, Déclarations fiscales, etc. Allez dans Classement pour les appliquer.
@@ -353,7 +353,7 @@ Plan and payment management.
 ### Features:
 - View your current plan and usage (emails used / quota).
 - Change plan (upgrade/downgrade).
-- Secure payment via Stripe (credit card).
+- Secure payment via Paddle (credit card).
 - Cancel subscription.
 - Billing history.
 
@@ -425,7 +425,7 @@ Open an email, then click the magic wand icon (✨). AI generates a reply draft 
 Go to Tasks, click the "Export CSV" button at the top. A CSV file will be downloaded with all your tasks.
 
 ### How do I cancel my subscription?
-Go to Subscription, you'll see your current plan. Click "Manage subscription" to access the Stripe billing portal where you can cancel.
+Go to Subscription, you'll see your current plan. Click "Manage subscription" to access the Paddle billing portal where you can cancel.
 
 ### What is an Industry Pack?
 An Industry Pack is a set of predefined categories tailored to your industry. For example, the "Accountant" pack includes categories like Client Invoices, Tax Returns, etc. Go to Classification to apply them.
@@ -574,7 +574,7 @@ Plan- en betalingsbeheer.
 ### Functies:
 - Uw huidige plan en gebruik bekijken (gebruikte e-mails / quotum).
 - Plan wijzigen (upgraden/downgraden).
-- Veilige betaling via Stripe (creditcard).
+- Veilige betaling via Paddle (creditcard).
 - Abonnement opzeggen.
 - Factureringsgeschiedenis.
 
@@ -646,7 +646,7 @@ Open een e-mail en klik op het toverstaficoon (✨). AI genereert een antwoordco
 Ga naar Taken, klik op de knop "CSV exporteren" bovenaan. Er wordt een CSV-bestand gedownload met al uw taken.
 
 ### Hoe annuleer ik mijn abonnement?
-Ga naar Abonnement, u ziet uw huidige plan. Klik op "Abonnement beheren" om het Stripe-factureringsportaal te openen waar u kunt opzeggen.
+Ga naar Abonnement, u ziet uw huidige plan. Klik op "Abonnement beheren" om het Paddle-factureringsportaal te openen waar u kunt opzeggen.
 
 ### Wat is een Branchepakket?
 Een Branchepakket is een set voorgedefinieerde categorieën afgestemd op uw branche. Bijvoorbeeld, het pakket "Accountant" bevat categorieën zoals Klantfacturen, Belastingaangiften, enz. Ga naar Classificatie om ze toe te passen.

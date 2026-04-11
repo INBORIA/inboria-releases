@@ -994,7 +994,7 @@
       "heroTitle": "Einfache Preise, keine Überraschungen",
       "heroDesc": "Wählen Sie den Plan, der Ihren Bedürfnissen entspricht. Ändern oder kündigen Sie jederzeit.",
       "noCommitment": "Keine Verpflichtung, jederzeit kündbar",
-      "securePayment": "Sichere Zahlung über Stripe",
+      "securePayment": "Sichere Zahlung über Paddle",
       "gdprCompliant": "DSGVO-konform"
     },
     "classification": {
@@ -1639,7 +1639,7 @@
       "subscriptionFeatures": [
         "3 Pläne: Solo (9 €/Monat), Pro (29 €/Monat), Business (59 €/Monat)",
         "Kostenlose Testversion von 100 E-Mails enthalten",
-        "Sichere Zahlung über Stripe",
+        "Sichere Zahlung über Paddle",
         "Sehen Sie Ihr Kontingent und Ihren aktuellen Verbrauch",
         "Ändern Sie die Pläne jederzeit"
       ],

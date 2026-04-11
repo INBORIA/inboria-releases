@@ -26,7 +26,7 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
 - **Follow-ups**: Manages follow-up tracking with CRUD endpoints and status management.
 - **CSV Export**: Provides endpoints for exporting emails, projects, follow-ups, and tasks data.
 - **Email Sending**: Handles sending emails, supporting threading for Gmail, Microsoft Graph for Outlook, and SMTP for IMAP.
-- **Stripe Integration**: Manages subscriptions, checkout, and customer portal with geographic restrictions and B2B VAT collection.
+- **Paddle Integration**: Manages subscriptions via Paddle overlay checkout, webhooks, and customer portal with geographic restrictions and EU tax handling. Price IDs configured via env vars (`PADDLE_PRICE_SOLO`, `PADDLE_PRICE_PRO`, `PADDLE_PRICE_BUSINESS`). DB columns `stripe_customer_id`/`stripe_subscription_id` store Paddle IDs (legacy naming).
 - **Integrations (Pro plan)**: Includes Slack for urgent email notifications and Notion for creating task pages from AI-extracted tasks.
 - **Mobile App**: Developed with Expo (Inboria-branded), sharing API hooks and Supabase Auth, featuring a dark-only theme and tab-based navigation. Full i18n (FR/EN/NL) using react-i18next with locale files in `i18n/locales/`. All screens use `useTranslation()` for dynamic language switching.
 - **Organisation Layer (Business plan)**: Implements multi-tenancy with `organisations`, `organisation_members`, and `invitations` tables, supporting CRUD operations for organizations and member management.
@@ -62,6 +62,6 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
 - **OpenAI**: GPT-4o-mini via Replit AI Integration for all AI-powered functionalities.
 - **Google APIs**: For Gmail OAuth2 integration and sending emails.
 - **Microsoft Graph API**: For Outlook OAuth2 integration and sending emails.
-- **Stripe**: For subscription management, payment processing, and customer portal.
+- **Paddle**: For subscription management, payment processing (overlay checkout), and customer portal.
 - **Slack API**: For integrating Slack notifications.
 - **Notion API**: For integrating Notion task management.

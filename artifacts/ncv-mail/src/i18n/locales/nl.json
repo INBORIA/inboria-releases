@@ -994,7 +994,7 @@
       "heroTitle": "Eenvoudige tarieven, geen verrassingen",
       "heroDesc": "Kies het plan dat bij uw behoeften past. Wijzig of annuleer op elk moment.",
       "noCommitment": "Zonder verplichting, op elk moment opzegbaar",
-      "securePayment": "Veilige betaling via Stripe",
+      "securePayment": "Veilige betaling via Paddle",
       "gdprCompliant": "AVG-conform"
     },
     "classification": {
@@ -1639,7 +1639,7 @@
       "subscriptionFeatures": [
         "3 plannen: Solo (€9/maand), Pro (€29/maand), Business (€59/maand)",
         "Gratis proef van 100 e-mails inbegrepen",
-        "Veilige betaling via Stripe",
+        "Veilige betaling via Paddle",
         "Uw quota en huidig verbruik bekijken",
         "Op elk moment van plan wisselen"
       ],
