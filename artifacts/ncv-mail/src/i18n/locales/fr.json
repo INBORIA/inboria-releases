@@ -1504,7 +1504,9 @@
   "language": {
     "fr": "Français",
     "en": "English",
-    "nl": "Nederlands"
+    "nl": "Nederlands",
+    "de": "Deutsch",
+    "es": "Español"
   },
   "manual": {
     "title": "Manuel d'utilisation",

@@ -6,6 +6,8 @@ const languages = [
   { code: "fr", label: "FR", flag: "🇫🇷" },
   { code: "en", label: "EN", flag: "🇬🇧" },
   { code: "nl", label: "NL", flag: "🇧🇪" },
+  { code: "de", label: "DE", flag: "🇩🇪" },
+  { code: "es", label: "ES", flag: "🇪🇸" },
 ];
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {
@@ -57,7 +59,7 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
               <span className="text-base">{lang.flag}</span>
               <span className="font-medium">{lang.label}</span>
               <span className="text-[11px] opacity-60">
-                {lang.code === "fr" ? "Français" : lang.code === "en" ? "English" : "Nederlands"}
+                {lang.code === "fr" ? "Français" : lang.code === "en" ? "English" : lang.code === "nl" ? "Nederlands" : lang.code === "de" ? "Deutsch" : "Español"}
               </span>
             </button>
           ))}

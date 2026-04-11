@@ -37,6 +37,8 @@ const LANGUAGES = [
   { code: "fr", label: "FR", flag: "🇫🇷" },
   { code: "en", label: "EN", flag: "🇬🇧" },
   { code: "nl", label: "NL", flag: "🇳🇱" },
+  { code: "de", label: "DE", flag: "🇩🇪" },
+  { code: "es", label: "ES", flag: "🇪🇸" },
 ];
 
 function formatDate(dateStr: string): string {
