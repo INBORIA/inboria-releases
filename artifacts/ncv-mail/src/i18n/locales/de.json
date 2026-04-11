@@ -1,0 +1,3466 @@
+{
+  "common": {
+    "loading": "Laden...",
+    "error": "Fehler",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "confirm": "Bestätigen",
+    "close": "Schließen",
+    "back": "Zurück",
+    "next": "Weiter",
+    "search": "Suchen",
+    "noResults": "Keine Ergebnisse",
+    "free": "Kostenlos",
+    "perMonth": "/Monat",
+    "perSeatMonth": "/Platz/Monat",
+    "recommended": "Empfohlen",
+    "start": "Loslegen",
+    "redirecting": "Weiterleitung...",
+    "export": "Exportieren",
+    "emailExported": "E-Mail exportiert",
+    "exportError": "Fehler beim Exportieren",
+    "add": "Hinzufügen"
+  },
+  "nav": {
+    "home": "Startseite",
+    "features": "Funktionen",
+    "classification": "Klassifizierung",
+    "ai": "KI",
+    "enterprise": "Unternehmen",
+    "pricing": "Preise",
+    "login": "Anmelden",
+    "signup": "Registrieren",
+    "logout": "Abmelden",
+    "openMenu": "Menü öffnen"
+  },
+  "sidebar": {
+    "inbox": "Posteingang",
+    "sent": "Gesendet",
+    "archives": "Archiv",
+    "followup": "Nachverfolgung",
+    "dailyBrief": "Tagesbericht",
+    "tasks": "Aufgaben",
+    "tasksAndFollowup": "Aufgaben & Nachverfolgung",
+    "projects": "Projekte",
+    "classification": "Klassifizierung",
+    "settings": "Einstellungen",
+    "subscription": "Abonnement",
+    "agenda": "Kalender",
+    "manual": "Benutzerhandbuch",
+    "myTeam": "Mein Team",
+    "sharedMailboxes": "Geteilte Postfächer",
+    "teamActivity": "Teamaktivität",
+    "emailQuota": "E-Mail-Kontingent",
+    "user": "Benutzer"
+  },
+  "dashboard": {
+    "expiredSubscription": "Ihr Abonnement ist abgelaufen",
+    "trialEnded": "Ihre kostenlose Testphase ist beendet",
+    "resubscribe": "Abonnieren Sie erneut, um Inboria weiter zu nutzen.",
+    "trialUsed": "Sie haben Ihre 100 kostenlosen E-Mails aufgebraucht. Wählen Sie einen Plan, um fortzufahren.",
+    "choosePlan": "Plan wählen"
+  },
+  "footer": {
+    "solution": "Eine Inboria-Lösung",
+    "legalInfo": "Rechtliche Informationen",
+    "legalNotice": "Impressum",
+    "privacyPolicy": "Datenschutzrichtlinie",
+    "termsOfUse": "Nutzungsbedingungen",
+    "accessAccount": "Mein Konto aufrufen",
+    "contact": "Kontakt",
+    "allRightsReserved": "© 2026 Inboria. Alle Rechte vorbehalten."
+  },
+  "auth": {
+    "welcome": "Welcome",
+    "loginSubtitle": "Log in to your Inboria account",
+    "email": "Email",
+    "emailPlaceholder": "name@company.com",
+    "password": "Password",
+    "forgotPassword": "Forgot password?",
+    "loginButton": "Log in",
+    "loggingIn": "Logging in...",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create an account",
+    "loginError": "Login error",
+    "checkCredentials": "Please check your credentials.",
+    "invalidEmail": "Invalid email",
+    "passwordRequired": "Password is required",
+    "signupTitle": "Create an account",
+    "signupForPlan": "Sign up to activate the {{plan}} plan",
+    "signupSubtitle": "Join Inboria to organize your inbox",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "John Smith",
+    "fullNameRequired": "Full name required",
+    "professionalEmail": "Professional email",
+    "professionalEmailPlaceholder": "john@company.com",
+    "country": "Country",
+    "selectCountry": "Select your country",
+    "countryAvailability": "Inboria is available in the European Union, EEA and Switzerland.",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordRequired": "Please confirm your password",
+    "passwordsNoMatch": "Passwords do not match",
+    "creatingAccount": "Creating...",
+    "createMyAccount": "Create my account",
+    "signupError": "Registration error",
+    "accountCreated": "Account created",
+    "accountCreatedDesc": "Your account has been created successfully.",
+    "termsAccept": "By creating an account, you accept our",
+    "termsLink": "terms of use",
+    "andOur": "and our",
+    "privacyLink": "privacy policy",
+    "alreadyAccount": "Already have an account?",
+    "passwordStrength": {
+      "min8": "8 characters minimum",
+      "uppercase": "One uppercase letter",
+      "lowercase": "One lowercase letter",
+      "digit": "One digit",
+      "special": "One special character (!@#$...)",
+      "veryWeak": "Very weak",
+      "weak": "Weak",
+      "medium": "Medium",
+      "strong": "Strong",
+      "excellent": "Excellent"
+    },
+    "passwordValidation": {
+      "min8": "Minimum 8 characters",
+      "uppercase": "At least one uppercase letter",
+      "lowercase": "At least one lowercase letter",
+      "digit": "At least one digit",
+      "special": "At least one special character"
+    },
+    "forgotPasswordTitle": "Forgot password?",
+    "forgotPasswordSubtitle": "Enter your email address and we'll send you a link to reset your password.",
+    "emailAddress": "Email address",
+    "sendResetLink": "Send reset link",
+    "sending": "Sending...",
+    "resetEmailSent": "Email sent!",
+    "resetEmailSentIfExists": "If an account exists with the address <1>{{email}}</1>, you will receive a reset link shortly.",
+    "checkSpam": "Check your spam folder if you can't find the email.",
+    "resetEmailSentDesc": "Check your inbox to reset your password.",
+    "backToLogin": "Back to login",
+    "resetPasswordTitle": "New password",
+    "resetPasswordSubtitle": "Choose a new password for your account.",
+    "newPassword": "New password",
+    "min6Chars": "Minimum 6 characters",
+    "retypePassword": "Retype your password",
+    "resetButton": "Reset password",
+    "updating": "Updating...",
+    "resetting": "Resetting...",
+    "passwordChanged": "Password changed!",
+    "redirectingToSpace": "Redirecting to your dashboard...",
+    "passwordUpdated": "Password updated",
+    "passwordUpdatedDesc": "You can now log in with your new password.",
+    "passwordTooShort": "Password too short",
+    "passwordMin6": "Password must be at least 6 characters.",
+    "passwordUpdateError": "Unable to update password.",
+    "linkExpired": "Link expired",
+    "linkExpiredDesc": "This reset link is no longer valid. Please request a new one.",
+    "requestNewLink": "Request a new link",
+    "verifyingLink": "We're verifying your reset link",
+    "verifyEmailTitle": "Verify your email",
+    "verifyEmailDesc": "We sent a confirmation link to",
+    "verifyStep1": "Open your inbox",
+    "verifyStep2": "Click the link in the Inboria email",
+    "verifyStep3": "You will be redirected to your dashboard",
+    "cantFindEmail": "Can't find the email? Check your spam or",
+    "resendEmail": "resend it",
+    "resending": "Sending...",
+    "resendError": "Unable to resend the email. Try again in a few minutes.",
+    "emailResent": "Email resent",
+    "emailResentDesc": "Check your inbox and spam folder.",
+    "verifying": "Verifying...",
+    "acceptInviteTitle": "Team invitation",
+    "acceptingInvite": "Accepting invitation...",
+    "inviteForEmail": "This invitation is for <1>{{email}}</1>.",
+    "wrongAccountDesc": "You are currently logged in with a different account. To accept the invitation, you need to log in with the correct account.",
+    "createAccountWith": "Create an account with {{email}}",
+    "loginWith": "Log in with {{email}}",
+    "loginRequired": "Log in or create an account to accept this invitation.",
+    "joinedSuccess": "You have successfully joined the organization!",
+    "goToDashboard": "Go to dashboard",
+    "backToHome": "Back to home",
+    "invalidInviteLink": "Invalid invitation link.",
+    "inviteError": "Error accepting the invitation.",
+    "serverError": "Server connection error.",
+    "acceptInviteDesc": "You have been invited to join a team on Inboria.",
+    "pageNotFound": "Page not found",
+    "pageNotFoundDesc": "The page you're looking for doesn't exist or has been moved.",
+    "backToDashboard": "Back to dashboard"
+  },
+  "inbox": {
+    "title": "Inbox",
+    "allCategories": "All",
+    "uncategorized": "Uncategorized",
+    "unread": "Unread",
+    "assigned": "Assigned",
+    "noEmails": "No emails in this category",
+    "noEmailsDesc": "Emails will appear here once synced.",
+    "searchPlaceholder": "Search for an email...",
+    "refreshing": "Syncing...",
+    "refresh": "Refresh",
+    "newEmail": "New email",
+    "compose": "Compose",
+    "selectAll": "Select all",
+    "deselectAll": "Deselect all",
+    "selectedCount": "{{count}} selected",
+    "bulkArchive": "Archive",
+    "bulkMarkRead": "Mark as read",
+    "recategorize": "Recategorize uncategorized",
+    "recategorizeSuccess": "{{count}} email(s) recategorized",
+    "triageTitle": "Quick triage",
+    "triageSuccess": "Email triaged successfully",
+    "priority": "Priority",
+    "category": "Category",
+    "project": "Project",
+    "assignedTo": "Assigned to",
+    "noProject": "No project",
+    "notAssigned": "Unassigned",
+    "priorities": {
+      "urgent": "Urgent",
+      "medium": "Medium",
+      "low": "Low",
+      "urgentPlural": "Urgent",
+      "mediumPlural": "Medium",
+      "lowPlural": "Low"
+    },
+    "reply": "Reply",
+    "aiReply": "AI Reply",
+    "generating": "Generating...",
+    "markRead": "Read",
+    "archive": "Archive",
+    "deleteEmail": "Delete",
+    "createTask": "Create task",
+    "follow": "Follow up",
+    "aiSummary": "AI Summary",
+    "replyTo": "Reply to",
+    "subject": "Subject",
+    "message": "Message",
+    "send": "Send",
+    "sending": "Sending...",
+    "sendSuccess": "Email sent",
+    "newTask": "New task",
+    "taskTitle": "Task title",
+    "taskTitlePlaceholder": "E.g.: Reply to quote, Send contract...",
+    "taskProjectOptional": "Project (optional)",
+    "taskCreated": "Task created",
+    "newFollowup": "New follow-up",
+    "followupTitle": "Follow-up title",
+    "followupDueDate": "Due date",
+    "followupNotes": "Notes (optional)",
+    "followupCreated": "Follow-up created",
+    "sender": "Sender",
+    "senderRequired": "Sender required",
+    "subjectRequired": "Subject required",
+    "contentRequired": "Content required",
+    "composeTitle": "New message",
+    "to": "To",
+    "attachments": "Attachments",
+    "emailSent": "Email sent successfully",
+    "syncComplete": "Sync complete",
+    "syncNewEmails": "{{count}} new email(s)",
+    "syncNoNew": "No new emails",
+    "subjectLabel": "Subject",
+    "sharedMailbox": "Shared mailbox",
+    "claim": "Claim",
+    "unclaim": "Release",
+    "claimedBy": "Claimed by",
+    "loadMore": "Load more",
+    "page": "Page",
+    "quickTriage": "Quick triage",
+    "handlePrefix": "Handle:",
+    "followPrefix": "Follow-up:",
+    "assignedBadge": "Assigned",
+    "taskBadgeSingular": "task",
+    "taskBadgePlural": "tasks",
+    "emailArchived": "Email archived",
+    "emailDeleted": "Email moved to trash",
+    "emailRestoredToInbox": "Email restored to inbox",
+    "trash": "Trash",
+    "trashEmpty": "Trash is empty",
+    "trashEmptyDesc": "Deleted emails will appear here.",
+    "restoreEmail": "Restore",
+    "permanentDelete": "Delete permanently",
+    "emptyTrash": "Empty trash",
+    "emptyTrashConfirm": "Are you sure? This action is irreversible.",
+    "trashEmptied": "Trash emptied",
+    "emailPermanentlyDeleted": "Email permanently deleted",
+    "emailRestored": "Email restored to inbox",
+    "priorityChanged": "Priority changed",
+    "categoryUpdated": "Category updated",
+    "projectUpdated": "Project updated",
+    "markedRead": "Marked as read",
+    "draftGenerated": "AI draft generated",
+    "draftError": "Draft unavailable",
+    "assignSuccess": "Email assigned",
+    "unassignSuccess": "Email unassigned",
+    "bulkArchived": "{{count}} email(s) archived",
+    "bulkRead": "{{count}} email(s) marked as read",
+    "bulkDeleted": "{{count}} email(s) deleted",
+    "taskCreatedSuccess": "Task created successfully",
+    "taskCreateError": "Unable to create task.",
+    "followupCreateError": "Unable to create follow-up.",
+    "sendError": "Unable to send email.",
+    "archiveTitle": "Archive",
+    "deleteTitle": "Delete",
+    "emailDetail": "Email detail",
+    "replyPlaceholder": "Your reply...",
+    "noEmailSelected": "Select an email to read",
+    "assign": "Assign",
+    "unassign": "Unassign",
+    "download": "Download",
+    "exportDownloaded": "Export downloaded",
+    "exportError": "Error exporting"
+  },
+  "sent": {
+    "title": "Sent emails",
+    "noEmails": "No sent emails",
+    "noEmailsDesc": "Your sent emails will appear here.",
+    "to": "To",
+    "viewConversation": "View conversation",
+    "createFollowupTask": "Create follow-up task",
+    "projectUpdated": "Project updated",
+    "exportDownloaded": "Export downloaded",
+    "exportError": "Error exporting",
+    "reply": "Reply",
+    "you": "You",
+    "unknownRecipient": "Unknown recipient",
+    "loadMore": "Load more",
+    "conversationWith": "Conversation",
+    "aiSummary": "AI conversation summary",
+    "summaryError": "Error generating summary.",
+    "followupCreated": "Follow-up created",
+    "followupError": "Error creating follow-up.",
+    "createFollowup": "Create follow-up",
+    "followupTitleLabel": "Follow-up title",
+    "followupTitlePlaceholder": "E.g.: Follow up on quote...",
+    "followupNotesPlaceholder": "Notes about this follow-up...",
+    "followupDueDate": "Due date",
+    "followupNotes": "Notes (optional)",
+    "createFollowupBtn": "Create follow-up",
+    "emailsSentCount": "{{count}} email(s) sent",
+    "exportCSV": "Export CSV",
+    "assignProject": "Assign to project",
+    "noProject": "No project",
+    "sentAt": "Sent on",
+    "newMessage": "New message",
+    "generating": "Generating..."
+  },
+  "archives": {
+    "title": "Archives",
+    "noEmails": "No archived emails",
+    "noEmailsDesc": "Archived emails will appear here.",
+    "restore": "Restore",
+    "restored": "Email restored",
+    "emailDeleted": "Email deleted",
+    "priorityChanged": "Priority changed",
+    "categoryUpdated": "Category updated",
+    "projectUpdated": "Project updated",
+    "restoreToInbox": "Restore to inbox",
+    "loadMore": "Load more archives",
+    "archivedByAI": "Emails automatically classified by AI.",
+    "emailCount": "{{count}} archived email(s)",
+    "exportDownloaded": "Export downloaded",
+    "exportError": "Error exporting",
+    "searchPlaceholder": "Search archives...",
+    "allCategories": "All",
+    "uncategorized": "Uncategorized"
+  },
+  "followup": {
+    "title": "Follow-up",
+    "noFollowups": "No pending follow-ups",
+    "noFollowupsDesc": "Create a follow-up from an email to find it here.",
+    "dueDate": "Due date",
+    "overdue": "Overdue",
+    "today": "Today",
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "markComplete": "Mark complete",
+    "markIncomplete": "Mark incomplete",
+    "subtitle": "Manage your follow-ups and reminders",
+    "all": "All",
+    "pending": "Pending",
+    "relance": "Follow-up",
+    "aiDetection": "AI Detection",
+    "aiDetectionDesc": "AI analyzes your emails to identify necessary follow-ups.",
+    "newFollowup": "New follow-up",
+    "created": "Follow-up created",
+    "deleted": "Follow-up deleted",
+    "statusUpdated": "Status updated",
+    "notes": "Notes",
+    "notesPlaceholder": "Add notes about this follow-up...",
+    "save": "Save",
+    "notesUpdated": "Notes updated",
+    "conversationExported": "Conversation exported",
+    "replySent": "Reply sent",
+    "replyError": "Error sending reply.",
+    "draftGenerated": "AI draft generated",
+    "draftError": "Draft unavailable",
+    "noFollowupsAlt": "Create your first follow-up or use AI detection.",
+    "active": "Active",
+    "exportDownloaded": "Export downloaded",
+    "exportError": "Error exporting",
+    "detecting": "Detecting...",
+    "detectedCount": "{{count}} follow-up(s) detected",
+    "linkedEmail": "Linked email",
+    "project": "Project",
+    "noProject": "No project",
+    "titleLabel": "Title",
+    "titlePlaceholder": "E.g.: Follow up with client...",
+    "emailOptional": "Linked email (optional)",
+    "selectEmail": "Select an email",
+    "projectOptional": "Project (optional)",
+    "create": "Create",
+    "delete": "Delete",
+    "viewConversation": "View conversation",
+    "conversationWith": "Conversation",
+    "aiSummary": "AI Summary",
+    "summaryError": "Error generating summary",
+    "reply": "Reply",
+    "aiReply": "AI Reply",
+    "replyTo": "Reply to",
+    "replySubject": "Subject",
+    "replyMessage": "Message",
+    "send": "Send",
+    "sending": "Sending..."
+  },
+  "brief": {
+    "title": "Daily brief",
+    "subtitle": "Your daily AI-generated summary",
+    "noBrief": "No brief available",
+    "noBriefDesc": "The daily brief will be available after your emails are synced.",
+    "urgentEmails": "Urgent emails",
+    "pendingTasks": "Pending tasks",
+    "unreadCount": "Unread",
+    "summary": "Summary",
+    "aiDailyBrief": "AI Daily Brief",
+    "personalizedSummary": "Your personalized summary to start the day.",
+    "regenerate": "Regenerate",
+    "analyzing": "AI is analyzing your mailbox...",
+    "analyzingDesc": "Reading, sorting and extracting important information.",
+    "clickRegenerate": "Click Regenerate to get your daily brief.",
+    "generateBrief": "Generate brief",
+    "serenityScore": "Serenity score",
+    "urgencies": "Urgencies",
+    "toHandle": "to handle",
+    "tasksLabel": "Tasks",
+    "newTasks": "new",
+    "overview": "Overview",
+    "keyEmails": "Key emails to handle",
+    "urgent": "Urgent",
+    "important": "Important",
+    "noCriticalEmail": "No critical email detected.",
+    "dailyAdvice": "Daily advice"
+  },
+  "tasks": {
+    "title": "My tasks",
+    "subtitle": "Manage your tasks and follow-ups from one place.",
+    "noTasks": "No tasks",
+    "noTasksDesc": "Your tasks will appear here — created by AI or by you.",
+    "addTask": "Add a task",
+    "todo": "To do",
+    "followup": "Follow-up",
+    "done": "Done",
+    "all": "All",
+    "completed": "Completed",
+    "deleted": "Task deleted",
+    "deleteError": "Unable to delete task.",
+    "createdOn": "Created on",
+    "exportDownloaded": "Export downloaded",
+    "exportError": "Error exporting",
+    "export": "Export",
+    "viewEmail": "View email",
+    "sourceAi": "AI",
+    "sourceManual": "Manual",
+    "markFollowup": "Set as follow-up",
+    "markDone": "Mark as done",
+    "markTodo": "Back to do",
+    "movedToFollowup": "Task set to follow-up",
+    "movedToDone": "Task completed",
+    "movedToTodo": "Task moved back to do",
+    "statusUpdated": "Status updated",
+    "taskCreated": "Task created"
+  },
+  "projects": {
+    "title": "Projects",
+    "noProjects": "No projects",
+    "noProjectsDesc": "Create a project to group your emails and tasks.",
+    "addProject": "New project",
+    "name": "Project name",
+    "reference": "Reference",
+    "description": "Description",
+    "emailCount": "{{count}} email(s)",
+    "taskCount": "{{count}} task(s)",
+    "createProject": "Create project",
+    "editProject": "Edit project",
+    "deleteProject": "Delete project",
+    "status": "Status",
+    "statusActive": "Active",
+    "statusComplete": "Completed",
+    "statusPaused": "On hold",
+    "color": "Color",
+    "colors": {
+      "blue": "Blue",
+      "green": "Green",
+      "purple": "Purple",
+      "amber": "Amber",
+      "red": "Red",
+      "cyan": "Cyan",
+      "pink": "Pink",
+      "indigo": "Indigo"
+    },
+    "nameTooShort": "Name must be at least 2 characters",
+    "created": "Project created",
+    "createError": "Unable to create project.",
+    "updated": "Project updated",
+    "updateError": "Unable to update project.",
+    "deleted": "Project deleted",
+    "deleteError": "Unable to delete project.",
+    "deleteConfirmTitle": "Delete this project?",
+    "deleteConfirmDesc": "Linked emails and tasks will not be deleted but will no longer be associated with this project.",
+    "emails": "Emails",
+    "tasks": "Tasks",
+    "notesLabel": "Notes",
+    "addNote": "Add a note...",
+    "noNotes": "No notes yet.",
+    "noteError": "Unable to add note.",
+    "noTasksInProject": "No tasks in this project.",
+    "noEmailsInProject": "No emails in this project.",
+    "taskCreated": "Task created",
+    "taskError": "Unable to create task.",
+    "taskDeleted": "Task deleted",
+    "newTask": "New task",
+    "addTaskPlaceholder": "Add a task...",
+    "export": "Export",
+    "exportDownloaded": "Export downloaded",
+    "exportError": "Error exporting",
+    "searchProjects": "Search projects...",
+    "noProjectsAlt": "Create your first project to group emails and tasks.",
+    "viewDetail": "View detail"
+  },
+  "classification": {
+    "title": "Classification",
+    "categories": "Categories",
+    "addCategory": "Add a category",
+    "categoryName": "Category name",
+    "categoryDescription": "Description",
+    "noCategories": "No categories",
+    "noCategoriesDesc": "Create categories to organize your emails.",
+    "industryPacks": "Industry packs",
+    "applyPack": "Apply pack",
+    "packApplied": "Pack applied",
+    "generateAI": "Generate with AI",
+    "generateAIDesc": "Describe your business and the AI will create suitable categories.",
+    "generating": "Generating...",
+    "searchPacks": "Search for a pack...",
+    "families": "families",
+    "packs": "packs",
+    "subtitle": "Organize your emails with custom categories.",
+    "suggestedCategories": "Quick suggestions",
+    "addAll": "Add all",
+    "add": "Add",
+    "added": "added",
+    "addError": "Unable to add",
+    "create": "Create",
+    "edit": "Edit",
+    "categoryCreated": "Category created",
+    "categoryUpdated": "Category updated",
+    "categoryDeleted": "Category deleted",
+    "categoryModified": "Category modified",
+    "descriptionPlaceholder": "E.g.: All emails containing invoices, quotes or receipts.",
+    "createError": "Unable to create category.",
+    "updateError": "Unable to update category.",
+    "deleteError": "Unable to delete category.",
+    "deleteConfirmTitle": "Delete this category?",
+    "deleteConfirmDesc": "Emails in this category will not be deleted.",
+    "nameTooShort": "Name must be at least 2 characters",
+    "myCategories": "My categories",
+    "searchCategories": "Search categories...",
+    "noCategoriesAlt": "Create categories or use suggestions to get started.",
+    "packCategories": "categories",
+    "apply": "Apply",
+    "applyAll": "Apply all",
+    "packAppliedCount": "{{count}} category(ies) added",
+    "generatePlaceholder": "Describe your business...",
+    "generate": "Generate",
+    "generated": "Pack generated",
+    "generatedCount": "{{count}} category(ies) generated",
+    "generateError": "Unable to generate pack.",
+    "hideSuggestions": "Hide suggestions",
+    "showSuggestions": "Show suggestions",
+    "source": "Source",
+    "manual": "Manual",
+    "pack": "Industry pack",
+    "aiGenerated": "AI generated",
+    "descriptionLabel": "Description",
+    "nameLabel": "Name",
+    "newCategory": "New category",
+    "createCategory": "Create a category",
+    "editCategory": "Edit category",
+    "descriptionHelp": "Description (to help the AI)",
+    "creating": "Creating...",
+    "packPreConfigDesc": "Add pre-configured categories suited to your business",
+    "jobNotListed": "My profession is not listed",
+    "searchJobs": "Search for a profession...",
+    "noJobFound": "No profession found.",
+    "generateCustomWithAI": "Generate a custom pack with AI",
+    "categoriesCount": "{{count}} categories",
+    "newCount": "({{count}} new)",
+    "applyPackTitle": "Apply pack \"{{name}}\"",
+    "packWillAddDesc": "This pack will add {{count}} category(ies) to your classification. Your current categories will not be modified or deleted.",
+    "alreadyExistCount": "{{count}} category(ies) already exist and will be skipped.",
+    "alreadyExists": "(already exists)",
+    "applying": "Applying...",
+    "applyCount": "Apply ({{count}} categories)",
+    "applyThisPack": "Apply this pack",
+    "applyPackError": "Unable to apply the pack.",
+    "packAppliedTitle": "Pack \"{{name}}\" applied",
+    "packAppliedDesc": "{{added}} category(ies) added, {{skipped}} already existing.",
+    "generateCustomTitle": "Generate a custom pack",
+    "generateCustomDesc": "Describe your profession or business, and the AI will generate suitable categories.",
+    "generateRetryError": "Unable to generate the pack. Please try again.",
+    "packGeneratedDesc": "Pack \"{{name}}\" generated with {{count}} categories:",
+    "regenerate": "Regenerate",
+    "suggestedCategoriesTitle": "Suggested categories",
+    "suggestedCategoriesDesc": "Click to add, the AI will use them to classify your emails",
+    "hide": "Hide",
+    "manageCategoriesDesc": "Manage the folders where the AI classifies your emails",
+    "noCategoriesAltDesc": "Choose an industry pack above or create your own categories.",
+    "createFirst": "Create first",
+    "noDescription": "No description",
+    "emailsLabel": "emails",
+    "addErrorDesc": "Unable to add \"{{name}}\".",
+    "deleteConfirmCatDesc": "The category \"{{name}}\" will be deleted. Associated emails will lose this category.",
+    "deleteErrorDesc": "Unable to delete this category",
+    "saving": "Saving...",
+    "suggestedCats": {
+      "facturation": {
+        "name": "Billing",
+        "desc": "Invoices, quotes, purchase orders, payment reminders"
+      },
+      "support_client": {
+        "name": "Customer Support",
+        "desc": "Help requests, complaints, customer questions"
+      },
+      "commercial": {
+        "name": "Sales",
+        "desc": "Prospects, sales proposals, negotiations, deals"
+      },
+      "administratif": {
+        "name": "Administrative",
+        "desc": "Contracts, official documents, legal correspondence"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "desc": "Newsletters, promotions, marketing emails"
+      },
+      "newsletter_marketing": {
+        "name": "Newsletter / Marketing",
+        "desc": "Newsletters, promotions, marketing campaigns, ads"
+      },
+      "rh_equipe": {
+        "name": "HR / Team",
+        "desc": "Leave, recruitment, staff management, internal notes"
+      },
+      "fournisseurs": {
+        "name": "Suppliers",
+        "desc": "Orders, deliveries, supplier relations, purchases"
+      },
+      "juridique": {
+        "name": "Legal",
+        "desc": "Formal notices, GDPR, compliance, litigation"
+      },
+      "juridique_conformite": {
+        "name": "Legal / Compliance",
+        "desc": "Formal notices, GDPR, compliance, litigation, contracts"
+      },
+      "technique": {
+        "name": "Technical",
+        "desc": "Bugs, maintenance, servers, IT, technical requests"
+      },
+      "technique_it": {
+        "name": "Technical / IT",
+        "desc": "Bugs, maintenance, servers, IT, technical requests"
+      },
+      "formation": {
+        "name": "Training",
+        "desc": "Webinars, certifications, e-learning, invitations"
+      },
+      "banque_finance": {
+        "name": "Banking / Finance",
+        "desc": "Bank statements, transfers, loans, insurance"
+      },
+      "logistique_livraisons": {
+        "name": "Logistics / Deliveries",
+        "desc": "Package tracking, carriers, delivery notes"
+      },
+      "rendez_vous_planning": {
+        "name": "Appointments / Planning",
+        "desc": "Confirmations, cancellations, meeting reminders"
+      },
+      "international_export": {
+        "name": "International / Export",
+        "desc": "Customs, foreign clients, translations, incoterms"
+      },
+      "urgent_prioritaire": {
+        "name": "Urgent / Priority",
+        "desc": "Emails requiring immediate action, critical alerts"
+      },
+      "comptabilite": {
+        "name": "Accounting",
+        "desc": "Accounting entries, balance sheets, VAT, tax returns"
+      },
+      "paiements_encaissements": {
+        "name": "Payments / Collections",
+        "desc": "Payment confirmations, delays, reminders, refunds"
+      },
+      "partenaires_sous_traitants": {
+        "name": "Partners / Subcontractors",
+        "desc": "Collaborations, agreements, exchanges with external partners"
+      },
+      "projets": {
+        "name": "Projects",
+        "desc": "Project tracking, deliverables, deadlines, progress reports"
+      },
+      "communication_interne": {
+        "name": "Internal Communication",
+        "desc": "Memos, announcements, meeting minutes, circulars"
+      },
+      "immobilier_locaux": {
+        "name": "Real Estate / Premises",
+        "desc": "Leases, rent, building maintenance, charges"
+      },
+      "abonnements_saas": {
+        "name": "Subscriptions / SaaS",
+        "desc": "Software licenses, renewals, tool invoices"
+      },
+      "devis_negociations": {
+        "name": "Quotes / Negotiations",
+        "desc": "Quote requests, comparisons, counter-proposals"
+      },
+      "spam_a_supprimer": {
+        "name": "Spam / To Delete",
+        "desc": "Unwanted emails, unsolicited marketing"
+      },
+      "namePlaceholder": "E.g.: Invoices, Suppliers...",
+      "descPlaceholder": "E.g.: All emails containing invoices, quotes or receipts."
+    }
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and AI preferences.",
+    "emailConnection": "Email Connection",
+    "connected": "Connected",
+    "sync": "Sync",
+    "disconnect": "Disconnect",
+    "disconnected": "Email account disconnected",
+    "addGoogleAccount": "Add a Google account (OAuth).",
+    "connectGoogle": "Connect Google",
+    "otherProviders": "Other providers",
+    "connect": "Connect",
+    "connecting": "Connecting...",
+    "fillAllFields": "Please fill in all fields",
+    "connectionError": "Server connection error",
+    "connectionFailed": "Connection failed",
+    "advancedConfig": "Advanced configuration",
+    "hideAdvancedConfig": "Hide advanced config",
+    "emailAddress": "Email address",
+    "imapServer": "IMAP Server",
+    "port": "Port",
+    "aiPreferences": "AI Preferences",
+    "urgentBilling": "Urgent billing",
+    "urgentBillingDesc": "Detect unpaid invoices as urgent.",
+    "taskExtraction": "Task extraction",
+    "taskExtractionDesc": "Convert client requests into tasks.",
+    "projectDetection": "Project detection",
+    "projectDetectionDesc": "Automatically associate emails with your active projects.",
+    "emailSignature": "Email signature",
+    "signatureDesc": "This signature will be automatically added to AI-generated drafts and your manual replies.",
+    "preview": "Preview",
+    "saving": "Saving...",
+    "saveSignature": "Save signature",
+    "signatureSaved": "Signature saved",
+    "signatureSavedDesc": "Your signature will be used in AI drafts and replies.",
+    "managementMode": "Management mode",
+    "profile": "Profile",
+    "profileUpdated": "Profile updated",
+    "changePassword": "Change password",
+    "currentPassword": "Current password",
+    "newPassword": "New password",
+    "confirmNewPassword": "Confirm new password",
+    "passwordTooShort": "Password too short",
+    "passwordMinChars": "Minimum 6 characters.",
+    "passwordsNoMatch": "Passwords do not match.",
+    "wrongCurrentPassword": "Incorrect current password",
+    "verifyCurrentPassword": "Please verify your current password.",
+    "passwordChanged": "Password changed successfully",
+    "passwordChangeError": "Unable to change password.",
+    "changingPassword": "Changing...",
+    "changePasswordButton": "Change password",
+    "connectedSuccess": "connected successfully!",
+    "deleteConnection": "Delete connection",
+    "deleteConnectionConfirm": "Are you sure you want to delete this connection?",
+    "connectionDeleted": "Connection deleted",
+    "deleteConnectionError": "Unable to delete connection.",
+    "lastSync": "Last sync",
+    "never": "Never",
+    "appPassword": "App password",
+    "connectOutlook": "Connect Outlook (OAuth)",
+    "noConnections": "No email connections configured",
+    "noConnectionsDesc": "Connect your mailbox to start receiving emails.",
+    "connectedAccounts": "Connected accounts",
+    "other": "Other",
+    "notifications": "Notifications",
+    "morningBrief": "Morning brief",
+    "morningBriefDesc": "AI email summary every morning at 8am.",
+    "urgentAlerts": "Urgent alerts",
+    "urgentAlertsDesc": "Notification for critical emails.",
+    "accountInfo": "Account information",
+    "fullName": "Full name",
+    "timezone": "Timezone",
+    "email": "Email",
+    "autoArchive": "Auto-archive",
+    "autoArchiveDesc": "AI archives low-priority emails (newsletters, ads, notifications). Urgent and medium emails stay in inbox.",
+    "autoMark": "Auto-marking",
+    "autoMarkDesc": "Mark low-priority emails already summarized by AI as read.",
+    "managementModeDesc": "Choose the level of AI autonomy in managing your emails.",
+    "manualModeInfo": "In manual mode (default), AI sorts and classifies your emails but takes no automatic action. Enable the options above to switch to autopilot mode.",
+    "connectProvider": "Connect {{name}}",
+    "currentPasswordPlaceholder": "Your current password",
+    "newPasswordPlaceholder": "Minimum 6 characters",
+    "confirmNewPasswordPlaceholder": "Retype new password",
+    "cancel": "Cancel"
+  },
+  "subscription": {
+    "title": "Manage your subscription",
+    "subtitle": "Choose the plan that fits your email volume.",
+    "currentPlan": "Current plan",
+    "expired": "Expired",
+    "renewalDate": "Renewal on",
+    "aiConsumption": "AI consumption",
+    "manageSubscription": "Manage subscription",
+    "changePlan": "Change plan",
+    "currentPlanBadge": "Current plan",
+    "trialInProgress": "Trial in progress",
+    "trialEnded": "Trial ended",
+    "paymentSuccess": "Payment successful",
+    "paymentSuccessDesc": "Your subscription has been updated successfully.",
+    "paymentCancelled": "Payment cancelled",
+    "paymentCancelledDesc": "You were not charged.",
+    "planUpdated": "Plan updated",
+    "planUpdatedDesc": "Your subscription has been modified successfully.",
+    "paymentError": "Unable to create payment session.",
+    "portalError": "Unable to access the management portal.",
+    "quotaOverage": "Quota overage",
+    "quotaOverageDesc": "Automatic pay-as-you-go billing. No surprises — you're notified at 80% of your monthly quota.",
+    "noCommitment": "No commitment",
+    "noCommitmentDesc": "All plans are commitment-free. You can add or remove seats, change plans or cancel anytime from your personal space.",
+    "securityTitle": "Security and privacy",
+    "securityDesc": "Your emails are never stored to train our models. Real-time AI only. Data hosted in Europe (GDPR).",
+    "seatCount": "Number of seats",
+    "collaborators": "collaborators",
+    "collaborator": "collaborator",
+    "perSeatPerMonth": "€9 per seat/month (minimum 3 seats)",
+    "seatsExample": "Example: 3 collaborators = €27/month — adjustable at any time from your space.",
+    "expiredSubscription": "Your subscription has expired",
+    "trialEndedFull": "Your free trial has ended",
+    "resubscribe": "Resubscribe to a paid plan to continue using Inboria.",
+    "trialUsedFull": "You have used your 100 free emails. Choose a plan below to continue."
+  },
+  "plans": {
+    "trial": "Trial",
+    "trialDesc": "100 free emails to discover Inboria",
+    "trialFeatures": {
+      "f1": "100 free emails (one-time use)",
+      "f2": "3 custom categories",
+      "f3": "Email support",
+      "f4": "AI drafts included"
+    },
+    "solo": "Solo",
+    "soloDesc": "For freelancers",
+    "soloFeatures": {
+      "f1": "3,000 emails per month",
+      "f2": "Unlimited categories",
+      "f3": "Daily brief",
+      "f4": "Proactive AI drafts",
+      "f5": "Automatic task extraction",
+      "f6": "Priority support",
+      "f7": "Overage: €0.002/email"
+    },
+    "pro": "Pro",
+    "proDesc": "Ideal for professionals",
+    "proFeatures": {
+      "f1": "10,000 emails per month",
+      "f2": "Unlimited categories",
+      "f3": "Daily brief",
+      "f4": "Proactive AI drafts",
+      "f5": "Automatic task extraction",
+      "f6": "Detailed statistics",
+      "f7": "Priority support",
+      "f8": "Overage: €0.001/email"
+    },
+    "business": "Business",
+    "businessDesc": "For teams",
+    "businessFeatures": {
+      "f1": "10,000 emails sorted/seat/month",
+      "f2": "Everything in the Pro plan",
+      "f3": "Minimum 3 seats, up to 50",
+      "f4": "Shared mailboxes between colleagues",
+      "f5": "Task assignment between members",
+      "f6": "Dedicated API",
+      "f7": "Priority support",
+      "f8": "Overage: €0.001/email"
+    },
+    "essai": "Trial",
+    "essaiDesc": "100 free emails to discover Inboria",
+    "essaiFeatures": {
+      "f1": "100 free emails (one-time use)",
+      "f2": "3 custom categories",
+      "f3": "Email support",
+      "f4": "AI drafts included"
+    },
+    "recommended": "Recommended",
+    "free": "Free",
+    "perMonth": "/month",
+    "perSeatMonth": "/seat/month",
+    "perSeatDetail": "i.e. €9 per seat/month",
+    "redirecting": "Redirecting...",
+    "start": "Get started",
+    "numberOfCollaborators": "Number of collaborators",
+    "total": "Total",
+    "seatsExample": "Example: 3 collaborators = €27/month — adjustable at any time from your space."
+  },
+  "marketing": {
+    "home": {
+      "heroTitle1": "Your inbox is already managed",
+      "heroTitle2": "when you arrive in the morning.",
+      "heroTitle3": "Inboria — the Email Autopilot.",
+      "heroDesc": "Inboria reads, analyzes and automatically sorts your emails according to YOUR own rules.",
+      "startFree": "Start for free",
+      "howItWorks": "How it works",
+      "howItWorksDesc": "Three simple steps to transform your email management",
+      "step1Title": "Connect your mailbox",
+      "step1Desc": "Simple and secure integration with your existing email in just a few clicks.",
+      "step2Title": "Create your custom categories",
+      "step2Desc": "Define your own categories according to your business and specific needs.",
+      "step3Title": "AI manages your inbox on autopilot",
+      "step3Desc": "Our artificial intelligence sorts, prioritizes, prepares replies and extracts your tasks automatically. Your inbox is already managed when you arrive in the morning.",
+      "trustTitle": "Discover why thousands of professionals trust us",
+      "timeSaving": "Time saving",
+      "timeSavingDesc": "Save several hours per week by automating email sorting.",
+      "customization": "Full customization",
+      "customizationDesc": "Create sorting rules tailored to your business and priorities.",
+      "dataSecurity": "Data security",
+      "dataSecurityDesc": "Your data remains confidential and secured with end-to-end encryption.",
+      "clearVision": "Clear vision",
+      "clearVisionDesc": "Instantly find your important emails thanks to optimal organization.",
+      "ctaTitle": "Ready to save 2 hours a day?",
+      "ctaDesc": "100 free emails to discover Inboria. No credit card required.",
+      "tryFree": "Try for free"
+    },
+    "features": {
+      "heroTitle": "Everything you need to take back control of your emails",
+      "heroDesc": "Inboria uses artificial intelligence to sort, summarize and reply to your emails automatically.",
+      "smartSort": "Smart sorting by categories",
+      "smartSortDesc": "Artificial intelligence analyzes your email content and automatically files them in the appropriate folders to keep a clean inbox.",
+      "autoSummary": "Automatic summaries",
+      "autoSummaryDesc": "Save precious time by reading a concise AI-generated summary for long threads and endless newsletters.",
+      "aiDrafts": "Custom AI drafts",
+      "aiDraftsDesc": "Inboria prepares context-appropriate replies matching your usual tone. All you need to do is review and send.",
+      "dailyBrief": "Daily brief",
+      "dailyBriefDesc": "Receive a clear morning recap of urgent emails, today's meetings and pending follow-ups.",
+      "taskExtraction": "Automatic task extraction",
+      "taskExtractionDesc": "Action items mentioned in your emails are automatically detected and added to your task manager.",
+      "projectManagement": "Project management",
+      "projectManagementDesc": "Intelligently group all exchanges, attachments and participants related to a project in a dedicated space.",
+      "multiMailbox": "Multi-mailbox connection",
+      "multiMailboxDesc": "Centralize all your accounts (Gmail, Outlook, iCloud, IMAP) in a single, unified and frictionless interface.",
+      "emailSignature": "Custom email signature",
+      "emailSignatureDesc": "Create, manage and deploy dynamic, harmonized professional signatures for yourself or your entire team.",
+      "smartArchive": "Smart archiving",
+      "smartArchiveDesc": "Proactive inbox cleanup: read newsletters and obsolete notifications are archived or deleted according to your rules.",
+      "priorityDetection": "Priority detection",
+      "priorityDetectionDesc": "Never miss what matters. Emails from your important clients or containing urgencies are instantly highlighted.",
+      "mobileApp": "Mobile app",
+      "mobileAppDesc": "Stay productive on the go with our iOS and Android app optimized for quick and efficient consultation.",
+      "security": "Security and privacy",
+      "securityDesc": "Your data is protected by end-to-end encryption. We strictly comply with GDPR and never sell your information.",
+      "ctaTitle": "Ready to save 2 hours a day?",
+      "ctaDesc": "100 free emails to discover Inboria. No credit card required.",
+      "tryFree": "Try for free"
+    },
+    "pricing": {
+      "heroTitle": "Simple pricing, no surprises",
+      "heroDesc": "Choose the plan that fits your needs. Change or cancel anytime.",
+      "noCommitment": "No commitment, cancel anytime",
+      "securePayment": "Secure payment via Stripe",
+      "gdprCompliant": "GDPR compliant"
+    },
+    "classification": {
+      "badge": "Smart classification",
+      "heroTitle": "56 industry packs to organize your emails in one click",
+      "heroDesc": "Inboria offers pre-configured category packs for every profession. Lawyer, doctor, restaurateur, e-commerce... Apply yours and let AI sort your emails automatically.",
+      "tryFree": "Try for free",
+      "seePricing": "See pricing",
+      "stats": {
+        "packsAvailable": "industry packs available",
+        "sectorFamilies": "sector families",
+        "aiGeneration": "custom generation"
+      },
+      "familiesTitle": "9 sector families, 56 industry packs",
+      "familiesDesc": "Each pack contains 6 to 12 categories optimized for your business.",
+      "packsCount": "{{count}} packs",
+      "professionalServices": "Professional services",
+      "professionalServicesDesc": "Lawyers, accountants, notaries, consultants, architects, brokers... Categories adapted to legal, financial and advisory exchanges.",
+      "health": "Health",
+      "healthDesc": "Doctors, dentists, physiotherapists, pharmacists, vets, psychologists. Appointment management, prescriptions, labs and insurance.",
+      "commerce": "Commerce & Distribution",
+      "commerceDesc": "Shops, e-commerce, wholesalers, florists, wine merchants. Orders, suppliers, logistics and daily customer relations.",
+      "realEstate": "Real Estate & Construction",
+      "realEstateDesc": "Real estate agencies, building managers, construction companies, property developers. Mandates, visits, sites, quotes and tenders.",
+      "businessServices": "Business services",
+      "businessServicesDesc": "Marketing agencies, HR firms, engineering offices, IT companies, chartered accountants. Projects, reporting, invoicing and client collaboration.",
+      "crafts": "Crafts & Technical trades",
+      "craftsDesc": "Electricians, plumbers, carpenters, mechanics, landscapers. Quotes, interventions, after-sales and subcontractor management.",
+      "education": "Education & Training",
+      "educationDesc": "Private schools, training centres, coaches, driving schools. Registrations, schedules, certifications and parent/student communication.",
+      "hospitality": "Hospitality & Tourism",
+      "hospitalityDesc": "Restaurants, hotels, caterers, travel agencies, guesthouses. Reservations, suppliers, events and customer reviews.",
+      "otherServices": "Other services",
+      "otherServicesDesc": "Associations, content creators, fashion, transport, cleaning, beauty salons... All businesses that don't fit in a single category.",
+      "advantagesTitle": "The advantages of Inboria classification",
+      "advantagesDesc": "A system designed so that every email lands in the right place, effortlessly.",
+      "operational30s": "Operational in 30 seconds",
+      "operational30sDesc": "No need to create your categories one by one. A pre-configured industry pack saves you hours of setup.",
+      "operational30sH1": "56 packs for the most common professions",
+      "operational30sH2": "Categories optimized by industry",
+      "operational30sH3": "One-click application",
+      "customAI": "Custom AI",
+      "customAIDesc": "Your profession isn't in the list? Describe your business and the AI generates a perfectly tailored category pack.",
+      "customAIH1": "Intelligent AI generation",
+      "customAIH2": "6 to 12 custom categories",
+      "customAIH3": "Name and description for each category",
+      "mergeNoOverwrite": "Merge without overwrite",
+      "mergeNoOverwriteDesc": "Applying a pack never erases your existing categories. Duplicates are automatically detected and ignored.",
+      "mergeNoOverwriteH1": "Smart duplicate detection",
+      "mergeNoOverwriteH2": "Your personal categories preserved",
+      "mergeNoOverwriteH3": "Origin tracking (pack or manual)",
+      "intuitiveSearch": "Intuitive search and navigation",
+      "intuitiveSearchDesc": "Instantly find the ideal pack with keyword search and collapsible sector families.",
+      "intuitiveSearchH1": "Real-time search",
+      "intuitiveSearchH2": "9 families organized by sector",
+      "intuitiveSearchH3": "Content preview before applying",
+      "howItWorksTitle": "How does it work?",
+      "howItWorksDesc": "From choosing the pack to full automation, in 4 simple steps.",
+      "step1": "Choose your profession",
+      "step1Desc": "Browse the 9 sector families and find the pack that matches your business.",
+      "step2": "Apply the pack",
+      "step2Desc": "In one click, the pack's categories are added to your account without overwriting your existing ones.",
+      "step3": "AI takes over",
+      "step3Desc": "Inboria uses your categories to automatically sort every incoming email into the right folder.",
+      "step4": "Refine over time",
+      "step4Desc": "Add, modify or delete categories. Generate a custom AI pack if your profession is unique.",
+      "ctaTitle": "Your mailbox organized in 30 seconds",
+      "ctaDesc": "Choose your industry pack, apply it, and let Inboria sort your emails automatically. It's that simple.",
+      "startFree": "Start for free",
+      "seePricingAlt": "See pricing",
+      "ctaFooter": "100 free emails to try • No credit card required"
+    },
+    "ai": {
+      "badge": "Artificial Intelligence",
+      "heroTitle": "The AI that manages your emails while you work",
+      "heroDesc": "Inboria integrates advanced artificial intelligence that sorts, summarizes, categorizes and prepares your replies automatically. You stay in control, the AI does the repetitive work.",
+      "tryAIFree": "Try AI for free",
+      "allFeatures": "All features",
+      "stats": {
+        "advancedAI": "Advanced AI",
+        "latestGen": "latest generation",
+        "processingTime": "processing time",
+        "gdpr": "compliant and secure"
+      },
+      "whatAIDoes": "What AI does for you",
+      "whatAIDoesDesc": "Six integrated AI features that transform your daily email management.",
+      "autoSort": "Automatic sorting by categories",
+      "autoSortDesc": "Every incoming email is analyzed by the AI which identifies its subject, sender and context to automatically sort it into the right category. No more unsorted emails piling up.",
+      "autoSortH1": "Semantic content analysis",
+      "autoSortH2": "Recurring sender recognition",
+      "autoSortH3": "Real-time sorting on receipt",
+      "autoSortH4": "Learning from your preferences",
+      "smartSummaries": "Smart summaries",
+      "smartSummariesDesc": "Long threads, endless newsletters and complex exchanges are summarized in a few clear lines. You understand the essentials without reading everything.",
+      "smartSummariesH1": "One sentence or paragraph summary",
+      "smartSummariesH2": "Key point extraction",
+      "smartSummariesH3": "Action item identification",
+      "smartSummariesH4": "Summary of 10+ email threads",
+      "aiDrafts": "AI reply drafts",
+      "aiDraftsDesc": "Inboria prepares relevant and contextual replies that you only need to review and validate. The AI adapts to your tone and writing style.",
+      "aiDraftsH1": "Context-appropriate replies",
+      "aiDraftsH2": "Personalized professional tone",
+      "aiDraftsH3": "Wording suggestions",
+      "aiDraftsH4": "One click to send",
+      "dailyBrief": "Daily brief",
+      "dailyBriefDesc": "Every morning, receive a smart recap: urgent emails, today's meetings, pending follow-ups and extracted tasks. Start your day with a clear view.",
+      "dailyBriefH1": "Automatic morning recap",
+      "dailyBriefH2": "Priorities highlighted",
+      "dailyBriefH3": "Today's meetings and deadlines",
+      "dailyBriefH4": "Unanswered email tracking",
+      "priorityDetection": "Priority detection",
+      "priorityDetectionDesc": "The AI automatically identifies urgent emails, important client requests and messages requiring quick action. They are highlighted in your inbox.",
+      "priorityDetectionH1": "Urgent emails flagged",
+      "priorityDetectionH2": "VIPs and important clients detected",
+      "priorityDetectionH3": "Deadlines extracted automatically",
+      "priorityDetectionH4": "High priority notifications",
+      "aiPacks": "AI-generated industry packs",
+      "aiPacksDesc": "Your profession isn't in our 56 pre-configured packs? Simply describe your business and the AI generates a custom category pack perfectly suited to your needs.",
+      "aiPacksH1": "Natural language generation",
+      "aiPacksH2": "6 to 12 relevant categories",
+      "aiPacksH3": "Names and descriptions generated",
+      "aiPacksH4": "One-click application",
+      "howAIWorks": "How does the AI work?",
+      "howAIWorksDesc": "From received email to validated action, in 4 transparent steps.",
+      "step1": "Email received",
+      "step1Desc": "An email arrives in your Inboria inbox.",
+      "step2": "AI analysis",
+      "step2Desc": "The AI analyzes the content, sender, subject and context in under 3 seconds.",
+      "step3": "Automatic actions",
+      "step3Desc": "The email is sorted, summarized, and a reply draft is prepared if necessary.",
+      "step4": "You validate",
+      "step4Desc": "You find everything organized. One click to validate the AI's suggestions.",
+      "securityTitle": "AI security and privacy",
+      "securityDesc": "We take protecting your data as seriously as our AI's performance.",
+      "transparency": "Total transparency",
+      "transparencyDesc": "Every AI action is visible and explainable. You see why an email was sorted into a category and can always correct it.",
+      "yourData": "Your data stays yours",
+      "yourDataDesc": "No email is used to train models. Your data is processed in real-time and never stored by AI providers.",
+      "gdprCompliant": "GDPR compliant",
+      "gdprCompliantDesc": "Inboria strictly complies with the General Data Protection Regulation. European hosting, encryption and guaranteed right to erasure.",
+      "secureInfra": "Secure infrastructure",
+      "secureInfraDesc": "Encryption in transit and at rest. Enhanced authentication. No sensitive data is ever exposed in logs or AI responses.",
+      "faqTitle": "Frequently asked questions about AI",
+      "faq1q": "Does the AI really read all my emails?",
+      "faq1a": "The AI analyzes your email content only to sort and summarize them. No email is stored by the AI provider or used to train models. Processing is ephemeral and real-time.",
+      "faq2q": "Can I disable the AI?",
+      "faq2a": "Yes, each AI feature (sorting, summaries, drafts) can be disabled individually from your settings. You always keep full control.",
+      "faq3q": "Does the AI work in French?",
+      "faq3a": "Absolutely. Inboria is designed for SMEs in Belgium and France. The AI understands and responds in French, Dutch and English.",
+      "faq4q": "Does the AI make mistakes sometimes?",
+      "faq4a": "Like any AI, errors are possible. That's why every suggestion is presented for validation. You can correct a sorting in one click and the AI learns from your corrections.",
+      "faq5q": "Which AI model is used?",
+      "faq5a": "Inboria uses latest-generation language models, recognized for their reliability and performance in natural language processing. We continuously select and optimize the best available models to ensure quality results.",
+      "ctaTitle": "Let AI work for you",
+      "ctaDesc": "Join the SMEs that save 2 hours a day thanks to Inboria's artificial intelligence.",
+      "tryFree": "Try for free",
+      "seePricing": "See pricing",
+      "ctaFooter": "100 free emails • No credit card required • AI included in all plans"
+    },
+    "enterprise": {
+      "badge": "Business Plan",
+      "heroTitle": "Your team, one single inbox",
+      "heroDesc": "Inboria combines artificial intelligence and team collaboration for effortless email management. AI sorts, summarizes and prepares your replies while your team collaborates via shared mailboxes, assignments and internal comments.",
+      "chooseBusiness": "Choose Business plan",
+      "comparePlans": "Compare plans",
+      "stats": {
+        "unlimited": "Unlimited",
+        "teamMembers": "team members",
+        "integratedAI": "Integrated AI",
+        "aiFeatures": "automatic sorting & summaries",
+        "realTime": "Real-time",
+        "collaboration": "collaboration & notifications"
+      },
+      "collaborateTitle": "Everything to collaborate efficiently",
+      "collaborateDesc": "Tools designed for SMEs who want to structure their email management without complexity.",
+      "aiTeam": "Artificial intelligence at the team's service",
+      "aiTeamDesc": "Inboria's AI works for your entire team: it automatically sorts incoming emails, generates instant summaries, detects priorities and prepares reply drafts. Whether in your personal or shared mailboxes, every email is analyzed and categorized before you even open your inbox.",
+      "aiTeamH1": "Automatic AI sorting and categorization",
+      "aiTeamH2": "Smart summaries of long exchanges",
+      "aiTeamH3": "Contextual reply drafts",
+      "aiTeamH4": "Priority detection and task extraction",
+      "centralOrg": "Centralized organization",
+      "centralOrgDesc": "Create your organization in one click and bring your whole team under one roof. Each collaborator has their own access while sharing common resources.",
+      "centralOrgH1": "Instant organization creation",
+      "centralOrgH2": "Seat and access management",
+      "centralOrgH3": "Unified view of team activity",
+      "rolesPermissions": "Roles and permissions",
+      "rolesPermissionsDesc": "Structure your team with clear roles. Administrators manage members and settings, while members focus on their work.",
+      "rolesPermissionsH1": "Admin and member roles",
+      "rolesPermissionsH2": "Email invitations with secure link",
+      "rolesPermissionsH3": "Real-time access management",
+      "sharedMailboxes": "Shared mailboxes",
+      "sharedMailboxesDesc": "Create shared inboxes for your generic addresses (contact@, support@, billing@). Every team member can view, claim and handle incoming emails.",
+      "sharedMailboxesH1": "Unlimited shared mailboxes",
+      "sharedMailboxesH2": "Email claiming system",
+      "sharedMailboxesH3": "Visibility on who handles what",
+      "internalNotes": "Internal notes on emails",
+      "internalNotesDesc": "Collaborate directly on emails by adding private comments visible only to your team. No more unnecessary forwards and \"did you see this email?\" on Slack.",
+      "internalNotesH1": "Contextual comments per email",
+      "internalNotesH2": "Complete internal exchange history",
+      "internalNotesH3": "Edit and delete your own notes",
+      "smartAssignment": "Smart assignment",
+      "smartAssignmentDesc": "Distribute work efficiently by assigning each email to the right collaborator. The assignee receives a notification and finds their assigned emails in a dedicated view.",
+      "smartAssignmentH1": "One-click assignment",
+      "smartAssignmentH2": "\"My assigned emails\" view",
+      "smartAssignmentH3": "Flexible reassignment and unassignment",
+      "realTimeNotifs": "Real-time notifications",
+      "realTimeNotifsDesc": "Never miss anything: every assignment or comment triggers an instant notification. The bell in your sidebar keeps you informed without leaving your inbox.",
+      "realTimeNotifsH1": "Automatic notifications",
+      "realTimeNotifsH2": "Unread counter badge",
+      "realTimeNotifsH3": "Individual or bulk read marking",
+      "activityDashboard": "Activity dashboard",
+      "activityDashboardDesc": "Track your team's performance at a glance: emails assigned, handled, commented. A chronological activity feed shows you who's doing what, in real-time.",
+      "activityDashboardH1": "Per-member statistics",
+      "activityDashboardH2": "Live activity feed",
+      "activityDashboardH3": "Assignment and processing metrics",
+      "workflowTitle": "Operational in 4 steps",
+      "workflowDesc": "From creating your organization to daily collaboration.",
+      "wStep1": "Create your organization",
+      "wStep1Desc": "Name your company and activate the Business plan.",
+      "wStep2": "Invite your colleagues",
+      "wStep2Desc": "Send email invitations. They join in one click.",
+      "wStep3": "Set up your shared mailboxes",
+      "wStep3Desc": "Create your shared addresses and add the relevant members.",
+      "wStep4": "Collaborate effortlessly",
+      "wStep4Desc": "Assign, comment, track activity. AI handles the rest.",
+      "ctaTitle": "Ready to transform your team's email management?",
+      "ctaDesc": "Join the Belgian and French SMEs that have already adopted Inboria for smoother collaboration and tenfold productivity.",
+      "discoverBusiness": "Discover Business plan",
+      "ctaFooter": "Business plan from €49/month • Scalable seats • 2-minute setup",
+      "faqTitle": "Frequently asked questions",
+      "faq1q": "How many members can I add to my team?",
+      "faq1a": "The Business plan includes base seats, and you can add as many as needed directly from your subscription portal. There is no imposed limit.",
+      "faq2q": "Do my collaborators have access to all my emails?",
+      "faq2a": "No, each member keeps their private emails. Only shared mailbox emails and explicitly assigned emails are visible to the team.",
+      "faq3q": "Are internal comments visible to the email sender?",
+      "faq3a": "Absolutely not. Comments are strictly internal to your organization. The original sender never knows about them.",
+      "faq4q": "Can I upgrade from Solo to Business plan?",
+      "faq4a": "Yes, the upgrade is instant from the Subscription page of your dashboard. Your data and settings are preserved.",
+      "faq5q": "Does AI also work on shared mailboxes?",
+      "faq5a": "Yes, the artificial intelligence sorts, summarizes and categorizes all emails, including those from shared mailboxes, in the same way as for your personal emails."
+    },
+    "legal": {
+      "privacyTitle": "Privacy Policy",
+      "termsTitle": "Terms of Use",
+      "legalNoticeTitle": "Legal Notice",
+      "dataController": "Data Controller",
+      "companyName": "Company name: NCV Management SRL",
+      "headquarters": "Headquarters: Rixensart, Belgium",
+      "bceNumber": "Company number BCE: BE0439.327.747",
+      "contactEmail": "Contact email",
+      "dataCollected": "1. Data collected",
+      "dataCollectedIntro": "As part of using our services, we collect the following data:",
+      "dataEmail": "Email address",
+      "dataName": "First and last name",
+      "dataAuth": "Login and authentication data",
+      "dataContent": "Email content processed by our AI service",
+      "dataUsage": "2. Data usage",
+      "dataUsageIntro": "Your personal data is used exclusively for the following purposes:",
+      "dataUsageAI": "Operation of the AI sorting and analysis service",
+      "dataUsageBilling": "Billing and subscription management",
+      "dataUsageImprovement": "Continuous improvement of our service and algorithms",
+      "retention": "3. Data retention",
+      "retentionActive": "Your data remains active and is retained as long as your account exists on our platform.",
+      "retentionDeletion": "All your personal data and email content are permanently deleted 30 days after account termination.",
+      "gdprRights": "4. Your rights (GDPR)",
+      "gdprRightsIntro": "In accordance with the General Data Protection Regulation (GDPR), you have the following rights regarding your personal data:",
+      "rightAccess": "Right of access",
+      "rightAccessDesc": "You can request to view the data we hold about you.",
+      "rightRectification": "Right of rectification",
+      "rightRectificationDesc": "You can request the correction of inaccurate data.",
+      "rightErasure": "Right to erasure (deletion)",
+      "rightErasureDesc": "You can demand the deletion of your personal data.",
+      "rightPortability": "Right to data portability",
+      "rightPortabilityDesc": "You can retrieve your data in a structured and readable format.",
+      "exerciseRights": "To exercise these rights, please contact us at",
+      "serviceEditor": "Service editor",
+      "bceNumberShort": "BCE number: BE0439.327.747",
+      "serviceDescription": "1. Service description",
+      "serviceDescText": "Inboria is an AI-powered email sorting and management service. The service allows users to connect their existing inboxes to automate the sorting, categorization and prioritization of incoming messages.",
+      "accountAccess": "2. Account access and creation",
+      "accountAccessText1": "Access to the service requires creating a user account. When creating this account, the user commits to providing accurate and up-to-date information.",
+      "accountAccessText2": "The user is solely responsible for the confidentiality of their login credentials and all activities performed under their account. In case of unauthorized use, the user must immediately notify NCV Management SRL.",
+      "userObligations": "3. User obligations",
+      "userObligationsIntro": "The user agrees to use the service in compliance with applicable laws and these terms.",
+      "userObligationsForbidden": "It is strictly prohibited to:",
+      "userObl1": "Use the service to send spam or unsolicited communications.",
+      "userObl2": "Transmit illegal, defamatory content, or content infringing third-party rights.",
+      "userObl3": "Attempt to circumvent security measures or disrupt the service's operation.",
+      "liability": "4. Limitation of liability",
+      "liabilityText1": "NCV Management SRL strives to keep the service accessible and operational but does not guarantee uninterrupted or error-free operation.",
+      "liabilityText2": "To the extent permitted by law, NCV Management SRL disclaims any liability for indirect damages, data loss, or business losses resulting from the use or inability to use the service.",
+      "ip": "5. Intellectual property",
+      "ipText1": "All elements making up the Inboria service (software, interfaces, algorithms, texts, images) are the exclusive property of NCV Management SRL and are protected by intellectual property laws.",
+      "ipText2": "The user retains full ownership of data and content (emails) submitted to the service. They grant NCV Management SRL a limited license solely for the purpose of providing the AI sorting service.",
+      "termination": "6. Account termination",
+      "terminationText1": "The user can terminate their account at any time from the settings of their personal space.",
+      "terminationText2": "NCV Management SRL reserves the right to suspend or terminate an account in case of violation of these terms of use. Upon termination, user data will be deleted in accordance with our Privacy Policy.",
+      "jurisdiction": "7. Applicable law and jurisdiction",
+      "jurisdictionText": "These terms of use are governed by Belgian law. In case of dispute regarding the interpretation or execution of these terms, the courts of Brussels shall have sole jurisdiction.",
+      "siteEditor": "Site editor"
+    },
+    "demo": {
+      "incoming": "Incoming email",
+      "from": "From",
+      "subject": "Subject",
+      "aiAnalysis": "AI Analysis",
+      "categorized": "Categorized",
+      "priority": "Priority",
+      "taskExtracted": "Task extracted",
+      "draftReady": "Draft ready",
+      "sorted": "Sorted",
+      "summarized": "Summarized",
+      "drafted": "Drafted"
+    }
+  },
+  "team": {
+    "title": "My team",
+    "invite": "Invite",
+    "role": "Role",
+    "admin": "Admin",
+    "member": "Member",
+    "remove": "Remove",
+    "pending": "Pending",
+    "subtitle": "Manage your organization and collaborators.",
+    "createOrg": "Create organization",
+    "orgName": "Organization name",
+    "orgNamePlaceholder": "E.g.: My Company",
+    "orgCreated": "Organization created",
+    "members": "Members",
+    "invitations": "Pending invitations",
+    "inviteEmail": "Collaborator email",
+    "inviteEmailPlaceholder": "collaborator@company.com",
+    "inviteSent": "Invitation sent to {{email}}",
+    "cancelInvite": "Cancel",
+    "inviteCancelled": "Invitation cancelled",
+    "removeMember": "Remove",
+    "memberRemoved": "Member removed",
+    "roleUpdated": "Role updated",
+    "businessRequired": "Feature reserved for the Business plan.",
+    "businessRequiredDesc": "Upgrade to Business plan to create an organization and invite collaborators.",
+    "upgradeToBusiness": "Upgrade to Business",
+    "copyInviteLink": "Copy link",
+    "linkCopied": "Link copied",
+    "noMembers": "No members",
+    "noInvitations": "No pending invitations",
+    "you": "(you)",
+    "orgLabel": "Organization",
+    "inviteRole": "Role to assign",
+    "removeConfirm": "Remove this member?",
+    "removeConfirmDesc": "This collaborator will lose access to the organization.",
+    "error": "Error",
+    "inviteError": "Error sending invitation"
+  },
+  "sharedMailboxes": {
+    "title": "Shared mailboxes",
+    "create": "Create shared mailbox",
+    "noMailboxes": "No shared mailboxes",
+    "members": "Members",
+    "addMember": "Add member",
+    "subtitle": "Manage your team's shared mailboxes.",
+    "businessOnly": "Available with the Business plan only.",
+    "mailboxName": "Mailbox name",
+    "mailboxNamePlaceholder": "E.g.: contact@, support@...",
+    "mailboxCreated": "Shared mailbox created",
+    "mailboxDeleted": "Mailbox deleted",
+    "mailboxDeleteError": "Unable to delete mailbox.",
+    "memberAdded": "Member added",
+    "memberRemoved": "Member removed",
+    "memberAddError": "Unable to add member.",
+    "memberRemoveError": "Unable to remove member.",
+    "emails": "Emails",
+    "allEmails": "All",
+    "unclaimed": "Unclaimed",
+    "mine": "My emails",
+    "claim": "Claim",
+    "unclaim": "Release",
+    "claimedBy": "Claimed by",
+    "shareConnection": "Share connection",
+    "shareConnectionDesc": "Link an existing email connection to this shared mailbox.",
+    "shared": "Shared",
+    "sharedSuccess": "Connection shared successfully",
+    "shareError": "Unable to share connection.",
+    "sync": "Sync",
+    "syncing": "Syncing...",
+    "syncSuccess": "Sync completed",
+    "syncError": "Sync error",
+    "noMailboxesDesc": "Create a shared mailbox to centralize your team's emails.",
+    "noEmails": "No emails in this mailbox",
+    "selectMember": "Select a member",
+    "delete": "Delete",
+    "deleteConfirm": "Delete this shared mailbox?",
+    "deleteConfirmDesc": "Associated emails will no longer be accessible through this mailbox.",
+    "back": "Back",
+    "loadMore": "Load more",
+    "connectionLinked": "Connection linked",
+    "noConnections": "No connections available",
+    "emailCount": "{{count}} email(s)",
+    "memberCount": "{{count}} member(s)",
+    "shareTitle": "Share an address with the team",
+    "shareDesc": "Select a connected address from your Settings to share it with your team members.",
+    "namePlaceholder": "Name (optional, e.g.: Support)",
+    "share": "Share",
+    "noConnectionsDesc": "No email address connected. Connect an address in Settings first to share it.",
+    "allShared": "All your connected addresses are already shared.",
+    "shareToStart": "Share a connected address above to get started.",
+    "connected": "Connected",
+    "unprocessedCount": "{{count}} unprocessed",
+    "add": "Add",
+    "selectColleague": "Select a colleague...",
+    "noMembers": "No members.",
+    "noName": "No name",
+    "noEmailsInView": "No emails in this view.",
+    "colleague": "Colleague",
+    "emailClaimed": "Email claimed",
+    "emailUnclaimed": "Email released",
+    "details": "Details",
+    "syncedCount": "{{count}} new email(s) synced",
+    "syncNoNew": "Sync completed, no new emails",
+    "syncFailed": "Sync failed",
+    "loadMoreEmails": "Load more emails",
+    "claimedByOn": "Claimed by {{name}} on {{date}}",
+    "release": "Release",
+    "take": "Claim",
+    "member": "member",
+    "membersPlural": "members"
+  },
+  "teamActivity": {
+    "title": "Team dashboard",
+    "subtitle": "Overview of your team's activity",
+    "members": "Members",
+    "assignedEmails": "Assigned emails",
+    "archivedEmails": "Archived emails",
+    "comments": "Comments",
+    "performance": "Performance by member",
+    "noMembers": "No members in your organization",
+    "noName": "No name",
+    "assigned": "assigned",
+    "archived": "archived",
+    "recentActivity": "Recent activity",
+    "noActivity": "No recent activity",
+    "actions": {
+      "assign_email": "assigned an email",
+      "add_comment": "added a comment",
+      "unassign_email": "unassigned an email",
+      "create_shared_mailbox": "created a shared mailbox",
+      "archive_email": "archived an email"
+    },
+    "time": {
+      "justNow": "just now",
+      "minutesAgo": "{{count}}min ago",
+      "hoursAgo": "{{count}}h ago",
+      "daysAgo": "{{count}}d ago"
+    }
+  },
+  "notifications": {
+    "title": "Notifications",
+    "markAllRead": "Mark all as read",
+    "noNotifications": "No notifications",
+    "assigned": "assigned you an email",
+    "commented": "commented on an email",
+    "justNow": "just now",
+    "minutesAgo": "{{count}}min ago",
+    "hoursAgo": "{{count}}h ago",
+    "daysAgo": "{{count}}d ago"
+  },
+  "comments": {
+    "title": "Internal notes",
+    "placeholder": "Add an internal note...",
+    "send": "Send",
+    "edit": "Edit",
+    "delete": "Delete",
+    "edited": "(edited)",
+    "noComments": "No comments",
+    "anonymous": "Anonymous",
+    "cancel": "Cancel",
+    "save": "Save",
+    "ctrlEnter": "Ctrl+Enter to send"
+  },
+  "attachments": {
+    "title": "Attachments",
+    "download": "Download",
+    "preview": "Preview",
+    "attachFile": "Attach",
+    "maxFiles": "Maximum {{count}} files",
+    "fileTooLarge": "File too large (max {{size}} MB)",
+    "notAuthenticated": "Not authenticated",
+    "uploadError": "Upload error",
+    "remove": "Remove",
+    "maxSize": "Max 10 MB per file",
+    "uploading": "Uploading...",
+    "count": "{{count}} attachment(s)"
+  },
+  "cookies": {
+    "title": "Cookie Management",
+    "description": "Inboria uses cookies to ensure the proper functioning of the site and improve your experience. You can accept all cookies or only essential cookies.",
+    "learnMore": "Learn more",
+    "acceptAll": "Accept all",
+    "essentialOnly": "Essential only",
+    "refuse": "Refuse",
+    "customize": "Customize"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "The page you are looking for does not exist.",
+    "backHome": "Back to home"
+  },
+  "language": {
+    "fr": "Français",
+    "en": "English",
+    "nl": "Nederlands",
+    "de": "Deutsch",
+    "es": "Español"
+  },
+  "manual": {
+    "title": "User guide",
+    "subtitle": "Discover all the features of Inboria",
+    "open": "Open",
+    "businessFeatures": "Business Features",
+    "businessUpgradeTitle": "Business Features",
+    "businessUpgradeDesc": "Upgrade to Business plan to unlock team management, shared mailboxes and activity tracking.",
+    "viewPlans": "View plans →",
+    "sections": {
+      "reception": "Inbox",
+      "receptionDesc": "Your smart inbox. All emails are automatically sorted by priority (urgent, medium, low) and classified by category using AI.",
+      "receptionFeatures": [
+        "Auto-sort by priority with color coding",
+        "AI summary of each email in one sentence",
+        "Quick keyword search",
+        "Auto sync (every 5 min) with Gmail, Outlook and IMAP",
+        "Pagination: batch loading of 50 emails for smooth navigation",
+        "Multi-select to archive, delete or mark as read",
+        "Assign emails to a colleague (Business plan)",
+        "Shared mailboxes tab to view and handle team emails",
+        "Full HTML display (formatting, images, buttons)",
+        "Email simulator to test AI sorting",
+        "New message: compose and send directly"
+      ],
+      "attachments": "Attachments",
+      "attachmentsDesc": "Manage attachments for incoming and outgoing emails. View, download and attach files easily.",
+      "attachmentsFeatures": [
+        "Auto-detection of attachments on reception (Gmail and IMAP)",
+        "Visual indicator (paperclip + counter) on emails with attachments",
+        "One-click attachment download",
+        "Inline image preview directly in the email",
+        "PDFs open in a new tab",
+        "Attach files when sending or replying (Attach button)",
+        "Up to 10 files per email, 10 MB max per file",
+        "Individual removal of attached files before sending"
+      ],
+      "sent": "Sent",
+      "sentDesc": "Find all your sent emails and replies. View full conversations with exchange history.",
+      "sentFeatures": [
+        "List of all sent emails and replies",
+        "Visual distinction between new messages and replies",
+        "Conversation view: full exchange history in one place",
+        "Attachment indicator on sent emails",
+        "Access to AI summary of each email"
+      ],
+      "archives": "Archives",
+      "archivesDesc": "Find all your archived emails. An archived email no longer appears in Inbox but remains accessible at any time.",
+      "archivesFeatures": [
+        "List of all archived emails",
+        "Search in archives",
+        "Unarchive an email to return it to Inbox",
+        "Full detail of each archived email"
+      ],
+      "brief": "Daily brief",
+      "briefDesc": "A daily summary of your email activity. View your inbox status and trends at a glance.",
+      "briefFeatures": [
+        "Counters: urgent, medium, low emails",
+        "Inbox health (score in %)",
+        "Stats by category",
+        "Email volume trends over time",
+        "Overview to prioritize your day"
+      ],
+      "agenda": "Agenda",
+      "agendaDesc": "Your built-in calendar with automatic appointment detection from your emails. Manage appointments, meetings and events.",
+      "agendaFeatures": [
+        "Automatic appointment detection by AI from your emails",
+        "Month, week and day views",
+        "Create, edit and delete appointments",
+        "Link an appointment to a project",
+        "Link to the source email of the appointment",
+        "Location, participants and configurable reminder",
+        "All-day event option",
+        "CSV export of appointments",
+        "Smooth navigation between dates"
+      ],
+      "tasks": "Tasks",
+      "tasksDesc": "Manage tasks automatically extracted from your emails by AI. Each email with a concrete action generates a task.",
+      "tasksFeatures": [
+        "Auto-generated tasks by AI from your emails",
+        "Direct link to source email for each task",
+        "Check/uncheck a task as done",
+        "Delete completed or unneeded tasks",
+        "AI filter to view only auto-generated tasks",
+        "Count badges on each filter (All, To do, Done, AI)",
+        "Create a manual task",
+        "Reply directly to the source email from a task",
+        "CSV export of tasks"
+      ],
+      "projects": "Projects",
+      "projectsDesc": "Group your emails by project to better organize your work. Create projects and associate emails.",
+      "projectsFeatures": [
+        "Create, rename and delete projects",
+        "Associate an email with a project from Inbox",
+        "View all project emails in one click",
+        "Email counter per project"
+      ],
+      "classification": "Classification",
+      "classificationDesc": "Manage your email categories. AI auto-creates relevant categories, but you can customize them. Choose from 50 pre-built industry packs.",
+      "classificationFeatures": [
+        "List of all your categories with counters",
+        "Create new categories manually",
+        "Rename or delete a category",
+        "Re-categorize 'uncategorized' emails in one click",
+        "50 pre-built industry packs (accounting, real estate, legal, e-commerce...)",
+        "AI learns from your corrections to improve"
+      ],
+      "notifications": "Notifications",
+      "notificationsDesc": "Stay informed of important activity. Notifications alert you to urgent emails, assignments and team actions.",
+      "notificationsFeatures": [
+        "Notification bell with unread counter",
+        "Notifications for urgent emails received",
+        "Email assignment notifications (Business plan)",
+        "Mark a notification as read or mark all as read",
+        "Recent notification history"
+      ],
+      "settings": "Settings",
+      "settingsDesc": "Configure your account, connect your email accounts and customize your preferences.",
+      "settingsFeatures": [
+        "Edit your name, language and email signature",
+        "Connect multiple email accounts (Gmail, Outlook, IMAP)",
+        "Connect multiple accounts from the same provider",
+        "Disconnect a specific email account",
+        "Manage integrations (Slack, Notion)",
+        "Set custom AI rules (priority/category by sender)"
+      ],
+      "subscription": "Subscription",
+      "subscriptionDesc": "Manage your Inboria subscription plan. Compare offers and upgrade.",
+      "subscriptionFeatures": [
+        "3 plans: Solo (€9/mo), Pro (€29/mo), Business (€59/mo)",
+        "Free trial of 100 emails included",
+        "Secure payment via Stripe",
+        "View your quota and current consumption",
+        "Change plans anytime"
+      ],
+      "team": "Team",
+      "teamDesc": "Manage your organization members. Invite colleagues, assign roles and collaborate on emails.",
+      "teamFeatures": [
+        "Invite members by email",
+        "Roles: admin (full management) and member (limited access)",
+        "View all active members",
+        "Remove a member from the organization",
+        "Create your organization if it doesn't exist yet"
+      ],
+      "sharedMailboxes": "Shared mailboxes",
+      "sharedMailboxesDesc": "Share email accounts with your team. Admin shares an existing email connection, members can view and handle emails.",
+      "sharedMailboxesFeatures": [
+        "Admin shares one of their email connections as a shared mailbox",
+        "Add or remove members from a shared mailbox",
+        "Members see shared emails in Inbox > Shared mailboxes tab",
+        "Claim an email to indicate you're handling it",
+        "Release a claimed email",
+        "Counter for unclaimed emails"
+      ],
+      "teamActivity": "Team activity",
+      "teamActivityDesc": "Track your team's activity in real time. See who's doing what and follow important actions.",
+      "teamActivityFeatures": [
+        "Real-time activity log",
+        "View each member's actions (emails read, archived, assigned...)",
+        "Filter by member or action type",
+        "Full team action history"
+      ]
+    }
+  },
+  "demo": {
+    "ariaLabel": "Animated demo of the Inboria dashboard",
+    "nav": {
+      "reception": "Inbox",
+      "archives": "Archives",
+      "dailyBrief": "Daily brief",
+      "tasks": "Tasks",
+      "projects": "Projects",
+      "categories": "Categories",
+      "settings": "Settings",
+      "subscription": "Subscription"
+    },
+    "search": "Search emails...",
+    "quota": "Quota",
+    "priority": "Priority:",
+    "priorityAll": "All",
+    "priorityUrgent": "Urgent",
+    "priorityMedium": "Medium",
+    "priorityLow": "Low",
+    "selected": "{{count}} selected",
+    "deleteBtn": "Delete",
+    "status": {
+      "sorting": "AI sorting — {{sorted}}/{{total}} classified",
+      "organized": "Inbox organized — {{count}} emails sorted automatically",
+      "selecting": "{{count}} newsletter(s) selected",
+      "deleted": "{{count}} email(s) deleted!",
+      "clean": "Clean inbox — {{count}} important emails",
+      "received": "{{count}} email(s) received"
+    },
+    "badge": {
+      "sorting": "AI sorting...",
+      "sorted": "Sorted!",
+      "selecting": "{{count}} sel.",
+      "deleted": "Deleted!",
+      "clean": "Clean!",
+      "autopilot": "Autopilot"
+    },
+    "stats": {
+      "urgent": "Urgent",
+      "cleaned": "Cleaned",
+      "sortedByAI": "Sorted by AI",
+      "timeSaved": "Time saved"
+    },
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "olderDate": "Apr 3",
+    "emails": [
+      {
+        "sender": "Peter Martin",
+        "subject": "Q2 Contract — signature required",
+        "summary": "Q2 service contract to sign by Friday. Amount: €12,400."
+      },
+      {
+        "sender": "Marie Laurent",
+        "subject": "Client meeting tomorrow 9am",
+        "summary": "Meeting confirmed with Dupont SA tomorrow at 9am. Agenda attached."
+      },
+      {
+        "sender": "Sophie Dubois",
+        "subject": "March 2026 monthly report",
+        "summary": "March accounting report ready for review. Revenue up 8%."
+      },
+      {
+        "sender": "Thomas Bernard",
+        "subject": "Website quote — client feedback",
+        "summary": "Client approved the €4,800 quote. Requests to start Monday."
+      },
+      {
+        "sender": "LinkedIn",
+        "subject": "3 new connections this week",
+        "summary": "New contacts: Jean Leroy (CEO), Anne Petit (HR), Marc Faure (CTO)."
+      },
+      {
+        "sender": "Tech Newsletter",
+        "subject": "AI trends in 2026",
+        "summary": "Special report: email automation, GPT-5, and the future of B2B SaaS."
+      }
+    ]
+  },
+  "agenda": {
+    "title": "Agenda",
+    "subtitle": "Manage your appointments and meetings",
+    "noAppointments": "No appointments",
+    "noAppointmentsDesc": "Create an appointment manually or let AI detect them from your emails.",
+    "newAppointment": "New appointment",
+    "editAppointment": "Edit appointment",
+    "deleteAppointment": "Delete appointment",
+    "deleteConfirm": "Delete this appointment?",
+    "deleteConfirmDesc": "This action cannot be undone.",
+    "appointmentTitle": "Title",
+    "appointmentTitlePlaceholder": "E.g.: Client meeting, Supplier call...",
+    "description": "Description",
+    "descriptionPlaceholder": "Appointment details...",
+    "location": "Location",
+    "locationPlaceholder": "Office, video call, address...",
+    "startDate": "Start",
+    "endDate": "End",
+    "allDay": "All day",
+    "reminder": "Reminder",
+    "reminderMinutes": "{{minutes}} min before",
+    "project": "Project",
+    "noProject": "No project",
+    "created": "Appointment created",
+    "updated": "Appointment updated",
+    "deleted": "Appointment deleted",
+    "createError": "Unable to create appointment",
+    "updateError": "Unable to update appointment",
+    "deleteError": "Unable to delete appointment",
+    "today": "Today",
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "detectFromEmails": "Detect from emails",
+    "detecting": "AI detection...",
+    "detectedCount": "{{count}} appointment(s) detected",
+    "noDetected": "No appointments detected in your recent emails",
+    "exportCSV": "Export CSV",
+    "exportDownloaded": "Export downloaded",
+    "exportError": "Error exporting",
+    "todayAppointments": "Today's appointments",
+    "tomorrowAppointments": "Tomorrow's appointments",
+    "upcomingAppointments": "Upcoming appointments",
+    "confirmed": "Confirmed",
+    "suggestion": "AI Suggestion",
+    "confirmAppointment": "Confirm",
+    "dismissAppointment": "Dismiss",
+    "suggestionsDetected": "{{count}} suggestion(s) to confirm",
+    "participants": "Participants",
+    "participantsPlaceholder": "E.g. John, Mary, contact@email.com",
+    "createFromEmail": "Create appointment",
+    "appointmentConfirmed": "Appointment confirmed",
+    "appointmentDismissed": "Suggestion dismissed",
+    "noRdv": "No appointments",
+    "viewSourceEmail": "View source email",
+    "aiSuggestion": "AI-detected suggestion"
+  },
+  "supportChat": {
+    "title": "Inboria Assistant",
+    "subtitle": "AI Support • Available 24/7",
+    "welcomeTitle": "How can I help you?",
+    "welcomeMessage": "Ask me anything about Inboria: features, settings, subscription, and more.",
+    "placeholder": "Type your question...",
+    "poweredBy": "Powered by Inboria AI",
+    "errorMessage": "Sorry, an error occurred. Please try again or contact support@inboria.com."
+  },
+  "packs": {
+    "families": {
+      "services_professionnels": "Professional Services",
+      "sante": "Healthcare",
+      "commerce_distribution": "Commerce & Distribution",
+      "immobilier_construction": "Real Estate & Construction",
+      "services_entreprises": "Business Services",
+      "artisanat_techniques": "Crafts & Technical Trades",
+      "enseignement_formation": "Education & Training",
+      "restauration_tourisme": "Food & Tourism",
+      "autres_services": "Other Services"
+    },
+    "items": {
+      "comptable": {
+        "name": "Accountant / Chartered Accountant",
+        "cats": {
+          "0": {
+            "n": "Tax Returns",
+            "d": "VAT, taxes, quarterly and annual returns"
+          },
+          "1": {
+            "n": "Client Invoicing",
+            "d": "Invoices, fees, payment reminders"
+          },
+          "2": {
+            "n": "Suppliers",
+            "d": "Supplier invoices, orders, deliveries"
+          },
+          "3": {
+            "n": "Accounting",
+            "d": "Accounting entries, balance sheets, journals"
+          },
+          "4": {
+            "n": "Payroll / HR",
+            "d": "Payslips, social security, contributions"
+          },
+          "5": {
+            "n": "Clients",
+            "d": "Client correspondence, requests, appointments"
+          },
+          "6": {
+            "n": "Legal",
+            "d": "Contracts, statutes, legal compliance"
+          },
+          "7": {
+            "n": "Banking",
+            "d": "Bank statements, transfers, transactions"
+          }
+        }
+      },
+      "avocat": {
+        "name": "Lawyer / Legal Counsel",
+        "cats": {
+          "0": {
+            "n": "Client Files",
+            "d": "Client correspondence, procedural documents"
+          },
+          "1": {
+            "n": "Courts",
+            "d": "Summons, judgments, conclusions"
+          },
+          "2": {
+            "n": "Fellow Lawyers",
+            "d": "Exchanges between lawyers, negotiations"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Fees, retainers, expense statements"
+          },
+          "4": {
+            "n": "Legal",
+            "d": "Legislation, case law, legal monitoring"
+          },
+          "5": {
+            "n": "Bailiffs / Experts",
+            "d": "Service of process, expert reports"
+          },
+          "6": {
+            "n": "Administrative",
+            "d": "Bar association, mandatory training"
+          }
+        }
+      },
+      "notaire": {
+        "name": "Notary",
+        "cats": {
+          "0": {
+            "n": "Real Estate Deeds",
+            "d": "Preliminary contracts, deeds of sale, mortgages"
+          },
+          "1": {
+            "n": "Estates",
+            "d": "Estate declarations, divisions"
+          },
+          "2": {
+            "n": "Family Law",
+            "d": "Marriages, donations, prenuptial agreements"
+          },
+          "3": {
+            "n": "Companies",
+            "d": "Incorporations, statutory amendments"
+          },
+          "4": {
+            "n": "Clients",
+            "d": "Client correspondence, appointments, documents"
+          },
+          "5": {
+            "n": "Administration",
+            "d": "Tax office, registry, registration"
+          },
+          "6": {
+            "n": "Billing",
+            "d": "Fees, retainers, settlements"
+          }
+        }
+      },
+      "consultant": {
+        "name": "Consultant / Coach",
+        "cats": {
+          "0": {
+            "n": "Assignments",
+            "d": "Proposals, assignment contracts, deliverables"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Client follow-up, feedback, appointments"
+          },
+          "2": {
+            "n": "Billing",
+            "d": "Invoices, quotes, reminders"
+          },
+          "3": {
+            "n": "Prospecting",
+            "d": "Prospects, incoming requests, networking"
+          },
+          "4": {
+            "n": "Training",
+            "d": "Content, materials, certifications"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Contracts, insurance, official documents"
+          }
+        }
+      },
+      "architecte": {
+        "name": "Architect",
+        "cats": {
+          "0": {
+            "n": "Projects",
+            "d": "Plans, specifications, building permits"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Client correspondence, appointments, approvals"
+          },
+          "2": {
+            "n": "Contractors",
+            "d": "Bids, contracts, site monitoring"
+          },
+          "3": {
+            "n": "Administration",
+            "d": "Municipality, urban planning, permits"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Fees, settlements, progress reports"
+          },
+          "5": {
+            "n": "Suppliers",
+            "d": "Materials, catalogs, technical quotes"
+          },
+          "6": {
+            "n": "Architects' Association",
+            "d": "Fees, training, obligations"
+          }
+        }
+      },
+      "geometre": {
+        "name": "Land Surveyor",
+        "cats": {
+          "0": {
+            "n": "Field Missions",
+            "d": "Boundary markers, surveys, cadastral plans"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Requests, quotes, reports"
+          },
+          "2": {
+            "n": "Land Registry",
+            "d": "Cadastral plans, transfers, divisions"
+          },
+          "3": {
+            "n": "Notaries",
+            "d": "Certificates, subdivision plans, surveys"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, quotes, reminders"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Government, municipality, official documents"
+          }
+        }
+      },
+      "huissier": {
+        "name": "Bailiff",
+        "cats": {
+          "0": {
+            "n": "Service of Process",
+            "d": "Writs, summons, formal notices"
+          },
+          "1": {
+            "n": "Debt Collection",
+            "d": "Debts, payment plans, seizures"
+          },
+          "2": {
+            "n": "Official Reports",
+            "d": "Official reports, on-site observations"
+          },
+          "3": {
+            "n": "Courts",
+            "d": "Decisions, judgments, enforcements"
+          },
+          "4": {
+            "n": "Clients / Lawyers",
+            "d": "Instructions, correspondence, reports"
+          },
+          "5": {
+            "n": "Billing",
+            "d": "Costs, retainers, settlements"
+          }
+        }
+      },
+      "traducteur": {
+        "name": "Translator / Interpreter",
+        "cats": {
+          "0": {
+            "n": "Translation Projects",
+            "d": "Texts to translate, deliverables, deadlines"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Requests, quotes, feedback"
+          },
+          "2": {
+            "n": "Agencies",
+            "d": "Agency assignments, rates, scheduling"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, purchase orders, reminders"
+          },
+          "4": {
+            "n": "Training",
+            "d": "Glossaries, tools, certifications"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Sworn translator, court, legalization"
+          }
+        }
+      },
+      "expert-sinistres": {
+        "name": "Claims Expert",
+        "cats": {
+          "0": {
+            "n": "Claims Files",
+            "d": "Declarations, reports, photos"
+          },
+          "1": {
+            "n": "Insurance",
+            "d": "Companies, policies, compensations"
+          },
+          "2": {
+            "n": "Policyholders",
+            "d": "Correspondence, appointments, documents"
+          },
+          "3": {
+            "n": "Experts / Counter-experts",
+            "d": "Reports, adversarial meetings"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Fees, expense notes, settlements"
+          },
+          "5": {
+            "n": "Legal",
+            "d": "Judicial expertise, courts"
+          }
+        }
+      },
+      "commissaire-comptes": {
+        "name": "Statutory Auditor",
+        "cats": {
+          "0": {
+            "n": "Audit Assignments",
+            "d": "Audit plans, reports, annual accounts"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Correspondence, document requests"
+          },
+          "2": {
+            "n": "Standards / Regulations",
+            "d": "ISA, accounting standards, monitoring"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Fees, engagement letters"
+          },
+          "4": {
+            "n": "Institute",
+            "d": "IRE/IBR, training, fees"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Commercial courts, NBB, publications"
+          }
+        }
+      },
+      "medecin": {
+        "name": "Doctor / Medical Practice",
+        "cats": {
+          "0": {
+            "n": "Patients",
+            "d": "Patient correspondence, appointments, follow-ups"
+          },
+          "1": {
+            "n": "Fellow Doctors",
+            "d": "Medical exchanges, specialist opinions, transfers"
+          },
+          "2": {
+            "n": "Laboratories",
+            "d": "Test results, prescriptions"
+          },
+          "3": {
+            "n": "Health Insurance",
+            "d": "Reimbursements, certificates, agreements"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Fees, fee statements, third-party payment"
+          },
+          "5": {
+            "n": "Continuing Education",
+            "d": "Conferences, accreditations, publications"
+          },
+          "6": {
+            "n": "Administrative",
+            "d": "Medical association, insurance, on-call duty"
+          }
+        }
+      },
+      "dentiste": {
+        "name": "Dentist",
+        "cats": {
+          "0": {
+            "n": "Patients",
+            "d": "Appointments, follow-ups, reminders"
+          },
+          "1": {
+            "n": "Dental Suppliers",
+            "d": "Materials, equipment, orders"
+          },
+          "2": {
+            "n": "Prosthetics Lab",
+            "d": "Prosthetics, crowns, implants"
+          },
+          "3": {
+            "n": "Health Insurance",
+            "d": "Nomenclature, reimbursements"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Fee statements, settlements"
+          },
+          "5": {
+            "n": "Training",
+            "d": "Continuing education, dental conferences"
+          }
+        }
+      },
+      "kinesitherapeute": {
+        "name": "Physiotherapist",
+        "cats": {
+          "0": {
+            "n": "Patients",
+            "d": "Prescriptions, appointments, treatment follow-ups"
+          },
+          "1": {
+            "n": "Referring Doctors",
+            "d": "Reports, agreement requests, assessments"
+          },
+          "2": {
+            "n": "Health Insurance",
+            "d": "Certificates, agreements, reimbursements"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Fee statements, third-party payment"
+          },
+          "4": {
+            "n": "Suppliers",
+            "d": "Equipment, supplies, orders"
+          },
+          "5": {
+            "n": "Training",
+            "d": "Training, specializations, conferences"
+          }
+        }
+      },
+      "pharmacien": {
+        "name": "Pharmacist",
+        "cats": {
+          "0": {
+            "n": "Suppliers / Wholesalers",
+            "d": "Orders, deliveries, stock shortages"
+          },
+          "1": {
+            "n": "Patients",
+            "d": "Prescriptions, follow-ups, advice"
+          },
+          "2": {
+            "n": "Health / Drug Agency",
+            "d": "Regulations, reimbursements, pharmacovigilance"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Supplier invoices, pricing, margins"
+          },
+          "4": {
+            "n": "Team",
+            "d": "Scheduling, recruitment, training"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Pharmacists' association, inspections, on-call"
+          }
+        }
+      },
+      "veterinaire": {
+        "name": "Veterinarian",
+        "cats": {
+          "0": {
+            "n": "Clients / Pet Owners",
+            "d": "Appointments, follow-ups, vaccine reminders"
+          },
+          "1": {
+            "n": "Suppliers",
+            "d": "Medications, equipment, food"
+          },
+          "2": {
+            "n": "Colleagues / Specialists",
+            "d": "Transfers, specialist opinions"
+          },
+          "3": {
+            "n": "Food Safety Agency",
+            "d": "Inspections, regulations, traceability"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, surgery quotes, reminders"
+          },
+          "5": {
+            "n": "Laboratories",
+            "d": "Analyses, biopsies, results"
+          }
+        }
+      },
+      "psychologue": {
+        "name": "Psychologist / Therapist",
+        "cats": {
+          "0": {
+            "n": "Patients",
+            "d": "Appointments, therapeutic follow-ups, correspondence"
+          },
+          "1": {
+            "n": "Colleagues",
+            "d": "Supervisions, referrals, exchanges"
+          },
+          "2": {
+            "n": "Billing",
+            "d": "Fees, certificates, agreements"
+          },
+          "3": {
+            "n": "Training",
+            "d": "Continuing education, symposia, publications"
+          },
+          "4": {
+            "n": "Administrative",
+            "d": "Psychology board, insurance"
+          }
+        }
+      },
+      "infirmier": {
+        "name": "Independent Nurse",
+        "cats": {
+          "0": {
+            "n": "Patients",
+            "d": "Care plans, rounds, appointments"
+          },
+          "1": {
+            "n": "Doctors",
+            "d": "Prescriptions, reports, coordination"
+          },
+          "2": {
+            "n": "Health Insurance",
+            "d": "Certificates, agreements, reimbursements"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Care statements, third-party payment, nomenclature"
+          },
+          "4": {
+            "n": "Suppliers",
+            "d": "Care supplies, orders"
+          }
+        }
+      },
+      "opticien": {
+        "name": "Optician / Hearing Aid Specialist",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Orders, fittings, complaints"
+          },
+          "1": {
+            "n": "Suppliers / Lens Makers",
+            "d": "Lens/frame orders, catalogs"
+          },
+          "2": {
+            "n": "Health Insurance",
+            "d": "Reimbursements, certificates, prescriptions"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, quotes, reminders"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Promotions, loyalty, events"
+          }
+        }
+      },
+      "ecommerce": {
+        "name": "E-commerce",
+        "cats": {
+          "0": {
+            "n": "Orders",
+            "d": "Confirmations, tracking, order modifications"
+          },
+          "1": {
+            "n": "Customer Service",
+            "d": "Complaints, returns, refunds, after-sales"
+          },
+          "2": {
+            "n": "Suppliers",
+            "d": "Sourcing, negotiations, deliveries"
+          },
+          "3": {
+            "n": "Logistics",
+            "d": "Carriers, tracking, warehouse"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Campaigns, newsletters, partnerships, affiliates"
+          },
+          "5": {
+            "n": "Payments",
+            "d": "Transactions, disputes, chargebacks"
+          },
+          "6": {
+            "n": "Technical",
+            "d": "Platform, bugs, updates, hosting"
+          }
+        }
+      },
+      "commerce-detail": {
+        "name": "Retail",
+        "cats": {
+          "0": {
+            "n": "Suppliers",
+            "d": "Orders, deliveries, catalogs"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Loyalty, complaints, special requests"
+          },
+          "2": {
+            "n": "Billing",
+            "d": "Invoices, purchase orders, reminders"
+          },
+          "3": {
+            "n": "Team",
+            "d": "Scheduling, recruitment, training"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Promotions, window displays, events"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Lease, insurance, regulations"
+          }
+        }
+      },
+      "grossiste": {
+        "name": "Wholesaler / Import-Export",
+        "cats": {
+          "0": {
+            "n": "B2B Clients",
+            "d": "Orders, quotes, negotiations"
+          },
+          "1": {
+            "n": "Suppliers",
+            "d": "Purchasing, sourcing, imports"
+          },
+          "2": {
+            "n": "Logistics",
+            "d": "Shipping, customs, transit, containers"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, credits, reminders"
+          },
+          "4": {
+            "n": "Customs / Export",
+            "d": "Customs documents, certificates of origin"
+          },
+          "5": {
+            "n": "Sales",
+            "d": "Prospecting, trade shows, catalog"
+          }
+        }
+      },
+      "franchise": {
+        "name": "Franchise / Retail Chain",
+        "cats": {
+          "0": {
+            "n": "Franchisor",
+            "d": "Guidelines, reports, royalties"
+          },
+          "1": {
+            "n": "Operations",
+            "d": "Sourcing, logistics, procedures"
+          },
+          "2": {
+            "n": "Team",
+            "d": "Recruitment, training, scheduling"
+          },
+          "3": {
+            "n": "Marketing",
+            "d": "Local campaigns, events, communication"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Royalties, invoices, revenue"
+          },
+          "5": {
+            "n": "Clients",
+            "d": "Loyalty, complaints, satisfaction"
+          }
+        }
+      },
+      "marches-publics": {
+        "name": "Public Procurement / Tenders",
+        "cats": {
+          "0": {
+            "n": "Tenders",
+            "d": "Specifications, publications, submissions"
+          },
+          "1": {
+            "n": "Active Cases",
+            "d": "Submitted offers, negotiations, awards"
+          },
+          "2": {
+            "n": "Execution",
+            "d": "Contracts, amendments, work acceptance"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Settlements, progress payments, retention"
+          },
+          "4": {
+            "n": "Subcontractors",
+            "d": "Partners, agreements, coordination"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Accreditation, certificates, social security"
+          }
+        }
+      },
+      "concessionnaire": {
+        "name": "Car Dealership",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Inquiries, test drives, after-sales follow-up"
+          },
+          "1": {
+            "n": "Manufacturer",
+            "d": "Stock, targets, programs, incentives"
+          },
+          "2": {
+            "n": "Workshop / After-sales",
+            "d": "Appointments, recalls, warranties"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Sales, financing, leasing"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Promotions, open days, digital"
+          },
+          "5": {
+            "n": "Parts Suppliers",
+            "d": "Parts orders, tires, accessories"
+          }
+        }
+      },
+      "agent-immobilier": {
+        "name": "Real Estate Agent",
+        "cats": {
+          "0": {
+            "n": "Listings",
+            "d": "Properties for sale/rent, valuations, exclusives"
+          },
+          "1": {
+            "n": "Buyers / Tenants",
+            "d": "Viewings, offers, negotiations"
+          },
+          "2": {
+            "n": "Owners",
+            "d": "Listing follow-up, reports, renewals"
+          },
+          "3": {
+            "n": "Notaries",
+            "d": "Preliminary contracts, deeds, documents"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Ads, photos, real estate portals"
+          },
+          "5": {
+            "n": "Billing",
+            "d": "Commissions, fees, invoices"
+          },
+          "6": {
+            "n": "Administrative",
+            "d": "Professional body, training, energy certificates"
+          }
+        }
+      },
+      "syndic": {
+        "name": "Property Manager / Rental Management",
+        "cats": {
+          "0": {
+            "n": "Co-owners",
+            "d": "Meetings, decisions, complaints"
+          },
+          "1": {
+            "n": "Tenants",
+            "d": "Leases, inspections, complaints"
+          },
+          "2": {
+            "n": "Suppliers / Maintenance",
+            "d": "Works, quotes, maintenance contracts"
+          },
+          "3": {
+            "n": "Accounting",
+            "d": "Charges, settlements, fund calls"
+          },
+          "4": {
+            "n": "Legal",
+            "d": "Disputes, arrears, procedures"
+          },
+          "5": {
+            "n": "Insurance",
+            "d": "Claims, policies, appraisals"
+          }
+        }
+      },
+      "entrepreneur-construction": {
+        "name": "Construction Contractor",
+        "cats": {
+          "0": {
+            "n": "Construction Sites",
+            "d": "Scheduling, site meetings, minutes"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Quotes, contracts, handovers"
+          },
+          "2": {
+            "n": "Subcontractors",
+            "d": "Agreements, coordination, invoices"
+          },
+          "3": {
+            "n": "Suppliers",
+            "d": "Materials, orders, deliveries"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Progress payments, settlements, retention"
+          },
+          "5": {
+            "n": "Safety",
+            "d": "Safety coordinator, plans, accidents"
+          },
+          "6": {
+            "n": "Administrative",
+            "d": "Accreditation, insurance, site social security"
+          }
+        }
+      },
+      "promoteur": {
+        "name": "Property Developer",
+        "cats": {
+          "0": {
+            "n": "Projects",
+            "d": "Feasibility studies, permits, plans"
+          },
+          "1": {
+            "n": "Sales",
+            "d": "Off-plan sales, reservations, options"
+          },
+          "2": {
+            "n": "Contractors",
+            "d": "Tenders, work monitoring, minutes"
+          },
+          "3": {
+            "n": "Financing",
+            "d": "Banks, loans, guarantees"
+          },
+          "4": {
+            "n": "Notaries / Legal",
+            "d": "Deeds, easements, co-ownership"
+          },
+          "5": {
+            "n": "Billing",
+            "d": "Fund calls, final settlements"
+          }
+        }
+      },
+      "architecte-interieur": {
+        "name": "Interior Designer / Decorator",
+        "cats": {
+          "0": {
+            "n": "Client Projects",
+            "d": "Briefs, moodboards, plans, approvals"
+          },
+          "1": {
+            "n": "Suppliers / Craftsmen",
+            "d": "Quotes, orders, samples"
+          },
+          "2": {
+            "n": "Clients",
+            "d": "Correspondence, appointments, follow-up"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Quotes, fees, invoices"
+          },
+          "4": {
+            "n": "Inspiration",
+            "d": "Trends, fairs, publications"
+          }
+        }
+      },
+      "agence-marketing": {
+        "name": "Marketing / Communications Agency",
+        "cats": {
+          "0": {
+            "n": "Clients / Accounts",
+            "d": "Briefs, approvals, monthly reports"
+          },
+          "1": {
+            "n": "Creative Projects",
+            "d": "Mockups, content, campaigns"
+          },
+          "2": {
+            "n": "Media / Advertising",
+            "d": "Media plans, buying, performance"
+          },
+          "3": {
+            "n": "Prospecting",
+            "d": "New clients, pitches, proposals"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Quotes, invoices, budgets"
+          },
+          "5": {
+            "n": "Team",
+            "d": "Scheduling, freelancers, internal briefs"
+          },
+          "6": {
+            "n": "Suppliers",
+            "d": "Printers, photographers, SaaS tools"
+          }
+        }
+      },
+      "agence-web": {
+        "name": "Web / IT Agency",
+        "cats": {
+          "0": {
+            "n": "Client Projects",
+            "d": "Specifications, sprints, deliverables"
+          },
+          "1": {
+            "n": "Support / Tickets",
+            "d": "Bugs, requests, maintenance"
+          },
+          "2": {
+            "n": "Hosting",
+            "d": "Servers, domains, SSL, monitoring"
+          },
+          "3": {
+            "n": "Clients",
+            "d": "Correspondence, approvals, feedback"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Quotes, invoices, SLA contracts"
+          },
+          "5": {
+            "n": "Team / Dev",
+            "d": "Recruitment, code reviews, training"
+          },
+          "6": {
+            "n": "Tech Watch",
+            "d": "New technologies, updates, security"
+          }
+        }
+      },
+      "rh-recrutement": {
+        "name": "Human Resources / Recruitment",
+        "cats": {
+          "0": {
+            "n": "Applications",
+            "d": "CVs, cover letters, interviews"
+          },
+          "1": {
+            "n": "Clients / Companies",
+            "d": "Mandates, profiles sought, feedback"
+          },
+          "2": {
+            "n": "Active Candidates",
+            "d": "Follow-up, outreach, proposals"
+          },
+          "3": {
+            "n": "Contracts",
+            "d": "Offers, terms, signatures"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Fees, success fees, invoices"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Temp work, labor law, training"
+          }
+        }
+      },
+      "assurances": {
+        "name": "Insurance Office",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Inquiries, appointments, policies"
+          },
+          "1": {
+            "n": "Companies",
+            "d": "Underwriting, rates, commissions"
+          },
+          "2": {
+            "n": "Claims",
+            "d": "Declarations, appraisals, compensations"
+          },
+          "3": {
+            "n": "Renewals",
+            "d": "Due dates, amendments, cancellations"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Premiums, commissions, reminders"
+          },
+          "5": {
+            "n": "Compliance",
+            "d": "FSMA, training, anti-money laundering"
+          }
+        }
+      },
+      "courtier-financier": {
+        "name": "Financial Broker",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Files, simulations, appointments"
+          },
+          "1": {
+            "n": "Banks / Institutions",
+            "d": "Loan applications, offers, terms"
+          },
+          "2": {
+            "n": "Active Cases",
+            "d": "Follow-up, missing documents, signatures"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Commissions, brokerage, invoices"
+          },
+          "4": {
+            "n": "Compliance",
+            "d": "FSMA, MiFID, training"
+          },
+          "5": {
+            "n": "Market Watch",
+            "d": "Rates, products, financial news"
+          }
+        }
+      },
+      "cybersecurite": {
+        "name": "Cybersecurity Expert",
+        "cats": {
+          "0": {
+            "n": "Assignments / Audits",
+            "d": "Pentests, reports, recommendations"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Requests, contracts, follow-up"
+          },
+          "2": {
+            "n": "Security Alerts",
+            "d": "Vulnerabilities, incidents, patches"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Quotes, invoices, contracts"
+          },
+          "4": {
+            "n": "Watch",
+            "d": "CVEs, threats, new attacks"
+          },
+          "5": {
+            "n": "Training",
+            "d": "Certifications, conferences, publications"
+          }
+        }
+      },
+      "conseil-gestion": {
+        "name": "Management Consulting Firm",
+        "cats": {
+          "0": {
+            "n": "Assignments",
+            "d": "Proposals, methodology, deliverables"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Follow-up, meetings, steering committees"
+          },
+          "2": {
+            "n": "Billing",
+            "d": "Fees, expenses, timesheets"
+          },
+          "3": {
+            "n": "Prospecting",
+            "d": "Networking, tenders, references"
+          },
+          "4": {
+            "n": "Team",
+            "d": "Consultants, scheduling, evaluations"
+          },
+          "5": {
+            "n": "Watch",
+            "d": "Industry trends, benchmarks, studies"
+          }
+        }
+      },
+      "artisan": {
+        "name": "Craftsman (plumber, electrician...)",
+        "cats": {
+          "0": {
+            "n": "Jobs / Interventions",
+            "d": "Scheduling, appointments, emergencies"
+          },
+          "1": {
+            "n": "Quotes / Orders",
+            "d": "Quote requests, estimates, acceptances"
+          },
+          "2": {
+            "n": "Clients",
+            "d": "Correspondence, complaints, satisfaction"
+          },
+          "3": {
+            "n": "Suppliers",
+            "d": "Materials, orders, deliveries"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, deposits, reminders"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Accreditation, insurance, inspections"
+          }
+        }
+      },
+      "garagiste": {
+        "name": "Mechanic / Body Shop",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Appointments, diagnostics, repair quotes"
+          },
+          "1": {
+            "n": "Parts Suppliers",
+            "d": "Orders, catalogs, returns"
+          },
+          "2": {
+            "n": "Insurance",
+            "d": "Appraisals, approvals, claims"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, warranties, reminders"
+          },
+          "4": {
+            "n": "Vehicle Inspection",
+            "d": "Appointments, results, re-inspections"
+          },
+          "5": {
+            "n": "Team",
+            "d": "Workshop scheduling, training, mechanics"
+          }
+        }
+      },
+      "photographe": {
+        "name": "Photographer / Videographer",
+        "cats": {
+          "0": {
+            "n": "Clients / Bookings",
+            "d": "Inquiries, reservations, briefs"
+          },
+          "1": {
+            "n": "Deliveries",
+            "d": "Galleries, edits, retouching"
+          },
+          "2": {
+            "n": "Billing",
+            "d": "Quotes, invoices, deposits"
+          },
+          "3": {
+            "n": "Suppliers",
+            "d": "Equipment, studio rental, printing"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Portfolio, social media, website"
+          },
+          "5": {
+            "n": "Copyright",
+            "d": "Licenses, assignments, contracts"
+          }
+        }
+      },
+      "imprimeur": {
+        "name": "Printer / Graphic Designer",
+        "cats": {
+          "0": {
+            "n": "Orders",
+            "d": "Quotes, proofs, approvals, production"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Briefs, correspondence, complaints"
+          },
+          "2": {
+            "n": "Suppliers",
+            "d": "Paper, inks, finishing, subcontracting"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, purchase orders, reminders"
+          },
+          "4": {
+            "n": "Deliveries",
+            "d": "Shipping, scheduling, dispatches"
+          }
+        }
+      },
+      "paysagiste": {
+        "name": "Landscaper / Gardener",
+        "cats": {
+          "0": {
+            "n": "Projects",
+            "d": "Scheduling, landscaping, maintenance"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Quotes, appointments, projects"
+          },
+          "2": {
+            "n": "Suppliers",
+            "d": "Nurseries, materials, equipment rental"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, maintenance contracts, reminders"
+          },
+          "4": {
+            "n": "Team",
+            "d": "Team scheduling, seasonal workers, training"
+          }
+        }
+      },
+      "serrurier": {
+        "name": "Locksmith / Glazier",
+        "cats": {
+          "0": {
+            "n": "Emergency Calls",
+            "d": "Repairs, lockouts, emergencies"
+          },
+          "1": {
+            "n": "Quotes / Works",
+            "d": "Installations, replacements, security upgrades"
+          },
+          "2": {
+            "n": "Clients",
+            "d": "Individuals, property managers, businesses"
+          },
+          "3": {
+            "n": "Suppliers",
+            "d": "Locks, glass, hardware"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, quotes, reminders"
+          }
+        }
+      },
+      "formateur": {
+        "name": "Trainer / Training Center",
+        "cats": {
+          "0": {
+            "n": "Participants",
+            "d": "Registrations, confirmations, evaluations"
+          },
+          "1": {
+            "n": "Clients / Companies",
+            "d": "Requests, agreements, scheduling"
+          },
+          "2": {
+            "n": "Content",
+            "d": "Materials, presentations, exercises"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, grants, training vouchers"
+          },
+          "4": {
+            "n": "Administrative",
+            "d": "Accreditations, certifications, quality"
+          },
+          "5": {
+            "n": "Marketing",
+            "d": "Catalog, website, promotions"
+          }
+        }
+      },
+      "ecole": {
+        "name": "School / Institution",
+        "cats": {
+          "0": {
+            "n": "Parents / Students",
+            "d": "Correspondence, report cards, absences"
+          },
+          "1": {
+            "n": "Teachers",
+            "d": "Meetings, scheduling, teaching materials"
+          },
+          "2": {
+            "n": "Administration",
+            "d": "Ministry, inspections, subsidies"
+          },
+          "3": {
+            "n": "Suppliers",
+            "d": "Textbooks, equipment, canteen"
+          },
+          "4": {
+            "n": "Activities",
+            "d": "Field trips, events, shows"
+          },
+          "5": {
+            "n": "Accounting",
+            "d": "Budget, school fees, invoices"
+          }
+        }
+      },
+      "auto-ecole": {
+        "name": "Driving School",
+        "cats": {
+          "0": {
+            "n": "Students",
+            "d": "Registrations, scheduling, exams"
+          },
+          "1": {
+            "n": "Instructors",
+            "d": "Scheduling, evaluations, availability"
+          },
+          "2": {
+            "n": "Administration",
+            "d": "Transport authority, accreditations, regulations"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Lessons, packages, reminders"
+          },
+          "4": {
+            "n": "Vehicles",
+            "d": "Maintenance, insurance, vehicle inspection"
+          }
+        }
+      },
+      "restaurant": {
+        "name": "Restaurant / Caterer",
+        "cats": {
+          "0": {
+            "n": "Reservations",
+            "d": "Tables, events, groups"
+          },
+          "1": {
+            "n": "Suppliers",
+            "d": "Food, beverages, equipment"
+          },
+          "2": {
+            "n": "Clients",
+            "d": "Inquiries, complaints, loyalty"
+          },
+          "3": {
+            "n": "Team",
+            "d": "Scheduling, recruitment, training"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Supplier invoices, accounting"
+          },
+          "5": {
+            "n": "Administrative",
+            "d": "Food safety, licenses, insurance"
+          },
+          "6": {
+            "n": "Marketing",
+            "d": "Social media, reviews, events"
+          }
+        }
+      },
+      "hotel": {
+        "name": "Hotel / B&B / Guesthouse",
+        "cats": {
+          "0": {
+            "n": "Reservations",
+            "d": "Booking, confirmation, cancellations"
+          },
+          "1": {
+            "n": "Clients",
+            "d": "Special requests, complaints, reviews"
+          },
+          "2": {
+            "n": "OTA / Platforms",
+            "d": "Booking.com, Airbnb, channel manager"
+          },
+          "3": {
+            "n": "Suppliers",
+            "d": "Linen, housekeeping, maintenance, breakfast"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, commissions, tourist tax"
+          },
+          "5": {
+            "n": "Marketing",
+            "d": "Website, promotions, social media"
+          }
+        }
+      },
+      "agence-voyage": {
+        "name": "Travel Agency",
+        "cats": {
+          "0": {
+            "n": "Clients / Travelers",
+            "d": "Inquiries, quotes, confirmations"
+          },
+          "1": {
+            "n": "Tour Operators",
+            "d": "Availability, bookings, contracts"
+          },
+          "2": {
+            "n": "Airlines",
+            "d": "Tickets, changes, cancellations"
+          },
+          "3": {
+            "n": "Hotels / Transfers",
+            "d": "Bookings, vouchers, confirmations"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, commissions, travel insurance"
+          },
+          "5": {
+            "n": "Complaints",
+            "d": "Complaints, refunds, disputes"
+          }
+        }
+      },
+      "association": {
+        "name": "Association / NGO",
+        "cats": {
+          "0": {
+            "n": "Members / Donors",
+            "d": "Memberships, donations, acknowledgments"
+          },
+          "1": {
+            "n": "Projects / Actions",
+            "d": "Programs, partnerships, reports"
+          },
+          "2": {
+            "n": "Grants",
+            "d": "Calls for projects, supporting docs, reports"
+          },
+          "3": {
+            "n": "Volunteers",
+            "d": "Recruitment, scheduling, coordination"
+          },
+          "4": {
+            "n": "Communication",
+            "d": "Newsletter, events, media"
+          },
+          "5": {
+            "n": "Accounting",
+            "d": "Budget, accounts, auditor"
+          }
+        }
+      },
+      "createur-contenu": {
+        "name": "Content Creator / Influencer",
+        "cats": {
+          "0": {
+            "n": "Brands / Sponsors",
+            "d": "Proposals, contracts, briefs"
+          },
+          "1": {
+            "n": "Agencies",
+            "d": "Collaborations, negotiations, scheduling"
+          },
+          "2": {
+            "n": "Community",
+            "d": "Fan messages, creator collaborations"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, quotes, royalties"
+          },
+          "4": {
+            "n": "Platforms",
+            "d": "YouTube, TikTok, Instagram, monetization"
+          },
+          "5": {
+            "n": "Legal",
+            "d": "Contracts, GDPR, image rights"
+          }
+        }
+      },
+      "mode-textile": {
+        "name": "Fashion / Textile",
+        "cats": {
+          "0": {
+            "n": "Suppliers / Workshops",
+            "d": "Fabrics, manufacturing, samples"
+          },
+          "1": {
+            "n": "B2B Clients",
+            "d": "Orders, showrooms, restocks"
+          },
+          "2": {
+            "n": "E-commerce",
+            "d": "Online orders, returns, after-sales"
+          },
+          "3": {
+            "n": "Logistics",
+            "d": "Shipping, stock, customs"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Lookbooks, influencers, press"
+          },
+          "5": {
+            "n": "Billing",
+            "d": "Invoices, purchase orders, reminders"
+          }
+        }
+      },
+      "salon-beaute": {
+        "name": "Beauty Salon / Wellness",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Appointments, loyalty, preferences"
+          },
+          "1": {
+            "n": "Suppliers",
+            "d": "Products, equipment, orders"
+          },
+          "2": {
+            "n": "Team",
+            "d": "Scheduling, recruitment, training"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, payments, accounting"
+          },
+          "4": {
+            "n": "Marketing",
+            "d": "Promotions, social media, reviews"
+          }
+        }
+      },
+      "nettoyage": {
+        "name": "Cleaning Company",
+        "cats": {
+          "0": {
+            "n": "Clients / Contracts",
+            "d": "Specifications, scheduling, inspections"
+          },
+          "1": {
+            "n": "Team",
+            "d": "Scheduling, replacements, recruitment"
+          },
+          "2": {
+            "n": "Suppliers",
+            "d": "Products, equipment, supplies"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, contracts, reminders"
+          },
+          "4": {
+            "n": "Quality",
+            "d": "Inspections, complaints, certifications"
+          }
+        }
+      },
+      "transport-logistique": {
+        "name": "Transport / Logistics",
+        "cats": {
+          "0": {
+            "n": "Clients / Shippers",
+            "d": "Transport orders, tracking, deliveries"
+          },
+          "1": {
+            "n": "Drivers",
+            "d": "Scheduling, CMR, onboard documents"
+          },
+          "2": {
+            "n": "Subcontractors",
+            "d": "Chartering, rates, availability"
+          },
+          "3": {
+            "n": "Billing",
+            "d": "Invoices, rates, disputes"
+          },
+          "4": {
+            "n": "Vehicles",
+            "d": "Maintenance, vehicle inspection, insurance"
+          },
+          "5": {
+            "n": "Regulations",
+            "d": "Licenses, ADR, tachograph, customs"
+          }
+        }
+      },
+      "industrie-production": {
+        "name": "Industry / Manufacturing",
+        "cats": {
+          "0": {
+            "n": "Clients / Orders",
+            "d": "Purchase orders, deliveries, specifications"
+          },
+          "1": {
+            "n": "Suppliers",
+            "d": "Raw materials, components, tooling"
+          },
+          "2": {
+            "n": "Production",
+            "d": "Scheduling, quality, maintenance"
+          },
+          "3": {
+            "n": "Logistics",
+            "d": "Shipping, stock, transport"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Invoices, quotes, reminders"
+          },
+          "5": {
+            "n": "HR / Safety",
+            "d": "Staff, training, workplace accidents"
+          }
+        }
+      },
+      "event-planning": {
+        "name": "Event Planner",
+        "cats": {
+          "0": {
+            "n": "Clients",
+            "d": "Briefs, quotes, approvals"
+          },
+          "1": {
+            "n": "Vendors",
+            "d": "Caterers, DJs, decor, tech"
+          },
+          "2": {
+            "n": "Venues",
+            "d": "Bookings, quotes, contracts"
+          },
+          "3": {
+            "n": "Logistics",
+            "d": "Scheduling, setup, coordination"
+          },
+          "4": {
+            "n": "Billing",
+            "d": "Quotes, invoices, deposits"
+          },
+          "5": {
+            "n": "Marketing",
+            "d": "Invitations, ticketing, communication"
+          }
+        }
+      }
+    }
+  }
+}
