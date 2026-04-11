@@ -91,7 +91,7 @@ import {
 } from "@/components/ui/form";
 import { FAMILLES_METIERS, type PackMetier, type FamilleMetier } from "@/data/packs-metiers";
 import { useTranslation } from 'react-i18next';
-import { translateCategoryName } from "@/lib/category-translations";
+import { translateCategoryName, translateCategory } from "@/lib/category-translations";
 
 function useTranslatedPacks(t: any, lang: string): FamilleMetier[] {
   return useMemo(() => {
@@ -751,7 +751,7 @@ export default function Classement() {
                             </span>
                           )}
                           <p className="text-[#8b9cb3] text-[11px]">
-                            {cat.description}
+                            {translateCategory(cat.name, cat.description, lang).description}
                           </p>
                         </div>
                       </div>
@@ -880,7 +880,7 @@ export default function Classement() {
                               </span>
                             )}
                             <p className="text-[#8b9cb3] text-[11px]">
-                              {cat.description}
+                              {translateCategory(cat.name, cat.description, lang).description}
                             </p>
                           </div>
                         </div>
@@ -1127,7 +1127,7 @@ export default function Classement() {
                     {translateCategoryName(cat.name, lang)}
                   </h3>
                   <p className="text-[12px] text-[#8b9cb3] line-clamp-2 h-9 mb-3">
-                    {cat.description || (
+                    {translateCategory(cat.name, cat.description, lang).description || (
                       <span className="italic opacity-50">
                         {t("classification.noDescription")}
                       </span>

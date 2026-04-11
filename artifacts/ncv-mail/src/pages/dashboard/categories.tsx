@@ -22,7 +22,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { useTranslation } from "react-i18next";
-import { translateCategoryName } from "@/lib/category-translations";
+import { translateCategoryName, translateCategory } from "@/lib/category-translations";
 
 const SUGGESTED_CATEGORY_KEYS = [
   { key: "facturation", icon: Receipt, color: "text-amber-400 bg-amber-500/10" },
@@ -409,7 +409,7 @@ export default function Categories() {
                 
                 <h3 className="text-[14px] font-semibold text-white mb-1">{translateCategoryName(cat.name, lang)}</h3>
                 <p className="text-[12px] text-[#8b9cb3] line-clamp-2 h-9 mb-3">
-                  {cat.description || <span className="italic opacity-50">{t("classification.noDescription")}</span>}
+                  {translateCategory(cat.name, cat.description, lang).description || <span className="italic opacity-50">{t("classification.noDescription")}</span>}
                 </p>
                 
                 <div className="flex items-center text-[12px] text-[#8b9cb3] bg-white/[0.04] px-2.5 py-1 rounded-md inline-flex w-fit">

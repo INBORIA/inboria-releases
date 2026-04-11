@@ -1,0 +1,179 @@
+Abonnements / SaaS
+Licences logiciels, renouvellements, factures outils
+
+3
+E-Mails
+
+Verwaltung
+Contrats, documents officiels, courriers juridiques
+
+0
+E-Mails
+
+Bank / Finanzen
+Relevés bancaires, virements, prêts, assurances
+
+1
+E-Mails
+
+Vertrieb
+Prospects, propositions commerciales, négociations, ventes
+
+1
+E-Mails
+
+Interne Kommunikation
+Mémos, annonces, comptes-rendus, circulaires
+
+2
+E-Mails
+
+Buchhaltung
+Écritures comptables, bilans, TVA, déclarations fiscales
+
+0
+E-Mails
+
+Angebote / Verhandlungen
+Demandes de devis, comparatifs, contre-propositions
+
+0
+E-Mails
+
+Rechnungsstellung
+Factures, devis, bons de commande, relances de paiement
+
+5
+E-Mails
+
+Weiterbildung
+Webinaires, certifications, e-learning, invitations
+
+4
+E-Mails
+
+Lieferanten
+Commandes, livraisons, relations fournisseurs, achats
+
+0
+E-Mails
+
+Hosting
+Keine Beschreibung
+
+2
+E-Mails
+
+Immobilien / Räumlichkeiten
+Baux, loyers, maintenance bâtiment, charges
+
+0
+E-Mails
+
+International / Export
+Douanes, clients étrangers, traductions, incoterms
+
+0
+E-Mails
+
+Recht / Compliance
+Mises en demeure, RGPD, conformité, contentieux, contrats
+
+0
+E-Mails
+
+Logistik / Lieferungen
+Suivi de colis, transporteurs, bons de livraison
+
+0
+E-Mails
+
+Newsletter / Marketing
+Newsletters, promotions, campagnes marketing, publicités
+
+4
+E-Mails
+
+Newsletter
+Keine Beschreibung
+
+28
+E-Mails
+
+Benachrichtigungen
+Keine Beschreibung
+
+331
+E-Mails
+
+Zahlungen / Inkasso
+Confirmations de paiement, retards, rappels, remboursements
+
+0
+E-Mails
+
+Partner / Subunternehmer
+Collaborations, accords, échanges avec partenaires externes
+
+0
+E-Mails
+
+Projekte
+Suivi de projet, livrables, deadlines, rapports d'avancement
+
+1
+E-Mails
+
+Aktion
+Keine Beschreibung
+
+3
+E-Mails
+
+Aktionen
+Keine Beschreibung
+
+26
+E-Mails
+
+Termine / Planung
+Confirmations, annulations, rappels de réunions
+
+3
+E-Mails
+
+Soziale Medien
+Keine Beschreibung
+
+9
+E-Mails
+
+Personal / Team
+Congés, recrutement, gestion du personnel, notes internes
+
+0
+E-Mails
+
+Spam / Zu löschen
+Emails indésirables, démarchage non sollicité
+
+0
+E-Mails
+
+Kundensupport
+Demandes d'aide, réclamations, questions des clients
+
+7
+E-Mails
+
+Technik / IT
+Bugs, maintenance, serveurs, IT, demandes techniques
+
+0
+E-Mails
+
+Dringend / Priorität
+Emails nécessitant une action immédiate, alertes critiques
+
+3
+E-Mails
