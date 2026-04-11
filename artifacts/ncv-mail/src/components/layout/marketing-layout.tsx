@@ -1,5 +1,5 @@
 import { Link, useLocation } from "wouter";
-import ncvLogo from "@assets/image_1775392688923.png";
+import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
@@ -24,9 +24,8 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
       <header className="sticky top-0 z-50 bg-[#0d1117]/95 backdrop-blur-sm border-b border-[#1f2937]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between h-36">
-            <Link href="/" className="flex flex-col items-center">
-              <img src={ncvLogo} alt="NCV Mail" className="h-28 w-28 object-contain" />
-              <span className="font-bold text-base tracking-tight text-white -mt-3">NCV Mail</span>
+            <Link href="/" className="flex items-center">
+              <img src={appLogo} alt="Inboria" className="h-16 w-auto object-contain" />
             </Link>
 
             <nav className="hidden md:flex items-center gap-6">
@@ -105,9 +104,8 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div>
-              <div className="flex flex-col items-start mb-3">
-                <img src={ncvLogo} alt="NCV Mail" className="h-20 w-20 object-contain -mb-1" />
-                <span className="font-semibold text-[15px] text-white">NCV Mail</span>
+              <div className="flex items-start mb-3">
+                <img src={appLogo} alt="Inboria" className="h-14 w-auto object-contain" />
               </div>
               <p className="text-[13px] text-[#8b9cb3]">{t("footer.solution")}</p>
             </div>
@@ -132,8 +130,8 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
 
             <div>
               <h4 className="text-[13px] font-semibold text-white mb-3">{t("footer.contact")}</h4>
-              <a href="mailto:contact@ncvmail.com" className="text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
-                contact@ncvmail.com
+              <a href="mailto:contact@inboria.com" className="text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
+                contact@inboria.com
               </a>
             </div>
           </div>

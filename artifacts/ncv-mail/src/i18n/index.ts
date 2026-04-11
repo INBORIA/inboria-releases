@@ -21,7 +21,7 @@ i18n
     },
     detection: {
       order: ["localStorage", "navigator"],
-      lookupLocalStorage: "ncvmail-lang",
+      lookupLocalStorage: "inboria-lang",
       caches: ["localStorage"],
     },
   });

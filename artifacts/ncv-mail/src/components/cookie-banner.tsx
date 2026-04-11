@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Link } from "wouter";
 import { Cookie, X } from "lucide-react";
 
-const CONSENT_KEY = "ncvmail_cookie_consent";
+const CONSENT_KEY = "inboria_cookie_consent";
 
 type ConsentValue = "accepted" | "rejected" | "essential";
 
@@ -66,7 +66,7 @@ export function CookieBanner() {
                 </button>
               </div>
               <p className="text-[12px] text-[#8b9cb3] leading-relaxed mb-3">
-                NCV Mail utilise des cookies pour assurer le bon fonctionnement du site et améliorer votre expérience.
+                Inboria utilise des cookies pour assurer le bon fonctionnement du site et améliorer votre expérience.
                 Vous pouvez accepter tous les cookies ou uniquement les cookies essentiels.{" "}
                 <Link href="/confidentialite" className="text-[#2d7dd2] hover:underline">
                   En savoir plus

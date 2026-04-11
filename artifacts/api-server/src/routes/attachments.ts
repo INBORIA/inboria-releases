@@ -12,7 +12,7 @@ import { requireAuth } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
-const UPLOAD_DIR = path.join(os.tmpdir(), "ncvmail-uploads");
+const UPLOAD_DIR = path.join(os.tmpdir(), "inboria-uploads");
 try { fs.mkdirSync(UPLOAD_DIR, { recursive: true }); } catch {}
 
 const upload = multer({

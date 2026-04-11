@@ -57,7 +57,7 @@
   "dashboard": {
     "expiredSubscription": "Your subscription has expired",
     "trialEnded": "Your free trial has ended",
-    "resubscribe": "Resubscribe to continue using NCV Mail.",
+    "resubscribe": "Resubscribe to continue using Inboria.",
     "trialUsed": "You have used your 100 free emails. Choose a plan to continue.",
     "choosePlan": "Choose a plan"
   },
@@ -69,11 +69,11 @@
     "termsOfUse": "Terms of use",
     "accessAccount": "Access my account",
     "contact": "Contact",
-    "allRightsReserved": "© 2026 NCV Mail. All rights reserved."
+    "allRightsReserved": "© 2026 Inboria. All rights reserved."
   },
   "auth": {
     "welcome": "Welcome",
-    "loginSubtitle": "Log in to your NCV Mail account",
+    "loginSubtitle": "Log in to your Inboria account",
     "email": "Email",
     "emailPlaceholder": "name@company.com",
     "password": "Password",
@@ -88,7 +88,7 @@
     "passwordRequired": "Password is required",
     "signupTitle": "Create an account",
     "signupForPlan": "Sign up to activate the {{plan}} plan",
-    "signupSubtitle": "Join NCV Mail to organize your inbox",
+    "signupSubtitle": "Join Inboria to organize your inbox",
     "fullName": "Full name",
     "fullNamePlaceholder": "John Smith",
     "fullNameRequired": "Full name required",
@@ -96,7 +96,7 @@
     "professionalEmailPlaceholder": "john@company.com",
     "country": "Country",
     "selectCountry": "Select your country",
-    "countryAvailability": "NCV Mail is available in the European Union, EEA and Switzerland.",
+    "countryAvailability": "Inboria is available in the European Union, EEA and Switzerland.",
     "confirmPassword": "Confirm password",
     "confirmPasswordRequired": "Please confirm your password",
     "passwordsNoMatch": "Passwords do not match",
@@ -161,7 +161,7 @@
     "verifyEmailTitle": "Verify your email",
     "verifyEmailDesc": "We sent a confirmation link to",
     "verifyStep1": "Open your inbox",
-    "verifyStep2": "Click the link in the NCV Mail email",
+    "verifyStep2": "Click the link in the Inboria email",
     "verifyStep3": "You will be redirected to your dashboard",
     "cantFindEmail": "Can't find the email? Check your spam or",
     "resendEmail": "resend it",
@@ -183,7 +183,7 @@
     "invalidInviteLink": "Invalid invitation link.",
     "inviteError": "Error accepting the invitation.",
     "serverError": "Server connection error.",
-    "acceptInviteDesc": "You have been invited to join a team on NCV Mail.",
+    "acceptInviteDesc": "You have been invited to join a team on Inboria.",
     "pageNotFound": "Page not found",
     "pageNotFoundDesc": "The page you're looking for doesn't exist or has been moved.",
     "backToDashboard": "Back to dashboard"
@@ -783,12 +783,12 @@
     "seatsExample": "Example: 3 collaborators = €27/month — adjustable at any time from your space.",
     "expiredSubscription": "Your subscription has expired",
     "trialEndedFull": "Your free trial has ended",
-    "resubscribe": "Resubscribe to a paid plan to continue using NCV Mail.",
+    "resubscribe": "Resubscribe to a paid plan to continue using Inboria.",
     "trialUsedFull": "You have used your 100 free emails. Choose a plan below to continue."
   },
   "plans": {
     "trial": "Trial",
-    "trialDesc": "100 free emails to discover NCV Mail",
+    "trialDesc": "100 free emails to discover Inboria",
     "trialFeatures": {
       "f1": "100 free emails (one-time use)",
       "f2": "3 custom categories",
@@ -831,7 +831,7 @@
       "f8": "Overage: €0.001/email"
     },
     "essai": "Trial",
-    "essaiDesc": "100 free emails to discover NCV Mail",
+    "essaiDesc": "100 free emails to discover Inboria",
     "essaiFeatures": {
       "f1": "100 free emails (one-time use)",
       "f2": "3 custom categories",
@@ -853,8 +853,8 @@
     "home": {
       "heroTitle1": "Your inbox is already managed",
       "heroTitle2": "when you arrive in the morning.",
-      "heroTitle3": "NCV Mail — the Email Autopilot.",
-      "heroDesc": "NCV Mail reads, analyzes and automatically sorts your emails according to YOUR own rules.",
+      "heroTitle3": "Inboria — the Email Autopilot.",
+      "heroDesc": "Inboria reads, analyzes and automatically sorts your emails according to YOUR own rules.",
       "startFree": "Start for free",
       "howItWorks": "How it works",
       "howItWorksDesc": "Three simple steps to transform your email management",
@@ -874,18 +874,18 @@
       "clearVision": "Clear vision",
       "clearVisionDesc": "Instantly find your important emails thanks to optimal organization.",
       "ctaTitle": "Ready to save 2 hours a day?",
-      "ctaDesc": "100 free emails to discover NCV Mail. No credit card required.",
+      "ctaDesc": "100 free emails to discover Inboria. No credit card required.",
       "tryFree": "Try for free"
     },
     "features": {
       "heroTitle": "Everything you need to take back control of your emails",
-      "heroDesc": "NCV Mail uses artificial intelligence to sort, summarize and reply to your emails automatically.",
+      "heroDesc": "Inboria uses artificial intelligence to sort, summarize and reply to your emails automatically.",
       "smartSort": "Smart sorting by categories",
       "smartSortDesc": "Artificial intelligence analyzes your email content and automatically files them in the appropriate folders to keep a clean inbox.",
       "autoSummary": "Automatic summaries",
       "autoSummaryDesc": "Save precious time by reading a concise AI-generated summary for long threads and endless newsletters.",
       "aiDrafts": "Custom AI drafts",
-      "aiDraftsDesc": "NCV Mail prepares context-appropriate replies matching your usual tone. All you need to do is review and send.",
+      "aiDraftsDesc": "Inboria prepares context-appropriate replies matching your usual tone. All you need to do is review and send.",
       "dailyBrief": "Daily brief",
       "dailyBriefDesc": "Receive a clear morning recap of urgent emails, today's meetings and pending follow-ups.",
       "taskExtraction": "Automatic task extraction",
@@ -905,7 +905,7 @@
       "security": "Security and privacy",
       "securityDesc": "Your data is protected by end-to-end encryption. We strictly comply with GDPR and never sell your information.",
       "ctaTitle": "Ready to save 2 hours a day?",
-      "ctaDesc": "100 free emails to discover NCV Mail. No credit card required.",
+      "ctaDesc": "100 free emails to discover Inboria. No credit card required.",
       "tryFree": "Try for free"
     },
     "pricing": {
@@ -918,7 +918,7 @@
     "classification": {
       "badge": "Smart classification",
       "heroTitle": "56 industry packs to organize your emails in one click",
-      "heroDesc": "NCV Mail offers pre-configured category packs for every profession. Lawyer, doctor, restaurateur, e-commerce... Apply yours and let AI sort your emails automatically.",
+      "heroDesc": "Inboria offers pre-configured category packs for every profession. Lawyer, doctor, restaurateur, e-commerce... Apply yours and let AI sort your emails automatically.",
       "tryFree": "Try for free",
       "seePricing": "See pricing",
       "stats": {
@@ -947,7 +947,7 @@
       "hospitalityDesc": "Restaurants, hotels, caterers, travel agencies, guesthouses. Reservations, suppliers, events and customer reviews.",
       "otherServices": "Other services",
       "otherServicesDesc": "Associations, content creators, fashion, transport, cleaning, beauty salons... All businesses that don't fit in a single category.",
-      "advantagesTitle": "The advantages of NCV Mail classification",
+      "advantagesTitle": "The advantages of Inboria classification",
       "advantagesDesc": "A system designed so that every email lands in the right place, effortlessly.",
       "operational30s": "Operational in 30 seconds",
       "operational30sDesc": "No need to create your categories one by one. A pre-configured industry pack saves you hours of setup.",
@@ -976,11 +976,11 @@
       "step2": "Apply the pack",
       "step2Desc": "In one click, the pack's categories are added to your account without overwriting your existing ones.",
       "step3": "AI takes over",
-      "step3Desc": "NCV Mail uses your categories to automatically sort every incoming email into the right folder.",
+      "step3Desc": "Inboria uses your categories to automatically sort every incoming email into the right folder.",
       "step4": "Refine over time",
       "step4Desc": "Add, modify or delete categories. Generate a custom AI pack if your profession is unique.",
       "ctaTitle": "Your mailbox organized in 30 seconds",
-      "ctaDesc": "Choose your industry pack, apply it, and let NCV Mail sort your emails automatically. It's that simple.",
+      "ctaDesc": "Choose your industry pack, apply it, and let Inboria sort your emails automatically. It's that simple.",
       "startFree": "Start for free",
       "seePricingAlt": "See pricing",
       "ctaFooter": "100 free emails to try • No credit card required"
@@ -988,7 +988,7 @@
     "ai": {
       "badge": "Artificial Intelligence",
       "heroTitle": "The AI that manages your emails while you work",
-      "heroDesc": "NCV Mail integrates advanced artificial intelligence that sorts, summarizes, categorizes and prepares your replies automatically. You stay in control, the AI does the repetitive work.",
+      "heroDesc": "Inboria integrates advanced artificial intelligence that sorts, summarizes, categorizes and prepares your replies automatically. You stay in control, the AI does the repetitive work.",
       "tryAIFree": "Try AI for free",
       "allFeatures": "All features",
       "stats": {
@@ -1012,7 +1012,7 @@
       "smartSummariesH3": "Action item identification",
       "smartSummariesH4": "Summary of 10+ email threads",
       "aiDrafts": "AI reply drafts",
-      "aiDraftsDesc": "NCV Mail prepares relevant and contextual replies that you only need to review and validate. The AI adapts to your tone and writing style.",
+      "aiDraftsDesc": "Inboria prepares relevant and contextual replies that you only need to review and validate. The AI adapts to your tone and writing style.",
       "aiDraftsH1": "Context-appropriate replies",
       "aiDraftsH2": "Personalized professional tone",
       "aiDraftsH3": "Wording suggestions",
@@ -1038,7 +1038,7 @@
       "howAIWorks": "How does the AI work?",
       "howAIWorksDesc": "From received email to validated action, in 4 transparent steps.",
       "step1": "Email received",
-      "step1Desc": "An email arrives in your NCV Mail inbox.",
+      "step1Desc": "An email arrives in your Inboria inbox.",
       "step2": "AI analysis",
       "step2Desc": "The AI analyzes the content, sender, subject and context in under 3 seconds.",
       "step3": "Automatic actions",
@@ -1052,7 +1052,7 @@
       "yourData": "Your data stays yours",
       "yourDataDesc": "No email is used to train models. Your data is processed in real-time and never stored by AI providers.",
       "gdprCompliant": "GDPR compliant",
-      "gdprCompliantDesc": "NCV Mail strictly complies with the General Data Protection Regulation. European hosting, encryption and guaranteed right to erasure.",
+      "gdprCompliantDesc": "Inboria strictly complies with the General Data Protection Regulation. European hosting, encryption and guaranteed right to erasure.",
       "secureInfra": "Secure infrastructure",
       "secureInfraDesc": "Encryption in transit and at rest. Enhanced authentication. No sensitive data is ever exposed in logs or AI responses.",
       "faqTitle": "Frequently asked questions about AI",
@@ -1061,13 +1061,13 @@
       "faq2q": "Can I disable the AI?",
       "faq2a": "Yes, each AI feature (sorting, summaries, drafts) can be disabled individually from your settings. You always keep full control.",
       "faq3q": "Does the AI work in French?",
-      "faq3a": "Absolutely. NCV Mail is designed for SMEs in Belgium and France. The AI understands and responds in French, Dutch and English.",
+      "faq3a": "Absolutely. Inboria is designed for SMEs in Belgium and France. The AI understands and responds in French, Dutch and English.",
       "faq4q": "Does the AI make mistakes sometimes?",
       "faq4a": "Like any AI, errors are possible. That's why every suggestion is presented for validation. You can correct a sorting in one click and the AI learns from your corrections.",
       "faq5q": "Which AI model is used?",
-      "faq5a": "NCV Mail uses latest-generation language models, recognized for their reliability and performance in natural language processing. We continuously select and optimize the best available models to ensure quality results.",
+      "faq5a": "Inboria uses latest-generation language models, recognized for their reliability and performance in natural language processing. We continuously select and optimize the best available models to ensure quality results.",
       "ctaTitle": "Let AI work for you",
-      "ctaDesc": "Join the SMEs that save 2 hours a day thanks to NCV Mail's artificial intelligence.",
+      "ctaDesc": "Join the SMEs that save 2 hours a day thanks to Inboria's artificial intelligence.",
       "tryFree": "Try for free",
       "seePricing": "See pricing",
       "ctaFooter": "100 free emails • No credit card required • AI included in all plans"
@@ -1075,7 +1075,7 @@
     "enterprise": {
       "badge": "Business Plan",
       "heroTitle": "Your team, one single inbox",
-      "heroDesc": "NCV Mail combines artificial intelligence and team collaboration for effortless email management. AI sorts, summarizes and prepares your replies while your team collaborates via shared mailboxes, assignments and internal comments.",
+      "heroDesc": "Inboria combines artificial intelligence and team collaboration for effortless email management. AI sorts, summarizes and prepares your replies while your team collaborates via shared mailboxes, assignments and internal comments.",
       "chooseBusiness": "Choose Business plan",
       "comparePlans": "Compare plans",
       "stats": {
@@ -1089,7 +1089,7 @@
       "collaborateTitle": "Everything to collaborate efficiently",
       "collaborateDesc": "Tools designed for SMEs who want to structure their email management without complexity.",
       "aiTeam": "Artificial intelligence at the team's service",
-      "aiTeamDesc": "NCV Mail's AI works for your entire team: it automatically sorts incoming emails, generates instant summaries, detects priorities and prepares reply drafts. Whether in your personal or shared mailboxes, every email is analyzed and categorized before you even open your inbox.",
+      "aiTeamDesc": "Inboria's AI works for your entire team: it automatically sorts incoming emails, generates instant summaries, detects priorities and prepares reply drafts. Whether in your personal or shared mailboxes, every email is analyzed and categorized before you even open your inbox.",
       "aiTeamH1": "Automatic AI sorting and categorization",
       "aiTeamH2": "Smart summaries of long exchanges",
       "aiTeamH3": "Contextual reply drafts",
@@ -1140,7 +1140,7 @@
       "wStep4": "Collaborate effortlessly",
       "wStep4Desc": "Assign, comment, track activity. AI handles the rest.",
       "ctaTitle": "Ready to transform your team's email management?",
-      "ctaDesc": "Join the Belgian and French SMEs that have already adopted NCV Mail for smoother collaboration and tenfold productivity.",
+      "ctaDesc": "Join the Belgian and French SMEs that have already adopted Inboria for smoother collaboration and tenfold productivity.",
       "discoverBusiness": "Discover Business plan",
       "ctaFooter": "Business plan from €49/month • Scalable seats • 2-minute setup",
       "faqTitle": "Frequently asked questions",
@@ -1192,7 +1192,7 @@
       "serviceEditor": "Service editor",
       "bceNumberShort": "BCE number: BE0439.327.747",
       "serviceDescription": "1. Service description",
-      "serviceDescText": "NCV Mail is an AI-powered email sorting and management service. The service allows users to connect their existing inboxes to automate the sorting, categorization and prioritization of incoming messages.",
+      "serviceDescText": "Inboria is an AI-powered email sorting and management service. The service allows users to connect their existing inboxes to automate the sorting, categorization and prioritization of incoming messages.",
       "accountAccess": "2. Account access and creation",
       "accountAccessText1": "Access to the service requires creating a user account. When creating this account, the user commits to providing accurate and up-to-date information.",
       "accountAccessText2": "The user is solely responsible for the confidentiality of their login credentials and all activities performed under their account. In case of unauthorized use, the user must immediately notify NCV Management SRL.",
@@ -1206,7 +1206,7 @@
       "liabilityText1": "NCV Management SRL strives to keep the service accessible and operational but does not guarantee uninterrupted or error-free operation.",
       "liabilityText2": "To the extent permitted by law, NCV Management SRL disclaims any liability for indirect damages, data loss, or business losses resulting from the use or inability to use the service.",
       "ip": "5. Intellectual property",
-      "ipText1": "All elements making up the NCV Mail service (software, interfaces, algorithms, texts, images) are the exclusive property of NCV Management SRL and are protected by intellectual property laws.",
+      "ipText1": "All elements making up the Inboria service (software, interfaces, algorithms, texts, images) are the exclusive property of NCV Management SRL and are protected by intellectual property laws.",
       "ipText2": "The user retains full ownership of data and content (emails) submitted to the service. They grant NCV Management SRL a limited license solely for the purpose of providing the AI sorting service.",
       "termination": "6. Account termination",
       "terminationText1": "The user can terminate their account at any time from the settings of their personal space.",
@@ -1408,7 +1408,7 @@
   },
   "cookies": {
     "title": "Cookie Management",
-    "description": "NCV Mail uses cookies to ensure the proper functioning of the site and improve your experience. You can accept all cookies or only essential cookies.",
+    "description": "Inboria uses cookies to ensure the proper functioning of the site and improve your experience. You can accept all cookies or only essential cookies.",
     "learnMore": "Learn more",
     "acceptAll": "Accept all",
     "essentialOnly": "Essential only",
@@ -1427,7 +1427,7 @@
   },
   "manual": {
     "title": "User guide",
-    "subtitle": "Discover all the features of NCV Mail",
+    "subtitle": "Discover all the features of Inboria",
     "open": "Open",
     "businessFeatures": "Business Features",
     "businessUpgradeTitle": "Business Features",
@@ -1551,7 +1551,7 @@
         "Set custom AI rules (priority/category by sender)"
       ],
       "subscription": "Subscription",
-      "subscriptionDesc": "Manage your NCV Mail subscription plan. Compare offers and upgrade.",
+      "subscriptionDesc": "Manage your Inboria subscription plan. Compare offers and upgrade.",
       "subscriptionFeatures": [
         "3 plans: Solo (€9/mo), Pro (€29/mo), Business (€59/mo)",
         "Free trial of 100 emails included",
@@ -1589,7 +1589,7 @@
     }
   },
   "demo": {
-    "ariaLabel": "Animated demo of the NCV Mail dashboard",
+    "ariaLabel": "Animated demo of the Inboria dashboard",
     "nav": {
       "reception": "Inbox",
       "archives": "Archives",
@@ -1701,12 +1701,12 @@
     "aiSuggestion": "AI-detected suggestion"
   },
   "supportChat": {
-    "title": "NCV Mail Assistant",
+    "title": "Inboria Assistant",
     "subtitle": "AI Support • Available 24/7",
     "welcomeTitle": "How can I help you?",
-    "welcomeMessage": "Ask me anything about NCV Mail: features, settings, subscription, and more.",
+    "welcomeMessage": "Ask me anything about Inboria: features, settings, subscription, and more.",
     "placeholder": "Type your question...",
-    "poweredBy": "Powered by NCV Mail AI",
-    "errorMessage": "Sorry, an error occurred. Please try again or contact support@ncvmail.be."
+    "poweredBy": "Powered by Inboria AI",
+    "errorMessage": "Sorry, an error occurred. Please try again or contact support@inboria.com."
   }
 }

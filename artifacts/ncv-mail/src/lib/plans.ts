@@ -6,7 +6,7 @@ export const plans = [
     name: "Essai",
     price: "gratuit",
     quota: 100,
-    description: "100 emails offerts pour découvrir NCV Mail",
+    description: "100 emails offerts pour découvrir Inboria",
     features: [
       "100 emails offerts (usage unique)",
       "3 rubriques personnalisées",

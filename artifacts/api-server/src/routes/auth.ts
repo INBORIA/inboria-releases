@@ -17,7 +17,7 @@ router.post("/auth/register", async (req, res): Promise<void> => {
     const { email, password, fullName, country } = parsed.data;
 
     if (!country || !isAllowedCountry(country)) {
-      res.status(400).json({ error: "NCV Mail est actuellement disponible uniquement dans l'Union Europeenne, l'EEE et la Suisse." });
+      res.status(400).json({ error: "Inboria est actuellement disponible uniquement dans l'Union Europeenne, l'EEE et la Suisse." });
       return;
     }
 

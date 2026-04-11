@@ -57,7 +57,7 @@
   "dashboard": {
     "expiredSubscription": "Uw abonnement is verlopen",
     "trialEnded": "Uw gratis proefperiode is beëindigd",
-    "resubscribe": "Vernieuw uw abonnement om NCV Mail te blijven gebruiken.",
+    "resubscribe": "Vernieuw uw abonnement om Inboria te blijven gebruiken.",
     "trialUsed": "U heeft uw 100 gratis e-mails gebruikt. Kies een plan om door te gaan.",
     "choosePlan": "Kies een plan"
   },
@@ -69,11 +69,11 @@
     "termsOfUse": "Gebruiksvoorwaarden",
     "accessAccount": "Naar mijn account",
     "contact": "Contact",
-    "allRightsReserved": "© 2026 NCV Mail. Alle rechten voorbehouden."
+    "allRightsReserved": "© 2026 Inboria. Alle rechten voorbehouden."
   },
   "auth": {
     "welcome": "Welkom",
-    "loginSubtitle": "Log in op uw NCV Mail-account",
+    "loginSubtitle": "Log in op uw Inboria-account",
     "email": "E-mail",
     "emailPlaceholder": "naam@bedrijf.com",
     "password": "Wachtwoord",
@@ -88,7 +88,7 @@
     "passwordRequired": "Wachtwoord is vereist",
     "signupTitle": "Account aanmaken",
     "signupForPlan": "Registreer om het {{plan}}-plan te activeren",
-    "signupSubtitle": "Word lid van NCV Mail om uw inbox te organiseren",
+    "signupSubtitle": "Word lid van Inboria om uw inbox te organiseren",
     "fullName": "Volledige naam",
     "fullNamePlaceholder": "Jan Jansen",
     "fullNameRequired": "Volledige naam vereist",
@@ -96,7 +96,7 @@
     "professionalEmailPlaceholder": "jan@bedrijf.com",
     "country": "Land",
     "selectCountry": "Selecteer uw land",
-    "countryAvailability": "NCV Mail is beschikbaar in de Europese Unie, de EER en Zwitserland.",
+    "countryAvailability": "Inboria is beschikbaar in de Europese Unie, de EER en Zwitserland.",
     "confirmPassword": "Wachtwoord bevestigen",
     "confirmPasswordRequired": "Bevestig uw wachtwoord",
     "passwordsNoMatch": "Wachtwoorden komen niet overeen",
@@ -161,7 +161,7 @@
     "verifyEmailTitle": "Verifieer uw e-mail",
     "verifyEmailDesc": "We hebben een bevestigingslink gestuurd naar",
     "verifyStep1": "Open uw inbox",
-    "verifyStep2": "Klik op de link in de NCV Mail e-mail",
+    "verifyStep2": "Klik op de link in de Inboria e-mail",
     "verifyStep3": "U wordt doorgestuurd naar uw dashboard",
     "cantFindEmail": "Kunt u de e-mail niet vinden? Controleer uw spam of",
     "resendEmail": "verstuur opnieuw",
@@ -183,7 +183,7 @@
     "invalidInviteLink": "Ongeldige uitnodigingslink.",
     "inviteError": "Fout bij het accepteren van de uitnodiging.",
     "serverError": "Serververbindingsfout.",
-    "acceptInviteDesc": "U bent uitgenodigd om lid te worden van een team op NCV Mail.",
+    "acceptInviteDesc": "U bent uitgenodigd om lid te worden van een team op Inboria.",
     "pageNotFound": "Pagina niet gevonden",
     "pageNotFoundDesc": "De pagina die u zoekt bestaat niet of is verplaatst.",
     "backToDashboard": "Terug naar dashboard"
@@ -783,12 +783,12 @@
     "seatsExample": "Voorbeeld: 3 medewerkers = €27/maand — op elk moment aanpasbaar vanuit uw ruimte.",
     "expiredSubscription": "Uw abonnement is verlopen",
     "trialEndedFull": "Uw gratis proefperiode is beëindigd",
-    "resubscribe": "Vernieuw naar een betaald plan om NCV Mail te blijven gebruiken.",
+    "resubscribe": "Vernieuw naar een betaald plan om Inboria te blijven gebruiken.",
     "trialUsedFull": "U heeft uw 100 gratis e-mails gebruikt. Kies hieronder een plan om door te gaan."
   },
   "plans": {
     "trial": "Proef",
-    "trialDesc": "100 gratis e-mails om NCV Mail te ontdekken",
+    "trialDesc": "100 gratis e-mails om Inboria te ontdekken",
     "trialFeatures": {
       "f1": "100 gratis e-mails (eenmalig gebruik)",
       "f2": "3 aangepaste categorieën",
@@ -831,7 +831,7 @@
       "f8": "Overschrijding: €0,001/e-mail"
     },
     "essai": "Proefperiode",
-    "essaiDesc": "100 gratis e-mails om NCV Mail te ontdekken",
+    "essaiDesc": "100 gratis e-mails om Inboria te ontdekken",
     "essaiFeatures": {
       "f1": "100 gratis e-mails (eenmalig gebruik)",
       "f2": "3 aangepaste categorieën",
@@ -853,8 +853,8 @@
     "home": {
       "heroTitle1": "Uw inbox is al beheerd",
       "heroTitle2": "wanneer u 's ochtends arriveert.",
-      "heroTitle3": "NCV Mail — de E-mail Autopilot.",
-      "heroDesc": "NCV Mail leest, analyseert en sorteert automatisch uw e-mails volgens UW eigen regels.",
+      "heroTitle3": "Inboria — de E-mail Autopilot.",
+      "heroDesc": "Inboria leest, analyseert en sorteert automatisch uw e-mails volgens UW eigen regels.",
       "startFree": "Gratis beginnen",
       "howItWorks": "Hoe het werkt",
       "howItWorksDesc": "Drie eenvoudige stappen om uw e-mailbeheer te transformeren",
@@ -874,18 +874,18 @@
       "clearVision": "Helder overzicht",
       "clearVisionDesc": "Vind uw belangrijke e-mails direct terug dankzij optimale organisatie.",
       "ctaTitle": "Klaar om 2 uur per dag te besparen?",
-      "ctaDesc": "100 gratis e-mails om NCV Mail te ontdekken. Geen creditcard vereist.",
+      "ctaDesc": "100 gratis e-mails om Inboria te ontdekken. Geen creditcard vereist.",
       "tryFree": "Gratis proberen"
     },
     "features": {
       "heroTitle": "Alles wat u nodig heeft om de controle over uw e-mails terug te nemen",
-      "heroDesc": "NCV Mail gebruikt kunstmatige intelligentie om uw e-mails automatisch te sorteren, samen te vatten en te beantwoorden.",
+      "heroDesc": "Inboria gebruikt kunstmatige intelligentie om uw e-mails automatisch te sorteren, samen te vatten en te beantwoorden.",
       "smartSort": "Slim sorteren op categorie",
       "smartSortDesc": "Kunstmatige intelligentie analyseert uw e-mailinhoud en sorteert ze automatisch in de juiste mappen voor een opgeruimde inbox.",
       "autoSummary": "Automatische samenvattingen",
       "autoSummaryDesc": "Bespaar kostbare tijd door een beknopte AI-gegenereerde samenvatting te lezen voor lange discussiethreads en eindeloze nieuwsbrieven.",
       "aiDrafts": "Aangepaste AI-concepten",
-      "aiDraftsDesc": "NCV Mail bereidt contextgepaste antwoorden voor die passen bij uw gebruikelijke toon. U hoeft alleen maar na te lezen en te verzenden.",
+      "aiDraftsDesc": "Inboria bereidt contextgepaste antwoorden voor die passen bij uw gebruikelijke toon. U hoeft alleen maar na te lezen en te verzenden.",
       "dailyBrief": "Dagelijks overzicht",
       "dailyBriefDesc": "Ontvang elke ochtend een helder overzicht van dringende e-mails, vergaderingen van vandaag en openstaande opvolgingen.",
       "taskExtraction": "Automatische taakextractie",
@@ -905,7 +905,7 @@
       "security": "Beveiliging en privacy",
       "securityDesc": "Uw gegevens worden beschermd door end-to-end-encryptie. Wij respecteren strikt de AVG en verkopen nooit uw informatie.",
       "ctaTitle": "Klaar om 2 uur per dag te besparen?",
-      "ctaDesc": "100 gratis e-mails om NCV Mail te ontdekken. Geen creditcard vereist.",
+      "ctaDesc": "100 gratis e-mails om Inboria te ontdekken. Geen creditcard vereist.",
       "tryFree": "Gratis proberen"
     },
     "pricing": {
@@ -918,7 +918,7 @@
     "classification": {
       "badge": "Slimme classificatie",
       "heroTitle": "56 branchepakketten om uw e-mails met één klik te organiseren",
-      "heroDesc": "NCV Mail biedt vooraf geconfigureerde categoriepakketten voor elk beroep. Advocaat, arts, restaurateur, e-commerce... Pas het uwe toe en laat AI uw e-mails automatisch sorteren.",
+      "heroDesc": "Inboria biedt vooraf geconfigureerde categoriepakketten voor elk beroep. Advocaat, arts, restaurateur, e-commerce... Pas het uwe toe en laat AI uw e-mails automatisch sorteren.",
       "tryFree": "Gratis proberen",
       "seePricing": "Tarieven bekijken",
       "stats": {
@@ -947,7 +947,7 @@
       "hospitalityDesc": "Restaurants, hotels, traiteurs, reisbureaus, gastenkamers. Reserveringen, leveranciers, evenementen en klantbeoordelingen.",
       "otherServices": "Overige diensten",
       "otherServicesDesc": "Verenigingen, contentmakers, mode, transport, schoonmaak, schoonheidssalons... Alle beroepen die niet in één categorie passen.",
-      "advantagesTitle": "De voordelen van NCV Mail classificatie",
+      "advantagesTitle": "De voordelen van Inboria classificatie",
       "advantagesDesc": "Een systeem ontworpen zodat elke e-mail moeiteloos op de juiste plaats terechtkomt.",
       "operational30s": "Operationeel in 30 seconden",
       "operational30sDesc": "Geen behoefte om uw categorieën één voor één aan te maken. Een vooraf geconfigureerd branchepakket bespaart u uren instelling.",
@@ -976,11 +976,11 @@
       "step2": "Pas het pakket toe",
       "step2Desc": "Met één klik worden de categorieën van het pakket aan uw account toegevoegd zonder uw bestaande te overschrijven.",
       "step3": "AI neemt het over",
-      "step3Desc": "NCV Mail gebruikt uw categorieën om elke inkomende e-mail automatisch in de juiste map te sorteren.",
+      "step3Desc": "Inboria gebruikt uw categorieën om elke inkomende e-mail automatisch in de juiste map te sorteren.",
       "step4": "Verfijn in de loop van de tijd",
       "step4Desc": "Voeg categorieën toe, wijzig of verwijder ze. Genereer een aangepast AI-pakket als uw beroep uniek is.",
       "ctaTitle": "Uw mailbox georganiseerd in 30 seconden",
-      "ctaDesc": "Kies uw branchepakket, pas het toe en laat NCV Mail uw e-mails automatisch sorteren. Zo eenvoudig is het.",
+      "ctaDesc": "Kies uw branchepakket, pas het toe en laat Inboria uw e-mails automatisch sorteren. Zo eenvoudig is het.",
       "startFree": "Gratis beginnen",
       "seePricingAlt": "Tarieven bekijken",
       "ctaFooter": "100 gratis e-mails om te proberen • Geen creditcard vereist"
@@ -988,7 +988,7 @@
     "ai": {
       "badge": "Kunstmatige Intelligentie",
       "heroTitle": "De AI die uw e-mails beheert terwijl u werkt",
-      "heroDesc": "NCV Mail integreert geavanceerde kunstmatige intelligentie die automatisch sorteert, samenvat, categoriseert en uw antwoorden voorbereidt. U houdt de controle, de AI doet het repetitieve werk.",
+      "heroDesc": "Inboria integreert geavanceerde kunstmatige intelligentie die automatisch sorteert, samenvat, categoriseert en uw antwoorden voorbereidt. U houdt de controle, de AI doet het repetitieve werk.",
       "tryAIFree": "AI gratis proberen",
       "allFeatures": "Alle functies",
       "stats": {
@@ -1012,7 +1012,7 @@
       "smartSummariesH3": "Identificatie van gevraagde acties",
       "smartSummariesH4": "Synthese van threads met 10+ e-mails",
       "aiDrafts": "AI-antwoordconcepten",
-      "aiDraftsDesc": "NCV Mail bereidt relevante en contextuele antwoorden voor die u alleen hoeft na te lezen en te valideren. De AI past zich aan uw toon en schrijfstijl aan.",
+      "aiDraftsDesc": "Inboria bereidt relevante en contextuele antwoorden voor die u alleen hoeft na te lezen en te valideren. De AI past zich aan uw toon en schrijfstijl aan.",
       "aiDraftsH1": "Contextgepaste antwoorden",
       "aiDraftsH2": "Gepersonaliseerde professionele toon",
       "aiDraftsH3": "Formuleringsuggesties",
@@ -1038,7 +1038,7 @@
       "howAIWorks": "Hoe werkt de AI?",
       "howAIWorksDesc": "Van ontvangen e-mail tot gevalideerde actie, in 4 transparante stappen.",
       "step1": "E-mail ontvangen",
-      "step1Desc": "Een e-mail komt aan in uw NCV Mail-inbox.",
+      "step1Desc": "Een e-mail komt aan in uw Inboria-inbox.",
       "step2": "AI-analyse",
       "step2Desc": "De AI analyseert de inhoud, afzender, onderwerp en context in minder dan 3 seconden.",
       "step3": "Automatische acties",
@@ -1052,7 +1052,7 @@
       "yourData": "Uw gegevens blijven van u",
       "yourDataDesc": "Geen enkele e-mail wordt gebruikt om modellen te trainen. Uw gegevens worden in realtime verwerkt en worden nooit opgeslagen door AI-providers.",
       "gdprCompliant": "AVG-conform",
-      "gdprCompliantDesc": "NCV Mail respecteert strikt de Algemene Verordening Gegevensbescherming. Europese hosting, encryptie en gegarandeerd recht op wissing.",
+      "gdprCompliantDesc": "Inboria respecteert strikt de Algemene Verordening Gegevensbescherming. Europese hosting, encryptie en gegarandeerd recht op wissing.",
       "secureInfra": "Veilige infrastructuur",
       "secureInfraDesc": "Encryptie tijdens overdracht en in rust. Versterkte authenticatie. Geen gevoelige gegevens worden ooit blootgesteld in logs of AI-antwoorden.",
       "faqTitle": "Veelgestelde vragen over AI",
@@ -1061,13 +1061,13 @@
       "faq2q": "Kan ik de AI uitschakelen?",
       "faq2a": "Ja, elke AI-functie (sorteren, samenvattingen, concepten) kan individueel worden uitgeschakeld vanuit uw instellingen. U behoudt altijd volledige controle.",
       "faq3q": "Werkt de AI in het Frans?",
-      "faq3a": "Absoluut. NCV Mail is ontworpen voor KMO's in België en Frankrijk. De AI begrijpt en antwoordt in het Frans, Nederlands en Engels.",
+      "faq3a": "Absoluut. Inboria is ontworpen voor KMO's in België en Frankrijk. De AI begrijpt en antwoordt in het Frans, Nederlands en Engels.",
       "faq4q": "Maakt de AI soms fouten?",
       "faq4a": "Zoals elke AI zijn fouten mogelijk. Daarom wordt elke suggestie ter validatie voorgelegd. U kunt een sortering met één klik corrigeren en de AI leert van uw correcties.",
       "faq5q": "Welk AI-model wordt gebruikt?",
-      "faq5a": "NCV Mail gebruikt taalmodellen van de laatste generatie, erkend voor hun betrouwbaarheid en prestaties in natuurlijke taalverwerking. Wij selecteren en optimaliseren voortdurend de beste beschikbare modellen om kwaliteitsresultaten te garanderen.",
+      "faq5a": "Inboria gebruikt taalmodellen van de laatste generatie, erkend voor hun betrouwbaarheid en prestaties in natuurlijke taalverwerking. Wij selecteren en optimaliseren voortdurend de beste beschikbare modellen om kwaliteitsresultaten te garanderen.",
       "ctaTitle": "Laat AI voor u werken",
-      "ctaDesc": "Sluit u aan bij de KMO's die 2 uur per dag besparen dankzij de kunstmatige intelligentie van NCV Mail.",
+      "ctaDesc": "Sluit u aan bij de KMO's die 2 uur per dag besparen dankzij de kunstmatige intelligentie van Inboria.",
       "tryFree": "Gratis proberen",
       "seePricing": "Tarieven bekijken",
       "ctaFooter": "100 gratis e-mails • Geen creditcard vereist • AI inbegrepen in alle plannen"
@@ -1075,7 +1075,7 @@
     "enterprise": {
       "badge": "Business-plan",
       "heroTitle": "Uw team, één enkele inbox",
-      "heroDesc": "NCV Mail combineert kunstmatige intelligentie en teamwerk voor moeiteloos e-mailbeheer. AI sorteert, vat samen en bereidt uw antwoorden voor terwijl uw team samenwerkt via gedeelde mailboxen, toewijzingen en interne opmerkingen.",
+      "heroDesc": "Inboria combineert kunstmatige intelligentie en teamwerk voor moeiteloos e-mailbeheer. AI sorteert, vat samen en bereidt uw antwoorden voor terwijl uw team samenwerkt via gedeelde mailboxen, toewijzingen en interne opmerkingen.",
       "chooseBusiness": "Business-plan kiezen",
       "comparePlans": "Plannen vergelijken",
       "stats": {
@@ -1089,7 +1089,7 @@
       "collaborateTitle": "Alles om efficiënt samen te werken",
       "collaborateDesc": "Tools ontworpen voor KMO's die hun e-mailbeheer willen structureren zonder complexiteit.",
       "aiTeam": "Kunstmatige intelligentie ten dienste van het team",
-      "aiTeamDesc": "De AI van NCV Mail werkt voor uw hele team: het sorteert automatisch inkomende e-mails, genereert directe samenvattingen, detecteert prioriteiten en bereidt antwoordconcepten voor. Of het nu in uw persoonlijke of gedeelde mailboxen is, elke e-mail wordt geanalyseerd en gecategoriseerd voordat u zelfs maar uw inbox opent.",
+      "aiTeamDesc": "De AI van Inboria werkt voor uw hele team: het sorteert automatisch inkomende e-mails, genereert directe samenvattingen, detecteert prioriteiten en bereidt antwoordconcepten voor. Of het nu in uw persoonlijke of gedeelde mailboxen is, elke e-mail wordt geanalyseerd en gecategoriseerd voordat u zelfs maar uw inbox opent.",
       "aiTeamH1": "Automatische AI-sortering en categorisering",
       "aiTeamH2": "Slimme samenvattingen van lange uitwisselingen",
       "aiTeamH3": "Contextuele antwoordconcepten",
@@ -1140,7 +1140,7 @@
       "wStep4": "Werk moeiteloos samen",
       "wStep4Desc": "Wijs toe, reageer, volg de activiteit. AI doet de rest.",
       "ctaTitle": "Klaar om het e-mailbeheer van uw team te transformeren?",
-      "ctaDesc": "Sluit u aan bij de Belgische en Franse KMO's die NCV Mail al hebben geadopteerd voor vlottere samenwerking en tienvoudige productiviteit.",
+      "ctaDesc": "Sluit u aan bij de Belgische en Franse KMO's die Inboria al hebben geadopteerd voor vlottere samenwerking en tienvoudige productiviteit.",
       "discoverBusiness": "Business-plan ontdekken",
       "ctaFooter": "Business-plan vanaf €49/maand • Schaalbare zetels • 2 minuten installatie",
       "faqTitle": "Veelgestelde vragen",
@@ -1192,7 +1192,7 @@
       "serviceEditor": "Diensteditor",
       "bceNumberShort": "KBO-nummer: BE0439.327.747",
       "serviceDescription": "1. Dienstbeschrijving",
-      "serviceDescText": "NCV Mail is een door AI aangedreven e-mail sorteer- en beheerdienst. De dienst stelt gebruikers in staat hun bestaande inboxen te verbinden om het sorteren, categoriseren en prioriteren van inkomende berichten te automatiseren.",
+      "serviceDescText": "Inboria is een door AI aangedreven e-mail sorteer- en beheerdienst. De dienst stelt gebruikers in staat hun bestaande inboxen te verbinden om het sorteren, categoriseren en prioriteren van inkomende berichten te automatiseren.",
       "accountAccess": "2. Accounttoegang en -aanmaak",
       "accountAccessText1": "Toegang tot de dienst vereist het aanmaken van een gebruikersaccount. Bij het aanmaken van dit account verbindt de gebruiker zich ertoe juiste en actuele informatie te verstrekken.",
       "accountAccessText2": "De gebruiker is als enige verantwoordelijk voor de vertrouwelijkheid van zijn inloggegevens en alle activiteiten uitgevoerd onder zijn account. In geval van ongeautoriseerd gebruik moet de gebruiker NCV Management SRL onmiddellijk op de hoogte stellen.",
@@ -1206,7 +1206,7 @@
       "liabilityText1": "NCV Management SRL streeft ernaar de dienst toegankelijk en operationeel te houden, maar garandeert geen ononderbroken of foutloze werking.",
       "liabilityText2": "Voor zover wettelijk toegestaan, wijst NCV Management SRL elke aansprakelijkheid af voor indirecte schade, gegevensverlies of bedrijfsverlies als gevolg van het gebruik of de onmogelijkheid om de dienst te gebruiken.",
       "ip": "5. Intellectueel eigendom",
-      "ipText1": "Alle elementen die de NCV Mail-dienst vormen (software, interfaces, algoritmen, teksten, afbeeldingen) zijn het exclusieve eigendom van NCV Management SRL en worden beschermd door wetten op intellectueel eigendom.",
+      "ipText1": "Alle elementen die de Inboria-dienst vormen (software, interfaces, algoritmen, teksten, afbeeldingen) zijn het exclusieve eigendom van NCV Management SRL en worden beschermd door wetten op intellectueel eigendom.",
       "ipText2": "De gebruiker behoudt het volledige eigendom van gegevens en inhoud (e-mails) die aan de dienst worden ingediend. Hij verleent NCV Management SRL een beperkte licentie uitsluitend voor het leveren van de AI-sorteerdienst.",
       "termination": "6. Beëindiging van het account",
       "terminationText1": "De gebruiker kan zijn account op elk moment beëindigen vanuit de instellingen van zijn persoonlijke ruimte.",
@@ -1408,7 +1408,7 @@
   },
   "cookies": {
     "title": "Cookiebeheer",
-    "description": "NCV Mail gebruikt cookies om de goede werking van de site te waarborgen en uw ervaring te verbeteren. U kunt alle cookies accepteren of alleen essentiële cookies.",
+    "description": "Inboria gebruikt cookies om de goede werking van de site te waarborgen en uw ervaring te verbeteren. U kunt alle cookies accepteren of alleen essentiële cookies.",
     "learnMore": "Meer informatie",
     "acceptAll": "Alles accepteren",
     "essentialOnly": "Alleen essentieel",
@@ -1427,7 +1427,7 @@
   },
   "manual": {
     "title": "Gebruikershandleiding",
-    "subtitle": "Ontdek alle functies van NCV Mail",
+    "subtitle": "Ontdek alle functies van Inboria",
     "open": "Openen",
     "businessFeatures": "Business-functies",
     "businessUpgradeTitle": "Business-functies",
@@ -1551,7 +1551,7 @@
         "Aangepaste AI-regels instellen (prioriteit/categorie per afzender)"
       ],
       "subscription": "Abonnement",
-      "subscriptionDesc": "Beheer uw NCV Mail-abonnementsplan. Vergelijk aanbiedingen en upgrade.",
+      "subscriptionDesc": "Beheer uw Inboria-abonnementsplan. Vergelijk aanbiedingen en upgrade.",
       "subscriptionFeatures": [
         "3 plannen: Solo (€9/maand), Pro (€29/maand), Business (€59/maand)",
         "Gratis proef van 100 e-mails inbegrepen",
@@ -1589,7 +1589,7 @@
     }
   },
   "demo": {
-    "ariaLabel": "Geanimeerde demo van het NCV Mail dashboard",
+    "ariaLabel": "Geanimeerde demo van het Inboria dashboard",
     "nav": {
       "reception": "Inbox",
       "archives": "Archief",
@@ -1701,12 +1701,12 @@
     "aiSuggestion": "AI-gedetecteerde suggestie"
   },
   "supportChat": {
-    "title": "NCV Mail Assistent",
+    "title": "Inboria Assistent",
     "subtitle": "AI-ondersteuning • 24/7 beschikbaar",
     "welcomeTitle": "Hoe kan ik u helpen?",
-    "welcomeMessage": "Stel mij elke vraag over NCV Mail: functies, instellingen, abonnement en meer.",
+    "welcomeMessage": "Stel mij elke vraag over Inboria: functies, instellingen, abonnement en meer.",
     "placeholder": "Typ uw vraag...",
-    "poweredBy": "Aangedreven door NCV Mail AI",
-    "errorMessage": "Sorry, er is een fout opgetreden. Probeer het opnieuw of neem contact op met support@ncvmail.be."
+    "poweredBy": "Aangedreven door Inboria AI",
+    "errorMessage": "Sorry, er is een fout opgetreden. Probeer het opnieuw of neem contact op met support@inboria.com."
   }
 }

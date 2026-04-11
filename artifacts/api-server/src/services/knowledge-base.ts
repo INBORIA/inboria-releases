@@ -1,9 +1,9 @@
 export function getKnowledgeBase(language: "fr" | "en" | "nl"): string {
   const kb: Record<string, string> = {
-    fr: `# NCV Mail — Base de connaissances complète
+    fr: `# Inboria — Base de connaissances complète
 
 ## Présentation générale
-NCV Mail est un assistant email intelligent propulsé par l'IA, conçu pour les PME en Belgique et en France. Il trie, classe et résume automatiquement vos emails professionnels. L'application fonctionne en français, anglais et néerlandais.
+Inboria est un assistant email intelligent propulsé par l'IA, conçu pour les PME en Belgique et en France. Il trie, classe et résume automatiquement vos emails professionnels. L'application fonctionne en français, anglais et néerlandais.
 
 ## 1. RÉCEPTION (Boîte de réception)
 La page principale affiche tous vos emails entrants avec tri intelligent par l'IA.
@@ -25,12 +25,12 @@ La page principale affiche tous vos emails entrants avec tri intelligent par l'I
 
 ### Comment ça marche :
 1. Connectez votre boîte email dans Paramètres (Gmail OAuth ou IMAP).
-2. NCV Mail synchronise vos emails automatiquement toutes les 5 minutes.
+2. Inboria synchronise vos emails automatiquement toutes les 5 minutes.
 3. L'IA analyse chaque email : priorité, catégorie, résumé.
 4. Vous voyez vos emails triés intelligemment dans la boîte de réception.
 
 ## 2. ENVOYÉS
-Affiche tous les emails que vous avez envoyés depuis NCV Mail.
+Affiche tous les emails que vous avez envoyés depuis Inboria.
 
 ### Fonctionnalités :
 - Liste des emails envoyés avec destinataire, sujet, date.
@@ -192,7 +192,7 @@ La synchronisation se fait automatiquement toutes les 5 minutes. Si vos emails n
 L'IA analyse le sujet, l'expéditeur et le contenu de chaque email pour déterminer sa priorité (Urgent, Moyen, Faible), sa catégorie et générer un résumé. Vous pouvez personnaliser les catégories dans la page Classement.
 
 ### Mes données sont-elles sécurisées ?
-Oui. NCV Mail utilise le chiffrement SSL/TLS pour toutes les communications. Vos identifiants email sont stockés de manière sécurisée. Nous ne stockons pas le contenu complet de vos emails de manière permanente — seuls les métadonnées et résumés sont conservés.
+Oui. Inboria utilise le chiffrement SSL/TLS pour toutes les communications. Vos identifiants email sont stockés de manière sécurisée. Nous ne stockons pas le contenu complet de vos emails de manière permanente — seuls les métadonnées et résumés sont conservés.
 
 ### Comment changer de langue ?
 Cliquez sur le sélecteur de langue en haut à droite du dashboard (bouton avec le drapeau ou les initiales de la langue). Choisissez entre Français, English ou Nederlands.
@@ -221,10 +221,10 @@ Plan Business uniquement : ouvrez l'email et cliquez sur le bouton "Assigner". C
 ### Comment utiliser l'agenda ?
 L'agenda affiche vos rendez-vous. L'IA détecte automatiquement les RDV mentionnés dans vos emails. Vous pouvez aussi créer des RDV manuellement. Changez de vue (jour/semaine/mois) avec les boutons en haut.`,
 
-    en: `# NCV Mail — Complete Knowledge Base
+    en: `# Inboria — Complete Knowledge Base
 
 ## General Overview
-NCV Mail is an AI-powered intelligent email assistant designed for SMEs in Belgium and France. It automatically sorts, categorizes, and summarizes your professional emails. The application works in French, English, and Dutch.
+Inboria is an AI-powered intelligent email assistant designed for SMEs in Belgium and France. It automatically sorts, categorizes, and summarizes your professional emails. The application works in French, English, and Dutch.
 
 ## 1. INBOX
 The main page displays all your incoming emails with AI-powered smart sorting.
@@ -246,12 +246,12 @@ The main page displays all your incoming emails with AI-powered smart sorting.
 
 ### How it works:
 1. Connect your email inbox in Settings (Gmail OAuth or IMAP).
-2. NCV Mail syncs your emails automatically every 5 minutes.
+2. Inboria syncs your emails automatically every 5 minutes.
 3. AI analyzes each email: priority, category, summary.
 4. You see your emails smartly sorted in the inbox.
 
 ## 2. SENT
-Displays all emails you've sent from NCV Mail.
+Displays all emails you've sent from Inboria.
 
 ### Features:
 - List of sent emails with recipient, subject, date.
@@ -413,7 +413,7 @@ Sync happens automatically every 5 minutes. If your emails don't appear: check y
 AI analyzes the subject, sender, and content of each email to determine its priority (Urgent, Medium, Low), category, and generate a summary. You can customize categories in the Classification page.
 
 ### Is my data secure?
-Yes. NCV Mail uses SSL/TLS encryption for all communications. Your email credentials are stored securely. We don't permanently store the full content of your emails — only metadata and summaries are kept.
+Yes. Inboria uses SSL/TLS encryption for all communications. Your email credentials are stored securely. We don't permanently store the full content of your emails — only metadata and summaries are kept.
 
 ### How do I change the language?
 Click the language selector at the top right of the dashboard (button with the flag or language initials). Choose between Français, English, or Nederlands.
@@ -442,10 +442,10 @@ Business plan only: open the email and click the "Assign" button. Choose the tea
 ### How do I use the calendar?
 The calendar displays your appointments. AI automatically detects appointments mentioned in your emails. You can also create appointments manually. Switch views (day/week/month) with the buttons at the top.`,
 
-    nl: `# NCV Mail — Volledige Kennisbank
+    nl: `# Inboria — Volledige Kennisbank
 
 ## Algemeen Overzicht
-NCV Mail is een AI-aangedreven intelligente e-mailassistent ontworpen voor KMO's in België en Frankrijk. Het sorteert, classificeert en vat uw professionele e-mails automatisch samen. De applicatie werkt in het Frans, Engels en Nederlands.
+Inboria is een AI-aangedreven intelligente e-mailassistent ontworpen voor KMO's in België en Frankrijk. Het sorteert, classificeert en vat uw professionele e-mails automatisch samen. De applicatie werkt in het Frans, Engels en Nederlands.
 
 ## 1. ONTVANGEN (Inbox)
 De hoofdpagina toont al uw inkomende e-mails met slimme AI-sortering.
@@ -467,12 +467,12 @@ De hoofdpagina toont al uw inkomende e-mails met slimme AI-sortering.
 
 ### Hoe het werkt:
 1. Verbind uw e-mailbox in Instellingen (Gmail OAuth of IMAP).
-2. NCV Mail synchroniseert uw e-mails automatisch elke 5 minuten.
+2. Inboria synchroniseert uw e-mails automatisch elke 5 minuten.
 3. AI analyseert elke e-mail: prioriteit, categorie, samenvatting.
 4. U ziet uw e-mails slim gesorteerd in de inbox.
 
 ## 2. VERZONDEN
-Toont alle e-mails die u vanuit NCV Mail heeft verzonden.
+Toont alle e-mails die u vanuit Inboria heeft verzonden.
 
 ### Functies:
 - Lijst van verzonden e-mails met ontvanger, onderwerp, datum.
@@ -634,7 +634,7 @@ Synchronisatie gebeurt automatisch elke 5 minuten. Als uw e-mails niet verschijn
 AI analyseert het onderwerp, de afzender en de inhoud van elke e-mail om de prioriteit (Dringend, Gemiddeld, Laag), categorie te bepalen en een samenvatting te genereren. U kunt categorieën aanpassen op de Classificatiepagina.
 
 ### Zijn mijn gegevens veilig?
-Ja. NCV Mail gebruikt SSL/TLS-versleuteling voor alle communicatie. Uw e-mailgegevens worden veilig opgeslagen. We slaan de volledige inhoud van uw e-mails niet permanent op — alleen metadata en samenvattingen worden bewaard.
+Ja. Inboria gebruikt SSL/TLS-versleuteling voor alle communicatie. Uw e-mailgegevens worden veilig opgeslagen. We slaan de volledige inhoud van uw e-mails niet permanent op — alleen metadata en samenvattingen worden bewaard.
 
 ### Hoe verander ik de taal?
 Klik op de taalkiezer rechtsboven in het dashboard (knop met de vlag of taalinitialen). Kies tussen Français, English of Nederlands.
@@ -669,9 +669,9 @@ De agenda toont uw afspraken. AI detecteert automatisch afspraken die in uw e-ma
 
 export function getSystemPrompt(language: "fr" | "en" | "nl"): string {
   const prompts: Record<string, string> = {
-    fr: `Tu es l'assistant de support de NCV Mail, un outil de gestion d'emails intelligent propulsé par l'IA pour les PME. Tu réponds aux questions des utilisateurs sur les fonctionnalités de l'application de manière claire, concise et amicale. Tu réponds TOUJOURS en français. Tu es poli et professionnel. Si tu ne connais pas la réponse, dis-le honnêtement et suggère de contacter le support par email à support@ncvmail.be. Ne parle jamais de sujets non liés à NCV Mail. Garde tes réponses courtes et utiles (max 3-4 paragraphes).`,
-    en: `You are NCV Mail's support assistant, an AI-powered intelligent email management tool for SMEs. You answer user questions about the application's features in a clear, concise, and friendly manner. You ALWAYS respond in English. You are polite and professional. If you don't know the answer, say so honestly and suggest contacting support by email at support@ncvmail.be. Never discuss topics unrelated to NCV Mail. Keep your answers short and helpful (max 3-4 paragraphs).`,
-    nl: `Je bent de support-assistent van NCV Mail, een AI-aangedreven intelligent e-mailbeheertool voor KMO's. Je beantwoordt vragen van gebruikers over de functies van de applicatie op een duidelijke, beknopte en vriendelijke manier. Je antwoordt ALTIJD in het Nederlands. Je bent beleefd en professioneel. Als je het antwoord niet weet, zeg dat dan eerlijk en stel voor om contact op te nemen met de support via e-mail op support@ncvmail.be. Bespreek nooit onderwerpen die niet gerelateerd zijn aan NCV Mail. Houd je antwoorden kort en nuttig (max 3-4 paragrafen).`,
+    fr: `Tu es l'assistant de support de Inboria, un outil de gestion d'emails intelligent propulsé par l'IA pour les PME. Tu réponds aux questions des utilisateurs sur les fonctionnalités de l'application de manière claire, concise et amicale. Tu réponds TOUJOURS en français. Tu es poli et professionnel. Si tu ne connais pas la réponse, dis-le honnêtement et suggère de contacter le support par email à support@inboria.com. Ne parle jamais de sujets non liés à Inboria. Garde tes réponses courtes et utiles (max 3-4 paragraphes).`,
+    en: `You are Inboria's support assistant, an AI-powered intelligent email management tool for SMEs. You answer user questions about the application's features in a clear, concise, and friendly manner. You ALWAYS respond in English. You are polite and professional. If you don't know the answer, say so honestly and suggest contacting support by email at support@inboria.com. Never discuss topics unrelated to Inboria. Keep your answers short and helpful (max 3-4 paragraphs).`,
+    nl: `Je bent de support-assistent van Inboria, een AI-aangedreven intelligent e-mailbeheertool voor KMO's. Je beantwoordt vragen van gebruikers over de functies van de applicatie op een duidelijke, beknopte en vriendelijke manier. Je antwoordt ALTIJD in het Nederlands. Je bent beleefd en professioneel. Als je het antwoord niet weet, zeg dat dan eerlijk en stel voor om contact op te nemen met de support via e-mail op support@inboria.com. Bespreek nooit onderwerpen die niet gerelateerd zijn aan Inboria. Houd je antwoorden kort en nuttig (max 3-4 paragrafen).`,
   };
   return prompts[language] || prompts.fr;
 }

@@ -15,7 +15,7 @@ export default function MentionsLegales() {
             <p>{t("marketing.legal.companyName")}</p>
             <p>{t("marketing.legal.headquarters")}</p>
             <p>{t("marketing.legal.bceNumberShort")}</p>
-            <p>{t("marketing.legal.contactEmail")} : <a href="mailto:contact@ncvmail.com" className="text-[#2d7dd2] hover:underline">contact@ncvmail.com</a></p>
+            <p>{t("marketing.legal.contactEmail")} : <a href="mailto:contact@inboria.com" className="text-[#2d7dd2] hover:underline">contact@inboria.com</a></p>
           </div>
 
         </div>

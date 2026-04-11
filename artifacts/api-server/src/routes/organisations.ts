@@ -428,7 +428,7 @@ router.post("/organisations/invite", requireAuth, async (req, res): Promise<void
       .single();
     const orgName = orgData?.name || "votre organisation";
 
-    const frontendUrl = process.env["FRONTEND_URL"] || `https://${process.env["REPLIT_DEV_DOMAIN"] || "ncvmail.com"}`;
+    const frontendUrl = process.env["FRONTEND_URL"] || `https://${process.env["REPLIT_DEV_DOMAIN"] || "inboria.com"}`;
     const acceptUrl = `${frontendUrl}/accept-invite?token=${token}`;
 
     try {
@@ -446,18 +446,18 @@ router.post("/organisations/invite", requireAuth, async (req, res): Promise<void
       });
 
       await transporter.sendMail({
-        from: '"NCV Mail" <noreply@ncvmail.com>',
+        from: '"Inboria" <noreply@inboria.com>',
         to: email.toLowerCase().trim(),
-        subject: `${inviterName} vous invite à rejoindre ${orgName} sur NCV Mail`,
+        subject: `${inviterName} vous invite à rejoindre ${orgName} sur Inboria`,
         html: `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0d1117; color: #ffffff; border-radius: 8px;">
             <div style="text-align: center; margin-bottom: 30px;">
-              <h1 style="color: #2d7dd2; margin: 0;">NCV Mail</h1>
+              <h1 style="color: #2d7dd2; margin: 0;">Inboria</h1>
               <p style="color: #8b9cb3; margin-top: 5px;">Email Autopilot pour PME</p>
             </div>
             <h2 style="color: #ffffff; text-align: center;">Vous avez été invité(e) !</h2>
             <p style="color: #c9d1d9; line-height: 1.6;">
-              <strong>${inviterName}</strong> vous invite à rejoindre l'équipe <strong>${orgName}</strong> sur NCV Mail en tant que <strong>${inviteRole === "admin" ? "administrateur" : "membre"}</strong>.
+              <strong>${inviterName}</strong> vous invite à rejoindre l'équipe <strong>${orgName}</strong> sur Inboria en tant que <strong>${inviteRole === "admin" ? "administrateur" : "membre"}</strong>.
             </p>
             <div style="text-align: center; margin: 30px 0;">
               <a href="${acceptUrl}" style="background: #2d7dd2; color: #ffffff; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">

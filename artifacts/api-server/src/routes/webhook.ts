@@ -78,7 +78,7 @@ router.post("/webhook/email", async (req, res): Promise<void> => {
           sender: "Client SARL <contact@client.com>",
           subject: "Facture impayee - Urgent",
           body: "Bonjour, votre facture n.1234 est en retard...",
-          user_email: "utilisateur@ncvmail.com",
+          user_email: "utilisateur@inboria.com",
           external_id: "msg_abc123",
           received_at: "2025-01-15T10:30:00Z",
         },
@@ -359,7 +359,7 @@ router.get("/webhook/test", (req, res): void => {
   }
   res.json({
     status: "ok",
-    message: "Webhook NCV Mail actif",
+    message: "Webhook Inboria actif",
     endpoints: {
       single: "POST /api/webhook/email",
       batch: "POST /api/webhook/email/batch",

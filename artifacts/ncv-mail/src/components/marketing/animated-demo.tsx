@@ -180,7 +180,7 @@ export function AnimatedDemo() {
             <div className="w-2.5 h-2.5 rounded-full bg-[#10b981]/60" />
           </div>
           <div className="flex-1 text-center">
-            <span className="text-[11px] text-[#8b9cb3]">NCV Mail — Dashboard</span>
+            <span className="text-[11px] text-[#8b9cb3]">Inboria — Dashboard</span>
           </div>
         </div>
 
@@ -190,7 +190,7 @@ export function AnimatedDemo() {
               <div className="w-6 h-6 rounded-md bg-[#2d7dd2] flex items-center justify-center">
                 <span className="text-[10px] font-bold text-white">N</span>
               </div>
-              <span className="text-[12px] font-semibold text-white tracking-tight">NCV Mail</span>
+              <span className="text-[12px] font-semibold text-white tracking-tight">Inboria</span>
             </div>
 
             <nav className="flex-1 px-2 py-2 space-y-0.5">

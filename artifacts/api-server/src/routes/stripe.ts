@@ -10,7 +10,7 @@ interface RawBodyRequest extends Request {
 }
 
 function getFrontendUrl(): string {
-  return process.env["FRONTEND_URL"] || `https://${process.env["REPLIT_DEV_DOMAIN"] || "ncvmail.com"}`;
+  return process.env["FRONTEND_URL"] || `https://${process.env["REPLIT_DEV_DOMAIN"] || "inboria.com"}`;
 }
 
 const PRICE_MAP: Record<string, string> = {
@@ -70,7 +70,7 @@ router.post("/stripe/checkout", requireAuth, async (req, res): Promise<void> => 
     }
 
     if (profile.country && !isAllowedCountry(profile.country)) {
-      res.status(403).json({ error: "NCV Mail est actuellement disponible uniquement dans l'Union Europeenne, l'EEE et la Suisse." });
+      res.status(403).json({ error: "Inboria est actuellement disponible uniquement dans l'Union Europeenne, l'EEE et la Suisse." });
       return;
     }
 
