@@ -82,50 +82,88 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
     const todayAppointments = (todayAppts || []).map(mapAppt);
     const tomorrowAppointments = (tomorrowAppts || []).map(mapAppt);
 
-    const langInstructions: Record<string, { system: string; userLang: string }> = {
+    const briefingPrompts: Record<string, { system: string; user: string }> = {
       fr: {
-        system: "Tu es un assistant de gestion d'emails et d'agenda pour Inboria. Tu DOIS répondre UNIQUEMENT en français. Même si les emails sont en anglais, ton résumé, ton conseil et toutes tes réponses doivent être rédigés entièrement en français. Aucun mot en anglais dans ta réponse.",
-        userLang: "Réponds UNIQUEMENT en français. Tous les champs du JSON doivent être en français.",
+        system: `Tu es un assistant de gestion d'emails et d'agenda pour Inboria.
+RÈGLE ABSOLUE : Tu DOIS répondre UNIQUEMENT et ENTIÈREMENT en FRANÇAIS.
+Même si les emails sont en anglais ou en néerlandais, TOUT ton texte doit être en français.
+Le champ "summary" doit être en français.
+Le champ "advice" doit être en français.
+Aucun mot anglais ou néerlandais dans ta réponse JSON.`,
+        user: `Voici les ${allEmails.length} derniers emails de l'utilisateur :
+${allEmails.map(e => `- [${e.priority}] ${e.sender}: ${e.subject} ${e.summary ? `(${e.summary})` : ""}`).join("\n")}
+
+Statistiques : ${urgent} urgents, ${moyen} moyens, ${faible} faibles, ${pending} en attente.${
+          todayAppointments.length > 0 || tomorrowAppointments.length > 0
+            ? `\n\nRendez-vous aujourd'hui (${todayAppointments.length}) : ${todayAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "aucun"}\nRendez-vous demain (${tomorrowAppointments.length}) : ${tomorrowAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "aucun"}`
+            : ""
+        }
+
+IMPORTANT : Réponds UNIQUEMENT en français. Génère un objet JSON avec ces 3 champs :
+{
+  "summary": "(résumé général de la journée en 2-3 phrases EN FRANÇAIS, incluant les RDV si pertinent)",
+  "advice": "(un conseil personnalisé EN FRANÇAIS pour améliorer la gestion des emails et de l'agenda)",
+  "keyEmailIds": ["id1", "id2", ...]
+}
+Rappel : les valeurs de "summary" et "advice" DOIVENT être rédigées entièrement en français.`,
       },
       en: {
-        system: "You are an email and calendar management assistant for Inboria. You MUST respond ONLY in English. Generate a structured daily briefing including appointments.",
-        userLang: "Respond ONLY in English. All JSON fields must be in English.",
+        system: `You are an email and calendar management assistant for Inboria.
+ABSOLUTE RULE: You MUST respond ONLY and ENTIRELY in ENGLISH.
+Even if emails are in French or Dutch, ALL your text must be in English.
+The "summary" field must be in English.
+The "advice" field must be in English.
+No French or Dutch words in your JSON response.`,
+        user: `Here are the user's ${allEmails.length} latest emails:
+${allEmails.map(e => `- [${e.priority}] ${e.sender}: ${e.subject} ${e.summary ? `(${e.summary})` : ""}`).join("\n")}
+
+Stats: ${urgent} urgent, ${moyen} medium, ${faible} low, ${pending} pending.${
+          todayAppointments.length > 0 || tomorrowAppointments.length > 0
+            ? `\n\nToday's appointments (${todayAppointments.length}): ${todayAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "none"}\nTomorrow's appointments (${tomorrowAppointments.length}): ${tomorrowAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "none"}`
+            : ""
+        }
+
+IMPORTANT: Respond ONLY in English. Generate a JSON object with these 3 fields:
+{
+  "summary": "(general overview of the day in 2-3 sentences IN ENGLISH, including appointments if relevant)",
+  "advice": "(a personalized tip IN ENGLISH to improve email and calendar management)",
+  "keyEmailIds": ["id1", "id2", ...]
+}
+Reminder: the values of "summary" and "advice" MUST be written entirely in English.`,
       },
       nl: {
-        system: "Je bent een e-mail- en agendabeheerassistent voor Inboria. Je MOET UITSLUITEND in het Nederlands antwoorden. Zelfs als de e-mails in het Engels zijn, moeten je samenvatting, advies en alle antwoorden volledig in het Nederlands zijn geschreven.",
-        userLang: "Antwoord UITSLUITEND in het Nederlands. Alle JSON-velden moeten in het Nederlands zijn.",
+        system: `Je bent een e-mail- en agendabeheerassistent voor Inboria.
+ABSOLUTE REGEL: Je MOET UITSLUITEND en VOLLEDIG in het NEDERLANDS antwoorden.
+Zelfs als de e-mails in het Engels of Frans zijn, MOET al je tekst in het Nederlands zijn.
+Het veld "summary" moet in het Nederlands zijn.
+Het veld "advice" moet in het Nederlands zijn.
+Geen Engelse of Franse woorden in je JSON-antwoord.`,
+        user: `Hier zijn de ${allEmails.length} laatste e-mails van de gebruiker:
+${allEmails.map(e => `- [${e.priority}] ${e.sender}: ${e.subject} ${e.summary ? `(${e.summary})` : ""}`).join("\n")}
+
+Statistieken: ${urgent} urgent, ${moyen} gemiddeld, ${faible} laag, ${pending} in afwachting.${
+          todayAppointments.length > 0 || tomorrowAppointments.length > 0
+            ? `\n\nAfspraken vandaag (${todayAppointments.length}): ${todayAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "geen"}\nAfspraken morgen (${tomorrowAppointments.length}): ${tomorrowAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "geen"}`
+            : ""
+        }
+
+BELANGRIJK: Antwoord UITSLUITEND in het Nederlands. Genereer een JSON-object met deze 3 velden:
+{
+  "summary": "(algemeen overzicht van de dag in 2-3 zinnen IN HET NEDERLANDS, inclusief afspraken indien relevant)",
+  "advice": "(een gepersonaliseerd advies IN HET NEDERLANDS om e-mail- en agendabeheer te verbeteren)",
+  "keyEmailIds": ["id1", "id2", ...]
+}
+Herinnering: de waarden van "summary" en "advice" MOETEN volledig in het Nederlands zijn geschreven.`,
       },
     };
-    const lang = langInstructions[language] || langInstructions.fr;
-
-    const appointmentContext = todayAppointments.length > 0 || tomorrowAppointments.length > 0
-      ? `\n\nRendez-vous aujourd'hui (${todayAppointments.length}): ${todayAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "aucun"}\nRendez-vous demain (${tomorrowAppointments.length}): ${tomorrowAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "aucun"}`
-      : "";
+    const prompt = briefingPrompts[language] || briefingPrompts.fr;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       max_completion_tokens: 2048,
       messages: [
-        {
-          role: "system",
-          content: lang.system,
-        },
-        {
-          role: "user",
-          content: `Voici les ${allEmails.length} derniers emails de l'utilisateur:
-${allEmails.map(e => `- [${e.priority}] ${e.sender}: ${e.subject} ${e.summary ? `(${e.summary})` : ""}`).join("\n")}
-
-Statistiques: ${urgent} urgents, ${moyen} moyens, ${faible} faibles, ${pending} en attente.${appointmentContext}
-
-${lang.userLang}
-
-Genere un JSON avec:
-{
-  "summary": "resume general de la journee en 2-3 phrases (incluant les RDV si pertinent)",
-  "advice": "un conseil personnalise pour ameliorer la gestion des emails et de l'agenda",
-  "keyEmailIds": [liste des 5 IDs les plus importants]
-}`,
-        },
+        { role: "system", content: prompt.system },
+        { role: "user", content: prompt.user },
       ],
     });
 
