@@ -803,11 +803,6 @@ export default function Dashboard() {
     isDraggingRef.current = true;
     didDragRef.current = false;
     dragStartIdRef.current = id;
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      next.add(id);
-      return next;
-    });
     const handleMouseUp = () => {
       isDraggingRef.current = false;
       document.removeEventListener("mouseup", handleMouseUp);
@@ -817,12 +812,13 @@ export default function Dashboard() {
 
   const handleDragSelectEnter = useCallback((id: number) => {
     if (!isDraggingRef.current) return;
-    if (id !== dragStartIdRef.current) didDragRef.current = true;
-    setSelectedIds((prev) => {
-      const next = new Set(prev);
-      next.add(id);
-      return next;
-    });
+    if (id !== dragStartIdRef.current) {
+      if (!didDragRef.current) {
+        didDragRef.current = true;
+        setSelectedIds((prev) => new Set(prev).add(dragStartIdRef.current!));
+      }
+      setSelectedIds((prev) => new Set(prev).add(id));
+    }
   }, []);
 
   const handleContextMenu = useCallback((e: React.MouseEvent, emailId: number) => {

@@ -77,15 +77,19 @@ export default function Taches() {
     isDraggingRef.current = true;
     didDragRef.current = false;
     dragStartIdRef.current = id;
-    setSelectedTaskIds((prev) => new Set(prev).add(id));
     const handleMouseUp = () => { isDraggingRef.current = false; document.removeEventListener("mouseup", handleMouseUp); };
     document.addEventListener("mouseup", handleMouseUp);
   }, []);
 
   const handleDragSelectEnter = useCallback((id: string) => {
     if (!isDraggingRef.current) return;
-    if (id !== dragStartIdRef.current) didDragRef.current = true;
-    setSelectedTaskIds((prev) => new Set(prev).add(id));
+    if (id !== dragStartIdRef.current) {
+      if (!didDragRef.current) {
+        didDragRef.current = true;
+        setSelectedTaskIds((prev) => new Set(prev).add(dragStartIdRef.current!));
+      }
+      setSelectedTaskIds((prev) => new Set(prev).add(id));
+    }
   }, []);
 
   const handleTaskContextMenu = useCallback((e: React.MouseEvent, taskId: string) => {

@@ -230,15 +230,19 @@ export default function Archives() {
     isDraggingRef.current = true;
     didDragRef.current = false;
     dragStartIdRef.current = id;
-    setSelectedIds((prev) => new Set(prev).add(id));
     const handleMouseUp = () => { isDraggingRef.current = false; document.removeEventListener("mouseup", handleMouseUp); };
     document.addEventListener("mouseup", handleMouseUp);
   }, []);
 
   const handleDragSelectEnter = useCallback((id: number) => {
     if (!isDraggingRef.current) return;
-    if (id !== dragStartIdRef.current) didDragRef.current = true;
-    setSelectedIds((prev) => new Set(prev).add(id));
+    if (id !== dragStartIdRef.current) {
+      if (!didDragRef.current) {
+        didDragRef.current = true;
+        setSelectedIds((prev) => new Set(prev).add(dragStartIdRef.current!));
+      }
+      setSelectedIds((prev) => new Set(prev).add(id));
+    }
   }, []);
 
   const handleContextMenuArchive = useCallback((e: React.MouseEvent, emailId: number) => {
