@@ -179,7 +179,7 @@ const s = StyleSheet.create({
   scrollContent: { padding: 24, justifyContent: "center", flexGrow: 1 },
 
   logoBox: { alignItems: "center", marginBottom: 40 },
-  logoImg: { width: 180, height: 60, marginBottom: 16 },
+  logoImg: { width: 280, height: 90, marginBottom: 20 },
   subtitle: { fontSize: 14, fontFamily: "Inter_400Regular", marginTop: 6 },
 
   errorBox: {
