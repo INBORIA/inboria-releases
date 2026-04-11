@@ -230,6 +230,18 @@ export default function Archives() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  const listContainerRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (selectedIds.size === 0) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-email-row]") || target.closest("[data-selection-bar]") || target.closest("[data-context-menu]")) return;
+      setSelectedIds(new Set());
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [selectedIds.size > 0]);
+
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
   const dragStartIdRef = useRef<number | null>(null);
@@ -461,6 +473,7 @@ export default function Archives() {
                 return (
                   <div
                     key={email.id}
+                    data-email-row
                     className={`group flex items-stretch rounded-lg border transition-colors cursor-pointer overflow-hidden select-none ${isSelected ? "border-primary/50 bg-primary/[0.08]" : "border-border bg-card hover:bg-[#1a2235]"}`}
                     onClick={() => {
                       if (didDragRef.current) return;
@@ -517,7 +530,7 @@ export default function Archives() {
             )}
           </div>
           {selectionMode && (
-            <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#141c2b] border border-[#1f2937] rounded-lg shadow-2xl px-4 py-2 flex items-center gap-3">
+            <div data-selection-bar className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#141c2b] border border-[#1f2937] rounded-lg shadow-2xl px-4 py-2 flex items-center gap-3">
               <span className="text-[11px] text-[#8b9cb3]">{t("inbox.selectedCount", { count: selectedIds.size })}</span>
               <button onClick={handleBulkRestore} className="flex items-center gap-1.5 text-[11px] text-primary hover:text-white transition-colors">
                 <RotateCcw className="w-3 h-3" />{t("archives.restoreToInbox")}
@@ -532,6 +545,7 @@ export default function Archives() {
         {contextMenu && (
           <div
             ref={contextMenuRef}
+            data-context-menu
             className="fixed z-[9999] min-w-[200px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
             style={{ top: Math.min(contextMenu.y, window.innerHeight - 240), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
           >

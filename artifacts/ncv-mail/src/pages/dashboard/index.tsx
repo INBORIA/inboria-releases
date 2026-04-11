@@ -84,6 +84,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
 
   return (
     <div
+      data-email-row
       className={`group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden select-none ${isSelected ? "border-primary/50 bg-primary/[0.06]" : "border-border"}`}
       onClick={onClick}
       onContextMenu={(e) => { e.preventDefault(); onContextMenu?.(e, email.id); }}
@@ -802,6 +803,17 @@ export default function Dashboard() {
     document.addEventListener("keydown", handleKeyDown);
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
+
+  useEffect(() => {
+    if (selectedIds.size === 0) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-email-row]") || target.closest("[data-selection-bar]") || target.closest("[data-context-menu]")) return;
+      setSelectedIds(new Set());
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [selectedIds.size > 0]);
 
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
@@ -1687,7 +1699,7 @@ export default function Dashboard() {
                   </div>
 
                   {selectionMode && (
-                    <div className="flex items-center gap-2 mb-2 p-2.5 rounded-lg bg-primary/[0.08] border border-primary/20">
+                    <div data-selection-bar className="flex items-center gap-2 mb-2 p-2.5 rounded-lg bg-primary/[0.08] border border-primary/20">
                       <button
                         onClick={toggleSelectAll}
                         className="flex items-center gap-1.5 text-[11px] text-primary hover:text-white transition-colors"
@@ -1892,6 +1904,7 @@ export default function Dashboard() {
       {contextMenu && (
         <div
           ref={contextMenuRef}
+          data-context-menu
           className="fixed z-[9999] min-w-[200px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
           style={{ top: Math.min(contextMenu.y, window.innerHeight - 260), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
         >

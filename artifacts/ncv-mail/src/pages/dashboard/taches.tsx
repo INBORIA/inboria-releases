@@ -77,6 +77,17 @@ export default function Taches() {
     return () => document.removeEventListener("keydown", handleKeyDown);
   }, []);
 
+  useEffect(() => {
+    if (selectedTaskIds.size === 0) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-email-row]") || target.closest("[data-selection-bar]") || target.closest("[data-context-menu]")) return;
+      setSelectedTaskIds(new Set());
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [selectedTaskIds.size > 0]);
+
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
   const dragStartIdRef = useRef<string | null>(null);
@@ -305,6 +316,7 @@ export default function Taches() {
               return (
                 <div
                   key={task.id}
+                  data-email-row
                   className={`group rounded-lg border p-4 flex items-start gap-3 transition-all cursor-pointer select-none ${isTaskSelected ? "border-primary/50 bg-primary/[0.08]" : `bg-card border-border hover:bg-[#1a2235]`} ${taskStatus === "done" ? "opacity-60" : ""}`}
                   onClick={() => {
                     if (didDragRef.current) return;
@@ -409,7 +421,7 @@ export default function Taches() {
           )}
         </div>
         {taskSelectionMode && (
-          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#141c2b] border border-[#1f2937] rounded-lg shadow-2xl px-4 py-2 flex items-center gap-3">
+          <div data-selection-bar className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#141c2b] border border-[#1f2937] rounded-lg shadow-2xl px-4 py-2 flex items-center gap-3">
             <span className="text-[11px] text-[#8b9cb3]">{t("inbox.selectedCount", { count: selectedTaskIds.size })}</span>
             <button onClick={handleBulkMarkDone} className="flex items-center gap-1.5 text-[11px] text-emerald-400 hover:text-emerald-300 transition-colors">
               <CheckCircle2 className="w-3 h-3" />{t("tasks.markDone")}
@@ -424,6 +436,7 @@ export default function Taches() {
       {contextMenu && (
         <div
           ref={contextMenuRef}
+          data-context-menu
           className="fixed z-[9999] min-w-[200px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
           style={{ top: Math.min(contextMenu.y, window.innerHeight - 200), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
         >
