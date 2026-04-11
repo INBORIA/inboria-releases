@@ -31,24 +31,17 @@ export default function Abonnement() {
   const [paddleReady, setPaddleReady] = useState(false);
 
   useEffect(() => {
-    const initPaddle = () => {
-      if (window.Paddle) {
-        window.Paddle.Setup({ seller: undefined });
-        setPaddleReady(true);
-      }
-    };
-
     if (window.Paddle) {
-      initPaddle();
-    } else {
-      const interval = setInterval(() => {
-        if (window.Paddle) {
-          initPaddle();
-          clearInterval(interval);
-        }
-      }, 500);
-      return () => clearInterval(interval);
+      setPaddleReady(true);
+      return;
     }
+    const interval = setInterval(() => {
+      if (window.Paddle) {
+        setPaddleReady(true);
+        clearInterval(interval);
+      }
+    }, 500);
+    return () => clearInterval(interval);
   }, []);
 
   useEffect(() => {
