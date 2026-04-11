@@ -100,7 +100,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
       <div className="flex h-28 shrink-0 flex-col items-center justify-center px-4 border-b border-[#1f2937]">
-        <img src={appLogo} alt="Inboria" className="h-20 w-auto object-contain" />
+        <img src={appLogo} alt="Inboria" className="h-28 w-auto object-contain" />
       </div>
       
       <nav className="flex-1 px-2 py-2.5 space-y-0.5">
@@ -206,7 +206,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               </SheetContent>
             </Sheet>
             <div className="flex items-center gap-2 ml-2">
-              <img src={appLogo} alt="Inboria" className="h-24 w-auto object-contain" />
+              <img src={appLogo} alt="Inboria" className="h-28 w-auto object-contain" />
             </div>
           </div>
           <div className="flex-1" />
