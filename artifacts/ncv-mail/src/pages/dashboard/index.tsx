@@ -1698,59 +1698,51 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {selectionMode && (
-                    <div data-selection-bar className="flex items-center gap-2 mb-2 p-2.5 rounded-lg bg-primary/[0.08] border border-primary/20">
-                      <button
-                        onClick={toggleSelectAll}
-                        className="flex items-center gap-1.5 text-[11px] text-primary hover:text-white transition-colors"
-                      >
-                        {selectedIds.size === (activeEmails?.length || 0) ? <CheckSquare className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />}
-                        {selectedIds.size === (activeEmails?.length || 0) ? t("inbox.deselectAll") : t("inbox.selectAll")}
-                      </button>
-                      <span className="text-[11px] text-[#8b9cb3]">
-                        {t("inbox.selectedCount", { count: selectedIds.size })}
-                      </span>
-                      <div className="flex-1" />
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
-                        onClick={() => handleBulkAction("read")}
-                        disabled={bulkUpdateMut.isPending}
-                      >
-                        <CheckCircle2 className="w-3 h-3" />
-                        {t("inbox.bulkMarkRead")}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
-                        onClick={() => handleBulkAction("archive")}
-                        disabled={bulkUpdateMut.isPending}
-                      >
-                        <Archive className="w-3 h-3" />
-                        {t("inbox.bulkArchive")}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.08]"
-                        onClick={() => handleBulkAction("delete")}
-                        disabled={bulkUpdateMut.isPending}
-                      >
-                        <Trash2 className="w-3 h-3" />
-                        {t("inbox.deleteEmail")}
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        className="h-7 px-2 text-[#8b9cb3] hover:text-white"
-                        onClick={() => setSelectedIds(new Set())}
-                      >
-                        <X className="w-3.5 h-3.5" />
-                      </Button>
-                    </div>
-                  )}
+                  <div data-selection-bar className={`flex items-center gap-2 mb-2 p-2.5 rounded-lg border ${selectionMode ? "bg-primary/[0.08] border-primary/20" : "bg-card/50 border-border"}`}>
+                    <button
+                      onClick={toggleSelectAll}
+                      className="flex items-center gap-1.5 text-[11px] text-primary hover:text-white transition-colors"
+                    >
+                      {selectedIds.size === (activeEmails?.length || 0) && selectedIds.size > 0 ? <CheckSquare className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />}
+                      {selectedIds.size === (activeEmails?.length || 0) && selectedIds.size > 0 ? t("inbox.deselectAll") : t("inbox.selectAll")}
+                    </button>
+                    {selectionMode && (
+                      <>
+                        <span className="text-[11px] text-[#8b9cb3]">
+                          {t("inbox.selectedCount", { count: selectedIds.size })}
+                        </span>
+                        <div className="flex-1" />
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                          onClick={() => handleBulkAction("archive")}
+                          disabled={bulkUpdateMut.isPending}
+                        >
+                          <Archive className="w-3 h-3" />
+                          {t("inbox.bulkArchive")}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.08]"
+                          onClick={() => handleBulkAction("delete")}
+                          disabled={bulkUpdateMut.isPending}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                          {t("inbox.deleteEmail")}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          className="h-7 px-2 text-[#8b9cb3] hover:text-white"
+                          onClick={() => setSelectedIds(new Set())}
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </Button>
+                      </>
+                    )}
+                  </div>
 
                   <div className="space-y-1">
                     {emailsLoading ? (
@@ -1926,13 +1918,6 @@ export default function Dashboard() {
                 {t("inbox.openEmail")}
               </button>
             )}
-            <button
-              onClick={() => { handleBulkAction("read"); setContextMenu(null); }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
-            >
-              <CheckCircle2 className="w-3.5 h-3.5" />
-              {t("inbox.bulkMarkRead")}
-            </button>
             <button
               onClick={() => { handleBulkAction("archive"); setContextMenu(null); }}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
