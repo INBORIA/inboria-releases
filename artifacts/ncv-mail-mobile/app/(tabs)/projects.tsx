@@ -15,6 +15,7 @@ import { useListProjects, getListProjectsQueryKey } from "@workspace/api-client-
 import type { Project } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
+import { useTranslation } from "react-i18next";
 
 const STATUS_COLORS: Record<string, string> = {
   actif: "#22c55e",
@@ -22,18 +23,19 @@ const STATUS_COLORS: Record<string, string> = {
   en_pause: "#f59e0b",
 };
 
-const STATUS_LABELS: Record<string, string> = {
-  actif: "Actif",
-  termine: "Termine",
-  en_pause: "En pause",
-};
-
 export default function ProjectsScreen() {
   const colors = useColors();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [refreshing, setRefreshing] = useState(false);
   const isWeb = Platform.OS === "web";
+
+  const STATUS_LABELS: Record<string, string> = {
+    actif: t("projects.statusActive"),
+    termine: t("projects.statusDone"),
+    en_pause: t("projects.statusPaused"),
+  };
 
   const { data: projects, isLoading } = useListProjects();
 
@@ -88,7 +90,7 @@ export default function ProjectsScreen() {
             <View style={s.stat}>
               <MaterialCommunityIcons name="clock-outline" size={13} color={colors.warning} />
               <Text style={[s.statText, { color: colors.warning }]}>
-                {item.pendingTaskCount} en cours
+                {item.pendingTaskCount} {t("projects.inProgress")}
               </Text>
             </View>
           )}
@@ -108,9 +110,9 @@ export default function ProjectsScreen() {
       ) : !projects?.length ? (
         <View style={s.center}>
           <MaterialCommunityIcons name="folder-outline" size={48} color={colors.mutedForeground + "40"} />
-          <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>Aucun projet</Text>
+          <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>{t("projects.noProjects")}</Text>
           <Text style={[s.emptyHint, { color: colors.mutedForeground }]}>
-            Les projets sont crees automatiquement par l'IA
+            {t("projects.noProjectsHint")}
           </Text>
         </View>
       ) : (

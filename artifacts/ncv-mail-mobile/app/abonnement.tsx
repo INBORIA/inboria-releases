@@ -11,77 +11,53 @@ import { useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGetProfile } from "@workspace/api-client-react";
 import { useColors } from "@/hooks/useColors";
-
-const plans = [
-  {
-    id: "essai",
-    name: "Essai",
-    price: "gratuit",
-    quota: 100,
-    description: "100 emails offerts pour decouvrir NCV Mail",
-    features: [
-      "100 emails offerts (usage unique)",
-      "3 rubriques personnalisees",
-      "Support par email",
-      "Brouillons IA inclus",
-    ],
-    icon: "check" as const,
-  },
-  {
-    id: "solo",
-    name: "Solo",
-    price: "9",
-    quota: 3000,
-    description: "Pour les independants",
-    features: [
-      "3 000 emails par mois",
-      "Rubriques illimitees",
-      "Brief quotidien",
-      "Brouillons IA proactifs",
-      "Extraction automatique des taches",
-      "Support prioritaire",
-    ],
-    icon: "lightning-bolt" as const,
-  },
-  {
-    id: "pro",
-    name: "Pro",
-    price: "19",
-    quota: 10000,
-    description: "Ideal pour les professionnels",
-    features: [
-      "10 000 emails par mois",
-      "Rubriques illimitees",
-      "Brief quotidien",
-      "Brouillons IA proactifs",
-      "Statistiques detaillees",
-      "Support prioritaire",
-    ],
-    icon: "lightning-bolt-outline" as const,
-  },
-  {
-    id: "business",
-    name: "Business",
-    price: "9",
-    quota: 10000,
-    description: "Pour les equipes",
-    features: [
-      "10 000 emails / siege / mois",
-      "Tout du plan Pro inclus",
-      "Minimum 3 sieges, jusqu'a 50",
-      "Boites partagees",
-      "Assignation de taches",
-      "API dediee",
-    ],
-    icon: "account-group-outline" as const,
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export default function AbonnementScreen() {
   const colors = useColors();
   const router = useRouter();
   const { data: profile } = useGetProfile();
+  const { t } = useTranslation();
   const isWeb = Platform.OS === "web";
+
+  const plans = [
+    {
+      id: "essai",
+      name: t("subscription.trial"),
+      price: t("common.free"),
+      quota: 100,
+      description: t("subscription.trialDesc"),
+      features: t("subscription.trialFeatures", { returnObjects: true }) as string[],
+      icon: "check" as const,
+    },
+    {
+      id: "solo",
+      name: t("subscription.solo"),
+      price: "9",
+      quota: 3000,
+      description: t("subscription.soloDesc"),
+      features: t("subscription.soloFeatures", { returnObjects: true }) as string[],
+      icon: "lightning-bolt" as const,
+    },
+    {
+      id: "pro",
+      name: t("subscription.pro"),
+      price: "19",
+      quota: 10000,
+      description: t("subscription.proDesc"),
+      features: t("subscription.proFeatures", { returnObjects: true }) as string[],
+      icon: "lightning-bolt-outline" as const,
+    },
+    {
+      id: "business",
+      name: t("subscription.business"),
+      price: "9",
+      quota: 10000,
+      description: t("subscription.businessDesc"),
+      features: t("subscription.businessFeatures", { returnObjects: true }) as string[],
+      icon: "account-group-outline" as const,
+    },
+  ];
 
   const quotaPercent = profile
     ? Math.min(100, (profile.emailsUsed / Math.max(1, profile.emailsQuota)) * 100)
@@ -92,30 +68,30 @@ export default function AbonnementScreen() {
       <View style={[s.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
           <MaterialCommunityIcons name="arrow-left" size={20} color={colors.mutedForeground} />
-          <Text style={[s.backText, { color: colors.mutedForeground }]}>Retour</Text>
+          <Text style={[s.backText, { color: colors.mutedForeground }]}>{t("common.back")}</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={[s.scroll, { paddingBottom: isWeb ? 84 : 100 }]}>
-        <Text style={[s.pageTitle, { color: colors.foreground }]}>Abonnement</Text>
+        <Text style={[s.pageTitle, { color: colors.foreground }]}>{t("subscription.title")}</Text>
         <Text style={[s.pageSubtitle, { color: colors.mutedForeground }]}>
-          Gerez votre plan et vos quotas.
+          {t("subscription.subtitle")}
         </Text>
 
         {profile && (
           <View style={[s.currentPlan, { backgroundColor: colors.card, borderColor: colors.border }]}>
             <View style={s.planRow}>
-              <Text style={[s.planLabel, { color: colors.foreground }]}>Plan actuel</Text>
+              <Text style={[s.planLabel, { color: colors.foreground }]}>{t("subscription.currentPlan")}</Text>
               <View style={[s.planBadge, { backgroundColor: colors.primary + "20" }]}>
                 <Text style={[s.planBadgeText, { color: colors.primary }]}>
-                  {profile.plan?.charAt(0).toUpperCase() + profile.plan?.slice(1) || "Essai"}
+                  {profile.plan?.charAt(0).toUpperCase() + profile.plan?.slice(1) || t("subscription.trial")}
                 </Text>
               </View>
             </View>
 
             <View style={s.quotaSection}>
               <View style={s.quotaHeader}>
-                <Text style={[s.quotaLabel, { color: colors.mutedForeground }]}>Consommation IA</Text>
+                <Text style={[s.quotaLabel, { color: colors.mutedForeground }]}>{t("subscription.aiConsumption")}</Text>
                 <Text style={[s.quotaValue, { color: colors.foreground }]}>
                   {profile.emailsUsed} / {profile.emailsQuota}
                 </Text>
@@ -133,14 +109,14 @@ export default function AbonnementScreen() {
               </View>
               {quotaPercent > 80 && (
                 <Text style={[s.quotaWarn, { color: "#ef4444" }]}>
-                  Attention : vous approchez de votre limite mensuelle.
+                  {t("subscription.quotaWarning")}
                 </Text>
               )}
             </View>
           </View>
         )}
 
-        <Text style={[s.sectionTitle, { color: colors.foreground }]}>Tous les plans</Text>
+        <Text style={[s.sectionTitle, { color: colors.foreground }]}>{t("subscription.allPlans")}</Text>
 
         {plans.map((plan) => {
           const isCurrent = profile?.plan === plan.id;
@@ -157,7 +133,7 @@ export default function AbonnementScreen() {
             >
               {isCurrent && (
                 <View style={[s.currentTag, { backgroundColor: colors.primary + "20" }]}>
-                  <Text style={[s.currentTagText, { color: colors.primary }]}>Plan actuel</Text>
+                  <Text style={[s.currentTagText, { color: colors.primary }]}>{t("subscription.currentPlan")}</Text>
                 </View>
               )}
               <View style={s.planCardHeader}>
@@ -173,13 +149,15 @@ export default function AbonnementScreen() {
                   <Text style={[s.planDesc, { color: colors.mutedForeground }]}>{plan.description}</Text>
                 </View>
                 <View>
-                  <Text style={[s.planPrice, { color: colors.foreground }]}>{plan.id === "essai" ? "Gratuit" : `${plan.price}€`}</Text>
-                  {plan.id !== "essai" && <Text style={[s.planPeriod, { color: colors.mutedForeground }]}>/mois</Text>}
+                  <Text style={[s.planPrice, { color: colors.foreground }]}>
+                    {plan.id === "essai" ? t("common.free") : `${plan.price}\u20AC`}
+                  </Text>
+                  {plan.id !== "essai" && <Text style={[s.planPeriod, { color: colors.mutedForeground }]}>{t("common.month")}</Text>}
                 </View>
               </View>
 
               <View style={s.featuresList}>
-                {plan.features.map((feature, i) => (
+                {(Array.isArray(plan.features) ? plan.features : []).map((feature, i) => (
                   <View key={i} style={s.featureRow}>
                     <MaterialCommunityIcons
                       name="check"
@@ -199,9 +177,9 @@ export default function AbonnementScreen() {
             <MaterialCommunityIcons name="credit-card-outline" size={16} color="#f59e0b" />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={[s.infoTitle, { color: colors.foreground }]}>Depassement de quota</Text>
+            <Text style={[s.infoTitle, { color: colors.foreground }]}>{t("subscription.overage")}</Text>
             <Text style={[s.infoDesc, { color: colors.mutedForeground }]}>
-              Facturation automatique Pay-as-you-go. Notification a 80% du quota.
+              {t("subscription.overageDesc")}
             </Text>
           </View>
         </View>
@@ -211,9 +189,9 @@ export default function AbonnementScreen() {
             <MaterialCommunityIcons name="information-outline" size={16} color="#3b82f6" />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={[s.infoTitle, { color: colors.foreground }]}>Sans engagement</Text>
+            <Text style={[s.infoTitle, { color: colors.foreground }]}>{t("subscription.noCommitment")}</Text>
             <Text style={[s.infoDesc, { color: colors.mutedForeground }]}>
-              Changez de plan ou annulez a tout moment.
+              {t("subscription.noCommitmentDesc")}
             </Text>
           </View>
         </View>
@@ -223,15 +201,15 @@ export default function AbonnementScreen() {
             <MaterialCommunityIcons name="shield-check-outline" size={16} color={colors.primary} />
           </View>
           <View style={{ flex: 1 }}>
-            <Text style={[s.infoTitle, { color: colors.foreground }]}>Securite RGPD</Text>
+            <Text style={[s.infoTitle, { color: colors.foreground }]}>{t("subscription.gdpr")}</Text>
             <Text style={[s.infoDesc, { color: colors.mutedForeground }]}>
-              Vos emails ne sont jamais stockes pour entrainer nos modeles. Donnees hebergees en Europe.
+              {t("subscription.gdprDesc")}
             </Text>
           </View>
         </View>
 
         <Text style={[s.footnote, { color: colors.mutedForeground }]}>
-          Pour changer de plan, rendez-vous sur l'application web NCV Mail.
+          {t("subscription.changePlan")}
         </Text>
       </ScrollView>
     </View>

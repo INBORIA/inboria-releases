@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "NCV Mail",
+    "name": "Inboria",
     "slug": "ncv-mail-mobile",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "ncv-mail-mobile",
+    "scheme": "inboria-mobile",
     "userInterfaceStyle": "dark",
     "newArchEnabled": true,
     "splash": {
@@ -15,10 +15,10 @@
     },
     "ios": {
       "supportsTablet": false,
-      "bundleIdentifier": "com.ncvmail.mobile"
+      "bundleIdentifier": "com.inboria.mobile"
     },
     "android": {
-      "package": "com.ncvmail.mobile",
+      "package": "com.inboria.mobile",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/icon.png",
         "backgroundColor": "#0d1117"

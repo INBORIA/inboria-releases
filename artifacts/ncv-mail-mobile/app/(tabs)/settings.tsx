@@ -12,48 +12,50 @@ import { useGetProfile } from "@workspace/api-client-react";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "expo-router";
-
-const MENU_ITEMS = [
-  {
-    key: "archives",
-    label: "Archives",
-    desc: "Emails archives par l'IA",
-    icon: "archive-outline" as const,
-    route: "/archives",
-    color: "#6366f1",
-  },
-  {
-    key: "categories",
-    label: "Categories",
-    desc: "Gerer les dossiers de classement",
-    icon: "tag-outline" as const,
-    route: "/categories",
-    color: "#22c55e",
-  },
-  {
-    key: "abonnement",
-    label: "Abonnement",
-    desc: "Plan et quotas emails",
-    icon: "credit-card-outline" as const,
-    route: "/abonnement",
-    color: "#f59e0b",
-  },
-  {
-    key: "parametres",
-    label: "Parametres",
-    desc: "Profil, comptes email, preferences IA",
-    icon: "cog-outline" as const,
-    route: "/parametres",
-    color: "#8b5cf6",
-  },
-];
+import { useTranslation } from "react-i18next";
 
 export default function MenuScreen() {
   const colors = useColors();
   const { signOut } = useAuth();
   const { data: profile } = useGetProfile();
   const router = useRouter();
+  const { t } = useTranslation();
   const isWeb = Platform.OS === "web";
+
+  const MENU_ITEMS = [
+    {
+      key: "archives",
+      label: t("settings.archives"),
+      desc: t("settings.archivesDesc"),
+      icon: "archive-outline" as const,
+      route: "/archives",
+      color: "#6366f1",
+    },
+    {
+      key: "categories",
+      label: t("settings.categories"),
+      desc: t("settings.categoriesDesc"),
+      icon: "tag-outline" as const,
+      route: "/categories",
+      color: "#22c55e",
+    },
+    {
+      key: "abonnement",
+      label: t("settings.subscription"),
+      desc: t("settings.subscriptionDesc"),
+      icon: "credit-card-outline" as const,
+      route: "/abonnement",
+      color: "#f59e0b",
+    },
+    {
+      key: "parametres",
+      label: t("settings.parameters"),
+      desc: t("settings.parametersDesc"),
+      icon: "cog-outline" as const,
+      route: "/parametres",
+      color: "#8b5cf6",
+    },
+  ];
 
   const quotaPercent = profile
     ? Math.min(100, (profile.emailsUsed / Math.max(1, profile.emailsQuota)) * 100)
@@ -77,7 +79,7 @@ export default function MenuScreen() {
           </Text>
           <View style={[s.planBadge, { backgroundColor: colors.primary + "20" }]}>
             <Text style={[s.planText, { color: colors.primary }]}>
-              {profile?.plan?.charAt(0).toUpperCase() + (profile?.plan?.slice(1) || "") || "Gratuit"}
+              {profile?.plan?.charAt(0).toUpperCase() + (profile?.plan?.slice(1) || "") || t("common.free")}
             </Text>
           </View>
         </View>
@@ -87,7 +89,7 @@ export default function MenuScreen() {
         <View style={s.quotaHeader}>
           <View style={s.quotaLeft}>
             <MaterialCommunityIcons name="email-check-outline" size={16} color={colors.primary} />
-            <Text style={[s.quotaLabel, { color: colors.mutedForeground }]}>Quota emails IA</Text>
+            <Text style={[s.quotaLabel, { color: colors.mutedForeground }]}>{t("settings.aiQuota")}</Text>
           </View>
           <Text style={[s.quotaValue, { color: colors.foreground }]}>
             {profile?.emailsUsed ?? 0} / {profile?.emailsQuota ?? 0}
@@ -132,7 +134,7 @@ export default function MenuScreen() {
         activeOpacity={0.7}
       >
         <MaterialCommunityIcons name="logout" size={18} color={colors.destructive} />
-        <Text style={[s.logoutLabel, { color: colors.destructive }]}>Se deconnecter</Text>
+        <Text style={[s.logoutLabel, { color: colors.destructive }]}>{t("settings.logout")}</Text>
       </TouchableOpacity>
     </ScrollView>
   );

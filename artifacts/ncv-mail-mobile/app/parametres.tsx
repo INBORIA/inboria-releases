@@ -21,6 +21,7 @@ import {
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
+import { useTranslation } from "react-i18next";
 
 interface EmailConnection {
   id: string;
@@ -47,16 +48,11 @@ function useEmailConnections() {
   });
 }
 
-const SORT_LEVELS = [
-  { id: "strict", label: "Strict" },
-  { id: "normal", label: "Normal" },
-  { id: "souple", label: "Souple" },
-];
-
 export default function ParametresScreen() {
   const colors = useColors();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const isWeb = Platform.OS === "web";
 
   const { data: profile, isLoading } = useGetProfile();
@@ -69,6 +65,12 @@ export default function ParametresScreen() {
   const [notifDaily, setNotifDaily] = useState(true);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
+
+  const SORT_LEVELS = [
+    { id: "strict", label: t("parametres.strict") },
+    { id: "normal", label: t("parametres.normal") },
+    { id: "souple", label: t("parametres.flexible") },
+  ];
 
   useEffect(() => {
     if (profile) {
@@ -94,7 +96,7 @@ export default function ParametresScreen() {
         },
         onError: () => {
           setSaving(false);
-          Alert.alert("Erreur", "Impossible de sauvegarder les modifications.");
+          Alert.alert(t("common.error"), t("parametres.saveError"));
         },
       }
     );
@@ -122,14 +124,14 @@ export default function ParametresScreen() {
       <View style={[s.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
           <MaterialCommunityIcons name="arrow-left" size={20} color={colors.mutedForeground} />
-          <Text style={[s.backText, { color: colors.mutedForeground }]}>Retour</Text>
+          <Text style={[s.backText, { color: colors.mutedForeground }]}>{t("common.back")}</Text>
         </TouchableOpacity>
       </View>
 
       <ScrollView contentContainerStyle={[s.scroll, { paddingBottom: isWeb ? 84 : 100 }]}>
-        <Text style={[s.pageTitle, { color: colors.foreground }]}>Parametres</Text>
+        <Text style={[s.pageTitle, { color: colors.foreground }]}>{t("parametres.title")}</Text>
         <Text style={[s.pageSubtitle, { color: colors.mutedForeground }]}>
-          Gerez votre profil et les preferences de l'IA.
+          {t("parametres.subtitle")}
         </Text>
 
         {isLoading ? (
@@ -143,22 +145,22 @@ export default function ParametresScreen() {
                 <View style={[s.sectionIcon, { backgroundColor: colors.primary + "15" }]}>
                   <MaterialCommunityIcons name="account-outline" size={18} color={colors.primary} />
                 </View>
-                <Text style={[s.sectionTitle, { color: colors.foreground }]}>Profil</Text>
+                <Text style={[s.sectionTitle, { color: colors.foreground }]}>{t("parametres.profile")}</Text>
               </View>
 
               <View style={s.fieldGroup}>
-                <Text style={[s.fieldLabel, { color: colors.mutedForeground }]}>Nom complet</Text>
+                <Text style={[s.fieldLabel, { color: colors.mutedForeground }]}>{t("parametres.fullName")}</Text>
                 <TextInput
                   style={[s.textInput, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
                   value={fullName}
                   onChangeText={setFullName}
-                  placeholder="Votre nom"
+                  placeholder={t("parametres.namePlaceholder")}
                   placeholderTextColor={colors.mutedForeground + "60"}
                 />
               </View>
 
               <View style={s.fieldGroup}>
-                <Text style={[s.fieldLabel, { color: colors.mutedForeground }]}>Email</Text>
+                <Text style={[s.fieldLabel, { color: colors.mutedForeground }]}>{t("parametres.email")}</Text>
                 <View style={[s.readOnlyField, { backgroundColor: colors.background, borderColor: colors.border }]}>
                   <Text style={[s.readOnlyText, { color: colors.foreground + "80" }]}>
                     {profile?.email || "..."}
@@ -173,7 +175,7 @@ export default function ParametresScreen() {
                 <View style={[s.sectionIcon, { backgroundColor: "#22c55e15" }]}>
                   <MaterialCommunityIcons name="email-check-outline" size={18} color="#22c55e" />
                 </View>
-                <Text style={[s.sectionTitle, { color: colors.foreground }]}>Comptes email connectes</Text>
+                <Text style={[s.sectionTitle, { color: colors.foreground }]}>{t("parametres.connectedAccounts")}</Text>
               </View>
 
               {connectionsLoading ? (
@@ -182,7 +184,7 @@ export default function ParametresScreen() {
                 <View style={s.noConnectionBox}>
                   <MaterialCommunityIcons name="alert-circle-outline" size={28} color={colors.mutedForeground + "40"} />
                   <Text style={[s.noConnectionText, { color: colors.mutedForeground }]}>
-                    Impossible de charger les comptes email
+                    {t("parametres.loadError")}
                   </Text>
                 </View>
               ) : connections && connections.length > 0 ? (
@@ -201,7 +203,7 @@ export default function ParametresScreen() {
                           <Text style={[s.connEmail, { color: colors.foreground }]}>{conn.email_address}</Text>
                           <View style={s.connStatusRow}>
                             <MaterialCommunityIcons name="check-circle" size={12} color="#22c55e" />
-                            <Text style={[s.connStatus, { color: "#22c55e" }]}>Connecte</Text>
+                            <Text style={[s.connStatus, { color: "#22c55e" }]}>{t("parametres.connected")}</Text>
                             {conn.last_synced_at && (
                               <Text style={[s.connSync, { color: colors.mutedForeground }]}>
                                 Sync : {new Date(conn.last_synced_at).toLocaleDateString("fr-FR")}
@@ -220,7 +222,7 @@ export default function ParametresScreen() {
                 <View style={s.noConnectionBox}>
                   <MaterialCommunityIcons name="email-off-outline" size={28} color={colors.mutedForeground + "40"} />
                   <Text style={[s.noConnectionText, { color: colors.mutedForeground }]}>
-                    Aucun compte email connecte
+                    {t("parametres.noAccount")}
                   </Text>
                 </View>
               )}
@@ -228,7 +230,7 @@ export default function ParametresScreen() {
               <View style={[s.webNotice, { backgroundColor: colors.primary + "08", borderColor: colors.primary + "20" }]}>
                 <MaterialCommunityIcons name="monitor" size={14} color={colors.primary} />
                 <Text style={[s.webNoticeText, { color: colors.mutedForeground }]}>
-                  Pour ajouter ou modifier vos connexions email, rendez-vous sur l'application web NCV Mail.
+                  {t("parametres.webNotice")}
                 </Text>
               </View>
             </View>
@@ -238,11 +240,11 @@ export default function ParametresScreen() {
                 <View style={[s.sectionIcon, { backgroundColor: "#f59e0b15" }]}>
                   <MaterialCommunityIcons name="brain" size={18} color="#f59e0b" />
                 </View>
-                <Text style={[s.sectionTitle, { color: colors.foreground }]}>Preferences IA</Text>
+                <Text style={[s.sectionTitle, { color: colors.foreground }]}>{t("parametres.aiPreferences")}</Text>
               </View>
 
               <View style={s.fieldGroup}>
-                <Text style={[s.fieldLabel, { color: colors.mutedForeground }]}>Niveau de tri</Text>
+                <Text style={[s.fieldLabel, { color: colors.mutedForeground }]}>{t("parametres.sortLevel")}</Text>
                 <View style={s.optionRow}>
                   {SORT_LEVELS.map((level) => (
                     <TouchableOpacity
@@ -274,7 +276,7 @@ export default function ParametresScreen() {
                 <View style={s.toggleRow}>
                   <View style={s.toggleInfo}>
                     <MaterialCommunityIcons name="bell-ring-outline" size={16} color={colors.mutedForeground} />
-                    <Text style={[s.toggleLabel, { color: colors.foreground }]}>Alertes emails urgents</Text>
+                    <Text style={[s.toggleLabel, { color: colors.foreground }]}>{t("parametres.urgentAlerts")}</Text>
                   </View>
                   <Switch
                     value={notifUrgent}
@@ -287,7 +289,7 @@ export default function ParametresScreen() {
                 <View style={s.toggleRow}>
                   <View style={s.toggleInfo}>
                     <MaterialCommunityIcons name="calendar-check-outline" size={16} color={colors.mutedForeground} />
-                    <Text style={[s.toggleLabel, { color: colors.foreground }]}>Brief quotidien</Text>
+                    <Text style={[s.toggleLabel, { color: colors.foreground }]}>{t("parametres.dailyBrief")}</Text>
                   </View>
                   <Switch
                     value={notifDaily}
@@ -316,12 +318,12 @@ export default function ParametresScreen() {
               ) : saved ? (
                 <>
                   <MaterialCommunityIcons name="check" size={18} color="#fff" />
-                  <Text style={s.saveBtnText}>Enregistre !</Text>
+                  <Text style={s.saveBtnText}>{t("common.saved")}</Text>
                 </>
               ) : (
                 <>
                   <MaterialCommunityIcons name="content-save-outline" size={18} color="#fff" />
-                  <Text style={s.saveBtnText}>Enregistrer</Text>
+                  <Text style={s.saveBtnText}>{t("common.save")}</Text>
                 </>
               )}
             </TouchableOpacity>

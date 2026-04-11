@@ -30,6 +30,7 @@ import {
 import type { Email, PaginatedEmails } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
+import { useTranslation } from "react-i18next";
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -45,6 +46,7 @@ export default function InboxScreen() {
   const colors = useColors();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [searchQuery, setSearchQuery] = useState("");
   const [filterPriority, setFilterPriority] = useState<string>("all");
   const [filterCategory, setFilterCategory] = useState<number | null>(null);
@@ -129,11 +131,11 @@ export default function InboxScreen() {
 
     if (action === "delete") {
       Alert.alert(
-        "Supprimer",
-        `Supprimer ${ids.length} email(s) définitivement ?`,
+        t("common.delete"),
+        t("inbox.deleteConfirm", { count: ids.length }),
         [
-          { text: "Annuler", style: "cancel" },
-          { text: "Supprimer", style: "destructive", onPress: doAction },
+          { text: t("common.cancel"), style: "cancel" },
+          { text: t("common.delete"), style: "destructive", onPress: doAction },
         ]
       );
     } else {
@@ -149,10 +151,10 @@ export default function InboxScreen() {
   };
 
   const priorityFilters = [
-    { key: "all", label: "Tous" },
-    { key: "urgent", label: "Urgent" },
-    { key: "moyen", label: "Moyen" },
-    { key: "faible", label: "Faible" },
+    { key: "all", label: t("inbox.filterAll") },
+    { key: "urgent", label: t("inbox.filterUrgent") },
+    { key: "moyen", label: t("inbox.filterMedium") },
+    { key: "faible", label: t("inbox.filterLow") },
   ];
 
   const priorityDotColor = (p: string) =>
@@ -252,7 +254,7 @@ export default function InboxScreen() {
               {item.status === "unread" && (
                 <View style={[s.unreadBadge, { backgroundColor: colors.primary + "20" }]}>
                   <View style={[s.unreadDot, { backgroundColor: colors.primary }]} />
-                  <Text style={[s.chipLabel, { color: colors.primary }]}>Nouveau</Text>
+                  <Text style={[s.chipLabel, { color: colors.primary }]}>{t("inbox.newBadge")}</Text>
                 </View>
               )}
               {item.categoryName ? (
@@ -297,7 +299,7 @@ export default function InboxScreen() {
                 color={colors.primary}
               />
               <Text style={[s.bulkLabel, { color: colors.primary }]}>
-                {selectedIds.size} sélectionné(s)
+                {t("common.selected", { count: selectedIds.size })}
               </Text>
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setSelectedIds(new Set())} hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}>
@@ -311,7 +313,7 @@ export default function InboxScreen() {
               disabled={bulkUpdate.isPending}
             >
               <MaterialCommunityIcons name="email-check-outline" size={16} color={colors.primary} />
-              <Text style={[s.bulkBtnText, { color: colors.foreground }]}>Lu</Text>
+              <Text style={[s.bulkBtnText, { color: colors.foreground }]}>{t("inbox.read")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[s.bulkBtn, { backgroundColor: colors.card, borderColor: colors.border }]}
@@ -319,7 +321,7 @@ export default function InboxScreen() {
               disabled={bulkUpdate.isPending}
             >
               <MaterialCommunityIcons name="archive-outline" size={16} color={colors.moyen} />
-              <Text style={[s.bulkBtnText, { color: colors.foreground }]}>Archiver</Text>
+              <Text style={[s.bulkBtnText, { color: colors.foreground }]}>{t("inbox.archive")}</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[s.bulkBtn, { backgroundColor: colors.destructive + "15", borderColor: colors.destructive + "30" }]}
@@ -327,7 +329,7 @@ export default function InboxScreen() {
               disabled={bulkUpdate.isPending}
             >
               <MaterialCommunityIcons name="trash-can-outline" size={16} color={colors.destructive} />
-              <Text style={[s.bulkBtnText, { color: colors.destructive }]}>Supprimer</Text>
+              <Text style={[s.bulkBtnText, { color: colors.destructive }]}>{t("inbox.deleteBtn")}</Text>
             </TouchableOpacity>
           </View>
           {bulkUpdate.isPending && (
@@ -338,9 +340,9 @@ export default function InboxScreen() {
         <>
           <View style={s.summaryRow}>
             {[
-              { label: "Urgents", count: summary?.urgentCount ?? 0, color: colors.urgent },
-              { label: "Moyens", count: summary?.moyenCount ?? 0, color: colors.moyen },
-              { label: "Faibles", count: summary?.faibleCount ?? 0, color: colors.faible },
+              { label: t("inbox.urgent"), count: summary?.urgentCount ?? 0, color: colors.urgent },
+              { label: t("inbox.medium"), count: summary?.moyenCount ?? 0, color: colors.moyen },
+              { label: t("inbox.low"), count: summary?.faibleCount ?? 0, color: colors.faible },
             ].map((card) => (
               <View
                 key={card.label}
@@ -356,7 +358,7 @@ export default function InboxScreen() {
             <MaterialCommunityIcons name="magnify" size={16} color={colors.mutedForeground} />
             <TextInput
               style={[s.searchInput, { color: colors.foreground }]}
-              placeholder="Rechercher..."
+              placeholder={t("common.search")}
               placeholderTextColor={colors.mutedForeground + "80"}
               value={searchQuery}
               onChangeText={setSearchQuery}
@@ -378,7 +380,7 @@ export default function InboxScreen() {
         ) : !activeEmails?.length ? (
           <View style={s.center}>
             <MaterialCommunityIcons name="email-open-outline" size={48} color={colors.mutedForeground + "40"} />
-            <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>Aucun email</Text>
+            <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>{t("inbox.noEmails")}</Text>
           </View>
         ) : (
           <FlatList
@@ -451,7 +453,7 @@ export default function InboxScreen() {
                       { color: filterCategory === null ? colors.primary : colors.mutedForeground },
                     ]}
                   >
-                    Toutes
+                    {t("common.allFem")}
                   </Text>
                 </TouchableOpacity>
                 {categories.map((cat) => {

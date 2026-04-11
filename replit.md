@@ -28,7 +28,7 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
 - **Email Sending**: Handles sending emails, supporting threading for Gmail, Microsoft Graph for Outlook, and SMTP for IMAP.
 - **Stripe Integration**: Manages subscriptions, checkout, and customer portal with geographic restrictions and B2B VAT collection.
 - **Integrations (Pro plan)**: Includes Slack for urgent email notifications and Notion for creating task pages from AI-extracted tasks.
-- **Mobile App**: Developed with Expo, sharing API hooks and Supabase Auth, featuring a dark-only theme and tab-based navigation.
+- **Mobile App**: Developed with Expo (Inboria-branded), sharing API hooks and Supabase Auth, featuring a dark-only theme and tab-based navigation. Full i18n (FR/EN/NL) using react-i18next with locale files in `i18n/locales/`. All screens use `useTranslation()` for dynamic language switching.
 - **Organisation Layer (Business plan)**: Implements multi-tenancy with `organisations`, `organisation_members`, and `invitations` tables, supporting CRUD operations for organizations and member management.
 - **Shared Mailboxes (Phase 2)**: Allows sharing email connections within an organization, with dedicated tables and API routes for management and email claiming.
 - **Internal Comments (Phase 3)**: Enables users to add, edit, and delete comments on emails within the application, with access control.

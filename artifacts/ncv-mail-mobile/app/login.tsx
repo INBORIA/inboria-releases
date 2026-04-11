@@ -14,13 +14,15 @@ import { KeyboardAwareScrollViewCompat } from "@/components/KeyboardAwareScrollV
 import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useTranslation } from "react-i18next";
 
-const logoSource = require("@/assets/images/logo-ncv.webp");
+const logoSource = require("@/assets/images/inboria-logo.png");
 
 export default function LoginScreen() {
   const colors = useColors();
   const insets = useSafeAreaInsets();
   const { signIn, signUp } = useAuth();
+  const { t } = useTranslation();
   const [mode, setMode] = useState<"login" | "register">("login");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -32,11 +34,11 @@ export default function LoginScreen() {
 
   const handleSubmit = async () => {
     if (!email.trim() || !password.trim()) {
-      setError("Veuillez remplir tous les champs");
+      setError(t("login.fillAllFields"));
       return;
     }
     if (mode === "register" && !fullName.trim()) {
-      setError("Veuillez entrer votre nom");
+      setError(t("login.enterName"));
       return;
     }
     setLoading(true);
@@ -67,9 +69,9 @@ export default function LoginScreen() {
       >
         <View style={s.logoBox}>
           <Image source={logoSource} style={s.logoImg} resizeMode="contain" />
-          <Text style={[s.appTitle, { color: colors.foreground }]}>NCV Mail</Text>
+          <Text style={[s.appTitle, { color: colors.foreground }]}>{t("login.title")}</Text>
           <Text style={[s.subtitle, { color: colors.mutedForeground }]}>
-            {mode === "login" ? "Connectez-vous a votre compte" : "Creez votre compte"}
+            {mode === "login" ? t("login.loginSubtitle") : t("login.registerSubtitle")}
           </Text>
         </View>
 
@@ -84,10 +86,10 @@ export default function LoginScreen() {
 
         {mode === "register" && (
           <View style={s.field}>
-            <Text style={[s.label, { color: colors.mutedForeground }]}>Nom complet</Text>
+            <Text style={[s.label, { color: colors.mutedForeground }]}>{t("login.fullName")}</Text>
             <TextInput
               style={[s.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground }]}
-              placeholder="Jean Dupont"
+              placeholder={t("login.fullNamePlaceholder")}
               placeholderTextColor={colors.mutedForeground + "80"}
               value={fullName}
               onChangeText={setFullName}
@@ -97,10 +99,10 @@ export default function LoginScreen() {
         )}
 
         <View style={s.field}>
-          <Text style={[s.label, { color: colors.mutedForeground }]}>Email</Text>
+          <Text style={[s.label, { color: colors.mutedForeground }]}>{t("login.email")}</Text>
           <TextInput
             style={[s.input, { backgroundColor: colors.card, borderColor: colors.border, color: colors.foreground }]}
-            placeholder="votre@email.com"
+            placeholder={t("login.emailPlaceholder")}
             placeholderTextColor={colors.mutedForeground + "80"}
             value={email}
             onChangeText={setEmail}
@@ -111,7 +113,7 @@ export default function LoginScreen() {
         </View>
 
         <View style={s.field}>
-          <Text style={[s.label, { color: colors.mutedForeground }]}>Mot de passe</Text>
+          <Text style={[s.label, { color: colors.mutedForeground }]}>{t("login.password")}</Text>
           <View style={s.passwordWrap}>
             <TextInput
               style={[
@@ -133,7 +135,7 @@ export default function LoginScreen() {
             >
               <MaterialCommunityIcons name={showPassword ? "eye-off-outline" : "eye-outline"} size={18} color={colors.primary} />
               <Text style={[s.eyeLabel, { color: colors.primary }]}>
-                {showPassword ? "Cacher" : "Voir"}
+                {showPassword ? t("login.hidePassword") : t("login.showPassword")}
               </Text>
             </TouchableOpacity>
           </View>
@@ -149,7 +151,7 @@ export default function LoginScreen() {
             <ActivityIndicator color="#fff" size="small" />
           ) : (
             <Text style={s.submitLabel}>
-              {mode === "login" ? "Se connecter" : "Creer un compte"}
+              {mode === "login" ? t("login.login") : t("login.register")}
             </Text>
           )}
         </TouchableOpacity>
@@ -162,9 +164,9 @@ export default function LoginScreen() {
           }}
         >
           <Text style={[s.switchText, { color: colors.mutedForeground }]}>
-            {mode === "login" ? "Pas encore de compte ? " : "Deja un compte ? "}
+            {mode === "login" ? t("login.noAccount") : t("login.hasAccount")}
             <Text style={{ color: colors.primary }}>
-              {mode === "login" ? "S'inscrire" : "Se connecter"}
+              {mode === "login" ? t("login.signUp") : t("login.signIn")}
             </Text>
           </Text>
         </TouchableOpacity>

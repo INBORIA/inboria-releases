@@ -13,6 +13,7 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGetProject } from "@workspace/api-client-react";
 import type { Email, Task } from "@workspace/api-client-react";
 import { useColors } from "@/hooks/useColors";
+import { useTranslation } from "react-i18next";
 
 type AppColors = ReturnType<typeof useColors>;
 
@@ -20,11 +21,6 @@ const STATUS_COLORS: Record<string, string> = {
   actif: "#22c55e",
   termine: "#8b9cb3",
   en_pause: "#f59e0b",
-};
-const STATUS_LABELS: Record<string, string> = {
-  actif: "Actif",
-  termine: "Termine",
-  en_pause: "En pause",
 };
 
 function EmailItem({ email, colors, onPress }: { email: Email; colors: AppColors; onPress: () => void }) {
@@ -87,7 +83,14 @@ export default function ProjectDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const colors = useColors();
   const router = useRouter();
+  const { t } = useTranslation();
   const isWeb = Platform.OS === "web";
+
+  const STATUS_LABELS: Record<string, string> = {
+    actif: t("projects.statusActive"),
+    termine: t("projects.statusDone"),
+    en_pause: t("projects.statusPaused"),
+  };
 
   const { data: project, isLoading } = useGetProject(id || "");
 
@@ -104,7 +107,7 @@ export default function ProjectDetailScreen() {
       <View style={[s.full, { backgroundColor: colors.background }]}>
         <MaterialCommunityIcons name="alert-circle-outline" size={48} color={colors.mutedForeground + "40"} />
         <Text style={[s.emptyLabel, { color: colors.mutedForeground, marginTop: 12 }]}>
-          Projet introuvable
+          {t("projects.notFound")}
         </Text>
       </View>
     );
@@ -143,17 +146,17 @@ export default function ProjectDetailScreen() {
           <View style={[s.statsCard, { borderColor: colors.border }]}>
             <View style={s.statBox}>
               <Text style={[s.statNum, { color: colors.foreground }]}>{emails.length}</Text>
-              <Text style={[s.statLabel, { color: colors.mutedForeground }]}>Emails</Text>
+              <Text style={[s.statLabel, { color: colors.mutedForeground }]}>{t("projects.emails")}</Text>
             </View>
             <View style={[s.statDivider, { backgroundColor: colors.border }]} />
             <View style={s.statBox}>
               <Text style={[s.statNum, { color: colors.foreground }]}>{tasks.length}</Text>
-              <Text style={[s.statLabel, { color: colors.mutedForeground }]}>Taches</Text>
+              <Text style={[s.statLabel, { color: colors.mutedForeground }]}>{t("projects.tasks")}</Text>
             </View>
             <View style={[s.statDivider, { backgroundColor: colors.border }]} />
             <View style={s.statBox}>
               <Text style={[s.statNum, { color: colors.success }]}>{doneTasks}</Text>
-              <Text style={[s.statLabel, { color: colors.mutedForeground }]}>Terminees</Text>
+              <Text style={[s.statLabel, { color: colors.mutedForeground }]}>{t("projects.completed")}</Text>
             </View>
           </View>
         </View>
@@ -162,7 +165,7 @@ export default function ProjectDetailScreen() {
           <>
             <View style={[s.sectionHeader, { backgroundColor: colors.background }]}>
               <Text style={[s.sectionTitle, { color: colors.foreground }]}>
-                Emails ({emails.length})
+                {t("projects.emails")} ({emails.length})
               </Text>
             </View>
             {emails.map((email) => (
@@ -180,7 +183,7 @@ export default function ProjectDetailScreen() {
           <>
             <View style={[s.sectionHeader, { backgroundColor: colors.background }]}>
               <Text style={[s.sectionTitle, { color: colors.foreground }]}>
-                Taches ({tasks.length})
+                {t("projects.tasks")} ({tasks.length})
               </Text>
             </View>
             {tasks.map((task) => (
@@ -193,7 +196,7 @@ export default function ProjectDetailScreen() {
           <View style={[s.full, { paddingTop: 40 }]}>
             <MaterialCommunityIcons name="email-open-outline" size={40} color={colors.mutedForeground + "40"} />
             <Text style={[s.emptyLabel, { color: colors.mutedForeground, marginTop: 8 }]}>
-              Aucun email ni tache
+              {t("projects.noEmailsOrTasks")}
             </Text>
           </View>
         )}

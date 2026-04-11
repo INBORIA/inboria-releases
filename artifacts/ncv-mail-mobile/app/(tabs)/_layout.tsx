@@ -7,7 +7,7 @@ import { useTranslation } from "react-i18next";
 
 import { useColors } from "@/hooks/useColors";
 
-const logoSource = require("@/assets/images/logo-ncv.webp");
+const logoSource = require("@/assets/images/inboria-logo.png");
 
 function LogoIcon() {
   return (
@@ -64,7 +64,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: "Réception",
+          title: t("tabs.inbox"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="email-outline" size={size} color={color} />
           ),
@@ -73,7 +73,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="bilan"
         options={{
-          title: "Bilan",
+          title: t("tabs.bilan"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="chart-bar" size={size} color={color} />
           ),
@@ -91,7 +91,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="tasks"
         options={{
-          title: "Taches",
+          title: t("tabs.tasks"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="check-circle-outline" size={size} color={color} />
           ),
@@ -100,7 +100,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="projects"
         options={{
-          title: "Projets",
+          title: t("tabs.projects"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="folder-outline" size={size} color={color} />
           ),
@@ -109,7 +109,7 @@ export default function TabLayout() {
       <Tabs.Screen
         name="settings"
         options={{
-          title: "Menu",
+          title: t("tabs.menu"),
           tabBarIcon: ({ color, size }) => (
             <MaterialCommunityIcons name="menu" size={size} color={color} />
           ),

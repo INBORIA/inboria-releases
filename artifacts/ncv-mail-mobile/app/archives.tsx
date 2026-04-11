@@ -23,6 +23,7 @@ import type { PaginatedEmails } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { useTranslation } from "react-i18next";
 
 function formatDate(dateStr: string): string {
   const d = new Date(dateStr);
@@ -45,6 +46,7 @@ export default function ArchivesScreen() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const insets = useSafeAreaInsets();
+  const { t } = useTranslation();
   const isWeb = Platform.OS === "web";
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
@@ -80,11 +82,13 @@ export default function ArchivesScreen() {
     );
   };
 
+  const uncategorizedLabel = t("archives.uncategorized");
+
   const handleDelete = (id: number) => {
-    Alert.alert("Supprimer", "Supprimer cet email definitivement ?", [
-      { text: "Annuler", style: "cancel" },
+    Alert.alert(t("common.delete"), t("archives.deleteConfirm"), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Supprimer",
+        text: t("common.delete"),
         style: "destructive",
         onPress: () => deleteEmail.mutate({ id }, { onSuccess: () => invalidateAll() }),
       },
@@ -92,11 +96,11 @@ export default function ArchivesScreen() {
   };
 
   const categoryList = Object.keys(emailsByCategory).sort();
-  if (uncategorized.length > 0) categoryList.push("Non classe");
+  if (uncategorized.length > 0) categoryList.push(uncategorizedLabel);
 
   if (selectedCategory) {
     const selectedEmails =
-      selectedCategory === "Non classe" ? uncategorized : emailsByCategory[selectedCategory] || [];
+      selectedCategory === uncategorizedLabel ? uncategorized : emailsByCategory[selectedCategory] || [];
 
     return (
       <View style={[s.container, { backgroundColor: colors.background }]}>
@@ -106,10 +110,10 @@ export default function ArchivesScreen() {
             onPress={() => setSelectedCategory(null)}
           >
             <MaterialCommunityIcons name="arrow-left" size={20} color={colors.mutedForeground} />
-            <Text style={[s.backText, { color: colors.mutedForeground }]}>Archives</Text>
+            <Text style={[s.backText, { color: colors.mutedForeground }]}>{t("archives.title")}</Text>
           </TouchableOpacity>
           <Text style={[s.headerCount, { color: colors.mutedForeground }]}>
-            {selectedEmails.length} email(s)
+            {selectedEmails.length} {t("common.emails")}
           </Text>
         </View>
 
@@ -164,7 +168,7 @@ export default function ArchivesScreen() {
             <View style={s.emptyBox}>
               <MaterialCommunityIcons name="folder-open-outline" size={40} color={colors.mutedForeground + "40"} />
               <Text style={[s.emptyText, { color: colors.mutedForeground }]}>
-                Aucun email dans cette categorie
+                {t("archives.noEmailsInCategory")}
               </Text>
             </View>
           }
@@ -178,14 +182,14 @@ export default function ArchivesScreen() {
       <View style={[s.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
           <MaterialCommunityIcons name="arrow-left" size={20} color={colors.mutedForeground} />
-          <Text style={[s.backText, { color: colors.mutedForeground }]}>Retour</Text>
+          <Text style={[s.backText, { color: colors.mutedForeground }]}>{t("common.back")}</Text>
         </TouchableOpacity>
       </View>
 
       <View style={s.titleRow}>
-        <Text style={[s.pageTitle, { color: colors.foreground }]}>Archives</Text>
+        <Text style={[s.pageTitle, { color: colors.foreground }]}>{t("archives.title")}</Text>
         <Text style={[s.pageSubtitle, { color: colors.mutedForeground }]}>
-          Emails classes par l'IA. {archivedEmails.length} email(s) archives.
+          {t("archives.subtitle", { count: archivedEmails.length })}
         </Text>
       </View>
 
@@ -196,9 +200,9 @@ export default function ArchivesScreen() {
       ) : archivedEmails.length === 0 ? (
         <View style={s.emptyBox}>
           <MaterialCommunityIcons name="archive-outline" size={48} color={colors.mutedForeground + "30"} />
-          <Text style={[s.emptyTitle, { color: colors.foreground }]}>Aucune archive</Text>
+          <Text style={[s.emptyTitle, { color: colors.foreground }]}>{t("archives.noArchives")}</Text>
           <Text style={[s.emptyText, { color: colors.mutedForeground }]}>
-            Les emails archives apparaitront ici.
+            {t("archives.noArchivesDesc")}
           </Text>
         </View>
       ) : (
@@ -209,7 +213,7 @@ export default function ArchivesScreen() {
           contentContainerStyle={s.gridContent}
           columnWrapperStyle={s.gridRow}
           renderItem={({ item: catName, index }) => {
-            const count = catName === "Non classe" ? uncategorized.length : emailsByCategory[catName]?.length || 0;
+            const count = catName === uncategorizedLabel ? uncategorized.length : emailsByCategory[catName]?.length || 0;
             const colorSet = CATEGORY_COLORS[index % CATEGORY_COLORS.length];
             return (
               <TouchableOpacity
@@ -223,7 +227,7 @@ export default function ArchivesScreen() {
                 <Text style={[s.catName, { color: colors.foreground }]}>{catName}</Text>
                 <View style={[s.catCount, { backgroundColor: colors.foreground + "08" }]}>
                   <Text style={[s.catCountNum, { color: colors.primary }]}>{count}</Text>
-                  <Text style={[s.catCountLabel, { color: colors.mutedForeground }]}> email{count !== 1 ? "s" : ""}</Text>
+                  <Text style={[s.catCountLabel, { color: colors.mutedForeground }]}> {t("common.emails")}</Text>
                 </View>
               </TouchableOpacity>
             );

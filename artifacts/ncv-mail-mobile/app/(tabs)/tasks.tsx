@@ -18,6 +18,7 @@ import {
 import type { Task } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
+import { useTranslation } from "react-i18next";
 
 let Haptics: typeof import("expo-haptics") | null = null;
 try {
@@ -29,6 +30,7 @@ try {
 export default function TasksScreen() {
   const colors = useColors();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const [filter, setFilter] = useState<"all" | "pending" | "done">("pending");
   const [refreshing, setRefreshing] = useState(false);
   const isWeb = Platform.OS === "web";
@@ -70,9 +72,9 @@ export default function TasksScreen() {
   };
 
   const filters = [
-    { key: "pending" as const, label: "En cours" },
-    { key: "done" as const, label: "Terminees" },
-    { key: "all" as const, label: "Toutes" },
+    { key: "pending" as const, label: t("tasks.pending") },
+    { key: "done" as const, label: t("tasks.done") },
+    { key: "all" as const, label: t("tasks.all") },
   ];
 
   const renderTask = ({ item }: { item: Task }) => (
@@ -165,7 +167,7 @@ export default function TasksScreen() {
       ) : !tasks?.length ? (
         <View style={s.center}>
           <MaterialCommunityIcons name="check-circle-outline" size={48} color={colors.mutedForeground + "40"} />
-          <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>Aucune tache</Text>
+          <Text style={[s.emptyLabel, { color: colors.mutedForeground }]}>{t("tasks.noTasks")}</Text>
         </View>
       ) : (
         <FlatList

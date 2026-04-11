@@ -11,23 +11,26 @@ import {
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useGenerateDailySummary } from "@workspace/api-client-react";
 import { useColors } from "@/hooks/useColors";
+import { useTranslation } from "react-i18next";
 
 export default function BilanScreen() {
   const colors = useColors();
+  const { t, i18n } = useTranslation();
   const generateSummary = useGenerateDailySummary();
   const [summaryData, setSummaryData] = useState<any>(null);
   const isWeb = Platform.OS === "web";
+  const currentLang = (i18n.resolvedLanguage || i18n.language || "fr").substring(0, 2);
 
   const fetchSummary = () => {
     generateSummary.mutate(
-      { data: { language: "fr" } },
+      { data: { language: currentLang } },
       { onSuccess: (data) => setSummaryData(data) }
     );
   };
 
   useEffect(() => {
     fetchSummary();
-  }, []);
+  }, [currentLang]);
 
   return (
     <ScrollView
@@ -37,10 +40,10 @@ export default function BilanScreen() {
       <View style={s.headerRow}>
         <View style={{ flex: 1 }}>
           <Text style={[s.title, { color: colors.foreground }]}>
-            Bilan Quotidien IA
+            {t("bilan.title")}
           </Text>
           <Text style={[s.subtitle, { color: colors.mutedForeground }]}>
-            Votre resume personnalise pour demarrer la journee.
+            {t("bilan.subtitle")}
           </Text>
         </View>
         <TouchableOpacity
@@ -54,7 +57,7 @@ export default function BilanScreen() {
           ) : (
             <>
               <MaterialCommunityIcons name="refresh" size={14} color="#fff" />
-              <Text style={s.refreshLabel}>Regenerer</Text>
+              <Text style={s.refreshLabel}>{t("bilan.regenerate")}</Text>
             </>
           )}
         </TouchableOpacity>
@@ -64,18 +67,18 @@ export default function BilanScreen() {
         <View style={[s.loadingCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <ActivityIndicator size="large" color={colors.primary} />
           <Text style={[s.loadingTitle, { color: colors.foreground }]}>
-            L'IA analyse votre boite mail...
+            {t("bilan.analyzing")}
           </Text>
           <Text style={[s.loadingDesc, { color: colors.mutedForeground }]}>
-            Lecture, tri et extraction des informations importantes.
+            {t("bilan.analyzingDesc")}
           </Text>
         </View>
       ) : !summaryData ? (
         <View style={[s.emptyCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
           <MaterialCommunityIcons name="chart-bar" size={48} color={colors.mutedForeground + "40"} />
-          <Text style={[s.emptyTitle, { color: colors.foreground }]}>Aucun bilan disponible</Text>
+          <Text style={[s.emptyTitle, { color: colors.foreground }]}>{t("bilan.noBilan")}</Text>
           <Text style={[s.emptyDesc, { color: colors.mutedForeground }]}>
-            Appuyez sur Regenerer pour obtenir votre bilan du jour.
+            {t("bilan.noBilanDesc")}
           </Text>
           <TouchableOpacity
             style={[s.generateBtn, { backgroundColor: colors.primary }]}
@@ -83,14 +86,14 @@ export default function BilanScreen() {
             activeOpacity={0.7}
           >
             <MaterialCommunityIcons name="lightning-bolt" size={14} color="#fff" />
-            <Text style={s.generateLabel}>Generer le bilan</Text>
+            <Text style={s.generateLabel}>{t("bilan.generate")}</Text>
           </TouchableOpacity>
         </View>
       ) : (
         <>
           <View style={s.statsRow}>
             <View style={[s.scoreCard, { backgroundColor: colors.primary + "15", borderColor: colors.primary + "30" }]}>
-              <Text style={[s.statLabel, { color: colors.primary }]}>Score serenite</Text>
+              <Text style={[s.statLabel, { color: colors.primary }]}>{t("bilan.serenityScore")}</Text>
               <View style={s.scoreRow}>
                 <Text style={[s.scoreValue, { color: colors.foreground }]}>{summaryData.score}</Text>
                 <Text style={[s.scoreMax, { color: colors.mutedForeground }]}>/100</Text>
@@ -107,7 +110,7 @@ export default function BilanScreen() {
                 </View>
                 <View>
                   <Text style={[s.miniCount, { color: colors.foreground }]}>{summaryData.stats.urgent}</Text>
-                  <Text style={[s.miniLabel, { color: colors.mutedForeground }]}>Urgences</Text>
+                  <Text style={[s.miniLabel, { color: colors.mutedForeground }]}>{t("bilan.urgencies")}</Text>
                 </View>
               </View>
               <View style={[s.miniStat, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -116,14 +119,14 @@ export default function BilanScreen() {
                 </View>
                 <View>
                   <Text style={[s.miniCount, { color: colors.foreground }]}>{summaryData.stats.pending}</Text>
-                  <Text style={[s.miniLabel, { color: colors.mutedForeground }]}>Taches</Text>
+                  <Text style={[s.miniLabel, { color: colors.mutedForeground }]}>{t("bilan.tasks")}</Text>
                 </View>
               </View>
             </View>
           </View>
 
           <View style={[s.overviewCard, { backgroundColor: colors.card, borderColor: colors.border, borderLeftColor: colors.primary }]}>
-            <Text style={[s.sectionTitle, { color: colors.foreground }]}>Vue d'ensemble</Text>
+            <Text style={[s.sectionTitle, { color: colors.foreground }]}>{t("bilan.overview")}</Text>
             <Text style={[s.overviewText, { color: colors.mutedForeground }]}>
               {summaryData.summary}
             </Text>
@@ -133,7 +136,7 @@ export default function BilanScreen() {
             <View>
               <View style={s.sectionHeader}>
                 <MaterialCommunityIcons name="arrow-right" size={16} color={colors.primary} />
-                <Text style={[s.sectionTitle, { color: colors.foreground }]}>Emails cles a traiter</Text>
+                <Text style={[s.sectionTitle, { color: colors.foreground }]}>{t("bilan.keyEmails")}</Text>
               </View>
               {summaryData.keyEmails.map((email: any) => (
                 <View key={email.id} style={[s.emailCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
@@ -145,7 +148,7 @@ export default function BilanScreen() {
                       <Text style={[s.priorityText, {
                         color: email.priority === "urgent" ? "#ef4444" : "#f59e0b"
                       }]}>
-                        {email.priority === "urgent" ? "Urgent" : "Important"}
+                        {email.priority === "urgent" ? t("bilan.urgent") : t("bilan.important")}
                       </Text>
                     </View>
                   </View>
@@ -162,7 +165,7 @@ export default function BilanScreen() {
             <View>
               <View style={s.sectionHeader}>
                 <MaterialCommunityIcons name="trending-up" size={16} color={colors.primary} />
-                <Text style={[s.sectionTitle, { color: colors.foreground }]}>Conseil du jour</Text>
+                <Text style={[s.sectionTitle, { color: colors.foreground }]}>{t("bilan.dailyAdvice")}</Text>
               </View>
               <View style={[s.adviceCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
                 <View style={[s.adviceIcon, { backgroundColor: colors.primary + "15" }]}>

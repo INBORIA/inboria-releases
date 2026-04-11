@@ -21,19 +21,22 @@ import {
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
+import { useTranslation } from "react-i18next";
 
-const SUGGESTED_CATEGORIES = [
-  { name: "Facturation", description: "Factures, devis, bons de commande, relances de paiement", icon: "receipt" as const, color: "#f59e0b" },
-  { name: "Support client", description: "Demandes d'aide, reclamations, questions des clients", icon: "headphones" as const, color: "#3b82f6" },
-  { name: "Commercial", description: "Prospects, propositions commerciales, negociations", icon: "trending-up" as const, color: "#22c55e" },
-  { name: "Administratif", description: "Contrats, documents officiels, courriers juridiques", icon: "file-document-outline" as const, color: "#a855f7" },
-  { name: "Newsletter", description: "Newsletters, promotions, emails marketing", icon: "email-newsletter" as const, color: "#06b6d4" },
-  { name: "RH / Equipe", description: "Conges, recrutement, gestion du personnel", icon: "account-group-outline" as const, color: "#ec4899" },
-  { name: "Fournisseurs", description: "Commandes, livraisons, relations fournisseurs", icon: "briefcase-outline" as const, color: "#f97316" },
-  { name: "Juridique", description: "Mises en demeure, RGPD, conformite", icon: "shield-check-outline" as const, color: "#ef4444" },
-  { name: "Technique", description: "Bugs, maintenance, serveurs, IT", icon: "wrench-outline" as const, color: "#6366f1" },
-  { name: "Formation", description: "Webinaires, certifications, e-learning", icon: "book-open-page-variant-outline" as const, color: "#14b8a6" },
-];
+const SUGGESTED_ICONS: Record<string, { icon: any; color: string }> = {
+  billing: { icon: "receipt" as const, color: "#f59e0b" },
+  support: { icon: "headphones" as const, color: "#3b82f6" },
+  sales: { icon: "trending-up" as const, color: "#22c55e" },
+  admin: { icon: "file-document-outline" as const, color: "#a855f7" },
+  newsletter: { icon: "email-newsletter" as const, color: "#06b6d4" },
+  hr: { icon: "account-group-outline" as const, color: "#ec4899" },
+  suppliers: { icon: "briefcase-outline" as const, color: "#f97316" },
+  legal: { icon: "shield-check-outline" as const, color: "#ef4444" },
+  tech: { icon: "wrench-outline" as const, color: "#6366f1" },
+  training: { icon: "book-open-page-variant-outline" as const, color: "#14b8a6" },
+};
+
+const SUGGESTED_KEYS = ["billing", "support", "sales", "admin", "newsletter", "hr", "suppliers", "legal", "tech", "training"];
 
 const CAT_COLORS = [
   { bg: "#3b82f615", fg: "#3b82f6" },
@@ -50,6 +53,7 @@ export default function CategoriesScreen() {
   const colors = useColors();
   const router = useRouter();
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const isWeb = Platform.OS === "web";
 
   const { data: categories, isLoading } = useListCategories();
@@ -62,19 +66,28 @@ export default function CategoriesScreen() {
   const [newDescription, setNewDescription] = useState("");
   const [addingNames, setAddingNames] = useState<Set<string>>(new Set());
 
+  const suggestedCategories = useMemo(() => {
+    return SUGGESTED_KEYS.map((key) => ({
+      key,
+      name: t(`categories.suggested.${key}.name`),
+      description: t(`categories.suggested.${key}.desc`),
+      ...SUGGESTED_ICONS[key],
+    }));
+  }, [t]);
+
   const existingNames = useMemo(() => {
     return new Set((categories || []).map((c: any) => c.name.toLowerCase()));
   }, [categories]);
 
   const availableSuggestions = useMemo(() => {
-    return SUGGESTED_CATEGORIES.filter((s) => !existingNames.has(s.name.toLowerCase()));
-  }, [existingNames]);
+    return suggestedCategories.filter((s) => !existingNames.has(s.name.toLowerCase()));
+  }, [existingNames, suggestedCategories]);
 
   const invalidate = () => {
     queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
   };
 
-  const handleAddSuggestion = (s: (typeof SUGGESTED_CATEGORIES)[0]) => {
+  const handleAddSuggestion = (s: (typeof suggestedCategories)[0]) => {
     setAddingNames((prev) => new Set(prev).add(s.name));
     createCategory.mutate(
       { data: { name: s.name, description: s.description } },
@@ -114,10 +127,10 @@ export default function CategoriesScreen() {
   };
 
   const handleDelete = (id: number, name: string) => {
-    Alert.alert("Supprimer", `Supprimer la categorie "${name}" ?`, [
-      { text: "Annuler", style: "cancel" },
+    Alert.alert(t("common.delete"), t("categories.deleteConfirm", { name }), [
+      { text: t("common.cancel"), style: "cancel" },
       {
-        text: "Supprimer",
+        text: t("common.delete"),
         style: "destructive",
         onPress: () => deleteCategory.mutate({ id }, { onSuccess: invalidate }),
       },
@@ -129,14 +142,14 @@ export default function CategoriesScreen() {
       <View style={[s.header, { borderBottomColor: colors.border }]}>
         <TouchableOpacity style={s.backBtn} onPress={() => router.back()}>
           <MaterialCommunityIcons name="arrow-left" size={20} color={colors.mutedForeground} />
-          <Text style={[s.backText, { color: colors.mutedForeground }]}>Retour</Text>
+          <Text style={[s.backText, { color: colors.mutedForeground }]}>{t("common.back")}</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={[s.addBtn, { backgroundColor: colors.primary }]}
           onPress={() => setCreateModal(true)}
         >
           <MaterialCommunityIcons name="plus" size={16} color="#fff" />
-          <Text style={s.addBtnLabel}>Nouvelle</Text>
+          <Text style={s.addBtnLabel}>{t("common.new")}</Text>
         </TouchableOpacity>
       </View>
 
@@ -147,9 +160,9 @@ export default function CategoriesScreen() {
         ListHeaderComponent={
           <>
             <View style={s.titleRow}>
-              <Text style={[s.pageTitle, { color: colors.foreground }]}>Categories de classement</Text>
+              <Text style={[s.pageTitle, { color: colors.foreground }]}>{t("categories.title")}</Text>
               <Text style={[s.pageSubtitle, { color: colors.mutedForeground }]}>
-                Gerez les dossiers dans lesquels l'IA classe vos emails.
+                {t("categories.subtitle")}
               </Text>
             </View>
 
@@ -160,10 +173,10 @@ export default function CategoriesScreen() {
                     <View style={[s.suggestIcon, { backgroundColor: colors.primary + "15" }]}>
                       <MaterialCommunityIcons name="lightning-bolt" size={14} color={colors.primary} />
                     </View>
-                    <Text style={[s.suggestLabel, { color: colors.foreground }]}>Suggestions</Text>
+                    <Text style={[s.suggestLabel, { color: colors.foreground }]}>{t("common.suggestions")}</Text>
                   </View>
                   <TouchableOpacity onPress={() => setShowSuggestions(false)}>
-                    <Text style={[s.hideText, { color: colors.mutedForeground }]}>Masquer</Text>
+                    <Text style={[s.hideText, { color: colors.mutedForeground }]}>{t("common.hide")}</Text>
                   </TouchableOpacity>
                 </View>
                 <View style={s.suggestionsGrid}>
@@ -171,7 +184,7 @@ export default function CategoriesScreen() {
                     const isAdding = addingNames.has(sug.name);
                     return (
                       <TouchableOpacity
-                        key={sug.name}
+                        key={sug.key}
                         style={[s.suggestChip, { backgroundColor: colors.card, borderColor: colors.border }]}
                         onPress={() => handleAddSuggestion(sug)}
                         disabled={isAdding}
@@ -212,11 +225,11 @@ export default function CategoriesScreen() {
               </View>
               <Text style={[s.catCardName, { color: colors.foreground }]}>{item.name}</Text>
               <Text style={[s.catCardDesc, { color: colors.mutedForeground }]} numberOfLines={2}>
-                {item.description || "Aucune description"}
+                {item.description || t("categories.noDescription")}
               </Text>
               <View style={[s.catCardCount, { backgroundColor: colors.foreground + "08" }]}>
                 <Text style={[s.catCountNum, { color: colors.primary }]}>{item.emailCount || 0}</Text>
-                <Text style={[s.catCountLabel, { color: colors.mutedForeground }]}> emails</Text>
+                <Text style={[s.catCountLabel, { color: colors.mutedForeground }]}> {t("common.emails")}</Text>
               </View>
             </View>
           );
@@ -231,9 +244,9 @@ export default function CategoriesScreen() {
           ) : (
             <View style={s.emptyBox}>
               <MaterialCommunityIcons name="tag-outline" size={48} color={colors.mutedForeground + "30"} />
-              <Text style={[s.emptyTitle, { color: colors.foreground }]}>Aucune categorie</Text>
+              <Text style={[s.emptyTitle, { color: colors.foreground }]}>{t("categories.noCategories")}</Text>
               <Text style={[s.emptyText, { color: colors.mutedForeground }]}>
-                Creez des categories pour organiser votre boite.
+                {t("categories.noCategoriesDesc")}
               </Text>
             </View>
           )
@@ -243,19 +256,19 @@ export default function CategoriesScreen() {
       <Modal visible={createModal} transparent animationType="slide">
         <View style={s.modalOverlay}>
           <View style={[s.modalCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
-            <Text style={[s.modalTitle, { color: colors.foreground }]}>Nouvelle categorie</Text>
-            <Text style={[s.modalLabel, { color: colors.mutedForeground }]}>Nom</Text>
+            <Text style={[s.modalTitle, { color: colors.foreground }]}>{t("categories.newCategory")}</Text>
+            <Text style={[s.modalLabel, { color: colors.mutedForeground }]}>{t("categories.nameLabel")}</Text>
             <TextInput
               style={[s.modalInput, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
-              placeholder="Ex: Factures, Fournisseurs..."
+              placeholder={t("categories.namePlaceholder")}
               placeholderTextColor={colors.mutedForeground + "80"}
               value={newName}
               onChangeText={setNewName}
             />
-            <Text style={[s.modalLabel, { color: colors.mutedForeground }]}>Description (pour l'IA)</Text>
+            <Text style={[s.modalLabel, { color: colors.mutedForeground }]}>{t("categories.descLabel")}</Text>
             <TextInput
               style={[s.modalInput, s.modalTextarea, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
-              placeholder="Ex: Tous les emails avec des factures ou devis."
+              placeholder={t("categories.descPlaceholder")}
               placeholderTextColor={colors.mutedForeground + "80"}
               value={newDescription}
               onChangeText={setNewDescription}
@@ -266,7 +279,7 @@ export default function CategoriesScreen() {
                 style={[s.modalCancel, { borderColor: colors.border }]}
                 onPress={() => { setCreateModal(false); setNewName(""); setNewDescription(""); }}
               >
-                <Text style={[s.modalCancelText, { color: colors.mutedForeground }]}>Annuler</Text>
+                <Text style={[s.modalCancelText, { color: colors.mutedForeground }]}>{t("common.cancel")}</Text>
               </TouchableOpacity>
               <TouchableOpacity
                 style={[s.modalSubmit, { backgroundColor: colors.primary, opacity: !newName.trim() ? 0.5 : 1 }]}
@@ -276,7 +289,7 @@ export default function CategoriesScreen() {
                 {createCategory.isPending ? (
                   <ActivityIndicator size="small" color="#fff" />
                 ) : (
-                  <Text style={s.modalSubmitText}>Creer</Text>
+                  <Text style={s.modalSubmitText}>{t("categories.create")}</Text>
                 )}
               </TouchableOpacity>
             </View>
