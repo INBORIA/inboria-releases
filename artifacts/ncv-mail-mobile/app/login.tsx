@@ -69,7 +69,6 @@ export default function LoginScreen() {
       >
         <View style={s.logoBox}>
           <Image source={logoSource} style={s.logoImg} resizeMode="contain" />
-          <Text style={[s.appTitle, { color: colors.foreground }]}>{t("login.title")}</Text>
           <Text style={[s.subtitle, { color: colors.mutedForeground }]}>
             {mode === "login" ? t("login.loginSubtitle") : t("login.registerSubtitle")}
           </Text>
@@ -180,8 +179,7 @@ const s = StyleSheet.create({
   scrollContent: { padding: 24, justifyContent: "center", flexGrow: 1 },
 
   logoBox: { alignItems: "center", marginBottom: 40 },
-  logoImg: { width: 80, height: 80, marginBottom: 16 },
-  appTitle: { fontSize: 28, fontFamily: "Inter_700Bold", letterSpacing: -0.5 },
+  logoImg: { width: 180, height: 60, marginBottom: 16 },
   subtitle: { fontSize: 14, fontFamily: "Inter_400Regular", marginTop: 6 },
 
   errorBox: {
