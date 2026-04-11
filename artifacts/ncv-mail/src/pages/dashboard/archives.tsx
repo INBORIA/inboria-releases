@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { translateCategoryName } from "@/lib/category-translations";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Archive, Clock, ArrowLeft, Trash2, RotateCcw, ChevronRight, FolderOpen, Sparkles, CheckSquare, Square, Check } from "lucide-react";
+import { Archive, Clock, ArrowLeft, Trash2, RotateCcw, ChevronRight, FolderOpen, Sparkles, CheckSquare, Square } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { PaginatedEmails, Email } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
@@ -468,14 +468,6 @@ export default function Archives() {
                   >
                     <div className={`w-1 shrink-0 ${barColor}`} />
                     <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setSelectedIds((prev) => { const next = new Set(prev); if (next.has(email.id)) next.delete(email.id); else next.add(email.id); return next; }); }}
-                        onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); handleDragSelectStart(email.id); }}
-                        onMouseEnter={() => handleDragSelectEnter(email.id)}
-                        className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all cursor-pointer border border-[#2a3441] hover:border-primary select-none"
-                      >
-                        {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
-                      </button>
                       <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                         <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
                       </div>
