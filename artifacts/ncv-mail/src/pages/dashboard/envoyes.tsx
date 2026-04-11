@@ -5,6 +5,7 @@ import {
   useListEmails,
   useListProjects,
   useUpdateEmail,
+  useDeleteEmail,
   useGetEmailConversation,
   useGetConversationSummary,
   getListEmailsQueryKey,
@@ -31,8 +32,12 @@ import {
   Eye,
   CalendarDays,
   X,
+  Trash2,
+  ChevronRight,
+  CheckSquare,
+  Square,
 } from "lucide-react";
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -72,6 +77,49 @@ export default function Envoyes() {
   const sentEmails = accumulated;
   const { data: projects } = useListProjects();
   const updateEmail = useUpdateEmail();
+  const deleteEmail = useDeleteEmail();
+
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
+  const contextMenuRef = useRef<HTMLDivElement>(null);
+  const selectionMode = selectedIds.size > 0;
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    const handler = (e: MouseEvent) => {
+      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+        setContextMenu(null);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [contextMenu]);
+
+  const handleContextMenu = useCallback((e: React.MouseEvent, emailId: number) => {
+    e.preventDefault();
+    setSelectedIds((prev) => {
+      if (prev.size > 0 && !prev.has(emailId)) {
+        return new Set(prev).add(emailId);
+      } else if (prev.size === 0) {
+        return new Set([emailId]);
+      }
+      return prev;
+    });
+    setContextMenu({ x: e.clientX, y: e.clientY, emailId });
+  }, []);
+
+  const handleBulkDelete = () => {
+    const ids = Array.from(selectedIds);
+    ids.forEach((id) => {
+      deleteEmail.mutate({ id }, {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+        },
+      });
+    });
+    setSelectedIds(new Set());
+    toast({ title: t("inbox.deleteEmail") });
+  };
 
   const handleUpdateProject = (id: number, projectId: string) => {
     updateEmail.mutate(
@@ -154,17 +202,38 @@ export default function Envoyes() {
             <div className="space-y-1">
               {sentEmails.map((email) => {
                 const isReply = !!email.replyToEmailId;
+                const isSelected = selectedIds.has(email.id);
                 return (
                   <div
                     key={email.id}
-                    className="group flex items-stretch rounded-lg border border-border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden"
-                    onClick={() => setSelectedEmailId(email.id)}
+                    className={`group flex items-stretch rounded-lg border transition-colors cursor-pointer overflow-hidden ${isSelected ? "border-primary/50 bg-primary/[0.08]" : "border-border bg-card hover:bg-[#1a2235]"}`}
+                    onClick={() => {
+                      if (selectionMode) {
+                        setSelectedIds((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(email.id)) next.delete(email.id); else next.add(email.id);
+                          return next;
+                        });
+                      } else {
+                        setSelectedEmailId(email.id);
+                      }
+                    }}
+                    onContextMenu={(e) => handleContextMenu(e, email.id)}
                   >
                     <div className="w-1 shrink-0 bg-primary" />
                     <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
-                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-[12px] shrink-0 mt-0.5">
-                        {isReply ? <Reply className="w-3.5 h-3.5" /> : <Send className="w-3.5 h-3.5" />}
-                      </div>
+                      {selectionMode ? (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setSelectedIds((prev) => { const next = new Set(prev); if (next.has(email.id)) next.delete(email.id); else next.add(email.id); return next; }); }}
+                          className="mt-1 shrink-0"
+                        >
+                          {isSelected ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-[#8b9cb3]" />}
+                        </button>
+                      ) : (
+                        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-[12px] shrink-0 mt-0.5">
+                          {isReply ? <Reply className="w-3.5 h-3.5" /> : <Send className="w-3.5 h-3.5" />}
+                        </div>
+                      )}
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
                           <span className="font-semibold text-[12px] text-white truncate flex items-center gap-1">
@@ -216,7 +285,52 @@ export default function Envoyes() {
             )}
           </>
         )}
+        {selectionMode && (
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#141c2b] border border-[#1f2937] rounded-lg shadow-2xl px-4 py-2 flex items-center gap-3">
+            <span className="text-[11px] text-[#8b9cb3]">{t("inbox.selectedCount", { count: selectedIds.size })}</span>
+            <button onClick={handleBulkDelete} className="flex items-center gap-1.5 text-[11px] text-red-400 hover:text-red-300 transition-colors">
+              <Trash2 className="w-3 h-3" />{t("inbox.deleteEmail")}
+            </button>
+            <button onClick={() => setSelectedIds(new Set())} className="text-[11px] text-[#8b9cb3] hover:text-white transition-colors ml-2">{t("common.cancel")}</button>
+          </div>
+        )}
       </div>
+      {contextMenu && (
+        <div
+          ref={contextMenuRef}
+          className="fixed z-[9999] min-w-[200px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+          style={{ top: Math.min(contextMenu.y, window.innerHeight - 200), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
+        >
+          <div className="px-3 py-2 border-b border-[#1f2937]">
+            <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider font-medium">
+              {selectedIds.size > 1
+                ? t("inbox.selectedCount", { count: selectedIds.size })
+                : sentEmails.find(e => e.id === contextMenu.emailId)?.subject?.substring(0, 30) + "..."
+              }
+            </span>
+          </div>
+          <div className="py-1">
+            {selectedIds.size <= 1 && (
+              <button
+                onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+                {t("inbox.openEmail")}
+              </button>
+            )}
+            <div className="border-t border-[#1f2937] my-1" />
+            <button
+              onClick={() => { handleBulkDelete(); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              {t("inbox.deleteEmail")}
+              {selectedIds.size > 1 && ` (${selectedIds.size})`}
+            </button>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }

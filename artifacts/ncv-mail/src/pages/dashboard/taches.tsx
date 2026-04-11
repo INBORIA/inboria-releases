@@ -18,11 +18,12 @@ import { fr, enUS, nl } from "date-fns/locale";
 import {
   Calendar, Mail, Clock, Trash2, User, Sparkles, Tag, Download,
   Reply, Send, Wand2, Loader2, Plus, ArrowRight, RotateCcw, CheckCircle2,
+  CheckSquare, Square, ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
@@ -52,6 +53,44 @@ export default function Taches() {
   const [emailDetailTask, setEmailDetailTask] = useState<any>(null);
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [selectedTaskIds, setSelectedTaskIds] = useState<Set<string>>(new Set());
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; taskId: string } | null>(null);
+  const contextMenuRef = useRef<HTMLDivElement>(null);
+  const taskSelectionMode = selectedTaskIds.size > 0;
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    const handler = (e: MouseEvent) => {
+      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+        setContextMenu(null);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [contextMenu]);
+
+  const handleTaskContextMenu = useCallback((e: React.MouseEvent, taskId: string) => {
+    e.preventDefault();
+    setSelectedTaskIds((prev) => {
+      if (prev.size > 0 && !prev.has(taskId)) {
+        return new Set(prev).add(taskId);
+      } else if (prev.size === 0) {
+        return new Set([taskId]);
+      }
+      return prev;
+    });
+    setContextMenu({ x: e.clientX, y: e.clientY, taskId });
+  }, []);
+
+  const handleBulkMarkDone = () => {
+    Array.from(selectedTaskIds).forEach((id) => handleToggleDone(id, false));
+    setSelectedTaskIds(new Set());
+  };
+
+  const handleBulkDeleteTasks = () => {
+    Array.from(selectedTaskIds).forEach((id) => handleDeleteTask(id));
+    setSelectedTaskIds(new Set());
+  };
 
   const sendEmailMut = useSendEmail();
   const generateDraftMut = useGenerateDraft();
@@ -231,11 +270,30 @@ export default function Taches() {
               const taskStatus = task.status || "todo";
               const statusStyle = STATUS_STYLES[taskStatus as keyof typeof STATUS_STYLES] || STATUS_STYLES.todo;
 
+              const isTaskSelected = selectedTaskIds.has(task.id);
               return (
                 <div
                   key={task.id}
-                  className={`bg-card rounded-lg border border-border p-4 flex items-start gap-3 transition-all hover:bg-[#1a2235] ${taskStatus === "done" ? "opacity-60" : ""}`}
+                  className={`rounded-lg border p-4 flex items-start gap-3 transition-all cursor-pointer ${isTaskSelected ? "border-primary/50 bg-primary/[0.08]" : `bg-card border-border hover:bg-[#1a2235]`} ${taskStatus === "done" ? "opacity-60" : ""}`}
+                  onClick={() => {
+                    if (taskSelectionMode) {
+                      setSelectedTaskIds((prev) => {
+                        const next = new Set(prev);
+                        if (next.has(task.id)) next.delete(task.id); else next.add(task.id);
+                        return next;
+                      });
+                    }
+                  }}
+                  onContextMenu={(e) => handleTaskContextMenu(e, task.id)}
                 >
+                  {taskSelectionMode && (
+                    <button
+                      onClick={(e) => { e.stopPropagation(); setSelectedTaskIds((prev) => { const next = new Set(prev); if (next.has(task.id)) next.delete(task.id); else next.add(task.id); return next; }); }}
+                      className="mt-0.5 shrink-0"
+                    >
+                      {isTaskSelected ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-[#8b9cb3]" />}
+                    </button>
+                  )}
                   <div className="flex-1 min-w-0">
                     <p className={`text-[13px] font-medium text-white mb-1.5 ${taskStatus === "done" ? "line-through text-[#8b9cb3]" : ""}`}>
                       {task.title}
@@ -316,7 +374,54 @@ export default function Taches() {
             })
           )}
         </div>
+        {taskSelectionMode && (
+          <div className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#141c2b] border border-[#1f2937] rounded-lg shadow-2xl px-4 py-2 flex items-center gap-3">
+            <span className="text-[11px] text-[#8b9cb3]">{t("inbox.selectedCount", { count: selectedTaskIds.size })}</span>
+            <button onClick={handleBulkMarkDone} className="flex items-center gap-1.5 text-[11px] text-emerald-400 hover:text-emerald-300 transition-colors">
+              <CheckCircle2 className="w-3 h-3" />{t("tasks.markDone")}
+            </button>
+            <button onClick={handleBulkDeleteTasks} className="flex items-center gap-1.5 text-[11px] text-red-400 hover:text-red-300 transition-colors">
+              <Trash2 className="w-3 h-3" />{t("common.delete")}
+            </button>
+            <button onClick={() => setSelectedTaskIds(new Set())} className="text-[11px] text-[#8b9cb3] hover:text-white transition-colors ml-2">{t("common.cancel")}</button>
+          </div>
+        )}
       </div>
+      {contextMenu && (
+        <div
+          ref={contextMenuRef}
+          className="fixed z-[9999] min-w-[200px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+          style={{ top: Math.min(contextMenu.y, window.innerHeight - 200), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
+        >
+          <div className="px-3 py-2 border-b border-[#1f2937]">
+            <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider font-medium">
+              {selectedTaskIds.size > 1
+                ? t("inbox.selectedCount", { count: selectedTaskIds.size })
+                : filteredTasks.find((t: any) => t.id === contextMenu.taskId)?.title?.substring(0, 30) + "..."
+              }
+            </span>
+          </div>
+          <div className="py-1">
+            <button
+              onClick={() => { handleBulkMarkDone(); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <CheckCircle2 className="w-3.5 h-3.5" />
+              {t("tasks.markDone")}
+              {selectedTaskIds.size > 1 && ` (${selectedTaskIds.size})`}
+            </button>
+            <div className="border-t border-[#1f2937] my-1" />
+            <button
+              onClick={() => { handleBulkDeleteTasks(); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              {t("common.delete")}
+              {selectedTaskIds.size > 1 && ` (${selectedTaskIds.size})`}
+            </button>
+          </div>
+        </div>
+      )}
 
       <Dialog open={showAddTask} onOpenChange={setShowAddTask}>
         <DialogContent className="bg-card border-border max-w-md">
