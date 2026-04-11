@@ -28,9 +28,11 @@ export default function BilanQuotidien() {
     to: endOfDay(tomorrow).toISOString(),
   });
 
+  const currentLang = (i18n.resolvedLanguage || i18n.language || "fr").substring(0, 2);
+
   const fetchSummary = () => {
     generateSummary.mutate(
-      { data: { language: (i18n.language || i18n.resolvedLanguage || "fr").substring(0, 2) } },
+      { data: { language: currentLang } },
       {
         onSuccess: (data) => {
           setSummaryData(data);
@@ -42,7 +44,7 @@ export default function BilanQuotidien() {
   useEffect(() => {
     fetchSummary();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [currentLang]);
 
   return (
     <DashboardLayout>
