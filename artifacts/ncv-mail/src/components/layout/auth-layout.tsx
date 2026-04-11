@@ -1,4 +1,4 @@
-import mailopsLogo from "@assets/mailops_logo_white_transparent_v1_1775861214478.png";
+import appLogo from "@assets/inboria_logo_transparent_color_v1_1775912112108.png";
 import { Link } from "wouter";
 import { ArrowLeft } from "lucide-react";
 
@@ -12,7 +12,7 @@ export function AuthLayout({ children }: { children: React.ReactNode }) {
       <div className="w-full max-w-md bg-card rounded-xl border border-border overflow-hidden shadow-lg">
         <div className="p-8">
           <div className="flex justify-center mb-8">
-            <img src={mailopsLogo} alt="MailOps" className="h-48 w-48 object-contain" />
+            <img src={appLogo} alt="Inboria" className="h-20 w-auto object-contain" />
           </div>
           {children}
         </div>
