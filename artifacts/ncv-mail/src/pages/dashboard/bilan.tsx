@@ -30,7 +30,7 @@ export default function BilanQuotidien() {
 
   const fetchSummary = () => {
     generateSummary.mutate(
-      { data: { language: i18n.language } },
+      { data: { language: (i18n.resolvedLanguage || i18n.language || "fr").substring(0, 2) } },
       {
         onSuccess: (data) => {
           setSummaryData(data);

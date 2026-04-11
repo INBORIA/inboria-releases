@@ -31,7 +31,8 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
     const parsed = GenerateDailySummaryBody.safeParse(req.body);
-    const language = parsed.success && parsed.data.language ? parsed.data.language : "fr";
+    const rawLang = parsed.success && parsed.data.language ? parsed.data.language : "fr";
+    const language = rawLang.substring(0, 2).toLowerCase();
 
     const { data: emails } = await supabaseAdmin
       .from("emails")
