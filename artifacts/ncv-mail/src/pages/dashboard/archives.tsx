@@ -266,13 +266,12 @@ export default function Archives() {
       const idx = trail.indexOf(id);
       if (idx !== -1) {
         trail.splice(idx + 1);
-        const keep = new Set(preSelectRef.current);
-        trail.forEach((tid) => keep.add(tid));
-        setSelectedIds(keep);
       } else {
         trail.push(id);
-        setSelectedIds((prev) => new Set(prev).add(id));
       }
+      const keep = new Set(preSelectRef.current);
+      trail.forEach((tid) => keep.add(tid));
+      setSelectedIds(keep);
     }
   }, []);
 

@@ -112,13 +112,12 @@ export default function Taches() {
       const idx = trail.indexOf(id);
       if (idx !== -1) {
         trail.splice(idx + 1);
-        const keep = new Set(preSelectRef.current);
-        trail.forEach((tid) => keep.add(tid));
-        setSelectedTaskIds(keep);
       } else {
         trail.push(id);
-        setSelectedTaskIds((prev) => new Set(prev).add(id));
       }
+      const keep = new Set(preSelectRef.current);
+      trail.forEach((tid) => keep.add(tid));
+      setSelectedTaskIds(keep);
     }
   }, []);
 
