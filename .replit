@@ -38,6 +38,9 @@ STRIPE_PRICE_PRO = "price_1TJFkhA7juG5DM5r7FSz1wBZ"
 STRIPE_PRICE_BUSINESS = "price_1TJFkiA7juG5DM5rMPsRMDom"
 STRIPE_WEBHOOK_SECRET = "whsec_IfmO1NhY13Bg0nlmGm4HtMx62OQoLHS3"
 PADDLE_ENVIRONMENT = "production"
+PADDLE_PRICE_SOLO = "pri_01knz2tcxz2mzydqyt4zxt06sx"
+PADDLE_PRICE_PRO = "pri_01knz2td5y795gt9wxxh7spysb"
+PADDLE_PRICE_BUSINESS = "pri_01knz2tdd90z955ab3qyxqr6t4"
 
 [nix]
 channel = "stable-25_05"
