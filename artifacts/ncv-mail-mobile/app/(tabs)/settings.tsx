@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -13,14 +13,24 @@ import { useColors } from "@/hooks/useColors";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "expo-router";
 import { useTranslation } from "react-i18next";
+import { changeLanguage } from "@/i18n";
+
+const LANGUAGES = [
+  { code: "fr", label: "Français", flag: "🇫🇷" },
+  { code: "en", label: "English", flag: "🇬🇧" },
+  { code: "nl", label: "Nederlands", flag: "🇳🇱" },
+];
 
 export default function MenuScreen() {
   const colors = useColors();
   const { signOut } = useAuth();
   const { data: profile } = useGetProfile();
   const router = useRouter();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isWeb = Platform.OS === "web";
+  const [showLangPicker, setShowLangPicker] = useState(false);
+
+  const currentLang = LANGUAGES.find((l) => l.code === (i18n.resolvedLanguage || i18n.language || "fr").substring(0, 2)) || LANGUAGES[0];
 
   const MENU_ITEMS = [
     {
@@ -106,6 +116,58 @@ export default function MenuScreen() {
             ]}
           />
         </View>
+      </View>
+
+      <View style={[s.langCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+        <TouchableOpacity
+          style={s.langRow}
+          onPress={() => setShowLangPicker(!showLangPicker)}
+          activeOpacity={0.7}
+        >
+          <View style={[s.menuIcon, { backgroundColor: "#3b82f615" }]}>
+            <MaterialCommunityIcons name="translate" size={20} color="#3b82f6" />
+          </View>
+          <View style={s.menuText}>
+            <Text style={[s.menuLabel, { color: colors.foreground }]}>{t("settings.language")}</Text>
+            <Text style={[s.menuDesc, { color: colors.mutedForeground }]}>{t("settings.languageDesc")}</Text>
+          </View>
+          <View style={s.langCurrent}>
+            <Text style={s.langFlag}>{currentLang.flag}</Text>
+            <Text style={[s.langCurrentLabel, { color: colors.primary }]}>{currentLang.label}</Text>
+            <MaterialCommunityIcons
+              name={showLangPicker ? "chevron-up" : "chevron-down"}
+              size={18}
+              color={colors.mutedForeground + "60"}
+            />
+          </View>
+        </TouchableOpacity>
+        {showLangPicker && (
+          <View style={[s.langOptions, { borderTopColor: colors.border }]}>
+            {LANGUAGES.map((lang) => {
+              const isActive = currentLang.code === lang.code;
+              return (
+                <TouchableOpacity
+                  key={lang.code}
+                  style={[
+                    s.langOption,
+                    isActive && { backgroundColor: colors.primary + "10" },
+                  ]}
+                  onPress={() => {
+                    changeLanguage(lang.code);
+                    setShowLangPicker(false);
+                  }}
+                  activeOpacity={0.7}
+                >
+                  <Text style={s.langFlag}>{lang.flag}</Text>
+                  <Text style={[s.langOptionLabel, { color: isActive ? colors.primary : colors.foreground }]}>
+                    {lang.label}
+                  </Text>
+                  {isActive && <MaterialCommunityIcons name="check" size={16} color={colors.primary} />}
+                </TouchableOpacity>
+              );
+            })}
+          </View>
+        )}
       </View>
 
       <View style={s.menuSection}>
@@ -203,6 +265,39 @@ const s = StyleSheet.create({
   menuText: { flex: 1, minWidth: 0 },
   menuLabel: { fontSize: 14, fontFamily: "Inter_600SemiBold" },
   menuDesc: { fontSize: 12, fontFamily: "Inter_400Regular", marginTop: 2 },
+
+  langCard: {
+    borderRadius: 12,
+    borderWidth: 1,
+    overflow: "hidden",
+  },
+  langRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    padding: 14,
+    gap: 12,
+  },
+  langCurrent: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 6,
+  },
+  langFlag: { fontSize: 18 },
+  langCurrentLabel: { fontSize: 13, fontFamily: "Inter_600SemiBold" },
+  langOptions: {
+    borderTopWidth: 1,
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  langOption: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
+    borderRadius: 8,
+  },
+  langOptionLabel: { fontSize: 14, fontFamily: "Inter_500Medium", flex: 1 },
 
   logoutBtn: {
     flexDirection: "row",

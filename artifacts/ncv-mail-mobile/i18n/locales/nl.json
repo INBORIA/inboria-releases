@@ -132,6 +132,8 @@
     "parameters": "Instellingen",
     "parametersDesc": "Profiel, e-mailaccounts, AI-voorkeuren",
     "aiQuota": "AI e-mailquota",
+    "language": "Taal",
+    "languageDesc": "Kies de taal van de app",
     "logout": "Uitloggen"
   },
   "parametres": {

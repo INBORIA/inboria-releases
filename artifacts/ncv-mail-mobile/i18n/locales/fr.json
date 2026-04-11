@@ -132,6 +132,8 @@
     "parameters": "Paramètres",
     "parametersDesc": "Profil, comptes email, préférences IA",
     "aiQuota": "Quota emails IA",
+    "language": "Langue",
+    "languageDesc": "Choisissez la langue de l'application",
     "logout": "Se déconnecter"
   },
   "parametres": {

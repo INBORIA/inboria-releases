@@ -132,6 +132,8 @@
     "parameters": "Settings",
     "parametersDesc": "Profile, email accounts, AI preferences",
     "aiQuota": "AI email quota",
+    "language": "Language",
+    "languageDesc": "Choose the app language",
     "logout": "Sign out"
   },
   "parametres": {
