@@ -69,6 +69,14 @@ export default function Taches() {
     return () => document.removeEventListener("mousedown", handler);
   }, [contextMenu]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedTaskIds(new Set());
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
   const dragStartIdRef = useRef<string | null>(null);

@@ -222,6 +222,14 @@ export default function Archives() {
     return () => document.removeEventListener("mousedown", handler);
   }, [contextMenu]);
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedIds(new Set());
+    };
+    document.addEventListener("keydown", handleKeyDown);
+    return () => document.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
   const dragStartIdRef = useRef<number | null>(null);
