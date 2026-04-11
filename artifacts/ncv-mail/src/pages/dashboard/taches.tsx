@@ -18,7 +18,7 @@ import { fr, enUS, nl } from "date-fns/locale";
 import {
   Calendar, Mail, Clock, Trash2, User, Sparkles, Tag, Download,
   Reply, Send, Wand2, Loader2, Plus, ArrowRight, RotateCcw, CheckCircle2,
-  CheckSquare, Square, ChevronRight,
+  CheckSquare, Square, ChevronRight, Check,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -274,7 +274,7 @@ export default function Taches() {
               return (
                 <div
                   key={task.id}
-                  className={`rounded-lg border p-4 flex items-start gap-3 transition-all cursor-pointer ${isTaskSelected ? "border-primary/50 bg-primary/[0.08]" : `bg-card border-border hover:bg-[#1a2235]`} ${taskStatus === "done" ? "opacity-60" : ""}`}
+                  className={`group rounded-lg border p-4 flex items-start gap-3 transition-all cursor-pointer ${isTaskSelected ? "border-primary/50 bg-primary/[0.08]" : `bg-card border-border hover:bg-[#1a2235]`} ${taskStatus === "done" ? "opacity-60" : ""}`}
                   onClick={() => {
                     if (taskSelectionMode) {
                       setSelectedTaskIds((prev) => {
@@ -288,13 +288,15 @@ export default function Taches() {
                 >
                   <button
                     onClick={(e) => { e.stopPropagation(); setSelectedTaskIds((prev) => { const next = new Set(prev); if (next.has(task.id)) next.delete(task.id); else next.add(task.id); return next; }); }}
-                    className={`w-7 h-7 rounded-md flex items-center justify-center shrink-0 mt-0.5 transition-all ${taskSelectionMode || isTaskSelected ? "bg-transparent border border-primary/40 hover:border-primary" : "bg-primary/10 hover:bg-primary/20"}`}
+                    className="w-7 h-7 rounded-md flex items-center justify-center shrink-0 mt-0.5 transition-all cursor-pointer bg-primary/10 group-hover:bg-transparent group-hover:border group-hover:border-primary/40 hover:!border-primary data-[selected=true]:bg-transparent data-[selected=true]:border data-[selected=true]:border-primary/40"
+                    data-selected={taskSelectionMode || isTaskSelected}
                   >
-                    {taskSelectionMode || isTaskSelected ? (
-                      isTaskSelected ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-[#8b9cb3]" />
-                    ) : (
+                    <span className={`${taskSelectionMode || isTaskSelected ? "hidden" : "block group-hover:hidden"}`}>
                       <CheckCircle2 className="w-3.5 h-3.5 text-primary/60" />
-                    )}
+                    </span>
+                    <div className={`w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors ${isTaskSelected ? "bg-primary border-primary" : "border-[#8b9cb3]/40 hover:border-primary"} ${taskSelectionMode || isTaskSelected ? "block" : "hidden group-hover:block"}`}>
+                      {isTaskSelected && <Check className="w-3 h-3 text-white" />}
+                    </div>
                   </button>
                   <div className="flex-1 min-w-0">
                     <p className={`text-[13px] font-medium text-white mb-1.5 ${taskStatus === "done" ? "line-through text-[#8b9cb3]" : ""}`}>

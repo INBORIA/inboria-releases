@@ -36,6 +36,7 @@ import {
   ChevronRight,
   CheckSquare,
   Square,
+  Check,
 } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -224,13 +225,15 @@ export default function Envoyes() {
                     <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
                       <button
                         onClick={(e) => { e.stopPropagation(); setSelectedIds((prev) => { const next = new Set(prev); if (next.has(email.id)) next.delete(email.id); else next.add(email.id); return next; }); }}
-                        className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all cursor-pointer ${selectionMode || isSelected ? "bg-transparent border-2 border-primary/40 hover:border-primary" : "bg-primary/20 hover:ring-2 hover:ring-primary/30"}`}
+                        className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all cursor-pointer relative bg-primary/20 group-hover:bg-transparent group-hover:border-2 group-hover:border-primary/40 hover:!border-primary data-[selected=true]:bg-transparent data-[selected=true]:border-2 data-[selected=true]:border-primary/40"
+                        data-selected={selectionMode || isSelected}
                       >
-                        {selectionMode || isSelected ? (
-                          isSelected ? <CheckSquare className="w-4 h-4 text-primary" /> : <Square className="w-4 h-4 text-[#8b9cb3]" />
-                        ) : (
-                          isReply ? <Reply className="w-3.5 h-3.5 text-primary" /> : <Send className="w-3.5 h-3.5 text-primary" />
-                        )}
+                        <span className={`${selectionMode || isSelected ? "hidden" : "block group-hover:hidden"}`}>
+                          {isReply ? <Reply className="w-3.5 h-3.5 text-primary" /> : <Send className="w-3.5 h-3.5 text-primary" />}
+                        </span>
+                        <div className={`w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors ${isSelected ? "bg-primary border-primary" : "border-[#8b9cb3]/40 hover:border-primary"} ${selectionMode || isSelected ? "block" : "hidden group-hover:block"}`}>
+                          {isSelected && <Check className="w-3 h-3 text-white" />}
+                        </div>
                       </button>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
