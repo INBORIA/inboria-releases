@@ -858,8 +858,6 @@ export default function Dashboard() {
     setSelectedIds((prev) => {
       if (prev.size > 0 && !prev.has(emailId)) {
         return new Set(prev).add(emailId);
-      } else if (prev.size === 0) {
-        return new Set([emailId]);
       }
       return prev;
     });
