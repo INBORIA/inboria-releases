@@ -770,7 +770,16 @@ export default function Dashboard() {
   useEffect(() => {
     if (inboxMode === "trash") {
       setTrashPage(1);
-      setAccumulatedTrashEmails([]);
+      const paged = trashData as PaginatedEmails | undefined;
+      if (paged) {
+        setAccumulatedTrashEmails(paged.emails || []);
+        setTrashTotal(paged.total || 0);
+        setTrashTotalPages(paged.totalPages || 0);
+      } else {
+        setAccumulatedTrashEmails([]);
+        setTrashTotal(0);
+        setTrashTotalPages(0);
+      }
     }
   }, [inboxMode]);
 
@@ -815,7 +824,16 @@ export default function Dashboard() {
   useEffect(() => {
     if (inboxMode === "spam") {
       setSpamPage(1);
-      setAccumulatedSpamEmails([]);
+      const paged = spamData as PaginatedEmails | undefined;
+      if (paged) {
+        setAccumulatedSpamEmails(paged.emails || []);
+        setSpamTotal(paged.total || 0);
+        setSpamTotalPages(paged.totalPages || 0);
+      } else {
+        setAccumulatedSpamEmails([]);
+        setSpamTotal(0);
+        setSpamTotalPages(0);
+      }
     }
   }, [inboxMode]);
 
