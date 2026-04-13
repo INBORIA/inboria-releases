@@ -203,7 +203,7 @@ export default function Taches() {
       {
         onSuccess: () => {
           invalidate();
-          toast({ title: t(!currentDone ? "tasks.movedToDone" : "tasks.movedToTodo") });
+          
         },
       }
     );
