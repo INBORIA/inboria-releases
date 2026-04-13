@@ -91,59 +91,72 @@ export default function Taches() {
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
   const dragStartIdRef = useRef<string | null>(null);
-  const dragTrailRef = useRef<string[]>([]);
   const preSelectRef = useRef<Set<string>>(new Set());
   const autoScrollRaf = useRef<number>(0);
+  const lastMouseYRef = useRef(0);
+
+  const getRowIdFromPoint = useCallback((y: number, x: number): string | null => {
+    const el = document.elementFromPoint(x, y);
+    if (!el) return null;
+    const row = (el as HTMLElement).closest?.("[data-row-id]");
+    if (!row) return null;
+    return row.getAttribute("data-row-id");
+  }, []);
+
+  const selectRange = useCallback((currentId: string) => {
+    const rows = Array.from(document.querySelectorAll("[data-row-id]"));
+    const ids = rows.map((r) => r.getAttribute("data-row-id")!);
+    const startIdx = ids.indexOf(dragStartIdRef.current!);
+    const endIdx = ids.indexOf(currentId);
+    if (startIdx === -1 || endIdx === -1) return;
+    const lo = Math.min(startIdx, endIdx);
+    const hi = Math.max(startIdx, endIdx);
+    const keep = new Set(preSelectRef.current);
+    for (let i = lo; i <= hi; i++) keep.add(ids[i]);
+    setSelectedTaskIds(keep);
+  }, []);
 
   useEffect(() => {
+    const threshold = 60;
+    const speed = 14;
+
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDraggingRef.current) return;
-      const threshold = 60;
-      const speed = 12;
+      lastMouseYRef.current = e.clientY;
+      if (!didDragRef.current) didDragRef.current = true;
+      const hoverId = getRowIdFromPoint(e.clientY, e.clientX);
+      if (hoverId !== null) selectRange(hoverId);
+
       cancelAnimationFrame(autoScrollRaf.current);
       const scroll = () => {
         if (!isDraggingRef.current) return;
-        if (e.clientY > window.innerHeight - threshold) {
+        const y = lastMouseYRef.current;
+        if (y > window.innerHeight - threshold) {
           window.scrollBy(0, speed);
+          const id = getRowIdFromPoint(y, window.innerWidth / 2);
+          if (id !== null) selectRange(id);
           autoScrollRaf.current = requestAnimationFrame(scroll);
-        } else if (e.clientY < threshold) {
+        } else if (y < threshold) {
           window.scrollBy(0, -speed);
+          const id = getRowIdFromPoint(y, window.innerWidth / 2);
+          if (id !== null) selectRange(id);
           autoScrollRaf.current = requestAnimationFrame(scroll);
         }
       };
       scroll();
     };
+
     document.addEventListener("mousemove", handleMouseMove);
     return () => { document.removeEventListener("mousemove", handleMouseMove); cancelAnimationFrame(autoScrollRaf.current); };
-  }, []);
+  }, [getRowIdFromPoint, selectRange]);
 
   const handleDragSelectStart = useCallback((id: string) => {
     isDraggingRef.current = true;
     didDragRef.current = false;
     dragStartIdRef.current = id;
-    dragTrailRef.current = [id];
     setSelectedTaskIds((prev) => { preSelectRef.current = new Set(prev); return prev; });
-    const handleMouseUp = () => { isDraggingRef.current = false; cancelAnimationFrame(autoScrollRaf.current); dragTrailRef.current = []; document.removeEventListener("mouseup", handleMouseUp); };
+    const handleMouseUp = () => { isDraggingRef.current = false; cancelAnimationFrame(autoScrollRaf.current); document.removeEventListener("mouseup", handleMouseUp); };
     document.addEventListener("mouseup", handleMouseUp);
-  }, []);
-
-  const handleDragSelectEnter = useCallback((id: string) => {
-    if (!isDraggingRef.current) return;
-    if (!didDragRef.current) didDragRef.current = true;
-    const trail = dragTrailRef.current;
-    const idx = trail.indexOf(id);
-    if (idx !== -1) {
-      if (idx === 0) {
-        trail.length = 0;
-      } else {
-        trail.splice(idx + 1);
-      }
-    } else {
-      trail.push(id);
-    }
-    const keep = new Set(preSelectRef.current);
-    trail.forEach((tid) => keep.add(tid));
-    setSelectedTaskIds(keep);
   }, []);
 
   const handleTaskContextMenu = useCallback((e: React.MouseEvent, taskId: string) => {
@@ -386,6 +399,7 @@ export default function Taches() {
                 <div
                   key={task.id}
                   data-email-row
+                  data-row-id={task.id}
                   className={`group rounded-lg border p-4 flex items-start gap-3 transition-all cursor-pointer select-none ${isTaskSelected ? "border-primary/50 bg-primary/[0.08]" : `bg-card border-border hover:bg-[#1a2235]`} ${taskStatus === "done" ? "opacity-60" : ""}`}
                   onClick={() => {
                     if (didDragRef.current) return;
@@ -396,7 +410,6 @@ export default function Taches() {
                     });
                   }}
                   onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); handleDragSelectStart(task.id); } }}
-                  onMouseEnter={() => handleDragSelectEnter(task.id)}
                   onContextMenu={(e) => handleTaskContextMenu(e, task.id)}
                 >
                   <button

@@ -77,7 +77,7 @@ function PriorityBadge({ priority }: { priority: string }) {
   );
 }
 
-function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, onDragSelectEnter }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; onDragSelectEnter?: (id: number) => void }) {
+function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
@@ -86,11 +86,11 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
   return (
     <div
       data-email-row
+      data-row-id={email.id}
       className={`group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden select-none ${isSelected ? "border-primary/50 bg-primary/[0.06]" : "border-border"}`}
       onClick={onClick}
       onContextMenu={(e) => { e.preventDefault(); onContextMenu?.(e, email.id); }}
       onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); onDragSelectStart?.(email.id); } }}
-      onMouseEnter={() => { onDragSelectEnter?.(email.id); }}
     >
       <div className={`w-1 shrink-0 ${barColor}`} />
       <div className="flex items-center gap-2 flex-1 min-w-0 p-3">
@@ -98,7 +98,6 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
           className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all cursor-pointer border border-[#2a3441] hover:border-primary select-none"
           onClick={(e) => { e.stopPropagation(); onToggleSelect(email.id); }}
           onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onDragSelectStart?.(email.id); }}
-          onMouseEnter={() => { onDragSelectEnter?.(email.id); }}
         >
           {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
         </button>
@@ -870,64 +869,77 @@ export default function Dashboard() {
   const isDraggingRef = useRef(false);
   const didDragRef = useRef(false);
   const dragStartIdRef = useRef<number | null>(null);
-  const dragTrailRef = useRef<number[]>([]);
   const preSelectRef = useRef<Set<number>>(new Set());
   const autoScrollRaf = useRef<number>(0);
+  const lastMouseYRef = useRef(0);
+
+  const getRowIdFromPoint = useCallback((y: number, x: number): number | null => {
+    const el = document.elementFromPoint(x, y);
+    if (!el) return null;
+    const row = (el as HTMLElement).closest?.("[data-row-id]");
+    if (!row) return null;
+    const id = Number(row.getAttribute("data-row-id"));
+    return isNaN(id) ? null : id;
+  }, []);
+
+  const selectRange = useCallback((currentId: number) => {
+    const rows = Array.from(document.querySelectorAll("[data-row-id]"));
+    const ids = rows.map((r) => Number(r.getAttribute("data-row-id")));
+    const startIdx = ids.indexOf(dragStartIdRef.current!);
+    const endIdx = ids.indexOf(currentId);
+    if (startIdx === -1 || endIdx === -1) return;
+    const lo = Math.min(startIdx, endIdx);
+    const hi = Math.max(startIdx, endIdx);
+    const keep = new Set(preSelectRef.current);
+    for (let i = lo; i <= hi; i++) keep.add(ids[i]);
+    setSelectedIds(keep);
+  }, []);
 
   useEffect(() => {
+    const threshold = 60;
+    const speed = 14;
+
     const handleMouseMove = (e: MouseEvent) => {
       if (!isDraggingRef.current) return;
-      const threshold = 60;
-      const speed = 12;
+      lastMouseYRef.current = e.clientY;
+      if (!didDragRef.current) didDragRef.current = true;
+      const hoverId = getRowIdFromPoint(e.clientY, e.clientX);
+      if (hoverId !== null) selectRange(hoverId);
+
       cancelAnimationFrame(autoScrollRaf.current);
       const scroll = () => {
         if (!isDraggingRef.current) return;
-        if (e.clientY > window.innerHeight - threshold) {
+        const y = lastMouseYRef.current;
+        if (y > window.innerHeight - threshold) {
           window.scrollBy(0, speed);
+          const id = getRowIdFromPoint(y, window.innerWidth / 2);
+          if (id !== null) selectRange(id);
           autoScrollRaf.current = requestAnimationFrame(scroll);
-        } else if (e.clientY < threshold) {
+        } else if (y < threshold) {
           window.scrollBy(0, -speed);
+          const id = getRowIdFromPoint(y, window.innerWidth / 2);
+          if (id !== null) selectRange(id);
           autoScrollRaf.current = requestAnimationFrame(scroll);
         }
       };
       scroll();
     };
+
     document.addEventListener("mousemove", handleMouseMove);
     return () => { document.removeEventListener("mousemove", handleMouseMove); cancelAnimationFrame(autoScrollRaf.current); };
-  }, []);
+  }, [getRowIdFromPoint, selectRange]);
 
   const handleDragSelectStart = useCallback((id: number) => {
     isDraggingRef.current = true;
     didDragRef.current = false;
     dragStartIdRef.current = id;
-    dragTrailRef.current = [id];
     setSelectedIds((prev) => { preSelectRef.current = new Set(prev); return prev; });
     const handleMouseUp = () => {
       isDraggingRef.current = false;
       cancelAnimationFrame(autoScrollRaf.current);
-      dragTrailRef.current = [];
       document.removeEventListener("mouseup", handleMouseUp);
     };
     document.addEventListener("mouseup", handleMouseUp);
-  }, []);
-
-  const handleDragSelectEnter = useCallback((id: number) => {
-    if (!isDraggingRef.current) return;
-    if (!didDragRef.current) didDragRef.current = true;
-    const trail = dragTrailRef.current;
-    const idx = trail.indexOf(id);
-    if (idx !== -1) {
-      if (idx === 0) {
-        trail.length = 0;
-      } else {
-        trail.splice(idx + 1);
-      }
-    } else {
-      trail.push(id);
-    }
-    const keep = new Set(preSelectRef.current);
-    trail.forEach((tid) => keep.add(tid));
-    setSelectedIds(keep);
   }, []);
 
   const handleContextMenu = useCallback((e: React.MouseEvent, emailId: number) => {
@@ -2023,7 +2035,6 @@ export default function Dashboard() {
                             selectionMode={selectionMode}
                             onContextMenu={handleContextMenu}
                             onDragSelectStart={handleDragSelectStart}
-                            onDragSelectEnter={handleDragSelectEnter}
                           />
                         ))}
                         {hasMorePages && (
