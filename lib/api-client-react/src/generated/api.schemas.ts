@@ -890,6 +890,10 @@ export type EmptyTrash200 = {
   success?: boolean;
 };
 
+export type EmptySpam200 = {
+  success?: boolean;
+};
+
 export type BulkUpdateEmailsBodyAction =
   (typeof BulkUpdateEmailsBodyAction)[keyof typeof BulkUpdateEmailsBodyAction];
 

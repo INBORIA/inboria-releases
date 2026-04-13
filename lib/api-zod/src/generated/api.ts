@@ -370,6 +370,13 @@ export const EmptyTrashResponse = zod.object({
 });
 
 /**
+ * @summary Permanently delete all spam emails
+ */
+export const EmptySpamResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
  * @summary Bulk update emails (archive, mark read, delete)
  */
 export const BulkUpdateEmailsBody = zod.object({

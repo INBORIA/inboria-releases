@@ -219,7 +219,7 @@ async function triageEmailAI(
   subject: string,
   body: string,
   userId: string
-): Promise<{ priority: string; summary: string; category: string; tasks: string[] }> {
+): Promise<{ priority: string; summary: string; category: string; tasks: string[]; is_spam: boolean }> {
   try {
     const { data: categories } = await supabaseAdmin
       .from("categories")
@@ -250,11 +250,11 @@ async function triageEmailAI(
       messages: [
         {
           role: "system",
-          content: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide. Classe TOUJOURS les emails dans une categorie pertinente. Exemples: LinkedIn/reseaux sociaux → 'Reseaux sociaux', newsletters → 'Newsletters', codes de verification/securite → 'Notifications', factures/paiements → 'Facturation', hebergement/domaines → 'Hebergement'. N'utilise JAMAIS 'Non classe'.",
+          content: "Tu es un assistant de tri d'emails professionnel pour une PME. Reponds uniquement en JSON valide. Classe TOUJOURS les emails dans une categorie pertinente. Exemples: LinkedIn/reseaux sociaux → 'Reseaux sociaux', newsletters → 'Newsletters', codes de verification/securite → 'Notifications', factures/paiements → 'Facturation', hebergement/domaines → 'Hebergement'. N'utilise JAMAIS 'Non classe'. IMPORTANT: Detecte les emails spam/indesirables (publicites non sollicitees, arnaques, phishing, loteries, offres suspectes, emails en masse non pertinents). Mets is_spam=true pour ces emails.",
         },
         {
           role: "user",
-          content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${(body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800)}\n\nCategories existantes: ${categoryNames.join(", ") || "Aucune"}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom de categorie existante OU propose un nouveau nom pertinent (court, professionnel). Utilise 'Non classe' uniquement si vraiment inclassable.","tasks":["tache 1","tache 2"]}\n\nIMPORTANT pour les taches: Chaque tache doit etre explicite et auto-suffisante. Inclus toujours QUI (expediteur/service) et QUOI. Exemples: au lieu de "Verifier l'adresse email" → "Confirmer l'inscription sur Replit (email de verification)", au lieu de "Utiliser le code" → "Saisir le code de verification LinkedIn dans les 15 min". Ne genere PAS de tache pour les emails purement informatifs (newsletters, notifications automatiques, confirmations de lecture). Genere des taches uniquement quand une ACTION concrete est requise.`,
+          content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${(body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800)}\n\nCategories existantes: ${categoryNames.join(", ") || "Aucune"}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom de categorie existante OU propose un nouveau nom pertinent (court, professionnel). Utilise 'Non classe' uniquement si vraiment inclassable.","tasks":["tache 1","tache 2"],"is_spam":false}\n\nIMPORTANT pour is_spam: Mets true si l'email est un spam, une publicite non sollicitee, du phishing, une arnaque, une loterie, ou un email en masse non pertinent pour une PME. Les newsletters auxquelles l'utilisateur est abonne ne sont PAS du spam.\n\nIMPORTANT pour les taches: Chaque tache doit etre explicite et auto-suffisante. Inclus toujours QUI (expediteur/service) et QUOI. Exemples: au lieu de "Verifier l'adresse email" → "Confirmer l'inscription sur Replit (email de verification)", au lieu de "Utiliser le code" → "Saisir le code de verification LinkedIn dans les 15 min". Ne genere PAS de tache pour les emails purement informatifs (newsletters, notifications automatiques, confirmations de lecture). Genere des taches uniquement quand une ACTION concrete est requise.`,
         },
       ],
     });
@@ -267,10 +267,11 @@ async function triageEmailAI(
       summary: result.summary || "",
       category: result.category || "Non classe",
       tasks: Array.isArray(result.tasks) ? result.tasks : [],
+      is_spam: result.is_spam === true,
     };
   } catch (err: any) {
     console.error("[auto-sync] triageEmailAI error:", err.message);
-    return { priority: "faible", summary: "", category: "Non classe", tasks: [] };
+    return { priority: "faible", summary: "", category: "Non classe", tasks: [], is_spam: false };
   }
 }
 
@@ -346,7 +347,7 @@ async function saveEmailWithTriage(
     sender,
     subject,
     body,
-    status: "non_lu",
+    status: triage.is_spam ? "spam" : "non_lu",
     priority: triage.priority,
     summary: triage.summary,
     category_id: categoryId,

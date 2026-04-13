@@ -64,6 +64,7 @@ export * from "./detectFollowupsBodyEmailsItem";
 export * from "./draftResponse";
 export * from "./email";
 export * from "./emailComment";
+export * from "./emptySpam200";
 export * from "./emptyTrash200";
 export * from "./exportEmailsParams";
 export * from "./followup";

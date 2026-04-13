@@ -50,8 +50,8 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       query = query.eq("status", req.query.status as string);
       countQuery = countQuery.eq("status", req.query.status as string);
     } else {
-      query = query.neq("status", "archived").neq("status", "trashed");
-      countQuery = countQuery.neq("status", "archived").neq("status", "trashed");
+      query = query.neq("status", "archived").neq("status", "trashed").neq("status", "spam");
+      countQuery = countQuery.neq("status", "archived").neq("status", "trashed").neq("status", "spam");
     }
     if (req.query.projectId) {
       query = query.eq("project_id", req.query.projectId as string);
@@ -721,15 +721,6 @@ router.post("/emails/bulk", requireAuth, async (req, res): Promise<void> => {
         .select("id");
       error = result.error;
       affected = result.data?.length || 0;
-    } else if (action === "unread") {
-      const result = await supabaseAdmin
-        .from("emails")
-        .update({ status: "unread" })
-        .in("id", sanitizedIds)
-        .eq("user_id", req.userId!)
-        .select("id");
-      error = result.error;
-      affected = result.data?.length || 0;
     }
 
     if (error) {
@@ -784,6 +775,47 @@ router.delete("/emails/trash/empty", requireAuth, async (req, res): Promise<void
   }
 });
 
+router.delete("/emails/spam/empty", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data: spamEmails } = await supabaseAdmin
+      .from("emails")
+      .select("id")
+      .eq("user_id", req.userId!)
+      .eq("status", "spam");
+
+    if (spamEmails && spamEmails.length > 0) {
+      const spamIds = spamEmails.map((e: any) => e.id);
+
+      await supabaseAdmin
+        .from("tasks")
+        .delete()
+        .in("email_id", spamIds)
+        .eq("user_id", req.userId!);
+
+      await supabaseAdmin
+        .from("appointments")
+        .delete()
+        .in("email_id", spamIds)
+        .eq("user_id", req.userId!);
+    }
+
+    const { error } = await supabaseAdmin
+      .from("emails")
+      .delete()
+      .eq("user_id", req.userId!)
+      .eq("status", "spam");
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Failed to empty spam" });
+  }
+});
+
 router.delete("/emails/:id", requireAuth, async (req, res): Promise<void> => {
   try {
     const { error } = await supabaseAdmin
@@ -807,10 +839,10 @@ router.post("/emails/:id/restore", requireAuth, async (req, res): Promise<void> 
   try {
     const { error } = await supabaseAdmin
       .from("emails")
-      .update({ status: "inbox" })
+      .update({ status: "non_lu" })
       .eq("id", req.params.id)
       .eq("user_id", req.userId!)
-      .eq("status", "trashed");
+      .in("status", ["trashed", "spam"]);
 
     if (error) {
       res.status(500).json({ error: error.message });
@@ -842,7 +874,7 @@ router.delete("/emails/:id/permanent", requireAuth, async (req, res): Promise<vo
       .delete()
       .eq("id", req.params.id)
       .eq("user_id", req.userId!)
-      .eq("status", "trashed");
+      .in("status", ["trashed", "spam"]);
 
     if (error) {
       res.status(500).json({ error: error.message });

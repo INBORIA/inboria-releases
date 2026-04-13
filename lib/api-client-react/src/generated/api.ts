@@ -64,6 +64,7 @@ import type {
   DraftResponse,
   Email,
   EmailComment,
+  EmptySpam200,
   EmptyTrash200,
   ExportEmailsParams,
   Followup,
@@ -1386,6 +1387,87 @@ export const useEmptyTrash = <
   TContext
 > => {
   return useMutation(getEmptyTrashMutationOptions(options));
+};
+
+/**
+ * @summary Permanently delete all spam emails
+ */
+export const getEmptySpamUrl = () => {
+  return `/api/emails/spam/empty`;
+};
+
+export const emptySpam = async (
+  options?: RequestInit,
+): Promise<EmptySpam200> => {
+  return customFetch<EmptySpam200>(getEmptySpamUrl(), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getEmptySpamMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof emptySpam>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof emptySpam>>,
+  TError,
+  void,
+  TContext
+> => {
+  const mutationKey = ["emptySpam"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof emptySpam>>,
+    void
+  > = () => {
+    return emptySpam(requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type EmptySpamMutationResult = NonNullable<
+  Awaited<ReturnType<typeof emptySpam>>
+>;
+
+export type EmptySpamMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Permanently delete all spam emails
+ */
+export const useEmptySpam = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof emptySpam>>,
+    TError,
+    void,
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof emptySpam>>,
+  TError,
+  void,
+  TContext
+> => {
+  return useMutation(getEmptySpamMutationOptions(options));
 };
 
 /**

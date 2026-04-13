@@ -351,6 +351,22 @@ paths:
                   success:
                     type: boolean
 
+  /emails/spam/empty:
+    delete:
+      operationId: emptySpam
+      tags: [emails]
+      summary: Permanently delete all spam emails
+      responses:
+        "200":
+          description: Spam emptied
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
   /emails/bulk:
     post:
       operationId: bulkUpdateEmails
