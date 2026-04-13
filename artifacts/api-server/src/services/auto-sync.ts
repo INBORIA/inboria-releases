@@ -377,7 +377,7 @@ async function saveEmailWithTriage(
 
   detectAppointmentFromEmail(inserted.id, sender, subject, body, userId).catch(() => {});
 
-  if (triage.tasks.length > 0) {
+  if (triage.tasks.length > 0 && triage.priority === "urgent") {
     const { data: existingTasks } = await supabaseAdmin
       .from("tasks")
       .select("id")
