@@ -366,13 +366,11 @@ export default function Taches() {
                   className={`group rounded-lg border p-4 flex items-start gap-3 transition-all cursor-pointer select-none ${isTaskSelected ? "border-primary/50 bg-primary/[0.08]" : `bg-card border-border hover:bg-[#1a2235]`} ${taskStatus === "done" ? "opacity-60" : ""}`}
                   onClick={() => {
                     if (didDragRef.current) return;
-                    if (taskSelectionMode) {
-                      setSelectedTaskIds((prev) => {
-                        const next = new Set(prev);
-                        if (next.has(task.id)) next.delete(task.id); else next.add(task.id);
-                        return next;
-                      });
-                    }
+                    setSelectedTaskIds((prev) => {
+                      const next = new Set(prev);
+                      if (next.has(task.id)) next.delete(task.id); else next.add(task.id);
+                      return next;
+                    });
                   }}
                   onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); handleDragSelectStart(task.id); } }}
                   onMouseEnter={() => handleDragSelectEnter(task.id)}
