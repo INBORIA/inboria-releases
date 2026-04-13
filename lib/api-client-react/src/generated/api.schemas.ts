@@ -847,7 +847,7 @@ export type RegisterPushToken200 = {
 export type ListEmailsParams = {
   priority?: ListEmailsPriority;
   categoryId?: number;
-  status?: string;
+  status?: ListEmailsStatus;
   /**
    * Search term to filter emails by subject, sender or summary
    */
@@ -872,6 +872,18 @@ export const ListEmailsPriority = {
   urgent: "urgent",
   moyen: "moyen",
   faible: "faible",
+} as const;
+
+export type ListEmailsStatus =
+  (typeof ListEmailsStatus)[keyof typeof ListEmailsStatus];
+
+export const ListEmailsStatus = {
+  non_lu: "non_lu",
+  read: "read",
+  unread: "unread",
+  archived: "archived",
+  trashed: "trashed",
+  spam: "spam",
 } as const;
 
 export type DeleteEmail200 = {

@@ -737,14 +737,14 @@ export default function Dashboard() {
   const [trashTotalPages, setTrashTotalPages] = useState(0);
 
   const { data: trashCountData } = useListEmails({
-    status: "trashed" as any,
+    status: "trashed",
     page: 1,
     limit: 1,
   });
   const trashCountFromApi = (trashCountData as PaginatedEmails)?.total ?? 0;
 
   const { data: trashData, isLoading: trashLoading, isFetching: trashFetching } = useListEmails({
-    status: "trashed" as any,
+    status: "trashed",
     page: trashPage,
     limit: 50,
   }, { query: { enabled: inboxMode === "trash" } });
@@ -782,14 +782,14 @@ export default function Dashboard() {
   const [spamTotalPages, setSpamTotalPages] = useState(0);
 
   const { data: spamCountData } = useListEmails({
-    status: "spam" as any,
+    status: "spam",
     page: 1,
     limit: 1,
   });
   const spamCountFromApi = (spamCountData as PaginatedEmails)?.total ?? 0;
 
   const { data: spamData, isLoading: spamLoading, isFetching: spamFetching } = useListEmails({
-    status: "spam" as any,
+    status: "spam",
     page: spamPage,
     limit: 50,
   }, { query: { enabled: inboxMode === "spam" } });

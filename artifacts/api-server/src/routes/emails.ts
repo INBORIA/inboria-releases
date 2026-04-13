@@ -680,8 +680,8 @@ router.get("/emails/:id/conversation", requireAuth, async (req, res): Promise<vo
 router.post("/emails/bulk", requireAuth, async (req, res): Promise<void> => {
   try {
     const { ids, action } = req.body;
-    if (!Array.isArray(ids) || ids.length === 0 || !["delete", "archive", "read", "unread"].includes(action)) {
-      res.status(400).json({ error: "ids (array) et action (delete|archive|read|unread) requis" });
+    if (!Array.isArray(ids) || ids.length === 0 || !["delete", "archive", "read"].includes(action)) {
+      res.status(400).json({ error: "ids (array) et action (delete|archive|read) requis" });
       return;
     }
 

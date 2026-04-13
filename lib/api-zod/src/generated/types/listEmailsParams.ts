@@ -6,11 +6,12 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { ListEmailsPriority } from "./listEmailsPriority";
+import type { ListEmailsStatus } from "./listEmailsStatus";
 
 export type ListEmailsParams = {
   priority?: ListEmailsPriority;
   categoryId?: number;
-  status?: string;
+  status?: ListEmailsStatus;
   /**
    * Search term to filter emails by subject, sender or summary
    */

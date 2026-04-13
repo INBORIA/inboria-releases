@@ -197,6 +197,7 @@ paths:
           in: query
           schema:
             type: string
+            enum: [non_lu, read, unread, archived, trashed, spam]
         - name: q
           in: query
           schema:

@@ -104,6 +104,7 @@ export * from "./keyEmail";
 export * from "./listAppointmentsParams";
 export * from "./listEmailsParams";
 export * from "./listEmailsPriority";
+export * from "./listEmailsStatus";
 export * from "./listFollowupsParams";
 export * from "./listFollowupsStatus";
 export * from "./listTasksParams";

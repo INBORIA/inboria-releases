@@ -185,7 +185,9 @@ export const listEmailsQueryLimitMax = 100;
 export const ListEmailsQueryParams = zod.object({
   priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
   categoryId: zod.coerce.number().optional(),
-  status: zod.coerce.string().optional(),
+  status: zod
+    .enum(["non_lu", "read", "unread", "archived", "trashed", "spam"])
+    .optional(),
   q: zod.coerce
     .string()
     .optional()
