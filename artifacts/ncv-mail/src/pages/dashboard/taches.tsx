@@ -570,7 +570,7 @@ export default function Taches() {
       </Dialog>
 
       <Dialog open={!!emailDetailTask} onOpenChange={(open) => { if (!open) { setEmailDetailTask(null); setReplyOpen(false); setReplyTo(""); setReplySubject(""); setReplyText(""); setReplyAttachments([]); } }}>
-        <DialogContent className="bg-card border-border max-w-2xl max-h-[80vh] overflow-y-auto">
+        <DialogContent className="bg-card border-border max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-white text-[14px] pr-6">
               {emailDetailTask?.emailSubject}
@@ -662,7 +662,7 @@ export default function Taches() {
                   </div>
                   <div>
                     <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
-                    <Textarea value={replyText} onChange={(e) => setReplyText(e.target.value)} placeholder={t("inbox.replyPlaceholder")} className="h-24 bg-background border-border text-white text-[12px] resize-none" />
+                    <Textarea value={replyText} onChange={(e) => setReplyText(e.target.value)} placeholder={t("inbox.replyPlaceholder")} className="min-h-[180px] bg-background border-border text-white text-[12px] resize-y" />
                   </div>
                   <div className="flex items-center gap-2 justify-between">
                     <FileAttachInput files={replyAttachments} onChange={setReplyAttachments} />
