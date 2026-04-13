@@ -369,6 +369,11 @@ export default function Taches() {
                           <Sparkles className="w-2.5 h-2.5 mr-0.5" />{t("tasks.sourceAi")}
                         </Badge>
                       )}
+                      {task.emailPriority && PRIORITY_BADGE_STYLES[task.emailPriority] && (
+                        <Badge className={`text-[10px] px-1.5 py-0 h-[18px] font-medium border ${PRIORITY_BADGE_STYLES[task.emailPriority].bg} ${PRIORITY_BADGE_STYLES[task.emailPriority].text} ${PRIORITY_BADGE_STYLES[task.emailPriority].border}`}>
+                          {t(PRIORITY_BADGE_STYLES[task.emailPriority].labelKey)}
+                        </Badge>
+                      )}
                       {task.dueDate && (
                         <div className={`flex items-center gap-1 ${new Date(task.dueDate) < new Date() && taskStatus !== "done" ? "text-red-400" : ""}`}>
                           <Calendar className="w-3 h-3" />
