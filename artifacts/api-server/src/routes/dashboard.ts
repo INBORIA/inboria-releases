@@ -19,7 +19,7 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
       .is("shared_mailbox_id", null);
 
     const allEmails = emails || [];
-    const inboxEmails = allEmails.filter(e => e.status !== "archived");
+    const inboxEmails = allEmails.filter(e => e.status !== "archived" && e.status !== "trashed" && e.status !== "spam");
     const urgent = inboxEmails.filter(e => e.priority === "urgent").length;
     const moyen = inboxEmails.filter(e => e.priority === "moyen").length;
     const faible = inboxEmails.filter(e => e.priority === "faible").length;
@@ -95,7 +95,9 @@ router.get("/dashboard/category-counts", requireAuth, async (req, res): Promise<
       .select("category_id")
       .eq("user_id", req.userId!)
       .is("shared_mailbox_id", null)
-      .neq("status", "archived");
+      .neq("status", "archived")
+      .neq("status", "trashed")
+      .neq("status", "spam");
 
     const countMap: Record<number, number> = {};
     (emails || []).forEach((e: any) => {
