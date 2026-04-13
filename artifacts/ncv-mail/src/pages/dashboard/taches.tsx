@@ -154,12 +154,12 @@ export default function Taches() {
   const [replyText, setReplyText] = useState("");
   const [replyAttachments, setReplyAttachments] = useState<UploadedFile[]>([]);
 
-  const { data: tasks, isLoading } = useListTasks({ status: filter as any });
+  const { data: tasks, isLoading } = useListTasks({});
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
   const createTask = useCreateTask();
 
-  const invalidate = () => queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+  const invalidate = () => queryClient.refetchQueries({ queryKey: getListTasksQueryKey() });
 
   const handleToggleDone = (id: string, currentDone: boolean) => {
     updateTask.mutate(
@@ -237,6 +237,10 @@ export default function Taches() {
 
   const filteredTasks = filter === "ai"
     ? taskList.filter((t: any) => t.source === "ai")
+    : filter === "todo"
+    ? taskList.filter((t: any) => t.status !== "done")
+    : filter === "done"
+    ? taskList.filter((t: any) => t.status === "done")
     : taskList;
 
   const filters = [
