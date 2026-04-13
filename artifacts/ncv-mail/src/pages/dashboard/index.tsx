@@ -285,17 +285,6 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   {isDrafting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
                   {isDrafting ? t("inbox.generating") : t("inbox.aiReply")}
                 </Button>
-                {email.status === "unread" && (
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
-                    onClick={() => onMarkRead(email.id)}
-                  >
-                    <CheckCircle2 className="w-3 h-3" />
-                    {t("inbox.markRead")}
-                  </Button>
-                )}
                 <Button
                   variant="outline"
                   size="sm"
