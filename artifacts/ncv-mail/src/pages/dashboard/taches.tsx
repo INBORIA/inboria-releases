@@ -401,26 +401,26 @@ export default function Taches() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-1 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0">
                     {taskStatus !== "done" ? (
                       <button
-                        onClick={() => handleToggleDone(task.id, false)}
-                        className="p-1.5 rounded-md text-[#8b9cb3] hover:text-emerald-400 hover:bg-emerald-500/10 transition-colors"
-                        title={t("tasks.markDone")}
+                        onClick={(e) => { e.stopPropagation(); handleToggleDone(task.id, false); }}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-medium text-emerald-400 bg-emerald-500/10 border border-emerald-500/20 hover:bg-emerald-500/20 hover:text-emerald-300 transition-colors"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5" />
+                        {t("tasks.markDone")}
                       </button>
                     ) : (
                       <button
-                        onClick={() => handleToggleDone(task.id, true)}
-                        className="p-1.5 rounded-md text-[#8b9cb3] hover:text-blue-400 hover:bg-blue-500/10 transition-colors"
-                        title={t("tasks.markTodo")}
+                        onClick={(e) => { e.stopPropagation(); handleToggleDone(task.id, true); }}
+                        className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-md text-[11px] font-medium text-blue-400 bg-blue-500/10 border border-blue-500/20 hover:bg-blue-500/20 hover:text-blue-300 transition-colors"
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
+                        {t("tasks.markTodo")}
                       </button>
                     )}
                     <button
-                      onClick={() => handleDeleteTask(task.id)}
+                      onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }}
                       className="p-1.5 rounded-md text-[#8b9cb3] hover:text-red-400 hover:bg-red-500/10 transition-colors"
                       title={t("common.delete")}
                     >
