@@ -1036,7 +1036,7 @@ export default function Dashboard() {
     queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
-    queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+    queryClient.refetchQueries({ queryKey: getGetDashboardSummaryQueryKey() });
   };
 
   const handleMarkAsRead = (id: number) => {
@@ -1906,19 +1906,28 @@ export default function Dashboard() {
               ) : (
                 <>
                   <div className="grid grid-cols-3 gap-2 mb-4">
-                    <div className="rounded-lg border border-red-500/20 bg-red-500/5 p-3">
+                    <div
+                      className={`rounded-lg border p-3 cursor-pointer transition-colors ${filterPriority === "urgent" ? "border-red-500/50 bg-red-500/15" : "border-red-500/20 bg-red-500/5 hover:bg-red-500/10"}`}
+                      onClick={() => setFilterPriority(filterPriority === "urgent" ? "all" : "urgent")}
+                    >
                       <div className="text-[10px] font-medium text-red-400 uppercase tracking-wider mb-0.5">{t("inbox.priorities.urgentPlural")}</div>
                       <div className="text-xl font-bold text-white">
                         {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.urgentCount || 0}
                       </div>
                     </div>
-                    <div className="rounded-lg border border-amber-500/20 bg-amber-500/5 p-3">
+                    <div
+                      className={`rounded-lg border p-3 cursor-pointer transition-colors ${filterPriority === "moyen" ? "border-amber-500/50 bg-amber-500/15" : "border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10"}`}
+                      onClick={() => setFilterPriority(filterPriority === "moyen" ? "all" : "moyen")}
+                    >
                       <div className="text-[10px] font-medium text-amber-400 uppercase tracking-wider mb-0.5">{t("inbox.priorities.mediumPlural")}</div>
                       <div className="text-xl font-bold text-white">
                         {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.moyenCount || 0}
                       </div>
                     </div>
-                    <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-3">
+                    <div
+                      className={`rounded-lg border p-3 cursor-pointer transition-colors ${filterPriority === "faible" ? "border-emerald-500/50 bg-emerald-500/15" : "border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10"}`}
+                      onClick={() => setFilterPriority(filterPriority === "faible" ? "all" : "faible")}
+                    >
                       <div className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider mb-0.5">{t("inbox.priorities.lowPlural")}</div>
                       <div className="text-xl font-bold text-white">
                         {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.faibleCount || 0}
