@@ -976,7 +976,7 @@ export default function Dashboard() {
       (entries) => {
         if (entries[0].isIntersecting) loadMore();
       },
-      { threshold: 0.1 }
+      { threshold: 0, rootMargin: "200px" }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -2014,19 +2014,29 @@ export default function Dashboard() {
                           />
                         ))}
                         {hasMorePages && (
-                          <div ref={loadMoreRef} className="flex items-center justify-center py-4">
+                          <div ref={loadMoreRef} className="py-2">
                             {emailsFetching ? (
-                              <div className="flex items-center gap-2 text-[#8b9cb3]">
-                                <Loader2 className="w-4 h-4 animate-spin" />
-                                <span className="text-[11px]">{t("common.loading")}</span>
+                              <div className="space-y-2">
+                                {[...Array(3)].map((_, i) => (
+                                  <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card animate-pulse">
+                                    <div className="w-1 h-10 rounded-full bg-white/5" />
+                                    <div className="flex-1 space-y-2">
+                                      <Skeleton className="h-3 w-32 bg-white/5" />
+                                      <Skeleton className="h-3 w-48 bg-white/5" />
+                                    </div>
+                                    <Skeleton className="h-3 w-12 bg-white/5" />
+                                  </div>
+                                ))}
                               </div>
                             ) : (
-                              <button
-                                onClick={loadMore}
-                                className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40"
-                              >
-                                {t("inbox.loadMore")}
-                              </button>
+                              <div className="flex items-center justify-center py-2">
+                                <button
+                                  onClick={loadMore}
+                                  className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40"
+                                >
+                                  {t("inbox.loadMore")}
+                                </button>
+                              </div>
                             )}
                           </div>
                         )}
