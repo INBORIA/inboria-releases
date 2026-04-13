@@ -93,6 +93,29 @@ export default function Taches() {
   const dragStartIdRef = useRef<string | null>(null);
   const dragTrailRef = useRef<string[]>([]);
   const preSelectRef = useRef<Set<string>>(new Set());
+  const autoScrollRaf = useRef<number>(0);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      const threshold = 60;
+      const speed = 12;
+      cancelAnimationFrame(autoScrollRaf.current);
+      const scroll = () => {
+        if (!isDraggingRef.current) return;
+        if (e.clientY > window.innerHeight - threshold) {
+          window.scrollBy(0, speed);
+          autoScrollRaf.current = requestAnimationFrame(scroll);
+        } else if (e.clientY < threshold) {
+          window.scrollBy(0, -speed);
+          autoScrollRaf.current = requestAnimationFrame(scroll);
+        }
+      };
+      scroll();
+    };
+    document.addEventListener("mousemove", handleMouseMove);
+    return () => { document.removeEventListener("mousemove", handleMouseMove); cancelAnimationFrame(autoScrollRaf.current); };
+  }, []);
 
   const handleDragSelectStart = useCallback((id: string) => {
     isDraggingRef.current = true;
@@ -100,7 +123,7 @@ export default function Taches() {
     dragStartIdRef.current = id;
     dragTrailRef.current = [id];
     setSelectedTaskIds((prev) => { preSelectRef.current = new Set(prev); return prev; });
-    const handleMouseUp = () => { isDraggingRef.current = false; dragTrailRef.current = []; document.removeEventListener("mouseup", handleMouseUp); };
+    const handleMouseUp = () => { isDraggingRef.current = false; cancelAnimationFrame(autoScrollRaf.current); dragTrailRef.current = []; document.removeEventListener("mouseup", handleMouseUp); };
     document.addEventListener("mouseup", handleMouseUp);
   }, []);
 

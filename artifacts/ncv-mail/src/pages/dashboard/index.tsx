@@ -872,6 +872,29 @@ export default function Dashboard() {
   const dragStartIdRef = useRef<number | null>(null);
   const dragTrailRef = useRef<number[]>([]);
   const preSelectRef = useRef<Set<number>>(new Set());
+  const autoScrollRaf = useRef<number>(0);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      const threshold = 60;
+      const speed = 12;
+      cancelAnimationFrame(autoScrollRaf.current);
+      const scroll = () => {
+        if (!isDraggingRef.current) return;
+        if (e.clientY > window.innerHeight - threshold) {
+          window.scrollBy(0, speed);
+          autoScrollRaf.current = requestAnimationFrame(scroll);
+        } else if (e.clientY < threshold) {
+          window.scrollBy(0, -speed);
+          autoScrollRaf.current = requestAnimationFrame(scroll);
+        }
+      };
+      scroll();
+    };
+    document.addEventListener("mousemove", handleMouseMove);
+    return () => { document.removeEventListener("mousemove", handleMouseMove); cancelAnimationFrame(autoScrollRaf.current); };
+  }, []);
 
   const handleDragSelectStart = useCallback((id: number) => {
     isDraggingRef.current = true;
@@ -881,6 +904,7 @@ export default function Dashboard() {
     setSelectedIds((prev) => { preSelectRef.current = new Set(prev); return prev; });
     const handleMouseUp = () => {
       isDraggingRef.current = false;
+      cancelAnimationFrame(autoScrollRaf.current);
       dragTrailRef.current = [];
       document.removeEventListener("mouseup", handleMouseUp);
     };
