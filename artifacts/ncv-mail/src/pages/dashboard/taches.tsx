@@ -306,6 +306,36 @@ export default function Taches() {
           ))}
         </div>
 
+        <div data-selection-bar className={`flex items-center gap-2 mb-3 p-2.5 rounded-lg border h-[40px] ${taskSelectionMode ? "bg-primary/[0.08] border-primary/20" : "bg-card/50 border-border"}`}>
+          <button
+            onClick={() => {
+              if (selectedTaskIds.size === filteredTasks.length && selectedTaskIds.size > 0) {
+                setSelectedTaskIds(new Set());
+              } else {
+                setSelectedTaskIds(new Set(filteredTasks.map((t: any) => t.id)));
+              }
+            }}
+            className="flex items-center gap-1.5 text-[11px] text-primary hover:text-white transition-colors"
+          >
+            {selectedTaskIds.size === filteredTasks.length && selectedTaskIds.size > 0 ? <CheckSquare className="w-3.5 h-3.5" /> : <Square className="w-3.5 h-3.5" />}
+            {selectedTaskIds.size === filteredTasks.length && selectedTaskIds.size > 0 ? t("inbox.deselectAll") : t("inbox.selectAll")}
+          </button>
+          {taskSelectionMode && (
+            <>
+              <span className="text-[11px] text-[#8b9cb3]">
+                {t("inbox.selectedCount", { count: selectedTaskIds.size })}
+              </span>
+              <div className="flex-1" />
+              <button onClick={handleBulkMarkDone} className="flex items-center gap-1.5 text-[11px] text-emerald-400 hover:text-emerald-300 transition-colors px-2 py-1 rounded-md hover:bg-emerald-500/10">
+                <CheckCircle2 className="w-3.5 h-3.5" />{t("tasks.markDone")}
+              </button>
+              <button onClick={handleBulkDeleteTasks} className="flex items-center gap-1.5 text-[11px] text-red-400 hover:text-red-300 transition-colors px-2 py-1 rounded-md hover:bg-red-500/10">
+                <Trash2 className="w-3.5 h-3.5" />{t("common.delete")}
+              </button>
+            </>
+          )}
+        </div>
+
         <div className="space-y-1.5">
           {isLoading ? (
             Array(4).fill(0).map((_, i) => (
