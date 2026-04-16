@@ -1,6 +1,6 @@
 import app from "./app";
 import { logger } from "./lib/logger";
-import { startAutoSync } from "./services/auto-sync";
+import { startAutoSync, NOISE_SENDER_REGEX, NOISE_SUBJECT_REGEX } from "./services/auto-sync";
 import { supabaseAdmin } from "./lib/supabase";
 
 async function ensureProjectsTable() {
@@ -332,9 +332,6 @@ async function purgeNoiseTasks() {
       return;
     }
     if (!candidateTasks || candidateTasks.length === 0) return;
-
-    const NOISE_SENDER_REGEX = /(noreply|no-reply|no\.reply|donotreply|do-not-reply|notification|notifications@|mailer-daemon|postmaster|automated@|alerts?@|info-noreply)/i;
-    const NOISE_SUBJECT_REGEX = /(confirm.*sign.?up|sign.?up.*confirm|verify.*email|email.*verif|verification.*code|code.*verification|welcome to|your.*code is|your.*one.?time|one.?time.*pass|otp.*code|bienvenue|confirmez.*inscription|v[ée]rifi.*compte|code.*v[ée]rification|activate.*account|account.*activation|reset.*password|password.*reset|magic.*link|email.*confirmation|confirm your email)/i;
 
     const titlePatterns = NOISE_TITLE_PATTERNS.map((p) => new RegExp(p.replace(/%/g, ".*").replace(/_/g, "."), "i"));
 

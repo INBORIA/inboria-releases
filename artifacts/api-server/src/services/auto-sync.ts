@@ -108,8 +108,8 @@ const ALLOWED_IMAP_HOSTS = [
 
 let syncRunning = false;
 
-const NOISE_SENDER_REGEX = /(noreply|no-reply|no\.reply|donotreply|do-not-reply|notification|notifications@|mailer-daemon|postmaster|automated@|alerts?@|info-noreply)/i;
-const NOISE_SUBJECT_REGEX = /(confirm.*sign.?up|sign.?up.*confirm|verify.*email|email.*verif|verification.*code|code.*verification|welcome to|your.*code is|your.*one.?time|one.?time.*pass|otp.*code|bienvenue|confirmez.*inscription|v[ée]rifi.*compte|code.*v[ée]rification|activate.*account|account.*activation|reset.*password|password.*reset|magic.*link|email.*confirmation|confirm your email)/i;
+export const NOISE_SENDER_REGEX = /(noreply|no-reply|no\.reply|donotreply|do-not-reply|notification|notifications@|mailer-daemon|postmaster|automated@|alerts?@|info-noreply)/i;
+export const NOISE_SUBJECT_REGEX = /(confirm.*sign.?up|sign.?up.*confirm|verify.*email|email.*verif|verification.*code|code.*verification|code.*confirmation|confirmation.*code|welcome to|your.*code is|your.*one.?time|one.?time.*pass|otp.*code|bienvenue|confirmez.*inscription|v[ée]rifi.*compte|code.*v[ée]rification|activate.*account|account.*activation|reset.*password|password.*reset|magic.*link|email.*confirmation|confirm your email)/i;
 
 export function isNoiseEmail(sender: string, subject: string): boolean {
   const s = (sender || "").toLowerCase();
