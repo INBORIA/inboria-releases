@@ -5,7 +5,7 @@ import OpenAI from "openai";
 import { simpleParser } from "mailparser";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
-import { triggerSyncForConnection } from "../services/auto-sync";
+import { triggerSyncForConnection, isNoiseEmail, userHasOpenTaskWithTitle } from "../services/auto-sync";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -669,7 +669,7 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
         continue;
       }
 
-      if (triage.tasks && triage.tasks.length > 0) {
+      if (triage.tasks && triage.tasks.length > 0 && !isNoiseEmail(from, subject)) {
         const { data: insertedEmail } = await supabaseAdmin
           .from("emails")
           .select("id")
@@ -684,16 +684,18 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
             .limit(1);
 
           if (!existingTasks || existingTasks.length === 0) {
-            await supabaseAdmin.from("tasks").insert(
-              triage.tasks.map((title: string) => ({
-                user_id: userId,
-                email_id: insertedEmail.id,
-                title,
-                done: false,
-              }))
-            );
+            const taskInserts: { user_id: string; email_id: number; title: string; done: boolean }[] = [];
+            for (const title of triage.tasks as string[]) {
+              if (await userHasOpenTaskWithTitle(userId, title)) continue;
+              taskInserts.push({ user_id: userId, email_id: insertedEmail.id, title, done: false });
+            }
+            if (taskInserts.length > 0) {
+              await supabaseAdmin.from("tasks").insert(taskInserts);
+            }
           }
         }
+      } else if (triage.tasks && triage.tasks.length > 0) {
+        console.log(`[email-connect] noise email, skipping ${triage.tasks.length} task(s)`);
       }
 
       synced++;

@@ -108,6 +108,33 @@ const ALLOWED_IMAP_HOSTS = [
 
 let syncRunning = false;
 
+const NOISE_SENDER_REGEX = /(noreply|no-reply|no\.reply|donotreply|do-not-reply|notification|notifications@|mailer-daemon|postmaster|automated@|alerts?@|info-noreply)/i;
+const NOISE_SUBJECT_REGEX = /(confirm.*sign.?up|sign.?up.*confirm|verify.*email|email.*verif|verification.*code|code.*verification|welcome to|your.*code is|your.*one.?time|one.?time.*pass|otp.*code|bienvenue|confirmez.*inscription|v[ée]rifi.*compte|code.*v[ée]rification|activate.*account|account.*activation|reset.*password|password.*reset|magic.*link|email.*confirmation|confirm your email)/i;
+
+export function isNoiseEmail(sender: string, subject: string): boolean {
+  const s = (sender || "").toLowerCase();
+  const sub = (subject || "").toLowerCase();
+  return NOISE_SENDER_REGEX.test(s) || NOISE_SUBJECT_REGEX.test(sub);
+}
+
+function normalizeTitle(title: string): string {
+  return (title || "").trim().toLowerCase().replace(/\s+/g, " ");
+}
+
+export async function userHasOpenTaskWithTitle(userId: string, title: string): Promise<boolean> {
+  const norm = normalizeTitle(title);
+  if (!norm) return true;
+  const { data } = await supabaseAdmin
+    .from("tasks")
+    .select("id, title")
+    .eq("user_id", userId)
+    .eq("done", false)
+    .ilike("title", title)
+    .limit(5);
+  if (!data || data.length === 0) return false;
+  return data.some((t: any) => normalizeTitle(t.title) === norm);
+}
+
 function isPrivateIP(host: string): boolean {
   try {
     if (net.isIP(host)) {
@@ -377,7 +404,7 @@ async function saveEmailWithTriage(
 
   detectAppointmentFromEmail(inserted.id, sender, subject, body, userId).catch(() => {});
 
-  if (triage.tasks.length > 0) {
+  if (triage.tasks.length > 0 && !isNoiseEmail(sender, subject)) {
     const { data: existingTasks } = await supabaseAdmin
       .from("tasks")
       .select("id")
@@ -385,24 +412,31 @@ async function saveEmailWithTriage(
       .limit(1);
 
     if (!existingTasks || existingTasks.length === 0) {
-      const { error: taskErr } = await supabaseAdmin.from("tasks").insert(
-        triage.tasks.map((title) => ({
-          user_id: userId,
-          email_id: inserted.id,
-          title,
-          done: false,
-        }))
-      );
-      if (taskErr) {
-        console.error("[auto-sync] task insert error:", taskErr.message);
+      const tasksToInsert: { user_id: string; email_id: number; title: string; done: boolean }[] = [];
+      for (const title of triage.tasks) {
+        const dup = await userHasOpenTaskWithTitle(userId, title);
+        if (dup) {
+          console.log(`[auto-sync] skip duplicate task title for user ${userId}: "${title}"`);
+          continue;
+        }
+        tasksToInsert.push({ user_id: userId, email_id: inserted.id, title, done: false });
       }
 
-      for (const title of triage.tasks) {
-        createNotionTask(userId, title, subject, sender).catch(() => {});
+      if (tasksToInsert.length > 0) {
+        const { error: taskErr } = await supabaseAdmin.from("tasks").insert(tasksToInsert);
+        if (taskErr) {
+          console.error("[auto-sync] task insert error:", taskErr.message);
+        }
+
+        for (const t of tasksToInsert) {
+          createNotionTask(userId, t.title, subject, sender).catch(() => {});
+        }
       }
     } else {
       console.log(`[auto-sync] tasks already exist for email ${inserted.id}, skipping`);
     }
+  } else if (triage.tasks.length > 0) {
+    console.log(`[auto-sync] noise email detected (${sender} | ${subject.slice(0, 60)}), skipping ${triage.tasks.length} task(s)`);
   }
 
   const { error: quotaErr } = await supabaseAdmin.rpc("increment_emails_used", {

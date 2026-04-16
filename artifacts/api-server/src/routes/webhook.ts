@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import OpenAI from "openai";
+import { isNoiseEmail, userHasOpenTaskWithTitle } from "../services/auto-sync";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -180,7 +181,7 @@ router.post("/webhook/email", async (req, res): Promise<void> => {
       return;
     }
 
-    if (triage.tasks.length > 0) {
+    if (triage.tasks.length > 0 && !isNoiseEmail(sender, subject)) {
       const { data: existingTasks } = await supabaseAdmin
         .from("tasks")
         .select("id")
@@ -188,14 +189,17 @@ router.post("/webhook/email", async (req, res): Promise<void> => {
         .limit(1);
 
       if (!existingTasks || existingTasks.length === 0) {
-        const taskInserts = triage.tasks.map((title) => ({
-          user_id: userId,
-          email_id: insertedEmail.id,
-          title,
-          done: false,
-        }));
-        await supabaseAdmin.from("tasks").insert(taskInserts);
+        const taskInserts: { user_id: string; email_id: number; title: string; done: boolean }[] = [];
+        for (const title of triage.tasks) {
+          if (await userHasOpenTaskWithTitle(userId, title)) continue;
+          taskInserts.push({ user_id: userId, email_id: insertedEmail.id, title, done: false });
+        }
+        if (taskInserts.length > 0) {
+          await supabaseAdmin.from("tasks").insert(taskInserts);
+        }
       }
+    } else if (triage.tasks.length > 0) {
+      console.log(`[webhook] noise email, skipping ${triage.tasks.length} task(s)`);
     }
 
     await supabaseAdmin

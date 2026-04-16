@@ -233,7 +233,7 @@ async function cleanupDuplicateTasks() {
   try {
     const { data: aiTasks, error: fetchErr } = await supabaseAdmin
       .from("tasks")
-      .select("id, email_id, title")
+      .select("id, email_id, user_id, title, done")
       .not("email_id", "is", null)
       .order("id", { ascending: true });
 
@@ -247,27 +247,40 @@ async function cleanupDuplicateTasks() {
       return;
     }
 
-    const seen = new Map<string, number>();
-    const toDelete: number[] = [];
+    const normTitle = (t: string) => (t || "").trim().toLowerCase().replace(/\s+/g, " ");
+    const seenEmailTitle = new Map<string, number>();
+    const seenUserTitle = new Map<string, number>();
+    const toDelete = new Set<number>();
 
     for (const task of aiTasks) {
-      const key = `${task.email_id}::${task.title}`;
-      if (seen.has(key)) {
-        toDelete.push(task.id);
-      } else {
-        seen.set(key, task.id);
+      const nt = normTitle(task.title);
+      const k1 = `${task.email_id}::${nt}`;
+      if (seenEmailTitle.has(k1)) {
+        toDelete.add(task.id);
+        continue;
+      }
+      seenEmailTitle.set(k1, task.id);
+
+      if (!task.done) {
+        const k2 = `${task.user_id}::${nt}`;
+        if (seenUserTitle.has(k2)) {
+          toDelete.add(task.id);
+          continue;
+        }
+        seenUserTitle.set(k2, task.id);
       }
     }
 
-    if (toDelete.length === 0) {
+    if (toDelete.size === 0) {
       logger.info(`No duplicate tasks found (${aiTasks.length} AI tasks, all unique)`);
       return;
     }
 
+    const ids = Array.from(toDelete);
     const batchSize = 50;
     let deleted = 0;
-    for (let i = 0; i < toDelete.length; i += batchSize) {
-      const batch = toDelete.slice(i, i + batchSize);
+    for (let i = 0; i < ids.length; i += batchSize) {
+      const batch = ids.slice(i, i + batchSize);
       const { error: delErr } = await supabaseAdmin
         .from("tasks")
         .delete()
@@ -282,6 +295,80 @@ async function cleanupDuplicateTasks() {
     logger.info(`Cleaned up ${deleted} duplicate tasks (kept ${aiTasks.length - deleted})`);
   } catch (e: any) {
     logger.warn({ error: e.message }, "Duplicate task cleanup failed (non-fatal)");
+  }
+}
+
+async function purgeNoiseTasks() {
+  try {
+    const NOISE_TITLE_PATTERNS = [
+      "%confirm%sign%up%",
+      "%sign%up%confirm%",
+      "%verify%email%",
+      "%email%verif%",
+      "%verification%code%",
+      "%code%verification%",
+      "%welcome to%",
+      "%confirm your email%",
+      "%email confirmation%",
+      "%confirmez%inscription%",
+      "%v_rifi%compte%",
+      "%code%v_rification%",
+      "%magic link%",
+      "%reset%password%",
+      "%password%reset%",
+      "%activate%account%",
+      "%one%time%pass%",
+      "%otp%code%",
+    ];
+
+    const { data: candidateTasks, error: fetchErr } = await supabaseAdmin
+      .from("tasks")
+      .select("id, title, email_id, emails(sender, subject)")
+      .eq("done", false)
+      .not("email_id", "is", null);
+
+    if (fetchErr) {
+      logger.warn({ error: fetchErr.message }, "Failed to fetch tasks for noise purge");
+      return;
+    }
+    if (!candidateTasks || candidateTasks.length === 0) return;
+
+    const NOISE_SENDER_REGEX = /(noreply|no-reply|no\.reply|donotreply|do-not-reply|notification|notifications@|mailer-daemon|postmaster|automated@|alerts?@|info-noreply)/i;
+    const NOISE_SUBJECT_REGEX = /(confirm.*sign.?up|sign.?up.*confirm|verify.*email|email.*verif|verification.*code|code.*verification|welcome to|your.*code is|your.*one.?time|one.?time.*pass|otp.*code|bienvenue|confirmez.*inscription|v[ée]rifi.*compte|code.*v[ée]rification|activate.*account|account.*activation|reset.*password|password.*reset|magic.*link|email.*confirmation|confirm your email)/i;
+
+    const titlePatterns = NOISE_TITLE_PATTERNS.map((p) => new RegExp(p.replace(/%/g, ".*").replace(/_/g, "."), "i"));
+
+    const toDelete: number[] = [];
+    for (const t of candidateTasks as any[]) {
+      const sender = t.emails?.sender || "";
+      const subject = t.emails?.subject || "";
+      const titleMatchesNoise = titlePatterns.some((rx) => rx.test(t.title || ""));
+      const senderIsNoise = NOISE_SENDER_REGEX.test(sender);
+      const subjectIsNoise = NOISE_SUBJECT_REGEX.test(subject);
+      if ((titleMatchesNoise && (senderIsNoise || subjectIsNoise)) || (senderIsNoise && subjectIsNoise)) {
+        toDelete.push(t.id);
+      }
+    }
+
+    if (toDelete.length === 0) {
+      logger.info("No noise tasks to purge");
+      return;
+    }
+
+    const batchSize = 100;
+    let deleted = 0;
+    for (let i = 0; i < toDelete.length; i += batchSize) {
+      const batch = toDelete.slice(i, i + batchSize);
+      const { error: delErr } = await supabaseAdmin.from("tasks").delete().in("id", batch);
+      if (delErr) {
+        logger.warn({ error: delErr.message }, "Error deleting noise tasks batch");
+      } else {
+        deleted += batch.length;
+      }
+    }
+    logger.info(`Purged ${deleted} noise tasks (signup/verify/welcome from noreply senders)`);
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "Noise task purge failed (non-fatal)");
   }
 }
 
@@ -315,5 +402,6 @@ app.listen(port, (err) => {
   ensureAppointmentsTable();
   ensureProfileTimezone();
   cleanupDuplicateTasks();
+  purgeNoiseTasks();
   startAutoSync();
 });
