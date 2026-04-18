@@ -347,24 +347,24 @@ export default function Agenda() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-2">
-            <Button onClick={navigatePrev} size="sm" variant="ghost" className="h-7 w-7 p-0">
+        <div className="flex flex-wrap items-center justify-between gap-y-2 gap-x-4 mb-4">
+          <div className="flex items-center gap-2 min-w-0 flex-shrink">
+            <Button onClick={navigatePrev} size="sm" variant="ghost" className="h-7 w-7 p-0 flex-shrink-0">
               <ChevronLeft className="w-4 h-4" />
             </Button>
-            <Button onClick={goToToday} size="sm" variant="outline" className="h-7 text-[11px] px-2">
+            <Button onClick={goToToday} size="sm" variant="outline" className="h-7 text-[11px] px-2 flex-shrink-0">
               {t("agenda.today")}
             </Button>
-            <Button onClick={navigateNext} size="sm" variant="ghost" className="h-7 w-7 p-0">
+            <Button onClick={navigateNext} size="sm" variant="ghost" className="h-7 w-7 p-0 flex-shrink-0">
               <ChevronRight className="w-4 h-4" />
             </Button>
-            <span className="text-[14px] font-medium text-white ml-2 capitalize">
+            <span className="text-[14px] font-medium text-white ml-2 capitalize whitespace-nowrap">
               {viewMode === "day"
                 ? format(currentDate, "EEEE d MMMM yyyy", { locale })
                 : format(currentDate, "MMMM yyyy", { locale })}
             </span>
           </div>
-          <div className="flex bg-card border border-border rounded-lg overflow-hidden mr-16">
+          <div className="flex bg-card border border-border rounded-lg overflow-hidden flex-shrink-0">
             {(["day", "week", "month"] as ViewMode[]).map((mode) => (
               <button
                 key={mode}
