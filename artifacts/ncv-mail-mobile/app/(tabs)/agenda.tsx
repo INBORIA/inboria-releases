@@ -243,12 +243,7 @@ export default function AgendaScreen() {
               <MaterialCommunityIcons name="chevron-left" size={24} color={colors.foreground} />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setCurrentDate(new Date())} style={s.monthTitleBtn}>
-              <Text
-                style={[s.monthTitle, { color: colors.foreground }]}
-                numberOfLines={1}
-                adjustsFontSizeToFit
-                minimumFontScale={0.7}
-              >
+              <Text style={[s.monthTitle, { color: colors.foreground }]}>
                 {monthLabel}
               </Text>
             </TouchableOpacity>
@@ -300,12 +295,7 @@ export default function AgendaScreen() {
           </View>
 
           <View style={[s.listHeader, { borderTopColor: colors.border }]}>
-            <Text
-              style={[s.listTitle, { color: colors.foreground, flex: 1, marginRight: 8 }]}
-              numberOfLines={1}
-              adjustsFontSizeToFit
-              minimumFontScale={0.7}
-            >
+            <Text style={[s.listTitle, { color: colors.foreground, flex: 1, flexShrink: 1, marginRight: 8 }]}>
               {format(selectedDay, "d MMMM", { locale })} ({dayAppointments.length})
             </Text>
             <TouchableOpacity onPress={() => setShowCreate(!showCreate)} style={[s.addBtn, { backgroundColor: colors.primary }]}>
@@ -404,12 +394,7 @@ export default function AgendaScreen() {
               renderItem={({ item }) => renderAppointment(item)}
               renderSectionHeader={({ section: { title } }) => (
                 <View style={[s.sectionHeader, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
-                  <Text
-                    style={[s.sectionHeaderText, { color: colors.foreground }]}
-                    numberOfLines={1}
-                    adjustsFontSizeToFit
-                    minimumFontScale={0.7}
-                  >
+                  <Text style={[s.sectionHeaderText, { color: colors.foreground, flexShrink: 1 }]}>
                     {title}
                   </Text>
                 </View>
