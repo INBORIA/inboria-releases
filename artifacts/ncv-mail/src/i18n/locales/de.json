@@ -848,7 +848,7 @@
     "currentPlan": "Aktueller Plan",
     "expired": "Abgelaufen",
     "renewalDate": "Erneuerung am",
-    "aiConsumption": "KI-Verbrauch",
+    "aiConsumption": "Von KI analysierte E-Mails diesen Monat",
     "manageSubscription": "Abonnement verwalten",
     "changePlan": "Plan ändern",
     "currentPlanBadge": "Aktueller Plan",
@@ -876,7 +876,14 @@
     "expiredSubscription": "Ihr Abonnement ist abgelaufen",
     "trialEndedFull": "Ihre kostenlose Testphase ist beendet",
     "resubscribe": "Abonnieren Sie einen kostenpflichtigen Plan, um Inboria weiterhin zu nutzen.",
-    "trialUsedFull": "Sie haben Ihre 100 kostenlosen E-Mails verwendet. Wählen Sie einen Plan unten, um fortzufahren."
+    "trialUsedFull": "Sie haben Ihre 100 kostenlosen E-Mails verwendet. Wählen Sie einen Plan unten, um fortzufahren.",
+    "maintenanceHint": "Zähler inkonsistent oder legitime E-Mails als Spam markiert? Nutzen Sie diese Wartungsaktionen.",
+    "recountQuota": "Quota neu zählen",
+    "recountSuccess": "Quota neu gezählt",
+    "recountSuccessDesc": "Zähler auf {{count}} einzigartige E-Mails angepasst.",
+    "restoreSpam": "Spam wiederherstellen",
+    "restoreSpamSuccess": "Spam wiederhergestellt",
+    "restoreSpamSuccessDesc": "{{count}} E-Mail(s) zurück im Posteingang."
   },
   "plans": {
     "trial": "Testversion",

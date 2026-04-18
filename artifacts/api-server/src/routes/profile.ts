@@ -163,4 +163,38 @@ router.post("/profile/push-token", requireAuth, async (req, res): Promise<void> 
   }
 });
 
+router.post("/profile/recount-quota", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { count, error: countErr } = await supabaseAdmin
+      .from("emails")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", req.userId!);
+    if (countErr) { res.status(500).json({ error: countErr.message }); return; }
+    const actual = count || 0;
+    const { error: upErr } = await supabaseAdmin
+      .from("profiles")
+      .update({ emails_used: actual })
+      .eq("id", req.userId!);
+    if (upErr) { res.status(500).json({ error: upErr.message }); return; }
+    res.json({ ok: true, emails_used: actual });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
+router.post("/profile/restore-spam", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("emails")
+      .update({ status: "inbox" })
+      .eq("user_id", req.userId!)
+      .eq("status", "spam")
+      .select("id");
+    if (error) { res.status(500).json({ error: error.message }); return; }
+    res.json({ ok: true, restored: (data || []).length });
+  } catch (e: any) {
+    res.status(500).json({ error: e.message });
+  }
+});
+
 export default router;

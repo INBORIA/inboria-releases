@@ -21,6 +21,8 @@ export default function Abonnement() {
   const { data: profile, isLoading } = useGetProfile();
   const checkout = useCreateCheckoutSession();
   const [portalLoading, setPortalLoading] = useState(false);
+  const [recountLoading, setRecountLoading] = useState(false);
+  const [restoreLoading, setRestoreLoading] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const searchString = useSearch();
@@ -139,6 +141,49 @@ export default function Abonnement() {
     );
   };
 
+  const handleRecount = async () => {
+    setRecountLoading(true);
+    try {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const session = await (await import("@/lib/supabase")).supabase.auth.getSession();
+      const accessToken = session.data.session?.access_token;
+      const res = await fetch(`${baseUrl}/api/profile/recount-quota`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const data = await res.json();
+      if (data.ok) {
+        await queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+        toast({ title: t("subscription.recountSuccess"), description: t("subscription.recountSuccessDesc", { count: data.emails_used }) });
+      } else throw new Error(data.error || "Erreur");
+    } catch {
+      toast({ title: t("common.error"), variant: "destructive" });
+    } finally {
+      setRecountLoading(false);
+    }
+  };
+
+  const handleRestoreSpam = async () => {
+    setRestoreLoading(true);
+    try {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const session = await (await import("@/lib/supabase")).supabase.auth.getSession();
+      const accessToken = session.data.session?.access_token;
+      const res = await fetch(`${baseUrl}/api/profile/restore-spam`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${accessToken}` },
+      });
+      const data = await res.json();
+      if (data.ok) {
+        toast({ title: t("subscription.restoreSpamSuccess"), description: t("subscription.restoreSpamSuccessDesc", { count: data.restored }) });
+      } else throw new Error(data.error || "Erreur");
+    } catch {
+      toast({ title: t("common.error"), variant: "destructive" });
+    } finally {
+      setRestoreLoading(false);
+    }
+  };
+
   const handlePortal = async () => {
     setPortalLoading(true);
     try {
@@ -253,6 +298,24 @@ export default function Abonnement() {
             </div>
           </div>
         ) : null}
+
+        {profile && (
+          <div className="bg-card rounded-lg border border-border p-4 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+            <div className="text-[12px] text-[#8b9cb3] flex-1">
+              {t("subscription.maintenanceHint")}
+            </div>
+            <div className="flex gap-2 shrink-0">
+              <Button variant="outline" size="sm" onClick={handleRecount} disabled={recountLoading}>
+                {recountLoading && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />}
+                {t("subscription.recountQuota")}
+              </Button>
+              <Button variant="outline" size="sm" onClick={handleRestoreSpam} disabled={restoreLoading}>
+                {restoreLoading && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />}
+                {t("subscription.restoreSpam")}
+              </Button>
+            </div>
+          </div>
+        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {plans.map((plan) => {
