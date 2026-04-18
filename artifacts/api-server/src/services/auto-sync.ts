@@ -548,7 +548,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
       const subject = headers.find((h) => h.name === "Subject")?.value || "(pas de sujet)";
       const emailBody = extractGmailBody(fullMsg.payload) || fullMsg.snippet || "";
 
-      const scopedExternalId = `${conn.id}:${msg.id!}`;
+      const scopedExternalId = `gmail:${msg.id!}`;
       const savedId = await saveEmailWithTriage(
         conn.user_id,
         scopedExternalId,
@@ -587,7 +587,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
       const toBackfill = (allUserEmails || []).filter((e: any) => {
         const b = e.body || "";
         const extId = e.external_id || "";
-        if (!extId.startsWith(conn.id + ":")) return false;
+        if (!extId.startsWith("gmail:") && !extId.startsWith(conn.id + ":")) return false;
         if (b.length < 30) return false;
         if (/<html/i.test(b) || /<div/i.test(b) || /<table/i.test(b)) return false;
         return true;
@@ -624,7 +624,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
         .from("emails")
         .select("id, external_id")
         .eq("user_id", conn.user_id)
-        .like("external_id", `${conn.id}:%`)
+        .or(`external_id.like.gmail:%,external_id.like.${conn.id}:%`)
         .not("status", "eq", "sent")
         .order("created_at", { ascending: false })
         .limit(50);
@@ -743,7 +743,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
       const senderEmail = msg.from?.emailAddress?.address || "Inconnu";
       const senderName = msg.from?.emailAddress?.name || senderEmail;
 
-      const scopedExternalId = `${conn.id}:${msg.id}`;
+      const scopedExternalId = `outlook:${msg.id}`;
       const savedId = await saveEmailWithTriage(
         conn.user_id,
         scopedExternalId,
@@ -856,7 +856,7 @@ async function syncImapForUser(conn: any): Promise<number> {
 
     for await (const msg of client.fetch(range, { envelope: true, uid: true, source: true })) {
       fetchedCount++;
-      const externalId = `${conn.id}:imap_${msg.uid}`;
+      const externalId = `imap:${conn.email_address}:${msg.uid}`;
       const envelope = msg.envelope!;
       const from = envelope?.from?.[0];
       const sender = from?.name ? `${from.name} <${from.address}>` : from?.address || "inconnu";
@@ -927,7 +927,7 @@ async function syncImapForUser(conn: any): Promise<number> {
         .from("emails")
         .select("id, external_id")
         .eq("user_id", conn.user_id)
-        .like("external_id", `${conn.id}:imap_%`)
+        .or(`external_id.like.imap:${conn.email_address}:%,external_id.like.${conn.id}:imap_%`)
         .not("status", "eq", "sent")
         .order("created_at", { ascending: false })
         .limit(50);
