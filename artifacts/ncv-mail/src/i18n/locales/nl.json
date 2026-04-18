@@ -51,14 +51,15 @@
     "myTeam": "Mijn team",
     "sharedMailboxes": "Gedeelde mailboxen",
     "teamActivity": "Teamactiviteit",
-    "emailQuota": "E-mailquota",
-    "user": "Gebruiker"
+    "emailQuota": "AI-credits",
+    "user": "Gebruiker",
+    "aiCredits": "AI-credits"
   },
   "dashboard": {
     "expiredSubscription": "Uw abonnement is verlopen",
     "trialEnded": "Uw gratis proefperiode is beëindigd",
     "resubscribe": "Vernieuw uw abonnement om Inboria te blijven gebruiken.",
-    "trialUsed": "U heeft uw 100 gratis e-mails gebruikt. Kies een plan om door te gaan.",
+    "trialUsed": "U heeft uw 100 gratis AI-credits gebruikt. Kies een plan om door te gaan.",
     "choosePlan": "Kies een plan"
   },
   "footer": {
@@ -869,8 +870,8 @@
     "planUpdatedDesc": "Uw abonnement is succesvol gewijzigd.",
     "paymentError": "Kan geen betalingssessie aanmaken.",
     "portalError": "Kan het beheerportaal niet openen.",
-    "quotaOverage": "Quotumoverschrijding",
-    "quotaOverageDesc": "Automatische pay-as-you-go facturatie. Geen verrassingen — u wordt gewaarschuwd bij 80% van uw maandelijks quotum.",
+    "quotaOverage": "Credits overschrijding",
+    "quotaOverageDesc": "Automatische pay-as-you-go facturatie. Geen verrassingen — u wordt gewaarschuwd bij 80% van uw maandelijkse AI-credits.",
     "noCommitment": "Zonder verplichting",
     "noCommitmentDesc": "Alle plannen zijn zonder verplichting. U kunt zetels toevoegen of verwijderen, van plan wisselen of op elk moment annuleren vanuit uw persoonlijke ruimte.",
     "securityTitle": "Beveiliging en privacy",
@@ -883,10 +884,10 @@
     "expiredSubscription": "Uw abonnement is verlopen",
     "trialEndedFull": "Uw gratis proefperiode is beëindigd",
     "resubscribe": "Vernieuw naar een betaald plan om Inboria te blijven gebruiken.",
-    "trialUsedFull": "U heeft uw 100 gratis e-mails gebruikt. Kies hieronder een plan om door te gaan.",
+    "trialUsedFull": "U heeft uw 100 gratis AI-credits gebruikt. Kies hieronder een plan om door te gaan.",
     "maintenanceHint": "Inconsistente teller of legitieme e-mails als spam gemarkeerd? Gebruik deze onderhoudsacties.",
-    "recountQuota": "Quota opnieuw tellen",
-    "recountSuccess": "Quota opnieuw geteld",
+    "recountQuota": "Credits opnieuw tellen",
+    "recountSuccess": "Credits opnieuw geteld",
     "recountSuccessDesc": "Teller aangepast naar {{count}} unieke e-mails.",
     "restoreSpam": "Spam herstellen",
     "restoreSpamSuccess": "Spam hersteld",
@@ -894,9 +895,9 @@
   },
   "plans": {
     "trial": "Proef",
-    "trialDesc": "100 gratis e-mails om Inboria te ontdekken",
+    "trialDesc": "100 gratis AI-credits om Inboria te ontdekken",
     "trialFeatures": {
-      "f1": "100 gratis e-mails (eenmalig gebruik)",
+      "f1": "100 gratis AI-credits (eenmalig gebruik)",
       "f2": "3 aangepaste categorieën",
       "f3": "E-mailondersteuning",
       "f4": "AI-concepten inbegrepen"
@@ -904,42 +905,42 @@
     "solo": "Solo",
     "soloDesc": "Voor zelfstandigen",
     "soloFeatures": {
-      "f1": "3.000 e-mails per maand",
+      "f1": "3.000 AI-credits / maand",
       "f2": "Onbeperkte categorieën",
       "f3": "Dagelijks overzicht",
       "f4": "Proactieve AI-concepten",
       "f5": "Automatische taakextractie",
       "f6": "Prioriteitsondersteuning",
-      "f7": "Overschrijding: €0,002/e-mail"
+      "f7": "Overschrijding: €0,002 / credit"
     },
     "pro": "Pro",
     "proDesc": "Ideaal voor professionals",
     "proFeatures": {
-      "f1": "10.000 e-mails per maand",
+      "f1": "10.000 AI-credits / maand",
       "f2": "Onbeperkte categorieën",
       "f3": "Dagelijks overzicht",
       "f4": "Proactieve AI-concepten",
       "f5": "Automatische taakextractie",
       "f6": "Gedetailleerde statistieken",
       "f7": "Prioriteitsondersteuning",
-      "f8": "Overschrijding: €0,001/e-mail"
+      "f8": "Overschrijding: €0,001 / credit"
     },
     "business": "Business",
     "businessDesc": "Voor teams",
     "businessFeatures": {
-      "f1": "10.000 e-mails gesorteerd/zetel/maand",
+      "f1": "10.000 AI-credits / zetel / maand",
       "f2": "Alles uit het Pro-plan inbegrepen",
       "f3": "Minimaal 3 zetels, tot 50",
       "f4": "Gedeelde mailboxen tussen collega's",
       "f5": "Toewijzing van taken tussen leden",
       "f6": "Dedicated API",
       "f7": "Prioriteitsondersteuning",
-      "f8": "Overschrijding: €0,001/e-mail"
+      "f8": "Overschrijding: €0,001 / credit"
     },
     "essai": "Proefperiode",
-    "essaiDesc": "100 gratis e-mails om Inboria te ontdekken",
+    "essaiDesc": "100 gratis AI-credits om Inboria te ontdekken",
     "essaiFeatures": {
-      "f1": "100 gratis e-mails (eenmalig gebruik)",
+      "f1": "100 gratis AI-credits (eenmalig gebruik)",
       "f2": "3 aangepaste categorieën",
       "f3": "E-mailondersteuning",
       "f4": "AI-concepten inbegrepen"
@@ -980,7 +981,7 @@
       "clearVision": "Helder overzicht",
       "clearVisionDesc": "Vind uw belangrijke e-mails direct terug dankzij optimale organisatie.",
       "ctaTitle": "Klaar om 2 uur per dag te besparen?",
-      "ctaDesc": "100 gratis e-mails om Inboria te ontdekken. Geen creditcard vereist.",
+      "ctaDesc": "100 gratis AI-credits om Inboria te ontdekken. Geen creditcard vereist.",
       "tryFree": "Gratis proberen"
     },
     "features": {
@@ -1011,7 +1012,7 @@
       "security": "Beveiliging en privacy",
       "securityDesc": "Uw gegevens worden beschermd door end-to-end-encryptie. Wij respecteren strikt de AVG en verkopen nooit uw informatie.",
       "ctaTitle": "Klaar om 2 uur per dag te besparen?",
-      "ctaDesc": "100 gratis e-mails om Inboria te ontdekken. Geen creditcard vereist.",
+      "ctaDesc": "100 gratis AI-credits om Inboria te ontdekken. Geen creditcard vereist.",
       "tryFree": "Gratis proberen"
     },
     "pricing": {
@@ -1089,7 +1090,7 @@
       "ctaDesc": "Kies uw branchepakket, pas het toe en laat Inboria uw e-mails automatisch sorteren. Zo eenvoudig is het.",
       "startFree": "Gratis beginnen",
       "seePricingAlt": "Tarieven bekijken",
-      "ctaFooter": "100 gratis e-mails om te proberen • Geen creditcard vereist"
+      "ctaFooter": "100 gratis AI-credits om te proberen • Geen creditcard vereist"
     },
     "ai": {
       "badge": "Kunstmatige Intelligentie",
@@ -1176,7 +1177,7 @@
       "ctaDesc": "Sluit u aan bij de KMO's die 2 uur per dag besparen dankzij de kunstmatige intelligentie van Inboria.",
       "tryFree": "Gratis proberen",
       "seePricing": "Tarieven bekijken",
-      "ctaFooter": "100 gratis e-mails • Geen creditcard vereist • AI inbegrepen in alle plannen"
+      "ctaFooter": "100 gratis AI-credits • Geen creditcard vereist • AI inbegrepen in alle plannen"
     },
     "enterprise": {
       "badge": "Business-plan",
@@ -1709,7 +1710,7 @@
       "subscription": "Abonnement"
     },
     "search": "E-mails zoeken...",
-    "quota": "Quota",
+    "quota": "AI-credits",
     "priority": "Prioriteit:",
     "priorityAll": "Alle",
     "priorityUrgent": "Urgent",

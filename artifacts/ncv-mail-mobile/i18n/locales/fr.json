@@ -128,10 +128,10 @@
     "categories": "Catégories",
     "categoriesDesc": "Gérer les dossiers de classement",
     "subscription": "Abonnement",
-    "subscriptionDesc": "Plan et quotas emails",
+    "subscriptionDesc": "Plan et crédits IA",
     "parameters": "Paramètres",
     "parametersDesc": "Profil, comptes email, préférences IA",
-    "aiQuota": "Quota emails IA",
+    "aiQuota": "Crédits IA",
     "language": "Langue",
     "languageDesc": "Choisissez la langue de l'application",
     "logout": "Se déconnecter"
@@ -165,9 +165,9 @@
     "quotaWarning": "Attention : vous approchez de votre limite mensuelle.",
     "allPlans": "Tous les plans",
     "trial": "Essai",
-    "trialDesc": "100 emails offerts pour découvrir Inboria",
+    "trialDesc": "100 crédits IA offerts pour découvrir Inboria",
     "trialFeatures": [
-      "100 emails offerts (usage unique)",
+      "100 crédits IA offerts (usage unique)",
       "3 rubriques personnalisées",
       "Support par email",
       "Brouillons IA inclus"
@@ -175,7 +175,7 @@
     "solo": "Solo",
     "soloDesc": "Pour les indépendants",
     "soloFeatures": [
-      "3 000 emails par mois",
+      "3 000 crédits IA / mois",
       "Rubriques illimitées",
       "Brief quotidien",
       "Brouillons IA proactifs",
@@ -185,7 +185,7 @@
     "pro": "Pro",
     "proDesc": "Idéal pour les professionnels",
     "proFeatures": [
-      "10 000 emails par mois",
+      "10 000 crédits IA / mois",
       "Rubriques illimitées",
       "Brief quotidien",
       "Brouillons IA proactifs",
@@ -195,7 +195,7 @@
     "business": "Business",
     "businessDesc": "Pour les équipes",
     "businessFeatures": [
-      "10 000 emails / siège / mois",
+      "10 000 crédits IA / siège / mois",
       "Tout du plan Pro inclus",
       "Minimum 3 sièges, jusqu'à 50",
       "Boîtes partagées",

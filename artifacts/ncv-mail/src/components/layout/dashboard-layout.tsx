@@ -135,7 +135,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         <div className="px-2.5 py-2 mb-2">
           <div className="flex justify-between items-center mb-1.5">
             <span className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">
-              {t("sidebar.emailQuota")}
+              {t("sidebar.aiCredits")}
             </span>
             <span className="text-[10px] font-medium text-white">
               {(user as any).emailsUsed}/{(user as any).emailsQuota}

@@ -128,10 +128,10 @@
     "categories": "Categorías",
     "categoriesDesc": "Gestionar carpetas de clasificación",
     "subscription": "Suscripción",
-    "subscriptionDesc": "Plan y cuotas de correo",
+    "subscriptionDesc": "Plan y créditos IA",
     "parameters": "Ajustes",
     "parametersDesc": "Perfil, cuentas de correo, preferencias IA",
-    "aiQuota": "Cuota de correos IA",
+    "aiQuota": "Créditos IA",
     "language": "Idioma",
     "languageDesc": "Elige el idioma de la aplicación",
     "logout": "Cerrar sesión"
@@ -165,9 +165,9 @@
     "quotaWarning": "Atención: te estás acercando a tu límite mensual.",
     "allPlans": "Todos los planes",
     "trial": "Prueba",
-    "trialDesc": "100 correos gratis para descubrir Inboria",
+    "trialDesc": "100 créditos IA gratis para descubrir Inboria",
     "trialFeatures": [
-      "100 correos gratis (una sola vez)",
+      "100 créditos IA gratis (una sola vez)",
       "3 categorías personalizadas",
       "Soporte por correo",
       "Borradores IA incluidos"
@@ -175,7 +175,7 @@
     "solo": "Solo",
     "soloDesc": "Para autónomos",
     "soloFeatures": [
-      "3.000 correos al mes",
+      "3.000 créditos IA / mes",
       "Categorías ilimitadas",
       "Resumen diario",
       "Borradores IA proactivos",
@@ -185,7 +185,7 @@
     "pro": "Pro",
     "proDesc": "Ideal para profesionales",
     "proFeatures": [
-      "10.000 correos al mes",
+      "10.000 créditos IA / mes",
       "Categorías ilimitadas",
       "Resumen diario",
       "Borradores IA proactivos",

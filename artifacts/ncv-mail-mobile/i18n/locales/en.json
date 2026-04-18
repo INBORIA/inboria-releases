@@ -128,10 +128,10 @@
     "categories": "Categories",
     "categoriesDesc": "Manage classification folders",
     "subscription": "Subscription",
-    "subscriptionDesc": "Plan and email quotas",
+    "subscriptionDesc": "Plan and AI credits",
     "parameters": "Settings",
     "parametersDesc": "Profile, email accounts, AI preferences",
-    "aiQuota": "AI email quota",
+    "aiQuota": "AI credits",
     "language": "Language",
     "languageDesc": "Choose the app language",
     "logout": "Sign out"
@@ -165,9 +165,9 @@
     "quotaWarning": "Warning: you are approaching your monthly limit.",
     "allPlans": "All plans",
     "trial": "Trial",
-    "trialDesc": "100 free emails to discover Inboria",
+    "trialDesc": "100 free AI credits to discover Inboria",
     "trialFeatures": [
-      "100 free emails (one-time)",
+      "100 free AI credits (one-time)",
       "3 custom categories",
       "Email support",
       "AI drafts included"
@@ -175,7 +175,7 @@
     "solo": "Solo",
     "soloDesc": "For freelancers",
     "soloFeatures": [
-      "3,000 emails per month",
+      "3,000 AI credits / month",
       "Unlimited categories",
       "Daily briefing",
       "Proactive AI drafts",
@@ -185,7 +185,7 @@
     "pro": "Pro",
     "proDesc": "Ideal for professionals",
     "proFeatures": [
-      "10,000 emails per month",
+      "10,000 AI credits / month",
       "Unlimited categories",
       "Daily briefing",
       "Proactive AI drafts",
@@ -195,7 +195,7 @@
     "business": "Business",
     "businessDesc": "For teams",
     "businessFeatures": [
-      "10,000 emails / seat / month",
+      "10,000 AI credits / seat / month",
       "Everything in Pro plan",
       "Minimum 3 seats, up to 50",
       "Shared mailboxes",

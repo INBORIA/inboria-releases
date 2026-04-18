@@ -128,10 +128,10 @@
     "categories": "Categorieën",
     "categoriesDesc": "Classificatiemappen beheren",
     "subscription": "Abonnement",
-    "subscriptionDesc": "Plan en e-mailquota",
+    "subscriptionDesc": "Plan en AI-credits",
     "parameters": "Instellingen",
     "parametersDesc": "Profiel, e-mailaccounts, AI-voorkeuren",
-    "aiQuota": "AI e-mailquota",
+    "aiQuota": "AI-credits",
     "language": "Taal",
     "languageDesc": "Kies de taal van de app",
     "logout": "Uitloggen"
@@ -165,9 +165,9 @@
     "quotaWarning": "Let op: u nadert uw maandelijkse limiet.",
     "allPlans": "Alle plannen",
     "trial": "Proefperiode",
-    "trialDesc": "100 gratis e-mails om Inboria te ontdekken",
+    "trialDesc": "100 gratis AI-credits om Inboria te ontdekken",
     "trialFeatures": [
-      "100 gratis e-mails (eenmalig)",
+      "100 gratis AI-credits (eenmalig)",
       "3 aangepaste categorieën",
       "E-mailondersteuning",
       "AI-concepten inbegrepen"
@@ -175,7 +175,7 @@
     "solo": "Solo",
     "soloDesc": "Voor zelfstandigen",
     "soloFeatures": [
-      "3.000 e-mails per maand",
+      "3.000 AI-credits / maand",
       "Onbeperkte categorieën",
       "Dagelijks overzicht",
       "Proactieve AI-concepten",
@@ -185,7 +185,7 @@
     "pro": "Pro",
     "proDesc": "Ideaal voor professionals",
     "proFeatures": [
-      "10.000 e-mails per maand",
+      "10.000 AI-credits / maand",
       "Onbeperkte categorieën",
       "Dagelijks overzicht",
       "Proactieve AI-concepten",
@@ -195,7 +195,7 @@
     "business": "Business",
     "businessDesc": "Voor teams",
     "businessFeatures": [
-      "10.000 e-mails / zetel / maand",
+      "10.000 AI-credits / zetel / maand",
       "Alles uit het Pro-plan",
       "Minimaal 3 zetels, tot 50",
       "Gedeelde mailboxen",

@@ -130,7 +130,7 @@ Gestion de votre plan et paiement.
 - **Business** : 39€/mois par siège, emails illimités, boîtes illimitées, boîtes partagées, gestion d'équipe.
 
 ### Fonctionnalités :
-- Voir votre plan actuel et utilisation (emails utilisés / quota).
+- Voir votre plan actuel et utilisation (crédits IA utilisés / total).
 - Changer de plan (upgrade/downgrade).
 - Paiement sécurisé via Paddle (carte bancaire).
 - Annuler l'abonnement.
@@ -209,8 +209,8 @@ Allez dans Abonnement, vous verrez votre plan actuel. Cliquez sur "Gérer l'abon
 ### Qu'est-ce qu'un Pack Métier ?
 Un Pack Métier est un ensemble de catégories prédéfinies adaptées à votre secteur d'activité. Par exemple, le pack "Comptable" inclut des catégories comme Factures clients, Déclarations fiscales, etc. Allez dans Classement pour les appliquer.
 
-### Comment fonctionne le quota d'emails ?
-Chaque plan a un quota mensuel d'emails que l'IA peut traiter. Vous pouvez voir votre utilisation dans la barre latérale (jauge en bas). Une fois le quota atteint, vous devez passer à un plan supérieur pour continuer.
+### Comment fonctionnent les crédits IA ?
+Chaque plan inclut un nombre mensuel de crédits IA. Un crédit est consommé chaque fois que l'IA traite un email (classement, résumé, brouillon, extraction de tâche). Vous pouvez voir votre consommation dans la barre latérale (jauge en bas). Une fois les crédits épuisés, vous devez passer à un plan supérieur pour continuer.
 
 ### Puis-je connecter plusieurs boîtes email ?
 Oui, selon votre plan : Starter = 1 boîte, Pro = 3 boîtes, Business = illimité. Ajoutez vos connexions dans Paramètres.
@@ -345,13 +345,13 @@ Gmail, Outlook, Hotmail, Orange, Free, SFR, Bouygues, La Poste, Yahoo, Proximus,
 Plan and payment management.
 
 ### Available plans:
-- **Trial**: Free, 100 AI emails included. Perfect for testing.
+- **Trial**: Free, 100 AI credits included. Perfect for testing.
 - **Starter**: €9/month, 500 emails/month, 1 mailbox.
 - **Pro**: €19/month, 2000 emails/month, 3 mailboxes. (Recommended)
 - **Business**: €39/month per seat, unlimited emails, unlimited mailboxes, shared mailboxes, team management.
 
 ### Features:
-- View your current plan and usage (emails used / quota).
+- View your current plan and usage (AI credits used / total).
 - Change plan (upgrade/downgrade).
 - Secure payment via Paddle (credit card).
 - Cancel subscription.
@@ -430,8 +430,8 @@ Go to Subscription, you'll see your current plan. Click "Manage subscription" to
 ### What is an Industry Pack?
 An Industry Pack is a set of predefined categories tailored to your industry. For example, the "Accountant" pack includes categories like Client Invoices, Tax Returns, etc. Go to Classification to apply them.
 
-### How does the email quota work?
-Each plan has a monthly quota of emails that AI can process. You can see your usage in the sidebar (gauge at the bottom). Once the quota is reached, you need to upgrade to a higher plan to continue.
+### How do AI credits work?
+Each plan includes a monthly amount of AI credits. One credit is consumed every time the AI processes an email (sorting, summary, draft, task extraction). You can see your usage in the sidebar (gauge at the bottom). Once your credits are used up, you need to upgrade to a higher plan to continue.
 
 ### Can I connect multiple email accounts?
 Yes, depending on your plan: Starter = 1 mailbox, Pro = 3 mailboxes, Business = unlimited. Add connections in Settings.

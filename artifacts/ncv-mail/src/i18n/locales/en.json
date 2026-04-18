@@ -51,14 +51,15 @@
     "myTeam": "My team",
     "sharedMailboxes": "Shared mailboxes",
     "teamActivity": "Team activity",
-    "emailQuota": "Email quota",
-    "user": "User"
+    "emailQuota": "AI credits",
+    "user": "User",
+    "aiCredits": "AI credits"
   },
   "dashboard": {
     "expiredSubscription": "Your subscription has expired",
     "trialEnded": "Your free trial has ended",
     "resubscribe": "Resubscribe to continue using Inboria.",
-    "trialUsed": "You have used your 100 free emails. Choose a plan to continue.",
+    "trialUsed": "You have used your 100 free AI credits. Choose a plan to continue.",
     "choosePlan": "Choose a plan"
   },
   "footer": {
@@ -869,8 +870,8 @@
     "planUpdatedDesc": "Your subscription has been modified successfully.",
     "paymentError": "Unable to create payment session.",
     "portalError": "Unable to access the management portal.",
-    "quotaOverage": "Quota overage",
-    "quotaOverageDesc": "Automatic pay-as-you-go billing. No surprises — you're notified at 80% of your monthly quota.",
+    "quotaOverage": "Credits overage",
+    "quotaOverageDesc": "Automatic pay-as-you-go billing. No surprises — you're notified at 80% of your monthly AI credits.",
     "noCommitment": "No commitment",
     "noCommitmentDesc": "All plans are commitment-free. You can add or remove seats, change plans or cancel anytime from your personal space.",
     "securityTitle": "Security and privacy",
@@ -883,10 +884,10 @@
     "expiredSubscription": "Your subscription has expired",
     "trialEndedFull": "Your free trial has ended",
     "resubscribe": "Resubscribe to a paid plan to continue using Inboria.",
-    "trialUsedFull": "You have used your 100 free emails. Choose a plan below to continue.",
+    "trialUsedFull": "You have used your 100 free AI credits. Choose a plan below to continue.",
     "maintenanceHint": "Counter inconsistent or legitimate emails marked as spam? Use these maintenance actions.",
-    "recountQuota": "Recount quota",
-    "recountSuccess": "Quota recounted",
+    "recountQuota": "Recount credits",
+    "recountSuccess": "Credits recounted",
     "recountSuccessDesc": "Counter adjusted to {{count}} unique emails.",
     "restoreSpam": "Restore spam",
     "restoreSpamSuccess": "Spam restored",
@@ -894,9 +895,9 @@
   },
   "plans": {
     "trial": "Trial",
-    "trialDesc": "100 free emails to discover Inboria",
+    "trialDesc": "100 free AI credits to discover Inboria",
     "trialFeatures": {
-      "f1": "100 free emails (one-time use)",
+      "f1": "100 free AI credits (one-time use)",
       "f2": "3 custom categories",
       "f3": "Email support",
       "f4": "AI drafts included"
@@ -904,42 +905,42 @@
     "solo": "Solo",
     "soloDesc": "For freelancers",
     "soloFeatures": {
-      "f1": "3,000 emails per month",
+      "f1": "3,000 AI credits / month",
       "f2": "Unlimited categories",
       "f3": "Daily brief",
       "f4": "Proactive AI drafts",
       "f5": "Automatic task extraction",
       "f6": "Priority support",
-      "f7": "Overage: €0.002/email"
+      "f7": "Overage: €0.002 / credit"
     },
     "pro": "Pro",
     "proDesc": "Ideal for professionals",
     "proFeatures": {
-      "f1": "10,000 emails per month",
+      "f1": "10,000 AI credits / month",
       "f2": "Unlimited categories",
       "f3": "Daily brief",
       "f4": "Proactive AI drafts",
       "f5": "Automatic task extraction",
       "f6": "Detailed statistics",
       "f7": "Priority support",
-      "f8": "Overage: €0.001/email"
+      "f8": "Overage: €0.001 / credit"
     },
     "business": "Business",
     "businessDesc": "For teams",
     "businessFeatures": {
-      "f1": "10,000 emails sorted/seat/month",
+      "f1": "10,000 AI credits / seat / month",
       "f2": "Everything in the Pro plan",
       "f3": "Minimum 3 seats, up to 50",
       "f4": "Shared mailboxes between colleagues",
       "f5": "Task assignment between members",
       "f6": "Dedicated API",
       "f7": "Priority support",
-      "f8": "Overage: €0.001/email"
+      "f8": "Overage: €0.001 / credit"
     },
     "essai": "Trial",
-    "essaiDesc": "100 free emails to discover Inboria",
+    "essaiDesc": "100 free AI credits to discover Inboria",
     "essaiFeatures": {
-      "f1": "100 free emails (one-time use)",
+      "f1": "100 free AI credits (one-time use)",
       "f2": "3 custom categories",
       "f3": "Email support",
       "f4": "AI drafts included"
@@ -980,7 +981,7 @@
       "clearVision": "Clear vision",
       "clearVisionDesc": "Instantly find your important emails thanks to optimal organization.",
       "ctaTitle": "Ready to save 2 hours a day?",
-      "ctaDesc": "100 free emails to discover Inboria. No credit card required.",
+      "ctaDesc": "100 free AI credits to discover Inboria. No credit card required.",
       "tryFree": "Try for free"
     },
     "features": {
@@ -1011,7 +1012,7 @@
       "security": "Security and privacy",
       "securityDesc": "Your data is protected by end-to-end encryption. We strictly comply with GDPR and never sell your information.",
       "ctaTitle": "Ready to save 2 hours a day?",
-      "ctaDesc": "100 free emails to discover Inboria. No credit card required.",
+      "ctaDesc": "100 free AI credits to discover Inboria. No credit card required.",
       "tryFree": "Try for free"
     },
     "pricing": {
@@ -1089,7 +1090,7 @@
       "ctaDesc": "Choose your industry pack, apply it, and let Inboria sort your emails automatically. It's that simple.",
       "startFree": "Start for free",
       "seePricingAlt": "See pricing",
-      "ctaFooter": "100 free emails to try • No credit card required"
+      "ctaFooter": "100 free AI credits to try • No credit card required"
     },
     "ai": {
       "badge": "Artificial Intelligence",
@@ -1176,7 +1177,7 @@
       "ctaDesc": "Join the SMEs that save 2 hours a day thanks to Inboria's artificial intelligence.",
       "tryFree": "Try for free",
       "seePricing": "See pricing",
-      "ctaFooter": "100 free emails • No credit card required • AI included in all plans"
+      "ctaFooter": "100 free AI credits • No credit card required • AI included in all plans"
     },
     "enterprise": {
       "badge": "Business Plan",
@@ -1662,7 +1663,7 @@
       "subscriptionDesc": "Manage your Inboria subscription plan. Compare offers and upgrade.",
       "subscriptionFeatures": [
         "3 plans: Solo (€9/mo), Pro (€29/mo), Business (€59/mo)",
-        "Free trial of 100 emails included",
+        "Free trial of 100 AI credits included",
         "Secure payment via Paddle",
         "View your quota and current consumption",
         "Change plans anytime"
@@ -1709,7 +1710,7 @@
       "subscription": "Subscription"
     },
     "search": "Search emails...",
-    "quota": "Quota",
+    "quota": "AI credits",
     "priority": "Priority:",
     "priorityAll": "All",
     "priorityUrgent": "Urgent",

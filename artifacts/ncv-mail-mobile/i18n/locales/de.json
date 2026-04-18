@@ -128,10 +128,10 @@
     "categories": "Kategorien",
     "categoriesDesc": "Klassifizierungsordner verwalten",
     "subscription": "Abonnement",
-    "subscriptionDesc": "Tarif und E-Mail-Kontingente",
+    "subscriptionDesc": "Tarif und KI-Credits",
     "parameters": "Einstellungen",
     "parametersDesc": "Profil, E-Mail-Konten, KI-Einstellungen",
-    "aiQuota": "KI-E-Mail-Kontingent",
+    "aiQuota": "KI-Credits",
     "language": "Sprache",
     "languageDesc": "App-Sprache auswählen",
     "logout": "Abmelden"
@@ -165,9 +165,9 @@
     "quotaWarning": "Achtung: Sie nähern sich Ihrem monatlichen Limit.",
     "allPlans": "Alle Tarife",
     "trial": "Testversion",
-    "trialDesc": "100 kostenlose E-Mails zum Entdecken von Inboria",
+    "trialDesc": "100 kostenlose KI-Credits zum Entdecken von Inboria",
     "trialFeatures": [
-      "100 kostenlose E-Mails (einmalig)",
+      "100 kostenlose KI-Credits (einmalig)",
       "3 benutzerdefinierte Kategorien",
       "E-Mail-Support",
       "KI-Entwürfe inklusive"
@@ -175,7 +175,7 @@
     "solo": "Solo",
     "soloDesc": "Für Freiberufler",
     "soloFeatures": [
-      "3.000 E-Mails pro Monat",
+      "3.000 KI-Credits / Monat",
       "Unbegrenzte Kategorien",
       "Tägliches Briefing",
       "Proaktive KI-Entwürfe",
@@ -185,7 +185,7 @@
     "pro": "Pro",
     "proDesc": "Ideal für Fachleute",
     "proFeatures": [
-      "10.000 E-Mails pro Monat",
+      "10.000 KI-Credits / Monat",
       "Unbegrenzte Kategorien",
       "Tägliches Briefing",
       "Proaktive KI-Entwürfe",

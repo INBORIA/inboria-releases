@@ -51,14 +51,15 @@
     "myTeam": "Mein Team",
     "sharedMailboxes": "Geteilte Postfächer",
     "teamActivity": "Teamaktivität",
-    "emailQuota": "E-Mail-Quota",
-    "user": "Benutzer"
+    "emailQuota": "KI-Credits",
+    "user": "Benutzer",
+    "aiCredits": "KI-Credits"
   },
   "dashboard": {
     "expiredSubscription": "Ihr Abonnement ist abgelaufen",
     "trialEnded": "Ihre kostenlose Testversion ist beendet",
     "resubscribe": "Erneut abonnieren, um Inboria weiterhin zu nutzen.",
-    "trialUsed": "Sie haben Ihre 100 kostenlosen E-Mails verwendet. Wählen Sie einen Plan, um fortzufahren.",
+    "trialUsed": "Sie haben Ihre 100 kostenlosen KI-Credits verwendet. Wählen Sie einen Plan, um fortzufahren.",
     "choosePlan": "Wählen Sie einen Plan"
   },
   "footer": {
@@ -869,8 +870,8 @@
     "planUpdatedDesc": "Ihr Abonnement wurde erfolgreich geändert.",
     "paymentError": "Zahlungssitzung kann nicht erstellt werden.",
     "portalError": "Zugriff auf das Verwaltungsportal nicht möglich.",
-    "quotaOverage": "Quota-Überschreitung",
-    "quotaOverageDesc": "Automatische Pay-as-you-go-Abrechnung. Keine Überraschungen — Sie werden bei 80 % Ihres monatlichen Kontingents benachrichtigt.",
+    "quotaOverage": "Credit-Überschreitung",
+    "quotaOverageDesc": "Automatische Pay-as-you-go-Abrechnung. Keine Überraschungen — Sie werden bei 80 % Ihrer monatlichen KI-Credits benachrichtigt.",
     "noCommitment": "Keine Verpflichtung",
     "noCommitmentDesc": "Alle Pläne sind ohne Verpflichtung. Sie können Sitze hinzufügen oder entfernen, Pläne ändern oder jederzeit aus Ihrem persönlichen Bereich kündigen.",
     "securityTitle": "Sicherheit und Datenschutz",
@@ -883,10 +884,10 @@
     "expiredSubscription": "Ihr Abonnement ist abgelaufen",
     "trialEndedFull": "Ihre kostenlose Testphase ist beendet",
     "resubscribe": "Abonnieren Sie einen kostenpflichtigen Plan, um Inboria weiterhin zu nutzen.",
-    "trialUsedFull": "Sie haben Ihre 100 kostenlosen E-Mails verwendet. Wählen Sie einen Plan unten, um fortzufahren.",
+    "trialUsedFull": "Sie haben Ihre 100 kostenlosen KI-Credits verwendet. Wählen Sie einen Plan unten, um fortzufahren.",
     "maintenanceHint": "Zähler inkonsistent oder legitime E-Mails als Spam markiert? Nutzen Sie diese Wartungsaktionen.",
-    "recountQuota": "Quota neu zählen",
-    "recountSuccess": "Quota neu gezählt",
+    "recountQuota": "Credits neu berechnen",
+    "recountSuccess": "Credits neu gezählt",
     "recountSuccessDesc": "Zähler auf {{count}} einzigartige E-Mails angepasst.",
     "restoreSpam": "Spam wiederherstellen",
     "restoreSpamSuccess": "Spam wiederhergestellt",
@@ -894,9 +895,9 @@
   },
   "plans": {
     "trial": "Testversion",
-    "trialDesc": "100 kostenlose E-Mails, um Inboria zu entdecken",
+    "trialDesc": "100 kostenlose KI-Credits, um Inboria zu entdecken",
     "trialFeatures": {
-      "f1": "100 kostenlose E-Mails (einmalige Nutzung)",
+      "f1": "100 kostenlose KI-Credits (einmalige Nutzung)",
       "f2": "3 benutzerdefinierte Kategorien",
       "f3": "E-Mail-Support",
       "f4": "AI-Entwürfe enthalten"
@@ -904,42 +905,42 @@
     "solo": "Solo",
     "soloDesc": "Für Freiberufler",
     "soloFeatures": {
-      "f1": "3.000 E-Mails pro Monat",
+      "f1": "3.000 KI-Credits / Monat",
       "f2": "Unbegrenzte Kategorien",
       "f3": "Täglicher Bericht",
       "f4": "Proaktive AI-Entwürfe",
       "f5": "Automatische Aufgabenextraktion",
       "f6": "Priorisierter Support",
-      "f7": "Überziehung: 0,002 €/E-Mail"
+      "f7": "Überziehung: 0,002 € / Credit"
     },
     "pro": "Pro",
     "proDesc": "Ideal für Fachleute",
     "proFeatures": {
-      "f1": "10.000 E-Mails pro Monat",
+      "f1": "10.000 KI-Credits / Monat",
       "f2": "Unbegrenzte Kategorien",
       "f3": "Täglicher Bericht",
       "f4": "Proaktive AI-Entwürfe",
       "f5": "Automatische Aufgabenextraktion",
       "f6": "Detaillierte Statistiken",
       "f7": "Priorisierter Support",
-      "f8": "Überziehung: 0,001 €/E-Mail"
+      "f8": "Überziehung: 0,001 € / Credit"
     },
     "business": "Business",
     "businessDesc": "Für Teams",
     "businessFeatures": {
-      "f1": "10.000 E-Mails sortiert/Sitz/Monat",
+      "f1": "10.000 KI-Credits / Sitz / Monat",
       "f2": "Alles im Pro-Plan enthalten",
       "f3": "Mindestens 3 Sitze, bis zu 50",
       "f4": "Geteilte Postfächer zwischen Kollegen",
       "f5": "Aufgabenverteilung zwischen Mitgliedern",
       "f6": "Dedizierte API",
       "f7": "Priorisierter Support",
-      "f8": "Überziehung: 0,001 €/E-Mail"
+      "f8": "Überziehung: 0,001 € / Credit"
     },
     "essai": "Testversion",
-    "essaiDesc": "100 kostenlose E-Mails, um Inboria zu entdecken",
+    "essaiDesc": "100 kostenlose KI-Credits, um Inboria zu entdecken",
     "essaiFeatures": {
-      "f1": "100 kostenlose E-Mails (einmalige Nutzung)",
+      "f1": "100 kostenlose KI-Credits (einmalige Nutzung)",
       "f2": "3 benutzerdefinierte Kategorien",
       "f3": "E-Mail-Support",
       "f4": "AI-Entwürfe enthalten"
@@ -980,7 +981,7 @@
       "clearVision": "Klare Sicht",
       "clearVisionDesc": "Finden Sie sofort Ihre wichtigen E-Mails dank optimaler Organisation.",
       "ctaTitle": "Bereit, 2 Stunden am Tag zu sparen?",
-      "ctaDesc": "100 kostenlose E-Mails, um Inboria zu entdecken. Keine Kreditkarte erforderlich.",
+      "ctaDesc": "100 kostenlose KI-Credits, um Inboria zu entdecken. Keine Kreditkarte erforderlich.",
       "tryFree": "Kostenlos ausprobieren"
     },
     "features": {
@@ -1011,7 +1012,7 @@
       "security": "Sicherheit und Datenschutz",
       "securityDesc": "Ihre Daten sind durch End-to-End-Verschlüsselung geschützt. Wir halten uns strikt an die DSGVO und verkaufen niemals Ihre Informationen.",
       "ctaTitle": "Bereit, 2 Stunden am Tag zu sparen?",
-      "ctaDesc": "100 kostenlose E-Mails, um Inboria zu entdecken. Keine Kreditkarte erforderlich.",
+      "ctaDesc": "100 kostenlose KI-Credits, um Inboria zu entdecken. Keine Kreditkarte erforderlich.",
       "tryFree": "Kostenlos ausprobieren"
     },
     "pricing": {
@@ -1089,7 +1090,7 @@
       "ctaDesc": "Wählen Sie Ihr Branchenpaket, wenden Sie es an, und lassen Sie Inboria Ihre E-Mails automatisch sortieren. So einfach ist das.",
       "startFree": "Kostenlos starten",
       "seePricingAlt": "Preise ansehen",
-      "ctaFooter": "100 kostenlose E-Mails zum Ausprobieren • Keine Kreditkarte erforderlich"
+      "ctaFooter": "100 kostenlose KI-Credits zum Ausprobieren • Keine Kreditkarte erforderlich"
     },
     "ai": {
       "badge": "Künstliche Intelligenz",
@@ -1176,7 +1177,7 @@
       "ctaDesc": "Schließen Sie sich den KMUs an, die dank der künstlichen Intelligenz von Inboria täglich 2 Stunden sparen.",
       "tryFree": "Kostenlos ausprobieren",
       "seePricing": "Preise ansehen",
-      "ctaFooter": "100 kostenlose E-Mails • Keine Kreditkarte erforderlich • KI in allen Plänen enthalten"
+      "ctaFooter": "100 kostenlose KI-Credits • Keine Kreditkarte erforderlich • KI in allen Plänen enthalten"
     },
     "enterprise": {
       "badge": "Geschäftsplan",
@@ -1664,7 +1665,7 @@
         "3 Pläne: Solo (9 €/Monat), Pro (29 €/Monat), Business (59 €/Monat)",
         "Kostenlose Testversion von 100 E-Mails enthalten",
         "Sichere Zahlung über Paddle",
-        "Sehen Sie Ihr Kontingent und Ihren aktuellen Verbrauch",
+        "Sehen Sie Ihre KI-Credits und Ihren aktuellen Verbrauch",
         "Ändern Sie die Pläne jederzeit"
       ],
       "team": "Team",
@@ -1709,7 +1710,7 @@
       "subscription": "Abonnement"
     },
     "search": "E-Mails suchen...",
-    "quota": "Kontingent",
+    "quota": "KI-Credits",
     "priority": "Priorität:",
     "priorityAll": "Alle",
     "priorityUrgent": "Dringend",
