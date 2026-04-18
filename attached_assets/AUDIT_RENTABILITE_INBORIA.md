@@ -330,6 +330,226 @@ Hypothèse : les frais Paddle ne s'appliquent pas à chaque mail individuellemen
 
 ---
 
+## 12. Scénario « pire cas réaliste » — abonné qui exploite toutes les fonctions IA
+
+L'objectif de cette section est de mesurer **l'exposition maximale d'Inboria** par abonné qui :
+1. Reçoit la moyenne Microsoft de **117 mails/jour calendaire** (= 3 510 mails/mois) → 100% triés par l'IA
+2. **« joue avec l'app »** : utilise toutes les fonctions IA à un rythme intensif mais plausible
+
+### 12.1 Hypothèses « abuser plausible »
+
+| Action IA | Hypothèse worst case |
+|---|---|
+| Mails reçus & triés (triage + détection RDV) | 100% des 3 510 mails reçus |
+| Brouillon IA généré | sur **80%** des mails reçus → 2 808 brouillons |
+| Régénération de brouillon (utilisateur clique « réécrire ») | sur 30% des brouillons → 842 régénérations |
+| Adapter le ton (formal / casual / court) | sur 50% des brouillons → 1 404 variantes |
+| Relance IA générée | **5/jour** × 30 = 150 |
+| Résumé de fil de conversation | sur 50% des fils → 1 755 |
+| Reclassification manuelle (apprentissage) | **20/jour** × 30 = 600 |
+| Détection RDV manuelle (clic bouton) | 100/mois |
+| Chat support intelligent | **30 messages/jour** × 30 = 900 |
+| Brief quotidien | 30/mois |
+| Création projet via IA | 20/mois |
+| Catégorisation projet automatique | 100/mois |
+
+### 12.2 Coût OpenAI worst case par mois
+
+| Action | Volume | Coût unitaire (EUR) | **Coût total** |
+|---|---|---|---|
+| Triage | 3 510 | 0,000306 € | 1,074 € |
+| Détection RDV (auto sur sync) | 3 510 | 0,000099 € | 0,348 € |
+| Brouillons | 2 808 | 0,000428 € | 1,202 € |
+| Régénérations | 842 | 0,000428 € | 0,360 € |
+| Variantes de ton | 1 404 | 0,000428 € | 0,601 € |
+| Relances | 150 | 0,000317 € | 0,048 € |
+| Résumés conversation | 1 755 | 0,000373 € | 0,654 € |
+| Reclassif manuelle | 600 | 0,000207 € | 0,124 € |
+| Détection RDV manuelle | 100 | 0,000099 € | 0,010 € |
+| Chat support | 900 | 0,000207 € | 0,186 € |
+| Brief quotidien | 30 | 0,000683 € | 0,020 € |
+| Création projets IA | 20 | 0,000400 € | 0,008 € |
+| Catégorisation projets | 100 | 0,000300 € | 0,030 € |
+| **TOTAL OpenAI worst case** | | | **4,67 €** |
+
+### 12.3 Autres coûts directs « pire cas »
+
+**Brevo SMTP** (mails sortants, réponses envoyées par l'utilisateur) :
+- Hypothèse : 50 mails sortants/jour × 30 = 1 500 mails sortants/mois
+- Plan Brevo Business 65 €/mois pour 20 000 mails mutualisé = 0,00325 €/mail
+- **Coût Brevo / abonné worst case : 1 500 × 0,00325 € = 4,88 €**
+
+**Supabase** (DB + auth + storage), pire cas dilution faible (100 abonnés actifs) :
+- Plan Pro 25 $/mois (~23 €) base
+- Compute add-on micro 10 $/mois si DB sollicitée
+- Stockage emails (corpus 3 510 × 5 KB ≈ 18 MB/abonné/mois) : négligeable
+- Egress (transfert) : ~50 MB/jour × 30 ≈ 1,5 GB/mois × 0,09 $/GB = 0,12 $
+- **Worst case par abonné (mutualisé sur 100 abonnés) : ~1,00 €**
+- À 1 000 abonnés : ~0,10 € / abonné
+
+**Replit hébergement** (oublié dans rev. 1) :
+- Reserved VM Hacker plan + Deployment + Membership ≈ 60 $/mois (~55 €) mutualisé
+- À 100 abonnés : **0,55 € / abonné**
+- À 500 abonnés : **0,11 € / abonné**
+- À 1 000 abonnés : **0,055 € / abonné**
+
+**Paddle** : identique aux sections précédentes.
+
+### 12.4 Synthèse pire cas par plan (à 100 abonnés actifs = scénario early stage)
+
+#### Plan Solo « abuser » (9 €/mois)
+
+L'abuser dépasse le quota Solo (3 000) → 510 mails en Pay-as-you-go × 0,002 € = **1,02 € de revenu supplémentaire**.
+
+| Poste | Montant |
+|---|---|
+| Revenu (9 € + dépassement 1,02 €) | **10,02 €** |
+| OpenAI worst case | 4,67 € |
+| Brevo | 4,88 € |
+| Supabase (100 abonnés) | 1,00 € |
+| Replit (100 abonnés) | 0,55 € |
+| Paddle (2 transactions : abonnement + dépassement) | 0,95 + 0,50 + 0,05 + 0,50 = 2,00 € |
+| **Total coûts directs** | **13,10 €** |
+| **Marge nette** | **−3,08 € ⚠️ PERTE** |
+
+#### Plan Pro « abuser » (19 €/mois)
+
+L'abuser reste sous le quota Pro (10 000), pas de dépassement.
+
+| Poste | Montant |
+|---|---|
+| Revenu | **19,00 €** |
+| OpenAI worst case | 4,67 € |
+| Brevo | 4,88 € |
+| Supabase | 1,00 € |
+| Replit | 0,55 € |
+| Paddle | 1,45 € |
+| **Total coûts directs** | **12,55 €** |
+| **Marge nette** | **6,45 € (34%)** ✅ |
+
+#### Plan Business « abuser » (9 €/siège, 3 sièges)
+
+Chaque siège = même profil abuser que Pro.
+
+| Poste / siège | Montant |
+|---|---|
+| Revenu / siège | **9,00 €** |
+| OpenAI worst case | 4,67 € |
+| Brevo | 4,88 € |
+| Supabase | 1,00 € |
+| Replit | 0,55 € |
+| Paddle / siège | 0,62 € |
+| **Total coûts directs / siège** | **11,72 €** |
+| **Marge nette / siège** | **−2,72 € ⚠️ PERTE** |
+
+### 12.5 Conclusion sur le pire cas
+
+| Plan | Marge worst case « à 100 abonnés » | Verdict |
+|---|---|---|
+| Solo | **−3,08 €** | ⚠️ **DÉFICITAIRE** si user abuse |
+| Pro | +6,45 € (34%) | ✅ Reste rentable |
+| Business / siège | **−2,72 €** | ⚠️ **DÉFICITAIRE** si user abuse |
+
+**Risques identifiés** :
+1. Le **Pay-as-you-go actuel ne couvre que les mails entrants triés**, pas les actions IA secondaires (brouillons, chat, etc.) → un abuser peut consommer indéfiniment sans payer plus
+2. Les **mails sortants Brevo** sont le 2ᵉ poste de coût après OpenAI, et ne sont pas plafonnés
+3. **Solo et Business** à 9 € sont **structurellement vulnérables** à un usage abusif
+
+---
+
+## 13. Recommandation : passage à un système de crédits IA
+
+### 13.1 Principe
+
+Remplacer le quota « X mails par mois » par une **réserve de crédits IA** où **chaque action IA consomme un nombre défini de crédits**. Le décompte est transparent, affiché à côté de chaque bouton dans l'interface.
+
+**Avantages** :
+- Plafond strict de consommation IA → coûts maîtrisés
+- Le client paie pour ce qu'il consomme réellement
+- Possibilité d'acheter des **packs de crédits supplémentaires** (au lieu de forcer l'upgrade)
+- Pédagogie : le client voit le coût de chaque action, valorise la fonctionnalité
+
+### 13.2 Barème de crédits proposé
+
+(1 crédit ≈ coût d'un triage standard ≈ 0,000405 €)
+
+| Action | Crédits | Justification |
+|---|---|---|
+| Mail entrant analysé (triage + RDV) | **1** | coût de référence |
+| Brouillon IA généré | **2** | 2× plus de tokens (contexte + sortie) |
+| Régénération de brouillon | **2** | identique brouillon |
+| Variante de ton | **1** | sortie courte |
+| Relance IA générée | **2** | contexte + sortie longue |
+| Résumé de fil de conversation | **2** | gros contexte |
+| Reclassification manuelle | **1** | re-triage |
+| Détection RDV manuelle | **gratuit** | déjà fait à la sync |
+| Chat support intelligent | **1 / message** | court |
+| Brief quotidien | **gratuit** (1×/j max) | mutualisé, déjà optimisé |
+| Création projet via IA | **2** | analyse + structuration |
+| Catégorisation projet automatique | **1** | classif courte |
+| Lecture, recherche, tri, ouverture | **gratuit** | aucun appel IA |
+
+### 13.3 Plans recommandés (en crédits)
+
+| Plan | Prix | Crédits/mois | Équivalent en mails triés purs | Équivalent profil normal |
+|---|---|---|---|---|
+| Essai | gratuit | **200** | ~200 mails | découverte 1 semaine |
+| Solo | 9 € | **5 000** | ~5 000 mails purs | indépendant ~100 mails/j + IA modérée |
+| Pro | 19 € | **20 000** | ~20 000 mails purs | dirigeant 117 mails/j + IA intensive |
+| Business | 9 €/siège | **20 000/siège** | identique Pro | équipes |
+
+**Pack supplémentaire** (Pay-as-you-go en crédits) :
+- **+ 5 000 crédits = 4,90 €** (≈ 0,001 €/crédit)
+- ou **dépassement automatique** à 0,0012 €/crédit hors pack
+
+### 13.4 Vérification du pire cas avec le nouveau système
+
+Reprenons l'abuser worst case (3 510 mails reçus + actions intensives). Calcul des **crédits consommés** :
+
+| Action | Volume | Crédits / unité | **Total crédits** |
+|---|---|---|---|
+| Triage + RDV | 3 510 | 1 | 3 510 |
+| Brouillons | 2 808 | 2 | 5 616 |
+| Régénérations | 842 | 2 | 1 684 |
+| Variantes ton | 1 404 | 1 | 1 404 |
+| Relances | 150 | 2 | 300 |
+| Résumés conv. | 1 755 | 2 | 3 510 |
+| Reclassif | 600 | 1 | 600 |
+| Chat support | 900 | 1 | 900 |
+| Création projets | 20 | 2 | 40 |
+| Catégorisation projets | 100 | 1 | 100 |
+| **TOTAL crédits consommés** | | | **17 664** |
+
+→ Reste **dans la limite Pro (20 000 crédits)**. Aucun débordement.
+
+→ Pour le **Solo (5 000 crédits)**, l'abuser consomme 17 664 crédits → 12 664 en dépassement × 0,0012 € = **15,20 € de revenu supplémentaire**. Total revenu : 9 + 15,20 = 24,20 €.
+
+#### Marge worst case avec système de crédits
+
+| Plan | Revenu | OpenAI | Brevo | Infra | Paddle | Marge | % |
+|---|---|---|---|---|---|---|---|
+| **Solo abuser** (avec dépassement crédits) | 24,20 € | 4,67 € | 4,88 € | 1,55 € | 2,00 € | **11,10 €** | **46%** ✅ |
+| **Pro abuser** | 19,00 € | 4,67 € | 4,88 € | 1,55 € | 1,45 € | **6,45 €** | **34%** ✅ |
+| **Business abuser** / siège | 9,00 € | 4,67 € | 4,88 € | 1,55 € | 0,62 € | **−2,72 €** | ⚠️ négatif |
+
+**Pour rendre Business également étanche au pire cas**, deux options :
+- **(a)** Réduire les crédits Business à **10 000/siège** (au lieu de 20 000) → l'abuser consomme 17 664, dépasse de 7 664 × 0,0012 € = 9,20 € de revenu supplémentaire → marge devient +6,48 € (39%) ✅
+- **(b)** Augmenter le prix Business à **15 €/siège** → marge devient +3,28 € sans toucher aux crédits → 18% (encore juste)
+
+L'**option (a)** est recommandée : elle protège la marge sans changer le prix d'appel.
+
+### 13.5 Mise en œuvre technique
+
+1. Ajouter un champ `credits_used` (int) et `credits_quota` (int) à la table `profiles`
+2. Créer une fonction utilitaire `consumeCredits(userId, amount, action)` appelée par chaque endpoint IA
+3. Migrer les anciens compteurs `emails_used` (1 mail = 1 crédit pour la rétrocompatibilité)
+4. Refondre la page Abonnement pour afficher la consommation en crédits + barème
+5. Afficher le coût en crédits sur chaque bouton IA (ex. « Générer brouillon (2 crédits) »)
+6. Ajouter une page « Acheter un pack de crédits » avec checkout Paddle
+7. Webhook Paddle : crédit le compte à la réception du paiement pack
+
+---
+
 ## 11. Sources
 
 - OpenAI Pricing : https://openai.com/api/pricing/
