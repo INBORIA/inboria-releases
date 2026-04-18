@@ -321,7 +321,13 @@
     "unassign": "Toewijzing opheffen",
     "download": "Downloaden",
     "exportDownloaded": "Export gedownload",
-    "exportError": "Fout bij exporteren"
+    "exportError": "Fout bij exporteren",
+    "sortLabel": "Sortering",
+    "sortPriority": "Prioriteit",
+    "sortDate": "Datum",
+    "sortByPriority": "Sortering: Prioriteit",
+    "sortByDateDesc": "Sortering: Datum ↓ (nieuwste)",
+    "sortByDateAsc": "Sortering: Datum ↑ (oudste)"
   },
   "sent": {
     "title": "Verzonden e-mails",

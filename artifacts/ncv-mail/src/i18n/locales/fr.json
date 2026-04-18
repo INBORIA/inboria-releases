@@ -321,7 +321,13 @@
     "unassign": "Désassigner",
     "download": "Télécharger",
     "exportDownloaded": "Export téléchargé",
-    "exportError": "Erreur lors de l'export"
+    "exportError": "Erreur lors de l'export",
+    "sortLabel": "Tri",
+    "sortPriority": "Priorité",
+    "sortDate": "Date",
+    "sortByPriority": "Tri : Priorité",
+    "sortByDateDesc": "Tri : Date ↓ (récent)",
+    "sortByDateAsc": "Tri : Date ↑ (ancien)"
   },
   "sent": {
     "title": "Emails envoyés",

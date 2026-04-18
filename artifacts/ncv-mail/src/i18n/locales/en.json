@@ -321,7 +321,13 @@
     "unassign": "Unassign",
     "download": "Download",
     "exportDownloaded": "Export downloaded",
-    "exportError": "Error exporting"
+    "exportError": "Error exporting",
+    "sortLabel": "Sort",
+    "sortPriority": "Priority",
+    "sortDate": "Date",
+    "sortByPriority": "Sort: Priority",
+    "sortByDateDesc": "Sort: Date ↓ (newest)",
+    "sortByDateAsc": "Sort: Date ↑ (oldest)"
   },
   "sent": {
     "title": "Sent emails",
