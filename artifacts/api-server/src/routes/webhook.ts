@@ -192,6 +192,11 @@ router.post("/webhook/email", async (req, res): Promise<void> => {
       .single();
 
     if (insertError) {
+      // 23505 = unique constraint on (user_id, external_id) -> email already received, idempotent OK
+      if (insertError.code === "23505") {
+        res.json({ ok: true, duplicate: true });
+        return;
+      }
       console.error("webhook insert error:", insertError);
       res.status(500).json({ error: "Erreur lors de l'enregistrement" });
       return;
