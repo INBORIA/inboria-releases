@@ -879,8 +879,8 @@
     "seatCount": "Número de asientos",
     "collaborators": "colaboradores",
     "collaborator": "colaborador",
-    "perSeatPerMonth": "€9 por asiento/mes (mínimo 3 asientos)",
-    "seatsExample": "Ejemplo: 3 colaboradores = €27/mes — ajustable en cualquier momento desde tu espacio.",
+    "perSeatPerMonth": "€12,99 por asiento/mes (mínimo 3 asientos)",
+    "seatsExample": "Ejemplo: 3 colaboradores = €38,97/mes — ajustable en cualquier momento desde tu espacio.",
     "expiredSubscription": "Tu suscripción ha expirado",
     "trialEndedFull": "Tu prueba gratuita ha terminado",
     "resubscribe": "Vuelve a suscribirte a un plan de pago para continuar usando Inboria.",
@@ -949,12 +949,12 @@
     "free": "Gratis",
     "perMonth": "/mes",
     "perSeatMonth": "/usuario/mes",
-    "perSeatDetail": "es decir, €9 por usuario/mes",
+    "perSeatDetail": "es decir, €12,99 por usuario/mes",
     "redirecting": "Redirigiendo...",
     "start": "Comenzar",
     "numberOfCollaborators": "Número de colaboradores",
     "total": "Total",
-    "seatsExample": "Ejemplo: 3 colaboradores = €27/mes — ajustable en cualquier momento desde su espacio."
+    "seatsExample": "Ejemplo: 3 colaboradores = €38,97/mes — ajustable en cualquier momento desde su espacio."
   },
   "marketing": {
     "home": {

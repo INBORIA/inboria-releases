@@ -879,8 +879,8 @@
     "seatCount": "Aantal zetels",
     "collaborators": "medewerkers",
     "collaborator": "medewerker",
-    "perSeatPerMonth": "€9 per zetel/maand (minimaal 3 zetels)",
-    "seatsExample": "Voorbeeld: 3 medewerkers = €27/maand — op elk moment aanpasbaar vanuit uw ruimte.",
+    "perSeatPerMonth": "€12,99 per zetel/maand (minimaal 3 zetels)",
+    "seatsExample": "Voorbeeld: 3 medewerkers = €38,97/maand — op elk moment aanpasbaar vanuit uw ruimte.",
     "expiredSubscription": "Uw abonnement is verlopen",
     "trialEndedFull": "Uw gratis proefperiode is beëindigd",
     "resubscribe": "Vernieuw naar een betaald plan om Inboria te blijven gebruiken.",
@@ -949,12 +949,12 @@
     "free": "Gratis",
     "perMonth": "/maand",
     "perSeatMonth": "/zetel/maand",
-    "perSeatDetail": "Namelijk €9 per zetel/maand",
+    "perSeatDetail": "Namelijk €12,99 per zetel/maand",
     "redirecting": "Doorverwijzen...",
     "start": "Beginnen",
     "numberOfCollaborators": "Aantal medewerkers",
     "total": "Totaal",
-    "seatsExample": "Voorbeeld: 3 medewerkers = €27/maand — op elk moment aanpasbaar vanuit uw ruimte."
+    "seatsExample": "Voorbeeld: 3 medewerkers = €38,97/maand — op elk moment aanpasbaar vanuit uw ruimte."
   },
   "marketing": {
     "home": {

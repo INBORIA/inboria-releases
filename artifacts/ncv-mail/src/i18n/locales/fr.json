@@ -879,8 +879,8 @@
     "seatCount": "Nombre de sièges",
     "collaborators": "collaborateurs",
     "collaborator": "collaborateur",
-    "perSeatPerMonth": "Soit 9€ par siège / mois (minimum 3 sièges)",
-    "seatsExample": "Exemple : 3 collaborateurs = 27€/mois — modifiable à tout moment depuis votre espace.",
+    "perSeatPerMonth": "Soit 12,99€ par siège / mois (minimum 3 sièges)",
+    "seatsExample": "Exemple : 3 collaborateurs = 38,97€/mois — modifiable à tout moment depuis votre espace.",
     "expiredSubscription": "Votre abonnement a expiré",
     "trialEndedFull": "Votre essai gratuit est terminé",
     "resubscribe": "Réabonnez-vous à un plan payant pour continuer à utiliser Inboria.",
@@ -949,12 +949,12 @@
     "free": "Gratuit",
     "perMonth": "/mois",
     "perSeatMonth": "/siège/mois",
-    "perSeatDetail": "Soit 9€ par siège/mois",
+    "perSeatDetail": "Soit 12,99€ par siège/mois",
     "redirecting": "Redirection...",
     "start": "Commencer",
     "numberOfCollaborators": "Nombre de collaborateurs",
     "total": "Total",
-    "seatsExample": "Exemple : 3 collaborateurs = 27€/mois — modifiable à tout moment depuis votre espace."
+    "seatsExample": "Exemple : 3 collaborateurs = 38,97€/mois — modifiable à tout moment depuis votre espace."
   },
   "marketing": {
     "home": {

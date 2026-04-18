@@ -53,7 +53,7 @@ export const plans = [
   {
     id: "business",
     name: "Business",
-    price: "9",
+    price: "12.99",
     quota: 10000,
     description: "Pour les équipes",
     features: [

@@ -51,7 +51,7 @@ export default function AbonnementScreen() {
     {
       id: "business",
       name: t("subscription.business"),
-      price: "9",
+      price: "12.99",
       quota: 10000,
       description: t("subscription.businessDesc"),
       features: t("subscription.businessFeatures", { returnObjects: true }) as string[],
