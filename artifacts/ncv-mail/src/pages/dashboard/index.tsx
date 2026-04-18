@@ -693,7 +693,7 @@ export default function Dashboard() {
     categoryId: selectedCategoryId,
     q: searchQuery || undefined,
     page: emailPage,
-    limit: 50,
+    limit: 200,
   });
 
   useEffect(() => {

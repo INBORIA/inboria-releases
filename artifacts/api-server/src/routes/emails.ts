@@ -21,7 +21,7 @@ const router: IRouter = Router();
 router.get("/emails", requireAuth, async (req, res): Promise<void> => {
   try {
     const page = Math.max(1, parseInt(req.query.page as string, 10) || 1);
-    const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string, 10) || 50));
+    const limit = Math.min(500, Math.max(1, parseInt(req.query.limit as string, 10) || 50));
     const from = (page - 1) * limit;
     const to = from + limit - 1;
 
@@ -31,9 +31,14 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       .eq("user_id", req.userId!)
       .is("shared_mailbox_id", null);
 
+    // Note: on n'inclut PAS `body` ici — il peut peser plusieurs Mo par mail
+    // (HTML de newsletters) et n'est jamais affiche dans la liste.
+    // Le body est recupere par /emails/:id quand l'utilisateur ouvre un mail.
     let query = supabaseAdmin
       .from("emails")
-      .select("*, categories(name), projects(name, reference)")
+      .select(
+        "id, sender, subject, status, priority, summary, category_id, project_id, reply_to_email_id, recipient, assigned_to, assigned_at, created_at, categories(name), projects(name, reference)"
+      )
       .eq("user_id", req.userId!)
       .is("shared_mailbox_id", null)
       .order("created_at", { ascending: false });
@@ -113,7 +118,6 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
           sender: s.name,
           senderEmail: s.email,
           subject: e.subject,
-          body: e.body,
           status: e.status,
           priority: e.priority || "faible",
           summary: e.summary,
