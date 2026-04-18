@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import OpenAI from "openai";
 import { isNoiseEmail, userHasOpenTaskWithTitle } from "../services/auto-sync";
+import { preClassifyEmail, recordAIClassification, bumpMetrics } from "../services/pre-filter";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -129,7 +130,22 @@ router.post("/webhook/email", async (req, res): Promise<void> => {
       return;
     }
 
-    const triage = await triageEmailAI(sender, subject, body || "", userId);
+    const pre = await preClassifyEmail({ userId, sender, subject });
+    let triage: { priority: string; summary: string; category: string; tasks: string[] };
+    if (pre.hit && pre.classification) {
+      triage = {
+        priority: pre.classification.priority,
+        summary: pre.classification.summary,
+        category: pre.classification.category,
+        tasks: pre.classification.tasks,
+      };
+      bumpMetrics(userId, pre.reason === "sender-cache" ? "cache" : "prefilter").catch(() => {});
+      console.log(`[webhook] pre-filter hit (${pre.reason}) for ${sender} -> ${triage.category}`);
+    } else {
+      triage = await triageEmailAI(sender, subject, body || "", userId);
+      bumpMetrics(userId, "ai").catch(() => {});
+      recordAIClassification(userId, sender, triage.category, triage.priority).catch(() => {});
+    }
 
     let categoryId = null;
     if (triage.category && triage.category !== "Non classe") {
@@ -253,12 +269,23 @@ router.post("/webhook/email/batch", async (req, res): Promise<void> => {
     const results = [];
     for (const email of emails.slice(0, 50)) {
       try {
-        const triage = await triageEmailAI(
-          email.sender || "Inconnu",
-          email.subject || "(pas de sujet)",
-          email.body || "",
-          connection.user_id
-        );
+        const sender = email.sender || "Inconnu";
+        const subject = email.subject || "(pas de sujet)";
+        const pre = await preClassifyEmail({ userId: connection.user_id, sender, subject });
+        let triage: { priority: string; summary: string; category: string; tasks: string[] };
+        if (pre.hit && pre.classification) {
+          triage = {
+            priority: pre.classification.priority,
+            summary: pre.classification.summary,
+            category: pre.classification.category,
+            tasks: pre.classification.tasks,
+          };
+          bumpMetrics(connection.user_id, pre.reason === "sender-cache" ? "cache" : "prefilter").catch(() => {});
+        } else {
+          triage = await triageEmailAI(sender, subject, email.body || "", connection.user_id);
+          bumpMetrics(connection.user_id, "ai").catch(() => {});
+          recordAIClassification(connection.user_id, sender, triage.category, triage.priority).catch(() => {});
+        }
 
         let categoryId = null;
         if (triage.category && triage.category !== "Non classe") {

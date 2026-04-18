@@ -6,6 +6,7 @@ import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import * as net from "net";
 import { sendSlackNotification, createNotionTask } from "./integrations";
+import { preClassifyEmail, recordAIClassification, bumpMetrics } from "./pre-filter";
 
 interface AttachmentMeta {
   filename: string;
@@ -309,7 +310,8 @@ async function saveEmailWithTriage(
   subject: string,
   body: string,
   createdAt: string,
-  sharedMailboxId?: string | null
+  sharedMailboxId?: string | null,
+  headers?: Record<string, string | string[] | undefined>
 ): Promise<number | null> {
   const { data: existing } = await supabaseAdmin
     .from("emails")
@@ -335,7 +337,24 @@ async function saveEmailWithTriage(
     return null;
   }
 
-  const triage = await triageEmailAI(sender, subject, body, userId);
+  // Pre-filtre deterministe : evite l'appel IA sur les mails evidents (newsletters, notifs auto, expediteurs en cache)
+  const pre = await preClassifyEmail({ userId, sender, subject, headers });
+  let triage: { priority: string; summary: string; category: string; tasks: string[]; is_spam: boolean };
+
+  if (pre.hit && pre.classification) {
+    triage = pre.classification;
+    if (pre.reason === "sender-cache") {
+      bumpMetrics(userId, "cache").catch(() => {});
+      logger.info({ sender, reason: pre.reason, category: triage.category }, "[auto-sync] pre-filter hit (cache)");
+    } else {
+      bumpMetrics(userId, "prefilter").catch(() => {});
+      logger.info({ sender, reason: pre.reason, category: triage.category }, "[auto-sync] pre-filter hit (header)");
+    }
+  } else {
+    triage = await triageEmailAI(sender, subject, body, userId);
+    bumpMetrics(userId, "ai").catch(() => {});
+    recordAIClassification(userId, sender, triage.category, triage.priority).catch(() => {});
+  }
 
   let categoryId = null;
   if (triage.category && triage.category !== "Non classe") {
@@ -402,7 +421,11 @@ async function saveEmailWithTriage(
     sendSlackNotification(userId, sender, subject, triage.summary).catch(() => {});
   }
 
-  detectAppointmentFromEmail(inserted.id, sender, subject, body, userId).catch(() => {});
+  // Skip appointment detection pour les hits pre-filtre evidents (newsletters, notifications)
+  // -> ces mails ne contiennent jamais de RDV, evite un appel OpenAI inutile
+  if (!pre.hit) {
+    detectAppointmentFromEmail(inserted.id, sender, subject, body, userId).catch(() => {});
+  }
 
   if (triage.tasks.length > 0 && !isNoiseEmail(sender, subject)) {
     const { data: existingTasks } = await supabaseAdmin
@@ -548,6 +571,11 @@ async function syncGmailForUser(conn: any): Promise<number> {
       const subject = headers.find((h) => h.name === "Subject")?.value || "(pas de sujet)";
       const emailBody = extractGmailBody(fullMsg.payload) || fullMsg.snippet || "";
 
+      const headerMap: Record<string, string> = {};
+      for (const h of headers) {
+        if (h?.name && h?.value) headerMap[h.name.toLowerCase()] = h.value;
+      }
+
       const scopedExternalId = `gmail:${msg.id!}`;
       const savedId = await saveEmailWithTriage(
         conn.user_id,
@@ -556,7 +584,8 @@ async function syncGmailForUser(conn: any): Promise<number> {
         subject,
         emailBody,
         new Date(parseInt(fullMsg.internalDate || "0")).toISOString(),
-        (conn as any)._sharedMailboxId
+        (conn as any)._sharedMailboxId,
+        headerMap
       );
 
       if (savedId) {
@@ -862,6 +891,7 @@ async function syncImapForUser(conn: any): Promise<number> {
       const sender = from?.name ? `${from.name} <${from.address}>` : from?.address || "inconnu";
 
       let bodyText = "";
+      let imapHeaders: Record<string, string> = {};
       if (msg.source) {
         try {
           const parsed = await simpleParser(msg.source);
@@ -869,6 +899,12 @@ async function syncImapForUser(conn: any): Promise<number> {
             ? (typeof parsed.html === "string" ? parsed.html : "")
             : parsed.text || "";
           bodyText = bodyText.slice(0, 10000);
+          if (parsed.headers && typeof (parsed.headers as any).forEach === "function") {
+            (parsed.headers as Map<string, any>).forEach((value, key) => {
+              if (value === undefined || value === null) return;
+              imapHeaders[key.toLowerCase()] = String(typeof value === "object" ? JSON.stringify(value) : value);
+            });
+          }
         } catch (parseErr: any) {
           log.warn({ uid: msg.uid, error: parseErr.message }, "simpleParser failed, using raw fallback");
           try {
@@ -908,7 +944,8 @@ async function syncImapForUser(conn: any): Promise<number> {
         envelope?.subject || "(pas de sujet)",
         bodyText,
         envelope?.date ? new Date(envelope.date).toISOString() : new Date().toISOString(),
-        (conn as any)._sharedMailboxId
+        (conn as any)._sharedMailboxId,
+        imapHeaders
       );
 
       if (savedId) {
