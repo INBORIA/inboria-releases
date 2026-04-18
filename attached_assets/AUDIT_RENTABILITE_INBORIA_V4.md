@@ -586,6 +586,14 @@ Tarif PAYG :
 
 ## 14. Business plan — rentabilité par plan et fixation des prix
 
+### 14.0 Note de réconciliation des hypothèses (rev. 4)
+
+Cette section utilise un **jeu d'hypothèses propre**, distinct du § 12 (worst case borné) et du § 13.4 (mix marketing). Pour éviter toute confusion à l'auditeur :
+
+- Les **profils Light / Median / Heavy** ci-dessous (§ 14.1) modélisent une distribution **réaliste de population**, pas un cas extrême ni un mix marketing.
+- Le profil **Heavy de § 14** consomme **plus** d'actions IA secondaires (modélisé à partir des hypothèses du § 5 et § 12) que le profil mixte du § 13.4. Conséquence : son coût variable total (6,59 €) est plus **élevé** que dans la rev. 3 (5,15 €) **non pas parce qu'un coût unitaire a augmenté** — au contraire, le triage est passé de 1,074 € à 0,376 € — **mais parce que la composition d'usage retenue intègre désormais plus d'actions secondaires explicites** (brouillons à 80 % des reçus, résumés à 50 %, etc., reprises du § 12).
+- Les comparaisons « vs rev. 3 » données dans les tableaux suivants concernent uniquement les lignes recalculables à composition constante. Pour Heavy, on retient la **direction** (marge rentable) plutôt qu'un delta brut comparable.
+
 ### 14.1 Trois profils d'abonnés modélisés
 
 | Profil | % typique | Mails reçus/mois | % envoi | Envois/mois | Usage IA secondaire |
