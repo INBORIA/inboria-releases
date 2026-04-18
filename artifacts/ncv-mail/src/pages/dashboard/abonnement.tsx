@@ -322,7 +322,7 @@ export default function Abonnement() {
             const isCurrentPlan = profile?.plan === plan.id;
             const isBusiness = plan.hasSeats;
             const price = isBusiness
-              ? parseInt(plan.price) * businessSeats
+              ? (parseFloat(plan.price) * businessSeats).toFixed(2)
               : plan.price;
             const isLoading = loadingPlan === plan.id;
 
