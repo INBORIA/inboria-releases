@@ -364,7 +364,7 @@ export default function Agenda() {
                 : format(currentDate, "MMMM yyyy", { locale })}
             </span>
           </div>
-          <div className="flex bg-card border border-border rounded-lg overflow-hidden mr-8">
+          <div className="flex bg-card border border-border rounded-lg overflow-hidden mr-16">
             {(["day", "week", "month"] as ViewMode[]).map((mode) => (
               <button
                 key={mode}
