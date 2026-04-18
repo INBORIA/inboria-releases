@@ -42,7 +42,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
@@ -1583,11 +1583,19 @@ export default function Dashboard() {
                     : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
                 }`}
               >
-                {sortMode === "priority"
-                  ? t("inbox.sortPriority", "Priorité")
-                  : sortMode === "date_desc"
-                    ? t("inbox.sortDateDesc", "Date ↓")
-                    : t("inbox.sortDateAsc", "Date ↑")}
+                {sortMode === "priority" ? (
+                  <ArrowUpDown className="w-3 h-3" />
+                ) : sortMode === "date_desc" ? (
+                  <ArrowDown className="w-3 h-3" />
+                ) : (
+                  <ArrowUp className="w-3 h-3" />
+                )}
+                <span>
+                  {t("inbox.sortLabel", "Tri")}:{" "}
+                  {sortMode === "priority"
+                    ? t("inbox.sortPriority", "Priorité")
+                    : t("inbox.sortDate", "Date")}
+                </span>
               </button>
               <div className="w-px h-4 bg-[#1f2937] mx-1" />
               <Select value={filterCategory} onValueChange={setFilterCategory}>
