@@ -594,6 +594,146 @@ L'abonné ne fait pas QUE recevoir des mails ni QUE en envoyer : il combine tria
 
 ---
 
+## 14. Business plan — rentabilité par plan et fixation des prix
+
+Cette section reprend l'ensemble des coûts unitaires normalisés (sections 3 et 13.2) et le système de crédits validé pour modéliser la rentabilité réelle de chaque plan, à différentes échelles d'abonnés. Objectif : valider ou ajuster le prix de chaque abonnement.
+
+### 14.1 Trois profils d'abonnés modélisés
+
+| Profil | % typique | Mails reçus/mois | % envoi | Envois/mois | Usage IA secondaire |
+|---|---|---|---|---|---|
+| **Light** (freelance occasionnel) | ~50 % | 900 (30/j) | 10 % | 90 | faible (5 % brouillons IA) |
+| **Median** (pro chargé) | ~35 % | 2 400 (80/j) | 20 % | 480 | modéré (50 % brouillons) |
+| **Heavy / abuser** (dirigeant) | ~15 % | 3 510 (117/j) | 30 % | 1 050 | intensif (cf. § 13.4) |
+
+### 14.2 Crédits consommés par profil
+
+| Profil | Crédits/mois |
+|---|---|
+| Light | **2 311** |
+| Median | **9 274** |
+| Heavy | **18 279** |
+
+*Détail Light : 900 triage + 900 envois (90×10) + 90 brouillons + 28 régén + 23 variantes + 60 relances + 100 résumés + 90 reclassif + 90 chat + 10 projets + 20 catég.*
+*Détail Median : 2 400 + 4 800 + 480 + 144 + 120 + 180 + 480 + 300 + 300 + 20 + 50.*
+
+### 14.3 Coûts directs variables par profil (OpenAI + Brevo)
+
+| Profil | OpenAI | Brevo | **Total variable** |
+|---|---|---|---|
+| Light | 0,40 € | 0,27 € | **0,67 €** |
+| Median | 1,19 € | 1,44 € | **2,63 €** |
+| Heavy | 2,00 € | 3,15 € | **5,15 €** |
+
+### 14.4 Marge unitaire par combinaison profil × plan
+
+Hypothèses : infra mutualisée à 100 abonnés (Supabase 1,00 € + Replit 0,55 € = 1,55 €/abonné — pire cas). Paddle = 5 % + 0,50 € par transaction, mutualisé sur les sièges Business.
+
+#### Plan SOLO — 9 € / 3 000 crédits
+
+| Profil | Crédits conso | Dépassement | Revenu PAYG | Revenu total | Coûts (var + infra + Paddle) | **Marge** | **%** |
+|---|---|---|---|---|---|---|---|
+| Light | 2 311 (sous quota) | 0 | 0 € | **9,00 €** | 0,67 + 1,55 + 0,95 = 3,17 € | **+5,83 €** | **65 %** ✅ |
+| Median | 9 274 → +6 274 | 7,53 € | 7,53 € | **16,53 €** | 2,63 + 1,55 + 1,83 = 6,01 € | **+10,52 €** | **64 %** ✅ |
+| Heavy | 18 279 → +15 279 | 18,33 € | 18,33 € | **27,33 €** | 5,15 + 1,55 + 2,37 = 9,07 € | **+18,26 €** | **67 %** ✅ |
+
+#### Plan PRO — 19 € / 10 000 crédits
+
+| Profil | Crédits conso | Dépassement | Revenu PAYG | Revenu total | Coûts | **Marge** | **%** |
+|---|---|---|---|---|---|---|---|
+| Light | 2 311 (sous quota) | 0 | 0 € | **19,00 €** | 0,67 + 1,55 + 1,45 = 3,67 € | **+15,33 €** | **81 %** ⚠️ surpayé |
+| Median | 9 274 (sous quota) | 0 | 0 € | **19,00 €** | 2,63 + 1,55 + 1,45 = 5,63 € | **+13,37 €** | **70 %** ✅ |
+| Heavy | 18 279 → +8 279 | 9,93 € | 9,93 € | **28,93 €** | 5,15 + 1,55 + 2,45 = 9,15 € | **+19,78 €** | **68 %** ✅ |
+
+#### Plan BUSINESS — 9 € / siège / 10 000 crédits / siège (équipe 3 sièges)
+
+| Profil / siège | Crédits conso | Dépassement | Revenu PAYG | Revenu total/siège | Coûts/siège | **Marge/siège** | **%** |
+|---|---|---|---|---|---|---|---|
+| Light | 2 311 | 0 | 0 € | **9,00 €** | 0,67 + 1,55 + 0,62 = 2,84 € | **+6,16 €** | **68 %** ✅ |
+| Median | 9 274 | 0 | 0 € | **9,00 €** | 2,63 + 1,55 + 0,62 = 4,80 € | **+4,20 €** | **47 %** ✅ |
+| Heavy | 18 279 → +8 279 | 9,93 € | 9,93 € | **18,93 €** | 5,15 + 1,55 + 1,28 = 7,98 € | **+10,95 €** | **58 %** ✅ |
+
+**→ Tous les couples profil × plan sont rentables**, marge minimale 47 % (Business median, qui reste très acceptable pour du SaaS B2B).
+
+### 14.5 Projection à l'échelle (mix d'abonnés réaliste)
+
+**Hypothèse d'auto-sélection rationnelle des plans** :
+- Light → Solo (90 %) ou Essai (10 %)
+- Median → Solo (40 %) si conscient du PAYG, Pro (60 %)
+- Heavy → Pro (50 %) ou Business (50 %)
+
+Distribution finale estimée sur 100 abonnés payants :
+- **55 Solo** (40 light + 15 median qui dépassent)
+- **30 Pro** (20 median + 10 heavy)
+- **15 sièges Business** (5 équipes de 3 sièges, profil heavy)
+
+#### Marge mensuelle agrégée par palier d'échelle
+
+| Palier | Infra/abonné | Marge Solo (×55) | Marge Pro (×30) | Marge Business (×15 sièges) | **Marge brute/mois** | **MRR** |
+|---|---|---|---|---|---|---|
+| **100 abonnés** | 1,55 € | 55 × 7,06 € = 388 € | 30 × 16,57 € = 497 € | 15 × 10,95 € = 164 € | **1 049 €** | ~2 700 € |
+| **500 abonnés** (×5) | 0,31 €/abonné | 275 × 8,30 € = 2 283 € | 150 × 17,81 € = 2 671 € | 75 × 12,19 € = 914 € | **5 868 €** | ~13 500 € |
+| **1 000 abonnés** (×10) | 0,155 € | 550 × 8,46 € = 4 651 € | 300 × 17,97 € = 5 391 € | 150 × 12,35 € = 1 852 € | **11 894 €** | ~27 000 € |
+| **5 000 abonnés** (×50) | 0,031 € | 2 750 × 8,58 € = 23 595 € | 1 500 × 18,09 € = 27 138 € | 750 × 12,47 € = 9 352 € | **60 086 €** | ~135 000 € |
+
+*La marge Solo affichée est la moyenne pondérée (40 light @ 5,83 + 15 median dépassement @ 10,52, infra ajustée). La marge Pro est la moyenne (20 median @ 13,37 + 10 heavy @ 19,78). La marge Business est calculée sur le profil heavy moyen.*
+
+#### Marge nette annuelle (après bénéfice)
+
+| Palier | Marge brute annuelle | CAC estimé (15 €/abonné × 50 % churn) | Bénéfice net annuel estimé |
+|---|---|---|---|
+| 100 abonnés | 12 588 € | ~750 € | **~11 800 €** |
+| 500 abonnés | 70 416 € | ~3 750 € | **~66 700 €** |
+| 1 000 abonnés | 142 728 € | ~7 500 € | **~135 200 €** |
+| 5 000 abonnés | 721 032 € | ~37 500 € | **~683 500 €** |
+
+### 14.6 Verdict sur les prix actuels
+
+| Plan | Prix actuel | Diagnostic | Recommandation |
+|---|---|---|---|
+| **Essai** | gratuit | 100 crédits = ~1 jour d'usage léger | **Conserver** mais limiter à 7-14 jours pour conversion |
+| **Solo** | 9 € | Marge 65-67 % sur tous profils. Sweet spot pour freelances et indépendants. | **Conserver à 9 €** |
+| **Pro** | 19 € | Marge 70-81 %. Light qui prend Pro = surpayé (ils basculeront vers Solo). Median/Heavy = parfait. | **Conserver à 19 €** |
+| **Business** | 9 €/siège | Marge 47-68 %. Plus faible que Pro car prix d'entrée bas. | **Option A : conserver à 9 €/siège** (volume + LTV justifient) **Option B : monter à 12 €/siège** pour aligner sur Pro |
+
+### 14.7 Scénarios alternatifs — sensibilité au prix
+
+#### Scénario 1 : statu quo (9 / 19 / 9)
+- MRR à 1 000 abonnés : ~27 000 €/mois
+- Marge brute : 11 894 €/mois (44 % du MRR)
+- Décision : modèle viable, scaler le marketing
+
+#### Scénario 2 : Business augmenté à 12 €/siège
+- Marge Business heavy passe de 10,95 € à 13,95 €/siège (+27 %)
+- MRR à 1 000 abonnés : ~27 450 €/mois (+450 €)
+- Marge brute : 12 344 €/mois (+450 €/mois soit +5 400 €/an)
+- Risque : perte de compétitivité face à Outlook Copilot (30 €/mois) ou Superhuman (30 $/mois) — risque faible car positionnement reste agressif
+
+#### Scénario 3 : ajout d'un plan « Starter » à 5 €/1 500 crédits
+- Cible : light users qui trouvent Solo trop cher
+- Marge unitaire estimée : 5 − (0,40 + 1,55 + 0,75 Paddle) = 2,30 € (46 %)
+- Risque : cannibalisation Solo. À ne lancer que si analytics montrent un taux de churn > 20 % sur Solo light.
+
+#### Scénario 4 : pricing annuel −20 %
+- Solo annuel : 86 €/an (vs 108 € mensuel)
+- Pro annuel : 182 €/an (vs 228 € mensuel)
+- Business annuel : 86 €/siège/an
+- Avantage : engagement annuel réduit le churn (LTV ×3), Paddle facturé 1×/an (économise 11 frais fixes 0,50 €)
+- **Recommandation forte** : ajouter le pricing annuel dès maintenant
+
+### 14.8 Conclusion business plan
+
+| Question | Réponse |
+|---|---|
+| Chaque plan est-il rentable ? | **Oui** — marge minimale 47 %, maximale 81 % |
+| Les prix actuels sont-ils corrects ? | **Oui pour Solo et Pro**. Business optionnellement à monter à 12 €/siège. |
+| Seuil de rentabilité opérationnelle | Atteint dès **~50 abonnés payants** (couvre Replit + Supabase fixes) |
+| Objectif MRR pour viabilité salaire fondateur (3 000 €/mois net) | **~250-300 abonnés payants** mix actuel |
+| Objectif MRR pour viabilité équipe (10 000 €/mois) | **~800 abonnés payants** |
+| Levier prioritaire de marge | **Pricing annuel** (Scénario 4) > montée Business à 12 € (Scénario 2) > Starter (Scénario 3) |
+
+---
+
 ## 11. Sources
 
 - OpenAI Pricing : https://openai.com/api/pricing/
