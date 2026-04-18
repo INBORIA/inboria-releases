@@ -1012,6 +1012,13 @@ export default function Dashboard() {
   }, [hasMorePages, emailsFetching]);
 
   useEffect(() => {
+    if (hasMorePages && !emailsFetching) {
+      const t = setTimeout(() => setEmailPage((p) => p + 1), 50);
+      return () => clearTimeout(t);
+    }
+  }, [hasMorePages, emailsFetching]);
+
+  useEffect(() => {
     const el = loadMoreRef.current;
     if (!el) return;
     const observer = new IntersectionObserver(
