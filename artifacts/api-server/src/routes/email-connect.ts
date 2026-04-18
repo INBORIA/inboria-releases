@@ -243,6 +243,20 @@ router.get("/email/callback/gmail", async (req, res): Promise<void> => {
     const { tokens } = await oauth2Client.getToken(code);
     oauth2Client.setCredentials(tokens);
 
+    const grantedScope = (tokens.scope || "").toString();
+    const hasReadScope = grantedScope.includes("gmail.readonly") || grantedScope.includes("mail.google.com");
+    if (!hasReadScope) {
+      console.error("[email-connect] Gmail OAuth granted scopes missing gmail.readonly:", grantedScope);
+      res.status(400).send(`<html><body style="font-family: sans-serif; background:#0d1117; color:#fff; padding: 40px; max-width: 600px; margin: 0 auto;">
+<h2 style="color:#ef4444;">Permission Gmail incomplète</h2>
+<p>Pour qu'Inboria puisse lire vos emails, vous devez cocher <strong>"Voir, modifier et créer vos messages Gmail"</strong> sur l'écran de consentement Google.</p>
+<p>Cette permission n'a pas été accordée. Veuillez recommencer la connexion et bien cocher TOUTES les cases proposées par Google.</p>
+<p>Permissions accordées : <code style="background:#141c2b; padding:4px 8px; border-radius:4px;">${grantedScope || "(aucune)"}</code></p>
+<button onclick="window.close()" style="background:#2d7dd2; color:#fff; border:none; padding: 10px 24px; border-radius:6px; cursor:pointer; font-size: 14px;">Fermer</button>
+</body></html>`);
+      return;
+    }
+
     const oauth2 = google.oauth2({ version: "v2", auth: oauth2Client });
     const { data: userInfo } = await oauth2.userinfo.get();
 
