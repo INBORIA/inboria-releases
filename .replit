@@ -41,6 +41,7 @@ PADDLE_ENVIRONMENT = "production"
 PADDLE_PRICE_SOLO = "pri_01knz2tcxz2mzydqyt4zxt06sx"
 PADDLE_PRICE_PRO = "pri_01knz2td5y795gt9wxxh7spysb"
 PADDLE_PRICE_BUSINESS = "pri_01knz2tdd90z955ab3qyxqr6t4"
+EXPO_PUBLIC_SUPABASE_URL = "https://ecdwevvisbrcsomdiqop.supabase.co"
 
 [nix]
 channel = "stable-25_05"
