@@ -327,7 +327,8 @@
     "sortDate": "Datum",
     "sortByPriority": "Sortering: Prioriteit",
     "sortByDateDesc": "Sortering: Datum ↓ (nieuwste)",
-    "sortByDateAsc": "Sortering: Datum ↑ (oudste)"
+    "sortByDateAsc": "Sortering: Datum ↑ (oudste)",
+    "loadingBody": "Inhoud laden..."
   },
   "sent": {
     "title": "Verzonden e-mails",

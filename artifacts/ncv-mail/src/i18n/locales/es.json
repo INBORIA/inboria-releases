@@ -327,7 +327,8 @@
     "sortDate": "Fecha",
     "sortByPriority": "Orden: Prioridad",
     "sortByDateDesc": "Orden: Fecha ↓ (reciente)",
-    "sortByDateAsc": "Orden: Fecha ↑ (antigua)"
+    "sortByDateAsc": "Orden: Fecha ↑ (antigua)",
+    "loadingBody": "Cargando contenido..."
   },
   "sent": {
     "title": "Emails enviados",

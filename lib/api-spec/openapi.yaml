@@ -2537,7 +2537,6 @@ components:
         - id
         - sender
         - subject
-        - body
         - status
         - priority
         - createdAt

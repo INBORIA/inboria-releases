@@ -327,7 +327,8 @@
     "sortDate": "Date",
     "sortByPriority": "Sort: Priority",
     "sortByDateDesc": "Sort: Date ↓ (newest)",
-    "sortByDateAsc": "Sort: Date ↑ (oldest)"
+    "sortByDateAsc": "Sort: Date ↑ (oldest)",
+    "loadingBody": "Loading content..."
   },
   "sent": {
     "title": "Sent emails",

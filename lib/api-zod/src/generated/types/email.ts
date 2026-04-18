@@ -13,7 +13,7 @@ export interface Email {
   /** @nullable */
   recipient?: string | null;
   subject: string;
-  body: string;
+  body?: string;
   status: string;
   priority: string;
   /** @nullable */

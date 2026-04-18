@@ -244,7 +244,17 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
             )}
 
             <div className="p-4">
-              <EmailBodyRenderer body={email.body} />
+              {email.body ? (
+                <EmailBodyRenderer body={email.body} />
+              ) : (
+                <div className="space-y-2 animate-pulse" aria-label={t("inbox.loadingBody") as string}>
+                  <div className="h-3 bg-white/5 rounded w-full" />
+                  <div className="h-3 bg-white/5 rounded w-11/12" />
+                  <div className="h-3 bg-white/5 rounded w-10/12" />
+                  <div className="h-3 bg-white/5 rounded w-9/12" />
+                  <div className="h-3 bg-white/5 rounded w-11/12" />
+                </div>
+              )}
               {email.attachments && email.attachments.length > 0 && (
                 <AttachmentList attachments={email.attachments} />
               )}
