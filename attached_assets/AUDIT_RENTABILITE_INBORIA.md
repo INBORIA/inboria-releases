@@ -514,9 +514,23 @@ Les quotas actuels (3 000 / 10 000 / 10 000) sont conservés tels quels et **sim
 | Pro | 19 € | **10 000** |
 | Business | 9 € / siège | **10 000 / siège** |
 
-**Dépassement (Pay-as-you-go en crédits)** — *uniformisé pour couvrir TOUTES les actions, plus seulement les mails entrants* :
-- **+ 5 000 crédits achetés en pack = 4,90 €** (≈ 0,00098 €/crédit)
-- ou **dépassement automatique au crédit = 0,0012 €/crédit** hors pack
+**Dépassement (Pay-as-you-go en crédits) — étendu à TOUTES les fonctions consommatrices de l'app** :
+
+Contrairement au PAYG actuel (qui ne facture que les mails entrants au-delà du quota), le nouveau PAYG en crédits couvre **chaque action listée au barème 13.2** dès que le solde de crédits inclus est épuisé :
+
+- ✅ Triage entrant supplémentaire (1 crédit / mail)
+- ✅ Brouillons, régénérations, variantes de ton
+- ✅ Relances, résumés de fil
+- ✅ Reclassifications, catégorisation projets
+- ✅ Messages de chat support
+- ✅ Création de projets via IA
+- ✅ **Mails envoyés via Brevo (10 crédits / envoi)**
+
+Tarif :
+- **Pack pré-acheté : 5 000 crédits = 4,90 €** (≈ 0,00098 €/crédit)
+- **Dépassement automatique au compteur (sans pack) : 0,0012 €/crédit**
+
+→ Aucune action consommatrice n'échappe au PAYG : tout coût direct (OpenAI ou Brevo) est désormais refacturé proportionnellement au-delà du quota inclus.
 
 ### 13.4 Vérification du pire cas — profil « abuser mixte » réaliste
 
