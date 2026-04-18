@@ -25,17 +25,23 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useTranslation } from "react-i18next";
 import { format, parseISO, startOfMonth, endOfMonth, addMonths, subMonths, addDays, isToday, isSameDay, type Locale } from "date-fns";
-import { fr, enUS, nl } from "date-fns/locale";
+import { fr, enUS, nl, de, es } from "date-fns/locale";
 import type { Appointment } from "@workspace/api-client-react";
 
-const dateLocales: Record<string, Locale> = { fr, en: enUS, nl };
+const dateLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es };
+
+function resolveDateLocale(lang: string | undefined): Locale {
+  if (!lang) return fr;
+  const short = lang.toLowerCase().split(/[-_]/)[0];
+  return dateLocales[short] || fr;
+}
 
 type ViewMode = "calendar" | "upcoming";
 
 export default function AgendaScreen() {
   const colors = useColors();
   const { t, i18n } = useTranslation();
-  const locale = dateLocales[i18n.language] || fr;
+  const locale = resolveDateLocale(i18n.language);
   const queryClient = useQueryClient();
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState<Date>(new Date());
@@ -233,13 +239,20 @@ export default function AgendaScreen() {
       {viewMode === "calendar" ? (
         <>
           <View style={[s.monthHeader, { borderBottomColor: colors.border }]}>
-            <TouchableOpacity onPress={() => setCurrentDate(subMonths(currentDate, 1))}>
+            <TouchableOpacity onPress={() => setCurrentDate(subMonths(currentDate, 1))} style={s.monthNavBtn}>
               <MaterialCommunityIcons name="chevron-left" size={24} color={colors.foreground} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setCurrentDate(new Date())}>
-              <Text style={[s.monthTitle, { color: colors.foreground }]}>{monthLabel}</Text>
+            <TouchableOpacity onPress={() => setCurrentDate(new Date())} style={s.monthTitleBtn}>
+              <Text
+                style={[s.monthTitle, { color: colors.foreground }]}
+                numberOfLines={1}
+                adjustsFontSizeToFit
+                minimumFontScale={0.7}
+              >
+                {monthLabel}
+              </Text>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => setCurrentDate(addMonths(currentDate, 1))}>
+            <TouchableOpacity onPress={() => setCurrentDate(addMonths(currentDate, 1))} style={s.monthNavBtn}>
               <MaterialCommunityIcons name="chevron-right" size={24} color={colors.foreground} />
             </TouchableOpacity>
           </View>
@@ -287,7 +300,12 @@ export default function AgendaScreen() {
           </View>
 
           <View style={[s.listHeader, { borderTopColor: colors.border }]}>
-            <Text style={[s.listTitle, { color: colors.foreground }]}>
+            <Text
+              style={[s.listTitle, { color: colors.foreground, flex: 1, marginRight: 8 }]}
+              numberOfLines={1}
+              adjustsFontSizeToFit
+              minimumFontScale={0.7}
+            >
               {format(selectedDay, "d MMMM", { locale })} ({dayAppointments.length})
             </Text>
             <TouchableOpacity onPress={() => setShowCreate(!showCreate)} style={[s.addBtn, { backgroundColor: colors.primary }]}>
@@ -386,7 +404,14 @@ export default function AgendaScreen() {
               renderItem={({ item }) => renderAppointment(item)}
               renderSectionHeader={({ section: { title } }) => (
                 <View style={[s.sectionHeader, { backgroundColor: colors.background, borderBottomColor: colors.border }]}>
-                  <Text style={[s.sectionHeaderText, { color: colors.foreground }]}>{title}</Text>
+                  <Text
+                    style={[s.sectionHeaderText, { color: colors.foreground }]}
+                    numberOfLines={1}
+                    adjustsFontSizeToFit
+                    minimumFontScale={0.7}
+                  >
+                    {title}
+                  </Text>
                 </View>
               )}
               contentContainerStyle={{ paddingHorizontal: 16, paddingBottom: 20 }}
@@ -430,14 +455,24 @@ const s = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "space-between",
-    paddingHorizontal: 16,
+    paddingHorizontal: 8,
     paddingVertical: 10,
     borderBottomWidth: 1,
+  },
+  monthNavBtn: {
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+  },
+  monthTitleBtn: {
+    flex: 1,
+    alignItems: "center",
+    paddingHorizontal: 4,
   },
   monthTitle: {
     fontSize: 16,
     fontFamily: "Inter_600SemiBold",
     textTransform: "capitalize",
+    textAlign: "center",
   },
   daysRow: {
     flexDirection: "row",
