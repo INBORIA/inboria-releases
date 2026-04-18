@@ -596,6 +596,16 @@ export default function Dashboard() {
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const [filterPriority, setFilterPriority] = useState<string>("all");
+  const [sortMode, setSortMode] = useState<"priority" | "date_desc" | "date_asc">(() => {
+    if (typeof window === "undefined") return "priority";
+    const saved = window.localStorage.getItem("inbox.sortMode");
+    return saved === "date_desc" || saved === "date_asc" || saved === "priority" ? saved : "priority";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("inbox.sortMode", sortMode);
+    }
+  }, [sortMode]);
   const [isSimulateOpen, setIsSimulateOpen] = useState(false);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
@@ -953,7 +963,14 @@ export default function Dashboard() {
   }, []);
 
   const activeEmails = emails
-    ?.sort((a, b) => {
+    ?.slice()
+    .sort((a, b) => {
+      if (sortMode === "date_desc") {
+        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+      }
+      if (sortMode === "date_asc") {
+        return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+      }
       const pOrder: Record<string, number> = { urgent: 0, moyen: 1, faible: 2 };
       return (pOrder[a.priority] ?? 2) - (pOrder[b.priority] ?? 2);
     });
@@ -1548,6 +1565,30 @@ export default function Dashboard() {
                   {f.label}
                 </button>
               ))}
+              <div className="w-px h-4 bg-[#1f2937] mx-1" />
+              <button
+                onClick={() => {
+                  setSortMode((m) => (m === "priority" ? "date_desc" : m === "date_desc" ? "date_asc" : "priority"));
+                }}
+                title={
+                  sortMode === "priority"
+                    ? t("inbox.sortByPriority", "Tri : Priorité")
+                    : sortMode === "date_desc"
+                      ? t("inbox.sortByDateDesc", "Tri : Date ↓ (récent)")
+                      : t("inbox.sortByDateAsc", "Tri : Date ↑ (ancien)")
+                }
+                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                  sortMode !== "priority"
+                    ? "bg-primary/15 text-primary border border-primary/20"
+                    : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                }`}
+              >
+                {sortMode === "priority"
+                  ? t("inbox.sortPriority", "Priorité")
+                  : sortMode === "date_desc"
+                    ? t("inbox.sortDateDesc", "Date ↓")
+                    : t("inbox.sortDateAsc", "Date ↑")}
+              </button>
               <div className="w-px h-4 bg-[#1f2937] mx-1" />
               <Select value={filterCategory} onValueChange={setFilterCategory}>
                 <SelectTrigger className="w-auto min-w-[130px] h-6 bg-card border-border text-[#8b9cb3] text-[10px]">
