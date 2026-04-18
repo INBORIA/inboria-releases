@@ -529,8 +529,8 @@ async function syncGmailForUser(conn: any): Promise<number> {
     const gmail = google.gmail({ version: "v1", auth: oauth2Client });
     const { data: messageList } = await gmail.users.messages.list({
       userId: "me",
-      maxResults: 10,
-      q: "is:inbox newer_than:1d",
+      maxResults: 50,
+      q: "is:inbox newer_than:2d",
     });
 
     if (!messageList.messages) return 0;
