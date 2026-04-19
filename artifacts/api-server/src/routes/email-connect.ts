@@ -347,10 +347,30 @@ router.get("/email/callback/outlook", async (req, res): Promise<void> => {
     });
     const profile = await profileResponse.json() as any;
 
+    let emailFromIdToken: string | null = null;
+    if (tokens.id_token) {
+      try {
+        const payloadB64 = String(tokens.id_token).split(".")[1];
+        if (payloadB64) {
+          const decoded = JSON.parse(Buffer.from(payloadB64.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8"));
+          emailFromIdToken = decoded.email || decoded.preferred_username || null;
+        }
+      } catch (e) {
+        console.warn("[email-connect] Failed to decode Outlook id_token:", (e as Error).message);
+      }
+    }
+
+    const resolvedEmail = profile.mail || profile.userPrincipalName || emailFromIdToken;
+    if (!resolvedEmail) {
+      console.error("[email-connect] Outlook: could not resolve email from profile or id_token", { profile });
+      res.status(400).send("Connexion Outlook echouee: adresse email introuvable dans le profil Microsoft");
+      return;
+    }
+
     const outlookRow = {
       user_id: userId,
       provider: "outlook",
-      email_address: profile.mail || profile.userPrincipalName,
+      email_address: resolvedEmail,
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
