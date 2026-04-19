@@ -542,10 +542,10 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     ref={(el) => {
                       if (el) {
                         el.style.height = "auto";
-                        el.style.height = Math.max(320, el.scrollHeight) + "px";
+                        el.style.height = Math.max(480, el.scrollHeight) + "px";
                       }
                     }}
-                    className="min-h-[320px] bg-background border-border text-white text-[14px] leading-relaxed resize-y overflow-hidden"
+                    className="min-h-[480px] bg-background border-border text-white text-[14px] leading-relaxed resize-y overflow-hidden"
                   />
                 </div>
                 <div className="flex items-center gap-2 justify-between">
