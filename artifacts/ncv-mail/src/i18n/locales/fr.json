@@ -773,6 +773,7 @@
     "sync": "Sync",
     "disconnect": "Déconnecter",
     "disconnected": "Compte email déconnecté",
+    "addNewAccount": "Ajouter un compte",
     "addGoogleAccount": "Ajouter un compte Google (OAuth).",
     "connectGoogle": "Connecter Google",
     "microsoftTitle": "Outlook / Microsoft 365",
