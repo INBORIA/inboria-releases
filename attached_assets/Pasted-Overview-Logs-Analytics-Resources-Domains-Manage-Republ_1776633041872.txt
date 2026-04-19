@@ -1,0 +1,265 @@
+Overview
+
+Logs
+
+Analytics
+
+Resources
+
+Domains
+
+Manage
+
+Republish
+
+Adjust settings
+
+Run security scan
+Who can access your app
+
+Public
+Anyone on the internet with the URL
+General configuration
+Build command
+Optional
+Compiles your app before it deploys
+Run command
+Starts your app after it deploys
+Production database settings
+Configure how your production database is created and populated when you publish. Learn more
+
+Copy your development database to production database
+This will replace your production database with your development database, overwriting any existing production data. This is a destructive action, but you can always restore your production database, learn more.
+Production app secrets
+Secrets now sync automatically with your team's published apps. Production app secrets added before 4/17/2025 12:00 AM remain unchanged to avoid disrupting existing workflows. Manage syncing below.
+
+SESSION_SECRET
+
+••••••••
+
+
+
+AI_INTEGRATIONS_OPENAI_BASE_URL
+
+••••••••
+
+
+
+AI_INTEGRATIONS_OPENAI_API_KEY
+
+••••••••
+
+
+
+SUPABASE_SECRET_KEY
+
+••••••••
+
+
+
+VITE_SUPABASE_PUBLISHABLE_KEY
+
+••••••••
+
+
+
+DATABASE_URL
+
+••••••••
+
+
+
+PGDATABASE
+
+••••••••
+
+
+
+PGHOST
+
+••••••••
+
+
+
+PGPORT
+
+••••••••
+
+
+
+PGUSER
+
+••••••••
+
+
+
+PGPASSWORD
+
+••••••••
+
+
+
+CONNECTORS_HOSTNAME
+
+••••••••
+
+
+
+REPLIT_CONNECTORS_HOSTNAME
+
+••••••••
+
+
+
+OPENAI_API_KEY
+
+••••••••
+
+
+
+BREVO_SMTP_PASSWORD
+
+••••••••
+
+
+
+PADDLE_WEBHOOK_SECRET
+
+••••••••
+
+
+
+PADDLE_CLIENT_TOKEN
+
+••••••••
+
+
+
+PADDLE_API_KEY
+
+••••••••
+
+
+
+EXPO_PUBLIC_SUPABASE_ANON_KEY
+
+••••••••
+
+
+
+MICROSOFT_CLIENT_ID
+
+••••••••
+
+
+
+MICROSOFT_CLIENT_SECRET
+
+••••••••
+
+
+
+Add deployment secret
+Port configuration
+Configure which port your app uses for incoming requests
+Security scan before publishing
+Beta
+We always run a security scan before publishing. This setting controls whether publishing is blocked when critical vulnerabilities are found. Some high-risk issues may still block publishing. Learn more
+
+Engagement tools
+Enable feedback widget
+Add a feedback widget to the corner of your published app. Review submissions in your inbox and send to Agent for fixes.
+
+"Made with Replit" badge
+Display a "Made with Replit" referral badge on your published app, when someone signs up using your referral link, you earn credits. Learn more.
+
+Sync Stripe live account with Stripe sandbox
+Automatically sync your sandbox products and prices to your live account.
+
+
+Cancel
+
+Publish
+Publishing
+Started 9 minutes ago by Jean-Jacques
+
+Cancel
+Provision
+Security Scan
+Build
+Bundle
+Promote
+Production
+Status
+Jean-Jacques is publishing 9 minutes ago
+
+Visibility
+Public
+Geography
+North America
+Type
+Autoscale
+(2 vCPU / 4 GiB RAM / 3 Max)
+See all usage
+Database
+Production database connected
+NCV Mail
+app-developement.replit.app 
+NCV Mail Mobile
+app-developement.replit.app/ncv-mail-mobile/ 
+Ready to publish NCV Mail Mobile to the App Store?
+You'll need an active Apple Developer account. After publishing, you can test your app on TestFlight, then submit to App Store review.
+
+Start publishing to the App Store
+a84ada1d
+jjneybergh
+Jean-Jacques
+published about 24 hours ago
+a84ada1d
+jjneybergh
+Jean-Jacques
+published about 24 hours ago
+6e95221f
+jjneybergh
+Jean-Jacques
+published 1 day ago
+0a8d287c
+jjneybergh
+Jean-Jacques
+published 1 day ago
+4d47bc28
+jjneybergh
+Jean-Jacques
+published 1 day ago
+79b57bf1
+jjneybergh
+Jean-Jacques
+failed to publish 1 day ago
+f6a11c70
+jjneybergh
+Jean-Jacques
+published 1 day ago
+4f0f329a
+jjneybergh
+Jean-Jacques
+published 1 day ago
+7eadec2c
+jjneybergh
+Jean-Jacques
+published 1 day ago
+3aa4e2ea
+jjneybergh
+Jean-Jacques
+published 1 day ago
+d608cdf3
+jjneybergh
+Jean-Jacques
+published 3 days ago
+a8d25832
+jjneybergh
+Jean-Jacques
+published 6 days ago
+a14debf4
+jjneybergh
+Jean-Jacques
+published 15 days ago
