@@ -40,7 +40,7 @@ function verifySignedState(state: string): string | null {
 }
 
 function getFrontendUrl(): string {
-  return process.env["FRONTEND_URL"] || `https://${process.env["REPLIT_DEV_DOMAIN"] || "localhost"}`;
+  return process.env["FRONTEND_URL"] || `https://${process.env["REPLIT_DEV_DOMAIN"] || process.env["REPLIT_DOMAINS"] || "inboria.com"}`;
 }
 
 function getRedirectUri(provider: string): string {
