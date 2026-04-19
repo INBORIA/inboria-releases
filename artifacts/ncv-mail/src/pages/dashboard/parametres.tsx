@@ -16,7 +16,16 @@ import { supabase } from "@/lib/supabase";
 import { useTranslation } from 'react-i18next';
 
 const IMAP_PROVIDERS = [
-  { id: "ovh", name: "OVH", color: "bg-blue-500/10 text-blue-400", letter: "OV", host: "", port: "993" },
+  { id: "ovh", name: "OVH", color: "bg-blue-500/10 text-blue-400", letter: "OV", host: "ssl0.ovh.net", port: "993" },
+  { id: "godaddy", name: "GoDaddy", color: "bg-blue-500/10 text-blue-400", letter: "GD", host: "imap.secureserver.net", port: "993" },
+  { id: "yahoo", name: "Yahoo Mail", color: "bg-blue-500/10 text-blue-400", letter: "YH", host: "imap.mail.yahoo.com", port: "993" },
+  { id: "icloud", name: "iCloud / Apple", color: "bg-blue-500/10 text-blue-400", letter: "iC", host: "imap.mail.me.com", port: "993" },
+  { id: "aol", name: "AOL Mail", color: "bg-blue-500/10 text-blue-400", letter: "AO", host: "imap.aol.com", port: "993" },
+  { id: "free", name: "Free", color: "bg-blue-500/10 text-blue-400", letter: "FR", host: "imap.free.fr", port: "993" },
+  { id: "orange", name: "Orange", color: "bg-blue-500/10 text-blue-400", letter: "OR", host: "imap.orange.fr", port: "993" },
+  { id: "sfr", name: "SFR", color: "bg-blue-500/10 text-blue-400", letter: "SF", host: "imap.sfr.fr", port: "993" },
+  { id: "laposte", name: "La Poste", color: "bg-blue-500/10 text-blue-400", letter: "LP", host: "imap.laposte.net", port: "993" },
+  { id: "autre", name: "Autre fournisseur", color: "bg-blue-500/10 text-blue-400", letter: "?", host: "", port: "993" },
 ];
 
 interface EmailConnection {
@@ -310,10 +319,10 @@ export default function Parametres() {
 
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
                     <div className="flex items-center gap-3">
-                      <div className="w-9 h-9 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 font-bold text-sm">OV</div>
+                      <div className="w-9 h-9 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 font-bold text-sm">@</div>
                       <div>
-                        <h4 className="font-medium text-[13px] text-white">{t("settings.ovhTitle", "OVH")}</h4>
-                        <p className="text-[11px] text-[#8b9cb3]">{t("settings.ovhDesc", "Boîte mail hébergée chez OVH (IMAP)")}</p>
+                        <h4 className="font-medium text-[13px] text-white">{t("settings.imapTitle", "Autre fournisseur (IMAP)")}</h4>
+                        <p className="text-[11px] text-[#8b9cb3]">{t("settings.imapDesc", "OVH, GoDaddy, Yahoo, iCloud, Free, Orange et plus")}</p>
                       </div>
                     </div>
                     <Button
@@ -322,13 +331,13 @@ export default function Parametres() {
                       className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]"
                       onClick={() => {
                         setSelectedProvider("ovh");
-                        setImapHost("");
+                        setImapHost("ssl0.ovh.net");
                         setImapPort("993");
                         setShowAdvanced(false);
                         setConnectError("");
                       }}
                     >
-                      {t("settings.connectOvh", "Connecter OVH")}
+                      {t("settings.connectImap", "Connecter")}
                     </Button>
                   </div>
                   </div>
@@ -356,6 +365,31 @@ export default function Parametres() {
                       )}
 
                       <div className="space-y-2.5">
+                        <div className="space-y-1">
+                          <Label className="text-[12px] text-[#8b9cb3]">{t("settings.provider", "Fournisseur")}</Label>
+                          <Select
+                            value={selectedProvider ?? undefined}
+                            onValueChange={(value) => {
+                              setSelectedProvider(value);
+                              const prov = IMAP_PROVIDERS.find(p => p.id === value);
+                              if (prov) {
+                                setImapHost(prov.host);
+                                setImapPort(prov.port);
+                                setShowAdvanced(value === "autre");
+                              }
+                              setConnectError("");
+                            }}
+                          >
+                            <SelectTrigger className="bg-background border-border text-white h-9 text-[13px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {IMAP_PROVIDERS.map(p => (
+                                <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
                         <div className="space-y-1">
                           <Label className="text-[12px] text-[#8b9cb3]">{t("settings.emailAddress")}</Label>
                           <Input type="email" placeholder="votre@email.com" className="bg-background border-border text-white h-9 text-[13px]" value={imapEmail} onChange={(e) => setImapEmail(e.target.value)} />
