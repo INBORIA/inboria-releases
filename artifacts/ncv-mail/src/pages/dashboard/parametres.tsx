@@ -16,17 +16,52 @@ import { supabase } from "@/lib/supabase";
 import { useTranslation } from 'react-i18next';
 
 const IMAP_PROVIDERS = [
+  // Pro / hébergeurs internationaux
   { id: "ovh", name: "OVH (Mail standard)", color: "bg-blue-500/10 text-blue-400", letter: "OV", host: "ssl0.ovh.net", port: "993" },
   { id: "ovhpro", name: "OVH Email Pro", color: "bg-blue-500/10 text-blue-400", letter: "OP", host: "pro3.mail.ovh.net", port: "993" },
   { id: "ionos", name: "Ionos (ex 1&1)", color: "bg-blue-500/10 text-blue-400", letter: "IO", host: "imap.ionos.fr", port: "993" },
   { id: "godaddy", name: "GoDaddy", color: "bg-blue-500/10 text-blue-400", letter: "GD", host: "imap.secureserver.net", port: "993" },
-  { id: "yahoo", name: "Yahoo Mail", color: "bg-blue-500/10 text-blue-400", letter: "YH", host: "imap.mail.yahoo.com", port: "993" },
+  { id: "zoho", name: "Zoho Mail", color: "bg-blue-500/10 text-blue-400", letter: "ZO", host: "imap.zoho.com", port: "993" },
+  { id: "fastmail", name: "Fastmail", color: "bg-blue-500/10 text-blue-400", letter: "FM", host: "imap.fastmail.com", port: "993" },
   { id: "icloud", name: "iCloud / Apple", color: "bg-blue-500/10 text-blue-400", letter: "iC", host: "imap.mail.me.com", port: "993" },
+  { id: "yahoo", name: "Yahoo Mail", color: "bg-blue-500/10 text-blue-400", letter: "YH", host: "imap.mail.yahoo.com", port: "993" },
   { id: "aol", name: "AOL Mail", color: "bg-blue-500/10 text-blue-400", letter: "AO", host: "imap.aol.com", port: "993" },
+  // 🇩🇪 Allemagne
+  { id: "gmx", name: "GMX", color: "bg-blue-500/10 text-blue-400", letter: "GM", host: "imap.gmx.com", port: "993" },
+  { id: "webde", name: "Web.de", color: "bg-blue-500/10 text-blue-400", letter: "WD", host: "imap.web.de", port: "993" },
+  { id: "tonline", name: "T-Online (Telekom)", color: "bg-blue-500/10 text-blue-400", letter: "TO", host: "secureimap.t-online.de", port: "993" },
+  { id: "strato", name: "Strato", color: "bg-blue-500/10 text-blue-400", letter: "ST", host: "imap.strato.de", port: "993" },
+  { id: "mailboxorg", name: "Mailbox.org", color: "bg-blue-500/10 text-blue-400", letter: "MB", host: "imap.mailbox.org", port: "993" },
+  { id: "posteo", name: "Posteo", color: "bg-blue-500/10 text-blue-400", letter: "PO", host: "posteo.de", port: "993" },
+  // 🇫🇷 France
   { id: "free", name: "Free", color: "bg-blue-500/10 text-blue-400", letter: "FR", host: "imap.free.fr", port: "993" },
-  { id: "orange", name: "Orange", color: "bg-blue-500/10 text-blue-400", letter: "OR", host: "imap.orange.fr", port: "993" },
+  { id: "orange", name: "Orange / Wanadoo", color: "bg-blue-500/10 text-blue-400", letter: "OR", host: "imap.orange.fr", port: "993" },
   { id: "sfr", name: "SFR", color: "bg-blue-500/10 text-blue-400", letter: "SF", host: "imap.sfr.fr", port: "993" },
+  { id: "bouygues", name: "Bouygues Telecom", color: "bg-blue-500/10 text-blue-400", letter: "BT", host: "mail.bbox.fr", port: "993" },
   { id: "laposte", name: "La Poste", color: "bg-blue-500/10 text-blue-400", letter: "LP", host: "imap.laposte.net", port: "993" },
+  { id: "mailo", name: "Mailo (ex Net-C)", color: "bg-blue-500/10 text-blue-400", letter: "MO", host: "mail.mailo.com", port: "993" },
+  // 🇳🇱 Pays-Bas
+  { id: "kpn", name: "KPN", color: "bg-blue-500/10 text-blue-400", letter: "KP", host: "mail.kpnmail.nl", port: "993" },
+  { id: "ziggo", name: "Ziggo", color: "bg-blue-500/10 text-blue-400", letter: "ZG", host: "imap.ziggo.nl", port: "993" },
+  { id: "xs4all", name: "XS4ALL", color: "bg-blue-500/10 text-blue-400", letter: "XS", host: "imap.xs4all.nl", port: "993" },
+  // 🇪🇸 Espagne
+  { id: "movistar", name: "Movistar / Telefónica", color: "bg-blue-500/10 text-blue-400", letter: "MV", host: "imap.movistar.es", port: "993" },
+  { id: "telefonica", name: "Telefónica.net", color: "bg-blue-500/10 text-blue-400", letter: "TF", host: "imap.telefonica.net", port: "993" },
+  // 🇬🇧 UK
+  { id: "btinternet", name: "BT Internet", color: "bg-blue-500/10 text-blue-400", letter: "BI", host: "mail.btinternet.com", port: "993" },
+  { id: "sky", name: "Sky", color: "bg-blue-500/10 text-blue-400", letter: "SK", host: "imap.tools.sky.com", port: "993" },
+  { id: "virginmedia", name: "Virgin Media", color: "bg-blue-500/10 text-blue-400", letter: "VM", host: "imap.virginmedia.com", port: "993" },
+  // 🇺🇸 US (autres que Yahoo/AOL/iCloud déjà listés)
+  { id: "comcast", name: "Comcast / Xfinity", color: "bg-blue-500/10 text-blue-400", letter: "CO", host: "imap.comcast.net", port: "993" },
+  { id: "att", name: "AT&T / Bellsouth", color: "bg-blue-500/10 text-blue-400", letter: "AT", host: "imap.mail.att.net", port: "993" },
+  { id: "cox", name: "Cox", color: "bg-blue-500/10 text-blue-400", letter: "CX", host: "imap.cox.net", port: "993" },
+  // 🌐 International
+  { id: "yandex", name: "Yandex Mail", color: "bg-blue-500/10 text-blue-400", letter: "YA", host: "imap.yandex.com", port: "993" },
+  { id: "mailru", name: "Mail.ru", color: "bg-blue-500/10 text-blue-400", letter: "MR", host: "imap.mail.ru", port: "993" },
+  { id: "qq", name: "QQ Mail (Tencent)", color: "bg-blue-500/10 text-blue-400", letter: "QQ", host: "imap.qq.com", port: "993" },
+  { id: "netease163", name: "NetEase 163", color: "bg-blue-500/10 text-blue-400", letter: "NE", host: "imap.163.com", port: "993" },
+  { id: "naver", name: "Naver (Corée)", color: "bg-blue-500/10 text-blue-400", letter: "NA", host: "imap.naver.com", port: "993" },
+  // Saisie manuelle
   { id: "autre", name: "Autre fournisseur", color: "bg-blue-500/10 text-blue-400", letter: "?", host: "", port: "993" },
 ];
 
