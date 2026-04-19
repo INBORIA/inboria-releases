@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next';
 
 const IMAP_PROVIDERS = [
   // Pro / hébergeurs internationaux
-  { id: "ovh", name: "OVH (Mail standard)", color: "bg-blue-500/10 text-blue-400", letter: "OV", host: "ssl0.ovh.net", port: "993" },
+  { id: "ovh", name: "OVH", color: "bg-blue-500/10 text-blue-400", letter: "OV", host: "ssl0.ovh.net", port: "993" },
   { id: "ovhpro", name: "OVH Email Pro", color: "bg-blue-500/10 text-blue-400", letter: "OP", host: "pro3.mail.ovh.net", port: "993" },
   { id: "ionos", name: "Ionos (ex 1&1)", color: "bg-blue-500/10 text-blue-400", letter: "IO", host: "imap.ionos.fr", port: "993" },
   { id: "godaddy", name: "GoDaddy", color: "bg-blue-500/10 text-blue-400", letter: "GD", host: "imap.secureserver.net", port: "993" },
@@ -420,7 +420,7 @@ export default function Parametres() {
                             <SelectTrigger className="bg-background border-border text-white h-9 text-[13px]">
                               <SelectValue />
                             </SelectTrigger>
-                            <SelectContent>
+                            <SelectContent className="max-h-[280px]">
                               {IMAP_PROVIDERS.map(p => (
                                 <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
                               ))}
