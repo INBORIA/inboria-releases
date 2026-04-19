@@ -412,6 +412,12 @@ app.listen(port, (err) => {
 
   logger.info({ port }, "Server listening");
 
+  const oauthBase =
+    process.env["BACKEND_URL"] ||
+    process.env["FRONTEND_URL"] ||
+    `https://${process.env["REPLIT_DEV_DOMAIN"] || (process.env["REPLIT_DOMAINS"] || "").split(",")[0]?.trim() || "inboria.com"}`;
+  logger.info({ gmailRedirectUri: `${oauthBase}/api/email/callback/gmail`, outlookRedirectUri: `${oauthBase}/api/email/callback/outlook` }, "[oauth] effective OAuth redirect URIs (must match Google / Microsoft consoles exactly)");
+
   ensureEmailsUniqueIndex();
   ensureProjectsTable();
   ensureIntegrationsTable();

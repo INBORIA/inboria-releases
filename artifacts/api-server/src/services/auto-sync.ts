@@ -163,13 +163,23 @@ function isValidImapHost(host: string): boolean {
   return domainRegex.test(host);
 }
 
-function getGoogleOAuth2Client() {
-  const domain = process.env["REPLIT_DEV_DOMAIN"] || process.env["REPLIT_DOMAINS"] || "localhost";
+function getGmailRedirectUri(): string {
+  const explicit = process.env["BACKEND_URL"] || process.env["FRONTEND_URL"];
+  if (explicit) {
+    return `${explicit.replace(/\/$/, "")}/api/email/callback/gmail`;
+  }
+  const replitDomains = process.env["REPLIT_DOMAINS"];
+  const firstReplitDomain = replitDomains ? replitDomains.split(",")[0]?.trim() : undefined;
+  const domain = process.env["REPLIT_DEV_DOMAIN"] || firstReplitDomain || "inboria.com";
   const protocol = domain.includes("localhost") ? "http" : "https";
+  return `${protocol}://${domain}/api/email/callback/gmail`;
+}
+
+function getGoogleOAuth2Client() {
   return new google.auth.OAuth2(
     GOOGLE_CLIENT_ID,
     GOOGLE_CLIENT_SECRET,
-    `${protocol}://${domain}/api/email/callback/gmail`
+    getGmailRedirectUri()
   );
 }
 

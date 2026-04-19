@@ -153,7 +153,13 @@ const GOOGLE_CLIENT_ID = process.env["GOOGLE_CLIENT_ID"] || "";
 const GOOGLE_CLIENT_SECRET = process.env["GOOGLE_CLIENT_SECRET"] || "";
 
 function getRedirectUri(provider: string) {
-  const domain = process.env["REPLIT_DEV_DOMAIN"] || process.env["REPLIT_DOMAINS"] || "localhost";
+  const explicit = process.env["BACKEND_URL"] || process.env["FRONTEND_URL"];
+  if (explicit) {
+    return `${explicit.replace(/\/$/, "")}/api/email/callback/${provider}`;
+  }
+  const replitDomains = process.env["REPLIT_DOMAINS"];
+  const firstReplitDomain = replitDomains ? replitDomains.split(",")[0]?.trim() : undefined;
+  const domain = process.env["REPLIT_DEV_DOMAIN"] || firstReplitDomain || "inboria.com";
   const protocol = domain.includes("localhost") ? "http" : "https";
   return `${protocol}://${domain}/api/email/callback/${provider}`;
 }
