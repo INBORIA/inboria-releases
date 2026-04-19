@@ -16,7 +16,8 @@ import { supabase } from "@/lib/supabase";
 import { useTranslation } from 'react-i18next';
 
 const IMAP_PROVIDERS = [
-  { id: "ovh", name: "OVH", color: "bg-blue-500/10 text-blue-400", letter: "OV", host: "ssl0.ovh.net", port: "993" },
+  { id: "ovh", name: "OVH (Mail standard)", color: "bg-blue-500/10 text-blue-400", letter: "OV", host: "ssl0.ovh.net", port: "993" },
+  { id: "ovhpro", name: "OVH Email Pro", color: "bg-blue-500/10 text-blue-400", letter: "OP", host: "pro3.mail.ovh.net", port: "993" },
   { id: "godaddy", name: "GoDaddy", color: "bg-blue-500/10 text-blue-400", letter: "GD", host: "imap.secureserver.net", port: "993" },
   { id: "yahoo", name: "Yahoo Mail", color: "bg-blue-500/10 text-blue-400", letter: "YH", host: "imap.mail.yahoo.com", port: "993" },
   { id: "icloud", name: "iCloud / Apple", color: "bg-blue-500/10 text-blue-400", letter: "iC", host: "imap.mail.me.com", port: "993" },
