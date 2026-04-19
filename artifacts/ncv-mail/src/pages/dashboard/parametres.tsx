@@ -16,8 +16,6 @@ import { supabase } from "@/lib/supabase";
 import { useTranslation } from 'react-i18next';
 
 const IMAP_PROVIDERS = [
-  { id: "outlook", name: "Outlook", color: "bg-blue-500/10 text-blue-400", letter: "Ol", host: "outlook.office365.com", port: "993" },
-  { id: "hotmail", name: "Hotmail", color: "bg-blue-500/10 text-blue-400", letter: "Hm", host: "outlook.office365.com", port: "993" },
   { id: "orange", name: "Orange", color: "bg-orange-500/10 text-orange-400", letter: "Or", host: "imap.orange.fr", port: "993" },
   { id: "free", name: "Free", color: "bg-red-500/10 text-red-400", letter: "Fr", host: "imap.free.fr", port: "993" },
   { id: "sfr", name: "SFR", color: "bg-green-500/10 text-green-400", letter: "SF", host: "imap.sfr.fr", port: "993" },

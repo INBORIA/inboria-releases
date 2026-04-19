@@ -1,0 +1,178 @@
+elcome, Jean Neybergh
+Thank you for joining. You don't current qualify for a Microsoft 365 Developer Program sandbox subscription.
+
+For details about Developer Program member benefits, see the Microsoft 365 Developer Program FAQ.
+
+Delete Profile
+We didn't find any content that matches your preferences. We're showing you a default set of content recommendations.
+Products
+Technologies
+At least one product or technology selection is required.
+Concepts
+Office
+Connectors
+Build your own Connector
+
+Thu, Aug 2, 2018
+
+Building an Office 365 Connector for your application is easy. All you need to do is register your connector in our developer portal, add an integrated configuration experience to your application, and implement your connector.
+
+View
+Visio
+Visio Developer Documentation
+
+Wed, Aug 22, 2018
+
+Find how-to content, sample code, SDK and API documentation, VBA references, training, and technical articles for developing solutions and customizing Visio.
+
+View
+Power Apps Overview
+
+Mon, Jul 15, 2019
+
+Using Power Apps, you can quickly build custom business apps that connect to your business data stored either in the underlying data platform (Common Data Service) or in various online and on-premises data sources (SharePoint, Excel, Office 365, Dynamics 365, SQL Server, and so on).
+
+View
+Creating Apps in Power Apps
+
+Thu, Dec 5, 2019
+
+Learn how to connect to common data service and create canvas apps, model-driven apps, and portals
+
+View
+View more concepts
+Quick starts
+Outlook
+Office
+Office Add-ins
+Build your first Outlook add-in
+
+Wed, Mar 4, 2020
+
+In this article, you'll walk through the process of building an Outlook task pane add-in that displays at least one property of a selected message.
+
+View
+Microsoft identity platform
+Register an application with the Microsoft identity platform
+
+Thu, Mar 12, 2020
+
+In this quickstart, you register an application using the App registrations experience in the Azure portal.
+
+View
+Microsoft Graph
+Microsoft Graph Quick Start
+
+Mon, Mar 30, 2020
+
+Build a simple app that connects to Office 365 and calls the Microsoft Graph API.
+
+View
+Excel
+Office
+Office Add-ins
+Excel custom function quick start
+
+Thu, Jan 16, 2020
+
+Get started developing Excel custom functions
+
+View
+Tutorials
+Microsoft Graph
+Build Node.js Express apps with Microsoft Graph
+
+Thu, Oct 31, 2019
+
+This tutorial teaches you how to build a Node.js Express web app that uses the Microsoft Graph API to retrieve calendar information for a user.
+
+View
+Microsoft Graph
+Build .NET apps with Microsoft Graph
+
+Thu, Oct 31, 2019
+
+This tutorial teaches you how to build a .NET console app that uses the Microsoft Graph API to access data on behalf of a user.
+
+View
+Microsoft Teams
+Create a Teams app using Node.js
+
+Fri, Nov 9, 2018
+
+Get started on the Microsoft Teams platform with Node.js and App Studio
+
+View
+Microsoft Teams
+Create a Teams app using C#
+
+Fri, Nov 9, 2018
+
+Get started on the Microsoft Teams platform with C#/.NET and App Studio
+
+View
+View more tutorials
+Report errors
+
+Follow us    
+Share this page   
+Share to Microsoft Teams
+ 
+Back to top
+What's new
+Surface Pro
+Surface Laptop
+Surface Laptop Studio 2
+Copilot for organizations
+Copilot for personal use
+AI in Windows
+Explore Microsoft products
+Windows 11 apps
+Microsoft Store
+Account profile
+Download Center
+Microsoft Store support
+Returns
+Order tracking
+Certified Refurbished
+Microsoft Store Promise
+Flexible Payments
+Education
+Microsoft in education
+Devices for education
+Microsoft Teams for Education
+Microsoft 365 Education
+How to buy for your school
+Educator training and development
+Deals for students and parents
+AI for education
+Business
+Microsoft AI
+Microsoft Security
+Dynamics 365
+Microsoft 365
+Microsoft Power Platform
+Microsoft Teams
+Microsoft 365 Copilot
+Small Business
+Developer & IT
+Azure
+Microsoft Developer
+Microsoft Learn
+Support for AI marketplace apps
+Microsoft Tech Community
+Microsoft Marketplace
+Marketplace Rewards
+Visual Studio
+Company
+Careers
+About Microsoft
+Company news
+Privacy at Microsoft
+Investors
+Diversity and inclusion
+Accessibility
+Sustainability
+English (United States)
+Your Privacy Choices
+Consumer Health Privacy
