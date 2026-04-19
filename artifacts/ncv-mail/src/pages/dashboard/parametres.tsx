@@ -300,6 +300,19 @@ export default function Parametres() {
                     </Button>
                   </div>
 
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 font-bold text-sm">M</div>
+                      <div>
+                        <h4 className="font-medium text-[13px] text-white">{t("settings.microsoftTitle", "Outlook / Microsoft 365")}</h4>
+                        <p className="text-[11px] text-[#8b9cb3]">{t("settings.microsoftDesc", "Compte personnel ou professionnel (Exchange, Office 365)")}</p>
+                      </div>
+                    </div>
+                    <Button variant="outline" size="sm" className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]" onClick={() => handleOAuthConnect("outlook")}>
+                      {t("settings.connectMicrosoft", "Connecter Microsoft")}
+                    </Button>
+                  </div>
+
 
                   {!selectedProvider && (
                     <>
