@@ -298,34 +298,30 @@ export default function Parametres() {
                     </Button>
                   </div>
 
-
-                  {!selectedProvider && (
-                    <>
-                      <div className="pt-2 border-t border-border">
-                        <p className="text-[12px] text-[#8b9cb3] mb-3">{t("settings.otherProviders")}</p>
-                        <div className="grid grid-cols-4 gap-2">
-                          {IMAP_PROVIDERS.map((provider) => (
-                            <button
-                              key={provider.id}
-                              className="flex flex-col items-center gap-1.5 p-3 rounded-lg border border-border bg-background hover:border-primary/30 hover:bg-primary/[0.04] transition-all group"
-                              onClick={() => {
-                                setSelectedProvider(provider.id);
-                                setImapHost(provider.host);
-                                setImapPort(provider.port);
-                                setShowAdvanced(provider.id === "autre");
-                                setConnectError("");
-                              }}
-                            >
-                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-[11px] ${provider.color}`}>
-                                {provider.letter}
-                              </div>
-                              <span className="text-[11px] text-[#8b9cb3] group-hover:text-white transition-colors">{provider.id === "autre" ? t("settings.other") : provider.name}</span>
-                            </button>
-                          ))}
-                        </div>
+                  <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
+                    <div className="flex items-center gap-3">
+                      <div className="w-9 h-9 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 font-bold text-sm">OV</div>
+                      <div>
+                        <h4 className="font-medium text-[13px] text-white">{t("settings.ovhTitle", "OVH")}</h4>
+                        <p className="text-[11px] text-[#8b9cb3]">{t("settings.ovhDesc", "Boîte mail hébergée chez OVH (IMAP)")}</p>
                       </div>
-                    </>
-                  )}
+                    </div>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]"
+                      onClick={() => {
+                        setSelectedProvider("ovh");
+                        setImapHost("");
+                        setImapPort("993");
+                        setShowAdvanced(false);
+                        setConnectError("");
+                      }}
+                    >
+                      {t("settings.connectOvh", "Connecter OVH")}
+                    </Button>
+                  </div>
+
 
                   {selectedProvider && (
                     <div className="p-4 border border-primary/20 rounded-lg bg-primary/5 space-y-3">
