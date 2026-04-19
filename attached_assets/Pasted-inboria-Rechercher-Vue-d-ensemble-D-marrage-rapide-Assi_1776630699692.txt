@@ -1,0 +1,67 @@
+inboria
+Rechercher
+
+Vue d'ensemble
+Démarrage rapide
+Assistant Intégration
+Diagnostiquer et résoudre les problèmes
+
+Gérer
+Personnalisation et propriétés
+Authentication (Preview)
+Certificats & secrets
+Configuration du jeton
+API autorisées
+Exposer une API
+Rôles d'application
+Propriétaires
+Rôles et administrateurs
+Manifeste
+
+Support + dépannage
+Ajouter ou supprimer des favoris en appuyant sur Ctrl+Shift+F
+
+Nom d'affichage
+:
+inboria
+ID d'application (client)
+:
+eabc74c8-746a-4d4b-a67b-a1dd1f1366be
+ID de l'objet
+:
+abe7a7b6-9ec6-490b-a47c-16ce387faecd
+ID de l'annuaire (locataire)
+:
+d206b234-0b09-46ec-846f-aa3f6362bb0c
+Types de comptes pris en charge
+:
+Tous les utilisateurs de compte Microsoft
+Informations d'identification client
+:
+Certificat 0, secret 1
+URI de redirection
+:
+{3 web, 0 spa, 0 client public
+URI ID d'application
+:
+Ajouter un URI d’ID d’application
+Application managée dans l'annuaire local
+:
+Créer un principal de service
+État
+:
+Activée
+Azure Active Directory Authentication Library (ADAL) and Azure AD Graph no longer receive new feature updates. We continue to provide technical support and security updates. Applications should be upgraded to Microsoft Authentication Library (MSAL) and Microsoft Graph. En savoir plus
+
+End users cannot grant consent to newly registered multitenant apps without verified publishers.  Ajouter l’ID MPN pour vérifier l'éditeur
+
+Démarrer
+Documentation
+Générez votre application avec la plateforme d’identités Microsoft
+La plateforme d’identités Microsoft inclut un service d’authentification, des bibliothèques open source et des outils de gestion des applications. Vous pouvez créer des solutions d’authentification modernes, basées sur des normes, accéder à des API et les protéger, et ajouter une connexion pour vos utilisateurs et vos clients.   En savoir plus
+Appeler des API
+Générer des applications plus puissantes avec des données utilisateur et entreprise riches à partir des services Microsoft et des sources de données de votre entreprise.
+Connecter les utilisateurs en 5 minutes
+Utilisez nos SDK pour connecter des utilisateurs et appeler des API en quelques étapes. Utilisez les guides de démarrage rapide pour démarrer une application web, une application mobile, une SPA ou une application démon.
+Configurer pour votre organisation
+Affectez des utilisateurs et des groupes, appliquez
