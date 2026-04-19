@@ -539,7 +539,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     value={replyText}
                     onChange={(e) => setReplyText(e.target.value)}
                     placeholder={t("inbox.replyPlaceholder")}
-                    className="h-24 bg-background border-border text-white text-[12px] resize-none"
+                    className="min-h-[320px] bg-background border-border text-white text-[14px] leading-relaxed resize-y"
                   />
                 </div>
                 <div className="flex items-center gap-2 justify-between">
