@@ -405,9 +405,9 @@ async function saveEmailWithTriage(
 
   const { data: inserted, error: insertErr } = await supabaseAdmin
     .from("emails")
-    .insert(insertPayload)
+    .upsert(insertPayload, { onConflict: "user_id,external_id", ignoreDuplicates: true })
     .select("id")
-    .single();
+    .maybeSingle();
 
   if (insertErr) {
     if (insertErr.code === "23505") return null;

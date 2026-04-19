@@ -3,6 +3,27 @@ import { logger } from "./lib/logger";
 import { startAutoSync, NOISE_SENDER_REGEX, NOISE_SUBJECT_REGEX } from "./services/auto-sync";
 import { supabaseAdmin } from "./lib/supabase";
 
+async function ensureEmailsUniqueIndex() {
+  try {
+    const { data, error } = await supabaseAdmin
+      .rpc("exec_sql" as any, {
+        query: `SELECT 1 AS ok FROM pg_indexes WHERE tablename = 'emails' AND indexname = 'emails_user_external_id_uniq' LIMIT 1;`,
+      });
+    if (error) {
+      logger.warn({ error: error.message }, "[health] could not verify emails unique index via RPC — please confirm manually that index 'emails_user_external_id_uniq' exists on emails(user_id, external_id) WHERE external_id IS NOT NULL");
+      return;
+    }
+    const present = Array.isArray(data) ? data.length > 0 : !!data;
+    if (present) {
+      logger.info("[health] emails unique index OK (emails_user_external_id_uniq)");
+    } else {
+      logger.error("[health] CRITICAL: missing unique index 'emails_user_external_id_uniq' on emails(user_id, external_id). Duplicates can be inserted! Run: CREATE UNIQUE INDEX IF NOT EXISTS emails_user_external_id_uniq ON emails (user_id, external_id) WHERE external_id IS NOT NULL;");
+    }
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "[health] emails unique index check failed (non-fatal)");
+  }
+}
+
 async function ensureProjectsTable() {
   try {
     const { error } = await supabaseAdmin.from("projects").select("id").limit(1);
@@ -391,6 +412,7 @@ app.listen(port, (err) => {
 
   logger.info({ port }, "Server listening");
 
+  ensureEmailsUniqueIndex();
   ensureProjectsTable();
   ensureIntegrationsTable();
   ensureOrganisationsTable();
