@@ -856,7 +856,8 @@
     "currentPasswordPlaceholder": "Uw huidige wachtwoord",
     "newPasswordPlaceholder": "Minimaal 6 tekens",
     "confirmNewPasswordPlaceholder": "Typ het nieuwe wachtwoord opnieuw",
-    "cancel": "Annuleren"
+    "cancel": "Annuleren",
+    "otherProvider": "Andere provider"
   },
   "subscription": {
     "title": "Beheer uw abonnement",

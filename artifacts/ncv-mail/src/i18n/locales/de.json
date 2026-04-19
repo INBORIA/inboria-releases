@@ -856,7 +856,8 @@
     "currentPasswordPlaceholder": "Ihr aktuelles Passwort",
     "newPasswordPlaceholder": "Mindestens 6 Zeichen",
     "confirmNewPasswordPlaceholder": "Neues Passwort erneut eingeben",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "otherProvider": "Anderer Anbieter"
   },
   "subscription": {
     "title": "Verwalten Sie Ihr Abonnement",

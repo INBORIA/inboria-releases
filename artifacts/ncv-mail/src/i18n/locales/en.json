@@ -856,7 +856,8 @@
     "currentPasswordPlaceholder": "Your current password",
     "newPasswordPlaceholder": "Minimum 6 characters",
     "confirmNewPasswordPlaceholder": "Retype new password",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "otherProvider": "Other provider"
   },
   "subscription": {
     "title": "Manage your subscription",

@@ -60,7 +60,7 @@ const IMAP_PROVIDERS = [
   { id: "mailru", name: "Mail.ru", color: "bg-blue-500/10 text-blue-400", letter: "MR", host: "imap.mail.ru", port: "993" },
   { id: "qq", name: "QQ Mail (Tencent)", color: "bg-blue-500/10 text-blue-400", letter: "QQ", host: "imap.qq.com", port: "993" },
   { id: "netease163", name: "NetEase 163", color: "bg-blue-500/10 text-blue-400", letter: "NE", host: "imap.163.com", port: "993" },
-  { id: "naver", name: "Naver (Corée)", color: "bg-blue-500/10 text-blue-400", letter: "NA", host: "imap.naver.com", port: "993" },
+  { id: "naver", name: "Naver", color: "bg-blue-500/10 text-blue-400", letter: "NA", host: "imap.naver.com", port: "993" },
   // Saisie manuelle
   { id: "autre", name: "Autre fournisseur", color: "bg-blue-500/10 text-blue-400", letter: "?", host: "", port: "993" },
 ];
@@ -422,7 +422,9 @@ export default function Parametres() {
                             </SelectTrigger>
                             <SelectContent className="max-h-[280px]">
                               {IMAP_PROVIDERS.map(p => (
-                                <SelectItem key={p.id} value={p.id}>{p.name}</SelectItem>
+                                <SelectItem key={p.id} value={p.id}>
+                                  {p.id === "autre" ? t("settings.otherProvider") : p.name}
+                                </SelectItem>
                               ))}
                             </SelectContent>
                           </Select>

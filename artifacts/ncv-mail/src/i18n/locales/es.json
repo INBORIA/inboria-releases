@@ -856,7 +856,8 @@
     "currentPasswordPlaceholder": "Tu contraseña actual",
     "newPasswordPlaceholder": "Mínimo 6 caracteres",
     "confirmNewPasswordPlaceholder": "Vuelve a escribir la nueva contraseña",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "otherProvider": "Otro proveedor"
   },
   "subscription": {
     "title": "Gestiona tu suscripción",

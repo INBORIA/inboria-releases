@@ -856,7 +856,8 @@
     "currentPasswordPlaceholder": "Votre mot de passe actuel",
     "newPasswordPlaceholder": "Minimum 6 caractères",
     "confirmNewPasswordPlaceholder": "Retapez le nouveau mot de passe",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "otherProvider": "Autre fournisseur"
   },
   "subscription": {
     "title": "Gérez votre abonnement",
