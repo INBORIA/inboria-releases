@@ -242,6 +242,11 @@ export default function Parametres() {
                 <Skeleton className="h-16 w-full bg-white/5" />
               ) : (
                 <>
+                  {connections && connections.length > 0 && (
+                    <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#8b9cb3] mb-1">
+                      {t("settings.connectedAccounts", "Comptes connectés")}
+                    </h3>
+                  )}
                   {connections?.map((conn) => (
                     <div key={conn.id} className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
                       <div className="flex items-center gap-3">
@@ -271,6 +276,11 @@ export default function Parametres() {
                       </Button>
                     </div>
                   ))}
+
+                  <div className={connections && connections.length > 0 ? "pt-4 mt-2 border-t border-border space-y-3" : "space-y-3"}>
+                    <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#8b9cb3]">
+                      {t("settings.addNewAccount", "Ajouter un compte")}
+                    </h3>
 
                   <div className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
                     <div className="flex items-center gap-3">
@@ -320,6 +330,7 @@ export default function Parametres() {
                     >
                       {t("settings.connectOvh", "Connecter OVH")}
                     </Button>
+                  </div>
                   </div>
 
 
