@@ -301,7 +301,7 @@ router.get("/email/connect/outlook", requireAuth, async (req, res): Promise<void
 
     const redirectUri = getRedirectUri("outlook");
     const scope = encodeURIComponent("openid email Mail.Read Mail.Send offline_access");
-    const url = `https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?client_id=${MICROSOFT_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${req.userId}&response_mode=query`;
+    const url = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${MICROSOFT_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${req.userId}&response_mode=query`;
 
     res.json({ url });
   } catch {
@@ -322,7 +322,7 @@ router.get("/email/callback/outlook", async (req, res): Promise<void> => {
     }
 
     const redirectUri = getRedirectUri("outlook");
-    const tokenResponse = await fetch("https://login.microsoftonline.com/consumers/oauth2/v2.0/token", {
+    const tokenResponse = await fetch("https://login.microsoftonline.com/common/oauth2/v2.0/token", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
