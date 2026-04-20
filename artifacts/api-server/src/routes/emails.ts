@@ -467,7 +467,11 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
     let conn = connections[0];
     if (connectionId) {
       const matched = connections.find((c: any) => String(c.id) === String(connectionId));
-      if (matched) conn = matched;
+      if (!matched) {
+        res.status(400).json({ error: "Invalid connectionId" });
+        return;
+      }
+      conn = matched;
     }
     let fromAddress = conn.email_address;
 

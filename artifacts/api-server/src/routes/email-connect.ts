@@ -507,7 +507,8 @@ router.get("/email/connections", requireAuth, async (req, res): Promise<void> =>
     const { data, error } = await supabaseAdmin
       .from("email_connections")
       .select("id, provider, email_address, created_at, last_synced_at, signature")
-      .eq("user_id", req.userId!);
+      .eq("user_id", req.userId!)
+      .order("created_at", { ascending: true });
 
     if (error) {
       res.status(500).json({ error: error.message });

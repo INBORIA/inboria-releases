@@ -305,14 +305,13 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   onClick={() => {
                     setReplyTo(email.sender || "");
                     setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
-                    if (!replyConnectionId) {
-                      const defConn = resolveDefaultConnectionId();
-                      setReplyConnectionId(defConn);
-                    }
+                    const effectiveConnId = replyConnectionId || resolveDefaultConnectionId();
+                    if (!replyConnectionId) setReplyConnectionId(effectiveConnId);
                     if (!replyProjectId && email.project_id) setReplyProjectId(String(email.project_id));
                     setReplyOpen(true);
                     onGenerateDraft(email.id, (draft) => {
-                      setReplyText(draft);
+                      const sig = signatureForConnection(effectiveConnId);
+                      setReplyText(sig ? `${(draft || "").replace(/\s+$/, "")}\n\n-- \n${sig}` : (draft || ""));
                     });
                   }}
                 >
