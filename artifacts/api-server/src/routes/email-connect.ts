@@ -208,6 +208,8 @@ const IMAP_PROVIDERS: Record<string, { host: string; port: number }> = {
   "infomaniak.ch": { host: "mail.infomaniak.com", port: 993 },
   "ionos.fr": { host: "imap.ionos.fr", port: 993 },
   "ionos.com": { host: "imap.ionos.com", port: 993 },
+  "gmail.com": { host: "imap.gmail.com", port: 993 },
+  "googlemail.com": { host: "imap.gmail.com", port: 993 },
 };
 
 router.get("/email/connect/gmail", requireAuth, async (req, res): Promise<void> => {

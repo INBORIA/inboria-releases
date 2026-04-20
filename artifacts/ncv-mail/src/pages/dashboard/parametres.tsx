@@ -16,6 +16,8 @@ import { supabase } from "@/lib/supabase";
 import { useTranslation } from 'react-i18next';
 
 const IMAP_PROVIDERS = [
+  // Gmail via App Password (contournement OAuth Google)
+  { id: "gmail", name: "Gmail / Google Workspace", color: "bg-red-500/10 text-red-400", letter: "G", host: "imap.gmail.com", port: "993" },
   // Pro / hébergeurs internationaux
   { id: "ovh", name: "OVH", color: "bg-blue-500/10 text-blue-400", letter: "OV", host: "ssl0.ovh.net", port: "993" },
   { id: "ovhpro", name: "OVH Email Pro", color: "bg-blue-500/10 text-blue-400", letter: "OP", host: "pro3.mail.ovh.net", port: "993" },
@@ -333,11 +335,22 @@ export default function Parametres() {
                       <div className="w-9 h-9 bg-red-500/10 rounded-lg flex items-center justify-center text-red-400 font-bold text-sm">G</div>
                       <div>
                         <h4 className="font-medium text-[13px] text-white">Gmail / Google Workspace</h4>
-                        <p className="text-[11px] text-[#8b9cb3]">{t("settings.addGoogleAccount")}</p>
+                        <p className="text-[11px] text-[#8b9cb3]">{t("settings.gmailAppPasswordDesc")}</p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm" className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]" onClick={() => handleOAuthConnect("gmail")}>
-                      {t("settings.connectGoogle")}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]"
+                      onClick={() => {
+                        setSelectedProvider("gmail");
+                        setImapHost("imap.gmail.com");
+                        setImapPort("993");
+                        setShowAdvanced(false);
+                        setConnectError("");
+                      }}
+                    >
+                      {t("settings.connectGmail")}
                     </Button>
                   </div>
 
@@ -431,8 +444,50 @@ export default function Parametres() {
                         </div>
                         <div className="space-y-1">
                           <Label className="text-[12px] text-[#8b9cb3]">{t("settings.emailAddress")}</Label>
-                          <Input type="email" placeholder="votre@email.com" className="bg-background border-border text-white h-9 text-[13px]" value={imapEmail} onChange={(e) => setImapEmail(e.target.value)} />
+                          <Input
+                            type="email"
+                            placeholder="votre@email.com"
+                            className="bg-background border-border text-white h-9 text-[13px]"
+                            value={imapEmail}
+                            onChange={(e) => {
+                              const v = e.target.value;
+                              setImapEmail(v);
+                              const domain = v.split("@")[1]?.toLowerCase().trim();
+                              if (domain === "gmail.com" || domain === "googlemail.com") {
+                                if (selectedProvider !== "gmail") {
+                                  setSelectedProvider("gmail");
+                                  setImapHost("imap.gmail.com");
+                                  setImapPort("993");
+                                  setShowAdvanced(false);
+                                }
+                              }
+                            }}
+                          />
                         </div>
+
+                        {selectedProvider === "gmail" && (
+                          <div className="p-3 bg-background rounded-lg border border-primary/20 space-y-2">
+                            <p className="text-[12px] font-semibold text-white">{t("settings.gmailWizardTitle")}</p>
+                            <ol className="text-[11px] text-[#8b9cb3] space-y-1.5 list-decimal list-inside">
+                              <li>
+                                {t("settings.gmailWizardStep1")}{" "}
+                                <a href="https://myaccount.google.com/security" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                                  myaccount.google.com/security
+                                </a>
+                              </li>
+                              <li>
+                                {t("settings.gmailWizardStep2")}{" "}
+                                <a href="https://myaccount.google.com/apppasswords" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
+                                  myaccount.google.com/apppasswords
+                                </a>
+                              </li>
+                              <li>{t("settings.gmailWizardStep3")}</li>
+                              <li>{t("settings.gmailWizardStep4")}</li>
+                            </ol>
+                            <p className="text-[11px] text-[#8b9cb3] italic">{t("settings.gmailWizardNote")}</p>
+                          </div>
+                        )}
+
                         <div className="space-y-1">
                           <Label className="text-[12px] text-[#8b9cb3]">{t("settings.appPassword")}</Label>
                           <div className="relative">
