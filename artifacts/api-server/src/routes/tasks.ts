@@ -118,12 +118,14 @@ router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
     const { data: tasks, error } = await query;
 
     if (error) {
+      console.error("[tasks][GET /tasks] supabase error:", { scope, projectId, status, error });
       res.status(500).json({ error: error.message });
       return;
     }
 
     res.json((tasks || []).map(mapTask));
-  } catch {
+  } catch (err) {
+    console.error("[tasks][GET /tasks] error:", err);
     res.status(500).json({ error: "Failed to list tasks" });
   }
 });
@@ -183,12 +185,14 @@ router.post("/tasks", requireAuth, async (req, res): Promise<void> => {
       .single();
 
     if (error) {
+      console.error("[tasks][POST /tasks] supabase error:", { insertData, error });
       res.status(500).json({ error: error.message });
       return;
     }
 
     res.status(201).json(mapTask(task));
-  } catch {
+  } catch (err) {
+    console.error("[tasks][POST /tasks] error:", err);
     res.status(500).json({ error: "Failed to create task" });
   }
 });
