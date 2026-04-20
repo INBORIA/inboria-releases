@@ -311,7 +311,11 @@ Reponds en JSON:
         description: typeof c.description === "string" ? c.description.trim().slice(0, 300) : "",
       }));
 
-    await consumeAiCredits(req.userId!, "generate_pack").catch(() => {});
+    const billing = await consumeAiCredits(req.userId!, "generate_pack");
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
     res.json({ packName, categories });
   } catch {
     res.status(500).json({ error: "Failed to generate pack" });

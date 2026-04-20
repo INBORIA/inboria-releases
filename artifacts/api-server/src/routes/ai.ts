@@ -181,7 +181,11 @@ Herinnering: de waarden van "summary" en "advice" MOETEN volledig in het Nederla
 
     const score = Math.max(0, Math.round(100 - (urgent / Math.max(allEmails.length, 1)) * 40 - (pending / Math.max(allEmails.length, 1)) * 30));
 
-    await consumeAiCredits(req.userId!, "daily_summary").catch(() => {});
+    const billing = await consumeAiCredits(req.userId!, "daily_summary");
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
     res.json({
       score,
       summary: aiResponse.summary || "Aucun email a analyser.",
@@ -319,7 +323,11 @@ Redige une reponse professionnelle et adaptee au contexte. Reponds uniquement av
 
     const draft = completion.choices[0]?.message?.content?.trim() || "";
 
-    await consumeAiCredits(req.userId!, "draft").catch(() => {});
+    const billing = await consumeAiCredits(req.userId!, "draft");
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
     res.json({ draft });
   } catch (err: any) {
     console.error("AI draft error:", err);
@@ -453,7 +461,11 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
       }
     }
 
-    await consumeAiCredits(req.userId!, "recategorize_uncategorized").catch(() => {});
+    const billing = await consumeAiCredits(req.userId!, "recategorize_uncategorized");
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
     res.json({ recategorized, created: createdCategories });
   } catch (err: any) {
     console.error("[recategorize] Error:", err);
@@ -484,7 +496,11 @@ router.post("/ai/conversation-summary", requireAuth, async (req, res): Promise<v
       ],
     });
 
-    await consumeAiCredits(req.userId!, "conversation_summary").catch(() => {});
+    const billing = await consumeAiCredits(req.userId!, "conversation_summary");
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
     res.json({ summary: completion.choices[0]?.message?.content || "" });
   } catch (err: any) {
     res.status(500).json({ error: "Erreur de résumé: " + err.message });
@@ -531,7 +547,11 @@ Si aucun suivi n'est nécessaire, retourne {"followups": []}.` },
     });
 
     const parsed = JSON.parse(completion.choices[0]?.message?.content || '{"followups":[]}');
-    await consumeAiCredits(req.userId!, "detect_followups").catch(() => {});
+    const billing = await consumeAiCredits(req.userId!, "detect_followups");
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
     res.json(parsed);
   } catch (err: any) {
     res.status(500).json({ error: "Erreur de détection: " + err.message });
@@ -559,7 +579,11 @@ ${signature ? `\nSignature à utiliser:\n${signature}` : ""}` },
       ],
     });
 
-    await consumeAiCredits(req.userId!, "generate_relance").catch(() => {});
+    const billing = await consumeAiCredits(req.userId!, "generate_relance");
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
     res.json({
       subject: `Relance: ${originalEmail.subject || ""}`,
       body: completion.choices[0]?.message?.content || "",
@@ -628,7 +652,11 @@ Extrais le maximum d'informations structurées même si une date exacte n'est pa
     const content = completion.choices[0]?.message?.content ?? "{}";
     const result = JSON.parse(content);
 
-    await consumeAiCredits(req.userId!, "extract_appointment").catch(() => {});
+    const billing = await consumeAiCredits(req.userId!, "extract_appointment");
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
     res.json({
       title: result.title || email.subject || "",
       description: result.description || "",
@@ -802,7 +830,11 @@ N'invente PAS de RDV. Détecte uniquement si une date/heure concrète est mentio
       });
     }
 
-    await consumeAiCredits(req.userId!, "detect_appointments").catch(() => {});
+    const billing = await consumeAiCredits(req.userId!, "detect_appointments");
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
     res.json({ appointments: created, count: created.length });
   } catch (err: any) {
     logger.error({ err: err.message, stack: err.stack }, "[detect-appointments] Unhandled error");
@@ -883,7 +915,11 @@ router.post("/ai/support-chat", requireAuth, async (req, res): Promise<void> => 
 
     logger.info({ userId, language: lang }, "[support-chat] Reply generated");
 
-    await consumeAiCredits(req.userId!, "support_chat").catch(() => {});
+    const billing = await consumeAiCredits(req.userId!, "support_chat");
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
     res.json({ reply });
   } catch (err: any) {
     logger.error({ err: err.message, stack: err.stack }, "[support-chat] Error");
