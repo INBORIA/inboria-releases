@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useLocation } from "wouter";
 import { supabase } from "@/lib/supabase";
 import { AuthLayout } from "@/components/layout/auth-layout";
@@ -20,10 +20,20 @@ export default function ResetPassword() {
   const [sessionReady, setSessionReady] = useState(false);
   const [sessionError, setSessionError] = useState(false);
   const { toast } = useToast();
+  const handledRef = useRef(false);
 
   useEffect(() => {
+    if (handledRef.current) return;
+    handledRef.current = true;
+
     const handleSession = async () => {
       try {
+        const { data: existing } = await supabase.auth.getSession();
+        if (existing.session) {
+          setSessionReady(true);
+          return;
+        }
+
         const params = new URLSearchParams(window.location.search);
         const code = params.get("code");
         const hashParams = new URLSearchParams(window.location.hash.replace("#", ""));
@@ -40,7 +50,13 @@ export default function ResetPassword() {
 
         if (code) {
           const { error } = await supabase.auth.exchangeCodeForSession(code);
+          window.history.replaceState({}, "", window.location.pathname);
           if (error) {
+            const { data: retry } = await supabase.auth.getSession();
+            if (retry.session) {
+              setSessionReady(true);
+              return;
+            }
             setSessionError(true);
             return;
           }
@@ -51,6 +67,7 @@ export default function ResetPassword() {
             access_token: accessToken,
             refresh_token: refreshToken,
           });
+          window.history.replaceState({}, "", window.location.pathname);
           if (error) {
             setSessionError(true);
             return;
