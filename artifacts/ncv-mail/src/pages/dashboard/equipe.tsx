@@ -129,7 +129,7 @@ export default function Equipe() {
 
   function copyInviteLink(token: string) {
     const baseUrl = window.location.origin;
-    const link = `${baseUrl}/invitation/${token}`;
+    const link = `${baseUrl}/accept-invite?token=${token}`;
     navigator.clipboard.writeText(link);
     setCopiedToken(token);
     setTimeout(() => setCopiedToken(null), 2000);
