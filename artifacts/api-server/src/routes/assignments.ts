@@ -17,7 +17,7 @@ async function getOrgIdForMember(userId: string): Promise<string | null> {
 
 router.post("/emails/:emailId/assign", requireAuth, async (req, res): Promise<void> => {
   try {
-    const emailId = parseInt(req.params.emailId, 10);
+    const emailId = parseInt(req.params.emailId as string, 10);
     if (isNaN(emailId)) {
       res.status(400).json({ error: "ID email invalide" });
       return;
@@ -130,7 +130,7 @@ router.post("/emails/:emailId/assign", requireAuth, async (req, res): Promise<vo
 
 router.post("/emails/:emailId/unassign", requireAuth, async (req, res): Promise<void> => {
   try {
-    const emailId = parseInt(req.params.emailId, 10);
+    const emailId = parseInt(req.params.emailId as string, 10);
     if (isNaN(emailId)) {
       res.status(400).json({ error: "ID email invalide" });
       return;

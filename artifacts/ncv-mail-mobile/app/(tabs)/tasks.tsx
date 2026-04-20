@@ -44,7 +44,7 @@ export default function TasksScreen() {
     setRefreshing(false);
   }, [queryClient]);
 
-  const toggleTask = (id: string, currentDone: boolean) => {
+  const toggleTask = (id: any, currentDone: boolean) => {
     if (Platform.OS !== "web" && Haptics) {
       try {
         Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);

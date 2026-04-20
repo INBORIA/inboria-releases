@@ -12,11 +12,11 @@ export function NotificationBell() {
   const [, setLocation] = useLocation();
 
   const { data: unreadData, refetch: refetchCount } = useGetUnreadNotificationCount({
-    query: { refetchInterval: 30000 },
+    query: { refetchInterval: 30000 } as any,
   });
   const { data: notifications, refetch: refetchNotifs } = useGetNotifications(
     { limit: 20 },
-    { query: { enabled: open } }
+    { query: { enabled: open } as any }
   );
   const markRead = useMarkNotificationRead();
   const markAllRead = useMarkAllNotificationsRead();

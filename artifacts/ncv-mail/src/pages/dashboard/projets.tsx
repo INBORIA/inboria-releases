@@ -130,7 +130,7 @@ function ProjectNotes({ projectId }: { projectId: string }) {
   const handleAddNote = () => {
     if (!noteText.trim()) return;
     createNote.mutate(
-      { projectId, data: { content: noteText.trim() } },
+      { id: projectId, data: { content: noteText.trim() } },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListProjectNotesQueryKey(projectId) });
@@ -145,7 +145,7 @@ function ProjectNotes({ projectId }: { projectId: string }) {
 
   const handleDeleteNote = (noteId: string) => {
     deleteNote.mutate(
-      { projectId, noteId },
+      { id: projectId, noteId },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getListProjectNotesQueryKey(projectId) });
@@ -224,7 +224,7 @@ function ProjectDetailView({
 
   const handleDeleteTask = (taskId: string) => {
     deleteTaskMut.mutate(
-      { id: taskId },
+      { id: taskId as any },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
@@ -237,7 +237,7 @@ function ProjectDetailView({
 
   const handleToggleTask = (taskId: string, currentDone: boolean) => {
     updateTaskMut.mutate(
-      { id: taskId, data: { done: !currentDone } },
+      { id: taskId as any, data: { done: !currentDone } },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
@@ -527,7 +527,7 @@ export default function Projets() {
   );
 
   const createForm = useForm<ProjectFormValues>({
-    resolver: zodResolver(projectSchema),
+    resolver: zodResolver(projectSchema as any),
     defaultValues: {
       name: "",
       reference: "",
@@ -538,7 +538,7 @@ export default function Projets() {
   });
 
   const editForm = useForm<ProjectFormValues>({
-    resolver: zodResolver(projectSchema),
+    resolver: zodResolver(projectSchema as any),
   });
 
   const handleOpenEdit = (project: any) => {
@@ -559,8 +559,8 @@ export default function Projets() {
           name: data.name,
           reference: data.reference || undefined,
           description: data.description || undefined,
-          status: data.status || "actif",
-          color: data.color || "blue",
+          status: (data.status || "actif") as any,
+          color: (data.color || "blue") as any,
         },
       },
       {
@@ -585,8 +585,8 @@ export default function Projets() {
           name: data.name,
           reference: data.reference || undefined,
           description: data.description || undefined,
-          status: data.status,
-          color: data.color,
+          status: data.status as any,
+          color: data.color as any,
         },
       },
       {

@@ -112,7 +112,7 @@ router.patch("/categories/:id", requireAuth, async (req, res): Promise<void> => 
 
 router.delete("/categories/:id", requireAuth, async (req, res): Promise<void> => {
   try {
-    const catId = parseInt(req.params.id, 10);
+    const catId = parseInt(req.params.id as string, 10);
     if (isNaN(catId)) {
       res.status(400).json({ error: "ID invalide" });
       return;

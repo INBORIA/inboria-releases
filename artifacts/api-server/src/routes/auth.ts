@@ -63,7 +63,7 @@ router.post("/auth/register", async (req, res): Promise<void> => {
         emailsQuota: 100,
         createdAt: data.user?.created_at,
       },
-      session: data.session,
+      session: (data as any).session,
     });
   } catch (err) {
     res.status(500).json({ error: "Registration failed" });
@@ -162,7 +162,7 @@ router.post("/auth/login", async (req, res): Promise<void> => {
         emailsQuota: profile?.emails_quota ?? 100,
         createdAt: data.user.created_at,
       },
-      session: data.session,
+      session: (data as any).session,
     });
   } catch (err) {
     res.status(500).json({ error: "Login failed" });

@@ -56,7 +56,7 @@ export default function BoitesPartagees() {
 
   const { data: mailboxes, isLoading } = useGetSharedMailboxes();
   const { data: orgMembers } = useGetOrganisationMembers();
-  const { data: adminConnections } = useGetAdminConnections({ query: { enabled: !!isAdmin } });
+  const { data: adminConnections } = useGetAdminConnections({ query: { enabled: !!isAdmin } as any });
 
   const createMailbox = useCreateSharedMailbox();
   const deleteMailbox = useDeleteSharedMailbox();
@@ -575,7 +575,7 @@ function MailboxEmails({
               <div className="flex items-center gap-3 text-xs text-muted-foreground">
                 <span className="flex items-center gap-1">
                   <Clock className="h-3 w-3" />
-                  {new Date(email.createdAt).toLocaleDateString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
+                  {new Date(email.createdAt || Date.now()).toLocaleDateString("fr-FR", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" })}
                 </span>
                 {email.claimedAt && email.claimedByName && (
                   <span className="flex items-center gap-1">

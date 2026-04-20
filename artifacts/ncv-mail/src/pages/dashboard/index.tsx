@@ -81,7 +81,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
-  const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
+  const barColor = PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible;
 
   return (
     <div
@@ -145,7 +145,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
               {t("inbox.assignedBadge")}
             </span>
           )}
-          <PriorityBadge priority={email.priority} />
+          <PriorityBadge priority={(email.priority || "faible") as any} />
           <span className="text-[10px] text-[#8b9cb3] whitespace-nowrap items-center gap-1 hidden sm:flex">
             <Clock className="w-3 h-3" />
             {format(new Date(email.createdAt), "d MMM HH:mm", { locale: dateFnsLocale })}
@@ -207,7 +207,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
   const [taskProjectId, setTaskProjectId] = useState("none");
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
+  const barColor = PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible;
 
   return (
     <div className="flex flex-col h-full">
@@ -220,7 +220,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
           {t("inbox.title")}
         </button>
         <div className="flex-1" />
-        <PriorityBadge priority={email.priority} />
+        <PriorityBadge priority={(email.priority || "faible") as any} />
       </div>
 
       <div className="bg-card rounded-lg border border-border overflow-hidden">
@@ -858,18 +858,18 @@ export default function Dashboard() {
   const { data: profile } = useGetProfile();
 
   const { data: myOrg } = useGetMyOrganisation();
-  const { data: orgMembers } = useGetOrganisationMembers({ query: { enabled: !!(myOrg as any)?.id } });
+  const { data: orgMembers } = useGetOrganisationMembers({ query: { enabled: !!(myOrg as any)?.id } as any });
   const assignEmailMut = useAssignEmail();
   const unassignEmailMut = useUnassignEmail();
 
   const plan = (profile as any)?.plan;
-  const { data: sharedMailboxes } = useGetSharedMailboxes({ query: { enabled: plan === "business" } });
+  const { data: sharedMailboxes } = useGetSharedMailboxes({ query: { enabled: plan === "business" } as any });
   const [sharedPage, setSharedPage] = useState(1);
   const [accumulatedSharedEmails, setAccumulatedSharedEmails] = useState<PaginatedSharedMailboxEmails["emails"]>([]);
   const { data: sharedEmailsData, isLoading: sharedEmailsLoading, isFetching: sharedFetching } = useGetSharedMailboxEmails(
     selectedSharedMailboxId || "",
     { page: sharedPage, limit: 50 },
-    { query: { enabled: !!selectedSharedMailboxId && inboxMode === "shared" } }
+    { query: { enabled: !!selectedSharedMailboxId && inboxMode === "shared" } as any }
   );
   const sharedPaged = sharedEmailsData as PaginatedSharedMailboxEmails | undefined;
   const sharedHasMore = sharedPaged ? sharedPage < (sharedPaged.totalPages ?? 1) : false;
@@ -979,7 +979,7 @@ export default function Dashboard() {
     status: "trashed",
     page: trashPage,
     limit: 50,
-  }, { query: { enabled: inboxMode === "trash" } });
+  }, { query: { enabled: inboxMode === "trash" } as any });
 
   useEffect(() => {
     if (trashData) {
@@ -1033,7 +1033,7 @@ export default function Dashboard() {
     status: "spam",
     page: spamPage,
     limit: 50,
-  }, { query: { enabled: inboxMode === "spam" } });
+  }, { query: { enabled: inboxMode === "spam" } as any });
 
   useEffect(() => {
     if (spamData) {
@@ -1270,6 +1270,7 @@ export default function Dashboard() {
       const t = setTimeout(() => setEmailPage((p) => p + 1), 50);
       return () => clearTimeout(t);
     }
+    return undefined;
   }, [hasMorePages, emailsFetching]);
 
   useEffect(() => {
@@ -1380,7 +1381,7 @@ export default function Dashboard() {
 
   const handleUpdatePriority = (id: number, priority: string) => {
     updateEmail.mutate(
-      { id, data: { priority } },
+      { id, data: { priority } as any },
       {
         onSuccess: () => {
           invalidateAll();
@@ -1447,7 +1448,7 @@ export default function Dashboard() {
   const createTaskMut = useCreateTask();
   const handleCreateTask = (emailId: number, title: string, projectId?: string) => {
     createTaskMut.mutate(
-      { data: { title, emailId, projectId: projectId || null } },
+      { data: { title, emailId, projectId: projectId || undefined } },
       {
         onSuccess: () => {
           if (projectId) {
@@ -1576,7 +1577,7 @@ export default function Dashboard() {
   };
 
   const form = useForm<z.infer<typeof triageSchema>>({
-    resolver: zodResolver(triageSchema),
+    resolver: zodResolver(triageSchema as any),
     defaultValues: { sender: "", subject: "", body: "" },
   });
 
@@ -1952,7 +1953,7 @@ export default function Dashboard() {
                           key={email.id}
                           className="group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors overflow-hidden border-border"
                         >
-                          <div className={`w-1 shrink-0 ${PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible}`} />
+                          <div className={`w-1 shrink-0 ${PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible}`} />
                           <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
                             <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-primary/20">
                               <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
@@ -1960,7 +1961,7 @@ export default function Dashboard() {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-0.5">
                                 <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>
-                                <PriorityBadge priority={email.priority} />
+                                <PriorityBadge priority={(email.priority || "faible") as any} />
                               </div>
                               <h3 className="text-[12px] text-white/80 truncate">{email.subject}</h3>
                               {email.summary && (
@@ -2083,7 +2084,7 @@ export default function Dashboard() {
                           key={email.id}
                           className="group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors overflow-hidden border-border"
                         >
-                          <div className={`w-1 shrink-0 ${PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible}`} />
+                          <div className={`w-1 shrink-0 ${PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible}`} />
                           <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
                             <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-primary/20">
                               <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
@@ -2091,7 +2092,7 @@ export default function Dashboard() {
                             <div className="flex-1 min-w-0">
                               <div className="flex items-center gap-2 mb-0.5">
                                 <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>
-                                <PriorityBadge priority={email.priority} />
+                                <PriorityBadge priority={(email.priority || "faible") as any} />
                               </div>
                               <h3 className="text-[12px] text-white/80 truncate">{email.subject}</h3>
                               {email.summary && (
@@ -2191,7 +2192,7 @@ export default function Dashboard() {
                             key={email.id}
                             className="group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors overflow-hidden border-border"
                           >
-                            <div className={`w-1 shrink-0 ${PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible}`} />
+                            <div className={`w-1 shrink-0 ${PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible}`} />
                             <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
                               <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-primary/20">
                                 <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
@@ -2199,7 +2200,7 @@ export default function Dashboard() {
                               <div className="flex-1 min-w-0">
                                 <div className="flex items-center gap-2 mb-0.5">
                                   <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>
-                                  <PriorityBadge priority={email.priority} />
+                                  <PriorityBadge priority={(email.priority || "faible") as any} />
                                   {isClaimed && (
                                     <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${isClaimedByMe ? "bg-primary/15 text-primary" : "bg-white/[0.06] text-[#8b9cb3]"}`}>
                                       {isClaimedByMe ? t("inbox.claimedBy") : t("inbox.claim")}
@@ -2220,7 +2221,7 @@ export default function Dashboard() {
                                     size="sm"
                                     variant="outline"
                                     className="gap-1 h-7 text-[10px] bg-transparent border-border text-primary hover:text-white hover:bg-primary/10"
-                                    onClick={() => handleClaimEmail(email.id)}
+                                    onClick={() => handleClaimEmail(email.id as any)}
                                     disabled={claimEmailMut.isPending}
                                   >
                                     <UserPlus className="w-3 h-3" />
@@ -2231,7 +2232,7 @@ export default function Dashboard() {
                                     size="sm"
                                     variant="outline"
                                     className="gap-1 h-7 text-[10px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
-                                    onClick={() => handleUnclaimEmail(email.id)}
+                                    onClick={() => handleUnclaimEmail(email.id as any)}
                                     disabled={unclaimEmailMut.isPending}
                                   >
                                     <UserX className="w-3 h-3" />

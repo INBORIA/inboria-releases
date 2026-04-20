@@ -265,12 +265,12 @@ export default function Classement() {
   };
 
   const createForm = useForm<CategoryFormValues>({
-    resolver: zodResolver(categorySchema),
+    resolver: zodResolver(categorySchema as any),
     defaultValues: { name: "", description: "" },
   });
 
   const editForm = useForm<CategoryFormValues>({
-    resolver: zodResolver(categorySchema),
+    resolver: zodResolver(categorySchema as any),
   });
 
   const handleOpenEdit = (category: any) => {

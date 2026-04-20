@@ -709,7 +709,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
 
 router.get("/emails/:id/conversation", requireAuth, async (req, res): Promise<void> => {
   try {
-    const emailId = parseInt(req.params.id, 10);
+    const emailId = parseInt(req.params.id as string, 10);
     if (isNaN(emailId)) { res.status(400).json({ error: "ID invalide" }); return; }
 
     const { data: email, error } = await supabaseAdmin

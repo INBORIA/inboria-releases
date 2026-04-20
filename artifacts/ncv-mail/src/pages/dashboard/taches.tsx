@@ -199,7 +199,7 @@ export default function Taches() {
 
   const handleToggleDone = (id: string, currentDone: boolean) => {
     updateTask.mutate(
-      { id, data: { done: !currentDone } },
+      { id: id as any, data: { done: !currentDone } },
       {
         onSuccess: () => {
           invalidate();
@@ -211,7 +211,7 @@ export default function Taches() {
 
   const handleDeleteTask = (id: string) => {
     deleteTask.mutate(
-      { id },
+      { id: id as any },
       {
         onSuccess: () => { invalidate(); toast({ title: t("tasks.deleted") }); },
         onError: () => toast({ variant: "destructive", title: t("common.error"), description: t("tasks.deleteError") }),

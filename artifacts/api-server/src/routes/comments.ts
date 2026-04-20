@@ -7,7 +7,7 @@ const router: IRouter = Router();
 
 router.get("/emails/:emailId/comments", requireAuth, async (req, res): Promise<void> => {
   try {
-    const emailId = parseInt(req.params.emailId, 10);
+    const emailId = parseInt(req.params.emailId as string, 10);
     if (isNaN(emailId)) {
       res.status(400).json({ error: "ID email invalide" });
       return;
@@ -71,7 +71,7 @@ router.get("/emails/:emailId/comments", requireAuth, async (req, res): Promise<v
 
 router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<void> => {
   try {
-    const emailId = parseInt(req.params.emailId, 10);
+    const emailId = parseInt(req.params.emailId as string, 10);
     if (isNaN(emailId)) {
       res.status(400).json({ error: "ID email invalide" });
       return;

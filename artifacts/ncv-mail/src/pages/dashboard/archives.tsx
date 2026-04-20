@@ -384,7 +384,7 @@ export default function Archives() {
 
   const handleUpdatePriority = (id: number, priority: string) => {
     updateEmail.mutate(
-      { id, data: { priority } },
+      { id, data: { priority } as any },
       {
         onSuccess: () => {
           invalidateAll();

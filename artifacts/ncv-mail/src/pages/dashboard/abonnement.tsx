@@ -320,7 +320,7 @@ export default function Abonnement() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {plans.map((plan) => {
             const isCurrentPlan = profile?.plan === plan.id;
-            const isBusiness = plan.hasSeats;
+            const isBusiness = (plan as any).hasSeats;
             const price = isBusiness
               ? (parseFloat(plan.price) * businessSeats).toFixed(2)
               : plan.price;

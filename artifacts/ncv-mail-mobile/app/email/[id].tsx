@@ -125,7 +125,7 @@ export default function EmailDetailScreen() {
 
   const handleReplyOpen = () => {
     if (!email) return;
-    setReplyTo(email.senderEmail || "");
+    setReplyTo((email as any).senderEmail || "");
     setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
     setReplyText(profile?.signature ? `\n\n${profile.signature}` : "");
     setReplyOpen(true);
@@ -133,7 +133,7 @@ export default function EmailDetailScreen() {
 
   const handleAiDraft = () => {
     if (!email) return;
-    setReplyTo(email.senderEmail || "");
+    setReplyTo((email as any).senderEmail || "");
     setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
     setReplyOpen(true);
     generateDraft.mutate(
@@ -162,7 +162,7 @@ export default function EmailDetailScreen() {
   const handleUpdatePriority = (priority: string) => {
     hapticLight();
     updateEmail.mutate(
-      { id: Number(id), data: { priority } },
+      { id: Number(id), data: { priority } as any },
       { onSuccess: invalidateAll }
     );
     setShowPriorityPicker(false);
@@ -241,9 +241,9 @@ export default function EmailDetailScreen() {
             </View>
             <View style={s.senderInfo}>
               <Text style={[s.senderName, { color: colors.foreground }]}>{email.sender}</Text>
-              {email.senderEmail ? (
+              {(email as any).senderEmail ? (
                 <Text style={[s.senderEmail, { color: colors.mutedForeground }]}>
-                  {email.senderEmail}
+                  {(email as any).senderEmail}
                 </Text>
               ) : null}
             </View>

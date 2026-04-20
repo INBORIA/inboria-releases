@@ -894,7 +894,7 @@ async function syncImap(conn: any, userId: string): Promise<number> {
     let synced = 0;
 
     try {
-      const mailboxStatus = client.mailbox;
+      const mailboxStatus = client.mailbox as any;
       const totalMessages = mailboxStatus?.exists || 0;
       if (totalMessages === 0) { lock.release(); await client.logout(); return 0; }
       const startSeq = Math.max(1, totalMessages - 19);
@@ -906,7 +906,7 @@ async function syncImap(conn: any, userId: string): Promise<number> {
         if (existing) continue;
 
         const envelope = msg.envelope;
-        const from = envelope.from?.[0];
+        const from = envelope?.from?.[0];
         const sender = from?.name ? `${from.name} <${from.address}>` : (from?.address || "inconnu");
 
         let bodyText = "";
@@ -930,9 +930,9 @@ async function syncImap(conn: any, userId: string): Promise<number> {
 
         const imapInsert: Record<string, any> = {
           user_id: userId, external_id: externalId, sender,
-          subject: envelope.subject || "(pas de sujet)", body: bodyText,
+          subject: envelope?.subject || "(pas de sujet)", body: bodyText,
           status: "non_lu",
-          created_at: envelope.date ? new Date(envelope.date).toISOString() : new Date().toISOString(),
+          created_at: envelope?.date ? new Date(envelope.date).toISOString() : new Date().toISOString(),
         };
         if ((conn as any)._sharedMailboxId) {
           imapInsert.shared_mailbox_id = (conn as any)._sharedMailboxId;

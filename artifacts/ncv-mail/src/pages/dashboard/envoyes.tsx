@@ -54,7 +54,7 @@ export default function Envoyes() {
   const [page, setPage] = useState(1);
   const [accumulated, setAccumulated] = useState<any[]>([]);
 
-  const { data: emailsData, isLoading, isFetching } = useListEmails({ status: "sent", limit: 50, page });
+  const { data: emailsData, isLoading, isFetching } = useListEmails({ status: "sent" as any, limit: 50, page } as any);
   const paged = emailsData as PaginatedEmails | undefined;
   const hasMore = paged ? page < (paged.totalPages ?? 1) : false;
 
