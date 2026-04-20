@@ -5,6 +5,7 @@ import OpenAI from "openai";
 import { requireAuth } from "../middlewares/auth";
 import { logger } from "../lib/logger";
 import { getKnowledgeBase, getSystemPrompt } from "../services/knowledge-base";
+import { AI_COST, checkEntitlement, consumeAiCredits, type AiEventType } from "../services/credits";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -12,22 +13,9 @@ const openai = new OpenAI({
 
 const router: IRouter = Router();
 
-async function checkEntitlement(userId: string): Promise<{ blocked: boolean; reason?: string }> {
-  const { data: profile } = await supabaseAdmin
-    .from("profiles")
-    .select("plan, emails_used, emails_quota")
-    .eq("id", userId)
-    .single();
-
-  if (!profile) return { blocked: true, reason: "Profil introuvable" };
-  if (profile.plan === "expired") return { blocked: true, reason: "Votre abonnement a expire. Reabonnez-vous pour continuer." };
-  if (profile.emails_used >= profile.emails_quota) return { blocked: true, reason: "Quota d'emails atteint. Passez a un plan superieur pour continuer." };
-  return { blocked: false };
-}
-
 router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> => {
   try {
-    const entitlement = await checkEntitlement(req.userId!);
+    const entitlement = await checkEntitlement(req.userId!, AI_COST.daily_summary);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
     const parsed = GenerateDailySummaryBody.safeParse(req.body);
@@ -193,6 +181,7 @@ Herinnering: de waarden van "summary" en "advice" MOETEN volledig in het Nederla
 
     const score = Math.max(0, Math.round(100 - (urgent / Math.max(allEmails.length, 1)) * 40 - (pending / Math.max(allEmails.length, 1)) * 30));
 
+    await consumeAiCredits(req.userId!, "daily_summary").catch(() => {});
     res.json({
       score,
       summary: aiResponse.summary || "Aucun email a analyser.",
@@ -245,7 +234,7 @@ const LANG_PROMPTS: Record<string, { system: string; uncategorized: string; noCa
 
 router.post("/ai/triage", requireAuth, async (req, res): Promise<void> => {
   try {
-    const entitlement = await checkEntitlement(req.userId!);
+    const entitlement = await checkEntitlement(req.userId!, AI_COST.triage);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
     const parsed = TriageEmailBody.safeParse(req.body);
@@ -322,6 +311,7 @@ IMPORTANT for tasks: Each task must be explicit and self-contained. Always inclu
       };
     }
 
+    await consumeAiCredits(req.userId!, "triage").catch(() => {});
     res.json({
       category: triageResult.category || lp.uncategorized,
       priority: triageResult.priority || "moyen",
@@ -336,7 +326,7 @@ IMPORTANT for tasks: Each task must be explicit and self-contained. Always inclu
 
 router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
   try {
-    const entitlement = await checkEntitlement(req.userId!);
+    const entitlement = await checkEntitlement(req.userId!, AI_COST.draft);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
     const parsed = GenerateDraftBody.safeParse(req.body);
@@ -421,6 +411,7 @@ Redige une reponse professionnelle et adaptee au contexte. Reponds uniquement av
 
     const draft = completion.choices[0]?.message?.content?.trim() || "";
 
+    await consumeAiCredits(req.userId!, "draft").catch(() => {});
     res.json({ draft });
   } catch (err: any) {
     console.error("AI draft error:", err);
@@ -434,7 +425,7 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
     const userLang = (req.body?.lang || "fr").substring(0, 2).toLowerCase();
     const lp = LANG_PROMPTS[userLang] || LANG_PROMPTS.fr;
 
-    const entitlement = await checkEntitlement(userId);
+    const entitlement = await checkEntitlement(userId, AI_COST.recategorize_uncategorized);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
     const { data: categories } = await supabaseAdmin
@@ -554,6 +545,7 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
       }
     }
 
+    await consumeAiCredits(req.userId!, "recategorize_uncategorized").catch(() => {});
     res.json({ recategorized, created: createdCategories });
   } catch (err: any) {
     console.error("[recategorize] Error:", err);
@@ -563,7 +555,7 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
 
 router.post("/ai/conversation-summary", requireAuth, async (req, res): Promise<void> => {
   try {
-    const entitlement = await checkEntitlement(req.userId!);
+    const entitlement = await checkEntitlement(req.userId!, AI_COST.conversation_summary);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
     const { thread } = req.body;
@@ -584,6 +576,7 @@ router.post("/ai/conversation-summary", requireAuth, async (req, res): Promise<v
       ],
     });
 
+    await consumeAiCredits(req.userId!, "conversation_summary").catch(() => {});
     res.json({ summary: completion.choices[0]?.message?.content || "" });
   } catch (err: any) {
     res.status(500).json({ error: "Erreur de résumé: " + err.message });
@@ -592,7 +585,7 @@ router.post("/ai/conversation-summary", requireAuth, async (req, res): Promise<v
 
 router.post("/ai/detect-followups", requireAuth, async (req, res): Promise<void> => {
   try {
-    const entitlement = await checkEntitlement(req.userId!);
+    const entitlement = await checkEntitlement(req.userId!, AI_COST.detect_followups);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
     const { emails } = req.body;
@@ -630,6 +623,7 @@ Si aucun suivi n'est nécessaire, retourne {"followups": []}.` },
     });
 
     const parsed = JSON.parse(completion.choices[0]?.message?.content || '{"followups":[]}');
+    await consumeAiCredits(req.userId!, "detect_followups").catch(() => {});
     res.json(parsed);
   } catch (err: any) {
     res.status(500).json({ error: "Erreur de détection: " + err.message });
@@ -638,7 +632,7 @@ Si aucun suivi n'est nécessaire, retourne {"followups": []}.` },
 
 router.post("/ai/generate-relance", requireAuth, async (req, res): Promise<void> => {
   try {
-    const entitlement = await checkEntitlement(req.userId!);
+    const entitlement = await checkEntitlement(req.userId!, AI_COST.generate_relance);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
     const { originalEmail, context, signature } = req.body;
@@ -657,6 +651,7 @@ ${signature ? `\nSignature à utiliser:\n${signature}` : ""}` },
       ],
     });
 
+    await consumeAiCredits(req.userId!, "generate_relance").catch(() => {});
     res.json({
       subject: `Relance: ${originalEmail.subject || ""}`,
       body: completion.choices[0]?.message?.content || "",
@@ -668,7 +663,7 @@ ${signature ? `\nSignature à utiliser:\n${signature}` : ""}` },
 
 router.post("/ai/extract-appointment", requireAuth, async (req, res): Promise<void> => {
   try {
-    const entitlement = await checkEntitlement(req.userId!);
+    const entitlement = await checkEntitlement(req.userId!, AI_COST.extract_appointment);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
     const { emailId } = req.body;
@@ -725,6 +720,7 @@ Extrais le maximum d'informations structurées même si une date exacte n'est pa
     const content = completion.choices[0]?.message?.content ?? "{}";
     const result = JSON.parse(content);
 
+    await consumeAiCredits(req.userId!, "extract_appointment").catch(() => {});
     res.json({
       title: result.title || email.subject || "",
       description: result.description || "",
@@ -741,7 +737,7 @@ Extrais le maximum d'informations structurées même si une date exacte n'est pa
 
 router.post("/ai/detect-appointments", requireAuth, async (req, res): Promise<void> => {
   try {
-    const entitlement = await checkEntitlement(req.userId!);
+    const entitlement = await checkEntitlement(req.userId!, AI_COST.detect_appointments);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
     const lang = req.body?.lang || "fr";
@@ -898,6 +894,7 @@ N'invente PAS de RDV. Détecte uniquement si une date/heure concrète est mentio
       });
     }
 
+    await consumeAiCredits(req.userId!, "detect_appointments").catch(() => {});
     res.json({ appointments: created, count: created.length });
   } catch (err: any) {
     logger.error({ err: err.message, stack: err.stack }, "[detect-appointments] Unhandled error");
@@ -911,7 +908,7 @@ router.post("/ai/support-chat", requireAuth, async (req, res): Promise<void> => 
   try {
     const userId = req.userId!;
 
-    const entitlement = await checkEntitlement(userId);
+    const entitlement = await checkEntitlement(userId, AI_COST.support_chat);
     if (entitlement.blocked) {
       res.status(403).json({ error: entitlement.reason });
       return;
@@ -978,6 +975,7 @@ router.post("/ai/support-chat", requireAuth, async (req, res): Promise<void> => 
 
     logger.info({ userId, language: lang }, "[support-chat] Reply generated");
 
+    await consumeAiCredits(req.userId!, "support_chat").catch(() => {});
     res.json({ reply });
   } catch (err: any) {
     logger.error({ err: err.message, stack: err.stack }, "[support-chat] Error");

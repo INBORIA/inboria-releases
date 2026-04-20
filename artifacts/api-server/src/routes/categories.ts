@@ -3,6 +3,7 @@ import { supabaseAdmin } from "../lib/supabase";
 import { CreateCategoryBody, UpdateCategoryBody, ApplyPackBody, GeneratePackBody } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/auth";
 import OpenAI from "openai";
+import { AI_COST, checkEntitlement, consumeAiCredits } from "../services/credits";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -254,15 +255,8 @@ router.post("/categories/apply-pack", requireAuth, async (req, res): Promise<voi
 
 router.post("/categories/generate-pack", requireAuth, async (req, res): Promise<void> => {
   try {
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("plan, emails_used, emails_quota")
-      .eq("id", req.userId!)
-      .single();
-
-    if (!profile) { res.status(403).json({ error: "Profil introuvable" }); return; }
-    if (profile.plan === "expired") { res.status(403).json({ error: "Votre abonnement a expire." }); return; }
-    if (profile.emails_used >= profile.emails_quota) { res.status(403).json({ error: "Quota atteint." }); return; }
+    const entitlement = await checkEntitlement(req.userId!, AI_COST.generate_pack);
+    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
     const parsed = GeneratePackBody.safeParse(req.body);
     if (!parsed.success) {
@@ -317,6 +311,7 @@ Reponds en JSON:
         description: typeof c.description === "string" ? c.description.trim().slice(0, 300) : "",
       }));
 
+    await consumeAiCredits(req.userId!, "generate_pack").catch(() => {});
     res.json({ packName, categories });
   } catch {
     res.status(500).json({ error: "Failed to generate pack" });
