@@ -119,6 +119,9 @@ router.get("/projects/:id", requireAuth, async (req, res): Promise<void> => {
         dueDate: t.due_date,
         emailSubject: t.emails?.subject || null,
         createdAt: t.created_at,
+        assignedToUserId: t.assigned_to_user_id || null,
+        assignedAt: t.assigned_at || null,
+        assignedByUserId: t.assigned_by_user_id || null,
       })),
     });
   } catch {
