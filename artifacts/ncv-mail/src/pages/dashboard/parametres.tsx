@@ -493,7 +493,7 @@ export default function Parametres() {
                           <Label className="text-[12px] text-[#8b9cb3]">{t("settings.emailAddress")}</Label>
                           <Input
                             type="email"
-                            placeholder="votre@email.com"
+                            placeholder={t("auth.emailPlaceholder")}
                             className="bg-background border-border text-white h-9 text-[13px]"
                             value={imapEmail}
                             onChange={(e) => {
