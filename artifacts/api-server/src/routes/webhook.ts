@@ -3,6 +3,7 @@ import { supabaseAdmin } from "../lib/supabase";
 import OpenAI from "openai";
 import { isNoiseEmail, userHasOpenTaskWithTitle } from "../services/auto-sync";
 import { preClassifyEmail, recordAIClassification, bumpMetrics } from "../services/pre-filter";
+import { logTriageEvent, checkEntitlement } from "../services/credits";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -117,15 +118,17 @@ router.post("/webhook/email", async (req, res): Promise<void> => {
 
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("emails_used, emails_quota")
+      .select("emails_used, emails_quota, ai_credits_used")
       .eq("id", userId)
       .single();
 
-    if (profile && profile.emails_used >= profile.emails_quota) {
+    // Unified quota check (emails_used + ai_credits_used against quota)
+    const ent = await checkEntitlement(userId, 1);
+    if (ent.blocked) {
       res.status(429).json({
-        error: "Quota depasse",
-        used: profile.emails_used,
-        quota: profile.emails_quota,
+        error: ent.reason || "Quota depasse",
+        used: (profile?.emails_used || 0) + (profile?.ai_credits_used || 0),
+        quota: profile?.emails_quota || 0,
       });
       return;
     }
@@ -145,6 +148,7 @@ router.post("/webhook/email", async (req, res): Promise<void> => {
       triage = await triageEmailAI(sender, subject, body || "", userId);
       bumpMetrics(userId, "ai").catch(() => {});
       recordAIClassification(userId, sender, triage.category, triage.priority).catch(() => {});
+      logTriageEvent(userId, { source: "webhook", externalId: external_id, sender }).catch(() => {});
     }
 
     let categoryId = null;
@@ -290,6 +294,7 @@ router.post("/webhook/email/batch", async (req, res): Promise<void> => {
           triage = await triageEmailAI(sender, subject, email.body || "", connection.user_id);
           bumpMetrics(connection.user_id, "ai").catch(() => {});
           recordAIClassification(connection.user_id, sender, triage.category, triage.priority).catch(() => {});
+          logTriageEvent(connection.user_id, { source: "webhook-batch", externalId: email.external_id, sender }).catch(() => {});
         }
 
         let categoryId = null;

@@ -169,18 +169,49 @@ router.post("/profile/push-token", requireAuth, async (req, res): Promise<void> 
 
 router.post("/profile/recount-quota", requireAuth, async (req, res): Promise<void> => {
   try {
-    const { count, error: countErr } = await supabaseAdmin
+    const now = new Date();
+    const monthStart = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
+
+    const { count: emailsCount, error: countErr } = await supabaseAdmin
       .from("emails")
       .select("id", { count: "exact", head: true })
-      .eq("user_id", req.userId!);
+      .eq("user_id", req.userId!)
+      .gte("created_at", monthStart);
     if (countErr) { res.status(500).json({ error: countErr.message }); return; }
-    const actual = count || 0;
+    const emailsUsed = emailsCount || 0;
+
+    const { data: events, error: evErr } = await supabaseAdmin
+      .from("usage_events")
+      .select("credits, event_type")
+      .eq("user_id", req.userId!)
+      .gte("occurred_at", monthStart);
+    if (evErr) { res.status(500).json({ error: evErr.message }); return; }
+
+    // auto_triage events are emails ingested automatically — they're already
+    // counted in `emails_used` via the emails table, so exclude them here
+    // to avoid double-counting. Manual /api/ai/triage uses event_type="triage"
+    // and IS legitimately counted in ai_credits_used.
+    const aiCreditsUsed = (events || [])
+      .filter((e: any) => e.event_type !== "auto_triage")
+      .reduce((sum: number, e: any) => sum + (e.credits || 0), 0);
+
     const { error: upErr } = await supabaseAdmin
       .from("profiles")
-      .update({ emails_used: actual })
+      .update({
+        emails_used: emailsUsed,
+        ai_credits_used: aiCreditsUsed,
+        quota_period_start: monthStart,
+      })
       .eq("id", req.userId!);
     if (upErr) { res.status(500).json({ error: upErr.message }); return; }
-    res.json({ ok: true, emails_used: actual });
+
+    res.json({
+      ok: true,
+      emails_used: emailsUsed,
+      ai_credits_used: aiCreditsUsed,
+      total: emailsUsed + aiCreditsUsed,
+      period_start: monthStart,
+    });
   } catch (e: any) {
     res.status(500).json({ error: e.message });
   }

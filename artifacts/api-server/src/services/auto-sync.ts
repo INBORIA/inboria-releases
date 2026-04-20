@@ -7,6 +7,7 @@ import { logger } from "../lib/logger";
 import * as net from "net";
 import { sendSlackNotification, createNotionTask } from "./integrations";
 import { preClassifyEmail, recordAIClassification, bumpMetrics } from "./pre-filter";
+import { consumeAiCredits, logTriageEvent, checkEntitlement } from "./credits";
 
 interface AttachmentMeta {
   filename: string;
@@ -191,6 +192,18 @@ async function detectAppointmentFromEmail(
   userId: string
 ): Promise<void> {
   try {
+    const billing = await consumeAiCredits(userId, "extract_appointment", {
+      source: "auto-sync",
+      emailId,
+      reason: "auto-detect-appointment-on-incoming",
+    });
+    if (!billing.ok) {
+      logger.warn(
+        { emailId, userId },
+        "[auto-sync] skipping appointment detection: billing fail-closed",
+      );
+      return;
+    }
     const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
     const cleanBody = (body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800);
     const completion = await openai.chat.completions.create({
@@ -343,7 +356,10 @@ async function saveEmailWithTriage(
     return null;
   }
 
-  if (profile.emails_used >= profile.emails_quota) {
+  // Unified quota check: counts emails_used + ai_credits_used against quota
+  // (same logic as /api/ai/* routes). Prevents overage via combined usage.
+  const ent = await checkEntitlement(userId, 1);
+  if (ent.blocked) {
     return null;
   }
 
@@ -437,6 +453,11 @@ async function saveEmailWithTriage(
 
   if (triage.priority === "urgent") {
     sendSlackNotification(userId, sender, subject, triage.summary).catch(() => {});
+  }
+
+  // Log triage event for audit trail and accurate billing recount
+  if (!pre.hit) {
+    logTriageEvent(userId, { source: "auto-sync", externalId, sender }).catch(() => {});
   }
 
   // Skip appointment detection pour les hits pre-filtre evidents (newsletters, notifications)

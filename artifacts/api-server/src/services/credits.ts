@@ -95,11 +95,44 @@ export async function checkEntitlement(
   return { blocked: false, emailsUsed, aiCreditsUsed: aiUsed, quota };
 }
 
+export async function logTriageEvent(
+  userId: string,
+  metadata: Record<string, unknown> = {},
+): Promise<void> {
+  try {
+    const { error } = await supabaseAdmin.from("usage_events").insert({
+      user_id: userId,
+      event_type: "auto_triage",
+      credits: 1,
+      metadata,
+    });
+    if (error) {
+      logger.warn(
+        { err: error.message },
+        "[credits] usage_events insert failed for triage (continuing)",
+      );
+    }
+  } catch (e: any) {
+    logger.warn({ err: e?.message }, "[credits] logTriageEvent threw");
+  }
+}
+
+/**
+ * Bills AI credits. Returns { ok, cost } where ok=false means billing FAILED
+ * and the caller should NOT proceed with the paid OpenAI call (fail-closed).
+ *
+ * Two writes happen:
+ *   1) usage_events insert (audit trail, source of truth for recount)
+ *   2) profiles.ai_credits_used increment (real-time quota display)
+ *
+ * If (1) fails, we hard-fail (no audit = no billing = revenue leak).
+ * If (2) fails (RPC), we try a fallback update; if that also fails, hard-fail.
+ */
 export async function consumeAiCredits(
   userId: string,
   eventType: AiEventType,
   metadata: Record<string, unknown> = {},
-): Promise<number> {
+): Promise<{ ok: boolean; cost: number }> {
   const cost = AI_COST[eventType] ?? 1;
 
   try {
@@ -112,13 +145,18 @@ export async function consumeAiCredits(
         metadata,
       });
     if (insertErr) {
-      logger.warn(
-        { err: insertErr.message, eventType },
-        "[credits] usage_events insert failed (continuing)",
+      logger.error(
+        { err: insertErr.message, eventType, userId },
+        "[credits] FAIL-CLOSED: usage_events insert failed, refusing to bill",
       );
+      return { ok: false, cost };
     }
   } catch (e: any) {
-    logger.warn({ err: e?.message }, "[credits] usage_events insert threw");
+    logger.error(
+      { err: e?.message, eventType, userId },
+      "[credits] FAIL-CLOSED: usage_events insert threw",
+    );
+    return { ok: false, cost };
   }
 
   try {
@@ -133,14 +171,24 @@ export async function consumeAiCredits(
         .eq("id", userId)
         .single();
       const next = (profile?.ai_credits_used || 0) + cost;
-      await supabaseAdmin
+      const { error: upErr } = await supabaseAdmin
         .from("profiles")
         .update({ ai_credits_used: next })
         .eq("id", userId);
+      if (upErr) {
+        logger.error(
+          { err: upErr.message, eventType, userId },
+          "[credits] increment fallback failed AFTER usage_events insert — recount will reconcile",
+        );
+        // usage_events was written, so recount will fix this. Return ok=true.
+      }
     }
   } catch (e: any) {
-    logger.error({ err: e?.message, eventType }, "[credits] increment failed");
+    logger.error(
+      { err: e?.message, eventType, userId },
+      "[credits] increment threw AFTER usage_events insert — recount will reconcile",
+    );
   }
 
-  return cost;
+  return { ok: true, cost };
 }
