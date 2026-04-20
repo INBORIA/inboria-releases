@@ -59,8 +59,6 @@ import type {
   DeleteTask200,
   DetectAppointments200,
   DetectAppointmentsBody,
-  DetectFollowups200,
-  DetectFollowupsBody,
   DraftResponse,
   Email,
   EmailComment,
@@ -72,8 +70,6 @@ import type {
   GenerateDraftBody,
   GeneratePackBody,
   GeneratePackResponse,
-  GenerateRelance200,
-  GenerateRelanceBody,
   GetConversationSummary200,
   GetConversationSummaryBody,
   GetEmailAttachments200,
@@ -4265,178 +4261,6 @@ export const useGetConversationSummary = <
   TContext
 > => {
   return useMutation(getGetConversationSummaryMutationOptions(options));
-};
-
-/**
- * @summary AI detects emails needing followups
- */
-export const getDetectFollowupsUrl = () => {
-  return `/api/ai/detect-followups`;
-};
-
-export const detectFollowups = async (
-  detectFollowupsBody: DetectFollowupsBody,
-  options?: RequestInit,
-): Promise<DetectFollowups200> => {
-  return customFetch<DetectFollowups200>(getDetectFollowupsUrl(), {
-    ...options,
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(detectFollowupsBody),
-  });
-};
-
-export const getDetectFollowupsMutationOptions = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof detectFollowups>>,
-    TError,
-    { data: BodyType<DetectFollowupsBody> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof detectFollowups>>,
-  TError,
-  { data: BodyType<DetectFollowupsBody> },
-  TContext
-> => {
-  const mutationKey = ["detectFollowups"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof detectFollowups>>,
-    { data: BodyType<DetectFollowupsBody> }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return detectFollowups(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type DetectFollowupsMutationResult = NonNullable<
-  Awaited<ReturnType<typeof detectFollowups>>
->;
-export type DetectFollowupsMutationBody = BodyType<DetectFollowupsBody>;
-export type DetectFollowupsMutationError = ErrorType<unknown>;
-
-/**
- * @summary AI detects emails needing followups
- */
-export const useDetectFollowups = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof detectFollowups>>,
-    TError,
-    { data: BodyType<DetectFollowupsBody> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationResult<
-  Awaited<ReturnType<typeof detectFollowups>>,
-  TError,
-  { data: BodyType<DetectFollowupsBody> },
-  TContext
-> => {
-  return useMutation(getDetectFollowupsMutationOptions(options));
-};
-
-/**
- * @summary Generate AI follow-up email draft
- */
-export const getGenerateRelanceUrl = () => {
-  return `/api/ai/generate-relance`;
-};
-
-export const generateRelance = async (
-  generateRelanceBody: GenerateRelanceBody,
-  options?: RequestInit,
-): Promise<GenerateRelance200> => {
-  return customFetch<GenerateRelance200>(getGenerateRelanceUrl(), {
-    ...options,
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(generateRelanceBody),
-  });
-};
-
-export const getGenerateRelanceMutationOptions = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof generateRelance>>,
-    TError,
-    { data: BodyType<GenerateRelanceBody> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof generateRelance>>,
-  TError,
-  { data: BodyType<GenerateRelanceBody> },
-  TContext
-> => {
-  const mutationKey = ["generateRelance"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof generateRelance>>,
-    { data: BodyType<GenerateRelanceBody> }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return generateRelance(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type GenerateRelanceMutationResult = NonNullable<
-  Awaited<ReturnType<typeof generateRelance>>
->;
-export type GenerateRelanceMutationBody = BodyType<GenerateRelanceBody>;
-export type GenerateRelanceMutationError = ErrorType<unknown>;
-
-/**
- * @summary Generate AI follow-up email draft
- */
-export const useGenerateRelance = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof generateRelance>>,
-    TError,
-    { data: BodyType<GenerateRelanceBody> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationResult<
-  Awaited<ReturnType<typeof generateRelance>>,
-  TError,
-  { data: BodyType<GenerateRelanceBody> },
-  TContext
-> => {
-  return useMutation(getGenerateRelanceMutationOptions(options));
 };
 
 /**

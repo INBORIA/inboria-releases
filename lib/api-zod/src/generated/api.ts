@@ -1052,41 +1052,6 @@ export const GetConversationSummaryResponse = zod.object({
 });
 
 /**
- * @summary AI detects emails needing followups
- */
-export const DetectFollowupsBody = zod.object({
-  emails: zod.array(zod.object({}).passthrough()),
-});
-
-export const DetectFollowupsResponse = zod.object({
-  followups: zod
-    .array(
-      zod.object({
-        emailId: zod.number().optional(),
-        title: zod.string().optional(),
-        reason: zod.string().optional(),
-        suggestedDueDate: zod.string().nullish(),
-        urgency: zod.string().optional(),
-      }),
-    )
-    .optional(),
-});
-
-/**
- * @summary Generate AI follow-up email draft
- */
-export const GenerateRelanceBody = zod.object({
-  originalEmail: zod.object({}).passthrough(),
-  context: zod.string().optional(),
-  signature: zod.string().optional(),
-});
-
-export const GenerateRelanceResponse = zod.object({
-  subject: zod.string().optional(),
-  body: zod.string().optional(),
-});
-
-/**
  * @summary Export emails as CSV
  */
 export const ExportEmailsQueryParams = zod.object({

@@ -1005,37 +1005,6 @@ export type GetConversationSummary200 = {
   summary?: string;
 };
 
-export type DetectFollowupsBodyEmailsItem = { [key: string]: unknown };
-
-export type DetectFollowupsBody = {
-  emails: DetectFollowupsBodyEmailsItem[];
-};
-
-export type DetectFollowups200FollowupsItem = {
-  emailId?: number;
-  title?: string;
-  reason?: string;
-  suggestedDueDate?: string | null;
-  urgency?: string;
-};
-
-export type DetectFollowups200 = {
-  followups?: DetectFollowups200FollowupsItem[];
-};
-
-export type GenerateRelanceBodyOriginalEmail = { [key: string]: unknown };
-
-export type GenerateRelanceBody = {
-  originalEmail: GenerateRelanceBodyOriginalEmail;
-  context?: string;
-  signature?: string;
-};
-
-export type GenerateRelance200 = {
-  subject?: string;
-  body?: string;
-};
-
 export type ExportEmailsParams = {
   status?: string;
 };

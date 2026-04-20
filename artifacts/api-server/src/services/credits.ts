@@ -5,8 +5,6 @@ export const AI_COST = {
   draft: 2,
   daily_summary: 3,
   conversation_summary: 2,
-  detect_followups: 2,
-  generate_relance: 2,
   extract_appointment: 1,
   detect_appointments: 3,
   recategorize_uncategorized: 3,
