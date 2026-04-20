@@ -397,15 +397,23 @@ async function saveEmailWithTriage(
     }
   }
 
+  // PostgreSQL text columns reject \u0000 (NUL) bytes — strip them and other
+  // invalid surrogate halves to avoid "unsupported Unicode escape sequence".
+  const stripNul = (s: string | null | undefined): string =>
+    (s || "")
+      .replace(/\u0000/g, "")
+      .replace(/[\uD800-\uDBFF](?![\uDC00-\uDFFF])/g, "")
+      .replace(/(?<![\uD800-\uDBFF])[\uDC00-\uDFFF]/g, "");
+
   const insertPayload: Record<string, any> = {
     user_id: userId,
     external_id: externalId,
-    sender,
-    subject,
-    body,
+    sender: stripNul(sender),
+    subject: stripNul(subject),
+    body: stripNul(body),
     status: triage.is_spam ? "spam" : "non_lu",
     priority: triage.priority,
-    summary: triage.summary,
+    summary: stripNul(triage.summary),
     category_id: categoryId,
     created_at: createdAt,
   };
