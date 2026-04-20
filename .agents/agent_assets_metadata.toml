@@ -41,3 +41,9 @@ id = "ag2XEbCy2J4zY-ddBngIA"
 uri = "file://attached_assets/AUDIT_RENTABILITE_INBORIA_V4.txt"
 type = "text"
 title = "Audit rentabilité Inboria — rev. 4 (TXT)"
+
+[[outputs]]
+id = "f1-kzlvwx4YGgQy-Q5ciH"
+uri = "file://AUDIT_RENTABILITE_INBORIA_V5.md"
+type = "text"
+title = "Audit de rentabilité Inboria — Révision 5"
