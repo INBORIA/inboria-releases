@@ -329,7 +329,11 @@
     "sortByPriority": "Sort: Priority",
     "sortByDateDesc": "Sort: Date ↓ (newest)",
     "sortByDateAsc": "Sort: Date ↑ (oldest)",
-    "loadingBody": "Loading content..."
+    "loadingBody": "Loading content...",
+    "from": "From",
+    "fullscreen": "Fullscreen",
+    "exitFullscreen": "Exit fullscreen",
+    "appointmentProposed": "Proposed appointment added to calendar"
   },
   "sent": {
     "title": "Sent emails",
@@ -866,7 +870,10 @@
     "newPasswordPlaceholder": "Minimum 6 characters",
     "confirmNewPasswordPlaceholder": "Retype new password",
     "cancel": "Cancel",
-    "otherProvider": "Other provider"
+    "otherProvider": "Other provider",
+    "accountSignature": "Signature",
+    "accountSignatureLabel": "Signature for this account",
+    "accountSignaturePlaceholder": "Specific signature for this account (otherwise, global signature)"
   },
   "subscription": {
     "title": "Manage your subscription",

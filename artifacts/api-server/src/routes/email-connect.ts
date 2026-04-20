@@ -506,7 +506,7 @@ router.get("/email/connections", requireAuth, async (req, res): Promise<void> =>
   try {
     const { data, error } = await supabaseAdmin
       .from("email_connections")
-      .select("id, provider, email_address, created_at, last_synced_at")
+      .select("id, provider, email_address, created_at, last_synced_at, signature")
       .eq("user_id", req.userId!);
 
     if (error) {
@@ -518,6 +518,33 @@ router.get("/email/connections", requireAuth, async (req, res): Promise<void> =>
     res.json(data || []);
   } catch {
     res.status(500).json({ error: "Erreur lors de la recuperation des connexions" });
+  }
+});
+
+router.patch("/email/connections/:connectionId", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const updates: Record<string, any> = {};
+    if (req.body?.signature !== undefined) {
+      updates.signature = typeof req.body.signature === "string" ? req.body.signature : null;
+    }
+    if (Object.keys(updates).length === 0) {
+      res.status(400).json({ error: "No supported fields to update" });
+      return;
+    }
+    const { data, error } = await supabaseAdmin
+      .from("email_connections")
+      .update(updates)
+      .eq("user_id", req.userId!)
+      .eq("id", req.params.connectionId)
+      .select("id, provider, email_address, signature")
+      .single();
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+    res.json(data);
+  } catch (e: any) {
+    res.status(500).json({ error: e.message || "Failed to update connection" });
   }
 });
 

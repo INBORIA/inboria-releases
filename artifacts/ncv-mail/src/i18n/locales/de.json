@@ -329,7 +329,11 @@
     "sortByPriority": "Sortierung: Priorität",
     "sortByDateDesc": "Sortierung: Datum ↓ (neueste)",
     "sortByDateAsc": "Sortierung: Datum ↑ (älteste)",
-    "loadingBody": "Inhalt wird geladen..."
+    "loadingBody": "Inhalt wird geladen...",
+    "from": "Von",
+    "fullscreen": "Vollbild",
+    "exitFullscreen": "Vollbild verlassen",
+    "appointmentProposed": "Vorgeschlagener Termin im Kalender erstellt"
   },
   "sent": {
     "title": "Gesendete E-Mails",
@@ -866,7 +870,10 @@
     "newPasswordPlaceholder": "Mindestens 6 Zeichen",
     "confirmNewPasswordPlaceholder": "Neues Passwort erneut eingeben",
     "cancel": "Abbrechen",
-    "otherProvider": "Anderer Anbieter"
+    "otherProvider": "Anderer Anbieter",
+    "accountSignature": "Signatur",
+    "accountSignatureLabel": "Signatur für dieses Konto",
+    "accountSignaturePlaceholder": "Spezifische Signatur für dieses Konto (sonst globale Signatur)"
   },
   "subscription": {
     "title": "Verwalten Sie Ihr Abonnement",

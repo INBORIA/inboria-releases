@@ -345,10 +345,90 @@ function buildMimeWithAttachments(
   return lines.join("\r\n");
 }
 
+function detectAppointmentInBody(body: string): { startAt: Date; endAt: Date; title: string } | null {
+  if (!body || body.length > 20000) return null;
+  const lower = body.toLowerCase();
+  const keywordRx = /\b(rendez-?vous|rdv|meeting|appointment|reuni[oó]n|treffen|afspraak|call|visio|entretien|zoom|teams|google\s*meet)\b/i;
+  if (!keywordRx.test(lower)) return null;
+
+  const months: Record<string, number> = {
+    janvier: 0, january: 0, januar: 0, januari: 0, enero: 0,
+    fevrier: 1, "février": 1, february: 1, februar: 1, februari: 1, febrero: 1,
+    mars: 2, march: 2, "märz": 2, marzo: 2, maart: 2,
+    avril: 3, april: 3, abril: 3,
+    mai: 4, may: 4, mei: 4, mayo: 4,
+    juin: 5, june: 5, juni: 5, junio: 5,
+    juillet: 6, july: 6, juli: 6, julio: 6,
+    aout: 7, "août": 7, august: 7, augustus: 7, agosto: 7,
+    septembre: 8, september: 8, septiembre: 8,
+    octobre: 9, october: 9, oktober: 9, octubre: 9,
+    novembre: 10, november: 10, noviembre: 10,
+    decembre: 11, "décembre": 11, december: 11, dezember: 11, diciembre: 11,
+  };
+
+  const now = new Date();
+  let date: Date | null = null;
+
+  const buildDateStrict = (y: number, m: number, d: number): Date | null => {
+    const dt = new Date(y, m, d);
+    if (dt.getFullYear() !== y || dt.getMonth() !== m || dt.getDate() !== d) return null;
+    return dt;
+  };
+
+  const numericRx = /\b(\d{1,2})[\/\-.](\d{1,2})(?:[\/\-.](\d{2,4}))?\b/;
+  const numMatch = body.match(numericRx);
+  if (numMatch) {
+    const d = parseInt(numMatch[1] || "0", 10);
+    const m = parseInt(numMatch[2] || "0", 10) - 1;
+    let y = numMatch[3] ? parseInt(numMatch[3], 10) : now.getFullYear();
+    if (y < 100) y += 2000;
+    if (d >= 1 && d <= 31 && m >= 0 && m <= 11) {
+      date = buildDateStrict(y, m, d);
+    }
+  }
+
+  if (!date) {
+    const monthNames = Object.keys(months).join("|");
+    const textRx = new RegExp(`\\b(\\d{1,2})\\s+(${monthNames})(?:\\s+(\\d{4}))?\\b`, "i");
+    const textMatch = body.match(textRx);
+    if (textMatch) {
+      const d = parseInt(textMatch[1] || "0", 10);
+      const monthKey = (textMatch[2] || "").toLowerCase();
+      const m = months[monthKey];
+      const y = textMatch[3] ? parseInt(textMatch[3], 10) : now.getFullYear();
+      if (m !== undefined && d >= 1 && d <= 31) {
+        date = buildDateStrict(y, m, d);
+      }
+    }
+  }
+
+  if (!date) return null;
+
+  const timeRx = /\b([01]?\d|2[0-3])\s*[h:]\s*(\d{2})?\s*(am|pm)?\b/i;
+  const timeMatch = body.match(timeRx);
+  let hour = 9;
+  let minute = 0;
+  if (timeMatch) {
+    hour = parseInt(timeMatch[1] || "0", 10);
+    minute = timeMatch[2] ? parseInt(timeMatch[2], 10) : 0;
+    const ampm = (timeMatch[3] || "").toLowerCase();
+    if (ampm === "pm" && hour < 12) hour += 12;
+    if (ampm === "am" && hour === 12) hour = 0;
+  } else {
+    return null;
+  }
+
+  date.setHours(hour, minute, 0, 0);
+  if (date.getTime() < now.getTime() - 24 * 3600 * 1000) return null;
+
+  const endAt = new Date(date.getTime() + 60 * 60 * 1000);
+  return { startAt: date, endAt, title: "" };
+}
+
 router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
   const uploadIds: string[] = [];
   try {
-    const { to, subject, body, replyToEmailId, attachments: rawUploadIds } = req.body;
+    const { to, subject, body, replyToEmailId, attachments: rawUploadIds, connectionId, projectId } = req.body;
 
     const ids: string[] = Array.isArray(rawUploadIds) ? rawUploadIds.filter((x: any) => typeof x === "string") : [];
     uploadIds.push(...ids);
@@ -384,7 +464,11 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
-    const conn = connections[0];
+    let conn = connections[0];
+    if (connectionId) {
+      const matched = connections.find((c: any) => String(c.id) === String(connectionId));
+      if (matched) conn = matched;
+    }
     let fromAddress = conn.email_address;
 
     if (conn.provider === "gmail") {
@@ -525,7 +609,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       });
     }
 
-    const { data: sentEmail, error: insertError } = await supabaseAdmin.from("emails").insert({
+    const insertPayload: Record<string, any> = {
       user_id: req.userId!,
       sender: fromAddress,
       recipient: to,
@@ -535,7 +619,26 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       priority: "faible",
       external_id: null,
       reply_to_email_id: replyToEmailId || null,
-    }).select("id").single();
+    };
+    let validatedProjectId: string | null = null;
+    if (projectId) {
+      const { data: ownedProject } = await supabaseAdmin
+        .from("projects")
+        .select("id")
+        .eq("user_id", req.userId!)
+        .eq("id", projectId)
+        .maybeSingle();
+      if (ownedProject) {
+        validatedProjectId = String(ownedProject.id);
+        insertPayload.project_id = validatedProjectId;
+      }
+    }
+
+    const { data: sentEmail, error: insertError } = await supabaseAdmin
+      .from("emails")
+      .insert(insertPayload)
+      .select("id")
+      .single();
 
     if (insertError) {
       console.error("Failed to save sent email to DB:", insertError.message);
@@ -558,7 +661,38 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       }
     }
 
-    res.json({ success: true, emailId: sentEmail?.id });
+    let appointmentId: number | string | null = null;
+    if (sentEmail?.id) {
+      try {
+        const detected = detectAppointmentInBody(body);
+        if (detected) {
+          const { data: appt, error: apptErr } = await supabaseAdmin
+            .from("appointments")
+            .insert({
+              user_id: req.userId!,
+              title: subject || "Rendez-vous",
+              description: body.slice(0, 500),
+              location: null,
+              start_at: detected.startAt.toISOString(),
+              end_at: detected.endAt.toISOString(),
+              all_day: false,
+              email_id: sentEmail.id,
+              project_id: validatedProjectId,
+              reminder_minutes: 30,
+              participants: typeof to === "string" ? to : null,
+              confirmed: false,
+            })
+            .select("id")
+            .single();
+          if (!apptErr && appt) appointmentId = appt.id;
+          else if (apptErr) console.error("Failed to create proposed appointment:", apptErr.message);
+        }
+      } catch (e: any) {
+        console.error("Appointment detection failed:", e.message);
+      }
+    }
+
+    res.json({ success: true, emailId: sentEmail?.id, appointmentId });
   } catch (err: any) {
     console.error("Send email error:", err);
     res.status(500).json({ error: "Echec de l'envoi: " + (err.message || "Erreur inconnue") });

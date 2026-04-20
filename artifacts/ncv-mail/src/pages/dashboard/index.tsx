@@ -42,7 +42,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { Button } from "@/components/ui/button";
@@ -858,6 +858,62 @@ export default function Dashboard() {
   const [composeSubject, setComposeSubject] = useState("");
   const [composeBody, setComposeBody] = useState("");
   const [composeAttachments, setComposeAttachments] = useState<UploadedFile[]>([]);
+  const [composeFromId, setComposeFromId] = useState<string>("");
+  const [composeProjectId, setComposeProjectId] = useState<string>("");
+  const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
+  const [composeAppliedSig, setComposeAppliedSig] = useState<string>("");
+
+  const { data: composeConnections } = useQuery<Array<{ id: string; provider: string; email_address: string; signature?: string | null }>>({
+    queryKey: ["email-connections-compose"],
+    queryFn: async () => {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res = await fetch(`${import.meta.env.BASE_URL}api/email/connections`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  const userGlobalSignature = ((profile as any)?.signature as string) || "";
+
+  const computeSignatureFor = useCallback((connId: string): string => {
+    const conn = composeConnections?.find((c) => String(c.id) === String(connId));
+    const sig = (conn?.signature || "").trim();
+    if (sig) return sig;
+    return (userGlobalSignature || "").trim();
+  }, [composeConnections, userGlobalSignature]);
+
+  const isMobileViewport = typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches;
+
+  useEffect(() => {
+    if (!isComposeOpen) return;
+    if (isMobileViewport) setIsComposeFullscreen(true);
+    if (composeConnections && composeConnections.length > 0 && !composeFromId) {
+      setComposeFromId(String(composeConnections[0].id));
+    }
+  }, [isComposeOpen, composeConnections, composeFromId, isMobileViewport]);
+
+  useEffect(() => {
+    if (!isComposeOpen || !composeFromId) return;
+    const newSig = computeSignatureFor(composeFromId);
+    setComposeBody((prev) => {
+      let base = prev || "";
+      if (composeAppliedSig) {
+        const oldBlock = `\n\n-- \n${composeAppliedSig}`;
+        const idx = base.lastIndexOf(oldBlock);
+        if (idx !== -1) base = base.slice(0, idx) + base.slice(idx + oldBlock.length);
+      }
+      if (newSig) {
+        base = `${base.replace(/\s+$/, "")}\n\n-- \n${newSig}`;
+      }
+      return base;
+    });
+    setComposeAppliedSig(newSig);
+  }, [composeFromId, isComposeOpen, computeSignatureFor]);
+
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
@@ -1249,17 +1305,33 @@ export default function Dashboard() {
 
   const handleComposeSend = () => {
     if (!composeTo.trim() || !composeSubject.trim() || !composeBody.trim()) return;
+    const payload: any = {
+      to: composeTo,
+      subject: composeSubject,
+      body: composeBody,
+      replyToEmailId: null,
+      attachments: composeAttachments.length > 0 ? composeAttachments.map((a) => a.uploadId) : undefined,
+    };
+    if (composeFromId) payload.connectionId = composeFromId;
+    if (composeProjectId) payload.projectId = composeProjectId;
     sendEmailMut.mutate(
-      { data: { to: composeTo, subject: composeSubject, body: composeBody, replyToEmailId: null, attachments: composeAttachments.length > 0 ? composeAttachments.map((a) => a.uploadId) : undefined } },
+      { data: payload },
       {
-        onSuccess: () => {
+        onSuccess: (resp: any) => {
           invalidateAll();
           setIsComposeOpen(false);
           setComposeTo("");
           setComposeSubject("");
           setComposeBody("");
           setComposeAttachments([]);
-          toast({ title: t("inbox.emailSent") });
+          setComposeProjectId("");
+          setComposeAppliedSig("");
+          setIsComposeFullscreen(false);
+          if (resp?.appointmentId) {
+            toast({ title: t("inbox.emailSent"), description: t("inbox.appointmentProposed", "Rendez-vous proposé créé dans l'agenda") });
+          } else {
+            toast({ title: t("inbox.emailSent") });
+          }
         },
         onError: (err: any) => {
           const msg = err?.data?.error || err?.message || t("inbox.sendError");
@@ -1455,18 +1527,57 @@ export default function Dashboard() {
               <span className="hidden sm:inline">{isSyncing ? t("inbox.refreshing") : t("inbox.refresh")}</span>
             </Button>
 
-            <Dialog open={isComposeOpen} onOpenChange={(open) => { setIsComposeOpen(open); if (!open) { setComposeTo(""); setComposeSubject(""); setComposeBody(""); } }}>
+            <Dialog open={isComposeOpen} onOpenChange={(open) => {
+              setIsComposeOpen(open);
+              if (!open) {
+                setComposeTo("");
+                setComposeSubject("");
+                setComposeBody("");
+                setComposeProjectId("");
+                setComposeAppliedSig("");
+                setIsComposeFullscreen(false);
+              }
+            }}>
               <DialogTrigger asChild>
                 <Button size="sm" className="gap-1.5 h-8 text-[11px]">
                   <PenSquare className="w-3 h-3" />
                   <span className="hidden sm:inline">{t("inbox.newEmail")}</span>
                 </Button>
               </DialogTrigger>
-              <DialogContent className="bg-card border-border">
-                <DialogHeader>
+              <DialogContent
+                className={
+                  isComposeFullscreen
+                    ? "bg-card border-border w-screen max-w-none h-screen sm:rounded-none p-0 flex flex-col"
+                    : "bg-card border-border w-[95vw] sm:max-w-3xl p-0 flex flex-col max-h-[90vh]"
+                }
+              >
+                <DialogHeader className="px-5 pt-4 pb-2 flex-row items-center justify-between gap-2 space-y-0 border-b border-border">
                   <DialogTitle className="text-white text-[14px]">{t("inbox.composeTitle")}</DialogTitle>
+                  <button
+                    type="button"
+                    onClick={() => setIsComposeFullscreen((v) => !v)}
+                    className="text-[#8b9cb3] hover:text-white p-1 rounded hover:bg-white/[0.04]"
+                    aria-label={isComposeFullscreen ? t("inbox.exitFullscreen", "Quitter plein écran") : t("inbox.fullscreen", "Plein écran")}
+                  >
+                    {isComposeFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                  </button>
                 </DialogHeader>
-                <div className="space-y-3">
+                <div className="space-y-3 p-5 overflow-y-auto flex-1">
+                  {composeConnections && composeConnections.length > 1 && (
+                    <div>
+                      <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.from", "De")}</label>
+                      <Select value={composeFromId} onValueChange={setComposeFromId}>
+                        <SelectTrigger className="bg-background border-border text-white text-[12px] h-8">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {composeConnections.map((c) => (
+                            <SelectItem key={c.id} value={String(c.id)}>{c.email_address}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                   <div>
                     <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.to")}</label>
                     <Input value={composeTo} onChange={(e) => setComposeTo(e.target.value)} placeholder="email@exemple.com" className="bg-background border-border text-white text-[12px] h-8" />
@@ -1475,13 +1586,40 @@ export default function Dashboard() {
                     <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.subject")}</label>
                     <Input value={composeSubject} onChange={(e) => setComposeSubject(e.target.value)} placeholder={t("inbox.subject")} className="bg-background border-border text-white text-[12px] h-8" />
                   </div>
-                  <div>
+                  {projects && projects.length > 0 && (
+                    <div>
+                      <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.project")}</label>
+                      <Select value={composeProjectId || "__none__"} onValueChange={(v) => setComposeProjectId(v === "__none__" ? "" : v)}>
+                        <SelectTrigger className="bg-background border-border text-white text-[12px] h-8">
+                          <SelectValue placeholder={t("inbox.noProject")} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="__none__">{t("inbox.noProject")}</SelectItem>
+                          {(projects as any[]).map((p) => (
+                            <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
+                  <div className="flex flex-col flex-1 min-h-0">
                     <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.message")}</label>
-                    <Textarea value={composeBody} onChange={(e) => setComposeBody(e.target.value)} placeholder={t("inbox.message")} className="h-32 bg-background border-border text-white text-[12px]" />
+                    <Textarea
+                      value={composeBody}
+                      onChange={(e) => setComposeBody(e.target.value)}
+                      placeholder={t("inbox.message")}
+                      className={
+                        isComposeFullscreen
+                          ? "bg-background border-border text-white text-[13px] flex-1 min-h-[300px] resize-none"
+                          : "bg-background border-border text-white text-[13px] min-h-[260px] resize-y"
+                      }
+                    />
                   </div>
                   <FileAttachInput files={composeAttachments} onChange={setComposeAttachments} />
+                </div>
+                <div className="border-t border-border p-4">
                   <Button
-                    className="w-full gap-2 h-8 text-[12px]"
+                    className="w-full gap-2 h-9 text-[12px]"
                     disabled={sendEmailMut.isPending || !composeTo.trim() || !composeSubject.trim() || !composeBody.trim()}
                     onClick={handleComposeSend}
                   >

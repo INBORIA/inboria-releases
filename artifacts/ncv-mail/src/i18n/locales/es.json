@@ -329,7 +329,11 @@
     "sortByPriority": "Orden: Prioridad",
     "sortByDateDesc": "Orden: Fecha ↓ (reciente)",
     "sortByDateAsc": "Orden: Fecha ↑ (antigua)",
-    "loadingBody": "Cargando contenido..."
+    "loadingBody": "Cargando contenido...",
+    "from": "De",
+    "fullscreen": "Pantalla completa",
+    "exitFullscreen": "Salir de pantalla completa",
+    "appointmentProposed": "Cita propuesta añadida al calendario"
   },
   "sent": {
     "title": "Emails enviados",
@@ -866,7 +870,10 @@
     "newPasswordPlaceholder": "Mínimo 6 caracteres",
     "confirmNewPasswordPlaceholder": "Vuelve a escribir la nueva contraseña",
     "cancel": "Cancelar",
-    "otherProvider": "Otro proveedor"
+    "otherProvider": "Otro proveedor",
+    "accountSignature": "Firma",
+    "accountSignatureLabel": "Firma para esta cuenta",
+    "accountSignaturePlaceholder": "Firma específica para esta cuenta (de lo contrario, firma global)"
   },
   "subscription": {
     "title": "Gestiona tu suscripción",

@@ -73,6 +73,88 @@ interface EmailConnection {
   email_address: string;
   created_at: string;
   last_synced_at: string | null;
+  signature?: string | null;
+}
+
+function AccountConnectionCard({
+  conn,
+  onDisconnect,
+  onSaveSignature,
+  t,
+}: {
+  conn: EmailConnection;
+  onDisconnect: () => void;
+  onSaveSignature: (value: string) => void;
+  t: any;
+}) {
+  const [sigDraft, setSigDraft] = useState(conn.signature || "");
+  const [editing, setEditing] = useState(false);
+  useEffect(() => { setSigDraft(conn.signature || ""); }, [conn.signature]);
+  const saved = (conn.signature || "");
+  const dirty = sigDraft !== saved;
+  return (
+    <div className="flex flex-col gap-3 p-3.5 border border-border rounded-lg bg-background">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+        <div className="flex items-center gap-3">
+          <div className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm ${
+            conn.provider === "gmail" ? "bg-red-500/10 text-red-400" :
+            conn.provider === "outlook" ? "bg-blue-500/10 text-blue-400" :
+            "bg-white/[0.06] text-[#8b9cb3]"
+          }`}>
+            {conn.provider === "gmail" ? "G" : conn.provider === "outlook" ? "O" : "@"}
+          </div>
+          <div>
+            <h4 className="font-medium text-[13px] text-white">{conn.email_address}</h4>
+            <p className="text-[11px] text-emerald-400 flex items-center gap-1">
+              <CheckCircle2 className="w-3 h-3" />
+              {t("settings.connected")}
+              {conn.last_synced_at && (
+                <span className="text-[#8b9cb3] ml-1.5">
+                  — {t("settings.sync")} : {new Date(conn.last_synced_at).toLocaleString()}
+                </span>
+              )}
+            </p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]"
+            onClick={() => setEditing((v) => !v)}
+          >
+            <Pen className="w-3.5 h-3.5 mr-1.5" />
+            {editing ? t("common.close", "Fermer") : t("settings.accountSignature", "Signature")}
+          </Button>
+          <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 text-[12px]" onClick={onDisconnect}>
+            <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+            {t("settings.disconnect")}
+          </Button>
+        </div>
+      </div>
+      {editing && (
+        <div className="space-y-2 pt-2 border-t border-border">
+          <Label className="text-[11px] text-[#8b9cb3]">{t("settings.accountSignatureLabel", "Signature pour ce compte")}</Label>
+          <Textarea
+            value={sigDraft}
+            onChange={(e) => setSigDraft(e.target.value)}
+            placeholder={t("settings.accountSignaturePlaceholder", "Signature spécifique à ce compte (sinon, signature globale)")}
+            className="bg-card border-border text-white text-[12px] min-h-[100px] font-mono"
+          />
+          <div className="flex justify-end">
+            <Button
+              size="sm"
+              className="h-8 text-[12px]"
+              disabled={!dirty}
+              onClick={() => onSaveSignature(sigDraft)}
+            >
+              {t("common.save")}
+            </Button>
+          </div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 function useEmailConnections() {
@@ -304,6 +386,25 @@ export default function Parametres() {
     }
   };
 
+  const handleSaveAccountSignature = async (connectionId: string, value: string) => {
+    try {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const res = await fetch(`${baseUrl}/api/email/connections/${connectionId}`, {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ signature: value }),
+      });
+      if (!res.ok) throw new Error("Save failed");
+      queryClient.invalidateQueries({ queryKey: ["email-connections"] });
+      toast({ title: t("settings.signatureSaved") });
+    } catch {
+      toast({ variant: "destructive", title: t("common.error") });
+    }
+  };
+
   const handleDisconnect = async (connectionId: string) => {
     try {
       const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
@@ -343,33 +444,13 @@ export default function Parametres() {
                     </h3>
                   )}
                   {connections?.map((conn) => (
-                    <div key={conn.id} className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm ${
-                          conn.provider === "gmail" ? "bg-red-500/10 text-red-400" :
-                          conn.provider === "outlook" ? "bg-blue-500/10 text-blue-400" :
-                          "bg-white/[0.06] text-[#8b9cb3]"
-                        }`}>
-                          {conn.provider === "gmail" ? "G" : conn.provider === "outlook" ? "O" : "@"}
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-[13px] text-white">{conn.email_address}</h4>
-                          <p className="text-[11px] text-emerald-400 flex items-center gap-1">
-                            <CheckCircle2 className="w-3 h-3" />
-                            {t("settings.connected")}
-                            {conn.last_synced_at && (
-                              <span className="text-[#8b9cb3] ml-1.5">
-                                — {t("settings.sync")} : {new Date(conn.last_synced_at).toLocaleString()}
-                              </span>
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                      <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 text-[12px]" onClick={() => handleDisconnect(conn.id)}>
-                        <Trash2 className="w-3.5 h-3.5 mr-1.5" />
-                        {t("settings.disconnect")}
-                      </Button>
-                    </div>
+                    <AccountConnectionCard
+                      key={conn.id}
+                      conn={conn}
+                      onDisconnect={() => handleDisconnect(conn.id)}
+                      onSaveSignature={(val) => handleSaveAccountSignature(conn.id, val)}
+                      t={t}
+                    />
                   ))}
 
                   <div className={connections && connections.length > 0 ? "pt-4 mt-2 border-t border-border space-y-3" : "space-y-3"}>

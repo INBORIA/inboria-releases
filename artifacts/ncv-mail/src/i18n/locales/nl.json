@@ -329,7 +329,11 @@
     "sortByPriority": "Sortering: Prioriteit",
     "sortByDateDesc": "Sortering: Datum ↓ (nieuwste)",
     "sortByDateAsc": "Sortering: Datum ↑ (oudste)",
-    "loadingBody": "Inhoud laden..."
+    "loadingBody": "Inhoud laden...",
+    "from": "Van",
+    "fullscreen": "Volledig scherm",
+    "exitFullscreen": "Volledig scherm afsluiten",
+    "appointmentProposed": "Voorgestelde afspraak toegevoegd aan agenda"
   },
   "sent": {
     "title": "Verzonden e-mails",
@@ -866,7 +870,10 @@
     "newPasswordPlaceholder": "Minimaal 6 tekens",
     "confirmNewPasswordPlaceholder": "Typ het nieuwe wachtwoord opnieuw",
     "cancel": "Annuleren",
-    "otherProvider": "Andere provider"
+    "otherProvider": "Andere provider",
+    "accountSignature": "Handtekening",
+    "accountSignatureLabel": "Handtekening voor dit account",
+    "accountSignaturePlaceholder": "Specifieke handtekening voor dit account (anders globale handtekening)"
   },
   "subscription": {
     "title": "Beheer uw abonnement",

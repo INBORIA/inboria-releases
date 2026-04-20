@@ -250,6 +250,37 @@ async function ensureProfileTimezone() {
   }
 }
 
+async function ensureEmailConnectionSignature() {
+  try {
+    const { data, error } = await supabaseAdmin.from("email_connections").select("signature").limit(1);
+    if (error && error.message.toLowerCase().includes("signature")) {
+      const supabaseUrl = process.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"] || "";
+      const serviceKey = process.env["SUPABASE_SECRET_KEY"] || "";
+      const sql = `ALTER TABLE email_connections ADD COLUMN IF NOT EXISTS signature text;`;
+      if (supabaseUrl && serviceKey) {
+        const { error: rpcErr } = await supabaseAdmin.rpc("exec_sql", { query: sql });
+        if (!rpcErr) {
+          logger.info("email_connections.signature column added via RPC");
+        } else {
+          await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "Authorization": `Bearer ${serviceKey}`, "apikey": serviceKey },
+            body: JSON.stringify({ query: sql }),
+          });
+          logger.info("email_connections.signature column add attempted via REST");
+        }
+      } else {
+        logger.warn("email_connections.signature column missing — run: ALTER TABLE email_connections ADD COLUMN IF NOT EXISTS signature text;");
+      }
+    } else {
+      logger.info("email_connections.signature column OK");
+      void data;
+    }
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "email_connections.signature check failed (non-fatal)");
+  }
+}
+
 async function cleanupDuplicateTasks() {
   try {
     const { data: aiTasks, error: fetchErr } = await supabaseAdmin
@@ -426,6 +457,7 @@ app.listen(port, (err) => {
   ensureEmailAttachmentsTable();
   ensureAppointmentsTable();
   ensureProfileTimezone();
+  ensureEmailConnectionSignature();
   cleanupDuplicateTasks();
   purgeNoiseTasks();
   startAutoSync();
