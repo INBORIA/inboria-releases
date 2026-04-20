@@ -508,6 +508,17 @@ export default function Taches() {
                           <span>{task.projectReference ? `${task.projectReference} — ` : ""}{task.projectName}</span>
                         </div>
                       )}
+                      {task.assignedToUserId && (() => {
+                        const m = orgMembersList.find((mm: any) => mm.userId === task.assignedToUserId);
+                        const label = m ? (m.fullName || m.email) : task.assignedToUserId.slice(0, 6);
+                        const isMine = task.assignedToUserId === currentUserId;
+                        return (
+                          <Badge className={`text-[10px] px-1.5 py-0 h-[18px] font-medium border gap-1 ${isMine ? "bg-cyan-500/15 text-cyan-300 border-cyan-500/25" : "bg-violet-500/15 text-violet-300 border-violet-500/25"}`}>
+                            <User className="w-2.5 h-2.5" />
+                            {isMine ? t("tasks.assignedToMe", "Moi") : label}
+                          </Badge>
+                        );
+                      })()}
                       {!task.dueDate && !task.emailSubject && (
                         <div className="flex items-center gap-1">
                           <Clock className="w-3 h-3" />
