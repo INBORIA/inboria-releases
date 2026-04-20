@@ -706,7 +706,7 @@ async function syncGmail(conn: any, userId: string): Promise<number> {
       }
       const { error: insertError } = await supabaseAdmin
         .from("emails")
-        .upsert(gmailInsert, { onConflict: "user_id,external_id", ignoreDuplicates: true });
+        .insert(gmailInsert);
 
       if (insertError) {
         if (insertError.code === "23505") continue;
@@ -821,9 +821,13 @@ async function syncOutlook(conn: any, userId: string): Promise<number> {
     if ((conn as any)._sharedMailboxId) {
       outlookInsert.shared_mailbox_id = (conn as any)._sharedMailboxId;
     }
-    await supabaseAdmin
+    const { error: outlookInsertErr } = await supabaseAdmin
       .from("emails")
-      .upsert(outlookInsert, { onConflict: "user_id,external_id", ignoreDuplicates: true });
+      .insert(outlookInsert);
+    if (outlookInsertErr && outlookInsertErr.code !== "23505") {
+      console.error("syncOutlook: insert error", outlookInsertErr);
+      continue;
+    }
 
     synced++;
   }
@@ -905,9 +909,13 @@ async function syncImap(conn: any, userId: string): Promise<number> {
         if ((conn as any)._sharedMailboxId) {
           imapInsert.shared_mailbox_id = (conn as any)._sharedMailboxId;
         }
-        await supabaseAdmin
+        const { error: imapInsertErr } = await supabaseAdmin
           .from("emails")
-          .upsert(imapInsert, { onConflict: "user_id,external_id", ignoreDuplicates: true });
+          .insert(imapInsert);
+        if (imapInsertErr && imapInsertErr.code !== "23505") {
+          console.error("syncImap: insert error", imapInsertErr);
+          continue;
+        }
         synced++;
       }
     } finally { lock.release(); }
