@@ -1341,6 +1341,9 @@ export default function Dashboard() {
     queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
     queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
     queryClient.refetchQueries({ queryKey: getGetDashboardSummaryQueryKey() });
+    // Refetch the open email detail too — otherwise stale detail data
+    // overrides the freshly-fetched list values when displayed.
+    queryClient.invalidateQueries({ queryKey: ["email-detail"] });
   };
 
   const handleMarkAsRead = (id: number) => {
