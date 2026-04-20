@@ -505,20 +505,12 @@ function ConversationView({
         )}
       </div>
 
-      {email && (
+      {email?.projectName && (
         <div className="mb-4">
-          <h2 className="text-[15px] font-semibold text-white mb-1">{email.subject}</h2>
-          <div className="flex items-center gap-2 text-[11px] text-[#8b9cb3]">
-            <span>{t("sent.to")}: {email.recipient || "?"}</span>
-            <span>•</span>
-            <span>{email.createdAt ? format(new Date(email.createdAt), "dd MMMM yyyy HH:mm", { locale: dateFnsLocale }) : ""}</span>
-          </div>
-          {email.projectName && (
-            <span className="inline-block mt-1 text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-[#8b9cb3]">
-              <FolderKanban className="w-3 h-3 inline mr-1" />
-              {email.projectReference} - {email.projectName}
-            </span>
-          )}
+          <span className="inline-block text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-[#8b9cb3]">
+            <FolderKanban className="w-3 h-3 inline mr-1" />
+            {email.projectReference} - {email.projectName}
+          </span>
         </div>
       )}
 
@@ -651,8 +643,8 @@ function ConversationView({
             key={msg.id || idx}
             className={`rounded-lg border p-4 ${
               msg.role === "sent"
-                ? "border-primary/20 bg-primary/5 ml-8"
-                : "border-border bg-card mr-8"
+                ? "border-primary/20 bg-primary/5"
+                : "border-border bg-card"
             }`}
           >
             <div className="flex items-center gap-2 mb-2">
