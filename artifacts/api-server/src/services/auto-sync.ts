@@ -270,7 +270,7 @@ async function triageEmailAI(
   subject: string,
   body: string,
   userId: string
-): Promise<{ priority: string; summary: string; category: string; tasks: string[]; is_spam: boolean }> {
+): Promise<{ priority: string; summary: string; category: string; project: string; tasks: string[]; is_spam: boolean }> {
   try {
     const { data: categories } = await supabaseAdmin
       .from("categories")
@@ -278,6 +278,18 @@ async function triageEmailAI(
       .eq("user_id", userId);
     const JUNK_CATS = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
     const categoryNames = (categories || []).map((c: any) => c.name).filter((n: string) => !JUNK_CATS.includes(n.toLowerCase()));
+
+    const { data: activeProjects } = await supabaseAdmin
+      .from("projects")
+      .select("name, reference, description")
+      .eq("user_id", userId)
+      .eq("status", "actif");
+    const projectsList = (activeProjects || []).map((p: any) => {
+      const parts = [`"${p.name}"`];
+      if (p.reference) parts.push(`(ref: ${p.reference})`);
+      if (p.description) parts.push(`— ${String(p.description).slice(0, 80)}`);
+      return `- ${parts.join(" ")}`;
+    }).join("\n");
 
     const { data: rules } = await supabaseAdmin
       .from("ai_rules")
@@ -295,6 +307,10 @@ async function triageEmailAI(
         }).join("\n");
     }
 
+    const projectsContext = projectsList
+      ? `\n\nProjets actifs de l'utilisateur:\n${projectsList}\n\nSi l'email concerne clairement l'un de ces projets (mention du nom, de la reference, ou contenu lie), mets le nom exact du projet dans "project". Sinon mets "Aucun".`
+      : "";
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       max_completion_tokens: 512,
@@ -305,7 +321,7 @@ async function triageEmailAI(
         },
         {
           role: "user",
-          content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${(body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800)}\n\nCategories existantes: ${categoryNames.join(", ") || "Aucune"}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom de categorie existante OU propose un nouveau nom pertinent (court, professionnel). Utilise 'Non classe' uniquement si vraiment inclassable.","tasks":["tache 1","tache 2"],"is_spam":false}\n\nIMPORTANT pour is_spam: TRES CONSERVATEUR. Mets true UNIQUEMENT pour arnaques evidentes (loterie, heritage, 'vous avez gagne', sextorsion, faux remboursement fiscal). Les emails de verification, codes OTP, alertes de securite, notifications de service, newsletters, marketing legitime, emails commerciaux NE SONT PAS du spam. En cas de doute, false.\n\nIMPORTANT pour les taches: Sois TRES SELECTIF. Ne genere des taches QUE quand une action humaine CONCRETE et IMPORTANTE est requise (repondre a un client, payer une facture, signer un document, confirmer un rendez-vous). JAMAIS de tache pour: newsletters, notifications automatiques, confirmations d'inscription, codes de verification, emails marketing, reseaux sociaux, alertes de securite, confirmations de commande, recus, emails informatifs. Si aucune action importante n'est requise, retourne "tasks":[] (tableau vide). Maximum 1 tache par email.`,
+          content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${(body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800)}\n\nCategories existantes: ${categoryNames.join(", ") || "Aucune"}${projectsContext}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom de categorie existante OU propose un nouveau nom pertinent (court, professionnel). Utilise 'Non classe' uniquement si vraiment inclassable.","project":"nom exact d'un projet actif OU 'Aucun'","tasks":["tache 1","tache 2"],"is_spam":false}\n\nIMPORTANT pour is_spam: TRES CONSERVATEUR. Mets true UNIQUEMENT pour arnaques evidentes (loterie, heritage, 'vous avez gagne', sextorsion, faux remboursement fiscal). Les emails de verification, codes OTP, alertes de securite, notifications de service, newsletters, marketing legitime, emails commerciaux NE SONT PAS du spam. En cas de doute, false.\n\nIMPORTANT pour project: ne renvoie un nom de projet QUE si l'email le mentionne explicitement (nom, reference) OU si le contenu est clairement lie au projet. En cas de doute, mets "Aucun". Ne jamais inventer un nom de projet qui ne figure pas dans la liste ci-dessus.\n\nIMPORTANT pour les taches: Sois TRES SELECTIF. Ne genere des taches QUE quand une action humaine CONCRETE et IMPORTANTE est requise (repondre a un client, payer une facture, signer un document, confirmer un rendez-vous). JAMAIS de tache pour: newsletters, notifications automatiques, confirmations d'inscription, codes de verification, emails marketing, reseaux sociaux, alertes de securite, confirmations de commande, recus, emails informatifs. Si aucune action importante n'est requise, retourne "tasks":[] (tableau vide). Maximum 1 tache par email.`,
         },
       ],
     });
@@ -317,12 +333,13 @@ async function triageEmailAI(
       priority: result.priority || "faible",
       summary: result.summary || "",
       category: result.category || "Non classe",
+      project: typeof result.project === "string" ? result.project : "Aucun",
       tasks: Array.isArray(result.tasks) ? result.tasks : [],
       is_spam: result.is_spam === true,
     };
   } catch (err: any) {
     console.error("[auto-sync] triageEmailAI error:", err.message);
-    return { priority: "faible", summary: "", category: "Non classe", tasks: [], is_spam: false };
+    return { priority: "faible", summary: "", category: "Non classe", project: "Aucun", tasks: [], is_spam: false };
   }
 }
 
@@ -382,6 +399,21 @@ async function saveEmailWithTriage(
     recordAIClassification(userId, sender, triage.category, triage.priority).catch(() => {});
   }
 
+  let projectId: string | null = null;
+  if (triage.project && triage.project.toLowerCase() !== "aucun" && triage.project.toLowerCase() !== "none") {
+    const { data: matchedProject } = await supabaseAdmin
+      .from("projects")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("name", triage.project)
+      .eq("status", "actif")
+      .maybeSingle();
+    if (matchedProject?.id) {
+      projectId = matchedProject.id;
+      logger.info({ userId, projectId, projectName: triage.project }, "[auto-sync] email auto-linked to project");
+    }
+  }
+
   let categoryId = null;
   if (triage.category && triage.category !== "Non classe") {
     const { data: cat } = await supabaseAdmin
@@ -431,6 +463,7 @@ async function saveEmailWithTriage(
     priority: triage.priority,
     summary: stripNul(triage.summary),
     category_id: categoryId,
+    project_id: projectId,
     created_at: createdAt,
   };
   if (sharedMailboxId) {

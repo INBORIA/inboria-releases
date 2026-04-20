@@ -400,9 +400,13 @@ function ProjectDetailView({
                   faible: "bg-emerald-500",
                 };
                 return (
-                  <div
+                  <button
                     key={email.id}
-                    className="flex items-stretch bg-card border border-border rounded-lg overflow-hidden"
+                    type="button"
+                    onClick={() => {
+                      window.location.href = `/dashboard?emailId=${email.id}`;
+                    }}
+                    className="flex items-stretch bg-card border border-border rounded-lg overflow-hidden w-full text-left hover:bg-card/80 hover:border-primary/40 transition-colors cursor-pointer"
                   >
                     <div className={`w-1 shrink-0 ${barColors[email.priority] || barColors.faible}`} />
                     <div className="flex items-center gap-2.5 flex-1 min-w-0 px-3 py-2">
@@ -414,7 +418,7 @@ function ProjectDetailView({
                         {new Date(email.createdAt).toLocaleDateString(i18n.language)}
                       </span>
                     </div>
-                  </div>
+                  </button>
                 );
               })}
             </div>
