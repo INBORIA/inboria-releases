@@ -127,7 +127,8 @@ router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
           "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)"
         )
         .order("created_at", { ascending: false })
-        .in("user_id", memberIds);
+        .in("assigned_to_user_id", memberIds)
+        .not("assigned_to_user_id", "is", null);
       if (projectId) teamQ = teamQ.eq("project_id", projectId);
       if (status === "done") teamQ = teamQ.eq("done", true);
       else if (status === "pending" || status === "todo") teamQ = teamQ.eq("done", false);
