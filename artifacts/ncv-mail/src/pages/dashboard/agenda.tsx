@@ -257,7 +257,7 @@ export default function Agenda() {
 
   const handleDetect = () => {
     detectAppointments.mutate(
-      { data: { lang: i18n.language, forceRescan: true } },
+      { data: { lang: i18n.language } },
       {
         onSuccess: (data) => {
           const count = (data as { count?: number })?.count || 0;
