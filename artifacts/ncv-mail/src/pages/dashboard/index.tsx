@@ -177,7 +177,7 @@ const triageSchema = z.object({
   body: z.string().min(1, "Contenu requis"),
 });
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[]) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string) => void }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }> }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
@@ -186,6 +186,22 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
   const [replyTo, setReplyTo] = useState("");
   const [replySubject, setReplySubject] = useState("");
   const [replyText, setReplyText] = useState("");
+  const [replyConnectionId, setReplyConnectionId] = useState<string>("");
+  const [replyProjectId, setReplyProjectId] = useState<string>("");
+
+  const resolveDefaultConnectionId = useCallback(() => {
+    if (!connections || connections.length === 0) return "";
+    const recip = (email?.recipient || "").toLowerCase();
+    const match = connections.find((c) => (c.email_address || "").toLowerCase() === recip);
+    return String((match || connections[0]).id);
+  }, [connections, email]);
+
+  const signatureForConnection = useCallback((connId: string): string => {
+    const conn = connections?.find((c) => String(c.id) === String(connId));
+    const sig = (conn?.signature || "").trim();
+    if (sig) return sig;
+    return (userSignature || "").trim();
+  }, [connections, userSignature]);
   const [taskFormOpen, setTaskFormOpen] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskProjectId, setTaskProjectId] = useState("none");
@@ -269,7 +285,11 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     if (!replyOpen) {
                       setReplyTo(email.sender || "");
                       setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
-                      setReplyText(userSignature ? `\n\n${userSignature}` : "");
+                      const defConn = resolveDefaultConnectionId();
+                      setReplyConnectionId(defConn);
+                      setReplyProjectId(email.project_id ? String(email.project_id) : "");
+                      const sig = signatureForConnection(defConn);
+                      setReplyText(sig ? `\n\n-- \n${sig}` : "");
                     }
                     setReplyOpen(!replyOpen);
                   }}
@@ -285,6 +305,11 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   onClick={() => {
                     setReplyTo(email.sender || "");
                     setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
+                    if (!replyConnectionId) {
+                      const defConn = resolveDefaultConnectionId();
+                      setReplyConnectionId(defConn);
+                    }
+                    if (!replyProjectId && email.project_id) setReplyProjectId(String(email.project_id));
                     setReplyOpen(true);
                     onGenerateDraft(email.id, (draft) => {
                       setReplyText(draft);
@@ -515,6 +540,38 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
 
             {replyOpen && (
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
+                {connections && connections.length > 1 && (
+                  <div>
+                    <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.from", "De")}</label>
+                    <Select
+                      value={replyConnectionId}
+                      onValueChange={(v) => {
+                        const oldSig = signatureForConnection(replyConnectionId);
+                        const newSig = signatureForConnection(v);
+                        setReplyConnectionId(v);
+                        setReplyText((prev) => {
+                          let base = prev || "";
+                          if (oldSig) {
+                            const oldBlock = `\n\n-- \n${oldSig}`;
+                            const idx = base.lastIndexOf(oldBlock);
+                            if (idx !== -1) base = base.slice(0, idx) + base.slice(idx + oldBlock.length);
+                          }
+                          if (newSig) base = `${base.replace(/\s+$/, "")}\n\n-- \n${newSig}`;
+                          return base;
+                        });
+                      }}
+                    >
+                      <SelectTrigger className="bg-background border-border text-white text-[12px] h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {connections.map((c) => (
+                          <SelectItem key={c.id} value={String(c.id)}>{c.email_address}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 <div>
                   <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
                   <Input
@@ -524,6 +581,22 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     className="bg-background border-border text-white text-[12px] h-8"
                   />
                 </div>
+                {projects && projects.length > 0 && (
+                  <div>
+                    <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.project")}</label>
+                    <Select value={replyProjectId || "__none__"} onValueChange={(v) => setReplyProjectId(v === "__none__" ? "" : v)}>
+                      <SelectTrigger className="bg-background border-border text-white text-[12px] h-8">
+                        <SelectValue placeholder={t("inbox.noProject")} />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="__none__">{t("inbox.noProject")}</SelectItem>
+                        {projects.map((p: any) => (
+                          <SelectItem key={p.id} value={String(p.id)}>{p.name}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
                 <div>
                   <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.subject")}</label>
                   <Input
@@ -564,11 +637,13 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                       className="gap-1.5 h-7 text-[11px]"
                       disabled={isSending || !replyTo.trim() || !replySubject.trim() || !replyText.trim()}
                       onClick={() => {
-                        onSendReply(replyTo, replySubject, replyText, email.id, replyAttachments);
+                        onSendReply(replyTo, replySubject, replyText, email.id, replyAttachments, replyConnectionId || undefined, replyProjectId || undefined);
                         setReplyText("");
                         setReplyTo("");
                         setReplySubject("");
                         setReplyAttachments([]);
+                        setReplyConnectionId("");
+                        setReplyProjectId("");
                         setReplyOpen(false);
                       }}
                     >
@@ -1286,14 +1361,27 @@ export default function Dashboard() {
     );
   };
 
-  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[]) => {
+  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => {
     const uploadIds = attachments?.map((a) => a.uploadId).filter(Boolean);
+    const data: any = {
+      to,
+      subject,
+      body,
+      replyToEmailId: replyToEmailId ?? null,
+      attachments: uploadIds && uploadIds.length > 0 ? uploadIds : undefined,
+    };
+    if (connectionId) data.connectionId = connectionId;
+    if (projectId) data.projectId = projectId;
     sendEmailMut.mutate(
-      { data: { to, subject, body, replyToEmailId: replyToEmailId ?? null, attachments: uploadIds && uploadIds.length > 0 ? uploadIds : undefined } },
+      { data },
       {
-        onSuccess: () => {
+        onSuccess: (resp: any) => {
           invalidateAll();
-          toast({ title: t("inbox.emailSent") });
+          if (resp?.appointmentId) {
+            toast({ title: t("inbox.emailSent"), description: t("inbox.appointmentProposed", "Rendez-vous proposé créé dans l'agenda") });
+          } else {
+            toast({ title: t("inbox.emailSent") });
+          }
         },
         onError: (err: any) => {
           const msg = err?.data?.error || err?.message || t("inbox.sendError");
@@ -1471,6 +1559,7 @@ export default function Dashboard() {
             onAssign={handleAssign}
             onUnassign={handleUnassign}
             onCreateTask={handleCreateTask}
+            connections={composeConnections}
           />
         </div>
       </DashboardLayout>
