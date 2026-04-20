@@ -10,7 +10,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Pen, Lock, Globe } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { useTranslation } from 'react-i18next';
@@ -118,6 +118,52 @@ export default function Parametres() {
   const [showNewPwd, setShowNewPwd] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
   const [timezone, setTimezone] = useState("Europe/Brussels");
+
+  const WIZARD_STORAGE_KEY = "inboria.imapWizard.v1";
+  const WIZARD_TTL_MS = 30 * 60 * 1000;
+  const wizardHydratedRef = useRef(false);
+
+  useEffect(() => {
+    try {
+      const raw = sessionStorage.getItem(WIZARD_STORAGE_KEY);
+      if (raw) {
+        const data = JSON.parse(raw);
+        if (data && typeof data === "object" && Date.now() - (data.savedAt || 0) <= WIZARD_TTL_MS) {
+          if (data.selectedProvider) setSelectedProvider(data.selectedProvider);
+          if (data.imapEmail) setImapEmail(data.imapEmail);
+          if (data.imapPassword) setImapPassword(data.imapPassword);
+          if (data.imapHost) setImapHost(data.imapHost);
+          if (data.imapPort) setImapPort(data.imapPort);
+          if (data.showAdvanced) setShowAdvanced(true);
+        } else {
+          sessionStorage.removeItem(WIZARD_STORAGE_KEY);
+        }
+      }
+    } catch {}
+    wizardHydratedRef.current = true;
+  }, []);
+
+  useEffect(() => {
+    if (!wizardHydratedRef.current) return;
+    try {
+      if (!selectedProvider) {
+        sessionStorage.removeItem(WIZARD_STORAGE_KEY);
+        return;
+      }
+      sessionStorage.setItem(
+        WIZARD_STORAGE_KEY,
+        JSON.stringify({
+          selectedProvider,
+          imapEmail,
+          imapPassword,
+          imapHost,
+          imapPort,
+          showAdvanced,
+          savedAt: Date.now(),
+        })
+      );
+    } catch {}
+  }, [selectedProvider, imapEmail, imapPassword, imapHost, imapPort, showAdvanced]);
 
   useEffect(() => {
     if (profile) {
