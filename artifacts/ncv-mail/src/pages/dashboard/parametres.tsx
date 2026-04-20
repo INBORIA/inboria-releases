@@ -247,8 +247,9 @@ export default function Parametres() {
         setImapHost("");
         setImapPort("");
       } else {
-        setConnectError(data.error || t("settings.connectionFailed"));
-        if (data.needsManualConfig) setShowAdvanced(true);
+        const isGmail = selectedProvider === "gmail" || imapEmail.toLowerCase().endsWith("@gmail.com") || imapEmail.toLowerCase().endsWith("@googlemail.com");
+        setConnectError(isGmail ? t("settings.gmailConnectError") : (data.error || t("settings.connectionFailed")));
+        if (data.needsManualConfig && selectedProvider !== "gmail") setShowAdvanced(true);
       }
     } catch {
       setConnectError(t("settings.connectionError"));
@@ -498,7 +499,7 @@ export default function Parametres() {
                           </div>
                         </div>
 
-                        {(selectedProvider === "autre" || showAdvanced) && (
+                        {selectedProvider !== "gmail" && (selectedProvider === "autre" || showAdvanced) && (
                           <div className="grid grid-cols-2 gap-2.5">
                             <div className="space-y-1">
                               <Label className="text-[12px] text-[#8b9cb3]">{t("settings.imapServer")}</Label>

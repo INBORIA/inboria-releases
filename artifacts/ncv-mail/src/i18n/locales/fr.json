@@ -784,6 +784,7 @@
     "gmailWizardStep3": "Saisissez « Inboria » comme nom et cliquez sur « Créer ».",
     "gmailWizardStep4": "Copiez le mot de passe de 16 caractères et collez-le ci-dessous.",
     "gmailWizardNote": "Ce mot de passe d'application est différent de votre mot de passe Google habituel. Il ne donne accès qu'à votre messagerie via IMAP.",
+    "gmailConnectError": "Connexion Gmail échouée. Vérifiez que la validation en 2 étapes est activée et que vous avez bien collé le mot de passe d'application de 16 caractères (sans espaces).",
     "microsoftTitle": "Outlook / Microsoft 365",
     "microsoftDesc": "Compte personnel ou professionnel (Exchange, Office 365)",
     "connectMicrosoft": "Connecter Microsoft",

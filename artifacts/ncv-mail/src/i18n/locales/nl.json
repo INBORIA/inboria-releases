@@ -782,6 +782,7 @@
     "gmailWizardStep3": "Voer \"Inboria\" in als naam en klik op \"Aanmaken\".",
     "gmailWizardStep4": "Kopieer het wachtwoord van 16 tekens en plak het hieronder.",
     "gmailWizardNote": "Een app-wachtwoord is anders dan uw gewone Google-wachtwoord. Het geeft alleen IMAP-toegang tot uw mailbox.",
+    "gmailConnectError": "Gmail-verbinding mislukt. Zorg ervoor dat verificatie in 2 stappen is ingeschakeld en dat u het app-wachtwoord van 16 tekens (zonder spaties) heeft geplakt.",
     "addGoogleAccount": "Google-account toevoegen (OAuth).",
     "connectGoogle": "Google verbinden",
     "microsoftTitle": "Outlook / Microsoft 365",

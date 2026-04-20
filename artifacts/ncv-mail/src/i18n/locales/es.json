@@ -782,6 +782,7 @@
     "gmailWizardStep3": "Introduzca «Inboria» como nombre y haga clic en «Crear».",
     "gmailWizardStep4": "Copie la contraseña de 16 caracteres y péguela a continuación.",
     "gmailWizardNote": "Una contraseña de aplicación es diferente de su contraseña habitual de Google. Solo da acceso IMAP a su buzón.",
+    "gmailConnectError": "Conexión Gmail fallida. Compruebe que la verificación en 2 pasos está activada y que ha pegado la contraseña de aplicación de 16 caracteres (sin espacios).",
     "addGoogleAccount": "Agregar una cuenta de Google (OAuth).",
     "connectGoogle": "Conectar Google",
     "microsoftTitle": "Outlook / Microsoft 365",
