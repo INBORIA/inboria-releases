@@ -51,6 +51,9 @@ export default function AcceptInvite() {
         if (res.ok) {
           setStatus("success");
           setMessage(t("auth.joinedSuccess"));
+        } else if (res.status === 401) {
+          await supabase.auth.signOut();
+          setStatus("login-required");
         } else if (res.status === 403 && data.error?.includes("destinée à")) {
           const emailMatch = data.error.match(/destinée à ([^\s.]+)/);
           const targetEmail = emailMatch ? emailMatch[1] : "";
