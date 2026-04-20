@@ -745,12 +745,12 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
 
   return (
     <>
-      <DialogHeader className="px-5 pt-4 pb-2 flex-row items-center justify-between gap-2 space-y-0 border-b border-border">
+      <DialogHeader className="px-5 pt-4 pb-2 pr-12 flex-row items-center justify-between gap-2 space-y-0 border-b border-border">
         <DialogTitle className="text-white text-[14px]">{t("inbox.composeTitle")}</DialogTitle>
         <button
           type="button"
           onClick={() => setIsFullscreen((v: boolean) => !v)}
-          className="text-[#8b9cb3] hover:text-white p-1 rounded hover:bg-white/[0.04]"
+          className="text-[#8b9cb3] hover:text-white p-1 rounded hover:bg-white/[0.04] mr-2"
           aria-label={isFullscreen ? t("inbox.exitFullscreen", "Quitter plein écran") : t("inbox.fullscreen", "Plein écran")}
         >
           {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
