@@ -12,4 +12,9 @@ export interface UpdateTaskBody {
   /** @nullable */
   projectId?: string | null;
   inFollowup?: boolean;
+  /**
+   * User id of the assignee, or null to unassign. Only the task creator can change this.
+   * @nullable
+   */
+  assignedToUserId?: string | null;
 }

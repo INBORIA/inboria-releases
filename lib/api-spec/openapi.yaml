@@ -524,6 +524,21 @@ paths:
           schema:
             type: string
             enum: [all, pending, done]
+        - name: scope
+          in: query
+          description: |
+            mine (default) = tasks I created or am assigned to;
+            assigned_to_me = only tasks assigned to me;
+            created_by_me = only tasks I created;
+            team = all tasks of my organisation members.
+          schema:
+            type: string
+            enum: [mine, assigned_to_me, created_by_me, team]
+        - name: projectId
+          in: query
+          description: Restrict to tasks of a given project.
+          schema:
+            type: string
       responses:
         "200":
           description: List of tasks
@@ -2751,6 +2766,15 @@ components:
         createdAt:
           type: string
           format: date-time
+        userId:
+          type: ["string", "null"]
+        assignedToUserId:
+          type: ["string", "null"]
+        assignedAt:
+          type: ["string", "null"]
+          format: date-time
+        assignedByUserId:
+          type: ["string", "null"]
       required:
         - id
         - title
@@ -2768,6 +2792,9 @@ components:
           type: ["string", "null"]
         inFollowup:
           type: boolean
+        assignedToUserId:
+          type: ["string", "null"]
+          description: User id of the assignee, or null to unassign. Only the task creator can change this.
 
     CreateTaskBody:
       type: object
@@ -2780,6 +2807,9 @@ components:
           type: integer
         projectId:
           type: string
+        assignedToUserId:
+          type: string
+          description: Optional user id to assign the task to (must be in the same organisation).
 
     ProjectNote:
       type: object

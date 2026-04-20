@@ -281,6 +281,49 @@ async function ensureEmailConnectionSignature() {
   }
 }
 
+async function ensureTaskAssignment() {
+  try {
+    const { error } = await supabaseAdmin.from("tasks").select("assigned_to_user_id").limit(1);
+    if (error && error.message.toLowerCase().includes("assigned_to_user_id")) {
+      const supabaseUrl = process.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"] || "";
+      const serviceKey = process.env["SUPABASE_SECRET_KEY"] || "";
+      const sql = `
+        ALTER TABLE public.tasks
+          ADD COLUMN IF NOT EXISTS assigned_to_user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL,
+          ADD COLUMN IF NOT EXISTS assigned_at timestamptz,
+          ADD COLUMN IF NOT EXISTS assigned_by_user_id uuid REFERENCES auth.users(id) ON DELETE SET NULL;
+        CREATE INDEX IF NOT EXISTS idx_tasks_assigned_to ON public.tasks(assigned_to_user_id);
+        CREATE INDEX IF NOT EXISTS idx_tasks_project_id ON public.tasks(project_id);
+        DO $$ BEGIN
+          IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'tasks' AND policyname = 'Assignees can view assigned tasks') THEN
+            CREATE POLICY "Assignees can view assigned tasks" ON public.tasks FOR SELECT USING (auth.uid() = assigned_to_user_id);
+          END IF;
+          IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'tasks' AND policyname = 'Assignees can update assigned tasks') THEN
+            CREATE POLICY "Assignees can update assigned tasks" ON public.tasks FOR UPDATE USING (auth.uid() = assigned_to_user_id);
+          END IF;
+        END $$;
+      `;
+      const { error: rpcErr } = await supabaseAdmin.rpc("exec_sql" as any, { query: sql });
+      if (!rpcErr) {
+        logger.info("tasks.assigned_to_user_id column + RLS added via RPC");
+      } else if (supabaseUrl && serviceKey) {
+        await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "Authorization": `Bearer ${serviceKey}`, "apikey": serviceKey },
+          body: JSON.stringify({ query: sql }),
+        });
+        logger.info("tasks.assigned_to_user_id migration attempted via REST");
+      } else {
+        logger.warn("tasks.assigned_to_user_id missing — run sql_task_assignment.sql manually");
+      }
+    } else {
+      logger.info("tasks.assigned_to_user_id column OK");
+    }
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "tasks.assigned_to_user_id check failed (non-fatal)");
+  }
+}
+
 async function cleanupDuplicateTasks() {
   try {
     const { data: aiTasks, error: fetchErr } = await supabaseAdmin
@@ -458,6 +501,7 @@ app.listen(port, (err) => {
   ensureAppointmentsTable();
   ensureProfileTimezone();
   ensureEmailConnectionSignature();
+  ensureTaskAssignment();
   cleanupDuplicateTasks();
   purgeNoiseTasks();
   startAutoSync();

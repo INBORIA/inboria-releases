@@ -15,6 +15,9 @@ import {
   useCreateProjectNote,
   useDeleteProjectNote,
   getListProjectNotesQueryKey,
+  useGetMyOrganisation,
+  useGetOrganisationMembers,
+  useGetProfile,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -221,6 +224,32 @@ function ProjectDetailView({
   const createTaskMut = useCreateTask();
   const updateTaskMut = useUpdateTask();
   const deleteTaskMut = useDeleteTask();
+  const { data: myOrg } = useGetMyOrganisation();
+  const { data: orgMembers } = useGetOrganisationMembers({ query: { enabled: !!(myOrg as any)?.id } as any });
+  const { data: profile } = useGetProfile();
+  const currentUserId = (profile as any)?.id || (profile as any)?.userId || null;
+  const members: any[] = Array.isArray(orgMembers) ? orgMembers : [];
+  const memberLabel = (uid: string | null | undefined) => {
+    if (!uid) return null;
+    const m = members.find((mm: any) => mm.userId === uid);
+    if (!m) return null;
+    return m.fullName || m.email || uid.slice(0, 6);
+  };
+  const handleAssignTask = (taskId: string, assignedToUserId: string | null) => {
+    updateTaskMut.mutate(
+      { id: taskId as any, data: { assignedToUserId } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+          toast({ title: assignedToUserId ? t("projects.taskAssigned", "Tâche assignée") : t("projects.taskUnassigned", "Tâche désassignée") });
+        },
+        onError: (e: any) => {
+          toast({ variant: "destructive", title: t("common.error"), description: e?.message || "Assignation impossible" });
+        },
+      }
+    );
+  };
 
   const handleDeleteTask = (taskId: string) => {
     deleteTaskMut.mutate(
@@ -453,7 +482,10 @@ function ProjectDetailView({
           </div>
           {(project.tasks || []).length > 0 ? (
             <div className="space-y-1">
-              {project.tasks.map((task: any) => (
+              {project.tasks.map((task: any) => {
+                const isCreator = !currentUserId || task.userId === currentUserId || !task.userId;
+                const assigneeLabel = memberLabel(task.assignedToUserId);
+                return (
                 <div
                   key={task.id}
                   className="bg-card border border-border rounded-lg px-3 py-2 flex items-center gap-2.5 group"
@@ -472,9 +504,33 @@ function ProjectDetailView({
                     {task.title}
                   </p>
                   {task.emailSubject && (
-                    <span className="text-[10px] text-[#8b9cb3] truncate max-w-[180px]">
+                    <span className="text-[10px] text-[#8b9cb3] truncate max-w-[140px]">
                       {task.emailSubject}
                     </span>
+                  )}
+                  {members.length > 0 && (
+                    isCreator ? (
+                      <Select
+                        value={task.assignedToUserId || "none"}
+                        onValueChange={(val) => handleAssignTask(String(task.id), val === "none" ? null : val)}
+                      >
+                        <SelectTrigger className="w-[140px] h-7 bg-background border-border text-[11px] text-white">
+                          <SelectValue placeholder={t("projects.assignTo", "Assigner à…")} />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border">
+                          <SelectItem value="none">{t("projects.unassigned", "Non assignée")}</SelectItem>
+                          {members.map((m: any) => (
+                            <SelectItem key={m.userId} value={m.userId}>
+                              {m.fullName || m.email}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    ) : assigneeLabel ? (
+                      <span className="text-[10px] text-cyan-400 bg-cyan-500/10 px-2 py-0.5 rounded">
+                        {assigneeLabel}
+                      </span>
+                    ) : null
                   )}
                   <button
                     onClick={() => handleDeleteTask(String(task.id))}
@@ -484,7 +540,8 @@ function ProjectDetailView({
                     <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
-              ))}
+                );
+              })}
             </div>
           ) : (
             <p className="text-[11px] text-[#8b9cb3]/60 italic">{t("projects.noTasksInProject")}</p>

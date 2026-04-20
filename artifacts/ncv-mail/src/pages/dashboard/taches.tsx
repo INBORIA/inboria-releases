@@ -50,6 +50,7 @@ export default function Taches() {
   const { toast } = useToast();
 
   const [filter, setFilter] = useState<string>("all");
+  const [scope, setScope] = useState<"mine" | "assigned_to_me" | "created_by_me" | "team">("mine");
   const [emailDetailTask, setEmailDetailTask] = useState<any>(null);
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -190,7 +191,7 @@ export default function Taches() {
   const [replyText, setReplyText] = useState("");
   const [replyAttachments, setReplyAttachments] = useState<UploadedFile[]>([]);
 
-  const { data: tasks, isLoading } = useListTasks({});
+  const { data: tasks, isLoading } = useListTasks({ scope } as any);
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
   const createTask = useCreateTask();
@@ -322,6 +323,27 @@ export default function Taches() {
               {t("tasks.export")}
             </Button>
           </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 mb-2 flex-wrap">
+          {([
+            { key: "mine", label: t("tasks.scopeMine", "Mes tâches") },
+            { key: "assigned_to_me", label: t("tasks.scopeAssignedToMe", "Assignées à moi") },
+            { key: "created_by_me", label: t("tasks.scopeCreatedByMe", "Créées par moi") },
+            { key: "team", label: t("tasks.scopeTeam", "Équipe") },
+          ] as const).map((s) => (
+            <button
+              key={s.key}
+              onClick={() => setScope(s.key)}
+              className={`text-[11px] px-2.5 py-1 rounded-md transition-all ${
+                scope === s.key
+                  ? "bg-cyan-600 text-white font-medium"
+                  : "bg-card text-[#8b9cb3] hover:bg-[#1a2235] hover:text-white border border-border"
+              }`}
+            >
+              {s.label}
+            </button>
+          ))}
         </div>
 
         <div className="flex items-center gap-1.5 mb-4">

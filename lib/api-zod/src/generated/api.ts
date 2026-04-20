@@ -504,6 +504,16 @@ export const GeneratePackResponse = zod.object({
  */
 export const ListTasksQueryParams = zod.object({
   status: zod.enum(["all", "pending", "done"]).optional(),
+  scope: zod
+    .enum(["mine", "assigned_to_me", "created_by_me", "team"])
+    .optional()
+    .describe(
+      "mine (default) = tasks I created or am assigned to;\nassigned_to_me = only tasks assigned to me;\ncreated_by_me = only tasks I created;\nteam = all tasks of my organisation members.\n",
+    ),
+  projectId: zod.coerce
+    .string()
+    .optional()
+    .describe("Restrict to tasks of a given project."),
 });
 
 export const ListTasksResponseItem = zod.object({
@@ -519,6 +529,10 @@ export const ListTasksResponseItem = zod.object({
   projectName: zod.string().nullish(),
   projectReference: zod.string().nullish(),
   createdAt: zod.coerce.date(),
+  userId: zod.string().nullish(),
+  assignedToUserId: zod.string().nullish(),
+  assignedAt: zod.coerce.date().nullish(),
+  assignedByUserId: zod.string().nullish(),
 });
 export const ListTasksResponse = zod.array(ListTasksResponseItem);
 
@@ -529,6 +543,12 @@ export const CreateTaskBody = zod.object({
   title: zod.string(),
   emailId: zod.number().optional(),
   projectId: zod.string().optional(),
+  assignedToUserId: zod
+    .string()
+    .optional()
+    .describe(
+      "Optional user id to assign the task to (must be in the same organisation).",
+    ),
 });
 
 /**
@@ -543,6 +563,12 @@ export const UpdateTaskBody = zod.object({
   title: zod.string().optional(),
   projectId: zod.string().nullish(),
   inFollowup: zod.boolean().optional(),
+  assignedToUserId: zod
+    .string()
+    .nullish()
+    .describe(
+      "User id of the assignee, or null to unassign. Only the task creator can change this.",
+    ),
 });
 
 export const UpdateTaskResponse = zod.object({
@@ -558,6 +584,10 @@ export const UpdateTaskResponse = zod.object({
   projectName: zod.string().nullish(),
   projectReference: zod.string().nullish(),
   createdAt: zod.coerce.date(),
+  userId: zod.string().nullish(),
+  assignedToUserId: zod.string().nullish(),
+  assignedAt: zod.coerce.date().nullish(),
+  assignedByUserId: zod.string().nullish(),
 });
 
 /**
@@ -699,6 +729,10 @@ export const GetProjectResponse = zod.object({
       projectName: zod.string().nullish(),
       projectReference: zod.string().nullish(),
       createdAt: zod.coerce.date(),
+      userId: zod.string().nullish(),
+      assignedToUserId: zod.string().nullish(),
+      assignedAt: zod.coerce.date().nullish(),
+      assignedByUserId: zod.string().nullish(),
     }),
   ),
 });

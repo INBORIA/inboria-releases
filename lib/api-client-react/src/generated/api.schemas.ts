@@ -324,6 +324,14 @@ export interface Task {
   /** @nullable */
   projectReference?: string | null;
   createdAt: string;
+  /** @nullable */
+  userId?: string | null;
+  /** @nullable */
+  assignedToUserId?: string | null;
+  /** @nullable */
+  assignedAt?: string | null;
+  /** @nullable */
+  assignedByUserId?: string | null;
 }
 
 export interface UpdateTaskBody {
@@ -332,12 +340,19 @@ export interface UpdateTaskBody {
   /** @nullable */
   projectId?: string | null;
   inFollowup?: boolean;
+  /**
+   * User id of the assignee, or null to unassign. Only the task creator can change this.
+   * @nullable
+   */
+  assignedToUserId?: string | null;
 }
 
 export interface CreateTaskBody {
   title: string;
   emailId?: number;
   projectId?: string;
+  /** Optional user id to assign the task to (must be in the same organisation). */
+  assignedToUserId?: string;
 }
 
 export interface ProjectNote {
@@ -915,6 +930,18 @@ export type BulkUpdateEmails200 = {
 
 export type ListTasksParams = {
   status?: ListTasksStatus;
+  /**
+ * mine (default) = tasks I created or am assigned to;
+assigned_to_me = only tasks assigned to me;
+created_by_me = only tasks I created;
+team = all tasks of my organisation members.
+
+ */
+  scope?: ListTasksScope;
+  /**
+   * Restrict to tasks of a given project.
+   */
+  projectId?: string;
 };
 
 export type ListTasksStatus =
@@ -924,6 +951,16 @@ export const ListTasksStatus = {
   all: "all",
   pending: "pending",
   done: "done",
+} as const;
+
+export type ListTasksScope =
+  (typeof ListTasksScope)[keyof typeof ListTasksScope];
+
+export const ListTasksScope = {
+  mine: "mine",
+  assigned_to_me: "assigned_to_me",
+  created_by_me: "created_by_me",
+  team: "team",
 } as const;
 
 export type DeleteTask200 = {

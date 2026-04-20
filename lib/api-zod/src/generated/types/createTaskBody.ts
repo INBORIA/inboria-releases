@@ -10,4 +10,6 @@ export interface CreateTaskBody {
   title: string;
   emailId?: number;
   projectId?: string;
+  /** Optional user id to assign the task to (must be in the same organisation). */
+  assignedToUserId?: string;
 }

@@ -27,4 +27,12 @@ export interface Task {
   /** @nullable */
   projectReference?: string | null;
   createdAt: Date;
+  /** @nullable */
+  userId?: string | null;
+  /** @nullable */
+  assignedToUserId?: string | null;
+  /** @nullable */
+  assignedAt?: Date | null;
+  /** @nullable */
+  assignedByUserId?: string | null;
 }

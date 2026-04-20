@@ -101,6 +101,7 @@ export * from "./listEmailsStatus";
 export * from "./listFollowupsParams";
 export * from "./listFollowupsStatus";
 export * from "./listTasksParams";
+export * from "./listTasksScope";
 export * from "./listTasksStatus";
 export * from "./loginBody";
 export * from "./markAllNotificationsRead200";

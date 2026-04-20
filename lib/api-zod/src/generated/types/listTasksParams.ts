@@ -5,8 +5,21 @@
  * NCV Mail API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { ListTasksScope } from "./listTasksScope";
 import type { ListTasksStatus } from "./listTasksStatus";
 
 export type ListTasksParams = {
   status?: ListTasksStatus;
+  /**
+ * mine (default) = tasks I created or am assigned to;
+assigned_to_me = only tasks assigned to me;
+created_by_me = only tasks I created;
+team = all tasks of my organisation members.
+
+ */
+  scope?: ListTasksScope;
+  /**
+   * Restrict to tasks of a given project.
+   */
+  projectId?: string;
 };
