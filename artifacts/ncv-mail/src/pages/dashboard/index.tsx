@@ -1834,10 +1834,7 @@ export default function Dashboard() {
                         </FormItem>
                       )}
                     />
-                    <div className="flex items-center justify-between pt-2">
-                      <span className="text-[10px] text-[#8b9cb3]">
-                        {t("inbox.triageCost", "Coût : 1 crédit IA")}
-                      </span>
+                    <div className="flex items-center justify-end pt-2">
                       <Button
                         type="submit"
                         size="sm"
