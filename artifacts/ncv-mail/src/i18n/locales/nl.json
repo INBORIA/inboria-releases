@@ -925,7 +925,14 @@
     "creditsBreakdownAi": "{{count}} AI-acties",
     "creditsBreakdownMails_one": "{{count}} ontvangen mail",
     "creditsBreakdownAi_one": "{{count}} AI-actie",
-    "advancedOptions": "Geavanceerde opties"
+    "advancedOptions": "Geavanceerde opties",
+    "cancelSubscription": "Abonnement opzeggen",
+    "cancelConfirmTitle": "Abonnement opzeggen?",
+    "cancelConfirmDesc": "Je abonnement blijft actief tot het einde van de huidige factureringsperiode en wordt daarna niet verlengd. Je kunt je op elk moment opnieuw abonneren.",
+    "cancelConfirmButton": "Opzegging bevestigen",
+    "cancelSuccess": "Abonnement opgezegd",
+    "cancelSuccessDesc": "Je abonnement eindigt op de volgende factuurdatum.",
+    "cancelError": "Opzeggen van het abonnement mislukt. Probeer opnieuw of neem contact op met support."
   },
   "plans": {
     "trial": "Proef",

@@ -925,7 +925,14 @@
     "creditsBreakdownAi": "{{count}} KI-Aktionen",
     "creditsBreakdownMails_one": "{{count}} empfangene Mail",
     "creditsBreakdownAi_one": "{{count}} KI-Aktion",
-    "advancedOptions": "Erweiterte Optionen"
+    "advancedOptions": "Erweiterte Optionen",
+    "cancelSubscription": "Abonnement kündigen",
+    "cancelConfirmTitle": "Abonnement kündigen?",
+    "cancelConfirmDesc": "Ihr Abonnement bleibt bis zum Ende des aktuellen Abrechnungszeitraums aktiv und wird danach nicht mehr verlängert. Sie können jederzeit erneut abonnieren.",
+    "cancelConfirmButton": "Kündigung bestätigen",
+    "cancelSuccess": "Abonnement gekündigt",
+    "cancelSuccessDesc": "Ihr Abonnement endet zum nächsten Abrechnungstermin.",
+    "cancelError": "Kündigung nicht möglich. Bitte erneut versuchen oder den Support kontaktieren."
   },
   "plans": {
     "trial": "Testversion",

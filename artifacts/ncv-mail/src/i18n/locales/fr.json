@@ -925,7 +925,14 @@
     "creditsBreakdownAi": "{{count}} actions IA",
     "creditsBreakdownMails_one": "{{count}} mail reçu",
     "creditsBreakdownAi_one": "{{count}} action IA",
-    "advancedOptions": "Options avancées"
+    "advancedOptions": "Options avancées",
+    "cancelSubscription": "Annuler mon abonnement",
+    "cancelConfirmTitle": "Annuler votre abonnement ?",
+    "cancelConfirmDesc": "Votre abonnement restera actif jusqu'à la fin de la période en cours, puis sera annulé sans renouvellement. Vous pouvez vous réabonner à tout moment.",
+    "cancelConfirmButton": "Confirmer l'annulation",
+    "cancelSuccess": "Abonnement annulé",
+    "cancelSuccessDesc": "Votre abonnement prendra fin à la prochaine échéance.",
+    "cancelError": "Impossible d'annuler l'abonnement. Réessayez ou contactez le support."
   },
   "plans": {
     "trial": "Essai",

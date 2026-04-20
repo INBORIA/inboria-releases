@@ -925,7 +925,14 @@
     "creditsBreakdownAi": "{{count}} acciones de IA",
     "creditsBreakdownMails_one": "{{count}} correo recibido",
     "creditsBreakdownAi_one": "{{count}} acción de IA",
-    "advancedOptions": "Opciones avanzadas"
+    "advancedOptions": "Opciones avanzadas",
+    "cancelSubscription": "Cancelar mi suscripción",
+    "cancelConfirmTitle": "¿Cancelar tu suscripción?",
+    "cancelConfirmDesc": "Tu suscripción seguirá activa hasta el final del período de facturación actual y luego no se renovará. Puedes volver a suscribirte cuando quieras.",
+    "cancelConfirmButton": "Confirmar cancelación",
+    "cancelSuccess": "Suscripción cancelada",
+    "cancelSuccessDesc": "Tu suscripción finalizará en la próxima fecha de facturación.",
+    "cancelError": "No se pudo cancelar la suscripción. Vuelve a intentarlo o contacta con soporte."
   },
   "plans": {
     "trial": "Prueba",

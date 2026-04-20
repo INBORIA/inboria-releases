@@ -360,6 +360,32 @@ router.post("/paddle/webhook", async (req: RawBodyRequest, res): Promise<void> =
   }
 });
 
+router.post("/paddle/cancel", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("stripe_subscription_id")
+      .eq("id", req.userId!)
+      .single();
+
+    if (!profile?.stripe_subscription_id) {
+      res.status(400).json({ error: "Aucun abonnement actif" });
+      return;
+    }
+
+    const paddle = getPaddleClient();
+    await paddle.subscriptions.cancel(profile.stripe_subscription_id, {
+      effectiveFrom: "next_billing_period" as any,
+    });
+
+    res.json({ ok: true });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("Paddle cancel error:", message);
+    res.status(500).json({ error: "Erreur lors de l'annulation" });
+  }
+});
+
 router.get("/paddle/portal", requireAuth, async (req, res): Promise<void> => {
   try {
     const { data: profile } = await supabaseAdmin

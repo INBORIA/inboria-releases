@@ -925,7 +925,14 @@
     "creditsBreakdownAi": "{{count}} AI actions",
     "creditsBreakdownMails_one": "{{count}} mail received",
     "creditsBreakdownAi_one": "{{count}} AI action",
-    "advancedOptions": "Advanced options"
+    "advancedOptions": "Advanced options",
+    "cancelSubscription": "Cancel my subscription",
+    "cancelConfirmTitle": "Cancel your subscription?",
+    "cancelConfirmDesc": "Your subscription will stay active until the end of the current billing period, then end without renewal. You can resubscribe at any time.",
+    "cancelConfirmButton": "Confirm cancellation",
+    "cancelSuccess": "Subscription cancelled",
+    "cancelSuccessDesc": "Your subscription will end at the next billing date.",
+    "cancelError": "Unable to cancel the subscription. Try again or contact support."
   },
   "plans": {
     "trial": "Trial",

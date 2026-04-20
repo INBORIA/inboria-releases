@@ -1,7 +1,18 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useGetProfile, useCreateCheckoutSession, getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { Check, Shield, Info, CreditCard, ExternalLink, Loader2, AlertTriangle, ChevronDown } from "lucide-react";
+import { Check, Shield, Info, CreditCard, Loader2, AlertTriangle, XCircle } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -20,9 +31,6 @@ export default function Abonnement() {
   const { t, i18n } = useTranslation();
   const { data: profile, isLoading } = useGetProfile();
   const checkout = useCreateCheckoutSession();
-  const [portalLoading, setPortalLoading] = useState(false);
-  const [recountLoading, setRecountLoading] = useState(false);
-  const [restoreLoading, setRestoreLoading] = useState(false);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const searchString = useSearch();
@@ -31,7 +39,7 @@ export default function Abonnement() {
   const [businessSeats, setBusinessSeats] = useState(3);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [paddleReady, setPaddleReady] = useState(false);
-  const [advancedOpen, setAdvancedOpen] = useState(false);
+  const [cancelLoading, setCancelLoading] = useState(false);
 
   useEffect(() => {
     if (window.Paddle) {
@@ -142,70 +150,34 @@ export default function Abonnement() {
     );
   };
 
-  const handleRecount = async () => {
-    setRecountLoading(true);
+  const handleCancel = async () => {
+    setCancelLoading(true);
     try {
       const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
       const session = await (await import("@/lib/supabase")).supabase.auth.getSession();
       const accessToken = session.data.session?.access_token;
-      const res = await fetch(`${baseUrl}/api/profile/recount-quota`, {
+      const res = await fetch(`${baseUrl}/api/paddle/cancel`, {
         method: "POST",
         headers: { Authorization: `Bearer ${accessToken}` },
       });
       const data = await res.json();
       if (data.ok) {
         await queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
-        toast({ title: t("subscription.recountSuccess"), description: t("subscription.recountSuccessDesc", { count: data.emails_used }) });
-      } else throw new Error(data.error || "Erreur");
-    } catch {
-      toast({ title: t("common.error"), variant: "destructive" });
-    } finally {
-      setRecountLoading(false);
-    }
-  };
-
-  const handleRestoreSpam = async () => {
-    setRestoreLoading(true);
-    try {
-      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
-      const session = await (await import("@/lib/supabase")).supabase.auth.getSession();
-      const accessToken = session.data.session?.access_token;
-      const res = await fetch(`${baseUrl}/api/profile/restore-spam`, {
-        method: "POST",
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      const data = await res.json();
-      if (data.ok) {
-        toast({ title: t("subscription.restoreSpamSuccess"), description: t("subscription.restoreSpamSuccessDesc", { count: data.restored }) });
-      } else throw new Error(data.error || "Erreur");
-    } catch {
-      toast({ title: t("common.error"), variant: "destructive" });
-    } finally {
-      setRestoreLoading(false);
-    }
-  };
-
-  const handlePortal = async () => {
-    setPortalLoading(true);
-    try {
-      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
-      const token = (await import("@/lib/supabase")).supabase.auth.getSession();
-      const session = await token;
-      const accessToken = session.data.session?.access_token;
-
-      const res = await fetch(`${baseUrl}/api/paddle/portal`, {
-        headers: { Authorization: `Bearer ${accessToken}` },
-      });
-      const data = await res.json();
-      if (data.url) {
-        window.open(data.url, "_blank");
+        toast({
+          title: t("subscription.cancelSuccess"),
+          description: t("subscription.cancelSuccessDesc"),
+        });
       } else {
         throw new Error(data.error || "Erreur");
       }
     } catch {
-      window.location.href = "mailto:support@inboria.com?subject=Gestion%20de%20mon%20abonnement";
+      toast({
+        title: t("common.error"),
+        description: t("subscription.cancelError"),
+        variant: "destructive",
+      });
     } finally {
-      setPortalLoading(false);
+      setCancelLoading(false);
     }
   };
 
@@ -289,55 +261,45 @@ export default function Abonnement() {
                 })()}
               </div>
               {hasPaidPlan && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="shrink-0"
-                  onClick={handlePortal}
-                  disabled={portalLoading}
-                >
-                  {portalLoading ? (
-                    <Loader2 className="w-4 h-4 animate-spin mr-1" />
-                  ) : (
-                    <ExternalLink className="w-3.5 h-3.5 mr-1" />
-                  )}
-                  {t("subscription.manageSubscription")}
-                </Button>
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="shrink-0 text-red-400 border-red-500/30 hover:bg-red-500/10 hover:text-red-300"
+                      disabled={cancelLoading}
+                      data-testid="button-cancel-subscription"
+                    >
+                      {cancelLoading ? (
+                        <Loader2 className="w-4 h-4 animate-spin mr-1" />
+                      ) : (
+                        <XCircle className="w-3.5 h-3.5 mr-1" />
+                      )}
+                      {t("subscription.cancelSubscription")}
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>{t("subscription.cancelConfirmTitle")}</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        {t("subscription.cancelConfirmDesc")}
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+                      <AlertDialogAction
+                        onClick={handleCancel}
+                        className="bg-red-500 hover:bg-red-600 text-white"
+                      >
+                        {t("subscription.cancelConfirmButton")}
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
               )}
             </div>
           </div>
         ) : null}
-
-        {profile && (
-          <div className="mb-8">
-            <button
-              type="button"
-              onClick={() => setAdvancedOpen((v) => !v)}
-              className="text-[11px] text-[#6b7d96] hover:text-[#8b9cb3] flex items-center gap-1 transition-colors"
-              data-testid="button-advanced-options"
-            >
-              <ChevronDown className={`w-3 h-3 transition-transform ${advancedOpen ? "" : "-rotate-90"}`} />
-              {t("subscription.advancedOptions")}
-            </button>
-            {advancedOpen && (
-              <div className="mt-3 bg-card rounded-lg border border-border p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                <div className="text-[12px] text-[#8b9cb3] flex-1">
-                  {t("subscription.maintenanceHint")}
-                </div>
-                <div className="flex gap-2 shrink-0">
-                  <Button variant="outline" size="sm" onClick={handleRecount} disabled={recountLoading}>
-                    {recountLoading && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />}
-                    {t("subscription.recountQuota")}
-                  </Button>
-                  <Button variant="outline" size="sm" onClick={handleRestoreSpam} disabled={restoreLoading}>
-                    {restoreLoading && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />}
-                    {t("subscription.restoreSpam")}
-                  </Button>
-                </div>
-              </div>
-            )}
-          </div>
-        )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3">
           {plans.map((plan) => {
