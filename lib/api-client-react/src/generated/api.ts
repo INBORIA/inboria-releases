@@ -122,8 +122,6 @@ import type {
   SharedMailboxMember,
   Task,
   TeamDashboard,
-  TriageEmailBody,
-  TriageResult,
   UnassignEmail200,
   UnclaimSharedEmail200,
   UnreadCount,
@@ -8612,92 +8610,6 @@ export function useGetAssignedToMe<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
-
-/**
- * @summary AI triage a single email
- */
-export const getTriageEmailUrl = () => {
-  return `/api/ai/triage`;
-};
-
-export const triageEmail = async (
-  triageEmailBody: TriageEmailBody,
-  options?: RequestInit,
-): Promise<TriageResult> => {
-  return customFetch<TriageResult>(getTriageEmailUrl(), {
-    ...options,
-    method: "POST",
-    headers: { "Content-Type": "application/json", ...options?.headers },
-    body: JSON.stringify(triageEmailBody),
-  });
-};
-
-export const getTriageEmailMutationOptions = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof triageEmail>>,
-    TError,
-    { data: BodyType<TriageEmailBody> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationOptions<
-  Awaited<ReturnType<typeof triageEmail>>,
-  TError,
-  { data: BodyType<TriageEmailBody> },
-  TContext
-> => {
-  const mutationKey = ["triageEmail"];
-  const { mutation: mutationOptions, request: requestOptions } = options
-    ? options.mutation &&
-      "mutationKey" in options.mutation &&
-      options.mutation.mutationKey
-      ? options
-      : { ...options, mutation: { ...options.mutation, mutationKey } }
-    : { mutation: { mutationKey }, request: undefined };
-
-  const mutationFn: MutationFunction<
-    Awaited<ReturnType<typeof triageEmail>>,
-    { data: BodyType<TriageEmailBody> }
-  > = (props) => {
-    const { data } = props ?? {};
-
-    return triageEmail(data, requestOptions);
-  };
-
-  return { mutationFn, ...mutationOptions };
-};
-
-export type TriageEmailMutationResult = NonNullable<
-  Awaited<ReturnType<typeof triageEmail>>
->;
-export type TriageEmailMutationBody = BodyType<TriageEmailBody>;
-export type TriageEmailMutationError = ErrorType<unknown>;
-
-/**
- * @summary AI triage a single email
- */
-export const useTriageEmail = <
-  TError = ErrorType<unknown>,
-  TContext = unknown,
->(options?: {
-  mutation?: UseMutationOptions<
-    Awaited<ReturnType<typeof triageEmail>>,
-    TError,
-    { data: BodyType<TriageEmailBody> },
-    TContext
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseMutationResult<
-  Awaited<ReturnType<typeof triageEmail>>,
-  TError,
-  { data: BodyType<TriageEmailBody> },
-  TContext
-> => {
-  return useMutation(getTriageEmailMutationOptions(options));
-};
 
 /**
  * @summary AI detect appointments from emails

@@ -147,8 +147,6 @@ export * from "./taskSource";
 export * from "./taskStatus";
 export * from "./teamDashboard";
 export * from "./teamMemberStats";
-export * from "./triageEmailBody";
-export * from "./triageResult";
 export * from "./unassignEmail200";
 export * from "./unclaimSharedEmail200";
 export * from "./unreadCount";

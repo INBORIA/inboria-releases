@@ -413,21 +413,6 @@ export interface DraftResponse {
   draft: string;
 }
 
-export interface TriageEmailBody {
-  sender: string;
-  subject: string;
-  body: string;
-  /** User language code (fr, en, nl) */
-  lang?: string;
-}
-
-export interface TriageResult {
-  category: string;
-  priority: string;
-  summary: string;
-  tasks: string[];
-}
-
 export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus];
 
 export const ProjectStatus = {

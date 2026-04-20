@@ -2,7 +2,6 @@ import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 
 export const AI_COST = {
-  triage: 1,
   draft: 2,
   daily_summary: 3,
   conversation_summary: 2,

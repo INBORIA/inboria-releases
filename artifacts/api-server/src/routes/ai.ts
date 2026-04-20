@@ -1,6 +1,6 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
-import { GenerateDailySummaryBody, TriageEmailBody, GenerateDraftBody } from "@workspace/api-zod";
+import { GenerateDailySummaryBody, GenerateDraftBody } from "@workspace/api-zod";
 import OpenAI from "openai";
 import { requireAuth } from "../middlewares/auth";
 import { logger } from "../lib/logger";
@@ -231,98 +231,6 @@ const LANG_PROMPTS: Record<string, { system: string; uncategorized: string; noCa
     projectNote: "Als de e-mail betrekking lijkt te hebben op een van deze projecten, geef dan de exacte naam op in \"project\". Anders, vul \"Geen\" in.",
   },
 };
-
-router.post("/ai/triage", requireAuth, async (req, res): Promise<void> => {
-  try {
-    const entitlement = await checkEntitlement(req.userId!, AI_COST.triage);
-    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
-
-    const parsed = TriageEmailBody.safeParse(req.body);
-    if (!parsed.success) {
-      res.status(400).json({ error: parsed.error.message });
-      return;
-    }
-
-    const userLang = (req.body.lang || "fr").substring(0, 2).toLowerCase();
-    const lp = LANG_PROMPTS[userLang] || LANG_PROMPTS.fr;
-
-    const { data: categories } = await supabaseAdmin
-      .from("categories")
-      .select("name")
-      .eq("user_id", req.userId!);
-
-    const categoryNames = (categories || []).map((c: any) => c.name);
-
-    const { data: userProjects } = await supabaseAdmin
-      .from("projects")
-      .select("name, reference")
-      .eq("user_id", req.userId!)
-      .eq("status", "actif");
-    const projectList = (userProjects || []).map((p: any) => `${p.reference} (${p.name})`);
-
-    let projectContext = "";
-    if (projectList.length > 0) {
-      projectContext = `\n\n${lp.projectIntro}: ${projectList.join(", ")}\n${lp.projectNote}`;
-    }
-
-    const completion = await openai.chat.completions.create({
-      model: "gpt-4o-mini",
-      max_completion_tokens: 1024,
-      messages: [
-        {
-          role: "system",
-          content: lp.system,
-        },
-        {
-          role: "user",
-          content: `Email:
-From: ${parsed.data.sender}
-Subject: ${parsed.data.subject}
-Body: ${parsed.data.body}
-
-Available categories: ${categoryNames.join(", ") || lp.noCategory}${projectContext}
-
-Respond in JSON:
-{
-  "category": "exact category name or '${lp.uncategorized}'",
-  "priority": "urgent" | "moyen" | "faible",
-  "summary": "1-sentence summary in ${userLang}",
-  "tasks": ["task 1", "task 2"],
-  "project": "project name or ${lp.noProject}"
-}
-
-IMPORTANT for tasks: Each task must be explicit and self-contained. Always include WHO (sender/service) and WHAT. Do NOT generate tasks for purely informational emails (newsletters, automatic notifications, read confirmations). Generate tasks only when a concrete ACTION is required. Write tasks in ${userLang}.`,
-        },
-      ],
-    });
-
-    let triageResult: { category: string; priority: string; summary: string; tasks: string[]; project: string };
-    try {
-      const content = completion.choices[0]?.message?.content ?? "{}";
-      const jsonMatch = content.match(/\{[\s\S]*\}/);
-      triageResult = JSON.parse(jsonMatch ? jsonMatch[0] : "{}");
-    } catch {
-      triageResult = {
-        category: lp.uncategorized,
-        priority: "moyen",
-        summary: lp.analyzing,
-        tasks: [],
-        project: lp.noProject,
-      };
-    }
-
-    await consumeAiCredits(req.userId!, "triage").catch(() => {});
-    res.json({
-      category: triageResult.category || lp.uncategorized,
-      priority: triageResult.priority || "moyen",
-      summary: triageResult.summary || lp.analyzing,
-      tasks: triageResult.tasks || [],
-      project: triageResult.project || lp.noProject,
-    });
-  } catch {
-    res.status(500).json({ error: "Failed to triage email" });
-  }
-});
 
 router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
   try {

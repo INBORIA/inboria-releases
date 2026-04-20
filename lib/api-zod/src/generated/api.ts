@@ -1788,23 +1788,6 @@ export const GetAssignedToMeResponseItem = zod.object({
 export const GetAssignedToMeResponse = zod.array(GetAssignedToMeResponseItem);
 
 /**
- * @summary AI triage a single email
- */
-export const TriageEmailBody = zod.object({
-  sender: zod.string(),
-  subject: zod.string(),
-  body: zod.string(),
-  lang: zod.string().optional().describe("User language code (fr, en, nl)"),
-});
-
-export const TriageEmailResponse = zod.object({
-  category: zod.string(),
-  priority: zod.string(),
-  summary: zod.string(),
-  tasks: zod.array(zod.string()),
-});
-
-/**
  * @summary AI detect appointments from emails
  */
 export const detectAppointmentsBodyLangDefault = `fr`;

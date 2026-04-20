@@ -12,7 +12,6 @@ import {
   useGenerateDraft,
   getListEmailsQueryKey,
   useGetDashboardSummary,
-  useTriageEmail,
   getGetDashboardSummaryQueryKey,
   getGetCategoryCountsQueryKey,
   getGetInboxHealthQueryKey,
@@ -50,10 +49,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
 const PRIORITY_BAR_COLORS: Record<string, string> = {
   urgent: "bg-red-500",
@@ -170,12 +165,6 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
     </div>
   );
 }
-
-const triageSchema = z.object({
-  sender: z.string().min(1, "Expéditeur requis"),
-  subject: z.string().min(1, "Sujet requis"),
-  body: z.string().min(1, "Contenu requis"),
-});
 
 function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }> }) {
   const { t, i18n } = useTranslation();
@@ -840,7 +829,6 @@ export default function Dashboard() {
       window.localStorage.setItem("inbox.sortMode", sortMode);
     }
   }, [sortMode]);
-  const [isSimulateOpen, setIsSimulateOpen] = useState(false);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
   const [isSyncing, setIsSyncing] = useState(false);
   const [searchInput, setSearchInput] = useState("");
@@ -953,7 +941,6 @@ export default function Dashboard() {
 
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
-  const triageEmail = useTriageEmail();
   const sendEmailMut = useSendEmail();
   const generateDraftMut = useGenerateDraft();
   const recategorizeMut = useRecategorizeUncategorized();
@@ -1577,34 +1564,6 @@ export default function Dashboard() {
     } finally {
       setIsSyncing(false);
     }
-  };
-
-  const form = useForm<z.infer<typeof triageSchema>>({
-    resolver: zodResolver(triageSchema as any),
-    defaultValues: { sender: "", subject: "", body: "" },
-  });
-
-  const onSubmitTriage = (data: z.infer<typeof triageSchema>) => {
-    triageEmail.mutate(
-      { data: { ...data, lang } },
-      {
-        onSuccess: (result) => {
-          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
-          queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
-          setIsSimulateOpen(false);
-          form.reset();
-          toast({ 
-            title: t("inbox.triageSuccess"), 
-            description: `${result.priority} — ${result.category}` 
-          });
-        },
-        onError: () => {
-          toast({ variant: "destructive", title: t("common.error") });
-        }
-      }
-    );
   };
 
   const handleClaimEmail = (emailId: number) => {

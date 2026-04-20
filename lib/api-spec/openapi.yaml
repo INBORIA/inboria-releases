@@ -2176,25 +2176,6 @@ paths:
                 items:
                   $ref: "#/components/schemas/Email"
 
-  /ai/triage:
-    post:
-      operationId: triageEmail
-      tags: [ai]
-      summary: AI triage a single email
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: "#/components/schemas/TriageEmailBody"
-      responses:
-        "200":
-          description: Triage result
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/TriageResult"
-
   /ai/detect-appointments:
     post:
       operationId: detectAppointments
@@ -3046,42 +3027,6 @@ components:
           type: string
       required:
         - draft
-
-    TriageEmailBody:
-      type: object
-      properties:
-        sender:
-          type: string
-        subject:
-          type: string
-        body:
-          type: string
-        lang:
-          type: string
-          description: User language code (fr, en, nl)
-      required:
-        - sender
-        - subject
-        - body
-
-    TriageResult:
-      type: object
-      properties:
-        category:
-          type: string
-        priority:
-          type: string
-        summary:
-          type: string
-        tasks:
-          type: array
-          items:
-            type: string
-      required:
-        - category
-        - priority
-        - summary
-        - tasks
 
     Project:
       type: object

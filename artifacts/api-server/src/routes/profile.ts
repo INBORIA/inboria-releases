@@ -189,8 +189,8 @@ router.post("/profile/recount-quota", requireAuth, async (req, res): Promise<voi
 
     // auto_triage events are emails ingested automatically — they're already
     // counted in `emails_used` via the emails table, so exclude them here
-    // to avoid double-counting. Manual /api/ai/triage uses event_type="triage"
-    // and IS legitimately counted in ai_credits_used.
+    // to avoid double-counting. All other AI event types are legitimately
+    // counted in ai_credits_used.
     const aiCreditsUsed = (events || [])
       .filter((e: any) => e.event_type !== "auto_triage")
       .reduce((sum: number, e: any) => sum + (e.credits || 0), 0);
