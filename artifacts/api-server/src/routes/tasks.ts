@@ -64,25 +64,48 @@ async function isSameOrganisation(actorId: string, targetUserId: string): Promis
   return !!data;
 }
 
+let assignmentColumnAvailable: boolean | null = null;
+
+function isMissingAssignmentColumnError(err: any): boolean {
+  if (!err) return false;
+  const msg = (err.message || "").toLowerCase();
+  return err.code === "42703" && msg.includes("assigned_to_user_id");
+}
+
 router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
   try {
     const userId = req.userId!;
-    const scope = (req.query.scope as string | undefined) || "mine";
+    const requestedScope = (req.query.scope as string | undefined) || "mine";
     const projectId = req.query.projectId as string | undefined;
     const status = req.query.status as string | undefined;
 
-    let query = supabaseAdmin
-      .from("tasks")
-      .select(
-        "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)"
-      )
-      .order("created_at", { ascending: false });
+    const buildQuery = (useAssignmentCol: boolean) => {
+      let q = supabaseAdmin
+        .from("tasks")
+        .select(
+          "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)"
+        )
+        .order("created_at", { ascending: false });
 
-    if (scope === "assigned_to_me") {
-      query = query.eq("assigned_to_user_id", userId);
-    } else if (scope === "created_by_me") {
-      query = query.eq("user_id", userId);
-    } else if (scope === "team") {
+      if (requestedScope === "assigned_to_me") {
+        if (useAssignmentCol) q = q.eq("assigned_to_user_id", userId);
+        else q = q.eq("user_id", "00000000-0000-0000-0000-000000000000");
+      } else if (requestedScope === "created_by_me") {
+        q = q.eq("user_id", userId);
+      } else if (requestedScope !== "team") {
+        if (useAssignmentCol) q = q.or(`user_id.eq.${userId},assigned_to_user_id.eq.${userId}`);
+        else q = q.eq("user_id", userId);
+      }
+
+      if (projectId) q = q.eq("project_id", projectId);
+      if (status && status !== "all") {
+        if (status === "done") q = q.eq("done", true);
+        else if (status === "pending" || status === "todo") q = q.eq("done", false);
+      }
+      return q;
+    };
+
+    if (requestedScope === "team") {
       const orgId = await getActorOrganisationId(userId);
       if (!orgId) {
         res.json([]);
@@ -98,27 +121,39 @@ router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
         res.json([]);
         return;
       }
-      query = query.in("user_id", memberIds);
-    } else {
-      query = query.or(`user_id.eq.${userId},assigned_to_user_id.eq.${userId}`);
-    }
-
-    if (projectId) {
-      query = query.eq("project_id", projectId);
-    }
-
-    if (status && status !== "all") {
-      if (status === "done") {
-        query = query.eq("done", true);
-      } else if (status === "pending" || status === "todo") {
-        query = query.eq("done", false);
+      let teamQ = supabaseAdmin
+        .from("tasks")
+        .select(
+          "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)"
+        )
+        .order("created_at", { ascending: false })
+        .in("user_id", memberIds);
+      if (projectId) teamQ = teamQ.eq("project_id", projectId);
+      if (status === "done") teamQ = teamQ.eq("done", true);
+      else if (status === "pending" || status === "todo") teamQ = teamQ.eq("done", false);
+      const { data, error } = await teamQ;
+      if (error) {
+        console.error("[tasks][GET /tasks team] supabase error:", error);
+        res.status(500).json({ error: error.message });
+        return;
       }
+      res.json((data || []).map(mapTask));
+      return;
     }
 
-    const { data: tasks, error } = await query;
+    const useCol = assignmentColumnAvailable !== false;
+    let { data: tasks, error } = await buildQuery(useCol);
+
+    if (error && isMissingAssignmentColumnError(error)) {
+      assignmentColumnAvailable = false;
+      console.warn("[tasks] assigned_to_user_id column missing — falling back to user_id only. Run sql_task_assignment.sql in Supabase.");
+      ({ data: tasks, error } = await buildQuery(false));
+    } else if (!error && assignmentColumnAvailable === null) {
+      assignmentColumnAvailable = true;
+    }
 
     if (error) {
-      console.error("[tasks][GET /tasks] supabase error:", { scope, projectId, status, error });
+      console.error("[tasks][GET /tasks] supabase error:", { requestedScope, projectId, status, error });
       res.status(500).json({ error: error.message });
       return;
     }
