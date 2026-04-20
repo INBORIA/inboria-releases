@@ -1,7 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useGetProfile, useCreateCheckoutSession, getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { Check, Shield, Info, CreditCard, ExternalLink, Loader2, AlertTriangle } from "lucide-react";
+import { Check, Shield, Info, CreditCard, ExternalLink, Loader2, AlertTriangle, ChevronDown } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
@@ -31,6 +31,7 @@ export default function Abonnement() {
   const [businessSeats, setBusinessSeats] = useState(3);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
   const [paddleReady, setPaddleReady] = useState(false);
+  const [advancedOpen, setAdvancedOpen] = useState(false);
 
   useEffect(() => {
     if (window.Paddle) {
@@ -202,11 +203,7 @@ export default function Abonnement() {
         throw new Error(data.error || "Erreur");
       }
     } catch {
-      toast({
-        title: t("common.error"),
-        description: t("subscription.portalError"),
-        variant: "destructive",
-      });
+      window.location.href = "mailto:support@inboria.com?subject=Gestion%20de%20mon%20abonnement";
     } finally {
       setPortalLoading(false);
     }
@@ -312,20 +309,33 @@ export default function Abonnement() {
         ) : null}
 
         {profile && (
-          <div className="bg-card rounded-lg border border-border p-4 mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-            <div className="text-[12px] text-[#8b9cb3] flex-1">
-              {t("subscription.maintenanceHint")}
-            </div>
-            <div className="flex gap-2 shrink-0">
-              <Button variant="outline" size="sm" onClick={handleRecount} disabled={recountLoading}>
-                {recountLoading && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />}
-                {t("subscription.recountQuota")}
-              </Button>
-              <Button variant="outline" size="sm" onClick={handleRestoreSpam} disabled={restoreLoading}>
-                {restoreLoading && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />}
-                {t("subscription.restoreSpam")}
-              </Button>
-            </div>
+          <div className="mb-8">
+            <button
+              type="button"
+              onClick={() => setAdvancedOpen((v) => !v)}
+              className="text-[11px] text-[#6b7d96] hover:text-[#8b9cb3] flex items-center gap-1 transition-colors"
+              data-testid="button-advanced-options"
+            >
+              <ChevronDown className={`w-3 h-3 transition-transform ${advancedOpen ? "" : "-rotate-90"}`} />
+              {t("subscription.advancedOptions")}
+            </button>
+            {advancedOpen && (
+              <div className="mt-3 bg-card rounded-lg border border-border p-4 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+                <div className="text-[12px] text-[#8b9cb3] flex-1">
+                  {t("subscription.maintenanceHint")}
+                </div>
+                <div className="flex gap-2 shrink-0">
+                  <Button variant="outline" size="sm" onClick={handleRecount} disabled={recountLoading}>
+                    {recountLoading && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />}
+                    {t("subscription.recountQuota")}
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={handleRestoreSpam} disabled={restoreLoading}>
+                    {restoreLoading && <Loader2 className="w-3.5 h-3.5 animate-spin mr-1" />}
+                    {t("subscription.restoreSpam")}
+                  </Button>
+                </div>
+              </div>
+            )}
           </div>
         )}
 

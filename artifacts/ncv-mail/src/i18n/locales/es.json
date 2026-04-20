@@ -885,7 +885,7 @@
     "currentPlan": "Plan actual",
     "expired": "Expirado",
     "renewalDate": "Renovación el",
-    "aiConsumption": "Correos analizados por IA este mes",
+    "aiConsumption": "Créditos utilizados este mes",
     "manageSubscription": "Gestionar suscripción",
     "changePlan": "Cambiar de plan",
     "currentPlanBadge": "Plan actual",
@@ -914,7 +914,7 @@
     "trialEndedFull": "Tu prueba gratuita ha terminado",
     "resubscribe": "Vuelve a suscribirte a un plan de pago para continuar usando Inboria.",
     "trialUsedFull": "Has utilizado tus 100 créditos IA gratuitos. Elige un plan a continuación para continuar.",
-    "maintenanceHint": "¿Contador inconsistente o correos legítimos marcados como spam? Usa estas acciones de mantenimiento.",
+    "maintenanceHint": "Opciones avanzadas: recalcular el uso de créditos o restaurar correos marcados como spam por error.",
     "recountQuota": "Recalcular créditos",
     "recountSuccess": "Créditos recontados",
     "recountSuccessDesc": "Contador ajustado a {{count}} correos únicos.",
@@ -924,7 +924,8 @@
     "creditsBreakdownMails": "{{count}} correos recibidos",
     "creditsBreakdownAi": "{{count}} acciones de IA",
     "creditsBreakdownMails_one": "{{count}} correo recibido",
-    "creditsBreakdownAi_one": "{{count}} acción de IA"
+    "creditsBreakdownAi_one": "{{count}} acción de IA",
+    "advancedOptions": "Opciones avanzadas"
   },
   "plans": {
     "trial": "Prueba",

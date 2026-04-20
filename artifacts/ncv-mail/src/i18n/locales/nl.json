@@ -885,7 +885,7 @@
     "currentPlan": "Huidig plan",
     "expired": "Verlopen",
     "renewalDate": "Verlenging op",
-    "aiConsumption": "Door AI geanalyseerde e-mails deze maand",
+    "aiConsumption": "Verbruikte credits deze maand",
     "manageSubscription": "Abonnement beheren",
     "changePlan": "Plan wijzigen",
     "currentPlanBadge": "Huidig plan",
@@ -914,7 +914,7 @@
     "trialEndedFull": "Uw gratis proefperiode is beëindigd",
     "resubscribe": "Vernieuw naar een betaald plan om Inboria te blijven gebruiken.",
     "trialUsedFull": "U heeft uw 100 gratis AI-credits gebruikt. Kies hieronder een plan om door te gaan.",
-    "maintenanceHint": "Inconsistente teller of legitieme e-mails als spam gemarkeerd? Gebruik deze onderhoudsacties.",
+    "maintenanceHint": "Geavanceerde opties: het credit-gebruik opnieuw berekenen of e-mails herstellen die ten onrechte als spam zijn gemarkeerd.",
     "recountQuota": "Credits opnieuw tellen",
     "recountSuccess": "Credits opnieuw geteld",
     "recountSuccessDesc": "Teller aangepast naar {{count}} unieke e-mails.",
@@ -924,7 +924,8 @@
     "creditsBreakdownMails": "{{count}} ontvangen mails",
     "creditsBreakdownAi": "{{count}} AI-acties",
     "creditsBreakdownMails_one": "{{count}} ontvangen mail",
-    "creditsBreakdownAi_one": "{{count}} AI-actie"
+    "creditsBreakdownAi_one": "{{count}} AI-actie",
+    "advancedOptions": "Geavanceerde opties"
   },
   "plans": {
     "trial": "Proef",

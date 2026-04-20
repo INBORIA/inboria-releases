@@ -364,7 +364,7 @@ router.get("/paddle/portal", requireAuth, async (req, res): Promise<void> => {
   try {
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("stripe_customer_id")
+      .select("stripe_customer_id, stripe_subscription_id")
       .eq("id", req.userId!)
       .single();
 
@@ -374,13 +374,26 @@ router.get("/paddle/portal", requireAuth, async (req, res): Promise<void> => {
     }
 
     const paddle = getPaddleClient();
+    const subIds = profile.stripe_subscription_id ? [profile.stripe_subscription_id] : [];
 
     const portalSession = await paddle.customerPortalSessions.create(
       profile.stripe_customer_id,
-      []
+      subIds,
     );
 
-    res.json({ url: (portalSession as any).urls?.general?.overview || "" });
+    const urls = (portalSession as any).urls;
+    const url =
+      urls?.general?.overview ||
+      urls?.subscriptions?.[0]?.cancelSubscription ||
+      urls?.subscriptions?.[0]?.updateSubscriptionPaymentMethod ||
+      "";
+
+    if (!url) {
+      res.status(500).json({ error: "Portail Paddle indisponible pour ce compte" });
+      return;
+    }
+
+    res.json({ url });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("Paddle portal error:", message);

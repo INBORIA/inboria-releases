@@ -885,7 +885,7 @@
     "currentPlan": "Aktueller Plan",
     "expired": "Abgelaufen",
     "renewalDate": "Erneuerung am",
-    "aiConsumption": "Von KI analysierte E-Mails diesen Monat",
+    "aiConsumption": "Diesen Monat verbrauchte Credits",
     "manageSubscription": "Abonnement verwalten",
     "changePlan": "Plan ändern",
     "currentPlanBadge": "Aktueller Plan",
@@ -914,7 +914,7 @@
     "trialEndedFull": "Ihre kostenlose Testphase ist beendet",
     "resubscribe": "Abonnieren Sie einen kostenpflichtigen Plan, um Inboria weiterhin zu nutzen.",
     "trialUsedFull": "Sie haben Ihre 100 kostenlosen KI-Credits verwendet. Wählen Sie einen Plan unten, um fortzufahren.",
-    "maintenanceHint": "Zähler inkonsistent oder legitime E-Mails als Spam markiert? Nutzen Sie diese Wartungsaktionen.",
+    "maintenanceHint": "Erweiterte Optionen: Credit-Verbrauch neu berechnen oder fälschlicherweise als Spam markierte E-Mails wiederherstellen.",
     "recountQuota": "Credits neu berechnen",
     "recountSuccess": "Credits neu gezählt",
     "recountSuccessDesc": "Zähler auf {{count}} einzigartige E-Mails angepasst.",
@@ -924,7 +924,8 @@
     "creditsBreakdownMails": "{{count}} empfangene Mails",
     "creditsBreakdownAi": "{{count}} KI-Aktionen",
     "creditsBreakdownMails_one": "{{count}} empfangene Mail",
-    "creditsBreakdownAi_one": "{{count}} KI-Aktion"
+    "creditsBreakdownAi_one": "{{count}} KI-Aktion",
+    "advancedOptions": "Erweiterte Optionen"
   },
   "plans": {
     "trial": "Testversion",
