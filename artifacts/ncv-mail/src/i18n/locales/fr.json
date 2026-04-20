@@ -53,7 +53,11 @@
     "teamActivity": "Activité équipe",
     "emailQuota": "Crédits IA",
     "user": "Utilisateur",
-    "aiCredits": "Crédits IA"
+    "aiCredits": "Crédits IA",
+    "creditsBreakdownMails": "{{count}} mails",
+    "creditsBreakdownAi": "{{count}} IA",
+    "creditsBreakdownMails_one": "{{count}} mail",
+    "creditsBreakdownAi_one": "{{count}} IA"
   },
   "dashboard": {
     "expiredSubscription": "Votre abonnement a expiré",
@@ -916,7 +920,11 @@
     "recountSuccessDesc": "Compteur ajusté à {{count}} mails uniques.",
     "restoreSpam": "Restaurer les spams",
     "restoreSpamSuccess": "Spams restaurés",
-    "restoreSpamSuccessDesc": "{{count}} mail(s) remis dans la boîte de réception."
+    "restoreSpamSuccessDesc": "{{count}} mail(s) remis dans la boîte de réception.",
+    "creditsBreakdownMails": "{{count}} mails reçus",
+    "creditsBreakdownAi": "{{count}} actions IA",
+    "creditsBreakdownMails_one": "{{count}} mail reçu",
+    "creditsBreakdownAi_one": "{{count}} action IA"
   },
   "plans": {
     "trial": "Essai",

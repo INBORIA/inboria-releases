@@ -55,7 +55,10 @@ export interface UserProfile {
   plan: string;
   seats: number;
   emailsUsed: number;
+  aiCreditsUsed?: number;
   emailsQuota: number;
+  /** @nullable */
+  quotaPeriodStart?: string | null;
   aiLanguage?: UserProfileAiLanguage;
   signature?: string;
   timezone?: string;

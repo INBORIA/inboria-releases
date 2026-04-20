@@ -53,7 +53,11 @@
     "teamActivity": "Teamactiviteit",
     "emailQuota": "AI-credits",
     "user": "Gebruiker",
-    "aiCredits": "AI-credits"
+    "aiCredits": "AI-credits",
+    "creditsBreakdownMails": "{{count}} mails",
+    "creditsBreakdownAi": "{{count}} AI",
+    "creditsBreakdownMails_one": "{{count}} mail",
+    "creditsBreakdownAi_one": "{{count}} AI"
   },
   "dashboard": {
     "expiredSubscription": "Uw abonnement is verlopen",
@@ -916,7 +920,11 @@
     "recountSuccessDesc": "Teller aangepast naar {{count}} unieke e-mails.",
     "restoreSpam": "Spam herstellen",
     "restoreSpamSuccess": "Spam hersteld",
-    "restoreSpamSuccessDesc": "{{count}} e-mail(s) teruggezet in inbox."
+    "restoreSpamSuccessDesc": "{{count}} e-mail(s) teruggezet in inbox.",
+    "creditsBreakdownMails": "{{count}} ontvangen mails",
+    "creditsBreakdownAi": "{{count}} AI-acties",
+    "creditsBreakdownMails_one": "{{count}} ontvangen mail",
+    "creditsBreakdownAi_one": "{{count}} AI-actie"
   },
   "plans": {
     "trial": "Proef",

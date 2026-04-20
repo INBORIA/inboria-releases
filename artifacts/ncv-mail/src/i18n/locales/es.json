@@ -53,7 +53,11 @@
     "teamActivity": "Actividad del equipo",
     "emailQuota": "Créditos IA",
     "user": "Usuario",
-    "aiCredits": "Créditos IA"
+    "aiCredits": "Créditos IA",
+    "creditsBreakdownMails": "{{count}} correos",
+    "creditsBreakdownAi": "{{count}} IA",
+    "creditsBreakdownMails_one": "{{count}} correo",
+    "creditsBreakdownAi_one": "{{count}} IA"
   },
   "dashboard": {
     "expiredSubscription": "Su suscripción ha expirado",
@@ -916,7 +920,11 @@
     "recountSuccessDesc": "Contador ajustado a {{count}} correos únicos.",
     "restoreSpam": "Restaurar spam",
     "restoreSpamSuccess": "Spam restaurado",
-    "restoreSpamSuccessDesc": "{{count}} correo(s) devueltos a bandeja de entrada."
+    "restoreSpamSuccessDesc": "{{count}} correo(s) devueltos a bandeja de entrada.",
+    "creditsBreakdownMails": "{{count}} correos recibidos",
+    "creditsBreakdownAi": "{{count}} acciones de IA",
+    "creditsBreakdownMails_one": "{{count}} correo recibido",
+    "creditsBreakdownAi_one": "{{count}} acción de IA"
   },
   "plans": {
     "trial": "Prueba",

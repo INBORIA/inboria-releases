@@ -226,7 +226,7 @@ export default function Abonnement() {
           </p>
         </div>
 
-        {!isLoading && profile && (profile.plan === "expired" || (profile.plan === "essai" && profile.emailsUsed >= profile.emailsQuota)) && (
+        {!isLoading && profile && (profile.plan === "expired" || (profile.plan === "essai" && (profile.emailsUsed + ((profile as any).aiCreditsUsed || 0)) >= profile.emailsQuota)) && (
           <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-5 mb-6 flex items-center gap-3">
             <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
             <div>
@@ -264,20 +264,32 @@ export default function Abonnement() {
             </div>
             <div className="flex items-center gap-3">
               <div className="w-full md:w-64">
-                <div className="flex justify-between text-[12px] font-medium mb-1.5">
-                  <span className="text-[#8b9cb3]">{t("subscription.aiConsumption")}</span>
-                  <span className="text-white">
-                    {profile.emailsUsed} / {profile.emailsQuota}
-                  </span>
-                </div>
-                <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-primary rounded-full transition-all"
-                    style={{
-                      width: `${Math.min(100, (profile.emailsUsed / Math.max(1, profile.emailsQuota)) * 100)}%`,
-                    }}
-                  />
-                </div>
+                {(() => {
+                  const aiUsed = (profile as any).aiCreditsUsed || 0;
+                  const total = profile.emailsUsed + aiUsed;
+                  const pct = Math.min(100, (total / Math.max(1, profile.emailsQuota)) * 100);
+                  const barColor = pct >= 90 ? "bg-red-500" : pct >= 80 ? "bg-amber-500" : "bg-primary";
+                  return (
+                    <>
+                      <div className="flex justify-between text-[12px] font-medium mb-1.5">
+                        <span className="text-[#8b9cb3]">{t("subscription.aiConsumption")}</span>
+                        <span className="text-white">
+                          {total} / {profile.emailsQuota}
+                        </span>
+                      </div>
+                      <div className="w-full h-1.5 bg-white/10 rounded-full overflow-hidden">
+                        <div
+                          className={`h-full ${barColor} rounded-full transition-all`}
+                          style={{ width: `${pct}%` }}
+                        />
+                      </div>
+                      <div className="mt-1 text-[10px] text-[#6b7d96] flex justify-between">
+                        <span>{t("subscription.creditsBreakdownMails", { count: profile.emailsUsed })}</span>
+                        <span>{t("subscription.creditsBreakdownAi", { count: aiUsed })}</span>
+                      </div>
+                    </>
+                  );
+                })()}
               </div>
               {hasPaidPlan && (
                 <Button

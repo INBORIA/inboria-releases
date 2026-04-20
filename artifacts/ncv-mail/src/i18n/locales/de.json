@@ -53,7 +53,11 @@
     "teamActivity": "Teamaktivität",
     "emailQuota": "KI-Credits",
     "user": "Benutzer",
-    "aiCredits": "KI-Credits"
+    "aiCredits": "KI-Credits",
+    "creditsBreakdownMails": "{{count}} Mails",
+    "creditsBreakdownAi": "{{count}} KI",
+    "creditsBreakdownMails_one": "{{count}} Mail",
+    "creditsBreakdownAi_one": "{{count}} KI"
   },
   "dashboard": {
     "expiredSubscription": "Ihr Abonnement ist abgelaufen",
@@ -916,7 +920,11 @@
     "recountSuccessDesc": "Zähler auf {{count}} einzigartige E-Mails angepasst.",
     "restoreSpam": "Spam wiederherstellen",
     "restoreSpamSuccess": "Spam wiederhergestellt",
-    "restoreSpamSuccessDesc": "{{count}} E-Mail(s) zurück im Posteingang."
+    "restoreSpamSuccessDesc": "{{count}} E-Mail(s) zurück im Posteingang.",
+    "creditsBreakdownMails": "{{count}} empfangene Mails",
+    "creditsBreakdownAi": "{{count}} KI-Aktionen",
+    "creditsBreakdownMails_one": "{{count}} empfangene Mail",
+    "creditsBreakdownAi_one": "{{count}} KI-Aktion"
   },
   "plans": {
     "trial": "Testversion",

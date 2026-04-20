@@ -42,6 +42,7 @@ export const LoginBody = zod.object({
   password: zod.string(),
 });
 
+export const loginResponseUserAiCreditsUsedDefault = 0;
 export const loginResponseUserAiLanguageDefault = `fr`;
 export const loginResponseUserSignatureDefault = ``;
 export const loginResponseUserTimezoneDefault = `Europe/Brussels`;
@@ -54,7 +55,9 @@ export const LoginResponse = zod.object({
     plan: zod.string(),
     seats: zod.number(),
     emailsUsed: zod.number(),
+    aiCreditsUsed: zod.number().default(loginResponseUserAiCreditsUsedDefault),
     emailsQuota: zod.number(),
+    quotaPeriodStart: zod.coerce.date().nullish(),
     aiLanguage: zod
       .enum(["fr", "en", "nl"])
       .default(loginResponseUserAiLanguageDefault),
@@ -72,6 +75,7 @@ export const LoginResponse = zod.object({
 /**
  * @summary Get current user
  */
+export const getMeResponseAiCreditsUsedDefault = 0;
 export const getMeResponseAiLanguageDefault = `fr`;
 export const getMeResponseSignatureDefault = ``;
 export const getMeResponseTimezoneDefault = `Europe/Brussels`;
@@ -83,7 +87,9 @@ export const GetMeResponse = zod.object({
   plan: zod.string(),
   seats: zod.number(),
   emailsUsed: zod.number(),
+  aiCreditsUsed: zod.number().default(getMeResponseAiCreditsUsedDefault),
   emailsQuota: zod.number(),
+  quotaPeriodStart: zod.coerce.date().nullish(),
   aiLanguage: zod
     .enum(["fr", "en", "nl"])
     .default(getMeResponseAiLanguageDefault),
@@ -100,6 +106,7 @@ export const GetMeResponse = zod.object({
 /**
  * @summary Get user profile
  */
+export const getProfileResponseAiCreditsUsedDefault = 0;
 export const getProfileResponseAiLanguageDefault = `fr`;
 export const getProfileResponseSignatureDefault = ``;
 export const getProfileResponseTimezoneDefault = `Europe/Brussels`;
@@ -111,7 +118,9 @@ export const GetProfileResponse = zod.object({
   plan: zod.string(),
   seats: zod.number(),
   emailsUsed: zod.number(),
+  aiCreditsUsed: zod.number().default(getProfileResponseAiCreditsUsedDefault),
   emailsQuota: zod.number(),
+  quotaPeriodStart: zod.coerce.date().nullish(),
   aiLanguage: zod
     .enum(["fr", "en", "nl"])
     .default(getProfileResponseAiLanguageDefault),
@@ -137,6 +146,7 @@ export const UpdateProfileBody = zod.object({
   timezone: zod.string().optional(),
 });
 
+export const updateProfileResponseAiCreditsUsedDefault = 0;
 export const updateProfileResponseAiLanguageDefault = `fr`;
 export const updateProfileResponseSignatureDefault = ``;
 export const updateProfileResponseTimezoneDefault = `Europe/Brussels`;
@@ -148,7 +158,11 @@ export const UpdateProfileResponse = zod.object({
   plan: zod.string(),
   seats: zod.number(),
   emailsUsed: zod.number(),
+  aiCreditsUsed: zod
+    .number()
+    .default(updateProfileResponseAiCreditsUsedDefault),
   emailsQuota: zod.number(),
+  quotaPeriodStart: zod.coerce.date().nullish(),
   aiLanguage: zod
     .enum(["fr", "en", "nl"])
     .default(updateProfileResponseAiLanguageDefault),

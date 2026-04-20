@@ -2427,8 +2427,14 @@ components:
           type: integer
         emailsUsed:
           type: integer
+        aiCreditsUsed:
+          type: integer
+          default: 0
         emailsQuota:
           type: integer
+        quotaPeriodStart:
+          type: ["string", "null"]
+          format: date-time
         aiLanguage:
           type: string
           enum: [fr, en, nl]

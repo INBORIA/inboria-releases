@@ -53,7 +53,11 @@
     "teamActivity": "Team activity",
     "emailQuota": "AI credits",
     "user": "User",
-    "aiCredits": "AI credits"
+    "aiCredits": "AI credits",
+    "creditsBreakdownMails": "{{count}} mails",
+    "creditsBreakdownAi": "{{count}} AI",
+    "creditsBreakdownMails_one": "{{count}} mail",
+    "creditsBreakdownAi_one": "{{count}} AI"
   },
   "dashboard": {
     "expiredSubscription": "Your subscription has expired",
@@ -916,7 +920,11 @@
     "recountSuccessDesc": "Counter adjusted to {{count}} unique emails.",
     "restoreSpam": "Restore spam",
     "restoreSpamSuccess": "Spam restored",
-    "restoreSpamSuccessDesc": "{{count}} email(s) moved back to inbox."
+    "restoreSpamSuccessDesc": "{{count}} email(s) moved back to inbox.",
+    "creditsBreakdownMails": "{{count}} mails received",
+    "creditsBreakdownAi": "{{count}} AI actions",
+    "creditsBreakdownMails_one": "{{count}} mail received",
+    "creditsBreakdownAi_one": "{{count}} AI action"
   },
   "plans": {
     "trial": "Trial",

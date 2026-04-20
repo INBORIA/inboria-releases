@@ -39,7 +39,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: profile, isLoading } = useGetProfile();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
-  const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, emailsQuota: 100 };
+  const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
+  const totalUsed = ((user as any).emailsUsed || 0) + ((user as any).aiCreditsUsed || 0);
 
   const baseNavigation = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
@@ -68,7 +69,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     : baseNavigation;
 
   const isExpired = (user as any).plan === "expired";
-  const isTrialExhausted = (user as any).plan === "essai" && (user as any).emailsUsed >= (user as any).emailsQuota;
+  const isTrialExhausted = (user as any).plan === "essai" && totalUsed >= (user as any).emailsQuota;
   const isBlocked = isExpired || isTrialExhausted;
 
   const allowedWhenBlocked = ["/dashboard/abonnement", "/dashboard/parametres", "/dashboard/manuel"];
@@ -94,7 +95,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const usagePercent = Math.min(
     100,
-    ((user as any).emailsUsed / Math.max(1, (user as any).emailsQuota)) * 100
+    (totalUsed / Math.max(1, (user as any).emailsQuota)) * 100
   );
 
   const SidebarContent = () => (
@@ -138,14 +139,21 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               {t("sidebar.aiCredits")}
             </span>
             <span className="text-[10px] font-medium text-white">
-              {(user as any).emailsUsed}/{(user as any).emailsQuota}
+              {totalUsed}/{(user as any).emailsQuota}
             </span>
           </div>
           <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
             <div
-              className="h-full bg-primary rounded-full transition-all"
+              className={cn(
+                "h-full rounded-full transition-all",
+                usagePercent >= 90 ? "bg-red-500" : usagePercent >= 80 ? "bg-amber-500" : "bg-primary"
+              )}
               style={{ width: `${usagePercent}%` }}
             />
+          </div>
+          <div className="mt-1 text-[9px] text-[#6b7d96] flex justify-between">
+            <span>{t("sidebar.creditsBreakdownMails", { count: (user as any).emailsUsed || 0 })}</span>
+            <span>{t("sidebar.creditsBreakdownAi", { count: (user as any).aiCreditsUsed || 0 })}</span>
           </div>
         </div>
 
