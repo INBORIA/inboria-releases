@@ -508,7 +508,7 @@ router.get("/organisations/invitations", requireAuth, async (req, res): Promise<
 
     const { data: invitations } = await supabaseAdmin
       .from("invitations")
-      .select("id, email, role, status, created_at, expires_at")
+      .select("id, email, role, status, token, created_at, expires_at")
       .eq("organisation_id", membership.organisation_id)
       .order("created_at", { ascending: false });
 
