@@ -829,7 +829,13 @@ export default function Dashboard() {
       window.localStorage.setItem("inbox.sortMode", sortMode);
     }
   }, [sortMode]);
-  const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
+  const [selectedEmailId, setSelectedEmailId] = useState<number | null>(() => {
+    if (typeof window === "undefined") return null;
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("emailId");
+    const num = id ? Number(id) : NaN;
+    return Number.isFinite(num) && num > 0 ? num : null;
+  });
   const [isSyncing, setIsSyncing] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const searchQuery = useDebounce(searchInput, 300);
