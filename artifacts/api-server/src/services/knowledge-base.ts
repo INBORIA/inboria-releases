@@ -180,6 +180,23 @@ Guide intégré dans l'application expliquant toutes les fonctionnalités.
 - Abonnement
 - Sections Business (boîtes partagées, équipe)
 
+## 15. SPAM ET FILTRAGE IA
+Inboria intègre un filtrage anti-spam intelligent pour garder votre boîte propre.
+
+### Fonctionnalités :
+- **Détection automatique** : L'IA repère les emails commerciaux indésirables, phishing et messages de masse, et les classe dans le dossier Spam.
+- **Dossier Spam dédié** : Accessible depuis la barre latérale, il regroupe tous les emails marqués comme spam.
+- **Restaurer un email** : Si un message légitime est classé par erreur, restaurez-le vers la boîte de réception en un clic.
+- **Vider le spam** : Bouton pour supprimer définitivement tous les emails spam d'un coup.
+- **Suppression définitive** : Supprimez un email spam individuellement.
+- **Confirmation requise** : Toute action destructive (vider, supprimer définitivement) demande une confirmation pour éviter les pertes accidentelles.
+- **Apprentissage continu** : Plus vous utilisez Inboria, plus l'IA affine la détection en fonction de vos habitudes.
+
+### Bonnes pratiques :
+- Vérifiez le dossier Spam de temps en temps pour récupérer les faux positifs.
+- Restaurez les emails légitimes pour aider l'IA à mieux apprendre.
+- Videz régulièrement le dossier Spam pour garder votre compte léger.
+
 ## QUESTIONS FRÉQUENTES
 
 ### Comment connecter ma boîte email ?
@@ -401,6 +418,23 @@ Built-in guide explaining all features.
 - Subscription
 - Business sections (shared mailboxes, team)
 
+## 15. SPAM AND AI FILTERING
+Inboria includes intelligent spam filtering to keep your inbox clean.
+
+### Features:
+- **Automatic detection**: AI identifies unwanted commercial emails, phishing, and mass messages, and routes them to the Spam folder.
+- **Dedicated Spam folder**: Accessible from the sidebar, it gathers all emails marked as spam.
+- **Restore an email**: If a legitimate message is wrongly classified, restore it back to the inbox in one click.
+- **Empty spam**: Button to permanently delete all spam emails at once.
+- **Permanent deletion**: Delete individual spam emails permanently.
+- **Confirmation required**: Any destructive action (empty, permanent delete) asks for confirmation to avoid accidental loss.
+- **Continuous learning**: The more you use Inboria, the better the AI tunes detection to your habits.
+
+### Best practices:
+- Check the Spam folder occasionally to recover false positives.
+- Restore legitimate emails so the AI learns better over time.
+- Empty the Spam folder regularly to keep your account light.
+
 ## FREQUENTLY ASKED QUESTIONS
 
 ### How do I connect my email?
@@ -621,6 +655,23 @@ Ingebouwde gids die alle functies uitlegt.
 - Instellingen
 - Abonnement
 - Business-secties (gedeelde mailboxen, team)
+
+## 15. SPAM EN AI-FILTERING
+Inboria bevat intelligente spamfiltering om uw inbox schoon te houden.
+
+### Functies:
+- **Automatische detectie**: AI herkent ongewenste commerciële e-mails, phishing en massaberichten en plaatst ze in de Spam-map.
+- **Aparte Spam-map**: Toegankelijk vanuit de zijbalk, bevat alle als spam gemarkeerde e-mails.
+- **Een e-mail herstellen**: Als een legitiem bericht onterecht is geclassificeerd, herstel het dan met één klik naar de inbox.
+- **Spam legen**: Knop om alle spam-e-mails in één keer permanent te verwijderen.
+- **Permanent verwijderen**: Verwijder spam-e-mails individueel definitief.
+- **Bevestiging vereist**: Elke destructieve actie (legen, permanent verwijderen) vraagt om bevestiging om ongelukken te voorkomen.
+- **Continue leren**: Hoe meer u Inboria gebruikt, hoe beter de AI de detectie afstemt op uw gewoonten.
+
+### Best practices:
+- Controleer de Spam-map af en toe om vals-positieven te herstellen.
+- Herstel legitieme e-mails zodat de AI beter leert.
+- Leeg de Spam-map regelmatig om uw account licht te houden.
 
 ## VEELGESTELDE VRAGEN
 

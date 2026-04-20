@@ -17,6 +17,7 @@ import {
   Bell,
   Paperclip,
   CalendarDays,
+  ListChecks,
 } from "lucide-react";
 import { Link } from "wouter";
 import { useGetProfile, useGetMyOrganisation } from "@workspace/api-client-react";
@@ -74,6 +75,16 @@ const sectionConfigs: ManualSection[] = [
     color: "text-amber-400",
     bgColor: "bg-amber-500/10",
     borderColor: "border-amber-500/20",
+  },
+  {
+    icon: ListChecks,
+    nameKey: "manual.sections.followup",
+    descKey: "manual.sections.followupDesc",
+    featuresKey: "manual.sections.followupFeatures",
+    href: "/dashboard/suivi",
+    color: "text-fuchsia-400",
+    bgColor: "bg-fuchsia-500/10",
+    borderColor: "border-fuchsia-500/20",
   },
   {
     icon: LayoutDashboard,

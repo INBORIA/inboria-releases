@@ -1612,6 +1612,17 @@
         "Desarchivar un correo electrónico para devolverlo a la Bandeja de entrada",
         "Detalle completo de cada correo electrónico archivado"
       ],
+      "followup": "Seguimiento",
+      "followupDesc": "Centraliza tus recordatorios y seguimientos. La IA detecta automáticamente los correos sin respuesta que necesitan seguimiento para que nada se te pase por alto.",
+      "followupFeatures": [
+        "Lista de todos tus seguimientos activos y completados",
+        "Detección automática por IA de seguimientos desde tus conversaciones",
+        "Creación manual de un seguimiento con fecha de vencimiento y notas",
+        "Filtros: próximos, atrasados, hoy, completados",
+        "Enlace directo al correo de origen y a la conversación completa",
+        "Respuesta rápida o borrador IA desde la ficha de seguimiento",
+        "Marcar como hecho o eliminar un seguimiento"
+      ],
       "brief": "Resumen diario",
       "briefDesc": "Un resumen diario de tu actividad de correo electrónico. Visualiza el estado de tu bandeja de entrada y las tendencias de un vistazo.",
       "briefFeatures": [

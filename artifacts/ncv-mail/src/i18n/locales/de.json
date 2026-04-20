@@ -1612,6 +1612,17 @@
         "E-Mail archivieren, um sie in den Posteingang zurückzubringen",
         "Vollständige Details zu jeder archivierten E-Mail"
       ],
+      "followup": "Nachverfolgung",
+      "followupDesc": "Zentralisieren Sie Ihre Erinnerungen und Nachverfolgungen. Die KI erkennt automatisch unbeantwortete E-Mails, die eine Nachverfolgung verdienen, damit nichts vergessen wird.",
+      "followupFeatures": [
+        "Liste aller laufenden und abgeschlossenen Nachverfolgungen",
+        "Automatische KI-Erkennung von Nachverfolgungen aus Ihren Konversationen",
+        "Manuelles Erstellen einer Nachverfolgung mit Fälligkeitsdatum und Notizen",
+        "Filter: bevorstehend, überfällig, heute, abgeschlossen",
+        "Direktverknüpfung zur Quell-E-Mail und vollständigen Konversation",
+        "Schnellantwort oder KI-Entwurf von der Nachverfolgungskarte aus",
+        "Als erledigt markieren oder Nachverfolgung löschen"
+      ],
       "brief": "Täglicher Bericht",
       "briefDesc": "Eine tägliche Zusammenfassung Ihrer E-Mail-Aktivitäten. Sehen Sie den Status Ihres Posteingangs und Trends auf einen Blick.",
       "briefFeatures": [

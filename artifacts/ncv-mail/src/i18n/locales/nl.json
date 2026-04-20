@@ -1612,6 +1612,17 @@
         "Een e-mail dearchiveren om terug te plaatsen in de Inbox",
         "Volledig detail van elke gearchiveerde e-mail"
       ],
+      "followup": "Opvolging",
+      "followupDesc": "Centraliseer uw herinneringen en opvolgingen. AI detecteert automatisch onbeantwoorde e-mails die opvolging verdienen, zodat niets vergeten wordt.",
+      "followupFeatures": [
+        "Lijst van al uw lopende en afgeronde opvolgingen",
+        "Automatische AI-detectie van opvolgingen vanuit uw gesprekken",
+        "Handmatig een opvolging aanmaken met vervaldatum en notities",
+        "Filters: aankomend, te laat, vandaag, afgerond",
+        "Directe link naar de bron-e-mail en het volledige gesprek",
+        "Snel antwoord of AI-concept vanuit de opvolgingskaart",
+        "Markeer als afgerond of verwijder een opvolging"
+      ],
       "brief": "Dagelijks overzicht",
       "briefDesc": "Een dagelijkse samenvatting van uw e-mailactiviteit. Bekijk in één oogopslag de status van uw inbox en trends.",
       "briefFeatures": [

@@ -1612,6 +1612,17 @@
         "Unarchive an email to return it to Inbox",
         "Full detail of each archived email"
       ],
+      "followup": "Follow-up",
+      "followupDesc": "Centralize your reminders and follow-ups. AI automatically detects unanswered emails that need a follow-up so nothing slips through the cracks.",
+      "followupFeatures": [
+        "List of all your active and completed follow-ups",
+        "Automatic AI detection of follow-ups from your conversations",
+        "Manual creation of a follow-up with due date and notes",
+        "Filters: upcoming, overdue, today, completed",
+        "Direct link to the source email and full conversation",
+        "Quick reply or AI draft from the follow-up card",
+        "Mark as done or delete a follow-up"
+      ],
       "brief": "Daily brief",
       "briefDesc": "A daily summary of your email activity. View your inbox status and trends at a glance.",
       "briefFeatures": [

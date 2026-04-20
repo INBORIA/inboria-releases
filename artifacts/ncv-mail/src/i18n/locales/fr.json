@@ -1612,6 +1612,17 @@
         "Possibilité de désarchiver un email pour le remettre dans la Réception",
         "Détail complet de chaque email archivé"
       ],
+      "followup": "Suivi",
+      "followupDesc": "Centralisez vos relances et rappels. L'IA détecte automatiquement les emails sans réponse qui méritent un suivi pour ne plus rien oublier.",
+      "followupFeatures": [
+        "Liste de toutes vos relances en cours et terminées",
+        "Détection automatique des suivis par l'IA depuis vos conversations",
+        "Création manuelle d'un suivi avec date d'échéance et notes",
+        "Filtres : à venir, en retard, aujourd'hui, terminés",
+        "Lien direct vers l'email d'origine et la conversation complète",
+        "Réponse rapide ou brouillon IA depuis la fiche de suivi",
+        "Marquer comme terminé ou supprimer un suivi"
+      ],
       "brief": "Bilan quotidien",
       "briefDesc": "Un résumé quotidien de votre activité email. Visualisez en un coup d'œil l'état de votre boîte et les tendances.",
       "briefFeatures": [
