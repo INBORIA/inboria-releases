@@ -1,6 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
+import { TaskAssigneePicker } from "@/components/task-assignee-picker";
 import { FileAttachInput, type UploadedFile } from "@/components/FileAttachInput";
 import {
   useListTasks,
@@ -11,6 +12,8 @@ import {
   useSendEmail,
   useGenerateDraft,
   useGetProfile,
+  useGetMyOrganisation,
+  useGetOrganisationMembers,
 } from "@workspace/api-client-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
@@ -54,6 +57,7 @@ export default function Taches() {
   const [emailDetailTask, setEmailDetailTask] = useState<any>(null);
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskAssignees, setNewTaskAssignees] = useState<string[]>([]);
   const [selectedTaskIds, setSelectedTaskIds] = useState<Set<string>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; taskId: string } | null>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
@@ -192,6 +196,10 @@ export default function Taches() {
   const [replyAttachments, setReplyAttachments] = useState<UploadedFile[]>([]);
 
   const { data: tasks, isLoading } = useListTasks({ scope } as any);
+  const { data: myOrg } = useGetMyOrganisation();
+  const { data: orgMembers } = useGetOrganisationMembers({ query: { enabled: !!(myOrg as any)?.id } as any });
+  const orgMembersList: any[] = Array.isArray(orgMembers) ? orgMembers : [];
+  const currentUserId = (profile as any)?.id || (profile as any)?.userId || null;
   const updateTask = useUpdateTask();
   const deleteTask = useDeleteTask();
   const createTask = useCreateTask();
@@ -220,19 +228,32 @@ export default function Taches() {
     );
   };
 
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
     if (!newTaskTitle.trim() || newTaskTitle.trim().length < 2) return;
-    createTask.mutate(
-      { data: { title: newTaskTitle.trim() } },
-      {
-        onSuccess: () => {
-          invalidate();
-          toast({ title: t("tasks.taskCreated") });
-          setNewTaskTitle("");
-          setShowAddTask(false);
-        },
+    const title = newTaskTitle.trim();
+    const assignees = newTaskAssignees.length > 0 ? newTaskAssignees : [null];
+    try {
+      for (const assignee of assignees) {
+        await createTask.mutateAsync({
+          data: {
+            title,
+            ...(assignee ? { assignedToUserId: assignee } : {}),
+          } as any,
+        });
       }
-    );
+      invalidate();
+      toast({
+        title:
+          assignees.length > 1
+            ? t("tasks.tasksCreated", { count: assignees.length, defaultValue: `${assignees.length} tâches créées` })
+            : t("tasks.taskCreated"),
+      });
+      setNewTaskTitle("");
+      setNewTaskAssignees([]);
+      setShowAddTask(false);
+    } catch (e: any) {
+      toast({ variant: "destructive", title: t("common.error"), description: e?.message || "" });
+    }
   };
 
   const handleSendReply = () => {
@@ -590,8 +611,14 @@ export default function Taches() {
               onKeyDown={(e) => { if (e.key === "Enter") handleAddTask(); }}
               autoFocus
             />
+            <TaskAssigneePicker
+              members={orgMembersList}
+              currentUserId={currentUserId}
+              value={newTaskAssignees}
+              onChange={setNewTaskAssignees}
+            />
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" size="sm" onClick={() => { setShowAddTask(false); setNewTaskTitle(""); }} className="text-[#8b9cb3] hover:text-white h-8 text-[12px]">
+              <Button variant="ghost" size="sm" onClick={() => { setShowAddTask(false); setNewTaskTitle(""); setNewTaskAssignees([]); }} className="text-[#8b9cb3] hover:text-white h-8 text-[12px]">
                 {t("common.cancel")}
               </Button>
               <Button size="sm" onClick={handleAddTask} disabled={createTask.isPending || newTaskTitle.trim().length < 2} className="h-8 text-[12px] gap-1.5">

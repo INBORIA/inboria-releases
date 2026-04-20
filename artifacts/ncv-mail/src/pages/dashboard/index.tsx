@@ -1,6 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
+import { TaskAssigneePicker } from "@/components/task-assignee-picker";
 import { AttachmentList, AttachmentBadge } from "@/components/AttachmentList";
 import { FileAttachInput, type UploadedFile } from "@/components/FileAttachInput";
 import {
@@ -166,7 +167,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
   );
 }
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }> }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }> }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
@@ -194,6 +195,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
   const [taskFormOpen, setTaskFormOpen] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskProjectId, setTaskProjectId] = useState("none");
+  const [taskAssignees, setTaskAssignees] = useState<string[]>([]);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const barColor = PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible;
@@ -498,11 +500,20 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     </SelectContent>
                   </Select>
                 </div>
+                <div>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("tasks.assignTo", "Assigner à")}</label>
+                  <TaskAssigneePicker
+                    members={(orgMembers as any[]) || []}
+                    currentUserId={currentUserId || null}
+                    value={taskAssignees}
+                    onChange={setTaskAssignees}
+                  />
+                </div>
                 <div className="flex items-center gap-2 justify-end">
                   <Button
                     variant="ghost"
                     size="sm"
-                    onClick={() => { setTaskFormOpen(false); setTaskTitle(""); setTaskProjectId("none"); }}
+                    onClick={() => { setTaskFormOpen(false); setTaskTitle(""); setTaskProjectId("none"); setTaskAssignees([]); }}
                     className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
                   >
                     {t("common.cancel")}
@@ -512,10 +523,16 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     className="gap-1.5 h-7 text-[11px]"
                     disabled={!taskTitle.trim()}
                     onClick={() => {
-                      onCreateTask?.(email.id, taskTitle.trim(), taskProjectId !== "none" ? taskProjectId : undefined);
+                      onCreateTask?.(
+                        email.id,
+                        taskTitle.trim(),
+                        taskProjectId !== "none" ? taskProjectId : undefined,
+                        taskAssignees,
+                      );
                       setTaskFormOpen(false);
                       setTaskTitle("");
                       setTaskProjectId("none");
+                      setTaskAssignees([]);
                     }}
                   >
                     <ListTodo className="w-3 h-3" />
@@ -1442,27 +1459,40 @@ export default function Dashboard() {
   };
 
   const createTaskMut = useCreateTask();
-  const handleCreateTask = (emailId: number, title: string, projectId?: string) => {
-    createTaskMut.mutate(
-      { data: { title, emailId, projectId: projectId || undefined } },
-      {
-        onSuccess: () => {
-          if (projectId) {
-            updateEmail.mutate(
-              { id: emailId, data: { projectId } },
-              { onSuccess: () => invalidateAll() }
-            );
-          } else {
-            invalidateAll();
-          }
-          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
-          toast({ title: t("inbox.taskCreated") });
-        },
-        onError: () => {
-          toast({ variant: "destructive", title: t("common.error"), description: t("inbox.taskCreateError") });
-        },
+  const handleCreateTask = async (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => {
+    const assignees = assigneeUserIds && assigneeUserIds.length > 0 ? assigneeUserIds : [null];
+    try {
+      for (const assignee of assignees) {
+        await createTaskMut.mutateAsync({
+          data: {
+            title,
+            emailId,
+            projectId: projectId || undefined,
+            ...(assignee ? { assignedToUserId: assignee } : {}),
+          } as any,
+        });
       }
-    );
+      if (projectId) {
+        await new Promise<void>((resolve) => {
+          updateEmail.mutate(
+            { id: emailId, data: { projectId } },
+            { onSuccess: () => { invalidateAll(); resolve(); }, onError: () => resolve() }
+          );
+        });
+      } else {
+        invalidateAll();
+      }
+      queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+      toast({
+        title:
+          assignees.length > 1
+            ? t("tasks.tasksCreated", { count: assignees.length, defaultValue: `${assignees.length} tâches créées` })
+            : t("inbox.taskCreated"),
+      });
+    } catch {
+      toast({ variant: "destructive", title: t("common.error"), description: t("inbox.taskCreateError") });
+    }
+    return;
   };
 
   const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => {

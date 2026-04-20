@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { TaskAssigneePicker } from "@/components/task-assignee-picker";
 import {
   useListProjects,
   useCreateProject,
@@ -221,6 +222,7 @@ function ProjectDetailView({
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [newTaskTitle, setNewTaskTitle] = useState("");
+  const [newTaskAssignees, setNewTaskAssignees] = useState<string[]>([]);
   const createTaskMut = useCreateTask();
   const updateTaskMut = useUpdateTask();
   const deleteTaskMut = useDeleteTask();
@@ -276,22 +278,33 @@ function ProjectDetailView({
     );
   };
 
-  const handleAddTask = () => {
+  const handleAddTask = async () => {
     if (!newTaskTitle.trim()) return;
-    createTaskMut.mutate(
-      { data: { title: newTaskTitle.trim(), projectId } },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
-          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
-          setNewTaskTitle("");
-          toast({ title: t("projects.taskCreated") });
-        },
-        onError: () => {
-          toast({ variant: "destructive", title: t("common.error"), description: t("projects.taskError") });
-        },
+    const title = newTaskTitle.trim();
+    const assignees = newTaskAssignees.length > 0 ? newTaskAssignees : [null];
+    try {
+      for (const assignee of assignees) {
+        await createTaskMut.mutateAsync({
+          data: {
+            title,
+            projectId,
+            ...(assignee ? { assignedToUserId: assignee } : {}),
+          } as any,
+        });
       }
-    );
+      queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+      queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+      setNewTaskTitle("");
+      setNewTaskAssignees([]);
+      toast({
+        title:
+          assignees.length > 1
+            ? t("tasks.tasksCreated", { count: assignees.length, defaultValue: `${assignees.length} tâches créées` })
+            : t("projects.taskCreated"),
+      });
+    } catch {
+      toast({ variant: "destructive", title: t("common.error"), description: t("projects.taskError") });
+    }
   };
 
   if (isLoading) {
@@ -458,18 +471,26 @@ function ProjectDetailView({
           <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
             <CheckSquare className="w-3.5 h-3.5 text-primary" /> {t("projects.tasks")} ({(project.tasks || []).length})
           </h2>
-          <div className="flex gap-2 mb-2">
+          <div className="flex gap-2 mb-2 flex-wrap">
             <Input
               value={newTaskTitle}
               onChange={(e) => setNewTaskTitle(e.target.value)}
               placeholder={t("projects.addTaskPlaceholder")}
-              className="bg-background border-border text-white text-[12px] h-8 flex-1"
+              className="bg-background border-border text-white text-[12px] h-8 flex-1 min-w-[180px]"
               onKeyDown={(e) => {
                 if (e.key === "Enter" && newTaskTitle.trim()) {
                   handleAddTask();
                 }
               }}
             />
+            <div className="w-[180px] shrink-0">
+              <TaskAssigneePicker
+                members={members}
+                currentUserId={currentUserId}
+                value={newTaskAssignees}
+                onChange={setNewTaskAssignees}
+              />
+            </div>
             <Button
               size="sm"
               className="h-8 px-3 gap-1.5 shrink-0"
