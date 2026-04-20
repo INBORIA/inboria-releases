@@ -1568,7 +1568,7 @@ export default function Dashboard() {
             </div>
 
           {inboxMode !== "trash" && inboxMode !== "spam" && (
-            <div className="flex items-center gap-1.5 max-w-[1200px] mx-auto">
+            <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-[1200px] mx-auto">
               <span className="text-[10px] text-[#8b9cb3] mr-1">{t("inbox.priority")}:</span>
               {[
                 { value: "all", label: t("inbox.allCategories") },
@@ -1620,7 +1620,8 @@ export default function Dashboard() {
                     : t("inbox.sortDate", "Date")}
                 </span>
               </button>
-              <div className="w-px h-4 bg-[#1f2937] mx-1" />
+              <div className="basis-full h-0 sm:hidden" />
+              <div className="hidden sm:block w-px h-4 bg-[#1f2937] mx-1" />
               <Select value={filterCategory} onValueChange={setFilterCategory}>
                 <SelectTrigger className="w-auto min-w-[130px] h-6 bg-card border-border text-[#8b9cb3] text-[10px]">
                   <SelectValue placeholder={t("inbox.category")} />
