@@ -18,6 +18,7 @@ import {
   Paperclip,
   CalendarDays,
   ListChecks,
+  FolderOpen,
 } from "lucide-react";
 import { Link } from "wouter";
 import { useGetProfile, useGetMyOrganisation } from "@workspace/api-client-react";
@@ -135,6 +136,16 @@ const sectionConfigs: ManualSection[] = [
     color: "text-orange-400",
     bgColor: "bg-orange-500/10",
     borderColor: "border-orange-500/20",
+  },
+  {
+    icon: FolderOpen,
+    nameKey: "manual.sections.categories",
+    descKey: "manual.sections.categoriesDesc",
+    featuresKey: "manual.sections.categoriesFeatures",
+    href: "/dashboard/categories",
+    color: "text-lime-400",
+    bgColor: "bg-lime-500/10",
+    borderColor: "border-lime-500/20",
   },
   {
     icon: Bell,

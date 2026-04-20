@@ -1696,6 +1696,16 @@
         "Establecer reglas de IA personalizadas (prioridad/categoría por remitente)"
       ],
       "subscription": "Suscripción",
+      "categories": "Categorías",
+      "categoriesDesc": "Vista dedicada a la gestión detallada de tus categorías. Personaliza etiquetas, palabras clave e iconos para que la IA clasifique tus correos a tu manera.",
+      "categoriesFeatures": [
+        "Lista de todas tus categorías activas con contadores de correos",
+        "Crear una categoría con nombre, descripción y palabras clave",
+        "Edición rápida o eliminación de una categoría",
+        "Sugerencias IA basadas en tu historial de correos",
+        "Categorías sugeridas listas para usar (Facturación, Soporte, Comercial...)",
+        "Palabras clave para ayudar a la IA a reconocer automáticamente los correos"
+      ],
       "subscriptionDesc": "Gestiona tu plan de suscripción de Inboria. Compara ofertas y actualiza.",
       "subscriptionFeatures": [
         "3 planes: Solo (€9/mes), Pro (€29/mes), Empresarial (€59/mes)",

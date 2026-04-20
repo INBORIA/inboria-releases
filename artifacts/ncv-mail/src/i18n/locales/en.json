@@ -1696,6 +1696,16 @@
         "Set custom AI rules (priority/category by sender)"
       ],
       "subscription": "Subscription",
+      "categories": "Categories",
+      "categoriesDesc": "Dedicated view for fine-grained category management. Personalize labels, keywords and icons so the AI sorts your emails your way.",
+      "categoriesFeatures": [
+        "List of all your active categories with email counters",
+        "Create a category with name, description and keywords",
+        "Quick edit or delete a category",
+        "AI suggestions based on your email history",
+        "Ready-to-use suggested categories (Billing, Support, Sales...)",
+        "Keywords to help AI automatically recognize emails"
+      ],
       "subscriptionDesc": "Manage your Inboria subscription plan. Compare offers and upgrade.",
       "subscriptionFeatures": [
         "3 plans: Solo (€9/mo), Pro (€29/mo), Business (€59/mo)",

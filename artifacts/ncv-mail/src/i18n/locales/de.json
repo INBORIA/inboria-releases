@@ -1696,6 +1696,16 @@
         "Benutzerdefinierte KI-Regeln festlegen (Priorität/Kategorie nach Absender)"
       ],
       "subscription": "Abonnement",
+      "categories": "Kategorien",
+      "categoriesDesc": "Spezielle Ansicht für die feinkörnige Kategorienverwaltung. Passen Sie Bezeichnungen, Schlüsselwörter und Symbole an, damit die KI Ihre E-Mails nach Ihren Wünschen sortiert.",
+      "categoriesFeatures": [
+        "Liste aller aktiven Kategorien mit E-Mail-Zählern",
+        "Kategorie erstellen mit Name, Beschreibung und Schlüsselwörtern",
+        "Schnelles Bearbeiten oder Löschen einer Kategorie",
+        "KI-Vorschläge basierend auf Ihrem E-Mail-Verlauf",
+        "Sofort einsetzbare vorgeschlagene Kategorien (Rechnungen, Support, Vertrieb...)",
+        "Schlüsselwörter, damit die KI E-Mails automatisch erkennt"
+      ],
       "subscriptionDesc": "Verwalten Sie Ihren Inboria-Abonnementplan. Vergleichen Sie Angebote und upgraden Sie.",
       "subscriptionFeatures": [
         "3 Pläne: Solo (9 €/Monat), Pro (29 €/Monat), Business (59 €/Monat)",

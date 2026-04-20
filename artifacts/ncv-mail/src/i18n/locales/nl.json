@@ -1696,6 +1696,16 @@
         "Aangepaste AI-regels instellen (prioriteit/categorie per afzender)"
       ],
       "subscription": "Abonnement",
+      "categories": "Categorieën",
+      "categoriesDesc": "Specifieke weergave voor verfijnd categoriebeheer. Personaliseer labels, trefwoorden en pictogrammen zodat de AI uw e-mails op uw manier sorteert.",
+      "categoriesFeatures": [
+        "Lijst van al uw actieve categorieën met e-mailtellers",
+        "Een categorie aanmaken met naam, beschrijving en trefwoorden",
+        "Snelle bewerking of verwijdering van een categorie",
+        "AI-suggesties op basis van uw e-mailgeschiedenis",
+        "Voorgestelde kant-en-klare categorieën (Facturatie, Support, Commercieel...)",
+        "Trefwoorden om de AI te helpen e-mails automatisch te herkennen"
+      ],
       "subscriptionDesc": "Beheer uw Inboria-abonnementsplan. Vergelijk aanbiedingen en upgrade.",
       "subscriptionFeatures": [
         "3 plannen: Solo (€9/maand), Pro (€29/maand), Business (€59/maand)",

@@ -1695,6 +1695,16 @@
         "Gérer les intégrations (Slack, Notion)",
         "Définir des règles IA personnalisées (priorité/catégorie par expéditeur)"
       ],
+      "categories": "Catégories",
+      "categoriesDesc": "Vue dédiée à la gestion fine de vos catégories. Personnalisez les libellés, mots-clés et icônes pour que l'IA classe vos emails à votre image.",
+      "categoriesFeatures": [
+        "Liste de toutes vos catégories actives avec compteur d'emails",
+        "Création d'une catégorie avec nom, description et mots-clés",
+        "Édition rapide ou suppression d'une catégorie",
+        "Suggestions IA basées sur votre historique d'emails",
+        "Catégories suggérées prêtes à l'emploi (Facturation, Support, Commercial...)",
+        "Mots-clés pour aider l'IA à reconnaître automatiquement les emails"
+      ],
       "subscription": "Abonnement",
       "subscriptionDesc": "Gérez votre plan d'abonnement Inboria. Comparez les offres et passez à un plan supérieur.",
       "subscriptionFeatures": [

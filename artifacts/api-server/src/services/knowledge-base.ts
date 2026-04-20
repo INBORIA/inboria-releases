@@ -181,21 +181,29 @@ Guide intégré dans l'application expliquant toutes les fonctionnalités.
 - Sections Business (boîtes partagées, équipe)
 
 ## 15. SPAM ET FILTRAGE IA
-Inboria intègre un filtrage anti-spam intelligent pour garder votre boîte propre.
+Inboria utilise un filtrage en plusieurs couches pour éviter le bruit dans votre boîte tout en économisant vos crédits IA.
 
-### Fonctionnalités :
-- **Détection automatique** : L'IA repère les emails commerciaux indésirables, phishing et messages de masse, et les classe dans le dossier Spam.
-- **Dossier Spam dédié** : Accessible depuis la barre latérale, il regroupe tous les emails marqués comme spam.
-- **Restaurer un email** : Si un message légitime est classé par erreur, restaurez-le vers la boîte de réception en un clic.
-- **Vider le spam** : Bouton pour supprimer définitivement tous les emails spam d'un coup.
-- **Suppression définitive** : Supprimez un email spam individuellement.
-- **Confirmation requise** : Toute action destructive (vider, supprimer définitivement) demande une confirmation pour éviter les pertes accidentelles.
-- **Apprentissage continu** : Plus vous utilisez Inboria, plus l'IA affine la détection en fonction de vos habitudes.
+### Pré-filtre déterministe (avant l'IA) :
+- **Motif noreply / notifications** : Les adresses dont la partie locale correspond à des motifs comme noreply, no-reply, donotreply, notification(s), alerts, mailer-daemon, postmaster, newsletter, bounce, digest, broadcast… sont automatiquement reconnues et classées dans la catégorie « Notifications ».
+- **Cache d'expéditeurs** : La table sender_cache mémorise pour chaque expéditeur déjà vu sa catégorie et sa priorité. Le second email du même expéditeur évite donc un appel IA et hérite immédiatement du même classement, ce qui accélère la synchronisation et préserve vos crédits.
+- **Détection de spam déterministe** : Avant tout traitement IA, le pré-filtre marque comme spam les emails qui présentent des signaux clairs (adresses commerciales en masse, signatures connues), pour qu'ils n'apparaissent jamais dans la Réception principale.
+
+### Catégorisation automatique en spam :
+- **Décision IA** : Les emails non couverts par le pré-filtre passent par GPT-4o-mini, qui peut décider qu'un message est du spam ; il est alors directement déposé dans le dossier Spam au lieu de la Réception.
+- **Dossier Spam dédié** : Accessible depuis la barre latérale, il regroupe tous les emails marqués comme spam (par le pré-filtre ou par l'IA).
+- **Sans crédit gaspillé** : Un email pré-filtré ne consomme aucun crédit IA — seuls les messages incertains atteignent l'IA.
+
+### Reclassement manuel :
+- **Restaurer vers la Réception** : Depuis le dossier Spam, un clic remet un email légitime dans la Réception principale.
+- **Marquer comme spam** : Depuis la Réception, vous pouvez forcer un email vers Spam si l'IA s'est trompée.
+- **Apprentissage par le cache** : Vos restaurations et marquages alimentent le sender_cache, donc la prochaine fois qu'un email du même expéditeur arrive, il prend la bonne destination sans re-solliciter l'IA.
+- **Vider le spam** : Bouton pour supprimer définitivement tous les emails spam d'un coup, avec confirmation obligatoire.
+- **Suppression définitive** : Supprimez un email spam individuellement, également avec confirmation.
 
 ### Bonnes pratiques :
-- Vérifiez le dossier Spam de temps en temps pour récupérer les faux positifs.
-- Restaurez les emails légitimes pour aider l'IA à mieux apprendre.
-- Videz régulièrement le dossier Spam pour garder votre compte léger.
+- Vérifiez le dossier Spam de temps en temps pour récupérer les faux positifs et entraîner le cache.
+- Restaurez les emails légitimes plutôt que de les rouvrir : cela met à jour le sender_cache.
+- Videz régulièrement le Spam pour garder votre compte léger.
 
 ## QUESTIONS FRÉQUENTES
 
@@ -419,21 +427,29 @@ Built-in guide explaining all features.
 - Business sections (shared mailboxes, team)
 
 ## 15. SPAM AND AI FILTERING
-Inboria includes intelligent spam filtering to keep your inbox clean.
+Inboria uses multi-layer filtering to keep noise out of your inbox while saving your AI credits.
 
-### Features:
-- **Automatic detection**: AI identifies unwanted commercial emails, phishing, and mass messages, and routes them to the Spam folder.
-- **Dedicated Spam folder**: Accessible from the sidebar, it gathers all emails marked as spam.
-- **Restore an email**: If a legitimate message is wrongly classified, restore it back to the inbox in one click.
-- **Empty spam**: Button to permanently delete all spam emails at once.
-- **Permanent deletion**: Delete individual spam emails permanently.
-- **Confirmation required**: Any destructive action (empty, permanent delete) asks for confirmation to avoid accidental loss.
-- **Continuous learning**: The more you use Inboria, the better the AI tunes detection to your habits.
+### Deterministic pre-filter (before AI):
+- **Noreply / notification pattern**: Addresses whose local part matches patterns such as noreply, no-reply, donotreply, notification(s), alerts, mailer-daemon, postmaster, newsletter, bounce, digest, broadcast… are automatically recognized and routed to the "Notifications" category.
+- **Sender cache**: The sender_cache table remembers, for every sender we've already seen, their category and priority. The second email from the same sender therefore skips the AI call and inherits the same classification immediately — faster sync and lower credit usage.
+- **Deterministic spam detection**: Before any AI step, the pre-filter marks as spam emails that exhibit clear signals (mass commercial senders, known signatures), so they never reach the main Inbox.
+
+### Automatic spam categorization:
+- **AI decision**: Emails not covered by the pre-filter pass through GPT-4o-mini, which can decide a message is spam; it's then dropped directly into the Spam folder instead of the Inbox.
+- **Dedicated Spam folder**: Accessible from the sidebar, it gathers all emails marked as spam (by the pre-filter or by AI).
+- **No credit wasted**: A pre-filtered email consumes zero AI credits — only uncertain messages reach the model.
+
+### Manual reclassification:
+- **Restore to Inbox**: From the Spam folder, one click moves a legitimate email back to the main Inbox.
+- **Mark as spam**: From the Inbox, you can force an email into Spam if the AI got it wrong.
+- **Learning via the cache**: Your restorations and spam markings feed the sender_cache, so the next email from the same sender lands in the right place without hitting the AI again.
+- **Empty spam**: Button to permanently delete all spam emails at once, confirmation required.
+- **Permanent deletion**: Delete individual spam emails permanently, confirmation required.
 
 ### Best practices:
-- Check the Spam folder occasionally to recover false positives.
-- Restore legitimate emails so the AI learns better over time.
-- Empty the Spam folder regularly to keep your account light.
+- Check the Spam folder occasionally to rescue false positives and train the cache.
+- Restore legitimate emails rather than reopening them: this updates the sender_cache.
+- Empty Spam regularly to keep your account light.
 
 ## FREQUENTLY ASKED QUESTIONS
 
@@ -657,21 +673,29 @@ Ingebouwde gids die alle functies uitlegt.
 - Business-secties (gedeelde mailboxen, team)
 
 ## 15. SPAM EN AI-FILTERING
-Inboria bevat intelligente spamfiltering om uw inbox schoon te houden.
+Inboria gebruikt meerlaags filteren om ruis uit uw inbox te houden en tegelijk uw AI-credits te besparen.
 
-### Functies:
-- **Automatische detectie**: AI herkent ongewenste commerciële e-mails, phishing en massaberichten en plaatst ze in de Spam-map.
-- **Aparte Spam-map**: Toegankelijk vanuit de zijbalk, bevat alle als spam gemarkeerde e-mails.
-- **Een e-mail herstellen**: Als een legitiem bericht onterecht is geclassificeerd, herstel het dan met één klik naar de inbox.
-- **Spam legen**: Knop om alle spam-e-mails in één keer permanent te verwijderen.
-- **Permanent verwijderen**: Verwijder spam-e-mails individueel definitief.
-- **Bevestiging vereist**: Elke destructieve actie (legen, permanent verwijderen) vraagt om bevestiging om ongelukken te voorkomen.
-- **Continue leren**: Hoe meer u Inboria gebruikt, hoe beter de AI de detectie afstemt op uw gewoonten.
+### Deterministische voorfilter (vóór AI):
+- **Noreply / notificatie-patroon**: Adressen waarvan het lokale deel overeenkomt met patronen zoals noreply, no-reply, donotreply, notification(s), alerts, mailer-daemon, postmaster, newsletter, bounce, digest, broadcast… worden automatisch herkend en in de categorie "Notificaties" geplaatst.
+- **Verzendercache**: De tabel sender_cache onthoudt voor elke reeds geziene afzender de categorie en prioriteit. De tweede e-mail van dezelfde afzender slaat de AI-aanroep dus over en erft direct dezelfde classificatie — snellere synchronisatie, lager creditgebruik.
+- **Deterministische spamdetectie**: Vóór elke AI-stap markeert de voorfilter e-mails als spam die duidelijke signalen vertonen (massale commerciële afzenders, bekende handtekeningen), zodat ze nooit in de hoofdinbox belanden.
+
+### Automatische spamcategorisering:
+- **AI-beslissing**: E-mails die niet door de voorfilter worden afgevangen, gaan door GPT-4o-mini, dat kan beslissen dat een bericht spam is; het komt dan rechtstreeks in de Spam-map terecht in plaats van de Inbox.
+- **Aparte Spam-map**: Toegankelijk vanuit de zijbalk, verzamelt alle als spam gemarkeerde e-mails (door de voorfilter of de AI).
+- **Geen verspilde credits**: Een voorgefilterde e-mail verbruikt nul AI-credits — alleen onzekere berichten bereiken het model.
+
+### Handmatige herclassificatie:
+- **Herstellen naar Inbox**: Vanuit de Spam-map verplaatst één klik een legitieme e-mail terug naar de hoofdinbox.
+- **Markeren als spam**: Vanuit de Inbox kunt u een e-mail naar Spam forceren als de AI het verkeerd had.
+- **Leren via de cache**: Uw herstellingen en spam-markeringen voeden de sender_cache, zodat de volgende e-mail van dezelfde afzender op de juiste plek belandt zonder de AI opnieuw aan te roepen.
+- **Spam legen**: Knop om alle spam-e-mails in één keer definitief te verwijderen, bevestiging vereist.
+- **Permanent verwijderen**: Verwijder individuele spam-e-mails definitief, bevestiging vereist.
 
 ### Best practices:
-- Controleer de Spam-map af en toe om vals-positieven te herstellen.
-- Herstel legitieme e-mails zodat de AI beter leert.
-- Leeg de Spam-map regelmatig om uw account licht te houden.
+- Controleer de Spam-map af en toe om vals-positieven te redden en de cache te trainen.
+- Herstel legitieme e-mails in plaats van ze opnieuw te openen: dit werkt de sender_cache bij.
+- Leeg Spam regelmatig om uw account licht te houden.
 
 ## VEELGESTELDE VRAGEN
 
