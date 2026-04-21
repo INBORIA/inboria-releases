@@ -272,7 +272,7 @@ router.delete("/organisations/members/:memberId", requireAuth, async (req, res):
 
     await supabaseAdmin
       .from("profiles")
-      .update({ organisation_id: null, plan: "expired" })
+      .update({ organisation_id: null })
       .eq("id", target.user_id);
 
     res.json({ success: true });
@@ -400,13 +400,71 @@ router.post("/organisations/invite", requireAuth, async (req, res): Promise<void
       }
     }
 
+    const normalizedEmail = email.toLowerCase().trim();
+
+    let existingAuthUserId: string | null = null;
+    try {
+      let p = 1;
+      while (p < 20) {
+        const { data: list } = await supabaseAdmin.auth.admin.listUsers({ page: p, perPage: 200 });
+        if (!list?.users?.length) break;
+        const match = list.users.find((u: any) => (u.email || "").toLowerCase() === normalizedEmail);
+        if (match) { existingAuthUserId = match.id; break; }
+        if (list.users.length < 200) break;
+        p++;
+      }
+    } catch (e) {
+      console.error("[invite] listUsers failed:", e);
+    }
+
+    if (existingAuthUserId) {
+      const { data: orgInfo } = await supabaseAdmin
+        .from("organisations")
+        .select("plan, emails_quota")
+        .eq("id", adminMembership.organisation_id)
+        .single();
+
+      const { error: insErr } = await supabaseAdmin
+        .from("organisation_members")
+        .insert({
+          organisation_id: adminMembership.organisation_id,
+          user_id: existingAuthUserId,
+          role: inviteRole,
+          status: "active",
+        });
+
+      if (insErr) {
+        console.error("[invite] direct member insert failed:", insErr);
+        res.status(500).json({ error: "Erreur lors de l'ajout du membre" });
+        return;
+      }
+
+      await supabaseAdmin
+        .from("profiles")
+        .update({
+          organisation_id: adminMembership.organisation_id,
+          plan: orgInfo?.plan || "business",
+          emails_quota: orgInfo?.emails_quota ?? 30000,
+        })
+        .eq("id", existingAuthUserId);
+
+      res.status(201).json({
+        id: null,
+        email: normalizedEmail,
+        role: inviteRole,
+        status: "accepted",
+        directlyAdded: true,
+      });
+      return;
+    }
+
     const token = generateToken();
 
     const { data: invitation, error } = await supabaseAdmin
       .from("invitations")
       .insert({
         organisation_id: adminMembership.organisation_id,
-        email: email.toLowerCase().trim(),
+        email: normalizedEmail,
         invited_by: req.userId!,
         role: inviteRole,
         token,

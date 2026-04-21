@@ -84,10 +84,14 @@ export default function Equipe() {
   async function handleInvite() {
     if (!inviteEmail.trim()) return;
     try {
-      const result = await inviteMutation.mutateAsync({
+      const result: any = await inviteMutation.mutateAsync({
         data: { email: inviteEmail.trim(), role: inviteRole },
       });
-      toast({ title: t("team.inviteSent", { email: inviteEmail.trim() }) });
+      if (result?.directlyAdded) {
+        toast({ title: `${inviteEmail.trim()} a été ajouté(e) à l'équipe` });
+      } else {
+        toast({ title: t("team.inviteSent", { email: inviteEmail.trim() }) });
+      }
       setInviteEmail("");
       invalidateAll();
     } catch (e: any) {
