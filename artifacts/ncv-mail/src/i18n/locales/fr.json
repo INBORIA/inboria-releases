@@ -1427,7 +1427,10 @@
     "removeConfirm": "Retirer ce membre ?",
     "removeConfirmDesc": "Ce collaborateur perdra l'accès à l'organisation.",
     "error": "Erreur",
-    "inviteError": "Erreur lors de l'envoi"
+    "inviteError": "Erreur lors de l'envoi",
+    "changeRole": "Changer le rôle",
+    "adminDesc": "Peut gérer l'équipe, l'abonnement et tous les emails",
+    "memberDesc": "Accès à ses emails et aux tâches partagées"
   },
   "sharedMailboxes": {
     "title": "Boîtes partagées",

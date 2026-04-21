@@ -1427,7 +1427,10 @@
     "removeConfirm": "¿Eliminar a este miembro?",
     "removeConfirmDesc": "Este colaborador perderá el acceso a la organización.",
     "error": "Error",
-    "inviteError": "Error al enviar la invitación"
+    "inviteError": "Error al enviar la invitación",
+    "changeRole": "Cambiar rol",
+    "adminDesc": "Puede gestionar el equipo, la suscripción y todos los correos",
+    "memberDesc": "Acceso a sus correos y tareas compartidas"
   },
   "sharedMailboxes": {
     "title": "Buzones compartidos",

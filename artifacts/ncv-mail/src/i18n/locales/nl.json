@@ -1427,7 +1427,10 @@
     "removeConfirm": "Dit lid verwijderen?",
     "removeConfirmDesc": "Deze medewerker verliest toegang tot de organisatie.",
     "error": "Fout",
-    "inviteError": "Fout bij het verzenden van de uitnodiging"
+    "inviteError": "Fout bij het verzenden van de uitnodiging",
+    "changeRole": "Rol wijzigen",
+    "adminDesc": "Kan team, abonnement en alle e-mails beheren",
+    "memberDesc": "Toegang tot eigen e-mails en gedeelde taken"
   },
   "sharedMailboxes": {
     "title": "Gedeelde mailboxen",

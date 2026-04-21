@@ -1427,7 +1427,10 @@
     "removeConfirm": "Remove this member?",
     "removeConfirmDesc": "This collaborator will lose access to the organization.",
     "error": "Error",
-    "inviteError": "Error sending invitation"
+    "inviteError": "Error sending invitation",
+    "changeRole": "Change role",
+    "adminDesc": "Can manage the team, billing and all emails",
+    "memberDesc": "Access to own emails and shared tasks"
   },
   "sharedMailboxes": {
     "title": "Shared mailboxes",

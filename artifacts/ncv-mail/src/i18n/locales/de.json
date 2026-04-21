@@ -1427,7 +1427,10 @@
     "removeConfirm": "Dieses Mitglied entfernen?",
     "removeConfirmDesc": "Dieser Mitarbeiter verliert den Zugang zur Organisation.",
     "error": "Fehler",
-    "inviteError": "Fehler beim Senden der Einladung"
+    "inviteError": "Fehler beim Senden der Einladung",
+    "changeRole": "Rolle ändern",
+    "adminDesc": "Kann Team, Abonnement und alle E-Mails verwalten",
+    "memberDesc": "Zugriff auf eigene E-Mails und geteilte Aufgaben"
   },
   "sharedMailboxes": {
     "title": "Geteilte Postfächer",
