@@ -57,6 +57,26 @@ export default function Equipe() {
   const [inviteRole, setInviteRole] = useState<"member" | "admin">("member");
   const [copiedToken, setCopiedToken] = useState<string | null>(null);
   const [showRoleDropdown, setShowRoleDropdown] = useState<string | null>(null);
+  const [dropdownPos, setDropdownPos] = useState<{ top: number; left: number; openUp: boolean } | null>(null);
+
+  function openRoleDropdown(memberId: string, e: React.MouseEvent<HTMLButtonElement>) {
+    if (showRoleDropdown === memberId) {
+      setShowRoleDropdown(null);
+      setDropdownPos(null);
+      return;
+    }
+    const r = e.currentTarget.getBoundingClientRect();
+    const menuHeight = 160;
+    const menuWidth = 260;
+    const spaceBelow = window.innerHeight - r.bottom;
+    const openUp = spaceBelow < menuHeight + 16;
+    setDropdownPos({
+      top: openUp ? r.top - 8 : r.bottom + 8,
+      left: Math.max(8, r.right - menuWidth),
+      openUp,
+    });
+    setShowRoleDropdown(memberId);
+  }
 
   const isAdmin = (org as any)?.myRole === "admin";
   const plan = (profile as any)?.plan;
@@ -258,24 +278,28 @@ export default function Equipe() {
                   <div className="flex items-center gap-2">
                     <div className="relative">
                       <button
-                        onClick={() =>
-                          setShowRoleDropdown(
-                            showRoleDropdown === member.id ? null : member.id
-                          )
-                        }
+                        onClick={(e) => openRoleDropdown(member.id, e)}
                         className="flex items-center gap-1 px-2 py-1 rounded text-[11px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] transition-colors"
                       >
                         <Shield className="h-3 w-3" />
                         {member.role === "admin" ? t("team.admin") : t("team.member")}
                         <ChevronDown className="h-3 w-3" />
                       </button>
-                      {showRoleDropdown === member.id && (
+                      {showRoleDropdown === member.id && dropdownPos && (
                         <>
                           <div
-                            className="fixed inset-0 z-20"
-                            onClick={() => setShowRoleDropdown(null)}
+                            className="fixed inset-0 z-40"
+                            onClick={() => { setShowRoleDropdown(null); setDropdownPos(null); }}
                           />
-                          <div className="absolute right-0 top-full mt-2 bg-[#1a2332] border border-[#1f2937] rounded-lg shadow-2xl z-30 py-2 min-w-[240px]">
+                          <div
+                            style={{
+                              position: "fixed",
+                              top: dropdownPos.openUp ? undefined : dropdownPos.top,
+                              bottom: dropdownPos.openUp ? window.innerHeight - dropdownPos.top : undefined,
+                              left: dropdownPos.left,
+                              width: 260,
+                            }}
+                            className="bg-[#1a2332] border border-[#1f2937] rounded-lg shadow-2xl z-50 py-2">
                             <div className="px-3 pb-2 mb-1 border-b border-[#1f2937]">
                               <div className="text-[11px] font-medium text-white">
                                 {t("team.changeRole") || "Changer le rôle"}
