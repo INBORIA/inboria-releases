@@ -270,22 +270,50 @@ export default function Equipe() {
                         <ChevronDown className="h-3 w-3" />
                       </button>
                       {showRoleDropdown === member.id && (
-                        <div className="absolute right-0 top-full mt-1 bg-[#1a2332] border border-[#1f2937] rounded-lg shadow-xl z-10 py-1 min-w-[120px]">
-                          <button
-                            onClick={() => handleChangeRole(member.id, "admin")}
-                            className="w-full text-left px-3 py-1.5 text-[11px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
-                          >
-                            <Crown className="inline h-3 w-3 mr-1.5" />
-                            {t("team.admin")}
-                          </button>
-                          <button
-                            onClick={() => handleChangeRole(member.id, "member")}
-                            className="w-full text-left px-3 py-1.5 text-[11px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
-                          >
-                            <Shield className="inline h-3 w-3 mr-1.5" />
-                            {t("team.member")}
-                          </button>
-                        </div>
+                        <>
+                          <div
+                            className="fixed inset-0 z-20"
+                            onClick={() => setShowRoleDropdown(null)}
+                          />
+                          <div className="absolute right-0 top-full mt-2 bg-[#1a2332] border border-[#1f2937] rounded-lg shadow-2xl z-30 py-2 min-w-[240px]">
+                            <div className="px-3 pb-2 mb-1 border-b border-[#1f2937]">
+                              <div className="text-[11px] font-medium text-white">
+                                {t("team.changeRole") || "Changer le rôle"}
+                              </div>
+                              <div className="text-[10px] text-[#8b9cb3] truncate">
+                                {member.fullName || member.email}
+                              </div>
+                            </div>
+                            <button
+                              onClick={() => handleChangeRole(member.id, "admin")}
+                              className={`w-full text-left px-3 py-2 text-[12px] hover:bg-white/[0.06] flex items-start gap-2 ${
+                                member.role === "admin" ? "text-primary" : "text-white"
+                              }`}
+                            >
+                              <Crown className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                              <div className="flex-1">
+                                <div className="font-medium">{t("team.admin")}</div>
+                                <div className="text-[10px] text-[#8b9cb3] leading-snug">
+                                  {t("team.adminDesc") || "Peut gérer l'équipe, l'abonnement et tous les emails"}
+                                </div>
+                              </div>
+                            </button>
+                            <button
+                              onClick={() => handleChangeRole(member.id, "member")}
+                              className={`w-full text-left px-3 py-2 text-[12px] hover:bg-white/[0.06] flex items-start gap-2 ${
+                                member.role === "member" ? "text-primary" : "text-white"
+                              }`}
+                            >
+                              <Shield className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                              <div className="flex-1">
+                                <div className="font-medium">{t("team.member")}</div>
+                                <div className="text-[10px] text-[#8b9cb3] leading-snug">
+                                  {t("team.memberDesc") || "Accès à ses emails et aux tâches partagées"}
+                                </div>
+                              </div>
+                            </button>
+                          </div>
+                        </>
                       )}
                     </div>
                     <button
