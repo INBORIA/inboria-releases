@@ -3587,5 +3587,22 @@
         }
       }
     }
+  },
+  "waitlist": {
+    "title": "Demnächst verfügbar",
+    "bannerTitle": "Bezahlte Tarife starten bald",
+    "bannerDesc": "Inboria ist derzeit in der privaten Beta. Hinterlassen Sie Ihre E-Mail-Adresse — wir benachrichtigen Sie, sobald die Abonnements verfügbar sind.",
+    "formLabel": "Gewünschter Tarif (optional)",
+    "emailPlaceholder": "sie@unternehmen.com",
+    "joinButton": "Beim Start benachrichtigen",
+    "joining": "Speichern...",
+    "successTitle": "Danke!",
+    "successDesc": "Ihre E-Mail-Adresse wurde gespeichert. Wir melden uns, sobald die Abonnements geöffnet sind.",
+    "errorTitle": "Fehler",
+    "errorDesc": "Ihre E-Mail-Adresse konnte nicht gespeichert werden. Bitte versuchen Sie es gleich erneut.",
+    "invalidEmail": "Ungültige E-Mail-Adresse.",
+    "ctaComingSoon": "Demnächst verfügbar",
+    "paymentsFrozenTitle": "Abonnements pausiert",
+    "paymentsFrozenDesc": "Bezahlte Tarife werden bald geöffnet. Genießen Sie Inboria zwischenzeitlich im Beta-Modus — Zahlungsaktionen sind derzeit nicht verfügbar."
   }
 }

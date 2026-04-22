@@ -857,6 +857,28 @@ export interface UpdateAppointmentBody {
   participants?: string;
 }
 
+export type WaitlistSignupBodyPlan =
+  | (typeof WaitlistSignupBodyPlan)[keyof typeof WaitlistSignupBodyPlan]
+  | null;
+
+export const WaitlistSignupBodyPlan = {
+  solo: "solo",
+  pro: "pro",
+  business: "business",
+} as const;
+
+export interface WaitlistSignupBody {
+  email: string;
+  plan?: WaitlistSignupBodyPlan;
+  /**
+   * @minimum 1
+   * @maximum 500
+   */
+  seats?: number | null;
+  /** @maxLength 8 */
+  locale?: string | null;
+}
+
 export type RegisterPushToken200 = {
   success?: boolean;
 };
@@ -1244,5 +1266,9 @@ export type ListAppointmentsParams = {
 };
 
 export type DeleteAppointment200 = {
+  success?: boolean;
+};
+
+export type JoinWaitlist200 = {
   success?: boolean;
 };

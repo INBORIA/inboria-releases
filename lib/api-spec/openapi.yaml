@@ -2390,6 +2390,31 @@ paths:
               schema:
                 type: string
 
+  /waitlist:
+    post:
+      operationId: joinWaitlist
+      tags: [waitlist]
+      summary: Subscribe to the payments waitlist
+      description: Public endpoint that records an email for the future payment plans launch.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WaitlistSignupBody"
+      responses:
+        "200":
+          description: Signup recorded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+        "400":
+          description: Invalid email
+
 components:
   schemas:
     HealthStatus:
@@ -3834,3 +3859,25 @@ components:
           type: boolean
         participants:
           type: string
+
+    WaitlistSignupBody:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+        plan:
+          type: string
+          enum: [solo, pro, business]
+          nullable: true
+        seats:
+          type: integer
+          minimum: 1
+          maximum: 500
+          nullable: true
+        locale:
+          type: string
+          maxLength: 8
+          nullable: true

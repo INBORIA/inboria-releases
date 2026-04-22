@@ -3587,5 +3587,22 @@
         }
       }
     }
+  },
+  "waitlist": {
+    "title": "Coming soon",
+    "bannerTitle": "Paid plans are launching very soon",
+    "bannerDesc": "Inboria is currently in private beta. Drop your email and we'll let you know the moment subscriptions go live.",
+    "formLabel": "Plan you're interested in (optional)",
+    "emailPlaceholder": "you@company.com",
+    "joinButton": "Notify me at launch",
+    "joining": "Saving...",
+    "successTitle": "Thanks!",
+    "successDesc": "Your email has been saved. We'll reach out as soon as subscriptions open.",
+    "errorTitle": "Error",
+    "errorDesc": "We couldn't save your email. Please try again in a moment.",
+    "invalidEmail": "Invalid email address.",
+    "ctaComingSoon": "Coming soon",
+    "paymentsFrozenTitle": "Subscriptions paused",
+    "paymentsFrozenDesc": "We're opening paid plans very soon. In the meantime, enjoy Inboria in beta mode — no payment actions are available right now."
   }
 }

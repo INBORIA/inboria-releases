@@ -20,6 +20,9 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useSearch, useLocation } from "wouter";
 import { plans } from "@/lib/plans";
 import { useTranslation } from "react-i18next";
+import { isPaymentsEnabled } from "@/lib/feature-flags";
+import { WaitlistForm } from "@/components/waitlist-form";
+import { Clock } from "lucide-react";
 
 declare global {
   interface Window {
@@ -38,22 +41,19 @@ export default function Abonnement() {
 
   const [businessSeats, setBusinessSeats] = useState(3);
   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
-  const [paddleReady, setPaddleReady] = useState(false);
   const [cancelLoading, setCancelLoading] = useState(false);
+  const paymentsEnabled = isPaymentsEnabled();
 
   useEffect(() => {
-    if (window.Paddle) {
-      setPaddleReady(true);
-      return;
-    }
+    if (!paymentsEnabled) return;
+    if (window.Paddle) return;
     const interval = setInterval(() => {
       if (window.Paddle) {
-        setPaddleReady(true);
         clearInterval(interval);
       }
     }, 500);
     return () => clearInterval(interval);
-  }, []);
+  }, [paymentsEnabled]);
 
   useEffect(() => {
     const params = new URLSearchParams(searchString);
@@ -195,6 +195,28 @@ export default function Abonnement() {
           </p>
         </div>
 
+        {!paymentsEnabled && (
+          <div
+            className="rounded-lg border border-[#2d7dd2]/40 bg-[#2d7dd2]/5 p-5 mb-6"
+            data-testid="banner-payments-frozen"
+          >
+            <div className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-lg flex items-center justify-center bg-[#2d7dd2]/15 text-[#2d7dd2] shrink-0">
+                <Clock className="w-4 h-4" />
+              </div>
+              <div className="flex-1 min-w-0">
+                <h3 className="text-[14px] font-semibold text-white mb-1">
+                  {t("waitlist.paymentsFrozenTitle")}
+                </h3>
+                <p className="text-[12px] text-[#8b9cb3] leading-relaxed mb-4">
+                  {t("waitlist.paymentsFrozenDesc")}
+                </p>
+                <WaitlistForm compact />
+              </div>
+            </div>
+          </div>
+        )}
+
         {!isLoading && profile && (profile.plan === "expired" || (profile.plan === "essai" && (profile.emailsUsed + ((profile as any).aiCreditsUsed || 0)) >= profile.emailsQuota)) && (
           <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-5 mb-6 flex items-center gap-3">
             <AlertTriangle className="w-5 h-5 text-red-400 shrink-0" />
@@ -260,7 +282,7 @@ export default function Abonnement() {
                   );
                 })()}
               </div>
-              {hasPaidPlan && (
+              {hasPaidPlan && paymentsEnabled && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button
@@ -419,6 +441,17 @@ export default function Abonnement() {
                     disabled
                   >
                     {profile?.plan === "essai" ? t("subscription.trialInProgress") : t("subscription.trialEnded")}
+                  </Button>
+                ) : !paymentsEnabled ? (
+                  <Button
+                    variant="ghost"
+                    className="w-full text-[#8b9cb3] cursor-not-allowed"
+                    size="sm"
+                    disabled
+                    data-testid={`button-coming-soon-${plan.id}`}
+                  >
+                    <Clock className="w-3.5 h-3.5 mr-1.5" />
+                    {t("waitlist.ctaComingSoon")}
                   </Button>
                 ) : (
                   <Button

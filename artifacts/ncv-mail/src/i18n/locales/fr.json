@@ -1953,5 +1953,22 @@
       "restauration_tourisme": "Restauration & Tourisme",
       "autres_services": "Autres services"
     }
+  },
+  "waitlist": {
+    "title": "Bientôt disponible",
+    "bannerTitle": "Les abonnements payants arrivent très bientôt",
+    "bannerDesc": "Inboria est actuellement en bêta privée. Laissez-nous votre email pour être prévenu·e dès l'ouverture officielle des abonnements.",
+    "formLabel": "Plan qui vous intéresse (optionnel)",
+    "emailPlaceholder": "vous@entreprise.com",
+    "joinButton": "Me prévenir au lancement",
+    "joining": "Enregistrement...",
+    "successTitle": "Merci !",
+    "successDesc": "Votre email a bien été enregistré. Nous vous écrirons dès l'ouverture des abonnements.",
+    "errorTitle": "Erreur",
+    "errorDesc": "Impossible d'enregistrer votre email. Réessayez dans quelques instants.",
+    "invalidEmail": "Adresse email invalide.",
+    "ctaComingSoon": "Bientôt disponible",
+    "paymentsFrozenTitle": "Abonnements en pause",
+    "paymentsFrozenDesc": "Nous ouvrons les abonnements payants très prochainement. En attendant, profitez d'Inboria en mode bêta — aucune action de paiement n'est possible pour l'instant."
   }
 }

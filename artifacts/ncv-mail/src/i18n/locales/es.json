@@ -3587,5 +3587,22 @@
         }
       }
     }
+  },
+  "waitlist": {
+    "title": "Próximamente disponible",
+    "bannerTitle": "Los planes de pago llegan muy pronto",
+    "bannerDesc": "Inboria está actualmente en beta privada. Déjenos su correo y le avisaremos en cuanto se abran las suscripciones.",
+    "formLabel": "Plan que le interesa (opcional)",
+    "emailPlaceholder": "tu@empresa.com",
+    "joinButton": "Avisarme al lanzamiento",
+    "joining": "Guardando...",
+    "successTitle": "¡Gracias!",
+    "successDesc": "Su correo ha sido guardado. Le escribiremos en cuanto se abran las suscripciones.",
+    "errorTitle": "Error",
+    "errorDesc": "No se pudo guardar su correo. Inténtelo de nuevo en unos instantes.",
+    "invalidEmail": "Dirección de correo inválida.",
+    "ctaComingSoon": "Próximamente disponible",
+    "paymentsFrozenTitle": "Suscripciones en pausa",
+    "paymentsFrozenDesc": "Abriremos los planes de pago muy pronto. Mientras tanto, disfrute de Inboria en modo beta — no se permiten acciones de pago por ahora."
   }
 }

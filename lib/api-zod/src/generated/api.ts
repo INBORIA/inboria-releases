@@ -2031,3 +2031,22 @@ export const DeleteAppointmentParams = zod.object({
 export const DeleteAppointmentResponse = zod.object({
   success: zod.boolean().optional(),
 });
+
+/**
+ * Public endpoint that records an email for the future payment plans launch.
+ * @summary Subscribe to the payments waitlist
+ */
+export const joinWaitlistBodySeatsMax = 500;
+
+export const joinWaitlistBodyLocaleMax = 8;
+
+export const JoinWaitlistBody = zod.object({
+  email: zod.string().email(),
+  plan: zod.enum(["solo", "pro", "business"]).nullish(),
+  seats: zod.number().min(1).max(joinWaitlistBodySeatsMax).nullish(),
+  locale: zod.string().max(joinWaitlistBodyLocaleMax).nullish(),
+});
+
+export const JoinWaitlistResponse = zod.object({
+  success: zod.boolean().optional(),
+});

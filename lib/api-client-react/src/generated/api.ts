@@ -85,6 +85,7 @@ import type {
   Integration,
   Invitation,
   InviteBody,
+  JoinWaitlist200,
   ListAppointmentsParams,
   ListEmailsParams,
   ListFollowupsParams,
@@ -141,6 +142,7 @@ import type {
   UploadAttachments200,
   UploadAttachmentsBody,
   UserProfile,
+  WaitlistSignupBody,
 } from "./api.schemas";
 
 import { customFetch } from "../custom-fetch";
@@ -9318,3 +9320,90 @@ export function useExportAppointments<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * Public endpoint that records an email for the future payment plans launch.
+ * @summary Subscribe to the payments waitlist
+ */
+export const getJoinWaitlistUrl = () => {
+  return `/api/waitlist`;
+};
+
+export const joinWaitlist = async (
+  waitlistSignupBody: WaitlistSignupBody,
+  options?: RequestInit,
+): Promise<JoinWaitlist200> => {
+  return customFetch<JoinWaitlist200>(getJoinWaitlistUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(waitlistSignupBody),
+  });
+};
+
+export const getJoinWaitlistMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof joinWaitlist>>,
+    TError,
+    { data: BodyType<WaitlistSignupBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof joinWaitlist>>,
+  TError,
+  { data: BodyType<WaitlistSignupBody> },
+  TContext
+> => {
+  const mutationKey = ["joinWaitlist"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof joinWaitlist>>,
+    { data: BodyType<WaitlistSignupBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return joinWaitlist(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type JoinWaitlistMutationResult = NonNullable<
+  Awaited<ReturnType<typeof joinWaitlist>>
+>;
+export type JoinWaitlistMutationBody = BodyType<WaitlistSignupBody>;
+export type JoinWaitlistMutationError = ErrorType<void>;
+
+/**
+ * @summary Subscribe to the payments waitlist
+ */
+export const useJoinWaitlist = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof joinWaitlist>>,
+    TError,
+    { data: BodyType<WaitlistSignupBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof joinWaitlist>>,
+  TError,
+  { data: BodyType<WaitlistSignupBody> },
+  TContext
+> => {
+  return useMutation(getJoinWaitlistMutationOptions(options));
+};

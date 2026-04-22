@@ -3587,5 +3587,22 @@
         }
       }
     }
+  },
+  "waitlist": {
+    "title": "Binnenkort beschikbaar",
+    "bannerTitle": "Betaalde abonnementen komen heel binnenkort",
+    "bannerDesc": "Inboria is momenteel in privébèta. Laat uw e-mailadres achter en wij waarschuwen u zodra de abonnementen live gaan.",
+    "formLabel": "Gewenst abonnement (optioneel)",
+    "emailPlaceholder": "u@bedrijf.com",
+    "joinButton": "Verwittig mij bij lancering",
+    "joining": "Opslaan...",
+    "successTitle": "Bedankt!",
+    "successDesc": "Uw e-mailadres is opgeslagen. We nemen contact op zodra de abonnementen openen.",
+    "errorTitle": "Fout",
+    "errorDesc": "We konden uw e-mailadres niet opslaan. Probeer het zo dadelijk opnieuw.",
+    "invalidEmail": "Ongeldig e-mailadres.",
+    "ctaComingSoon": "Binnenkort beschikbaar",
+    "paymentsFrozenTitle": "Abonnementen op pauze",
+    "paymentsFrozenDesc": "Betaalde abonnementen openen binnenkort. Geniet ondertussen van Inboria in bètamodus — betaalacties zijn momenteel niet beschikbaar."
   }
 }
