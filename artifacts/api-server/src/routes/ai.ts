@@ -250,7 +250,7 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
 
     const { data: email, error: emailErr } = await supabaseAdmin
       .from("emails")
-      .select("id, sender, subject, body, category_id, project_id")
+      .select("id, sender, subject, body, category_id, project_id, connection_id")
       .eq("id", emailId)
       .eq("user_id", req.userId!)
       .single();
@@ -288,12 +288,21 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
 
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("full_name, signature")
+      .select("full_name")
       .eq("id", req.userId!)
       .single();
 
+    let userSignature = "";
+    if (email.connection_id) {
+      const { data: connection } = await supabaseAdmin
+        .from("email_connections")
+        .select("signature")
+        .eq("id", email.connection_id)
+        .single();
+      userSignature = (connection?.signature || "").trim();
+    }
+
     const userName = (profile?.full_name || "").split(" ")[0] || "Cordialement";
-    const userSignature = profile?.signature || "";
 
     const signatureInstruction = userSignature
       ? `Termine le brouillon avec la signature suivante (telle quelle, ne la modifie pas):\n\n${userSignature}`
@@ -350,7 +359,7 @@ router.post("/ai/forward-intro", requireAuth, async (req, res): Promise<void> =>
 
     const { data: email, error: emailErr } = await supabaseAdmin
       .from("emails")
-      .select("id, sender, subject, body")
+      .select("id, sender, subject, body, connection_id")
       .eq("id", emailId)
       .eq("user_id", req.userId!)
       .single();
@@ -362,12 +371,21 @@ router.post("/ai/forward-intro", requireAuth, async (req, res): Promise<void> =>
 
     const { data: profile } = await supabaseAdmin
       .from("profiles")
-      .select("full_name, signature")
+      .select("full_name")
       .eq("id", req.userId!)
       .single();
 
+    let userSignature = "";
+    if (email.connection_id) {
+      const { data: connection } = await supabaseAdmin
+        .from("email_connections")
+        .select("signature")
+        .eq("id", email.connection_id)
+        .single();
+      userSignature = (connection?.signature || "").trim();
+    }
+
     const userName = (profile?.full_name || "").split(" ")[0] || "Cordialement";
-    const userSignature = profile?.signature || "";
     const signatureInstruction = userSignature
       ? `Termine le message par la signature suivante telle quelle :\n\n${userSignature}`
       : `Signe simplement avec le prenom \"${userName}\".`;

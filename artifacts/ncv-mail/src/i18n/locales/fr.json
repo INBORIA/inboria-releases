@@ -850,13 +850,9 @@
     "taskExtractionDesc": "Convertir les requêtes clients en tâches.",
     "projectDetection": "Détection de projets",
     "projectDetectionDesc": "Associer automatiquement les emails à vos projets actifs.",
-    "emailSignature": "Signature email",
-    "signatureDesc": "Cette signature sera automatiquement ajoutée aux brouillons générés par l'IA et à vos réponses manuelles.",
     "preview": "Aperçu",
     "saving": "Enregistrement...",
-    "saveSignature": "Enregistrer la signature",
     "signatureSaved": "Signature enregistrée",
-    "signatureSavedDesc": "Votre signature sera utilisée dans les brouillons IA et les réponses.",
     "managementMode": "Mode de gestion",
     "profile": "Profil",
     "profileUpdated": "Profil mis à jour",
@@ -929,7 +925,7 @@
     "otherProvider": "Autre fournisseur",
     "accountSignature": "Signature",
     "accountSignatureLabel": "Signature pour ce compte",
-    "accountSignaturePlaceholder": "Signature spécifique à ce compte (sinon, signature globale)"
+    "accountSignaturePlaceholder": "Signature spécifique à ce compte (laisser vide pour aucune signature)"
   },
   "subscription": {
     "title": "Gérez votre abonnement",

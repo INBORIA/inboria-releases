@@ -860,13 +860,9 @@
     "taskExtractionDesc": "Convert client requests into tasks.",
     "projectDetection": "Project detection",
     "projectDetectionDesc": "Automatically associate emails with your active projects.",
-    "emailSignature": "Email signature",
-    "signatureDesc": "This signature will be automatically added to AI-generated drafts and your manual replies.",
     "preview": "Preview",
     "saving": "Saving...",
-    "saveSignature": "Save signature",
     "signatureSaved": "Signature saved",
-    "signatureSavedDesc": "Your signature will be used in AI drafts and replies.",
     "managementMode": "Management mode",
     "profile": "Profile",
     "profileUpdated": "Profile updated",
@@ -939,7 +935,7 @@
     "otherProvider": "Other provider",
     "accountSignature": "Signature",
     "accountSignatureLabel": "Signature for this account",
-    "accountSignaturePlaceholder": "Specific signature for this account (otherwise, global signature)"
+    "accountSignaturePlaceholder": "Specific signature for this account (leave empty for no signature)"
   },
   "subscription": {
     "title": "Manage your subscription",

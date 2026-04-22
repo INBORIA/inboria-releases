@@ -339,7 +339,7 @@ function AccountConnectionCard({
           <Textarea
             value={sigDraft}
             onChange={(e) => setSigDraft(e.target.value)}
-            placeholder={t("settings.accountSignaturePlaceholder", "Signature spécifique à ce compte (sinon, signature globale)")}
+            placeholder={t("settings.accountSignaturePlaceholder", "Signature spécifique à ce compte (laisser vide pour aucune signature)")}
             className="bg-card border-border text-white text-[12px] min-h-[100px] font-mono"
           />
           <div className="flex justify-end">
@@ -388,7 +388,6 @@ export default function Parametres() {
   const canShareWithTeam = isOrgAdmin && (userPlan === "business" || userPlan === "pro");
 
   const [fullName, setFullName] = useState("");
-  const [signature, setSignature] = useState("");
   const [selectedProvider, setSelectedProvider] = useState<string | null>(null);
   const [imapEmail, setImapEmail] = useState("");
   const [imapPassword, setImapPassword] = useState("");
@@ -455,7 +454,6 @@ export default function Parametres() {
   useEffect(() => {
     if (profile) {
       setFullName(profile.fullName);
-      setSignature((profile as any).signature || "");
       setTimezone((profile as any).timezone || "Europe/Brussels");
     }
   }, [profile]);
@@ -517,18 +515,6 @@ export default function Parametres() {
     } finally {
       setChangingPassword(false);
     }
-  };
-
-  const handleSaveSignature = () => {
-    updateProfile.mutate(
-      { data: { signature } as any },
-      {
-        onSuccess: () => {
-          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
-          toast({ title: t("settings.signatureSaved"), description: t("settings.signatureSavedDesc") });
-        }
-      }
-    );
   };
 
   const handleOAuthConnect = async (provider: "gmail" | "outlook") => {
@@ -992,43 +978,6 @@ export default function Parametres() {
                   <Switch defaultChecked />
                 </div>
               </div>
-            </div>
-          </section>
-
-          <section>
-            <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
-              <Pen className="w-4 h-4 text-primary" />
-              {t("settings.emailSignature")}
-            </h2>
-            <div className="bg-card rounded-lg border border-border p-5 space-y-4">
-              <p className="text-[12px] text-[#8b9cb3]">
-                {t("settings.signatureDesc")}
-              </p>
-              {isLoading ? (
-                <Skeleton className="h-32 w-full bg-white/5" />
-              ) : (
-                <div className="space-y-3">
-                  <Textarea
-                    value={signature}
-                    onChange={(e) => setSignature(e.target.value)}
-                    placeholder={"Cordialement,\n\nJean Dupont\nGérant — Inboria\njean@inboria.com\n+32 470 00 00 00"}
-                    className="bg-background border-border text-white text-[13px] min-h-[140px] resize-y font-mono"
-                  />
-                  {signature && (
-                    <div className="p-3 bg-background rounded-lg border border-border">
-                      <p className="text-[11px] text-[#8b9cb3] mb-2">{t("settings.preview")} :</p>
-                      <div className="text-[13px] text-white whitespace-pre-line">{signature}</div>
-                    </div>
-                  )}
-                  <Button
-                    onClick={handleSaveSignature}
-                    disabled={updateProfile.isPending || signature === ((profile as any)?.signature || "")}
-                    size="sm"
-                  >
-                    {updateProfile.isPending ? t("settings.saving") : t("settings.saveSignature")}
-                  </Button>
-                </div>
-              )}
             </div>
           </section>
 

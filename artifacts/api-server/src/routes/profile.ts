@@ -59,7 +59,7 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       emailsQuota: profile.emails_quota ?? 100,
       quotaPeriodStart: profile.quota_period_start || null,
       aiLanguage: profile.ai_language || "fr",
-      signature: profile.signature || "",
+      signature: "",
       timezone: profile.timezone || "Europe/Brussels",
       createdAt: profile.created_at,
       organisationId,
@@ -83,7 +83,6 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
     const updates: Record<string, unknown> = {};
     if (parsed.data.fullName !== undefined) updates.full_name = parsed.data.fullName;
     if (parsed.data.aiLanguage !== undefined) updates.ai_language = parsed.data.aiLanguage;
-    if (parsed.data.signature !== undefined) updates.signature = parsed.data.signature;
     if ((parsed.data as any).timezone !== undefined) updates.timezone = (parsed.data as any).timezone;
     if (parsed.data.plan !== undefined) {
       if (parsed.data.plan === "essai") {
@@ -127,7 +126,7 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
       emailsQuota: profile.emails_quota ?? 100,
       quotaPeriodStart: profile.quota_period_start || null,
       aiLanguage: profile.ai_language || "fr",
-      signature: profile.signature || "",
+      signature: "",
       timezone: profile.timezone || "Europe/Brussels",
       createdAt: profile.created_at,
     });

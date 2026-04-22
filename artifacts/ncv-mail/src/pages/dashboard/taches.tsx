@@ -703,7 +703,7 @@ export default function Taches() {
                     if (!replyOpen) {
                       setReplyTo(emailDetailTask.emailSenderEmail || emailDetailTask.emailSender || "");
                       setReplySubject(emailDetailTask.emailSubject?.startsWith("Re:") ? emailDetailTask.emailSubject : `Re: ${emailDetailTask.emailSubject}`);
-                      setReplyText((profile as any)?.signature ? `\n\n${(profile as any).signature}` : "");
+                      setReplyText("");
                     }
                     setReplyOpen(!replyOpen);
                   }}

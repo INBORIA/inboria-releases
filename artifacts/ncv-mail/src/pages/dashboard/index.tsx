@@ -185,7 +185,7 @@ function buildForwardCitation(email: any, t: (k: string) => string, dateLocale: 
   return lines.join("\n");
 }
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections, sharedMailboxes }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }>; sharedMailboxes?: any[] }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections, sharedMailboxes }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }>; sharedMailboxes?: any[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
@@ -213,10 +213,8 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
 
   const signatureForConnection = useCallback((connId: string): string => {
     const conn = connections?.find((c) => String(c.id) === String(connId));
-    const sig = (conn?.signature || "").trim();
-    if (sig) return sig;
-    return (userSignature || "").trim();
-  }, [connections, userSignature]);
+    return (conn?.signature || "").trim();
+  }, [connections]);
   const [taskFormOpen, setTaskFormOpen] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskProjectId, setTaskProjectId] = useState("none");
@@ -935,7 +933,6 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
   setIsFullscreen,
   connections,
   projects,
-  userGlobalSignature,
   isPending,
   onSend,
 }: {
@@ -943,7 +940,6 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
   setIsFullscreen: (v: boolean | ((p: boolean) => boolean)) => void;
   connections: ComposeConnection[];
   projects: any[];
-  userGlobalSignature: string;
   isPending: boolean;
   onSend: (p: ComposeSendPayload) => void;
 }) {
@@ -958,9 +954,8 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
 
   const computeSig = useCallback((connId: string) => {
     const c = connections.find((x) => String(x.id) === String(connId));
-    const s = (c?.signature || "").trim();
-    return s || (userGlobalSignature || "").trim();
-  }, [connections, userGlobalSignature]);
+    return (c?.signature || "").trim();
+  }, [connections]);
 
   useEffect(() => {
     if (!fromId && connections[0]) setFromId(String(connections[0].id));
@@ -1349,8 +1344,6 @@ export default function Dashboard() {
       return res.json();
     },
   });
-
-  const userGlobalSignature = ((profile as any)?.signature as string) || "";
 
   const isMobileViewport = typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches;
 
@@ -1928,7 +1921,6 @@ export default function Dashboard() {
             isDrafting={generateDraftMut.isPending}
             categories={categoryCounts || []}
             projects={projects || []}
-            userSignature={(profile as any)?.signature || ""}
             currentUserId={(profile as any)?.id}
             orgMembers={(orgMembers as any[]) || []}
             onAssign={handleAssign}
@@ -2018,7 +2010,6 @@ export default function Dashboard() {
                     setIsFullscreen={setIsComposeFullscreen}
                     connections={composeConnections || []}
                     projects={(projects as any[]) || []}
-                    userGlobalSignature={userGlobalSignature}
                     isPending={sendEmailMut.isPending}
                     onSend={handleComposeSend}
                   />

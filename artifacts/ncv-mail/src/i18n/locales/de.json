@@ -860,13 +860,9 @@
     "taskExtractionDesc": "Kundenanfragen in Aufgaben umwandeln.",
     "projectDetection": "Projekterkennung",
     "projectDetectionDesc": "E-Mails automatisch mit Ihren aktiven Projekten verknüpfen.",
-    "emailSignature": "E-Mail-Signatur",
-    "signatureDesc": "Diese Signatur wird automatisch zu KI-generierten Entwürfen und Ihren manuellen Antworten hinzugefügt.",
     "preview": "Vorschau",
     "saving": "Speichern...",
-    "saveSignature": "Signatur speichern",
     "signatureSaved": "Signatur gespeichert",
-    "signatureSavedDesc": "Ihre Signatur wird in KI-Entwürfen und Antworten verwendet.",
     "managementMode": "Verwaltungsmodus",
     "profile": "Profil",
     "profileUpdated": "Profil aktualisiert",
@@ -939,7 +935,7 @@
     "otherProvider": "Anderer Anbieter",
     "accountSignature": "Signatur",
     "accountSignatureLabel": "Signatur für dieses Konto",
-    "accountSignaturePlaceholder": "Spezifische Signatur für dieses Konto (sonst globale Signatur)"
+    "accountSignaturePlaceholder": "Spezifische Signatur für dieses Konto (leer lassen für keine Signatur)"
   },
   "subscription": {
     "title": "Verwalten Sie Ihr Abonnement",

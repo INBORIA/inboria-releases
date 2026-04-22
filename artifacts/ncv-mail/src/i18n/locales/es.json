@@ -860,13 +860,9 @@
     "taskExtractionDesc": "Convertir solicitudes de clientes en tareas.",
     "projectDetection": "Detección de proyectos",
     "projectDetectionDesc": "Asociar automáticamente correos electrónicos con tus proyectos activos.",
-    "emailSignature": "Firma de correo electrónico",
-    "signatureDesc": "Esta firma se añadirá automáticamente a los borradores generados por IA y a tus respuestas manuales.",
     "preview": "Vista previa",
     "saving": "Guardando...",
-    "saveSignature": "Guardar firma",
     "signatureSaved": "Firma guardada",
-    "signatureSavedDesc": "Tu firma se utilizará en los borradores de IA y en las respuestas.",
     "managementMode": "Modo de gestión",
     "profile": "Perfil",
     "profileUpdated": "Perfil actualizado",
@@ -939,7 +935,7 @@
     "otherProvider": "Otro proveedor",
     "accountSignature": "Firma",
     "accountSignatureLabel": "Firma para esta cuenta",
-    "accountSignaturePlaceholder": "Firma específica para esta cuenta (de lo contrario, firma global)"
+    "accountSignaturePlaceholder": "Firma específica para esta cuenta (dejar vacío para sin firma)"
   },
   "subscription": {
     "title": "Gestiona tu suscripción",

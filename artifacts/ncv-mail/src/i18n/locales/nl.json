@@ -860,13 +860,9 @@
     "taskExtractionDesc": "Klantverzoeken omzetten in taken.",
     "projectDetection": "Projectdetectie",
     "projectDetectionDesc": "E-mails automatisch koppelen aan uw actieve projecten.",
-    "emailSignature": "E-mailhandtekening",
-    "signatureDesc": "Deze handtekening wordt automatisch toegevoegd aan AI-gegenereerde concepten en uw handmatige antwoorden.",
     "preview": "Voorbeeld",
     "saving": "Opslaan...",
-    "saveSignature": "Handtekening opslaan",
     "signatureSaved": "Handtekening opgeslagen",
-    "signatureSavedDesc": "Uw handtekening wordt gebruikt in AI-concepten en antwoorden.",
     "managementMode": "Beheersmodus",
     "profile": "Profiel",
     "profileUpdated": "Profiel bijgewerkt",
@@ -939,7 +935,7 @@
     "otherProvider": "Andere provider",
     "accountSignature": "Handtekening",
     "accountSignatureLabel": "Handtekening voor dit account",
-    "accountSignaturePlaceholder": "Specifieke handtekening voor dit account (anders globale handtekening)"
+    "accountSignaturePlaceholder": "Specifieke handtekening voor dit account (laat leeg voor geen handtekening)"
   },
   "subscription": {
     "title": "Beheer uw abonnement",

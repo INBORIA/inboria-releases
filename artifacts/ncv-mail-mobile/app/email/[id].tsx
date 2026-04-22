@@ -127,7 +127,7 @@ export default function EmailDetailScreen() {
     if (!email) return;
     setReplyTo((email as any).senderEmail || "");
     setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
-    setReplyText(profile?.signature ? `\n\n${profile.signature}` : "");
+    setReplyText("");
     setReplyOpen(true);
   };
 
