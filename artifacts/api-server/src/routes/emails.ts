@@ -7,6 +7,7 @@ import * as os from "os";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { resolveUploadedFiles, cleanupUploadIds } from "./attachments";
+import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 
 function parseSender(raw: string) {
   const match = raw.match(/^(.+?)\s*<(.+?)>$/);
@@ -25,11 +26,13 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     const from = (page - 1) * limit;
     const to = from + limit - 1;
 
+    const memberMailboxIds = await getMemberMailboxIds(req.userId!);
+    const scopeOr = buildInboxScopeOrFilter(req.userId!, memberMailboxIds);
+
     let countQuery = supabaseAdmin
       .from("emails")
       .select("id", { count: "exact", head: true })
-      .eq("user_id", req.userId!)
-      .is("shared_mailbox_id", null);
+      .or(scopeOr);
 
     // Note: on n'inclut PAS `body` ici — il peut peser plusieurs Mo par mail
     // (HTML de newsletters) et n'est jamais affiche dans la liste.
@@ -37,10 +40,9 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     let query = supabaseAdmin
       .from("emails")
       .select(
-        "id, sender, subject, status, priority, summary, category_id, project_id, reply_to_email_id, recipient, assigned_to, assigned_at, created_at, categories(name), projects(name, reference)"
+        "id, sender, subject, status, priority, summary, category_id, project_id, reply_to_email_id, recipient, assigned_to, assigned_at, created_at, shared_mailbox_id, categories(name), projects(name, reference)"
       )
-      .eq("user_id", req.userId!)
-      .is("shared_mailbox_id", null)
+      .or(scopeOr)
       .order("created_at", { ascending: false });
 
     if (req.query.priority) {

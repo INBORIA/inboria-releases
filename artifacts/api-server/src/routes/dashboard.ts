@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 
 const router: IRouter = Router();
 
@@ -12,11 +13,13 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
       .eq("id", req.userId!)
       .single();
 
+    const memberMailboxIds = await getMemberMailboxIds(req.userId!);
+    const scopeOr = buildInboxScopeOrFilter(req.userId!, memberMailboxIds);
+
     const { data: emails } = await supabaseAdmin
       .from("emails")
       .select("priority, status")
-      .eq("user_id", req.userId!)
-      .is("shared_mailbox_id", null);
+      .or(scopeOr);
 
     const allEmails = emails || [];
     const inboxEmails = allEmails.filter(e => e.status !== "archived" && e.status !== "trashed" && e.status !== "spam");
@@ -49,11 +52,13 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
 
 router.get("/dashboard/inbox-health", requireAuth, async (req, res): Promise<void> => {
   try {
+    const memberMailboxIds = await getMemberMailboxIds(req.userId!);
+    const scopeOr = buildInboxScopeOrFilter(req.userId!, memberMailboxIds);
+
     const { data: emails } = await supabaseAdmin
       .from("emails")
       .select("priority, status")
-      .eq("user_id", req.userId!)
-      .is("shared_mailbox_id", null);
+      .or(scopeOr);
 
     const allEmails = emails || [];
     const total = allEmails.length;
@@ -90,11 +95,13 @@ router.get("/dashboard/category-counts", requireAuth, async (req, res): Promise<
       .select("id, name")
       .eq("user_id", req.userId!);
 
+    const memberMailboxIds = await getMemberMailboxIds(req.userId!);
+    const scopeOr = buildInboxScopeOrFilter(req.userId!, memberMailboxIds);
+
     const { data: emails } = await supabaseAdmin
       .from("emails")
       .select("category_id")
-      .eq("user_id", req.userId!)
-      .is("shared_mailbox_id", null)
+      .or(scopeOr)
       .neq("status", "archived")
       .neq("status", "trashed")
       .neq("status", "spam");
