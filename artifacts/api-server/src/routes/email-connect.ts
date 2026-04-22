@@ -706,6 +706,29 @@ router.post("/email/connections/:connectionId/share", requireAuth, async (req, r
       .single();
 
     if (error || !mailbox) {
+      if ((error as any)?.code === "23505") {
+        const { data: dup } = await supabaseAdmin
+          .from("shared_mailboxes")
+          .select("id, name, email_address, connection_id, created_at")
+          .eq("organisation_id", orgId)
+          .eq("connection_id", c.id)
+          .maybeSingle();
+        if (dup) {
+          const e = dup as any;
+          res.status(409).json({
+            error: "already_shared",
+            message: "Ce compte est déjà partagé avec l'équipe.",
+            sharedMailbox: {
+              id: e.id,
+              name: e.name,
+              emailAddress: e.email_address,
+              connectionId: e.connection_id,
+              createdAt: e.created_at,
+            },
+          });
+          return;
+        }
+      }
       console.error("Failed to create shared mailbox from connection:", error);
       res.status(500).json({ error: "Erreur lors de la création de la boîte partagée" });
       return;

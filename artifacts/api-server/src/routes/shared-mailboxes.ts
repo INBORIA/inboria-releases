@@ -187,6 +187,18 @@ router.post("/shared-mailboxes", requireAuth, async (req, res): Promise<void> =>
       .single();
 
     if (error || !mailbox) {
+      if ((error as any)?.code === "23505") {
+        const { data: dup } = await supabaseAdmin
+          .from("shared_mailboxes")
+          .select("id")
+          .eq("organisation_id", orgId)
+          .eq("connection_id", conn.id)
+          .maybeSingle();
+        if (dup) {
+          res.status(409).json({ error: "Cette adresse est déjà partagée" });
+          return;
+        }
+      }
       console.error("Failed to create shared mailbox:", error);
       res.status(500).json({ error: "Erreur lors de la création" });
       return;
