@@ -275,6 +275,8 @@
     "allAccounts": "Tous les comptes",
     "accountFilter": "Compte",
     "receivedOn": "Reçu sur :",
+    "sharedShort": "Partagée",
+    "filteredAccountReminder": "Filtré : {{email}} (cliquez pour voir tous)",
     "claim": "Revendiquer",
     "unclaim": "Libérer",
     "claimedBy": "Revendiqué par",

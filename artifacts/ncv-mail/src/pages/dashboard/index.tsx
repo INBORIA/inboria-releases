@@ -116,13 +116,20 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
         </div>
         <div className="flex items-center gap-2 shrink-0 self-center">
           {showMailboxBadge && mailboxBadge && (
-            <span
-              title={mailboxBadge.label}
-              aria-label={mailboxBadge.label}
-              className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border inline-flex items-center gap-1 max-w-[140px] ${mailboxBadge.bgClass} ${mailboxBadge.textClass} ${mailboxBadge.borderClass}`}
-            >
-              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${mailboxBadge.dotClass}`} aria-hidden="true" />
-              <span className="truncate sr-only md:not-sr-only">{mailboxBadge.shortLabel}</span>
+            <span className="inline-flex items-center gap-1 shrink-0">
+              <span
+                title={mailboxBadge.label}
+                aria-label={mailboxBadge.label}
+                className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border inline-flex items-center gap-1 max-w-[140px] ${mailboxBadge.bgClass} ${mailboxBadge.textClass} ${mailboxBadge.borderClass}`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${mailboxBadge.dotClass}`} aria-hidden="true" />
+                <span className="truncate sr-only md:not-sr-only">{mailboxBadge.shortLabel}</span>
+              </span>
+              {mailboxBadge.isShared && (
+                <span className="text-[9px] px-1 py-0.5 rounded-full font-medium bg-zinc-700/60 text-zinc-200 border border-zinc-500/30 hidden sm:inline">
+                  {t("inbox.sharedShort")}
+                </span>
+              )}
             </span>
           )}
           {email.categoryName && (
@@ -249,18 +256,24 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 </span>
               </div>
               {(() => {
-                const badge = resolveMailboxBadge(email, connections, sharedMailboxes as any[] | undefined);
+                const badge = resolveMailboxBadge(email, connections, sharedMailboxes);
                 if (!badge) return null;
                 return (
                   <div className="flex items-center gap-1.5 mb-2">
                     <span className="text-[10px] uppercase tracking-wider text-[#8b9cb3] font-medium">{t("inbox.receivedOn")}</span>
                     <span
                       title={badge.label}
+                      aria-label={badge.label}
                       className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border inline-flex items-center gap-1 ${badge.bgClass} ${badge.textClass} ${badge.borderClass}`}
                     >
-                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${badge.dotClass}`} />
+                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${badge.dotClass}`} aria-hidden="true" />
                       <span className="truncate max-w-[260px]">{badge.label}</span>
                     </span>
+                    {badge.isShared && (
+                      <span className="text-[9px] px-1 py-0.5 rounded-full font-medium bg-zinc-700/60 text-zinc-200 border border-zinc-500/30">
+                        {t("inbox.sharedShort")}
+                      </span>
+                    )}
                   </div>
                 );
               })()}
@@ -893,19 +906,30 @@ export default function Dashboard() {
   const [inboxMode, setInboxMode] = useState<InboxMode>("personal");
   const [selectedSharedMailboxId, setSelectedSharedMailboxId] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>("all");
-  const [selectedAccountId, setSelectedAccountId] = useState<string>(() => {
-    if (typeof window === "undefined") return "all";
-    return window.localStorage.getItem("inboria.selectedAccount") || "all";
-  });
-  useEffect(() => {
-    if (typeof window === "undefined") return;
-    window.localStorage.setItem("inboria.selectedAccount", selectedAccountId);
-  }, [selectedAccountId]);
+  const [selectedAccountId, setSelectedAccountId] = useState<string>("all");
 
   const { data: categoryCounts, isLoading: categoriesLoading } = useGetCategoryCounts();
   const { data: summary, isLoading: summaryLoading } = useGetDashboardSummary();
   const { data: projects } = useListProjects();
   const { data: profile } = useGetProfile();
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const uid = (profile as { id?: string } | undefined)?.id;
+    if (!uid) {
+      setSelectedAccountId("all");
+      return;
+    }
+    const stored = window.localStorage.getItem(`inboria.selectedAccount:${uid}`);
+    setSelectedAccountId(stored || "all");
+  }, [profile]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const uid = (profile as { id?: string } | undefined)?.id;
+    if (!uid) return;
+    window.localStorage.setItem(`inboria.selectedAccount:${uid}`, selectedAccountId);
+  }, [selectedAccountId, profile]);
 
   const { data: myOrg } = useGetMyOrganisation();
   const { data: orgMembers } = useGetOrganisationMembers({ query: { enabled: !!(myOrg as any)?.id } as any });
@@ -1709,7 +1733,7 @@ export default function Dashboard() {
             onUnassign={handleUnassign}
             onCreateTask={handleCreateTask}
             connections={composeConnections}
-            sharedMailboxes={sharedMailboxes as any[] | undefined}
+            sharedMailboxes={sharedMailboxes}
           />
         </div>
       </DashboardLayout>
@@ -1872,6 +1896,17 @@ export default function Dashboard() {
                     ))}
                   </SelectContent>
                 </Select>
+              )}
+              {inboxMode === "personal" && (composeConnections?.length || 0) >= 2 && selectedAccountEmail && (
+                <button
+                  type="button"
+                  onClick={() => setSelectedAccountId("all")}
+                  className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-amber-500/15 text-amber-300 border border-amber-500/25 hover:bg-amber-500/25"
+                  title={t("inbox.filteredAccountReminder", { email: selectedAccountEmail })}
+                  aria-label={t("inbox.filteredAccountReminder", { email: selectedAccountEmail })}
+                >
+                  {t("inbox.filteredAccountReminder", { email: selectedAccountEmail })}
+                </button>
               )}
               {inboxMode === "personal" && (composeConnections?.length || 0) >= 2 && (
                 <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
@@ -2425,7 +2460,7 @@ export default function Dashboard() {
                     ) : (
                       <>
                         {activeEmails?.map((email) => {
-                          const badge = resolveMailboxBadge(email as any, composeConnections, undefined);
+                          const badge = resolveMailboxBadge(email, composeConnections, sharedMailboxes);
                           return (
                             <EmailRow
                               key={email.id}

@@ -275,6 +275,8 @@
     "allAccounts": "Alle Konten",
     "accountFilter": "Konto",
     "receivedOn": "Empfangen auf:",
+    "sharedShort": "Geteilt",
+    "filteredAccountReminder": "Gefiltert: {{email}} (klicken für alle)",
     "claim": "Beanspruchen",
     "unclaim": "Freigeben",
     "claimedBy": "Beansprucht von",

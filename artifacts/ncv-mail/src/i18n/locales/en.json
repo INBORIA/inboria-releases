@@ -275,6 +275,8 @@
     "allAccounts": "All accounts",
     "accountFilter": "Account",
     "receivedOn": "Received on:",
+    "sharedShort": "Shared",
+    "filteredAccountReminder": "Filtered: {{email}} (click to see all)",
     "claim": "Claim",
     "unclaim": "Release",
     "claimedBy": "Claimed by",

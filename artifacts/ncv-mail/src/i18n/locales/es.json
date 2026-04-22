@@ -275,6 +275,8 @@
     "allAccounts": "Todas las cuentas",
     "accountFilter": "Cuenta",
     "receivedOn": "Recibido en:",
+    "sharedShort": "Compartida",
+    "filteredAccountReminder": "Filtrado: {{email}} (clic para ver todos)",
     "claim": "Reclamar",
     "unclaim": "Liberar",
     "claimedBy": "Reclamado por",

@@ -275,6 +275,8 @@
     "allAccounts": "Alle accounts",
     "accountFilter": "Account",
     "receivedOn": "Ontvangen op:",
+    "sharedShort": "Gedeeld",
+    "filteredAccountReminder": "Gefilterd: {{email}} (klik voor alles)",
     "claim": "Claimen",
     "unclaim": "Vrijgeven",
     "claimedBy": "Geclaimd door",

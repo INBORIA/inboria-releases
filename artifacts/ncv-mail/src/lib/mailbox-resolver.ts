@@ -102,10 +102,15 @@ export function resolveMailboxBadge(
     }
   }
 
-  const recipient = (email.recipient || "").toLowerCase().trim();
-  if (!recipient || !connections || connections.length === 0) return null;
+  if (!email.recipient || !connections || connections.length === 0) return null;
 
-  const match = connections.find((c) => (c.email_address || "").toLowerCase() === recipient);
+  const addresses = extractAddresses(email.recipient);
+  if (addresses.length === 0) return null;
+
+  const match = connections.find((c) => {
+    const addr = (c.email_address || "").trim().toLowerCase();
+    return !!addr && addresses.includes(addr);
+  });
   const target = match || null;
   if (!target) return null;
 
