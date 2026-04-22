@@ -41,8 +41,7 @@ export function WaitlistForm({ defaultPlan, defaultSeats, source, compact }: Wai
       },
       {
         onSuccess: (data) => {
-          const already =
-            (data as unknown as { alreadyRegistered?: boolean })?.alreadyRegistered === true;
+          const already = data.alreadyRegistered === true;
           toast({
             title: already ? t("waitlist.alreadyRegisteredTitle") : t("waitlist.successTitle"),
             description: already

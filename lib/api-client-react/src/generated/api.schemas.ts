@@ -1275,5 +1275,7 @@ export type DeleteAppointment200 = {
 };
 
 export type JoinWaitlist200 = {
-  success?: boolean;
+  success: boolean;
+  /** True if the email was already on the waitlist before this call. */
+  alreadyRegistered: boolean;
 };

@@ -2057,5 +2057,10 @@ export const JoinWaitlistBody = zod.object({
 });
 
 export const JoinWaitlistResponse = zod.object({
-  success: zod.boolean().optional(),
+  success: zod.boolean(),
+  alreadyRegistered: zod
+    .boolean()
+    .describe(
+      "True if the email was already on the waitlist before this call.",
+    ),
 });

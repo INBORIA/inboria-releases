@@ -2409,9 +2409,15 @@ paths:
             application/json:
               schema:
                 type: object
+                required:
+                  - success
+                  - alreadyRegistered
                 properties:
                   success:
                     type: boolean
+                  alreadyRegistered:
+                    type: boolean
+                    description: True if the email was already on the waitlist before this call.
         "400":
           description: Invalid email
 

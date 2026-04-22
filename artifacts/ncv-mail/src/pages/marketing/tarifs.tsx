@@ -99,7 +99,7 @@ export default function Tarifs() {
                 {t("waitlist.bannerDesc")}
               </p>
               <div className="mt-5">
-                <WaitlistForm compact />
+                <WaitlistForm compact source="marketing-tarifs" />
               </div>
             </div>
           </div>

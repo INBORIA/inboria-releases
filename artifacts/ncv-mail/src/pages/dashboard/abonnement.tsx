@@ -211,7 +211,7 @@ export default function Abonnement() {
                 <p className="text-[12px] text-[#8b9cb3] leading-relaxed mb-4">
                   {t("waitlist.paymentsFrozenDesc")}
                 </p>
-                <WaitlistForm compact />
+                <WaitlistForm compact source="dashboard-abonnement" />
               </div>
             </div>
           </div>
@@ -442,7 +442,7 @@ export default function Abonnement() {
                   >
                     {profile?.plan === "essai" ? t("subscription.trialInProgress") : t("subscription.trialEnded")}
                   </Button>
-                ) : !paymentsEnabled ? (
+                ) : !paymentsEnabled && !hasPaidPlan ? (
                   <Button
                     variant="ghost"
                     className="w-full text-[#8b9cb3] cursor-not-allowed"
