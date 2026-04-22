@@ -58,6 +58,7 @@
     "creditsBreakdownAi": "{{count}} IA",
     "creditsBreakdownMails_one": "{{count}} correo",
     "creditsBreakdownAi_one": "{{count}} IA",
+    "admin": "Admin",
     "adminWaitlist": "Admin · Lista de espera",
     "adminSubscribers": "Admin · Suscriptores"
   },

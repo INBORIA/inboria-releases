@@ -73,8 +73,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   if (isInternalAdmin) {
     navigation = [
       ...navigation,
-      { name: t("sidebar.adminWaitlist"), href: "/dashboard/admin/waitlist", icon: ShieldCheck },
-      { name: t("sidebar.adminSubscribers"), href: "/dashboard/admin/abonnes", icon: ShieldCheck },
+      { name: t("sidebar.admin"), href: "/dashboard/admin", icon: ShieldCheck },
     ];
   }
 

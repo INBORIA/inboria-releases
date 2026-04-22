@@ -63,19 +63,24 @@ const PAGE_SIZE = 50;
 const PLAN_OPTIONS = ["essai", "pro", "business", "expired"];
 const ALL_PLANS = "__all__";
 
-export default function AdminAbonnes() {
+interface AdminAbonnesProps {
+  embedded?: boolean;
+}
+
+export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {}) {
   const { t, i18n } = useTranslation();
   const { data: profileData, isLoading: profileLoading } = useGetProfile();
   const profile = (profileData ?? {}) as ProfileWithAdmin;
   const isAdmin = !!profile.isAdmin;
   const [, setLocation] = useLocation();
 
-  // Redirect non-admin users away from this page once the profile resolves.
+  // When rendered standalone, redirect non-admin users. When embedded inside
+  // the unified /dashboard/admin page, the parent handles the redirect.
   useEffect(() => {
-    if (!profileLoading && !isAdmin) {
+    if (!embedded && !profileLoading && !isAdmin) {
       setLocation("/dashboard", { replace: true });
     }
-  }, [profileLoading, isAdmin, setLocation]);
+  }, [embedded, profileLoading, isAdmin, setLocation]);
 
   const [search, setSearch] = useState("");
   const [planFilter, setPlanFilter] = useState<string>(ALL_PLANS);
@@ -141,29 +146,32 @@ export default function AdminAbonnes() {
     setPage(1);
   }
 
+  const Wrap = ({ children }: { children: React.ReactNode }) =>
+    embedded ? <>{children}</> : <DashboardLayout>{children}</DashboardLayout>;
+
   if (profileLoading) {
     return (
-      <DashboardLayout>
+      <Wrap>
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
-      </DashboardLayout>
+      </Wrap>
     );
   }
 
   if (!isAdmin) {
     // Effect above redirects; render a spinner during the brief unmount window.
     return (
-      <DashboardLayout>
+      <Wrap>
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
-      </DashboardLayout>
+      </Wrap>
     );
   }
 
   return (
-    <DashboardLayout>
+    <Wrap>
       <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
@@ -414,6 +422,6 @@ export default function AdminAbonnes() {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </Wrap>
   );
 }

@@ -28,7 +28,11 @@ interface ProfileWithAdmin {
 
 const PAGE_SIZE = 50;
 
-export default function AdminWaitlist() {
+interface AdminWaitlistProps {
+  embedded?: boolean;
+}
+
+export default function AdminWaitlist({ embedded = false }: AdminWaitlistProps = {}) {
   const { t, i18n } = useTranslation();
   const { data: profileData, isLoading: profileLoading } = useGetProfile();
   const profile = (profileData ?? {}) as ProfileWithAdmin;
@@ -36,10 +40,10 @@ export default function AdminWaitlist() {
   const [, setLocation] = useLocation();
 
   useEffect(() => {
-    if (!profileLoading && !isAdmin) {
+    if (!embedded && !profileLoading && !isAdmin) {
       setLocation("/dashboard", { replace: true });
     }
-  }, [profileLoading, isAdmin, setLocation]);
+  }, [embedded, profileLoading, isAdmin, setLocation]);
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -94,29 +98,32 @@ export default function AdminWaitlist() {
     }
   }
 
+  const Wrap = ({ children }: { children: React.ReactNode }) =>
+    embedded ? <>{children}</> : <DashboardLayout>{children}</DashboardLayout>;
+
   if (profileLoading) {
     return (
-      <DashboardLayout>
+      <Wrap>
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
-      </DashboardLayout>
+      </Wrap>
     );
   }
 
   if (!isAdmin) {
     // Effect above redirects; render a spinner during the brief unmount window.
     return (
-      <DashboardLayout>
+      <Wrap>
         <div className="flex items-center justify-center h-64">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
-      </DashboardLayout>
+      </Wrap>
     );
   }
 
   return (
-    <DashboardLayout>
+    <Wrap>
       <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
         <div className="flex items-center justify-between gap-4 flex-wrap">
           <div>
@@ -235,6 +242,6 @@ export default function AdminWaitlist() {
           </div>
         )}
       </div>
-    </DashboardLayout>
+    </Wrap>
   );
 }
