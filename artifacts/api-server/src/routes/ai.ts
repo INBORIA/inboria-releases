@@ -335,6 +335,75 @@ Redige une reponse professionnelle et adaptee au contexte. Reponds uniquement av
   }
 });
 
+router.post("/ai/forward-intro", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const entitlement = await checkEntitlement(req.userId!, AI_COST.draft);
+    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
+
+    const emailId = Number(req.body?.emailId);
+    if (!Number.isInteger(emailId) || emailId <= 0) {
+      res.status(400).json({ error: "emailId requis (entier positif)" });
+      return;
+    }
+    const recipient = typeof req.body?.to === "string" ? req.body.to.trim() : "";
+    const note = typeof req.body?.note === "string" ? req.body.note.trim().slice(0, 500) : "";
+
+    const { data: email, error: emailErr } = await supabaseAdmin
+      .from("emails")
+      .select("id, sender, subject, body")
+      .eq("id", emailId)
+      .eq("user_id", req.userId!)
+      .single();
+
+    if (emailErr || !email) {
+      res.status(404).json({ error: "Email introuvable" });
+      return;
+    }
+
+    const { data: profile } = await supabaseAdmin
+      .from("profiles")
+      .select("full_name, signature")
+      .eq("id", req.userId!)
+      .single();
+
+    const userName = (profile?.full_name || "").split(" ")[0] || "Cordialement";
+    const userSignature = profile?.signature || "";
+    const signatureInstruction = userSignature
+      ? `Termine le message par la signature suivante telle quelle :\n\n${userSignature}`
+      : `Signe simplement avec le prenom \"${userName}\".`;
+
+    const recipientHint = recipient ? `Le destinataire est : ${recipient}.` : "Le destinataire n'est pas precise.";
+    const noteHint = note ? `Contexte fourni par l'utilisateur a integrer : ${note}` : "";
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      max_completion_tokens: 400,
+      messages: [
+        {
+          role: "system",
+          content: `Tu rediges un court message d'introduction (3-5 lignes maximum) qui sera place AU-DESSUS d'un email transfere. Ton professionnel, courtois, en francais. N'inclus pas le message original cite, n'inclus pas de salutation type \"Bonjour [Prenom]\" si le prenom est inconnu - utilise une formulation neutre. ${signatureInstruction}`,
+        },
+        {
+          role: "user",
+          content: `${recipientHint} ${noteHint}\n\nVoici l'email a transferer (pour contexte uniquement, ne le recopie pas) :\n\nExpediteur original : ${email.sender}\nObjet : ${email.subject}\nCorps :\n${(email.body || "").slice(0, 2000)}\n\nRedige uniquement le court message d'introduction (3-5 lignes max) qui sera ajoute en haut du transfert. Reponds uniquement avec le texte, sans guillemets ni explication.`,
+        },
+      ],
+    });
+
+    const intro = completion.choices[0]?.message?.content?.trim() || "";
+
+    const billing = await consumeAiCredits(req.userId!, "draft");
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
+    res.json({ intro });
+  } catch (err: any) {
+    logger.error({ err: err?.message, stack: err?.stack }, "[forward-intro] error");
+    res.status(500).json({ error: "Echec de la generation du message" });
+  }
+});
+
 router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Promise<void> => {
   try {
     const userId = req.userId!;

@@ -43,7 +43,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2 } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { Button } from "@/components/ui/button";
@@ -186,6 +186,30 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
   );
 }
 
+function buildForwardCitation(email: any, t: (k: string) => string, dateLocale: any): string {
+  const header = t("inbox.forwardCitationHeader");
+  const fromLabel = t("inbox.forwardFromLabel");
+  const dateLabel = t("inbox.forwardDateLabel");
+  const subjectLabel = t("inbox.forwardSubjectLabel");
+  const toLabel = t("inbox.forwardToLabel");
+  let dateStr = "";
+  try {
+    const rawDate = email?.createdAt || email?.created_at || email?.received_at;
+    if (rawDate) dateStr = format(new Date(rawDate), "Pp", { locale: dateLocale });
+  } catch { dateStr = ""; }
+  const lines = [
+    "",
+    header,
+    `${fromLabel} : ${email?.sender || ""}`,
+    `${dateLabel} : ${dateStr}`,
+    `${subjectLabel} : ${email?.subject || ""}`,
+    `${toLabel} : ${email?.recipient || ""}`,
+    "",
+    (email?.body || "").split("\n").map((l: string) => `> ${l}`).join("\n"),
+  ];
+  return lines.join("\n");
+}
+
 function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections, sharedMailboxes }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }>; sharedMailboxes?: any[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
@@ -197,6 +221,13 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
   const [replyText, setReplyText] = useState("");
   const [replyConnectionId, setReplyConnectionId] = useState<string>("");
   const [replyProjectId, setReplyProjectId] = useState<string>("");
+  const [forwardOpen, setForwardOpen] = useState(false);
+  const [forwardAttachments, setForwardAttachments] = useState<UploadedFile[]>([]);
+  const [forwardTo, setForwardTo] = useState("");
+  const [forwardSubject, setForwardSubject] = useState("");
+  const [forwardText, setForwardText] = useState("");
+  const [forwardConnectionId, setForwardConnectionId] = useState<string>("");
+  const [forwardIntroLoading, setForwardIntroLoading] = useState(false);
 
   const resolveDefaultConnectionId = useCallback(() => {
     if (!connections || connections.length === 0) return "";
@@ -349,6 +380,74 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 >
                   {isDrafting ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
                   {isDrafting ? t("inbox.generating") : t("inbox.aiReply")}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                  onClick={() => {
+                    if (!forwardOpen) {
+                      const defConn = resolveDefaultConnectionId();
+                      setForwardConnectionId(defConn);
+                      setForwardTo("");
+                      const subj = email.subject || "";
+                      const prefix = t("inbox.forwardSubjectPrefix");
+                      setForwardSubject(subj.toLowerCase().startsWith(prefix.trim().toLowerCase()) ? subj : `${prefix}${subj}`);
+                      const sig = signatureForConnection(defConn);
+                      const sigBlock = sig ? `\n\n-- \n${sig}` : "";
+                      const citation = buildForwardCitation(email, t, dateFnsLocale);
+                      setForwardText(`${sigBlock}\n\n${citation}`);
+                      setForwardAttachments([]);
+                    }
+                    setForwardOpen(!forwardOpen);
+                  }}
+                >
+                  <Forward className="w-3 h-3" />
+                  {t("inbox.forward")}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+                  disabled={forwardIntroLoading}
+                  onClick={async () => {
+                    const defConn = forwardConnectionId || resolveDefaultConnectionId();
+                    if (!forwardConnectionId) setForwardConnectionId(defConn);
+                    if (!forwardSubject) {
+                      const subj = email.subject || "";
+                      const prefix = t("inbox.forwardSubjectPrefix");
+                      setForwardSubject(subj.toLowerCase().startsWith(prefix.trim().toLowerCase()) ? subj : `${prefix}${subj}`);
+                    }
+                    setForwardOpen(true);
+                    setForwardIntroLoading(true);
+                    try {
+                      const { supabase } = await import("@/lib/supabase");
+                      const { data: sessionData } = await supabase.auth.getSession();
+                      const token = sessionData?.session?.access_token || "";
+                      const baseUrl = import.meta.env.VITE_API_URL || `https://${window.location.host}`;
+                      const resp = await fetch(`${baseUrl}/api/ai/forward-intro`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
+                        body: JSON.stringify({ emailId: email.id, to: forwardTo }),
+                      });
+                      const json = resp.ok ? await resp.json() : null;
+                      const intro = (json?.intro || "").trim();
+                      const sig = signatureForConnection(defConn);
+                      const sigBlock = sig && !intro.includes(sig) ? `\n\n-- \n${sig}` : "";
+                      const citation = buildForwardCitation(email, t, dateFnsLocale);
+                      setForwardText(`${intro}${sigBlock}\n\n${citation}`);
+                      if (resp.ok) {
+                        queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+                      }
+                    } catch {
+                      // silent — keep panel open with whatever was there
+                    } finally {
+                      setForwardIntroLoading(false);
+                    }
+                  }}
+                >
+                  {forwardIntroLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
+                  {forwardIntroLoading ? t("inbox.generating") : t("inbox.aiForward")}
                 </Button>
                 <Button
                   variant="outline"
@@ -694,6 +793,121 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                         setReplyConnectionId("");
                         setReplyProjectId("");
                         setReplyOpen(false);
+                      }}
+                    >
+                      <Send className="w-3 h-3" />
+                      {isSending ? t("inbox.sending") : t("inbox.send")}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {forwardOpen && (
+              <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
+                {connections && connections.length > 1 && (
+                  <div>
+                    <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.from", "De")}</label>
+                    <Select
+                      value={forwardConnectionId}
+                      onValueChange={(v) => {
+                        const oldSig = signatureForConnection(forwardConnectionId);
+                        const newSig = signatureForConnection(v);
+                        setForwardConnectionId(v);
+                        setForwardText((prev) => {
+                          let base = prev || "";
+                          if (oldSig) {
+                            const oldBlock = `\n\n-- \n${oldSig}`;
+                            const idx = base.indexOf(oldBlock);
+                            if (idx !== -1) base = base.slice(0, idx) + base.slice(idx + oldBlock.length);
+                          }
+                          if (newSig) {
+                            const citation = buildForwardCitation(email, t, dateFnsLocale);
+                            const citIdx = base.indexOf(citation.split("\n").find((l) => l.trim().length > 0) || "");
+                            if (citIdx > 0) {
+                              base = `${base.slice(0, citIdx).replace(/\s+$/, "")}\n\n-- \n${newSig}\n\n${base.slice(citIdx)}`;
+                            } else {
+                              base = `${base.replace(/\s+$/, "")}\n\n-- \n${newSig}`;
+                            }
+                          }
+                          return base;
+                        });
+                      }}
+                    >
+                      <SelectTrigger className="bg-background border-border text-white text-[12px] h-8">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {connections.map((c) => (
+                          <SelectItem key={c.id} value={String(c.id)}>{c.email_address}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                )}
+                <div>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
+                  <Input
+                    value={forwardTo}
+                    onChange={(e) => setForwardTo(e.target.value)}
+                    placeholder="email@exemple.com"
+                    className="bg-background border-border text-white text-[12px] h-8"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.subject")}</label>
+                  <Input
+                    value={forwardSubject}
+                    onChange={(e) => setForwardSubject(e.target.value)}
+                    placeholder={t("inbox.subject")}
+                    className="bg-background border-border text-white text-[12px] h-8"
+                  />
+                </div>
+                <div>
+                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
+                  <Textarea
+                    value={forwardText}
+                    onChange={(e) => setForwardText(e.target.value)}
+                    placeholder={t("inbox.replyPlaceholder")}
+                    ref={(el) => {
+                      if (el) {
+                        el.style.height = "auto";
+                        el.style.height = Math.max(480, el.scrollHeight) + "px";
+                      }
+                    }}
+                    className="min-h-[480px] bg-background border-border text-white text-[14px] leading-relaxed resize-y overflow-hidden"
+                  />
+                </div>
+                {Array.isArray(email?.attachments) && email.attachments.length > 0 && (
+                  <div className="text-[11px] text-[#8b9cb3] bg-white/[0.02] border border-border rounded-md p-2">
+                    <div className="font-medium text-white/80 mb-1">{t("inbox.forwardOriginalAttachments")} ({email.attachments.length})</div>
+                    <div className="text-[#8b9cb3]">{email.attachments.map((a: any) => a.filename || a.name || "").filter(Boolean).join(", ")}</div>
+                    <div className="mt-1 text-[10px] text-[#8b9cb3]/80">{t("inbox.forwardReattachHint")}</div>
+                  </div>
+                )}
+                <div className="flex items-center gap-2 justify-between">
+                  <FileAttachInput files={forwardAttachments} onChange={setForwardAttachments} />
+                  <div className="flex items-center gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => { setForwardOpen(false); setForwardText(""); setForwardTo(""); setForwardSubject(""); setForwardAttachments([]); }}
+                      className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
+                    >
+                      {t("common.cancel")}
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="gap-1.5 h-7 text-[11px]"
+                      disabled={isSending || !forwardTo.trim() || !forwardSubject.trim() || !forwardText.trim()}
+                      onClick={() => {
+                        onSendReply(forwardTo, forwardSubject, forwardText, undefined, forwardAttachments, forwardConnectionId || undefined, undefined);
+                        setForwardText("");
+                        setForwardTo("");
+                        setForwardSubject("");
+                        setForwardAttachments([]);
+                        setForwardConnectionId("");
+                        setForwardOpen(false);
                       }}
                     >
                       <Send className="w-3 h-3" />
@@ -2614,7 +2828,7 @@ export default function Dashboard() {
             </span>
           </div>
           <div className="py-1">
-            {selectedIds.size <= 1 && (
+            {selectedIds.size <= 1 ? (
               <button
                 onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
                 className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
@@ -2622,23 +2836,25 @@ export default function Dashboard() {
                 <ChevronRight className="w-3.5 h-3.5" />
                 {t("inbox.openEmail")}
               </button>
+            ) : (
+              <>
+                <button
+                  onClick={() => { handleBulkAction("archive"); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Archive className="w-3.5 h-3.5" />
+                  {t("inbox.bulkArchive")} ({selectedIds.size})
+                </button>
+                <div className="border-t border-[#1f2937] my-1" />
+                <button
+                  onClick={() => { handleBulkAction("delete"); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  {t("inbox.deleteEmail")} ({selectedIds.size})
+                </button>
+              </>
             )}
-            <button
-              onClick={() => { handleBulkAction("archive"); setContextMenu(null); }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
-            >
-              <Archive className="w-3.5 h-3.5" />
-              {t("inbox.bulkArchive")}
-            </button>
-            <div className="border-t border-[#1f2937] my-1" />
-            <button
-              onClick={() => { handleBulkAction("delete"); setContextMenu(null); }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors"
-            >
-              <Trash2 className="w-3.5 h-3.5" />
-              {t("inbox.deleteEmail")}
-              {selectedIds.size > 1 && ` (${selectedIds.size})`}
-            </button>
           </div>
         </div>
       )}
