@@ -178,25 +178,72 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
     if (!html || !iframeRef.current) return;
 
     const iframe = iframeRef.current;
+    const channelId = `ncvmail-${Math.random().toString(36).slice(2)}`;
+    iframe.dataset.channelId = channelId;
 
-    const updateHeight = () => {
+    const measure = () => {
       try {
         const doc = iframe.contentDocument || iframe.contentWindow?.document;
-        if (doc?.body) {
-          const h = doc.body.scrollHeight;
-          if (h > 0) setIframeHeight(h + 16);
-        }
+        if (!doc?.body) return;
+        const h = Math.max(
+          doc.body.scrollHeight,
+          doc.documentElement?.scrollHeight || 0,
+        );
+        if (h > 0) setIframeHeight(h + 16);
       } catch {}
     };
 
+    const onMessage = (e: MessageEvent) => {
+      if (!e.data || typeof e.data !== "object") return;
+      if (e.data.type !== "ncvmail-resize" || e.data.channelId !== channelId) return;
+      const h = Number(e.data.height);
+      if (h > 0) setIframeHeight(h + 16);
+    };
+    window.addEventListener("message", onMessage);
+
     const handleLoad = () => {
-      updateHeight();
-      const interval = setInterval(updateHeight, 500);
-      setTimeout(() => clearInterval(interval), 5000);
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (!doc) return;
+
+        const script = doc.createElement("script");
+        script.textContent = `
+          (function() {
+            var channelId = ${JSON.stringify(channelId)};
+            function send() {
+              var h = Math.max(
+                document.body ? document.body.scrollHeight : 0,
+                document.documentElement ? document.documentElement.scrollHeight : 0
+              );
+              parent.postMessage({ type: "ncvmail-resize", channelId: channelId, height: h }, "*");
+            }
+            send();
+            if (typeof ResizeObserver !== "undefined" && document.body) {
+              new ResizeObserver(send).observe(document.body);
+            }
+            var imgs = document.images;
+            for (var i = 0; i < imgs.length; i++) {
+              if (!imgs[i].complete) {
+                imgs[i].addEventListener("load", send);
+                imgs[i].addEventListener("error", send);
+              }
+            }
+            window.addEventListener("load", send);
+            setTimeout(send, 250);
+            setTimeout(send, 1000);
+            setTimeout(send, 3000);
+          })();
+        `;
+        doc.documentElement.appendChild(script);
+      } catch {}
+      measure();
     };
 
     iframe.addEventListener("load", handleLoad);
-    return () => iframe.removeEventListener("load", handleLoad);
+    return () => {
+      iframe.removeEventListener("load", handleLoad);
+      window.removeEventListener("message", onMessage);
+    };
   }, [html, content]);
 
   if (!content) {
