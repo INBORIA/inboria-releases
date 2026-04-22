@@ -281,7 +281,7 @@
     "syncNewEmails": "{{count}} new email(s)",
     "syncNoNew": "No new emails",
     "subjectLabel": "Subject",
-    "sharedMailbox": "Shared mailbox",
+    "sharedMailbox": "Shared mailboxes",
     "allAccounts": "All accounts",
     "accountFilter": "Account",
     "receivedOn": "Received on:",

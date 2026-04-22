@@ -281,7 +281,7 @@
     "syncNewEmails": "{{count}} nouveau(x) email(s)",
     "syncNoNew": "Aucun nouvel email",
     "subjectLabel": "Objet",
-    "sharedMailbox": "Boîte partagée",
+    "sharedMailbox": "Boîtes partagées",
     "allAccounts": "Tous les comptes",
     "accountFilter": "Compte",
     "receivedOn": "Reçu sur :",
