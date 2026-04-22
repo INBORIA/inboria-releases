@@ -72,13 +72,29 @@ async function main() {
       continue;
     }
 
-    if (candidates.length > 1) {
-      log(`AMBIGUOUS id=${mb.id} email=${email} — ${candidates.length} candidates: ${candidates.map((c) => `${c.user_id}/${c.provider}`).join(", ")}`);
-      ambiguous++;
-      continue;
+    let cand;
+    if (mb.created_by) {
+      const owned = candidates.filter((c) => c.user_id === mb.created_by);
+      if (owned.length === 1) {
+        cand = owned[0];
+      } else if (owned.length > 1) {
+        log(`AMBIGUOUS id=${mb.id} email=${email} — ${owned.length} candidates owned by created_by=${mb.created_by}`);
+        ambiguous++;
+        continue;
+      }
     }
 
-    const cand = candidates[0];
+    if (!cand) {
+      if (candidates.length > 1) {
+        log(`AMBIGUOUS id=${mb.id} email=${email} — ${candidates.length} candidates, no created_by tiebreak: ${candidates.map((c) => `${c.user_id}/${c.provider}`).join(", ")}`);
+        ambiguous++;
+        continue;
+      }
+      cand = candidates[0];
+      if (mb.created_by && cand.user_id !== mb.created_by) {
+        log(`WARN id=${mb.id} email=${email} — falling back to single non-owner candidate user=${cand.user_id} (created_by=${mb.created_by})`);
+      }
+    }
     log(`MATCH id=${mb.id} email=${email} -> connection_id=${cand.id} user=${cand.user_id} provider=${cand.provider}`);
 
     if (APPLY) {

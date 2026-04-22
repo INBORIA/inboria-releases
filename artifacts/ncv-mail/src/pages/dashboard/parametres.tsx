@@ -1,5 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useGetProfile, useUpdateProfile, useGetMyOrganisation, getGetProfileQueryKey } from "@workspace/api-client-react";
+import { useGetProfile, useUpdateProfile, useGetMyOrganisation, getGetProfileQueryKey, getGetSharedMailboxesQueryKey } from "@workspace/api-client-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -652,6 +652,7 @@ export default function Parametres() {
       });
       if (res.status === 409) {
         queryClient.invalidateQueries({ queryKey: ["email-connections"] });
+        queryClient.invalidateQueries({ queryKey: getGetSharedMailboxesQueryKey() });
         toast({ title: t("settings.shareAlreadyShared", "Ce compte est déjà partagé.") });
         return;
       }
@@ -664,6 +665,7 @@ export default function Parametres() {
         return;
       }
       queryClient.invalidateQueries({ queryKey: ["email-connections"] });
+      queryClient.invalidateQueries({ queryKey: getGetSharedMailboxesQueryKey() });
       toast({ title: t("settings.shareSuccess", "Compte partagé avec l'équipe") });
     } catch {
       toast({ variant: "destructive", title: t("common.error") });
@@ -702,6 +704,7 @@ export default function Parametres() {
       const body = await res.json().catch(() => ({}));
       const impacted = Array.isArray(body?.impactedMembers) ? body.impactedMembers : [];
       queryClient.invalidateQueries({ queryKey: ["email-connections"] });
+      queryClient.invalidateQueries({ queryKey: getGetSharedMailboxesQueryKey() });
       const toastTitle = t("settings.unshareSuccess", "Partage désactivé");
       const toastDesc = impacted.length > 0
         ? t("settings.unshareSuccessDesc", "{{count}} membre(s) ont perdu l'accès.", { count: impacted.length })
