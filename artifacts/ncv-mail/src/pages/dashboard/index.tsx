@@ -1836,6 +1836,7 @@ export default function Dashboard() {
       {
         onSuccess: (data) => {
           callback(data.draft);
+          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
           toast({ title: t("inbox.draftGenerated") });
         },
         onError: () => {
