@@ -27,7 +27,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useRef, useEffect, useCallback } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useAuth } from "@/lib/auth";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
@@ -50,7 +51,26 @@ export default function Taches() {
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const queryClient = useQueryClient();
   const { data: profile } = useGetProfile();
+  const { session } = useAuth();
   const { toast } = useToast();
+
+  const { data: connections } = useQuery<Array<{ id: string; provider: string; email_address: string; signature?: string | null }>>({
+    queryKey: ["taches-compose-connections"],
+    queryFn: async () => {
+      const res = await fetch(`${import.meta.env.BASE_URL}api/email/connections`, {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+    enabled: !!session,
+  });
+
+  const signatureForConnection = useCallback((connId: string | null | undefined): string => {
+    if (!connId || !connections) return "";
+    const conn = connections.find((c) => String(c.id) === String(connId));
+    return (conn?.signature || "").trim();
+  }, [connections]);
 
   const [filter, setFilter] = useState<string>("all");
   const [scope, setScope] = useState<"mine" | "assigned_to_me" | "created_by_me" | "team">("mine");
@@ -703,7 +723,8 @@ export default function Taches() {
                     if (!replyOpen) {
                       setReplyTo(emailDetailTask.emailSenderEmail || emailDetailTask.emailSender || "");
                       setReplySubject(emailDetailTask.emailSubject?.startsWith("Re:") ? emailDetailTask.emailSubject : `Re: ${emailDetailTask.emailSubject}`);
-                      setReplyText("");
+                      const sig = signatureForConnection(emailDetailTask.emailConnectionId);
+                      setReplyText(sig ? `\n\n${sig}` : "");
                     }
                     setReplyOpen(!replyOpen);
                   }}

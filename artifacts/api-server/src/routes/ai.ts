@@ -298,6 +298,7 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
         .from("email_connections")
         .select("signature")
         .eq("id", email.connection_id)
+        .eq("user_id", req.userId!)
         .single();
       userSignature = (connection?.signature || "").trim();
     }
@@ -381,6 +382,7 @@ router.post("/ai/forward-intro", requireAuth, async (req, res): Promise<void> =>
         .from("email_connections")
         .select("signature")
         .eq("id", email.connection_id)
+        .eq("user_id", req.userId!)
         .single();
       userSignature = (connection?.signature || "").trim();
     }
