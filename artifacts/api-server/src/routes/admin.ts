@@ -188,10 +188,51 @@ router.get(
           ? req.query["plan"].trim()
           : null;
 
-      // Build base query. We push the plan filter to Supabase so pagination
-      // remains exhaustive within the filtered set. Search remains client-side
-      // here since email lives in auth.users — see follow-up #72 for full
-      // server-side search.
+      // Resolve the set of profile IDs the search applies to. Email lives in
+      // auth.users, full_name lives in profiles. When a search term is given,
+      // we walk auth.admin.listUsers (capped to 1 page of 1000 entries — fine
+      // for the beta cohort and the foreseeable PME scale; see follow-up #72
+      // for a denormalised email column once we outgrow this) and union with
+      // profiles whose full_name matches. The resulting ID list drives the
+      // paginated profiles query below so total/page semantics stay exact.
+      let restrictedIds: string[] | null = null;
+      if (search) {
+        const idsFromAuth: string[] = [];
+        try {
+          const { data: usersList } = await supabaseAdmin.auth.admin.listUsers({
+            page: 1,
+            perPage: 1000,
+          });
+          for (const u of usersList?.users ?? []) {
+            if (u.email && u.email.toLowerCase().includes(search)) {
+              idsFromAuth.push(u.id);
+            }
+          }
+        } catch (err: unknown) {
+          const message = err instanceof Error ? err.message : "auth listUsers failed";
+          logger.warn({ err: message }, "[admin] auth listUsers failed during search");
+        }
+
+        const { data: nameMatches, error: nameErr } = await supabaseAdmin
+          .from("profiles")
+          .select("id")
+          .ilike("full_name", `%${search}%`);
+        if (nameErr) {
+          logger.error({ err: nameErr }, "[admin] full_name search failed");
+          res.status(500).json({ error: "Failed to load users" });
+          return;
+        }
+
+        const idSet = new Set<string>(idsFromAuth);
+        for (const r of (nameMatches ?? []) as Array<{ id: string }>) {
+          idSet.add(r.id);
+        }
+        restrictedIds = Array.from(idSet);
+      }
+
+      // Build paginated profiles query. Plan filter and (optional) ID
+      // restriction are pushed to Supabase so pagination is exhaustive
+      // and total counts are accurate.
       const base = supabaseAdmin
         .from("profiles")
         .select(
@@ -202,20 +243,27 @@ router.get(
 
       const filtered = planFilter ? base.eq("plan", planFilter) : base;
 
-      // Hard cap of 500 rows when search is active (see follow-up #72).
-      // Without search, we paginate normally.
       let profileRows: ProfileRow[] = [];
       let total = 0;
 
-      if (search) {
-        const { data, error, count } = await filtered.limit(500);
-        if (error) {
-          logger.error({ err: error }, "[admin] users list failed");
-          res.status(500).json({ error: "Failed to load users" });
-          return;
+      if (restrictedIds !== null) {
+        if (restrictedIds.length === 0) {
+          profileRows = [];
+          total = 0;
+        } else {
+          const from = (page - 1) * limit;
+          const to = from + limit - 1;
+          const { data, error, count } = await filtered
+            .in("id", restrictedIds)
+            .range(from, to);
+          if (error) {
+            logger.error({ err: error }, "[admin] users list failed");
+            res.status(500).json({ error: "Failed to load users" });
+            return;
+          }
+          profileRows = (data ?? []) as ProfileRow[];
+          total = count ?? profileRows.length;
         }
-        profileRows = (data ?? []) as ProfileRow[];
-        total = count ?? profileRows.length;
       } else {
         const from = (page - 1) * limit;
         const to = from + limit - 1;
@@ -272,14 +320,6 @@ router.get(
           // ignore
         }
 
-        if (
-          search &&
-          !email.toLowerCase().includes(search) &&
-          !(p.full_name || "").toLowerCase().includes(search)
-        ) {
-          continue;
-        }
-
         const paddleStatus = p.stripe_subscription_id
           ? await fetchPaddleStatus(p.stripe_subscription_id)
           : null;
@@ -305,18 +345,10 @@ router.get(
         });
       }
 
-      // When search is active we paginate the filtered slice client-side here
-      // so the response shape stays consistent (page/pageSize/totalPages).
-      let pageRows: EnrichedUser[];
-      let effectiveTotal: number;
-      if (search) {
-        effectiveTotal = enriched.length;
-        const from = (page - 1) * limit;
-        pageRows = enriched.slice(from, from + limit);
-      } else {
-        effectiveTotal = total;
-        pageRows = enriched;
-      }
+      // Pagination is handled server-side (see profiles .range above), so the
+      // enriched list IS the current page.
+      const pageRows: EnrichedUser[] = enriched;
+      const effectiveTotal = total;
       const totalPages =
         limit > 0 ? Math.max(1, Math.ceil(effectiveTotal / limit)) : 1;
 
@@ -407,10 +439,13 @@ router.post(
         }
       }
 
-      // Surface a clear failure when Paddle was reachable but rejected the
-      // cancel and we're not going to do anything else (at_period_end on a
-      // real Paddle sub).
-      if (paddleError && mode === "at_period_end" && profile.stripe_subscription_id) {
+      // If Paddle rejected the cancel for a Paddle-backed subscription, we
+      // refuse to apply any local revocation. Doing so in immediate mode used
+      // to silently mark the user expired locally while billing kept running
+      // in Paddle, which is dangerous (revoked access + ongoing charges). Both
+      // modes now fail loudly so the admin can retry instead of producing an
+      // inconsistent state.
+      if (paddleError && profile.stripe_subscription_id) {
         audit("cancel_subscription_failed", {
           adminId: req.userId ?? null,
           targetUserId: userId,

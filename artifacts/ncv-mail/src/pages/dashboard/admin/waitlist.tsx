@@ -16,8 +16,9 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
+import { useLocation } from "wouter";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 
@@ -32,6 +33,13 @@ export default function AdminWaitlist() {
   const { data: profileData, isLoading: profileLoading } = useGetProfile();
   const profile = (profileData ?? {}) as ProfileWithAdmin;
   const isAdmin = !!profile.isAdmin;
+  const [, setLocation] = useLocation();
+
+  useEffect(() => {
+    if (!profileLoading && !isAdmin) {
+      setLocation("/dashboard", { replace: true });
+    }
+  }, [profileLoading, isAdmin, setLocation]);
 
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
@@ -97,16 +105,11 @@ export default function AdminWaitlist() {
   }
 
   if (!isAdmin) {
+    // Effect above redirects; render a spinner during the brief unmount window.
     return (
       <DashboardLayout>
-        <div className="max-w-xl mx-auto px-4 py-12">
-          <div className="bg-[#141c2b] rounded-xl border border-[#1f2937] p-8 text-center">
-            <ShieldOff className="mx-auto h-12 w-12 text-[#8b9cb3]/40 mb-4" />
-            <h2 className="text-lg font-semibold text-white mb-2">
-              {t("admin.notAuthorizedTitle")}
-            </h2>
-            <p className="text-[13px] text-[#8b9cb3]">{t("admin.notAuthorizedDesc")}</p>
-          </div>
+        <div className="flex items-center justify-center h-64">
+          <Loader2 className="h-6 w-6 animate-spin text-primary" />
         </div>
       </DashboardLayout>
     );
