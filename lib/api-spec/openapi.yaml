@@ -2421,6 +2421,98 @@ paths:
         "400":
           description: Invalid email
 
+  /admin/waitlist:
+    get:
+      operationId: adminListWaitlist
+      tags: [admin]
+      summary: List all waitlist signups (admin only)
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Waitlist signups
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminWaitlistList"
+        "403":
+          description: Admin access required
+
+  /admin/waitlist.csv:
+    get:
+      operationId: adminExportWaitlistCsv
+      tags: [admin]
+      summary: Export the waitlist as CSV (admin only)
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: CSV file
+          content:
+            text/csv:
+              schema:
+                type: string
+
+  /admin/users:
+    get:
+      operationId: adminListUsers
+      tags: [admin]
+      summary: List Inboria subscribers (admin only)
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: query
+          name: search
+          required: false
+          schema:
+            type: string
+          description: Filter by email or full name (case-insensitive substring).
+      responses:
+        "200":
+          description: User list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUserList"
+        "403":
+          description: Admin access required
+
+  /admin/users/{userId}/cancel-subscription:
+    post:
+      operationId: adminCancelUserSubscription
+      tags: [admin]
+      summary: Cancel a user's subscription (admin only)
+      description: |
+        For users with a real Paddle subscription, calls Paddle (mode `at_period_end` or
+        `immediate`). For beta testers without a Paddle subscription, simply marks the
+        plan as `expired`. When mode is `immediate`, the plan is also marked `expired`
+        right away even if Paddle was contacted.
+      security:
+        - BearerAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminCancelSubscriptionBody"
+      responses:
+        "200":
+          description: Cancellation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminCancelSubscriptionResult"
+        "403":
+          description: Admin access required
+        "404":
+          description: User not found
+
 components:
   schemas:
     HealthStatus:
@@ -2516,6 +2608,10 @@ components:
         organisationRole:
           type: ["string", "null"]
           enum: [admin, member, null]
+        isAdmin:
+          type: boolean
+          default: false
+          description: True when the profile has the internal admin flag.
       required:
         - id
         - email
@@ -3891,4 +3987,125 @@ components:
           type: string
           maxLength: 64
           nullable: true
-          description: Origin of the signup (e.g. "marketing-tarifs", "dashboard-abonnement")
+
+    AdminWaitlistSignup:
+      type: object
+      required:
+        - id
+        - email
+        - createdAt
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        plan:
+          type: ["string", "null"]
+        seats:
+          type: ["integer", "null"]
+        locale:
+          type: ["string", "null"]
+        source:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    AdminWaitlistList:
+      type: object
+      required:
+        - total
+        - signups
+      properties:
+        total:
+          type: integer
+        signups:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminWaitlistSignup"
+
+    AdminUser:
+      type: object
+      required:
+        - id
+        - email
+        - fullName
+        - plan
+        - emailsUsed
+        - aiCreditsUsed
+        - emailsQuota
+        - hasPaddleSubscription
+        - createdAt
+        - isAdmin
+      properties:
+        id:
+          type: string
+        email:
+          type: string
+        fullName:
+          type: string
+        plan:
+          type: string
+        seats:
+          type: integer
+        emailsUsed:
+          type: integer
+        aiCreditsUsed:
+          type: integer
+        emailsQuota:
+          type: integer
+        organisationId:
+          type: ["string", "null"]
+        organisationName:
+          type: ["string", "null"]
+        hasPaddleSubscription:
+          type: boolean
+        stripeCustomerId:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+        isAdmin:
+          type: boolean
+
+    AdminUserList:
+      type: object
+      required:
+        - total
+        - users
+      properties:
+        total:
+          type: integer
+        users:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminUser"
+
+    AdminCancelSubscriptionBody:
+      type: object
+      properties:
+        mode:
+          type: string
+          enum: [at_period_end, immediate]
+          default: at_period_end
+
+    AdminCancelSubscriptionResult:
+      type: object
+      required:
+        - ok
+        - mode
+        - paddleCancelled
+        - revokedNow
+      properties:
+        ok:
+          type: boolean
+        mode:
+          type: string
+          enum: [at_period_end, immediate]
+        paddleCancelled:
+          type: boolean
+        paddleError:
+          type: ["string", "null"]
+        revokedNow:
+          type: boolean
+          description: True if the user's plan was set to "expired" immediately.

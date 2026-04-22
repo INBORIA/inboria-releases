@@ -29,4 +29,6 @@ export interface UserProfile {
   organisationName?: string | null;
   /** @nullable */
   organisationRole?: UserProfileOrganisationRole;
+  /** True when the profile has the internal admin flag. */
+  isAdmin?: boolean;
 }

@@ -65,6 +65,7 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       organisationId,
       organisationName,
       organisationRole,
+      isAdmin: !!profile.is_admin,
     });
   } catch {
     res.status(500).json({ error: "Failed to get profile" });

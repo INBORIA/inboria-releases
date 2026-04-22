@@ -23,6 +23,7 @@ import exportRouter from "./export";
 import attachmentsRouter from "./attachments";
 import appointmentsRouter from "./appointments";
 import waitlistRouter from "./waitlist";
+import adminRouter from "./admin";
 
 const router: IRouter = Router();
 
@@ -50,5 +51,6 @@ router.use(exportRouter);
 router.use(attachmentsRouter);
 router.use(appointmentsRouter);
 router.use(waitlistRouter);
+router.use(adminRouter);
 
 export default router;

@@ -69,6 +69,8 @@ export interface UserProfile {
   organisationName?: string | null;
   /** @nullable */
   organisationRole?: UserProfileOrganisationRole;
+  /** True when the profile has the internal admin flag. */
+  isAdmin?: boolean;
 }
 
 export interface AuthResponse {
@@ -877,11 +879,82 @@ export interface WaitlistSignupBody {
   seats?: number | null;
   /** @maxLength 8 */
   locale?: string | null;
-  /**
-   * Origin of the signup (e.g. "marketing-tarifs", "dashboard-abonnement")
-   * @maxLength 64
-   */
+  /** @maxLength 64 */
   source?: string | null;
+}
+
+export interface AdminWaitlistSignup {
+  id: string;
+  email: string;
+  /** @nullable */
+  plan?: string | null;
+  /** @nullable */
+  seats?: number | null;
+  /** @nullable */
+  locale?: string | null;
+  /** @nullable */
+  source?: string | null;
+  createdAt: string;
+}
+
+export interface AdminWaitlistList {
+  total: number;
+  signups: AdminWaitlistSignup[];
+}
+
+export interface AdminUser {
+  id: string;
+  email: string;
+  fullName: string;
+  plan: string;
+  seats?: number;
+  emailsUsed: number;
+  aiCreditsUsed: number;
+  emailsQuota: number;
+  /** @nullable */
+  organisationId?: string | null;
+  /** @nullable */
+  organisationName?: string | null;
+  hasPaddleSubscription: boolean;
+  /** @nullable */
+  stripeCustomerId?: string | null;
+  createdAt: string;
+  isAdmin: boolean;
+}
+
+export interface AdminUserList {
+  total: number;
+  users: AdminUser[];
+}
+
+export type AdminCancelSubscriptionBodyMode =
+  (typeof AdminCancelSubscriptionBodyMode)[keyof typeof AdminCancelSubscriptionBodyMode];
+
+export const AdminCancelSubscriptionBodyMode = {
+  at_period_end: "at_period_end",
+  immediate: "immediate",
+} as const;
+
+export interface AdminCancelSubscriptionBody {
+  mode?: AdminCancelSubscriptionBodyMode;
+}
+
+export type AdminCancelSubscriptionResultMode =
+  (typeof AdminCancelSubscriptionResultMode)[keyof typeof AdminCancelSubscriptionResultMode];
+
+export const AdminCancelSubscriptionResultMode = {
+  at_period_end: "at_period_end",
+  immediate: "immediate",
+} as const;
+
+export interface AdminCancelSubscriptionResult {
+  ok: boolean;
+  mode: AdminCancelSubscriptionResultMode;
+  paddleCancelled: boolean;
+  /** @nullable */
+  paddleError?: string | null;
+  /** True if the user's plan was set to "expired" immediately. */
+  revokedNow: boolean;
 }
 
 export type RegisterPushToken200 = {
@@ -1278,4 +1351,11 @@ export type JoinWaitlist200 = {
   success: boolean;
   /** True if the email was already on the waitlist before this call. */
   alreadyRegistered: boolean;
+};
+
+export type AdminListUsersParams = {
+  /**
+   * Filter by email or full name (case-insensitive substring).
+   */
+  search?: string;
 };

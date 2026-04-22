@@ -20,6 +20,7 @@ import {
   BookOpen,
   Send,
   CalendarDays,
+  ShieldCheck,
 } from "lucide-react";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { cn } from "@/lib/utils";
@@ -57,8 +58,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   ];
 
   const isBusiness = (user as any).plan === "business";
+  const isInternalAdmin = !!(user as any).isAdmin;
   const archivesIndex = 5;
-  const navigation = isBusiness
+  let navigation = isBusiness
     ? [
         ...baseNavigation.slice(0, archivesIndex + 1),
         { name: t("sidebar.sharedMailboxes"), href: "/dashboard/boites-partagees", icon: MailPlus },
@@ -67,6 +69,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         ...baseNavigation.slice(archivesIndex + 1),
       ]
     : baseNavigation;
+
+  if (isInternalAdmin) {
+    navigation = [
+      ...navigation,
+      { name: t("sidebar.adminWaitlist"), href: "/dashboard/admin/waitlist", icon: ShieldCheck },
+      { name: t("sidebar.adminSubscribers"), href: "/dashboard/admin/abonnes", icon: ShieldCheck },
+    ];
+  }
 
   const isExpired = (user as any).plan === "expired";
   const isTrialExhausted = (user as any).plan === "essai" && totalUsed >= (user as any).emailsQuota;

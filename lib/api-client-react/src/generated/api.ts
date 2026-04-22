@@ -22,7 +22,12 @@ import type {
   AddCommentBody,
   AddSharedMailboxMember200,
   AddSharedMailboxMemberBody,
+  AdminCancelSubscriptionBody,
+  AdminCancelSubscriptionResult,
   AdminConnection,
+  AdminListUsersParams,
+  AdminUserList,
+  AdminWaitlistList,
   ApplyPackBody,
   ApplyPackResponse,
   Appointment,
@@ -9406,4 +9411,345 @@ export const useJoinWaitlist = <
   TContext
 > => {
   return useMutation(getJoinWaitlistMutationOptions(options));
+};
+
+/**
+ * @summary List all waitlist signups (admin only)
+ */
+export const getAdminListWaitlistUrl = () => {
+  return `/api/admin/waitlist`;
+};
+
+export const adminListWaitlist = async (
+  options?: RequestInit,
+): Promise<AdminWaitlistList> => {
+  return customFetch<AdminWaitlistList>(getAdminListWaitlistUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getAdminListWaitlistQueryKey = () => {
+  return [`/api/admin/waitlist`] as const;
+};
+
+export const getAdminListWaitlistQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminListWaitlist>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminListWaitlist>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminListWaitlistQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminListWaitlist>>
+  > = ({ signal }) => adminListWaitlist({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminListWaitlist>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminListWaitlistQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminListWaitlist>>
+>;
+export type AdminListWaitlistQueryError = ErrorType<void>;
+
+/**
+ * @summary List all waitlist signups (admin only)
+ */
+
+export function useAdminListWaitlist<
+  TData = Awaited<ReturnType<typeof adminListWaitlist>>,
+  TError = ErrorType<void>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminListWaitlist>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminListWaitlistQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Export the waitlist as CSV (admin only)
+ */
+export const getAdminExportWaitlistCsvUrl = () => {
+  return `/api/admin/waitlist.csv`;
+};
+
+export const adminExportWaitlistCsv = async (
+  options?: RequestInit,
+): Promise<string> => {
+  return customFetch<string>(getAdminExportWaitlistCsvUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getAdminExportWaitlistCsvQueryKey = () => {
+  return [`/api/admin/waitlist.csv`] as const;
+};
+
+export const getAdminExportWaitlistCsvQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminExportWaitlistCsv>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminExportWaitlistCsv>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getAdminExportWaitlistCsvQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof adminExportWaitlistCsv>>
+  > = ({ signal }) => adminExportWaitlistCsv({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminExportWaitlistCsv>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminExportWaitlistCsvQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminExportWaitlistCsv>>
+>;
+export type AdminExportWaitlistCsvQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Export the waitlist as CSV (admin only)
+ */
+
+export function useAdminExportWaitlistCsv<
+  TData = Awaited<ReturnType<typeof adminExportWaitlistCsv>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof adminExportWaitlistCsv>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminExportWaitlistCsvQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary List Inboria subscribers (admin only)
+ */
+export const getAdminListUsersUrl = (params?: AdminListUsersParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/admin/users?${stringifiedParams}`
+    : `/api/admin/users`;
+};
+
+export const adminListUsers = async (
+  params?: AdminListUsersParams,
+  options?: RequestInit,
+): Promise<AdminUserList> => {
+  return customFetch<AdminUserList>(getAdminListUsersUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getAdminListUsersQueryKey = (params?: AdminListUsersParams) => {
+  return [`/api/admin/users`, ...(params ? [params] : [])] as const;
+};
+
+export const getAdminListUsersQueryOptions = <
+  TData = Awaited<ReturnType<typeof adminListUsers>>,
+  TError = ErrorType<void>,
+>(
+  params?: AdminListUsersParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof adminListUsers>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getAdminListUsersQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof adminListUsers>>> = ({
+    signal,
+  }) => adminListUsers(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof adminListUsers>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type AdminListUsersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof adminListUsers>>
+>;
+export type AdminListUsersQueryError = ErrorType<void>;
+
+/**
+ * @summary List Inboria subscribers (admin only)
+ */
+
+export function useAdminListUsers<
+  TData = Awaited<ReturnType<typeof adminListUsers>>,
+  TError = ErrorType<void>,
+>(
+  params?: AdminListUsersParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof adminListUsers>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminListUsersQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * For users with a real Paddle subscription, calls Paddle (mode `at_period_end` or
+`immediate`). For beta testers without a Paddle subscription, simply marks the
+plan as `expired`. When mode is `immediate`, the plan is also marked `expired`
+right away even if Paddle was contacted.
+
+ * @summary Cancel a user's subscription (admin only)
+ */
+export const getAdminCancelUserSubscriptionUrl = (userId: string) => {
+  return `/api/admin/users/${userId}/cancel-subscription`;
+};
+
+export const adminCancelUserSubscription = async (
+  userId: string,
+  adminCancelSubscriptionBody?: AdminCancelSubscriptionBody,
+  options?: RequestInit,
+): Promise<AdminCancelSubscriptionResult> => {
+  return customFetch<AdminCancelSubscriptionResult>(
+    getAdminCancelUserSubscriptionUrl(userId),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(adminCancelSubscriptionBody),
+    },
+  );
+};
+
+export const getAdminCancelUserSubscriptionMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminCancelUserSubscription>>,
+    TError,
+    { userId: string; data: BodyType<AdminCancelSubscriptionBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof adminCancelUserSubscription>>,
+  TError,
+  { userId: string; data: BodyType<AdminCancelSubscriptionBody> },
+  TContext
+> => {
+  const mutationKey = ["adminCancelUserSubscription"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof adminCancelUserSubscription>>,
+    { userId: string; data: BodyType<AdminCancelSubscriptionBody> }
+  > = (props) => {
+    const { userId, data } = props ?? {};
+
+    return adminCancelUserSubscription(userId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AdminCancelUserSubscriptionMutationResult = NonNullable<
+  Awaited<ReturnType<typeof adminCancelUserSubscription>>
+>;
+export type AdminCancelUserSubscriptionMutationBody =
+  BodyType<AdminCancelSubscriptionBody>;
+export type AdminCancelUserSubscriptionMutationError = ErrorType<void>;
+
+/**
+ * @summary Cancel a user's subscription (admin only)
+ */
+export const useAdminCancelUserSubscription = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof adminCancelUserSubscription>>,
+    TError,
+    { userId: string; data: BodyType<AdminCancelSubscriptionBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof adminCancelUserSubscription>>,
+  TError,
+  { userId: string; data: BodyType<AdminCancelSubscriptionBody> },
+  TContext
+> => {
+  return useMutation(getAdminCancelUserSubscriptionMutationOptions(options));
 };

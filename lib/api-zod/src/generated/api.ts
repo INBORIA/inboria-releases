@@ -46,6 +46,7 @@ export const loginResponseUserAiCreditsUsedDefault = 0;
 export const loginResponseUserAiLanguageDefault = `fr`;
 export const loginResponseUserSignatureDefault = ``;
 export const loginResponseUserTimezoneDefault = `Europe/Brussels`;
+export const loginResponseUserIsAdminDefault = false;
 
 export const LoginResponse = zod.object({
   user: zod.object({
@@ -69,6 +70,10 @@ export const LoginResponse = zod.object({
     organisationRole: zod
       .union([zod.literal("admin"), zod.literal("member"), zod.literal(null)])
       .nullish(),
+    isAdmin: zod
+      .boolean()
+      .default(loginResponseUserIsAdminDefault)
+      .describe("True when the profile has the internal admin flag."),
   }),
 });
 
@@ -79,6 +84,7 @@ export const getMeResponseAiCreditsUsedDefault = 0;
 export const getMeResponseAiLanguageDefault = `fr`;
 export const getMeResponseSignatureDefault = ``;
 export const getMeResponseTimezoneDefault = `Europe/Brussels`;
+export const getMeResponseIsAdminDefault = false;
 
 export const GetMeResponse = zod.object({
   id: zod.number(),
@@ -101,6 +107,10 @@ export const GetMeResponse = zod.object({
   organisationRole: zod
     .union([zod.literal("admin"), zod.literal("member"), zod.literal(null)])
     .nullish(),
+  isAdmin: zod
+    .boolean()
+    .default(getMeResponseIsAdminDefault)
+    .describe("True when the profile has the internal admin flag."),
 });
 
 /**
@@ -110,6 +120,7 @@ export const getProfileResponseAiCreditsUsedDefault = 0;
 export const getProfileResponseAiLanguageDefault = `fr`;
 export const getProfileResponseSignatureDefault = ``;
 export const getProfileResponseTimezoneDefault = `Europe/Brussels`;
+export const getProfileResponseIsAdminDefault = false;
 
 export const GetProfileResponse = zod.object({
   id: zod.number(),
@@ -132,6 +143,10 @@ export const GetProfileResponse = zod.object({
   organisationRole: zod
     .union([zod.literal("admin"), zod.literal("member"), zod.literal(null)])
     .nullish(),
+  isAdmin: zod
+    .boolean()
+    .default(getProfileResponseIsAdminDefault)
+    .describe("True when the profile has the internal admin flag."),
 });
 
 /**
@@ -150,6 +165,7 @@ export const updateProfileResponseAiCreditsUsedDefault = 0;
 export const updateProfileResponseAiLanguageDefault = `fr`;
 export const updateProfileResponseSignatureDefault = ``;
 export const updateProfileResponseTimezoneDefault = `Europe/Brussels`;
+export const updateProfileResponseIsAdminDefault = false;
 
 export const UpdateProfileResponse = zod.object({
   id: zod.number(),
@@ -174,6 +190,10 @@ export const UpdateProfileResponse = zod.object({
   organisationRole: zod
     .union([zod.literal("admin"), zod.literal("member"), zod.literal(null)])
     .nullish(),
+  isAdmin: zod
+    .boolean()
+    .default(updateProfileResponseIsAdminDefault)
+    .describe("True when the profile has the internal admin flag."),
 });
 
 /**
@@ -2047,13 +2067,7 @@ export const JoinWaitlistBody = zod.object({
   plan: zod.enum(["solo", "pro", "business"]).nullish(),
   seats: zod.number().min(1).max(joinWaitlistBodySeatsMax).nullish(),
   locale: zod.string().max(joinWaitlistBodyLocaleMax).nullish(),
-  source: zod
-    .string()
-    .max(joinWaitlistBodySourceMax)
-    .nullish()
-    .describe(
-      'Origin of the signup (e.g. \"marketing-tarifs\", \"dashboard-abonnement\")',
-    ),
+  source: zod.string().max(joinWaitlistBodySourceMax).nullish(),
 });
 
 export const JoinWaitlistResponse = zod.object({
@@ -2063,4 +2077,84 @@ export const JoinWaitlistResponse = zod.object({
     .describe(
       "True if the email was already on the waitlist before this call.",
     ),
+});
+
+/**
+ * @summary List all waitlist signups (admin only)
+ */
+export const AdminListWaitlistResponse = zod.object({
+  total: zod.number(),
+  signups: zod.array(
+    zod.object({
+      id: zod.string(),
+      email: zod.string(),
+      plan: zod.string().nullish(),
+      seats: zod.number().nullish(),
+      locale: zod.string().nullish(),
+      source: zod.string().nullish(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary List Inboria subscribers (admin only)
+ */
+export const AdminListUsersQueryParams = zod.object({
+  search: zod.coerce
+    .string()
+    .optional()
+    .describe("Filter by email or full name (case-insensitive substring)."),
+});
+
+export const AdminListUsersResponse = zod.object({
+  total: zod.number(),
+  users: zod.array(
+    zod.object({
+      id: zod.string(),
+      email: zod.string(),
+      fullName: zod.string(),
+      plan: zod.string(),
+      seats: zod.number().optional(),
+      emailsUsed: zod.number(),
+      aiCreditsUsed: zod.number(),
+      emailsQuota: zod.number(),
+      organisationId: zod.string().nullish(),
+      organisationName: zod.string().nullish(),
+      hasPaddleSubscription: zod.boolean(),
+      stripeCustomerId: zod.string().nullish(),
+      createdAt: zod.coerce.date(),
+      isAdmin: zod.boolean(),
+    }),
+  ),
+});
+
+/**
+ * For users with a real Paddle subscription, calls Paddle (mode `at_period_end` or
+`immediate`). For beta testers without a Paddle subscription, simply marks the
+plan as `expired`. When mode is `immediate`, the plan is also marked `expired`
+right away even if Paddle was contacted.
+
+ * @summary Cancel a user's subscription (admin only)
+ */
+export const AdminCancelUserSubscriptionParams = zod.object({
+  userId: zod.coerce.string(),
+});
+
+export const adminCancelUserSubscriptionBodyModeDefault = `at_period_end`;
+
+export const AdminCancelUserSubscriptionBody = zod.object({
+  mode: zod
+    .enum(["at_period_end", "immediate"])
+    .default(adminCancelUserSubscriptionBodyModeDefault),
+});
+
+export const AdminCancelUserSubscriptionResponse = zod.object({
+  ok: zod.boolean(),
+  mode: zod.enum(["at_period_end", "immediate"]),
+  paddleCancelled: zod.boolean(),
+  paddleError: zod.string().nullish(),
+  revokedNow: zod
+    .boolean()
+    .describe('True if the user\'s plan was set to \"expired\" immediately.'),
 });
