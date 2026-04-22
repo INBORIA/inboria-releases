@@ -2028,7 +2028,7 @@ export default function Dashboard() {
 
           </div>
 
-          <div className="flex items-center gap-1 max-w-[1200px] mx-auto mb-1.5">
+          <div className="flex flex-wrap items-center gap-1 gap-y-1.5 max-w-[1200px] mx-auto mb-1.5">
               <button
                 onClick={() => { setInboxMode("personal"); setSelectedSharedMailboxId(null); }}
                 className={`flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
