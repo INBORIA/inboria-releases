@@ -1361,6 +1361,7 @@ export default function Dashboard() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
+  const contextMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     if (!contextMenu) return;
@@ -2798,17 +2799,26 @@ export default function Dashboard() {
         <div
           ref={contextMenuRef}
           data-context-menu
-          className="fixed z-[9999] min-w-[200px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
-          style={{ top: Math.min(contextMenu.y, window.innerHeight - 260), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
+          className="fixed z-[9999] min-w-[180px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+          style={{ top: Math.min(contextMenu.y, window.innerHeight - 220), left: Math.min(contextMenu.x, window.innerWidth - 200) }}
+          onMouseLeave={() => {
+            if (contextMenuCloseTimer.current) clearTimeout(contextMenuCloseTimer.current);
+            contextMenuCloseTimer.current = setTimeout(() => setContextMenu(null), 250);
+          }}
+          onMouseEnter={() => {
+            if (contextMenuCloseTimer.current) {
+              clearTimeout(contextMenuCloseTimer.current);
+              contextMenuCloseTimer.current = null;
+            }
+          }}
         >
-          <div className="px-3 py-2 border-b border-[#1f2937]">
-            <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider font-medium">
-              {selectedIds.size > 1
-                ? t("inbox.selectedCount", { count: selectedIds.size })
-                : activeEmails?.find(e => e.id === contextMenu.emailId)?.subject?.substring(0, 30) + "..."
-              }
-            </span>
-          </div>
+          {selectedIds.size > 1 && (
+            <div className="px-3 py-2 border-b border-[#1f2937]">
+              <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider font-medium">
+                {t("inbox.selectedCount", { count: selectedIds.size })}
+              </span>
+            </div>
+          )}
           <div className="py-1">
             {selectedIds.size <= 1 ? (
               <>
