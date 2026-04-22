@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><title>Note d’accompagnement Inboria — 22 avril 2026</title>
+<style>
+@page { size: A4; margin: 18mm 16mm; }
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 24px; color: #1a1a1a; line-height: 1.55; font-size: 11pt; }
+h1 { font-size: 22pt; border-bottom: 3px solid #2563eb; padding-bottom: 12px; margin-top: 0; color: #1e3a8a; }
+h2 { font-size: 15pt; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; margin-top: 28px; color: #1e3a8a; }
+h3 { font-size: 12pt; margin-top: 22px; color: #334155; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 10pt; page-break-inside: avoid; }
+th, td { border: 1px solid #cbd5e1; padding: 6px 9px; text-align: left; vertical-align: top; }
+th { background: #f1f5f9; font-weight: 600; color: #1e293b; }
+tr:nth-child(even) td { background: #fafbfc; }
+code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-size: 9.5pt; font-family: "SF Mono", Menlo, Consolas, monospace; }
+pre { background: #f8fafc; padding: 12px; border-radius: 4px; overflow-x: auto; border-left: 3px solid #2563eb; }
+blockquote { border-left: 4px solid #2563eb; padding: 8px 16px; margin: 12px 0; background: #eff6ff; color: #1e3a8a; font-style: italic; }
+a { color: #2563eb; text-decoration: none; word-break: break-all; }
+a:hover { text-decoration: underline; }
+hr { border: none; border-top: 1px solid #cbd5e1; margin: 24px 0; }
+ul, ol { padding-left: 24px; }
+li { margin: 3px 0; }
+strong { color: #0f172a; }
+@media print {
+  body { padding: 0; max-width: 100%; }
+  h2 { page-break-after: avoid; }
+  table { page-break-inside: avoid; }
+  a { color: #1e3a8a; }
+}
+.print-hint { background: #fef3c7; border: 1px solid #f59e0b; padding: 10px 14px; border-radius: 4px; margin-bottom: 20px; color: #78350f; font-size: 10pt; }
+@media print { .print-hint { display: none; } }
+</style></head><body>
+<div class="print-hint">💡 Pour générer un PDF : appuie sur <strong>Cmd+P</strong> (Mac) ou <strong>Ctrl+P</strong> (Windows/Linux), puis choisis « Enregistrer au format PDF ».</div>
+<h1>Note d&#39;accompagnement et synthèse détaillée — Inboria</h1>
+<p><strong>À lire avant le rapport d&#39;audit complet</strong></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Émetteur</strong></td>
+<td>Jean-Jacques Neybergh, fondateur d&#39;Inboria</td>
+</tr>
+<tr>
+<td><strong>Destinataire</strong></td>
+<td>Lecteur tiers du rapport d&#39;audit (comptable, conseiller, partenaire)</td>
+</tr>
+<tr>
+<td><strong>Date</strong></td>
+<td>22 avril 2026</td>
+</tr>
+<tr>
+<td><strong>Document de référence</strong></td>
+<td><code>RAPPORT_AUDIT_INBORIA_2026-04-22.md</code> (et <code>.html</code>)</td>
+</tr>
+<tr>
+<td><strong>Version</strong></td>
+<td>1.0</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Partie 1 — Note d&#39;accompagnement</h2>
+<h3>Pourquoi ce document existe</h3>
+<p>Le rapport d&#39;audit ci-joint a été produit pour répondre à une question simple : <strong>est-ce que le modèle économique d&#39;Inboria tient la route, et est-ce que la facturation IA des clients est fiable ?</strong></p>
+<p>Il a été rédigé pour un usage avant tout interne — suivre la rentabilité, valider les hypothèses de coûts, et garder une trace datée des marges par plan tarifaire. Il est néanmoins suffisamment sourcé et transparent pour être lu par un tiers de confiance (comptable, conseiller, partenaire commercial éventuel) sans modification.</p>
+<h3>Ce qu&#39;est Inboria, en quelques lignes</h3>
+<p>Inboria est un service en ligne pour PME (petites et moyennes entreprises) qui automatise le traitement de la boîte mail professionnelle grâce à l&#39;intelligence artificielle : tri automatique, brouillons de réponse, résumés quotidiens, détection de rendez-vous, recherche conversationnelle. Le service fonctionne en abonnement mensuel par utilisateur ou par siège.</p>
+<ul>
+<li><strong>Domaine commercial</strong> : inboria.com</li>
+<li><strong>Phase actuelle</strong> : bêta privée fermée (aucun client payant à ce jour)</li>
+<li><strong>Stack technique</strong> : application web React, application mobile Expo, base de données Supabase, paiements via Paddle (gelés pendant la bêta), modèle IA OpenAI <code>gpt-4o-mini</code></li>
+<li><strong>Plans tarifaires</strong> :<ul>
+<li><strong>Solo</strong> : 9 €/mois — 3 000 e-mails traités</li>
+<li><strong>Pro</strong> : 19 €/mois — 10 000 e-mails traités</li>
+<li><strong>Business</strong> : 12,99 €/mois et par siège (3 sièges minimum) — 10 000 e-mails traités</li>
+</ul>
+</li>
+</ul>
+<h3>Comment lire le rapport</h3>
+<p>Le rapport principal est organisé en cinq sections :</p>
+<ol>
+<li><strong>Synthèse exécutive</strong> — les conclusions clés en une page</li>
+<li><strong>Audit du système de facturation IA</strong> — comment Inboria compte ce qui est consommé chez OpenAI et le refacture aux clients sans perte ni double comptage</li>
+<li><strong>Audit de rentabilité</strong> — coûts fixes mensuels, marges nettes par plan, seuils de rentabilité</li>
+<li><strong>Recommandations</strong> — actions à mener pour sécuriser et développer le service</li>
+<li><strong>Annexes</strong> — sources officielles citées (A), paliers d&#39;infrastructure (B), pièces justificatives dans le code source (C)</li>
+</ol>
+<p>Le rapport contient également un historique des versions en fin de document, qui trace toutes les corrections apportées suite à un contrôle externe des sources.</p>
+<h3>Points d&#39;attention pour le lecteur</h3>
+<p>Trois points méritent d&#39;être compris avant la lecture :</p>
+<ol>
+<li><p><strong>Phase de projet</strong> : le rapport raisonne sur une <strong>phase de démarrage commercial</strong>, pas sur une cible d&#39;hypercroissance. Les coûts fixes sont dimensionnés pour les <strong>premiers mois de commercialisation</strong>, pas pour 100 000 utilisateurs.</p>
+</li>
+<li><p><strong>Niveau de preuve différencié</strong> : dans le tableau des coûts fixes (section 3.2 du rapport), une colonne « Niveau de preuve » indique pour chaque ligne si le coût est <strong>confirmé</strong> par une source officielle ou s&#39;il s&#39;agit d&#39;une <strong>estimation interne</strong> à valider par facture réelle dès la production en place. Les deux postes encore estimatifs sont <strong>Replit Reserved VM</strong> et <strong>Brevo</strong> (le fournisseur d&#39;envoi d&#39;e-mails transactionnels).</p>
+</li>
+<li><p><strong>Bêta privée fermée</strong> : à la date de rédaction, <strong>aucun encaissement client n&#39;a eu lieu</strong>. Les paiements et les inscriptions publiques sont volontairement désactivés via un commutateur logiciel (<code>VITE_PAYMENTS_ENABLED</code>). Toutes les projections sont donc des projections, pas des résultats observés.</p>
+</li>
+</ol>
+<h3>Ce que le rapport ne couvre pas</h3>
+<p>Pour éviter toute lecture erronée, voici ce que le rapport <strong>ne fait pas</strong> :</p>
+<ul>
+<li>Il ne contient <strong>aucune projection commerciale</strong> (nombre de clients prévus dans 12 ou 24 mois, parts de marché visées). Il décrit uniquement la <strong>structure</strong> économique du produit.</li>
+<li>Il <strong>ne valorise pas l&#39;entreprise</strong> et n&#39;a pas vocation à servir de support de levée de fonds.</li>
+<li>Il ne traite pas les questions juridiques, fiscales ou de conformité (RGPD, CGV, mentions légales).</li>
+<li>Il ne traite pas les questions de propriété intellectuelle ni la protection de la marque.</li>
+</ul>
+<p>Pour ces sujets, un conseil spécialisé est nécessaire.</p>
+<hr>
+<h2>Partie 2 — Synthèse détaillée du rapport</h2>
+<p>Cette synthèse reprend les conclusions principales du rapport d&#39;audit. Elle ne remplace pas la lecture du document complet, qui contient les sources, les calculs détaillés et les pièces justificatives en annexe.</p>
+<h3>2.1 Système de facturation IA — verdict</h3>
+<p><strong>Verdict : système solide, fiable, conçu pour ne jamais facturer un client pour un service qu&#39;il n&#39;a pas reçu.</strong></p>
+<h4>Comment ça marche, en français simple</h4>
+<p>Quand un client utilise une fonction d&#39;intelligence artificielle (tri d&#39;un e-mail, génération d&#39;un brouillon de réponse, résumé quotidien, etc.), le système :</p>
+<ol>
+<li>Vérifie que le client a encore du quota disponible <strong>avant</strong> d&#39;appeler OpenAI</li>
+<li>Si le quota est épuisé, refuse l&#39;opération immédiatement (« fail-closed »)</li>
+<li>Si le quota est suffisant, appelle OpenAI et réserve le coût correspondant</li>
+<li>Enregistre <strong>immédiatement</strong> la consommation dans une table dédiée appelée <code>usage_events</code> (« événements de consommation »)</li>
+<li>Recalcule le compteur de quota du client à partir de cette table, qui sert de <strong>source de vérité</strong></li>
+</ol>
+<p>Chaque type d&#39;opération a un coût en « crédits internes » fixé à l&#39;avance dans le code, par exemple :</p>
+<ul>
+<li>Génération d&#39;un brouillon de réponse : 2 crédits</li>
+<li>Résumé quotidien d&#39;une boîte : 3 crédits</li>
+<li>Détection automatique de rendez-vous : 3 crédits</li>
+<li>Une réponse du chat support : 1 crédit</li>
+</ul>
+<p>Cette grille de coûts se trouve dans le fichier <code>artifacts/api-server/src/services/credits.ts</code>, et elle est directement vérifiable par lecture du code.</p>
+<h4>Sécurités en place</h4>
+<ul>
+<li><strong>Bouton « Recompte » dans l&#39;interface d&#39;administration</strong> — permet de recalculer le compteur d&#39;un client à partir des événements bruts en cas de doute</li>
+<li><strong>Triage forfaitaire</strong> — la fonction de tri d&#39;e-mails utilise un coût forfaitaire (<code>emails_used</code>) plutôt que de facturer chaque appel OpenAI individuellement, ce qui élimine une catégorie entière de risque de comptage</li>
+<li><strong>Source de vérité unique</strong> — la table <code>usage_events</code> est la référence ; les autres compteurs sont reconstruits à partir d&#39;elle</li>
+<li><strong>Refus en cas de panne</strong> — si un appel OpenAI échoue ou plante, le crédit n&#39;est pas consommé</li>
+</ul>
+<h4>Risque résiduel chiffré</h4>
+<p>Le seul scénario théorique où Inboria pourrait être facturé par OpenAI sans facturer son client est le suivant : <strong>panne du serveur Express précisément entre la réponse d&#39;OpenAI et l&#39;écriture dans la base de données</strong>. Ce scénario est extrêmement improbable et représente un risque financier estimé à <strong>moins de 1 € par an</strong>, ce qui est négligeable.</p>
+<h3>2.2 Rentabilité par plan — verdict</h3>
+<p><strong>Verdict : marges nettes très confortables sur les trois plans, même dans l&#39;hypothèse pessimiste.</strong></p>
+<h4>Hypothèse de calcul retenue</h4>
+<p>Pour rester prudent, la marge a été calculée dans le <strong>scénario le moins favorable</strong> : chaque client consomme <strong>100 % de son quota mensuel</strong> (consommation maximale d&#39;OpenAI). En pratique, la consommation moyenne sera nettement inférieure et les marges réelles seront donc <strong>plus élevées</strong> que celles présentées ici.</p>
+<h4>Marges nettes par plan (cas pire)</h4>
+<table>
+<thead>
+<tr>
+<th>Plan</th>
+<th align="right">Prix client</th>
+<th align="right">Coût IA pire cas</th>
+<th align="right">Frais Paddle</th>
+<th align="right">Marge nette</th>
+<th align="right">Marge en %</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Solo</strong></td>
+<td align="right">9 €</td>
+<td align="right">0,68 €</td>
+<td align="right">0,95 €</td>
+<td align="right">7,37 €</td>
+<td align="right"><strong>81 %</strong></td>
+</tr>
+<tr>
+<td><strong>Pro</strong></td>
+<td align="right">19 €</td>
+<td align="right">2,28 €</td>
+<td align="right">1,45 €</td>
+<td align="right">15,27 €</td>
+<td align="right"><strong>79 %</strong></td>
+</tr>
+<tr>
+<td><strong>Business</strong></td>
+<td align="right">12,99 €/siège (×3 mini = 38,97 €)</td>
+<td align="right">6,84 €</td>
+<td align="right">2,45 €</td>
+<td align="right">29,68 €</td>
+<td align="right"><strong>74 %</strong></td>
+</tr>
+</tbody></table>
+<p>Toutes les marges sont à plus de <strong>70 %</strong> dans le scénario le plus défavorable. C&#39;est une assise économique très saine pour un produit en phase de lancement.</p>
+<h4>Coûts fixes mensuels</h4>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th align="right">Total mensuel</th>
+<th>Détail</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Bêta actuelle</strong> (aucun client)</td>
+<td align="right">~28 €</td>
+<td>Replit Core 18 € + Reserved VM ~9 € + Domaine 1 € (Supabase et Brevo en gratuit)</td>
+</tr>
+<tr>
+<td><strong>Lancement</strong> (1 à 100 abonnés)</td>
+<td align="right">~83 €</td>
+<td>Ajout de Supabase Pro 23 € et Brevo Business ~17 €</td>
+</tr>
+<tr>
+<td><strong>Croissance</strong> (100 à 2 000 abonnés)</td>
+<td align="right">~104 €</td>
+<td>Replit Reserved VM dimensionnée plus large + Brevo palier supérieur</td>
+</tr>
+</tbody></table>
+<p>Deux lignes du tableau (Replit Reserved VM et Brevo) sont marquées comme <strong>estimations internes</strong> dans le rapport, à confirmer par facture réelle dès la production en place.</p>
+<h4>Seuil de rentabilité (pire cas, 100 % Business)</h4>
+<p>Combien de clients faut-il pour couvrir les coûts fixes, dans l&#39;hypothèse la plus défavorable où tous les clients sont en plan Business avec consommation maximale ?</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th align="right">Coûts fixes</th>
+<th align="right">Clients Business nécessaires</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Bêta</td>
+<td align="right">28 €</td>
+<td align="right"><strong>1 client</strong></td>
+</tr>
+<tr>
+<td>Lancement</td>
+<td align="right">83 €</td>
+<td align="right"><strong>3 clients</strong></td>
+</tr>
+<tr>
+<td>Croissance</td>
+<td align="right">104 €</td>
+<td align="right"><strong>4 clients</strong></td>
+</tr>
+</tbody></table>
+<p>À titre d&#39;illustration, <strong>100 clients Business</strong> dans le scénario le plus défavorable génèreraient un bénéfice net annuel d&#39;environ <strong>33 000 €</strong>. Dans une hypothèse de consommation moyenne plus réaliste (50 % du quota), ce chiffre serait sensiblement plus élevé.</p>
+<h3>2.3 Sources et niveau de preuve</h3>
+<p>Le rapport cite cinq sources officielles, toutes accessibles publiquement :</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Source</th>
+<th>Coût</th>
+<th>Niveau de preuve</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>[1]</td>
+<td>OpenAI</td>
+<td>0,15 $/1M tokens entrée, 0,60 $/1M tokens sortie pour <code>gpt-4o-mini</code></td>
+<td><strong>Confirmé</strong></td>
+</tr>
+<tr>
+<td>[2]</td>
+<td>Paddle</td>
+<td>5 % + 0,50 $ par transaction</td>
+<td><strong>Confirmé</strong></td>
+</tr>
+<tr>
+<td>[3]</td>
+<td>Supabase</td>
+<td>Pro à partir de 25 $/mois</td>
+<td><strong>Confirmé</strong></td>
+</tr>
+<tr>
+<td>[4]</td>
+<td>Replit</td>
+<td>Core à 20 $/mois</td>
+<td><strong>Confirmé</strong> ; Reserved VM <strong>estimée</strong></td>
+</tr>
+<tr>
+<td>[5]</td>
+<td>Brevo</td>
+<td>Free 300 mails/jour</td>
+<td><strong>Confirmé</strong> ; paliers payants <strong>estimés</strong></td>
+</tr>
+</tbody></table>
+<p>Les deux estimations restantes seront remplacées par les factures réelles dès le premier mois de production commerciale.</p>
+<h3>2.4 Recommandations principales du rapport</h3>
+<p>Le rapport identifie plusieurs chantiers à mener avant ou pendant l&#39;ouverture commerciale :</p>
+<ol>
+<li><strong>Tester de bout en bout l&#39;encaissement Paddle</strong> en mode production avant la levée du gel des paiements</li>
+<li><strong>Configurer les magic links Supabase et l&#39;OAuth Gmail</strong> sur le domaine inboria.com en production</li>
+<li><strong>Activer les alertes opérationnelles</strong> (boîte e-mail déconnectée, plantage de la connexion IMAP)</li>
+<li><strong>Mettre en place la limitation de débit</strong> sur les actions IA pour prévenir les abus</li>
+<li><strong>Remplacer les estimations Replit Reserved VM et Brevo par les factures réelles</strong> dès le premier mois de production</li>
+</ol>
+<p>Ces points sont déjà inscrits dans le suivi interne du projet.</p>
+<h3>2.5 Conclusion</h3>
+<p>Le modèle économique d&#39;Inboria, tel que documenté dans le rapport d&#39;audit du 22 avril 2026, présente :</p>
+<ul>
+<li><strong>Une intégrité de facturation IA solide</strong> (risque résiduel inférieur à 1 € par an)</li>
+<li><strong>Des marges nettes confortables</strong> (74 % à 81 % dans le scénario le plus défavorable)</li>
+<li><strong>Des coûts fixes maîtrisés</strong> (28 € en bêta, 83 € en lancement, 104 € en croissance)</li>
+<li><strong>Un seuil de rentabilité bas</strong> (1 à 4 clients Business selon la phase)</li>
+<li><strong>Une transparence méthodologique</strong> sur les estimations restantes (Replit VM, Brevo)</li>
+</ul>
+<p>Le projet est en mesure d&#39;aborder l&#39;ouverture commerciale dans des conditions économiques saines, sous réserve de mener à bien les chantiers techniques identifiés dans la section recommandations du rapport.</p>
+<hr>
+<p><strong>Fin de la note d&#39;accompagnement.</strong></p>
+<p>Pour les détails complets, les calculs intermédiaires et les références aux pièces justificatives dans le code source, se reporter au document <code>RAPPORT_AUDIT_INBORIA_2026-04-22.md</code> (ou sa version imprimable <code>.html</code>).</p>
+
+</body></html>

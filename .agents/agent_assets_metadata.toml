@@ -53,3 +53,9 @@ id = "dx4q45EbzOdhd0DjLmIgH"
 uri = "file://RAPPORT_AUDIT_INBORIA_2026-04-22.md"
 type = "text"
 title = "Rapport d'audit Inboria — 22 avril 2026"
+
+[[outputs]]
+id = "GyzAl88jjJ_iCzl6bIXU-"
+uri = "file://NOTE_ACCOMPAGNEMENT_INBORIA_2026-04-22.md"
+type = "text"
+title = "Note d’accompagnement et synthèse détaillée — Inboria"
