@@ -1301,6 +1301,7 @@ export default function Dashboard() {
       if (!selectedAccountEmail) return true;
       const sharedId = e.shared_mailbox_id ?? e.sharedMailboxId ?? null;
       if (sharedId) return false;
+      if (!e.recipient) return true;
       return recipientMatchesAddress(e.recipient, selectedAccountEmail);
     })
     .sort((a, b) => {
