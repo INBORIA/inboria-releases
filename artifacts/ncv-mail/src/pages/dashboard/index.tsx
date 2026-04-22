@@ -1920,17 +1920,6 @@ export default function Dashboard() {
                   </SelectContent>
                 </Select>
               )}
-              {inboxMode === "personal" && (composeConnections?.length || 0) >= 2 && selectedAccountEmail && (
-                <button
-                  type="button"
-                  onClick={() => setSelectedAccountId("all")}
-                  className="ml-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-amber-500/15 text-amber-300 border border-amber-500/25 hover:bg-amber-500/25"
-                  title={t("inbox.filteredAccountReminder", { email: selectedAccountEmail })}
-                  aria-label={t("inbox.filteredAccountReminder", { email: selectedAccountEmail })}
-                >
-                  {t("inbox.filteredAccountReminder", { email: selectedAccountEmail })}
-                </button>
-              )}
             </div>
 
           {inboxMode !== "trash" && inboxMode !== "spam" && (
