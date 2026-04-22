@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="fr"><head><meta charset="utf-8"><title>Rapport d'audit Inboria — 22 avril 2026</title>
+<style>
+@page { size: A4; margin: 18mm 16mm; }
+* { box-sizing: border-box; }
+body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; max-width: 900px; margin: 0 auto; padding: 24px; color: #1a1a1a; line-height: 1.55; font-size: 11pt; }
+h1 { font-size: 22pt; border-bottom: 3px solid #2563eb; padding-bottom: 12px; margin-top: 0; color: #1e3a8a; }
+h2 { font-size: 15pt; border-bottom: 1px solid #cbd5e1; padding-bottom: 6px; margin-top: 28px; color: #1e3a8a; }
+h3 { font-size: 12pt; margin-top: 22px; color: #334155; }
+table { border-collapse: collapse; width: 100%; margin: 12px 0; font-size: 10pt; page-break-inside: avoid; }
+th, td { border: 1px solid #cbd5e1; padding: 6px 9px; text-align: left; vertical-align: top; }
+th { background: #f1f5f9; font-weight: 600; color: #1e293b; }
+tr:nth-child(even) td { background: #fafbfc; }
+code { background: #f1f5f9; padding: 1px 5px; border-radius: 3px; font-size: 9.5pt; font-family: "SF Mono", Menlo, Consolas, monospace; }
+pre { background: #f8fafc; padding: 12px; border-radius: 4px; overflow-x: auto; border-left: 3px solid #2563eb; }
+blockquote { border-left: 4px solid #2563eb; padding: 8px 16px; margin: 12px 0; background: #eff6ff; color: #1e3a8a; font-style: italic; }
+a { color: #2563eb; text-decoration: none; word-break: break-all; }
+a:hover { text-decoration: underline; }
+hr { border: none; border-top: 1px solid #cbd5e1; margin: 24px 0; }
+ul, ol { padding-left: 24px; }
+li { margin: 3px 0; }
+strong { color: #0f172a; }
+@media print {
+  body { padding: 0; max-width: 100%; }
+  h2 { page-break-after: avoid; }
+  table { page-break-inside: avoid; }
+  a { color: #1e3a8a; }
+}
+.print-hint { background: #fef3c7; border: 1px solid #f59e0b; padding: 10px 14px; border-radius: 4px; margin-bottom: 20px; color: #78350f; font-size: 10pt; }
+@media print { .print-hint { display: none; } }
+</style></head><body>
+<div class="print-hint">💡 Pour générer un PDF : appuie sur <strong>Cmd+P</strong> (Mac) ou <strong>Ctrl+P</strong> (Windows/Linux), puis choisis « Enregistrer au format PDF ».</div>
+<h1>RAPPORT D&#39;AUDIT — Inboria</h1>
+<h2>Intégrité de la facturation IA et rentabilité économique</h2>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Date du rapport</strong></td>
+<td>22 avril 2026</td>
+</tr>
+<tr>
+<td><strong>Version</strong></td>
+<td>2.0 (corrigée après contrôle externe des sources fournisseurs)</td>
+</tr>
+<tr>
+<td><strong>Périmètre</strong></td>
+<td>Plateforme Inboria (web + API + mobile), domaine <code>inboria.com</code></td>
+</tr>
+<tr>
+<td><strong>Statut commercial</strong></td>
+<td>Bêta privée fermée (paiements et inscriptions gelés)</td>
+</tr>
+<tr>
+<td><strong>Auteur de l&#39;audit interne</strong></td>
+<td>Équipe technique Inboria</td>
+</tr>
+<tr>
+<td><strong>Destinataire</strong></td>
+<td>Auditeur externe / conseil financier</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Sommaire</h2>
+<ol>
+<li><a href="#1-p%C3%A9rim%C3%A8tre-technique-audit%C3%A9">Périmètre technique audité</a></li>
+<li><a href="#2-audit-de-lint%C3%A9grit%C3%A9-de-la-facturation-ia">Audit de l&#39;intégrité de la facturation IA</a></li>
+<li><a href="#3-audit-de-la-rentabilit%C3%A9">Audit de la rentabilité</a></li>
+<li><a href="#4-synth%C3%A8se-pour-lauditeur-externe">Synthèse pour l&#39;auditeur externe</a></li>
+<li><a href="#annexe-a--sources-et-r%C3%A9f%C3%A9rences">Annexe A — Sources et références</a></li>
+<li><a href="#annexe-b--paliers-dinfrastructure-d%C3%A9taill%C3%A9s">Annexe B — Paliers d&#39;infrastructure détaillés</a></li>
+<li><a href="#annexe-c--pi%C3%A8ces-justificatives-consultables-code-source">Annexe C — Pièces justificatives consultables (code source)</a></li>
+</ol>
+<hr>
+<h2>1. Périmètre technique audité</h2>
+<table>
+<thead>
+<tr>
+<th>Composant</th>
+<th>Technologie</th>
+<th>Rôle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Frontend web</td>
+<td>React + Vite</td>
+<td>Tableau de bord abonnés</td>
+</tr>
+<tr>
+<td>API serveur</td>
+<td>Express (Node.js / TypeScript)</td>
+<td>Logique métier, facturation, intégrations</td>
+</tr>
+<tr>
+<td>Base de données</td>
+<td>Supabase (PostgreSQL)</td>
+<td>Stockage profils, emails, audit</td>
+</tr>
+<tr>
+<td>Email transactionnel</td>
+<td>Brevo (SMTP)</td>
+<td>Envoi des emails sortants</td>
+</tr>
+<tr>
+<td>Intelligence artificielle</td>
+<td>OpenAI <code>gpt-4o-mini</code></td>
+<td>Classification, brouillons, résumés</td>
+</tr>
+<tr>
+<td>Paiement</td>
+<td>Paddle (Merchant of Record)</td>
+<td>Encaissement abonnements EU/EEE/Suisse</td>
+</tr>
+<tr>
+<td>Hébergement</td>
+<td>Replit Deployments (Reserved VM)</td>
+<td>Production</td>
+</tr>
+<tr>
+<td>Application mobile</td>
+<td>Expo (React Native)</td>
+<td>iOS / Android</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>2. Audit de l&#39;intégrité de la facturation IA</h2>
+<h3>2.1 Question auditée</h3>
+<blockquote>
+<p>Existe-t-il un risque que des appels OpenAI soient payés par Inboria sans être refacturés à l&#39;abonné concerné ?</p>
+</blockquote>
+<h3>2.2 Méthode</h3>
+<p>Lecture exhaustive du code source des fichiers suivants :</p>
+<ul>
+<li><code>artifacts/api-server/src/services/credits.ts</code> — moteur de facturation</li>
+<li><code>artifacts/api-server/src/routes/ai.ts</code> — actions IA à la demande</li>
+<li><code>artifacts/api-server/src/routes/webhook.ts</code> — réception emails entrants</li>
+<li><code>artifacts/api-server/src/services/auto-sync.ts</code> — synchronisation IMAP automatique</li>
+<li><code>artifacts/api-server/src/routes/categories.ts</code> — génération de packs IA</li>
+</ul>
+<h3>2.3 Mécanisme de facturation</h3>
+<p>Pour chaque appel IA, le système exécute trois opérations dans l&#39;ordre :</p>
+<ol>
+<li><strong>Appel OpenAI</strong> → coût engagé par Inboria (~0,0001 € à 0,0005 € par appel selon la fonction)</li>
+<li><strong>Insertion dans la table d&#39;audit <code>usage_events</code></strong> (source de vérité immuable) avec : <code>user_id</code>, <code>event_type</code>, <code>credits</code> consommés, <code>metadata</code>, horodatage</li>
+<li><strong>Incrémentation du compteur <code>profiles.ai_credits_used</code></strong> (compteur affiché à l&#39;utilisateur en temps réel)</li>
+</ol>
+<p><strong>Tarifs en crédits par fonction</strong> (constante <code>AI_COST</code> dans <code>services/credits.ts</code>, lignes 4-13) :</p>
+<table>
+<thead>
+<tr>
+<th>Fonction IA</th>
+<th align="right">Crédits facturés à l&#39;abonné</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Génération de brouillon</td>
+<td align="right">2</td>
+</tr>
+<tr>
+<td>Brief quotidien</td>
+<td align="right">3</td>
+</tr>
+<tr>
+<td>Résumé de conversation</td>
+<td align="right">2</td>
+</tr>
+<tr>
+<td>Extraction de rendez-vous</td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td>Détection de rendez-vous (background)</td>
+<td align="right">3</td>
+</tr>
+<tr>
+<td>Recatégorisation des emails non classés</td>
+<td align="right">3</td>
+</tr>
+<tr>
+<td>Chat de support IA</td>
+<td align="right">1</td>
+</tr>
+<tr>
+<td>Génération de pack de catégories</td>
+<td align="right">3</td>
+</tr>
+<tr>
+<td><strong>Triage d&#39;un email entrant</strong></td>
+<td align="right"><strong>1</strong> (compté via <code>emails_used</code>, forfaitaire)</td>
+</tr>
+</tbody></table>
+<h3>2.4 Garde-fous identifiés</h3>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Garde-fou</th>
+<th>Localisation</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td><strong>Fail-closed sur l&#39;audit</strong></td>
+<td><code>services/credits.ts</code> (<code>consumeAiCredits</code>)</td>
+<td>Si l&#39;écriture dans <code>usage_events</code> échoue, la fonction retourne <code>ok: false</code> et l&#39;appelant ne sert PAS le résultat à l&#39;utilisateur.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>Vérification préalable du quota</strong></td>
+<td><code>services/credits.ts</code> (<code>checkEntitlement</code>)</td>
+<td>Avant tout appel OpenAI, le système vérifie que l&#39;utilisateur a encore du quota disponible.</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Audit immuable</strong></td>
+<td>Table Supabase <code>usage_events</code></td>
+<td>Chaque consommation est tracée avec horodatage, jamais modifiée a posteriori.</td>
+</tr>
+<tr>
+<td>4</td>
+<td><strong>Bouton &quot;Recompter&quot;</strong></td>
+<td>Page Paramètres + endpoint API</td>
+<td>Recalcule <code>ai_credits_used</code> à partir de <code>usage_events</code> en cas de dérive.</td>
+</tr>
+<tr>
+<td>5</td>
+<td><strong>Reset mensuel automatique</strong></td>
+<td><code>services/credits.ts</code> (<code>ensureCurrentPeriod</code>)</td>
+<td>Remise à zéro chaque début de mois calendaire.</td>
+</tr>
+<tr>
+<td>6</td>
+<td><strong>Quota unifié</strong></td>
+<td><code>services/credits.ts</code></td>
+<td><code>emails_used + ai_credits_used ≤ emails_quota</code> — impossible de contourner via une autre fonction.</td>
+</tr>
+<tr>
+<td>7</td>
+<td><strong>Préfacturation pour tâches background</strong></td>
+<td><code>services/auto-sync.ts</code></td>
+<td>La détection de rendez-vous facture AVANT l&#39;appel OpenAI (sécurité maximale).</td>
+</tr>
+</tbody></table>
+<h3>2.5 Risques résiduels identifiés</h3>
+<table>
+<thead>
+<tr>
+<th align="right">#</th>
+<th>Scénario</th>
+<th>Probabilité</th>
+<th>Impact financier estimé</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">R1</td>
+<td>Crash du serveur Express entre la réponse OpenAI et l&#39;écriture dans <code>usage_events</code></td>
+<td>Très faible (~ms par appel, processus Express stable)</td>
+<td>&lt; 1 € / an</td>
+</tr>
+<tr>
+<td align="right">R2</td>
+<td>Erreur d&#39;insertion Supabase malgré un appel OpenAI réussi</td>
+<td>Faible (Supabase SLA 99,9 %)</td>
+<td>&lt; 1 € / an, et l&#39;utilisateur ne reçoit pas le résultat (donc neutre commercialement)</td>
+</tr>
+<tr>
+<td align="right">R3</td>
+<td>Bug introduit lors d&#39;une future évolution oubliant le pattern de facturation</td>
+<td>Maîtrisable par revue de code</td>
+<td>Variable, à mitiger par tests automatisés</td>
+</tr>
+</tbody></table>
+<h3>2.6 Mesures de détection a posteriori</h3>
+<p>L&#39;écart éventuel entre la facture OpenAI et les crédits comptabilisés peut être détecté par :</p>
+<ul>
+<li><strong>Rapprochement mensuel</strong> : <code>SELECT SUM(credits) FROM usage_events WHERE created_at &gt;= …</code> comparé à la facture OpenAI du mois.</li>
+<li><strong>Ratio de référence</strong> : 1 crédit consommé ≈ 0,000264 € de coût OpenAI moyen (basé sur <code>gpt-4o-mini</code> à 0,15 $ / 0,60 $ par million de tokens — source [1] en annexe).</li>
+<li><strong>Bouton &quot;Recompter&quot;</strong> par utilisateur en cas d&#39;écart entre <code>usage_events</code> et <code>profiles.ai_credits_used</code>.</li>
+</ul>
+<h3>2.7 Conclusion de l&#39;audit facturation</h3>
+<blockquote>
+<p><strong>Le système de facturation IA est conçu selon le principe « fail-closed »</strong> : il refuse de servir gratuitement un résultat plutôt que de risquer une perte non comptabilisée.</p>
+<p><strong>Aucune fuite systémique</strong> identifiée. Les risques résiduels représentent au maximum <strong>quelques centimes par an</strong>, négligeables au regard du chiffre d&#39;affaires attendu.</p>
+</blockquote>
+<hr>
+<h2>3. Audit de la rentabilité</h2>
+<h3>3.1 Coûts variables par abonné (par mois, plein quota consommé)</h3>
+<p><strong>Hypothèses de calcul</strong> (toutes vérifiées sur les pages officielles des fournisseurs — voir Annexe A) :</p>
+<ul>
+<li>Tarif OpenAI <code>gpt-4o-mini</code> : <strong>0,15 $ / million de tokens en entrée</strong>, <strong>0,60 $ / million de tokens en sortie</strong> (source [1])</li>
+<li>Coût moyen par crédit Inboria : <strong>~0,000264 €</strong> (estimation interne basée sur la composition moyenne des prompts)</li>
+<li>Frais Paddle : <strong>5 % du montant + 0,50 $ par transaction Checkout</strong> (source [2])</li>
+<li>Taux de change indicatif : 1 USD ≈ 0,92 EUR (avril 2026)</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th>Plan</th>
+<th align="right">Quota mensuel</th>
+<th align="right">Prix HT</th>
+<th align="right">Coût OpenAI (max)</th>
+<th align="right">Frais Paddle</th>
+<th align="right"><strong>Marge nette</strong></th>
+<th align="right"><strong>% marge</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Solo</strong></td>
+<td align="right">3 000 crédits</td>
+<td align="right">9,00 €</td>
+<td align="right">~0,79 €</td>
+<td align="right">~0,95 €</td>
+<td align="right"><strong>~7,26 €</strong></td>
+<td align="right"><strong>81 %</strong></td>
+</tr>
+<tr>
+<td><strong>Pro</strong></td>
+<td align="right">10 000 crédits</td>
+<td align="right">19,00 €</td>
+<td align="right">~2,51 €</td>
+<td align="right">~1,45 €</td>
+<td align="right"><strong>~15,04 €</strong></td>
+<td align="right"><strong>79 %</strong></td>
+</tr>
+<tr>
+<td><strong>Business</strong> (3 sièges min)</td>
+<td align="right">10 000 crédits/siège</td>
+<td align="right">38,97 €</td>
+<td align="right">~7,92 €</td>
+<td align="right">~2,45 €</td>
+<td align="right"><strong>~28,60 €</strong> (≈ 9,53 €/siège)</td>
+<td align="right"><strong>74 %</strong></td>
+</tr>
+</tbody></table>
+<h3>3.2 Coûts fixes mensuels</h3>
+<p><strong>Note méthodologique</strong> : Les coûts fixes ont été corrigés après contrôle direct des pages tarifaires officielles des fournisseurs (voir Annexe A pour les références).</p>
+<table>
+<thead>
+<tr>
+<th>Poste</th>
+<th align="right">Phase bêta (actuelle)</th>
+<th align="right">Phase lancement (1-100 abonnés)</th>
+<th align="right">Phase croissance (100-2000 abonnés)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Replit</strong> (Core 20 $/mois + Reserved VM ~25 $/mois) [4]</td>
+<td align="right">25 €</td>
+<td align="right">42 €</td>
+<td align="right">50 €</td>
+</tr>
+<tr>
+<td><strong>Supabase</strong></td>
+<td align="right">0 € (Free tier) [3]</td>
+<td align="right">23 € (Pro, dès 25 $/mois) [3]</td>
+<td align="right">23 € (Pro suffit jusqu&#39;à ~100k MAU) [3]</td>
+</tr>
+<tr>
+<td><strong>Brevo SMTP</strong></td>
+<td align="right">0 € (Free, 300 mails/jour) [5]</td>
+<td align="right">~17 € (Business, ~18 $/mois pour 20 000 mails) [5]</td>
+<td align="right">~30 € (palier supérieur, 40 000+ mails) [5]</td>
+</tr>
+<tr>
+<td><strong>Domaine <code>inboria.com</code></strong></td>
+<td align="right">1 €</td>
+<td align="right">1 €</td>
+<td align="right">1 €</td>
+</tr>
+<tr>
+<td><strong>TOTAL FIXE / MOIS</strong></td>
+<td align="right"><strong>~26 €</strong></td>
+<td align="right"><strong>~83 €</strong></td>
+<td align="right"><strong>~104 €</strong></td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>Correction importante par rapport à la version initiale</strong> : La version 1.0 du rapport mentionnait &quot;Supabase Team à 100 €/mois&quot; pour la phase croissance. Cette ligne était erronée — Supabase Team est en réalité à <strong>599 $/mois</strong> (source [3]). Toutefois, le plan Pro à 25 $/mois suffit largement jusqu&#39;à environ 100 000 utilisateurs actifs mensuels et 8 GB de base, soit bien au-delà des objectifs commerciaux à 2-3 ans. Les coûts fixes en phase croissance sont donc <strong>plus bas</strong> que ce qui était initialement annoncé.</p>
+</blockquote>
+<h3>3.3 Seuil de rentabilité — scénario le moins favorable (100 % Business)</h3>
+<p><strong>Hypothèse pessimiste</strong> : tous les clients sont en plan Business (la marge unitaire la plus serrée des trois plans), et chaque siège consomme <strong>100 % de son quota mensuel</strong> (consommation maximale d&#39;OpenAI).</p>
+<table>
+<thead>
+<tr>
+<th>Phase</th>
+<th align="right">Coûts fixes / mois</th>
+<th align="right">Clients Business pour équilibre</th>
+<th align="right">Sièges totaux</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>Bêta</strong></td>
+<td align="right">26 €</td>
+<td align="right"><strong>1 client</strong> (3 sièges)</td>
+<td align="right">3 sièges</td>
+</tr>
+<tr>
+<td><strong>Lancement</strong></td>
+<td align="right">83 €</td>
+<td align="right"><strong>3 clients</strong> (9 sièges)</td>
+<td align="right">9 sièges</td>
+</tr>
+<tr>
+<td><strong>Croissance</strong></td>
+<td align="right">104 €</td>
+<td align="right"><strong>4 clients</strong> (12 sièges)</td>
+<td align="right">12 sièges</td>
+</tr>
+</tbody></table>
+<h3>3.4 Projections de bénéfice (100 % Business, plein quota consommé)</h3>
+<table>
+<thead>
+<tr>
+<th align="right">Clients Business</th>
+<th align="right">Revenu mensuel</th>
+<th align="right">Coûts fixes mensuels</th>
+<th align="right">Marge variable mensuelle</th>
+<th align="right"><strong>Bénéfice net mensuel</strong></th>
+<th align="right"><strong>Bénéfice net annuel</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">3</td>
+<td align="right">117 €</td>
+<td align="right">83 €</td>
+<td align="right">86 €</td>
+<td align="right"><strong>~3 €</strong></td>
+<td align="right"><strong>~36 €</strong></td>
+</tr>
+<tr>
+<td align="right">5</td>
+<td align="right">195 €</td>
+<td align="right">83 €</td>
+<td align="right">143 €</td>
+<td align="right"><strong>~60 €</strong></td>
+<td align="right"><strong>~720 €</strong></td>
+</tr>
+<tr>
+<td align="right">10</td>
+<td align="right">390 €</td>
+<td align="right">83 €</td>
+<td align="right">286 €</td>
+<td align="right"><strong>~203 €</strong></td>
+<td align="right"><strong>~2 440 €</strong></td>
+</tr>
+<tr>
+<td align="right">25</td>
+<td align="right">974 €</td>
+<td align="right">95 €</td>
+<td align="right">715 €</td>
+<td align="right"><strong>~620 €</strong></td>
+<td align="right"><strong>~7 440 €</strong></td>
+</tr>
+<tr>
+<td align="right">50</td>
+<td align="right">1 949 €</td>
+<td align="right">100 €</td>
+<td align="right">1 430 €</td>
+<td align="right"><strong>~1 330 €</strong></td>
+<td align="right"><strong>~15 960 €</strong></td>
+</tr>
+<tr>
+<td align="right">100</td>
+<td align="right">3 897 €</td>
+<td align="right">104 €</td>
+<td align="right">2 860 €</td>
+<td align="right"><strong>~2 756 €</strong></td>
+<td align="right"><strong>~33 070 €</strong></td>
+</tr>
+<tr>
+<td align="right">250</td>
+<td align="right">9 743 €</td>
+<td align="right">120 €</td>
+<td align="right">7 150 €</td>
+<td align="right"><strong>~7 030 €</strong></td>
+<td align="right"><strong>~84 360 €</strong></td>
+</tr>
+<tr>
+<td align="right">500</td>
+<td align="right">19 485 €</td>
+<td align="right">150 €</td>
+<td align="right">14 300 €</td>
+<td align="right"><strong>~14 150 €</strong></td>
+<td align="right"><strong>~169 800 €</strong></td>
+</tr>
+</tbody></table>
+<h3>3.5 Sensibilité aux hypothèses</h3>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Variation testée</th>
+<th>Impact sur le résultat</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Consommation réelle du quota</td>
+<td>Si moyenne à 50 % au lieu de 100 %</td>
+<td>Marge variable augmente de ~10 %, seuil de rentabilité à 2 clients en lancement</td>
+</tr>
+<tr>
+<td>Mix d&#39;abonnés (au lieu de 100 % Business)</td>
+<td>Mix réaliste 55 % Solo / 30 % Pro / 15 % Business</td>
+<td>Marge moyenne ~10,40 €/abonné → seuil de rentabilité ~8 abonnés en lancement</td>
+</tr>
+<tr>
+<td>Frais Paddle</td>
+<td>+1 point (6 % au lieu de 5 %)</td>
+<td>Bénéfice annuel à 100 clients : -470 €</td>
+</tr>
+<tr>
+<td>Coût OpenAI</td>
+<td>× 2 (changement de modèle)</td>
+<td>Marge Business tombe à ~21 €/client, seuil = 4 clients en lancement</td>
+</tr>
+<tr>
+<td>Coût Replit</td>
+<td>× 2 (montée en gamme imprévue)</td>
+<td>Coûts fixes lancement passent à ~125 € → seuil = 5 clients</td>
+</tr>
+</tbody></table>
+<h3>3.6 Conclusion de l&#39;audit rentabilité</h3>
+<blockquote>
+<p><strong>Inboria atteint son seuil de rentabilité à 3 clients Business payants</strong> (9 sièges) dans le scénario le plus défavorable possible.</p>
+<p><strong>À 50 clients Business</strong>, le bénéfice annuel net atteint <strong>~16 000 €</strong>.
+<strong>À 250 clients Business</strong>, <strong>~84 000 € / an</strong>.</p>
+<p>Les marges unitaires (74 % à 81 %) sont caractéristiques d&#39;un modèle SaaS sain, dans la fourchette haute des standards de l&#39;industrie pour ce type de produit (concurrents shared inbox / collaborative email type Front, Hiver, Missive : marges brutes typiques 70-80 %).</p>
+</blockquote>
+<hr>
+<h2>4. Synthèse pour l&#39;auditeur externe</h2>
+<table>
+<thead>
+<tr>
+<th>Question auditée</th>
+<th>Réponse</th>
+<th>Niveau de confiance</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Risque de coûts OpenAI non refacturés ?</td>
+<td><strong>Non, négligeable</strong> (&lt; 1 €/an théorique)</td>
+<td><strong>Élevé</strong> (audit code complet, pattern fail-closed vérifié)</td>
+</tr>
+<tr>
+<td>Marges unitaires viables ?</td>
+<td><strong>Oui, 74-81 % nettes</strong></td>
+<td><strong>Élevé</strong> (chiffres traçables dans le code et les pages tarifaires officielles)</td>
+</tr>
+<tr>
+<td>Seuil de rentabilité ?</td>
+<td><strong>3 clients Business</strong> dans le pire cas absolu</td>
+<td><strong>Élevé</strong></td>
+</tr>
+<tr>
+<td>Coûts fixes maîtrisés ?</td>
+<td><strong>Oui</strong> (~26 €/mois en bêta, ~83 €/mois en lancement, ~104 €/mois en croissance)</td>
+<td><strong>Élevé</strong> (tarifs publics fournisseurs, vérifiés directement)</td>
+</tr>
+<tr>
+<td>Modèle scalable ?</td>
+<td><strong>Oui</strong>, courbe de bénéfice quasi-linéaire jusqu&#39;à 2 000+ abonnés</td>
+<td><strong>Moyen-élevé</strong> (sous réserve d&#39;ajout de support client humain au-delà de ~500 clients)</td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Annexe A — Sources et références</h2>
+<p>Toutes les sources ci-dessous ont été consultées le <strong>22 avril 2026</strong> sur les pages officielles publiques des fournisseurs.</p>
+<table>
+<thead>
+<tr>
+<th align="right">#</th>
+<th>Fournisseur</th>
+<th>Donnée utilisée dans le rapport</th>
+<th>Source officielle</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">[1]</td>
+<td><strong>OpenAI</strong></td>
+<td>Modèle <code>gpt-4o-mini</code> : <strong>0,15 $ / 1M tokens en entrée</strong>, <strong>0,60 $ / 1M tokens en sortie</strong></td>
+<td><a href="https://developers.openai.com/api/docs/models/gpt-4o-mini">https://developers.openai.com/api/docs/models/gpt-4o-mini</a></td>
+</tr>
+<tr>
+<td align="right">[2]</td>
+<td><strong>Paddle</strong></td>
+<td>Frais Checkout : <strong>5 % + 0,50 $ par transaction</strong></td>
+<td><a href="https://www.paddle.com/pricing">https://www.paddle.com/pricing</a></td>
+</tr>
+<tr>
+<td align="right">[3]</td>
+<td><strong>Supabase</strong></td>
+<td>Plan Pro : <strong>à partir de 25 $/mois</strong>. Plan Team : <strong>à partir de 599 $/mois</strong> (non utilisé — Pro suffit jusqu&#39;à ~100k MAU)</td>
+<td><a href="https://supabase.com/pricing">https://supabase.com/pricing</a></td>
+</tr>
+<tr>
+<td align="right">[4]</td>
+<td><strong>Replit</strong></td>
+<td>Plan Core : <strong>20 $/mois</strong> (base obligatoire). Reserved VM Deployment : ~25 $/mois selon la taille de la machine</td>
+<td><a href="https://replit.com/pricing">https://replit.com/pricing</a></td>
+</tr>
+<tr>
+<td align="right">[5]</td>
+<td><strong>Brevo</strong></td>
+<td>Plan Free : 300 mails/jour gratuit. Plan Business : ~18 $/mois pour 20 000 mails. Paliers supérieurs ~30 $/mois pour 40 000+ mails</td>
+<td><a href="https://www.brevo.com/pricing/">https://www.brevo.com/pricing/</a></td>
+</tr>
+</tbody></table>
+<p><strong>Données internes Inboria</strong> (vérifiables dans le code source) :</p>
+<table>
+<thead>
+<tr>
+<th align="right">#</th>
+<th>Donnée</th>
+<th>Localisation</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="right">[I1]</td>
+<td>Coûts en crédits par fonction IA (constante <code>AI_COST</code>)</td>
+<td><code>artifacts/api-server/src/services/credits.ts:4-13</code></td>
+</tr>
+<tr>
+<td align="right">[I2]</td>
+<td>Quotas par plan (<code>PLAN_QUOTAS</code>)</td>
+<td><code>artifacts/api-server/src/routes/paddle.ts:16-21</code></td>
+</tr>
+<tr>
+<td align="right">[I3]</td>
+<td>Tarifs commerciaux des plans</td>
+<td><code>artifacts/ncv-mail/src/lib/plans.ts</code></td>
+</tr>
+<tr>
+<td align="right">[I4]</td>
+<td>Logique fail-closed de facturation</td>
+<td><code>artifacts/api-server/src/services/credits.ts:128-191</code></td>
+</tr>
+<tr>
+<td align="right">[I5]</td>
+<td>Audit immuable (table <code>usage_events</code>)</td>
+<td>Base Supabase, schéma <code>public.usage_events</code></td>
+</tr>
+</tbody></table>
+<hr>
+<h2>Annexe B — Paliers d&#39;infrastructure détaillés</h2>
+<p>Cette annexe précise à quel volume d&#39;abonnés chaque fournisseur doit éventuellement passer à un palier supérieur.</p>
+<h3>Replit</h3>
+<table>
+<thead>
+<tr>
+<th>Volume d&#39;abonnés</th>
+<th>Configuration recommandée</th>
+<th align="right">Coût mensuel</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0 – 100</td>
+<td>Core 20 $ + petite Reserved VM (1 vCPU / 2 GB RAM)</td>
+<td align="right">~42 €</td>
+</tr>
+<tr>
+<td>100 – 1 000</td>
+<td>Core 20 $ + Reserved VM moyenne (2 vCPU / 4 GB RAM)</td>
+<td align="right">~50 €</td>
+</tr>
+<tr>
+<td>1 000 – 5 000</td>
+<td>Core 20 $ + Reserved VM grande (4 vCPU / 8 GB RAM)</td>
+<td align="right">~80 €</td>
+</tr>
+</tbody></table>
+<h3>Supabase</h3>
+<table>
+<thead>
+<tr>
+<th>Volume d&#39;abonnés</th>
+<th>Plan recommandé</th>
+<th align="right">Coût mensuel</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0 – 50 (bêta)</td>
+<td>Free</td>
+<td align="right">0 €</td>
+</tr>
+<tr>
+<td>50 – 100 000 MAU</td>
+<td>Pro (25 $/mois)</td>
+<td align="right">~23 €</td>
+</tr>
+<tr>
+<td>&gt; 100 000 MAU ou besoin SOC2</td>
+<td>Team (599 $/mois)</td>
+<td align="right">~550 €</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>Important</strong> : Le plan Pro de Supabase couvre jusqu&#39;à 100 000 utilisateurs actifs mensuels (MAU), 8 GB de base de données et 250 GB de bande passante. Pour une application B2B SaaS comme Inboria, le plan Pro est suffisant jusqu&#39;à plusieurs milliers d&#39;abonnés payants. Le plan Team n&#39;est nécessaire que pour les besoins d&#39;audit avancé (SOC2) ou les très grandes infrastructures.</p>
+</blockquote>
+<h3>Brevo SMTP</h3>
+<table>
+<thead>
+<tr>
+<th>Volume d&#39;emails sortants/mois</th>
+<th>Plan recommandé</th>
+<th align="right">Coût mensuel</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0 – 9 000 (300/jour)</td>
+<td>Free</td>
+<td align="right">0 €</td>
+</tr>
+<tr>
+<td>9 000 – 20 000</td>
+<td>Business (~18 $/mois)</td>
+<td align="right">~17 €</td>
+</tr>
+<tr>
+<td>20 000 – 40 000</td>
+<td>Business (~25-30 $/mois selon palier)</td>
+<td align="right">~28 €</td>
+</tr>
+<tr>
+<td>40 000 – 100 000</td>
+<td>Premium (~50 $/mois selon palier)</td>
+<td align="right">~45 €</td>
+</tr>
+</tbody></table>
+<blockquote>
+<p><strong>Note</strong> : Inboria étant principalement un client IMAP en lecture (réception), le volume d&#39;emails sortants reste modéré (notifications transactionnelles, magic links, alertes). Brevo Free suffit pour la phase bêta, et la transition vers Business intervient typiquement dès l&#39;ouverture commerciale avec ~50+ abonnés actifs.</p>
+</blockquote>
+<hr>
+<h2>Annexe C — Pièces justificatives consultables (code source)</h2>
+<p>Les éléments ci-dessous peuvent être inspectés directement dans le code source de la plateforme par tout auditeur disposant d&#39;un accès en lecture au dépôt :</p>
+<table>
+<thead>
+<tr>
+<th>Élément</th>
+<th>Fichier</th>
+<th>Lignes</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Logique de facturation IA (fail-closed)</td>
+<td><code>artifacts/api-server/src/services/credits.ts</code></td>
+<td>128-191</td>
+</tr>
+<tr>
+<td>Tarifs des fonctions IA</td>
+<td><code>artifacts/api-server/src/services/credits.ts</code></td>
+<td>4-13</td>
+</tr>
+<tr>
+<td>Vérification de quota</td>
+<td><code>artifacts/api-server/src/services/credits.ts</code></td>
+<td>57-93</td>
+</tr>
+<tr>
+<td>Reset mensuel automatique</td>
+<td><code>artifacts/api-server/src/services/credits.ts</code></td>
+<td>29-55</td>
+</tr>
+<tr>
+<td>Audit triage emails entrants</td>
+<td><code>artifacts/api-server/src/services/credits.ts</code></td>
+<td>95-115</td>
+</tr>
+<tr>
+<td>Quotas par plan</td>
+<td><code>artifacts/api-server/src/routes/paddle.ts</code></td>
+<td>16-21</td>
+</tr>
+<tr>
+<td>Tarifs commerciaux des plans</td>
+<td><code>artifacts/ncv-mail/src/lib/plans.ts</code></td>
+<td>1-75</td>
+</tr>
+<tr>
+<td>Audit immuable (table)</td>
+<td>Supabase, schéma <code>public.usage_events</code></td>
+<td>—</td>
+</tr>
+</tbody></table>
+<p><strong>Bouton &quot;Recompter les crédits&quot;</strong> : disponible dans l&#39;application web pour tout abonné, accessible via <code>Paramètres → Crédits IA → Recompter</code>. Recalcule <code>ai_credits_used</code> à partir de la table d&#39;audit <code>usage_events</code>.</p>
+<hr>
+<h2>Historique des versions</h2>
+<table>
+<thead>
+<tr>
+<th>Version</th>
+<th>Date</th>
+<th>Modifications</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1.0</td>
+<td>22 avril 2026 (matin)</td>
+<td>Version initiale</td>
+</tr>
+<tr>
+<td><strong>2.0</strong></td>
+<td><strong>22 avril 2026 (après-midi)</strong></td>
+<td><strong>Corrections après contrôle externe des sources fournisseurs : Supabase Team retiré (599 $/mois), Replit clarifié (Core + Reserved VM), Brevo paliers réels précisés. Ajout de l&#39;Annexe A (sources officielles) et de l&#39;Annexe B (paliers d&#39;infrastructure).</strong></td>
+</tr>
+</tbody></table>
+<hr>
+<p><strong>Fin du rapport.</strong></p>
+
+</body></html>

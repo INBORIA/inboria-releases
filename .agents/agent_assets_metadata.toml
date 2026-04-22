@@ -47,3 +47,9 @@ id = "f1-kzlvwx4YGgQy-Q5ciH"
 uri = "file://AUDIT_RENTABILITE_INBORIA_V5.md"
 type = "text"
 title = "Audit de rentabilité Inboria — Révision 5"
+
+[[outputs]]
+id = "dx4q45EbzOdhd0DjLmIgH"
+uri = "file://RAPPORT_AUDIT_INBORIA_2026-04-22.md"
+type = "text"
+title = "Rapport d'audit Inboria — 22 avril 2026"
