@@ -115,31 +115,6 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
           )}
         </div>
         <div className="flex items-center gap-2 shrink-0 self-center">
-          {showMailboxBadge && mailboxBadge && (
-            <span className="inline-flex items-center gap-1 shrink-0">
-              <span
-                title={mailboxBadge.label}
-                aria-label={mailboxBadge.label}
-                className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border inline-flex items-center gap-1 max-w-[140px] ${mailboxBadge.bgClass} ${mailboxBadge.textClass} ${mailboxBadge.borderClass}`}
-              >
-                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${mailboxBadge.dotClass}`} aria-hidden="true" />
-                <span className="truncate sr-only md:not-sr-only">{mailboxBadge.shortLabel}</span>
-              </span>
-              {mailboxBadge.isShared && (
-                <span className="text-[9px] px-1 py-0.5 rounded-full font-medium bg-zinc-700/60 text-zinc-200 border border-zinc-500/30 hidden sm:inline">
-                  {t("inbox.sharedShort")}
-                </span>
-              )}
-            </span>
-          )}
-          {email.categoryName && (
-            <span
-              className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-blue-500/15 text-blue-400 border border-blue-500/20 hidden sm:inline-flex hover:bg-blue-500/25 transition-colors"
-              onClick={(e) => { e.stopPropagation(); onCategoryClick?.(email.categoryName); }}
-            >
-              {translateCategoryName(email.categoryName, lang)}
-            </span>
-          )}
           {email.projectReference && (
             <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-purple-500/15 text-purple-400 border border-purple-500/20 hidden sm:inline-flex">
               {email.projectReference}
