@@ -346,41 +346,61 @@ strong { color: #0f172a; }
 <th align="right">Phase bêta (actuelle)</th>
 <th align="right">Phase lancement (1-100 abonnés)</th>
 <th align="right">Phase croissance (100-2000 abonnés)</th>
+<th>Niveau de preuve</th>
 </tr>
 </thead>
 <tbody><tr>
-<td><strong>Replit</strong> (Core 20 $/mois + Reserved VM ~25 $/mois) [4]</td>
-<td align="right">25 €</td>
-<td align="right">42 €</td>
-<td align="right">50 €</td>
+<td><strong>Replit Core</strong> (base obligatoire)</td>
+<td align="right">18 € (20 $/mois) [4]</td>
+<td align="right">18 €</td>
+<td align="right">18 €</td>
+<td><strong>Confirmé</strong> par page tarifaire publique [4]</td>
+</tr>
+<tr>
+<td><strong>Replit Reserved VM</strong> (usage compute, dépend du dimensionnement)</td>
+<td align="right">~9 € (≈ 10 $)</td>
+<td align="right">~24 € (≈ 26 $)</td>
+<td align="right">~32 € (≈ 35 $)</td>
+<td><strong>Estimation interne</strong> — à confirmer par devis ou facture Replit ⚠️</td>
 </tr>
 <tr>
 <td><strong>Supabase</strong></td>
 <td align="right">0 € (Free tier) [3]</td>
 <td align="right">23 € (Pro, dès 25 $/mois) [3]</td>
 <td align="right">23 € (Pro suffit jusqu&#39;à ~100k MAU) [3]</td>
+<td><strong>Confirmé</strong> par page tarifaire publique [3]</td>
 </tr>
 <tr>
 <td><strong>Brevo SMTP</strong></td>
-<td align="right">0 € (Free, 300 mails/jour) [5]</td>
-<td align="right">~17 € (Business, ~18 $/mois pour 20 000 mails) [5]</td>
-<td align="right">~30 € (palier supérieur, 40 000+ mails) [5]</td>
+<td align="right">0 € (Free, 300 mails/jour)</td>
+<td align="right">~17 € (Business, ~18 $/mois)</td>
+<td align="right">~30 € (palier supérieur)</td>
+<td><strong>Estimation par paliers</strong> — à confirmer par capture tarifaire ou facture ⚠️</td>
 </tr>
 <tr>
 <td><strong>Domaine <code>inboria.com</code></strong></td>
 <td align="right">1 €</td>
 <td align="right">1 €</td>
 <td align="right">1 €</td>
+<td>Confirmé (registrar)</td>
 </tr>
 <tr>
 <td><strong>TOTAL FIXE / MOIS</strong></td>
-<td align="right"><strong>~26 €</strong></td>
+<td align="right"><strong>~28 €</strong></td>
 <td align="right"><strong>~83 €</strong></td>
 <td align="right"><strong>~104 €</strong></td>
+<td></td>
 </tr>
 </tbody></table>
 <blockquote>
-<p><strong>Correction importante par rapport à la version initiale</strong> : La version 1.0 du rapport mentionnait &quot;Supabase Team à 100 €/mois&quot; pour la phase croissance. Cette ligne était erronée — Supabase Team est en réalité à <strong>599 $/mois</strong> (source [3]). Toutefois, le plan Pro à 25 $/mois suffit largement jusqu&#39;à environ 100 000 utilisateurs actifs mensuels et 8 GB de base, soit bien au-delà des objectifs commerciaux à 2-3 ans. Les coûts fixes en phase croissance sont donc <strong>plus bas</strong> que ce qui était initialement annoncé.</p>
+<p><strong>Note méthodologique sur les postes marqués ⚠️</strong> :</p>
+<ul>
+<li><strong>Replit Reserved VM</strong> : Le coût d&#39;une VM réservée dépend de la taille (vCPU, RAM) et est facturé au mois par Replit. Les valeurs ci-dessus sont des estimations internes basées sur les tarifs publics de référence pour des VM petites/moyennes/grandes. <strong>Pour un audit externe rigoureux, ces lignes doivent être validées par une facture Replit réelle ou un devis officiel</strong> une fois la production en place.</li>
+<li><strong>Brevo</strong> : Les paliers exacts varient selon le volume mensuel et les options (dédié IP, support, etc.). Les valeurs ci-dessus reflètent les tarifs publics observés pour les paliers Free / Business standard. <strong>Une facture mensuelle réelle Brevo viendra remplacer ces estimations dès l&#39;ouverture commerciale.</strong></li>
+</ul>
+</blockquote>
+<blockquote>
+<p><strong>Correction importante par rapport à la version 1.0 du rapport</strong> : La version 1.0 mentionnait &quot;Supabase Team à 100 €/mois&quot; pour la phase croissance. Cette ligne était erronée — Supabase Team est en réalité à <strong>599 $/mois</strong> (source [3]). Toutefois, le plan Pro à 25 $/mois suffit largement jusqu&#39;à environ 100 000 utilisateurs actifs mensuels et 8 GB de base, soit bien au-delà des objectifs commerciaux à 2-3 ans. Le plan Team <strong>n&#39;est pas retenu</strong> dans les projections de court terme car il ne correspond ni à la situation actuelle (bêta privée fermée) ni à l&#39;horizon réaliste des premiers mois de commercialisation.</p>
 </blockquote>
 <h3>3.3 Seuil de rentabilité — scénario le moins favorable (100 % Business)</h3>
 <p><strong>Hypothèse pessimiste</strong> : tous les clients sont en plan Business (la marge unitaire la plus serrée des trois plans), et chaque siège consomme <strong>100 % de son quota mensuel</strong> (consommation maximale d&#39;OpenAI).</p>
@@ -600,13 +620,13 @@ strong { color: #0f172a; }
 <tr>
 <td align="right">[4]</td>
 <td><strong>Replit</strong></td>
-<td>Plan Core : <strong>20 $/mois</strong> (base obligatoire). Reserved VM Deployment : ~25 $/mois selon la taille de la machine</td>
+<td>Plan <strong>Core : 20 $/mois confirmé</strong> sur la page tarifaire publique. <strong>Reserved VM</strong> : tarifée à la taille de la machine (vCPU/RAM), montants utilisés dans le rapport sont <strong>estimatifs</strong> et seront remplacés par la facture réelle dès la production en place.</td>
 <td><a href="https://replit.com/pricing">https://replit.com/pricing</a></td>
 </tr>
 <tr>
 <td align="right">[5]</td>
 <td><strong>Brevo</strong></td>
-<td>Plan Free : 300 mails/jour gratuit. Plan Business : ~18 $/mois pour 20 000 mails. Paliers supérieurs ~30 $/mois pour 40 000+ mails</td>
+<td>Plan <strong>Free</strong> (300 mails/jour) confirmé. Paliers Starter / Business / Premium : ordres de grandeur publics, montants exacts <strong>à confirmer par capture tarifaire ou facture</strong> dès l&#39;ouverture commerciale.</td>
 <td><a href="https://www.brevo.com/pricing/">https://www.brevo.com/pricing/</a></td>
 </tr>
 </tbody></table>
@@ -803,9 +823,14 @@ strong { color: #0f172a; }
 <td>Version initiale</td>
 </tr>
 <tr>
-<td><strong>2.0</strong></td>
-<td><strong>22 avril 2026 (après-midi)</strong></td>
-<td><strong>Corrections après contrôle externe des sources fournisseurs : Supabase Team retiré (599 $/mois), Replit clarifié (Core + Reserved VM), Brevo paliers réels précisés. Ajout de l&#39;Annexe A (sources officielles) et de l&#39;Annexe B (paliers d&#39;infrastructure).</strong></td>
+<td>2.0</td>
+<td>22 avril 2026 (après-midi)</td>
+<td>Corrections après contrôle externe des sources fournisseurs : Supabase Team retiré (599 $/mois), Replit clarifié (Core + Reserved VM), Brevo paliers réels précisés. Ajout de l&#39;Annexe A (sources officielles) et de l&#39;Annexe B (paliers d&#39;infrastructure).</td>
+</tr>
+<tr>
+<td><strong>2.1</strong></td>
+<td><strong>22 avril 2026 (soir)</strong></td>
+<td><strong>Affinage des lignes Replit et Brevo : ajout d&#39;une colonne « Niveau de preuve » dans le tableau des coûts fixes. Replit Core 20 $/mois isolé comme « confirmé ». Replit Reserved VM et Brevo paliers explicitement marqués « estimation interne — à confirmer par facture ou devis ». Note méthodologique ajoutée pour transparence vis-à-vis de l&#39;auditeur externe.</strong></td>
 </tr>
 </tbody></table>
 <hr>
