@@ -1369,8 +1369,15 @@ export default function Dashboard() {
         setContextMenu(null);
       }
     };
+    const keyHandler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setContextMenu(null);
+    };
     document.addEventListener("mousedown", handler);
-    return () => document.removeEventListener("mousedown", handler);
+    document.addEventListener("keydown", keyHandler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("keydown", keyHandler);
+    };
   }, [contextMenu]);
 
   useEffect(() => {
@@ -2804,13 +2811,30 @@ export default function Dashboard() {
           </div>
           <div className="py-1">
             {selectedIds.size <= 1 ? (
-              <button
-                onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-                {t("inbox.openEmail")}
-              </button>
+              <>
+                <button
+                  onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                  {t("inbox.openEmail")}
+                </button>
+                <button
+                  onClick={() => { handleArchive(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Archive className="w-3.5 h-3.5" />
+                  {t("inbox.archive")}
+                </button>
+                <div className="border-t border-[#1f2937] my-1" />
+                <button
+                  onClick={() => { handleDelete(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  {t("inbox.deleteEmail")}
+                </button>
+              </>
             ) : (
               <>
                 <button
