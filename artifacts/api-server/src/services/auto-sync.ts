@@ -344,7 +344,8 @@ async function saveEmailWithTriage(
   body: string,
   createdAt: string,
   sharedMailboxId?: string | null,
-  headers?: Record<string, string | string[] | undefined>
+  headers?: Record<string, string | string[] | undefined>,
+  recipient?: string | null
 ): Promise<number | null> {
   const { data: existing } = await supabaseAdmin
     .from("emails")
@@ -461,6 +462,9 @@ async function saveEmailWithTriage(
   };
   if (sharedMailboxId) {
     insertPayload.shared_mailbox_id = sharedMailboxId;
+  }
+  if (recipient) {
+    insertPayload.recipient = stripNul(recipient);
   }
 
   const { data: inserted, error: insertErr } = await supabaseAdmin
@@ -641,6 +645,8 @@ async function syncGmailForUser(conn: any): Promise<number> {
         if (h?.name && h?.value) headerMap[h.name.toLowerCase()] = h.value;
       }
 
+      const recipientHeader = headerMap["delivered-to"] || headerMap["to"] || conn.email_address;
+
       const scopedExternalId = `gmail:${msg.id!}`;
       const savedId = await saveEmailWithTriage(
         conn.user_id,
@@ -650,7 +656,8 @@ async function syncGmailForUser(conn: any): Promise<number> {
         emailBody,
         new Date(parseInt(fullMsg.internalDate || "0")).toISOString(),
         (conn as any)._sharedMailboxId,
-        headerMap
+        headerMap,
+        recipientHeader
       );
 
       if (savedId) {
@@ -818,7 +825,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
     }
 
     const filterDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const graphUrl = `https://graph.microsoft.com/v1.0/me/messages?$top=10&$orderby=receivedDateTime desc&$select=id,from,subject,bodyPreview,receivedDateTime&$filter=receivedDateTime ge ${filterDate}`;
+    const graphUrl = `https://graph.microsoft.com/v1.0/me/messages?$top=10&$orderby=receivedDateTime desc&$select=id,from,toRecipients,subject,bodyPreview,receivedDateTime&$filter=receivedDateTime ge ${filterDate}`;
 
     const response = await fetch(graphUrl, {
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -837,6 +844,12 @@ async function syncOutlookForUser(conn: any): Promise<number> {
       const senderEmail = msg.from?.emailAddress?.address || "Inconnu";
       const senderName = msg.from?.emailAddress?.name || senderEmail;
 
+      const toRecipients: any[] = Array.isArray(msg.toRecipients) ? msg.toRecipients : [];
+      const recipientHeader = toRecipients
+        .map((r) => r?.emailAddress?.address)
+        .filter((x: any) => !!x)
+        .join(", ") || conn.email_address;
+
       const scopedExternalId = `outlook:${msg.id}`;
       const savedId = await saveEmailWithTriage(
         conn.user_id,
@@ -845,7 +858,9 @@ async function syncOutlookForUser(conn: any): Promise<number> {
         msg.subject || "(pas de sujet)",
         msg.bodyPreview || "",
         msg.receivedDateTime,
-        (conn as any)._sharedMailboxId
+        (conn as any)._sharedMailboxId,
+        undefined,
+        recipientHeader
       );
 
       if (savedId) synced++;
@@ -1002,6 +1017,12 @@ async function syncImapForUser(conn: any): Promise<number> {
         }
       }
 
+      const toList: any[] = Array.isArray(envelope?.to) ? envelope.to : [];
+      const recipientHeader = toList
+        .map((r) => r?.address)
+        .filter((x: any) => !!x)
+        .join(", ") || imapHeaders["delivered-to"] || imapHeaders["to"] || conn.email_address;
+
       const savedId = await saveEmailWithTriage(
         conn.user_id,
         externalId,
@@ -1010,7 +1031,8 @@ async function syncImapForUser(conn: any): Promise<number> {
         bodyText,
         envelope?.date ? new Date(envelope.date).toISOString() : new Date().toISOString(),
         (conn as any)._sharedMailboxId,
-        imapHeaders
+        imapHeaders,
+        recipientHeader
       );
 
       if (savedId) {

@@ -51,6 +51,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { resolveMailboxBadge, recipientMatchesAddress, type MailboxBadge } from "@/lib/mailbox-resolver";
 
 const PRIORITY_BAR_COLORS: Record<string, string> = {
   urgent: "bg-red-500",
@@ -74,7 +75,7 @@ function PriorityBadge({ priority }: { priority: string }) {
   );
 }
 
-function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void }) {
+function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
@@ -114,6 +115,16 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
           )}
         </div>
         <div className="flex items-center gap-2 shrink-0 self-center">
+          {showMailboxBadge && mailboxBadge && (
+            <span
+              title={mailboxBadge.label}
+              aria-label={mailboxBadge.label}
+              className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border inline-flex items-center gap-1 max-w-[140px] ${mailboxBadge.bgClass} ${mailboxBadge.textClass} ${mailboxBadge.borderClass}`}
+            >
+              <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${mailboxBadge.dotClass}`} aria-hidden="true" />
+              <span className="truncate sr-only md:not-sr-only">{mailboxBadge.shortLabel}</span>
+            </span>
+          )}
           {email.categoryName && (
             <span
               className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-blue-500/15 text-blue-400 border border-blue-500/20 hidden sm:inline-flex hover:bg-blue-500/25 transition-colors"
@@ -168,7 +179,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
   );
 }
 
-function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }> }) {
+function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, userSignature, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections, sharedMailboxes }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; userSignature?: string; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }>; sharedMailboxes?: any[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
@@ -237,6 +248,22 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   {format(new Date(email.createdAt), "d MMMM yyyy a HH:mm", { locale: dateFnsLocale })}
                 </span>
               </div>
+              {(() => {
+                const badge = resolveMailboxBadge(email, connections, sharedMailboxes as any[] | undefined);
+                if (!badge) return null;
+                return (
+                  <div className="flex items-center gap-1.5 mb-2">
+                    <span className="text-[10px] uppercase tracking-wider text-[#8b9cb3] font-medium">{t("inbox.receivedOn")}</span>
+                    <span
+                      title={badge.label}
+                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border inline-flex items-center gap-1 ${badge.bgClass} ${badge.textClass} ${badge.borderClass}`}
+                    >
+                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${badge.dotClass}`} />
+                      <span className="truncate max-w-[260px]">{badge.label}</span>
+                    </span>
+                  </div>
+                );
+              })()}
               <div className="text-[10px] uppercase tracking-wider text-[#8b9cb3] font-medium mb-1">{t("inbox.subjectLabel")}</div>
               <h2 className="text-[16px] font-bold text-white leading-snug">{email.subject || "(Sans objet)"}</h2>
             </div>
@@ -866,6 +893,14 @@ export default function Dashboard() {
   const [inboxMode, setInboxMode] = useState<InboxMode>("personal");
   const [selectedSharedMailboxId, setSelectedSharedMailboxId] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>("all");
+  const [selectedAccountId, setSelectedAccountId] = useState<string>(() => {
+    if (typeof window === "undefined") return "all";
+    return window.localStorage.getItem("inboria.selectedAccount") || "all";
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("inboria.selectedAccount", selectedAccountId);
+  }, [selectedAccountId]);
 
   const { data: categoryCounts, isLoading: categoriesLoading } = useGetCategoryCounts();
   const { data: summary, isLoading: summaryLoading } = useGetDashboardSummary();
@@ -1230,8 +1265,18 @@ export default function Dashboard() {
     setContextMenu({ x: e.clientX, y: e.clientY, emailId });
   }, []);
 
+  const selectedAccountEmail = (() => {
+    if (selectedAccountId === "all" || !composeConnections) return null;
+    const c = composeConnections.find((x) => String(x.id) === String(selectedAccountId));
+    return c ? (c.email_address || "").toLowerCase() : null;
+  })();
+
   const activeEmails = emails
     ?.slice()
+    .filter((e: any) => {
+      if (!selectedAccountEmail) return true;
+      return recipientMatchesAddress(e.recipient, selectedAccountEmail);
+    })
     .sort((a, b) => {
       if (sortMode === "date_desc") {
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
@@ -1664,6 +1709,7 @@ export default function Dashboard() {
             onUnassign={handleUnassign}
             onCreateTask={handleCreateTask}
             connections={composeConnections}
+            sharedMailboxes={sharedMailboxes as any[] | undefined}
           />
         </div>
       </DashboardLayout>
@@ -1824,6 +1870,27 @@ export default function Dashboard() {
                     {(sharedMailboxes as any[])?.map((mb: any) => (
                       <SelectItem key={mb.id} value={mb.id}>{mb.name}</SelectItem>
                     ))}
+                  </SelectContent>
+                </Select>
+              )}
+              {inboxMode === "personal" && (composeConnections?.length || 0) >= 2 && (
+                <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
+                  <SelectTrigger className="w-auto min-w-[140px] h-6 bg-card border-border text-[#8b9cb3] text-[10px] ml-1">
+                    <SelectValue placeholder={t("inbox.accountFilter")} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    <SelectItem value="all">{t("inbox.allAccounts")}</SelectItem>
+                    {composeConnections?.map((c) => {
+                      const badge = resolveMailboxBadge({ recipient: c.email_address }, composeConnections, undefined);
+                      return (
+                        <SelectItem key={c.id} value={String(c.id)}>
+                          <span className="inline-flex items-center gap-1.5">
+                            {badge && <span className={`w-1.5 h-1.5 rounded-full ${badge.dotClass}`} />}
+                            {c.email_address}
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
                   </SelectContent>
                 </Select>
               )}
@@ -2357,21 +2424,26 @@ export default function Dashboard() {
                       </div>
                     ) : (
                       <>
-                        {activeEmails?.map((email) => (
-                          <EmailRow
-                            key={email.id}
-                            email={email}
-                            onClick={() => { if (didDragRef.current) return; if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(email.id); } }}
-                            onArchive={handleArchive}
-                            onDelete={handleDelete}
-                            onCategoryClick={(name: string) => setFilterCategory(name)}
-                            isSelected={selectedIds.has(email.id)}
-                            onToggleSelect={toggleSelect}
-                            selectionMode={selectionMode}
-                            onContextMenu={handleContextMenu}
-                            onDragSelectStart={handleDragSelectStart}
-                          />
-                        ))}
+                        {activeEmails?.map((email) => {
+                          const badge = resolveMailboxBadge(email as any, composeConnections, undefined);
+                          return (
+                            <EmailRow
+                              key={email.id}
+                              email={email}
+                              onClick={() => { if (didDragRef.current) return; if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(email.id); } }}
+                              onArchive={handleArchive}
+                              onDelete={handleDelete}
+                              onCategoryClick={(name: string) => setFilterCategory(name)}
+                              isSelected={selectedIds.has(email.id)}
+                              onToggleSelect={toggleSelect}
+                              selectionMode={selectionMode}
+                              onContextMenu={handleContextMenu}
+                              onDragSelectStart={handleDragSelectStart}
+                              mailboxBadge={badge}
+                              showMailboxBadge={selectedAccountId === "all" && (composeConnections?.length || 0) >= 2}
+                            />
+                          );
+                        })}
                         {hasMorePages && (
                           <div ref={loadMoreRef} className="py-2">
                             {emailsFetching ? (
