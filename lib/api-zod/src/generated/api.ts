@@ -2171,10 +2171,13 @@ export const AdminListUsersResponse = zod.object({
 });
 
 /**
- * For users with a real Paddle subscription, calls Paddle (mode `at_period_end` or
-`immediate`). For beta testers without a Paddle subscription, simply marks the
-plan as `expired`. When mode is `immediate`, the plan is also marked `expired`
-right away even if Paddle was contacted.
+ * Revokes the user's local access immediately in all successful paths
+(plan set to `expired`, organisation seat freed). The `mode` parameter
+only controls how Paddle is told to stop billing: `at_period_end` lets
+the current billing period run out before Paddle stops charging,
+`immediate` cancels in Paddle right away. If Paddle rejects the
+cancellation, the endpoint returns 502 and no local change is applied.
+Beta testers without a Paddle subscription skip the Paddle call.
 
  * @summary Cancel a user's subscription (admin only)
  */

@@ -188,17 +188,13 @@ router.get(
           ? req.query["plan"].trim()
           : null;
 
-      // Resolve the set of profile IDs the search applies to. Email lives in
-      // auth.users, full_name lives in profiles. When a search term is given,
-      // we walk auth.admin.listUsers (capped to 1 page of 1000 entries — fine
-      // for the beta cohort and the foreseeable PME scale; see follow-up #72
-      // for a denormalised email column once we outgrow this) and union with
-      // profiles whose full_name matches. The resulting ID list drives the
-      // paginated profiles query below so total/page semantics stay exact.
+      // Search resolves to a set of profile IDs (email match via auth.users +
+      // name match via profiles.full_name) which is then paginated server-side.
       let restrictedIds: string[] | null = null;
       if (search) {
         const idsFromAuth: string[] = [];
         try {
+          // TODO(#72): scale email search beyond 1000 auth users via a denormalised email column.
           const { data: usersList } = await supabaseAdmin.auth.admin.listUsers({
             page: 1,
             perPage: 1000,
@@ -230,9 +226,6 @@ router.get(
         restrictedIds = Array.from(idSet);
       }
 
-      // Build paginated profiles query. Plan filter and (optional) ID
-      // restriction are pushed to Supabase so pagination is exhaustive
-      // and total counts are accurate.
       const base = supabaseAdmin
         .from("profiles")
         .select(
@@ -345,8 +338,6 @@ router.get(
         });
       }
 
-      // Pagination is handled server-side (see profiles .range above), so the
-      // enriched list IS the current page.
       const pageRows: EnrichedUser[] = enriched;
       const effectiveTotal = total;
       const totalPages =
@@ -378,11 +369,6 @@ router.get(
 
 async function freeOrganisationSeat(userId: string, orgId: string | null): Promise<void> {
   if (!orgId) return;
-  // Remove the user's active membership from the organisation. The seat count
-  // (organisations.seats_total) is a soft cap; freeing a seat means the row
-  // becomes available because we removed the active member. Failures bubble up
-  // to the caller so the admin sees a real error rather than a silent partial
-  // revocation.
   const { error: memberErr } = await supabaseAdmin
     .from("organisation_members")
     .delete()
@@ -439,12 +425,8 @@ router.post(
         }
       }
 
-      // If Paddle rejected the cancel for a Paddle-backed subscription, we
-      // refuse to apply any local revocation. Doing so in immediate mode used
-      // to silently mark the user expired locally while billing kept running
-      // in Paddle, which is dangerous (revoked access + ongoing charges). Both
-      // modes now fail loudly so the admin can retry instead of producing an
-      // inconsistent state.
+      // Refuse to revoke locally if Paddle was contacted but rejected the
+      // cancel: revoked access + ongoing charges is the worst outcome.
       if (paddleError && profile.stripe_subscription_id) {
         audit("cancel_subscription_failed", {
           adminId: req.userId ?? null,
@@ -463,12 +445,6 @@ router.post(
         return;
       }
 
-      // Revoke local access immediately in all successful paths:
-      // - beta tester (no Paddle sub) → only DB revocation possible
-      // - mode=immediate → cut access right away regardless of Paddle outcome
-      // - mode=at_period_end on a real sub → Paddle accepted; we also flip the
-      //   plan to expired so the admin sees a coherent state. The Paddle webhook
-      //   will continue to deliver subscription.canceled at the period end.
       const { error: upErr } = await supabaseAdmin
         .from("profiles")
         .update({ plan: "expired", stripe_subscription_id: null })
