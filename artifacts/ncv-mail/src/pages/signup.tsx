@@ -19,6 +19,7 @@ import { useState, useMemo } from "react";
 import { Eye, EyeOff, Globe } from "lucide-react";
 import { EU_EEE_COUNTRIES } from "@/data/eu-countries";
 import { useTranslation } from "react-i18next";
+import { isPaymentsEnabled } from "@/lib/feature-flags";
 
 export default function Signup() {
   const { t } = useTranslation();
@@ -30,7 +31,8 @@ export default function Signup() {
   const [showPassword, setShowPassword] = useState(false);
 
   const params = new URLSearchParams(searchString);
-  const selectedPlan = params.get("plan");
+  const rawSelectedPlan = params.get("plan");
+  const selectedPlan = isPaymentsEnabled() ? rawSelectedPlan : null;
   const prefillEmail = params.get("email") || "";
 
   function getPasswordStrength(password: string) {

@@ -121,6 +121,13 @@ export default function Abonnement() {
 
   const handleSubscribe = (planId: string, seats?: number) => {
     if (planId === "essai") return;
+    if (!paymentsEnabled) {
+      toast({
+        title: t("waitlist.paymentsFrozenTitle"),
+        description: t("waitlist.paymentsFrozenDesc"),
+      });
+      return;
+    }
 
     setLoadingPlan(planId);
     checkout.mutate(
