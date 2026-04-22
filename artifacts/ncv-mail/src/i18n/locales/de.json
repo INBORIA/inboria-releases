@@ -3603,6 +3603,8 @@
     "invalidEmail": "Ungültige E-Mail-Adresse.",
     "ctaComingSoon": "Demnächst verfügbar",
     "paymentsFrozenTitle": "Abonnements pausiert",
-    "paymentsFrozenDesc": "Bezahlte Tarife werden bald geöffnet. Genießen Sie Inboria zwischenzeitlich im Beta-Modus — Zahlungsaktionen sind derzeit nicht verfügbar."
+    "paymentsFrozenDesc": "Bezahlte Tarife werden bald geöffnet. Genießen Sie Inboria zwischenzeitlich im Beta-Modus — Zahlungsaktionen sind derzeit nicht verfügbar.",
+    "alreadyRegisteredTitle": "Du stehst bereits auf der Liste",
+    "alreadyRegisteredDesc": "Diese E-Mail ist bereits registriert. Wir melden uns, sobald die kostenpflichtigen Pläne starten."
   }
 }

@@ -1969,6 +1969,8 @@
     "invalidEmail": "Adresse email invalide.",
     "ctaComingSoon": "Bientôt disponible",
     "paymentsFrozenTitle": "Abonnements en pause",
-    "paymentsFrozenDesc": "Nous ouvrons les abonnements payants très prochainement. En attendant, profitez d'Inboria en mode bêta — aucune action de paiement n'est possible pour l'instant."
+    "paymentsFrozenDesc": "Nous ouvrons les abonnements payants très prochainement. En attendant, profitez d'Inboria en mode bêta — aucune action de paiement n'est possible pour l'instant.",
+    "alreadyRegisteredTitle": "Vous êtes déjà inscrit·e",
+    "alreadyRegisteredDesc": "Cet email est déjà sur la liste d'attente. Nous vous écrirons dès l'ouverture des abonnements."
   }
 }

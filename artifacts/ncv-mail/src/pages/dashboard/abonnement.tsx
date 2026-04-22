@@ -282,7 +282,7 @@ export default function Abonnement() {
                   );
                 })()}
               </div>
-              {hasPaidPlan && paymentsEnabled && (
+              {hasPaidPlan && (
                 <AlertDialog>
                   <AlertDialogTrigger asChild>
                     <Button

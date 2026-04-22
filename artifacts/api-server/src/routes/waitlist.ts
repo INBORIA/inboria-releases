@@ -1,5 +1,6 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
+import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
 
@@ -16,6 +17,7 @@ router.post("/waitlist", async (req, res): Promise<void> => {
     plan?: unknown;
     seats?: unknown;
     locale?: unknown;
+    source?: unknown;
   };
 
   const email = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
@@ -37,22 +39,27 @@ router.post("/waitlist", async (req, res): Promise<void> => {
   const locale =
     typeof body.locale === "string" && body.locale.length <= 8 ? body.locale : null;
 
-  const { error } = await supabaseAdmin.from("waitlist_signups").upsert(
-    {
-      email,
-      plan,
-      seats,
-      locale,
-    },
-    { onConflict: "email" }
-  );
+  const source =
+    typeof body.source === "string" && body.source.length > 0 && body.source.length <= 64
+      ? body.source
+      : null;
+
+  const row: Record<string, unknown> = { email, plan, seats, locale };
+  if (source !== null) row.source = source;
+
+  const { error } = await supabaseAdmin.from("waitlist_signups").insert(row);
 
   if (error) {
+    if ((error as { code?: string }).code === "23505") {
+      res.status(200).json({ success: true, alreadyRegistered: true });
+      return;
+    }
+    logger.error({ err: error }, "[waitlist] insert failed");
     res.status(500).json({ error: "save_failed" });
     return;
   }
 
-  res.status(200).json({ success: true });
+  res.status(200).json({ success: true, alreadyRegistered: false });
 });
 
 export default router;

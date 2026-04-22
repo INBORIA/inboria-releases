@@ -17,4 +17,9 @@ export interface WaitlistSignupBody {
   seats?: number | null;
   /** @maxLength 8 */
   locale?: string | null;
+  /**
+   * Origin of the signup (e.g. "marketing-tarifs", "dashboard-abonnement")
+   * @maxLength 64
+   */
+  source?: string | null;
 }

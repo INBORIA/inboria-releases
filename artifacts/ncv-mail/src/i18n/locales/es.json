@@ -3603,6 +3603,8 @@
     "invalidEmail": "Dirección de correo inválida.",
     "ctaComingSoon": "Próximamente disponible",
     "paymentsFrozenTitle": "Suscripciones en pausa",
-    "paymentsFrozenDesc": "Abriremos los planes de pago muy pronto. Mientras tanto, disfrute de Inboria en modo beta — no se permiten acciones de pago por ahora."
+    "paymentsFrozenDesc": "Abriremos los planes de pago muy pronto. Mientras tanto, disfrute de Inboria en modo beta — no se permiten acciones de pago por ahora.",
+    "alreadyRegisteredTitle": "Ya estás en la lista",
+    "alreadyRegisteredDesc": "Este correo ya está registrado. Te avisaremos en cuanto se abran los planes de pago."
   }
 }

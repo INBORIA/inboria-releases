@@ -2040,11 +2040,20 @@ export const joinWaitlistBodySeatsMax = 500;
 
 export const joinWaitlistBodyLocaleMax = 8;
 
+export const joinWaitlistBodySourceMax = 64;
+
 export const JoinWaitlistBody = zod.object({
   email: zod.string().email(),
   plan: zod.enum(["solo", "pro", "business"]).nullish(),
   seats: zod.number().min(1).max(joinWaitlistBodySeatsMax).nullish(),
   locale: zod.string().max(joinWaitlistBodyLocaleMax).nullish(),
+  source: zod
+    .string()
+    .max(joinWaitlistBodySourceMax)
+    .nullish()
+    .describe(
+      'Origin of the signup (e.g. \"marketing-tarifs\", \"dashboard-abonnement\")',
+    ),
 });
 
 export const JoinWaitlistResponse = zod.object({

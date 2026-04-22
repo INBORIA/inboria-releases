@@ -1,19 +1,21 @@
 import { useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
-import { Bell, CheckCircle2, Loader2 } from "lucide-react";
+import { Bell, Loader2 } from "lucide-react";
 import { useJoinWaitlist } from "@workspace/api-client-react";
+import { useToast } from "@/hooks/use-toast";
 
 interface WaitlistFormProps {
   defaultPlan?: "solo" | "pro" | "business" | null;
   defaultSeats?: number | null;
+  source?: string;
   compact?: boolean;
 }
 
-export function WaitlistForm({ defaultPlan, defaultSeats, compact }: WaitlistFormProps) {
+export function WaitlistForm({ defaultPlan, defaultSeats, source, compact }: WaitlistFormProps) {
   const { t, i18n } = useTranslation();
+  const { toast } = useToast();
   const [email, setEmail] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [done, setDone] = useState(false);
   const join = useJoinWaitlist();
 
   const isValid = (value: string): boolean =>
@@ -34,39 +36,31 @@ export function WaitlistForm({ defaultPlan, defaultSeats, compact }: WaitlistFor
           plan: defaultPlan ?? null,
           seats: defaultSeats ?? null,
           locale: i18n.language || null,
+          source: source ?? null,
         },
       },
       {
-        onSuccess: () => {
-          setDone(true);
+        onSuccess: (data) => {
+          const already =
+            (data as unknown as { alreadyRegistered?: boolean })?.alreadyRegistered === true;
+          toast({
+            title: already ? t("waitlist.alreadyRegisteredTitle") : t("waitlist.successTitle"),
+            description: already
+              ? t("waitlist.alreadyRegisteredDesc")
+              : t("waitlist.successDesc"),
+          });
+          setEmail("");
         },
         onError: () => {
-          setError(t("waitlist.errorDesc"));
+          toast({
+            title: t("waitlist.errorTitle"),
+            description: t("waitlist.errorDesc"),
+            variant: "destructive",
+          });
         },
       }
     );
   };
-
-  if (done) {
-    return (
-      <div
-        className={`rounded-lg border border-emerald-500/30 bg-emerald-500/5 p-4 flex items-start gap-3 ${
-          compact ? "" : "max-w-xl mx-auto"
-        }`}
-        data-testid="waitlist-success"
-      >
-        <CheckCircle2 className="w-5 h-5 text-emerald-400 shrink-0 mt-0.5" />
-        <div>
-          <p className="text-[14px] font-semibold text-white">
-            {t("waitlist.successTitle")}
-          </p>
-          <p className="text-[12px] text-[#8b9cb3] mt-0.5">
-            {t("waitlist.successDesc")}
-          </p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <form

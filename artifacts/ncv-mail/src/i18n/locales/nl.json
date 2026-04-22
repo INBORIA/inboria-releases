@@ -3603,6 +3603,8 @@
     "invalidEmail": "Ongeldig e-mailadres.",
     "ctaComingSoon": "Binnenkort beschikbaar",
     "paymentsFrozenTitle": "Abonnementen op pauze",
-    "paymentsFrozenDesc": "Betaalde abonnementen openen binnenkort. Geniet ondertussen van Inboria in bètamodus — betaalacties zijn momenteel niet beschikbaar."
+    "paymentsFrozenDesc": "Betaalde abonnementen openen binnenkort. Geniet ondertussen van Inboria in bètamodus — betaalacties zijn momenteel niet beschikbaar.",
+    "alreadyRegisteredTitle": "Je staat al op de lijst",
+    "alreadyRegisteredDesc": "Dit e-mailadres is al ingeschreven. We nemen contact op zodra de betaalde abonnementen openen."
   }
 }

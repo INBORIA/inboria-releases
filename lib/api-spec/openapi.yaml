@@ -3881,3 +3881,8 @@ components:
           type: string
           maxLength: 8
           nullable: true
+        source:
+          type: string
+          maxLength: 64
+          nullable: true
+          description: Origin of the signup (e.g. "marketing-tarifs", "dashboard-abonnement")

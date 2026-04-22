@@ -3603,6 +3603,8 @@
     "invalidEmail": "Invalid email address.",
     "ctaComingSoon": "Coming soon",
     "paymentsFrozenTitle": "Subscriptions paused",
-    "paymentsFrozenDesc": "We're opening paid plans very soon. In the meantime, enjoy Inboria in beta mode — no payment actions are available right now."
+    "paymentsFrozenDesc": "We're opening paid plans very soon. In the meantime, enjoy Inboria in beta mode — no payment actions are available right now.",
+    "alreadyRegisteredTitle": "You are already on the list",
+    "alreadyRegisteredDesc": "This email is already registered. We will reach out as soon as paid plans open."
   }
 }
