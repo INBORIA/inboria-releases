@@ -1299,6 +1299,8 @@ export default function Dashboard() {
     ?.slice()
     .filter((e: any) => {
       if (!selectedAccountEmail) return true;
+      const sharedId = e.shared_mailbox_id ?? e.sharedMailboxId ?? null;
+      if (sharedId) return false;
       return recipientMatchesAddress(e.recipient, selectedAccountEmail);
     })
     .sort((a, b) => {
@@ -1885,6 +1887,27 @@ export default function Dashboard() {
                   <span className="text-[9px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded-full">{inboxMode === "trash" ? trashTotal : trashCountFromApi}</span>
                 )}
               </button>
+              {inboxMode === "personal" && (composeConnections?.length || 0) >= 2 && (
+                <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
+                  <SelectTrigger className="w-auto min-w-[140px] h-6 bg-card border-border text-[#8b9cb3] text-[10px] ml-1">
+                    <SelectValue placeholder={t("inbox.accountFilter")} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border">
+                    <SelectItem value="all">{t("inbox.allAccounts")}</SelectItem>
+                    {composeConnections?.map((c) => {
+                      const badge = resolveMailboxBadge({ recipient: c.email_address }, composeConnections, undefined);
+                      return (
+                        <SelectItem key={c.id} value={String(c.id)}>
+                          <span className="inline-flex items-center gap-1.5">
+                            {badge && <span className={`w-1.5 h-1.5 rounded-full ${badge.dotClass}`} />}
+                            {c.email_address}
+                          </span>
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              )}
               {inboxMode === "shared" && (sharedMailboxes as any[])?.length > 1 && (
                 <Select value={selectedSharedMailboxId || ""} onValueChange={setSelectedSharedMailboxId}>
                   <SelectTrigger className="w-auto min-w-[120px] h-6 bg-card border-border text-[#8b9cb3] text-[10px] ml-1">
@@ -1907,27 +1930,6 @@ export default function Dashboard() {
                 >
                   {t("inbox.filteredAccountReminder", { email: selectedAccountEmail })}
                 </button>
-              )}
-              {inboxMode === "personal" && (composeConnections?.length || 0) >= 2 && (
-                <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
-                  <SelectTrigger className="w-auto min-w-[140px] h-6 bg-card border-border text-[#8b9cb3] text-[10px] ml-1">
-                    <SelectValue placeholder={t("inbox.accountFilter")} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border">
-                    <SelectItem value="all">{t("inbox.allAccounts")}</SelectItem>
-                    {composeConnections?.map((c) => {
-                      const badge = resolveMailboxBadge({ recipient: c.email_address }, composeConnections, undefined);
-                      return (
-                        <SelectItem key={c.id} value={String(c.id)}>
-                          <span className="inline-flex items-center gap-1.5">
-                            {badge && <span className={`w-1.5 h-1.5 rounded-full ${badge.dotClass}`} />}
-                            {c.email_address}
-                          </span>
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectContent>
-                </Select>
               )}
             </div>
 
