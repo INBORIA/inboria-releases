@@ -15,9 +15,11 @@ import {
   Shield,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { isPaymentsEnabled } from "@/lib/feature-flags";
 
 export default function Fonctionnalites() {
   const { t } = useTranslation();
+  const paymentsEnabled = isPaymentsEnabled();
 
   const features = [
     { icon: Tags, key: "smartSort" },
@@ -75,7 +77,7 @@ export default function Fonctionnalites() {
           </p>
           <Link href="/signup">
             <button className="mt-6 px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
-              {t("marketing.features.tryFree")}
+              {paymentsEnabled ? t("marketing.features.tryFree") : t("waitlist.ctaJoin")}
             </button>
           </Link>
         </div>

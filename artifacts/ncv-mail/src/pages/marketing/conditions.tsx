@@ -12,10 +12,8 @@ export default function Conditions() {
         <div className="space-y-8 text-[14px] text-[#8b9cb3] leading-relaxed">
           <div>
             <h2 className="text-[16px] font-semibold text-white mb-2">{t("marketing.legal.serviceEditor")}</h2>
-            <p>{t("marketing.legal.companyName")}</p>
-            <p>{t("marketing.legal.headquarters")}</p>
-            <p>{t("marketing.legal.bceNumberShort")}</p>
-            <p>{t("marketing.legal.contactEmail")} : <a href="mailto:contact@inboria.com" className="text-[#2d7dd2] hover:underline">contact@inboria.com</a></p>
+            <p>{t("marketing.legal.betaPlaceholder")}</p>
+            <p className="mt-2">{t("marketing.legal.contactEmail")} : <a href="mailto:support@inboria.com" className="text-[#2d7dd2] hover:underline">support@inboria.com</a></p>
           </div>
 
           <div>

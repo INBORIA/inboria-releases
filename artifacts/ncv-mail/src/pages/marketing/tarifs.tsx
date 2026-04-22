@@ -115,7 +115,7 @@ export default function Tarifs() {
               const price = isBusiness ? (businessSeats * 12.99).toFixed(2) : plan.price;
               const featureKeys = planFeatureKeys[plan.id] || [];
               const isPaid = plan.id !== "essai";
-              const ctaDisabled = (isPaid && !paymentsEnabled) || loadingPlan === plan.id;
+              const ctaDisabled = !paymentsEnabled || loadingPlan === plan.id;
 
               return (
                 <div
@@ -204,7 +204,7 @@ export default function Tarifs() {
                     } disabled:opacity-50 disabled:cursor-not-allowed`}
                     data-testid={`button-cta-${plan.id}`}
                   >
-                    {isPaid && !paymentsEnabled
+                    {!paymentsEnabled
                       ? t("waitlist.ctaComingSoon")
                       : loadingPlan === plan.id
                         ? t("plans.redirecting")

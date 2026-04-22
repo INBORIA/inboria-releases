@@ -1342,7 +1342,7 @@
       "termsTitle": "Terms of Use",
       "legalNoticeTitle": "Legal Notice",
       "dataController": "Data Controller",
-      "companyName": "Company name: NCV Management SRL",
+      "companyName": "Company name: the publisher",
       "headquarters": "Headquarters: Rixensart, Belgium",
       "bceNumber": "Company number BCE: BE0439.327.747",
       "contactEmail": "Contact email",
@@ -1377,7 +1377,7 @@
       "serviceDescText": "Inboria is an AI-powered email sorting and management service. The service allows users to connect their existing inboxes to automate the sorting, categorization and prioritization of incoming messages.",
       "accountAccess": "2. Account access and creation",
       "accountAccessText1": "Access to the service requires creating a user account. When creating this account, the user commits to providing accurate and up-to-date information.",
-      "accountAccessText2": "The user is solely responsible for the confidentiality of their login credentials and all activities performed under their account. In case of unauthorized use, the user must immediately notify NCV Management SRL.",
+      "accountAccessText2": "The user is solely responsible for the confidentiality of their login credentials and all activities performed under their account. In case of unauthorized use, the user must immediately notify the publisher.",
       "userObligations": "3. User obligations",
       "userObligationsIntro": "The user agrees to use the service in compliance with applicable laws and these terms.",
       "userObligationsForbidden": "It is strictly prohibited to:",
@@ -1385,17 +1385,18 @@
       "userObl2": "Transmit illegal, defamatory content, or content infringing third-party rights.",
       "userObl3": "Attempt to circumvent security measures or disrupt the service's operation.",
       "liability": "4. Limitation of liability",
-      "liabilityText1": "NCV Management SRL strives to keep the service accessible and operational but does not guarantee uninterrupted or error-free operation.",
-      "liabilityText2": "To the extent permitted by law, NCV Management SRL disclaims any liability for indirect damages, data loss, or business losses resulting from the use or inability to use the service.",
+      "liabilityText1": "The publisher strives to keep the service accessible and operational but does not guarantee uninterrupted or error-free operation.",
+      "liabilityText2": "To the extent permitted by law, the publisher disclaims any liability for indirect damages, data loss, or business losses resulting from the use or inability to use the service.",
       "ip": "5. Intellectual property",
-      "ipText1": "All elements making up the Inboria service (software, interfaces, algorithms, texts, images) are the exclusive property of NCV Management SRL and are protected by intellectual property laws.",
-      "ipText2": "The user retains full ownership of data and content (emails) submitted to the service. They grant NCV Management SRL a limited license solely for the purpose of providing the AI sorting service.",
+      "ipText1": "All elements making up the Inboria service (software, interfaces, algorithms, texts, images) are the exclusive property of the publisher and are protected by intellectual property laws.",
+      "ipText2": "The user retains full ownership of data and content (emails) submitted to the service. They grant the publisher a limited license solely for the purpose of providing the AI sorting service.",
       "termination": "6. Account termination",
       "terminationText1": "The user can terminate their account at any time from the settings of their personal space.",
-      "terminationText2": "NCV Management SRL reserves the right to suspend or terminate an account in case of violation of these terms of use. Upon termination, user data will be deleted in accordance with our Privacy Policy.",
+      "terminationText2": "The publisher reserves the right to suspend or terminate an account in case of violation of these terms of use. Upon termination, user data will be deleted in accordance with our Privacy Policy.",
       "jurisdiction": "7. Applicable law and jurisdiction",
       "jurisdictionText": "These terms of use are governed by Belgian law. In case of dispute regarding the interpretation or execution of these terms, the courts of Brussels shall have sole jurisdiction.",
-      "siteEditor": "Site editor"
+      "siteEditor": "Site editor",
+      "betaPlaceholder": "Service in closed private beta. Legal information (company name, registered office, business number) will be published once the publishing company is officially incorporated."
     },
     "demo": {
       "incoming": "Incoming email",
@@ -3605,6 +3606,10 @@
     "paymentsFrozenTitle": "Subscriptions paused",
     "paymentsFrozenDesc": "We're opening paid plans very soon. In the meantime, enjoy Inboria in beta mode — no payment actions are available right now.",
     "alreadyRegisteredTitle": "You are already on the list",
-    "alreadyRegisteredDesc": "This email is already registered. We will reach out as soon as paid plans open."
+    "alreadyRegisteredDesc": "This email is already registered. We will reach out as soon as paid plans open.",
+    "ctaJoin": "Join the waiting list",
+    "signupClosedTitle": "Inboria is in closed private beta",
+    "signupClosedDesc": "Sign-ups are temporarily closed while we finalize the incorporation of the publishing company. Join the waiting list to be notified as soon as we reopen.",
+    "haveAccountLogin": "Already have an account?"
   }
 }

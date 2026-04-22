@@ -1342,7 +1342,7 @@
       "termsTitle": "Gebruiksvoorwaarden",
       "legalNoticeTitle": "Juridische kennisgeving",
       "dataController": "Verwerkingsverantwoordelijke",
-      "companyName": "Bedrijfsnaam: NCV Management SRL",
+      "companyName": "Bedrijfsnaam: de uitgever",
       "headquarters": "Hoofdkantoor: Rixensart, België",
       "bceNumber": "Ondernemingsnummer KBO: BE0439.327.747",
       "contactEmail": "Contact e-mail",
@@ -1377,7 +1377,7 @@
       "serviceDescText": "Inboria is een door AI aangedreven e-mail sorteer- en beheerdienst. De dienst stelt gebruikers in staat hun bestaande inboxen te verbinden om het sorteren, categoriseren en prioriteren van inkomende berichten te automatiseren.",
       "accountAccess": "2. Accounttoegang en -aanmaak",
       "accountAccessText1": "Toegang tot de dienst vereist het aanmaken van een gebruikersaccount. Bij het aanmaken van dit account verbindt de gebruiker zich ertoe juiste en actuele informatie te verstrekken.",
-      "accountAccessText2": "De gebruiker is als enige verantwoordelijk voor de vertrouwelijkheid van zijn inloggegevens en alle activiteiten uitgevoerd onder zijn account. In geval van ongeautoriseerd gebruik moet de gebruiker NCV Management SRL onmiddellijk op de hoogte stellen.",
+      "accountAccessText2": "De gebruiker is als enige verantwoordelijk voor de vertrouwelijkheid van zijn inloggegevens en alle activiteiten uitgevoerd onder zijn account. In geval van ongeautoriseerd gebruik moet de gebruiker de uitgever onmiddellijk op de hoogte stellen.",
       "userObligations": "3. Verplichtingen van de gebruiker",
       "userObligationsIntro": "De gebruiker verbindt zich ertoe de dienst te gebruiken in overeenstemming met de geldende wetgeving en deze voorwaarden.",
       "userObligationsForbidden": "Het is strikt verboden om:",
@@ -1385,17 +1385,18 @@
       "userObl2": "Illegale, lasterlijke inhoud of inhoud die inbreuk maakt op rechten van derden te verzenden.",
       "userObl3": "Beveiligingsmaatregelen te proberen te omzeilen of de werking van de dienst te verstoren.",
       "liability": "4. Beperking van aansprakelijkheid",
-      "liabilityText1": "NCV Management SRL streeft ernaar de dienst toegankelijk en operationeel te houden, maar garandeert geen ononderbroken of foutloze werking.",
-      "liabilityText2": "Voor zover wettelijk toegestaan, wijst NCV Management SRL elke aansprakelijkheid af voor indirecte schade, gegevensverlies of bedrijfsverlies als gevolg van het gebruik of de onmogelijkheid om de dienst te gebruiken.",
+      "liabilityText1": "De uitgever streeft ernaar de dienst toegankelijk en operationeel te houden, maar garandeert geen ononderbroken of foutloze werking.",
+      "liabilityText2": "Voor zover wettelijk toegestaan, wijst de uitgever elke aansprakelijkheid af voor indirecte schade, gegevensverlies of bedrijfsverlies als gevolg van het gebruik of de onmogelijkheid om de dienst te gebruiken.",
       "ip": "5. Intellectueel eigendom",
-      "ipText1": "Alle elementen die de Inboria-dienst vormen (software, interfaces, algoritmen, teksten, afbeeldingen) zijn het exclusieve eigendom van NCV Management SRL en worden beschermd door wetten op intellectueel eigendom.",
-      "ipText2": "De gebruiker behoudt het volledige eigendom van gegevens en inhoud (e-mails) die aan de dienst worden ingediend. Hij verleent NCV Management SRL een beperkte licentie uitsluitend voor het leveren van de AI-sorteerdienst.",
+      "ipText1": "Alle elementen die de Inboria-dienst vormen (software, interfaces, algoritmen, teksten, afbeeldingen) zijn het exclusieve eigendom van de uitgever en worden beschermd door wetten op intellectueel eigendom.",
+      "ipText2": "De gebruiker behoudt het volledige eigendom van gegevens en inhoud (e-mails) die aan de dienst worden ingediend. Hij verleent de uitgever een beperkte licentie uitsluitend voor het leveren van de AI-sorteerdienst.",
       "termination": "6. Beëindiging van het account",
       "terminationText1": "De gebruiker kan zijn account op elk moment beëindigen vanuit de instellingen van zijn persoonlijke ruimte.",
-      "terminationText2": "NCV Management SRL behoudt zich het recht voor om een account te schorsen of te beëindigen bij schending van deze gebruiksvoorwaarden. Bij beëindiging worden de gegevens van de gebruiker verwijderd overeenkomstig ons Privacybeleid.",
+      "terminationText2": "De uitgever behoudt zich het recht voor om een account te schorsen of te beëindigen bij schending van deze gebruiksvoorwaarden. Bij beëindiging worden de gegevens van de gebruiker verwijderd overeenkomstig ons Privacybeleid.",
       "jurisdiction": "7. Toepasselijk recht en jurisdictie",
       "jurisdictionText": "Deze gebruiksvoorwaarden worden beheerst door het Belgisch recht. In geval van geschil over de interpretatie of uitvoering van deze voorwaarden zijn de rechtbanken van Brussel uitsluitend bevoegd.",
-      "siteEditor": "Site-editor"
+      "siteEditor": "Site-editor",
+      "betaPlaceholder": "Dienst in gesloten privébèta. Juridische informatie (bedrijfsnaam, statutaire zetel, ondernemingsnummer) wordt gepubliceerd zodra de uitgevende vennootschap officieel is opgericht."
     },
     "demo": {
       "incoming": "Inkomende e-mail",
@@ -3605,6 +3606,10 @@
     "paymentsFrozenTitle": "Abonnementen op pauze",
     "paymentsFrozenDesc": "Betaalde abonnementen openen binnenkort. Geniet ondertussen van Inboria in bètamodus — betaalacties zijn momenteel niet beschikbaar.",
     "alreadyRegisteredTitle": "Je staat al op de lijst",
-    "alreadyRegisteredDesc": "Dit e-mailadres is al ingeschreven. We nemen contact op zodra de betaalde abonnementen openen."
+    "alreadyRegisteredDesc": "Dit e-mailadres is al ingeschreven. We nemen contact op zodra de betaalde abonnementen openen.",
+    "ctaJoin": "Word lid van de wachtlijst",
+    "signupClosedTitle": "Inboria is in gesloten privébèta",
+    "signupClosedDesc": "Aanmeldingen zijn tijdelijk gesloten terwijl wij de oprichting van de uitgevende vennootschap afronden. Schrijf je in op de wachtlijst om op de hoogte te worden gebracht zodra we heropenen.",
+    "haveAccountLogin": "Heb je al een account?"
   }
 }

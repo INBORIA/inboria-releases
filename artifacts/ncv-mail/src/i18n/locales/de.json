@@ -1342,7 +1342,7 @@
       "termsTitle": "Nutzungsbedingungen",
       "legalNoticeTitle": "Rechtshinweis",
       "dataController": "Datenverantwortlicher",
-      "companyName": "Unternehmensname: NCV Management SRL",
+      "companyName": "Unternehmensname: der Herausgeber",
       "headquarters": "Hauptsitz: Rixensart, Belgien",
       "bceNumber": "Unternehmensnummer BCE: BE0439.327.747",
       "contactEmail": "Kontakt-E-Mail",
@@ -1377,7 +1377,7 @@
       "serviceDescText": "Inboria ist ein KI-gestützter E-Mail-Sortier- und Verwaltungsdienst. Der Dienst ermöglicht es den Nutzern, ihre bestehenden Postfächer zu verbinden, um das Sortieren, Kategorisieren und Priorisieren eingehender Nachrichten zu automatisieren.",
       "accountAccess": "2. Kontozugang und -erstellung",
       "accountAccessText1": "Der Zugang zum Dienst erfordert die Erstellung eines Benutzerkontos. Bei der Erstellung dieses Kontos verpflichtet sich der Benutzer, genaue und aktuelle Informationen bereitzustellen.",
-      "accountAccessText2": "Der Benutzer ist allein verantwortlich für die Vertraulichkeit seiner Anmeldedaten und aller Aktivitäten, die unter seinem Konto durchgeführt werden. Im Falle einer unbefugten Nutzung muss der Benutzer NCV Management SRL sofort benachrichtigen.",
+      "accountAccessText2": "Der Benutzer ist allein verantwortlich für die Vertraulichkeit seiner Anmeldedaten und aller Aktivitäten, die unter seinem Konto durchgeführt werden. Im Falle einer unbefugten Nutzung muss der Benutzer den Herausgeber sofort benachrichtigen.",
       "userObligations": "3. Verpflichtungen des Benutzers",
       "userObligationsIntro": "Der Benutzer verpflichtet sich, den Dienst in Übereinstimmung mit den geltenden Gesetzen und diesen Bedingungen zu nutzen.",
       "userObligationsForbidden": "Es ist strengstens untersagt:",
@@ -1385,17 +1385,18 @@
       "userObl2": "Illegale, diffamierende Inhalte oder Inhalte, die die Rechte Dritter verletzen, zu übertragen.",
       "userObl3": "Zu versuchen, Sicherheitsmaßnahmen zu umgehen oder den Betrieb des Dienstes zu stören.",
       "liability": "4. Haftungsbeschränkung",
-      "liabilityText1": "NCV Management SRL bemüht sich, den Dienst zugänglich und betriebsbereit zu halten, garantiert jedoch nicht einen ununterbrochenen oder fehlerfreien Betrieb.",
-      "liabilityText2": "Soweit gesetzlich zulässig, lehnt NCV Management SRL jegliche Haftung für indirekte Schäden, Datenverluste oder Geschäftseinbußen ab, die aus der Nutzung oder der Unfähigkeit zur Nutzung des Dienstes resultieren.",
+      "liabilityText1": "Der Herausgeber bemüht sich, den Dienst zugänglich und betriebsbereit zu halten, garantiert jedoch nicht einen ununterbrochenen oder fehlerfreien Betrieb.",
+      "liabilityText2": "Soweit gesetzlich zulässig, lehnt der Herausgeber jegliche Haftung für indirekte Schäden, Datenverluste oder Geschäftseinbußen ab, die aus der Nutzung oder der Unfähigkeit zur Nutzung des Dienstes resultieren.",
       "ip": "5. Geistiges Eigentum",
-      "ipText1": "Alle Elemente, die den Inboria-Dienst ausmachen (Software, Schnittstellen, Algorithmen, Texte, Bilder), sind das ausschließliche Eigentum von NCV Management SRL und durch Gesetze zum geistigen Eigentum geschützt.",
-      "ipText2": "Der Benutzer behält das volle Eigentum an den Daten und Inhalten (E-Mails), die er dem Dienst übermittelt. Er gewährt NCV Management SRL eine eingeschränkte Lizenz ausschließlich zum Zweck der Bereitstellung des KI-Sortierdienstes.",
+      "ipText1": "Alle Elemente, die den Inboria-Dienst ausmachen (Software, Schnittstellen, Algorithmen, Texte, Bilder), sind das ausschließliche Eigentum des Herausgebers und durch Gesetze zum geistigen Eigentum geschützt.",
+      "ipText2": "Der Benutzer behält das volle Eigentum an den Daten und Inhalten (E-Mails), die er dem Dienst übermittelt. Er gewährt dem Herausgeber eine eingeschränkte Lizenz ausschließlich zum Zweck der Bereitstellung des KI-Sortierdienstes.",
       "termination": "6. Kontokündigung",
       "terminationText1": "Der Benutzer kann sein Konto jederzeit über die Einstellungen seines persönlichen Bereichs kündigen.",
-      "terminationText2": "NCV Management SRL behält sich das Recht vor, ein Konto im Falle eines Verstoßes gegen diese Nutzungsbedingungen auszusetzen oder zu kündigen. Bei Kündigung werden die Benutzerdaten gemäß unserer Datenschutzrichtlinie gelöscht.",
+      "terminationText2": "Der Herausgeber behält sich das Recht vor, ein Konto im Falle eines Verstoßes gegen diese Nutzungsbedingungen auszusetzen oder zu kündigen. Bei Kündigung werden die Benutzerdaten gemäß unserer Datenschutzrichtlinie gelöscht.",
       "jurisdiction": "7. Anwendbares Recht und Gerichtsbarkeit",
       "jurisdictionText": "Diese Nutzungsbedingungen unterliegen dem belgischen Recht. Im Falle eines Streits über die Auslegung oder Ausführung dieser Bedingungen sind die Gerichte von Brüssel ausschließlich zuständig.",
-      "siteEditor": "Site-Editor"
+      "siteEditor": "Site-Editor",
+      "betaPlaceholder": "Dienst in geschlossener privater Beta. Rechtliche Informationen (Firmenname, Sitz, Unternehmensnummer) werden veröffentlicht, sobald die herausgebende Gesellschaft offiziell gegründet ist."
     },
     "demo": {
       "incoming": "Eingehende E-Mail",
@@ -3605,6 +3606,10 @@
     "paymentsFrozenTitle": "Abonnements pausiert",
     "paymentsFrozenDesc": "Bezahlte Tarife werden bald geöffnet. Genießen Sie Inboria zwischenzeitlich im Beta-Modus — Zahlungsaktionen sind derzeit nicht verfügbar.",
     "alreadyRegisteredTitle": "Du stehst bereits auf der Liste",
-    "alreadyRegisteredDesc": "Diese E-Mail ist bereits registriert. Wir melden uns, sobald die kostenpflichtigen Pläne starten."
+    "alreadyRegisteredDesc": "Diese E-Mail ist bereits registriert. Wir melden uns, sobald die kostenpflichtigen Pläne starten.",
+    "ctaJoin": "Warteliste beitreten",
+    "signupClosedTitle": "Inboria befindet sich in einer geschlossenen privaten Beta",
+    "signupClosedDesc": "Anmeldungen sind vorübergehend geschlossen, während wir die Gründung der herausgebenden Gesellschaft abschließen. Tragen Sie sich in die Warteliste ein, um benachrichtigt zu werden, sobald wir wieder öffnen.",
+    "haveAccountLogin": "Sie haben bereits ein Konto?"
   }
 }

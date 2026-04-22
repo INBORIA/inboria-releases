@@ -1,0 +1,260 @@
+diff --git a/artifacts/ncv-mail/src/i18n/locales/de.json b/artifacts/ncv-mail/src/i18n/locales/de.json
+index 825c50b..77fba78 100644
+--- a/artifacts/ncv-mail/src/i18n/locales/de.json
++++ b/artifacts/ncv-mail/src/i18n/locales/de.json
+@@ -3587,5 +3587,24 @@
+         }
+       }
+     }
++  },
++  "waitlist": {
++    "title": "Demnächst verfügbar",
++    "bannerTitle": "Bezahlte Tarife starten bald",
++    "bannerDesc": "Inboria ist derzeit in der privaten Beta. Hinterlassen Sie Ihre E-Mail-Adresse — wir benachrichtigen Sie, sobald die Abonnements verfügbar sind.",
++    "formLabel": "Gewünschter Tarif (optional)",
++    "emailPlaceholder": "sie@unternehmen.com",
++    "joinButton": "Beim Start benachrichtigen",
++    "joining": "Speichern...",
++    "successTitle": "Danke!",
++    "successDesc": "Ihre E-Mail-Adresse wurde gespeichert. Wir melden uns, sobald die Abonnements geöffnet sind.",
++    "errorTitle": "Fehler",
++    "errorDesc": "Ihre E-Mail-Adresse konnte nicht gespeichert werden. Bitte versuchen Sie es gleich erneut.",
++    "invalidEmail": "Ungültige E-Mail-Adresse.",
++    "ctaComingSoon": "Demnächst verfügbar",
++    "paymentsFrozenTitle": "Abonnements pausiert",
++    "paymentsFrozenDesc": "Bezahlte Tarife werden bald geöffnet. Genießen Sie Inboria zwischenzeitlich im Beta-Modus — Zahlungsaktionen sind derzeit nicht verfügbar.",
++    "alreadyRegisteredTitle": "Du stehst bereits auf der Liste",
++    "alreadyRegisteredDesc": "Diese E-Mail ist bereits registriert. Wir melden uns, sobald die kostenpflichtigen Pläne starten."
+   }
+ }
+diff --git a/artifacts/ncv-mail/src/i18n/locales/en.json b/artifacts/ncv-mail/src/i18n/locales/en.json
+index fed1110..d903938 100644
+--- a/artifacts/ncv-mail/src/i18n/locales/en.json
++++ b/artifacts/ncv-mail/src/i18n/locales/en.json
+@@ -3587,5 +3587,24 @@
+         }
+       }
+     }
++  },
++  "waitlist": {
++    "title": "Coming soon",
++    "bannerTitle": "Paid plans are launching very soon",
++    "bannerDesc": "Inboria is currently in private beta. Drop your email and we'll let you know the moment subscriptions go live.",
++    "formLabel": "Plan you're interested in (optional)",
++    "emailPlaceholder": "you@company.com",
++    "joinButton": "Notify me at launch",
++    "joining": "Saving...",
++    "successTitle": "Thanks!",
++    "successDesc": "Your email has been saved. We'll reach out as soon as subscriptions open.",
++    "errorTitle": "Error",
++    "errorDesc": "We couldn't save your email. Please try again in a moment.",
++    "invalidEmail": "Invalid email address.",
++    "ctaComingSoon": "Coming soon",
++    "paymentsFrozenTitle": "Subscriptions paused",
++    "paymentsFrozenDesc": "We're opening paid plans very soon. In the meantime, enjoy Inboria in beta mode — no payment actions are available right now.",
++    "alreadyRegisteredTitle": "You are already on the list",
++    "alreadyRegisteredDesc": "This email is already registered. We will reach out as soon as paid plans open."
+   }
+ }
+diff --git a/artifacts/ncv-mail/src/i18n/locales/es.json b/artifacts/ncv-mail/src/i18n/locales/es.json
+index e84584b..fe9864d 100644
+--- a/artifacts/ncv-mail/src/i18n/locales/es.json
++++ b/artifacts/ncv-mail/src/i18n/locales/es.json
+@@ -3587,5 +3587,24 @@
+         }
+       }
+     }
++  },
++  "waitlist": {
++    "title": "Próximamente disponible",
++    "bannerTitle": "Los planes de pago llegan muy pronto",
++    "bannerDesc": "Inboria está actualmente en beta privada. Déjenos su correo y le avisaremos en cuanto se abran las suscripciones.",
++    "formLabel": "Plan que le interesa (opcional)",
++    "emailPlaceholder": "tu@empresa.com",
++    "joinButton": "Avisarme al lanzamiento",
++    "joining": "Guardando...",
++    "successTitle": "¡Gracias!",
++    "successDesc": "Su correo ha sido guardado. Le escribiremos en cuanto se abran las suscripciones.",
++    "errorTitle": "Error",
++    "errorDesc": "No se pudo guardar su correo. Inténtelo de nuevo en unos instantes.",
++    "invalidEmail": "Dirección de correo inválida.",
++    "ctaComingSoon": "Próximamente disponible",
++    "paymentsFrozenTitle": "Suscripciones en pausa",
++    "paymentsFrozenDesc": "Abriremos los planes de pago muy pronto. Mientras tanto, disfrute de Inboria en modo beta — no se permiten acciones de pago por ahora.",
++    "alreadyRegisteredTitle": "Ya estás en la lista",
++    "alreadyRegisteredDesc": "Este correo ya está registrado. Te avisaremos en cuanto se abran los planes de pago."
+   }
+ }
+diff --git a/artifacts/ncv-mail/src/i18n/locales/fr.json b/artifacts/ncv-mail/src/i18n/locales/fr.json
+index 48367f7..baeb90c 100644
+--- a/artifacts/ncv-mail/src/i18n/locales/fr.json
++++ b/artifacts/ncv-mail/src/i18n/locales/fr.json
+@@ -1953,5 +1953,24 @@
+       "restauration_tourisme": "Restauration & Tourisme",
+       "autres_services": "Autres services"
+     }
++  },
++  "waitlist": {
++    "title": "Bientôt disponible",
++    "bannerTitle": "Les abonnements payants arrivent très bientôt",
++    "bannerDesc": "Inboria est actuellement en bêta privée. Laissez-nous votre email pour être prévenu·e dès l'ouverture officielle des abonnements.",
++    "formLabel": "Plan qui vous intéresse (optionnel)",
++    "emailPlaceholder": "vous@entreprise.com",
++    "joinButton": "Me prévenir au lancement",
++    "joining": "Enregistrement...",
++    "successTitle": "Merci !",
++    "successDesc": "Votre email a bien été enregistré. Nous vous écrirons dès l'ouverture des abonnements.",
++    "errorTitle": "Erreur",
++    "errorDesc": "Impossible d'enregistrer votre email. Réessayez dans quelques instants.",
++    "invalidEmail": "Adresse email invalide.",
++    "ctaComingSoon": "Bientôt disponible",
++    "paymentsFrozenTitle": "Abonnements en pause",
++    "paymentsFrozenDesc": "Nous ouvrons les abonnements payants très prochainement. En attendant, profitez d'Inboria en mode bêta — aucune action de paiement n'est possible pour l'instant.",
++    "alreadyRegisteredTitle": "Vous êtes déjà inscrit·e",
++    "alreadyRegisteredDesc": "Cet email est déjà sur la liste d'attente. Nous vous écrirons dès l'ouverture des abonnements."
+   }
+ }
+diff --git a/artifacts/ncv-mail/src/i18n/locales/nl.json b/artifacts/ncv-mail/src/i18n/locales/nl.json
+index 4fcdf9b..6e83d82 100644
+--- a/artifacts/ncv-mail/src/i18n/locales/nl.json
++++ b/artifacts/ncv-mail/src/i18n/locales/nl.json
+@@ -3587,5 +3587,24 @@
+         }
+       }
+     }
++  },
++  "waitlist": {
++    "title": "Binnenkort beschikbaar",
++    "bannerTitle": "Betaalde abonnementen komen heel binnenkort",
++    "bannerDesc": "Inboria is momenteel in privébèta. Laat uw e-mailadres achter en wij waarschuwen u zodra de abonnementen live gaan.",
++    "formLabel": "Gewenst abonnement (optioneel)",
++    "emailPlaceholder": "u@bedrijf.com",
++    "joinButton": "Verwittig mij bij lancering",
++    "joining": "Opslaan...",
++    "successTitle": "Bedankt!",
++    "successDesc": "Uw e-mailadres is opgeslagen. We nemen contact op zodra de abonnementen openen.",
++    "errorTitle": "Fout",
++    "errorDesc": "We konden uw e-mailadres niet opslaan. Probeer het zo dadelijk opnieuw.",
++    "invalidEmail": "Ongeldig e-mailadres.",
++    "ctaComingSoon": "Binnenkort beschikbaar",
++    "paymentsFrozenTitle": "Abonnementen op pauze",
++    "paymentsFrozenDesc": "Betaalde abonnementen openen binnenkort. Geniet ondertussen van Inboria in bètamodus — betaalacties zijn momenteel niet beschikbaar.",
++    "alreadyRegisteredTitle": "Je staat al op de lijst",
++    "alreadyRegisteredDesc": "Dit e-mailadres is al ingeschreven. We nemen contact op zodra de betaalde abonnementen openen."
+   }
+ }
+diff --git a/artifacts/ncv-mail/src/pages/marketing/tarifs.tsx b/artifacts/ncv-mail/src/pages/marketing/tarifs.tsx
+index fa08ebe..094b916 100644
+--- a/artifacts/ncv-mail/src/pages/marketing/tarifs.tsx
++++ b/artifacts/ncv-mail/src/pages/marketing/tarifs.tsx
+@@ -1,11 +1,13 @@
+ import { Link, useLocation } from "wouter";
+ import { MarketingLayout } from "@/components/layout/marketing-layout";
+-import { Check, Shield, CreditCard } from "lucide-react";
++import { Check, Shield, CreditCard, Clock } from "lucide-react";
+ import { useState } from "react";
+ import { plans } from "@/lib/plans";
+ import { useAuth } from "@/lib/auth";
+ import { useCreateCheckoutSession } from "@workspace/api-client-react";
+ import { useTranslation } from "react-i18next";
++import { isPaymentsEnabled } from "@/lib/feature-flags";
++import { WaitlistForm } from "@/components/waitlist-form";
+ 
+ const planFeatureKeys: Record<string, string[]> = {
+   essai: ["f1", "f2", "f3", "f4"],
+@@ -21,6 +23,7 @@ export default function Tarifs() {
+   const checkout = useCreateCheckoutSession();
+   const [, navigate] = useLocation();
+   const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
++  const paymentsEnabled = isPaymentsEnabled();
+ 
+   const handleCta = (planId: string, seats?: number) => {
+     if (!session) {
+@@ -76,6 +79,33 @@ export default function Tarifs() {
+         </div>
+       </section>
+ 
++      {!paymentsEnabled && (
++        <section className="border-t border-[#1f2937]">
++          <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
++            <div
++              className="rounded-2xl border border-[#2d7dd2]/40 bg-[#2d7dd2]/5 p-6 sm:p-8"
++              data-testid="banner-coming-soon"
++            >
++              <div className="flex items-center gap-2 mb-3">
++                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2d7dd2]/15 text-[#2d7dd2] text-[11px] font-semibold">
++                  <Clock className="w-3 h-3" />
++                  {t("waitlist.title")}
++                </span>
++              </div>
++              <h2 className="text-xl sm:text-2xl font-bold text-white">
++                {t("waitlist.bannerTitle")}
++              </h2>
++              <p className="mt-2 text-[14px] text-[#8b9cb3] max-w-2xl">
++                {t("waitlist.bannerDesc")}
++              </p>
++              <div className="mt-5">
++                <WaitlistForm compact source="marketing-tarifs" />
++              </div>
++            </div>
++          </div>
++        </section>
++      )}
++
+       <section className="border-t border-[#1f2937]">
+         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+@@ -84,6 +114,8 @@ export default function Tarifs() {
+               const isRecommended = plan.id === "pro";
+               const price = isBusiness ? (businessSeats * 12.99).toFixed(2) : plan.price;
+               const featureKeys = planFeatureKeys[plan.id] || [];
++              const isPaid = plan.id !== "essai";
++              const ctaDisabled = (isPaid && !paymentsEnabled) || loadingPlan === plan.id;
+ 
+               return (
+                 <div
+@@ -164,14 +196,19 @@ export default function Tarifs() {
+ 
+                   <button
+                     onClick={() => handleCta(plan.id, isBusiness ? businessSeats : undefined)}
+-                    disabled={loadingPlan === plan.id}
++                    disabled={ctaDisabled}
+                     className={`w-full py-2.5 text-[13px] font-semibold rounded-lg transition-colors ${
+                       isRecommended
+                         ? "bg-[#2d7dd2] text-white hover:bg-[#2563b1]"
+                         : "bg-white/5 text-white border border-[#1f2937] hover:bg-white/10"
+-                    } disabled:opacity-50`}
++                    } disabled:opacity-50 disabled:cursor-not-allowed`}
++                    data-testid={`button-cta-${plan.id}`}
+                   >
+-                    {loadingPlan === plan.id ? t("plans.redirecting") : t("plans.start")}
++                    {isPaid && !paymentsEnabled
++                      ? t("waitlist.ctaComingSoon")
++                      : loadingPlan === plan.id
++                        ? t("plans.redirecting")
++                        : t("plans.start")}
+                   </button>
+                 </div>
+               );
+diff --git a/artifacts/ncv-mail/src/pages/signup.tsx b/artifacts/ncv-mail/src/pages/signup.tsx
+index d7d75d7..b1e0bad 100644
+--- a/artifacts/ncv-mail/src/pages/signup.tsx
++++ b/artifacts/ncv-mail/src/pages/signup.tsx
+@@ -19,6 +19,7 @@ import { useState, useMemo } from "react";
+ import { Eye, EyeOff, Globe } from "lucide-react";
+ import { EU_EEE_COUNTRIES } from "@/data/eu-countries";
+ import { useTranslation } from "react-i18next";
++import { isPaymentsEnabled } from "@/lib/feature-flags";
+ 
+ export default function Signup() {
+   const { t } = useTranslation();
+@@ -30,7 +31,8 @@ export default function Signup() {
+   const [showPassword, setShowPassword] = useState(false);
+ 
+   const params = new URLSearchParams(searchString);
+-  const selectedPlan = params.get("plan");
++  const rawSelectedPlan = params.get("plan");
++  const selectedPlan = isPaymentsEnabled() ? rawSelectedPlan : null;
+   const prefillEmail = params.get("email") || "";
+ 
+   function getPasswordStrength(password: string) {

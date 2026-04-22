@@ -12,10 +12,8 @@ export default function Confidentialite() {
         <div className="space-y-8 text-[14px] text-[#8b9cb3] leading-relaxed">
           <div>
             <h2 className="text-[16px] font-semibold text-white mb-2">{t("marketing.legal.dataController")}</h2>
-            <p>{t("marketing.legal.companyName")}</p>
-            <p>{t("marketing.legal.headquarters")}</p>
-            <p>{t("marketing.legal.bceNumber")}</p>
-            <p>{t("marketing.legal.contactEmail")} : <a href="mailto:contact@inboria.com" className="text-[#2d7dd2] hover:underline">contact@inboria.com</a></p>
+            <p>{t("marketing.legal.betaPlaceholder")}</p>
+            <p className="mt-2">{t("marketing.legal.contactEmail")} : <a href="mailto:support@inboria.com" className="text-[#2d7dd2] hover:underline">support@inboria.com</a></p>
           </div>
 
           <div>
@@ -54,7 +52,7 @@ export default function Confidentialite() {
               <li><strong className="text-white">{t("marketing.legal.rightErasure")} :</strong> {t("marketing.legal.rightErasureDesc")}</li>
               <li><strong className="text-white">{t("marketing.legal.rightPortability")} :</strong> {t("marketing.legal.rightPortabilityDesc")}</li>
             </ul>
-            <p className="mt-3">{t("marketing.legal.exerciseRights")} : <a href="mailto:contact@inboria.com" className="text-[#2d7dd2] hover:underline">contact@inboria.com</a></p>
+            <p className="mt-3">{t("marketing.legal.exerciseRights")} : <a href="mailto:support@inboria.com" className="text-[#2d7dd2] hover:underline">support@inboria.com</a></p>
           </div>
         </div>
       </div>

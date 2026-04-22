@@ -20,6 +20,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { isPaymentsEnabled } from "@/lib/feature-flags";
 
 const familleKeys = [
   { icon: Briefcase, key: "professionalServices", packs: ["Avocat", "Comptable", "Notaire", "Consultant", "Architecte", "Courtier en assurances"] },
@@ -42,6 +43,7 @@ const advantageKeys = [
 
 export default function ClassementMarketing() {
   const { t } = useTranslation();
+  const paymentsEnabled = isPaymentsEnabled();
 
   const heroStats = [
     { value: "56+", label: t("marketing.classification.stats.packsAvailable") },
@@ -74,7 +76,7 @@ export default function ClassementMarketing() {
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/signup">
               <button className="px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors flex items-center gap-2">
-                {t("marketing.classification.tryFree")}
+                {paymentsEnabled ? t("marketing.classification.tryFree") : t("waitlist.ctaJoin")}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
@@ -224,7 +226,7 @@ export default function ClassementMarketing() {
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link href="/signup">
                 <button className="px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
-                  {t("marketing.classification.startFree")}
+                  {paymentsEnabled ? t("marketing.classification.startFree") : t("waitlist.ctaJoin")}
                 </button>
               </Link>
               <Link href="/tarifs">

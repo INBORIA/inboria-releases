@@ -1342,7 +1342,7 @@
       "termsTitle": "Conditions d'utilisation",
       "legalNoticeTitle": "Mentions légales",
       "dataController": "Responsable du traitement",
-      "companyName": "Nom de l'entreprise : NCV Management SRL",
+      "companyName": "Nom de l'entreprise : l'éditeur",
       "headquarters": "Siège social : Rixensart, Belgique",
       "bceNumber": "Numéro d'entreprise BCE : BE0439.327.747",
       "contactEmail": "Email de contact",
@@ -1377,7 +1377,7 @@
       "serviceDescText": "Inboria est un service de tri et de gestion d'emails propulsé par l'intelligence artificielle. Le service permet aux utilisateurs de connecter leurs boîtes de réception existantes afin d'automatiser le tri, la catégorisation et la priorisation de leurs messages entrants.",
       "accountAccess": "2. Accès et création de compte",
       "accountAccessText1": "L'accès au service nécessite la création d'un compte utilisateur. Lors de la création de ce compte, l'utilisateur s'engage à fournir des informations exactes et à jour.",
-      "accountAccessText2": "L'utilisateur est seul responsable de la confidentialité de ses identifiants de connexion et de toutes les activités effectuées sous son compte. En cas d'utilisation non autorisée, l'utilisateur doit en informer immédiatement NCV Management SRL.",
+      "accountAccessText2": "L'utilisateur est seul responsable de la confidentialité de ses identifiants de connexion et de toutes les activités effectuées sous son compte. En cas d'utilisation non autorisée, l'utilisateur doit en informer immédiatement l'éditeur.",
       "userObligations": "3. Obligations de l'utilisateur",
       "userObligationsIntro": "L'utilisateur s'engage à utiliser le service de manière conforme aux lois en vigueur et aux présentes conditions.",
       "userObligationsForbidden": "Il est strictement interdit de :",
@@ -1385,17 +1385,18 @@
       "userObl2": "Transmettre des contenus illégaux, diffamatoires, ou portant atteinte aux droits de tiers.",
       "userObl3": "Tenter de contourner les mesures de sécurité ou de perturber le fonctionnement du service.",
       "liability": "4. Limitation de responsabilité",
-      "liabilityText1": "NCV Management SRL s'efforce de maintenir le service accessible et opérationnel, mais ne garantit pas un fonctionnement ininterrompu ou exempt d'erreurs.",
-      "liabilityText2": "Dans les limites permises par la loi, NCV Management SRL décline toute responsabilité pour les dommages indirects, la perte de données, ou les pertes d'exploitation résultant de l'utilisation ou de l'impossibilité d'utiliser le service.",
+      "liabilityText1": "L'éditeur s'efforce de maintenir le service accessible et opérationnel, mais ne garantit pas un fonctionnement ininterrompu ou exempt d'erreurs.",
+      "liabilityText2": "Dans les limites permises par la loi, l'éditeur décline toute responsabilité pour les dommages indirects, la perte de données, ou les pertes d'exploitation résultant de l'utilisation ou de l'impossibilité d'utiliser le service.",
       "ip": "5. Propriété intellectuelle",
-      "ipText1": "Tous les éléments composant le service Inboria (logiciels, interfaces, algorithmes, textes, images) sont la propriété exclusive de NCV Management SRL et sont protégés par les lois sur la propriété intellectuelle.",
-      "ipText2": "L'utilisateur conserve l'entière propriété des données et contenus (emails) qu'il soumet au service. Il accorde à NCV Management SRL une licence limitée au seul but de fournir le service de tri IA.",
+      "ipText1": "Tous les éléments composant le service Inboria (logiciels, interfaces, algorithmes, textes, images) sont la propriété exclusive de l'éditeur et sont protégés par les lois sur la propriété intellectuelle.",
+      "ipText2": "L'utilisateur conserve l'entière propriété des données et contenus (emails) qu'il soumet au service. Il accorde à l'éditeur une licence limitée au seul but de fournir le service de tri IA.",
       "termination": "6. Résiliation du compte",
       "terminationText1": "L'utilisateur peut résilier son compte à tout moment depuis les paramètres de son espace personnel.",
-      "terminationText2": "NCV Management SRL se réserve le droit de suspendre ou de résilier un compte en cas de violation des présentes conditions d'utilisation. À la résiliation, les données de l'utilisateur seront supprimées conformément à notre Politique de confidentialité.",
+      "terminationText2": "L'éditeur se réserve le droit de suspendre ou de résilier un compte en cas de violation des présentes conditions d'utilisation. À la résiliation, les données de l'utilisateur seront supprimées conformément à notre Politique de confidentialité.",
       "jurisdiction": "7. Droit applicable et juridiction",
       "jurisdictionText": "Les présentes conditions d'utilisation sont régies par le droit belge. En cas de litige concernant l'interprétation ou l'exécution de ces conditions, les tribunaux de Bruxelles seront seuls compétents.",
-      "siteEditor": "Éditeur du site"
+      "siteEditor": "Éditeur du site",
+      "betaPlaceholder": "Service en bêta privée fermée. Les informations légales (raison sociale, siège, BCE) seront publiées dès la constitution officielle de la société éditrice."
     },
     "demo": {
       "incoming": "Email entrant",
@@ -1971,6 +1972,10 @@
     "paymentsFrozenTitle": "Abonnements en pause",
     "paymentsFrozenDesc": "Nous ouvrons les abonnements payants très prochainement. En attendant, profitez d'Inboria en mode bêta — aucune action de paiement n'est possible pour l'instant.",
     "alreadyRegisteredTitle": "Vous êtes déjà inscrit·e",
-    "alreadyRegisteredDesc": "Cet email est déjà sur la liste d'attente. Nous vous écrirons dès l'ouverture des abonnements."
+    "alreadyRegisteredDesc": "Cet email est déjà sur la liste d'attente. Nous vous écrirons dès l'ouverture des abonnements.",
+    "ctaJoin": "Rejoindre la liste d'attente",
+    "signupClosedTitle": "Inboria est en bêta privée fermée",
+    "signupClosedDesc": "Les inscriptions sont temporairement fermées le temps que nous finalisions la constitution de la société éditrice. Inscrivez-vous à la liste d'attente pour être prévenu dès la réouverture.",
+    "haveAccountLogin": "Vous avez déjà un compte ?"
   }
 }

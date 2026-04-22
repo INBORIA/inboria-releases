@@ -18,6 +18,7 @@ import {
   Server,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { isPaymentsEnabled } from "@/lib/feature-flags";
 
 const aiFeatureKeys = [
   { icon: Tags, key: "autoSort", highlights: ["autoSortH1", "autoSortH2", "autoSortH3", "autoSortH4"] },
@@ -37,6 +38,7 @@ const principleKeys = [
 
 export default function IntelligenceArtificielle() {
   const { t } = useTranslation();
+  const paymentsEnabled = isPaymentsEnabled();
 
   const heroStats = [
     { value: t("marketing.ai.stats.advancedAI"), label: t("marketing.ai.stats.latestGen") },
@@ -77,7 +79,7 @@ export default function IntelligenceArtificielle() {
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/signup">
               <button className="px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors flex items-center gap-2">
-                {t("marketing.ai.tryAIFree")}
+                {paymentsEnabled ? t("marketing.ai.tryAIFree") : t("waitlist.ctaJoin")}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
@@ -234,7 +236,7 @@ export default function IntelligenceArtificielle() {
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link href="/signup">
                 <button className="px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
-                  {t("marketing.ai.tryFree")}
+                  {paymentsEnabled ? t("marketing.ai.tryFree") : t("waitlist.ctaJoin")}
                 </button>
               </Link>
               <Link href="/tarifs">

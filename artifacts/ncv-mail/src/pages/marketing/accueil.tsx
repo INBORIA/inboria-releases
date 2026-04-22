@@ -3,9 +3,11 @@ import { MarketingLayout } from "@/components/layout/marketing-layout";
 import { AnimatedDemo } from "@/components/marketing/animated-demo";
 import { Mail, Tags, Zap, Clock, Eye, Shield } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { isPaymentsEnabled } from "@/lib/feature-flags";
 
 export default function Accueil() {
   const { t } = useTranslation();
+  const paymentsEnabled = isPaymentsEnabled();
 
   const steps = [
     {
@@ -67,7 +69,7 @@ export default function Accueil() {
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link href="/signup">
               <button className="px-6 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
-                {t("marketing.home.startFree")}
+                {paymentsEnabled ? t("marketing.home.startFree") : t("waitlist.ctaJoin")}
               </button>
             </Link>
           </div>
@@ -132,7 +134,7 @@ export default function Accueil() {
           </p>
           <Link href="/signup">
             <button className="mt-6 px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
-              {t("marketing.home.tryFree")}
+              {paymentsEnabled ? t("marketing.home.tryFree") : t("waitlist.ctaJoin")}
             </button>
           </Link>
         </div>

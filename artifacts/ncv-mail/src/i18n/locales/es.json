@@ -1342,7 +1342,7 @@
       "termsTitle": "Términos de uso",
       "legalNoticeTitle": "Aviso legal",
       "dataController": "Responsable del tratamiento",
-      "companyName": "Nombre de la empresa: NCV Management SRL",
+      "companyName": "Nombre de la empresa: el editor",
       "headquarters": "Sede: Rixensart, Bélgica",
       "bceNumber": "Número de empresa BCE: BE0439.327.747",
       "contactEmail": "Correo electrónico de contacto",
@@ -1377,7 +1377,7 @@
       "serviceDescText": "Inboria es un servicio de clasificación y gestión de correos electrónicos impulsado por IA. El servicio permite a los usuarios conectar sus bandejas de entrada existentes para automatizar la clasificación, categorización y priorización de los mensajes entrantes.",
       "accountAccess": "2. Acceso y creación de cuenta",
       "accountAccessText1": "El acceso al servicio requiere la creación de una cuenta de usuario. Al crear esta cuenta, el usuario se compromete a proporcionar información precisa y actualizada.",
-      "accountAccessText2": "El usuario es el único responsable de la confidencialidad de sus credenciales de inicio de sesión y de todas las actividades realizadas bajo su cuenta. En caso de uso no autorizado, el usuario debe notificar inmediatamente a NCV Management SRL.",
+      "accountAccessText2": "El usuario es el único responsable de la confidencialidad de sus credenciales de inicio de sesión y de todas las actividades realizadas bajo su cuenta. En caso de uso no autorizado, el usuario debe notificar inmediatamente al editor.",
       "userObligations": "3. Obligaciones del usuario",
       "userObligationsIntro": "El usuario se compromete a utilizar el servicio de acuerdo con las leyes aplicables y estos términos.",
       "userObligationsForbidden": "Está estrictamente prohibido:",
@@ -1385,17 +1385,18 @@
       "userObl2": "Transmitir contenido ilegal, difamatorio o que infrinja derechos de terceros.",
       "userObl3": "Intentar eludir las medidas de seguridad o interrumpir el funcionamiento del servicio.",
       "liability": "4. Limitación de responsabilidad",
-      "liabilityText1": "NCV Management SRL se esfuerza por mantener el servicio accesible y operativo, pero no garantiza un funcionamiento ininterrumpido o libre de errores.",
-      "liabilityText2": "En la medida permitida por la ley, NCV Management SRL declina cualquier responsabilidad por daños indirectos, pérdida de datos o pérdidas comerciales resultantes del uso o la imposibilidad de usar el servicio.",
+      "liabilityText1": "El editor se esfuerza por mantener el servicio accesible y operativo, pero no garantiza un funcionamiento ininterrumpido o libre de errores.",
+      "liabilityText2": "En la medida permitida por la ley, el editor declina cualquier responsabilidad por daños indirectos, pérdida de datos o pérdidas comerciales resultantes del uso o la imposibilidad de usar el servicio.",
       "ip": "5. Propiedad intelectual",
-      "ipText1": "Todos los elementos que componen el servicio Inboria (software, interfaces, algoritmos, textos, imágenes) son propiedad exclusiva de NCV Management SRL y están protegidos por las leyes de propiedad intelectual.",
-      "ipText2": "El usuario conserva la plena propiedad de los datos y contenidos (correos electrónicos) que envía al servicio. Concede a NCV Management SRL una licencia limitada únicamente con el fin de proporcionar el servicio de clasificación de IA.",
+      "ipText1": "Todos los elementos que componen el servicio Inboria (software, interfaces, algoritmos, textos, imágenes) son propiedad exclusiva del editor y están protegidos por las leyes de propiedad intelectual.",
+      "ipText2": "El usuario conserva la plena propiedad de los datos y contenidos (correos electrónicos) que envía al servicio. Concede al editor una licencia limitada únicamente con el fin de proporcionar el servicio de clasificación de IA.",
       "termination": "6. Terminación de la cuenta",
       "terminationText1": "El usuario puede terminar su cuenta en cualquier momento desde la configuración de su espacio personal.",
-      "terminationText2": "NCV Management SRL se reserva el derecho de suspender o terminar una cuenta en caso de violación de estos términos de uso. Al finalizar, los datos del usuario se eliminarán de acuerdo con nuestra Política de privacidad.",
+      "terminationText2": "El editor se reserva el derecho de suspender o terminar una cuenta en caso de violación de estos términos de uso. Al finalizar, los datos del usuario se eliminarán de acuerdo con nuestra Política de privacidad.",
       "jurisdiction": "7. Ley aplicable y jurisdicción",
       "jurisdictionText": "Estos términos de uso se rigen por la ley belga. En caso de disputa sobre la interpretación o ejecución de estos términos, los tribunales de Bruselas tendrán jurisdicción exclusiva.",
-      "siteEditor": "Editor del sitio"
+      "siteEditor": "Editor del sitio",
+      "betaPlaceholder": "Servicio en beta privada cerrada. La información legal (razón social, domicilio, número de empresa) se publicará una vez constituida oficialmente la sociedad editora."
     },
     "demo": {
       "incoming": "Correo electrónico entrante",
@@ -3605,6 +3606,10 @@
     "paymentsFrozenTitle": "Suscripciones en pausa",
     "paymentsFrozenDesc": "Abriremos los planes de pago muy pronto. Mientras tanto, disfrute de Inboria en modo beta — no se permiten acciones de pago por ahora.",
     "alreadyRegisteredTitle": "Ya estás en la lista",
-    "alreadyRegisteredDesc": "Este correo ya está registrado. Te avisaremos en cuanto se abran los planes de pago."
+    "alreadyRegisteredDesc": "Este correo ya está registrado. Te avisaremos en cuanto se abran los planes de pago.",
+    "ctaJoin": "Unirse a la lista de espera",
+    "signupClosedTitle": "Inboria está en beta privada cerrada",
+    "signupClosedDesc": "Las inscripciones están temporalmente cerradas mientras finalizamos la constitución de la sociedad editora. Únete a la lista de espera para recibir un aviso en cuanto reabramos.",
+    "haveAccountLogin": "¿Ya tienes una cuenta?"
   }
 }

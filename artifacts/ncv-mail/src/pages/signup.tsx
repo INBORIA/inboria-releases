@@ -20,6 +20,8 @@ import { Eye, EyeOff, Globe } from "lucide-react";
 import { EU_EEE_COUNTRIES } from "@/data/eu-countries";
 import { useTranslation } from "react-i18next";
 import { isPaymentsEnabled } from "@/lib/feature-flags";
+import { WaitlistForm } from "@/components/waitlist-form";
+import { Clock } from "lucide-react";
 
 export default function Signup() {
   const { t } = useTranslation();
@@ -112,6 +114,32 @@ export default function Signup() {
         setLocation("/dashboard");
       }
     }
+  }
+
+  if (!isPaymentsEnabled()) {
+    return (
+      <AuthLayout>
+        <div className="mb-6 text-center">
+          <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#2d7dd2]/15 text-[#2d7dd2] text-[11px] font-semibold mb-3">
+            <Clock className="w-3 h-3" />
+            {t("waitlist.title")}
+          </div>
+          <h1 className="text-2xl font-bold text-white">{t("waitlist.signupClosedTitle")}</h1>
+          <p className="text-[#8b9cb3] mt-2 text-sm">
+            {t("waitlist.signupClosedDesc")}
+          </p>
+        </div>
+
+        <WaitlistForm source="signup-closed" />
+
+        <p className="mt-6 text-center text-[13px] text-[#8b9cb3]">
+          {t("waitlist.haveAccountLogin")}{" "}
+          <Link href="/login" className="text-[#2d7dd2] hover:underline">
+            {t("auth.login")}
+          </Link>
+        </p>
+      </AuthLayout>
+    );
   }
 
   return (

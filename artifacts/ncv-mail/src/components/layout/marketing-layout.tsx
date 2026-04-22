@@ -130,8 +130,8 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
 
             <div>
               <h4 className="text-[13px] font-semibold text-white mb-3">{t("footer.contact")}</h4>
-              <a href="mailto:contact@inboria.com" className="text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
-                contact@inboria.com
+              <a href="mailto:support@inboria.com" className="text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
+                support@inboria.com
               </a>
             </div>
           </div>

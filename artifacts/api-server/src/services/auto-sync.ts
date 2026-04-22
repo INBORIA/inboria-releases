@@ -375,7 +375,7 @@ async function saveEmailWithTriage(
 
   // Pre-filtre deterministe : evite l'appel IA sur les mails evidents (newsletters, notifs auto, expediteurs en cache)
   const pre = await preClassifyEmail({ userId, sender, subject, headers });
-  let triage: { priority: string; summary: string; category: string; tasks: string[]; is_spam: boolean };
+  let triage: { priority: string; summary: string; category: string; tasks: string[]; is_spam: boolean; project?: string };
 
   if (pre.hit && pre.classification) {
     triage = pre.classification;
