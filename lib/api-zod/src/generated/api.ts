@@ -1391,6 +1391,61 @@ export const AcceptInvitationResponse = zod.object({
 });
 
 /**
+ * @summary Share an email connection as a team mailbox (admin + Pro/Business plan)
+ */
+export const ShareEmailConnectionParams = zod.object({
+  connectionId: zod.coerce.string(),
+});
+
+export const ShareEmailConnectionBody = zod.object({
+  name: zod
+    .string()
+    .optional()
+    .describe("Optional display name for the shared mailbox"),
+});
+
+/**
+ * @summary Stop sharing an email connection with the team (admin only)
+ */
+export const UnshareEmailConnectionParams = zod.object({
+  connectionId: zod.coerce.string(),
+});
+
+export const UnshareEmailConnectionResponse = zod.object({
+  success: zod.boolean().optional(),
+  removed: zod.number().optional(),
+  impactedMembers: zod
+    .array(
+      zod.object({
+        userId: zod.string(),
+        fullName: zod.string().nullish(),
+        email: zod.string().nullish(),
+      }),
+    )
+    .optional(),
+});
+
+/**
+ * @summary List members who currently have access to a shared connection (admin only)
+ */
+export const GetEmailConnectionShareMembersParams = zod.object({
+  connectionId: zod.coerce.string(),
+});
+
+export const GetEmailConnectionShareMembersResponse = zod.object({
+  mailboxId: zod.string().optional(),
+  members: zod
+    .array(
+      zod.object({
+        userId: zod.string(),
+        fullName: zod.string().nullish(),
+        email: zod.string().nullish(),
+      }),
+    )
+    .optional(),
+});
+
+/**
  * @summary List shared mailboxes for user's organisation
  */
 export const GetSharedMailboxesResponseItem = zod.object({

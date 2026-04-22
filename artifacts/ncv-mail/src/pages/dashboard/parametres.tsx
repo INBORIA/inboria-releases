@@ -14,6 +14,7 @@ import { Users2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
@@ -105,13 +106,17 @@ function isPersonalDomain(email: string): boolean {
   return PERSONAL_EMAIL_DOMAINS.has(email.slice(at + 1).toLowerCase());
 }
 
+type ImpactedMember = { userId: string; fullName: string | null; email: string | null };
+
 function AccountConnectionCard({
   conn,
   onDisconnect,
   onSaveSignature,
   onShare,
   onUnshare,
-  canShare,
+  onFetchShareMembers,
+  isAdmin,
+  isPlanEntitled,
   t,
 }: {
   conn: EmailConnection;
@@ -119,7 +124,9 @@ function AccountConnectionCard({
   onSaveSignature: (value: string) => void;
   onShare: () => Promise<void>;
   onUnshare: () => Promise<void>;
-  canShare: boolean;
+  onFetchShareMembers: () => Promise<ImpactedMember[]>;
+  isAdmin: boolean;
+  isPlanEntitled: boolean;
   t: any;
 }) {
   const [sigDraft, setSigDraft] = useState(conn.signature || "");
@@ -127,14 +134,19 @@ function AccountConnectionCard({
   const [confirmShareOpen, setConfirmShareOpen] = useState(false);
   const [confirmUnshareOpen, setConfirmUnshareOpen] = useState(false);
   const [toggleBusy, setToggleBusy] = useState(false);
+  const [unshareMembers, setUnshareMembers] = useState<ImpactedMember[] | null>(null);
+  const [unshareMembersLoading, setUnshareMembersLoading] = useState(false);
   useEffect(() => { setSigDraft(conn.signature || ""); }, [conn.signature]);
   const saved = (conn.signature || "");
   const dirty = sigDraft !== saved;
   const isShared = !!conn.is_shared;
   const personal = isPersonalDomain(conn.email_address);
+  const showToggle = isAdmin;
+  const toggleDisabled = !isPlanEntitled || toggleBusy;
 
   async function handleToggleChange(next: boolean) {
     if (next === isShared) return;
+    if (!isPlanEntitled) return;
     if (next) {
       if (personal) {
         setConfirmShareOpen(true);
@@ -143,7 +155,17 @@ function AccountConnectionCard({
         try { await onShare(); } finally { setToggleBusy(false); }
       }
     } else {
+      setUnshareMembers(null);
       setConfirmUnshareOpen(true);
+      setUnshareMembersLoading(true);
+      try {
+        const members = await onFetchShareMembers();
+        setUnshareMembers(members);
+      } catch {
+        setUnshareMembers([]);
+      } finally {
+        setUnshareMembersLoading(false);
+      }
     }
   }
 
@@ -207,7 +229,7 @@ function AccountConnectionCard({
           </Button>
         </div>
       </div>
-      {canShare && (
+      {showToggle && (
         <div className="flex items-center justify-between gap-3 pt-2 border-t border-border">
           <div className="flex items-start gap-2">
             <Users2 className="w-3.5 h-3.5 text-[#8b9cb3] mt-0.5" />
@@ -222,11 +244,26 @@ function AccountConnectionCard({
               </p>
             </div>
           </div>
-          <Switch
-            checked={isShared}
-            disabled={toggleBusy}
-            onCheckedChange={handleToggleChange}
-          />
+          {isPlanEntitled ? (
+            <Switch
+              checked={isShared}
+              disabled={toggleDisabled}
+              onCheckedChange={handleToggleChange}
+            />
+          ) : (
+            <TooltipProvider delayDuration={200}>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <span className="inline-block cursor-not-allowed opacity-60">
+                    <Switch checked={false} disabled aria-disabled />
+                  </span>
+                </TooltipTrigger>
+                <TooltipContent side="left">
+                  {t("settings.shareRequiresPlan", "Disponible avec les plans Pro et Business.")}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
         </div>
       )}
       <AlertDialog open={confirmShareOpen} onOpenChange={setConfirmShareOpen}>
@@ -253,8 +290,39 @@ function AccountConnectionCard({
             <AlertDialogTitle>
               {t("settings.unshareConfirmTitle", "Arrêter le partage avec l'équipe ?")}
             </AlertDialogTitle>
-            <AlertDialogDescription>
-              {t("settings.unshareConfirmDesc", "Les membres de votre organisation ne verront plus les emails de {{email}}. Vos emails restent disponibles dans votre boîte personnelle.", { email: conn.email_address })}
+            <AlertDialogDescription asChild>
+              <div className="space-y-2">
+                <p>
+                  {t("settings.unshareConfirmDesc", "Les membres de votre organisation ne verront plus les emails de {{email}}. Vos emails restent disponibles dans votre boîte personnelle.", { email: conn.email_address })}
+                </p>
+                {unshareMembersLoading && (
+                  <p className="text-[12px] text-[#8b9cb3]">
+                    {t("settings.unshareMembersLoading", "Chargement des membres concernés…")}
+                  </p>
+                )}
+                {!unshareMembersLoading && unshareMembers && unshareMembers.length > 0 && (
+                  <div className="rounded-md border border-border bg-background/40 p-2.5">
+                    <p className="text-[12px] font-medium text-white mb-1.5">
+                      {t("settings.unshareMembersImpactedTitle", "Membres qui perdront l'accès :")}
+                    </p>
+                    <ul className="text-[12px] text-[#c5cee0] space-y-0.5 max-h-32 overflow-y-auto">
+                      {unshareMembers.map((m) => (
+                        <li key={m.userId} className="truncate">
+                          {m.fullName || m.email || m.userId}
+                          {m.fullName && m.email && (
+                            <span className="text-[#8b9cb3]"> — {m.email}</span>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {!unshareMembersLoading && unshareMembers && unshareMembers.length === 0 && (
+                  <p className="text-[12px] text-[#8b9cb3]">
+                    {t("settings.unshareMembersNone", "Aucun autre membre n'a actuellement accès à cette boîte.")}
+                  </p>
+                )}
+              </div>
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -582,11 +650,16 @@ export default function Parametres() {
         },
         body: JSON.stringify({}),
       });
+      if (res.status === 409) {
+        queryClient.invalidateQueries({ queryKey: ["email-connections"] });
+        toast({ title: t("settings.shareAlreadyShared", "Ce compte est déjà partagé.") });
+        return;
+      }
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
         toast({
           variant: "destructive",
-          title: body?.error || t("common.error"),
+          title: body?.message || body?.error || t("common.error"),
         });
         return;
       }
@@ -594,6 +667,20 @@ export default function Parametres() {
       toast({ title: t("settings.shareSuccess", "Compte partagé avec l'équipe") });
     } catch {
       toast({ variant: "destructive", title: t("common.error") });
+    }
+  };
+
+  const handleFetchShareMembers = async (connectionId: string): Promise<ImpactedMember[]> => {
+    const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+    try {
+      const res = await fetch(`${baseUrl}/api/email/connections/${connectionId}/share/members`, {
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      if (!res.ok) return [];
+      const body = await res.json().catch(() => ({}));
+      return Array.isArray(body?.members) ? body.members : [];
+    } catch {
+      return [];
     }
   };
 
@@ -608,12 +695,18 @@ export default function Parametres() {
         const body = await res.json().catch(() => ({}));
         toast({
           variant: "destructive",
-          title: body?.error || t("common.error"),
+          title: body?.message || body?.error || t("common.error"),
         });
         return;
       }
+      const body = await res.json().catch(() => ({}));
+      const impacted = Array.isArray(body?.impactedMembers) ? body.impactedMembers : [];
       queryClient.invalidateQueries({ queryKey: ["email-connections"] });
-      toast({ title: t("settings.unshareSuccess", "Partage désactivé") });
+      const toastTitle = t("settings.unshareSuccess", "Partage désactivé");
+      const toastDesc = impacted.length > 0
+        ? t("settings.unshareSuccessDesc", "{{count}} membre(s) ont perdu l'accès.", { count: impacted.length })
+        : undefined;
+      toast({ title: toastTitle, description: toastDesc });
     } catch {
       toast({ variant: "destructive", title: t("common.error") });
     }
@@ -651,7 +744,9 @@ export default function Parametres() {
                       onSaveSignature={(val) => handleSaveAccountSignature(conn.id, val)}
                       onShare={() => handleShareConnection(conn.id)}
                       onUnshare={() => handleUnshareConnection(conn.id)}
-                      canShare={canShareWithTeam}
+                      onFetchShareMembers={() => handleFetchShareMembers(conn.id)}
+                      isAdmin={isOrgAdmin}
+                      isPlanEntitled={canShareWithTeam}
                       t={t}
                     />
                   ))}

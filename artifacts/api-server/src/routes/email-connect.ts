@@ -676,13 +676,16 @@ router.post("/email/connections/:connectionId/share", requireAuth, async (req, r
 
     if (existing) {
       const e = existing as any;
-      res.status(200).json({
-        id: e.id,
-        name: e.name,
-        emailAddress: e.email_address,
-        connectionId: e.connection_id,
-        createdAt: e.created_at,
-        alreadyShared: true,
+      res.status(409).json({
+        error: "already_shared",
+        message: "Ce compte est déjà partagé avec l'équipe.",
+        sharedMailbox: {
+          id: e.id,
+          name: e.name,
+          emailAddress: e.email_address,
+          connectionId: e.connection_id,
+          createdAt: e.created_at,
+        },
       });
       return;
     }
@@ -773,19 +776,112 @@ router.delete("/email/connections/:connectionId/share", requireAuth, async (req,
 
     const ids = ((mailboxes as any[]) || []).map((m: any) => m.id);
     if (ids.length === 0) {
-      res.json({ success: true, alreadyUnshared: true });
+      res.status(404).json({ error: "not_shared", message: "Ce compte n'est pas partagé." });
       return;
     }
+
+    const { data: memberRows } = await supabaseAdmin
+      .from("shared_mailbox_members")
+      .select("user_id")
+      .in("shared_mailbox_id", ids);
+
+    const memberUserIds = Array.from(
+      new Set(((memberRows as any[]) || []).map((m: any) => m.user_id).filter((u: any) => u && u !== req.userId!)),
+    );
+
+    let impactedMembers: { userId: string; fullName: string | null; email: string | null }[] = [];
+    if (memberUserIds.length > 0) {
+      const { data: profs } = await supabaseAdmin
+        .from("profiles")
+        .select("id, full_name, email")
+        .in("id", memberUserIds);
+      impactedMembers = ((profs as any[]) || []).map((p: any) => ({
+        userId: p.id,
+        fullName: p.full_name,
+        email: p.email,
+      }));
+    }
+
+    await supabaseAdmin
+      .from("emails")
+      .update({ shared_mailbox_id: null })
+      .in("shared_mailbox_id", ids);
 
     await supabaseAdmin
       .from("shared_mailboxes")
       .delete()
       .in("id", ids);
 
-    res.json({ success: true, removed: ids.length });
+    res.json({ success: true, removed: ids.length, impactedMembers });
   } catch (e: any) {
     console.error("unshare connection error", e);
     res.status(500).json({ error: "Erreur lors de l'arrêt du partage" });
+  }
+});
+
+router.get("/email/connections/:connectionId/share/members", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const orgId = await getOrgIdForAdminConn(req.userId!);
+    if (!orgId) {
+      res.status(403).json({ error: "Accès réservé aux administrateurs" });
+      return;
+    }
+
+    const { data: conn } = await supabaseAdmin
+      .from("email_connections")
+      .select("id")
+      .eq("id", req.params.connectionId)
+      .eq("user_id", req.userId!)
+      .maybeSingle();
+
+    if (!conn) {
+      res.status(404).json({ error: "Connexion email introuvable" });
+      return;
+    }
+
+    const { data: mb } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("id")
+      .eq("organisation_id", orgId)
+      .eq("connection_id", req.params.connectionId)
+      .maybeSingle();
+
+    if (!mb) {
+      res.status(404).json({ error: "not_shared", message: "Ce compte n'est pas partagé." });
+      return;
+    }
+
+    const mailboxId = (mb as any).id;
+
+    const { data: memberRows } = await supabaseAdmin
+      .from("shared_mailbox_members")
+      .select("user_id")
+      .eq("shared_mailbox_id", mailboxId);
+
+    const memberUserIds = Array.from(
+      new Set(((memberRows as any[]) || []).map((m: any) => m.user_id).filter((u: any) => u && u !== req.userId!)),
+    );
+
+    if (memberUserIds.length === 0) {
+      res.json({ mailboxId, members: [] });
+      return;
+    }
+
+    const { data: profs } = await supabaseAdmin
+      .from("profiles")
+      .select("id, full_name, email")
+      .in("id", memberUserIds);
+
+    const members = ((profs as any[]) || []).map((p: any) => ({
+      userId: p.id,
+      fullName: p.full_name,
+      email: p.email,
+    }));
+
+    res.json({ mailboxId, members });
+  } catch (e: any) {
+    console.error("share members error", e);
+    res.status(500).json({ error: "Erreur lors du chargement des membres" });
   }
 });
 

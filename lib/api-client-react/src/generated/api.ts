@@ -73,6 +73,7 @@ import type {
   GetConversationSummary200,
   GetConversationSummaryBody,
   GetEmailAttachments200,
+  GetEmailConnectionShareMembers200,
   GetEmailConversation200,
   GetFollowupStats200,
   GetInvitationByToken200,
@@ -114,13 +115,17 @@ import type {
   RestoreEmail200,
   SendEmail200,
   SendEmailBody,
+  ShareEmailConnection409,
+  ShareEmailConnectionBody,
   SharedMailbox,
+  SharedMailboxFromConnection,
   SharedMailboxMember,
   Task,
   TeamDashboard,
   UnassignEmail200,
   UnclaimSharedEmail200,
   UnreadCount,
+  UnshareEmailConnection200,
   UpdateAppointmentBody,
   UpdateCategoryBody,
   UpdateEmailBody,
@@ -6342,6 +6347,283 @@ export const useAcceptInvitation = <
 > => {
   return useMutation(getAcceptInvitationMutationOptions(options));
 };
+
+/**
+ * @summary Share an email connection as a team mailbox (admin + Pro/Business plan)
+ */
+export const getShareEmailConnectionUrl = (connectionId: string) => {
+  return `/api/email/connections/${connectionId}/share`;
+};
+
+export const shareEmailConnection = async (
+  connectionId: string,
+  shareEmailConnectionBody?: ShareEmailConnectionBody,
+  options?: RequestInit,
+): Promise<SharedMailboxFromConnection> => {
+  return customFetch<SharedMailboxFromConnection>(
+    getShareEmailConnectionUrl(connectionId),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(shareEmailConnectionBody),
+    },
+  );
+};
+
+export const getShareEmailConnectionMutationOptions = <
+  TError = ErrorType<void | ShareEmailConnection409>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof shareEmailConnection>>,
+    TError,
+    { connectionId: string; data: BodyType<ShareEmailConnectionBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof shareEmailConnection>>,
+  TError,
+  { connectionId: string; data: BodyType<ShareEmailConnectionBody> },
+  TContext
+> => {
+  const mutationKey = ["shareEmailConnection"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof shareEmailConnection>>,
+    { connectionId: string; data: BodyType<ShareEmailConnectionBody> }
+  > = (props) => {
+    const { connectionId, data } = props ?? {};
+
+    return shareEmailConnection(connectionId, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ShareEmailConnectionMutationResult = NonNullable<
+  Awaited<ReturnType<typeof shareEmailConnection>>
+>;
+export type ShareEmailConnectionMutationBody =
+  BodyType<ShareEmailConnectionBody>;
+export type ShareEmailConnectionMutationError =
+  ErrorType<void | ShareEmailConnection409>;
+
+/**
+ * @summary Share an email connection as a team mailbox (admin + Pro/Business plan)
+ */
+export const useShareEmailConnection = <
+  TError = ErrorType<void | ShareEmailConnection409>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof shareEmailConnection>>,
+    TError,
+    { connectionId: string; data: BodyType<ShareEmailConnectionBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof shareEmailConnection>>,
+  TError,
+  { connectionId: string; data: BodyType<ShareEmailConnectionBody> },
+  TContext
+> => {
+  return useMutation(getShareEmailConnectionMutationOptions(options));
+};
+
+/**
+ * @summary Stop sharing an email connection with the team (admin only)
+ */
+export const getUnshareEmailConnectionUrl = (connectionId: string) => {
+  return `/api/email/connections/${connectionId}/share`;
+};
+
+export const unshareEmailConnection = async (
+  connectionId: string,
+  options?: RequestInit,
+): Promise<UnshareEmailConnection200> => {
+  return customFetch<UnshareEmailConnection200>(
+    getUnshareEmailConnectionUrl(connectionId),
+    {
+      ...options,
+      method: "DELETE",
+    },
+  );
+};
+
+export const getUnshareEmailConnectionMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unshareEmailConnection>>,
+    TError,
+    { connectionId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof unshareEmailConnection>>,
+  TError,
+  { connectionId: string },
+  TContext
+> => {
+  const mutationKey = ["unshareEmailConnection"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof unshareEmailConnection>>,
+    { connectionId: string }
+  > = (props) => {
+    const { connectionId } = props ?? {};
+
+    return unshareEmailConnection(connectionId, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UnshareEmailConnectionMutationResult = NonNullable<
+  Awaited<ReturnType<typeof unshareEmailConnection>>
+>;
+
+export type UnshareEmailConnectionMutationError = ErrorType<void>;
+
+/**
+ * @summary Stop sharing an email connection with the team (admin only)
+ */
+export const useUnshareEmailConnection = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unshareEmailConnection>>,
+    TError,
+    { connectionId: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof unshareEmailConnection>>,
+  TError,
+  { connectionId: string },
+  TContext
+> => {
+  return useMutation(getUnshareEmailConnectionMutationOptions(options));
+};
+
+/**
+ * @summary List members who currently have access to a shared connection (admin only)
+ */
+export const getGetEmailConnectionShareMembersUrl = (connectionId: string) => {
+  return `/api/email/connections/${connectionId}/share/members`;
+};
+
+export const getEmailConnectionShareMembers = async (
+  connectionId: string,
+  options?: RequestInit,
+): Promise<GetEmailConnectionShareMembers200> => {
+  return customFetch<GetEmailConnectionShareMembers200>(
+    getGetEmailConnectionShareMembersUrl(connectionId),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getGetEmailConnectionShareMembersQueryKey = (
+  connectionId: string,
+) => {
+  return [`/api/email/connections/${connectionId}/share/members`] as const;
+};
+
+export const getGetEmailConnectionShareMembersQueryOptions = <
+  TData = Awaited<ReturnType<typeof getEmailConnectionShareMembers>>,
+  TError = ErrorType<void>,
+>(
+  connectionId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getEmailConnectionShareMembers>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ??
+    getGetEmailConnectionShareMembersQueryKey(connectionId);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getEmailConnectionShareMembers>>
+  > = ({ signal }) =>
+    getEmailConnectionShareMembers(connectionId, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!connectionId,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getEmailConnectionShareMembers>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetEmailConnectionShareMembersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getEmailConnectionShareMembers>>
+>;
+export type GetEmailConnectionShareMembersQueryError = ErrorType<void>;
+
+/**
+ * @summary List members who currently have access to a shared connection (admin only)
+ */
+
+export function useGetEmailConnectionShareMembers<
+  TData = Awaited<ReturnType<typeof getEmailConnectionShareMembers>>,
+  TError = ErrorType<void>,
+>(
+  connectionId: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getEmailConnectionShareMembers>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetEmailConnectionShareMembersQueryOptions(
+    connectionId,
+    options,
+  );
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
 
 /**
  * @summary List shared mailboxes for user's organisation

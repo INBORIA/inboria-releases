@@ -680,6 +680,20 @@ export interface SharedMailboxMember {
   canReply?: boolean;
 }
 
+export interface SharedMailboxFromConnection {
+  id: string;
+  name: string;
+  emailAddress: string;
+  connectionId?: string;
+  createdAt?: string;
+}
+
+export interface ImpactedShareMember {
+  userId: string;
+  fullName?: string | null;
+  email?: string | null;
+}
+
 export interface AddSharedMailboxMemberBody {
   userId: string;
   canReply?: boolean;
@@ -1103,6 +1117,28 @@ export type GetInvitationByToken200 = {
 export type AcceptInvitation200 = {
   success?: boolean;
   organisationId?: string;
+};
+
+export type ShareEmailConnectionBody = {
+  /** Optional display name for the shared mailbox */
+  name?: string;
+};
+
+export type ShareEmailConnection409 = {
+  error?: string;
+  message?: string;
+  sharedMailbox?: SharedMailboxFromConnection;
+};
+
+export type UnshareEmailConnection200 = {
+  success?: boolean;
+  removed?: number;
+  impactedMembers?: ImpactedShareMember[];
+};
+
+export type GetEmailConnectionShareMembers200 = {
+  mailboxId?: string;
+  members?: ImpactedShareMember[];
 };
 
 export type DeleteSharedMailbox200 = {
