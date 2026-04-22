@@ -1,5 +1,16 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useGetProfile, useUpdateProfile, getGetProfileQueryKey } from "@workspace/api-client-react";
+import { useGetProfile, useUpdateProfile, useGetMyOrganisation, getGetProfileQueryKey } from "@workspace/api-client-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Users2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -74,24 +85,80 @@ interface EmailConnection {
   created_at: string;
   last_synced_at: string | null;
   signature?: string | null;
+  shared_mailbox_id?: string | null;
+  is_shared?: boolean;
+}
+
+const PERSONAL_EMAIL_DOMAINS = new Set([
+  "gmail.com", "googlemail.com",
+  "outlook.com", "hotmail.com", "live.com", "msn.com",
+  "yahoo.com", "yahoo.fr", "ymail.com",
+  "icloud.com", "me.com", "mac.com",
+  "laposte.net", "orange.fr", "wanadoo.fr", "free.fr", "sfr.fr",
+  "gmx.com", "gmx.fr", "gmx.de",
+  "proton.me", "protonmail.com",
+]);
+
+function isPersonalDomain(email: string): boolean {
+  const at = email.lastIndexOf("@");
+  if (at < 0) return false;
+  return PERSONAL_EMAIL_DOMAINS.has(email.slice(at + 1).toLowerCase());
 }
 
 function AccountConnectionCard({
   conn,
   onDisconnect,
   onSaveSignature,
+  onShare,
+  onUnshare,
+  canShare,
   t,
 }: {
   conn: EmailConnection;
   onDisconnect: () => void;
   onSaveSignature: (value: string) => void;
+  onShare: () => Promise<void>;
+  onUnshare: () => Promise<void>;
+  canShare: boolean;
   t: any;
 }) {
   const [sigDraft, setSigDraft] = useState(conn.signature || "");
   const [editing, setEditing] = useState(false);
+  const [confirmShareOpen, setConfirmShareOpen] = useState(false);
+  const [confirmUnshareOpen, setConfirmUnshareOpen] = useState(false);
+  const [toggleBusy, setToggleBusy] = useState(false);
   useEffect(() => { setSigDraft(conn.signature || ""); }, [conn.signature]);
   const saved = (conn.signature || "");
   const dirty = sigDraft !== saved;
+  const isShared = !!conn.is_shared;
+  const personal = isPersonalDomain(conn.email_address);
+
+  async function handleToggleChange(next: boolean) {
+    if (next === isShared) return;
+    if (next) {
+      if (personal) {
+        setConfirmShareOpen(true);
+      } else {
+        setToggleBusy(true);
+        try { await onShare(); } finally { setToggleBusy(false); }
+      }
+    } else {
+      setConfirmUnshareOpen(true);
+    }
+  }
+
+  async function confirmShare() {
+    setConfirmShareOpen(false);
+    setToggleBusy(true);
+    try { await onShare(); } finally { setToggleBusy(false); }
+  }
+
+  async function confirmUnshare() {
+    setConfirmUnshareOpen(false);
+    setToggleBusy(true);
+    try { await onUnshare(); } finally { setToggleBusy(false); }
+  }
+
   return (
     <div className="flex flex-col gap-3 p-3.5 border border-border rounded-lg bg-background">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
@@ -104,7 +171,15 @@ function AccountConnectionCard({
             {conn.provider === "gmail" ? "G" : conn.provider === "outlook" ? "O" : "@"}
           </div>
           <div>
-            <h4 className="font-medium text-[13px] text-white">{conn.email_address}</h4>
+            <h4 className="font-medium text-[13px] text-white flex items-center gap-2">
+              {conn.email_address}
+              {isShared && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded bg-primary/10 text-primary">
+                  <Users2 className="w-3 h-3" />
+                  {t("settings.sharedBadge", "Partagée")}
+                </span>
+              )}
+            </h4>
             <p className="text-[11px] text-emerald-400 flex items-center gap-1">
               <CheckCircle2 className="w-3 h-3" />
               {t("settings.connected")}
@@ -132,6 +207,64 @@ function AccountConnectionCard({
           </Button>
         </div>
       </div>
+      {canShare && (
+        <div className="flex items-center justify-between gap-3 pt-2 border-t border-border">
+          <div className="flex items-start gap-2">
+            <Users2 className="w-3.5 h-3.5 text-[#8b9cb3] mt-0.5" />
+            <div>
+              <Label className="text-[12px] text-white">
+                {t("settings.shareWithTeam", "Partager avec l'équipe")}
+              </Label>
+              <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+                {isShared
+                  ? t("settings.shareWithTeamOnDesc", "Vos collègues membres voient les emails et peuvent les traiter.")
+                  : t("settings.shareWithTeamOffDesc", "Boîte personnelle. Seul vous voyez les emails.")}
+              </p>
+            </div>
+          </div>
+          <Switch
+            checked={isShared}
+            disabled={toggleBusy}
+            onCheckedChange={handleToggleChange}
+          />
+        </div>
+      )}
+      <AlertDialog open={confirmShareOpen} onOpenChange={setConfirmShareOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t("settings.shareConfirmPersonalTitle", "Vraiment partager cette adresse personnelle ?")}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("settings.shareConfirmPersonalDesc", "L'adresse {{email}} ressemble à une boîte mail personnelle. Tous les membres de votre organisation pourront lire vos emails entrants et y répondre. Cette action est destinée aux boîtes professionnelles partagées (support@, contact@…).", { email: conn.email_address })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel", "Annuler")}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmShare}>
+              {t("settings.shareConfirmYes", "Oui, partager")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      <AlertDialog open={confirmUnshareOpen} onOpenChange={setConfirmUnshareOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t("settings.unshareConfirmTitle", "Arrêter le partage avec l'équipe ?")}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("settings.unshareConfirmDesc", "Les membres de votre organisation ne verront plus les emails de {{email}}. Vos emails restent disponibles dans votre boîte personnelle.", { email: conn.email_address })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel", "Annuler")}</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmUnshare}>
+              {t("settings.unshareConfirmYes", "Arrêter le partage")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
       {editing && (
         <div className="space-y-2 pt-2 border-t border-border">
           <Label className="text-[11px] text-[#8b9cb3]">{t("settings.accountSignatureLabel", "Signature pour ce compte")}</Label>
@@ -181,6 +314,10 @@ export default function Parametres() {
   const { toast } = useToast();
   const { session } = useAuth();
   const { data: connections, isLoading: connectionsLoading } = useEmailConnections();
+  const { data: org } = useGetMyOrganisation();
+  const isOrgAdmin = (org as any)?.myRole === "admin";
+  const userPlan = (profile as any)?.plan;
+  const canShareWithTeam = isOrgAdmin && (userPlan === "business" || userPlan === "pro");
 
   const [fullName, setFullName] = useState("");
   const [signature, setSignature] = useState("");
@@ -408,12 +545,75 @@ export default function Parametres() {
   const handleDisconnect = async (connectionId: string) => {
     try {
       const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
-      await fetch(`${baseUrl}/api/email/connections/${connectionId}`, {
+      const res = await fetch(`${baseUrl}/api/email/connections/${connectionId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${session?.access_token}` },
       });
+      if (res.status === 409) {
+        toast({
+          variant: "destructive",
+          title: t("settings.cannotDisconnectSharedTitle", "Désactivez d'abord le partage"),
+          description: t(
+            "settings.cannotDisconnectSharedDesc",
+            "Ce compte alimente une boîte partagée d'équipe. Désactivez le toggle « Partager avec l'équipe » avant de déconnecter le compte.",
+          ),
+        });
+        return;
+      }
+      if (!res.ok) {
+        toast({ variant: "destructive", title: t("common.error") });
+        return;
+      }
       queryClient.invalidateQueries({ queryKey: ["email-connections"] });
       toast({ title: t("settings.disconnected") });
+    } catch {
+      toast({ variant: "destructive", title: t("common.error") });
+    }
+  };
+
+  const handleShareConnection = async (connectionId: string) => {
+    const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+    try {
+      const res = await fetch(`${baseUrl}/api/email/connections/${connectionId}/share`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+        body: JSON.stringify({}),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        toast({
+          variant: "destructive",
+          title: body?.error || t("common.error"),
+        });
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey: ["email-connections"] });
+      toast({ title: t("settings.shareSuccess", "Compte partagé avec l'équipe") });
+    } catch {
+      toast({ variant: "destructive", title: t("common.error") });
+    }
+  };
+
+  const handleUnshareConnection = async (connectionId: string) => {
+    const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+    try {
+      const res = await fetch(`${baseUrl}/api/email/connections/${connectionId}/share`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        toast({
+          variant: "destructive",
+          title: body?.error || t("common.error"),
+        });
+        return;
+      }
+      queryClient.invalidateQueries({ queryKey: ["email-connections"] });
+      toast({ title: t("settings.unshareSuccess", "Partage désactivé") });
     } catch {
       toast({ variant: "destructive", title: t("common.error") });
     }
@@ -449,6 +649,9 @@ export default function Parametres() {
                       conn={conn}
                       onDisconnect={() => handleDisconnect(conn.id)}
                       onSaveSignature={(val) => handleSaveAccountSignature(conn.id, val)}
+                      onShare={() => handleShareConnection(conn.id)}
+                      onUnshare={() => handleUnshareConnection(conn.id)}
+                      canShare={canShareWithTeam}
                       t={t}
                     />
                   ))}

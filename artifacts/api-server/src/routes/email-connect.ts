@@ -517,8 +517,31 @@ router.get("/email/connections", requireAuth, async (req, res): Promise<void> =>
       return;
     }
 
+    const connections = data || [];
+    let sharedByConnId: Record<string, string> = {};
+    if (connections.length > 0) {
+      const userOrgId = await getOrgIdForActiveMemberConn(req.userId!);
+      if (userOrgId) {
+        const ids = connections.map((c: any) => c.id);
+        const { data: shared } = await supabaseAdmin
+          .from("shared_mailboxes")
+          .select("id, connection_id")
+          .eq("organisation_id", userOrgId)
+          .in("connection_id", ids);
+        for (const sm of (shared || []) as any[]) {
+          if (sm.connection_id) sharedByConnId[sm.connection_id] = sm.id;
+        }
+      }
+    }
+
+    const enriched = connections.map((c: any) => ({
+      ...c,
+      shared_mailbox_id: sharedByConnId[c.id] || null,
+      is_shared: !!sharedByConnId[c.id],
+    }));
+
     res.set("Cache-Control", "no-store");
-    res.json(data || []);
+    res.json(enriched);
   } catch {
     res.status(500).json({ error: "Erreur lors de la recuperation des connexions" });
   }
@@ -553,6 +576,27 @@ router.patch("/email/connections/:connectionId", requireAuth, async (req, res): 
 
 router.delete("/email/connections/:connectionId", requireAuth, async (req, res): Promise<void> => {
   try {
+    const userOrgIdForCheck = await getOrgIdForActiveMemberConn(req.userId!);
+    let shared: { id: string; name: string } | null = null;
+    if (userOrgIdForCheck) {
+      const { data } = await supabaseAdmin
+        .from("shared_mailboxes")
+        .select("id, name")
+        .eq("organisation_id", userOrgIdForCheck)
+        .eq("connection_id", req.params.connectionId)
+        .maybeSingle();
+      shared = (data as any) || null;
+    }
+
+    if (shared) {
+      res.status(409).json({
+        error: "shared_mailbox_linked",
+        message: "Ce compte alimente une boîte partagée. Désactivez le partage avec l'équipe avant de déconnecter.",
+        sharedMailboxName: shared.name,
+      });
+      return;
+    }
+
     await supabaseAdmin
       .from("email_connections")
       .delete()
@@ -562,6 +606,186 @@ router.delete("/email/connections/:connectionId", requireAuth, async (req, res):
     res.json({ success: true });
   } catch {
     res.status(500).json({ error: "Erreur lors de la deconnexion" });
+  }
+});
+
+async function getOrgIdForAdminConn(userId: string): Promise<string | null> {
+  const { data } = await supabaseAdmin
+    .from("organisation_members")
+    .select("organisation_id")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .eq("role", "admin")
+    .maybeSingle();
+  return (data as any)?.organisation_id || null;
+}
+
+async function getOrgIdForActiveMemberConn(userId: string): Promise<string | null> {
+  const { data } = await supabaseAdmin
+    .from("organisation_members")
+    .select("organisation_id")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .maybeSingle();
+  return (data as any)?.organisation_id || null;
+}
+
+async function userHasSharingPlan(userId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin
+    .from("profiles")
+    .select("plan")
+    .eq("id", userId)
+    .maybeSingle();
+  const plan = (data as any)?.plan;
+  return plan === "pro" || plan === "business";
+}
+
+router.post("/email/connections/:connectionId/share", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const orgId = await getOrgIdForAdminConn(req.userId!);
+    if (!orgId) {
+      res.status(403).json({ error: "Accès réservé aux administrateurs" });
+      return;
+    }
+
+    if (!(await userHasSharingPlan(req.userId!))) {
+      res.status(402).json({ error: "Le partage d'équipe nécessite un plan Pro ou Business." });
+      return;
+    }
+
+    const { data: conn } = await supabaseAdmin
+      .from("email_connections")
+      .select("id, email_address, provider")
+      .eq("id", req.params.connectionId)
+      .eq("user_id", req.userId!)
+      .maybeSingle();
+
+    if (!conn) {
+      res.status(404).json({ error: "Connexion email introuvable" });
+      return;
+    }
+
+    const c = conn as { id: string; email_address: string; provider: string };
+
+    const { data: existing } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("id, name, email_address, connection_id, created_at")
+      .eq("organisation_id", orgId)
+      .eq("connection_id", c.id)
+      .maybeSingle();
+
+    if (existing) {
+      const e = existing as any;
+      res.status(200).json({
+        id: e.id,
+        name: e.name,
+        emailAddress: e.email_address,
+        connectionId: e.connection_id,
+        createdAt: e.created_at,
+        alreadyShared: true,
+      });
+      return;
+    }
+
+    const requestedName = typeof req.body?.name === "string" ? req.body.name.trim() : "";
+    const mailboxName = requestedName || c.email_address.split("@")[0];
+
+    const { data: mailbox, error } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .insert({
+        organisation_id: orgId,
+        name: mailboxName,
+        email_address: c.email_address,
+        connection_id: c.id,
+        created_by: req.userId!,
+      })
+      .select()
+      .single();
+
+    if (error || !mailbox) {
+      console.error("Failed to create shared mailbox from connection:", error);
+      res.status(500).json({ error: "Erreur lors de la création de la boîte partagée" });
+      return;
+    }
+
+    const m = mailbox as any;
+
+    await supabaseAdmin
+      .from("shared_mailbox_members")
+      .insert({
+        shared_mailbox_id: m.id,
+        user_id: req.userId!,
+        can_reply: true,
+      });
+
+    const { data: backfilledRows, error: bfErr } = await supabaseAdmin
+      .from("emails")
+      .update({ shared_mailbox_id: m.id })
+      .eq("user_id", req.userId!)
+      .like("external_id", `${c.id}:%`)
+      .is("shared_mailbox_id", null)
+      .select("id");
+
+    if (bfErr) {
+      console.error(`[email-connect/share] Backfill error:`, bfErr.message);
+    } else if (backfilledRows && backfilledRows.length > 0) {
+      console.log(`[email-connect/share] Backfilled ${backfilledRows.length} email(s) for mailbox ${m.id}`);
+    }
+
+    res.status(201).json({
+      id: m.id,
+      name: m.name,
+      emailAddress: m.email_address,
+      connectionId: m.connection_id,
+      createdAt: m.created_at,
+    });
+  } catch (e: any) {
+    console.error("share connection error", e);
+    res.status(500).json({ error: "Erreur lors du partage du compte" });
+  }
+});
+
+router.delete("/email/connections/:connectionId/share", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const orgId = await getOrgIdForAdminConn(req.userId!);
+    if (!orgId) {
+      res.status(403).json({ error: "Accès réservé aux administrateurs" });
+      return;
+    }
+
+    const { data: conn } = await supabaseAdmin
+      .from("email_connections")
+      .select("id")
+      .eq("id", req.params.connectionId)
+      .eq("user_id", req.userId!)
+      .maybeSingle();
+
+    if (!conn) {
+      res.status(404).json({ error: "Connexion email introuvable" });
+      return;
+    }
+
+    const { data: mailboxes } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("id")
+      .eq("organisation_id", orgId)
+      .eq("connection_id", req.params.connectionId);
+
+    const ids = ((mailboxes as any[]) || []).map((m: any) => m.id);
+    if (ids.length === 0) {
+      res.json({ success: true, alreadyUnshared: true });
+      return;
+    }
+
+    await supabaseAdmin
+      .from("shared_mailboxes")
+      .delete()
+      .in("id", ids);
+
+    res.json({ success: true, removed: ids.length });
+  } catch (e: any) {
+    console.error("unshare connection error", e);
+    res.status(500).json({ error: "Erreur lors de l'arrêt du partage" });
   }
 });
 
