@@ -83,12 +83,18 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const isBlocked = isExpired || isTrialExhausted;
 
   const allowedWhenBlocked = ["/dashboard/abonnement", "/dashboard/parametres", "/dashboard/manuel"];
+  const isAdminRoute = location.startsWith("/dashboard/admin");
 
   useEffect(() => {
-    if (!isLoading && isBlocked && !allowedWhenBlocked.includes(location)) {
+    if (
+      !isLoading &&
+      isBlocked &&
+      !allowedWhenBlocked.includes(location) &&
+      !(isInternalAdmin && isAdminRoute)
+    ) {
       setLocation("/dashboard/abonnement");
     }
-  }, [isBlocked, isLoading, location, setLocation]);
+  }, [isBlocked, isLoading, location, setLocation, isInternalAdmin, isAdminRoute]);
 
   if (isLoading) {
     return (
