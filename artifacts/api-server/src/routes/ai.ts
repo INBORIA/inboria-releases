@@ -286,12 +286,6 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
       }
     }
 
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("full_name")
-      .eq("id", req.userId!)
-      .single();
-
     let userSignature = "";
     if (email.connection_id) {
       const { data: connection } = await supabaseAdmin
@@ -303,11 +297,9 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
       userSignature = (connection?.signature || "").trim();
     }
 
-    const userName = (profile?.full_name || "").split(" ")[0] || "Cordialement";
-
     const signatureInstruction = userSignature
       ? `Termine le brouillon avec la signature suivante (telle quelle, ne la modifie pas):\n\n${userSignature}`
-      : `Signe avec le prenom "${userName}".`;
+      : `N'ajoute aucune signature ni formule de signature : termine le brouillon directement par la dernière phrase utile, sans nom ni "Cordialement".`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -370,12 +362,6 @@ router.post("/ai/forward-intro", requireAuth, async (req, res): Promise<void> =>
       return;
     }
 
-    const { data: profile } = await supabaseAdmin
-      .from("profiles")
-      .select("full_name")
-      .eq("id", req.userId!)
-      .single();
-
     let userSignature = "";
     if (email.connection_id) {
       const { data: connection } = await supabaseAdmin
@@ -387,10 +373,9 @@ router.post("/ai/forward-intro", requireAuth, async (req, res): Promise<void> =>
       userSignature = (connection?.signature || "").trim();
     }
 
-    const userName = (profile?.full_name || "").split(" ")[0] || "Cordialement";
     const signatureInstruction = userSignature
       ? `Termine le message par la signature suivante telle quelle :\n\n${userSignature}`
-      : `Signe simplement avec le prenom \"${userName}\".`;
+      : `N'ajoute aucune signature ni formule de signature : termine le message directement par la dernière phrase utile, sans nom ni "Cordialement".`;
 
     const recipientHint = recipient ? `Le destinataire est : ${recipient}.` : "Le destinataire n'est pas precise.";
     const noteHint = note ? `Contexte fourni par l'utilisateur a integrer : ${note}` : "";
