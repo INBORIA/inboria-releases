@@ -37,7 +37,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
   const [location, setLocation] = useLocation();
   const { signOut } = useAuth();
-  const { data: profile, isLoading } = useGetProfile();
+  const { data: profile, isLoading } = useGetProfile({
+    query: { refetchInterval: 30000, refetchIntervalInBackground: false } as any,
+  });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
