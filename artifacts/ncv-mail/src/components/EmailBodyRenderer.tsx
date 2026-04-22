@@ -178,8 +178,10 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
     if (!html || !iframeRef.current) return;
 
     const iframe = iframeRef.current;
-    const channelId = `ncvmail-${Math.random().toString(36).slice(2)}`;
-    iframe.dataset.channelId = channelId;
+    let resizeObserver: ResizeObserver | null = null;
+    let mutationObserver: MutationObserver | null = null;
+    const imageListeners: Array<{ img: HTMLImageElement; fn: () => void }> = [];
+    const timers: number[] = [];
 
     const measure = () => {
       try {
@@ -188,61 +190,59 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
         const h = Math.max(
           doc.body.scrollHeight,
           doc.documentElement?.scrollHeight || 0,
+          doc.body.getBoundingClientRect().height,
         );
-        if (h > 0) setIframeHeight(h + 16);
+        if (h > 0) setIframeHeight(Math.ceil(h) + 16);
       } catch {}
     };
 
-    const onMessage = (e: MessageEvent) => {
-      if (!e.data || typeof e.data !== "object") return;
-      if (e.data.type !== "ncvmail-resize" || e.data.channelId !== channelId) return;
-      const h = Number(e.data.height);
-      if (h > 0) setIframeHeight(h + 16);
+    const wireImages = (doc: Document) => {
+      const imgs = Array.from(doc.images);
+      for (const img of imgs) {
+        if (img.complete) continue;
+        const fn = () => measure();
+        img.addEventListener("load", fn);
+        img.addEventListener("error", fn);
+        imageListeners.push({ img, fn });
+      }
     };
-    window.addEventListener("message", onMessage);
 
     const handleLoad = () => {
       try {
         const doc = iframe.contentDocument || iframe.contentWindow?.document;
-        if (!doc) return;
+        if (!doc?.body) return;
 
-        const script = doc.createElement("script");
-        script.textContent = `
-          (function() {
-            var channelId = ${JSON.stringify(channelId)};
-            function send() {
-              var h = Math.max(
-                document.body ? document.body.scrollHeight : 0,
-                document.documentElement ? document.documentElement.scrollHeight : 0
-              );
-              parent.postMessage({ type: "ncvmail-resize", channelId: channelId, height: h }, "*");
-            }
-            send();
-            if (typeof ResizeObserver !== "undefined" && document.body) {
-              new ResizeObserver(send).observe(document.body);
-            }
-            var imgs = document.images;
-            for (var i = 0; i < imgs.length; i++) {
-              if (!imgs[i].complete) {
-                imgs[i].addEventListener("load", send);
-                imgs[i].addEventListener("error", send);
-              }
-            }
-            window.addEventListener("load", send);
-            setTimeout(send, 250);
-            setTimeout(send, 1000);
-            setTimeout(send, 3000);
-          })();
-        `;
-        doc.documentElement.appendChild(script);
+        if (typeof ResizeObserver !== "undefined") {
+          resizeObserver = new ResizeObserver(() => measure());
+          resizeObserver.observe(doc.body);
+          if (doc.documentElement) resizeObserver.observe(doc.documentElement);
+        }
+
+        mutationObserver = new MutationObserver(() => {
+          wireImages(doc);
+          measure();
+        });
+        mutationObserver.observe(doc.body, { childList: true, subtree: true, attributes: true });
+
+        wireImages(doc);
       } catch {}
+
       measure();
+      timers.push(window.setTimeout(measure, 250));
+      timers.push(window.setTimeout(measure, 1000));
+      timers.push(window.setTimeout(measure, 3000));
     };
 
     iframe.addEventListener("load", handleLoad);
     return () => {
       iframe.removeEventListener("load", handleLoad);
-      window.removeEventListener("message", onMessage);
+      resizeObserver?.disconnect();
+      mutationObserver?.disconnect();
+      for (const { img, fn } of imageListeners) {
+        img.removeEventListener("load", fn);
+        img.removeEventListener("error", fn);
+      }
+      for (const t of timers) clearTimeout(t);
     };
   }, [html, content]);
 
