@@ -100,12 +100,10 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
     }
     if (parsed.data.seats !== undefined) updates.seats = parsed.data.seats;
 
-    const { data: profile, error } = await supabaseAdmin
-      .from("profiles")
-      .update(updates)
-      .eq("id", req.userId!)
-      .select()
-      .single();
+    const query = Object.keys(updates).length === 0
+      ? supabaseAdmin.from("profiles").select().eq("id", req.userId!).single()
+      : supabaseAdmin.from("profiles").update(updates).eq("id", req.userId!).select().single();
+    const { data: profile, error } = await query;
 
     if (error || !profile) {
       res.status(404).json({ error: "Profile not found" });
