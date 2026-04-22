@@ -1,6 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { MessageCircleQuestion, Send, X, Loader2, Bot, User } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
+import { getGetProfileQueryKey } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 
 interface ChatMessage {
@@ -11,6 +13,7 @@ interface ChatMessage {
 export function SupportChatWidget() {
   const { t, i18n } = useTranslation();
   const { session } = useAuth();
+  const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -70,6 +73,7 @@ export function SupportChatWidget() {
         ...prev,
         { role: "assistant", content: data.reply },
       ]);
+      queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
     } catch {
       setMessages((prev) => [
         ...prev,

@@ -1,5 +1,6 @@
 import { Switch, Route, Router as WouterRouter, Redirect } from "wouter";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, MutationCache } from "@tanstack/react-query";
+import { getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/lib/auth";
@@ -73,7 +74,26 @@ setAuthTokenGetter(async () => {
   return null;
 });
 
+const AI_MUTATION_KEYS = new Set([
+  "generatePack",
+  "generateDailySummary",
+  "recategorizeUncategorized",
+  "generateDraft",
+  "getConversationSummary",
+  "detectAppointments",
+]);
+
+const mutationCache = new MutationCache({
+  onSuccess: (_data, _variables, _context, mutation) => {
+    const key = mutation.options.mutationKey?.[0];
+    if (typeof key === "string" && AI_MUTATION_KEYS.has(key)) {
+      queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+    }
+  },
+});
+
 const queryClient = new QueryClient({
+  mutationCache,
   defaultOptions: {
     queries: {
       retry: (failureCount, error: any) => {

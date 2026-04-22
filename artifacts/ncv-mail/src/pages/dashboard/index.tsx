@@ -36,6 +36,7 @@ import {
   useEmptySpam,
 } from "@workspace/api-client-react";
 import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
+import { getGetProfileQueryKey } from "@workspace/api-client-react";
 import { useTranslation } from 'react-i18next';
 import { translateCategoryName } from "@/lib/category-translations";
 import { format } from "date-fns";
@@ -358,6 +359,9 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                         body: JSON.stringify({ emailId: email.id }),
                       });
                       const extracted = resp.ok ? await resp.json() : null;
+                      if (resp.ok) {
+                        queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+                      }
                       const params = new URLSearchParams();
                       params.set("title", extracted?.title || email.subject || "");
                       params.set("emailId", String(email.id));

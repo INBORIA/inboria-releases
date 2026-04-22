@@ -6,14 +6,14 @@ import {
   useFonts,
 } from "@expo-google-fonts/inter";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { QueryClient, QueryClientProvider, MutationCache } from "@tanstack/react-query";
 import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import React, { useEffect, useRef } from "react";
 import { Platform } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import { SafeAreaProvider } from "react-native-safe-area-context";
-import { setBaseUrl, useRegisterPushToken } from "@workspace/api-client-react";
+import { setBaseUrl, useRegisterPushToken, getGetProfileQueryKey } from "@workspace/api-client-react";
 
 import "@/i18n";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
@@ -28,7 +28,25 @@ if (domain) {
   setBaseUrl(`https://${domain}`);
 }
 
-const queryClient = new QueryClient();
+const AI_MUTATION_KEYS = new Set([
+  "generatePack",
+  "generateDailySummary",
+  "recategorizeUncategorized",
+  "generateDraft",
+  "getConversationSummary",
+  "detectAppointments",
+]);
+
+const queryClient = new QueryClient({
+  mutationCache: new MutationCache({
+    onSuccess: (_data, _variables, _context, mutation) => {
+      const key = mutation.options.mutationKey?.[0];
+      if (typeof key === "string" && AI_MUTATION_KEYS.has(key)) {
+        queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+      }
+    },
+  }),
+});
 
 function AuthGate({ children }: { children: React.ReactNode }) {
   const { session, loading } = useAuth();
