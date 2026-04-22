@@ -8,6 +8,7 @@ import * as net from "net";
 import { sendSlackNotification, createNotionTask } from "./integrations";
 import { preClassifyEmail, recordAIClassification, bumpMetrics } from "./pre-filter";
 import { consumeAiCredits, logTriageEvent, checkEntitlement } from "./credits";
+import { getEmailOAuthRedirectUri } from "../lib/urls";
 
 interface AttachmentMeta {
   filename: string;
@@ -165,15 +166,7 @@ function isValidImapHost(host: string): boolean {
 }
 
 function getGmailRedirectUri(): string {
-  const explicit = process.env["BACKEND_URL"] || process.env["FRONTEND_URL"];
-  if (explicit) {
-    return `${explicit.replace(/\/$/, "")}/api/email/callback/gmail`;
-  }
-  const replitDomains = process.env["REPLIT_DOMAINS"];
-  const firstReplitDomain = replitDomains ? replitDomains.split(",")[0]?.trim() : undefined;
-  const domain = process.env["REPLIT_DEV_DOMAIN"] || firstReplitDomain || "inboria.com";
-  const protocol = domain.includes("localhost") ? "http" : "https";
-  return `${protocol}://${domain}/api/email/callback/gmail`;
+  return getEmailOAuthRedirectUri("gmail");
 }
 
 function getGoogleOAuth2Client() {

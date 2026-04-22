@@ -3,6 +3,7 @@ import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import crypto from "crypto";
 import nodemailer from "nodemailer";
+import { getFrontendUrl } from "../lib/urls";
 
 const router: IRouter = Router();
 
@@ -486,8 +487,7 @@ router.post("/organisations/invite", requireAuth, async (req, res): Promise<void
       .single();
     const orgName = orgData?.name || "votre organisation";
 
-    const frontendUrl = process.env["FRONTEND_URL"] || `https://${process.env["REPLIT_DEV_DOMAIN"] || "inboria.com"}`;
-    const acceptUrl = `${frontendUrl}/accept-invite?token=${token}`;
+    const acceptUrl = `${getFrontendUrl()}/accept-invite?token=${token}`;
 
     try {
       const { data: inviter } = await supabaseAdmin.auth.admin.getUserById(req.userId!);

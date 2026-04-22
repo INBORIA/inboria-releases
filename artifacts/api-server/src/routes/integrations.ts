@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { createHmac, randomBytes } from "crypto";
+import { getFrontendUrl as frontendUrl, getIntegrationsOAuthRedirectUri } from "../lib/urls";
 
 const router: IRouter = Router();
 
@@ -40,13 +41,11 @@ function verifySignedState(state: string): string | null {
 }
 
 function getFrontendUrl(): string {
-  return process.env["FRONTEND_URL"] || `https://${process.env["REPLIT_DEV_DOMAIN"] || process.env["REPLIT_DOMAINS"] || "inboria.com"}`;
+  return frontendUrl();
 }
 
 function getRedirectUri(provider: string): string {
-  const domain = process.env["REPLIT_DEV_DOMAIN"] || process.env["REPLIT_DOMAINS"] || "localhost";
-  const protocol = domain.includes("localhost") ? "http" : "https";
-  return `${protocol}://${domain}/api/integrations/${provider}/callback`;
+  return getIntegrationsOAuthRedirectUri(provider);
 }
 
 function toCamelCase(row: any) {
