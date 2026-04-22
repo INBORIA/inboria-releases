@@ -9,5 +9,8 @@ import type { AdminWaitlistSignup } from "./adminWaitlistSignup";
 
 export interface AdminWaitlistList {
   total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   signups: AdminWaitlistSignup[];
 }

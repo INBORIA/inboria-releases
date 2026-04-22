@@ -3655,6 +3655,9 @@
     "cancelDoneImmediate": "Subscription cancelled immediately.",
     "cancelDonePeriodEnd": "Cancellation scheduled for end of period.",
     "cancelDoneNoPaddle": "Access revoked (beta account).",
+    "planFilterPlaceholder": "Filter by plan",
+    "planFilterAll": "All plans",
+    "paginationLabel": "Page {{page}} of {{totalPages}}",
     "cancelError": "Revocation failed."
   }
 }

@@ -32,6 +32,22 @@ interface ProfileRow {
   is_admin: boolean | null;
 }
 
+interface PaginationQuery {
+  page: number;
+  limit: number;
+}
+
+function parsePagination(query: Record<string, unknown>, defaultLimit = 50): PaginationQuery {
+  const rawPage = Number(query["page"]);
+  const rawLimit = Number(query["limit"]);
+  const page = Number.isFinite(rawPage) && rawPage >= 1 ? Math.floor(rawPage) : 1;
+  const limit =
+    Number.isFinite(rawLimit) && rawLimit >= 1
+      ? Math.min(Math.floor(rawLimit), 200)
+      : defaultLimit;
+  return { page, limit };
+}
+
 function csvEscape(value: string | number | null | undefined): string {
   if (value === null || value === undefined) return "";
   let str = String(value);
@@ -45,16 +61,25 @@ function csvEscape(value: string | number | null | undefined): string {
   return str;
 }
 
+function audit(action: string, fields: Record<string, unknown>): void {
+  logger.info({ audit: true, action, ...fields }, `[admin-audit] ${action}`);
+}
+
 router.get(
   "/admin/waitlist",
   requireAuth,
   requireAdmin,
-  async (_req, res): Promise<void> => {
+  async (req, res): Promise<void> => {
     try {
-      const { data, error } = await supabaseAdmin
+      const { page, limit } = parsePagination(req.query as Record<string, unknown>);
+      const from = (page - 1) * limit;
+      const to = from + limit - 1;
+
+      const { data, error, count } = await supabaseAdmin
         .from("waitlist_signups")
-        .select("id, email, plan, seats, locale, source, created_at")
-        .order("created_at", { ascending: false });
+        .select("id, email, plan, seats, locale, source, created_at", { count: "exact" })
+        .order("created_at", { ascending: false })
+        .range(from, to);
 
       if (error) {
         logger.error({ err: error }, "[admin] waitlist list failed");
@@ -63,8 +88,16 @@ router.get(
       }
 
       const rows = (data ?? []) as WaitlistRow[];
+      const total = count ?? rows.length;
+      const totalPages = limit > 0 ? Math.max(1, Math.ceil(total / limit)) : 1;
+
+      audit("list_waitlist", { adminId: req.userId ?? null, page, limit, total });
+
       res.json({
-        total: rows.length,
+        total,
+        page,
+        pageSize: limit,
+        totalPages,
         signups: rows.map((r) => ({
           id: r.id,
           email: r.email,
@@ -87,7 +120,7 @@ router.get(
   "/admin/waitlist.csv",
   requireAuth,
   requireAdmin,
-  async (_req, res): Promise<void> => {
+  async (req, res): Promise<void> => {
     try {
       const { data, error } = await supabaseAdmin
         .from("waitlist_signups")
@@ -108,6 +141,8 @@ router.get(
       );
       const csv = [header, ...lines].join("\n");
 
+      audit("export_waitlist_csv", { adminId: req.userId ?? null, total: rows.length });
+
       const stamp = new Date().toISOString().slice(0, 10);
       res.setHeader("Content-Type", "text/csv; charset=utf-8");
       res.setHeader(
@@ -121,32 +156,78 @@ router.get(
   },
 );
 
+interface PaddleSubscriptionLike {
+  status?: string | null;
+}
+
+async function fetchPaddleStatus(subscriptionId: string): Promise<string | null> {
+  try {
+    const paddle = getPaddleClient();
+    const sub = (await paddle.subscriptions.get(subscriptionId)) as PaddleSubscriptionLike;
+    return typeof sub?.status === "string" ? sub.status : null;
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Paddle status fetch failed";
+    logger.warn({ err: message, subscriptionId }, "[admin] paddle status fetch failed");
+    return null;
+  }
+}
+
 router.get(
   "/admin/users",
   requireAuth,
   requireAdmin,
   async (req, res): Promise<void> => {
     try {
+      const { page, limit } = parsePagination(req.query as Record<string, unknown>);
       const search =
         typeof req.query["search"] === "string"
           ? req.query["search"].trim().toLowerCase()
           : "";
+      const planFilter =
+        typeof req.query["plan"] === "string" && req.query["plan"].trim() !== ""
+          ? req.query["plan"].trim()
+          : null;
 
-      const { data: profiles, error } = await supabaseAdmin
+      // Build base query. We push the plan filter to Supabase so pagination
+      // remains exhaustive within the filtered set. Search remains client-side
+      // here since email lives in auth.users — see follow-up #72 for full
+      // server-side search.
+      const base = supabaseAdmin
         .from("profiles")
         .select(
           "id, full_name, plan, seats, emails_used, ai_credits_used, emails_quota, stripe_customer_id, stripe_subscription_id, organisation_id, created_at, is_admin",
+          { count: "exact" },
         )
-        .order("created_at", { ascending: false })
-        .limit(500);
+        .order("created_at", { ascending: false });
 
-      if (error) {
-        logger.error({ err: error }, "[admin] users list failed");
-        res.status(500).json({ error: "Failed to load users" });
-        return;
+      const filtered = planFilter ? base.eq("plan", planFilter) : base;
+
+      // Hard cap of 500 rows when search is active (see follow-up #72).
+      // Without search, we paginate normally.
+      let profileRows: ProfileRow[] = [];
+      let total = 0;
+
+      if (search) {
+        const { data, error, count } = await filtered.limit(500);
+        if (error) {
+          logger.error({ err: error }, "[admin] users list failed");
+          res.status(500).json({ error: "Failed to load users" });
+          return;
+        }
+        profileRows = (data ?? []) as ProfileRow[];
+        total = count ?? profileRows.length;
+      } else {
+        const from = (page - 1) * limit;
+        const to = from + limit - 1;
+        const { data, error, count } = await filtered.range(from, to);
+        if (error) {
+          logger.error({ err: error }, "[admin] users list failed");
+          res.status(500).json({ error: "Failed to load users" });
+          return;
+        }
+        profileRows = (data ?? []) as ProfileRow[];
+        total = count ?? profileRows.length;
       }
-
-      const profileRows = (profiles ?? []) as ProfileRow[];
 
       const orgIds = Array.from(
         new Set(profileRows.map((p) => p.organisation_id).filter((v): v is string => !!v)),
@@ -162,7 +243,7 @@ router.get(
         }
       }
 
-      const enriched: Array<{
+      interface EnrichedUser {
         id: string;
         email: string;
         fullName: string;
@@ -174,10 +255,13 @@ router.get(
         organisationId: string | null;
         organisationName: string | null;
         hasPaddleSubscription: boolean;
+        paddleStatus: string | null;
         stripeCustomerId: string | null;
         createdAt: string;
         isAdmin: boolean;
-      }> = [];
+      }
+
+      const enriched: EnrichedUser[] = [];
 
       for (const p of profileRows) {
         let email = "";
@@ -188,9 +272,17 @@ router.get(
           // ignore
         }
 
-        if (search && !email.toLowerCase().includes(search) && !(p.full_name || "").toLowerCase().includes(search)) {
+        if (
+          search &&
+          !email.toLowerCase().includes(search) &&
+          !(p.full_name || "").toLowerCase().includes(search)
+        ) {
           continue;
         }
+
+        const paddleStatus = p.stripe_subscription_id
+          ? await fetchPaddleStatus(p.stripe_subscription_id)
+          : null;
 
         enriched.push({
           id: p.id,
@@ -202,15 +294,48 @@ router.get(
           aiCreditsUsed: p.ai_credits_used ?? 0,
           emailsQuota: p.emails_quota ?? 0,
           organisationId: p.organisation_id,
-          organisationName: p.organisation_id ? orgNameById.get(p.organisation_id) ?? null : null,
+          organisationName: p.organisation_id
+            ? orgNameById.get(p.organisation_id) ?? null
+            : null,
           hasPaddleSubscription: !!p.stripe_subscription_id,
+          paddleStatus,
           stripeCustomerId: p.stripe_customer_id,
           createdAt: p.created_at,
           isAdmin: !!p.is_admin,
         });
       }
 
-      res.json({ total: enriched.length, users: enriched });
+      // When search is active we paginate the filtered slice client-side here
+      // so the response shape stays consistent (page/pageSize/totalPages).
+      let pageRows: EnrichedUser[];
+      let effectiveTotal: number;
+      if (search) {
+        effectiveTotal = enriched.length;
+        const from = (page - 1) * limit;
+        pageRows = enriched.slice(from, from + limit);
+      } else {
+        effectiveTotal = total;
+        pageRows = enriched;
+      }
+      const totalPages =
+        limit > 0 ? Math.max(1, Math.ceil(effectiveTotal / limit)) : 1;
+
+      audit("list_users", {
+        adminId: req.userId ?? null,
+        page,
+        limit,
+        total: effectiveTotal,
+        search: search || null,
+        plan: planFilter,
+      });
+
+      res.json({
+        total: effectiveTotal,
+        page,
+        pageSize: limit,
+        totalPages,
+        users: pageRows,
+      });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Unknown error";
       logger.error({ err: message }, "[admin] users list crashed");
@@ -219,13 +344,33 @@ router.get(
   },
 );
 
+async function freeOrganisationSeat(userId: string, orgId: string | null): Promise<void> {
+  if (!orgId) return;
+  // Remove the user's active membership from the organisation. The seat count
+  // (organisations.seats_total) is a soft cap; freeing a seat means the row
+  // becomes available because we removed the active member. Failures bubble up
+  // to the caller so the admin sees a real error rather than a silent partial
+  // revocation.
+  const { error: memberErr } = await supabaseAdmin
+    .from("organisation_members")
+    .delete()
+    .eq("user_id", userId)
+    .eq("organisation_id", orgId);
+  if (memberErr) {
+    throw new Error(
+      `Failed to remove organisation membership: ${memberErr.message ?? "unknown"}`,
+    );
+  }
+}
+
 router.post(
   "/admin/users/:userId/cancel-subscription",
   requireAuth,
   requireAdmin,
   async (req, res): Promise<void> => {
     try {
-      const userId = req.params["userId"];
+      const rawUserId = req.params["userId"];
+      const userId = typeof rawUserId === "string" ? rawUserId : "";
       if (!userId) {
         res.status(400).json({ error: "Missing userId" });
         return;
@@ -236,7 +381,7 @@ router.post(
 
       const { data: profile, error: profileErr } = await supabaseAdmin
         .from("profiles")
-        .select("stripe_subscription_id, plan")
+        .select("stripe_subscription_id, plan, organisation_id")
         .eq("id", userId)
         .single();
 
@@ -262,27 +407,16 @@ router.post(
         }
       }
 
-      // For testers without a Paddle subscription, OR when mode === "immediate",
-      // immediately mark the plan as expired so access is revoked right away.
-      // For at_period_end on a real Paddle sub, leave the plan untouched — the
-      // webhook will downgrade it when the period ends.
-      const shouldExpireNow = !profile.stripe_subscription_id || mode === "immediate";
-      if (shouldExpireNow) {
-        const { error: upErr } = await supabaseAdmin
-          .from("profiles")
-          .update({ plan: "expired", stripe_subscription_id: null })
-          .eq("id", userId);
-        if (upErr) {
-          logger.error({ err: upErr, userId }, "[admin] failed to mark plan expired");
-          res.status(500).json({ error: "Failed to revoke access" });
-          return;
-        }
-      }
-
-      // If we tried Paddle and it failed AND we did not perform a DB-side
-      // revocation (at_period_end on a real sub), the cancellation effectively
-      // did not happen — surface that to the admin instead of a misleading 200.
-      if (paddleError && !shouldExpireNow) {
+      // Surface a clear failure when Paddle was reachable but rejected the
+      // cancel and we're not going to do anything else (at_period_end on a
+      // real Paddle sub).
+      if (paddleError && mode === "at_period_end" && profile.stripe_subscription_id) {
+        audit("cancel_subscription_failed", {
+          adminId: req.userId ?? null,
+          targetUserId: userId,
+          mode,
+          paddleError,
+        });
         res.status(502).json({
           ok: false,
           mode,
@@ -294,12 +428,92 @@ router.post(
         return;
       }
 
+      // Revoke local access immediately in all successful paths:
+      // - beta tester (no Paddle sub) → only DB revocation possible
+      // - mode=immediate → cut access right away regardless of Paddle outcome
+      // - mode=at_period_end on a real sub → Paddle accepted; we also flip the
+      //   plan to expired so the admin sees a coherent state. The Paddle webhook
+      //   will continue to deliver subscription.canceled at the period end.
+      const { error: upErr } = await supabaseAdmin
+        .from("profiles")
+        .update({ plan: "expired", stripe_subscription_id: null })
+        .eq("id", userId);
+      if (upErr) {
+        logger.error({ err: upErr, userId }, "[admin] failed to mark plan expired");
+        res.status(500).json({ error: "Failed to revoke access" });
+        return;
+      }
+
+      try {
+        await freeOrganisationSeat(userId, profile.organisation_id);
+      } catch (err: unknown) {
+        const message =
+          err instanceof Error ? err.message : "Failed to free organisation seat";
+        logger.error({ err: message, userId }, "[admin] free seat failed during revoke");
+        audit("cancel_subscription_partial", {
+          adminId: req.userId ?? null,
+          targetUserId: userId,
+          mode,
+          paddleCancelled,
+          stage: "free_seat",
+          error: message,
+        });
+        res.status(500).json({
+          ok: false,
+          mode,
+          paddleCancelled,
+          paddleError,
+          revokedNow: false,
+          error: message,
+        });
+        return;
+      }
+      // After freeing the seat, also detach the profile from the organisation.
+      if (profile.organisation_id) {
+        const { error: detachErr } = await supabaseAdmin
+          .from("profiles")
+          .update({ organisation_id: null })
+          .eq("id", userId);
+        if (detachErr) {
+          logger.error(
+            { err: detachErr, userId },
+            "[admin] failed to detach profile from organisation",
+          );
+          audit("cancel_subscription_partial", {
+            adminId: req.userId ?? null,
+            targetUserId: userId,
+            mode,
+            paddleCancelled,
+            stage: "detach_profile",
+            error: detachErr.message ?? "unknown",
+          });
+          res.status(500).json({
+            ok: false,
+            mode,
+            paddleCancelled,
+            paddleError,
+            revokedNow: false,
+            error: "Failed to detach profile from organisation",
+          });
+          return;
+        }
+      }
+
+      audit("cancel_subscription", {
+        adminId: req.userId ?? null,
+        targetUserId: userId,
+        mode,
+        paddleCancelled,
+        paddleError,
+        seatFreed: !!profile.organisation_id,
+      });
+
       res.json({
         ok: true,
         mode,
         paddleCancelled,
         paddleError,
-        revokedNow: shouldExpireNow,
+        revokedNow: true,
       });
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : "Unknown error";

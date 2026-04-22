@@ -3655,6 +3655,9 @@
     "cancelDoneImmediate": "Abonnement onmiddellijk geannuleerd.",
     "cancelDonePeriodEnd": "Annulering gepland aan einde van periode.",
     "cancelDoneNoPaddle": "Toegang ingetrokken (beta-account).",
+    "planFilterPlaceholder": "Filter op plan",
+    "planFilterAll": "Alle plannen",
+    "paginationLabel": "Pagina {{page}} van {{totalPages}}",
     "cancelError": "Intrekken mislukt."
   }
 }

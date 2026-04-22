@@ -9,5 +9,8 @@ import type { AdminUser } from "./adminUser";
 
 export interface AdminUserList {
   total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   users: AdminUser[];
 }

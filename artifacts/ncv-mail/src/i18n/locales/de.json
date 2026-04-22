@@ -3655,6 +3655,9 @@
     "cancelDoneImmediate": "Abonnement sofort gekündigt.",
     "cancelDonePeriodEnd": "Kündigung zum Periodenende geplant.",
     "cancelDoneNoPaddle": "Zugang entzogen (Beta-Konto).",
+    "planFilterPlaceholder": "Nach Tarif filtern",
+    "planFilterAll": "Alle Tarife",
+    "paginationLabel": "Seite {{page}} von {{totalPages}}",
     "cancelError": "Entzug fehlgeschlagen."
   }
 }

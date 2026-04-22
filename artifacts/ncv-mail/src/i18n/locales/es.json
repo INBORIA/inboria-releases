@@ -3655,6 +3655,9 @@
     "cancelDoneImmediate": "Suscripción cancelada de inmediato.",
     "cancelDonePeriodEnd": "Cancelación programada para el fin del periodo.",
     "cancelDoneNoPaddle": "Acceso revocado (cuenta beta).",
+    "planFilterPlaceholder": "Filtrar por plan",
+    "planFilterAll": "Todos los planes",
+    "paginationLabel": "Página {{page}} de {{totalPages}}",
     "cancelError": "Error al revocar."
   }
 }

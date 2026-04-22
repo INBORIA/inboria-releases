@@ -6,15 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 
-export type AdminListUsersParams = {
-  /**
-   * Filter by email or full name (case-insensitive substring).
-   */
-  search?: string;
-  /**
-   * Filter by plan name (e.g. essai, pro, business, expired).
-   */
-  plan?: string;
+export type AdminListWaitlistParams = {
   /**
    * @minimum 1
    */

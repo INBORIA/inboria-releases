@@ -4,6 +4,8 @@ import {
   useAdminCancelUserSubscription,
   useGetProfile,
   getAdminListUsersQueryKey,
+  type AdminUser,
+  type AdminCancelSubscriptionResult,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -21,6 +23,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Loader2,
   Search,
   Users,
@@ -28,67 +37,71 @@ import {
   XCircle,
   Crown,
   AlertTriangle,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 
-interface AdminUser {
-  id: string;
-  email: string;
-  fullName: string;
-  plan: string;
-  seats: number;
-  emailsUsed: number;
-  aiCreditsUsed: number;
-  emailsQuota: number;
-  organisationId: string | null;
-  organisationName: string | null;
-  hasPaddleSubscription: boolean;
-  stripeCustomerId: string | null;
-  createdAt: string;
-  isAdmin: boolean;
+interface ProfileWithAdmin {
+  id?: string;
+  isAdmin?: boolean;
 }
+
+interface ApiErrorResponse {
+  error?: string;
+  paddleError?: string;
+}
+
+interface ApiError {
+  response?: { data?: ApiErrorResponse };
+}
+
+const PAGE_SIZE = 50;
+const PLAN_OPTIONS = ["essai", "pro", "business", "expired"];
+const ALL_PLANS = "__all__";
 
 export default function AdminAbonnes() {
   const { t, i18n } = useTranslation();
-  const { data: profile, isLoading: profileLoading } = useGetProfile();
-  const { data, isLoading, refetch } = useAdminListUsers();
+  const { data: profileData, isLoading: profileLoading } = useGetProfile();
+  const profile = (profileData ?? {}) as ProfileWithAdmin;
+  const isAdmin = !!profile.isAdmin;
+
+  const [search, setSearch] = useState("");
+  const [planFilter, setPlanFilter] = useState<string>(ALL_PLANS);
+  const [page, setPage] = useState(1);
+  const [pendingId, setPendingId] = useState<string | null>(null);
+  const [confirmOpenFor, setConfirmOpenFor] = useState<string | null>(null);
+
+  const params = {
+    page,
+    limit: PAGE_SIZE,
+    ...(search.trim() ? { search: search.trim() } : {}),
+    ...(planFilter !== ALL_PLANS ? { plan: planFilter } : {}),
+  };
+
+  const { data, isLoading, refetch } = useAdminListUsers(params);
   const cancelMutation = useAdminCancelUserSubscription();
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const [search, setSearch] = useState("");
-  const [pendingId, setPendingId] = useState<string | null>(null);
-  const [confirmOpenFor, setConfirmOpenFor] = useState<string | null>(null);
-
-  const isAdmin = !!(profile as any)?.isAdmin;
-
-  const users = useMemo(() => {
-    const list = ((data as any)?.users || []) as AdminUser[];
-    if (!search.trim()) return list;
-    const q = search.trim().toLowerCase();
-    return list.filter(
-      (u) =>
-        u.email.toLowerCase().includes(q) ||
-        u.fullName.toLowerCase().includes(q) ||
-        (u.organisationName || "").toLowerCase().includes(q),
-    );
-  }, [data, search]);
+  const users: AdminUser[] = data?.users ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = data?.totalPages ?? 1;
 
   async function handleCancel(userId: string, mode: "at_period_end" | "immediate") {
     setPendingId(userId);
     try {
-      const result: any = await cancelMutation.mutateAsync({
+      const result = (await cancelMutation.mutateAsync({
         userId,
         data: { mode },
-      });
-      // Backend may return ok:false (HTTP 502) when Paddle fails on at_period_end
-      // and no DB-side revocation occurred — show the real failure to the admin.
+      })) as AdminCancelSubscriptionResult;
+
       if (result?.ok === false) {
         toast({
           title: t("admin.cancelError"),
-          description: result?.paddleError || result?.error || undefined,
+          description: result?.paddleError ?? undefined,
           variant: "destructive",
         });
         return;
@@ -101,8 +114,9 @@ export default function AdminAbonnes() {
       toast({ title: message });
       queryClient.invalidateQueries({ queryKey: getAdminListUsersQueryKey() });
       setConfirmOpenFor(null);
-    } catch (e: any) {
-      const data = e?.response?.data;
+    } catch (err) {
+      const apiErr = err as ApiError;
+      const data = apiErr?.response?.data;
       toast({
         title: data?.error || t("admin.cancelError"),
         description: data?.paddleError || undefined,
@@ -111,6 +125,11 @@ export default function AdminAbonnes() {
     } finally {
       setPendingId(null);
     }
+  }
+
+  function resetToPage1<T>(setter: (v: T) => void, value: T): void {
+    setter(value);
+    setPage(1);
   }
 
   if (profileLoading) {
@@ -139,8 +158,6 @@ export default function AdminAbonnes() {
     );
   }
 
-  const total = (data as any)?.total ?? users.length;
-
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
@@ -159,15 +176,36 @@ export default function AdminAbonnes() {
           </Button>
         </div>
 
-        <div className="relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8b9cb3]" />
-          <Input
-            placeholder={t("admin.subscribersSearchPlaceholder")}
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="bg-[#0d1117] border-[#1f2937] text-white pl-9"
-            data-testid="input-users-search"
-          />
+        <div className="flex flex-wrap items-center gap-3">
+          <div className="relative flex-1 min-w-[240px]">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8b9cb3]" />
+            <Input
+              placeholder={t("admin.subscribersSearchPlaceholder")}
+              value={search}
+              onChange={(e) => resetToPage1(setSearch, e.target.value)}
+              className="bg-[#0d1117] border-[#1f2937] text-white pl-9"
+              data-testid="input-users-search"
+            />
+          </div>
+          <Select
+            value={planFilter}
+            onValueChange={(v) => resetToPage1(setPlanFilter, v)}
+          >
+            <SelectTrigger
+              className="w-[180px] bg-[#0d1117] border-[#1f2937] text-white"
+              data-testid="select-plan-filter"
+            >
+              <SelectValue placeholder={t("admin.planFilterPlaceholder")} />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL_PLANS}>{t("admin.planFilterAll")}</SelectItem>
+              {PLAN_OPTIONS.map((p) => (
+                <SelectItem key={p} value={p} className="capitalize">
+                  {p}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
 
         <div className="bg-[#141c2b] rounded-xl border border-[#1f2937] overflow-hidden">
@@ -197,10 +235,11 @@ export default function AdminAbonnes() {
                 </thead>
                 <tbody className="divide-y divide-[#1f2937]">
                   {users.map((u) => {
+                    const seats = u.seats ?? 1;
                     const totalUsed = u.emailsUsed + u.aiCreditsUsed;
                     const isExpired = u.plan === "expired";
                     const isPending = pendingId === u.id;
-                    const isSelf = u.id === (profile as any)?.id;
+                    const isSelf = u.id === profile.id;
                     return (
                       <tr
                         key={u.id}
@@ -232,8 +271,11 @@ export default function AdminAbonnes() {
                           >
                             {u.plan}
                           </span>
-                          {u.plan === "business" && u.seats > 1 && (
-                            <span className="text-[#8b9cb3] text-[11px]"> · {u.seats} {t("admin.seatsShort")}</span>
+                          {u.plan === "business" && seats > 1 && (
+                            <span className="text-[#8b9cb3] text-[11px]">
+                              {" "}
+                              · {seats} {t("admin.seatsShort")}
+                            </span>
                           )}
                         </td>
                         <td className="px-4 py-2 text-[#8b9cb3]">
@@ -244,9 +286,19 @@ export default function AdminAbonnes() {
                         </td>
                         <td className="px-4 py-2">
                           {u.hasPaddleSubscription ? (
-                            <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400">
-                              ● Paddle
-                            </span>
+                            <div className="flex flex-col gap-0.5">
+                              <span className="inline-flex items-center gap-1 text-[11px] text-emerald-400">
+                                ● Paddle
+                              </span>
+                              {u.paddleStatus && (
+                                <span
+                                  className="text-[10px] text-[#8b9cb3] capitalize"
+                                  data-testid={`paddle-status-${u.id}`}
+                                >
+                                  {u.paddleStatus.replace(/_/g, " ")}
+                                </span>
+                              )}
+                            </div>
                           ) : (
                             <span className="text-[11px] text-amber-400">
                               {t("admin.noPaddle")}
@@ -259,12 +311,16 @@ export default function AdminAbonnes() {
                         <td className="px-4 py-2 text-right">
                           {isExpired || isSelf ? (
                             <span className="text-[11px] text-[#8b9cb3]">
-                              {isSelf ? t("admin.youCannotCancelSelf") : t("admin.alreadyExpired")}
+                              {isSelf
+                                ? t("admin.youCannotCancelSelf")
+                                : t("admin.alreadyExpired")}
                             </span>
                           ) : (
                             <AlertDialog
                               open={confirmOpenFor === u.id}
-                              onOpenChange={(open) => setConfirmOpenFor(open ? u.id : null)}
+                              onOpenChange={(open) =>
+                                setConfirmOpenFor(open ? u.id : null)
+                              }
                             >
                               <AlertDialogTrigger asChild>
                                 <Button
@@ -298,7 +354,9 @@ export default function AdminAbonnes() {
                                   <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
                                   {u.hasPaddleSubscription && (
                                     <AlertDialogAction
-                                      onClick={() => handleCancel(u.id, "at_period_end")}
+                                      onClick={() =>
+                                        handleCancel(u.id, "at_period_end")
+                                      }
                                       className="bg-amber-500 hover:bg-amber-600 text-white"
                                     >
                                       {t("admin.cancelAtPeriodEnd")}
@@ -323,6 +381,34 @@ export default function AdminAbonnes() {
             </div>
           )}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-[#8b9cb3]">
+              {t("admin.paginationLabel", { page, totalPages })}
+            </span>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={page <= 1 || isLoading}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                data-testid="button-page-prev"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={page >= totalPages || isLoading}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                data-testid="button-page-next"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

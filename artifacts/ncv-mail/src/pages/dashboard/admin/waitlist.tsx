@@ -2,45 +2,63 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import {
   useAdminListWaitlist,
   useGetProfile,
+  type AdminWaitlistSignup,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Loader2, Download, Search, Mail, ShieldOff } from "lucide-react";
+import {
+  Loader2,
+  Download,
+  Search,
+  Mail,
+  ShieldOff,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { useState, useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
 
+interface ProfileWithAdmin {
+  isAdmin?: boolean;
+}
+
+const PAGE_SIZE = 50;
+
 export default function AdminWaitlist() {
   const { t, i18n } = useTranslation();
-  const { data: profile, isLoading: profileLoading } = useGetProfile();
-  const { data, isLoading, refetch } = useAdminListWaitlist();
+  const { data: profileData, isLoading: profileLoading } = useGetProfile();
+  const profile = (profileData ?? {}) as ProfileWithAdmin;
+  const isAdmin = !!profile.isAdmin;
+
+  const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
   const [exporting, setExporting] = useState(false);
   const { toast } = useToast();
 
-  const isAdmin = !!(profile as any)?.isAdmin;
+  const { data, isLoading, refetch } = useAdminListWaitlist({
+    page,
+    limit: PAGE_SIZE,
+  });
 
+  const allSignups: AdminWaitlistSignup[] = data?.signups ?? [];
+  const total = data?.total ?? 0;
+  const totalPages = data?.totalPages ?? 1;
+
+  // Search is applied client-side over the current page only — for full-text
+  // search across all pages, see the export CSV.
   const signups = useMemo(() => {
-    const list = ((data as any)?.signups || []) as Array<{
-      id: string;
-      email: string;
-      plan: string | null;
-      seats: number | null;
-      locale: string | null;
-      source: string | null;
-      createdAt: string;
-    }>;
-    if (!search.trim()) return list;
+    if (!search.trim()) return allSignups;
     const q = search.trim().toLowerCase();
-    return list.filter(
+    return allSignups.filter(
       (s) =>
         s.email.toLowerCase().includes(q) ||
         (s.source || "").toLowerCase().includes(q) ||
         (s.plan || "").toLowerCase().includes(q),
     );
-  }, [data, search]);
+  }, [allSignups, search]);
 
   async function handleExportCsv() {
     setExporting(true);
@@ -94,8 +112,6 @@ export default function AdminWaitlist() {
     );
   }
 
-  const total = (data as any)?.total ?? signups.length;
-
   return (
     <DashboardLayout>
       <div className="max-w-5xl mx-auto px-4 py-6 space-y-6">
@@ -111,7 +127,7 @@ export default function AdminWaitlist() {
           </div>
           <Button
             onClick={handleExportCsv}
-            disabled={exporting || signups.length === 0}
+            disabled={exporting || total === 0}
             data-testid="button-export-waitlist-csv"
           >
             {exporting ? (
@@ -176,7 +192,9 @@ export default function AdminWaitlist() {
                       <td className="px-4 py-2 text-white font-medium">{s.email}</td>
                       <td className="px-4 py-2 text-[#8b9cb3]">{s.plan || "—"}</td>
                       <td className="px-4 py-2 text-[#8b9cb3]">{s.seats ?? "—"}</td>
-                      <td className="px-4 py-2 text-[#8b9cb3] uppercase">{s.locale || "—"}</td>
+                      <td className="px-4 py-2 text-[#8b9cb3] uppercase">
+                        {s.locale || "—"}
+                      </td>
                       <td className="px-4 py-2 text-[#8b9cb3]">{s.source || "—"}</td>
                     </tr>
                   ))}
@@ -185,6 +203,34 @@ export default function AdminWaitlist() {
             </div>
           )}
         </div>
+
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between">
+            <span className="text-[11px] text-[#8b9cb3]">
+              {t("admin.paginationLabel", { page, totalPages })}
+            </span>
+            <div className="flex items-center gap-2">
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={page <= 1 || isLoading}
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                data-testid="button-page-prev"
+              >
+                <ChevronLeft className="h-4 w-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                disabled={page >= totalPages || isLoading}
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                data-testid="button-page-next"
+              >
+                <ChevronRight className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

@@ -2021,6 +2021,9 @@
     "cancelDoneImmediate": "Abonnement résilié immédiatement.",
     "cancelDonePeriodEnd": "Annulation programmée à la fin de la période.",
     "cancelDoneNoPaddle": "Accès révoqué (compte bêta).",
-    "cancelError": "Échec de la révocation."
+    "cancelError": "Échec de la révocation.",
+    "planFilterPlaceholder": "Filtrer par plan",
+    "planFilterAll": "Tous les plans",
+    "paginationLabel": "Page {{page}} sur {{totalPages}}"
   }
 }

@@ -899,6 +899,9 @@ export interface AdminWaitlistSignup {
 
 export interface AdminWaitlistList {
   total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   signups: AdminWaitlistSignup[];
 }
 
@@ -916,6 +919,11 @@ export interface AdminUser {
   /** @nullable */
   organisationName?: string | null;
   hasPaddleSubscription: boolean;
+  /**
+   * Live Paddle subscription status (active, canceled, past_due, paused, trialing) when known.
+   * @nullable
+   */
+  paddleStatus?: string | null;
   /** @nullable */
   stripeCustomerId?: string | null;
   createdAt: string;
@@ -924,6 +932,9 @@ export interface AdminUser {
 
 export interface AdminUserList {
   total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
   users: AdminUser[];
 }
 
@@ -1353,9 +1364,34 @@ export type JoinWaitlist200 = {
   alreadyRegistered: boolean;
 };
 
+export type AdminListWaitlistParams = {
+  /**
+   * @minimum 1
+   */
+  page?: number;
+  /**
+   * @minimum 1
+   * @maximum 200
+   */
+  limit?: number;
+};
+
 export type AdminListUsersParams = {
   /**
    * Filter by email or full name (case-insensitive substring).
    */
   search?: string;
+  /**
+   * Filter by plan name (e.g. essai, pro, business, expired).
+   */
+  plan?: string;
+  /**
+   * @minimum 1
+   */
+  page?: number;
+  /**
+   * @minimum 1
+   * @maximum 200
+   */
+  limit?: number;
 };

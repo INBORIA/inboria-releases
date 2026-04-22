@@ -26,6 +26,7 @@ import type {
   AdminCancelSubscriptionResult,
   AdminConnection,
   AdminListUsersParams,
+  AdminListWaitlistParams,
   AdminUserList,
   AdminWaitlistList,
   ApplyPackBody,
@@ -9416,41 +9417,60 @@ export const useJoinWaitlist = <
 /**
  * @summary List all waitlist signups (admin only)
  */
-export const getAdminListWaitlistUrl = () => {
-  return `/api/admin/waitlist`;
+export const getAdminListWaitlistUrl = (params?: AdminListWaitlistParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/admin/waitlist?${stringifiedParams}`
+    : `/api/admin/waitlist`;
 };
 
 export const adminListWaitlist = async (
+  params?: AdminListWaitlistParams,
   options?: RequestInit,
 ): Promise<AdminWaitlistList> => {
-  return customFetch<AdminWaitlistList>(getAdminListWaitlistUrl(), {
+  return customFetch<AdminWaitlistList>(getAdminListWaitlistUrl(params), {
     ...options,
     method: "GET",
   });
 };
 
-export const getAdminListWaitlistQueryKey = () => {
-  return [`/api/admin/waitlist`] as const;
+export const getAdminListWaitlistQueryKey = (
+  params?: AdminListWaitlistParams,
+) => {
+  return [`/api/admin/waitlist`, ...(params ? [params] : [])] as const;
 };
 
 export const getAdminListWaitlistQueryOptions = <
   TData = Awaited<ReturnType<typeof adminListWaitlist>>,
   TError = ErrorType<void>,
->(options?: {
-  query?: UseQueryOptions<
-    Awaited<ReturnType<typeof adminListWaitlist>>,
-    TError,
-    TData
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}) => {
+>(
+  params?: AdminListWaitlistParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof adminListWaitlist>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getAdminListWaitlistQueryKey();
+  const queryKey =
+    queryOptions?.queryKey ?? getAdminListWaitlistQueryKey(params);
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof adminListWaitlist>>
-  > = ({ signal }) => adminListWaitlist({ signal, ...requestOptions });
+  > = ({ signal }) => adminListWaitlist(params, { signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof adminListWaitlist>>,
@@ -9471,15 +9491,18 @@ export type AdminListWaitlistQueryError = ErrorType<void>;
 export function useAdminListWaitlist<
   TData = Awaited<ReturnType<typeof adminListWaitlist>>,
   TError = ErrorType<void>,
->(options?: {
-  query?: UseQueryOptions<
-    Awaited<ReturnType<typeof adminListWaitlist>>,
-    TError,
-    TData
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions = getAdminListWaitlistQueryOptions(options);
+>(
+  params?: AdminListWaitlistParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof adminListWaitlist>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getAdminListWaitlistQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

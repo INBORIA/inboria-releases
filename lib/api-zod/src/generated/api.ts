@@ -2082,8 +2082,25 @@ export const JoinWaitlistResponse = zod.object({
 /**
  * @summary List all waitlist signups (admin only)
  */
+export const adminListWaitlistQueryPageDefault = 1;
+
+export const adminListWaitlistQueryLimitDefault = 50;
+export const adminListWaitlistQueryLimitMax = 200;
+
+export const AdminListWaitlistQueryParams = zod.object({
+  page: zod.coerce.number().min(1).default(adminListWaitlistQueryPageDefault),
+  limit: zod.coerce
+    .number()
+    .min(1)
+    .max(adminListWaitlistQueryLimitMax)
+    .default(adminListWaitlistQueryLimitDefault),
+});
+
 export const AdminListWaitlistResponse = zod.object({
   total: zod.number(),
+  page: zod.number(),
+  pageSize: zod.number(),
+  totalPages: zod.number(),
   signups: zod.array(
     zod.object({
       id: zod.string(),
@@ -2100,15 +2117,33 @@ export const AdminListWaitlistResponse = zod.object({
 /**
  * @summary List Inboria subscribers (admin only)
  */
+export const adminListUsersQueryPageDefault = 1;
+
+export const adminListUsersQueryLimitDefault = 50;
+export const adminListUsersQueryLimitMax = 200;
+
 export const AdminListUsersQueryParams = zod.object({
   search: zod.coerce
     .string()
     .optional()
     .describe("Filter by email or full name (case-insensitive substring)."),
+  plan: zod.coerce
+    .string()
+    .optional()
+    .describe("Filter by plan name (e.g. essai, pro, business, expired)."),
+  page: zod.coerce.number().min(1).default(adminListUsersQueryPageDefault),
+  limit: zod.coerce
+    .number()
+    .min(1)
+    .max(adminListUsersQueryLimitMax)
+    .default(adminListUsersQueryLimitDefault),
 });
 
 export const AdminListUsersResponse = zod.object({
   total: zod.number(),
+  page: zod.number(),
+  pageSize: zod.number(),
+  totalPages: zod.number(),
   users: zod.array(
     zod.object({
       id: zod.string(),
@@ -2122,6 +2157,12 @@ export const AdminListUsersResponse = zod.object({
       organisationId: zod.string().nullish(),
       organisationName: zod.string().nullish(),
       hasPaddleSubscription: zod.boolean(),
+      paddleStatus: zod
+        .string()
+        .nullish()
+        .describe(
+          "Live Paddle subscription status (active, canceled, past_due, paused, trialing) when known.",
+        ),
       stripeCustomerId: zod.string().nullish(),
       createdAt: zod.coerce.date(),
       isAdmin: zod.boolean(),

@@ -20,6 +20,11 @@ export interface AdminUser {
   /** @nullable */
   organisationName?: string | null;
   hasPaddleSubscription: boolean;
+  /**
+   * Live Paddle subscription status (active, canceled, past_due, paused, trialing) when known.
+   * @nullable
+   */
+  paddleStatus?: string | null;
   /** @nullable */
   stripeCustomerId?: string | null;
   createdAt: Date;

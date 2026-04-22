@@ -18,6 +18,7 @@ export * from "./adminCancelSubscriptionResult";
 export * from "./adminCancelSubscriptionResultMode";
 export * from "./adminConnection";
 export * from "./adminListUsersParams";
+export * from "./adminListWaitlistParams";
 export * from "./adminUser";
 export * from "./adminUserList";
 export * from "./adminWaitlistList";

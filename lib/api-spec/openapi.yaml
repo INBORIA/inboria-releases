@@ -2428,6 +2428,22 @@ paths:
       summary: List all waitlist signups (admin only)
       security:
         - BearerAuth: []
+      parameters:
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
       responses:
         "200":
           description: Waitlist signups
@@ -2467,6 +2483,27 @@ paths:
           schema:
             type: string
           description: Filter by email or full name (case-insensitive substring).
+        - in: query
+          name: plan
+          required: false
+          schema:
+            type: string
+          description: Filter by plan name (e.g. essai, pro, business, expired).
+        - in: query
+          name: page
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            default: 1
+        - in: query
+          name: limit
+          required: false
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 200
+            default: 50
       responses:
         "200":
           description: User list
@@ -4015,9 +4052,18 @@ components:
       type: object
       required:
         - total
+        - page
+        - pageSize
+        - totalPages
         - signups
       properties:
         total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
           type: integer
         signups:
           type: array
@@ -4060,6 +4106,9 @@ components:
           type: ["string", "null"]
         hasPaddleSubscription:
           type: boolean
+        paddleStatus:
+          type: ["string", "null"]
+          description: Live Paddle subscription status (active, canceled, past_due, paused, trialing) when known.
         stripeCustomerId:
           type: ["string", "null"]
         createdAt:
@@ -4072,9 +4121,18 @@ components:
       type: object
       required:
         - total
+        - page
+        - pageSize
+        - totalPages
         - users
       properties:
         total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
           type: integer
         users:
           type: array
