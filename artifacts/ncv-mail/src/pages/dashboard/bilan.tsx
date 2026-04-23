@@ -3,7 +3,7 @@ import { useGenerateDailySummary, useListAppointments } from "@workspace/api-cli
 import type { Appointment } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Sparkles, ArrowRight, AlertTriangle, TrendingUp, RefreshCw, CheckSquare, BarChart3, CalendarDays, Clock, MapPin } from "lucide-react";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { format, parseISO, startOfDay, endOfDay, addDays, type Locale } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
@@ -40,11 +40,6 @@ export default function BilanQuotidien() {
       }
     );
   };
-
-  useEffect(() => {
-    fetchSummary();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentLang]);
 
   return (
     <DashboardLayout>
