@@ -265,7 +265,9 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
     /color\s*:\s*(?:black|#000|rgb\s*\(\s*0)/i.test(content) ||
     /color\s*:\s*#[0-4][0-9a-f]{5}\b/i.test(content);
 
-  const useWhiteBg = hasDarkTextColors || /<!DOCTYPE/i.test(content);
+  const isFullHtmlDoc = /<!DOCTYPE/i.test(content) || /<html[\s>]/i.test(content) || /<body[\s>]/i.test(content);
+
+  const useWhiteBg = hasDarkTextColors || isFullHtmlDoc;
 
   const overrideStyle = `
     <style id="ncvmail-overrides">
