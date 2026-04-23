@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { Bell } from "lucide-react";
+import { Bell, AlertCircle, MessageSquare, UserPlus } from "lucide-react";
 import { useGetUnreadNotificationCount, useGetNotifications, useMarkNotificationRead, useMarkAllNotificationsRead } from "@workspace/api-client-react";
 import { cn } from "@/lib/utils";
 import { useLocation } from "wouter";
@@ -39,10 +39,28 @@ export function NotificationBell() {
         onSuccess: () => { refetchCount(); refetchNotifs(); },
       });
     }
+    if (notif.type === "connection_disconnected") {
+      setLocation("/dashboard/parametres");
+      setOpen(false);
+      return;
+    }
     if (notif.emailId) {
       setLocation(`/dashboard/email/${notif.emailId}`);
       setOpen(false);
     }
+  };
+
+  const renderIcon = (type: string) => {
+    if (type === "connection_disconnected") {
+      return <AlertCircle className="h-3.5 w-3.5 text-red-400 shrink-0 mt-0.5" />;
+    }
+    if (type === "commented") {
+      return <MessageSquare className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />;
+    }
+    if (type === "assigned") {
+      return <UserPlus className="h-3.5 w-3.5 text-primary shrink-0 mt-0.5" />;
+    }
+    return null;
   };
 
   const handleMarkAllRead = () => {
@@ -105,11 +123,12 @@ export function NotificationBell() {
                   )}
                 >
                   <div className="flex items-start gap-2">
-                    {!n.read && (
+                    {renderIcon(n.type)}
+                    {!n.read && !renderIcon(n.type) && (
                       <span className="mt-1.5 h-1.5 w-1.5 rounded-full bg-primary shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className="text-[11px] font-medium text-white truncate">{n.title}</p>
+                      <p className={cn("text-[11px] font-medium truncate", n.type === "connection_disconnected" ? "text-red-300" : "text-white")}>{n.title}</p>
                       {n.message && (
                         <p className="text-[10px] text-[#8b9cb3] mt-0.5 line-clamp-2">{n.message}</p>
                       )}

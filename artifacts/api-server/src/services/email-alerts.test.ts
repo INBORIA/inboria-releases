@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { maybeSendDisconnectedAlert, type MaybeSendDeps } from "./email-alerts";
 
-function makeDeps(overrides: Partial<MaybeSendDeps> & { conn?: any; userEmail?: string | null; lang?: any } = {}): MaybeSendDeps & { sendMock: ReturnType<typeof vi.fn>; markMock: ReturnType<typeof vi.fn> } {
+function makeDeps(overrides: Partial<MaybeSendDeps> & { conn?: any; userEmail?: string | null; lang?: any } = {}): MaybeSendDeps & { sendMock: ReturnType<typeof vi.fn>; markMock: ReturnType<typeof vi.fn>; notifMock: ReturnType<typeof vi.fn> } {
   const sendMock = vi.fn().mockResolvedValue({ messageId: "m1" });
   const markMock = vi.fn().mockResolvedValue(undefined);
+  const notifMock = vi.fn().mockResolvedValue(undefined);
   const conn = overrides.conn ?? {
     id: "c1",
     user_id: "u1",
@@ -18,10 +19,12 @@ function makeDeps(overrides: Partial<MaybeSendDeps> & { conn?: any; userEmail?: 
     fetchUserEmail: overrides.fetchUserEmail ?? vi.fn().mockResolvedValue("userEmail" in overrides ? overrides.userEmail : "owner@example.com"),
     fetchUserLang: overrides.fetchUserLang ?? vi.fn().mockResolvedValue(overrides.lang ?? "fr"),
     markAlertSent: markMock,
+    createNotification: notifMock,
     now: overrides.now,
     frontendUrl: "https://inboria.test",
     sendMock,
     markMock,
+    notifMock,
   } as any;
 }
 
@@ -115,6 +118,42 @@ describe("maybeSendDisconnectedAlert", () => {
     expect(result.sent).toBe(false);
     expect(result.reason).toBe("error");
     expect(deps.markMock).not.toHaveBeenCalled();
+  });
+
+  it("inserts an in-app notification when alert is sent", async () => {
+    const deps = makeDeps();
+    const result = await maybeSendDisconnectedAlert("c1", deps);
+    expect(result.sent).toBe(true);
+    expect(deps.notifMock).toHaveBeenCalledOnce();
+    const arg = deps.notifMock.mock.calls[0]![0];
+    expect(arg.userId).toBe("u1");
+    expect(arg.title).toMatch(/boite@example\.com/);
+    expect(arg.title).toMatch(/deconnectee/i);
+    expect(arg.message).toMatch(/Parametres/);
+  });
+
+  it("does not insert an in-app notification when below threshold", async () => {
+    const deps = makeDeps({ conn: { id: "c1", user_id: "u1", email_address: "x@y.z", consecutive_failures: 1, last_error_message: "fail", last_alert_sent_at: null } });
+    const result = await maybeSendDisconnectedAlert("c1", deps);
+    expect(result.sent).toBe(false);
+    expect(deps.notifMock).not.toHaveBeenCalled();
+  });
+
+  it("still reports sent=true even if notification insert fails", async () => {
+    const deps = makeDeps();
+    deps.createNotification = vi.fn().mockRejectedValue(new Error("db down"));
+    const result = await maybeSendDisconnectedAlert("c1", deps);
+    expect(result.sent).toBe(true);
+    expect(deps.sendMock).toHaveBeenCalledOnce();
+    expect(deps.markMock).toHaveBeenCalledOnce();
+  });
+
+  it("uses English notification copy when lang=en", async () => {
+    const deps = makeDeps({ lang: "en" });
+    await maybeSendDisconnectedAlert("c1", deps);
+    const arg = deps.notifMock.mock.calls[0]![0];
+    expect(arg.title).toMatch(/disconnected/i);
+    expect(arg.message).toMatch(/Settings/);
   });
 
   it("escapes HTML in error message and sanitizes tokens", async () => {

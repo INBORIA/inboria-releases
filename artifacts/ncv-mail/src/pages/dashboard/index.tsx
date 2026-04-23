@@ -1138,6 +1138,41 @@ export default function Dashboard() {
     window.localStorage.setItem(`inboria.selectedAccount:${uid}`, selectedAccountId);
   }, [selectedAccountId, profile]);
 
+  const disconnectedToastFiredRef = useRef(false);
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (disconnectedToastFiredRef.current) return;
+    const uid = (profile as { id?: string } | undefined)?.id;
+    if (!uid || !composeConnections) return;
+    const downConns = composeConnections.filter((c) => (c.consecutive_failures ?? 0) >= 3);
+    if (downConns.length === 0) return;
+    const today = new Date().toISOString().slice(0, 10);
+    const dismissKey = `inboria.disconnectedToast.dismissed:${uid}:${today}`;
+    if (window.localStorage.getItem(dismissKey)) return;
+    disconnectedToastFiredRef.current = true;
+    window.localStorage.setItem(dismissKey, "1");
+    toast({
+      variant: "destructive",
+      duration: 8000,
+      title: t("inbox.disconnectedToastTitle", {
+        count: downConns.length,
+        defaultValue_one: "1 boîte déconnectée",
+        defaultValue_other: "{{count}} boîtes déconnectées",
+      }),
+      description: t("inbox.disconnectedToastDescription", {
+        defaultValue: "Cliquez pour reconnecter dans Paramètres.",
+      }),
+      action: (
+        <Link
+          href="/dashboard/parametres"
+          className="inline-flex items-center justify-center rounded-md border border-white/30 bg-white/10 px-3 py-1.5 text-[11px] font-medium text-white hover:bg-white/20 transition-colors"
+        >
+          {t("inbox.disconnectedToastAction", { defaultValue: "Reconnecter" })}
+        </Link>
+      ) as any,
+    });
+  }, [composeConnections, profile, toast, t]);
+
   const { data: myOrg } = useGetMyOrganisation();
   const { data: orgMembers } = useGetOrganisationMembers({ query: { enabled: !!(myOrg as any)?.id } as any });
   const assignEmailMut = useAssignEmail();
@@ -2136,11 +2171,11 @@ export default function Dashboard() {
                       <TooltipTrigger asChild>
                         <Link
                           href="/dashboard/parametres"
-                          className="inline-flex items-center gap-1 ml-1 px-1.5 py-0.5 rounded-md border border-red-500/30 bg-red-500/10 text-red-400 text-[10px] hover:bg-red-500/20 transition-colors"
-                          aria-label={t("inbox.disconnectedAlert", { count: downConns.length, defaultValue: "{{count}} compte(s) déconnecté(s)" })}
+                          className="inline-flex items-center gap-1 ml-1 px-2 py-0.5 rounded-md border border-red-500/30 bg-red-500/10 text-red-400 text-[10px] font-medium hover:bg-red-500/20 transition-colors"
+                          aria-label={t("inbox.disconnectedAccountsLabel", { count: downConns.length, defaultValue_one: "1 boîte hors service", defaultValue_other: "{{count}} boîtes hors service" })}
                         >
-                          <AlertCircle className="w-3 h-3" />
-                          <span>{downConns.length}</span>
+                          <AlertCircle className="w-3 h-3 shrink-0" />
+                          <span>{t("inbox.disconnectedAccountsLabel", { count: downConns.length, defaultValue_one: "1 boîte hors service", defaultValue_other: "{{count}} boîtes hors service" })}</span>
                         </Link>
                       </TooltipTrigger>
                       <TooltipContent className="max-w-xs">

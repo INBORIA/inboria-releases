@@ -8,7 +8,7 @@ const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
 type Lang = "fr" | "en" | "nl" | "de" | "es";
 
-const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string }> = {
+const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
     subject: (email) => `Inboria — Boite ${email} deconnectee`,
     intro: "Inboria n'arrive plus a synchroniser cette boite mail depuis plusieurs essais. Vos nouveaux mails ne sont donc plus traites tant que la connexion n'est pas retablie.",
@@ -16,6 +16,8 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     cta: "Reconnecter cette boite",
     ctaUrl: "/dashboard/parametres",
     footer: "Cet email est envoye au plus une fois par semaine et par boite. Si la reconnexion reussit, vous ne recevrez plus d'alerte.",
+    notifTitle: (email) => `Boite ${email} deconnectee`,
+    notifMessage: "Cliquez pour reconnecter cette boite dans Parametres.",
   },
   en: {
     subject: (email) => `Inboria — Mailbox ${email} disconnected`,
@@ -24,6 +26,8 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     cta: "Reconnect this mailbox",
     ctaUrl: "/dashboard/parametres",
     footer: "This email is sent at most once per week per mailbox. If reconnection succeeds, you will stop receiving alerts.",
+    notifTitle: (email) => `Mailbox ${email} disconnected`,
+    notifMessage: "Click to reconnect this mailbox in Settings.",
   },
   nl: {
     subject: (email) => `Inboria — Mailbox ${email} losgekoppeld`,
@@ -32,6 +36,8 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     cta: "Deze mailbox opnieuw verbinden",
     ctaUrl: "/dashboard/parametres",
     footer: "Deze e-mail wordt maximaal eenmaal per week per mailbox verzonden. Zodra de verbinding hersteld is, stoppen de meldingen.",
+    notifTitle: (email) => `Mailbox ${email} losgekoppeld`,
+    notifMessage: "Klik om deze mailbox opnieuw te verbinden in Instellingen.",
   },
   de: {
     subject: (email) => `Inboria — Postfach ${email} getrennt`,
@@ -40,6 +46,8 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     cta: "Dieses Postfach erneut verbinden",
     ctaUrl: "/dashboard/parametres",
     footer: "Diese E-Mail wird hochstens einmal pro Woche und Postfach gesendet. Sobald die Verbindung wiederhergestellt ist, erhalten Sie keine Benachrichtigungen mehr.",
+    notifTitle: (email) => `Postfach ${email} getrennt`,
+    notifMessage: "Klicken Sie, um dieses Postfach in den Einstellungen erneut zu verbinden.",
   },
   es: {
     subject: (email) => `Inboria — Buzon ${email} desconectado`,
@@ -48,6 +56,8 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     cta: "Reconectar este buzon",
     ctaUrl: "/dashboard/parametres",
     footer: "Este correo se envia como maximo una vez por semana y por buzon. Si la reconexion tiene exito, dejara de recibir alertas.",
+    notifTitle: (email) => `Buzon ${email} desconectado`,
+    notifMessage: "Haga clic para reconectar este buzon en Configuracion.",
   },
 };
 
@@ -83,6 +93,7 @@ export interface MaybeSendDeps {
   fetchUserEmail?: (userId: string) => Promise<string | null>;
   fetchUserLang?: (userId: string) => Promise<Lang>;
   markAlertSent?: (connId: string) => Promise<void>;
+  createNotification?: (params: { userId: string; title: string; message: string }) => Promise<void>;
   now?: () => number;
   frontendUrl?: string;
 }
@@ -132,6 +143,17 @@ async function defaultMarkAlertSent(connId: string): Promise<void> {
     .eq("id", connId);
 }
 
+async function defaultCreateNotification(params: { userId: string; title: string; message: string }): Promise<void> {
+  await supabaseAdmin.from("notifications").insert({
+    user_id: params.userId,
+    type: "connection_disconnected",
+    title: params.title,
+    message: params.message,
+    email_id: null,
+    triggered_by: null,
+  });
+}
+
 export async function maybeSendDisconnectedAlert(
   connId: string,
   deps: MaybeSendDeps = {},
@@ -176,6 +198,17 @@ export async function maybeSendDisconnectedAlert(
 
     const markAlertSent = deps.markAlertSent ?? defaultMarkAlertSent;
     await markAlertSent(connId);
+
+    try {
+      const createNotif = deps.createNotification ?? defaultCreateNotification;
+      await createNotif({
+        userId: conn.user_id,
+        title: tpl.notifTitle(conn.email_address),
+        message: tpl.notifMessage,
+      });
+    } catch (notifErr: any) {
+      log.warn({ err: sanitizeErrorMessage(notifErr?.message || String(notifErr)) }, "Failed to insert in-app notification (alert mail still sent)");
+    }
 
     log.info({ email: userEmail, mailbox: conn.email_address, lang }, "Disconnected alert sent");
     return { sent: true };
