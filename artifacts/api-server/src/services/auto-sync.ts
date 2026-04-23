@@ -1065,7 +1065,6 @@ async function syncImapForUser(conn: any): Promise<number> {
 
   let synced = 0;
   let fetchSucceeded = false;
-  let lockReleased = false;
   try {
     const mailboxStatus = client.mailbox;
     const totalMessages = mailboxStatus ? mailboxStatus.exists : 0;
@@ -1297,7 +1296,7 @@ async function syncImapForUser(conn: any): Promise<number> {
   } catch (fetchErr: any) {
     log.error({ error: fetchErr.message }, "Error during IMAP fetch/parse");
   } finally {
-    if (!lockReleased) lock.release();
+    try { lock.release(); } catch {}
   }
 
   try {
@@ -1404,16 +1403,20 @@ async function runAutoSync() {
       return 0;
     });
 
+    const cycleLog = logger.child({ service: "auto-sync" });
     for (const r of loopResult.perConnection) {
       if (r.synced < 0) {
-        console.error(`[auto-sync] ${r.email}: sync failed`);
+        cycleLog.error({ connId: r.id, email: r.email }, "Connection sync failed");
       } else {
-        console.log(`[auto-sync] ${r.email}: ${r.synced} new email(s)`);
+        cycleLog.info({ connId: r.id, email: r.email, synced: r.synced }, "Connection sync done");
       }
     }
 
     const elapsed = ((Date.now() - startTime) / 1000).toFixed(1);
-    console.log(`[auto-sync] Done: ${loopResult.totalSynced} new email(s) in ${elapsed}s (${loopResult.failureCount} failures)`);
+    cycleLog.info(
+      { totalSynced: loopResult.totalSynced, failures: loopResult.failureCount, elapsedSeconds: elapsed },
+      "Auto-sync cycle done",
+    );
   } catch (err: any) {
     console.error("[auto-sync] Fatal error:", err.message);
   } finally {
