@@ -265,58 +265,52 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
     /color\s*:\s*(?:black|#000|rgb\s*\(\s*0)/i.test(content) ||
     /color\s*:\s*#[0-4][0-9a-f]{5}\b/i.test(content);
 
-  const isFullDocument = /<!doctype/i.test(content) || /<html[\s>]/i.test(content) || /<body[\s>]/i.test(content);
-  const useWhiteBg = hasDarkTextColors || isFullDocument;
+  const useWhiteBg = hasDarkTextColors || /<!DOCTYPE/i.test(content);
 
-  const baseStyle = `
-    <style>
+  const overrideStyle = `
+    <style id="ncvmail-overrides">
       html, body {
         height: auto !important;
         min-height: 0 !important;
         max-height: none !important;
         overflow: visible !important;
+        width: auto !important;
+        max-width: 100% !important;
         margin: 0 !important;
+        padding: 0 !important;
+        background: transparent !important;
       }
-      body {
-        padding: ${useWhiteBg ? "12px" : "0"};
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        font-size: 13px;
-        line-height: 1.6;
-        color: ${useWhiteBg ? "#222" : "rgba(255,255,255,0.8)"};
-        background: ${useWhiteBg ? "#ffffff" : "transparent"};
-        word-wrap: break-word;
-        overflow-wrap: break-word;
-      }
-      * { box-sizing: border-box; max-width: 100%; }
-      a { color: #2d7dd2; }
-      img { max-width: 100%; height: auto; }
+      body { padding: ${useWhiteBg ? "12px" : "0"} !important; }
+      img { max-width: 100% !important; height: auto !important; }
       table { max-width: 100% !important; }
-      pre, code { white-space: pre-wrap; word-wrap: break-word; }
+      pre, code { white-space: pre-wrap !important; word-wrap: break-word !important; }
     </style>
   `;
 
-  let wrappedHtml: string;
-  if (isFullDocument) {
-    if (/<head[\s>]/i.test(content)) {
-      wrappedHtml = content.replace(/<head([^>]*)>/i, `<head$1>${baseStyle}`);
-    } else if (/<html[\s>]/i.test(content)) {
-      wrappedHtml = content.replace(/<html([^>]*)>/i, `<html$1><head>${baseStyle}</head>`);
-    } else {
-      wrappedHtml = `<!DOCTYPE html><html><head>${baseStyle}</head>${content}</html>`;
-    }
-  } else {
-    wrappedHtml = `
-      <!DOCTYPE html>
-      <html>
-      <head>
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        ${baseStyle}
-      </head>
-      <body>${content}</body>
-      </html>
-    `;
-  }
+  const wrappedHtml = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="utf-8" />
+      <meta name="viewport" content="width=device-width, initial-scale=1" />
+      <style>
+        body {
+          margin: 0;
+          padding: ${useWhiteBg ? "12px" : "0"};
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          font-size: 13px;
+          line-height: 1.6;
+          color: ${useWhiteBg ? "#222" : "rgba(255,255,255,0.8)"};
+          background: ${useWhiteBg ? "#ffffff" : "transparent"};
+          word-wrap: break-word;
+          overflow-wrap: break-word;
+        }
+        a { color: #2d7dd2; }
+      </style>
+    </head>
+    <body>${content}${overrideStyle}</body>
+    </html>
+  `;
 
   return (
     <iframe
