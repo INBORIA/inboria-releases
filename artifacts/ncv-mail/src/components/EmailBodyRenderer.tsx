@@ -289,50 +289,39 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
 
   const useWhiteBg = hasDarkTextColors || isFullHtmlDoc;
 
-  const overrideStyle = `
-    <style id="ncvmail-overrides">
-      html, body {
-        height: auto !important;
-        min-height: 0 !important;
-        max-height: none !important;
-        overflow: visible !important;
-        width: auto !important;
-        max-width: 100% !important;
-        margin: 0 !important;
-        padding: 0 !important;
-        background: transparent !important;
+  const baseStyle = `
+    <style>
+      body {
+        margin: 0;
+        padding: ${useWhiteBg ? "12px" : "0"};
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        font-size: 13px;
+        line-height: 1.6;
+        color: ${useWhiteBg ? "#222" : "rgba(255,255,255,0.8)"};
+        background: ${useWhiteBg ? "#ffffff" : "transparent"};
+        word-wrap: break-word;
+        overflow-wrap: break-word;
       }
-      body { padding: ${useWhiteBg ? "12px" : "0"} !important; }
-      img { max-width: 100% !important; height: auto !important; }
-      table { max-width: 100% !important; }
-      pre, code { white-space: pre-wrap !important; word-wrap: break-word !important; }
+      a { color: #2d7dd2; }
     </style>
   `;
 
-  const wrappedHtml = `
-    <!DOCTYPE html>
-    <html>
-    <head>
-      <meta charset="utf-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1" />
-      <style>
-        body {
-          margin: 0;
-          padding: ${useWhiteBg ? "12px" : "0"};
-          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-          font-size: 13px;
-          line-height: 1.6;
-          color: ${useWhiteBg ? "#222" : "rgba(255,255,255,0.8)"};
-          background: ${useWhiteBg ? "#ffffff" : "transparent"};
-          word-wrap: break-word;
-          overflow-wrap: break-word;
-        }
-        a { color: #2d7dd2; }
-      </style>
-    </head>
-    <body>${overrideStyle}${content}</body>
-    </html>
-  `;
+  let wrappedHtml: string;
+  if (isFullHtmlDoc) {
+    wrappedHtml = content;
+  } else {
+    wrappedHtml = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        ${baseStyle}
+      </head>
+      <body>${content}</body>
+      </html>
+    `;
+  }
 
   return (
     <iframe
