@@ -92,7 +92,8 @@ export interface MaybeSendDeps {
   fetchConnection?: (connId: string) => Promise<any | null>;
   fetchUserEmail?: (userId: string) => Promise<string | null>;
   fetchUserLang?: (userId: string) => Promise<Lang>;
-  markAlertSent?: (connId: string) => Promise<void>;
+  claimAlertSlot?: (connId: string, params: { nowIso: string; cutoffIso: string }) => Promise<boolean>;
+  revertAlertSlot?: (connId: string, previousSentAt: string | null) => Promise<void>;
   createNotification?: (params: { userId: string; title: string; message: string }) => Promise<void>;
   now?: () => number;
   frontendUrl?: string;
@@ -136,10 +137,25 @@ async function defaultFetchUserLang(userId: string): Promise<Lang> {
   return pickLang(data?.ai_language ?? null);
 }
 
-async function defaultMarkAlertSent(connId: string): Promise<void> {
+async function defaultClaimAlertSlot(
+  connId: string,
+  params: { nowIso: string; cutoffIso: string },
+): Promise<boolean> {
+  const { data, error } = await supabaseAdmin
+    .from("email_connections")
+    .update({ last_alert_sent_at: params.nowIso })
+    .eq("id", connId)
+    .or(`last_alert_sent_at.is.null,last_alert_sent_at.lt.${params.cutoffIso}`)
+    .select("id")
+    .maybeSingle();
+  if (error) throw error;
+  return data !== null;
+}
+
+async function defaultRevertAlertSlot(connId: string, previousSentAt: string | null): Promise<void> {
   await supabaseAdmin
     .from("email_connections")
-    .update({ last_alert_sent_at: new Date().toISOString() })
+    .update({ last_alert_sent_at: previousSentAt })
     .eq("id", connId);
 }
 
@@ -189,15 +205,32 @@ export async function maybeSendDisconnectedAlert(
     const transporter = deps.transporter ?? defaultTransporter();
     const frontendUrl = deps.frontendUrl ?? process.env["FRONTEND_URL"] ?? "https://inboria.com";
 
-    await transporter.sendMail({
-      from: '"Inboria" <noreply@inboria.com>',
-      to: userEmail,
-      subject: tpl.subject(conn.email_address),
-      html: renderHtml(tpl, conn.email_address, errorMsg, frontendUrl),
-    });
+    const claimAlertSlot = deps.claimAlertSlot ?? defaultClaimAlertSlot;
+    const nowIso = new Date(now).toISOString();
+    const cutoffIso = new Date(now - ALERT_COOLDOWN_MS).toISOString();
+    const claimed = await claimAlertSlot(connId, { nowIso, cutoffIso });
+    if (!claimed) {
+      return { sent: false, reason: "cooldown" };
+    }
 
-    const markAlertSent = deps.markAlertSent ?? defaultMarkAlertSent;
-    await markAlertSent(connId);
+    const previousSentAt: string | null = conn.last_alert_sent_at ?? null;
+
+    try {
+      await transporter.sendMail({
+        from: '"Inboria" <noreply@inboria.com>',
+        to: userEmail,
+        subject: tpl.subject(conn.email_address),
+        html: renderHtml(tpl, conn.email_address, errorMsg, frontendUrl),
+      });
+    } catch (sendErr: any) {
+      const revertAlertSlot = deps.revertAlertSlot ?? defaultRevertAlertSlot;
+      try {
+        await revertAlertSlot(connId, previousSentAt);
+      } catch (revertErr: any) {
+        log.warn({ err: sanitizeErrorMessage(revertErr?.message || String(revertErr)) }, "Failed to revert alert slot after send failure");
+      }
+      throw sendErr;
+    }
 
     try {
       const createNotif = deps.createNotification ?? defaultCreateNotification;

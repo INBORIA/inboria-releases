@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { maybeSendDisconnectedAlert, type MaybeSendDeps } from "./email-alerts";
 
-function makeDeps(overrides: Partial<MaybeSendDeps> & { conn?: any; userEmail?: string | null; lang?: any } = {}): MaybeSendDeps & { sendMock: ReturnType<typeof vi.fn>; markMock: ReturnType<typeof vi.fn>; notifMock: ReturnType<typeof vi.fn> } {
+function makeDeps(overrides: Partial<MaybeSendDeps> & { conn?: any; userEmail?: string | null; lang?: any; claimResult?: boolean } = {}): MaybeSendDeps & { sendMock: ReturnType<typeof vi.fn>; claimMock: ReturnType<typeof vi.fn>; revertMock: ReturnType<typeof vi.fn>; notifMock: ReturnType<typeof vi.fn> } {
   const sendMock = vi.fn().mockResolvedValue({ messageId: "m1" });
-  const markMock = vi.fn().mockResolvedValue(undefined);
+  const claimMock = vi.fn().mockResolvedValue(overrides.claimResult ?? true);
+  const revertMock = vi.fn().mockResolvedValue(undefined);
   const notifMock = vi.fn().mockResolvedValue(undefined);
   const conn = overrides.conn ?? {
     id: "c1",
@@ -18,12 +19,14 @@ function makeDeps(overrides: Partial<MaybeSendDeps> & { conn?: any; userEmail?: 
     fetchConnection: overrides.fetchConnection ?? vi.fn().mockResolvedValue(conn),
     fetchUserEmail: overrides.fetchUserEmail ?? vi.fn().mockResolvedValue("userEmail" in overrides ? overrides.userEmail : "owner@example.com"),
     fetchUserLang: overrides.fetchUserLang ?? vi.fn().mockResolvedValue(overrides.lang ?? "fr"),
-    markAlertSent: markMock,
+    claimAlertSlot: claimMock,
+    revertAlertSlot: revertMock,
     createNotification: notifMock,
     now: overrides.now,
     frontendUrl: "https://inboria.test",
     sendMock,
-    markMock,
+    claimMock,
+    revertMock,
     notifMock,
   } as any;
 }
@@ -36,7 +39,8 @@ describe("maybeSendDisconnectedAlert", () => {
     const result = await maybeSendDisconnectedAlert("c1", deps);
     expect(result.sent).toBe(true);
     expect(deps.sendMock).toHaveBeenCalledOnce();
-    expect(deps.markMock).toHaveBeenCalledWith("c1");
+    expect(deps.claimMock).toHaveBeenCalledWith("c1", expect.objectContaining({ nowIso: expect.any(String), cutoffIso: expect.any(String) }));
+    expect(deps.revertMock).not.toHaveBeenCalled();
     const arg = deps.sendMock.mock.calls[0]![0];
     expect(arg.to).toBe("owner@example.com");
     expect(arg.subject).toMatch(/boite@example.com/);
@@ -53,14 +57,29 @@ describe("maybeSendDisconnectedAlert", () => {
     expect(deps.sendMock).not.toHaveBeenCalled();
   });
 
-  it("respects 7-day cooldown", async () => {
+  it("respects 7-day cooldown via pre-check (skips before claim)", async () => {
     const threeDaysAgo = new Date(Date.now() - 3 * 24 * 60 * 60 * 1000).toISOString();
     const deps = makeDeps({ conn: { id: "c1", user_id: "u1", email_address: "x@y.z", consecutive_failures: 5, last_error_message: "fail", last_alert_sent_at: threeDaysAgo } });
     const result = await maybeSendDisconnectedAlert("c1", deps);
     expect(result.sent).toBe(false);
     expect(result.reason).toBe("cooldown");
     expect(deps.sendMock).not.toHaveBeenCalled();
-    expect(deps.markMock).not.toHaveBeenCalled();
+    expect(deps.claimMock).not.toHaveBeenCalled();
+  });
+
+  it("respects cooldown atomically when claim returns false (race lost)", async () => {
+    const eightDaysAgo = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString();
+    const deps = makeDeps({
+      conn: { id: "c1", user_id: "u1", email_address: "x@y.z", consecutive_failures: 5, last_error_message: "fail", last_alert_sent_at: eightDaysAgo },
+      claimResult: false,
+    });
+    const result = await maybeSendDisconnectedAlert("c1", deps);
+    expect(result.sent).toBe(false);
+    expect(result.reason).toBe("cooldown");
+    expect(deps.claimMock).toHaveBeenCalledOnce();
+    expect(deps.sendMock).not.toHaveBeenCalled();
+    expect(deps.notifMock).not.toHaveBeenCalled();
+    expect(deps.revertMock).not.toHaveBeenCalled();
   });
 
   it("re-sends after 7+ days", async () => {
@@ -111,13 +130,25 @@ describe("maybeSendDisconnectedAlert", () => {
     expect(deps.sendMock).not.toHaveBeenCalled();
   });
 
-  it("returns error reason and does not throw if transporter fails", async () => {
+  it("returns error reason and reverts the slot if transporter fails (no previous alert)", async () => {
     const deps = makeDeps();
     (deps.transporter as any).sendMail = vi.fn().mockRejectedValue(new Error("smtp down"));
     const result = await maybeSendDisconnectedAlert("c1", deps);
     expect(result.sent).toBe(false);
     expect(result.reason).toBe("error");
-    expect(deps.markMock).not.toHaveBeenCalled();
+    expect(deps.claimMock).toHaveBeenCalledOnce();
+    expect(deps.revertMock).toHaveBeenCalledWith("c1", null);
+    expect(deps.notifMock).not.toHaveBeenCalled();
+  });
+
+  it("reverts the slot to the previous timestamp on send failure (re-send case)", async () => {
+    const eightDaysAgo = new Date(Date.now() - 8 * 24 * 60 * 60 * 1000).toISOString();
+    const deps = makeDeps({ conn: { id: "c1", user_id: "u1", email_address: "x@y.z", consecutive_failures: 5, last_error_message: "fail", last_alert_sent_at: eightDaysAgo } });
+    (deps.transporter as any).sendMail = vi.fn().mockRejectedValue(new Error("smtp down"));
+    const result = await maybeSendDisconnectedAlert("c1", deps);
+    expect(result.sent).toBe(false);
+    expect(result.reason).toBe("error");
+    expect(deps.revertMock).toHaveBeenCalledWith("c1", eightDaysAgo);
   });
 
   it("inserts an in-app notification when alert is sent", async () => {
@@ -145,7 +176,8 @@ describe("maybeSendDisconnectedAlert", () => {
     const result = await maybeSendDisconnectedAlert("c1", deps);
     expect(result.sent).toBe(true);
     expect(deps.sendMock).toHaveBeenCalledOnce();
-    expect(deps.markMock).toHaveBeenCalledOnce();
+    expect(deps.claimMock).toHaveBeenCalledOnce();
+    expect(deps.revertMock).not.toHaveBeenCalled();
   });
 
   it("uses English notification copy when lang=en", async () => {
