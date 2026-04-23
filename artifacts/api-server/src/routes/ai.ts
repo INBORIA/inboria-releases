@@ -268,7 +268,7 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
     const { data: email, error: emailErr } = await fetchAccessibleEmail(
       emailId,
       req.userId!,
-      "id, sender, subject, body, category_id, project_id, connection_id",
+      "id, sender, subject, body, category_id, project_id",
     );
 
     if (emailErr || !email) {
@@ -303,20 +303,7 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
       }
     }
 
-    let userSignature = "";
-    if (email.connection_id) {
-      const { data: connection } = await supabaseAdmin
-        .from("email_connections")
-        .select("signature")
-        .eq("id", email.connection_id)
-        .eq("user_id", req.userId!)
-        .single();
-      userSignature = (connection?.signature || "").trim();
-    }
-
-    const signatureInstruction = userSignature
-      ? `Termine le brouillon avec la signature suivante (telle quelle, ne la modifie pas):\n\n${userSignature}`
-      : `N'ajoute aucune signature ni formule de signature : termine le brouillon directement par la dernière phrase utile, sans nom ni "Cordialement".`;
+    const signatureInstruction = `N'ajoute aucune signature ni formule de signature : termine le brouillon directement par la dernière phrase utile, sans nom ni "Cordialement".`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -376,28 +363,16 @@ router.post("/ai/forward-intro", requireAuth, async (req, res): Promise<void> =>
     const { data: email, error: emailErr } = await fetchAccessibleEmail(
       emailId,
       req.userId!,
-      "id, sender, subject, body, connection_id",
+      "id, sender, subject, body",
     );
 
     if (emailErr || !email) {
+      logger.warn({ emailId, userId: req.userId, emailErr }, "[ai/forward-intro] email lookup failed");
       res.status(404).json({ error: "Email introuvable" });
       return;
     }
 
-    let userSignature = "";
-    if (email.connection_id) {
-      const { data: connection } = await supabaseAdmin
-        .from("email_connections")
-        .select("signature")
-        .eq("id", email.connection_id)
-        .eq("user_id", req.userId!)
-        .single();
-      userSignature = (connection?.signature || "").trim();
-    }
-
-    const signatureInstruction = userSignature
-      ? `Termine le message par la signature suivante telle quelle :\n\n${userSignature}`
-      : `N'ajoute aucune signature ni formule de signature : termine le message directement par la dernière phrase utile, sans nom ni "Cordialement".`;
+    const signatureInstruction = `N'ajoute aucune signature ni formule de signature : termine le message directement par la dernière phrase utile, sans nom ni "Cordialement".`;
 
     const recipientHint = recipient ? `Le destinataire est : ${recipient}.` : "Le destinataire n'est pas precise.";
     const noteHint = note ? `Contexte fourni par l'utilisateur a integrer : ${note}` : "";
