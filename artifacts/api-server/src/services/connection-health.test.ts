@@ -31,6 +31,7 @@ import {
   fetchWithTimeout,
   withTimeout,
   safeRunForConnection,
+  runSyncLoop,
 } from "./connection-health";
 
 beforeEach(() => {
@@ -91,6 +92,51 @@ describe("markConnectionFailure", () => {
     maybeSingleMock.mockResolvedValueOnce({ data: null, error: { message: "db down" } });
     await expect(markConnectionFailure("conn-1", "fetch", new Error("x"))).resolves.toBeUndefined();
     expect(updateMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("runSyncLoop (runAutoSync isolation behavior)", () => {
+  it("processes every connection even when one provider call rejects (simulates IMAP client.connect rejection)", async () => {
+    rpcMock.mockResolvedValue({ error: null });
+
+    const connections = [
+      { id: "c1", email_address: "ok1@test.com", provider: "imap" },
+      { id: "c2", email_address: "fail@test.com", provider: "imap" },
+      { id: "c3", email_address: "ok3@test.com", provider: "outlook" },
+    ];
+
+    const dispatcher = vi.fn(async (conn: any) => {
+      if (conn.id === "c2") {
+        throw new Error("client.connect ECONNREFUSED");
+      }
+      return conn.provider === "imap" ? 5 : 3;
+    });
+
+    const result = await runSyncLoop(connections as any, dispatcher);
+
+    expect(dispatcher).toHaveBeenCalledTimes(3);
+    expect(result.totalSynced).toBe(8);
+    expect(result.failureCount).toBe(1);
+    expect(result.perConnection).toEqual([
+      { id: "c1", email: "ok1@test.com", synced: 5 },
+      { id: "c2", email: "fail@test.com", synced: -1 },
+      { id: "c3", email: "ok3@test.com", synced: 3 },
+    ]);
+
+    expect(rpcMock).toHaveBeenCalledTimes(1);
+    expect(rpcMock.mock.calls[0][1].p_id).toBe("c2");
+    expect(rpcMock.mock.calls[0][1].p_error_message).toContain("client.connect ECONNREFUSED");
+  });
+
+  it("returns zero failures when all connections succeed", async () => {
+    const connections = [
+      { id: "c1", email_address: "a@x", provider: "gmail" },
+      { id: "c2", email_address: "b@x", provider: "imap" },
+    ];
+    const result = await runSyncLoop(connections as any, async () => 2);
+    expect(result.totalSynced).toBe(4);
+    expect(result.failureCount).toBe(0);
+    expect(rpcMock).not.toHaveBeenCalled();
   });
 });
 

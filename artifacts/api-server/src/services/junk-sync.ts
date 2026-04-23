@@ -9,7 +9,7 @@ const JUNK_BACKFILL_DAYS = 30;
 const JUNK_PER_SYNC_LIMIT = 30;
 const JUNK_LOCK_TIMEOUT_MS = 10_000;
 const JUNK_SEARCH_TIMEOUT_MS = 30_000;
-const JUNK_FETCH_DEADLINE_MS = 60_000;
+const JUNK_FETCH_STEP_TIMEOUT_MS = 30_000;
 const IMAP_MOVE_LOCK_TIMEOUT_MS = 10_000;
 const IMAP_MOVE_TIMEOUT_MS = 30_000;
 const HTTP_TIMEOUT_MS = 20_000;
@@ -171,7 +171,6 @@ export async function syncImapJunk(
   }
 
   let savedCount = 0;
-  const fetchStartedAt = Date.now();
   try {
     const sinceDate = new Date(Date.now() - JUNK_BACKFILL_DAYS * 24 * 3600 * 1000);
     const uids = await withTimeout(
@@ -187,11 +186,11 @@ export async function syncImapJunk(
     const recent = uids.slice(-JUNK_PER_SYNC_LIMIT);
     log.info({ junkPath, total: uids.length, fetching: recent.length }, "Junk fetch starting");
 
-    for await (const msg of client.fetch(recent, { envelope: true, uid: true, source: true }, { uid: true })) {
-      if (Date.now() - fetchStartedAt > JUNK_FETCH_DEADLINE_MS) {
-        log.warn({ junkPath, savedSoFar: savedCount }, "Junk fetch deadline exceeded, stopping");
-        break;
-      }
+    const iterator = client.fetch(recent, { envelope: true, uid: true, source: true }, { uid: true })[Symbol.asyncIterator]();
+    while (true) {
+      const step = await withTimeout(iterator.next(), JUNK_FETCH_STEP_TIMEOUT_MS, "Junk fetch step");
+      if (step.done) break;
+      const msg = step.value;
       const externalId = `imap-junk:${conn.email_address}:${msg.uid}`;
       const envelope = msg.envelope;
       const from = envelope?.from?.[0];

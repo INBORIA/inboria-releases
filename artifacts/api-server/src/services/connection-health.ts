@@ -89,6 +89,36 @@ export async function markConnectionFailure(
   }
 }
 
+export interface SyncLoopResult {
+  totalSynced: number;
+  failureCount: number;
+  perConnection: Array<{ id: string | null; email: string | null; synced: number }>;
+}
+
+/**
+ * Runs `dispatcher` for each connection, isolating per-connection failures.
+ * Mirrors the loop used by `runAutoSync` so tests can assert that one
+ * thrown connection does not stop the others and that markConnectionFailure
+ * is invoked for the failing one.
+ */
+export async function runSyncLoop(
+  connections: Array<{ id: string; email_address: string; provider?: string } & Record<string, unknown>>,
+  dispatcher: (conn: any) => Promise<number>,
+): Promise<SyncLoopResult> {
+  let totalSynced = 0;
+  let failureCount = 0;
+  const perConnection: SyncLoopResult["perConnection"] = [];
+
+  for (const conn of connections) {
+    const synced = await safeRunForConnection(conn, "fetch", () => dispatcher(conn));
+    perConnection.push({ id: conn.id ?? null, email: conn.email_address ?? null, synced });
+    if (synced < 0) failureCount++;
+    else totalSynced += synced;
+  }
+
+  return { totalSynced, failureCount, perConnection };
+}
+
 export async function safeRunForConnection<T>(
   conn: { id?: string | null; email_address?: string | null } | null | undefined,
   phase: SyncPhase,
