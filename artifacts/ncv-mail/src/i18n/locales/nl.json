@@ -3747,7 +3747,7 @@
     "statusIdle": "Inactief",
     "ready": "Autopilot klaar",
     "justActed": "Actie bezig",
-    "todayDone": "{{count}} acties vandaag",
+    "todayDone": "Autopilot · {{count}} acties vandaag",
     "empty": "Geen activiteit in de laatste 24 uur.",
     "last24h": "Laatste 24 uur",
     "short": {
