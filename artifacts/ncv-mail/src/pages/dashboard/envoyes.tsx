@@ -9,9 +9,6 @@ import {
   useGetEmailConversation,
   useGetConversationSummary,
   getListEmailsQueryKey,
-  useCreateFollowup,
-  getListFollowupsQueryKey,
-  getGetFollowupStatsQueryKey,
 } from "@workspace/api-client-react";
 import type { PaginatedEmails } from "@workspace/api-client-react";
 import { format } from "date-fns";
@@ -29,9 +26,7 @@ import {
   Loader2,
   User,
   ArrowRight,
-  Eye,
   CalendarDays,
-  X,
   Trash2,
   ChevronRight,
   CheckSquare,
@@ -41,7 +36,6 @@ import {
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
@@ -413,12 +407,6 @@ function ConversationView({
   const [aiSummary, setAiSummary] = useState<string | null>(null);
   const [loadingSummary, setLoadingSummary] = useState(false);
   const summaryMut = useGetConversationSummary();
-  const createFollowup = useCreateFollowup();
-  const [followupOpen, setFollowupOpen] = useState(false);
-  const [followupTitle, setFollowupTitle] = useState("");
-  const [followupDueDate, setFollowupDueDate] = useState("");
-  const [followupNotes, setFollowupNotes] = useState("");
-  const [followupProjectId, setFollowupProjectId] = useState("none");
 
   const thread = (convoData as any)?.thread || [];
   const email = (convoData as any)?.email;
@@ -456,24 +444,6 @@ function ConversationView({
           {t("sent.title")}
         </Button>
         <div className="flex-1" />
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => {
-            if (!followupOpen) {
-              setFollowupTitle(`Suivi: ${email?.subject || ""}`);
-              setFollowupProjectId(email?.projectId || "none");
-              setFollowupNotes("");
-              const d = new Date(); d.setDate(d.getDate() + 3);
-              setFollowupDueDate(d.toISOString().split("T")[0]);
-            }
-            setFollowupOpen(!followupOpen);
-          }}
-          className="gap-1 text-[11px] h-7 bg-transparent border-amber-500/30 text-amber-400 hover:bg-amber-500/10 hover:text-amber-300"
-        >
-          <Eye className="w-3 h-3" />
-          {t("sent.createFollowupTask")}
-        </Button>
         <Button
           variant="outline"
           size="sm"
@@ -539,101 +509,6 @@ function ConversationView({
               ))}
             </SelectContent>
           </Select>
-        </div>
-      )}
-
-      {followupOpen && (
-        <div className="mb-4 rounded-lg border border-amber-500/20 bg-amber-500/5 p-4 space-y-2.5">
-          <div className="flex items-center justify-between mb-1">
-            <div className="flex items-center gap-1.5">
-              <Eye className="w-3.5 h-3.5 text-amber-400" />
-              <span className="text-[11px] font-medium text-amber-400 uppercase tracking-wider">{t("sent.createFollowup")}</span>
-            </div>
-            <button onClick={() => setFollowupOpen(false)} className="text-[#8b9cb3] hover:text-white"><X className="w-4 h-4" /></button>
-          </div>
-          <div>
-            <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("sent.followupTitleLabel")}</label>
-            <Input
-              value={followupTitle}
-              onChange={(e) => setFollowupTitle(e.target.value)}
-              placeholder={t("sent.followupTitlePlaceholder")}
-              className="bg-background border-border text-white text-[12px] h-8"
-            />
-          </div>
-          <div>
-            <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("sent.followupDueDate")}</label>
-            <Input
-              type="date"
-              value={followupDueDate}
-              onChange={(e) => setFollowupDueDate(e.target.value)}
-              className="bg-background border-border text-white text-[12px] h-8"
-            />
-          </div>
-          <div>
-            <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("followup.projectOptional")}</label>
-            <Select value={followupProjectId} onValueChange={setFollowupProjectId}>
-              <SelectTrigger className="w-full h-8 bg-background border-border text-[12px] text-white">
-                <SelectValue placeholder={t("sent.noProject")} />
-              </SelectTrigger>
-              <SelectContent className="bg-card border-border">
-                <SelectItem value="none">{t("sent.noProject")}</SelectItem>
-                {projects.map((p: any) => (
-                  <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-          <div>
-            <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("sent.followupNotes")}</label>
-            <Textarea
-              value={followupNotes}
-              onChange={(e) => setFollowupNotes(e.target.value)}
-              placeholder="Notes sur ce suivi..."
-              className="bg-background border-border text-white text-[12px] h-16 resize-none"
-            />
-          </div>
-          <div className="flex items-center gap-2 justify-end">
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => setFollowupOpen(false)}
-              className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
-            >
-              {t("common.cancel")}
-            </Button>
-            <Button
-              size="sm"
-              className="gap-1.5 h-7 text-[11px] bg-amber-600 hover:bg-amber-700"
-              disabled={!followupTitle.trim() || createFollowup.isPending}
-              onClick={() => {
-                createFollowup.mutate(
-                  {
-                    data: {
-                      title: followupTitle.trim(),
-                      emailId,
-                      dueDate: followupDueDate || undefined,
-                      notes: followupNotes || undefined,
-                      projectId: followupProjectId !== "none" ? followupProjectId : undefined,
-                    } as any,
-                  },
-                  {
-                    onSuccess: () => {
-                      queryClient.invalidateQueries({ queryKey: getListFollowupsQueryKey() });
-                      queryClient.invalidateQueries({ queryKey: getGetFollowupStatsQueryKey() });
-                      toast({ title: t("sent.followupCreated") });
-                      setFollowupOpen(false);
-                    },
-                    onError: () => {
-                      toast({ title: t("sent.followupError"), variant: "destructive" });
-                    },
-                  }
-                );
-              }}
-            >
-              {createFollowup.isPending ? <Loader2 className="w-3 h-3 animate-spin" /> : <Eye className="w-3 h-3" />}
-              {t("sent.createFollowupBtn")}
-            </Button>
-          </div>
         </div>
       )}
 

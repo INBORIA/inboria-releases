@@ -33,7 +33,6 @@ export default function Relances() {
   const [, setLocation] = useLocation();
 
   const { data: aiSuggestions, isLoading: loadingAi } = useListFollowups({ kind: "ai" });
-  const { data: manual, isLoading: loadingManual } = useListFollowups({ kind: "manual" });
 
   const updateMut = useUpdateFollowup();
   const dismissMut = useDismissFollowup();
@@ -103,7 +102,6 @@ export default function Relances() {
   }
 
   const aiList = (aiSuggestions as any[]) || [];
-  const manualList = (manual as any[]) || [];
 
   return (
     <DashboardLayout>
@@ -230,59 +228,6 @@ export default function Relances() {
           )}
         </section>
 
-        <section>
-          <div className="flex items-center gap-2 mb-3">
-            <MailCheck className="w-4 h-4 text-[#8b9cb3]" />
-            <h2 className="text-[13px] font-medium text-white uppercase tracking-wider">
-              {t("relances.scheduledTitle", "Programmées")}
-            </h2>
-            <span className="text-[11px] text-[#8b9cb3]">
-              ({manualList.length})
-            </span>
-          </div>
-
-          {loadingManual ? (
-            <Skeleton className="h-20 w-full" />
-          ) : manualList.length === 0 ? (
-            <div className="rounded-lg border border-border bg-card/40 p-6 text-center">
-              <p className="text-[12px] text-[#8b9cb3]">
-                {t(
-                  "relances.emptyScheduledDesc",
-                  "Aucune relance programmée manuellement. Vous pouvez en créer une depuis n'importe quel mail envoyé.",
-                )}
-              </p>
-            </div>
-          ) : (
-            <div className="space-y-2">
-              {manualList.map((f: any) => (
-                <div
-                  key={f.id}
-                  className="rounded-lg border border-border bg-card p-3 flex items-center justify-between gap-3"
-                >
-                  <div className="flex-1 min-w-0">
-                    <p className="text-[13px] text-white truncate">{f.title}</p>
-                    {f.due_date && (
-                      <p className="text-[11px] text-[#8b9cb3] mt-0.5">
-                        {t("relances.dueOn", "Échéance")} : {new Date(f.due_date).toLocaleDateString()}
-                      </p>
-                    )}
-                  </div>
-                  <span
-                    className={`text-[10px] px-2 py-0.5 rounded ${
-                      f.status === "termine"
-                        ? "bg-emerald-500/10 text-emerald-400"
-                        : f.status === "relance"
-                          ? "bg-blue-500/10 text-blue-400"
-                          : "bg-amber-500/10 text-amber-400"
-                    }`}
-                  >
-                    {t(`relances.status.${f.status}`, f.status) as string}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
       </div>
     </DashboardLayout>
   );
