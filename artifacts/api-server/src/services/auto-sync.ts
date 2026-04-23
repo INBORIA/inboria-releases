@@ -382,17 +382,25 @@ export async function saveEmailWithTriage(
   if (providerMessageId && junkColumnsAvailable) {
     const { data: existingByMsgId } = await supabaseAdmin
       .from("emails")
-      .select("id, status")
+      .select("id, status, external_id")
       .eq("user_id", userId)
       .eq("provider_message_id", providerMessageId)
       .limit(1)
       .maybeSingle();
     if (existingByMsgId) {
-      if (forceSpam && existingByMsgId.status !== "spam") {
-        await supabaseAdmin
-          .from("emails")
-          .update({ status: "spam", spam_source: "provider" })
-          .eq("id", existingByMsgId.id);
+      const update: Record<string, any> = {};
+      if ((existingByMsgId as any).external_id !== externalId) {
+        update.external_id = externalId;
+      }
+      if (forceSpam && (existingByMsgId as any).status !== "spam") {
+        update.status = "spam";
+        update.spam_source = "provider";
+      } else if (!forceSpam && (existingByMsgId as any).status === "spam") {
+        update.status = "non_lu";
+        update.spam_source = "user";
+      }
+      if (Object.keys(update).length > 0) {
+        await supabaseAdmin.from("emails").update(update).eq("id", existingByMsgId.id);
       }
       return null;
     }
@@ -1042,23 +1050,15 @@ async function syncImapForUser(conn: any): Promise<number> {
     log.info({ totalMessages }, "Mailbox status");
 
     if (totalMessages === 0) {
-      log.info("Mailbox empty, nothing to fetch");
+      log.info("Mailbox empty, skipping INBOX fetch (junk sync will still run)");
       fetchSucceeded = true;
-      lock.release();
-      lockReleased = true;
-      await client.logout();
-      await supabaseAdmin
-        .from("email_connections")
-        .update({ last_synced_at: new Date().toISOString() })
-        .eq("id", conn.id);
-      return 0;
     }
 
     const startSeq = Math.max(1, totalMessages - 9);
     const range = `${startSeq}:*`;
     let fetchedCount = 0;
 
-    for await (const msg of client.fetch(range, { envelope: true, uid: true, source: true })) {
+    for await (const msg of (totalMessages === 0 ? [] as any[] : client.fetch(range, { envelope: true, uid: true, source: true }))) {
       fetchedCount++;
       const externalId = `imap:${conn.email_address}:${msg.uid}`;
       const envelope = msg.envelope!;
