@@ -38,9 +38,26 @@ function fakeFetchOk(body: any, status = 200): any {
   });
 }
 
+function fakeFetchSequence(responses: Array<{ body: any; status?: number }>): any {
+  const fn = vi.fn();
+  for (const r of responses) {
+    const status = r.status ?? 200;
+    fn.mockResolvedValueOnce({
+      ok: status >= 200 && status < 300,
+      status,
+      text: async () => JSON.stringify(r.body),
+      json: async () => r.body,
+    });
+  }
+  return fn;
+}
+
 describe("blockSenderOnProvider — Microsoft", () => {
-  it("creates a messageRule via Graph and returns the rule id", async () => {
-    const fetchGraph = fakeFetchOk({ id: "rule-abc" });
+  it("resolves junk folder id then creates a messageRule via Graph", async () => {
+    const fetchGraph = fakeFetchSequence([
+      { body: { id: "REAL-JUNK-FOLDER-ID-base64==" } },
+      { body: { id: "rule-abc" } },
+    ]);
     const result = await blockSenderOnProvider(
       microsoftConn(),
       "Spammer@Example.COM",
@@ -48,14 +65,19 @@ describe("blockSenderOnProvider — Microsoft", () => {
     );
     expect(result.ok).toBe(true);
     expect(result.providerRuleId).toBe("rule-abc");
-    expect(fetchGraph).toHaveBeenCalledTimes(1);
-    const [url, init] = fetchGraph.mock.calls[0]!;
-    expect(url).toBe("https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messageRules");
-    expect(init.method).toBe("POST");
-    expect(init.headers.Authorization).toBe("Bearer valid-token");
-    const payload = JSON.parse(init.body);
+    expect(fetchGraph).toHaveBeenCalledTimes(2);
+
+    const [junkUrl, junkInit] = fetchGraph.mock.calls[0]!;
+    expect(junkUrl).toBe("https://graph.microsoft.com/v1.0/me/mailFolders/junkemail");
+    expect(junkInit.method).toBe("GET");
+
+    const [ruleUrl, ruleInit] = fetchGraph.mock.calls[1]!;
+    expect(ruleUrl).toBe("https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messageRules");
+    expect(ruleInit.method).toBe("POST");
+    expect(ruleInit.headers.Authorization).toBe("Bearer valid-token");
+    const payload = JSON.parse(ruleInit.body);
     expect(payload.conditions.fromAddresses[0].emailAddress.address).toBe("spammer@example.com");
-    expect(payload.actions.moveToFolder).toBe("junkemail");
+    expect(payload.actions.moveToFolder).toBe("REAL-JUNK-FOLDER-ID-base64==");
     expect(payload.actions.stopProcessingRules).toBe(true);
     expect(payload.isEnabled).toBe(true);
   });
@@ -72,8 +94,24 @@ describe("blockSenderOnProvider — Microsoft", () => {
     expect(fetchGraph).not.toHaveBeenCalled();
   });
 
-  it("returns api_error when Graph responds non-2xx", async () => {
-    const fetchGraph = fakeFetchOk({ error: "boom" }, 500);
+  it("returns api_error when junk folder lookup fails", async () => {
+    const fetchGraph = fakeFetchSequence([{ body: { error: "no" }, status: 403 }]);
+    const result = await blockSenderOnProvider(
+      microsoftConn(),
+      "x@y.com",
+      { fetchGraph, resolveMsToken: async () => "tok" },
+    );
+    expect(result.ok).toBe(false);
+    expect(result.reason).toBe("api_error");
+    expect(result.message).toContain("junk-lookup");
+    expect(fetchGraph).toHaveBeenCalledTimes(1);
+  });
+
+  it("returns api_error when messageRules POST responds non-2xx", async () => {
+    const fetchGraph = fakeFetchSequence([
+      { body: { id: "junk-id" } },
+      { body: { error: "boom" }, status: 500 },
+    ]);
     const result = await blockSenderOnProvider(
       microsoftConn(),
       "x@y.com",

@@ -144,6 +144,28 @@ export async function blockSenderOnProvider(
       return { ok: false, providerRuleId: null, reason: "auth_failed" };
     }
     const fetchFn = deps.fetchGraph ?? fetchWithTimeout;
+
+    // Résout l'ID réel du dossier "Junk Email" — l'alias "junkemail" est valide
+    // pour /me/mailFolders/{name} mais messageRuleActions.moveToFolder attend
+    // l'identifiant concret retourné par Graph.
+    const junkResp = await fetchFn(
+      "https://graph.microsoft.com/v1.0/me/mailFolders/junkemail",
+      {
+        method: "GET",
+        headers: { Authorization: `Bearer ${accessToken}` },
+        timeoutMs: HTTP_TIMEOUT_MS,
+      },
+    );
+    if (!junkResp.ok) {
+      log.warn({ status: junkResp.status }, "Graph junkemail folder lookup failed");
+      return { ok: false, providerRuleId: null, reason: "api_error", message: `junk-lookup ${junkResp.status}` };
+    }
+    const junkFolder = (await junkResp.json()) as any;
+    const junkFolderId = junkFolder?.id;
+    if (!junkFolderId || typeof junkFolderId !== "string") {
+      return { ok: false, providerRuleId: null, reason: "api_error", message: "junk-folder-id-missing" };
+    }
+
     const resp = await fetchFn(
       "https://graph.microsoft.com/v1.0/me/mailFolders/inbox/messageRules",
       {
@@ -160,7 +182,7 @@ export async function blockSenderOnProvider(
             fromAddresses: [{ emailAddress: { address: target } }],
           },
           actions: {
-            moveToFolder: "junkemail",
+            moveToFolder: junkFolderId,
             stopProcessingRules: true,
           },
         }),
