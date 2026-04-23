@@ -7,7 +7,7 @@ import { logger } from "../lib/logger";
 import { getKnowledgeBase, getSystemPrompt } from "../services/knowledge-base";
 import { AI_COST, checkEntitlement, consumeAiCredits, type AiEventType } from "../services/credits";
 import { recordAutopilotEvent } from "../services/autopilot-events";
-import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
+import { getMemberMailboxIds } from "../lib/inbox-scope";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -17,13 +17,11 @@ const router: IRouter = Router();
 
 async function fetchAccessibleEmail(emailId: number, userId: string, columns: string) {
   const memberMailboxIds = await getMemberMailboxIds(userId);
-  const orFilter = buildInboxScopeOrFilter(userId, memberMailboxIds);
-  return await supabaseAdmin
-    .from("emails")
-    .select(columns)
-    .eq("id", emailId)
-    .or(orFilter)
-    .single();
+  const query = supabaseAdmin.from("emails").select(columns).eq("id", emailId);
+  if (memberMailboxIds.length > 0) {
+    return await query.or(`user_id.eq.${userId},shared_mailbox_id.in.(${memberMailboxIds.join(",")})`).single();
+  }
+  return await query.eq("user_id", userId).single();
 }
 
 router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> => {
