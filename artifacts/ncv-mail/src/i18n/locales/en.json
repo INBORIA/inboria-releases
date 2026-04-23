@@ -312,6 +312,7 @@
     "spamEmpty": "No junk mail",
     "spamEmptyDesc": "Emails flagged as junk will appear here.",
     "spamSourceProvider": "Filtered by your provider",
+    "spamSourceProviderToast": "Some messages were already flagged as spam by your provider (Gmail, Outlook…). Inboria displays them as-is, without re-classifying them or using AI credits.",
     "emptySpam": "Empty junk",
     "emptySpamConfirm": "Are you sure? All junk mail will be permanently deleted.",
     "spamEmptied": "Junk emptied",

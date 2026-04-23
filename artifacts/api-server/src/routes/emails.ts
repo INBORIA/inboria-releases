@@ -24,7 +24,7 @@ async function moveProviderMessage(
   emailRowId: string | number,
   userId: string,
   externalId: string,
-  destination: "INBOX" | "JUNK",
+  destination: "INBOX" | "JUNK" | "TRASH",
 ): Promise<void> {
   if (!externalId) return;
 
@@ -33,18 +33,24 @@ async function moveProviderMessage(
     if (!messageId) return;
     const { data: conns } = await supabaseAdmin
       .from("email_connections")
-      .select("access_token, refresh_token, token_expires_at")
+      .select("access_token")
       .eq("user_id", userId)
       .eq("provider", "outlook");
-    if (!conns || conns.length !== 1) return;
-    const access = (conns[0] as any).access_token;
-    if (!access) return;
-    const result = await moveOutlookMessage(access, messageId, destination === "JUNK" ? "junkemail" : "inbox");
-    if (result.ok && result.newId && result.newId !== messageId) {
-      await supabaseAdmin
-        .from("emails")
-        .update({ external_id: `outlook:${result.newId}` })
-        .eq("id", emailRowId);
+    if (!conns || conns.length === 0) return;
+    const graphDest = destination === "JUNK" ? "junkemail" : destination === "TRASH" ? "deleteditems" : "inbox";
+    for (const c of conns) {
+      const access = (c as any).access_token;
+      if (!access) continue;
+      const result = await moveOutlookMessage(access, messageId, graphDest);
+      if (result.ok) {
+        if (result.newId && result.newId !== messageId) {
+          await supabaseAdmin
+            .from("emails")
+            .update({ external_id: `outlook:${result.newId}` })
+            .eq("id", emailRowId);
+        }
+        return;
+      }
     }
     return;
   }
@@ -1038,12 +1044,17 @@ router.delete("/emails/spam/empty", requireAuth, async (req, res): Promise<void>
   try {
     const { data: spamEmails } = await supabaseAdmin
       .from("emails")
-      .select("id")
+      .select("id, external_id")
       .eq("user_id", req.userId!)
       .eq("status", "spam");
 
     if (spamEmails && spamEmails.length > 0) {
       const spamIds = spamEmails.map((e: any) => e.id);
+      for (const e of spamEmails as any[]) {
+        if (e.external_id) {
+          await moveProviderMessage(e.id, req.userId!, e.external_id, "TRASH").catch(() => undefined);
+        }
+      }
 
       await supabaseAdmin
         .from("tasks")
@@ -1096,6 +1107,22 @@ router.delete("/emails/:id", requireAuth, async (req, res): Promise<void> => {
 
 router.post("/emails/:id/restore", requireAuth, async (req, res): Promise<void> => {
   try {
+    const { data: existing } = await supabaseAdmin
+      .from("emails")
+      .select("status, external_id")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .maybeSingle();
+
+    if (existing && (existing as any).external_id && (existing as any).status === "spam") {
+      await moveProviderMessage(
+        req.params.id as any,
+        req.userId!,
+        (existing as any).external_id,
+        "INBOX",
+      ).catch(() => undefined);
+    }
+
     const { error } = await supabaseAdmin
       .from("emails")
       .update({ status: "non_lu" })
@@ -1116,6 +1143,22 @@ router.post("/emails/:id/restore", requireAuth, async (req, res): Promise<void> 
 
 router.delete("/emails/:id/permanent", requireAuth, async (req, res): Promise<void> => {
   try {
+    const { data: existing } = await supabaseAdmin
+      .from("emails")
+      .select("status, external_id")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .maybeSingle();
+
+    if (existing && (existing as any).external_id) {
+      await moveProviderMessage(
+        req.params.id as any,
+        req.userId!,
+        (existing as any).external_id,
+        "TRASH",
+      ).catch(() => undefined);
+    }
+
     await supabaseAdmin
       .from("tasks")
       .delete()

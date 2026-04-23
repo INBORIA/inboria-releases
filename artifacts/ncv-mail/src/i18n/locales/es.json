@@ -312,6 +312,7 @@
     "spamEmpty": "Sin correo no deseado",
     "spamEmptyDesc": "Los correos detectados como no deseados aparecerán aquí.",
     "spamSourceProvider": "Filtrado por su proveedor",
+    "spamSourceProviderToast": "Algunos mensajes ya fueron marcados como spam por su proveedor (Gmail, Outlook…). Inboria los muestra tal cual, sin reclasificarlos ni usar créditos de IA.",
     "emptySpam": "Vaciar correo no deseado",
     "emptySpamConfirm": "¿Estás seguro? Todo el correo no deseado será eliminado permanentemente.",
     "spamEmptied": "Correo no deseado vaciado",

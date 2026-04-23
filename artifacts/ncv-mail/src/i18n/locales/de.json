@@ -312,6 +312,7 @@
     "spamEmpty": "Keine Junk-E-Mail",
     "spamEmptyDesc": "Als Junk-E-Mail erkannte Nachrichten erscheinen hier.",
     "spamSourceProvider": "Vom Anbieter gefiltert",
+    "spamSourceProviderToast": "Einige Nachrichten wurden bereits von Ihrem Anbieter (Gmail, Outlook…) als Spam markiert. Inboria zeigt sie unverändert an, ohne sie neu zu klassifizieren oder KI-Credits zu verbrauchen.",
     "emptySpam": "Junk-E-Mail leeren",
     "emptySpamConfirm": "Sind Sie sicher? Alle Junk-E-Mails werden dauerhaft gelöscht.",
     "spamEmptied": "Junk-E-Mail geleert",

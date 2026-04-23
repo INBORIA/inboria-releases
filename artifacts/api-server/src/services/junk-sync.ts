@@ -24,6 +24,54 @@ const IMAP_JUNK_FALLBACK_NAMES = [
   "Ongewenste e-mail",
 ];
 
+const IMAP_TRASH_FALLBACK_NAMES = [
+  "Trash",
+  "Deleted",
+  "Deleted Items",
+  "Deleted Messages",
+  "INBOX.Trash",
+  "INBOX.Deleted",
+  "INBOX.Deleted Items",
+  "Corbeille",
+  "INBOX.Corbeille",
+  "Éléments supprimés",
+  "Elements supprimes",
+  "Prullenbak",
+  "Verwijderde items",
+  "Papierkorb",
+  "Gelöschte Elemente",
+  "Geloeschte Elemente",
+  "Elementos eliminados",
+];
+
+export async function discoverImapTrashFolder(client: ImapFlow): Promise<string | null> {
+  const log = logger.child({ service: "trash-discover" });
+  try {
+    const list = await client.list();
+    const flagged = list.find((m) => {
+      const flags = m.flags as unknown;
+      if (flags instanceof Set) return flags.has("\\Trash");
+      if (Array.isArray(flags)) return flags.includes("\\Trash");
+      return false;
+    });
+    if (flagged?.path) {
+      log.info({ path: flagged.path }, "IMAP Trash discovered via SPECIAL-USE \\Trash");
+      return flagged.path;
+    }
+    const lowerMap = new Map(list.map((m) => [m.path.toLowerCase(), m.path]));
+    for (const candidate of IMAP_TRASH_FALLBACK_NAMES) {
+      const hit = lowerMap.get(candidate.toLowerCase());
+      if (hit) {
+        log.info({ path: hit }, "IMAP Trash discovered via fallback name");
+        return hit;
+      }
+    }
+  } catch (err: any) {
+    log.warn({ err: err.message }, "IMAP Trash discovery failed");
+  }
+  return null;
+}
+
 export interface JunkEmailPayload {
   externalId: string;
   sender: string;
@@ -255,7 +303,7 @@ export async function moveImapMessage(
   conn: { id: string; email_address: string; access_token: string; refresh_token: string; junk_folder_path?: string | null },
   uid: number,
   fromFolder: string,
-  toFolder: "INBOX" | "JUNK",
+  toFolder: "INBOX" | "JUNK" | "TRASH",
 ): Promise<{ ok: true; newUid: number | null; targetFolder: string } | { ok: false }> {
   const log = logger.child({ service: "junk-move-imap", email: conn.email_address });
   let imapConfig: { host: string; port: number };
@@ -283,13 +331,20 @@ export async function moveImapMessage(
     let target: string;
     if (toFolder === "INBOX") {
       target = "INBOX";
-    } else {
+    } else if (toFolder === "JUNK") {
       const junkPath = await discoverImapJunkFolder(client, conn.junk_folder_path);
       if (!junkPath) {
         log.warn("Move to JUNK aborted: no junk folder discovered");
         return { ok: false };
       }
       target = junkPath;
+    } else {
+      const trashPath = await discoverImapTrashFolder(client);
+      if (!trashPath) {
+        log.warn("Move to TRASH aborted: no trash folder discovered");
+        return { ok: false };
+      }
+      target = trashPath;
     }
 
     const lock = await client.getMailboxLock(fromFolder);
@@ -320,7 +375,7 @@ export async function moveImapMessage(
 export async function moveOutlookMessage(
   accessToken: string,
   messageId: string,
-  destination: "inbox" | "junkemail",
+  destination: "inbox" | "junkemail" | "deleteditems",
 ): Promise<{ ok: true; newId: string | null } | { ok: false }> {
   const log = logger.child({ service: "junk-move-outlook" });
   try {

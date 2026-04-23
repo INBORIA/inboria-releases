@@ -1328,8 +1328,20 @@ export default function Dashboard() {
           return [...prev, ...unique];
         });
       }
+      const seenKey = "inboria:providerSpamToastSeen";
+      if (
+        typeof window !== "undefined" &&
+        !window.localStorage.getItem(seenKey) &&
+        newEmails.some((e: any) => e.spamSource === "provider")
+      ) {
+        window.localStorage.setItem(seenKey, "1");
+        toast({
+          title: t("inbox.spamSourceProvider"),
+          description: t("inbox.spamSourceProviderToast"),
+        });
+      }
     }
-  }, [spamData, spamPage]);
+  }, [spamData, spamPage, toast, t]);
 
   useEffect(() => {
     if (inboxMode === "spam") {
