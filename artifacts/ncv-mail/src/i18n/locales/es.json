@@ -3738,5 +3738,30 @@
     "planFilterAll": "Todos los planes",
     "paginationLabel": "Página {{page}} de {{totalPages}}",
     "cancelError": "Error al revocar."
+  },
+  "autopilot": {
+    "title": "Autopilot",
+    "panelTitle": "Actividad de Autopilot",
+    "openPanel": "Abrir panel Autopilot",
+    "statusActive": "Activo",
+    "statusIdle": "Inactivo",
+    "empty": "Sin actividad en las últimas 24 horas.",
+    "last24h": "Últimas 24 horas",
+    "short": {
+      "sorted": "Ordenados",
+      "drafts": "Borradores",
+      "tasks": "Tareas",
+      "appointments": "Citas"
+    },
+    "events": {
+      "email_sorted": "Correo ordenado",
+      "draft_generated": "Borrador generado",
+      "task_created": "Tarea creada",
+      "appointment_extracted": "Cita detectada",
+      "forward_intro_generated": "Introducción de reenvío",
+      "sender_blocked": "Remitente bloqueado",
+      "summary_generated": "Resumen generado",
+      "follow_up_detected": "Seguimiento detectado"
+    }
   }
 }

@@ -6,6 +6,7 @@ import { requireAuth } from "../middlewares/auth";
 import { logger } from "../lib/logger";
 import { getKnowledgeBase, getSystemPrompt } from "../services/knowledge-base";
 import { AI_COST, checkEntitlement, consumeAiCredits, type AiEventType } from "../services/credits";
+import { recordAutopilotEvent } from "../services/autopilot-events";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -330,6 +331,12 @@ Redige une reponse professionnelle et adaptee au contexte. Reponds uniquement av
       res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
       return;
     }
+    recordAutopilotEvent({
+      userId: req.userId!,
+      eventType: "draft_generated",
+      title: req.body?.subject || null,
+      emailId: Number(req.body?.emailId) || null,
+    }).catch(() => {});
     res.json({ draft });
   } catch (err: any) {
     console.error("AI draft error:", err);
@@ -402,6 +409,12 @@ router.post("/ai/forward-intro", requireAuth, async (req, res): Promise<void> =>
       res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
       return;
     }
+    recordAutopilotEvent({
+      userId: req.userId!,
+      eventType: "forward_intro_generated",
+      title: req.body?.subject || null,
+      emailId: Number(req.body?.emailId) || null,
+    }).catch(() => {});
     res.json({ intro });
   } catch (err: any) {
     logger.error({ err: err?.message, stack: err?.stack }, "[forward-intro] error");
@@ -540,6 +553,14 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
       res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
       return;
     }
+    if (recategorized > 0) {
+      recordAutopilotEvent({
+        userId,
+        eventType: "email_sorted",
+        title: null,
+        metadata: { batch: true, count: recategorized, source: "recategorize" },
+      }).catch(() => {});
+    }
     res.json({ recategorized, created: createdCategories });
   } catch (err: any) {
     console.error("[recategorize] Error:", err);
@@ -644,6 +665,15 @@ Extrais le maximum d'informations structurées même si une date exacte n'est pa
     if (!billing.ok) {
       res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
       return;
+    }
+    if (result.hasAppointment) {
+      recordAutopilotEvent({
+        userId: req.userId!,
+        eventType: "appointment_extracted",
+        title: result.title || email.subject || null,
+        emailId: Number(req.body?.emailId) || null,
+        metadata: { startAt: result.startAt ?? null },
+      }).catch(() => {});
     }
     res.json({
       title: result.title || email.subject || "",

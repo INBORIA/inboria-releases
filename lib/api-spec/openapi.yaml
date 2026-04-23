@@ -38,6 +38,8 @@ tags:
     description: Organisation and team management operations
   - name: shared-mailboxes
     description: Shared mailbox operations
+  - name: autopilot
+    description: Autopilot live activity operations
   - name: notifications
     description: Notification operations
   - name: team
@@ -380,6 +382,19 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/SpamCount"
+
+  /autopilot/activity:
+    get:
+      operationId: getAutopilotActivity
+      tags: [autopilot]
+      summary: Get today's autopilot counts and the last 24h timeline
+      responses:
+        "200":
+          description: Activity snapshot
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AutopilotActivity"
 
   /senders/blocked:
     get:
@@ -3942,6 +3957,80 @@ components:
         - provider
         - scope
         - blockedAt
+
+    AutopilotEvent:
+      type: object
+      required:
+        - id
+        - eventType
+        - createdAt
+      properties:
+        id:
+          type: string
+        eventType:
+          type: string
+          enum:
+            - email_sorted
+            - draft_generated
+            - task_created
+            - appointment_extracted
+            - forward_intro_generated
+            - sender_blocked
+            - summary_generated
+            - follow_up_detected
+        title:
+          type: ["string", "null"]
+        emailId:
+          type: ["integer", "null"]
+        metadata:
+          type: object
+          additionalProperties: true
+        createdAt:
+          type: string
+          format: date-time
+
+    AutopilotTodayCounts:
+      type: object
+      required:
+        - total
+        - email_sorted
+        - draft_generated
+        - task_created
+        - appointment_extracted
+        - forward_intro_generated
+        - sender_blocked
+        - summary_generated
+        - follow_up_detected
+      properties:
+        total: { type: integer }
+        email_sorted: { type: integer }
+        draft_generated: { type: integer }
+        task_created: { type: integer }
+        appointment_extracted: { type: integer }
+        forward_intro_generated: { type: integer }
+        sender_blocked: { type: integer }
+        summary_generated: { type: integer }
+        follow_up_detected: { type: integer }
+
+    AutopilotActivity:
+      type: object
+      required:
+        - todayCounts
+        - recent
+        - isActive
+        - lastEventAt
+      properties:
+        todayCounts:
+          $ref: "#/components/schemas/AutopilotTodayCounts"
+        recent:
+          type: array
+          items:
+            $ref: "#/components/schemas/AutopilotEvent"
+        isActive:
+          type: boolean
+        lastEventAt:
+          type: ["string", "null"]
+          format: date-time
 
     BlockSenderResultEntry:
       type: object

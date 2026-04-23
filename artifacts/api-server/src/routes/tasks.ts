@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { recordAutopilotEvent } from "../services/autopilot-events";
 
 const router: IRouter = Router();
 
@@ -226,6 +227,14 @@ router.post("/tasks", requireAuth, async (req, res): Promise<void> => {
       res.status(500).json({ error: error.message });
       return;
     }
+
+    recordAutopilotEvent({
+      userId,
+      eventType: "task_created",
+      title: task.title || null,
+      emailId: (task.email_id as number | null) ?? null,
+      metadata: { source: emailId ? "from_email" : "manual" },
+    }).catch(() => {});
 
     res.status(201).json(mapTask(task));
   } catch (err) {

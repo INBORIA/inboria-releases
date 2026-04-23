@@ -7,6 +7,7 @@ import {
   unblockSenderOnProvider,
   type ConnectionForBlock,
 } from "../services/blocked-senders";
+import { recordAutopilotEvent } from "../services/autopilot-events";
 
 const router: IRouter = Router();
 
@@ -129,6 +130,12 @@ router.post("/senders/block", requireAuth, async (req, res): Promise<void> => {
       });
     }
 
+    recordAutopilotEvent({
+      userId: req.userId!,
+      eventType: "sender_blocked",
+      title: target,
+      metadata: { scope: normalizedScope, results },
+    }).catch(() => {});
     res.json({
       blocked: target,
       scope: normalizedScope,

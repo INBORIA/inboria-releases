@@ -35,6 +35,7 @@ import type {
   AssignEmailBody,
   AssignEmailResult,
   AuthResponse,
+  AutopilotActivity,
   BlockSenderBody,
   BlockSenderResult,
   BlockedSender,
@@ -1551,6 +1552,81 @@ export function useGetSpamCount<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetSpamCountQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get today's autopilot counts and the last 24h timeline
+ */
+export const getGetAutopilotActivityUrl = () => {
+  return `/api/autopilot/activity`;
+};
+
+export const getAutopilotActivity = async (
+  options?: RequestInit,
+): Promise<AutopilotActivity> => {
+  return customFetch<AutopilotActivity>(getGetAutopilotActivityUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetAutopilotActivityQueryKey = () => {
+  return [`/api/autopilot/activity`] as const;
+};
+
+export const getGetAutopilotActivityQueryOptions = <
+  TData = Awaited<ReturnType<typeof getAutopilotActivity>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getAutopilotActivity>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetAutopilotActivityQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getAutopilotActivity>>
+  > = ({ signal }) => getAutopilotActivity({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getAutopilotActivity>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetAutopilotActivityQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getAutopilotActivity>>
+>;
+export type GetAutopilotActivityQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get today's autopilot counts and the last 24h timeline
+ */
+
+export function useGetAutopilotActivity<
+  TData = Awaited<ReturnType<typeof getAutopilotActivity>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getAutopilotActivity>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetAutopilotActivityQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

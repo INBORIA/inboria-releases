@@ -3738,5 +3738,30 @@
     "planFilterAll": "Alle Tarife",
     "paginationLabel": "Seite {{page}} von {{totalPages}}",
     "cancelError": "Entzug fehlgeschlagen."
+  },
+  "autopilot": {
+    "title": "Autopilot",
+    "panelTitle": "Autopilot-Aktivität",
+    "openPanel": "Autopilot-Panel öffnen",
+    "statusActive": "Aktiv",
+    "statusIdle": "Inaktiv",
+    "empty": "Keine Aktivität in den letzten 24 Stunden.",
+    "last24h": "Letzte 24 Stunden",
+    "short": {
+      "sorted": "Sortiert",
+      "drafts": "Entwürfe",
+      "tasks": "Aufgaben",
+      "appointments": "Termine"
+    },
+    "events": {
+      "email_sorted": "E-Mail sortiert",
+      "draft_generated": "Entwurf erstellt",
+      "task_created": "Aufgabe erstellt",
+      "appointment_extracted": "Termin erkannt",
+      "forward_intro_generated": "Weiterleitungs-Intro erstellt",
+      "sender_blocked": "Absender blockiert",
+      "summary_generated": "Zusammenfassung erstellt",
+      "follow_up_detected": "Erinnerung erkannt"
+    }
   }
 }

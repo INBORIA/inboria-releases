@@ -3738,5 +3738,30 @@
     "planFilterAll": "Alle plannen",
     "paginationLabel": "Pagina {{page}} van {{totalPages}}",
     "cancelError": "Intrekken mislukt."
+  },
+  "autopilot": {
+    "title": "Autopilot",
+    "panelTitle": "Autopilot-activiteit",
+    "openPanel": "Autopilot-paneel openen",
+    "statusActive": "Actief",
+    "statusIdle": "Inactief",
+    "empty": "Geen activiteit in de laatste 24 uur.",
+    "last24h": "Laatste 24 uur",
+    "short": {
+      "sorted": "Gesorteerd",
+      "drafts": "Concepten",
+      "tasks": "Taken",
+      "appointments": "Afspraken"
+    },
+    "events": {
+      "email_sorted": "E-mail gesorteerd",
+      "draft_generated": "Concept gegenereerd",
+      "task_created": "Taak aangemaakt",
+      "appointment_extracted": "Afspraak gedetecteerd",
+      "forward_intro_generated": "Doorstuur-intro geschreven",
+      "sender_blocked": "Afzender geblokkeerd",
+      "summary_generated": "Samenvatting gegenereerd",
+      "follow_up_detected": "Herinnering gedetecteerd"
+    }
   }
 }

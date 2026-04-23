@@ -438,6 +438,44 @@ export const GetSpamCountResponse = zod.object({
 });
 
 /**
+ * @summary Get today's autopilot counts and the last 24h timeline
+ */
+export const GetAutopilotActivityResponse = zod.object({
+  todayCounts: zod.object({
+    total: zod.number(),
+    email_sorted: zod.number(),
+    draft_generated: zod.number(),
+    task_created: zod.number(),
+    appointment_extracted: zod.number(),
+    forward_intro_generated: zod.number(),
+    sender_blocked: zod.number(),
+    summary_generated: zod.number(),
+    follow_up_detected: zod.number(),
+  }),
+  recent: zod.array(
+    zod.object({
+      id: zod.string(),
+      eventType: zod.enum([
+        "email_sorted",
+        "draft_generated",
+        "task_created",
+        "appointment_extracted",
+        "forward_intro_generated",
+        "sender_blocked",
+        "summary_generated",
+        "follow_up_detected",
+      ]),
+      title: zod.string().nullish(),
+      emailId: zod.number().nullish(),
+      metadata: zod.record(zod.string(), zod.unknown()).optional(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+  isActive: zod.boolean(),
+  lastEventAt: zod.coerce.date().nullable(),
+});
+
+/**
  * @summary List blocked senders
  */
 export const ListBlockedSendersQueryParams = zod.object({

@@ -3738,5 +3738,30 @@
     "planFilterAll": "All plans",
     "paginationLabel": "Page {{page}} of {{totalPages}}",
     "cancelError": "Revocation failed."
+  },
+  "autopilot": {
+    "title": "Autopilot",
+    "panelTitle": "Autopilot activity",
+    "openPanel": "Open Autopilot panel",
+    "statusActive": "Active",
+    "statusIdle": "Idle",
+    "empty": "No activity in the last 24 hours.",
+    "last24h": "Last 24 hours",
+    "short": {
+      "sorted": "Sorted",
+      "drafts": "Drafts",
+      "tasks": "Tasks",
+      "appointments": "Meetings"
+    },
+    "events": {
+      "email_sorted": "Email sorted",
+      "draft_generated": "Draft generated",
+      "task_created": "Task created",
+      "appointment_extracted": "Meeting detected",
+      "forward_intro_generated": "Forward intro written",
+      "sender_blocked": "Sender blocked",
+      "summary_generated": "Summary generated",
+      "follow_up_detected": "Follow-up detected"
+    }
   }
 }

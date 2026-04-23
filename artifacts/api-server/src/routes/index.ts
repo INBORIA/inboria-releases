@@ -26,6 +26,7 @@ import waitlistRouter from "./waitlist";
 import adminRouter from "./admin";
 import renderFailuresRouter from "./render-failures";
 import blockedSendersRouter from "./blocked-senders";
+import autopilotRouter from "./autopilot";
 
 const router: IRouter = Router();
 
@@ -56,5 +57,6 @@ router.use(waitlistRouter);
 router.use(adminRouter);
 router.use(renderFailuresRouter);
 router.use(blockedSendersRouter);
+router.use(autopilotRouter);
 
 export default router;

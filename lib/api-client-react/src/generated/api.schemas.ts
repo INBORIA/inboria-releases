@@ -785,6 +785,53 @@ export interface BlockedSender {
   blockedAt: string;
 }
 
+export type AutopilotEventEventType =
+  (typeof AutopilotEventEventType)[keyof typeof AutopilotEventEventType];
+
+export const AutopilotEventEventType = {
+  email_sorted: "email_sorted",
+  draft_generated: "draft_generated",
+  task_created: "task_created",
+  appointment_extracted: "appointment_extracted",
+  forward_intro_generated: "forward_intro_generated",
+  sender_blocked: "sender_blocked",
+  summary_generated: "summary_generated",
+  follow_up_detected: "follow_up_detected",
+} as const;
+
+export type AutopilotEventMetadata = { [key: string]: unknown };
+
+export interface AutopilotEvent {
+  id: string;
+  eventType: AutopilotEventEventType;
+  /** @nullable */
+  title?: string | null;
+  /** @nullable */
+  emailId?: number | null;
+  metadata?: AutopilotEventMetadata;
+  createdAt: string;
+}
+
+export interface AutopilotTodayCounts {
+  total: number;
+  email_sorted: number;
+  draft_generated: number;
+  task_created: number;
+  appointment_extracted: number;
+  forward_intro_generated: number;
+  sender_blocked: number;
+  summary_generated: number;
+  follow_up_detected: number;
+}
+
+export interface AutopilotActivity {
+  todayCounts: AutopilotTodayCounts;
+  recent: AutopilotEvent[];
+  isActive: boolean;
+  /** @nullable */
+  lastEventAt: string | null;
+}
+
 export interface BlockSenderResultEntry {
   connectionId: string;
   ok: boolean;
