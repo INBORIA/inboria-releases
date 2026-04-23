@@ -272,7 +272,6 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
     );
 
     if (emailErr || !email) {
-      logger.warn({ emailId, userId: req.userId, emailErr }, "[ai/draft] email lookup failed");
       res.status(404).json({ error: "Email introuvable" });
       return;
     }
@@ -367,7 +366,6 @@ router.post("/ai/forward-intro", requireAuth, async (req, res): Promise<void> =>
     );
 
     if (emailErr || !email) {
-      logger.warn({ emailId, userId: req.userId, emailErr }, "[ai/forward-intro] email lookup failed");
       res.status(404).json({ error: "Email introuvable" });
       return;
     }
