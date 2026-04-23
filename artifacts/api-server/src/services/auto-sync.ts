@@ -891,7 +891,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
 
       if (!tokenResponse.ok) {
         const msg = `Outlook token refresh failed: ${tokenResponse.status} ${tokenResponse.statusText}`;
-        console.error(`[auto-sync] ${msg}`);
+        logger.error({ service: "outlook-sync", phase: "token-refresh", connId: conn.id, email: conn.email_address, status: tokenResponse.status }, msg);
         await markConnectionFailure(conn.id, "token-refresh", new Error(msg));
         return -1;
       }
@@ -926,7 +926,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
 
     if (!response.ok) {
       const msg = `Outlook Graph API error: ${response.status} ${response.statusText}`;
-      console.error(`[auto-sync] ${msg}`);
+      logger.error({ service: "outlook-sync", phase: "graph-api", connId: conn.id, email: conn.email_address, status: response.status }, msg);
       await markConnectionFailure(conn.id, "graph-api", new Error(msg));
       return -1;
     }
