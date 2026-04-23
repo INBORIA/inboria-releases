@@ -44,7 +44,7 @@
     "tasks": "Taken",
     "tasksAndFollowup": "Taken & Opvolging",
     "projects": "Projecten",
-    "contacts": "Contacten",
+    "contacts": "Contact 360°",
     "classification": "Classificatie",
     "settings": "Instellingen",
     "subscription": "Abonnement",
@@ -3796,7 +3796,7 @@
     }
   },
   "contacts": {
-    "title": "Contacten",
+    "title": "Contact 360°",
     "subtitle": "Iedereen waarmee u e-mails heeft uitgewisseld",
     "searchPlaceholder": "Zoek een contact…",
     "noResults": "Geen contact gevonden",

@@ -44,7 +44,7 @@
     "tasks": "Aufgaben",
     "tasksAndFollowup": "Aufgaben & Nachverfolgung",
     "projects": "Projekte",
-    "contacts": "Kontakte",
+    "contacts": "Contact 360°",
     "classification": "Klassifizierung",
     "settings": "Einstellungen",
     "subscription": "Abonnement",
@@ -3796,7 +3796,7 @@
     }
   },
   "contacts": {
-    "title": "Kontakte",
+    "title": "Contact 360°",
     "subtitle": "Alle Personen, mit denen Sie E-Mails ausgetauscht haben",
     "searchPlaceholder": "Kontakt suchen…",
     "noResults": "Kein Kontakt gefunden",
