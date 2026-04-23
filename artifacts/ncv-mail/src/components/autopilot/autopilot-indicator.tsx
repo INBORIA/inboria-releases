@@ -143,13 +143,10 @@ export function AutopilotIndicator() {
         </span>
 
         <Sparkles className="h-3.5 w-3.5 text-white/70 group-hover:text-white" />
-        <span className="hidden text-[11px] font-medium tracking-wide text-white/80 sm:inline">
-          {t("autopilot.title")}
-        </span>
 
         {latest && (
           <span className="hidden max-w-[280px] truncate text-[11px] text-white/50 md:inline">
-            · {labelFor(latest.eventType)}
+            {labelFor(latest.eventType)}
             {latest.title ? ` — ${latest.title}` : ""}
           </span>
         )}
