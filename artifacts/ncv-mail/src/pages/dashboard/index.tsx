@@ -1091,7 +1091,10 @@ export default function Dashboard() {
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [selectedAccountId, setSelectedAccountId] = useState<string>("all");
 
-  const { data: categoryCounts, isLoading: categoriesLoading } = useGetCategoryCounts();
+  const categoryCountsParams = inboxMode === "shared" && selectedSharedMailboxId
+    ? { scope: "shared" as const, sharedMailboxId: selectedSharedMailboxId }
+    : { scope: "personal" as const };
+  const { data: categoryCounts, isLoading: categoriesLoading } = useGetCategoryCounts(categoryCountsParams);
   const { data: summary, isLoading: summaryLoading } = useGetDashboardSummary();
   const { data: projects } = useListProjects();
   const { data: profile } = useGetProfile();

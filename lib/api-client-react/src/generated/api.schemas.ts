@@ -1092,6 +1092,26 @@ export type DeleteTask200 = {
   success?: boolean;
 };
 
+export type GetCategoryCountsParams = {
+  /**
+   * Scope du compteur — personal=perso uniquement, shared=boîte partagée (sharedMailboxId requis), all=pooled (défaut)
+   */
+  scope?: GetCategoryCountsScope;
+  /**
+   * ID de la boîte partagée quand scope=shared
+   */
+  sharedMailboxId?: string;
+};
+
+export type GetCategoryCountsScope =
+  (typeof GetCategoryCountsScope)[keyof typeof GetCategoryCountsScope];
+
+export const GetCategoryCountsScope = {
+  personal: "personal",
+  shared: "shared",
+  all: "all",
+} as const;
+
 export type DeleteProject200 = {
   success?: boolean;
 };

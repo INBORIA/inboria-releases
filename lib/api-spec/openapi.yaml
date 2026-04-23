@@ -642,6 +642,20 @@ paths:
       operationId: getCategoryCounts
       tags: [dashboard]
       summary: Email counts per category
+      parameters:
+        - in: query
+          name: scope
+          required: false
+          schema:
+            type: string
+            enum: [personal, shared, all]
+          description: Scope du compteur — personal=perso uniquement, shared=boîte partagée (sharedMailboxId requis), all=pooled (défaut)
+        - in: query
+          name: sharedMailboxId
+          required: false
+          schema:
+            type: string
+          description: ID de la boîte partagée quand scope=shared
       responses:
         "200":
           description: Category counts

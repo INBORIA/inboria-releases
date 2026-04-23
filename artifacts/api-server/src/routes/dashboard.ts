@@ -95,16 +95,33 @@ router.get("/dashboard/category-counts", requireAuth, async (req, res): Promise<
       .select("id, name")
       .eq("user_id", req.userId!);
 
-    const memberMailboxIds = await getMemberMailboxIds(req.userId!);
-    const scopeOr = buildInboxScopeOrFilter(req.userId!, memberMailboxIds);
+    const scope = (req.query.scope as string | undefined) || "all";
+    const sharedMailboxId = (req.query.sharedMailboxId as string | undefined) || "";
 
-    const { data: emails } = await supabaseAdmin
+    let query = supabaseAdmin
       .from("emails")
       .select("category_id")
-      .or(scopeOr)
       .neq("status", "archived")
       .neq("status", "trashed")
-      .neq("status", "spam");
+      .neq("status", "spam")
+      .neq("status", "sent");
+
+    if (scope === "personal") {
+      query = query.eq("user_id", req.userId!).is("shared_mailbox_id", null);
+    } else if (scope === "shared" && sharedMailboxId) {
+      const memberMailboxIds = await getMemberMailboxIds(req.userId!);
+      if (!memberMailboxIds.includes(sharedMailboxId)) {
+        res.status(403).json({ error: "Not a member of this shared mailbox" });
+        return;
+      }
+      query = query.eq("shared_mailbox_id", sharedMailboxId);
+    } else {
+      const memberMailboxIds = await getMemberMailboxIds(req.userId!);
+      const scopeOr = buildInboxScopeOrFilter(req.userId!, memberMailboxIds);
+      query = query.or(scopeOr);
+    }
+
+    const { data: emails } = await query;
 
     const countMap: Record<number, number> = {};
     (emails || []).forEach((e: any) => {

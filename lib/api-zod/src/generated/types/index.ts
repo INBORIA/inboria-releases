@@ -82,6 +82,8 @@ export * from "./generateDraftBody";
 export * from "./generatePackBody";
 export * from "./generatePackResponse";
 export * from "./generatePackResponseCategoriesItem";
+export * from "./getCategoryCountsParams";
+export * from "./getCategoryCountsScope";
 export * from "./getConversationSummary200";
 export * from "./getConversationSummaryBody";
 export * from "./getConversationSummaryBodyThreadItem";

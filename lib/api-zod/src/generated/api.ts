@@ -649,6 +649,19 @@ export const GetInboxHealthResponse = zod.object({
 /**
  * @summary Email counts per category
  */
+export const GetCategoryCountsQueryParams = zod.object({
+  scope: zod
+    .enum(["personal", "shared", "all"])
+    .optional()
+    .describe(
+      "Scope du compteur — personal=perso uniquement, shared=boîte partagée (sharedMailboxId requis), all=pooled (défaut)",
+    ),
+  sharedMailboxId: zod.coerce
+    .string()
+    .optional()
+    .describe("ID de la boîte partagée quand scope=shared"),
+});
+
 export const GetCategoryCountsResponseItem = zod.object({
   categoryId: zod.number(),
   categoryName: zod.string(),

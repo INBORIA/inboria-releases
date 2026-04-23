@@ -76,6 +76,7 @@ import type {
   GenerateDraftBody,
   GeneratePackBody,
   GeneratePackResponse,
+  GetCategoryCountsParams,
   GetConversationSummary200,
   GetConversationSummaryBody,
   GetEmailAttachments200,
@@ -2571,41 +2572,63 @@ export function useGetInboxHealth<
 /**
  * @summary Email counts per category
  */
-export const getGetCategoryCountsUrl = () => {
-  return `/api/dashboard/category-counts`;
+export const getGetCategoryCountsUrl = (params?: GetCategoryCountsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/dashboard/category-counts?${stringifiedParams}`
+    : `/api/dashboard/category-counts`;
 };
 
 export const getCategoryCounts = async (
+  params?: GetCategoryCountsParams,
   options?: RequestInit,
 ): Promise<CategoryCount[]> => {
-  return customFetch<CategoryCount[]>(getGetCategoryCountsUrl(), {
+  return customFetch<CategoryCount[]>(getGetCategoryCountsUrl(params), {
     ...options,
     method: "GET",
   });
 };
 
-export const getGetCategoryCountsQueryKey = () => {
-  return [`/api/dashboard/category-counts`] as const;
+export const getGetCategoryCountsQueryKey = (
+  params?: GetCategoryCountsParams,
+) => {
+  return [
+    `/api/dashboard/category-counts`,
+    ...(params ? [params] : []),
+  ] as const;
 };
 
 export const getGetCategoryCountsQueryOptions = <
   TData = Awaited<ReturnType<typeof getCategoryCounts>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: UseQueryOptions<
-    Awaited<ReturnType<typeof getCategoryCounts>>,
-    TError,
-    TData
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}) => {
+>(
+  params?: GetCategoryCountsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getCategoryCounts>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
   const { query: queryOptions, request: requestOptions } = options ?? {};
 
-  const queryKey = queryOptions?.queryKey ?? getGetCategoryCountsQueryKey();
+  const queryKey =
+    queryOptions?.queryKey ?? getGetCategoryCountsQueryKey(params);
 
   const queryFn: QueryFunction<
     Awaited<ReturnType<typeof getCategoryCounts>>
-  > = ({ signal }) => getCategoryCounts({ signal, ...requestOptions });
+  > = ({ signal }) => getCategoryCounts(params, { signal, ...requestOptions });
 
   return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
     Awaited<ReturnType<typeof getCategoryCounts>>,
@@ -2626,15 +2649,18 @@ export type GetCategoryCountsQueryError = ErrorType<unknown>;
 export function useGetCategoryCounts<
   TData = Awaited<ReturnType<typeof getCategoryCounts>>,
   TError = ErrorType<unknown>,
->(options?: {
-  query?: UseQueryOptions<
-    Awaited<ReturnType<typeof getCategoryCounts>>,
-    TError,
-    TData
-  >;
-  request?: SecondParameter<typeof customFetch>;
-}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
-  const queryOptions = getGetCategoryCountsQueryOptions(options);
+>(
+  params?: GetCategoryCountsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getCategoryCounts>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetCategoryCountsQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;
