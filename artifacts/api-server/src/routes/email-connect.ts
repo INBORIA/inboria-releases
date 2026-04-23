@@ -501,7 +501,7 @@ router.get("/email/connections", requireAuth, async (req, res): Promise<void> =>
   try {
     const { data, error } = await supabaseAdmin
       .from("email_connections")
-      .select("id, provider, email_address, created_at, last_synced_at, signature")
+      .select("id, provider, email_address, created_at, last_synced_at, signature, consecutive_failures, last_error_at, last_error_message")
       .eq("user_id", req.userId!)
       .order("created_at", { ascending: true });
 

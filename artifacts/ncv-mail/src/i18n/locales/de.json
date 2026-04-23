@@ -937,7 +937,9 @@
     "otherProvider": "Anderer Anbieter",
     "accountSignature": "Signatur",
     "accountSignatureLabel": "Signatur für dieses Konto",
-    "accountSignaturePlaceholder": "Spezifische Signatur für dieses Konto (leer lassen für keine Signatur)"
+    "accountSignaturePlaceholder": "Spezifische Signatur für dieses Konto (leer lassen für keine Signatur)",
+    "disconnectedBadge": "Getrennt",
+    "disconnectedTooltip": "Verbinden Sie dieses Konto erneut, um die Synchronisierung fortzusetzen."
   },
   "subscription": {
     "title": "Verwalten Sie Ihr Abonnement",

@@ -88,6 +88,9 @@ interface EmailConnection {
   signature?: string | null;
   shared_mailbox_id?: string | null;
   is_shared?: boolean;
+  consecutive_failures?: number | null;
+  last_error_at?: string | null;
+  last_error_message?: string | null;
 }
 
 const PERSONAL_EMAIL_DOMAINS = new Set([
@@ -202,15 +205,45 @@ function AccountConnectionCard({
                 </span>
               )}
             </h4>
-            <p className="text-[11px] text-emerald-400 flex items-center gap-1">
-              <CheckCircle2 className="w-3 h-3" />
-              {t("settings.connected")}
-              {conn.last_synced_at && (
-                <span className="text-[#8b9cb3] ml-1.5">
-                  — {t("settings.sync")} : {new Date(conn.last_synced_at).toLocaleString()}
-                </span>
-              )}
-            </p>
+            {(conn.consecutive_failures ?? 0) >= 3 ? (
+              <p className="text-[11px] text-red-400 flex items-center gap-1">
+                <AlertCircle className="w-3 h-3" />
+                <TooltipProvider delayDuration={150}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <span className="cursor-help underline decoration-dotted underline-offset-2">
+                        {t("settings.disconnectedBadge", "Déconnectée")}
+                      </span>
+                    </TooltipTrigger>
+                    <TooltipContent className="max-w-xs">
+                      <p className="text-[11px]">
+                        {t("settings.disconnectedTooltip", "Reconnectez ce compte pour reprendre la synchronisation.")}
+                      </p>
+                      {conn.last_error_message && (
+                        <p className="text-[10px] mt-1 text-[#8b9cb3] break-words">
+                          {conn.last_error_message}
+                        </p>
+                      )}
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                {conn.last_error_at && (
+                  <span className="text-[#8b9cb3] ml-1.5">
+                    — {new Date(conn.last_error_at).toLocaleString()}
+                  </span>
+                )}
+              </p>
+            ) : (
+              <p className="text-[11px] text-emerald-400 flex items-center gap-1">
+                <CheckCircle2 className="w-3 h-3" />
+                {t("settings.connected")}
+                {conn.last_synced_at && (
+                  <span className="text-[#8b9cb3] ml-1.5">
+                    — {t("settings.sync")} : {new Date(conn.last_synced_at).toLocaleString()}
+                  </span>
+                )}
+              </p>
+            )}
           </div>
         </div>
         <div className="flex items-center gap-2">

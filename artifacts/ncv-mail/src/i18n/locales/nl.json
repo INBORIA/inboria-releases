@@ -937,7 +937,9 @@
     "otherProvider": "Andere provider",
     "accountSignature": "Handtekening",
     "accountSignatureLabel": "Handtekening voor dit account",
-    "accountSignaturePlaceholder": "Specifieke handtekening voor dit account (laat leeg voor geen handtekening)"
+    "accountSignaturePlaceholder": "Specifieke handtekening voor dit account (laat leeg voor geen handtekening)",
+    "disconnectedBadge": "Losgekoppeld",
+    "disconnectedTooltip": "Verbind dit account opnieuw om de synchronisatie te hervatten."
   },
   "subscription": {
     "title": "Beheer uw abonnement",

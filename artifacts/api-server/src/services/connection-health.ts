@@ -51,6 +51,7 @@ export async function markConnectionFailure(
 
     if (!rpcErr) {
       log.info("Connection failure recorded (atomic)");
+      void notifyDisconnectedIfNeeded(connId);
       return;
     }
 
@@ -83,9 +84,22 @@ export async function markConnectionFailure(
       log.warn({ err: updateErr.message }, "Failed to persist failure");
     } else {
       log.info({ consecutiveFailures: next }, "Connection failure recorded (fallback)");
+      void notifyDisconnectedIfNeeded(connId);
     }
   } catch (e: unknown) {
     log.warn({ err: e instanceof Error ? e.message : String(e) }, "markConnectionFailure threw");
+  }
+}
+
+async function notifyDisconnectedIfNeeded(connId: string): Promise<void> {
+  try {
+    const mod = await import("./email-alerts");
+    await mod.maybeSendDisconnectedAlert(connId);
+  } catch (e: unknown) {
+    logger.warn(
+      { service: "connection-health", connId, err: e instanceof Error ? e.message : String(e) },
+      "notifyDisconnectedIfNeeded threw",
+    );
   }
 }
 
@@ -146,6 +160,7 @@ export async function markConnectionSuccess(connId: string): Promise<void> {
         consecutive_failures: 0,
         last_error_at: null,
         last_error_message: null,
+        last_alert_sent_at: null,
         last_synced_at: new Date().toISOString(),
       })
       .eq("id", connId);

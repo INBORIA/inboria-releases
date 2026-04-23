@@ -937,7 +937,9 @@
     "otherProvider": "Other provider",
     "accountSignature": "Signature",
     "accountSignatureLabel": "Signature for this account",
-    "accountSignaturePlaceholder": "Specific signature for this account (leave empty for no signature)"
+    "accountSignaturePlaceholder": "Specific signature for this account (leave empty for no signature)",
+    "disconnectedBadge": "Disconnected",
+    "disconnectedTooltip": "Reconnect this account to resume synchronization."
   },
   "subscription": {
     "title": "Manage your subscription",

@@ -937,7 +937,9 @@
     "otherProvider": "Otro proveedor",
     "accountSignature": "Firma",
     "accountSignatureLabel": "Firma para esta cuenta",
-    "accountSignaturePlaceholder": "Firma específica para esta cuenta (dejar vacío para sin firma)"
+    "accountSignaturePlaceholder": "Firma específica para esta cuenta (dejar vacío para sin firma)",
+    "disconnectedBadge": "Desconectada",
+    "disconnectedTooltip": "Vuelva a conectar esta cuenta para reanudar la sincronizacion."
   },
   "subscription": {
     "title": "Gestiona tu suscripción",

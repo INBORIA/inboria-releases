@@ -1,0 +1,186 @@
+import nodemailer, { type Transporter } from "nodemailer";
+import { supabaseAdmin } from "../lib/supabase";
+import { logger } from "../lib/logger";
+import { sanitizeErrorMessage } from "./connection-health";
+
+const FAILURE_THRESHOLD = 3;
+const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
+
+type Lang = "fr" | "en" | "nl" | "de" | "es";
+
+const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string }> = {
+  fr: {
+    subject: (email) => `Inboria — Boite ${email} deconnectee`,
+    intro: "Inboria n'arrive plus a synchroniser cette boite mail depuis plusieurs essais. Vos nouveaux mails ne sont donc plus traites tant que la connexion n'est pas retablie.",
+    reasonLabel: "Derniere erreur",
+    cta: "Reconnecter cette boite",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Cet email est envoye au plus une fois par semaine et par boite. Si la reconnexion reussit, vous ne recevrez plus d'alerte.",
+  },
+  en: {
+    subject: (email) => `Inboria — Mailbox ${email} disconnected`,
+    intro: "Inboria has been unable to sync this mailbox for several attempts. Your new emails are no longer being processed until the connection is restored.",
+    reasonLabel: "Last error",
+    cta: "Reconnect this mailbox",
+    ctaUrl: "/dashboard/parametres",
+    footer: "This email is sent at most once per week per mailbox. If reconnection succeeds, you will stop receiving alerts.",
+  },
+  nl: {
+    subject: (email) => `Inboria — Mailbox ${email} losgekoppeld`,
+    intro: "Inboria kan deze mailbox al meerdere keren niet synchroniseren. Uw nieuwe e-mails worden niet meer verwerkt totdat de verbinding hersteld is.",
+    reasonLabel: "Laatste fout",
+    cta: "Deze mailbox opnieuw verbinden",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Deze e-mail wordt maximaal eenmaal per week per mailbox verzonden. Zodra de verbinding hersteld is, stoppen de meldingen.",
+  },
+  de: {
+    subject: (email) => `Inboria — Postfach ${email} getrennt`,
+    intro: "Inboria konnte dieses Postfach mehrfach nicht synchronisieren. Ihre neuen E-Mails werden nicht mehr verarbeitet, solange die Verbindung nicht wiederhergestellt ist.",
+    reasonLabel: "Letzter Fehler",
+    cta: "Dieses Postfach erneut verbinden",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Diese E-Mail wird hochstens einmal pro Woche und Postfach gesendet. Sobald die Verbindung wiederhergestellt ist, erhalten Sie keine Benachrichtigungen mehr.",
+  },
+  es: {
+    subject: (email) => `Inboria — Buzon ${email} desconectado`,
+    intro: "Inboria no consigue sincronizar este buzon desde hace varios intentos. Sus nuevos correos ya no se procesan hasta que se restablezca la conexion.",
+    reasonLabel: "Ultimo error",
+    cta: "Reconectar este buzon",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Este correo se envia como maximo una vez por semana y por buzon. Si la reconexion tiene exito, dejara de recibir alertas.",
+  },
+};
+
+function pickLang(raw: string | null | undefined): Lang {
+  const v = (raw || "fr").slice(0, 2).toLowerCase();
+  if (v === "en" || v === "nl" || v === "de" || v === "es") return v;
+  return "fr";
+}
+
+function renderHtml(tpl: typeof TEMPLATES["fr"], mailboxEmail: string, errorMsg: string, frontendUrl: string): string {
+  const safeErr = errorMsg.replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c] || c));
+  const link = `${frontendUrl.replace(/\/$/, "")}${tpl.ctaUrl}`;
+  return `
+    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0d1117; color: #ffffff; border-radius: 8px;">
+      <div style="text-align: center; margin-bottom: 24px;">
+        <h1 style="color: #2d7dd2; margin: 0;">Inboria</h1>
+      </div>
+      <h2 style="color: #ef4444; text-align: center; font-size: 18px;">${tpl.subject(mailboxEmail)}</h2>
+      <p style="color: #c9d1d9; line-height: 1.6;">${tpl.intro}</p>
+      <p style="color: #8b9cb3; font-size: 13px;"><strong>${tpl.reasonLabel} :</strong> ${safeErr || "—"}</p>
+      <div style="text-align: center; margin: 28px 0;">
+        <a href="${link}" style="background: #2d7dd2; color: #ffffff; padding: 12px 28px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">${tpl.cta}</a>
+      </div>
+      <hr style="border: none; border-top: 1px solid #1f2937; margin: 20px 0;" />
+      <p style="color: #6e7681; font-size: 12px; text-align: center;">${tpl.footer}</p>
+    </div>
+  `;
+}
+
+export interface MaybeSendDeps {
+  transporter?: Transporter;
+  fetchConnection?: (connId: string) => Promise<any | null>;
+  fetchUserEmail?: (userId: string) => Promise<string | null>;
+  fetchUserLang?: (userId: string) => Promise<Lang>;
+  markAlertSent?: (connId: string) => Promise<void>;
+  now?: () => number;
+  frontendUrl?: string;
+}
+
+let cachedTransporter: Transporter | null = null;
+function defaultTransporter(): Transporter {
+  if (cachedTransporter) return cachedTransporter;
+  cachedTransporter = nodemailer.createTransport({
+    host: "smtp-relay.brevo.com",
+    port: 587,
+    secure: false,
+    auth: {
+      user: "a74939001@smtp-brevo.com",
+      pass: process.env["BREVO_SMTP_PASSWORD"] || "",
+    },
+  });
+  return cachedTransporter;
+}
+
+async function defaultFetchConnection(connId: string) {
+  const { data } = await supabaseAdmin
+    .from("email_connections")
+    .select("id, user_id, email_address, consecutive_failures, last_error_message, last_alert_sent_at")
+    .eq("id", connId)
+    .single();
+  return data || null;
+}
+
+async function defaultFetchUserEmail(userId: string): Promise<string | null> {
+  const { data } = await supabaseAdmin.auth.admin.getUserById(userId);
+  return data?.user?.email || null;
+}
+
+async function defaultFetchUserLang(userId: string): Promise<Lang> {
+  const { data } = await supabaseAdmin
+    .from("profiles")
+    .select("ai_language")
+    .eq("id", userId)
+    .single();
+  return pickLang(data?.ai_language ?? null);
+}
+
+async function defaultMarkAlertSent(connId: string): Promise<void> {
+  await supabaseAdmin
+    .from("email_connections")
+    .update({ last_alert_sent_at: new Date().toISOString() })
+    .eq("id", connId);
+}
+
+export async function maybeSendDisconnectedAlert(
+  connId: string,
+  deps: MaybeSendDeps = {},
+): Promise<{ sent: boolean; reason?: string }> {
+  const log = logger.child({ service: "email-alerts", connId });
+  try {
+    const fetchConnection = deps.fetchConnection ?? defaultFetchConnection;
+    const conn = await fetchConnection(connId);
+    if (!conn) return { sent: false, reason: "no-conn" };
+
+    const failures = Number(conn.consecutive_failures || 0);
+    if (failures < FAILURE_THRESHOLD) return { sent: false, reason: "below-threshold" };
+
+    const now = (deps.now ?? Date.now)();
+    if (conn.last_alert_sent_at) {
+      const lastMs = new Date(conn.last_alert_sent_at).getTime();
+      if (now - lastMs < ALERT_COOLDOWN_MS) {
+        return { sent: false, reason: "cooldown" };
+      }
+    }
+
+    const fetchUserEmail = deps.fetchUserEmail ?? defaultFetchUserEmail;
+    const fetchUserLang = deps.fetchUserLang ?? defaultFetchUserLang;
+    const userEmail = await fetchUserEmail(conn.user_id);
+    if (!userEmail) {
+      log.warn("No user email found, skipping alert");
+      return { sent: false, reason: "no-user-email" };
+    }
+    const lang = pickLang(await fetchUserLang(conn.user_id));
+    const tpl = TEMPLATES[lang];
+    const errorMsg = sanitizeErrorMessage(String(conn.last_error_message || ""));
+
+    const transporter = deps.transporter ?? defaultTransporter();
+    const frontendUrl = deps.frontendUrl ?? process.env["FRONTEND_URL"] ?? "https://inboria.com";
+
+    await transporter.sendMail({
+      from: '"Inboria" <noreply@inboria.com>',
+      to: userEmail,
+      subject: tpl.subject(conn.email_address),
+      html: renderHtml(tpl, conn.email_address, errorMsg, frontendUrl),
+    });
+
+    const markAlertSent = deps.markAlertSent ?? defaultMarkAlertSent;
+    await markAlertSent(connId);
+
+    log.info({ email: userEmail, mailbox: conn.email_address, lang }, "Disconnected alert sent");
+    return { sent: true };
+  } catch (err: any) {
+    log.error({ err: sanitizeErrorMessage(err?.message || String(err)) }, "Failed to send disconnected alert");
+    return { sent: false, reason: "error" };
+  }
+}
