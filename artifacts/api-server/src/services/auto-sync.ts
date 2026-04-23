@@ -11,6 +11,12 @@ import { consumeAiCredits, logTriageEvent, checkEntitlement } from "./credits";
 import { getEmailOAuthRedirectUri } from "../lib/urls";
 import { syncImapJunk, syncOutlookJunk, type JunkEmailPayload } from "./junk-sync";
 import { hasJunkColumns } from "../lib/schema-flags";
+import {
+  markConnectionFailure,
+  markConnectionSuccess,
+  fetchWithTimeout,
+  withTimeout,
+} from "./connection-health";
 
 interface SaveEmailOptions {
   forceSpam?: boolean;
@@ -695,13 +701,20 @@ async function syncGmailForUser(conn: any): Promise<number> {
     });
 
     const gmail = google.gmail({ version: "v1", auth: oauth2Client });
-    const { data: messageList } = await gmail.users.messages.list({
-      userId: "me",
-      maxResults: 50,
-      q: "is:inbox newer_than:2d",
-    });
+    const { data: messageList } = await withTimeout(
+      gmail.users.messages.list({
+        userId: "me",
+        maxResults: 50,
+        q: "is:inbox newer_than:2d",
+      }),
+      20_000,
+      "Gmail messages.list",
+    );
 
-    if (!messageList.messages) return 0;
+    if (!messageList.messages) {
+      await markConnectionSuccess(conn.id);
+      return 0;
+    }
 
     let synced = 0;
     for (const msg of messageList.messages) {
