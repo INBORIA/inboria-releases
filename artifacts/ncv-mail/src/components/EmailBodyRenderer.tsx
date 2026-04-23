@@ -308,7 +308,7 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
         a { color: #2d7dd2; }
       </style>
     </head>
-    <body>${content}${overrideStyle}</body>
+    <body>${overrideStyle}${content}</body>
     </html>
   `;
 
