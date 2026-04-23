@@ -311,7 +311,14 @@ router.get("/contacts/:email", requireAuth, async (req, res): Promise<void> => {
     }
 
     let comments: Array<{ id: string; emailId: number; emailSubject: string; body: string; createdAt: string; authorName: string }> = [];
-    if (emailIds.length) {
+    // Internal team comments are a Business-plan feature only
+    const { data: profileRow } = await supabaseAdmin
+      .from("profiles")
+      .select("plan")
+      .eq("id", req.userId!)
+      .maybeSingle();
+    const isBusinessPlan = (profileRow?.plan || "") === "business";
+    if (emailIds.length && isBusinessPlan) {
       const { data: cmtRows } = await supabaseAdmin
         .from("email_comments")
         .select("id, email_id, user_id, body, created_at")
