@@ -161,15 +161,8 @@ export function AutopilotIndicator() {
         <PhaseIcon className={cn("w-3 h-3", phase === "acting" && "animate-spin")} />
         <span className="hidden sm:inline max-w-[260px] truncate">{phaseText}</span>
         <span className="sm:hidden">Autopilot</span>
-        {total > 0 && (
-          <span
-            className={cn(
-              "ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-semibold",
-              phase === "acting"
-                ? "bg-[#2d7dd2]/20 text-[#2d7dd2]"
-                : "bg-emerald-500/20 text-emerald-300",
-            )}
-          >
+        {phase === "acting" && total > 0 && (
+          <span className="ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full bg-[#2d7dd2]/20 px-1 text-[9px] font-semibold text-[#2d7dd2]">
             {total}
           </span>
         )}
