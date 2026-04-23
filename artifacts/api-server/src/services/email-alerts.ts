@@ -153,10 +153,11 @@ async function defaultClaimAlertSlot(
 }
 
 async function defaultRevertAlertSlot(connId: string, previousSentAt: string | null): Promise<void> {
-  await supabaseAdmin
+  const { error } = await supabaseAdmin
     .from("email_connections")
     .update({ last_alert_sent_at: previousSentAt })
     .eq("id", connId);
+  if (error) throw error;
 }
 
 async function defaultCreateNotification(params: { userId: string; title: string; message: string }): Promise<void> {
