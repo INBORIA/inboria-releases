@@ -1052,6 +1052,52 @@ async function syncImapForUser(conn: any): Promise<number> {
     log.info({ fetched: fetchedCount, newEmails: synced, duplicatesSkipped: fetchedCount - synced }, "IMAP fetch complete");
 
     try {
+      const { data: candidateBodies } = await supabaseAdmin
+        .from("emails")
+        .select("id, external_id, body")
+        .eq("user_id", conn.user_id)
+        .like("external_id", `imap:${conn.email_address}:%`)
+        .order("created_at", { ascending: false })
+        .limit(150);
+
+      const truncated = (candidateBodies || []).filter((e: any) => {
+        const len = (e.body || "").length;
+        return len === 10000 || len === 5000;
+      }).slice(0, 10);
+
+      if (truncated.length > 0) {
+        log.info({ count: truncated.length }, "Backfill: re-fetching truncated bodies");
+        for (const email of truncated) {
+          const parts = (email.external_id || "").split(":");
+          const uid = parseInt(parts[parts.length - 1], 10);
+          if (!uid) continue;
+          try {
+            const bfMsg = await client.fetchOne(String(uid), { source: true }, { uid: true }) as any;
+            if (!bfMsg?.source) continue;
+            const parsed = await simpleParser(bfMsg.source);
+            let bodyText = parsed.html
+              ? (typeof parsed.html === "string" ? parsed.html : "")
+              : parsed.text || "";
+            if (bodyText.length > IMAP_BODY_MAX_BYTES) {
+              bodyText = bodyText.slice(0, IMAP_BODY_MAX_BYTES);
+            }
+            if (bodyText && bodyText.length > (email.body || "").length) {
+              await supabaseAdmin
+                .from("emails")
+                .update({ body: bodyText })
+                .eq("id", email.id);
+              log.info({ emailId: email.id, oldLength: (email.body || "").length, newLength: bodyText.length }, "Backfilled IMAP body");
+            }
+          } catch (bfErr: any) {
+            log.warn({ emailId: email.id, error: bfErr.message }, "Body backfill failed");
+          }
+        }
+      }
+    } catch (bfErr: any) {
+      log.warn({ error: bfErr.message }, "IMAP body backfill error");
+    }
+
+    try {
       const { data: emailsWithoutAttachments } = await supabaseAdmin
         .from("emails")
         .select("id, external_id")
