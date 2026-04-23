@@ -44,6 +44,7 @@
     "tasks": "Tâches",
     "tasksAndFollowup": "Tâches & Suivi",
     "projects": "Projets",
+    "contacts": "Contacts",
     "classification": "Classement",
     "settings": "Paramètres",
     "subscription": "Abonnement",
@@ -2149,5 +2150,34 @@
       "relance": "En cours",
       "termine": "Terminée"
     }
+  },
+  "contacts": {
+    "title": "Contacts",
+    "subtitle": "Toutes les personnes avec qui vous avez échangé",
+    "searchPlaceholder": "Rechercher un contact…",
+    "noResults": "Aucun contact trouvé",
+    "empty": "Aucun contact pour l'instant",
+    "totalCount": "{{count}} contacts",
+    "exchangeCount": "{{count}} échanges",
+    "backToList": "Retour aux contacts",
+    "notFound": "Contact introuvable",
+    "loadError": "Erreur de chargement",
+    "relationshipSince": "Première interaction",
+    "lastInteraction": "Dernière interaction",
+    "exchanges": "échanges",
+    "conversations": "Conversations",
+    "noConversations": "Aucun échange",
+    "tasks": "Tâches liées",
+    "noTasks": "Aucune tâche",
+    "dueDate": "Échéance",
+    "appointments": "Rendez-vous",
+    "noAppointments": "Aucun rendez-vous",
+    "projects": "Projets",
+    "noProjects": "Aucun projet",
+    "comments": "Notes internes",
+    "noComments": "Aucune note",
+    "unknownAuthor": "Inconnu",
+    "attachments": "Pièces jointes",
+    "noAttachments": "Aucune pièce jointe"
   }
 }

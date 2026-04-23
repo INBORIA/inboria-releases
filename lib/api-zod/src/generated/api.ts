@@ -2461,3 +2461,114 @@ export const AdminCancelUserSubscriptionResponse = zod.object({
     .boolean()
     .describe('True if the user\'s plan was set to \"expired\" immediately.'),
 });
+
+/**
+ * @summary List contacts derived from email exchanges
+ */
+export const listContactsQueryPageDefault = 1;
+export const listContactsQueryPageSizeDefault = 30;
+
+export const ListContactsQueryParams = zod.object({
+  q: zod.coerce.string().optional(),
+  page: zod.coerce.number().default(listContactsQueryPageDefault),
+  pageSize: zod.coerce.number().default(listContactsQueryPageSizeDefault),
+});
+
+export const ListContactsResponse = zod.object({
+  contacts: zod.array(
+    zod.object({
+      name: zod.string(),
+      email: zod.string(),
+      count: zod.number(),
+      lastSeenAt: zod.coerce.date(),
+      firstSeenAt: zod.coerce.date(),
+    }),
+  ),
+  total: zod.number(),
+  page: zod.number(),
+  pageSize: zod.number(),
+  totalPages: zod.number(),
+});
+
+/**
+ * @summary Aggregated 360 view for a single contact (URL-encoded email)
+ */
+export const GetContactParams = zod.object({
+  email: zod.coerce.string(),
+});
+
+export const GetContactResponse = zod.object({
+  contact: zod.object({
+    name: zod.string(),
+    email: zod.string(),
+    totalCount: zod.number(),
+    firstSeenAt: zod.coerce.date(),
+    lastSeenAt: zod.coerce.date(),
+  }),
+  conversations: zod.array(
+    zod.object({
+      id: zod.number(),
+      subject: zod.string(),
+      sender: zod.string(),
+      senderEmail: zod.string(),
+      recipient: zod.string().nullish(),
+      summary: zod.string().nullish(),
+      status: zod.string(),
+      priority: zod.string(),
+      direction: zod.enum(["inbound", "outbound"]),
+      createdAt: zod.coerce.date(),
+      projectName: zod.string().nullish(),
+      projectReference: zod.string().nullish(),
+    }),
+  ),
+  tasks: zod.array(
+    zod.object({
+      id: zod.string(),
+      title: zod.string(),
+      done: zod.boolean(),
+      dueDate: zod.string().nullish(),
+      emailId: zod.number().nullish(),
+      projectName: zod.string().nullish(),
+      projectReference: zod.string().nullish(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+  appointments: zod.array(
+    zod.object({
+      id: zod.string(),
+      title: zod.string(),
+      location: zod.string().nullish(),
+      startAt: zod.coerce.date(),
+      endAt: zod.string().nullish(),
+      allDay: zod.boolean(),
+      emailId: zod.number().nullish(),
+    }),
+  ),
+  projects: zod.array(
+    zod.object({
+      id: zod.string(),
+      name: zod.string(),
+      reference: zod.string().nullish(),
+    }),
+  ),
+  comments: zod.array(
+    zod.object({
+      id: zod.string(),
+      emailId: zod.number(),
+      emailSubject: zod.string().optional(),
+      body: zod.string(),
+      createdAt: zod.coerce.date(),
+      authorName: zod.string(),
+    }),
+  ),
+  attachments: zod.array(
+    zod.object({
+      id: zod.string(),
+      filename: zod.string(),
+      contentType: zod.string().nullish(),
+      size: zod.number().nullish(),
+      emailId: zod.number(),
+      createdAt: zod.coerce.date().nullish(),
+    }),
+  ),
+});

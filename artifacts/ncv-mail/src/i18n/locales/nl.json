@@ -44,6 +44,7 @@
     "tasks": "Taken",
     "tasksAndFollowup": "Taken & Opvolging",
     "projects": "Projecten",
+    "contacts": "Contacten",
     "classification": "Classificatie",
     "settings": "Instellingen",
     "subscription": "Abonnement",
@@ -3793,5 +3794,34 @@
       "relance": "Bezig",
       "termine": "Voltooid"
     }
+  },
+  "contacts": {
+    "title": "Contacten",
+    "subtitle": "Iedereen waarmee u e-mails heeft uitgewisseld",
+    "searchPlaceholder": "Zoek een contact…",
+    "noResults": "Geen contact gevonden",
+    "empty": "Nog geen contact",
+    "totalCount": "{{count}} contacten",
+    "exchangeCount": "{{count}} uitwisselingen",
+    "backToList": "Terug naar contacten",
+    "notFound": "Contact niet gevonden",
+    "loadError": "Laadfout",
+    "relationshipSince": "Eerste interactie",
+    "lastInteraction": "Laatste interactie",
+    "exchanges": "uitwisselingen",
+    "conversations": "Gesprekken",
+    "noConversations": "Geen uitwisselingen",
+    "tasks": "Gekoppelde taken",
+    "noTasks": "Geen taak",
+    "dueDate": "Vervaldatum",
+    "appointments": "Afspraken",
+    "noAppointments": "Geen afspraak",
+    "projects": "Projecten",
+    "noProjects": "Geen project",
+    "comments": "Interne notities",
+    "noComments": "Geen notitie",
+    "unknownAuthor": "Onbekend",
+    "attachments": "Bijlagen",
+    "noAttachments": "Geen bijlage"
   }
 }

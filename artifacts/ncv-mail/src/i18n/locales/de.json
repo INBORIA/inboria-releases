@@ -44,6 +44,7 @@
     "tasks": "Aufgaben",
     "tasksAndFollowup": "Aufgaben & Nachverfolgung",
     "projects": "Projekte",
+    "contacts": "Kontakte",
     "classification": "Klassifizierung",
     "settings": "Einstellungen",
     "subscription": "Abonnement",
@@ -3793,5 +3794,34 @@
       "relance": "Läuft",
       "termine": "Erledigt"
     }
+  },
+  "contacts": {
+    "title": "Kontakte",
+    "subtitle": "Alle Personen, mit denen Sie E-Mails ausgetauscht haben",
+    "searchPlaceholder": "Kontakt suchen…",
+    "noResults": "Kein Kontakt gefunden",
+    "empty": "Noch kein Kontakt",
+    "totalCount": "{{count}} Kontakte",
+    "exchangeCount": "{{count}} Austausche",
+    "backToList": "Zurück zu Kontakten",
+    "notFound": "Kontakt nicht gefunden",
+    "loadError": "Ladefehler",
+    "relationshipSince": "Erste Interaktion",
+    "lastInteraction": "Letzte Interaktion",
+    "exchanges": "Austausche",
+    "conversations": "Unterhaltungen",
+    "noConversations": "Keine Austausche",
+    "tasks": "Verknüpfte Aufgaben",
+    "noTasks": "Keine Aufgabe",
+    "dueDate": "Fälligkeit",
+    "appointments": "Termine",
+    "noAppointments": "Kein Termin",
+    "projects": "Projekte",
+    "noProjects": "Kein Projekt",
+    "comments": "Interne Notizen",
+    "noComments": "Keine Notiz",
+    "unknownAuthor": "Unbekannt",
+    "attachments": "Anhänge",
+    "noAttachments": "Kein Anhang"
   }
 }

@@ -29,6 +29,8 @@ import Classement from "@/pages/dashboard/classement";
 import Parametres from "@/pages/dashboard/parametres";
 import Abonnement from "@/pages/dashboard/abonnement";
 import Projets from "@/pages/dashboard/projets";
+import Contacts from "@/pages/dashboard/contacts";
+import ContactDetail from "@/pages/dashboard/contact-detail";
 import Equipe from "@/pages/dashboard/equipe";
 import AdminIndex from "@/pages/dashboard/admin";
 import AdminWaitlist from "@/pages/dashboard/admin/waitlist";
@@ -165,6 +167,8 @@ function Router() {
       <Route path="/dashboard/classement" component={() => <ProtectedRoute component={Classement} />} />
       <Route path="/dashboard/categories" component={() => <Redirect to="/dashboard/classement" />} />
       <Route path="/dashboard/projets" component={() => <ProtectedRoute component={Projets} />} />
+      <Route path="/dashboard/contacts" component={() => <ProtectedRoute component={Contacts} />} />
+      <Route path="/dashboard/contacts/:email" component={() => <ProtectedRoute component={ContactDetail} />} />
       <Route path="/dashboard/parametres" component={() => <ProtectedRoute component={Parametres} />} />
       <Route path="/dashboard/abonnement" component={() => <ProtectedRoute component={Abonnement} />} />
       <Route path="/dashboard/equipe" component={() => <ProtectedRoute component={Equipe} />} />

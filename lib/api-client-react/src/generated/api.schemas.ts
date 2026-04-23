@@ -1077,6 +1077,123 @@ export interface AdminCancelSubscriptionResult {
   revokedNow: boolean;
 }
 
+export interface Contact {
+  name: string;
+  email: string;
+  count: number;
+  lastSeenAt: string;
+  firstSeenAt: string;
+}
+
+export interface ContactListResponse {
+  contacts: Contact[];
+  total: number;
+  page: number;
+  pageSize: number;
+  totalPages: number;
+}
+
+export type ContactConversationDirection =
+  (typeof ContactConversationDirection)[keyof typeof ContactConversationDirection];
+
+export const ContactConversationDirection = {
+  inbound: "inbound",
+  outbound: "outbound",
+} as const;
+
+export interface ContactConversation {
+  id: number;
+  subject: string;
+  sender: string;
+  senderEmail: string;
+  /** @nullable */
+  recipient?: string | null;
+  /** @nullable */
+  summary?: string | null;
+  status: string;
+  priority: string;
+  direction: ContactConversationDirection;
+  createdAt: string;
+  /** @nullable */
+  projectName?: string | null;
+  /** @nullable */
+  projectReference?: string | null;
+}
+
+export interface ContactTask {
+  id: string;
+  title: string;
+  done: boolean;
+  /** @nullable */
+  dueDate?: string | null;
+  /** @nullable */
+  emailId?: number | null;
+  /** @nullable */
+  projectName?: string | null;
+  /** @nullable */
+  projectReference?: string | null;
+  createdAt: string;
+}
+
+export interface ContactAppointment {
+  id: string;
+  title: string;
+  /** @nullable */
+  location?: string | null;
+  startAt: string;
+  /** @nullable */
+  endAt?: string | null;
+  allDay: boolean;
+  /** @nullable */
+  emailId?: number | null;
+}
+
+export interface ContactProject {
+  id: string;
+  name: string;
+  /** @nullable */
+  reference?: string | null;
+}
+
+export interface ContactComment {
+  id: string;
+  emailId: number;
+  emailSubject?: string;
+  body: string;
+  createdAt: string;
+  authorName: string;
+}
+
+export interface ContactAttachment {
+  id: string;
+  filename: string;
+  /** @nullable */
+  contentType?: string | null;
+  /** @nullable */
+  size?: number | null;
+  emailId: number;
+  /** @nullable */
+  createdAt?: string | null;
+}
+
+export interface ContactSummary {
+  name: string;
+  email: string;
+  totalCount: number;
+  firstSeenAt: string;
+  lastSeenAt: string;
+}
+
+export interface ContactDetail {
+  contact: ContactSummary;
+  conversations: ContactConversation[];
+  tasks: ContactTask[];
+  appointments: ContactAppointment[];
+  projects: ContactProject[];
+  comments: ContactComment[];
+  attachments: ContactAttachment[];
+}
+
 export type RegisterPushToken200 = {
   success?: boolean;
 };
@@ -1575,4 +1692,10 @@ export type AdminListUsersParams = {
    * @maximum 200
    */
   limit?: number;
+};
+
+export type ListContactsParams = {
+  q?: string;
+  page?: number;
+  pageSize?: number;
 };

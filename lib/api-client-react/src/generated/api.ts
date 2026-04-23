@@ -47,6 +47,8 @@ import type {
   CheckoutBody,
   CheckoutResponse,
   ClaimSharedEmail200,
+  ContactDetail,
+  ContactListResponse,
   CreateAppointmentBody,
   CreateCategoryBody,
   CreateFollowupBody,
@@ -101,6 +103,7 @@ import type {
   JoinWaitlist200,
   ListAppointmentsParams,
   ListBlockedSendersParams,
+  ListContactsParams,
   ListEmailsParams,
   ListFollowupsParams,
   ListTasksParams,
@@ -10402,3 +10405,184 @@ export const useAdminCancelUserSubscription = <
 > => {
   return useMutation(getAdminCancelUserSubscriptionMutationOptions(options));
 };
+
+/**
+ * @summary List contacts derived from email exchanges
+ */
+export const getListContactsUrl = (params?: ListContactsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/contacts?${stringifiedParams}`
+    : `/api/contacts`;
+};
+
+export const listContacts = async (
+  params?: ListContactsParams,
+  options?: RequestInit,
+): Promise<ContactListResponse> => {
+  return customFetch<ContactListResponse>(getListContactsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListContactsQueryKey = (params?: ListContactsParams) => {
+  return [`/api/contacts`, ...(params ? [params] : [])] as const;
+};
+
+export const getListContactsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listContacts>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListContactsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listContacts>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListContactsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listContacts>>> = ({
+    signal,
+  }) => listContacts(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listContacts>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListContactsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listContacts>>
+>;
+export type ListContactsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List contacts derived from email exchanges
+ */
+
+export function useListContacts<
+  TData = Awaited<ReturnType<typeof listContacts>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListContactsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listContacts>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListContactsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Aggregated 360 view for a single contact (URL-encoded email)
+ */
+export const getGetContactUrl = (email: string) => {
+  return `/api/contacts/${email}`;
+};
+
+export const getContact = async (
+  email: string,
+  options?: RequestInit,
+): Promise<ContactDetail> => {
+  return customFetch<ContactDetail>(getGetContactUrl(email), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetContactQueryKey = (email: string) => {
+  return [`/api/contacts/${email}`] as const;
+};
+
+export const getGetContactQueryOptions = <
+  TData = Awaited<ReturnType<typeof getContact>>,
+  TError = ErrorType<void>,
+>(
+  email: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getContact>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetContactQueryKey(email);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getContact>>> = ({
+    signal,
+  }) => getContact(email, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!email,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getContact>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetContactQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getContact>>
+>;
+export type GetContactQueryError = ErrorType<void>;
+
+/**
+ * @summary Aggregated 360 view for a single contact (URL-encoded email)
+ */
+
+export function useGetContact<
+  TData = Awaited<ReturnType<typeof getContact>>,
+  TError = ErrorType<void>,
+>(
+  email: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getContact>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetContactQueryOptions(email, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}

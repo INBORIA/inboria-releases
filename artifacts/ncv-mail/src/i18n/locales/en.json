@@ -44,6 +44,7 @@
     "tasks": "Tasks",
     "tasksAndFollowup": "Tasks & Follow-up",
     "projects": "Projects",
+    "contacts": "Contacts",
     "classification": "Classification",
     "settings": "Settings",
     "subscription": "Subscription",
@@ -3793,5 +3794,34 @@
       "relance": "In progress",
       "termine": "Done"
     }
+  },
+  "contacts": {
+    "title": "Contacts",
+    "subtitle": "Everyone you've exchanged emails with",
+    "searchPlaceholder": "Search a contact…",
+    "noResults": "No contact found",
+    "empty": "No contact yet",
+    "totalCount": "{{count}} contacts",
+    "exchangeCount": "{{count}} exchanges",
+    "backToList": "Back to contacts",
+    "notFound": "Contact not found",
+    "loadError": "Loading error",
+    "relationshipSince": "First interaction",
+    "lastInteraction": "Last interaction",
+    "exchanges": "exchanges",
+    "conversations": "Conversations",
+    "noConversations": "No exchanges",
+    "tasks": "Linked tasks",
+    "noTasks": "No task",
+    "dueDate": "Due date",
+    "appointments": "Meetings",
+    "noAppointments": "No meeting",
+    "projects": "Projects",
+    "noProjects": "No project",
+    "comments": "Internal notes",
+    "noComments": "No note",
+    "unknownAuthor": "Unknown",
+    "attachments": "Attachments",
+    "noAttachments": "No attachment"
   }
 }

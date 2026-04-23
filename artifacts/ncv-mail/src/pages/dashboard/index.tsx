@@ -274,9 +274,24 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     {(email.sender || "?")[0].toUpperCase()}
                   </div>
                   <div>
-                    <div className="text-[13px] font-medium text-white">{email.sender}</div>
+                    {email.senderEmail ? (
+                      <Link
+                        href={`/dashboard/contacts/${encodeURIComponent(email.senderEmail)}`}
+                        className="text-[13px] font-medium text-white hover:text-primary hover:underline transition-colors block"
+                        data-testid="link-contact-sender"
+                      >
+                        {email.sender}
+                      </Link>
+                    ) : (
+                      <div className="text-[13px] font-medium text-white">{email.sender}</div>
+                    )}
                     {email.senderEmail && email.senderEmail !== email.sender && (
-                      <div className="text-[11px] text-[#8b9cb3]">{email.senderEmail}</div>
+                      <Link
+                        href={`/dashboard/contacts/${encodeURIComponent(email.senderEmail)}`}
+                        className="text-[11px] text-[#8b9cb3] hover:text-primary hover:underline transition-colors block"
+                      >
+                        {email.senderEmail}
+                      </Link>
                     )}
                   </div>
                 </div>

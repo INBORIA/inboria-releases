@@ -2735,6 +2735,64 @@ paths:
         "404":
           description: User not found
 
+  /contacts:
+    get:
+      operationId: listContacts
+      tags: [contacts]
+      summary: List contacts derived from email exchanges
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: q
+          in: query
+          required: false
+          schema:
+            type: string
+        - name: page
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 30
+      responses:
+        "200":
+          description: Paginated contacts list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactListResponse"
+
+  /contacts/{email}:
+    get:
+      operationId: getContact
+      tags: [contacts]
+      summary: Aggregated 360 view for a single contact (URL-encoded email)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Contact with conversations, tasks, appointments, projects, comments and attachments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactDetail"
+        "400":
+          description: Invalid email
+        "404":
+          description: Contact not found
+
 components:
   schemas:
     HealthStatus:
@@ -4507,3 +4565,205 @@ components:
         revokedNow:
           type: boolean
           description: True if the user's plan was set to "expired" immediately.
+
+    Contact:
+      type: object
+      required: [name, email, count, lastSeenAt, firstSeenAt]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        count:
+          type: integer
+        lastSeenAt:
+          type: string
+          format: date-time
+        firstSeenAt:
+          type: string
+          format: date-time
+
+    ContactListResponse:
+      type: object
+      required: [contacts, total, page, pageSize, totalPages]
+      properties:
+        contacts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Contact"
+        total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+        totalPages:
+          type: integer
+
+    ContactConversation:
+      type: object
+      required: [id, subject, sender, senderEmail, status, priority, direction, createdAt]
+      properties:
+        id:
+          type: integer
+        subject:
+          type: string
+        sender:
+          type: string
+        senderEmail:
+          type: string
+        recipient:
+          type: ["string", "null"]
+        summary:
+          type: ["string", "null"]
+        status:
+          type: string
+        priority:
+          type: string
+        direction:
+          type: string
+          enum: [inbound, outbound]
+        createdAt:
+          type: string
+          format: date-time
+        projectName:
+          type: ["string", "null"]
+        projectReference:
+          type: ["string", "null"]
+
+    ContactTask:
+      type: object
+      required: [id, title, done, createdAt]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        done:
+          type: boolean
+        dueDate:
+          type: ["string", "null"]
+        emailId:
+          type: ["integer", "null"]
+        projectName:
+          type: ["string", "null"]
+        projectReference:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+
+    ContactAppointment:
+      type: object
+      required: [id, title, startAt, allDay]
+      properties:
+        id:
+          type: string
+        title:
+          type: string
+        location:
+          type: ["string", "null"]
+        startAt:
+          type: string
+          format: date-time
+        endAt:
+          type: ["string", "null"]
+        allDay:
+          type: boolean
+        emailId:
+          type: ["integer", "null"]
+
+    ContactProject:
+      type: object
+      required: [id, name]
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        reference:
+          type: ["string", "null"]
+
+    ContactComment:
+      type: object
+      required: [id, emailId, body, createdAt, authorName]
+      properties:
+        id:
+          type: string
+        emailId:
+          type: integer
+        emailSubject:
+          type: string
+        body:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        authorName:
+          type: string
+
+    ContactAttachment:
+      type: object
+      required: [id, filename, emailId]
+      properties:
+        id:
+          type: string
+        filename:
+          type: string
+        contentType:
+          type: ["string", "null"]
+        size:
+          type: ["integer", "null"]
+        emailId:
+          type: integer
+        createdAt:
+          type: ["string", "null"]
+          format: date-time
+
+    ContactSummary:
+      type: object
+      required: [name, email, totalCount, firstSeenAt, lastSeenAt]
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        totalCount:
+          type: integer
+        firstSeenAt:
+          type: string
+          format: date-time
+        lastSeenAt:
+          type: string
+          format: date-time
+
+    ContactDetail:
+      type: object
+      required: [contact, conversations, tasks, appointments, projects, comments, attachments]
+      properties:
+        contact:
+          $ref: "#/components/schemas/ContactSummary"
+        conversations:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContactConversation"
+        tasks:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContactTask"
+        appointments:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContactAppointment"
+        projects:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContactProject"
+        comments:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContactComment"
+        attachments:
+          type: array
+          items:
+            $ref: "#/components/schemas/ContactAttachment"
