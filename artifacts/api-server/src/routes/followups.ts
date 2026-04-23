@@ -85,7 +85,11 @@ router.get("/followups/stats", requireAuth, async (req, res): Promise<void> => {
       if (f.status === "en_attente") stats.en_attente++;
       else if (f.status === "relance") stats.relance++;
       else if (f.status === "termine") stats.termine++;
-      if ((f as any).ai_suggestion === true && f.status !== "termine") stats.aiSuggestions++;
+      // Compteur "Suggestions IA actives" : uniquement les suggestions encore
+      // non actionnées (en_attente) — non-dismissed est déjà appliqué via
+      // runStats(dismissedAtSupported). Toute action (relance/termine/ignore)
+      // doit faire disparaître la suggestion du badge.
+      if ((f as any).ai_suggestion === true && f.status === "en_attente") stats.aiSuggestions++;
     }
 
     const runOverdue = async (withDismissed: boolean) => {

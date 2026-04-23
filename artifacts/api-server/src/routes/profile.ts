@@ -61,7 +61,7 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       aiLanguage: profile.ai_language || "fr",
       signature: "",
       timezone: profile.timezone || "Europe/Brussels",
-      followUpDelayDays: profile.follow_up_delay_days ?? 7,
+      followUpDelayDays: profile.follow_up_delay_days ?? 5,
       createdAt: profile.created_at,
       organisationId,
       organisationName,
@@ -133,7 +133,7 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
       aiLanguage: profile.ai_language || "fr",
       signature: "",
       timezone: profile.timezone || "Europe/Brussels",
-      followUpDelayDays: profile.follow_up_delay_days ?? 7,
+      followUpDelayDays: profile.follow_up_delay_days ?? 5,
       createdAt: profile.created_at,
     });
   } catch {

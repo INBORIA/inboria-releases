@@ -92,10 +92,18 @@ export async function detectForUser(
     .gte("created_at", lookbackStart);
 
   const inboundList = (inbound || []) as Array<{ sender: string | null; subject: string | null; created_at: string }>;
-  const repliedEmails = new Set<string>();
+  // Plus récent timestamp d'inbound par expéditeur normalisé. Une "réponse"
+  // ne compte que si elle est postérieure au mail envoyé (sans cela, un
+  // ancien mail entrant du même contact masque toujours une vraie absence
+  // de réponse aux mails ultérieurs).
+  const lastInboundBySender = new Map<string, number>();
   for (const inb of inboundList) {
     const fromAddr = normalizeEmail(inb.sender);
-    if (fromAddr) repliedEmails.add(fromAddr);
+    if (!fromAddr) continue;
+    const ts = new Date(inb.created_at).getTime();
+    if (!Number.isFinite(ts)) continue;
+    const prev = lastInboundBySender.get(fromAddr);
+    if (prev === undefined || ts > prev) lastInboundBySender.set(fromAddr, ts);
   }
 
   // Suggestions déjà existantes / ignorées (par email_id) pour éviter les doublons
@@ -119,7 +127,9 @@ export async function detectForUser(
 
     const recipientNorm = normalizeEmail(mail.recipient);
     if (!recipientNorm) continue;
-    if (repliedEmails.has(recipientNorm)) continue;
+    const sentTs = new Date(mail.created_at).getTime();
+    const lastReplyTs = lastInboundBySender.get(recipientNorm);
+    if (lastReplyTs !== undefined && Number.isFinite(sentTs) && lastReplyTs > sentTs) continue;
 
     const dueDate = new Date(now.getTime() + 86_400_000).toISOString().split("T")[0];
 
