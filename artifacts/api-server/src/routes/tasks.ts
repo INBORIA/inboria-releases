@@ -25,7 +25,7 @@ function mapTask(t: any) {
     emailSender: senderName || null,
     emailSenderEmail: senderEmail || null,
     emailBody: t.emails?.body || null,
-    emailConnectionId: t.emails?.connection_id || null,
+    emailConnectionId: null,
     emailSummary: t.emails?.summary || null,
     emailPriority: t.emails?.priority || null,
     emailStatus: t.emails?.status || null,
@@ -85,7 +85,7 @@ router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
       let q = supabaseAdmin
         .from("tasks")
         .select(
-          "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, connection_id, categories:categories(name)), projects(name, reference)"
+          "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)"
         )
         .order("created_at", { ascending: false });
 
@@ -126,7 +126,7 @@ router.get("/tasks", requireAuth, async (req, res): Promise<void> => {
       let teamQ = supabaseAdmin
         .from("tasks")
         .select(
-          "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, connection_id, categories:categories(name)), projects(name, reference)"
+          "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)"
         )
         .order("created_at", { ascending: false })
         .in("assigned_to_user_id", memberIds)
@@ -218,7 +218,7 @@ router.post("/tasks", requireAuth, async (req, res): Promise<void> => {
       .from("tasks")
       .insert(insertData)
       .select(
-        "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, connection_id, categories:categories(name)), projects(name, reference)"
+        "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)"
       )
       .single();
 
@@ -298,7 +298,7 @@ router.patch("/tasks/:id", requireAuth, async (req, res): Promise<void> => {
       .update(updates)
       .eq("id", req.params.id)
       .select(
-        "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, connection_id, categories:categories(name)), projects(name, reference)"
+        "*, emails(subject, sender, body, summary, priority, status, created_at, category_id, categories:categories(name)), projects(name, reference)"
       )
       .single();
 
