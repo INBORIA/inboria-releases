@@ -1,4 +1,4 @@
-import { useGetProfile, useGetSpamCount } from "@workspace/api-client-react";
+import { useGetProfile } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import {
@@ -21,7 +21,6 @@ import {
   Send,
   CalendarDays,
   ShieldCheck,
-  ShieldAlert,
 } from "lucide-react";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { cn } from "@/lib/utils";
@@ -47,11 +46,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
   const totalUsed = ((user as any).emailsUsed || 0) + ((user as any).aiCreditsUsed || 0);
 
-  const { data: spamCountData } = useGetSpamCount({
-    query: { refetchInterval: 30000, refetchIntervalInBackground: false } as any,
-  });
-  const spamCount = (spamCountData as any)?.count || 0;
-
   const baseNavigation: Array<{ name: string; href: string; icon: any; badge?: number }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
@@ -59,7 +53,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     { name: t("sidebar.projects"), href: "/dashboard/projets", icon: FolderKanban },
     { name: t("sidebar.agenda"), href: "/dashboard/agenda", icon: CalendarDays },
     { name: t("sidebar.archives"), href: "/dashboard/archives", icon: Archive },
-    { name: t("sidebar.junk"), href: "/dashboard/indesirables", icon: ShieldAlert, badge: spamCount },
     { name: t("sidebar.dailyBrief"), href: "/dashboard/bilan", icon: LayoutDashboard },
     { name: t("sidebar.classification"), href: "/dashboard/classement", icon: Tags },
     { name: t("sidebar.settings"), href: "/dashboard/parametres", icon: Settings },
