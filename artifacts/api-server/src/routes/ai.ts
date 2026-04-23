@@ -7,12 +7,24 @@ import { logger } from "../lib/logger";
 import { getKnowledgeBase, getSystemPrompt } from "../services/knowledge-base";
 import { AI_COST, checkEntitlement, consumeAiCredits, type AiEventType } from "../services/credits";
 import { recordAutopilotEvent } from "../services/autopilot-events";
+import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
 });
 
 const router: IRouter = Router();
+
+async function fetchAccessibleEmail(emailId: number, userId: string, columns: string) {
+  const memberMailboxIds = await getMemberMailboxIds(userId);
+  const orFilter = buildInboxScopeOrFilter(userId, memberMailboxIds);
+  return await supabaseAdmin
+    .from("emails")
+    .select(columns)
+    .eq("id", emailId)
+    .or(orFilter)
+    .single();
+}
 
 router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> => {
   try {
@@ -255,12 +267,11 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
     }
     const { emailId } = parsed.data;
 
-    const { data: email, error: emailErr } = await supabaseAdmin
-      .from("emails")
-      .select("id, sender, subject, body, category_id, project_id, connection_id")
-      .eq("id", emailId)
-      .eq("user_id", req.userId!)
-      .single();
+    const { data: email, error: emailErr } = await fetchAccessibleEmail(
+      emailId,
+      req.userId!,
+      "id, sender, subject, body, category_id, project_id, connection_id",
+    );
 
     if (emailErr || !email) {
       res.status(404).json({ error: "Email introuvable" });
@@ -363,12 +374,11 @@ router.post("/ai/forward-intro", requireAuth, async (req, res): Promise<void> =>
     const recipient = typeof req.body?.to === "string" ? req.body.to.trim() : "";
     const note = typeof req.body?.note === "string" ? req.body.note.trim().slice(0, 500) : "";
 
-    const { data: email, error: emailErr } = await supabaseAdmin
-      .from("emails")
-      .select("id, sender, subject, body, connection_id")
-      .eq("id", emailId)
-      .eq("user_id", req.userId!)
-      .single();
+    const { data: email, error: emailErr } = await fetchAccessibleEmail(
+      emailId,
+      req.userId!,
+      "id, sender, subject, body, connection_id",
+    );
 
     if (emailErr || !email) {
       res.status(404).json({ error: "Email introuvable" });
@@ -629,12 +639,11 @@ router.post("/ai/extract-appointment", requireAuth, async (req, res): Promise<vo
       .single();
     const extractTimezone = extractProfile?.timezone || "Europe/Brussels";
 
-    const { data: email, error: emailErr } = await supabaseAdmin
-      .from("emails")
-      .select("id, sender, subject, body, summary")
-      .eq("id", emailId)
-      .eq("user_id", req.userId!)
-      .single();
+    const { data: email, error: emailErr } = await fetchAccessibleEmail(
+      emailId,
+      req.userId!,
+      "id, sender, subject, body, summary",
+    );
 
     if (emailErr || !email) { res.status(404).json({ error: "Email introuvable" }); return; }
 
