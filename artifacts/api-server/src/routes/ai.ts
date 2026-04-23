@@ -187,6 +187,12 @@ Herinnering: de waarden van "summary" en "advice" MOETEN volledig in het Nederla
       res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
       return;
     }
+    recordAutopilotEvent({
+      userId: req.userId!,
+      eventType: "summary_generated",
+      title: "Bilan quotidien",
+      metadata: { kind: "daily_summary", score, total: allEmails.length, urgent },
+    }).catch(() => {});
     res.json({
       score,
       summary: aiResponse.summary || "Aucun email a analyser.",
@@ -596,6 +602,12 @@ router.post("/ai/conversation-summary", requireAuth, async (req, res): Promise<v
       res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
       return;
     }
+    recordAutopilotEvent({
+      userId: req.userId!,
+      eventType: "summary_generated",
+      title: "Résumé de conversation",
+      metadata: { kind: "conversation_summary", messages: thread.length },
+    }).catch(() => {});
     res.json({ summary: completion.choices[0]?.message?.content || "" });
   } catch (err: any) {
     res.status(500).json({ error: "Erreur de résumé: " + err.message });
@@ -852,6 +864,16 @@ N'invente PAS de RDV. Détecte uniquement si une date/heure concrète est mentio
     if (!billing.ok) {
       res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
       return;
+    }
+    if (created.length > 0) {
+      recordAutopilotEvent({
+        userId: req.userId!,
+        eventType: "appointment_extracted",
+        title: created.length === 1
+          ? created[0].title
+          : `${created.length} rendez-vous détectés`,
+        metadata: { kind: "detect_appointments", count: created.length },
+      }).catch(() => {});
     }
     res.json({ appointments: created, count: created.length });
   } catch (err: any) {
