@@ -2507,16 +2507,21 @@ export const GetContactResponse = zod.object({
   }),
   conversations: zod.array(
     zod.object({
-      id: zod.number(),
-      subject: zod.string(),
-      sender: zod.string(),
-      senderEmail: zod.string(),
-      recipient: zod.string().nullish(),
+      id: zod.number().describe("ID of the latest email in the thread"),
+      threadKey: zod
+        .string()
+        .describe("Normalized subject used as thread grouping key"),
+      subject: zod
+        .string()
+        .describe("Subject of the latest email in the thread"),
       summary: zod.string().nullish(),
       status: zod.string(),
       priority: zod.string(),
       direction: zod.enum(["inbound", "outbound"]),
-      createdAt: zod.coerce.date(),
+      createdAt: zod.coerce
+        .date()
+        .describe("Timestamp of the latest email in the thread"),
+      messageCount: zod.number().min(1),
       projectName: zod.string().nullish(),
       projectReference: zod.string().nullish(),
     }),

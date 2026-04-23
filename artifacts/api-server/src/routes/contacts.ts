@@ -180,21 +180,33 @@ router.get("/contacts/:email", requireAuth, async (req, res): Promise<void> => {
     let displayName = target;
     let firstSeenAt = matching[0].created_at as string;
     let lastSeenAt = matching[0].created_at as string;
-    const conversations: Array<{
-      id: number;
+
+    type ThreadEntry = {
+      threadKey: string;
+      latestEmailId: number;
       subject: string;
-      sender: string;
-      senderEmail: string;
-      recipient: string | null;
-      summary: string | null;
-      status: string;
-      priority: string;
-      direction: "inbound" | "outbound";
-      createdAt: string;
+      latestSummary: string | null;
+      latestStatus: string;
+      latestPriority: string;
+      latestDirection: "inbound" | "outbound";
+      latestCreatedAt: string;
+      messageCount: number;
       projectName: string | null;
       projectReference: string | null;
-    }> = [];
+    };
+    const threadMap = new Map<string, ThreadEntry>();
     const projectIds = new Set<string>();
+
+    function normalizeSubject(s: string): string {
+      let v = (s || "").trim();
+      // Strip leading reply/forward prefixes (Re:, Fwd:, Tr:, Fw:, Rép:, AW:, WG:, RV:) in any language
+      while (true) {
+        const prev = v;
+        v = v.replace(/^\s*(re|ré|rép|aw|fwd|fw|tr|tr\.|wg|rv|antw|antwort|i|sv|vs)\s*[:：]\s*/i, "").trim();
+        if (v === prev) break;
+      }
+      return v.toLowerCase().replace(/\s+/g, " ");
+    }
 
     for (const e of matching) {
       const s = parseAddress(e.sender as string);
@@ -209,21 +221,56 @@ router.get("/contacts/:email", requireAuth, async (req, res): Promise<void> => {
       if (ts > lastSeenAt) lastSeenAt = ts;
       if (ts < firstSeenAt) firstSeenAt = ts;
       if (e.project_id) projectIds.add(String(e.project_id));
-      conversations.push({
-        id: e.id,
-        subject: e.subject || "(sans objet)",
-        sender: s?.name || e.sender || "",
-        senderEmail: s?.email || "",
-        recipient: e.recipient || null,
-        summary: e.summary || null,
-        status: e.status,
-        priority: e.priority || "faible",
-        direction,
-        createdAt: ts,
-        projectName: (e as any).projects?.name || null,
-        projectReference: (e as any).projects?.reference || null,
-      });
+
+      const rawSubject = (e.subject as string) || "(sans objet)";
+      const key = normalizeSubject(rawSubject) || `__id_${e.id}`;
+      const existing = threadMap.get(key);
+      if (!existing) {
+        threadMap.set(key, {
+          threadKey: key,
+          latestEmailId: e.id,
+          subject: rawSubject,
+          latestSummary: e.summary || null,
+          latestStatus: e.status,
+          latestPriority: e.priority || "faible",
+          latestDirection: direction,
+          latestCreatedAt: ts,
+          messageCount: 1,
+          projectName: (e as any).projects?.name || null,
+          projectReference: (e as any).projects?.reference || null,
+        });
+      } else {
+        existing.messageCount += 1;
+        // Emails are queried desc by created_at, so first seen is already the latest
+        if (ts > existing.latestCreatedAt) {
+          existing.latestEmailId = e.id;
+          existing.subject = rawSubject;
+          existing.latestSummary = e.summary || null;
+          existing.latestStatus = e.status;
+          existing.latestPriority = e.priority || "faible";
+          existing.latestDirection = direction;
+          existing.latestCreatedAt = ts;
+          existing.projectName = (e as any).projects?.name || null;
+          existing.projectReference = (e as any).projects?.reference || null;
+        }
+      }
     }
+
+    const conversations = Array.from(threadMap.values())
+      .sort((a, b) => (a.latestCreatedAt < b.latestCreatedAt ? 1 : -1))
+      .map((t) => ({
+        id: t.latestEmailId,
+        threadKey: t.threadKey,
+        subject: t.subject,
+        summary: t.latestSummary,
+        status: t.latestStatus,
+        priority: t.latestPriority,
+        direction: t.latestDirection,
+        createdAt: t.latestCreatedAt,
+        messageCount: t.messageCount,
+        projectName: t.projectName,
+        projectReference: t.projectReference,
+      }));
 
     const emailIds = matching.map((e: any) => e.id);
 

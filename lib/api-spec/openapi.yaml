@@ -4602,18 +4602,17 @@ components:
 
     ContactConversation:
       type: object
-      required: [id, subject, sender, senderEmail, status, priority, direction, createdAt]
+      required: [id, threadKey, subject, status, priority, direction, createdAt, messageCount]
       properties:
         id:
           type: integer
+          description: ID of the latest email in the thread
+        threadKey:
+          type: string
+          description: Normalized subject used as thread grouping key
         subject:
           type: string
-        sender:
-          type: string
-        senderEmail:
-          type: string
-        recipient:
-          type: ["string", "null"]
+          description: Subject of the latest email in the thread
         summary:
           type: ["string", "null"]
         status:
@@ -4626,6 +4625,10 @@ components:
         createdAt:
           type: string
           format: date-time
+          description: Timestamp of the latest email in the thread
+        messageCount:
+          type: integer
+          minimum: 1
         projectName:
           type: ["string", "null"]
         projectReference:

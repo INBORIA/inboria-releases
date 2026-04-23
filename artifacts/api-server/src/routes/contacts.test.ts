@@ -204,9 +204,18 @@ describe("GET /contacts/:email (detail)", () => {
     expect(res.json.contact.firstSeenAt).toBe("2026-04-20T10:00:00Z");
     expect(res.json.contact.lastSeenAt).toBe("2026-04-22T10:00:00Z");
 
-    expect(res.json.conversations).toHaveLength(3);
-    const outbound = res.json.conversations.find((c: any) => c.direction === "outbound");
-    expect(outbound.id).toBe(11);
+    // Threads: "Devis" + "Re: Devis" group together (2 messages, latest=11=outbound),
+    // "Relance" is its own thread (1 message, inbound)
+    expect(res.json.conversations).toHaveLength(2);
+    const devisThread = res.json.conversations.find((c: any) => c.messageCount === 2);
+    expect(devisThread).toBeDefined();
+    expect(devisThread.id).toBe(11);
+    expect(devisThread.direction).toBe("outbound");
+    expect(devisThread.subject).toBe("Re: Devis");
+    const relanceThread = res.json.conversations.find((c: any) => c.subject === "Relance");
+    expect(relanceThread).toBeDefined();
+    expect(relanceThread.messageCount).toBe(1);
+    expect(relanceThread.direction).toBe("inbound");
 
     expect(res.json.tasks).toHaveLength(1);
     expect(res.json.tasks[0].title).toBe("Préparer devis");

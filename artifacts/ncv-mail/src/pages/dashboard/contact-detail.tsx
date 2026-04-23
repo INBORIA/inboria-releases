@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams, useLocation } from "wouter";
 import { format, formatDistanceToNow } from "date-fns";
@@ -12,14 +13,15 @@ import {
   Paperclip,
   Inbox as InboxIcon,
   Send,
-  Loader2,
   ChevronRight,
+  ChevronDown,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useGetContact } from "@workspace/api-client-react";
+import { AttachmentList } from "@/components/AttachmentList";
 
 const LOCALE_MAP: Record<string, any> = { fr, en: enUS, nl, de, es };
 
@@ -29,23 +31,43 @@ function Section({
   count,
   children,
   empty,
+  sectionKey,
+  defaultOpen = true,
 }: {
   icon: any;
   title: string;
   count: number;
   children: React.ReactNode;
   empty: string;
+  sectionKey: string;
+  defaultOpen?: boolean;
 }) {
+  const [open, setOpen] = useState(defaultOpen);
   return (
     <Card className="bg-[#0f1620] border-[#1f2937] p-4">
-      <div className="flex items-center gap-2 mb-3">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-2 w-full text-left hover:opacity-80 transition-opacity"
+        aria-expanded={open}
+        data-testid={`toggle-section-${sectionKey}`}
+      >
         <Icon className="w-4 h-4 text-primary" />
         <h2 className="text-sm font-semibold text-white">{title}</h2>
         <Badge variant="outline" className="ml-auto text-xs">
           {count}
         </Badge>
-      </div>
-      {count === 0 ? <div className="text-xs text-[#8b9cb3] py-3 text-center">{empty}</div> : children}
+        {open ? (
+          <ChevronDown className="w-4 h-4 text-[#8b9cb3]" />
+        ) : (
+          <ChevronRight className="w-4 h-4 text-[#8b9cb3]" />
+        )}
+      </button>
+      {open && (
+        <div className="mt-3" data-testid={`content-section-${sectionKey}`}>
+          {count === 0 ? <div className="text-xs text-[#8b9cb3] py-3 text-center">{empty}</div> : children}
+        </div>
+      )}
     </Card>
   );
 }
@@ -144,13 +166,14 @@ export default function ContactDetailPage() {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <Section
             icon={Mail}
+            sectionKey="conversations"
             title={t("contacts.conversations", "Conversations")}
             count={conversations.length}
             empty={t("contacts.noConversations", "Aucun échange")}
           >
             <ul className="space-y-1 max-h-96 overflow-y-auto pr-1">
               {conversations.map((conv: any) => (
-                <li key={conv.id}>
+                <li key={conv.threadKey || conv.id}>
                   <Link
                     href={`/dashboard?email=${conv.id}`}
                     className="flex items-start gap-2 p-2 rounded hover:bg-[#1a2332] transition-colors group"
@@ -162,7 +185,14 @@ export default function ContactDetailPage() {
                       <InboxIcon className="w-3.5 h-3.5 text-green-400 mt-0.5 flex-shrink-0" />
                     )}
                     <div className="flex-1 min-w-0">
-                      <div className="text-sm text-white truncate">{conv.subject}</div>
+                      <div className="flex items-center gap-2">
+                        <div className="text-sm text-white truncate flex-1">{conv.subject}</div>
+                        {conv.messageCount > 1 && (
+                          <Badge variant="outline" className="text-[9px] px-1.5 py-0 h-4 flex-shrink-0">
+                            {conv.messageCount}
+                          </Badge>
+                        )}
+                      </div>
                       {conv.summary && <div className="text-xs text-[#8b9cb3] truncate">{conv.summary}</div>}
                       <div className="text-[10px] text-[#8b9cb3] mt-0.5">
                         {format(new Date(conv.createdAt), "Pp", { locale: dateLocale })}
@@ -180,6 +210,7 @@ export default function ContactDetailPage() {
 
           <Section
             icon={CheckSquare}
+            sectionKey="tasks"
             title={t("contacts.tasks", "Tâches liées")}
             count={tasks.length}
             empty={t("contacts.noTasks", "Aucune tâche")}
@@ -209,6 +240,7 @@ export default function ContactDetailPage() {
 
           <Section
             icon={CalendarDays}
+            sectionKey="appointments"
             title={t("contacts.appointments", "Rendez-vous")}
             count={appointments.length}
             empty={t("contacts.noAppointments", "Aucun rendez-vous")}
@@ -228,6 +260,7 @@ export default function ContactDetailPage() {
 
           <Section
             icon={FolderKanban}
+            sectionKey="projects"
             title={t("contacts.projects", "Projets")}
             count={projects.length}
             empty={t("contacts.noProjects", "Aucun projet")}
@@ -244,9 +277,11 @@ export default function ContactDetailPage() {
 
           <Section
             icon={MessageSquare}
+            sectionKey="comments"
             title={t("contacts.comments", "Notes internes")}
             count={comments.length}
             empty={t("contacts.noComments", "Aucune note")}
+            defaultOpen={false}
           >
             <ul className="space-y-2">
               {comments.map((cm: any) => (
@@ -264,23 +299,20 @@ export default function ContactDetailPage() {
 
           <Section
             icon={Paperclip}
+            sectionKey="attachments"
             title={t("contacts.attachments", "Pièces jointes")}
             count={attachments.length}
             empty={t("contacts.noAttachments", "Aucune pièce jointe")}
+            defaultOpen={false}
           >
-            <ul className="space-y-1">
-              {attachments.map((a: any) => (
-                <li key={a.id} className="flex items-center gap-2 text-sm text-white" data-testid={`item-attachment-${a.id}`}>
-                  <Paperclip className="w-3.5 h-3.5 text-[#8b9cb3] flex-shrink-0" />
-                  <span className="truncate">{a.filename}</span>
-                  {a.size && (
-                    <span className="text-xs text-[#8b9cb3] ml-auto flex-shrink-0">
-                      {Math.ceil(a.size / 1024)} KB
-                    </span>
-                  )}
-                </li>
-              ))}
-            </ul>
+            <AttachmentList
+              attachments={attachments.map((a: any) => ({
+                id: String(a.id),
+                filename: a.filename,
+                content_type: a.contentType || "application/octet-stream",
+                size: a.size || 0,
+              })) as any}
+            />
           </Section>
         </div>
       </div>

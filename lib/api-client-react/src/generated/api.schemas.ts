@@ -1102,18 +1102,21 @@ export const ContactConversationDirection = {
 } as const;
 
 export interface ContactConversation {
+  /** ID of the latest email in the thread */
   id: number;
+  /** Normalized subject used as thread grouping key */
+  threadKey: string;
+  /** Subject of the latest email in the thread */
   subject: string;
-  sender: string;
-  senderEmail: string;
-  /** @nullable */
-  recipient?: string | null;
   /** @nullable */
   summary?: string | null;
   status: string;
   priority: string;
   direction: ContactConversationDirection;
+  /** Timestamp of the latest email in the thread */
   createdAt: string;
+  /** @minimum 1 */
+  messageCount: number;
   /** @nullable */
   projectName?: string | null;
   /** @nullable */

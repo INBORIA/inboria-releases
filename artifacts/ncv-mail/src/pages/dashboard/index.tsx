@@ -322,6 +322,36 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   </div>
                 );
               })()}
+              {(() => {
+                const recipients = String(email.recipient || "")
+                  .split(/\s*[,;]\s*/)
+                  .map((p: string) => {
+                    const m = p.match(/^\s*"?([^"<>]*?)"?\s*<\s*([^<>]+)\s*>\s*$/);
+                    if (m) return { name: (m[1] || "").trim() || m[2].trim(), email: m[2].trim().toLowerCase() };
+                    const bare = p.replace(/^["'<\s]+|["'>\s]+$/g, "").toLowerCase();
+                    if (bare.includes("@")) return { name: bare, email: bare };
+                    return null;
+                  })
+                  .filter((x): x is { name: string; email: string } => !!x);
+                if (recipients.length === 0) return null;
+                return (
+                  <div className="flex items-start gap-1.5 mb-2 flex-wrap">
+                    <span className="text-[10px] uppercase tracking-wider text-[#8b9cb3] font-medium mt-0.5">{t("inbox.toLabel", "À")}</span>
+                    {recipients.map((r, i) => (
+                      <span key={r.email} className="inline-flex items-center">
+                        <Link
+                          href={`/dashboard/contacts/${encodeURIComponent(r.email)}`}
+                          className="text-[11px] text-[#8b9cb3] hover:text-primary hover:underline transition-colors"
+                          data-testid={`link-contact-recipient-${r.email}`}
+                        >
+                          {r.name}
+                        </Link>
+                        {i < recipients.length - 1 && <span className="text-[11px] text-[#8b9cb3] mx-0.5">,</span>}
+                      </span>
+                    ))}
+                  </div>
+                );
+              })()}
               <div className="text-[10px] uppercase tracking-wider text-[#8b9cb3] font-medium mb-1">{t("inbox.subjectLabel")}</div>
               <h2 className="text-[16px] font-bold text-white leading-snug">{email.subject || "(Sans objet)"}</h2>
             </div>
