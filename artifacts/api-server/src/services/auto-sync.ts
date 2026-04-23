@@ -656,7 +656,7 @@ async function saveAttachmentsMeta(
     try {
       const supabaseUrl = process.env["VITE_SUPABASE_URL"];
       const supabaseKey = process.env["SUPABASE_SECRET_KEY"];
-      const resp = await fetch(`${supabaseUrl}/rest/v1/email_attachments`, {
+      const resp = await fetchWithTimeout(`${supabaseUrl}/rest/v1/email_attachments`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -665,6 +665,7 @@ async function saveAttachmentsMeta(
           "Prefer": "return=minimal",
         },
         body: JSON.stringify(rows),
+        timeoutMs: 20_000,
       });
       if (!resp.ok) {
         const errText = await resp.text();
@@ -719,11 +720,11 @@ async function syncGmailForUser(conn: any): Promise<number> {
 
     let synced = 0;
     for (const msg of messageList.messages) {
-      const { data: fullMsg } = await gmail.users.messages.get({
-        userId: "me",
-        id: msg.id!,
-        format: "full",
-      });
+      const { data: fullMsg } = await withTimeout(
+        gmail.users.messages.get({ userId: "me", id: msg.id!, format: "full" }),
+        20_000,
+        "Gmail messages.get",
+      );
 
       const headers = fullMsg.payload?.headers || [];
       const from = headers.find((h) => h.name === "From")?.value || "Inconnu";
@@ -784,11 +785,11 @@ async function syncGmailForUser(conn: any): Promise<number> {
         if (!gmailMsgId) continue;
 
         try {
-          const { data: fullMsg } = await gmail.users.messages.get({
-            userId: "me",
-            id: gmailMsgId,
-            format: "full",
-          });
+          const { data: fullMsg } = await withTimeout(
+            gmail.users.messages.get({ userId: "me", id: gmailMsgId, format: "full" }),
+            20_000,
+            "Gmail messages.get (body backfill)",
+          );
           const htmlBody = extractGmailBody(fullMsg.payload) || "";
           if (htmlBody && /<[a-z][\s\S]*>/i.test(htmlBody) && htmlBody !== email.body) {
             await supabaseAdmin
@@ -832,11 +833,11 @@ async function syncGmailForUser(conn: any): Promise<number> {
             if (!gmailMsgId || gmailMsgId.startsWith("imap_")) continue;
 
             try {
-              const { data: fullMsg } = await gmail.users.messages.get({
-                userId: "me",
-                id: gmailMsgId,
-                format: "full",
-              });
+              const { data: fullMsg } = await withTimeout(
+                gmail.users.messages.get({ userId: "me", id: gmailMsgId, format: "full" }),
+                20_000,
+                "Gmail messages.get (attachments backfill)",
+              );
               const gmailAttachments = extractGmailAttachments(fullMsg.payload);
               if (gmailAttachments.length > 0) {
                 await saveAttachmentsMeta(email.id, gmailAttachments, "gmail", conn.id, gmailMsgId);
