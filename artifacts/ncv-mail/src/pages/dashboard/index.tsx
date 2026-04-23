@@ -43,7 +43,9 @@ import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2 } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import { Link } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect, useRef, useCallback, memo } from "react";
 import { Button } from "@/components/ui/button";
@@ -1091,7 +1093,7 @@ export default function Dashboard() {
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [selectedAccountId, setSelectedAccountId] = useState<string>("all");
 
-  const { data: composeConnections } = useQuery<Array<{ id: string; provider: string; email_address: string; signature?: string | null }>>({
+  const { data: composeConnections } = useQuery<Array<{ id: string; provider: string; email_address: string; signature?: string | null; consecutive_failures?: number | null; last_error_message?: string | null }>>({
     queryKey: ["email-connections-compose"],
     queryFn: async () => {
       const { supabase } = await import("@/lib/supabase");
@@ -2107,11 +2109,17 @@ export default function Dashboard() {
                     <SelectItem value="all">{t("inbox.allAccounts")}</SelectItem>
                     {composeConnections?.map((c) => {
                       const badge = resolveMailboxBadge({ recipient: c.email_address }, composeConnections, undefined);
+                      const isDown = (c.consecutive_failures ?? 0) >= 3;
                       return (
                         <SelectItem key={c.id} value={String(c.id)}>
                           <span className="inline-flex items-center gap-1.5">
-                            {badge && <span className={`w-1.5 h-1.5 rounded-full ${badge.dotClass}`} />}
-                            {c.email_address}
+                            {isDown ? (
+                              <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
+                            ) : (
+                              badge && <span className={`w-1.5 h-1.5 rounded-full ${badge.dotClass}`} />
+                            )}
+                            <span className={isDown ? "text-red-400" : ""}>{c.email_address}</span>
+                            {isDown && <AlertCircle className="w-3 h-3 text-red-400 ml-1" />}
                           </span>
                         </SelectItem>
                       );
@@ -2119,6 +2127,39 @@ export default function Dashboard() {
                   </SelectContent>
                 </Select>
               )}
+              {inboxMode === "personal" && (() => {
+                const downConns = (composeConnections || []).filter((c) => (c.consecutive_failures ?? 0) >= 3);
+                if (downConns.length === 0) return null;
+                return (
+                  <TooltipProvider delayDuration={150}>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link
+                          href="/dashboard/parametres"
+                          className="inline-flex items-center gap-1 ml-1 px-1.5 py-0.5 rounded-md border border-red-500/30 bg-red-500/10 text-red-400 text-[10px] hover:bg-red-500/20 transition-colors"
+                          aria-label={t("inbox.disconnectedAlert", { count: downConns.length, defaultValue: "{{count}} compte(s) déconnecté(s)" })}
+                        >
+                          <AlertCircle className="w-3 h-3" />
+                          <span>{downConns.length}</span>
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent className="max-w-xs">
+                        <p className="text-[11px] font-medium mb-1">
+                          {t("inbox.disconnectedTooltipTitle", { defaultValue: "Compte(s) déconnecté(s)" })}
+                        </p>
+                        <ul className="text-[10px] text-[#8b9cb3] space-y-0.5">
+                          {downConns.map((c) => (
+                            <li key={c.id}>• {c.email_address}</li>
+                          ))}
+                        </ul>
+                        <p className="text-[10px] mt-1.5 text-[#8b9cb3]">
+                          {t("inbox.disconnectedTooltipCta", { defaultValue: "Cliquez pour reconnecter dans Paramètres." })}
+                        </p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                );
+              })()}
               {inboxMode === "shared" && (sharedMailboxes as any[])?.length > 1 && (
                 <Select value={selectedSharedMailboxId || ""} onValueChange={setSelectedSharedMailboxId}>
                   <SelectTrigger className="w-auto min-w-[120px] h-6 bg-card border-border text-[#8b9cb3] text-[10px] ml-1">
