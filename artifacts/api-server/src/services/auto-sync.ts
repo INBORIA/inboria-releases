@@ -10,6 +10,8 @@ import { preClassifyEmail, recordAIClassification, bumpMetrics } from "./pre-fil
 import { consumeAiCredits, logTriageEvent, checkEntitlement } from "./credits";
 import { getEmailOAuthRedirectUri } from "../lib/urls";
 
+const IMAP_BODY_MAX_BYTES = 200_000;
+
 interface AttachmentMeta {
   filename: string;
   contentType: string;
@@ -978,7 +980,10 @@ async function syncImapForUser(conn: any): Promise<number> {
           bodyText = parsed.html
             ? (typeof parsed.html === "string" ? parsed.html : "")
             : parsed.text || "";
-          bodyText = bodyText.slice(0, 10000);
+          if (bodyText.length > IMAP_BODY_MAX_BYTES) {
+            log.warn({ uid: msg.uid, originalLength: bodyText.length, limit: IMAP_BODY_MAX_BYTES }, "IMAP body truncated");
+            bodyText = bodyText.slice(0, IMAP_BODY_MAX_BYTES);
+          }
           if (parsed.headers && typeof (parsed.headers as any).forEach === "function") {
             (parsed.headers as Map<string, any>).forEach((value, key) => {
               if (value === undefined || value === null) return;
@@ -991,7 +996,7 @@ async function syncImapForUser(conn: any): Promise<number> {
             const raw = msg.source.toString("utf-8");
             const bodyStart = raw.indexOf("\r\n\r\n");
             if (bodyStart !== -1) {
-              bodyText = raw.slice(bodyStart + 4).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 5000);
+              bodyText = raw.slice(bodyStart + 4).replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, IMAP_BODY_MAX_BYTES);
             }
           } catch (rawErr: any) {
             log.warn({ uid: msg.uid, error: rawErr.message }, "Raw body extraction also failed");
