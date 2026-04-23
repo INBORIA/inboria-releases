@@ -23,6 +23,8 @@ export interface Followup {
   /** @nullable */
   notes?: string | null;
   aiSuggestion?: boolean;
+  /** @nullable */
+  dismissedAt?: Date | null;
   emails?: FollowupEmails;
   projects?: FollowupProjects;
   createdAt?: Date;

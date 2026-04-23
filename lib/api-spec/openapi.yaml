@@ -1088,6 +1088,12 @@ paths:
           in: query
           schema:
             type: string
+        - name: kind
+          in: query
+          description: Filtre par type de relance (ai = suggestions IA, manual = créées par l'utilisateur).
+          schema:
+            type: string
+            enum: [ai, manual]
       responses:
         "200":
           description: List of followups
@@ -1136,6 +1142,9 @@ paths:
                     type: integer
                   overdue:
                     type: integer
+                  aiSuggestions:
+                    type: integer
+                    description: Nombre de suggestions IA actives (non terminées, non ignorées).
 
   /followups/{id}:
     patch:
@@ -1181,6 +1190,58 @@ paths:
                 properties:
                   success:
                     type: boolean
+
+  /followups/{id}/dismiss:
+    post:
+      operationId: dismissFollowup
+      tags: [followups]
+      summary: Marquer une suggestion de relance comme ignorée
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Dismissed followup
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Followup"
+
+  /ai/follow-up-draft:
+    post:
+      operationId: generateFollowUpDraft
+      tags: [ai]
+      summary: Génère un brouillon de mail de relance pour une suggestion existante
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [followupId]
+              properties:
+                followupId:
+                  type: string
+      responses:
+        "200":
+          description: Brouillon généré
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [draft, subject, to, emailId]
+                properties:
+                  draft:
+                    type: string
+                  subject:
+                    type: string
+                  to:
+                    type: string
+                  emailId:
+                    type: integer
 
   /ai/conversation-summary:
     post:
@@ -2773,6 +2834,12 @@ components:
           type: boolean
           default: false
           description: True when the profile has the internal admin flag.
+        followUpDelayDays:
+          type: integer
+          default: 5
+          minimum: 1
+          maximum: 60
+          description: Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.
       required:
         - id
         - email
@@ -2799,6 +2866,10 @@ components:
           type: string
         timezone:
           type: string
+        followUpDelayDays:
+          type: integer
+          minimum: 1
+          maximum: 60
 
     RegisterPushTokenBody:
       type: object
@@ -2891,6 +2962,9 @@ components:
           type: ["string", "null"]
         aiSuggestion:
           type: boolean
+        dismissedAt:
+          type: ["string", "null"]
+          format: date-time
         emails:
           type: object
           nullable: true

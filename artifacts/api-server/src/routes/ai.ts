@@ -346,6 +346,89 @@ Redige une reponse professionnelle et adaptee au contexte. Reponds uniquement av
   }
 });
 
+router.post("/ai/follow-up-draft", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const entitlement = await checkEntitlement(req.userId!, AI_COST.draft);
+    if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
+
+    const followupId = typeof req.body?.followupId === "string" ? req.body.followupId.trim() : "";
+    if (!followupId) {
+      res.status(400).json({ error: "followupId requis" });
+      return;
+    }
+
+    const { data: followup, error: fErr } = await supabaseAdmin
+      .from("followups")
+      .select("id, email_id, title")
+      .eq("id", followupId)
+      .eq("user_id", req.userId!)
+      .single();
+
+    if (fErr || !followup || !followup.email_id) {
+      res.status(404).json({ error: "Relance ou email introuvable" });
+      return;
+    }
+
+    const { data: email, error: emailErr } = await fetchAccessibleEmail(
+      followup.email_id as number,
+      req.userId!,
+      "id, sender, recipient, subject, body, created_at",
+    );
+
+    if (emailErr || !email) {
+      res.status(404).json({ error: "Email introuvable" });
+      return;
+    }
+
+    const sentDate = email.created_at ? new Date(email.created_at).toLocaleDateString("fr-FR") : "";
+    const cleanBody = (email.body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 1500);
+    const signatureInstruction = `N'ajoute aucune signature ni formule de signature : termine le brouillon directement par la dernière phrase utile, sans nom ni "Cordialement".`;
+
+    const completion = await openai.chat.completions.create({
+      model: "gpt-4o-mini",
+      max_completion_tokens: 600,
+      messages: [
+        {
+          role: "system",
+          content: `Tu rédiges un court email de relance professionnel et courtois en français. Le destinataire n'a pas répondu à un email précédent. Le ton est poli, bref (3-6 lignes), sans culpabilisation. Rappelle brièvement le contexte du mail initial et propose une suite (réponse, point téléphonique, etc.). ${signatureInstruction}`,
+        },
+        {
+          role: "user",
+          content: `Voici le mail initial que j'ai envoyé${sentDate ? ` le ${sentDate}` : ""} et qui est resté sans réponse.\n\nDestinataire : ${email.recipient || "(inconnu)"}\nObjet initial : ${email.subject || "(sans objet)"}\nCorps initial :\n${cleanBody}\n\nRédige uniquement le texte d'un mail de relance court (3-6 lignes), sans objet, sans signature, sans guillemets, prêt à coller dans le corps.`,
+        },
+      ],
+    });
+
+    const draft = completion.choices[0]?.message?.content?.trim() || "";
+    const subject = (email.subject || "").match(/^\s*re\s*:/i)
+      ? (email.subject as string)
+      : `Re: ${email.subject || ""}`.trim();
+
+    const billing = await consumeAiCredits(req.userId!, "draft");
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
+    recordAutopilotEvent({
+      userId: req.userId!,
+      eventType: "draft_generated",
+      title: subject,
+      emailId: (email.id as number) || null,
+      metadata: { kind: "follow_up_draft", followupId },
+    }).catch(() => {});
+
+    res.json({
+      draft,
+      subject,
+      to: email.recipient || "",
+      emailId: email.id,
+    });
+  } catch (err: any) {
+    logger.error({ err: err?.message, stack: err?.stack }, "[ai/follow-up-draft] error");
+    res.status(500).json({ error: "Echec de la generation du brouillon" });
+  }
+});
+
 router.post("/ai/forward-intro", requireAuth, async (req, res): Promise<void> => {
   try {
     const entitlement = await checkEntitlement(req.userId!, AI_COST.draft);

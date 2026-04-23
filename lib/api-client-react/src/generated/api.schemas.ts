@@ -71,6 +71,12 @@ export interface UserProfile {
   organisationRole?: UserProfileOrganisationRole;
   /** True when the profile has the internal admin flag. */
   isAdmin?: boolean;
+  /**
+   * Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.
+   * @minimum 1
+   * @maximum 60
+   */
+  followUpDelayDays?: number;
 }
 
 export interface AuthResponse {
@@ -93,6 +99,11 @@ export interface UpdateProfileBody {
   aiLanguage?: UpdateProfileBodyAiLanguage;
   signature?: string;
   timezone?: string;
+  /**
+   * @minimum 1
+   * @maximum 60
+   */
+  followUpDelayDays?: number;
 }
 
 export interface RegisterPushTokenBody {
@@ -174,6 +185,8 @@ export interface Followup {
   /** @nullable */
   notes?: string | null;
   aiSuggestion?: boolean;
+  /** @nullable */
+  dismissedAt?: string | null;
   emails?: FollowupEmails;
   projects?: FollowupProjects;
   createdAt?: string;
@@ -1277,6 +1290,10 @@ export type GetEmailConversation200 = {
 export type ListFollowupsParams = {
   status?: ListFollowupsStatus;
   projectId?: string;
+  /**
+   * Filtre par type de relance (ai = suggestions IA, manual = créées par l'utilisateur).
+   */
+  kind?: ListFollowupsKind;
 };
 
 export type ListFollowupsStatus =
@@ -1289,15 +1306,36 @@ export const ListFollowupsStatus = {
   termine: "termine",
 } as const;
 
+export type ListFollowupsKind =
+  (typeof ListFollowupsKind)[keyof typeof ListFollowupsKind];
+
+export const ListFollowupsKind = {
+  ai: "ai",
+  manual: "manual",
+} as const;
+
 export type GetFollowupStats200 = {
   en_attente?: number;
   relance?: number;
   termine?: number;
   overdue?: number;
+  /** Nombre de suggestions IA actives (non terminées, non ignorées). */
+  aiSuggestions?: number;
 };
 
 export type DeleteFollowup200 = {
   success?: boolean;
+};
+
+export type GenerateFollowUpDraftBody = {
+  followupId: string;
+};
+
+export type GenerateFollowUpDraft200 = {
+  draft: string;
+  subject: string;
+  to: string;
+  emailId: number;
 };
 
 export type GetConversationSummaryBodyThreadItem = { [key: string]: unknown };

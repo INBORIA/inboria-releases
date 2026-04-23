@@ -5,9 +5,14 @@
  * NCV Mail API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { ListFollowupsKind } from "./listFollowupsKind";
 import type { ListFollowupsStatus } from "./listFollowupsStatus";
 
 export type ListFollowupsParams = {
   status?: ListFollowupsStatus;
   projectId?: string;
+  /**
+   * Filtre par type de relance (ai = suggestions IA, manual = créées par l'utilisateur).
+   */
+  kind?: ListFollowupsKind;
 };

@@ -14,4 +14,9 @@ export interface UpdateProfileBody {
   aiLanguage?: UpdateProfileBodyAiLanguage;
   signature?: string;
   timezone?: string;
+  /**
+   * @minimum 1
+   * @maximum 60
+   */
+  followUpDelayDays?: number;
 }

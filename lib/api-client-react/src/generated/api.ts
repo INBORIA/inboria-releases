@@ -78,6 +78,8 @@ import type {
   Followup,
   ForceSharedMailboxSync200,
   GenerateDraftBody,
+  GenerateFollowUpDraft200,
+  GenerateFollowUpDraftBody,
   GeneratePackBody,
   GeneratePackResponse,
   GetCategoryCountsParams,
@@ -4634,6 +4636,177 @@ export const useDeleteFollowup = <
   TContext
 > => {
   return useMutation(getDeleteFollowupMutationOptions(options));
+};
+
+/**
+ * @summary Marquer une suggestion de relance comme ignorée
+ */
+export const getDismissFollowupUrl = (id: string) => {
+  return `/api/followups/${id}/dismiss`;
+};
+
+export const dismissFollowup = async (
+  id: string,
+  options?: RequestInit,
+): Promise<Followup> => {
+  return customFetch<Followup>(getDismissFollowupUrl(id), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getDismissFollowupMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof dismissFollowup>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof dismissFollowup>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ["dismissFollowup"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof dismissFollowup>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return dismissFollowup(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DismissFollowupMutationResult = NonNullable<
+  Awaited<ReturnType<typeof dismissFollowup>>
+>;
+
+export type DismissFollowupMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Marquer une suggestion de relance comme ignorée
+ */
+export const useDismissFollowup = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof dismissFollowup>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof dismissFollowup>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getDismissFollowupMutationOptions(options));
+};
+
+/**
+ * @summary Génère un brouillon de mail de relance pour une suggestion existante
+ */
+export const getGenerateFollowUpDraftUrl = () => {
+  return `/api/ai/follow-up-draft`;
+};
+
+export const generateFollowUpDraft = async (
+  generateFollowUpDraftBody: GenerateFollowUpDraftBody,
+  options?: RequestInit,
+): Promise<GenerateFollowUpDraft200> => {
+  return customFetch<GenerateFollowUpDraft200>(getGenerateFollowUpDraftUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(generateFollowUpDraftBody),
+  });
+};
+
+export const getGenerateFollowUpDraftMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generateFollowUpDraft>>,
+    TError,
+    { data: BodyType<GenerateFollowUpDraftBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof generateFollowUpDraft>>,
+  TError,
+  { data: BodyType<GenerateFollowUpDraftBody> },
+  TContext
+> => {
+  const mutationKey = ["generateFollowUpDraft"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof generateFollowUpDraft>>,
+    { data: BodyType<GenerateFollowUpDraftBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return generateFollowUpDraft(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type GenerateFollowUpDraftMutationResult = NonNullable<
+  Awaited<ReturnType<typeof generateFollowUpDraft>>
+>;
+export type GenerateFollowUpDraftMutationBody =
+  BodyType<GenerateFollowUpDraftBody>;
+export type GenerateFollowUpDraftMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Génère un brouillon de mail de relance pour une suggestion existante
+ */
+export const useGenerateFollowUpDraft = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generateFollowUpDraft>>,
+    TError,
+    { data: BodyType<GenerateFollowUpDraftBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof generateFollowUpDraft>>,
+  TError,
+  { data: BodyType<GenerateFollowUpDraftBody> },
+  TContext
+> => {
+  return useMutation(getGenerateFollowUpDraftMutationOptions(options));
 };
 
 /**

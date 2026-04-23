@@ -19,6 +19,7 @@ import {
   runSyncLoop,
   sanitizeErrorMessage,
 } from "./connection-health";
+import { runFollowupDetectionForAllUsers } from "./follow-up-detector";
 
 interface SaveEmailOptions {
   forceSpam?: boolean;
@@ -1433,6 +1434,13 @@ export async function runAutoSync(overrides?: {
       { totalSynced: loopResult.totalSynced, failures: loopResult.failureCount, elapsedSeconds: elapsed },
       "Auto-sync cycle done",
     );
+
+    // Détection des relances IA après que les nouveaux mails ont été ingérés
+    try {
+      await runFollowupDetectionForAllUsers();
+    } catch (err: any) {
+      cycleLog.warn({ err: err?.message }, "Follow-up detection cycle failed (non-fatal)");
+    }
   } catch (err: any) {
     cycleLog.error({ err: err.message }, "Auto-sync fatal error");
   } finally {

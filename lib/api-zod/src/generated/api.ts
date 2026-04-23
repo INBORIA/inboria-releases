@@ -47,6 +47,8 @@ export const loginResponseUserAiLanguageDefault = `fr`;
 export const loginResponseUserSignatureDefault = ``;
 export const loginResponseUserTimezoneDefault = `Europe/Brussels`;
 export const loginResponseUserIsAdminDefault = false;
+export const loginResponseUserFollowUpDelayDaysDefault = 5;
+export const loginResponseUserFollowUpDelayDaysMax = 60;
 
 export const LoginResponse = zod.object({
   user: zod.object({
@@ -74,6 +76,14 @@ export const LoginResponse = zod.object({
       .boolean()
       .default(loginResponseUserIsAdminDefault)
       .describe("True when the profile has the internal admin flag."),
+    followUpDelayDays: zod
+      .number()
+      .min(1)
+      .max(loginResponseUserFollowUpDelayDaysMax)
+      .default(loginResponseUserFollowUpDelayDaysDefault)
+      .describe(
+        "Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.",
+      ),
   }),
 });
 
@@ -85,6 +95,8 @@ export const getMeResponseAiLanguageDefault = `fr`;
 export const getMeResponseSignatureDefault = ``;
 export const getMeResponseTimezoneDefault = `Europe/Brussels`;
 export const getMeResponseIsAdminDefault = false;
+export const getMeResponseFollowUpDelayDaysDefault = 5;
+export const getMeResponseFollowUpDelayDaysMax = 60;
 
 export const GetMeResponse = zod.object({
   id: zod.number(),
@@ -111,6 +123,14 @@ export const GetMeResponse = zod.object({
     .boolean()
     .default(getMeResponseIsAdminDefault)
     .describe("True when the profile has the internal admin flag."),
+  followUpDelayDays: zod
+    .number()
+    .min(1)
+    .max(getMeResponseFollowUpDelayDaysMax)
+    .default(getMeResponseFollowUpDelayDaysDefault)
+    .describe(
+      "Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.",
+    ),
 });
 
 /**
@@ -121,6 +141,8 @@ export const getProfileResponseAiLanguageDefault = `fr`;
 export const getProfileResponseSignatureDefault = ``;
 export const getProfileResponseTimezoneDefault = `Europe/Brussels`;
 export const getProfileResponseIsAdminDefault = false;
+export const getProfileResponseFollowUpDelayDaysDefault = 5;
+export const getProfileResponseFollowUpDelayDaysMax = 60;
 
 export const GetProfileResponse = zod.object({
   id: zod.number(),
@@ -147,11 +169,21 @@ export const GetProfileResponse = zod.object({
     .boolean()
     .default(getProfileResponseIsAdminDefault)
     .describe("True when the profile has the internal admin flag."),
+  followUpDelayDays: zod
+    .number()
+    .min(1)
+    .max(getProfileResponseFollowUpDelayDaysMax)
+    .default(getProfileResponseFollowUpDelayDaysDefault)
+    .describe(
+      "Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.",
+    ),
 });
 
 /**
  * @summary Update profile
  */
+export const updateProfileBodyFollowUpDelayDaysMax = 60;
+
 export const UpdateProfileBody = zod.object({
   fullName: zod.string().optional(),
   plan: zod.string().optional(),
@@ -159,6 +191,11 @@ export const UpdateProfileBody = zod.object({
   aiLanguage: zod.enum(["fr", "en", "nl"]).optional(),
   signature: zod.string().optional(),
   timezone: zod.string().optional(),
+  followUpDelayDays: zod
+    .number()
+    .min(1)
+    .max(updateProfileBodyFollowUpDelayDaysMax)
+    .optional(),
 });
 
 export const updateProfileResponseAiCreditsUsedDefault = 0;
@@ -166,6 +203,8 @@ export const updateProfileResponseAiLanguageDefault = `fr`;
 export const updateProfileResponseSignatureDefault = ``;
 export const updateProfileResponseTimezoneDefault = `Europe/Brussels`;
 export const updateProfileResponseIsAdminDefault = false;
+export const updateProfileResponseFollowUpDelayDaysDefault = 5;
+export const updateProfileResponseFollowUpDelayDaysMax = 60;
 
 export const UpdateProfileResponse = zod.object({
   id: zod.number(),
@@ -194,6 +233,14 @@ export const UpdateProfileResponse = zod.object({
     .boolean()
     .default(updateProfileResponseIsAdminDefault)
     .describe("True when the profile has the internal admin flag."),
+  followUpDelayDays: zod
+    .number()
+    .min(1)
+    .max(updateProfileResponseFollowUpDelayDaysMax)
+    .default(updateProfileResponseFollowUpDelayDaysDefault)
+    .describe(
+      "Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.",
+    ),
 });
 
 /**
@@ -1148,6 +1195,12 @@ export const GetEmailConversationResponse = zod.object({
 export const ListFollowupsQueryParams = zod.object({
   status: zod.enum(["all", "en_attente", "relance", "termine"]).optional(),
   projectId: zod.coerce.string().optional(),
+  kind: zod
+    .enum(["ai", "manual"])
+    .optional()
+    .describe(
+      "Filtre par type de relance (ai = suggestions IA, manual = créées par l'utilisateur).",
+    ),
 });
 
 export const ListFollowupsResponseItem = zod.object({
@@ -1160,6 +1213,7 @@ export const ListFollowupsResponseItem = zod.object({
   dueDate: zod.coerce.date().nullish(),
   notes: zod.string().nullish(),
   aiSuggestion: zod.boolean().optional(),
+  dismissedAt: zod.coerce.date().nullish(),
   emails: zod.object({}).passthrough().nullish(),
   projects: zod.object({}).passthrough().nullish(),
   createdAt: zod.coerce.date().optional(),
@@ -1189,6 +1243,7 @@ export const CreateFollowupResponse = zod.object({
   dueDate: zod.coerce.date().nullish(),
   notes: zod.string().nullish(),
   aiSuggestion: zod.boolean().optional(),
+  dismissedAt: zod.coerce.date().nullish(),
   emails: zod.object({}).passthrough().nullish(),
   projects: zod.object({}).passthrough().nullish(),
   createdAt: zod.coerce.date().optional(),
@@ -1203,6 +1258,12 @@ export const GetFollowupStatsResponse = zod.object({
   relance: zod.number().optional(),
   termine: zod.number().optional(),
   overdue: zod.number().optional(),
+  aiSuggestions: zod
+    .number()
+    .optional()
+    .describe(
+      "Nombre de suggestions IA actives (non terminées, non ignorées).",
+    ),
 });
 
 /**
@@ -1230,6 +1291,7 @@ export const UpdateFollowupResponse = zod.object({
   dueDate: zod.coerce.date().nullish(),
   notes: zod.string().nullish(),
   aiSuggestion: zod.boolean().optional(),
+  dismissedAt: zod.coerce.date().nullish(),
   emails: zod.object({}).passthrough().nullish(),
   projects: zod.object({}).passthrough().nullish(),
   createdAt: zod.coerce.date().optional(),
@@ -1245,6 +1307,44 @@ export const DeleteFollowupParams = zod.object({
 
 export const DeleteFollowupResponse = zod.object({
   success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Marquer une suggestion de relance comme ignorée
+ */
+export const DismissFollowupParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const DismissFollowupResponse = zod.object({
+  id: zod.string(),
+  userId: zod.string().optional(),
+  emailId: zod.number().nullish(),
+  projectId: zod.string().nullish(),
+  title: zod.string(),
+  status: zod.enum(["en_attente", "relance", "termine"]),
+  dueDate: zod.coerce.date().nullish(),
+  notes: zod.string().nullish(),
+  aiSuggestion: zod.boolean().optional(),
+  dismissedAt: zod.coerce.date().nullish(),
+  emails: zod.object({}).passthrough().nullish(),
+  projects: zod.object({}).passthrough().nullish(),
+  createdAt: zod.coerce.date().optional(),
+  updatedAt: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary Génère un brouillon de mail de relance pour une suggestion existante
+ */
+export const GenerateFollowUpDraftBody = zod.object({
+  followupId: zod.string(),
+});
+
+export const GenerateFollowUpDraftResponse = zod.object({
+  draft: zod.string(),
+  subject: zod.string(),
+  to: zod.string(),
+  emailId: zod.number(),
 });
 
 /**

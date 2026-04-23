@@ -24,6 +24,7 @@ import Envoyes from "@/pages/dashboard/envoyes";
 import Suivi from "@/pages/dashboard/suivi";
 import BilanQuotidien from "@/pages/dashboard/bilan";
 import Taches from "@/pages/dashboard/taches";
+import Relances from "@/pages/dashboard/relances";
 import Classement from "@/pages/dashboard/classement";
 import Parametres from "@/pages/dashboard/parametres";
 import Abonnement from "@/pages/dashboard/abonnement";
@@ -160,6 +161,7 @@ function Router() {
       <Route path="/dashboard/corbeille" component={() => <ProtectedRoute component={Corbeille} />} />
       <Route path="/dashboard/bilan" component={() => <ProtectedRoute component={BilanQuotidien} />} />
       <Route path="/dashboard/taches" component={() => <ProtectedRoute component={Taches} />} />
+      <Route path="/dashboard/relances" component={() => <ProtectedRoute component={Relances} />} />
       <Route path="/dashboard/classement" component={() => <ProtectedRoute component={Classement} />} />
       <Route path="/dashboard/categories" component={() => <Redirect to="/dashboard/classement" />} />
       <Route path="/dashboard/projets" component={() => <ProtectedRoute component={Projets} />} />

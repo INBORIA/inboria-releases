@@ -11,4 +11,6 @@ export type GetFollowupStats200 = {
   relance?: number;
   termine?: number;
   overdue?: number;
+  /** Nombre de suggestions IA actives (non terminées, non ignorées). */
+  aiSuggestions?: number;
 };

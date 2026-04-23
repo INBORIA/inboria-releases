@@ -31,4 +31,10 @@ export interface UserProfile {
   organisationRole?: UserProfileOrganisationRole;
   /** True when the profile has the internal admin flag. */
   isAdmin?: boolean;
+  /**
+   * Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.
+   * @minimum 1
+   * @maximum 60
+   */
+  followUpDelayDays?: number;
 }

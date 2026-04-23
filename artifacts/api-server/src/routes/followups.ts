@@ -8,11 +8,13 @@ router.get("/followups", requireAuth, async (req, res): Promise<void> => {
   try {
     const status = req.query.status as string | undefined;
     const projectId = req.query.projectId as string | undefined;
+    const kind = req.query.kind as string | undefined; // "ai" | "manual" | undefined
 
     let query = supabaseAdmin
       .from("followups")
       .select("*, emails(id, sender, subject, summary, status, priority, created_at, recipient, reply_to_email_id), projects(id, name, reference, color)")
       .eq("user_id", req.userId!)
+      .is("dismissed_at", null)
       .order("created_at", { ascending: false });
 
     if (status && status !== "all") {
@@ -20,6 +22,11 @@ router.get("/followups", requireAuth, async (req, res): Promise<void> => {
     }
     if (projectId) {
       query = query.eq("project_id", projectId);
+    }
+    if (kind === "ai") {
+      query = query.eq("ai_suggestion", true);
+    } else if (kind === "manual") {
+      query = query.eq("ai_suggestion", false);
     }
 
     const { data, error } = await query;
@@ -34,24 +41,27 @@ router.get("/followups/stats", requireAuth, async (req, res): Promise<void> => {
   try {
     const { data, error } = await supabaseAdmin
       .from("followups")
-      .select("status")
-      .eq("user_id", req.userId!);
+      .select("status, ai_suggestion")
+      .eq("user_id", req.userId!)
+      .is("dismissed_at", null);
 
     if (error) { res.status(500).json({ error: error.message }); return; }
 
-    const stats = { en_attente: 0, relance: 0, termine: 0, overdue: 0 };
+    const stats = { en_attente: 0, relance: 0, termine: 0, overdue: 0, aiSuggestions: 0 };
     const today = new Date().toISOString().split("T")[0];
 
     for (const f of data || []) {
       if (f.status === "en_attente") stats.en_attente++;
       else if (f.status === "relance") stats.relance++;
       else if (f.status === "termine") stats.termine++;
+      if ((f as any).ai_suggestion === true && f.status !== "termine") stats.aiSuggestions++;
     }
 
     const { count } = await supabaseAdmin
       .from("followups")
       .select("id", { count: "exact", head: true })
       .eq("user_id", req.userId!)
+      .is("dismissed_at", null)
       .neq("status", "termine")
       .lt("due_date", today);
 
@@ -109,6 +119,23 @@ router.patch("/followups/:id", requireAuth, async (req, res): Promise<void> => {
       .select()
       .single();
 
+    if (error) { res.status(500).json({ error: error.message }); return; }
+    res.json(data);
+  } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post("/followups/:id/dismiss", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { id } = req.params;
+    const { data, error } = await supabaseAdmin
+      .from("followups")
+      .update({ dismissed_at: new Date().toISOString() })
+      .eq("id", id)
+      .eq("user_id", req.userId!)
+      .select()
+      .single();
     if (error) { res.status(500).json({ error: error.message }); return; }
     res.json(data);
   } catch (err: any) {
