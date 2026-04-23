@@ -1,4 +1,4 @@
-import { useGetProfile } from "@workspace/api-client-react";
+import { useGetProfile, useGetFollowupStats } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import {
@@ -21,6 +21,7 @@ import {
   Send,
   CalendarDays,
   ShieldCheck,
+  MailCheck,
 } from "lucide-react";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { cn } from "@/lib/utils";
@@ -42,6 +43,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: profile, isLoading } = useGetProfile({
     query: { refetchInterval: 30000, refetchIntervalInBackground: false } as any,
   });
+  const { data: followupStats } = useGetFollowupStats({
+    query: { refetchInterval: 60000, refetchIntervalInBackground: false } as any,
+  });
+  const aiFollowupCount = (followupStats as any)?.aiSuggestions || 0;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
@@ -51,6 +56,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
     { name: t("tasks.title"), href: "/dashboard/taches", icon: CheckSquare },
+    { name: t("sidebar.followups", "Relances"), href: "/dashboard/relances", icon: MailCheck, badge: aiFollowupCount },
     { name: t("sidebar.projects"), href: "/dashboard/projets", icon: FolderKanban },
     { name: t("sidebar.agenda"), href: "/dashboard/agenda", icon: CalendarDays },
     { name: t("sidebar.archives"), href: "/dashboard/archives", icon: Archive },

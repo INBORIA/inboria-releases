@@ -61,7 +61,8 @@
     "creditsBreakdownAi_one": "{{count}} AI",
     "admin": "Admin",
     "adminWaitlist": "Admin · Waitlist",
-    "adminSubscribers": "Admin · Subscribers"
+    "adminSubscribers": "Admin · Subscribers",
+    "followups": "Follow-ups"
   },
   "dashboard": {
     "expiredSubscription": "Your subscription has expired",
@@ -992,7 +993,9 @@
     "accountSignatureLabel": "Signature for this account",
     "accountSignaturePlaceholder": "Specific signature for this account (leave empty for no signature)",
     "disconnectedBadge": "Disconnected",
-    "disconnectedTooltip": "Reconnect this account to resume synchronization."
+    "disconnectedTooltip": "Reconnect this account to resume synchronization.",
+    "followUpDelayLabel": "Days before follow-up suggestion",
+    "followUpDelayHint": "Inboria will suggest a follow-up for emails left without a reply after this many days (1 to 60)."
   },
   "subscription": {
     "title": "Manage your subscription",
@@ -3765,6 +3768,30 @@
       "sender_blocked": "Sender blocked",
       "summary_generated": "Summary generated",
       "follow_up_detected": "Follow-up detected"
+    }
+  },
+  "relances": {
+    "pageTitle": "Follow-ups",
+    "pageSubtitle": "Inboria detects emails you've sent that haven't received a reply. Approve or dismiss the suggestions.",
+    "suggestionsTitle": "AI suggestions",
+    "scheduledTitle": "Scheduled",
+    "emptySuggestionsTitle": "No follow-ups to suggest",
+    "emptySuggestionsDesc": "All your sent emails have been answered, or none are old enough to follow up on.",
+    "emptyScheduledDesc": "No manually scheduled follow-ups yet. You can create one from any sent email.",
+    "daysWithoutReply": "{{count}} d without reply",
+    "sentOn": "Sent",
+    "noSubject": "(no subject)",
+    "createDraft": "Draft follow-up",
+    "markReplied": "Mark as replied",
+    "dismiss": "Dismiss",
+    "dueOn": "Due",
+    "dismissedToast": "Suggestion dismissed",
+    "markedRepliedToast": "Marked as replied",
+    "draftErrorTitle": "Draft generation failed",
+    "status": {
+      "en_attente": "Pending",
+      "relance": "In progress",
+      "termine": "Done"
     }
   }
 }

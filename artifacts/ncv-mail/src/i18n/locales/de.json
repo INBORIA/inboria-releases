@@ -61,7 +61,8 @@
     "creditsBreakdownAi_one": "{{count}} KI",
     "admin": "Admin",
     "adminWaitlist": "Admin · Warteliste",
-    "adminSubscribers": "Admin · Abonnenten"
+    "adminSubscribers": "Admin · Abonnenten",
+    "followups": "Erinnerungen"
   },
   "dashboard": {
     "expiredSubscription": "Ihr Abonnement ist abgelaufen",
@@ -992,7 +993,9 @@
     "accountSignatureLabel": "Signatur für dieses Konto",
     "accountSignaturePlaceholder": "Spezifische Signatur für dieses Konto (leer lassen für keine Signatur)",
     "disconnectedBadge": "Getrennt",
-    "disconnectedTooltip": "Verbinden Sie dieses Konto erneut, um die Synchronisierung fortzusetzen."
+    "disconnectedTooltip": "Verbinden Sie dieses Konto erneut, um die Synchronisierung fortzusetzen.",
+    "followUpDelayLabel": "Tage vor Erinnerungsvorschlag",
+    "followUpDelayHint": "Inboria schlägt eine Erinnerung für E-Mails ohne Antwort nach dieser Anzahl Tagen vor (1 bis 60)."
   },
   "subscription": {
     "title": "Verwalten Sie Ihr Abonnement",
@@ -3765,6 +3768,30 @@
       "sender_blocked": "Absender blockiert",
       "summary_generated": "Zusammenfassung erstellt",
       "follow_up_detected": "Erinnerung erkannt"
+    }
+  },
+  "relances": {
+    "pageTitle": "Erinnerungen",
+    "pageSubtitle": "Inboria erkennt gesendete E-Mails ohne Antwort. Bestätigen oder verwerfen Sie die Vorschläge.",
+    "suggestionsTitle": "KI-Vorschläge",
+    "scheduledTitle": "Geplant",
+    "emptySuggestionsTitle": "Keine Erinnerungen vorzuschlagen",
+    "emptySuggestionsDesc": "Alle gesendeten E-Mails wurden beantwortet oder sind noch nicht alt genug.",
+    "emptyScheduledDesc": "Noch keine manuell geplanten Erinnerungen. Sie können eine aus jeder gesendeten E-Mail erstellen.",
+    "daysWithoutReply": "{{count}} T ohne Antwort",
+    "sentOn": "Gesendet",
+    "noSubject": "(kein Betreff)",
+    "createDraft": "Erinnerung verfassen",
+    "markReplied": "Als beantwortet markieren",
+    "dismiss": "Verwerfen",
+    "dueOn": "Fällig",
+    "dismissedToast": "Vorschlag verworfen",
+    "markedRepliedToast": "Als beantwortet markiert",
+    "draftErrorTitle": "Entwurfserstellung fehlgeschlagen",
+    "status": {
+      "en_attente": "Ausstehend",
+      "relance": "Läuft",
+      "termine": "Erledigt"
     }
   }
 }

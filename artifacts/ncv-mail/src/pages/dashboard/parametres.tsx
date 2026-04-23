@@ -10,7 +10,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Users2 } from "lucide-react";
+import { Users2, MailCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
@@ -437,6 +437,7 @@ export default function Parametres() {
   const [showNewPwd, setShowNewPwd] = useState(false);
   const [changingPassword, setChangingPassword] = useState(false);
   const [timezone, setTimezone] = useState("Europe/Brussels");
+  const [followUpDelayDays, setFollowUpDelayDays] = useState<number>(5);
 
   const WIZARD_STORAGE_KEY = "inboria.imapWizard.v1";
   const WIZARD_TTL_MS = 30 * 60 * 1000;
@@ -488,6 +489,8 @@ export default function Parametres() {
     if (profile) {
       setFullName(profile.fullName);
       setTimezone((profile as any).timezone || "Europe/Brussels");
+      const d = (profile as any).followUpDelayDays;
+      setFollowUpDelayDays(typeof d === "number" && d >= 1 && d <= 60 ? d : 5);
     }
   }, [profile]);
 
@@ -503,8 +506,9 @@ export default function Parametres() {
   }, []);
 
   const handleSaveProfile = () => {
+    const safeDelay = Math.max(1, Math.min(60, Math.round(followUpDelayDays || 5)));
     updateProfile.mutate(
-      { data: { fullName, timezone } as any },
+      { data: { fullName, timezone, followUpDelayDays: safeDelay } as any },
       {
         onSuccess: () => {
           queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
@@ -1116,7 +1120,31 @@ export default function Parametres() {
                       </SelectContent>
                     </Select>
                   </div>
-                  <Button onClick={handleSaveProfile} disabled={updateProfile.isPending || (fullName === (profile?.fullName ?? "") && timezone === ((profile as any)?.timezone ?? "Europe/Brussels"))} size="sm">
+                  <div className="space-y-1.5">
+                    <Label className="text-[12px] text-[#8b9cb3] flex items-center gap-1.5">
+                      <MailCheck className="w-3 h-3" />
+                      {t("settings.followUpDelayLabel", "Délai avant suggestion de relance (jours)")}
+                    </Label>
+                    <Input
+                      type="number"
+                      min={1}
+                      max={60}
+                      value={followUpDelayDays}
+                      onChange={(e) => {
+                        const v = parseInt(e.target.value, 10);
+                        if (!isNaN(v)) setFollowUpDelayDays(v);
+                      }}
+                      onBlur={() => setFollowUpDelayDays((d) => Math.max(1, Math.min(60, Math.round(d || 5))))}
+                      className="bg-background border-border text-white h-9 text-[13px] max-w-[120px]"
+                    />
+                    <p className="text-[11px] text-[#8b9cb3]">
+                      {t(
+                        "settings.followUpDelayHint",
+                        "Inboria suggérera une relance pour vos mails envoyés sans réponse après ce nombre de jours (1 à 60).",
+                      )}
+                    </p>
+                  </div>
+                  <Button onClick={handleSaveProfile} disabled={updateProfile.isPending || (fullName === (profile?.fullName ?? "") && timezone === ((profile as any)?.timezone ?? "Europe/Brussels") && followUpDelayDays === ((profile as any)?.followUpDelayDays ?? 5))} size="sm">
                     {updateProfile.isPending ? t("settings.saving") : t("common.save")}
                   </Button>
                 </div>

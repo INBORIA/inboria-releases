@@ -960,6 +960,9 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
   projects,
   isPending,
   onSend,
+  initialTo = "",
+  initialSubject = "",
+  initialBody = "",
 }: {
   isFullscreen: boolean;
   setIsFullscreen: (v: boolean | ((p: boolean) => boolean)) => void;
@@ -967,15 +970,18 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
   projects: any[];
   isPending: boolean;
   onSend: (p: ComposeSendPayload) => void;
+  initialTo?: string;
+  initialSubject?: string;
+  initialBody?: string;
 }) {
   const { t } = useTranslation();
-  const [to, setTo] = useState("");
-  const [subject, setSubject] = useState("");
-  const [body, setBody] = useState("");
+  const [to, setTo] = useState(initialTo);
+  const [subject, setSubject] = useState(initialSubject);
+  const [body, setBody] = useState(initialBody);
   const [attachments, setAttachments] = useState<UploadedFile[]>([]);
   const [fromId, setFromId] = useState<string>(() => (connections[0] ? String(connections[0].id) : ""));
   const [projectId, setProjectId] = useState<string>("");
-  const [appliedSig, setAppliedSig] = useState<string>("");
+  const [appliedSig, setAppliedSig] = useState<string>(initialBody ? "__prefilled__" : "");
 
   const computeSig = useCallback((connId: string) => {
     const c = connections.find((x) => String(x.id) === String(connId));
@@ -1316,6 +1322,7 @@ export default function Dashboard() {
 
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
+  const [composePrefill, setComposePrefill] = useState<{ to: string; subject: string; body: string } | null>(null);
 
 
   const isMobileViewport = typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches;
@@ -1323,6 +1330,32 @@ export default function Dashboard() {
   useEffect(() => {
     if (isComposeOpen && isMobileViewport) setIsComposeFullscreen(true);
   }, [isComposeOpen, isMobileViewport]);
+
+  useEffect(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("compose") !== "1") return;
+      const raw = sessionStorage.getItem("inboria.compose.prefill");
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setComposePrefill({
+          to: typeof parsed?.to === "string" ? parsed.to : "",
+          subject: typeof parsed?.subject === "string" ? parsed.subject : "",
+          body: typeof parsed?.body === "string" ? parsed.body : "",
+        });
+        sessionStorage.removeItem("inboria.compose.prefill");
+      } else {
+        setComposePrefill({ to: "", subject: "", body: "" });
+      }
+      setIsComposeOpen(true);
+      const url = new URL(window.location.href);
+      url.searchParams.delete("compose");
+      window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+    } catch {
+      /* noop */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
@@ -1969,6 +2002,7 @@ export default function Dashboard() {
               setIsComposeOpen(open);
               if (!open) {
                 setIsComposeFullscreen(false);
+                setComposePrefill(null);
               }
             }}>
               <DialogTrigger asChild>
@@ -1993,6 +2027,9 @@ export default function Dashboard() {
                     projects={(projects as any[]) || []}
                     isPending={sendEmailMut.isPending}
                     onSend={handleComposeSend}
+                    initialTo={composePrefill?.to}
+                    initialSubject={composePrefill?.subject}
+                    initialBody={composePrefill?.body}
                   />
                 )}
               </DialogContent>

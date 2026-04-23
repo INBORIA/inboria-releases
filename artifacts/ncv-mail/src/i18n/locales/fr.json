@@ -61,7 +61,8 @@
     "creditsBreakdownAi_one": "{{count}} IA",
     "admin": "Admin",
     "adminWaitlist": "Admin · Waitlist",
-    "adminSubscribers": "Admin · Abonnés"
+    "adminSubscribers": "Admin · Abonnés",
+    "followups": "Relances"
   },
   "dashboard": {
     "expiredSubscription": "Votre abonnement a expiré",
@@ -982,7 +983,9 @@
     "accountSignatureLabel": "Signature pour ce compte",
     "accountSignaturePlaceholder": "Signature spécifique à ce compte (laisser vide pour aucune signature)",
     "disconnectedBadge": "Déconnectée",
-    "disconnectedTooltip": "Reconnectez ce compte pour reprendre la synchronisation."
+    "disconnectedTooltip": "Reconnectez ce compte pour reprendre la synchronisation.",
+    "followUpDelayLabel": "Délai avant suggestion de relance (jours)",
+    "followUpDelayHint": "Inboria suggérera une relance pour vos mails envoyés sans réponse après ce nombre de jours (1 à 60)."
   },
   "subscription": {
     "title": "Gérez votre abonnement",
@@ -2121,6 +2124,30 @@
       "sender_blocked": "Expéditeur bloqué",
       "summary_generated": "Résumé généré",
       "follow_up_detected": "Relance détectée"
+    }
+  },
+  "relances": {
+    "pageTitle": "Relances",
+    "pageSubtitle": "Inboria détecte les mails que vous avez envoyés et qui sont restés sans réponse. Validez ou ignorez les suggestions.",
+    "suggestionsTitle": "Suggestions IA",
+    "scheduledTitle": "Programmées",
+    "emptySuggestionsTitle": "Aucune relance à proposer",
+    "emptySuggestionsDesc": "Tous vos mails envoyés ont reçu une réponse, ou aucun n'est assez ancien pour être relancé.",
+    "emptyScheduledDesc": "Aucune relance programmée manuellement. Vous pouvez en créer une depuis n'importe quel mail envoyé.",
+    "daysWithoutReply": "{{count}} j sans réponse",
+    "sentOn": "Envoyé",
+    "noSubject": "(sans objet)",
+    "createDraft": "Créer la relance",
+    "markReplied": "Marquer comme répondu",
+    "dismiss": "Ignorer",
+    "dueOn": "Échéance",
+    "dismissedToast": "Suggestion ignorée",
+    "markedRepliedToast": "Marquée comme répondu",
+    "draftErrorTitle": "Échec de la génération du brouillon",
+    "status": {
+      "en_attente": "En attente",
+      "relance": "En cours",
+      "termine": "Terminée"
     }
   }
 }

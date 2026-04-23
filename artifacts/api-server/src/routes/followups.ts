@@ -1,8 +1,19 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { logger } from "../lib/logger";
 
 const router: IRouter = Router();
+
+// Graceful degradation: si la migration ajoutant `dismissed_at` n'a pas encore
+// été appliquée en prod, on log un warn une fois et on désactive le filtre pour
+// éviter que toute la page Relances/Suivi tombe en 500.
+let dismissedAtSupported = true;
+function isMissingDismissedAt(error: { message?: string; code?: string } | null): boolean {
+  if (!error) return false;
+  const msg = (error.message || "").toLowerCase();
+  return msg.includes("dismissed_at") || error.code === "42703";
+}
 
 router.get("/followups", requireAuth, async (req, res): Promise<void> => {
   try {
@@ -10,26 +21,28 @@ router.get("/followups", requireAuth, async (req, res): Promise<void> => {
     const projectId = req.query.projectId as string | undefined;
     const kind = req.query.kind as string | undefined; // "ai" | "manual" | undefined
 
-    let query = supabaseAdmin
-      .from("followups")
-      .select("*, emails(id, sender, subject, summary, status, priority, created_at, recipient, reply_to_email_id), projects(id, name, reference, color)")
-      .eq("user_id", req.userId!)
-      .is("dismissed_at", null)
-      .order("created_at", { ascending: false });
+    const buildQuery = (withDismissed: boolean) => {
+      let q = supabaseAdmin
+        .from("followups")
+        .select("*, emails(id, sender, subject, summary, status, priority, created_at, recipient, reply_to_email_id), projects(id, name, reference, color)")
+        .eq("user_id", req.userId!)
+        .order("created_at", { ascending: false });
+      if (withDismissed) q = q.is("dismissed_at", null);
+      if (status && status !== "all") q = q.eq("status", status);
+      if (projectId) q = q.eq("project_id", projectId);
+      if (kind === "ai") q = q.eq("ai_suggestion", true);
+      else if (kind === "manual") q = q.eq("ai_suggestion", false);
+      return q;
+    };
 
-    if (status && status !== "all") {
-      query = query.eq("status", status);
+    let { data, error } = await buildQuery(dismissedAtSupported);
+    if (error && isMissingDismissedAt(error) && dismissedAtSupported) {
+      dismissedAtSupported = false;
+      logger.warn(
+        "[followups] dismissed_at column missing — migration 2026_04_24_followups_ai_proactives.sql not applied yet, disabling dismissed filter",
+      );
+      ({ data, error } = await buildQuery(false));
     }
-    if (projectId) {
-      query = query.eq("project_id", projectId);
-    }
-    if (kind === "ai") {
-      query = query.eq("ai_suggestion", true);
-    } else if (kind === "manual") {
-      query = query.eq("ai_suggestion", false);
-    }
-
-    const { data, error } = await query;
     if (error) { res.status(500).json({ error: error.message }); return; }
     res.json(data || []);
   } catch (err: any) {
@@ -39,12 +52,23 @@ router.get("/followups", requireAuth, async (req, res): Promise<void> => {
 
 router.get("/followups/stats", requireAuth, async (req, res): Promise<void> => {
   try {
-    const { data, error } = await supabaseAdmin
-      .from("followups")
-      .select("status, ai_suggestion")
-      .eq("user_id", req.userId!)
-      .is("dismissed_at", null);
+    const runStats = async (withDismissed: boolean) => {
+      let q = supabaseAdmin
+        .from("followups")
+        .select("status, ai_suggestion")
+        .eq("user_id", req.userId!);
+      if (withDismissed) q = q.is("dismissed_at", null);
+      return q;
+    };
 
+    let { data, error } = await runStats(dismissedAtSupported);
+    if (error && isMissingDismissedAt(error) && dismissedAtSupported) {
+      dismissedAtSupported = false;
+      logger.warn(
+        "[followups/stats] dismissed_at column missing — migration not applied yet, disabling dismissed filter",
+      );
+      ({ data, error } = await runStats(false));
+    }
     if (error) { res.status(500).json({ error: error.message }); return; }
 
     const stats = { en_attente: 0, relance: 0, termine: 0, overdue: 0, aiSuggestions: 0 };
@@ -57,14 +81,21 @@ router.get("/followups/stats", requireAuth, async (req, res): Promise<void> => {
       if ((f as any).ai_suggestion === true && f.status !== "termine") stats.aiSuggestions++;
     }
 
-    const { count } = await supabaseAdmin
-      .from("followups")
-      .select("id", { count: "exact", head: true })
-      .eq("user_id", req.userId!)
-      .is("dismissed_at", null)
-      .neq("status", "termine")
-      .lt("due_date", today);
-
+    const runOverdue = async (withDismissed: boolean) => {
+      let q = supabaseAdmin
+        .from("followups")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", req.userId!)
+        .neq("status", "termine")
+        .lt("due_date", today);
+      if (withDismissed) q = q.is("dismissed_at", null);
+      return q;
+    };
+    let { count, error: cErr } = await runOverdue(dismissedAtSupported);
+    if (cErr && isMissingDismissedAt(cErr) && dismissedAtSupported) {
+      dismissedAtSupported = false;
+      ({ count, error: cErr } = await runOverdue(false));
+    }
     stats.overdue = count || 0;
 
     res.json(stats);

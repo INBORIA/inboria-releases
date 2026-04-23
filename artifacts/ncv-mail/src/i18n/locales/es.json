@@ -61,7 +61,8 @@
     "creditsBreakdownAi_one": "{{count}} IA",
     "admin": "Admin",
     "adminWaitlist": "Admin · Lista de espera",
-    "adminSubscribers": "Admin · Suscriptores"
+    "adminSubscribers": "Admin · Suscriptores",
+    "followups": "Recordatorios"
   },
   "dashboard": {
     "expiredSubscription": "Su suscripción ha expirado",
@@ -992,7 +993,9 @@
     "accountSignatureLabel": "Firma para esta cuenta",
     "accountSignaturePlaceholder": "Firma específica para esta cuenta (dejar vacío para sin firma)",
     "disconnectedBadge": "Desconectada",
-    "disconnectedTooltip": "Vuelva a conectar esta cuenta para reanudar la sincronizacion."
+    "disconnectedTooltip": "Vuelva a conectar esta cuenta para reanudar la sincronizacion.",
+    "followUpDelayLabel": "Días antes de sugerir un recordatorio",
+    "followUpDelayHint": "Inboria sugerirá un recordatorio para los correos sin respuesta tras este número de días (1 a 60)."
   },
   "subscription": {
     "title": "Gestiona tu suscripción",
@@ -3765,6 +3768,30 @@
       "sender_blocked": "Remitente bloqueado",
       "summary_generated": "Resumen generado",
       "follow_up_detected": "Seguimiento detectado"
+    }
+  },
+  "relances": {
+    "pageTitle": "Recordatorios",
+    "pageSubtitle": "Inboria detecta los correos enviados sin respuesta. Aprueba o descarta las sugerencias.",
+    "suggestionsTitle": "Sugerencias de IA",
+    "scheduledTitle": "Programados",
+    "emptySuggestionsTitle": "Ningún recordatorio que sugerir",
+    "emptySuggestionsDesc": "Todos tus correos enviados han recibido respuesta, o ninguno es lo bastante antiguo.",
+    "emptyScheduledDesc": "Aún no hay recordatorios programados. Puedes crear uno desde cualquier correo enviado.",
+    "daysWithoutReply": "{{count}} d sin respuesta",
+    "sentOn": "Enviado",
+    "noSubject": "(sin asunto)",
+    "createDraft": "Redactar recordatorio",
+    "markReplied": "Marcar como respondido",
+    "dismiss": "Descartar",
+    "dueOn": "Vencimiento",
+    "dismissedToast": "Sugerencia descartada",
+    "markedRepliedToast": "Marcado como respondido",
+    "draftErrorTitle": "Falló la generación del borrador",
+    "status": {
+      "en_attente": "Pendiente",
+      "relance": "En curso",
+      "termine": "Completado"
     }
   }
 }

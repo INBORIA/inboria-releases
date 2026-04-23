@@ -276,7 +276,7 @@ export default function Relances() {
                           : "bg-amber-500/10 text-amber-400"
                     }`}
                   >
-                    {t(`relances.status.${f.status}`, f.status)}
+                    {t(`relances.status.${f.status}`, f.status) as string}
                   </span>
                 </div>
               ))}

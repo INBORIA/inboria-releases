@@ -61,7 +61,8 @@
     "creditsBreakdownAi_one": "{{count}} AI",
     "admin": "Admin",
     "adminWaitlist": "Admin · Wachtlijst",
-    "adminSubscribers": "Admin · Abonnees"
+    "adminSubscribers": "Admin · Abonnees",
+    "followups": "Herinneringen"
   },
   "dashboard": {
     "expiredSubscription": "Uw abonnement is verlopen",
@@ -992,7 +993,9 @@
     "accountSignatureLabel": "Handtekening voor dit account",
     "accountSignaturePlaceholder": "Specifieke handtekening voor dit account (laat leeg voor geen handtekening)",
     "disconnectedBadge": "Losgekoppeld",
-    "disconnectedTooltip": "Verbind dit account opnieuw om de synchronisatie te hervatten."
+    "disconnectedTooltip": "Verbind dit account opnieuw om de synchronisatie te hervatten.",
+    "followUpDelayLabel": "Aantal dagen voor herinneringssuggestie",
+    "followUpDelayHint": "Inboria stelt een herinnering voor wanneer een verzonden e-mail na zoveel dagen onbeantwoord blijft (1 tot 60)."
   },
   "subscription": {
     "title": "Beheer uw abonnement",
@@ -3765,6 +3768,30 @@
       "sender_blocked": "Afzender geblokkeerd",
       "summary_generated": "Samenvatting gegenereerd",
       "follow_up_detected": "Herinnering gedetecteerd"
+    }
+  },
+  "relances": {
+    "pageTitle": "Herinneringen",
+    "pageSubtitle": "Inboria detecteert verzonden e-mails die geen antwoord ontvingen. Bevestig of negeer de suggesties.",
+    "suggestionsTitle": "AI-suggesties",
+    "scheduledTitle": "Gepland",
+    "emptySuggestionsTitle": "Geen herinneringen voorgesteld",
+    "emptySuggestionsDesc": "Al uw verzonden e-mails kregen een antwoord, of geen enkele is oud genoeg.",
+    "emptyScheduledDesc": "Nog geen handmatig geplande herinneringen. U kunt er één aanmaken vanaf elke verzonden e-mail.",
+    "daysWithoutReply": "{{count}} d zonder antwoord",
+    "sentOn": "Verzonden",
+    "noSubject": "(geen onderwerp)",
+    "createDraft": "Herinnering opstellen",
+    "markReplied": "Beantwoord",
+    "dismiss": "Negeren",
+    "dueOn": "Vervaldatum",
+    "dismissedToast": "Suggestie genegeerd",
+    "markedRepliedToast": "Gemarkeerd als beantwoord",
+    "draftErrorTitle": "Concept genereren mislukt",
+    "status": {
+      "en_attente": "In afwachting",
+      "relance": "Bezig",
+      "termine": "Voltooid"
     }
   }
 }
