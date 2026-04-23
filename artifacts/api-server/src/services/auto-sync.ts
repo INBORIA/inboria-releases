@@ -1338,11 +1338,6 @@ async function syncImapForUser(conn: any): Promise<number> {
   return -1;
 }
 
-// NOTE: Trash folder is intentionally NOT fetched/synced (product decision —
-// users do not want their deleted emails surfaced in Inboria). Move-to-Trash
-// operations from junk-sync.ts ARE timeout-bounded (lock 10s + messageMove
-// 30s + logout 5s for IMAP, fetchWithTimeout 20s for Outlook Graph), so no
-// trash-related call can stall the global sync cycle.
 export type AutoSyncDispatcher = (conn: any) => Promise<number>;
 
 const defaultDispatcher: AutoSyncDispatcher = async (conn) => {
@@ -1357,8 +1352,10 @@ export async function runAutoSync(overrides?: {
   dispatcher?: AutoSyncDispatcher;
   skipBackfill?: boolean;
 }) {
+  const cycleLog = logger.child({ service: "auto-sync" });
+
   if (syncRunning) {
-    console.log("[auto-sync] Sync already in progress, skipping");
+    cycleLog.info("Sync already in progress, skipping");
     return;
   }
 
@@ -1374,7 +1371,7 @@ export async function runAutoSync(overrides?: {
         .select("*");
 
       if (connErr) {
-        console.error("[auto-sync] Failed to fetch connections:", connErr.message);
+        cycleLog.error({ err: connErr.message }, "Failed to fetch connections");
         return;
       }
       connections = data;
@@ -1384,7 +1381,7 @@ export async function runAutoSync(overrides?: {
       return;
     }
 
-    console.log(`[auto-sync] Starting sync for ${connections.length} connection(s)`);
+    cycleLog.info({ count: connections.length }, "Starting sync cycle");
 
     const connToSharedMailbox: Record<string, string> = {};
     if (!overrides?.skipBackfill) {
@@ -1409,11 +1406,9 @@ export async function runAutoSync(overrides?: {
         .is("shared_mailbox_id", null)
         .select("id");
       if (bfError) {
-        console.error(`[auto-sync] Backfill error for ${connId}:`, bfError.message);
+        cycleLog.error({ connId, err: bfError.message }, "Shared mailbox backfill error");
       } else if (backfilledRows && backfilledRows.length > 0) {
-        console.log(`[auto-sync] Backfilled ${backfilledRows.length} email(s) for shared mailbox ${sharedMbId}`);
-      } else {
-        console.log(`[auto-sync] Backfill check for conn ${connId}: 0 emails to update`);
+        cycleLog.info({ connId, sharedMbId, count: backfilledRows.length }, "Shared mailbox backfilled");
       }
     }
 
@@ -1424,7 +1419,6 @@ export async function runAutoSync(overrides?: {
     const dispatcher = overrides?.dispatcher ?? defaultDispatcher;
     const loopResult = await runSyncLoop(connections, dispatcher);
 
-    const cycleLog = logger.child({ service: "auto-sync" });
     for (const r of loopResult.perConnection) {
       if (r.synced < 0) {
         cycleLog.error({ connId: r.id, email: r.email }, "Connection sync failed");
@@ -1439,7 +1433,7 @@ export async function runAutoSync(overrides?: {
       "Auto-sync cycle done",
     );
   } catch (err: any) {
-    console.error("[auto-sync] Fatal error:", err.message);
+    cycleLog.error({ err: err.message }, "Auto-sync fatal error");
   } finally {
     syncRunning = false;
   }
