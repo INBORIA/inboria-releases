@@ -1052,18 +1052,34 @@ async function syncImapForUser(conn: any): Promise<number> {
     log.info({ fetched: fetchedCount, newEmails: synced, duplicatesSkipped: fetchedCount - synced }, "IMAP fetch complete");
 
     try {
-      const { data: candidateBodies } = await supabaseAdmin
-        .from("emails")
-        .select("id, external_id, body")
-        .eq("user_id", conn.user_id)
-        .like("external_id", `imap:${conn.email_address}:%`)
-        .order("created_at", { ascending: false })
-        .limit(150);
+      const PAGE = 500;
+      const MAX_PAGES = 6;
+      const BACKFILL_BATCH = 25;
+      const truncated: Array<{ id: number; external_id: string; body: string }> = [];
 
-      const truncated = (candidateBodies || []).filter((e: any) => {
-        const len = (e.body || "").length;
-        return len === 10000 || len === 5000;
-      }).slice(0, 10);
+      for (let page = 0; page < MAX_PAGES && truncated.length < BACKFILL_BATCH; page++) {
+        const from = page * PAGE;
+        const to = from + PAGE - 1;
+        const { data: candidateBodies } = await supabaseAdmin
+          .from("emails")
+          .select("id, external_id, body")
+          .eq("user_id", conn.user_id)
+          .like("external_id", `imap:${conn.email_address}:%`)
+          .order("created_at", { ascending: false })
+          .range(from, to);
+
+        if (!candidateBodies || candidateBodies.length === 0) break;
+
+        for (const e of candidateBodies) {
+          const len = ((e as any).body || "").length;
+          if (len === 10000 || len === 5000) {
+            truncated.push(e as any);
+            if (truncated.length >= 10) break;
+          }
+        }
+
+        if (candidateBodies.length < PAGE) break;
+      }
 
       if (truncated.length > 0) {
         log.info({ count: truncated.length }, "Backfill: re-fetching truncated bodies");
