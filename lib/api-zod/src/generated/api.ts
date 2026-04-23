@@ -431,6 +431,66 @@ export const EmptySpamResponse = zod.object({
 });
 
 /**
+ * @summary Number of emails in junk folder (sidebar counter)
+ */
+export const GetSpamCountResponse = zod.object({
+  count: zod.number(),
+});
+
+/**
+ * @summary List blocked senders
+ */
+export const ListBlockedSendersQueryParams = zod.object({
+  connectionId: zod.coerce.string().optional(),
+});
+
+export const ListBlockedSendersResponseItem = zod.object({
+  id: zod.string(),
+  connectionId: zod.string(),
+  emailAddress: zod.string(),
+  provider: zod.string(),
+  providerRuleId: zod.string().nullish(),
+  scope: zod.enum(["connection", "all_accounts"]),
+  blockedAt: zod.coerce.date(),
+});
+export const ListBlockedSendersResponse = zod.array(
+  ListBlockedSendersResponseItem,
+);
+
+/**
+ * @summary Block a sender on the provider and locally
+ */
+export const BlockSenderBody = zod.object({
+  email: zod.string(),
+  connectionId: zod.string(),
+  scope: zod.enum(["connection", "all_accounts"]).optional(),
+});
+
+export const BlockSenderResponse = zod.object({
+  blocked: zod.string(),
+  scope: zod.enum(["connection", "all_accounts"]),
+  results: zod.array(
+    zod.object({
+      connectionId: zod.string(),
+      ok: zod.boolean(),
+      reason: zod.string().nullish(),
+    }),
+  ),
+});
+
+/**
+ * @summary Unblock a sender
+ */
+export const UnblockSenderParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UnblockSenderResponse = zod.object({
+  ok: zod.boolean().optional(),
+  providerSync: zod.boolean().optional(),
+});
+
+/**
  * @summary Bulk update emails (archive, mark read, delete)
  */
 export const BulkUpdateEmailsBody = zod.object({

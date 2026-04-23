@@ -35,6 +35,9 @@ import type {
   AssignEmailBody,
   AssignEmailResult,
   AuthResponse,
+  BlockSenderBody,
+  BlockSenderResult,
+  BlockedSender,
   BulkUpdateEmails200,
   BulkUpdateEmailsBody,
   CancelInvitation200,
@@ -94,6 +97,7 @@ import type {
   InviteBody,
   JoinWaitlist200,
   ListAppointmentsParams,
+  ListBlockedSendersParams,
   ListEmailsParams,
   ListFollowupsParams,
   ListTasksParams,
@@ -128,9 +132,11 @@ import type {
   SharedMailbox,
   SharedMailboxFromConnection,
   SharedMailboxMember,
+  SpamCount,
   Task,
   TeamDashboard,
   UnassignEmail200,
+  UnblockSender200,
   UnclaimSharedEmail200,
   UnreadCount,
   UnshareEmailConnection200,
@@ -1476,6 +1482,348 @@ export const useEmptySpam = <
   TContext
 > => {
   return useMutation(getEmptySpamMutationOptions(options));
+};
+
+/**
+ * @summary Number of emails in junk folder (sidebar counter)
+ */
+export const getGetSpamCountUrl = () => {
+  return `/api/emails/spam/count`;
+};
+
+export const getSpamCount = async (
+  options?: RequestInit,
+): Promise<SpamCount> => {
+  return customFetch<SpamCount>(getGetSpamCountUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetSpamCountQueryKey = () => {
+  return [`/api/emails/spam/count`] as const;
+};
+
+export const getGetSpamCountQueryOptions = <
+  TData = Awaited<ReturnType<typeof getSpamCount>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getSpamCount>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetSpamCountQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof getSpamCount>>> = ({
+    signal,
+  }) => getSpamCount({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getSpamCount>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetSpamCountQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getSpamCount>>
+>;
+export type GetSpamCountQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Number of emails in junk folder (sidebar counter)
+ */
+
+export function useGetSpamCount<
+  TData = Awaited<ReturnType<typeof getSpamCount>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getSpamCount>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetSpamCountQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary List blocked senders
+ */
+export const getListBlockedSendersUrl = (params?: ListBlockedSendersParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/senders/blocked?${stringifiedParams}`
+    : `/api/senders/blocked`;
+};
+
+export const listBlockedSenders = async (
+  params?: ListBlockedSendersParams,
+  options?: RequestInit,
+): Promise<BlockedSender[]> => {
+  return customFetch<BlockedSender[]>(getListBlockedSendersUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListBlockedSendersQueryKey = (
+  params?: ListBlockedSendersParams,
+) => {
+  return [`/api/senders/blocked`, ...(params ? [params] : [])] as const;
+};
+
+export const getListBlockedSendersQueryOptions = <
+  TData = Awaited<ReturnType<typeof listBlockedSenders>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListBlockedSendersParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listBlockedSenders>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListBlockedSendersQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listBlockedSenders>>
+  > = ({ signal }) => listBlockedSenders(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listBlockedSenders>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListBlockedSendersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listBlockedSenders>>
+>;
+export type ListBlockedSendersQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List blocked senders
+ */
+
+export function useListBlockedSenders<
+  TData = Awaited<ReturnType<typeof listBlockedSenders>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: ListBlockedSendersParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listBlockedSenders>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListBlockedSendersQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Block a sender on the provider and locally
+ */
+export const getBlockSenderUrl = () => {
+  return `/api/senders/block`;
+};
+
+export const blockSender = async (
+  blockSenderBody: BlockSenderBody,
+  options?: RequestInit,
+): Promise<BlockSenderResult> => {
+  return customFetch<BlockSenderResult>(getBlockSenderUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(blockSenderBody),
+  });
+};
+
+export const getBlockSenderMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof blockSender>>,
+    TError,
+    { data: BodyType<BlockSenderBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof blockSender>>,
+  TError,
+  { data: BodyType<BlockSenderBody> },
+  TContext
+> => {
+  const mutationKey = ["blockSender"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof blockSender>>,
+    { data: BodyType<BlockSenderBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return blockSender(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type BlockSenderMutationResult = NonNullable<
+  Awaited<ReturnType<typeof blockSender>>
+>;
+export type BlockSenderMutationBody = BodyType<BlockSenderBody>;
+export type BlockSenderMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Block a sender on the provider and locally
+ */
+export const useBlockSender = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof blockSender>>,
+    TError,
+    { data: BodyType<BlockSenderBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof blockSender>>,
+  TError,
+  { data: BodyType<BlockSenderBody> },
+  TContext
+> => {
+  return useMutation(getBlockSenderMutationOptions(options));
+};
+
+/**
+ * @summary Unblock a sender
+ */
+export const getUnblockSenderUrl = (id: string) => {
+  return `/api/senders/blocked/${id}`;
+};
+
+export const unblockSender = async (
+  id: string,
+  options?: RequestInit,
+): Promise<UnblockSender200> => {
+  return customFetch<UnblockSender200>(getUnblockSenderUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getUnblockSenderMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unblockSender>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof unblockSender>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ["unblockSender"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof unblockSender>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return unblockSender(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UnblockSenderMutationResult = NonNullable<
+  Awaited<ReturnType<typeof unblockSender>>
+>;
+
+export type UnblockSenderMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Unblock a sender
+ */
+export const useUnblockSender = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unblockSender>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof unblockSender>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getUnblockSenderMutationOptions(options));
 };
 
 /**

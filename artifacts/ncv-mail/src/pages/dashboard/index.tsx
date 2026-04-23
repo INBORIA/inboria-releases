@@ -34,6 +34,7 @@ import {
   usePermanentDeleteEmail,
   useEmptyTrash,
   useEmptySpam,
+  useBlockSender,
 } from "@workspace/api-client-react";
 import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
@@ -1687,6 +1688,28 @@ export default function Dashboard() {
     );
   };
 
+  const blockSenderMut = useBlockSender();
+  const handleBlockSender = (id: number) => {
+    const email = (emails as any[]).find((e: any) => e.id === id);
+    const addr = (email?.senderEmail || "").trim();
+    if (!addr) {
+      toast({ title: t("junk.blockFailed"), description: t("junk.blockNoEmail"), variant: "destructive" });
+      return;
+    }
+    const firstConn = (composeConnections || []).find((c: any) => c.status !== "disconnected") || (composeConnections || [])[0];
+    if (!firstConn?.id) {
+      toast({ title: t("junk.blockFailed"), description: t("junk.blockNoConnection"), variant: "destructive" });
+      return;
+    }
+    blockSenderMut.mutate(
+      { data: { email: addr, connectionId: firstConn.id, scope: "all_accounts" } },
+      {
+        onSuccess: () => { toast({ title: t("junk.blocked"), description: addr }); invalidateAll(); },
+        onError: () => toast({ title: t("junk.blockFailed"), variant: "destructive" }),
+      },
+    );
+  };
+
   const handleArchive = (id: number) => {
     updateEmail.mutate(
       { id, data: { status: "archived" } },
@@ -2929,6 +2952,13 @@ export default function Dashboard() {
                 >
                   <Archive className="w-3.5 h-3.5" />
                   {t("inbox.archive")}
+                </button>
+                <button
+                  onClick={() => { handleBlockSender(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <ShieldAlert className="w-3.5 h-3.5" />
+                  {t("junk.blockSender")}
                 </button>
                 <div className="border-t border-[#1f2937] my-1" />
                 <button

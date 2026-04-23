@@ -762,6 +762,50 @@ export interface UnreadCount {
   count: number;
 }
 
+export interface SpamCount {
+  count: number;
+}
+
+export type BlockedSenderScope =
+  (typeof BlockedSenderScope)[keyof typeof BlockedSenderScope];
+
+export const BlockedSenderScope = {
+  connection: "connection",
+  all_accounts: "all_accounts",
+} as const;
+
+export interface BlockedSender {
+  id: string;
+  connectionId: string;
+  emailAddress: string;
+  provider: string;
+  /** @nullable */
+  providerRuleId?: string | null;
+  scope: BlockedSenderScope;
+  blockedAt: string;
+}
+
+export interface BlockSenderResultEntry {
+  connectionId: string;
+  ok: boolean;
+  /** @nullable */
+  reason?: string | null;
+}
+
+export type BlockSenderResultScope =
+  (typeof BlockSenderResultScope)[keyof typeof BlockSenderResultScope];
+
+export const BlockSenderResultScope = {
+  connection: "connection",
+  all_accounts: "all_accounts",
+} as const;
+
+export interface BlockSenderResult {
+  blocked: string;
+  scope: BlockSenderResultScope;
+  results: BlockSenderResultEntry[];
+}
+
 export interface TeamMemberStats {
   userId: string;
   fullName: string;
@@ -1037,6 +1081,29 @@ export type EmptyTrash200 = {
 
 export type EmptySpam200 = {
   success?: boolean;
+};
+
+export type ListBlockedSendersParams = {
+  connectionId?: string;
+};
+
+export type BlockSenderBodyScope =
+  (typeof BlockSenderBodyScope)[keyof typeof BlockSenderBodyScope];
+
+export const BlockSenderBodyScope = {
+  connection: "connection",
+  all_accounts: "all_accounts",
+} as const;
+
+export type BlockSenderBody = {
+  email: string;
+  connectionId: string;
+  scope?: BlockSenderBodyScope;
+};
+
+export type UnblockSender200 = {
+  ok?: boolean;
+  providerSync?: boolean;
 };
 
 export type BulkUpdateEmailsBodyAction =

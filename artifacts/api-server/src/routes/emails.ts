@@ -1040,6 +1040,19 @@ router.delete("/emails/trash/empty", requireAuth, async (req, res): Promise<void
   }
 });
 
+router.get("/emails/spam/count", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { count } = await supabaseAdmin
+      .from("emails")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", req.userId!)
+      .eq("status", "spam");
+    res.json({ count: count || 0 });
+  } catch {
+    res.status(500).json({ error: "Failed to get spam count" });
+  }
+});
+
 router.delete("/emails/spam/empty", requireAuth, async (req, res): Promise<void> => {
   try {
     const { data: spamEmails } = await supabaseAdmin

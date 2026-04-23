@@ -368,6 +368,92 @@ paths:
                   success:
                     type: boolean
 
+  /emails/spam/count:
+    get:
+      operationId: getSpamCount
+      tags: [emails]
+      summary: Number of emails in junk folder (sidebar counter)
+      responses:
+        "200":
+          description: Spam count
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SpamCount"
+
+  /senders/blocked:
+    get:
+      operationId: listBlockedSenders
+      tags: [senders]
+      summary: List blocked senders
+      parameters:
+        - name: connectionId
+          in: query
+          required: false
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Blocked senders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BlockedSender"
+
+  /senders/block:
+    post:
+      operationId: blockSender
+      tags: [senders]
+      summary: Block a sender on the provider and locally
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, connectionId]
+              properties:
+                email:
+                  type: string
+                connectionId:
+                  type: string
+                scope:
+                  type: string
+                  enum: [connection, all_accounts]
+      responses:
+        "200":
+          description: Blocked
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BlockSenderResult"
+
+  /senders/blocked/{id}:
+    delete:
+      operationId: unblockSender
+      tags: [senders]
+      summary: Unblock a sender
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Unblocked
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+                  providerSync:
+                    type: boolean
+
   /emails/bulk:
     post:
       operationId: bulkUpdateEmails
@@ -3821,6 +3907,71 @@ components:
           type: integer
       required:
         - count
+
+    SpamCount:
+      type: object
+      properties:
+        count:
+          type: integer
+      required:
+        - count
+
+    BlockedSender:
+      type: object
+      properties:
+        id:
+          type: string
+        connectionId:
+          type: string
+        emailAddress:
+          type: string
+        provider:
+          type: string
+        providerRuleId:
+          type: ["string", "null"]
+        scope:
+          type: string
+          enum: [connection, all_accounts]
+        blockedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - connectionId
+        - emailAddress
+        - provider
+        - scope
+        - blockedAt
+
+    BlockSenderResultEntry:
+      type: object
+      properties:
+        connectionId:
+          type: string
+        ok:
+          type: boolean
+        reason:
+          type: ["string", "null"]
+      required:
+        - connectionId
+        - ok
+
+    BlockSenderResult:
+      type: object
+      properties:
+        blocked:
+          type: string
+        scope:
+          type: string
+          enum: [connection, all_accounts]
+        results:
+          type: array
+          items:
+            $ref: "#/components/schemas/BlockSenderResultEntry"
+      required:
+        - blocked
+        - scope
+        - results
 
     TeamDashboard:
       type: object
