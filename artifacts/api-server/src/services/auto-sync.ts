@@ -698,7 +698,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
           .from("email_connections")
           .update(updates)
           .eq("id", conn.id);
-        if (error) console.error("[auto-sync] Gmail token update error:", error.message);
+        if (error) logger.error({ service: "gmail-sync", phase: "token-refresh", connId: conn.id, email: conn.email_address, err: error.message }, "Gmail token update error");
       }
     });
 
@@ -855,7 +855,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
 
     return synced;
   } catch (err: any) {
-    console.error(`[auto-sync] Gmail error for ${conn.email_address}:`, err.message);
+    logger.error({ service: "gmail-sync", connId: conn.id, email: conn.email_address, err: err.message }, "Gmail sync error");
     await markConnectionFailure(conn.id, "gmail-api", err);
     return -1;
   }
@@ -869,7 +869,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
 
     if (conn.token_expires_at && new Date(conn.token_expires_at) < new Date()) {
       if (!MICROSOFT_CLIENT_ID || !MICROSOFT_CLIENT_SECRET) {
-        console.error("[auto-sync] Outlook: missing Microsoft credentials, cannot refresh token");
+        logger.error({ service: "outlook-sync", phase: "token-refresh", connId: conn.id, email: conn.email_address }, "Missing Microsoft credentials, cannot refresh token");
         await markConnectionFailure(conn.id, "token-refresh", new Error("Missing Microsoft credentials"));
         return -1;
       }
@@ -898,7 +898,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
 
       const tokens = (await tokenResponse.json()) as any;
       if (!tokens.access_token) {
-        console.error("[auto-sync] Outlook token refresh: no access_token in response");
+        logger.error({ service: "outlook-sync", phase: "token-refresh", connId: conn.id, email: conn.email_address }, "Outlook token refresh: no access_token in response");
         await markConnectionFailure(conn.id, "token-refresh", new Error("No access_token in refresh response"));
         return -1;
       }
@@ -988,13 +988,13 @@ async function syncOutlookForUser(conn: any): Promise<number> {
         console.log(`[auto-sync] Outlook junk: ${junkSaved} new spam(s) for ${conn.email_address}`);
       }
     } catch (junkErr: any) {
-      console.error(`[auto-sync] Outlook junk error for ${conn.email_address}:`, junkErr.message);
+      logger.error({ service: "outlook-sync", phase: "junk", connId: conn.id, email: conn.email_address, err: junkErr.message }, "Outlook junk error");
     }
 
     await markConnectionSuccess(conn.id);
     return synced;
   } catch (err: any) {
-    console.error(`[auto-sync] Outlook error for ${conn.email_address}:`, err.message);
+    logger.error({ service: "outlook-sync", connId: conn.id, email: conn.email_address, err: err.message }, "Outlook sync error");
     await markConnectionFailure(conn.id, "graph-api", err);
     return -1;
   }
