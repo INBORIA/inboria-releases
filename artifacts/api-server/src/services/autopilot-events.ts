@@ -57,7 +57,7 @@ export interface AutopilotActivitySnapshot {
   lastEventAt: string | null;
 }
 
-const ACTIVE_THRESHOLD_MS = 30 * 1000;
+const ACTIVE_THRESHOLD_MS = 12 * 1000;
 
 export async function getActivitySnapshot(userId: string): Promise<AutopilotActivitySnapshot> {
   const startOfDay = new Date();
