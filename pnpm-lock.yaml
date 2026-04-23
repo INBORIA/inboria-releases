@@ -666,6 +666,9 @@ importers:
       '@supabase/supabase-js':
         specifier: ^2.101.1
         version: 2.101.1
+      '@types/html-to-text':
+        specifier: ^9.0.4
+        version: 9.0.4
       date-fns:
         specifier: ^3.6.0
         version: 3.6.0
@@ -678,6 +681,9 @@ importers:
       expo-secure-store:
         specifier: ^55.0.11
         version: 55.0.11(expo@54.0.33)
+      html-to-text:
+        specifier: ^9.0.5
+        version: 9.0.5
       i18next:
         specifier: ^26.0.4
         version: 26.0.4(typescript@5.9.3)

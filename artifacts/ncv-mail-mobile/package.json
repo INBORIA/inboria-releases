@@ -57,10 +57,12 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.101.1",
+    "@types/html-to-text": "^9.0.4",
     "date-fns": "^3.6.0",
     "expo-device": "^55.0.12",
     "expo-notifications": "^55.0.16",
     "expo-secure-store": "^55.0.11",
+    "html-to-text": "^9.0.5",
     "i18next": "^26.0.4",
     "react-i18next": "^17.0.2"
   }
