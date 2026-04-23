@@ -1054,7 +1054,7 @@ async function syncImapForUser(conn: any): Promise<number> {
     try {
       const PAGE = 500;
       const MAX_PAGES = 6;
-      const BACKFILL_BATCH = 25;
+      const BACKFILL_BATCH = 300;
       const truncated: Array<{ id: number; external_id: string; body: string }> = [];
 
       for (let page = 0; page < MAX_PAGES && truncated.length < BACKFILL_BATCH; page++) {
@@ -1074,7 +1074,7 @@ async function syncImapForUser(conn: any): Promise<number> {
           const len = ((e as any).body || "").length;
           if (len === 10000 || len === 5000) {
             truncated.push(e as any);
-            if (truncated.length >= 10) break;
+            if (truncated.length >= BACKFILL_BATCH) break;
           }
         }
 
