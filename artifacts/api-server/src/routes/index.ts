@@ -25,6 +25,7 @@ import appointmentsRouter from "./appointments";
 import waitlistRouter from "./waitlist";
 import adminRouter from "./admin";
 import renderFailuresRouter from "./render-failures";
+import blockedSendersRouter from "./blocked-senders";
 
 const router: IRouter = Router();
 
@@ -54,5 +55,6 @@ router.use(appointmentsRouter);
 router.use(waitlistRouter);
 router.use(adminRouter);
 router.use(renderFailuresRouter);
+router.use(blockedSendersRouter);
 
 export default router;
