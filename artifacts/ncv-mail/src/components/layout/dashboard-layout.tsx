@@ -126,8 +126,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
-      <div className="flex h-16 shrink-0 flex-col items-center justify-center px-4 border-b border-[#1f2937]">
-        <img src={appLogo} alt="Inboria" className="h-16 w-auto object-contain" />
+      <div className="flex h-28 shrink-0 flex-col items-center justify-center px-4 border-b border-[#1f2937]">
+        <img src={appLogo} alt="Inboria" className="h-24 w-auto object-contain" />
       </div>
       
       <nav className="flex-1 px-2 py-2.5 space-y-0.5">
@@ -231,7 +231,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       </div>
 
       <div className="lg:pl-[200px] flex flex-col flex-1 min-w-0">
-        <div className="sticky top-0 z-10 flex h-12 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4">
+        <div className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4">
           <div className="lg:hidden flex items-center">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
               <SheetTrigger asChild>
@@ -245,7 +245,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               </SheetContent>
             </Sheet>
             <div className="flex items-center gap-2 ml-2">
-              <img src={appLogo} alt="Inboria" className="h-12 w-auto object-contain" />
+              <img src={appLogo} alt="Inboria" className="h-14 w-auto object-contain" />
             </div>
           </div>
           <div className="flex-1" />
