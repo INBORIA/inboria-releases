@@ -3746,8 +3746,8 @@
     "statusActive": "Activo",
     "statusIdle": "Inactivo",
     "ready": "Autopilot listo",
-    "justActed": "Autopilot",
-    "todayDone": "Autopilot · {{count}} acciones hoy",
+    "justActed": "Acción en curso",
+    "todayDone": "{{count}} acciones hoy",
     "empty": "Sin actividad en las últimas 24 horas.",
     "last24h": "Últimas 24 horas",
     "short": {

@@ -132,7 +132,7 @@ export function AutopilotIndicator() {
   const phaseText =
     phase === "acting"
       ? latest
-        ? `${t("autopilot.justActed")} · ${labelFor(latest.eventType)}`
+        ? labelFor(latest.eventType)
         : t("autopilot.justActed")
       : phase === "done"
         ? t("autopilot.todayDone", { count: total })
