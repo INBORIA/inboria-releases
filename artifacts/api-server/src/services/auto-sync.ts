@@ -1338,7 +1338,25 @@ async function syncImapForUser(conn: any): Promise<number> {
   return -1;
 }
 
-async function runAutoSync() {
+// NOTE: Trash folder is intentionally NOT fetched/synced (product decision —
+// users do not want their deleted emails surfaced in Inboria). Move-to-Trash
+// operations from junk-sync.ts ARE timeout-bounded (lock 10s + messageMove
+// 30s + logout 5s for IMAP, fetchWithTimeout 20s for Outlook Graph), so no
+// trash-related call can stall the global sync cycle.
+export type AutoSyncDispatcher = (conn: any) => Promise<number>;
+
+const defaultDispatcher: AutoSyncDispatcher = async (conn) => {
+  if (conn.provider === "gmail") return syncGmailForUser(conn);
+  if (conn.provider === "outlook") return syncOutlookForUser(conn);
+  if (conn.provider === "imap") return syncImapForUser(conn);
+  return 0;
+};
+
+export async function runAutoSync(overrides?: {
+  connections?: any[];
+  dispatcher?: AutoSyncDispatcher;
+  skipBackfill?: boolean;
+}) {
   if (syncRunning) {
     console.log("[auto-sync] Sync already in progress, skipping");
     return;
@@ -1348,13 +1366,18 @@ async function runAutoSync() {
   const startTime = Date.now();
 
   try {
-    const { data: connections, error: connErr } = await supabaseAdmin
-      .from("email_connections")
-      .select("*");
+    let connections: any[] | null = overrides?.connections ?? null;
 
-    if (connErr) {
-      console.error("[auto-sync] Failed to fetch connections:", connErr.message);
-      return;
+    if (!connections) {
+      const { data, error: connErr } = await supabaseAdmin
+        .from("email_connections")
+        .select("*");
+
+      if (connErr) {
+        console.error("[auto-sync] Failed to fetch connections:", connErr.message);
+        return;
+      }
+      connections = data;
     }
 
     if (!connections || connections.length === 0) {
@@ -1363,14 +1386,16 @@ async function runAutoSync() {
 
     console.log(`[auto-sync] Starting sync for ${connections.length} connection(s)`);
 
-    const { data: sharedMailboxes } = await supabaseAdmin
-      .from("shared_mailboxes")
-      .select("id, connection_id");
     const connToSharedMailbox: Record<string, string> = {};
-    if (sharedMailboxes) {
-      for (const sm of sharedMailboxes) {
-        if (sm.connection_id) {
-          connToSharedMailbox[sm.connection_id] = sm.id;
+    if (!overrides?.skipBackfill) {
+      const { data: sharedMailboxes } = await supabaseAdmin
+        .from("shared_mailboxes")
+        .select("id, connection_id");
+      if (sharedMailboxes) {
+        for (const sm of sharedMailboxes) {
+          if (sm.connection_id) {
+            connToSharedMailbox[sm.connection_id] = sm.id;
+          }
         }
       }
     }
@@ -1396,12 +1421,8 @@ async function runAutoSync() {
       (c as any)._sharedMailboxId = connToSharedMailbox[c.id] || null;
     }
 
-    const loopResult = await runSyncLoop(connections, async (conn) => {
-      if (conn.provider === "gmail") return syncGmailForUser(conn);
-      if (conn.provider === "outlook") return syncOutlookForUser(conn);
-      if (conn.provider === "imap") return syncImapForUser(conn);
-      return 0;
-    });
+    const dispatcher = overrides?.dispatcher ?? defaultDispatcher;
+    const loopResult = await runSyncLoop(connections, dispatcher);
 
     const cycleLog = logger.child({ service: "auto-sync" });
     for (const r of loopResult.perConnection) {
