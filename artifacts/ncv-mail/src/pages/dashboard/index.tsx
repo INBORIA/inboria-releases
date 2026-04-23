@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { AutopilotIndicator } from "@/components/autopilot/autopilot-indicator";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
@@ -1930,7 +1931,6 @@ export default function Dashboard() {
   }
 
   const displayedEmailCount = activeEmails?.length || 0;
-  const autopilotActive = displayedEmailCount > 0;
 
   return (
     <DashboardLayout>
@@ -1955,18 +1955,7 @@ export default function Dashboard() {
               )}
             </div>
 
-            <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] font-medium transition-all ${
-              autopilotActive
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-                : "border-[#1f2937] bg-card text-[#8b9cb3]"
-            }`}>
-              {autopilotActive ? (
-                <CheckCircle className="w-3 h-3" />
-              ) : (
-                <Zap className="w-3 h-3" />
-              )}
-              <span className="hidden sm:inline">Autopilot</span>
-            </div>
+            <AutopilotIndicator />
 
             <Button
               variant="outline"

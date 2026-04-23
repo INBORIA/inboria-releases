@@ -3745,6 +3745,9 @@
     "openPanel": "Open Autopilot panel",
     "statusActive": "Active",
     "statusIdle": "Idle",
+    "ready": "Autopilot ready",
+    "justActed": "Autopilot",
+    "todayDone": "{{count}} actions today",
     "empty": "No activity in the last 24 hours.",
     "last24h": "Last 24 hours",
     "short": {

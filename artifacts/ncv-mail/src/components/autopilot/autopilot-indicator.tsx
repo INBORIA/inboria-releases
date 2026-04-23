@@ -10,6 +10,9 @@ import {
   FileText,
   Clock,
   X,
+  Zap,
+  RefreshCw,
+  CheckCircle,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
@@ -118,44 +121,53 @@ export function AutopilotIndicator() {
   // tick is unused inside markup; reading it forces re-render for relative dates
   void tick;
 
+  // Phase visuelle calquée sur la démo du site vitrine :
+  //  - "acting"  = action IA dans les 90 dernières secondes (bleu, RefreshCw spin)
+  //  - "done"    = pas d'action récente mais des actions ont eu lieu aujourd'hui (vert, CheckCircle)
+  //  - "idle"    = rien aujourd'hui (gris, Zap)
+  const phase: "acting" | "done" | "idle" = isActive ? "acting" : total > 0 ? "done" : "idle";
+
+  const PhaseIcon = phase === "acting" ? RefreshCw : phase === "done" ? CheckCircle : Zap;
+
+  const phaseText =
+    phase === "acting"
+      ? latest
+        ? `${t("autopilot.justActed")} · ${labelFor(latest.eventType)}`
+        : t("autopilot.justActed")
+      : phase === "done"
+        ? t("autopilot.todayDone", { count: total })
+        : t("autopilot.ready");
+
+  const pillClass =
+    phase === "acting"
+      ? "border-[#2d7dd2]/30 bg-[#2d7dd2]/10 text-[#2d7dd2]"
+      : phase === "done"
+        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+        : "border-[#1f2937] bg-card text-[#8b9cb3]";
+
   return (
     <div className="relative">
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
         className={cn(
-          "group flex h-8 items-center gap-2 rounded-full border border-white/5 bg-white/[0.03] px-2.5 transition",
-          "hover:bg-white/[0.06] hover:border-white/10",
-          open && "bg-white/[0.06] border-white/10",
+          "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] font-medium transition-all duration-500",
+          pillClass,
+          "hover:brightness-110",
         )}
         aria-label={t("autopilot.openPanel")}
+        title={phaseText}
       >
-        <span className="relative flex h-2 w-2 shrink-0">
-          {isActive && (
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400/70 opacity-75" />
-          )}
-          <span
-            className={cn(
-              "relative inline-flex h-2 w-2 rounded-full",
-              isActive ? "bg-emerald-400" : "bg-zinc-500",
-            )}
-          />
-        </span>
-
-        <Sparkles className="h-3.5 w-3.5 text-white/70 group-hover:text-white" />
-
-        {latest && (
-          <span className="hidden max-w-[280px] truncate text-[11px] text-white/50 md:inline">
-            {labelFor(latest.eventType)}
-            {latest.title ? ` — ${latest.title}` : ""}
-          </span>
-        )}
-
+        <PhaseIcon className={cn("w-3 h-3", phase === "acting" && "animate-spin")} />
+        <span className="hidden sm:inline max-w-[260px] truncate">{phaseText}</span>
+        <span className="sm:hidden">Autopilot</span>
         {total > 0 && (
           <span
             className={cn(
-              "ml-1 inline-flex h-5 min-w-5 items-center justify-center rounded-full px-1.5",
-              "bg-emerald-500/15 text-[10px] font-semibold text-emerald-300",
+              "ml-0.5 inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[9px] font-semibold",
+              phase === "acting"
+                ? "bg-[#2d7dd2]/20 text-[#2d7dd2]"
+                : "bg-emerald-500/20 text-emerald-300",
             )}
           >
             {total}

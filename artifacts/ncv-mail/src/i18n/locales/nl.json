@@ -3745,6 +3745,9 @@
     "openPanel": "Autopilot-paneel openen",
     "statusActive": "Actief",
     "statusIdle": "Inactief",
+    "ready": "Autopilot klaar",
+    "justActed": "Autopilot",
+    "todayDone": "{{count}} acties vandaag",
     "empty": "Geen activiteit in de laatste 24 uur.",
     "last24h": "Laatste 24 uur",
     "short": {

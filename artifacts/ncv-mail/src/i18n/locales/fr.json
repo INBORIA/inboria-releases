@@ -2101,6 +2101,9 @@
     "openPanel": "Ouvrir le panneau Autopilot",
     "statusActive": "Actif",
     "statusIdle": "En veille",
+    "ready": "Autopilot prêt",
+    "justActed": "Autopilot",
+    "todayDone": "{{count}} actions aujourd'hui",
     "empty": "Aucune action sur les dernières 24 h.",
     "last24h": "Dernières 24 heures",
     "short": {
