@@ -918,7 +918,7 @@ function useDebounce(value: string, delay: number) {
   return debounced;
 }
 
-type InboxMode = "personal" | "shared" | "spam" | "trash";
+type InboxMode = "personal" | "shared" | "trash";
 
 type ComposeConnection = { id: string; provider: string; email_address: string; signature?: string | null };
 type ComposeSendPayload = {
@@ -1333,71 +1333,12 @@ export default function Dashboard() {
 
   const trashHasMore = trashPage < trashTotalPages;
 
-  const [spamPage, setSpamPage] = useState(1);
-  const [accumulatedSpamEmails, setAccumulatedSpamEmails] = useState<Email[]>([]);
-  const [spamTotal, setSpamTotal] = useState(0);
-  const [spamTotalPages, setSpamTotalPages] = useState(0);
-
   const { data: spamCountData } = useListEmails({
     status: "spam",
     page: 1,
     limit: 1,
   });
   const spamCountFromApi = (spamCountData as PaginatedEmails)?.total ?? 0;
-
-  const { data: spamData, isLoading: spamLoading, isFetching: spamFetching } = useListEmails({
-    status: "spam",
-    page: spamPage,
-    limit: 50,
-  }, { query: { enabled: inboxMode === "spam" } as any });
-
-  useEffect(() => {
-    if (spamData) {
-      const paged = spamData as PaginatedEmails;
-      const newEmails = paged.emails || [];
-      setSpamTotal(paged.total || 0);
-      setSpamTotalPages(paged.totalPages || 0);
-      if (spamPage === 1) {
-        setAccumulatedSpamEmails(newEmails);
-      } else {
-        setAccumulatedSpamEmails((prev) => {
-          const existingIds = new Set(prev.map((e) => e.id));
-          const unique = newEmails.filter((e) => !existingIds.has(e.id));
-          return [...prev, ...unique];
-        });
-      }
-      const seenKey = "inboria:providerSpamToastSeen";
-      if (
-        typeof window !== "undefined" &&
-        !window.localStorage.getItem(seenKey) &&
-        newEmails.some((e: any) => e.spamSource === "provider")
-      ) {
-        window.localStorage.setItem(seenKey, "1");
-        toast({
-          title: t("inbox.spamSourceProvider"),
-          description: t("inbox.spamSourceProviderToast"),
-        });
-      }
-    }
-  }, [spamData, spamPage, toast, t]);
-
-  useEffect(() => {
-    if (inboxMode === "spam") {
-      setSpamPage(1);
-      const paged = spamData as PaginatedEmails | undefined;
-      if (paged) {
-        setAccumulatedSpamEmails(paged.emails || []);
-        setSpamTotal(paged.total || 0);
-        setSpamTotalPages(paged.totalPages || 0);
-      } else {
-        setAccumulatedSpamEmails([]);
-        setSpamTotal(0);
-        setSpamTotalPages(0);
-      }
-    }
-  }, [inboxMode]);
-
-  const spamHasMore = spamPage < spamTotalPages;
 
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
@@ -2130,20 +2071,16 @@ export default function Dashboard() {
                   {t("inbox.sharedMailbox")}
                 </button>
               )}
-              <button
-                onClick={() => setInboxMode("spam")}
-                className={`flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
-                  inboxMode === "spam"
-                    ? "bg-orange-500/15 text-orange-400 border border-orange-500/20"
-                    : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
-                }`}
+              <Link
+                href="/dashboard/indesirables"
+                className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
               >
                 <ShieldAlert className="w-3 h-3" />
                 {t("inbox.spam")}
-                {(inboxMode === "spam" ? spamTotal : spamCountFromApi) > 0 && (
-                  <span className="text-[9px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded-full">{inboxMode === "spam" ? spamTotal : spamCountFromApi}</span>
+                {spamCountFromApi > 0 && (
+                  <span className="text-[9px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded-full">{spamCountFromApi}</span>
                 )}
-              </button>
+              </Link>
               <button
                 onClick={() => setInboxMode("trash")}
                 className={`flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
@@ -2232,7 +2169,7 @@ export default function Dashboard() {
               )}
             </div>
 
-          {inboxMode !== "trash" && inboxMode !== "spam" && (
+          {inboxMode !== "trash" && (
             <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-[1200px] mx-auto">
               <span className="text-[10px] text-[#8b9cb3] mr-1">{t("inbox.priority")}:</span>
               {[
@@ -2430,142 +2367,6 @@ export default function Dashboard() {
                             className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40 disabled:opacity-50"
                           >
                             {trashFetching ? t("common.loading") : t("inbox.loadMore")}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </>
-              ) : inboxMode === "spam" ? (
-                <>
-                  {spamTotal > 0 && (
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-[11px] text-[#8b9cb3]">
-                        {spamTotal} {spamTotal === 1 ? "email" : "emails"}
-                      </span>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="gap-1.5 h-7 text-[11px] bg-transparent border-orange-500/20 text-orange-400 hover:text-orange-300 hover:bg-orange-500/10"
-                        onClick={() => {
-                          if (window.confirm(t("inbox.emptySpamConfirm"))) {
-                            emptySpamMut.mutate(undefined, {
-                              onSuccess: () => {
-                                toast({ title: t("inbox.spamEmptied") });
-                                setAccumulatedSpamEmails([]);
-                                setSpamTotal(0);
-                                queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-                                queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
-                                queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
-                                queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
-                              },
-                            });
-                          }
-                        }}
-                        disabled={emptySpamMut.isPending}
-                      >
-                        <ShieldAlert className="w-3 h-3" />
-                        {t("inbox.emptySpam")}
-                      </Button>
-                    </div>
-                  )}
-                  {spamLoading ? (
-                    Array(3).fill(0).map((_, i) => (
-                      <div key={i} className="bg-card rounded-lg border border-border p-3 mb-1">
-                        <Skeleton className="h-4 w-3/4 mb-2 bg-white/5" />
-                        <Skeleton className="h-3 w-1/2 bg-white/5" />
-                      </div>
-                    ))
-                  ) : accumulatedSpamEmails.length === 0 ? (
-                    <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
-                      <ShieldAlert className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
-                      <h3 className="text-[13px] font-medium text-white">{t("inbox.spamEmpty")}</h3>
-                      <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.spamEmptyDesc")}</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-1">
-                      {accumulatedSpamEmails.map((email) => (
-                        <div
-                          key={email.id}
-                          className="group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors overflow-hidden border-border"
-                        >
-                          <div className={`w-1 shrink-0 ${PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible}`} />
-                          <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-primary/20">
-                              <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-0.5">
-                                <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>
-                                <PriorityBadge priority={(email.priority || "faible") as any} />
-                              </div>
-                              <h3 className="text-[12px] text-white/80 truncate">{email.subject}</h3>
-                              {email.summary && (
-                                <div className="flex items-center gap-1 mt-0.5">
-                                  <Sparkles className="w-3 h-3 text-primary shrink-0" />
-                                  <p className="text-[11px] text-[#8b9cb3] line-clamp-1">{email.summary}</p>
-                                </div>
-                              )}
-                              {(email as any).spamSource === "provider" && (
-                                <span className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded-sm text-[10px] text-amber-300 bg-amber-500/10 border border-amber-500/20">
-                                  {t("inbox.spamSourceProvider")}
-                                </span>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-1 shrink-0">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 px-2 text-[10px] gap-1 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
-                                onClick={() => {
-                                  restoreEmailMut.mutate({ id: email.id }, {
-                                    onSuccess: () => {
-                                      toast({ title: t("inbox.emailRestoredFromSpam") });
-                                      setAccumulatedSpamEmails((prev) => prev.filter((e) => e.id !== email.id));
-                                      setSpamTotal((prev) => prev - 1);
-                                      queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-                                      queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
-                                      queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
-                                      queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
-                                    },
-                                  });
-                                }}
-                                disabled={restoreEmailMut.isPending}
-                              >
-                                <Inbox className="w-3 h-3" />
-                                {t("inbox.restoreEmail")}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 px-2 text-[10px] gap-1 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                                onClick={() => {
-                                  permanentDeleteMut.mutate({ id: email.id }, {
-                                    onSuccess: () => {
-                                      toast({ title: t("inbox.emailPermanentlyDeleted") });
-                                      setAccumulatedSpamEmails((prev) => prev.filter((e) => e.id !== email.id));
-                                      setSpamTotal((prev) => prev - 1);
-                                      queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-                                    },
-                                  });
-                                }}
-                                disabled={permanentDeleteMut.isPending}
-                              >
-                                <X className="w-3 h-3" />
-                                {t("inbox.permanentDelete")}
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                      {spamHasMore && (
-                        <div className="flex items-center justify-center py-4">
-                          <button
-                            onClick={() => { if (!spamFetching) setSpamPage((p) => p + 1); }}
-                            disabled={spamFetching}
-                            className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40 disabled:opacity-50"
-                          >
-                            {spamFetching ? t("common.loading") : t("inbox.loadMore")}
                           </button>
                         </div>
                       )}
