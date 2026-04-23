@@ -1,10 +1,13 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-const updateMock = vi.fn();
-const eqUpdateMock = vi.fn();
-const selectMock = vi.fn();
-const eqSelectMock = vi.fn();
-const maybeSingleMock = vi.fn();
+const { updateMock, eqUpdateMock, selectMock, eqSelectMock, maybeSingleMock, rpcMock } = vi.hoisted(() => ({
+  updateMock: vi.fn(),
+  eqUpdateMock: vi.fn(),
+  selectMock: vi.fn(),
+  eqSelectMock: vi.fn(),
+  maybeSingleMock: vi.fn(),
+  rpcMock: vi.fn(),
+}));
 
 vi.mock("../lib/supabase", () => ({
   supabaseAdmin: {
@@ -12,6 +15,7 @@ vi.mock("../lib/supabase", () => ({
       select: selectMock,
       update: updateMock,
     })),
+    rpc: rpcMock,
   },
 }));
 
@@ -26,6 +30,7 @@ import {
   markConnectionSuccess,
   fetchWithTimeout,
   withTimeout,
+  safeRunForConnection,
 } from "./connection-health";
 
 beforeEach(() => {
@@ -34,46 +39,96 @@ beforeEach(() => {
   eqSelectMock.mockReturnValue({ maybeSingle: maybeSingleMock });
   updateMock.mockReturnValue({ eq: eqUpdateMock });
   eqUpdateMock.mockResolvedValue({ error: null });
+  rpcMock.mockResolvedValue({ error: null });
 });
 
 describe("markConnectionFailure", () => {
-  it("increments consecutive_failures from existing value", async () => {
+  it("uses atomic RPC by default", async () => {
+    rpcMock.mockResolvedValueOnce({ error: null });
+    await markConnectionFailure("conn-1", "fetch", new Error("boom"));
+    expect(rpcMock).toHaveBeenCalledWith("increment_connection_failure", {
+      p_id: "conn-1",
+      p_error_message: expect.stringContaining("[fetch]"),
+    });
+    expect(updateMock).not.toHaveBeenCalled();
+  });
+
+  it("falls back to read-modify-write when RPC missing", async () => {
+    rpcMock.mockResolvedValueOnce({ error: { message: "function not found" } });
     maybeSingleMock.mockResolvedValueOnce({ data: { consecutive_failures: 2 }, error: null });
     await markConnectionFailure("conn-1", "fetch", new Error("boom"));
     expect(updateMock).toHaveBeenCalledTimes(1);
     const payload = updateMock.mock.calls[0][0];
     expect(payload.consecutive_failures).toBe(3);
-    expect(payload.last_error_message).toContain("[fetch]");
     expect(payload.last_error_message).toContain("boom");
-    expect(typeof payload.last_error_at).toBe("string");
   });
 
-  it("starts at 1 when no prior failures", async () => {
+  it("starts at 1 when no prior failures (fallback path)", async () => {
+    rpcMock.mockResolvedValueOnce({ error: { message: "missing" } });
     maybeSingleMock.mockResolvedValueOnce({ data: null, error: null });
     await markConnectionFailure("conn-1", "connect", new Error("nope"));
     expect(updateMock.mock.calls[0][0].consecutive_failures).toBe(1);
   });
 
   it("redacts Bearer tokens and JWTs from error message", async () => {
-    maybeSingleMock.mockResolvedValueOnce({ data: { consecutive_failures: 0 }, error: null });
+    rpcMock.mockResolvedValueOnce({ error: null });
     const err = new Error("Unauthorized: Bearer eyJhbGciOiJIUzI1NiJ9.payload.signature failed");
     await markConnectionFailure("conn-1", "graph-api", err);
-    const payload = updateMock.mock.calls[0][0];
-    expect(payload.last_error_message).not.toContain("eyJhbGciOiJIUzI1NiJ9");
-    expect(payload.last_error_message).toContain("[redacted]");
+    const payload = rpcMock.mock.calls[0][1];
+    expect(payload.p_error_message).not.toContain("eyJhbGciOiJIUzI1NiJ9");
+    expect(payload.p_error_message).toContain("[redacted]");
   });
 
   it("truncates very long error messages to 500 chars", async () => {
-    maybeSingleMock.mockResolvedValueOnce({ data: { consecutive_failures: 0 }, error: null });
+    rpcMock.mockResolvedValueOnce({ error: null });
     const longErr = new Error("X".repeat(2000));
     await markConnectionFailure("conn-1", "fetch", longErr);
-    expect(updateMock.mock.calls[0][0].last_error_message.length).toBeLessThanOrEqual(500);
+    expect(rpcMock.mock.calls[0][1].p_error_message.length).toBeLessThanOrEqual(500);
   });
 
-  it("does not throw when supabase read fails", async () => {
+  it("does not throw when fallback read also fails", async () => {
+    rpcMock.mockResolvedValueOnce({ error: { message: "rpc down" } });
     maybeSingleMock.mockResolvedValueOnce({ data: null, error: { message: "db down" } });
     await expect(markConnectionFailure("conn-1", "fetch", new Error("x"))).resolves.toBeUndefined();
     expect(updateMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("safeRunForConnection (per-connection isolation)", () => {
+  it("isolates failures: one bad connection does not break the others, and markConnectionFailure is recorded for the failing one only", async () => {
+    rpcMock.mockResolvedValue({ error: null });
+
+    const conn1 = { id: "c1", email_address: "fail@test.com" };
+    const conn2 = { id: "c2", email_address: "ok@test.com" };
+    const conn3 = { id: "c3", email_address: "also-ok@test.com" };
+
+    const results: Array<number | -1> = [];
+    for (const conn of [conn1, conn2, conn3]) {
+      const synced = await safeRunForConnection(conn, "fetch", async () => {
+        if (conn.id === "c1") throw new Error("simulated IMAP crash");
+        return 7;
+      });
+      results.push(synced);
+    }
+
+    expect(results).toEqual([-1, 7, 7]);
+    expect(rpcMock).toHaveBeenCalledTimes(1);
+    expect(rpcMock.mock.calls[0][1].p_id).toBe("c1");
+    expect(rpcMock.mock.calls[0][1].p_error_message).toContain("simulated IMAP crash");
+  });
+
+  it("returns the function result on success without calling markConnectionFailure", async () => {
+    const result = await safeRunForConnection({ id: "c1", email_address: "ok@x" }, "fetch", async () => 42);
+    expect(result).toBe(42);
+    expect(rpcMock).not.toHaveBeenCalled();
+  });
+
+  it("does not throw if conn.id is missing", async () => {
+    const result = await safeRunForConnection({ email_address: "anon" }, "fetch", async () => {
+      throw new Error("oops");
+    });
+    expect(result).toBe(-1);
+    expect(rpcMock).not.toHaveBeenCalled();
   });
 });
 

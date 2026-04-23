@@ -2,10 +2,17 @@ import { ImapFlow } from "imapflow";
 import { simpleParser } from "mailparser";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
+import { fetchWithTimeout, withTimeout } from "./connection-health";
 
 const IMAP_BODY_MAX_BYTES = 200_000;
 const JUNK_BACKFILL_DAYS = 30;
 const JUNK_PER_SYNC_LIMIT = 30;
+const JUNK_LOCK_TIMEOUT_MS = 10_000;
+const JUNK_SEARCH_TIMEOUT_MS = 30_000;
+const JUNK_FETCH_DEADLINE_MS = 60_000;
+const IMAP_MOVE_LOCK_TIMEOUT_MS = 10_000;
+const IMAP_MOVE_TIMEOUT_MS = 30_000;
+const HTTP_TIMEOUT_MS = 20_000;
 
 const IMAP_JUNK_FALLBACK_NAMES = [
   "Junk",
@@ -157,16 +164,21 @@ export async function syncImapJunk(
 
   let lock;
   try {
-    lock = await client.getMailboxLock(junkPath);
+    lock = await withTimeout(client.getMailboxLock(junkPath), JUNK_LOCK_TIMEOUT_MS, "Junk lock");
   } catch (lockErr: any) {
     log.warn({ err: lockErr.message, junkPath }, "Could not lock Junk folder");
     return 0;
   }
 
   let savedCount = 0;
+  const fetchStartedAt = Date.now();
   try {
     const sinceDate = new Date(Date.now() - JUNK_BACKFILL_DAYS * 24 * 3600 * 1000);
-    const uids = await client.search({ since: sinceDate }, { uid: true });
+    const uids = await withTimeout(
+      client.search({ since: sinceDate }, { uid: true }) as Promise<number[]>,
+      JUNK_SEARCH_TIMEOUT_MS,
+      "Junk search",
+    );
     if (!uids || uids.length === 0) {
       log.info({ junkPath }, "Junk folder empty in window");
       return 0;
@@ -176,6 +188,10 @@ export async function syncImapJunk(
     log.info({ junkPath, total: uids.length, fetching: recent.length }, "Junk fetch starting");
 
     for await (const msg of client.fetch(recent, { envelope: true, uid: true, source: true }, { uid: true })) {
+      if (Date.now() - fetchStartedAt > JUNK_FETCH_DEADLINE_MS) {
+        log.warn({ junkPath, savedSoFar: savedCount }, "Junk fetch deadline exceeded, stopping");
+        break;
+      }
       const externalId = `imap-junk:${conn.email_address}:${msg.uid}`;
       const envelope = msg.envelope;
       const from = envelope?.from?.[0];
@@ -251,7 +267,10 @@ export async function syncOutlookJunk(
       `&$select=id,internetMessageId,from,toRecipients,subject,bodyPreview,receivedDateTime` +
       `&$filter=receivedDateTime ge ${filterDate}`;
 
-    const resp = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+    const resp = await fetchWithTimeout(url, {
+      headers: { Authorization: `Bearer ${accessToken}` },
+      timeoutMs: HTTP_TIMEOUT_MS,
+    });
     if (!resp.ok) {
       log.warn({ status: resp.status }, "Outlook junk fetch error");
       return 0;
@@ -347,10 +366,18 @@ export async function moveImapMessage(
       target = trashPath;
     }
 
-    const lock = await client.getMailboxLock(fromFolder);
+    const lock = await withTimeout(
+      client.getMailboxLock(fromFolder),
+      IMAP_MOVE_LOCK_TIMEOUT_MS,
+      `Move lock ${fromFolder}`,
+    );
     let newUid: number | null = null;
     try {
-      const result: any = await client.messageMove(String(uid), target, { uid: true });
+      const result: any = await withTimeout(
+        client.messageMove(String(uid), target, { uid: true }),
+        IMAP_MOVE_TIMEOUT_MS,
+        "IMAP messageMove",
+      );
       const uidMap = result?.uidMap;
       if (uidMap && typeof uidMap.get === "function") {
         const mapped = uidMap.get(uid);
@@ -368,7 +395,7 @@ export async function moveImapMessage(
     log.warn({ err: err.message, uid, fromFolder, toFolder }, "IMAP move failed");
     return { ok: false };
   } finally {
-    try { await client.logout(); } catch {}
+    try { await withTimeout(client.logout(), 5_000, "IMAP move logout"); } catch {}
   }
 }
 
@@ -379,12 +406,13 @@ export async function moveOutlookMessage(
 ): Promise<{ ok: true; newId: string | null } | { ok: false }> {
   const log = logger.child({ service: "junk-move-outlook" });
   try {
-    const resp = await fetch(
+    const resp = await fetchWithTimeout(
       `https://graph.microsoft.com/v1.0/me/messages/${encodeURIComponent(messageId)}/move`,
       {
         method: "POST",
         headers: { Authorization: `Bearer ${accessToken}`, "Content-Type": "application/json" },
         body: JSON.stringify({ destinationId: destination }),
+        timeoutMs: HTTP_TIMEOUT_MS,
       },
     );
     if (!resp.ok) {

@@ -44,6 +44,18 @@ export async function markConnectionFailure(
   const message = sanitizeErrorMessage(`[${phase}] ${rawMessage}`);
 
   try {
+    const { error: rpcErr } = await supabaseAdmin.rpc("increment_connection_failure", {
+      p_id: connId,
+      p_error_message: message,
+    });
+
+    if (!rpcErr) {
+      log.info("Connection failure recorded (atomic)");
+      return;
+    }
+
+    log.warn({ err: rpcErr.message }, "RPC unavailable, falling back to read-modify-write");
+
     const { data, error: readErr } = await supabaseAdmin
       .from("email_connections")
       .select("consecutive_failures")
@@ -70,10 +82,28 @@ export async function markConnectionFailure(
     if (updateErr) {
       log.warn({ err: updateErr.message }, "Failed to persist failure");
     } else {
-      log.info({ consecutiveFailures: next }, "Connection failure recorded");
+      log.info({ consecutiveFailures: next }, "Connection failure recorded (fallback)");
     }
   } catch (e: unknown) {
     log.warn({ err: e instanceof Error ? e.message : String(e) }, "markConnectionFailure threw");
+  }
+}
+
+export async function safeRunForConnection<T>(
+  conn: { id?: string | null; email_address?: string | null } | null | undefined,
+  phase: SyncPhase,
+  fn: () => Promise<T>,
+): Promise<T | -1> {
+  try {
+    return await fn();
+  } catch (err: unknown) {
+    const msg = err instanceof Error ? err.message : String(err);
+    const log = logger.child({ service: "connection-health", connId: conn?.id ?? null });
+    log.warn({ err: msg, email: conn?.email_address ?? null }, "Per-connection sync threw, isolating");
+    if (conn?.id) {
+      await markConnectionFailure(conn.id, phase, err);
+    }
+    return -1;
   }
 }
 

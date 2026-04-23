@@ -16,6 +16,7 @@ import {
   markConnectionSuccess,
   fetchWithTimeout,
   withTimeout,
+  safeRunForConnection,
 } from "./connection-health";
 
 interface SaveEmailOptions {
@@ -1077,8 +1078,14 @@ async function syncImapForUser(conn: any): Promise<number> {
     const startSeq = Math.max(1, totalMessages - 9);
     const range = `${startSeq}:*`;
     let fetchedCount = 0;
+    const inboxFetchStartedAt = Date.now();
+    const INBOX_FETCH_DEADLINE_MS = 60_000;
 
     for await (const msg of (totalMessages === 0 ? [] as any[] : client.fetch(range, { envelope: true, uid: true, source: true }))) {
+      if (Date.now() - inboxFetchStartedAt > INBOX_FETCH_DEADLINE_MS) {
+        log.warn({ fetchedSoFar: fetchedCount }, "INBOX fetch deadline exceeded, stopping");
+        break;
+      }
       fetchedCount++;
       const externalId = `imap:${conn.email_address}:${msg.uid}`;
       const envelope = msg.envelope!;
@@ -1382,24 +1389,18 @@ async function runAutoSync() {
     let totalSynced = 0;
 
     for (const conn of connections) {
-      try {
-        (conn as any)._sharedMailboxId = connToSharedMailbox[conn.id] || null;
-        let synced = 0;
-        if (conn.provider === "gmail") {
-          synced = await syncGmailForUser(conn);
-        } else if (conn.provider === "outlook") {
-          synced = await syncOutlookForUser(conn);
-        } else if (conn.provider === "imap") {
-          synced = await syncImapForUser(conn);
-        }
-        if (synced < 0) {
-          console.error(`[auto-sync] ${conn.email_address} (${conn.provider}): sync failed`);
-        } else {
-          totalSynced += synced;
-          console.log(`[auto-sync] ${conn.email_address} (${conn.provider}): ${synced} new email(s)`);
-        }
-      } catch (err: any) {
-        console.error(`[auto-sync] Error for ${conn.email_address}:`, err.message);
+      (conn as any)._sharedMailboxId = connToSharedMailbox[conn.id] || null;
+      const synced = await safeRunForConnection(conn, "fetch", async () => {
+        if (conn.provider === "gmail") return syncGmailForUser(conn);
+        if (conn.provider === "outlook") return syncOutlookForUser(conn);
+        if (conn.provider === "imap") return syncImapForUser(conn);
+        return 0;
+      });
+      if (synced < 0) {
+        console.error(`[auto-sync] ${conn.email_address} (${conn.provider}): sync failed`);
+      } else {
+        totalSynced += synced;
+        console.log(`[auto-sync] ${conn.email_address} (${conn.provider}): ${synced} new email(s)`);
       }
     }
 
