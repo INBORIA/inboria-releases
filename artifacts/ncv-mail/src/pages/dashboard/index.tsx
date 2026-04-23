@@ -54,6 +54,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 import { resolveMailboxBadge, recipientMatchesAddress, type MailboxBadge } from "@/lib/mailbox-resolver";
+import { convert as htmlToPlainText } from "html-to-text";
 
 const PRIORITY_BAR_COLORS: Record<string, string> = {
   urgent: "bg-red-500",
@@ -165,27 +166,24 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
 
 function htmlBodyToPlainText(raw: string): string {
   if (!raw) return "";
-  const looksLikeHtml = /<\/?(?:html|body|div|p|br|span|table|td|tr|a|img|style|meta|font|hr)\b/i.test(raw);
+  const looksLikeHtml = /<\/?[a-z][\s\S]*?>/i.test(raw);
   if (!looksLikeHtml) return raw;
-  let s = raw;
-  s = s.replace(/<!--[\s\S]*?-->/g, "");
-  s = s.replace(/<(script|style|head)[\s\S]*?<\/\1>/gi, "");
-  s = s.replace(/<\/(p|div|li|h[1-6]|tr)>/gi, "\n");
-  s = s.replace(/<br\s*\/?>/gi, "\n");
-  s = s.replace(/<\/?(table|tbody|thead|tfoot)[^>]*>/gi, "\n");
-  s = s.replace(/<[^>]+>/g, "");
-  s = s
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&lt;/gi, "<")
-    .replace(/&gt;/gi, ">")
-    .replace(/&quot;/gi, '"')
-    .replace(/&#39;/gi, "'")
-    .replace(/&apos;/gi, "'")
-    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(parseInt(n, 10)))
-    .replace(/&#x([0-9a-f]+);/gi, (_, n) => String.fromCharCode(parseInt(n, 16)));
-  s = s.replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
-  return s;
+  try {
+    const text = htmlToPlainText(raw, {
+      wordwrap: false,
+      selectors: [
+        { selector: "img", format: "skip" },
+        { selector: "style", format: "skip" },
+        { selector: "script", format: "skip" },
+        { selector: "head", format: "skip" },
+        { selector: "a", options: { ignoreHref: false, hideLinkHrefIfSameAsText: true } },
+        { selector: "hr", format: "skip" },
+      ],
+    });
+    return text.replace(/\n{3,}/g, "\n\n").trim();
+  } catch {
+    return raw.replace(/<[^>]+>/g, "").replace(/&nbsp;/gi, " ").replace(/\s+/g, " ").trim();
+  }
 }
 
 function buildForwardCitation(email: any, t: (k: string) => string, dateLocale: any): string {
