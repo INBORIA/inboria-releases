@@ -1088,6 +1088,22 @@ router.delete("/emails/spam/empty", requireAuth, async (req, res): Promise<void>
 
 router.delete("/emails/:id", requireAuth, async (req, res): Promise<void> => {
   try {
+    const { data: existing } = await supabaseAdmin
+      .from("emails")
+      .select("status, external_id")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .maybeSingle();
+
+    if (existing && (existing as any).external_id && (existing as any).status !== "trashed") {
+      await moveProviderMessage(
+        req.params.id as any,
+        req.userId!,
+        (existing as any).external_id,
+        "TRASH",
+      ).catch(() => undefined);
+    }
+
     const { error } = await supabaseAdmin
       .from("emails")
       .update({ status: "trashed" })
@@ -1114,7 +1130,8 @@ router.post("/emails/:id/restore", requireAuth, async (req, res): Promise<void> 
       .eq("user_id", req.userId!)
       .maybeSingle();
 
-    if (existing && (existing as any).external_id && (existing as any).status === "spam") {
+    if (existing && (existing as any).external_id &&
+        ((existing as any).status === "spam" || (existing as any).status === "trashed")) {
       await moveProviderMessage(
         req.params.id as any,
         req.userId!,
