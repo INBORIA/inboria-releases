@@ -5,6 +5,11 @@ import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope
 
 const router: IRouter = Router();
 
+// V1 limitation : on scanne au plus 5000 emails par requête /contacts pour borner
+// le coût mémoire/CPU de l'agrégation côté API. Pour un compte avec >5000 emails,
+// les compteurs (totalCount, firstSeenAt) reflètent uniquement les 5000 plus récents.
+// Phase ultérieure : déléguer l'agrégation à PostgreSQL (vue matérialisée + index)
+// pour une exhaustivité réelle sans cap.
 const MAX_EMAILS_SCAN = 5000;
 
 interface ParsedAddress {
