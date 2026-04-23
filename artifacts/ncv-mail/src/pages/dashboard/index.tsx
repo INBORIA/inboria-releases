@@ -917,7 +917,7 @@ function useDebounce(value: string, delay: number) {
   return debounced;
 }
 
-type InboxMode = "personal" | "shared" | "trash";
+type InboxMode = "personal" | "shared";
 
 type ComposeConnection = { id: string; provider: string; email_address: string; signature?: string | null };
 type ComposeSendPayload = {
@@ -1275,12 +1275,6 @@ export default function Dashboard() {
   const bulkUpdateMut = useBulkUpdateEmails();
   const restoreEmailMut = useRestoreEmail();
   const permanentDeleteMut = usePermanentDeleteEmail();
-  const emptyTrashMut = useEmptyTrash();
-
-  const [trashPage, setTrashPage] = useState(1);
-  const [accumulatedTrashEmails, setAccumulatedTrashEmails] = useState<Email[]>([]);
-  const [trashTotal, setTrashTotal] = useState(0);
-  const [trashTotalPages, setTrashTotalPages] = useState(0);
 
   const { data: trashCountData } = useListEmails({
     status: "trashed",
@@ -1288,48 +1282,6 @@ export default function Dashboard() {
     limit: 1,
   });
   const trashCountFromApi = (trashCountData as PaginatedEmails)?.total ?? 0;
-
-  const { data: trashData, isLoading: trashLoading, isFetching: trashFetching } = useListEmails({
-    status: "trashed",
-    page: trashPage,
-    limit: 50,
-  }, { query: { enabled: inboxMode === "trash" } as any });
-
-  useEffect(() => {
-    if (trashData) {
-      const paged = trashData as PaginatedEmails;
-      const newEmails = paged.emails || [];
-      setTrashTotal(paged.total || 0);
-      setTrashTotalPages(paged.totalPages || 0);
-      if (trashPage === 1) {
-        setAccumulatedTrashEmails(newEmails);
-      } else {
-        setAccumulatedTrashEmails((prev) => {
-          const existingIds = new Set(prev.map((e) => e.id));
-          const unique = newEmails.filter((e) => !existingIds.has(e.id));
-          return [...prev, ...unique];
-        });
-      }
-    }
-  }, [trashData, trashPage]);
-
-  useEffect(() => {
-    if (inboxMode === "trash") {
-      setTrashPage(1);
-      const paged = trashData as PaginatedEmails | undefined;
-      if (paged) {
-        setAccumulatedTrashEmails(paged.emails || []);
-        setTrashTotal(paged.total || 0);
-        setTrashTotalPages(paged.totalPages || 0);
-      } else {
-        setAccumulatedTrashEmails([]);
-        setTrashTotal(0);
-        setTrashTotalPages(0);
-      }
-    }
-  }, [inboxMode]);
-
-  const trashHasMore = trashPage < trashTotalPages;
 
   const { data: spamCountData } = useListEmails({
     status: "spam",
@@ -2079,20 +2031,16 @@ export default function Dashboard() {
                   <span className="text-[9px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded-full">{spamCountFromApi}</span>
                 )}
               </Link>
-              <button
-                onClick={() => setInboxMode("trash")}
-                className={`flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
-                  inboxMode === "trash"
-                    ? "bg-red-500/15 text-red-400 border border-red-500/20"
-                    : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
-                }`}
+              <Link
+                href="/dashboard/corbeille"
+                className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
               >
                 <Trash2 className="w-3 h-3" />
                 {t("inbox.trash")}
-                {(inboxMode === "trash" ? trashTotal : trashCountFromApi) > 0 && (
-                  <span className="text-[9px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded-full">{inboxMode === "trash" ? trashTotal : trashCountFromApi}</span>
+                {trashCountFromApi > 0 && (
+                  <span className="text-[9px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded-full">{trashCountFromApi}</span>
                 )}
-              </button>
+              </Link>
               {inboxMode === "personal" && (composeConnections?.length || 0) >= 2 && (
                 <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
                   <SelectTrigger className="w-auto min-w-[140px] h-6 bg-card border-border text-[#8b9cb3] text-[10px] ml-1">
@@ -2167,8 +2115,7 @@ export default function Dashboard() {
               )}
             </div>
 
-          {inboxMode !== "trash" && (
-            <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-[1200px] mx-auto">
+          <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-[1200px] mx-auto">
               <span className="text-[10px] text-[#8b9cb3] mr-1">{t("inbox.priority")}:</span>
               {[
                 { value: "all", label: t("inbox.allCategories") },
@@ -2234,144 +2181,12 @@ export default function Dashboard() {
                 </SelectContent>
               </Select>
             </div>
-          )}
         </div>
 
         <div className="flex-1 overflow-auto">
           <div className="p-5 max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-5">
             <div className="flex-1 min-w-0">
-              {inboxMode === "trash" ? (
-                <>
-                  {trashTotal > 0 && (
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-[11px] text-[#8b9cb3]">
-                        {trashTotal} {trashTotal === 1 ? "email" : "emails"}
-                      </span>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="gap-1.5 h-7 text-[11px] bg-transparent border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                        onClick={() => {
-                          if (window.confirm(t("inbox.emptyTrashConfirm"))) {
-                            emptyTrashMut.mutate(undefined, {
-                              onSuccess: () => {
-                                toast({ title: t("inbox.trashEmptied") });
-                                setAccumulatedTrashEmails([]);
-                                setTrashTotal(0);
-                                queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-                                queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
-                                queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
-                                queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
-                              },
-                            });
-                          }
-                        }}
-                        disabled={emptyTrashMut.isPending}
-                      >
-                        <Trash2 className="w-3 h-3" />
-                        {t("inbox.emptyTrash")}
-                      </Button>
-                    </div>
-                  )}
-                  {trashLoading ? (
-                    Array(3).fill(0).map((_, i) => (
-                      <div key={i} className="bg-card rounded-lg border border-border p-3 mb-1">
-                        <Skeleton className="h-4 w-3/4 mb-2 bg-white/5" />
-                        <Skeleton className="h-3 w-1/2 bg-white/5" />
-                      </div>
-                    ))
-                  ) : accumulatedTrashEmails.length === 0 ? (
-                    <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
-                      <Trash2 className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
-                      <h3 className="text-[13px] font-medium text-white">{t("inbox.trashEmpty")}</h3>
-                      <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.trashEmptyDesc")}</p>
-                    </div>
-                  ) : (
-                    <div className="space-y-1">
-                      {accumulatedTrashEmails.map((email) => (
-                        <div
-                          key={email.id}
-                          className="group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors overflow-hidden border-border"
-                        >
-                          <div className={`w-1 shrink-0 ${PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible}`} />
-                          <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
-                            <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-primary/20">
-                              <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <div className="flex items-center gap-2 mb-0.5">
-                                <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>
-                                <PriorityBadge priority={(email.priority || "faible") as any} />
-                              </div>
-                              <h3 className="text-[12px] text-white/80 truncate">{email.subject}</h3>
-                              {email.summary && (
-                                <div className="flex items-center gap-1 mt-0.5">
-                                  <Sparkles className="w-3 h-3 text-primary shrink-0" />
-                                  <p className="text-[11px] text-[#8b9cb3] line-clamp-1">{email.summary}</p>
-                                </div>
-                              )}
-                            </div>
-                            <div className="flex items-center gap-1 shrink-0">
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 px-2 text-[10px] gap-1 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10"
-                                onClick={() => {
-                                  restoreEmailMut.mutate({ id: email.id }, {
-                                    onSuccess: () => {
-                                      toast({ title: t("inbox.emailRestored") });
-                                      setAccumulatedTrashEmails((prev) => prev.filter((e) => e.id !== email.id));
-                                      setTrashTotal((prev) => prev - 1);
-                                      queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-                                      queryClient.invalidateQueries({ queryKey: getGetDashboardSummaryQueryKey() });
-                                      queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
-                                      queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
-                                    },
-                                  });
-                                }}
-                                disabled={restoreEmailMut.isPending}
-                              >
-                                <Inbox className="w-3 h-3" />
-                                {t("inbox.restoreEmail")}
-                              </Button>
-                              <Button
-                                size="sm"
-                                variant="ghost"
-                                className="h-7 px-2 text-[10px] gap-1 text-red-400 hover:text-red-300 hover:bg-red-500/10"
-                                onClick={() => {
-                                  permanentDeleteMut.mutate({ id: email.id }, {
-                                    onSuccess: () => {
-                                      toast({ title: t("inbox.emailPermanentlyDeleted") });
-                                      setAccumulatedTrashEmails((prev) => prev.filter((e) => e.id !== email.id));
-                                      setTrashTotal((prev) => prev - 1);
-                                      queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-                                    },
-                                  });
-                                }}
-                                disabled={permanentDeleteMut.isPending}
-                              >
-                                <X className="w-3 h-3" />
-                                {t("inbox.permanentDelete")}
-                              </Button>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                      {trashHasMore && (
-                        <div className="flex items-center justify-center py-4">
-                          <button
-                            onClick={() => { if (!trashFetching) setTrashPage((p) => p + 1); }}
-                            disabled={trashFetching}
-                            className="text-[11px] text-primary hover:text-white transition-colors px-3 py-1.5 rounded-md border border-primary/20 hover:border-primary/40 disabled:opacity-50"
-                          >
-                            {trashFetching ? t("common.loading") : t("inbox.loadMore")}
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </>
-              ) : inboxMode === "shared" ? (
+              {inboxMode === "shared" ? (
                 <>
                   {sharedEmailsLoading ? (
                     Array(3).fill(0).map((_, i) => (

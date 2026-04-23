@@ -19,6 +19,7 @@ import AcceptInvite from "@/pages/accept-invite";
 import Dashboard from "@/pages/dashboard/index";
 import Archives from "@/pages/dashboard/archives";
 import Indesirables from "@/pages/dashboard/indesirables";
+import Corbeille from "@/pages/dashboard/corbeille";
 import Envoyes from "@/pages/dashboard/envoyes";
 import Suivi from "@/pages/dashboard/suivi";
 import BilanQuotidien from "@/pages/dashboard/bilan";
@@ -156,6 +157,7 @@ function Router() {
       <Route path="/dashboard/suivi" component={() => <ProtectedRoute component={Suivi} />} />
       <Route path="/dashboard/archives" component={() => <ProtectedRoute component={Archives} />} />
       <Route path="/dashboard/indesirables" component={() => <ProtectedRoute component={Indesirables} />} />
+      <Route path="/dashboard/corbeille" component={() => <ProtectedRoute component={Corbeille} />} />
       <Route path="/dashboard/bilan" component={() => <ProtectedRoute component={BilanQuotidien} />} />
       <Route path="/dashboard/taches" component={() => <ProtectedRoute component={Taches} />} />
       <Route path="/dashboard/classement" component={() => <ProtectedRoute component={Classement} />} />

@@ -450,6 +450,19 @@
     "blockNoConnection": "Aucun compte email connecté",
     "emptied": "Dossier vidé"
   },
+  "trash": {
+    "title": "Corbeille",
+    "count": "{{count}} élément(s)",
+    "empty": "Vider",
+    "emptyConfirmTitle": "Vider la corbeille ?",
+    "emptyConfirmBody": "Tous les éléments seront supprimés définitivement. Cette action est irréversible.",
+    "restore": "Restaurer",
+    "permanentDelete": "Supprimer définitivement",
+    "noEmails": "La corbeille est vide",
+    "restored": "Email restauré",
+    "deleted": "Email supprimé définitivement",
+    "emptied": "Corbeille vidée"
+  },
   "followup": {
     "title": "Suivi",
     "noFollowups": "Aucun suivi en attente",
