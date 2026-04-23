@@ -499,11 +499,21 @@ router.post("/email/connect/imap", requireAuth, async (req, res): Promise<void> 
 
 router.get("/email/connections", requireAuth, async (req, res): Promise<void> => {
   try {
-    const { data, error } = await supabaseAdmin
+    let { data, error } = await supabaseAdmin
       .from("email_connections")
       .select("id, provider, email_address, created_at, last_synced_at, signature, consecutive_failures, last_error_at, last_error_message")
       .eq("user_id", req.userId!)
       .order("created_at", { ascending: true });
+
+    if (error && /consecutive_failures|last_error_at|last_error_message|schema cache/i.test(error.message || "")) {
+      const fallback = await supabaseAdmin
+        .from("email_connections")
+        .select("id, provider, email_address, created_at, last_synced_at, signature")
+        .eq("user_id", req.userId!)
+        .order("created_at", { ascending: true });
+      data = fallback.data;
+      error = fallback.error;
+    }
 
     if (error) {
       res.status(500).json({ error: error.message });
