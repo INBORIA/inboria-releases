@@ -212,6 +212,26 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
         const doc = iframe.contentDocument || iframe.contentWindow?.document;
         if (!doc?.body) return;
 
+        try {
+          const existing = doc.getElementById("ncvmail-overrides-late");
+          if (existing) existing.remove();
+          const overrideTag = doc.createElement("style");
+          overrideTag.id = "ncvmail-overrides-late";
+          overrideTag.textContent = `
+            html, body {
+              height: auto !important;
+              min-height: 0 !important;
+              max-height: none !important;
+              overflow: visible !important;
+              width: auto !important;
+              max-width: 100% !important;
+            }
+            img { max-width: 100% !important; height: auto !important; }
+            table { max-width: 100% !important; }
+          `;
+          (doc.head || doc.documentElement).appendChild(overrideTag);
+        } catch {}
+
         if (typeof ResizeObserver !== "undefined") {
           resizeObserver = new ResizeObserver(() => measure());
           resizeObserver.observe(doc.body);
