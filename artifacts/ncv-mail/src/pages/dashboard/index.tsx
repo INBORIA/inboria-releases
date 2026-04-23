@@ -1091,9 +1091,28 @@ export default function Dashboard() {
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [selectedAccountId, setSelectedAccountId] = useState<string>("all");
 
+  const { data: composeConnections } = useQuery<Array<{ id: string; provider: string; email_address: string; signature?: string | null }>>({
+    queryKey: ["email-connections-compose"],
+    queryFn: async () => {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res = await fetch(`${import.meta.env.BASE_URL}api/email/connections`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  const selectedAccountEmailForCounts = (() => {
+    if (inboxMode !== "personal" || selectedAccountId === "all") return undefined;
+    const c = composeConnections?.find((x) => String(x.id) === String(selectedAccountId));
+    return c?.email_address || undefined;
+  })();
   const categoryCountsParams = inboxMode === "shared" && selectedSharedMailboxId
     ? { scope: "shared" as const, sharedMailboxId: selectedSharedMailboxId }
-    : { scope: "personal" as const };
+    : { scope: "personal" as const, accountEmail: selectedAccountEmailForCounts };
   const { data: categoryCounts, isLoading: categoriesLoading } = useGetCategoryCounts(categoryCountsParams);
   const { data: summary, isLoading: summaryLoading } = useGetDashboardSummary();
   const { data: projects } = useListProjects();
@@ -1333,19 +1352,6 @@ export default function Dashboard() {
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
 
-  const { data: composeConnections } = useQuery<Array<{ id: string; provider: string; email_address: string; signature?: string | null }>>({
-    queryKey: ["email-connections-compose"],
-    queryFn: async () => {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      const res = await fetch(`${import.meta.env.BASE_URL}api/email/connections`, {
-        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
-      });
-      if (!res.ok) return [];
-      return res.json();
-    },
-  });
 
   const isMobileViewport = typeof window !== "undefined" && window.matchMedia("(max-width: 640px)").matches;
 

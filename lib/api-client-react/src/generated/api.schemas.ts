@@ -1101,6 +1101,10 @@ export type GetCategoryCountsParams = {
    * ID de la boîte partagée quand scope=shared
    */
   sharedMailboxId?: string;
+  /**
+   * Filtre par adresse destinataire (scope=personal) — aligne le compteur sur le filtre "compte" de la liste
+   */
+  accountEmail?: string;
 };
 
 export type GetCategoryCountsScope =

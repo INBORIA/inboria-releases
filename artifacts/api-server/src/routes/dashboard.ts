@@ -97,6 +97,7 @@ router.get("/dashboard/category-counts", requireAuth, async (req, res): Promise<
 
     const scope = (req.query.scope as string | undefined) || "all";
     const sharedMailboxId = (req.query.sharedMailboxId as string | undefined) || "";
+    const accountEmail = (req.query.accountEmail as string | undefined)?.trim() || "";
 
     let query = supabaseAdmin
       .from("emails")
@@ -108,6 +109,10 @@ router.get("/dashboard/category-counts", requireAuth, async (req, res): Promise<
 
     if (scope === "personal") {
       query = query.eq("user_id", req.userId!).is("shared_mailbox_id", null);
+      if (accountEmail) {
+        const escaped = accountEmail.replace(/[%_\\,()."']/g, (c) => `\\${c}`);
+        query = query.ilike("recipient", `%${escaped}%`);
+      }
     } else if (scope === "shared" && sharedMailboxId) {
       const memberMailboxIds = await getMemberMailboxIds(req.userId!);
       if (!memberMailboxIds.includes(sharedMailboxId)) {

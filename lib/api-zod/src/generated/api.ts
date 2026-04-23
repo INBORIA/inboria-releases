@@ -660,6 +660,12 @@ export const GetCategoryCountsQueryParams = zod.object({
     .string()
     .optional()
     .describe("ID de la boîte partagée quand scope=shared"),
+  accountEmail: zod.coerce
+    .string()
+    .optional()
+    .describe(
+      'Filtre par adresse destinataire (scope=personal) — aligne le compteur sur le filtre \"compte\" de la liste',
+    ),
 });
 
 export const GetCategoryCountsResponseItem = zod.object({

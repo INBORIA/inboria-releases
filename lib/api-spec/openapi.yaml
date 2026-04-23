@@ -656,6 +656,12 @@ paths:
           schema:
             type: string
           description: ID de la boîte partagée quand scope=shared
+        - in: query
+          name: accountEmail
+          required: false
+          schema:
+            type: string
+          description: Filtre par adresse destinataire (scope=personal) — aligne le compteur sur le filtre "compte" de la liste
       responses:
         "200":
           description: Category counts
