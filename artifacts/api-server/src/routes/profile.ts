@@ -61,6 +61,7 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       aiLanguage: profile.ai_language || "fr",
       signature: "",
       timezone: profile.timezone || "Europe/Brussels",
+      followUpDelayDays: profile.follow_up_delay_days ?? 7,
       createdAt: profile.created_at,
       organisationId,
       organisationName,
@@ -99,6 +100,12 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
       updates.emails_quota = quotaMap[parsed.data.plan] ?? 100;
     }
     if (parsed.data.seats !== undefined) updates.seats = parsed.data.seats;
+    if ((parsed.data as any).followUpDelayDays !== undefined) {
+      const v = Number((parsed.data as any).followUpDelayDays);
+      if (Number.isFinite(v) && v >= 1 && v <= 60) {
+        updates.follow_up_delay_days = Math.round(v);
+      }
+    }
 
     const query = Object.keys(updates).length === 0
       ? supabaseAdmin.from("profiles").select().eq("id", req.userId!).single()
@@ -126,6 +133,7 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
       aiLanguage: profile.ai_language || "fr",
       signature: "",
       timezone: profile.timezone || "Europe/Brussels",
+      followUpDelayDays: profile.follow_up_delay_days ?? 7,
       createdAt: profile.created_at,
     });
   } catch {

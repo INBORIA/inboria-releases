@@ -30,8 +30,15 @@ router.get("/followups", requireAuth, async (req, res): Promise<void> => {
       if (withDismissed) q = q.is("dismissed_at", null);
       if (status && status !== "all") q = q.eq("status", status);
       if (projectId) q = q.eq("project_id", projectId);
-      if (kind === "ai") q = q.eq("ai_suggestion", true);
-      else if (kind === "manual") q = q.eq("ai_suggestion", false);
+      if (kind === "ai") {
+        q = q.eq("ai_suggestion", true);
+        // Une suggestion IA n'est "active" que tant qu'elle est en_attente.
+        // Dès que l'utilisateur Crée la relance / Marque répondu / Ignore,
+        // elle doit disparaître de la section Suggestions IA.
+        if (!status || status === "all") q = q.eq("status", "en_attente");
+      } else if (kind === "manual") {
+        q = q.eq("ai_suggestion", false);
+      }
       return q;
     };
 
