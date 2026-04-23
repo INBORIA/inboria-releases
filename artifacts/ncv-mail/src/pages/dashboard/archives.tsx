@@ -124,7 +124,7 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
             )}
 
             <div className="p-4">
-              <EmailBodyRenderer body={email.body} />
+              <EmailBodyRenderer body={email.body} emailId={email.id} sender={email.sender} />
             </div>
 
             <div className="px-4 py-3 border-t border-border">

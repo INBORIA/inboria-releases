@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useMemo } from "react";
+import { useRef, useEffect, useState, useMemo, type ReactNode } from "react";
 
 function isHtml(text: string): boolean {
   return /<\/?[a-z][\s\S]*>/i.test(text);
@@ -167,21 +167,74 @@ export function cleanEmailBody(raw: string): string {
   return raw;
 }
 
-export function EmailBodyRenderer({ body }: { body?: string | null }) {
+function htmlToReadableText(html: string): string {
+  try {
+    const doc = new DOMParser().parseFromString(html, "text/html");
+    doc.querySelectorAll("script, style, head, title, meta, link, noscript").forEach((el) => el.remove());
+    doc.querySelectorAll("[hidden], [aria-hidden='true']").forEach((el) => el.remove());
+    doc.querySelectorAll("br").forEach((el) => el.replaceWith("\n"));
+    doc.querySelectorAll("p, div, tr, li, h1, h2, h3, h4, h5, h6").forEach((el) => {
+      el.append("\n");
+    });
+    const text = (doc.body?.textContent || "").replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+    return text;
+  } catch {
+    return html.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim();
+  }
+}
+
+function renderTextWithLinks(text: string): ReactNode[] {
+  const parts: ReactNode[] = [];
+  const regex = /(https?:\/\/[^\s<>]+|[\w._%+-]+@[\w.-]+\.[A-Za-z]{2,})/g;
+  let lastIndex = 0;
+  let match: RegExpExecArray | null;
+  let key = 0;
+  while ((match = regex.exec(text)) !== null) {
+    if (match.index > lastIndex) parts.push(text.slice(lastIndex, match.index));
+    const m = match[0];
+    const href = m.includes("@") ? `mailto:${m}` : m;
+    parts.push(
+      <a key={`l${key++}`} href={href} target="_blank" rel="noopener noreferrer" className="text-blue-400 hover:underline break-all">
+        {m}
+      </a>,
+    );
+    lastIndex = match.index + m.length;
+  }
+  if (lastIndex < text.length) parts.push(text.slice(lastIndex));
+  return parts;
+}
+
+interface EmailBodyRendererProps {
+  body?: string | null;
+  emailId?: number | string;
+  sender?: string;
+}
+
+export function EmailBodyRenderer({ body, emailId, sender }: EmailBodyRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
   const [iframeHeight, setIframeHeight] = useState(200);
+  const [renderFailed, setRenderFailed] = useState(false);
 
   const content = useMemo(() => cleanEmailBody(body || ""), [body]);
   const html = isHtml(content);
+  const fallbackText = useMemo(
+    () => (html ? htmlToReadableText(content) : content),
+    [html, content],
+  );
 
   useEffect(() => {
-    if (!html || !iframeRef.current) return;
+    setRenderFailed(false);
+  }, [body, emailId]);
+
+  useEffect(() => {
+    if (!html || !iframeRef.current || renderFailed) return;
 
     const iframe = iframeRef.current;
     let resizeObserver: ResizeObserver | null = null;
     let mutationObserver: MutationObserver | null = null;
     const imageListeners: Array<{ img: HTMLImageElement; fn: () => void }> = [];
     const timers: number[] = [];
+    let measuredOk = false;
 
     const measure = () => {
       try {
@@ -192,8 +245,45 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
           doc.documentElement?.scrollHeight || 0,
           doc.body.getBoundingClientRect().height,
         );
-        if (h > 0) setIframeHeight(Math.ceil(h) + 16);
+        if (h > 0) {
+          setIframeHeight(Math.ceil(h) + 16);
+          if (h >= 30) measuredOk = true;
+        }
       } catch {}
+    };
+
+    const reportFailure = (reason: string) => {
+      try {
+        const apiBase = (import.meta.env.VITE_API_BASE_URL as string | undefined) || "";
+        fetch(`${apiBase}/api/render-failures`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify({
+            emailId: emailId ?? null,
+            sender: sender ?? null,
+            reason,
+            bodyLength: (body || "").length,
+          }),
+          keepalive: true,
+        }).catch(() => {});
+      } catch {}
+    };
+
+    const checkRendered = () => {
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow?.document;
+        const innerText = (doc?.body?.innerText || "").trim();
+        const h = doc?.body?.scrollHeight || 0;
+        const looksEmpty = h < 30 || innerText.length < 5;
+        if (looksEmpty && !measuredOk) {
+          setRenderFailed(true);
+          reportFailure(`empty_render h=${h} text=${innerText.length}`);
+        }
+      } catch (err) {
+        setRenderFailed(true);
+        reportFailure(`exception ${(err as Error)?.message || ""}`);
+      }
     };
 
     const wireImages = (doc: Document) => {
@@ -251,9 +341,24 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
       timers.push(window.setTimeout(measure, 250));
       timers.push(window.setTimeout(measure, 1000));
       timers.push(window.setTimeout(measure, 3000));
+      timers.push(window.setTimeout(checkRendered, 3500));
     };
 
     iframe.addEventListener("load", handleLoad);
+    const safetyTimer = window.setTimeout(() => {
+      try {
+        const doc = iframe.contentDocument || iframe.contentWindow?.document;
+        if (!doc?.body) {
+          setRenderFailed(true);
+          reportFailure("no_document_after_5s");
+        }
+      } catch {
+        setRenderFailed(true);
+        reportFailure("safety_timer_exception");
+      }
+    }, 5000);
+    timers.push(safetyTimer);
+
     return () => {
       iframe.removeEventListener("load", handleLoad);
       resizeObserver?.disconnect();
@@ -264,7 +369,7 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
       }
       for (const t of timers) clearTimeout(t);
     };
-  }, [html, content]);
+  }, [html, content, renderFailed, body, emailId, sender]);
 
   if (!content) {
     return (
@@ -275,8 +380,21 @@ export function EmailBodyRenderer({ body }: { body?: string | null }) {
   if (!html) {
     return (
       <p className="text-[13px] text-white/80 leading-relaxed whitespace-pre-wrap">
-        {content}
+        {renderTextWithLinks(content)}
       </p>
+    );
+  }
+
+  if (renderFailed) {
+    return (
+      <div className="space-y-2">
+        <p className="text-[11px] text-white/40 italic">Affichage simplifié</p>
+        <div className="text-[13px] text-white/80 leading-relaxed whitespace-pre-wrap break-words">
+          {fallbackText
+            ? renderTextWithLinks(fallbackText)
+            : <span className="text-white/40 italic">(Contenu indisponible)</span>}
+        </div>
+      </div>
     );
   }
 

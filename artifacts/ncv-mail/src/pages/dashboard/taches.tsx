@@ -711,7 +711,7 @@ export default function Taches() {
 
               {emailDetailTask.emailBody && (
                 <div className="border border-border rounded-lg p-3">
-                  <EmailBodyRenderer body={emailDetailTask.emailBody} />
+                  <EmailBodyRenderer body={emailDetailTask.emailBody} emailId={emailDetailTask.emailId} sender={emailDetailTask.emailSenderEmail || emailDetailTask.emailSender} />
                 </div>
               )}
 

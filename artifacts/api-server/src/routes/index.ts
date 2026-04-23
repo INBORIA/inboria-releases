@@ -24,6 +24,7 @@ import attachmentsRouter from "./attachments";
 import appointmentsRouter from "./appointments";
 import waitlistRouter from "./waitlist";
 import adminRouter from "./admin";
+import renderFailuresRouter from "./render-failures";
 
 const router: IRouter = Router();
 
@@ -52,5 +53,6 @@ router.use(attachmentsRouter);
 router.use(appointmentsRouter);
 router.use(waitlistRouter);
 router.use(adminRouter);
+router.use(renderFailuresRouter);
 
 export default router;

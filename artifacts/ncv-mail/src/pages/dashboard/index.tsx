@@ -297,7 +297,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
 
             <div className="p-4">
               {email.body ? (
-                <EmailBodyRenderer body={email.body} />
+                <EmailBodyRenderer body={email.body} emailId={email.id} sender={email.senderEmail || email.sender} />
               ) : (
                 <div className="space-y-2 animate-pulse" aria-label={t("inbox.loadingBody") as string}>
                   <div className="h-3 bg-white/5 rounded w-full" />
