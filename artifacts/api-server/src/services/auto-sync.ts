@@ -758,12 +758,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
       }
     }
 
-    if (synced > 0) {
-      await supabaseAdmin
-        .from("email_connections")
-        .update({ last_synced_at: new Date().toISOString() })
-        .eq("id", conn.id);
-    }
+    await markConnectionSuccess(conn.id);
 
     try {
       const { data: allUserEmails } = await supabaseAdmin
@@ -859,7 +854,8 @@ async function syncGmailForUser(conn: any): Promise<number> {
     return synced;
   } catch (err: any) {
     console.error(`[auto-sync] Gmail error for ${conn.email_address}:`, err.message);
-    return 0;
+    await markConnectionFailure(conn.id, "gmail-api", err);
+    return -1;
   }
 }
 
@@ -872,9 +868,10 @@ async function syncOutlookForUser(conn: any): Promise<number> {
     if (conn.token_expires_at && new Date(conn.token_expires_at) < new Date()) {
       if (!MICROSOFT_CLIENT_ID || !MICROSOFT_CLIENT_SECRET) {
         console.error("[auto-sync] Outlook: missing Microsoft credentials, cannot refresh token");
-        return 0;
+        await markConnectionFailure(conn.id, "token-refresh", new Error("Missing Microsoft credentials"));
+        return -1;
       }
-      const tokenResponse = await fetch(
+      const tokenResponse = await fetchWithTimeout(
         "https://login.microsoftonline.com/common/oauth2/v2.0/token",
         {
           method: "POST",
@@ -886,18 +883,22 @@ async function syncOutlookForUser(conn: any): Promise<number> {
             grant_type: "refresh_token",
             scope: "Mail.Read offline_access",
           }),
+          timeoutMs: 20_000,
         }
       );
 
       if (!tokenResponse.ok) {
-        console.error(`[auto-sync] Outlook token refresh failed: ${tokenResponse.status} ${tokenResponse.statusText}`);
-        return 0;
+        const msg = `Outlook token refresh failed: ${tokenResponse.status} ${tokenResponse.statusText}`;
+        console.error(`[auto-sync] ${msg}`);
+        await markConnectionFailure(conn.id, "token-refresh", new Error(msg));
+        return -1;
       }
 
       const tokens = (await tokenResponse.json()) as any;
       if (!tokens.access_token) {
         console.error("[auto-sync] Outlook token refresh: no access_token in response");
-        return 0;
+        await markConnectionFailure(conn.id, "token-refresh", new Error("No access_token in refresh response"));
+        return -1;
       }
 
       accessToken = tokens.access_token;
@@ -916,17 +917,23 @@ async function syncOutlookForUser(conn: any): Promise<number> {
     const filterDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
     const graphUrl = `https://graph.microsoft.com/v1.0/me/messages?$top=10&$orderby=receivedDateTime desc&$select=id,internetMessageId,from,toRecipients,subject,bodyPreview,receivedDateTime&$filter=receivedDateTime ge ${filterDate}`;
 
-    const response = await fetch(graphUrl, {
+    const response = await fetchWithTimeout(graphUrl, {
       headers: { Authorization: `Bearer ${accessToken}` },
+      timeoutMs: 20_000,
     });
 
     if (!response.ok) {
-      console.error(`[auto-sync] Outlook Graph API error: ${response.status} ${response.statusText}`);
-      return 0;
+      const msg = `Outlook Graph API error: ${response.status} ${response.statusText}`;
+      console.error(`[auto-sync] ${msg}`);
+      await markConnectionFailure(conn.id, "graph-api", new Error(msg));
+      return -1;
     }
 
     const data = (await response.json()) as any;
-    if (!data.value) return 0;
+    if (!data.value) {
+      await markConnectionSuccess(conn.id);
+      return 0;
+    }
 
     let synced = 0;
     for (const msg of data.value) {
@@ -982,17 +989,12 @@ async function syncOutlookForUser(conn: any): Promise<number> {
       console.error(`[auto-sync] Outlook junk error for ${conn.email_address}:`, junkErr.message);
     }
 
-    if (synced > 0) {
-      await supabaseAdmin
-        .from("email_connections")
-        .update({ last_synced_at: new Date().toISOString() })
-        .eq("id", conn.id);
-    }
-
+    await markConnectionSuccess(conn.id);
     return synced;
   } catch (err: any) {
     console.error(`[auto-sync] Outlook error for ${conn.email_address}:`, err.message);
-    return 0;
+    await markConnectionFailure(conn.id, "graph-api", err);
+    return -1;
   }
 }
 
@@ -1004,6 +1006,7 @@ async function syncImapForUser(conn: any): Promise<number> {
     if (conn.refresh_token) imapConfig = JSON.parse(conn.refresh_token);
   } catch (parseErr: any) {
     log.error(`IMAP config parse failed: ${parseErr.message}`);
+    await markConnectionFailure(conn.id, "config", parseErr);
     return -1;
   }
 
@@ -1011,12 +1014,14 @@ async function syncImapForUser(conn: any): Promise<number> {
 
   if (!isValidImapHost(imapConfig.host)) {
     log.error({ host: imapConfig.host }, "IMAP blocked: invalid host");
+    await markConnectionFailure(conn.id, "config", new Error(`Invalid IMAP host: ${imapConfig.host}`));
     return -1;
   }
 
   const port = Number(imapConfig.port);
   if (!port || port < 1 || port > 65535) {
     log.error({ port: imapConfig.port }, "IMAP blocked: invalid port");
+    await markConnectionFailure(conn.id, "config", new Error(`Invalid IMAP port: ${imapConfig.port}`));
     return -1;
   }
 
@@ -1040,17 +1045,19 @@ async function syncImapForUser(conn: any): Promise<number> {
     log.info("IMAP connected successfully");
   } catch (connErr: any) {
     log.error({ error: connErr.message }, "IMAP connection failed");
-    try { await client.logout(); } catch {}
+    try { await withTimeout(client.logout(), 5_000, "IMAP logout"); } catch {}
+    await markConnectionFailure(conn.id, "connect", connErr);
     return -1;
   }
 
   let lock: MailboxLockObject;
   try {
-    lock = await client.getMailboxLock("INBOX");
+    lock = await withTimeout(client.getMailboxLock("INBOX"), 10_000, "INBOX lock");
     log.info("INBOX lock acquired");
   } catch (lockErr: any) {
     log.error({ error: lockErr.message }, "Failed to lock INBOX");
-    try { await client.logout(); } catch {}
+    try { await withTimeout(client.logout(), 5_000, "IMAP logout"); } catch {}
+    await markConnectionFailure(conn.id, "lock", lockErr);
     return -1;
   }
 
@@ -1306,17 +1313,16 @@ async function syncImapForUser(conn: any): Promise<number> {
   }
 
   try {
-    await client.logout();
+    await withTimeout(client.logout(), 5_000, "IMAP logout");
   } catch {}
 
   if (fetchSucceeded) {
-    await supabaseAdmin
-      .from("email_connections")
-      .update({ last_synced_at: new Date().toISOString() })
-      .eq("id", conn.id);
+    await markConnectionSuccess(conn.id);
+    return synced;
   }
 
-  return fetchSucceeded ? synced : -1;
+  await markConnectionFailure(conn.id, "fetch", new Error("IMAP fetch did not complete"));
+  return -1;
 }
 
 async function runAutoSync() {
