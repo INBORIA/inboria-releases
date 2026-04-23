@@ -22,7 +22,7 @@ export type SyncPhase =
   | "gmail-api"
   | "unknown";
 
-function sanitizeErrorMessage(raw: string): string {
+export function sanitizeErrorMessage(raw: string): string {
   let cleaned = raw;
   for (const pattern of SECRET_PATTERNS) {
     cleaned = cleaned.replace(pattern, "[redacted]");

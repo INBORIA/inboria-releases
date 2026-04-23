@@ -17,6 +17,7 @@ import {
   fetchWithTimeout,
   withTimeout,
   runSyncLoop,
+  sanitizeErrorMessage,
 } from "./connection-health";
 
 interface SaveEmailOptions {
@@ -698,7 +699,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
           .from("email_connections")
           .update(updates)
           .eq("id", conn.id);
-        if (error) logger.error({ service: "gmail-sync", phase: "token-refresh", connId: conn.id, email: conn.email_address, err: error.message }, "Gmail token update error");
+        if (error) logger.error({ service: "gmail-sync", phase: "token-refresh", connId: conn.id, email: conn.email_address, err: sanitizeErrorMessage(error.message) }, "Gmail token update error");
       }
     });
 
@@ -855,7 +856,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
 
     return synced;
   } catch (err: any) {
-    logger.error({ service: "gmail-sync", connId: conn.id, email: conn.email_address, err: err.message }, "Gmail sync error");
+    logger.error({ service: "gmail-sync", connId: conn.id, email: conn.email_address, err: sanitizeErrorMessage(err.message) }, "Gmail sync error");
     await markConnectionFailure(conn.id, "gmail-api", err);
     return -1;
   }
@@ -988,13 +989,13 @@ async function syncOutlookForUser(conn: any): Promise<number> {
         console.log(`[auto-sync] Outlook junk: ${junkSaved} new spam(s) for ${conn.email_address}`);
       }
     } catch (junkErr: any) {
-      logger.error({ service: "outlook-sync", phase: "junk", connId: conn.id, email: conn.email_address, err: junkErr.message }, "Outlook junk error");
+      logger.error({ service: "outlook-sync", phase: "junk", connId: conn.id, email: conn.email_address, err: sanitizeErrorMessage(junkErr.message) }, "Outlook junk error");
     }
 
     await markConnectionSuccess(conn.id);
     return synced;
   } catch (err: any) {
-    logger.error({ service: "outlook-sync", connId: conn.id, email: conn.email_address, err: err.message }, "Outlook sync error");
+    logger.error({ service: "outlook-sync", connId: conn.id, email: conn.email_address, err: sanitizeErrorMessage(err.message) }, "Outlook sync error");
     await markConnectionFailure(conn.id, "graph-api", err);
     return -1;
   }
