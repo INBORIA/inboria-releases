@@ -29,7 +29,7 @@ export default function ContactsPage() {
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-white flex items-center gap-2">
             <Users className="w-6 h-6 text-primary" />
-            {t("contacts.title", "Contacts")}
+            {t("contacts.title", "Contact 360°")}
           </h1>
           <p className="text-sm text-[#8b9cb3] mt-1">
             {t("contacts.subtitle", "Toutes les personnes avec qui vous avez échangé")}
