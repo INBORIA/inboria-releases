@@ -33,7 +33,6 @@ import {
   useRestoreEmail,
   usePermanentDeleteEmail,
   useEmptyTrash,
-  useEmptySpam,
   useBlockSender,
 } from "@workspace/api-client-react";
 import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
@@ -1277,7 +1276,6 @@ export default function Dashboard() {
   const restoreEmailMut = useRestoreEmail();
   const permanentDeleteMut = usePermanentDeleteEmail();
   const emptyTrashMut = useEmptyTrash();
-  const emptySpamMut = useEmptySpam();
 
   const [trashPage, setTrashPage] = useState(1);
   const [accumulatedTrashEmails, setAccumulatedTrashEmails] = useState<Email[]>([]);
