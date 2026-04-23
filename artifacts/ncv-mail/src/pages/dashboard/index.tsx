@@ -1,5 +1,4 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { AutopilotIndicator } from "@/components/autopilot/autopilot-indicator";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
@@ -1954,8 +1953,6 @@ export default function Dashboard() {
                 </button>
               )}
             </div>
-
-            <AutopilotIndicator />
 
             <Button
               variant="outline"
