@@ -36,6 +36,11 @@ export interface Email {
   assignedToName?: string | null;
   /** @nullable */
   assignedAt?: Date | null;
+  /**
+   * Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.
+   * @nullable
+   */
+  spamSource?: string | null;
   attachmentCount?: number;
   attachments?: Attachment[];
   createdAt: Date;

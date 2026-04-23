@@ -2747,6 +2747,9 @@ components:
         assignedAt:
           type: ["string", "null"]
           format: date-time
+        spamSource:
+          type: ["string", "null"]
+          description: "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon."
         attachmentCount:
           type: integer
         attachments:

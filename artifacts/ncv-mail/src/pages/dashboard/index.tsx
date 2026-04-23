@@ -2395,6 +2395,11 @@ export default function Dashboard() {
                                   <p className="text-[11px] text-[#8b9cb3] line-clamp-1">{email.summary}</p>
                                 </div>
                               )}
+                              {(email as any).spamSource === "provider" && (
+                                <span className="inline-flex items-center gap-1 mt-1 px-1.5 py-0.5 rounded-sm text-[10px] text-amber-300 bg-amber-500/10 border border-amber-500/20">
+                                  {t("inbox.spamSourceProvider")}
+                                </span>
+                              )}
                             </div>
                             <div className="flex items-center gap-1 shrink-0">
                               <Button

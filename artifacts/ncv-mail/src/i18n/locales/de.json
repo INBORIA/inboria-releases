@@ -311,6 +311,7 @@
     "spam": "Junk-E-Mail",
     "spamEmpty": "Keine Junk-E-Mail",
     "spamEmptyDesc": "Als Junk-E-Mail erkannte Nachrichten erscheinen hier.",
+    "spamSourceProvider": "Vom Anbieter gefiltert",
     "emptySpam": "Junk-E-Mail leeren",
     "emptySpamConfirm": "Sind Sie sicher? Alle Junk-E-Mails werden dauerhaft gelöscht.",
     "spamEmptied": "Junk-E-Mail geleert",

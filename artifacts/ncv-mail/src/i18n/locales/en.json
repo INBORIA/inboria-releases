@@ -311,6 +311,7 @@
     "spam": "Junk",
     "spamEmpty": "No junk mail",
     "spamEmptyDesc": "Emails flagged as junk will appear here.",
+    "spamSourceProvider": "Filtered by your provider",
     "emptySpam": "Empty junk",
     "emptySpamConfirm": "Are you sure? All junk mail will be permanently deleted.",
     "spamEmptied": "Junk emptied",

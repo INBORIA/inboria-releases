@@ -311,6 +311,7 @@
     "spam": "Correo no deseado",
     "spamEmpty": "Sin correo no deseado",
     "spamEmptyDesc": "Los correos detectados como no deseados aparecerán aquí.",
+    "spamSourceProvider": "Filtrado por su proveedor",
     "emptySpam": "Vaciar correo no deseado",
     "emptySpamConfirm": "¿Estás seguro? Todo el correo no deseado será eliminado permanentemente.",
     "spamEmptied": "Correo no deseado vaciado",

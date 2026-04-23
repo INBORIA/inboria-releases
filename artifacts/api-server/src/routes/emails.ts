@@ -8,6 +8,9 @@ import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { resolveUploadedFiles, cleanupUploadIds } from "./attachments";
 import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
+import { moveImapMessage, moveOutlookMessage, discoverImapJunkFolder, isValidImapHost } from "../services/junk-sync";
+import { hasJunkColumns } from "../lib/schema-flags";
+import { ImapFlow } from "imapflow";
 
 function parseSender(raw: string) {
   const match = raw.match(/^(.+?)\s*<(.+?)>$/);
@@ -15,6 +18,97 @@ function parseSender(raw: string) {
     name: match ? match[1].trim().replace(/^"|"$/g, "") : raw,
     email: match ? match[2].trim() : raw,
   };
+}
+
+async function moveProviderMessage(
+  emailRowId: string | number,
+  userId: string,
+  externalId: string,
+  destination: "INBOX" | "JUNK",
+): Promise<void> {
+  if (!externalId) return;
+
+  if (externalId.startsWith("outlook:")) {
+    const messageId = externalId.slice("outlook:".length);
+    if (!messageId) return;
+    const { data: conns } = await supabaseAdmin
+      .from("email_connections")
+      .select("access_token, refresh_token, token_expires_at")
+      .eq("user_id", userId)
+      .eq("provider", "outlook");
+    if (!conns || conns.length !== 1) return;
+    const access = (conns[0] as any).access_token;
+    if (!access) return;
+    const result = await moveOutlookMessage(access, messageId, destination === "JUNK" ? "junkemail" : "inbox");
+    if (result.ok && result.newId && result.newId !== messageId) {
+      await supabaseAdmin
+        .from("emails")
+        .update({ external_id: `outlook:${result.newId}` })
+        .eq("id", emailRowId);
+    }
+    return;
+  }
+
+  const isImapInbox = externalId.startsWith("imap:");
+  const isImapJunk = externalId.startsWith("imap-junk:");
+  if (!isImapInbox && !isImapJunk) return;
+
+  const parts = externalId.split(":");
+  if (parts.length < 3) return;
+  const emailAddress = parts.slice(1, -1).join(":");
+  const uidStr = parts[parts.length - 1];
+  const uid = parseInt(uidStr, 10);
+  if (!uid || !emailAddress) return;
+
+  const { data: conn } = await supabaseAdmin
+    .from("email_connections")
+    .select("id, email_address, access_token, refresh_token, junk_folder_path")
+    .eq("user_id", userId)
+    .eq("provider", "imap")
+    .eq("email_address", emailAddress)
+    .maybeSingle();
+  if (!conn) return;
+
+  let fromFolder: string;
+  if (isImapJunk) {
+    fromFolder = (conn as any).junk_folder_path || "";
+    if (!fromFolder) {
+      let cfg: { host: string; port: number };
+      try {
+        cfg = JSON.parse((conn as any).refresh_token);
+      } catch {
+        return;
+      }
+      if (!isValidImapHost(cfg.host)) return;
+      try {
+        const probe = new ImapFlow({
+          host: cfg.host,
+          port: Number(cfg.port) || 993,
+          secure: true,
+          auth: { user: (conn as any).email_address, pass: (conn as any).access_token },
+          logger: false,
+        });
+        await probe.connect();
+        const discovered = await discoverImapJunkFolder(probe, null);
+        await probe.logout().catch(() => {});
+        if (!discovered) return;
+        fromFolder = discovered;
+      } catch {
+        return;
+      }
+    }
+  } else {
+    fromFolder = "INBOX";
+  }
+
+  const moveResult = await moveImapMessage(conn as any, uid, fromFolder, destination);
+  if (moveResult.ok && moveResult.newUid) {
+    const newPrefix = destination === "JUNK" ? "imap-junk:" : "imap:";
+    await supabaseAdmin
+      .from("emails")
+      .update({ external_id: `${newPrefix}${emailAddress}:${moveResult.newUid}` })
+      .eq("id", emailRowId);
+  }
 }
 
 const router: IRouter = Router();
@@ -40,7 +134,7 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     let query = supabaseAdmin
       .from("emails")
       .select(
-        "id, sender, subject, status, priority, summary, category_id, project_id, reply_to_email_id, recipient, assigned_to, assigned_at, created_at, shared_mailbox_id, categories(name), projects(name, reference)"
+        `id, sender, subject, status, priority, summary, category_id, project_id, reply_to_email_id, recipient, assigned_to, assigned_at, created_at, shared_mailbox_id${(await hasJunkColumns()) ? ", spam_source" : ""}, categories(name), projects(name, reference)`
       )
       .or(scopeOr)
       .order("created_at", { ascending: false });
@@ -132,6 +226,7 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
           recipient: e.recipient || null,
           assignedTo: e.assigned_to || null,
           assignedAt: e.assigned_at || null,
+          spamSource: e.spam_source || null,
           taskCount: taskCountMap[e.id] || 0,
           attachmentCount: attachmentCountMap[e.id] || 0,
           createdAt: e.created_at,
@@ -194,6 +289,7 @@ router.get("/emails/:id", requireAuth, async (req, res): Promise<void> => {
       assignedTo: email.assigned_to || null,
       assignedToName,
       assignedAt: email.assigned_at || null,
+      spamSource: email.spam_source || null,
       attachments: attachments || [],
       attachmentCount: (attachments || []).length,
       createdAt: email.created_at,
@@ -207,7 +303,7 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
   try {
     const { data: oldEmail } = await supabaseAdmin
       .from("emails")
-      .select("sender, priority, category_id")
+      .select("sender, priority, category_id, status, external_id")
       .eq("id", req.params.id)
       .eq("user_id", req.userId!)
       .single();
@@ -217,6 +313,14 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
     if (req.body.status !== undefined) updates.status = req.body.status;
     if (req.body.priority !== undefined) updates.priority = req.body.priority;
     if (req.body.projectId !== undefined) updates.project_id = req.body.projectId;
+    if (req.body.status !== undefined && oldEmail) {
+      const newStatus = req.body.status as string;
+      const wasSpam = oldEmail.status === "spam";
+      const isSpam = newStatus === "spam";
+      if (wasSpam !== isSpam && (await hasJunkColumns())) {
+        updates.spam_source = isSpam ? "user" : null;
+      }
+    }
 
     const { data: email, error } = await supabaseAdmin
       .from("emails")
@@ -265,6 +369,16 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
       }
     }
 
+    if (req.body.status !== undefined && oldEmail) {
+      const newStatus = req.body.status as string;
+      const wasSpam = oldEmail.status === "spam";
+      const isSpam = newStatus === "spam";
+      if (wasSpam !== isSpam) {
+        moveProviderMessage(email.id, req.userId!, oldEmail.external_id || "", isSpam ? "JUNK" : "INBOX")
+          .catch((err: any) => console.error("[emails.patch] provider move error:", err?.message));
+      }
+    }
+
     const s = parseSender(email.sender || "");
     res.json({
       id: email.id,
@@ -279,6 +393,7 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
       categoryName: email.categories?.name || null,
       assignedTo: email.assigned_to || null,
       assignedAt: email.assigned_at || null,
+      spamSource: (email as any).spam_source || null,
       createdAt: email.created_at,
     });
   } catch {

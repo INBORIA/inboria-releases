@@ -311,6 +311,7 @@
     "spam": "Courrier indésirable",
     "spamEmpty": "Aucun courrier indésirable",
     "spamEmptyDesc": "Les emails détectés comme indésirables apparaîtront ici.",
+    "spamSourceProvider": "Filtré par votre fournisseur",
     "emptySpam": "Vider le courrier indésirable",
     "emptySpamConfirm": "Êtes-vous sûr ? Tous les courriers indésirables seront supprimés définitivement.",
     "spamEmptied": "Courrier indésirable vidé",

@@ -259,6 +259,12 @@ export const ListEmailsResponse = zod.object({
       assignedTo: zod.string().nullish(),
       assignedToName: zod.string().nullish(),
       assignedAt: zod.coerce.date().nullish(),
+      spamSource: zod
+        .string()
+        .nullish()
+        .describe(
+          "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
+        ),
       attachmentCount: zod.number().optional(),
       attachments: zod
         .array(
@@ -304,6 +310,12 @@ export const GetEmailResponse = zod.object({
   assignedTo: zod.string().nullish(),
   assignedToName: zod.string().nullish(),
   assignedAt: zod.coerce.date().nullish(),
+  spamSource: zod
+    .string()
+    .nullish()
+    .describe(
+      "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
+    ),
   attachmentCount: zod.number().optional(),
   attachments: zod
     .array(
@@ -350,6 +362,12 @@ export const UpdateEmailResponse = zod.object({
   assignedTo: zod.string().nullish(),
   assignedToName: zod.string().nullish(),
   assignedAt: zod.coerce.date().nullish(),
+  spamSource: zod
+    .string()
+    .nullish()
+    .describe(
+      "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
+    ),
   attachmentCount: zod.number().optional(),
   attachments: zod
     .array(
@@ -739,6 +757,12 @@ export const GetProjectResponse = zod.object({
       assignedTo: zod.string().nullish(),
       assignedToName: zod.string().nullish(),
       assignedAt: zod.coerce.date().nullish(),
+      spamSource: zod
+        .string()
+        .nullish()
+        .describe(
+          "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
+        ),
       attachmentCount: zod.number().optional(),
       attachments: zod
         .array(
@@ -949,6 +973,12 @@ export const GetEmailConversationResponse = zod.object({
       assignedTo: zod.string().nullish(),
       assignedToName: zod.string().nullish(),
       assignedAt: zod.coerce.date().nullish(),
+      spamSource: zod
+        .string()
+        .nullish()
+        .describe(
+          "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
+        ),
       attachmentCount: zod.number().optional(),
       attachments: zod
         .array(
@@ -985,6 +1015,12 @@ export const GetEmailConversationResponse = zod.object({
           assignedTo: zod.string().nullish(),
           assignedToName: zod.string().nullish(),
           assignedAt: zod.coerce.date().nullish(),
+          spamSource: zod
+            .string()
+            .nullish()
+            .describe(
+              "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
+            ),
           attachmentCount: zod.number().optional(),
           attachments: zod
             .array(
@@ -1864,6 +1900,12 @@ export const GetAssignedToMeResponseItem = zod.object({
   assignedTo: zod.string().nullish(),
   assignedToName: zod.string().nullish(),
   assignedAt: zod.coerce.date().nullish(),
+  spamSource: zod
+    .string()
+    .nullish()
+    .describe(
+      "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
+    ),
   attachmentCount: zod.number().optional(),
   attachments: zod
     .array(

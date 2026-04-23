@@ -9,6 +9,13 @@ import { sendSlackNotification, createNotionTask } from "./integrations";
 import { preClassifyEmail, recordAIClassification, bumpMetrics } from "./pre-filter";
 import { consumeAiCredits, logTriageEvent, checkEntitlement } from "./credits";
 import { getEmailOAuthRedirectUri } from "../lib/urls";
+import { syncImapJunk, syncOutlookJunk, type JunkEmailPayload } from "./junk-sync";
+import { hasJunkColumns } from "../lib/schema-flags";
+
+interface SaveEmailOptions {
+  forceSpam?: boolean;
+  providerMessageId?: string | null;
+}
 
 const IMAP_BODY_MAX_BYTES = 200_000;
 
@@ -338,7 +345,7 @@ async function triageEmailAI(
   }
 }
 
-async function saveEmailWithTriage(
+export async function saveEmailWithTriage(
   userId: string,
   externalId: string,
   sender: string,
@@ -347,16 +354,49 @@ async function saveEmailWithTriage(
   createdAt: string,
   sharedMailboxId?: string | null,
   headers?: Record<string, string | string[] | undefined>,
-  recipient?: string | null
+  recipient?: string | null,
+  options?: SaveEmailOptions,
 ): Promise<number | null> {
+  const forceSpam = options?.forceSpam === true;
+  const providerMessageId = options?.providerMessageId || null;
+
   const { data: existing } = await supabaseAdmin
     .from("emails")
-    .select("id")
+    .select("id, status")
     .eq("user_id", userId)
     .eq("external_id", externalId)
     .maybeSingle();
 
-  if (existing) return null;
+  const junkColumnsAvailable = await hasJunkColumns();
+
+  if (existing) {
+    if (forceSpam && existing.status !== "spam") {
+      const update: Record<string, unknown> = { status: "spam" };
+      if (junkColumnsAvailable) update.spam_source = "provider";
+      await supabaseAdmin.from("emails").update(update).eq("id", existing.id);
+    }
+    return null;
+  }
+
+  // Cross-folder dedup (INBOX <-> Junk move) via RFC 822 Message-ID
+  if (providerMessageId && junkColumnsAvailable) {
+    const { data: existingByMsgId } = await supabaseAdmin
+      .from("emails")
+      .select("id, status")
+      .eq("user_id", userId)
+      .eq("provider_message_id", providerMessageId)
+      .limit(1)
+      .maybeSingle();
+    if (existingByMsgId) {
+      if (forceSpam && existingByMsgId.status !== "spam") {
+        await supabaseAdmin
+          .from("emails")
+          .update({ status: "spam", spam_source: "provider" })
+          .eq("id", existingByMsgId.id);
+      }
+      return null;
+    }
+  }
 
   const { data: profile, error: profileErr } = await supabaseAdmin
     .from("profiles")
@@ -369,16 +409,25 @@ async function saveEmailWithTriage(
     return null;
   }
 
-  // Unified quota check: counts emails_used + ai_credits_used against quota
-  // (same logic as /api/ai/* routes). Prevents overage via combined usage.
-  const ent = await checkEntitlement(userId, 1);
-  if (ent.blocked) {
-    return null;
+  // Junk serveur : on consomme aucun credit (pas de classification IA),
+  // on inscrit directement la ligne en spam.
+  if (!forceSpam) {
+    const ent = await checkEntitlement(userId, 1);
+    if (ent.blocked) {
+      return null;
+    }
   }
 
-  // Pre-filtre deterministe : evite l'appel IA sur les mails evidents (newsletters, notifs auto, expediteurs en cache)
-  const pre = await preClassifyEmail({ userId, sender, subject, headers });
+  // Junk fournisseur : court-circuit complet du flux IA. Aucune classif, aucun task,
+  // aucun RDV, aucun credit consomme. Le mail est juste reflete dans la vue Spam.
+  let pre: Awaited<ReturnType<typeof preClassifyEmail>> = { hit: false };
   let triage: { priority: string; summary: string; category: string; tasks: string[]; is_spam: boolean; project?: string };
+  if (forceSpam) {
+    triage = { priority: "faible", summary: "", category: "Non classe", tasks: [], is_spam: true, project: "Aucun" };
+  } else {
+
+  // Pre-filtre deterministe : evite l'appel IA sur les mails evidents (newsletters, notifs auto, expediteurs en cache)
+  pre = await preClassifyEmail({ userId, sender, subject, headers });
 
   if (pre.hit && pre.classification) {
     triage = pre.classification;
@@ -394,6 +443,7 @@ async function saveEmailWithTriage(
     bumpMetrics(userId, "ai").catch(() => {});
     recordAIClassification(userId, sender, triage.category, triage.priority).catch(() => {});
   }
+  } // fin du bloc !forceSpam
 
   let projectId: string | null = null;
   if (triage.project && triage.project.toLowerCase() !== "aucun" && triage.project.toLowerCase() !== "none") {
@@ -455,13 +505,23 @@ async function saveEmailWithTriage(
     sender: stripNul(sender),
     subject: stripNul(subject),
     body: stripNul(body),
-    status: triage.is_spam ? "spam" : "non_lu",
+    status: forceSpam ? "spam" : (triage.is_spam ? "spam" : "non_lu"),
     priority: triage.priority,
     summary: stripNul(triage.summary),
     category_id: categoryId,
     project_id: projectId,
     created_at: createdAt,
   };
+  if (junkColumnsAvailable) {
+    if (forceSpam) {
+      insertPayload.spam_source = "provider";
+    } else if (triage.is_spam) {
+      insertPayload.spam_source = "ai";
+    }
+    if (providerMessageId) {
+      insertPayload.provider_message_id = providerMessageId;
+    }
+  }
   if (sharedMailboxId) {
     insertPayload.shared_mailbox_id = sharedMailboxId;
   }
@@ -482,6 +542,10 @@ async function saveEmailWithTriage(
   }
 
   if (!inserted) return null;
+
+  if (forceSpam) {
+    return inserted.id;
+  }
 
   if (triage.priority === "urgent") {
     sendSlackNotification(userId, sender, subject, triage.summary).catch(() => {});
@@ -533,17 +597,19 @@ async function saveEmailWithTriage(
     console.log(`[auto-sync] noise email detected (${sender} | ${subject.slice(0, 60)}), skipping ${triage.tasks.length} task(s)`);
   }
 
-  const { error: quotaErr } = await supabaseAdmin.rpc("increment_emails_used", {
-    user_id_input: userId,
-  });
+  if (!forceSpam) {
+    const { error: quotaErr } = await supabaseAdmin.rpc("increment_emails_used", {
+      user_id_input: userId,
+    });
 
-  if (quotaErr) {
-    const { error: fallbackErr } = await supabaseAdmin
-      .from("profiles")
-      .update({ emails_used: profile.emails_used + 1 })
-      .eq("id", userId);
-    if (fallbackErr) {
-      console.error("[auto-sync] quota update error:", fallbackErr.message);
+    if (quotaErr) {
+      const { error: fallbackErr } = await supabaseAdmin
+        .from("profiles")
+        .update({ emails_used: profile.emails_used + 1 })
+        .eq("id", userId);
+      if (fallbackErr) {
+        console.error("[auto-sync] quota update error:", fallbackErr.message);
+      }
     }
   }
 
@@ -827,7 +893,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
     }
 
     const filterDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const graphUrl = `https://graph.microsoft.com/v1.0/me/messages?$top=10&$orderby=receivedDateTime desc&$select=id,from,toRecipients,subject,bodyPreview,receivedDateTime&$filter=receivedDateTime ge ${filterDate}`;
+    const graphUrl = `https://graph.microsoft.com/v1.0/me/messages?$top=10&$orderby=receivedDateTime desc&$select=id,internetMessageId,from,toRecipients,subject,bodyPreview,receivedDateTime&$filter=receivedDateTime ge ${filterDate}`;
 
     const response = await fetch(graphUrl, {
       headers: { Authorization: `Bearer ${accessToken}` },
@@ -862,10 +928,37 @@ async function syncOutlookForUser(conn: any): Promise<number> {
         msg.receivedDateTime,
         (conn as any)._sharedMailboxId,
         undefined,
-        recipientHeader
+        recipientHeader,
+        { providerMessageId: msg.internetMessageId || null },
       );
 
       if (savedId) synced++;
+    }
+
+    try {
+      const junkSaved = await syncOutlookJunk(
+        conn,
+        accessToken,
+        (conn as any)._sharedMailboxId || null,
+        (payload: JunkEmailPayload, userId, sharedMailboxId) =>
+          saveEmailWithTriage(
+            userId,
+            payload.externalId,
+            payload.sender,
+            payload.subject,
+            payload.body,
+            payload.createdAt,
+            sharedMailboxId,
+            payload.headers,
+            payload.recipient,
+            { forceSpam: true, providerMessageId: payload.providerMessageId },
+          ),
+      );
+      if (junkSaved > 0) {
+        console.log(`[auto-sync] Outlook junk: ${junkSaved} new spam(s) for ${conn.email_address}`);
+      }
+    } catch (junkErr: any) {
+      console.error(`[auto-sync] Outlook junk error for ${conn.email_address}:`, junkErr.message);
     }
 
     if (synced > 0) {
@@ -1028,6 +1121,7 @@ async function syncImapForUser(conn: any): Promise<number> {
         .filter((x: any) => !!x)
         .join(", ") || imapHeaders["delivered-to"] || imapHeaders["to"] || conn.email_address;
 
+      const providerMessageId = envelope?.messageId || imapHeaders["message-id"] || null;
       const savedId = await saveEmailWithTriage(
         conn.user_id,
         externalId,
@@ -1037,7 +1131,8 @@ async function syncImapForUser(conn: any): Promise<number> {
         envelope?.date ? new Date(envelope.date).toISOString() : new Date().toISOString(),
         (conn as any)._sharedMailboxId,
         imapHeaders,
-        recipientHeader
+        recipientHeader,
+        { providerMessageId },
       );
 
       if (savedId) {
@@ -1169,6 +1264,32 @@ async function syncImapForUser(conn: any): Promise<number> {
     log.error({ error: fetchErr.message }, "Error during IMAP fetch/parse");
   } finally {
     if (!lockReleased) lock.release();
+  }
+
+  try {
+    const junkSaved = await syncImapJunk(
+      conn,
+      client,
+      (conn as any)._sharedMailboxId || null,
+      (payload: JunkEmailPayload, userId, sharedMailboxId) =>
+        saveEmailWithTriage(
+          userId,
+          payload.externalId,
+          payload.sender,
+          payload.subject,
+          payload.body,
+          payload.createdAt,
+          sharedMailboxId,
+          payload.headers,
+          payload.recipient,
+          { forceSpam: true, providerMessageId: payload.providerMessageId },
+        ),
+    );
+    if (junkSaved > 0) {
+      log.info({ saved: junkSaved }, "IMAP junk sync complete");
+    }
+  } catch (junkErr: any) {
+    log.warn({ err: junkErr.message }, "IMAP junk sync error");
   }
 
   try {

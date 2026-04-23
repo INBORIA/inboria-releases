@@ -311,6 +311,7 @@
     "spam": "Ongewenste e-mail",
     "spamEmpty": "Geen ongewenste e-mail",
     "spamEmptyDesc": "E-mails die als ongewenst worden gedetecteerd, verschijnen hier.",
+    "spamSourceProvider": "Gefilterd door uw provider",
     "emptySpam": "Ongewenste e-mail leegmaken",
     "emptySpamConfirm": "Weet u het zeker? Alle ongewenste e-mail wordt definitief verwijderd.",
     "spamEmptied": "Ongewenste e-mail geleegd",
