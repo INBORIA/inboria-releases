@@ -39,6 +39,11 @@ function chain(table: string) {
     },
     order: () => c,
     limit: () => c,
+    maybeSingle: () => {
+      let data: any[] = [];
+      if (table === "profiles") data = profileRows.filter((p: any) => !c._filters.id || p.id === c._filters.id);
+      return Promise.resolve({ data: data[0] || null, error: null });
+    },
     then: (resolve: any) => {
       let data: any[] = [];
       if (table === "emails") data = emailRows;
@@ -48,7 +53,7 @@ function chain(table: string) {
       else if (table === "projects") data = projectRows;
       else if (table === "email_comments") data = commentRows;
       else if (table === "profiles") data = profileRows.filter((p: any) => !c._filters.id || p.id === c._filters.id);
-      else if (table === "email_connections") data = connectionRows.filter((c) => !c._filters?.user_id || c.user_id === c._filters.user_id);
+      else if (table === "email_connections") data = connectionRows.filter((row: any) => !c._filters.user_id || row.user_id === c._filters.user_id);
       else if (table === "shared_mailboxes") data = sharedMailboxRows;
       return Promise.resolve({ data, error: null }).then(resolve);
     },
@@ -219,7 +224,10 @@ describe("GET /contacts/:email (detail)", () => {
     commentRows = [
       { id: "c1", email_id: 10, user_id: "u-team", body: "Important", created_at: "2026-04-20T12:00:00Z" },
     ];
-    profileRows = [{ id: "u-team", full_name: "Marc" }];
+    profileRows = [
+      { id: "user-1", plan: "business" },
+      { id: "u-team", full_name: "Marc" },
+    ];
 
     const res = await call("/contacts/" + encodeURIComponent("alice@example.com"));
     expect(res.status).toBe(200);
@@ -286,7 +294,6 @@ describe("GET /contacts/:email (detail)", () => {
     commentRows = [
       { id: "c-team", email_id: 71, user_id: "user-1", body: "Team note", created_at: "2026-04-20T11:00:00Z" },
     ];
-    profileRows.push({ id: "user-1", plan: "business" } as any);
     const res = await call("/contacts/" + encodeURIComponent("alice@example.com"));
     expect(res.status).toBe(200);
     expect(res.json.comments).toHaveLength(1);
