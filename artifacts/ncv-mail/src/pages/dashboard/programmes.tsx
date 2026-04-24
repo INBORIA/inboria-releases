@@ -175,7 +175,8 @@ export default function Programmes() {
           )}
         </section>
 
-        {/* Section: Envois programmés (scheduled sends) */}
+        {/* Section: Envois programmés (scheduled sends) — hidden when empty */}
+        {!isLoading && emails.length > 0 && (
         <section>
           <div className="flex items-center gap-2 mb-3">
             <CalendarClock className="w-5 h-5 text-primary" />
@@ -184,15 +185,7 @@ export default function Programmes() {
             </h2>
           </div>
 
-          {isLoading ? (
-            <div className="text-[13px] text-[#8b9cb3]">…</div>
-          ) : emails.length === 0 ? (
-            <div className="text-center py-8 border border-border rounded-md bg-card">
-              <Mail className="w-7 h-7 mx-auto text-[#8b9cb3] mb-2 opacity-50" />
-              <p className="text-[13px] text-white font-medium">{t("wave1.scheduledPageEmpty")}</p>
-              <p className="text-[12px] text-[#8b9cb3] mt-1">{t("wave1.scheduledPageEmptyHint")}</p>
-            </div>
-          ) : (
+          {(
             <div className="space-y-2">
               {emails.map((e: any) => (
                 <div
