@@ -391,7 +391,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   className="gap-1.5 h-7 text-[11px]"
                   onClick={() => {
                     if (!replyOpen) {
-                      setReplyTo(email.senderEmail || extractEmailAddress(email.sender) || "");
+                      setReplyTo(extractEmailAddress(email.senderEmail) || extractEmailAddress(email.sender) || "");
                       setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
                       const defConn = resolveDefaultConnectionId();
                       setReplyConnectionId(defConn);

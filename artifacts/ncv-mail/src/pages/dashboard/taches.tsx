@@ -296,7 +296,7 @@ export default function Taches() {
 
   const handleGenerateDraftForTask = () => {
     if (!emailDetailTask?.emailId) return;
-    setReplyTo(emailDetailTask.emailSenderEmail || extractEmailAddress(emailDetailTask.emailSender) || "");
+    setReplyTo(extractEmailAddress(emailDetailTask.emailSenderEmail) || extractEmailAddress(emailDetailTask.emailSender) || "");
     setReplySubject(emailDetailTask.emailSubject?.startsWith("Re:") ? emailDetailTask.emailSubject : `Re: ${emailDetailTask.emailSubject}`);
     setReplyOpen(true);
     generateDraftMut.mutate(
@@ -722,7 +722,7 @@ export default function Taches() {
                   className="gap-1.5 h-7 text-[11px]"
                   onClick={() => {
                     if (!replyOpen) {
-                      setReplyTo(emailDetailTask.emailSenderEmail || extractEmailAddress(emailDetailTask.emailSender) || "");
+                      setReplyTo(extractEmailAddress(emailDetailTask.emailSenderEmail) || extractEmailAddress(emailDetailTask.emailSender) || "");
                       setReplySubject(emailDetailTask.emailSubject?.startsWith("Re:") ? emailDetailTask.emailSubject : `Re: ${emailDetailTask.emailSubject}`);
                       const sig = signatureForConnection(emailDetailTask.emailConnectionId);
                       setReplyText(sig ? `\n\n${sig}` : "");
