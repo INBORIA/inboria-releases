@@ -26,7 +26,6 @@ import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
-import { Link } from "wouter";
 import { useTranslation } from 'react-i18next';
 
 const IMAP_PROVIDERS = [
