@@ -205,6 +205,65 @@ Inboria utilise un filtrage en plusieurs couches pour éviter le bruit dans votr
 - Restaurez les emails légitimes plutôt que de les rouvrir : cela met à jour le sender_cache.
 - Videz régulièrement le Spam pour garder votre compte léger.
 
+## 16. ENVOI INTELLIGENT (Vague 1)
+Trois fonctions complémentaires pour mieux maîtriser vos envois et votre boîte.
+
+### Reporter un email (Snooze)
+- **Comment** : Ouvrez un email, cliquez sur l'icône horloge "Reporter" et choisissez une date/heure ou un raccourci (Ce soir, Demain matin, Lundi prochain, Date personnalisée).
+- **Effet** : L'email disparaît temporairement de la Réception et réapparaît automatiquement à l'heure choisie, comme un nouveau message non-lu.
+- **Où retrouver les emails reportés** : Page **Reportés** dans le menu de gauche (sous Programmés). Vous pouvez les "Désactiver le report" pour les ramener tout de suite.
+
+### Programmer un envoi
+- **Comment** : Dans le composer (nouveau ou réponse), cliquez sur la flèche à côté du bouton Envoyer et choisissez "Envoyer plus tard". Sélectionnez date et heure.
+- **Effet** : L'email part automatiquement à l'heure prévue. Vous restez libre de l'annuler ou modifier avant l'envoi.
+- **Où voir les envois programmés** : Page **Programmés** dans le menu de gauche.
+
+### Annuler un envoi (Undo Send)
+- **Comment** : Après avoir cliqué sur Envoyer dans une réponse, un toast apparaît en bas avec un bouton "Annuler" pendant 10 secondes.
+- **Effet** : Si vous cliquez Annuler dans les 10s, l'email n'est jamais envoyé. Sinon, il part normalement.
+
+### Suivi d'ouverture (Tracking)
+- Indicateur sur les emails envoyés : "Vu" ou "Non vu" selon si le destinataire a ouvert votre email.
+- Discret, en respect de la vie privée (pixel transparent invisible).
+
+## 17. TEMPLATES IA (Vague 2)
+Bibliothèque de réponses-types réutilisables, avec assistance IA.
+
+### Créer un template
+- **Manuellement** : Page **Paramètres → Templates**, bouton "Nouveau template". Donnez un nom, un sujet et un corps. L'IA peut suggérer un nom basé sur le contenu.
+- **Depuis un email envoyé** : Dans le composer, après envoi, cliquez sur "Sauvegarder comme template". Le contenu est repris automatiquement.
+- **Catégorisation IA** : Chaque template reçoit un tag automatique (devis, relance, rdv, refus, remerciement, suivi, autre).
+
+### Utiliser un template
+- **Suggestions automatiques** : Quand vous ouvrez une réponse, un bandeau en haut du composer affiche 1 à 3 templates pertinents pour le contexte de l'email reçu.
+- **Insertion en 1 clic** : Cliquez sur la suggestion pour insérer le template dans la réponse.
+- **Variables** : Si le template contient des variables (ex: {{prenom}}), elles sont remplies automatiquement quand c'est possible.
+
+### Gérer les templates
+- Page **Paramètres → Templates** : liste groupée par catégorie, recherche, édition, suppression.
+- Compteur d'utilisation : voyez combien de fois chaque template a servi.
+
+## 18. RÈGLES AUTOMATIQUES (Vague 2)
+Automatisez le traitement de certains emails en langage naturel.
+
+### Créer une règle
+- **Page** : **Paramètres → Règles**, bouton "Nouvelle règle".
+- **En langage naturel** : Tapez par exemple "Si un client mentionne devis, classer en Commercial et m'avertir". L'IA traduit la phrase en règle structurée (conditions + actions).
+- **Conditions possibles** : Expéditeur contient X, Sujet contient X, Corps contient X, Catégorie IA = X, Priorité = X.
+- **Actions possibles** : Classer dans une catégorie, Marquer prioritaire, Notifier, Archiver, Assigner à un membre, Créer une tâche.
+
+### Tester avant d'activer (Simulateur)
+- **Bouton "Simuler"** : Avant d'activer une règle, lancez le simulateur. Il vous montre quels emails des 30 derniers jours auraient été affectés.
+- **Sécurité** : Évite les surprises. Si la règle attrape trop d'emails, ajustez les conditions.
+
+### Suivi et rollback
+- **Compteur** : Chaque règle affiche le nombre de fois où elle a été déclenchée.
+- **Journal d'audit** : Liste de toutes les actions exécutées par les règles ces dernières 24h.
+- **Annuler en 1 clic** : Pour chaque action des dernières 24h, bouton "Annuler" qui restaure l'état précédent (ex: catégorie d'origine, statut non-archivé).
+
+### Activer/Désactiver
+- Interrupteur sur chaque règle pour la mettre en pause sans la supprimer.
+
 ## QUESTIONS FRÉQUENTES
 
 ### Comment connecter ma boîte email ?
@@ -451,6 +510,65 @@ Inboria uses multi-layer filtering to keep noise out of your inbox while saving 
 - Restore legitimate emails rather than reopening them: this updates the sender_cache.
 - Empty Spam regularly to keep your account light.
 
+## 16. SMART SEND (Wave 1)
+Three complementary features to better control your sending and inbox.
+
+### Snooze an email
+- **How**: Open an email, click the clock "Snooze" icon and pick a date/time or a preset (Tonight, Tomorrow morning, Next Monday, Custom).
+- **Effect**: The email temporarily disappears from your Inbox and automatically reappears at the chosen time as a new unread message.
+- **Where to find snoozed emails**: **Snoozed** page in the left menu (under Scheduled). You can "Unsnooze" to bring them back immediately.
+
+### Schedule a send
+- **How**: In the composer (new or reply), click the arrow next to the Send button and pick "Send later". Select date and time.
+- **Effect**: The email is sent automatically at the planned time. You remain free to cancel or edit it before sending.
+- **Where to view scheduled sends**: **Scheduled** page in the left menu.
+
+### Undo Send
+- **How**: After clicking Send in a reply, a toast appears at the bottom with an "Undo" button for 10 seconds.
+- **Effect**: If you click Undo within 10s, the email is never sent. Otherwise it goes out normally.
+
+### Open tracking
+- Indicator on sent emails: "Seen" or "Not seen" depending on whether the recipient opened your email.
+- Discreet, privacy-respecting (invisible transparent pixel).
+
+## 17. AI TEMPLATES (Wave 2)
+Reusable response template library with AI assistance.
+
+### Create a template
+- **Manually**: **Settings → Templates** page, "New template" button. Give a name, subject and body. AI can suggest a name based on the content.
+- **From a sent email**: In the composer, after sending, click "Save as template". The content is reused automatically.
+- **AI categorization**: Each template gets an automatic tag (quote, follow-up, meeting, refusal, thanks, follow-up, other).
+
+### Use a template
+- **Auto suggestions**: When you open a reply, a banner at the top of the composer displays 1 to 3 relevant templates for the received email's context.
+- **One-click insertion**: Click a suggestion to insert the template into the reply.
+- **Variables**: If the template contains variables (e.g. {{firstname}}), they are filled in automatically when possible.
+
+### Manage templates
+- **Settings → Templates** page: list grouped by category, search, edit, delete.
+- Usage counter: see how many times each template has been used.
+
+## 18. AUTOMATION RULES (Wave 2)
+Automate handling of certain emails in natural language.
+
+### Create a rule
+- **Page**: **Settings → Rules**, "New rule" button.
+- **In natural language**: Type for example "If a customer mentions quote, classify as Sales and notify me". AI translates the sentence into a structured rule (conditions + actions).
+- **Possible conditions**: Sender contains X, Subject contains X, Body contains X, AI Category = X, Priority = X.
+- **Possible actions**: Classify in a category, Mark as priority, Notify, Archive, Assign to a member, Create a task.
+
+### Test before activating (Simulator)
+- **"Simulate" button**: Before activating a rule, run the simulator. It shows you which emails from the last 30 days would have been affected.
+- **Safety**: Avoids surprises. If the rule catches too many emails, adjust the conditions.
+
+### Tracking and rollback
+- **Counter**: Each rule displays the number of times it has been triggered.
+- **Audit log**: List of all actions executed by rules in the last 24 hours.
+- **One-click undo**: For each action in the last 24h, "Undo" button which restores the previous state (e.g. original category, unarchived status).
+
+### Enable/Disable
+- Switch on each rule to pause it without deleting it.
+
 ## FREQUENTLY ASKED QUESTIONS
 
 ### How do I connect my email?
@@ -696,6 +814,65 @@ Inboria gebruikt meerlaags filteren om ruis uit uw inbox te houden en tegelijk u
 - Controleer de Spam-map af en toe om vals-positieven te redden en de cache te trainen.
 - Herstel legitieme e-mails in plaats van ze opnieuw te openen: dit werkt de sender_cache bij.
 - Leeg Spam regelmatig om uw account licht te houden.
+
+## 16. SLIM VERZENDEN (Golf 1)
+Drie aanvullende functies om uw verzendingen en inbox beter te beheersen.
+
+### Een e-mail uitstellen (Snooze)
+- **Hoe**: Open een e-mail, klik op het klokpictogram "Uitstellen" en kies datum/tijd of een snelkeuze (Vanavond, Morgenochtend, Volgende maandag, Aangepast).
+- **Effect**: De e-mail verdwijnt tijdelijk uit de Inbox en verschijnt automatisch op het gekozen tijdstip als nieuw ongelezen bericht.
+- **Uitgestelde e-mails terugvinden**: Pagina **Uitgesteld** in het linker menu (onder Gepland). U kunt "Niet meer uitstellen" om ze meteen terug te halen.
+
+### Verzending plannen
+- **Hoe**: In de composer (nieuw of beantwoorden), klik op de pijl naast Verzenden en kies "Later verzenden". Selecteer datum en tijd.
+- **Effect**: De e-mail wordt automatisch verzonden op de geplande tijd. U kunt nog annuleren of aanpassen vóór verzending.
+- **Geplande verzendingen bekijken**: Pagina **Gepland** in het linker menu.
+
+### Verzenden ongedaan maken (Undo Send)
+- **Hoe**: Na het klikken op Verzenden in een antwoord verschijnt onderaan een melding met een "Ongedaan maken"-knop gedurende 10 seconden.
+- **Effect**: Klikt u binnen 10s op Ongedaan maken, dan wordt de e-mail nooit verzonden. Anders gaat hij normaal weg.
+
+### Openings-tracking
+- Indicator op verzonden e-mails: "Gezien" of "Niet gezien" afhankelijk of de ontvanger uw e-mail heeft geopend.
+- Discreet, met respect voor privacy (onzichtbare transparante pixel).
+
+## 17. AI-SJABLONEN (Golf 2)
+Herbruikbare antwoordsjablonen met AI-ondersteuning.
+
+### Een sjabloon maken
+- **Handmatig**: Pagina **Instellingen → Sjablonen**, knop "Nieuw sjabloon". Geef een naam, onderwerp en inhoud. AI kan een naam voorstellen op basis van de inhoud.
+- **Vanuit een verzonden e-mail**: Klik in de composer na verzenden op "Opslaan als sjabloon". De inhoud wordt automatisch overgenomen.
+- **AI-categorisatie**: Elk sjabloon krijgt een automatisch label (offerte, opvolging, afspraak, weigering, dank, opvolging, overig).
+
+### Een sjabloon gebruiken
+- **Automatische suggesties**: Bij het openen van een antwoord toont een balk bovenaan de composer 1 tot 3 relevante sjablonen voor de context van de ontvangen e-mail.
+- **Invoegen met één klik**: Klik op een suggestie om het sjabloon in te voegen.
+- **Variabelen**: Bevat het sjabloon variabelen (bv. {{voornaam}}), dan worden die waar mogelijk automatisch ingevuld.
+
+### Sjablonen beheren
+- Pagina **Instellingen → Sjablonen**: lijst gegroepeerd per categorie, zoeken, bewerken, verwijderen.
+- Gebruiks-teller: zie hoe vaak elk sjabloon is gebruikt.
+
+## 18. AUTOMATISERINGSREGELS (Golf 2)
+Automatiseer de behandeling van bepaalde e-mails in natuurlijke taal.
+
+### Een regel maken
+- **Pagina**: **Instellingen → Regels**, knop "Nieuwe regel".
+- **In natuurlijke taal**: Typ bijvoorbeeld "Als een klant offerte vermeldt, classificeer als Commercieel en stuur een melding". AI vertaalt de zin in een gestructureerde regel (voorwaarden + acties).
+- **Mogelijke voorwaarden**: Afzender bevat X, Onderwerp bevat X, Inhoud bevat X, AI-categorie = X, Prioriteit = X.
+- **Mogelijke acties**: Classificeren in een categorie, Markeren als prioriteit, Melding sturen, Archiveren, Toewijzen aan lid, Taak aanmaken.
+
+### Testen vóór activeren (Simulator)
+- **Knop "Simuleren"**: Vóór het activeren van een regel, voer de simulator uit. Hij toont welke e-mails van de afgelopen 30 dagen zouden zijn beïnvloed.
+- **Veiligheid**: Voorkomt verrassingen. Vangt de regel te veel e-mails, pas dan de voorwaarden aan.
+
+### Opvolging en rollback
+- **Teller**: Elke regel toont het aantal keer dat hij is geactiveerd.
+- **Auditlogboek**: Lijst van alle acties uitgevoerd door regels in de afgelopen 24 uur.
+- **Één klik om ongedaan te maken**: Voor elke actie van de laatste 24u, knop "Ongedaan maken" die de vorige staat herstelt (bv. originele categorie, niet-gearchiveerde status).
+
+### Aan/Uit
+- Schakelaar op elke regel om hem te pauzeren zonder te verwijderen.
 
 ## VEELGESTELDE VRAGEN
 
