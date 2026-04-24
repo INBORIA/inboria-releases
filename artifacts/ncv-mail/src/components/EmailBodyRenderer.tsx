@@ -118,7 +118,7 @@ function cleanPlainText(text: string): string {
   cleaned = cleaned.replace(/^[-_=]{3,}\s*$/gm, "---");
   cleaned = cleaned.replace(/\b[A-Za-z0-9+/=]{60,}\b/g, "");
 
-  cleaned = cleaned.replace(/(&[a-z]+;|&#\d+;)/gi, (match) => {
+  cleaned = cleaned.replace(/(&[a-z]+;|&#\d+;|&#x[0-9a-f]+;)/gi, (match) => {
     const el = document.createElement("span");
     el.innerHTML = match;
     return el.textContent || match;
