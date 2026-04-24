@@ -320,13 +320,25 @@ export function EmailComments({
 
   function plainSnippet(html: string | undefined): string {
     if (!html) return "";
-    return String(html)
+    let s = String(html)
       .replace(/<style[\s\S]*?<\/style>/gi, " ")
       .replace(/<script[\s\S]*?<\/script>/gi, " ")
       .replace(/<[^>]+>/g, " ")
       .replace(/&nbsp;/gi, " ")
       .replace(/\s+/g, " ")
       .trim();
+    if (typeof document !== "undefined") {
+      for (let i = 0; i < 5; i++) {
+        const before = s;
+        s = s.replace(/(&[a-z]+;|&#\d+;|&#x[0-9a-f]+;)/gi, (m) => {
+          const el = document.createElement("span");
+          el.innerHTML = m;
+          return el.textContent || m;
+        });
+        if (s === before) break;
+      }
+    }
+    return s;
   }
 
   return (
