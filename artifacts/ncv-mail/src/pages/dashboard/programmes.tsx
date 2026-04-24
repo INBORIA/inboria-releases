@@ -185,9 +185,8 @@ export default function Programmes() {
             </h2>
           </div>
 
-          {(
-            <div className="space-y-2">
-              {emails.map((e: any) => (
+          <div className="space-y-2">
+            {emails.map((e: any) => (
                 <div
                   key={e.id}
                   className="border border-border rounded-md bg-card p-3 flex items-start justify-between gap-3"
