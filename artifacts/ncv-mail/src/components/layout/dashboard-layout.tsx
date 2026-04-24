@@ -21,6 +21,7 @@ import {
   CalendarClock,
   CalendarDays,
   BellOff,
+  ChevronUp,
   ShieldCheck,
   MailCheck,
   FileText,
@@ -32,6 +33,14 @@ import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import { useTranslation } from "react-i18next";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -70,8 +79,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     { name: t("sidebar.classification"), href: "/dashboard/classement", icon: Tags },
     { name: t("templates.title"), href: "/dashboard/parametres/templates", icon: FileText },
     { name: t("rules.title"), href: "/dashboard/parametres/regles", icon: Wand2 },
-    { name: t("sidebar.settings"), href: "/dashboard/parametres", icon: Settings },
-    { name: t("sidebar.subscription"), href: "/dashboard/abonnement", icon: CreditCard },
   ];
 
   const isBusiness = (user as any).plan === "business";
@@ -194,36 +201,63 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </div>
         </div>
 
-        <div className="flex items-center justify-between px-2">
-          <div className="flex items-center gap-2">
-            <div className="h-7 w-7 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[11px] font-semibold text-primary">
-              {((user as any).fullName || t("sidebar.user")).charAt(0).toUpperCase()}
-            </div>
-            <div className="flex flex-col">
-              <span className="text-[12px] font-medium text-white truncate max-w-[100px]">
-                {(user as any).fullName || t("sidebar.user")}
-              </span>
-              <span className="text-[10px] text-[#8b9cb3] capitalize">
-                {(user as any).plan}
-              </span>
-            </div>
-          </div>
-          <Tooltip>
-            <TooltipTrigger asChild>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] h-7 w-7"
-                onClick={handleLogout}
-              >
-                <LogOut className="h-3.5 w-3.5" />
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent side="top">
-              <p>{t("nav.logout")}</p>
-            </TooltipContent>
-          </Tooltip>
-        </div>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <button
+              className="flex items-center justify-between w-full px-2 py-1.5 rounded-md hover:bg-white/[0.06] transition-colors text-left"
+              data-testid="user-menu-trigger"
+            >
+              <div className="flex items-center gap-2 min-w-0">
+                <div className="h-7 w-7 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[11px] font-semibold text-primary shrink-0">
+                  {((user as any).fullName || t("sidebar.user")).charAt(0).toUpperCase()}
+                </div>
+                <div className="flex flex-col min-w-0">
+                  <span className="text-[12px] font-medium text-white truncate max-w-[120px]">
+                    {(user as any).fullName || t("sidebar.user")}
+                  </span>
+                  <span className="text-[10px] text-[#8b9cb3] capitalize">
+                    {(user as any).plan}
+                  </span>
+                </div>
+              </div>
+              <ChevronUp className="h-3.5 w-3.5 text-[#8b9cb3] shrink-0" />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="top" align="start" className="w-56 mb-1">
+            <DropdownMenuLabel className="font-normal">
+              <div className="flex flex-col">
+                <span className="text-[12px] font-medium text-white truncate">
+                  {(user as any).fullName || t("sidebar.user")}
+                </span>
+                <span className="text-[10px] text-[#8b9cb3] capitalize">
+                  {(user as any).plan}
+                </span>
+              </div>
+            </DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem asChild data-testid="user-menu-subscription">
+              <Link href="/dashboard/abonnement" className="cursor-pointer">
+                <CreditCard className="h-4 w-4 mr-2" />
+                {t("sidebar.subscription")}
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild data-testid="user-menu-settings">
+              <Link href="/dashboard/parametres" className="cursor-pointer">
+                <Settings className="h-4 w-4 mr-2" />
+                {t("sidebar.settings")}
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+              onClick={handleLogout}
+              className="cursor-pointer text-red-400 focus:text-red-300 focus:bg-red-500/10"
+              data-testid="user-menu-logout"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              {t("nav.logout")}
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </div>
     </div>
   );
