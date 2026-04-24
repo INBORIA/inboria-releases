@@ -207,18 +207,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               className="flex items-center justify-between w-full px-2 py-1.5 rounded-md hover:bg-white/[0.06] transition-colors text-left"
               data-testid="user-menu-trigger"
             >
-              <div className="flex items-center gap-2 min-w-0">
-                <div className="h-7 w-7 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[11px] font-semibold text-primary shrink-0">
-                  {((user as any).fullName || t("sidebar.user")).charAt(0).toUpperCase()}
-                </div>
-                <div className="flex flex-col min-w-0">
-                  <span className="text-[12px] font-medium text-white truncate max-w-[120px]">
-                    {(user as any).fullName || t("sidebar.user")}
-                  </span>
-                  <span className="text-[10px] text-[#8b9cb3] capitalize">
-                    {(user as any).plan}
-                  </span>
-                </div>
+              <div className="h-7 w-7 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[11px] font-semibold text-primary shrink-0">
+                {((user as any).fullName || t("sidebar.user")).charAt(0).toUpperCase()}
               </div>
               <ChevronUp className="h-3.5 w-3.5 text-[#8b9cb3] shrink-0" />
             </button>
