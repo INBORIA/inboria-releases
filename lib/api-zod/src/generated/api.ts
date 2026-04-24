@@ -50,6 +50,8 @@ export const loginResponseUserIsAdminDefault = false;
 export const loginResponseUserFollowUpDelayDaysDefault = 5;
 export const loginResponseUserFollowUpDelayDaysMax = 60;
 
+export const loginResponseUserTrackingEnabledDefault = false;
+
 export const LoginResponse = zod.object({
   user: zod.object({
     id: zod.number(),
@@ -84,6 +86,12 @@ export const LoginResponse = zod.object({
       .describe(
         "Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.",
       ),
+    trackingEnabled: zod
+      .boolean()
+      .default(loginResponseUserTrackingEnabledDefault)
+      .describe(
+        "True if the user opted in to read-receipt tracking pixels on sent emails.",
+      ),
   }),
 });
 
@@ -97,6 +105,8 @@ export const getMeResponseTimezoneDefault = `Europe/Brussels`;
 export const getMeResponseIsAdminDefault = false;
 export const getMeResponseFollowUpDelayDaysDefault = 5;
 export const getMeResponseFollowUpDelayDaysMax = 60;
+
+export const getMeResponseTrackingEnabledDefault = false;
 
 export const GetMeResponse = zod.object({
   id: zod.number(),
@@ -131,6 +141,12 @@ export const GetMeResponse = zod.object({
     .describe(
       "Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.",
     ),
+  trackingEnabled: zod
+    .boolean()
+    .default(getMeResponseTrackingEnabledDefault)
+    .describe(
+      "True if the user opted in to read-receipt tracking pixels on sent emails.",
+    ),
 });
 
 /**
@@ -143,6 +159,8 @@ export const getProfileResponseTimezoneDefault = `Europe/Brussels`;
 export const getProfileResponseIsAdminDefault = false;
 export const getProfileResponseFollowUpDelayDaysDefault = 5;
 export const getProfileResponseFollowUpDelayDaysMax = 60;
+
+export const getProfileResponseTrackingEnabledDefault = false;
 
 export const GetProfileResponse = zod.object({
   id: zod.number(),
@@ -177,6 +195,12 @@ export const GetProfileResponse = zod.object({
     .describe(
       "Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.",
     ),
+  trackingEnabled: zod
+    .boolean()
+    .default(getProfileResponseTrackingEnabledDefault)
+    .describe(
+      "True if the user opted in to read-receipt tracking pixels on sent emails.",
+    ),
 });
 
 /**
@@ -196,6 +220,7 @@ export const UpdateProfileBody = zod.object({
     .min(1)
     .max(updateProfileBodyFollowUpDelayDaysMax)
     .optional(),
+  trackingEnabled: zod.boolean().optional(),
 });
 
 export const updateProfileResponseAiCreditsUsedDefault = 0;
@@ -205,6 +230,8 @@ export const updateProfileResponseTimezoneDefault = `Europe/Brussels`;
 export const updateProfileResponseIsAdminDefault = false;
 export const updateProfileResponseFollowUpDelayDaysDefault = 5;
 export const updateProfileResponseFollowUpDelayDaysMax = 60;
+
+export const updateProfileResponseTrackingEnabledDefault = false;
 
 export const UpdateProfileResponse = zod.object({
   id: zod.number(),
@@ -240,6 +267,12 @@ export const UpdateProfileResponse = zod.object({
     .default(updateProfileResponseFollowUpDelayDaysDefault)
     .describe(
       "Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.",
+    ),
+  trackingEnabled: zod
+    .boolean()
+    .default(updateProfileResponseTrackingEnabledDefault)
+    .describe(
+      "True if the user opted in to read-receipt tracking pixels on sent emails.",
     ),
 });
 
@@ -286,6 +319,8 @@ export const ListEmailsQueryParams = zod.object({
     .describe("Number of emails per page"),
 });
 
+export const listEmailsResponseEmailsItemOpenedCountDefault = 0;
+
 export const ListEmailsResponse = zod.object({
   emails: zod.array(
     zod.object({
@@ -312,6 +347,28 @@ export const ListEmailsResponse = zod.object({
         .describe(
           "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
         ),
+      snoozedUntil: zod.coerce
+        .date()
+        .nullish()
+        .describe(
+          "ISO timestamp until which this email is hidden from the inbox.",
+        ),
+      sentAt: zod.coerce
+        .date()
+        .nullish()
+        .describe(
+          "ISO timestamp when this email was actually sent (set for sent \/ scheduled-then-sent emails).",
+        ),
+      openedAt: zod.coerce
+        .date()
+        .nullish()
+        .describe(
+          "First time the recipient opened a sent email (tracking pixel hit).",
+        ),
+      openedCount: zod
+        .number()
+        .default(listEmailsResponseEmailsItemOpenedCountDefault)
+        .describe("Number of recorded pixel opens for a sent email."),
       attachmentCount: zod.number().optional(),
       attachments: zod
         .array(
@@ -339,6 +396,8 @@ export const GetEmailParams = zod.object({
   id: zod.coerce.number(),
 });
 
+export const getEmailResponseOpenedCountDefault = 0;
+
 export const GetEmailResponse = zod.object({
   id: zod.number(),
   sender: zod.string(),
@@ -363,6 +422,26 @@ export const GetEmailResponse = zod.object({
     .describe(
       "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
     ),
+  snoozedUntil: zod.coerce
+    .date()
+    .nullish()
+    .describe("ISO timestamp until which this email is hidden from the inbox."),
+  sentAt: zod.coerce
+    .date()
+    .nullish()
+    .describe(
+      "ISO timestamp when this email was actually sent (set for sent \/ scheduled-then-sent emails).",
+    ),
+  openedAt: zod.coerce
+    .date()
+    .nullish()
+    .describe(
+      "First time the recipient opened a sent email (tracking pixel hit).",
+    ),
+  openedCount: zod
+    .number()
+    .default(getEmailResponseOpenedCountDefault)
+    .describe("Number of recorded pixel opens for a sent email."),
   attachmentCount: zod.number().optional(),
   attachments: zod
     .array(
@@ -391,6 +470,8 @@ export const UpdateEmailBody = zod.object({
   projectId: zod.string().nullish(),
 });
 
+export const updateEmailResponseOpenedCountDefault = 0;
+
 export const UpdateEmailResponse = zod.object({
   id: zod.number(),
   sender: zod.string(),
@@ -415,6 +496,26 @@ export const UpdateEmailResponse = zod.object({
     .describe(
       "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
     ),
+  snoozedUntil: zod.coerce
+    .date()
+    .nullish()
+    .describe("ISO timestamp until which this email is hidden from the inbox."),
+  sentAt: zod.coerce
+    .date()
+    .nullish()
+    .describe(
+      "ISO timestamp when this email was actually sent (set for sent \/ scheduled-then-sent emails).",
+    ),
+  openedAt: zod.coerce
+    .date()
+    .nullish()
+    .describe(
+      "First time the recipient opened a sent email (tracking pixel hit).",
+    ),
+  openedCount: zod
+    .number()
+    .default(updateEmailResponseOpenedCountDefault)
+    .describe("Number of recorded pixel opens for a sent email."),
   attachmentCount: zod.number().optional(),
   attachments: zod
     .array(
@@ -875,6 +976,8 @@ export const GetProjectParams = zod.object({
   id: zod.coerce.string(),
 });
 
+export const getProjectResponseEmailsItemOpenedCountDefault = 0;
+
 export const GetProjectResponse = zod.object({
   id: zod.string(),
   name: zod.string(),
@@ -908,6 +1011,28 @@ export const GetProjectResponse = zod.object({
         .describe(
           "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
         ),
+      snoozedUntil: zod.coerce
+        .date()
+        .nullish()
+        .describe(
+          "ISO timestamp until which this email is hidden from the inbox.",
+        ),
+      sentAt: zod.coerce
+        .date()
+        .nullish()
+        .describe(
+          "ISO timestamp when this email was actually sent (set for sent \/ scheduled-then-sent emails).",
+        ),
+      openedAt: zod.coerce
+        .date()
+        .nullish()
+        .describe(
+          "First time the recipient opened a sent email (tracking pixel hit).",
+        ),
+      openedCount: zod
+        .number()
+        .default(getProjectResponseEmailsItemOpenedCountDefault)
+        .describe("Number of recorded pixel opens for a sent email."),
       attachmentCount: zod.number().optional(),
       attachments: zod
         .array(
@@ -1023,6 +1148,89 @@ export const DeleteProjectNoteResponse = zod.object({
 });
 
 /**
+ * @summary Snooze an email until a future date
+ */
+export const SnoozeEmailParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const SnoozeEmailBody = zod.object({
+  snoozeUntil: zod.coerce
+    .date()
+    .describe(
+      "ISO timestamp until which the email should stay hidden from the inbox.",
+    ),
+});
+
+export const SnoozeEmailResponse = zod.object({
+  success: zod.boolean().optional(),
+  snoozedUntil: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary Wake a snoozed email immediately
+ */
+export const UnsnoozeEmailParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UnsnoozeEmailResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * @summary Schedule an email to be sent at a future date
+ */
+export const ScheduleEmailBody = zod.object({
+  to: zod.string(),
+  subject: zod.string(),
+  body: zod.string(),
+  replyToEmailId: zod.number().nullish(),
+  connectionId: zod.string().nullish(),
+  projectId: zod.string().nullish(),
+  scheduledSendAt: zod.coerce
+    .date()
+    .describe(
+      "ISO timestamp at which to send the email (must be in the future).",
+    ),
+});
+
+export const ScheduleEmailResponse = zod.object({
+  success: zod.boolean().optional(),
+  scheduledEmailId: zod.number().optional(),
+  scheduledSendAt: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary List pending scheduled emails
+ */
+export const ListScheduledEmailsResponse = zod.object({
+  emails: zod.array(
+    zod.object({
+      id: zod.number(),
+      recipient: zod.string().nullish(),
+      subject: zod.string(),
+      body: zod.string(),
+      scheduledSendAt: zod.coerce.date(),
+      replyToEmailId: zod.number().nullish(),
+      projectId: zod.string().nullish(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary Cancel a scheduled email
+ */
+export const CancelScheduledEmailParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const CancelScheduledEmailResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
  * @summary Send an email
  */
 export const SendEmailBody = zod.object({
@@ -1098,6 +1306,9 @@ export const GetEmailConversationParams = zod.object({
   id: zod.coerce.number(),
 });
 
+export const getEmailConversationResponseEmailOpenedCountDefault = 0;
+export const getEmailConversationResponseThreadItemOneOpenedCountDefault = 0;
+
 export const GetEmailConversationResponse = zod.object({
   email: zod
     .object({
@@ -1124,6 +1335,28 @@ export const GetEmailConversationResponse = zod.object({
         .describe(
           "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
         ),
+      snoozedUntil: zod.coerce
+        .date()
+        .nullish()
+        .describe(
+          "ISO timestamp until which this email is hidden from the inbox.",
+        ),
+      sentAt: zod.coerce
+        .date()
+        .nullish()
+        .describe(
+          "ISO timestamp when this email was actually sent (set for sent \/ scheduled-then-sent emails).",
+        ),
+      openedAt: zod.coerce
+        .date()
+        .nullish()
+        .describe(
+          "First time the recipient opened a sent email (tracking pixel hit).",
+        ),
+      openedCount: zod
+        .number()
+        .default(getEmailConversationResponseEmailOpenedCountDefault)
+        .describe("Number of recorded pixel opens for a sent email."),
       attachmentCount: zod.number().optional(),
       attachments: zod
         .array(
@@ -1166,6 +1399,30 @@ export const GetEmailConversationResponse = zod.object({
             .describe(
               "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
             ),
+          snoozedUntil: zod.coerce
+            .date()
+            .nullish()
+            .describe(
+              "ISO timestamp until which this email is hidden from the inbox.",
+            ),
+          sentAt: zod.coerce
+            .date()
+            .nullish()
+            .describe(
+              "ISO timestamp when this email was actually sent (set for sent \/ scheduled-then-sent emails).",
+            ),
+          openedAt: zod.coerce
+            .date()
+            .nullish()
+            .describe(
+              "First time the recipient opened a sent email (tracking pixel hit).",
+            ),
+          openedCount: zod
+            .number()
+            .default(
+              getEmailConversationResponseThreadItemOneOpenedCountDefault,
+            )
+            .describe("Number of recorded pixel opens for a sent email."),
           attachmentCount: zod.number().optional(),
           attachments: zod
             .array(
@@ -2080,6 +2337,8 @@ export const UnassignEmailResponse = zod.object({
 /**
  * @summary Get emails assigned to the current user
  */
+export const getAssignedToMeResponseOpenedCountDefault = 0;
+
 export const GetAssignedToMeResponseItem = zod.object({
   id: zod.number(),
   sender: zod.string(),
@@ -2104,6 +2363,26 @@ export const GetAssignedToMeResponseItem = zod.object({
     .describe(
       "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
     ),
+  snoozedUntil: zod.coerce
+    .date()
+    .nullish()
+    .describe("ISO timestamp until which this email is hidden from the inbox."),
+  sentAt: zod.coerce
+    .date()
+    .nullish()
+    .describe(
+      "ISO timestamp when this email was actually sent (set for sent \/ scheduled-then-sent emails).",
+    ),
+  openedAt: zod.coerce
+    .date()
+    .nullish()
+    .describe(
+      "First time the recipient opened a sent email (tracking pixel hit).",
+    ),
+  openedCount: zod
+    .number()
+    .default(getAssignedToMeResponseOpenedCountDefault)
+    .describe("Number of recorded pixel opens for a sent email."),
   attachmentCount: zod.number().optional(),
   attachments: zod
     .array(

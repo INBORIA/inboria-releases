@@ -1,6 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { startAutoSync, NOISE_SENDER_REGEX, NOISE_SUBJECT_REGEX } from "./services/auto-sync";
+import { startScheduledSendWorker } from "./services/scheduled-send-worker";
 import { supabaseAdmin } from "./lib/supabase";
 import { getEmailOAuthRedirectUri } from "./lib/urls";
 
@@ -282,6 +283,46 @@ async function ensureEmailConnectionSignature() {
   }
 }
 
+async function ensureWaveOneSchema() {
+  try {
+    const sql = `
+      ALTER TABLE emails ADD COLUMN IF NOT EXISTS snoozed_until timestamptz;
+      ALTER TABLE emails ADD COLUMN IF NOT EXISTS scheduled_send_at timestamptz;
+      ALTER TABLE emails ADD COLUMN IF NOT EXISTS sent_at timestamptz;
+      ALTER TABLE emails ADD COLUMN IF NOT EXISTS opened_at timestamptz;
+      ALTER TABLE emails ADD COLUMN IF NOT EXISTS opened_count integer DEFAULT 0;
+      ALTER TABLE emails ADD COLUMN IF NOT EXISTS tracking_pixel_id text;
+      ALTER TABLE emails ADD COLUMN IF NOT EXISTS scheduled_send_error text;
+      ALTER TABLE emails ADD COLUMN IF NOT EXISTS scheduled_connection_id uuid;
+      ALTER TABLE profiles ADD COLUMN IF NOT EXISTS tracking_enabled boolean DEFAULT false;
+      CREATE INDEX IF NOT EXISTS idx_emails_snoozed_until ON emails(snoozed_until) WHERE snoozed_until IS NOT NULL;
+      CREATE INDEX IF NOT EXISTS idx_emails_scheduled_send_at ON emails(scheduled_send_at) WHERE scheduled_send_at IS NOT NULL;
+      CREATE INDEX IF NOT EXISTS idx_emails_tracking_pixel_id ON emails(tracking_pixel_id) WHERE tracking_pixel_id IS NOT NULL;
+    `;
+    const supabaseUrl = process.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"] || "";
+    const serviceKey = process.env["SUPABASE_SECRET_KEY"] || "";
+    const { error: rpcErr } = await supabaseAdmin.rpc("exec_sql" as any, { query: sql });
+    if (!rpcErr) {
+      logger.info("[wave1] schema columns/indexes ensured (snooze, schedule, tracking)");
+      return;
+    }
+    if (supabaseUrl && serviceKey) {
+      const resp = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "apikey": serviceKey, "Authorization": `Bearer ${serviceKey}` },
+        body: JSON.stringify({ query: sql }),
+      });
+      if (resp.ok) {
+        logger.info("[wave1] schema columns/indexes ensured via REST fallback");
+        return;
+      }
+    }
+    logger.warn({ error: rpcErr.message }, "[wave1] schema migration failed — features may be degraded; run the ALTER statements manually in Supabase");
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "[wave1] schema check failed (non-fatal)");
+  }
+}
+
 async function ensureTaskAssignment() {
   try {
     const { error } = await supabaseAdmin.from("tasks").select("assigned_to_user_id").limit(1);
@@ -499,7 +540,9 @@ app.listen(port, (err) => {
   ensureProfileTimezone();
   ensureEmailConnectionSignature();
   ensureTaskAssignment();
+  ensureWaveOneSchema();
   cleanupDuplicateTasks();
   purgeNoiseTasks();
   startAutoSync();
+  startScheduledSendWorker();
 });

@@ -25,6 +25,58 @@ export async function hasJunkColumns(): Promise<boolean> {
   return result;
 }
 
+let cachedHasWaveOneColumns: boolean | null = null;
+let waveOneProbeInFlight: Promise<boolean> | null = null;
+
+export async function hasWaveOneColumns(): Promise<boolean> {
+  if (cachedHasWaveOneColumns !== null) return cachedHasWaveOneColumns;
+  if (waveOneProbeInFlight) return waveOneProbeInFlight;
+
+  waveOneProbeInFlight = (async () => {
+    try {
+      const { error } = await supabaseAdmin
+        .from("emails")
+        .select("snoozed_until, scheduled_send_at, sent_at, opened_at, opened_count, tracking_pixel_id")
+        .limit(1);
+      cachedHasWaveOneColumns = !error;
+    } catch {
+      cachedHasWaveOneColumns = false;
+    }
+    return cachedHasWaveOneColumns;
+  })();
+
+  const result = await waveOneProbeInFlight;
+  waveOneProbeInFlight = null;
+  return result;
+}
+
+let cachedHasTrackingProfile: boolean | null = null;
+let trackingProbeInFlight: Promise<boolean> | null = null;
+
+export async function hasTrackingProfileColumn(): Promise<boolean> {
+  if (cachedHasTrackingProfile !== null) return cachedHasTrackingProfile;
+  if (trackingProbeInFlight) return trackingProbeInFlight;
+
+  trackingProbeInFlight = (async () => {
+    try {
+      const { error } = await supabaseAdmin
+        .from("profiles")
+        .select("tracking_enabled")
+        .limit(1);
+      cachedHasTrackingProfile = !error;
+    } catch {
+      cachedHasTrackingProfile = false;
+    }
+    return cachedHasTrackingProfile;
+  })();
+
+  const result = await trackingProbeInFlight;
+  trackingProbeInFlight = null;
+  return result;
+}
+
 export function resetSchemaFlagsCache(): void {
   cachedHasJunkColumns = null;
+  cachedHasWaveOneColumns = null;
+  cachedHasTrackingProfile = null;
 }

@@ -943,6 +943,128 @@ paths:
                   success:
                     type: boolean
 
+  /emails/{id}/snooze:
+    post:
+      operationId: snoozeEmail
+      tags: [emails]
+      summary: Snooze an email until a future date
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SnoozeEmailBody"
+      responses:
+        "200":
+          description: Email snoozed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  snoozedUntil:
+                    type: string
+                    format: date-time
+
+  /emails/{id}/unsnooze:
+    post:
+      operationId: unsnoozeEmail
+      tags: [emails]
+      summary: Wake a snoozed email immediately
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Email unsnoozed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
+  /emails/schedule:
+    post:
+      operationId: scheduleEmail
+      tags: [emails]
+      summary: Schedule an email to be sent at a future date
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ScheduleEmailBody"
+      responses:
+        "200":
+          description: Email scheduled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  scheduledEmailId:
+                    type: integer
+                  scheduledSendAt:
+                    type: string
+                    format: date-time
+
+  /emails/scheduled:
+    get:
+      operationId: listScheduledEmails
+      tags: [emails]
+      summary: List pending scheduled emails
+      responses:
+        "200":
+          description: Scheduled emails
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  emails:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/ScheduledEmail"
+                required:
+                  - emails
+
+  /emails/scheduled/{id}:
+    delete:
+      operationId: cancelScheduledEmail
+      tags: [emails]
+      summary: Cancel a scheduled email
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Cancelled
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+
   /emails/send:
     post:
       operationId: sendEmail
@@ -2898,6 +3020,10 @@ components:
           minimum: 1
           maximum: 60
           description: Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.
+        trackingEnabled:
+          type: boolean
+          default: false
+          description: True if the user opted in to read-receipt tracking pixels on sent emails.
       required:
         - id
         - email
@@ -2928,6 +3054,8 @@ components:
           type: integer
           minimum: 1
           maximum: 60
+        trackingEnabled:
+          type: boolean
 
     RegisterPushTokenBody:
       type: object
@@ -2980,6 +3108,22 @@ components:
         spamSource:
           type: ["string", "null"]
           description: "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon."
+        snoozedUntil:
+          type: ["string", "null"]
+          format: date-time
+          description: ISO timestamp until which this email is hidden from the inbox.
+        sentAt:
+          type: ["string", "null"]
+          format: date-time
+          description: ISO timestamp when this email was actually sent (set for sent / scheduled-then-sent emails).
+        openedAt:
+          type: ["string", "null"]
+          format: date-time
+          description: First time the recipient opened a sent email (tracking pixel hit).
+        openedCount:
+          type: integer
+          default: 0
+          description: Number of recorded pixel opens for a sent email.
         attachmentCount:
           type: integer
         attachments:
@@ -3114,6 +3258,69 @@ components:
         - to
         - subject
         - body
+
+    SnoozeEmailBody:
+      type: object
+      properties:
+        snoozeUntil:
+          type: string
+          format: date-time
+          description: ISO timestamp until which the email should stay hidden from the inbox.
+      required:
+        - snoozeUntil
+
+    ScheduleEmailBody:
+      type: object
+      properties:
+        to:
+          type: string
+        subject:
+          type: string
+        body:
+          type: string
+        replyToEmailId:
+          type: ["integer", "null"]
+        connectionId:
+          type: ["string", "null"]
+        projectId:
+          type: ["string", "null"]
+        scheduledSendAt:
+          type: string
+          format: date-time
+          description: ISO timestamp at which to send the email (must be in the future).
+      required:
+        - to
+        - subject
+        - body
+        - scheduledSendAt
+
+    ScheduledEmail:
+      type: object
+      properties:
+        id:
+          type: integer
+        recipient:
+          type: ["string", "null"]
+        subject:
+          type: string
+        body:
+          type: string
+        scheduledSendAt:
+          type: string
+          format: date-time
+        replyToEmailId:
+          type: ["integer", "null"]
+        projectId:
+          type: ["string", "null"]
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - subject
+        - body
+        - scheduledSendAt
+        - createdAt
 
     UploadedFileInfo:
       type: object

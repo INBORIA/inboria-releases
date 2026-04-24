@@ -19,4 +19,5 @@ export interface UpdateProfileBody {
    * @maximum 60
    */
   followUpDelayDays?: number;
+  trackingEnabled?: boolean;
 }

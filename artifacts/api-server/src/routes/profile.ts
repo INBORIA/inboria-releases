@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { UpdateProfileBody } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/auth";
+import { hasTrackingProfileColumn } from "../lib/schema-flags";
 
 const router: IRouter = Router();
 
@@ -62,6 +63,7 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       signature: "",
       timezone: profile.timezone || "Europe/Brussels",
       followUpDelayDays: profile.follow_up_delay_days ?? 5,
+      trackingEnabled: !!profile.tracking_enabled,
       createdAt: profile.created_at,
       organisationId,
       organisationName,
@@ -106,6 +108,11 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
         updates.follow_up_delay_days = Math.round(v);
       }
     }
+    if ((parsed.data as any).trackingEnabled !== undefined) {
+      if (await hasTrackingProfileColumn()) {
+        updates.tracking_enabled = !!(parsed.data as any).trackingEnabled;
+      }
+    }
 
     const query = Object.keys(updates).length === 0
       ? supabaseAdmin.from("profiles").select().eq("id", req.userId!).single()
@@ -134,6 +141,7 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
       signature: "",
       timezone: profile.timezone || "Europe/Brussels",
       followUpDelayDays: profile.follow_up_delay_days ?? 5,
+      trackingEnabled: !!profile.tracking_enabled,
       createdAt: profile.created_at,
     });
   } catch {

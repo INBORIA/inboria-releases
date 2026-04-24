@@ -518,6 +518,9 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
       .eq("user_id", userId)
       .is("category_id", null)
       .neq("status", "archived")
+      .neq("status", "sent")
+      .neq("status", "scheduled")
+      .neq("status", "scheduled_failed")
       .order("created_at", { ascending: false })
       .limit(50);
 
@@ -529,6 +532,9 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
         .eq("user_id", userId)
         .in("category_id", junkCategoryIds)
         .neq("status", "archived")
+        .neq("status", "sent")
+        .neq("status", "scheduled")
+        .neq("status", "scheduled_failed")
         .order("created_at", { ascending: false })
         .limit(50);
       junkEmails = data || [];

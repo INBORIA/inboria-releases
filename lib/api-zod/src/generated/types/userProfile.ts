@@ -37,4 +37,6 @@ export interface UserProfile {
    * @maximum 60
    */
   followUpDelayDays?: number;
+  /** True if the user opted in to read-receipt tracking pixels on sent emails. */
+  trackingEnabled?: boolean;
 }

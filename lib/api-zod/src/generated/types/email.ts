@@ -41,6 +41,23 @@ export interface Email {
    * @nullable
    */
   spamSource?: string | null;
+  /**
+   * ISO timestamp until which this email is hidden from the inbox.
+   * @nullable
+   */
+  snoozedUntil?: Date | null;
+  /**
+   * ISO timestamp when this email was actually sent (set for sent / scheduled-then-sent emails).
+   * @nullable
+   */
+  sentAt?: Date | null;
+  /**
+   * First time the recipient opened a sent email (tracking pixel hit).
+   * @nullable
+   */
+  openedAt?: Date | null;
+  /** Number of recorded pixel opens for a sent email. */
+  openedCount?: number;
   attachmentCount?: number;
   attachments?: Attachment[];
   createdAt: Date;

@@ -438,6 +438,7 @@ export default function Parametres() {
   const [changingPassword, setChangingPassword] = useState(false);
   const [timezone, setTimezone] = useState("Europe/Brussels");
   const [followUpDelayDays, setFollowUpDelayDays] = useState<number>(5);
+  const [trackingEnabled, setTrackingEnabled] = useState<boolean>(false);
 
   const WIZARD_STORAGE_KEY = "inboria.imapWizard.v1";
   const WIZARD_TTL_MS = 30 * 60 * 1000;
@@ -491,8 +492,25 @@ export default function Parametres() {
       setTimezone((profile as any).timezone || "Europe/Brussels");
       const d = (profile as any).followUpDelayDays;
       setFollowUpDelayDays(typeof d === "number" && d >= 1 && d <= 60 ? d : 5);
+      setTrackingEnabled(!!(profile as any).trackingEnabled);
     }
   }, [profile]);
+
+  const handleToggleTracking = (next: boolean) => {
+    setTrackingEnabled(next);
+    updateProfile.mutate(
+      { data: { trackingEnabled: next } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+          toast({ title: t("settings.profileUpdated") });
+        },
+        onError: () => {
+          setTrackingEnabled(!next);
+        },
+      }
+    );
+  };
 
   useEffect(() => {
     const handler = (e: MessageEvent) => {
@@ -1147,6 +1165,21 @@ export default function Parametres() {
                   <Button onClick={handleSaveProfile} disabled={updateProfile.isPending || (fullName === (profile?.fullName ?? "") && timezone === ((profile as any)?.timezone ?? "Europe/Brussels") && followUpDelayDays === ((profile as any)?.followUpDelayDays ?? 5))} size="sm">
                     {updateProfile.isPending ? t("settings.saving") : t("common.save")}
                   </Button>
+
+                  <div className="pt-3 mt-3 border-t border-border/50 space-y-2">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <Label className="text-[12px] text-white">{t("wave1.trackingSectionTitle")}</Label>
+                        <p className="text-[11px] text-[#8b9cb3] mt-0.5">{t("wave1.trackingSectionDesc")}</p>
+                      </div>
+                      <Switch
+                        checked={trackingEnabled}
+                        onCheckedChange={handleToggleTracking}
+                        disabled={updateProfile.isPending}
+                      />
+                    </div>
+                    <p className="text-[10px] text-[#8b9cb3] italic">{t("wave1.trackingDisclaimer")}</p>
+                  </div>
                 </div>
               )}
             </div>

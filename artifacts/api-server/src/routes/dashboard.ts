@@ -22,7 +22,7 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
       .or(scopeOr);
 
     const allEmails = emails || [];
-    const inboxEmails = allEmails.filter(e => e.status !== "archived" && e.status !== "trashed" && e.status !== "spam");
+    const inboxEmails = allEmails.filter(e => e.status !== "archived" && e.status !== "trashed" && e.status !== "spam" && e.status !== "scheduled" && e.status !== "scheduled_failed");
     const urgent = inboxEmails.filter(e => e.priority === "urgent").length;
     const moyen = inboxEmails.filter(e => e.priority === "moyen").length;
     const faible = inboxEmails.filter(e => e.priority === "faible").length;
@@ -105,7 +105,9 @@ router.get("/dashboard/category-counts", requireAuth, async (req, res): Promise<
       .neq("status", "archived")
       .neq("status", "trashed")
       .neq("status", "spam")
-      .neq("status", "sent");
+      .neq("status", "sent")
+      .neq("status", "scheduled")
+      .neq("status", "scheduled_failed");
 
     if (scope === "personal") {
       query = query.eq("user_id", req.userId!).is("shared_mailbox_id", null);

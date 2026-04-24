@@ -54,6 +54,10 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { ToastAction } from "@/components/ui/toast";
+import SnoozeButton from "@/components/wave1/SnoozeButton";
+import ScheduleSendDialog from "@/components/wave1/ScheduleSendDialog";
+import { Eye } from "lucide-react";
 import { resolveMailboxBadge, recipientMatchesAddress, type MailboxBadge } from "@/lib/mailbox-resolver";
 import { convert as htmlToPlainText } from "html-to-text";
 
@@ -230,6 +234,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
   const [forwardText, setForwardText] = useState("");
   const [forwardConnectionId, setForwardConnectionId] = useState<string>("");
   const [forwardIntroLoading, setForwardIntroLoading] = useState(false);
+  const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
 
   const resolveDefaultConnectionId = useCallback(() => {
     if (!connections || connections.length === 0) return "";
@@ -355,6 +360,32 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
               })()}
               <div className="text-[10px] uppercase tracking-wider text-[#8b9cb3] font-medium mb-1">{t("inbox.subjectLabel")}</div>
               <h2 className="text-[16px] font-bold text-white leading-snug">{email.subject || "(Sans objet)"}</h2>
+              {(() => {
+                const sn = (email as any).snoozedUntil;
+                const oc = (email as any).openedCount as number | undefined;
+                const oa = (email as any).openedAt as string | undefined;
+                const sentAt = (email as any).sentAt;
+                const snDate = sn ? new Date(sn) : null;
+                const showSnoozed = !!(snDate && !isNaN(snDate.getTime()) && snDate.getTime() > Date.now());
+                const showOpened = !!(sentAt && typeof oc === "number" && oc > 0);
+                if (!showSnoozed && !showOpened) return null;
+                return (
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                    {showSnoozed && (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[10px]" data-testid="badge-snoozed-until">
+                        <Clock className="w-2.5 h-2.5" />
+                        {t("wave1.snoozedUntilLabel", { date: format(snDate!, "PPp", { locale: dateFnsLocale }) })}
+                      </span>
+                    )}
+                    {showOpened && (
+                      <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px]" data-testid="badge-opened-count" title={oa ? t("wave1.openedAtLabel", { date: format(new Date(oa), "PPp", { locale: dateFnsLocale }) }) as string : undefined}>
+                        <Eye className="w-2.5 h-2.5" />
+                        {t("wave1.openedBadgeCount", { count: oc! })}
+                      </span>
+                    )}
+                  </div>
+                );
+              })()}
             </div>
 
             {email.summary && (
@@ -493,6 +524,10 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   {forwardIntroLoading ? <Loader2 className="w-3 h-3 animate-spin" /> : <Wand2 className="w-3 h-3" />}
                   {forwardIntroLoading ? t("inbox.generating") : t("inbox.aiForward")}
                 </Button>
+                <SnoozeButton
+                  emailId={email.id}
+                  snoozedUntil={(email as any).snoozedUntil ?? null}
+                />
                 <Button
                   variant="outline"
                   size="sm"
@@ -825,6 +860,17 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                       {t("common.cancel")}
                     </Button>
                     <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5 h-7 text-[11px] bg-transparent border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+                      disabled={isSending || !replyTo.trim() || !replySubject.trim() || !replyText.trim()}
+                      onClick={() => setScheduleDialogOpen(true)}
+                      data-testid="button-schedule-send"
+                    >
+                      <CalendarDays className="w-3 h-3" />
+                      {t("wave1.scheduleButton")}
+                    </Button>
+                    <Button
                       size="sm"
                       className="gap-1.5 h-7 text-[11px]"
                       disabled={isSending || !replyTo.trim() || !replySubject.trim() || !replyText.trim()}
@@ -844,6 +890,26 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                     </Button>
                   </div>
                 </div>
+                <ScheduleSendDialog
+                  open={scheduleDialogOpen}
+                  onOpenChange={setScheduleDialogOpen}
+                  to={replyTo}
+                  subject={replySubject}
+                  body={replyText}
+                  replyToEmailId={email.id}
+                  connectionId={replyConnectionId || undefined}
+                  projectId={replyProjectId || undefined}
+                  attachments={replyAttachments}
+                  onScheduled={() => {
+                    setReplyText("");
+                    setReplyTo("");
+                    setReplySubject("");
+                    setReplyAttachments([]);
+                    setReplyConnectionId("");
+                    setReplyProjectId("");
+                    setReplyOpen(false);
+                  }}
+                />
               </div>
             )}
 
@@ -1859,23 +1925,46 @@ export default function Dashboard() {
     };
     if (connectionId) data.connectionId = connectionId;
     if (projectId) data.projectId = projectId;
-    sendEmailMut.mutate(
-      { data },
-      {
-        onSuccess: (resp: any) => {
-          invalidateAll();
-          if (resp?.appointmentId) {
-            toast({ title: t("inbox.emailSent"), description: t("inbox.appointmentProposed", "Rendez-vous proposé créé dans l'agenda") });
-          } else {
-            toast({ title: t("inbox.emailSent") });
-          }
-        },
-        onError: (err: any) => {
-          const msg = err?.data?.error || err?.message || t("inbox.sendError");
-          toast({ variant: "destructive", title: t("common.error"), description: msg });
-        },
-      }
-    );
+
+    let cancelled = false;
+    const performSend = () => {
+      if (cancelled) return;
+      sendEmailMut.mutate(
+        { data },
+        {
+          onSuccess: (resp: any) => {
+            invalidateAll();
+            if (resp?.appointmentId) {
+              toast({ title: t("inbox.emailSent"), description: t("inbox.appointmentProposed", "Rendez-vous proposé créé dans l'agenda") });
+            } else {
+              toast({ title: t("inbox.emailSent") });
+            }
+          },
+          onError: (err: any) => {
+            const msg = err?.data?.error || err?.message || t("inbox.sendError");
+            toast({ variant: "destructive", title: t("common.error"), description: msg });
+          },
+        }
+      );
+    };
+    const timer = setTimeout(performSend, 10000);
+    toast({
+      title: t("wave1.undoSendToast"),
+      duration: 10000,
+      action: (
+        <ToastAction
+          altText={t("wave1.undoSendAction") as string}
+          onClick={() => {
+            cancelled = true;
+            clearTimeout(timer);
+            toast({ title: t("wave1.undoCancelled") });
+          }}
+          data-testid="button-undo-send"
+        >
+          {t("wave1.undoSendAction")}
+        </ToastAction>
+      ),
+    });
   };
 
   const handleComposeSend = useCallback((p: ComposeSendPayload) => {

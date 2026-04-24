@@ -9,7 +9,7 @@ import { requireAuth } from "../middlewares/auth";
 import { resolveUploadedFiles, cleanupUploadIds } from "./attachments";
 import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 import { moveImapMessage, moveOutlookMessage, discoverImapJunkFolder, isValidImapHost } from "../services/junk-sync";
-import { hasJunkColumns } from "../lib/schema-flags";
+import { hasJunkColumns, hasWaveOneColumns, hasTrackingProfileColumn } from "../lib/schema-flags";
 import { ImapFlow } from "imapflow";
 
 function parseSender(raw: string) {
@@ -137,10 +137,12 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     // Note: on n'inclut PAS `body` ici — il peut peser plusieurs Mo par mail
     // (HTML de newsletters) et n'est jamais affiche dans la liste.
     // Le body est recupere par /emails/:id quand l'utilisateur ouvre un mail.
+    const wave1 = await hasWaveOneColumns();
+    const wave1Cols = wave1 ? ", snoozed_until, sent_at, opened_at, opened_count" : "";
     let query = supabaseAdmin
       .from("emails")
       .select(
-        `id, sender, subject, status, priority, summary, category_id, project_id, reply_to_email_id, recipient, assigned_to, assigned_at, created_at, shared_mailbox_id${(await hasJunkColumns()) ? ", spam_source" : ""}, categories(name), projects(name, reference)`
+        `id, sender, subject, status, priority, summary, category_id, project_id, reply_to_email_id, recipient, assigned_to, assigned_at, created_at, shared_mailbox_id${wave1Cols}${(await hasJunkColumns()) ? ", spam_source" : ""}, categories(name), projects(name, reference)`
       )
       .or(scopeOr)
       .order("created_at", { ascending: false });
@@ -153,12 +155,36 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       query = query.eq("category_id", req.query.categoryId as string);
       countQuery = countQuery.eq("category_id", req.query.categoryId as string);
     }
+    const wantsSnoozed = req.query.snoozed === "1" || req.query.snoozed === "true";
     if (req.query.status) {
       query = query.eq("status", req.query.status as string);
       countQuery = countQuery.eq("status", req.query.status as string);
     } else {
-      query = query.neq("status", "archived").neq("status", "trashed").neq("status", "spam").neq("status", "sent");
-      countQuery = countQuery.neq("status", "archived").neq("status", "trashed").neq("status", "spam").neq("status", "sent");
+      query = query
+        .neq("status", "archived")
+        .neq("status", "trashed")
+        .neq("status", "spam")
+        .neq("status", "sent")
+        .neq("status", "scheduled")
+        .neq("status", "scheduled_failed");
+      countQuery = countQuery
+        .neq("status", "archived")
+        .neq("status", "trashed")
+        .neq("status", "spam")
+        .neq("status", "sent")
+        .neq("status", "scheduled")
+        .neq("status", "scheduled_failed");
+    }
+    if (wave1) {
+      if (wantsSnoozed) {
+        const nowIso = new Date().toISOString();
+        query = query.not("snoozed_until", "is", null).gt("snoozed_until", nowIso);
+        countQuery = countQuery.not("snoozed_until", "is", null).gt("snoozed_until", nowIso);
+      } else {
+        const nowIso = new Date().toISOString();
+        query = query.or(`snoozed_until.is.null,snoozed_until.lte.${nowIso}`);
+        countQuery = countQuery.or(`snoozed_until.is.null,snoozed_until.lte.${nowIso}`);
+      }
     }
     if (req.query.projectId) {
       query = query.eq("project_id", req.query.projectId as string);
@@ -233,6 +259,10 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
           assignedTo: e.assigned_to || null,
           assignedAt: e.assigned_at || null,
           spamSource: e.spam_source || null,
+          snoozedUntil: e.snoozed_until || null,
+          sentAt: e.sent_at || null,
+          openedAt: e.opened_at || null,
+          openedCount: e.opened_count || 0,
           taskCount: taskCountMap[e.id] || 0,
           attachmentCount: attachmentCountMap[e.id] || 0,
           createdAt: e.created_at,
@@ -296,6 +326,10 @@ router.get("/emails/:id", requireAuth, async (req, res): Promise<void> => {
       assignedToName,
       assignedAt: email.assigned_at || null,
       spamSource: email.spam_source || null,
+      snoozedUntil: (email as any).snoozed_until || null,
+      sentAt: (email as any).sent_at || null,
+      openedAt: (email as any).opened_at || null,
+      openedCount: (email as any).opened_count || 0,
       attachments: attachments || [],
       attachmentCount: (attachments || []).length,
       createdAt: email.created_at,
@@ -561,6 +595,40 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
+    const trackingProfileSupported = await hasTrackingProfileColumn();
+    const wave1Supported = await hasWaveOneColumns();
+    let trackingEnabled = false;
+    if (trackingProfileSupported) {
+      const { data: senderProfile } = await supabaseAdmin
+        .from("profiles")
+        .select("tracking_enabled")
+        .eq("id", req.userId!)
+        .maybeSingle();
+      trackingEnabled = !!(senderProfile && (senderProfile as any).tracking_enabled);
+    }
+    let trackingPixelId: string | null = null;
+    let bodyForSend: string = body;
+    let useHtml: boolean = false;
+    if (trackingEnabled && wave1Supported && (!ids || ids.length === 0)) {
+      try {
+        const { randomUUID } = await import("crypto");
+        trackingPixelId = randomUUID();
+        const { getBackendUrl } = await import("../lib/urls");
+        const pixelUrl = `${getBackendUrl()}/api/track/open/${encodeURIComponent(trackingPixelId)}.gif`;
+        const escaped = body
+          .split("\n")
+          .map((line: string) => line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"))
+          .join("<br>");
+        bodyForSend = `${escaped}<img src="${pixelUrl}" width="1" height="1" alt="" style="display:none;border:0;width:1px;height:1px" />`;
+        useHtml = true;
+      } catch (e: any) {
+        console.warn("[tracking-pixel] failed to build pixel:", e?.message);
+        trackingPixelId = null;
+        bodyForSend = body;
+        useHtml = false;
+      }
+    }
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(to.trim())) {
       res.status(400).json({ error: "Adresse email destinataire invalide. Vérifiez le format (ex: nom@domaine.com)" });
@@ -638,9 +706,9 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
           `From: ${fromAddress}`,
           `Subject: ${subject}`,
           ...extraHeaders,
-          `Content-Type: text/plain; charset=utf-8`,
+          `Content-Type: ${useHtml ? "text/html" : "text/plain"}; charset=utf-8`,
           "",
-          body,
+          useHtml ? bodyForSend : body,
         ];
         raw = Buffer.from(messageParts.join("\r\n"))
           .toString("base64")
@@ -681,7 +749,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       const mailBody: any = {
         message: {
           subject,
-          body: { contentType: "Text", content: body },
+          body: { contentType: useHtml ? "HTML" : "Text", content: useHtml ? bodyForSend : body },
           toRecipients: [{ emailAddress: { address: to } }],
           attachments: attachments.map((att) => ({
             "@odata.type": "#microsoft.graph.fileAttachment",
@@ -727,7 +795,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
         from: conn.email_address,
         to,
         subject,
-        text: body,
+        ...(useHtml ? { html: bodyForSend } : { text: body }),
         attachments: attachments.map((att) => ({
           filename: att.filename,
           path: att.serverPath,
@@ -747,6 +815,12 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       external_id: null,
       reply_to_email_id: replyToEmailId || null,
     };
+    if (wave1Supported) {
+      insertPayload.sent_at = new Date().toISOString();
+      if (trackingPixelId) {
+        insertPayload.tracking_pixel_id = trackingPixelId;
+      }
+    }
     let validatedProjectId: string | null = null;
     if (projectId) {
       const { data: ownedProject } = await supabaseAdmin
@@ -1217,6 +1291,251 @@ router.delete("/emails/:id/permanent", requireAuth, async (req, res): Promise<vo
   } catch {
     res.status(500).json({ error: "Failed to permanently delete email" });
   }
+});
+
+// ──────────────────────── Wave 1: Snooze ────────────────────────
+
+router.post("/emails/:id/snooze", requireAuth, async (req, res): Promise<void> => {
+  try {
+    if (!(await hasWaveOneColumns())) {
+      res.status(503).json({ error: "Fonctionnalité non disponible : appliquez sql_wave1_quick_wins.sql dans Supabase pour activer le snooze." });
+      return;
+    }
+    const emailId = parseInt(req.params.id as string, 10);
+    if (Number.isNaN(emailId)) { res.status(400).json({ error: "ID invalide" }); return; }
+    const snoozeUntilRaw = req.body?.snoozeUntil;
+    if (!snoozeUntilRaw || typeof snoozeUntilRaw !== "string") {
+      res.status(400).json({ error: "snoozeUntil requis (date ISO)" });
+      return;
+    }
+    const snoozeDate = new Date(snoozeUntilRaw);
+    if (Number.isNaN(snoozeDate.getTime())) {
+      res.status(400).json({ error: "snoozeUntil invalide" });
+      return;
+    }
+    if (snoozeDate.getTime() <= Date.now() + 30_000) {
+      res.status(400).json({ error: "La date de réveil doit être au moins 1 minute dans le futur" });
+      return;
+    }
+
+    const { error } = await supabaseAdmin
+      .from("emails")
+      .update({ snoozed_until: snoozeDate.toISOString() })
+      .eq("id", emailId)
+      .eq("user_id", req.userId!);
+    if (error) { res.status(500).json({ error: error.message }); return; }
+    res.json({ success: true, snoozedUntil: snoozeDate.toISOString() });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "Failed to snooze" });
+  }
+});
+
+router.post("/emails/:id/unsnooze", requireAuth, async (req, res): Promise<void> => {
+  try {
+    if (!(await hasWaveOneColumns())) {
+      res.status(503).json({ error: "Fonctionnalité non disponible : appliquez sql_wave1_quick_wins.sql dans Supabase." });
+      return;
+    }
+    const emailId = parseInt(req.params.id as string, 10);
+    if (Number.isNaN(emailId)) { res.status(400).json({ error: "ID invalide" }); return; }
+    const { error } = await supabaseAdmin
+      .from("emails")
+      .update({ snoozed_until: null })
+      .eq("id", emailId)
+      .eq("user_id", req.userId!);
+    if (error) { res.status(500).json({ error: error.message }); return; }
+    res.json({ success: true });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "Failed to unsnooze" });
+  }
+});
+
+// ──────────────────────── Wave 1: Scheduled send ────────────────────────
+
+router.post("/emails/schedule", requireAuth, async (req, res): Promise<void> => {
+  try {
+    if (!(await hasWaveOneColumns())) {
+      res.status(503).json({ error: "Envoi programmé indisponible : appliquez sql_wave1_quick_wins.sql dans Supabase." });
+      return;
+    }
+    const { to, subject, body, replyToEmailId, connectionId, projectId, scheduledSendAt } = req.body || {};
+    if (!to || !subject || !body || !scheduledSendAt) {
+      res.status(400).json({ error: "Destinataire, sujet, corps et scheduledSendAt requis" });
+      return;
+    }
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(String(to).trim())) {
+      res.status(400).json({ error: "Adresse email destinataire invalide" });
+      return;
+    }
+    const scheduledDate = new Date(scheduledSendAt);
+    if (Number.isNaN(scheduledDate.getTime()) || scheduledDate.getTime() <= Date.now() + 30_000) {
+      res.status(400).json({ error: "scheduledSendAt doit être une date ISO future (>1 min)" });
+      return;
+    }
+
+    const { data: connections } = await supabaseAdmin
+      .from("email_connections")
+      .select("id, email_address")
+      .eq("user_id", req.userId!);
+    if (!connections || connections.length === 0) {
+      res.status(400).json({ error: "Aucun compte email connecté" });
+      return;
+    }
+    let chosen = connections[0] as any;
+    if (connectionId) {
+      const matched = connections.find((c: any) => String(c.id) === String(connectionId));
+      if (!matched) { res.status(400).json({ error: "connectionId invalide" }); return; }
+      chosen = matched as any;
+    }
+
+    let validatedProjectId: string | null = null;
+    if (projectId) {
+      const { data: ownedProject } = await supabaseAdmin
+        .from("projects")
+        .select("id")
+        .eq("user_id", req.userId!)
+        .eq("id", projectId)
+        .maybeSingle();
+      if (ownedProject) validatedProjectId = String((ownedProject as any).id);
+    }
+
+    let trackingEnabled = false;
+    if (await hasTrackingProfileColumn()) {
+      const { data: senderProfile } = await supabaseAdmin
+        .from("profiles")
+        .select("tracking_enabled")
+        .eq("id", req.userId!)
+        .maybeSingle();
+      trackingEnabled = !!(senderProfile && (senderProfile as any).tracking_enabled);
+    }
+    let trackingPixelId: string | null = null;
+    if (trackingEnabled) {
+      const { randomUUID } = await import("crypto");
+      trackingPixelId = randomUUID();
+    }
+
+    const insertPayload: Record<string, any> = {
+      user_id: req.userId!,
+      sender: chosen.email_address,
+      recipient: to,
+      subject,
+      body,
+      status: "scheduled",
+      priority: "faible",
+      scheduled_send_at: scheduledDate.toISOString(),
+      scheduled_connection_id: chosen.id,
+      reply_to_email_id: replyToEmailId || null,
+    };
+    if (validatedProjectId) insertPayload.project_id = validatedProjectId;
+    if (trackingPixelId) insertPayload.tracking_pixel_id = trackingPixelId;
+
+    const { data: row, error } = await supabaseAdmin
+      .from("emails")
+      .insert(insertPayload)
+      .select("id")
+      .single();
+    if (error || !row) { res.status(500).json({ error: error?.message || "Insert failed" }); return; }
+
+    res.json({ success: true, scheduledEmailId: (row as any).id, scheduledSendAt: scheduledDate.toISOString() });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "Failed to schedule email" });
+  }
+});
+
+router.get("/emails/scheduled", requireAuth, async (req, res): Promise<void> => {
+  try {
+    if (!(await hasWaveOneColumns())) {
+      res.json({ emails: [] });
+      return;
+    }
+    const { data: rows, error } = await supabaseAdmin
+      .from("emails")
+      .select("id, recipient, subject, body, scheduled_send_at, reply_to_email_id, project_id, created_at")
+      .eq("user_id", req.userId!)
+      .eq("status", "scheduled")
+      .order("scheduled_send_at", { ascending: true });
+    if (error) { res.status(500).json({ error: error.message }); return; }
+    res.json({
+      emails: (rows || []).map((r: any) => ({
+        id: r.id,
+        recipient: r.recipient || null,
+        subject: r.subject || "",
+        body: r.body || "",
+        scheduledSendAt: r.scheduled_send_at,
+        replyToEmailId: r.reply_to_email_id || null,
+        projectId: r.project_id || null,
+        createdAt: r.created_at,
+      })),
+    });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "Failed to list scheduled emails" });
+  }
+});
+
+router.delete("/emails/scheduled/:id", requireAuth, async (req, res): Promise<void> => {
+  try {
+    if (!(await hasWaveOneColumns())) {
+      res.status(503).json({ error: "Fonctionnalité indisponible : appliquez sql_wave1_quick_wins.sql dans Supabase." });
+      return;
+    }
+    const emailId = parseInt(req.params.id as string, 10);
+    if (Number.isNaN(emailId)) { res.status(400).json({ error: "ID invalide" }); return; }
+    const { data, error } = await supabaseAdmin
+      .from("emails")
+      .delete()
+      .eq("id", emailId)
+      .eq("user_id", req.userId!)
+      .eq("status", "scheduled")
+      .select("id");
+    if (error) { res.status(500).json({ error: error.message }); return; }
+    if (!data || (data as any[]).length === 0) {
+      res.status(404).json({ error: "Email programmé introuvable" });
+      return;
+    }
+    res.json({ success: true });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "Failed to cancel scheduled email" });
+  }
+});
+
+// ──────────────────────── Wave 1: Tracking pixel (public, no auth) ────────────────────────
+
+const TRANSPARENT_GIF_BASE64 = "R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==";
+const TRANSPARENT_GIF = Buffer.from(TRANSPARENT_GIF_BASE64, "base64");
+
+router.get("/track/open/:pixelId.gif", async (req, res): Promise<void> => {
+  // Always serve the pixel — never leak whether the id exists.
+  res.setHeader("Content-Type", "image/gif");
+  res.setHeader("Content-Length", String(TRANSPARENT_GIF.length));
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+  res.setHeader("Pragma", "no-cache");
+  res.setHeader("Expires", "0");
+
+  // Best-effort: record the open without blocking the response too long.
+  try {
+    const rawPixelId = req.params.pixelId || "";
+    if (rawPixelId && /^[A-Za-z0-9_-]{8,128}$/.test(rawPixelId)) {
+      const { data: row } = await supabaseAdmin
+        .from("emails")
+        .select("id, opened_at, opened_count")
+        .eq("tracking_pixel_id", rawPixelId)
+        .maybeSingle();
+      if (row && (row as any).id) {
+        const updates: Record<string, any> = {
+          opened_count: ((row as any).opened_count || 0) + 1,
+        };
+        if (!(row as any).opened_at) {
+          updates.opened_at = new Date().toISOString();
+        }
+        await supabaseAdmin.from("emails").update(updates).eq("id", (row as any).id);
+      }
+    }
+  } catch {
+    // swallow — pixel must always return 200
+  }
+
+  res.status(200).end(TRANSPARENT_GIF);
 });
 
 export default router;

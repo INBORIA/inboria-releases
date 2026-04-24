@@ -77,6 +77,8 @@ export interface UserProfile {
    * @maximum 60
    */
   followUpDelayDays?: number;
+  /** True if the user opted in to read-receipt tracking pixels on sent emails. */
+  trackingEnabled?: boolean;
 }
 
 export interface AuthResponse {
@@ -104,6 +106,7 @@ export interface UpdateProfileBody {
    * @maximum 60
    */
   followUpDelayDays?: number;
+  trackingEnabled?: boolean;
 }
 
 export interface RegisterPushTokenBody {
@@ -153,6 +156,23 @@ export interface Email {
    * @nullable
    */
   spamSource?: string | null;
+  /**
+   * ISO timestamp until which this email is hidden from the inbox.
+   * @nullable
+   */
+  snoozedUntil?: string | null;
+  /**
+   * ISO timestamp when this email was actually sent (set for sent / scheduled-then-sent emails).
+   * @nullable
+   */
+  sentAt?: string | null;
+  /**
+   * First time the recipient opened a sent email (tracking pixel hit).
+   * @nullable
+   */
+  openedAt?: string | null;
+  /** Number of recorded pixel opens for a sent email. */
+  openedCount?: number;
   attachmentCount?: number;
   attachments?: Attachment[];
   createdAt: string;
@@ -242,6 +262,39 @@ export interface SendEmailBody {
   /** @nullable */
   replyToEmailId?: number | null;
   attachments?: string[];
+}
+
+export interface SnoozeEmailBody {
+  /** ISO timestamp until which the email should stay hidden from the inbox. */
+  snoozeUntil: string;
+}
+
+export interface ScheduleEmailBody {
+  to: string;
+  subject: string;
+  body: string;
+  /** @nullable */
+  replyToEmailId?: number | null;
+  /** @nullable */
+  connectionId?: string | null;
+  /** @nullable */
+  projectId?: string | null;
+  /** ISO timestamp at which to send the email (must be in the future). */
+  scheduledSendAt: string;
+}
+
+export interface ScheduledEmail {
+  id: number;
+  /** @nullable */
+  recipient?: string | null;
+  subject: string;
+  body: string;
+  scheduledSendAt: string;
+  /** @nullable */
+  replyToEmailId?: number | null;
+  /** @nullable */
+  projectId?: string | null;
+  createdAt: string;
 }
 
 export interface UploadedFileInfo {
@@ -1373,6 +1426,29 @@ export type DeleteProject200 = {
 };
 
 export type DeleteProjectNote200 = {
+  success?: boolean;
+};
+
+export type SnoozeEmail200 = {
+  success?: boolean;
+  snoozedUntil?: string;
+};
+
+export type UnsnoozeEmail200 = {
+  success?: boolean;
+};
+
+export type ScheduleEmail200 = {
+  success?: boolean;
+  scheduledEmailId?: number;
+  scheduledSendAt?: string;
+};
+
+export type ListScheduledEmails200 = {
+  emails: ScheduledEmail[];
+};
+
+export type CancelScheduledEmail200 = {
   success?: boolean;
 };
 
