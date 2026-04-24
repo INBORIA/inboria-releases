@@ -1122,7 +1122,19 @@
     "start": "Beginnen",
     "numberOfCollaborators": "Aantal medewerkers",
     "total": "Totaal",
-    "seatsExample": "Voorbeeld: 3 medewerkers = €38,97/maand — op elk moment aanpasbaar vanuit uw ruimte."
+    "seatsExample": "Voorbeeld: 3 medewerkers = €38,97/maand — op elk moment aanpasbaar vanuit uw ruimte.",
+    "plus": "Plus",
+    "plusDesc": "Multichannel en volledig ecosysteem",
+    "plusFeatures": {
+      "f1": "15.000 AI-credits / maand",
+      "f2": "WhatsApp Business inbegrepen",
+      "f3": "SMS (Twilio / Brevo) inbegrepen",
+      "f4": "CRM-integraties (HubSpot, Pipedrive)",
+      "f5": "API-sleutels & webhooks (Zapier / Make / n8n)",
+      "f6": "Alles van het Pro-abonnement inbegrepen",
+      "f7": "Prioritaire ondersteuning",
+      "f8": "Extra verbruik: € 0,001 / credit"
+    }
   },
   "marketing": {
     "home": {
@@ -1181,7 +1193,9 @@
       "securityDesc": "Uw gegevens worden beschermd door end-to-end-encryptie. Wij respecteren strikt de AVG en verkopen nooit uw informatie.",
       "ctaTitle": "Klaar om 2 uur per dag te besparen?",
       "ctaDesc": "100 gratis AI-credits om Inboria te ontdekken. Geen creditcard vereist.",
-      "tryFree": "Gratis proberen"
+      "tryFree": "Gratis proberen",
+      "ecosystem": "Verbonden ecosysteem",
+      "ecosystemDesc": "Slack, Notion, HubSpot, Pipedrive, WhatsApp, SMS en Zapier/Make/n8n-webhooks — Inboria integreert met je stack."
     },
     "pricing": {
       "heroTitle": "Eenvoudige tarieven, geen verrassingen",
@@ -4073,5 +4087,81 @@
     "colArchived": "Gearchiveerd",
     "colAssigned": "Toegewezen",
     "colAvgResponse": "Gem. reactietijd"
+  },
+  "integrations": {
+    "pageTitle": "Integraties",
+    "pageDesc": "Verbind Inboria met je tools, maak API-sleutels en activeer automatiseringen.",
+    "parametresLinkTitle": "CRM, automatisering en multichannel-berichten",
+    "parametresLinkDesc": "Verbind HubSpot, Pipedrive, Slack, Notion, WhatsApp, SMS — maak API-sleutels en webhooks voor Zapier / Make / n8n.",
+    "categoryCrm": "CRM",
+    "categoryCommunication": "Communicatie",
+    "categoryAutomation": "Automatisering",
+    "automationDesc": "API-sleutels en uitgaande webhooks voor Zapier, Make, n8n.",
+    "connect": "Verbinden",
+    "disconnect": "Ontkoppelen",
+    "connected": "Verbonden",
+    "disconnected": "Ontkoppeld",
+    "notConnected": "Niet verbonden",
+    "notConfigured": "Niet geconfigureerd",
+    "sync": "Synchroniseren",
+    "syncDone": "Synchronisatie voltooid",
+    "syncFailed": "Synchronisatie mislukt",
+    "lastSynced": "Laatste sync",
+    "contacts": "contacten",
+    "deals": "deals",
+    "data": "Gegevens",
+    "copied": "Gekopieerd",
+    "confirmDisconnect": "Wil je deze integratie echt ontkoppelen?",
+    "connectFailed": "Verbinden mislukt",
+    "hubspot": {
+      "desc": "Synchroniseer contacten en deals, en log e-mails in HubSpot."
+    },
+    "pipedrive": {
+      "desc": "Synchroniseer personen en deals, log e-mails als Pipedrive-activiteiten."
+    },
+    "slack": {
+      "desc": "Ontvang prioritaire e-mails en urgente taken in Slack."
+    },
+    "notion": {
+      "desc": "Exporteer taken en samenvattingen naar een Notion-database."
+    },
+    "apiKeys": {
+      "title": "API-sleutels",
+      "desc": "Genereer een sleutel om de publieke Inboria-API te gebruiken vanuit Zapier, Make, n8n of je scripts.",
+      "create": "Sleutel aanmaken",
+      "namePlaceholder": "Naam (bv. Zapier prod)",
+      "empty": "Nog geen sleutels.",
+      "copyNow": "Kopieer deze sleutel nu — hij wordt niet opnieuw getoond.",
+      "lastUsed": "Laatst gebruikt",
+      "confirmRevoke": "Deze sleutel intrekken? Integraties die hem gebruiken zullen stoppen.",
+      "createFailed": "Kon sleutel niet aanmaken"
+    },
+    "webhooks": {
+      "title": "Uitgaande webhooks",
+      "desc": "Ontvang Inboria-events (e-mail ontvangen, taak aangemaakt, afspraak, regel geactiveerd) op je URL.",
+      "create": "Webhook toevoegen",
+      "targetUrl": "Doel-URL (https://...)",
+      "eventType": "Event",
+      "empty": "Nog geen webhooks.",
+      "confirmDelete": "Deze webhook verwijderen?",
+      "createFailed": "Kon webhook niet aanmaken"
+    },
+    "messaging": {
+      "title": "Multichannel-berichten",
+      "desc": "Verbind WhatsApp Business en SMS om vanuit Inboria te ontvangen en te antwoorden.",
+      "empty": "Geen kanalen verbonden.",
+      "add": "Kanaal toevoegen",
+      "added": "Kanaal toegevoegd",
+      "addFailed": "Kon kanaal niet toevoegen",
+      "provider": "Provider",
+      "displayName": "Weergavenaam",
+      "phone": "Nummer",
+      "phoneNumberId": "Phone Number ID (Meta)",
+      "accessToken": "Access token",
+      "accountSid": "Account SID (Twilio)",
+      "authToken": "Auth token (Twilio)",
+      "brevoApiKey": "Brevo API-sleutel",
+      "helpLink": "Hoe krijg ik deze gegevens?"
+    }
   }
 }

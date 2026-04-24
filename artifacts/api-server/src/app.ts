@@ -35,7 +35,13 @@ app.use(
   express.json({
     limit: "10mb",
     verify: (req: Request & { rawBody?: Buffer }, _res, buf) => {
-      if (req.originalUrl?.startsWith("/api/paddle/webhook")) {
+      const url = req.originalUrl || "";
+      if (
+        url.startsWith("/api/paddle/webhook") ||
+        url.startsWith("/api/messaging/whatsapp/webhook") ||
+        url.startsWith("/api/integrations/hubspot/webhook") ||
+        url.startsWith("/api/integrations/pipedrive/webhook")
+      ) {
         req.rawBody = buf;
       }
     },

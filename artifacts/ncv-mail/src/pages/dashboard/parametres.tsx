@@ -20,7 +20,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Pen, Lock, Globe, Clock, Key, Webhook, ChevronRight } from "lucide-react";
+import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Pen, Lock, Globe, Clock, Key, Webhook, Plug, ChevronRight } from "lucide-react";
+import { Link } from "wouter";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
@@ -1277,6 +1278,27 @@ export default function Parametres() {
             </div>
           </section>
           
+          <section>
+            <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
+              <Plug className="w-4 h-4 text-primary" />
+              {t("integrations.pageTitle", "Intégrations")}
+            </h2>
+            <Link href="/dashboard/parametres/integrations">
+              <a
+                className="block bg-card rounded-lg border border-border p-5 hover:border-primary/40 transition-colors group"
+                data-testid="link-integrations"
+              >
+                <div className="flex items-center justify-between gap-4">
+                  <div className="space-y-0.5">
+                    <p className="text-[13px] text-white font-medium">{t("integrations.parametresLinkTitle", "CRM, automatisation et messagerie multicanale")}</p>
+                    <p className="text-[11px] text-[#8b9cb3]">{t("integrations.parametresLinkDesc", "Connectez HubSpot, Pipedrive, Slack, Notion, WhatsApp, SMS — créez des clés API et webhooks pour Zapier / Make / n8n.")}</p>
+                  </div>
+                  <ChevronRight className="w-4 h-4 text-[#8b9cb3] group-hover:text-white transition-colors shrink-0" />
+                </div>
+              </a>
+            </Link>
+          </section>
+
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
               <Bell className="w-4 h-4 text-primary" />

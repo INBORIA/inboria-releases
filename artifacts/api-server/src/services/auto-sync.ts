@@ -6,6 +6,9 @@ import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import * as net from "net";
 import { sendSlackNotification, createNotionTask } from "./integrations";
+import { emitEvent } from "./webhook-emitter";
+import { logEmailToHubspot } from "./hubspot";
+import { logEmailToPipedrive } from "./pipedrive";
 import { preClassifyEmail, recordAIClassification, bumpMetrics } from "./pre-filter";
 import { consumeAiCredits, logTriageEvent, checkEntitlement } from "./credits";
 import { getEmailOAuthRedirectUri } from "../lib/urls";
@@ -616,6 +619,21 @@ export async function saveEmailWithTriage(
 
   if (triage.priority === "urgent") {
     sendSlackNotification(userId, sender, subject, triage.summary).catch(() => {});
+  }
+
+  emitEvent(userId, "email.received", {
+    id: inserted.id,
+    sender,
+    subject,
+    summary: triage.summary,
+    priority: triage.priority,
+  }).catch(() => {});
+
+  // Push to CRMs (no-op if not connected)
+  const senderEmail = (sender.match(/<(.+?)>/)?.[1] || sender).trim();
+  if (senderEmail) {
+    logEmailToHubspot(userId, inserted.id, senderEmail, subject, body, "inbound").catch(() => {});
+    logEmailToPipedrive(userId, inserted.id, senderEmail, subject, body).catch(() => {});
   }
 
   // Log triage event for audit trail and accurate billing recount

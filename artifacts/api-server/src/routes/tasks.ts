@@ -285,7 +285,7 @@ router.patch("/tasks/:id", requireAuth, async (req, res): Promise<void> => {
     // Allow update if user is creator OR current assignee
     const { data: existing } = await supabaseAdmin
       .from("tasks")
-      .select("user_id, assigned_to_user_id")
+      .select("user_id, assigned_to_user_id, done, title")
       .eq("id", req.params.id)
       .maybeSingle();
 
@@ -319,6 +319,22 @@ router.patch("/tasks/:id", requireAuth, async (req, res): Promise<void> => {
     if (error || !task) {
       res.status(404).json({ error: "Task not found" });
       return;
+    }
+
+    if (
+      typeof req.body.done === "boolean" &&
+      req.body.done === true &&
+      existing.done !== true
+    ) {
+      emitWebhook({
+        userId,
+        event: "task.completed",
+        payload: {
+          id: task.id,
+          title: task.title,
+          emailId: task.email_id ?? null,
+        },
+      }).catch(() => {});
     }
 
     res.json(mapTask(task));

@@ -1,5 +1,6 @@
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
+import { emitEvent } from "./webhook-emitter";
 
 export type AutopilotEventType =
   | "email_sorted"
@@ -41,6 +42,15 @@ export async function recordAutopilotEvent(input: AutopilotEventInput): Promise<
       "Insert exception (non-fatal)",
     );
   }
+
+  // Mirror autopilot rule firings to subscribed external webhooks (Zapier/Make/n8n).
+  // Each autopilot event represents an automation rule action being executed.
+  emitEvent(input.userId, "rule.triggered", {
+    rule: input.eventType,
+    title: input.title ?? null,
+    emailId: input.emailId ?? null,
+    metadata: input.metadata ?? {},
+  }).catch(() => {});
 }
 
 export interface AutopilotActivitySnapshot {

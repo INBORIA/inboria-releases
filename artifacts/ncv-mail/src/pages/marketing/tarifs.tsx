@@ -13,6 +13,7 @@ const planFeatureKeys: Record<string, string[]> = {
   essai: ["f1", "f2", "f3", "f4"],
   solo: ["f1", "f2", "f3", "f4", "f5", "f6", "f7"],
   pro: ["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8"],
+  plus: ["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8"],
   business: ["f1", "f2", "f3", "f4", "f5", "f6", "f7", "f8"],
 };
 

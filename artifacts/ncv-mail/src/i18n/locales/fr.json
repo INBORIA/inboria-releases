@@ -1112,7 +1112,19 @@
     "start": "Commencer",
     "numberOfCollaborators": "Nombre de collaborateurs",
     "total": "Total",
-    "seatsExample": "Exemple : 3 collaborateurs = 38,97€/mois — modifiable à tout moment depuis votre espace."
+    "seatsExample": "Exemple : 3 collaborateurs = 38,97€/mois — modifiable à tout moment depuis votre espace.",
+    "plus": "Plus",
+    "plusDesc": "Multi-canal et écosystème complet",
+    "plusFeatures": {
+      "f1": "15 000 crédits IA / mois",
+      "f2": "WhatsApp Business inclus",
+      "f3": "SMS (Twilio / Brevo) inclus",
+      "f4": "Intégrations CRM (HubSpot, Pipedrive)",
+      "f5": "Clés API & webhooks (Zapier / Make / n8n)",
+      "f6": "Tout du plan Pro inclus",
+      "f7": "Support prioritaire",
+      "f8": "Dépassement : 0,001€ / crédit"
+    }
   },
   "marketing": {
     "home": {
@@ -1171,7 +1183,9 @@
       "securityDesc": "Vos données sont protégées par un chiffrement de bout en bout. Nous respectons strictement le RGPD et ne vendons jamais vos informations.",
       "ctaTitle": "Prêt à gagner 2h par jour ?",
       "ctaDesc": "100 crédits IA offerts pour découvrir Inboria. Aucune carte bancaire requise.",
-      "tryFree": "Essayer gratuitement"
+      "tryFree": "Essayer gratuitement",
+      "ecosystem": "Écosystème connecté",
+      "ecosystemDesc": "Slack, Notion, HubSpot, Pipedrive, WhatsApp, SMS et webhooks Zapier/Make/n8n — Inboria s'intègre à votre stack."
     },
     "pricing": {
       "heroTitle": "Des tarifs simples, sans surprise",
@@ -2429,5 +2443,81 @@
     "colArchived": "Archivés",
     "colAssigned": "Assignés",
     "colAvgResponse": "Réponse moyenne"
+  },
+  "integrations": {
+    "pageTitle": "Intégrations",
+    "pageDesc": "Connectez Inboria à vos outils, créez des clés API et déclenchez des automatisations.",
+    "parametresLinkTitle": "CRM, automatisation et messagerie multicanale",
+    "parametresLinkDesc": "Connectez HubSpot, Pipedrive, Slack, Notion, WhatsApp, SMS — créez des clés API et webhooks pour Zapier / Make / n8n.",
+    "categoryCrm": "CRM",
+    "categoryCommunication": "Communication",
+    "categoryAutomation": "Automatisation",
+    "automationDesc": "Clés API et webhooks sortants pour Zapier, Make, n8n.",
+    "connect": "Connecter",
+    "disconnect": "Déconnecter",
+    "connected": "Connecté",
+    "disconnected": "Déconnecté",
+    "notConnected": "Non connecté",
+    "notConfigured": "Non configuré",
+    "sync": "Synchroniser",
+    "syncDone": "Synchronisation terminée",
+    "syncFailed": "Échec de la synchronisation",
+    "lastSynced": "Dernière sync",
+    "contacts": "contacts",
+    "deals": "affaires",
+    "data": "Données",
+    "copied": "Copié",
+    "confirmDisconnect": "Voulez-vous vraiment déconnecter cette intégration ?",
+    "connectFailed": "Échec de la connexion",
+    "hubspot": {
+      "desc": "Synchronisez vos contacts, affaires et journalisez les emails dans HubSpot."
+    },
+    "pipedrive": {
+      "desc": "Synchronisez personnes et deals, journalisez les emails comme activités Pipedrive."
+    },
+    "slack": {
+      "desc": "Recevez les emails prioritaires et tâches urgentes dans Slack."
+    },
+    "notion": {
+      "desc": "Exportez tâches et résumés vers une base de données Notion."
+    },
+    "apiKeys": {
+      "title": "Clés API",
+      "desc": "Génère une clé pour utiliser l'API publique Inboria depuis Zapier, Make, n8n ou vos scripts.",
+      "create": "Créer une clé",
+      "namePlaceholder": "Nom (ex : Zapier prod)",
+      "empty": "Aucune clé pour le moment.",
+      "copyNow": "Copiez cette clé maintenant — elle ne sera plus affichée.",
+      "lastUsed": "Dernière utilisation",
+      "confirmRevoke": "Révoquer cette clé ? Les intégrations qui l'utilisent cesseront de fonctionner.",
+      "createFailed": "Impossible de créer la clé"
+    },
+    "webhooks": {
+      "title": "Webhooks sortants",
+      "desc": "Recevez les évènements Inboria (email reçu, tâche créée, rendez-vous, règle déclenchée) sur votre URL.",
+      "create": "Ajouter un webhook",
+      "targetUrl": "URL de destination (https://...)",
+      "eventType": "Évènement",
+      "empty": "Aucun webhook pour le moment.",
+      "confirmDelete": "Supprimer ce webhook ?",
+      "createFailed": "Impossible de créer le webhook"
+    },
+    "messaging": {
+      "title": "Messagerie multicanale",
+      "desc": "Connectez WhatsApp Business et SMS pour recevoir et répondre depuis Inboria.",
+      "empty": "Aucun canal connecté.",
+      "add": "Ajouter un canal",
+      "added": "Canal ajouté",
+      "addFailed": "Impossible d'ajouter le canal",
+      "provider": "Fournisseur",
+      "displayName": "Nom affiché",
+      "phone": "Numéro",
+      "phoneNumberId": "Phone Number ID (Meta)",
+      "accessToken": "Access token",
+      "accountSid": "Account SID (Twilio)",
+      "authToken": "Auth token (Twilio)",
+      "brevoApiKey": "Clé API Brevo",
+      "helpLink": "Comment obtenir ces identifiants ?"
+    }
   }
 }

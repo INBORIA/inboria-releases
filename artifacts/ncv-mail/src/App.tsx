@@ -33,6 +33,7 @@ import Regles from "@/pages/dashboard/regles";
 import ParametresSla from "@/pages/dashboard/parametres-sla";
 import ParametresApi from "@/pages/dashboard/parametres-api";
 import ParametresWebhooks from "@/pages/dashboard/parametres-webhooks";
+import ParametresIntegrations from "@/pages/dashboard/parametres-integrations";
 import Abonnement from "@/pages/dashboard/abonnement";
 import Projets from "@/pages/dashboard/projets";
 import Contacts from "@/pages/dashboard/contacts";
@@ -182,6 +183,7 @@ function Router() {
       <Route path="/dashboard/parametres/sla" component={() => <ProtectedRoute component={ParametresSla} />} />
       <Route path="/dashboard/parametres/api" component={() => <ProtectedRoute component={ParametresApi} />} />
       <Route path="/dashboard/parametres/webhooks" component={() => <ProtectedRoute component={ParametresWebhooks} />} />
+      <Route path="/dashboard/parametres/integrations" component={() => <ProtectedRoute component={ParametresIntegrations} />} />
       <Route path="/dashboard/abonnement" component={() => <ProtectedRoute component={Abonnement} />} />
       <Route path="/dashboard/equipe" component={() => <ProtectedRoute component={Equipe} />} />
       <Route path="/dashboard/boites-partagees" component={() => <ProtectedRoute component={BoitesPartagees} />} />

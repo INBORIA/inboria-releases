@@ -17,12 +17,14 @@ const PLAN_QUOTAS: Record<string, number> = {
   essai: 100,
   solo: 3000,
   pro: 10000,
+  plus: 15000,
   business: 10000,
 };
 
 const PRICE_MAP: Record<string, string> = {
   solo: process.env["PADDLE_PRICE_SOLO"] || "",
   pro: process.env["PADDLE_PRICE_PRO"] || "",
+  plus: process.env["PADDLE_PRICE_PLUS"] || "",
   business: process.env["PADDLE_PRICE_BUSINESS"] || "",
 };
 

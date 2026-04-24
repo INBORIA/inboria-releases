@@ -3,6 +3,7 @@ import { logger } from "./lib/logger";
 import { startAutoSync, NOISE_SENDER_REGEX, NOISE_SUBJECT_REGEX } from "./services/auto-sync";
 import { startScheduledSendWorker } from "./services/scheduled-send-worker";
 import { startSnoozeWakeWorker } from "./services/snooze-wake-worker";
+import { startCrmSyncScheduler } from "./services/crm-sync-scheduler";
 import { supabaseAdmin } from "./lib/supabase";
 import { getEmailOAuthRedirectUri } from "./lib/urls";
 import { startSlaWorker } from "./services/sla";
@@ -658,6 +659,7 @@ app.listen(port, (err) => {
   startSnoozeWakeWorker();
   startSlaWorker();
   startWebhookDispatcher();
+  startCrmSyncScheduler();
 });
 
 async function ensureB2bTables() {

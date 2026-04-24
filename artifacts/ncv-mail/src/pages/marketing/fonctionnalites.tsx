@@ -13,6 +13,7 @@ import {
   AlertTriangle,
   Smartphone,
   Shield,
+  Plug,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { isPaymentsEnabled } from "@/lib/feature-flags";
@@ -34,6 +35,7 @@ export default function Fonctionnalites() {
     { icon: AlertTriangle, key: "priorityDetection" },
     { icon: Smartphone, key: "mobileApp" },
     { icon: Shield, key: "security" },
+    { icon: Plug, key: "ecosystem" },
   ];
 
   return (

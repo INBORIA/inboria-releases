@@ -12,6 +12,8 @@ import { moveImapMessage, moveOutlookMessage, discoverImapJunkFolder, isValidIma
 import { hasJunkColumns, hasWaveOneColumns, hasTrackingProfileColumn } from "../lib/schema-flags";
 import { ImapFlow } from "imapflow";
 import { emitWebhook } from "../services/webhooks";
+import { logEmailToHubspot } from "../services/hubspot";
+import { logEmailToPipedrive } from "../services/pipedrive";
 
 function parseSender(raw: string) {
   const match = raw.match(/^(.+?)\s*<(.+?)>$/);
@@ -900,6 +902,9 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
     }
 
     if (sentEmail?.id) {
+      // Log outbound email to connected CRMs (HubSpot/Pipedrive).
+      logEmailToHubspot(req.userId!, sentEmail.id, to, subject, body, "outbound").catch(() => {});
+      logEmailToPipedrive(req.userId!, sentEmail.id, to, subject, body).catch(() => {});
       emitWebhook({
         userId: req.userId!,
         event: "email.sent",
@@ -913,6 +918,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
         },
       }).catch(() => {});
     }
+
     res.json({ success: true, emailId: sentEmail?.id, appointmentId });
   } catch (err: any) {
     console.error("Send email error:", err);
