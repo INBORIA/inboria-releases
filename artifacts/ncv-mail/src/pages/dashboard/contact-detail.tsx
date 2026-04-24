@@ -175,7 +175,7 @@ export default function ContactDetailPage() {
               {conversations.map((conv: any) => (
                 <li key={conv.threadKey || conv.id}>
                   <Link
-                    href={`/dashboard?email=${conv.id}`}
+                    href={`/dashboard?emailId=${conv.id}`}
                     className="flex items-start gap-2 p-2 rounded hover:bg-[#1a2332] transition-colors group"
                     data-testid={`link-conversation-${conv.id}`}
                   >

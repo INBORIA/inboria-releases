@@ -1403,6 +1403,18 @@ export default function Dashboard() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    try {
+      const url = new URL(window.location.href);
+      if (!url.searchParams.has("emailId")) return;
+      url.searchParams.delete("emailId");
+      window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+    } catch {
+      /* noop */
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
