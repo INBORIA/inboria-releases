@@ -118,11 +118,15 @@ function cleanPlainText(text: string): string {
   cleaned = cleaned.replace(/^[-_=]{3,}\s*$/gm, "---");
   cleaned = cleaned.replace(/\b[A-Za-z0-9+/=]{60,}\b/g, "");
 
-  cleaned = cleaned.replace(/(&[a-z]+;|&#\d+;|&#x[0-9a-f]+;)/gi, (match) => {
-    const el = document.createElement("span");
-    el.innerHTML = match;
-    return el.textContent || match;
-  });
+  for (let i = 0; i < 5; i++) {
+    const before = cleaned;
+    cleaned = cleaned.replace(/(&[a-z]+;|&#\d+;|&#x[0-9a-f]+;)/gi, (match) => {
+      const el = document.createElement("span");
+      el.innerHTML = match;
+      return el.textContent || match;
+    });
+    if (cleaned === before) break;
+  }
 
   cleaned = cleaned.replace(/(Se désabonner|Unsubscribe|Manage notification|View online|Voir en ligne)\s*:?\s*(https?:\/\/\S+|\[lien\])/gi, "");
 
@@ -133,10 +137,16 @@ function cleanPlainText(text: string): string {
 }
 
 function fixDoubleEncodedEntities(input: string): string {
-  return input
-    .replace(/&amp;#x([0-9a-f]+);/gi, "&#x$1;")
-    .replace(/&amp;#(\d+);/g, "&#$1;")
-    .replace(/&amp;(amp|lt|gt|quot|apos|nbsp);/gi, "&$1;");
+  let result = input;
+  for (let i = 0; i < 5; i++) {
+    const before = result;
+    result = result
+      .replace(/&amp;#x([0-9a-f]+);/gi, "&#x$1;")
+      .replace(/&amp;#(\d+);/g, "&#$1;")
+      .replace(/&amp;(amp|lt|gt|quot|apos|nbsp);/gi, "&$1;");
+    if (result === before) break;
+  }
+  return result;
 }
 
 export function cleanEmailBody(raw: string): string {
