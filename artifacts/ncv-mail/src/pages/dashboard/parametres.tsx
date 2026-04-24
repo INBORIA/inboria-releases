@@ -20,11 +20,12 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Pen, Lock, Globe } from "lucide-react";
+import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Pen, Lock, Globe, Clock, Key, Webhook, ChevronRight } from "lucide-react";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
+import { Link } from "wouter";
 import { useTranslation } from 'react-i18next';
 
 const IMAP_PROVIDERS = [
@@ -765,6 +766,39 @@ export default function Parametres() {
         </div>
 
         <div className="space-y-6">
+          <section>
+            <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
+              <Shield className="w-4 h-4 text-primary" />
+              {t("settings.b2bSection")}
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-2">
+              <Link href="/dashboard/parametres/sla" className="bg-card rounded-lg border border-border hover:border-primary/40 transition-colors p-3 flex items-center gap-3">
+                <Clock className="w-4 h-4 text-primary shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[12px] font-medium text-white">{t("settings.slaCard")}</div>
+                  <div className="text-[10px] text-[#8b9cb3]">{t("settings.slaCardDesc")}</div>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-[#8b9cb3] shrink-0" />
+              </Link>
+              <Link href="/dashboard/parametres/api" className="bg-card rounded-lg border border-border hover:border-primary/40 transition-colors p-3 flex items-center gap-3">
+                <Key className="w-4 h-4 text-primary shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[12px] font-medium text-white">{t("settings.apiCard")}</div>
+                  <div className="text-[10px] text-[#8b9cb3]">{t("settings.apiCardDesc")}</div>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-[#8b9cb3] shrink-0" />
+              </Link>
+              <Link href="/dashboard/parametres/webhooks" className="bg-card rounded-lg border border-border hover:border-primary/40 transition-colors p-3 flex items-center gap-3">
+                <Webhook className="w-4 h-4 text-primary shrink-0" />
+                <div className="flex-1 min-w-0">
+                  <div className="text-[12px] font-medium text-white">{t("settings.webhooksCard")}</div>
+                  <div className="text-[10px] text-[#8b9cb3]">{t("settings.webhooksCardDesc")}</div>
+                </div>
+                <ChevronRight className="w-3.5 h-3.5 text-[#8b9cb3] shrink-0" />
+              </Link>
+            </div>
+          </section>
+
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
               <Mail className="w-4 h-4 text-primary" />

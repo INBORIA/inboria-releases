@@ -11,6 +11,7 @@ import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope
 import { moveImapMessage, moveOutlookMessage, discoverImapJunkFolder, isValidImapHost } from "../services/junk-sync";
 import { hasJunkColumns, hasWaveOneColumns, hasTrackingProfileColumn } from "../lib/schema-flags";
 import { ImapFlow } from "imapflow";
+import { emitWebhook } from "../services/webhooks";
 
 function parseSender(raw: string) {
   const match = raw.match(/^(.+?)\s*<(.+?)>$/);
@@ -898,6 +899,20 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       }
     }
 
+    if (sentEmail?.id) {
+      emitWebhook({
+        userId: req.userId!,
+        event: "email.sent",
+        payload: {
+          id: sentEmail.id,
+          to,
+          subject,
+          replyToEmailId: replyToEmailId || null,
+          projectId: validatedProjectId,
+          appointmentId,
+        },
+      }).catch(() => {});
+    }
     res.json({ success: true, emailId: sentEmail?.id, appointmentId });
   } catch (err: any) {
     console.error("Send email error:", err);

@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { recordAutopilotEvent } from "../services/autopilot-events";
+import { emitWebhook } from "../services/webhooks";
 
 const router: IRouter = Router();
 
@@ -234,6 +235,19 @@ router.post("/tasks", requireAuth, async (req, res): Promise<void> => {
       title: task.title || null,
       emailId: (task.email_id as number | null) ?? null,
       metadata: { source: emailId ? "from_email" : "manual" },
+    }).catch(() => {});
+
+    emitWebhook({
+      userId,
+      event: "task.created",
+      payload: {
+        id: task.id,
+        title: task.title,
+        emailId: task.email_id,
+        projectId: task.project_id,
+        assignedToUserId: task.assigned_to_user_id,
+        source: emailId ? "from_email" : "manual",
+      },
     }).catch(() => {});
 
     res.status(201).json(mapTask(task));

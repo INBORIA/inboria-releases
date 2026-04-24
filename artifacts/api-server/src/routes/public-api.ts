@@ -1,0 +1,510 @@
+import { Router, type IRouter } from "express";
+import { supabaseAdmin } from "../lib/supabase";
+import { requireApiKey } from "../middlewares/api-key";
+import { emitWebhook } from "../services/webhooks";
+import { recordAutopilotEvent } from "../services/autopilot-events";
+import { logger } from "../lib/logger";
+
+const router: IRouter = Router();
+
+// =====================================================================
+// GET /api/v1/public/emails — list recent emails for the key owner
+// =====================================================================
+router.get("/v1/public/emails", requireApiKey(["emails:read"]), async (req, res): Promise<void> => {
+  try {
+    const limit = Math.min(100, Math.max(1, parseInt(String(req.query.limit || "50"), 10) || 50));
+    const offset = Math.max(0, parseInt(String(req.query.offset || "0"), 10) || 0);
+    const since = req.query.since ? String(req.query.since) : null;
+
+    let q = supabaseAdmin
+      .from("emails")
+      .select("id, sender, subject, body, status, priority, summary, category_id, created_at")
+      .eq("user_id", req.userId!)
+      .neq("status", "supprime")
+      .order("created_at", { ascending: false })
+      .range(offset, offset + limit - 1);
+
+    if (since) q = q.gte("created_at", since);
+
+    const { data, error } = await q;
+    if (error) { res.status(500).json({ error: error.message }); return; }
+
+    res.json({
+      data: (data || []).map((e: any) => ({
+        id: e.id,
+        from: e.sender,
+        subject: e.subject,
+        body: e.body,
+        status: e.status,
+        priority: e.priority,
+        summary: e.summary,
+        categoryId: e.category_id,
+        createdAt: e.created_at,
+      })),
+      pagination: { limit, offset, count: (data || []).length },
+    });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "Internal error" });
+  }
+});
+
+router.get("/v1/public/emails/:id", requireApiKey(["emails:read"]), async (req, res): Promise<void> => {
+  try {
+    const { data, error } = await supabaseAdmin
+      .from("emails")
+      .select("id, sender, recipient, subject, body, status, priority, summary, category_id, created_at")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .single();
+    if (error || !data) { res.status(404).json({ error: "Not found" }); return; }
+    res.json({
+      id: data.id,
+      from: data.sender,
+      to: data.recipient,
+      subject: data.subject,
+      body: data.body,
+      status: data.status,
+      priority: data.priority,
+      summary: data.summary,
+      categoryId: data.category_id,
+      createdAt: data.created_at,
+    });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "Internal error" });
+  }
+});
+
+// =====================================================================
+// POST /api/v1/public/tasks — create a task
+// =====================================================================
+router.post("/v1/public/tasks", requireApiKey(["tasks:write"]), async (req, res): Promise<void> => {
+  try {
+    const { title, emailId, projectId, dueDate } = req.body || {};
+    if (!title || typeof title !== "string" || title.trim().length < 2) {
+      res.status(400).json({ error: "title required (min 2 chars)" });
+      return;
+    }
+    const insertData: Record<string, unknown> = {
+      user_id: req.userId!,
+      title: title.trim(),
+    };
+    if (emailId) insertData.email_id = emailId;
+    if (projectId) insertData.project_id = projectId;
+    if (dueDate) insertData.due_date = dueDate;
+
+    const { data, error } = await supabaseAdmin
+      .from("tasks")
+      .insert(insertData)
+      .select("id, title, done, due_date, email_id, project_id, created_at")
+      .single();
+
+    if (error || !data) { res.status(500).json({ error: error?.message || "Insert failed" }); return; }
+
+    recordAutopilotEvent({
+      userId: req.userId!,
+      eventType: "task_created",
+      title: data.title || null,
+      emailId: (data.email_id as number | null) ?? null,
+      metadata: { source: "public_api" },
+    }).catch(() => {});
+
+    emitWebhook({
+      userId: req.userId!,
+      event: "task.created",
+      payload: { id: data.id, title: data.title, emailId: data.email_id, projectId: data.project_id, dueDate: data.due_date, source: "public_api" },
+    }).catch(() => {});
+
+    res.status(201).json({
+      id: data.id,
+      title: data.title,
+      done: data.done,
+      dueDate: data.due_date,
+      emailId: data.email_id,
+      projectId: data.project_id,
+      createdAt: data.created_at,
+    });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "Internal error" });
+  }
+});
+
+// =====================================================================
+// POST /api/v1/public/appointments — create an appointment
+// =====================================================================
+router.post("/v1/public/appointments", requireApiKey(["appointments:write"]), async (req, res): Promise<void> => {
+  try {
+    const { title, description, location, startAt, endAt, allDay, emailId, projectId, reminderMinutes, participants } = req.body || {};
+    if (!title || !startAt || !endAt) {
+      res.status(400).json({ error: "title, startAt, endAt required" });
+      return;
+    }
+    const { data, error } = await supabaseAdmin
+      .from("appointments")
+      .insert({
+        user_id: req.userId!,
+        title,
+        description: description || null,
+        location: location || null,
+        start_at: startAt,
+        end_at: endAt,
+        all_day: !!allDay,
+        email_id: emailId || null,
+        project_id: projectId || null,
+        reminder_minutes: reminderMinutes ?? 30,
+        participants: participants || null,
+      })
+      .select("id, title, start_at, end_at, all_day, email_id, project_id, created_at")
+      .single();
+    if (error || !data) { res.status(500).json({ error: error?.message || "Insert failed" }); return; }
+
+    emitWebhook({
+      userId: req.userId!,
+      event: "appointment.created",
+      payload: { id: data.id, title: data.title, startAt: data.start_at, endAt: data.end_at, source: "public_api" },
+    }).catch(() => {});
+
+    res.status(201).json({
+      id: data.id,
+      title: data.title,
+      startAt: data.start_at,
+      endAt: data.end_at,
+      allDay: data.all_day,
+      emailId: data.email_id,
+      projectId: data.project_id,
+      createdAt: data.created_at,
+    });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "Internal error" });
+  }
+});
+
+// =====================================================================
+// POST /api/v1/public/contacts — create / upsert a contact (lightweight)
+// We don't have a proper contacts table; we record an organisation-level
+// known contact via a simple table or fall back to projects.contacts JSON.
+// For V1 we store as a no-op success if no table exists, so client sees 200.
+// =====================================================================
+router.post("/v1/public/contacts", requireApiKey(["contacts:write"]), async (req, res): Promise<void> => {
+  try {
+    const { name, email, phone, notes } = req.body || {};
+    if (!email || typeof email !== "string" || !/.+@.+\..+/.test(email)) {
+      res.status(400).json({ error: "email required" });
+      return;
+    }
+    const lcEmail = email.toLowerCase();
+
+    // Upsert into contacts table; require it to exist for the public API contract.
+    const { data, error } = await supabaseAdmin
+      .from("contacts")
+      .upsert(
+        {
+          user_id: req.userId!,
+          name: name || null,
+          email: lcEmail,
+          phone: phone || null,
+          notes: notes || null,
+        },
+        { onConflict: "user_id,email" },
+      )
+      .select("id, name, email, phone, notes, created_at, updated_at")
+      .maybeSingle();
+
+    if (error) {
+      logger.warn({ err: error.message }, "[public-api] contacts insert failed");
+      res.status(503).json({
+        error: "contacts_storage_unavailable",
+        message: "Contacts table is not provisioned. Apply migrations/2026_04_24_b2b_credibility.sql in Supabase.",
+      });
+      return;
+    }
+    res.status(201).json({ ...data, persisted: true });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "Internal error" });
+  }
+});
+
+// =====================================================================
+// POST /api/v1/public/rules/:id/trigger — manually apply an ai_rule.
+//
+// Behavior:
+//   - Validates the rule exists and is owned by the API key's user.
+//   - If body.emailId is provided, the rule's forced_priority and
+//     forced_category are applied to that single email (only if it
+//     belongs to the same user). The rule's sender_pattern is *not*
+//     re-checked here — the caller is asking for an explicit override.
+//   - Otherwise, the endpoint scans the user's last 200 inbox emails
+//     and re-applies forced_priority / forced_category to those whose
+//     sender contains the rule's sender_pattern (case-insensitive).
+//   - In all cases an `rule.triggered` webhook is emitted with the
+//     count of affected emails so external automations can react.
+// =====================================================================
+router.post("/v1/public/rules/:id/trigger", requireApiKey(["rules:trigger"]), async (req, res): Promise<void> => {
+  try {
+    const ruleId = req.params.id;
+    const userId = req.userId!;
+    const body = req.body || {};
+    const targetEmailId = body.emailId != null ? Number(body.emailId) : null;
+
+    // Ownership check on the rule.
+    const { data: rule, error: ruleErr } = await supabaseAdmin
+      .from("ai_rules")
+      .select("id, user_id, sender_pattern, forced_priority, forced_category")
+      .eq("id", ruleId)
+      .maybeSingle();
+    if (ruleErr || !rule) {
+      res.status(404).json({ error: "Rule not found" });
+      return;
+    }
+    if (rule.user_id !== userId) {
+      res.status(403).json({ error: "Forbidden" });
+      return;
+    }
+
+    // Resolve forced category id (if any) once.
+    let forcedCategoryId: string | null = null;
+    if (rule.forced_category) {
+      const { data: cat } = await supabaseAdmin
+        .from("categories")
+        .select("id")
+        .eq("user_id", userId)
+        .ilike("name", rule.forced_category)
+        .maybeSingle();
+      forcedCategoryId = cat?.id || null;
+    }
+
+    const r = rule;
+    function buildUpdate(): Record<string, unknown> {
+      const upd: Record<string, unknown> = {};
+      if (r.forced_priority) upd.priority = r.forced_priority;
+      if (forcedCategoryId) upd.category_id = forcedCategoryId;
+      return upd;
+    }
+
+    let affected = 0;
+
+    if (targetEmailId) {
+      const { data: e } = await supabaseAdmin
+        .from("emails")
+        .select("id, user_id")
+        .eq("id", targetEmailId)
+        .maybeSingle();
+      if (!e || e.user_id !== userId) {
+        res.status(404).json({ error: "Email not found" });
+        return;
+      }
+      const upd = buildUpdate();
+      if (Object.keys(upd).length > 0) {
+        await supabaseAdmin.from("emails").update(upd).eq("id", targetEmailId);
+        affected = 1;
+      }
+    } else if (rule.sender_pattern) {
+      const pattern = String(rule.sender_pattern).trim();
+      if (pattern) {
+        const { data: matches } = await supabaseAdmin
+          .from("emails")
+          .select("id")
+          .eq("user_id", userId)
+          .ilike("sender", `%${pattern}%`)
+          .neq("status", "supprime")
+          .order("created_at", { ascending: false })
+          .limit(200);
+        const ids = (matches || []).map((m: any) => m.id);
+        if (ids.length > 0) {
+          const upd = buildUpdate();
+          if (Object.keys(upd).length > 0) {
+            await supabaseAdmin.from("emails").update(upd).in("id", ids);
+            affected = ids.length;
+          }
+        }
+      }
+    }
+
+    emitWebhook({
+      userId,
+      event: "rule.triggered",
+      payload: {
+        ruleId,
+        emailId: targetEmailId,
+        affected,
+        source: "public_api",
+      },
+    }).catch(() => {});
+
+    logger.info({ userId, ruleId, affected, source: "public_api" }, "[public-api] rule.triggered");
+
+    res.status(202).json({ accepted: true, ruleId, affected });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "Internal error" });
+  }
+});
+
+// =====================================================================
+// Developer documentation router (mounted at both /api and /).
+// Exposes:
+//   - GET /v1/public/openapi.json  (the OpenAPI 3 spec)
+//   - GET /dev                     (Redoc viewer)
+// =====================================================================
+export const devDocsRouter: IRouter = Router();
+
+devDocsRouter.get("/v1/public/openapi.json", (_req, res) => {
+  res.json(PUBLIC_OPENAPI);
+});
+
+devDocsRouter.get("/dev", (_req, res) => {
+  res.setHeader("Content-Type", "text/html; charset=utf-8");
+  res.send(`<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <title>Inboria — Developers</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    .header { padding: 16px 24px; border-bottom: 1px solid #e5e7eb; display: flex; align-items: center; justify-content: space-between; }
+    .header h1 { font-size: 18px; margin: 0; }
+    .header a { color: #2d7dd2; text-decoration: none; font-size: 14px; }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>Inboria — API publique v1</h1>
+    <a href="/v1/public/openapi.json">Télécharger OpenAPI spec</a>
+  </div>
+  <redoc spec-url="/v1/public/openapi.json"></redoc>
+  <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
+</body>
+</html>`);
+});
+
+// Also mount the dev/docs handlers on the main /api router for backwards
+// compatibility (existing UI links use /api/dev and /api/v1/public/openapi.json).
+router.use("/", devDocsRouter);
+
+const PUBLIC_OPENAPI = {
+  openapi: "3.0.3",
+  info: {
+    title: "Inboria Public API",
+    version: "1.0.0",
+    description:
+      "Public REST API for Inboria. Authenticate with `X-API-Key: <key>` (or `Authorization: Bearer <key>`). Rate limit: 60 requests / minute / key. Generate keys at /dashboard/parametres/api.",
+  },
+  servers: [{ url: "/api/v1/public", description: "Production base path" }],
+  components: {
+    securitySchemes: {
+      ApiKeyAuth: { type: "apiKey", in: "header", name: "X-API-Key" },
+    },
+    schemas: {
+      Error: { type: "object", properties: { error: { type: "string" } } },
+      Email: {
+        type: "object",
+        properties: {
+          id: { type: "integer" },
+          from: { type: "string" },
+          subject: { type: "string" },
+          body: { type: "string" },
+          status: { type: "string" },
+          priority: { type: "string" },
+          summary: { type: "string" },
+          categoryId: { type: "string", nullable: true },
+          createdAt: { type: "string", format: "date-time" },
+        },
+      },
+      Task: {
+        type: "object",
+        required: ["title"],
+        properties: {
+          id: { type: "integer" },
+          title: { type: "string" },
+          done: { type: "boolean" },
+          dueDate: { type: "string", format: "date-time", nullable: true },
+          emailId: { type: "integer", nullable: true },
+          projectId: { type: "string", nullable: true },
+          createdAt: { type: "string", format: "date-time" },
+        },
+      },
+      Appointment: {
+        type: "object",
+        required: ["title", "startAt", "endAt"],
+        properties: {
+          id: { type: "string" },
+          title: { type: "string" },
+          startAt: { type: "string", format: "date-time" },
+          endAt: { type: "string", format: "date-time" },
+          allDay: { type: "boolean" },
+          location: { type: "string", nullable: true },
+          description: { type: "string", nullable: true },
+        },
+      },
+      Contact: {
+        type: "object",
+        required: ["email"],
+        properties: {
+          email: { type: "string" },
+          name: { type: "string", nullable: true },
+          phone: { type: "string", nullable: true },
+          notes: { type: "string", nullable: true },
+        },
+      },
+    },
+  },
+  security: [{ ApiKeyAuth: [] }],
+  paths: {
+    "/emails": {
+      get: {
+        summary: "List emails",
+        parameters: [
+          { name: "limit", in: "query", schema: { type: "integer", default: 50, maximum: 100 } },
+          { name: "offset", in: "query", schema: { type: "integer", default: 0 } },
+          { name: "since", in: "query", schema: { type: "string", format: "date-time" } },
+        ],
+        responses: { "200": { description: "OK" }, "401": { description: "Unauthorized" }, "429": { description: "Rate limited" } },
+      },
+    },
+    "/emails/{id}": {
+      get: {
+        summary: "Get one email",
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "integer" } }],
+        responses: { "200": { description: "OK" }, "404": { description: "Not found" } },
+      },
+    },
+    "/tasks": {
+      post: {
+        summary: "Create a task",
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { $ref: "#/components/schemas/Task" } } },
+        },
+        responses: { "201": { description: "Created" }, "400": { description: "Bad request" } },
+      },
+    },
+    "/appointments": {
+      post: {
+        summary: "Create an appointment",
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { $ref: "#/components/schemas/Appointment" } } },
+        },
+        responses: { "201": { description: "Created" }, "400": { description: "Bad request" } },
+      },
+    },
+    "/contacts": {
+      post: {
+        summary: "Create or upsert a contact",
+        requestBody: {
+          required: true,
+          content: { "application/json": { schema: { $ref: "#/components/schemas/Contact" } } },
+        },
+        responses: { "201": { description: "Created" }, "200": { description: "Accepted (no persistence)" }, "400": { description: "Bad request" } },
+      },
+    },
+    "/rules/{id}/trigger": {
+      post: {
+        summary: "Manually trigger a rule by id",
+        parameters: [{ name: "id", in: "path", required: true, schema: { type: "string" } }],
+        responses: { "202": { description: "Accepted" } },
+      },
+    },
+  },
+};
+
+export default router;

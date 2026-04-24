@@ -560,6 +560,26 @@ export async function saveEmailWithTriage(
 
   if (!inserted) return null;
 
+  // Emit public webhook: email.received (B2B credibility — Vague 3)
+  try {
+    const { emitWebhook } = await import("./webhooks");
+    emitWebhook({
+      userId,
+      event: "email.received",
+      payload: {
+        id: inserted.id,
+        from: sender,
+        subject,
+        priority: triage.priority,
+        summary: triage.summary,
+        receivedAt: insertPayload.created_at || new Date().toISOString(),
+        forceSpam: !!forceSpam,
+      },
+    }).catch(() => {});
+  } catch {
+    /* webhooks optional */
+  }
+
   if (forceSpam) {
     return inserted.id;
   }

@@ -2,6 +2,7 @@ import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { recordAutopilotEvent } from "../services/autopilot-events";
+import { emitWebhook } from "../services/webhooks";
 
 const router: IRouter = Router();
 
@@ -106,6 +107,18 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
       title: data.title || null,
       emailId: data.email_id ?? null,
       metadata: { source: "create_appointment" },
+    }).catch(() => {});
+    emitWebhook({
+      userId: req.userId!,
+      event: "appointment.created",
+      payload: {
+        id: data.id,
+        title: data.title,
+        startAt: data.start_at,
+        endAt: data.end_at,
+        emailId: data.email_id,
+        projectId: data.project_id,
+      },
     }).catch(() => {});
     res.status(201).json(mapAppointment(data));
   } catch (err: any) {

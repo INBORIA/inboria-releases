@@ -100,6 +100,11 @@ async function buildAll() {
       "puppeteer",
       "puppeteer-core",
       "electron",
+      // pdfkit pulls fontkit -> brotli -> @swc/helpers and ships .afm font files
+      // it loads at runtime via path traversal. Bundle-friendly only when external.
+      "pdfkit",
+      "fontkit",
+      "brotli",
     ],
     sourcemap: "linked",
     plugins: [

@@ -53,7 +53,7 @@ import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archiv
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { useState, useEffect, useRef, useCallback, memo } from "react";
+import { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -88,7 +88,7 @@ function PriorityBadge({ priority }: { priority: string }) {
   );
 }
 
-function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean }) {
+function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
@@ -98,7 +98,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
     <div
       data-email-row
       data-row-id={email.id}
-      className={`group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden select-none ${isSelected ? "border-primary/50 bg-primary/[0.06]" : "border-border"}`}
+      className={`group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden select-none ${isSelected ? "border-primary/50 bg-primary/[0.06]" : isSlaBreach ? "border-red-500/40" : "border-border"}`}
       onClick={onClick}
       onContextMenu={(e) => { e.preventDefault(); onContextMenu?.(e, email.id); }}
       onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); onDragSelectStart?.(email.id); } }}
@@ -146,6 +146,15 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
             <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 hidden sm:inline-flex items-center gap-1">
               <UserPlus className="w-2.5 h-2.5" />
               {t("inbox.assignedBadge")}
+            </span>
+          )}
+          {isSlaBreach && (
+            <span
+              className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-red-500/15 text-red-400 border border-red-500/30 inline-flex items-center gap-1"
+              title={t("inbox.slaOverdue", { defaultValue: "SLA overdue" })}
+            >
+              <AlertCircle className="w-2.5 h-2.5" />
+              SLA
             </span>
           )}
           <PriorityBadge priority={(email.priority || "faible") as any} />
@@ -699,7 +708,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
               </div>
             </div>
 
-            <EmailComments emailId={email.id} currentUserId={currentUserId} />
+            <EmailComments emailId={email.id} currentUserId={currentUserId} email={email} />
 
             {taskFormOpen && (
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
@@ -1341,6 +1350,31 @@ export default function Dashboard() {
 
   const plan = (profile as any)?.plan;
   const { data: sharedMailboxes } = useGetSharedMailboxes({ query: { enabled: plan === "business" } as any });
+
+  // Active SLA breaches (unresolved) — used to flag overdue rows in the inbox.
+  const { data: slaBreachList } = useQuery<any[]>({
+    queryKey: ["sla-breaches-active"],
+    enabled: plan === "business",
+    refetchInterval: 60_000,
+    queryFn: async () => {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) return [];
+      const res = await fetch(`${import.meta.env.BASE_URL}api/sla/breaches`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+  const slaBreachIds = useMemo(() => {
+    const s = new Set<number>();
+    for (const b of (slaBreachList || []) as any[]) {
+      if (!b.resolvedAt) s.add(Number(b.emailId));
+    }
+    return s;
+  }, [slaBreachList]);
   const [sharedPage, setSharedPage] = useState(1);
   const [accumulatedSharedEmails, setAccumulatedSharedEmails] = useState<PaginatedSharedMailboxEmails["emails"]>([]);
   const { data: sharedEmailsData, isLoading: sharedEmailsLoading, isFetching: sharedFetching } = useGetSharedMailboxEmails(
@@ -2433,10 +2467,11 @@ export default function Dashboard() {
                       {sharedEmailsList.map((email) => {
                         const isClaimed = !!email.claimedBy;
                         const isClaimedByMe = email.claimedBy === (profile as any)?.id;
+                        const isSlaBreach = slaBreachIds.has(Number(email.id));
                         return (
                           <div
                             key={email.id}
-                            className="group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors overflow-hidden border-border"
+                            className={`group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors overflow-hidden ${isSlaBreach ? "border-red-500/40" : "border-border"}`}
                           >
                             <div className={`w-1 shrink-0 ${PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible}`} />
                             <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
@@ -2447,6 +2482,15 @@ export default function Dashboard() {
                                 <div className="flex items-center gap-2 mb-0.5">
                                   <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>
                                   <PriorityBadge priority={(email.priority || "faible") as any} />
+                                  {isSlaBreach && (
+                                    <span
+                                      className="text-[9px] px-1.5 py-0.5 rounded-full font-semibold bg-red-500/15 text-red-400 border border-red-500/30 inline-flex items-center gap-1"
+                                      title={t("inbox.slaOverdue", { defaultValue: "SLA overdue" })}
+                                    >
+                                      <AlertCircle className="w-2.5 h-2.5" />
+                                      SLA
+                                    </span>
+                                  )}
                                   {isClaimed && (
                                     <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${isClaimedByMe ? "bg-primary/15 text-primary" : "bg-white/[0.06] text-[#8b9cb3]"}`}>
                                       {isClaimedByMe ? t("inbox.claimedBy") : t("inbox.claim")}
@@ -2618,6 +2662,7 @@ export default function Dashboard() {
                               onDragSelectStart={handleDragSelectStart}
                               mailboxBadge={badge}
                               showMailboxBadge={selectedAccountId === "all" && (composeConnections?.length || 0) >= 2}
+                              isSlaBreach={slaBreachIds.has(Number(email.id))}
                             />
                           );
                         })}

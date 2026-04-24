@@ -32,7 +32,7 @@ router.get("/emails/:emailId/comments", requireAuth, async (req, res): Promise<v
 
     const { data: comments } = await supabaseAdmin
       .from("email_comments")
-      .select("id, email_id, user_id, body, created_at, updated_at")
+      .select("id, email_id, user_id, body, mentions, created_at, updated_at")
       .eq("email_id", emailId)
       .order("created_at", { ascending: true });
 
@@ -41,7 +41,12 @@ router.get("/emails/:emailId/comments", requireAuth, async (req, res): Promise<v
       return;
     }
 
-    const userIds = [...new Set(comments.map(c => c.user_id))];
+    const userIds = new Set<string>();
+    for (const c of comments) {
+      userIds.add(c.user_id);
+      const ms: string[] = Array.isArray(c.mentions) ? c.mentions : [];
+      for (const m of ms) userIds.add(m);
+    }
     const profileMap = new Map<string, string>();
 
     for (const uid of userIds) {
@@ -59,6 +64,10 @@ router.get("/emails/:emailId/comments", requireAuth, async (req, res): Promise<v
       userId: c.user_id,
       authorName: profileMap.get(c.user_id) || "",
       body: c.body,
+      mentions: (Array.isArray(c.mentions) ? c.mentions : []).map((uid: string) => ({
+        userId: uid,
+        name: profileMap.get(uid) || "",
+      })),
       createdAt: c.created_at,
       updatedAt: c.updated_at,
     }));
@@ -77,7 +86,7 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
       return;
     }
 
-    const { body } = req.body;
+    const { body, mentions } = req.body;
     if (!body || !body.trim()) {
       res.status(400).json({ error: "Le commentaire ne peut pas être vide" });
       return;
@@ -100,12 +109,31 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
       return;
     }
 
+    // Validate mentions: must be uuid strings, must be members of the same org
+    const incomingMentions: string[] = Array.isArray(mentions)
+      ? mentions.filter((m: any) => typeof m === "string" && /^[0-9a-f-]{36}$/i.test(m))
+      : [];
+    let validatedMentions: string[] = [];
+    if (incomingMentions.length > 0) {
+      const orgIdAuthor = await getOrgIdForUser(req.userId!);
+      if (orgIdAuthor) {
+        const { data: members } = await supabaseAdmin
+          .from("organisation_members")
+          .select("user_id")
+          .eq("organisation_id", orgIdAuthor)
+          .eq("status", "active")
+          .in("user_id", incomingMentions);
+        validatedMentions = (members || []).map((m: any) => m.user_id);
+      }
+    }
+
     const { data: comment, error } = await supabaseAdmin
       .from("email_comments")
       .insert({
         email_id: emailId,
         user_id: req.userId!,
         body: body.trim(),
+        mentions: validatedMentions,
       })
       .select()
       .single();
@@ -147,6 +175,19 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
       });
     }
 
+    // Notify mentioned users
+    for (const mUid of validatedMentions) {
+      if (mUid === req.userId!) continue;
+      createNotification({
+        userId: mUid,
+        type: "comment_mention",
+        title: "Vous avez été mentionné",
+        message: `${commenterName} : "${body.trim().slice(0, 80)}"`,
+        emailId,
+        triggeredBy: req.userId!,
+      });
+    }
+
     if (orgId && (email.shared_mailbox_id || email.assigned_to)) {
       logActivity({
         organisationId: orgId,
@@ -154,8 +195,20 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
         action: "add_comment",
         entityType: "email",
         entityId: String(emailId),
-        details: { commentId: comment.id },
+        details: { commentId: comment.id, mentions: validatedMentions },
       });
+    }
+
+    // Build mention names for the response
+    const mentionNames: { userId: string; name: string }[] = [];
+    if (validatedMentions.length > 0) {
+      const { data: profiles } = await supabaseAdmin
+        .from("profiles")
+        .select("id, full_name")
+        .in("id", validatedMentions);
+      for (const p of profiles || []) {
+        mentionNames.push({ userId: p.id, name: p.full_name || "" });
+      }
     }
 
     res.status(201).json({
@@ -164,6 +217,7 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
       userId: comment.user_id,
       authorName: profile?.full_name || "",
       body: comment.body,
+      mentions: mentionNames,
       createdAt: comment.created_at,
       updatedAt: comment.updated_at,
     });

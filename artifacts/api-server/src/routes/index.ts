@@ -30,6 +30,11 @@ import autopilotRouter from "./autopilot";
 import contactsRouter from "./contacts";
 import templatesRouter from "./templates";
 import automationRulesRouter from "./automation-rules";
+import slaRouter from "./sla";
+import apiKeysRouter from "./api-keys";
+import webhooksMgmtRouter from "./webhooks-mgmt";
+import analyticsRouter from "./analytics";
+import publicApiRouter from "./public-api";
 
 const router: IRouter = Router();
 
@@ -64,5 +69,10 @@ router.use(autopilotRouter);
 router.use(contactsRouter);
 router.use(templatesRouter);
 router.use(automationRulesRouter);
+router.use(slaRouter);
+router.use(apiKeysRouter);
+router.use(webhooksMgmtRouter);
+router.use(analyticsRouter);
+router.use(publicApiRouter);
 
 export default router;

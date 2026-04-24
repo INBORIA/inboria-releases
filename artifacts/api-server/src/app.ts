@@ -45,6 +45,12 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/api", router);
 
+// Public developer documentation alias — exposed at root so that the spec'd
+// paths /dev and /v1/public/openapi.json are reachable without the /api prefix.
+import("./routes/public-api").then(({ devDocsRouter }) => {
+  app.use("/", devDocsRouter);
+}).catch(() => { /* optional */ });
+
 app.use((err: Error, _req: Request, res: Response, _next: NextFunction) => {
   logger.error({ err }, "Unhandled error");
   res.status(500).json({ error: "Internal server error" });

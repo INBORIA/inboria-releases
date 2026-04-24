@@ -5,6 +5,8 @@ import { startScheduledSendWorker } from "./services/scheduled-send-worker";
 import { startSnoozeWakeWorker } from "./services/snooze-wake-worker";
 import { supabaseAdmin } from "./lib/supabase";
 import { getEmailOAuthRedirectUri } from "./lib/urls";
+import { startSlaWorker } from "./services/sla";
+import { startWebhookDispatcher } from "./services/webhooks";
 
 async function ensureEmailsUniqueIndex() {
   try {
@@ -650,7 +652,28 @@ app.listen(port, (err) => {
   ensureTemplatesAndAutomationRules();
   cleanupDuplicateTasks();
   purgeNoiseTasks();
+  ensureB2bTables();
   startAutoSync();
   startScheduledSendWorker();
   startSnoozeWakeWorker();
+  startSlaWorker();
+  startWebhookDispatcher();
 });
+
+async function ensureB2bTables() {
+  // Best-effort presence check for the B2B tables (sla_policies, api_keys, webhook_endpoints).
+  // The actual DDL must be applied via migrations/2026_04_24_b2b_credibility.sql in Supabase.
+  const tables = ["sla_policies", "sla_breaches", "api_keys", "webhook_endpoints", "webhook_deliveries"];
+  for (const t of tables) {
+    try {
+      const { error } = await supabaseAdmin.from(t).select("id").limit(1);
+      if (error && (error.message.includes("does not exist") || error.message.includes("schema cache"))) {
+        logger.warn({ table: t }, "[b2b] table missing — apply migrations/2026_04_24_b2b_credibility.sql in Supabase");
+      } else {
+        logger.info({ table: t }, "[b2b] table OK");
+      }
+    } catch (e: any) {
+      logger.warn({ error: e.message, table: t }, "[b2b] table check failed (non-fatal)");
+    }
+  }
+}
