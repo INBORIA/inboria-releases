@@ -175,16 +175,30 @@ export default function Programmes() {
           )}
         </section>
 
-        {/* Section: Envois programmés (scheduled sends) — hidden when empty */}
-        {!isLoading && emails.length > 0 && (
+        {/* Section: Envois programmés (scheduled sends) — always visible */}
         <section>
           <div className="flex items-center gap-2 mb-3">
             <CalendarClock className="w-5 h-5 text-primary" />
             <h2 className="text-[16px] font-semibold text-white">
               {t("wave1.scheduledPageTitle")}
             </h2>
+            {emails.length > 0 && (
+              <span className="text-[11px] text-[#8b9cb3]">({emails.length})</span>
+            )}
           </div>
 
+          {isLoading ? (
+            <div className="text-[12px] text-[#8b9cb3]">…</div>
+          ) : emails.length === 0 ? (
+            <div className="border border-dashed border-border rounded-md p-4 text-center">
+              <div className="text-[12px] text-[#8b9cb3]">
+                {t("wave1.scheduledPageEmpty", "Aucun envoi programmé")}
+              </div>
+              <div className="text-[11px] text-[#6b7c93] mt-1">
+                {t("wave1.scheduledPageEmptyHint", "Utilisez « Programmer » dans le composer pour planifier un envoi à une date/heure précise.")}
+              </div>
+            </div>
+          ) : (
           <div className="space-y-2">
             {emails.map((e: any) => (
                 <div
@@ -218,8 +232,8 @@ export default function Programmes() {
                 </div>
               ))}
           </div>
+          )}
         </section>
-        )}
       </div>
     </DashboardLayout>
   );

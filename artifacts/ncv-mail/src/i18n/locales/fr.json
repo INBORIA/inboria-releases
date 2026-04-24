@@ -37,7 +37,7 @@
   "sidebar": {
     "inbox": "Réception",
     "sent": "Envoyés",
-    "scheduled": "Reportés",
+    "scheduled": "Reportés & Programmés",
     "archives": "Archives",
     "junk": "Courrier indésirable",
     "followup": "Suivi",
@@ -2231,7 +2231,7 @@
     "scheduleErrorPast": "La date doit être dans le futur",
     "scheduledPageTitle": "Envois programmés",
     "scheduledPageEmpty": "Aucun envoi programmé",
-    "scheduledPageEmptyHint": "Vos brouillons programmés apparaîtront ici.",
+    "scheduledPageEmptyHint": "Utilisez « Programmer » dans le composer pour planifier un envoi à une date/heure précise.",
     "snoozedSectionTitle": "Emails reportés",
     "snoozedSectionEmpty": "Aucun email reporté",
     "snoozedSectionEmptyHint": "Les emails que vous reportez réapparaîtront ici jusqu'à leur réveil.",
