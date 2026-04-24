@@ -353,6 +353,11 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
     if (req.body.status !== undefined) updates.status = req.body.status;
     if (req.body.priority !== undefined) updates.priority = req.body.priority;
     if (req.body.projectId !== undefined) updates.project_id = req.body.projectId;
+    // Wave 1 — clear snooze state once user marks as read (first interaction).
+    if (req.body.status === "read" && (await hasWaveOneColumns())) {
+      updates.snoozed_until = null;
+      updates.snooze_woken_at = null;
+    }
     if (req.body.status !== undefined && oldEmail) {
       const newStatus = req.body.status as string;
       const wasSpam = oldEmail.status === "spam";
@@ -441,7 +446,7 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
   }
 });
 
-interface ResolvedAttachment {
+export interface ResolvedAttachment {
   serverPath: string;
   filename: string;
   contentType: string;
@@ -461,7 +466,7 @@ function sanitizeFilename(name: string): string {
   return name.replace(/[\r\n"\\]/g, "_");
 }
 
-function buildMimeWithAttachments(
+export function buildMimeWithAttachments(
   to: string,
   from: string,
   subject: string,
@@ -1350,6 +1355,36 @@ router.post("/emails/:id/unsnooze", requireAuth, async (req, res): Promise<void>
   }
 });
 
+// ──────────────────────── Wave 1: Cancel pending send (10-second undo) ────────────────────────
+
+const PENDING_TTL_MS = 60_000;
+const cancelledPendingSends = new Map<string, number>();
+function gcPendingSends(): void {
+  const now = Date.now();
+  for (const [id, expireAt] of cancelledPendingSends.entries()) {
+    if (expireAt <= now) cancelledPendingSends.delete(id);
+  }
+}
+export function isPendingSendCancelled(pendingId: string): boolean {
+  gcPendingSends();
+  return cancelledPendingSends.has(pendingId);
+}
+
+router.post("/emails/cancel-pending", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const pendingId = String(req.body?.pendingId || "").trim();
+    if (!pendingId) {
+      res.status(400).json({ error: "pendingId requis" });
+      return;
+    }
+    cancelledPendingSends.set(pendingId, Date.now() + PENDING_TTL_MS);
+    gcPendingSends();
+    res.json({ success: true });
+  } catch (e: any) {
+    res.status(500).json({ error: e?.message || "Failed to cancel pending send" });
+  }
+});
+
 // ──────────────────────── Wave 1: Scheduled send ────────────────────────
 
 router.post("/emails/schedule", requireAuth, async (req, res): Promise<void> => {
@@ -1358,10 +1393,20 @@ router.post("/emails/schedule", requireAuth, async (req, res): Promise<void> => 
       res.status(503).json({ error: "Envoi programmé indisponible : appliquez sql_wave1_quick_wins.sql dans Supabase." });
       return;
     }
-    const { to, subject, body, replyToEmailId, connectionId, projectId, scheduledSendAt } = req.body || {};
+    const { to, subject, body, replyToEmailId, connectionId, projectId, scheduledSendAt, attachments: rawScheduledAttachments } = req.body || {};
     if (!to || !subject || !body || !scheduledSendAt) {
       res.status(400).json({ error: "Destinataire, sujet, corps et scheduledSendAt requis" });
       return;
+    }
+    const scheduledUploadIds: string[] = Array.isArray(rawScheduledAttachments)
+      ? (rawScheduledAttachments as unknown[]).filter((x): x is string => typeof x === "string")
+      : [];
+    if (scheduledUploadIds.length > 0) {
+      const resolved = resolveUploadedFiles(scheduledUploadIds, req.userId!);
+      if (!resolved) {
+        res.status(400).json({ error: "Un ou plusieurs fichiers joints sont invalides ou expirés" });
+        return;
+      }
     }
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(String(to).trim())) {
@@ -1429,6 +1474,7 @@ router.post("/emails/schedule", requireAuth, async (req, res): Promise<void> => 
     };
     if (validatedProjectId) insertPayload.project_id = validatedProjectId;
     if (trackingPixelId) insertPayload.tracking_pixel_id = trackingPixelId;
+    if (scheduledUploadIds.length > 0) insertPayload.scheduled_attachment_ids = scheduledUploadIds;
 
     const { data: row, error } = await supabaseAdmin
       .from("emails")

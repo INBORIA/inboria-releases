@@ -48,6 +48,8 @@ export * from "./bulkUpdateEmails200";
 export * from "./bulkUpdateEmailsBody";
 export * from "./bulkUpdateEmailsBodyAction";
 export * from "./cancelInvitation200";
+export * from "./cancelPendingSend200";
+export * from "./cancelPendingSendBody";
 export * from "./cancelScheduledEmail200";
 export * from "./category";
 export * from "./categoryCount";

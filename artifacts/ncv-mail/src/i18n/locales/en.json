@@ -37,6 +37,7 @@
   "sidebar": {
     "inbox": "Inbox",
     "sent": "Sent",
+    "scheduled": "Scheduled",
     "archives": "Archives",
     "junk": "Junk mail",
     "followup": "Follow-up",
@@ -3836,6 +3837,7 @@
     "snoozeApply": "Snooze",
     "snoozeCancel": "Cancel",
     "snoozeWake": "Wake up now",
+    "snoozeWokenLabel": "Woken",
     "snoozedUntilLabel": "Snoozed until {{date}}",
     "snoozeSuccess": "Message snoozed",
     "unsnoozeSuccess": "Message back in inbox",

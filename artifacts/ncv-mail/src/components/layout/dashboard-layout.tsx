@@ -19,6 +19,7 @@ import {
   Activity,
   BookOpen,
   Send,
+  CalendarClock,
   CalendarDays,
   ShieldCheck,
   MailCheck,
@@ -55,6 +56,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const baseNavigation: Array<{ name: string; href: string; icon: any; badge?: number }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
+    { name: t("sidebar.scheduled", "Programmés"), href: "/dashboard/programmes", icon: CalendarClock },
     { name: t("tasks.title"), href: "/dashboard/taches", icon: CheckSquare },
     { name: t("sidebar.followups", "Relances"), href: "/dashboard/relances", icon: MailCheck, badge: aiFollowupCount },
     { name: t("sidebar.contacts", "Contact 360°"), href: "/dashboard/contacts", icon: Users },

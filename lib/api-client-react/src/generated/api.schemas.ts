@@ -281,6 +281,13 @@ export interface ScheduleEmailBody {
   projectId?: string | null;
   /** ISO timestamp at which to send the email (must be in the future). */
   scheduledSendAt: string;
+  /** Optional list of upload IDs (returned by /uploads) to attach to the scheduled email. */
+  attachments?: string[];
+}
+
+export interface CancelPendingSendBody {
+  /** Client-generated identifier for a pending send within its 10-second undo window. */
+  pendingId: string;
 }
 
 export interface ScheduledEmail {
@@ -1449,6 +1456,10 @@ export type ListScheduledEmails200 = {
 };
 
 export type CancelScheduledEmail200 = {
+  success?: boolean;
+};
+
+export type CancelPendingSend200 = {
   success?: boolean;
 };
 

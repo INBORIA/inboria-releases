@@ -9,7 +9,9 @@ ALTER TABLE public.emails
   ADD COLUMN IF NOT EXISTS opened_count integer DEFAULT 0,
   ADD COLUMN IF NOT EXISTS tracking_pixel_id text,
   ADD COLUMN IF NOT EXISTS scheduled_send_error text,
-  ADD COLUMN IF NOT EXISTS scheduled_connection_id uuid;
+  ADD COLUMN IF NOT EXISTS scheduled_connection_id uuid,
+  ADD COLUMN IF NOT EXISTS scheduled_attachment_ids text[],
+  ADD COLUMN IF NOT EXISTS snooze_woken_at timestamptz;
 
 ALTER TABLE public.profiles
   ADD COLUMN IF NOT EXISTS tracking_enabled boolean DEFAULT false;

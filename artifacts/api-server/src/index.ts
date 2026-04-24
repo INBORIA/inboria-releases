@@ -2,6 +2,7 @@ import app from "./app";
 import { logger } from "./lib/logger";
 import { startAutoSync, NOISE_SENDER_REGEX, NOISE_SUBJECT_REGEX } from "./services/auto-sync";
 import { startScheduledSendWorker } from "./services/scheduled-send-worker";
+import { startSnoozeWakeWorker } from "./services/snooze-wake-worker";
 import { supabaseAdmin } from "./lib/supabase";
 import { getEmailOAuthRedirectUri } from "./lib/urls";
 
@@ -545,4 +546,5 @@ app.listen(port, (err) => {
   purgeNoiseTasks();
   startAutoSync();
   startScheduledSendWorker();
+  startSnoozeWakeWorker();
 });

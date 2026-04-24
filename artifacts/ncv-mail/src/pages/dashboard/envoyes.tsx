@@ -32,6 +32,7 @@ import {
   CheckSquare,
   Square,
   Check,
+  Eye,
 } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -315,6 +316,21 @@ export default function Envoyes() {
                         {(email as any).attachmentCount > 0 && (
                           <AttachmentBadge count={(email as any).attachmentCount} />
                         )}
+                        {(() => {
+                          const oc = (email as any).openedCount as number | undefined;
+                          const oa = (email as any).openedAt as string | undefined;
+                          if (typeof oc !== "number" || oc <= 0) return null;
+                          return (
+                            <span
+                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px]"
+                              data-testid={`badge-opened-row-${email.id}`}
+                              title={oa ? (t("wave1.openedAtLabel", { date: format(new Date(oa), "PPp", { locale: dateFnsLocale }) }) as string) : undefined}
+                            >
+                              <Eye className="w-2.5 h-2.5" />
+                              {t("wave1.openedBadgeCount", { count: oc })}
+                            </span>
+                          );
+                        })()}
                         <span className="text-[10px] text-[#8b9cb3]">
                           {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
                         </span>

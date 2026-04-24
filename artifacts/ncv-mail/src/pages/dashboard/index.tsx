@@ -11,6 +11,7 @@ import {
   useUpdateEmail,
   useDeleteEmail,
   useSendEmail,
+  useCancelPendingSend,
   useGenerateDraft,
   getListEmailsQueryKey,
   useGetDashboardSummary,
@@ -366,7 +367,10 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 const oa = (email as any).openedAt as string | undefined;
                 const sentAt = (email as any).sentAt;
                 const snDate = sn ? new Date(sn) : null;
-                const showSnoozed = !!(snDate && !isNaN(snDate.getTime()) && snDate.getTime() > Date.now());
+                // Wave 1 — badge persists while a snooze decision exists (past or future).
+                // PATCH /emails/:id status=read clears snoozed_until, so any non-null value
+                // means the user hasn't acknowledged the snooze yet.
+                const showSnoozed = !!(snDate && !isNaN(snDate.getTime()));
                 const showOpened = !!(sentAt && typeof oc === "number" && oc > 0);
                 if (!showSnoozed && !showOpened) return null;
                 return (
@@ -1412,6 +1416,7 @@ export default function Dashboard() {
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
   const sendEmailMut = useSendEmail();
+  const cancelPendingSendMut = useCancelPendingSend();
   const generateDraftMut = useGenerateDraft();
   const recategorizeMut = useRecategorizeUncategorized();
   const bulkUpdateMut = useBulkUpdateEmails();
@@ -1927,6 +1932,9 @@ export default function Dashboard() {
     if (projectId) data.projectId = projectId;
 
     let cancelled = false;
+    const pendingId = (typeof crypto !== "undefined" && (crypto as any).randomUUID)
+      ? (crypto as any).randomUUID() as string
+      : `pend-${Date.now()}-${Math.random().toString(36).slice(2)}`;
     const performSend = () => {
       if (cancelled) return;
       sendEmailMut.mutate(
@@ -1957,6 +1965,11 @@ export default function Dashboard() {
           onClick={() => {
             cancelled = true;
             clearTimeout(timer);
+            // Fire-and-forget audit so other devices know the send was cancelled.
+            cancelPendingSendMut.mutate(
+              { data: { pendingId } },
+              { onError: () => { /* audit-only; never surface */ } }
+            );
             toast({ title: t("wave1.undoCancelled") });
           }}
           data-testid="button-undo-send"

@@ -37,6 +37,7 @@
   "sidebar": {
     "inbox": "Postvak IN",
     "sent": "Verzonden",
+    "scheduled": "Gepland",
     "archives": "Archief",
     "junk": "Ongewenste e-mail",
     "followup": "Opvolging",
@@ -3836,6 +3837,7 @@
     "snoozeApply": "Uitstellen",
     "snoozeCancel": "Annuleren",
     "snoozeWake": "Nu wakker maken",
+    "snoozeWokenLabel": "Wakker",
     "snoozedUntilLabel": "Uitgesteld tot {{date}}",
     "snoozeSuccess": "Bericht uitgesteld",
     "unsnoozeSuccess": "Bericht terug in inbox",

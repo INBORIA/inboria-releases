@@ -18,4 +18,6 @@ export interface ScheduleEmailBody {
   projectId?: string | null;
   /** ISO timestamp at which to send the email (must be in the future). */
   scheduledSendAt: Date;
+  /** Optional list of upload IDs (returned by /uploads) to attach to the scheduled email. */
+  attachments?: string[];
 }

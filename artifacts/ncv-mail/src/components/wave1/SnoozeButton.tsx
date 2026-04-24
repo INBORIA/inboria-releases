@@ -43,7 +43,11 @@ export function SnoozeButton({ emailId, snoozedUntil, variant = "full", onAfter 
   const snoozeMut = useSnoozeEmail();
   const unsnoozeMut = useUnsnoozeEmail();
 
-  const isSnoozed = !!snoozedUntil && new Date(snoozedUntil).getTime() > Date.now();
+  // Wave 1 — badge persists while a snooze decision exists (past or future) until the
+  // user marks the email as read. Backend PATCH /emails/:id status=read clears the field,
+  // so any non-null value here means "still snoozed in the user's mind".
+  const hasSnoozeDecision = !!snoozedUntil;
+  const isFutureSnooze = !!snoozedUntil && new Date(snoozedUntil).getTime() > Date.now();
 
   const apply = (date: Date) => {
     if (date.getTime() <= Date.now()) {
@@ -83,8 +87,11 @@ export function SnoozeButton({ emailId, snoozedUntil, variant = "full", onAfter 
     );
   };
 
-  if (isSnoozed) {
+  if (hasSnoozeDecision) {
     const fmt = new Intl.DateTimeFormat(i18n.language, { dateStyle: "short", timeStyle: "short" });
+    const label = isFutureSnooze
+      ? `${t("wave1.snoozeWake")} (${fmt.format(new Date(snoozedUntil!))})`
+      : `${t("wave1.snoozeWokenLabel", "Réveillé")} (${fmt.format(new Date(snoozedUntil!))})`;
     return (
       <Button
         size="sm"
@@ -92,9 +99,10 @@ export function SnoozeButton({ emailId, snoozedUntil, variant = "full", onAfter 
         onClick={wake}
         disabled={unsnoozeMut.isPending}
         className="h-7 text-[11px] gap-1 border-amber-500/30 text-amber-300 hover:bg-amber-500/10"
+        title={isFutureSnooze ? t("wave1.snoozeWake") : t("wave1.snoozeWokenLabel", "Réveillé")}
       >
         <BellOff className="w-3 h-3" />
-        {t("wave1.snoozeWake")} ({fmt.format(new Date(snoozedUntil!))})
+        {label}
       </Button>
     );
   }

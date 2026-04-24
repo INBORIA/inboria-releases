@@ -37,6 +37,7 @@
   "sidebar": {
     "inbox": "Réception",
     "sent": "Envoyés",
+    "scheduled": "Programmés",
     "archives": "Archives",
     "junk": "Courrier indésirable",
     "followup": "Suivi",
@@ -2192,6 +2193,7 @@
     "snoozeApply": "Reporter",
     "snoozeCancel": "Annuler",
     "snoozeWake": "Réveiller maintenant",
+    "snoozeWokenLabel": "Réveillé",
     "snoozedUntilLabel": "Reporté jusqu'au {{date}}",
     "snoozeSuccess": "Message reporté",
     "unsnoozeSuccess": "Message remis dans la boîte",

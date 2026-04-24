@@ -1,8 +1,11 @@
+import fs from "fs";
 import { google } from "googleapis";
 import nodemailer from "nodemailer";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { getBackendUrl } from "../lib/urls";
+import { resolveUploadedFiles } from "../routes/attachments";
+import { buildMimeWithAttachments, type ResolvedAttachment } from "../routes/emails";
 
 const POLL_INTERVAL_MS = 60_000;
 const MAX_BATCH = 25;
@@ -28,6 +31,25 @@ async function sendOneScheduled(row: any): Promise<void> {
   const replyToEmailId: number | null = row.reply_to_email_id || null;
   const connectionId: string | null = row.scheduled_connection_id || null;
   const pixelId: string | null = row.tracking_pixel_id || null;
+  const attachmentIds: string[] = Array.isArray(row.scheduled_attachment_ids)
+    ? (row.scheduled_attachment_ids as unknown[]).filter((x): x is string => typeof x === "string")
+    : [];
+
+  let resolvedAttachments: ResolvedAttachment[] = [];
+  if (attachmentIds.length > 0) {
+    const resolved = resolveUploadedFiles(attachmentIds, userId);
+    if (!resolved) {
+      await supabaseAdmin
+        .from("emails")
+        .update({
+          status: "scheduled_failed",
+          scheduled_send_error: "Pièces jointes invalides ou expirées",
+        })
+        .eq("id", row.id);
+      return;
+    }
+    resolvedAttachments = resolved;
+  }
 
   if (!to || !subject || !body) {
     await supabaseAdmin
@@ -60,8 +82,12 @@ async function sendOneScheduled(row: any): Promise<void> {
   }
 
   const fromAddress: string = conn.email_address;
-  const isHtml = pixelId !== null;
-  const finalBody = pixelId ? `${bodyAsHtml(body)}${buildTrackingPixelHtml(pixelId)}` : body;
+  const hasAttachments = resolvedAttachments.length > 0;
+  // Tracking pixel and attachments are mutually exclusive in the scheduled flow,
+  // matching the immediate-send route behaviour, to keep MIME construction simple.
+  const useTrackingPixel = pixelId !== null && !hasAttachments;
+  const isHtml = useTrackingPixel;
+  const finalBody = useTrackingPixel ? `${bodyAsHtml(body)}${buildTrackingPixelHtml(pixelId!)}` : body;
 
   try {
     if (conn.provider === "gmail") {
@@ -89,21 +115,38 @@ async function sendOneScheduled(row: any): Promise<void> {
         }
       }
 
-      const ctype = isHtml ? "text/html" : "text/plain";
-      const messageParts = [
-        `To: ${to}`,
-        `From: ${fromAddress}`,
-        `Subject: ${subject}`,
-        ...extraHeaders,
-        `Content-Type: ${ctype}; charset=utf-8`,
-        "",
-        finalBody,
-      ];
-      const raw = Buffer.from(messageParts.join("\r\n"))
-        .toString("base64")
-        .replace(/\+/g, "-")
-        .replace(/\//g, "_")
-        .replace(/=+$/, "");
+      let raw: string;
+      if (hasAttachments) {
+        const mimeMessage = buildMimeWithAttachments(
+          to,
+          fromAddress,
+          subject,
+          finalBody,
+          resolvedAttachments,
+          extraHeaders
+        );
+        raw = Buffer.from(mimeMessage)
+          .toString("base64")
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=+$/, "");
+      } else {
+        const ctype = isHtml ? "text/html" : "text/plain";
+        const messageParts = [
+          `To: ${to}`,
+          `From: ${fromAddress}`,
+          `Subject: ${subject}`,
+          ...extraHeaders,
+          `Content-Type: ${ctype}; charset=utf-8`,
+          "",
+          finalBody,
+        ];
+        raw = Buffer.from(messageParts.join("\r\n"))
+          .toString("base64")
+          .replace(/\+/g, "-")
+          .replace(/\//g, "_")
+          .replace(/=+$/, "");
+      }
       await gmail.users.messages.send({ userId: "me", requestBody: { raw } });
     } else if (conn.provider === "outlook") {
       let accessToken = conn.access_token;
@@ -136,6 +179,16 @@ async function sendOneScheduled(row: any): Promise<void> {
           subject,
           body: { contentType: isHtml ? "HTML" : "Text", content: finalBody },
           toRecipients: [{ emailAddress: { address: to } }],
+          ...(hasAttachments
+            ? {
+                attachments: resolvedAttachments.map((att) => ({
+                  "@odata.type": "#microsoft.graph.fileAttachment",
+                  name: att.filename,
+                  contentType: att.contentType,
+                  contentBytes: fs.readFileSync(att.serverPath).toString("base64"),
+                })),
+              }
+            : {}),
         },
         saveToSentItems: true,
       };
@@ -169,6 +222,15 @@ async function sendOneScheduled(row: any): Promise<void> {
         to,
         subject,
         ...(isHtml ? { html: finalBody } : { text: finalBody }),
+        ...(hasAttachments
+          ? {
+              attachments: resolvedAttachments.map((att) => ({
+                filename: att.filename,
+                path: att.serverPath,
+                contentType: att.contentType,
+              })),
+            }
+          : {}),
       });
     }
 

@@ -37,6 +37,7 @@
   "sidebar": {
     "inbox": "Posteingang",
     "sent": "Gesendet",
+    "scheduled": "Geplant",
     "archives": "Archive",
     "junk": "Junk-E-Mail",
     "followup": "Nachverfolgung",
@@ -3836,6 +3837,7 @@
     "snoozeApply": "Erinnern",
     "snoozeCancel": "Abbrechen",
     "snoozeWake": "Jetzt aufwecken",
+    "snoozeWokenLabel": "Geweckt",
     "snoozedUntilLabel": "Erinnert bis {{date}}",
     "snoozeSuccess": "Nachricht erinnert",
     "unsnoozeSuccess": "Nachricht zurück im Posteingang",

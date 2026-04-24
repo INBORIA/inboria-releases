@@ -42,6 +42,8 @@ import type {
   BulkUpdateEmails200,
   BulkUpdateEmailsBody,
   CancelInvitation200,
+  CancelPendingSend200,
+  CancelPendingSendBody,
   CancelScheduledEmail200,
   Category,
   CategoryCount,
@@ -4200,6 +4202,93 @@ export const useCancelScheduledEmail = <
   TContext
 > => {
   return useMutation(getCancelScheduledEmailMutationOptions(options));
+};
+
+/**
+ * Client-side undo flow registers the cancellation here so that the server can reflect the user's intent for downstream coordination (multi-device awareness, audit trail). Returns 200 even when the pendingId was never registered (idempotent).
+ * @summary Record a 10-second-undo cancellation for a pending send
+ */
+export const getCancelPendingSendUrl = () => {
+  return `/api/emails/cancel-pending`;
+};
+
+export const cancelPendingSend = async (
+  cancelPendingSendBody: CancelPendingSendBody,
+  options?: RequestInit,
+): Promise<CancelPendingSend200> => {
+  return customFetch<CancelPendingSend200>(getCancelPendingSendUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(cancelPendingSendBody),
+  });
+};
+
+export const getCancelPendingSendMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof cancelPendingSend>>,
+    TError,
+    { data: BodyType<CancelPendingSendBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof cancelPendingSend>>,
+  TError,
+  { data: BodyType<CancelPendingSendBody> },
+  TContext
+> => {
+  const mutationKey = ["cancelPendingSend"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof cancelPendingSend>>,
+    { data: BodyType<CancelPendingSendBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return cancelPendingSend(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CancelPendingSendMutationResult = NonNullable<
+  Awaited<ReturnType<typeof cancelPendingSend>>
+>;
+export type CancelPendingSendMutationBody = BodyType<CancelPendingSendBody>;
+export type CancelPendingSendMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Record a 10-second-undo cancellation for a pending send
+ */
+export const useCancelPendingSend = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof cancelPendingSend>>,
+    TError,
+    { data: BodyType<CancelPendingSendBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof cancelPendingSend>>,
+  TError,
+  { data: BodyType<CancelPendingSendBody> },
+  TContext
+> => {
+  return useMutation(getCancelPendingSendMutationOptions(options));
 };
 
 /**

@@ -37,6 +37,7 @@
   "sidebar": {
     "inbox": "Bandeja de entrada",
     "sent": "Enviados",
+    "scheduled": "Programados",
     "archives": "Archivos",
     "junk": "Correo no deseado",
     "followup": "Seguimiento",
@@ -3836,6 +3837,7 @@
     "snoozeApply": "Posponer",
     "snoozeCancel": "Cancelar",
     "snoozeWake": "Despertar ahora",
+    "snoozeWokenLabel": "Despertado",
     "snoozedUntilLabel": "Pospuesto hasta {{date}}",
     "snoozeSuccess": "Mensaje pospuesto",
     "unsnoozeSuccess": "Mensaje de vuelta en la bandeja",

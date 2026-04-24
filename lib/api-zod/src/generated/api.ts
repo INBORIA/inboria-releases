@@ -1193,6 +1193,12 @@ export const ScheduleEmailBody = zod.object({
     .describe(
       "ISO timestamp at which to send the email (must be in the future).",
     ),
+  attachments: zod
+    .array(zod.string())
+    .optional()
+    .describe(
+      "Optional list of upload IDs (returned by \/uploads) to attach to the scheduled email.",
+    ),
 });
 
 export const ScheduleEmailResponse = zod.object({
@@ -1227,6 +1233,22 @@ export const CancelScheduledEmailParams = zod.object({
 });
 
 export const CancelScheduledEmailResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
+ * Client-side undo flow registers the cancellation here so that the server can reflect the user's intent for downstream coordination (multi-device awareness, audit trail). Returns 200 even when the pendingId was never registered (idempotent).
+ * @summary Record a 10-second-undo cancellation for a pending send
+ */
+export const CancelPendingSendBody = zod.object({
+  pendingId: zod
+    .string()
+    .describe(
+      "Client-generated identifier for a pending send within its 10-second undo window.",
+    ),
+});
+
+export const CancelPendingSendResponse = zod.object({
   success: zod.boolean().optional(),
 });
 
