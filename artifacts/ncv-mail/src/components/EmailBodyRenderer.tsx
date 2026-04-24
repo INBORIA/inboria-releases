@@ -132,11 +132,18 @@ function cleanPlainText(text: string): string {
   return cleaned;
 }
 
+function fixDoubleEncodedEntities(input: string): string {
+  return input
+    .replace(/&amp;#x([0-9a-f]+);/gi, "&#x$1;")
+    .replace(/&amp;#(\d+);/g, "&#$1;")
+    .replace(/&amp;(amp|lt|gt|quot|apos|nbsp);/gi, "&$1;");
+}
+
 export function cleanEmailBody(raw: string): string {
   if (!raw) return "";
 
   if (isHtml(raw) && !raw.trimStart().startsWith("Content-Type:") && !raw.trimStart().startsWith("MIME-Version:")) {
-    return raw;
+    return fixDoubleEncodedEntities(raw);
   }
 
   if (hasMimeArtifacts(raw)) {
