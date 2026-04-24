@@ -37,7 +37,8 @@
   "sidebar": {
     "inbox": "Réception",
     "sent": "Envoyés",
-    "scheduled": "Reportés & Programmés",
+    "snoozed": "Reportés",
+    "scheduled": "Programmés",
     "archives": "Archives",
     "junk": "Courrier indésirable",
     "followup": "Suivi",

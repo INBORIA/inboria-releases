@@ -37,7 +37,8 @@
   "sidebar": {
     "inbox": "Bandeja de entrada",
     "sent": "Enviados",
-    "scheduled": "Pospuestos & Programados",
+    "snoozed": "Pospuestos",
+    "scheduled": "Programados",
     "archives": "Archivos",
     "junk": "Correo no deseado",
     "followup": "Seguimiento",

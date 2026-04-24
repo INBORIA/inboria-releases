@@ -37,7 +37,8 @@
   "sidebar": {
     "inbox": "Posteingang",
     "sent": "Gesendet",
-    "scheduled": "Zurückgestellt & Geplant",
+    "snoozed": "Zurückgestellt",
+    "scheduled": "Geplant",
     "archives": "Archive",
     "junk": "Junk-E-Mail",
     "followup": "Nachverfolgung",

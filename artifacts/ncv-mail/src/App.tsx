@@ -23,6 +23,7 @@ import Corbeille from "@/pages/dashboard/corbeille";
 import Envoyes from "@/pages/dashboard/envoyes";
 import Suivi from "@/pages/dashboard/suivi";
 import Programmes from "@/pages/dashboard/programmes";
+import Reportes from "@/pages/dashboard/reportes";
 import BilanQuotidien from "@/pages/dashboard/bilan";
 import Taches from "@/pages/dashboard/taches";
 import Relances from "@/pages/dashboard/relances";
@@ -165,6 +166,7 @@ function Router() {
       <Route path="/dashboard/envoyes" component={() => <ProtectedRoute component={Envoyes} />} />
       <Route path="/dashboard/suivi" component={() => <ProtectedRoute component={Suivi} />} />
       <Route path="/dashboard/programmes" component={() => <ProtectedRoute component={Programmes} />} />
+      <Route path="/dashboard/reportes" component={() => <ProtectedRoute component={Reportes} />} />
       <Route path="/dashboard/archives" component={() => <ProtectedRoute component={Archives} />} />
       <Route path="/dashboard/indesirables" component={() => <ProtectedRoute component={Indesirables} />} />
       <Route path="/dashboard/corbeille" component={() => <ProtectedRoute component={Corbeille} />} />
