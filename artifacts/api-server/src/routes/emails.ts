@@ -280,7 +280,8 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
   }
 });
 
-router.get("/emails/:id", requireAuth, async (req, res): Promise<void> => {
+router.get("/emails/:id", requireAuth, async (req, res, next): Promise<void> => {
+  if (!/^\d+$/.test(String(req.params.id))) { next(); return; }
   try {
     const { data: email, error } = await supabaseAdmin
       .from("emails")
