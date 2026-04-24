@@ -30,7 +30,8 @@
     "openai": "^6.33.0",
     "pino": "^9",
     "pino-http": "^10",
-    "scrypt-js": "^3.0.1"
+    "scrypt-js": "^3.0.1",
+    "zod": "catalog:"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",

@@ -23,6 +23,8 @@ import {
   CalendarDays,
   ShieldCheck,
   MailCheck,
+  FileText,
+  Wand2,
 } from "lucide-react";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { cn } from "@/lib/utils";
@@ -65,6 +67,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     { name: t("sidebar.archives"), href: "/dashboard/archives", icon: Archive },
     { name: t("sidebar.dailyBrief"), href: "/dashboard/bilan", icon: LayoutDashboard },
     { name: t("sidebar.classification"), href: "/dashboard/classement", icon: Tags },
+    { name: t("templates.title"), href: "/dashboard/parametres/templates", icon: FileText },
+    { name: t("rules.title"), href: "/dashboard/parametres/regles", icon: Wand2 },
     { name: t("sidebar.settings"), href: "/dashboard/parametres", icon: Settings },
     { name: t("sidebar.subscription"), href: "/dashboard/abonnement", icon: CreditCard },
     { name: t("sidebar.manual"), href: "/dashboard/manuel", icon: BookOpen },

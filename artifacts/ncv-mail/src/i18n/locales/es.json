@@ -3866,5 +3866,118 @@
     "openedBadgeCount": "Abierto {{count}} veces",
     "openedAtLabel": "Primera apertura: {{date}}",
     "notOpenedYet": "Aún no abierto"
+  },
+  "templates": {
+    "title": "Plantillas",
+    "subtitle": "Sus plantillas de respuesta reutilizables",
+    "newButton": "Nueva plantilla",
+    "newTitle": "Nueva plantilla",
+    "editTitle": "Editar plantilla",
+    "empty": "Sin plantillas aún",
+    "emptyHint": "Cree una, o guarde un correo enviado como plantilla desde su página de detalle.",
+    "subjectLabel": "Asunto",
+    "usedCount": "Usada {{count}} veces",
+    "saved": "Plantilla guardada",
+    "created": "Plantilla creada",
+    "deleted": "Plantilla eliminada",
+    "deleteTitle": "¿Eliminar esta plantilla?",
+    "deleteConfirm": "La plantilla \"{{name}}\" se eliminará permanentemente.",
+    "bodyPlaceholder": "Hola {{first_name}},\n\nGracias por su mensaje…",
+    "variablesHint": "Use la sintaxis {{variable}} para insertar campos dinámicos.",
+    "fields": {
+      "name": "Nombre",
+      "subject": "Asunto",
+      "body": "Cuerpo"
+    },
+    "errors": {
+      "nameRequired": "El nombre es obligatorio",
+      "saveFailed": "Error al guardar",
+      "suggestNameFailed": "Sugerencia de nombre no disponible"
+    },
+    "suggestionTitle": "Plantillas sugeridas",
+    "insert": "Insertar",
+    "saveAsTemplate": "Guardar como plantilla",
+    "savedAsTemplate": "Correo guardado como plantilla",
+    "suggestNameWithAI": "Sugerir un nombre con IA",
+    "suggestNameShort": "Sugerir"
+  },
+  "rules": {
+    "title": "Reglas automáticas",
+    "subtitle": "Describa sus reglas en lenguaje natural — la IA las convierte en automatizaciones.",
+    "newButton": "Nueva regla",
+    "newTitle": "Nueva regla",
+    "editTitle": "Editar regla",
+    "empty": "Sin reglas aún",
+    "emptyHint": "Ejemplo: \"Cuando un correo viene de noreply@github.com, archívalo.\"",
+    "nameLabel": "Nombre",
+    "namePlaceholder": "p. ej. Archivo GitHub",
+    "nlLabel": "Describa la regla",
+    "nlPlaceholder": "P. ej. Cuando un correo viene de noreply@github.com, archívalo.",
+    "nlHint": "La IA convierte su frase en una regla estructurada. Puede simularla antes de guardar.",
+    "parseButton": "Analizar",
+    "simulateButton": "Simular en los últimos 100 correos",
+    "simulationResult": "{{count}} de {{total}} correos coinciden.",
+    "parsed": "Regla analizada",
+    "parsedByAI": "Analizada por IA",
+    "parsedByHeuristic": "Reconocida automáticamente (gratis)",
+    "saved": "Regla guardada",
+    "created": "Regla creada",
+    "deleted": "Regla eliminada",
+    "deleteTitle": "¿Eliminar esta regla?",
+    "deleteConfirm": "La regla \"{{name}}\" se eliminará permanentemente.",
+    "runsCount": "{{count}} ejecuciones",
+    "ifLabel": "Si",
+    "thenLabel": "Entonces",
+    "and": "y",
+    "or": "o",
+    "tabs": {
+      "list": "Reglas",
+      "audit": "Historial 24h"
+    },
+    "auditEmpty": "Ninguna acción de regla activada en las últimas 24 horas.",
+    "auditEmail": "Correo",
+    "rolledBack": "Revertida",
+    "rollback": "Revertir",
+    "rollbackDone": "Acción revertida",
+    "field": {
+      "sender": "Remitente",
+      "recipient": "Destinatario",
+      "subject": "Asunto",
+      "body": "Cuerpo",
+      "category": "Categoría"
+    },
+    "op": {
+      "contains": "contiene",
+      "not_contains": "no contiene",
+      "equals": "es igual a",
+      "starts_with": "comienza con",
+      "ends_with": "termina con",
+      "regex": "coincide con"
+    },
+    "action": {
+      "archive": "archivar",
+      "mark_read": "marcar como leído",
+      "categorize": "clasificar como \"{{category}}\"",
+      "set_priority": "marcar como {{priority}}",
+      "move_to_project": "mover al proyecto \"{{project}}\"",
+      "transfer": "reenviar a {{to}}",
+      "create_task": "crear tarea \"{{title}}\"",
+      "notify": "enviar una notificación",
+      "slack_notify": "notificar en Slack",
+      "notion_create": "crear página de Notion \"{{title}}\"",
+      "assign": "asignar a un miembro"
+    },
+    "cond": {
+      "hasAttachment": "con adjunto",
+      "noAttachment": "sin adjunto",
+      "projectIs": "proyecto = \"{{value}}\""
+    },
+    "errors": {
+      "tooShort": "Por favor, escriba una instrucción más específica.",
+      "parseFailed": "No se pudo analizar esta instrucción.",
+      "simulateFailed": "Simulación fallida.",
+      "saveFailed": "Error al guardar.",
+      "rollbackFailed": "Reversión fallida."
+    }
   }
 }

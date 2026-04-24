@@ -2938,6 +2938,334 @@ paths:
         "404":
           description: Contact not found
 
+  /templates:
+    get:
+      operationId: listTemplates
+      tags: [templates]
+      summary: List user templates
+      responses:
+        "200":
+          description: List of templates
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/EmailTemplate"
+    post:
+      operationId: createTemplate
+      tags: [templates]
+      summary: Create a template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTemplateBody"
+      responses:
+        "201":
+          description: Created template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmailTemplate"
+
+  /templates/{id}:
+    patch:
+      operationId: updateTemplate
+      tags: [templates]
+      summary: Update a template
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateTemplateBody"
+      responses:
+        "200":
+          description: Updated template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmailTemplate"
+    delete:
+      operationId: deleteTemplate
+      tags: [templates]
+      summary: Delete a template
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "204":
+          description: Deleted
+
+  /templates/{id}/use:
+    post:
+      operationId: incrementTemplateUsage
+      tags: [templates]
+      summary: Increment template usage counter
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Updated counter
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok, usageCount]
+                properties:
+                  ok: { type: boolean }
+                  usageCount: { type: integer }
+
+  /templates/from-email/{emailId}:
+    post:
+      operationId: createTemplateFromEmail
+      tags: [templates]
+      summary: Create a template from an existing email (AI-categorized)
+      parameters:
+        - name: emailId
+          in: path
+          required: true
+          schema:
+            type: integer
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name: { type: string }
+      responses:
+        "201":
+          description: Created template
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EmailTemplate"
+
+  /templates/suggest-name:
+    post:
+      operationId: suggestTemplateName
+      tags: [templates]
+      summary: AI-suggest a short name for a template
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                subject: { type: string }
+                body: { type: string }
+                sourceEmailId: { type: integer }
+      responses:
+        "200":
+          description: Suggested template name
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [name]
+                properties:
+                  name: { type: string }
+
+  /templates/suggest:
+    get:
+      operationId: suggestTemplates
+      tags: [templates]
+      summary: AI-suggest 1-3 templates relevant to a given email
+      parameters:
+        - in: query
+          name: emailId
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Suggested templates
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [cached, templates]
+                properties:
+                  cached: { type: boolean }
+                  templates:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/EmailTemplate"
+
+  /automation-rules:
+    get:
+      operationId: listAutomationRules
+      tags: [automation-rules]
+      summary: List user automation rules
+      responses:
+        "200":
+          description: List of rules
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AutomationRule"
+    post:
+      operationId: createAutomationRule
+      tags: [automation-rules]
+      summary: Create an automation rule
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAutomationRuleBody"
+      responses:
+        "201":
+          description: Created rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AutomationRule"
+
+  /automation-rules/{id}:
+    patch:
+      operationId: updateAutomationRule
+      tags: [automation-rules]
+      summary: Update an automation rule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateAutomationRuleBody"
+      responses:
+        "200":
+          description: Updated rule
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AutomationRule"
+    delete:
+      operationId: deleteAutomationRule
+      tags: [automation-rules]
+      summary: Delete an automation rule
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204":
+          description: Deleted
+
+  /automation-rules/parse:
+    post:
+      operationId: parseAutomationRule
+      tags: [automation-rules]
+      summary: Parse a natural-language instruction into a structured rule (preview, not saved)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [input]
+              properties:
+                input: { type: string }
+                name: { type: string }
+      responses:
+        "200":
+          description: Parsed rule
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [source, rule]
+                properties:
+                  source:
+                    type: string
+                    enum: [heuristic, ai]
+                  rule:
+                    $ref: "#/components/schemas/AutomationRuleDraft"
+
+  /automation-rules/simulate:
+    post:
+      operationId: simulateAutomationRule
+      tags: [automation-rules]
+      summary: Simulate a rule against the user's last 100 emails
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [conditions]
+              properties:
+                conditions:
+                  $ref: "#/components/schemas/RuleConditions"
+      responses:
+        "200":
+          description: Simulation result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SimulationResult"
+
+  /automation-rules/audit:
+    get:
+      operationId: listAutomationRuleAudit
+      tags: [automation-rules]
+      summary: List rule executions in the last 24h (rollback window)
+      responses:
+        "200":
+          description: Audit list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/RuleAuditEntry"
+
+  /automation-rules/audit/{id}/rollback:
+    post:
+      operationId: rollbackRuleExecution
+      tags: [automation-rules]
+      summary: Rollback a single executed action (within 24h)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Rolled back
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok: { type: boolean }
+
 components:
   schemas:
     HealthStatus:
@@ -5014,3 +5342,190 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ContactAttachment"
+
+    EmailTemplate:
+      type: object
+      required: [id, name, subject, body, variables, usageCount, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        subject: { type: string }
+        body: { type: string }
+        categoryAi:
+          type: ["string", "null"]
+        variables:
+          type: array
+          items: { type: string }
+        usageCount: { type: integer }
+        sourceEmailId:
+          type: ["integer", "null"]
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    CreateTemplateBody:
+      type: object
+      required: [name, body]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 120 }
+        subject: { type: string }
+        body: { type: string }
+        categoryAi: { type: string }
+        sourceEmailId: { type: integer }
+
+    UpdateTemplateBody:
+      type: object
+      properties:
+        name: { type: string }
+        subject: { type: string }
+        body: { type: string }
+        categoryAi: { type: string }
+
+    RuleCondition:
+      type: object
+      required: [field, op, value]
+      properties:
+        field:
+          type: string
+          enum: [sender, recipient, subject, body, category, has_attachment, project]
+        op:
+          type: string
+          enum: [contains, not_contains, equals, starts_with, ends_with, regex, is_true, is_false]
+        value: { type: string, maxLength: 500 }
+
+    RuleConditions:
+      type: object
+      properties:
+        all:
+          type: array
+          items: { $ref: "#/components/schemas/RuleCondition" }
+        any:
+          type: array
+          items: { $ref: "#/components/schemas/RuleCondition" }
+
+    RuleAction:
+      type: object
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum:
+            - archive
+            - categorize
+            - set_priority
+            - assign
+            - transfer
+            - create_task
+            - notify
+            - mark_read
+            - move_to_project
+            - slack_notify
+            - notion_create
+        category: { type: string }
+        priority:
+          type: string
+          enum: [urgent, moyen, faible]
+        userId: { type: string }
+        projectId: { type: string }
+        to: { type: string }
+        title: { type: string }
+        message: { type: string }
+
+    AutomationRule:
+      type: object
+      required: [id, name, conditions, actions, enabled, runsCount, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        naturalLanguageInput:
+          type: ["string", "null"]
+        conditions:
+          $ref: "#/components/schemas/RuleConditions"
+        actions:
+          type: array
+          items: { $ref: "#/components/schemas/RuleAction" }
+        enabled: { type: boolean }
+        connectionId:
+          type: ["string", "null"]
+        runsCount: { type: integer }
+        lastRunAt:
+          type: ["string", "null"]
+          format: date-time
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    AutomationRuleDraft:
+      type: object
+      required: [name, conditions, actions]
+      properties:
+        name: { type: string }
+        conditions:
+          $ref: "#/components/schemas/RuleConditions"
+        actions:
+          type: array
+          items: { $ref: "#/components/schemas/RuleAction" }
+
+    CreateAutomationRuleBody:
+      type: object
+      required: [name, conditions, actions]
+      properties:
+        name: { type: string }
+        conditions:
+          $ref: "#/components/schemas/RuleConditions"
+        actions:
+          type: array
+          items: { $ref: "#/components/schemas/RuleAction" }
+        enabled: { type: boolean }
+        connectionId: { type: string }
+        naturalLanguageInput: { type: string }
+
+    UpdateAutomationRuleBody:
+      type: object
+      properties:
+        name: { type: string }
+        conditions:
+          $ref: "#/components/schemas/RuleConditions"
+        actions:
+          type: array
+          items: { $ref: "#/components/schemas/RuleAction" }
+        enabled: { type: boolean }
+
+    SimulationMatch:
+      type: object
+      required: [id, sender, subject, createdAt]
+      properties:
+        id: { type: integer }
+        sender: { type: string }
+        subject: { type: string }
+        createdAt: { type: string, format: date-time }
+
+    SimulationResult:
+      type: object
+      required: [totalScanned, matchCount, matches]
+      properties:
+        totalScanned: { type: integer }
+        matchCount: { type: integer }
+        matches:
+          type: array
+          items: { $ref: "#/components/schemas/SimulationMatch" }
+
+    RuleAuditEntry:
+      type: object
+      required: [id, actionType, actionPayload, occurredAt]
+      properties:
+        id: { type: string }
+        ruleId:
+          type: ["string", "null"]
+        emailId:
+          type: ["integer", "null"]
+        actionType: { type: string }
+        actionPayload:
+          type: object
+          additionalProperties: true
+        previousState:
+          type: ["object", "null"]
+          additionalProperties: true
+        rolledBackAt:
+          type: ["string", "null"]
+          format: date-time
+        occurredAt: { type: string, format: date-time }
+

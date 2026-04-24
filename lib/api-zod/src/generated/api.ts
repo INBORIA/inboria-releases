@@ -2878,3 +2878,745 @@ export const GetContactResponse = zod.object({
     }),
   ),
 });
+
+/**
+ * @summary List user templates
+ */
+export const ListTemplatesResponseItem = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  subject: zod.string(),
+  body: zod.string(),
+  categoryAi: zod.string().nullish(),
+  variables: zod.array(zod.string()),
+  usageCount: zod.number(),
+  sourceEmailId: zod.number().nullish(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+export const ListTemplatesResponse = zod.array(ListTemplatesResponseItem);
+
+/**
+ * @summary Create a template
+ */
+export const createTemplateBodyNameMax = 120;
+
+export const CreateTemplateBody = zod.object({
+  name: zod.string().min(1).max(createTemplateBodyNameMax),
+  subject: zod.string().optional(),
+  body: zod.string(),
+  categoryAi: zod.string().optional(),
+  sourceEmailId: zod.number().optional(),
+});
+
+/**
+ * @summary Update a template
+ */
+export const UpdateTemplateParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateTemplateBody = zod.object({
+  name: zod.string().optional(),
+  subject: zod.string().optional(),
+  body: zod.string().optional(),
+  categoryAi: zod.string().optional(),
+});
+
+export const UpdateTemplateResponse = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  subject: zod.string(),
+  body: zod.string(),
+  categoryAi: zod.string().nullish(),
+  variables: zod.array(zod.string()),
+  usageCount: zod.number(),
+  sourceEmailId: zod.number().nullish(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete a template
+ */
+export const DeleteTemplateParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+/**
+ * @summary Increment template usage counter
+ */
+export const IncrementTemplateUsageParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const IncrementTemplateUsageResponse = zod.object({
+  ok: zod.boolean(),
+  usageCount: zod.number(),
+});
+
+/**
+ * @summary Create a template from an existing email (AI-categorized)
+ */
+export const CreateTemplateFromEmailParams = zod.object({
+  emailId: zod.coerce.number(),
+});
+
+export const CreateTemplateFromEmailBody = zod.object({
+  name: zod.string().optional(),
+});
+
+/**
+ * @summary AI-suggest a short name for a template
+ */
+export const SuggestTemplateNameBody = zod.object({
+  subject: zod.string().optional(),
+  body: zod.string().optional(),
+  sourceEmailId: zod.number().optional(),
+});
+
+export const SuggestTemplateNameResponse = zod.object({
+  name: zod.string(),
+});
+
+/**
+ * @summary AI-suggest 1-3 templates relevant to a given email
+ */
+export const SuggestTemplatesQueryParams = zod.object({
+  emailId: zod.coerce.number(),
+});
+
+export const SuggestTemplatesResponse = zod.object({
+  cached: zod.boolean(),
+  templates: zod.array(
+    zod.object({
+      id: zod.string(),
+      name: zod.string(),
+      subject: zod.string(),
+      body: zod.string(),
+      categoryAi: zod.string().nullish(),
+      variables: zod.array(zod.string()),
+      usageCount: zod.number(),
+      sourceEmailId: zod.number().nullish(),
+      createdAt: zod.coerce.date(),
+      updatedAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary List user automation rules
+ */
+export const listAutomationRulesResponseConditionsAllItemValueMax = 500;
+
+export const listAutomationRulesResponseConditionsAnyItemValueMax = 500;
+
+export const ListAutomationRulesResponseItem = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  naturalLanguageInput: zod.string().nullish(),
+  conditions: zod.object({
+    all: zod
+      .array(
+        zod.object({
+          field: zod.enum([
+            "sender",
+            "recipient",
+            "subject",
+            "body",
+            "category",
+            "has_attachment",
+            "project",
+          ]),
+          op: zod.enum([
+            "contains",
+            "not_contains",
+            "equals",
+            "starts_with",
+            "ends_with",
+            "regex",
+            "is_true",
+            "is_false",
+          ]),
+          value: zod
+            .string()
+            .max(listAutomationRulesResponseConditionsAllItemValueMax),
+        }),
+      )
+      .optional(),
+    any: zod
+      .array(
+        zod.object({
+          field: zod.enum([
+            "sender",
+            "recipient",
+            "subject",
+            "body",
+            "category",
+            "has_attachment",
+            "project",
+          ]),
+          op: zod.enum([
+            "contains",
+            "not_contains",
+            "equals",
+            "starts_with",
+            "ends_with",
+            "regex",
+            "is_true",
+            "is_false",
+          ]),
+          value: zod
+            .string()
+            .max(listAutomationRulesResponseConditionsAnyItemValueMax),
+        }),
+      )
+      .optional(),
+  }),
+  actions: zod.array(
+    zod.object({
+      type: zod.enum([
+        "archive",
+        "categorize",
+        "set_priority",
+        "assign",
+        "transfer",
+        "create_task",
+        "notify",
+        "mark_read",
+        "move_to_project",
+        "slack_notify",
+        "notion_create",
+      ]),
+      category: zod.string().optional(),
+      priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
+      userId: zod.string().optional(),
+      projectId: zod.string().optional(),
+      to: zod.string().optional(),
+      title: zod.string().optional(),
+      message: zod.string().optional(),
+    }),
+  ),
+  enabled: zod.boolean(),
+  connectionId: zod.string().nullish(),
+  runsCount: zod.number(),
+  lastRunAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+export const ListAutomationRulesResponse = zod.array(
+  ListAutomationRulesResponseItem,
+);
+
+/**
+ * @summary Create an automation rule
+ */
+export const createAutomationRuleBodyConditionsAllItemValueMax = 500;
+
+export const createAutomationRuleBodyConditionsAnyItemValueMax = 500;
+
+export const CreateAutomationRuleBody = zod.object({
+  name: zod.string(),
+  conditions: zod.object({
+    all: zod
+      .array(
+        zod.object({
+          field: zod.enum([
+            "sender",
+            "recipient",
+            "subject",
+            "body",
+            "category",
+            "has_attachment",
+            "project",
+          ]),
+          op: zod.enum([
+            "contains",
+            "not_contains",
+            "equals",
+            "starts_with",
+            "ends_with",
+            "regex",
+            "is_true",
+            "is_false",
+          ]),
+          value: zod
+            .string()
+            .max(createAutomationRuleBodyConditionsAllItemValueMax),
+        }),
+      )
+      .optional(),
+    any: zod
+      .array(
+        zod.object({
+          field: zod.enum([
+            "sender",
+            "recipient",
+            "subject",
+            "body",
+            "category",
+            "has_attachment",
+            "project",
+          ]),
+          op: zod.enum([
+            "contains",
+            "not_contains",
+            "equals",
+            "starts_with",
+            "ends_with",
+            "regex",
+            "is_true",
+            "is_false",
+          ]),
+          value: zod
+            .string()
+            .max(createAutomationRuleBodyConditionsAnyItemValueMax),
+        }),
+      )
+      .optional(),
+  }),
+  actions: zod.array(
+    zod.object({
+      type: zod.enum([
+        "archive",
+        "categorize",
+        "set_priority",
+        "assign",
+        "transfer",
+        "create_task",
+        "notify",
+        "mark_read",
+        "move_to_project",
+        "slack_notify",
+        "notion_create",
+      ]),
+      category: zod.string().optional(),
+      priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
+      userId: zod.string().optional(),
+      projectId: zod.string().optional(),
+      to: zod.string().optional(),
+      title: zod.string().optional(),
+      message: zod.string().optional(),
+    }),
+  ),
+  enabled: zod.boolean().optional(),
+  connectionId: zod.string().optional(),
+  naturalLanguageInput: zod.string().optional(),
+});
+
+/**
+ * @summary Update an automation rule
+ */
+export const UpdateAutomationRuleParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const updateAutomationRuleBodyConditionsAllItemValueMax = 500;
+
+export const updateAutomationRuleBodyConditionsAnyItemValueMax = 500;
+
+export const UpdateAutomationRuleBody = zod.object({
+  name: zod.string().optional(),
+  conditions: zod
+    .object({
+      all: zod
+        .array(
+          zod.object({
+            field: zod.enum([
+              "sender",
+              "recipient",
+              "subject",
+              "body",
+              "category",
+              "has_attachment",
+              "project",
+            ]),
+            op: zod.enum([
+              "contains",
+              "not_contains",
+              "equals",
+              "starts_with",
+              "ends_with",
+              "regex",
+              "is_true",
+              "is_false",
+            ]),
+            value: zod
+              .string()
+              .max(updateAutomationRuleBodyConditionsAllItemValueMax),
+          }),
+        )
+        .optional(),
+      any: zod
+        .array(
+          zod.object({
+            field: zod.enum([
+              "sender",
+              "recipient",
+              "subject",
+              "body",
+              "category",
+              "has_attachment",
+              "project",
+            ]),
+            op: zod.enum([
+              "contains",
+              "not_contains",
+              "equals",
+              "starts_with",
+              "ends_with",
+              "regex",
+              "is_true",
+              "is_false",
+            ]),
+            value: zod
+              .string()
+              .max(updateAutomationRuleBodyConditionsAnyItemValueMax),
+          }),
+        )
+        .optional(),
+    })
+    .optional(),
+  actions: zod
+    .array(
+      zod.object({
+        type: zod.enum([
+          "archive",
+          "categorize",
+          "set_priority",
+          "assign",
+          "transfer",
+          "create_task",
+          "notify",
+          "mark_read",
+          "move_to_project",
+          "slack_notify",
+          "notion_create",
+        ]),
+        category: zod.string().optional(),
+        priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
+        userId: zod.string().optional(),
+        projectId: zod.string().optional(),
+        to: zod.string().optional(),
+        title: zod.string().optional(),
+        message: zod.string().optional(),
+      }),
+    )
+    .optional(),
+  enabled: zod.boolean().optional(),
+});
+
+export const updateAutomationRuleResponseConditionsAllItemValueMax = 500;
+
+export const updateAutomationRuleResponseConditionsAnyItemValueMax = 500;
+
+export const UpdateAutomationRuleResponse = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  naturalLanguageInput: zod.string().nullish(),
+  conditions: zod.object({
+    all: zod
+      .array(
+        zod.object({
+          field: zod.enum([
+            "sender",
+            "recipient",
+            "subject",
+            "body",
+            "category",
+            "has_attachment",
+            "project",
+          ]),
+          op: zod.enum([
+            "contains",
+            "not_contains",
+            "equals",
+            "starts_with",
+            "ends_with",
+            "regex",
+            "is_true",
+            "is_false",
+          ]),
+          value: zod
+            .string()
+            .max(updateAutomationRuleResponseConditionsAllItemValueMax),
+        }),
+      )
+      .optional(),
+    any: zod
+      .array(
+        zod.object({
+          field: zod.enum([
+            "sender",
+            "recipient",
+            "subject",
+            "body",
+            "category",
+            "has_attachment",
+            "project",
+          ]),
+          op: zod.enum([
+            "contains",
+            "not_contains",
+            "equals",
+            "starts_with",
+            "ends_with",
+            "regex",
+            "is_true",
+            "is_false",
+          ]),
+          value: zod
+            .string()
+            .max(updateAutomationRuleResponseConditionsAnyItemValueMax),
+        }),
+      )
+      .optional(),
+  }),
+  actions: zod.array(
+    zod.object({
+      type: zod.enum([
+        "archive",
+        "categorize",
+        "set_priority",
+        "assign",
+        "transfer",
+        "create_task",
+        "notify",
+        "mark_read",
+        "move_to_project",
+        "slack_notify",
+        "notion_create",
+      ]),
+      category: zod.string().optional(),
+      priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
+      userId: zod.string().optional(),
+      projectId: zod.string().optional(),
+      to: zod.string().optional(),
+      title: zod.string().optional(),
+      message: zod.string().optional(),
+    }),
+  ),
+  enabled: zod.boolean(),
+  connectionId: zod.string().nullish(),
+  runsCount: zod.number(),
+  lastRunAt: zod.coerce.date().nullish(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete an automation rule
+ */
+export const DeleteAutomationRuleParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+/**
+ * @summary Parse a natural-language instruction into a structured rule (preview, not saved)
+ */
+export const ParseAutomationRuleBody = zod.object({
+  input: zod.string(),
+  name: zod.string().optional(),
+});
+
+export const parseAutomationRuleResponseRuleConditionsAllItemValueMax = 500;
+
+export const parseAutomationRuleResponseRuleConditionsAnyItemValueMax = 500;
+
+export const ParseAutomationRuleResponse = zod.object({
+  source: zod.enum(["heuristic", "ai"]),
+  rule: zod.object({
+    name: zod.string(),
+    conditions: zod.object({
+      all: zod
+        .array(
+          zod.object({
+            field: zod.enum([
+              "sender",
+              "recipient",
+              "subject",
+              "body",
+              "category",
+              "has_attachment",
+              "project",
+            ]),
+            op: zod.enum([
+              "contains",
+              "not_contains",
+              "equals",
+              "starts_with",
+              "ends_with",
+              "regex",
+              "is_true",
+              "is_false",
+            ]),
+            value: zod
+              .string()
+              .max(parseAutomationRuleResponseRuleConditionsAllItemValueMax),
+          }),
+        )
+        .optional(),
+      any: zod
+        .array(
+          zod.object({
+            field: zod.enum([
+              "sender",
+              "recipient",
+              "subject",
+              "body",
+              "category",
+              "has_attachment",
+              "project",
+            ]),
+            op: zod.enum([
+              "contains",
+              "not_contains",
+              "equals",
+              "starts_with",
+              "ends_with",
+              "regex",
+              "is_true",
+              "is_false",
+            ]),
+            value: zod
+              .string()
+              .max(parseAutomationRuleResponseRuleConditionsAnyItemValueMax),
+          }),
+        )
+        .optional(),
+    }),
+    actions: zod.array(
+      zod.object({
+        type: zod.enum([
+          "archive",
+          "categorize",
+          "set_priority",
+          "assign",
+          "transfer",
+          "create_task",
+          "notify",
+          "mark_read",
+          "move_to_project",
+          "slack_notify",
+          "notion_create",
+        ]),
+        category: zod.string().optional(),
+        priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
+        userId: zod.string().optional(),
+        projectId: zod.string().optional(),
+        to: zod.string().optional(),
+        title: zod.string().optional(),
+        message: zod.string().optional(),
+      }),
+    ),
+  }),
+});
+
+/**
+ * @summary Simulate a rule against the user's last 100 emails
+ */
+export const simulateAutomationRuleBodyConditionsAllItemValueMax = 500;
+
+export const simulateAutomationRuleBodyConditionsAnyItemValueMax = 500;
+
+export const SimulateAutomationRuleBody = zod.object({
+  conditions: zod.object({
+    all: zod
+      .array(
+        zod.object({
+          field: zod.enum([
+            "sender",
+            "recipient",
+            "subject",
+            "body",
+            "category",
+            "has_attachment",
+            "project",
+          ]),
+          op: zod.enum([
+            "contains",
+            "not_contains",
+            "equals",
+            "starts_with",
+            "ends_with",
+            "regex",
+            "is_true",
+            "is_false",
+          ]),
+          value: zod
+            .string()
+            .max(simulateAutomationRuleBodyConditionsAllItemValueMax),
+        }),
+      )
+      .optional(),
+    any: zod
+      .array(
+        zod.object({
+          field: zod.enum([
+            "sender",
+            "recipient",
+            "subject",
+            "body",
+            "category",
+            "has_attachment",
+            "project",
+          ]),
+          op: zod.enum([
+            "contains",
+            "not_contains",
+            "equals",
+            "starts_with",
+            "ends_with",
+            "regex",
+            "is_true",
+            "is_false",
+          ]),
+          value: zod
+            .string()
+            .max(simulateAutomationRuleBodyConditionsAnyItemValueMax),
+        }),
+      )
+      .optional(),
+  }),
+});
+
+export const SimulateAutomationRuleResponse = zod.object({
+  totalScanned: zod.number(),
+  matchCount: zod.number(),
+  matches: zod.array(
+    zod.object({
+      id: zod.number(),
+      sender: zod.string(),
+      subject: zod.string(),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+});
+
+/**
+ * @summary List rule executions in the last 24h (rollback window)
+ */
+export const ListAutomationRuleAuditResponseItem = zod.object({
+  id: zod.string(),
+  ruleId: zod.string().nullish(),
+  emailId: zod.number().nullish(),
+  actionType: zod.string(),
+  actionPayload: zod.record(zod.string(), zod.unknown()),
+  previousState: zod.record(zod.string(), zod.unknown()).nullish(),
+  rolledBackAt: zod.coerce.date().nullish(),
+  occurredAt: zod.coerce.date(),
+});
+export const ListAutomationRuleAuditResponse = zod.array(
+  ListAutomationRuleAuditResponseItem,
+);
+
+/**
+ * @summary Rollback a single executed action (within 24h)
+ */
+export const RollbackRuleExecutionParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const RollbackRuleExecutionResponse = zod.object({
+  ok: zod.boolean(),
+});

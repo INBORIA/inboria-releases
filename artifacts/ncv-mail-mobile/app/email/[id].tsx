@@ -10,6 +10,8 @@ import {
   TextInput,
   Alert,
   Share,
+  Modal,
+  Pressable,
 } from "react-native";
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -24,6 +26,8 @@ import {
   useGetProfile,
   useCreateTask,
   useCreateAppointment,
+  useListTemplates,
+  useIncrementTemplateUsage,
   getListEmailsQueryKey,
   getGetEmailQueryKey,
   getListTasksQueryKey,
@@ -33,6 +37,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useColors } from "@/hooks/useColors";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { cleanEmailBody } from "@/utils/cleanEmailBody";
+import { applyTemplateVariables } from "@/utils/templateVariables";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/contexts/AuthContext";
 import { convert as htmlToPlainText } from "html-to-text";
@@ -138,6 +143,9 @@ export default function EmailDetailScreen() {
   const [replyTo, setReplyTo] = useState("");
   const [replySubject, setReplySubject] = useState("");
   const [replyText, setReplyText] = useState("");
+  const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
+  const { data: templatesList } = useListTemplates({ query: { enabled: replyOpen } });
+  const useTemplateMut = useIncrementTemplateUsage();
   const [showPriorityPicker, setShowPriorityPicker] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
   const [showProjectPicker, setShowProjectPicker] = useState(false);
@@ -850,7 +858,19 @@ export default function EmailDetailScreen() {
               style={[s.input, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
             />
 
-            <Text style={[s.fieldLabel, { color: colors.mutedForeground }]}>{t("emailDetail.message")}</Text>
+            <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginTop: 8 }}>
+              <Text style={[s.fieldLabel, { color: colors.mutedForeground }]}>{t("emailDetail.message")}</Text>
+              {(templatesList && (templatesList as any).length > 0) ? (
+                <TouchableOpacity
+                  onPress={() => setTemplatePickerOpen(true)}
+                  style={{ flexDirection: "row", alignItems: "center", gap: 4, paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6, borderWidth: 1, borderColor: colors.border }}
+                  activeOpacity={0.7}
+                >
+                  <MaterialCommunityIcons name="file-document-outline" size={12} color={colors.foreground} />
+                  <Text style={{ fontSize: 11, color: colors.foreground }}>{t("emailDetail.insertTemplate")}</Text>
+                </TouchableOpacity>
+              ) : null}
+            </View>
             <TextInput
               value={replyText}
               onChangeText={setReplyText}
@@ -861,6 +881,52 @@ export default function EmailDetailScreen() {
               textAlignVertical="top"
               style={[s.textarea, { backgroundColor: colors.background, borderColor: colors.border, color: colors.foreground }]}
             />
+
+            <Modal visible={templatePickerOpen} transparent animationType="fade" onRequestClose={() => setTemplatePickerOpen(false)}>
+              <Pressable style={{ flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "center", padding: 24 }} onPress={() => setTemplatePickerOpen(false)}>
+                <Pressable style={{ backgroundColor: colors.card, borderRadius: 12, padding: 16, maxHeight: "70%" }} onPress={(e) => e.stopPropagation()}>
+                  <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground, marginBottom: 12 }}>
+                    {t("emailDetail.insertTemplate")}
+                  </Text>
+                  <ScrollView>
+                    {(templatesList || []).map((tpl) => (
+                      <TouchableOpacity
+                        key={tpl.id}
+                        onPress={() => {
+                          useTemplateMut.mutate({ id: tpl.id });
+                          const ctx = {
+                            senderEmail: (email as { sender?: string } | undefined)?.sender || null,
+                            senderName: (email as { sender?: string } | undefined)?.sender || null,
+                            subject: (email as { subject?: string } | undefined)?.subject || null,
+                            userFullName:
+                              (profile as { fullName?: string } | undefined)?.fullName || null,
+                          };
+                          const filledBody = applyTemplateVariables(tpl.body || "", ctx);
+                          const filledSubject = tpl.subject
+                            ? applyTemplateVariables(tpl.subject, ctx)
+                            : "";
+                          setReplyText((prev) =>
+                            prev?.trim() ? `${filledBody}\n\n${prev}` : filledBody,
+                          );
+                          if (filledSubject && !replySubject) setReplySubject(filledSubject);
+                          setTemplatePickerOpen(false);
+                        }}
+                        style={{ paddingVertical: 10, borderBottomWidth: 1, borderBottomColor: colors.border }}
+                        activeOpacity={0.7}
+                      >
+                        <Text style={{ fontSize: 14, fontWeight: "500", color: colors.foreground }}>{tpl.name}</Text>
+                        {tpl.subject ? (
+                          <Text style={{ fontSize: 11, color: colors.mutedForeground, marginTop: 2 }} numberOfLines={1}>{tpl.subject}</Text>
+                        ) : null}
+                      </TouchableOpacity>
+                    ))}
+                  </ScrollView>
+                  <TouchableOpacity onPress={() => setTemplatePickerOpen(false)} style={{ marginTop: 12, alignSelf: "flex-end", paddingVertical: 8, paddingHorizontal: 16 }}>
+                    <Text style={{ color: colors.mutedForeground }}>{t("common.cancel")}</Text>
+                  </TouchableOpacity>
+                </Pressable>
+              </Pressable>
+            </Modal>
 
             <View style={s.replyActions}>
               <TouchableOpacity

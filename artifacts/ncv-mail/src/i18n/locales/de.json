@@ -3866,5 +3866,118 @@
     "openedBadgeCount": "{{count}} mal geöffnet",
     "openedAtLabel": "Erste Öffnung: {{date}}",
     "notOpenedYet": "Noch nicht geöffnet"
+  },
+  "templates": {
+    "title": "Vorlagen",
+    "subtitle": "Ihre wiederverwendbaren Antwortvorlagen",
+    "newButton": "Neue Vorlage",
+    "newTitle": "Neue Vorlage",
+    "editTitle": "Vorlage bearbeiten",
+    "empty": "Noch keine Vorlagen",
+    "emptyHint": "Erstellen Sie eine oder speichern Sie eine gesendete E-Mail als Vorlage von der Detailseite.",
+    "subjectLabel": "Betreff",
+    "usedCount": "{{count}}-mal verwendet",
+    "saved": "Vorlage gespeichert",
+    "created": "Vorlage erstellt",
+    "deleted": "Vorlage gelöscht",
+    "deleteTitle": "Diese Vorlage löschen?",
+    "deleteConfirm": "Die Vorlage \"{{name}}\" wird endgültig gelöscht.",
+    "bodyPlaceholder": "Hallo {{first_name}},\n\nDanke für Ihre Nachricht…",
+    "variablesHint": "Verwenden Sie die {{variable}}-Syntax, um dynamische Felder einzufügen.",
+    "fields": {
+      "name": "Name",
+      "subject": "Betreff",
+      "body": "Inhalt"
+    },
+    "errors": {
+      "nameRequired": "Name ist erforderlich",
+      "saveFailed": "Speichern fehlgeschlagen",
+      "suggestNameFailed": "Namensvorschlag nicht verfügbar"
+    },
+    "suggestionTitle": "Vorgeschlagene Vorlagen",
+    "insert": "Einfügen",
+    "saveAsTemplate": "Als Vorlage speichern",
+    "savedAsTemplate": "E-Mail als Vorlage gespeichert",
+    "suggestNameWithAI": "Namen mit KI vorschlagen",
+    "suggestNameShort": "Vorschlagen"
+  },
+  "rules": {
+    "title": "Automatische Regeln",
+    "subtitle": "Beschreiben Sie Ihre Regeln in natürlicher Sprache — KI macht daraus Automatisierungen.",
+    "newButton": "Neue Regel",
+    "newTitle": "Neue Regel",
+    "editTitle": "Regel bearbeiten",
+    "empty": "Noch keine Regeln",
+    "emptyHint": "Beispiel: \"Wenn eine E-Mail von noreply@github.com kommt, archiviere sie.\"",
+    "nameLabel": "Name",
+    "namePlaceholder": "z. B. GitHub-Archiv",
+    "nlLabel": "Beschreiben Sie die Regel",
+    "nlPlaceholder": "Z.B. Wenn eine E-Mail von noreply@github.com kommt, archiviere sie.",
+    "nlHint": "KI wandelt Ihren Satz in eine strukturierte Regel um. Sie können sie vor dem Speichern simulieren.",
+    "parseButton": "Analysieren",
+    "simulateButton": "Auf letzten 100 E-Mails simulieren",
+    "simulationResult": "{{count}} von {{total}} E-Mails passen.",
+    "parsed": "Regel analysiert",
+    "parsedByAI": "Von KI analysiert",
+    "parsedByHeuristic": "Automatisch erkannt (kostenlos)",
+    "saved": "Regel gespeichert",
+    "created": "Regel erstellt",
+    "deleted": "Regel gelöscht",
+    "deleteTitle": "Diese Regel löschen?",
+    "deleteConfirm": "Die Regel \"{{name}}\" wird endgültig gelöscht.",
+    "runsCount": "{{count}} Ausführungen",
+    "ifLabel": "Wenn",
+    "thenLabel": "Dann",
+    "and": "und",
+    "or": "oder",
+    "tabs": {
+      "list": "Regeln",
+      "audit": "24h-Verlauf"
+    },
+    "auditEmpty": "Keine Regelaktion in den letzten 24 Stunden ausgelöst.",
+    "auditEmail": "E-Mail",
+    "rolledBack": "Zurückgesetzt",
+    "rollback": "Zurücksetzen",
+    "rollbackDone": "Aktion zurückgesetzt",
+    "field": {
+      "sender": "Absender",
+      "recipient": "Empfänger",
+      "subject": "Betreff",
+      "body": "Inhalt",
+      "category": "Kategorie"
+    },
+    "op": {
+      "contains": "enthält",
+      "not_contains": "enthält nicht",
+      "equals": "ist gleich",
+      "starts_with": "beginnt mit",
+      "ends_with": "endet mit",
+      "regex": "entspricht"
+    },
+    "action": {
+      "archive": "archivieren",
+      "mark_read": "als gelesen markieren",
+      "categorize": "als \"{{category}}\" kategorisieren",
+      "set_priority": "als {{priority}} markieren",
+      "move_to_project": "ins Projekt \"{{project}}\" verschieben",
+      "transfer": "weiterleiten an {{to}}",
+      "create_task": "Aufgabe \"{{title}}\" erstellen",
+      "notify": "Benachrichtigung senden",
+      "slack_notify": "auf Slack benachrichtigen",
+      "notion_create": "Notion-Seite \"{{title}}\" erstellen",
+      "assign": "einem Mitglied zuweisen"
+    },
+    "cond": {
+      "hasAttachment": "mit Anhang",
+      "noAttachment": "ohne Anhang",
+      "projectIs": "Projekt = \"{{value}}\""
+    },
+    "errors": {
+      "tooShort": "Bitte schreiben Sie eine genauere Anweisung.",
+      "parseFailed": "Diese Anweisung konnte nicht analysiert werden.",
+      "simulateFailed": "Simulation fehlgeschlagen.",
+      "saveFailed": "Speichern fehlgeschlagen.",
+      "rollbackFailed": "Zurücksetzen fehlgeschlagen."
+    }
   }
 }

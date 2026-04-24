@@ -224,16 +224,46 @@
     "descPlaceholder": "Bijv.: Alle e-mails met facturen of offertes.",
     "create": "Aanmaken",
     "suggested": {
-      "billing": { "name": "Facturering", "desc": "Facturen, offertes, bestellingen, betalingsherinneringen" },
-      "support": { "name": "Klantenservice", "desc": "Hulpverzoeken, klachten, klantvragen" },
-      "sales": { "name": "Commercieel", "desc": "Prospects, zakelijke voorstellen, onderhandelingen" },
-      "admin": { "name": "Administratief", "desc": "Contracten, officiële documenten, juridische correspondentie" },
-      "newsletter": { "name": "Nieuwsbrief", "desc": "Nieuwsbrieven, promoties, marketingmails" },
-      "hr": { "name": "HR / Team", "desc": "Verlof, werving, personeelsbeheer" },
-      "suppliers": { "name": "Leveranciers", "desc": "Bestellingen, leveringen, leveranciersrelaties" },
-      "legal": { "name": "Juridisch", "desc": "Ingebrekestellingen, AVG, compliance" },
-      "tech": { "name": "Technisch", "desc": "Bugs, onderhoud, servers, IT" },
-      "training": { "name": "Opleiding", "desc": "Webinars, certificeringen, e-learning" }
+      "billing": {
+        "name": "Facturering",
+        "desc": "Facturen, offertes, bestellingen, betalingsherinneringen"
+      },
+      "support": {
+        "name": "Klantenservice",
+        "desc": "Hulpverzoeken, klachten, klantvragen"
+      },
+      "sales": {
+        "name": "Commercieel",
+        "desc": "Prospects, zakelijke voorstellen, onderhandelingen"
+      },
+      "admin": {
+        "name": "Administratief",
+        "desc": "Contracten, officiële documenten, juridische correspondentie"
+      },
+      "newsletter": {
+        "name": "Nieuwsbrief",
+        "desc": "Nieuwsbrieven, promoties, marketingmails"
+      },
+      "hr": {
+        "name": "HR / Team",
+        "desc": "Verlof, werving, personeelsbeheer"
+      },
+      "suppliers": {
+        "name": "Leveranciers",
+        "desc": "Bestellingen, leveringen, leveranciersrelaties"
+      },
+      "legal": {
+        "name": "Juridisch",
+        "desc": "Ingebrekestellingen, AVG, compliance"
+      },
+      "tech": {
+        "name": "Technisch",
+        "desc": "Bugs, onderhoud, servers, IT"
+      },
+      "training": {
+        "name": "Opleiding",
+        "desc": "Webinars, certificeringen, e-learning"
+      }
     }
   },
   "archives": {
@@ -296,6 +326,7 @@
     "rdvDescription": "Beschrijving",
     "rdvCreated": "Afspraak aangemaakt",
     "rdvInvalidDate": "Ongeldige datum (formaat JJJJ-MM-DD UU:MM)",
-    "export": "Exporteren"
+    "export": "Exporteren",
+    "insertTemplate": "Sjabloon invoegen"
   }
 }

@@ -367,6 +367,111 @@ async function ensureTaskAssignment() {
   }
 }
 
+async function ensureTemplatesAndAutomationRules() {
+  try {
+    const { error } = await supabaseAdmin.from("email_templates").select("id").limit(1);
+    if (!error) {
+      logger.info("email_templates / automation_rules tables OK");
+      return;
+    }
+    if (!error.message.includes("does not exist") && !error.message.includes("schema cache")) {
+      logger.info("email_templates / automation_rules tables OK");
+      return;
+    }
+    const supabaseUrl = process.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"] || "";
+    const serviceKey = process.env["SUPABASE_SECRET_KEY"] || "";
+    if (!supabaseUrl || !serviceKey) {
+      logger.warn("email_templates table missing — please run artifacts/api-server/migrations/2026_04_24_templates_and_automation_rules.sql manually");
+      return;
+    }
+    const sql = `
+      CREATE TABLE IF NOT EXISTS public.email_templates (
+        id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id      uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+        name         text NOT NULL,
+        subject      text NOT NULL DEFAULT '',
+        body         text NOT NULL DEFAULT '',
+        category_ai  text,
+        variables    jsonb NOT NULL DEFAULT '[]'::jsonb,
+        usage_count  integer NOT NULL DEFAULT 0,
+        source_email_id integer,
+        created_at   timestamptz NOT NULL DEFAULT now(),
+        updated_at   timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS email_templates_user_id_idx ON public.email_templates (user_id, created_at DESC);
+      CREATE INDEX IF NOT EXISTS email_templates_user_category_idx ON public.email_templates (user_id, category_ai);
+      ALTER TABLE public.email_templates ENABLE ROW LEVEL SECURITY;
+      DO $$ BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'email_templates' AND policyname = 'Users manage their templates') THEN
+          CREATE POLICY "Users manage their templates" ON public.email_templates FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+        END IF;
+      END $$;
+
+      CREATE TABLE IF NOT EXISTS public.automation_rules (
+        id              uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id         uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+        connection_id   uuid REFERENCES public.email_connections(id) ON DELETE CASCADE,
+        name            text NOT NULL,
+        natural_language_input text,
+        conditions      jsonb NOT NULL DEFAULT '{}'::jsonb,
+        actions         jsonb NOT NULL DEFAULT '[]'::jsonb,
+        enabled         boolean NOT NULL DEFAULT true,
+        last_run_at     timestamptz,
+        runs_count      integer NOT NULL DEFAULT 0,
+        created_at      timestamptz NOT NULL DEFAULT now(),
+        updated_at      timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS automation_rules_user_idx ON public.automation_rules (user_id, enabled);
+      CREATE INDEX IF NOT EXISTS automation_rules_connection_idx ON public.automation_rules (connection_id);
+      ALTER TABLE public.automation_rules ENABLE ROW LEVEL SECURITY;
+      DO $$ BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'automation_rules' AND policyname = 'Users manage their automation rules') THEN
+          CREATE POLICY "Users manage their automation rules" ON public.automation_rules FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+        END IF;
+      END $$;
+
+      CREATE TABLE IF NOT EXISTS public.rule_executions_audit (
+        id            uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id       uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+        rule_id       uuid REFERENCES public.automation_rules(id) ON DELETE SET NULL,
+        email_id      integer,
+        action_type   text NOT NULL,
+        action_payload jsonb NOT NULL DEFAULT '{}'::jsonb,
+        previous_state jsonb,
+        rolled_back_at timestamptz,
+        occurred_at   timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE INDEX IF NOT EXISTS rule_executions_user_idx ON public.rule_executions_audit (user_id, occurred_at DESC);
+      CREATE INDEX IF NOT EXISTS rule_executions_rule_idx ON public.rule_executions_audit (rule_id);
+      CREATE INDEX IF NOT EXISTS rule_executions_email_idx ON public.rule_executions_audit (email_id);
+      ALTER TABLE public.rule_executions_audit ENABLE ROW LEVEL SECURITY;
+      DO $$ BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'rule_executions_audit' AND policyname = 'Users view their rule audit') THEN
+          CREATE POLICY "Users view their rule audit" ON public.rule_executions_audit FOR SELECT USING (auth.uid() = user_id);
+        END IF;
+      END $$;
+    `;
+    const { error: rpcErr } = await supabaseAdmin.rpc("exec_sql" as any, { query: sql });
+    if (!rpcErr) {
+      logger.info("email_templates / automation_rules / rule_executions_audit tables created via RPC");
+      return;
+    }
+    const resp = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
+      body: JSON.stringify({ query: sql }),
+    });
+    if (resp.ok) {
+      logger.info("email_templates / automation_rules tables created via REST RPC");
+    } else {
+      const txt = await resp.text();
+      logger.warn({ status: resp.status, body: txt.slice(0, 200) }, "email_templates table creation failed — please run artifacts/api-server/migrations/2026_04_24_templates_and_automation_rules.sql manually");
+    }
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "email_templates / automation_rules ensure failed (non-fatal)");
+  }
+}
+
 async function cleanupDuplicateTasks() {
   try {
     const { data: aiTasks, error: fetchErr } = await supabaseAdmin
@@ -542,6 +647,7 @@ app.listen(port, (err) => {
   ensureEmailConnectionSignature();
   ensureTaskAssignment();
   ensureWaveOneSchema();
+  ensureTemplatesAndAutomationRules();
   cleanupDuplicateTasks();
   purgeNoiseTasks();
   startAutoSync();

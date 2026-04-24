@@ -56,6 +56,9 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - `/dashboard/abonnement`: Subscription management.
     - `/dashboard/agenda`: Calendar for appointments.
     - `/dashboard/activite-equipe`: Team activity dashboard (Business plan only).
+    - `/dashboard/parametres/templates`: AI-contextual reply templates (CRUD, variable detection, AI auto-categorization, suggestions on reply).
+    - `/dashboard/parametres/regles`: Automation rules (NL→JSON via GPT, simulator on last 100 emails, 24h audit + rollback).
+- **Templates & Automation Rules (Task #104, Vague 2)**: Tables `email_templates`, `automation_rules`, `rule_executions_audit` (migration `2026_04_24_templates_and_automation_rules.sql`). The api-server attempts auto-apply on boot via the `exec_sql` RPC; if the RPC is not provisioned on the Supabase project, run the SQL migration manually in the Supabase SQL editor before using these features. Backend services in `artifacts/api-server/src/services/automation-rules.ts` (heuristic + GPT NL parser, condition matcher, action runner) and routes `routes/templates.ts` + `routes/automation-rules.ts`. Mobile composer integrates a template picker (`artifacts/ncv-mail-mobile/app/email/[id].tsx`).
 
 ## External Dependencies
 

@@ -3866,5 +3866,118 @@
     "openedBadgeCount": "Opened {{count}} times",
     "openedAtLabel": "First opened: {{date}}",
     "notOpenedYet": "Not opened yet"
+  },
+  "templates": {
+    "title": "Templates",
+    "subtitle": "Your reusable reply templates",
+    "newButton": "New template",
+    "newTitle": "New template",
+    "editTitle": "Edit template",
+    "empty": "No templates yet",
+    "emptyHint": "Create one, or save a sent email as a template from its detail page.",
+    "subjectLabel": "Subject",
+    "usedCount": "Used {{count}} times",
+    "saved": "Template saved",
+    "created": "Template created",
+    "deleted": "Template deleted",
+    "deleteTitle": "Delete this template?",
+    "deleteConfirm": "The template \"{{name}}\" will be permanently deleted.",
+    "bodyPlaceholder": "Hello {{first_name}},\n\nThanks for your message…",
+    "variablesHint": "Use the {{variable}} syntax to insert dynamic fields.",
+    "fields": {
+      "name": "Name",
+      "subject": "Subject",
+      "body": "Body"
+    },
+    "errors": {
+      "nameRequired": "Name is required",
+      "saveFailed": "Save failed",
+      "suggestNameFailed": "Name suggestion unavailable"
+    },
+    "suggestionTitle": "Suggested templates",
+    "insert": "Insert",
+    "saveAsTemplate": "Save as template",
+    "savedAsTemplate": "Email saved as template",
+    "suggestNameWithAI": "Suggest a name with AI",
+    "suggestNameShort": "Suggest"
+  },
+  "rules": {
+    "title": "Automation rules",
+    "subtitle": "Describe your rules in natural language — AI converts them into automations.",
+    "newButton": "New rule",
+    "newTitle": "New rule",
+    "editTitle": "Edit rule",
+    "empty": "No rules yet",
+    "emptyHint": "Example: \"When a mail comes from noreply@github.com, archive it.\"",
+    "nameLabel": "Name",
+    "namePlaceholder": "e.g. GitHub archive",
+    "nlLabel": "Describe the rule",
+    "nlPlaceholder": "E.g. When a mail comes from noreply@github.com, archive it.",
+    "nlHint": "AI converts your sentence into a structured rule. You can simulate it before saving.",
+    "parseButton": "Parse",
+    "simulateButton": "Simulate on last 100 emails",
+    "simulationResult": "{{count}} of {{total}} emails match.",
+    "parsed": "Rule parsed",
+    "parsedByAI": "Parsed by AI",
+    "parsedByHeuristic": "Recognised automatically (free)",
+    "saved": "Rule saved",
+    "created": "Rule created",
+    "deleted": "Rule deleted",
+    "deleteTitle": "Delete this rule?",
+    "deleteConfirm": "The rule \"{{name}}\" will be permanently deleted.",
+    "runsCount": "{{count}} runs",
+    "ifLabel": "If",
+    "thenLabel": "Then",
+    "and": "and",
+    "or": "or",
+    "tabs": {
+      "list": "Rules",
+      "audit": "24h history"
+    },
+    "auditEmpty": "No rule action triggered in the last 24 hours.",
+    "auditEmail": "Email",
+    "rolledBack": "Rolled back",
+    "rollback": "Roll back",
+    "rollbackDone": "Action rolled back",
+    "field": {
+      "sender": "Sender",
+      "recipient": "Recipient",
+      "subject": "Subject",
+      "body": "Body",
+      "category": "Category"
+    },
+    "op": {
+      "contains": "contains",
+      "not_contains": "does not contain",
+      "equals": "equals",
+      "starts_with": "starts with",
+      "ends_with": "ends with",
+      "regex": "matches"
+    },
+    "action": {
+      "archive": "archive",
+      "mark_read": "mark as read",
+      "categorize": "categorize as \"{{category}}\"",
+      "set_priority": "mark as {{priority}}",
+      "move_to_project": "move to project \"{{project}}\"",
+      "transfer": "forward to {{to}}",
+      "create_task": "create task \"{{title}}\"",
+      "notify": "send a notification",
+      "slack_notify": "notify on Slack",
+      "notion_create": "create Notion page \"{{title}}\"",
+      "assign": "assign to a member"
+    },
+    "cond": {
+      "hasAttachment": "has attachment",
+      "noAttachment": "no attachment",
+      "projectIs": "project = \"{{value}}\""
+    },
+    "errors": {
+      "tooShort": "Please write a more specific instruction.",
+      "parseFailed": "Could not parse this instruction.",
+      "simulateFailed": "Simulation failed.",
+      "saveFailed": "Save failed.",
+      "rollbackFailed": "Rollback failed."
+    }
   }
 }

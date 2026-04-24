@@ -28,6 +28,8 @@ import renderFailuresRouter from "./render-failures";
 import blockedSendersRouter from "./blocked-senders";
 import autopilotRouter from "./autopilot";
 import contactsRouter from "./contacts";
+import templatesRouter from "./templates";
+import automationRulesRouter from "./automation-rules";
 
 const router: IRouter = Router();
 
@@ -60,5 +62,7 @@ router.use(renderFailuresRouter);
 router.use(blockedSendersRouter);
 router.use(autopilotRouter);
 router.use(contactsRouter);
+router.use(templatesRouter);
+router.use(automationRulesRouter);
 
 export default router;

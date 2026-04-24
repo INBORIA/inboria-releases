@@ -1257,6 +1257,190 @@ export interface ContactDetail {
   attachments: ContactAttachment[];
 }
 
+export interface EmailTemplate {
+  id: string;
+  name: string;
+  subject: string;
+  body: string;
+  /** @nullable */
+  categoryAi?: string | null;
+  variables: string[];
+  usageCount: number;
+  /** @nullable */
+  sourceEmailId?: number | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateTemplateBody {
+  /**
+   * @minLength 1
+   * @maxLength 120
+   */
+  name: string;
+  subject?: string;
+  body: string;
+  categoryAi?: string;
+  sourceEmailId?: number;
+}
+
+export interface UpdateTemplateBody {
+  name?: string;
+  subject?: string;
+  body?: string;
+  categoryAi?: string;
+}
+
+export type RuleConditionField =
+  (typeof RuleConditionField)[keyof typeof RuleConditionField];
+
+export const RuleConditionField = {
+  sender: "sender",
+  recipient: "recipient",
+  subject: "subject",
+  body: "body",
+  category: "category",
+  has_attachment: "has_attachment",
+  project: "project",
+} as const;
+
+export type RuleConditionOp =
+  (typeof RuleConditionOp)[keyof typeof RuleConditionOp];
+
+export const RuleConditionOp = {
+  contains: "contains",
+  not_contains: "not_contains",
+  equals: "equals",
+  starts_with: "starts_with",
+  ends_with: "ends_with",
+  regex: "regex",
+  is_true: "is_true",
+  is_false: "is_false",
+} as const;
+
+export interface RuleCondition {
+  field: RuleConditionField;
+  op: RuleConditionOp;
+  /** @maxLength 500 */
+  value: string;
+}
+
+export interface RuleConditions {
+  all?: RuleCondition[];
+  any?: RuleCondition[];
+}
+
+export type RuleActionType =
+  (typeof RuleActionType)[keyof typeof RuleActionType];
+
+export const RuleActionType = {
+  archive: "archive",
+  categorize: "categorize",
+  set_priority: "set_priority",
+  assign: "assign",
+  transfer: "transfer",
+  create_task: "create_task",
+  notify: "notify",
+  mark_read: "mark_read",
+  move_to_project: "move_to_project",
+  slack_notify: "slack_notify",
+  notion_create: "notion_create",
+} as const;
+
+export type RuleActionPriority =
+  (typeof RuleActionPriority)[keyof typeof RuleActionPriority];
+
+export const RuleActionPriority = {
+  urgent: "urgent",
+  moyen: "moyen",
+  faible: "faible",
+} as const;
+
+export interface RuleAction {
+  type: RuleActionType;
+  category?: string;
+  priority?: RuleActionPriority;
+  userId?: string;
+  projectId?: string;
+  to?: string;
+  title?: string;
+  message?: string;
+}
+
+export interface AutomationRule {
+  id: string;
+  name: string;
+  /** @nullable */
+  naturalLanguageInput?: string | null;
+  conditions: RuleConditions;
+  actions: RuleAction[];
+  enabled: boolean;
+  /** @nullable */
+  connectionId?: string | null;
+  runsCount: number;
+  /** @nullable */
+  lastRunAt?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface AutomationRuleDraft {
+  name: string;
+  conditions: RuleConditions;
+  actions: RuleAction[];
+}
+
+export interface CreateAutomationRuleBody {
+  name: string;
+  conditions: RuleConditions;
+  actions: RuleAction[];
+  enabled?: boolean;
+  connectionId?: string;
+  naturalLanguageInput?: string;
+}
+
+export interface UpdateAutomationRuleBody {
+  name?: string;
+  conditions?: RuleConditions;
+  actions?: RuleAction[];
+  enabled?: boolean;
+}
+
+export interface SimulationMatch {
+  id: number;
+  sender: string;
+  subject: string;
+  createdAt: string;
+}
+
+export interface SimulationResult {
+  totalScanned: number;
+  matchCount: number;
+  matches: SimulationMatch[];
+}
+
+export type RuleAuditEntryActionPayload = { [key: string]: unknown };
+
+/**
+ * @nullable
+ */
+export type RuleAuditEntryPreviousState = { [key: string]: unknown } | null;
+
+export interface RuleAuditEntry {
+  id: string;
+  /** @nullable */
+  ruleId?: string | null;
+  /** @nullable */
+  emailId?: number | null;
+  actionType: string;
+  actionPayload: RuleAuditEntryActionPayload;
+  /** @nullable */
+  previousState?: RuleAuditEntryPreviousState;
+  /** @nullable */
+  rolledBackAt?: string | null;
+  occurredAt: string;
+}
+
 export type RegisterPushToken200 = {
   success?: boolean;
 };
@@ -1788,4 +1972,58 @@ export type ListContactsParams = {
   q?: string;
   page?: number;
   pageSize?: number;
+};
+
+export type IncrementTemplateUsage200 = {
+  ok: boolean;
+  usageCount: number;
+};
+
+export type CreateTemplateFromEmailBody = {
+  name?: string;
+};
+
+export type SuggestTemplateNameBody = {
+  subject?: string;
+  body?: string;
+  sourceEmailId?: number;
+};
+
+export type SuggestTemplateName200 = {
+  name: string;
+};
+
+export type SuggestTemplatesParams = {
+  emailId: number;
+};
+
+export type SuggestTemplates200 = {
+  cached: boolean;
+  templates: EmailTemplate[];
+};
+
+export type ParseAutomationRuleBody = {
+  input: string;
+  name?: string;
+};
+
+export type ParseAutomationRule200Source =
+  (typeof ParseAutomationRule200Source)[keyof typeof ParseAutomationRule200Source];
+
+export const ParseAutomationRule200Source = {
+  heuristic: "heuristic",
+  ai: "ai",
+} as const;
+
+export type ParseAutomationRule200 = {
+  source: ParseAutomationRule200Source;
+  rule: AutomationRuleDraft;
+};
+
+export type SimulateAutomationRuleBody = {
+  conditions: RuleConditions;
+};
+
+export type RollbackRuleExecution200 = {
+  ok: boolean;
 };

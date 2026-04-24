@@ -224,16 +224,46 @@
     "descPlaceholder": "Z.B.: Alle E-Mails mit Rechnungen oder Angeboten.",
     "create": "Erstellen",
     "suggested": {
-      "billing": { "name": "Rechnungen", "desc": "Rechnungen, Angebote, Bestellungen, Zahlungserinnerungen" },
-      "support": { "name": "Kundensupport", "desc": "Hilfeanfragen, Beschwerden, Kundenfragen" },
-      "sales": { "name": "Vertrieb", "desc": "Interessenten, Geschäftsvorschläge, Verhandlungen" },
-      "admin": { "name": "Verwaltung", "desc": "Verträge, offizielle Dokumente, rechtliche Korrespondenz" },
-      "newsletter": { "name": "Newsletter", "desc": "Newsletter, Werbeaktionen, Marketing-E-Mails" },
-      "hr": { "name": "Personal / Team", "desc": "Urlaub, Einstellung, Personalverwaltung" },
-      "suppliers": { "name": "Lieferanten", "desc": "Bestellungen, Lieferungen, Lieferantenbeziehungen" },
-      "legal": { "name": "Recht", "desc": "Abmahnungen, DSGVO, Compliance" },
-      "tech": { "name": "Technik", "desc": "Fehler, Wartung, Server, IT" },
-      "training": { "name": "Weiterbildung", "desc": "Webinare, Zertifizierungen, E-Learning" }
+      "billing": {
+        "name": "Rechnungen",
+        "desc": "Rechnungen, Angebote, Bestellungen, Zahlungserinnerungen"
+      },
+      "support": {
+        "name": "Kundensupport",
+        "desc": "Hilfeanfragen, Beschwerden, Kundenfragen"
+      },
+      "sales": {
+        "name": "Vertrieb",
+        "desc": "Interessenten, Geschäftsvorschläge, Verhandlungen"
+      },
+      "admin": {
+        "name": "Verwaltung",
+        "desc": "Verträge, offizielle Dokumente, rechtliche Korrespondenz"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "desc": "Newsletter, Werbeaktionen, Marketing-E-Mails"
+      },
+      "hr": {
+        "name": "Personal / Team",
+        "desc": "Urlaub, Einstellung, Personalverwaltung"
+      },
+      "suppliers": {
+        "name": "Lieferanten",
+        "desc": "Bestellungen, Lieferungen, Lieferantenbeziehungen"
+      },
+      "legal": {
+        "name": "Recht",
+        "desc": "Abmahnungen, DSGVO, Compliance"
+      },
+      "tech": {
+        "name": "Technik",
+        "desc": "Fehler, Wartung, Server, IT"
+      },
+      "training": {
+        "name": "Weiterbildung",
+        "desc": "Webinare, Zertifizierungen, E-Learning"
+      }
     }
   },
   "archives": {
@@ -296,6 +326,7 @@
     "rdvDescription": "Beschreibung",
     "rdvCreated": "Termin erstellt",
     "rdvInvalidDate": "Ungültiges Datum (Format JJJJ-MM-TT HH:MM)",
-    "export": "Exportieren"
+    "export": "Exportieren",
+    "insertTemplate": "Vorlage einfügen"
   }
 }

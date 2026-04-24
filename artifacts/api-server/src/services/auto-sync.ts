@@ -564,6 +564,36 @@ export async function saveEmailWithTriage(
     return inserted.id;
   }
 
+  // Run user automation rules (best-effort, never block the sync)
+  try {
+    const { runMatchingRules } = await import("../routes/automation-rules");
+    let categoryNameForRules: string | null = null;
+    if (categoryId) {
+      const { data: catRow } = await supabaseAdmin
+        .from("categories")
+        .select("name")
+        .eq("id", categoryId)
+        .maybeSingle();
+      categoryNameForRules = catRow?.name || null;
+    }
+    await runMatchingRules({
+      userId,
+      emailId: inserted.id,
+      email: {
+        sender,
+        recipient: recipient || null,
+        subject,
+        body,
+        category_name: categoryNameForRules,
+        category_id: categoryId,
+        priority: triage.priority,
+        status: insertPayload.status,
+      },
+    });
+  } catch (e: any) {
+    logger.warn({ err: e?.message, emailId: inserted.id }, "[auto-sync] runMatchingRules failed (continuing)");
+  }
+
   if (triage.priority === "urgent") {
     sendSlackNotification(userId, sender, subject, triage.summary).catch(() => {});
   }

@@ -2222,5 +2222,118 @@
     "openedBadgeCount": "Ouvert {{count}} fois",
     "openedAtLabel": "Première ouverture : {{date}}",
     "notOpenedYet": "Pas encore ouvert"
+  },
+  "templates": {
+    "title": "Templates",
+    "subtitle": "Vos modèles de réponse réutilisables",
+    "newButton": "Nouveau template",
+    "newTitle": "Nouveau template",
+    "editTitle": "Modifier le template",
+    "empty": "Aucun template pour l'instant",
+    "emptyHint": "Créez-en un ou enregistrez un email envoyé comme template depuis sa page de détail.",
+    "subjectLabel": "Sujet",
+    "usedCount": "Utilisé {{count}} fois",
+    "saved": "Template enregistré",
+    "created": "Template créé",
+    "deleted": "Template supprimé",
+    "deleteTitle": "Supprimer ce template ?",
+    "deleteConfirm": "Le template « {{name}} » sera supprimé définitivement.",
+    "bodyPlaceholder": "Bonjour {{first_name}},\n\nMerci pour votre message…",
+    "variablesHint": "Utilisez la syntaxe {{variable}} pour insérer des champs dynamiques.",
+    "fields": {
+      "name": "Nom",
+      "subject": "Sujet",
+      "body": "Corps du message"
+    },
+    "errors": {
+      "nameRequired": "Le nom est obligatoire",
+      "saveFailed": "Échec de l'enregistrement",
+      "suggestNameFailed": "Suggestion de nom indisponible"
+    },
+    "suggestionTitle": "Templates suggérés",
+    "insert": "Insérer",
+    "saveAsTemplate": "Enregistrer comme template",
+    "savedAsTemplate": "Email enregistré comme template",
+    "suggestNameWithAI": "Suggérer un nom avec l'IA",
+    "suggestNameShort": "Suggérer"
+  },
+  "rules": {
+    "title": "Règles automatiques",
+    "subtitle": "Décrivez vos règles en langage naturel — l'IA les transforme en automatisations.",
+    "newButton": "Nouvelle règle",
+    "newTitle": "Nouvelle règle",
+    "editTitle": "Modifier la règle",
+    "empty": "Aucune règle pour l'instant",
+    "emptyHint": "Exemple : « Quand un mail vient de noreply@github.com, archive-le. »",
+    "nameLabel": "Nom",
+    "namePlaceholder": "ex. Archives GitHub",
+    "nlLabel": "Décrivez la règle",
+    "nlPlaceholder": "Ex. Quand un mail vient de noreply@github.com, archive-le.",
+    "nlHint": "L'IA convertit votre phrase en règle structurée. Vous pouvez la simuler avant de l'enregistrer.",
+    "parseButton": "Analyser",
+    "simulateButton": "Simuler sur les 100 derniers emails",
+    "simulationResult": "{{count}} emails correspondent sur {{total}} analysés.",
+    "parsed": "Règle analysée",
+    "parsedByAI": "Analysée par IA",
+    "parsedByHeuristic": "Reconnue automatiquement (gratuit)",
+    "saved": "Règle enregistrée",
+    "created": "Règle créée",
+    "deleted": "Règle supprimée",
+    "deleteTitle": "Supprimer cette règle ?",
+    "deleteConfirm": "La règle « {{name}} » sera supprimée définitivement.",
+    "runsCount": "{{count}} exécutions",
+    "ifLabel": "Si",
+    "thenLabel": "Alors",
+    "and": "et",
+    "or": "ou",
+    "tabs": {
+      "list": "Règles",
+      "audit": "Historique 24h"
+    },
+    "auditEmpty": "Aucune action déclenchée par une règle dans les dernières 24 heures.",
+    "auditEmail": "Email",
+    "rolledBack": "Annulée",
+    "rollback": "Annuler",
+    "rollbackDone": "Action annulée",
+    "field": {
+      "sender": "L'expéditeur",
+      "recipient": "Le destinataire",
+      "subject": "Le sujet",
+      "body": "Le corps",
+      "category": "La catégorie"
+    },
+    "op": {
+      "contains": "contient",
+      "not_contains": "ne contient pas",
+      "equals": "est égal à",
+      "starts_with": "commence par",
+      "ends_with": "finit par",
+      "regex": "correspond à"
+    },
+    "action": {
+      "archive": "archiver",
+      "mark_read": "marquer comme lu",
+      "categorize": "classer dans « {{category}} »",
+      "set_priority": "marquer comme {{priority}}",
+      "move_to_project": "déplacer dans le projet « {{project}} »",
+      "transfer": "transférer à {{to}}",
+      "create_task": "créer la tâche « {{title}} »",
+      "notify": "envoyer une notification",
+      "slack_notify": "notifier sur Slack",
+      "notion_create": "créer une page Notion « {{title}} »",
+      "assign": "assigner à un membre"
+    },
+    "cond": {
+      "hasAttachment": "avec pièce jointe",
+      "noAttachment": "sans pièce jointe",
+      "projectIs": "projet = « {{value}} »"
+    },
+    "errors": {
+      "tooShort": "Veuillez écrire une instruction plus précise.",
+      "parseFailed": "Impossible d'analyser cette instruction.",
+      "simulateFailed": "Échec de la simulation.",
+      "saveFailed": "Échec de l'enregistrement.",
+      "rollbackFailed": "Annulation impossible."
+    }
   }
 }

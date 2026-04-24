@@ -224,16 +224,46 @@
     "descPlaceholder": "E.g.: All emails with invoices or quotes.",
     "create": "Create",
     "suggested": {
-      "billing": { "name": "Billing", "desc": "Invoices, quotes, purchase orders, payment reminders" },
-      "support": { "name": "Customer support", "desc": "Help requests, complaints, customer questions" },
-      "sales": { "name": "Sales", "desc": "Prospects, business proposals, negotiations" },
-      "admin": { "name": "Administrative", "desc": "Contracts, official documents, legal correspondence" },
-      "newsletter": { "name": "Newsletter", "desc": "Newsletters, promotions, marketing emails" },
-      "hr": { "name": "HR / Team", "desc": "Leave, recruitment, staff management" },
-      "suppliers": { "name": "Suppliers", "desc": "Orders, deliveries, supplier relations" },
-      "legal": { "name": "Legal", "desc": "Formal notices, GDPR, compliance" },
-      "tech": { "name": "Technical", "desc": "Bugs, maintenance, servers, IT" },
-      "training": { "name": "Training", "desc": "Webinars, certifications, e-learning" }
+      "billing": {
+        "name": "Billing",
+        "desc": "Invoices, quotes, purchase orders, payment reminders"
+      },
+      "support": {
+        "name": "Customer support",
+        "desc": "Help requests, complaints, customer questions"
+      },
+      "sales": {
+        "name": "Sales",
+        "desc": "Prospects, business proposals, negotiations"
+      },
+      "admin": {
+        "name": "Administrative",
+        "desc": "Contracts, official documents, legal correspondence"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "desc": "Newsletters, promotions, marketing emails"
+      },
+      "hr": {
+        "name": "HR / Team",
+        "desc": "Leave, recruitment, staff management"
+      },
+      "suppliers": {
+        "name": "Suppliers",
+        "desc": "Orders, deliveries, supplier relations"
+      },
+      "legal": {
+        "name": "Legal",
+        "desc": "Formal notices, GDPR, compliance"
+      },
+      "tech": {
+        "name": "Technical",
+        "desc": "Bugs, maintenance, servers, IT"
+      },
+      "training": {
+        "name": "Training",
+        "desc": "Webinars, certifications, e-learning"
+      }
     }
   },
   "archives": {
@@ -296,6 +326,7 @@
     "rdvDescription": "Description",
     "rdvCreated": "Appointment created",
     "rdvInvalidDate": "Invalid date (format YYYY-MM-DD HH:MM)",
-    "export": "Export"
+    "export": "Export",
+    "insertTemplate": "Insert template"
   }
 }

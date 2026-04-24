@@ -224,16 +224,46 @@
     "descPlaceholder": "Ex: Tous les emails avec des factures ou devis.",
     "create": "Créer",
     "suggested": {
-      "billing": { "name": "Facturation", "desc": "Factures, devis, bons de commande, relances de paiement" },
-      "support": { "name": "Support client", "desc": "Demandes d'aide, réclamations, questions des clients" },
-      "sales": { "name": "Commercial", "desc": "Prospects, propositions commerciales, négociations" },
-      "admin": { "name": "Administratif", "desc": "Contrats, documents officiels, courriers juridiques" },
-      "newsletter": { "name": "Newsletter", "desc": "Newsletters, promotions, emails marketing" },
-      "hr": { "name": "RH / Équipe", "desc": "Congés, recrutement, gestion du personnel" },
-      "suppliers": { "name": "Fournisseurs", "desc": "Commandes, livraisons, relations fournisseurs" },
-      "legal": { "name": "Juridique", "desc": "Mises en demeure, RGPD, conformité" },
-      "tech": { "name": "Technique", "desc": "Bugs, maintenance, serveurs, IT" },
-      "training": { "name": "Formation", "desc": "Webinaires, certifications, e-learning" }
+      "billing": {
+        "name": "Facturation",
+        "desc": "Factures, devis, bons de commande, relances de paiement"
+      },
+      "support": {
+        "name": "Support client",
+        "desc": "Demandes d'aide, réclamations, questions des clients"
+      },
+      "sales": {
+        "name": "Commercial",
+        "desc": "Prospects, propositions commerciales, négociations"
+      },
+      "admin": {
+        "name": "Administratif",
+        "desc": "Contrats, documents officiels, courriers juridiques"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "desc": "Newsletters, promotions, emails marketing"
+      },
+      "hr": {
+        "name": "RH / Équipe",
+        "desc": "Congés, recrutement, gestion du personnel"
+      },
+      "suppliers": {
+        "name": "Fournisseurs",
+        "desc": "Commandes, livraisons, relations fournisseurs"
+      },
+      "legal": {
+        "name": "Juridique",
+        "desc": "Mises en demeure, RGPD, conformité"
+      },
+      "tech": {
+        "name": "Technique",
+        "desc": "Bugs, maintenance, serveurs, IT"
+      },
+      "training": {
+        "name": "Formation",
+        "desc": "Webinaires, certifications, e-learning"
+      }
     }
   },
   "archives": {
@@ -296,6 +326,7 @@
     "rdvDescription": "Description",
     "rdvCreated": "Rendez-vous créé",
     "rdvInvalidDate": "Date invalide (format AAAA-MM-JJ HH:MM)",
-    "export": "Exporter"
+    "export": "Exporter",
+    "insertTemplate": "Insérer un template"
   }
 }

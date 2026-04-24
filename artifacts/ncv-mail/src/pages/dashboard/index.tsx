@@ -5,6 +5,8 @@ import { EmailComments } from "@/components/email-comments";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
 import { AttachmentList, AttachmentBadge } from "@/components/AttachmentList";
 import { FileAttachInput, type UploadedFile } from "@/components/FileAttachInput";
+import { TemplateSuggestionBar } from "@/components/templates/template-suggestion-bar";
+import { SaveAsTemplateButton } from "@/components/templates/save-as-template-button";
 import {
   useListEmails,
   useGetCategoryCounts,
@@ -29,6 +31,8 @@ import {
   useGetSharedMailboxes,
   useGetSharedMailboxEmails,
   useClaimSharedEmail,
+  useSuggestTemplates,
+  useCreateTemplateFromEmail,
   useUnclaimSharedEmail,
   useCreateTask,
   getListTasksQueryKey,
@@ -771,6 +775,16 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
 
             {replyOpen && (
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
+                <TemplateSuggestionBar
+                  emailId={email.id}
+                  enabled={replyOpen}
+                  emailSender={email.sender || null}
+                  emailSubject={email.subject || null}
+                  onInsert={(body, subject) => {
+                    setReplyText((prev) => (prev?.trim() ? `${body}\n\n${prev}` : body));
+                    if (subject && !replySubject) setReplySubject(subject);
+                  }}
+                />
                 {connections && connections.length > 1 && (
                   <div>
                     <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.from", "De")}</label>
@@ -855,6 +869,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                 <div className="flex items-center gap-2 justify-between">
                   <FileAttachInput files={replyAttachments} onChange={setReplyAttachments} />
                   <div className="flex items-center gap-2">
+                    <SaveAsTemplateButton subject={replySubject} body={replyText} sourceEmailId={email.id} />
                     <Button
                       variant="ghost"
                       size="sm"

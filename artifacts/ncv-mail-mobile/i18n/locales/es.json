@@ -224,16 +224,46 @@
     "descPlaceholder": "Ej.: Todos los correos con facturas o presupuestos.",
     "create": "Crear",
     "suggested": {
-      "billing": { "name": "Facturación", "desc": "Facturas, presupuestos, pedidos, recordatorios de pago" },
-      "support": { "name": "Atención al cliente", "desc": "Solicitudes de ayuda, reclamaciones, preguntas de clientes" },
-      "sales": { "name": "Ventas", "desc": "Prospectos, propuestas comerciales, negociaciones" },
-      "admin": { "name": "Administrativo", "desc": "Contratos, documentos oficiales, correspondencia legal" },
-      "newsletter": { "name": "Newsletter", "desc": "Boletines, promociones, correos de marketing" },
-      "hr": { "name": "RRHH / Equipo", "desc": "Vacaciones, contratación, gestión de personal" },
-      "suppliers": { "name": "Proveedores", "desc": "Pedidos, entregas, relaciones con proveedores" },
-      "legal": { "name": "Legal", "desc": "Requerimientos, RGPD, cumplimiento normativo" },
-      "tech": { "name": "Técnico", "desc": "Errores, mantenimiento, servidores, TI" },
-      "training": { "name": "Formación", "desc": "Webinars, certificaciones, e-learning" }
+      "billing": {
+        "name": "Facturación",
+        "desc": "Facturas, presupuestos, pedidos, recordatorios de pago"
+      },
+      "support": {
+        "name": "Atención al cliente",
+        "desc": "Solicitudes de ayuda, reclamaciones, preguntas de clientes"
+      },
+      "sales": {
+        "name": "Ventas",
+        "desc": "Prospectos, propuestas comerciales, negociaciones"
+      },
+      "admin": {
+        "name": "Administrativo",
+        "desc": "Contratos, documentos oficiales, correspondencia legal"
+      },
+      "newsletter": {
+        "name": "Newsletter",
+        "desc": "Boletines, promociones, correos de marketing"
+      },
+      "hr": {
+        "name": "RRHH / Equipo",
+        "desc": "Vacaciones, contratación, gestión de personal"
+      },
+      "suppliers": {
+        "name": "Proveedores",
+        "desc": "Pedidos, entregas, relaciones con proveedores"
+      },
+      "legal": {
+        "name": "Legal",
+        "desc": "Requerimientos, RGPD, cumplimiento normativo"
+      },
+      "tech": {
+        "name": "Técnico",
+        "desc": "Errores, mantenimiento, servidores, TI"
+      },
+      "training": {
+        "name": "Formación",
+        "desc": "Webinars, certificaciones, e-learning"
+      }
     }
   },
   "archives": {
@@ -296,6 +326,7 @@
     "rdvDescription": "Descripción",
     "rdvCreated": "Cita creada",
     "rdvInvalidDate": "Fecha no válida (formato AAAA-MM-DD HH:MM)",
-    "export": "Exportar"
+    "export": "Exportar",
+    "insertTemplate": "Insertar plantilla"
   }
 }

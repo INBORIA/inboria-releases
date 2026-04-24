@@ -28,6 +28,8 @@ import Taches from "@/pages/dashboard/taches";
 import Relances from "@/pages/dashboard/relances";
 import Classement from "@/pages/dashboard/classement";
 import Parametres from "@/pages/dashboard/parametres";
+import Templates from "@/pages/dashboard/templates";
+import Regles from "@/pages/dashboard/regles";
 import Abonnement from "@/pages/dashboard/abonnement";
 import Projets from "@/pages/dashboard/projets";
 import Contacts from "@/pages/dashboard/contacts";
@@ -172,6 +174,8 @@ function Router() {
       <Route path="/dashboard/contacts" component={() => <ProtectedRoute component={Contacts} />} />
       <Route path="/dashboard/contacts/:email" component={() => <ProtectedRoute component={ContactDetail} />} />
       <Route path="/dashboard/parametres" component={() => <ProtectedRoute component={Parametres} />} />
+      <Route path="/dashboard/parametres/templates" component={() => <ProtectedRoute component={Templates} />} />
+      <Route path="/dashboard/parametres/regles" component={() => <ProtectedRoute component={Regles} />} />
       <Route path="/dashboard/abonnement" component={() => <ProtectedRoute component={Abonnement} />} />
       <Route path="/dashboard/equipe" component={() => <ProtectedRoute component={Equipe} />} />
       <Route path="/dashboard/boites-partagees" component={() => <ProtectedRoute component={BoitesPartagees} />} />

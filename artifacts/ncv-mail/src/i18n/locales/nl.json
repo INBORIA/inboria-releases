@@ -3866,5 +3866,118 @@
     "openedBadgeCount": "{{count}} keer geopend",
     "openedAtLabel": "Eerste opening: {{date}}",
     "notOpenedYet": "Nog niet geopend"
+  },
+  "templates": {
+    "title": "Sjablonen",
+    "subtitle": "Uw herbruikbare antwoordsjablonen",
+    "newButton": "Nieuw sjabloon",
+    "newTitle": "Nieuw sjabloon",
+    "editTitle": "Sjabloon bewerken",
+    "empty": "Nog geen sjablonen",
+    "emptyHint": "Maak er een of sla een verzonden e-mail op als sjabloon vanaf de detailpagina.",
+    "subjectLabel": "Onderwerp",
+    "usedCount": "{{count}} keer gebruikt",
+    "saved": "Sjabloon opgeslagen",
+    "created": "Sjabloon aangemaakt",
+    "deleted": "Sjabloon verwijderd",
+    "deleteTitle": "Dit sjabloon verwijderen?",
+    "deleteConfirm": "Het sjabloon \"{{name}}\" wordt definitief verwijderd.",
+    "bodyPlaceholder": "Hallo {{first_name}},\n\nBedankt voor je bericht…",
+    "variablesHint": "Gebruik de {{variable}}-syntaxis om dynamische velden in te voegen.",
+    "fields": {
+      "name": "Naam",
+      "subject": "Onderwerp",
+      "body": "Inhoud"
+    },
+    "errors": {
+      "nameRequired": "Naam is verplicht",
+      "saveFailed": "Opslaan mislukt",
+      "suggestNameFailed": "Naamsuggestie niet beschikbaar"
+    },
+    "suggestionTitle": "Voorgestelde sjablonen",
+    "insert": "Invoegen",
+    "saveAsTemplate": "Opslaan als sjabloon",
+    "savedAsTemplate": "E-mail opgeslagen als sjabloon",
+    "suggestNameWithAI": "Naam voorstellen met AI",
+    "suggestNameShort": "Voorstellen"
+  },
+  "rules": {
+    "title": "Automatische regels",
+    "subtitle": "Beschrijf uw regels in natuurlijke taal — AI zet ze om in automatiseringen.",
+    "newButton": "Nieuwe regel",
+    "newTitle": "Nieuwe regel",
+    "editTitle": "Regel bewerken",
+    "empty": "Nog geen regels",
+    "emptyHint": "Voorbeeld: \"Als een mail van noreply@github.com komt, archiveer het.\"",
+    "nameLabel": "Naam",
+    "namePlaceholder": "bijv. GitHub archief",
+    "nlLabel": "Beschrijf de regel",
+    "nlPlaceholder": "Bijv. Als een mail van noreply@github.com komt, archiveer het.",
+    "nlHint": "AI zet uw zin om in een gestructureerde regel. U kunt deze simuleren voor het opslaan.",
+    "parseButton": "Analyseren",
+    "simulateButton": "Simuleer op laatste 100 e-mails",
+    "simulationResult": "{{count}} van {{total}} e-mails komen overeen.",
+    "parsed": "Regel geanalyseerd",
+    "parsedByAI": "Geanalyseerd door AI",
+    "parsedByHeuristic": "Automatisch herkend (gratis)",
+    "saved": "Regel opgeslagen",
+    "created": "Regel aangemaakt",
+    "deleted": "Regel verwijderd",
+    "deleteTitle": "Deze regel verwijderen?",
+    "deleteConfirm": "De regel \"{{name}}\" wordt definitief verwijderd.",
+    "runsCount": "{{count}} uitvoeringen",
+    "ifLabel": "Als",
+    "thenLabel": "Dan",
+    "and": "en",
+    "or": "of",
+    "tabs": {
+      "list": "Regels",
+      "audit": "Geschiedenis 24u"
+    },
+    "auditEmpty": "Geen regelactie geactiveerd in de afgelopen 24 uur.",
+    "auditEmail": "E-mail",
+    "rolledBack": "Teruggedraaid",
+    "rollback": "Terugdraaien",
+    "rollbackDone": "Actie teruggedraaid",
+    "field": {
+      "sender": "Afzender",
+      "recipient": "Ontvanger",
+      "subject": "Onderwerp",
+      "body": "Inhoud",
+      "category": "Categorie"
+    },
+    "op": {
+      "contains": "bevat",
+      "not_contains": "bevat niet",
+      "equals": "is gelijk aan",
+      "starts_with": "begint met",
+      "ends_with": "eindigt op",
+      "regex": "komt overeen met"
+    },
+    "action": {
+      "archive": "archiveren",
+      "mark_read": "markeren als gelezen",
+      "categorize": "categoriseren als \"{{category}}\"",
+      "set_priority": "markeren als {{priority}}",
+      "move_to_project": "verplaatsen naar project \"{{project}}\"",
+      "transfer": "doorsturen naar {{to}}",
+      "create_task": "taak aanmaken \"{{title}}\"",
+      "notify": "een melding sturen",
+      "slack_notify": "melden op Slack",
+      "notion_create": "Notion-pagina aanmaken \"{{title}}\"",
+      "assign": "toewijzen aan een lid"
+    },
+    "cond": {
+      "hasAttachment": "met bijlage",
+      "noAttachment": "zonder bijlage",
+      "projectIs": "project = \"{{value}}\""
+    },
+    "errors": {
+      "tooShort": "Schrijf een meer specifieke instructie.",
+      "parseFailed": "Kan deze instructie niet analyseren.",
+      "simulateFailed": "Simulatie mislukt.",
+      "saveFailed": "Opslaan mislukt.",
+      "rollbackFailed": "Terugdraaien mislukt."
+    }
   }
 }
