@@ -17,7 +17,6 @@ import {
   Users,
   MailPlus,
   Activity,
-  BookOpen,
   Send,
   CalendarClock,
   CalendarDays,
@@ -71,7 +70,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     { name: t("rules.title"), href: "/dashboard/parametres/regles", icon: Wand2 },
     { name: t("sidebar.settings"), href: "/dashboard/parametres", icon: Settings },
     { name: t("sidebar.subscription"), href: "/dashboard/abonnement", icon: CreditCard },
-    { name: t("sidebar.manual"), href: "/dashboard/manuel", icon: BookOpen },
   ];
 
   const isBusiness = (user as any).plan === "business";
@@ -98,7 +96,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const isTrialExhausted = (user as any).plan === "essai" && totalUsed >= (user as any).emailsQuota;
   const isBlocked = isExpired || isTrialExhausted;
 
-  const allowedWhenBlocked = ["/dashboard/abonnement", "/dashboard/parametres", "/dashboard/manuel"];
+  const allowedWhenBlocked = ["/dashboard/abonnement", "/dashboard/parametres"];
   const isAdminRoute = location.startsWith("/dashboard/admin");
 
   useEffect(() => {

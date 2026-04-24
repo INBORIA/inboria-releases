@@ -44,7 +44,6 @@ import AdminWaitlist from "@/pages/dashboard/admin/waitlist";
 import AdminAbonnes from "@/pages/dashboard/admin/abonnes";
 import BoitesPartagees from "@/pages/dashboard/boites-partagees";
 import TeamActivite from "@/pages/dashboard/team-activite";
-import Manuel from "@/pages/dashboard/manuel";
 import Agenda from "@/pages/dashboard/agenda";
 
 import Accueil from "@/pages/marketing/accueil";
@@ -189,7 +188,6 @@ function Router() {
       <Route path="/dashboard/boites-partagees" component={() => <ProtectedRoute component={BoitesPartagees} />} />
       <Route path="/dashboard/activite-equipe" component={() => <ProtectedRoute component={TeamActivite} />} />
       <Route path="/dashboard/agenda" component={() => <ProtectedRoute component={Agenda} />} />
-      <Route path="/dashboard/manuel" component={() => <ProtectedRoute component={Manuel} />} />
       <Route path="/dashboard/admin" component={() => <ProtectedRoute component={AdminIndex} />} />
       <Route path="/dashboard/admin/waitlist" component={() => <ProtectedRoute component={AdminWaitlist} />} />
       <Route path="/dashboard/admin/abonnes" component={() => <ProtectedRoute component={AdminAbonnes} />} />

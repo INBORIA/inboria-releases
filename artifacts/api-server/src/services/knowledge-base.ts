@@ -1,4 +1,4 @@
-export function getKnowledgeBase(language: "fr" | "en" | "nl"): string {
+export function getKnowledgeBase(language: "fr" | "en" | "nl" | "de" | "es" | string): string {
   const kb: Record<string, string> = {
     fr: `# Inboria — Base de connaissances complète
 
@@ -914,16 +914,578 @@ Alleen Business-plan: open de e-mail en klik op de knop "Toewijzen". Kies het te
 
 ### Hoe gebruik ik de agenda?
 De agenda toont uw afspraken. AI detecteert automatisch afspraken die in uw e-mails worden vermeld. U kunt ook handmatig afspraken aanmaken. Wissel van weergave (dag/week/maand) met de knoppen bovenaan.`,
+
+    de: `# Inboria — Vollständige Wissensdatenbank
+
+## Allgemeine Übersicht
+Inboria ist ein KI-gestützter intelligenter E-Mail-Assistent für KMU in Belgien und Frankreich. Er sortiert, klassifiziert und fasst Ihre geschäftlichen E-Mails automatisch zusammen. Die Anwendung ist auf Französisch, Englisch, Niederländisch, Deutsch und Spanisch verfügbar.
+
+## 1. POSTEINGANG
+Die Hauptseite zeigt alle eingehenden E-Mails mit intelligenter KI-Sortierung.
+
+### Funktionen:
+- **Prioritätssortierung**: Jede E-Mail erhält automatisch eine Priorität (Dringend 🔴, Mittel 🟡, Niedrig 🟢) durch die KI.
+- **KI-Zusammenfassung**: Jede E-Mail hat eine kurze KI-Zusammenfassung, die ohne Öffnen sichtbar ist.
+- **Automatische Kategorisierung**: Die KI ordnet E-Mails Kategorien zu (Rechnungen, Kundensupport, Vertrieb usw.).
+- **Suche**: Suchleiste, um E-Mails nach Absender, Betreff oder Inhalt zu finden.
+- **Filter**: Nach Kategorie, Priorität, Status (gelesen/ungelesen, archiviert) filtern.
+- **Aktionen**: Antworten, Archivieren, Löschen, Aufgabe erstellen, Termin erstellen.
+- **Mehrfachauswahl**: Mehrere E-Mails auswählen, um sie gemeinsam zu archivieren oder zu löschen.
+- **E-Mail verfassen**: Schaltfläche zum Verfassen einer neuen E-Mail mit KI-Unterstützung.
+- **KI-Entwurf**: Die KI kann einen Antwortentwurf basierend auf dem Kontext der E-Mail erstellen. Klicken Sie auf das Zauberstab-Symbol.
+- **Anhänge**: Empfangene Anhänge anzeigen und herunterladen. Anhänge beim Senden hinzufügen.
+- **Kommentare**: Interne Notizen zu einer E-Mail hinzufügen (nur für Sie und Ihr Team sichtbar).
+- **Zuweisen**: Eine E-Mail einem Teammitglied zuweisen (nur Business-Tarif).
+- **Paginierung**: E-Mails werden in Stapeln von 50 für bessere Leistung geladen.
+
+### Funktionsweise:
+1. Verbinden Sie Ihr E-Mail-Konto in Einstellungen (Gmail OAuth oder IMAP).
+2. Inboria synchronisiert Ihre E-Mails automatisch alle 5 Minuten.
+3. Die KI analysiert jede E-Mail: Priorität, Kategorie, Zusammenfassung.
+4. Sie sehen Ihre E-Mails intelligent sortiert im Posteingang.
+
+## 2. GESENDET
+Zeigt alle E-Mails an, die Sie aus Inboria gesendet haben.
+
+### Funktionen:
+- Liste der gesendeten E-Mails mit Empfänger, Betreff, Datum.
+- Suche in gesendeten E-Mails.
+- Vollständigen Inhalt einer gesendeten E-Mail anzeigen.
+- Gesendete Anhänge anzeigen.
+
+## 3. AUFGABEN
+Die KI erkennt automatisch Aufgaben in Ihren E-Mails und listet sie hier auf.
+
+### Funktionen:
+- **KI-Aufgaben**: Automatisch in Ihren E-Mails erkannt (z. B. "Bitte senden Sie das Angebot" → Aufgabe erstellt).
+- **Manuelle Aufgaben**: Sie können auch Aufgaben mit Titel und Beschreibung manuell erstellen.
+- **Filtern**: Alle Aufgaben anzeigen, nur KI-Aufgaben oder nur manuelle.
+- **Abzeichen**: Zähler für gesamt, KI und manuell.
+- **Als erledigt markieren**: Häkchen setzen, um eine Aufgabe als erledigt zu markieren.
+- **Quell-E-Mail anzeigen**: Bei KI-Aufgaben klicken, um die ursprüngliche E-Mail zu sehen.
+- **CSV exportieren**: Alle Aufgaben als CSV-Datei exportieren.
+
+## 4. PROJEKTE
+Organisieren Sie Ihre E-Mails nach Projekt für eine thematische Nachverfolgung.
+
+### Funktionen:
+- **Projekt erstellen**: Geben Sie Ihrem Projekt einen Namen und eine Beschreibung.
+- **E-Mails zuordnen**: Aus dem Posteingang einer E-Mail ein Projekt zuweisen.
+- **Projektansicht**: Alle einem Projekt zugeordneten E-Mails anzeigen.
+- **Projektstatus**: Aktiv oder archiviert.
+
+## 5. KALENDER
+Kalenderansicht mit automatischer Terminerkennung durch die KI.
+
+### Funktionen:
+- **Ansichten**: Tag, Woche, Monat — Ansicht mit den Schaltflächen oben wechseln.
+- **KI-Erkennung**: Die KI analysiert Ihre E-Mails und erkennt automatisch erwähnte Termine.
+- **KI-Vorschläge**: Erkannte Termine erscheinen als Vorschläge, die Sie bestätigen oder ignorieren können.
+- **Manuell erstellen**: Termin manuell mit Titel, Datum, Uhrzeit, Ort und Teilnehmern erstellen.
+- **Heutige/Morgige Termine**: Seitenleiste mit den nächsten Terminen.
+- **CSV exportieren**: Kalender als CSV exportieren.
+- **Quell-E-Mail anzeigen**: Bei KI-erkannten Terminen die ursprüngliche E-Mail aufrufen.
+
+## 6. ARCHIV
+E-Mails, die Sie archiviert haben. Sie sind nicht mehr im Posteingang, bleiben aber zugänglich.
+
+### Funktionen:
+- Liste archivierter E-Mails.
+- Suche im Archiv.
+- Archivierte E-Mail wiederherstellen (in Posteingang zurücklegen).
+- Endgültig löschen.
+- Papierkorb mit Option "Papierkorb leeren".
+
+## 7. TAGESBERICHT
+Tägliche von KI generierte Zusammenfassung Ihrer E-Mail-Aktivität.
+
+### Funktionen:
+- **KI-Zusammenfassung**: Übersicht über Ihre heutigen E-Mails (empfangen, dringend, bearbeitet).
+- **Achtungspunkte**: Die KI identifiziert wichtige E-Mails, die Aufmerksamkeit erfordern.
+- **Statistiken**: Diagramme Ihrer E-Mail-Aktivität.
+- **Posteingangsgesundheit**: Indikator für die Gesundheit Ihres Postfachs (ausstehend, durchschnittliche Antwortzeit).
+- **Generieren**: Klicken Sie auf die Schaltfläche, um den Tagesbericht zu generieren/regenerieren.
+
+## 8. KLASSIFIZIERUNG (Kategorien)
+Verwalten Sie die Kategorien, die die KI zur Klassifizierung verwendet.
+
+### Funktionen:
+- **Standardkategorien**: Rechnungen, Support, Vertrieb, Verwaltung, Privat usw.
+- **Branchenpakete**: Über 50 verfügbare Branchenpakete (Buchhalter, Anwalt, Restaurant, Immobilien usw.). Jedes Paket fügt branchenspezifische Kategorien hinzu.
+- **KI-Paket**: Geben Sie Ihren Beruf ein, und die KI generiert benutzerdefinierte Kategorien.
+- **Erstellen/Bearbeiten/Löschen**: Verwalten Sie Ihre Kategorien manuell.
+- **Schlüsselwörter**: Jede Kategorie kann Schlüsselwörter haben, um die KI bei der Klassifizierung zu unterstützen.
+- **Neu kategorisieren**: Schaltfläche, um die KI-Kategorisierung auf nicht klassifizierte E-Mails anzuwenden.
+
+## 9. EINSTELLUNGEN
+Konfiguration Ihres Kontos und der E-Mail-Verbindungen.
+
+### Bereiche:
+- **Profil**: Name und E-Mail-Signatur ändern.
+- **E-Mail-Verbindungen**: Gmail (OAuth) verbinden, IMAP verbinden (Outlook, Hotmail, Orange, Free, SFR, Yahoo, Proximus, Telenet, iCloud, OVH, IONOS, Infomaniak und mehr).
+- **Benachrichtigungen**: E-Mail-Benachrichtigungen aktivieren/deaktivieren.
+- **KI-Einstellungen**: Verhalten der KI konfigurieren (Zusammenfassungssprache usw.).
+- **Sprache**: Wählen Sie die Oberflächensprache (Französisch, Englisch, Niederländisch, Deutsch, Spanisch).
+- **Sicherheit**: Passwort ändern.
+
+## 10. ABONNEMENT
+Verwaltung Ihres Tarifs und der Zahlung.
+
+### Verfügbare Tarife:
+- **Probe**: Kostenlos, 100 KI-E-Mails inklusive.
+- **Starter**: 9 €/Monat, 500 E-Mails/Monat, 1 Postfach.
+- **Pro**: 19 €/Monat, 2000 E-Mails/Monat, 3 Postfächer. (Empfohlen)
+- **Business**: 39 €/Monat pro Sitz, unbegrenzte E-Mails, unbegrenzte Postfächer, geteilte Postfächer, Teamverwaltung.
+
+### Funktionen:
+- Aktuellen Tarif und Nutzung anzeigen.
+- Tarif wechseln (Upgrade/Downgrade).
+- Sichere Zahlung über Paddle.
+- Abonnement kündigen.
+- Rechnungsverlauf.
+
+## 11. GETEILTE POSTFÄCHER (nur Business-Tarif)
+Geteilte E-Mail-Postfächer zwischen Teammitgliedern.
+
+### Funktionen:
+- Geteiltes Postfach erstellen (z. B. contact@, info@, support@).
+- Teammitglieder dem Postfach zuweisen.
+- E-Mails des geteilten Postfachs anzeigen.
+- Eine E-Mail beanspruchen (zur Bearbeitung zuweisen).
+- Eine E-Mail freigeben (für das Team verfügbar machen).
+
+## 12. TEAMVERWALTUNG (nur Business-Tarif)
+Verwalten Sie die Mitglieder Ihrer Organisation.
+
+### Funktionen:
+- Mitglieder per E-Mail einladen.
+- Rollen festlegen: Admin oder Mitglied.
+- Mitgliederliste mit Status anzeigen.
+- Mitglied aus dem Team entfernen.
+- Teamaktivität anzeigen.
+
+## 13. TEAMAKTIVITÄT (nur Business-Tarif)
+Verfolgung der Aktivität von Organisationsmitgliedern.
+
+### Funktionen:
+- Aktivitätsübersicht jedes Mitglieds.
+- Bearbeitete E-Mails pro Mitglied.
+- Erledigte Aufgaben.
+
+## 14. KI-CHAT-ASSISTENT
+Schwebendes Chat-Widget rechts unten in der Anwendung. Stellen Sie Fragen in natürlicher Sprache zu jeder Funktion — der Assistent antwortet in Ihrer Sprache (FR/EN/NL/DE/ES). Ersetzt das alte statische Handbuch.
+
+## 15. SPAM UND KI-FILTERUNG
+Inboria verwendet eine mehrschichtige Filterung, um Lärm zu vermeiden und KI-Credits zu sparen.
+
+### Deterministischer Vorfilter (vor der KI):
+- **Noreply/Notification-Muster**: Adressen mit lokalen Teilen wie noreply, no-reply, donotreply, notification(s), alerts, mailer-daemon, postmaster, newsletter, bounce, digest, broadcast werden automatisch erkannt und in die Kategorie "Benachrichtigungen" einsortiert.
+- **Absender-Cache**: Die Tabelle sender_cache merkt sich für jeden bereits gesehenen Absender Kategorie und Priorität. Die zweite E-Mail desselben Absenders vermeidet einen KI-Aufruf.
+- **Deterministische Spam-Erkennung**: Vor jeder KI-Verarbeitung markiert der Vorfilter E-Mails mit klaren Signalen (Massensendungen, bekannte Signaturen) als Spam.
+
+### Automatische Spam-Kategorisierung:
+- **KI-Entscheidung**: E-Mails ohne Vorfilter-Treffer durchlaufen GPT-4o-mini, das entscheidet, ob es sich um Spam handelt.
+- **Spam-Ordner**: In der Seitenleiste zugänglich, sammelt alle als Spam markierten E-Mails.
+- **Keine vergeudeten Credits**: Eine vorgefilterte E-Mail verbraucht keine KI-Credits.
+
+### Manuelle Neuklassifizierung:
+- **Wiederherstellen**: Aus dem Spam-Ordner mit einem Klick zurück in den Posteingang.
+- **Als Spam markieren**: Aus dem Posteingang eine E-Mail in Spam verschieben.
+- **Lernen über den Cache**: Wiederherstellungen und Markierungen aktualisieren sender_cache für zukünftige E-Mails.
+- **Spam leeren**: Schaltfläche, um alle Spam-E-Mails endgültig zu löschen, mit Bestätigung.
+- **Einzelne Löschung**: Eine Spam-E-Mail einzeln löschen, ebenfalls mit Bestätigung.
+
+## 16. INTELLIGENTES SENDEN (Welle 1)
+Drei Funktionen zur besseren Kontrolle Ihres Postfachs.
+
+### E-Mail aufschieben (Snooze)
+- **Wie**: Öffnen Sie eine E-Mail, klicken Sie auf das Uhrsymbol "Aufschieben" und wählen Sie ein Datum/Uhrzeit oder einen Schnellzugriff (Heute Abend, Morgen früh, Nächsten Montag, Benutzerdefiniert).
+- **Effekt**: Die E-Mail verschwindet vorübergehend aus dem Posteingang und erscheint zur gewählten Zeit automatisch wieder als ungelesen.
+- **Wo finden**: Seite **Aufgeschoben** im linken Menü (unter Geplant). Sie können sie sofort "Aufschiebung deaktivieren".
+
+### Senden planen
+- **Wie**: Im Composer (Neu oder Antwort) auf den Pfeil neben Senden klicken und "Später senden" wählen. Datum und Uhrzeit auswählen.
+- **Effekt**: Die E-Mail wird automatisch zur geplanten Zeit gesendet. Sie können sie vor dem Senden abbrechen oder bearbeiten.
+- **Wo sehen**: Seite **Geplant** im linken Menü.
+
+### Senden rückgängig (Undo Send)
+- **Wie**: Nach Klick auf Senden in einer Antwort erscheint unten ein Toast mit einer "Rückgängig"-Schaltfläche für 10 Sekunden.
+- **Effekt**: Bei Klick auf Rückgängig innerhalb von 10s wird die E-Mail nie gesendet.
+
+### Öffnungsverfolgung (Tracking)
+- Indikator bei gesendeten E-Mails: "Gesehen" oder "Nicht gesehen".
+- Diskret, datenschutzkonform (transparenter unsichtbarer Pixel).
+
+## 17. KI-VORLAGEN (Welle 2)
+Bibliothek wiederverwendbarer Standardantworten mit KI-Unterstützung.
+
+### Vorlage erstellen
+- **Manuell**: Seite **Einstellungen → Vorlagen**, Schaltfläche "Neue Vorlage". Geben Sie Name, Betreff und Inhalt an. Die KI kann einen Namen basierend auf dem Inhalt vorschlagen.
+- **Aus einer gesendeten E-Mail**: Im Composer nach dem Senden auf "Als Vorlage speichern" klicken.
+- **KI-Kategorisierung**: Jede Vorlage erhält ein automatisches Tag (Angebot, Erinnerung, Termin, Ablehnung, Dank, Nachverfolgung, Sonstiges).
+
+### Vorlage verwenden
+- **Automatische Vorschläge**: Beim Öffnen einer Antwort zeigt ein Banner oben im Composer 1 bis 3 relevante Vorlagen für den Kontext an.
+- **Einfügen mit 1 Klick**: Klicken Sie auf den Vorschlag, um die Vorlage in die Antwort einzufügen.
+- **Variablen**: Wenn die Vorlage Variablen enthält (z. B. {{vorname}}), werden sie nach Möglichkeit automatisch ausgefüllt.
+
+### Vorlagen verwalten
+- Seite **Einstellungen → Vorlagen**: Liste nach Kategorie gruppiert, Suche, Bearbeiten, Löschen.
+- Nutzungszähler: sehen Sie, wie oft jede Vorlage verwendet wurde.
+
+## 18. AUTOMATISCHE REGELN (Welle 2)
+Automatisieren Sie die Verarbeitung bestimmter E-Mails in natürlicher Sprache.
+
+### Regel erstellen
+- **Seite**: **Einstellungen → Regeln**, Schaltfläche "Neue Regel".
+- **In natürlicher Sprache**: Tippen Sie z. B. "Wenn ein Kunde Angebot erwähnt, in Vertrieb einsortieren und mich benachrichtigen". Die KI übersetzt den Satz in eine strukturierte Regel.
+- **Mögliche Bedingungen**: Absender enthält X, Betreff enthält X, Inhalt enthält X, KI-Kategorie = X, Priorität = X.
+- **Mögliche Aktionen**: In Kategorie einsortieren, Als prioritär markieren, Benachrichtigen, Archivieren, Mitglied zuweisen, Aufgabe erstellen.
+
+### Vor dem Aktivieren testen (Simulator)
+- **"Simulieren"-Schaltfläche**: Vor der Aktivierung den Simulator starten. Er zeigt, welche E-Mails der letzten 30 Tage betroffen wären.
+- **Sicherheit**: Vermeidet Überraschungen.
+
+### Nachverfolgung und Rollback
+- **Zähler**: Jede Regel zeigt, wie oft sie ausgelöst wurde.
+- **Audit-Protokoll**: Liste aller Aktionen, die Regeln in den letzten 24h ausgeführt haben.
+- **Rückgängig mit 1 Klick**: Für jede Aktion der letzten 24h Schaltfläche "Rückgängig", die den vorherigen Zustand wiederherstellt.
+
+### Ein/Aus
+- Schalter an jeder Regel, um sie zu pausieren, ohne sie zu löschen.
+
+## HÄUFIG GESTELLTE FRAGEN
+
+### Wie verbinde ich mein E-Mail-Konto?
+Gehen Sie zu Einstellungen → E-Mail-Verbindungen. Wählen Sie Ihren Anbieter (Gmail, Outlook usw.). Für Gmail werden Sie zu Google weitergeleitet. Für andere geben Sie Ihre E-Mail-Adresse und Ihr IMAP-Passwort ein.
+
+### Warum werden meine E-Mails nicht synchronisiert?
+Synchronisation erfolgt automatisch alle 5 Minuten. Wenn keine E-Mails erscheinen: Verbindung in Einstellungen prüfen, Zugangsdaten und IMAP-Zugang beim Anbieter überprüfen.
+
+### Wie kategorisiert die KI meine E-Mails?
+Die KI analysiert Betreff, Absender und Inhalt jeder E-Mail, um Priorität (Dringend, Mittel, Niedrig), Kategorie und Zusammenfassung zu bestimmen.
+
+### Sind meine Daten sicher?
+Ja. Inboria verwendet SSL/TLS-Verschlüsselung. Wir speichern den vollständigen Inhalt nicht dauerhaft — nur Metadaten und Zusammenfassungen.
+
+### Wie ändere ich die Sprache?
+Klicken Sie auf den Sprachwähler oben rechts im Dashboard. Wählen Sie zwischen Französisch, Englisch, Niederländisch, Deutsch oder Spanisch.
+
+### Wie erstelle ich einen KI-Entwurf?
+Öffnen Sie eine E-Mail und klicken Sie auf das Zauberstab-Symbol (✨). Die KI generiert einen Antwortentwurf zum Bearbeiten.
+
+### Wie exportiere ich meine Aufgaben?
+Aufgaben → Schaltfläche "CSV exportieren" oben.
+
+### Wie kündige ich mein Abonnement?
+Abonnement → "Abonnement verwalten" → Paddle-Portal.
+
+### Was ist ein Branchenpaket?
+Ein Branchenpaket ist eine Sammlung vordefinierter Kategorien für Ihren Beruf. Beispielsweise enthält das Paket "Buchhalter" Kategorien wie Kundenrechnungen, Steuererklärungen.
+
+### Wie funktionieren KI-Credits?
+Jeder Tarif enthält monatliche KI-Credits. Ein Credit wird pro KI-Verarbeitung verbraucht. Ihre Nutzung sehen Sie in der Seitenleiste unten. Bei Erschöpfung müssen Sie upgraden.
+
+### Kann ich mehrere E-Mail-Konten verbinden?
+Ja, je nach Tarif: Starter = 1 Postfach, Pro = 3, Business = unbegrenzt.
+
+### Wie weise ich eine E-Mail einem Kollegen zu?
+Nur Business: E-Mail öffnen → "Zuweisen" → Mitglied wählen.
+
+### Wie verwende ich den Kalender?
+Der Kalender zeigt Ihre Termine. Die KI erkennt Termine in E-Mails. Sie können auch manuell Termine erstellen. Ansicht (Tag/Woche/Monat) oben wechseln.`,
+
+    es: `# Inboria — Base de conocimientos completa
+
+## Visión general
+Inboria es un asistente de correo inteligente con IA, diseñado para PYMES en Bélgica y Francia. Ordena, clasifica y resume automáticamente sus correos profesionales. La aplicación funciona en francés, inglés, neerlandés, alemán y español.
+
+## 1. BANDEJA DE ENTRADA
+La página principal muestra todos los correos entrantes con clasificación inteligente por IA.
+
+### Funciones:
+- **Clasificación por prioridad**: Cada correo recibe automáticamente una prioridad (Urgente 🔴, Media 🟡, Baja 🟢) asignada por la IA.
+- **Resumen IA**: Cada correo tiene un resumen breve generado por la IA, visible sin abrir.
+- **Categorización automática**: La IA clasifica los correos en categorías (Facturas, Soporte, Comercial, etc.).
+- **Búsqueda**: Barra de búsqueda para encontrar un correo por remitente, asunto o contenido.
+- **Filtros**: Filtrar por categoría, prioridad, estado (leído/no leído, archivado).
+- **Acciones**: Responder, Archivar, Eliminar, Crear una tarea, Crear una cita.
+- **Selección múltiple**: Seleccionar varios correos para archivar o eliminar en lote.
+- **Redactar correo**: Botón para redactar un nuevo correo con asistencia IA.
+- **Borrador IA**: La IA puede generar un borrador de respuesta basado en el contexto. Haga clic en el icono de varita mágica.
+- **Adjuntos**: Ver y descargar adjuntos recibidos. Añadir adjuntos al enviar.
+- **Comentarios**: Añadir notas internas en un correo (visibles solo para usted y su equipo).
+- **Asignar**: Asignar un correo a un miembro del equipo (solo plan Business).
+- **Paginación**: Los correos se cargan en lotes de 50 para mejor rendimiento.
+
+### Cómo funciona:
+1. Conecte su cuenta de correo en Ajustes (Gmail OAuth o IMAP).
+2. Inboria sincroniza sus correos automáticamente cada 5 minutos.
+3. La IA analiza cada correo: prioridad, categoría, resumen.
+4. Verá sus correos clasificados inteligentemente en la bandeja.
+
+## 2. ENVIADOS
+Muestra todos los correos que ha enviado desde Inboria.
+
+### Funciones:
+- Lista de correos enviados con destinatario, asunto, fecha.
+- Búsqueda en correos enviados.
+- Ver el contenido completo de un correo enviado.
+- Ver los adjuntos enviados.
+
+## 3. TAREAS
+La IA detecta automáticamente las tareas en sus correos y las lista aquí.
+
+### Funciones:
+- **Tareas IA**: Detectadas automáticamente (ej.: "Por favor envíe el presupuesto" → tarea creada).
+- **Tareas manuales**: También puede crear tareas manualmente con título y descripción.
+- **Filtrar**: Ver todas, solo IA, o solo manuales.
+- **Insignias**: Contadores para total, IA y manuales.
+- **Marcar como hecho**: Marque para completar una tarea.
+- **Ver correo origen**: Para tareas IA, haga clic para ver el correo original.
+- **Exportar CSV**: Exporte todas sus tareas en archivo CSV.
+
+## 4. PROYECTOS
+Organice sus correos por proyecto para un seguimiento temático.
+
+### Funciones:
+- **Crear un proyecto**: Asigne nombre y descripción.
+- **Asociar correos**: Desde la bandeja, asigne un correo a un proyecto.
+- **Vista proyecto**: Ver todos los correos asociados a un proyecto.
+- **Estado del proyecto**: Activo o archivado.
+
+## 5. AGENDA / CALENDARIO
+Vista de calendario con detección automática de citas por la IA.
+
+### Funciones:
+- **Vistas**: Día, Semana, Mes — cambie la vista con los botones superiores.
+- **Detección IA**: La IA analiza sus correos y detecta automáticamente citas mencionadas.
+- **Sugerencias IA**: Las citas detectadas aparecen como sugerencias para confirmar o ignorar.
+- **Crear manualmente**: Cree una cita con título, fecha, hora, lugar y participantes.
+- **Citas hoy/mañana**: Panel lateral con próximas citas.
+- **Exportar CSV**: Exporte su agenda en CSV.
+- **Ver correo origen**: Para citas detectadas por IA, acceda al correo original.
+
+## 6. ARCHIVOS
+Correos archivados. Ya no están en la bandeja pero permanecen accesibles.
+
+### Funciones:
+- Lista de correos archivados.
+- Búsqueda en archivos.
+- Restaurar un correo archivado (devolverlo a la bandeja).
+- Eliminación definitiva.
+- Papelera con opción "Vaciar papelera".
+
+## 7. INFORME DIARIO
+Resumen diario generado por IA de su actividad.
+
+### Funciones:
+- **Resumen IA**: Visión general de los correos del día (recibidos, urgentes, tratados).
+- **Puntos de atención**: La IA identifica correos importantes que requieren su atención.
+- **Estadísticas**: Gráficos de actividad.
+- **Salud del buzón**: Indicador de salud (correos pendientes, tiempo medio de respuesta).
+- **Generar**: Botón para generar/regenerar el informe del día.
+
+## 8. CLASIFICACIÓN (Categorías)
+Gestione las categorías que la IA usa para clasificar sus correos.
+
+### Funciones:
+- **Categorías por defecto**: Facturas, Soporte, Comercial, Admin, Personal, etc.
+- **Packs sectoriales**: Más de 50 packs disponibles (Contable, Abogado, Restaurante, Inmobiliaria, etc.). Cada pack añade categorías específicas.
+- **Pack IA**: Indique su profesión y la IA genera categorías personalizadas.
+- **Crear/Modificar/Eliminar**: Gestione manualmente.
+- **Palabras clave**: Cada categoría puede tener palabras clave para ayudar a la IA.
+- **Recategorizar**: Botón para relanzar la categorización IA en correos sin clasificar.
+
+## 9. AJUSTES
+Configuración de cuenta y conexiones de correo.
+
+### Secciones:
+- **Perfil**: Modificar nombre y firma.
+- **Conexiones de correo**: Conectar Gmail (OAuth), conectar vía IMAP (Outlook, Hotmail, Orange, Free, SFR, Yahoo, Proximus, Telenet, iCloud, OVH, IONOS, Infomaniak y más).
+- **Notificaciones**: Activar/desactivar notificaciones.
+- **Preferencias IA**: Configurar el comportamiento de la IA.
+- **Idioma**: Elegir idioma de la interfaz (Francés, Inglés, Neerlandés, Alemán, Español).
+- **Seguridad**: Cambiar su contraseña.
+
+## 10. SUSCRIPCIÓN
+Gestión de su plan y pago.
+
+### Planes disponibles:
+- **Prueba**: Gratis, 100 correos IA incluidos.
+- **Starter**: 9 €/mes, 500 correos/mes, 1 buzón.
+- **Pro**: 19 €/mes, 2000 correos/mes, 3 buzones. (Recomendado)
+- **Business**: 39 €/mes por puesto, correos ilimitados, buzones ilimitados, buzones compartidos, gestión de equipo.
+
+### Funciones:
+- Ver plan actual y uso.
+- Cambiar de plan.
+- Pago seguro vía Paddle.
+- Cancelar suscripción.
+- Historial de facturación.
+
+## 11. BUZONES COMPARTIDOS (solo plan Business)
+Buzones compartidos entre miembros del equipo.
+
+### Funciones:
+- Crear un buzón compartido (ej.: contact@, info@, support@).
+- Asignar miembros al buzón.
+- Ver correos del buzón compartido.
+- Reclamar un correo (asignárselo).
+- Liberar un correo.
+
+## 12. GESTIÓN DE EQUIPO (solo plan Business)
+Gestione los miembros de su organización.
+
+### Funciones:
+- Invitar miembros por correo.
+- Definir roles: Admin o Miembro.
+- Ver lista de miembros con estado.
+- Retirar un miembro del equipo.
+- Ver actividad del equipo.
+
+## 13. ACTIVIDAD DEL EQUIPO (solo plan Business)
+Seguimiento de la actividad de los miembros.
+
+### Funciones:
+- Vista general de actividad por miembro.
+- Correos tratados por miembro.
+- Tareas completadas.
+
+## 14. ASISTENTE CHAT IA
+Widget de chat flotante en la esquina inferior derecha de la aplicación. Haga preguntas en lenguaje natural sobre cualquier función — el asistente responde en su idioma (FR/EN/NL/DE/ES). Reemplaza el antiguo manual estático.
+
+## 15. SPAM Y FILTRADO IA
+Inboria utiliza filtrado en varias capas para evitar ruido y ahorrar créditos IA.
+
+### Pre-filtro determinista (antes de la IA):
+- **Patrón noreply/notificaciones**: Direcciones cuya parte local coincide con noreply, no-reply, donotreply, notification(s), alerts, mailer-daemon, postmaster, newsletter, bounce, digest, broadcast son reconocidas automáticamente y clasificadas en "Notificaciones".
+- **Caché de remitentes**: La tabla sender_cache memoriza categoría y prioridad de cada remitente ya visto. El segundo correo del mismo remitente evita una llamada IA.
+- **Detección de spam determinista**: Antes de cualquier procesamiento IA, el pre-filtro marca como spam los correos con señales claras (envíos masivos, firmas conocidas).
+
+### Categorización automática en spam:
+- **Decisión IA**: Los correos no cubiertos por el pre-filtro pasan por GPT-4o-mini, que decide si son spam.
+- **Carpeta Spam**: Accesible desde la barra lateral, agrupa todos los correos marcados como spam.
+- **Sin créditos malgastados**: Un correo pre-filtrado no consume crédito IA.
+
+### Reclasificación manual:
+- **Restaurar**: Desde Spam, un clic devuelve un correo legítimo a la bandeja.
+- **Marcar como spam**: Desde la bandeja, puede forzar un correo a Spam.
+- **Aprendizaje por caché**: Sus restauraciones y marcados alimentan sender_cache.
+- **Vaciar spam**: Botón para eliminar definitivamente todo el spam, con confirmación.
+- **Eliminación individual**: Elimine un correo spam individualmente, con confirmación.
+
+## 16. ENVÍO INTELIGENTE (Ola 1)
+Tres funciones para controlar mejor sus envíos y su buzón.
+
+### Posponer un correo (Snooze)
+- **Cómo**: Abra un correo, haga clic en el icono de reloj "Posponer" y elija fecha/hora o un atajo (Esta noche, Mañana por la mañana, Próximo lunes, Personalizado).
+- **Efecto**: El correo desaparece temporalmente de la bandeja y reaparece automáticamente a la hora elegida como nuevo no leído.
+- **Dónde encontrar**: Página **Pospuestos** en el menú izquierdo (debajo de Programados). Puede "Desactivar el aplazamiento" para traerlos de inmediato.
+
+### Programar un envío
+- **Cómo**: En el composer (nuevo o respuesta), haga clic en la flecha junto a Enviar y elija "Enviar más tarde". Seleccione fecha y hora.
+- **Efecto**: El correo se envía automáticamente a la hora prevista. Puede cancelarlo o modificarlo antes.
+- **Dónde ver los envíos programados**: Página **Programados** en el menú izquierdo.
+
+### Cancelar un envío (Undo Send)
+- **Cómo**: Después de hacer clic en Enviar en una respuesta, aparece un toast abajo con un botón "Cancelar" durante 10 segundos.
+- **Efecto**: Si hace clic en Cancelar dentro de 10s, el correo no se envía.
+
+### Seguimiento de apertura (Tracking)
+- Indicador en correos enviados: "Visto" o "No visto" según si el destinatario abrió.
+- Discreto, respetuoso con la privacidad (píxel transparente invisible).
+
+## 17. PLANTILLAS IA (Ola 2)
+Biblioteca de respuestas-tipo reutilizables, con asistencia IA.
+
+### Crear una plantilla
+- **Manualmente**: Página **Ajustes → Plantillas**, botón "Nueva plantilla". Asigne nombre, asunto y cuerpo. La IA puede sugerir un nombre basado en el contenido.
+- **Desde un correo enviado**: En el composer, después de enviar, haga clic en "Guardar como plantilla".
+- **Categorización IA**: Cada plantilla recibe una etiqueta automática (presupuesto, recordatorio, cita, rechazo, agradecimiento, seguimiento, otro).
+
+### Usar una plantilla
+- **Sugerencias automáticas**: Al abrir una respuesta, una banda en la parte superior muestra 1 a 3 plantillas relevantes para el contexto del correo recibido.
+- **Inserción en 1 clic**: Haga clic en la sugerencia para insertar la plantilla.
+- **Variables**: Si la plantilla contiene variables (ej.: {{nombre}}), se rellenan automáticamente cuando es posible.
+
+### Gestionar plantillas
+- Página **Ajustes → Plantillas**: lista agrupada por categoría, búsqueda, edición, eliminación.
+- Contador de uso: vea cuántas veces se ha usado cada plantilla.
+
+## 18. REGLAS AUTOMÁTICAS (Ola 2)
+Automatice el tratamiento de ciertos correos en lenguaje natural.
+
+### Crear una regla
+- **Página**: **Ajustes → Reglas**, botón "Nueva regla".
+- **En lenguaje natural**: Escriba por ejemplo "Si un cliente menciona presupuesto, clasificar en Comercial y avisarme". La IA traduce la frase en una regla estructurada (condiciones + acciones).
+- **Condiciones posibles**: Remitente contiene X, Asunto contiene X, Cuerpo contiene X, Categoría IA = X, Prioridad = X.
+- **Acciones posibles**: Clasificar en categoría, Marcar prioritario, Notificar, Archivar, Asignar a un miembro, Crear una tarea.
+
+### Probar antes de activar (Simulador)
+- **Botón "Simular"**: Antes de activar una regla, lance el simulador. Le muestra qué correos de los últimos 30 días habrían sido afectados.
+- **Seguridad**: Evita sorpresas.
+
+### Seguimiento y rollback
+- **Contador**: Cada regla muestra cuántas veces se ha activado.
+- **Registro de auditoría**: Lista de todas las acciones ejecutadas en las últimas 24h.
+- **Cancelar en 1 clic**: Para cada acción de las últimas 24h, botón "Cancelar" que restaura el estado anterior.
+
+### On/Off
+- Interruptor en cada regla para pausarla sin eliminarla.
+
+## PREGUNTAS FRECUENTES
+
+### ¿Cómo conecto mi cuenta de correo?
+Vaya a Ajustes → Conexiones de correo. Elija su proveedor (Gmail, Outlook, etc.). Para Gmail, será redirigido a Google. Para otros, introduzca su correo y contraseña IMAP.
+
+### ¿Por qué no se sincronizan mis correos?
+La sincronización se realiza automáticamente cada 5 minutos. Si no aparecen: verifique la conexión en Ajustes, credenciales correctas, acceso IMAP activado.
+
+### ¿Cómo clasifica la IA mis correos?
+La IA analiza asunto, remitente y contenido para determinar prioridad (Urgente, Media, Baja), categoría y generar resumen.
+
+### ¿Mis datos están seguros?
+Sí. Inboria usa cifrado SSL/TLS. No almacenamos el contenido completo permanentemente — solo metadatos y resúmenes.
+
+### ¿Cómo cambio el idioma?
+Haga clic en el selector de idioma arriba a la derecha. Elija entre Francés, Inglés, Neerlandés, Alemán o Español.
+
+### ¿Cómo creo un borrador IA?
+Abra un correo y haga clic en el icono de varita mágica (✨). La IA genera un borrador para editar.
+
+### ¿Cómo exporto mis tareas?
+Tareas → botón "Exportar CSV" arriba.
+
+### ¿Cómo cancelo mi suscripción?
+Suscripción → "Gestionar suscripción" → portal Paddle.
+
+### ¿Qué es un Pack Sectorial?
+Un Pack Sectorial es un conjunto de categorías predefinidas adaptadas a su sector. Por ejemplo, el pack "Contable" incluye Facturas clientes, Declaraciones fiscales, etc.
+
+### ¿Cómo funcionan los créditos IA?
+Cada plan incluye créditos IA mensuales. Un crédito se consume por cada procesamiento IA. Vea su consumo en la barra lateral abajo. Al agotarse, debe pasar a un plan superior.
+
+### ¿Puedo conectar varias cuentas?
+Sí, según plan: Starter = 1, Pro = 3, Business = ilimitado.
+
+### ¿Cómo asigno un correo a un colega?
+Solo Business: abra el correo → "Asignar" → elija miembro.
+
+### ¿Cómo uso la agenda?
+La agenda muestra sus citas. La IA detecta automáticamente las citas mencionadas en correos. También puede crear citas manualmente. Cambie de vista (día/semana/mes) con los botones superiores.`,
   };
 
   return kb[language] || kb.fr;
 }
 
-export function getSystemPrompt(language: "fr" | "en" | "nl"): string {
+export function getSystemPrompt(language: "fr" | "en" | "nl" | "de" | "es" | string): string {
   const prompts: Record<string, string> = {
     fr: `Tu es l'assistant de support de Inboria, un outil de gestion d'emails intelligent propulsé par l'IA pour les PME. Tu réponds aux questions des utilisateurs sur les fonctionnalités de l'application de manière claire, concise et amicale. Tu réponds TOUJOURS en français. Tu es poli et professionnel. Si tu ne connais pas la réponse, dis-le honnêtement et suggère de contacter le support par email à support@inboria.com. Ne parle jamais de sujets non liés à Inboria. Garde tes réponses courtes et utiles (max 3-4 paragraphes).`,
     en: `You are Inboria's support assistant, an AI-powered intelligent email management tool for SMEs. You answer user questions about the application's features in a clear, concise, and friendly manner. You ALWAYS respond in English. You are polite and professional. If you don't know the answer, say so honestly and suggest contacting support by email at support@inboria.com. Never discuss topics unrelated to Inboria. Keep your answers short and helpful (max 3-4 paragraphs).`,
     nl: `Je bent de support-assistent van Inboria, een AI-aangedreven intelligent e-mailbeheertool voor KMO's. Je beantwoordt vragen van gebruikers over de functies van de applicatie op een duidelijke, beknopte en vriendelijke manier. Je antwoordt ALTIJD in het Nederlands. Je bent beleefd en professioneel. Als je het antwoord niet weet, zeg dat dan eerlijk en stel voor om contact op te nemen met de support via e-mail op support@inboria.com. Bespreek nooit onderwerpen die niet gerelateerd zijn aan Inboria. Houd je antwoorden kort en nuttig (max 3-4 paragrafen).`,
+    de: `Du bist der Support-Assistent von Inboria, einem KI-gestützten intelligenten E-Mail-Verwaltungstool für KMU. Du beantwortest Benutzerfragen zu den Funktionen der Anwendung klar, prägnant und freundlich. Du antwortest IMMER auf Deutsch. Du bist höflich und professionell. Wenn du die Antwort nicht kennst, sage das ehrlich und schlage vor, den Support per E-Mail unter support@inboria.com zu kontaktieren. Sprich niemals über Themen, die nichts mit Inboria zu tun haben. Halte deine Antworten kurz und hilfreich (max. 3-4 Absätze).`,
+    es: `Eres el asistente de soporte de Inboria, una herramienta inteligente de gestión de correo electrónico con IA para PYMES. Respondes a las preguntas de los usuarios sobre las funciones de la aplicación de manera clara, concisa y amigable. SIEMPRE respondes en español. Eres educado y profesional. Si no conoces la respuesta, dilo con honestidad y sugiere contactar al soporte por correo a support@inboria.com. Nunca hables de temas no relacionados con Inboria. Mantén tus respuestas cortas y útiles (máx. 3-4 párrafos).`,
   };
   return prompts[language] || prompts.fr;
 }
