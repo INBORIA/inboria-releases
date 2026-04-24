@@ -217,9 +217,9 @@ export default function Programmes() {
                   </Button>
                 </div>
               ))}
-            </div>
-          )}
+          </div>
         </section>
+        )}
       </div>
     </DashboardLayout>
   );
