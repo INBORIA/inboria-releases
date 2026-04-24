@@ -37,7 +37,7 @@
   "sidebar": {
     "inbox": "Inbox",
     "sent": "Sent",
-    "scheduled": "Scheduled",
+    "scheduled": "Snoozed",
     "archives": "Archives",
     "junk": "Junk mail",
     "followup": "Follow-up",

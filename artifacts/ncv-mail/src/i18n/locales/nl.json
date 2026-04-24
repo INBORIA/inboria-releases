@@ -37,7 +37,7 @@
   "sidebar": {
     "inbox": "Postvak IN",
     "sent": "Verzonden",
-    "scheduled": "Gepland",
+    "scheduled": "Uitgesteld",
     "archives": "Archief",
     "junk": "Ongewenste e-mail",
     "followup": "Opvolging",
