@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { extractEmailAddress } from "@/lib/utils";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
@@ -295,7 +296,7 @@ export default function Taches() {
 
   const handleGenerateDraftForTask = () => {
     if (!emailDetailTask?.emailId) return;
-    setReplyTo(emailDetailTask.emailSenderEmail || emailDetailTask.emailSender || "");
+    setReplyTo(emailDetailTask.emailSenderEmail || extractEmailAddress(emailDetailTask.emailSender) || "");
     setReplySubject(emailDetailTask.emailSubject?.startsWith("Re:") ? emailDetailTask.emailSubject : `Re: ${emailDetailTask.emailSubject}`);
     setReplyOpen(true);
     generateDraftMut.mutate(
@@ -721,7 +722,7 @@ export default function Taches() {
                   className="gap-1.5 h-7 text-[11px]"
                   onClick={() => {
                     if (!replyOpen) {
-                      setReplyTo(emailDetailTask.emailSenderEmail || emailDetailTask.emailSender || "");
+                      setReplyTo(emailDetailTask.emailSenderEmail || extractEmailAddress(emailDetailTask.emailSender) || "");
                       setReplySubject(emailDetailTask.emailSubject?.startsWith("Re:") ? emailDetailTask.emailSubject : `Re: ${emailDetailTask.emailSubject}`);
                       const sig = signatureForConnection(emailDetailTask.emailConnectionId);
                       setReplyText(sig ? `\n\n${sig}` : "");

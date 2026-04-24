@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { extractEmailAddress } from "@/lib/utils";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
@@ -390,7 +391,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   className="gap-1.5 h-7 text-[11px]"
                   onClick={() => {
                     if (!replyOpen) {
-                      setReplyTo(email.sender || "");
+                      setReplyTo(email.senderEmail || extractEmailAddress(email.sender) || "");
                       setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
                       const defConn = resolveDefaultConnectionId();
                       setReplyConnectionId(defConn);
@@ -410,7 +411,7 @@ function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdateP
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
                   disabled={isDrafting}
                   onClick={() => {
-                    setReplyTo(email.sender || "");
+                    setReplyTo(email.senderEmail || extractEmailAddress(email.sender) || "");
                     setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
                     const effectiveConnId = replyConnectionId || resolveDefaultConnectionId();
                     if (!replyConnectionId) setReplyConnectionId(effectiveConnId);
