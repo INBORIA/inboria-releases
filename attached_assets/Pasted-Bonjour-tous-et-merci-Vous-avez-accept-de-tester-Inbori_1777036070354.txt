@@ -1,0 +1,55 @@
+Bonjour à tous, et merci !
+
+Vous avez accepté de tester Inboria en avant-première — l'autopilote email pour les pros qui veulent reprendre le contrôle de leur boîte de réception. Vos retours vont façonner le produit avant le lancement officiel.
+
+🎁 Votre accès — gratuit pendant toute la beta
+Plan Business complet, sans carte bancaire, sans engagement. Vos identifiants vous ont déjà été transmis en privé — vérifiez vos messages.
+
+💻 Version Web — Démarrer en 5 minutes
+1️⃣ Allez sur https://inboria.com
+2️⃣ Connectez-vous avec les identifiants reçus
+3️⃣ Choisissez votre langue en haut à droite (FR / EN / NL / DE / ES)
+4️⃣ Allez dans Paramètres → Boîtes mail → Connecter une boîte
+* Outlook 365 → 1 clic via Microsoft (le plus simple)
+* Gmail / Yahoo / Telenet / Skynet… → mot de passe d'application requis
+5️⃣ Ouvrez un email reçu, cliquez sur "Générer une réponse IA" → magie ✨
+
+📱 Version Mobile — Comme une vraie app sur votre téléphone !
+Pas besoin de passer par un store. Inboria s'installe directement sur votre écran d'accueil en 30 secondes.
+
+🤖 Android (Chrome)
+
+Ouvrez https://inboria.com dans Chrome
+Touchez le menu (⋮ en haut à droite)
+Choisissez "Ajouter à l'écran d'accueil"
+L'icône Inboria apparaît sur votre écran — touchez-la, et c'est comme une vraie app ✨
+🍏 iPhone / iPad (Safari)
+
+Ouvrez https://inboria.com dans Safari
+Touchez l'icône Partage en bas (carré avec flèche ↑)
+Faites défiler et choisissez "Sur l'écran d'accueil"
+Confirmez — l'icône Inboria apparaît, vous l'utilisez comme n'importe quelle app
+💡 Conseil : commencez par la version web sur ordinateur pour connecter votre boîte mail, puis installez l'icône sur votre téléphone — vos données sont automatiquement synchronisées.
+
+🔒 Côté sécurité
+
+Pensez à changer votre mot de passe à la 1ʳᵉ connexion (Profil → Sécurité)
+Vos emails sont traités automatiquement par l'IA, jamais lus par un humain
+Données hébergées en Europe (RGPD)
+Vous pouvez révoquer l'accès et supprimer votre compte à tout moment
+🎯 Ce qui m'intéresse particulièrement
+✅ Le tri automatique est-il pertinent pour votre activité ?
+✅ La qualité des brouillons IA : ton, style, justesse ?
+✅ L'ergonomie mobile : aussi fluide que prévu ?
+✅ Y a-t-il des moments où vous vous perdez dans l'app ?
+✅ Qu'est-ce qui vous manquerait pour remplacer votre workflow actuel ?
+
+🐛 Pour vos retours
+
+🔴 Bug bloquant → message direct, je traite dans la journée
+🟡 Bug mineur ou suggestion → ici dans le groupe, ou en privé
+💡 Idée produit → tout est bon à prendre !
+Encore merci à tous, vous faites partie des toutes premières personnes à utiliser Inboria. C'est précieux. 🙏
+
+Bon test !
+Jean-Jacques
