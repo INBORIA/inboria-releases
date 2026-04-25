@@ -384,10 +384,11 @@ router.get("/integrations/hubspot/callback", async (req, res): Promise<void> => 
     syncHubspotContacts(userId, 50).catch(() => {});
 
     const frontendUrl = getFrontendUrl();
-    res.send(`<html><body><script>
-      window.opener?.postMessage({ type: "integration-connected", provider: "hubspot" }, "*");
-      window.location.href = "${frontendUrl}/dashboard/parametres/integrations?integration=hubspot&status=success";
-    </script><p>HubSpot connecte ! Redirection...</p></body></html>`);
+    res.send(`<html><body style="font-family:system-ui;padding:24px;text-align:center"><script>
+      try { window.opener?.postMessage({ type: "integration-connected", provider: "hubspot" }, "*"); } catch (e) {}
+      if (window.opener) { window.close(); }
+      setTimeout(function(){ window.location.href = "${frontendUrl}/dashboard/parametres/crm?integration=hubspot&status=success"; }, 600);
+    </script><p>HubSpot connecté ! Vous pouvez fermer cette fenêtre.</p></body></html>`);
   } catch (err) {
     console.error("[integrations] HubSpot callback error:", (err as Error).message);
     res.status(500).send("Erreur de connexion HubSpot");
