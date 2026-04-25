@@ -1,0 +1,118 @@
+Email Connection
+Connected accounts
+@
+contact@xchangesuite.com
+Connected
+— Sync : 25/04/2026 20:16:13
+
+Signature
+Disconnect
+Share with team
+Personal mailbox. Only you can see the emails.
+
+
+@
+legal@xchangesuite.com
+Connected
+— Sync : 25/04/2026 20:11:37
+
+Signature
+Disconnect
+Share with team
+Personal mailbox. Only you can see the emails.
+
+
+@
+jj.neybergh@gmail.com
+Connected
+— Sync : 25/04/2026 20:16:04
+
+Signature
+Disconnect
+Share with team
+Personal mailbox. Only you can see the emails.
+
+
+@
+support@inboria.com
+Shared
+Connected
+— Sync : 25/04/2026 20:16:08
+
+Signature
+Disconnect
+Share with team
+Your colleagues who are members can see and handle these emails.
+
+
+Add an account
+G
+Gmail / Google Workspace
+Connect your Gmail in 2 minutes with an app password.
+
+Connect Gmail
+M
+Outlook / Microsoft 365
+Personal or business account (Exchange, Office 365)
+
+Connect Microsoft
+@
+Other provider (IMAP)
+OVH, GoDaddy, Yahoo, iCloud, Free, Orange and more
+
+Connect
+AI Preferences
+Urgent billing
+Detect unpaid invoices as urgent.
+
+
+Task extraction
+Convert client requests into tasks.
+
+
+Project detection
+Automatically associate emails with your active projects.
+
+
+Management mode
+Choose the level of AI autonomy in managing your emails.
+
+Auto-archive
+AI archives low-priority emails (newsletters, ads, notifications). Urgent and medium emails stay in inbox.
+
+
+Auto-marking
+Mark low-priority emails already summarized by AI as read.
+
+
+In manual mode (default), AI sorts and classifies your emails but takes no automatic action. Enable the options above to switch to autopilot mode.
+
+Account information
+Email
+jj.neybergh@gmail.com
+Full name
+jean Neybergh
+Timezone
+
+Europe/Brussels (CET/CEST)
+Days before follow-up suggestion
+5
+Inboria will suggest a follow-up for emails left without a reply after this many days (1 to 60).
+
+Save
+Open tracking
+Inserts an invisible pixel into your sent messages so you know when they're opened.
+
+
+Tracking is respected by most mail clients but may be blocked by some (Apple Mail, etc.).
+
+Change password
+Current password
+Your current password
+
+New password
+Minimum 6 characters
+
+Confirm new password
+Retype new password
+Change password

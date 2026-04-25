@@ -1,0 +1,20 @@
+Explication complète des 4 blocs — Page "Avancé" du plan Business
+Bloc 1 — CRM : HubSpot, Pipedrive, Salesforce
+Ce bloc représente la connexion entre Inboria et le CRM que l'entreprise utilise déjà. Concrètement, voici ce que cela signifie pour l'utilisateur au quotidien :
+Quand un email arrive dans Inboria, l'application va automatiquement chercher dans HubSpot, Pipedrive ou Salesforce si ce contact existe déjà. Si oui, elle affiche sa fiche complète à côté de l'email : son nom, son entreprise, le deal en cours, la valeur du contrat, la dernière interaction. L'utilisateur répond à l'email avec tout le contexte business sous les yeux, sans ouvrir son CRM.
+Dans l'autre sens, chaque email envoyé ou reçu est automatiquement enregistré dans la fiche du contact dans le CRM. Le commercial n'a plus jamais à copier-coller ses emails dans HubSpot ou Salesforce. Inboria le fait à sa place, en temps réel.
+En un clic depuis un email, l'utilisateur peut aussi créer une tâche, un deal ou une note directement dans son CRM, sans quitter Inboria.
+Valeur ajoutée en une phrase : Votre CRM est enfin à jour automatiquement, sans que vos commerciaux aient à y penser.
+Bloc 2 — Collaboration : Slack, Notion
+Slack : Quand Inboria détecte un email important (client prioritaire, signal d'achat, délai urgent), il envoie une alerte automatique dans le canal Slack de votre choix. Votre équipe est notifiée en temps réel sans avoir à surveiller la boîte mail en permanence. Les alertes SLA (email sans réponse depuis trop longtemps) arrivent aussi dans Slack.
+Notion : Les résumés d'emails, les tâches extraites par l'IA et les notes de contact peuvent être synchronisés automatiquement dans votre espace Notion. Si votre équipe gère ses projets et sa base de connaissances dans Notion, Inboria y dépose l'information sans action manuelle.
+Valeur ajoutée en une phrase : Les informations importantes de vos emails arrivent directement là où travaille votre équipe, sans changer ses habitudes.
+Bloc 3 — Multi-canal client : WhatsApp, SMS
+C'est l'un des blocs les plus différenciants d'Inboria. La réalité du terrain pour une PME en 2025, c'est que les clients ne communiquent plus uniquement par email. Certains envoient un WhatsApp, d'autres un SMS.
+Avec ce bloc, Inboria centralise tous ces canaux dans une interface unique. Un message WhatsApp d'un client arrive dans Inboria comme un email. L'IA peut en faire un résumé, proposer une réponse, extraire une tâche, et l'enregistrer dans le CRM — exactement comme elle le ferait avec un email classique.
+Pour l'utilisateur, c'est une boîte de réception universelle : email, WhatsApp et SMS au même endroit, traités par la même IA.
+Valeur ajoutée en une phrase : Vos clients vous écrivent où ils veulent — vous gérez tout depuis un seul endroit avec la même IA.
+Bloc 4 — Pour développeurs : Clés API, Webhooks, SLA
+Clés API : Inboria expose une API publique documentée. Cela signifie que le développeur de l'entreprise cliente peut connecter Inboria à n'importe quel outil interne : leur ERP maison, leur CRM sur mesure, leur tableau de bord de pilotage. C'est la porte ouverte à toutes les intégrations que vous n'avez pas encore développées.
+Webhooks : Au lieu que le système externe interroge Inboria en permanence ("est-ce qu'il y a du nouveau ?"), Inboria envoie lui-même une notification instantanée dès qu'un événement se produit (email reçu, tâche créée, deal détecté). C'est plus rapide, plus efficace, et c'est le standard technique utilisé par Stripe, GitHub, HubSpot. Les webhooks d'Inboria sont signés cryptographiquement, ce qui garantit leur authenticité.
+SLA (Service Level Agreement) : Vous pouvez définir des objectifs de temps de réponse sur vos boîtes partagées. Par exemple : "tout email entrant doit recevoir une réponse en moins de 2 heures". Inboria surveille en temps réel et déclenche une alerte (Slack ou email) si l'objectif n'est pas respecté. C'est un outil de pilotage de la qualité de service pour les managers.
