@@ -14,6 +14,15 @@ import {
   Smartphone,
   Shield,
   Plug,
+  BellOff,
+  MailCheck,
+  Users,
+  CalendarDays,
+  MailPlus,
+  UsersRound,
+  Bell,
+  Languages,
+  Bot,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { isPaymentsEnabled } from "@/lib/feature-flags";
@@ -36,6 +45,15 @@ export default function Fonctionnalites() {
     { icon: Smartphone, key: "mobileApp" },
     { icon: Shield, key: "security" },
     { icon: Plug, key: "ecosystem" },
+    { icon: BellOff, key: "snoozeSchedule" },
+    { icon: MailCheck, key: "aiFollowups" },
+    { icon: Users, key: "contact360" },
+    { icon: CalendarDays, key: "agenda" },
+    { icon: MailPlus, key: "sharedMailboxes" },
+    { icon: UsersRound, key: "teamWork" },
+    { icon: Bell, key: "realtimeNotifications" },
+    { icon: Languages, key: "multilingual" },
+    { icon: Bot, key: "autopilotMode" },
   ];
 
   return (
