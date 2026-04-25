@@ -125,7 +125,7 @@ export async function syncHubspotContacts(userId: string, limit = 100): Promise<
 
   try {
     const res = await fetch(
-      `${HUBSPOT_API}/crm/v3/objects/contacts?limit=${limit}&properties=email,firstname,lastname,company,phone`,
+      `${HUBSPOT_API}/crm/v3/objects/contacts?limit=${limit}&properties=email,firstname,lastname,company,phone,jobtitle,lifecyclestage,hubspot_owner_id,notes_last_contacted,hs_lead_status`,
       { headers: { Authorization: `Bearer ${row.access_token}` } },
     );
     if (!res.ok) {

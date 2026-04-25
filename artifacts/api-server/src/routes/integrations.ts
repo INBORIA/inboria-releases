@@ -432,8 +432,28 @@ router.get("/integrations/hubspot/stats", requireAuth, async (req, res): Promise
   }
 });
 
-// Wave HubSpot — contexte par contact (utilisé pour la fiche dans le panneau).
-// Retourne le contact + ses deals (par appariement company best-effort).
+// Wave HubSpot — contexte par contact (fiche dans le panneau "Contexte HubSpot").
+// Retourne le contact enrichi (job/lifecycle/owner/last interaction) + ses deals
+// (joints exactement par contact_external_id). 404 si non trouvé.
+type CrmContactRow = {
+  external_id: string;
+  email: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  company: string | null;
+  phone: string | null;
+  raw: Record<string, string | null> | null;
+  last_synced_at: string;
+};
+type CrmDealRow = {
+  external_id: string;
+  title: string | null;
+  amount: number | null;
+  currency: string | null;
+  stage: string | null;
+  status: string | null;
+  raw: Record<string, string | null> | null;
+};
 router.get("/integrations/hubspot/contact-context", requireAuth, async (req, res): Promise<void> => {
   try {
     const email = String(req.query.email || "").trim().toLowerCase();
@@ -441,28 +461,50 @@ router.get("/integrations/hubspot/contact-context", requireAuth, async (req, res
       res.status(400).json({ error: "email required" });
       return;
     }
-    const { data: contact } = await supabaseAdmin
+    const { data: contactData } = await supabaseAdmin
       .from("crm_contacts")
       .select("external_id, email, first_name, last_name, company, phone, raw, last_synced_at")
       .eq("user_id", req.userId!)
       .eq("provider", "hubspot")
       .ilike("email", email)
       .maybeSingle();
-    if (!contact) {
-      res.json({ contact: null, deals: [] });
+    if (!contactData) {
+      res.status(404).json({ error: "contact not found" });
       return;
     }
+    const contact = contactData as CrmContactRow;
+    const raw = contact.raw || {};
+    const { data: dealsData } = await supabaseAdmin
+      .from("crm_deals")
+      .select("external_id, title, amount, currency, stage, status, raw")
+      .eq("user_id", req.userId!)
+      .eq("provider", "hubspot")
+      .eq("contact_external_id", contact.external_id);
+    const deals = ((dealsData || []) as CrmDealRow[]).map((d) => ({
+      externalId: d.external_id,
+      title: d.title,
+      amount: d.amount,
+      currency: d.currency,
+      stage: d.stage,
+      status: d.status,
+      closeDate: (d.raw && (d.raw["closedate"] as string | null)) || null,
+    }));
     res.json({
       contact: {
-        externalId: (contact as any).external_id,
-        email: (contact as any).email,
-        firstName: (contact as any).first_name,
-        lastName: (contact as any).last_name,
-        company: (contact as any).company,
-        phone: (contact as any).phone,
-        lastSyncedAt: (contact as any).last_synced_at,
+        externalId: contact.external_id,
+        email: contact.email,
+        firstName: contact.first_name,
+        lastName: contact.last_name,
+        company: contact.company,
+        phone: contact.phone,
+        jobTitle: (raw["jobtitle"] as string | null) || null,
+        lifecycleStage: (raw["lifecyclestage"] as string | null) || null,
+        leadStatus: (raw["hs_lead_status"] as string | null) || null,
+        ownerId: (raw["hubspot_owner_id"] as string | null) || null,
+        lastContactedAt: (raw["notes_last_contacted"] as string | null) || null,
+        lastSyncedAt: contact.last_synced_at,
       },
-      deals: [],
+      deals,
     });
   } catch (err) {
     console.error("[integrations] hubspot contact-context error:", (err as Error).message);

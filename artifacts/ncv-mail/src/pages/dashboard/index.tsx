@@ -42,7 +42,7 @@ import {
   useBlockSender,
   useListIntegrations,
 } from "@workspace/api-client-react";
-import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails, ListEmailsCrmFilter } from "@workspace/api-client-react";
+import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails, ListEmailsCrmFilter, Integration } from "@workspace/api-client-react";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
 import { useTranslation } from 'react-i18next';
 import { translateCategoryName } from "@/lib/category-translations";
@@ -1231,31 +1231,95 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
   );
 });
 
-// Wave HubSpot — petit panneau latéral affiché à droite de la Réception
-// quand le filtre CRM HubSpot est actif. Lit /api/integrations/hubspot/stats.
-function HubspotContextPanel({ onHide }: { onHide: () => void }) {
+// Wave HubSpot — panneau latéral "Contexte HubSpot".
+// Affiche la fiche du contact correspondant à l'expéditeur de l'email sélectionné :
+// nom, société, poste, owner, lifecycle, deals, dernière interaction.
+// Repliable en bande verticale étroite via le bouton Minimize2.
+type HubspotContext = {
+  contact: {
+    externalId: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    company: string | null;
+    phone: string | null;
+    jobTitle: string | null;
+    lifecycleStage: string | null;
+    leadStatus: string | null;
+    ownerId: string | null;
+    lastContactedAt: string | null;
+    lastSyncedAt: string;
+  };
+  deals: Array<{
+    externalId: string;
+    title: string | null;
+    amount: number | null;
+    currency: string | null;
+    stage: string | null;
+    status: string | null;
+    closeDate: string | null;
+  }>;
+};
+
+function HubspotContextPanel({
+  senderEmail,
+  collapsed,
+  onToggleCollapsed,
+  onHide,
+}: {
+  senderEmail: string | null;
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
+  onHide: () => void;
+}) {
   const { t } = useTranslation();
-  const { data: stats } = useQuery({
-    queryKey: ["hubspot-stats"],
-    queryFn: async () => {
+  const { data: ctx, isLoading, isError } = useQuery({
+    queryKey: ["hubspot-contact-context", senderEmail],
+    enabled: !!senderEmail && !collapsed,
+    queryFn: async (): Promise<HubspotContext | null> => {
       const { supabase } = await import("@/lib/supabase");
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData?.session?.access_token;
-      const res = await fetch(`${import.meta.env.BASE_URL}api/integrations/hubspot/stats`, {
+      const url = `${import.meta.env.BASE_URL}api/integrations/hubspot/contact-context?email=${encodeURIComponent(senderEmail!)}`;
+      const res = await fetch(url, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
+      if (res.status === 404) return null;
       if (!res.ok) throw new Error("failed");
-      return res.json() as Promise<{
-        connected: boolean;
-        contactsCount: number;
-        dealsCount: number;
-        lastSyncedAt: string | null;
-        lastError: string | null;
-      }>;
+      return res.json() as Promise<HubspotContext>;
     },
+    retry: false,
     refetchOnWindowFocus: false,
-    staleTime: 30_000,
+    staleTime: 60_000,
   });
+
+  if (collapsed) {
+    return (
+      <div
+        className="bg-card rounded-lg border border-primary/30 p-2 flex flex-col items-center gap-2"
+        data-testid="panel-hubspot-context-collapsed"
+      >
+        <Building2 className="w-3.5 h-3.5 text-primary" />
+        <button
+          onClick={onToggleCollapsed}
+          title={t("inbox.crmExpand")}
+          className="text-[#8b9cb3] hover:text-white"
+          data-testid="button-hubspot-expand"
+        >
+          <Maximize2 className="w-3 h-3" />
+        </button>
+      </div>
+    );
+  }
+
+  const fullName =
+    [ctx?.contact?.firstName, ctx?.contact?.lastName].filter(Boolean).join(" ") ||
+    ctx?.contact?.email ||
+    senderEmail ||
+    "—";
+  const initials = ((ctx?.contact?.firstName?.[0] ?? "") + (ctx?.contact?.lastName?.[0] ?? "")).toUpperCase()
+    || (senderEmail?.[0] ?? "?").toUpperCase();
+
   return (
     <div
       className="bg-card rounded-lg border border-primary/30 p-3 space-y-2"
@@ -1266,37 +1330,131 @@ function HubspotContextPanel({ onHide }: { onHide: () => void }) {
           <Building2 className="w-3 h-3" />
           {t("inbox.crmHubspotPanelTitle")}
         </h3>
-        <button
-          onClick={onHide}
-          title={t("inbox.crmHide")}
-          className="text-[#8b9cb3] hover:text-white"
-          data-testid="button-hubspot-hide"
-        >
-          <X className="w-3 h-3" />
-        </button>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={onToggleCollapsed}
+            title={t("inbox.crmCollapse")}
+            className="text-[#8b9cb3] hover:text-white"
+            data-testid="button-hubspot-collapse"
+          >
+            <Minimize2 className="w-3 h-3" />
+          </button>
+          <button
+            onClick={onHide}
+            title={t("inbox.crmHide")}
+            className="text-[#8b9cb3] hover:text-white"
+            data-testid="button-hubspot-hide"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        </div>
       </div>
-      {stats && stats.contactsCount === 0 ? (
-        <p className="text-[10px] text-[#8b9cb3] leading-relaxed">{t("inbox.crmNoContacts")}</p>
-      ) : (
+
+      {!senderEmail && (
+        <p className="text-[10px] text-[#8b9cb3] leading-relaxed">
+          {t("inbox.crmSelectEmailHint")}
+        </p>
+      )}
+
+      {senderEmail && isLoading && (
+        <p className="text-[10px] text-[#8b9cb3]">…</p>
+      )}
+
+      {senderEmail && !isLoading && (ctx === null || isError) && (
+        <p className="text-[10px] text-[#8b9cb3] leading-relaxed" data-testid="text-hubspot-no-match">
+          {t("inbox.crmNoMatch")}
+        </p>
+      )}
+
+      {senderEmail && ctx && (
         <>
-          <div className="flex items-center justify-between text-[11px]">
-            <span className="text-[#8b9cb3]">{t("inbox.crmContacts")}</span>
-            <span className="text-white font-medium">{stats?.contactsCount ?? "—"}</span>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-medium shrink-0">
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[12px] text-white font-medium truncate" data-testid="text-hubspot-contact-name">{fullName}</p>
+              {ctx.contact.email && (
+                <p className="text-[10px] text-[#8b9cb3] truncate">{ctx.contact.email}</p>
+              )}
+            </div>
           </div>
-          <div className="flex items-center justify-between text-[11px]">
-            <span className="text-[#8b9cb3]">{t("inbox.crmDeals")}</span>
-            <span className="text-white font-medium">{stats?.dealsCount ?? "—"}</span>
-          </div>
-          <div className="flex items-center justify-between text-[10px] pt-1 border-t border-[#1f2937]">
-            <span className="text-[#8b9cb3]">{t("inbox.crmLastSync")}</span>
-            <span className="text-[#8b9cb3]">
-              {stats?.lastSyncedAt
-                ? new Date(stats.lastSyncedAt).toLocaleDateString()
-                : t("inbox.crmNeverSynced")}
-            </span>
+
+          {ctx.contact.company && (
+            <div className="text-[11px]">
+              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmCompany")}</div>
+              <div className="text-white">{ctx.contact.company}</div>
+            </div>
+          )}
+          {ctx.contact.jobTitle && (
+            <div className="text-[11px]">
+              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmJobTitle")}</div>
+              <div className="text-white">{ctx.contact.jobTitle}</div>
+            </div>
+          )}
+          {ctx.contact.ownerId && (
+            <div className="text-[11px]">
+              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmOwner")}</div>
+              <div className="text-white">{ctx.contact.ownerId}</div>
+            </div>
+          )}
+          {ctx.contact.lifecycleStage && (
+            <div className="text-[11px]">
+              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLifecycle")}</div>
+              <div className="text-white capitalize">{ctx.contact.lifecycleStage}</div>
+            </div>
+          )}
+          {ctx.contact.leadStatus && (
+            <div className="text-[11px]">
+              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLeadStatus")}</div>
+              <div className="text-white capitalize">{ctx.contact.leadStatus}</div>
+            </div>
+          )}
+          {ctx.contact.lastContactedAt && (
+            <div className="text-[11px]">
+              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLastInteraction")}</div>
+              <div className="text-white">
+                {new Date(ctx.contact.lastContactedAt).toLocaleDateString()}
+              </div>
+            </div>
+          )}
+
+          <div className="pt-2 border-t border-[#1f2937]">
+            <div className="text-[#8b9cb3] text-[10px] uppercase tracking-wider mb-1.5">
+              {t("inbox.crmDealsTitle")}
+            </div>
+            {ctx.deals.length === 0 ? (
+              <p className="text-[10px] text-[#8b9cb3]">{t("inbox.crmNoDeals")}</p>
+            ) : (
+              <ul className="space-y-1.5" data-testid="list-hubspot-deals">
+                {ctx.deals.map((d) => (
+                  <li key={d.externalId} className="text-[11px] bg-[#0f1729] rounded p-1.5">
+                    <div className="text-white font-medium truncate">{d.title || "—"}</div>
+                    <div className="text-[10px] text-[#8b9cb3] flex flex-wrap gap-x-2">
+                      {d.amount != null && (
+                        <span>
+                          {t("inbox.crmDealAmount")}: {d.amount} {d.currency || ""}
+                        </span>
+                      )}
+                      {d.stage && (
+                        <span>
+                          {t("inbox.crmDealStage")}: {d.stage}
+                        </span>
+                      )}
+                      {d.closeDate && (
+                        <span>
+                          {t("inbox.crmDealClose")}: {new Date(d.closeDate).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
           </div>
         </>
       )}
+
       <Link href="/dashboard/parametres/crm">
         <button
           className="w-full text-[10px] text-primary hover:text-white transition-colors py-1 mt-1 border-t border-[#1f2937]"
@@ -1316,9 +1474,11 @@ export default function Dashboard() {
   const [filterPriority, setFilterPriority] = useState<string>("all");
   // Wave HubSpot — filtre Réception sur les expéditeurs présents dans HubSpot.
   const [crmFilter, setCrmFilter] = useState<"hubspot" | null>(null);
+  const [crmPanelCollapsed, setCrmPanelCollapsed] = useState(false);
   const integrationsQuery = useListIntegrations();
-  const hasHubspot = !!(integrationsQuery.data as any[] | undefined)?.find(
-    (i: any) => i.provider === "hubspot" && i.enabled,
+  const integrationsList = (integrationsQuery.data ?? []) as Integration[];
+  const hasHubspot = integrationsList.some(
+    (i) => String(i.provider) === "hubspot" && i.enabled,
   );
   // Désactive automatiquement le filtre si HubSpot est déconnecté.
   useEffect(() => {
@@ -2819,7 +2979,16 @@ export default function Dashboard() {
 
             <div className="w-full lg:w-[200px] shrink-0 space-y-3">
               {hasHubspot && crmFilter === "hubspot" && (
-                <HubspotContextPanel onHide={() => setCrmFilter(null)} />
+                <HubspotContextPanel
+                  senderEmail={
+                    selectedEmail
+                      ? extractEmailAddress(selectedEmail.senderEmail || selectedEmail.sender) || null
+                      : null
+                  }
+                  collapsed={crmPanelCollapsed}
+                  onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
+                  onHide={() => setCrmFilter(null)}
+                />
               )}
               <div className="bg-card rounded-lg border border-border p-3">
                 <div className="flex items-center justify-between mb-2.5">
