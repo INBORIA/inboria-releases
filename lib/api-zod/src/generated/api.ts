@@ -317,6 +317,12 @@ export const ListEmailsQueryParams = zod.object({
     .max(listEmailsQueryLimitMax)
     .default(listEmailsQueryLimitDefault)
     .describe("Number of emails per page"),
+  crmFilter: zod
+    .enum(["hubspot", "pipedrive"])
+    .optional()
+    .describe(
+      "Restrict to senders present in the user's CRM contacts for the given provider",
+    ),
 });
 
 export const listEmailsResponseEmailsItemOpenedCountDefault = 0;

@@ -397,6 +397,79 @@ router.post("/integrations/hubspot/sync", requireAuth, async (req, res): Promise
   res.json({ contacts, deals });
 });
 
+// Wave HubSpot — petit endpoint utilisé par le panneau "Contexte HubSpot"
+// affiché à droite de la Réception lorsque le filtre CRM HubSpot est actif.
+router.get("/integrations/hubspot/stats", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const [{ data: integ }, { count: contactsCount }, { count: dealsCount }] = await Promise.all([
+      supabaseAdmin
+        .from("integrations")
+        .select("last_synced_at, last_error, enabled")
+        .eq("user_id", req.userId!)
+        .eq("provider", "hubspot")
+        .maybeSingle(),
+      supabaseAdmin
+        .from("crm_contacts")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", req.userId!)
+        .eq("provider", "hubspot"),
+      supabaseAdmin
+        .from("crm_deals")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", req.userId!)
+        .eq("provider", "hubspot"),
+    ]);
+    res.json({
+      connected: !!integ?.enabled,
+      contactsCount: contactsCount || 0,
+      dealsCount: dealsCount || 0,
+      lastSyncedAt: integ?.last_synced_at || null,
+      lastError: integ?.last_error || null,
+    });
+  } catch (err) {
+    console.error("[integrations] hubspot stats error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to fetch HubSpot stats" });
+  }
+});
+
+// Wave HubSpot — contexte par contact (utilisé pour la fiche dans le panneau).
+// Retourne le contact + ses deals (par appariement company best-effort).
+router.get("/integrations/hubspot/contact-context", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const email = String(req.query.email || "").trim().toLowerCase();
+    if (!email) {
+      res.status(400).json({ error: "email required" });
+      return;
+    }
+    const { data: contact } = await supabaseAdmin
+      .from("crm_contacts")
+      .select("external_id, email, first_name, last_name, company, phone, raw, last_synced_at")
+      .eq("user_id", req.userId!)
+      .eq("provider", "hubspot")
+      .ilike("email", email)
+      .maybeSingle();
+    if (!contact) {
+      res.json({ contact: null, deals: [] });
+      return;
+    }
+    res.json({
+      contact: {
+        externalId: (contact as any).external_id,
+        email: (contact as any).email,
+        firstName: (contact as any).first_name,
+        lastName: (contact as any).last_name,
+        company: (contact as any).company,
+        phone: (contact as any).phone,
+        lastSyncedAt: (contact as any).last_synced_at,
+      },
+      deals: [],
+    });
+  } catch (err) {
+    console.error("[integrations] hubspot contact-context error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to fetch HubSpot context" });
+  }
+});
+
 router.post("/integrations/hubspot/note", requireAuth, async (req, res): Promise<void> => {
   const { contactEmail, body } = req.body || {};
   if (!contactEmail || !body) {

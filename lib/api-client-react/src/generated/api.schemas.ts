@@ -1464,6 +1464,10 @@ export type ListEmailsParams = {
    * @maximum 100
    */
   limit?: number;
+  /**
+   * Restrict to senders present in the user's CRM contacts for the given provider
+   */
+  crmFilter?: ListEmailsCrmFilter;
 };
 
 export type ListEmailsPriority =
@@ -1485,6 +1489,14 @@ export const ListEmailsStatus = {
   archived: "archived",
   trashed: "trashed",
   spam: "spam",
+} as const;
+
+export type ListEmailsCrmFilter =
+  (typeof ListEmailsCrmFilter)[keyof typeof ListEmailsCrmFilter];
+
+export const ListEmailsCrmFilter = {
+  hubspot: "hubspot",
+  pipedrive: "pipedrive",
 } as const;
 
 export type DeleteEmail200 = {

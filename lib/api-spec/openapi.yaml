@@ -220,6 +220,12 @@ paths:
             minimum: 1
             maximum: 100
           description: Number of emails per page
+        - name: crmFilter
+          in: query
+          schema:
+            type: string
+            enum: [hubspot, pipedrive]
+          description: Restrict to senders present in the user's CRM contacts for the given provider
       responses:
         "200":
           description: Paginated list of emails

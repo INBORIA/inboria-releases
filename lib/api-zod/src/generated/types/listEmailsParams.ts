@@ -5,6 +5,7 @@
  * NCV Mail API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { ListEmailsCrmFilter } from "./listEmailsCrmFilter";
 import type { ListEmailsPriority } from "./listEmailsPriority";
 import type { ListEmailsStatus } from "./listEmailsStatus";
 
@@ -27,4 +28,8 @@ export type ListEmailsParams = {
    * @maximum 100
    */
   limit?: number;
+  /**
+   * Restrict to senders present in the user's CRM contacts for the given provider
+   */
+  crmFilter?: ListEmailsCrmFilter;
 };

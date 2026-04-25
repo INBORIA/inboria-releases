@@ -204,6 +204,33 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       }
     }
 
+    // Wave HubSpot — filtre Réception sur expéditeurs présents dans crm_contacts
+    // pour le provider donné. On charge les emails CRM de l'utilisateur (limité)
+    // puis on construit un OR ilike sur sender.
+    const crmFilterRaw = (req.query.crmFilter as string | undefined)?.trim().toLowerCase();
+    if (crmFilterRaw === "hubspot" || crmFilterRaw === "pipedrive") {
+      const { data: crmRows } = await supabaseAdmin
+        .from("crm_contacts")
+        .select("email")
+        .eq("user_id", req.userId!)
+        .eq("provider", crmFilterRaw)
+        .not("email", "is", null)
+        .limit(500);
+      const emails = Array.from(
+        new Set((crmRows || []).map((r: any) => String(r.email || "").trim().toLowerCase()).filter(Boolean)),
+      );
+      if (emails.length === 0) {
+        // Aucun contact CRM → retour vide immédiat
+        res.json({ emails: [], total: 0, page, totalPages: 0 });
+        return;
+      }
+      const orParts = emails
+        .map((e) => `sender.ilike.%${e.replace(/[%_\\,()."']/g, (c) => `\\${c}`)}%`)
+        .join(",");
+      query = query.or(orParts);
+      countQuery = countQuery.or(orParts);
+    }
+
     query = query.range(from, to);
 
     const [{ count: total }, { data: emails, error }] = await Promise.all([

@@ -147,6 +147,7 @@ export * from "./keyEmail";
 export * from "./listAppointmentsParams";
 export * from "./listBlockedSendersParams";
 export * from "./listContactsParams";
+export * from "./listEmailsCrmFilter";
 export * from "./listEmailsParams";
 export * from "./listEmailsPriority";
 export * from "./listEmailsStatus";

@@ -40,8 +40,9 @@ import {
   usePermanentDeleteEmail,
   useEmptyTrash,
   useBlockSender,
+  useListIntegrations,
 } from "@workspace/api-client-react";
-import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
+import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails, ListEmailsCrmFilter } from "@workspace/api-client-react";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
 import { useTranslation } from 'react-i18next';
 import { translateCategoryName } from "@/lib/category-translations";
@@ -49,7 +50,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -1230,11 +1231,99 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
   );
 });
 
+// Wave HubSpot — petit panneau latéral affiché à droite de la Réception
+// quand le filtre CRM HubSpot est actif. Lit /api/integrations/hubspot/stats.
+function HubspotContextPanel({ onHide }: { onHide: () => void }) {
+  const { t } = useTranslation();
+  const { data: stats } = useQuery({
+    queryKey: ["hubspot-stats"],
+    queryFn: async () => {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res = await fetch(`${import.meta.env.BASE_URL}api/integrations/hubspot/stats`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error("failed");
+      return res.json() as Promise<{
+        connected: boolean;
+        contactsCount: number;
+        dealsCount: number;
+        lastSyncedAt: string | null;
+        lastError: string | null;
+      }>;
+    },
+    refetchOnWindowFocus: false,
+    staleTime: 30_000,
+  });
+  return (
+    <div
+      className="bg-card rounded-lg border border-primary/30 p-3 space-y-2"
+      data-testid="panel-hubspot-context"
+    >
+      <div className="flex items-center justify-between">
+        <h3 className="text-[10px] font-medium text-primary uppercase tracking-wider flex items-center gap-1.5">
+          <Building2 className="w-3 h-3" />
+          {t("inbox.crmHubspotPanelTitle")}
+        </h3>
+        <button
+          onClick={onHide}
+          title={t("inbox.crmHide")}
+          className="text-[#8b9cb3] hover:text-white"
+          data-testid="button-hubspot-hide"
+        >
+          <X className="w-3 h-3" />
+        </button>
+      </div>
+      {stats && stats.contactsCount === 0 ? (
+        <p className="text-[10px] text-[#8b9cb3] leading-relaxed">{t("inbox.crmNoContacts")}</p>
+      ) : (
+        <>
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-[#8b9cb3]">{t("inbox.crmContacts")}</span>
+            <span className="text-white font-medium">{stats?.contactsCount ?? "—"}</span>
+          </div>
+          <div className="flex items-center justify-between text-[11px]">
+            <span className="text-[#8b9cb3]">{t("inbox.crmDeals")}</span>
+            <span className="text-white font-medium">{stats?.dealsCount ?? "—"}</span>
+          </div>
+          <div className="flex items-center justify-between text-[10px] pt-1 border-t border-[#1f2937]">
+            <span className="text-[#8b9cb3]">{t("inbox.crmLastSync")}</span>
+            <span className="text-[#8b9cb3]">
+              {stats?.lastSyncedAt
+                ? new Date(stats.lastSyncedAt).toLocaleDateString()
+                : t("inbox.crmNeverSynced")}
+            </span>
+          </div>
+        </>
+      )}
+      <Link href="/dashboard/parametres/crm">
+        <button
+          className="w-full text-[10px] text-primary hover:text-white transition-colors py-1 mt-1 border-t border-[#1f2937]"
+          data-testid="button-hubspot-configure"
+        >
+          {t("inbox.crmConfigure")} →
+        </button>
+      </Link>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const [filterPriority, setFilterPriority] = useState<string>("all");
+  // Wave HubSpot — filtre Réception sur les expéditeurs présents dans HubSpot.
+  const [crmFilter, setCrmFilter] = useState<"hubspot" | null>(null);
+  const integrationsQuery = useListIntegrations();
+  const hasHubspot = !!(integrationsQuery.data as any[] | undefined)?.find(
+    (i: any) => i.provider === "hubspot" && i.enabled,
+  );
+  // Désactive automatiquement le filtre si HubSpot est déconnecté.
+  useEffect(() => {
+    if (!hasHubspot && crmFilter === "hubspot") setCrmFilter(null);
+  }, [hasHubspot, crmFilter]);
   const [sortMode, setSortMode] = useState<"priority" | "date_desc" | "date_asc">(() => {
     if (typeof window === "undefined") return "priority";
     const saved = window.localStorage.getItem("inbox.sortMode");
@@ -1424,7 +1513,7 @@ export default function Dashboard() {
   const [totalPages, setTotalPages] = useState(0);
 
   const prevFilterKey = useRef("");
-  const currentFilterKey = `${filterPriority}|${searchQuery}|${filterCategory}`;
+  const currentFilterKey = `${filterPriority}|${searchQuery}|${filterCategory}|${crmFilter || ""}`;
   useEffect(() => {
     if (prevFilterKey.current !== currentFilterKey) {
       prevFilterKey.current = currentFilterKey;
@@ -1439,6 +1528,7 @@ export default function Dashboard() {
     q: searchQuery || undefined,
     page: emailPage,
     limit: 200,
+    ...(crmFilter ? { crmFilter: crmFilter as ListEmailsCrmFilter } : {}),
   });
 
   useEffect(() => {
@@ -2437,6 +2527,28 @@ export default function Dashboard() {
                 </SelectContent>
               </Select>
             </div>
+
+          {hasHubspot && (
+            <div
+              className="flex flex-wrap items-center gap-1.5 max-w-[1200px] mx-auto mt-2"
+              data-testid="row-crm-filter"
+            >
+              <span className="text-[10px] text-[#8b9cb3] mr-1">{t("inbox.crmLabel")}:</span>
+              <button
+                onClick={() => setCrmFilter((c) => (c === "hubspot" ? null : "hubspot"))}
+                title={t("inbox.crmHubspotTooltip")}
+                data-testid="button-crm-hubspot"
+                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                  crmFilter === "hubspot"
+                    ? "bg-primary/15 text-primary border border-primary/20"
+                    : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                }`}
+              >
+                <Building2 className="w-3 h-3" />
+                <span>HubSpot</span>
+              </button>
+            </div>
+          )}
         </div>
 
         <div className="flex-1 overflow-auto">
@@ -2706,6 +2818,9 @@ export default function Dashboard() {
             </div>
 
             <div className="w-full lg:w-[200px] shrink-0 space-y-3">
+              {hasHubspot && crmFilter === "hubspot" && (
+                <HubspotContextPanel onHide={() => setCrmFilter(null)} />
+              )}
               <div className="bg-card rounded-lg border border-border p-3">
                 <div className="flex items-center justify-between mb-2.5">
                   <h3 className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">
