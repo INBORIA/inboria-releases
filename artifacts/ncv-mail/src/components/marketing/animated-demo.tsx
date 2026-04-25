@@ -3,6 +3,7 @@ import {
   Inbox, Archive, LayoutDashboard, CheckSquare, FolderKanban, Tags, Settings, CreditCard,
   LogOut, Search, Clock, ChevronRight, Sparkles, Zap, CheckCircle, RefreshCw, Trash2, Check, Square,
   Send, BellOff, CalendarClock, MailCheck, MailPlus, Users, Activity, CalendarDays, FileText, Wand2, ShieldCheck, Plus,
+  MessageCircleQuestion,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -24,7 +25,6 @@ const NAV_KEYS: Array<{ key: string; fallback: string; icon: any; active?: boole
   { key: "sidebar.classification", fallback: "Classement", icon: Tags },
   { key: "templates.title", fallback: "Templates", icon: FileText },
   { key: "rules.title", fallback: "Règles automatiques", icon: Wand2 },
-  { key: "sidebar.admin", fallback: "Admin", icon: ShieldCheck },
 ];
 
 const JUNK_INDICES = [4, 5];
@@ -257,7 +257,7 @@ export function AnimatedDemo() {
             </div>
           </div>
 
-          <div className="flex-1 flex flex-col min-w-0">
+          <div className="flex-1 flex flex-col min-w-0 relative">
             <div className="px-3 sm:px-4 pt-3 sm:pt-4 pb-2 border-b border-[#1f2937]">
               <div className="flex items-center gap-2 mb-2.5">
                 <div className="flex-1 flex items-center gap-2 bg-[#141c2b] border border-[#1f2937] rounded-lg px-3 py-1.5 min-w-0">
@@ -436,6 +436,12 @@ export function AnimatedDemo() {
                 </div>
               </div>
             )}
+
+            <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10 pointer-events-none">
+              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#2d7dd2] flex items-center justify-center shadow-lg shadow-[#2d7dd2]/40 ring-2 ring-[#2d7dd2]/20">
+                <MessageCircleQuestion className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
+              </div>
+            </div>
           </div>
         </div>
       </div>
