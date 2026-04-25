@@ -44,7 +44,6 @@ export default function Fonctionnalites() {
     { icon: AlertTriangle, key: "priorityDetection" },
     { icon: Smartphone, key: "mobileApp" },
     { icon: Shield, key: "security" },
-    { icon: Plug, key: "ecosystem" },
     { icon: BellOff, key: "snoozeSchedule" },
     { icon: MailCheck, key: "aiFollowups" },
     { icon: Users, key: "contact360" },
