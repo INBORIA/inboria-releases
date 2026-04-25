@@ -1,0 +1,97 @@
+ CRM → Inboria : exemples concrets d'interface (la partie qui était trop floue)
+Voici à quoi ça ressemble écran par écran dans l'app :
+
+📍 Vue 360° du contact (panneau latéral droit, sur chaque email)
+Quand un email arrive d'un contact connu du CRM, le panneau affiche :
+
+Avatar + nom + société + poste (récupérés de HubSpot)
+Encart "Contexte CRM" :
+Statut : "Client actif — Stade Négociation"
+Deal en cours : "Renouvellement 2026 — 45 000 € — Probabilité 60 %"
+Propriétaire CRM : "Marc Dupont"
+Dernière activité : "Appel le 18/04 — Note : intéressé par module Premium"
+Bouton "Ouvrir dans HubSpot" qui pointe directement vers la fiche
+📍 Liste des emails (badges contextuels)
+Pastille couleur à côté de chaque email selon le statut CRM :
+
+🟢 vert = client actif
+🟠 orange = deal chaud (Négociation/Proposition)
+🔴 rouge = client en risque (NPS bas, deal Lost récent)
+⚪ gris = pas dans le CRM
+Tooltip au survol : "Deal 45 K€ en stade Négociation"
+📍 Brouillons IA enrichis
+Quand l'IA prépare une réponse, elle voit le CRM dans son prompt. L'utilisateur voit un petit encart au-dessus du brouillon :
+
+"Contexte utilisé : client depuis 2 ans, deal de renouvellement en cours, ton recommandé : chaleureux et orienté rétention."
+Cette transparence est rassurante : l'IA ne brode pas, elle s'appuie sur des données vérifiables.
+
+📍 Filtres intelligents dans la boîte de réception
+Nouveaux filtres automatiques :
+
+"Emails de mes deals chauds" (croise expéditeurs × deals en stade Proposition/Négociation)
+"Emails de mes clients VIP" (deals fermés > X €)
+"Emails sans réponse de mes deals chauds" (objet de la fonction Relances IA)
+📍 Brief quotidien augmenté
+
+"Bonjour. Ce matin, 12 emails urgents — dont 3 de vos deals chauds : Marc Dupont (45 K€), Sarah Lemoine (28 K€), Société XYZ (60 K€). Suggestion : traiter ces 3 d'abord."
+
+C'est exactement ce qui transforme Inboria de "client email avec IA" en "co-pilot commercial avec conscience du business". C'est ça votre différenciation vendable.
+
+4. Parcours UX de connexion (le "comment")
+Excellente nouvelle : ce parcours est déjà codé dans votre app, dans la page Paramètres > Intégrations. Voici les étapes telles qu'elles existent :
+
+L'utilisateur va dans Paramètres → Intégrations
+Section "CRM" — il voit deux cartes : HubSpot et Pipedrive
+Carte HubSpot : logo + description + statut ("Non connecté") + bouton "Connecter"
+Clic → ouverture d'une fenêtre popup vers HubSpot
+HubSpot demande : "Inboria souhaite accéder à vos contacts, deals et activités. Autoriser ?"
+L'utilisateur confirme → HubSpot renvoie vers Inboria avec un code de sécurité → Inboria stocke les jetons d'accès dans Supabase (chiffrés)
+Popup se ferme, carte affiche ✅ "Connecté" avec badge vert
+Bouton "Synchroniser maintenant" déclenche la première sync
+Quelques secondes plus tard : "1 247 contacts importés, 38 deals importés"
+À partir de ce moment, tous les emails entrants/sortants se loguent automatiquement dans HubSpot, sans aucune action utilisateur
+Pour déconnecter : bouton "Déconnecter" → confirmation → jetons effacés, emails Inboria conservés.
+
+⏱️ Temps total côté utilisateur : ~30 secondes. C'est le standard du marché (HubSpot et Salesforce eux-mêmes utilisent ce flux).
+
+5. Modèle de monétisation (la décision business à trancher)
+Voici les 2 modèles viables. Je recommande clairement Option A.
+
+🟢 Option A — Intégrations dans le plan Business (recommandée)
+Plan	Prix indicatif	Intégrations CRM
+Gratuit	0 €	Aucune
+Starter	~10 €/utilisateur/mois	Aucune
+Business	~25 €/utilisateur/mois	HubSpot + Pipedrive + Slack inclus
+Enterprise	~50 €/utilisateur/mois	+ Salesforce + Webhooks + API publique + boîtes partagées illimitées
+Avantages :
+
+Argument d'upgrade limpide : "vous voulez brancher votre HubSpot ? passez Business"
+Conforme à la pratique du marché (HubSpot lui-même ne donne ses APIs qu'à partir du plan Pro)
+Justifie clairement l'écart de prix entre Starter et Business
+Vous protège financièrement : les intégrations ont un coût récurrent (maintenance, support, appels API) — il faut qu'elles paient
+🟡 Option B — Tout inclus partout, mais consommation de crédits IA
+Toutes les intégrations disponibles dès le plan Free
+Mais les actions enrichies (brouillons CRM-aware, vue 360°, relances intelligentes) consomment des crédits IA
+Le plan Free a 100 crédits, Business 10 000, etc.
+Avantages : adoption massive, viralité. Inconvénient : conversion payante plus difficile, marges plus faibles.
+
+Ma recommandation : Option A
+Vous avez déjà un système de crédits IA (visible 782/10000 dans la démo) — ces deux logiques peuvent même coexister : intégrations réservées aux plans supérieurs (porte d'entrée) + crédits IA qui consomment dans tous les cas (modulation de l'usage).
+
+Décisions complémentaires à trancher :
+
+Plafond du nombre de contacts CRM synchronisés selon le plan ? (ex : 1 000 en Business, illimité en Enterprise)
+Fréquence de sync : toutes les heures en Business, temps réel via webhooks en Enterprise ?
+En résumé : vous avez maintenant une stratégie complète
+✅ Concurrence indirecte cartographiée (Superhuman + Front)
+✅ Statistique du temps email sourcée (McKinsey + Adobe + HubSpot)
+✅ Synergie CRM → Inboria décrite avec maquettes concrètes
+✅ Parcours UX décrit étape par étape (et déjà codé à 90 %)
+✅ Modèle de monétisation proposé avec arbitrage clair
+
+Ma question pour passer à l'action :
+
+Avant que je vous propose un plan détaillé pour réveiller HubSpot + Pipedrive (Vague 1) puis ajouter Salesforce (Vague 2), j'ai besoin de votre arbitrage sur deux points :
+
+Modèle de monétisation : Option A ou Option B ? (par défaut je pars sur A — intégrations CRM réservées au plan Business+).
+Salesforce : on l'attaque tout de suite après HubSpot+Pipedrive, ou on le repousse de quelques semaines pour valider que les 2 premiers fonctionnent en production avant ? (par défaut je recommanderais de stabiliser HubSpot+Pipedrive en prod 2-3 semaines avant Salesforce, qui demande 4-6 semaines de dev seul).
