@@ -21,7 +21,6 @@ import {
   CalendarClock,
   CalendarDays,
   BellOff,
-  ChevronUp,
   ShieldCheck,
   MailCheck,
   FileText,
@@ -105,19 +104,22 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const isTrialExhausted = (user as any).plan === "essai" && totalUsed >= (user as any).emailsQuota;
   const isBlocked = isExpired || isTrialExhausted;
 
-  const allowedWhenBlocked = ["/dashboard/abonnement", "/dashboard/parametres"];
   const isAdminRoute = location.startsWith("/dashboard/admin");
+  const isAllowedWhenBlocked =
+    location === "/dashboard/abonnement" ||
+    location === "/dashboard/parametres" ||
+    location.startsWith("/dashboard/parametres/");
 
   useEffect(() => {
     if (
       !isLoading &&
       isBlocked &&
-      !allowedWhenBlocked.includes(location) &&
+      !isAllowedWhenBlocked &&
       !(isInternalAdmin && isAdminRoute)
     ) {
       setLocation("/dashboard/abonnement");
     }
-  }, [isBlocked, isLoading, location, setLocation, isInternalAdmin, isAdminRoute]);
+  }, [isBlocked, isLoading, location, setLocation, isInternalAdmin, isAdminRoute, isAllowedWhenBlocked]);
 
   if (isLoading) {
     return (
@@ -200,56 +202,58 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             <span>{t("sidebar.creditsBreakdownAi", { count: (user as any).aiCreditsUsed || 0 })}</span>
           </div>
         </div>
-
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <button
-              className="flex items-center justify-between w-full px-2 py-1.5 rounded-md hover:bg-white/[0.06] transition-colors text-left"
-              data-testid="user-menu-trigger"
-            >
-              <div className="h-7 w-7 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[11px] font-semibold text-primary shrink-0">
-                {((user as any).fullName || t("sidebar.user")).charAt(0).toUpperCase()}
-              </div>
-              <ChevronUp className="h-3.5 w-3.5 text-[#8b9cb3] shrink-0" />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="top" align="start" className="w-56 mb-1">
-            <DropdownMenuLabel className="font-normal">
-              <div className="flex flex-col">
-                <span className="text-[12px] font-medium text-white truncate">
-                  {(user as any).fullName || t("sidebar.user")}
-                </span>
-                <span className="text-[10px] text-[#8b9cb3] capitalize">
-                  {(user as any).plan}
-                </span>
-              </div>
-            </DropdownMenuLabel>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem asChild data-testid="user-menu-subscription">
-              <Link href="/dashboard/abonnement" className="cursor-pointer">
-                <CreditCard className="h-4 w-4 mr-2" />
-                {t("sidebar.subscription")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild data-testid="user-menu-settings">
-              <Link href="/dashboard/parametres" className="cursor-pointer">
-                <Settings className="h-4 w-4 mr-2" />
-                {t("sidebar.settings")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuSeparator />
-            <DropdownMenuItem
-              onClick={handleLogout}
-              className="cursor-pointer text-red-400 focus:text-red-300 focus:bg-red-500/10"
-              data-testid="user-menu-logout"
-            >
-              <LogOut className="h-4 w-4 mr-2" />
-              {t("nav.logout")}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
       </div>
     </div>
+  );
+
+  const UserMenu = () => (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <button
+          className="flex items-center justify-center h-8 w-8 rounded-full hover:ring-2 hover:ring-primary/40 transition-all"
+          data-testid="user-menu-trigger"
+          aria-label={t("sidebar.user")}
+        >
+          <div className="h-8 w-8 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[12px] font-semibold text-primary shrink-0">
+            {((user as any).fullName || t("sidebar.user")).charAt(0).toUpperCase()}
+          </div>
+        </button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent side="bottom" align="end" className="w-56 mt-1">
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col">
+            <span className="text-[12px] font-medium text-white truncate">
+              {(user as any).fullName || t("sidebar.user")}
+            </span>
+            <span className="text-[10px] text-[#8b9cb3] capitalize">
+              {(user as any).plan}
+            </span>
+          </div>
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild data-testid="user-menu-subscription">
+          <Link href="/dashboard/abonnement" className="cursor-pointer">
+            <CreditCard className="h-4 w-4 mr-2" />
+            {t("sidebar.subscription")}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuItem asChild data-testid="user-menu-settings">
+          <Link href="/dashboard/parametres" className="cursor-pointer">
+            <Settings className="h-4 w-4 mr-2" />
+            {t("sidebar.settings")}
+          </Link>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          onClick={handleLogout}
+          className="cursor-pointer text-red-400 focus:text-red-300 focus:bg-red-500/10"
+          data-testid="user-menu-logout"
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          {t("nav.logout")}
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 
   return (
@@ -283,6 +287,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             <AutopilotIndicator />
             <NotificationBell />
             <LanguageSwitcher />
+            <UserMenu />
           </div>
         </div>
 
