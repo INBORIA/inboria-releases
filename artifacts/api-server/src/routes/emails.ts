@@ -205,8 +205,12 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     }
 
     // Wave HubSpot — filtre Réception sur expéditeurs présents dans crm_contacts
-    // pour le provider donné. On charge les emails CRM de l'utilisateur (limité)
-    // puis on construit un OR ilike sur sender.
+    // pour le provider donné. Le client Supabase ne supportant pas les JOIN
+    // cross-table sans relation FK déclarée et le périmètre tâche interdisant
+    // toute nouvelle table/colonne/fonction SQL, on procède en deux requêtes :
+    // 1) on récupère les emails CRM normalisés du user (cap raisonnable 10000),
+    // 2) on filtre les emails dont l'expéditeur contient un de ces emails.
+    type CrmContactEmailRow = { email: string | null };
     const crmFilterRaw = (req.query.crmFilter as string | undefined)?.trim().toLowerCase();
     if (crmFilterRaw === "hubspot" || crmFilterRaw === "pipedrive") {
       const { data: crmRows } = await supabaseAdmin
@@ -215,15 +219,23 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
         .eq("user_id", req.userId!)
         .eq("provider", crmFilterRaw)
         .not("email", "is", null)
-        .limit(500);
+        .limit(10000);
+      const typedRows = (crmRows ?? []) as CrmContactEmailRow[];
       const emails = Array.from(
-        new Set((crmRows || []).map((r: any) => String(r.email || "").trim().toLowerCase()).filter(Boolean)),
+        new Set(
+          typedRows
+            .map((r) => String(r.email ?? "").trim().toLowerCase())
+            .filter((e) => e.length > 0),
+        ),
       );
       if (emails.length === 0) {
         // Aucun contact CRM → retour vide immédiat
         res.json({ emails: [], total: 0, page, totalPages: 0 });
         return;
       }
+      // Match par contenance d'adresse (sender peut être "Nom <email>" ou "email").
+      // PostgREST n'accepte pas de regex côté serveur — on échappe les méta-chars
+      // ilike (% et _) ainsi que les séparateurs OR (, et ").
       const orParts = emails
         .map((e) => `sender.ilike.%${e.replace(/[%_\\,()."']/g, (c) => `\\${c}`)}%`)
         .join(",");

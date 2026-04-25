@@ -385,6 +385,8 @@
     "crmSelectEmailHint": "Select an email to view the HubSpot contact.",
     "crmCollapse": "Collapse",
     "crmExpand": "Expand",
+    "crmEmptyHubspotTitle": "No emails from a HubSpot contact yet",
+    "crmEmptyHubspotDesc": "All received emails whose sender is a HubSpot contact will appear here.",
     "sortByPriority": "Sort: Priority",
     "sortByDateDesc": "Sort: Date ↓ (newest)",
     "sortByDateAsc": "Sort: Date ↑ (oldest)",

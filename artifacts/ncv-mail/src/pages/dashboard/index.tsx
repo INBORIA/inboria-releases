@@ -2911,9 +2911,19 @@ export default function Dashboard() {
                       ))
                     ) : activeEmails?.length === 0 ? (
                       <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
-                        <Inbox className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
-                        <h3 className="text-[13px] font-medium text-white">{t("inbox.noEmails")}</h3>
-                        <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.noEmailsDesc")}</p>
+                        {crmFilter === "hubspot" ? (
+                          <>
+                            <Building2 className="mx-auto h-8 w-8 text-primary/40 mb-2" />
+                            <h3 className="text-[13px] font-medium text-white">{t("inbox.crmEmptyHubspotTitle")}</h3>
+                            <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.crmEmptyHubspotDesc")}</p>
+                          </>
+                        ) : (
+                          <>
+                            <Inbox className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
+                            <h3 className="text-[13px] font-medium text-white">{t("inbox.noEmails")}</h3>
+                            <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.noEmailsDesc")}</p>
+                          </>
+                        )}
                       </div>
                     ) : (
                       <>
