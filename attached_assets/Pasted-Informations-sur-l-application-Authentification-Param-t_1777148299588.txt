@@ -1,0 +1,61 @@
+Informations sur l'application
+Authentification
+Paramètres d'authentification
+Ces paramètres déterminent le mode de connexion de votre application à HubSpot et les données auxquelles elle est autorisée à accéder.
+Informations d'identification de l'application
+ID de l'application
+Il s'agit de l'ID unique de votre application. Vous en aurez besoin pour passer certains appels d'API.	------
+Copier
+ID du client
+Cet ID est unique pour votre application et est utilisé pour lancer l'authentification OAuth.	------
+Copier
+Secret du client
+Utilisé pour établir et actualiser l'authentification OAuth.	
+------
+
+
+Afficher
+
+Copier
+Exemple d'URL d'installation (OAuth)
+Un utilisateur aura besoin d'une URL d'installation comme celle-ci pour installer votre application. Les URL d'installation sont générées en fonction des informations d'identification de l'application, de l'URL de redirection et de la configuration des domaines trouvés sur cette page.
+
+Cet exemple d'URL d'installation inclut tous les champs d'application requis et n'importe quels domaines optionnels que vous avez configurés.
+
+En savoir plus sur OAuth
+
+Votre exemple d'URL d'installation apparaîtra ici une fois votre application créée
+
+Copier
+URL de redirection
+Les utilisateurs doivent être redirigés vers un de ces emplacements après avoir accordé l'accès à votre application. Si votre URL d'installation contient une redirection ne figurant pas dans cette liste, les utilisateurs recevront une notification d'erreur d'installation.
+
+http://localhost n'est pas pris en charge.
+
+En savoir plus sur les URL de redirection	
++ Ajouter une URL de redirection
+
+
+https://
+Domaines
+Les domaines déterminent les autorisations dont dispose votre application pour accéder à des données ou réaliser des actions dans HubSpot. Les personnes qui installent votre application doivent approuver les domaines qu'elle demande. Il est vivement recommandé d'exiger le moins de domaines possible pour le fonctionnement de votre application. En savoir plus
+
+Ajoutez un nouveau champ d'application
+
+Toujours requis pour toutes les installations d'applications. Les domaines nécessaires doivent être répertoriés dans le paramètre de requête domaine de chaque URL d'installation.
+
+oauth
+
+Obligatoire
+
+Supprimer
+
+
+Peut être requis pour les installations d'applications en fonction de l'URL d'installation. Les domaines conditionnellement requis peuvent être répertoriés dans le paramètre de requête domaine de l'URL d'installation. Si l'utilisateur ou le compte n'a pas accès à un domaine requis, il ne pourra pas installer l'application.
+
+Aucun champ d'application conditionnellement requis sélectionné
+
+
+Utilisé uniquement si le compte a accès aux domaines demandés. Les domaines facultatifs doivent être répertoriés dans le paramètre de requête optional_scope de l'URL d'installation. Si l'utilisateur ou le compte n'a pas accès à un optional_scope (domaine_facultatif), il peut toujours installer l'application.
+
+Aucun champ d'application optionnel sélectionné
