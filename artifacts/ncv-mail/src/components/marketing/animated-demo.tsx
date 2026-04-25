@@ -2,18 +2,29 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Inbox, Archive, LayoutDashboard, CheckSquare, FolderKanban, Tags, Settings, CreditCard,
   LogOut, Search, Clock, ChevronRight, Sparkles, Zap, CheckCircle, RefreshCw, Trash2, Check, Square,
+  Send, BellOff, CalendarClock, MailCheck, MailPlus, Users, Activity, CalendarDays, FileText, Wand2, ShieldCheck, Plus,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
-const NAV_KEYS = [
-  { key: "demo.nav.reception", icon: Inbox, active: true },
-  { key: "demo.nav.archives", icon: Archive },
-  { key: "demo.nav.dailyBrief", icon: LayoutDashboard },
-  { key: "demo.nav.tasks", icon: CheckSquare },
-  { key: "demo.nav.projects", icon: FolderKanban },
-  { key: "demo.nav.categories", icon: Tags },
-  { key: "demo.nav.settings", icon: Settings },
-  { key: "demo.nav.subscription", icon: CreditCard },
+const NAV_KEYS: Array<{ key: string; fallback: string; icon: any; active?: boolean; badge?: number }> = [
+  { key: "sidebar.inbox", fallback: "Réception", icon: Inbox, active: true },
+  { key: "sidebar.sent", fallback: "Envoyés", icon: Send },
+  { key: "sidebar.snoozed", fallback: "Reportés", icon: BellOff },
+  { key: "sidebar.scheduled", fallback: "Programmés", icon: CalendarClock },
+  { key: "tasks.title", fallback: "Tâches", icon: CheckSquare },
+  { key: "sidebar.followups", fallback: "Relances", icon: MailCheck, badge: 7 },
+  { key: "sidebar.sharedMailboxes", fallback: "Boîtes partagées", icon: MailPlus },
+  { key: "sidebar.myTeam", fallback: "Mon équipe", icon: Users },
+  { key: "sidebar.teamActivity", fallback: "Activité équipe", icon: Activity },
+  { key: "sidebar.contacts", fallback: "Contact 360°", icon: Users },
+  { key: "sidebar.projects", fallback: "Projets", icon: FolderKanban },
+  { key: "sidebar.agenda", fallback: "Agenda", icon: CalendarDays },
+  { key: "sidebar.archives", fallback: "Archives", icon: Archive },
+  { key: "sidebar.dailyBrief", fallback: "Bilan quotidien", icon: LayoutDashboard },
+  { key: "sidebar.classification", fallback: "Classement", icon: Tags },
+  { key: "templates.title", fallback: "Templates", icon: FileText },
+  { key: "rules.title", fallback: "Règles automatiques", icon: Wand2 },
+  { key: "sidebar.admin", fallback: "Admin", icon: ShieldCheck },
 ];
 
 const JUNK_INDICES = [4, 5];
@@ -193,21 +204,26 @@ export function AnimatedDemo() {
               <span className="text-[12px] font-semibold text-white tracking-tight">Inboria</span>
             </div>
 
-            <nav className="flex-1 px-2 py-2 space-y-0.5">
+            <nav className="flex-1 px-2 py-1.5 space-y-[1px] overflow-y-auto">
               {NAV_KEYS.map((item) => (
                 <div
                   key={item.key}
-                  className={`flex items-center gap-2 px-2.5 py-1.5 rounded-md text-[11px] font-medium ${
+                  className={`flex items-center gap-1.5 px-2 py-[5px] rounded-md text-[10px] font-medium ${
                     item.active
                       ? "bg-[#1e3a5f] text-[#2d7dd2]"
                       : "text-[#8b9cb3]"
                   }`}
                 >
-                  <item.icon className={`w-3.5 h-3.5 shrink-0 ${item.active ? "text-[#2d7dd2]" : "text-[#8b9cb3]"}`} />
-                  <span className="truncate">{t(item.key)}</span>
+                  <item.icon className={`w-3 h-3 shrink-0 ${item.active ? "text-[#2d7dd2]" : "text-[#8b9cb3]"}`} />
+                  <span className="truncate">{t(item.key, item.fallback)}</span>
                   {item.active && (
-                    <span className="ml-auto text-[9px] bg-[#2d7dd2]/20 text-[#2d7dd2] px-1.5 py-0.5 rounded-full font-medium">
+                    <span className="ml-auto shrink-0 text-[8px] bg-[#2d7dd2]/20 text-[#2d7dd2] px-1.5 py-0.5 rounded-full font-medium">
                       {inboxCount}
+                    </span>
+                  )}
+                  {item.badge && !item.active && (
+                    <span className="ml-auto shrink-0 text-[8px] bg-[#2a3441] text-white px-1.5 py-0.5 rounded-full font-medium">
+                      {item.badge}
                     </span>
                   )}
                 </div>
@@ -218,10 +234,14 @@ export function AnimatedDemo() {
               <div className="px-2.5 py-2">
                 <div className="flex justify-between items-center mb-1.5">
                   <span className="text-[9px] font-medium text-[#8b9cb3] uppercase tracking-wider">{t("demo.quota")}</span>
-                  <span className="text-[9px] font-medium text-white">24/3000</span>
+                  <span className="text-[9px] font-medium text-white">782/10000</span>
                 </div>
                 <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-                  <div className="h-full bg-[#2d7dd2] rounded-full" style={{ width: "1%" }} />
+                  <div className="h-full bg-[#2d7dd2] rounded-full" style={{ width: "7.82%" }} />
+                </div>
+                <div className="mt-1 text-[8px] text-[#6b7d96] flex justify-between">
+                  <span>471 mails</span>
+                  <span>311 IA</span>
                 </div>
               </div>
               <div className="flex items-center gap-2 px-2.5 py-1.5">
@@ -240,9 +260,17 @@ export function AnimatedDemo() {
           <div className="flex-1 flex flex-col min-w-0">
             <div className="px-3 sm:px-4 pt-3 sm:pt-4 pb-2 border-b border-[#1f2937]">
               <div className="flex items-center gap-2 mb-2.5">
-                <div className="flex-1 flex items-center gap-2 bg-[#141c2b] border border-[#1f2937] rounded-lg px-3 py-1.5">
-                  <Search className="w-3.5 h-3.5 text-[#8b9cb3]" />
-                  <span className="text-[11px] text-[#8b9cb3]">{t("demo.search")}</span>
+                <div className="flex-1 flex items-center gap-2 bg-[#141c2b] border border-[#1f2937] rounded-lg px-3 py-1.5 min-w-0">
+                  <Search className="w-3.5 h-3.5 text-[#8b9cb3] shrink-0" />
+                  <span className="text-[11px] text-[#8b9cb3] truncate">{t("demo.search")}</span>
+                </div>
+                <div className="hidden md:flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[10px] font-medium text-[#8b9cb3] shrink-0">
+                  <RefreshCw className="w-3 h-3" />
+                  <span>{t("inbox.refresh", "Actualiser")}</span>
+                </div>
+                <div className="flex items-center gap-1.5 px-2 py-1.5 rounded-lg bg-[#2d7dd2] text-[10px] font-medium text-white shrink-0">
+                  <Plus className="w-3 h-3" />
+                  <span className="hidden sm:inline">{t("inbox.newEmail", "Nouvel email")}</span>
                 </div>
                 <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border text-[11px] font-medium transition-all duration-500 ${
                   phase === "sorting"
@@ -265,6 +293,26 @@ export function AnimatedDemo() {
                   <span className="hidden sm:inline">
                     {phase === "sorting" ? t("demo.badge.sorting") : phase === "done" ? t("demo.badge.sorted") : phase === "selecting" ? t("demo.badge.selecting", { count: selectedJunk }) : phase === "deleting" ? t("demo.badge.deleted") : phase === "clean" ? t("demo.badge.clean") : t("demo.badge.autopilot")}
                   </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1 mb-2 overflow-x-auto pb-0.5">
+                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
+                  {t("sidebar.inbox", "Réception")}
+                </div>
+                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#8b9cb3] border border-[#1f2937] shrink-0">
+                  {t("sidebar.sharedMailboxes", "Boîtes partagées")}
+                </div>
+                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#8b9cb3] border border-[#1f2937] shrink-0 flex items-center gap-1">
+                  <span>{t("inbox.junk", "Courrier indésirable")}</span>
+                  <span className="bg-[#2a3441] text-white px-1 rounded text-[8px]">40</span>
+                </div>
+                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#8b9cb3] border border-[#1f2937] shrink-0 flex items-center gap-1">
+                  <span>{t("inbox.trash", "Corbeille")}</span>
+                  <span className="bg-[#2a3441] text-white px-1 rounded text-[8px]">11</span>
+                </div>
+                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#8b9cb3] border border-[#1f2937] shrink-0">
+                  {t("inbox.allAccounts", "Tous les comptes")}
                 </div>
               </div>
 
