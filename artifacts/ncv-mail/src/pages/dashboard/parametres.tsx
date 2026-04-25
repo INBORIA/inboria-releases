@@ -1,7 +1,8 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
-import { User, Building2, MessagesSquare, MessageCircle, Code2, ChevronRight } from "lucide-react";
+import { User, Building2, MessagesSquare, MessageCircle, Code2, ChevronRight, ArrowLeft } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface HubCard {
   href: string;
@@ -67,6 +68,13 @@ export default function Parametres() {
   return (
     <DashboardLayout>
       <div className="p-5 max-w-4xl mx-auto w-full">
+        <div className="mb-2">
+          <Link href="/dashboard">
+            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#8b9cb3] hover:text-white" data-testid="back-to-inbox">
+              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("sidebar.inbox", "Boîte de réception")}
+            </Button>
+          </Link>
+        </div>
         <div className="mb-6">
           <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("settings.title")}</h1>
           <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("settings.subtitle")}</p>

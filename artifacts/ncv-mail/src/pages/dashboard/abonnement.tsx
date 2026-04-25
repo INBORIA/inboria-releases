@@ -1,7 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useGetProfile, useCreateCheckoutSession, getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { Check, Shield, Info, CreditCard, Loader2, AlertTriangle, XCircle } from "lucide-react";
+import { Check, Shield, Info, CreditCard, Loader2, AlertTriangle, XCircle, ArrowLeft } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -17,7 +17,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
-import { useSearch, useLocation } from "wouter";
+import { useSearch, useLocation, Link } from "wouter";
 import { plans } from "@/lib/plans";
 import { useTranslation } from "react-i18next";
 import { isPaymentsEnabled } from "@/lib/feature-flags";
@@ -193,6 +193,13 @@ export default function Abonnement() {
   return (
     <DashboardLayout>
       <div className="p-5 max-w-6xl mx-auto w-full">
+        <div className="mb-2">
+          <Link href="/dashboard">
+            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#8b9cb3] hover:text-white" data-testid="back-to-inbox">
+              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("sidebar.inbox", "Boîte de réception")}
+            </Button>
+          </Link>
+        </div>
         <div className="mb-6 text-center max-w-2xl mx-auto">
           <h1 className="text-xl font-bold text-white tracking-tight mb-1.5">
             {t("subscription.title")}
