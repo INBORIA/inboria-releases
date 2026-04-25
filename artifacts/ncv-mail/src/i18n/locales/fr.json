@@ -1113,19 +1113,7 @@
     "start": "Commencer",
     "numberOfCollaborators": "Nombre de collaborateurs",
     "total": "Total",
-    "seatsExample": "Exemple : 3 collaborateurs = 38,97€/mois — modifiable à tout moment depuis votre espace.",
-    "plus": "Plus",
-    "plusDesc": "Multi-canal et écosystème complet",
-    "plusFeatures": {
-      "f1": "15 000 crédits IA / mois",
-      "f2": "WhatsApp Business inclus",
-      "f3": "SMS (Twilio / Brevo) inclus",
-      "f4": "Intégrations CRM (HubSpot, Pipedrive)",
-      "f5": "Clés API & webhooks (Zapier / Make / n8n)",
-      "f6": "Tout du plan Pro inclus",
-      "f7": "Support prioritaire",
-      "f8": "Dépassement : 0,001€ / crédit"
-    }
+    "seatsExample": "Exemple : 3 collaborateurs = 38,97€/mois — modifiable à tout moment depuis votre espace."
   },
   "marketing": {
     "home": {
@@ -1448,7 +1436,7 @@
       "ctaTitle": "Prêt à transformer la gestion email de votre équipe ?",
       "ctaDesc": "Rejoignez les PME belges et françaises qui ont déjà adopté Inboria pour une collaboration plus fluide et une productivité décuplée.",
       "discoverBusiness": "Découvrir le plan Business",
-      "ctaFooter": "Plan Business à partir de 49€/mois • Sièges extensibles • Configuration en 2 minutes",
+      "ctaFooter": "Plan Business à partir de 38,97€/mois (3 sièges à 12,99€/siège) • Extensible jusqu'à 50 sièges • Configuration en 2 minutes",
       "faqTitle": "Questions fréquentes",
       "faq1q": "Combien de membres puis-je ajouter à mon équipe ?",
       "faq1a": "Le plan Business inclut des sièges de base, et vous pouvez en ajouter autant que nécessaire directement depuis votre portail d'abonnement. Il n'y a pas de limite imposée.",
@@ -1890,7 +1878,7 @@
       "subscription": "Abonnement",
       "subscriptionDesc": "Gérez votre plan d'abonnement Inboria. Comparez les offres et passez à un plan supérieur.",
       "subscriptionFeatures": [
-        "3 plans : Solo (9€/mois), Pro (29€/mois), Business (59€/mois)",
+        "4 plans : Essai (gratuit), Solo (9€/mois), Pro (19€/mois), Business (à partir de 38,97€/mois)",
         "Essai gratuit de 100 crédits IA inclus",
         "Paiement sécurisé via Paddle",
         "Voir votre quota et votre consommation actuelle",

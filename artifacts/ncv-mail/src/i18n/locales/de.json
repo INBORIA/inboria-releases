@@ -1123,19 +1123,7 @@
     "start": "Loslegen",
     "numberOfCollaborators": "Anzahl der Mitarbeiter",
     "total": "Gesamt",
-    "seatsExample": "Beispiel: 3 Mitarbeiter = 38,97 €/Monat — jederzeit von Ihrem Bereich aus anpassbar.",
-    "plus": "Plus",
-    "plusDesc": "Multichannel und vollständiges Ökosystem",
-    "plusFeatures": {
-      "f1": "15.000 KI-Credits / Monat",
-      "f2": "WhatsApp Business inklusive",
-      "f3": "SMS (Twilio / Brevo) inklusive",
-      "f4": "CRM-Integrationen (HubSpot, Pipedrive)",
-      "f5": "API-Schlüssel & Webhooks (Zapier / Make / n8n)",
-      "f6": "Alles aus Pro inklusive",
-      "f7": "Priorisierter Support",
-      "f8": "Überschreitung: 0,001 € / Credit"
-    }
+    "seatsExample": "Beispiel: 3 Mitarbeiter = 38,97 €/Monat — jederzeit von Ihrem Bereich aus anpassbar."
   },
   "marketing": {
     "home": {
@@ -1458,7 +1446,7 @@
       "ctaTitle": "Bereit, das E-Mail-Management Ihres Teams zu transformieren?",
       "ctaDesc": "Schließen Sie sich den belgischen und französischen KMUs an, die Inboria bereits für eine reibungslosere Zusammenarbeit und eine zehnfache Produktivität übernommen haben.",
       "discoverBusiness": "Geschäftsplan entdecken",
-      "ctaFooter": "Geschäftsplan ab 49 €/Monat • Skalierbare Sitze • Einrichtung in 2 Minuten",
+      "ctaFooter": "Geschäftsplan ab 38,97 €/Monat (3 Sitze à 12,99 €/Sitz) • Skalierbar bis zu 50 Sitzen • Einrichtung in 2 Minuten",
       "faqTitle": "Häufig gestellte Fragen",
       "faq1q": "Wie viele Mitglieder kann ich zu meinem Team hinzufügen?",
       "faq1a": "Der Geschäftsplan umfasst Basissitze, und Sie können so viele hinzufügen, wie Sie direkt über Ihr Abonnement-Portal benötigen. Es gibt keine festgelegte Grenze.",
@@ -1900,7 +1888,7 @@
       ],
       "subscriptionDesc": "Verwalten Sie Ihren Inboria-Abonnementplan. Vergleichen Sie Angebote und upgraden Sie.",
       "subscriptionFeatures": [
-        "3 Pläne: Solo (9 €/Monat), Pro (29 €/Monat), Business (59 €/Monat)",
+        "4 Pläne: Test (kostenlos), Solo (9 €/Monat), Pro (19 €/Monat), Business (ab 38,97 €/Monat)",
         "Kostenlose Testversion von 100 E-Mails enthalten",
         "Sichere Zahlung über Paddle",
         "Sehen Sie Ihre KI-Credits und Ihren aktuellen Verbrauch",

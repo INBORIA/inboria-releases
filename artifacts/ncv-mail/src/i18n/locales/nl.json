@@ -1123,19 +1123,7 @@
     "start": "Beginnen",
     "numberOfCollaborators": "Aantal medewerkers",
     "total": "Totaal",
-    "seatsExample": "Voorbeeld: 3 medewerkers = €38,97/maand — op elk moment aanpasbaar vanuit uw ruimte.",
-    "plus": "Plus",
-    "plusDesc": "Multichannel en volledig ecosysteem",
-    "plusFeatures": {
-      "f1": "15.000 AI-credits / maand",
-      "f2": "WhatsApp Business inbegrepen",
-      "f3": "SMS (Twilio / Brevo) inbegrepen",
-      "f4": "CRM-integraties (HubSpot, Pipedrive)",
-      "f5": "API-sleutels & webhooks (Zapier / Make / n8n)",
-      "f6": "Alles van het Pro-abonnement inbegrepen",
-      "f7": "Prioritaire ondersteuning",
-      "f8": "Extra verbruik: € 0,001 / credit"
-    }
+    "seatsExample": "Voorbeeld: 3 medewerkers = €38,97/maand — op elk moment aanpasbaar vanuit uw ruimte."
   },
   "marketing": {
     "home": {
@@ -1458,7 +1446,7 @@
       "ctaTitle": "Klaar om het e-mailbeheer van uw team te transformeren?",
       "ctaDesc": "Sluit u aan bij de Belgische en Franse KMO's die Inboria al hebben geadopteerd voor vlottere samenwerking en tienvoudige productiviteit.",
       "discoverBusiness": "Business-plan ontdekken",
-      "ctaFooter": "Business-plan vanaf €49/maand • Schaalbare zetels • 2 minuten installatie",
+      "ctaFooter": "Business-plan vanaf €38,97/maand (3 zetels à €12,99/zetel) • Schaalbaar tot 50 zetels • 2 minuten installatie",
       "faqTitle": "Veelgestelde vragen",
       "faq1q": "Hoeveel leden kan ik aan mijn team toevoegen?",
       "faq1a": "Het Business-plan omvat basiszetels, en u kunt er zoveel toevoegen als nodig direct vanuit uw abonnementsportaal. Er is geen opgelegde limiet.",
@@ -1900,7 +1888,7 @@
       ],
       "subscriptionDesc": "Beheer uw Inboria-abonnementsplan. Vergelijk aanbiedingen en upgrade.",
       "subscriptionFeatures": [
-        "3 plannen: Solo (€9/maand), Pro (€29/maand), Business (€59/maand)",
+        "4 plannen: Proef (gratis), Solo (€9/maand), Pro (€19/maand), Business (vanaf €38,97/maand)",
         "Gratis proef van 100 e-mails inbegrepen",
         "Veilige betaling via Paddle",
         "Uw quota en huidig verbruik bekijken",

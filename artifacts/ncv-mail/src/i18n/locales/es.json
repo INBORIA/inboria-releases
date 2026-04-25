@@ -1123,19 +1123,7 @@
     "start": "Comenzar",
     "numberOfCollaborators": "Número de colaboradores",
     "total": "Total",
-    "seatsExample": "Ejemplo: 3 colaboradores = €38,97/mes — ajustable en cualquier momento desde su espacio.",
-    "plus": "Plus",
-    "plusDesc": "Multicanal y ecosistema completo",
-    "plusFeatures": {
-      "f1": "15 000 créditos IA / mes",
-      "f2": "WhatsApp Business incluido",
-      "f3": "SMS (Twilio / Brevo) incluido",
-      "f4": "Integraciones CRM (HubSpot, Pipedrive)",
-      "f5": "Claves API y webhooks (Zapier / Make / n8n)",
-      "f6": "Todo del plan Pro incluido",
-      "f7": "Soporte prioritario",
-      "f8": "Excedente: 0,001 € / crédito"
-    }
+    "seatsExample": "Ejemplo: 3 colaboradores = €38,97/mes — ajustable en cualquier momento desde su espacio."
   },
   "marketing": {
     "home": {
@@ -1458,7 +1446,7 @@
       "ctaTitle": "¿Listo para transformar la gestión de correos electrónicos de tu equipo?",
       "ctaDesc": "Únete a las PYMEs belgas y francesas que ya han adoptado Inboria para una colaboración más fluida y una productividad diez veces mayor.",
       "discoverBusiness": "Descubrir plan de Negocios",
-      "ctaFooter": "Plan de Negocios desde 49€/mes • Asientos escalables • Configuración en 2 minutos",
+      "ctaFooter": "Plan de Negocios desde 38,97€/mes (3 asientos a 12,99€/asiento) • Escalable hasta 50 asientos • Configuración en 2 minutos",
       "faqTitle": "Preguntas frecuentes",
       "faq1q": "¿Cuántos miembros puedo añadir a mi equipo?",
       "faq1a": "El plan de Negocios incluye asientos base, y puedes añadir tantos como necesites directamente desde tu portal de suscripción. No hay un límite impuesto.",
@@ -1900,7 +1888,7 @@
       ],
       "subscriptionDesc": "Gestiona tu plan de suscripción de Inboria. Compara ofertas y actualiza.",
       "subscriptionFeatures": [
-        "3 planes: Solo (€9/mes), Pro (€29/mes), Empresarial (€59/mes)",
+        "4 planes: Prueba (gratis), Solo (€9/mes), Pro (€19/mes), Empresarial (desde €38,97/mes)",
         "Prueba gratuita de 100 créditos IA incluida",
         "Pago seguro a través de Paddle",
         "Ver tu cuota y consumo actual",

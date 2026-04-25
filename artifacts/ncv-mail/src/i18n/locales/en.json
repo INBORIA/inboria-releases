@@ -1123,19 +1123,7 @@
     "start": "Get started",
     "numberOfCollaborators": "Number of collaborators",
     "total": "Total",
-    "seatsExample": "Example: 3 collaborators = €38.97/month — adjustable at any time from your space.",
-    "plus": "Plus",
-    "plusDesc": "Multi-channel and full ecosystem",
-    "plusFeatures": {
-      "f1": "15,000 AI credits / month",
-      "f2": "WhatsApp Business included",
-      "f3": "SMS (Twilio / Brevo) included",
-      "f4": "CRM integrations (HubSpot, Pipedrive)",
-      "f5": "API keys & webhooks (Zapier / Make / n8n)",
-      "f6": "Everything in Pro included",
-      "f7": "Priority support",
-      "f8": "Overage: €0.001 / credit"
-    }
+    "seatsExample": "Example: 3 collaborators = €38.97/month — adjustable at any time from your space."
   },
   "marketing": {
     "home": {
@@ -1458,7 +1446,7 @@
       "ctaTitle": "Ready to transform your team's email management?",
       "ctaDesc": "Join the Belgian and French SMEs that have already adopted Inboria for smoother collaboration and tenfold productivity.",
       "discoverBusiness": "Discover Business plan",
-      "ctaFooter": "Business plan from €49/month • Scalable seats • 2-minute setup",
+      "ctaFooter": "Business plan from €38.97/month (3 seats at €12.99/seat) • Scalable up to 50 seats • 2-minute setup",
       "faqTitle": "Frequently asked questions",
       "faq1q": "How many members can I add to my team?",
       "faq1a": "The Business plan includes base seats, and you can add as many as needed directly from your subscription portal. There is no imposed limit.",
@@ -1900,7 +1888,7 @@
       ],
       "subscriptionDesc": "Manage your Inboria subscription plan. Compare offers and upgrade.",
       "subscriptionFeatures": [
-        "3 plans: Solo (€9/mo), Pro (€29/mo), Business (€59/mo)",
+        "4 plans: Trial (free), Solo (€9/mo), Pro (€19/mo), Business (from €38.97/mo)",
         "Free trial of 100 AI credits included",
         "Secure payment via Paddle",
         "View your quota and current consumption",
