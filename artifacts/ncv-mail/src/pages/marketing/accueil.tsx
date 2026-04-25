@@ -1,7 +1,7 @@
 import { Link } from "wouter";
 import { MarketingLayout } from "@/components/layout/marketing-layout";
 import { AnimatedDemo } from "@/components/marketing/animated-demo";
-import { Mail, Tags, Zap, Clock, Eye, Shield, Bot, MessageSquare, Users, Languages } from "lucide-react";
+import { Mail, Tags, Zap, Clock, Eye, Shield, Bot, Users, Languages } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { isPaymentsEnabled } from "@/lib/feature-flags";
 
@@ -55,11 +55,6 @@ export default function Accueil() {
       icon: Bot,
       title: t("marketing.home.autopilot"),
       desc: t("marketing.home.autopilotDesc"),
-    },
-    {
-      icon: MessageSquare,
-      title: t("marketing.home.multiChannel"),
-      desc: t("marketing.home.multiChannelDesc"),
     },
     {
       icon: Users,
