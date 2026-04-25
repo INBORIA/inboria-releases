@@ -332,11 +332,7 @@ router.get("/integrations/hubspot/connect", requireAuth, async (req, res): Promi
     res.status(400).json({ error: "HubSpot integration not configured" });
     return;
   }
-  const isPro = await requireProPlan(req.userId!);
-  if (!isPro) {
-    res.status(403).json({ error: "Integration reservee au plan Pro ou superieur" });
-    return;
-  }
+  // CRM accessible a tous les plans (Free, Solo, Pro, Business, Plus)
   const state = createSignedState(req.userId!);
   const params = new URLSearchParams({
     client_id: HUBSPOT_CLIENT_ID,
@@ -422,11 +418,7 @@ router.get("/integrations/pipedrive/connect", requireAuth, async (req, res): Pro
     res.status(400).json({ error: "Pipedrive integration not configured" });
     return;
   }
-  const isPro = await requireProPlan(req.userId!);
-  if (!isPro) {
-    res.status(403).json({ error: "Integration reservee au plan Pro ou superieur" });
-    return;
-  }
+  // CRM accessible a tous les plans (Free, Solo, Pro, Business, Plus)
   const state = createSignedState(req.userId!);
   const params = new URLSearchParams({
     client_id: PIPEDRIVE_CLIENT_ID,
