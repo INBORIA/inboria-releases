@@ -120,7 +120,6 @@ export async function exchangeHubspotCode(
 
 export async function syncHubspotContacts(userId: string, limit = 100): Promise<{ synced: number; error?: string }> {
   let row = await getIntegration(userId);
-  console.log("[hubspot.sync.contacts] userId=", userId, "row?=", !!row);
   if (!row) return { synced: 0, error: "not connected" };
   row = await refreshIfExpired(row);
 
@@ -129,18 +128,15 @@ export async function syncHubspotContacts(userId: string, limit = 100): Promise<
       `${HUBSPOT_API}/crm/v3/objects/contacts?limit=${limit}&properties=email,firstname,lastname,company,phone`,
       { headers: { Authorization: `Bearer ${row.access_token}` } },
     );
-    console.log("[hubspot.sync.contacts] HubSpot HTTP", res.status);
     if (!res.ok) {
       const text = await res.text();
-      console.log("[hubspot.sync.contacts] error body", text.slice(0, 300));
       return { synced: 0, error: `HubSpot API ${res.status}: ${text.slice(0, 200)}` };
     }
     const data = (await res.json()) as { results?: Array<{ id: string; properties: Record<string, string> }> };
     const results = data.results || [];
-    console.log("[hubspot.sync.contacts] results=", results.length);
 
     for (const c of results) {
-      const { error: upsertErr } = await supabaseAdmin
+      await supabaseAdmin
         .from("crm_contacts")
         .upsert(
           {
@@ -158,7 +154,6 @@ export async function syncHubspotContacts(userId: string, limit = 100): Promise<
           },
           { onConflict: "user_id,provider,external_id" },
         );
-      if (upsertErr) console.log("[hubspot.sync.contacts] upsert err", upsertErr.message);
     }
 
     await supabaseAdmin
