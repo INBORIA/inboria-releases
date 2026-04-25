@@ -146,7 +146,7 @@ router.get("/contacts", requireAuth, async (req, res): Promise<void> => {
 
 router.get("/contacts/:email", requireAuth, async (req, res): Promise<void> => {
   try {
-    const target = normalizeEmailParam(req.params.email);
+    const target = normalizeEmailParam(String(req.params.email ?? ""));
     if (!target || !target.includes("@")) {
       res.status(400).json({ error: "Adresse email invalide" });
       return;

@@ -49,7 +49,7 @@ import { translateCategoryName } from "@/lib/category-translations";
 import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from "wouter";
@@ -1231,9 +1231,11 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
   );
 });
 
-// Wave HubSpot — panneau latéral "Contexte HubSpot".
+// Wave HubSpot — panneau latéral "Cockpit HubSpot" (Orientation 3).
 // Affiche la fiche du contact correspondant à l'expéditeur de l'email sélectionné :
 // nom, société, poste, owner, lifecycle, deals, dernière interaction.
+// Inclut la barre d'actions cockpit : logger l'email, créer un deal préfilled,
+// créer une tâche, faire avancer la phase d'un deal, changer le lifecycle/lead status.
 // Repliable en bande verticale étroite via le bouton Minimize2.
 type HubspotContext = {
   contact: {
@@ -1261,29 +1263,78 @@ type HubspotContext = {
   }>;
 };
 
+type HubspotPipelinesResponse = {
+  pipelines: Array<{
+    id: string;
+    label: string;
+    stages: Array<{ id: string; label: string; displayOrder: number }>;
+  }>;
+};
+
+const HUBSPOT_LIFECYCLE_OPTIONS = [
+  "subscriber",
+  "lead",
+  "marketingqualifiedlead",
+  "salesqualifiedlead",
+  "opportunity",
+  "customer",
+  "evangelist",
+  "other",
+];
+const HUBSPOT_LEAD_STATUS_OPTIONS = [
+  "NEW",
+  "OPEN",
+  "IN_PROGRESS",
+  "OPEN_DEAL",
+  "UNQUALIFIED",
+  "ATTEMPTED_TO_CONTACT",
+  "CONNECTED",
+  "BAD_TIMING",
+];
+
+async function authedFetch(url: string, init: RequestInit = {}): Promise<Response> {
+  const { supabase } = await import("@/lib/supabase");
+  const { data: sessionData } = await supabase.auth.getSession();
+  const token = sessionData?.session?.access_token;
+  return fetch(url, {
+    ...init,
+    headers: {
+      ...(init.headers || {}),
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      ...(init.body ? { "Content-Type": "application/json" } : {}),
+    },
+  });
+}
+
 function HubspotContextPanel({
   senderEmail,
+  selectedEmailId,
+  selectedSubject,
+  selectedBody,
+  selectedDate,
   collapsed,
   onToggleCollapsed,
   onHide,
 }: {
   senderEmail: string | null;
+  selectedEmailId: number | null;
+  selectedSubject: string | null;
+  selectedBody: string | null;
+  selectedDate: string | null;
   collapsed: boolean;
   onToggleCollapsed: () => void;
   onHide: () => void;
 }) {
   const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const apiBase = `${import.meta.env.BASE_URL}api`;
+
   const { data: ctx, isLoading, isError } = useQuery({
     queryKey: ["hubspot-contact-context", senderEmail],
     enabled: !!senderEmail && !collapsed,
     queryFn: async (): Promise<HubspotContext | null> => {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      const url = `${import.meta.env.BASE_URL}api/integrations/hubspot/contact-context?email=${encodeURIComponent(senderEmail!)}`;
-      const res = await fetch(url, {
-        headers: token ? { Authorization: `Bearer ${token}` } : {},
-      });
+      const res = await authedFetch(`${apiBase}/integrations/hubspot/contact-context?email=${encodeURIComponent(senderEmail!)}`);
       if (res.status === 404) return null;
       if (!res.ok) throw new Error("failed");
       return res.json() as Promise<HubspotContext>;
@@ -1292,6 +1343,187 @@ function HubspotContextPanel({
     refetchOnWindowFocus: false,
     staleTime: 60_000,
   });
+
+  // Chargement paresseux des pipelines (uniquement si on a un contact ET qu'au
+  // moins un deal existe, ou si l'utilisateur ouvre le formulaire "Créer deal").
+  const [pipelinesEnabled, setPipelinesEnabled] = useState(false);
+  useEffect(() => {
+    if (ctx && ctx.deals.length > 0) setPipelinesEnabled(true);
+  }, [ctx]);
+  const { data: pipelinesData } = useQuery({
+    queryKey: ["hubspot-pipelines"],
+    enabled: pipelinesEnabled && !collapsed,
+    queryFn: async (): Promise<HubspotPipelinesResponse> => {
+      const res = await authedFetch(`${apiBase}/integrations/hubspot/pipelines`);
+      if (!res.ok) throw new Error("failed");
+      return res.json() as Promise<HubspotPipelinesResponse>;
+    },
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+  });
+  const allStages = (pipelinesData?.pipelines || []).flatMap((p) =>
+    p.stages.map((s) => ({ pipelineId: p.id, pipelineLabel: p.label, ...s })),
+  );
+  const defaultPipeline = pipelinesData?.pipelines?.[0];
+  const defaultStage = defaultPipeline?.stages?.[0];
+
+  // Mutations cockpit
+  const refresh = () => {
+    queryClient.invalidateQueries({ queryKey: ["hubspot-contact-context", senderEmail] });
+  };
+  const logEmailMut = useMutation({
+    mutationFn: async () => {
+      const res = await authedFetch(`${apiBase}/integrations/hubspot/log-email`, {
+        method: "POST",
+        body: JSON.stringify({
+          contactExternalId: ctx?.contact?.externalId,
+          emailId: selectedEmailId,
+          subject: selectedSubject,
+          body: selectedBody,
+          occurredAt: selectedDate,
+        }),
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "log failed");
+      return res.json();
+    },
+    onSuccess: (data: { alreadyLogged?: boolean }) => {
+      toast({
+        title: data.alreadyLogged ? t("inbox.crmActionAlreadyLogged") : t("inbox.crmActionLogEmailDone"),
+      });
+    },
+    onError: (err: Error) => {
+      toast({ title: t("inbox.crmActionError"), description: err.message, variant: "destructive" });
+    },
+  });
+  const createDealMut = useMutation({
+    mutationFn: async (input: {
+      dealname: string;
+      amount: string;
+      pipeline: string;
+      dealstage: string;
+      closedate: string;
+    }) => {
+      const res = await authedFetch(`${apiBase}/integrations/hubspot/create-deal`, {
+        method: "POST",
+        body: JSON.stringify({
+          contactExternalId: ctx?.contact?.externalId,
+          dealname: input.dealname,
+          amount: input.amount ? Number(input.amount) : null,
+          pipeline: input.pipeline || null,
+          dealstage: input.dealstage || null,
+          closedate: input.closedate || null,
+        }),
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "create deal failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionDealCreated") });
+      setShowDealForm(false);
+      refresh();
+    },
+    onError: (err: Error) => {
+      toast({ title: t("inbox.crmActionError"), description: err.message, variant: "destructive" });
+    },
+  });
+  const createTaskMut = useMutation({
+    mutationFn: async (input: { subject: string; body: string; dueAt: string }) => {
+      const res = await authedFetch(`${apiBase}/integrations/hubspot/create-task`, {
+        method: "POST",
+        body: JSON.stringify({
+          contactExternalId: ctx?.contact?.externalId,
+          subject: input.subject,
+          body: input.body,
+          dueAt: input.dueAt || null,
+        }),
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "create task failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionTaskCreated") });
+      setShowTaskForm(false);
+    },
+    onError: (err: Error) => {
+      toast({ title: t("inbox.crmActionError"), description: err.message, variant: "destructive" });
+    },
+  });
+  const updateDealStageMut = useMutation({
+    mutationFn: async (input: { dealExternalId: string; dealstage: string }) => {
+      const res = await authedFetch(`${apiBase}/integrations/hubspot/deals/${encodeURIComponent(input.dealExternalId)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ dealstage: input.dealstage }),
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "update deal failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionDealStageUpdated") });
+      refresh();
+    },
+    onError: (err: Error) => {
+      toast({ title: t("inbox.crmActionError"), description: err.message, variant: "destructive" });
+    },
+  });
+  const updateContactPropsMut = useMutation({
+    mutationFn: async (input: { lifecycleStage?: string; leadStatus?: string }) => {
+      if (!ctx?.contact?.externalId) throw new Error("no contact");
+      const res = await authedFetch(`${apiBase}/integrations/hubspot/contacts/${encodeURIComponent(ctx.contact.externalId)}`, {
+        method: "PATCH",
+        body: JSON.stringify(input),
+      });
+      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "update contact failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionContactUpdated") });
+      refresh();
+    },
+    onError: (err: Error) => {
+      toast({ title: t("inbox.crmActionError"), description: err.message, variant: "destructive" });
+    },
+  });
+
+  // Forms state
+  const [showDealForm, setShowDealForm] = useState(false);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [dealName, setDealName] = useState("");
+  const [dealAmount, setDealAmount] = useState("");
+  const [dealPipeline, setDealPipeline] = useState("");
+  const [dealStage, setDealStage] = useState("");
+  const [dealClose, setDealClose] = useState("");
+  const [taskSubject, setTaskSubject] = useState("");
+  const [taskBody, setTaskBody] = useState("");
+  const [taskDue, setTaskDue] = useState("");
+
+  // Quand on ouvre le form Deal, préremplir avec l'email sélectionné.
+  useEffect(() => {
+    if (showDealForm) {
+      setPipelinesEnabled(true);
+      if (!dealName && selectedSubject) setDealName(selectedSubject.slice(0, 80));
+      if (!dealClose) {
+        const d = new Date();
+        d.setDate(d.getDate() + 30);
+        setDealClose(d.toISOString().slice(0, 10));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showDealForm]);
+  useEffect(() => {
+    if (showDealForm && defaultPipeline && !dealPipeline) setDealPipeline(defaultPipeline.id);
+    if (showDealForm && defaultStage && !dealStage) setDealStage(defaultStage.id);
+  }, [showDealForm, defaultPipeline, defaultStage, dealPipeline, dealStage]);
+  useEffect(() => {
+    if (showTaskForm) {
+      if (!taskSubject) setTaskSubject(selectedSubject ? `Suivi : ${selectedSubject.slice(0, 80)}` : t("inbox.crmActionTaskDefaultTitle"));
+      if (!taskDue) {
+        const d = new Date();
+        d.setDate(d.getDate() + 7);
+        setTaskDue(d.toISOString().slice(0, 10));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showTaskForm]);
 
   if (collapsed) {
     return (
@@ -1380,6 +1612,148 @@ function HubspotContextPanel({
             </div>
           </div>
 
+          {/* Cockpit Orientation 3 — barre d'actions */}
+          <div className="grid grid-cols-3 gap-1 pt-1">
+            <button
+              type="button"
+              onClick={() => logEmailMut.mutate()}
+              disabled={!selectedEmailId || logEmailMut.isPending}
+              title={t("inbox.crmActionLogEmail")}
+              className="text-[10px] bg-primary/10 hover:bg-primary/20 disabled:opacity-40 text-primary rounded px-1.5 py-1 flex items-center justify-center"
+              data-testid="button-hubspot-log-email"
+            >
+              {logEmailMut.isPending ? "…" : t("inbox.crmActionLogEmailShort")}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setShowDealForm((v) => !v); setShowTaskForm(false); }}
+              className={`text-[10px] rounded px-1.5 py-1 ${showDealForm ? "bg-primary text-white" : "bg-primary/10 hover:bg-primary/20 text-primary"}`}
+              data-testid="button-hubspot-toggle-deal-form"
+            >
+              {t("inbox.crmActionCreateDealShort")}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setShowTaskForm((v) => !v); setShowDealForm(false); }}
+              className={`text-[10px] rounded px-1.5 py-1 ${showTaskForm ? "bg-primary text-white" : "bg-primary/10 hover:bg-primary/20 text-primary"}`}
+              data-testid="button-hubspot-toggle-task-form"
+            >
+              {t("inbox.crmActionCreateTaskShort")}
+            </button>
+          </div>
+
+          {/* Formulaire création deal préfilled */}
+          {showDealForm && (
+            <div className="space-y-1.5 bg-[#0f1729] rounded p-2" data-testid="form-hubspot-deal">
+              <input
+                type="text"
+                value={dealName}
+                onChange={(e) => setDealName(e.target.value)}
+                placeholder={t("inbox.crmActionDealName")}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-hubspot-deal-name"
+              />
+              <input
+                type="number"
+                value={dealAmount}
+                onChange={(e) => setDealAmount(e.target.value)}
+                placeholder={t("inbox.crmActionDealAmount")}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-hubspot-deal-amount"
+              />
+              {allStages.length > 0 && (
+                <select
+                  value={dealStage}
+                  onChange={(e) => {
+                    setDealStage(e.target.value);
+                    const found = allStages.find((s) => s.id === e.target.value);
+                    if (found) setDealPipeline(found.pipelineId);
+                  }}
+                  className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                  data-testid="select-hubspot-deal-stage"
+                >
+                  {allStages.map((s) => (
+                    <option key={`${s.pipelineId}:${s.id}`} value={s.id}>
+                      {s.pipelineLabel} — {s.label}
+                    </option>
+                  ))}
+                </select>
+              )}
+              <input
+                type="date"
+                value={dealClose}
+                onChange={(e) => setDealClose(e.target.value)}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-hubspot-deal-close"
+              />
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => createDealMut.mutate({ dealname: dealName, amount: dealAmount, pipeline: dealPipeline, dealstage: dealStage, closedate: dealClose })}
+                  disabled={!dealName.trim() || createDealMut.isPending}
+                  className="flex-1 text-[10px] bg-primary hover:bg-primary/90 disabled:opacity-40 text-white rounded px-1.5 py-1"
+                  data-testid="button-hubspot-deal-submit"
+                >
+                  {createDealMut.isPending ? "…" : t("inbox.crmActionSubmit")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDealForm(false)}
+                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                >
+                  {t("inbox.crmActionCancel")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Formulaire création tâche préfilled */}
+          {showTaskForm && (
+            <div className="space-y-1.5 bg-[#0f1729] rounded p-2" data-testid="form-hubspot-task">
+              <input
+                type="text"
+                value={taskSubject}
+                onChange={(e) => setTaskSubject(e.target.value)}
+                placeholder={t("inbox.crmActionTaskTitle")}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-hubspot-task-subject"
+              />
+              <textarea
+                value={taskBody}
+                onChange={(e) => setTaskBody(e.target.value)}
+                placeholder={t("inbox.crmActionTaskNote")}
+                rows={2}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white resize-none"
+                data-testid="textarea-hubspot-task-body"
+              />
+              <input
+                type="date"
+                value={taskDue}
+                onChange={(e) => setTaskDue(e.target.value)}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-hubspot-task-due"
+              />
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => createTaskMut.mutate({ subject: taskSubject, body: taskBody, dueAt: taskDue })}
+                  disabled={!taskSubject.trim() || createTaskMut.isPending}
+                  className="flex-1 text-[10px] bg-primary hover:bg-primary/90 disabled:opacity-40 text-white rounded px-1.5 py-1"
+                  data-testid="button-hubspot-task-submit"
+                >
+                  {createTaskMut.isPending ? "…" : t("inbox.crmActionSubmit")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowTaskForm(false)}
+                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                >
+                  {t("inbox.crmActionCancel")}
+                </button>
+              </div>
+            </div>
+          )}
+
           {ctx.contact.company && (
             <div className="text-[11px]">
               <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmCompany")}</div>
@@ -1398,18 +1772,41 @@ function HubspotContextPanel({
               <div className="text-white">{ctx.contact.ownerId}</div>
             </div>
           )}
-          {ctx.contact.lifecycleStage && (
-            <div className="text-[11px]">
-              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLifecycle")}</div>
-              <div className="text-white capitalize">{ctx.contact.lifecycleStage}</div>
-            </div>
-          )}
-          {ctx.contact.leadStatus && (
-            <div className="text-[11px]">
-              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLeadStatus")}</div>
-              <div className="text-white capitalize">{ctx.contact.leadStatus}</div>
-            </div>
-          )}
+
+          {/* Lifecycle stage éditable (PATCH HubSpot) */}
+          <div className="text-[11px]">
+            <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLifecycle")}</div>
+            <select
+              value={ctx.contact.lifecycleStage || ""}
+              onChange={(e) => updateContactPropsMut.mutate({ lifecycleStage: e.target.value })}
+              disabled={updateContactPropsMut.isPending}
+              className="w-full text-[10px] bg-[#0f1729] border border-[#1f2937] rounded px-1.5 py-1 text-white capitalize"
+              data-testid="select-hubspot-lifecycle"
+            >
+              <option value="">—</option>
+              {HUBSPOT_LIFECYCLE_OPTIONS.map((o) => (
+                <option key={o} value={o} className="capitalize">{o}</option>
+              ))}
+            </select>
+          </div>
+
+          {/* Lead status éditable (PATCH HubSpot) */}
+          <div className="text-[11px]">
+            <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLeadStatus")}</div>
+            <select
+              value={ctx.contact.leadStatus || ""}
+              onChange={(e) => updateContactPropsMut.mutate({ leadStatus: e.target.value })}
+              disabled={updateContactPropsMut.isPending}
+              className="w-full text-[10px] bg-[#0f1729] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+              data-testid="select-hubspot-lead-status"
+            >
+              <option value="">—</option>
+              {HUBSPOT_LEAD_STATUS_OPTIONS.map((o) => (
+                <option key={o} value={o}>{o}</option>
+              ))}
+            </select>
+          </div>
+
           {ctx.contact.lastContactedAt && (
             <div className="text-[11px]">
               <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLastInteraction")}</div>
@@ -1428,17 +1825,12 @@ function HubspotContextPanel({
             ) : (
               <ul className="space-y-1.5" data-testid="list-hubspot-deals">
                 {ctx.deals.map((d) => (
-                  <li key={d.externalId} className="text-[11px] bg-[#0f1729] rounded p-1.5">
+                  <li key={d.externalId} className="text-[11px] bg-[#0f1729] rounded p-1.5 space-y-1">
                     <div className="text-white font-medium truncate">{d.title || "—"}</div>
                     <div className="text-[10px] text-[#8b9cb3] flex flex-wrap gap-x-2">
                       {d.amount != null && (
                         <span>
                           {t("inbox.crmDealAmount")}: {d.amount} {d.currency || ""}
-                        </span>
-                      )}
-                      {d.stage && (
-                        <span>
-                          {t("inbox.crmDealStage")}: {d.stage}
                         </span>
                       )}
                       {d.closeDate && (
@@ -1447,6 +1839,29 @@ function HubspotContextPanel({
                         </span>
                       )}
                     </div>
+                    {/* Étape éditable — déclenche updateDealStageMut */}
+                    {allStages.length > 0 ? (
+                      <select
+                        value={d.stage || ""}
+                        onChange={(e) => updateDealStageMut.mutate({ dealExternalId: d.externalId, dealstage: e.target.value })}
+                        disabled={updateDealStageMut.isPending}
+                        className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1 py-0.5 text-white"
+                        data-testid={`select-hubspot-deal-stage-${d.externalId}`}
+                      >
+                        <option value="">—</option>
+                        {allStages.map((s) => (
+                          <option key={`${s.pipelineId}:${s.id}`} value={s.id}>
+                            {s.label}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      d.stage && (
+                        <div className="text-[10px] text-[#8b9cb3]">
+                          {t("inbox.crmDealStage")}: {d.stage}
+                        </div>
+                      )
+                    )}
                   </li>
                 ))}
               </ul>
@@ -2995,6 +3410,10 @@ export default function Dashboard() {
                       ? extractEmailAddress(selectedEmail.senderEmail || selectedEmail.sender) || null
                       : null
                   }
+                  selectedEmailId={selectedEmail ? Number(selectedEmail.id) : null}
+                  selectedSubject={selectedEmail?.subject ?? null}
+                  selectedBody={selectedEmail?.body ?? null}
+                  selectedDate={selectedEmail?.created_at ?? selectedEmail?.createdAt ?? null}
                   collapsed={crmPanelCollapsed}
                   onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
                   onHide={() => setCrmFilter(null)}

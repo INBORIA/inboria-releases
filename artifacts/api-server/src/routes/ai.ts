@@ -15,13 +15,36 @@ const openai = new OpenAI({
 
 const router: IRouter = Router();
 
-async function fetchAccessibleEmail(emailId: number, userId: string, columns: string) {
+// Type union covering all column subsets used across this file's call sites.
+// Each call passes a comma-separated `columns` string; the row shape returned
+// is a subset of these fields. Generic-ifying allows callers to pin a stricter
+// type when needed without losing access to the listed fields.
+type AccessibleEmailRow = {
+  id: number;
+  sender: string | null;
+  recipient: string | null;
+  subject: string | null;
+  body: string | null;
+  summary: string | null;
+  category_id: string | null;
+  project_id: string | null;
+  created_at: string;
+};
+
+async function fetchAccessibleEmail<T = AccessibleEmailRow>(
+  emailId: number,
+  userId: string,
+  columns: string,
+): Promise<{ data: T | null; error: { message: string } | null }> {
   const memberMailboxIds = await getMemberMailboxIds(userId);
   const query = supabaseAdmin.from("emails").select(columns).eq("id", emailId);
-  if (memberMailboxIds.length > 0) {
-    return await query.or(`user_id.eq.${userId},shared_mailbox_id.in.(${memberMailboxIds.join(",")})`).single();
-  }
-  return await query.eq("user_id", userId).single();
+  const result = memberMailboxIds.length > 0
+    ? await query.or(`user_id.eq.${userId},shared_mailbox_id.in.(${memberMailboxIds.join(",")})`).single()
+    : await query.eq("user_id", userId).single();
+  return {
+    data: (result.data as unknown as T | null),
+    error: result.error ? { message: result.error.message } : null,
+  };
 }
 
 router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> => {

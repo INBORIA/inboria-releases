@@ -17,6 +17,12 @@ import {
   HUBSPOT_SCOPES,
   createHubspotNote,
   findHubspotContactIdByEmail,
+  logEmailEngagement,
+  createHubspotDeal,
+  createHubspotTask,
+  getHubspotDealPipelines,
+  updateHubspotDealStage,
+  updateHubspotContactProps,
 } from "../services/hubspot";
 import {
   exchangePipedriveCode,
@@ -525,6 +531,269 @@ router.post("/integrations/hubspot/note", requireAuth, async (req, res): Promise
   }
   const result = await createHubspotNote(req.userId!, contactId, body);
   res.json(result);
+});
+
+// ============== Wave HubSpot — Cockpit Orientation 3 ==============
+// Endpoints d'action déclenchés par les boutons du panneau "Contexte HubSpot" :
+// logger l'email, créer un deal préfilled, créer une tâche, faire avancer la
+// phase d'un deal, changer le lifecycle/lead status du contact.
+// Tous : 404 si le contact n'est pas dans le cache crm_contacts (sync manquante).
+
+// Résout + valide l'ID externe HubSpot à partir d'un email OU d'un externalId
+// fourni par le client. Dans TOUS les cas, on confirme via crm_contacts que cet
+// externalId appartient bien au user courant (filtre user_id+provider). Sans
+// cette validation, un client malveillant pourrait passer un externalId d'un
+// autre tenant et déclencher des actions HubSpot dans le compte connecté.
+async function resolveContactExternalId(
+  userId: string,
+  emailParam: string | undefined,
+  contactExternalIdParam: string | undefined,
+): Promise<{ id: string } | { error: string; status: number }> {
+  const externalId = String(contactExternalIdParam || "").trim();
+  const email = String(emailParam || "").trim().toLowerCase();
+  if (!externalId && !email) {
+    return { error: "contactEmail or contactExternalId required", status: 400 };
+  }
+  let query = supabaseAdmin
+    .from("crm_contacts")
+    .select("external_id")
+    .eq("user_id", userId)
+    .eq("provider", "hubspot");
+  if (externalId) {
+    query = query.eq("external_id", externalId);
+  } else {
+    query = query.ilike("email", email);
+  }
+  const { data } = await query.maybeSingle();
+  const id = (data as { external_id?: string } | null)?.external_id;
+  if (!id) return { error: "Contact not found in HubSpot cache", status: 404 };
+  return { id };
+}
+
+// Idem pour les deals : valide qu'un deal externalId appartient bien à l'user.
+async function assertDealOwnedByUser(userId: string, dealExternalId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin
+    .from("crm_deals")
+    .select("external_id")
+    .eq("user_id", userId)
+    .eq("provider", "hubspot")
+    .eq("external_id", dealExternalId)
+    .maybeSingle();
+  return !!data;
+}
+
+router.post("/integrations/hubspot/log-email", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { contactEmail, contactExternalId, emailId, subject, body, occurredAt } = req.body || {};
+    const resolved = await resolveContactExternalId(req.userId!, contactEmail, contactExternalId);
+    if ("error" in resolved) {
+      res.status(resolved.status).json({ error: resolved.error });
+      return;
+    }
+
+    // Idempotence atomique : on s'appuie sur l'index unique
+    // crm_email_logs_user_provider_email_uniq (user_id, provider, email_id)
+    // posé dans 2026_04_24_v4_platform_ecosystem.sql L87. On tente d'insérer
+    // une ligne "claim" AVANT l'appel HubSpot. Si conflit → déjà loggué, on
+    // court-circuite. Sinon on appelle HubSpot puis on met à jour la ligne avec
+    // l'external_log_id réel. Élimine la race condition entre check et insert.
+    const hasEmailId = typeof emailId === "number" && Number.isFinite(emailId);
+    if (hasEmailId) {
+      const { data: claim, error: claimErr } = await supabaseAdmin
+        .from("crm_email_logs")
+        .insert({
+          user_id: req.userId!,
+          provider: "hubspot",
+          email_id: emailId,
+          external_log_id: null,
+        })
+        .select("id")
+        .maybeSingle();
+      if (claimErr) {
+        // Code Postgres 23505 = unique_violation. Toute autre erreur remonte.
+        if ((claimErr as { code?: string }).code === "23505") {
+          res.json({ ok: true, alreadyLogged: true });
+          return;
+        }
+        console.error("[integrations] hubspot log-email claim error:", claimErr);
+        res.status(500).json({ error: "Failed to claim log row" });
+        return;
+      }
+      const claimId = (claim as { id?: number } | null)?.id;
+      const result = await logEmailEngagement(
+        req.userId!,
+        resolved.id,
+        String(subject || ""),
+        String(body || ""),
+        typeof occurredAt === "string" ? occurredAt : null,
+      );
+      if (!result.ok) {
+        // Rollback du claim pour permettre un retry ultérieur.
+        if (claimId) await supabaseAdmin.from("crm_email_logs").delete().eq("id", claimId);
+        res.status(502).json({ error: result.error });
+        return;
+      }
+      if (claimId && result.data?.id) {
+        await supabaseAdmin.from("crm_email_logs").update({ external_log_id: result.data.id }).eq("id", claimId);
+      }
+      res.json({ ok: true, id: result.data?.id || null });
+      return;
+    }
+
+    // Pas d'emailId → log à la volée, sans idempotence (action manuelle libre).
+    const result = await logEmailEngagement(
+      req.userId!,
+      resolved.id,
+      String(subject || ""),
+      String(body || ""),
+      typeof occurredAt === "string" ? occurredAt : null,
+    );
+    if (!result.ok) {
+      res.status(502).json({ error: result.error });
+      return;
+    }
+    res.json({ ok: true, id: result.data?.id || null });
+  } catch (err) {
+    console.error("[integrations] hubspot log-email error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to log email" });
+  }
+});
+
+router.post("/integrations/hubspot/create-deal", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { contactEmail, contactExternalId, dealname, amount, pipeline, dealstage, closedate } = req.body || {};
+    if (!dealname || typeof dealname !== "string" || !dealname.trim()) {
+      res.status(400).json({ error: "dealname required" });
+      return;
+    }
+    const resolved = await resolveContactExternalId(req.userId!, contactEmail, contactExternalId);
+    if ("error" in resolved) {
+      res.status(resolved.status).json({ error: resolved.error });
+      return;
+    }
+    const amountNum = amount != null && amount !== "" ? Number(amount) : null;
+    const result = await createHubspotDeal(req.userId!, resolved.id, {
+      dealname: dealname.trim().slice(0, 200),
+      amount: amountNum != null && Number.isFinite(amountNum) ? amountNum : null,
+      pipeline: typeof pipeline === "string" ? pipeline : null,
+      dealstage: typeof dealstage === "string" ? dealstage : null,
+      closedate: typeof closedate === "string" ? closedate : null,
+    });
+    if (!result.ok) {
+      res.status(502).json({ error: result.error });
+      return;
+    }
+    res.json({ ok: true, id: result.data?.id || null });
+  } catch (err) {
+    console.error("[integrations] hubspot create-deal error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to create deal" });
+  }
+});
+
+router.post("/integrations/hubspot/create-task", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { contactEmail, contactExternalId, subject, body, dueAt, priority } = req.body || {};
+    if (!subject || typeof subject !== "string" || !subject.trim()) {
+      res.status(400).json({ error: "subject required" });
+      return;
+    }
+    const resolved = await resolveContactExternalId(req.userId!, contactEmail, contactExternalId);
+    if ("error" in resolved) {
+      res.status(resolved.status).json({ error: resolved.error });
+      return;
+    }
+    const validPriority = priority === "LOW" || priority === "MEDIUM" || priority === "HIGH" ? priority : null;
+    const result = await createHubspotTask(req.userId!, resolved.id, {
+      subject: subject.trim().slice(0, 200),
+      body: typeof body === "string" ? body.slice(0, 4000) : null,
+      dueAt: typeof dueAt === "string" ? dueAt : null,
+      priority: validPriority,
+    });
+    if (!result.ok) {
+      res.status(502).json({ error: result.error });
+      return;
+    }
+    res.json({ ok: true, id: result.data?.id || null });
+  } catch (err) {
+    console.error("[integrations] hubspot create-task error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to create task" });
+  }
+});
+
+router.get("/integrations/hubspot/pipelines", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const result = await getHubspotDealPipelines(req.userId!);
+    if (!result.ok) {
+      res.status(502).json({ error: result.error });
+      return;
+    }
+    res.json(result.data);
+  } catch (err) {
+    console.error("[integrations] hubspot pipelines error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to fetch pipelines" });
+  }
+});
+
+router.patch("/integrations/hubspot/deals/:dealExternalId", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const dealExternalId = String(req.params.dealExternalId ?? "").trim();
+    if (!dealExternalId) {
+      res.status(400).json({ error: "dealExternalId required" });
+      return;
+    }
+    const { dealstage } = req.body || {};
+    if (!dealstage || typeof dealstage !== "string") {
+      res.status(400).json({ error: "dealstage required" });
+      return;
+    }
+    // Garde-fou multi-tenant : on ne PATCH que des deals présents dans le cache
+    // de l'utilisateur. Empêche un client malveillant de modifier des deals
+    // arbitraires dans le HubSpot du tenant connecté.
+    const owned = await assertDealOwnedByUser(req.userId!, dealExternalId);
+    if (!owned) {
+      res.status(404).json({ error: "Deal not found in HubSpot cache" });
+      return;
+    }
+    const result = await updateHubspotDealStage(req.userId!, dealExternalId, dealstage);
+    if (!result.ok) {
+      res.status(502).json({ error: result.error });
+      return;
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("[integrations] hubspot patch deal error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to update deal" });
+  }
+});
+
+router.patch("/integrations/hubspot/contacts/:contactExternalId", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const contactExternalId = String(req.params.contactExternalId ?? "").trim();
+    if (!contactExternalId) {
+      res.status(400).json({ error: "contactExternalId required" });
+      return;
+    }
+    // Garde-fou multi-tenant : valide que ce contact externe appartient à l'user
+    // (présent dans crm_contacts) avant tout PATCH HubSpot.
+    const owned = await resolveContactExternalId(req.userId!, undefined, contactExternalId);
+    if ("error" in owned) {
+      res.status(owned.status).json({ error: owned.error });
+      return;
+    }
+    const { lifecycleStage, leadStatus } = req.body || {};
+    const result = await updateHubspotContactProps(req.userId!, contactExternalId, {
+      lifecyclestage: typeof lifecycleStage === "string" ? lifecycleStage : null,
+      hs_lead_status: typeof leadStatus === "string" ? leadStatus : null,
+    });
+    if (!result.ok) {
+      res.status(result.error === "no properties to update" ? 400 : 502).json({ error: result.error });
+      return;
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("[integrations] hubspot patch contact error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to update contact" });
+  }
 });
 
 // ============== Pipedrive ==============

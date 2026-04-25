@@ -7,7 +7,12 @@ export const HUBSPOT_SCOPES = [
   "crm.objects.contacts.read",
   "crm.objects.contacts.write",
   "crm.objects.deals.read",
+  "crm.objects.deals.write",
+  "crm.objects.tasks.read",
+  "crm.objects.tasks.write",
   "crm.schemas.contacts.read",
+  "crm.schemas.deals.read",
+  "sales-email-read",
 ];
 
 interface HubspotIntegrationRow {
@@ -278,6 +283,229 @@ export async function createHubspotNote(
   } catch (err: any) {
     return { ok: false, error: err?.message };
   }
+}
+
+// ===========================================================================
+// Wave HubSpot — Cockpit Orientation 3
+// Helpers explicites appelés par l'UI (boutons "Logger", "Créer deal/tâche",
+// dropdowns lifecycle/stage). Tous réutilisent l'access_token déjà stocké
+// dans `integrations` avec refresh auto via refreshIfExpired.
+// ===========================================================================
+
+type HubspotResult<T = void> = { ok: true; data?: T } | { ok: false; error: string; status?: number };
+
+async function authorizedFetch(
+  userId: string,
+  path: string,
+  init: RequestInit,
+): Promise<HubspotResult<unknown>> {
+  let row = await getIntegration(userId);
+  if (!row) return { ok: false, error: "not connected" };
+  row = await refreshIfExpired(row);
+  try {
+    const res = await fetch(`${HUBSPOT_API}${path}`, {
+      ...init,
+      headers: {
+        ...(init.headers || {}),
+        Authorization: `Bearer ${row.access_token}`,
+        "Content-Type": "application/json",
+      },
+    });
+    if (!res.ok) {
+      const txt = await res.text().catch(() => "");
+      return { ok: false, error: `HubSpot API ${res.status}: ${txt.slice(0, 200)}`, status: res.status };
+    }
+    if (res.status === 204) return { ok: true };
+    const data = await res.json().catch(() => ({}));
+    return { ok: true, data };
+  } catch (err) {
+    return { ok: false, error: (err as Error).message || "network error" };
+  }
+}
+
+// Crée une note d'engagement HubSpot reflétant un email reçu/envoyé. Appelé
+// par le bouton "Logger l'email dans HubSpot" du panneau cockpit.
+export async function logEmailEngagement(
+  userId: string,
+  contactExternalId: string,
+  subject: string,
+  bodyText: string,
+  occurredAt: string | null,
+): Promise<HubspotResult<{ id?: string }>> {
+  const ts = occurredAt ? new Date(occurredAt).getTime() : Date.now();
+  const noteBody =
+    `Email enregistré depuis Inboria\n\nObjet : ${subject || "(sans objet)"}\n\n` +
+    bodyText.replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 4000);
+  const result = await authorizedFetch(userId, `/crm/v3/objects/notes`, {
+    method: "POST",
+    body: JSON.stringify({
+      properties: { hs_note_body: noteBody, hs_timestamp: ts },
+      associations: [
+        {
+          to: { id: contactExternalId },
+          types: [{ associationCategory: "HUBSPOT_DEFINED", associationTypeId: 202 }],
+        },
+      ],
+    }),
+  });
+  return result as HubspotResult<{ id?: string }>;
+}
+
+export async function createHubspotDeal(
+  userId: string,
+  contactExternalId: string,
+  input: {
+    dealname: string;
+    amount?: number | null;
+    pipeline?: string | null;
+    dealstage?: string | null;
+    closedate?: string | null;
+  },
+): Promise<HubspotResult<{ id?: string }>> {
+  const properties: Record<string, string> = { dealname: input.dealname };
+  if (input.amount != null && Number.isFinite(input.amount)) properties["amount"] = String(input.amount);
+  if (input.pipeline) properties["pipeline"] = input.pipeline;
+  if (input.dealstage) properties["dealstage"] = input.dealstage;
+  if (input.closedate) properties["closedate"] = input.closedate;
+
+  const result = await authorizedFetch(userId, `/crm/v3/objects/deals`, {
+    method: "POST",
+    body: JSON.stringify({
+      properties,
+      associations: [
+        {
+          to: { id: contactExternalId },
+          // 3 = deal-to-contact dans le catalogue HUBSPOT_DEFINED
+          types: [{ associationCategory: "HUBSPOT_DEFINED", associationTypeId: 3 }],
+        },
+      ],
+    }),
+  });
+  if (!result.ok) return result;
+  const data = result.data as { id?: string } | undefined;
+
+  // Réplique le deal dans crm_deals pour que le panneau le voie tout de suite
+  // sans attendre la prochaine sync. Utilise les colonnes existantes uniquement.
+  if (data?.id) {
+    await supabaseAdmin.from("crm_deals").upsert(
+      {
+        user_id: userId,
+        provider: "hubspot",
+        external_id: data.id,
+        contact_external_id: contactExternalId,
+        title: input.dealname,
+        amount: input.amount ?? null,
+        currency: null,
+        stage: input.dealstage ?? null,
+        status: null,
+        raw: { ...properties } as unknown as Record<string, unknown>,
+        last_synced_at: new Date().toISOString(),
+      },
+      { onConflict: "user_id,provider,external_id" },
+    );
+  }
+  return { ok: true, data };
+}
+
+export async function createHubspotTask(
+  userId: string,
+  contactExternalId: string,
+  input: { subject: string; body?: string | null; dueAt?: string | null; priority?: "LOW" | "MEDIUM" | "HIGH" | null },
+): Promise<HubspotResult<{ id?: string }>> {
+  const properties: Record<string, string> = {
+    hs_task_subject: input.subject,
+    hs_task_status: "NOT_STARTED",
+    hs_task_type: "TODO",
+    hs_timestamp: String(Date.now()),
+  };
+  if (input.body) properties["hs_task_body"] = input.body;
+  if (input.dueAt) properties["hs_timestamp"] = String(new Date(input.dueAt).getTime());
+  if (input.priority) properties["hs_task_priority"] = input.priority;
+
+  const result = await authorizedFetch(userId, `/crm/v3/objects/tasks`, {
+    method: "POST",
+    body: JSON.stringify({
+      properties,
+      associations: [
+        {
+          to: { id: contactExternalId },
+          // 204 = contact-to-task dans le catalogue HUBSPOT_DEFINED
+          types: [{ associationCategory: "HUBSPOT_DEFINED", associationTypeId: 204 }],
+        },
+      ],
+    }),
+  });
+  return result as HubspotResult<{ id?: string }>;
+}
+
+export async function getHubspotDealPipelines(
+  userId: string,
+): Promise<HubspotResult<{ pipelines: Array<{ id: string; label: string; stages: Array<{ id: string; label: string; displayOrder: number }> }> }>> {
+  const result = await authorizedFetch(userId, `/crm/v3/pipelines/deals`, { method: "GET" });
+  if (!result.ok) return result;
+  const data = result.data as { results?: Array<{ id: string; label: string; stages?: Array<{ id: string; label: string; displayOrder: number }> }> } | undefined;
+  const pipelines = (data?.results || []).map((p) => ({
+    id: p.id,
+    label: p.label,
+    stages: (p.stages || []).map((s) => ({ id: s.id, label: s.label, displayOrder: s.displayOrder })).sort((a, b) => a.displayOrder - b.displayOrder),
+  }));
+  return { ok: true, data: { pipelines } };
+}
+
+export async function updateHubspotDealStage(
+  userId: string,
+  dealExternalId: string,
+  dealstage: string,
+): Promise<HubspotResult> {
+  const result = await authorizedFetch(userId, `/crm/v3/objects/deals/${encodeURIComponent(dealExternalId)}`, {
+    method: "PATCH",
+    body: JSON.stringify({ properties: { dealstage } }),
+  });
+  if (!result.ok) return result;
+  await supabaseAdmin
+    .from("crm_deals")
+    .update({ stage: dealstage, last_synced_at: new Date().toISOString() })
+    .eq("user_id", userId)
+    .eq("provider", "hubspot")
+    .eq("external_id", dealExternalId);
+  return { ok: true };
+}
+
+export async function updateHubspotContactProps(
+  userId: string,
+  contactExternalId: string,
+  props: { lifecyclestage?: string | null; hs_lead_status?: string | null },
+): Promise<HubspotResult> {
+  const properties: Record<string, string> = {};
+  if (props.lifecyclestage) properties["lifecyclestage"] = props.lifecyclestage;
+  if (props.hs_lead_status) properties["hs_lead_status"] = props.hs_lead_status;
+  if (Object.keys(properties).length === 0) return { ok: false, error: "no properties to update" };
+
+  const result = await authorizedFetch(userId, `/crm/v3/objects/contacts/${encodeURIComponent(contactExternalId)}`, {
+    method: "PATCH",
+    body: JSON.stringify({ properties }),
+  });
+  if (!result.ok) return result;
+
+  // Met à jour le cache local pour refléter immédiatement dans le panneau.
+  const { data: existing } = await supabaseAdmin
+    .from("crm_contacts")
+    .select("raw")
+    .eq("user_id", userId)
+    .eq("provider", "hubspot")
+    .eq("external_id", contactExternalId)
+    .maybeSingle();
+  const currentRaw = ((existing as { raw?: Record<string, string> | null } | null)?.raw) || {};
+  const newRaw: Record<string, string> = { ...currentRaw };
+  if (props.lifecyclestage) newRaw["lifecyclestage"] = props.lifecyclestage;
+  if (props.hs_lead_status) newRaw["hs_lead_status"] = props.hs_lead_status;
+  await supabaseAdmin
+    .from("crm_contacts")
+    .update({ raw: newRaw, last_synced_at: new Date().toISOString() })
+    .eq("user_id", userId)
+    .eq("provider", "hubspot")
+    .eq("external_id", contactExternalId);
+  return { ok: true };
 }
 
 export async function logEmailToHubspot(

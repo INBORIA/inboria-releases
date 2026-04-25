@@ -99,6 +99,7 @@ const ALL_EVENTS = [
   "email.received",
   "email.sent",
   "task.created",
+  "task.completed",
   "appointment.created",
   "rule.triggered",
 ] as const;

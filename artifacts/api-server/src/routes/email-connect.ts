@@ -511,7 +511,7 @@ router.get("/email/connections", requireAuth, async (req, res): Promise<void> =>
         .select("id, provider, email_address, created_at, last_synced_at, signature")
         .eq("user_id", req.userId!)
         .order("created_at", { ascending: true });
-      data = fallback.data;
+      data = fallback.data as typeof data;
       error = fallback.error;
     }
 
