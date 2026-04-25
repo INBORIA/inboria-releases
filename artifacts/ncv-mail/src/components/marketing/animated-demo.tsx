@@ -6,6 +6,7 @@ import {
   MessageCircleQuestion,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 
 const NAV_KEYS: Array<{ key: string; fallback: string; icon: any; active?: boolean; badge?: number }> = [
   { key: "sidebar.inbox", fallback: "Réception", icon: Inbox, active: true },
@@ -197,11 +198,8 @@ export function AnimatedDemo() {
 
         <div className="flex min-h-[380px] sm:min-h-[420px]">
           <div className="hidden sm:flex flex-col w-[180px] border-r border-[#1f2937] bg-[#0d1117]">
-            <div className="flex items-center gap-2 px-4 py-3 border-b border-[#1f2937]">
-              <div className="w-6 h-6 rounded-md bg-[#2d7dd2] flex items-center justify-center">
-                <span className="text-[10px] font-bold text-white">N</span>
-              </div>
-              <span className="text-[12px] font-semibold text-white tracking-tight">Inboria</span>
+            <div className="flex items-center justify-center px-3 py-2 border-b border-[#1f2937]">
+              <img src={appLogo} alt="Inboria" className="h-10 w-auto object-contain" />
             </div>
 
             <nav className="flex-1 px-2 py-1.5 space-y-[1px] overflow-y-auto">
