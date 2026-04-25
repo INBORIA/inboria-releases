@@ -396,8 +396,8 @@ router.get("/integrations/hubspot/callback", async (req, res): Promise<void> => 
 });
 
 router.post("/integrations/hubspot/sync", requireAuth, async (req, res): Promise<void> => {
-  const contacts = await syncHubspotContacts(req.userId!, 200);
-  const deals = await syncHubspotDeals(req.userId!, 200);
+  const contacts = await syncHubspotContacts(req.userId!, 100);
+  const deals = await syncHubspotDeals(req.userId!, 100);
   res.json({ contacts, deals });
 });
 
