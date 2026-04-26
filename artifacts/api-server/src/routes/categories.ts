@@ -125,14 +125,14 @@ router.patch("/categories/:id", requireAuth, async (req, res): Promise<void> => 
       .select("id, is_system")
       .eq("id", req.params.id)
       .eq("user_id", req.userId!)
-      .maybeSingle();
+      .maybeSingle<{ id: number; is_system: boolean | null }>();
 
     if (!existing) {
       res.status(404).json({ error: "Category not found" });
       return;
     }
 
-    if ((existing as any).is_system === true) {
+    if (existing.is_system === true) {
       res.status(400).json({ error: "system_category_protected" });
       return;
     }
@@ -181,14 +181,14 @@ router.delete("/categories/:id", requireAuth, async (req, res): Promise<void> =>
       .select("id, is_system")
       .eq("id", catId)
       .eq("user_id", req.userId!)
-      .maybeSingle();
+      .maybeSingle<{ id: number; is_system: boolean | null }>();
 
     if (!existing) {
       res.status(404).json({ error: "Catégorie introuvable" });
       return;
     }
 
-    if ((existing as any).is_system === true) {
+    if (existing.is_system === true) {
       res.status(400).json({ error: "system_category_protected" });
       return;
     }
@@ -280,11 +280,13 @@ router.post(
 
       // On vérifie que les deux catégories existent ET appartiennent à
       // l'utilisateur courant — empêche la fusion croisée entre comptes.
+      type CatRow = { id: number; name: string; is_system: boolean | null };
       const { data: cats, error: lookupError } = await supabaseAdmin
         .from("categories")
         .select("id, name, is_system")
         .eq("user_id", req.userId!)
-        .in("id", [sourceId, targetId]);
+        .in("id", [sourceId, targetId])
+        .returns<CatRow[]>();
 
       if (lookupError) {
         res.status(500).json({ error: lookupError.message });
@@ -295,8 +297,8 @@ router.post(
         return;
       }
 
-      const target = cats.find((c: any) => c.id === targetId);
-      const source = cats.find((c: any) => c.id === sourceId);
+      const target = cats.find((c) => c.id === targetId);
+      const source = cats.find((c) => c.id === sourceId);
       if (!target || !source) {
         res.status(404).json({ error: "Catégorie introuvable" });
         return;
@@ -305,7 +307,7 @@ router.post(
       // La catégorie système "Non classé" ne peut être ni source ni cible
       // de fusion : la supprimer (source) la ferait disparaître, et la
       // recevoir (cible) en ferait perdre l'unicité ou la spécificité.
-      if ((source as any).is_system === true || (target as any).is_system === true) {
+      if (source.is_system === true || target.is_system === true) {
         res.status(400).json({ error: "system_category_protected" });
         return;
       }
@@ -351,7 +353,7 @@ router.post(
         movedEmails: movedEmails || 0,
         deletedCategoryId: sourceId,
         targetCategoryId: targetId,
-        targetName: (target as any).name,
+        targetName: target.name,
       });
     } catch {
       res.status(500).json({ error: "Failed to merge categories" });

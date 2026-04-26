@@ -575,6 +575,18 @@ export default function Classement() {
     );
   };
 
+  // Détecte le code d'erreur "system_category_protected" renvoyé par l'API
+  // pour les opérations interdites sur la catégorie système (rename / delete /
+  // merge). On accepte n'importe quelle réponse JSON tant qu'elle a un champ
+  // `error` string, sans recourir à un cast `as any`.
+  const isSystemCategoryProtectedError = (err: unknown): boolean => {
+    if (!(err instanceof ApiError) || err.status !== 400) return false;
+    const data = err.data;
+    if (data === null || typeof data !== "object") return false;
+    const errCode = (data as { error?: unknown }).error;
+    return errCode === "system_category_protected";
+  };
+
   const onSubmitEdit = (data: CategoryFormValues) => {
     if (!editCategory) return;
     updateCategory.mutate(
@@ -590,11 +602,7 @@ export default function Classement() {
         onError: (err: unknown) => {
           // La catégorie système "Non classé" ne peut pas être renommée :
           // l'API renvoie 400 avec error="system_category_protected".
-          if (
-            err instanceof ApiError &&
-            err.status === 400 &&
-            (err.data as any)?.error === "system_category_protected"
-          ) {
+          if (isSystemCategoryProtectedError(err)) {
             setEditCategory(null);
             toast({
               variant: "destructive",
@@ -628,11 +636,7 @@ export default function Classement() {
             queryKey: getListCategoriesQueryKey(),
           });
           // Idem côté suppression : message dédié quand la catégorie est protégée.
-          if (
-            err instanceof ApiError &&
-            err.status === 400 &&
-            (err.data as any)?.error === "system_category_protected"
-          ) {
+          if (isSystemCategoryProtectedError(err)) {
             toast({
               variant: "destructive",
               title: t("common.error"),
