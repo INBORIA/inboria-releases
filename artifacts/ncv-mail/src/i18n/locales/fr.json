@@ -408,6 +408,7 @@
     "crmActionSubmit": "Créer",
     "crmActionCancel": "Annuler",
     "crmActionError": "Action HubSpot échouée",
+    "crmActionErrorReconnect": "Droits HubSpot insuffisants. Allez dans Paramètres → Intégrations et reconnectez HubSpot pour autoriser cette action.",
     "sortByPriority": "Tri : Priorité",
     "sortByDateDesc": "Tri : Date ↓ (récent)",
     "sortByDateAsc": "Tri : Date ↑ (ancien)",

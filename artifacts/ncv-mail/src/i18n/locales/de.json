@@ -408,6 +408,7 @@
     "crmActionSubmit": "Erstellen",
     "crmActionCancel": "Abbrechen",
     "crmActionError": "HubSpot-Aktion fehlgeschlagen",
+    "crmActionErrorReconnect": "Unzureichende HubSpot-Berechtigungen. Gehen Sie zu Einstellungen → Integrationen und verbinden Sie HubSpot erneut, um diese Aktion zu autorisieren.",
     "sortByPriority": "Sortierung: Priorität",
     "sortByDateDesc": "Sortierung: Datum ↓ (neueste)",
     "sortByDateAsc": "Sortierung: Datum ↑ (älteste)",

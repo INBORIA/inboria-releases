@@ -1414,7 +1414,14 @@ function HubspotContextPanel({
           closedate: input.closedate || null,
         }),
       });
-      if (!res.ok) throw new Error((await res.json().catch(() => ({}))).error || "create deal failed");
+      if (!res.ok) {
+        // Récupère le hint du backend pour afficher un message ciblé
+        // (reconnexion HubSpot vs erreur de validation pipeline/stage).
+        const body = await res.json().catch(() => ({} as { error?: string; hint?: string }));
+        const err = new Error(body.error || "create deal failed") as Error & { hint?: string };
+        err.hint = body.hint;
+        throw err;
+      }
       return res.json();
     },
     onSuccess: () => {
@@ -1422,8 +1429,11 @@ function HubspotContextPanel({
       setShowDealForm(false);
       refresh();
     },
-    onError: (err: Error) => {
-      toast({ title: t("inbox.crmActionError"), description: err.message, variant: "destructive" });
+    onError: (err: Error & { hint?: string }) => {
+      // Hint "reconnect_hubspot" → message clair et actionnable plutôt
+      // que l'erreur brute "HubSpot API 403: ...".
+      const description = err.hint === "reconnect_hubspot" ? t("inbox.crmActionErrorReconnect") : err.message;
+      toast({ title: t("inbox.crmActionError"), description, variant: "destructive" });
     },
   });
   const createTaskMut = useMutation({

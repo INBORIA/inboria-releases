@@ -408,6 +408,7 @@
     "crmActionSubmit": "Crear",
     "crmActionCancel": "Cancelar",
     "crmActionError": "Acción de HubSpot fallida",
+    "crmActionErrorReconnect": "Permisos de HubSpot insuficientes. Vaya a Ajustes → Integraciones y vuelva a conectar HubSpot para autorizar esta acción.",
     "sortByPriority": "Orden: Prioridad",
     "sortByDateDesc": "Orden: Fecha ↓ (reciente)",
     "sortByDateAsc": "Orden: Fecha ↑ (antigua)",

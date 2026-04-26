@@ -408,6 +408,7 @@
     "crmActionSubmit": "Aanmaken",
     "crmActionCancel": "Annuleren",
     "crmActionError": "HubSpot-actie mislukt",
+    "crmActionErrorReconnect": "Onvoldoende HubSpot-rechten. Ga naar Instellingen → Integraties en koppel HubSpot opnieuw om deze actie toe te staan.",
     "sortByPriority": "Sortering: Prioriteit",
     "sortByDateDesc": "Sortering: Datum ↓ (nieuwste)",
     "sortByDateAsc": "Sortering: Datum ↑ (oudste)",

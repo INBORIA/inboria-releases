@@ -680,7 +680,28 @@ router.post("/integrations/hubspot/create-deal", requireAuth, async (req, res): 
       closedate: typeof closedate === "string" ? closedate : null,
     });
     if (!result.ok) {
-      res.status(502).json({ error: result.error });
+      // Log détaillé pour diagnostiquer côté serveur (l'erreur HubSpot
+      // contient le code + le body, ex. scope manquant, validation
+      // échouée, pipeline inexistant, etc.).
+      console.error("[integrations] hubspot create-deal failed:", {
+        userId: req.userId,
+        hubspotStatus: result.status ?? null,
+        hubspotError: result.error,
+        payload: { dealname: dealname.slice(0, 80), amount: amountNum, pipeline, dealstage, closedate },
+      });
+      // Hint utilisateur : 403 = scope manquant (l'utilisateur a connecté
+      // HubSpot avant l'extension des scopes) → suggérer reconnexion.
+      // 401 = token expiré/révoqué → suggérer reconnexion.
+      // 400 = validation HubSpot (mauvais pipeline/stage) → afficher le
+      // message brut pour que l'utilisateur corrige.
+      const status = result.status ?? 0;
+      const needsReconnect = status === 401 || status === 403;
+      const hint = needsReconnect
+        ? "reconnect_hubspot"
+        : status === 400
+          ? "validation"
+          : "upstream";
+      res.status(502).json({ error: result.error, hint, hubspotStatus: status });
       return;
     }
     res.json({ ok: true, id: result.data?.id || null });
