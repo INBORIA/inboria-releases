@@ -7,7 +7,7 @@ import { logger } from "../lib/logger";
 import { getKnowledgeBase, getSystemPrompt } from "../services/knowledge-base";
 import { AI_COST, checkEntitlement, consumeAiCredits, type AiEventType } from "../services/credits";
 import { recordAutopilotEvent } from "../services/autopilot-events";
-import { getMemberMailboxIds } from "../lib/inbox-scope";
+import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 import { ensureSystemCategory } from "../lib/system-categories";
 
 const openai = new OpenAI({
@@ -557,10 +557,18 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
       )
       .map((c: any) => c.id);
 
+    // On élargit la portée : non seulement les emails personnels mais aussi
+    // ceux des boîtes partagées dont l'utilisateur est membre — c'est la
+    // même portée que celle utilisée par le compteur du tableau de bord.
+    // Avant : `.eq("user_id", userId)` ignorait les non-classés des boîtes
+    // partagées, et le bouton "Re-classer maintenant" tournait à vide.
+    const memberMailboxIds = await getMemberMailboxIds(userId);
+    const inboxScopeOr = buildInboxScopeOrFilter(userId, memberMailboxIds);
+
     const { data: nullEmails } = await supabaseAdmin
       .from("emails")
       .select("id, sender, subject, body")
-      .eq("user_id", userId)
+      .or(inboxScopeOr)
       .is("category_id", null)
       .neq("status", "archived")
       .neq("status", "sent")
@@ -574,7 +582,7 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
       const { data } = await supabaseAdmin
         .from("emails")
         .select("id, sender, subject, body")
-        .eq("user_id", userId)
+        .or(inboxScopeOr)
         .in("category_id", junkCategoryIds)
         .neq("status", "archived")
         .neq("status", "sent")
@@ -629,11 +637,14 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
         // ça comme une re-catégorisation utile.
         if (JUNK_NAMES.includes(catName.toLowerCase())) {
           if (systemCatId) {
+            // L'id email est déjà confirmé dans la portée par le SELECT
+            // ci-dessus (personnel + boîtes partagées dont je suis membre).
+            // On évite `.eq("user_id", userId)` qui bloquerait les emails
+            // de boîtes partagées (user_id != userId).
             await supabaseAdmin
               .from("emails")
               .update({ category_id: systemCatId })
-              .eq("id", email.id)
-              .eq("user_id", userId);
+              .eq("id", email.id);
           }
           continue;
         }
@@ -660,11 +671,12 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
         }
 
         if (categoryId) {
+          // Idem qu'au-dessus : pas de filtre user_id sur l'UPDATE — l'email
+          // a déjà été validé par le SELECT scopé (perso + boîtes partagées).
           await supabaseAdmin
             .from("emails")
             .update({ category_id: categoryId })
-            .eq("id", email.id)
-            .eq("user_id", userId);
+            .eq("id", email.id);
           recategorized++;
         }
       } catch (err: any) {
@@ -678,10 +690,12 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
     // garantie par le drapeau is_system côté DB et par cette boucle.
     if (recategorized > 0 && legacyJunkIds.length > 0) {
       for (const junkId of legacyJunkIds) {
+        // On compte sans filtre user_id sur les emails : la catégorie peut
+        // contenir des emails de boîtes partagées (user_id ≠ requesting
+        // user) — il ne faut pas la supprimer si elle en héberge encore.
         const { count } = await supabaseAdmin
           .from("emails")
           .select("id", { count: "exact", head: true })
-          .eq("user_id", userId)
           .eq("category_id", junkId);
         if (count === 0) {
           await supabaseAdmin.from("categories").delete().eq("id", junkId).eq("user_id", userId);
