@@ -4,7 +4,7 @@ import { CreateCategoryBody, UpdateCategoryBody, ApplyPackBody, GeneratePackBody
 import { requireAuth } from "../middlewares/auth";
 import OpenAI from "openai";
 import { AI_COST, checkEntitlement, consumeAiCredits } from "../services/credits";
-import { findSimilarCategories } from "../lib/similarity";
+import { findSimilarCategories, findDuplicatePairs } from "../lib/similarity";
 
 // Headers/query params autorisant le bypass volontaire de la détection
 // de quasi-doublons ("Créer quand même" côté UI).
@@ -183,6 +183,137 @@ router.delete("/categories/:id", requireAuth, async (req, res): Promise<void> =>
     res.status(500).json({ error: "Failed to delete category" });
   }
 });
+
+// Liste les paires de catégories de l'utilisateur dont les noms se ressemblent
+// fortement. Sert au "nettoyage des doublons" côté UI : on ne supprime jamais
+// rien automatiquement, on propose simplement la fusion à l'utilisateur.
+router.get("/categories/duplicates", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data: categories, error } = await supabaseAdmin
+      .from("categories")
+      .select("id, name, source_pack, emails(count)")
+      .eq("user_id", req.userId!);
+
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+
+    const enriched = (categories || []).map((c: any) => ({
+      id: c.id,
+      name: c.name,
+      sourcePack: c.source_pack || null,
+      emailCount: c.emails?.[0]?.count || 0,
+    }));
+
+    const pairs = findDuplicatePairs(enriched);
+    res.json({
+      pairs: pairs.map((p) => ({
+        a: p.a,
+        b: p.b,
+        similarity: p.similarity,
+      })),
+    });
+  } catch {
+    res.status(500).json({ error: "Failed to detect duplicates" });
+  }
+});
+
+// Fusionne la catégorie source dans la cible : tous les emails liés à la
+// source sont réaffectés à la cible, puis la source est supprimée. Les deux
+// catégories doivent appartenir au même utilisateur. La réaffectation et la
+// suppression sont faites séquentiellement (pas de transaction Postgres
+// disponible via supabase-js, mais le risque est limité : si la suppression
+// échoue après la réaffectation, l'utilisateur peut toujours supprimer la
+// source à la main, sans perte de donnée).
+router.post(
+  "/categories/:id/merge-into/:targetId",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const sourceId = parseInt(req.params.id as string, 10);
+      const targetId = parseInt(req.params.targetId as string, 10);
+      if (isNaN(sourceId) || isNaN(targetId)) {
+        res.status(400).json({ error: "ID invalide" });
+        return;
+      }
+      if (sourceId === targetId) {
+        res.status(400).json({ error: "Source et cible identiques" });
+        return;
+      }
+
+      // On vérifie que les deux catégories existent ET appartiennent à
+      // l'utilisateur courant — empêche la fusion croisée entre comptes.
+      const { data: cats, error: lookupError } = await supabaseAdmin
+        .from("categories")
+        .select("id, name")
+        .eq("user_id", req.userId!)
+        .in("id", [sourceId, targetId]);
+
+      if (lookupError) {
+        res.status(500).json({ error: lookupError.message });
+        return;
+      }
+      if (!cats || cats.length !== 2) {
+        res.status(404).json({ error: "Catégorie introuvable" });
+        return;
+      }
+
+      const target = cats.find((c: any) => c.id === targetId);
+      const source = cats.find((c: any) => c.id === sourceId);
+      if (!target || !source) {
+        res.status(404).json({ error: "Catégorie introuvable" });
+        return;
+      }
+
+      // Réaffectation des emails. On compte d'abord pour le retour, puis on
+      // applique l'UPDATE. Le filtre user_id est redondant (les emails sont
+      // déjà liés à la catégorie source qui appartient à l'utilisateur), mais
+      // on le garde par défense en profondeur.
+      const { count: movedEmails, error: countError } = await supabaseAdmin
+        .from("emails")
+        .select("id", { count: "exact", head: true })
+        .eq("category_id", sourceId)
+        .eq("user_id", req.userId!);
+
+      if (countError) {
+        res.status(500).json({ error: countError.message });
+        return;
+      }
+
+      const { error: updateError } = await supabaseAdmin
+        .from("emails")
+        .update({ category_id: targetId })
+        .eq("category_id", sourceId)
+        .eq("user_id", req.userId!);
+
+      if (updateError) {
+        res.status(500).json({ error: updateError.message });
+        return;
+      }
+
+      const { error: deleteError } = await supabaseAdmin
+        .from("categories")
+        .delete()
+        .eq("id", sourceId)
+        .eq("user_id", req.userId!);
+
+      if (deleteError) {
+        res.status(500).json({ error: deleteError.message });
+        return;
+      }
+
+      res.json({
+        movedEmails: movedEmails || 0,
+        deletedCategoryId: sourceId,
+        targetCategoryId: targetId,
+        targetName: (target as any).name,
+      });
+    } catch {
+      res.status(500).json({ error: "Failed to merge categories" });
+    }
+  },
+);
 
 router.post("/categories/apply-pack", requireAuth, async (req, res): Promise<void> => {
   try {

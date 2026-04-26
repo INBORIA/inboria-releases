@@ -784,7 +784,7 @@
     "categoryDeleted": "Categoría eliminada",
     "categoryModified": "Categoría modificada",
     "descriptionPlaceholder": "Ej: Todos los correos electrónicos que contienen facturas, presupuestos o recibos.",
-    "createError": "No se puede crear la categoría.",
+    "createError": "No se pudo crear la categoría. Inténtalo de nuevo.",
     "updateError": "No se puede actualizar la categoría.",
     "deleteError": "No se puede eliminar la categoría.",
     "deleteConfirmTitle": "¿Eliminar esta categoría?",
@@ -814,7 +814,7 @@
     "createCategory": "Crear una categoría",
     "editCategory": "Editar categoría",
     "descriptionHelp": "Descripción (para ayudar a la IA)",
-    "creating": "Creando...",
+    "creating": "Creando…",
     "duplicateWarning": {
       "title": "Categoría similar detectada",
       "desc": "Está creando «{{name}}». Una o más categorías existentes son muy parecidas:",
@@ -968,6 +968,53 @@
       },
       "namePlaceholder": "Ej: Facturas, Proveedores...",
       "descPlaceholder": "Ej: Todos los correos electrónicos que contienen facturas, presupuestos o recibos."
+    },
+    "cleanupDuplicates": {
+      "buttonZero": "Sin duplicados",
+      "button": "Limpiar duplicados",
+      "buttonCount": "Limpiar duplicados ({{count}})",
+      "title": "Duplicados detectados",
+      "desc": "{{count}} par(es) de categorías se parecen mucho. Fusiónelas para reasignar automáticamente sus correos.",
+      "empty": "Por ahora no hay duplicados detectados.",
+      "similarity": "{{percent}}% similar",
+      "emailsSuffix": "{{count}} correos",
+      "mergeBtn": "Fusionar",
+      "mergeArrow": "Fusionar «{{source}}» en «{{target}}»",
+      "keepBoth": "Mantener ambas",
+      "confirmTitle": "¿Fusionar «{{source}}» en «{{target}}»?",
+      "confirmDesc": "Los correos de «{{source}}» se moverán a «{{target}}», luego «{{source}}» será eliminada. Esta acción es irreversible.",
+      "merging": "Fusionando…",
+      "mergedToast": "{{count}} correo(s) movidos a «{{target}}»",
+      "close": "Cerrar",
+      "detecting": "Analizando…"
+    },
+    "sections": {
+      "byPack": "Paquete {{name}}",
+      "standards": "Categorías estándar",
+      "manual": "Mis categorías personales"
+    },
+    "unusedToggle": {
+      "show": "Ver categorías vacías",
+      "hide": "Ocultar categorías vacías"
+    },
+    "unusedBadge": "Vacía",
+    "origin": {
+      "pack": "Paquete",
+      "standard": "Estándar",
+      "manual": "Personal"
+    },
+    "industryPacksAccordion": "Catálogo de paquetes profesionales",
+    "industryPacksAccordionDesc": "Categorías preconfiguradas por profesión. Haga clic para explorar.",
+    "suggestionsAccordion": "Sugerencias estándar",
+    "suggestionsAccordionDesc": "Empiece rápido con categorías comunes",
+    "countCategories": "{{count}} categorías",
+    "countUnused": "{{count}} vacías",
+    "nearDup": {
+      "title": "Categoría similar detectada",
+      "desc": "Una categoría se parece mucho a «{{name}}». ¿Usar la existente o crear igualmente?",
+      "similarity": "{{pct}}% similar",
+      "useExisting": "Usar la existente",
+      "createAnyway": "Crear igualmente"
     }
   },
   "settings": {

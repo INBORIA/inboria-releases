@@ -784,7 +784,7 @@
     "categoryDeleted": "Kategorie gelöscht",
     "categoryModified": "Kategorie geändert",
     "descriptionPlaceholder": "Z.B.: Alle E-Mails, die Rechnungen, Angebote oder Quittungen enthalten.",
-    "createError": "Kategorie kann nicht erstellt werden.",
+    "createError": "Kategorie konnte nicht erstellt werden. Bitte erneut versuchen.",
     "updateError": "Kategorie kann nicht aktualisiert werden.",
     "deleteError": "Kategorie kann nicht gelöscht werden.",
     "deleteConfirmTitle": "Diese Kategorie löschen?",
@@ -814,7 +814,7 @@
     "createCategory": "Kategorie erstellen",
     "editCategory": "Kategorie bearbeiten",
     "descriptionHelp": "Beschreibung (um der KI zu helfen)",
-    "creating": "Erstelle...",
+    "creating": "Wird erstellt…",
     "duplicateWarning": {
       "title": "Ähnliche Kategorie erkannt",
       "desc": "Sie erstellen \"{{name}}\". Eine oder mehrere bestehende Kategorien sind sehr ähnlich:",
@@ -968,6 +968,53 @@
       },
       "namePlaceholder": "Z.B.: Rechnungen, Lieferanten...",
       "descPlaceholder": "Z.B.: Alle E-Mails, die Rechnungen, Angebote oder Quittungen enthalten."
+    },
+    "cleanupDuplicates": {
+      "buttonZero": "Keine Duplikate",
+      "button": "Duplikate bereinigen",
+      "buttonCount": "Duplikate bereinigen ({{count}})",
+      "title": "Duplikate erkannt",
+      "desc": "{{count}} Kategorie-Paar(e) sehen sehr ähnlich aus. Führen Sie sie zusammen, um deren E-Mails automatisch neu zuzuordnen.",
+      "empty": "Aktuell keine Duplikate erkannt.",
+      "similarity": "{{percent}}% ähnlich",
+      "emailsSuffix": "{{count}} E-Mails",
+      "mergeBtn": "Zusammenführen",
+      "mergeArrow": "„{{source}}\" in „{{target}}\" zusammenführen",
+      "keepBoth": "Beide behalten",
+      "confirmTitle": "„{{source}}\" in „{{target}}\" zusammenführen?",
+      "confirmDesc": "E-Mails von „{{source}}\" werden zu „{{target}}\" verschoben, dann wird „{{source}}\" gelöscht. Dies kann nicht rückgängig gemacht werden.",
+      "merging": "Wird zusammengeführt…",
+      "mergedToast": "{{count}} E-Mail(s) verschoben zu „{{target}}\"",
+      "close": "Schließen",
+      "detecting": "Wird analysiert…"
+    },
+    "sections": {
+      "byPack": "Set {{name}}",
+      "standards": "Standardkategorien",
+      "manual": "Meine persönlichen Kategorien"
+    },
+    "unusedToggle": {
+      "show": "Leere Kategorien anzeigen",
+      "hide": "Leere Kategorien ausblenden"
+    },
+    "unusedBadge": "Leer",
+    "origin": {
+      "pack": "Set",
+      "standard": "Standard",
+      "manual": "Persönlich"
+    },
+    "industryPacksAccordion": "Katalog der Branchensets",
+    "industryPacksAccordionDesc": "Vorgefertigte Kategorien nach Beruf. Klicken zum Erkunden.",
+    "suggestionsAccordion": "Standardvorschläge",
+    "suggestionsAccordionDesc": "Starten Sie schnell mit gängigen Kategorien",
+    "countCategories": "{{count}} Kategorien",
+    "countUnused": "{{count}} leer",
+    "nearDup": {
+      "title": "Ähnliche Kategorie erkannt",
+      "desc": "Eine Kategorie ähnelt stark „{{name}}\". Vorhandene verwenden oder trotzdem erstellen?",
+      "similarity": "{{pct}}% ähnlich",
+      "useExisting": "Vorhandene verwenden",
+      "createAnyway": "Trotzdem erstellen"
     }
   },
   "settings": {

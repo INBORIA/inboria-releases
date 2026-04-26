@@ -784,7 +784,7 @@
     "categoryDeleted": "Categorie verwijderd",
     "categoryModified": "Categorie gewijzigd",
     "descriptionPlaceholder": "Bijv.: Alle e-mails met facturen, offertes of bonnen.",
-    "createError": "Kan categorie niet aanmaken.",
+    "createError": "Kon de categorie niet aanmaken. Probeer opnieuw.",
     "updateError": "Kan categorie niet bijwerken.",
     "deleteError": "Kan categorie niet verwijderen.",
     "deleteConfirmTitle": "Deze categorie verwijderen?",
@@ -814,7 +814,7 @@
     "createCategory": "Categorie aanmaken",
     "editCategory": "Categorie bewerken",
     "descriptionHelp": "Beschrijving (om de AI te helpen)",
-    "creating": "Aanmaken...",
+    "creating": "Bezig…",
     "duplicateWarning": {
       "title": "Vergelijkbare categorie gedetecteerd",
       "desc": "U probeert \"{{name}}\" aan te maken. Een of meer bestaande categorieën lijken er sterk op:",
@@ -968,6 +968,53 @@
       },
       "namePlaceholder": "Bijv.: Facturen, Leveranciers...",
       "descPlaceholder": "Bijv.: Alle e-mails met facturen, offertes of bonnen."
+    },
+    "cleanupDuplicates": {
+      "buttonZero": "Geen duplicaten",
+      "button": "Duplicaten opruimen",
+      "buttonCount": "Duplicaten opruimen ({{count}})",
+      "title": "Duplicaten gedetecteerd",
+      "desc": "{{count}} paar/paren categorieën lijken sterk op elkaar. Voeg ze samen om hun e-mails automatisch over te zetten.",
+      "empty": "Op dit moment geen duplicaten gevonden.",
+      "similarity": "{{percent}}% gelijk",
+      "emailsSuffix": "{{count}} e-mails",
+      "mergeBtn": "Samenvoegen",
+      "mergeArrow": "\"{{source}}\" samenvoegen in \"{{target}}\"",
+      "keepBoth": "Beide behouden",
+      "confirmTitle": "\"{{source}}\" samenvoegen in \"{{target}}\"?",
+      "confirmDesc": "E-mails van \"{{source}}\" worden verplaatst naar \"{{target}}\", daarna wordt \"{{source}}\" verwijderd. Dit kan niet ongedaan worden gemaakt.",
+      "merging": "Samenvoegen…",
+      "mergedToast": "{{count}} e-mail(s) verplaatst naar \"{{target}}\"",
+      "close": "Sluiten",
+      "detecting": "Bezig met scannen…"
+    },
+    "sections": {
+      "byPack": "Pakket {{name}}",
+      "standards": "Standaardcategorieën",
+      "manual": "Mijn persoonlijke categorieën"
+    },
+    "unusedToggle": {
+      "show": "Lege categorieën tonen",
+      "hide": "Lege categorieën verbergen"
+    },
+    "unusedBadge": "Leeg",
+    "origin": {
+      "pack": "Pakket",
+      "standard": "Standaard",
+      "manual": "Persoonlijk"
+    },
+    "industryPacksAccordion": "Catalogus branchepakketten",
+    "industryPacksAccordionDesc": "Vooraf samengestelde categorieën per beroep. Klik om te verkennen.",
+    "suggestionsAccordion": "Standaardsuggesties",
+    "suggestionsAccordionDesc": "Start snel met veelvoorkomende categorieën",
+    "countCategories": "{{count}} categorieën",
+    "countUnused": "{{count}} leeg",
+    "nearDup": {
+      "title": "Vergelijkbare categorie gedetecteerd",
+      "desc": "Een categorie lijkt sterk op \"{{name}}\". Bestaande gebruiken of toch aanmaken?",
+      "similarity": "{{pct}}% vergelijkbaar",
+      "useExisting": "Bestaande gebruiken",
+      "createAnyway": "Toch aanmaken"
     }
   },
   "settings": {

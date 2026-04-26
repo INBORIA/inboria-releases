@@ -784,7 +784,7 @@
     "categoryDeleted": "Category deleted",
     "categoryModified": "Category modified",
     "descriptionPlaceholder": "E.g.: All emails containing invoices, quotes or receipts.",
-    "createError": "Unable to create category.",
+    "createError": "Could not create the category. Please try again.",
     "updateError": "Unable to update category.",
     "deleteError": "Unable to delete category.",
     "deleteConfirmTitle": "Delete this category?",
@@ -814,7 +814,7 @@
     "createCategory": "Create a category",
     "editCategory": "Edit category",
     "descriptionHelp": "Description (to help the AI)",
-    "creating": "Creating...",
+    "creating": "Creating…",
     "duplicateWarning": {
       "title": "Similar category detected",
       "desc": "You're creating \"{{name}}\". One or more existing categories look very close to it:",
@@ -968,6 +968,53 @@
       },
       "namePlaceholder": "E.g.: Invoices, Suppliers...",
       "descPlaceholder": "E.g.: All emails containing invoices, quotes or receipts."
+    },
+    "cleanupDuplicates": {
+      "buttonZero": "No duplicates",
+      "button": "Clean up duplicates",
+      "buttonCount": "Clean up duplicates ({{count}})",
+      "title": "Duplicates detected",
+      "desc": "{{count}} pair(s) of categories look very similar. Merge them to automatically reassign their emails.",
+      "empty": "No duplicates detected right now.",
+      "similarity": "{{percent}}% similar",
+      "emailsSuffix": "{{count}} emails",
+      "mergeBtn": "Merge",
+      "mergeArrow": "Merge \"{{source}}\" into \"{{target}}\"",
+      "keepBoth": "Keep both",
+      "confirmTitle": "Merge \"{{source}}\" into \"{{target}}\"?",
+      "confirmDesc": "Emails from \"{{source}}\" will be moved to \"{{target}}\", then \"{{source}}\" will be deleted. This cannot be undone.",
+      "merging": "Merging…",
+      "mergedToast": "{{count}} email(s) moved to \"{{target}}\"",
+      "close": "Close",
+      "detecting": "Scanning…"
+    },
+    "sections": {
+      "byPack": "{{name}} pack",
+      "standards": "Standard categories",
+      "manual": "My personal categories"
+    },
+    "unusedToggle": {
+      "show": "Show empty categories",
+      "hide": "Hide empty categories"
+    },
+    "unusedBadge": "Empty",
+    "origin": {
+      "pack": "Pack",
+      "standard": "Standard",
+      "manual": "Personal"
+    },
+    "industryPacksAccordion": "Industry pack catalog",
+    "industryPacksAccordionDesc": "Pre-built categories by profession. Click to browse.",
+    "suggestionsAccordion": "Standard suggestions",
+    "suggestionsAccordionDesc": "Get started fast with common categories",
+    "countCategories": "{{count}} categories",
+    "countUnused": "{{count}} empty",
+    "nearDup": {
+      "title": "Similar category detected",
+      "desc": "A category is very similar to \"{{name}}\". Use the existing one or create anyway?",
+      "similarity": "{{pct}}% similar",
+      "useExisting": "Use existing",
+      "createAnyway": "Create anyway"
     }
   },
   "settings": {

@@ -67,6 +67,12 @@ import {
   MessageSquare,
   Settings,
   ArrowLeftRight,
+  Combine,
+  Eye,
+  EyeOff,
+  ArrowRight,
+  Folder,
+  User as UserIcon,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -74,8 +80,15 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
+import { Switch } from "@/components/ui/switch";
 import { useState, useMemo } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { z } from "zod";
@@ -92,6 +105,8 @@ import {
 import { FAMILLES_METIERS, type PackMetier, type FamilleMetier } from "@/data/packs-metiers";
 import { useTranslation } from 'react-i18next';
 import { translateCategoryName, translateCategory } from "@/lib/category-translations";
+import { customFetch, ApiError } from "@workspace/api-client-react";
+import i18n from "@/i18n";
 
 function useTranslatedPacks(t: any, lang: string): FamilleMetier[] {
   return useMemo(() => {
@@ -193,6 +208,218 @@ export default function Classement() {
     categories: { name: string; description: string }[];
   } | null>(null);
 
+  // ---- Refonte : doublons, fusion, vue inutilisées, modale near-dup ----
+  type DuplicateCat = { id: number; name: string; sourcePack: string | null; emailCount: number };
+  type DuplicatePair = { a: DuplicateCat; b: DuplicateCat; similarity: number };
+
+  const [showUnused, setShowUnused] = useState(true);
+  const [isCleanupOpen, setIsCleanupOpen] = useState(false);
+  const [mergeConfirm, setMergeConfirm] = useState<{
+    source: DuplicateCat;
+    target: DuplicateCat;
+  } | null>(null);
+  const [mergeBusy, setMergeBusy] = useState(false);
+  const [nearDup, setNearDup] = useState<null | {
+    source: "form" | "suggestion";
+    name: string;
+    description: string;
+    similar: Array<{ id: number; name: string; similarity: number }>;
+    suggestionKey?: string;
+  }>(null);
+  const [forcing, setForcing] = useState(false);
+
+  // Détection des paires de doublons côté serveur. Refetch après chaque
+  // mutation (création, fusion, suppression).
+  const duplicatesQuery = useQuery({
+    queryKey: ["categories", "duplicates"],
+    queryFn: () =>
+      customFetch<{ pairs: DuplicatePair[] }>("/api/categories/duplicates"),
+    staleTime: 10_000,
+  });
+  const duplicatePairs = duplicatesQuery.data?.pairs ?? [];
+
+  // Set des noms "standards" (= proposés dans les suggestions) toutes langues
+  // confondues, pour distinguer les catégories standard des purement manuelles
+  // dans la section "Mes catégories" (les catégories avec sourcePack restent
+  // toujours classées dans leur pack, prioritairement).
+  const standardNamesSet = useMemo(() => {
+    const set = new Set<string>();
+    const langs = ["fr", "en", "nl", "de", "es"];
+    for (const lang of langs) {
+      for (const k of SUGGESTED_CATEGORY_KEYS) {
+        const name = i18n.getResource(
+          lang,
+          "translation",
+          `classification.suggestedCats.${k.key}.name`,
+        );
+        if (typeof name === "string" && name.trim()) {
+          set.add(name.toLowerCase().trim());
+        }
+      }
+    }
+    return set;
+  }, []);
+
+  type GroupKind = "pack" | "standard" | "manual";
+  type CategoryGroup = { key: string; kind: GroupKind; label: string; items: any[] };
+
+  const filteredCategories = useMemo(() => {
+    const list = categories || [];
+    if (showUnused) return list;
+    return list.filter((c: any) => (c.emailCount || 0) > 0);
+  }, [categories, showUnused]);
+
+  const unusedCount = useMemo(
+    () => (categories || []).filter((c: any) => (c.emailCount || 0) === 0).length,
+    [categories],
+  );
+
+  // Regroupement : catégories à sourcePack → une section par pack ;
+  // catégories sans sourcePack mais nom = standard → "Catégories standards" ;
+  // tout le reste → "Mes catégories personnelles".
+  const groupedCategories = useMemo<CategoryGroup[]>(() => {
+    const byPack = new Map<string, any[]>();
+    const standards: any[] = [];
+    const manuals: any[] = [];
+    for (const cat of filteredCategories as any[]) {
+      const pack = (cat.sourcePack || "").trim();
+      if (pack) {
+        if (!byPack.has(pack)) byPack.set(pack, []);
+        byPack.get(pack)!.push(cat);
+        continue;
+      }
+      const norm = (cat.name || "").toLowerCase().trim();
+      if (standardNamesSet.has(norm)) {
+        standards.push(cat);
+      } else {
+        manuals.push(cat);
+      }
+    }
+    const groups: CategoryGroup[] = [];
+    // Packs : un par sourcePack distinct, triés par nom de pack
+    Array.from(byPack.keys())
+      .sort((x, y) => x.localeCompare(y))
+      .forEach((packName) => {
+        groups.push({
+          key: `pack:${packName}`,
+          kind: "pack",
+          label: t("classification.sections.byPack", { name: packName }),
+          items: byPack.get(packName)!,
+        });
+      });
+    if (standards.length > 0) {
+      groups.push({
+        key: "standards",
+        kind: "standard",
+        label: t("classification.sections.standards"),
+        items: standards,
+      });
+    }
+    if (manuals.length > 0) {
+      groups.push({
+        key: "manual",
+        kind: "manual",
+        label: t("classification.sections.manual"),
+        items: manuals,
+      });
+    }
+    return groups;
+  }, [filteredCategories, standardNamesSet, t]);
+
+  const extractSimilar = (
+    err: unknown,
+  ): Array<{ id: number; name: string; similarity: number }> | null => {
+    if (err instanceof ApiError && err.status === 409) {
+      const data = err.data as
+        | { similar?: Array<{ id: number; name: string; similarity: number }> }
+        | null;
+      if (data && Array.isArray(data.similar) && data.similar.length > 0) {
+        return data.similar;
+      }
+    }
+    return null;
+  };
+
+  const forceCreateCategory = async (name: string, description: string) => {
+    return customFetch<{ id: number; name: string }>(
+      "/api/categories?force=1",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Force-Create": "1" },
+        body: JSON.stringify({ name, description }),
+      },
+    );
+  };
+
+  const handleNearDupForce = async () => {
+    if (!nearDup) return;
+    setForcing(true);
+    try {
+      await forceCreateCategory(nearDup.name, nearDup.description);
+      await queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
+      await duplicatesQuery.refetch();
+      toast({ title: t("classification.categoryCreated") });
+      if (nearDup.source === "form") {
+        setIsCreateOpen(false);
+        createForm.reset();
+      }
+      setNearDup(null);
+    } catch {
+      toast({
+        variant: "destructive",
+        title: t("common.error"),
+        description: t("classification.createError"),
+      });
+    } finally {
+      setForcing(false);
+    }
+  };
+
+  const handleNearDupUseExisting = () => {
+    if (!nearDup) return;
+    if (nearDup.source === "form") {
+      setIsCreateOpen(false);
+      createForm.reset();
+    }
+    toast({
+      title: t("classification.duplicateWarning.usedExistingToast", {
+        name: nearDup.similar[0]?.name ?? "",
+      }),
+    });
+    setNearDup(null);
+  };
+
+  const doMerge = async (source: DuplicateCat, target: DuplicateCat) => {
+    setMergeBusy(true);
+    try {
+      const result = await customFetch<{
+        movedEmails: number;
+        deletedCategoryId: number;
+        targetCategoryId: number;
+        targetName: string;
+      }>(`/api/categories/${source.id}/merge-into/${target.id}`, {
+        method: "POST",
+      });
+      await queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
+      await duplicatesQuery.refetch();
+      toast({
+        title: t("classification.cleanupDuplicates.mergedToast", {
+          count: result.movedEmails,
+          target: result.targetName,
+        }),
+      });
+      setMergeConfirm(null);
+    } catch {
+      toast({
+        variant: "destructive",
+        title: t("common.error"),
+        description: t("classification.deleteErrorDesc"),
+      });
+    } finally {
+      setMergeBusy(false);
+    }
+  };
+
   const suggestedCategories = useMemo(() => {
     return SUGGESTED_CATEGORY_KEYS.map((s) => ({
       ...s,
@@ -244,12 +471,23 @@ export default function Classement() {
           });
           toast({ title: `"${suggestion.name}" ${t("classification.added")}` });
         },
-        onError: () => {
+        onError: (err: unknown) => {
           setAddingNames((prev) => {
             const next = new Set(prev);
             next.delete(suggestion.key);
             return next;
           });
+          const similar = extractSimilar(err);
+          if (similar) {
+            setNearDup({
+              source: "suggestion",
+              name: suggestion.name,
+              description: suggestion.description,
+              similar,
+              suggestionKey: suggestion.key,
+            });
+            return;
+          }
           toast({
             variant: "destructive",
             title: t("common.error"),
@@ -289,9 +527,27 @@ export default function Classement() {
           queryClient.invalidateQueries({
             queryKey: getListCategoriesQueryKey(),
           });
+          duplicatesQuery.refetch();
           setIsCreateOpen(false);
           createForm.reset();
           toast({ title: t("classification.categoryCreated") });
+        },
+        onError: (err: unknown) => {
+          const similar = extractSimilar(err);
+          if (similar) {
+            setNearDup({
+              source: "form",
+              name: data.name,
+              description: data.description || "",
+              similar,
+            });
+            return;
+          }
+          toast({
+            variant: "destructive",
+            title: t("common.error"),
+            description: t("classification.createError"),
+          });
         },
       }
     );
@@ -460,13 +716,27 @@ export default function Classement() {
             </p>
           </div>
 
-          <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-            <DialogTrigger asChild>
-              <Button size="sm" className="shrink-0 gap-2">
-                <Plus className="w-3.5 h-3.5" />
-                {t("classification.newCategory")}
+          <div className="flex items-center gap-2 shrink-0">
+            {duplicatePairs.length > 0 && (
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsCleanupOpen(true)}
+                className="gap-2 border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
+              >
+                <Combine className="w-3.5 h-3.5" />
+                {t("classification.cleanupDuplicates.buttonCount", {
+                  count: duplicatePairs.length,
+                })}
               </Button>
-            </DialogTrigger>
+            )}
+            <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+              <DialogTrigger asChild>
+                <Button size="sm" className="gap-2">
+                  <Plus className="w-3.5 h-3.5" />
+                  {t("classification.newCategory")}
+                </Button>
+              </DialogTrigger>
             <DialogContent className="bg-card border-border">
               <DialogHeader>
                 <DialogTitle className="text-white">
@@ -526,6 +796,7 @@ export default function Classement() {
               </Form>
             </DialogContent>
           </Dialog>
+          </div>
         </div>
 
         <Dialog
@@ -591,123 +862,6 @@ export default function Classement() {
             </Form>
           </DialogContent>
         </Dialog>
-
-        <div className="mb-8 rounded-lg border border-border bg-card/50 p-5">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                <Package className="w-4 h-4 text-primary" />
-              </div>
-              <div>
-                <h2 className="text-[14px] font-semibold text-white">
-                  {t("classification.industryPacks")}
-                </h2>
-                <p className="text-[12px] text-[#8b9cb3]">
-                  {t("classification.packPreConfigDesc")}
-                </p>
-              </div>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              className="gap-2 text-[12px] border-primary/30 text-primary hover:bg-primary/10"
-              onClick={() => setIsAiDialogOpen(true)}
-            >
-              <Wand2 className="w-3.5 h-3.5" />
-              {t("classification.jobNotListed")}
-            </Button>
-          </div>
-
-          <div className="relative mb-4">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8b9cb3]" />
-            <Input
-              placeholder={t("classification.searchJobs")}
-              value={packSearch}
-              onChange={(e) => setPackSearch(e.target.value)}
-              className="pl-10 bg-background border-border text-white text-[13px]"
-            />
-          </div>
-
-          {filteredFamilles.length === 0 && (
-            <div className="text-center py-8">
-              <p className="text-[13px] text-[#8b9cb3]">
-                {t("classification.noJobFound")}{" "}
-                <button
-                  onClick={() => setIsAiDialogOpen(true)}
-                  className="text-primary hover:underline"
-                >
-                  {t("classification.generateCustomWithAI")}
-                </button>
-              </p>
-            </div>
-          )}
-
-          <div className="space-y-3">
-            {filteredFamilles.map((famille) => (
-              <div key={famille.key} className="rounded-lg border border-border overflow-hidden">
-                <button
-                  onClick={() => toggleFamille(famille.key)}
-                  className="w-full flex items-center justify-between px-4 py-2.5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
-                >
-                  <span className="text-[13px] font-medium text-white">
-                    {famille.name}
-                    <span className="text-[#8b9cb3] font-normal ml-2">
-                      ({famille.packs.length})
-                    </span>
-                  </span>
-                  {expandedFamilles.has(famille.key) ? (
-                    <ChevronUp className="w-4 h-4 text-[#8b9cb3]" />
-                  ) : (
-                    <ChevronDown className="w-4 h-4 text-[#8b9cb3]" />
-                  )}
-                </button>
-
-                {expandedFamilles.has(famille.key) && (
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 p-3">
-                    {famille.packs.map((pack) => {
-                      const Icon = pack.icon;
-                      const newCount = getNewCategoriesCount(pack);
-                      return (
-                        <div
-                          key={pack.id}
-                          className="flex flex-col items-start gap-2 p-3 rounded-lg border border-border bg-background hover:border-primary/40 hover:bg-primary/[0.04] transition-all text-left group"
-                        >
-                          <div className="flex items-center gap-2 w-full">
-                            <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                              <Icon className="w-4 h-4 text-primary" />
-                            </div>
-                            <div className="min-w-0 flex-1">
-                              <p className="text-[12px] font-medium text-white truncate">
-                                {pack.name}
-                              </p>
-                              <p className="text-[10px] text-[#8b9cb3]">
-                                {t("classification.categoriesCount", { count: pack.categories.length })}
-                                {newCount < pack.categories.length && (
-                                  <span className="text-primary ml-1">
-                                    {t("classification.newCount", { count: newCount })}
-                                  </span>
-                                )}
-                              </p>
-                            </div>
-                          </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            className="w-full text-[11px] h-7 border-primary/30 text-primary hover:bg-primary/10 mt-1"
-                            onClick={() => handleSelectPack(pack)}
-                          >
-                            <Plus className="w-3 h-3 mr-1" />
-                            {t("classification.apply")}
-                          </Button>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
 
         <Dialog open={isApplyDialogOpen} onOpenChange={setIsApplyDialogOpen}>
           <DialogContent className="bg-card border-border max-w-lg">
@@ -919,8 +1073,9 @@ export default function Classement() {
           </DialogContent>
         </Dialog>
 
-        <div className="mb-5">
-          <div className="flex items-center justify-between mb-4">
+        {/* === MES CATÉGORIES (TOP) === */}
+        <div className="mb-8">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
             <div className="flex items-center gap-2">
               <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
                 <Tags className="w-4 h-4 text-primary" />
@@ -930,100 +1085,59 @@ export default function Classement() {
                   {t("classification.myCategories")}
                 </h2>
                 <p className="text-[12px] text-[#8b9cb3]">
-                  {t("classification.manageCategoriesDesc")}
+                  {t("classification.countCategories", { count: categories?.length ?? 0 })}
+                  {unusedCount > 0 && (
+                    <span className="ml-2 text-amber-400/80">
+                      · {t("classification.countUnused", { count: unusedCount })}
+                    </span>
+                  )}
                 </p>
               </div>
             </div>
+            {unusedCount > 0 && (
+              <div className="flex items-center gap-2">
+                <Switch
+                  id="show-unused"
+                  checked={showUnused}
+                  onCheckedChange={setShowUnused}
+                />
+                <label
+                  htmlFor="show-unused"
+                  className="text-[12px] text-[#8b9cb3] flex items-center gap-1.5 cursor-pointer"
+                >
+                  {showUnused ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                  {showUnused
+                    ? t("classification.unusedToggle.hide")
+                    : t("classification.unusedToggle.show")}
+                </label>
+              </div>
+            )}
           </div>
 
-          {showSuggestions && availableSuggestions.length > 0 && (
-            <div className="mb-6 rounded-lg border border-primary/20 bg-primary/[0.03] p-5">
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-primary" />
-                  </div>
-                  <div>
-                    <h3 className="text-[14px] font-semibold text-white">
-                      {t("classification.suggestedCategoriesTitle")}
-                    </h3>
-                    <p className="text-[12px] text-[#8b9cb3]">
-                      {t("classification.suggestedCategoriesDesc")}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-[12px] border-primary/30 text-primary hover:bg-primary/10"
-                    onClick={handleAddAllSuggestions}
-                    disabled={addingNames.size > 0}
-                  >
-                    {t("classification.addAll")}
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    className="text-[12px] text-[#8b9cb3] hover:text-white"
-                    onClick={() => setShowSuggestions(false)}
-                  >
-                    {t("classification.hide")}
-                  </Button>
-                </div>
+          {duplicatePairs.length > 0 && (
+            <div className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/[0.04] p-3 flex items-center justify-between gap-3">
+              <div className="flex items-center gap-2 min-w-0">
+                <Combine className="w-4 h-4 text-amber-400 shrink-0" />
+                <p className="text-[12px] text-amber-200">
+                  {t("classification.cleanupDuplicates.desc", {
+                    count: duplicatePairs.length,
+                  })}
+                </p>
               </div>
-              <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-                {availableSuggestions.map((s) => {
-                  const Icon = s.icon;
-                  const isAdding = addingNames.has(s.key);
-                  return (
-                    <button
-                      key={s.key}
-                      onClick={() => handleAddSuggestion(s)}
-                      disabled={isAdding}
-                      className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border bg-card hover:border-primary/40 hover:bg-primary/[0.04] transition-all text-center group disabled:opacity-50"
-                    >
-                      <div
-                        className={`w-9 h-9 rounded-lg flex items-center justify-center ${s.color} group-hover:scale-110 transition-transform`}
-                      >
-                        {isAdding ? (
-                          <Check className="w-4 h-4 animate-pulse" />
-                        ) : (
-                          <Icon className="w-4 h-4" />
-                        )}
-                      </div>
-                      <div>
-                        <p className="text-[12px] font-medium text-white">
-                          {s.name}
-                        </p>
-                        <p className="text-[10px] text-[#8b9cb3] line-clamp-1 mt-0.5">
-                          {s.description}
-                        </p>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
-
-          {!showSuggestions && availableSuggestions.length > 0 && (
-            <div className="mb-4 flex justify-end">
               <Button
-                variant="ghost"
                 size="sm"
-                className="text-[12px] text-[#8b9cb3] hover:text-white gap-1.5"
-                onClick={() => setShowSuggestions(true)}
+                variant="outline"
+                className="shrink-0 border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
+                onClick={() => setIsCleanupOpen(true)}
               >
-                <Sparkles className="w-3 h-3" />
-                {t("classification.showSuggestions")}
+                {t("classification.cleanupDuplicates.button")}
               </Button>
             </div>
           )}
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-            {isLoading ? (
-              Array(6)
+          {isLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+              {Array(6)
                 .fill(0)
                 .map((_, i) => (
                   <div
@@ -1034,117 +1148,576 @@ export default function Classement() {
                     <Skeleton className="h-5 w-3/4 mb-2 bg-white/5" />
                     <Skeleton className="h-4 w-full bg-white/5" />
                   </div>
-                ))
-            ) : categories?.length === 0 ? (
-              <div className="col-span-full text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
-                <Tags className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
-                <h3 className="text-sm font-medium text-white mb-1">
-                  {t("classification.noCategories")}
-                </h3>
-                <p className="text-[13px] text-[#8b9cb3] mb-4">
-                  {t("classification.noCategoriesAltDesc")}
-                </p>
-                <Button onClick={() => setIsCreateOpen(true)} size="sm">
-                  <Plus className="w-3.5 h-3.5 mr-2" />
-                  {t("classification.createFirst")}
+                ))}
+            </div>
+          ) : (categories?.length ?? 0) === 0 ? (
+            <div className="text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
+              <Tags className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
+              <h3 className="text-sm font-medium text-white mb-1">
+                {t("classification.noCategories")}
+              </h3>
+              <p className="text-[13px] text-[#8b9cb3] mb-4">
+                {t("classification.noCategoriesAltDesc")}
+              </p>
+              <Button onClick={() => setIsCreateOpen(true)} size="sm">
+                <Plus className="w-3.5 h-3.5 mr-2" />
+                {t("classification.createFirst")}
+              </Button>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              {groupedCategories.map(
+                (group) =>
+                  group.items.length > 0 && (
+                    <div key={group.key}>
+                      <div className="flex items-center gap-2 mb-3">
+                        {group.key === "pack" ? (
+                          <Package className="w-3.5 h-3.5 text-primary/70" />
+                        ) : group.key === "standard" ? (
+                          <Folder className="w-3.5 h-3.5 text-blue-400/70" />
+                        ) : (
+                          <UserIcon className="w-3.5 h-3.5 text-purple-400/70" />
+                        )}
+                        <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[#8b9cb3]">
+                          {group.label}
+                        </h3>
+                        <span className="text-[11px] text-[#8b9cb3]/50">
+                          ({group.items.length})
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                        {group.items.map((cat: any, i: number) => {
+                          const allList = (categories ?? []) as any[];
+                          const idx = allList.findIndex(
+                            (c: any) => c.id === cat.id,
+                          );
+                          const colorIdx =
+                            (idx >= 0 ? idx : i) % categoryColors.length;
+                          const isUnused = (cat.emailCount || 0) === 0;
+                          const originLabel = cat.sourcePack
+                            ? cat.sourcePack
+                            : group.key === "standard"
+                              ? t("classification.origin.standard")
+                              : t("classification.origin.manual");
+                          const originColor = cat.sourcePack
+                            ? "bg-primary/10 text-primary/80"
+                            : group.key === "standard"
+                              ? "bg-blue-500/10 text-blue-300"
+                              : "bg-purple-500/10 text-purple-300";
+                          return (
+                            <div
+                              key={cat.id}
+                              className={`bg-card rounded-lg border p-5 hover:border-primary/30 transition-colors group ${
+                                isUnused
+                                  ? "border-border/50 opacity-70"
+                                  : "border-border"
+                              }`}
+                            >
+                              <div className="flex justify-between items-start mb-3 gap-2">
+                                <div
+                                  className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${categoryColors[colorIdx]}`}
+                                >
+                                  <Tags className="w-4 h-4" />
+                                </div>
+                                <div className="flex items-center gap-1 flex-wrap justify-end">
+                                  <span
+                                    className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${originColor}`}
+                                  >
+                                    {originLabel}
+                                  </span>
+                                  {isUnused && (
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 font-medium">
+                                      {t("classification.unusedBadge")}
+                                    </span>
+                                  )}
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button
+                                        variant="ghost"
+                                        size="icon"
+                                        className="h-7 w-7 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/[0.06]"
+                                      >
+                                        <MoreVertical className="h-3.5 w-3.5" />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent
+                                      align="end"
+                                      className="bg-card border-border"
+                                    >
+                                      <DropdownMenuItem
+                                        onClick={() => handleOpenEdit(cat)}
+                                        className="gap-2 cursor-pointer text-[#8b9cb3] hover:text-white"
+                                      >
+                                        <Edit2 className="h-3.5 w-3.5" />{" "}
+                                        {t("classification.edit")}
+                                      </DropdownMenuItem>
+                                      <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                          <DropdownMenuItem
+                                            onSelect={(e) => e.preventDefault()}
+                                            className="gap-2 text-red-400 cursor-pointer"
+                                          >
+                                            <Trash2 className="h-3.5 w-3.5" />{" "}
+                                            {t("common.delete")}
+                                          </DropdownMenuItem>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent className="bg-card border-border">
+                                          <AlertDialogHeader>
+                                            <AlertDialogTitle className="text-white">
+                                              {t("classification.deleteConfirmTitle")}
+                                            </AlertDialogTitle>
+                                            <AlertDialogDescription className="text-[#8b9cb3]">
+                                              {t("classification.deleteConfirmCatDesc", {
+                                                name: cat.name,
+                                              })}
+                                            </AlertDialogDescription>
+                                          </AlertDialogHeader>
+                                          <AlertDialogFooter>
+                                            <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">
+                                              {t("common.cancel")}
+                                            </AlertDialogCancel>
+                                            <AlertDialogAction
+                                              onClick={() => handleDelete(cat.id)}
+                                              className="bg-red-500 text-white hover:bg-red-600"
+                                            >
+                                              {t("common.delete")}
+                                            </AlertDialogAction>
+                                          </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                      </AlertDialog>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </div>
+                              </div>
+
+                              <h3 className="text-[14px] font-semibold text-white mb-1">
+                                {translateCategoryName(cat.name, lang)}
+                              </h3>
+                              <p className="text-[12px] text-[#8b9cb3] line-clamp-2 h-9 mb-3">
+                                {translateCategory(cat.name, cat.description, lang)
+                                  .description || (
+                                  <span className="italic opacity-50">
+                                    {t("classification.noDescription")}
+                                  </span>
+                                )}
+                              </p>
+
+                              <div className="flex items-center text-[12px] text-[#8b9cb3] bg-white/[0.04] px-2.5 py-1 rounded-md inline-flex w-fit">
+                                <span className="text-primary font-medium mr-1">
+                                  {cat.emailCount || 0}
+                                </span>
+                                {t("classification.emailsLabel")}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  ),
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* === ACCORDION BOTTOM (Packs métiers + Suggestions) === */}
+        <Accordion type="multiple" className="space-y-3">
+          <AccordionItem
+            value="industry-packs"
+            className="rounded-lg border border-border bg-card/50 px-4"
+          >
+            <AccordionTrigger className="hover:no-underline py-3">
+              <div className="flex items-center gap-2 text-left">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                  <Package className="w-4 h-4 text-primary" />
+                </div>
+                <div>
+                  <h2 className="text-[14px] font-semibold text-white">
+                    {t("classification.industryPacksAccordion")}
+                  </h2>
+                  <p className="text-[12px] text-[#8b9cb3] font-normal">
+                    {t("classification.industryPacksAccordionDesc")}
+                  </p>
+                </div>
+              </div>
+            </AccordionTrigger>
+            <AccordionContent className="pt-2 pb-4">
+              <div className="flex justify-end mb-3">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="gap-2 text-[12px] border-primary/30 text-primary hover:bg-primary/10"
+                  onClick={() => setIsAiDialogOpen(true)}
+                >
+                  <Wand2 className="w-3.5 h-3.5" />
+                  {t("classification.jobNotListed")}
                 </Button>
               </div>
-            ) : (
-              categories?.map((cat: any, i: number) => (
-                <div
-                  key={cat.id}
-                  className="bg-card rounded-lg border border-border p-5 hover:border-primary/30 transition-colors group"
-                >
-                  <div className="flex justify-between items-start mb-3">
-                    <div
-                      className={`w-9 h-9 rounded-lg flex items-center justify-center ${categoryColors[i % categoryColors.length]}`}
+              <div className="relative mb-4">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8b9cb3]" />
+                <Input
+                  placeholder={t("classification.searchJobs")}
+                  value={packSearch}
+                  onChange={(e) => setPackSearch(e.target.value)}
+                  className="pl-10 bg-background border-border text-white text-[13px]"
+                />
+              </div>
+              {filteredFamilles.length === 0 && (
+                <div className="text-center py-8">
+                  <p className="text-[13px] text-[#8b9cb3]">
+                    {t("classification.noJobFound")}{" "}
+                    <button
+                      onClick={() => setIsAiDialogOpen(true)}
+                      className="text-primary hover:underline"
                     >
-                      <Tags className="w-4 h-4" />
-                    </div>
-                    <div className="flex items-center gap-1">
-                      {cat.sourcePack && (
-                        <span className="text-[10px] px-1.5 py-0.5 rounded bg-primary/10 text-primary/70 font-medium">
-                          {cat.sourcePack}
-                        </span>
-                      )}
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-7 w-7 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/[0.06]"
-                          >
-                            <MoreVertical className="h-3.5 w-3.5" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent
-                          align="end"
-                          className="bg-card border-border"
-                        >
-                          <DropdownMenuItem
-                            onClick={() => handleOpenEdit(cat)}
-                            className="gap-2 cursor-pointer text-[#8b9cb3] hover:text-white"
-                          >
-                            <Edit2 className="h-3.5 w-3.5" /> {t("classification.edit")}
-                          </DropdownMenuItem>
-                          <AlertDialog>
-                            <AlertDialogTrigger asChild>
-                              <DropdownMenuItem
-                                onSelect={(e) => e.preventDefault()}
-                                className="gap-2 text-red-400 cursor-pointer"
-                              >
-                                <Trash2 className="h-3.5 w-3.5" /> {t("common.delete")}
-                              </DropdownMenuItem>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent className="bg-card border-border">
-                              <AlertDialogHeader>
-                                <AlertDialogTitle className="text-white">
-                                  {t("classification.deleteConfirmTitle")}
-                                </AlertDialogTitle>
-                                <AlertDialogDescription className="text-[#8b9cb3]">
-                                  {t("classification.deleteConfirmCatDesc", { name: cat.name })}
-                                </AlertDialogDescription>
-                              </AlertDialogHeader>
-                              <AlertDialogFooter>
-                                <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">
-                                  {t("common.cancel")}
-                                </AlertDialogCancel>
-                                <AlertDialogAction
-                                  onClick={() => handleDelete(cat.id)}
-                                  className="bg-red-500 text-white hover:bg-red-600"
-                                >
-                                  {t("common.delete")}
-                                </AlertDialogAction>
-                              </AlertDialogFooter>
-                            </AlertDialogContent>
-                          </AlertDialog>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  </div>
-
-                  <h3 className="text-[14px] font-semibold text-white mb-1">
-                    {translateCategoryName(cat.name, lang)}
-                  </h3>
-                  <p className="text-[12px] text-[#8b9cb3] line-clamp-2 h-9 mb-3">
-                    {translateCategory(cat.name, cat.description, lang).description || (
-                      <span className="italic opacity-50">
-                        {t("classification.noDescription")}
-                      </span>
-                    )}
+                      {t("classification.generateCustomWithAI")}
+                    </button>
                   </p>
+                </div>
+              )}
+              <div className="space-y-3">
+                {filteredFamilles.map((famille) => (
+                  <div
+                    key={famille.key}
+                    className="rounded-lg border border-border overflow-hidden"
+                  >
+                    <button
+                      onClick={() => toggleFamille(famille.key)}
+                      className="w-full flex items-center justify-between px-4 py-2.5 bg-white/[0.02] hover:bg-white/[0.04] transition-colors"
+                    >
+                      <span className="text-[13px] font-medium text-white">
+                        {famille.name}
+                        <span className="text-[#8b9cb3] font-normal ml-2">
+                          ({famille.packs.length})
+                        </span>
+                      </span>
+                      {expandedFamilles.has(famille.key) ? (
+                        <ChevronUp className="w-4 h-4 text-[#8b9cb3]" />
+                      ) : (
+                        <ChevronDown className="w-4 h-4 text-[#8b9cb3]" />
+                      )}
+                    </button>
+                    {expandedFamilles.has(famille.key) && (
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-2 p-3">
+                        {famille.packs.map((pack) => {
+                          const Icon = pack.icon;
+                          const newCount = getNewCategoriesCount(pack);
+                          return (
+                            <div
+                              key={pack.id}
+                              className="flex flex-col items-start gap-2 p-3 rounded-lg border border-border bg-background hover:border-primary/40 hover:bg-primary/[0.04] transition-all text-left group"
+                            >
+                              <div className="flex items-center gap-2 w-full">
+                                <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                                  <Icon className="w-4 h-4 text-primary" />
+                                </div>
+                                <div className="min-w-0 flex-1">
+                                  <p className="text-[12px] font-medium text-white truncate">
+                                    {pack.name}
+                                  </p>
+                                  <p className="text-[10px] text-[#8b9cb3]">
+                                    {t("classification.categoriesCount", {
+                                      count: pack.categories.length,
+                                    })}
+                                    {newCount < pack.categories.length && (
+                                      <span className="text-primary ml-1">
+                                        {t("classification.newCount", {
+                                          count: newCount,
+                                        })}
+                                      </span>
+                                    )}
+                                  </p>
+                                </div>
+                              </div>
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                className="w-full text-[11px] h-7 border-primary/30 text-primary hover:bg-primary/10 mt-1"
+                                onClick={() => handleSelectPack(pack)}
+                              >
+                                <Plus className="w-3 h-3 mr-1" />
+                                {t("classification.apply")}
+                              </Button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </AccordionContent>
+          </AccordionItem>
 
-                  <div className="flex items-center text-[12px] text-[#8b9cb3] bg-white/[0.04] px-2.5 py-1 rounded-md inline-flex w-fit">
-                    <span className="text-primary font-medium mr-1">
-                      {cat.emailCount || 0}
-                    </span>
-                    {t("classification.emailsLabel")}
+          {availableSuggestions.length > 0 && (
+            <AccordionItem
+              value="suggestions"
+              className="rounded-lg border border-border bg-card/50 px-4"
+            >
+              <AccordionTrigger className="hover:no-underline py-3">
+                <div className="flex items-center gap-2 text-left">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                    <Sparkles className="w-4 h-4 text-primary" />
+                  </div>
+                  <div>
+                    <h2 className="text-[14px] font-semibold text-white">
+                      {t("classification.suggestionsAccordion")}
+                    </h2>
+                    <p className="text-[12px] text-[#8b9cb3] font-normal">
+                      {t("classification.suggestionsAccordionDesc")}
+                    </p>
                   </div>
                 </div>
-              ))
+              </AccordionTrigger>
+              <AccordionContent className="pt-2 pb-4">
+                <div className="flex justify-end mb-3">
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    className="text-[12px] border-primary/30 text-primary hover:bg-primary/10"
+                    onClick={handleAddAllSuggestions}
+                    disabled={addingNames.size > 0}
+                  >
+                    {t("classification.addAll")}
+                  </Button>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+                  {availableSuggestions.map((s) => {
+                    const Icon = s.icon;
+                    const isAdding = addingNames.has(s.key);
+                    return (
+                      <button
+                        key={s.key}
+                        onClick={() => handleAddSuggestion(s)}
+                        disabled={isAdding}
+                        className="flex flex-col items-center gap-2 p-3 rounded-lg border border-border bg-card hover:border-primary/40 hover:bg-primary/[0.04] transition-all text-center group disabled:opacity-50"
+                      >
+                        <div
+                          className={`w-9 h-9 rounded-lg flex items-center justify-center ${s.color} group-hover:scale-110 transition-transform`}
+                        >
+                          {isAdding ? (
+                            <Check className="w-4 h-4 animate-pulse" />
+                          ) : (
+                            <Icon className="w-4 h-4" />
+                          )}
+                        </div>
+                        <div>
+                          <p className="text-[12px] font-medium text-white">
+                            {s.name}
+                          </p>
+                          <p className="text-[10px] text-[#8b9cb3] line-clamp-1 mt-0.5">
+                            {s.description}
+                          </p>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </AccordionContent>
+            </AccordionItem>
+          )}
+        </Accordion>
+
+        {/* === DIALOG NEAR-DUPLICATE === */}
+        <Dialog open={!!nearDup} onOpenChange={(open) => !open && setNearDup(null)}>
+          <DialogContent className="bg-card border-border max-w-lg">
+            <DialogHeader>
+              <DialogTitle className="text-white flex items-center gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-400" />
+                {t("classification.nearDup.title")}
+              </DialogTitle>
+            </DialogHeader>
+            {nearDup && (
+              <div className="space-y-4">
+                <p className="text-[13px] text-[#8b9cb3]">
+                  {t("classification.nearDup.desc", { name: nearDup.name })}
+                </p>
+                <div className="space-y-2">
+                  {nearDup.similar.slice(0, 3).map((s) => (
+                    <div
+                      key={s.id}
+                      className="flex items-center justify-between p-3 rounded-md bg-white/[0.03] border border-border"
+                    >
+                      <div className="min-w-0">
+                        <p className="text-[13px] font-medium text-white truncate">
+                          {s.name}
+                        </p>
+                        <p className="text-[11px] text-[#8b9cb3]">
+                          {t("classification.nearDup.similarity", {
+                            pct: Math.round(s.similarity * 100),
+                          })}
+                        </p>
+                      </div>
+                      <ArrowRight className="w-4 h-4 text-[#8b9cb3] shrink-0" />
+                    </div>
+                  ))}
+                </div>
+                <DialogFooter className="gap-2 sm:gap-2 flex-col sm:flex-row">
+                  <Button
+                    variant="ghost"
+                    onClick={() => setNearDup(null)}
+                    className="text-[#8b9cb3]"
+                  >
+                    {t("common.cancel")}
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleNearDupUseExisting}
+                    className="border-primary/30 text-primary hover:bg-primary/10"
+                  >
+                    {t("classification.nearDup.useExisting")}
+                  </Button>
+                  <Button onClick={handleNearDupForce} disabled={forcing}>
+                    {forcing ? (
+                      <>
+                        <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" />
+                        {t("classification.creating")}
+                      </>
+                    ) : (
+                      t("classification.nearDup.createAnyway")
+                    )}
+                  </Button>
+                </DialogFooter>
+              </div>
             )}
-          </div>
-        </div>
+          </DialogContent>
+        </Dialog>
+
+        {/* === DIALOG CLEANUP DUPLICATES === */}
+        <Dialog open={isCleanupOpen} onOpenChange={setIsCleanupOpen}>
+          <DialogContent className="bg-card border-border max-w-2xl">
+            <DialogHeader>
+              <DialogTitle className="text-white flex items-center gap-2">
+                <Combine className="w-4 h-4 text-amber-400" />
+                {t("classification.cleanupDuplicates.title")}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-3">
+              <p className="text-[13px] text-[#8b9cb3]">
+                {t("classification.cleanupDuplicates.desc")}
+              </p>
+              {duplicatePairs.length === 0 ? (
+                <div className="text-center py-8">
+                  <Check className="mx-auto h-10 w-10 text-emerald-400/40 mb-2" />
+                  <p className="text-[13px] text-[#8b9cb3]">
+                    {t("classification.cleanupDuplicates.empty")}
+                  </p>
+                </div>
+              ) : (
+                <div className="max-h-96 overflow-y-auto space-y-2 pr-1">
+                  {duplicatePairs.map((pair: any, idx: number) => (
+                    <div
+                      key={idx}
+                      className="rounded-md bg-white/[0.03] border border-border p-3"
+                    >
+                      <div className="flex items-center justify-between gap-3 mb-2">
+                        <div className="flex items-center gap-2 min-w-0 flex-1">
+                          <span className="text-[13px] text-white font-medium truncate">
+                            {pair.a.name}
+                          </span>
+                          <ArrowLeftRight className="w-3.5 h-3.5 text-[#8b9cb3] shrink-0" />
+                          <span className="text-[13px] text-white font-medium truncate">
+                            {pair.b.name}
+                          </span>
+                        </div>
+                        <span className="text-[11px] text-amber-300 shrink-0">
+                          {Math.round(pair.similarity * 100)}%
+                        </span>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-[11px] h-7 border-primary/30 text-primary hover:bg-primary/10"
+                          onClick={() =>
+                            setMergeConfirm({
+                              source: pair.b,
+                              target: pair.a,
+                            })
+                          }
+                        >
+                          {t("classification.cleanupDuplicates.mergeArrow", {
+                            source: pair.b.name,
+                            target: pair.a.name,
+                          })}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="text-[11px] h-7 border-primary/30 text-primary hover:bg-primary/10"
+                          onClick={() =>
+                            setMergeConfirm({
+                              source: pair.a,
+                              target: pair.b,
+                            })
+                          }
+                        >
+                          {t("classification.cleanupDuplicates.mergeArrow", {
+                            source: pair.a.name,
+                            target: pair.b.name,
+                          })}
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+            <DialogFooter>
+              <Button
+                variant="ghost"
+                onClick={() => setIsCleanupOpen(false)}
+                className="text-[#8b9cb3]"
+              >
+                {t("common.close")}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* === DIALOG MERGE CONFIRM === */}
+        <AlertDialog
+          open={!!mergeConfirm}
+          onOpenChange={(open) => !open && setMergeConfirm(null)}
+        >
+          <AlertDialogContent className="bg-card border-border">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-white">
+                {t("classification.cleanupDuplicates.confirmTitle")}
+              </AlertDialogTitle>
+              <AlertDialogDescription className="text-[#8b9cb3]">
+                {mergeConfirm &&
+                  t("classification.cleanupDuplicates.confirmDesc", {
+                    source: mergeConfirm.source.name,
+                    target: mergeConfirm.target.name,
+                  })}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">
+                {t("common.cancel")}
+              </AlertDialogCancel>
+              <AlertDialogAction
+                onClick={(e) => {
+                  e.preventDefault();
+                  if (mergeConfirm) {
+                    void doMerge(mergeConfirm.source, mergeConfirm.target);
+                  }
+                }}
+                disabled={mergeBusy}
+                className="bg-primary text-primary-foreground hover:bg-primary/90"
+              >
+                {mergeBusy ? (
+                  <>
+                    <Loader2 className="w-3.5 h-3.5 animate-spin mr-2" />
+                    {t("classification.cleanupDuplicates.merging")}
+                  </>
+                ) : (
+                  t("classification.cleanupDuplicates.mergeBtn")
+                )}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     </DashboardLayout>
   );

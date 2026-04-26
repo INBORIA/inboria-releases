@@ -103,3 +103,32 @@ export function findSimilarCategories(
   matches.sort((a, b) => b.similarity - a.similarity);
   return matches;
 }
+
+export type DuplicatePair<T extends { id: number; name: string }> = {
+  a: T;
+  b: T;
+  similarity: number;
+};
+
+// Compare toutes les paires (i,j) avec i<j et renvoie celles dont le score
+// dépasse le seuil. Tri décroissant par similarité pour proposer en premier
+// les doublons les plus évidents. Complexité O(n²) mais n est petit (max
+// quelques dizaines de catégories par utilisateur en pratique).
+export function findDuplicatePairs<T extends { id: number; name: string }>(
+  categories: ReadonlyArray<T>,
+  threshold: number = CATEGORY_SIMILARITY_THRESHOLD,
+): DuplicatePair<T>[] {
+  const pairs: DuplicatePair<T>[] = [];
+  for (let i = 0; i < categories.length; i++) {
+    for (let j = i + 1; j < categories.length; j++) {
+      const ci = categories[i]!;
+      const cj = categories[j]!;
+      const score = similarity(ci.name, cj.name);
+      if (score >= threshold) {
+        pairs.push({ a: ci, b: cj, similarity: score });
+      }
+    }
+  }
+  pairs.sort((x, y) => y.similarity - x.similarity);
+  return pairs;
+}

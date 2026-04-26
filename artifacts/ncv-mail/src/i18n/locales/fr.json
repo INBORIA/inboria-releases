@@ -774,7 +774,7 @@
     "categoryDeleted": "Catégorie supprimée",
     "categoryModified": "Catégorie modifiée",
     "descriptionPlaceholder": "Ex: Tous les emails contenant des factures, devis ou reçus.",
-    "createError": "Impossible de créer la catégorie.",
+    "createError": "Impossible de créer la catégorie. Réessayez.",
     "updateError": "Impossible de modifier la catégorie.",
     "deleteError": "Impossible de supprimer la catégorie.",
     "deleteConfirmTitle": "Supprimer cette catégorie ?",
@@ -804,7 +804,7 @@
     "createCategory": "Créer une catégorie",
     "editCategory": "Modifier la catégorie",
     "descriptionHelp": "Description (pour aider l'IA)",
-    "creating": "Création...",
+    "creating": "Création…",
     "duplicateWarning": {
       "title": "Catégorie similaire détectée",
       "desc": "Vous essayez de créer « {{name}} ». Une ou plusieurs catégories existantes lui ressemblent beaucoup :",
@@ -958,6 +958,53 @@
       },
       "namePlaceholder": "Ex: Factures, Fournisseurs...",
       "descPlaceholder": "Ex: Tous les emails contenant des factures, devis ou reçus."
+    },
+    "cleanupDuplicates": {
+      "buttonZero": "Aucun doublon",
+      "button": "Nettoyer les doublons",
+      "buttonCount": "Nettoyer les doublons ({{count}})",
+      "title": "Doublons détectés",
+      "desc": "{{count}} paire(s) de catégories se ressemblent fortement. Fusionnez-les pour réaffecter automatiquement leurs emails.",
+      "empty": "Aucun doublon détecté pour le moment.",
+      "similarity": "{{percent}}% de similarité",
+      "emailsSuffix": "{{count}} emails",
+      "mergeBtn": "Fusionner",
+      "mergeArrow": "Fusionner « {{source}} » dans « {{target}} »",
+      "keepBoth": "Garder les deux",
+      "confirmTitle": "Fusionner « {{source}} » dans « {{target}} » ?",
+      "confirmDesc": "Les emails de « {{source}} » seront déplacés vers « {{target}} », puis « {{source}} » sera supprimée. Cette action est irréversible.",
+      "merging": "Fusion en cours…",
+      "mergedToast": "{{count}} email(s) déplacés vers « {{target}} »",
+      "close": "Fermer",
+      "detecting": "Analyse en cours…"
+    },
+    "sections": {
+      "byPack": "Pack {{name}}",
+      "standards": "Catégories standards",
+      "manual": "Mes catégories personnelles"
+    },
+    "unusedToggle": {
+      "show": "Voir les catégories vides",
+      "hide": "Masquer les catégories vides"
+    },
+    "unusedBadge": "Vide",
+    "origin": {
+      "pack": "Pack",
+      "standard": "Standard",
+      "manual": "Personnelle"
+    },
+    "industryPacksAccordion": "Catalogue de packs métiers",
+    "industryPacksAccordionDesc": "Catégories pré-configurées par profession. Cliquez pour explorer.",
+    "suggestionsAccordion": "Suggestions standards",
+    "suggestionsAccordionDesc": "Démarrez vite avec des catégories courantes",
+    "countCategories": "{{count}} catégories",
+    "countUnused": "{{count}} vides",
+    "nearDup": {
+      "title": "Catégorie similaire détectée",
+      "desc": "Une catégorie ressemble fortement à « {{name}} ». Voulez-vous utiliser l'existante ou créer quand même ?",
+      "similarity": "{{pct}}% de similarité",
+      "useExisting": "Utiliser l'existante",
+      "createAnyway": "Créer quand même"
     }
   },
   "settings": {
