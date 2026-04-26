@@ -4981,7 +4981,18 @@ export default function Dashboard() {
                         })()}
                       </span>
                     </div>
-                    {categoryCounts?.map((cat) => (
+                    {categoryCounts
+                      ?.filter((cat) => {
+                        // La catégorie système "Non classé" (et anciennes
+                        // catégories legacy au même nom) ne s'affiche pas
+                        // dans la liste : elle est déjà exposée via le
+                        // bouton "X non classé" en haut à droite, qui
+                        // déclenche la reclassification IA. Doublonner ici
+                        // crée la confusion "9 vs 0" reprochée.
+                        const JUNK = ["non classé", "non classe", "uncategorized"];
+                        return !JUNK.includes((cat.categoryName || "").toLowerCase());
+                      })
+                      .map((cat) => (
                       <div
                         key={cat.categoryId}
                         className={`flex items-center justify-between py-1 px-1.5 rounded transition-colors cursor-pointer ${filterCategory === cat.categoryName ? "bg-primary/10 text-primary" : "hover:bg-white/[0.04]"}`}

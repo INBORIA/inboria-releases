@@ -276,25 +276,18 @@ export default function Classement() {
     [categories],
   );
 
-  // Regroupement : catégorie système "Non classé" → tout en haut, toujours
-  // visible même si vide ; catégories à sourcePack → une section par pack ;
+  // Regroupement : catégories à sourcePack → une section par pack ;
   // catégories sans sourcePack mais nom = standard → "Catégories standards" ;
   // tout le reste → "Mes catégories personnelles".
+  // La catégorie système "Non classé" est volontairement masquée ici :
+  // elle se gère exclusivement depuis le tableau de bord (compteur d'emails
+  // à reclasser dans la barre latérale "Réception").
   const groupedCategories = useMemo<CategoryGroup[]>(() => {
-    const systems: any[] = [];
     const byPack = new Map<string, any[]>();
     const standards: any[] = [];
     const manuals: any[] = [];
-    // Pour le groupe "système" on lit la liste COMPLÈTE, pas la filtrée :
-    // la catégorie "Non classé" doit rester visible même quand
-    // l'utilisateur a coché "masquer les inutilisées".
-    for (const cat of (categories ?? []) as any[]) {
-      if (cat.isSystem === true) {
-        systems.push(cat);
-      }
-    }
     for (const cat of filteredCategories as any[]) {
-      if (cat.isSystem === true) continue; // déjà géré au-dessus
+      if (cat.isSystem === true) continue; // masquée — gérée dans le dashboard
       const pack = (cat.sourcePack || "").trim();
       if (pack) {
         if (!byPack.has(pack)) byPack.set(pack, []);
@@ -309,15 +302,6 @@ export default function Classement() {
       }
     }
     const groups: CategoryGroup[] = [];
-    // Système : épinglée tout en haut, toujours présente.
-    if (systems.length > 0) {
-      groups.push({
-        key: "system",
-        kind: "system",
-        label: t("classification.sections.system"),
-        items: systems,
-      });
-    }
     // Packs : un par sourcePack distinct, triés par nom de pack
     Array.from(byPack.keys())
       .sort((x, y) => x.localeCompare(y))
