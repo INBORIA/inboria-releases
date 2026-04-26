@@ -1322,10 +1322,11 @@ router.get("/integrations/salesforce/callback", async (req, res): Promise<void> 
     syncSalesforceContacts(userId, 50).catch(() => {});
 
     const frontendUrl = getFrontendUrl();
-    res.send(`<html><body><script>
-      window.opener?.postMessage({ type: "integration-connected", provider: "salesforce" }, "*");
-      window.location.href = "${frontendUrl}/dashboard/parametres/integrations?integration=salesforce&status=success";
-    </script><p>Salesforce connecte ! Redirection...</p></body></html>`);
+    res.send(`<html><body style="font-family:system-ui;padding:24px;text-align:center"><script>
+      try { window.opener?.postMessage({ type: "integration-connected", provider: "salesforce" }, "*"); } catch (e) {}
+      if (window.opener) { window.close(); }
+      setTimeout(function(){ window.location.href = "${frontendUrl}/dashboard/parametres/crm?integration=salesforce&status=success"; }, 600);
+    </script><p>Salesforce connecté ! Vous pouvez fermer cette fenêtre.</p></body></html>`);
   } catch (err) {
     console.error("[integrations] Salesforce callback error:", (err as Error).message);
     res.status(500).send("Erreur de connexion Salesforce");
