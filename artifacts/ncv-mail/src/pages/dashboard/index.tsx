@@ -2807,30 +2807,54 @@ export default function Dashboard() {
   if (selectedEmail) {
     return (
       <DashboardLayout>
-        <div className="p-5 max-w-[900px] mx-auto w-full">
-          <EmailDetail
-            email={selectedEmail}
-            onBack={() => setSelectedEmailId(null)}
-            onMarkRead={handleMarkAsRead}
-            onArchive={handleArchive}
-            onDelete={handleDelete}
-            onUpdatePriority={handleUpdatePriority}
-            onUpdateCategory={handleUpdateCategory}
-            onUpdateProject={handleUpdateProject}
-            onSendReply={handleSendReply}
-            isSending={sendEmailMut.isPending}
-            onGenerateDraft={handleGenerateDraft}
-            isDrafting={generateDraftMut.isPending}
-            categories={categoryCounts || []}
-            projects={projects || []}
-            currentUserId={(profile as any)?.id}
-            orgMembers={(orgMembers as any[]) || []}
-            onAssign={handleAssign}
-            onUnassign={handleUnassign}
-            onCreateTask={handleCreateTask}
-            connections={composeConnections}
-            sharedMailboxes={sharedMailboxes}
-          />
+        <div className="p-5 max-w-[1200px] mx-auto w-full flex flex-col md:flex-row gap-5">
+          <div className="flex-1 min-w-0 max-w-[900px]">
+            <EmailDetail
+              email={selectedEmail}
+              onBack={() => setSelectedEmailId(null)}
+              onMarkRead={handleMarkAsRead}
+              onArchive={handleArchive}
+              onDelete={handleDelete}
+              onUpdatePriority={handleUpdatePriority}
+              onUpdateCategory={handleUpdateCategory}
+              onUpdateProject={handleUpdateProject}
+              onSendReply={handleSendReply}
+              isSending={sendEmailMut.isPending}
+              onGenerateDraft={handleGenerateDraft}
+              isDrafting={generateDraftMut.isPending}
+              categories={categoryCounts || []}
+              projects={projects || []}
+              currentUserId={(profile as any)?.id}
+              orgMembers={(orgMembers as any[]) || []}
+              onAssign={handleAssign}
+              onUnassign={handleUnassign}
+              onCreateTask={handleCreateTask}
+              connections={composeConnections}
+              sharedMailboxes={sharedMailboxes}
+            />
+          </div>
+          {/* Panneau HubSpot côté droit en vue détail. Rendu dès qu'une
+              intégration HubSpot est active : l'utilisateur ouvre un email,
+              il voit immédiatement le contexte CRM + les actions cockpit
+              (Logger / + Affaire / + Tâche / lifecycle / lead status / phase).
+              Sans cette branche, le panneau était invisible en vue détail
+              (vue liste seulement) et la cockpit semblait absente. */}
+          {hasHubspot && (
+            <div className="w-full md:w-[280px] shrink-0">
+              <HubspotContextPanel
+                senderEmail={
+                  extractEmailAddress(selectedEmail.senderEmail || selectedEmail.sender) || null
+                }
+                selectedEmailId={Number(selectedEmail.id)}
+                selectedSubject={selectedEmail?.subject ?? null}
+                selectedBody={selectedEmail?.body ?? null}
+                selectedDate={selectedEmail?.created_at ?? selectedEmail?.createdAt ?? null}
+                collapsed={crmPanelCollapsed}
+                onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
+                onHide={() => setCrmFilter(null)}
+              />
+            </div>
+          )}
         </div>
       </DashboardLayout>
     );
