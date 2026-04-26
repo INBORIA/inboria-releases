@@ -917,6 +917,11 @@ export const GetDashboardSummaryResponse = zod.object({
   urgentCount: zod.number(),
   moyenCount: zod.number(),
   faibleCount: zod.number(),
+  uncategorizedCount: zod
+    .number()
+    .describe(
+      'Server-computed count of inbox emails with no category or in the system \"Non classé\" category. Single source of truth — avoids fragile client-side formula based on diff between summary and category-counts.',
+    ),
   notificationCount: zod.number(),
   pendingTasks: zod.number(),
   emailsUsed: zod.number(),

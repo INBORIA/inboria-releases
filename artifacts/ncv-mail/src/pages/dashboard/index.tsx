@@ -4927,12 +4927,14 @@ export default function Dashboard() {
                     {t("inbox.category")}
                   </h3>
                   {(() => {
-                    const JUNK = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
-                    const summaryData = summary as { urgentCount?: number; moyenCount?: number; faibleCount?: number } | undefined;
-                    const serverInboxTotal = (summaryData?.urgentCount || 0) + (summaryData?.moyenCount || 0) + (summaryData?.faibleCount || 0);
-                    const categorizedTotal = (categoryCounts || []).reduce((sum, c) => sum + c.count, 0);
-                    const junkTotal = (categoryCounts || []).filter((c) => JUNK.includes(c.categoryName.toLowerCase())).reduce((sum, c) => sum + c.count, 0);
-                    const uncategorizedCount = Math.max(0, serverInboxTotal - categorizedTotal + junkTotal);
+                    // Source unique : compte server-side dans summary.
+                    // Avant : formule fragile (summary.total - categoryCounts.sum + junk)
+                    // qui generait des faux positifs (1, 9...) quand un email
+                    // arrivait entre les deux fetches ou si une categorie etait
+                    // dupliquee. Maintenant aligne strictement sur la branche
+                    // "uncategorized" de /api/emails — count = liste affichee.
+                    const summaryData = summary as { uncategorizedCount?: number } | undefined;
+                    const uncategorizedCount = summaryData?.uncategorizedCount || 0;
                     if (uncategorizedCount === 0) return null;
                     return (
                       <button
@@ -4990,12 +4992,10 @@ export default function Dashboard() {
                         categorie. N'apparait que s'il y a au moins un
                         email non classe. */}
                     {(() => {
-                      const JUNK = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
-                      const summaryData = summary as { urgentCount?: number; moyenCount?: number; faibleCount?: number } | undefined;
-                      const serverInboxTotal = (summaryData?.urgentCount || 0) + (summaryData?.moyenCount || 0) + (summaryData?.faibleCount || 0);
-                      const categorizedTotal = (categoryCounts || []).reduce((sum, c) => sum + c.count, 0);
-                      const junkTotal = (categoryCounts || []).filter((c) => JUNK.includes(c.categoryName.toLowerCase())).reduce((sum, c) => sum + c.count, 0);
-                      const uncategorizedCount = Math.max(0, serverInboxTotal - categorizedTotal + junkTotal);
+                      // Source unique : compte server-side dans summary
+                      // (cf. commentaire identique sur le bouton ci-dessus).
+                      const summaryData = summary as { uncategorizedCount?: number } | undefined;
+                      const uncategorizedCount = summaryData?.uncategorizedCount || 0;
                       if (uncategorizedCount === 0) return null;
                       return (
                         <div

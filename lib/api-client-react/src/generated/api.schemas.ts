@@ -453,6 +453,8 @@ export interface DashboardSummary {
   urgentCount: number;
   moyenCount: number;
   faibleCount: number;
+  /** Server-computed count of inbox emails with no category or in the system "Non classé" category. Single source of truth — avoids fragile client-side formula based on diff between summary and category-counts. */
+  uncategorizedCount: number;
   notificationCount: number;
   pendingTasks: number;
   emailsUsed: number;

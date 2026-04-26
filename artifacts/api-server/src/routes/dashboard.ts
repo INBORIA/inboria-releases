@@ -18,7 +18,7 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
 
     const { data: emails } = await supabaseAdmin
       .from("emails")
-      .select("priority, status")
+      .select("priority, status, category_id")
       .or(scopeOr);
 
     const allEmails = emails || [];
@@ -33,6 +33,24 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
     const faible = inboxEmails.filter(e => e.priority === "faible").length;
     const notificationCount = 0;
 
+    // Compte server-side des emails non classes (NULL OR junk categories).
+    // Source unique de verite alignee sur la branche "uncategorized" de
+    // /api/emails. Remplace l'ancienne formule fragile cote frontend
+    // (summary.total - sum(categoryCounts) + junk) qui produisait des
+    // faux positifs lors d'arrivees d'emails entre les deux requetes
+    // ou si certaines categories etaient renommees / dupliquees.
+    const JUNK_NAMES = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
+    const { data: junkCats } = await supabaseAdmin
+      .from("categories")
+      .select("id, name, is_system")
+      .eq("user_id", req.userId!);
+    const junkIds = (junkCats || [])
+      .filter((c: any) => c.is_system === true || JUNK_NAMES.includes((c.name || "").toLowerCase()))
+      .map((c: any) => c.id);
+    const uncategorizedCount = inboxEmails.filter(e =>
+      e.category_id == null || junkIds.includes(e.category_id)
+    ).length;
+
     const { count: pendingTasks } = await supabaseAdmin
       .from("tasks")
       .select("*", { count: "exact", head: true })
@@ -44,6 +62,7 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
       urgentCount: urgent,
       moyenCount: moyen,
       faibleCount: faible,
+      uncategorizedCount,
       notificationCount,
       pendingTasks: pendingTasks || 0,
       emailsUsed: profile?.emails_used ?? 0,

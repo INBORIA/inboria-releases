@@ -3960,6 +3960,9 @@ components:
           type: integer
         faibleCount:
           type: integer
+        uncategorizedCount:
+          type: integer
+          description: Server-computed count of inbox emails with no category or in the system "Non classé" category. Single source of truth — avoids fragile client-side formula based on diff between summary and category-counts.
         notificationCount:
           type: integer
         pendingTasks:
@@ -3975,6 +3978,7 @@ components:
         - urgentCount
         - moyenCount
         - faibleCount
+        - uncategorizedCount
         - notificationCount
         - pendingTasks
         - emailsUsed
