@@ -266,12 +266,13 @@ Automatisez le traitement de certains emails en langage naturel.
 
 ## 19. INTÉGRATIONS CRM
 
-Inboria se connecte nativement à 3 CRM leaders du marché : HubSpot, Pipedrive et Salesforce. La synchronisation est bidirectionnelle et automatique.
+Inboria se connecte nativement à 4 CRM leaders du marché : HubSpot, Pipedrive, Salesforce et Odoo. La synchronisation est bidirectionnelle et automatique.
 
 ### CRM supportés
 - **HubSpot** : synchronisation des contacts et des deals.
 - **Pipedrive** : synchronisation des personnes, deals et organisations.
 - **Salesforce** : synchronisation des contacts, comptes et opportunités. Mode Sandbox disponible (toggle au moment de la connexion vers test.salesforce.com) pour tester avant de passer en Production.
+- **Odoo** : synchronisation des contacts (res.partner) et opportunités (crm.lead). Authentification par URL d'instance + base de données + login + clé API (générée dans Odoo : Profil → Sécurité du compte → Nouvelle clé API). Pas d'OAuth — Odoo n'expose pas d'OAuth standard.
 
 ### Comment connecter un CRM
 1. Aller dans Paramètres → CRM.

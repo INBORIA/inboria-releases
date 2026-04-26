@@ -2,6 +2,7 @@ import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { syncHubspotContacts, syncHubspotDeals } from "./hubspot";
 import { syncPipedriveContacts, syncPipedriveDeals } from "./pipedrive";
+import { syncOdooContacts, syncOdooDeals } from "./odoo";
 
 const CRM_SYNC_INTERVAL_MS = 15 * 60 * 1000;
 
@@ -14,7 +15,7 @@ async function runCycle(): Promise<void> {
     const { data: rows, error } = await supabaseAdmin
       .from("integrations")
       .select("user_id, provider")
-      .in("provider", ["hubspot", "pipedrive"])
+      .in("provider", ["hubspot", "pipedrive", "odoo"])
       .eq("enabled", true);
     if (error) {
       logger.warn({ service: "crm-sync", err: error.message }, "Failed to load CRM integrations");
@@ -24,6 +25,7 @@ async function runCycle(): Promise<void> {
 
     let hubspotCount = 0;
     let pipedriveCount = 0;
+    let odooCount = 0;
     for (const row of rows) {
       const userId = String(row.user_id);
       try {
@@ -35,6 +37,10 @@ async function runCycle(): Promise<void> {
           await syncPipedriveContacts(userId, 100);
           await syncPipedriveDeals(userId, 100);
           pipedriveCount += 1;
+        } else if (row.provider === "odoo") {
+          await syncOdooContacts(userId, 100);
+          await syncOdooDeals(userId, 100);
+          odooCount += 1;
         }
       } catch (err: any) {
         logger.warn(
@@ -44,7 +50,7 @@ async function runCycle(): Promise<void> {
       }
     }
     logger.info(
-      { service: "crm-sync", hubspot: hubspotCount, pipedrive: pipedriveCount },
+      { service: "crm-sync", hubspot: hubspotCount, pipedrive: pipedriveCount, odoo: odooCount },
       "CRM sync cycle done",
     );
   } catch (err: any) {

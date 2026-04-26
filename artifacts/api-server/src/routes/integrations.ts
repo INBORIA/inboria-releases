@@ -52,6 +52,14 @@ import {
   updateSalesforceContact,
   logEmailEngagementSalesforce,
 } from "../services/salesforce";
+import {
+  connectOdoo,
+  disconnectOdoo,
+  syncOdooContacts,
+  syncOdooDeals,
+  getOdooContactContext,
+  logEmailEngagementOdoo,
+} from "../services/odoo";
 
 const router: IRouter = Router();
 
@@ -172,6 +180,9 @@ router.get("/integrations/availability", async (_req, res): Promise<void> => {
     hubspot: !!HUBSPOT_CLIENT_ID,
     pipedrive: !!PIPEDRIVE_CLIENT_ID,
     salesforce: !!SALESFORCE_CLIENT_ID,
+    // Odoo : toujours disponible. Pas d'OAuth central côté Inboria —
+    // chaque utilisateur fournit son URL + base + login + clé API perso.
+    odoo: true,
     whatsapp: true,
     sms_twilio: true,
     sms_brevo: true,
@@ -1649,6 +1660,162 @@ router.patch("/integrations/salesforce/contacts/:contactExternalId", requireAuth
   } catch (err) {
     console.error("[integrations] salesforce patch contact error:", (err as Error).message);
     res.status(500).json({ error: "Failed to update contact" });
+  }
+});
+
+// ============================================================================
+// Odoo CRM — connexion par URL + base + login + clé API (PAS d'OAuth).
+// Spécificité : la route `connect` POST prend les credentials en body et
+// s'authentifie immédiatement (pas de redirect, pas de popup). Si OK, la
+// ligne integrations est upsertée et le front reçoit `{ok:true}` direct.
+// ============================================================================
+
+router.post("/integrations/odoo/connect", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const isPro = await requireProPlan(req.userId!);
+    if (!isPro) {
+      res.status(403).json({ error: "Integration reservee au plan Pro ou superieur" });
+      return;
+    }
+    const { url, db, login, apiKey } = req.body || {};
+    const result = await connectOdoo(req.userId!, {
+      url: String(url || ""),
+      db: String(db || ""),
+      login: String(login || ""),
+      apiKey: String(apiKey || ""),
+    });
+    if (!result.ok) {
+      res.status(400).json({ error: result.error || "Connexion Odoo refusée" });
+      return;
+    }
+    res.json({
+      ok: true,
+      workspaceName: result.workspaceName ?? null,
+      hasCrm: result.hasCrm === true,
+    });
+  } catch (err) {
+    console.error("[integrations] odoo connect error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to connect Odoo" });
+  }
+});
+
+router.post("/integrations/odoo/sync", requireAuth, async (req, res): Promise<void> => {
+  const contacts = await syncOdooContacts(req.userId!, 200);
+  const deals = await syncOdooDeals(req.userId!, 200);
+  res.json({ contacts, deals });
+});
+
+router.delete("/integrations/odoo", requireAuth, async (req, res): Promise<void> => {
+  // Override explicite avant la route générique DELETE /integrations/:provider
+  // pour symétrie avec le service (cleanup éventuel + log clair).
+  try {
+    await disconnectOdoo(req.userId!);
+    res.json({ success: true });
+  } catch (err) {
+    console.error("[integrations] odoo disconnect error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to disconnect Odoo" });
+  }
+});
+
+router.get("/integrations/odoo/contact-context", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const email = String(req.query.email || "").trim().toLowerCase();
+    if (!email) {
+      res.status(400).json({ error: "email required" });
+      return;
+    }
+    const ctx = await getOdooContactContext(req.userId!, email);
+    if (!ctx) {
+      res.status(404).json({ error: "contact not found" });
+      return;
+    }
+    res.json(ctx);
+  } catch (err) {
+    console.error("[integrations] odoo contact-context error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to fetch Odoo context" });
+  }
+});
+
+router.post("/integrations/odoo/log-email", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { contactEmail, contactExternalId, emailId, subject, body, occurredAt } = req.body || {};
+    const externalId = String(contactExternalId || "").trim();
+    const email = String(contactEmail || "").trim().toLowerCase();
+    if (!externalId && !email) {
+      res.status(400).json({ error: "contactEmail or contactExternalId required" });
+      return;
+    }
+    let resolvedId = externalId;
+    if (!resolvedId) {
+      const { data } = await supabaseAdmin
+        .from("crm_contacts")
+        .select("external_id")
+        .eq("user_id", req.userId!)
+        .eq("provider", "odoo")
+        .ilike("email", email)
+        .maybeSingle();
+      resolvedId = (data as { external_id?: string } | null)?.external_id || "";
+      if (!resolvedId) {
+        res.status(404).json({ error: "Contact not found in Odoo cache" });
+        return;
+      }
+    }
+    const hasEmailId = typeof emailId === "number" && Number.isFinite(emailId);
+    if (hasEmailId) {
+      // Idempotence : claim crm_email_logs avant l'appel API. En cas de
+      // conflit unique → déjà loggé. En cas d'échec API → on supprime le
+      // claim pour permettre une nouvelle tentative.
+      const { data: claim, error: claimErr } = await supabaseAdmin
+        .from("crm_email_logs")
+        .insert({ user_id: req.userId!, provider: "odoo", email_id: emailId, external_log_id: null })
+        .select("id")
+        .maybeSingle();
+      if (claimErr) {
+        if ((claimErr as { code?: string }).code === "23505") {
+          res.json({ ok: true, alreadyLogged: true });
+          return;
+        }
+        console.error("[integrations] odoo log-email claim error:", claimErr);
+        res.status(500).json({ error: "Failed to claim log row" });
+        return;
+      }
+      const claimId = (claim as { id?: number } | null)?.id;
+      const result = await logEmailEngagementOdoo(
+        req.userId!,
+        resolvedId,
+        String(subject || ""),
+        String(body || ""),
+        typeof occurredAt === "string" ? occurredAt : null,
+      );
+      if (!result.ok) {
+        if (claimId) await supabaseAdmin.from("crm_email_logs").delete().eq("id", claimId);
+        res.status(502).json({ error: result.error });
+        return;
+      }
+      if (claimId && result.id) {
+        await supabaseAdmin
+          .from("crm_email_logs")
+          .update({ external_log_id: String(result.id) })
+          .eq("id", claimId);
+      }
+      res.json({ ok: true, id: result.id ?? null });
+      return;
+    }
+    const result = await logEmailEngagementOdoo(
+      req.userId!,
+      resolvedId,
+      String(subject || ""),
+      String(body || ""),
+      typeof occurredAt === "string" ? occurredAt : null,
+    );
+    if (!result.ok) {
+      res.status(502).json({ error: result.error });
+      return;
+    }
+    res.json({ ok: true, id: result.id ?? null });
+  } catch (err) {
+    console.error("[integrations] odoo log-email error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to log email" });
   }
 });
 
