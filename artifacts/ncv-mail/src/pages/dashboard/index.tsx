@@ -1583,29 +1583,9 @@ function HubspotContextPanel({
       </div>
 
       {!senderEmail && (
-        <div className="space-y-2">
-          <p className="text-[10px] text-[#8b9cb3] leading-relaxed">
-            {t("inbox.crmSelectEmailHint")}
-          </p>
-          {/* Aperçu désactivé du cockpit : les 3 actions principales sont
-              listées dès l'ouverture du panneau, même sans email sélectionné,
-              pour que l'utilisateur voit immédiatement ce qui devient
-              disponible une fois un email cliqué. */}
-          <div className="flex flex-col gap-1 opacity-50 pointer-events-none">
-            <div className="text-[10px] text-white bg-[#0f1729] border border-border rounded px-2 py-1 flex items-center gap-1.5">
-              <Building2 className="w-2.5 h-2.5 text-primary" />
-              {t("inbox.crmActionLogEmailShort")}
-            </div>
-            <div className="text-[10px] text-white bg-[#0f1729] border border-border rounded px-2 py-1 flex items-center gap-1.5">
-              <Building2 className="w-2.5 h-2.5 text-primary" />
-              {t("inbox.crmActionCreateDealShort")}
-            </div>
-            <div className="text-[10px] text-white bg-[#0f1729] border border-border rounded px-2 py-1 flex items-center gap-1.5">
-              <Building2 className="w-2.5 h-2.5 text-primary" />
-              {t("inbox.crmActionCreateTaskShort")}
-            </div>
-          </div>
-        </div>
+        <p className="text-[10px] text-[#8b9cb3] leading-relaxed">
+          {t("inbox.crmSelectEmailHint")}
+        </p>
       )}
 
       {senderEmail && isLoading && (
