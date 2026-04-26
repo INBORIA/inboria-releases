@@ -1,0 +1,95 @@
+
+Recherchez dans la configuration
+Recherchez dans la configuration
+Configuration
+Appuyez sur la barre d'espacement pour réorganiser les onglets.
+Accueil
+Gestionnaire d'objet
+Recherche rapide
+Recherche rapide
+Accueil de la configuration
+Salesforce Go
+Assistant de configuration de Service
+Assistant de configuration de Commerce
+Assistant Hyperforce
+Mises à jour de version
+Application mobile Salesforce
+Utilisation de Lightning
+Sales Cloud partout
+Administration
+Utilisateurs
+Données
+E-mail
+Outils de la plate-forme
+Gestion des abonnements
+Applications
+Paramètres de fonctionnalité
+Slack
+Data Cloud
+Heroku
+MuleSoft
+Einstein
+Objets et champs
+Événements
+Automatisation des processus
+Interface utilisateur
+Code personnalisé
+Développement
+À l'échelle
+Environnements
+Engagement des utilisateurs
+Habilitation
+Intégrations
+Générateur de notification
+Hors ligne
+Go Accelerate
+Paramètres
+Paramètres de la société
+Classification des données
+Centre de confidentialité
+Data Mask
+Identité
+Sécurité
+Bienvenue jean-Jacques
+Gérez et personnalisez Salesforce dans Configuration. Parcourez les suggestions, explorez les fonctionnalités, et bien plus.
+
+Laissez Agentforce vous guider pour les tâches de configuration
+Bêta
+Collaborez avec un agent IA sur les tâches quotidiennes telles que la création d’utilisateurs et la gestion des autorisations. Pour commencer, activez Configuration avec Agentforce.
+
+Ignorer
+
+Atteindre les objectifs métiers populaires
+Afficher tout
+
+Cross-Cloud
+Communiquer avec des prospects et des clients
+Aidez les commerciaux à prioriser et à interagir avec des clients.
+Inclut
+Sales Cloud Everywhere
+Agentforce (par défaut)
+E-mails commerciaux Einstein
+4 terminé(s)
+1 en cours
+
+Field Service
+Planifier le travail Field Service
+Répondez aux attentes des clients et aux priorités de l’entreprise pour les tâches d’assistance planifiées.
+Inclut
+Stratégies de planification
+Outils de planification et de répartition
+Agentforce pour répartiteurs
+1 terminé(s)
+1 en cours
+
+Cross-Cloud
+Suivre et gérer les données clients
+Collectez, organisez et analysez les données clients pour recueillir des connaissances, personnaliser les expériences et stimuler l’engagement.
+Inclut
+Gestion des requêtes
+Gestion des commentaires
+Capture d'activité Einstein
+2 terminé(s)
+1 en cours
+Éléments récents
+Nom	Type	Objet
