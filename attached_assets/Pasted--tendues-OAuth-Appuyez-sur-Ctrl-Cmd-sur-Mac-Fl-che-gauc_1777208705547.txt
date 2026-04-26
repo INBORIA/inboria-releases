@@ -1,0 +1,37 @@
+Étendues OAuth
+Appuyez sur Ctrl (Cmd sur Mac) + Flèche gauche ou Ctrl (Cmd sur Mac) + Flèche droite pour déplacer les éléments entre les listes. Prend charge la navigation à caractère unique. Appuyez sur CTRL + touche d’espacement pour sélectionner l’option.
+Domaines OAuth disponibles
+Accéder au service d’URL d'identité (id, profile, email, address, phone)
+Gérer les données des utilisateurs via des API (api)
+Gérer les données des utilisateurs via des navigateurs Web (web)
+Obtenir un accès complet (full)
+Accéder aux ressources de l'API REST Connect (chatter_api)
+Accéder aux applications Visualforce (visualforce)
+Exécuter des requêtes à tout moment (refresh_token, offline_access)
+Accéder à des identifiants utilisateur uniques (openid)
+Accéder aux autorisations personnalisées (custom_permissions)
+Accéder aux ressources de l'API REST Analytics (wave_api)
+Accéder aux ressources Charts Geodata de l'API REST Analytics (eclair_api)
+Gérer les services Pardot (pardot_api)
+Accéder aux applications Lightning (lightning)
+Accéder à des ressources de contenus (content)
+Gérer les données de l'API Ingestion Data Cloud (cdp_ingest_api)
+Gérer les données de profil Data Cloud (cdp_profile_api)
+Exécuter des requêtes SQL sur les données Data Cloud (cdp_query_api)
+Accéder aux services chatbot (chatbot_api)
+Exécuter la segmentation sur les données Data Cloud (cdp_segment_api)
+Gérer la résolution de l'identité Data Cloud (cdp_identityresolution_api)
+Gérer les données des Connaissances calculées Data Cloud (cdp_calculated_insight_api)
+Accéder à la plate-forme Salesforce API (sfap_api)
+Accéder aux ressources d'API d'intégration (interaction_api)
+Accéder à toutes les ressources d'API Data Cloud (cdp_api)
+Accéder aux services Einstein GPT (einstein_gpt_api)
+Accéder à l'API de connexion sans mot de passe headless (pwdless_login_api)
+Accéder à l'API de mot de passe oublié headless (forgot_password)
+Accéder à l'API Headless Registration (user_registration_api)
+Accéder aux serveurs MCP hébergés par Salesforce (mcp_api)
+Accéder à l’API en temps réel Service Cloud (scrt_api)
+Domaines OAuth sélectionnés
+Une option doit être sélectionnée
+Examiner tous les jetons
+Configurer un jeton d'identification
