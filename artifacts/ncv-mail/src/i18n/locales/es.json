@@ -426,6 +426,8 @@
     "crmActionContactUpdatedPipedrive": "Contacto actualizado en Pipedrive",
     "crmActionPipedriveError": "Acción de Pipedrive fallida",
     "crmActionPipedriveErrorReconnect": "Permisos de Pipedrive insuficientes. Vaya a Ajustes → Integraciones y vuelva a conectar Pipedrive para autorizar esta acción.",
+    "crmPipedriveActivitiesTitle": "Actividades recientes",
+    "crmPipedriveNoActivities": "Sin actividad reciente",
     "sortByPriority": "Orden: Prioridad",
     "sortByDateDesc": "Orden: Fecha ↓ (reciente)",
     "sortByDateAsc": "Orden: Fecha ↑ (antigua)",

@@ -1296,6 +1296,14 @@ type PipedriveContext = {
     status: string | null;
     closeDate: string | null;
   }>;
+  activities: Array<{
+    id: string;
+    type: string | null;
+    subject: string | null;
+    dueDate: string | null;
+    done: boolean;
+    addTime: string | null;
+  }>;
 };
 
 type PipedrivePipelinesResponse = {
@@ -2473,6 +2481,49 @@ function PipedriveContextPanel({
               </ul>
             )}
           </div>
+
+          {/* Activités récentes — 5 dernières activités du contact côté
+              Pipedrive (mix tâches/notes/réunions). Repliée côté UI mais
+              toujours présente : section vide affichée si pas d'activité.
+              Mirroir de l'historique attendu en parité du panneau HubSpot. */}
+          <div className="pt-2 border-t border-[#1f2937]">
+            <div className="text-[#8b9cb3] text-[10px] uppercase tracking-wider mb-1.5">
+              {t("inbox.crmPipedriveActivitiesTitle")}
+            </div>
+            {!ctx.activities || ctx.activities.length === 0 ? (
+              <p className="text-[10px] text-[#8b9cb3]" data-testid="text-pipedrive-no-activities">
+                {t("inbox.crmPipedriveNoActivities")}
+              </p>
+            ) : (
+              <ul className="space-y-1" data-testid="list-pipedrive-activities">
+                {ctx.activities.map((a) => (
+                  <li
+                    key={a.id}
+                    className="text-[10px] bg-[#0f1729] rounded p-1.5"
+                    data-testid={`item-pipedrive-activity-${a.id}`}
+                  >
+                    <div className="flex items-start gap-1">
+                      <span className={a.done ? "text-emerald-400" : "text-amber-400"}>
+                        {a.done ? "✓" : "•"}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-white truncate">{a.subject || a.type || "—"}</div>
+                        {(a.dueDate || a.addTime) && (
+                          <div className="text-[#8b9cb3] text-[9px]">
+                            {a.dueDate
+                              ? new Date(a.dueDate).toLocaleDateString()
+                              : a.addTime
+                                ? new Date(a.addTime).toLocaleDateString()
+                                : ""}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </>
       )}
 
@@ -2499,6 +2550,12 @@ export default function Dashboard() {
   const [crmPanelCollapsed, setCrmPanelCollapsed] = useState(false);
   const [detailHubspotPanelHidden, setDetailHubspotPanelHidden] = useState(false);
   const [detailPipedrivePanelHidden, setDetailPipedrivePanelHidden] = useState(false);
+  // Sélecteur exclusif du panneau CRM affiché dans la colonne droite quand
+  // les DEUX intégrations sont actives. Par défaut HubSpot (parité avec le
+  // comportement antérieur). L'utilisateur bascule via les onglets affichés
+  // au-dessus du panneau. Si une seule intégration est connectée, ce state
+  // est forcé sur celle-là (cf. useEffect plus bas).
+  const [activeCrmDetailPanel, setActiveCrmDetailPanel] = useState<"hubspot" | "pipedrive">("hubspot");
   const integrationsQuery = useListIntegrations();
   const integrationsList = (integrationsQuery.data ?? []) as Integration[];
   const hasHubspot = integrationsList.some(
@@ -2512,6 +2569,17 @@ export default function Dashboard() {
     if (!hasHubspot && crmFilter === "hubspot") setCrmFilter(null);
     if (!hasPipedrive && crmFilter === "pipedrive") setCrmFilter(null);
   }, [hasHubspot, hasPipedrive, crmFilter]);
+  // Recale le panneau actif sur le CRM disponible quand l'autre est absent.
+  // Garantit que si seul Pipedrive est connecté, on affiche bien le panneau
+  // Pipedrive (et symétriquement). Quand les deux deviennent disponibles,
+  // on garde la sélection courante (HubSpot par défaut au mount).
+  useEffect(() => {
+    if (hasHubspot && !hasPipedrive && activeCrmDetailPanel !== "hubspot") {
+      setActiveCrmDetailPanel("hubspot");
+    } else if (hasPipedrive && !hasHubspot && activeCrmDetailPanel !== "pipedrive") {
+      setActiveCrmDetailPanel("pipedrive");
+    }
+  }, [hasHubspot, hasPipedrive, activeCrmDetailPanel]);
   const [sortMode, setSortMode] = useState<"priority" | "date_desc" | "date_asc">(() => {
     if (typeof window === "undefined") return "priority";
     const saved = window.localStorage.getItem("inbox.sortMode");
@@ -3453,45 +3521,78 @@ export default function Dashboard() {
               sharedMailboxes={sharedMailboxes}
             />
           </div>
-          {/* Panneau HubSpot côté droit en vue détail. Rendu dès qu'une
-              intégration HubSpot est active : l'utilisateur ouvre un email,
-              il voit immédiatement le contexte CRM + les actions cockpit
-              (Logger / + Affaire / + Tâche / lifecycle / lead status / phase).
-              Sans cette branche, le panneau était invisible en vue détail
-              (vue liste seulement) et la cockpit semblait absente. */}
-          {hasHubspot && !detailHubspotPanelHidden && (
-            <div className="w-full md:w-[280px] shrink-0">
-              <HubspotContextPanel
-                senderEmail={
-                  extractEmailAddress(selectedEmail.senderEmail || selectedEmail.sender) || null
-                }
-                selectedEmailId={Number(selectedEmail.id)}
-                selectedSubject={selectedEmail?.subject ?? null}
-                selectedBody={selectedEmail?.body ?? null}
-                selectedDate={selectedEmail?.created_at ?? selectedEmail?.createdAt ?? null}
-                collapsed={crmPanelCollapsed}
-                onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
-                onHide={() => setDetailHubspotPanelHidden(true)}
-              />
-            </div>
-          )}
-          {/* Panneau Pipedrive — miroir HubSpot. Affiché en plus si Pipedrive
-              est aussi connecté ; les deux panneaux peuvent coexister côte à
-              côte (useful quand un même contact est dans les deux CRM). */}
-          {hasPipedrive && !detailPipedrivePanelHidden && (
-            <div className="w-full md:w-[280px] shrink-0">
-              <PipedriveContextPanel
-                senderEmail={
-                  extractEmailAddress(selectedEmail.senderEmail || selectedEmail.sender) || null
-                }
-                selectedEmailId={Number(selectedEmail.id)}
-                selectedSubject={selectedEmail?.subject ?? null}
-                selectedBody={selectedEmail?.body ?? null}
-                selectedDate={selectedEmail?.created_at ?? selectedEmail?.createdAt ?? null}
-                collapsed={crmPanelCollapsed}
-                onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
-                onHide={() => setDetailPipedrivePanelHidden(true)}
-              />
+          {/* Panneau CRM côté droit en vue détail.
+              Spécification (task #129) :
+              - HubSpot seul connecté → on affiche HubSpot
+              - Pipedrive seul connecté → on affiche Pipedrive
+              - Les DEUX connectés → un sélecteur (onglets) permet de
+                basculer ; HubSpot est par défaut.
+              Les deux panneaux ne s'affichent JAMAIS simultanément.
+              Le bouton "masquer" ferme la branche correspondante ; la
+              recharge de la page rétablit l'état par défaut. */}
+          {((hasHubspot && !detailHubspotPanelHidden && activeCrmDetailPanel === "hubspot") ||
+            (hasPipedrive && !detailPipedrivePanelHidden && activeCrmDetailPanel === "pipedrive")) && (
+            <div className="w-full md:w-[280px] shrink-0 space-y-2">
+              {/* Onglets de bascule — uniquement quand les 2 CRM coexistent. */}
+              {hasHubspot && hasPipedrive && (
+                <div
+                  className="flex items-center gap-1 bg-card rounded-lg border border-border p-1"
+                  data-testid="tabs-crm-detail-panel"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setActiveCrmDetailPanel("hubspot")}
+                    className={`flex-1 text-[10px] uppercase tracking-wider rounded px-2 py-1 ${
+                      activeCrmDetailPanel === "hubspot"
+                        ? "bg-orange-500/20 text-orange-400"
+                        : "text-[#8b9cb3] hover:text-white"
+                    }`}
+                    data-testid="tab-crm-detail-hubspot"
+                  >
+                    HubSpot
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveCrmDetailPanel("pipedrive")}
+                    className={`flex-1 text-[10px] uppercase tracking-wider rounded px-2 py-1 ${
+                      activeCrmDetailPanel === "pipedrive"
+                        ? "bg-primary/20 text-primary"
+                        : "text-[#8b9cb3] hover:text-white"
+                    }`}
+                    data-testid="tab-crm-detail-pipedrive"
+                  >
+                    Pipedrive
+                  </button>
+                </div>
+              )}
+              {hasHubspot && !detailHubspotPanelHidden && activeCrmDetailPanel === "hubspot" && (
+                <HubspotContextPanel
+                  senderEmail={
+                    extractEmailAddress(selectedEmail.senderEmail || selectedEmail.sender) || null
+                  }
+                  selectedEmailId={Number(selectedEmail.id)}
+                  selectedSubject={selectedEmail?.subject ?? null}
+                  selectedBody={selectedEmail?.body ?? null}
+                  selectedDate={selectedEmail?.created_at ?? selectedEmail?.createdAt ?? null}
+                  collapsed={crmPanelCollapsed}
+                  onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
+                  onHide={() => setDetailHubspotPanelHidden(true)}
+                />
+              )}
+              {hasPipedrive && !detailPipedrivePanelHidden && activeCrmDetailPanel === "pipedrive" && (
+                <PipedriveContextPanel
+                  senderEmail={
+                    extractEmailAddress(selectedEmail.senderEmail || selectedEmail.sender) || null
+                  }
+                  selectedEmailId={Number(selectedEmail.id)}
+                  selectedSubject={selectedEmail?.subject ?? null}
+                  selectedBody={selectedEmail?.body ?? null}
+                  selectedDate={selectedEmail?.created_at ?? selectedEmail?.createdAt ?? null}
+                  collapsed={crmPanelCollapsed}
+                  onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
+                  onHide={() => setDetailPipedrivePanelHidden(true)}
+                />
+              )}
             </div>
           )}
         </div>

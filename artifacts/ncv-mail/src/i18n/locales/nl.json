@@ -426,6 +426,8 @@
     "crmActionContactUpdatedPipedrive": "Contact bijgewerkt in Pipedrive",
     "crmActionPipedriveError": "Pipedrive-actie mislukt",
     "crmActionPipedriveErrorReconnect": "Onvoldoende Pipedrive-rechten. Ga naar Instellingen → Integraties en koppel Pipedrive opnieuw om deze actie toe te staan.",
+    "crmPipedriveActivitiesTitle": "Recente activiteiten",
+    "crmPipedriveNoActivities": "Geen recente activiteit",
     "sortByPriority": "Sortering: Prioriteit",
     "sortByDateDesc": "Sortering: Datum ↓ (nieuwste)",
     "sortByDateAsc": "Sortering: Datum ↑ (oudste)",

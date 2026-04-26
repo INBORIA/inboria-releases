@@ -426,6 +426,8 @@
     "crmActionContactUpdatedPipedrive": "Contact updated in Pipedrive",
     "crmActionPipedriveError": "Pipedrive action failed",
     "crmActionPipedriveErrorReconnect": "Insufficient Pipedrive permissions. Go to Settings → Integrations and reconnect Pipedrive to authorize this action.",
+    "crmPipedriveActivitiesTitle": "Recent activities",
+    "crmPipedriveNoActivities": "No recent activity",
     "sortByPriority": "Sort: Priority",
     "sortByDateDesc": "Sort: Date ↓ (newest)",
     "sortByDateAsc": "Sort: Date ↑ (oldest)",

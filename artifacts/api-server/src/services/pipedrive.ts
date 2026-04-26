@@ -373,6 +373,14 @@ export async function getPipedriveContactContext(
     status: string | null;
     closeDate: string | null;
   }>;
+  activities: Array<{
+    id: string;
+    type: string | null;
+    subject: string | null;
+    dueDate: string | null;
+    done: boolean;
+    addTime: string | null;
+  }>;
 } | null> {
   const { data: contactData } = await supabaseAdmin
     .from("crm_contacts")
@@ -426,6 +434,45 @@ export async function getPipedriveContactContext(
     closeDate: (d.raw && (d.raw["expected_close_date"] as string | null)) || null,
   }));
 
+  // Récupère les 5 dernières activités du contact côté Pipedrive (parité
+  // avec le panneau HubSpot qui affiche aussi un historique). On préfère un
+  // appel upstream live (pas de cache local) car les activités évoluent
+  // souvent et le coût d'un GET supplémentaire reste marginal. Si le token
+  // est invalide / réseau KO, on retombe sur une liste vide pour ne pas
+  // casser l'affichage du contact.
+  let activities: Array<{
+    id: string;
+    type: string | null;
+    subject: string | null;
+    dueDate: string | null;
+    done: boolean;
+    addTime: string | null;
+  }> = [];
+  try {
+    const personIdNum = Number(contact.external_id);
+    if (Number.isFinite(personIdNum)) {
+      const actRes = await authorizedPipedriveFetch(
+        userId,
+        `/api/v1/persons/${personIdNum}/activities?limit=5&start=0`,
+        { method: "GET" },
+      );
+      if (actRes.ok) {
+        const rows = ((actRes.data as { data?: Array<Record<string, unknown>> } | undefined)?.data || [])
+          .slice(0, 5);
+        activities = rows.map((a) => ({
+          id: String(a["id"] ?? ""),
+          type: (a["type"] as string | null) ?? null,
+          subject: (a["subject"] as string | null) ?? null,
+          dueDate: (a["due_date"] as string | null) ?? null,
+          done: a["done"] === true || a["done"] === 1,
+          addTime: (a["add_time"] as string | null) ?? null,
+        }));
+      }
+    }
+  } catch {
+    activities = [];
+  }
+
   return {
     contact: {
       externalId: contact.external_id,
@@ -440,6 +487,7 @@ export async function getPipedriveContactContext(
       lastSyncedAt: contact.last_synced_at,
     },
     deals,
+    activities,
   };
 }
 
