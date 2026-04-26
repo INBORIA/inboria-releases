@@ -979,7 +979,7 @@
       "similarity": "{{percent}}% similar",
       "emailsSuffix": "{{count}} emails",
       "mergeBtn": "Merge",
-      "mergeArrow": "Merge \"{{source}}\" into \"{{target}}\"",
+      "mergeArrow": "Keep \"{{target}}\"",
       "keepBoth": "Keep both",
       "confirmTitle": "Merge \"{{source}}\" into \"{{target}}\"?",
       "confirmDesc": "Emails from \"{{source}}\" will be moved to \"{{target}}\", then \"{{source}}\" will be deleted. This cannot be undone.",

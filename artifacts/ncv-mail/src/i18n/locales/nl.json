@@ -979,7 +979,7 @@
       "similarity": "{{percent}}% gelijk",
       "emailsSuffix": "{{count}} e-mails",
       "mergeBtn": "Samenvoegen",
-      "mergeArrow": "\"{{source}}\" samenvoegen in \"{{target}}\"",
+      "mergeArrow": "\"{{target}}\" behouden",
       "keepBoth": "Beide behouden",
       "confirmTitle": "\"{{source}}\" samenvoegen in \"{{target}}\"?",
       "confirmDesc": "E-mails van \"{{source}}\" worden verplaatst naar \"{{target}}\", daarna wordt \"{{source}}\" verwijderd. Dit kan niet ongedaan worden gemaakt.",

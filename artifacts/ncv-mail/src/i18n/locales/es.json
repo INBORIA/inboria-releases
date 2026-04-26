@@ -979,7 +979,7 @@
       "similarity": "{{percent}}% similar",
       "emailsSuffix": "{{count}} correos",
       "mergeBtn": "Fusionar",
-      "mergeArrow": "Fusionar «{{source}}» en «{{target}}»",
+      "mergeArrow": "Conservar «{{target}}»",
       "keepBoth": "Mantener ambas",
       "confirmTitle": "¿Fusionar «{{source}}» en «{{target}}»?",
       "confirmDesc": "Los correos de «{{source}}» se moverán a «{{target}}», luego «{{source}}» será eliminada. Esta acción es irreversible.",
