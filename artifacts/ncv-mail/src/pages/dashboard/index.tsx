@@ -42,7 +42,7 @@ import {
   useBlockSender,
   useListIntegrations,
 } from "@workspace/api-client-react";
-import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails, ListEmailsCrmFilter, Integration } from "@workspace/api-client-react";
+import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails, Integration } from "@workspace/api-client-react";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
 import { useTranslation } from 'react-i18next';
 import { translateCategoryName } from "@/lib/category-translations";
@@ -3452,7 +3452,7 @@ export default function Dashboard() {
     q: searchQuery || undefined,
     page: emailPage,
     limit: 200,
-    ...(crmFilter ? { crmFilter: ListEmailsCrmFilter[crmFilter] } : {}),
+    ...(crmFilter ? { crmFilter } : {}),
   });
 
   useEffect(() => {
