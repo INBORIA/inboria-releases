@@ -1536,6 +1536,39 @@ router.post("/integrations/salesforce/create-task", requireAuth, async (req, res
   }
 });
 
+router.get("/integrations/salesforce/stats", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const [{ data: integ }, { count: contactsCount }, { count: dealsCount }] = await Promise.all([
+      supabaseAdmin
+        .from("integrations")
+        .select("last_synced_at, last_error, enabled")
+        .eq("user_id", req.userId!)
+        .eq("provider", "salesforce")
+        .maybeSingle(),
+      supabaseAdmin
+        .from("crm_contacts")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", req.userId!)
+        .eq("provider", "salesforce"),
+      supabaseAdmin
+        .from("crm_deals")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", req.userId!)
+        .eq("provider", "salesforce"),
+    ]);
+    res.json({
+      connected: !!integ?.enabled,
+      contactsCount: contactsCount || 0,
+      dealsCount: dealsCount || 0,
+      lastSyncedAt: integ?.last_synced_at || null,
+      lastError: integ?.last_error || null,
+    });
+  } catch (err) {
+    console.error("[integrations] salesforce stats error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to fetch Salesforce stats" });
+  }
+});
+
 router.get("/integrations/salesforce/pipelines", requireAuth, async (req, res): Promise<void> => {
   try {
     const result = await getSalesforcePipelines(req.userId!);

@@ -410,6 +410,7 @@
     "crmActionError": "HubSpot-actie mislukt",
     "crmActionErrorReconnect": "Onvoldoende HubSpot-rechten. Ga naar Instellingen → Integraties en koppel HubSpot opnieuw om deze actie toe te staan.",
     "crmPipedriveTooltip": "Toon alleen e-mails waarvan de afzender in Pipedrive staat",
+    "crmSalesforceTooltip": "Toon alleen e-mails waarvan de afzender in Salesforce staat",
     "crmPipedrivePanelTitle": "Pipedrive-context",
     "crmOwnerPipedrive": "Pipedrive-eigenaar",
     "crmLabelPipedrive": "Label",

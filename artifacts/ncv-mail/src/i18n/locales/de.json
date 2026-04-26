@@ -410,6 +410,7 @@
     "crmActionError": "HubSpot-Aktion fehlgeschlagen",
     "crmActionErrorReconnect": "Unzureichende HubSpot-Berechtigungen. Gehen Sie zu Einstellungen → Integrationen und verbinden Sie HubSpot erneut, um diese Aktion zu autorisieren.",
     "crmPipedriveTooltip": "Nur E-Mails anzeigen, deren Absender in Pipedrive vorhanden ist",
+    "crmSalesforceTooltip": "Nur E-Mails anzeigen, deren Absender in Salesforce vorhanden ist",
     "crmPipedrivePanelTitle": "Pipedrive-Kontext",
     "crmOwnerPipedrive": "Pipedrive-Inhaber",
     "crmLabelPipedrive": "Etikett",

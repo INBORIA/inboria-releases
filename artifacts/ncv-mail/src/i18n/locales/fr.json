@@ -410,6 +410,7 @@
     "crmActionError": "Action HubSpot échouée",
     "crmActionErrorReconnect": "Droits HubSpot insuffisants. Allez dans Paramètres → Intégrations et reconnectez HubSpot pour autoriser cette action.",
     "crmPipedriveTooltip": "Afficher uniquement les emails dont l'expéditeur est dans Pipedrive",
+    "crmSalesforceTooltip": "Afficher uniquement les emails dont l'expéditeur est dans Salesforce",
     "crmPipedrivePanelTitle": "Contexte Pipedrive",
     "crmOwnerPipedrive": "Propriétaire Pipedrive",
     "crmLabelPipedrive": "Étiquette",

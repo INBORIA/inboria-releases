@@ -410,6 +410,7 @@
     "crmActionError": "HubSpot action failed",
     "crmActionErrorReconnect": "Insufficient HubSpot permissions. Go to Settings → Integrations and reconnect HubSpot to authorize this action.",
     "crmPipedriveTooltip": "Show only emails whose sender is in Pipedrive",
+    "crmSalesforceTooltip": "Show only emails whose sender is in Salesforce",
     "crmPipedrivePanelTitle": "Pipedrive context",
     "crmOwnerPipedrive": "Pipedrive owner",
     "crmLabelPipedrive": "Label",

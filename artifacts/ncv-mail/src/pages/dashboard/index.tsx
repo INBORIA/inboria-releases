@@ -3222,7 +3222,8 @@ export default function Dashboard() {
   useEffect(() => {
     if (!hasHubspot && crmFilter === "hubspot") setCrmFilter(null);
     if (!hasPipedrive && crmFilter === "pipedrive") setCrmFilter(null);
-  }, [hasHubspot, hasPipedrive, crmFilter]);
+    if (!hasSalesforce && crmFilter === "salesforce") setCrmFilter(null);
+  }, [hasHubspot, hasPipedrive, hasSalesforce, crmFilter]);
   // Recale le panneau actif sur le seul CRM disponible. Logique étendue à 3
   // CRMs : si exactement un seul est connecté, on force sa sélection. Sinon
   // (0 ou ≥2 connectés), on conserve la sélection courante (l'utilisateur
@@ -4574,7 +4575,7 @@ export default function Dashboard() {
               </Select>
             </div>
 
-          {(hasHubspot || hasPipedrive) && (
+          {(hasHubspot || hasPipedrive || hasSalesforce) && (
             <div
               className="flex flex-wrap items-center gap-1.5 max-w-[1200px] mx-auto mt-2"
               data-testid="row-crm-filter"
@@ -4608,6 +4609,21 @@ export default function Dashboard() {
                 >
                   <Briefcase className="w-3 h-3" />
                   <span>Pipedrive</span>
+                </button>
+              )}
+              {hasSalesforce && (
+                <button
+                  onClick={() => setCrmFilter((c) => (c === "salesforce" ? null : "salesforce"))}
+                  title={t("inbox.crmSalesforceTooltip")}
+                  data-testid="button-crm-salesforce"
+                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                    crmFilter === "salesforce"
+                      ? "bg-primary/15 text-primary border border-primary/20"
+                      : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                  }`}
+                >
+                  <Cloud className="w-3 h-3" />
+                  <span>Salesforce</span>
                 </button>
               )}
             </div>
