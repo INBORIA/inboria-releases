@@ -31,6 +31,13 @@ import {
   PIPEDRIVE_SCOPES,
   createPipedriveActivity,
   findPipedrivePersonIdByEmail,
+  getPipedriveContactContext,
+  getPipedrivePipelines,
+  createPipedriveDeal,
+  createPipedriveTask,
+  updatePipedriveDealStage,
+  updatePipedrivePerson,
+  logEmailEngagementPipedrive,
 } from "../services/pipedrive";
 
 const router: IRouter = Router();
@@ -902,6 +909,295 @@ router.post("/integrations/pipedrive/sync", requireAuth, async (req, res): Promi
   const contacts = await syncPipedriveContacts(req.userId!, 200);
   const deals = await syncPipedriveDeals(req.userId!, 200);
   res.json({ contacts, deals });
+});
+
+// ============== Wave Pipedrive — Cockpit (parité HubSpot) ==============
+// Endpoints d'action déclenchés par les boutons du panneau "Contexte Pipedrive" :
+// logger l'email, créer un deal préfilled, créer une tâche (activité type=task),
+// faire avancer la phase d'un deal, mettre à jour le label du contact.
+// Tous : 404 si le contact n'est pas dans le cache crm_contacts (sync manquante).
+
+async function resolvePipedrivePersonId(
+  userId: string,
+  emailParam: string | undefined,
+  contactExternalIdParam: string | undefined,
+): Promise<{ id: number; externalId: string } | { error: string; status: number }> {
+  const externalId = String(contactExternalIdParam || "").trim();
+  const email = String(emailParam || "").trim().toLowerCase();
+  if (!externalId && !email) {
+    return { error: "contactEmail or contactExternalId required", status: 400 };
+  }
+  let query = supabaseAdmin
+    .from("crm_contacts")
+    .select("external_id")
+    .eq("user_id", userId)
+    .eq("provider", "pipedrive");
+  if (externalId) {
+    query = query.eq("external_id", externalId);
+  } else {
+    query = query.ilike("email", email);
+  }
+  const { data } = await query.maybeSingle();
+  const id = (data as { external_id?: string } | null)?.external_id;
+  if (!id) return { error: "Contact not found in Pipedrive cache", status: 404 };
+  const num = Number(id);
+  if (!Number.isFinite(num)) return { error: "Invalid Pipedrive person id", status: 500 };
+  return { id: num, externalId: id };
+}
+
+async function assertPipedriveDealOwnedByUser(userId: string, dealExternalId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin
+    .from("crm_deals")
+    .select("external_id")
+    .eq("user_id", userId)
+    .eq("provider", "pipedrive")
+    .eq("external_id", dealExternalId)
+    .maybeSingle();
+  return !!data;
+}
+
+// Mappe une PipedriveResult en échec vers une réponse HTTP avec le bon hint.
+// Garantit la parité reconnect_pipedrive sur TOUTES les routes (et pas
+// seulement create-deal) : si l'access_token est invalide ou si le scope
+// deals:full n'est pas autorisé, le front affiche le toast "reconnecter".
+function sendPipedriveError(
+  res: import("express").Response,
+  result: { ok: false; error: string; status?: number },
+): void {
+  const status = result.status ?? 0;
+  const needsReconnect = status === 401 || status === 403;
+  const hint = needsReconnect ? "reconnect_pipedrive" : status === 400 ? "validation" : "upstream";
+  res.status(502).json({ error: result.error, hint, pipedriveStatus: status });
+}
+
+router.get("/integrations/pipedrive/contact-context", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const email = String(req.query.email || "").trim().toLowerCase();
+    if (!email) {
+      res.status(400).json({ error: "email required" });
+      return;
+    }
+    const ctx = await getPipedriveContactContext(req.userId!, email);
+    if (!ctx) {
+      res.status(404).json({ error: "contact not found" });
+      return;
+    }
+    res.json(ctx);
+  } catch (err) {
+    console.error("[integrations] pipedrive contact-context error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to fetch Pipedrive context" });
+  }
+});
+
+router.post("/integrations/pipedrive/log-email", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { contactEmail, contactExternalId, emailId, subject, body, occurredAt } = req.body || {};
+    const resolved = await resolvePipedrivePersonId(req.userId!, contactEmail, contactExternalId);
+    if ("error" in resolved) {
+      res.status(resolved.status).json({ error: resolved.error });
+      return;
+    }
+    const hasEmailId = typeof emailId === "number" && Number.isFinite(emailId);
+    if (hasEmailId) {
+      // Idempotence : on tente d'insérer un row claim crm_email_logs avant
+      // d'appeler Pipedrive. Si l'INSERT échoue avec 23505 (unique violation),
+      // l'email a déjà été loggé → on retourne alreadyLogged sans rappeler
+      // l'API. Sinon, on délègue à logEmailEngagementPipedrive ; si l'appel
+      // échoue, on supprime le row claim pour permettre une nouvelle tentative.
+      const { data: claim, error: claimErr } = await supabaseAdmin
+        .from("crm_email_logs")
+        .insert({ user_id: req.userId!, provider: "pipedrive", email_id: emailId, external_log_id: null })
+        .select("id")
+        .maybeSingle();
+      if (claimErr) {
+        if ((claimErr as { code?: string }).code === "23505") {
+          res.json({ ok: true, alreadyLogged: true });
+          return;
+        }
+        console.error("[integrations] pipedrive log-email claim error:", claimErr);
+        res.status(500).json({ error: "Failed to claim log row" });
+        return;
+      }
+      const claimId = (claim as { id?: number } | null)?.id;
+      const result = await logEmailEngagementPipedrive(
+        req.userId!,
+        resolved.id,
+        String(subject || ""),
+        String(body || ""),
+        typeof occurredAt === "string" ? occurredAt : null,
+      );
+      if (!result.ok) {
+        if (claimId) await supabaseAdmin.from("crm_email_logs").delete().eq("id", claimId);
+        sendPipedriveError(res, result);
+        return;
+      }
+      if (claimId && result.data?.id) {
+        await supabaseAdmin
+          .from("crm_email_logs")
+          .update({ external_log_id: String(result.data.id) })
+          .eq("id", claimId);
+      }
+      res.json({ ok: true, id: result.data?.id ?? null });
+      return;
+    }
+    const result = await logEmailEngagementPipedrive(
+      req.userId!,
+      resolved.id,
+      String(subject || ""),
+      String(body || ""),
+      typeof occurredAt === "string" ? occurredAt : null,
+    );
+    if (!result.ok) {
+      sendPipedriveError(res, result);
+      return;
+    }
+    res.json({ ok: true, id: result.data?.id ?? null });
+  } catch (err) {
+    console.error("[integrations] pipedrive log-email error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to log email" });
+  }
+});
+
+router.post("/integrations/pipedrive/create-deal", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { contactEmail, contactExternalId, dealname, amount, dealstage, closedate, currency } = req.body || {};
+    if (!dealname || typeof dealname !== "string" || !dealname.trim()) {
+      res.status(400).json({ error: "dealname required" });
+      return;
+    }
+    const resolved = await resolvePipedrivePersonId(req.userId!, contactEmail, contactExternalId);
+    if ("error" in resolved) {
+      res.status(resolved.status).json({ error: resolved.error });
+      return;
+    }
+    const amountNum = amount != null && amount !== "" ? Number(amount) : null;
+    const result = await createPipedriveDeal(req.userId!, resolved.id, {
+      title: dealname.trim().slice(0, 200),
+      value: amountNum != null && Number.isFinite(amountNum) ? amountNum : null,
+      currency: typeof currency === "string" ? currency : null,
+      stageId: typeof dealstage === "string" ? dealstage : null,
+      expectedCloseDate: typeof closedate === "string" ? closedate : null,
+    });
+    if (!result.ok) {
+      console.error("[integrations] pipedrive create-deal failed:", {
+        userId: req.userId,
+        status: result.status,
+        error: result.error,
+      });
+      sendPipedriveError(res, result);
+      return;
+    }
+    res.json({ ok: true, id: result.data?.id ?? null });
+  } catch (err) {
+    console.error("[integrations] pipedrive create-deal error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to create deal" });
+  }
+});
+
+router.post("/integrations/pipedrive/create-task", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { contactEmail, contactExternalId, subject, body, dueAt } = req.body || {};
+    if (!subject || typeof subject !== "string" || !subject.trim()) {
+      res.status(400).json({ error: "subject required" });
+      return;
+    }
+    const resolved = await resolvePipedrivePersonId(req.userId!, contactEmail, contactExternalId);
+    if ("error" in resolved) {
+      res.status(resolved.status).json({ error: resolved.error });
+      return;
+    }
+    const result = await createPipedriveTask(req.userId!, resolved.id, {
+      subject: subject.trim().slice(0, 200),
+      body: typeof body === "string" ? body.slice(0, 4000) : null,
+      dueAt: typeof dueAt === "string" ? dueAt : null,
+    });
+    if (!result.ok) {
+      sendPipedriveError(res, result);
+      return;
+    }
+    res.json({ ok: true, id: result.data?.id ?? null });
+  } catch (err) {
+    console.error("[integrations] pipedrive create-task error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to create task" });
+  }
+});
+
+router.get("/integrations/pipedrive/pipelines", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const result = await getPipedrivePipelines(req.userId!);
+    if (!result.ok) {
+      sendPipedriveError(res, result);
+      return;
+    }
+    res.json(result.data);
+  } catch (err) {
+    console.error("[integrations] pipedrive pipelines error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to fetch pipelines" });
+  }
+});
+
+router.patch("/integrations/pipedrive/deals/:dealExternalId", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const dealExternalId = String(req.params.dealExternalId ?? "").trim();
+    if (!dealExternalId) {
+      res.status(400).json({ error: "dealExternalId required" });
+      return;
+    }
+    const { dealstage } = req.body || {};
+    if (!dealstage || typeof dealstage !== "string") {
+      res.status(400).json({ error: "dealstage required" });
+      return;
+    }
+    const owned = await assertPipedriveDealOwnedByUser(req.userId!, dealExternalId);
+    if (!owned) {
+      res.status(404).json({ error: "Deal not found in Pipedrive cache" });
+      return;
+    }
+    const result = await updatePipedriveDealStage(req.userId!, dealExternalId, dealstage);
+    if (!result.ok) {
+      sendPipedriveError(res, result);
+      return;
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("[integrations] pipedrive patch deal error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to update deal" });
+  }
+});
+
+router.patch("/integrations/pipedrive/contacts/:contactExternalId", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const contactExternalId = String(req.params.contactExternalId ?? "").trim();
+    if (!contactExternalId) {
+      res.status(400).json({ error: "contactExternalId required" });
+      return;
+    }
+    const owned = await resolvePipedrivePersonId(req.userId!, undefined, contactExternalId);
+    if ("error" in owned) {
+      res.status(owned.status).json({ error: owned.error });
+      return;
+    }
+    const { label } = req.body || {};
+    if (label === undefined) {
+      res.status(400).json({ error: "no properties to update" });
+      return;
+    }
+    const result = await updatePipedrivePerson(req.userId!, contactExternalId, {
+      label: typeof label === "string" ? label : null,
+    });
+    if (!result.ok) {
+      if (result.error === "no properties to update") {
+        res.status(400).json({ error: result.error });
+      } else {
+        sendPipedriveError(res, result);
+      }
+      return;
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("[integrations] pipedrive patch contact error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to update contact" });
+  }
 });
 
 // ============== CRM inbound webhooks (no auth — provider HMAC verification) ==============

@@ -50,7 +50,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2 } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -1271,6 +1271,41 @@ type HubspotPipelinesResponse = {
   }>;
 };
 
+// Wave Pipedrive — Cockpit (parité HubSpot). Forme miroir : pas de
+// jobTitle/lifecycle/leadStatus (Pipedrive n'a pas ces champs natifs),
+// remplacés par `label` (catégorie libre côté Person Pipedrive).
+type PipedriveContext = {
+  contact: {
+    externalId: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    company: string | null;
+    phone: string | null;
+    label: string | null;
+    ownerId: string | null;
+    ownerName: string | null;
+    lastSyncedAt: string;
+  };
+  deals: Array<{
+    externalId: string;
+    title: string | null;
+    amount: number | null;
+    currency: string | null;
+    stage: string | null;
+    status: string | null;
+    closeDate: string | null;
+  }>;
+};
+
+type PipedrivePipelinesResponse = {
+  pipelines: Array<{
+    id: string;
+    label: string;
+    stages: Array<{ id: string; label: string; displayOrder: number }>;
+  }>;
+};
+
 const HUBSPOT_LIFECYCLE_OPTIONS = [
   "subscriber",
   "lead",
@@ -1892,24 +1927,591 @@ function HubspotContextPanel({
   );
 }
 
+// ============================================================================
+// Wave Pipedrive — Cockpit (parité HubSpot)
+// Miroir 1:1 de HubspotContextPanel : mêmes mutations (log/create-deal/
+// create-task/PATCH deal stage/PATCH person), mêmes data-testid mais
+// préfixés `pipedrive-`. Différences notables :
+//   - Pas de jobTitle/lifecycle/leadStatus dropdowns (Pipedrive n'a pas ces
+//     champs natifs). Remplacé par un seul champ texte `label` éditable.
+//   - L'option "+ Tâche" crée une activité Pipedrive type=task (Pipedrive
+//     n'a pas d'objet "task" séparé).
+//   - Pas de hint "reconnect_pipedrive" dédié dans i18n : le message neutre
+//     `crmActionPipedriveErrorReconnect` est utilisé pour 401/403.
+// ============================================================================
+function PipedriveContextPanel({
+  senderEmail,
+  selectedEmailId,
+  selectedSubject,
+  selectedBody,
+  selectedDate,
+  collapsed,
+  onToggleCollapsed,
+  onHide,
+}: {
+  senderEmail: string | null;
+  selectedEmailId: number | null;
+  selectedSubject: string | null;
+  selectedBody: string | null;
+  selectedDate: string | null;
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
+  onHide: () => void;
+}) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const apiBase = `${import.meta.env.BASE_URL}api`;
+
+  const { data: ctx, isLoading, isError } = useQuery({
+    queryKey: ["pipedrive-contact-context", senderEmail],
+    enabled: !!senderEmail && !collapsed,
+    queryFn: async (): Promise<PipedriveContext | null> => {
+      const res = await authedFetch(`${apiBase}/integrations/pipedrive/contact-context?email=${encodeURIComponent(senderEmail!)}`);
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error("failed");
+      return res.json() as Promise<PipedriveContext>;
+    },
+    retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 60_000,
+  });
+
+  // Chargement paresseux des pipelines (uniquement si on a un contact ET
+  // qu'au moins un deal existe, ou si l'utilisateur ouvre "Créer affaire").
+  const [pipelinesEnabled, setPipelinesEnabled] = useState(false);
+  useEffect(() => {
+    if (ctx && ctx.deals.length > 0) setPipelinesEnabled(true);
+  }, [ctx]);
+  const { data: pipelinesData } = useQuery({
+    queryKey: ["pipedrive-pipelines"],
+    enabled: pipelinesEnabled && !collapsed,
+    queryFn: async (): Promise<PipedrivePipelinesResponse> => {
+      const res = await authedFetch(`${apiBase}/integrations/pipedrive/pipelines`);
+      if (!res.ok) throw new Error("failed");
+      return res.json() as Promise<PipedrivePipelinesResponse>;
+    },
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+  });
+  const allStages = (pipelinesData?.pipelines || []).flatMap((p) =>
+    p.stages.map((s) => ({ pipelineId: p.id, pipelineLabel: p.label, ...s })),
+  );
+  const defaultPipeline = pipelinesData?.pipelines?.[0];
+  const defaultStage = defaultPipeline?.stages?.[0];
+
+  const refresh = () => {
+    queryClient.invalidateQueries({ queryKey: ["pipedrive-contact-context", senderEmail] });
+  };
+
+  // Helper centralisé : extrait le hint `reconnect_pipedrive` du payload
+  // d'erreur backend. Toutes les mutations Pipedrive doivent passer par ici
+  // pour garantir que les 401/403 (token expiré ou scope deals:full manquant)
+  // affichent le toast "reconnecter Pipedrive" plutôt qu'un message brut.
+  const throwPipedriveError = async (res: Response, fallback: string): Promise<never> => {
+    const body = await res.json().catch(() => ({} as { error?: string; hint?: string }));
+    const err = new Error(body.error || fallback) as Error & { hint?: string };
+    err.hint = body.hint;
+    throw err;
+  };
+  const showPipedriveError = (err: Error & { hint?: string }) => {
+    const description = err.hint === "reconnect_pipedrive" ? t("inbox.crmActionPipedriveErrorReconnect") : err.message;
+    toast({ title: t("inbox.crmActionPipedriveError"), description, variant: "destructive" });
+  };
+
+  const logEmailMut = useMutation({
+    mutationFn: async () => {
+      const res = await authedFetch(`${apiBase}/integrations/pipedrive/log-email`, {
+        method: "POST",
+        body: JSON.stringify({
+          contactExternalId: ctx?.contact?.externalId,
+          emailId: selectedEmailId,
+          subject: selectedSubject,
+          body: selectedBody,
+          occurredAt: selectedDate,
+        }),
+      });
+      if (!res.ok) await throwPipedriveError(res, "log failed");
+      return res.json();
+    },
+    onSuccess: (data: { alreadyLogged?: boolean }) => {
+      toast({
+        title: data.alreadyLogged ? t("inbox.crmActionAlreadyLoggedPipedrive") : t("inbox.crmActionLogEmailDonePipedrive"),
+      });
+    },
+    onError: showPipedriveError,
+  });
+
+  const createDealMut = useMutation({
+    mutationFn: async (input: { dealname: string; amount: string; pipeline: string; dealstage: string; closedate: string }) => {
+      const res = await authedFetch(`${apiBase}/integrations/pipedrive/create-deal`, {
+        method: "POST",
+        body: JSON.stringify({
+          contactExternalId: ctx?.contact?.externalId,
+          dealname: input.dealname,
+          amount: input.amount ? Number(input.amount) : null,
+          dealstage: input.dealstage || null,
+          closedate: input.closedate || null,
+        }),
+      });
+      if (!res.ok) await throwPipedriveError(res, "create deal failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionDealCreatedPipedrive") });
+      setShowDealForm(false);
+      refresh();
+    },
+    onError: showPipedriveError,
+  });
+
+  const createTaskMut = useMutation({
+    mutationFn: async (input: { subject: string; body: string; dueAt: string }) => {
+      const res = await authedFetch(`${apiBase}/integrations/pipedrive/create-task`, {
+        method: "POST",
+        body: JSON.stringify({
+          contactExternalId: ctx?.contact?.externalId,
+          subject: input.subject,
+          body: input.body,
+          dueAt: input.dueAt || null,
+        }),
+      });
+      if (!res.ok) await throwPipedriveError(res, "create task failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionTaskCreatedPipedrive") });
+      setShowTaskForm(false);
+    },
+    onError: showPipedriveError,
+  });
+
+  const updateDealStageMut = useMutation({
+    mutationFn: async (input: { dealExternalId: string; dealstage: string }) => {
+      const res = await authedFetch(`${apiBase}/integrations/pipedrive/deals/${encodeURIComponent(input.dealExternalId)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ dealstage: input.dealstage }),
+      });
+      if (!res.ok) await throwPipedriveError(res, "update deal failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionDealStageUpdated") });
+      refresh();
+    },
+    onError: showPipedriveError,
+  });
+
+  // Edition du `label` Pipedrive avec petit debounce manuel via state local
+  // pour éviter un PATCH par caractère.
+  const updateLabelMut = useMutation({
+    mutationFn: async (label: string) => {
+      if (!ctx?.contact?.externalId) throw new Error("no contact");
+      const res = await authedFetch(`${apiBase}/integrations/pipedrive/contacts/${encodeURIComponent(ctx.contact.externalId)}`, {
+        method: "PATCH",
+        body: JSON.stringify({ label }),
+      });
+      if (!res.ok) await throwPipedriveError(res, "update contact failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionContactUpdatedPipedrive") });
+      refresh();
+    },
+    onError: showPipedriveError,
+  });
+
+  const [showDealForm, setShowDealForm] = useState(false);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [dealName, setDealName] = useState("");
+  const [dealAmount, setDealAmount] = useState("");
+  const [dealPipeline, setDealPipeline] = useState("");
+  const [dealStage, setDealStage] = useState("");
+  const [dealClose, setDealClose] = useState("");
+  const [taskSubject, setTaskSubject] = useState("");
+  const [taskBody, setTaskBody] = useState("");
+  const [taskDue, setTaskDue] = useState("");
+  const [labelDraft, setLabelDraft] = useState<string>("");
+  useEffect(() => {
+    setLabelDraft(ctx?.contact?.label ?? "");
+  }, [ctx?.contact?.label]);
+
+  useEffect(() => {
+    if (showDealForm) {
+      setPipelinesEnabled(true);
+      if (!dealName && selectedSubject) setDealName(selectedSubject.slice(0, 80));
+      if (!dealClose) {
+        const d = new Date();
+        d.setDate(d.getDate() + 30);
+        setDealClose(d.toISOString().slice(0, 10));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showDealForm]);
+  useEffect(() => {
+    if (showDealForm && defaultPipeline && !dealPipeline) setDealPipeline(defaultPipeline.id);
+    if (showDealForm && defaultStage && !dealStage) setDealStage(defaultStage.id);
+  }, [showDealForm, defaultPipeline, defaultStage, dealPipeline, dealStage]);
+  useEffect(() => {
+    if (showTaskForm) {
+      if (!taskSubject) setTaskSubject(selectedSubject ? `Suivi : ${selectedSubject.slice(0, 80)}` : t("inbox.crmActionTaskDefaultTitle"));
+      if (!taskDue) {
+        const d = new Date();
+        d.setDate(d.getDate() + 7);
+        setTaskDue(d.toISOString().slice(0, 10));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showTaskForm]);
+
+  if (collapsed) {
+    return (
+      <div
+        className="bg-card rounded-lg border border-primary/30 p-2 flex flex-col items-center gap-2"
+        data-testid="panel-pipedrive-context-collapsed"
+      >
+        <Briefcase className="w-3.5 h-3.5 text-primary" />
+        <button
+          onClick={onToggleCollapsed}
+          title={t("inbox.crmExpand")}
+          className="text-[#8b9cb3] hover:text-white"
+          data-testid="button-pipedrive-expand"
+        >
+          <Maximize2 className="w-3 h-3" />
+        </button>
+      </div>
+    );
+  }
+
+  const fullName =
+    [ctx?.contact?.firstName, ctx?.contact?.lastName].filter(Boolean).join(" ") ||
+    ctx?.contact?.email ||
+    senderEmail ||
+    "—";
+  const initials = ((ctx?.contact?.firstName?.[0] ?? "") + (ctx?.contact?.lastName?.[0] ?? "")).toUpperCase()
+    || (senderEmail?.[0] ?? "?").toUpperCase();
+
+  return (
+    <div
+      className="bg-card rounded-lg border border-primary/30 p-3 space-y-2"
+      data-testid="panel-pipedrive-context"
+    >
+      <div className="flex items-center justify-between">
+        <h3 className="text-[10px] font-medium text-primary uppercase tracking-wider flex items-center gap-1.5">
+          <Briefcase className="w-3 h-3" />
+          {t("inbox.crmPipedrivePanelTitle")}
+        </h3>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={onToggleCollapsed}
+            title={t("inbox.crmCollapse")}
+            className="text-[#8b9cb3] hover:text-white"
+            data-testid="button-pipedrive-collapse"
+          >
+            <Minimize2 className="w-3 h-3" />
+          </button>
+          <button
+            onClick={onHide}
+            title={t("inbox.crmHide")}
+            className="text-[#8b9cb3] hover:text-white"
+            data-testid="button-pipedrive-hide"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        </div>
+      </div>
+
+      {!senderEmail && (
+        <p className="text-[10px] text-[#8b9cb3] leading-relaxed">
+          {t("inbox.crmSelectEmailHintPipedrive")}
+        </p>
+      )}
+
+      {senderEmail && isLoading && (
+        <p className="text-[10px] text-[#8b9cb3]">…</p>
+      )}
+
+      {senderEmail && !isLoading && (ctx === null || isError) && (
+        <p className="text-[10px] text-[#8b9cb3] leading-relaxed" data-testid="text-pipedrive-no-match">
+          {t("inbox.crmNoMatchPipedrive")}
+        </p>
+      )}
+
+      {senderEmail && ctx && (
+        <>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-primary/20 text-primary flex items-center justify-center text-[10px] font-medium shrink-0">
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[12px] text-white font-medium truncate" data-testid="text-pipedrive-contact-name">{fullName}</p>
+              {ctx.contact.email && (
+                <p className="text-[10px] text-[#8b9cb3] truncate">{ctx.contact.email}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-1 pt-1">
+            <button
+              type="button"
+              onClick={() => logEmailMut.mutate()}
+              disabled={!selectedEmailId || logEmailMut.isPending}
+              title={t("inbox.crmActionLogEmailPipedrive")}
+              className="text-[10px] bg-primary/10 hover:bg-primary/20 disabled:opacity-40 text-primary rounded px-1.5 py-1 flex items-center justify-center"
+              data-testid="button-pipedrive-log-email"
+            >
+              {logEmailMut.isPending ? "…" : t("inbox.crmActionLogEmailShort")}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setShowDealForm((v) => !v); setShowTaskForm(false); }}
+              className={`text-[10px] rounded px-1.5 py-1 ${showDealForm ? "bg-primary text-white" : "bg-primary/10 hover:bg-primary/20 text-primary"}`}
+              data-testid="button-pipedrive-toggle-deal-form"
+            >
+              {t("inbox.crmActionCreateDealShort")}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setShowTaskForm((v) => !v); setShowDealForm(false); }}
+              className={`text-[10px] rounded px-1.5 py-1 ${showTaskForm ? "bg-primary text-white" : "bg-primary/10 hover:bg-primary/20 text-primary"}`}
+              data-testid="button-pipedrive-toggle-task-form"
+            >
+              {t("inbox.crmActionCreateTaskShort")}
+            </button>
+          </div>
+
+          {showDealForm && (
+            <div className="space-y-1.5 bg-[#0f1729] rounded p-2" data-testid="form-pipedrive-deal">
+              <input
+                type="text"
+                value={dealName}
+                onChange={(e) => setDealName(e.target.value)}
+                placeholder={t("inbox.crmActionDealName")}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-pipedrive-deal-name"
+              />
+              <input
+                type="number"
+                value={dealAmount}
+                onChange={(e) => setDealAmount(e.target.value)}
+                placeholder={t("inbox.crmActionDealAmount")}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-pipedrive-deal-amount"
+              />
+              {allStages.length > 0 && (
+                <select
+                  value={dealStage}
+                  onChange={(e) => {
+                    setDealStage(e.target.value);
+                    const found = allStages.find((s) => s.id === e.target.value);
+                    if (found) setDealPipeline(found.pipelineId);
+                  }}
+                  className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                  data-testid="select-pipedrive-deal-stage"
+                >
+                  {allStages.map((s) => (
+                    <option key={`${s.pipelineId}:${s.id}`} value={s.id}>
+                      {s.pipelineLabel} — {s.label}
+                    </option>
+                  ))}
+                </select>
+              )}
+              <input
+                type="date"
+                value={dealClose}
+                onChange={(e) => setDealClose(e.target.value)}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-pipedrive-deal-close"
+              />
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => createDealMut.mutate({ dealname: dealName, amount: dealAmount, pipeline: dealPipeline, dealstage: dealStage, closedate: dealClose })}
+                  disabled={!dealName.trim() || createDealMut.isPending}
+                  className="flex-1 text-[10px] bg-primary hover:bg-primary/90 disabled:opacity-40 text-white rounded px-1.5 py-1"
+                  data-testid="button-pipedrive-deal-submit"
+                >
+                  {createDealMut.isPending ? "…" : t("inbox.crmActionSubmit")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDealForm(false)}
+                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                >
+                  {t("inbox.crmActionCancel")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {showTaskForm && (
+            <div className="space-y-1.5 bg-[#0f1729] rounded p-2" data-testid="form-pipedrive-task">
+              <input
+                type="text"
+                value={taskSubject}
+                onChange={(e) => setTaskSubject(e.target.value)}
+                placeholder={t("inbox.crmActionTaskTitle")}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-pipedrive-task-subject"
+              />
+              <textarea
+                value={taskBody}
+                onChange={(e) => setTaskBody(e.target.value)}
+                placeholder={t("inbox.crmActionTaskNote")}
+                rows={2}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white resize-none"
+                data-testid="textarea-pipedrive-task-body"
+              />
+              <input
+                type="date"
+                value={taskDue}
+                onChange={(e) => setTaskDue(e.target.value)}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-pipedrive-task-due"
+              />
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => createTaskMut.mutate({ subject: taskSubject, body: taskBody, dueAt: taskDue })}
+                  disabled={!taskSubject.trim() || createTaskMut.isPending}
+                  className="flex-1 text-[10px] bg-primary hover:bg-primary/90 disabled:opacity-40 text-white rounded px-1.5 py-1"
+                  data-testid="button-pipedrive-task-submit"
+                >
+                  {createTaskMut.isPending ? "…" : t("inbox.crmActionSubmit")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowTaskForm(false)}
+                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                >
+                  {t("inbox.crmActionCancel")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {ctx.contact.company && (
+            <div className="text-[11px]">
+              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmCompany")}</div>
+              <div className="text-white">{ctx.contact.company}</div>
+            </div>
+          )}
+          {ctx.contact.ownerName && (
+            <div className="text-[11px]">
+              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmOwnerPipedrive")}</div>
+              <div className="text-white">{ctx.contact.ownerName}</div>
+            </div>
+          )}
+
+          {/* Label Pipedrive éditable (équivalent Person.label) — soumis sur blur */}
+          <div className="text-[11px]">
+            <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLabelPipedrive")}</div>
+            <input
+              type="text"
+              value={labelDraft}
+              onChange={(e) => setLabelDraft(e.target.value)}
+              onBlur={() => {
+                const trimmed = labelDraft.trim();
+                if (trimmed !== (ctx.contact.label ?? "").trim()) {
+                  updateLabelMut.mutate(trimmed);
+                }
+              }}
+              disabled={updateLabelMut.isPending}
+              placeholder={t("inbox.crmLabelPipedrivePlaceholder")}
+              className="w-full text-[10px] bg-[#0f1729] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+              data-testid="input-pipedrive-label"
+            />
+          </div>
+
+          <div className="pt-2 border-t border-[#1f2937]">
+            <div className="text-[#8b9cb3] text-[10px] uppercase tracking-wider mb-1.5">
+              {t("inbox.crmDealsTitle")}
+            </div>
+            {ctx.deals.length === 0 ? (
+              <p className="text-[10px] text-[#8b9cb3]">{t("inbox.crmNoDeals")}</p>
+            ) : (
+              <ul className="space-y-1.5" data-testid="list-pipedrive-deals">
+                {ctx.deals.map((d) => (
+                  <li key={d.externalId} className="text-[11px] bg-[#0f1729] rounded p-1.5 space-y-1">
+                    <div className="text-white font-medium truncate">{d.title || "—"}</div>
+                    <div className="text-[10px] text-[#8b9cb3] flex flex-wrap gap-x-2">
+                      {d.amount != null && (
+                        <span>
+                          {t("inbox.crmDealAmount")}: {d.amount} {d.currency || ""}
+                        </span>
+                      )}
+                      {d.closeDate && (
+                        <span>
+                          {t("inbox.crmDealClose")}: {new Date(d.closeDate).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                    {allStages.length > 0 ? (
+                      <select
+                        value={d.stage || ""}
+                        onChange={(e) => updateDealStageMut.mutate({ dealExternalId: d.externalId, dealstage: e.target.value })}
+                        disabled={updateDealStageMut.isPending}
+                        className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1 py-0.5 text-white"
+                        data-testid={`select-pipedrive-deal-stage-${d.externalId}`}
+                      >
+                        <option value="">—</option>
+                        {allStages.map((s) => (
+                          <option key={`${s.pipelineId}:${s.id}`} value={s.id}>
+                            {s.label}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      d.stage && (
+                        <div className="text-[10px] text-[#8b9cb3]">
+                          {t("inbox.crmDealStage")}: {d.stage}
+                        </div>
+                      )
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </>
+      )}
+
+      <Link href="/dashboard/parametres/crm">
+        <button
+          className="w-full text-[10px] text-primary hover:text-white transition-colors py-1 mt-1 border-t border-[#1f2937]"
+          data-testid="button-pipedrive-configure"
+        >
+          {t("inbox.crmConfigure")} →
+        </button>
+      </Link>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
   const [filterPriority, setFilterPriority] = useState<string>("all");
-  // Wave HubSpot — filtre Réception sur les expéditeurs présents dans HubSpot.
-  const [crmFilter, setCrmFilter] = useState<"hubspot" | null>(null);
+  // Wave HubSpot/Pipedrive — filtre Réception sur les expéditeurs présents
+  // dans le CRM choisi. crmFilter = null désactive le filtre.
+  const [crmFilter, setCrmFilter] = useState<"hubspot" | "pipedrive" | null>(null);
   const [crmPanelCollapsed, setCrmPanelCollapsed] = useState(false);
   const [detailHubspotPanelHidden, setDetailHubspotPanelHidden] = useState(false);
+  const [detailPipedrivePanelHidden, setDetailPipedrivePanelHidden] = useState(false);
   const integrationsQuery = useListIntegrations();
   const integrationsList = (integrationsQuery.data ?? []) as Integration[];
   const hasHubspot = integrationsList.some(
     (i) => String(i.provider) === "hubspot" && i.enabled,
   );
-  // Désactive automatiquement le filtre si HubSpot est déconnecté.
+  const hasPipedrive = integrationsList.some(
+    (i) => String(i.provider) === "pipedrive" && i.enabled,
+  );
+  // Désactive automatiquement le filtre si le CRM ciblé est déconnecté.
   useEffect(() => {
     if (!hasHubspot && crmFilter === "hubspot") setCrmFilter(null);
-  }, [hasHubspot, crmFilter]);
+    if (!hasPipedrive && crmFilter === "pipedrive") setCrmFilter(null);
+  }, [hasHubspot, hasPipedrive, crmFilter]);
   const [sortMode, setSortMode] = useState<"priority" | "date_desc" | "date_asc">(() => {
     if (typeof window === "undefined") return "priority";
     const saved = window.localStorage.getItem("inbox.sortMode");
@@ -1927,11 +2529,12 @@ export default function Dashboard() {
     const num = id ? Number(id) : NaN;
     return Number.isFinite(num) && num > 0 ? num : null;
   });
-  // Réafficher le panneau HubSpot à chaque changement d'email ouvert :
-  // si l'utilisateur l'a masqué sur un email, on ne veut pas que ce
+  // Réafficher les panneaux CRM à chaque changement d'email ouvert :
+  // si l'utilisateur les a masqués sur un email, on ne veut pas que ce
   // masquage persiste sur l'email suivant (chaque email mérite son contexte).
   useEffect(() => {
     setDetailHubspotPanelHidden(false);
+    setDetailPipedrivePanelHidden(false);
   }, [selectedEmailId]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [searchInput, setSearchInput] = useState("");
@@ -2872,6 +3475,25 @@ export default function Dashboard() {
               />
             </div>
           )}
+          {/* Panneau Pipedrive — miroir HubSpot. Affiché en plus si Pipedrive
+              est aussi connecté ; les deux panneaux peuvent coexister côte à
+              côte (useful quand un même contact est dans les deux CRM). */}
+          {hasPipedrive && !detailPipedrivePanelHidden && (
+            <div className="w-full md:w-[280px] shrink-0">
+              <PipedriveContextPanel
+                senderEmail={
+                  extractEmailAddress(selectedEmail.senderEmail || selectedEmail.sender) || null
+                }
+                selectedEmailId={Number(selectedEmail.id)}
+                selectedSubject={selectedEmail?.subject ?? null}
+                selectedBody={selectedEmail?.body ?? null}
+                selectedDate={selectedEmail?.created_at ?? selectedEmail?.createdAt ?? null}
+                collapsed={crmPanelCollapsed}
+                onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
+                onHide={() => setDetailPipedrivePanelHidden(true)}
+              />
+            </div>
+          )}
         </div>
       </DashboardLayout>
     );
@@ -3155,25 +3777,42 @@ export default function Dashboard() {
               </Select>
             </div>
 
-          {hasHubspot && (
+          {(hasHubspot || hasPipedrive) && (
             <div
               className="flex flex-wrap items-center gap-1.5 max-w-[1200px] mx-auto mt-2"
               data-testid="row-crm-filter"
             >
               <span className="text-[10px] text-[#8b9cb3] mr-1">{t("inbox.crmLabel")}:</span>
-              <button
-                onClick={() => setCrmFilter((c) => (c === "hubspot" ? null : "hubspot"))}
-                title={t("inbox.crmHubspotTooltip")}
-                data-testid="button-crm-hubspot"
-                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
-                  crmFilter === "hubspot"
-                    ? "bg-primary/15 text-primary border border-primary/20"
-                    : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
-                }`}
-              >
-                <Building2 className="w-3 h-3" />
-                <span>HubSpot</span>
-              </button>
+              {hasHubspot && (
+                <button
+                  onClick={() => setCrmFilter((c) => (c === "hubspot" ? null : "hubspot"))}
+                  title={t("inbox.crmHubspotTooltip")}
+                  data-testid="button-crm-hubspot"
+                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                    crmFilter === "hubspot"
+                      ? "bg-primary/15 text-primary border border-primary/20"
+                      : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                  }`}
+                >
+                  <Building2 className="w-3 h-3" />
+                  <span>HubSpot</span>
+                </button>
+              )}
+              {hasPipedrive && (
+                <button
+                  onClick={() => setCrmFilter((c) => (c === "pipedrive" ? null : "pipedrive"))}
+                  title={t("inbox.crmPipedriveTooltip")}
+                  data-testid="button-crm-pipedrive"
+                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                    crmFilter === "pipedrive"
+                      ? "bg-primary/15 text-primary border border-primary/20"
+                      : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                  }`}
+                >
+                  <Briefcase className="w-3 h-3" />
+                  <span>Pipedrive</span>
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -3383,6 +4022,12 @@ export default function Dashboard() {
                             <Building2 className="mx-auto h-8 w-8 text-primary/40 mb-2" />
                             <h3 className="text-[13px] font-medium text-white">{t("inbox.crmEmptyHubspotTitle")}</h3>
                             <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.crmEmptyHubspotDesc")}</p>
+                          </>
+                        ) : crmFilter === "pipedrive" ? (
+                          <>
+                            <Briefcase className="mx-auto h-8 w-8 text-primary/40 mb-2" />
+                            <h3 className="text-[13px] font-medium text-white">{t("inbox.crmEmptyPipedriveTitle")}</h3>
+                            <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.crmEmptyPipedriveDesc")}</p>
                           </>
                         ) : (
                           <>
