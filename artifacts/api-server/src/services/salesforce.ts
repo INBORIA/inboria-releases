@@ -257,11 +257,17 @@ export async function syncSalesforceDeals(
   // OpportunityContactRoles est une subquery : on récupère l'éventuel primary
   // pour stocker contact_external_id. Si aucun role, contact_external_id = null
   // (le deal sera quand même cherchable via AccountId côté getContactContext).
-  const soql =
-    `SELECT Id, Name, Amount, StageName, CloseDate, AccountId, IsClosed, IsWon, ` +
+  // CurrencyIsoCode n'existe que sur les orgs multi-currency. On tente avec,
+  // et si Salesforce répond INVALID_FIELD on retombe sur la query sans devise
+  // (la valeur stockée sera alors null — graceful fallback).
+  const soqlBase = (withCurrency: boolean) =>
+    `SELECT Id, Name, Amount,${withCurrency ? " CurrencyIsoCode," : ""} StageName, CloseDate, AccountId, IsClosed, IsWon, ` +
     `(SELECT ContactId, IsPrimary FROM OpportunityContactRoles) ` +
     `FROM Opportunity ORDER BY LastModifiedDate DESC LIMIT ${safeLimit}`;
-  const r = await soqlQuery<Record<string, any>>(userId, soql);
+  let r = await soqlQuery<Record<string, any>>(userId, soqlBase(true));
+  if (!r.ok && /INVALID_FIELD/i.test(r.error || "") && /CurrencyIsoCode/i.test(r.error || "")) {
+    r = await soqlQuery<Record<string, any>>(userId, soqlBase(false));
+  }
   if (!r.ok) return { synced: 0, error: r.error };
   const records = r.data?.records || [];
   for (const o of records) {
@@ -274,7 +280,7 @@ export async function syncSalesforceDeals(
         external_id: String(o.Id),
         title: o.Name || null,
         amount: o.Amount != null ? Number(o.Amount) : null,
-        currency: null, // CurrencyIsoCode requires multi-currency org; omit for safety
+        currency: (o.CurrencyIsoCode as string | null) || null,
         stage: o.StageName || null,
         status: o.IsClosed ? (o.IsWon ? "won" : "lost") : "open",
         contact_external_id: primary?.ContactId ? String(primary.ContactId) : null,
@@ -386,17 +392,22 @@ export async function getSalesforceContactContext(
     closeDate: string | null;
   }> = [];
   try {
-    const dealSoql =
-      `SELECT Id, Name, Amount, StageName, CloseDate, IsClosed, IsWon FROM Opportunity ` +
+    // Idem syncSalesforceDeals : tentative avec CurrencyIsoCode, fallback sans
+    // si l'org n'a pas l'option multi-currency activée.
+    const dealSoqlBase = (withCurrency: boolean) =>
+      `SELECT Id, Name, Amount,${withCurrency ? " CurrencyIsoCode," : ""} StageName, CloseDate, IsClosed, IsWon FROM Opportunity ` +
       `WHERE Id IN (SELECT OpportunityId FROM OpportunityContactRole WHERE ContactId = '${soqlEscape(contact.external_id)}') ` +
       `ORDER BY LastModifiedDate DESC LIMIT 10`;
-    const dealsRes = await soqlQuery<Record<string, any>>(userId, dealSoql);
+    let dealsRes = await soqlQuery<Record<string, any>>(userId, dealSoqlBase(true));
+    if (!dealsRes.ok && /INVALID_FIELD/i.test(dealsRes.error || "") && /CurrencyIsoCode/i.test(dealsRes.error || "")) {
+      dealsRes = await soqlQuery<Record<string, any>>(userId, dealSoqlBase(false));
+    }
     if (dealsRes.ok) {
       deals = (dealsRes.data?.records || []).map((o) => ({
         externalId: String(o.Id),
         title: o.Name || null,
         amount: o.Amount != null ? Number(o.Amount) : null,
-        currency: null,
+        currency: (o.CurrencyIsoCode as string | null) || null,
         stage: o.StageName || null,
         status: o.IsClosed ? (o.IsWon ? "won" : "lost") : "open",
         closeDate: o.CloseDate || null,
@@ -494,6 +505,7 @@ export async function createSalesforceOpportunity(
   input: {
     name: string;
     amount?: number | null;
+    currency?: string | null;
     stageName?: string | null;
     closeDate?: string | null;
   },
@@ -514,6 +526,7 @@ export async function createSalesforceOpportunity(
     CloseDate: input.closeDate || new Date(Date.now() + 30 * 86400_000).toISOString().slice(0, 10),
   };
   if (input.amount != null && Number.isFinite(input.amount)) body["Amount"] = input.amount;
+  if (input.currency && /^[A-Z]{3}$/.test(input.currency)) body["CurrencyIsoCode"] = input.currency;
   if (accountId) body["AccountId"] = accountId;
 
   const r = await authorizedFetch(
@@ -544,7 +557,7 @@ export async function createSalesforceOpportunity(
         contact_external_id: contactId,
         title: input.name,
         amount: input.amount ?? null,
-        currency: null,
+        currency: (body["CurrencyIsoCode"] as string | undefined) || null,
         stage: (body["StageName"] as string) || null,
         status: "open",
         raw: { ...body, AccountId: accountId } as Record<string, unknown>,

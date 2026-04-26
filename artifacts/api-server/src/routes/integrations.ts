@@ -1475,7 +1475,7 @@ router.post("/integrations/salesforce/log-email", requireAuth, async (req, res):
 
 router.post("/integrations/salesforce/create-deal", requireAuth, async (req, res): Promise<void> => {
   try {
-    const { contactEmail, contactExternalId, dealname, amount, dealstage, closedate } = req.body || {};
+    const { contactEmail, contactExternalId, dealname, amount, currency, dealstage, closedate } = req.body || {};
     if (!dealname || typeof dealname !== "string" || !dealname.trim()) {
       res.status(400).json({ error: "dealname required" });
       return;
@@ -1486,9 +1486,13 @@ router.post("/integrations/salesforce/create-deal", requireAuth, async (req, res
       return;
     }
     const amountNum = amount != null && amount !== "" ? Number(amount) : null;
+    const currencyIso = typeof currency === "string" && /^[A-Z]{3}$/.test(currency.toUpperCase())
+      ? currency.toUpperCase()
+      : null;
     const result = await createSalesforceOpportunity(req.userId!, resolved.id, {
       name: dealname.trim().slice(0, 120),
       amount: amountNum != null && Number.isFinite(amountNum) ? amountNum : null,
+      currency: currencyIso,
       stageName: typeof dealstage === "string" ? dealstage : null,
       closeDate: typeof closedate === "string" ? closedate : null,
     });

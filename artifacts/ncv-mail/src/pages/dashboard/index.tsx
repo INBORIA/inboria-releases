@@ -3097,7 +3097,7 @@ function SalesforceContextPanel({
                     <div className="text-[10px] text-[#8b9cb3] flex flex-wrap gap-x-2">
                       {d.amount != null && (
                         <span>
-                          {t("inbox.crmDealAmount")}: {d.amount}
+                          {t("inbox.crmDealAmount")}: {d.amount} {d.currency || ""}
                         </span>
                       )}
                       {d.closeDate && (
