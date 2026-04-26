@@ -595,6 +595,21 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
 
     const emails = [...(nullEmails || []), ...junkEmails].slice(0, 50);
 
+    // Diagnostic temporaire pour comprendre pourquoi le bouton "Re-classer"
+    // tourne à vide pour l'utilisateur : trace ce que le SELECT trouve
+    // réellement (perso + boîtes partagées).
+    logger.info({
+      service: "recategorize",
+      userId,
+      memberMailboxIds,
+      systemCatId,
+      junkCategoryIds,
+      legacyJunkIds,
+      nullEmailsCount: (nullEmails || []).length,
+      junkEmailsCount: junkEmails.length,
+      totalEmails: emails.length,
+    }, "[recategorize] fetched candidates");
+
     if (emails.length === 0) {
       res.json({ recategorized: 0, created: [] });
       return;
