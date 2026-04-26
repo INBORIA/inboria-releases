@@ -1,5 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
@@ -34,6 +34,7 @@ interface AvailabilityMap {
   notion: boolean;
   hubspot: boolean;
   pipedrive: boolean;
+  salesforce: boolean;
   whatsapp: boolean;
   sms_twilio: boolean;
   sms_brevo: boolean;
@@ -80,9 +81,12 @@ export default function ParametresCrm() {
     return () => window.removeEventListener("message", onMessage);
   }, [qc]);
 
-  async function connectProvider(provider: string) {
+  // Helper générique : accepte des query params optionnels (ex. sandbox=true
+  // pour Salesforce). Reste compatible avec HubSpot/Pipedrive sans option.
+  async function connectProvider(provider: string, queryParams?: Record<string, string>) {
     try {
-      const res = await fetch(`${baseUrl()}/api/integrations/${provider}/connect`, {
+      const qs = queryParams ? `?${new URLSearchParams(queryParams).toString()}` : "";
+      const res = await fetch(`${baseUrl()}/api/integrations/${provider}/connect${qs}`, {
         headers: authHeaders(token),
       });
       const data = await res.json();
@@ -92,6 +96,10 @@ export default function ParametresCrm() {
       toast({ title: t("integrations.connectFailed"), description: err.message, variant: "destructive" });
     }
   }
+
+  // State local pour le toggle Sandbox de la carte Salesforce. Persisté
+  // uniquement le temps de la session : décision consciente à chaque connect.
+  const [sfSandbox, setSfSandbox] = useState(false);
 
   async function disconnectProvider(provider: string) {
     if (!confirm(t("integrations.confirmDisconnect"))) return;
@@ -105,7 +113,7 @@ export default function ParametresCrm() {
     }
   }
 
-  async function syncCrm(provider: "hubspot" | "pipedrive") {
+  async function syncCrm(provider: "hubspot" | "pipedrive" | "salesforce") {
     const res = await fetch(`${baseUrl()}/api/integrations/${provider}/sync`, {
       method: "POST",
       headers: authHeaders(token),
@@ -224,31 +232,122 @@ export default function ParametresCrm() {
           {renderProviderCard("hubspot", "HubSpot", Building2)}
           {renderProviderCard("pipedrive", "Pipedrive", Briefcase)}
 
-          <Card data-testid="card-integration-salesforce" className="opacity-70">
-            <CardContent className="p-4">
-              <div className="flex items-start gap-3">
-                <div className="rounded-lg bg-[#1a2332] p-2">
-                  <Cloud className="h-5 w-5 text-[#2d7dd2]" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <h3 className="font-semibold text-sm">Salesforce</h3>
-                    <Badge variant="outline" className="text-[10px]">
-                      {t("settings.hub.comingSoon", "Bientôt disponible")}
-                    </Badge>
+          {/* Carte Salesforce — parité HubSpot/Pipedrive avec un toggle
+              Sandbox supplémentaire (cible ETI/grands comptes : tester sur
+              une org Sandbox avant de connecter la Production). Le toggle
+              n'est exposé qu'à l'état "non connecté" : une fois la connexion
+              établie, le badge `workspaceName` indique déjà "(Sandbox)". */}
+          {(() => {
+            const row = findIntegration("salesforce");
+            const available = availability.data?.salesforce ?? false;
+            const isConnected = !!row && row.enabled;
+            return (
+              <Card data-testid="card-integration-salesforce">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-lg bg-[#1a2332] p-2">
+                      <Cloud className="h-5 w-5 text-[#2d7dd2]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-semibold text-sm">
+                          {row?.workspaceName || "Salesforce"}
+                        </h3>
+                        {isConnected ? (
+                          <Badge variant="default" className="text-[10px] bg-emerald-600">
+                            <CheckCircle2 className="h-3 w-3 mr-1" />
+                            {t("integrations.connected")}
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-[10px]">
+                            {t("integrations.notConnected")}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-xs text-[#8b9cb3] mt-1">
+                        {t(
+                          "settings.hub.salesforceDesc",
+                          "Synchronisation des contacts, comptes et opportunités Salesforce.",
+                        )}
+                      </p>
+                      {row?.lastError && (
+                        <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
+                          <AlertCircle className="h-3 w-3" />
+                          {row.lastError}
+                        </p>
+                      )}
+                      {row?.lastSyncedAt && (
+                        <p className="text-xs text-[#8b9cb3] mt-1">
+                          {t("integrations.lastSynced")}: {new Date(row.lastSyncedAt).toLocaleString()}
+                        </p>
+                      )}
+                      {!isConnected && (
+                        <label
+                          className="flex items-center gap-2 mt-3 text-xs text-[#8b9cb3] cursor-pointer select-none"
+                          data-testid="label-salesforce-sandbox"
+                        >
+                          <input
+                            type="checkbox"
+                            className="h-3.5 w-3.5 accent-primary"
+                            checked={sfSandbox}
+                            onChange={(e) => setSfSandbox(e.target.checked)}
+                            data-testid="checkbox-salesforce-sandbox"
+                          />
+                          <span>
+                            {t(
+                              "settings.hub.salesforceSandbox",
+                              "Sandbox (test.salesforce.com)",
+                            )}
+                          </span>
+                        </label>
+                      )}
+                      <div className="flex gap-2 mt-3 flex-wrap">
+                        {!isConnected ? (
+                          <Button
+                            size="sm"
+                            onClick={() =>
+                              connectProvider(
+                                "salesforce",
+                                sfSandbox ? { sandbox: "true" } : undefined,
+                              )
+                            }
+                            disabled={!available}
+                            data-testid="button-connect-salesforce"
+                          >
+                            {available
+                              ? t("integrations.connect")
+                              : t("integrations.notConfigured")}
+                          </Button>
+                        ) : (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => syncCrm("salesforce")}
+                              data-testid="button-sync-salesforce"
+                            >
+                              <RefreshCw className="h-3 w-3 mr-1" />
+                              {t("integrations.sync")}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-red-400"
+                              onClick={() => disconnectProvider("salesforce")}
+                              data-testid="button-disconnect-salesforce"
+                            >
+                              <Trash2 className="h-3 w-3 mr-1" />
+                              {t("integrations.disconnect")}
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  <p className="text-xs text-[#8b9cb3] mt-1">
-                    {t("settings.hub.salesforceDesc", "Synchronisation des contacts, comptes et opportunités Salesforce.")}
-                  </p>
-                  <div className="mt-3">
-                    <Button size="sm" disabled>
-                      {t("settings.hub.comingSoon", "Bientôt disponible")}
-                    </Button>
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+                </CardContent>
+              </Card>
+            );
+          })()}
         </div>
       </div>
     </DashboardLayout>

@@ -50,7 +50,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -1314,6 +1314,51 @@ type PipedrivePipelinesResponse = {
   }>;
 };
 
+// Salesforce context — parité PipedriveContext mais avec champs Salesforce :
+// `description` (texte libre éditable, équivalent du label Pipedrive) et
+// `tasks` (Activities Salesforce, équivalent activities Pipedrive).
+type SalesforceContext = {
+  contact: {
+    externalId: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    company: string | null;
+    phone: string | null;
+    jobTitle: string | null;
+    description: string | null;
+    leadSource: string | null;
+    ownerId: string | null;
+    ownerName: string | null;
+    lastSyncedAt: string;
+  };
+  deals: Array<{
+    externalId: string;
+    title: string | null;
+    amount: number | null;
+    currency: string | null;
+    stage: string | null;
+    status: string | null;
+    closeDate: string | null;
+  }>;
+  tasks: Array<{
+    id: string;
+    subject: string | null;
+    status: string | null;
+    activityDate: string | null;
+    isClosed: boolean;
+    createdDate: string | null;
+  }>;
+};
+
+type SalesforcePipelinesResponse = {
+  pipelines: Array<{
+    id: string;
+    label: string;
+    stages: Array<{ id: string; label: string; displayOrder: number }>;
+  }>;
+};
+
 const HUBSPOT_LIFECYCLE_OPTIONS = [
   "subscriber",
   "lead",
@@ -2539,6 +2584,610 @@ function PipedriveContextPanel({
   );
 }
 
+// ===========================================================================
+// Salesforce — panneau cockpit (parité HubSpot/Pipedrive).
+// Mêmes contrats côté UI : log email, créer Opportunity (deal Salesforce),
+// créer Task, modifier StageName d'une Opp, éditer Description du Contact.
+// Différences fonctionnelles : pas de currency (omis pour rester compatible
+// avec orgs single-currency), `description` à la place du `label` Pipedrive,
+// `tasks` à la place des `activities`.
+// ===========================================================================
+function SalesforceContextPanel({
+  senderEmail,
+  selectedEmailId,
+  selectedSubject,
+  selectedBody,
+  selectedDate,
+  collapsed,
+  onToggleCollapsed,
+  onHide,
+}: {
+  senderEmail: string | null;
+  selectedEmailId: number | null;
+  selectedSubject: string | null;
+  selectedBody: string | null;
+  selectedDate: string | null;
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
+  onHide: () => void;
+}) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const apiBase = `${import.meta.env.BASE_URL}api`;
+
+  const { data: ctx, isLoading, isError } = useQuery({
+    queryKey: ["salesforce-contact-context", senderEmail],
+    enabled: !!senderEmail && !collapsed,
+    queryFn: async (): Promise<SalesforceContext | null> => {
+      const res = await authedFetch(
+        `${apiBase}/integrations/salesforce/contact-context?email=${encodeURIComponent(senderEmail!)}`,
+      );
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error("failed");
+      return res.json() as Promise<SalesforceContext>;
+    },
+    retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 60_000,
+  });
+
+  const [pipelinesEnabled, setPipelinesEnabled] = useState(false);
+  useEffect(() => {
+    if (ctx && ctx.deals.length > 0) setPipelinesEnabled(true);
+  }, [ctx]);
+  const { data: pipelinesData } = useQuery({
+    queryKey: ["salesforce-pipelines"],
+    enabled: pipelinesEnabled && !collapsed,
+    queryFn: async (): Promise<SalesforcePipelinesResponse> => {
+      const res = await authedFetch(`${apiBase}/integrations/salesforce/pipelines`);
+      if (!res.ok) throw new Error("failed");
+      return res.json() as Promise<SalesforcePipelinesResponse>;
+    },
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+  });
+  const allStages = (pipelinesData?.pipelines || []).flatMap((p) =>
+    p.stages.map((s) => ({ pipelineId: p.id, pipelineLabel: p.label, ...s })),
+  );
+  const defaultPipeline = pipelinesData?.pipelines?.[0];
+  const defaultStage = defaultPipeline?.stages?.[0];
+
+  const refresh = () => {
+    queryClient.invalidateQueries({ queryKey: ["salesforce-contact-context", senderEmail] });
+  };
+
+  // Helper centralisé : extrait `reconnect_salesforce` du payload backend.
+  // Indispensable pour différencier 401/403 (token expiré, scope manquant)
+  // d'une erreur métier classique → l'UI bascule sur un toast "reconnecter".
+  const throwSalesforceError = async (res: Response, fallback: string): Promise<never> => {
+    const body = await res.json().catch(() => ({} as { error?: string; hint?: string }));
+    const err = new Error(body.error || fallback) as Error & { hint?: string };
+    err.hint = body.hint;
+    throw err;
+  };
+  const showSalesforceError = (err: Error & { hint?: string }) => {
+    const description = err.hint === "reconnect_salesforce" ? t("inbox.crmActionSalesforceErrorReconnect") : err.message;
+    toast({ title: t("inbox.crmActionSalesforceError"), description, variant: "destructive" });
+  };
+
+  const logEmailMut = useMutation({
+    mutationFn: async () => {
+      const res = await authedFetch(`${apiBase}/integrations/salesforce/log-email`, {
+        method: "POST",
+        body: JSON.stringify({
+          contactExternalId: ctx?.contact?.externalId,
+          emailId: selectedEmailId,
+          subject: selectedSubject,
+          body: selectedBody,
+          occurredAt: selectedDate,
+        }),
+      });
+      if (!res.ok) await throwSalesforceError(res, "log failed");
+      return res.json();
+    },
+    onSuccess: (data: { alreadyLogged?: boolean }) => {
+      toast({
+        title: data.alreadyLogged
+          ? t("inbox.crmActionAlreadyLoggedSalesforce")
+          : t("inbox.crmActionLogEmailDoneSalesforce"),
+      });
+    },
+    onError: showSalesforceError,
+  });
+
+  const createDealMut = useMutation({
+    mutationFn: async (input: { dealname: string; amount: string; pipeline: string; dealstage: string; closedate: string }) => {
+      const res = await authedFetch(`${apiBase}/integrations/salesforce/create-deal`, {
+        method: "POST",
+        body: JSON.stringify({
+          contactExternalId: ctx?.contact?.externalId,
+          dealname: input.dealname,
+          amount: input.amount ? Number(input.amount) : null,
+          dealstage: input.dealstage || null,
+          closedate: input.closedate || null,
+        }),
+      });
+      if (!res.ok) await throwSalesforceError(res, "create opportunity failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionDealCreatedSalesforce") });
+      setShowDealForm(false);
+      refresh();
+    },
+    onError: showSalesforceError,
+  });
+
+  const createTaskMut = useMutation({
+    mutationFn: async (input: { subject: string; body: string; dueAt: string }) => {
+      const res = await authedFetch(`${apiBase}/integrations/salesforce/create-task`, {
+        method: "POST",
+        body: JSON.stringify({
+          contactExternalId: ctx?.contact?.externalId,
+          subject: input.subject,
+          body: input.body,
+          dueAt: input.dueAt || null,
+        }),
+      });
+      if (!res.ok) await throwSalesforceError(res, "create task failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionTaskCreatedSalesforce") });
+      setShowTaskForm(false);
+    },
+    onError: showSalesforceError,
+  });
+
+  const updateDealStageMut = useMutation({
+    mutationFn: async (input: { dealExternalId: string; dealstage: string }) => {
+      const res = await authedFetch(
+        `${apiBase}/integrations/salesforce/deals/${encodeURIComponent(input.dealExternalId)}`,
+        { method: "PATCH", body: JSON.stringify({ dealstage: input.dealstage }) },
+      );
+      if (!res.ok) await throwSalesforceError(res, "update opportunity failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionDealStageUpdated") });
+      refresh();
+    },
+    onError: showSalesforceError,
+  });
+
+  // Edition de la Description Salesforce avec submit on blur (équivalent du
+  // label Pipedrive). Pas de PATCH par caractère — un PATCH si valeur changée.
+  const updateDescriptionMut = useMutation({
+    mutationFn: async (description: string) => {
+      if (!ctx?.contact?.externalId) throw new Error("no contact");
+      const res = await authedFetch(
+        `${apiBase}/integrations/salesforce/contacts/${encodeURIComponent(ctx.contact.externalId)}`,
+        { method: "PATCH", body: JSON.stringify({ description }) },
+      );
+      if (!res.ok) await throwSalesforceError(res, "update contact failed");
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionContactUpdatedSalesforce") });
+      refresh();
+    },
+    onError: showSalesforceError,
+  });
+
+  const [showDealForm, setShowDealForm] = useState(false);
+  const [showTaskForm, setShowTaskForm] = useState(false);
+  const [dealName, setDealName] = useState("");
+  const [dealAmount, setDealAmount] = useState("");
+  const [dealPipeline, setDealPipeline] = useState("");
+  const [dealStage, setDealStage] = useState("");
+  const [dealClose, setDealClose] = useState("");
+  const [taskSubject, setTaskSubject] = useState("");
+  const [taskBody, setTaskBody] = useState("");
+  const [taskDue, setTaskDue] = useState("");
+  const [descriptionDraft, setDescriptionDraft] = useState<string>("");
+  useEffect(() => {
+    setDescriptionDraft(ctx?.contact?.description ?? "");
+  }, [ctx?.contact?.description]);
+
+  useEffect(() => {
+    if (showDealForm) {
+      setPipelinesEnabled(true);
+      if (!dealName && selectedSubject) setDealName(selectedSubject.slice(0, 80));
+      if (!dealClose) {
+        const d = new Date();
+        d.setDate(d.getDate() + 30);
+        setDealClose(d.toISOString().slice(0, 10));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showDealForm]);
+  useEffect(() => {
+    if (showDealForm && defaultPipeline && !dealPipeline) setDealPipeline(defaultPipeline.id);
+    if (showDealForm && defaultStage && !dealStage) setDealStage(defaultStage.id);
+  }, [showDealForm, defaultPipeline, defaultStage, dealPipeline, dealStage]);
+  useEffect(() => {
+    if (showTaskForm) {
+      if (!taskSubject) setTaskSubject(selectedSubject ? `Suivi : ${selectedSubject.slice(0, 80)}` : t("inbox.crmActionTaskDefaultTitle"));
+      if (!taskDue) {
+        const d = new Date();
+        d.setDate(d.getDate() + 7);
+        setTaskDue(d.toISOString().slice(0, 10));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showTaskForm]);
+
+  if (collapsed) {
+    return (
+      <div
+        className="bg-card rounded-lg border border-sky-500/30 p-2 flex flex-col items-center gap-2"
+        data-testid="panel-salesforce-context-collapsed"
+      >
+        <Cloud className="w-3.5 h-3.5 text-sky-400" />
+        <button
+          onClick={onToggleCollapsed}
+          title={t("inbox.crmExpand")}
+          className="text-[#8b9cb3] hover:text-white"
+          data-testid="button-salesforce-expand"
+        >
+          <Maximize2 className="w-3 h-3" />
+        </button>
+      </div>
+    );
+  }
+
+  const fullName =
+    [ctx?.contact?.firstName, ctx?.contact?.lastName].filter(Boolean).join(" ") ||
+    ctx?.contact?.email ||
+    senderEmail ||
+    "—";
+  const initials = ((ctx?.contact?.firstName?.[0] ?? "") + (ctx?.contact?.lastName?.[0] ?? "")).toUpperCase()
+    || (senderEmail?.[0] ?? "?").toUpperCase();
+
+  return (
+    <div
+      className="bg-card rounded-lg border border-sky-500/30 p-3 space-y-2"
+      data-testid="panel-salesforce-context"
+    >
+      <div className="flex items-center justify-between">
+        <h3 className="text-[10px] font-medium text-sky-400 uppercase tracking-wider flex items-center gap-1.5">
+          <Cloud className="w-3 h-3" />
+          {t("inbox.crmSalesforcePanelTitle")}
+        </h3>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={onToggleCollapsed}
+            title={t("inbox.crmCollapse")}
+            className="text-[#8b9cb3] hover:text-white"
+            data-testid="button-salesforce-collapse"
+          >
+            <Minimize2 className="w-3 h-3" />
+          </button>
+          <button
+            onClick={onHide}
+            title={t("inbox.crmHide")}
+            className="text-[#8b9cb3] hover:text-white"
+            data-testid="button-salesforce-hide"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        </div>
+      </div>
+
+      {!senderEmail && (
+        <p className="text-[10px] text-[#8b9cb3] leading-relaxed">
+          {t("inbox.crmSelectEmailHintSalesforce")}
+        </p>
+      )}
+
+      {senderEmail && isLoading && (
+        <p className="text-[10px] text-[#8b9cb3]">…</p>
+      )}
+
+      {senderEmail && !isLoading && (ctx === null || isError) && (
+        <p className="text-[10px] text-[#8b9cb3] leading-relaxed" data-testid="text-salesforce-no-match">
+          {t("inbox.crmNoMatchSalesforce")}
+        </p>
+      )}
+
+      {senderEmail && ctx && (
+        <>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-sky-500/20 text-sky-400 flex items-center justify-center text-[10px] font-medium shrink-0">
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[12px] text-white font-medium truncate" data-testid="text-salesforce-contact-name">{fullName}</p>
+              {ctx.contact.email && (
+                <p className="text-[10px] text-[#8b9cb3] truncate">{ctx.contact.email}</p>
+              )}
+            </div>
+          </div>
+
+          <div className="grid grid-cols-3 gap-1 pt-1">
+            <button
+              type="button"
+              onClick={() => logEmailMut.mutate()}
+              disabled={!selectedEmailId || logEmailMut.isPending}
+              title={t("inbox.crmActionLogEmailSalesforce")}
+              className="text-[10px] bg-sky-500/10 hover:bg-sky-500/20 disabled:opacity-40 text-sky-400 rounded px-1.5 py-1 flex items-center justify-center"
+              data-testid="button-salesforce-log-email"
+            >
+              {logEmailMut.isPending ? "…" : t("inbox.crmActionLogEmailShort")}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setShowDealForm((v) => !v); setShowTaskForm(false); }}
+              className={`text-[10px] rounded px-1.5 py-1 ${showDealForm ? "bg-sky-500 text-white" : "bg-sky-500/10 hover:bg-sky-500/20 text-sky-400"}`}
+              data-testid="button-salesforce-toggle-deal-form"
+            >
+              {t("inbox.crmActionCreateDealShort")}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setShowTaskForm((v) => !v); setShowDealForm(false); }}
+              className={`text-[10px] rounded px-1.5 py-1 ${showTaskForm ? "bg-sky-500 text-white" : "bg-sky-500/10 hover:bg-sky-500/20 text-sky-400"}`}
+              data-testid="button-salesforce-toggle-task-form"
+            >
+              {t("inbox.crmActionCreateTaskShort")}
+            </button>
+          </div>
+
+          {showDealForm && (
+            <div className="space-y-1.5 bg-[#0f1729] rounded p-2" data-testid="form-salesforce-deal">
+              <input
+                type="text"
+                value={dealName}
+                onChange={(e) => setDealName(e.target.value)}
+                placeholder={t("inbox.crmActionDealName")}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-salesforce-deal-name"
+              />
+              <input
+                type="number"
+                value={dealAmount}
+                onChange={(e) => setDealAmount(e.target.value)}
+                placeholder={t("inbox.crmActionDealAmount")}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-salesforce-deal-amount"
+              />
+              {allStages.length > 0 && (
+                <select
+                  value={dealStage}
+                  onChange={(e) => {
+                    setDealStage(e.target.value);
+                    const found = allStages.find((s) => s.id === e.target.value);
+                    if (found) setDealPipeline(found.pipelineId);
+                  }}
+                  className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                  data-testid="select-salesforce-deal-stage"
+                >
+                  {allStages.map((s) => (
+                    <option key={`${s.pipelineId}:${s.id}`} value={s.id}>
+                      {s.label}
+                    </option>
+                  ))}
+                </select>
+              )}
+              <input
+                type="date"
+                value={dealClose}
+                onChange={(e) => setDealClose(e.target.value)}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-salesforce-deal-close"
+              />
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => createDealMut.mutate({ dealname: dealName, amount: dealAmount, pipeline: dealPipeline, dealstage: dealStage, closedate: dealClose })}
+                  disabled={!dealName.trim() || createDealMut.isPending}
+                  className="flex-1 text-[10px] bg-sky-500 hover:bg-sky-500/90 disabled:opacity-40 text-white rounded px-1.5 py-1"
+                  data-testid="button-salesforce-deal-submit"
+                >
+                  {createDealMut.isPending ? "…" : t("inbox.crmActionSubmit")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowDealForm(false)}
+                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                >
+                  {t("inbox.crmActionCancel")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {showTaskForm && (
+            <div className="space-y-1.5 bg-[#0f1729] rounded p-2" data-testid="form-salesforce-task">
+              <input
+                type="text"
+                value={taskSubject}
+                onChange={(e) => setTaskSubject(e.target.value)}
+                placeholder={t("inbox.crmActionTaskTitle")}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-salesforce-task-subject"
+              />
+              <textarea
+                value={taskBody}
+                onChange={(e) => setTaskBody(e.target.value)}
+                placeholder={t("inbox.crmActionTaskNote")}
+                rows={2}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white resize-none"
+                data-testid="textarea-salesforce-task-body"
+              />
+              <input
+                type="date"
+                value={taskDue}
+                onChange={(e) => setTaskDue(e.target.value)}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-salesforce-task-due"
+              />
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => createTaskMut.mutate({ subject: taskSubject, body: taskBody, dueAt: taskDue })}
+                  disabled={!taskSubject.trim() || createTaskMut.isPending}
+                  className="flex-1 text-[10px] bg-sky-500 hover:bg-sky-500/90 disabled:opacity-40 text-white rounded px-1.5 py-1"
+                  data-testid="button-salesforce-task-submit"
+                >
+                  {createTaskMut.isPending ? "…" : t("inbox.crmActionSubmit")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowTaskForm(false)}
+                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                >
+                  {t("inbox.crmActionCancel")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {ctx.contact.company && (
+            <div className="text-[11px]">
+              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmCompany")}</div>
+              <div className="text-white">{ctx.contact.company}</div>
+            </div>
+          )}
+          {ctx.contact.jobTitle && (
+            <div className="text-[11px]">
+              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmJobTitleSalesforce")}</div>
+              <div className="text-white">{ctx.contact.jobTitle}</div>
+            </div>
+          )}
+          {ctx.contact.ownerName && (
+            <div className="text-[11px]">
+              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmOwnerSalesforce")}</div>
+              <div className="text-white">{ctx.contact.ownerName}</div>
+            </div>
+          )}
+
+          {/* Description Salesforce éditable (équivalent du label Pipedrive) */}
+          <div className="text-[11px]">
+            <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmDescriptionSalesforce")}</div>
+            <textarea
+              value={descriptionDraft}
+              onChange={(e) => setDescriptionDraft(e.target.value)}
+              onBlur={() => {
+                const trimmed = descriptionDraft.trim();
+                if (trimmed !== (ctx.contact.description ?? "").trim()) {
+                  updateDescriptionMut.mutate(trimmed);
+                }
+              }}
+              disabled={updateDescriptionMut.isPending}
+              rows={2}
+              placeholder={t("inbox.crmDescriptionSalesforcePlaceholder")}
+              className="w-full text-[10px] bg-[#0f1729] border border-[#1f2937] rounded px-1.5 py-1 text-white resize-none"
+              data-testid="input-salesforce-description"
+            />
+          </div>
+
+          <div className="pt-2 border-t border-[#1f2937]">
+            <div className="text-[#8b9cb3] text-[10px] uppercase tracking-wider mb-1.5">
+              {t("inbox.crmDealsTitle")}
+            </div>
+            {ctx.deals.length === 0 ? (
+              <p className="text-[10px] text-[#8b9cb3]">{t("inbox.crmNoDeals")}</p>
+            ) : (
+              <ul className="space-y-1.5" data-testid="list-salesforce-deals">
+                {ctx.deals.map((d) => (
+                  <li key={d.externalId} className="text-[11px] bg-[#0f1729] rounded p-1.5 space-y-1">
+                    <div className="text-white font-medium truncate">{d.title || "—"}</div>
+                    <div className="text-[10px] text-[#8b9cb3] flex flex-wrap gap-x-2">
+                      {d.amount != null && (
+                        <span>
+                          {t("inbox.crmDealAmount")}: {d.amount}
+                        </span>
+                      )}
+                      {d.closeDate && (
+                        <span>
+                          {t("inbox.crmDealClose")}: {new Date(d.closeDate).toLocaleDateString()}
+                        </span>
+                      )}
+                    </div>
+                    {allStages.length > 0 ? (
+                      <select
+                        value={d.stage || ""}
+                        onChange={(e) => updateDealStageMut.mutate({ dealExternalId: d.externalId, dealstage: e.target.value })}
+                        disabled={updateDealStageMut.isPending}
+                        className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1 py-0.5 text-white"
+                        data-testid={`select-salesforce-deal-stage-${d.externalId}`}
+                      >
+                        <option value="">—</option>
+                        {allStages.map((s) => (
+                          <option key={`${s.pipelineId}:${s.id}`} value={s.id}>
+                            {s.label}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      d.stage && (
+                        <div className="text-[10px] text-[#8b9cb3]">
+                          {t("inbox.crmDealStage")}: {d.stage}
+                        </div>
+                      )
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          {/* Activités récentes — 5 dernières Tasks Salesforce du contact */}
+          <div className="pt-2 border-t border-[#1f2937]">
+            <div className="text-[#8b9cb3] text-[10px] uppercase tracking-wider mb-1.5">
+              {t("inbox.crmSalesforceTasksTitle")}
+            </div>
+            {!ctx.tasks || ctx.tasks.length === 0 ? (
+              <p className="text-[10px] text-[#8b9cb3]" data-testid="text-salesforce-no-tasks">
+                {t("inbox.crmSalesforceNoTasks")}
+              </p>
+            ) : (
+              <ul className="space-y-1" data-testid="list-salesforce-tasks">
+                {ctx.tasks.map((tk) => (
+                  <li
+                    key={tk.id}
+                    className="text-[10px] bg-[#0f1729] rounded p-1.5"
+                    data-testid={`item-salesforce-task-${tk.id}`}
+                  >
+                    <div className="flex items-start gap-1">
+                      <span className={tk.isClosed ? "text-emerald-400" : "text-amber-400"}>
+                        {tk.isClosed ? "✓" : "•"}
+                      </span>
+                      <div className="min-w-0 flex-1">
+                        <div className="text-white truncate">{tk.subject || "—"}</div>
+                        {(tk.activityDate || tk.createdDate) && (
+                          <div className="text-[#8b9cb3] text-[9px]">
+                            {tk.activityDate
+                              ? new Date(tk.activityDate).toLocaleDateString()
+                              : tk.createdDate
+                                ? new Date(tk.createdDate).toLocaleDateString()
+                                : ""}
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </>
+      )}
+
+      <Link href="/dashboard/parametres/crm">
+        <button
+          className="w-full text-[10px] text-sky-400 hover:text-white transition-colors py-1 mt-1 border-t border-[#1f2937]"
+          data-testid="button-salesforce-configure"
+        >
+          {t("inbox.crmConfigure")} →
+        </button>
+      </Link>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
@@ -2550,12 +3199,14 @@ export default function Dashboard() {
   const [crmPanelCollapsed, setCrmPanelCollapsed] = useState(false);
   const [detailHubspotPanelHidden, setDetailHubspotPanelHidden] = useState(false);
   const [detailPipedrivePanelHidden, setDetailPipedrivePanelHidden] = useState(false);
+  const [detailSalesforcePanelHidden, setDetailSalesforcePanelHidden] = useState(false);
   // Sélecteur exclusif du panneau CRM affiché dans la colonne droite quand
-  // les DEUX intégrations sont actives. Par défaut HubSpot (parité avec le
+  // PLUSIEURS intégrations sont actives. Par défaut HubSpot (parité avec le
   // comportement antérieur). L'utilisateur bascule via les onglets affichés
   // au-dessus du panneau. Si une seule intégration est connectée, ce state
-  // est forcé sur celle-là (cf. useEffect plus bas).
-  const [activeCrmDetailPanel, setActiveCrmDetailPanel] = useState<"hubspot" | "pipedrive">("hubspot");
+  // est forcé sur celle-là (cf. useEffect plus bas). Étendu à 3 valeurs
+  // pour intégrer Salesforce en parité totale.
+  const [activeCrmDetailPanel, setActiveCrmDetailPanel] = useState<"hubspot" | "pipedrive" | "salesforce">("hubspot");
   const integrationsQuery = useListIntegrations();
   const integrationsList = (integrationsQuery.data ?? []) as Integration[];
   const hasHubspot = integrationsList.some(
@@ -2564,22 +3215,30 @@ export default function Dashboard() {
   const hasPipedrive = integrationsList.some(
     (i) => String(i.provider) === "pipedrive" && i.enabled,
   );
+  const hasSalesforce = integrationsList.some(
+    (i) => String(i.provider) === "salesforce" && i.enabled,
+  );
   // Désactive automatiquement le filtre si le CRM ciblé est déconnecté.
   useEffect(() => {
     if (!hasHubspot && crmFilter === "hubspot") setCrmFilter(null);
     if (!hasPipedrive && crmFilter === "pipedrive") setCrmFilter(null);
   }, [hasHubspot, hasPipedrive, crmFilter]);
-  // Recale le panneau actif sur le CRM disponible quand l'autre est absent.
-  // Garantit que si seul Pipedrive est connecté, on affiche bien le panneau
-  // Pipedrive (et symétriquement). Quand les deux deviennent disponibles,
-  // on garde la sélection courante (HubSpot par défaut au mount).
+  // Recale le panneau actif sur le seul CRM disponible. Logique étendue à 3
+  // CRMs : si exactement un seul est connecté, on force sa sélection. Sinon
+  // (0 ou ≥2 connectés), on conserve la sélection courante (l'utilisateur
+  // basculera via les onglets si besoin). Si l'onglet courant pointe vers
+  // un CRM déconnecté, on retombe sur le premier disponible.
   useEffect(() => {
-    if (hasHubspot && !hasPipedrive && activeCrmDetailPanel !== "hubspot") {
-      setActiveCrmDetailPanel("hubspot");
-    } else if (hasPipedrive && !hasHubspot && activeCrmDetailPanel !== "pipedrive") {
-      setActiveCrmDetailPanel("pipedrive");
+    const connected: Array<"hubspot" | "pipedrive" | "salesforce"> = [];
+    if (hasHubspot) connected.push("hubspot");
+    if (hasPipedrive) connected.push("pipedrive");
+    if (hasSalesforce) connected.push("salesforce");
+    if (connected.length === 1 && activeCrmDetailPanel !== connected[0]) {
+      setActiveCrmDetailPanel(connected[0]!);
+    } else if (connected.length > 1 && !connected.includes(activeCrmDetailPanel)) {
+      setActiveCrmDetailPanel(connected[0]!);
     }
-  }, [hasHubspot, hasPipedrive, activeCrmDetailPanel]);
+  }, [hasHubspot, hasPipedrive, hasSalesforce, activeCrmDetailPanel]);
   const [sortMode, setSortMode] = useState<"priority" | "date_desc" | "date_asc">(() => {
     if (typeof window === "undefined") return "priority";
     const saved = window.localStorage.getItem("inbox.sortMode");
@@ -3531,38 +4190,60 @@ export default function Dashboard() {
               Le bouton "masquer" ferme la branche correspondante ; la
               recharge de la page rétablit l'état par défaut. */}
           {((hasHubspot && !detailHubspotPanelHidden && activeCrmDetailPanel === "hubspot") ||
-            (hasPipedrive && !detailPipedrivePanelHidden && activeCrmDetailPanel === "pipedrive")) && (
+            (hasPipedrive && !detailPipedrivePanelHidden && activeCrmDetailPanel === "pipedrive") ||
+            (hasSalesforce && !detailSalesforcePanelHidden && activeCrmDetailPanel === "salesforce")) && (
             <div className="w-full md:w-[280px] shrink-0 space-y-2">
-              {/* Onglets de bascule — uniquement quand les 2 CRM coexistent. */}
-              {hasHubspot && hasPipedrive && (
+              {/* Onglets de bascule — affichés dès que 2+ CRM coexistent.
+                  Chaque onglet est rendu uniquement si le CRM correspondant
+                  est connecté. Le clic sur un onglet bascule la sélection
+                  exclusive (un seul panneau actif à la fois). */}
+              {[hasHubspot, hasPipedrive, hasSalesforce].filter(Boolean).length >= 2 && (
                 <div
                   className="flex items-center gap-1 bg-card rounded-lg border border-border p-1"
                   data-testid="tabs-crm-detail-panel"
                 >
-                  <button
-                    type="button"
-                    onClick={() => setActiveCrmDetailPanel("hubspot")}
-                    className={`flex-1 text-[10px] uppercase tracking-wider rounded px-2 py-1 ${
-                      activeCrmDetailPanel === "hubspot"
-                        ? "bg-orange-500/20 text-orange-400"
-                        : "text-[#8b9cb3] hover:text-white"
-                    }`}
-                    data-testid="tab-crm-detail-hubspot"
-                  >
-                    HubSpot
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => setActiveCrmDetailPanel("pipedrive")}
-                    className={`flex-1 text-[10px] uppercase tracking-wider rounded px-2 py-1 ${
-                      activeCrmDetailPanel === "pipedrive"
-                        ? "bg-primary/20 text-primary"
-                        : "text-[#8b9cb3] hover:text-white"
-                    }`}
-                    data-testid="tab-crm-detail-pipedrive"
-                  >
-                    Pipedrive
-                  </button>
+                  {hasHubspot && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveCrmDetailPanel("hubspot")}
+                      className={`flex-1 text-[10px] uppercase tracking-wider rounded px-2 py-1 ${
+                        activeCrmDetailPanel === "hubspot"
+                          ? "bg-orange-500/20 text-orange-400"
+                          : "text-[#8b9cb3] hover:text-white"
+                      }`}
+                      data-testid="tab-crm-detail-hubspot"
+                    >
+                      HubSpot
+                    </button>
+                  )}
+                  {hasPipedrive && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveCrmDetailPanel("pipedrive")}
+                      className={`flex-1 text-[10px] uppercase tracking-wider rounded px-2 py-1 ${
+                        activeCrmDetailPanel === "pipedrive"
+                          ? "bg-primary/20 text-primary"
+                          : "text-[#8b9cb3] hover:text-white"
+                      }`}
+                      data-testid="tab-crm-detail-pipedrive"
+                    >
+                      Pipedrive
+                    </button>
+                  )}
+                  {hasSalesforce && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveCrmDetailPanel("salesforce")}
+                      className={`flex-1 text-[10px] uppercase tracking-wider rounded px-2 py-1 ${
+                        activeCrmDetailPanel === "salesforce"
+                          ? "bg-sky-500/20 text-sky-400"
+                          : "text-[#8b9cb3] hover:text-white"
+                      }`}
+                      data-testid="tab-crm-detail-salesforce"
+                    >
+                      Salesforce
+                    </button>
+                  )}
                 </div>
               )}
               {hasHubspot && !detailHubspotPanelHidden && activeCrmDetailPanel === "hubspot" && (
@@ -3591,6 +4272,20 @@ export default function Dashboard() {
                   collapsed={crmPanelCollapsed}
                   onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
                   onHide={() => setDetailPipedrivePanelHidden(true)}
+                />
+              )}
+              {hasSalesforce && !detailSalesforcePanelHidden && activeCrmDetailPanel === "salesforce" && (
+                <SalesforceContextPanel
+                  senderEmail={
+                    extractEmailAddress(selectedEmail.senderEmail || selectedEmail.sender) || null
+                  }
+                  selectedEmailId={Number(selectedEmail.id)}
+                  selectedSubject={selectedEmail?.subject ?? null}
+                  selectedBody={selectedEmail?.body ?? null}
+                  selectedDate={selectedEmail?.created_at ?? selectedEmail?.createdAt ?? null}
+                  collapsed={crmPanelCollapsed}
+                  onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
+                  onHide={() => setDetailSalesforcePanelHidden(true)}
                 />
               )}
             </div>

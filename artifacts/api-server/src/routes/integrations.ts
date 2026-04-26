@@ -39,6 +39,19 @@ import {
   updatePipedrivePerson,
   logEmailEngagementPipedrive,
 } from "../services/pipedrive";
+import {
+  exchangeSalesforceCode,
+  syncSalesforceContacts,
+  syncSalesforceDeals,
+  SALESFORCE_SCOPES,
+  getSalesforceContactContext,
+  getSalesforcePipelines,
+  createSalesforceOpportunity,
+  createSalesforceTask,
+  updateSalesforceOpportunityStage,
+  updateSalesforceContact,
+  logEmailEngagementSalesforce,
+} from "../services/salesforce";
 
 const router: IRouter = Router();
 
@@ -48,6 +61,7 @@ const NOTION_CLIENT_ID = process.env["NOTION_CLIENT_ID"] || "";
 const NOTION_CLIENT_SECRET = process.env["NOTION_CLIENT_SECRET"] || "";
 const HUBSPOT_CLIENT_ID = process.env["HUBSPOT_CLIENT_ID"] || "";
 const PIPEDRIVE_CLIENT_ID = process.env["PIPEDRIVE_CLIENT_ID"] || "";
+const SALESFORCE_CLIENT_ID = process.env["SALESFORCE_CLIENT_ID"] || "";
 
 function getStateSecret(): string {
   const secret = process.env["SESSION_SECRET"] || process.env["SUPABASE_SECRET_KEY"];
@@ -73,6 +87,31 @@ function verifySignedState(state: string): string | null {
     const age = Date.now() - data.ts;
     if (age > 10 * 60 * 1000) return null;
     return data.userId;
+  } catch {
+    return null;
+  }
+}
+
+// Variante du state HMAC qui transporte des flags additionnels (ex. Salesforce
+// sandbox vs prod). Même TTL 10 min, même secret.
+function createSignedStateWithFlags(userId: string, flags: Record<string, string | boolean>): string {
+  const nonce = randomBytes(16).toString("hex");
+  const payload = JSON.stringify({ userId, nonce, ts: Date.now(), flags });
+  const signature = createHmac("sha256", getStateSecret()).update(payload).digest("hex");
+  return Buffer.from(JSON.stringify({ payload, signature })).toString("base64url");
+}
+
+function verifySignedStateWithFlags(
+  state: string,
+): { userId: string; flags: Record<string, string | boolean> } | null {
+  try {
+    const { payload, signature } = JSON.parse(Buffer.from(state, "base64url").toString());
+    const expected = createHmac("sha256", getStateSecret()).update(payload).digest("hex");
+    if (signature !== expected) return null;
+    const data = JSON.parse(payload);
+    const age = Date.now() - data.ts;
+    if (age > 10 * 60 * 1000) return null;
+    return { userId: data.userId, flags: (data.flags as Record<string, string | boolean>) || {} };
   } catch {
     return null;
   }
@@ -132,6 +171,7 @@ router.get("/integrations/availability", async (_req, res): Promise<void> => {
     notion: !!NOTION_CLIENT_ID,
     hubspot: !!HUBSPOT_CLIENT_ID,
     pipedrive: !!PIPEDRIVE_CLIENT_ID,
+    salesforce: !!SALESFORCE_CLIENT_ID,
     whatsapp: true,
     sms_twilio: true,
     sms_brevo: true,
@@ -1196,6 +1236,380 @@ router.patch("/integrations/pipedrive/contacts/:contactExternalId", requireAuth,
     res.json({ ok: true });
   } catch (err) {
     console.error("[integrations] pipedrive patch contact error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to update contact" });
+  }
+});
+
+// ============== Wave Salesforce — OAuth + Cockpit (parité HubSpot/Pipedrive) ==============
+// Spécificité majeure : choix Production vs Sandbox au moment du connect.
+// Le flag `sandbox` est porté par le state HMAC (createSignedStateWithFlags)
+// pour que le callback sache vers quel host (login.salesforce.com OU
+// test.salesforce.com) faire l'échange du code et persister `isSandbox` dans
+// settings. Ce flag est ensuite réutilisé par le service pour les refresh.
+
+router.get("/integrations/salesforce/connect", requireAuth, async (req, res): Promise<void> => {
+  if (!SALESFORCE_CLIENT_ID) {
+    res.status(400).json({ error: "Salesforce integration not configured" });
+    return;
+  }
+  // CRM accessible a tous les plans (parité HubSpot/Pipedrive : trancher
+  // côté Salesforce ne pénaliserait pas les ETI cible).
+  const sandbox = String(req.query.sandbox || "").toLowerCase() === "true";
+  const state = createSignedStateWithFlags(req.userId!, { sandbox });
+  const params = new URLSearchParams({
+    response_type: "code",
+    client_id: SALESFORCE_CLIENT_ID,
+    redirect_uri: getRedirectUri("salesforce"),
+    state,
+    scope: SALESFORCE_SCOPES.join(" "),
+  });
+  const host = sandbox ? "https://test.salesforce.com" : "https://login.salesforce.com";
+  res.json({ url: `${host}/services/oauth2/authorize?${params}` });
+});
+
+router.get("/integrations/salesforce/callback", async (req, res): Promise<void> => {
+  try {
+    const { code, state } = req.query;
+    if (!code || !state) {
+      res.status(400).send("Missing code or state");
+      return;
+    }
+    const verified = verifySignedStateWithFlags(state as string);
+    if (!verified) {
+      res.status(400).send("Invalid or expired state");
+      return;
+    }
+    const userId = verified.userId;
+    const isSandbox = verified.flags?.sandbox === true;
+
+    const tokens = await exchangeSalesforceCode(code as string, getRedirectUri("salesforce"), isSandbox);
+    if (!tokens) {
+      res.status(400).send("Salesforce token exchange failed");
+      return;
+    }
+
+    // Récupère le nom de l'org pour l'afficher dans l'UI (best-effort).
+    let workspaceName = isSandbox ? "Salesforce Sandbox" : "Salesforce";
+    try {
+      const orgRes = await fetch(
+        `${tokens.instanceUrl.replace(/\/$/, "")}/services/data/v59.0/query?q=${encodeURIComponent("SELECT Name FROM Organization LIMIT 1")}`,
+        { headers: { Authorization: `Bearer ${tokens.accessToken}` } },
+      );
+      if (orgRes.ok) {
+        const json = (await orgRes.json()) as { records?: Array<{ Name?: string }> };
+        const orgName = json.records?.[0]?.Name;
+        if (orgName) workspaceName = isSandbox ? `${orgName} (Sandbox)` : orgName;
+      }
+    } catch {
+      // garde le nom par défaut
+    }
+
+    await supabaseAdmin.from("integrations").upsert(
+      {
+        user_id: userId,
+        provider: "salesforce",
+        access_token: tokens.accessToken,
+        refresh_token: tokens.refreshToken,
+        expires_at: tokens.expiresAt,
+        scopes: SALESFORCE_SCOPES.join(" "),
+        workspace_name: workspaceName,
+        settings: { instanceUrl: tokens.instanceUrl, isSandbox },
+        enabled: true,
+      },
+      { onConflict: "user_id,provider" },
+    );
+
+    syncSalesforceContacts(userId, 50).catch(() => {});
+
+    const frontendUrl = getFrontendUrl();
+    res.send(`<html><body><script>
+      window.opener?.postMessage({ type: "integration-connected", provider: "salesforce" }, "*");
+      window.location.href = "${frontendUrl}/dashboard/parametres/integrations?integration=salesforce&status=success";
+    </script><p>Salesforce connecte ! Redirection...</p></body></html>`);
+  } catch (err) {
+    console.error("[integrations] Salesforce callback error:", (err as Error).message);
+    res.status(500).send("Erreur de connexion Salesforce");
+  }
+});
+
+router.post("/integrations/salesforce/sync", requireAuth, async (req, res): Promise<void> => {
+  const contacts = await syncSalesforceContacts(req.userId!, 200);
+  const deals = await syncSalesforceDeals(req.userId!, 200);
+  res.json({ contacts, deals });
+});
+
+async function resolveSalesforceContactId(
+  userId: string,
+  emailParam: string | undefined,
+  contactExternalIdParam: string | undefined,
+): Promise<{ id: string } | { error: string; status: number }> {
+  const externalId = String(contactExternalIdParam || "").trim();
+  const email = String(emailParam || "").trim().toLowerCase();
+  if (!externalId && !email) {
+    return { error: "contactEmail or contactExternalId required", status: 400 };
+  }
+  let query = supabaseAdmin
+    .from("crm_contacts")
+    .select("external_id")
+    .eq("user_id", userId)
+    .eq("provider", "salesforce");
+  if (externalId) {
+    query = query.eq("external_id", externalId);
+  } else {
+    query = query.ilike("email", email);
+  }
+  const { data } = await query.maybeSingle();
+  const id = (data as { external_id?: string } | null)?.external_id;
+  if (!id) return { error: "Contact not found in Salesforce cache", status: 404 };
+  return { id };
+}
+
+async function assertSalesforceOpportunityOwnedByUser(userId: string, externalId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin
+    .from("crm_deals")
+    .select("external_id")
+    .eq("user_id", userId)
+    .eq("provider", "salesforce")
+    .eq("external_id", externalId)
+    .maybeSingle();
+  return !!data;
+}
+
+// Mappe une SfResult en échec vers une réponse HTTP avec le bon hint, parité
+// avec sendPipedriveError : 401/403 → reconnect_salesforce, 400 → validation.
+function sendSalesforceError(
+  res: import("express").Response,
+  result: { ok: false; error: string; status?: number },
+): void {
+  const status = result.status ?? 0;
+  const needsReconnect = status === 401 || status === 403;
+  const hint = needsReconnect ? "reconnect_salesforce" : status === 400 ? "validation" : "upstream";
+  res.status(502).json({ error: result.error, hint, salesforceStatus: status });
+}
+
+router.get("/integrations/salesforce/contact-context", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const email = String(req.query.email || "").trim().toLowerCase();
+    if (!email) {
+      res.status(400).json({ error: "email required" });
+      return;
+    }
+    const ctx = await getSalesforceContactContext(req.userId!, email);
+    if (!ctx) {
+      res.status(404).json({ error: "contact not found" });
+      return;
+    }
+    res.json(ctx);
+  } catch (err) {
+    console.error("[integrations] salesforce contact-context error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to fetch Salesforce context" });
+  }
+});
+
+router.post("/integrations/salesforce/log-email", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { contactEmail, contactExternalId, emailId, subject, body, occurredAt } = req.body || {};
+    const resolved = await resolveSalesforceContactId(req.userId!, contactEmail, contactExternalId);
+    if ("error" in resolved) {
+      res.status(resolved.status).json({ error: resolved.error });
+      return;
+    }
+    const hasEmailId = typeof emailId === "number" && Number.isFinite(emailId);
+    if (hasEmailId) {
+      // Idempotence : claim row crm_email_logs avant l'appel API. Si conflit
+      // unique (23505) → déjà loggé. Sinon, en cas d'échec API on supprime le
+      // claim pour permettre une nouvelle tentative.
+      const { data: claim, error: claimErr } = await supabaseAdmin
+        .from("crm_email_logs")
+        .insert({ user_id: req.userId!, provider: "salesforce", email_id: emailId, external_log_id: null })
+        .select("id")
+        .maybeSingle();
+      if (claimErr) {
+        if ((claimErr as { code?: string }).code === "23505") {
+          res.json({ ok: true, alreadyLogged: true });
+          return;
+        }
+        console.error("[integrations] salesforce log-email claim error:", claimErr);
+        res.status(500).json({ error: "Failed to claim log row" });
+        return;
+      }
+      const claimId = (claim as { id?: number } | null)?.id;
+      const result = await logEmailEngagementSalesforce(
+        req.userId!,
+        resolved.id,
+        String(subject || ""),
+        String(body || ""),
+        typeof occurredAt === "string" ? occurredAt : null,
+      );
+      if (!result.ok) {
+        if (claimId) await supabaseAdmin.from("crm_email_logs").delete().eq("id", claimId);
+        sendSalesforceError(res, result);
+        return;
+      }
+      if (claimId && result.data?.id) {
+        await supabaseAdmin
+          .from("crm_email_logs")
+          .update({ external_log_id: String(result.data.id) })
+          .eq("id", claimId);
+      }
+      res.json({ ok: true, id: result.data?.id ?? null });
+      return;
+    }
+    const result = await logEmailEngagementSalesforce(
+      req.userId!,
+      resolved.id,
+      String(subject || ""),
+      String(body || ""),
+      typeof occurredAt === "string" ? occurredAt : null,
+    );
+    if (!result.ok) {
+      sendSalesforceError(res, result);
+      return;
+    }
+    res.json({ ok: true, id: result.data?.id ?? null });
+  } catch (err) {
+    console.error("[integrations] salesforce log-email error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to log email" });
+  }
+});
+
+router.post("/integrations/salesforce/create-deal", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { contactEmail, contactExternalId, dealname, amount, dealstage, closedate } = req.body || {};
+    if (!dealname || typeof dealname !== "string" || !dealname.trim()) {
+      res.status(400).json({ error: "dealname required" });
+      return;
+    }
+    const resolved = await resolveSalesforceContactId(req.userId!, contactEmail, contactExternalId);
+    if ("error" in resolved) {
+      res.status(resolved.status).json({ error: resolved.error });
+      return;
+    }
+    const amountNum = amount != null && amount !== "" ? Number(amount) : null;
+    const result = await createSalesforceOpportunity(req.userId!, resolved.id, {
+      name: dealname.trim().slice(0, 120),
+      amount: amountNum != null && Number.isFinite(amountNum) ? amountNum : null,
+      stageName: typeof dealstage === "string" ? dealstage : null,
+      closeDate: typeof closedate === "string" ? closedate : null,
+    });
+    if (!result.ok) {
+      console.error("[integrations] salesforce create-deal failed:", {
+        userId: req.userId,
+        status: result.status,
+        error: result.error,
+      });
+      sendSalesforceError(res, result);
+      return;
+    }
+    res.json({ ok: true, id: result.data?.id ?? null });
+  } catch (err) {
+    console.error("[integrations] salesforce create-deal error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to create opportunity" });
+  }
+});
+
+router.post("/integrations/salesforce/create-task", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { contactEmail, contactExternalId, subject, body, dueAt } = req.body || {};
+    if (!subject || typeof subject !== "string" || !subject.trim()) {
+      res.status(400).json({ error: "subject required" });
+      return;
+    }
+    const resolved = await resolveSalesforceContactId(req.userId!, contactEmail, contactExternalId);
+    if ("error" in resolved) {
+      res.status(resolved.status).json({ error: resolved.error });
+      return;
+    }
+    const result = await createSalesforceTask(req.userId!, resolved.id, {
+      subject: subject.trim().slice(0, 255),
+      body: typeof body === "string" ? body.slice(0, 32000) : null,
+      dueAt: typeof dueAt === "string" ? dueAt : null,
+    });
+    if (!result.ok) {
+      sendSalesforceError(res, result);
+      return;
+    }
+    res.json({ ok: true, id: result.data?.id ?? null });
+  } catch (err) {
+    console.error("[integrations] salesforce create-task error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to create task" });
+  }
+});
+
+router.get("/integrations/salesforce/pipelines", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const result = await getSalesforcePipelines(req.userId!);
+    if (!result.ok) {
+      sendSalesforceError(res, result);
+      return;
+    }
+    res.json(result.data);
+  } catch (err) {
+    console.error("[integrations] salesforce pipelines error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to fetch pipelines" });
+  }
+});
+
+router.patch("/integrations/salesforce/deals/:dealExternalId", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const dealExternalId = String(req.params.dealExternalId ?? "").trim();
+    if (!dealExternalId) {
+      res.status(400).json({ error: "dealExternalId required" });
+      return;
+    }
+    const { dealstage } = req.body || {};
+    if (!dealstage || typeof dealstage !== "string") {
+      res.status(400).json({ error: "dealstage required" });
+      return;
+    }
+    const owned = await assertSalesforceOpportunityOwnedByUser(req.userId!, dealExternalId);
+    if (!owned) {
+      res.status(404).json({ error: "Opportunity not found in Salesforce cache" });
+      return;
+    }
+    const result = await updateSalesforceOpportunityStage(req.userId!, dealExternalId, dealstage);
+    if (!result.ok) {
+      sendSalesforceError(res, result);
+      return;
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("[integrations] salesforce patch deal error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to update opportunity" });
+  }
+});
+
+router.patch("/integrations/salesforce/contacts/:contactExternalId", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const contactExternalId = String(req.params.contactExternalId ?? "").trim();
+    if (!contactExternalId) {
+      res.status(400).json({ error: "contactExternalId required" });
+      return;
+    }
+    const owned = await resolveSalesforceContactId(req.userId!, undefined, contactExternalId);
+    if ("error" in owned) {
+      res.status(owned.status).json({ error: owned.error });
+      return;
+    }
+    const { description } = req.body || {};
+    if (description === undefined) {
+      res.status(400).json({ error: "no properties to update" });
+      return;
+    }
+    const result = await updateSalesforceContact(req.userId!, contactExternalId, {
+      description: typeof description === "string" ? description : null,
+    });
+    if (!result.ok) {
+      if (result.error === "no properties to update") {
+        res.status(400).json({ error: result.error });
+      } else {
+        sendSalesforceError(res, result);
+      }
+      return;
+    }
+    res.json({ ok: true });
+  } catch (err) {
+    console.error("[integrations] salesforce patch contact error:", (err as Error).message);
     res.status(500).json({ error: "Failed to update contact" });
   }
 });
