@@ -3427,7 +3427,9 @@ export default function Dashboard() {
   const claimEmailMut = useClaimSharedEmail();
   const unclaimEmailMut = useUnclaimSharedEmail();
 
-  const selectedCategoryId = filterCategory !== "all"
+  const selectedCategoryId = filterCategory === "__uncategorized__"
+    ? "uncategorized"
+    : filterCategory !== "all"
     ? categoryCounts?.find((c) => c.categoryName === filterCategory)?.categoryId
     : undefined;
 
@@ -4925,7 +4927,7 @@ export default function Dashboard() {
                     {t("inbox.category")}
                   </h3>
                   {(() => {
-                    const JUNK = ["non classé", "non classe", "uncategorized"];
+                    const JUNK = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
                     const summaryData = summary as { urgentCount?: number; moyenCount?: number; faibleCount?: number } | undefined;
                     const serverInboxTotal = (summaryData?.urgentCount || 0) + (summaryData?.moyenCount || 0) + (summaryData?.faibleCount || 0);
                     const categorizedTotal = (categoryCounts || []).reduce((sum, c) => sum + c.count, 0);
@@ -4981,6 +4983,35 @@ export default function Dashboard() {
                         })()}
                       </span>
                     </div>
+                    {/* Entree "Non classe" : meme style bleu que "Toutes",
+                        positionnee juste en dessous. Permet a l'utilisateur
+                        de filtrer les emails que l'IA n'a pas reussi a
+                        classer pour les assigner manuellement a une
+                        categorie. N'apparait que s'il y a au moins un
+                        email non classe. */}
+                    {(() => {
+                      const JUNK = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
+                      const summaryData = summary as { urgentCount?: number; moyenCount?: number; faibleCount?: number } | undefined;
+                      const serverInboxTotal = (summaryData?.urgentCount || 0) + (summaryData?.moyenCount || 0) + (summaryData?.faibleCount || 0);
+                      const categorizedTotal = (categoryCounts || []).reduce((sum, c) => sum + c.count, 0);
+                      const junkTotal = (categoryCounts || []).filter((c) => JUNK.includes(c.categoryName.toLowerCase())).reduce((sum, c) => sum + c.count, 0);
+                      const uncategorizedCount = Math.max(0, serverInboxTotal - categorizedTotal + junkTotal);
+                      if (uncategorizedCount === 0) return null;
+                      return (
+                        <div
+                          className={`flex items-center justify-between py-1 px-1.5 rounded transition-colors cursor-pointer ${filterCategory === "__uncategorized__" ? "bg-primary/10 text-primary" : "hover:bg-white/[0.04] text-primary"}`}
+                          onClick={() => setFilterCategory(filterCategory === "__uncategorized__" ? "all" : "__uncategorized__")}
+                        >
+                          <div className="flex items-center gap-1.5">
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                            <span className="text-[11px]">{t("inbox.uncategorized")}</span>
+                          </div>
+                          <span className="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded">
+                            {uncategorizedCount}
+                          </span>
+                        </div>
+                      );
+                    })()}
                     {categoryCounts
                       ?.filter((cat) => {
                         // La catégorie système "Non classé" (et anciennes
@@ -4989,7 +5020,7 @@ export default function Dashboard() {
                         // bouton "X non classé" en haut à droite, qui
                         // déclenche la reclassification IA. Doublonner ici
                         // crée la confusion "9 vs 0" reprochée.
-                        const JUNK = ["non classé", "non classe", "uncategorized"];
+                        const JUNK = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
                         return !JUNK.includes((cat.categoryName || "").toLowerCase());
                       })
                       .map((cat) => (

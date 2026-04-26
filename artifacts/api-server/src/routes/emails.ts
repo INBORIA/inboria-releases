@@ -154,7 +154,30 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       query = query.eq("priority", req.query.priority as string);
       countQuery = countQuery.eq("priority", req.query.priority as string);
     }
-    if (req.query.categoryId) {
+    if (req.query.categoryId === "uncategorized") {
+      // Filtre special : emails sans categorie OU dans la categorie systeme
+      // "Non classe" OU dans une ancienne categorie legacy "uncategorized"
+      // (heritages multilangues). Permet a l'utilisateur de voir tous les
+      // emails que l'IA n'a pas reussi a classer pour les assigner
+      // manuellement. Le set de noms est aligne sur JUNK_NAMES dans
+      // routes/ai.ts (recategorize).
+      const JUNK_NAMES = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
+      const { data: junkCats } = await supabaseAdmin
+        .from("categories")
+        .select("id, name, is_system")
+        .eq("user_id", req.userId!);
+      const junkIds = (junkCats || [])
+        .filter((c: any) => c.is_system === true || JUNK_NAMES.includes((c.name || "").toLowerCase()))
+        .map((c: any) => c.id);
+      if (junkIds.length > 0) {
+        const orFilter = `category_id.is.null,category_id.in.(${junkIds.join(",")})`;
+        query = query.or(orFilter);
+        countQuery = countQuery.or(orFilter);
+      } else {
+        query = query.is("category_id", null);
+        countQuery = countQuery.is("category_id", null);
+      }
+    } else if (req.query.categoryId) {
       query = query.eq("category_id", req.query.categoryId as string);
       countQuery = countQuery.eq("category_id", req.query.categoryId as string);
     }
