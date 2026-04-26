@@ -162,13 +162,22 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       // manuellement. Le set de noms est aligne sur JUNK_NAMES dans
       // routes/ai.ts (recategorize).
       const JUNK_NAMES = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
-      const { data: junkCats } = await supabaseAdmin
+      const { data: junkCats, error: junkErr } = await supabaseAdmin
         .from("categories")
         .select("id, name, is_system")
         .eq("user_id", req.userId!);
       const junkIds = (junkCats || [])
         .filter((c: any) => c.is_system === true || JUNK_NAMES.includes((c.name || "").toLowerCase()))
         .map((c: any) => c.id);
+      // Diagnostic temporaire pour comprendre pourquoi la liste filtree
+      // "Non classe" revient vide alors que la pastille affiche 9.
+      console.log("[emails-uncategorized]", {
+        userId: req.userId,
+        junkErr: junkErr?.message,
+        catCount: (junkCats || []).length,
+        junkIds,
+        scopeOr: scopeOr.substring(0, 150),
+      });
       if (junkIds.length > 0) {
         const orFilter = `category_id.is.null,category_id.in.(${junkIds.join(",")})`;
         query = query.or(orFilter);
