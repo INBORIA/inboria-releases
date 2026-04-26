@@ -3414,7 +3414,7 @@ export default function Dashboard() {
             </div>
 
             <div className="w-full md:w-[240px] shrink-0 space-y-3">
-              {hasHubspot && crmFilter === "hubspot" && (
+              {hasHubspot && crmFilter === "hubspot" && selectedEmail && (
                 <HubspotContextPanel
                   senderEmail={
                     selectedEmail
