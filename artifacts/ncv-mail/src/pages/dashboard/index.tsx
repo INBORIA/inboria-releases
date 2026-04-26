@@ -1583,9 +1583,29 @@ function HubspotContextPanel({
       </div>
 
       {!senderEmail && (
-        <p className="text-[10px] text-[#8b9cb3] leading-relaxed">
-          {t("inbox.crmSelectEmailHint")}
-        </p>
+        <div className="space-y-2">
+          <p className="text-[10px] text-[#8b9cb3] leading-relaxed">
+            {t("inbox.crmSelectEmailHint")}
+          </p>
+          {/* Aperçu désactivé du cockpit : les 3 actions principales sont
+              listées dès l'ouverture du panneau, même sans email sélectionné,
+              pour que l'utilisateur voit immédiatement ce qui devient
+              disponible une fois un email cliqué. */}
+          <div className="flex flex-col gap-1 opacity-50 pointer-events-none">
+            <div className="text-[10px] text-white bg-[#0f1729] border border-border rounded px-2 py-1 flex items-center gap-1.5">
+              <Building2 className="w-2.5 h-2.5 text-primary" />
+              {t("inbox.crmActionLogEmailShort")}
+            </div>
+            <div className="text-[10px] text-white bg-[#0f1729] border border-border rounded px-2 py-1 flex items-center gap-1.5">
+              <Building2 className="w-2.5 h-2.5 text-primary" />
+              {t("inbox.crmActionCreateDealShort")}
+            </div>
+            <div className="text-[10px] text-white bg-[#0f1729] border border-border rounded px-2 py-1 flex items-center gap-1.5">
+              <Building2 className="w-2.5 h-2.5 text-primary" />
+              {t("inbox.crmActionCreateTaskShort")}
+            </div>
+          </div>
+        </div>
       )}
 
       {senderEmail && isLoading && (
@@ -2913,7 +2933,15 @@ export default function Dashboard() {
 
           <div className="flex flex-wrap items-center gap-1 gap-y-1.5 max-w-[1200px] mx-auto mb-1.5">
               <button
-                onClick={() => { setInboxMode("personal"); setSelectedSharedMailboxId(null); }}
+                onClick={() => {
+                  setInboxMode("personal");
+                  setSelectedSharedMailboxId(null);
+                  // Réinitialise le filtre CRM HubSpot pour que cliquer
+                  // « Réception » ramène TOUJOURS la liste complète de la
+                  // boîte. Sans ça, le filtre HubSpot restait actif et l'user
+                  // ne voyait que les expéditeurs présents dans HubSpot.
+                  setCrmFilter(null);
+                }}
                 className={`flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
                   inboxMode === "personal"
                     ? "bg-primary/15 text-primary border border-primary/20"
@@ -2927,6 +2955,9 @@ export default function Dashboard() {
                 <button
                   onClick={() => {
                     setInboxMode("shared");
+                    // Idem : on bascule sur boîte partagée → on lève le filtre
+                    // HubSpot pour ne pas masquer des emails par inadvertance.
+                    setCrmFilter(null);
                     const mbs = sharedMailboxes as any[];
                     if (mbs?.length > 0 && !selectedSharedMailboxId) {
                       setSelectedSharedMailboxId(mbs[0].id);
@@ -3127,7 +3158,7 @@ export default function Dashboard() {
         </div>
 
         <div className="flex-1 overflow-auto">
-          <div className="p-5 max-w-[1200px] mx-auto flex flex-col lg:flex-row gap-5">
+          <div className="p-5 max-w-[1200px] mx-auto flex flex-col md:flex-row gap-5">
             <div className="flex-1 min-w-0">
               {inboxMode === "shared" ? (
                 <>
@@ -3402,7 +3433,7 @@ export default function Dashboard() {
               )}
             </div>
 
-            <div className="w-full lg:w-[200px] shrink-0 space-y-3">
+            <div className="w-full md:w-[240px] shrink-0 space-y-3">
               {hasHubspot && crmFilter === "hubspot" && (
                 <HubspotContextPanel
                   senderEmail={
