@@ -22,7 +22,12 @@ router.get("/dashboard/summary", requireAuth, async (req, res): Promise<void> =>
       .or(scopeOr);
 
     const allEmails = emails || [];
-    const inboxEmails = allEmails.filter(e => e.status !== "archived" && e.status !== "trashed" && e.status !== "spam" && e.status !== "scheduled" && e.status !== "scheduled_failed");
+    // Aligne le filtre statut sur /api/emails et /dashboard/category-counts
+    // (qui excluent tous les deux "sent"). Sans cette exclusion, les emails
+    // envoyes avec une priorite gonflaient le total Reception et faisaient
+    // apparaitre une fausse pastille "X Non classe" (ecart entre summary
+    // et category-counts).
+    const inboxEmails = allEmails.filter(e => e.status !== "archived" && e.status !== "trashed" && e.status !== "spam" && e.status !== "sent" && e.status !== "scheduled" && e.status !== "scheduled_failed");
     const urgent = inboxEmails.filter(e => e.priority === "urgent").length;
     const moyen = inboxEmails.filter(e => e.priority === "moyen").length;
     const faible = inboxEmails.filter(e => e.priority === "faible").length;
