@@ -1890,6 +1890,7 @@ export default function Dashboard() {
   // Wave HubSpot — filtre Réception sur les expéditeurs présents dans HubSpot.
   const [crmFilter, setCrmFilter] = useState<"hubspot" | null>(null);
   const [crmPanelCollapsed, setCrmPanelCollapsed] = useState(false);
+  const [detailHubspotPanelHidden, setDetailHubspotPanelHidden] = useState(false);
   const integrationsQuery = useListIntegrations();
   const integrationsList = (integrationsQuery.data ?? []) as Integration[];
   const hasHubspot = integrationsList.some(
@@ -1916,6 +1917,12 @@ export default function Dashboard() {
     const num = id ? Number(id) : NaN;
     return Number.isFinite(num) && num > 0 ? num : null;
   });
+  // Réafficher le panneau HubSpot à chaque changement d'email ouvert :
+  // si l'utilisateur l'a masqué sur un email, on ne veut pas que ce
+  // masquage persiste sur l'email suivant (chaque email mérite son contexte).
+  useEffect(() => {
+    setDetailHubspotPanelHidden(false);
+  }, [selectedEmailId]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const searchQuery = useDebounce(searchInput, 300);
@@ -2839,7 +2846,7 @@ export default function Dashboard() {
               (Logger / + Affaire / + Tâche / lifecycle / lead status / phase).
               Sans cette branche, le panneau était invisible en vue détail
               (vue liste seulement) et la cockpit semblait absente. */}
-          {hasHubspot && (
+          {hasHubspot && !detailHubspotPanelHidden && (
             <div className="w-full md:w-[280px] shrink-0">
               <HubspotContextPanel
                 senderEmail={
@@ -2851,7 +2858,7 @@ export default function Dashboard() {
                 selectedDate={selectedEmail?.created_at ?? selectedEmail?.createdAt ?? null}
                 collapsed={crmPanelCollapsed}
                 onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
-                onHide={() => setCrmFilter(null)}
+                onHide={() => setDetailHubspotPanelHidden(true)}
               />
             </div>
           )}
@@ -3438,22 +3445,12 @@ export default function Dashboard() {
             </div>
 
             <div className="w-full md:w-[240px] shrink-0 space-y-3">
-              {hasHubspot && crmFilter === "hubspot" && selectedEmail && (
-                <HubspotContextPanel
-                  senderEmail={
-                    selectedEmail
-                      ? extractEmailAddress(selectedEmail.senderEmail || selectedEmail.sender) || null
-                      : null
-                  }
-                  selectedEmailId={selectedEmail ? Number(selectedEmail.id) : null}
-                  selectedSubject={selectedEmail?.subject ?? null}
-                  selectedBody={selectedEmail?.body ?? null}
-                  selectedDate={selectedEmail?.created_at ?? selectedEmail?.createdAt ?? null}
-                  collapsed={crmPanelCollapsed}
-                  onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
-                  onHide={() => setCrmFilter(null)}
-                />
-              )}
+              {/* Note : le panneau HubSpot a été déplacé exclusivement dans la
+                  vue détail (cf. branche `if (selectedEmail) return ...` plus
+                  haut). Ici on est forcément en vue liste (selectedEmail
+                  toujours falsy), donc le panneau n'a plus rien à faire dans
+                  ce conteneur — il polluait l'en-tête vide reproché par
+                  l'utilisateur. */}
               <div className="bg-card rounded-lg border border-border p-3">
                 <div className="flex items-center justify-between mb-2.5">
                   <h3 className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">
