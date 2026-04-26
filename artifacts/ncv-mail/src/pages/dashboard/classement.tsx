@@ -1196,12 +1196,12 @@ export default function Classement() {
                           const isUnused = (cat.emailCount || 0) === 0;
                           const originLabel = cat.sourcePack
                             ? cat.sourcePack
-                            : group.key === "standard"
+                            : group.kind === "standard"
                               ? t("classification.origin.standard")
                               : t("classification.origin.manual");
                           const originColor = cat.sourcePack
                             ? "bg-primary/10 text-primary/80"
-                            : group.key === "standard"
+                            : group.kind === "standard"
                               ? "bg-blue-500/10 text-blue-300"
                               : "bg-purple-500/10 text-purple-300";
                           return (

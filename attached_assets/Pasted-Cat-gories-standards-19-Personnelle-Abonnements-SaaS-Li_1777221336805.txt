@@ -1,0 +1,205 @@
+Catégories standards
+(19)
+Personnelle
+
+Abonnements / SaaS
+Licences logiciels, renouvellements, factures outils
+
+11
+emails
+Personnelle
+
+Administratif
+Contrats, documents officiels, courriers juridiques
+
+1
+emails
+Personnelle
+
+Banque / Finance
+Relevés bancaires, virements, prêts, assurances
+
+5
+emails
+Personnelle
+
+Commercial
+Prospects, propositions commerciales, négociations, ventes
+
+5
+emails
+Personnelle
+
+Communication interne
+Mémos, annonces, comptes-rendus, circulaires
+
+21
+emails
+Personnelle
+Vide
+
+Devis / Négociations
+Demandes de devis, comparatifs, contre-propositions
+
+0
+emails
+Personnelle
+
+Facturation
+Factures, devis, bons de commande, relances de paiement
+
+30
+emails
+Personnelle
+
+Formation
+Webinaires, certifications, e-learning, invitations
+
+7
+emails
+Personnelle
+Vide
+
+Fournisseurs
+Commandes, livraisons, relations fournisseurs, achats
+
+0
+emails
+Personnelle
+Vide
+
+International / Export
+Douanes, clients étrangers, traductions, incoterms
+
+0
+emails
+Personnelle
+Vide
+
+Juridique / Conformité
+Mises en demeure, RGPD, conformité, contentieux, contrats
+
+0
+emails
+Personnelle
+
+Logistique / Livraisons
+Suivi de colis, transporteurs, bons de livraison
+
+1
+emails
+Personnelle
+
+Paiements / Encaissements
+Confirmations de paiement, retards, rappels, remboursements
+
+2
+emails
+Personnelle
+Vide
+
+Partenaires / Sous-traitants
+Collaborations, accords, échanges avec partenaires externes
+
+0
+emails
+Personnelle
+
+Projets
+Suivi de projet, livrables, deadlines, rapports d'avancement
+
+4
+emails
+Personnelle
+
+RH / Équipe
+Congés, recrutement, gestion du personnel, notes internes
+
+1
+emails
+Personnelle
+
+Support client
+Demandes d'aide, réclamations, questions des clients
+
+13
+emails
+Personnelle
+
+Technique / IT
+Bugs, maintenance, serveurs, IT, demandes techniques
+
+1
+emails
+Personnelle
+
+Urgent / Prioritaire
+Emails nécessitant une action immédiate, alertes critiques
+
+4
+emails
+Mes catégories personnelles
+(9)
+Personnelle
+
+CRM
+Tout ce qui concerne CRM, idem Hubspot, Pipedrive, Sales force
+
+2
+emails
+Personnelle
+
+Hébergement
+Aucune description
+
+4
+emails
+Personnelle
+
+Marketing
+Aucune description
+
+33
+emails
+Personnelle
+
+Newsletters
+Aucune description
+
+130
+emails
+Personnelle
+
+Notifications
+Aucune description
+
+152
+emails
+Personnelle
+
+Promotion
+Aucune description
+
+79
+emails
+Personnelle
+
+Réseaux sociaux
+Aucune description
+
+26
+emails
+Personnelle
+
+Spam / À supprimer
+Emails indésirables, démarchage non sollicité
+
+6
+emails
+Personnelle
+
+Webinaire / Événement
+Aucune description
+
+23
+emails
