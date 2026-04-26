@@ -264,6 +264,59 @@ Automatisez le traitement de certains emails en langage naturel.
 ### Activer/Désactiver
 - Interrupteur sur chaque règle pour la mettre en pause sans la supprimer.
 
+## 19. INTÉGRATIONS CRM
+
+Inboria se connecte nativement à 3 CRM leaders du marché : HubSpot, Pipedrive et Salesforce. La synchronisation est bidirectionnelle et automatique.
+
+### CRM supportés
+- **HubSpot** : synchronisation des contacts et des deals.
+- **Pipedrive** : synchronisation des personnes, deals et organisations.
+- **Salesforce** : synchronisation des contacts, comptes et opportunités. Mode Sandbox disponible (toggle au moment de la connexion vers test.salesforce.com) pour tester avant de passer en Production.
+
+### Comment connecter un CRM
+1. Aller dans Paramètres → CRM.
+2. Cliquer sur "Connecter" en face du CRM choisi.
+3. Vous êtes redirigé vers la page d'authentification OAuth officielle du CRM.
+4. Vous autorisez Inboria à accéder à vos contacts et deals.
+5. Une synchronisation initiale s'effectue automatiquement.
+
+### Synchronisation automatique
+- **HubSpot et Pipedrive** : synchronisation automatique toutes les 15 minutes en tâche de fond (planificateur \`crm-sync-scheduler\`).
+- **Salesforce** : synchronisation initiale au moment de la connexion + bouton manuel "Synchroniser maintenant" disponible à tout moment dans Paramètres → CRM.
+- **Bidirectionnelle** : les changements côté CRM remontent dans Inboria, et les nouveaux contacts dans Inboria peuvent être créés dans le CRM.
+- **Sync manuelle pour tous les CRM** : bouton "Synchroniser maintenant" dans Paramètres → CRM. Affiche le nombre de contacts et de deals synchronisés.
+- **Date de dernière synchro** : visible sur la carte de chaque CRM connecté.
+
+### Ce que voit l'utilisateur dans Inboria
+- Quand un email arrive, Inboria identifie automatiquement le contact correspondant dans le CRM connecté.
+- Les deals/opportunités en cours avec ce contact sont visibles depuis l'email.
+- Les nouvelles informations issues d'une conversation peuvent enrichir le CRM.
+
+### Sécurité OAuth
+- **Aucun mot de passe stocké** : Inboria utilise exclusivement OAuth.
+- **Tokens chiffrés au repos** dans la base de données.
+- **Révocation à tout moment** : depuis le CRM (page Apps connectées) ou depuis Paramètres → CRM dans Inboria.
+- **Échanges TLS** chiffrés de bout en bout.
+
+### Spécificités Salesforce
+- Toggle Sandbox pour cibler test.salesforce.com (recommandé pour ETI/grands comptes : tester sur une org de Sandbox avant de connecter la Production).
+- Compatible Lightning Experience.
+- Le badge \`workspaceName\` indique "(Sandbox)" quand la connexion est sur Sandbox.
+
+### Déconnexion
+- Bouton "Déconnecter" dans Paramètres → CRM.
+- La synchronisation s'arrête immédiatement.
+- Les tokens d'accès sont révoqués côté Inboria.
+- Les données dans Inboria restent disponibles ; le CRM n'est pas modifié.
+
+### Plusieurs CRM en parallèle
+- Possible de connecter HubSpot + Pipedrive + Salesforce en même temps.
+- Chaque email est enrichi des informations issues de tous les CRM connectés.
+
+### Pas de duplication des données
+- Inboria stocke uniquement les références minimales (ID, nom, email) pour faire le lien entre emails et CRM.
+- Le CRM reste la source unique de vérité.
+
 ## QUESTIONS FRÉQUENTES
 
 ### Comment connecter ma boîte email ?
@@ -568,6 +621,59 @@ Automate handling of certain emails in natural language.
 
 ### Enable/Disable
 - Switch on each rule to pause it without deleting it.
+
+## 19. CRM INTEGRATIONS
+
+Inboria natively connects to 3 leading CRMs: HubSpot, Pipedrive and Salesforce. Sync is bidirectional and automatic.
+
+### Supported CRMs
+- **HubSpot**: contacts and deals sync.
+- **Pipedrive**: persons, deals and organizations sync.
+- **Salesforce**: contacts, accounts and opportunities sync. Sandbox mode available (toggle at connection time pointing to test.salesforce.com) to test before going to Production.
+
+### How to connect a CRM
+1. Go to Settings → CRM.
+2. Click "Connect" next to your chosen CRM.
+3. You're redirected to the CRM's official OAuth login page.
+4. You authorize Inboria to access your contacts and deals.
+5. An initial sync runs automatically.
+
+### Automatic sync
+- **HubSpot and Pipedrive**: automatic sync every 15 minutes in the background (\`crm-sync-scheduler\`).
+- **Salesforce**: initial sync at connection time + manual "Sync now" button available any time in Settings → CRM.
+- **Bidirectional**: CRM-side changes flow into Inboria, and new contacts in Inboria can be created in the CRM.
+- **Manual sync for all CRMs**: "Sync now" button in Settings → CRM. Shows the number of contacts and deals synced.
+- **Last-sync date**: visible on each connected CRM's card.
+
+### What the user sees in Inboria
+- When an email arrives, Inboria automatically identifies the matching contact in the connected CRM.
+- Open deals/opportunities with this contact are visible from the email.
+- New information from a conversation can enrich the CRM.
+
+### OAuth security
+- **No password stored**: Inboria uses OAuth exclusively.
+- **Tokens encrypted at rest** in the database.
+- **Revocation any time**: from the CRM (Connected Apps page) or from Settings → CRM in Inboria.
+- **TLS-encrypted** end-to-end exchanges.
+
+### Salesforce specifics
+- Sandbox toggle to target test.salesforce.com (recommended for mid-market/enterprise: test on a Sandbox org before connecting Production).
+- Lightning Experience compatible.
+- The \`workspaceName\` badge shows "(Sandbox)" when connected to Sandbox.
+
+### Disconnection
+- "Disconnect" button in Settings → CRM.
+- Sync stops immediately.
+- Access tokens are revoked on Inboria's side.
+- Data inside Inboria stays available; the CRM is not modified.
+
+### Multiple CRMs in parallel
+- You can connect HubSpot + Pipedrive + Salesforce at the same time.
+- Each email is enriched with information from every connected CRM.
+
+### No data duplication
+- Inboria only stores minimal references (ID, name, email) to link emails with the CRM.
+- The CRM remains the single source of truth.
 
 ## FREQUENTLY ASKED QUESTIONS
 
@@ -874,6 +980,59 @@ Automatiseer de behandeling van bepaalde e-mails in natuurlijke taal.
 ### Aan/Uit
 - Schakelaar op elke regel om hem te pauzeren zonder te verwijderen.
 
+## 19. CRM-INTEGRATIES
+
+Inboria maakt een native verbinding met 3 toonaangevende CRM's: HubSpot, Pipedrive en Salesforce. De synchronisatie is bidirectioneel en automatisch.
+
+### Ondersteunde CRM's
+- **HubSpot**: synchronisatie van contacten en deals.
+- **Pipedrive**: synchronisatie van personen, deals en organisaties.
+- **Salesforce**: synchronisatie van contacten, accounts en opportunities. Sandbox-modus beschikbaar (toggle bij verbinding naar test.salesforce.com) om te testen vóór Productie.
+
+### Een CRM verbinden
+1. Ga naar Instellingen → CRM.
+2. Klik op "Verbinden" naast het gewenste CRM.
+3. U wordt doorgestuurd naar de officiële OAuth-loginpagina van het CRM.
+4. U geeft Inboria toestemming om uw contacten en deals te benaderen.
+5. Een initiële synchronisatie verloopt automatisch.
+
+### Automatische synchronisatie
+- **HubSpot en Pipedrive**: automatische synchronisatie elke 15 minuten op de achtergrond (planner \`crm-sync-scheduler\`).
+- **Salesforce**: initiële synchronisatie bij verbinding + handmatige knop "Nu synchroniseren" altijd beschikbaar in Instellingen → CRM.
+- **Bidirectioneel**: wijzigingen in het CRM komen in Inboria terecht en nieuwe contacten in Inboria kunnen in het CRM worden aangemaakt.
+- **Handmatige sync voor alle CRM's**: knop "Nu synchroniseren" in Instellingen → CRM. Toont het aantal gesynchroniseerde contacten en deals.
+- **Datum laatste sync**: zichtbaar op de kaart van elk verbonden CRM.
+
+### Wat de gebruiker ziet in Inboria
+- Wanneer een e-mail binnenkomt, identificeert Inboria automatisch het overeenkomstige contact in het verbonden CRM.
+- Lopende deals/opportunities met dit contact zijn zichtbaar vanuit de e-mail.
+- Nieuwe info uit een gesprek kan het CRM verrijken.
+
+### OAuth-beveiliging
+- **Geen wachtwoord opgeslagen**: Inboria gebruikt uitsluitend OAuth.
+- **Tokens versleuteld in rust** in de database.
+- **Te allen tijde intrekbaar**: vanuit het CRM (pagina Verbonden apps) of vanuit Instellingen → CRM in Inboria.
+- **TLS-versleutelde** end-to-end uitwisselingen.
+
+### Salesforce-specificiteiten
+- Sandbox-toggle voor test.salesforce.com (aanbevolen voor middenbedrijf/grote organisaties: eerst testen op een Sandbox-org).
+- Compatibel met Lightning Experience.
+- De \`workspaceName\`-badge toont "(Sandbox)" bij een Sandbox-verbinding.
+
+### Verbinding verbreken
+- Knop "Verbinden verbreken" in Instellingen → CRM.
+- Synchronisatie stopt onmiddellijk.
+- Toegangstokens worden ingetrokken aan Inboria's kant.
+- Gegevens binnen Inboria blijven beschikbaar; het CRM wordt niet gewijzigd.
+
+### Meerdere CRM's parallel
+- HubSpot + Pipedrive + Salesforce kunnen tegelijk verbonden zijn.
+- Elke e-mail wordt verrijkt met informatie uit alle verbonden CRM's.
+
+### Geen gegevensduplicatie
+- Inboria slaat alleen minimale referenties op (ID, naam, e-mail) om e-mails aan het CRM te koppelen.
+- Het CRM blijft de enige bron van waarheid.
+
 ## VEELGESTELDE VRAGEN
 
 ### Hoe verbind ik mijn e-mail?
@@ -1154,6 +1313,59 @@ Automatisieren Sie die Verarbeitung bestimmter E-Mails in natürlicher Sprache.
 ### Ein/Aus
 - Schalter an jeder Regel, um sie zu pausieren, ohne sie zu löschen.
 
+## 19. CRM-INTEGRATIONEN
+
+Inboria verbindet sich nativ mit 3 führenden CRMs: HubSpot, Pipedrive und Salesforce. Die Synchronisation ist bidirektional und automatisch.
+
+### Unterstützte CRMs
+- **HubSpot**: Synchronisation von Kontakten und Deals.
+- **Pipedrive**: Synchronisation von Personen, Deals und Organisationen.
+- **Salesforce**: Synchronisation von Kontakten, Accounts und Opportunities. Sandbox-Modus verfügbar (Toggle bei der Verbindung Richtung test.salesforce.com), um vor dem Wechsel in die Produktion zu testen.
+
+### Ein CRM verbinden
+1. Gehen Sie zu Einstellungen → CRM.
+2. Klicken Sie neben dem gewünschten CRM auf "Verbinden".
+3. Sie werden zur offiziellen OAuth-Anmeldeseite des CRM weitergeleitet.
+4. Sie autorisieren Inboria, auf Ihre Kontakte und Deals zuzugreifen.
+5. Eine initiale Synchronisation läuft automatisch.
+
+### Automatische Synchronisation
+- **HubSpot und Pipedrive**: automatische Synchronisation alle 15 Minuten im Hintergrund (Planer \`crm-sync-scheduler\`).
+- **Salesforce**: initiale Synchronisation bei Verbindung + manuelle Schaltfläche "Jetzt synchronisieren" jederzeit verfügbar in Einstellungen → CRM.
+- **Bidirektional**: Änderungen im CRM fließen in Inboria zurück, neue Kontakte in Inboria können im CRM angelegt werden.
+- **Manuelle Sync für alle CRMs**: Schaltfläche "Jetzt synchronisieren" in Einstellungen → CRM. Zeigt die Anzahl synchronisierter Kontakte und Deals.
+- **Datum der letzten Sync**: sichtbar auf der Karte jedes verbundenen CRM.
+
+### Was der Nutzer in Inboria sieht
+- Trifft eine E-Mail ein, identifiziert Inboria automatisch den entsprechenden Kontakt im verbundenen CRM.
+- Laufende Deals/Opportunities mit diesem Kontakt sind aus der E-Mail heraus sichtbar.
+- Neue Informationen aus einem Gespräch können das CRM anreichern.
+
+### OAuth-Sicherheit
+- **Kein Passwort gespeichert**: Inboria nutzt ausschließlich OAuth.
+- **Tokens verschlüsselt im Ruhezustand** in der Datenbank.
+- **Jederzeit widerrufbar**: aus dem CRM (Seite Verbundene Apps) oder aus Einstellungen → CRM in Inboria.
+- **TLS-verschlüsselte** End-to-End-Übertragung.
+
+### Salesforce-Besonderheiten
+- Sandbox-Toggle für test.salesforce.com (empfohlen für Mittelstand/Großkunden: zuerst auf einer Sandbox-Org testen, bevor die Produktion verbunden wird).
+- Lightning Experience kompatibel.
+- Das \`workspaceName\`-Badge zeigt "(Sandbox)" bei einer Sandbox-Verbindung.
+
+### Trennung
+- Schaltfläche "Trennen" in Einstellungen → CRM.
+- Synchronisation stoppt sofort.
+- Access-Tokens werden auf Inboria-Seite widerrufen.
+- Daten innerhalb von Inboria bleiben verfügbar; das CRM wird nicht verändert.
+
+### Mehrere CRMs parallel
+- HubSpot + Pipedrive + Salesforce können gleichzeitig verbunden sein.
+- Jede E-Mail wird mit Informationen aus allen verbundenen CRMs angereichert.
+
+### Keine Datendopplung
+- Inboria speichert nur minimale Referenzen (ID, Name, E-Mail), um E-Mails mit dem CRM zu verknüpfen.
+- Das CRM bleibt die einzige Quelle der Wahrheit.
+
 ## HÄUFIG GESTELLTE FRAGEN
 
 ### Wie verbinde ich mein E-Mail-Konto?
@@ -1433,6 +1645,59 @@ Automatice el tratamiento de ciertos correos en lenguaje natural.
 
 ### On/Off
 - Interruptor en cada regla para pausarla sin eliminarla.
+
+## 19. INTEGRACIONES CRM
+
+Inboria se conecta de forma nativa a 3 CRM líderes del mercado: HubSpot, Pipedrive y Salesforce. La sincronización es bidireccional y automática.
+
+### CRM compatibles
+- **HubSpot**: sincronización de contactos y deals.
+- **Pipedrive**: sincronización de personas, deals y organizaciones.
+- **Salesforce**: sincronización de contactos, cuentas y oportunidades. Modo Sandbox disponible (toggle al conectar hacia test.salesforce.com) para probar antes de pasar a Producción.
+
+### Cómo conectar un CRM
+1. Vaya a Configuración → CRM.
+2. Pulse "Conectar" junto al CRM elegido.
+3. Será redirigido a la página oficial de OAuth del CRM.
+4. Autoriza a Inboria para acceder a sus contactos y deals.
+5. Se ejecuta una sincronización inicial automáticamente.
+
+### Sincronización automática
+- **HubSpot y Pipedrive**: sincronización automática cada 15 minutos en segundo plano (planificador \`crm-sync-scheduler\`).
+- **Salesforce**: sincronización inicial al conectar + botón manual "Sincronizar ahora" disponible en cualquier momento en Configuración → CRM.
+- **Bidireccional**: los cambios en el CRM llegan a Inboria, y los nuevos contactos en Inboria pueden crearse en el CRM.
+- **Sincronización manual para todos los CRM**: botón "Sincronizar ahora" en Configuración → CRM. Muestra el número de contactos y deals sincronizados.
+- **Fecha de la última sincronización**: visible en la tarjeta de cada CRM conectado.
+
+### Lo que el usuario ve en Inboria
+- Cuando llega un correo, Inboria identifica automáticamente el contacto correspondiente en el CRM conectado.
+- Los deals/oportunidades en curso con ese contacto son visibles desde el correo.
+- La nueva información de una conversación puede enriquecer el CRM.
+
+### Seguridad OAuth
+- **Sin contraseñas almacenadas**: Inboria utiliza únicamente OAuth.
+- **Tokens cifrados en reposo** en la base de datos.
+- **Revocación en cualquier momento**: desde el CRM (página Aplicaciones conectadas) o desde Configuración → CRM en Inboria.
+- **Intercambios cifrados TLS** de extremo a extremo.
+
+### Particularidades de Salesforce
+- Toggle Sandbox para apuntar a test.salesforce.com (recomendado para mediana/gran empresa: probar primero en una org Sandbox).
+- Compatible con Lightning Experience.
+- La insignia \`workspaceName\` muestra "(Sandbox)" cuando la conexión es Sandbox.
+
+### Desconexión
+- Botón "Desconectar" en Configuración → CRM.
+- La sincronización se detiene de inmediato.
+- Los tokens de acceso se revocan en el lado de Inboria.
+- Los datos en Inboria siguen disponibles; el CRM no se modifica.
+
+### Varios CRM en paralelo
+- Es posible conectar HubSpot + Pipedrive + Salesforce a la vez.
+- Cada correo se enriquece con la información de todos los CRM conectados.
+
+### Sin duplicación de datos
+- Inboria solo almacena referencias mínimas (ID, nombre, correo) para vincular correos con el CRM.
+- El CRM sigue siendo la única fuente de verdad.
 
 ## PREGUNTAS FRECUENTES
 
