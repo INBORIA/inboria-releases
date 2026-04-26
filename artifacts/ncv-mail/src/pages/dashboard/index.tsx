@@ -3195,7 +3195,7 @@ export default function Dashboard() {
   const [filterPriority, setFilterPriority] = useState<string>("all");
   // Wave HubSpot/Pipedrive — filtre Réception sur les expéditeurs présents
   // dans le CRM choisi. crmFilter = null désactive le filtre.
-  const [crmFilter, setCrmFilter] = useState<"hubspot" | "pipedrive" | null>(null);
+  const [crmFilter, setCrmFilter] = useState<"hubspot" | "pipedrive" | "salesforce" | null>(null);
   const [crmPanelCollapsed, setCrmPanelCollapsed] = useState(false);
   const [detailHubspotPanelHidden, setDetailHubspotPanelHidden] = useState(false);
   const [detailPipedrivePanelHidden, setDetailPipedrivePanelHidden] = useState(false);
@@ -3262,6 +3262,7 @@ export default function Dashboard() {
   useEffect(() => {
     setDetailHubspotPanelHidden(false);
     setDetailPipedrivePanelHidden(false);
+    setDetailSalesforcePanelHidden(false);
   }, [selectedEmailId]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [searchInput, setSearchInput] = useState("");
