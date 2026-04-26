@@ -815,6 +815,14 @@
     "editCategory": "Edit category",
     "descriptionHelp": "Description (to help the AI)",
     "creating": "Creating...",
+    "duplicateWarning": {
+      "title": "Similar category detected",
+      "desc": "You're creating \"{{name}}\". One or more existing categories look very close to it:",
+      "help": "You can use the existing category (recommended) or create this one anyway if it really means something different to you.",
+      "useExisting": "Use existing",
+      "createAnyway": "Create anyway",
+      "usedExistingToast": "Kept existing category \"{{name}}\""
+    },
     "packPreConfigDesc": "Add pre-configured categories suited to your business",
     "jobNotListed": "My profession is not listed",
     "searchJobs": "Search for a profession...",

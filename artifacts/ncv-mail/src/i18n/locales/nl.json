@@ -815,6 +815,14 @@
     "editCategory": "Categorie bewerken",
     "descriptionHelp": "Beschrijving (om de AI te helpen)",
     "creating": "Aanmaken...",
+    "duplicateWarning": {
+      "title": "Vergelijkbare categorie gedetecteerd",
+      "desc": "U probeert \"{{name}}\" aan te maken. Een of meer bestaande categorieën lijken er sterk op:",
+      "help": "U kunt de bestaande categorie gebruiken (aanbevolen) of deze toch aanmaken als deze echt iets anders betekent.",
+      "useExisting": "Bestaande gebruiken",
+      "createAnyway": "Toch aanmaken",
+      "usedExistingToast": "Bestaande categorie \"{{name}}\" behouden"
+    },
     "packPreConfigDesc": "Voeg vooraf geconfigureerde categorieën toe die bij uw bedrijf passen",
     "jobNotListed": "Mijn beroep staat niet in de lijst",
     "searchJobs": "Zoek een beroep...",

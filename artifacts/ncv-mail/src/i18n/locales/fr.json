@@ -805,6 +805,14 @@
     "editCategory": "Modifier la catégorie",
     "descriptionHelp": "Description (pour aider l'IA)",
     "creating": "Création...",
+    "duplicateWarning": {
+      "title": "Catégorie similaire détectée",
+      "desc": "Vous essayez de créer « {{name}} ». Une ou plusieurs catégories existantes lui ressemblent beaucoup :",
+      "help": "Vous pouvez utiliser la catégorie existante (recommandé) ou créer celle-ci quand même si elle a vraiment un sens différent pour vous.",
+      "useExisting": "Utiliser l'existante",
+      "createAnyway": "Créer quand même",
+      "usedExistingToast": "Catégorie « {{name}} » conservée"
+    },
     "packPreConfigDesc": "Ajoutez des catégories pré-configurées adaptées à votre activité",
     "jobNotListed": "Mon métier n'est pas listé",
     "searchJobs": "Rechercher un métier...",

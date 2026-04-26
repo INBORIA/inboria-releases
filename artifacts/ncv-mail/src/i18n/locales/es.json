@@ -815,6 +815,14 @@
     "editCategory": "Editar categoría",
     "descriptionHelp": "Descripción (para ayudar a la IA)",
     "creating": "Creando...",
+    "duplicateWarning": {
+      "title": "Categoría similar detectada",
+      "desc": "Está creando «{{name}}». Una o más categorías existentes son muy parecidas:",
+      "help": "Puede usar la categoría existente (recomendado) o crear esta de todos modos si realmente significa algo distinto.",
+      "useExisting": "Usar la existente",
+      "createAnyway": "Crear de todos modos",
+      "usedExistingToast": "Categoría «{{name}}» conservada"
+    },
     "packPreConfigDesc": "Agrega categorías preconfiguradas adecuadas a tu negocio",
     "jobNotListed": "Mi profesión no está listada",
     "searchJobs": "Buscar una profesión...",

@@ -4,6 +4,18 @@ import { CreateCategoryBody, UpdateCategoryBody, ApplyPackBody, GeneratePackBody
 import { requireAuth } from "../middlewares/auth";
 import OpenAI from "openai";
 import { AI_COST, checkEntitlement, consumeAiCredits } from "../services/credits";
+import { findSimilarCategories } from "../lib/similarity";
+
+// Headers/query params autorisant le bypass volontaire de la détection
+// de quasi-doublons ("Créer quand même" côté UI).
+function isForceCreate(req: { query: any; headers: any; body: any }): boolean {
+  const q = String(req.query?.["force"] ?? "").toLowerCase();
+  if (q === "1" || q === "true" || q === "yes") return true;
+  const h = String(req.headers?.["x-force-create"] ?? "").toLowerCase();
+  if (h === "1" || h === "true" || h === "yes") return true;
+  if (req.body && req.body.force === true) return true;
+  return false;
+}
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -43,6 +55,25 @@ router.post("/categories", requireAuth, async (req, res): Promise<void> => {
     if (!parsed.success) {
       res.status(400).json({ error: parsed.error.message });
       return;
+    }
+
+    // Détection des quasi-doublons : on ne bloque pas un utilisateur qui veut
+    // explicitement créer "Factures" alors qu'il a déjà "Facturation", mais on
+    // l'avertit pour éviter les disperseurs. Bypass via ?force=1 ou header.
+    if (!isForceCreate(req)) {
+      const { data: existing } = await supabaseAdmin
+        .from("categories")
+        .select("id, name")
+        .eq("user_id", req.userId!);
+
+      const similar = findSimilarCategories(parsed.data.name, existing || []);
+      if (similar.length > 0) {
+        res.status(409).json({
+          error: "near_duplicate_category",
+          similar: similar.slice(0, 3),
+        });
+        return;
+      }
     }
 
     const { data: category, error } = await supabaseAdmin
@@ -184,14 +215,29 @@ router.post("/categories/apply-pack", requireAuth, async (req, res): Promise<voi
 
     const { data: existing } = await supabaseAdmin
       .from("categories")
-      .select("name")
+      .select("id, name")
       .eq("user_id", req.userId!);
 
-    const existingNames = new Set((existing || []).map((c: any) => c.name.toLowerCase()));
+    const existingList = (existing || []) as Array<{ id: number; name: string }>;
+    const existingNames = new Set(existingList.map((c) => c.name.toLowerCase()));
 
-    const toInsert = dedupedCategories.filter(
-      (c) => !existingNames.has(c.name.trim().toLowerCase())
-    );
+    // Quasi-doublon : on évite aussi les "Factures" face à "Facturation"
+    // pour ne pas polluer le classement quand on applique un pack métier.
+    // On accumule au fur et à mesure les noms acceptés du pack pour
+    // bloquer aussi les doublons internes au même payload.
+    const nearDuplicates: Array<{ name: string; matched: string }> = [];
+    const seen: Array<{ id: number; name: string }> = [...existingList];
+    const toInsert = dedupedCategories.filter((c) => {
+      const trimmed = c.name.trim();
+      if (existingNames.has(trimmed.toLowerCase())) return false;
+      const sim = findSimilarCategories(trimmed, seen);
+      if (sim.length > 0) {
+        nearDuplicates.push({ name: trimmed, matched: sim[0]!.name });
+        return false;
+      }
+      seen.push({ id: -1, name: trimmed });
+      return true;
+    });
 
     let added = 0;
     const addedCategories: any[] = [];
@@ -246,6 +292,7 @@ router.post("/categories/apply-pack", requireAuth, async (req, res): Promise<voi
     res.json({
       added,
       skipped: packCategories.length - added,
+      nearDuplicates,
       categories: addedCategories,
     });
   } catch {
@@ -270,6 +317,20 @@ router.post("/categories/generate-pack", requireAuth, async (req, res): Promise<
       return;
     }
 
+    // Charge les catégories déjà en place pour les passer à l'IA en
+    // contexte : on évite ainsi qu'elle propose "Factures" quand l'abonné
+    // a déjà "Facturation". Ceinture + bretelles : on filtre aussi côté
+    // serveur après la réponse.
+    const { data: existing } = await supabaseAdmin
+      .from("categories")
+      .select("id, name")
+      .eq("user_id", req.userId!);
+    const existingList = (existing || []) as Array<{ id: number; name: string }>;
+    const existingNamesList = existingList.map((c) => c.name).filter(Boolean);
+    const avoidBlock = existingNamesList.length > 0
+      ? `\n\nCategories DEJA existantes chez l'utilisateur (NE PAS reproposer ni proposer des variantes proches comme un singulier/pluriel ou un synonyme evident) :\n- ${existingNamesList.join("\n- ")}`
+      : "";
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       max_completion_tokens: 1024,
@@ -282,7 +343,7 @@ router.post("/categories/generate-pack", requireAuth, async (req, res): Promise<
           role: "user",
           content: `Metier/activite: ${description}
 
-Genere entre 6 et 12 categories d'emails pertinentes pour ce metier. Chaque categorie doit avoir un nom court et une description claire.
+Genere entre 6 et 12 categories d'emails pertinentes pour ce metier. Chaque categorie doit avoir un nom court et une description claire.${avoidBlock}
 
 Reponds en JSON:
 {
@@ -303,13 +364,22 @@ Reponds en JSON:
       ? result.packName.trim().slice(0, 100)
       : "Pack personnalise";
 
+    // Filtre côté serveur : retire toute proposition IA en quasi-doublon
+    // d'une catégorie existante OU d'une autre proposition du même pack.
+    const seenInPack: Array<{ id: number; name: string }> = [...existingList];
     const categories = (Array.isArray(result.categories) ? result.categories : [])
       .filter((c: any) => typeof c.name === "string" && c.name.trim().length >= 2)
-      .slice(0, 15)
       .map((c: any) => ({
         name: c.name.trim().slice(0, 100),
         description: typeof c.description === "string" ? c.description.trim().slice(0, 300) : "",
-      }));
+      }))
+      .filter((c: { name: string; description: string }) => {
+        const sim = findSimilarCategories(c.name, seenInPack);
+        if (sim.length > 0) return false;
+        seenInPack.push({ id: -1, name: c.name });
+        return true;
+      })
+      .slice(0, 15);
 
     const billing = await consumeAiCredits(req.userId!, "generate_pack");
     if (!billing.ok) {

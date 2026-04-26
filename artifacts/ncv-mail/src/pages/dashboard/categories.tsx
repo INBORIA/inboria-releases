@@ -4,7 +4,9 @@ import {
   useCreateCategory, 
   useUpdateCategory, 
   useDeleteCategory,
-  getListCategoriesQueryKey
+  getListCategoriesQueryKey,
+  customFetch,
+  ApiError,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -70,6 +72,32 @@ export default function Categories() {
   const [editCategory, setEditCategory] = useState<any>(null);
   const [showSuggestions, setShowSuggestions] = useState(true);
   const [addingNames, setAddingNames] = useState<Set<string>>(new Set());
+  const [nearDup, setNearDup] = useState<null | {
+    source: "form" | "suggestion";
+    name: string;
+    description: string;
+    similar: Array<{ id: number; name: string; similarity: number }>;
+    suggestionKey?: string;
+  }>(null);
+  const [forcing, setForcing] = useState(false);
+
+  const extractSimilar = (err: unknown): Array<{ id: number; name: string; similarity: number }> | null => {
+    if (err instanceof ApiError && err.status === 409) {
+      const data = err.data as { similar?: Array<{ id: number; name: string; similarity: number }> } | null;
+      if (data && Array.isArray(data.similar) && data.similar.length > 0) {
+        return data.similar;
+      }
+    }
+    return null;
+  };
+
+  const forceCreateCategory = async (name: string, description: string) => {
+    return customFetch<{ id: number; name: string }>("/api/categories?force=1", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "X-Force-Create": "1" },
+      body: JSON.stringify({ name, description }),
+    });
+  };
 
   const suggestedCategories = useMemo(() => {
     return SUGGESTED_CATEGORY_KEYS.map((s) => ({
@@ -97,8 +125,19 @@ export default function Categories() {
           setAddingNames(prev => { const next = new Set(prev); next.delete(suggestion.key); return next; });
           toast({ title: t("classification.categoryCreated") });
         },
-        onError: () => {
+        onError: (err: unknown) => {
           setAddingNames(prev => { const next = new Set(prev); next.delete(suggestion.key); return next; });
+          const similar = extractSimilar(err);
+          if (similar) {
+            setNearDup({
+              source: "suggestion",
+              name: suggestion.name,
+              description: suggestion.description,
+              similar,
+              suggestionKey: suggestion.key,
+            });
+            return;
+          }
           toast({ variant: "destructive", title: t("common.error"), description: t("classification.addErrorDesc", { name: suggestion.name }) });
         },
       }
@@ -136,8 +175,50 @@ export default function Categories() {
           createForm.reset();
           toast({ title: t("classification.categoryCreated") });
         },
+        onError: (err: unknown) => {
+          const similar = extractSimilar(err);
+          if (similar) {
+            setNearDup({
+              source: "form",
+              name: data.name,
+              description: data.description || "",
+              similar,
+            });
+            return;
+          }
+          toast({ variant: "destructive", title: t("common.error"), description: t("classification.createError") });
+        },
       }
     );
+  };
+
+  const handleNearDupForce = async () => {
+    if (!nearDup) return;
+    setForcing(true);
+    try {
+      await forceCreateCategory(nearDup.name, nearDup.description);
+      await queryClient.invalidateQueries({ queryKey: getListCategoriesQueryKey() });
+      toast({ title: t("classification.categoryCreated") });
+      if (nearDup.source === "form") {
+        setIsCreateOpen(false);
+        createForm.reset();
+      }
+      setNearDup(null);
+    } catch {
+      toast({ variant: "destructive", title: t("common.error"), description: t("classification.createError") });
+    } finally {
+      setForcing(false);
+    }
+  };
+
+  const handleNearDupUseExisting = () => {
+    if (!nearDup) return;
+    if (nearDup.source === "form") {
+      setIsCreateOpen(false);
+      createForm.reset();
+    }
+    toast({ title: t("classification.duplicateWarning.usedExistingToast", { name: nearDup.similar[0]?.name ?? "" }) });
+    setNearDup(null);
   };
 
   const onSubmitEdit = (data: CategoryFormValues) => {
@@ -228,6 +309,48 @@ export default function Categories() {
             </DialogContent>
           </Dialog>
         </div>
+
+        <AlertDialog open={!!nearDup} onOpenChange={(open) => !open && !forcing && setNearDup(null)}>
+          <AlertDialogContent className="bg-card border-border">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-white">{t("classification.duplicateWarning.title")}</AlertDialogTitle>
+              <AlertDialogDescription className="text-[#8b9cb3]">
+                {t("classification.duplicateWarning.desc", { name: nearDup?.name ?? "" })}
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="space-y-2 py-2">
+              {nearDup?.similar.map((s) => (
+                <div key={s.id} className="flex items-center gap-2 text-[13px] text-white bg-white/[0.04] rounded-md px-3 py-2">
+                  <Tags className="w-3.5 h-3.5 text-primary" />
+                  <span className="font-medium">{s.name}</span>
+                  <span className="ml-auto text-[11px] text-[#8b9cb3]">{Math.round(s.similarity * 100)}%</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-[12px] text-[#8b9cb3]">{t("classification.duplicateWarning.help")}</p>
+            <AlertDialogFooter className="gap-2">
+              <AlertDialogCancel disabled={forcing} className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">
+                {t("common.cancel")}
+              </AlertDialogCancel>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={handleNearDupUseExisting}
+                disabled={forcing}
+                className="border-primary/30 text-primary hover:bg-primary/10"
+              >
+                {t("classification.duplicateWarning.useExisting")}
+              </Button>
+              <AlertDialogAction
+                onClick={(e) => { e.preventDefault(); handleNearDupForce(); }}
+                disabled={forcing}
+                className="bg-amber-500 text-white hover:bg-amber-600"
+              >
+                {forcing ? t("classification.creating") : t("classification.duplicateWarning.createAnyway")}
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
 
         <Dialog open={!!editCategory} onOpenChange={(open) => !open && setEditCategory(null)}>
           <DialogContent className="bg-card border-border">

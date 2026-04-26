@@ -815,6 +815,14 @@
     "editCategory": "Kategorie bearbeiten",
     "descriptionHelp": "Beschreibung (um der KI zu helfen)",
     "creating": "Erstelle...",
+    "duplicateWarning": {
+      "title": "Ähnliche Kategorie erkannt",
+      "desc": "Sie erstellen \"{{name}}\". Eine oder mehrere bestehende Kategorien sind sehr ähnlich:",
+      "help": "Sie können die bestehende Kategorie verwenden (empfohlen) oder diese trotzdem anlegen, wenn sie für Sie wirklich etwas anderes bedeutet.",
+      "useExisting": "Bestehende verwenden",
+      "createAnyway": "Trotzdem erstellen",
+      "usedExistingToast": "Bestehende Kategorie \"{{name}}\" beibehalten"
+    },
     "packPreConfigDesc": "Fügen Sie vorkonfigurierte Kategorien hinzu, die zu Ihrem Unternehmen passen",
     "jobNotListed": "Mein Beruf ist nicht aufgeführt",
     "searchJobs": "Nach einem Beruf suchen...",
