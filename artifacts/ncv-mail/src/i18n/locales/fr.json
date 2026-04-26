@@ -212,7 +212,7 @@
     "disconnectedToastDescription": "Cliquez pour reconnecter dans Paramètres.",
     "disconnectedToastAction": "Reconnecter",
     "allCategories": "Toutes",
-    "uncategorized": "Non classé",
+    "uncategorized": "Non classés",
     "unread": "Non lus",
     "assigned": "Assignés",
     "noEmails": "Aucun email dans cette catégorie",
@@ -230,7 +230,7 @@
     "recategorize": "Reclasser les non-classés",
     "recategorizeSuccess": "{{count}} email(s) reclassé(s)",
     "priority": "Priorité",
-    "category": "Catégorie",
+    "category": "Catégories",
     "project": "Projet",
     "assignedTo": "Assigné",
     "noProject": "Aucun projet",
@@ -509,7 +509,7 @@
     "exportError": "Erreur lors de l'export",
     "searchPlaceholder": "Rechercher dans les archives...",
     "allCategories": "Toutes",
-    "uncategorized": "Non classé"
+    "uncategorized": "Non classés"
   },
   "junk": {
     "title": "Courrier indésirable",

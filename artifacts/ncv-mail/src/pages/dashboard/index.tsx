@@ -4994,19 +4994,31 @@ export default function Dashboard() {
                     {(() => {
                       // Source unique : compte server-side dans summary
                       // (cf. commentaire identique sur le bouton ci-dessus).
+                      // L'entree reste TOUJOURS visible, meme a 0, pour que
+                      // l'utilisateur soit rassure que le filtre fonctionne
+                      // et puisse cliquer dessus pour verifier la liste.
+                      // Quand count=0, look discret (gris) ; quand count>0,
+                      // look actif (primary) pour signaler une action a faire.
                       const summaryData = summary as { uncategorizedCount?: number } | undefined;
                       const uncategorizedCount = summaryData?.uncategorizedCount || 0;
-                      if (uncategorizedCount === 0) return null;
+                      const hasItems = uncategorizedCount > 0;
+                      const isSelected = filterCategory === "__uncategorized__";
                       return (
                         <div
-                          className={`flex items-center justify-between py-1 px-1.5 rounded transition-colors cursor-pointer ${filterCategory === "__uncategorized__" ? "bg-primary/10 text-primary" : "hover:bg-white/[0.04] text-primary"}`}
-                          onClick={() => setFilterCategory(filterCategory === "__uncategorized__" ? "all" : "__uncategorized__")}
+                          className={`flex items-center justify-between py-1 px-1.5 rounded transition-colors cursor-pointer ${
+                            isSelected
+                              ? "bg-primary/10 text-primary"
+                              : hasItems
+                                ? "hover:bg-white/[0.04] text-primary"
+                                : "hover:bg-white/[0.04] text-muted-foreground"
+                          }`}
+                          onClick={() => setFilterCategory(isSelected ? "all" : "__uncategorized__")}
                         >
                           <div className="flex items-center gap-1.5">
-                            <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                            <div className={`w-1.5 h-1.5 rounded-full ${hasItems ? "bg-primary" : "bg-white/20"}`} />
                             <span className="text-[11px]">{t("inbox.uncategorized")}</span>
                           </div>
-                          <span className="text-[10px] bg-primary/15 text-primary px-1.5 py-0.5 rounded">
+                          <span className={`text-[10px] px-1.5 py-0.5 rounded ${hasItems ? "bg-primary/15 text-primary" : "bg-white/[0.06] text-muted-foreground"}`}>
                             {uncategorizedCount}
                           </span>
                         </div>

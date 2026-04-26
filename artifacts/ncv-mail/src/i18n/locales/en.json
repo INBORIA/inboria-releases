@@ -230,7 +230,7 @@
     "recategorize": "Recategorize uncategorized",
     "recategorizeSuccess": "{{count}} email(s) recategorized",
     "priority": "Priority",
-    "category": "Category",
+    "category": "Categories",
     "project": "Project",
     "assignedTo": "Assigned to",
     "noProject": "No project",
