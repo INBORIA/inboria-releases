@@ -212,7 +212,11 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     // 2) on filtre les emails dont l'expéditeur contient un de ces emails.
     type CrmContactEmailRow = { email: string | null };
     const crmFilterRaw = (req.query.crmFilter as string | undefined)?.trim().toLowerCase();
-    if (crmFilterRaw === "hubspot" || crmFilterRaw === "pipedrive") {
+    if (
+      crmFilterRaw === "hubspot" ||
+      crmFilterRaw === "pipedrive" ||
+      crmFilterRaw === "salesforce"
+    ) {
       const { data: crmRows } = await supabaseAdmin
         .from("crm_contacts")
         .select("email")

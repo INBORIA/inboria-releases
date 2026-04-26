@@ -318,7 +318,7 @@ export const ListEmailsQueryParams = zod.object({
     .default(listEmailsQueryLimitDefault)
     .describe("Number of emails per page"),
   crmFilter: zod
-    .enum(["hubspot", "pipedrive"])
+    .enum(["hubspot", "pipedrive", "salesforce"])
     .optional()
     .describe(
       "Restrict to senders present in the user's CRM contacts for the given provider",

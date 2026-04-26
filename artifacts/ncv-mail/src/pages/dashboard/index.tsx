@@ -3452,7 +3452,7 @@ export default function Dashboard() {
     q: searchQuery || undefined,
     page: emailPage,
     limit: 200,
-    ...(crmFilter ? { crmFilter: crmFilter as ListEmailsCrmFilter } : {}),
+    ...(crmFilter ? { crmFilter: ListEmailsCrmFilter[crmFilter] } : {}),
   });
 
   useEffect(() => {

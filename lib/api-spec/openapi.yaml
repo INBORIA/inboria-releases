@@ -224,7 +224,7 @@ paths:
           in: query
           schema:
             type: string
-            enum: [hubspot, pipedrive]
+            enum: [hubspot, pipedrive, salesforce]
           description: Restrict to senders present in the user's CRM contacts for the given provider
       responses:
         "200":

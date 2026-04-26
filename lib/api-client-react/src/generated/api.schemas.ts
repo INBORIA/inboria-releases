@@ -1497,6 +1497,7 @@ export type ListEmailsCrmFilter =
 export const ListEmailsCrmFilter = {
   hubspot: "hubspot",
   pipedrive: "pipedrive",
+  salesforce: "salesforce",
 } as const;
 
 export type DeleteEmail200 = {
