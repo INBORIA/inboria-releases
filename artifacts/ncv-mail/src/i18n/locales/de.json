@@ -1546,11 +1546,11 @@
     "crm": {
       "badge": "CRM-Synchronisation",
       "heroTitle": "Ihr CRM und Ihre E-Mails, endlich synchron",
-      "heroDesc": "Inboria verbindet HubSpot, Pipedrive und Salesforce mit Ihrem Postfach. Kontakte, Deals und Opportunities werden automatisch synchronisiert — ohne doppelte Erfassung.",
+      "heroDesc": "Inboria verbindet HubSpot, Pipedrive, Salesforce und Odoo mit Ihrem Postfach. Kontakte, Deals und Opportunities werden automatisch synchronisiert — ohne doppelte Erfassung.",
       "tryFree": "Kostenlos testen",
       "allFeatures": "Alle Funktionen",
       "stats": {
-        "crmCount": "3 CRMs",
+        "crmCount": "4 CRMs",
         "crmCountLabel": "nativ unterstützt",
         "frequency": "15 Min.",
         "frequencyLabel": "Auto-Sync-Intervall",
@@ -1558,7 +1558,7 @@
         "bidirLabel": "bidirektionale Synchronisation"
       },
       "whatItDoes": "Was Inboria mit Ihrem CRM macht",
-      "whatItDoesDesc": "Native Integration mit den 3 führenden CRMs am Markt. Verbindung mit einem Klick, automatische Synchronisation und jede E-Mail mit den zugehörigen Kontakt- und Dealinformationen angereichert.",
+      "whatItDoesDesc": "Native Integration mit den 4 führenden CRMs am Markt. Verbindung mit einem Klick (oder per API-Key für Odoo), automatische Synchronisation und jede E-Mail mit den zugehörigen Kontakt- und Dealinformationen angereichert.",
       "hubspot": "HubSpot",
       "hubspotDesc": "Native HubSpot-Synchronisation. Ihre Kontakte und Deals erscheinen automatisch in Inboria. Wenn eine E-Mail eintrifft, sehen Sie sofort, mit welchem Kontakt sie verknüpft ist und welche Deals mit dieser Person laufen.",
       "hubspotH1": "Kontakte fortlaufend synchronisiert",
@@ -1577,6 +1577,12 @@
       "salesforceH2": "Sandbox-Modus für sicheres Testen",
       "salesforceH3": "Wechsel Sandbox / Produktion mit einem Klick",
       "salesforceH4": "Lightning Experience kompatibel",
+      "odoo": "Odoo (Community & Enterprise)",
+      "odooDesc": "Verbinden Sie Ihre Odoo-Instanz (Community oder Enterprise). Inboria synchronisiert Kontakte (res.partner) und Opportunities (crm.lead). Authentifizierung per URL + Datenbank + Login + API-Key — kein OAuth, Ihr Schlüssel kann jederzeit in Odoo widerrufen werden.",
+      "odooH1": "Kontakte (res.partner) synchronisiert",
+      "odooH2": "Opportunities (crm.lead) mit E-Mails verknüpft",
+      "odooH3": "Auth per API-Key (kein OAuth)",
+      "odooH4": "Community- und Enterprise-kompatibel",
       "autoSync": "Automatische Synchronisation",
       "autoSyncDesc": "Inboria synchronisiert Ihr CRM alle 15 Minuten im Hintergrund. Neue Kontakte aus Inboria fließen ins CRM zurück, und Änderungen im CRM werden in Inboria abgebildet. Sie können auch jederzeit eine Synchronisation erzwingen.",
       "autoSyncH1": "Auto-Sync alle 15 Minuten",
@@ -4386,6 +4392,26 @@
     },
     "pipedrive": {
       "desc": "Synchronisiere Personen und Deals, protokolliere E-Mails als Pipedrive-Aktivitäten."
+    },
+    "odoo": {
+      "desc": "Synchronisieren Sie Odoo-Kontakte und Opportunities. Auth per URL + Datenbank + Login + API-Key.",
+      "dialogTitle": "Odoo verbinden",
+      "dialogDesc": "Geben Sie die Daten Ihrer Odoo-Instanz ein, um die Synchronisation zu aktivieren.",
+      "urlLabel": "Instanz-URL",
+      "urlPlaceholder": "https://ihre-firma.odoo.com",
+      "dbLabel": "Datenbank",
+      "dbPlaceholder": "meine-datenbank",
+      "loginLabel": "Login",
+      "loginPlaceholder": "sie@firma.com",
+      "apiKeyLabel": "API-Key",
+      "apiKeyPlaceholder": "Ihr Odoo API-Key",
+      "helpText": "Wie erhalte ich meinen API-Key?",
+      "helpDetail": "In Odoo: Profil → Kontosicherheit → Neuer API-Key.",
+      "submit": "Verbinden",
+      "submitting": "Verbindung läuft…",
+      "connectSuccess": "Odoo verbunden",
+      "connectFailed": "Odoo-Verbindung fehlgeschlagen",
+      "missingFields": "Alle Felder sind erforderlich"
     },
     "slack": {
       "desc": "Empfange wichtige E-Mails und dringende Aufgaben in Slack."

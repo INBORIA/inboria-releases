@@ -4,20 +4,26 @@
 -- (constraint violation crm_contacts_provider_check / crm_deals_provider_check /
 -- crm_email_logs_provider_check) et le panneau Salesforce reste vide.
 
+-- NOTE : 'odoo' est inclus ici pour rester cohérent avec la migration
+-- 2026_04_26_crm_odoo_provider.sql (qui se trie lexicographiquement AVANT
+-- celle-ci). Sur une réinstallation/replay des migrations dans l'ordre lex,
+-- odoo serait sinon écrasé. En production, la migration salesforce a été
+-- appliquée AVANT la migration odoo, donc l'état final est déjà correct ;
+-- ce patch ne change rien pour les bases existantes.
 ALTER TABLE public.crm_contacts
   DROP CONSTRAINT IF EXISTS crm_contacts_provider_check;
 ALTER TABLE public.crm_contacts
   ADD CONSTRAINT crm_contacts_provider_check
-  CHECK (provider IN ('hubspot', 'pipedrive', 'salesforce'));
+  CHECK (provider IN ('hubspot', 'pipedrive', 'salesforce', 'odoo'));
 
 ALTER TABLE public.crm_deals
   DROP CONSTRAINT IF EXISTS crm_deals_provider_check;
 ALTER TABLE public.crm_deals
   ADD CONSTRAINT crm_deals_provider_check
-  CHECK (provider IN ('hubspot', 'pipedrive', 'salesforce'));
+  CHECK (provider IN ('hubspot', 'pipedrive', 'salesforce', 'odoo'));
 
 ALTER TABLE public.crm_email_logs
   DROP CONSTRAINT IF EXISTS crm_email_logs_provider_check;
 ALTER TABLE public.crm_email_logs
   ADD CONSTRAINT crm_email_logs_provider_check
-  CHECK (provider IN ('hubspot', 'pipedrive', 'salesforce'));
+  CHECK (provider IN ('hubspot', 'pipedrive', 'salesforce', 'odoo'));

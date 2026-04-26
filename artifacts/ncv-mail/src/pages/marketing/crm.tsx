@@ -7,6 +7,7 @@ import {
   Building2,
   Briefcase,
   Cloud,
+  Database,
   RefreshCw,
   ShieldCheck,
   Lock,
@@ -21,6 +22,7 @@ const crmFeatureKeys = [
   { icon: Building2, key: "hubspot", highlights: ["hubspotH1", "hubspotH2", "hubspotH3", "hubspotH4"] },
   { icon: Briefcase, key: "pipedrive", highlights: ["pipedriveH1", "pipedriveH2", "pipedriveH3", "pipedriveH4"] },
   { icon: Cloud, key: "salesforce", highlights: ["salesforceH1", "salesforceH2", "salesforceH3", "salesforceH4"] },
+  { icon: Database, key: "odoo", highlights: ["odooH1", "odooH2", "odooH3", "odooH4"] },
   { icon: RefreshCw, key: "autoSync", highlights: ["autoSyncH1", "autoSyncH2", "autoSyncH3", "autoSyncH4"] },
   { icon: Lock, key: "secureOauth", highlights: ["secureOauthH1", "secureOauthH2", "secureOauthH3", "secureOauthH4"] },
 ];

@@ -1546,11 +1546,11 @@
     "crm": {
       "badge": "CRM-synchronisatie",
       "heroTitle": "Uw CRM en e-mails, eindelijk gesynchroniseerd",
-      "heroDesc": "Inboria koppelt HubSpot, Pipedrive en Salesforce aan uw inbox. Contacten, deals en kansen worden automatisch gesynchroniseerd, zonder dubbele invoer.",
+      "heroDesc": "Inboria koppelt HubSpot, Pipedrive, Salesforce en Odoo aan uw inbox. Contacten, deals en kansen worden automatisch gesynchroniseerd, zonder dubbele invoer.",
       "tryFree": "Gratis proberen",
       "allFeatures": "Alle functies",
       "stats": {
-        "crmCount": "3 CRM's",
+        "crmCount": "4 CRM's",
         "crmCountLabel": "natief ondersteund",
         "frequency": "15 min",
         "frequencyLabel": "auto-synchro frequentie",
@@ -1558,7 +1558,7 @@
         "bidirLabel": "bidirectionele synchronisatie"
       },
       "whatItDoes": "Wat Inboria met uw CRM doet",
-      "whatItDoesDesc": "Native integratie met de 3 toonaangevende CRM's. Verbinding in één klik, automatische synchronisatie, en elk e-mailbericht verrijkt met de bijbehorende contact- en dealinformatie.",
+      "whatItDoesDesc": "Native integratie met de 4 toonaangevende CRM's. Verbinding in één klik (of via API-sleutel voor Odoo), automatische synchronisatie, en elk e-mailbericht verrijkt met de bijbehorende contact- en dealinformatie.",
       "hubspot": "HubSpot",
       "hubspotDesc": "Native HubSpot-synchronisatie. Uw contacten en deals verschijnen automatisch in Inboria. Wanneer een e-mail binnenkomt, ziet u meteen aan welk contact deze gekoppeld is en welke deals lopen met die persoon.",
       "hubspotH1": "Contacten continu gesynchroniseerd",
@@ -1577,6 +1577,12 @@
       "salesforceH2": "Sandbox-modus voor veilig testen",
       "salesforceH3": "Wissel Sandbox / Productie in één klik",
       "salesforceH4": "Lightning Experience compatibel",
+      "odoo": "Odoo (Community & Enterprise)",
+      "odooDesc": "Verbind uw Odoo-instance (Community of Enterprise). Inboria synchroniseert contacten (res.partner) en kansen (crm.lead). Authenticatie via URL + database + login + API-sleutel — geen OAuth, uw sleutel kan op elk moment in Odoo worden ingetrokken.",
+      "odooH1": "Contacten (res.partner) gesynchroniseerd",
+      "odooH2": "Kansen (crm.lead) gekoppeld aan e-mails",
+      "odooH3": "Auth via API-sleutel (geen OAuth)",
+      "odooH4": "Compatibel met Community en Enterprise",
       "autoSync": "Automatische synchronisatie",
       "autoSyncDesc": "Inboria synchroniseert uw CRM elke 15 minuten op de achtergrond. Nieuwe contacten in Inboria gaan terug naar het CRM, en wijzigingen aan CRM-zijde worden weerspiegeld in Inboria. U kunt ook altijd een synchronisatie forceren.",
       "autoSyncH1": "Auto-synchro elke 15 minuten",
@@ -4386,6 +4392,26 @@
     },
     "pipedrive": {
       "desc": "Synchroniseer personen en deals, log e-mails als Pipedrive-activiteiten."
+    },
+    "odoo": {
+      "desc": "Synchroniseer Odoo-contacten en kansen. Auth via URL + database + login + API-sleutel.",
+      "dialogTitle": "Odoo verbinden",
+      "dialogDesc": "Vul de gegevens van uw Odoo-instance in om synchronisatie te activeren.",
+      "urlLabel": "Instance-URL",
+      "urlPlaceholder": "https://uw-bedrijf.odoo.com",
+      "dbLabel": "Database",
+      "dbPlaceholder": "mijn-database",
+      "loginLabel": "Login",
+      "loginPlaceholder": "u@bedrijf.com",
+      "apiKeyLabel": "API-sleutel",
+      "apiKeyPlaceholder": "Uw Odoo API-sleutel",
+      "helpText": "Hoe krijg ik mijn API-sleutel?",
+      "helpDetail": "In Odoo: Profiel → Accountbeveiliging → Nieuwe API-sleutel.",
+      "submit": "Verbinden",
+      "submitting": "Bezig met verbinden…",
+      "connectSuccess": "Odoo verbonden",
+      "connectFailed": "Odoo-verbinding mislukt",
+      "missingFields": "Alle velden zijn verplicht"
     },
     "slack": {
       "desc": "Ontvang prioritaire e-mails en urgente taken in Slack."

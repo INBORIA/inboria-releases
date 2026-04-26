@@ -625,12 +625,13 @@ Automate handling of certain emails in natural language.
 
 ## 19. CRM INTEGRATIONS
 
-Inboria natively connects to 3 leading CRMs: HubSpot, Pipedrive and Salesforce. Sync is bidirectional and automatic.
+Inboria natively connects to 4 leading CRMs: HubSpot, Pipedrive, Salesforce and Odoo. Sync is bidirectional and automatic.
 
 ### Supported CRMs
 - **HubSpot**: contacts and deals sync.
 - **Pipedrive**: persons, deals and organizations sync.
 - **Salesforce**: contacts, accounts and opportunities sync. Sandbox mode available (toggle at connection time pointing to test.salesforce.com) to test before going to Production.
+- **Odoo**: contacts (res.partner) and opportunities (crm.lead) sync. Authentication by instance URL + database + login + API key (generated in Odoo: Profile → Account Security → New API Key). No OAuth — Odoo doesn't expose standard OAuth.
 
 ### How to connect a CRM
 1. Go to Settings → CRM.
@@ -983,12 +984,13 @@ Automatiseer de behandeling van bepaalde e-mails in natuurlijke taal.
 
 ## 19. CRM-INTEGRATIES
 
-Inboria maakt een native verbinding met 3 toonaangevende CRM's: HubSpot, Pipedrive en Salesforce. De synchronisatie is bidirectioneel en automatisch.
+Inboria maakt een native verbinding met 4 toonaangevende CRM's: HubSpot, Pipedrive, Salesforce en Odoo. De synchronisatie is bidirectioneel en automatisch.
 
 ### Ondersteunde CRM's
 - **HubSpot**: synchronisatie van contacten en deals.
 - **Pipedrive**: synchronisatie van personen, deals en organisaties.
 - **Salesforce**: synchronisatie van contacten, accounts en opportunities. Sandbox-modus beschikbaar (toggle bij verbinding naar test.salesforce.com) om te testen vóór Productie.
+- **Odoo**: synchronisatie van contacten (res.partner) en kansen (crm.lead). Authenticatie via instance-URL + database + login + API-sleutel (gegenereerd in Odoo: Profiel → Accountbeveiliging → Nieuwe API-sleutel). Geen OAuth — Odoo biedt geen standaard OAuth.
 
 ### Een CRM verbinden
 1. Ga naar Instellingen → CRM.
@@ -1316,12 +1318,13 @@ Automatisieren Sie die Verarbeitung bestimmter E-Mails in natürlicher Sprache.
 
 ## 19. CRM-INTEGRATIONEN
 
-Inboria verbindet sich nativ mit 3 führenden CRMs: HubSpot, Pipedrive und Salesforce. Die Synchronisation ist bidirektional und automatisch.
+Inboria verbindet sich nativ mit 4 führenden CRMs: HubSpot, Pipedrive, Salesforce und Odoo. Die Synchronisation ist bidirektional und automatisch.
 
 ### Unterstützte CRMs
 - **HubSpot**: Synchronisation von Kontakten und Deals.
 - **Pipedrive**: Synchronisation von Personen, Deals und Organisationen.
 - **Salesforce**: Synchronisation von Kontakten, Accounts und Opportunities. Sandbox-Modus verfügbar (Toggle bei der Verbindung Richtung test.salesforce.com), um vor dem Wechsel in die Produktion zu testen.
+- **Odoo**: Synchronisation von Kontakten (res.partner) und Opportunities (crm.lead). Authentifizierung per Instanz-URL + Datenbank + Login + API-Key (in Odoo erstellt: Profil → Kontosicherheit → Neuer API-Key). Kein OAuth — Odoo bietet kein Standard-OAuth.
 
 ### Ein CRM verbinden
 1. Gehen Sie zu Einstellungen → CRM.
@@ -1649,12 +1652,13 @@ Automatice el tratamiento de ciertos correos en lenguaje natural.
 
 ## 19. INTEGRACIONES CRM
 
-Inboria se conecta de forma nativa a 3 CRM líderes del mercado: HubSpot, Pipedrive y Salesforce. La sincronización es bidireccional y automática.
+Inboria se conecta de forma nativa a 4 CRM líderes del mercado: HubSpot, Pipedrive, Salesforce y Odoo. La sincronización es bidireccional y automática.
 
 ### CRM compatibles
 - **HubSpot**: sincronización de contactos y deals.
 - **Pipedrive**: sincronización de personas, deals y organizaciones.
 - **Salesforce**: sincronización de contactos, cuentas y oportunidades. Modo Sandbox disponible (toggle al conectar hacia test.salesforce.com) para probar antes de pasar a Producción.
+- **Odoo**: sincronización de contactos (res.partner) y oportunidades (crm.lead). Autenticación por URL de instancia + base de datos + login + clave API (generada en Odoo: Perfil → Seguridad de la cuenta → Nueva clave API). Sin OAuth — Odoo no expone OAuth estándar.
 
 ### Cómo conectar un CRM
 1. Vaya a Configuración → CRM.

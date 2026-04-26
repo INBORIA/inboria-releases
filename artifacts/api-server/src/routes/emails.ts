@@ -238,7 +238,8 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     if (
       crmFilterRaw === "hubspot" ||
       crmFilterRaw === "pipedrive" ||
-      crmFilterRaw === "salesforce"
+      crmFilterRaw === "salesforce" ||
+      crmFilterRaw === "odoo"
     ) {
       const { data: crmRows } = await supabaseAdmin
         .from("crm_contacts")

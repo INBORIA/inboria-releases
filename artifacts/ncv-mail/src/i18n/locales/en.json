@@ -1546,11 +1546,11 @@
     "crm": {
       "badge": "CRM sync",
       "heroTitle": "Your CRM and your emails, finally in sync",
-      "heroDesc": "Inboria connects HubSpot, Pipedrive and Salesforce to your inbox. Your contacts, deals and opportunities sync automatically — no double entry, ever.",
+      "heroDesc": "Inboria connects HubSpot, Pipedrive, Salesforce and Odoo to your inbox. Your contacts, deals and opportunities sync automatically — no double entry, ever.",
       "tryFree": "Try for free",
       "allFeatures": "All features",
       "stats": {
-        "crmCount": "3 CRMs",
+        "crmCount": "4 CRMs",
         "crmCountLabel": "natively supported",
         "frequency": "15 min",
         "frequencyLabel": "auto-sync frequency",
@@ -1558,7 +1558,7 @@
         "bidirLabel": "bidirectional sync"
       },
       "whatItDoes": "What Inboria does with your CRM",
-      "whatItDoesDesc": "Native integration with the 3 leading CRMs on the market. One-click connection, automatic sync, and every email enriched with the related contact and deal info.",
+      "whatItDoesDesc": "Native integration with the 4 leading CRMs on the market. One-click connection (or API key for Odoo), automatic sync, and every email enriched with the related contact and deal info.",
       "hubspot": "HubSpot",
       "hubspotDesc": "Native HubSpot sync. Your contacts and deals appear automatically in Inboria. When an email arrives, you instantly see which contact it's linked to and which deals are open with that person.",
       "hubspotH1": "Contacts kept in sync continuously",
@@ -1577,6 +1577,12 @@
       "salesforceH2": "Sandbox mode for safe testing",
       "salesforceH3": "Switch Sandbox / Production in one click",
       "salesforceH4": "Lightning Experience compatible",
+      "odoo": "Odoo (Community & Enterprise)",
+      "odooDesc": "Connect your Odoo instance (Community or Enterprise). Inboria syncs contacts (res.partner) and opportunities (crm.lead). Authentication via URL + database + login + API key — no OAuth, your key can be revoked any time in Odoo.",
+      "odooH1": "Contacts (res.partner) kept in sync",
+      "odooH2": "Opportunities (crm.lead) linked to emails",
+      "odooH3": "API key auth (no OAuth)",
+      "odooH4": "Community and Enterprise compatible",
       "autoSync": "Automatic sync",
       "autoSyncDesc": "Inboria syncs your CRM every 15 minutes in the background. New contacts added in Inboria flow back to the CRM, and CRM-side changes are reflected in Inboria. You can also force a sync any time.",
       "autoSyncH1": "Auto-sync every 15 minutes",
@@ -4386,6 +4392,26 @@
     },
     "pipedrive": {
       "desc": "Sync persons and deals, log emails as Pipedrive activities."
+    },
+    "odoo": {
+      "desc": "Sync your Odoo contacts and opportunities. Auth via URL + database + login + API key.",
+      "dialogTitle": "Connect Odoo",
+      "dialogDesc": "Enter your Odoo instance details to enable sync.",
+      "urlLabel": "Instance URL",
+      "urlPlaceholder": "https://your-company.odoo.com",
+      "dbLabel": "Database",
+      "dbPlaceholder": "my-database",
+      "loginLabel": "Login",
+      "loginPlaceholder": "you@company.com",
+      "apiKeyLabel": "API Key",
+      "apiKeyPlaceholder": "Your Odoo API key",
+      "helpText": "How do I get my API key?",
+      "helpDetail": "In Odoo: Profile → Account Security → New API Key.",
+      "submit": "Connect",
+      "submitting": "Connecting…",
+      "connectSuccess": "Odoo connected",
+      "connectFailed": "Odoo connection failed",
+      "missingFields": "All fields are required"
     },
     "slack": {
       "desc": "Receive priority emails and urgent tasks in Slack."

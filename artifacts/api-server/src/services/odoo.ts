@@ -1,4 +1,6 @@
 import { supabaseAdmin } from "../lib/supabase";
+import { lookup as dnsLookup } from "node:dns/promises";
+import { isIP } from "node:net";
 
 // ============================================================================
 // Odoo — service CRM via JSON-RPC.
@@ -72,12 +74,81 @@ interface JsonRpcError {
 }
 type RpcResult<T = unknown> = JsonRpcResult<T> | JsonRpcError;
 
+// SSRF guard : un utilisateur authentifié fournit l'URL Odoo, et le serveur
+// fait des requêtes vers cette URL. Sans contrôle, il pourrait viser
+// localhost, des IP internes, ou les endpoints de métadonnées cloud
+// (169.254.169.254). On résout le hostname puis on bloque toute IP
+// loopback / privée / link-local / unique-local IPv6. En production on
+// exige aussi https.
+function isPrivateIPv4(ip: string): boolean {
+  const parts = ip.split(".").map((n) => Number(n));
+  if (parts.length !== 4 || parts.some((n) => !Number.isFinite(n))) return true;
+  const [a, b] = parts;
+  if (a === 10) return true;
+  if (a === 127) return true;
+  if (a === 0) return true;
+  if (a === 169 && b === 254) return true; // link-local + cloud metadata
+  if (a === 172 && b >= 16 && b <= 31) return true;
+  if (a === 192 && b === 168) return true;
+  if (a >= 224) return true; // multicast / reserved
+  return false;
+}
+
+function isPrivateIPv6(ip: string): boolean {
+  const lower = ip.toLowerCase();
+  if (lower === "::1" || lower === "::") return true;
+  if (lower.startsWith("fc") || lower.startsWith("fd")) return true; // unique-local
+  if (lower.startsWith("fe80")) return true; // link-local
+  if (lower.startsWith("::ffff:")) {
+    const v4 = lower.slice(7);
+    if (isIP(v4) === 4) return isPrivateIPv4(v4);
+  }
+  return false;
+}
+
+async function assertUrlSafe(rawUrl: string): Promise<string | null> {
+  let parsed: URL;
+  try {
+    parsed = new URL(rawUrl);
+  } catch {
+    return "URL invalide";
+  }
+  if (parsed.protocol !== "https:" && parsed.protocol !== "http:") {
+    return "URL invalide (protocole non supporté)";
+  }
+  if (process.env.NODE_ENV === "production" && parsed.protocol !== "https:") {
+    return "URL invalide (https requis en production)";
+  }
+  const host = parsed.hostname;
+  if (!host) return "URL invalide (hostname vide)";
+  // Hostname littéral en IP : check direct
+  const v = isIP(host);
+  if (v === 4 && isPrivateIPv4(host)) return "URL refusée (adresse IP interne)";
+  if (v === 6 && isPrivateIPv6(host)) return "URL refusée (adresse IP interne)";
+  if (v === 0) {
+    // DNS lookup → bloque si résolution privée
+    try {
+      const records = await dnsLookup(host, { all: true, verbatim: true });
+      for (const r of records) {
+        if (r.family === 4 && isPrivateIPv4(r.address)) return "URL refusée (résolution interne)";
+        if (r.family === 6 && isPrivateIPv6(r.address)) return "URL refusée (résolution interne)";
+      }
+    } catch {
+      return "URL injoignable (DNS)";
+    }
+  }
+  return null;
+}
+
 async function jsonRpc<T = unknown>(
   baseUrl: string,
   service: "common" | "object" | "db",
   method: string,
   args: unknown[],
 ): Promise<RpcResult<T>> {
+  // Timeout 15 s : empêche un Odoo lent de bloquer un worker.
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 15_000);
   try {
     const res = await fetch(`${baseUrl.replace(/\/$/, "")}/jsonrpc`, {
       method: "POST",
@@ -87,6 +158,7 @@ async function jsonRpc<T = unknown>(
         method: "call",
         params: { service, method, args },
       }),
+      signal: controller.signal,
     });
     if (!res.ok) {
       const txt = await res.text().catch(() => "");
@@ -100,6 +172,8 @@ async function jsonRpc<T = unknown>(
     return { ok: true, data: body.result as T };
   } catch (err) {
     return { ok: false, error: (err as Error).message || "network error" };
+  } finally {
+    clearTimeout(timer);
   }
 }
 
@@ -158,6 +232,10 @@ export async function connectOdoo(
   if (!/^https?:\/\//i.test(url)) {
     return { ok: false, error: "L'URL doit commencer par https:// (ou http://)" };
   }
+  // Anti-SSRF : refuse toute URL vers loopback / réseau privé / métadonnées
+  // cloud avant de faire la moindre requête sortante côté serveur.
+  const ssrfErr = await assertUrlSafe(url);
+  if (ssrfErr) return { ok: false, error: ssrfErr };
 
   // Authenticate → uid
   const authRes = await jsonRpc<number | false>(

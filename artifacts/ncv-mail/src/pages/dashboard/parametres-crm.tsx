@@ -9,9 +9,20 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import {
   Building2,
   Briefcase,
   Cloud,
+  Database,
   ArrowLeft,
   RefreshCw,
   Trash2,
@@ -35,6 +46,7 @@ interface AvailabilityMap {
   hubspot: boolean;
   pipedrive: boolean;
   salesforce: boolean;
+  odoo: boolean;
   whatsapp: boolean;
   sms_twilio: boolean;
   sms_brevo: boolean;
@@ -101,6 +113,59 @@ export default function ParametresCrm() {
   // uniquement le temps de la session : décision consciente à chaque connect.
   const [sfSandbox, setSfSandbox] = useState(false);
 
+  // State + handler pour le formulaire Odoo (4 champs : URL, base, login,
+  // clé API). Odoo ne supporte pas OAuth pour les instances on-premise /
+  // Community, donc on passe par une auth JSON-RPC avec clé API utilisateur.
+  const [odooOpen, setOdooOpen] = useState(false);
+  const [odooUrl, setOdooUrl] = useState("");
+  const [odooDb, setOdooDb] = useState("");
+  const [odooLogin, setOdooLogin] = useState("");
+  const [odooApiKey, setOdooApiKey] = useState("");
+  const [odooSubmitting, setOdooSubmitting] = useState(false);
+
+  async function connectOdoo() {
+    if (!odooUrl.trim() || !odooDb.trim() || !odooLogin.trim() || !odooApiKey.trim()) {
+      toast({
+        title: t("integrations.odoo.missingFields"),
+        variant: "destructive",
+      });
+      return;
+    }
+    setOdooSubmitting(true);
+    try {
+      const res = await fetch(`${baseUrl()}/api/integrations/odoo/connect`, {
+        method: "POST",
+        headers: {
+          ...authHeaders(token),
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          url: odooUrl.trim(),
+          db: odooDb.trim(),
+          login: odooLogin.trim(),
+          apiKey: odooApiKey.trim(),
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "failed");
+      toast({ title: t("integrations.odoo.connectSuccess") });
+      setOdooOpen(false);
+      setOdooUrl("");
+      setOdooDb("");
+      setOdooLogin("");
+      setOdooApiKey("");
+      qc.invalidateQueries({ queryKey: ["integrations"] });
+    } catch (err: any) {
+      toast({
+        title: t("integrations.odoo.connectFailed"),
+        description: err.message,
+        variant: "destructive",
+      });
+    } finally {
+      setOdooSubmitting(false);
+    }
+  }
+
   async function disconnectProvider(provider: string) {
     if (!confirm(t("integrations.confirmDisconnect"))) return;
     const res = await fetch(`${baseUrl()}/api/integrations/${provider}`, {
@@ -113,7 +178,7 @@ export default function ParametresCrm() {
     }
   }
 
-  async function syncCrm(provider: "hubspot" | "pipedrive" | "salesforce") {
+  async function syncCrm(provider: "hubspot" | "pipedrive" | "salesforce" | "odoo") {
     const res = await fetch(`${baseUrl()}/api/integrations/${provider}/sync`, {
       method: "POST",
       headers: authHeaders(token),
@@ -224,7 +289,7 @@ export default function ParametresCrm() {
             {t("settings.hub.crm", "CRM")}
           </h1>
           <p className="text-[12px] text-[#8b9cb3] mt-0.5">
-            {t("settings.hub.crmDesc", "HubSpot, Pipedrive, Salesforce")}
+            {t("settings.hub.crmDesc", "HubSpot, Pipedrive, Salesforce, Odoo")}
           </p>
         </div>
 
@@ -348,7 +413,178 @@ export default function ParametresCrm() {
               </Card>
             );
           })()}
+
+          {/* Carte Odoo — auth par formulaire (URL + base + login + clé API),
+              pas OAuth. Cliquer sur "Connecter" ouvre un Dialog modal. La sync
+              auto 15 min tourne ensuite via le scheduler comme les 3 autres. */}
+          {(() => {
+            const row = findIntegration("odoo");
+            const available = availability.data?.odoo ?? false;
+            const isConnected = !!row && row.enabled;
+            return (
+              <Card data-testid="card-integration-odoo">
+                <CardContent className="p-4">
+                  <div className="flex items-start gap-3">
+                    <div className="rounded-lg bg-[#1a2332] p-2">
+                      <Database className="h-5 w-5 text-[#2d7dd2]" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="font-semibold text-sm">
+                          {row?.workspaceName || "Odoo"}
+                        </h3>
+                        {isConnected ? (
+                          <Badge variant="default" className="text-[10px] bg-emerald-600">
+                            <CheckCircle2 className="h-3 w-3 mr-1" />
+                            {t("integrations.connected")}
+                          </Badge>
+                        ) : (
+                          <Badge variant="outline" className="text-[10px]">
+                            {t("integrations.notConnected")}
+                          </Badge>
+                        )}
+                      </div>
+                      <p className="text-xs text-[#8b9cb3] mt-1">
+                        {t("integrations.odoo.desc")}
+                      </p>
+                      {row?.lastError && (
+                        <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
+                          <AlertCircle className="h-3 w-3" />
+                          {row.lastError}
+                        </p>
+                      )}
+                      {row?.lastSyncedAt && (
+                        <p className="text-xs text-[#8b9cb3] mt-1">
+                          {t("integrations.lastSynced")}: {new Date(row.lastSyncedAt).toLocaleString()}
+                        </p>
+                      )}
+                      <div className="flex gap-2 mt-3 flex-wrap">
+                        {!isConnected ? (
+                          <Button
+                            size="sm"
+                            onClick={() => setOdooOpen(true)}
+                            disabled={!available}
+                            data-testid="button-connect-odoo"
+                          >
+                            {available
+                              ? t("integrations.connect")
+                              : t("integrations.notConfigured")}
+                          </Button>
+                        ) : (
+                          <>
+                            <Button
+                              size="sm"
+                              variant="outline"
+                              onClick={() => syncCrm("odoo")}
+                              data-testid="button-sync-odoo"
+                            >
+                              <RefreshCw className="h-3 w-3 mr-1" />
+                              {t("integrations.sync")}
+                            </Button>
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              className="text-red-400"
+                              onClick={() => disconnectProvider("odoo")}
+                              data-testid="button-disconnect-odoo"
+                            >
+                              <Trash2 className="h-3 w-3 mr-1" />
+                              {t("integrations.disconnect")}
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })()}
         </div>
+
+        {/* Dialog Odoo — 4 champs requis. Le helpDetail explique où trouver
+            la clé API dans Odoo (Profil → Sécurité du compte → Nouvelle clé). */}
+        <Dialog open={odooOpen} onOpenChange={setOdooOpen}>
+          <DialogContent className="sm:max-w-md" data-testid="dialog-odoo-connect">
+            <DialogHeader>
+              <DialogTitle>{t("integrations.odoo.dialogTitle")}</DialogTitle>
+              <DialogDescription>{t("integrations.odoo.dialogDesc")}</DialogDescription>
+            </DialogHeader>
+            <div className="space-y-3 py-2">
+              <div className="space-y-1.5">
+                <Label htmlFor="odoo-url" className="text-xs">
+                  {t("integrations.odoo.urlLabel")}
+                </Label>
+                <Input
+                  id="odoo-url"
+                  type="url"
+                  placeholder={t("integrations.odoo.urlPlaceholder")}
+                  value={odooUrl}
+                  onChange={(e) => setOdooUrl(e.target.value)}
+                  data-testid="input-odoo-url"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="odoo-db" className="text-xs">
+                  {t("integrations.odoo.dbLabel")}
+                </Label>
+                <Input
+                  id="odoo-db"
+                  placeholder={t("integrations.odoo.dbPlaceholder")}
+                  value={odooDb}
+                  onChange={(e) => setOdooDb(e.target.value)}
+                  data-testid="input-odoo-db"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="odoo-login" className="text-xs">
+                  {t("integrations.odoo.loginLabel")}
+                </Label>
+                <Input
+                  id="odoo-login"
+                  type="email"
+                  placeholder={t("integrations.odoo.loginPlaceholder")}
+                  value={odooLogin}
+                  onChange={(e) => setOdooLogin(e.target.value)}
+                  data-testid="input-odoo-login"
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label htmlFor="odoo-apikey" className="text-xs">
+                  {t("integrations.odoo.apiKeyLabel")}
+                </Label>
+                <Input
+                  id="odoo-apikey"
+                  type="password"
+                  placeholder={t("integrations.odoo.apiKeyPlaceholder")}
+                  value={odooApiKey}
+                  onChange={(e) => setOdooApiKey(e.target.value)}
+                  data-testid="input-odoo-apikey"
+                />
+              </div>
+              <p className="text-[11px] text-[#8b9cb3] mt-2">
+                <span className="font-medium">{t("integrations.odoo.helpText")}</span>{" "}
+                {t("integrations.odoo.helpDetail")}
+              </p>
+            </div>
+            <DialogFooter>
+              <Button
+                variant="ghost"
+                onClick={() => setOdooOpen(false)}
+                disabled={odooSubmitting}
+              >
+                {t("common.cancel", "Annuler")}
+              </Button>
+              <Button
+                onClick={connectOdoo}
+                disabled={odooSubmitting}
+                data-testid="button-submit-odoo"
+              >
+                {odooSubmitting ? t("integrations.odoo.submitting") : t("integrations.odoo.submit")}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       </div>
     </DashboardLayout>
   );

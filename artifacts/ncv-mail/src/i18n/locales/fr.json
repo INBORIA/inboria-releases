@@ -1536,11 +1536,11 @@
     "crm": {
       "badge": "Synchronisation CRM",
       "heroTitle": "Votre CRM et vos emails, enfin synchronisés",
-      "heroDesc": "Inboria connecte HubSpot, Pipedrive et Salesforce à votre boîte mail. Vos contacts, deals et opportunités sont synchronisés automatiquement, sans double saisie.",
+      "heroDesc": "Inboria connecte HubSpot, Pipedrive, Salesforce et Odoo à votre boîte mail. Vos contacts, deals et opportunités sont synchronisés automatiquement, sans double saisie.",
       "tryFree": "Essayer gratuitement",
       "allFeatures": "Toutes les fonctionnalités",
       "stats": {
-        "crmCount": "3 CRM",
+        "crmCount": "4 CRM",
         "crmCountLabel": "supportés nativement",
         "frequency": "15 min",
         "frequencyLabel": "fréquence de synchro auto",
@@ -1548,7 +1548,7 @@
         "bidirLabel": "synchronisation bidirectionnelle"
       },
       "whatItDoes": "Ce qu'Inboria fait avec votre CRM",
-      "whatItDoesDesc": "Une intégration native avec les 3 CRM leaders du marché. Connexion en un clic, synchronisation automatique, et chaque email enrichi des informations contact et deal associées.",
+      "whatItDoesDesc": "Une intégration native avec les 4 CRM leaders du marché. Connexion en un clic (ou par clé API pour Odoo), synchronisation automatique, et chaque email enrichi des informations contact et deal associées.",
       "hubspot": "HubSpot",
       "hubspotDesc": "Synchronisation native avec HubSpot. Vos contacts et deals remontent automatiquement dans Inboria. Quand un email arrive, vous voyez immédiatement à quel contact il est lié et quels deals sont en cours avec cette personne.",
       "hubspotH1": "Contacts synchronisés en continu",
@@ -1567,6 +1567,12 @@
       "salesforceH2": "Mode Sandbox pour tester sereinement",
       "salesforceH3": "Bascule Sandbox / Production en un clic",
       "salesforceH4": "Compatible Lightning Experience",
+      "odoo": "Odoo (Community & Enterprise)",
+      "odooDesc": "Connectez votre instance Odoo (Community ou Enterprise). Inboria synchronise les contacts (res.partner) et opportunités (crm.lead). Authentification par URL + base + login + clé API — pas d'OAuth, votre clé peut être révoquée à tout moment dans Odoo.",
+      "odooH1": "Contacts (res.partner) synchronisés",
+      "odooH2": "Opportunités (crm.lead) liées aux emails",
+      "odooH3": "Auth par clé API (sans OAuth)",
+      "odooH4": "Compatible Community et Enterprise",
       "autoSync": "Synchronisation automatique",
       "autoSyncDesc": "Inboria synchronise votre CRM toutes les 15 minutes en tâche de fond. Les nouveaux contacts ajoutés dans Inboria remontent dans le CRM, et les changements côté CRM sont reflétés dans Inboria. Vous pouvez aussi forcer une synchro à tout moment.",
       "autoSyncH1": "Synchro auto toutes les 15 minutes",
@@ -2745,6 +2751,26 @@
     },
     "pipedrive": {
       "desc": "Synchronisez personnes et deals, journalisez les emails comme activités Pipedrive."
+    },
+    "odoo": {
+      "desc": "Synchronisez les contacts et opportunités Odoo. Auth par URL + base + login + clé API.",
+      "dialogTitle": "Connecter Odoo",
+      "dialogDesc": "Renseignez les informations de votre instance Odoo pour activer la synchronisation.",
+      "urlLabel": "URL de l'instance",
+      "urlPlaceholder": "https://votre-entreprise.odoo.com",
+      "dbLabel": "Base de données",
+      "dbPlaceholder": "ma-base",
+      "loginLabel": "Login",
+      "loginPlaceholder": "vous@entreprise.com",
+      "apiKeyLabel": "Clé API",
+      "apiKeyPlaceholder": "Votre clé API Odoo",
+      "helpText": "Comment obtenir ma clé API ?",
+      "helpDetail": "Dans Odoo : Profil → Sécurité du compte → Nouvelle clé API.",
+      "submit": "Connecter",
+      "submitting": "Connexion en cours…",
+      "connectSuccess": "Odoo connecté",
+      "connectFailed": "Échec de la connexion Odoo",
+      "missingFields": "Tous les champs sont requis"
     },
     "slack": {
       "desc": "Recevez les emails prioritaires et tâches urgentes dans Slack."

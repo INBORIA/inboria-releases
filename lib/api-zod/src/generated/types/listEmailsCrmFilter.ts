@@ -13,4 +13,5 @@ export const ListEmailsCrmFilter = {
   hubspot: "hubspot",
   pipedrive: "pipedrive",
   salesforce: "salesforce",
+  odoo: "odoo",
 } as const;
