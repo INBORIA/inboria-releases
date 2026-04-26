@@ -8,11 +8,8 @@ export const HUBSPOT_SCOPES = [
   "crm.objects.contacts.write",
   "crm.objects.deals.read",
   "crm.objects.deals.write",
-  "crm.objects.tasks.read",
   "crm.objects.tasks.write",
   "crm.schemas.contacts.read",
-  "crm.schemas.deals.read",
-  "sales-email-read",
 ];
 
 interface HubspotIntegrationRow {
