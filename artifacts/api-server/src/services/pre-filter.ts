@@ -1,5 +1,17 @@
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
+import { SYSTEM_CATEGORY_NAME } from "../lib/system-categories";
+
+// Noms qui désignent la catégorie "fourre-tout" (système ou héritée d'anciens
+// utilisateurs anglais/néerlandais). On ne veut JAMAIS apprendre du cache
+// pour ces classifications : ce sont précisément les emails qui restent à
+// trier, et les utiliser comme signal récurrent renforcerait la cellule
+// fourre-tout au lieu de l'éclaircir.
+const UNCLASSIFIED_NAMES = new Set<string>(
+  [SYSTEM_CATEGORY_NAME, "Non classe", "Uncategorized", "Niet geclassificeerd"].map(
+    (n) => n.toLowerCase(),
+  ),
+);
 
 export interface PreFilterClassification {
   priority: "urgent" | "moyen" | "faible";
@@ -184,7 +196,12 @@ export async function recordAIClassification(
   if (!FEATURE_ENABLED) return;
   try {
     const senderEmail = extractEmailAddress(sender || "");
-    if (!senderEmail || !category || category === "Non classe" || category === "Non classé") return;
+    if (!senderEmail || !category) return;
+    // On ne cache pas les classifications "fourre-tout" : ce sont les
+    // emails qui restent à trier (catégorie système ou héritée). Les
+    // mémoriser ferait croire au pré-filtre qu'il faut renvoyer
+    // l'expéditeur dans la cellule "à trier" la prochaine fois.
+    if (UNCLASSIFIED_NAMES.has(category.trim().toLowerCase())) return;
     if (!["urgent", "moyen", "faible"].includes(priority)) return;
 
     // Upsert atomique cote PostgreSQL pour eviter les race conditions

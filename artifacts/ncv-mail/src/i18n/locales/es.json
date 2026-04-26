@@ -991,7 +991,8 @@
     "sections": {
       "byPack": "Paquete {{name}}",
       "standards": "Categorías estándar",
-      "manual": "Mis categorías personales"
+      "manual": "Mis categorías personales",
+      "system": "Por clasificar (sin clasificar)"
     },
     "unusedToggle": {
       "show": "Ver categorías vacías",
@@ -1001,7 +1002,8 @@
     "origin": {
       "pack": "Paquete",
       "standard": "Estándar",
-      "manual": "Personal"
+      "manual": "Personal",
+      "system": "Sistema"
     },
     "industryPacksAccordion": "Catálogo de paquetes profesionales",
     "industryPacksAccordionDesc": "Categorías preconfiguradas por profesión. Haga clic para explorar.",
@@ -1015,6 +1017,16 @@
       "similarity": "{{pct}}% similar",
       "useExisting": "Usar la existente",
       "createAnyway": "Crear igualmente"
+    },
+    "systemCat": {
+      "name": "Sin clasificar",
+      "description": "Correos que la IA no pudo clasificar automáticamente. Clasifíquelos manualmente cuando tenga tiempo.",
+      "toSortBadge": "{{count}} por clasificar",
+      "pinnedHint": "Esta categoría es gestionada automáticamente por Inboria. No puede ser renombrada ni eliminada, pero puede clasificar sus correos manualmente.",
+      "cannotDelete": "Esta categoría del sistema no puede ser eliminada.",
+      "cannotRename": "Esta categoría del sistema no puede ser renombrada.",
+      "cannotMerge": "La categoría «Sin clasificar» no puede ser fusionada.",
+      "goToInbox": "Clasificar estos correos"
     }
   },
   "settings": {

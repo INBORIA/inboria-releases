@@ -5,6 +5,7 @@ import { requireAuth } from "../middlewares/auth";
 import OpenAI from "openai";
 import { AI_COST, checkEntitlement, consumeAiCredits } from "../services/credits";
 import { findSimilarCategories, findDuplicatePairs } from "../lib/similarity";
+import { ensureSystemCategory } from "../lib/system-categories";
 
 // Headers/query params autorisant le bypass volontaire de la détection
 // de quasi-doublons ("Créer quand même" côté UI).
@@ -25,6 +26,11 @@ const router: IRouter = Router();
 
 router.get("/categories", requireAuth, async (req, res): Promise<void> => {
   try {
+    // Garantit qu'on retourne TOUJOURS la catégorie système "Non classé".
+    // Idempotent : ne crée rien si elle existe déjà. Au premier passage,
+    // elle réaffecte aussi les emails orphelins (category_id IS NULL).
+    await ensureSystemCategory(req.userId!);
+
     const { data: categories, error } = await supabaseAdmin
       .from("categories")
       .select("*, emails(count)")
@@ -42,6 +48,7 @@ router.get("/categories", requireAuth, async (req, res): Promise<void> => {
       description: c.description || "",
       emailCount: c.emails?.[0]?.count || 0,
       sourcePack: c.source_pack || null,
+      isSystem: c.is_system === true,
       createdAt: c.created_at,
     })));
   } catch {
@@ -112,6 +119,24 @@ router.patch("/categories/:id", requireAuth, async (req, res): Promise<void> => 
       return;
     }
 
+    // Lecture de la cible AVANT update pour vérifier le drapeau is_system.
+    const { data: existing } = await supabaseAdmin
+      .from("categories")
+      .select("id, is_system")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .maybeSingle();
+
+    if (!existing) {
+      res.status(404).json({ error: "Category not found" });
+      return;
+    }
+
+    if ((existing as any).is_system === true) {
+      res.status(400).json({ error: "system_category_protected" });
+      return;
+    }
+
     const updates: Record<string, unknown> = {};
     if (parsed.data.name !== undefined) updates.name = parsed.data.name;
     if (parsed.data.description !== undefined) updates.description = parsed.data.description;
@@ -135,6 +160,7 @@ router.patch("/categories/:id", requireAuth, async (req, res): Promise<void> => 
       description: category.description,
       emailCount: 0,
       sourcePack: category.source_pack || null,
+      isSystem: category.is_system === true,
       createdAt: category.created_at,
     });
   } catch {
@@ -152,7 +178,7 @@ router.delete("/categories/:id", requireAuth, async (req, res): Promise<void> =>
 
     const { data: existing } = await supabaseAdmin
       .from("categories")
-      .select("id")
+      .select("id, is_system")
       .eq("id", catId)
       .eq("user_id", req.userId!)
       .maybeSingle();
@@ -162,10 +188,20 @@ router.delete("/categories/:id", requireAuth, async (req, res): Promise<void> =>
       return;
     }
 
+    if ((existing as any).is_system === true) {
+      res.status(400).json({ error: "system_category_protected" });
+      return;
+    }
+
+    // Réaffecte les emails de la catégorie supprimée vers la catégorie
+    // système "Non classé" plutôt que vers NULL : l'utilisateur retrouve
+    // ainsi ses emails dans le bac "à trier" au lieu de les voir disparaître.
+    const systemCat = await ensureSystemCategory(req.userId!);
     await supabaseAdmin
       .from("emails")
-      .update({ category_id: null })
-      .eq("category_id", catId);
+      .update({ category_id: systemCat ? systemCat.id : null })
+      .eq("category_id", catId)
+      .eq("user_id", req.userId!);
 
     const { error } = await supabaseAdmin
       .from("categories")
@@ -246,7 +282,7 @@ router.post(
       // l'utilisateur courant — empêche la fusion croisée entre comptes.
       const { data: cats, error: lookupError } = await supabaseAdmin
         .from("categories")
-        .select("id, name")
+        .select("id, name, is_system")
         .eq("user_id", req.userId!)
         .in("id", [sourceId, targetId]);
 
@@ -263,6 +299,14 @@ router.post(
       const source = cats.find((c: any) => c.id === sourceId);
       if (!target || !source) {
         res.status(404).json({ error: "Catégorie introuvable" });
+        return;
+      }
+
+      // La catégorie système "Non classé" ne peut être ni source ni cible
+      // de fusion : la supprimer (source) la ferait disparaître, et la
+      // recevoir (cible) en ferait perdre l'unicité ou la spécificité.
+      if ((source as any).is_system === true || (target as any).is_system === true) {
+        res.status(400).json({ error: "system_category_protected" });
         return;
       }
 

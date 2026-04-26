@@ -704,6 +704,12 @@ export const ListCategoriesResponseItem = zod.object({
   description: zod.string().nullish(),
   emailCount: zod.number().optional(),
   sourcePack: zod.string().nullish(),
+  isSystem: zod
+    .boolean()
+    .optional()
+    .describe(
+      'True for the protected \"Unsorted\" system category. Cannot be renamed, deleted, or merged.',
+    ),
   createdAt: zod.coerce.date(),
 });
 export const ListCategoriesResponse = zod.array(ListCategoriesResponseItem);
@@ -734,6 +740,12 @@ export const UpdateCategoryResponse = zod.object({
   description: zod.string().nullish(),
   emailCount: zod.number().optional(),
   sourcePack: zod.string().nullish(),
+  isSystem: zod
+    .boolean()
+    .optional()
+    .describe(
+      'True for the protected \"Unsorted\" system category. Cannot be renamed, deleted, or merged.',
+    ),
   createdAt: zod.coerce.date(),
 });
 
@@ -767,6 +779,12 @@ export const ApplyPackResponse = zod.object({
       description: zod.string().nullish(),
       emailCount: zod.number().optional(),
       sourcePack: zod.string().nullish(),
+      isSystem: zod
+        .boolean()
+        .optional()
+        .describe(
+          'True for the protected \"Unsorted\" system category. Cannot be renamed, deleted, or merged.',
+        ),
       createdAt: zod.coerce.date(),
     }),
   ),

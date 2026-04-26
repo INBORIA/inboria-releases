@@ -981,7 +981,8 @@
     "sections": {
       "byPack": "Pack {{name}}",
       "standards": "Catégories standards",
-      "manual": "Mes catégories personnelles"
+      "manual": "Mes catégories personnelles",
+      "system": "À trier (non classé)"
     },
     "unusedToggle": {
       "show": "Voir les catégories vides",
@@ -991,7 +992,8 @@
     "origin": {
       "pack": "Pack",
       "standard": "Standard",
-      "manual": "Personnelle"
+      "manual": "Personnelle",
+      "system": "Système"
     },
     "industryPacksAccordion": "Catalogue de packs métiers",
     "industryPacksAccordionDesc": "Catégories pré-configurées par profession. Cliquez pour explorer.",
@@ -1005,6 +1007,16 @@
       "similarity": "{{pct}}% de similarité",
       "useExisting": "Utiliser l'existante",
       "createAnyway": "Créer quand même"
+    },
+    "systemCat": {
+      "name": "Non classé",
+      "description": "Emails que l'IA n'a pas pu classer automatiquement. Classez-les manuellement quand vous avez un moment.",
+      "toSortBadge": "{{count}} à trier",
+      "pinnedHint": "Cette catégorie est gérée automatiquement par Inboria. Elle ne peut être ni renommée ni supprimée — mais vous pouvez classer ses emails à la main.",
+      "cannotDelete": "Cette catégorie système ne peut pas être supprimée.",
+      "cannotRename": "Cette catégorie système ne peut pas être renommée.",
+      "cannotMerge": "La catégorie « Non classé » ne peut pas être fusionnée.",
+      "goToInbox": "Trier ces emails"
     }
   },
   "settings": {

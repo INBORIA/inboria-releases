@@ -8,6 +8,7 @@ import { getKnowledgeBase, getSystemPrompt } from "../services/knowledge-base";
 import { AI_COST, checkEntitlement, consumeAiCredits, type AiEventType } from "../services/credits";
 import { recordAutopilotEvent } from "../services/autopilot-events";
 import { getMemberMailboxIds } from "../lib/inbox-scope";
+import { ensureSystemCategory } from "../lib/system-categories";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -525,14 +526,35 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
     const entitlement = await checkEntitlement(userId, AI_COST.recategorize_uncategorized);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
+    // Garantit la présence de la catégorie système "Non classé" et récupère
+    // son id : on s'en sert comme bucket canonique de fallback. Idempotent.
+    const systemCat = await ensureSystemCategory(userId);
+    const systemCatId = systemCat?.id ?? null;
+
     const { data: categories } = await supabaseAdmin
       .from("categories")
-      .select("id, name")
+      .select("id, name, is_system")
       .eq("user_id", userId);
 
+    // "Junk" = catégorie système + anciennes catégories nommées comme la
+    // fourre-tout (héritées de comptes EN/NL avant la mise en place du
+    // drapeau is_system). On exclut TOUTES ces catégories du jeu d'options
+    // proposé à l'IA, et on récupère leurs emails comme entrée.
     const JUNK_NAMES = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
-    const junkCategoryIds = (categories || [])
-      .filter((c: any) => JUNK_NAMES.includes(c.name.toLowerCase()))
+    const allCats = categories || [];
+    const junkCategoryIds = allCats
+      .filter(
+        (c: any) =>
+          c.is_system === true || JUNK_NAMES.includes(c.name.toLowerCase()),
+      )
+      .map((c: any) => c.id);
+    // Ids des cats héritées (NON système) : seules celles-là peuvent être
+    // supprimées en fin de pipeline si elles deviennent vides.
+    const legacyJunkIds = allCats
+      .filter(
+        (c: any) =>
+          c.is_system !== true && JUNK_NAMES.includes(c.name.toLowerCase()),
+      )
       .map((c: any) => c.id);
 
     const { data: nullEmails } = await supabaseAdmin
@@ -570,7 +592,7 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
       return;
     }
 
-    const realCategories = (categories || []).filter((c: any) => !JUNK_NAMES.includes(c.name.toLowerCase()));
+    const realCategories = allCats.filter((c: any) => !junkCategoryIds.includes(c.id));
     const categoryMap = new Map(realCategories.map((c: any) => [c.name, c.id]));
     const categoryNames = Array.from(categoryMap.keys());
 
@@ -597,9 +619,24 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
         const content = completion.choices[0]?.message?.content ?? "{}";
         const jsonMatch = content.match(/\{[\s\S]*\}/);
         const result = JSON.parse(jsonMatch ? jsonMatch[0] : "{}");
-        const catName = result.category || lp.uncategorized;
+        // Normalisation : trim + collapse whitespace pour ne pas rater
+        // un "Non classé " avec espace traînant.
+        const rawCatName = (result.category || lp.uncategorized) as string;
+        const catName = rawCatName.trim().replace(/\s+/g, " ");
 
-        if (JUNK_NAMES.includes(catName.toLowerCase())) continue;
+        // L'IA n'a pas trouvé de catégorie pertinente : on route vers la
+        // catégorie système (bucket canonique "à trier"). On ne compte pas
+        // ça comme une re-catégorisation utile.
+        if (JUNK_NAMES.includes(catName.toLowerCase())) {
+          if (systemCatId) {
+            await supabaseAdmin
+              .from("emails")
+              .update({ category_id: systemCatId })
+              .eq("id", email.id)
+              .eq("user_id", userId);
+          }
+          continue;
+        }
 
         let categoryId = categoryMap.get(catName) || null;
         if (!categoryId) {
@@ -635,8 +672,12 @@ router.post("/ai/recategorize-uncategorized", requireAuth, async (req, res): Pro
       }
     }
 
-    if (recategorized > 0 && junkCategoryIds.length > 0) {
-      for (const junkId of junkCategoryIds) {
+    // Nettoyage post-traitement : on ne supprime QUE les anciennes
+    // catégories nommées comme la fourre-tout (legacy EN/NL) qui sont
+    // devenues vides. La catégorie système, elle, est intouchable —
+    // garantie par le drapeau is_system côté DB et par cette boucle.
+    if (recategorized > 0 && legacyJunkIds.length > 0) {
+      for (const junkId of legacyJunkIds) {
         const { count } = await supabaseAdmin
           .from("emails")
           .select("id", { count: "exact", head: true })

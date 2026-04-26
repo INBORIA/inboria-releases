@@ -991,7 +991,8 @@
     "sections": {
       "byPack": "Pakket {{name}}",
       "standards": "Standaardcategorieën",
-      "manual": "Mijn persoonlijke categorieën"
+      "manual": "Mijn persoonlijke categorieën",
+      "system": "Te sorteren (niet ingedeeld)"
     },
     "unusedToggle": {
       "show": "Lege categorieën tonen",
@@ -1001,7 +1002,8 @@
     "origin": {
       "pack": "Pakket",
       "standard": "Standaard",
-      "manual": "Persoonlijk"
+      "manual": "Persoonlijk",
+      "system": "Systeem"
     },
     "industryPacksAccordion": "Catalogus branchepakketten",
     "industryPacksAccordionDesc": "Vooraf samengestelde categorieën per beroep. Klik om te verkennen.",
@@ -1015,6 +1017,16 @@
       "similarity": "{{pct}}% vergelijkbaar",
       "useExisting": "Bestaande gebruiken",
       "createAnyway": "Toch aanmaken"
+    },
+    "systemCat": {
+      "name": "Niet ingedeeld",
+      "description": "E-mails die de AI niet automatisch kon classificeren. Sorteer ze handmatig wanneer u tijd heeft.",
+      "toSortBadge": "{{count}} te sorteren",
+      "pinnedHint": "Deze categorie wordt automatisch beheerd door Inboria. Ze kan niet worden hernoemd of verwijderd — maar u kunt de e-mails handmatig sorteren.",
+      "cannotDelete": "Deze systeemcategorie kan niet worden verwijderd.",
+      "cannotRename": "Deze systeemcategorie kan niet worden hernoemd.",
+      "cannotMerge": "De categorie \"Niet ingedeeld\" kan niet worden samengevoegd.",
+      "goToInbox": "Deze e-mails sorteren"
     }
   },
   "settings": {

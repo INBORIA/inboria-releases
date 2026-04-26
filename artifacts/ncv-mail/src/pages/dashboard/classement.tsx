@@ -107,6 +107,7 @@ import { useTranslation } from 'react-i18next';
 import { translateCategoryName, translateCategory } from "@/lib/category-translations";
 import { customFetch, ApiError } from "@workspace/api-client-react";
 import i18n from "@/i18n";
+import { useLocation } from "wouter";
 
 function useTranslatedPacks(t: any, lang: string): FamilleMetier[] {
   return useMemo(() => {
@@ -182,6 +183,7 @@ export default function Classement() {
   const translatedFamilles = useTranslatedPacks(t, lang);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
 
   const { data: categories, isLoading } = useListCategories();
   const createCategory = useCreateCategory();
@@ -260,7 +262,7 @@ export default function Classement() {
     return set;
   }, []);
 
-  type GroupKind = "pack" | "standard" | "manual";
+  type GroupKind = "system" | "pack" | "standard" | "manual";
   type CategoryGroup = { key: string; kind: GroupKind; label: string; items: any[] };
 
   const filteredCategories = useMemo(() => {
@@ -274,14 +276,25 @@ export default function Classement() {
     [categories],
   );
 
-  // Regroupement : catégories à sourcePack → une section par pack ;
+  // Regroupement : catégorie système "Non classé" → tout en haut, toujours
+  // visible même si vide ; catégories à sourcePack → une section par pack ;
   // catégories sans sourcePack mais nom = standard → "Catégories standards" ;
   // tout le reste → "Mes catégories personnelles".
   const groupedCategories = useMemo<CategoryGroup[]>(() => {
+    const systems: any[] = [];
     const byPack = new Map<string, any[]>();
     const standards: any[] = [];
     const manuals: any[] = [];
+    // Pour le groupe "système" on lit la liste COMPLÈTE, pas la filtrée :
+    // la catégorie "Non classé" doit rester visible même quand
+    // l'utilisateur a coché "masquer les inutilisées".
+    for (const cat of (categories ?? []) as any[]) {
+      if (cat.isSystem === true) {
+        systems.push(cat);
+      }
+    }
     for (const cat of filteredCategories as any[]) {
+      if (cat.isSystem === true) continue; // déjà géré au-dessus
       const pack = (cat.sourcePack || "").trim();
       if (pack) {
         if (!byPack.has(pack)) byPack.set(pack, []);
@@ -296,6 +309,15 @@ export default function Classement() {
       }
     }
     const groups: CategoryGroup[] = [];
+    // Système : épinglée tout en haut, toujours présente.
+    if (systems.length > 0) {
+      groups.push({
+        key: "system",
+        kind: "system",
+        label: t("classification.sections.system"),
+        items: systems,
+      });
+    }
     // Packs : un par sourcePack distinct, triés par nom de pack
     Array.from(byPack.keys())
       .sort((x, y) => x.localeCompare(y))
@@ -324,7 +346,7 @@ export default function Classement() {
       });
     }
     return groups;
-  }, [filteredCategories, standardNamesSet, t]);
+  }, [categories, filteredCategories, standardNamesSet, t]);
 
   const extractSimilar = (
     err: unknown,
@@ -565,6 +587,28 @@ export default function Classement() {
           setEditCategory(null);
           toast({ title: t("classification.categoryUpdated") });
         },
+        onError: (err: unknown) => {
+          // La catégorie système "Non classé" ne peut pas être renommée :
+          // l'API renvoie 400 avec error="system_category_protected".
+          if (
+            err instanceof ApiError &&
+            err.status === 400 &&
+            (err.data as any)?.error === "system_category_protected"
+          ) {
+            setEditCategory(null);
+            toast({
+              variant: "destructive",
+              title: t("common.error"),
+              description: t("classification.systemCat.cannotRename"),
+            });
+            return;
+          }
+          toast({
+            variant: "destructive",
+            title: t("common.error"),
+            description: t("classification.updateError"),
+          });
+        },
       }
     );
   };
@@ -579,10 +623,23 @@ export default function Classement() {
           });
           toast({ title: t("classification.categoryDeleted") });
         },
-        onError: () => {
+        onError: (err: unknown) => {
           queryClient.invalidateQueries({
             queryKey: getListCategoriesQueryKey(),
           });
+          // Idem côté suppression : message dédié quand la catégorie est protégée.
+          if (
+            err instanceof ApiError &&
+            err.status === 400 &&
+            (err.data as any)?.error === "system_category_protected"
+          ) {
+            toast({
+              variant: "destructive",
+              title: t("common.error"),
+              description: t("classification.systemCat.cannotDelete"),
+            });
+            return;
+          }
           toast({
             title: t("common.error"),
             description: t("classification.deleteErrorDesc"),
@@ -1171,9 +1228,11 @@ export default function Classement() {
                   group.items.length > 0 && (
                     <div key={group.key}>
                       <div className="flex items-center gap-2 mb-3">
-                        {group.key === "pack" ? (
+                        {group.kind === "system" ? (
+                          <ShieldCheck className="w-3.5 h-3.5 text-amber-400/80" />
+                        ) : group.kind === "pack" ? (
                           <Package className="w-3.5 h-3.5 text-primary/70" />
-                        ) : group.key === "standard" ? (
+                        ) : group.kind === "standard" ? (
                           <Folder className="w-3.5 h-3.5 text-blue-400/70" />
                         ) : (
                           <UserIcon className="w-3.5 h-3.5 text-purple-400/70" />
@@ -1194,30 +1253,56 @@ export default function Classement() {
                           const colorIdx =
                             (idx >= 0 ? idx : i) % categoryColors.length;
                           const isUnused = (cat.emailCount || 0) === 0;
-                          const originLabel = cat.sourcePack
-                            ? cat.sourcePack
-                            : group.kind === "standard"
-                              ? t("classification.origin.standard")
-                              : t("classification.origin.manual");
-                          const originColor = cat.sourcePack
-                            ? "bg-primary/10 text-primary/80"
-                            : group.kind === "standard"
-                              ? "bg-blue-500/10 text-blue-300"
-                              : "bg-purple-500/10 text-purple-300";
-                          return (
-                            <div
-                              key={cat.id}
-                              className={`bg-card rounded-lg border p-5 hover:border-primary/30 transition-colors group ${
+                          const isSystemCat = cat.isSystem === true;
+                          const toSortCount = isSystemCat ? (cat.emailCount || 0) : 0;
+                          const originLabel = isSystemCat
+                            ? t("classification.origin.system")
+                            : cat.sourcePack
+                              ? cat.sourcePack
+                              : group.kind === "standard"
+                                ? t("classification.origin.standard")
+                                : t("classification.origin.manual");
+                          const originColor = isSystemCat
+                            ? "bg-white/[0.06] text-[#8b9cb3]"
+                            : cat.sourcePack
+                              ? "bg-primary/10 text-primary/80"
+                              : group.kind === "standard"
+                                ? "bg-blue-500/10 text-blue-300"
+                                : "bg-purple-500/10 text-purple-300";
+                          // La carte système n'est jamais "grisée" (elle peut être
+                          // vide volontairement, c'est une bonne nouvelle).
+                          const cardClasses = isSystemCat
+                            ? "bg-card rounded-lg border border-amber-500/30 p-5 hover:border-amber-500/50 transition-colors group"
+                            : `bg-card rounded-lg border p-5 hover:border-primary/30 transition-colors group ${
                                 isUnused
                                   ? "border-border/50 opacity-70"
                                   : "border-border"
-                              }`}
-                            >
+                              }`;
+                          // Pour la catégorie système, on affiche le nom et la
+                          // description traduits depuis i18n, indépendamment de
+                          // ce qui est stocké en base (créé en français côté
+                          // serveur).
+                          const displayName = isSystemCat
+                            ? t("classification.systemCat.name")
+                            : translateCategoryName(cat.name, lang);
+                          const displayDescription = isSystemCat
+                            ? t("classification.systemCat.description")
+                            : translateCategory(cat.name, cat.description, lang).description;
+                          return (
+                            <div key={cat.id} className={cardClasses}>
                               <div className="flex justify-between items-start mb-3 gap-2">
                                 <div
-                                  className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${categoryColors[colorIdx]}`}
+                                  className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
+                                    isSystemCat
+                                      ? "bg-amber-500/15 text-amber-300"
+                                      : categoryColors[colorIdx]
+                                  }`}
                                 >
-                                  <Tags className="w-4 h-4" />
+                                  {isSystemCat ? (
+                                    <ShieldCheck className="w-4 h-4" />
+                                  ) : (
+                                    <Tags className="w-4 h-4" />
+                                  )}
                                 </div>
                                 <div className="flex items-center gap-1 flex-wrap justify-end">
                                   <span
@@ -1225,88 +1310,109 @@ export default function Classement() {
                                   >
                                     {originLabel}
                                   </span>
-                                  {isUnused && (
+                                  {isSystemCat && toSortCount > 0 && (
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-orange-500/15 text-orange-300 font-semibold">
+                                      {t("classification.systemCat.toSortBadge", { count: toSortCount })}
+                                    </span>
+                                  )}
+                                  {!isSystemCat && isUnused && (
                                     <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 font-medium">
                                       {t("classification.unusedBadge")}
                                     </span>
                                   )}
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button
-                                        variant="ghost"
-                                        size="icon"
-                                        className="h-7 w-7 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/[0.06]"
+                                  {/* Menu d'actions masqué pour la catégorie
+                                      système : elle ne peut être ni éditée ni
+                                      supprimée. */}
+                                  {!isSystemCat && (
+                                    <DropdownMenu>
+                                      <DropdownMenuTrigger asChild>
+                                        <Button
+                                          variant="ghost"
+                                          size="icon"
+                                          className="h-7 w-7 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/[0.06]"
+                                        >
+                                          <MoreVertical className="h-3.5 w-3.5" />
+                                        </Button>
+                                      </DropdownMenuTrigger>
+                                      <DropdownMenuContent
+                                        align="end"
+                                        className="bg-card border-border"
                                       >
-                                        <MoreVertical className="h-3.5 w-3.5" />
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent
-                                      align="end"
-                                      className="bg-card border-border"
-                                    >
-                                      <DropdownMenuItem
-                                        onClick={() => handleOpenEdit(cat)}
-                                        className="gap-2 cursor-pointer text-[#8b9cb3] hover:text-white"
-                                      >
-                                        <Edit2 className="h-3.5 w-3.5" />{" "}
-                                        {t("classification.edit")}
-                                      </DropdownMenuItem>
-                                      <AlertDialog>
-                                        <AlertDialogTrigger asChild>
-                                          <DropdownMenuItem
-                                            onSelect={(e) => e.preventDefault()}
-                                            className="gap-2 text-red-400 cursor-pointer"
-                                          >
-                                            <Trash2 className="h-3.5 w-3.5" />{" "}
-                                            {t("common.delete")}
-                                          </DropdownMenuItem>
-                                        </AlertDialogTrigger>
-                                        <AlertDialogContent className="bg-card border-border">
-                                          <AlertDialogHeader>
-                                            <AlertDialogTitle className="text-white">
-                                              {t("classification.deleteConfirmTitle")}
-                                            </AlertDialogTitle>
-                                            <AlertDialogDescription className="text-[#8b9cb3]">
-                                              {t("classification.deleteConfirmCatDesc", {
-                                                name: cat.name,
-                                              })}
-                                            </AlertDialogDescription>
-                                          </AlertDialogHeader>
-                                          <AlertDialogFooter>
-                                            <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">
-                                              {t("common.cancel")}
-                                            </AlertDialogCancel>
-                                            <AlertDialogAction
-                                              onClick={() => handleDelete(cat.id)}
-                                              className="bg-red-500 text-white hover:bg-red-600"
+                                        <DropdownMenuItem
+                                          onClick={() => handleOpenEdit(cat)}
+                                          className="gap-2 cursor-pointer text-[#8b9cb3] hover:text-white"
+                                        >
+                                          <Edit2 className="h-3.5 w-3.5" />{" "}
+                                          {t("classification.edit")}
+                                        </DropdownMenuItem>
+                                        <AlertDialog>
+                                          <AlertDialogTrigger asChild>
+                                            <DropdownMenuItem
+                                              onSelect={(e) => e.preventDefault()}
+                                              className="gap-2 text-red-400 cursor-pointer"
                                             >
+                                              <Trash2 className="h-3.5 w-3.5" />{" "}
                                               {t("common.delete")}
-                                            </AlertDialogAction>
-                                          </AlertDialogFooter>
-                                        </AlertDialogContent>
-                                      </AlertDialog>
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
+                                            </DropdownMenuItem>
+                                          </AlertDialogTrigger>
+                                          <AlertDialogContent className="bg-card border-border">
+                                            <AlertDialogHeader>
+                                              <AlertDialogTitle className="text-white">
+                                                {t("classification.deleteConfirmTitle")}
+                                              </AlertDialogTitle>
+                                              <AlertDialogDescription className="text-[#8b9cb3]">
+                                                {t("classification.deleteConfirmCatDesc", {
+                                                  name: cat.name,
+                                                })}
+                                              </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                              <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">
+                                                {t("common.cancel")}
+                                              </AlertDialogCancel>
+                                              <AlertDialogAction
+                                                onClick={() => handleDelete(cat.id)}
+                                                className="bg-red-500 text-white hover:bg-red-600"
+                                              >
+                                                {t("common.delete")}
+                                              </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                          </AlertDialogContent>
+                                        </AlertDialog>
+                                      </DropdownMenuContent>
+                                    </DropdownMenu>
+                                  )}
                                 </div>
                               </div>
 
                               <h3 className="text-[14px] font-semibold text-white mb-1">
-                                {translateCategoryName(cat.name, lang)}
+                                {displayName}
                               </h3>
                               <p className="text-[12px] text-[#8b9cb3] line-clamp-2 h-9 mb-3">
-                                {translateCategory(cat.name, cat.description, lang)
-                                  .description || (
+                                {displayDescription || (
                                   <span className="italic opacity-50">
                                     {t("classification.noDescription")}
                                   </span>
                                 )}
                               </p>
 
-                              <div className="flex items-center text-[12px] text-[#8b9cb3] bg-white/[0.04] px-2.5 py-1 rounded-md inline-flex w-fit">
-                                <span className="text-primary font-medium mr-1">
-                                  {cat.emailCount || 0}
-                                </span>
-                                {t("classification.emailsLabel")}
+                              <div className="flex items-center justify-between gap-2">
+                                <div className="flex items-center text-[12px] text-[#8b9cb3] bg-white/[0.04] px-2.5 py-1 rounded-md inline-flex w-fit">
+                                  <span className="text-primary font-medium mr-1">
+                                    {cat.emailCount || 0}
+                                  </span>
+                                  {t("classification.emailsLabel")}
+                                </div>
+                                {isSystemCat && toSortCount > 0 && (
+                                  <button
+                                    type="button"
+                                    onClick={() => setLocation("/dashboard")}
+                                    className="text-[12px] text-orange-300 hover:text-orange-200 inline-flex items-center gap-1 font-medium"
+                                  >
+                                    {t("classification.systemCat.goToInbox")}
+                                    <ArrowRight className="w-3 h-3" />
+                                  </button>
+                                )}
                               </div>
                             </div>
                           );

@@ -991,7 +991,8 @@
     "sections": {
       "byPack": "{{name}} pack",
       "standards": "Standard categories",
-      "manual": "My personal categories"
+      "manual": "My personal categories",
+      "system": "To sort (unclassified)"
     },
     "unusedToggle": {
       "show": "Show empty categories",
@@ -1001,7 +1002,8 @@
     "origin": {
       "pack": "Pack",
       "standard": "Standard",
-      "manual": "Personal"
+      "manual": "Personal",
+      "system": "System"
     },
     "industryPacksAccordion": "Industry pack catalog",
     "industryPacksAccordionDesc": "Pre-built categories by profession. Click to browse.",
@@ -1015,6 +1017,16 @@
       "similarity": "{{pct}}% similar",
       "useExisting": "Use existing",
       "createAnyway": "Create anyway"
+    },
+    "systemCat": {
+      "name": "Unsorted",
+      "description": "Emails the AI couldn't classify automatically. Sort them manually when you have a moment.",
+      "toSortBadge": "{{count}} to sort",
+      "pinnedHint": "This category is managed automatically by Inboria. It cannot be renamed or deleted — but you can sort its emails manually.",
+      "cannotDelete": "This system category cannot be deleted.",
+      "cannotRename": "This system category cannot be renamed.",
+      "cannotMerge": "The \"Unsorted\" category cannot be merged.",
+      "goToInbox": "Sort these emails"
     }
   },
   "settings": {

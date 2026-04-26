@@ -14,5 +14,7 @@ export interface Category {
   emailCount?: number;
   /** @nullable */
   sourcePack?: string | null;
+  /** True for the protected "Unsorted" system category. Cannot be renamed, deleted, or merged. */
+  isSystem?: boolean;
   createdAt: Date;
 }

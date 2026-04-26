@@ -991,7 +991,8 @@
     "sections": {
       "byPack": "Set {{name}}",
       "standards": "Standardkategorien",
-      "manual": "Meine persönlichen Kategorien"
+      "manual": "Meine persönlichen Kategorien",
+      "system": "Zu sortieren (nicht klassifiziert)"
     },
     "unusedToggle": {
       "show": "Leere Kategorien anzeigen",
@@ -1001,7 +1002,8 @@
     "origin": {
       "pack": "Set",
       "standard": "Standard",
-      "manual": "Persönlich"
+      "manual": "Persönlich",
+      "system": "System"
     },
     "industryPacksAccordion": "Katalog der Branchensets",
     "industryPacksAccordionDesc": "Vorgefertigte Kategorien nach Beruf. Klicken zum Erkunden.",
@@ -1015,6 +1017,16 @@
       "similarity": "{{pct}}% ähnlich",
       "useExisting": "Vorhandene verwenden",
       "createAnyway": "Trotzdem erstellen"
+    },
+    "systemCat": {
+      "name": "Nicht klassifiziert",
+      "description": "E-Mails, die die KI nicht automatisch klassifizieren konnte. Sortieren Sie sie manuell, wenn Sie Zeit haben.",
+      "toSortBadge": "{{count}} zu sortieren",
+      "pinnedHint": "Diese Kategorie wird automatisch von Inboria verwaltet. Sie kann weder umbenannt noch gelöscht werden — aber Sie können ihre E-Mails manuell sortieren.",
+      "cannotDelete": "Diese Systemkategorie kann nicht gelöscht werden.",
+      "cannotRename": "Diese Systemkategorie kann nicht umbenannt werden.",
+      "cannotMerge": "Die Kategorie „Nicht klassifiziert\" kann nicht zusammengeführt werden.",
+      "goToInbox": "Diese E-Mails sortieren"
     }
   },
   "settings": {

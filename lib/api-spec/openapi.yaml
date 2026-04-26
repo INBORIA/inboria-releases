@@ -3753,6 +3753,9 @@ components:
           type: integer
         sourcePack:
           type: ["string", "null"]
+        isSystem:
+          type: boolean
+          description: True for the protected "Unsorted" system category. Cannot be renamed, deleted, or merged.
         createdAt:
           type: string
           format: date-time
