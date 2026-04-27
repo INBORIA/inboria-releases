@@ -348,7 +348,6 @@ export async function syncOdooContacts(
         "name",
         "email",
         "phone",
-        "mobile",
         "function",
         "company_name",
         "parent_id",
