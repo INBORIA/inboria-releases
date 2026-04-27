@@ -744,3 +744,150 @@ export async function logEmailEngagementOdoo(
   if (!r.ok) return { ok: false, error: r.error };
   return { ok: true, id: r.data ? String(r.data) : undefined };
 }
+
+// ----------------------------------------------------------------------------
+// Liste des types d'activité Odoo (mail.activity.type) — alimente le dropdown
+// du formulaire "Créer activité" du cockpit. Cap à 50 (largement suffisant
+// pour une instance type ; les types les plus courants sont "To-Do", "Call",
+// "Meeting", "Email"). Retourne [] si l'instance n'a pas le module installé.
+// ----------------------------------------------------------------------------
+export async function listOdooActivityTypes(
+  userId: string,
+): Promise<Array<{ id: number; name: string }>> {
+  const row = await getIntegration(userId);
+  if (!row) return [];
+  try {
+    const r = await searchReadResilient<Array<Record<string, any>>>(
+      row,
+      "mail.activity.type",
+      [],
+      { fields: ["id", "name"], limit: 50, order: "sequence asc, id asc" },
+    );
+    if (!r.ok || !Array.isArray(r.data)) return [];
+    return r.data
+      .filter((t) => typeof t.id === "number" && typeof t.name === "string")
+      .map((t) => ({ id: Number(t.id), name: String(t.name) }));
+  } catch {
+    return [];
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Créer une opportunité (crm.lead type='opportunity') liée au contact.
+// expectedRevenue et dateDeadline sont optionnels. La devise est héritée
+// automatiquement du paramétrage Odoo (company_currency).
+// ----------------------------------------------------------------------------
+export async function createOdooDeal(
+  userId: string,
+  input: {
+    contactExternalId: string;
+    name: string;
+    expectedRevenue: number | null;
+    dateDeadline: string | null;
+  },
+): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+  const row = await getIntegration(userId);
+  if (!row) return { ok: false, error: "not connected" };
+  if (row.settings?.hasCrm === false) {
+    return { ok: false, error: "Odoo CRM module not installed" };
+  }
+  const partnerId = Number(input.contactExternalId);
+  if (!Number.isFinite(partnerId) || partnerId <= 0) {
+    return { ok: false, error: "invalid contact id" };
+  }
+  const trimmedName = (input.name || "").trim().slice(0, 200);
+  if (!trimmedName) return { ok: false, error: "name required" };
+  const payload: Record<string, unknown> = {
+    name: trimmedName,
+    partner_id: partnerId,
+    type: "opportunity",
+  };
+  if (input.expectedRevenue != null && Number.isFinite(input.expectedRevenue)) {
+    payload["expected_revenue"] = Number(input.expectedRevenue);
+  }
+  if (input.dateDeadline) {
+    payload["date_deadline"] = String(input.dateDeadline);
+  }
+  // Odoo `create` retourne soit un id (single) soit un array d'ids selon la
+  // version. On normalise.
+  const r = await executeKw<number | number[]>(
+    row,
+    "crm.lead",
+    "create",
+    [payload],
+    {},
+  );
+  if (!r.ok) return { ok: false, error: r.error };
+  const id = Array.isArray(r.data) ? r.data[0] : r.data;
+  if (!Number.isFinite(Number(id))) return { ok: false, error: "create returned no id" };
+  return { ok: true, id: String(id) };
+}
+
+// ----------------------------------------------------------------------------
+// Créer une activité Odoo (mail.activity) attachée au contact (res.partner).
+// activityTypeId optionnel : si absent, on prend le premier type disponible
+// (l'instance Odoo a toujours au moins "To-Do" / "Email" par défaut).
+// ----------------------------------------------------------------------------
+export async function createOdooActivity(
+  userId: string,
+  input: {
+    contactExternalId: string;
+    summary: string;
+    note: string;
+    dateDeadline: string | null;
+    activityTypeId: number | null;
+  },
+): Promise<{ ok: true; id: string } | { ok: false; error: string }> {
+  const row = await getIntegration(userId);
+  if (!row) return { ok: false, error: "not connected" };
+  const partnerId = Number(input.contactExternalId);
+  if (!Number.isFinite(partnerId) || partnerId <= 0) {
+    return { ok: false, error: "invalid contact id" };
+  }
+  const summary = (input.summary || "").trim().slice(0, 200);
+  if (!summary) return { ok: false, error: "summary required" };
+
+  // Résout activity_type_id : si l'utilisateur n'a pas choisi, on récupère
+  // le premier type pour éviter le rejet "activity_type_id is required".
+  let activityTypeId = input.activityTypeId;
+  if (!activityTypeId || !Number.isFinite(activityTypeId)) {
+    const types = await listOdooActivityTypes(userId);
+    activityTypeId = types[0]?.id ?? null;
+    if (!activityTypeId) {
+      return { ok: false, error: "no activity type available in Odoo" };
+    }
+  }
+
+  // Récupère res_model_id de res.partner. mail.activity exige soit
+  // res_model_id (id de ir.model) soit res_model (string) selon la version.
+  // Le couple {res_model: "res.partner", res_id} est accepté par toutes les
+  // versions modernes d'Odoo (≥13).
+  const cleanNote = (input.note || "").replace(/<[^>]+>/g, " ").trim().slice(0, 5000);
+  const payload: Record<string, unknown> = {
+    res_model: "res.partner",
+    res_id: partnerId,
+    summary,
+    activity_type_id: Number(activityTypeId),
+  };
+  if (cleanNote) payload["note"] = cleanNote.replace(/[<>&]/g, (c) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;" }[c]!));
+  if (input.dateDeadline) {
+    payload["date_deadline"] = String(input.dateDeadline);
+  } else {
+    // Odoo exige date_deadline. Défaut : J+7.
+    const d = new Date();
+    d.setDate(d.getDate() + 7);
+    payload["date_deadline"] = d.toISOString().slice(0, 10);
+  }
+
+  const r = await executeKw<number | number[]>(
+    row,
+    "mail.activity",
+    "create",
+    [payload],
+    {},
+  );
+  if (!r.ok) return { ok: false, error: r.error };
+  const id = Array.isArray(r.data) ? r.data[0] : r.data;
+  if (!Number.isFinite(Number(id))) return { ok: false, error: "create returned no id" };
+  return { ok: true, id: String(id) };
+}

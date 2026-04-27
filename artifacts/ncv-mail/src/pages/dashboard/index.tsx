@@ -3302,6 +3302,133 @@ function OdooContextPanel({
     },
   });
 
+  // Cockpit Odoo — formulaires "Créer opportunité" et "Créer activité"
+  // (parité minimale avec HubSpot/Pipedrive/Salesforce). Les types
+  // d'activité sont chargés à la demande quand le formulaire s'ouvre,
+  // pour éviter un appel JSON-RPC inutile.
+  const [showOdooDealForm, setShowOdooDealForm] = useState(false);
+  const [showOdooActivityForm, setShowOdooActivityForm] = useState(false);
+  const [odooDealName, setOdooDealName] = useState("");
+  const [odooDealAmount, setOdooDealAmount] = useState("");
+  const [odooDealDeadline, setOdooDealDeadline] = useState("");
+  const [odooActivityTypeId, setOdooActivityTypeId] = useState<string>("");
+  const [odooActivitySummary, setOdooActivitySummary] = useState("");
+  const [odooActivityNote, setOdooActivityNote] = useState("");
+  const [odooActivityDue, setOdooActivityDue] = useState("");
+  const [odooActivityTypesEnabled, setOdooActivityTypesEnabled] = useState(false);
+
+  const { data: odooActivityTypesData } = useQuery({
+    queryKey: ["odoo-activity-types"],
+    enabled: odooActivityTypesEnabled && !collapsed,
+    queryFn: async (): Promise<{ activityTypes: Array<{ id: number; name: string }> }> => {
+      const res = await authedFetch(`${apiBase}/integrations/odoo/activity-types`);
+      if (!res.ok) throw new Error("failed");
+      return res.json() as Promise<{ activityTypes: Array<{ id: number; name: string }> }>;
+    },
+    staleTime: 5 * 60_000,
+    refetchOnWindowFocus: false,
+  });
+  const odooActivityTypes = odooActivityTypesData?.activityTypes ?? [];
+
+  // Préremplissage du form deal quand on l'ouvre (basé sur l'email courant)
+  useEffect(() => {
+    if (showOdooDealForm) {
+      if (!odooDealName && selectedSubject) setOdooDealName(selectedSubject.slice(0, 80));
+      if (!odooDealDeadline) {
+        const d = new Date();
+        d.setDate(d.getDate() + 30);
+        setOdooDealDeadline(d.toISOString().slice(0, 10));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showOdooDealForm]);
+
+  // Préremplissage du form activité + déclenche le chargement des types Odoo
+  useEffect(() => {
+    if (showOdooActivityForm) {
+      setOdooActivityTypesEnabled(true);
+      if (!odooActivitySummary) {
+        setOdooActivitySummary(
+          selectedSubject ? `Suivi : ${selectedSubject.slice(0, 80)}` : t("inbox.crmActionTaskDefaultTitle"),
+        );
+      }
+      if (!odooActivityDue) {
+        const d = new Date();
+        d.setDate(d.getDate() + 7);
+        setOdooActivityDue(d.toISOString().slice(0, 10));
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showOdooActivityForm]);
+
+  // Cale le type d'activité par défaut sur le premier disponible
+  useEffect(() => {
+    if (showOdooActivityForm && odooActivityTypes.length > 0 && !odooActivityTypeId) {
+      setOdooActivityTypeId(String(odooActivityTypes[0]!.id));
+    }
+  }, [showOdooActivityForm, odooActivityTypes, odooActivityTypeId]);
+
+  const createOdooDealMut = useMutation({
+    mutationFn: async () => {
+      const res = await authedFetch(`${apiBase}/integrations/odoo/create-deal`, {
+        method: "POST",
+        body: JSON.stringify({
+          contactExternalId: ctx?.contact?.externalId,
+          name: odooDealName,
+          expectedRevenue: odooDealAmount ? Number(odooDealAmount) : null,
+          dateDeadline: odooDealDeadline || null,
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({} as { error?: string }));
+        throw new Error(body.error || "create deal failed");
+      }
+      return res.json() as Promise<{ ok: boolean; id?: string }>;
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionDealCreatedOdoo") });
+      setShowOdooDealForm(false);
+      setOdooDealName("");
+      setOdooDealAmount("");
+      setOdooDealDeadline("");
+      refresh();
+    },
+    onError: (err: Error) => {
+      toast({ title: t("inbox.crmActionOdooError"), description: err.message, variant: "destructive" });
+    },
+  });
+
+  const createOdooActivityMut = useMutation({
+    mutationFn: async () => {
+      const res = await authedFetch(`${apiBase}/integrations/odoo/create-activity`, {
+        method: "POST",
+        body: JSON.stringify({
+          contactExternalId: ctx?.contact?.externalId,
+          summary: odooActivitySummary,
+          note: odooActivityNote,
+          dateDeadline: odooActivityDue || null,
+          activityTypeId: odooActivityTypeId ? Number(odooActivityTypeId) : null,
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({} as { error?: string }));
+        throw new Error(body.error || "create activity failed");
+      }
+      return res.json() as Promise<{ ok: boolean; id?: string }>;
+    },
+    onSuccess: () => {
+      toast({ title: t("inbox.crmActionActivityCreatedOdoo") });
+      setShowOdooActivityForm(false);
+      setOdooActivitySummary("");
+      setOdooActivityNote("");
+      setOdooActivityDue("");
+      refresh();
+    },
+    onError: (err: Error) => {
+      toast({ title: t("inbox.crmActionOdooError"), description: err.message, variant: "destructive" });
+    },
+  });
+
   if (collapsed) {
     return (
       <div
@@ -3409,18 +3536,143 @@ function OdooContextPanel({
             </div>
           )}
 
-          <div className="pt-1">
+          {/* Cockpit Odoo — 3 actions (parité HubSpot/Pipedrive/Salesforce) */}
+          <div className="grid grid-cols-3 gap-1 pt-1">
             <button
               type="button"
               onClick={() => logEmailMut.mutate()}
               disabled={!selectedEmailId || logEmailMut.isPending}
               title={t("inbox.crmActionLogEmailOdoo")}
-              className="w-full text-[10px] bg-indigo-500/10 hover:bg-indigo-500/20 disabled:opacity-40 text-indigo-400 rounded px-1.5 py-1 flex items-center justify-center"
+              className="text-[10px] bg-indigo-500/10 hover:bg-indigo-500/20 disabled:opacity-40 text-indigo-400 rounded px-1.5 py-1 flex items-center justify-center"
               data-testid="button-odoo-log-email"
             >
               {logEmailMut.isPending ? "…" : t("inbox.crmActionLogEmailShort")}
             </button>
+            <button
+              type="button"
+              onClick={() => { setShowOdooDealForm((v) => !v); setShowOdooActivityForm(false); }}
+              title={t("inbox.crmActionCreateDealOdoo")}
+              className={`text-[10px] rounded px-1.5 py-1 ${showOdooDealForm ? "bg-indigo-500 text-white" : "bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400"}`}
+              data-testid="button-odoo-toggle-deal-form"
+            >
+              {t("inbox.crmActionCreateDealShort")}
+            </button>
+            <button
+              type="button"
+              onClick={() => { setShowOdooActivityForm((v) => !v); setShowOdooDealForm(false); }}
+              title={t("inbox.crmActionCreateActivityOdoo")}
+              className={`text-[10px] rounded px-1.5 py-1 ${showOdooActivityForm ? "bg-indigo-500 text-white" : "bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-400"}`}
+              data-testid="button-odoo-toggle-activity-form"
+            >
+              {t("inbox.crmActionCreateActivityShort")}
+            </button>
           </div>
+
+          {/* Formulaire création opportunité (crm.lead) */}
+          {showOdooDealForm && (
+            <div className="space-y-1.5 bg-[#0f1729] rounded p-2" data-testid="form-odoo-deal">
+              <input
+                type="text"
+                value={odooDealName}
+                onChange={(e) => setOdooDealName(e.target.value)}
+                placeholder={t("inbox.crmActionDealName")}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-odoo-deal-name"
+              />
+              <input
+                type="number"
+                value={odooDealAmount}
+                onChange={(e) => setOdooDealAmount(e.target.value)}
+                placeholder={t("inbox.crmActionDealAmount")}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-odoo-deal-amount"
+              />
+              <input
+                type="date"
+                value={odooDealDeadline}
+                onChange={(e) => setOdooDealDeadline(e.target.value)}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-odoo-deal-deadline"
+              />
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => createOdooDealMut.mutate()}
+                  disabled={!odooDealName.trim() || createOdooDealMut.isPending}
+                  className="flex-1 text-[10px] bg-indigo-500 hover:bg-indigo-500/90 disabled:opacity-40 text-white rounded px-1.5 py-1"
+                  data-testid="button-odoo-deal-submit"
+                >
+                  {createOdooDealMut.isPending ? "…" : t("inbox.crmActionSubmit")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowOdooDealForm(false)}
+                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                >
+                  {t("inbox.crmActionCancel")}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Formulaire création activité (mail.activity) */}
+          {showOdooActivityForm && (
+            <div className="space-y-1.5 bg-[#0f1729] rounded p-2" data-testid="form-odoo-activity">
+              {odooActivityTypes.length > 0 && (
+                <select
+                  value={odooActivityTypeId}
+                  onChange={(e) => setOdooActivityTypeId(e.target.value)}
+                  className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                  data-testid="select-odoo-activity-type"
+                >
+                  {odooActivityTypes.map((tp) => (
+                    <option key={tp.id} value={String(tp.id)}>{tp.name}</option>
+                  ))}
+                </select>
+              )}
+              <input
+                type="text"
+                value={odooActivitySummary}
+                onChange={(e) => setOdooActivitySummary(e.target.value)}
+                placeholder={t("inbox.crmActionTaskTitle")}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-odoo-activity-summary"
+              />
+              <textarea
+                value={odooActivityNote}
+                onChange={(e) => setOdooActivityNote(e.target.value)}
+                placeholder={t("inbox.crmActionTaskNote")}
+                rows={2}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white resize-none"
+                data-testid="textarea-odoo-activity-note"
+              />
+              <input
+                type="date"
+                value={odooActivityDue}
+                onChange={(e) => setOdooActivityDue(e.target.value)}
+                className="w-full text-[10px] bg-[#0a0f1c] border border-[#1f2937] rounded px-1.5 py-1 text-white"
+                data-testid="input-odoo-activity-due"
+              />
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  onClick={() => createOdooActivityMut.mutate()}
+                  disabled={!odooActivitySummary.trim() || createOdooActivityMut.isPending}
+                  className="flex-1 text-[10px] bg-indigo-500 hover:bg-indigo-500/90 disabled:opacity-40 text-white rounded px-1.5 py-1"
+                  data-testid="button-odoo-activity-submit"
+                >
+                  {createOdooActivityMut.isPending ? "…" : t("inbox.crmActionSubmit")}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowOdooActivityForm(false)}
+                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                >
+                  {t("inbox.crmActionCancel")}
+                </button>
+              </div>
+            </div>
+          )}
 
           <div className="border-t border-[#1f2937] pt-1.5">
             <h4 className="text-[9px] uppercase tracking-wider text-[#5b6b85] mb-1">

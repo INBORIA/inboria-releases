@@ -59,6 +59,9 @@ import {
   syncOdooDeals,
   getOdooContactContext,
   logEmailEngagementOdoo,
+  listOdooActivityTypes,
+  createOdooDeal,
+  createOdooActivity,
 } from "../services/odoo";
 
 const router: IRouter = Router();
@@ -1733,6 +1736,67 @@ router.get("/integrations/odoo/contact-context", requireAuth, async (req, res): 
   } catch (err) {
     console.error("[integrations] odoo contact-context error:", (err as Error).message);
     res.status(500).json({ error: "Failed to fetch Odoo context" });
+  }
+});
+
+router.get("/integrations/odoo/activity-types", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const types = await listOdooActivityTypes(req.userId!);
+    res.json({ activityTypes: types });
+  } catch (err) {
+    console.error("[integrations] odoo activity-types error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to list Odoo activity types" });
+  }
+});
+
+router.post("/integrations/odoo/create-deal", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { contactExternalId, name, expectedRevenue, dateDeadline } = req.body || {};
+    const externalId = String(contactExternalId || "").trim();
+    if (!externalId) {
+      res.status(400).json({ error: "contactExternalId required" });
+      return;
+    }
+    const result = await createOdooDeal(req.userId!, {
+      contactExternalId: externalId,
+      name: String(name || ""),
+      expectedRevenue: typeof expectedRevenue === "number" && Number.isFinite(expectedRevenue) ? expectedRevenue : null,
+      dateDeadline: typeof dateDeadline === "string" && dateDeadline ? dateDeadline : null,
+    });
+    if (!result.ok) {
+      res.status(502).json({ error: result.error });
+      return;
+    }
+    res.json({ ok: true, id: result.id });
+  } catch (err) {
+    console.error("[integrations] odoo create-deal error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to create Odoo opportunity" });
+  }
+});
+
+router.post("/integrations/odoo/create-activity", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { contactExternalId, summary, note, dateDeadline, activityTypeId } = req.body || {};
+    const externalId = String(contactExternalId || "").trim();
+    if (!externalId) {
+      res.status(400).json({ error: "contactExternalId required" });
+      return;
+    }
+    const result = await createOdooActivity(req.userId!, {
+      contactExternalId: externalId,
+      summary: String(summary || ""),
+      note: String(note || ""),
+      dateDeadline: typeof dateDeadline === "string" && dateDeadline ? dateDeadline : null,
+      activityTypeId: typeof activityTypeId === "number" && Number.isFinite(activityTypeId) ? activityTypeId : null,
+    });
+    if (!result.ok) {
+      res.status(502).json({ error: result.error });
+      return;
+    }
+    res.json({ ok: true, id: result.id });
+  } catch (err) {
+    console.error("[integrations] odoo create-activity error:", (err as Error).message);
+    res.status(500).json({ error: "Failed to create Odoo activity" });
   }
 });
 
