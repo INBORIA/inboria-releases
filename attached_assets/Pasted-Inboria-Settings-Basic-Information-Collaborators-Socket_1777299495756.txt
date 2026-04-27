@@ -1,0 +1,66 @@
+Inboria
+Settings
+Basic Information
+Collaborators
+Socket Mode
+Install App
+Manage Distribution
+Features
+App Home
+Agents & AI Apps
+Work Object PreviewsNEW
+Workflow Steps
+Org Level Apps
+Incoming Webhooks
+Interactivity & Shortcuts
+Slash Commands
+Steps from AppsLEGACY
+OAuth & Permissions
+Event Subscriptions
+User ID Translation
+App Manifest
+Beta Features
+Submit to Slack Marketplace
+Review & Submit
+Give feedback
+Slack
+
+Help
+Contact
+Policies
+Our Blog
+App Home
+Where people find your app on Slack
+Your app’s home includes three tabs (Home, Messages and About) that help people have richer interactions with your app and better understand its functionality.
+Learn more
+
+App Home Image
+First, assign a scope to your bot token
+A bot token makes it possible for users to interact with your app. A bot token lets users at-mention it, and add it to channels and conversations. It also allows you to turn on tabs in your app’s home.
+
+Scopes govern an app’s capabilities and permissions. You’ll need to add at least one to your bot token to show the Home or Message tab in your app home. You can review and add the appropriate scopes under Scopes section in OAuth & Permissions.
+
+Show Tabs
+Turn on the Home tab and/or Message tab to display these surfaces to your users when they view your app in Slack. Currently, these options are disabled. You’ll need to first add a scope to your bot token.
+
+Home Tab
+
+The Home tab requires a bot token with at least one scope. Add a scope first to continue.
+
+Block Kit components you add to this tab let people easily interact with this app.
+
+
+Helpful links
+App Home documentation
+How to use Block Kit
+Block Kit Builder tool
+Messages Tab
+
+The Message tab requires read/write scopes added to your bot token such as im:history, im:write, and/or im:read
+
+Direct messages your app sends will show in this tab.
+
+
+About Tab
+
+Helpful info about what this app does will show in this tab. You can edit this info in the app’s basic information section.
