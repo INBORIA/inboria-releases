@@ -3188,6 +3188,307 @@ function SalesforceContextPanel({
   );
 }
 
+// ---------------------------------------------------------------------------
+// OdooContextPanel — 4ème CRM (parité visuelle/fonctionnelle minimale avec
+// HubSpot/Pipedrive/Salesforce). Affiche le contact Odoo (res.partner) trouvé
+// dans le cache pour l'expéditeur, ses opportunités (crm.lead) et activités
+// (mail.activity). Bouton "Logger l'email" pousse une note sur la fiche.
+// Couleur dédiée : indigo/purple (différencie des 3 autres CRMs).
+// ---------------------------------------------------------------------------
+type OdooContext = {
+  contact: {
+    externalId: string;
+    email: string | null;
+    firstName: string | null;
+    lastName: string | null;
+    company: string | null;
+    phone: string | null;
+    jobTitle: string | null;
+    city: string | null;
+    country: string | null;
+    lastSyncedAt: string;
+  };
+  deals: Array<{
+    externalId: string;
+    title: string | null;
+    amount: number | null;
+    currency: string | null;
+    stage: string | null;
+    status: string | null;
+    closeDate: string | null;
+  }>;
+  activities: Array<{
+    id: string;
+    summary: string | null;
+    activityType: string | null;
+    dueDate: string | null;
+    state: string | null;
+  }>;
+};
+
+function OdooContextPanel({
+  senderEmail,
+  selectedEmailId,
+  selectedSubject,
+  selectedBody,
+  selectedDate,
+  collapsed,
+  onToggleCollapsed,
+  onHide,
+}: {
+  senderEmail: string | null;
+  selectedEmailId: number | null;
+  selectedSubject: string | null;
+  selectedBody: string | null;
+  selectedDate: string | null;
+  collapsed: boolean;
+  onToggleCollapsed: () => void;
+  onHide: () => void;
+}) {
+  const { t } = useTranslation();
+  const queryClient = useQueryClient();
+  const { toast } = useToast();
+  const apiBase = `${import.meta.env.BASE_URL}api`;
+
+  const { data: ctx, isLoading, isError } = useQuery({
+    queryKey: ["odoo-contact-context", senderEmail],
+    enabled: !!senderEmail && !collapsed,
+    queryFn: async (): Promise<OdooContext | null> => {
+      const res = await authedFetch(
+        `${apiBase}/integrations/odoo/contact-context?email=${encodeURIComponent(senderEmail!)}`,
+      );
+      if (res.status === 404) return null;
+      if (!res.ok) throw new Error("failed");
+      return res.json() as Promise<OdooContext>;
+    },
+    retry: false,
+    refetchOnWindowFocus: false,
+    staleTime: 60_000,
+  });
+
+  const refresh = () => {
+    queryClient.invalidateQueries({ queryKey: ["odoo-contact-context", senderEmail] });
+  };
+
+  const logEmailMut = useMutation({
+    mutationFn: async () => {
+      const res = await authedFetch(`${apiBase}/integrations/odoo/log-email`, {
+        method: "POST",
+        body: JSON.stringify({
+          contactExternalId: ctx?.contact?.externalId,
+          contactEmail: senderEmail,
+          emailId: selectedEmailId,
+          subject: selectedSubject,
+          body: selectedBody,
+          occurredAt: selectedDate,
+        }),
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({} as { error?: string }));
+        throw new Error(body.error || "log failed");
+      }
+      return res.json() as Promise<{ ok: boolean; alreadyLogged?: boolean }>;
+    },
+    onSuccess: (data) => {
+      toast({
+        title: data.alreadyLogged
+          ? t("inbox.crmActionAlreadyLoggedOdoo")
+          : t("inbox.crmActionLogEmailDoneOdoo"),
+      });
+      refresh();
+    },
+    onError: (err: Error) => {
+      toast({ title: t("inbox.crmActionOdooError"), description: err.message, variant: "destructive" });
+    },
+  });
+
+  if (collapsed) {
+    return (
+      <div
+        className="bg-card rounded-lg border border-indigo-500/30 p-2 flex items-center justify-between"
+        data-testid="panel-odoo-context-collapsed"
+      >
+        <span className="text-[10px] font-medium text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+          <Database className="w-3 h-3" />
+          {t("inbox.crmOdooPanelTitle")}
+        </span>
+        <button
+          onClick={onToggleCollapsed}
+          title={t("inbox.crmExpand")}
+          className="text-[#8b9cb3] hover:text-white"
+          data-testid="button-odoo-expand"
+        >
+          <Maximize2 className="w-3 h-3" />
+        </button>
+      </div>
+    );
+  }
+
+  const fullName =
+    [ctx?.contact?.firstName, ctx?.contact?.lastName].filter(Boolean).join(" ") ||
+    ctx?.contact?.email ||
+    senderEmail ||
+    "—";
+  const initials = ((ctx?.contact?.firstName?.[0] ?? "") + (ctx?.contact?.lastName?.[0] ?? "")).toUpperCase()
+    || (senderEmail?.[0] ?? "?").toUpperCase();
+
+  return (
+    <div
+      className="bg-card rounded-lg border border-indigo-500/30 p-3 space-y-2"
+      data-testid="panel-odoo-context"
+    >
+      <div className="flex items-center justify-between">
+        <h3 className="text-[10px] font-medium text-indigo-400 uppercase tracking-wider flex items-center gap-1.5">
+          <Database className="w-3 h-3" />
+          {t("inbox.crmOdooPanelTitle")}
+        </h3>
+        <div className="flex items-center gap-1">
+          <button
+            onClick={onToggleCollapsed}
+            title={t("inbox.crmCollapse")}
+            className="text-[#8b9cb3] hover:text-white"
+            data-testid="button-odoo-collapse"
+          >
+            <Minimize2 className="w-3 h-3" />
+          </button>
+          <button
+            onClick={onHide}
+            title={t("inbox.crmHide")}
+            className="text-[#8b9cb3] hover:text-white"
+            data-testid="button-odoo-hide"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        </div>
+      </div>
+
+      {!senderEmail && (
+        <p className="text-[10px] text-[#8b9cb3] leading-relaxed">
+          {t("inbox.crmSelectEmailHintOdoo")}
+        </p>
+      )}
+
+      {senderEmail && isLoading && (
+        <p className="text-[10px] text-[#8b9cb3]">…</p>
+      )}
+
+      {senderEmail && !isLoading && (ctx === null || isError) && (
+        <p className="text-[10px] text-[#8b9cb3] leading-relaxed" data-testid="text-odoo-no-match">
+          {t("inbox.crmNoMatchOdoo")}
+        </p>
+      )}
+
+      {senderEmail && ctx && (
+        <>
+          <div className="flex items-center gap-2">
+            <div className="w-7 h-7 rounded-full bg-indigo-500/20 text-indigo-400 flex items-center justify-center text-[10px] font-medium shrink-0">
+              {initials}
+            </div>
+            <div className="min-w-0">
+              <p className="text-[12px] text-white font-medium truncate" data-testid="text-odoo-contact-name">{fullName}</p>
+              {ctx.contact.email && (
+                <p className="text-[10px] text-[#8b9cb3] truncate">{ctx.contact.email}</p>
+              )}
+            </div>
+          </div>
+
+          {(ctx.contact.company || ctx.contact.jobTitle || ctx.contact.phone || ctx.contact.city) && (
+            <div className="text-[10px] text-[#8b9cb3] space-y-0.5">
+              {ctx.contact.company && (
+                <div className="truncate"><span className="text-[#5b6b85]">{t("inbox.crmCompany")} :</span> <span className="text-white">{ctx.contact.company}</span></div>
+              )}
+              {ctx.contact.jobTitle && (
+                <div className="truncate"><span className="text-[#5b6b85]">{t("inbox.crmJobTitle")} :</span> <span className="text-white">{ctx.contact.jobTitle}</span></div>
+              )}
+              {ctx.contact.phone && (
+                <div className="truncate"><span className="text-[#5b6b85]">{t("inbox.crmOdooPhone")} :</span> <span className="text-white">{ctx.contact.phone}</span></div>
+              )}
+              {(ctx.contact.city || ctx.contact.country) && (
+                <div className="truncate"><span className="text-[#5b6b85]">{t("inbox.crmOdooLocation")} :</span> <span className="text-white">{[ctx.contact.city, ctx.contact.country].filter(Boolean).join(", ")}</span></div>
+              )}
+            </div>
+          )}
+
+          <div className="pt-1">
+            <button
+              type="button"
+              onClick={() => logEmailMut.mutate()}
+              disabled={!selectedEmailId || logEmailMut.isPending}
+              title={t("inbox.crmActionLogEmailOdoo")}
+              className="w-full text-[10px] bg-indigo-500/10 hover:bg-indigo-500/20 disabled:opacity-40 text-indigo-400 rounded px-1.5 py-1 flex items-center justify-center"
+              data-testid="button-odoo-log-email"
+            >
+              {logEmailMut.isPending ? "…" : t("inbox.crmActionLogEmailShort")}
+            </button>
+          </div>
+
+          <div className="border-t border-[#1f2937] pt-1.5">
+            <h4 className="text-[9px] uppercase tracking-wider text-[#5b6b85] mb-1">
+              {t("inbox.crmOdooDealsTitle")}
+            </h4>
+            {ctx.deals.length === 0 ? (
+              <p className="text-[10px] text-[#5b6b85] italic">{t("inbox.crmOdooDealsNone")}</p>
+            ) : (
+              <ul className="space-y-1">
+                {ctx.deals.slice(0, 5).map((d) => (
+                  <li key={d.externalId} className="text-[10px] flex items-start gap-1.5" data-testid={`row-odoo-deal-${d.externalId}`}>
+                    <span className={d.status === "won" ? "text-emerald-400" : d.status === "lost" ? "text-rose-400" : "text-amber-400"}>•</span>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-white truncate">{d.title || "—"}</div>
+                      <div className="text-[#8b9cb3] text-[9px] flex items-center gap-2">
+                        {d.stage && <span>{d.stage}</span>}
+                        {d.amount != null && (
+                          <span>{d.amount.toLocaleString()} {d.currency || ""}</span>
+                        )}
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+
+          <div className="border-t border-[#1f2937] pt-1.5">
+            <h4 className="text-[9px] uppercase tracking-wider text-[#5b6b85] mb-1">
+              {t("inbox.crmOdooActivitiesTitle")}
+            </h4>
+            {ctx.activities.length === 0 ? (
+              <p className="text-[10px] text-[#5b6b85] italic">{t("inbox.crmOdooActivitiesNone")}</p>
+            ) : (
+              <ul className="space-y-1">
+                {ctx.activities.slice(0, 5).map((a) => (
+                  <li key={a.id} className="text-[10px] flex items-start gap-1.5">
+                    <span className={a.state === "done" ? "text-emerald-400" : a.state === "overdue" ? "text-rose-400" : "text-amber-400"}>
+                      {a.state === "done" ? "✓" : "•"}
+                    </span>
+                    <div className="min-w-0 flex-1">
+                      <div className="text-white truncate">{a.summary || a.activityType || "—"}</div>
+                      {a.dueDate && (
+                        <div className="text-[#8b9cb3] text-[9px]">
+                          {new Date(a.dueDate).toLocaleDateString()}
+                        </div>
+                      )}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </>
+      )}
+
+      <Link href="/dashboard/parametres/crm">
+        <button
+          className="w-full text-[10px] text-indigo-400 hover:text-white transition-colors py-1 mt-1 border-t border-[#1f2937]"
+          data-testid="button-odoo-configure"
+        >
+          {t("inbox.crmConfigure")} →
+        </button>
+      </Link>
+    </div>
+  );
+}
+
 export default function Dashboard() {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
@@ -3200,13 +3501,14 @@ export default function Dashboard() {
   const [detailHubspotPanelHidden, setDetailHubspotPanelHidden] = useState(false);
   const [detailPipedrivePanelHidden, setDetailPipedrivePanelHidden] = useState(false);
   const [detailSalesforcePanelHidden, setDetailSalesforcePanelHidden] = useState(false);
+  const [detailOdooPanelHidden, setDetailOdooPanelHidden] = useState(false);
   // Sélecteur exclusif du panneau CRM affiché dans la colonne droite quand
   // PLUSIEURS intégrations sont actives. Par défaut HubSpot (parité avec le
   // comportement antérieur). L'utilisateur bascule via les onglets affichés
   // au-dessus du panneau. Si une seule intégration est connectée, ce state
   // est forcé sur celle-là (cf. useEffect plus bas). Étendu à 3 valeurs
   // pour intégrer Salesforce en parité totale.
-  const [activeCrmDetailPanel, setActiveCrmDetailPanel] = useState<"hubspot" | "pipedrive" | "salesforce">("hubspot");
+  const [activeCrmDetailPanel, setActiveCrmDetailPanel] = useState<"hubspot" | "pipedrive" | "salesforce" | "odoo">("hubspot");
   const integrationsQuery = useListIntegrations();
   const integrationsList = (integrationsQuery.data ?? []) as Integration[];
   const hasHubspot = integrationsList.some(
@@ -3236,16 +3538,17 @@ export default function Dashboard() {
   // basculera via les onglets si besoin). Si l'onglet courant pointe vers
   // un CRM déconnecté, on retombe sur le premier disponible.
   useEffect(() => {
-    const connected: Array<"hubspot" | "pipedrive" | "salesforce"> = [];
+    const connected: Array<"hubspot" | "pipedrive" | "salesforce" | "odoo"> = [];
     if (hasHubspot) connected.push("hubspot");
     if (hasPipedrive) connected.push("pipedrive");
     if (hasSalesforce) connected.push("salesforce");
+    if (hasOdoo) connected.push("odoo");
     if (connected.length === 1 && activeCrmDetailPanel !== connected[0]) {
       setActiveCrmDetailPanel(connected[0]!);
     } else if (connected.length > 1 && !connected.includes(activeCrmDetailPanel)) {
       setActiveCrmDetailPanel(connected[0]!);
     }
-  }, [hasHubspot, hasPipedrive, hasSalesforce, activeCrmDetailPanel]);
+  }, [hasHubspot, hasPipedrive, hasSalesforce, hasOdoo, activeCrmDetailPanel]);
   const [sortMode, setSortMode] = useState<"priority" | "date_desc" | "date_asc">(() => {
     if (typeof window === "undefined") return "priority";
     const saved = window.localStorage.getItem("inbox.sortMode");
@@ -3270,6 +3573,7 @@ export default function Dashboard() {
     setDetailHubspotPanelHidden(false);
     setDetailPipedrivePanelHidden(false);
     setDetailSalesforcePanelHidden(false);
+    setDetailOdooPanelHidden(false);
   }, [selectedEmailId]);
   const [isSyncing, setIsSyncing] = useState(false);
   const [searchInput, setSearchInput] = useState("");
@@ -4201,13 +4505,14 @@ export default function Dashboard() {
               recharge de la page rétablit l'état par défaut. */}
           {((hasHubspot && !detailHubspotPanelHidden && activeCrmDetailPanel === "hubspot") ||
             (hasPipedrive && !detailPipedrivePanelHidden && activeCrmDetailPanel === "pipedrive") ||
-            (hasSalesforce && !detailSalesforcePanelHidden && activeCrmDetailPanel === "salesforce")) && (
+            (hasSalesforce && !detailSalesforcePanelHidden && activeCrmDetailPanel === "salesforce") ||
+            (hasOdoo && !detailOdooPanelHidden && activeCrmDetailPanel === "odoo")) && (
             <div className="w-full md:w-[280px] shrink-0 space-y-2">
               {/* Onglets de bascule — affichés dès que 2+ CRM coexistent.
                   Chaque onglet est rendu uniquement si le CRM correspondant
                   est connecté. Le clic sur un onglet bascule la sélection
                   exclusive (un seul panneau actif à la fois). */}
-              {[hasHubspot, hasPipedrive, hasSalesforce].filter(Boolean).length >= 2 && (
+              {[hasHubspot, hasPipedrive, hasSalesforce, hasOdoo].filter(Boolean).length >= 2 && (
                 <div
                   className="flex items-center gap-1 bg-card rounded-lg border border-border p-1"
                   data-testid="tabs-crm-detail-panel"
@@ -4254,6 +4559,20 @@ export default function Dashboard() {
                       Salesforce
                     </button>
                   )}
+                  {hasOdoo && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveCrmDetailPanel("odoo")}
+                      className={`flex-1 text-[10px] uppercase tracking-wider rounded px-2 py-1 ${
+                        activeCrmDetailPanel === "odoo"
+                          ? "bg-indigo-500/20 text-indigo-400"
+                          : "text-[#8b9cb3] hover:text-white"
+                      }`}
+                      data-testid="tab-crm-detail-odoo"
+                    >
+                      Odoo
+                    </button>
+                  )}
                 </div>
               )}
               {hasHubspot && !detailHubspotPanelHidden && activeCrmDetailPanel === "hubspot" && (
@@ -4296,6 +4615,20 @@ export default function Dashboard() {
                   collapsed={crmPanelCollapsed}
                   onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
                   onHide={() => setDetailSalesforcePanelHidden(true)}
+                />
+              )}
+              {hasOdoo && !detailOdooPanelHidden && activeCrmDetailPanel === "odoo" && (
+                <OdooContextPanel
+                  senderEmail={
+                    extractEmailAddress(selectedEmail.senderEmail || selectedEmail.sender) || null
+                  }
+                  selectedEmailId={Number(selectedEmail.id)}
+                  selectedSubject={selectedEmail?.subject ?? null}
+                  selectedBody={selectedEmail?.body ?? null}
+                  selectedDate={selectedEmail?.created_at ?? selectedEmail?.createdAt ?? null}
+                  collapsed={crmPanelCollapsed}
+                  onToggleCollapsed={() => setCrmPanelCollapsed((v) => !v)}
+                  onHide={() => setDetailOdooPanelHidden(true)}
                 />
               )}
             </div>
