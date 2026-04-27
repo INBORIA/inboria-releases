@@ -1,0 +1,73 @@
+Inboria
+Settings
+Basic Information
+Collaborators
+Socket Mode
+Install App
+Manage Distribution
+Features
+App Home
+Agents & AI Apps
+Work Object PreviewsNEW
+Workflow Steps
+Org Level Apps
+Incoming Webhooks
+Interactivity & Shortcuts
+Slash Commands
+Steps from AppsLEGACY
+OAuth & Permissions
+Event Subscriptions
+User ID Translation
+App Manifest
+Beta Features
+Submit to Slack Marketplace
+Review & Submit
+Give feedback
+Slack
+
+Help
+Contact
+Policies
+Our Blog
+Basic Information
+App Credentials
+These credentials allow your app to access the Slack API. They are secret. Please don't share your app credentials with anyone, include them in public code repositories, or store them in insecure ways.
+
+App ID
+A0B0GMD2CG1
+Date of App Creation
+April 27, 2026
+Client ID
+11010805567137.11016727080545
+Client Secret
+••••••••••
+You'll need to send this secret along with your client ID when making your oauth.v2.access request.
+Signing Secret
+••••••••••
+Slack signs the requests we send you using this secret. Confirm that each request comes from Slack by verifying its unique signature.
+Verification Token
+rbLmvXHJZa6zTOBpfNw3iFQa
+This deprecated Verification Token can still be used to verify that requests come from Slack, but we strongly recommend using the above, more secure, signing secret instead.
+App-Level Tokens
+App-level tokens allow your app to use platform features that apply to multiple (or all) installations—for example, the API to list event authorizations. Features have distinct scopes, so request only the scopes for the features you need. Each app can have a maximum of 10 app-level tokens at one time.
+
+Tokens
+Display Information
+This information will be shown in the Slack Marketplace and in the Slack App
+For more information, view our App Detail Guidelines.
+
+App name
+Inboria
+Short description
+Add a short description...
+App icon & Preview
+Aucun fichier choisi
++ Add App Icon
+Inboria
+APP
+Background color
+#2C2D30
+Long description
+Add a long description that will show up on your App Detail page. You can format your description with bold text, lists and more.
+Delete App
+If your app is listed in the Slack Marketplace, please communicate any plans to deprecate it to your users, and be prepared to respond to questions and support requests after deleting it. Your app has 0 authed users.
