@@ -66,10 +66,11 @@ export function SlackChannelControls({ token }: { token: string | undefined }) {
       qc.invalidateQueries({ queryKey: ["integrations"] });
       toast({ title: t("integrations.slack.channelSaved") });
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
+      const message = err instanceof Error ? err.message : String(err);
       toast({
         title: t("integrations.slack.channelSaveError"),
-        description: err.message,
+        description: message,
         variant: "destructive",
       });
     },
@@ -97,10 +98,11 @@ export function SlackChannelControls({ token }: { token: string | undefined }) {
         title: t("integrations.slack.testSuccess", { channel: channelLabel.replace(/^#/, "") }),
       });
     },
-    onError: (err: any) => {
+    onError: (err: unknown) => {
+      const message = err instanceof Error ? err.message : String(err);
       toast({
         title: t("integrations.slack.testErrorTitle"),
-        description: err.message,
+        description: message,
         variant: "destructive",
       });
     },

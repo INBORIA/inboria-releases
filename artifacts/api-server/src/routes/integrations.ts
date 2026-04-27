@@ -2172,6 +2172,37 @@ router.patch("/integrations/:provider", requireAuth, async (req, res): Promise<v
       return;
     }
 
+    if (provider === "slack" && channelId !== undefined && channelId !== null) {
+      const { data: existing } = await supabaseAdmin
+        .from("integrations")
+        .select("access_token")
+        .eq("user_id", req.userId!)
+        .eq("provider", "slack")
+        .maybeSingle();
+
+      if (!existing?.access_token) {
+        res.status(404).json({ error: "Slack non connecté" });
+        return;
+      }
+
+      try {
+        const infoRes = await fetch(
+          `https://slack.com/api/conversations.info?channel=${encodeURIComponent(String(channelId))}`,
+          { headers: { Authorization: `Bearer ${existing.access_token}` } },
+        );
+        const infoData = (await infoRes.json()) as { ok: boolean; error?: string };
+        if (!infoData.ok) {
+          res.status(400).json({ error: "Canal Slack invalide" });
+          return;
+        }
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : "Unknown error";
+        console.error("[integrations] Slack channel validation error:", message);
+        res.status(502).json({ error: "Impossible de valider le canal Slack" });
+        return;
+      }
+    }
+
     const { data, error } = await supabaseAdmin
       .from("integrations")
       .update(updates)
