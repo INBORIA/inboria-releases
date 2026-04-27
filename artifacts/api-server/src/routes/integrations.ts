@@ -1,7 +1,23 @@
 import { Router, type IRouter, type Request } from "express";
+import { z } from "zod";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { createHmac, randomBytes } from "crypto";
+
+const SLACK_MIN_PRIORITY_VALUES = ["urgent_only", "urgent_moyen", "all_non_spam", "all"] as const;
+const slackSettingsSchema = z.object({
+  min_priority: z.enum(SLACK_MIN_PRIORITY_VALUES),
+});
+
+function readSlackMinPriority(settings: unknown): typeof SLACK_MIN_PRIORITY_VALUES[number] {
+  if (settings && typeof settings === "object") {
+    const raw = (settings as Record<string, unknown>).slack_min_priority;
+    if (typeof raw === "string" && (SLACK_MIN_PRIORITY_VALUES as readonly string[]).includes(raw)) {
+      return raw as typeof SLACK_MIN_PRIORITY_VALUES[number];
+    }
+  }
+  return "urgent_only";
+}
 import {
   verifyHubspotV3Signature,
   verifyHubspotSignature,
@@ -303,9 +319,7 @@ router.get("/integrations/slack/channels", requireAuth, async (req, res): Promis
       return;
     }
 
-    const allowedThresholds = ["urgent_only", "urgent_moyen", "all_non_spam", "all"];
-    const rawMin = (integration.settings as Record<string, any> | null)?.slack_min_priority;
-    const minPriority = allowedThresholds.includes(String(rawMin)) ? String(rawMin) : "urgent_only";
+    const minPriority = readSlackMinPriority(integration.settings);
 
     const channels: Array<{ id: string; name: string; isMember: boolean }> = [];
     let cursor: string | undefined;
@@ -414,12 +428,12 @@ router.post("/integrations/slack/test", requireAuth, async (req, res): Promise<v
 
 router.patch("/integrations/slack/settings", requireAuth, async (req, res): Promise<void> => {
   try {
-    const allowed = ["urgent_only", "urgent_moyen", "all_non_spam", "all"] as const;
-    const minPriority = req.body?.min_priority;
-    if (typeof minPriority !== "string" || !allowed.includes(minPriority as typeof allowed[number])) {
+    const parsed = slackSettingsSchema.safeParse(req.body);
+    if (!parsed.success) {
       res.status(400).json({ error: "Invalid min_priority" });
       return;
     }
+    const { min_priority: minPriority } = parsed.data;
 
     const { data: existingRow, error: fetchErr } = await supabaseAdmin
       .from("integrations")
