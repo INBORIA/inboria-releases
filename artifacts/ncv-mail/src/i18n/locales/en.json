@@ -4449,13 +4449,14 @@
       "test": "Test connection",
       "testSuccess": "Test message sent to #{{channel}}",
       "testErrorTitle": "Slack test failed",
-      "minPriorityLabel": "Minimum notification level",
+      "minPriorityLabel": "Notify from",
       "minPriorityUrgent": "Urgent only",
-      "minPriorityUrgentMoyen": "Urgent and medium",
-      "minPriorityAllNonSpam": "All emails (except junk)",
-      "minPriorityAll": "All emails (including junk)",
-      "minPrioritySaved": "Notification level updated",
-      "minPriorityHint": "Choose which emails trigger a Slack notification."
+      "minPriorityUrgentMoyen": "Urgent and Medium",
+      "minPriorityAllNonSpam": "All except junk",
+      "minPriorityAll": "All incoming emails",
+      "minPrioritySaved": "Slack preference updated",
+      "minPrioritySaveError": "Could not update the Slack preference",
+      "minPriorityHint": "Set how much noise you accept on your Slack channel."
     },
     "notion": {
       "desc": "Export tasks and summaries to a Notion database."

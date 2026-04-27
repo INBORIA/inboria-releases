@@ -4449,13 +4449,14 @@
       "test": "Probar conexión",
       "testSuccess": "Mensaje de prueba enviado a #{{channel}}",
       "testErrorTitle": "Prueba de Slack fallida",
-      "minPriorityLabel": "Nivel mínimo de notificación",
+      "minPriorityLabel": "Notificar a partir de",
       "minPriorityUrgent": "Solo urgentes",
       "minPriorityUrgentMoyen": "Urgentes y medios",
-      "minPriorityAllNonSpam": "Todos los correos (excepto spam)",
-      "minPriorityAll": "Todos los correos (incluido spam)",
-      "minPrioritySaved": "Nivel de notificación actualizado",
-      "minPriorityHint": "Elige qué correos activan una notificación de Slack."
+      "minPriorityAllNonSpam": "Todos excepto spam",
+      "minPriorityAll": "Todos los correos entrantes",
+      "minPrioritySaved": "Preferencia de Slack actualizada",
+      "minPrioritySaveError": "No se pudo actualizar la preferencia de Slack",
+      "minPriorityHint": "Define cuánto ruido aceptas en tu canal de Slack."
     },
     "notion": {
       "desc": "Exporta tareas y resúmenes a una base de datos Notion."

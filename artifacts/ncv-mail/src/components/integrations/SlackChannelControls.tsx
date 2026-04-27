@@ -108,7 +108,7 @@ export function SlackChannelControls({ token }: { token: string | undefined }) {
       setSelectedMinPriority(serverValue);
       qc.invalidateQueries({ queryKey: ["slack-channels"] });
       toast({
-        title: t("integrations.slack.channelSaveError"),
+        title: t("integrations.slack.minPrioritySaveError"),
         description: message,
         variant: "destructive",
       });

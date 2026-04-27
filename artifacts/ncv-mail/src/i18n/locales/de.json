@@ -4449,13 +4449,14 @@
       "test": "Verbindung testen",
       "testSuccess": "Testnachricht an #{{channel}} gesendet",
       "testErrorTitle": "Slack-Test fehlgeschlagen",
-      "minPriorityLabel": "Minimale Benachrichtigungsstufe",
+      "minPriorityLabel": "Benachrichtigen ab",
       "minPriorityUrgent": "Nur dringend",
-      "minPriorityUrgentMoyen": "Dringend und mittel",
-      "minPriorityAllNonSpam": "Alle E-Mails (außer Spam)",
-      "minPriorityAll": "Alle E-Mails (einschließlich Spam)",
-      "minPrioritySaved": "Benachrichtigungsstufe aktualisiert",
-      "minPriorityHint": "Wähle, welche E-Mails eine Slack-Benachrichtigung auslösen."
+      "minPriorityUrgentMoyen": "Dringend und Mittel",
+      "minPriorityAllNonSpam": "Alle außer Spam",
+      "minPriorityAll": "Alle eingehenden E-Mails",
+      "minPrioritySaved": "Slack-Einstellung aktualisiert",
+      "minPrioritySaveError": "Slack-Einstellung konnte nicht aktualisiert werden",
+      "minPriorityHint": "Lege fest, wie viel Rauschen du auf deinem Slack-Kanal akzeptierst."
     },
     "notion": {
       "desc": "Exportiere Aufgaben und Zusammenfassungen in eine Notion-Datenbank."

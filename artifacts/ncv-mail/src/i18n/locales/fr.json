@@ -2808,13 +2808,14 @@
       "test": "Tester la connexion",
       "testSuccess": "Message de test envoyé dans #{{channel}}",
       "testErrorTitle": "Échec du test Slack",
-      "minPriorityLabel": "Niveau minimum de notification",
-      "minPriorityUrgent": "Urgents uniquement",
-      "minPriorityUrgentMoyen": "Urgents et moyens",
-      "minPriorityAllNonSpam": "Tous les emails (sauf indésirables)",
-      "minPriorityAll": "Tous les emails (y compris indésirables)",
-      "minPrioritySaved": "Niveau de notification mis à jour",
-      "minPriorityHint": "Choisissez quels emails déclenchent une notification Slack."
+      "minPriorityLabel": "Notifier à partir de",
+      "minPriorityUrgent": "Urgent uniquement",
+      "minPriorityUrgentMoyen": "Urgent et Moyen",
+      "minPriorityAllNonSpam": "Tous sauf indésirables",
+      "minPriorityAll": "Tous les emails entrants",
+      "minPrioritySaved": "Préférence Slack mise à jour",
+      "minPrioritySaveError": "Impossible de mettre à jour la préférence Slack",
+      "minPriorityHint": "Réglez le bruit que vous acceptez sur votre canal Slack."
     },
     "notion": {
       "desc": "Exportez tâches et résumés vers une base de données Notion."

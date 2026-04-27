@@ -4449,13 +4449,14 @@
       "test": "Verbinding testen",
       "testSuccess": "Testbericht verzonden naar #{{channel}}",
       "testErrorTitle": "Slack-test mislukt",
-      "minPriorityLabel": "Minimaal meldingsniveau",
+      "minPriorityLabel": "Melden vanaf",
       "minPriorityUrgent": "Alleen dringend",
       "minPriorityUrgentMoyen": "Dringend en gemiddeld",
-      "minPriorityAllNonSpam": "Alle e-mails (behalve ongewenst)",
-      "minPriorityAll": "Alle e-mails (inclusief ongewenst)",
-      "minPrioritySaved": "Meldingsniveau bijgewerkt",
-      "minPriorityHint": "Kies welke e-mails een Slack-melding activeren."
+      "minPriorityAllNonSpam": "Alles behalve ongewenst",
+      "minPriorityAll": "Alle inkomende e-mails",
+      "minPrioritySaved": "Slack-voorkeur bijgewerkt",
+      "minPrioritySaveError": "Slack-voorkeur kan niet worden bijgewerkt",
+      "minPriorityHint": "Bepaal hoeveel ruis je accepteert op je Slack-kanaal."
     },
     "notion": {
       "desc": "Exporteer taken en samenvattingen naar een Notion-database."
