@@ -20,6 +20,7 @@ import {
   getGetAdminConnectionsQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { Link } from "wouter";
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
@@ -188,6 +189,20 @@ export default function BoitesPartagees() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        {viewMode === "list" && (
+          <div>
+            <Link href="/dashboard">
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+                {t("inbox.title")}
+              </Button>
+            </Link>
+          </div>
+        )}
         <div className="flex items-center gap-3">
           {viewMode !== "list" && (
             <Button variant="ghost" size="icon" onClick={() => { setViewMode("list"); setSelectedMailboxId(null); }}>

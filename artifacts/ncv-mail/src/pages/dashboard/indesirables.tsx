@@ -20,6 +20,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { useAuth } from "@/lib/auth";
 import { ArrowLeft, RotateCcw, Trash2, ShieldX, Shield, Eye, EyeOff, Clock, Loader2 } from "lucide-react";
+import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
@@ -239,6 +240,18 @@ export default function Indesirables() {
   return (
     <DashboardLayout>
       <div className="p-5 max-w-[900px] mx-auto w-full">
+        <div className="mb-2">
+          <Link href="/dashboard">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+              {t("inbox.title")}
+            </Button>
+          </Link>
+        </div>
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-baseline gap-3">
             <h1 className="text-[18px] font-semibold text-white">{t("junk.title")}</h1>
