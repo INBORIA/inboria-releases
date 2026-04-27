@@ -4448,7 +4448,14 @@
       "channelSaveError": "Kanaal kan niet worden bijgewerkt",
       "test": "Verbinding testen",
       "testSuccess": "Testbericht verzonden naar #{{channel}}",
-      "testErrorTitle": "Slack-test mislukt"
+      "testErrorTitle": "Slack-test mislukt",
+      "minPriorityLabel": "Minimaal meldingsniveau",
+      "minPriorityUrgent": "Alleen dringend",
+      "minPriorityUrgentMoyen": "Dringend en gemiddeld",
+      "minPriorityAllNonSpam": "Alle e-mails (behalve ongewenst)",
+      "minPriorityAll": "Alle e-mails (inclusief ongewenst)",
+      "minPrioritySaved": "Meldingsniveau bijgewerkt",
+      "minPriorityHint": "Kies welke e-mails een Slack-melding activeren."
     },
     "notion": {
       "desc": "Exporteer taken en samenvattingen naar een Notion-database."

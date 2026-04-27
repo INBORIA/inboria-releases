@@ -623,18 +623,19 @@ export async function saveEmailWithTriage(
       sender,
       subject: subject?.slice(0, 80),
       priority: triage.priority,
-      willNotifySlack: triage.priority === "urgent",
+      isSpam: triage.is_spam,
     },
     "[auto-sync] triage done",
   );
-  if (triage.priority === "urgent") {
-    sendSlackNotification(userId, sender, subject, triage.summary, inserted.id).catch((err) => {
-      logger.warn(
-        { err: err?.message, emailId: inserted.id },
-        "[auto-sync] sendSlackNotification rejected",
-      );
-    });
-  }
+  sendSlackNotification(userId, sender, subject, triage.summary, inserted.id, {
+    priority: triage.priority,
+    isSpam: triage.is_spam === true,
+  }).catch((err) => {
+    logger.warn(
+      { err: err?.message, emailId: inserted.id },
+      "[auto-sync] sendSlackNotification rejected",
+    );
+  });
 
   emitEvent(userId, "email.received", {
     id: inserted.id,

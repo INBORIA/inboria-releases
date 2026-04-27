@@ -4448,7 +4448,14 @@
       "channelSaveError": "Kanal konnte nicht aktualisiert werden",
       "test": "Verbindung testen",
       "testSuccess": "Testnachricht an #{{channel}} gesendet",
-      "testErrorTitle": "Slack-Test fehlgeschlagen"
+      "testErrorTitle": "Slack-Test fehlgeschlagen",
+      "minPriorityLabel": "Minimale Benachrichtigungsstufe",
+      "minPriorityUrgent": "Nur dringend",
+      "minPriorityUrgentMoyen": "Dringend und mittel",
+      "minPriorityAllNonSpam": "Alle E-Mails (außer Spam)",
+      "minPriorityAll": "Alle E-Mails (einschließlich Spam)",
+      "minPrioritySaved": "Benachrichtigungsstufe aktualisiert",
+      "minPriorityHint": "Wähle, welche E-Mails eine Slack-Benachrichtigung auslösen."
     },
     "notion": {
       "desc": "Exportiere Aufgaben und Zusammenfassungen in eine Notion-Datenbank."

@@ -48,12 +48,33 @@ async function logNotification(
   }
 }
 
+export type SlackMinPriority = "urgent_only" | "urgent_moyen" | "all_non_spam" | "all";
+
+const PRIORITY_RANK: Record<string, number> = {
+  urgent: 3,
+  moyen: 2,
+  faible: 1,
+};
+
+const THRESHOLD_RANK: Record<SlackMinPriority, number> = {
+  urgent_only: 3,
+  urgent_moyen: 2,
+  all_non_spam: 1,
+  all: 1,
+};
+
+function normalizeMinPriority(value: unknown): SlackMinPriority {
+  if (value === "urgent_moyen" || value === "all_non_spam" || value === "all") return value;
+  return "urgent_only";
+}
+
 export async function sendSlackNotification(
   userId: string,
   sender: string,
   subject: string,
   summary: string,
   emailId: number | null = null,
+  opts: { priority?: string; isSpam?: boolean } = {},
 ): Promise<void> {
   try {
     const isPro = await isProPlan(userId);
@@ -80,6 +101,25 @@ export async function sendSlackNotification(
     }
     if (!integration.channel_id) {
       console.log("[integrations] Slack skipped: missing channel_id (channel not selected)", { userId, emailId });
+      return;
+    }
+
+    const minPriority = normalizeMinPriority(integration.settings?.slack_min_priority);
+    const priority = (opts.priority || "urgent").toLowerCase();
+    const isSpam = opts.isSpam === true;
+
+    if (isSpam && minPriority !== "all") {
+      console.log("[integrations] Slack skipped: spam below threshold", { userId, emailId, minPriority });
+      return;
+    }
+    const rank = PRIORITY_RANK[priority] ?? 1;
+    if (rank < THRESHOLD_RANK[minPriority]) {
+      console.log("[integrations] Slack skipped: priority below threshold", {
+        userId,
+        emailId,
+        priority,
+        minPriority,
+      });
       return;
     }
 

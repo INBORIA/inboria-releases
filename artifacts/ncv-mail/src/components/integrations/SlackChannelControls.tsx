@@ -18,9 +18,12 @@ function authHeaders(token?: string): Record<string, string> {
   return token ? { Authorization: `Bearer ${token}` } : {};
 }
 
+type MinPriority = "urgent_only" | "urgent_moyen" | "all_non_spam" | "all";
+
 interface ChannelsPayload {
   channels: Array<{ id: string; name: string; isMember: boolean }>;
   currentChannelId: string | null;
+  minPriority?: MinPriority;
 }
 
 export function SlackChannelControls({ token }: { token: string | undefined }) {
@@ -28,6 +31,7 @@ export function SlackChannelControls({ token }: { token: string | undefined }) {
   const { toast } = useToast();
   const qc = useQueryClient();
   const [selectedChannel, setSelectedChannel] = useState<string | null>(null);
+  const [selectedMinPriority, setSelectedMinPriority] = useState<MinPriority | null>(null);
 
   const channelsQuery = useQuery<ChannelsPayload>({
     queryKey: ["slack-channels"],
@@ -50,6 +54,12 @@ export function SlackChannelControls({ token }: { token: string | undefined }) {
     }
   }, [channelsQuery.data, selectedChannel]);
 
+  useEffect(() => {
+    if (channelsQuery.data?.minPriority) {
+      setSelectedMinPriority(channelsQuery.data.minPriority);
+    }
+  }, [channelsQuery.data?.minPriority]);
+
   const saveMutation = useMutation({
     mutationFn: async (channelId: string) => {
       const res = await fetch(`${baseUrl()}/api/integrations/slack`, {
@@ -68,6 +78,35 @@ export function SlackChannelControls({ token }: { token: string | undefined }) {
     },
     onError: (err: unknown) => {
       const message = err instanceof Error ? err.message : String(err);
+      toast({
+        title: t("integrations.slack.channelSaveError"),
+        description: message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const minPriorityMutation = useMutation({
+    mutationFn: async (minPriority: MinPriority) => {
+      const res = await fetch(`${baseUrl()}/api/integrations/slack`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json", ...authHeaders(token) },
+        body: JSON.stringify({ slackMinPriority: minPriority }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data?.error || "failed");
+      return data;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["slack-channels"] });
+      qc.invalidateQueries({ queryKey: ["integrations"] });
+      toast({ title: t("integrations.slack.minPrioritySaved") });
+    },
+    onError: (err: unknown) => {
+      const message = err instanceof Error ? err.message : String(err);
+      const serverValue = channelsQuery.data?.minPriority ?? "urgent_only";
+      setSelectedMinPriority(serverValue);
+      qc.invalidateQueries({ queryKey: ["slack-channels"] });
       toast({
         title: t("integrations.slack.channelSaveError"),
         description: message,
@@ -153,6 +192,40 @@ export function SlackChannelControls({ token }: { token: string | undefined }) {
           </SelectContent>
         </Select>
       )}
+      <div className="pt-2">
+        <Label className="text-[11px] text-[#8b9cb3]">
+          {t("integrations.slack.minPriorityLabel")}
+        </Label>
+        <Select
+          value={selectedMinPriority ?? undefined}
+          onValueChange={(v) => {
+            const next = v as MinPriority;
+            setSelectedMinPriority(next);
+            minPriorityMutation.mutate(next);
+          }}
+        >
+          <SelectTrigger className="h-8 text-xs mt-1" data-testid="select-slack-min-priority">
+            <SelectValue placeholder={t("integrations.slack.minPriorityLabel")} />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="urgent_only" className="text-xs">
+              {t("integrations.slack.minPriorityUrgent")}
+            </SelectItem>
+            <SelectItem value="urgent_moyen" className="text-xs">
+              {t("integrations.slack.minPriorityUrgentMoyen")}
+            </SelectItem>
+            <SelectItem value="all_non_spam" className="text-xs">
+              {t("integrations.slack.minPriorityAllNonSpam")}
+            </SelectItem>
+            <SelectItem value="all" className="text-xs">
+              {t("integrations.slack.minPriorityAll")}
+            </SelectItem>
+          </SelectContent>
+        </Select>
+        <p className="text-[10px] text-[#6b7c93] mt-1">
+          {t("integrations.slack.minPriorityHint")}
+        </p>
+      </div>
       <div className="flex gap-2 flex-wrap">
         <Button
           size="sm"

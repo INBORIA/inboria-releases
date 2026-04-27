@@ -293,7 +293,7 @@ router.get("/integrations/slack/channels", requireAuth, async (req, res): Promis
   try {
     const { data: integration } = await supabaseAdmin
       .from("integrations")
-      .select("access_token, channel_id, enabled")
+      .select("access_token, channel_id, enabled, settings")
       .eq("user_id", req.userId!)
       .eq("provider", "slack")
       .maybeSingle();
@@ -302,6 +302,10 @@ router.get("/integrations/slack/channels", requireAuth, async (req, res): Promis
       res.status(404).json({ error: "Slack non connecté" });
       return;
     }
+
+    const allowedThresholds = ["urgent_only", "urgent_moyen", "all_non_spam", "all"];
+    const rawMin = (integration.settings as Record<string, any> | null)?.slack_min_priority;
+    const minPriority = allowedThresholds.includes(String(rawMin)) ? String(rawMin) : "urgent_only";
 
     const channels: Array<{ id: string; name: string; isMember: boolean }> = [];
     let cursor: string | undefined;
@@ -337,7 +341,7 @@ router.get("/integrations/slack/channels", requireAuth, async (req, res): Promis
     }
 
     channels.sort((a, b) => a.name.localeCompare(b.name));
-    res.json({ channels, currentChannelId: integration.channel_id });
+    res.json({ channels, currentChannelId: integration.channel_id, minPriority });
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[integrations] Slack channels list error:", message);
@@ -2152,7 +2156,7 @@ router.get("/crm/deals", requireAuth, async (req, res): Promise<void> => {
 router.patch("/integrations/:provider", requireAuth, async (req, res): Promise<void> => {
   try {
     const { provider } = req.params;
-    const { enabled, channelId, databaseId } = req.body;
+    const { enabled, channelId, databaseId, slackMinPriority } = req.body;
 
     if (typeof enabled === "boolean" && enabled) {
       const isPro = await requireProPlan(req.userId!);
@@ -2166,6 +2170,22 @@ router.patch("/integrations/:provider", requireAuth, async (req, res): Promise<v
     if (typeof enabled === "boolean") updates.enabled = enabled;
     if (channelId !== undefined) updates.channel_id = channelId;
     if (databaseId !== undefined) updates.database_id = databaseId;
+
+    if (provider === "slack" && slackMinPriority !== undefined) {
+      const allowed = ["urgent_only", "urgent_moyen", "all_non_spam", "all"];
+      if (!allowed.includes(String(slackMinPriority))) {
+        res.status(400).json({ error: "Invalid slackMinPriority" });
+        return;
+      }
+      const { data: existingRow } = await supabaseAdmin
+        .from("integrations")
+        .select("settings")
+        .eq("user_id", req.userId!)
+        .eq("provider", "slack")
+        .maybeSingle();
+      const currentSettings = (existingRow?.settings ?? {}) as Record<string, any>;
+      updates.settings = { ...currentSettings, slack_min_priority: slackMinPriority };
+    }
 
     if (Object.keys(updates).length === 0) {
       res.status(400).json({ error: "No fields to update" });

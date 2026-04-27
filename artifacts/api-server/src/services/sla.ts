@@ -176,6 +176,7 @@ async function evaluatePolicy(policy: any) {
             `[SLA] ${b.subject}`,
             `Sans réponse depuis ${b.elapsed} min ouvrées (objectif ${targetMin} min)`,
             b.id,
+            { priority: "urgent", isSpam: false },
           );
         } catch {}
       }

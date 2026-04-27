@@ -4448,7 +4448,14 @@
       "channelSaveError": "No se puede actualizar el canal",
       "test": "Probar conexión",
       "testSuccess": "Mensaje de prueba enviado a #{{channel}}",
-      "testErrorTitle": "Prueba de Slack fallida"
+      "testErrorTitle": "Prueba de Slack fallida",
+      "minPriorityLabel": "Nivel mínimo de notificación",
+      "minPriorityUrgent": "Solo urgentes",
+      "minPriorityUrgentMoyen": "Urgentes y medios",
+      "minPriorityAllNonSpam": "Todos los correos (excepto spam)",
+      "minPriorityAll": "Todos los correos (incluido spam)",
+      "minPrioritySaved": "Nivel de notificación actualizado",
+      "minPriorityHint": "Elige qué correos activan una notificación de Slack."
     },
     "notion": {
       "desc": "Exporta tareas y resúmenes a una base de datos Notion."

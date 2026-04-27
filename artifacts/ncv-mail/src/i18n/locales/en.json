@@ -4448,7 +4448,14 @@
       "channelSaveError": "Failed to update channel",
       "test": "Test connection",
       "testSuccess": "Test message sent to #{{channel}}",
-      "testErrorTitle": "Slack test failed"
+      "testErrorTitle": "Slack test failed",
+      "minPriorityLabel": "Minimum notification level",
+      "minPriorityUrgent": "Urgent only",
+      "minPriorityUrgentMoyen": "Urgent and medium",
+      "minPriorityAllNonSpam": "All emails (except junk)",
+      "minPriorityAll": "All emails (including junk)",
+      "minPrioritySaved": "Notification level updated",
+      "minPriorityHint": "Choose which emails trigger a Slack notification."
     },
     "notion": {
       "desc": "Export tasks and summaries to a Notion database."
