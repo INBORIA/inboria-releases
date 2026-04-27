@@ -20,11 +20,40 @@ async function isProPlan(userId: string): Promise<boolean> {
   return !!profile && profile.plan !== "essai" && profile.plan !== "expired" && profile.plan !== "solo";
 }
 
+// Best-effort — la trace d'une notif n'est qu'un side-effect destiné au
+// filtre Réception. On ignore silencieusement toute erreur d'insert pour
+// ne pas bloquer la livraison de la notif elle-même (la table notification_log
+// peut ne pas exister tant que la migration SQL n'a pas été appliquée).
+async function logNotification(
+  userId: string,
+  provider: "slack" | "notion",
+  status: "sent" | "failed",
+  emailId: number | null,
+  channelId: string | null,
+  channelName: string | null,
+  errorMessage: string | null,
+): Promise<void> {
+  try {
+    await supabaseAdmin.from("notification_log").insert({
+      user_id: userId,
+      email_id: emailId,
+      provider,
+      status,
+      channel_id: channelId,
+      channel_name: channelName,
+      error_message: errorMessage,
+    });
+  } catch {
+    // silencieux : la trace est non critique
+  }
+}
+
 export async function sendSlackNotification(
   userId: string,
   sender: string,
   subject: string,
-  summary: string
+  summary: string,
+  emailId: number | null = null,
 ): Promise<void> {
   try {
     if (!(await isProPlan(userId))) return;
@@ -73,10 +102,30 @@ export async function sendSlackNotification(
     const result = await response.json() as { ok: boolean; error?: string };
     if (!result.ok) {
       console.error("[integrations] Slack notification error:", result.error);
+      await logNotification(
+        userId,
+        "slack",
+        "failed",
+        emailId,
+        integration.channel_id,
+        integration.workspace_name,
+        result.error ?? "unknown_slack_error",
+      );
+      return;
     }
+    await logNotification(
+      userId,
+      "slack",
+      "sent",
+      emailId,
+      integration.channel_id,
+      integration.workspace_name,
+      null,
+    );
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[integrations] Slack notification failed:", message);
+    await logNotification(userId, "slack", "failed", emailId, null, null, message);
   }
 }
 
@@ -84,7 +133,8 @@ export async function createNotionTask(
   userId: string,
   taskTitle: string,
   emailSubject: string,
-  emailSender: string
+  emailSender: string,
+  emailId: number | null = null,
 ): Promise<void> {
   try {
     if (!(await isProPlan(userId))) return;
@@ -124,10 +174,30 @@ export async function createNotionTask(
     if (!response.ok) {
       const errBody = await response.text();
       console.error("[integrations] Notion task creation error:", errBody);
+      await logNotification(
+        userId,
+        "notion",
+        "failed",
+        emailId,
+        integration.database_id,
+        integration.workspace_name,
+        errBody.slice(0, 500),
+      );
+      return;
     }
+    await logNotification(
+      userId,
+      "notion",
+      "sent",
+      emailId,
+      integration.database_id,
+      integration.workspace_name,
+      null,
+    );
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : "Unknown error";
     console.error("[integrations] Notion task creation failed:", message);
+    await logNotification(userId, "notion", "failed", emailId, null, null, message);
   }
 }
 

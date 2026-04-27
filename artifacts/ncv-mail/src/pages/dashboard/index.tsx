@@ -50,7 +50,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, MessageSquare, FileText } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -3749,6 +3749,10 @@ export default function Dashboard() {
   // Wave HubSpot/Pipedrive — filtre Réception sur les expéditeurs présents
   // dans le CRM choisi. crmFilter = null désactive le filtre.
   const [crmFilter, setCrmFilter] = useState<"hubspot" | "pipedrive" | "salesforce" | "odoo" | null>(null);
+  // Wave Collaboration — filtre Réception sur les emails ayant déjà
+  // déclenché une notif vers Slack ou Notion (cf. table notification_log).
+  // collabFilter = null désactive le filtre.
+  const [collabFilter, setCollabFilter] = useState<"slack" | "notion" | null>(null);
   const [crmPanelCollapsed, setCrmPanelCollapsed] = useState(false);
   const [detailHubspotPanelHidden, setDetailHubspotPanelHidden] = useState(false);
   const [detailPipedrivePanelHidden, setDetailPipedrivePanelHidden] = useState(false);
@@ -3777,6 +3781,13 @@ export default function Dashboard() {
   const hasOdoo = integrationsList.some(
     (i) => String(i.provider) === "odoo" && i.enabled,
   );
+  // Wave Collaboration — détection des outils de notif/tâche externes.
+  const hasSlack = integrationsList.some(
+    (i) => String(i.provider) === "slack" && i.enabled,
+  );
+  const hasNotion = integrationsList.some(
+    (i) => String(i.provider) === "notion" && i.enabled,
+  );
   // Désactive automatiquement le filtre si le CRM ciblé est déconnecté.
   useEffect(() => {
     if (!hasHubspot && crmFilter === "hubspot") setCrmFilter(null);
@@ -3784,6 +3795,11 @@ export default function Dashboard() {
     if (!hasSalesforce && crmFilter === "salesforce") setCrmFilter(null);
     if (!hasOdoo && crmFilter === "odoo") setCrmFilter(null);
   }, [hasHubspot, hasPipedrive, hasSalesforce, hasOdoo, crmFilter]);
+  // Idem pour le filtre Collaboration : si l'outil est déconnecté on lâche.
+  useEffect(() => {
+    if (!hasSlack && collabFilter === "slack") setCollabFilter(null);
+    if (!hasNotion && collabFilter === "notion") setCollabFilter(null);
+  }, [hasSlack, hasNotion, collabFilter]);
   // Recale le panneau actif sur le seul CRM disponible. Logique étendue à 3
   // CRMs : si exactement un seul est connecté, on force sa sélection. Sinon
   // (0 ou ≥2 connectés), on conserve la sélection courante (l'utilisateur
@@ -4001,7 +4017,7 @@ export default function Dashboard() {
   const [totalPages, setTotalPages] = useState(0);
 
   const prevFilterKey = useRef("");
-  const currentFilterKey = `${filterPriority}|${searchQuery}|${filterCategory}|${crmFilter || ""}`;
+  const currentFilterKey = `${filterPriority}|${searchQuery}|${filterCategory}|${crmFilter || ""}|${collabFilter || ""}`;
   useEffect(() => {
     if (prevFilterKey.current !== currentFilterKey) {
       prevFilterKey.current = currentFilterKey;
@@ -4017,6 +4033,7 @@ export default function Dashboard() {
     page: emailPage,
     limit: 200,
     ...(crmFilter ? { crmFilter } : {}),
+    ...(collabFilter ? { collabFilter } : {}),
   });
 
   useEffect(() => {
@@ -5232,6 +5249,45 @@ export default function Dashboard() {
                 >
                   <Database className="w-3 h-3" />
                   <span>Odoo</span>
+                </button>
+              )}
+            </div>
+          )}
+
+          {(hasSlack || hasNotion) && (
+            <div
+              className="flex flex-wrap items-center gap-1.5 max-w-[1200px] mx-auto mt-2"
+              data-testid="row-collab-filter"
+            >
+              <span className="text-[10px] text-[#8b9cb3] mr-1">{t("inbox.collabLabel")}:</span>
+              {hasSlack && (
+                <button
+                  onClick={() => setCollabFilter((c) => (c === "slack" ? null : "slack"))}
+                  title={t("inbox.collabSlackTooltip")}
+                  data-testid="button-collab-slack"
+                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                    collabFilter === "slack"
+                      ? "bg-primary/15 text-primary border border-primary/20"
+                      : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                  }`}
+                >
+                  <MessageSquare className="w-3 h-3" />
+                  <span>Slack</span>
+                </button>
+              )}
+              {hasNotion && (
+                <button
+                  onClick={() => setCollabFilter((c) => (c === "notion" ? null : "notion"))}
+                  title={t("inbox.collabNotionTooltip")}
+                  data-testid="button-collab-notion"
+                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                    collabFilter === "notion"
+                      ? "bg-primary/15 text-primary border border-primary/20"
+                      : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                  }`}
+                >
+                  <FileText className="w-3 h-3" />
+                  <span>Notion</span>
                 </button>
               )}
             </div>

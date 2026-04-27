@@ -618,7 +618,7 @@ export async function saveEmailWithTriage(
   }
 
   if (triage.priority === "urgent") {
-    sendSlackNotification(userId, sender, subject, triage.summary).catch(() => {});
+    sendSlackNotification(userId, sender, subject, triage.summary, inserted.id).catch(() => {});
   }
 
   emitEvent(userId, "email.received", {
@@ -672,7 +672,7 @@ export async function saveEmailWithTriage(
         }
 
         for (const t of tasksToInsert) {
-          createNotionTask(userId, t.title, subject, sender).catch(() => {});
+          createNotionTask(userId, t.title, subject, sender, inserted.id).catch(() => {});
         }
       }
     } else {
