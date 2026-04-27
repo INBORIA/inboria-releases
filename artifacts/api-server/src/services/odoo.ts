@@ -582,13 +582,19 @@ export async function getOdooContactContext(
     state: string | null;
   }>;
 } | null> {
-  const { data: contactData } = await supabaseAdmin
+  // Odoo res.partner peut contenir plusieurs fiches avec le même email
+  // (ex. parent société + contact, ou doublons utilisateur). On prend la
+  // plus récemment synchronisée — utiliser .maybeSingle() ici renverrait
+  // une erreur silencieuse en cas de doublon et casserait le panneau.
+  const { data: contactRows } = await supabaseAdmin
     .from("crm_contacts")
     .select("external_id, email, first_name, last_name, company, phone, raw, last_synced_at")
     .eq("user_id", userId)
     .eq("provider", "odoo")
     .ilike("email", email)
-    .maybeSingle();
+    .order("last_synced_at", { ascending: false })
+    .limit(1);
+  const contactData = (contactRows && contactRows.length > 0) ? contactRows[0] : null;
   if (!contactData) return null;
   const contact = contactData as {
     external_id: string;
