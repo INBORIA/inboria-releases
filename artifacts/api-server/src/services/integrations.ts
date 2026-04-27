@@ -56,7 +56,11 @@ export async function sendSlackNotification(
   emailId: number | null = null,
 ): Promise<void> {
   try {
-    if (!(await isProPlan(userId))) return;
+    const isPro = await isProPlan(userId);
+    if (!isPro) {
+      console.log("[integrations] Slack skipped: user is not on a paid plan", { userId, emailId });
+      return;
+    }
 
     const { data: integration } = await supabaseAdmin
       .from("integrations")
@@ -66,7 +70,18 @@ export async function sendSlackNotification(
       .eq("enabled", true)
       .maybeSingle();
 
-    if (!integration || !integration.access_token || !integration.channel_id) return;
+    if (!integration) {
+      console.log("[integrations] Slack skipped: no enabled Slack integration", { userId, emailId });
+      return;
+    }
+    if (!integration.access_token) {
+      console.log("[integrations] Slack skipped: missing access_token", { userId, emailId });
+      return;
+    }
+    if (!integration.channel_id) {
+      console.log("[integrations] Slack skipped: missing channel_id (channel not selected)", { userId, emailId });
+      return;
+    }
 
     const blocks = [
       {

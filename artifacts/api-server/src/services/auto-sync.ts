@@ -617,8 +617,23 @@ export async function saveEmailWithTriage(
     logger.warn({ err: e?.message, emailId: inserted.id }, "[auto-sync] runMatchingRules failed (continuing)");
   }
 
+  logger.info(
+    {
+      emailId: inserted.id,
+      sender,
+      subject: subject?.slice(0, 80),
+      priority: triage.priority,
+      willNotifySlack: triage.priority === "urgent",
+    },
+    "[auto-sync] triage done",
+  );
   if (triage.priority === "urgent") {
-    sendSlackNotification(userId, sender, subject, triage.summary, inserted.id).catch(() => {});
+    sendSlackNotification(userId, sender, subject, triage.summary, inserted.id).catch((err) => {
+      logger.warn(
+        { err: err?.message, emailId: inserted.id },
+        "[auto-sync] sendSlackNotification rejected",
+      );
+    });
   }
 
   emitEvent(userId, "email.received", {
