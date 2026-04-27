@@ -20,7 +20,7 @@ import {
   getGetAdminConnectionsQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link } from "wouter";
+import { Link as RouterLink } from "wouter";
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
@@ -191,7 +191,7 @@ export default function BoitesPartagees() {
       <div className="space-y-6">
         {viewMode === "list" && (
           <div>
-            <Link href="/dashboard">
+            <RouterLink href="/dashboard">
               <Button
                 variant="ghost"
                 size="sm"
@@ -200,7 +200,7 @@ export default function BoitesPartagees() {
                 <ArrowLeft className="w-3.5 h-3.5 mr-1" />
                 {t("inbox.title")}
               </Button>
-            </Link>
+            </RouterLink>
           </div>
         )}
         <div className="flex items-center gap-3">

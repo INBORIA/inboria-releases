@@ -241,13 +241,19 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       crmFilterRaw === "salesforce" ||
       crmFilterRaw === "odoo"
     ) {
-      const { data: crmRows } = await supabaseAdmin
+      const { data: crmRows, error: crmErr } = await supabaseAdmin
         .from("crm_contacts")
         .select("email")
         .eq("user_id", req.userId!)
         .eq("provider", crmFilterRaw)
         .not("email", "is", null)
         .limit(10000);
+      if (crmErr) {
+        req.log?.warn?.(
+          { provider: crmFilterRaw, msg: crmErr.message },
+          "crm_contacts query failed",
+        );
+      }
       const typedRows = (crmRows ?? []) as CrmContactEmailRow[];
       const emails = Array.from(
         new Set(
@@ -255,6 +261,10 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
             .map((r) => String(r.email ?? "").trim().toLowerCase())
             .filter((e) => e.length > 0),
         ),
+      );
+      req.log?.info?.(
+        { provider: crmFilterRaw, contactsFound: emails.length },
+        "CRM filter applied",
       );
       if (emails.length === 0) {
         // Aucun contact CRM → retour vide immédiat
@@ -280,7 +290,7 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     type CollabLogRow = { email_id: number | null };
     const collabFilterRaw = (req.query.collabFilter as string | undefined)?.trim().toLowerCase();
     if (collabFilterRaw === "slack" || collabFilterRaw === "notion") {
-      const { data: logRows } = await supabaseAdmin
+      const { data: logRows, error: logErr } = await supabaseAdmin
         .from("notification_log")
         .select("email_id")
         .eq("user_id", req.userId!)
@@ -289,6 +299,12 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
         .not("email_id", "is", null)
         .order("sent_at", { ascending: false })
         .limit(5000);
+      if (logErr) {
+        req.log?.warn?.(
+          { provider: collabFilterRaw, msg: logErr.message, code: (logErr as any).code },
+          "notification_log query failed (table may not exist yet)",
+        );
+      }
       const typedLogRows = (logRows ?? []) as CollabLogRow[];
       const ids = Array.from(
         new Set(
@@ -296,6 +312,10 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
             .map((r) => r.email_id)
             .filter((id): id is number => typeof id === "number"),
         ),
+      );
+      req.log?.info?.(
+        { provider: collabFilterRaw, notificationsFound: ids.length },
+        "Collab filter applied",
       );
       if (ids.length === 0) {
         // Aucune notif loggée → retour vide immédiat
