@@ -50,7 +50,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -3195,7 +3195,7 @@ export default function Dashboard() {
   const [filterPriority, setFilterPriority] = useState<string>("all");
   // Wave HubSpot/Pipedrive — filtre Réception sur les expéditeurs présents
   // dans le CRM choisi. crmFilter = null désactive le filtre.
-  const [crmFilter, setCrmFilter] = useState<"hubspot" | "pipedrive" | "salesforce" | null>(null);
+  const [crmFilter, setCrmFilter] = useState<"hubspot" | "pipedrive" | "salesforce" | "odoo" | null>(null);
   const [crmPanelCollapsed, setCrmPanelCollapsed] = useState(false);
   const [detailHubspotPanelHidden, setDetailHubspotPanelHidden] = useState(false);
   const [detailPipedrivePanelHidden, setDetailPipedrivePanelHidden] = useState(false);
@@ -3218,12 +3218,18 @@ export default function Dashboard() {
   const hasSalesforce = integrationsList.some(
     (i) => String(i.provider) === "salesforce" && i.enabled,
   );
+  // Wave Odoo — 4ème CRM (URL + DB + login + clé API). Détection identique
+  // aux 3 autres : présence d'une intégration `odoo` activée pour ce user.
+  const hasOdoo = integrationsList.some(
+    (i) => String(i.provider) === "odoo" && i.enabled,
+  );
   // Désactive automatiquement le filtre si le CRM ciblé est déconnecté.
   useEffect(() => {
     if (!hasHubspot && crmFilter === "hubspot") setCrmFilter(null);
     if (!hasPipedrive && crmFilter === "pipedrive") setCrmFilter(null);
     if (!hasSalesforce && crmFilter === "salesforce") setCrmFilter(null);
-  }, [hasHubspot, hasPipedrive, hasSalesforce, crmFilter]);
+    if (!hasOdoo && crmFilter === "odoo") setCrmFilter(null);
+  }, [hasHubspot, hasPipedrive, hasSalesforce, hasOdoo, crmFilter]);
   // Recale le panneau actif sur le seul CRM disponible. Logique étendue à 3
   // CRMs : si exactement un seul est connecté, on force sa sélection. Sinon
   // (0 ou ≥2 connectés), on conserve la sélection courante (l'utilisateur
@@ -4577,7 +4583,7 @@ export default function Dashboard() {
               </Select>
             </div>
 
-          {(hasHubspot || hasPipedrive || hasSalesforce) && (
+          {(hasHubspot || hasPipedrive || hasSalesforce || hasOdoo) && (
             <div
               className="flex flex-wrap items-center gap-1.5 max-w-[1200px] mx-auto mt-2"
               data-testid="row-crm-filter"
@@ -4626,6 +4632,21 @@ export default function Dashboard() {
                 >
                   <Cloud className="w-3 h-3" />
                   <span>Salesforce</span>
+                </button>
+              )}
+              {hasOdoo && (
+                <button
+                  onClick={() => setCrmFilter((c) => (c === "odoo" ? null : "odoo"))}
+                  title={t("inbox.crmOdooTooltip")}
+                  data-testid="button-crm-odoo"
+                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                    crmFilter === "odoo"
+                      ? "bg-primary/15 text-primary border border-primary/20"
+                      : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                  }`}
+                >
+                  <Database className="w-3 h-3" />
+                  <span>Odoo</span>
                 </button>
               )}
             </div>
@@ -4843,6 +4864,18 @@ export default function Dashboard() {
                             <Briefcase className="mx-auto h-8 w-8 text-primary/40 mb-2" />
                             <h3 className="text-[13px] font-medium text-white">{t("inbox.crmEmptyPipedriveTitle")}</h3>
                             <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.crmEmptyPipedriveDesc")}</p>
+                          </>
+                        ) : crmFilter === "salesforce" ? (
+                          <>
+                            <Cloud className="mx-auto h-8 w-8 text-primary/40 mb-2" />
+                            <h3 className="text-[13px] font-medium text-white">{t("inbox.crmEmptySalesforceTitle")}</h3>
+                            <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.crmEmptySalesforceDesc")}</p>
+                          </>
+                        ) : crmFilter === "odoo" ? (
+                          <>
+                            <Database className="mx-auto h-8 w-8 text-primary/40 mb-2" />
+                            <h3 className="text-[13px] font-medium text-white">{t("inbox.crmEmptyOdooTitle")}</h3>
+                            <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.crmEmptyOdooDesc")}</p>
                           </>
                         ) : (
                           <>

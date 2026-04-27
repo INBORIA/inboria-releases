@@ -33,7 +33,7 @@ export default function Parametres() {
       titleKey: "settings.hub.crm",
       titleFallback: "CRM",
       descKey: "settings.hub.crmDesc",
-      descFallback: "HubSpot, Pipedrive, Salesforce",
+      descFallback: "HubSpot, Pipedrive, Salesforce, Odoo",
       testId: "hub-card-crm",
     },
     {
