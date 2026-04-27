@@ -4435,7 +4435,17 @@
       "missingFields": "All fields are required"
     },
     "slack": {
-      "desc": "Receive priority emails and urgent tasks in Slack."
+      "desc": "Receive priority emails and urgent tasks in Slack.",
+      "channelLabel": "Notification channel",
+      "channelPlaceholder": "Choose a channel…",
+      "channelLoading": "Loading channels…",
+      "channelLoadError": "Failed to load Slack channels",
+      "channelEmpty": "No public channel found",
+      "channelSaved": "Slack channel updated",
+      "channelSaveError": "Failed to update channel",
+      "test": "Test connection",
+      "testSuccess": "Test message sent to #{{channel}}",
+      "testErrorTitle": "Slack test failed"
     },
     "notion": {
       "desc": "Export tasks and summaries to a Notion database."

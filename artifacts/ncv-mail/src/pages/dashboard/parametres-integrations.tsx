@@ -10,6 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
+import { SlackChannelControls } from "@/components/integrations/SlackChannelControls";
 import {
   Slack,
   FileText,
@@ -280,6 +281,9 @@ export default function ParametresIntegrations() {
                   </>
                 )}
               </div>
+              {provider === "slack" && isConnected && (
+                <SlackChannelControls token={token} />
+              )}
             </div>
           </div>
         </CardContent>

@@ -4435,7 +4435,17 @@
       "missingFields": "Todos los campos son obligatorios"
     },
     "slack": {
-      "desc": "Recibe correos prioritarios y tareas urgentes en Slack."
+      "desc": "Recibe correos prioritarios y tareas urgentes en Slack.",
+      "channelLabel": "Canal de notificación",
+      "channelPlaceholder": "Elegir un canal…",
+      "channelLoading": "Cargando canales…",
+      "channelLoadError": "No se pueden cargar los canales de Slack",
+      "channelEmpty": "No se encontró ningún canal público",
+      "channelSaved": "Canal de Slack actualizado",
+      "channelSaveError": "No se puede actualizar el canal",
+      "test": "Probar conexión",
+      "testSuccess": "Mensaje de prueba enviado a #{{channel}}",
+      "testErrorTitle": "Prueba de Slack fallida"
     },
     "notion": {
       "desc": "Exporta tareas y resúmenes a una base de datos Notion."

@@ -4435,7 +4435,17 @@
       "missingFields": "Alle Felder sind erforderlich"
     },
     "slack": {
-      "desc": "Empfange wichtige E-Mails und dringende Aufgaben in Slack."
+      "desc": "Empfange wichtige E-Mails und dringende Aufgaben in Slack.",
+      "channelLabel": "Benachrichtigungskanal",
+      "channelPlaceholder": "Kanal auswählen…",
+      "channelLoading": "Lade Kanäle…",
+      "channelLoadError": "Slack-Kanäle konnten nicht geladen werden",
+      "channelEmpty": "Kein öffentlicher Kanal gefunden",
+      "channelSaved": "Slack-Kanal aktualisiert",
+      "channelSaveError": "Kanal konnte nicht aktualisiert werden",
+      "test": "Verbindung testen",
+      "testSuccess": "Testnachricht an #{{channel}} gesendet",
+      "testErrorTitle": "Slack-Test fehlgeschlagen"
     },
     "notion": {
       "desc": "Exportiere Aufgaben und Zusammenfassungen in eine Notion-Datenbank."

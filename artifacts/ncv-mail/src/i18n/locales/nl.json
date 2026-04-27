@@ -4435,7 +4435,17 @@
       "missingFields": "Alle velden zijn verplicht"
     },
     "slack": {
-      "desc": "Ontvang prioritaire e-mails en urgente taken in Slack."
+      "desc": "Ontvang prioritaire e-mails en urgente taken in Slack.",
+      "channelLabel": "Notificatiekanaal",
+      "channelPlaceholder": "Kies een kanaal…",
+      "channelLoading": "Kanalen laden…",
+      "channelLoadError": "Slack-kanalen kunnen niet worden geladen",
+      "channelEmpty": "Geen openbaar kanaal gevonden",
+      "channelSaved": "Slack-kanaal bijgewerkt",
+      "channelSaveError": "Kanaal kan niet worden bijgewerkt",
+      "test": "Verbinding testen",
+      "testSuccess": "Testbericht verzonden naar #{{channel}}",
+      "testErrorTitle": "Slack-test mislukt"
     },
     "notion": {
       "desc": "Exporteer taken en samenvattingen naar een Notion-database."

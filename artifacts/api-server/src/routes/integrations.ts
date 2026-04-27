@@ -289,6 +289,125 @@ router.get("/integrations/slack/callback", async (req, res): Promise<void> => {
   }
 });
 
+router.get("/integrations/slack/channels", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data: integration } = await supabaseAdmin
+      .from("integrations")
+      .select("access_token, channel_id, enabled")
+      .eq("user_id", req.userId!)
+      .eq("provider", "slack")
+      .maybeSingle();
+
+    if (!integration || !integration.access_token) {
+      res.status(404).json({ error: "Slack non connecté" });
+      return;
+    }
+
+    const channels: Array<{ id: string; name: string; isMember: boolean }> = [];
+    let cursor: string | undefined;
+    for (let i = 0; i < 10; i++) {
+      const params = new URLSearchParams({
+        types: "public_channel",
+        limit: "200",
+        exclude_archived: "true",
+      });
+      if (cursor) params.set("cursor", cursor);
+
+      const slackRes = await fetch(`https://slack.com/api/conversations.list?${params}`, {
+        headers: { Authorization: `Bearer ${integration.access_token}` },
+      });
+      const slackData = await slackRes.json() as {
+        ok: boolean;
+        error?: string;
+        channels?: Array<{ id: string; name: string; is_member?: boolean }>;
+        response_metadata?: { next_cursor?: string };
+      };
+
+      if (!slackData.ok) {
+        res.status(502).json({ error: `Slack API: ${slackData.error || "unknown"}` });
+        return;
+      }
+
+      for (const c of slackData.channels || []) {
+        channels.push({ id: c.id, name: c.name, isMember: !!c.is_member });
+      }
+
+      cursor = slackData.response_metadata?.next_cursor;
+      if (!cursor) break;
+    }
+
+    channels.sort((a, b) => a.name.localeCompare(b.name));
+    res.json({ channels, currentChannelId: integration.channel_id });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("[integrations] Slack channels list error:", message);
+    res.status(500).json({ error: "Failed to list Slack channels" });
+  }
+});
+
+router.post("/integrations/slack/test", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data: integration } = await supabaseAdmin
+      .from("integrations")
+      .select("access_token, channel_id, enabled")
+      .eq("user_id", req.userId!)
+      .eq("provider", "slack")
+      .maybeSingle();
+
+    if (!integration || !integration.access_token) {
+      res.status(404).json({ error: "Slack non connecté" });
+      return;
+    }
+
+    if (!integration.channel_id) {
+      res.status(400).json({ error: "Aucun canal Slack sélectionné" });
+      return;
+    }
+
+    const slackRes = await fetch("https://slack.com/api/chat.postMessage", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${integration.access_token}`,
+        "Content-Type": "application/json; charset=utf-8",
+      },
+      body: JSON.stringify({
+        channel: integration.channel_id,
+        text: ":test_tube: Test depuis Inboria — votre intégration Slack fonctionne !",
+        blocks: [
+          {
+            type: "section",
+            text: {
+              type: "mrkdwn",
+              text: ":test_tube: *Test depuis Inboria*\nVotre intégration Slack fonctionne. Les emails urgents et alertes SLA arriveront dans ce canal.",
+            },
+          },
+        ],
+      }),
+    });
+
+    const slackData = await slackRes.json() as { ok: boolean; error?: string; channel?: string };
+    if (!slackData.ok) {
+      res.status(502).json({ ok: false, error: slackData.error || "unknown" });
+      return;
+    }
+
+    let channelName: string | null = null;
+    try {
+      const infoRes = await fetch(`https://slack.com/api/conversations.info?channel=${integration.channel_id}`, {
+        headers: { Authorization: `Bearer ${integration.access_token}` },
+      });
+      const infoData = await infoRes.json() as { ok: boolean; channel?: { name?: string } };
+      if (infoData.ok) channelName = infoData.channel?.name ?? null;
+    } catch {}
+
+    res.json({ ok: true, channel: channelName });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("[integrations] Slack test error:", message);
+    res.status(500).json({ ok: false, error: "Slack test failed" });
+  }
+});
+
 router.get("/integrations/notion/connect", requireAuth, async (req, res): Promise<void> => {
   if (!NOTION_CLIENT_ID) {
     res.status(400).json({ error: "Notion integration not configured" });
