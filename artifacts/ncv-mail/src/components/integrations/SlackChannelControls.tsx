@@ -88,10 +88,10 @@ export function SlackChannelControls({ token }: { token: string | undefined }) {
 
   const minPriorityMutation = useMutation({
     mutationFn: async (minPriority: MinPriority) => {
-      const res = await fetch(`${baseUrl()}/api/integrations/slack`, {
+      const res = await fetch(`${baseUrl()}/api/integrations/slack/settings`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json", ...authHeaders(token) },
-        body: JSON.stringify({ slackMinPriority: minPriority }),
+        body: JSON.stringify({ min_priority: minPriority }),
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data?.error || "failed");

@@ -412,6 +412,55 @@ router.post("/integrations/slack/test", requireAuth, async (req, res): Promise<v
   }
 });
 
+router.patch("/integrations/slack/settings", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const allowed = ["urgent_only", "urgent_moyen", "all_non_spam", "all"] as const;
+    const minPriority = req.body?.min_priority;
+    if (typeof minPriority !== "string" || !allowed.includes(minPriority as typeof allowed[number])) {
+      res.status(400).json({ error: "Invalid min_priority" });
+      return;
+    }
+
+    const { data: existingRow, error: fetchErr } = await supabaseAdmin
+      .from("integrations")
+      .select("settings")
+      .eq("user_id", req.userId!)
+      .eq("provider", "slack")
+      .maybeSingle();
+
+    if (fetchErr) {
+      console.error("[integrations] Slack settings fetch error:", fetchErr.message);
+      res.status(500).json({ error: "Failed to read Slack integration" });
+      return;
+    }
+    if (!existingRow) {
+      res.status(404).json({ error: "Slack non connecté" });
+      return;
+    }
+
+    const currentSettings = (existingRow.settings ?? {}) as Record<string, unknown>;
+    const nextSettings = { ...currentSettings, slack_min_priority: minPriority };
+
+    const { error: updateErr } = await supabaseAdmin
+      .from("integrations")
+      .update({ settings: nextSettings })
+      .eq("user_id", req.userId!)
+      .eq("provider", "slack");
+
+    if (updateErr) {
+      console.error("[integrations] Slack settings update error:", updateErr.message);
+      res.status(500).json({ error: "Failed to update Slack settings" });
+      return;
+    }
+
+    res.json({ ok: true, settings: nextSettings });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("[integrations] Slack settings patch error:", message);
+    res.status(500).json({ error: "Slack settings update failed" });
+  }
+});
+
 router.get("/integrations/notion/connect", requireAuth, async (req, res): Promise<void> => {
   if (!NOTION_CLIENT_ID) {
     res.status(400).json({ error: "Notion integration not configured" });
@@ -2156,7 +2205,7 @@ router.get("/crm/deals", requireAuth, async (req, res): Promise<void> => {
 router.patch("/integrations/:provider", requireAuth, async (req, res): Promise<void> => {
   try {
     const { provider } = req.params;
-    const { enabled, channelId, databaseId, slackMinPriority } = req.body;
+    const { enabled, channelId, databaseId } = req.body;
 
     if (typeof enabled === "boolean" && enabled) {
       const isPro = await requireProPlan(req.userId!);
@@ -2170,22 +2219,6 @@ router.patch("/integrations/:provider", requireAuth, async (req, res): Promise<v
     if (typeof enabled === "boolean") updates.enabled = enabled;
     if (channelId !== undefined) updates.channel_id = channelId;
     if (databaseId !== undefined) updates.database_id = databaseId;
-
-    if (provider === "slack" && slackMinPriority !== undefined) {
-      const allowed = ["urgent_only", "urgent_moyen", "all_non_spam", "all"];
-      if (!allowed.includes(String(slackMinPriority))) {
-        res.status(400).json({ error: "Invalid slackMinPriority" });
-        return;
-      }
-      const { data: existingRow } = await supabaseAdmin
-        .from("integrations")
-        .select("settings")
-        .eq("user_id", req.userId!)
-        .eq("provider", "slack")
-        .maybeSingle();
-      const currentSettings = (existingRow?.settings ?? {}) as Record<string, any>;
-      updates.settings = { ...currentSettings, slack_min_priority: slackMinPriority };
-    }
 
     if (Object.keys(updates).length === 0) {
       res.status(400).json({ error: "No fields to update" });
