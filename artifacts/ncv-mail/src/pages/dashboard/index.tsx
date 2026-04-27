@@ -4987,11 +4987,13 @@ export default function Dashboard() {
                 onClick={() => {
                   setInboxMode("personal");
                   setSelectedSharedMailboxId(null);
-                  // Réinitialise le filtre CRM HubSpot pour que cliquer
-                  // « Réception » ramène TOUJOURS la liste complète de la
-                  // boîte. Sans ça, le filtre HubSpot restait actif et l'user
-                  // ne voyait que les expéditeurs présents dans HubSpot.
+                  // Réinitialise TOUS les filtres de la barre (CRM +
+                  // Collaboration) pour que cliquer « Réception » ramène
+                  // TOUJOURS la liste complète de la boîte. Sans ça, un
+                  // filtre Slack/HubSpot/etc. resté actif masquait des
+                  // emails et donnait l'impression d'une boîte vide.
                   setCrmFilter(null);
+                  setCollabFilter(null);
                 }}
                 className={`flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
                   inboxMode === "personal"
@@ -5006,9 +5008,11 @@ export default function Dashboard() {
                 <button
                   onClick={() => {
                     setInboxMode("shared");
-                    // Idem : on bascule sur boîte partagée → on lève le filtre
-                    // HubSpot pour ne pas masquer des emails par inadvertance.
+                    // Idem Réception : on lève TOUS les filtres de la barre
+                    // (CRM + Collaboration) en basculant sur boîte partagée
+                    // pour ne pas masquer des emails par inadvertance.
                     setCrmFilter(null);
+                    setCollabFilter(null);
                     const mbs = sharedMailboxes as any[];
                     if (mbs?.length > 0 && !selectedSharedMailboxId) {
                       setSelectedSharedMailboxId(mbs[0].id);
