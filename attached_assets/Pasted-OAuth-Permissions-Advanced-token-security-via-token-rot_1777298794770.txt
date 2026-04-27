@@ -1,0 +1,50 @@
+OAuth & Permissions
+
+Advanced token security via token rotation
+Recommended for developers building on or for security-minded organizations – opting into token rotation allows app tokens to automatically expire after they’re issued within your app code. View documentation.
+
+At least one redirect URL needs to be set below before this app can be opted into token rotation
+Proof Key for Code Exchange (PKCE)
+Enabling this feature lets your app use PKCE during OAuth. This is required if your app redirects to a custom URI scheme like myapp://OAuth, and optional for web-based authentication. See documentation for more details.
+
+OAuth Tokens
+OAuth Tokens will be automatically generated when you finish installing your app to your workspace. You’ll use these tokens to authenticate your app.
+
+Please add at least one feature or permission scope below to install your app.
+Redirect URLs
+You will need to configure redirect URLs in order to automatically generate the Add to Slack button or to distribute your app. If you pass a URL in an OAuth request, it must (partially) match one of the URLs you enter here. Learn more.
+
+Redirect URLs
+You haven’t added any Redirect URLs
+Portées
+Les capacités et les autorisations d’une application Slack sont régies par les portées qu’elle requiert.
+
+Les modifications apportées au statut facultatif s’appliquent immédiatement à votre application publiée, à condition que les portées aient déjà été approuvées.
+
+Portées des jetons bots
+Les portées qui régissent ce à quoi votre application peut accéder.
+
+Champ obligatoire
+
+Portée OAuth
+Description
+ 
+Vous n’avez ajouté aucune portée OAuth pour le jeton de votre bot.
+Portées des jetons d’utilisateur
+Les portées qui accèdent aux données des utilisateurs et agissent au nom des utilisateurs qui les autorisent.
+
+Champ obligatoire
+
+Portée OAuth
+Description
+ 
+Vous n’avez ajouté aucune portée OAuth pour votre jeton d’utilisateur.
+Les portées définissent les méthodes API qu’une application est autorisée à appeler. Elles définissent également les informations et les fonctionnalités qui sont disponibles pour l’espace de travail dans lequel l’application est installée. De nombreuses portées sont limitées à des ressources spécifiques comme des canaux ou des fichiers.
+
+Restrict API Token Usage
+Slack can limit use of your app’s OAuth tokens to a list of IP addresses and ranges you provide. Slack will then reject Web API method calls from unlisted IP addresses. Learn more.
+
+Allowed IP Address Ranges
+You haven’t added any IP address ranges
+Revoke All OAuth Tokens
+You can revoke all OAuth tokens if you want to invalidate the access any existing tokens have to Slack workspace data. Users will need to grant your app permissions again to use it.
