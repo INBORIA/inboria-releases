@@ -207,18 +207,25 @@ async function searchReadResilient<T = Array<Record<string, any>>>(
   opts: { fields: string[]; limit?: number; order?: string },
 ): Promise<RpcResult<T>> {
   let currentFields = [...opts.fields];
+  const dropped: string[] = [];
   for (let attempt = 0; attempt < 8; attempt++) {
     const r = await executeKw<T>(row, model, "search_read", [domain], {
       fields: currentFields,
       ...(opts.limit !== undefined ? { limit: opts.limit } : {}),
       ...(opts.order !== undefined ? { order: opts.order } : {}),
     });
-    if (r.ok) return r;
+    if (r.ok) {
+      if (dropped.length > 0) {
+        console.log(`[odoo] ${model}: dropped invalid fields ${JSON.stringify(dropped)} — proceeding with reduced set`);
+      }
+      return r;
+    }
     const m = (r.error || "").match(/Invalid field ['"]([^'"]+)['"] on/i);
     if (!m) return r;
     const bad = m[1];
     const next = currentFields.filter((f) => f !== bad);
     if (next.length === currentFields.length || next.length === 0) return r;
+    dropped.push(bad);
     currentFields = next;
   }
   return { ok: false, error: "search_read: too many invalid-field retries" };
@@ -397,6 +404,9 @@ export async function syncOdooContacts(
     return { synced: 0, error: r.error };
   }
   const records = r.data || [];
+  console.log(`[odoo] sync contacts: Odoo returned ${records.length} record(s) for user ${userId}`);
+  let upsertErrors = 0;
+  let firstUpsertError: string | null = null;
   for (const c of records) {
     // Odoo res.partner.name est un champ unique "Prénom Nom". On split au
     // premier espace pour first_name / last_name (best-effort, FR/EN).
@@ -422,7 +432,7 @@ export async function syncOdooContacts(
     } else if (c.is_company === true && fullName) {
       company = fullName;
     }
-    await supabaseAdmin.from("crm_contacts").upsert(
+    const { error: upsertErr } = await supabaseAdmin.from("crm_contacts").upsert(
       {
         user_id: userId,
         provider: "odoo",
@@ -438,12 +448,19 @@ export async function syncOdooContacts(
       },
       { onConflict: "user_id,provider,external_id" },
     );
+    if (upsertErr) {
+      upsertErrors++;
+      if (!firstUpsertError) firstUpsertError = upsertErr.message;
+      console.error(`[odoo] sync contacts upsert error for external_id=${c.id} email=${c.email}:`, upsertErr.message);
+    }
   }
+  const persisted = records.length - upsertErrors;
+  console.log(`[odoo] sync contacts: persisted ${persisted}/${records.length} for user ${userId}` + (upsertErrors > 0 ? ` (errors=${upsertErrors}, first="${firstUpsertError}")` : ""));
   await supabaseAdmin
     .from("integrations")
-    .update({ last_synced_at: new Date().toISOString(), last_error: null })
+    .update({ last_synced_at: new Date().toISOString(), last_error: upsertErrors > 0 ? `Upsert: ${firstUpsertError}` : null })
     .eq("id", row.id);
-  return { synced: records.length };
+  return { synced: persisted, error: upsertErrors > 0 ? `${upsertErrors} contact(s) refusés en base : ${firstUpsertError}` : undefined };
 }
 
 export async function syncOdooDeals(
