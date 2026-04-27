@@ -194,6 +194,36 @@ async function executeKw<T = unknown>(
   );
 }
 
+// Wrapper search_read tolérant : certaines installations Odoo (versions
+// anciennes, modules non installés, instances en cours d'activation) renvoient
+// "Invalid field 'X' on 'model'" pour des champs pourtant standards. Plutôt que
+// de planter la synchro, on parse le nom du champ rejeté, on le retire de la
+// liste et on retente. Max 8 retries (assez pour absorber plusieurs champs
+// manquants en cascade sans risquer une boucle).
+async function searchReadResilient<T = Array<Record<string, any>>>(
+  row: OdooIntegrationRow,
+  model: string,
+  domain: unknown[],
+  opts: { fields: string[]; limit?: number; order?: string },
+): Promise<RpcResult<T>> {
+  let currentFields = [...opts.fields];
+  for (let attempt = 0; attempt < 8; attempt++) {
+    const r = await executeKw<T>(row, model, "search_read", [domain], {
+      fields: currentFields,
+      ...(opts.limit !== undefined ? { limit: opts.limit } : {}),
+      ...(opts.order !== undefined ? { order: opts.order } : {}),
+    });
+    if (r.ok) return r;
+    const m = (r.error || "").match(/Invalid field ['"]([^'"]+)['"] on/i);
+    if (!m) return r;
+    const bad = m[1];
+    const next = currentFields.filter((f) => f !== bad);
+    if (next.length === currentFields.length || next.length === 0) return r;
+    currentFields = next;
+  }
+  return { ok: false, error: "search_read: too many invalid-field retries" };
+}
+
 // ----------------------------------------------------------------------------
 // Connexion / Authentification
 // ----------------------------------------------------------------------------
@@ -337,11 +367,10 @@ export async function syncOdooContacts(
   // Filtre : on ne synchronise que les contacts ayant un email. Sans email,
   // impossible de matcher avec les emails entrants Inboria → inutile en cache.
   // Tri : write_date DESC pour avoir d'abord les contacts récemment modifiés.
-  const r = await executeKw<Array<Record<string, any>>>(
+  const r = await searchReadResilient<Array<Record<string, any>>>(
     row,
     "res.partner",
-    "search_read",
-    [[["email", "!=", false]]],
+    [["email", "!=", false]],
     {
       fields: [
         "id",
@@ -431,11 +460,10 @@ export async function syncOdooDeals(
   // crm.lead avec type='opportunity'. Les "leads" purs (type='lead') sont
   // exclus : ce sont des prospects non qualifiés, peu pertinents pour le
   // panneau cockpit. On capture stage, contact lié, montant, devise.
-  const r = await executeKw<Array<Record<string, any>>>(
+  const r = await searchReadResilient<Array<Record<string, any>>>(
     row,
     "crm.lead",
-    "search_read",
-    [[["type", "=", "opportunity"]]],
+    [["type", "=", "opportunity"]],
     {
       fields: [
         "id",
@@ -578,11 +606,10 @@ export async function getOdooContactContext(
 
   if (row && row.settings?.hasCrm !== false) {
     try {
-      const dealsRes = await executeKw<Array<Record<string, any>>>(
+      const dealsRes = await searchReadResilient<Array<Record<string, any>>>(
         row,
         "crm.lead",
-        "search_read",
-        [[["partner_id", "=", Number(contact.external_id)], ["type", "=", "opportunity"]]],
+        [["partner_id", "=", Number(contact.external_id)], ["type", "=", "opportunity"]],
         {
           fields: ["id", "name", "expected_revenue", "company_currency", "stage_id", "active", "won_status", "probability", "date_deadline"],
           limit: 10,
@@ -615,11 +642,10 @@ export async function getOdooContactContext(
   if (row) {
     try {
       // mail.activity liées au contact (rappels, todos planifiés Odoo)
-      const actsRes = await executeKw<Array<Record<string, any>>>(
+      const actsRes = await searchReadResilient<Array<Record<string, any>>>(
         row,
         "mail.activity",
-        "search_read",
-        [[["res_model", "=", "res.partner"], ["res_id", "=", Number(contact.external_id)]]],
+        [["res_model", "=", "res.partner"], ["res_id", "=", Number(contact.external_id)]],
         {
           fields: ["id", "summary", "activity_type_id", "date_deadline", "state"],
           limit: 5,
