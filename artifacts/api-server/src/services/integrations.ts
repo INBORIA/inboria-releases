@@ -206,6 +206,59 @@ export async function createNotionTask(
 
     if (!integration || !integration.access_token || !integration.database_id) return;
 
+    // Discover the database schema dynamically so we use the correct title
+    // property name (it is not always "Name" — users can rename it or pick
+    // any database). Same approach as POST /api/integrations/notion/test.
+    const schemaRes = await fetch(
+      `https://api.notion.com/v1/databases/${integration.database_id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${integration.access_token}`,
+          "Notion-Version": "2022-06-28",
+        },
+      },
+    );
+    if (!schemaRes.ok) {
+      const errBody = await schemaRes.text();
+      console.error("[integrations] Notion schema fetch error:", errBody);
+      await logNotification(
+        userId,
+        "notion",
+        "failed",
+        emailId,
+        integration.database_id,
+        integration.workspace_name,
+        `schema fetch ${schemaRes.status}: ${errBody.slice(0, 400)}`,
+      );
+      return;
+    }
+    const schema = (await schemaRes.json()) as {
+      properties?: Record<string, { type: string }>;
+    };
+    const props = schema.properties ?? {};
+    const titlePropName = Object.entries(props).find(
+      ([, def]) => def?.type === "title",
+    )?.[0];
+    if (!titlePropName) {
+      console.error("[integrations] Notion DB has no title property");
+      await logNotification(
+        userId,
+        "notion",
+        "failed",
+        emailId,
+        integration.database_id,
+        integration.workspace_name,
+        "La base Notion n'a pas de propriété titre",
+      );
+      return;
+    }
+
+    // Only include the email subject/sender field if the user's database
+    // actually has a property named "Email" of type rich_text (otherwise
+    // the Notion API rejects the whole page).
+    const includeEmailField =
+      emailSubject && props["Email"]?.type === "rich_text";
+
     const response = await fetch("https://api.notion.com/v1/pages", {
       method: "POST",
       headers: {
@@ -216,14 +269,18 @@ export async function createNotionTask(
       body: JSON.stringify({
         parent: { database_id: integration.database_id },
         properties: {
-          Name: {
+          [titlePropName]: {
             title: [{ text: { content: taskTitle } }],
           },
-          ...(emailSubject ? {
-            "Email": {
-              rich_text: [{ text: { content: `${emailSender}: ${emailSubject}` } }],
-            },
-          } : {}),
+          ...(includeEmailField
+            ? {
+                Email: {
+                  rich_text: [
+                    { text: { content: `${emailSender}: ${emailSubject}` } },
+                  ],
+                },
+              }
+            : {}),
         },
       }),
     });

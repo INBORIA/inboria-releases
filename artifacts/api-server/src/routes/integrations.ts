@@ -586,6 +586,12 @@ const notionDatabaseSchema = z.object({
 
 router.get("/integrations/notion/databases", requireAuth, async (req, res): Promise<void> => {
   try {
+    const isPro = await requireProPlan(req.userId!);
+    if (!isPro) {
+      res.status(403).json({ error: "Integration reservee au plan Pro ou superieur" });
+      return;
+    }
+
     const { data: row, error } = await supabaseAdmin
       .from("integrations")
       .select("access_token, database_id")
@@ -653,6 +659,12 @@ router.get("/integrations/notion/databases", requireAuth, async (req, res): Prom
 
 router.patch("/integrations/notion/database", requireAuth, async (req, res): Promise<void> => {
   try {
+    const isPro = await requireProPlan(req.userId!);
+    if (!isPro) {
+      res.status(403).json({ error: "Integration reservee au plan Pro ou superieur" });
+      return;
+    }
+
     const parsed = notionDatabaseSchema.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({ error: "Invalid databaseId" });
@@ -699,6 +711,12 @@ router.patch("/integrations/notion/database", requireAuth, async (req, res): Pro
 
 router.post("/integrations/notion/test", requireAuth, async (req, res): Promise<void> => {
   try {
+    const isPro = await requireProPlan(req.userId!);
+    if (!isPro) {
+      res.status(403).json({ ok: false, error: "Integration reservee au plan Pro ou superieur" });
+      return;
+    }
+
     const { data: row, error } = await supabaseAdmin
       .from("integrations")
       .select("access_token, database_id")
