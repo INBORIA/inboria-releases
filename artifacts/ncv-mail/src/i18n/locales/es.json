@@ -4460,7 +4460,15 @@
       "minPriorityHint": "Define cuánto ruido aceptas en tu canal de Slack."
     },
     "notion": {
-      "desc": "Exporta tareas y resúmenes a una base de datos Notion."
+      "desc": "Exporta tareas y resúmenes a una base de datos Notion.",
+      "databaseLabel": "Base de datos Notion",
+      "databasePlaceholder": "Elige una base de datos…",
+      "databaseLoading": "Cargando bases de datos…",
+      "databaseLoadError": "No se pueden cargar las bases de datos Notion",
+      "databaseEmpty": "Ninguna base de datos compartida con Inboria. En Notion, abre la base de datos deseada y haz clic en 'Compartir' → añade la integración Inboria.",
+      "databaseSaved": "Base de datos Notion actualizada",
+      "databaseSaveError": "No se pudo actualizar la base de datos",
+      "databaseHint": "Las nuevas tareas creadas por Inboria se añadirán a esta base de datos."
     },
     "apiKeys": {
       "title": "Claves API",

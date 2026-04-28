@@ -579,6 +579,124 @@ router.get("/integrations/notion/callback", async (req, res): Promise<void> => {
   }
 });
 
+const NOTION_DB_ID_REGEX = /^[0-9a-f]{8}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{4}-?[0-9a-f]{12}$/i;
+const notionDatabaseSchema = z.object({
+  databaseId: z.string().regex(NOTION_DB_ID_REGEX, "Invalid Notion database ID"),
+});
+
+router.get("/integrations/notion/databases", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data: row, error } = await supabaseAdmin
+      .from("integrations")
+      .select("access_token, database_id")
+      .eq("user_id", req.userId!)
+      .eq("provider", "notion")
+      .eq("enabled", true)
+      .maybeSingle();
+
+    if (error) {
+      console.error("[integrations] Notion databases fetch error:", error.message);
+      res.status(500).json({ error: "Failed to read Notion integration" });
+      return;
+    }
+    if (!row?.access_token) {
+      res.status(404).json({ error: "Notion non connecté" });
+      return;
+    }
+
+    const searchRes = await fetch("https://api.notion.com/v1/search", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${row.access_token}`,
+        "Content-Type": "application/json",
+        "Notion-Version": "2022-06-28",
+      },
+      body: JSON.stringify({
+        filter: { property: "object", value: "database" },
+        page_size: 100,
+        sort: { direction: "descending", timestamp: "last_edited_time" },
+      }),
+    });
+
+    if (!searchRes.ok) {
+      const txt = await searchRes.text().catch(() => "");
+      console.error("[integrations] Notion search error:", searchRes.status, txt);
+      res.status(502).json({ error: "Échec de la récupération des bases Notion" });
+      return;
+    }
+
+    const searchData = (await searchRes.json()) as {
+      results?: Array<{
+        id: string;
+        title?: Array<{ plain_text?: string }>;
+        last_edited_time?: string;
+      }>;
+    };
+
+    const databases = (searchData.results ?? []).map((db) => ({
+      id: db.id,
+      title:
+        db.title?.map((t) => t.plain_text ?? "").join("").trim() || "Sans titre",
+      lastEditedTime: db.last_edited_time ?? null,
+    }));
+
+    res.json({
+      databases,
+      currentDatabaseId: row.database_id ?? null,
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("[integrations] Notion databases error:", message);
+    res.status(500).json({ error: "Notion databases fetch failed" });
+  }
+});
+
+router.patch("/integrations/notion/database", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const parsed = notionDatabaseSchema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: "Invalid databaseId" });
+      return;
+    }
+    const { databaseId } = parsed.data;
+
+    const { data: existing, error: fetchErr } = await supabaseAdmin
+      .from("integrations")
+      .select("id")
+      .eq("user_id", req.userId!)
+      .eq("provider", "notion")
+      .maybeSingle();
+
+    if (fetchErr) {
+      console.error("[integrations] Notion database fetch error:", fetchErr.message);
+      res.status(500).json({ error: "Failed to read Notion integration" });
+      return;
+    }
+    if (!existing) {
+      res.status(404).json({ error: "Notion non connecté" });
+      return;
+    }
+
+    const { error: updateErr } = await supabaseAdmin
+      .from("integrations")
+      .update({ database_id: databaseId })
+      .eq("user_id", req.userId!)
+      .eq("provider", "notion");
+
+    if (updateErr) {
+      console.error("[integrations] Notion database update error:", updateErr.message);
+      res.status(500).json({ error: "Failed to update Notion database" });
+      return;
+    }
+
+    res.json({ ok: true, databaseId });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("[integrations] Notion database patch error:", message);
+    res.status(500).json({ error: "Notion database update failed" });
+  }
+});
+
 // ============== HubSpot ==============
 router.get("/integrations/hubspot/connect", requireAuth, async (req, res): Promise<void> => {
   if (!HUBSPOT_CLIENT_ID) {

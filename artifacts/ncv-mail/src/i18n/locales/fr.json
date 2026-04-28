@@ -2819,7 +2819,15 @@
       "minPriorityHint": "Réglez le bruit que vous acceptez sur votre canal Slack."
     },
     "notion": {
-      "desc": "Exportez tâches et résumés vers une base de données Notion."
+      "desc": "Exportez tâches et résumés vers une base de données Notion.",
+      "databaseLabel": "Base de données Notion",
+      "databasePlaceholder": "Choisir une base…",
+      "databaseLoading": "Chargement des bases…",
+      "databaseLoadError": "Impossible de charger les bases Notion",
+      "databaseEmpty": "Aucune base partagée avec Inboria. Dans Notion, ouvrez la base souhaitée puis « Partager » → ajoutez l'intégration Inboria.",
+      "databaseSaved": "Base Notion mise à jour",
+      "databaseSaveError": "Impossible de mettre à jour la base",
+      "databaseHint": "Les nouvelles tâches créées par Inboria seront ajoutées dans cette base."
     },
     "apiKeys": {
       "title": "Clés API",

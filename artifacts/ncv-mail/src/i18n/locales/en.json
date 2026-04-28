@@ -4460,7 +4460,15 @@
       "minPriorityHint": "Set how much noise you accept on your Slack channel."
     },
     "notion": {
-      "desc": "Export tasks and summaries to a Notion database."
+      "desc": "Export tasks and summaries to a Notion database.",
+      "databaseLabel": "Notion database",
+      "databasePlaceholder": "Choose a database…",
+      "databaseLoading": "Loading databases…",
+      "databaseLoadError": "Unable to load Notion databases",
+      "databaseEmpty": "No database shared with Inboria. In Notion, open the database you want, then 'Share' → add the Inboria integration.",
+      "databaseSaved": "Notion database updated",
+      "databaseSaveError": "Unable to update the database",
+      "databaseHint": "New tasks created by Inboria will be added to this database."
     },
     "apiKeys": {
       "title": "API keys",

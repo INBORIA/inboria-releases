@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { SlackChannelControls } from "@/components/integrations/SlackChannelControls";
+import { NotionDatabaseControls } from "@/components/integrations/NotionDatabaseControls";
 import {
   Slack,
   FileText,
@@ -166,6 +167,9 @@ export default function ParametresCollaboration() {
               </div>
               {provider === "slack" && isConnected && (
                 <SlackChannelControls token={token} />
+              )}
+              {provider === "notion" && isConnected && (
+                <NotionDatabaseControls token={token} />
               )}
             </div>
           </div>

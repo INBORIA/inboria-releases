@@ -4460,7 +4460,15 @@
       "minPriorityHint": "Lege fest, wie viel Rauschen du auf deinem Slack-Kanal akzeptierst."
     },
     "notion": {
-      "desc": "Exportiere Aufgaben und Zusammenfassungen in eine Notion-Datenbank."
+      "desc": "Exportiere Aufgaben und Zusammenfassungen in eine Notion-Datenbank.",
+      "databaseLabel": "Notion-Datenbank",
+      "databasePlaceholder": "Datenbank auswählen…",
+      "databaseLoading": "Datenbanken werden geladen…",
+      "databaseLoadError": "Notion-Datenbanken konnten nicht geladen werden",
+      "databaseEmpty": "Keine Datenbank mit Inboria geteilt. Öffnen Sie in Notion die gewünschte Datenbank und klicken Sie auf 'Teilen' → fügen Sie die Inboria-Integration hinzu.",
+      "databaseSaved": "Notion-Datenbank aktualisiert",
+      "databaseSaveError": "Datenbank konnte nicht aktualisiert werden",
+      "databaseHint": "Neue von Inboria erstellte Aufgaben werden in dieser Datenbank angelegt."
     },
     "apiKeys": {
       "title": "API-Schlüssel",
