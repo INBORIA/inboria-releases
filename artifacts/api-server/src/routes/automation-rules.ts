@@ -580,7 +580,37 @@ export async function runMatchingRules(ctx: ExecuteRulesContext): Promise<Execut
                   .maybeSingle();
                 if (notion?.database_id && notion.access_token) {
                   try {
-                    await fetch("https://api.notion.com/v1/pages", {
+                    // Discover the title property name dynamically — the
+                    // user's database title column may be called "Name",
+                    // "Tâche", "Sujet", etc. Hardcoding "Name" breaks any
+                    // database where the title prop has a different name.
+                    const schemaRes = await fetch(
+                      `https://api.notion.com/v1/databases/${notion.database_id}`,
+                      {
+                        headers: {
+                          Authorization: `Bearer ${notion.access_token}`,
+                          "Notion-Version": "2022-06-28",
+                        },
+                      },
+                    );
+                    if (!schemaRes.ok) {
+                      payload.deliveredVia = "notion_failed";
+                      payload.notionError = `schema ${schemaRes.status}`;
+                      break;
+                    }
+                    const schema = (await schemaRes.json()) as {
+                      properties?: Record<string, { type: string }>;
+                    };
+                    const titlePropName = Object.entries(schema.properties ?? {}).find(
+                      ([, def]) => def?.type === "title",
+                    )?.[0];
+                    if (!titlePropName) {
+                      payload.deliveredVia = "notion_failed";
+                      payload.notionError = "no_title_property";
+                      break;
+                    }
+
+                    const pageRes = await fetch("https://api.notion.com/v1/pages", {
                       method: "POST",
                       headers: {
                         "Content-Type": "application/json",
@@ -590,11 +620,18 @@ export async function runMatchingRules(ctx: ExecuteRulesContext): Promise<Execut
                       body: JSON.stringify({
                         parent: { database_id: notion.database_id },
                         properties: {
-                          Name: { title: [{ text: { content: action.title.slice(0, 280) } }] },
+                          [titlePropName]: {
+                            title: [{ text: { content: action.title.slice(0, 280) } }],
+                          },
                         },
                       }),
                     });
-                    payload.deliveredVia = "notion";
+                    if (!pageRes.ok) {
+                      payload.deliveredVia = "notion_failed";
+                      payload.notionError = `page ${pageRes.status}`;
+                    } else {
+                      payload.deliveredVia = "notion";
+                    }
                   } catch (notionErr) {
                     payload.deliveredVia = "notion_failed";
                   }
