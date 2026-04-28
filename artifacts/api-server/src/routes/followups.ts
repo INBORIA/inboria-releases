@@ -6,9 +6,34 @@ import { logger } from "../lib/logger";
 const router: IRouter = Router();
 
 // Graceful degradation: si la migration ajoutant `dismissed_at` n'a pas encore
-// été appliquée en prod, on log un warn une fois et on désactive le filtre pour
-// éviter que toute la page Relances/Suivi tombe en 500.
+// été appliquée en prod, on log un warn et on désactive le filtre pour éviter
+// que toute la page Relances/Suivi tombe en 500.
+//
+// IMPORTANT: ce flag se reverifie automatiquement toutes les 60 secondes pour
+// reactiver le filtre des qu'une migration ajoutant la colonne est appliquee
+// SANS necessiter de redemarrer le serveur. Sinon le compteur Suggestions IA
+// reste fausse (compte les dismissed) jusqu'au prochain redemarrage.
 let dismissedAtSupported = true;
+let dismissedAtUnsupportedSince: number | null = null;
+const RECHECK_INTERVAL_MS = 60_000;
+
+function shouldUseDismissedFilter(): boolean {
+  if (dismissedAtSupported) return true;
+  if (dismissedAtUnsupportedSince && Date.now() - dismissedAtUnsupportedSince > RECHECK_INTERVAL_MS) {
+    // Re-tente le filtre : si la migration a ete appliquee entre-temps,
+    // la prochaine requete reussira et on remettra le flag a true.
+    dismissedAtSupported = true;
+    dismissedAtUnsupportedSince = null;
+    return true;
+  }
+  return false;
+}
+
+function markDismissedAtUnsupported(): void {
+  dismissedAtSupported = false;
+  dismissedAtUnsupportedSince = Date.now();
+}
+
 function isMissingDismissedAt(error: { message?: string; code?: string } | null): boolean {
   if (!error) return false;
   const msg = (error.message || "").toLowerCase();
@@ -42,11 +67,12 @@ router.get("/followups", requireAuth, async (req, res): Promise<void> => {
       return q;
     };
 
-    let { data, error } = await buildQuery(dismissedAtSupported);
-    if (error && isMissingDismissedAt(error) && dismissedAtSupported) {
-      dismissedAtSupported = false;
+    const useFilter = shouldUseDismissedFilter();
+    let { data, error } = await buildQuery(useFilter);
+    if (error && isMissingDismissedAt(error) && useFilter) {
+      markDismissedAtUnsupported();
       logger.warn(
-        "[followups] dismissed_at column missing — migration 2026_04_24_followups_ai_proactives.sql not applied yet, disabling dismissed filter",
+        "[followups] dismissed_at column missing — disabling dismissed filter for 60s, will re-test",
       );
       ({ data, error } = await buildQuery(false));
     }
@@ -68,11 +94,12 @@ router.get("/followups/stats", requireAuth, async (req, res): Promise<void> => {
       return q;
     };
 
-    let { data, error } = await runStats(dismissedAtSupported);
-    if (error && isMissingDismissedAt(error) && dismissedAtSupported) {
-      dismissedAtSupported = false;
+    const useFilter = shouldUseDismissedFilter();
+    let { data, error } = await runStats(useFilter);
+    if (error && isMissingDismissedAt(error) && useFilter) {
+      markDismissedAtUnsupported();
       logger.warn(
-        "[followups/stats] dismissed_at column missing — migration not applied yet, disabling dismissed filter",
+        "[followups/stats] dismissed_at column missing — disabling dismissed filter for 60s, will re-test",
       );
       ({ data, error } = await runStats(false));
     }
@@ -87,7 +114,7 @@ router.get("/followups/stats", requireAuth, async (req, res): Promise<void> => {
       else if (f.status === "termine") stats.termine++;
       // Compteur "Suggestions IA actives" : uniquement les suggestions encore
       // non actionnées (en_attente) — non-dismissed est déjà appliqué via
-      // runStats(dismissedAtSupported). Toute action (relance/termine/ignore)
+      // runStats(useFilter). Toute action (relance/termine/ignore)
       // doit faire disparaître la suggestion du badge.
       if ((f as any).ai_suggestion === true && f.status === "en_attente") stats.aiSuggestions++;
     }
@@ -102,9 +129,10 @@ router.get("/followups/stats", requireAuth, async (req, res): Promise<void> => {
       if (withDismissed) q = q.is("dismissed_at", null);
       return q;
     };
-    let { count, error: cErr } = await runOverdue(dismissedAtSupported);
-    if (cErr && isMissingDismissedAt(cErr) && dismissedAtSupported) {
-      dismissedAtSupported = false;
+    const useFilterOverdue = shouldUseDismissedFilter();
+    let { count, error: cErr } = await runOverdue(useFilterOverdue);
+    if (cErr && isMissingDismissedAt(cErr) && useFilterOverdue) {
+      markDismissedAtUnsupported();
       ({ count, error: cErr } = await runOverdue(false));
     }
     stats.overdue = count || 0;
