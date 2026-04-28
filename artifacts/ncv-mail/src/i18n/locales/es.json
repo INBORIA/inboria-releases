@@ -4468,7 +4468,10 @@
       "databaseEmpty": "Ninguna base de datos compartida con Inboria. En Notion, abre la base de datos deseada y haz clic en 'Compartir' → añade la integración Inboria.",
       "databaseSaved": "Base de datos Notion actualizada",
       "databaseSaveError": "No se pudo actualizar la base de datos",
-      "databaseHint": "Las nuevas tareas creadas por Inboria se añadirán a esta base de datos."
+      "databaseHint": "Las nuevas tareas creadas por Inboria se añadirán a esta base de datos.",
+      "test": "Probar la conexión",
+      "testSuccess": "Página de prueba creada en «{{database}}» ✅",
+      "testErrorTitle": "Error en la prueba de Notion"
     },
     "apiKeys": {
       "title": "Claves API",

@@ -4468,7 +4468,10 @@
       "databaseEmpty": "No database shared with Inboria. In Notion, open the database you want, then 'Share' → add the Inboria integration.",
       "databaseSaved": "Notion database updated",
       "databaseSaveError": "Unable to update the database",
-      "databaseHint": "New tasks created by Inboria will be added to this database."
+      "databaseHint": "New tasks created by Inboria will be added to this database.",
+      "test": "Test connection",
+      "testSuccess": "Test page created in \"{{database}}\" ✅",
+      "testErrorTitle": "Notion test failed"
     },
     "apiKeys": {
       "title": "API keys",

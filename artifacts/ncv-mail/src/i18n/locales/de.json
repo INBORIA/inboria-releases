@@ -4468,7 +4468,10 @@
       "databaseEmpty": "Keine Datenbank mit Inboria geteilt. Öffnen Sie in Notion die gewünschte Datenbank und klicken Sie auf 'Teilen' → fügen Sie die Inboria-Integration hinzu.",
       "databaseSaved": "Notion-Datenbank aktualisiert",
       "databaseSaveError": "Datenbank konnte nicht aktualisiert werden",
-      "databaseHint": "Neue von Inboria erstellte Aufgaben werden in dieser Datenbank angelegt."
+      "databaseHint": "Neue von Inboria erstellte Aufgaben werden in dieser Datenbank angelegt.",
+      "test": "Verbindung testen",
+      "testSuccess": "Testseite in „{{database}}“ erstellt ✅",
+      "testErrorTitle": "Notion-Test fehlgeschlagen"
     },
     "apiKeys": {
       "title": "API-Schlüssel",

@@ -2827,7 +2827,10 @@
       "databaseEmpty": "Aucune base partagée avec Inboria. Dans Notion, ouvrez la base souhaitée puis « Partager » → ajoutez l'intégration Inboria.",
       "databaseSaved": "Base Notion mise à jour",
       "databaseSaveError": "Impossible de mettre à jour la base",
-      "databaseHint": "Les nouvelles tâches créées par Inboria seront ajoutées dans cette base."
+      "databaseHint": "Les nouvelles tâches créées par Inboria seront ajoutées dans cette base.",
+      "test": "Tester la connexion",
+      "testSuccess": "Page test créée dans « {{database}} » ✅",
+      "testErrorTitle": "Échec du test Notion"
     },
     "apiKeys": {
       "title": "Clés API",

@@ -11,7 +11,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { Loader2, Save } from "lucide-react";
+import { Loader2, Save, Send } from "lucide-react";
 
 const baseUrl = () => import.meta.env.BASE_URL.replace(/\/$/, "");
 function authHeaders(token?: string): Record<string, string> {
@@ -72,6 +72,39 @@ export function NotionDatabaseControls({ token }: { token: string | undefined })
       const message = err instanceof Error ? err.message : String(err);
       toast({
         title: t("integrations.notion.databaseSaveError"),
+        description: message,
+        variant: "destructive",
+      });
+    },
+  });
+
+  const testMutation = useMutation({
+    mutationFn: async () => {
+      const res = await fetch(`${baseUrl()}/api/integrations/notion/test`, {
+        method: "POST",
+        headers: authHeaders(token),
+      });
+      const data = await res.json();
+      if (!res.ok || data.ok === false) {
+        throw new Error(data?.error || "failed");
+      }
+      return data as {
+        ok: true;
+        databaseTitle: string;
+        pageUrl: string | null;
+      };
+    },
+    onSuccess: (data) => {
+      toast({
+        title: t("integrations.notion.testSuccess", {
+          database: data.databaseTitle,
+        }),
+      });
+    },
+    onError: (err: unknown) => {
+      const message = err instanceof Error ? err.message : String(err);
+      toast({
+        title: t("integrations.notion.testErrorTitle"),
         description: message,
         variant: "destructive",
       });
@@ -154,6 +187,20 @@ export function NotionDatabaseControls({ token }: { token: string | undefined })
                 <Save className="h-3 w-3 mr-1" />
               )}
               {t("common.save")}
+            </Button>
+            <Button
+              size="sm"
+              variant="outline"
+              disabled={!initialDatabase || testMutation.isPending}
+              onClick={() => testMutation.mutate()}
+              data-testid="button-test-notion"
+            >
+              {testMutation.isPending ? (
+                <Loader2 className="h-3 w-3 animate-spin mr-1" />
+              ) : (
+                <Send className="h-3 w-3 mr-1" />
+              )}
+              {t("integrations.notion.test")}
             </Button>
           </div>
         </>

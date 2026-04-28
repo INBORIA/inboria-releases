@@ -4468,7 +4468,10 @@
       "databaseEmpty": "Geen database gedeeld met Inboria. Open in Notion de gewenste database en klik op 'Delen' → voeg de Inboria-integratie toe.",
       "databaseSaved": "Notion-database bijgewerkt",
       "databaseSaveError": "Kan de database niet bijwerken",
-      "databaseHint": "Nieuwe taken die Inboria aanmaakt, worden in deze database toegevoegd."
+      "databaseHint": "Nieuwe taken die Inboria aanmaakt, worden in deze database toegevoegd.",
+      "test": "Verbinding testen",
+      "testSuccess": "Testpagina aangemaakt in « {{database}} » ✅",
+      "testErrorTitle": "Notion-test mislukt"
     },
     "apiKeys": {
       "title": "API-sleutels",

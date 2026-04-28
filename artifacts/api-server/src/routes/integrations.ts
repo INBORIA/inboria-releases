@@ -697,6 +697,130 @@ router.patch("/integrations/notion/database", requireAuth, async (req, res): Pro
   }
 });
 
+router.post("/integrations/notion/test", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data: row, error } = await supabaseAdmin
+      .from("integrations")
+      .select("access_token, database_id")
+      .eq("user_id", req.userId!)
+      .eq("provider", "notion")
+      .eq("enabled", true)
+      .maybeSingle();
+
+    if (error) {
+      console.error("[integrations] Notion test fetch error:", error.message);
+      res.status(500).json({ ok: false, error: "Failed to read Notion integration" });
+      return;
+    }
+    if (!row?.access_token) {
+      res.status(404).json({ ok: false, error: "Notion non connecté" });
+      return;
+    }
+    if (!row.database_id) {
+      res.status(400).json({ ok: false, error: "Aucune base Notion sélectionnée" });
+      return;
+    }
+
+    const dbRes = await fetch(`https://api.notion.com/v1/databases/${row.database_id}`, {
+      headers: {
+        Authorization: `Bearer ${row.access_token}`,
+        "Notion-Version": "2022-06-28",
+      },
+    });
+    if (!dbRes.ok) {
+      const txt = await dbRes.text().catch(() => "");
+      console.error("[integrations] Notion db schema error:", dbRes.status, txt);
+      res.status(502).json({ ok: false, error: "Impossible de lire la base Notion" });
+      return;
+    }
+    const dbData = (await dbRes.json()) as {
+      title?: Array<{ plain_text?: string }>;
+      properties?: Record<string, { type: string }>;
+    };
+    const titlePropName = Object.entries(dbData.properties ?? {}).find(
+      ([, def]) => def?.type === "title",
+    )?.[0];
+    if (!titlePropName) {
+      res.status(400).json({
+        ok: false,
+        error: "La base Notion n'a pas de propriété titre",
+      });
+      return;
+    }
+    const dbTitle =
+      dbData.title?.map((t) => t.plain_text ?? "").join("").trim() || "Notion";
+
+    const stamp = new Date().toISOString().replace("T", " ").slice(0, 16);
+    const pageRes = await fetch("https://api.notion.com/v1/pages", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${row.access_token}`,
+        "Content-Type": "application/json",
+        "Notion-Version": "2022-06-28",
+      },
+      body: JSON.stringify({
+        parent: { database_id: row.database_id },
+        icon: { type: "emoji", emoji: "✅" },
+        properties: {
+          [titlePropName]: {
+            title: [
+              {
+                type: "text",
+                text: { content: `Inboria — Test de connexion (${stamp} UTC)` },
+              },
+            ],
+          },
+        },
+        children: [
+          {
+            object: "block",
+            type: "paragraph",
+            paragraph: {
+              rich_text: [
+                {
+                  type: "text",
+                  text: {
+                    content:
+                      "Cette page a été créée par Inboria pour vérifier la connexion Notion. Vous pouvez la supprimer.",
+                  },
+                },
+              ],
+            },
+          },
+        ],
+      }),
+    });
+
+    if (!pageRes.ok) {
+      const errData = (await pageRes.json().catch(() => ({}))) as {
+        message?: string;
+        code?: string;
+      };
+      console.error(
+        "[integrations] Notion test page create error:",
+        pageRes.status,
+        errData,
+      );
+      res.status(502).json({
+        ok: false,
+        error: errData.message || "Échec de la création de la page de test",
+      });
+      return;
+    }
+
+    const pageData = (await pageRes.json()) as { id: string; url?: string };
+    res.json({
+      ok: true,
+      databaseTitle: dbTitle,
+      pageUrl: pageData.url ?? null,
+    });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    console.error("[integrations] Notion test error:", message);
+    res.status(500).json({ ok: false, error: "Notion test failed" });
+  }
+});
+
 // ============== HubSpot ==============
 router.get("/integrations/hubspot/connect", requireAuth, async (req, res): Promise<void> => {
   if (!HUBSPOT_CLIENT_ID) {
