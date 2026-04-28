@@ -1,0 +1,48 @@
+Général
+Annonces
+Créez
+/
+Modifier l’intégration
+Gérez la configuration de votre intégration, les détails de son annonce et sa soumission sur la Marketplace.
+
+Informations de base
+Configurez le nom, l’icône et l’espace de travail associé de votre intégration.
+
+Nom de l’intégration
+*
+Inboria
+Icône
+*
+
+Nous vous recommandons d’utiliser un logo de 512 × 512 px
+Portée de l’installation
+Tous les espaces de travail
+Cette intégration peut être installée dans n’importe quel espace de travail. Pour modifier la portée, créez une nouvelle intégration.
+Autorisation (OAuth)
+Configurez OAuth 2.0 afin que les utilisateurs et utilisatrices puissent autoriser l’accès à leur espace de travail. Suivez le  pour obtenir les instructions de configuration.
+
+ID de client OAuth
+350d872b-594c-81b4-9e05-003705981a99
+Clef secrète du client OAuth
+••••••••••••••••••••••••••••••••••••••••
+URL d’autorisation
+https://api.notion.com/v1/oauth/authorize?client_id=350d872b-594c-81b4-9e05-003705981a99&response_type=code&owner=user&redirect_uri=https%3A%2F%2Finboria.com%2Fapi%2Fintegrations%2Fnotion%2Fcallback
+URI de redirection
+*
+https://inboria.com/api/integrations/notion/callback
+https://2f7c7417-8ab2-41fb-9fcc-9eddd617f0df-00-5fb1cmje57my.picard.replit.dev/api/integrations/notion/callback
+Dans le flux OAuth de Notion, les utilisateurs seront redirigés vers ce chemin d’accès après s’être connectés à Notion. Le code d’autorisation d’accès sera ajouté au chemin d’accès. Le chemin d’accès doit avoir un protocole et ne peut pas contenir de fragments d’URL, de chemins d’accès relatifs ni de caractères génériques, et ne peut pas être une adresse IP publique. Il doit également être inclus dans la requête de jeton.
+Autorisations
+Les autorisations demandées seront visibles des utilisateurs au moment où ils ajouteront votre intégration. Pour en savoir plus, consultez la .
+
+Installation de l’intégration
+Lorsque les utilisateurs et utilisatrices installent votre intégration via OAuth, ils et elles peuvent choisir des pages à partager ou dupliquer une page de modèle. Pour une expérience plus fluide, nous vous recommandons de créer automatiquement une page privée lors de l’installation.
+
+URL de la page modèle (facultatif)
+Ajoutez un lien vers une page Notion publique que les utilisateurs et utilisatrices peuvent dupliquer pendant le flux OAuth. Laissez ce champ vide si vous ne souhaitez pas proposer de modèle.
+Aperçu de lien
+Activer l’aperçu visuel du lien
+
+Déployez des données externes dans Notion. Des champs supplémentaires sont nécessaires pour configurer le modèle d’URL et l’interface correspondants.
+Date de création
+28 avr. 2026
