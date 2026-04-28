@@ -13,12 +13,36 @@
 --
 -- Fix code: filtre status="sent" + external_id IS NULL ajoute au detecteur.
 --
--- Fix donnees: ce script marque comme dismissed (sans les supprimer pour
--- garder la trace) toutes les suggestions IA en_attente qui pointent sur
--- un mail dont external_id IS NOT NULL (= synchronise depuis Gmail/Outlook,
--- pas envoye via Inboria).
+-- Fix donnees: ce script (1) garantit que la colonne dismissed_at existe
+-- (au cas ou la migration 2026_04_24_followups_ai_proactives.sql n'a pas
+-- ete appliquee), puis (2) marque comme dismissed toutes les suggestions
+-- IA en_attente qui pointent sur un mail dont external_id IS NOT NULL
+-- (synchronise depuis Gmail/Outlook, pas envoye via Inboria).
+--
+-- 100% idempotent : peut etre relance sans danger.
 -- =====================================================================
 
+-- 1) Securite : creer la colonne dismissed_at si elle n'existe pas encore
+--    (rattrapage de la migration 2026_04_24_followups_ai_proactives.sql)
+ALTER TABLE public.followups
+  ADD COLUMN IF NOT EXISTS dismissed_at timestamptz;
+
+-- 2) Securite : creer aussi le delai de relance par defaut sur profiles
+--    (meme rattrapage, sinon le detecteur retombe sur DEFAULT_DELAY_DAYS=5)
+ALTER TABLE public.profiles
+  ADD COLUMN IF NOT EXISTS follow_up_delay_days integer NOT NULL DEFAULT 5
+  CHECK (follow_up_delay_days >= 1 AND follow_up_delay_days <= 60);
+
+-- 3) Index utiles pour la detection (idempotents)
+CREATE INDEX IF NOT EXISTS emails_user_recipient_created_idx
+  ON public.emails (user_id, created_at DESC)
+  WHERE recipient IS NOT NULL;
+
+CREATE INDEX IF NOT EXISTS followups_email_ai_idx
+  ON public.followups (user_id, email_id)
+  WHERE ai_suggestion = true;
+
+-- 4) Cleanup : marquer dismissed toutes les fausses suggestions IA
 UPDATE public.followups f
 SET
   dismissed_at = NOW(),
