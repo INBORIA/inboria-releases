@@ -64,11 +64,22 @@ export async function detectForUser(
   const cutoffSent = new Date(now.getTime() - delayDays * 86_400_000).toISOString();
   const lookbackStart = new Date(now.getTime() - LOOKBACK_DAYS * 86_400_000).toISOString();
 
-  // Mails envoyés (recipient renseigné) entre lookback et cutoff (assez vieux pour relance)
+  // Mails envoyés DEPUIS Inboria (status="sent" + external_id IS NULL)
+  // entre lookback et cutoff (assez vieux pour relance).
+  //
+  // Pourquoi external_id IS NULL : la route POST /emails/send insère
+  // external_id=null pour tout mail envoye via Inboria. A l'inverse, la
+  // synchro Gmail/Outlook/IMAP ecrit un external_id non-null (ex.
+  // "gmail:<msgid>", "imap:<addr>:<uid>", etc.). Sans ce filtre, la
+  // detection proposait des relances pour TOUS les mails sortants
+  // synchronises depuis Gmail/Outlook (mails perso, automatiques, deja
+  // gérés ailleurs), generant un volume enorme de faux positifs.
   const { data: sentEmails, error: sentErr } = await supabaseAdmin
     .from("emails")
     .select("id, sender, recipient, subject, created_at, external_id")
     .eq("user_id", userId)
+    .eq("status", "sent")
+    .is("external_id", null)
     .not("recipient", "is", null)
     .gte("created_at", lookbackStart)
     .lte("created_at", cutoffSent)
