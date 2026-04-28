@@ -183,11 +183,14 @@ Réponds UNIQUEMENT en JSON valide, sans texte autour, format strict :
   },
   "actions": [
     { "type": "archive" } |
+    { "type": "mark_read" } |
     { "type": "categorize", "category": "string" } |
     { "type": "set_priority", "priority": "urgent|moyen|faible" } |
     { "type": "transfer", "to": "email@example.com" } |
     { "type": "create_task", "title": "string" } |
-    { "type": "notify", "message": "string" }
+    { "type": "notify", "message": "string" } |
+    { "type": "slack_notify", "message": "string" } |
+    { "type": "notion_create", "title": "string" }
   ]
 }
 
@@ -195,7 +198,10 @@ Règles :
 - Au moins 1 condition et 1 action.
 - "value" doit être concrète (extraite de l'instruction), pas un placeholder.
 - Préfère "contains" sauf si l'utilisateur précise "exactement / égal à / regex".
-- Pour les emails dans "transfer.to" : récupère l'adresse fournie. Si aucune adresse, ne mets PAS d'action transfer.`,
+- Pour les emails dans "transfer.to" : récupère l'adresse fournie. Si aucune adresse, ne mets PAS d'action transfer.
+- Si l'instruction mentionne "Notion", "tâche Notion", "page Notion", "créer dans Notion" → utilise OBLIGATOIREMENT { "type": "notion_create", "title": "..." } (PAS create_task). Le titre doit être pertinent et concis.
+- Si l'instruction mentionne "Slack", "envoyer sur Slack", "notifier Slack", "ping Slack" → utilise OBLIGATOIREMENT { "type": "slack_notify", "message": "..." } (PAS notify générique).
+- Plusieurs actions sont autorisées dans le tableau "actions" (ex : à la fois notion_create ET slack_notify si l'utilisateur demande les deux).`,
           },
           { role: "user", content: input.slice(0, 1000) },
         ],
