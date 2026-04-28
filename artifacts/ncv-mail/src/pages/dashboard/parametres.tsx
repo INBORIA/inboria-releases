@@ -1,7 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
-import { User, Building2, MessagesSquare, MessageCircle, Code2, ChevronRight, ArrowLeft } from "lucide-react";
+import { User, Building2, MessageCircle, Code2, ChevronRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface HubCard {
@@ -35,15 +35,6 @@ export default function Parametres() {
       descKey: "settings.hub.crmDesc",
       descFallback: "HubSpot, Pipedrive, Salesforce, Odoo",
       testId: "hub-card-crm",
-    },
-    {
-      href: "/dashboard/parametres/collaboration",
-      icon: MessagesSquare,
-      titleKey: "settings.hub.collaboration",
-      titleFallback: "Collaboration",
-      descKey: "settings.hub.collaborationDesc",
-      descFallback: "Slack, Notion",
-      testId: "hub-card-collaboration",
     },
     {
       href: "/dashboard/parametres/multi-canal",

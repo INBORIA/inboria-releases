@@ -23,8 +23,6 @@
  *   { "type": "move_to_project", "projectId": "uuid" }
  *   { "type": "create_task", "title": "Vérifier facture" }
  *   { "type": "notify", "message": "Mail entrant à traiter" }
- *   { "type": "slack_notify", "message": "..." }
- *   { "type": "notion_create", "title": "..." }
  */
 
 import { z } from "zod";
@@ -100,8 +98,6 @@ export const ActionSchema = z.discriminatedUnion("type", [
   z.object({ type: z.literal("move_to_project"), projectId: z.string().uuid() }),
   z.object({ type: z.literal("create_task"), title: z.string().min(1).max(280) }),
   z.object({ type: z.literal("notify"), message: z.string().min(1).max(280) }),
-  z.object({ type: z.literal("slack_notify"), message: z.string().min(1).max(280) }),
-  z.object({ type: z.literal("notion_create"), title: z.string().min(1).max(280) }),
 ]);
 
 export const ActionsSchema = z.array(ActionSchema).min(1).max(8);
@@ -342,22 +338,9 @@ export function parseRuleHeuristic(text: string, fallbackName?: string): Rule | 
     });
   }
 
-  // slack notify (must be checked before generic notify)
-  if (/\bslack\b/i.test(lower)) {
-    actions.push({ type: "slack_notify", message: text.slice(0, 200) });
-  } else if (/\b(notifier|notify|notificar|benachrichtigen|verwittig)\b/i.test(lower)) {
+  // notify
+  if (/\b(notifier|notify|notificar|benachrichtigen|verwittig)\b/i.test(lower)) {
     actions.push({ type: "notify", message: text.slice(0, 200) });
-  }
-
-  // notion create
-  if (/\bnotion\b/i.test(lower)) {
-    const notionTitle = text.match(
-      /\bnotion\b[^"“]*["“]([^"”]+)["”]/i,
-    );
-    actions.push({
-      type: "notion_create",
-      title: (notionTitle ? notionTitle[1] : text).slice(0, 200),
-    });
   }
 
   // transfer

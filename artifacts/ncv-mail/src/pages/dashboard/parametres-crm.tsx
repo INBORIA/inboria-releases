@@ -41,8 +41,6 @@ interface IntegrationRow {
 }
 
 interface AvailabilityMap {
-  slack: boolean;
-  notion: boolean;
   hubspot: boolean;
   pipedrive: boolean;
   salesforce: boolean;

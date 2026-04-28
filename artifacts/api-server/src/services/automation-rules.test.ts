@@ -77,24 +77,6 @@ describe("parseRuleHeuristic", () => {
     ).toMatchObject({ field: "has_attachment", op: "is_true" });
   });
 
-  it("parses notify on Slack as slack_notify", () => {
-    const r = parseRuleHeuristic(
-      'Quand sujet contient "alerte", notifier sur Slack.',
-    );
-    expect(r).not.toBeNull();
-    expect(r!.actions.find((a) => a.type === "slack_notify")).toBeTruthy();
-    expect(r!.actions.find((a) => a.type === "notify")).toBeFalsy();
-  });
-
-  it("parses Notion page creation", () => {
-    const r = parseRuleHeuristic(
-      'Quand sujet contient "réunion", créer une page Notion "Compte rendu".',
-    );
-    expect(r).not.toBeNull();
-    expect(r!.actions.find((a) => a.type === "notion_create")).toMatchObject({
-      type: "notion_create",
-    });
-  });
 });
 
 describe("validateRulePayload", () => {

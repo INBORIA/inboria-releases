@@ -42,7 +42,7 @@ export default function ParametresDeveloppeurs() {
       titleKey: "settings.slaCard",
       titleFallback: "SLA boîtes partagées",
       descKey: "settings.slaCardDesc",
-      descFallback: "Délais de réponse, alertes Slack",
+      descFallback: "Délais de réponse, alertes",
       testId: "dev-card-sla",
     },
   ];

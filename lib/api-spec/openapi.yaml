@@ -33,7 +33,7 @@ tags:
   - name: paddle
     description: Paddle payment operations
   - name: integrations
-    description: Slack and Notion integration operations
+    description: Third-party integration operations
   - name: organisations
     description: Organisation and team management operations
   - name: shared-mailboxes
@@ -1608,7 +1608,7 @@ paths:
     get:
       operationId: listIntegrations
       tags: [integrations]
-      summary: List user integrations (Slack, Notion)
+      summary: List user integrations
       responses:
         "200":
           description: List of integrations
@@ -1619,48 +1619,17 @@ paths:
                 items:
                   $ref: "#/components/schemas/Integration"
 
-  /integrations/slack/connect:
-    get:
-      operationId: connectSlack
-      tags: [integrations]
-      summary: Get Slack OAuth URL
-      responses:
-        "200":
-          description: OAuth URL
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OAuthUrlResponse"
-        "403":
-          description: Plan not eligible
-
-  /integrations/notion/connect:
-    get:
-      operationId: connectNotion
-      tags: [integrations]
-      summary: Get Notion OAuth URL
-      responses:
-        "200":
-          description: OAuth URL
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/OAuthUrlResponse"
-        "403":
-          description: Plan not eligible
-
   /integrations/{provider}:
     patch:
       operationId: updateIntegration
       tags: [integrations]
-      summary: Update integration settings (toggle enabled, change channel/database)
+      summary: Update integration settings (toggle enabled)
       parameters:
         - name: provider
           in: path
           required: true
           schema:
             type: string
-            enum: [slack, notion]
       requestBody:
         required: true
         content:
@@ -1687,7 +1656,6 @@ paths:
           required: true
           schema:
             type: string
-            enum: [slack, notion]
       responses:
         "200":
           description: Integration disconnected
@@ -4211,7 +4179,6 @@ components:
           type: string
         provider:
           type: string
-          enum: [slack, notion]
         workspaceName:
           type: ["string", "null"]
         channelId:
@@ -5431,8 +5398,6 @@ components:
             - notify
             - mark_read
             - move_to_project
-            - slack_notify
-            - notion_create
         category: { type: string }
         priority:
           type: string

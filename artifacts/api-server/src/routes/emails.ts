@@ -281,51 +281,6 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       countQuery = countQuery.or(orParts);
     }
 
-    // Wave Collaboration — filtre Réception sur les emails ayant déjà
-    // déclenché une notif vers l'outil collab choisi (Slack ou Notion).
-    // On lit notification_log (status='sent', provider=cible) pour ce user
-    // puis on restreint aux email_id correspondants. Aucun JOIN cross-table :
-    // PostgREST ne supportant pas de JOIN sans FK déclarée, on procède en
-    // deux requêtes (cap raisonnable 5000 entrées de log les plus récentes).
-    type CollabLogRow = { email_id: number | null };
-    const collabFilterRaw = (req.query.collabFilter as string | undefined)?.trim().toLowerCase();
-    if (collabFilterRaw === "slack" || collabFilterRaw === "notion") {
-      const { data: logRows, error: logErr } = await supabaseAdmin
-        .from("notification_log")
-        .select("email_id")
-        .eq("user_id", req.userId!)
-        .eq("provider", collabFilterRaw)
-        .eq("status", "sent")
-        .not("email_id", "is", null)
-        .order("sent_at", { ascending: false })
-        .limit(5000);
-      if (logErr) {
-        req.log?.warn?.(
-          { provider: collabFilterRaw, msg: logErr.message, code: (logErr as any).code },
-          "notification_log query failed (table may not exist yet)",
-        );
-      }
-      const typedLogRows = (logRows ?? []) as CollabLogRow[];
-      const ids = Array.from(
-        new Set(
-          typedLogRows
-            .map((r) => r.email_id)
-            .filter((id): id is number => typeof id === "number"),
-        ),
-      );
-      req.log?.info?.(
-        { provider: collabFilterRaw, notificationsFound: ids.length },
-        "Collab filter applied",
-      );
-      if (ids.length === 0) {
-        // Aucune notif loggée → retour vide immédiat
-        res.json({ emails: [], total: 0, page, totalPages: 0 });
-        return;
-      }
-      query = query.in("id", ids);
-      countQuery = countQuery.in("id", ids);
-    }
-
     query = query.range(from, to);
 
     const [{ count: total }, { data: emails, error }] = await Promise.all([

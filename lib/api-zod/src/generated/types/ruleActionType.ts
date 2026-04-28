@@ -19,6 +19,4 @@ export const RuleActionType = {
   notify: "notify",
   mark_read: "mark_read",
   move_to_project: "move_to_project",
-  slack_notify: "slack_notify",
-  notion_create: "notion_create",
 } as const;

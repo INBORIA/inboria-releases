@@ -1,7 +1,6 @@
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { createNotification } from "../lib/activity";
-import { sendSlackNotification } from "./integrations";
 
 const TICK_INTERVAL_MS = 5 * 60_000;
 let started = false;
@@ -14,7 +13,6 @@ interface BusinessHours {
 }
 
 interface Escalation {
-  slack?: boolean;
   email?: boolean; // in-app notification fallback
 }
 
@@ -87,7 +85,7 @@ export function businessMinutesBetween(start: Date, end: Date, bh: BusinessHours
 
 async function evaluatePolicy(policy: any) {
   const bh: BusinessHours = policy.business_hours || { timezone: "Europe/Brussels", days: [1, 2, 3, 4, 5], start: "09:00", end: "18:00" };
-  const escalation: Escalation = policy.escalation || { slack: true, email: true };
+  const escalation: Escalation = policy.escalation || { email: true };
   const targetMin: number = policy.target_minutes;
 
   // Find emails in this mailbox not yet replied (no related sent reply tracked)
@@ -166,18 +164,6 @@ async function evaluatePolicy(policy: any) {
             message: `Email de ${b.sender} sans réponse depuis ${b.elapsed} min ouvrées (objectif ${targetMin} min)`,
             emailId: b.id,
           });
-        } catch {}
-      }
-      if (escalation.slack) {
-        try {
-          await sendSlackNotification(
-            target,
-            b.sender,
-            `[SLA] ${b.subject}`,
-            `Sans réponse depuis ${b.elapsed} min ouvrées (objectif ${targetMin} min)`,
-            b.id,
-            { priority: "urgent", isSpam: false },
-          );
         } catch {}
       }
     }

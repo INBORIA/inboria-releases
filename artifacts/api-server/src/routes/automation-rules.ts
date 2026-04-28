@@ -188,9 +188,7 @@ Réponds UNIQUEMENT en JSON valide, sans texte autour, format strict :
     { "type": "set_priority", "priority": "urgent|moyen|faible" } |
     { "type": "transfer", "to": "email@example.com" } |
     { "type": "create_task", "title": "string" } |
-    { "type": "notify", "message": "string" } |
-    { "type": "slack_notify", "message": "string" } |
-    { "type": "notion_create", "title": "string" }
+    { "type": "notify", "message": "string" }
   ]
 }
 
@@ -199,9 +197,7 @@ Règles :
 - "value" doit être concrète (extraite de l'instruction), pas un placeholder.
 - Préfère "contains" sauf si l'utilisateur précise "exactement / égal à / regex".
 - Pour les emails dans "transfer.to" : récupère l'adresse fournie. Si aucune adresse, ne mets PAS d'action transfer.
-- Si l'instruction mentionne "Notion", "tâche Notion", "page Notion", "créer dans Notion" → utilise OBLIGATOIREMENT { "type": "notion_create", "title": "..." } (PAS create_task). Le titre doit être pertinent et concis.
-- Si l'instruction mentionne "Slack", "envoyer sur Slack", "notifier Slack", "ping Slack" → utilise OBLIGATOIREMENT { "type": "slack_notify", "message": "..." } (PAS notify générique).
-- Plusieurs actions sont autorisées dans le tableau "actions" (ex : à la fois notion_create ET slack_notify si l'utilisateur demande les deux).`,
+- Plusieurs actions sont autorisées dans le tableau "actions".`,
           },
           { role: "user", content: input.slice(0, 1000) },
         ],
@@ -533,119 +529,6 @@ export async function runMatchingRules(ctx: ExecuteRulesContext): Promise<Execut
                   })
                   .then(() => undefined, () => undefined);
                 break;
-              case "slack_notify": {
-                // Use the user's Slack integration if configured; otherwise
-                // fall back to a regular notifications row so the user still
-                // gets a record of the rule firing.
-                const { data: slack } = await supabaseAdmin
-                  .from("integrations")
-                  .select("provider, channel_id, access_token, enabled")
-                  .eq("user_id", userId)
-                  .eq("provider", "slack")
-                  .eq("enabled", true)
-                  .maybeSingle();
-                if (slack?.channel_id && slack.access_token) {
-                  try {
-                    await fetch("https://slack.com/api/chat.postMessage", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json; charset=utf-8",
-                        Authorization: `Bearer ${slack.access_token}`,
-                      },
-                      body: JSON.stringify({
-                        channel: slack.channel_id,
-                        text: `${rule.name}: ${action.message}`,
-                      }),
-                    });
-                    payload.deliveredVia = "slack";
-                  } catch (slackErr) {
-                    payload.deliveredVia = "slack_failed";
-                  }
-                } else {
-                  payload.deliveredVia = "no_slack_integration";
-                }
-                await supabaseAdmin
-                  .from("notifications")
-                  .insert({
-                    user_id: userId,
-                    type: "rule_slack",
-                    title: rule.name,
-                    body: action.message,
-                    email_id: emailId,
-                  })
-                  .then(() => undefined, () => undefined);
-                break;
-              }
-              case "notion_create": {
-                const { data: notion } = await supabaseAdmin
-                  .from("integrations")
-                  .select("provider, database_id, access_token, enabled")
-                  .eq("user_id", userId)
-                  .eq("provider", "notion")
-                  .eq("enabled", true)
-                  .maybeSingle();
-                if (notion?.database_id && notion.access_token) {
-                  try {
-                    // Discover the title property name dynamically — the
-                    // user's database title column may be called "Name",
-                    // "Tâche", "Sujet", etc. Hardcoding "Name" breaks any
-                    // database where the title prop has a different name.
-                    const schemaRes = await fetch(
-                      `https://api.notion.com/v1/databases/${notion.database_id}`,
-                      {
-                        headers: {
-                          Authorization: `Bearer ${notion.access_token}`,
-                          "Notion-Version": "2022-06-28",
-                        },
-                      },
-                    );
-                    if (!schemaRes.ok) {
-                      payload.deliveredVia = "notion_failed";
-                      payload.notionError = `schema ${schemaRes.status}`;
-                      break;
-                    }
-                    const schema = (await schemaRes.json()) as {
-                      properties?: Record<string, { type: string }>;
-                    };
-                    const titlePropName = Object.entries(schema.properties ?? {}).find(
-                      ([, def]) => def?.type === "title",
-                    )?.[0];
-                    if (!titlePropName) {
-                      payload.deliveredVia = "notion_failed";
-                      payload.notionError = "no_title_property";
-                      break;
-                    }
-
-                    const pageRes = await fetch("https://api.notion.com/v1/pages", {
-                      method: "POST",
-                      headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${notion.access_token}`,
-                        "Notion-Version": "2022-06-28",
-                      },
-                      body: JSON.stringify({
-                        parent: { database_id: notion.database_id },
-                        properties: {
-                          [titlePropName]: {
-                            title: [{ text: { content: action.title.slice(0, 280) } }],
-                          },
-                        },
-                      }),
-                    });
-                    if (!pageRes.ok) {
-                      payload.deliveredVia = "notion_failed";
-                      payload.notionError = `page ${pageRes.status}`;
-                    } else {
-                      payload.deliveredVia = "notion";
-                    }
-                  } catch (notionErr) {
-                    payload.deliveredVia = "notion_failed";
-                  }
-                } else {
-                  payload.deliveredVia = "no_notion_integration";
-                }
-                break;
-              }
               case "transfer":
                 // transfer is stored as audit only; actual sending should be done
                 // via /emails/send endpoint. For now we record intent.

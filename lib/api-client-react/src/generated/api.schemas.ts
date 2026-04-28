@@ -581,17 +581,9 @@ export interface UpdateProjectBody {
   color?: string;
 }
 
-export type IntegrationProvider =
-  (typeof IntegrationProvider)[keyof typeof IntegrationProvider];
-
-export const IntegrationProvider = {
-  slack: "slack",
-  notion: "notion",
-} as const;
-
 export interface Integration {
   id: string;
-  provider: IntegrationProvider;
+  provider: string;
   /** @nullable */
   workspaceName?: string | null;
   /** @nullable */
@@ -1347,8 +1339,6 @@ export const RuleActionType = {
   notify: "notify",
   mark_read: "mark_read",
   move_to_project: "move_to_project",
-  slack_notify: "slack_notify",
-  notion_create: "notion_create",
 } as const;
 
 export type RuleActionPriority =

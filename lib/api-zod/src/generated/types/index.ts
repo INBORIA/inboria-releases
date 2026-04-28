@@ -137,7 +137,6 @@ export * from "./impactedShareMember";
 export * from "./inboxHealth";
 export * from "./incrementTemplateUsage200";
 export * from "./integration";
-export * from "./integrationProvider";
 export * from "./invitation";
 export * from "./invitationStatus";
 export * from "./inviteBody";

@@ -5,7 +5,6 @@ import { simpleParser } from "mailparser";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import * as net from "net";
-import { sendSlackNotification, createNotionTask } from "./integrations";
 import { emitEvent } from "./webhook-emitter";
 import { logEmailToHubspot } from "./hubspot";
 import { logEmailToPipedrive } from "./pipedrive";
@@ -627,16 +626,6 @@ export async function saveEmailWithTriage(
     },
     "[auto-sync] triage done",
   );
-  sendSlackNotification(userId, sender, subject, triage.summary, inserted.id, {
-    priority: triage.priority,
-    isSpam: triage.is_spam === true,
-  }).catch((err) => {
-    logger.warn(
-      { err: err?.message, emailId: inserted.id },
-      "[auto-sync] sendSlackNotification rejected",
-    );
-  });
-
   emitEvent(userId, "email.received", {
     id: inserted.id,
     sender,
@@ -687,9 +676,6 @@ export async function saveEmailWithTriage(
           console.error("[auto-sync] task insert error:", taskErr.message);
         }
 
-        for (const t of tasksToInsert) {
-          createNotionTask(userId, t.title, subject, sender, inserted.id).catch(() => {});
-        }
       }
     } else {
       console.log(`[auto-sync] tasks already exist for email ${inserted.id}, skipping`);

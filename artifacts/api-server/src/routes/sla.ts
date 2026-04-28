@@ -118,7 +118,7 @@ router.put("/sla/policies/:mailboxId", requireAuth, async (req, res): Promise<vo
     } else {
       payload.target_minutes = payload.target_minutes ?? 240;
       payload.business_hours = payload.business_hours ?? { timezone: "Europe/Brussels", days: [1, 2, 3, 4, 5], start: "09:00", end: "18:00" };
-      payload.escalation = payload.escalation ?? { slack: true, email: true };
+      payload.escalation = payload.escalation ?? { email: true };
       payload.enabled = payload.enabled ?? true;
       const { data, error } = await supabaseAdmin
         .from("sla_policies")

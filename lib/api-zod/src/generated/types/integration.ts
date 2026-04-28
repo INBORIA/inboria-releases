@@ -5,11 +5,10 @@
  * NCV Mail API specification
  * OpenAPI spec version: 0.1.0
  */
-import type { IntegrationProvider } from "./integrationProvider";
 
 export interface Integration {
   id: string;
-  provider: IntegrationProvider;
+  provider: string;
   /** @nullable */
   workspaceName?: string | null;
   /** @nullable */

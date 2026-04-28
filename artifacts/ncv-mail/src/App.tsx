@@ -37,7 +37,6 @@ import ParametresWebhooks from "@/pages/dashboard/parametres-webhooks";
 import ParametresIntegrations from "@/pages/dashboard/parametres-integrations";
 import ParametresMonCompte from "@/pages/dashboard/parametres-mon-compte";
 import ParametresCrm from "@/pages/dashboard/parametres-crm";
-import ParametresCollaboration from "@/pages/dashboard/parametres-collaboration";
 import ParametresMultiCanal from "@/pages/dashboard/parametres-multi-canal";
 import ParametresDeveloppeurs from "@/pages/dashboard/parametres-developpeurs";
 import Abonnement from "@/pages/dashboard/abonnement";
@@ -188,7 +187,6 @@ function Router() {
       <Route path="/dashboard/parametres" component={() => <ProtectedRoute component={Parametres} />} />
       <Route path="/dashboard/parametres/mon-compte" component={() => <ProtectedRoute component={ParametresMonCompte} />} />
       <Route path="/dashboard/parametres/crm" component={() => <ProtectedRoute component={ParametresCrm} />} />
-      <Route path="/dashboard/parametres/collaboration" component={() => <ProtectedRoute component={ParametresCollaboration} />} />
       <Route path="/dashboard/parametres/multi-canal" component={() => <ProtectedRoute component={ParametresMultiCanal} />} />
       <Route path="/dashboard/parametres/developpeurs" component={() => <ProtectedRoute component={ParametresDeveloppeurs} />} />
       <Route path="/dashboard/parametres/templates" component={() => <ProtectedRoute component={Templates} />} />

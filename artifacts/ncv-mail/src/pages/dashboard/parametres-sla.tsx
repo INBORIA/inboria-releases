@@ -19,7 +19,7 @@ interface MailboxPolicy {
     id: string;
     targetMinutes: number;
     businessHours: { timezone: string; days: number[]; start: string; end: string };
-    escalation: { slack?: boolean; email?: boolean };
+    escalation: { email?: boolean };
     enabled: boolean;
   };
 }
@@ -202,7 +202,6 @@ function PolicyCard({
   const [end, setEnd] = useState<string>(mailbox.policy?.businessHours?.end ?? "18:00");
   const [tz, setTz] = useState<string>(mailbox.policy?.businessHours?.timezone ?? "Europe/Brussels");
   const [days, setDays] = useState<number[]>(mailbox.policy?.businessHours?.days ?? [1, 2, 3, 4, 5]);
-  const [slack, setSlack] = useState<boolean>(mailbox.policy?.escalation?.slack ?? true);
   const [emailNotif, setEmailNotif] = useState<boolean>(mailbox.policy?.escalation?.email ?? true);
 
   useEffect(() => {
@@ -213,7 +212,6 @@ function PolicyCard({
       setEnd(mailbox.policy.businessHours.end);
       setTz(mailbox.policy.businessHours.timezone);
       setDays(mailbox.policy.businessHours.days);
-      setSlack(mailbox.policy.escalation.slack ?? true);
       setEmailNotif(mailbox.policy.escalation.email ?? true);
     }
   }, [mailbox.policy]);
@@ -229,7 +227,7 @@ function PolicyCard({
       enabled,
       targetMinutes: target,
       businessHours: { timezone: tz, days, start, end },
-      escalation: { slack, email: emailNotif },
+      escalation: { email: emailNotif },
     });
   }
 
@@ -281,9 +279,6 @@ function PolicyCard({
         </div>
       </div>
       <div className="flex items-center gap-4">
-        <label className="flex items-center gap-2 text-[12px] text-[#c9d1d9]">
-          <Switch checked={slack} onCheckedChange={setSlack} /> Slack
-        </label>
         <label className="flex items-center gap-2 text-[12px] text-[#c9d1d9]">
           <Switch checked={emailNotif} onCheckedChange={setEmailNotif} /> {t("sla.inAppNotif")}
         </label>

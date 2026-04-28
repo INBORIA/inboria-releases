@@ -87,8 +87,6 @@ function describeAction(a: RuleActionShape, t: TFunction): string {
     case "transfer": return t("rules.action.transfer", { to: a.to || "" });
     case "create_task": return t("rules.action.create_task", { title: a.title || "" });
     case "notify": return t("rules.action.notify");
-    case "slack_notify": return t("rules.action.slack_notify");
-    case "notion_create": return t("rules.action.notion_create", { title: a.title || "" });
     case "assign": return t("rules.action.assign");
     default: return a.type;
   }

@@ -10,11 +10,7 @@ import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { SlackChannelControls } from "@/components/integrations/SlackChannelControls";
-import { NotionDatabaseControls } from "@/components/integrations/NotionDatabaseControls";
 import {
-  Slack,
-  FileText,
   MessageCircle,
   Phone,
   Building2,
@@ -42,8 +38,6 @@ interface IntegrationRow {
 }
 
 interface AvailabilityMap {
-  slack: boolean;
-  notion: boolean;
   hubspot: boolean;
   pipedrive: boolean;
   whatsapp: boolean;
@@ -92,8 +86,6 @@ const PROVIDER_META: Record<
   string,
   { label: string; icon: any; categoryKey: "communication" | "crm"; descKey: string }
 > = {
-  slack: { label: "Slack", icon: Slack, categoryKey: "communication", descKey: "integrations.slack.desc" },
-  notion: { label: "Notion", icon: FileText, categoryKey: "communication", descKey: "integrations.notion.desc" },
   hubspot: { label: "HubSpot", icon: Building2, categoryKey: "crm", descKey: "integrations.hubspot.desc" },
   pipedrive: { label: "Pipedrive", icon: Briefcase, categoryKey: "crm", descKey: "integrations.pipedrive.desc" },
 };
@@ -282,12 +274,6 @@ export default function ParametresIntegrations() {
                   </>
                 )}
               </div>
-              {provider === "slack" && isConnected && (
-                <SlackChannelControls token={token} />
-              )}
-              {provider === "notion" && isConnected && (
-                <NotionDatabaseControls token={token} />
-              )}
             </div>
           </div>
         </CardContent>
@@ -315,17 +301,11 @@ export default function ParametresIntegrations() {
         {/* Communication section */}
         <section data-testid="section-communication">
           <h2 className="text-lg font-semibold mb-3">{t("integrations.categoryCommunication")}</h2>
-          <div className="grid gap-3 md:grid-cols-2">
-            {renderProviderCard("slack")}
-            {renderProviderCard("notion")}
-          </div>
-          <div className="mt-3">
-            <MessagingChannelsCard
-              channels={messagingChannels.data || []}
-              onChange={() => qc.invalidateQueries({ queryKey: ["messaging-channels"] })}
-              token={token}
-            />
-          </div>
+          <MessagingChannelsCard
+            channels={messagingChannels.data || []}
+            onChange={() => qc.invalidateQueries({ queryKey: ["messaging-channels"] })}
+            token={token}
+          />
         </section>
 
         {/* Automation section */}

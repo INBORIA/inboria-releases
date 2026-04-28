@@ -1759,11 +1759,11 @@ export const GetPaddlePortalResponse = zod.object({
 });
 
 /**
- * @summary List user integrations (Slack, Notion)
+ * @summary List user integrations
  */
 export const ListIntegrationsResponseItem = zod.object({
   id: zod.string(),
-  provider: zod.enum(["slack", "notion"]),
+  provider: zod.string(),
   workspaceName: zod.string().nullish(),
   channelId: zod.string().nullish(),
   databaseId: zod.string().nullish(),
@@ -1773,24 +1773,10 @@ export const ListIntegrationsResponseItem = zod.object({
 export const ListIntegrationsResponse = zod.array(ListIntegrationsResponseItem);
 
 /**
- * @summary Get Slack OAuth URL
- */
-export const ConnectSlackResponse = zod.object({
-  url: zod.string(),
-});
-
-/**
- * @summary Get Notion OAuth URL
- */
-export const ConnectNotionResponse = zod.object({
-  url: zod.string(),
-});
-
-/**
- * @summary Update integration settings (toggle enabled, change channel/database)
+ * @summary Update integration settings (toggle enabled)
  */
 export const UpdateIntegrationParams = zod.object({
-  provider: zod.enum(["slack", "notion"]),
+  provider: zod.coerce.string(),
 });
 
 export const UpdateIntegrationBody = zod.object({
@@ -1801,7 +1787,7 @@ export const UpdateIntegrationBody = zod.object({
 
 export const UpdateIntegrationResponse = zod.object({
   id: zod.string(),
-  provider: zod.enum(["slack", "notion"]),
+  provider: zod.string(),
   workspaceName: zod.string().nullish(),
   channelId: zod.string().nullish(),
   databaseId: zod.string().nullish(),
@@ -1813,7 +1799,7 @@ export const UpdateIntegrationResponse = zod.object({
  * @summary Disconnect an integration
  */
 export const DeleteIntegrationParams = zod.object({
-  provider: zod.enum(["slack", "notion"]),
+  provider: zod.coerce.string(),
 });
 
 export const DeleteIntegrationResponse = zod.object({
@@ -3114,8 +3100,6 @@ export const ListAutomationRulesResponseItem = zod.object({
         "notify",
         "mark_read",
         "move_to_project",
-        "slack_notify",
-        "notion_create",
       ]),
       category: zod.string().optional(),
       priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
@@ -3216,8 +3200,6 @@ export const CreateAutomationRuleBody = zod.object({
         "notify",
         "mark_read",
         "move_to_project",
-        "slack_notify",
-        "notion_create",
       ]),
       category: zod.string().optional(),
       priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
@@ -3319,8 +3301,6 @@ export const UpdateAutomationRuleBody = zod.object({
           "notify",
           "mark_read",
           "move_to_project",
-          "slack_notify",
-          "notion_create",
         ]),
         category: zod.string().optional(),
         priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
@@ -3413,8 +3393,6 @@ export const UpdateAutomationRuleResponse = zod.object({
         "notify",
         "mark_read",
         "move_to_project",
-        "slack_notify",
-        "notion_create",
       ]),
       category: zod.string().optional(),
       priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
@@ -3526,8 +3504,6 @@ export const ParseAutomationRuleResponse = zod.object({
           "notify",
           "mark_read",
           "move_to_project",
-          "slack_notify",
-          "notion_create",
         ]),
         category: zod.string().optional(),
         priority: zod.enum(["urgent", "moyen", "faible"]).optional(),
