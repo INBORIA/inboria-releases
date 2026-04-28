@@ -4012,7 +4012,7 @@ export default function Dashboard() {
 
   const { data: emailsData, isLoading: emailsLoading, isFetching: emailsFetching } = useListEmails({
     priority: filterPriority !== "all" ? (filterPriority as "urgent" | "moyen" | "faible") : undefined,
-    categoryId: selectedCategoryId,
+    categoryId: selectedCategoryId as any,
     q: searchQuery || undefined,
     page: emailPage,
     limit: 200,

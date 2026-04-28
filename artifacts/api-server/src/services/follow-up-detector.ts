@@ -32,6 +32,76 @@ function normalizeEmail(addr: string | null | undefined): string | null {
   return raw || null;
 }
 
+/**
+ * Self-healing : marque dismissed_at sur toutes les suggestions IA ACTIVES
+ * (status="en_attente", dismissed_at IS NULL) dont le mail lié n'est PLUS un
+ * candidat valide pour relance — ie status != "sent" OU external_id IS NOT NULL.
+ *
+ * Idempotent. Tourne à chaque cycle de détection. Couvre les cas où :
+ *  - l'utilisateur a marqué le mail comme lu/non_lu après qu'il a été envoyé
+ *  - une synchro IMAP ultérieure a réécrit l'external_id du mail
+ *  - une race a inséré une suggestion juste avant que le mail change d'état
+ *  - des suggestions héritées d'une ancienne version du détecteur traînent
+ */
+async function cleanupStaleAiFollowups(userId: string): Promise<void> {
+  try {
+    const { data: actives } = await supabaseAdmin
+      .from("followups")
+      .select("id, email_id")
+      .eq("user_id", userId)
+      .eq("ai_suggestion", true)
+      .eq("status", "en_attente")
+      .is("dismissed_at", null);
+
+    if (!actives || actives.length === 0) return;
+
+    const emailIds = actives
+      .map((f: any) => f.email_id)
+      .filter((id: any) => typeof id === "number");
+    if (emailIds.length === 0) return;
+
+    const { data: emails } = await supabaseAdmin
+      .from("emails")
+      .select("id, status, external_id")
+      .in("id", emailIds);
+
+    const emailById = new Map<number, { status: string | null; external_id: string | null }>();
+    for (const e of emails || []) {
+      emailById.set((e as any).id, {
+        status: (e as any).status ?? null,
+        external_id: (e as any).external_id ?? null,
+      });
+    }
+
+    const stale: string[] = [];
+    for (const f of actives) {
+      const e = emailById.get((f as any).email_id);
+      // Mail introuvable (supprimé) → suggestion stale aussi.
+      if (!e) {
+        stale.push((f as any).id);
+        continue;
+      }
+      const isValid = e.status === "sent" && e.external_id === null;
+      if (!isValid) stale.push((f as any).id);
+    }
+
+    if (stale.length === 0) return;
+
+    const { error } = await supabaseAdmin
+      .from("followups")
+      .update({ dismissed_at: new Date().toISOString() })
+      .in("id", stale);
+
+    if (error) {
+      logger.warn({ err: error.message, userId, count: stale.length }, "[follow-up-detector] cleanup failed");
+    } else {
+      logger.info({ userId, dismissed: stale.length }, "[follow-up-detector] cleaned stale AI followups");
+    }
+  } catch (err: any) {
+    logger.warn({ err: err?.message, userId }, "[follow-up-detector] cleanup threw");
+  }
+}
+
 function buildSuggestionTitle(recipient: string | null, subject: string | null): string {
   const cleanRecipient = normalizeEmail(recipient) || recipient || "destinataire";
   const cleanSubject = (subject || "").replace(/^\s*(re|fwd|tr|fw)\s*:\s*/i, "").trim();
@@ -136,6 +206,10 @@ export async function detectForUser(
     if (inserts.length >= MAX_PER_USER_PER_RUN) break;
     if (alreadySuggested.has(mail.id)) continue;
 
+    // Defense-in-depth : double-check les invariants au cas où le mail aurait
+    // changé entre le SELECT et maintenant (race entre IMAP sync et detection).
+    if (mail.external_id !== null && mail.external_id !== undefined) continue;
+
     const recipientNorm = normalizeEmail(mail.recipient);
     if (!recipientNorm) continue;
     const sentTs = new Date(mail.created_at).getTime();
@@ -154,6 +228,11 @@ export async function detectForUser(
       notes: null,
     });
   }
+
+  // Self-healing : nettoyer les suggestions IA actives dont le mail lié n'est
+  // PLUS un candidat valide (status changé, external_id set par sync IMAP
+  // ultérieure, etc.). Idempotent, tourne à chaque cycle.
+  await cleanupStaleAiFollowups(userId);
 
   if (inserts.length === 0) return { created: 0, scanned: candidates.length };
 
