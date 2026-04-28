@@ -217,6 +217,9 @@ export default function CRM() {
               </div>
             ))}
           </div>
+          <p className="mt-10 text-[11px] text-[#5d6b7e] leading-relaxed text-center">
+            {t("marketing.crm.trademarkNotice")}
+          </p>
         </div>
       </section>
 

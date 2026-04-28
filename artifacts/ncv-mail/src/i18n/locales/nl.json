@@ -1650,6 +1650,7 @@
       "faq4a": "Ja. Als uw KMO bijvoorbeeld HubSpot voor marketing en Salesforce voor verkoop gebruikt, kunt u beide parallel verbinden. Elke e-mail wordt verrijkt met informatie uit alle verbonden CRM's.",
       "faq5q": "Hoe verbreek ik de verbinding met een CRM?",
       "faq5a": "Op elk moment, in Instellingen > CRM, klikt u op 'Loskoppelen'. De synchronisatie stopt onmiddellijk en de toegangstokens worden ingetrokken. Uw gegevens in Inboria blijven beschikbaar en uw CRM wordt niet gewijzigd.",
+      "trademarkNotice": "HubSpot, Pipedrive, Salesforce, Odoo, Slack en Notion zijn geregistreerde handelsmerken van hun respectieve eigenaren. Inboria is niet gelieerd aan een van deze bedrijven; de namen worden uitsluitend vermeld om de interoperabiliteit van onze dienst met deze producten te beschrijven.",
       "ctaTitle": "Klaar om uw CRM te verbinden?",
       "ctaDesc": "Probeer Inboria gratis en verbind uw CRM in minder dan een minuut.",
       "seePricing": "Bekijk tarieven",

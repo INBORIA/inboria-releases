@@ -1640,6 +1640,7 @@
       "faq4a": "Oui. Si votre PME utilise par exemple HubSpot pour le marketing et Salesforce pour les ventes, vous pouvez connecter les deux en parallèle. Chaque email est enrichi des informations issues de tous les CRM connectés.",
       "faq5q": "Comment se déconnecter d'un CRM ?",
       "faq5a": "À tout moment, dans Paramètres > CRM, cliquez sur 'Déconnecter'. La synchronisation s'arrête immédiatement et les tokens d'accès sont révoqués. Vos données dans Inboria restent disponibles, et votre CRM n'est pas modifié.",
+      "trademarkNotice": "HubSpot, Pipedrive, Salesforce, Odoo, Slack et Notion sont des marques déposées de leurs propriétaires respectifs. Inboria n'est affilié à aucune de ces sociétés ; les noms sont mentionnés uniquement pour décrire l'interopérabilité de notre service avec ces produits.",
       "ctaTitle": "Prêt à connecter votre CRM ?",
       "ctaDesc": "Essayez Inboria gratuitement et connectez votre CRM en moins d'une minute.",
       "seePricing": "Voir les tarifs",

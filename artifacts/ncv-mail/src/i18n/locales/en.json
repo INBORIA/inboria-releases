@@ -1650,6 +1650,7 @@
       "faq4a": "Yes. If your SMB uses, for example, HubSpot for marketing and Salesforce for sales, you can connect both in parallel. Each email is enriched with information from every connected CRM.",
       "faq5q": "How do I disconnect a CRM?",
       "faq5a": "At any time, in Settings > CRM, click 'Disconnect'. Sync stops immediately and access tokens are revoked. Your data inside Inboria stays available, and your CRM is not modified.",
+      "trademarkNotice": "HubSpot, Pipedrive, Salesforce, Odoo, Slack and Notion are registered trademarks of their respective owners. Inboria is not affiliated with any of these companies; the names are mentioned solely to describe the interoperability of our service with these products.",
       "ctaTitle": "Ready to connect your CRM?",
       "ctaDesc": "Try Inboria for free and connect your CRM in less than a minute.",
       "seePricing": "See pricing",
