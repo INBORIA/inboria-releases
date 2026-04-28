@@ -71,3 +71,9 @@ id = "U-aCJ_ufk0GuGZbO8sRx4"
 uri = "file://attached_assets/inboria_logo_transparent_fix_v2_1777375001429.png"
 type = "image"
 title = "Logo Inboria officiel (à uploader dans Notion)"
+
+[[outputs]]
+id = "TTB4Kj83I4Cyf-piho6hf"
+uri = "file://artifacts/ncv-mail/public/logo-icon-512.png"
+type = "image"
+title = "Icône Inboria 512×512 (à uploader dans Notion)"
