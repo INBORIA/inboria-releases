@@ -9,6 +9,7 @@ import { AI_COST, checkEntitlement, consumeAiCredits, type AiEventType } from ".
 import { recordAutopilotEvent } from "../services/autopilot-events";
 import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 import { ensureSystemCategory } from "../lib/system-categories";
+import { getUserAiLang } from "../services/ai-lang";
 
 const openai = new OpenAI({
   apiKey: process.env["OPENAI_API_KEY"],
@@ -737,11 +738,19 @@ router.post("/ai/conversation-summary", requireAuth, async (req, res): Promise<v
       `[${msg.role === "sent" ? "ENVOYÉ" : "REÇU"}] De: ${msg.sender || "?"} | Objet: ${msg.subject || ""}\n${(msg.body || "").substring(0, 1000)}`
     ).join("\n---\n");
 
+    const lang = await getUserAiLang(req.userId!);
+    const sysByLang: Record<string, string> = {
+      fr: "Tu es un assistant professionnel. Résume cette conversation email EN FRANÇAIS en 2-3 phrases. Identifie : le sujet principal, les décisions prises, et les actions en suspens.",
+      en: "You are a professional assistant. Summarize this email conversation IN ENGLISH in 2-3 sentences. Identify: the main topic, decisions made, and pending actions.",
+      nl: "Je bent een professionele assistent. Vat deze e-mailconversatie samen IN HET NEDERLANDS in 2-3 zinnen. Identificeer: het hoofdonderwerp, genomen beslissingen en openstaande acties.",
+      de: "Du bist ein professioneller Assistent. Fasse dieses E-Mail-Gespräch AUF DEUTSCH in 2-3 Sätzen zusammen. Identifiziere: das Hauptthema, getroffene Entscheidungen und offene Aktionen.",
+      es: "Eres un asistente profesional. Resume esta conversación de correo EN ESPAÑOL en 2-3 frases. Identifica: el tema principal, las decisiones tomadas y las acciones pendientes.",
+    };
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       temperature: 0.3,
       messages: [
-        { role: "system", content: "Tu es un assistant professionnel. Résume cette conversation email en français en 2-3 phrases. Identifie: le sujet principal, les décisions prises, et les actions en suspens." },
+        { role: "system", content: sysByLang[lang] || sysByLang.fr },
         { role: "user", content: conversation },
       ],
     });

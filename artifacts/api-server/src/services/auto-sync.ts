@@ -13,6 +13,7 @@ import { consumeAiCredits, logTriageEvent, checkEntitlement } from "./credits";
 import { getEmailOAuthRedirectUri } from "../lib/urls";
 import { syncImapJunk, syncOutlookJunk, type JunkEmailPayload } from "./junk-sync";
 import { hasJunkColumns } from "../lib/schema-flags";
+import { getUserAiLang, summaryLangInstruction } from "./ai-lang";
 import {
   markConnectionFailure,
   markConnectionSuccess,
@@ -285,6 +286,8 @@ async function triageEmailAI(
   userId: string
 ): Promise<{ priority: string; summary: string; category: string; project: string; tasks: string[]; is_spam: boolean }> {
   try {
+    const lang = await getUserAiLang(userId);
+    const langInstr = summaryLangInstruction(lang);
     const { data: categories } = await supabaseAdmin
       .from("categories")
       .select("name")
@@ -334,7 +337,7 @@ async function triageEmailAI(
         },
         {
           role: "user",
-          content: `Email:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${(body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800)}\n\nCategories existantes: ${categoryNames.join(", ") || "Aucune"}${projectsContext}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom de categorie existante OU propose un nouveau nom pertinent (court, professionnel). Utilise 'Non classe' uniquement si vraiment inclassable.","project":"nom exact d'un projet actif OU 'Aucun'","tasks":["tache 1","tache 2"],"is_spam":false}\n\nIMPORTANT pour is_spam: TRES CONSERVATEUR. Mets true UNIQUEMENT pour arnaques evidentes (loterie, heritage, 'vous avez gagne', sextorsion, faux remboursement fiscal). Les emails de verification, codes OTP, alertes de securite, notifications de service, newsletters, marketing legitime, emails commerciaux NE SONT PAS du spam. En cas de doute, false.\n\nIMPORTANT pour project: ne renvoie un nom de projet QUE si l'email le mentionne explicitement (nom, reference) OU si le contenu est clairement lie au projet. En cas de doute, mets "Aucun". Ne jamais inventer un nom de projet qui ne figure pas dans la liste ci-dessus.\n\nIMPORTANT pour les taches: Sois TRES SELECTIF. Ne genere des taches QUE quand une action humaine CONCRETE et IMPORTANTE est requise (repondre a un client, payer une facture, signer un document, confirmer un rendez-vous). JAMAIS de tache pour: newsletters, notifications automatiques, confirmations d'inscription, codes de verification, emails marketing, reseaux sociaux, alertes de securite, confirmations de commande, recus, emails informatifs. Si aucune action importante n'est requise, retourne "tasks":[] (tableau vide). Maximum 1 tache par email.`,
+          content: `${langInstr}\n\nEmail:\nDe: ${sender}\nSujet: ${subject}\nCorps: ${(body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800)}\n\nCategories existantes: ${categoryNames.join(", ") || "Aucune"}${projectsContext}${rulesContext}\n\nReponds en JSON:\n{"priority":"urgent|moyen|faible","summary":"resume 1 phrase","category":"nom de categorie existante OU propose un nouveau nom pertinent (court, professionnel). Utilise 'Non classe' uniquement si vraiment inclassable.","project":"nom exact d'un projet actif OU 'Aucun'","tasks":["tache 1","tache 2"],"is_spam":false}\n\nIMPORTANT pour is_spam: TRES CONSERVATEUR. Mets true UNIQUEMENT pour arnaques evidentes (loterie, heritage, 'vous avez gagne', sextorsion, faux remboursement fiscal). Les emails de verification, codes OTP, alertes de securite, notifications de service, newsletters, marketing legitime, emails commerciaux NE SONT PAS du spam. En cas de doute, false.\n\nIMPORTANT pour project: ne renvoie un nom de projet QUE si l'email le mentionne explicitement (nom, reference) OU si le contenu est clairement lie au projet. En cas de doute, mets "Aucun". Ne jamais inventer un nom de projet qui ne figure pas dans la liste ci-dessus.\n\nIMPORTANT pour les taches: Sois TRES SELECTIF. Ne genere des taches QUE quand une action humaine CONCRETE et IMPORTANTE est requise (repondre a un client, payer une facture, signer un document, confirmer un rendez-vous). JAMAIS de tache pour: newsletters, notifications automatiques, confirmations d'inscription, codes de verification, emails marketing, reseaux sociaux, alertes de securite, confirmations de commande, recus, emails informatifs. Si aucune action importante n'est requise, retourne "tasks":[] (tableau vide). Maximum 1 tache par email.`,
         },
       ],
     });

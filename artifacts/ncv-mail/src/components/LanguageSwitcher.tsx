@@ -1,6 +1,8 @@
 import { useTranslation } from "react-i18next";
 import { Globe } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
+import { useAuth } from "../lib/auth";
+import { useUpdateProfile } from "@workspace/api-client-react";
 
 const languages = [
   { code: "fr", label: "FR", flag: "🇫🇷" },
@@ -12,6 +14,8 @@ const languages = [
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {
   const { i18n } = useTranslation();
+  const { user } = useAuth();
+  const updateProfile = useUpdateProfile();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -48,6 +52,12 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
               key={lang.code}
               onClick={() => {
                 i18n.changeLanguage(lang.code);
+                if (user) {
+                  updateProfile.mutate(
+                    { data: { aiLanguage: lang.code as any } },
+                    { onError: () => {} },
+                  );
+                }
                 setOpen(false);
               }}
               className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-[13px] transition-colors ${
