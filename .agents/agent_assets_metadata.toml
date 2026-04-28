@@ -59,3 +59,9 @@ id = "GyzAl88jjJ_iCzl6bIXU-"
 uri = "file://NOTE_ACCOMPAGNEMENT_INBORIA_2026-04-22.md"
 type = "text"
 title = "Note d’accompagnement et synthèse détaillée — Inboria"
+
+[[outputs]]
+id = "G0-xI0Lu2pne5SaffpoRx"
+uri = "file://artifacts/ncv-mail/public/logo-ncv.png"
+type = "image"
+title = "Logo Inboria (à uploader dans Notion comme icône)"
