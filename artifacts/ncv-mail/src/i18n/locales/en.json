@@ -1181,8 +1181,6 @@
       "myAccountDesc": "Profile, security, email accounts, AI and notifications",
       "crm": "CRM",
       "crmDesc": "HubSpot, Pipedrive, Salesforce, Odoo",
-      "multichannel": "Customer multi-channel",
-      "multichannelDesc": "WhatsApp, SMS",
       "developers": "For developers",
       "developersDesc": "API, Webhooks, SLA",
       "comingSoon": "Coming soon",
@@ -4382,8 +4380,8 @@
   "integrations": {
     "pageTitle": "Integrations",
     "pageDesc": "Connect Inboria to your tools, create API keys, and trigger automations.",
-    "parametresLinkTitle": "CRM, automation and multi-channel messaging",
-    "parametresLinkDesc": "Connect HubSpot, Pipedrive, WhatsApp, SMS — create API keys and webhooks for Zapier / Make / n8n.",
+    "parametresLinkTitle": "CRM and automation",
+    "parametresLinkDesc": "Connect HubSpot, Pipedrive — create API keys and webhooks for Zapier / Make / n8n.",
     "categoryCrm": "CRM",
     "categoryCommunication": "Communication",
     "categoryAutomation": "Automation",
@@ -4450,23 +4448,6 @@
       "empty": "No webhooks yet.",
       "confirmDelete": "Delete this webhook?",
       "createFailed": "Could not create webhook"
-    },
-    "messaging": {
-      "title": "Multi-channel messaging",
-      "desc": "Connect WhatsApp Business and SMS to receive and reply from Inboria.",
-      "empty": "No channels connected.",
-      "add": "Add a channel",
-      "added": "Channel added",
-      "addFailed": "Could not add channel",
-      "provider": "Provider",
-      "displayName": "Display name",
-      "phone": "Number",
-      "phoneNumberId": "Phone Number ID (Meta)",
-      "accessToken": "Access token",
-      "accountSid": "Account SID (Twilio)",
-      "authToken": "Auth token (Twilio)",
-      "brevoApiKey": "Brevo API key",
-      "helpLink": "How to get these credentials?"
     }
   }
 }

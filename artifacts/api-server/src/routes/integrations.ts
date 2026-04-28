@@ -182,9 +182,6 @@ router.get("/integrations/availability", async (_req, res): Promise<void> => {
     // Odoo : toujours disponible. Pas d'OAuth central côté Inboria —
     // chaque utilisateur fournit son URL + base + login + clé API perso.
     odoo: true,
-    whatsapp: true,
-    sms_twilio: true,
-    sms_brevo: true,
   });
 });
 

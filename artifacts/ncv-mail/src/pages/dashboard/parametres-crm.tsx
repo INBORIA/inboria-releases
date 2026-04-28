@@ -45,9 +45,6 @@ interface AvailabilityMap {
   pipedrive: boolean;
   salesforce: boolean;
   odoo: boolean;
-  whatsapp: boolean;
-  sms_twilio: boolean;
-  sms_brevo: boolean;
 }
 
 const baseUrl = () => import.meta.env.BASE_URL.replace(/\/$/, "");

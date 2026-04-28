@@ -35,7 +35,6 @@ import apiKeysRouter from "./api-keys";
 import webhooksMgmtRouter from "./webhooks-mgmt";
 import analyticsRouter from "./analytics";
 import publicApiRouter from "./public-api";
-import messagingRouter from "./messaging";
 
 const router: IRouter = Router();
 
@@ -74,7 +73,6 @@ router.use(slaRouter);
 router.use(apiKeysRouter);
 router.use(webhooksMgmtRouter);
 router.use(analyticsRouter);
-router.use(messagingRouter);
 router.use(publicApiRouter);
 
 export default router;

@@ -38,7 +38,6 @@ app.use(
       const url = req.originalUrl || "";
       if (
         url.startsWith("/api/paddle/webhook") ||
-        url.startsWith("/api/messaging/whatsapp/webhook") ||
         url.startsWith("/api/integrations/hubspot/webhook") ||
         url.startsWith("/api/integrations/pipedrive/webhook")
       ) {
