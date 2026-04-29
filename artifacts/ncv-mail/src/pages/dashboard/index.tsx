@@ -4241,28 +4241,25 @@ export default function Dashboard() {
                     : t("inbox.sortDate", "Date")}
                 </span>
               </button>
-              <div className="basis-full h-0 sm:hidden md:hidden" />
-              <div className="hidden sm:block md:hidden w-px h-4 bg-[#1f2937] mx-1" />
-              {/* Le menu déroulant des catégories ne s'affiche que sur les
-                  petits écrans (< md). Sur md+, le panneau « Catégorie » à
-                  droite de la liste des emails couvre déjà ce besoin avec un
-                  vrai scroll de page, et garder ce menu en parallèle créait
-                  un double emploi : ouvert, il verrouillait le scroll de la
-                  page (comportement standard d'un popover) et empêchait
-                  l'utilisateur d'accéder aux catégories situées plus bas. */}
-              <div className="md:hidden">
-                <Select value={filterCategory} onValueChange={setFilterCategory}>
-                  <SelectTrigger className="w-auto min-w-[130px] h-6 bg-card border-border text-[#8b9cb3] text-[10px]">
-                    <SelectValue placeholder={t("inbox.category")} />
-                  </SelectTrigger>
-                  <SelectContent className="bg-card border-border max-h-[60vh]">
-                    <SelectItem value="all">{t("inbox.allCategories")}</SelectItem>
-                    {categoryCounts?.map((cat) => (
-                      <SelectItem key={cat.categoryId} value={cat.categoryName}>{translateCategoryName(cat.categoryName, lang)}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
+              <div className="basis-full h-0 sm:hidden" />
+              <div className="hidden sm:block w-px h-4 bg-[#1f2937] mx-1" />
+              <Select value={filterCategory} onValueChange={setFilterCategory}>
+                <SelectTrigger className="w-auto min-w-[130px] h-6 bg-card border-border text-[#8b9cb3] text-[10px]">
+                  <SelectValue placeholder={t("inbox.category")} />
+                </SelectTrigger>
+                {/* max-h-[50vh] borne explicitement la hauteur du menu pour
+                    qu'il reste clairement scrollable même quand l'utilisateur
+                    a beaucoup de catégories. Sans cette borne, le menu
+                    s'étirait jusqu'au bas de la fenêtre et la barre de
+                    défilement n'apparaissait pas, donnant l'impression que
+                    les catégories du bas étaient inaccessibles. */}
+                <SelectContent className="bg-card border-border max-h-[50vh] overflow-y-auto">
+                  <SelectItem value="all">{t("inbox.allCategories")}</SelectItem>
+                  {categoryCounts?.map((cat) => (
+                    <SelectItem key={cat.categoryId} value={cat.categoryName}>{translateCategoryName(cat.categoryName, lang)}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
 
           {(hasHubspot || hasPipedrive || hasSalesforce || hasOdoo) && (
