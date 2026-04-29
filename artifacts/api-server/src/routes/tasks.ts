@@ -12,7 +12,10 @@ function mapTask(t: any) {
   const senderName = senderMatch ? senderMatch[1].trim().replace(/^"|"$/g, "") : senderRaw;
   const senderEmail = senderMatch ? senderMatch[2].trim() : senderRaw;
 
-  const source = t.email_id ? "ai" : "manual";
+  const source =
+    typeof t.ai_generated === "boolean"
+      ? (t.ai_generated ? "ai" : "manual")
+      : (t.email_id ? "ai" : "manual");
 
   return {
     id: t.id,

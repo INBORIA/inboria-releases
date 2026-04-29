@@ -217,10 +217,10 @@ router.post("/webhook/email", async (req, res): Promise<void> => {
         .limit(1);
 
       if (!existingTasks || existingTasks.length === 0) {
-        const taskInserts: { user_id: string; email_id: number; title: string; done: boolean }[] = [];
+        const taskInserts: { user_id: string; email_id: number; title: string; done: boolean; ai_generated: boolean }[] = [];
         for (const title of triage.tasks) {
           if (await userHasOpenTaskWithTitle(userId, title)) continue;
-          taskInserts.push({ user_id: userId, email_id: insertedEmail.id, title, done: false });
+          taskInserts.push({ user_id: userId, email_id: insertedEmail.id, title, done: false, ai_generated: true });
         }
         if (taskInserts.length > 0) {
           await supabaseAdmin.from("tasks").insert(taskInserts);
@@ -358,6 +358,7 @@ router.post("/webhook/email/batch", async (req, res): Promise<void> => {
                 email_id: inserted.id,
                 title,
                 done: false,
+                ai_generated: true,
               }))
             );
           }

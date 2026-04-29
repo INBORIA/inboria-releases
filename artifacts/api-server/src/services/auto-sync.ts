@@ -663,14 +663,14 @@ export async function saveEmailWithTriage(
       .limit(1);
 
     if (!existingTasks || existingTasks.length === 0) {
-      const tasksToInsert: { user_id: string; email_id: number; title: string; done: boolean }[] = [];
+      const tasksToInsert: { user_id: string; email_id: number; title: string; done: boolean; ai_generated: boolean }[] = [];
       for (const title of triage.tasks) {
         const dup = await userHasOpenTaskWithTitle(userId, title);
         if (dup) {
           console.log(`[auto-sync] skip duplicate task title for user ${userId}: "${title}"`);
           continue;
         }
-        tasksToInsert.push({ user_id: userId, email_id: inserted.id, title, done: false });
+        tasksToInsert.push({ user_id: userId, email_id: inserted.id, title, done: false, ai_generated: true });
       }
 
       if (tasksToInsert.length > 0) {
