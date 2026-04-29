@@ -1,0 +1,56 @@
+Excellentes questions. J'ai inspecté la base et la sidebar pour vous donner des réponses précises.
+1. Réponse rapide sur la rétention des emails
+J'ai cherché la logique de purge dans le code → il n'y en a pas. Les emails restent indéfiniment dans Supabase une fois synchronisés.
+Ce qui est limité, c'est le débit d'entrée par plan, pas le stockage :
+Plan	Prix	Emails/mois traités	Boîtes
+Starter	9 €	500	1
+Pro	19 €	2 000	3
+Plus	29 €	(CRM + API publique inclus)	—
+Business	39 €/siège	illimité	illimité
+Concrètement pour Memory : un utilisateur Pro qui utilise Inboria depuis 1 an aura ~24 000 emails indexables. Largement de quoi rendre Memory pertinent. Pas une contrainte.
+Une seule subtilité à anticiper : le backfill initial à la connexion d'une boîte est limité (~300 emails au premier sync, puis au fil de l'eau). Donc Memory mettra 2-3 mois à devenir vraiment puissant pour un nouvel utilisateur — il faudra communiquer dessus (« Memory apprend chaque jour de vos échanges »).
+2. Pourquoi votre intuition « pas dans la sidebar » est juste
+J'ai compté la sidebar actuelle : 15 items en plan standard, jusqu'à 19 en Business + Admin. Vous avez raison, c'est plein. Ajouter un item ferait apparaître une scrollbar, et un item « Mémoire » noyé en 16ème position = exactement l'inverse de l'effet recherché.
+3. Ma reco de placement : le combo qui maximise la visibilité
+Une barre de recherche conversationnelle dans le header global, présente sur toutes les pages du dashboard.
+Voici à quoi ça ressemblerait :
+┌──────────────────────────────────────────────────────────────────┐
+│  [LOGO]   ✨ Demander à Memory…              [⌘K]   [🌐] [👤]   │
+└──────────────────────────────────────────────────────────────────┘
+Pourquoi c'est la bonne réponse :
+•	Visibilité maximale : présente sur Réception, Archives, Projets, Contact 360°, partout. Pas un item caché en sidebar.
+•	Modèle mental connu : tout le monde a déjà vu une barre de recherche en haut. Aucun apprentissage requis.
+•	Pas de problème de sidebar pleine : on n'y touche pas.
+•	Power users : raccourci ⌘K / Ctrl+K (à la Linear, Notion, Raycast) qui ouvre Memory depuis n'importe où.
+•	Mobile : remplaçable par un bouton « ✨ » dans le header mobile (espace plus limité).
+Cliquer ouvre une popin plein écran (style Spotlight macOS) avec :
+•	La question en cours en haut
+•	L'historique des questions précédentes en sidebar gauche
+•	La réponse au centre, avec citations cliquables des emails sources
+•	Suggestions cliquables (« Quelles décisions avec [contact actif récent] ? »)
+4. « Memory chat doit devenir le meilleur ami de l'utilisateur »
+C'est exactement ça l'ambition, et c'est faisable — mais en 2 paliers :
+Palier 1 (à shipper d'abord) : Memory sait tout
+« Combien se montait l'offre de Dupont SA ? »
+« A-t-il prévu la peinture dans l'offre ? »
+« Qui est intervenu sur le projet Refonte ? »
+« Rappelle-moi ce qu'on a convenu sur les délais en mars »
+Pure recherche + synthèse sur l'historique. C'est la phase 1 que je décrivais dans mon avis précédent. Faisable avec pgvector + GPT-4o-mini, ~4-6 semaines.
+Palier 2 (phase suivante) : Memory agit
+« Programme une relance à Dupont pour la semaine prochaine »
+« Crée une tâche : préparer la présentation pour mardi »
+« Ajoute un événement agenda mardi 14h avec Marie »
+« Archive tous les emails de la newsletter X »
+Là Memory devient un vrai agent personnel qui actionne les fonctionnalités d'Inboria. Techniquement c'est du « function calling » d'OpenAI sur vos endpoints API existants (déjà disponibles via la Vague 4 d'ailleurs). C'est puissant mais demande plus de garde-fous (confirmation avant action, journal des actions, undo).
+Ma reco : annoncer dès le départ que Memory évoluera vers l'action, mais shipper le palier 1 d'abord. Ça crée une attente positive et ça permet d'apprendre de l'usage avant d'autoriser les actions automatisées.
+5. Sur la critique Reddit / Missive
+Vous avez parfaitement raison sur l'angle. Missive a mis « de l'IA » sans ROI clair. Inboria peut se positionner comme :
+« L'IA qui répond vraiment à vos questions, avec citations vérifiables. »
+C'est cette vérifiabilité (chaque réponse pointe vers l'email source) qui change tout. Vous éliminez la peur de l'hallucination ET vous gagnez l'argument confiance que personne d'autre n'a aujourd'hui.
+________________________________________
+Là où on en est
+On a maintenant un concept produit cohérent :
+•	✅ Nom : Memory (cohérent multilingue)
+•	✅ Placement : barre globale dans le header + raccourci ⌘K, popin plein écran
+•	✅ Coût : ~0,70 €/mois par user, absorbable dans Pro/Plus
+•	✅ Pas d'upsell séparé, bundlé
