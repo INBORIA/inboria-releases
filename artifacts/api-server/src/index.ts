@@ -629,6 +629,13 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
+process.on("uncaughtException", (err) => {
+  logger.error({ err }, "uncaughtException — keeping server alive");
+});
+process.on("unhandledRejection", (reason) => {
+  logger.error({ reason }, "unhandledRejection — keeping server alive");
+});
+
 app.listen(port, (err) => {
   if (err) {
     logger.error({ err }, "Error listening on port");

@@ -1109,6 +1109,9 @@ async function syncImapForUser(conn: any): Promise<number> {
     auth: { user: conn.email_address, pass: conn.access_token },
     logger: false,
   });
+  client.on("error", (err: any) => {
+    log.warn({ err: err?.message || err }, "ImapFlow error event suppressed");
+  });
 
   try {
     let timeoutId: ReturnType<typeof setTimeout>;

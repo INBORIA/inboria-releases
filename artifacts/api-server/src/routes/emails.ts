@@ -97,6 +97,7 @@ async function moveProviderMessage(
           auth: { user: (conn as any).email_address, pass: (conn as any).access_token },
           logger: false,
         });
+        probe.on("error", () => {});
         await probe.connect();
         const discovered = await discoverImapJunkFolder(probe, null);
         await probe.logout().catch(() => {});

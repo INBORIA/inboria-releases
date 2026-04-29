@@ -155,6 +155,7 @@ router.get("/attachments/:id/download", requireAuth, async (req, res): Promise<v
         auth: { user: conn.email_address, pass: conn.access_token },
         logger: false as any,
       });
+      client.on("error", () => {});
 
       try {
         await client.connect();
