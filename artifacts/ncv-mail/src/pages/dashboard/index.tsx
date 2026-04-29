@@ -4241,19 +4241,28 @@ export default function Dashboard() {
                     : t("inbox.sortDate", "Date")}
                 </span>
               </button>
-              <div className="basis-full h-0 sm:hidden" />
-              <div className="hidden sm:block w-px h-4 bg-[#1f2937] mx-1" />
-              <Select value={filterCategory} onValueChange={setFilterCategory}>
-                <SelectTrigger className="w-auto min-w-[130px] h-6 bg-card border-border text-[#8b9cb3] text-[10px]">
-                  <SelectValue placeholder={t("inbox.category")} />
-                </SelectTrigger>
-                <SelectContent className="bg-card border-border">
-                  <SelectItem value="all">{t("inbox.allCategories")}</SelectItem>
-                  {categoryCounts?.map((cat) => (
-                    <SelectItem key={cat.categoryId} value={cat.categoryName}>{translateCategoryName(cat.categoryName, lang)}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <div className="basis-full h-0 sm:hidden md:hidden" />
+              <div className="hidden sm:block md:hidden w-px h-4 bg-[#1f2937] mx-1" />
+              {/* Le menu déroulant des catégories ne s'affiche que sur les
+                  petits écrans (< md). Sur md+, le panneau « Catégorie » à
+                  droite de la liste des emails couvre déjà ce besoin avec un
+                  vrai scroll de page, et garder ce menu en parallèle créait
+                  un double emploi : ouvert, il verrouillait le scroll de la
+                  page (comportement standard d'un popover) et empêchait
+                  l'utilisateur d'accéder aux catégories situées plus bas. */}
+              <div className="md:hidden">
+                <Select value={filterCategory} onValueChange={setFilterCategory}>
+                  <SelectTrigger className="w-auto min-w-[130px] h-6 bg-card border-border text-[#8b9cb3] text-[10px]">
+                    <SelectValue placeholder={t("inbox.category")} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-card border-border max-h-[60vh]">
+                    <SelectItem value="all">{t("inbox.allCategories")}</SelectItem>
+                    {categoryCounts?.map((cat) => (
+                      <SelectItem key={cat.categoryId} value={cat.categoryName}>{translateCategoryName(cat.categoryName, lang)}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
 
           {(hasHubspot || hasPipedrive || hasSalesforce || hasOdoo) && (
