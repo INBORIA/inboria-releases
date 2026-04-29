@@ -20,7 +20,7 @@ import {
   getGetAdminConnectionsQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
-import { Link as RouterLink } from "wouter";
+import { Link as RouterLink, useLocation } from "wouter";
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
@@ -456,6 +456,7 @@ function MailboxEmails({
   onUnclaim: (emailId: string) => void;
 }) {
   const { t } = useTranslation();
+  const [, setLocation] = useLocation();
   const [page, setPage] = useState(1);
   const [accumulatedEmails, setAccumulatedEmails] = useState<PaginatedSharedMailboxEmails["emails"]>([]);
   const { data: emailsData, isLoading, isFetching } = useGetSharedMailboxEmails(mailboxId, { filter, page, limit: 50 });
@@ -552,7 +553,11 @@ function MailboxEmails({
       ) : (
         <div className="space-y-3">
           {emails.map((email) => (
-            <div key={email.id} className="bg-card border border-border rounded-xl p-4 space-y-2">
+            <div
+              key={email.id}
+              onClick={() => setLocation(`/dashboard?emailId=${email.id}`)}
+              className="bg-card border border-border rounded-xl p-4 space-y-2 cursor-pointer hover:border-primary/40 hover:bg-white/[0.02] transition-colors"
+            >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2">
@@ -572,7 +577,7 @@ function MailboxEmails({
                 <div className="flex items-center gap-2 ml-3">
                   {email.claimedBy ? (
                     email.claimedBy === userId ? (
-                      <Button variant="outline" size="sm" onClick={() => onUnclaim(email.id)} className="text-orange-400 border-orange-400/30">
+                      <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); onUnclaim(email.id); }} className="text-orange-400 border-orange-400/30">
                         <Hand className="h-3 w-3 mr-1" /> {t("sharedMailboxes.release")}
                       </Button>
                     ) : (
@@ -581,7 +586,7 @@ function MailboxEmails({
                       </span>
                     )
                   ) : (
-                    <Button variant="outline" size="sm" onClick={() => onClaim(email.id)} className="text-green-400 border-green-400/30">
+                    <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); onClaim(email.id); }} className="text-green-400 border-green-400/30">
                       <Hand className="h-3 w-3 mr-1" /> {t("sharedMailboxes.take")}
                     </Button>
                   )}
