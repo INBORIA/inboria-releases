@@ -1,4 +1,4 @@
-import { useGetProfile, useGetFollowupStats } from "@workspace/api-client-react";
+import { useGetProfile } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import {
@@ -54,22 +54,18 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: profile, isLoading } = useGetProfile({
     query: { refetchInterval: 30000, refetchIntervalInBackground: false } as any,
   });
-  const { data: followupStats } = useGetFollowupStats({
-    query: { refetchInterval: 60000, refetchIntervalInBackground: false } as any,
-  });
-  const aiFollowupCount = (followupStats as any)?.aiSuggestions || 0;
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
   const totalUsed = ((user as any).emailsUsed || 0) + ((user as any).aiCreditsUsed || 0);
 
-  const baseNavigation: Array<{ name: string; href: string; icon: any; badge?: number }> = [
+  const baseNavigation: Array<{ name: string; href: string; icon: any }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
     { name: t("sidebar.snoozed", "Reportés"), href: "/dashboard/reportes", icon: BellOff },
     { name: t("sidebar.scheduled", "Programmés"), href: "/dashboard/programmes", icon: CalendarClock },
     { name: t("tasks.title"), href: "/dashboard/taches", icon: CheckSquare },
-    { name: t("sidebar.followups", "Relances"), href: "/dashboard/relances", icon: MailCheck, badge: aiFollowupCount },
+    { name: t("sidebar.followups", "Relances"), href: "/dashboard/relances", icon: MailCheck },
     { name: t("sidebar.contacts", "Contact 360°"), href: "/dashboard/contacts", icon: Users },
     { name: t("sidebar.projects"), href: "/dashboard/projets", icon: FolderKanban },
     { name: t("sidebar.agenda"), href: "/dashboard/agenda", icon: CalendarDays },
@@ -168,11 +164,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 aria-hidden="true"
               />
               <span className="flex-1 truncate">{item.name}</span>
-              {typeof (item as any).badge === "number" && (item as any).badge > 0 && (
-                <span className="ml-auto shrink-0 h-4 min-w-[18px] rounded-full bg-[#2a3441] text-[9px] font-semibold text-white flex items-center justify-center px-1.5">
-                  {(item as any).badge > 99 ? "99+" : (item as any).badge}
-                </span>
-              )}
             </Link>
           );
         })}
