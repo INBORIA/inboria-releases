@@ -43,7 +43,7 @@ export default function Programmes() {
 
   return (
     <DashboardLayout>
-      <div className="p-4 md:p-6 max-w-3xl mx-auto space-y-6">
+      <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6">
         <section>
           <div className="flex items-center gap-2 mb-3">
             <CalendarClock className="w-5 h-5 text-primary" />
