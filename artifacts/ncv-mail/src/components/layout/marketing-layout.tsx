@@ -108,7 +108,6 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
               <div className="flex items-start mb-3">
                 <img src={appLogo} alt="Inboria" className="h-24 w-auto object-contain" />
               </div>
-              <p className="text-[13px] text-[#8b9cb3]">{t("footer.solution")}</p>
             </div>
 
             <div>
