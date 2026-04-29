@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { BellOff, Mail, Clock } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import {
   useUnsnoozeEmail,
   getListEmailsQueryKey,
@@ -83,6 +84,7 @@ export default function Reportes() {
   return (
     <DashboardLayout>
       <div className="p-4 md:p-6 max-w-5xl mx-auto space-y-6">
+        <BackToInboxButton />
         <section>
           <div className="flex items-center gap-2 mb-3">
             <BellOff className="w-5 h-5 text-amber-400" />

@@ -9,6 +9,7 @@ import {
   ApiError,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
+import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
@@ -250,6 +251,7 @@ export default function Categories() {
   return (
     <DashboardLayout>
       <div className="p-5 max-w-5xl mx-auto w-full">
+        <BackToInboxButton />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
             <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("classification.title")}</h1>

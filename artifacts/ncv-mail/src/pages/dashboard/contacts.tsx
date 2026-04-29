@@ -7,6 +7,7 @@ import { Search, Users, Mail, ChevronRight, Loader2 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useListContacts } from "@workspace/api-client-react";
 
@@ -26,6 +27,7 @@ export default function ContactsPage() {
   return (
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto" data-testid="page-contacts">
+        <BackToInboxButton />
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-white flex items-center gap-2">
             <Users className="w-6 h-6 text-primary" />

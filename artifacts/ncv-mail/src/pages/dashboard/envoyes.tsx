@@ -36,6 +36,7 @@ import {
 } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
+import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
@@ -211,6 +212,7 @@ export default function Envoyes() {
   return (
     <DashboardLayout>
       <div className="p-5 max-w-5xl mx-auto w-full">
+        <BackToInboxButton />
         <div className="flex items-center justify-between mb-5">
           <div>
             <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">

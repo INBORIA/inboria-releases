@@ -21,6 +21,7 @@ import { Archive, Clock, ArrowLeft, Trash2, RotateCcw, ChevronRight, FolderOpen,
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { PaginatedEmails, Email } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
+import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 
@@ -436,6 +437,7 @@ export default function Archives() {
   return (
     <DashboardLayout>
       <div className="p-5 max-w-5xl mx-auto w-full">
+        <BackToInboxButton />
         <div className="mb-5">
           <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("archives.title")}</h1>
           <p className="text-[12px] text-[#8b9cb3] mt-0.5">

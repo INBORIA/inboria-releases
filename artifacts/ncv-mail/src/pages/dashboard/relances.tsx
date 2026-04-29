@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Button } from "@/components/ui/button";
+import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -106,6 +107,7 @@ export default function Relances() {
   return (
     <DashboardLayout>
       <div className="max-w-[1100px] mx-auto p-4 sm:p-6 space-y-6">
+        <BackToInboxButton />
         <div>
           <h1 className="text-[20px] font-semibold text-white flex items-center gap-2">
             <MailCheck className="w-5 h-5 text-primary" />

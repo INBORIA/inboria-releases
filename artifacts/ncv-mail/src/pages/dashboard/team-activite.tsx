@@ -2,6 +2,7 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useGetTeamDashboard } from "@workspace/api-client-react";
 import { Loader2, Users, MessageSquare, Mail, Archive } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 
 function ActionLabel({ action }: { action: string }) {
   const { t } = useTranslation();
@@ -59,6 +60,7 @@ export default function TeamActivitePage() {
   return (
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto space-y-6">
+        <BackToInboxButton />
         <div>
           <h1 className="text-xl font-bold text-white">{t("teamActivity.title")}</h1>
           <p className="text-[12px] text-[#8b9cb3] mt-1">

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams, useLocation } from "wouter";
+import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { format, formatDistanceToNow } from "date-fns";
 import { fr, enUS, nl, de, es } from "date-fns/locale";
 import {
@@ -126,6 +127,7 @@ export default function ContactDetailPage() {
   return (
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto" data-testid="page-contact-detail">
+        <BackToInboxButton />
         <button
           onClick={() => setLocation("/dashboard/contacts")}
           className="flex items-center gap-2 text-sm text-[#8b9cb3] hover:text-white mb-4"

@@ -7,6 +7,7 @@ import {
   useListProjects,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
+import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Sparkles, ArrowRight, AlertTriangle, TrendingUp, RefreshCw, CheckSquare, BarChart3, CalendarDays, Clock, MapPin, Download, Users, FileText } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -125,6 +126,7 @@ export default function BilanQuotidien() {
   return (
     <DashboardLayout>
       <div className="p-5 max-w-6xl mx-auto w-full">
+        <BackToInboxButton />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
             <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">

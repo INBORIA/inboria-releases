@@ -14,6 +14,7 @@ import {
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
+import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
@@ -248,6 +249,7 @@ export default function Regles() {
   return (
     <DashboardLayout>
       <div className="p-6 max-w-5xl mx-auto">
+        <BackToInboxButton />
         <div className="flex items-center justify-between mb-6">
           <div>
             <h1 className="text-2xl font-semibold flex items-center gap-2">
