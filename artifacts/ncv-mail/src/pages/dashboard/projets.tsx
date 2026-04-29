@@ -72,8 +72,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useState } from "react";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
-import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
+import { useQueryClient } from "@tanstack/react-query";
+import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
@@ -212,126 +212,6 @@ function ProjectNotes({ projectId }: { projectId: string }) {
   );
 }
 
-function ProjectEmailDetail({
-  emailMeta,
-  onBack,
-}: {
-  emailMeta: any;
-  onBack: () => void;
-}) {
-  const { t, i18n } = useTranslation();
-  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
-  const barColors: Record<string, string> = {
-    urgent: "bg-red-500",
-    moyen: "bg-amber-500",
-    faible: "bg-emerald-500",
-  };
-  const priorityStyles: Record<string, { bg: string; text: string; border: string; labelKey: string }> = {
-    urgent: { bg: "bg-red-500/15", text: "text-red-400", border: "border-red-500/20", labelKey: "inbox.priorities.urgent" },
-    moyen: { bg: "bg-amber-500/15", text: "text-amber-400", border: "border-amber-500/20", labelKey: "inbox.priorities.medium" },
-    faible: { bg: "bg-emerald-500/15", text: "text-emerald-400", border: "border-emerald-500/20", labelKey: "inbox.priorities.low" },
-  };
-
-  const { data: emailDetail, isLoading: bodyLoading, isError: bodyError } = useQuery({
-    queryKey: ["email-detail", emailMeta.id],
-    queryFn: async () => {
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) throw new Error("no session");
-      const resp = await fetch(`${import.meta.env.BASE_URL}api/emails/${emailMeta.id}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      return resp.json();
-    },
-    staleTime: 30_000,
-    retry: 1,
-  });
-
-  const merged: any = { ...emailMeta, ...(emailDetail || {}) };
-  const priority = merged.priority || "faible";
-  const barColor = barColors[priority] || barColors.faible;
-  const ps = priorityStyles[priority] || priorityStyles.faible;
-  const dateValue = merged.createdAt || emailMeta.createdAt;
-
-  return (
-    <DashboardLayout>
-      <div className="p-5 max-w-[900px] mx-auto w-full">
-        <div className="flex items-center gap-3 mb-4">
-          <Button
-            variant="ghost"
-            size="sm"
-            onClick={onBack}
-            className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
-          >
-            <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-            {t("common.back")}
-          </Button>
-          <div className="flex-1" />
-          <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border ${ps.bg} ${ps.text} ${ps.border}`}>
-            {t(ps.labelKey)}
-          </span>
-        </div>
-
-        <div className="bg-card rounded-lg border border-border overflow-hidden">
-          <div className="flex">
-            <div className={`w-1 shrink-0 ${barColor}`} />
-            <div className="flex-1 min-w-0">
-              <div className="p-4 border-b border-border">
-                <h2 className="text-[15px] font-semibold text-white mb-2.5">{merged.subject}</h2>
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-[12px]">
-                      {(merged.sender || "?")[0].toUpperCase()}
-                    </div>
-                    <div>
-                      <div className="text-[12px] font-medium text-white">{merged.sender}</div>
-                      {merged.senderEmail && merged.senderEmail !== merged.sender && (
-                        <div className="text-[10px] text-[#8b9cb3]">{merged.senderEmail}</div>
-                      )}
-                    </div>
-                  </div>
-                  {dateValue && (
-                    <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1">
-                      <Clock className="w-3 h-3" />
-                      {format(new Date(dateValue), "d MMMM yyyy HH:mm", { locale: dateFnsLocale })}
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {merged.summary && (
-                <div className="px-4 py-2.5 bg-primary/[0.06] border-b border-border">
-                  <div className="flex items-center gap-1.5 mb-0.5">
-                    <Sparkles className="w-3 h-3 text-primary" />
-                    <span className="text-[10px] font-medium text-primary uppercase tracking-wider">{t("inbox.aiSummary")}</span>
-                  </div>
-                  <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{merged.summary}</p>
-                </div>
-              )}
-
-              <div className="p-4">
-                {bodyLoading && !merged.body ? (
-                  <div className="space-y-2">
-                    <Skeleton className="h-3 w-3/4 bg-white/5" />
-                    <Skeleton className="h-3 w-full bg-white/5" />
-                    <Skeleton className="h-3 w-5/6 bg-white/5" />
-                    <Skeleton className="h-3 w-2/3 bg-white/5" />
-                  </div>
-                ) : bodyError && !merged.body ? (
-                  <p className="text-[12px] text-red-400/80 italic">{t("archives.bodyLoadError", "Impossible de charger le contenu de cet email.")}</p>
-                ) : (
-                  <EmailBodyRenderer body={merged.body} emailId={merged.id} sender={merged.sender} />
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </DashboardLayout>
-  );
-}
 
 function ProjectDetailView({
   projectId,
@@ -468,13 +348,23 @@ function ProjectDetailView({
   ).length;
   const doneTasks = (project.tasks || []).filter((t: any) => t.done).length;
 
-  const selectedEmailMeta = (project.emails || []).find((e: any) => e.id === selectedEmailId);
-  if (selectedEmailMeta) {
+  if (selectedEmailId) {
     return (
-      <ProjectEmailDetail
-        emailMeta={selectedEmailMeta}
-        onBack={() => setSelectedEmailId(null)}
-      />
+      <DashboardLayout>
+        <div className="p-5 max-w-[900px] mx-auto w-full">
+          <EmailDetailContainer
+            emailId={selectedEmailId}
+            onBack={() => setSelectedEmailId(null)}
+            onAfterArchive={() => setSelectedEmailId(null)}
+            onAfterDelete={() => setSelectedEmailId(null)}
+            onAfterMutation={() => {
+              queryClient.invalidateQueries({
+                queryKey: getGetProjectQueryKey(projectId),
+              });
+            }}
+          />
+        </div>
+      </DashboardLayout>
     );
   }
 

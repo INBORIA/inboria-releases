@@ -1,5 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
+import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import {
   useListEmails,
   useListCategories,
@@ -16,7 +16,7 @@ import { fr, enUS, nl } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { translateCategoryName } from "@/lib/category-translations";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQueryClient, useQuery } from "@tanstack/react-query";
+import { useQueryClient } from "@tanstack/react-query";
 import { Archive, Clock, ArrowLeft, Trash2, RotateCcw, ChevronRight, FolderOpen, Sparkles, CheckSquare, Square } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { PaginatedEmails, Email } from "@workspace/api-client-react";
@@ -57,159 +57,6 @@ const categoryColors = [
   "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
 ];
 
-function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, categories, projects, bodyLoading, bodyError }: {
-  email: any;
-  onBack: () => void;
-  onRestore: (id: number) => void;
-  onDelete: (id: number) => void;
-  onUpdatePriority: (id: number, priority: string) => void;
-  onUpdateCategory: (id: number, categoryId: string) => void;
-  onUpdateProject: (id: number, projectId: string) => void;
-  categories: any[];
-  projects: any[];
-  bodyLoading?: boolean;
-  bodyError?: boolean;
-}) {
-  const { t, i18n } = useTranslation();
-  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
-  const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
-
-  return (
-    <div className="flex flex-col h-full">
-      <div className="flex items-center gap-3 mb-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onBack}
-          className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
-        >
-          <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-          {t("common.back")}
-        </Button>
-        <div className="flex-1" />
-        <PriorityBadge priority={email.priority} />
-      </div>
-
-      <div className="bg-card rounded-lg border border-border overflow-hidden">
-        <div className="flex">
-          <div className={`w-1 shrink-0 ${barColor}`} />
-          <div className="flex-1 min-w-0">
-            <div className="p-4 border-b border-border">
-              <h2 className="text-[15px] font-semibold text-white mb-2.5">{email.subject}</h2>
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center text-primary font-semibold text-[12px]">
-                    {(email.sender || "?")[0].toUpperCase()}
-                  </div>
-                  <div>
-                    <div className="text-[12px] font-medium text-white">{email.sender}</div>
-                    {email.sender && (
-                      <div className="text-[10px] text-[#8b9cb3]">{email.sender}</div>
-                    )}
-                  </div>
-                </div>
-                <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1">
-                  <Clock className="w-3 h-3" />
-                  {format(new Date(email.createdAt), "d MMMM yyyy HH:mm", { locale: dateFnsLocale })}
-                </span>
-              </div>
-            </div>
-
-            {email.summary && (
-              <div className="px-4 py-2.5 bg-primary/[0.06] border-b border-border">
-                <div className="flex items-center gap-1.5 mb-0.5">
-                  <Sparkles className="w-3 h-3 text-primary" />
-                  <span className="text-[10px] font-medium text-primary uppercase tracking-wider">{t("inbox.aiSummary")}</span>
-                </div>
-                <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{email.summary}</p>
-              </div>
-            )}
-
-            <div className="p-4">
-              {bodyLoading && !email.body ? (
-                <div className="space-y-2">
-                  <Skeleton className="h-3 w-3/4 bg-white/5" />
-                  <Skeleton className="h-3 w-full bg-white/5" />
-                  <Skeleton className="h-3 w-5/6 bg-white/5" />
-                  <Skeleton className="h-3 w-2/3 bg-white/5" />
-                </div>
-              ) : bodyError && !email.body ? (
-                <p className="text-[12px] text-red-400/80 italic">{t("archives.bodyLoadError", "Impossible de charger le contenu de cet email.")}</p>
-              ) : (
-                <EmailBodyRenderer body={email.body} emailId={email.id} sender={email.sender} />
-              )}
-            </div>
-
-            <div className="px-4 py-3 border-t border-border">
-              <div className="flex items-center gap-1.5 mb-2.5">
-                <Button
-                  size="sm"
-                  className="gap-1.5 h-7 text-[11px]"
-                  onClick={() => onRestore(email.id)}
-                >
-                  <RotateCcw className="w-3 h-3" />
-                  {t("archives.restoreToInbox")}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-red-400/70 hover:text-red-400 hover:bg-red-500/[0.08]"
-                  onClick={() => onDelete(email.id)}
-                >
-                  <Trash2 className="w-3 h-3" />
-                  {t("common.delete")}
-                </Button>
-              </div>
-              <div className="flex items-center gap-2.5 flex-wrap">
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.priority")}:</span>
-                  <Select value={email.priority} onValueChange={(val) => onUpdatePriority(email.id, val)}>
-                    <SelectTrigger className="w-[100px] h-6 bg-card border-border text-[11px] text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-border">
-                      <SelectItem value="urgent">{t("inbox.priorities.urgent")}</SelectItem>
-                      <SelectItem value="moyen">{t("inbox.priorities.medium")}</SelectItem>
-                      <SelectItem value="faible">{t("inbox.priorities.low")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.category")}:</span>
-                  <Select value={email.categoryId?.toString() || "none"} onValueChange={(val) => onUpdateCategory(email.id, val)}>
-                    <SelectTrigger className="w-[130px] h-6 bg-card border-border text-[11px] text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-border">
-                      <SelectItem value="none">{t("inbox.uncategorized")}</SelectItem>
-                      {categories.map((cat: any) => (
-                        <SelectItem key={cat.id} value={cat.id.toString()}>{cat.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.project")}:</span>
-                  <Select value={email.projectId || "none"} onValueChange={(val) => onUpdateProject(email.id, val)}>
-                    <SelectTrigger className="w-[140px] h-6 bg-card border-border text-[11px] text-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="bg-card border-border">
-                      <SelectItem value="none">{t("inbox.noProject")}</SelectItem>
-                      {projects.map((p: any) => (
-                        <SelectItem key={p.id} value={p.id}>{p.reference} — {p.name}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 export default function Archives() {
   const { t, i18n } = useTranslation();
@@ -395,83 +242,28 @@ export default function Archives() {
     );
   };
 
-  const handleUpdatePriority = (id: number, priority: string) => {
-    updateEmail.mutate(
-      { id, data: { priority } as any },
-      {
-        onSuccess: () => {
-          invalidateAll();
-          toast({ title: t("archives.priorityChanged") });
-        },
-      }
-    );
-  };
-
-  const handleUpdateCategory = (id: number, categoryId: string) => {
-    updateEmail.mutate(
-      { id, data: { categoryId: categoryId === "none" ? null : parseInt(categoryId) } },
-      {
-        onSuccess: () => {
-          invalidateAll();
-          toast({ title: t("archives.categoryUpdated") });
-        },
-      }
-    );
-  };
-
-  const handleUpdateProject = (id: number, projectId: string) => {
-    updateEmail.mutate(
-      { id, data: { projectId: projectId === "none" ? null : projectId } as any },
-      {
-        onSuccess: () => {
-          invalidateAll();
-          toast({ title: t("archives.projectUpdated") });
-        },
-      }
-    );
-  };
-
-  const selectedEmailFromList = archivedEmails.find((e) => e.id === selectedEmailId);
-
-  const { data: emailDetailData, isLoading: emailDetailLoading, isError: emailDetailError } = useQuery({
-    queryKey: ["email-detail", selectedEmailId],
-    queryFn: async () => {
-      if (!selectedEmailId) return null;
-      const { supabase } = await import("@/lib/supabase");
-      const { data: sessionData } = await supabase.auth.getSession();
-      const token = sessionData?.session?.access_token;
-      if (!token) throw new Error("no session");
-      const resp = await fetch(`${import.meta.env.BASE_URL}api/emails/${selectedEmailId}`, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
-      return resp.json();
-    },
-    enabled: !!selectedEmailId,
-    staleTime: 30_000,
-    retry: 1,
-  });
-
-  const selectedEmail = selectedEmailFromList && emailDetailData
-    ? { ...selectedEmailFromList, ...emailDetailData }
-    : selectedEmailFromList;
-
-  if (selectedEmail) {
+  if (selectedEmailId) {
     return (
       <DashboardLayout>
         <div className="p-5 max-w-[900px] mx-auto w-full">
-          <ArchivedEmailDetail
-            email={selectedEmail}
+          <div className="mb-3 flex items-center justify-between">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => handleRestore(selectedEmailId)}
+              className="h-8 px-3 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 text-[12px] gap-1.5"
+              data-testid="button-restore-from-archive"
+            >
+              <RotateCcw className="w-3.5 h-3.5" />
+              {t("archives.restore", "Restaurer dans la boîte")}
+            </Button>
+          </div>
+          <EmailDetailContainer
+            emailId={selectedEmailId}
             onBack={() => setSelectedEmailId(null)}
-            onRestore={handleRestore}
-            onDelete={handleDelete}
-            onUpdatePriority={handleUpdatePriority}
-            onUpdateCategory={handleUpdateCategory}
-            onUpdateProject={handleUpdateProject}
-            categories={categories || []}
-            projects={projects || []}
-            bodyLoading={emailDetailLoading}
-            bodyError={emailDetailError}
+            onAfterArchive={() => setSelectedEmailId(null)}
+            onAfterDelete={() => setSelectedEmailId(null)}
+            onAfterMutation={invalidateAll}
           />
         </div>
       </DashboardLayout>
