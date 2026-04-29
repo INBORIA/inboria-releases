@@ -45,11 +45,6 @@ export default function ClassementMarketing() {
   const { t } = useTranslation();
   const paymentsEnabled = isPaymentsEnabled();
 
-  const heroStats = [
-    { value: "9", label: t("marketing.classification.stats.sectorFamilies") },
-    { value: "IA", label: t("marketing.classification.stats.aiGeneration") },
-  ];
-
   const howItWorks = [
     { step: "1", key: "step1" },
     { step: "2", key: "step2" },
@@ -86,14 +81,6 @@ export default function ClassementMarketing() {
             </Link>
           </div>
 
-          <div className="mt-12 grid grid-cols-2 gap-6 max-w-md mx-auto">
-            {heroStats.map((s) => (
-              <div key={s.label}>
-                <p className="text-2xl font-bold text-white">{s.value}</p>
-                <p className="text-[11px] text-[#8b9cb3] mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
@@ -105,6 +92,9 @@ export default function ClassementMarketing() {
             </h2>
             <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
               {t("marketing.classification.familiesDesc")}
+            </p>
+            <p className="mt-4 text-[13px] text-[#2d7dd2] max-w-2xl mx-auto leading-relaxed">
+              {t("marketing.classification.familiesReassurance")}
             </p>
           </div>
 
@@ -137,6 +127,30 @@ export default function ClassementMarketing() {
                 </div>
               </div>
             ))}
+
+            <div className="md:col-span-2 rounded-xl border-2 border-[#2d7dd2]/40 bg-gradient-to-br from-[#2d7dd2]/10 to-[#141c2b] p-6 sm:p-8">
+              <div className="flex flex-col sm:flex-row sm:items-center gap-6">
+                <div className="flex-1">
+                  <div className="flex items-center gap-3 mb-3">
+                    <div className="w-10 h-10 rounded-lg bg-[#2d7dd2]/20 flex items-center justify-center shrink-0">
+                      <Sparkles className="w-5 h-5 text-[#2d7dd2]" />
+                    </div>
+                    <h3 className="text-[16px] font-semibold text-white">
+                      {t("marketing.classification.notListedTitle")}
+                    </h3>
+                  </div>
+                  <p className="text-[13px] text-[#8b9cb3] leading-relaxed">
+                    {t("marketing.classification.notListedDesc")}
+                  </p>
+                </div>
+                <Link href="/signup" className="shrink-0">
+                  <button className="px-6 py-3 text-[13px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors flex items-center gap-2 whitespace-nowrap">
+                    {paymentsEnabled ? t("marketing.classification.notListedCta") : t("waitlist.ctaJoin")}
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+                </Link>
+              </div>
+            </div>
           </div>
         </div>
       </section>
