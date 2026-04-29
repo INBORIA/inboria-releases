@@ -3,6 +3,7 @@ import { useGetTeamDashboard } from "@workspace/api-client-react";
 import { Loader2, Users, MessageSquare, Mail, Archive } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
+import { useLocation } from "wouter";
 
 function ActionLabel({ action }: { action: string }) {
   const { t } = useTranslation();
@@ -27,9 +28,36 @@ function formatTime(dateStr: string, t: (key: string, opts?: any) => string) {
   return t("teamActivity.time.daysAgo", { count: days });
 }
 
-function StatCard({ label, value, icon }: { label: string; value: number; icon: React.ReactNode }) {
+function StatCard({ label, value, icon, onClick }: { label: string; value: number; icon: React.ReactNode; onClick?: () => void }) {
+  const interactive = !!onClick;
+  const baseClasses = "bg-[#141c2b] border border-[#1f2937] rounded-lg p-4 transition-colors text-left w-full";
+  const interactiveClasses = interactive
+    ? " hover:border-primary/40 hover:bg-[#172033] cursor-pointer focus:outline-none focus:ring-2 focus:ring-primary/40"
+    : "";
+  if (interactive) {
+    return (
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={onClick}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            onClick?.();
+          }
+        }}
+        className={baseClasses + interactiveClasses}
+      >
+        <div className="flex items-center gap-2 mb-2">
+          {icon}
+          <span className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">{label}</span>
+        </div>
+        <p className="text-2xl font-bold text-white">{value}</p>
+      </div>
+    );
+  }
   return (
-    <div className="bg-[#141c2b] border border-[#1f2937] rounded-lg p-4">
+    <div className={baseClasses}>
       <div className="flex items-center gap-2 mb-2">
         {icon}
         <span className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">{label}</span>
@@ -41,6 +69,7 @@ function StatCard({ label, value, icon }: { label: string; value: number; icon: 
 
 export default function TeamActivitePage() {
   const { t } = useTranslation();
+  const [, setLocation] = useLocation();
   const { data, isLoading } = useGetTeamDashboard();
 
   if (isLoading) {
@@ -73,16 +102,19 @@ export default function TeamActivitePage() {
             label={t("teamActivity.members")}
             value={members.length}
             icon={<Users className="h-4 w-4 text-primary" />}
+            onClick={() => setLocation("/dashboard/equipe")}
           />
           <StatCard
             label={t("teamActivity.assignedEmails")}
             value={members.reduce((s: number, m: any) => s + (m.assignedEmails || 0), 0)}
             icon={<Mail className="h-4 w-4 text-blue-400" />}
+            onClick={() => setLocation("/dashboard?assignee=any")}
           />
           <StatCard
             label={t("teamActivity.archivedEmails")}
             value={members.reduce((s: number, m: any) => s + (m.archivedEmails || 0), 0)}
             icon={<Archive className="h-4 w-4 text-green-400" />}
+            onClick={() => setLocation("/dashboard/archives")}
           />
           <StatCard
             label={t("teamActivity.comments")}
@@ -102,7 +134,19 @@ export default function TeamActivitePage() {
           ) : (
             <div className="divide-y divide-[#1f2937]">
               {members.map((m: any) => (
-                <div key={m.userId} className="px-4 py-3 flex items-center gap-4">
+                <div
+                  key={m.userId}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setLocation(`/dashboard?assignee=${encodeURIComponent(m.userId)}`)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      setLocation(`/dashboard?assignee=${encodeURIComponent(m.userId)}`);
+                    }
+                  }}
+                  className="w-full text-left px-4 py-3 flex items-center gap-4 hover:bg-[#172033] transition-colors focus:outline-none focus:bg-[#172033] cursor-pointer"
+                >
                   <div className="h-8 w-8 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[11px] font-semibold text-primary shrink-0">
                     {(m.fullName || "?").charAt(0).toUpperCase()}
                   </div>

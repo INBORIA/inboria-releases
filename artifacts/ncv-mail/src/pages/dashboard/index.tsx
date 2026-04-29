@@ -2914,6 +2914,20 @@ export default function Dashboard() {
     const num = id ? Number(id) : NaN;
     return Number.isFinite(num) && num > 0 ? num : null;
   });
+  const [assigneeFilter, setAssigneeFilter] = useState<string | null>(() => {
+    if (typeof window === "undefined") return null;
+    const params = new URLSearchParams(window.location.search);
+    const a = params.get("assignee");
+    return a && a.trim() ? a.trim() : null;
+  });
+  const clearAssigneeFilter = () => {
+    setAssigneeFilter(null);
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      url.searchParams.delete("assignee");
+      window.history.replaceState({}, "", url.toString());
+    }
+  };
   // Réafficher les panneaux CRM à chaque changement d'email ouvert :
   // si l'utilisateur les a masqués sur un email, on ne veut pas que ce
   // masquage persiste sur l'email suivant (chaque email mérite son contexte).
@@ -3127,7 +3141,7 @@ export default function Dashboard() {
   const [totalPages, setTotalPages] = useState(0);
 
   const prevFilterKey = useRef("");
-  const currentFilterKey = `${filterPriority}|${searchQuery}|${filterCategory}|${crmFilter || ""}`;
+  const currentFilterKey = `${filterPriority}|${searchQuery}|${filterCategory}|${crmFilter || ""}|${assigneeFilter || ""}`;
   useEffect(() => {
     if (prevFilterKey.current !== currentFilterKey) {
       prevFilterKey.current = currentFilterKey;
@@ -3376,6 +3390,17 @@ export default function Dashboard() {
   const activeEmails = emails
     ?.slice()
     .filter((e: any) => {
+      if (assigneeFilter) {
+        if (assigneeFilter === "any") {
+          if (!e.assignedTo) return false;
+        } else if (String(e.assignedTo || "") !== String(assigneeFilter)) {
+          return false;
+        }
+        // Filtre assignee actif : on ignore le filtre par compte (souvent
+        // persisté en localStorage) pour éviter un double-filtrage silencieux
+        // qui masquerait des emails à l'utilisateur arrivant depuis Activité équipe.
+        return true;
+      }
       if (!selectedAccountEmail) return true;
       const sharedId = e.shared_mailbox_id ?? e.sharedMailboxId ?? null;
       if (sharedId) return false;
@@ -4512,6 +4537,34 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
+
+                  {assigneeFilter && (() => {
+                    const memberName = assigneeFilter === "any"
+                      ? t("inbox.assigneeFilterAny", { defaultValue: "tous les emails assignés" })
+                      : (() => {
+                          const m = (orgMembers as any[] | undefined)?.find((x: any) => String(x.userId) === String(assigneeFilter));
+                          return m?.fullName || m?.email || t("inbox.assigneeFilterMember", { defaultValue: "ce membre" });
+                        })();
+                    return (
+                      <div className="flex items-center gap-2 mb-2 p-2.5 rounded-lg border border-primary/30 bg-primary/[0.06]">
+                        <UserPlus className="w-3.5 h-3.5 text-primary shrink-0" />
+                        <span className="text-[11px] text-white">
+                          {t("inbox.assigneeFilterLabel", { defaultValue: "Filtré sur" })}{" "}
+                          <span className="font-semibold">{memberName}</span>
+                        </span>
+                        <div className="flex-1" />
+                        <Button
+                          size="sm"
+                          variant="ghost"
+                          onClick={clearAssigneeFilter}
+                          className="h-6 px-2 text-[10px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
+                        >
+                          <X className="w-3 h-3 mr-1" />
+                          {t("inbox.clearFilter", { defaultValue: "Effacer le filtre" })}
+                        </Button>
+                      </div>
+                    );
+                  })()}
 
                   <div data-selection-bar className={`flex items-center gap-2 mb-2 p-2.5 rounded-lg border h-[40px] ${selectionMode ? "bg-primary/[0.08] border-primary/20" : "bg-card/50 border-border"}`}>
                     <button
