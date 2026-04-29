@@ -2923,6 +2923,18 @@ export default function Dashboard() {
     setDetailSalesforcePanelHidden(false);
     setDetailOdooPanelHidden(false);
   }, [selectedEmailId]);
+  // Quand l'utilisateur reclique sur "Réception" dans la sidebar alors qu'il
+  // est déjà sur /dashboard, on ferme l'email ouvert pour revenir à la liste.
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail;
+      if (detail?.href === "/dashboard") {
+        setSelectedEmailId(null);
+      }
+    };
+    window.addEventListener("sidebar-nav-reset", handler);
+    return () => window.removeEventListener("sidebar-nav-reset", handler);
+  }, []);
   const [isSyncing, setIsSyncing] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const searchQuery = useDebounce(searchInput, 300);

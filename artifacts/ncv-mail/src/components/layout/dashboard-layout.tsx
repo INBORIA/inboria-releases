@@ -154,7 +154,14 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                   : "text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]",
                 "group flex items-center gap-x-2.5 rounded-md px-2.5 py-[7px] text-[12px] font-medium transition-colors"
               )}
-              onClick={() => setMobileMenuOpen(false)}
+              onClick={() => {
+                setMobileMenuOpen(false);
+                if (location === item.href) {
+                  window.dispatchEvent(
+                    new CustomEvent("sidebar-nav-reset", { detail: { href: item.href } })
+                  );
+                }
+              }}
             >
               <item.icon
                 className={cn(
