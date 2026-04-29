@@ -106,7 +106,7 @@ export default function Relances() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-[1100px] mx-auto p-4 sm:p-6 space-y-6">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-6">
         <BackToInboxButton />
         <div>
           <h1 className="text-[20px] font-semibold text-white flex items-center gap-2">

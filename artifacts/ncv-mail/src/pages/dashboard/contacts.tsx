@@ -26,7 +26,7 @@ export default function ContactsPage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 max-w-5xl mx-auto" data-testid="page-contacts">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5" data-testid="page-contacts">
         <BackToInboxButton />
         <div className="mb-6">
           <h1 className="text-2xl font-semibold text-white flex items-center gap-2">

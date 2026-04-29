@@ -335,7 +335,7 @@ export default function Taches() {
 
   return (
     <DashboardLayout>
-      <div className="p-5 max-w-5xl mx-auto w-full">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton />
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>

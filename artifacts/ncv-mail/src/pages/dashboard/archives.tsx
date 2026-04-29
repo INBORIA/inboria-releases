@@ -246,7 +246,7 @@ export default function Archives() {
   if (selectedEmailId) {
     return (
       <DashboardLayout>
-        <div className="p-5 max-w-[900px] mx-auto w-full">
+        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
           <div className="mb-3 flex items-center justify-between">
             <Button
               variant="ghost"
@@ -284,7 +284,7 @@ export default function Archives() {
   if (selectedCategory && selectedEmails) {
     return (
       <DashboardLayout>
-        <div className="p-5 max-w-[900px] mx-auto w-full">
+        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-center gap-3 mb-4">
             <Button
               variant="ghost"
@@ -436,7 +436,7 @@ export default function Archives() {
 
   return (
     <DashboardLayout>
-      <div className="p-5 max-w-5xl mx-auto w-full">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton />
         <div className="mb-5">
           <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("archives.title")}</h1>

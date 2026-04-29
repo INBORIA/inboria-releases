@@ -59,7 +59,7 @@ export default function TeamActivitePage() {
 
   return (
     <DashboardLayout>
-      <div className="p-6 max-w-5xl mx-auto space-y-6">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-6">
         <BackToInboxButton />
         <div>
           <h1 className="text-xl font-bold text-white">{t("teamActivity.title")}</h1>
