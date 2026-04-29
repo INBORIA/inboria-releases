@@ -212,7 +212,7 @@
     "disconnectedToastTitle_other": "{{count}} mailboxes disconnected",
     "disconnectedToastDescription": "Click to reconnect in Settings.",
     "disconnectedToastAction": "Reconnect",
-    "allCategories": "All",
+    "allCategories": "All categories",
     "uncategorized": "Uncategorized",
     "unread": "Unread",
     "assigned": "Assigned",
