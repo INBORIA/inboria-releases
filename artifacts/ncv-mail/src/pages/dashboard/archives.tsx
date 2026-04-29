@@ -16,7 +16,7 @@ import { fr, enUS, nl } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { translateCategoryName } from "@/lib/category-translations";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Archive, Clock, ArrowLeft, Trash2, RotateCcw, ChevronRight, FolderOpen, Sparkles, CheckSquare, Square } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { PaginatedEmails, Email } from "@workspace/api-client-react";
@@ -57,7 +57,7 @@ const categoryColors = [
   "bg-indigo-500/10 text-indigo-400 border-indigo-500/20",
 ];
 
-function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, categories, projects }: {
+function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, categories, projects, bodyLoading, bodyError }: {
   email: any;
   onBack: () => void;
   onRestore: (id: number) => void;
@@ -67,6 +67,8 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
   onUpdateProject: (id: number, projectId: string) => void;
   categories: any[];
   projects: any[];
+  bodyLoading?: boolean;
+  bodyError?: boolean;
 }) {
   const { t, i18n } = useTranslation();
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
@@ -124,7 +126,18 @@ function ArchivedEmailDetail({ email, onBack, onRestore, onDelete, onUpdatePrior
             )}
 
             <div className="p-4">
-              <EmailBodyRenderer body={email.body} emailId={email.id} sender={email.sender} />
+              {bodyLoading && !email.body ? (
+                <div className="space-y-2">
+                  <Skeleton className="h-3 w-3/4 bg-white/5" />
+                  <Skeleton className="h-3 w-full bg-white/5" />
+                  <Skeleton className="h-3 w-5/6 bg-white/5" />
+                  <Skeleton className="h-3 w-2/3 bg-white/5" />
+                </div>
+              ) : bodyError && !email.body ? (
+                <p className="text-[12px] text-red-400/80 italic">{t("archives.bodyLoadError", "Impossible de charger le contenu de cet email.")}</p>
+              ) : (
+                <EmailBodyRenderer body={email.body} emailId={email.id} sender={email.sender} />
+              )}
             </div>
 
             <div className="px-4 py-3 border-t border-border">
@@ -418,7 +431,30 @@ export default function Archives() {
     );
   };
 
-  const selectedEmail = archivedEmails.find((e) => e.id === selectedEmailId);
+  const selectedEmailFromList = archivedEmails.find((e) => e.id === selectedEmailId);
+
+  const { data: emailDetailData, isLoading: emailDetailLoading, isError: emailDetailError } = useQuery({
+    queryKey: ["email-detail", selectedEmailId],
+    queryFn: async () => {
+      if (!selectedEmailId) return null;
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error("no session");
+      const resp = await fetch(`${import.meta.env.BASE_URL}api/emails/${selectedEmailId}`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+      return resp.json();
+    },
+    enabled: !!selectedEmailId,
+    staleTime: 30_000,
+    retry: 1,
+  });
+
+  const selectedEmail = selectedEmailFromList && emailDetailData
+    ? { ...selectedEmailFromList, ...emailDetailData }
+    : selectedEmailFromList;
 
   if (selectedEmail) {
     return (
@@ -434,6 +470,8 @@ export default function Archives() {
             onUpdateProject={handleUpdateProject}
             categories={categories || []}
             projects={projects || []}
+            bodyLoading={emailDetailLoading}
+            bodyError={emailDetailError}
           />
         </div>
       </DashboardLayout>
