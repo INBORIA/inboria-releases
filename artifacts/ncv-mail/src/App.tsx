@@ -1,5 +1,8 @@
 import { Switch, Route, Router as WouterRouter, Redirect } from "wouter";
-import { QueryClient, QueryClientProvider, MutationCache } from "@tanstack/react-query";
+import { useEffect } from "react";
+import { QueryClient, MutationCache } from "@tanstack/react-query";
+import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -111,6 +114,13 @@ const mutationCache = new MutationCache({
   },
 });
 
+const ONE_MINUTE = 1000 * 60;
+const ONE_HOUR = ONE_MINUTE * 60;
+const ONE_DAY = ONE_HOUR * 24;
+
+const PERSIST_CACHE_KEY = "inboria-cache-v1";
+const CACHE_BUSTER = "v1";
+
 const queryClient = new QueryClient({
   mutationCache,
   defaultOptions: {
@@ -131,9 +141,62 @@ const queryClient = new QueryClient({
         return failureCount < 1;
       },
       refetchOnWindowFocus: false,
+      // Stale-while-revalidate: serve cache instantly, refresh in background.
+      staleTime: 30 * 1000,
+      // gcTime must be >= persister maxAge so persisted entries are not garbage
+      // collected before they get a chance to be re-hydrated.
+      gcTime: ONE_DAY,
     },
   },
 });
+
+const persister = typeof window !== "undefined"
+  ? createSyncStoragePersister({
+      storage: window.localStorage,
+      key: PERSIST_CACHE_KEY,
+      throttleTime: 1000,
+    })
+  : undefined;
+
+const persistOptions = {
+  persister: persister!,
+  maxAge: ONE_DAY,
+  buster: CACHE_BUSTER,
+  dehydrateOptions: {
+    shouldDehydrateQuery: (query: any) => {
+      if (query.state.status !== "success") return false;
+      // Volatile / sensitive keys not worth persisting.
+      const firstKey = query.queryKey?.[0];
+      if (typeof firstKey === "string") {
+        if (firstKey.startsWith("/api/auth")) return false;
+        if (firstKey.startsWith("/auth")) return false;
+        if (firstKey === "supabase") return false;
+      }
+      return true;
+    },
+  },
+};
+
+/**
+ * Clears React Query cache (memory + persisted) when the user signs out so
+ * the next user session never sees stale data from another account.
+ */
+function CacheCleanup() {
+  useEffect(() => {
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+      if (event === "SIGNED_OUT") {
+        queryClient.clear();
+        try {
+          window.localStorage.removeItem(PERSIST_CACHE_KEY);
+        } catch {
+          // Storage may be unavailable in private mode — non fatal.
+        }
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, []);
+  return null;
+}
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
   const { session, loading } = useAuth();
@@ -209,7 +272,8 @@ function Router() {
 function App() {
   return (
     <AuthProvider>
-      <QueryClientProvider client={queryClient}>
+      <PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
+        <CacheCleanup />
         <TooltipProvider>
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
             <Router />
@@ -217,7 +281,7 @@ function App() {
           </WouterRouter>
           <Toaster />
         </TooltipProvider>
-      </QueryClientProvider>
+      </PersistQueryClientProvider>
     </AuthProvider>
   );
 }

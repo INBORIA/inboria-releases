@@ -41,6 +41,12 @@ import {
   useEmptyTrash,
   useBlockSender,
   useListIntegrations,
+  useGetDashboardBootstrap,
+  getGetMyOrganisationQueryKey,
+  getGetOrganisationMembersQueryKey,
+  getGetSharedMailboxesQueryKey,
+  getListProjectsQueryKey,
+  getListIntegrationsQueryKey,
 } from "@workspace/api-client-react";
 import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails, Integration } from "@workspace/api-client-react";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
@@ -2951,6 +2957,24 @@ export default function Dashboard() {
     ? { scope: "shared" as const, sharedMailboxId: selectedSharedMailboxId }
     : { scope: "personal" as const, accountEmail: selectedAccountEmailForCounts };
   const { data: categoryCounts, isLoading: categoriesLoading } = useGetCategoryCounts(categoryCountsParams);
+
+  // Bootstrap aggregator: one roundtrip to seed the React Query cache for the
+  // slow-moving "socle" data (profile, organisation, members, mailboxes,
+  // projects, integrations, summary). Subsequent useGet* hooks below read
+  // from cache instantly and refresh in background.
+  const { data: bootstrap } = useGetDashboardBootstrap();
+  useEffect(() => {
+    if (!bootstrap) return;
+    const b = bootstrap as any;
+    if (b.profile) queryClient.setQueryData(getGetProfileQueryKey(), b.profile);
+    if (b.organisation !== undefined) queryClient.setQueryData(getGetMyOrganisationQueryKey(), b.organisation);
+    if (Array.isArray(b.members)) queryClient.setQueryData(getGetOrganisationMembersQueryKey(), b.members);
+    if (Array.isArray(b.sharedMailboxes)) queryClient.setQueryData(getGetSharedMailboxesQueryKey(), b.sharedMailboxes);
+    if (Array.isArray(b.projects)) queryClient.setQueryData(getListProjectsQueryKey(), b.projects);
+    if (Array.isArray(b.integrations)) queryClient.setQueryData(getListIntegrationsQueryKey(), b.integrations);
+    if (b.summary) queryClient.setQueryData(getGetDashboardSummaryQueryKey(), b.summary);
+  }, [bootstrap, queryClient]);
+
   const { data: summary, isLoading: summaryLoading } = useGetDashboardSummary();
   const { data: projects } = useListProjects();
   const { data: profile } = useGetProfile();

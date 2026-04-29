@@ -476,6 +476,110 @@ export interface CategoryCount {
   count: number;
 }
 
+export type OrganisationMyRole =
+  (typeof OrganisationMyRole)[keyof typeof OrganisationMyRole];
+
+export const OrganisationMyRole = {
+  admin: "admin",
+  member: "member",
+} as const;
+
+export interface Organisation {
+  id: string;
+  name: string;
+  slug: string;
+  plan?: string;
+  seatsTotal?: number;
+  emailsQuota?: number;
+  emailsUsed?: number;
+  myRole?: OrganisationMyRole;
+  createdAt?: string;
+}
+
+export type OrganisationMemberRole =
+  (typeof OrganisationMemberRole)[keyof typeof OrganisationMemberRole];
+
+export const OrganisationMemberRole = {
+  admin: "admin",
+  member: "member",
+} as const;
+
+export type OrganisationMemberStatus =
+  (typeof OrganisationMemberStatus)[keyof typeof OrganisationMemberStatus];
+
+export const OrganisationMemberStatus = {
+  active: "active",
+  disabled: "disabled",
+} as const;
+
+export interface OrganisationMember {
+  id: string;
+  userId: string;
+  role: OrganisationMemberRole;
+  status: OrganisationMemberStatus;
+  joinedAt?: string;
+  fullName?: string;
+  email?: string;
+}
+
+export interface SharedMailbox {
+  id: string;
+  name: string;
+  emailAddress: string;
+  connectionId?: string | null;
+  createdAt?: string;
+  memberCount?: number;
+  unclaimedCount?: number;
+}
+
+export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus];
+
+export const ProjectStatus = {
+  actif: "actif",
+  termine: "termine",
+  en_pause: "en_pause",
+} as const;
+
+export interface Project {
+  id: string;
+  name: string;
+  reference: string;
+  /** @nullable */
+  description?: string | null;
+  status: ProjectStatus;
+  color: string;
+  emailCount: number;
+  taskCount: number;
+  pendingTaskCount: number;
+  createdAt: string;
+}
+
+export interface Integration {
+  id: string;
+  provider: string;
+  /** @nullable */
+  workspaceName?: string | null;
+  /** @nullable */
+  channelId?: string | null;
+  /** @nullable */
+  databaseId?: string | null;
+  enabled: boolean;
+  createdAt?: string;
+}
+
+/**
+ * Aggregated payload returned by /dashboard/bootstrap. Used by the inbox to seed the React Query cache in a single roundtrip.
+ */
+export interface DashboardBootstrap {
+  profile: UserProfile;
+  organisation?: Organisation | null;
+  members: OrganisationMember[];
+  sharedMailboxes: SharedMailbox[];
+  projects: Project[];
+  integrations: Integration[];
+  summary: DashboardSummary;
+}
+
 export interface DailySummaryRequest {
   language?: string;
 }
@@ -510,28 +614,6 @@ export interface GenerateDraftBody {
 
 export interface DraftResponse {
   draft: string;
-}
-
-export type ProjectStatus = (typeof ProjectStatus)[keyof typeof ProjectStatus];
-
-export const ProjectStatus = {
-  actif: "actif",
-  termine: "termine",
-  en_pause: "en_pause",
-} as const;
-
-export interface Project {
-  id: string;
-  name: string;
-  reference: string;
-  /** @nullable */
-  description?: string | null;
-  status: ProjectStatus;
-  color: string;
-  emailCount: number;
-  taskCount: number;
-  pendingTaskCount: number;
-  createdAt: string;
 }
 
 export interface ProjectDetail {
@@ -581,19 +663,6 @@ export interface UpdateProjectBody {
   color?: string;
 }
 
-export interface Integration {
-  id: string;
-  provider: string;
-  /** @nullable */
-  workspaceName?: string | null;
-  /** @nullable */
-  channelId?: string | null;
-  /** @nullable */
-  databaseId?: string | null;
-  enabled: boolean;
-  createdAt?: string;
-}
-
 export interface OAuthUrlResponse {
   url: string;
 }
@@ -637,26 +706,6 @@ export interface PortalResponse {
   url: string;
 }
 
-export type OrganisationMyRole =
-  (typeof OrganisationMyRole)[keyof typeof OrganisationMyRole];
-
-export const OrganisationMyRole = {
-  admin: "admin",
-  member: "member",
-} as const;
-
-export interface Organisation {
-  id: string;
-  name: string;
-  slug: string;
-  plan?: string;
-  seatsTotal?: number;
-  emailsQuota?: number;
-  emailsUsed?: number;
-  myRole?: OrganisationMyRole;
-  createdAt?: string;
-}
-
 export interface CreateOrganisationBody {
   /** @minLength 2 */
   name: string;
@@ -664,32 +713,6 @@ export interface CreateOrganisationBody {
 
 export interface UpdateOrganisationBody {
   name?: string;
-}
-
-export type OrganisationMemberRole =
-  (typeof OrganisationMemberRole)[keyof typeof OrganisationMemberRole];
-
-export const OrganisationMemberRole = {
-  admin: "admin",
-  member: "member",
-} as const;
-
-export type OrganisationMemberStatus =
-  (typeof OrganisationMemberStatus)[keyof typeof OrganisationMemberStatus];
-
-export const OrganisationMemberStatus = {
-  active: "active",
-  disabled: "disabled",
-} as const;
-
-export interface OrganisationMember {
-  id: string;
-  userId: string;
-  role: OrganisationMemberRole;
-  status: OrganisationMemberStatus;
-  joinedAt?: string;
-  fullName?: string;
-  email?: string;
 }
 
 export type InviteBodyRole =
@@ -722,16 +745,6 @@ export interface Invitation {
   token?: string;
   createdAt?: string;
   expiresAt?: string;
-}
-
-export interface SharedMailbox {
-  id: string;
-  name: string;
-  emailAddress: string;
-  connectionId?: string | null;
-  createdAt?: string;
-  memberCount?: number;
-  unclaimedCount?: number;
 }
 
 export interface CreateSharedMailboxBody {

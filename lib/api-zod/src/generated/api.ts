@@ -971,6 +971,157 @@ export const GetCategoryCountsResponse = zod.array(
 );
 
 /**
+ * Returns all the slow-moving dashboard "socle" data in a single
+roundtrip — profile, organisation, organisation members, shared
+mailboxes, projects, integrations and the dashboard summary —
+used by the inbox to seed the React Query cache and avoid the
+~10 parallel calls usually issued at first paint.
+
+ * @summary One-shot dashboard bootstrap aggregator
+ */
+export const getDashboardBootstrapResponseProfileAiCreditsUsedDefault = 0;
+export const getDashboardBootstrapResponseProfileAiLanguageDefault = `fr`;
+export const getDashboardBootstrapResponseProfileSignatureDefault = ``;
+export const getDashboardBootstrapResponseProfileTimezoneDefault = `Europe/Brussels`;
+export const getDashboardBootstrapResponseProfileIsAdminDefault = false;
+export const getDashboardBootstrapResponseProfileFollowUpDelayDaysDefault = 5;
+export const getDashboardBootstrapResponseProfileFollowUpDelayDaysMax = 60;
+
+export const getDashboardBootstrapResponseProfileTrackingEnabledDefault = false;
+
+export const GetDashboardBootstrapResponse = zod
+  .object({
+    profile: zod.object({
+      id: zod.number(),
+      email: zod.string(),
+      fullName: zod.string(),
+      plan: zod.string(),
+      seats: zod.number(),
+      emailsUsed: zod.number(),
+      aiCreditsUsed: zod
+        .number()
+        .default(getDashboardBootstrapResponseProfileAiCreditsUsedDefault),
+      emailsQuota: zod.number(),
+      quotaPeriodStart: zod.coerce.date().nullish(),
+      aiLanguage: zod
+        .enum(["fr", "en", "nl"])
+        .default(getDashboardBootstrapResponseProfileAiLanguageDefault),
+      signature: zod
+        .string()
+        .default(getDashboardBootstrapResponseProfileSignatureDefault),
+      timezone: zod
+        .string()
+        .default(getDashboardBootstrapResponseProfileTimezoneDefault),
+      createdAt: zod.coerce.date(),
+      organisationId: zod.string().nullish(),
+      organisationName: zod.string().nullish(),
+      organisationRole: zod
+        .union([zod.literal("admin"), zod.literal("member"), zod.literal(null)])
+        .nullish(),
+      isAdmin: zod
+        .boolean()
+        .default(getDashboardBootstrapResponseProfileIsAdminDefault)
+        .describe("True when the profile has the internal admin flag."),
+      followUpDelayDays: zod
+        .number()
+        .min(1)
+        .max(getDashboardBootstrapResponseProfileFollowUpDelayDaysMax)
+        .default(getDashboardBootstrapResponseProfileFollowUpDelayDaysDefault)
+        .describe(
+          "Délai par défaut (en jours) avant de suggérer une relance sur un mail envoyé sans réponse.",
+        ),
+      trackingEnabled: zod
+        .boolean()
+        .default(getDashboardBootstrapResponseProfileTrackingEnabledDefault)
+        .describe(
+          "True if the user opted in to read-receipt tracking pixels on sent emails.",
+        ),
+    }),
+    organisation: zod
+      .union([
+        zod.object({
+          id: zod.string(),
+          name: zod.string(),
+          slug: zod.string(),
+          plan: zod.string().optional(),
+          seatsTotal: zod.number().optional(),
+          emailsQuota: zod.number().optional(),
+          emailsUsed: zod.number().optional(),
+          myRole: zod.enum(["admin", "member"]).optional(),
+          createdAt: zod.coerce.date().optional(),
+        }),
+        zod.null(),
+      ])
+      .optional(),
+    members: zod.array(
+      zod.object({
+        id: zod.string(),
+        userId: zod.string(),
+        role: zod.enum(["admin", "member"]),
+        status: zod.enum(["active", "disabled"]),
+        joinedAt: zod.coerce.date().optional(),
+        fullName: zod.string().optional(),
+        email: zod.string().optional(),
+      }),
+    ),
+    sharedMailboxes: zod.array(
+      zod.object({
+        id: zod.string(),
+        name: zod.string(),
+        emailAddress: zod.string(),
+        connectionId: zod.string().nullish(),
+        createdAt: zod.coerce.date().optional(),
+        memberCount: zod.number().optional(),
+        unclaimedCount: zod.number().optional(),
+      }),
+    ),
+    projects: zod.array(
+      zod.object({
+        id: zod.string(),
+        name: zod.string(),
+        reference: zod.string(),
+        description: zod.string().nullish(),
+        status: zod.enum(["actif", "termine", "en_pause"]),
+        color: zod.string(),
+        emailCount: zod.number(),
+        taskCount: zod.number(),
+        pendingTaskCount: zod.number(),
+        createdAt: zod.coerce.date(),
+      }),
+    ),
+    integrations: zod.array(
+      zod.object({
+        id: zod.string(),
+        provider: zod.string(),
+        workspaceName: zod.string().nullish(),
+        channelId: zod.string().nullish(),
+        databaseId: zod.string().nullish(),
+        enabled: zod.boolean(),
+        createdAt: zod.coerce.date().optional(),
+      }),
+    ),
+    summary: zod.object({
+      totalEmails: zod.number(),
+      urgentCount: zod.number(),
+      moyenCount: zod.number(),
+      faibleCount: zod.number(),
+      uncategorizedCount: zod
+        .number()
+        .describe(
+          'Server-computed count of inbox emails with no category or in the system \"Non classé\" category. Single source of truth — avoids fragile client-side formula based on diff between summary and category-counts.',
+        ),
+      notificationCount: zod.number(),
+      pendingTasks: zod.number(),
+      emailsUsed: zod.number(),
+      emailsQuota: zod.number(),
+      plan: zod.string(),
+    }),
+  })
+  .describe(
+    "Aggregated payload returned by \/dashboard\/bootstrap. Used by the inbox to seed the React Query cache in a single roundtrip.",
+  );
+
+/**
  * @summary List projects
  */
 export const ListProjectsResponseItem = zod.object({

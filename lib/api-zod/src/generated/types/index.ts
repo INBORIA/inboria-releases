@@ -86,6 +86,7 @@ export * from "./createTemplateFromEmailBody";
 export * from "./dailySummary";
 export * from "./dailySummaryRequest";
 export * from "./dailySummaryStats";
+export * from "./dashboardBootstrap";
 export * from "./dashboardSummary";
 export * from "./deleteAppointment200";
 export * from "./deleteEmail200";

@@ -779,6 +779,25 @@ paths:
                 items:
                   $ref: "#/components/schemas/CategoryCount"
 
+  /dashboard/bootstrap:
+    get:
+      operationId: getDashboardBootstrap
+      tags: [dashboard]
+      summary: One-shot dashboard bootstrap aggregator
+      description: |
+        Returns all the slow-moving dashboard "socle" data in a single
+        roundtrip — profile, organisation, organisation members, shared
+        mailboxes, projects, integrations and the dashboard summary —
+        used by the inbox to seed the React Query cache and avoid the
+        ~10 parallel calls usually issued at first paint.
+      responses:
+        "200":
+          description: Bootstrap payload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardBootstrap"
+
   /projects:
     get:
       operationId: listProjects
@@ -3982,6 +4001,42 @@ components:
         - categoryId
         - categoryName
         - count
+
+    DashboardBootstrap:
+      type: object
+      description: Aggregated payload returned by /dashboard/bootstrap. Used by the inbox to seed the React Query cache in a single roundtrip.
+      properties:
+        profile:
+          $ref: "#/components/schemas/UserProfile"
+        organisation:
+          oneOf:
+            - $ref: "#/components/schemas/Organisation"
+            - type: "null"
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/OrganisationMember"
+        sharedMailboxes:
+          type: array
+          items:
+            $ref: "#/components/schemas/SharedMailbox"
+        projects:
+          type: array
+          items:
+            $ref: "#/components/schemas/Project"
+        integrations:
+          type: array
+          items:
+            $ref: "#/components/schemas/Integration"
+        summary:
+          $ref: "#/components/schemas/DashboardSummary"
+      required:
+        - profile
+        - members
+        - sharedMailboxes
+        - projects
+        - integrations
+        - summary
 
     DailySummaryRequest:
       type: object

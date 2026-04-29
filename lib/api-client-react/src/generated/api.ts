@@ -66,6 +66,7 @@ import type {
   CreateTemplateFromEmailBody,
   DailySummary,
   DailySummaryRequest,
+  DashboardBootstrap,
   DashboardSummary,
   DeleteAppointment200,
   DeleteEmail200,
@@ -3116,6 +3117,87 @@ export function useGetCategoryCounts<
   },
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetCategoryCountsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Returns all the slow-moving dashboard "socle" data in a single
+roundtrip — profile, organisation, organisation members, shared
+mailboxes, projects, integrations and the dashboard summary —
+used by the inbox to seed the React Query cache and avoid the
+~10 parallel calls usually issued at first paint.
+
+ * @summary One-shot dashboard bootstrap aggregator
+ */
+export const getGetDashboardBootstrapUrl = () => {
+  return `/api/dashboard/bootstrap`;
+};
+
+export const getDashboardBootstrap = async (
+  options?: RequestInit,
+): Promise<DashboardBootstrap> => {
+  return customFetch<DashboardBootstrap>(getGetDashboardBootstrapUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetDashboardBootstrapQueryKey = () => {
+  return [`/api/dashboard/bootstrap`] as const;
+};
+
+export const getGetDashboardBootstrapQueryOptions = <
+  TData = Awaited<ReturnType<typeof getDashboardBootstrap>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getDashboardBootstrap>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetDashboardBootstrapQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getDashboardBootstrap>>
+  > = ({ signal }) => getDashboardBootstrap({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getDashboardBootstrap>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetDashboardBootstrapQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getDashboardBootstrap>>
+>;
+export type GetDashboardBootstrapQueryError = ErrorType<unknown>;
+
+/**
+ * @summary One-shot dashboard bootstrap aggregator
+ */
+
+export function useGetDashboardBootstrap<
+  TData = Awaited<ReturnType<typeof getDashboardBootstrap>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getDashboardBootstrap>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetDashboardBootstrapQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;
