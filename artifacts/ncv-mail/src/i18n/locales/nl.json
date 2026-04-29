@@ -1951,7 +1951,12 @@
       "minutesAgo": "{{count}}min geleden",
       "hoursAgo": "{{count}}u geleden",
       "daysAgo": "{{count}}d geleden"
-    }
+    },
+    "commentsModalTitle": "Laatste opmerkingen",
+    "commentsModalSubtitle": "De 7 meest recente opmerkingen van uw team",
+    "commentsModalEmpty": "Nog geen opmerkingen",
+    "commentsModalOpenEmail": "E-mail openen",
+    "commentsModalOn": "op"
   },
   "notifications": {
     "title": "Meldingen",

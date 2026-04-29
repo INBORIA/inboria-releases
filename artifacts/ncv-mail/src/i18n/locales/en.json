@@ -1951,7 +1951,12 @@
       "minutesAgo": "{{count}}min ago",
       "hoursAgo": "{{count}}h ago",
       "daysAgo": "{{count}}d ago"
-    }
+    },
+    "commentsModalTitle": "Latest comments",
+    "commentsModalSubtitle": "Your team's 7 most recent comments",
+    "commentsModalEmpty": "No comments yet",
+    "commentsModalOpenEmail": "Open email",
+    "commentsModalOn": "on"
   },
   "notifications": {
     "title": "Notifications",

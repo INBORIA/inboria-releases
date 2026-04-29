@@ -125,6 +125,85 @@ router.get("/team/dashboard", requireAuth, async (req, res): Promise<void> => {
   }
 });
 
+router.get("/team/recent-comments", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const orgId = await getOrgIdForMember(req.userId!);
+    if (!orgId) {
+      res.json([]);
+      return;
+    }
+
+    const limitRaw = Number(req.query.limit);
+    const limit = Number.isFinite(limitRaw) && limitRaw > 0 && limitRaw <= 50 ? Math.floor(limitRaw) : 10;
+
+    const { data: members } = await supabaseAdmin
+      .from("organisation_members")
+      .select("user_id")
+      .eq("organisation_id", orgId)
+      .eq("status", "active");
+
+    const memberUserIds = (members || []).map((m) => m.user_id);
+    if (memberUserIds.length === 0) {
+      res.json([]);
+      return;
+    }
+
+    const { data: comments } = await supabaseAdmin
+      .from("email_comments")
+      .select("id, body, created_at, user_id, email_id")
+      .in("user_id", memberUserIds)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+
+    if (!comments || comments.length === 0) {
+      res.json([]);
+      return;
+    }
+
+    const emailIds = [...new Set(comments.map((c) => c.email_id))];
+    const userIds = [...new Set(comments.map((c) => c.user_id))];
+
+    // Restreindre aux emails qui appartiennent à un membre de l'organisation
+    // (un commentaire orphelin sur un email non visible ne devrait pas remonter ici).
+    const { data: emails } = await supabaseAdmin
+      .from("emails")
+      .select("id, subject, user_id")
+      .in("id", emailIds)
+      .in("user_id", memberUserIds);
+
+    const emailMap = new Map<number, string>();
+    for (const e of emails || []) {
+      emailMap.set(e.id, e.subject || "");
+    }
+
+    const { data: profiles } = await supabaseAdmin
+      .from("profiles")
+      .select("id, full_name")
+      .in("id", userIds);
+
+    const profileMap = new Map<string, string>();
+    for (const p of profiles || []) {
+      profileMap.set(p.id, p.full_name || "");
+    }
+
+    const enriched = comments
+      .filter((c) => emailMap.has(c.email_id))
+      .map((c) => ({
+        id: String(c.id),
+        body: c.body || "",
+        createdAt: c.created_at,
+        userId: c.user_id,
+        userName: profileMap.get(c.user_id) || "",
+        emailId: c.email_id,
+        emailSubject: emailMap.get(c.email_id) || "",
+      }));
+
+    res.json(enriched);
+  } catch {
+    res.status(500).json({ error: "Erreur lors de la récupération des commentaires récents" });
+  }
+});
+
 router.get("/team/activity", requireAuth, async (req, res): Promise<void> => {
   try {
     const orgId = await getOrgIdForMember(req.userId!);

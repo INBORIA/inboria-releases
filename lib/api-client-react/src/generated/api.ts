@@ -104,6 +104,7 @@ import type {
   GetNotificationsParams,
   GetSharedMailboxEmailsParams,
   GetTeamActivityParams,
+  GetTeamRecentCommentsParams,
   HealthStatus,
   InboxHealth,
   IncrementTemplateUsage200,
@@ -165,6 +166,7 @@ import type {
   SuggestTemplatesParams,
   Task,
   TeamDashboard,
+  TeamRecentComment,
   UnassignEmail200,
   UnblockSender200,
   UnclaimSharedEmail200,
@@ -9464,6 +9466,106 @@ export function useGetTeamDashboard<
   request?: SecondParameter<typeof customFetch>;
 }): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetTeamDashboardQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Get recent team comments enriched with email subject and author
+ */
+export const getGetTeamRecentCommentsUrl = (
+  params?: GetTeamRecentCommentsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/team/recent-comments?${stringifiedParams}`
+    : `/api/team/recent-comments`;
+};
+
+export const getTeamRecentComments = async (
+  params?: GetTeamRecentCommentsParams,
+  options?: RequestInit,
+): Promise<TeamRecentComment[]> => {
+  return customFetch<TeamRecentComment[]>(getGetTeamRecentCommentsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetTeamRecentCommentsQueryKey = (
+  params?: GetTeamRecentCommentsParams,
+) => {
+  return [`/api/team/recent-comments`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetTeamRecentCommentsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getTeamRecentComments>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: GetTeamRecentCommentsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getTeamRecentComments>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetTeamRecentCommentsQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getTeamRecentComments>>
+  > = ({ signal }) =>
+    getTeamRecentComments(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getTeamRecentComments>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetTeamRecentCommentsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getTeamRecentComments>>
+>;
+export type GetTeamRecentCommentsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Get recent team comments enriched with email subject and author
+ */
+
+export function useGetTeamRecentComments<
+  TData = Awaited<ReturnType<typeof getTeamRecentComments>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: GetTeamRecentCommentsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getTeamRecentComments>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetTeamRecentCommentsQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

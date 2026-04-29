@@ -2475,6 +2475,28 @@ export const GetTeamDashboardResponse = zod.object({
 });
 
 /**
+ * @summary Get recent team comments enriched with email subject and author
+ */
+export const getTeamRecentCommentsQueryLimitDefault = 10;
+
+export const GetTeamRecentCommentsQueryParams = zod.object({
+  limit: zod.coerce.number().default(getTeamRecentCommentsQueryLimitDefault),
+});
+
+export const GetTeamRecentCommentsResponseItem = zod.object({
+  id: zod.string(),
+  body: zod.string(),
+  createdAt: zod.string(),
+  userId: zod.string(),
+  userName: zod.string(),
+  emailId: zod.number(),
+  emailSubject: zod.string(),
+});
+export const GetTeamRecentCommentsResponse = zod.array(
+  GetTeamRecentCommentsResponseItem,
+);
+
+/**
  * @summary Get team activity log
  */
 export const GetTeamActivityQueryParams = zod.object({

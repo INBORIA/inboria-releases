@@ -2463,6 +2463,28 @@ paths:
               schema:
                 $ref: "#/components/schemas/TeamDashboard"
 
+  /team/recent-comments:
+    get:
+      operationId: getTeamRecentComments
+      tags: [team]
+      summary: Get recent team comments enriched with email subject and author
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        "200":
+          description: Recent comments across the team
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TeamRecentComment"
+
   /team/activity:
     get:
       operationId: getTeamActivity
@@ -4838,6 +4860,32 @@ components:
         - fullName
         - role
         - assignedEmails
+
+    TeamRecentComment:
+      type: object
+      properties:
+        id:
+          type: string
+        body:
+          type: string
+        createdAt:
+          type: string
+        userId:
+          type: string
+        userName:
+          type: string
+        emailId:
+          type: integer
+        emailSubject:
+          type: string
+      required:
+        - id
+        - body
+        - createdAt
+        - userId
+        - userName
+        - emailId
+        - emailSubject
 
     ActivityLog:
       type: object

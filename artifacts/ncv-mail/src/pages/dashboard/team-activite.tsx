@@ -1,9 +1,18 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useGetTeamDashboard } from "@workspace/api-client-react";
-import { Loader2, Users, MessageSquare, Mail, Archive } from "lucide-react";
+import { useGetTeamDashboard, useGetTeamRecentComments } from "@workspace/api-client-react";
+import { Loader2, Users, MessageSquare, Mail, Archive, ExternalLink } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { useLocation } from "wouter";
+import { useState } from "react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 function ActionLabel({ action }: { action: string }) {
   const { t } = useTranslation();
@@ -71,6 +80,11 @@ export default function TeamActivitePage() {
   const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const { data, isLoading } = useGetTeamDashboard();
+  const [commentsOpen, setCommentsOpen] = useState(false);
+  const { data: recentComments, isLoading: commentsLoading } = useGetTeamRecentComments(
+    { limit: 7 },
+    { query: { enabled: commentsOpen } as any }
+  );
 
   if (isLoading) {
     return (
@@ -120,6 +134,7 @@ export default function TeamActivitePage() {
             label={t("teamActivity.comments")}
             value={members.reduce((s: number, m: any) => s + (m.commentsCount || 0), 0)}
             icon={<MessageSquare className="h-4 w-4 text-yellow-400" />}
+            onClick={() => setCommentsOpen(true)}
           />
         </div>
 
@@ -200,6 +215,74 @@ export default function TeamActivitePage() {
           )}
         </div>
       </div>
+
+      <Dialog open={commentsOpen} onOpenChange={setCommentsOpen}>
+        <DialogContent className="bg-[#0d1422] border-[#1f2937] text-white sm:max-w-[560px]">
+          <DialogHeader>
+            <DialogTitle className="text-white">{t("teamActivity.commentsModalTitle")}</DialogTitle>
+            <DialogDescription className="text-[#8b9cb3]">
+              {t("teamActivity.commentsModalSubtitle")}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="max-h-[60vh] overflow-y-auto -mx-2 px-2">
+            {commentsLoading ? (
+              <div className="flex items-center justify-center py-10">
+                <Loader2 className="h-5 w-5 animate-spin text-primary" />
+              </div>
+            ) : !recentComments || recentComments.length === 0 ? (
+              <p className="text-[12px] text-[#8b9cb3] text-center py-10">
+                {t("teamActivity.commentsModalEmpty")}
+              </p>
+            ) : (
+              <ul className="space-y-3">
+                {recentComments.map((c: any) => (
+                  <li
+                    key={c.id}
+                    className="bg-[#141c2b] border border-[#1f2937] rounded-lg p-3"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="h-6 w-6 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[9px] font-semibold text-primary shrink-0 mt-0.5">
+                        {(c.userName || "?").charAt(0).toUpperCase()}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-[12px] font-medium text-white">
+                            {c.userName || t("teamActivity.noName")}
+                          </span>
+                          <span className="text-[10px] text-[#8b9cb3]">
+                            {formatTime(c.createdAt, t)}
+                          </span>
+                        </div>
+                        <p className="text-[11px] text-[#8b9cb3] mt-0.5 truncate">
+                          {t("teamActivity.commentsModalOn")}{" "}
+                          <span className="text-[#cbd5e1]">"{c.emailSubject || "—"}"</span>
+                        </p>
+                        <p className="text-[12px] text-[#e2e8f0] mt-2 whitespace-pre-wrap break-words line-clamp-3">
+                          {c.body}
+                        </p>
+                        <div className="mt-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="h-7 px-2 text-[11px] text-primary hover:text-primary hover:bg-primary/10"
+                            onClick={() => {
+                              setCommentsOpen(false);
+                              setLocation(`/dashboard?emailId=${c.emailId}`);
+                            }}
+                          >
+                            <ExternalLink className="h-3 w-3 mr-1" />
+                            {t("teamActivity.commentsModalOpenEmail")}
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

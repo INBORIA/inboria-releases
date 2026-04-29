@@ -964,6 +964,16 @@ export interface TeamDashboard {
   recentActivity: ActivityLog[];
 }
 
+export interface TeamRecentComment {
+  id: string;
+  body: string;
+  createdAt: string;
+  userId: string;
+  userName: string;
+  emailId: number;
+  emailSubject: string;
+}
+
 export interface AssignEmailBody {
   assignTo: string;
 }
@@ -1911,6 +1921,10 @@ export type MarkNotificationRead200 = {
 
 export type MarkAllNotificationsRead200 = {
   success?: boolean;
+};
+
+export type GetTeamRecentCommentsParams = {
+  limit?: number;
 };
 
 export type GetTeamActivityParams = {
