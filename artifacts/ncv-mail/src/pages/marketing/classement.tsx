@@ -46,7 +46,6 @@ export default function ClassementMarketing() {
   const paymentsEnabled = isPaymentsEnabled();
 
   const heroStats = [
-    { value: "56+", label: t("marketing.classification.stats.packsAvailable") },
     { value: "9", label: t("marketing.classification.stats.sectorFamilies") },
     { value: "IA", label: t("marketing.classification.stats.aiGeneration") },
   ];
@@ -87,7 +86,7 @@ export default function ClassementMarketing() {
             </Link>
           </div>
 
-          <div className="mt-12 grid grid-cols-3 gap-6 max-w-lg mx-auto">
+          <div className="mt-12 grid grid-cols-2 gap-6 max-w-md mx-auto">
             {heroStats.map((s) => (
               <div key={s.label}>
                 <p className="text-2xl font-bold text-white">{s.value}</p>
