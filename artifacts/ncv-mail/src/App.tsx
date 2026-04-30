@@ -218,6 +218,7 @@ function Router() {
       <Route path="/entreprise" component={Entreprise} />
       <Route path="/classement" component={ClassementMarketing} />
       <Route path="/intelligence-artificielle" component={IntelligenceArtificielle} />
+      <Route path="/inboria" component={IntelligenceArtificielle} />
       <Route path="/crm" component={CRM} />
       <Route path="/tarifs" component={Tarifs} />
       <Route path="/mentions-legales" component={MentionsLegales} />

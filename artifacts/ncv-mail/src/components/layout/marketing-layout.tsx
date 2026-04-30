@@ -14,7 +14,7 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
     { label: t("nav.home"), href: "/" },
     { label: t("nav.features"), href: "/fonctionnalites" },
     { label: t("nav.classification"), href: "/classement" },
-    { label: t("nav.ai"), href: "/intelligence-artificielle" },
+    { label: t("nav.ai"), href: "/inboria" },
     { label: t("nav.crm"), href: "/crm" },
     { label: t("nav.enterprise"), href: "/entreprise" },
     { label: t("nav.pricing"), href: "/tarifs" },
