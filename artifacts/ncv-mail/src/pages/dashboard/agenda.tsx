@@ -53,6 +53,7 @@ export default function Agenda() {
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
+  const [projectFilter, setProjectFilter] = useState<Set<string>>(new Set());
 
   const [formTitle, setFormTitle] = useState("");
   const [formDescription, setFormDescription] = useState("");
@@ -121,11 +122,43 @@ export default function Agenda() {
     return new Date(currentDate.getFullYear(), currentDate.getMonth(), currentDate.getDate(), 23, 59, 59);
   }, [currentDate, viewMode]);
 
-  const { data: appointments = [], isLoading } = useListAppointments({
+  const { data: rawAppointments = [], isLoading } = useListAppointments({
     from: rangeStart.toISOString(),
     to: rangeEnd.toISOString(),
   });
   const { data: projects = [] } = useListProjects();
+
+  const appointments = useMemo(() => {
+    if (projectFilter.size === 0) return rawAppointments;
+    return rawAppointments.filter((apt: any) => {
+      const pid = apt.projectId ? String(apt.projectId) : "";
+      if (!pid) return projectFilter.has("__none__");
+      return projectFilter.has(pid);
+    });
+  }, [rawAppointments, projectFilter]);
+
+  const projectsWithAppointments = useMemo(() => {
+    const ids = new Set<string>();
+    let hasUnassigned = false;
+    for (const apt of rawAppointments as any[]) {
+      if (apt.projectId) ids.add(String(apt.projectId));
+      else hasUnassigned = true;
+    }
+    return {
+      list: (projects as Project[]).filter((p) => ids.has(String(p.id))),
+      hasUnassigned,
+    };
+  }, [rawAppointments, projects]);
+
+  const toggleProjectFilter = (id: string) => {
+    setProjectFilter((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
+  const clearProjectFilter = () => setProjectFilter(new Set());
   const createAppointment = useCreateAppointment();
   const updateAppointment = useUpdateAppointment();
   const deleteAppointment = useDeleteAppointment();
@@ -382,6 +415,57 @@ export default function Agenda() {
             ))}
           </div>
         </div>
+
+        {(projectsWithAppointments.list.length > 0 || projectsWithAppointments.hasUnassigned) && (
+          <div className="flex items-center gap-1.5 flex-wrap mb-3 text-[11px]">
+            <span className="text-[#8b9cb3] mr-1">{t("agenda.filterByProject", "Filtrer par projet :")}</span>
+            <button
+              type="button"
+              onClick={clearProjectFilter}
+              className={`px-2 py-0.5 rounded-full border transition-colors ${
+                projectFilter.size === 0
+                  ? "bg-primary/20 border-primary/40 text-primary"
+                  : "bg-transparent border-border text-[#8b9cb3] hover:text-white"
+              }`}
+            >
+              {t("agenda.allProjects", "Tous")}
+            </button>
+            {projectsWithAppointments.list.map((p) => {
+              const id = String(p.id);
+              const active = projectFilter.has(id);
+              const color = (p as any).color || "#2d7dd2";
+              return (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => toggleProjectFilter(id)}
+                  className={`px-2 py-0.5 rounded-full border transition-colors flex items-center gap-1.5 ${
+                    active
+                      ? "border-transparent text-white"
+                      : "bg-transparent border-border text-[#8b9cb3] hover:text-white"
+                  }`}
+                  style={active ? { backgroundColor: `${color}30`, borderColor: `${color}80`, color } : undefined}
+                >
+                  <span className="inline-block w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
+                  {p.name}
+                </button>
+              );
+            })}
+            {projectsWithAppointments.hasUnassigned && (
+              <button
+                type="button"
+                onClick={() => toggleProjectFilter("__none__")}
+                className={`px-2 py-0.5 rounded-full border transition-colors ${
+                  projectFilter.has("__none__")
+                    ? "bg-[#8b9cb3]/20 border-[#8b9cb3]/40 text-white"
+                    : "bg-transparent border-border text-[#8b9cb3] hover:text-white"
+                }`}
+              >
+                {t("agenda.noProject", "Aucun projet")}
+              </button>
+            )}
+          </div>
+        )}
 
         {suggestions.length > 0 && (
           <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 mb-4">

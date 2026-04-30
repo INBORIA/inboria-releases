@@ -2363,7 +2363,13 @@
     "appointmentDismissed": "Suggestion supprimée",
     "noRdv": "Aucun RDV",
     "viewSourceEmail": "Voir l'email source",
-    "aiSuggestion": "Suggestion détectée par Inboria"
+    "aiSuggestion": "Suggestion détectée par Inboria",
+    "noDetectedForEmail": "Aucun rendez-vous detecte dans cet email.",
+    "createdFromEmail": "Rendez-vous ajoute a l'agenda",
+    "viewInAgenda": "Voir l'agenda",
+    "detectError": "Detection impossible. Reessayez.",
+    "filterByProject": "Filtrer par projet :",
+    "allProjects": "Tous"
   },
   "supportChat": {
     "title": "Assistant Inboria",

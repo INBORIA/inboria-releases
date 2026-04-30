@@ -2373,7 +2373,13 @@
     "appointmentDismissed": "Suggestion dismissed",
     "noRdv": "No appointments",
     "viewSourceEmail": "View source email",
-    "aiSuggestion": "Suggestion detected by Inboria"
+    "aiSuggestion": "Suggestion detected by Inboria",
+    "noDetectedForEmail": "No appointment detected in this email.",
+    "createdFromEmail": "Appointment added to your agenda",
+    "viewInAgenda": "Open agenda",
+    "detectError": "Detection failed. Please try again.",
+    "filterByProject": "Filter by project:",
+    "allProjects": "All"
   },
   "supportChat": {
     "title": "Inboria Assistant",

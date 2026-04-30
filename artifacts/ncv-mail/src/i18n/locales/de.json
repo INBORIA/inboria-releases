@@ -2373,7 +2373,13 @@
     "appointmentDismissed": "Vorschlag abgelehnt",
     "noRdv": "Keine Termine",
     "viewSourceEmail": "Ursprungs-E-Mail anzeigen",
-    "aiSuggestion": "Vorschlag erkannt von Inboria"
+    "aiSuggestion": "Vorschlag erkannt von Inboria",
+    "noDetectedForEmail": "Kein Termin in dieser E-Mail erkannt.",
+    "createdFromEmail": "Termin zum Kalender hinzugefuegt",
+    "viewInAgenda": "Kalender oeffnen",
+    "detectError": "Erkennung fehlgeschlagen. Bitte erneut versuchen.",
+    "filterByProject": "Nach Projekt filtern:",
+    "allProjects": "Alle"
   },
   "supportChat": {
     "title": "Inboria Assistant",

@@ -2373,7 +2373,13 @@
     "appointmentDismissed": "Sugerencia descartada",
     "noRdv": "No hay citas",
     "viewSourceEmail": "Ver correo electrónico fuente",
-    "aiSuggestion": "Sugerencia detectada por Inboria"
+    "aiSuggestion": "Sugerencia detectada por Inboria",
+    "noDetectedForEmail": "No se ha detectado ninguna cita en este correo.",
+    "createdFromEmail": "Cita anadida a tu agenda",
+    "viewInAgenda": "Ver agenda",
+    "detectError": "La deteccion ha fallado. Intentalo de nuevo.",
+    "filterByProject": "Filtrar por proyecto:",
+    "allProjects": "Todos"
   },
   "supportChat": {
     "title": "Asistente Inboria",

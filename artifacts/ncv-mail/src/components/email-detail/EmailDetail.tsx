@@ -29,7 +29,13 @@ import { SaveAsTemplateButton } from "@/components/templates/save-as-template-bu
 import SnoozeButton from "@/components/wave1/SnoozeButton";
 import ScheduleSendDialog from "@/components/wave1/ScheduleSendDialog";
 
-import { getGetProfileQueryKey, useGetInboriaExpertSuggestion } from "@workspace/api-client-react";
+import {
+  getGetProfileQueryKey,
+  useGetInboriaExpertSuggestion,
+  useDetectAppointments,
+  useUpdateAppointment,
+  getListAppointmentsQueryKey,
+} from "@workspace/api-client-react";
 
 import { PriorityBadge, PRIORITY_BAR_COLORS, buildForwardCitation } from "./helpers";
 
@@ -70,6 +76,9 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
   const [taskAssignees, setTaskAssignees] = useState<string[]>([]);
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const detectAppointments = useDetectAppointments();
+  const updateAppointment = useUpdateAppointment();
+  const [appointmentRunning, setAppointmentRunning] = useState(false);
   const barColor = PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible;
 
   // Inboria Phase 4 — expert suggestion. Only fires for shared mailboxes
@@ -406,41 +415,76 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 <Button
                   variant="outline"
                   size="sm"
+                  disabled={appointmentRunning || detectAppointments.isPending}
                   className="gap-1.5 h-7 text-[11px] bg-transparent border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
-                  onClick={async () => {
-                    try {
-                      const { supabase } = await import("@/lib/supabase");
-                      const { data: sessionData } = await supabase.auth.getSession();
-                      const token = sessionData?.session?.access_token || "";
-                      const baseUrl = import.meta.env.VITE_API_URL || `https://${window.location.host}`;
-                      const resp = await fetch(`${baseUrl}/api/ai/extract-appointment`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json", "Authorization": `Bearer ${token}` },
-                        body: JSON.stringify({ emailId: email.id }),
-                      });
-                      const extracted = resp.ok ? await resp.json() : null;
-                      if (resp.ok) {
-                        queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
-                      }
-                      const params = new URLSearchParams();
-                      params.set("title", extracted?.title || email.subject || "");
-                      params.set("emailId", String(email.id));
-                      params.set("participants", extracted?.participants || email.sender || "");
-                      if (extracted?.location) params.set("location", extracted.location);
-                      if (extracted?.description) params.set("description", extracted.description);
-                      if (extracted?.startAt) params.set("startAt", extracted.startAt);
-                      if (extracted?.endAt) params.set("endAt", extracted.endAt);
-                      window.location.href = `/dashboard/agenda?create=1&${params.toString()}`;
-                    } catch {
-                      const params = new URLSearchParams();
-                      params.set("title", email.subject || "");
-                      params.set("emailId", String(email.id));
-                      if (email.sender) params.set("participants", email.sender);
-                      window.location.href = `/dashboard/agenda?create=1&${params.toString()}`;
-                    }
+                  onClick={() => {
+                    if (appointmentRunning) return;
+                    setAppointmentRunning(true);
+                    detectAppointments.mutate(
+                      { data: { emailId: email.id, lang: i18n.language } },
+                      {
+                        onSuccess: async (data) => {
+                          const created = ((data as { appointments?: any[] })?.appointments) || [];
+                          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+                          queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
+                          if (created.length === 0) {
+                            toast({ title: t("agenda.noDetectedForEmail", "Aucun rendez-vous detecte dans cet email."), variant: "default" });
+                            setAppointmentRunning(false);
+                            return;
+                          }
+                          // Auto-confirm every appointment created from this
+                          // email so the user truly only needs one click.
+                          await Promise.all(
+                            created.map((apt: any) =>
+                              new Promise<void>((resolve) => {
+                                updateAppointment.mutate(
+                                  { id: String(apt.id), data: { confirmed: true } },
+                                  { onSettled: () => resolve() },
+                                );
+                              }),
+                            ),
+                          );
+                          queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
+                          const first = created[0];
+                          let detail = "";
+                          try {
+                            if (first?.startAt) {
+                              detail = format(new Date(first.startAt), "PPP p", { locale: dateFnsLocale });
+                            }
+                          } catch {
+                            detail = "";
+                          }
+                          const titlePart = created.length === 1
+                            ? `${first?.title || ""}${detail ? " — " + detail : ""}`
+                            : t("agenda.detectedCount", { count: created.length });
+                          toast({
+                            title: t("agenda.createdFromEmail", "Rendez-vous ajoute a l'agenda"),
+                            description: titlePart,
+                            action: (
+                              <Link
+                                to="/dashboard/agenda"
+                                className="text-emerald-400 hover:text-emerald-300 underline text-xs"
+                              >
+                                {t("agenda.viewInAgenda", "Voir l'agenda")}
+                              </Link>
+                            ),
+                          });
+                          setAppointmentRunning(false);
+                        },
+                        onError: (err: any) => {
+                          const msg = err?.response?.data?.error || t("agenda.detectError", "Detection impossible. Reessayez.");
+                          toast({ title: msg, variant: "destructive" });
+                          setAppointmentRunning(false);
+                        },
+                      },
+                    );
                   }}
                 >
-                  <CalendarDays className="w-3 h-3" />
+                  {appointmentRunning || detectAppointments.isPending ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <CalendarDays className="w-3 h-3" />
+                  )}
                   {t("agenda.createFromEmail")}
                 </Button>
                 <Button
