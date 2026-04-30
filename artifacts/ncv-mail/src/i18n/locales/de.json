@@ -1953,7 +1953,7 @@
       "daysAgo": "vor {{count}}d"
     },
     "commentsModalTitle": "Letzte Kommentare",
-    "commentsModalSubtitle": "Die 7 neuesten Kommentare Ihres Teams",
+    "commentsModalSubtitle": "Die neuesten Kommentare Ihres Teams",
     "commentsModalEmpty": "Noch keine Kommentare",
     "commentsModalOpenEmail": "E-Mail öffnen",
     "commentsModalOn": "zu",

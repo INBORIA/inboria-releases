@@ -1943,7 +1943,7 @@
       "daysAgo": "il y a {{count}}j"
     },
     "commentsModalTitle": "Derniers commentaires",
-    "commentsModalSubtitle": "Les 7 commentaires les plus récents de votre équipe",
+    "commentsModalSubtitle": "Les commentaires les plus récents de votre équipe",
     "commentsModalEmpty": "Aucun commentaire pour le moment",
     "commentsModalOpenEmail": "Ouvrir l'email",
     "commentsModalOn": "sur",

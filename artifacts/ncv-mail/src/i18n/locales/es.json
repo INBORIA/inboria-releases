@@ -1953,7 +1953,7 @@
       "daysAgo": "hace {{count}}d"
     },
     "commentsModalTitle": "Últimos comentarios",
-    "commentsModalSubtitle": "Los 7 comentarios más recientes de tu equipo",
+    "commentsModalSubtitle": "Los comentarios más recientes de tu equipo",
     "commentsModalEmpty": "Aún no hay comentarios",
     "commentsModalOpenEmail": "Abrir el email",
     "commentsModalOn": "en",

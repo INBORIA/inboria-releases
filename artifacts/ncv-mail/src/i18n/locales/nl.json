@@ -1953,7 +1953,7 @@
       "daysAgo": "{{count}}d geleden"
     },
     "commentsModalTitle": "Laatste opmerkingen",
-    "commentsModalSubtitle": "De 7 meest recente opmerkingen van uw team",
+    "commentsModalSubtitle": "De meest recente opmerkingen van uw team",
     "commentsModalEmpty": "Nog geen opmerkingen",
     "commentsModalOpenEmail": "E-mail openen",
     "commentsModalOn": "op",
