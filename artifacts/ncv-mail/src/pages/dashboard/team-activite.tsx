@@ -105,7 +105,7 @@ export default function TeamActivitePage() {
     if (!window.confirm(t("teamActivity.commentsModalDeleteConfirm"))) return;
     setDeletingId(commentId);
     try {
-      await deleteComment.mutateAsync({ emailId: String(emailId), commentId });
+      await deleteComment.mutateAsync({ emailId, commentId });
       await queryClient.invalidateQueries({ queryKey: getGetTeamRecentCommentsQueryKey({ limit: 50 }) });
       await queryClient.invalidateQueries({ queryKey: getGetTeamDashboardQueryKey() });
     } catch (e: any) {
