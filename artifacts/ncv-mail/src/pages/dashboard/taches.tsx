@@ -330,7 +330,7 @@ export default function Taches() {
     { key: "all", label: t("tasks.all"), count: taskList.length },
     { key: "todo", label: t("tasks.todo"), count: todoCount },
     { key: "done", label: t("tasks.done"), count: doneCount },
-    { key: "ai", label: "IA", count: aiCount },
+    { key: "ai", label: t("tasks.sourceAi"), count: aiCount },
   ];
 
   return (

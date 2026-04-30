@@ -125,7 +125,7 @@ export default function Relances() {
           <div className="flex items-center gap-2 mb-3">
             <Sparkles className="w-4 h-4 text-primary" />
             <h2 className="text-[13px] font-medium text-white uppercase tracking-wider">
-              {t("relances.suggestionsTitle", "Suggestions IA")}
+              {t("relances.suggestionsTitle", "Suggestions Inboria")}
             </h2>
             <span className="text-[11px] text-[#8b9cb3]">
               ({aiList.length})

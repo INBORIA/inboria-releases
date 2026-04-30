@@ -29,7 +29,7 @@ export default function Parametres() {
       titleKey: "settings.hub.myAccount",
       titleFallback: "Mon compte",
       descKey: "settings.hub.myAccountDesc",
-      descFallback: "Profil, sécurité, comptes email, IA et notifications",
+      descFallback: "Profil, sécurité, comptes email, Inboria et notifications",
       testId: "hub-card-mon-compte",
     },
     ...(isBusiness && isOrgAdmin

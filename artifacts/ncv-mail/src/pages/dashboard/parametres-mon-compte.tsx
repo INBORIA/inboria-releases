@@ -893,7 +893,7 @@ export default function ParametresMonCompte() {
         </div>
         <div className="mb-5">
           <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("settings.hub.myAccount", "Mon compte")}</h1>
-          <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("settings.hub.myAccountDesc", "Profil, sécurité, comptes email, IA et notifications")}</p>
+          <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("settings.hub.myAccountDesc", "Profil, sécurité, comptes email, Inboria et notifications")}</p>
         </div>
 
         <div className="space-y-6">
