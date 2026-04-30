@@ -2883,5 +2883,12 @@
       "decision_needed": "Décision à prendre",
       "escalation": "Urgent ou relance"
     }
+  },
+  "inboriaExpert": {
+    "suggested": "Inboria recommande",
+    "aTeammate": "un membre de l'équipe",
+    "assignThisOne": "lui assigner",
+    "tooltip": "Déjà géré {{count}} échange(s) avec ce contact — dernier le {{date}}.",
+    "tooltipNoDate": "Déjà géré {{count}} échange(s) avec ce contact."
   }
 }

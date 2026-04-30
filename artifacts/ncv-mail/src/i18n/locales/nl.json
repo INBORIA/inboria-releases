@@ -4541,5 +4541,12 @@
       "decision_needed": "Beslissing nodig",
       "escalation": "Urgent of opvolging"
     }
+  },
+  "inboriaExpert": {
+    "suggested": "Inboria raadt aan",
+    "aTeammate": "een teamlid",
+    "assignThisOne": "aan diegene toewijzen",
+    "tooltip": "Heeft al {{count}} contact(en) gehad met deze contactpersoon — laatst op {{date}}.",
+    "tooltipNoDate": "Heeft al {{count}} contact(en) gehad met deze contactpersoon."
   }
 }

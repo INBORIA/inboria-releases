@@ -101,6 +101,7 @@ import type {
   GetEmailConversation200,
   GetFollowupStats200,
   GetInboriaContextParams,
+  GetInboriaExpertSuggestionParams,
   GetInvitationByToken200,
   GetNotificationsParams,
   GetSharedMailboxEmailsParams,
@@ -108,6 +109,7 @@ import type {
   GetTeamRecentCommentsParams,
   HealthStatus,
   InboriaContextResponse,
+  InboriaExpertSuggestionResponse,
   InboriaMailboxSetting,
   InboriaMailboxSettingsResponse,
   InboxHealth,
@@ -11244,6 +11246,115 @@ export function useGetInboriaContext<
   },
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetInboriaContextQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Suggest the team member best suited to handle a given email, based on their past interactions with this contact in the same shared mailbox
+ */
+export const getGetInboriaExpertSuggestionUrl = (
+  params: GetInboriaExpertSuggestionParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/inboria/expert-suggestion?${stringifiedParams}`
+    : `/api/inboria/expert-suggestion`;
+};
+
+export const getInboriaExpertSuggestion = async (
+  params: GetInboriaExpertSuggestionParams,
+  options?: RequestInit,
+): Promise<InboriaExpertSuggestionResponse> => {
+  return customFetch<InboriaExpertSuggestionResponse>(
+    getGetInboriaExpertSuggestionUrl(params),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getGetInboriaExpertSuggestionQueryKey = (
+  params?: GetInboriaExpertSuggestionParams,
+) => {
+  return [
+    `/api/inboria/expert-suggestion`,
+    ...(params ? [params] : []),
+  ] as const;
+};
+
+export const getGetInboriaExpertSuggestionQueryOptions = <
+  TData = Awaited<ReturnType<typeof getInboriaExpertSuggestion>>,
+  TError = ErrorType<void>,
+>(
+  params: GetInboriaExpertSuggestionParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getInboriaExpertSuggestion>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetInboriaExpertSuggestionQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getInboriaExpertSuggestion>>
+  > = ({ signal }) =>
+    getInboriaExpertSuggestion(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getInboriaExpertSuggestion>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetInboriaExpertSuggestionQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getInboriaExpertSuggestion>>
+>;
+export type GetInboriaExpertSuggestionQueryError = ErrorType<void>;
+
+/**
+ * @summary Suggest the team member best suited to handle a given email, based on their past interactions with this contact in the same shared mailbox
+ */
+
+export function useGetInboriaExpertSuggestion<
+  TData = Awaited<ReturnType<typeof getInboriaExpertSuggestion>>,
+  TError = ErrorType<void>,
+>(
+  params: GetInboriaExpertSuggestionParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getInboriaExpertSuggestion>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetInboriaExpertSuggestionQueryOptions(
+    params,
+    options,
+  );
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

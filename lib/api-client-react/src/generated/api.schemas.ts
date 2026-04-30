@@ -1320,6 +1320,18 @@ export interface InboriaContextResponse {
   episodes: InboriaEpisode[];
 }
 
+export interface InboriaExpertSuggestion {
+  userId: string;
+  fullName: string;
+  interactionCount: number;
+  lastInteractionAt?: string | null;
+  score: number;
+}
+
+export interface InboriaExpertSuggestionResponse {
+  suggestion: InboriaExpertSuggestion | null;
+}
+
 export type InboriaMailboxSettingKind =
   (typeof InboriaMailboxSettingKind)[keyof typeof InboriaMailboxSettingKind];
 
@@ -2108,6 +2120,10 @@ export type GetInboriaContextParams = {
    * @maximum 50
    */
   limit?: number;
+};
+
+export type GetInboriaExpertSuggestionParams = {
+  emailId: number;
 };
 
 export type IncrementTemplateUsage200 = {

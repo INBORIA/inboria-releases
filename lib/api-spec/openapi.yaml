@@ -2992,6 +2992,33 @@ paths:
         "400":
           description: Invalid contactEmail
 
+  /inboria/expert-suggestion:
+    get:
+      operationId: getInboriaExpertSuggestion
+      tags: [inboria]
+      summary: Suggest the team member best suited to handle a given email, based on their past interactions with this contact in the same shared mailbox
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: emailId
+          in: query
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Suggested team member, or null if no clear match (personal mailbox, no history, score below threshold, or solo team)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InboriaExpertSuggestionResponse"
+        "400":
+          description: Invalid emailId
+        "403":
+          description: Requester is not a member of this mailbox
+        "404":
+          description: Email not found
+
   /inboria/mailbox-settings:
     get:
       operationId: listInboriaMailboxSettings
@@ -5574,6 +5601,28 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/InboriaEpisode"
+
+    InboriaExpertSuggestion:
+      type: object
+      required: [userId, fullName, interactionCount, score]
+      properties:
+        userId: { type: string }
+        fullName: { type: string }
+        interactionCount: { type: integer }
+        lastInteractionAt:
+          type: string
+          format: date-time
+          nullable: true
+        score: { type: integer }
+
+    InboriaExpertSuggestionResponse:
+      type: object
+      required: [suggestion]
+      properties:
+        suggestion:
+          nullable: true
+          allOf:
+            - $ref: "#/components/schemas/InboriaExpertSuggestion"
 
     InboriaMailboxSetting:
       type: object

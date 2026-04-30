@@ -4541,5 +4541,12 @@
       "decision_needed": "Decisión requerida",
       "escalation": "Urgente o recordatorio"
     }
+  },
+  "inboriaExpert": {
+    "suggested": "Inboria recomienda",
+    "aTeammate": "a un miembro del equipo",
+    "assignThisOne": "asignárselo",
+    "tooltip": "Ya gestionó {{count}} intercambio(s) con este contacto — último el {{date}}.",
+    "tooltipNoDate": "Ya gestionó {{count}} intercambio(s) con este contacto."
   }
 }

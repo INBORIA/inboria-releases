@@ -3203,6 +3203,25 @@ export const GetInboriaContextResponse = zod.object({
 });
 
 /**
+ * @summary Suggest the team member best suited to handle a given email, based on their past interactions with this contact in the same shared mailbox
+ */
+export const GetInboriaExpertSuggestionQueryParams = zod.object({
+  emailId: zod.coerce.number(),
+});
+
+export const GetInboriaExpertSuggestionResponse = zod.object({
+  suggestion: zod
+    .object({
+      userId: zod.string(),
+      fullName: zod.string(),
+      interactionCount: zod.number(),
+      lastInteractionAt: zod.coerce.date().nullish(),
+      score: zod.number(),
+    })
+    .nullable(),
+});
+
+/**
  * @summary List inboria_enabled flag for the user's personal connections and accessible shared mailboxes
  */
 export const ListInboriaMailboxSettingsResponse = zod.object({

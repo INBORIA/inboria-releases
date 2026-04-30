@@ -4541,5 +4541,12 @@
       "decision_needed": "Entscheidung erforderlich",
       "escalation": "Dringend oder Erinnerung"
     }
+  },
+  "inboriaExpert": {
+    "suggested": "Inboria empfiehlt",
+    "aTeammate": "ein Teammitglied",
+    "assignThisOne": "Person zuweisen",
+    "tooltip": "Hat bereits {{count}} E-Mail(s) mit diesem Kontakt bearbeitet — zuletzt am {{date}}.",
+    "tooltipNoDate": "Hat bereits {{count}} E-Mail(s) mit diesem Kontakt bearbeitet."
   }
 }

@@ -29,7 +29,7 @@ import { SaveAsTemplateButton } from "@/components/templates/save-as-template-bu
 import SnoozeButton from "@/components/wave1/SnoozeButton";
 import ScheduleSendDialog from "@/components/wave1/ScheduleSendDialog";
 
-import { getGetProfileQueryKey } from "@workspace/api-client-react";
+import { getGetProfileQueryKey, useGetInboriaExpertSuggestion } from "@workspace/api-client-react";
 
 import { PriorityBadge, PRIORITY_BAR_COLORS, buildForwardCitation } from "./helpers";
 
@@ -71,6 +71,31 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const barColor = PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible;
+
+  // Inboria Phase 4 — expert suggestion. Only fires for shared mailboxes
+  // with multiple members and an unread/unassigned inbound email; the
+  // backend itself returns null for personal mailboxes / outbound / solo
+  // teams so we just gate the request on having an emailId.
+  const expertQuery = useGetInboriaExpertSuggestion(
+    { emailId: email?.id },
+    {
+      query: {
+        enabled: Boolean(email?.id) && !email?.assignedTo,
+        staleTime: 60_000,
+        retry: false,
+      } as any,
+    },
+  );
+  const expertSuggestion = (expertQuery.data as any)?.suggestion as
+    | {
+        userId: string;
+        fullName: string;
+        interactionCount: number;
+        lastInteractionAt: string | null;
+        score: number;
+      }
+    | null
+    | undefined;
 
   return (
     <div className="flex flex-col h-full">
@@ -478,6 +503,26 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     </SelectContent>
                   </Select>
                 </div>
+                {orgMembers && orgMembers.length > 0 && expertSuggestion && !email.assignedTo && expertSuggestion.userId !== currentUserId && (
+                  <button
+                    type="button"
+                    onClick={() => onAssign?.(email.id, expertSuggestion.userId)}
+                    title={
+                      expertSuggestion.lastInteractionAt
+                        ? t("inboriaExpert.tooltip", {
+                            count: expertSuggestion.interactionCount,
+                            date: format(new Date(expertSuggestion.lastInteractionAt), "PP", { locale: dateFnsLocale }),
+                          })
+                        : t("inboriaExpert.tooltipNoDate", { count: expertSuggestion.interactionCount })
+                    }
+                    className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-[11px] transition-colors"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span className="font-medium">{t("inboriaExpert.suggested")}</span>
+                    <span className="text-white">{expertSuggestion.fullName || t("inboriaExpert.aTeammate")}</span>
+                    <span className="text-[#8b9cb3]">· {t("inboriaExpert.assignThisOne")}</span>
+                  </button>
+                )}
                 {orgMembers && orgMembers.length > 0 && (
                   <div className="flex items-center gap-1.5">
                     <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.assignedTo")}:</span>
