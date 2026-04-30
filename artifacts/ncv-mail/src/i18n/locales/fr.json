@@ -2313,7 +2313,8 @@
       "action3": "Préparer 3 brouillons",
       "action4": "Programmer 1 relance",
       "acceptAll": "Tout accepter"
-    }
+    },
+    "allCategories": "Toutes les catégories"
   },
   "agenda": {
     "title": "Agenda",

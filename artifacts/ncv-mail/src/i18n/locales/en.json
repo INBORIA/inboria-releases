@@ -2323,7 +2323,8 @@
       "action3": "Draft 3 replies",
       "action4": "Schedule 1 follow-up",
       "acceptAll": "Accept all"
-    }
+    },
+    "allCategories": "All categories"
   },
   "agenda": {
     "title": "Agenda",

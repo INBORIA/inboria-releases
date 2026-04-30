@@ -2323,7 +2323,8 @@
       "action3": "3 antwoorden voorbereiden",
       "action4": "1 herinnering plannen",
       "acceptAll": "Alles accepteren"
-    }
+    },
+    "allCategories": "Alle categorieën"
   },
   "agenda": {
     "title": "Agenda",

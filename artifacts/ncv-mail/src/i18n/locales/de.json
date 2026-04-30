@@ -2323,7 +2323,8 @@
       "action3": "3 Entwürfe vorbereiten",
       "action4": "1 Erinnerung planen",
       "acceptAll": "Alles akzeptieren"
-    }
+    },
+    "allCategories": "Alle Kategorien"
   },
   "agenda": {
     "title": "Agenda",

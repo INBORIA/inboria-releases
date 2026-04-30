@@ -2323,7 +2323,8 @@
       "action3": "Preparar 3 borradores",
       "action4": "Programar 1 recordatorio",
       "acceptAll": "Aceptar todo"
-    }
+    },
+    "allCategories": "Todas las categorías"
   },
   "agenda": {
     "title": "Agenda",
