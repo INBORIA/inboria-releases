@@ -2921,14 +2921,47 @@ export default function Dashboard() {
     return a && a.trim() ? a.trim() : null;
   });
   const [routeLocation] = useLocation();
-  // Re-sync the assignee filter from the URL whenever the route changes
-  // (e.g. user clicks "Réception" → /dashboard, or "Assignés" → /dashboard?assignee=me).
+  // Subscribe to ALL URL changes (wouter only tracks pathname, but we need to
+  // react to query-string changes too — e.g. clicking "Assignés" sidebar entry
+  // which navigates to /dashboard?assignee=me from the same /dashboard path).
+  const [searchString, setSearchString] = useState<string>(
+    () => (typeof window !== "undefined" ? window.location.search : ""),
+  );
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const params = new URLSearchParams(window.location.search);
+    const update = () => setSearchString(window.location.search);
+    update();
+    window.addEventListener("popstate", update);
+    // wouter dispatches these custom events on same-page nav via pushState/replaceState.
+    window.addEventListener("pushState" as any, update);
+    window.addEventListener("replaceState" as any, update);
+    // As a safety net, patch history methods so any caller (router or vanilla)
+    // triggers a re-read of the URL.
+    const origPush = window.history.pushState.bind(window.history);
+    const origReplace = window.history.replaceState.bind(window.history);
+    window.history.pushState = (...args: Parameters<typeof origPush>) => {
+      const r = origPush(...args);
+      update();
+      return r;
+    };
+    window.history.replaceState = (...args: Parameters<typeof origReplace>) => {
+      const r = origReplace(...args);
+      update();
+      return r;
+    };
+    return () => {
+      window.removeEventListener("popstate", update);
+      window.removeEventListener("pushState" as any, update);
+      window.removeEventListener("replaceState" as any, update);
+      window.history.pushState = origPush;
+      window.history.replaceState = origReplace;
+    };
+  }, []);
+  useEffect(() => {
+    const params = new URLSearchParams(searchString);
     const a = params.get("assignee");
     setAssigneeFilter(a && a.trim() ? a.trim() : null);
-  }, [routeLocation]);
+  }, [searchString, routeLocation]);
   const clearAssigneeFilter = () => {
     setAssigneeFilter(null);
     if (typeof window !== "undefined") {
