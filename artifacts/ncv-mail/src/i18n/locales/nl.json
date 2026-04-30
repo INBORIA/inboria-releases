@@ -1956,7 +1956,9 @@
     "commentsModalSubtitle": "De 7 meest recente opmerkingen van uw team",
     "commentsModalEmpty": "Nog geen opmerkingen",
     "commentsModalOpenEmail": "E-mail openen",
-    "commentsModalOn": "op"
+    "commentsModalOn": "op",
+    "commentsModalDelete": "Verwijderen",
+    "commentsModalDeleteConfirm": "Deze notitie definitief verwijderen?"
   },
   "notifications": {
     "title": "Meldingen",

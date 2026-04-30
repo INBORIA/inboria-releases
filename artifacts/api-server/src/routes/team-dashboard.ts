@@ -44,6 +44,15 @@ router.get("/team/dashboard", requireAuth, async (req, res): Promise<void> => {
 
     const requesterMailboxIds = await getMemberMailboxIds(req.userId!);
 
+    let scopedEmailIdsForCount: number[] = [];
+    if (requesterMailboxIds.length > 0) {
+      const { data: scopedEmails } = await supabaseAdmin
+        .from("emails")
+        .select("id")
+        .in("shared_mailbox_id", requesterMailboxIds);
+      scopedEmailIdsForCount = (scopedEmails || []).map((e: any) => e.id);
+    }
+
     const memberStats = [];
     for (const m of members) {
       const { data: profile } = await supabaseAdmin
@@ -77,12 +86,12 @@ router.get("/team/dashboard", requireAuth, async (req, res): Promise<void> => {
       const { count: assignedDoneCount } = await archivedQuery;
 
       let commentCount = 0;
-      if (requesterMailboxIds.length > 0) {
+      if (scopedEmailIdsForCount.length > 0) {
         const { count } = await supabaseAdmin
           .from("email_comments")
-          .select("id, emails!inner(shared_mailbox_id)", { count: "exact", head: true })
+          .select("id", { count: "exact", head: true })
           .eq("user_id", m.user_id)
-          .in("emails.shared_mailbox_id", requesterMailboxIds);
+          .in("email_id", scopedEmailIdsForCount);
         commentCount = count || 0;
       }
 
@@ -162,11 +171,31 @@ router.get("/team/recent-comments", requireAuth, async (req, res): Promise<void>
       return;
     }
 
+    const { data: scopedEmails, error: scopedErr } = await supabaseAdmin
+      .from("emails")
+      .select("id, subject")
+      .in("shared_mailbox_id", requesterMailboxIds);
+
+    if (scopedErr) {
+      res.status(500).json({ error: "Erreur lors de la récupération des commentaires récents" });
+      return;
+    }
+
+    const scopedEmailIds = (scopedEmails || []).map((e) => e.id);
+    if (scopedEmailIds.length === 0) {
+      res.json([]);
+      return;
+    }
+    const subjectMap = new Map<number, string>();
+    for (const e of scopedEmails || []) {
+      subjectMap.set(e.id, e.subject || "");
+    }
+
     const { data: comments, error: commentsErr } = await supabaseAdmin
       .from("email_comments")
-      .select("id, body, created_at, user_id, email_id, emails!inner(subject, shared_mailbox_id)")
+      .select("id, body, created_at, user_id, email_id")
       .in("user_id", memberUserIds)
-      .in("emails.shared_mailbox_id", requesterMailboxIds)
+      .in("email_id", scopedEmailIds)
       .order("created_at", { ascending: false })
       .limit(limit);
 
@@ -192,14 +221,14 @@ router.get("/team/recent-comments", requireAuth, async (req, res): Promise<void>
       profileMap.set(p.id, p.full_name || "");
     }
 
-    const enriched = comments.map((c: any) => ({
+    const enriched = comments.map((c) => ({
       id: String(c.id),
       body: c.body || "",
       createdAt: c.created_at,
       userId: c.user_id,
       userName: profileMap.get(c.user_id) || "",
       emailId: c.email_id,
-      emailSubject: c.emails?.subject || "",
+      emailSubject: subjectMap.get(c.email_id) || "",
     }));
 
     res.json(enriched);

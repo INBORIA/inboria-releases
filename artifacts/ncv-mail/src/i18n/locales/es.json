@@ -1956,7 +1956,9 @@
     "commentsModalSubtitle": "Los 7 comentarios más recientes de tu equipo",
     "commentsModalEmpty": "Aún no hay comentarios",
     "commentsModalOpenEmail": "Abrir el email",
-    "commentsModalOn": "en"
+    "commentsModalOn": "en",
+    "commentsModalDelete": "Eliminar",
+    "commentsModalDeleteConfirm": "¿Eliminar definitivamente esta nota?"
   },
   "notifications": {
     "title": "Notificaciones",

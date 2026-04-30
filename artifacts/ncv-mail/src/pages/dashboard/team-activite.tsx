@@ -1,10 +1,17 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useGetTeamDashboard, useGetTeamRecentComments } from "@workspace/api-client-react";
-import { Loader2, Users, MessageSquare, Mail, Archive, ExternalLink } from "lucide-react";
+import {
+  useGetTeamDashboard,
+  useGetTeamRecentComments,
+  useDeleteEmailComment,
+  getGetTeamRecentCommentsQueryKey,
+  getGetTeamDashboardQueryKey,
+} from "@workspace/api-client-react";
+import { Loader2, Users, MessageSquare, Mail, Archive, ExternalLink, Trash2 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { useLocation } from "wouter";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Dialog,
   DialogContent,
@@ -13,6 +20,8 @@ import {
   DialogDescription,
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "@/lib/auth";
+import { useToast } from "@/hooks/use-toast";
 
 function ActionLabel({ action }: { action: string }) {
   const { t } = useTranslation();
@@ -85,6 +94,29 @@ export default function TeamActivitePage() {
     { limit: 7 },
     { query: { enabled: commentsOpen } as any }
   );
+  const { user } = useAuth();
+  const currentUserId = user?.id;
+  const queryClient = useQueryClient();
+  const deleteComment = useDeleteEmailComment();
+  const { toast } = useToast();
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+
+  async function handleDeleteComment(commentId: string, emailId: number) {
+    if (!window.confirm(t("teamActivity.commentsModalDeleteConfirm"))) return;
+    setDeletingId(commentId);
+    try {
+      await deleteComment.mutateAsync({ emailId: String(emailId), commentId });
+      await queryClient.invalidateQueries({ queryKey: getGetTeamRecentCommentsQueryKey({ limit: 7 }) });
+      await queryClient.invalidateQueries({ queryKey: getGetTeamDashboardQueryKey() });
+    } catch (e: any) {
+      toast({
+        title: e?.response?.data?.error || t("common.error"),
+        variant: "destructive",
+      });
+    } finally {
+      setDeletingId(null);
+    }
+  }
 
   if (isLoading) {
     return (
@@ -260,7 +292,7 @@ export default function TeamActivitePage() {
                         <p className="text-[12px] text-[#e2e8f0] mt-2 whitespace-pre-wrap break-words line-clamp-3">
                           {c.body}
                         </p>
-                        <div className="mt-2">
+                        <div className="mt-2 flex items-center gap-1">
                           <Button
                             size="sm"
                             variant="ghost"
@@ -273,6 +305,24 @@ export default function TeamActivitePage() {
                             <ExternalLink className="h-3 w-3 mr-1" />
                             {t("teamActivity.commentsModalOpenEmail")}
                           </Button>
+                          {currentUserId && c.userId === currentUserId ? (
+                            <Button
+                              size="sm"
+                              variant="ghost"
+                              disabled={deletingId === c.id}
+                              className="h-7 px-2 text-[11px] text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                              onClick={() => handleDeleteComment(c.id, c.emailId)}
+                            >
+                              {deletingId === c.id ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                              ) : (
+                                <>
+                                  <Trash2 className="h-3 w-3 mr-1" />
+                                  {t("teamActivity.commentsModalDelete")}
+                                </>
+                              )}
+                            </Button>
+                          ) : null}
                         </div>
                       </div>
                     </div>

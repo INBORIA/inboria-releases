@@ -1956,7 +1956,9 @@
     "commentsModalSubtitle": "Die 7 neuesten Kommentare Ihres Teams",
     "commentsModalEmpty": "Noch keine Kommentare",
     "commentsModalOpenEmail": "E-Mail öffnen",
-    "commentsModalOn": "zu"
+    "commentsModalOn": "zu",
+    "commentsModalDelete": "Löschen",
+    "commentsModalDeleteConfirm": "Diese Notiz endgültig löschen?"
   },
   "notifications": {
     "title": "Benachrichtigungen",

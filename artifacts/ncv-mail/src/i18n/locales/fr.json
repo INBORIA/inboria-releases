@@ -1946,7 +1946,9 @@
     "commentsModalSubtitle": "Les 7 commentaires les plus récents de votre équipe",
     "commentsModalEmpty": "Aucun commentaire pour le moment",
     "commentsModalOpenEmail": "Ouvrir l'email",
-    "commentsModalOn": "sur"
+    "commentsModalOn": "sur",
+    "commentsModalDelete": "Supprimer",
+    "commentsModalDeleteConfirm": "Supprimer définitivement cette note ?"
   },
   "notifications": {
     "title": "Notifications",

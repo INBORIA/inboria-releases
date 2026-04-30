@@ -1956,7 +1956,9 @@
     "commentsModalSubtitle": "Your team's 7 most recent comments",
     "commentsModalEmpty": "No comments yet",
     "commentsModalOpenEmail": "Open email",
-    "commentsModalOn": "on"
+    "commentsModalOn": "on",
+    "commentsModalDelete": "Delete",
+    "commentsModalDeleteConfirm": "Permanently delete this note?"
   },
   "notifications": {
     "title": "Notifications",
