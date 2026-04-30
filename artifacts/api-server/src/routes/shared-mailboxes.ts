@@ -534,18 +534,6 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
       };
     });
 
-    req.log.info({
-      route: "GET /shared-mailboxes/:mailboxId/emails",
-      mailboxId: req.params.mailboxId,
-      userId: req.userId,
-      filter,
-      page,
-      limit,
-      totalCount,
-      returnedRows: enriched.length,
-      sampleIds: enriched.slice(0, 3).map(e => e.id),
-    }, "shared-mailbox detail debug");
-
     res.json({
       emails: enriched,
       total: totalCount,

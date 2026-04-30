@@ -458,28 +458,13 @@ function MailboxEmails({
   const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const [page, setPage] = useState(1);
-  const [accumulatedEmails, setAccumulatedEmails] = useState<PaginatedSharedMailboxEmails["emails"]>([]);
   const { data: emailsData, isLoading, isFetching } = useGetSharedMailboxEmails(mailboxId, { filter, page, limit: 50 });
   const paged = emailsData as PaginatedSharedMailboxEmails | undefined;
   const hasMore = paged ? page < (paged.totalPages ?? 1) : false;
-
-  useEffect(() => {
-    if (paged) {
-      if (page === 1) {
-        setAccumulatedEmails(paged.emails || []);
-      } else {
-        setAccumulatedEmails((prev) => {
-          const existingIds = new Set(prev.map((e) => e.id));
-          const unique = (paged.emails || []).filter((e) => !existingIds.has(e.id));
-          return [...prev, ...unique];
-        });
-      }
-    }
-  }, [paged, page]);
+  const emails = paged?.emails ?? [];
 
   useEffect(() => {
     setPage(1);
-    setAccumulatedEmails([]);
   }, [filter, mailboxId]);
 
   const loadMore = useCallback(() => {
@@ -488,7 +473,6 @@ function MailboxEmails({
     }
   }, [hasMore, isFetching]);
 
-  const emails = accumulatedEmails;
   const forceSync = useForceSharedMailboxSync();
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -502,7 +486,6 @@ function MailboxEmails({
         const count = result.synced ?? 0;
         toast({ title: count > 0 ? t("sharedMailboxes.syncedCount", { count }) : t("sharedMailboxes.syncNoNew") });
         setPage(1);
-        setAccumulatedEmails([]);
         queryClient.invalidateQueries({ queryKey: getGetSharedMailboxEmailsQueryKey(mailboxId) });
       } else {
         toast({ title: result.error || t("sharedMailboxes.syncFailed"), variant: "destructive" });
