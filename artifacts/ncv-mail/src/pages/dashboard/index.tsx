@@ -3062,6 +3062,8 @@ export default function Dashboard() {
   const { data: orgMembers } = useGetOrganisationMembers({ query: { enabled: !!(myOrg as any)?.id } as any });
   const assignEmailMut = useAssignEmail();
   const unassignEmailMut = useUnassignEmail();
+  const isOrgAdmin = (myOrg as any)?.myRole === "admin";
+  const [assigningInboxEmailId, setAssigningInboxEmailId] = useState<string | number | null>(null);
 
   const plan = (profile as any)?.plan;
   const { data: sharedMailboxes } = useGetSharedMailboxes({ query: { enabled: plan === "business" } as any });
@@ -3847,6 +3849,21 @@ export default function Dashboard() {
     );
   };
 
+  const handleAssignInboxEmail = async (emailId: number, assignTo: string) => {
+    if (!assignTo) return;
+    setAssigningInboxEmailId(null);
+    try {
+      await assignEmailMut.mutateAsync({ emailId, data: { assignTo } });
+      queryClient.invalidateQueries();
+      toast({ title: t("sharedMailboxes.assignSuccess") });
+    } catch (e: any) {
+      toast({
+        variant: "destructive",
+        title: e?.response?.data?.error || t("sharedMailboxes.assignError"),
+      });
+    }
+  };
+
   const hasSharedMailboxes = plan === "business" && sharedMailboxes && (sharedMailboxes as any[]).length > 0;
 
   if (selectedEmail) {
@@ -4446,18 +4463,51 @@ export default function Dashboard() {
                                   </div>
                                 )}
                               </div>
-                              <div className="flex items-center gap-1 shrink-0">
+                              <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
                                 {!isClaimed ? (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-1 h-7 text-[10px] bg-transparent border-border text-primary hover:text-white hover:bg-primary/10"
-                                    onClick={() => handleClaimEmail(email.id as any)}
-                                    disabled={claimEmailMut.isPending}
-                                  >
-                                    <UserPlus className="w-3 h-3" />
-                                    {t("inbox.claim")}
-                                  </Button>
+                                  <>
+                                    <Button
+                                      size="sm"
+                                      variant="outline"
+                                      className="gap-1 h-7 text-[10px] bg-transparent border-border text-primary hover:text-white hover:bg-primary/10"
+                                      onClick={() => handleClaimEmail(email.id as any)}
+                                      disabled={claimEmailMut.isPending}
+                                    >
+                                      <UserPlus className="w-3 h-3" />
+                                      {t("inbox.claim")}
+                                    </Button>
+                                    {isOrgAdmin && (
+                                      assigningInboxEmailId === email.id ? (
+                                        <select
+                                          autoFocus
+                                          defaultValue=""
+                                          onBlur={() => setAssigningInboxEmailId(null)}
+                                          onChange={(e) => handleAssignInboxEmail(Number(email.id), e.target.value)}
+                                          className="bg-card border border-border rounded-md text-[10px] h-7 px-2 text-white"
+                                        >
+                                          <option value="" disabled>{t("sharedMailboxes.selectColleague")}</option>
+                                          {((orgMembers as any[]) || [])
+                                            .filter((m: any) => m.userId && m.userId !== profile?.id)
+                                            .map((m: any) => (
+                                              <option key={m.userId} value={m.userId}>
+                                                {m.fullName || m.email || m.userId}
+                                              </option>
+                                            ))}
+                                        </select>
+                                      ) : (
+                                        <Button
+                                          size="sm"
+                                          variant="outline"
+                                          className="gap-1 h-7 text-[10px] bg-transparent border-indigo-400/30 text-indigo-400 hover:text-white hover:bg-indigo-400/10"
+                                          onClick={() => setAssigningInboxEmailId(email.id as any)}
+                                          title={t("sharedMailboxes.assignToColleague")}
+                                        >
+                                          <UserPlus className="w-3 h-3" />
+                                          {t("sharedMailboxes.assignToColleague")}
+                                        </Button>
+                                      )
+                                    )}
+                                  </>
                                 ) : isClaimedByMe ? (
                                   <Button
                                     size="sm"
