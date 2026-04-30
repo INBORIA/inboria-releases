@@ -46,6 +46,8 @@ tags:
     description: Team dashboard operations
   - name: appointments
     description: Appointment/calendar operations
+  - name: inboria
+    description: Inboria contextual memory operations
 paths:
   /healthz:
     get:
@@ -2953,6 +2955,37 @@ paths:
         "404":
           description: Contact not found
 
+  /inboria/context:
+    get:
+      operationId: getInboriaContext
+      tags: [inboria]
+      summary: Inboria contextual memory for a contact (facts and episodes extracted from past emails)
+      security:
+        - BearerAuth: []
+      parameters:
+        - name: contactEmail
+          in: query
+          required: true
+          description: URL-encoded email of the contact
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+            maximum: 50
+      responses:
+        "200":
+          description: Facts and episodes Inboria has noted for this contact, each linked to a verifiable source email
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InboriaContextResponse"
+        "400":
+          description: Invalid contactEmail
+
   /templates:
     get:
       operationId: listTemplates
@@ -5435,6 +5468,60 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/ContactAttachment"
+
+    InboriaSource:
+      type: object
+      required: [emailId]
+      properties:
+        emailId: { type: integer }
+        subject: { type: ["string", "null"] }
+        sentAt: { type: ["string", "null"], format: date-time }
+
+    InboriaFact:
+      type: object
+      required: [id, contactEmail, kind, statement, confidence, extractedAt, source]
+      properties:
+        id: { type: string }
+        contactEmail: { type: string }
+        kind:
+          type: string
+          description: One of preference, context, company, topic, relation
+        statement: { type: string }
+        confidence: { type: number }
+        extractedAt: { type: string, format: date-time }
+        source:
+          $ref: "#/components/schemas/InboriaSource"
+
+    InboriaEpisode:
+      type: object
+      required: [id, contactEmail, kind, summary, extractedAt, source]
+      properties:
+        id: { type: string }
+        contactEmail: { type: string }
+        kind:
+          type: string
+          description: One of meeting, call, decision, request, commitment, milestone
+        summary: { type: string }
+        eventDate:
+          type: ["string", "null"]
+          format: date
+        extractedAt: { type: string, format: date-time }
+        source:
+          $ref: "#/components/schemas/InboriaSource"
+
+    InboriaContextResponse:
+      type: object
+      required: [contactEmail, facts, episodes]
+      properties:
+        contactEmail: { type: string }
+        facts:
+          type: array
+          items:
+            $ref: "#/components/schemas/InboriaFact"
+        episodes:
+          type: array
+          items:
+            $ref: "#/components/schemas/InboriaEpisode"
 
     EmailTemplate:
       type: object

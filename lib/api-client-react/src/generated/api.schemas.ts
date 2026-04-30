@@ -1279,6 +1279,43 @@ export interface ContactDetail {
   attachments: ContactAttachment[];
 }
 
+export interface InboriaSource {
+  emailId: number;
+  /** @nullable */
+  subject?: string | null;
+  /** @nullable */
+  sentAt?: string | null;
+}
+
+export interface InboriaFact {
+  id: string;
+  contactEmail: string;
+  /** One of preference, context, company, topic, relation */
+  kind: string;
+  statement: string;
+  confidence: number;
+  extractedAt: string;
+  source: InboriaSource;
+}
+
+export interface InboriaEpisode {
+  id: string;
+  contactEmail: string;
+  /** One of meeting, call, decision, request, commitment, milestone */
+  kind: string;
+  summary: string;
+  /** @nullable */
+  eventDate?: string | null;
+  extractedAt: string;
+  source: InboriaSource;
+}
+
+export interface InboriaContextResponse {
+  contactEmail: string;
+  facts: InboriaFact[];
+  episodes: InboriaEpisode[];
+}
+
 export interface EmailTemplate {
   id: string;
   name: string;
@@ -2010,6 +2047,17 @@ export type ListContactsParams = {
   q?: string;
   page?: number;
   pageSize?: number;
+};
+
+export type GetInboriaContextParams = {
+  /**
+   * URL-encoded email of the contact
+   */
+  contactEmail: string;
+  /**
+   * @maximum 50
+   */
+  limit?: number;
 };
 
 export type IncrementTemplateUsage200 = {

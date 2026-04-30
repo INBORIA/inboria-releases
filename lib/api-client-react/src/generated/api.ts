@@ -100,12 +100,14 @@ import type {
   GetEmailConnectionShareMembers200,
   GetEmailConversation200,
   GetFollowupStats200,
+  GetInboriaContextParams,
   GetInvitationByToken200,
   GetNotificationsParams,
   GetSharedMailboxEmailsParams,
   GetTeamActivityParams,
   GetTeamRecentCommentsParams,
   HealthStatus,
+  InboriaContextResponse,
   InboxHealth,
   IncrementTemplateUsage200,
   Integration,
@@ -11142,6 +11144,103 @@ export function useGetContact<
   },
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetContactQueryOptions(email, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Inboria contextual memory for a contact (facts and episodes extracted from past emails)
+ */
+export const getGetInboriaContextUrl = (params: GetInboriaContextParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/inboria/context?${stringifiedParams}`
+    : `/api/inboria/context`;
+};
+
+export const getInboriaContext = async (
+  params: GetInboriaContextParams,
+  options?: RequestInit,
+): Promise<InboriaContextResponse> => {
+  return customFetch<InboriaContextResponse>(getGetInboriaContextUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetInboriaContextQueryKey = (
+  params?: GetInboriaContextParams,
+) => {
+  return [`/api/inboria/context`, ...(params ? [params] : [])] as const;
+};
+
+export const getGetInboriaContextQueryOptions = <
+  TData = Awaited<ReturnType<typeof getInboriaContext>>,
+  TError = ErrorType<void>,
+>(
+  params: GetInboriaContextParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getInboriaContext>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetInboriaContextQueryKey(params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getInboriaContext>>
+  > = ({ signal }) => getInboriaContext(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getInboriaContext>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetInboriaContextQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getInboriaContext>>
+>;
+export type GetInboriaContextQueryError = ErrorType<void>;
+
+/**
+ * @summary Inboria contextual memory for a contact (facts and episodes extracted from past emails)
+ */
+
+export function useGetInboriaContext<
+  TData = Awaited<ReturnType<typeof getInboriaContext>>,
+  TError = ErrorType<void>,
+>(
+  params: GetInboriaContextParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getInboriaContext>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetInboriaContextQueryOptions(params, options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

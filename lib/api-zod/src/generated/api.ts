@@ -3071,6 +3071,62 @@ export const GetContactResponse = zod.object({
 });
 
 /**
+ * @summary Inboria contextual memory for a contact (facts and episodes extracted from past emails)
+ */
+export const getInboriaContextQueryLimitDefault = 10;
+export const getInboriaContextQueryLimitMax = 50;
+
+export const GetInboriaContextQueryParams = zod.object({
+  contactEmail: zod.coerce
+    .string()
+    .describe("URL-encoded email of the contact"),
+  limit: zod.coerce
+    .number()
+    .max(getInboriaContextQueryLimitMax)
+    .default(getInboriaContextQueryLimitDefault),
+});
+
+export const GetInboriaContextResponse = zod.object({
+  contactEmail: zod.string(),
+  facts: zod.array(
+    zod.object({
+      id: zod.string(),
+      contactEmail: zod.string(),
+      kind: zod
+        .string()
+        .describe("One of preference, context, company, topic, relation"),
+      statement: zod.string(),
+      confidence: zod.number(),
+      extractedAt: zod.coerce.date(),
+      source: zod.object({
+        emailId: zod.number(),
+        subject: zod.string().nullish(),
+        sentAt: zod.coerce.date().nullish(),
+      }),
+    }),
+  ),
+  episodes: zod.array(
+    zod.object({
+      id: zod.string(),
+      contactEmail: zod.string(),
+      kind: zod
+        .string()
+        .describe(
+          "One of meeting, call, decision, request, commitment, milestone",
+        ),
+      summary: zod.string(),
+      eventDate: zod.coerce.date().nullish(),
+      extractedAt: zod.coerce.date(),
+      source: zod.object({
+        emailId: zod.number(),
+        subject: zod.string().nullish(),
+        sentAt: zod.coerce.date().nullish(),
+      }),
+    }),
+  ),
+});
+
+/**
  * @summary List user templates
  */
 export const ListTemplatesResponseItem = zod.object({

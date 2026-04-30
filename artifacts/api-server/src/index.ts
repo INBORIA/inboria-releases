@@ -1,6 +1,7 @@
 import app from "./app";
 import { logger } from "./lib/logger";
 import { startAutoSync, NOISE_SENDER_REGEX, NOISE_SUBJECT_REGEX } from "./services/auto-sync";
+import { startInboriaExtractor } from "./services/inboria-extractor";
 import { startScheduledSendWorker } from "./services/scheduled-send-worker";
 import { startSnoozeWakeWorker } from "./services/snooze-wake-worker";
 import { startCrmSyncScheduler } from "./services/crm-sync-scheduler";
@@ -662,6 +663,7 @@ app.listen(port, (err) => {
   purgeNoiseTasks();
   ensureB2bTables();
   startAutoSync();
+  startInboriaExtractor();
   startScheduledSendWorker();
   startSnoozeWakeWorker();
   startSlaWorker();
