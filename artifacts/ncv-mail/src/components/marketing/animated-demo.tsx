@@ -264,28 +264,37 @@ export function AnimatedDemo() {
 
           <div className="flex-1 flex flex-col min-w-0 relative">
             {inboriaPanelOpen && (
-              <div className="hidden md:block absolute top-12 right-3 sm:right-4 z-30 w-[260px] origin-top-right animate-in fade-in slide-in-from-top-2 duration-200">
+              <div className="hidden md:block absolute top-12 right-3 sm:right-4 z-30 w-[300px] origin-top-right animate-in fade-in slide-in-from-top-2 duration-200">
                 <div className="rounded-lg border border-[#2d7dd2]/40 bg-[#0d1117] shadow-2xl shadow-[#2d7dd2]/30 overflow-hidden">
-                  <div className="flex items-center gap-1.5 px-3 py-2 border-b border-[#1f2937] bg-[#2d7dd2]/[0.08]">
-                    <Sparkles className="w-3 h-3 text-[#2d7dd2]" />
-                    <span className="text-[10px] font-semibold text-white">{t("demo.inboria.title", "Inboria propose")}</span>
+                  <div className="flex items-center gap-2 px-3 py-2 border-b border-[#1f2937] bg-[#2d7dd2]/[0.08]">
+                    <div className="w-5 h-5 rounded-full bg-[#2d7dd2] flex items-center justify-center shrink-0">
+                      <Sparkles className="w-2.5 h-2.5 text-white" />
+                    </div>
+                    <div className="flex flex-col min-w-0">
+                      <span className="text-[10px] font-semibold text-white">{t("inboriaChat.title", "Inboria")}</span>
+                      <span className="text-[8px] text-[#8b9cb3]">{t("inboriaChat.subtitle", "Votre copilote emails")}</span>
+                    </div>
                   </div>
-                  <div className="px-3 py-2 space-y-1.5">
-                    {[
-                      { icon: Tags, text: t("demo.inboria.action1", "Trier 6 emails par priorité"), color: "text-[#2d7dd2]" },
-                      { icon: Trash2, text: t("demo.inboria.action2", "Supprimer 2 spams"), color: "text-red-400" },
-                      { icon: Wand2, text: t("demo.inboria.action3", "Préparer 3 brouillons"), color: "text-emerald-400" },
-                      { icon: MailCheck, text: t("demo.inboria.action4", "Programmer 1 relance"), color: "text-amber-400" },
-                    ].map((a, i) => (
-                      <div key={i} className="flex items-center gap-1.5 text-[10px] text-white/85">
-                        <a.icon className={`w-3 h-3 shrink-0 ${a.color}`} />
-                        <span className="truncate">{a.text}</span>
-                      </div>
-                    ))}
+                  <div className="px-3 py-2.5">
+                    <p className="text-[10px] font-semibold text-white mb-1">{t("inboriaChat.greetingTitle", "Bonjour, je suis Inboria.")}</p>
+                    <p className="text-[9px] text-[#8b9cb3] leading-snug mb-2">{t("inboriaChat.greetingDesc", "Je connais vos contacts, vos préférences et vos engagements en cours. Posez-moi une question.")}</p>
+                    <div className="space-y-1">
+                      {[
+                        t("inboriaChat.suggest1", "Quels engagements ai-je pris cette semaine ?"),
+                        t("inboriaChat.suggest2", "De quoi devrais-je relancer en priorité ?"),
+                        t("inboriaChat.suggest3", "Résume ce que je sais de mon dernier client."),
+                      ].map((q, i) => (
+                        <div key={i} className="flex items-start gap-1.5 px-2 py-1.5 rounded-md border border-[#1f2937] bg-[#141c2b] text-[9px] text-white/85 leading-snug">
+                          <MessageCircleQuestion className="w-2.5 h-2.5 text-[#2d7dd2] shrink-0 mt-[1px]" />
+                          <span>{q}</span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="px-3 pb-2 pt-1">
-                    <div className="w-full text-center text-[10px] font-semibold text-white bg-[#2d7dd2] rounded-md py-1">
-                      {t("demo.inboria.acceptAll", "Tout accepter")}
+                  <div className="px-3 pb-2 pt-1 border-t border-[#1f2937]">
+                    <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#141c2b] border border-[#1f2937]">
+                      <Search className="w-2.5 h-2.5 text-[#8b9cb3] shrink-0" />
+                      <span className="text-[9px] text-[#8b9cb3] truncate">{t("inboriaChat.inputPlaceholder", "Demandez quelque chose à Inboria…")}</span>
                     </div>
                   </div>
                 </div>
