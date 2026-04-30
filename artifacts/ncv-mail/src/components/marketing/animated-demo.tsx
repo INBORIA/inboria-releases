@@ -3,7 +3,7 @@ import {
   Inbox, Archive, LayoutDashboard, CheckSquare, FolderKanban, Tags, Settings, CreditCard,
   LogOut, Search, Clock, ChevronRight, Sparkles, Zap, CheckCircle, RefreshCw, Trash2, Check, Square,
   Send, BellOff, CalendarClock, MailCheck, MailPlus, Users, Activity, CalendarDays, FileText, Wand2, ShieldCheck, Plus,
-  MessageCircleQuestion,
+  MessageCircleQuestion, UserCheck,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
@@ -11,6 +11,7 @@ import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 const NAV_KEYS: Array<{ key: string; fallback: string; icon: any; active?: boolean; badge?: number }> = [
   { key: "sidebar.inbox", fallback: "Réception", icon: Inbox, active: true },
   { key: "sidebar.sent", fallback: "Envoyés", icon: Send },
+  { key: "sidebar.assigned", fallback: "Assignés", icon: UserCheck },
   { key: "sidebar.snoozed", fallback: "Reportés", icon: BellOff },
   { key: "sidebar.scheduled", fallback: "Programmés", icon: CalendarClock },
   { key: "tasks.title", fallback: "Tâches", icon: CheckSquare },
@@ -262,6 +263,10 @@ export function AnimatedDemo() {
                   <Search className="w-3.5 h-3.5 text-[#8b9cb3] shrink-0" />
                   <span className="text-[11px] text-[#8b9cb3] truncate">{t("demo.search")}</span>
                 </div>
+                <div className="hidden md:flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-[#2d7dd2]/30 bg-[#2d7dd2]/10 text-[10px] font-medium text-[#2d7dd2] shrink-0">
+                  <MessageCircleQuestion className="w-3 h-3" />
+                  <span>{t("assistant.button", "Inboria Assistant")}</span>
+                </div>
                 <div className="hidden md:flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[10px] font-medium text-[#8b9cb3] shrink-0">
                   <RefreshCw className="w-3 h-3" />
                   <span>{t("inbox.refresh", "Actualiser")}</span>
@@ -435,11 +440,6 @@ export function AnimatedDemo() {
               </div>
             )}
 
-            <div className="absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10 pointer-events-none">
-              <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-[#2d7dd2] flex items-center justify-center shadow-lg shadow-[#2d7dd2]/40 ring-2 ring-[#2d7dd2]/20">
-                <MessageCircleQuestion className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-              </div>
-            </div>
           </div>
         </div>
       </div>
