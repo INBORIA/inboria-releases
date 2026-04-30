@@ -108,6 +108,8 @@ import type {
   GetTeamRecentCommentsParams,
   HealthStatus,
   InboriaContextResponse,
+  InboriaMailboxSetting,
+  InboriaMailboxSettingsResponse,
   InboxHealth,
   IncrementTemplateUsage200,
   Integration,
@@ -181,6 +183,7 @@ import type {
   UpdateEmailBody,
   UpdateEmailComment200,
   UpdateFollowupBody,
+  UpdateInboriaMailboxSettingBody,
   UpdateIntegrationBody,
   UpdateMemberRole200,
   UpdateMemberRoleBody,
@@ -11248,6 +11251,175 @@ export function useGetInboriaContext<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary List inboria_enabled flag for the user's personal connections and accessible shared mailboxes
+ */
+export const getListInboriaMailboxSettingsUrl = () => {
+  return `/api/inboria/mailbox-settings`;
+};
+
+export const listInboriaMailboxSettings = async (
+  options?: RequestInit,
+): Promise<InboriaMailboxSettingsResponse> => {
+  return customFetch<InboriaMailboxSettingsResponse>(
+    getListInboriaMailboxSettingsUrl(),
+    {
+      ...options,
+      method: "GET",
+    },
+  );
+};
+
+export const getListInboriaMailboxSettingsQueryKey = () => {
+  return [`/api/inboria/mailbox-settings`] as const;
+};
+
+export const getListInboriaMailboxSettingsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listInboriaMailboxSettings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listInboriaMailboxSettings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListInboriaMailboxSettingsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listInboriaMailboxSettings>>
+  > = ({ signal }) => listInboriaMailboxSettings({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listInboriaMailboxSettings>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListInboriaMailboxSettingsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listInboriaMailboxSettings>>
+>;
+export type ListInboriaMailboxSettingsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List inboria_enabled flag for the user's personal connections and accessible shared mailboxes
+ */
+
+export function useListInboriaMailboxSettings<
+  TData = Awaited<ReturnType<typeof listInboriaMailboxSettings>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listInboriaMailboxSettings>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListInboriaMailboxSettingsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Toggle Inboria memory on/off for a single mailbox (personal connection or shared)
+ */
+export const getUpdateInboriaMailboxSettingUrl = () => {
+  return `/api/inboria/mailbox-settings`;
+};
+
+export const updateInboriaMailboxSetting = async (
+  updateInboriaMailboxSettingBody: UpdateInboriaMailboxSettingBody,
+  options?: RequestInit,
+): Promise<InboriaMailboxSetting> => {
+  return customFetch<InboriaMailboxSetting>(
+    getUpdateInboriaMailboxSettingUrl(),
+    {
+      ...options,
+      method: "PATCH",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(updateInboriaMailboxSettingBody),
+    },
+  );
+};
+
+export const getUpdateInboriaMailboxSettingMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateInboriaMailboxSetting>>,
+    TError,
+    { data: BodyType<UpdateInboriaMailboxSettingBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateInboriaMailboxSetting>>,
+  TError,
+  { data: BodyType<UpdateInboriaMailboxSettingBody> },
+  TContext
+> => {
+  const mutationKey = ["updateInboriaMailboxSetting"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateInboriaMailboxSetting>>,
+    { data: BodyType<UpdateInboriaMailboxSettingBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return updateInboriaMailboxSetting(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateInboriaMailboxSettingMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateInboriaMailboxSetting>>
+>;
+export type UpdateInboriaMailboxSettingMutationBody =
+  BodyType<UpdateInboriaMailboxSettingBody>;
+export type UpdateInboriaMailboxSettingMutationError = ErrorType<void>;
+
+/**
+ * @summary Toggle Inboria memory on/off for a single mailbox (personal connection or shared)
+ */
+export const useUpdateInboriaMailboxSetting = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateInboriaMailboxSetting>>,
+    TError,
+    { data: BodyType<UpdateInboriaMailboxSettingBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateInboriaMailboxSetting>>,
+  TError,
+  { data: BodyType<UpdateInboriaMailboxSettingBody> },
+  TContext
+> => {
+  return useMutation(getUpdateInboriaMailboxSettingMutationOptions(options));
+};
 
 /**
  * @summary List user templates

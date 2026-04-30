@@ -1316,6 +1316,41 @@ export interface InboriaContextResponse {
   episodes: InboriaEpisode[];
 }
 
+export type InboriaMailboxSettingKind =
+  (typeof InboriaMailboxSettingKind)[keyof typeof InboriaMailboxSettingKind];
+
+export const InboriaMailboxSettingKind = {
+  connection: "connection",
+  shared: "shared",
+} as const;
+
+export interface InboriaMailboxSetting {
+  kind: InboriaMailboxSettingKind;
+  id: string;
+  emailAddress: string;
+  label: string;
+  enabled: boolean;
+}
+
+export interface InboriaMailboxSettingsResponse {
+  personal: InboriaMailboxSetting[];
+  shared: InboriaMailboxSetting[];
+}
+
+export type UpdateInboriaMailboxSettingBodyKind =
+  (typeof UpdateInboriaMailboxSettingBodyKind)[keyof typeof UpdateInboriaMailboxSettingBodyKind];
+
+export const UpdateInboriaMailboxSettingBodyKind = {
+  connection: "connection",
+  shared: "shared",
+} as const;
+
+export interface UpdateInboriaMailboxSettingBody {
+  kind: UpdateInboriaMailboxSettingBodyKind;
+  id: string;
+  enabled: boolean;
+}
+
 export interface EmailTemplate {
   id: string;
   name: string;

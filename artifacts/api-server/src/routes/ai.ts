@@ -9,6 +9,7 @@ import { AI_COST, checkEntitlement, consumeAiCredits, type AiEventType } from ".
 import { recordAutopilotEvent } from "../services/autopilot-events";
 import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 import { ensureSystemCategory } from "../lib/system-categories";
+import { buildInboriaContextBlock } from "../lib/inboria-prompt";
 import { getUserAiLang } from "../services/ai-lang";
 
 const openai = new OpenAI({
@@ -329,6 +330,10 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
 
     const signatureInstruction = `N'ajoute aucune signature ni formule de signature : termine le brouillon directement par la dernière phrase utile, sans nom ni "Cordialement".`;
 
+    const inboriaContext = await buildInboriaContextBlock(req.userId!, email.sender).catch(
+      () => "",
+    );
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       max_completion_tokens: 1024,
@@ -344,7 +349,7 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
 Expediteur: ${email.sender}
 Sujet: ${email.subject}
 Corps:
-${email.body}${projectContext}${categoryContext}
+${email.body}${projectContext}${categoryContext}${inboriaContext}
 
 Redige une reponse professionnelle et adaptee au contexte. Reponds uniquement avec le texte du brouillon, sans explication supplementaire.`,
         },
@@ -409,6 +414,10 @@ router.post("/ai/follow-up-draft", requireAuth, async (req, res): Promise<void> 
     const cleanBody = (email.body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 1500);
     const signatureInstruction = `N'ajoute aucune signature ni formule de signature : termine le brouillon directement par la dernière phrase utile, sans nom ni "Cordialement".`;
 
+    const inboriaContext = await buildInboriaContextBlock(req.userId!, email.recipient).catch(
+      () => "",
+    );
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       max_completion_tokens: 600,
@@ -419,7 +428,7 @@ router.post("/ai/follow-up-draft", requireAuth, async (req, res): Promise<void> 
         },
         {
           role: "user",
-          content: `Voici le mail initial que j'ai envoyé${sentDate ? ` le ${sentDate}` : ""} et qui est resté sans réponse.\n\nDestinataire : ${email.recipient || "(inconnu)"}\nObjet initial : ${email.subject || "(sans objet)"}\nCorps initial :\n${cleanBody}\n\nRédige uniquement le texte d'un mail de relance court (3-6 lignes), sans objet, sans signature, sans guillemets, prêt à coller dans le corps.`,
+          content: `Voici le mail initial que j'ai envoyé${sentDate ? ` le ${sentDate}` : ""} et qui est resté sans réponse.\n\nDestinataire : ${email.recipient || "(inconnu)"}\nObjet initial : ${email.subject || "(sans objet)"}\nCorps initial :\n${cleanBody}${inboriaContext}\n\nRédige uniquement le texte d'un mail de relance court (3-6 lignes), sans objet, sans signature, sans guillemets, prêt à coller dans le corps.`,
         },
       ],
     });

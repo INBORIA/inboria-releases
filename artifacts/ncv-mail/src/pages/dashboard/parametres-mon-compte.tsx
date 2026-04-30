@@ -1,5 +1,15 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useGetProfile, useUpdateProfile, useGetMyOrganisation, getGetProfileQueryKey, getGetSharedMailboxesQueryKey } from "@workspace/api-client-react";
+import {
+  useGetProfile,
+  useUpdateProfile,
+  useGetMyOrganisation,
+  getGetProfileQueryKey,
+  getGetSharedMailboxesQueryKey,
+  useListInboriaMailboxSettings,
+  useUpdateInboriaMailboxSetting,
+  getListInboriaMailboxSettingsQueryKey,
+} from "@workspace/api-client-react";
+import type { InboriaMailboxSetting } from "@workspace/api-client-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -20,7 +30,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Pen, Lock, Globe, ArrowLeft } from "lucide-react";
+import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Pen, Lock, Globe, ArrowLeft, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
@@ -406,6 +416,120 @@ function useEmailConnections() {
     },
     enabled: !!session,
   });
+}
+
+function InboriaPrivacySection({ t }: { t: any }) {
+  const queryClient = useQueryClient();
+  const { data, isLoading } = useListInboriaMailboxSettings({
+    query: { queryKey: getListInboriaMailboxSettingsQueryKey() },
+  });
+  const updateMutation = useUpdateInboriaMailboxSetting();
+  const { toast } = useToast();
+  const [pending, setPending] = useState<string | null>(null);
+
+  const personal: InboriaMailboxSetting[] = (data as any)?.personal ?? [];
+  const shared: InboriaMailboxSetting[] = (data as any)?.shared ?? [];
+  const all = [...personal, ...shared];
+
+  async function handleToggle(item: InboriaMailboxSetting, next: boolean) {
+    const key = `${item.kind}:${item.id}`;
+    setPending(key);
+    try {
+      await updateMutation.mutateAsync({
+        data: { kind: item.kind, id: item.id, enabled: next },
+      });
+      await queryClient.invalidateQueries({
+        queryKey: getListInboriaMailboxSettingsQueryKey(),
+      });
+      toast({
+        title: next
+          ? t("settings.inboriaPrivacyToastOn", "Mémoire Inboria activée pour cette boîte.")
+          : t("settings.inboriaPrivacyToastOff", "Mémoire Inboria désactivée pour cette boîte."),
+      });
+    } catch (err: any) {
+      toast({
+        title: t("settings.inboriaPrivacyToastError", "Impossible de modifier le paramètre."),
+        variant: "destructive" as any,
+      });
+    } finally {
+      setPending(null);
+    }
+  }
+
+  function renderRow(item: InboriaMailboxSetting) {
+    const key = `${item.kind}:${item.id}`;
+    return (
+      <div
+        key={key}
+        className="flex items-center justify-between gap-3 p-3 border border-border rounded-lg bg-background"
+        data-testid={`row-inboria-mailbox-${item.kind}-${item.id}`}
+      >
+        <div className="flex items-start gap-2 min-w-0">
+          <Sparkles className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />
+          <div className="min-w-0">
+            <div className="text-[13px] text-white truncate">{item.label}</div>
+            <div className="text-[11px] text-[#8b9cb3] truncate">
+              {item.kind === "shared"
+                ? t("settings.inboriaPrivacySharedHint", "Boîte partagée — affecte toute l'équipe")
+                : item.emailAddress}
+            </div>
+          </div>
+        </div>
+        <Switch
+          checked={item.enabled}
+          disabled={pending === key}
+          onCheckedChange={(next) => handleToggle(item, next)}
+          data-testid={`switch-inboria-${item.kind}-${item.id}`}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <section>
+      <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
+        <Sparkles className="w-4 h-4 text-primary" />
+        {t("settings.inboriaPrivacyTitle", "Confidentialité — Mémoire Inboria")}
+      </h2>
+      <div className="bg-card rounded-lg border border-border p-5 space-y-3">
+        <p className="text-[12px] text-[#8b9cb3]">
+          {t(
+            "settings.inboriaPrivacyDesc",
+            "Inboria mémorise les préférences, sujets, décisions et engagements présents dans vos emails pour personnaliser ses réponses. Désactivez la mémoire sur une boîte pour qu'elle soit ignorée — par exemple votre boîte personnelle.",
+          )}
+        </p>
+        {isLoading ? (
+          <Skeleton className="h-12 w-full bg-white/5" />
+        ) : all.length === 0 ? (
+          <p className="text-[12px] text-[#8b9cb3] py-4 text-center">
+            {t(
+              "settings.inboriaPrivacyEmpty",
+              "Aucune boîte mail connectée pour l'instant.",
+            )}
+          </p>
+        ) : (
+          <>
+            {personal.length > 0 && (
+              <div className="space-y-2">
+                <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#8b9cb3]">
+                  {t("settings.inboriaPrivacyPersonal", "Vos boîtes personnelles")}
+                </h3>
+                {personal.map(renderRow)}
+              </div>
+            )}
+            {shared.length > 0 && (
+              <div className="space-y-2 pt-2">
+                <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#8b9cb3]">
+                  {t("settings.inboriaPrivacyShared", "Boîtes partagées de l'équipe")}
+                </h3>
+                {shared.map(renderRow)}
+              </div>
+            )}
+          </>
+        )}
+      </div>
+    </section>
+  );
 }
 
 export default function ParametresMonCompte() {
@@ -1011,6 +1135,7 @@ export default function ParametresMonCompte() {
             </div>
           </section>
 
+          <InboriaPrivacySection t={t} />
 
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">

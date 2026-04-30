@@ -2986,6 +2986,44 @@ paths:
         "400":
           description: Invalid contactEmail
 
+  /inboria/mailbox-settings:
+    get:
+      operationId: listInboriaMailboxSettings
+      tags: [inboria]
+      summary: List inboria_enabled flag for the user's personal connections and accessible shared mailboxes
+      security:
+        - BearerAuth: []
+      responses:
+        "200":
+          description: Mailboxes (personal + shared) with their inboria_enabled flag
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InboriaMailboxSettingsResponse"
+    patch:
+      operationId: updateInboriaMailboxSetting
+      tags: [inboria]
+      summary: Toggle Inboria memory on/off for a single mailbox (personal connection or shared)
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateInboriaMailboxSettingBody"
+      responses:
+        "200":
+          description: Updated setting
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/InboriaMailboxSetting"
+        "403":
+          description: User does not own this mailbox
+        "404":
+          description: Mailbox not found
+
   /templates:
     get:
       operationId: listTemplates
@@ -5522,6 +5560,41 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/InboriaEpisode"
+
+    InboriaMailboxSetting:
+      type: object
+      required: [kind, id, emailAddress, label, enabled]
+      properties:
+        kind:
+          type: string
+          enum: [connection, shared]
+        id: { type: string }
+        emailAddress: { type: string }
+        label: { type: string }
+        enabled: { type: boolean }
+
+    InboriaMailboxSettingsResponse:
+      type: object
+      required: [personal, shared]
+      properties:
+        personal:
+          type: array
+          items:
+            $ref: "#/components/schemas/InboriaMailboxSetting"
+        shared:
+          type: array
+          items:
+            $ref: "#/components/schemas/InboriaMailboxSetting"
+
+    UpdateInboriaMailboxSettingBody:
+      type: object
+      required: [kind, id, enabled]
+      properties:
+        kind:
+          type: string
+          enum: [connection, shared]
+        id: { type: string }
+        enabled: { type: boolean }
 
     EmailTemplate:
       type: object

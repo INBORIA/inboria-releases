@@ -3127,6 +3127,47 @@ export const GetInboriaContextResponse = zod.object({
 });
 
 /**
+ * @summary List inboria_enabled flag for the user's personal connections and accessible shared mailboxes
+ */
+export const ListInboriaMailboxSettingsResponse = zod.object({
+  personal: zod.array(
+    zod.object({
+      kind: zod.enum(["connection", "shared"]),
+      id: zod.string(),
+      emailAddress: zod.string(),
+      label: zod.string(),
+      enabled: zod.boolean(),
+    }),
+  ),
+  shared: zod.array(
+    zod.object({
+      kind: zod.enum(["connection", "shared"]),
+      id: zod.string(),
+      emailAddress: zod.string(),
+      label: zod.string(),
+      enabled: zod.boolean(),
+    }),
+  ),
+});
+
+/**
+ * @summary Toggle Inboria memory on/off for a single mailbox (personal connection or shared)
+ */
+export const UpdateInboriaMailboxSettingBody = zod.object({
+  kind: zod.enum(["connection", "shared"]),
+  id: zod.string(),
+  enabled: zod.boolean(),
+});
+
+export const UpdateInboriaMailboxSettingResponse = zod.object({
+  kind: zod.enum(["connection", "shared"]),
+  id: zod.string(),
+  emailAddress: zod.string(),
+  label: zod.string(),
+  enabled: zod.boolean(),
+});
+
+/**
  * @summary List user templates
  */
 export const ListTemplatesResponseItem = zod.object({
