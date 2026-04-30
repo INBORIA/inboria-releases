@@ -18,5 +18,8 @@ export interface SharedMailboxEmail {
   claimedBy?: string | null;
   claimedByName?: string | null;
   claimedAt?: Date | null;
+  assignedTo?: string | null;
+  assignedToName?: string | null;
+  assignedAt?: Date | null;
   createdAt?: Date;
 }

@@ -468,7 +468,7 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
 
     let query = supabaseAdmin
       .from("emails")
-      .select("id, sender, subject, body, status, priority, summary, category_id, claimed_by, claimed_at, created_at")
+      .select("id, sender, subject, body, status, priority, summary, category_id, claimed_by, claimed_at, assigned_to, assigned_at, created_at")
       .eq("shared_mailbox_id", req.params.mailboxId)
       .neq("status", "supprime")
       .order("created_at", { ascending: false });
@@ -493,16 +493,20 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
       return;
     }
 
-    const claimedByIds = [...new Set(emails.filter(e => e.claimed_by).map(e => e.claimed_by!))];
+    const userIdsForLookup = new Set<string>();
+    for (const e of emails) {
+      if (e.claimed_by) userIdsForLookup.add(e.claimed_by);
+      if (e.assigned_to) userIdsForLookup.add(e.assigned_to);
+    }
     const profileMap = new Map<string, string>();
-
-    for (const uid of claimedByIds) {
-      const { data: p } = await supabaseAdmin
+    if (userIdsForLookup.size > 0) {
+      const { data: profiles } = await supabaseAdmin
         .from("profiles")
-        .select("full_name")
-        .eq("id", uid)
-        .single();
-      if (p) profileMap.set(uid, p.full_name || "");
+        .select("id, full_name")
+        .in("id", Array.from(userIdsForLookup));
+      for (const p of profiles || []) {
+        profileMap.set(p.id, p.full_name || "");
+      }
     }
 
     function parseSenderField(raw: string) {
@@ -530,6 +534,9 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
         claimedBy: e.claimed_by,
         claimedByName: e.claimed_by ? profileMap.get(e.claimed_by) || "" : null,
         claimedAt: e.claimed_at,
+        assignedTo: e.assigned_to || null,
+        assignedToName: e.assigned_to ? profileMap.get(e.assigned_to) || "" : null,
+        assignedAt: e.assigned_at || null,
         createdAt: e.created_at,
       };
     });
@@ -614,7 +621,7 @@ router.post("/shared-mailboxes/emails/:emailId/unclaim", requireAuth, async (req
   try {
     const { data: email } = await supabaseAdmin
       .from("emails")
-      .select("id, shared_mailbox_id, claimed_by")
+      .select("id, shared_mailbox_id, claimed_by, assigned_to")
       .eq("id", req.params.emailId)
       .single();
 
@@ -628,9 +635,17 @@ router.post("/shared-mailboxes/emails/:emailId/unclaim", requireAuth, async (req
       return;
     }
 
+    // Releasing also clears any assignment that pointed to the same user,
+    // so the email fully returns to the unclaimed pool.
+    const releaseUpdates: Record<string, unknown> = { claimed_by: null, claimed_at: null };
+    if (email.assigned_to === req.userId!) {
+      releaseUpdates.assigned_to = null;
+      releaseUpdates.assigned_at = null;
+    }
+
     await supabaseAdmin
       .from("emails")
-      .update({ claimed_by: null, claimed_at: null })
+      .update(releaseUpdates)
       .eq("id", email.id);
 
     res.json({ success: true });

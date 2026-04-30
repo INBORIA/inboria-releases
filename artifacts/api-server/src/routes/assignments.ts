@@ -50,7 +50,7 @@ router.post("/emails/:emailId/assign", requireAuth, async (req, res): Promise<vo
 
     const { data: email } = await supabaseAdmin
       .from("emails")
-      .select("id, user_id")
+      .select("id, user_id, shared_mailbox_id")
       .eq("id", emailId)
       .single();
 
@@ -72,12 +72,38 @@ router.post("/emails/:emailId/assign", requireAuth, async (req, res): Promise<vo
       return;
     }
 
+    // For shared mailbox emails, only an admin of the owning org can
+    // assign to a different user (manager-assign). Self-assign is allowed.
+    if (email.shared_mailbox_id && assignTo !== req.userId!) {
+      const { data: requesterMember } = await supabaseAdmin
+        .from("organisation_members")
+        .select("id")
+        .eq("organisation_id", orgId)
+        .eq("user_id", req.userId!)
+        .eq("role", "admin")
+        .eq("status", "active")
+        .single();
+      if (!requesterMember) {
+        res.status(403).json({ error: "Seul un administrateur peut assigner un email partagé à un collègue" });
+        return;
+      }
+    }
+
+    const updates: Record<string, unknown> = {
+      assigned_to: assignTo,
+      assigned_at: new Date().toISOString(),
+    };
+    // For shared mailbox emails, manager-assign auto-claims for the assignee:
+    // the assignee becomes the active owner so the email leaves the
+    // "unclaimed" pool and appears in their inbox as taken-care-of.
+    if (email.shared_mailbox_id) {
+      updates.claimed_by = assignTo;
+      updates.claimed_at = new Date().toISOString();
+    }
+
     const { error } = await supabaseAdmin
       .from("emails")
-      .update({
-        assigned_to: assignTo,
-        assigned_at: new Date().toISOString(),
-      })
+      .update(updates)
       .eq("id", emailId);
 
     if (error) {
@@ -144,7 +170,7 @@ router.post("/emails/:emailId/unassign", requireAuth, async (req, res): Promise<
 
     const { data: email } = await supabaseAdmin
       .from("emails")
-      .select("id, user_id, assigned_to")
+      .select("id, user_id, assigned_to, shared_mailbox_id, claimed_by")
       .eq("id", emailId)
       .single();
 
@@ -180,9 +206,17 @@ router.post("/emails/:emailId/unassign", requireAuth, async (req, res): Promise<
       }
     }
 
+    const unassignUpdates: Record<string, unknown> = { assigned_to: null, assigned_at: null };
+    // For shared mailbox emails, releasing assignment also releases the
+    // implicit claim, so the email returns to the "unclaimed" pool.
+    if (email.shared_mailbox_id && email.claimed_by === email.assigned_to) {
+      unassignUpdates.claimed_by = null;
+      unassignUpdates.claimed_at = null;
+    }
+
     const { error } = await supabaseAdmin
       .from("emails")
-      .update({ assigned_to: null, assigned_at: null })
+      .update(unassignUpdates)
       .eq("id", emailId);
 
     if (error) {

@@ -4606,6 +4606,16 @@ components:
           type: string
           format: date-time
           nullable: true
+        assignedTo:
+          type: string
+          nullable: true
+        assignedToName:
+          type: string
+          nullable: true
+        assignedAt:
+          type: string
+          format: date-time
+          nullable: true
         createdAt:
           type: string
           format: date-time

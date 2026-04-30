@@ -800,6 +800,9 @@ export interface SharedMailboxEmail {
   claimedBy?: string | null;
   claimedByName?: string | null;
   claimedAt?: string | null;
+  assignedTo?: string | null;
+  assignedToName?: string | null;
+  assignedAt?: string | null;
   createdAt?: string;
 }
 

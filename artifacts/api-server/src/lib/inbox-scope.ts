@@ -10,6 +10,10 @@ export async function getMemberMailboxIds(userId: string): Promise<string[]> {
 
 export function buildInboxScopeOrFilter(userId: string, memberMailboxIds: string[]): string {
   const personal = `and(user_id.eq.${userId},shared_mailbox_id.is.null)`;
-  if (memberMailboxIds.length === 0) return personal;
-  return `${personal},shared_mailbox_id.in.(${memberMailboxIds.join(",")})`;
+  const assignedToMe = `assigned_to.eq.${userId}`;
+  const parts = [personal, assignedToMe];
+  if (memberMailboxIds.length > 0) {
+    parts.push(`shared_mailbox_id.in.(${memberMailboxIds.join(",")})`);
+  }
+  return parts.join(",");
 }

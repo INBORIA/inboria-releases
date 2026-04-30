@@ -4429,7 +4429,12 @@ export default function Dashboard() {
                                   )}
                                   {isClaimed && (
                                     <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${isClaimedByMe ? "bg-primary/15 text-primary" : "bg-white/[0.06] text-[#8b9cb3]"}`}>
-                                      {isClaimedByMe ? t("inbox.claimedBy") : t("inbox.claim")}
+                                      {t("inbox.claimedBy")} {isClaimedByMe ? t("emails.me", { defaultValue: "moi" }) : ((email as any).claimedByName || t("sharedMailboxes.colleague"))}
+                                    </span>
+                                  )}
+                                  {(email as any).assignedTo && (email as any).assignedTo === (email as any).claimedBy && (
+                                    <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium bg-indigo-500/15 text-indigo-400 border border-indigo-500/20">
+                                      {t("sharedMailboxes.assignedBadge")}
                                     </span>
                                   )}
                                 </div>

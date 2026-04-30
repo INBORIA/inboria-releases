@@ -9,6 +9,7 @@ import {
   useGetSharedMailboxEmails,
   useClaimSharedEmail,
   useUnclaimSharedEmail,
+  useAssignEmail,
   useForceSharedMailboxSync,
   useGetOrganisationMembers,
   useGetMyOrganisation,
@@ -354,6 +355,8 @@ export default function BoitesPartagees() {
           filter={emailFilter}
           setFilter={setEmailFilter}
           userId={(profile as any)?.id}
+          isAdmin={isAdmin}
+          orgMembers={(orgMembers as any[]) || []}
           onClaim={handleClaim}
           onUnclaim={handleUnclaim}
         />}
@@ -446,12 +449,14 @@ function MailboxDetail({
 }
 
 function MailboxEmails({
-  mailboxId, filter, setFilter, userId, onClaim, onUnclaim,
+  mailboxId, filter, setFilter, userId, isAdmin, orgMembers, onClaim, onUnclaim,
 }: {
   mailboxId: string;
   filter: "all" | "unclaimed" | "mine";
   setFilter: (v: "all" | "unclaimed" | "mine") => void;
   userId: string;
+  isAdmin: boolean;
+  orgMembers: any[];
   onClaim: (emailId: string) => void;
   onUnclaim: (emailId: string) => void;
 }) {
@@ -474,9 +479,24 @@ function MailboxEmails({
   }, [hasMore, isFetching]);
 
   const forceSync = useForceSharedMailboxSync();
+  const assignMut = useAssignEmail();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [syncing, setSyncing] = useState(false);
+  const [assigningEmailId, setAssigningEmailId] = useState<string | null>(null);
+
+  async function handleAssign(emailId: string, assignTo: string) {
+    if (!assignTo) return;
+    try {
+      await assignMut.mutateAsync({ emailId: Number(emailId), data: { assignTo } });
+      toast({ title: t("sharedMailboxes.assignSuccess") });
+      queryClient.invalidateQueries({ queryKey: getGetSharedMailboxEmailsQueryKey(mailboxId) });
+    } catch (e: any) {
+      toast({ title: e?.response?.data?.error || t("sharedMailboxes.assignError"), variant: "destructive" });
+    } finally {
+      setAssigningEmailId(null);
+    }
+  }
 
   async function handleForceSync() {
     setSyncing(true);
@@ -543,13 +563,21 @@ function MailboxEmails({
             >
               <div className="flex items-start justify-between">
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-2 flex-wrap">
                     <span className="font-semibold text-sm truncate">{email.sender}</span>
                     {email.priority === "urgent" && (
                       <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded-full">{t("inbox.priorities.urgent")}</span>
                     )}
                     {email.priority === "moyen" && (
                       <span className="text-xs bg-yellow-500/20 text-yellow-400 px-2 py-0.5 rounded-full">{t("inbox.priorities.medium")}</span>
+                    )}
+                    {email.priority === "faible" && (
+                      <span className="text-xs bg-emerald-500/15 text-emerald-400 px-2 py-0.5 rounded-full">{t("inbox.priorities.low")}</span>
+                    )}
+                    {(email as any).assignedTo && (email as any).assignedTo === email.claimedBy && (
+                      <span className="text-xs bg-indigo-500/15 text-indigo-400 px-2 py-0.5 rounded-full inline-flex items-center gap-1">
+                        <UserPlus className="h-3 w-3" />{t("sharedMailboxes.assignedBadge")}
+                      </span>
                     )}
                   </div>
                   <p className="text-sm font-medium mt-0.5">{email.subject}</p>
@@ -565,13 +593,47 @@ function MailboxEmails({
                       </Button>
                     ) : (
                       <span className="text-xs text-muted-foreground flex items-center gap-1">
-                        <User className="h-3 w-3" /> {email.claimedByName || t("sharedMailboxes.colleague")}
+                        <User className="h-3 w-3" /> {t("sharedMailboxes.claimedBy")} {email.claimedByName || t("sharedMailboxes.colleague")}
                       </span>
                     )
                   ) : (
-                    <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); onClaim(email.id); }} className="text-green-400 border-green-400/30">
-                      <Hand className="h-3 w-3 mr-1" /> {t("sharedMailboxes.take")}
-                    </Button>
+                    <>
+                      <Button variant="outline" size="sm" onClick={(e) => { e.stopPropagation(); onClaim(email.id); }} className="text-green-400 border-green-400/30">
+                        <Hand className="h-3 w-3 mr-1" /> {t("sharedMailboxes.take")}
+                      </Button>
+                      {isAdmin && (
+                        <div className="relative" onClick={(e) => e.stopPropagation()}>
+                          {assigningEmailId === email.id ? (
+                            <select
+                              autoFocus
+                              defaultValue=""
+                              onBlur={() => setAssigningEmailId(null)}
+                              onChange={(e) => handleAssign(email.id, e.target.value)}
+                              className="bg-card border border-border rounded-md text-xs px-2 py-1 text-white"
+                            >
+                              <option value="" disabled>{t("sharedMailboxes.selectColleague")}</option>
+                              {orgMembers
+                                .filter((m: any) => m.userId && m.userId !== userId)
+                                .map((m: any) => (
+                                  <option key={m.userId} value={m.userId}>
+                                    {m.fullName || m.email || m.userId}
+                                  </option>
+                                ))}
+                            </select>
+                          ) : (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => setAssigningEmailId(email.id)}
+                              className="text-indigo-400 border-indigo-400/30"
+                              title={t("sharedMailboxes.assignToColleague")}
+                            >
+                              <UserPlus className="h-3 w-3 mr-1" /> {t("sharedMailboxes.assignToColleague")}
+                            </Button>
+                          )}
+                        </div>
+                      )}
+                    </>
                   )}
                 </div>
               </div>
