@@ -4602,10 +4602,8 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {assigneeFilter && assigneeFilter !== "me" && (() => {
-                    const memberName = assigneeFilter === "any"
-                      ? t("inbox.assigneeFilterAny", { defaultValue: "tous les emails assignés" })
-                      : (() => {
+                  {assigneeFilter && assigneeFilter !== "me" && assigneeFilter !== "any" && (() => {
+                    const memberName = (() => {
                             const m = (orgMembers as any[] | undefined)?.find((x: any) => String(x.userId) === String(assigneeFilter));
                             return m?.fullName || m?.email || t("inbox.assigneeFilterMember", { defaultValue: "ce membre" });
                           })();

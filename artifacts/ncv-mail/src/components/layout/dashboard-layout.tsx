@@ -1,4 +1,4 @@
-import { useGetProfile } from "@workspace/api-client-react";
+import { useGetProfile, useGetMyOrganisation } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import {
@@ -55,14 +55,22 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: profile, isLoading } = useGetProfile({
     query: { refetchInterval: 30000, refetchIntervalInBackground: false } as any,
   });
+  const { data: myOrg } = useGetMyOrganisation();
+  const isOrgAdmin = (myOrg as any)?.myRole === "admin";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
   const totalUsed = ((user as any).emailsUsed || 0) + ((user as any).aiCreditsUsed || 0);
 
+  // Admins see ALL assigned emails across the team (theirs + ones they assigned
+  // to others). Non-admins only see their own assigned emails.
+  const assignedHref = isOrgAdmin
+    ? "/dashboard?assignee=any"
+    : "/dashboard?assignee=me";
+
   const baseNavigation: Array<{ name: string; href: string; icon: any }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
-    { name: t("sidebar.assigned", "Assignés"), href: "/dashboard?assignee=me", icon: UserCheck },
+    { name: t("sidebar.assigned", "Assignés"), href: assignedHref, icon: UserCheck },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
     { name: t("sidebar.snoozed", "Reportés"), href: "/dashboard/reportes", icon: BellOff },
     { name: t("sidebar.scheduled", "Programmés"), href: "/dashboard/programmes", icon: CalendarClock },
