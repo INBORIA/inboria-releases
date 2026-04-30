@@ -72,6 +72,12 @@ router.get("/team/dashboard", requireAuth, async (req, res): Promise<void> => {
         .select("id", { count: "exact", head: true })
         .eq("assigned_to", m.user_id)
         .neq("status", "supprime")
+        .neq("status", "archived")
+        .neq("status", "trashed")
+        .neq("status", "spam")
+        .neq("status", "sent")
+        .neq("status", "scheduled")
+        .neq("status", "scheduled_failed")
         .in("user_id", memberUserIds);
 
       const { count: assignedCount } = await assignedQuery;

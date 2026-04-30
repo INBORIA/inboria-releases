@@ -2921,40 +2921,23 @@ export default function Dashboard() {
     return a && a.trim() ? a.trim() : null;
   });
   const [routeLocation] = useLocation();
-  // Subscribe to ALL URL changes (wouter only tracks pathname, but we need to
-  // react to query-string changes too — e.g. clicking "Assignés" sidebar entry
-  // which navigates to /dashboard?assignee=me from the same /dashboard path).
+  // Subscribe to URL changes — wouter v3 only tracks pathname, but query
+  // strings change too (e.g. clicking "Assignés" → /dashboard?assignee=me).
+  // wouter dispatches custom "pushState"/"replaceState" events on window for
+  // same-page nav, and the browser fires "popstate" on back/forward.
   const [searchString, setSearchString] = useState<string>(
     () => (typeof window !== "undefined" ? window.location.search : ""),
   );
   useEffect(() => {
     if (typeof window === "undefined") return;
     const update = () => setSearchString(window.location.search);
-    update();
     window.addEventListener("popstate", update);
-    // wouter dispatches these custom events on same-page nav via pushState/replaceState.
     window.addEventListener("pushState" as any, update);
     window.addEventListener("replaceState" as any, update);
-    // As a safety net, patch history methods so any caller (router or vanilla)
-    // triggers a re-read of the URL.
-    const origPush = window.history.pushState.bind(window.history);
-    const origReplace = window.history.replaceState.bind(window.history);
-    window.history.pushState = (...args: Parameters<typeof origPush>) => {
-      const r = origPush(...args);
-      update();
-      return r;
-    };
-    window.history.replaceState = (...args: Parameters<typeof origReplace>) => {
-      const r = origReplace(...args);
-      update();
-      return r;
-    };
     return () => {
       window.removeEventListener("popstate", update);
       window.removeEventListener("pushState" as any, update);
       window.removeEventListener("replaceState" as any, update);
-      window.history.pushState = origPush;
-      window.history.replaceState = origReplace;
     };
   }, []);
   useEffect(() => {
@@ -4619,12 +4602,10 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {assigneeFilter && (() => {
+                  {assigneeFilter && assigneeFilter !== "me" && (() => {
                     const memberName = assigneeFilter === "any"
                       ? t("inbox.assigneeFilterAny", { defaultValue: "tous les emails assignés" })
-                      : assigneeFilter === "me"
-                        ? t("inbox.assigneeFilterMe", { defaultValue: "mes emails assignés" })
-                        : (() => {
+                      : (() => {
                             const m = (orgMembers as any[] | undefined)?.find((x: any) => String(x.userId) === String(assigneeFilter));
                             return m?.fullName || m?.email || t("inbox.assigneeFilterMember", { defaultValue: "ce membre" });
                           })();
