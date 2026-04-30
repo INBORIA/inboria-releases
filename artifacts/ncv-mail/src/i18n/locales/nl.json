@@ -2369,6 +2369,23 @@
     "poweredBy": "Aangedreven door Inboria AI",
     "errorMessage": "Sorry, er is een fout opgetreden. Probeer het opnieuw of neem contact op met support@inboria.com."
   },
+  "inboriaChat": {
+    "openLabel": "Inboria-chat openen",
+    "close": "Sluiten",
+    "title": "Inboria",
+    "subtitle": "Uw e-mail-copiloot",
+    "clear": "Wissen",
+    "greetingTitle": "Hallo, ik ben Inboria.",
+    "greetingDesc": "Ik ken uw contacten, voorkeuren en lopende toezeggingen. Stel mij gerust een vraag.",
+    "suggest1": "Welke toezeggingen heb ik deze week gedaan?",
+    "suggest2": "Wie moet ik als eerste opvolgen?",
+    "suggest3": "Vat samen wat ik weet over mijn laatste klant.",
+    "inputPlaceholder": "Vraag Inboria iets…",
+    "thinking": "Inboria denkt na…",
+    "footerHint": "Enter om te verzenden • Shift+Enter voor nieuwe regel",
+    "errorGeneric": "Er ging iets mis. Probeer het zo opnieuw.",
+    "errorQuota": "AI-quotum bereikt voor deze periode. Controleer uw abonnement."
+  },
   "packs": {
     "families": {
       "services_professionnels": "Professionele diensten",

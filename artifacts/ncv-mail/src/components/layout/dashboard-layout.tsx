@@ -47,6 +47,7 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SupportChatWidget } from "@/components/SupportChatWidget";
 import { NotificationBell } from "@/components/notifications/notification-bell";
 import { AutopilotIndicator } from "@/components/autopilot/autopilot-indicator";
+import { InboriaChatButton } from "@/components/inboria-chat/InboriaChatButton";
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { t } = useTranslation();
@@ -291,6 +292,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </div>
           <div className="flex-1" />
           <div className="flex items-center gap-2">
+            <InboriaChatButton />
             <AutopilotIndicator />
             <NotificationBell />
             <LanguageSwitcher />

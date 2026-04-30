@@ -2359,6 +2359,23 @@
     "poweredBy": "Propulsé par l'IA Inboria",
     "errorMessage": "Désolé, une erreur est survenue. Veuillez réessayer ou contactez support@inboria.com."
   },
+  "inboriaChat": {
+    "openLabel": "Ouvrir le chat Inboria",
+    "close": "Fermer",
+    "title": "Inboria",
+    "subtitle": "Votre copilote emails",
+    "clear": "Effacer",
+    "greetingTitle": "Bonjour, je suis Inboria.",
+    "greetingDesc": "Je connais vos contacts, vos préférences et vos engagements en cours. Posez-moi une question.",
+    "suggest1": "Quels engagements ai-je pris cette semaine ?",
+    "suggest2": "De quoi devrais-je relancer en priorité ?",
+    "suggest3": "Résume ce que je sais de mon dernier client.",
+    "inputPlaceholder": "Demandez quelque chose à Inboria…",
+    "thinking": "Inboria réfléchit…",
+    "footerHint": "Entrée pour envoyer • Maj+Entrée pour aller à la ligne",
+    "errorGeneric": "Désolé, une erreur est survenue. Réessayez dans un instant.",
+    "errorQuota": "Quota IA atteint pour cette période. Voyez votre abonnement."
+  },
   "packs": {
     "families": {
       "services_professionnels": "Services professionnels",

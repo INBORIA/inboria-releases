@@ -2369,6 +2369,23 @@
     "poweredBy": "Powered by Inboria AI",
     "errorMessage": "Sorry, an error occurred. Please try again or contact support@inboria.com."
   },
+  "inboriaChat": {
+    "openLabel": "Open Inboria chat",
+    "close": "Close",
+    "title": "Inboria",
+    "subtitle": "Your email copilot",
+    "clear": "Clear",
+    "greetingTitle": "Hi, I'm Inboria.",
+    "greetingDesc": "I know your contacts, your preferences and your active commitments. Ask me anything.",
+    "suggest1": "What did I commit to this week?",
+    "suggest2": "Who should I follow up with first?",
+    "suggest3": "Summarize what I know about my latest client.",
+    "inputPlaceholder": "Ask Inboria anything…",
+    "thinking": "Inboria is thinking…",
+    "footerHint": "Enter to send • Shift+Enter for new line",
+    "errorGeneric": "Sorry, something went wrong. Please try again in a moment.",
+    "errorQuota": "AI quota reached for this period. Check your subscription."
+  },
   "packs": {
     "families": {
       "services_professionnels": "Professional Services",

@@ -2369,6 +2369,23 @@
     "poweredBy": "Unterstützt von Inboria KI",
     "errorMessage": "Entschuldigung, es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut oder kontaktieren Sie support@inboria.com."
   },
+  "inboriaChat": {
+    "openLabel": "Inboria-Chat öffnen",
+    "close": "Schließen",
+    "title": "Inboria",
+    "subtitle": "Ihr E-Mail-Copilot",
+    "clear": "Löschen",
+    "greetingTitle": "Hallo, ich bin Inboria.",
+    "greetingDesc": "Ich kenne Ihre Kontakte, Präferenzen und offenen Zusagen. Stellen Sie mir gerne eine Frage.",
+    "suggest1": "Welche Zusagen habe ich diese Woche gemacht?",
+    "suggest2": "Bei wem sollte ich zuerst nachhaken?",
+    "suggest3": "Fassen Sie zusammen, was ich über meinen neuesten Kunden weiß.",
+    "inputPlaceholder": "Fragen Sie Inboria etwas…",
+    "thinking": "Inboria denkt nach…",
+    "footerHint": "Enter zum Senden • Umschalt+Enter für neue Zeile",
+    "errorGeneric": "Es ist ein Fehler aufgetreten. Bitte gleich noch einmal versuchen.",
+    "errorQuota": "KI-Kontingent für diesen Zeitraum erreicht. Überprüfen Sie Ihr Abonnement."
+  },
   "packs": {
     "families": {
       "services_professionnels": "Professionelle Dienstleistungen",

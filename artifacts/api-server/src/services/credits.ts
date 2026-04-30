@@ -9,6 +9,7 @@ export const AI_COST = {
   detect_appointments: 3,
   recategorize_uncategorized: 3,
   support_chat: 1,
+  inboria_chat: 1,
   generate_pack: 3,
   template_suggest: 1,
   template_categorize: 1,
