@@ -3402,8 +3402,6 @@ export default function Dashboard() {
         return true;
       }
       if (!selectedAccountEmail) return true;
-      const sharedId = e.shared_mailbox_id ?? e.sharedMailboxId ?? null;
-      if (sharedId) return false;
       if (!e.recipient) return false;
       return recipientMatchesAddress(e.recipient, selectedAccountEmail);
     })
