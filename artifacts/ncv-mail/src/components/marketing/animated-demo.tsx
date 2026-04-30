@@ -329,20 +329,37 @@ export function AnimatedDemo() {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] mr-1">{t("demo.priority")}</span>
-                  {priorityFilters.map((f, i) => (
-                    <div
-                      key={f}
-                      className={`text-[10px] px-2 py-0.5 rounded-md font-medium ${
-                        i === 0
-                          ? "bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20"
-                          : "text-[#8b9cb3] border border-[#1f2937]"
-                      }`}
-                    >
-                      {f}
-                    </div>
-                  ))}
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+                    <span className="text-[10px] text-[#8b9cb3] mr-1 shrink-0">{t("demo.crm", "CRM :")}</span>
+                    {["HubSpot", "Pipedrive", "Salesforce", "Odoo"].map((f, i) => (
+                      <div
+                        key={f}
+                        className={`text-[10px] px-2 py-0.5 rounded-md font-medium shrink-0 ${
+                          i === 0
+                            ? "bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20"
+                            : "text-[#8b9cb3] border border-[#1f2937]"
+                        }`}
+                      >
+                        {f}
+                      </div>
+                    ))}
+                  </div>
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] text-[#8b9cb3] mr-1">{t("demo.priority")}</span>
+                    {priorityFilters.map((f, i) => (
+                      <div
+                        key={f}
+                        className={`text-[10px] px-2 py-0.5 rounded-md font-medium ${
+                          i === 0
+                            ? "bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20"
+                            : "text-[#8b9cb3] border border-[#1f2937]"
+                        }`}
+                      >
+                        {f}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               )}
             </div>
