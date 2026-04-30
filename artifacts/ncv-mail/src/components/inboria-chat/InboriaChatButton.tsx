@@ -100,7 +100,9 @@ export function InboriaChatButton() {
           data-testid="inboria-chat-button"
         >
           <Sparkles className="h-4 w-4 text-purple-400" />
-          <span className="text-sm font-medium">Inboria</span>
+          <span className="text-sm font-medium">
+            Inbor<span className="text-cyan-400">ia</span>
+          </span>
         </Button>
       </SheetTrigger>
       <SheetContent
@@ -114,7 +116,7 @@ export function InboriaChatButton() {
             </div>
             <div>
               <SheetTitle className="text-sm font-semibold text-zinc-100 leading-tight">
-                {t("inboriaChat.title")}
+                Inbor<span className="text-cyan-400">ia</span>
               </SheetTitle>
               <p className="text-xs text-zinc-500 leading-tight">{t("inboriaChat.subtitle")}</p>
             </div>
