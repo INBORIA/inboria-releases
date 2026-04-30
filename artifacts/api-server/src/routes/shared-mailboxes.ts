@@ -534,13 +534,26 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
       };
     });
 
+    req.log.info({
+      route: "GET /shared-mailboxes/:mailboxId/emails",
+      mailboxId: req.params.mailboxId,
+      userId: req.userId,
+      filter,
+      page,
+      limit,
+      totalCount,
+      returnedRows: enriched.length,
+      sampleIds: enriched.slice(0, 3).map(e => e.id),
+    }, "shared-mailbox detail debug");
+
     res.json({
       emails: enriched,
       total: totalCount,
       page,
       totalPages: Math.ceil(totalCount / limit),
     });
-  } catch {
+  } catch (err: any) {
+    req.log.error({ err: err?.message, stack: err?.stack }, "shared-mailbox detail crashed");
     res.status(500).json({ error: "Erreur lors de la récupération des emails" });
   }
 });
