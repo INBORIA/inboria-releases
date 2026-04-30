@@ -3091,7 +3091,6 @@ export default function Dashboard() {
     return s;
   }, [slaBreachList]);
   const [sharedPage, setSharedPage] = useState(1);
-  const [accumulatedSharedEmails, setAccumulatedSharedEmails] = useState<PaginatedSharedMailboxEmails["emails"]>([]);
   const { data: sharedEmailsData, isLoading: sharedEmailsLoading, isFetching: sharedFetching } = useGetSharedMailboxEmails(
     selectedSharedMailboxId || "",
     { page: sharedPage, limit: 50 },
@@ -3099,24 +3098,10 @@ export default function Dashboard() {
   );
   const sharedPaged = sharedEmailsData as PaginatedSharedMailboxEmails | undefined;
   const sharedHasMore = sharedPaged ? sharedPage < (sharedPaged.totalPages ?? 1) : false;
-
-  useEffect(() => {
-    if (sharedPaged) {
-      if (sharedPage === 1) {
-        setAccumulatedSharedEmails(sharedPaged.emails || []);
-      } else {
-        setAccumulatedSharedEmails((prev) => {
-          const existingIds = new Set(prev.map((e) => e.id));
-          const unique = (sharedPaged.emails || []).filter((e) => !existingIds.has(e.id));
-          return [...prev, ...unique];
-        });
-      }
-    }
-  }, [sharedPaged, sharedPage]);
+  const sharedEmailsList = sharedPaged?.emails ?? [];
 
   useEffect(() => {
     setSharedPage(1);
-    setAccumulatedSharedEmails([]);
   }, [selectedSharedMailboxId]);
 
   const loadMoreShared = useCallback(() => {
@@ -3124,8 +3109,6 @@ export default function Dashboard() {
       setSharedPage((p) => p + 1);
     }
   }, [sharedHasMore, sharedFetching]);
-
-  const sharedEmailsList = accumulatedSharedEmails;
   const claimEmailMut = useClaimSharedEmail();
   const unclaimEmailMut = useUnclaimSharedEmail();
 
