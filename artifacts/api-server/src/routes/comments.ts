@@ -309,25 +309,6 @@ async function checkEmailAccess(email: { user_id: string; shared_mailbox_id: str
     if (member) return true;
   }
 
-  const { data: orgMember } = await supabaseAdmin
-    .from("organisation_members")
-    .select("organisation_id")
-    .eq("user_id", userId)
-    .eq("status", "active")
-    .single();
-
-  if (orgMember) {
-    const { data: emailOwnerOrg } = await supabaseAdmin
-      .from("organisation_members")
-      .select("organisation_id")
-      .eq("user_id", email.user_id)
-      .eq("organisation_id", orgMember.organisation_id)
-      .eq("status", "active")
-      .single();
-
-    if (emailOwnerOrg) return true;
-  }
-
   return false;
 }
 

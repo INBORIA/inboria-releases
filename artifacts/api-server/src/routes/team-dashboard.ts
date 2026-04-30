@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { getMemberMailboxIds } from "../lib/inbox-scope";
 
 const router: IRouter = Router();
 
@@ -41,6 +42,8 @@ router.get("/team/dashboard", requireAuth, async (req, res): Promise<void> => {
       .eq("organisation_id", orgId);
     const sharedMailboxIds = (sharedMailboxes || []).map((sm: any) => sm.id);
 
+    const requesterMailboxIds = await getMemberMailboxIds(req.userId!);
+
     const memberStats = [];
     for (const m of members) {
       const { data: profile } = await supabaseAdmin
@@ -73,10 +76,15 @@ router.get("/team/dashboard", requireAuth, async (req, res): Promise<void> => {
 
       const { count: assignedDoneCount } = await archivedQuery;
 
-      const { count: commentCount } = await supabaseAdmin
-        .from("email_comments")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", m.user_id);
+      let commentCount = 0;
+      if (requesterMailboxIds.length > 0) {
+        const { count } = await supabaseAdmin
+          .from("email_comments")
+          .select("id, emails!inner(shared_mailbox_id)", { count: "exact", head: true })
+          .eq("user_id", m.user_id)
+          .in("emails.shared_mailbox_id", requesterMailboxIds);
+        commentCount = count || 0;
+      }
 
       memberStats.push({
         userId: m.user_id,
@@ -148,33 +156,31 @@ router.get("/team/recent-comments", requireAuth, async (req, res): Promise<void>
       return;
     }
 
-    const { data: comments } = await supabaseAdmin
+    const requesterMailboxIds = await getMemberMailboxIds(req.userId!);
+    if (requesterMailboxIds.length === 0) {
+      res.json([]);
+      return;
+    }
+
+    const { data: comments, error: commentsErr } = await supabaseAdmin
       .from("email_comments")
-      .select("id, body, created_at, user_id, email_id")
+      .select("id, body, created_at, user_id, email_id, emails!inner(subject, shared_mailbox_id)")
       .in("user_id", memberUserIds)
+      .in("emails.shared_mailbox_id", requesterMailboxIds)
       .order("created_at", { ascending: false })
       .limit(limit);
+
+    if (commentsErr) {
+      res.status(500).json({ error: "Erreur lors de la récupération des commentaires récents" });
+      return;
+    }
 
     if (!comments || comments.length === 0) {
       res.json([]);
       return;
     }
 
-    const emailIds = [...new Set(comments.map((c) => c.email_id))];
     const userIds = [...new Set(comments.map((c) => c.user_id))];
-
-    // Restreindre aux emails qui appartiennent à un membre de l'organisation
-    // (un commentaire orphelin sur un email non visible ne devrait pas remonter ici).
-    const { data: emails } = await supabaseAdmin
-      .from("emails")
-      .select("id, subject, user_id")
-      .in("id", emailIds)
-      .in("user_id", memberUserIds);
-
-    const emailMap = new Map<number, string>();
-    for (const e of emails || []) {
-      emailMap.set(e.id, e.subject || "");
-    }
 
     const { data: profiles } = await supabaseAdmin
       .from("profiles")
@@ -186,17 +192,15 @@ router.get("/team/recent-comments", requireAuth, async (req, res): Promise<void>
       profileMap.set(p.id, p.full_name || "");
     }
 
-    const enriched = comments
-      .filter((c) => emailMap.has(c.email_id))
-      .map((c) => ({
-        id: String(c.id),
-        body: c.body || "",
-        createdAt: c.created_at,
-        userId: c.user_id,
-        userName: profileMap.get(c.user_id) || "",
-        emailId: c.email_id,
-        emailSubject: emailMap.get(c.email_id) || "",
-      }));
+    const enriched = comments.map((c: any) => ({
+      id: String(c.id),
+      body: c.body || "",
+      createdAt: c.created_at,
+      userId: c.user_id,
+      userName: profileMap.get(c.user_id) || "",
+      emailId: c.email_id,
+      emailSubject: c.emails?.subject || "",
+    }));
 
     res.json(enriched);
   } catch {
