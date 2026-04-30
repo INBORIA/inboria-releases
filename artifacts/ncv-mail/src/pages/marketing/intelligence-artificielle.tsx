@@ -16,11 +16,13 @@ import {
   Lock,
   Zap,
   Server,
+  MessageSquare,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { isPaymentsEnabled } from "@/lib/feature-flags";
 
 const aiFeatureKeys = [
+  { icon: Brain, key: "memory", highlights: ["memoryH1", "memoryH2", "memoryH3", "memoryH4"] },
   { icon: Tags, key: "autoSort", highlights: ["autoSortH1", "autoSortH2", "autoSortH3", "autoSortH4"] },
   { icon: FileText, key: "smartSummaries", highlights: ["smartSummariesH1", "smartSummariesH2", "smartSummariesH3", "smartSummariesH4"] },
   { icon: PenLine, key: "aiDrafts", highlights: ["aiDraftsH1", "aiDraftsH2", "aiDraftsH3", "aiDraftsH4"] },
@@ -28,6 +30,8 @@ const aiFeatureKeys = [
   { icon: AlertTriangle, key: "priorityDetection", highlights: ["priorityDetectionH1", "priorityDetectionH2", "priorityDetectionH3", "priorityDetectionH4"] },
   { icon: FolderKanban, key: "aiPacks", highlights: ["aiPacksH1", "aiPacksH2", "aiPacksH3", "aiPacksH4"] },
 ];
+
+const assistantHighlights = ["assistantH1", "assistantH2", "assistantH3", "assistantH4"];
 
 const principleKeys = [
   { icon: Eye, key: "transparency" },
@@ -166,6 +170,43 @@ export default function IntelligenceArtificielle() {
                 <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{t(`marketing.ai.${w.key}Desc`)}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="border-t border-[#1f2937]">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+          <div className="rounded-2xl border border-[#2d7dd2]/20 bg-gradient-to-br from-[#141c2b] to-[#0d1117] p-8 sm:p-12">
+            <div className="flex flex-col lg:flex-row lg:items-start gap-8">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-4">
+                  <div className="w-12 h-12 rounded-lg bg-[#2d7dd2]/10 flex items-center justify-center shrink-0">
+                    <MessageSquare className="w-6 h-6 text-[#2d7dd2]" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl sm:text-2xl font-bold text-white">
+                      {t("marketing.ai.assistantTitle")}
+                    </h2>
+                    <p className="text-[13px] text-[#2d7dd2] mt-0.5">
+                      {t("marketing.ai.assistantSubtitle")}
+                    </p>
+                  </div>
+                </div>
+                <p className="text-[14px] text-[#8b9cb3] leading-relaxed">
+                  {t("marketing.ai.assistantDesc")}
+                </p>
+              </div>
+              <div className="lg:w-72 shrink-0">
+                <ul className="space-y-2">
+                  {assistantHighlights.map((h) => (
+                    <li key={h} className="flex items-start gap-2">
+                      <CheckCircle2 className="w-4 h-4 text-[#2d7dd2] mt-0.5 shrink-0" />
+                      <span className="text-[12px] text-[#8b9cb3]">{t(`marketing.ai.${h}`)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </section>
