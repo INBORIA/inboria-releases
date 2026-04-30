@@ -265,7 +265,7 @@ export function AnimatedDemo() {
                 </div>
                 <div className="hidden md:flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-[#2d7dd2]/30 bg-[#2d7dd2]/10 text-[10px] font-medium text-[#2d7dd2] shrink-0">
                   <MessageCircleQuestion className="w-3 h-3" />
-                  <span>{t("assistant.button", "Inboria Assistant")}</span>
+                  <span>Inboria</span>
                 </div>
                 <div className="hidden md:flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[10px] font-medium text-[#8b9cb3] shrink-0">
                   <RefreshCw className="w-3 h-3" />
@@ -330,12 +330,12 @@ export function AnimatedDemo() {
                 </div>
               ) : (
                 <div className="space-y-1.5">
-                  <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
-                    <span className="text-[10px] text-[#8b9cb3] mr-1 shrink-0">{t("demo.crm", "CRM :")}</span>
-                    {["HubSpot", "Pipedrive", "Salesforce", "Odoo"].map((f, i) => (
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] text-[#8b9cb3] mr-1">{t("demo.priority")}</span>
+                    {priorityFilters.map((f, i) => (
                       <div
                         key={f}
-                        className={`text-[10px] px-2 py-0.5 rounded-md font-medium shrink-0 ${
+                        className={`text-[10px] px-2 py-0.5 rounded-md font-medium ${
                           i === 0
                             ? "bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20"
                             : "text-[#8b9cb3] border border-[#1f2937]"
@@ -345,12 +345,12 @@ export function AnimatedDemo() {
                       </div>
                     ))}
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] text-[#8b9cb3] mr-1">{t("demo.priority")}</span>
-                    {priorityFilters.map((f, i) => (
+                  <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
+                    <span className="text-[10px] text-[#8b9cb3] mr-1 shrink-0">{t("demo.crm", "CRM :")}</span>
+                    {["HubSpot", "Pipedrive", "Salesforce", "Odoo"].map((f, i) => (
                       <div
                         key={f}
-                        className={`text-[10px] px-2 py-0.5 rounded-md font-medium ${
+                        className={`text-[10px] px-2 py-0.5 rounded-md font-medium shrink-0 ${
                           i === 0
                             ? "bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20"
                             : "text-[#8b9cb3] border border-[#1f2937]"
