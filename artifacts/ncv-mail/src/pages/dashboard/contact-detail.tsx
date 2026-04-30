@@ -16,12 +16,18 @@ import {
   Send,
   ChevronRight,
   ChevronDown,
+  Sparkles,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useGetContact } from "@workspace/api-client-react";
+import {
+  useGetContact,
+  useGetInboriaContext,
+  getGetInboriaContextQueryKey,
+} from "@workspace/api-client-react";
+import type { InboriaFact, InboriaEpisode } from "@workspace/api-client-react";
 import { AttachmentList } from "@/components/AttachmentList";
 
 const LOCALE_MAP: Record<string, any> = { fr, en: enUS, nl, de, es };
@@ -82,6 +88,40 @@ export default function ContactDetailPage() {
 
   const { data, isLoading, isError, error } = useGetContact(encodeURIComponent(email));
   const detail = data as any;
+
+  const inboriaParams = { contactEmail: email, limit: 12 };
+  const inboriaQuery = useGetInboriaContext(inboriaParams, {
+    query: {
+      queryKey: getGetInboriaContextQueryKey(inboriaParams),
+      enabled: !!email && email.includes("@"),
+    },
+  });
+  const inboriaFacts: InboriaFact[] = (inboriaQuery.data as any)?.facts ?? [];
+  const inboriaEpisodes: InboriaEpisode[] = (inboriaQuery.data as any)?.episodes ?? [];
+  const inboriaCount = inboriaFacts.length + inboriaEpisodes.length;
+
+  const factKindLabel = (kind: string): string => {
+    switch (kind) {
+      case "preference":
+        return t("inboria.kindPreference", "préférence");
+      case "topic":
+        return t("inboria.kindTopic", "sujet");
+      case "role":
+        return t("inboria.kindRole", "rôle");
+      default:
+        return kind;
+    }
+  };
+  const episodeKindLabel = (kind: string): string => {
+    switch (kind) {
+      case "decision":
+        return t("inboria.kindDecision", "décision");
+      case "commitment":
+        return t("inboria.kindCommitment", "engagement");
+      default:
+        return kind;
+    }
+  };
 
   if (isLoading) {
     return (
@@ -166,6 +206,126 @@ export default function ContactDetailPage() {
         </Card>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          {email?.includes("@") && (
+          <div className="lg:col-span-2">
+            <Section
+              icon={Sparkles}
+              sectionKey="inboria"
+              title={t("inboria.sectionTitle", "Ce qu'Inboria a noté")}
+              count={inboriaCount}
+              empty={
+                inboriaQuery.isLoading
+                  ? t("inboria.loading", "Inboria analyse vos échanges…")
+                  : t(
+                      "inboria.empty",
+                      "Inboria n'a encore rien noté sur ce contact. Les observations apparaîtront au fur et à mesure des échanges.",
+                    )
+              }
+            >
+              <div className="space-y-4">
+                {inboriaFacts.length > 0 && (
+                  <div>
+                    <div className="text-xs uppercase tracking-wide text-[#8b9cb3] mb-2">
+                      {t("inboria.factsLabel", "Inboria a remarqué")}
+                    </div>
+                    <ul className="space-y-2">
+                      {inboriaFacts.map((f) => (
+                        <li
+                          key={f.id}
+                          className="flex items-start gap-2 p-2.5 rounded bg-[#0b1118] border border-[#1f2937]"
+                          data-testid={`item-inboria-fact-${f.id}`}
+                        >
+                          <Sparkles className="w-3.5 h-3.5 text-primary mt-1 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <Badge
+                                variant="outline"
+                                className="text-[10px] px-1.5 py-0 h-4 border-[#2d7dd2]/40 text-[#9ab8df]"
+                              >
+                                {factKindLabel(f.kind)}
+                              </Badge>
+                              <span className="text-sm text-white">{f.statement}</span>
+                            </div>
+                            <div className="text-[10px] text-[#8b9cb3] mt-1 flex items-center gap-2">
+                              {f.source.sentAt && (
+                                <span>
+                                  {t("inboria.extractedAt", "noté")}{" "}
+                                  {formatDistanceToNow(new Date(f.source.sentAt), {
+                                    addSuffix: true,
+                                    locale: dateLocale,
+                                  })}
+                                </span>
+                              )}
+                              {f.source?.emailId && (
+                                <Link
+                                  href={`/dashboard?emailId=${f.source.emailId}`}
+                                  className="text-primary hover:underline truncate"
+                                  data-testid={`link-inboria-fact-source-${f.id}`}
+                                >
+                                  {t("inboria.viewSource", "Voir l'email source")}
+                                  {f.source.subject ? ` — ${f.source.subject}` : ""}
+                                </Link>
+                              )}
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {inboriaEpisodes.length > 0 && (
+                  <div>
+                    <div className="text-xs uppercase tracking-wide text-[#8b9cb3] mb-2">
+                      {t("inboria.episodesLabel", "Inboria suggère")}
+                    </div>
+                    <ul className="space-y-2">
+                      {inboriaEpisodes.map((e) => (
+                        <li
+                          key={e.id}
+                          className="flex items-start gap-2 p-2.5 rounded bg-[#0b1118] border border-[#1f2937]"
+                          data-testid={`item-inboria-episode-${e.id}`}
+                        >
+                          <CalendarDays className="w-3.5 h-3.5 text-primary mt-1 flex-shrink-0" />
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 flex-wrap">
+                              <Badge
+                                variant="outline"
+                                className="text-[10px] px-1.5 py-0 h-4 border-amber-500/40 text-amber-300"
+                              >
+                                {episodeKindLabel(e.kind)}
+                              </Badge>
+                              <span className="text-sm text-white">{e.summary}</span>
+                            </div>
+                            <div className="text-[10px] text-[#8b9cb3] mt-1 flex items-center gap-2">
+                              {e.eventDate && (
+                                <span>
+                                  {t("inboria.eventDate", "le")}{" "}
+                                  {format(new Date(e.eventDate), "PPP", { locale: dateLocale })}
+                                </span>
+                              )}
+                              {e.source?.emailId && (
+                                <Link
+                                  href={`/dashboard?emailId=${e.source.emailId}`}
+                                  className="text-primary hover:underline truncate"
+                                  data-testid={`link-inboria-episode-source-${e.id}`}
+                                >
+                                  {t("inboria.viewSource", "Voir l'email source")}
+                                  {e.source.subject ? ` — ${e.source.subject}` : ""}
+                                </Link>
+                              )}
+                            </div>
+                          </div>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+            </Section>
+          </div>
+          )}
+
           <Section
             icon={Mail}
             sectionKey="conversations"

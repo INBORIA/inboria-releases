@@ -4157,6 +4157,21 @@
     "attachments": "Adjuntos",
     "noAttachments": "Sin adjunto"
   },
+  "inboria": {
+    "sectionTitle": "Lo que Inboria ha notado",
+    "loading": "Inboria está analizando vuestros intercambios…",
+    "empty": "Inboria todavía no ha notado nada sobre este contacto. Las observaciones aparecerán a medida que intercambies más correos.",
+    "factsLabel": "Inboria ha notado",
+    "episodesLabel": "Inboria sugiere",
+    "kindPreference": "preferencia",
+    "kindTopic": "tema",
+    "kindRole": "rol",
+    "kindDecision": "decisión",
+    "kindCommitment": "compromiso",
+    "extractedAt": "anotado",
+    "eventDate": "el",
+    "viewSource": "Ver el correo de origen"
+  },
   "wave1": {
     "snoozeButton": "Posponer",
     "snoozeTitle": "Posponer este mensaje",

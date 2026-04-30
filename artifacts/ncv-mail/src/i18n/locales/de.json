@@ -4157,6 +4157,21 @@
     "attachments": "Anhänge",
     "noAttachments": "Kein Anhang"
   },
+  "inboria": {
+    "sectionTitle": "Was Inboria bemerkt hat",
+    "loading": "Inboria analysiert Ihren Schriftverkehr…",
+    "empty": "Inboria hat noch nichts zu diesem Kontakt notiert. Beobachtungen erscheinen, sobald weitere E-Mails ausgetauscht werden.",
+    "factsLabel": "Inboria hat bemerkt",
+    "episodesLabel": "Inboria schlägt vor",
+    "kindPreference": "Präferenz",
+    "kindTopic": "Thema",
+    "kindRole": "Rolle",
+    "kindDecision": "Entscheidung",
+    "kindCommitment": "Zusage",
+    "extractedAt": "notiert",
+    "eventDate": "am",
+    "viewSource": "Quell-E-Mail anzeigen"
+  },
   "wave1": {
     "snoozeButton": "Erinnern",
     "snoozeTitle": "Nachricht erinnern",

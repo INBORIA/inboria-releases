@@ -4157,6 +4157,21 @@
     "attachments": "Bijlagen",
     "noAttachments": "Geen bijlage"
   },
+  "inboria": {
+    "sectionTitle": "Wat Inboria heeft opgemerkt",
+    "loading": "Inboria analyseert uw correspondentie…",
+    "empty": "Inboria heeft nog niets opgemerkt over dit contact. Observaties verschijnen naarmate er meer e-mails worden uitgewisseld.",
+    "factsLabel": "Inboria heeft opgemerkt",
+    "episodesLabel": "Inboria stelt voor",
+    "kindPreference": "voorkeur",
+    "kindTopic": "onderwerp",
+    "kindRole": "rol",
+    "kindDecision": "beslissing",
+    "kindCommitment": "toezegging",
+    "extractedAt": "genoteerd",
+    "eventDate": "op",
+    "viewSource": "Bron-e-mail bekijken"
+  },
   "wave1": {
     "snoozeButton": "Uitstellen",
     "snoozeTitle": "Bericht uitstellen",

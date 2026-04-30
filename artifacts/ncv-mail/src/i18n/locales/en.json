@@ -4157,6 +4157,21 @@
     "attachments": "Attachments",
     "noAttachments": "No attachment"
   },
+  "inboria": {
+    "sectionTitle": "What Inboria has noticed",
+    "loading": "Inboria is reviewing your exchanges…",
+    "empty": "Inboria hasn't noticed anything about this contact yet. Observations will appear as you exchange more emails.",
+    "factsLabel": "Inboria has noticed",
+    "episodesLabel": "Inboria suggests",
+    "kindPreference": "preference",
+    "kindTopic": "topic",
+    "kindRole": "role",
+    "kindDecision": "decision",
+    "kindCommitment": "commitment",
+    "extractedAt": "noted",
+    "eventDate": "on",
+    "viewSource": "View source email"
+  },
   "wave1": {
     "snoozeButton": "Snooze",
     "snoozeTitle": "Snooze this message",

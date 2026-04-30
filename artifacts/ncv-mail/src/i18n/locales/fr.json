@@ -2513,6 +2513,21 @@
     "attachments": "Pièces jointes",
     "noAttachments": "Aucune pièce jointe"
   },
+  "inboria": {
+    "sectionTitle": "Ce qu'Inboria a noté",
+    "loading": "Inboria analyse vos échanges…",
+    "empty": "Inboria n'a encore rien noté sur ce contact. Les observations apparaîtront au fur et à mesure des échanges.",
+    "factsLabel": "Inboria a remarqué",
+    "episodesLabel": "Inboria suggère",
+    "kindPreference": "préférence",
+    "kindTopic": "sujet",
+    "kindRole": "rôle",
+    "kindDecision": "décision",
+    "kindCommitment": "engagement",
+    "extractedAt": "noté",
+    "eventDate": "le",
+    "viewSource": "Voir l'email source"
+  },
   "wave1": {
     "snoozeButton": "Reporter",
     "snoozeTitle": "Reporter ce message",
