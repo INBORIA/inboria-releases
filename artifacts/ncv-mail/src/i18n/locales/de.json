@@ -1351,8 +1351,8 @@
       "dataSecurityDesc": "Ihre Daten bleiben vertraulich und sind mit End-to-End-Verschlüsselung gesichert.",
       "clearVision": "Klare Sicht",
       "clearVisionDesc": "Finden Sie sofort Ihre wichtigen E-Mails dank optimaler Organisation.",
-      "autopilot": "Autopilot-Modus",
-      "autopilotDesc": "Lassen Sie Inboria über Nacht nicht-dringende E-Mails bearbeiten, sortieren und beantworten. Sie kommen morgens in ein bereits verwaltetes Postfach.",
+      "autopilot": "Inboria verwaltet Ihren Posteingang über Nacht",
+      "autopilotDesc": "Aktivieren Sie Inboria, damit sie nicht-dringende E-Mails über Nacht bearbeitet, sortiert und beantwortet. Sie kommen morgens in ein verwaltetes Postfach.",
       "teamCollab": "Teamarbeit",
       "teamCollabDesc": "Geteilte Postfächer, Zuweisung, interne Kommentare, Echtzeitaktivität. Ihr Team arbeitet zusammen, ohne sich in die Quere zu kommen.",
       "multilingual": "Nativ mehrsprachig",
@@ -1407,8 +1407,8 @@
       "realtimeNotificationsDesc": "Benachrichtigungsglocke, Ungelesen-Badge, Zuweisungswarnungen. Bleiben Sie informiert, ohne den Bildschirm zu wechseln.",
       "multilingual": "Mehrsprachige Oberfläche",
       "multilingualDesc": "Verfügbar in Französisch, Englisch, Niederländisch, Deutsch und Spanisch. Jedes Teammitglied arbeitet in seiner eigenen Sprache.",
-      "autopilotMode": "Autopilot-Modus",
-      "autopilotModeDesc": "Lassen Sie Inboria nachts nicht-dringende E-Mails automatisch nach Ihren Regeln bearbeiten. Am Morgen ist Ihr Postfach bereits aufgeräumt."
+      "autopilotMode": "Inboria arbeitet eigenständig",
+      "autopilotModeDesc": "Inboria bearbeitet nicht-dringende E-Mails nachts automatisch nach Ihren Regeln. Am Morgen ist Ihr Postfach bereits aufgeräumt."
     },
     "pricing": {
       "heroTitle": "Einfache Preise, keine Überraschungen",
@@ -2272,7 +2272,7 @@
       "selecting": "{{count}} sel.",
       "deleted": "Gelöscht!",
       "clean": "Sauber!",
-      "autopilot": "Autopilot"
+      "autopilot": "Inboria"
     },
     "stats": {
       "urgent": "Dringend",

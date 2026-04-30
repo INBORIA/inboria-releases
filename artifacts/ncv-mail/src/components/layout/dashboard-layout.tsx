@@ -71,8 +71,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const baseNavigation: Array<{ name: string; href: string; icon: any }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
-    { name: t("sidebar.assigned", "Assignés"), href: assignedHref, icon: UserCheck },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
+    { name: t("sidebar.assigned", "Assignés"), href: assignedHref, icon: UserCheck },
     { name: t("sidebar.snoozed", "Reportés"), href: "/dashboard/reportes", icon: BellOff },
     { name: t("sidebar.scheduled", "Programmés"), href: "/dashboard/programmes", icon: CalendarClock },
     { name: t("tasks.title"), href: "/dashboard/taches", icon: CheckSquare },

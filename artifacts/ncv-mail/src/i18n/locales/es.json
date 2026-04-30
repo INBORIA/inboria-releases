@@ -1351,8 +1351,8 @@
       "dataSecurityDesc": "Tus datos permanecen confidenciales y seguros con cifrado de extremo a extremo.",
       "clearVision": "Visión clara",
       "clearVisionDesc": "Encuentra instantáneamente tus correos electrónicos importantes gracias a una organización óptima.",
-      "autopilot": "Modo Autopiloto",
-      "autopilotDesc": "Deja que Inboria procese, clasifique y responda los correos no urgentes durante la noche. Llegas por la mañana con la bandeja ya gestionada.",
+      "autopilot": "Inboria gestiona tu bandeja de noche",
+      "autopilotDesc": "Activa Inboria para que procese, clasifique y responda los correos no urgentes durante la noche. Llegas por la mañana con la bandeja ya gestionada.",
       "teamCollab": "Trabajo en equipo",
       "teamCollabDesc": "Buzones compartidos, asignación, comentarios internos, actividad en tiempo real. Tu equipo colabora sin pisarse.",
       "multilingual": "Multilingüe nativo",
@@ -1407,8 +1407,8 @@
       "realtimeNotificationsDesc": "Campana de notificaciones, contador de no leídos, alertas de asignación. Mantente informado sin cambiar de pantalla.",
       "multilingual": "Interfaz multilingüe",
       "multilingualDesc": "Disponible en francés, inglés, neerlandés, alemán y español. Cada miembro del equipo trabaja en su propio idioma.",
-      "autopilotMode": "Modo Autopiloto",
-      "autopilotModeDesc": "Deja que Inboria procese automáticamente los correos no urgentes durante la noche según tus reglas. Por la mañana, tu bandeja ya está ordenada."
+      "autopilotMode": "Inboria trabaja sola",
+      "autopilotModeDesc": "Inboria procesa automáticamente los correos no urgentes durante la noche según tus reglas. Por la mañana, tu bandeja ya está ordenada."
     },
     "pricing": {
       "heroTitle": "Precios simples, sin sorpresas",
@@ -2272,7 +2272,7 @@
       "selecting": "{{count}} sel.",
       "deleted": "¡Eliminado!",
       "clean": "¡Limpio!",
-      "autopilot": "Piloto automático"
+      "autopilot": "Inboria"
     },
     "stats": {
       "urgent": "Urgente",

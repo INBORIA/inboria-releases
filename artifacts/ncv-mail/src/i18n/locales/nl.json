@@ -1351,8 +1351,8 @@
       "dataSecurityDesc": "Uw gegevens blijven vertrouwelijk en beveiligd met end-to-end-encryptie.",
       "clearVision": "Helder overzicht",
       "clearVisionDesc": "Vind uw belangrijke e-mails direct terug dankzij optimale organisatie.",
-      "autopilot": "Autopilot-modus",
-      "autopilotDesc": "Laat AI 's nachts niet-urgente e-mails afhandelen, sorteren en beantwoorden. Wanneer u 's ochtends binnenkomt, is uw inbox al beheerd.",
+      "autopilot": "Inboria beheert uw inbox 's nachts",
+      "autopilotDesc": "Activeer Inboria om niet-dringende e-mails 's nachts te verwerken, sorteren en beantwoorden. U komt 's morgens binnen in een beheerde inbox.",
       "teamCollab": "Teamwerk",
       "teamCollabDesc": "Gedeelde mailboxen, toewijzing, interne opmerkingen, realtime activiteit. Uw team werkt samen zonder elkaar in de weg te zitten.",
       "multilingual": "Native meertalig",
@@ -1407,8 +1407,8 @@
       "realtimeNotificationsDesc": "Notificatiebel, ongelezen-badge, toewijzingsmeldingen. Blijf op de hoogte zonder van scherm te wisselen.",
       "multilingual": "Meertalige interface",
       "multilingualDesc": "Beschikbaar in het Frans, Engels, Nederlands, Duits en Spaans. Elk teamlid werkt in zijn eigen taal.",
-      "autopilotMode": "Autopilot-modus",
-      "autopilotModeDesc": "Laat AI 's nachts automatisch niet-urgente e-mails afhandelen volgens uw regels. 's Ochtends is uw inbox al opgeruimd."
+      "autopilotMode": "Inboria werkt zelfstandig",
+      "autopilotModeDesc": "Inboria verwerkt automatisch niet-dringende e-mails 's nachts volgens uw regels. 's Morgens is uw inbox al opgeruimd."
     },
     "pricing": {
       "heroTitle": "Eenvoudige tarieven, geen verrassingen",
@@ -2272,7 +2272,7 @@
       "selecting": "{{count}} sel.",
       "deleted": "Verwijderd!",
       "clean": "Schoon!",
-      "autopilot": "Autopilot"
+      "autopilot": "Inboria"
     },
     "stats": {
       "urgent": "Urgent",

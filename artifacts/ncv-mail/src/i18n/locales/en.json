@@ -1351,8 +1351,8 @@
       "dataSecurityDesc": "Your data remains confidential and secured with end-to-end encryption.",
       "clearVision": "Clear vision",
       "clearVisionDesc": "Instantly find your important emails thanks to optimal organization.",
-      "autopilot": "Autopilot mode",
-      "autopilotDesc": "Let AI handle, sort and reply to non-urgent emails overnight. You arrive in the morning with an inbox already managed.",
+      "autopilot": "Inboria runs your inbox overnight",
+      "autopilotDesc": "Enable Inboria to process, sort and reply to non-urgent emails overnight. You walk in to a managed inbox.",
       "teamCollab": "Teamwork",
       "teamCollabDesc": "Shared mailboxes, assignment, internal comments, real-time activity. Your team collaborates without stepping on each other.",
       "multilingual": "Native multilingual",
@@ -1407,8 +1407,8 @@
       "realtimeNotificationsDesc": "Notification bell, unread badge, assignment alerts. Stay informed without switching screens.",
       "multilingual": "Multilingual interface",
       "multilingualDesc": "Available in French, English, Dutch, German and Spanish. Every team member works in their own language.",
-      "autopilotMode": "Autopilot mode",
-      "autopilotModeDesc": "Let AI automatically handle non-urgent emails overnight according to your rules. By morning, your inbox is already tidy."
+      "autopilotMode": "Inboria runs on its own",
+      "autopilotModeDesc": "Inboria automatically processes non-urgent emails overnight based on your rules. By morning, your inbox is already tidied."
     },
     "pricing": {
       "heroTitle": "Simple pricing, no surprises",
@@ -2272,7 +2272,7 @@
       "selecting": "{{count}} sel.",
       "deleted": "Deleted!",
       "clean": "Clean!",
-      "autopilot": "Autopilot"
+      "autopilot": "Inboria"
     },
     "stats": {
       "urgent": "Urgent",

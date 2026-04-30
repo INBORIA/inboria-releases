@@ -1341,7 +1341,7 @@
       "dataSecurityDesc": "Vos données restent confidentielles et sécurisées avec un chiffrement de bout en bout.",
       "clearVision": "Vision claire",
       "clearVisionDesc": "Retrouvez instantanément vos emails importants grâce à une organisation optimale.",
-      "autopilot": "Mode Autopilote",
+      "autopilot": "Inboria en autonomie la nuit",
       "autopilotDesc": "Activez Inboria pour qu'elle traite, classe et réponde aux emails non urgents pendant la nuit. Vous arrivez le matin avec une boîte déjà gérée.",
       "teamCollab": "Travail en équipe",
       "teamCollabDesc": "Boîtes partagées, assignation, commentaires internes, activité en temps réel. Votre équipe collabore sans se marcher dessus.",
@@ -1397,8 +1397,8 @@
       "realtimeNotificationsDesc": "Cloche de notifications, badge des non-lus, alertes d'assignation. Vous restez informé sans changer d'écran.",
       "multilingual": "Interface multilingue",
       "multilingualDesc": "Disponible en français, anglais, néerlandais, allemand et espagnol. Chaque membre de l'équipe travaille dans sa langue.",
-      "autopilotMode": "Mode Autopilote",
-      "autopilotModeDesc": "Laissez Inboria traiter automatiquement les emails non urgents pendant la nuit selon vos règles. Le matin, votre boîte est déjà rangée."
+      "autopilotMode": "Inboria en autonomie",
+      "autopilotModeDesc": "Inboria traite automatiquement les emails non urgents pendant la nuit selon vos règles. Le matin, votre boîte est déjà rangée."
     },
     "pricing": {
       "heroTitle": "Des tarifs simples, sans surprise",
@@ -2262,7 +2262,7 @@
       "selecting": "{{count}} sélec.",
       "deleted": "Supprimé !",
       "clean": "Propre !",
-      "autopilot": "Autopilot"
+      "autopilot": "Inboria"
     },
     "stats": {
       "urgent": "Urgents",
