@@ -426,14 +426,30 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
       return;
     }
 
-    const { data: isMbMember } = await supabaseAdmin
-      .from("shared_mailbox_members")
-      .select("id")
-      .eq("shared_mailbox_id", req.params.mailboxId)
-      .eq("user_id", req.userId!)
-      .single();
+    const adminOrgId = await getOrgIdForAdmin(req.userId!);
+    let hasAccess = false;
 
-    if (!isMbMember) {
+    if (adminOrgId) {
+      const { data: mbInOrg } = await supabaseAdmin
+        .from("shared_mailboxes")
+        .select("id")
+        .eq("id", req.params.mailboxId)
+        .eq("organisation_id", adminOrgId)
+        .single();
+      if (mbInOrg) hasAccess = true;
+    }
+
+    if (!hasAccess) {
+      const { data: isMbMember } = await supabaseAdmin
+        .from("shared_mailbox_members")
+        .select("id")
+        .eq("shared_mailbox_id", req.params.mailboxId)
+        .eq("user_id", req.userId!)
+        .single();
+      if (isMbMember) hasAccess = true;
+    }
+
+    if (!hasAccess) {
       res.status(403).json({ error: "Vous n'avez pas accès à cette boîte" });
       return;
     }
@@ -552,14 +568,29 @@ router.post("/shared-mailboxes/emails/:emailId/claim", requireAuth, async (req, 
       return;
     }
 
-    const { data: isMember } = await supabaseAdmin
-      .from("shared_mailbox_members")
-      .select("id")
-      .eq("shared_mailbox_id", email.shared_mailbox_id)
-      .eq("user_id", req.userId!)
-      .single();
+    let hasAccess = false;
+    const adminOrgId = await getOrgIdForAdmin(req.userId!);
+    if (adminOrgId) {
+      const { data: mbInOrg } = await supabaseAdmin
+        .from("shared_mailboxes")
+        .select("id")
+        .eq("id", email.shared_mailbox_id)
+        .eq("organisation_id", adminOrgId)
+        .single();
+      if (mbInOrg) hasAccess = true;
+    }
 
-    if (!isMember) {
+    if (!hasAccess) {
+      const { data: isMember } = await supabaseAdmin
+        .from("shared_mailbox_members")
+        .select("id")
+        .eq("shared_mailbox_id", email.shared_mailbox_id)
+        .eq("user_id", req.userId!)
+        .single();
+      if (isMember) hasAccess = true;
+    }
+
+    if (!hasAccess) {
       res.status(403).json({ error: "Vous n'avez pas accès à cette boîte" });
       return;
     }
@@ -626,14 +657,20 @@ router.post("/shared-mailboxes/:mailboxId/force-sync", requireAuth, async (req, 
       return;
     }
 
-    const { data: isMember } = await supabaseAdmin
-      .from("shared_mailbox_members")
-      .select("id")
-      .eq("shared_mailbox_id", mailbox.id)
-      .eq("user_id", req.userId!)
-      .single();
+    const adminOrgId = await getOrgIdForAdmin(req.userId!);
+    let hasAccess = adminOrgId === mailbox.organisation_id;
 
-    if (!isMember) {
+    if (!hasAccess) {
+      const { data: isMember } = await supabaseAdmin
+        .from("shared_mailbox_members")
+        .select("id")
+        .eq("shared_mailbox_id", mailbox.id)
+        .eq("user_id", req.userId!)
+        .single();
+      if (isMember) hasAccess = true;
+    }
+
+    if (!hasAccess) {
       res.status(403).json({ error: "Vous n'avez pas accès à cette boîte" });
       return;
     }
