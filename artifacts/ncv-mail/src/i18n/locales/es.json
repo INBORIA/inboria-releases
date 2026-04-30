@@ -2315,7 +2315,15 @@
         "subject": "Tendencias de IA en 2026",
         "summary": "Informe especial: automatización de correos, GPT-5, y el futuro del SaaS B2B."
       }
-    ]
+    ],
+    "inboria": {
+      "title": "Inboria propone",
+      "action1": "Ordenar 6 correos por prioridad",
+      "action2": "Eliminar 2 spams",
+      "action3": "Preparar 3 borradores",
+      "action4": "Programar 1 recordatorio",
+      "acceptAll": "Aceptar todo"
+    }
   },
   "agenda": {
     "title": "Agenda",

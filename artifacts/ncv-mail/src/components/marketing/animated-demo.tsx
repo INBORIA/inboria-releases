@@ -33,7 +33,9 @@ const JUNK_INDICES = [4, 5];
 const EMAIL_COUNT = 6;
 const JUNK_COUNT = JUNK_INDICES.length;
 const ARRIVAL_DELAY = 350;
-const SORT_START = EMAIL_COUNT * ARRIVAL_DELAY + 1400;
+const PANEL_OPEN_TIME = EMAIL_COUNT * ARRIVAL_DELAY + 500;
+const PANEL_CLOSE_TIME = PANEL_OPEN_TIME + 2400;
+const SORT_START = PANEL_CLOSE_TIME + 200;
 const SORT_INTERVAL = 450;
 const SORT_DONE = SORT_START + EMAIL_COUNT * SORT_INTERVAL;
 const SELECT_START = SORT_DONE + 1200;
@@ -74,6 +76,7 @@ export function AnimatedDemo() {
   const [sortedCount, setSortedCount] = useState(reducedMotion ? EMAIL_COUNT : 0);
   const [selectedJunk, setSelectedJunk] = useState(reducedMotion ? JUNK_COUNT : 0);
   const [deletedJunk, setDeletedJunk] = useState(reducedMotion);
+  const [inboriaPanelOpen, setInboriaPanelOpen] = useState(false);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const mountedRef = useRef(true);
   const visibleRef = useRef(true);
@@ -94,6 +97,7 @@ export function AnimatedDemo() {
     setSortedCount(0);
     setSelectedJunk(0);
     setDeletedJunk(false);
+    setInboriaPanelOpen(false);
 
     const startTimer = setTimeout(() => {
       if (!mountedRef.current || !visibleRef.current) return;
@@ -101,6 +105,8 @@ export function AnimatedDemo() {
       for (let i = 1; i <= EMAIL_COUNT; i++) {
         t.push(setTimeout(() => setVisibleEmails(i), i * ARRIVAL_DELAY));
       }
+      t.push(setTimeout(() => setInboriaPanelOpen(true), PANEL_OPEN_TIME));
+      t.push(setTimeout(() => setInboriaPanelOpen(false), PANEL_CLOSE_TIME));
       t.push(setTimeout(() => setPhase("sorting"), SORT_START));
       for (let i = 1; i <= EMAIL_COUNT; i++) {
         t.push(setTimeout(() => setSortedCount(i), SORT_START + i * SORT_INTERVAL));
@@ -257,6 +263,35 @@ export function AnimatedDemo() {
           </div>
 
           <div className="flex-1 flex flex-col min-w-0 relative">
+            {inboriaPanelOpen && (
+              <div className="hidden md:block absolute top-12 right-3 sm:right-4 z-30 w-[260px] origin-top-right animate-in fade-in slide-in-from-top-2 duration-200">
+                <div className="rounded-lg border border-[#2d7dd2]/40 bg-[#0d1117] shadow-2xl shadow-[#2d7dd2]/30 overflow-hidden">
+                  <div className="flex items-center gap-1.5 px-3 py-2 border-b border-[#1f2937] bg-[#2d7dd2]/[0.08]">
+                    <Sparkles className="w-3 h-3 text-[#2d7dd2]" />
+                    <span className="text-[10px] font-semibold text-white">{t("demo.inboria.title", "Inboria propose")}</span>
+                  </div>
+                  <div className="px-3 py-2 space-y-1.5">
+                    {[
+                      { icon: Tags, text: t("demo.inboria.action1", "Trier 6 emails par priorité"), color: "text-[#2d7dd2]" },
+                      { icon: Trash2, text: t("demo.inboria.action2", "Supprimer 2 spams"), color: "text-red-400" },
+                      { icon: Wand2, text: t("demo.inboria.action3", "Préparer 3 brouillons"), color: "text-emerald-400" },
+                      { icon: MailCheck, text: t("demo.inboria.action4", "Programmer 1 relance"), color: "text-amber-400" },
+                    ].map((a, i) => (
+                      <div key={i} className="flex items-center gap-1.5 text-[10px] text-white/85">
+                        <a.icon className={`w-3 h-3 shrink-0 ${a.color}`} />
+                        <span className="truncate">{a.text}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <div className="px-3 pb-2 pt-1">
+                    <div className="w-full text-center text-[10px] font-semibold text-white bg-[#2d7dd2] rounded-md py-1">
+                      {t("demo.inboria.acceptAll", "Tout accepter")}
+                    </div>
+                  </div>
+                </div>
+                <div className="absolute -top-1 right-6 w-2 h-2 rotate-45 bg-[#0d1117] border-l border-t border-[#2d7dd2]/40" />
+              </div>
+            )}
             <div className="px-3 sm:px-4 pt-3 sm:pt-4 pb-2 border-b border-[#1f2937]">
               <div className="flex items-center gap-2 mb-2.5">
                 <div className="flex-1 flex items-center gap-2 bg-[#141c2b] border border-[#1f2937] rounded-lg px-3 py-1.5 min-w-0">

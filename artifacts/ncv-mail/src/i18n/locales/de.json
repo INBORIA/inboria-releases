@@ -2315,7 +2315,15 @@
         "subject": "KI-Trends 2026",
         "summary": "Sonderbericht: E-Mail-Automatisierung, GPT-5 und die Zukunft von B2B SaaS."
       }
-    ]
+    ],
+    "inboria": {
+      "title": "Inboria schlägt vor",
+      "action1": "6 E-Mails nach Priorität sortieren",
+      "action2": "2 Spams löschen",
+      "action3": "3 Entwürfe vorbereiten",
+      "action4": "1 Erinnerung planen",
+      "acceptAll": "Alles akzeptieren"
+    }
   },
   "agenda": {
     "title": "Agenda",

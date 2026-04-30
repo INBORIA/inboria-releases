@@ -2315,7 +2315,15 @@
         "subject": "AI trends in 2026",
         "summary": "Special report: email automation, GPT-5, and the future of B2B SaaS."
       }
-    ]
+    ],
+    "inboria": {
+      "title": "Inboria suggests",
+      "action1": "Sort 6 emails by priority",
+      "action2": "Delete 2 spams",
+      "action3": "Draft 3 replies",
+      "action4": "Schedule 1 follow-up",
+      "acceptAll": "Accept all"
+    }
   },
   "agenda": {
     "title": "Agenda",

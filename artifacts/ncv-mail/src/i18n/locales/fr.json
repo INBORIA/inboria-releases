@@ -2305,7 +2305,15 @@
         "subject": "Les tendances IA en 2026",
         "summary": "Dossier spécial : automatisation email, GPT-5, et l'avenir du SaaS B2B."
       }
-    ]
+    ],
+    "inboria": {
+      "title": "Inboria propose",
+      "action1": "Trier 6 emails par priorité",
+      "action2": "Supprimer 2 spams",
+      "action3": "Préparer 3 brouillons",
+      "action4": "Programmer 1 relance",
+      "acceptAll": "Tout accepter"
+    }
   },
   "agenda": {
     "title": "Agenda",
