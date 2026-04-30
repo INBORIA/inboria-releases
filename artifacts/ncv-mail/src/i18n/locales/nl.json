@@ -1182,6 +1182,8 @@
     "hub": {
       "myAccount": "Mijn account",
       "myAccountDesc": "Profiel, beveiliging, e-mailaccounts, AI en meldingen",
+      "myTeam": "Mijn team",
+      "myTeamDesc": "Teamleden uitnodigen en beheren",
       "crm": "CRM",
       "crmDesc": "HubSpot, Pipedrive, Salesforce, Odoo",
       "developers": "Voor ontwikkelaars",

@@ -1,8 +1,9 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
-import { User, Building2, Code2, ChevronRight, ArrowLeft } from "lucide-react";
+import { User, Building2, Code2, Users, ChevronRight, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useGetProfile, useGetMyOrganisation } from "@workspace/api-client-react";
 
 interface HubCard {
   href: string;
@@ -16,6 +17,10 @@ interface HubCard {
 
 export default function Parametres() {
   const { t } = useTranslation();
+  const { data: profile } = useGetProfile();
+  const isBusiness = (profile as any)?.plan === "business";
+  const { data: myOrg } = useGetMyOrganisation();
+  const isOrgAdmin = (myOrg as any)?.myRole === "admin";
 
   const cards: HubCard[] = [
     {
@@ -27,6 +32,19 @@ export default function Parametres() {
       descFallback: "Profil, sécurité, comptes email, IA et notifications",
       testId: "hub-card-mon-compte",
     },
+    ...(isBusiness && isOrgAdmin
+      ? [
+          {
+            href: "/dashboard/equipe",
+            icon: Users,
+            titleKey: "settings.hub.myTeam",
+            titleFallback: "Mon équipe",
+            descKey: "settings.hub.myTeamDesc",
+            descFallback: "Inviter et gérer les membres de votre équipe",
+            testId: "hub-card-mon-equipe",
+          },
+        ]
+      : []),
     {
       href: "/dashboard/parametres/crm",
       icon: Building2,

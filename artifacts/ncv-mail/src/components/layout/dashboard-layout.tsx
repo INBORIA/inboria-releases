@@ -93,7 +93,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     ? [
         ...baseNavigation.slice(0, archivesIndex + 1),
         { name: t("sidebar.sharedMailboxes"), href: "/dashboard/boites-partagees", icon: MailPlus },
-        { name: t("sidebar.myTeam"), href: "/dashboard/equipe", icon: Users },
         { name: t("sidebar.teamActivity"), href: "/dashboard/activite-equipe", icon: Activity },
         ...baseNavigation.slice(archivesIndex + 1),
       ]

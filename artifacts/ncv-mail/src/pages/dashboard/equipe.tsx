@@ -17,7 +17,8 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
+import { Link } from "wouter";
+import { ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import {
@@ -218,7 +219,19 @@ export default function Equipe() {
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-6">
-        <BackToInboxButton />
+        <div className="mb-3">
+          <Link href="/dashboard/parametres">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
+              data-testid="back-to-settings"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
+              {t("settings.title", "Paramètres")}
+            </Button>
+          </Link>
+        </div>
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-xl font-bold text-white flex items-center gap-2">

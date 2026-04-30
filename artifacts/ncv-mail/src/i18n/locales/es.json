@@ -1182,6 +1182,8 @@
     "hub": {
       "myAccount": "Mi cuenta",
       "myAccountDesc": "Perfil, seguridad, cuentas de correo, IA y notificaciones",
+      "myTeam": "Mi equipo",
+      "myTeamDesc": "Invitar y gestionar a los miembros de tu equipo",
       "crm": "CRM",
       "crmDesc": "HubSpot, Pipedrive, Salesforce, Odoo",
       "developers": "Para desarrolladores",
