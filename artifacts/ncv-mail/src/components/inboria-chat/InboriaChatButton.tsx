@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Sparkles, Send, Loader2, X, Bot, User as UserIcon } from "lucide-react";
+import { Sparkles, Send, Loader2, Bot, User as UserIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
@@ -94,12 +94,13 @@ export function InboriaChatButton() {
       <SheetTrigger asChild>
         <Button
           variant="ghost"
-          size="icon"
-          className="relative h-9 w-9 hover:bg-purple-500/10"
+          size="sm"
+          className="relative h-9 gap-1.5 px-2.5 hover:bg-purple-500/10 text-zinc-200"
           aria-label={t("inboriaChat.openLabel")}
           data-testid="inboria-chat-button"
         >
-          <Sparkles className="h-5 w-5 text-purple-400" />
+          <Sparkles className="h-4 w-4 text-purple-400" />
+          <span className="text-sm font-medium">Inboria</span>
         </Button>
       </SheetTrigger>
       <SheetContent
@@ -118,7 +119,7 @@ export function InboriaChatButton() {
               <p className="text-xs text-zinc-500 leading-tight">{t("inboriaChat.subtitle")}</p>
             </div>
           </div>
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-1 pr-7">
             {messages.length > 0 && (
               <Button
                 variant="ghost"
@@ -129,15 +130,6 @@ export function InboriaChatButton() {
                 {t("inboriaChat.clear")}
               </Button>
             )}
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsOpen(false)}
-              className="h-7 w-7"
-              aria-label={t("inboriaChat.close")}
-            >
-              <X className="h-4 w-4" />
-            </Button>
           </div>
         </div>
 
