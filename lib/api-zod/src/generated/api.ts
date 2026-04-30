@@ -323,6 +323,12 @@ export const ListEmailsQueryParams = zod.object({
     .describe(
       "Restrict to senders present in the user's CRM contacts for the given provider",
     ),
+  sort: zod
+    .enum(["smart"])
+    .optional()
+    .describe(
+      'When set to \"smart\", emails are sorted by Inboria strategic score',
+    ),
 });
 
 export const listEmailsResponseEmailsItemOpenedCountDefault = 0;
@@ -387,6 +393,16 @@ export const ListEmailsResponse = zod.object({
           }),
         )
         .optional(),
+      inboriaScore: zod
+        .number()
+        .optional()
+        .describe(
+          "Inboria strategic score (sum of weighted signals). Higher = more strategic.",
+        ),
+      inboriaReasons: zod
+        .array(zod.string())
+        .optional()
+        .describe("Human-readable reasons explaining the Inboria score."),
       createdAt: zod.coerce.date(),
     }),
   ),
@@ -460,6 +476,16 @@ export const GetEmailResponse = zod.object({
       }),
     )
     .optional(),
+  inboriaScore: zod
+    .number()
+    .optional()
+    .describe(
+      "Inboria strategic score (sum of weighted signals). Higher = more strategic.",
+    ),
+  inboriaReasons: zod
+    .array(zod.string())
+    .optional()
+    .describe("Human-readable reasons explaining the Inboria score."),
   createdAt: zod.coerce.date(),
 });
 
@@ -534,6 +560,16 @@ export const UpdateEmailResponse = zod.object({
       }),
     )
     .optional(),
+  inboriaScore: zod
+    .number()
+    .optional()
+    .describe(
+      "Inboria strategic score (sum of weighted signals). Higher = more strategic.",
+    ),
+  inboriaReasons: zod
+    .array(zod.string())
+    .optional()
+    .describe("Human-readable reasons explaining the Inboria score."),
   createdAt: zod.coerce.date(),
 });
 
@@ -1225,6 +1261,16 @@ export const GetProjectResponse = zod.object({
           }),
         )
         .optional(),
+      inboriaScore: zod
+        .number()
+        .optional()
+        .describe(
+          "Inboria strategic score (sum of weighted signals). Higher = more strategic.",
+        ),
+      inboriaReasons: zod
+        .array(zod.string())
+        .optional()
+        .describe("Human-readable reasons explaining the Inboria score."),
       createdAt: zod.coerce.date(),
     }),
   ),
@@ -1571,6 +1617,16 @@ export const GetEmailConversationResponse = zod.object({
           }),
         )
         .optional(),
+      inboriaScore: zod
+        .number()
+        .optional()
+        .describe(
+          "Inboria strategic score (sum of weighted signals). Higher = more strategic.",
+        ),
+      inboriaReasons: zod
+        .array(zod.string())
+        .optional()
+        .describe("Human-readable reasons explaining the Inboria score."),
       createdAt: zod.coerce.date(),
     })
     .optional(),
@@ -1637,6 +1693,16 @@ export const GetEmailConversationResponse = zod.object({
               }),
             )
             .optional(),
+          inboriaScore: zod
+            .number()
+            .optional()
+            .describe(
+              "Inboria strategic score (sum of weighted signals). Higher = more strategic.",
+            ),
+          inboriaReasons: zod
+            .array(zod.string())
+            .optional()
+            .describe("Human-readable reasons explaining the Inboria score."),
           createdAt: zod.coerce.date(),
         })
         .and(
@@ -2608,6 +2674,16 @@ export const GetAssignedToMeResponseItem = zod.object({
       }),
     )
     .optional(),
+  inboriaScore: zod
+    .number()
+    .optional()
+    .describe(
+      "Inboria strategic score (sum of weighted signals). Higher = more strategic.",
+    ),
+  inboriaReasons: zod
+    .array(zod.string())
+    .optional()
+    .describe("Human-readable reasons explaining the Inboria score."),
   createdAt: zod.coerce.date(),
 });
 export const GetAssignedToMeResponse = zod.array(GetAssignedToMeResponseItem);

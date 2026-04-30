@@ -4527,5 +4527,19 @@
       "brevoApiKey": "Brevo API-Schlüssel",
       "helpLink": "Wie bekomme ich diese Zugangsdaten?"
     }
+  },
+  "inboriaSort": {
+    "smartLabel": "Inboria-Sortierung",
+    "smartTooltipOn": "Intelligente Sortierung an: Inboria stellt strategische E-Mails nach oben.",
+    "smartTooltipOff": "Intelligente Sortierung aus.",
+    "disabledByInboria": "Deaktiviert, solange die Inboria-Sortierung aktiv ist.",
+    "strategic": "Strategisch",
+    "strategicTooltip": "Inboria stuft diese E-Mail als strategisch ein:",
+    "kinds": {
+      "awaiting_response": "Antwort erwartet",
+      "commitment_pending": "Frist genannt",
+      "decision_needed": "Entscheidung erforderlich",
+      "escalation": "Dringend oder Erinnerung"
+    }
   }
 }

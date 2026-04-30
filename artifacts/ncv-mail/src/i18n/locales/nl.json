@@ -4527,5 +4527,19 @@
       "brevoApiKey": "Brevo API-sleutel",
       "helpLink": "Hoe krijg ik deze gegevens?"
     }
+  },
+  "inboriaSort": {
+    "smartLabel": "Inboria-sortering",
+    "smartTooltipOn": "Slimme sortering aan: Inboria zet strategische e-mails bovenaan.",
+    "smartTooltipOff": "Slimme sortering uit.",
+    "disabledByInboria": "Uitgeschakeld zolang de Inboria-sortering aan staat.",
+    "strategic": "Strategisch",
+    "strategicTooltip": "Inboria markeert deze e-mail als strategisch:",
+    "kinds": {
+      "awaiting_response": "Antwoord verwacht",
+      "commitment_pending": "Deadline genoemd",
+      "decision_needed": "Beslissing nodig",
+      "escalation": "Urgent of opvolging"
+    }
   }
 }

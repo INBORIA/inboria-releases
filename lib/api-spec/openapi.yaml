@@ -228,6 +228,12 @@ paths:
             type: string
             enum: [hubspot, pipedrive, salesforce, odoo]
           description: Restrict to senders present in the user's CRM contacts for the given provider
+        - name: sort
+          in: query
+          schema:
+            type: string
+            enum: [smart]
+          description: When set to "smart", emails are sorted by Inboria strategic score
       responses:
         "200":
           description: Paginated list of emails
@@ -3567,6 +3573,14 @@ components:
           type: array
           items:
             $ref: "#/components/schemas/Attachment"
+        inboriaScore:
+          type: integer
+          description: Inboria strategic score (sum of weighted signals). Higher = more strategic.
+        inboriaReasons:
+          type: array
+          items:
+            type: string
+          description: Human-readable reasons explaining the Inboria score.
         createdAt:
           type: string
           format: date-time

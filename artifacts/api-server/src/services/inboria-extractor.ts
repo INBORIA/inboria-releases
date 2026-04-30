@@ -13,6 +13,12 @@ const EXTRACTION_MODEL = "gpt-4o-mini";
 
 const FACT_KINDS = ["preference", "topic", "role"] as const;
 const EPISODE_KINDS = ["decision", "commitment"] as const;
+const SIGNAL_KINDS = [
+  "awaiting_response",
+  "commitment_pending",
+  "decision_needed",
+  "escalation",
+] as const;
 
 const FactSchema = z.object({
   kind: z.enum(FACT_KINDS),
@@ -26,17 +32,26 @@ const EpisodeSchema = z.object({
   event_date: z.string().nullable().optional(),
 });
 
+const SignalSchema = z.object({
+  kind: z.enum(SIGNAL_KINDS),
+  severity: z.number().int().min(1).max(3),
+  reason: z.string().min(3).max(200),
+});
+
 const ExtractionRawSchema = z.object({
   facts: z.array(z.unknown()).default([]),
   episodes: z.array(z.unknown()).default([]),
+  signals: z.array(z.unknown()).default([]),
 });
 
 interface ParsedExtraction {
   facts: z.infer<typeof FactSchema>[];
   episodes: z.infer<typeof EpisodeSchema>[];
+  signals: z.infer<typeof SignalSchema>[];
 }
 
 let extractRunning = false;
+let signalsTableMissingWarned = false;
 
 interface EmailRow {
   id: number;
@@ -153,7 +168,7 @@ async function extractStructured(
         {
           role: "system",
           content:
-            "Tu es Inboria, la mémoire contextuelle d'un assistant email B2B. Tu lis un email et tu extrais STRICTEMENT ce qui est explicitement écrit, jamais d'inférence ni de devinette. Ne JAMAIS inventer. Si rien d'extractible: renvoie des tableaux vides.\n\nFAIT (kind):\n- preference: une préférence du contact (ex: 'préfère être contacté par email', 'aime les rendez-vous le matin')\n- topic: un sujet d'intérêt récurrent du contact (ex: 'travaille sur la migration ERP', 'cherche un fournisseur logistique')\n- role: la fonction ou le rôle du contact (ex: 'directrice marketing chez Acme', 'fondateur de XYZ')\n\nÉPISODE (kind):\n- decision: une décision actée par le contact (ex: 'décide de reporter le projet à Q3')\n- commitment: un engagement pris par le contact (ex: 'envoie le devis avant vendredi')\n\nRéponds en JSON strict: {\"facts\":[{\"kind\":\"preference|topic|role\",\"statement\":\"phrase courte factuelle\",\"confidence\":0.0-1.0}],\"episodes\":[{\"kind\":\"decision|commitment\",\"summary\":\"phrase courte\",\"event_date\":\"YYYY-MM-DD ou null\"}]}.\n\nMaximum 6 facts et 3 épisodes. Statements en français, courts (<140 caractères), sans pronom de première personne. Confidence reflète à quel point la phrase est explicitement écrite (>=0.8 = formulé tel quel, 0.5 = clairement implicite, <0.5 = à éviter).",
+            "Tu es Inboria, la mémoire contextuelle d'un assistant email B2B. Tu lis un email et tu extrais STRICTEMENT ce qui est explicitement écrit, jamais d'inférence ni de devinette. Ne JAMAIS inventer. Si rien d'extractible: renvoie des tableaux vides.\n\nFAIT (kind):\n- preference: une préférence du contact (ex: 'préfère être contacté par email', 'aime les rendez-vous le matin')\n- topic: un sujet d'intérêt récurrent du contact (ex: 'travaille sur la migration ERP', 'cherche un fournisseur logistique')\n- role: la fonction ou le rôle du contact (ex: 'directrice marketing chez Acme', 'fondateur de XYZ')\n\nÉPISODE (kind):\n- decision: une décision actée par le contact (ex: 'décide de reporter le projet à Q3')\n- commitment: un engagement pris par le contact (ex: 'envoie le devis avant vendredi')\n\nSIGNAL (kind) — qualifie l'EMAIL lui-même pour le tri intelligent du destinataire:\n- awaiting_response: le contact pose une question explicite ou demande une action et attend une réponse du destinataire\n- commitment_pending: le contact mentionne une deadline (date, jour, urgence) qui implique un délai à respecter\n- decision_needed: une décision est explicitement demandée au destinataire\n- escalation: ton qui exprime urgence, frustration, relance, blocage, ou enjeu critique\n\nRéponds en JSON strict: {\"facts\":[{\"kind\":\"preference|topic|role\",\"statement\":\"phrase courte factuelle\",\"confidence\":0.0-1.0}],\"episodes\":[{\"kind\":\"decision|commitment\",\"summary\":\"phrase courte\",\"event_date\":\"YYYY-MM-DD ou null\"}],\"signals\":[{\"kind\":\"awaiting_response|commitment_pending|decision_needed|escalation\",\"severity\":1|2|3,\"reason\":\"phrase courte FR explique pourquoi\"}]}.\n\nMaximum 6 facts, 3 épisodes, 3 signals. Statements/reasons en français, courts (<140 caractères), sans pronom de première personne. Severity 1=faible, 2=moyen, 3=fort. Pour signals: ne renvoyer QUE si le signal est explicitement présent dans l'email; sinon tableau vide. Confidence reflète à quel point la phrase est explicitement écrite (>=0.8 = formulé tel quel, 0.5 = clairement implicite, <0.5 = à éviter).",
         },
         {
           role: "user",
@@ -167,10 +182,10 @@ async function extractStructured(
       json = JSON.parse(raw);
     } catch {
       // Model returned malformed JSON despite response_format. Permanent for this email.
-      return { ok: true, data: { facts: [], episodes: [] } };
+      return { ok: true, data: { facts: [], episodes: [], signals: [] } };
     }
     const wrapper = ExtractionRawSchema.safeParse(json);
-    if (!wrapper.success) return { ok: true, data: { facts: [], episodes: [] } };
+    if (!wrapper.success) return { ok: true, data: { facts: [], episodes: [], signals: [] } };
     const facts: z.infer<typeof FactSchema>[] = [];
     for (const item of wrapper.data.facts.slice(0, 8)) {
       const r = FactSchema.safeParse(item);
@@ -181,7 +196,12 @@ async function extractStructured(
       const r = EpisodeSchema.safeParse(item);
       if (r.success) episodes.push(r.data);
     }
-    return { ok: true, data: { facts, episodes } };
+    const signals: z.infer<typeof SignalSchema>[] = [];
+    for (const item of wrapper.data.signals.slice(0, 3)) {
+      const r = SignalSchema.safeParse(item);
+      if (r.success) signals.push(r.data);
+    }
+    return { ok: true, data: { facts, episodes, signals } };
   } catch (err: any) {
     const transient = isTransientError(err);
     logger.warn(
@@ -275,6 +295,29 @@ async function processEmail(
     }
   }
 
+  if (parsed.signals.length > 0) {
+    const signalRows = parsed.signals.map((s) => ({
+      contact_email: contactEmail,
+      user_id: email.user_id,
+      shared_mailbox_id: email.shared_mailbox_id,
+      source_email_id: email.id,
+      kind: s.kind,
+      severity: s.severity,
+      reason: s.reason,
+    }));
+    const { error } = await supabaseAdmin.from("inboria_signals").insert(signalRows);
+    if (error) {
+      // Silent if table not yet created in Supabase Dashboard.
+      const msg = String(error.message || "");
+      if (!/relation .*inboria_signals.* does not exist/i.test(msg)) {
+        logger.warn(
+          { err: msg, emailId: email.id },
+          "[inboria-extractor] signals insert failed",
+        );
+      }
+    }
+  }
+
   return "processed";
 }
 
@@ -294,6 +337,36 @@ export async function runInboriaExtractorOnce(): Promise<{
       return { processed: 0, skipped: 0, retried: 0 };
     }
     const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
+
+    // Probe the inboria_signals table once per run. If it doesn't exist yet
+    // (migration not applied in Supabase Dashboard), we PAUSE the entire
+    // run — emails stay queued (inboria_processed_at NULL) so once the
+    // table is applied we backfill facts/episodes/signals together. This
+    // prevents permanent loss of signals for the backlog.
+    const { error: probeErr } = await supabaseAdmin
+      .from("inboria_signals")
+      .select("id", { head: true, count: "exact" })
+      .limit(1);
+    if (probeErr) {
+      const msg = String(probeErr.message || "");
+      // Catch both raw Postgres "relation … does not exist" and the
+      // PostgREST schema-cache variant ("Could not find the table 'X'").
+      const tableMissing =
+        /relation .*inboria_signals.* does not exist/i.test(msg) ||
+        /could not find the table.*inboria_signals/i.test(msg);
+      if (tableMissing) {
+        if (!signalsTableMissingWarned) {
+          signalsTableMissingWarned = true;
+          logger.warn(
+            "[inboria-extractor] inboria_signals table not found — pausing run. Apply migrations/2026_04_30_inboria_signals.sql in Supabase Dashboard, then the worker will resume on the next cycle.",
+          );
+        }
+        return { processed: 0, skipped: 0, retried: 0 };
+      }
+    } else {
+      // Table found — reset the warn-once flag so future losses re-warn.
+      signalsTableMissingWarned = false;
+    }
 
     const { data, error } = await supabaseAdmin
       .from("emails")

@@ -2869,5 +2869,19 @@
       "confirmDelete": "Supprimer ce webhook ?",
       "createFailed": "Impossible de créer le webhook"
     }
+  },
+  "inboriaSort": {
+    "smartLabel": "Tri Inboria",
+    "smartTooltipOn": "Tri intelligent activé : Inboria pousse en haut les emails stratégiques.",
+    "smartTooltipOff": "Tri intelligent désactivé.",
+    "disabledByInboria": "Désactivé tant que le tri Inboria est actif.",
+    "strategic": "Stratégique",
+    "strategicTooltip": "Inboria considère cet email comme stratégique :",
+    "kinds": {
+      "awaiting_response": "Réponse attendue",
+      "commitment_pending": "Échéance mentionnée",
+      "decision_needed": "Décision à prendre",
+      "escalation": "Urgent ou relance"
+    }
   }
 }

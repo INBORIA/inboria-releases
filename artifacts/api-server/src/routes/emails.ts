@@ -129,6 +129,12 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
     const limit = Math.min(500, Math.max(1, parseInt(req.query.limit as string, 10) || 50));
     const from = (page - 1) * limit;
     const to = from + limit - 1;
+    // Inboria Phase 3 — smart sort. We must score across the WHOLE matching
+    // set (not just the current page), otherwise strategic emails outside
+    // page 1 would never bubble up. We pull a wider candidate window
+    // (most-recent N), score them, sort, then slice the requested page.
+    const wantsSmartSort = (req.query.sort as string | undefined) === "smart";
+    const SMART_CANDIDATE_CAP = 1000;
 
     const memberMailboxIds = await getMemberMailboxIds(req.userId!);
     const scopeOr = buildInboxScopeOrFilter(req.userId!, memberMailboxIds);
@@ -282,7 +288,12 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       countQuery = countQuery.or(orParts);
     }
 
-    query = query.range(from, to);
+    if (wantsSmartSort) {
+      // Pull a wider window so scoring can re-rank globally, not intra-page.
+      query = query.range(0, SMART_CANDIDATE_CAP - 1);
+    } else {
+      query = query.range(from, to);
+    }
 
     const [{ count: total }, { data: emails, error }] = await Promise.all([
       countQuery,
@@ -317,38 +328,109 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
       });
     }
 
+    // Inboria Phase 3 — smart sort. Load signals for the candidate set, compute
+    // a score per email, attach reasons. Tolerant if inboria_signals table is
+    // not yet created in Supabase Dashboard (silently fall back to no boost).
+    const SIGNAL_WEIGHT: Record<string, number> = {
+      escalation: 3,
+      awaiting_response: 2,
+      decision_needed: 2,
+      commitment_pending: 2,
+    };
+    const SIGNAL_LABEL: Record<string, string> = {
+      escalation: "Urgent ou relance",
+      awaiting_response: "Réponse attendue",
+      decision_needed: "Décision à prendre",
+      commitment_pending: "Échéance mentionnée",
+    };
+    const scoreByEmail = new Map<number, number>();
+    const reasonsByEmail = new Map<number, string[]>();
+    if (emailIds.length > 0) {
+      const { data: signalRows, error: signalsErr } = await supabaseAdmin
+        .from("inboria_signals")
+        .select("source_email_id, kind, severity, reason")
+        .in("source_email_id", emailIds);
+      if (signalsErr) {
+        const msg = String(signalsErr.message || "");
+        if (!/relation .*inboria_signals.* does not exist/i.test(msg)) {
+          req.log?.warn?.({ msg }, "[inboria] signals fetch failed");
+        }
+      } else {
+        for (const row of (signalRows || []) as Array<{
+          source_email_id: number;
+          kind: string;
+          severity: number;
+          reason: string | null;
+        }>) {
+          const weight = SIGNAL_WEIGHT[row.kind] ?? 1;
+          const sev = Math.max(1, Math.min(3, Number(row.severity) || 2));
+          const points = weight * sev;
+          scoreByEmail.set(
+            row.source_email_id,
+            (scoreByEmail.get(row.source_email_id) || 0) + points,
+          );
+          const list = reasonsByEmail.get(row.source_email_id) || [];
+          const label = SIGNAL_LABEL[row.kind] || row.kind;
+          const reasonText = row.reason ? `${label} — ${row.reason}` : label;
+          if (list.length < 3 && !list.some((r) => r.startsWith(label))) {
+            list.push(reasonText);
+          }
+          reasonsByEmail.set(row.source_email_id, list);
+        }
+      }
+    }
+
     const totalCount = total || 0;
 
+    let mapped = (emails || []).map((e: any) => {
+      const s = parseSender(e.sender || "");
+      const inboriaScore = scoreByEmail.get(e.id) || 0;
+      const inboriaReasons = reasonsByEmail.get(e.id) || [];
+      return {
+        id: e.id,
+        sender: s.name,
+        senderEmail: s.email,
+        subject: e.subject,
+        status: e.status,
+        priority: e.priority || "faible",
+        summary: e.summary,
+        categoryId: e.category_id,
+        categoryName: e.categories?.name || null,
+        projectId: e.project_id,
+        projectName: e.projects?.name || null,
+        projectReference: e.projects?.reference || null,
+        replyToEmailId: e.reply_to_email_id || null,
+        recipient: e.recipient || null,
+        assignedTo: e.assigned_to || null,
+        assignedAt: e.assigned_at || null,
+        spamSource: e.spam_source || null,
+        snoozedUntil: e.snoozed_until || null,
+        sentAt: e.sent_at || null,
+        openedAt: e.opened_at || null,
+        openedCount: e.opened_count || 0,
+        taskCount: taskCountMap[e.id] || 0,
+        attachmentCount: attachmentCountMap[e.id] || 0,
+        createdAt: e.created_at,
+        inboriaScore,
+        inboriaReasons,
+      };
+    });
+
+    if (wantsSmartSort) {
+      mapped = mapped.slice().sort((a, b) => {
+        if (b.inboriaScore !== a.inboriaScore) return b.inboriaScore - a.inboriaScore;
+        const ad = a.createdAt ? new Date(a.createdAt).getTime() : 0;
+        const bd = b.createdAt ? new Date(b.createdAt).getTime() : 0;
+        return bd - ad;
+      });
+      // Slice the requested page out of the wider candidate window. We pulled
+      // up to SMART_CANDIDATE_CAP rows, so pagination beyond that is bounded
+      // by the candidate window — fine for typical inboxes (200/page × 5).
+      mapped = mapped.slice(from, from + limit);
+    }
+
     res.json({
-      emails: (emails || []).map((e: any) => {
-        const s = parseSender(e.sender || "");
-        return {
-          id: e.id,
-          sender: s.name,
-          senderEmail: s.email,
-          subject: e.subject,
-          status: e.status,
-          priority: e.priority || "faible",
-          summary: e.summary,
-          categoryId: e.category_id,
-          categoryName: e.categories?.name || null,
-          projectId: e.project_id,
-          projectName: e.projects?.name || null,
-          projectReference: e.projects?.reference || null,
-          replyToEmailId: e.reply_to_email_id || null,
-          recipient: e.recipient || null,
-          assignedTo: e.assigned_to || null,
-          assignedAt: e.assigned_at || null,
-          spamSource: e.spam_source || null,
-          snoozedUntil: e.snoozed_until || null,
-          sentAt: e.sent_at || null,
-          openedAt: e.opened_at || null,
-          openedCount: e.opened_count || 0,
-          taskCount: taskCountMap[e.id] || 0,
-          attachmentCount: attachmentCountMap[e.id] || 0,
-          createdAt: e.created_at,
-        };
-      }),
+      emails: mapped,
       total: totalCount,
       page,
       totalPages: Math.ceil(totalCount / limit),

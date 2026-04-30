@@ -7,6 +7,7 @@
  */
 import type { ListEmailsCrmFilter } from "./listEmailsCrmFilter";
 import type { ListEmailsPriority } from "./listEmailsPriority";
+import type { ListEmailsSort } from "./listEmailsSort";
 import type { ListEmailsStatus } from "./listEmailsStatus";
 
 export type ListEmailsParams = {
@@ -32,4 +33,8 @@ export type ListEmailsParams = {
    * Restrict to senders present in the user's CRM contacts for the given provider
    */
   crmFilter?: ListEmailsCrmFilter;
+  /**
+   * When set to "smart", emails are sorted by Inboria strategic score
+   */
+  sort?: ListEmailsSort;
 };

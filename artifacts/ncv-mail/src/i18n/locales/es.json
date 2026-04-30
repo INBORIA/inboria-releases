@@ -4527,5 +4527,19 @@
       "brevoApiKey": "Clave API de Brevo",
       "helpLink": "¿Cómo obtener estos datos?"
     }
+  },
+  "inboriaSort": {
+    "smartLabel": "Orden Inboria",
+    "smartTooltipOn": "Orden inteligente activado: Inboria sube los correos estratégicos.",
+    "smartTooltipOff": "Orden inteligente desactivado.",
+    "disabledByInboria": "Desactivado mientras el orden Inboria esté activo.",
+    "strategic": "Estratégico",
+    "strategicTooltip": "Inboria considera este correo como estratégico:",
+    "kinds": {
+      "awaiting_response": "Respuesta pendiente",
+      "commitment_pending": "Plazo mencionado",
+      "decision_needed": "Decisión requerida",
+      "escalation": "Urgente o recordatorio"
+    }
   }
 }

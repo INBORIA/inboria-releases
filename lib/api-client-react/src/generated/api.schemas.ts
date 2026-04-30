@@ -175,6 +175,10 @@ export interface Email {
   openedCount?: number;
   attachmentCount?: number;
   attachments?: Attachment[];
+  /** Inboria strategic score (sum of weighted signals). Higher = more strategic. */
+  inboriaScore?: number;
+  /** Human-readable reasons explaining the Inboria score. */
+  inboriaReasons?: string[];
   createdAt: string;
 }
 
@@ -1560,6 +1564,10 @@ export type ListEmailsParams = {
    * Restrict to senders present in the user's CRM contacts for the given provider
    */
   crmFilter?: ListEmailsCrmFilter;
+  /**
+   * When set to "smart", emails are sorted by Inboria strategic score
+   */
+  sort?: ListEmailsSort;
 };
 
 export type ListEmailsPriority =
@@ -1591,6 +1599,13 @@ export const ListEmailsCrmFilter = {
   pipedrive: "pipedrive",
   salesforce: "salesforce",
   odoo: "odoo",
+} as const;
+
+export type ListEmailsSort =
+  (typeof ListEmailsSort)[keyof typeof ListEmailsSort];
+
+export const ListEmailsSort = {
+  smart: "smart",
 } as const;
 
 export type DeleteEmail200 = {

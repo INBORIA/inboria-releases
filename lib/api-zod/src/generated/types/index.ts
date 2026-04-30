@@ -159,6 +159,7 @@ export * from "./listContactsParams";
 export * from "./listEmailsCrmFilter";
 export * from "./listEmailsParams";
 export * from "./listEmailsPriority";
+export * from "./listEmailsSort";
 export * from "./listEmailsStatus";
 export * from "./listFollowupsKind";
 export * from "./listFollowupsParams";

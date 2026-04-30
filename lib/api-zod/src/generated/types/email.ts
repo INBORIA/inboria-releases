@@ -60,5 +60,9 @@ export interface Email {
   openedCount?: number;
   attachmentCount?: number;
   attachments?: Attachment[];
+  /** Inboria strategic score (sum of weighted signals). Higher = more strategic. */
+  inboriaScore?: number;
+  /** Human-readable reasons explaining the Inboria score. */
+  inboriaReasons?: string[];
   createdAt: Date;
 }

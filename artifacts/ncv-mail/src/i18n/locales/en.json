@@ -4510,5 +4510,19 @@
       "confirmDelete": "Delete this webhook?",
       "createFailed": "Could not create webhook"
     }
+  },
+  "inboriaSort": {
+    "smartLabel": "Inboria sort",
+    "smartTooltipOn": "Smart sort on: Inboria pushes strategic emails to the top.",
+    "smartTooltipOff": "Smart sort off.",
+    "disabledByInboria": "Disabled while Inboria smart sort is on.",
+    "strategic": "Strategic",
+    "strategicTooltip": "Inboria flagged this email as strategic:",
+    "kinds": {
+      "awaiting_response": "Reply expected",
+      "commitment_pending": "Deadline mentioned",
+      "decision_needed": "Decision required",
+      "escalation": "Urgent or follow-up"
+    }
   }
 }

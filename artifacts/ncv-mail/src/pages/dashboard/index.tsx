@@ -2907,6 +2907,19 @@ export default function Dashboard() {
       window.localStorage.setItem("inbox.sortMode", sortMode);
     }
   }, [sortMode]);
+  // Inboria Phase 3 — Smart sort. When enabled, the server orders the page
+  // by Inboria strategic score (deadline, awaiting reply, escalation…)
+  // and we skip the client-side sort to preserve that order.
+  const [smartSort, setSmartSort] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    const saved = window.localStorage.getItem("inbox.smartSort");
+    return saved === null ? true : saved === "1";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("inbox.smartSort", smartSort ? "1" : "0");
+    }
+  }, [smartSort]);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(() => {
     if (typeof window === "undefined") return null;
     const params = new URLSearchParams(window.location.search);
@@ -3167,6 +3180,7 @@ export default function Dashboard() {
     page: emailPage,
     limit: 200,
     ...(crmFilter ? { crmFilter } : {}),
+    ...(smartSort ? { sort: "smart" as const } : {}),
   });
 
   useEffect(() => {
@@ -3419,6 +3433,8 @@ export default function Dashboard() {
       return recipientMatchesAddress(e.recipient, selectedAccountEmail);
     })
     .sort((a, b) => {
+      // Smart sort: server already ordered by Inboria score; preserve order.
+      if (smartSort) return 0;
       if (sortMode === "date_desc") {
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       }
@@ -4298,18 +4314,40 @@ export default function Dashboard() {
               ))}
               <div className="w-px h-4 bg-[#1f2937] mx-1" />
               <button
+                onClick={() => setSmartSort((v) => !v)}
+                title={
+                  smartSort
+                    ? t("inboriaSort.smartTooltipOn", "Tri intelligent activé : Inboria pousse en haut les emails stratégiques.")
+                    : t("inboriaSort.smartTooltipOff", "Tri intelligent désactivé.")
+                }
+                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                  smartSort
+                    ? "bg-primary/15 text-primary border border-primary/20"
+                    : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                }`}
+                data-testid="btn-inboria-smart-sort"
+              >
+                <Sparkles className="w-3 h-3" />
+                <span>{t("inboriaSort.smartLabel", "Tri Inboria")}</span>
+              </button>
+              <button
                 onClick={() => {
                   setSortMode((m) => (m === "priority" ? "date_desc" : m === "date_desc" ? "date_asc" : "priority"));
                 }}
+                disabled={smartSort}
                 title={
-                  sortMode === "priority"
+                  smartSort
+                    ? t("inboriaSort.disabledByInboria", "Désactivé tant que le tri Inboria est actif.")
+                    : sortMode === "priority"
                     ? t("inbox.sortByPriority", "Tri : Priorité")
                     : sortMode === "date_desc"
                       ? t("inbox.sortByDateDesc", "Tri : Date ↓ (récent)")
                       : t("inbox.sortByDateAsc", "Tri : Date ↑ (ancien)")
                 }
                 className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
-                  sortMode !== "priority"
+                  smartSort
+                    ? "text-[#5a6478] border border-[#1f2937] opacity-50 cursor-not-allowed"
+                    : sortMode !== "priority"
                     ? "bg-primary/15 text-primary border border-primary/20"
                     : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
                 }`}
@@ -4470,6 +4508,20 @@ export default function Dashboard() {
                                     >
                                       <AlertCircle className="w-2.5 h-2.5" />
                                       SLA
+                                    </span>
+                                  )}
+                                  {((email as any).inboriaScore ?? 0) >= 3 && (
+                                    <span
+                                      className="text-[9px] px-1.5 py-0.5 rounded-full font-semibold bg-primary/15 text-primary border border-primary/30 inline-flex items-center gap-1"
+                                      title={
+                                        ((email as any).inboriaReasons as string[] | undefined)?.length
+                                          ? `${t("inboriaSort.strategicTooltip", "Inboria considère cet email comme stratégique :")}\n• ${((email as any).inboriaReasons as string[]).join("\n• ")}`
+                                          : t("inboriaSort.strategic", "Stratégique")
+                                      }
+                                      data-testid={`badge-inboria-strategic-${email.id}`}
+                                    >
+                                      <Sparkles className="w-2.5 h-2.5" />
+                                      {t("inboriaSort.strategic", "Stratégique")}
                                     </span>
                                   )}
                                   {isClaimed && (
