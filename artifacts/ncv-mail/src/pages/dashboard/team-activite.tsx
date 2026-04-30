@@ -91,7 +91,7 @@ export default function TeamActivitePage() {
   const { data, isLoading } = useGetTeamDashboard();
   const [commentsOpen, setCommentsOpen] = useState(false);
   const { data: recentComments, isLoading: commentsLoading } = useGetTeamRecentComments(
-    { limit: 7 },
+    { limit: 50 },
     { query: { enabled: commentsOpen } as any }
   );
   const { user } = useAuth();
@@ -106,7 +106,7 @@ export default function TeamActivitePage() {
     setDeletingId(commentId);
     try {
       await deleteComment.mutateAsync({ emailId: String(emailId), commentId });
-      await queryClient.invalidateQueries({ queryKey: getGetTeamRecentCommentsQueryKey({ limit: 7 }) });
+      await queryClient.invalidateQueries({ queryKey: getGetTeamRecentCommentsQueryKey({ limit: 50 }) });
       await queryClient.invalidateQueries({ queryKey: getGetTeamDashboardQueryKey() });
     } catch (e: any) {
       toast({
