@@ -66,7 +66,8 @@
     "admin": "Admin",
     "adminWaitlist": "Admin · Waitlist",
     "adminSubscribers": "Admin · Subscribers",
-    "followups": "Follow-ups"
+    "followups": "Follow-ups",
+    "assigned": "Assigned"
   },
   "dashboard": {
     "expiredSubscription": "Your subscription has expired",
@@ -478,7 +479,8 @@
     "from": "From",
     "fullscreen": "Fullscreen",
     "exitFullscreen": "Exit fullscreen",
-    "appointmentProposed": "Proposed appointment added to calendar"
+    "appointmentProposed": "Proposed appointment added to calendar",
+    "assigneeFilterMe": "my assigned emails"
   },
   "sent": {
     "title": "Sent emails",

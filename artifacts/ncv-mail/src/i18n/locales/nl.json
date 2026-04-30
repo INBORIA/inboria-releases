@@ -66,7 +66,8 @@
     "admin": "Admin",
     "adminWaitlist": "Admin · Wachtlijst",
     "adminSubscribers": "Admin · Abonnees",
-    "followups": "Herinneringen"
+    "followups": "Herinneringen",
+    "assigned": "Toegewezen"
   },
   "dashboard": {
     "expiredSubscription": "Uw abonnement is verlopen",
@@ -478,7 +479,8 @@
     "from": "Van",
     "fullscreen": "Volledig scherm",
     "exitFullscreen": "Volledig scherm afsluiten",
-    "appointmentProposed": "Voorgestelde afspraak toegevoegd aan agenda"
+    "appointmentProposed": "Voorgestelde afspraak toegevoegd aan agenda",
+    "assigneeFilterMe": "mijn toegewezen e-mails"
   },
   "sent": {
     "title": "Verzonden e-mails",

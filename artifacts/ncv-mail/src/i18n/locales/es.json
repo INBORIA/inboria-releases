@@ -66,7 +66,8 @@
     "admin": "Admin",
     "adminWaitlist": "Admin · Lista de espera",
     "adminSubscribers": "Admin · Suscriptores",
-    "followups": "Recordatorios"
+    "followups": "Recordatorios",
+    "assigned": "Asignados"
   },
   "dashboard": {
     "expiredSubscription": "Su suscripción ha expirado",
@@ -478,7 +479,8 @@
     "from": "De",
     "fullscreen": "Pantalla completa",
     "exitFullscreen": "Salir de pantalla completa",
-    "appointmentProposed": "Cita propuesta añadida al calendario"
+    "appointmentProposed": "Cita propuesta añadida al calendario",
+    "assigneeFilterMe": "mis correos asignados"
   },
   "sent": {
     "title": "Emails enviados",

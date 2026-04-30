@@ -66,7 +66,8 @@
     "admin": "Admin",
     "adminWaitlist": "Admin · Waitlist",
     "adminSubscribers": "Admin · Abonnés",
-    "followups": "Relances"
+    "followups": "Relances",
+    "assigned": "Assignés"
   },
   "dashboard": {
     "expiredSubscription": "Votre abonnement a expiré",
@@ -478,7 +479,8 @@
     "from": "De",
     "fullscreen": "Plein écran",
     "exitFullscreen": "Quitter le plein écran",
-    "appointmentProposed": "Rendez-vous proposé créé dans l'agenda"
+    "appointmentProposed": "Rendez-vous proposé créé dans l'agenda",
+    "assigneeFilterMe": "mes emails assignés"
   },
   "sent": {
     "title": "Emails envoyés",

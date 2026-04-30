@@ -58,7 +58,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
 import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
-import { Link } from "wouter";
+import { Link, useLocation } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
 import { Button } from "@/components/ui/button";
@@ -2920,6 +2920,15 @@ export default function Dashboard() {
     const a = params.get("assignee");
     return a && a.trim() ? a.trim() : null;
   });
+  const [routeLocation] = useLocation();
+  // Re-sync the assignee filter from the URL whenever the route changes
+  // (e.g. user clicks "Réception" → /dashboard, or "Assignés" → /dashboard?assignee=me).
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const params = new URLSearchParams(window.location.search);
+    const a = params.get("assignee");
+    setAssigneeFilter(a && a.trim() ? a.trim() : null);
+  }, [routeLocation]);
   const clearAssigneeFilter = () => {
     setAssigneeFilter(null);
     if (typeof window !== "undefined") {
@@ -3376,8 +3385,11 @@ export default function Dashboard() {
     ?.slice()
     .filter((e: any) => {
       if (assigneeFilter) {
+        const meId = (profile as any)?.id;
         if (assigneeFilter === "any") {
           if (!e.assignedTo) return false;
+        } else if (assigneeFilter === "me") {
+          if (!meId || String(e.assignedTo || "") !== String(meId)) return false;
         } else if (String(e.assignedTo || "") !== String(assigneeFilter)) {
           return false;
         }
@@ -4577,10 +4589,12 @@ export default function Dashboard() {
                   {assigneeFilter && (() => {
                     const memberName = assigneeFilter === "any"
                       ? t("inbox.assigneeFilterAny", { defaultValue: "tous les emails assignés" })
-                      : (() => {
-                          const m = (orgMembers as any[] | undefined)?.find((x: any) => String(x.userId) === String(assigneeFilter));
-                          return m?.fullName || m?.email || t("inbox.assigneeFilterMember", { defaultValue: "ce membre" });
-                        })();
+                      : assigneeFilter === "me"
+                        ? t("inbox.assigneeFilterMe", { defaultValue: "mes emails assignés" })
+                        : (() => {
+                            const m = (orgMembers as any[] | undefined)?.find((x: any) => String(x.userId) === String(assigneeFilter));
+                            return m?.fullName || m?.email || t("inbox.assigneeFilterMember", { defaultValue: "ce membre" });
+                          })();
                     return (
                       <div className="flex items-center gap-2 mb-2 p-2.5 rounded-lg border border-primary/30 bg-primary/[0.06]">
                         <UserPlus className="w-3.5 h-3.5 text-primary shrink-0" />

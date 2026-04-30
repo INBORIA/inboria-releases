@@ -66,7 +66,8 @@
     "admin": "Admin",
     "adminWaitlist": "Admin · Warteliste",
     "adminSubscribers": "Admin · Abonnenten",
-    "followups": "Erinnerungen"
+    "followups": "Erinnerungen",
+    "assigned": "Zugewiesen"
   },
   "dashboard": {
     "expiredSubscription": "Ihr Abonnement ist abgelaufen",
@@ -478,7 +479,8 @@
     "from": "Von",
     "fullscreen": "Vollbild",
     "exitFullscreen": "Vollbild verlassen",
-    "appointmentProposed": "Vorgeschlagener Termin im Kalender erstellt"
+    "appointmentProposed": "Vorgeschlagener Termin im Kalender erstellt",
+    "assigneeFilterMe": "meine zugewiesenen E-Mails"
   },
   "sent": {
     "title": "Gesendete E-Mails",

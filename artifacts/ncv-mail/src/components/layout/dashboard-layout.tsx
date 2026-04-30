@@ -25,6 +25,7 @@ import {
   MailCheck,
   FileText,
   Wand2,
+  UserCheck,
 } from "lucide-react";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { cn } from "@/lib/utils";
@@ -61,6 +62,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const baseNavigation: Array<{ name: string; href: string; icon: any }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
+    { name: t("sidebar.assigned", "Assignés"), href: "/dashboard?assignee=me", icon: UserCheck },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
     { name: t("sidebar.snoozed", "Reportés"), href: "/dashboard/reportes", icon: BellOff },
     { name: t("sidebar.scheduled", "Programmés"), href: "/dashboard/programmes", icon: CalendarClock },
