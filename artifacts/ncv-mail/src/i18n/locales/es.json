@@ -1492,9 +1492,9 @@
       "ctaFooter": "100 créditos IA gratis para probar • No se requiere tarjeta de crédito"
     },
     "ai": {
-      "badge": "Inboria",
-      "heroTitle": "Inboria gestiona tus correos mientras trabajas",
-      "heroDesc": "Inboria es la inteligencia que se ocupa de tu bandeja de entrada: recuerda a tus contactos, ordena por importancia, prepara tus respuestas y libera tus mañanas. Tú mantienes el control, Inboria hace el trabajo repetitivo.",
+      "badge": "Inboria — tu mejor amigo en el trabajo",
+      "heroTitle": "Inboria, la mejor amiga que se ocupa de tus correos",
+      "heroDesc": "Inboria es la inteligencia que recuerda a tus contactos, ordena tus correos por importancia, prepara tus respuestas y libera tus mañanas. Como una mejor amiga fiable en el trabajo, cuida tu bandeja mientras tú te concentras en lo esencial.",
       "tryAIFree": "Prueba Inboria gratis",
       "allFeatures": "Todas las funciones",
       "stats": {
@@ -1503,8 +1503,8 @@
         "processingTime": "tiempo de procesamiento",
         "gdpr": "conforme y seguro"
       },
-      "whatAIDoes": "Lo que Inboria hace por ti",
-      "whatAIDoesDesc": "Siete habilidades integradas que transforman tu gestión diaria del correo electrónico.",
+      "whatAIDoes": "Lo que Inboria hace por ti, cada día",
+      "whatAIDoesDesc": "Siete habilidades integradas de una mejor amiga digital que transforman tu relación con el correo.",
       "memory": "Memoria de contactos",
       "memoryDesc": "Inboria recuerda cada contacto: lo que prometiste, quién espera una respuesta, el contexto de un proyecto. Ningún compromiso olvidado, ningún correo llega sin contexto.",
       "memoryH1": "Hechos, episodios y señales por contacto",
@@ -1558,8 +1558,8 @@
       "step4": "Tú validas",
       "step4Desc": "Encuentras todo organizado. Un clic para validar las sugerencias de Inboria.",
       "assistantTitle": "Inboria Assistant",
-      "assistantSubtitle": "El compañero que responde tus preguntas sobre la app",
-      "assistantDesc": "Inboria Assistant es tu interlocutor para el funcionamiento de Inboria: '¿Cómo activo el modo autopiloto?', '¿Dónde veo mis créditos restantes?', '¿Por qué este correo es urgente?'. Disponible 24/7 en una esquina de tu panel.",
+      "assistantSubtitle": "El colega de Inboria que responde tus preguntas sobre la app",
+      "assistantDesc": "Inboria Assistant es el colega de Inboria: responde a tus preguntas sobre el funcionamiento de la aplicación. '¿Cómo activo el modo autopiloto?', '¿Dónde veo mis créditos restantes?', '¿Por qué este correo es urgente?'. Disponible 24/7 en una esquina de tu panel.",
       "assistantH1": "Respuestas instantáneas sobre las funciones",
       "assistantH2": "Disponible 24/7 desde el panel",
       "assistantH3": "Contextual a tu plan y configuración",
@@ -1585,7 +1585,7 @@
       "faq4a": "Como toda inteligencia, los errores son posibles. Por eso cada sugerencia se presenta para validación. Corriges con un clic e Inboria aprende de tus correcciones.",
       "faq5q": "¿Qué modelos usa Inboria?",
       "faq5a": "Inboria se apoya en modelos de lenguaje de última generación, reconocidos por su fiabilidad en el procesamiento del lenguaje natural. Seleccionamos y optimizamos continuamente los mejores modelos disponibles para garantizar resultados de calidad.",
-      "ctaTitle": "Deja que Inboria trabaje para ti",
+      "ctaTitle": "Da la bienvenida a Inboria, tu nuevo mejor amigo en el trabajo",
       "ctaDesc": "Únete a las pymes que ahorran 2 horas al día gracias a Inboria.",
       "tryFree": "Probar gratis",
       "seePricing": "Ver precios",

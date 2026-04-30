@@ -1492,9 +1492,9 @@
       "ctaFooter": "100 free AI credits to try • No credit card required"
     },
     "ai": {
-      "badge": "Inboria",
-      "heroTitle": "Inboria handles your emails while you work",
-      "heroDesc": "Inboria is the intelligence that handles your inbox: it remembers your contacts, sorts by importance, prepares your replies and frees up your mornings. You stay in control, Inboria does the repetitive work.",
+      "badge": "Inboria — your best friend at work",
+      "heroTitle": "Inboria, the best friend who handles your emails",
+      "heroDesc": "Inboria is the intelligence that remembers your contacts, sorts your emails by importance, prepares your replies and frees up your mornings. Like a reliable best friend at work, she takes care of your inbox while you focus on what matters.",
       "tryAIFree": "Try Inboria for free",
       "allFeatures": "All features",
       "stats": {
@@ -1503,8 +1503,8 @@
         "processingTime": "processing time",
         "gdpr": "compliant and secure"
       },
-      "whatAIDoes": "What Inboria does for you",
-      "whatAIDoesDesc": "Seven built-in skills that transform how you handle email every day.",
+      "whatAIDoes": "What Inboria does for you, every day",
+      "whatAIDoesDesc": "Seven built-in skills of a digital best friend that transform your relationship with email.",
       "memory": "Contact memory",
       "memoryDesc": "Inboria remembers every contact: what you promised, who's waiting on a reply, the context of a project. No commitment forgotten, no email lands without context.",
       "memoryH1": "Facts, episodes and signals per contact",
@@ -1558,8 +1558,8 @@
       "step4": "You validate",
       "step4Desc": "You find everything organized. One click to validate Inboria's suggestions.",
       "assistantTitle": "Inboria Assistant",
-      "assistantSubtitle": "The colleague who answers your questions about the app",
-      "assistantDesc": "Inboria Assistant is your go-to for how Inboria works: 'How do I enable autopilot mode?', 'Where do I see my remaining credits?', 'Why is this email urgent?'. Available 24/7 in the corner of your dashboard.",
+      "assistantSubtitle": "Inboria's colleague who answers your questions about the app",
+      "assistantDesc": "Inboria Assistant is Inboria's colleague: he answers your questions about how the app works. 'How do I enable autopilot mode?', 'Where do I see my remaining credits?', 'Why is this email flagged urgent?'. Available 24/7 in the corner of your dashboard.",
       "assistantH1": "Instant answers about features",
       "assistantH2": "Available 24/7 from the dashboard",
       "assistantH3": "Context-aware of your plan and settings",
@@ -1585,7 +1585,7 @@
       "faq4a": "Like any intelligence, errors are possible. That's why every suggestion is shown for validation. You correct in one click and Inboria learns from your corrections.",
       "faq5q": "Which models does Inboria use?",
       "faq5a": "Inboria relies on the latest generation of language models, recognized for reliability in natural-language processing. We continuously select and optimize the best available models to guarantee quality results.",
-      "ctaTitle": "Let Inboria work for you",
+      "ctaTitle": "Welcome Inboria, your new best friend at work",
       "ctaDesc": "Join the SMEs that save 2 hours a day thanks to Inboria.",
       "tryFree": "Try for free",
       "seePricing": "See pricing",

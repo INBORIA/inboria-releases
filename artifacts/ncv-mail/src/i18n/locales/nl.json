@@ -1492,9 +1492,9 @@
       "ctaFooter": "100 gratis AI-credits om te proberen • Geen creditcard vereist"
     },
     "ai": {
-      "badge": "Inboria",
-      "heroTitle": "Inboria beheert uw e-mails terwijl u werkt",
-      "heroDesc": "Inboria is de intelligentie die uw inbox beheert: ze onthoudt uw contacten, sorteert op belang, bereidt uw antwoorden voor en maakt uw ochtenden vrij. U houdt de controle, Inboria doet het repetitieve werk.",
+      "badge": "Inboria — uw beste vriend op het werk",
+      "heroTitle": "Inboria, de beste vriend die uw e-mails afhandelt",
+      "heroDesc": "Inboria is de intelligentie die uw contacten onthoudt, uw e-mails op belang sorteert, uw antwoorden voorbereidt en uw ochtenden vrijmaakt. Als een betrouwbare beste vriend op het werk, ze zorgt voor uw inbox terwijl u zich richt op wat telt.",
       "tryAIFree": "Probeer Inboria gratis",
       "allFeatures": "Alle functies",
       "stats": {
@@ -1503,8 +1503,8 @@
         "processingTime": "verwerkingstijd",
         "gdpr": "conform en veilig"
       },
-      "whatAIDoes": "Wat Inboria voor u doet",
-      "whatAIDoesDesc": "Zeven ingebouwde vaardigheden die uw dagelijkse e-mailbeheer transformeren.",
+      "whatAIDoes": "Wat Inboria elke dag voor u doet",
+      "whatAIDoesDesc": "Zeven ingebouwde vaardigheden van een digitale beste vriend die uw relatie met e-mail transformeren.",
       "memory": "Contactgeheugen",
       "memoryDesc": "Inboria onthoudt elk contact: wat u beloofd hebt, wie wacht op een antwoord, de context van een project. Geen toezegging vergeten, geen e-mail zonder context.",
       "memoryH1": "Feiten, episodes en signalen per contact",
@@ -1558,8 +1558,8 @@
       "step4": "U valideert",
       "step4Desc": "U vindt alles georganiseerd terug. Eén klik om de suggesties van Inboria te valideren.",
       "assistantTitle": "Inboria Assistant",
-      "assistantSubtitle": "De collega die uw vragen over de app beantwoordt",
-      "assistantDesc": "Inboria Assistant is uw aanspreekpunt voor de werking van Inboria: 'Hoe activeer ik de autopilotmodus?', 'Waar zie ik mijn resterende credits?', 'Waarom is deze e-mail dringend?'. 24/7 beschikbaar in een hoek van uw dashboard.",
+      "assistantSubtitle": "De collega van Inboria die uw vragen over de app beantwoordt",
+      "assistantDesc": "Inboria Assistant is de collega van Inboria: hij beantwoordt uw vragen over de werking van de applicatie. 'Hoe activeer ik de autopilotmodus?', 'Waar zie ik mijn resterende credits?', 'Waarom is deze e-mail dringend?'. 24/7 beschikbaar in een hoek van uw dashboard.",
       "assistantH1": "Onmiddellijke antwoorden over functies",
       "assistantH2": "24/7 beschikbaar vanuit het dashboard",
       "assistantH3": "Contextueel met uw plan en instellingen",
@@ -1585,7 +1585,7 @@
       "faq4a": "Zoals elke intelligentie zijn fouten mogelijk. Daarom wordt elke suggestie ter validatie aangeboden. U corrigeert met één klik en Inboria leert van uw correcties.",
       "faq5q": "Welke modellen gebruikt Inboria?",
       "faq5a": "Inboria steunt op taalmodellen van de nieuwste generatie, erkend voor hun betrouwbaarheid in natuurlijke taalverwerking. We selecteren en optimaliseren voortdurend de beste beschikbare modellen om kwaliteitsresultaten te garanderen.",
-      "ctaTitle": "Laat Inboria voor u werken",
+      "ctaTitle": "Verwelkom Inboria, uw nieuwe beste vriend op het werk",
       "ctaDesc": "Sluit u aan bij de kmo's die 2 uur per dag besparen dankzij Inboria.",
       "tryFree": "Gratis proberen",
       "seePricing": "Bekijk de prijzen",
