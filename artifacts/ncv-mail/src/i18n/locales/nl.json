@@ -1930,7 +1930,7 @@
     "share": "Delen",
     "noConnectionsDesc": "Geen e-mailadres verbonden. Verbind eerst een adres in Instellingen om het te delen.",
     "allShared": "Al uw verbonden adressen zijn al gedeeld.",
-    "shareToStart": "Deel een verbonden adres hierboven om te beginnen.",
+    "shareToStart": "Om een adres te delen, schakel “Delen met team” in via Instellingen › Mijn account.",
     "connected": "Verbonden",
     "unprocessedCount": "{{count}} onverwerkt",
     "add": "Toevoegen",

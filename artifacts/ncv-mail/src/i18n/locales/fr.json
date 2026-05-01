@@ -1920,7 +1920,7 @@
     "share": "Partager",
     "noConnectionsDesc": "Aucune adresse email connectée. Connectez d'abord une adresse dans Paramètres pour pouvoir la partager.",
     "allShared": "Toutes vos adresses connectées sont déjà partagées.",
-    "shareToStart": "Partagez une adresse connectée ci-dessus pour commencer.",
+    "shareToStart": "Pour partager une adresse, activez « Partager avec l'équipe » depuis Paramètres › Mon compte.",
     "connected": "Connectée",
     "unprocessedCount": "{{count}} non traité(s)",
     "add": "Ajouter",

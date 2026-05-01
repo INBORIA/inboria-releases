@@ -1930,7 +1930,7 @@
     "share": "Compartir",
     "noConnectionsDesc": "No hay dirección de correo conectada. Conecta una dirección en Configuraciones primero para poder compartirla.",
     "allShared": "Todas tus direcciones conectadas ya están compartidas.",
-    "shareToStart": "Comparte una dirección conectada arriba para comenzar.",
+    "shareToStart": "Para compartir una dirección, activa «Compartir con el equipo» en Ajustes › Mi cuenta.",
     "connected": "Conectada",
     "unprocessedCount": "{{count}} no procesado(s)",
     "add": "Agregar",

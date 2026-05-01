@@ -1,7 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import {
   useGetSharedMailboxes,
-  useCreateSharedMailbox,
   useDeleteSharedMailbox,
   useGetSharedMailboxMembers,
   useAddSharedMailboxMember,
@@ -14,18 +13,15 @@ import {
   useGetOrganisationMembers,
   useGetMyOrganisation,
   useGetProfile,
-  useGetAdminConnections,
   getGetSharedMailboxesQueryKey,
   getGetSharedMailboxMembersQueryKey,
   getGetSharedMailboxEmailsQueryKey,
-  getGetAdminConnectionsQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link as RouterLink, useLocation } from "wouter";
 import { useState, useEffect, useCallback, useRef } from "react";
 import type { PaginatedSharedMailboxEmails } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { useTranslation } from 'react-i18next';
 import {
@@ -41,9 +37,7 @@ import {
   Clock,
   User,
   X,
-  Share2,
   CheckCircle2,
-  Link,
   RefreshCw,
 } from "lucide-react";
 
@@ -58,9 +52,7 @@ export default function BoitesPartagees() {
 
   const { data: mailboxes, isLoading } = useGetSharedMailboxes();
   const { data: orgMembers } = useGetOrganisationMembers();
-  const { data: adminConnections } = useGetAdminConnections({ query: { enabled: !!isAdmin } as any });
 
-  const createMailbox = useCreateSharedMailbox();
   const deleteMailbox = useDeleteSharedMailbox();
   const addMember = useAddSharedMailboxMember();
   const removeMember = useRemoveSharedMailboxMember();
@@ -74,8 +66,6 @@ export default function BoitesPartagees() {
   const [selectedMailboxId, setSelectedMailboxId] = useState<string | null>(null);
   const [emailFilter, setEmailFilter] = useState<"all" | "unclaimed" | "mine">("all");
   const [addMemberUserId, setAddMemberUserId] = useState("");
-  const [shareName, setShareName] = useState("");
-  const [sharingConnectionId, setSharingConnectionId] = useState<string | null>(null);
 
   if (plan !== "business") {
     return (
@@ -89,7 +79,6 @@ export default function BoitesPartagees() {
 
   function invalidateAll() {
     queryClient.invalidateQueries({ queryKey: getGetSharedMailboxesQueryKey() });
-    queryClient.invalidateQueries({ queryKey: getGetAdminConnectionsQueryKey() });
   }
 
   function invalidateMembers(mailboxId: string) {
@@ -98,18 +87,6 @@ export default function BoitesPartagees() {
 
   function invalidateEmails(mailboxId: string) {
     queryClient.invalidateQueries({ queryKey: getGetSharedMailboxEmailsQueryKey(mailboxId, { filter: emailFilter as any }) });
-  }
-
-  async function handleShareConnection(connectionId: string) {
-    try {
-      await createMailbox.mutateAsync({ data: { connectionId, name: shareName.trim() || undefined } });
-      toast({ title: t("sharedMailboxes.sharedSuccess") });
-      setShareName("");
-      setSharingConnectionId(null);
-      invalidateAll();
-    } catch (e: any) {
-      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
-    }
   }
 
   async function handleDeleteMailbox(id: string) {
@@ -185,8 +162,6 @@ export default function BoitesPartagees() {
 
   const selectedMailbox = (mailboxes as any[])?.find((m: any) => m.id === selectedMailboxId);
 
-  const availableConnections = ((adminConnections as any[]) || []).filter((c: any) => !c.alreadyShared);
-
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-6">
@@ -220,73 +195,6 @@ export default function BoitesPartagees() {
 
         {viewMode === "list" && (
           <>
-            {isAdmin && availableConnections.length > 0 && (
-              <div className="bg-card border border-border rounded-xl p-5 space-y-4">
-                <h2 className="text-lg font-semibold flex items-center gap-2">
-                  <Share2 className="h-5 w-5 text-primary" />
-                  {t("sharedMailboxes.shareTitle")}
-                </h2>
-                <p className="text-xs text-muted-foreground">
-                  {t("sharedMailboxes.shareDesc")}
-                </p>
-                <div className="space-y-2">
-                  {availableConnections.map((conn: any) => (
-                    <div key={conn.id} className="flex flex-col sm:flex-row items-center justify-between gap-3 p-3.5 border border-border rounded-lg bg-background">
-                      <div className="flex items-center gap-3">
-                        <div className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm ${
-                          conn.provider === "gmail" ? "bg-red-500/10 text-red-400" :
-                          conn.provider === "outlook" ? "bg-blue-500/10 text-blue-400" :
-                          "bg-white/[0.06] text-[#8b9cb3]"
-                        }`}>
-                          {conn.provider === "gmail" ? "G" : conn.provider === "outlook" ? "O" : "@"}
-                        </div>
-                        <div>
-                          <h4 className="font-medium text-[13px] text-white">{conn.emailAddress}</h4>
-                          <p className="text-[11px] text-[#8b9cb3]">{conn.provider === "gmail" ? "Gmail" : conn.provider === "outlook" ? "Outlook" : "IMAP"}</p>
-                        </div>
-                      </div>
-                      {sharingConnectionId === conn.id ? (
-                        <div className="flex items-center gap-2">
-                          <Input
-                            placeholder={t("sharedMailboxes.namePlaceholder")}
-                            value={shareName}
-                            onChange={(e) => setShareName(e.target.value)}
-                            className="bg-background h-8 text-[12px] w-48"
-                          />
-                          <Button size="sm" onClick={() => handleShareConnection(conn.id)} disabled={createMailbox.isPending}>
-                            {createMailbox.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : t("common.confirm")}
-                          </Button>
-                          <Button variant="ghost" size="sm" onClick={() => { setSharingConnectionId(null); setShareName(""); }}>
-                            <X className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      ) : (
-                        <Button variant="outline" size="sm" className="h-8 text-[12px]" onClick={() => setSharingConnectionId(conn.id)}>
-                          <Share2 className="h-3.5 w-3.5 mr-1.5" />
-                          {t("sharedMailboxes.share")}
-                        </Button>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {isAdmin && availableConnections.length === 0 && !isLoading && (
-              <div className="bg-card border border-border rounded-xl p-5">
-                <div className="flex items-start gap-3">
-                  <Link className="h-5 w-5 text-muted-foreground mt-0.5" />
-                  <div>
-                    <p className="text-sm text-muted-foreground">
-                      {((adminConnections as any[]) || []).length === 0
-                        ? t("sharedMailboxes.noConnectionsDesc")
-                        : t("sharedMailboxes.allShared")}
-                    </p>
-                  </div>
-                </div>
-              </div>
-            )}
-
             {isLoading ? (
               <div className="flex justify-center py-12">
                 <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />

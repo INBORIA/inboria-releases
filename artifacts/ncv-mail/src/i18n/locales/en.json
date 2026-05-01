@@ -1930,7 +1930,7 @@
     "share": "Share",
     "noConnectionsDesc": "No email address connected. Connect an address in Settings first to share it.",
     "allShared": "All your connected addresses are already shared.",
-    "shareToStart": "Share a connected address above to get started.",
+    "shareToStart": "To share an address, enable “Share with team” from Settings › My account.",
     "connected": "Connected",
     "unprocessedCount": "{{count}} unprocessed",
     "add": "Add",

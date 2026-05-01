@@ -1930,7 +1930,7 @@
     "share": "Teilen",
     "noConnectionsDesc": "Keine E-Mail-Adresse verbunden. Verbinden Sie zuerst eine Adresse in den Einstellungen, um sie teilen zu können.",
     "allShared": "Alle Ihre verbundenen Adressen sind bereits geteilt.",
-    "shareToStart": "Teilen Sie eine verbundene Adresse oben, um zu beginnen.",
+    "shareToStart": "Um eine Adresse zu teilen, aktivieren Sie „Mit Team teilen“ unter Einstellungen › Mein Konto.",
     "connected": "Verbunden",
     "unprocessedCount": "{{count}} nicht verarbeitet",
     "add": "Hinzufügen",
