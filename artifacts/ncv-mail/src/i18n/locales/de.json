@@ -1194,7 +1194,9 @@
       "developersDesc": "API, Webhooks, SLA",
       "comingSoon": "Demnächst verfügbar",
       "salesforceDesc": "Synchronisation von Salesforce-Kontakten, -Konten und -Opportunities.",
-      "salesforceSandbox": "Mit einer Sandbox-Org verbinden (test.salesforce.com)"
+      "salesforceSandbox": "Mit einer Sandbox-Org verbinden (test.salesforce.com)",
+      "privacy": "Datenschutz und Teamzugriff",
+      "privacyDesc": "Ihre privaten E-Mails und das Admin-Zugriffsprotokoll"
     },
     "b2bSection": "B2B-Glaubwürdigkeit",
     "slaCard": "SLAs für geteilte Postfächer",
@@ -4197,7 +4199,12 @@
     "noComments": "Keine Notiz",
     "unknownAuthor": "Unbekannt",
     "attachments": "Anhänge",
-    "noAttachments": "Kein Anhang"
+    "noAttachments": "Kein Anhang",
+    "viewMine": "Meine Akte",
+    "viewTeam": "Team-Aktenansicht",
+    "handledBy": "Bearbeitet von",
+    "rgpdTitle": "Sie sehen die Teamakte dieses Kontakts",
+    "rgpdBody": "Sie sehen die Korrespondenz aller Ihrer Teamkolleg:innen mit diesem Kontakt (nützlich bei Abwesenheit oder Personalwechsel). Als 'privat' markierte E-Mails werden automatisch ausgeblendet. Dieser Zugriff wird protokolliert und ist für die betroffenen Teamkolleg:innen sichtbar."
   },
   "inboria": {
     "sectionTitle": "Was Inboria bemerkt hat",
@@ -4564,5 +4571,40 @@
     "assignThisOne": "Person zuweisen",
     "tooltip": "Hat bereits {{count}} E-Mail(s) mit diesem Kontakt bearbeitet — zuletzt am {{date}}.",
     "tooltipNoDate": "Hat bereits {{count}} E-Mail(s) mit diesem Kontakt bearbeitet."
+  },
+  "emailDetail": {
+    "markPrivate": "Als privat markieren",
+    "unmarkPrivate": "Sichtbar machen",
+    "markPrivateHint": "Diese E-Mail vor Ihren Admins verbergen (Teamansicht + Inboria)",
+    "unmarkPrivateHint": "Diese E-Mail wieder für Ihre Admins sichtbar machen",
+    "privateOnTitle": "E-Mail als privat markiert",
+    "privateOffTitle": "E-Mail wieder sichtbar",
+    "privateOnDesc": "Diese E-Mail ist jetzt für Ihre Admins ausgeblendet (Teamaktenansicht + Inboria).",
+    "privateOffDesc": "Diese E-Mail ist für Ihre Admins wieder sichtbar (Teamaktenansicht + Inboria).",
+    "privateError": "Datenschutz konnte nicht aktualisiert werden."
+  },
+  "privacy": {
+    "title": "Datenschutz und Teamzugriff",
+    "subtitle": "Ihre E-Mails gehören weiterhin Ihnen. Admins Ihrer Organisation können pro Kontakt eine 'Teamakte' öffnen (nützlich bei Abwesenheit oder Personalwechsel). Sie sehen hier, wenn das passiert, und können jede E-Mail jederzeit verbergen.",
+    "howTitle": "Was Ihre Admins sehen können — und was nicht",
+    "how1": "Ihre Admins können eine Kontaktakte in der 'Teamansicht' öffnen und die Korrespondenz der Organisation mit diesem Kontakt sehen (Service-Kontinuität).",
+    "how2": "Als 'privat' markierte E-Mails werden in der Teamansicht und in Inboria auf Adminseite automatisch ausgeblendet.",
+    "how3": "Jeder Admin-Zugriff wird protokolliert und erscheint unten. Das Protokoll ist unveränderlich.",
+    "privateTitle": "Meine privaten E-Mails",
+    "privateEmpty": "Noch keine E-Mails als privat markiert. Sie können eine über deren E-Mail-Karte markieren (Schaltfläche 'Als privat markieren').",
+    "logTitle": "Protokoll der Admin-Zugriffe, die Sie betreffen",
+    "logEmpty": "Bislang keine Admin-Zugriffe, die Sie betreffen.",
+    "unmark": "Sichtbar machen",
+    "unmarkedTitle": "E-Mail wieder sichtbar",
+    "unmarkedDesc": "Diese E-Mail ist für Ihre Admins wieder sichtbar (Teamaktenansicht + Inboria).",
+    "unmarkError": "Diese E-Mail konnte nicht aktualisiert werden.",
+    "anAdmin": "Ein Administrator",
+    "action": {
+      "viewMemberInbox": "{{who}} hat Ihren Posteingang eingesehen",
+      "viewContactTeam": "{{who}} hat eine Kontaktakte eingesehen (Teamansicht) — {{n}} E-Mail(s) sichtbar",
+      "viewContactListTeam": "{{who}} hat die Kontaktliste eingesehen (Teamansicht)",
+      "viewInboriaTeam": "{{who}} hat Inboria eine Frage im Team-Modus gestellt — {{n}} E-Mail(s) gelesen",
+      "generic": "{{who}} hat einen Admin-Zugriff durchgeführt ({{action}})"
+    }
   }
 }

@@ -1,7 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
-import { User, Building2, Code2, Users, ChevronRight, ArrowLeft } from "lucide-react";
+import { User, Building2, Code2, Users, ChevronRight, ArrowLeft, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGetProfile, useGetMyOrganisation } from "@workspace/api-client-react";
 
@@ -45,6 +45,15 @@ export default function Parametres() {
           },
         ]
       : []),
+    {
+      href: "/dashboard/parametres/vie-privee",
+      icon: ShieldCheck,
+      titleKey: "settings.hub.privacy",
+      titleFallback: "Vie privée et accès équipe",
+      descKey: "settings.hub.privacyDesc",
+      descFallback: "Vos emails privés et le journal des consultations admin",
+      testId: "hub-card-vie-privee",
+    },
     {
       href: "/dashboard/parametres/crm",
       icon: Building2,

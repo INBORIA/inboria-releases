@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link, useParams, useLocation } from "wouter";
+import { useQuery } from "@tanstack/react-query";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { format, formatDistanceToNow } from "date-fns";
 import { fr, enUS, nl, de, es } from "date-fns/locale";
@@ -17,6 +18,9 @@ import {
   ChevronRight,
   ChevronDown,
   Sparkles,
+  Users,
+  Lock,
+  ShieldAlert,
 } from "lucide-react";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Card } from "@/components/ui/card";
@@ -26,6 +30,7 @@ import {
   useGetContact,
   useGetInboriaContext,
   getGetInboriaContextQueryKey,
+  useGetMyOrganisation,
 } from "@workspace/api-client-react";
 import type { InboriaFact, InboriaEpisode } from "@workspace/api-client-react";
 import { AttachmentList } from "@/components/AttachmentList";
@@ -86,7 +91,37 @@ export default function ContactDetailPage() {
   const [, setLocation] = useLocation();
   const email = decodeURIComponent(params.email || "");
 
-  const { data, isLoading, isError, error } = useGetContact(encodeURIComponent(email));
+  // Task #176 — Vue dossier équipe (admin org).
+  const { data: myOrg } = useGetMyOrganisation();
+  const isOrgAdmin = (myOrg as any)?.myRole === "admin";
+  const [teamView, setTeamView] = useState(false);
+  const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+
+  const selfQuery = useGetContact(encodeURIComponent(email), {
+    query: { enabled: !!email && !teamView } as any,
+  });
+  const teamQuery = useQuery({
+    queryKey: ["contact", email, "team"],
+    enabled: !!email && teamView && isOrgAdmin,
+    queryFn: async () => {
+      const res = await fetch(
+        `${baseUrl}/api/contacts/${encodeURIComponent(email)}?scope=team`,
+        { credentials: "include" },
+      );
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw Object.assign(new Error(body?.error || "Erreur"), {
+          response: { status: res.status },
+        });
+      }
+      return res.json();
+    },
+  });
+  const activeQuery = teamView ? teamQuery : selfQuery;
+  const data = activeQuery.data;
+  const isLoading = activeQuery.isLoading;
+  const isError = activeQuery.isError;
+  const error = (activeQuery as any).error;
   const detail = data as any;
 
   const inboriaParams = { contactEmail: email, limit: 12 };
@@ -204,6 +239,57 @@ export default function ContactDetailPage() {
             </div>
           </div>
         </Card>
+
+        {isOrgAdmin && (
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-2">
+              <button
+                type="button"
+                onClick={() => setTeamView(false)}
+                className={`px-3 py-1.5 rounded text-xs font-medium border transition-colors ${
+                  !teamView
+                    ? "bg-primary/15 border-primary/40 text-primary"
+                    : "bg-[#0f1620] border-[#1f2937] text-[#8b9cb3] hover:text-white"
+                }`}
+                data-testid="button-view-mine"
+              >
+                {t("contacts.viewMine", "Mon dossier")}
+              </button>
+              <button
+                type="button"
+                onClick={() => setTeamView(true)}
+                className={`px-3 py-1.5 rounded text-xs font-medium border transition-colors flex items-center gap-1.5 ${
+                  teamView
+                    ? "bg-amber-500/15 border-amber-500/40 text-amber-200"
+                    : "bg-[#0f1620] border-[#1f2937] text-[#8b9cb3] hover:text-white"
+                }`}
+                data-testid="button-view-team"
+              >
+                <Users className="w-3.5 h-3.5" />
+                {t("contacts.viewTeam", "Vue dossier équipe")}
+              </button>
+            </div>
+            {teamView && (
+              <div
+                className="flex items-start gap-2 p-3 rounded border border-amber-500/30 bg-amber-500/5 text-xs text-amber-100"
+                data-testid="banner-rgpd"
+              >
+                <ShieldAlert className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="font-medium mb-0.5">
+                    {t("contacts.rgpdTitle", "Vous consultez le dossier équipe de ce contact")}
+                  </div>
+                  <div className="text-amber-100/80">
+                    {t(
+                      "contacts.rgpdBody",
+                      "Vous voyez les échanges de tous vos coéquipiers avec ce contact (utile en cas d'absence ou de turn-over). Les emails marqués « privés » par leur propriétaire sont automatiquement masqués. Cette consultation est tracée et visible par les coéquipiers concernés.",
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           {email?.includes("@") && (
@@ -360,6 +446,11 @@ export default function ContactDetailPage() {
                         {format(new Date(conv.createdAt), "Pp", { locale: dateLocale })}
                         {conv.projectName && (
                           <span className="ml-2 text-primary">· {conv.projectName}</span>
+                        )}
+                        {teamView && conv.handledByName && (
+                          <span className="ml-2 text-amber-200" data-testid={`text-handled-by-${conv.id}`}>
+                            · {t("contacts.handledBy", "Traité par")} {conv.handledByName}
+                          </span>
                         )}
                       </div>
                     </div>

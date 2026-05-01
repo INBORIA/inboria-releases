@@ -47,8 +47,16 @@ function chain(table: string) {
     then: (resolve: any) => {
       let data: any[] = [];
       if (table === "emails") data = emailRows;
-      else if (table === "tasks") data = taskRows.filter((t) => !c._filters.user_id || t.user_id === c._filters.user_id);
-      else if (table === "appointments") data = appointmentRows.filter((a) => !c._filters.user_id || a.user_id === c._filters.user_id);
+      else if (table === "tasks") data = taskRows.filter((t) => {
+        if (c._filters.user_id && t.user_id !== c._filters.user_id) return false;
+        if (c._filters.user_id__in && !c._filters.user_id__in.includes(t.user_id)) return false;
+        return true;
+      });
+      else if (table === "appointments") data = appointmentRows.filter((a) => {
+        if (c._filters.user_id && a.user_id !== c._filters.user_id) return false;
+        if (c._filters.user_id__in && !c._filters.user_id__in.includes(a.user_id)) return false;
+        return true;
+      });
       else if (table === "email_attachments") data = attachmentRows;
       else if (table === "projects") data = projectRows;
       else if (table === "email_comments") data = commentRows;

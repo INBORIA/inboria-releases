@@ -1194,7 +1194,9 @@
       "developersDesc": "API, Webhooks, SLA",
       "comingSoon": "Binnenkort beschikbaar",
       "salesforceDesc": "Synchronisatie van Salesforce-contacten, accounts en kansen.",
-      "salesforceSandbox": "Verbind een Sandbox-org (test.salesforce.com)"
+      "salesforceSandbox": "Verbind een Sandbox-org (test.salesforce.com)",
+      "privacy": "Privacy en teamtoegang",
+      "privacyDesc": "Je privé-e-mails en het logboek van admintoegang"
     },
     "b2bSection": "B2B-geloofwaardigheid",
     "slaCard": "SLA's gedeelde mailboxen",
@@ -4197,7 +4199,12 @@
     "noComments": "Geen notitie",
     "unknownAuthor": "Onbekend",
     "attachments": "Bijlagen",
-    "noAttachments": "Geen bijlage"
+    "noAttachments": "Geen bijlage",
+    "viewMine": "Mijn dossier",
+    "viewTeam": "Teamdossier weergave",
+    "handledBy": "Behandeld door",
+    "rgpdTitle": "Je bekijkt het teamdossier van dit contact",
+    "rgpdBody": "Je ziet de uitwisselingen van al je teamgenoten met dit contact (handig bij afwezigheid of verloop). E-mails die door de eigenaar als 'privé' zijn gemarkeerd, zijn automatisch verborgen. Deze raadpleging wordt gelogd en is zichtbaar voor de betrokken teamgenoten."
   },
   "inboria": {
     "sectionTitle": "Wat Inboria heeft opgemerkt",
@@ -4564,5 +4571,40 @@
     "assignThisOne": "aan diegene toewijzen",
     "tooltip": "Heeft al {{count}} contact(en) gehad met deze contactpersoon — laatst op {{date}}.",
     "tooltipNoDate": "Heeft al {{count}} contact(en) gehad met deze contactpersoon."
+  },
+  "emailDetail": {
+    "markPrivate": "Markeer privé",
+    "unmarkPrivate": "Maak zichtbaar",
+    "markPrivateHint": "Verberg deze e-mail voor je admins (teamweergave + Inboria)",
+    "unmarkPrivateHint": "Maak deze e-mail weer zichtbaar voor je admins",
+    "privateOnTitle": "E-mail als privé gemarkeerd",
+    "privateOffTitle": "E-mail weer zichtbaar gemaakt",
+    "privateOnDesc": "Deze e-mail is nu verborgen voor je admins (teamdossierweergave + Inboria).",
+    "privateOffDesc": "Deze e-mail is weer zichtbaar voor je admins (teamdossierweergave + Inboria).",
+    "privateError": "Privacy bijwerken is mislukt."
+  },
+  "privacy": {
+    "title": "Privacy en teamtoegang",
+    "subtitle": "Je e-mails blijven van jou. Beheerders van je organisatie kunnen per contact een 'teamdossier' openen (handig bij afwezigheid of verloop). Je ziet hier wanneer dat gebeurt en je kunt elke e-mail op elk moment verbergen.",
+    "howTitle": "Wat je admins wel — en niet — kunnen zien",
+    "how1": "Je admins kunnen een contactdossier in 'teamweergave' openen en de uitwisselingen van de organisatie met dit contact zien (continuïteit van dienstverlening).",
+    "how2": "E-mails die je als 'privé' markeert, worden automatisch verborgen in de teamweergave en in Inboria aan de adminzijde.",
+    "how3": "Elke admintoegang wordt gelogd en verschijnt hieronder. Het logboek is onveranderlijk.",
+    "privateTitle": "Mijn privé-e-mails",
+    "privateEmpty": "Nog geen e-mails als privé gemarkeerd. Je kunt er een markeren via de e-mailfiche (knop 'Markeer privé').",
+    "logTitle": "Logboek van admintoegang die jou betreft",
+    "logEmpty": "Tot nu toe geen admintoegang die jou betreft.",
+    "unmark": "Maak zichtbaar",
+    "unmarkedTitle": "E-mail weer zichtbaar",
+    "unmarkedDesc": "Deze e-mail is weer zichtbaar voor je admins (teamdossierweergave + Inboria).",
+    "unmarkError": "Deze e-mail kon niet worden bijgewerkt.",
+    "anAdmin": "Een beheerder",
+    "action": {
+      "viewMemberInbox": "{{who}} heeft je inbox bekeken",
+      "viewContactTeam": "{{who}} heeft een contactdossier bekeken (teamweergave) — {{n}} e-mail(s) zichtbaar",
+      "viewContactListTeam": "{{who}} heeft de contactenlijst bekeken (teamweergave)",
+      "viewInboriaTeam": "{{who}} heeft Inboria een vraag gesteld in teammodus — {{n}} e-mail(s) gelezen",
+      "generic": "{{who}} heeft een admintoegang uitgevoerd ({{action}})"
+    }
   }
 }

@@ -1184,7 +1184,9 @@
       "developersDesc": "API, Webhooks, SLA",
       "comingSoon": "Bientôt disponible",
       "salesforceDesc": "Synchronisation des contacts, comptes et opportunités Salesforce.",
-      "salesforceSandbox": "Connecter une org Sandbox (test.salesforce.com)"
+      "salesforceSandbox": "Connecter une org Sandbox (test.salesforce.com)",
+      "privacy": "Vie privée et accès équipe",
+      "privacyDesc": "Vos emails privés et le journal des consultations admin"
     },
     "b2bSection": "Crédibilité B2B",
     "slaCard": "SLA boîtes partagées",
@@ -2553,7 +2555,12 @@
     "noComments": "Aucune note",
     "unknownAuthor": "Inconnu",
     "attachments": "Pièces jointes",
-    "noAttachments": "Aucune pièce jointe"
+    "noAttachments": "Aucune pièce jointe",
+    "viewMine": "Mon dossier",
+    "viewTeam": "Vue dossier équipe",
+    "handledBy": "Traité par",
+    "rgpdTitle": "Vous consultez le dossier équipe de ce contact",
+    "rgpdBody": "Vous voyez les échanges de tous vos coéquipiers avec ce contact (utile en cas d'absence ou de turn-over). Les emails marqués « privés » par leur propriétaire sont automatiquement masqués. Cette consultation est tracée et visible par les coéquipiers concernés."
   },
   "inboria": {
     "sectionTitle": "Ce qu'Inboria a noté",
@@ -2906,5 +2913,40 @@
     "assignThisOne": "lui assigner",
     "tooltip": "Déjà géré {{count}} échange(s) avec ce contact — dernier le {{date}}.",
     "tooltipNoDate": "Déjà géré {{count}} échange(s) avec ce contact."
+  },
+  "emailDetail": {
+    "markPrivate": "Marquer privé",
+    "unmarkPrivate": "Rendre visible",
+    "markPrivateHint": "Cacher cet email à vos admins (vue équipe + Inboria)",
+    "unmarkPrivateHint": "Rendre cet email visible pour vos admins",
+    "privateOnTitle": "Email marqué privé",
+    "privateOffTitle": "Email rendu visible",
+    "privateOnDesc": "Cet email est désormais invisible pour vos admins (vue dossier équipe + Inboria).",
+    "privateOffDesc": "Cet email redevient visible pour vos admins (vue dossier équipe + Inboria).",
+    "privateError": "Impossible de mettre à jour la confidentialité."
+  },
+  "privacy": {
+    "title": "Vie privée et accès équipe",
+    "subtitle": "Vos emails restent les vôtres. Les administrateurs de votre organisation peuvent ouvrir un « dossier équipe » par contact (utile en cas d'absence ou de turn-over) — vous voyez ici quand cela arrive et vous pouvez masquer un email à tout moment.",
+    "howTitle": "Ce que vos admins peuvent voir — et pas voir",
+    "how1": "Vos admins peuvent ouvrir un dossier contact en « vue équipe » et voir les échanges de l'org avec ce contact (continuité de service).",
+    "how2": "Les emails que vous marquez « privés » sont automatiquement masqués dans la vue équipe et dans Inboria côté admin.",
+    "how3": "Chaque consultation admin est tracée et apparaît ci-dessous. Le journal est immuable.",
+    "privateTitle": "Mes emails privés",
+    "privateEmpty": "Aucun email marqué privé pour l'instant. Vous pouvez en marquer un depuis sa fiche email (bouton « Marquer privé »).",
+    "logTitle": "Journal des consultations admin vous concernant",
+    "logEmpty": "Aucune consultation admin vous concernant pour l'instant.",
+    "unmark": "Rendre visible",
+    "unmarkedTitle": "Email rendu visible",
+    "unmarkedDesc": "Cet email redevient visible pour vos admins (vue dossier équipe + Inboria).",
+    "unmarkError": "Impossible de mettre à jour cet email.",
+    "anAdmin": "Un administrateur",
+    "action": {
+      "viewMemberInbox": "{{who}} a consulté votre boîte de réception",
+      "viewContactTeam": "{{who}} a consulté un dossier contact (vue équipe) — {{n}} email(s) visibles",
+      "viewContactListTeam": "{{who}} a consulté la liste des contacts (vue équipe)",
+      "viewInboriaTeam": "{{who}} a posé une question à Inboria en mode équipe — {{n}} email(s) lus",
+      "generic": "{{who}} a effectué une consultation administrateur ({{action}})"
+    }
   }
 }

@@ -1,4 +1,4 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
@@ -6,7 +6,7 @@ import { Link } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Inbox, Clock, Eye, Sparkles, Reply, Forward, Wand2, Loader2,
-  Archive, Trash2, ListTodo, CalendarDays, Download, Send,
+  Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -80,6 +80,54 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
   const updateAppointment = useUpdateAppointment();
   const [appointmentRunning, setAppointmentRunning] = useState(false);
   const barColor = PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible;
+
+  // Task #176 — Marquer un email comme privé (invisible pour les admins org).
+  // Resync local state when navigating between emails (le composant est
+  // monté une seule fois et ré-utilisé quand l'utilisateur change de mail
+  // dans la liste, donc useState seul retient l'ancienne valeur).
+  const [isPrivate, setIsPrivate] = useState<boolean>(Boolean((email as any).isPrivate));
+  const [privateLoading, setPrivateLoading] = useState(false);
+  useEffect(() => {
+    setIsPrivate(Boolean((email as any).isPrivate));
+  }, [email?.id, (email as any).isPrivate]);
+  const togglePrivate = useCallback(async () => {
+    if (!email?.id) return;
+    const next = !isPrivate;
+    setPrivateLoading(true);
+    try {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const res = await fetch(`${baseUrl}/api/emails/${email.id}/private`, {
+        method: "PATCH",
+        credentials: "include",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ isPrivate: next }),
+      });
+      if (!res.ok) throw new Error("Échec");
+      setIsPrivate(next);
+      toast({
+        title: next
+          ? t("emailDetail.privateOnTitle", "Email marqué privé")
+          : t("emailDetail.privateOffTitle", "Email rendu visible"),
+        description: next
+          ? t(
+              "emailDetail.privateOnDesc",
+              "Cet email est désormais invisible pour vos admins (vue dossier équipe + Inboria).",
+            )
+          : t(
+              "emailDetail.privateOffDesc",
+              "Cet email redevient visible pour vos admins (vue dossier équipe + Inboria).",
+            ),
+      });
+    } catch {
+      toast({
+        title: t("common.error", "Erreur"),
+        description: t("emailDetail.privateError", "Impossible de mettre à jour la confidentialité."),
+        variant: "destructive" as any,
+      });
+    } finally {
+      setPrivateLoading(false);
+    }
+  }, [email?.id, isPrivate, t, toast]);
 
   // Inboria Phase 4 — expert suggestion. Only fires for shared mailboxes
   // with multiple members and an unread/unassigned inbound email; the
@@ -396,6 +444,34 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 >
                   <Trash2 className="w-3 h-3" />
                   {t("inbox.deleteEmail")}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`gap-1.5 h-7 text-[11px] bg-transparent ${
+                    isPrivate
+                      ? "border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
+                      : "border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                  }`}
+                  onClick={togglePrivate}
+                  disabled={privateLoading}
+                  title={
+                    isPrivate
+                      ? t("emailDetail.unmarkPrivateHint", "Rendre cet email visible pour vos admins")
+                      : t("emailDetail.markPrivateHint", "Cacher cet email à vos admins (vue équipe + Inboria)")
+                  }
+                  data-testid="button-toggle-private"
+                >
+                  {privateLoading ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : isPrivate ? (
+                    <LockOpen className="w-3 h-3" />
+                  ) : (
+                    <Lock className="w-3 h-3" />
+                  )}
+                  {isPrivate
+                    ? t("emailDetail.unmarkPrivate", "Rendre visible")
+                    : t("emailDetail.markPrivate", "Marquer privé")}
                 </Button>
                 <Button
                   variant="outline"

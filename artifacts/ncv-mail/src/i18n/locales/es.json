@@ -1194,7 +1194,9 @@
       "developersDesc": "API, Webhooks, SLA",
       "comingSoon": "Próximamente",
       "salesforceDesc": "Sincronización de contactos, cuentas y oportunidades de Salesforce.",
-      "salesforceSandbox": "Conectar una org Sandbox (test.salesforce.com)"
+      "salesforceSandbox": "Conectar una org Sandbox (test.salesforce.com)",
+      "privacy": "Privacidad y acceso del equipo",
+      "privacyDesc": "Tus correos privados y el registro de accesos de admin"
     },
     "b2bSection": "Credibilidad B2B",
     "slaCard": "SLA de buzones compartidos",
@@ -4197,7 +4199,12 @@
     "noComments": "Sin nota",
     "unknownAuthor": "Desconocido",
     "attachments": "Adjuntos",
-    "noAttachments": "Sin adjunto"
+    "noAttachments": "Sin adjunto",
+    "viewMine": "Mi expediente",
+    "viewTeam": "Vista expediente del equipo",
+    "handledBy": "Gestionado por",
+    "rgpdTitle": "Estás consultando el expediente de equipo de este contacto",
+    "rgpdBody": "Ves los intercambios de todos tus compañeros con este contacto (útil en caso de ausencia o rotación). Los correos marcados como «privados» por su propietario se ocultan automáticamente. Esta consulta queda registrada y es visible para los compañeros afectados."
   },
   "inboria": {
     "sectionTitle": "Lo que Inboria ha notado",
@@ -4564,5 +4571,40 @@
     "assignThisOne": "asignárselo",
     "tooltip": "Ya gestionó {{count}} intercambio(s) con este contacto — último el {{date}}.",
     "tooltipNoDate": "Ya gestionó {{count}} intercambio(s) con este contacto."
+  },
+  "emailDetail": {
+    "markPrivate": "Marcar privado",
+    "unmarkPrivate": "Hacer visible",
+    "markPrivateHint": "Ocultar este correo a tus admins (vista de equipo + Inboria)",
+    "unmarkPrivateHint": "Volver a hacer visible este correo para tus admins",
+    "privateOnTitle": "Correo marcado como privado",
+    "privateOffTitle": "Correo vuelto visible",
+    "privateOnDesc": "Este correo queda oculto para tus admins (vista expediente de equipo + Inboria).",
+    "privateOffDesc": "Este correo vuelve a ser visible para tus admins (vista expediente de equipo + Inboria).",
+    "privateError": "No se ha podido actualizar la privacidad."
+  },
+  "privacy": {
+    "title": "Privacidad y acceso del equipo",
+    "subtitle": "Tus correos siguen siendo tuyos. Los administradores de tu organización pueden abrir un «expediente de equipo» por contacto (útil en caso de ausencia o rotación). Aquí ves cuándo ocurre y puedes ocultar cualquier correo en cualquier momento.",
+    "howTitle": "Lo que tus admins pueden — y no pueden — ver",
+    "how1": "Tus admins pueden abrir un expediente de contacto en «vista de equipo» y ver los intercambios de la organización con ese contacto (continuidad del servicio).",
+    "how2": "Los correos que marques como «privados» se ocultan automáticamente en la vista de equipo y en Inboria del lado admin.",
+    "how3": "Cada acceso de admin queda registrado y aparece abajo. El registro es inmutable.",
+    "privateTitle": "Mis correos privados",
+    "privateEmpty": "Aún no hay correos marcados como privados. Puedes marcar uno desde su ficha de correo (botón «Marcar privado»).",
+    "logTitle": "Registro de accesos de admin que te conciernen",
+    "logEmpty": "Por ahora ningún acceso de admin te concierne.",
+    "unmark": "Hacer visible",
+    "unmarkedTitle": "Correo vuelto visible",
+    "unmarkedDesc": "Este correo vuelve a ser visible para tus admins (vista expediente de equipo + Inboria).",
+    "unmarkError": "No se ha podido actualizar este correo.",
+    "anAdmin": "Un administrador",
+    "action": {
+      "viewMemberInbox": "{{who}} ha consultado tu bandeja de entrada",
+      "viewContactTeam": "{{who}} ha consultado un expediente de contacto (vista de equipo) — {{n}} correo(s) visibles",
+      "viewContactListTeam": "{{who}} ha consultado la lista de contactos (vista de equipo)",
+      "viewInboriaTeam": "{{who}} ha hecho una pregunta a Inboria en modo equipo — {{n}} correo(s) leídos",
+      "generic": "{{who}} ha realizado un acceso de administrador ({{action}})"
+    }
   }
 }

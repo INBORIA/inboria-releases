@@ -66,6 +66,12 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
     - Team activity dashboard (Business plan only)
     - AI-contextual reply templates
     - Automation rules
+    - Admin team folder view (RGPD-safe): org admins can switch any
+      contact 360 to "team view" to see what teammates handled, with
+      every access tracked in `admin_team_access_log`. Members can
+      mark individual emails as private (`emails.is_private`) to
+      hide them from team view + Inboria. Members audit accesses
+      about them via Settings → Vie privée & accès équipe.
 
 ## External Dependencies
 

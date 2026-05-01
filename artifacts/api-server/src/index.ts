@@ -328,6 +328,67 @@ async function ensureWaveOneSchema() {
   }
 }
 
+async function ensureAdminTeamAccessSchema() {
+  // Task #176 — emails.is_private + admin_team_access_log.
+  // The full SQL is in migrations/2026_05_01_admin_team_access.sql ; we
+  // attempt the same idempotent ALTER/CREATE here so a fresh deployment
+  // gets the schema without manual SQL Editor copy-paste.
+  try {
+    const sql = `
+      ALTER TABLE public.emails ADD COLUMN IF NOT EXISTS is_private boolean NOT NULL DEFAULT false;
+      CREATE INDEX IF NOT EXISTS emails_is_private_idx ON public.emails (is_private) WHERE is_private = true;
+      CREATE TABLE IF NOT EXISTS public.admin_team_access_log (
+        id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        organisation_id uuid NOT NULL REFERENCES public.organisations(id) ON DELETE CASCADE,
+        admin_user_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+        target_type text NOT NULL CHECK (target_type IN ('contact', 'inbox_overview', 'inboria_memory', 'member_inbox')),
+        target_value text NULL,
+        emails_seen_count integer NOT NULL DEFAULT 0,
+        action text NOT NULL DEFAULT 'view',
+        created_at timestamptz NOT NULL DEFAULT now()
+      );
+      DO $migr$ BEGIN
+        IF EXISTS (
+          SELECT 1 FROM information_schema.table_constraints
+          WHERE table_schema = 'public'
+            AND table_name = 'admin_team_access_log'
+            AND constraint_name = 'admin_team_access_log_target_type_check'
+        ) THEN
+          ALTER TABLE public.admin_team_access_log
+            DROP CONSTRAINT admin_team_access_log_target_type_check;
+        END IF;
+        ALTER TABLE public.admin_team_access_log
+          ADD CONSTRAINT admin_team_access_log_target_type_check
+          CHECK (target_type IN ('contact', 'inbox_overview', 'inboria_memory', 'member_inbox'));
+      END $migr$;
+      CREATE INDEX IF NOT EXISTS admin_team_access_log_org_idx ON public.admin_team_access_log (organisation_id, created_at DESC);
+      CREATE INDEX IF NOT EXISTS admin_team_access_log_admin_idx ON public.admin_team_access_log (admin_user_id, created_at DESC);
+      ALTER TABLE public.admin_team_access_log ENABLE ROW LEVEL SECURITY;
+    `;
+    const supabaseUrl = process.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"] || "";
+    const serviceKey = process.env["SUPABASE_SECRET_KEY"] || "";
+    const { error: rpcErr } = await supabaseAdmin.rpc("exec_sql" as any, { query: sql });
+    if (!rpcErr) {
+      logger.info("[task-176] emails.is_private + admin_team_access_log schema ensured");
+      return;
+    }
+    if (supabaseUrl && serviceKey) {
+      const resp = await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", apikey: serviceKey, Authorization: `Bearer ${serviceKey}` },
+        body: JSON.stringify({ query: sql }),
+      });
+      if (resp.ok) {
+        logger.info("[task-176] schema ensured via REST fallback");
+        return;
+      }
+    }
+    logger.warn({ error: rpcErr.message }, "[task-176] schema migration failed — please apply migrations/2026_05_01_admin_team_access.sql manually in Supabase");
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "[task-176] schema check failed (non-fatal)");
+  }
+}
+
 async function ensureTaskAssignment() {
   try {
     const { error } = await supabaseAdmin.from("tasks").select("assigned_to_user_id").limit(1);
@@ -658,6 +719,7 @@ app.listen(port, (err) => {
   ensureEmailConnectionSignature();
   ensureTaskAssignment();
   ensureWaveOneSchema();
+  ensureAdminTeamAccessSchema();
   ensureTemplatesAndAutomationRules();
   cleanupDuplicateTasks();
   purgeNoiseTasks();

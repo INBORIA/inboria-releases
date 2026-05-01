@@ -1194,7 +1194,9 @@
       "developersDesc": "API, Webhooks, SLA",
       "comingSoon": "Coming soon",
       "salesforceDesc": "Sync Salesforce contacts, accounts and opportunities.",
-      "salesforceSandbox": "Connect a Sandbox org (test.salesforce.com)"
+      "salesforceSandbox": "Connect a Sandbox org (test.salesforce.com)",
+      "privacy": "Privacy & team access",
+      "privacyDesc": "Your private emails and the admin access log"
     },
     "b2bSection": "B2B credibility",
     "slaCard": "Shared mailbox SLAs",
@@ -4197,7 +4199,12 @@
     "noComments": "No note",
     "unknownAuthor": "Unknown",
     "attachments": "Attachments",
-    "noAttachments": "No attachment"
+    "noAttachments": "No attachment",
+    "viewMine": "My view",
+    "viewTeam": "Team view",
+    "handledBy": "Handled by",
+    "rgpdTitle": "You're viewing the team-wide record for this contact",
+    "rgpdBody": "You can see all your teammates' exchanges with this contact (useful when someone's away or has left). Emails marked \"private\" by their owner are hidden automatically. This access is logged and visible to the teammates involved."
   },
   "inboria": {
     "sectionTitle": "What Inboria has noticed",
@@ -4547,5 +4554,40 @@
     "assignThisOne": "assign to them",
     "tooltip": "Already handled {{count}} exchange(s) with this contact — last on {{date}}.",
     "tooltipNoDate": "Already handled {{count}} exchange(s) with this contact."
+  },
+  "emailDetail": {
+    "markPrivate": "Mark private",
+    "unmarkPrivate": "Make visible",
+    "markPrivateHint": "Hide this email from your admins (team view + Inboria)",
+    "unmarkPrivateHint": "Make this email visible to your admins again",
+    "privateOnTitle": "Email marked as private",
+    "privateOffTitle": "Email made visible",
+    "privateOnDesc": "This email is now hidden from your admins (team folder view + Inboria).",
+    "privateOffDesc": "This email is visible to your admins again (team folder view + Inboria).",
+    "privateError": "Couldn't update privacy."
+  },
+  "privacy": {
+    "title": "Privacy & team access",
+    "subtitle": "Your emails stay yours. Your organisation's admins can open a per-contact \"team folder\" (useful when someone's away or has left). You can see here when it happens and hide any email at any time.",
+    "howTitle": "What your admins can — and can't — see",
+    "how1": "Your admins can open a contact folder in \"team view\" and see the organisation's exchanges with that contact (service continuity).",
+    "how2": "Emails you mark as \"private\" are automatically hidden in the team view and from Inboria on the admin side.",
+    "how3": "Every admin access is logged and appears below. The log is immutable.",
+    "privateTitle": "My private emails",
+    "privateEmpty": "No emails marked private yet. You can mark one from its email card (\"Mark private\" button).",
+    "logTitle": "Log of admin accesses involving you",
+    "logEmpty": "No admin access involving you so far.",
+    "unmark": "Make visible",
+    "unmarkedTitle": "Email made visible",
+    "unmarkedDesc": "This email is visible to your admins again (team folder view + Inboria).",
+    "unmarkError": "Couldn't update this email.",
+    "anAdmin": "An administrator",
+    "action": {
+      "viewMemberInbox": "{{who}} viewed your inbox",
+      "viewContactTeam": "{{who}} viewed a contact folder (team view) — {{n}} email(s) visible",
+      "viewContactListTeam": "{{who}} viewed the contact list (team view)",
+      "viewInboriaTeam": "{{who}} asked Inboria a question in team mode — {{n}} email(s) read",
+      "generic": "{{who}} performed an admin access ({{action}})"
+    }
   }
 }

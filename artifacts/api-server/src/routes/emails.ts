@@ -504,10 +504,40 @@ router.get("/emails/:id", requireAuth, async (req, res, next): Promise<void> => 
       openedCount: (email as any).opened_count || 0,
       attachments: attachments || [],
       attachmentCount: (attachments || []).length,
+      isPrivate: Boolean((email as any).is_private),
       createdAt: email.created_at,
     });
   } catch {
     res.status(500).json({ error: "Failed to get email" });
+  }
+});
+
+// Task #176 — Marquage privé d'un email par son propriétaire.
+// Un email marqué privé est exclu de la vue dossier équipe (admin) et de
+// l'élargissement du contexte mémoire d'Inboria côté admin. Seul le
+// propriétaire (user_id) peut basculer ce flag — un coéquipier non
+// propriétaire reçoit 403/404.
+router.patch("/emails/:id/private", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const isPrivate = Boolean(req.body?.isPrivate);
+    const { data: email, error } = await supabaseAdmin
+      .from("emails")
+      .update({ is_private: isPrivate })
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .select("id, is_private")
+      .maybeSingle();
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+    if (!email) {
+      res.status(404).json({ error: "Email introuvable ou vous n'en êtes pas propriétaire." });
+      return;
+    }
+    res.json({ id: email.id, isPrivate: Boolean((email as any).is_private) });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "Failed to update privacy flag" });
   }
 });
 
