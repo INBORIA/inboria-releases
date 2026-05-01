@@ -232,7 +232,7 @@ export default function TeamActivitePage() {
           </div>
         </div>
 
-        {members.length === 0 ? (
+        {members.length <= 1 ? (
           <div className="bg-[#141c2b] border border-[#1f2937] rounded-lg p-8 text-center text-[12px] text-[#8b9cb3]">
             {t("teamActivity.noTeammates")}
           </div>
