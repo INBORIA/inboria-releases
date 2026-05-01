@@ -52,6 +52,7 @@ interface ParsedExtraction {
 
 let extractRunning = false;
 let signalsTableMissingWarned = false;
+let signalsSchemaDriftWarned = false;
 
 interface EmailRow {
   id: number;
@@ -345,22 +346,27 @@ export async function runInboriaExtractorOnce(): Promise<{
     }
     const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 
-    // Probe the inboria_signals table once per run. If it doesn't exist yet
-    // (migration not applied in Supabase Dashboard), we PAUSE the entire
-    // run — emails stay queued (inboria_processed_at NULL) so once the
-    // table is applied we backfill facts/episodes/signals together. This
-    // prevents permanent loss of signals for the backlog.
+    // Probe the inboria_signals table once per run. We probe a critical
+    // column (source_email_id) so we catch BOTH cases: (a) table missing
+    // entirely, and (b) table created with an older incomplete schema
+    // (column drift). In case (a) we PAUSE the run — emails stay queued
+    // (inboria_processed_at NULL) so once the migration is applied we
+    // backfill facts/episodes/signals together. In case (b) we let the
+    // run proceed (Phase 1 facts/episodes are unaffected) and emit a
+    // single LOUD warning per process so the operator knows to apply
+    // migrations/2026_04_30_inboria_signals.sql.
     const { error: probeErr } = await supabaseAdmin
       .from("inboria_signals")
-      .select("id", { head: true, count: "exact" })
+      .select("source_email_id", { head: true, count: "exact" })
       .limit(1);
     if (probeErr) {
       const msg = String(probeErr.message || "");
-      // Catch both raw Postgres "relation … does not exist" and the
-      // PostgREST schema-cache variant ("Could not find the table 'X'").
       const tableMissing =
         /relation .*inboria_signals.* does not exist/i.test(msg) ||
         /could not find the table.*inboria_signals/i.test(msg);
+      const columnMissing =
+        /column .*inboria_signals\..* does not exist/i.test(msg) ||
+        /column .*source_email_id.* does not exist/i.test(msg);
       if (tableMissing) {
         if (!signalsTableMissingWarned) {
           signalsTableMissingWarned = true;
@@ -370,9 +376,20 @@ export async function runInboriaExtractorOnce(): Promise<{
         }
         return { processed: 0, skipped: 0, retried: 0 };
       }
+      if (columnMissing) {
+        if (!signalsSchemaDriftWarned) {
+          signalsSchemaDriftWarned = true;
+          logger.warn(
+            { err: msg },
+            "[inboria-extractor] inboria_signals table is missing required columns (schema drift) — facts/episodes still extracted, signals skipped silently. Apply migrations/2026_04_30_inboria_signals.sql in Supabase Dashboard to restore Phase 3 sorting.",
+          );
+        }
+        // Continue: Phase 1 (facts/episodes) is unaffected by signal drift.
+      }
     } else {
-      // Table found — reset the warn-once flag so future losses re-warn.
+      // Probe OK — reset both warn-once flags so future regressions re-warn.
       signalsTableMissingWarned = false;
+      signalsSchemaDriftWarned = false;
     }
 
     const { data, error } = await supabaseAdmin
