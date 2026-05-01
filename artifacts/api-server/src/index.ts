@@ -341,12 +341,18 @@ async function ensureAdminTeamAccessSchema() {
         id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
         organisation_id uuid NOT NULL REFERENCES public.organisations(id) ON DELETE CASCADE,
         admin_user_id uuid NOT NULL REFERENCES public.profiles(id) ON DELETE CASCADE,
+        target_user_id uuid NULL REFERENCES public.profiles(id) ON DELETE SET NULL,
         target_type text NOT NULL CHECK (target_type IN ('contact', 'inbox_overview', 'inboria_memory', 'member_inbox')),
         target_value text NULL,
         emails_seen_count integer NOT NULL DEFAULT 0,
         action text NOT NULL DEFAULT 'view',
         created_at timestamptz NOT NULL DEFAULT now()
       );
+      ALTER TABLE public.admin_team_access_log
+        ADD COLUMN IF NOT EXISTS target_user_id uuid NULL REFERENCES public.profiles(id) ON DELETE SET NULL;
+      CREATE INDEX IF NOT EXISTS admin_team_access_log_target_idx
+        ON public.admin_team_access_log (target_user_id, created_at DESC)
+        WHERE target_user_id IS NOT NULL;
       DO $migr$ BEGIN
         IF EXISTS (
           SELECT 1 FROM information_schema.table_constraints

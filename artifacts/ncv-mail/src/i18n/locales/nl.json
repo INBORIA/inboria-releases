@@ -4175,6 +4175,11 @@
   "contacts": {
     "title": "Contact 360°",
     "subtitle": "Iedereen waarmee u e-mails heeft uitgewisseld",
+    "teamSubtitle": "Alle contacten van uw team (e-mails gemarkeerd als privé worden verborgen).",
+    "scopeMine": "Mijn contacten",
+    "scopeTeam": "Hele team",
+    "scopeToggleAria": "Kies contactbereik",
+    "teamRgpdBanner": "U bekijkt de contacten van uw team. Deze raadpleging wordt geregistreerd en verschijnt in het privacydagboek van de betrokken teamleden. E-mails gemarkeerd als privé worden automatisch verborgen.",
     "searchPlaceholder": "Zoek een contact…",
     "noResults": "Geen contact gevonden",
     "empty": "Nog geen contact",
@@ -4607,6 +4612,12 @@
       "viewContactListTeam": "{{who}} heeft de contactenlijst bekeken (teamweergave)",
       "viewInboriaTeam": "{{who}} heeft Inboria een vraag gesteld in teammodus — {{n}} e-mail(s) gelezen",
       "generic": "{{who}} heeft een admintoegang uitgevoerd ({{action}})"
-    }
+    },
+    "orgLogTitle": "Adminraadplegingsdagboek (hele organisatie)",
+    "orgLogSubtitle": "Als beheerder ziet u hier alle teamweergave-raadplegingen door alle admins van uw organisatie, met de admin en de betrokken teamgenoot.",
+    "orgLogLine": "{{admin}} → {{target}}",
+    "orgLogEmpty": "Nog geen adminraadpleging in uw organisatie geregistreerd.",
+    "targetOrgWide": "Hele organisatie",
+    "targetUnknown": "Onbekend doel"
   }
 }

@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { Link, useParams, useLocation } from "wouter";
+import { Link, useParams, useLocation, useSearch } from "wouter";
 import { useQuery } from "@tanstack/react-query";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { format, formatDistanceToNow } from "date-fns";
@@ -91,10 +91,25 @@ export default function ContactDetailPage() {
   const [, setLocation] = useLocation();
   const email = decodeURIComponent(params.email || "");
 
-  // Task #176 — Vue dossier équipe (admin org).
+  // Task #176 — Vue dossier équipe (admin org). Persisted in URL via
+  // ?scope=team so a refresh / share-link keeps the team view active.
   const { data: myOrg } = useGetMyOrganisation();
   const isOrgAdmin = (myOrg as any)?.myRole === "admin";
-  const [teamView, setTeamView] = useState(false);
+  const search = useSearch();
+  const initialTeamView = useMemo(
+    () => new URLSearchParams(search).get("scope") === "team",
+    [search],
+  );
+  const [teamView, _setTeamView] = useState<boolean>(initialTeamView);
+  const setTeamView = (next: boolean) => {
+    _setTeamView(next);
+    const params = new URLSearchParams(search);
+    if (next) params.set("scope", "team");
+    else params.delete("scope");
+    const qs = params.toString();
+    const path = `/dashboard/contacts/${encodeURIComponent(email)}${qs ? `?${qs}` : ""}`;
+    setLocation(path, { replace: true });
+  };
   const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 
   // Self view stays always-enabled so the page header + toggle + orange RGPD

@@ -30,6 +30,10 @@ type LogEntry = {
   id: number;
   adminUserId: string;
   adminName: string;
+  adminEmail?: string;
+  targetUserId?: string | null;
+  targetName?: string;
+  targetEmail?: string;
   targetType: string;
   targetValue: string | null;
   emailsSeenCount: number;
@@ -72,6 +76,21 @@ export default function ParametresViePrivee() {
       return res.json() as Promise<{ entries: LogEntry[] }>;
     },
   });
+
+  // Org-wide journal — admin only. Backend returns 403 for non-admins; we
+  // gate the query so non-admins don't see a spurious failure.
+  const orgQuery = useQuery({
+    queryKey: ["privacy", "team-access-log", "org"],
+    queryFn: async () => {
+      const res = await fetch(`${baseUrl}/api/admin/team-access-log?scope=org&limit=100`, {
+        credentials: "include",
+      });
+      if (!res.ok) throw new Error("org-log");
+      return res.json() as Promise<{ entries: LogEntry[] }>;
+    },
+    retry: false,
+  });
+  const isOrgAdmin = !orgQuery.isError && Array.isArray(orgQuery.data?.entries);
 
   const privateQuery = useQuery({
     queryKey: ["privacy", "private-emails"],
@@ -312,6 +331,84 @@ export default function ParametresViePrivee() {
             )}
           </Card>
         </div>
+
+        {/* Section 4 — Admin org-wide journal (admin org only) */}
+        {isOrgAdmin && (
+          <div className="mb-6" data-testid="admin-org-journal-section">
+            <div className="flex items-center gap-2 mb-3">
+              <Users className="w-4 h-4 text-primary" />
+              <h2 className="text-[14px] font-semibold text-white">
+                {t("privacy.orgLogTitle", "Journal des consultations admin (toute l'organisation)")}
+              </h2>
+            </div>
+            <p className="text-[12px] text-[#8b9cb3] mb-2">
+              {t(
+                "privacy.orgLogSubtitle",
+                "En tant qu'administrateur, vous voyez ici l'ensemble des consultations « vue équipe » faites par tous les admins de votre organisation, avec l'admin et le coéquipier concerné.",
+              )}
+            </p>
+            <Card className="bg-[#0f1620] border-[#1f2937]">
+              {orgQuery.isLoading ? (
+                <div className="p-4 space-y-2">
+                  <Skeleton className="h-4 w-3/4" />
+                  <Skeleton className="h-4 w-2/3" />
+                  <Skeleton className="h-4 w-1/2" />
+                </div>
+              ) : orgQuery.data?.entries?.length ? (
+                <ul className="divide-y divide-[#1f2937]">
+                  {orgQuery.data.entries.map((e) => {
+                    const Icon = TARGET_ICON[e.targetType] || Eye;
+                    const adminLabel =
+                      e.adminName || e.adminEmail || t("privacy.anAdmin", "Un administrateur");
+                    const targetLabel =
+                      e.targetName ||
+                      e.targetEmail ||
+                      e.targetValue ||
+                      (e.targetType === "inbox_overview"
+                        ? t("privacy.targetOrgWide", "Toute l'organisation")
+                        : t("privacy.targetUnknown", "Cible inconnue"));
+                    return (
+                      <li
+                        key={e.id}
+                        className="flex items-start gap-3 p-3"
+                        data-testid={`org-log-entry-${e.id}`}
+                      >
+                        <div className="w-7 h-7 rounded-md bg-primary/10 flex items-center justify-center shrink-0 mt-0.5">
+                          <Icon className="w-3.5 h-3.5 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="text-[13px] text-white">
+                            {t("privacy.orgLogLine", "{{admin}} → {{target}}", {
+                              admin: adminLabel,
+                              target: targetLabel,
+                            })}
+                          </div>
+                          <div className="text-[11px] text-[#8b9cb3] mt-0.5">
+                            <span>{describeAction(e)}</span>
+                            <span className="mx-1.5">·</span>
+                            <span>
+                              {formatDistanceToNow(new Date(e.createdAt), {
+                                addSuffix: true,
+                                locale: dateLocale,
+                              })}
+                            </span>
+                          </div>
+                        </div>
+                      </li>
+                    );
+                  })}
+                </ul>
+              ) : (
+                <div className="p-4 text-[12px] text-[#8b9cb3]">
+                  {t(
+                    "privacy.orgLogEmpty",
+                    "Aucune consultation admin enregistrée dans votre organisation pour l'instant.",
+                  )}
+                </div>
+              )}
+            </Card>
+          </div>
+        )}
       </div>
     </DashboardLayout>
   );

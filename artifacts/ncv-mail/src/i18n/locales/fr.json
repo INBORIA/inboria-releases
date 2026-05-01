@@ -2531,6 +2531,11 @@
   "contacts": {
     "title": "Contact 360°",
     "subtitle": "Toutes les personnes avec qui vous avez échangé",
+    "teamSubtitle": "Tous les contacts de votre équipe (les emails marqués privés sont masqués).",
+    "scopeMine": "Mes contacts",
+    "scopeTeam": "Toute l'équipe",
+    "scopeToggleAria": "Choisir la portée des contacts",
+    "teamRgpdBanner": "Vous consultez les contacts de votre équipe. Cette consultation est tracée et apparaît dans le journal vie privée des coéquipiers concernés. Les emails marqués privés sont automatiquement masqués.",
     "searchPlaceholder": "Rechercher un contact…",
     "noResults": "Aucun contact trouvé",
     "empty": "Aucun contact pour l'instant",
@@ -2949,6 +2954,12 @@
       "viewContactListTeam": "{{who}} a consulté la liste des contacts (vue équipe)",
       "viewInboriaTeam": "{{who}} a posé une question à Inboria en mode équipe — {{n}} email(s) lus",
       "generic": "{{who}} a effectué une consultation administrateur ({{action}})"
-    }
+    },
+    "orgLogTitle": "Journal des consultations admin (toute l'organisation)",
+    "orgLogSubtitle": "En tant qu'administrateur, vous voyez ici l'ensemble des consultations « vue équipe » faites par tous les admins de votre organisation, avec l'admin et le coéquipier concerné.",
+    "orgLogLine": "{{admin}} → {{target}}",
+    "orgLogEmpty": "Aucune consultation admin enregistrée dans votre organisation pour l'instant.",
+    "targetOrgWide": "Toute l'organisation",
+    "targetUnknown": "Cible inconnue"
   }
 }

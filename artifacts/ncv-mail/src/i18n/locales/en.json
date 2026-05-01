@@ -4175,6 +4175,11 @@
   "contacts": {
     "title": "Contact 360°",
     "subtitle": "Everyone you've exchanged emails with",
+    "teamSubtitle": "All your team's contacts (emails marked private are hidden).",
+    "scopeMine": "My contacts",
+    "scopeTeam": "Whole team",
+    "scopeToggleAria": "Choose contact scope",
+    "teamRgpdBanner": "You are viewing your team's contacts. This access is logged and appears in the privacy journal of the impacted teammates. Emails marked private are automatically hidden.",
     "searchPlaceholder": "Search a contact…",
     "noResults": "No contact found",
     "empty": "No contact yet",
@@ -4590,6 +4595,12 @@
       "viewContactListTeam": "{{who}} viewed the contact list (team view)",
       "viewInboriaTeam": "{{who}} asked Inboria a question in team mode — {{n}} email(s) read",
       "generic": "{{who}} performed an admin access ({{action}})"
-    }
+    },
+    "orgLogTitle": "Admin access journal (whole organisation)",
+    "orgLogSubtitle": "As an administrator, you see here every team-view consultation made by all admins in your organisation, with the admin and the impacted teammate.",
+    "orgLogLine": "{{admin}} → {{target}}",
+    "orgLogEmpty": "No admin consultation recorded in your organisation yet.",
+    "targetOrgWide": "Whole organisation",
+    "targetUnknown": "Unknown target"
   }
 }

@@ -26,36 +26,54 @@ router.get("/admin/team-access-log", requireAuth, async (req, res): Promise<void
       }
       const { data, error } = await supabaseAdmin
         .from("admin_team_access_log")
-        .select("id, organisation_id, admin_user_id, target_type, target_value, emails_seen_count, action, created_at")
+        .select("id, organisation_id, admin_user_id, target_user_id, target_type, target_value, emails_seen_count, action, created_at")
         .eq("organisation_id", orgId)
         .order("created_at", { ascending: false })
         .limit(limit);
       if (error) {
+        req.log?.error({ err: error.message, code: (error as any).code, scope: "org" }, "[team-access-log] org query failed");
         res.status(500).json({ error: error.message });
         return;
       }
-      // Resolve admin names for display
-      const adminIds = Array.from(new Set((data || []).map((r: any) => r.admin_user_id).filter(Boolean)));
-      const nameMap = new Map<string, string>();
-      if (adminIds.length) {
+      // Resolve admin + target identities (name + email) for display.
+      const allIds = new Set<string>();
+      for (const r of data || []) {
+        if ((r as any).admin_user_id) allIds.add(String((r as any).admin_user_id));
+        if ((r as any).target_user_id) allIds.add(String((r as any).target_user_id));
+      }
+      const profMap = new Map<string, { name: string; email: string }>();
+      if (allIds.size) {
         const { data: profs } = await supabaseAdmin
           .from("profiles")
-          .select("id, full_name")
-          .in("id", adminIds);
-        for (const p of profs || []) nameMap.set(String(p.id), (p as any).full_name || "");
+          .select("id, full_name, email")
+          .in("id", Array.from(allIds));
+        for (const p of profs || []) {
+          profMap.set(String((p as any).id), {
+            name: (p as any).full_name || "",
+            email: (p as any).email || "",
+          });
+        }
       }
       res.json({
         scope: "org",
-        entries: (data || []).map((r: any) => ({
-          id: r.id,
-          adminUserId: r.admin_user_id,
-          adminName: nameMap.get(String(r.admin_user_id)) || "",
-          targetType: r.target_type,
-          targetValue: r.target_value,
-          emailsSeenCount: r.emails_seen_count,
-          action: r.action,
-          createdAt: r.created_at,
-        })),
+        entries: (data || []).map((r: any) => {
+          const admin = profMap.get(String(r.admin_user_id));
+          const target = r.target_user_id ? profMap.get(String(r.target_user_id)) : null;
+          return {
+            id: r.id,
+            adminUserId: r.admin_user_id,
+            adminName: admin?.name || "",
+            adminEmail: admin?.email || "",
+            targetUserId: r.target_user_id,
+            targetName: target?.name || "",
+            targetEmail: target?.email || r.target_value || "",
+            targetType: r.target_type,
+            targetValue: r.target_value,
+            emailsSeenCount: r.emails_seen_count,
+            action: r.action,
+            createdAt: r.created_at,
+          };
+        }),
       });
       return;
     }
@@ -80,26 +98,28 @@ router.get("/admin/team-access-log", requireAuth, async (req, res): Promise<void
     // contact list which contained my correspondants).
     const { data, error } = await supabaseAdmin
       .from("admin_team_access_log")
-      .select("id, organisation_id, admin_user_id, target_type, target_value, emails_seen_count, action, created_at")
+      .select("id, organisation_id, admin_user_id, target_user_id, target_type, target_value, emails_seen_count, action, created_at")
       .eq("organisation_id", orgId)
       .order("created_at", { ascending: false })
       .limit(500);
     if (error) {
+      req.log?.error({ err: error.message, code: (error as any).code, scope: "mine" }, "[team-access-log] mine query failed");
       res.status(500).json({ error: error.message });
       return;
     }
-    // Per-member pivot contract: a row "is about me" only when its
-    // target_value matches one of my own connected email addresses (or my
-    // user id, used as fallback in inboria team-mode logging when the owner
-    // has no email_connection row). target_type='inbox_overview' is an
+    // Per-member pivot contract: a row "is about me" when its target_user_id
+    // matches my user id (strict, new writes), OR — for legacy rows written
+    // before target_user_id existed — when target_value matches one of my
+    // connected email addresses (or my user id used as fallback when an
+    // owner had no email_connection). target_type='inbox_overview' is an
     // org-wide aggregate (no specific member targeted) and is intentionally
-    // excluded from /scope=mine to keep the journal informative for the
-    // member rather than noisy.
+    // excluded from /scope=mine to keep the journal informative.
     const myKeys = new Set<string>([
       ...myAddresses,
       String(req.userId!).toLowerCase(),
     ]);
     const filtered = (data || []).filter((r: any) => {
+      if (r.target_user_id && String(r.target_user_id) === String(req.userId)) return true;
       if (r.target_type === "member_inbox") {
         return r.target_value && myKeys.has(String(r.target_value).toLowerCase());
       }

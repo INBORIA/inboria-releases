@@ -54,23 +54,59 @@ export type AdminAccessTargetType =
  * to log must not block the admin's read. We log a warning so the gap is
  * detectable in observability.
  */
+// Cached at module level: once we detect the live DB has not yet been
+// migrated with target_user_id (the column is missing), we stop trying to
+// include it in the insert payload until the process restarts. This lets the
+// audit trail keep working in the legacy schema (target_value heuristics)
+// while the migration is being applied manually in Supabase.
+let targetUserIdColumnAvailable = true;
+
 export async function logAdminTeamAccess(params: {
   organisationId: string;
   adminUserId: string;
   targetType: AdminAccessTargetType;
+  targetUserId?: string | null;
   targetValue?: string | null;
   emailsSeenCount?: number;
   action?: string;
 }): Promise<void> {
   try {
-    const { error } = await supabaseAdmin.from("admin_team_access_log").insert({
+    const basePayload: Record<string, any> = {
       organisation_id: params.organisationId,
       admin_user_id: params.adminUserId,
       target_type: params.targetType,
       target_value: params.targetValue ?? null,
       emails_seen_count: params.emailsSeenCount ?? 0,
       action: params.action ?? "view",
-    });
+    };
+    const payload = targetUserIdColumnAvailable
+      ? { ...basePayload, target_user_id: params.targetUserId ?? null }
+      : basePayload;
+    const { error } = await supabaseAdmin.from("admin_team_access_log").insert(payload);
+    if (
+      error &&
+      targetUserIdColumnAvailable &&
+      typeof error.message === "string" &&
+      /target_user_id|column.*does not exist|schema cache/i.test(error.message)
+    ) {
+      // Schema not migrated yet — disable the column for this process and
+      // retry once with the legacy payload so the audit row still lands.
+      targetUserIdColumnAvailable = false;
+      logger.warn(
+        { err: error.message },
+        "[admin-team-access] target_user_id column missing — falling back to legacy payload (apply migrations/2026_05_01_admin_team_access.sql)",
+      );
+      const { error: retryErr } = await supabaseAdmin
+        .from("admin_team_access_log")
+        .insert(basePayload);
+      if (retryErr) {
+        logger.warn(
+          { err: retryErr.message, target: params.targetType },
+          "[admin-team-access] failed to write audit row (legacy retry)",
+        );
+      }
+      return;
+    }
     if (error) {
       logger.warn(
         { err: error.message, target: params.targetType },

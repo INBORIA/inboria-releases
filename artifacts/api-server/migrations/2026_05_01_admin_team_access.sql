@@ -21,12 +21,23 @@ create table if not exists public.admin_team_access_log (
   id uuid primary key default gen_random_uuid(),
   organisation_id uuid not null references public.organisations(id) on delete cascade,
   admin_user_id uuid not null references public.profiles(id) on delete cascade,
+  target_user_id uuid null references public.profiles(id) on delete set null,
   target_type text not null check (target_type in ('contact', 'inbox_overview', 'inboria_memory', 'member_inbox')),
   target_value text null,
   emails_seen_count integer not null default 0,
   action text not null default 'view',
   created_at timestamptz not null default now()
 );
+
+-- target_user_id is the strict pivot for "who is the data subject", added
+-- after the initial table existed without it. Email-based target_value matching
+-- is kept for legacy rows but new writes set both whenever the owner is known.
+alter table public.admin_team_access_log
+  add column if not exists target_user_id uuid references public.profiles(id) on delete set null;
+
+create index if not exists admin_team_access_log_target_idx
+  on public.admin_team_access_log (target_user_id, created_at desc)
+  where target_user_id is not null;
 
 -- Si la table préexistait avec l'ancien check, élargir au type 'member_inbox'
 -- (utilisé pour pivoter le journal côté membre via /admin/team-access-log?scope=mine).

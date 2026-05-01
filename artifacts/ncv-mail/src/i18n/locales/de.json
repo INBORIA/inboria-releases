@@ -4175,6 +4175,11 @@
   "contacts": {
     "title": "Contact 360°",
     "subtitle": "Alle Personen, mit denen Sie E-Mails ausgetauscht haben",
+    "teamSubtitle": "Alle Kontakte Ihres Teams (als privat markierte E-Mails sind ausgeblendet).",
+    "scopeMine": "Meine Kontakte",
+    "scopeTeam": "Ganzes Team",
+    "scopeToggleAria": "Kontaktbereich wählen",
+    "teamRgpdBanner": "Sie sehen die Kontakte Ihres Teams. Diese Einsicht wird protokolliert und erscheint im Datenschutz-Journal der betroffenen Teammitglieder. Als privat markierte E-Mails werden automatisch ausgeblendet.",
     "searchPlaceholder": "Kontakt suchen…",
     "noResults": "Kein Kontakt gefunden",
     "empty": "Noch kein Kontakt",
@@ -4607,6 +4612,12 @@
       "viewContactListTeam": "{{who}} hat die Kontaktliste eingesehen (Teamansicht)",
       "viewInboriaTeam": "{{who}} hat Inboria eine Frage im Team-Modus gestellt — {{n}} E-Mail(s) gelesen",
       "generic": "{{who}} hat einen Admin-Zugriff durchgeführt ({{action}})"
-    }
+    },
+    "orgLogTitle": "Admin-Zugriffsjournal (gesamte Organisation)",
+    "orgLogSubtitle": "Als Administrator sehen Sie hier alle Teamansicht-Einsichten aller Admins Ihrer Organisation, mit dem Admin und dem betroffenen Teammitglied.",
+    "orgLogLine": "{{admin}} → {{target}}",
+    "orgLogEmpty": "Noch keine Admin-Einsicht in Ihrer Organisation erfasst.",
+    "targetOrgWide": "Gesamte Organisation",
+    "targetUnknown": "Unbekanntes Ziel"
   }
 }

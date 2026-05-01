@@ -4175,6 +4175,11 @@
   "contacts": {
     "title": "Contact 360°",
     "subtitle": "Todas las personas con las que has intercambiado correos",
+    "teamSubtitle": "Todos los contactos de tu equipo (los correos marcados como privados están ocultos).",
+    "scopeMine": "Mis contactos",
+    "scopeTeam": "Todo el equipo",
+    "scopeToggleAria": "Elegir alcance de contactos",
+    "teamRgpdBanner": "Estás consultando los contactos de tu equipo. Esta consulta queda registrada y aparece en el diario de privacidad de los compañeros afectados. Los correos marcados como privados se ocultan automáticamente.",
     "searchPlaceholder": "Buscar un contacto…",
     "noResults": "No se encontró ningún contacto",
     "empty": "Aún sin contactos",
@@ -4607,6 +4612,12 @@
       "viewContactListTeam": "{{who}} ha consultado la lista de contactos (vista de equipo)",
       "viewInboriaTeam": "{{who}} ha hecho una pregunta a Inboria en modo equipo — {{n}} correo(s) leídos",
       "generic": "{{who}} ha realizado un acceso de administrador ({{action}})"
-    }
+    },
+    "orgLogTitle": "Diario de accesos de administrador (toda la organización)",
+    "orgLogSubtitle": "Como administrador, ves aquí todas las consultas en vista de equipo realizadas por los administradores de tu organización, con el administrador y el compañero afectado.",
+    "orgLogLine": "{{admin}} → {{target}}",
+    "orgLogEmpty": "Aún no se ha registrado ninguna consulta de administrador en tu organización.",
+    "targetOrgWide": "Toda la organización",
+    "targetUnknown": "Destinatario desconocido"
   }
 }
