@@ -7,9 +7,9 @@
  */
 
 export interface Contact {
-  name: string;
-  email: string;
-  count: number;
-  lastSeenAt: Date;
-  firstSeenAt: Date;
+  userId: string;
+  fullName: string;
+  interactionCount: number;
+  lastInteractionAt?: Date | null;
+  score: number;
 }

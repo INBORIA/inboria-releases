@@ -10,8 +10,22 @@ const router: IRouter = Router();
 
 const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 
-function normalizeEmail(raw: unknown): string {
-  return decodeURIComponent(String(raw || "")).trim().toLowerCase();
+// Extracts up to N distinct email addresses from a free-form text. Used by the
+// chat handler to detect "rappelle-moi qui est marc@acme.com" and load a
+// targeted memory block scoped to that contact.
+const EMAIL_IN_TEXT_REGEX = /([a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,})/gi;
+function extractContactEmails(text: string, limit = 2): string[] {
+  if (!text) return [];
+  const matches = String(text).toLowerCase().match(EMAIL_IN_TEXT_REGEX) || [];
+  const seen: string[] = [];
+  for (const raw of matches) {
+    const e = raw.trim();
+    if (!e.includes("@")) continue;
+    if (seen.includes(e)) continue;
+    seen.push(e);
+    if (seen.length >= limit) break;
+  }
+  return seen;
 }
 
 function buildInboriaScopeFilter(userId: string, memberMailboxIds: string[]): string {
@@ -180,101 +194,6 @@ router.patch("/inboria/mailbox-settings", requireAuth, async (req, res): Promise
     });
   } catch (err: any) {
     req.log.error({ err: err?.message }, "[inboria-mailbox-settings] unexpected error");
-    res.status(500).json({ error: "Internal error" });
-  }
-});
-
-router.get("/inboria/context", requireAuth, async (req, res): Promise<void> => {
-  try {
-    const userId = req.userId!;
-    const contactEmail = normalizeEmail(req.query.contactEmail);
-    if (!contactEmail || !contactEmail.includes("@")) {
-      res.status(400).json({ error: "Invalid contactEmail" });
-      return;
-    }
-    const rawLimit = Number(req.query.limit ?? 10);
-    const limit = Math.min(50, Math.max(1, Number.isFinite(rawLimit) ? rawLimit : 10));
-
-    const memberMailboxIds = await getMemberMailboxIds(userId);
-    const scopeFilter = buildInboriaScopeFilter(userId, memberMailboxIds);
-
-    const [factsRes, episodesRes] = await Promise.all([
-      supabaseAdmin
-        .from("inboria_facts")
-        .select("id, contact_email, kind, statement, confidence, extracted_at, source_email_id")
-        .eq("contact_email", contactEmail)
-        .or(scopeFilter)
-        .order("extracted_at", { ascending: false })
-        .limit(limit),
-      supabaseAdmin
-        .from("inboria_episodes")
-        .select("id, contact_email, kind, summary, event_date, extracted_at, source_email_id")
-        .eq("contact_email", contactEmail)
-        .or(scopeFilter)
-        .order("extracted_at", { ascending: false })
-        .limit(limit),
-    ]);
-
-    if (factsRes.error) {
-      req.log.error({ err: factsRes.error.message }, "[inboria-context] facts query failed");
-      res.status(500).json({ error: "Failed to load Inboria context" });
-      return;
-    }
-    if (episodesRes.error) {
-      req.log.error({ err: episodesRes.error.message }, "[inboria-context] episodes query failed");
-      res.status(500).json({ error: "Failed to load Inboria context" });
-      return;
-    }
-
-    const sourceIds = new Set<number>();
-    for (const r of factsRes.data || []) sourceIds.add(Number(r.source_email_id));
-    for (const r of episodesRes.data || []) sourceIds.add(Number(r.source_email_id));
-
-    let sourcesById = new Map<number, { subject: string | null; sentAt: string | null }>();
-    if (sourceIds.size > 0) {
-      const { data: emails } = await supabaseAdmin
-        .from("emails")
-        .select("id, subject, created_at")
-        .in("id", Array.from(sourceIds));
-      for (const e of emails || []) {
-        sourcesById.set(Number(e.id), {
-          subject: (e as any).subject ?? null,
-          sentAt: (e as any).created_at ?? null,
-        });
-      }
-    }
-
-    const facts = (factsRes.data || []).map((r: any) => ({
-      id: String(r.id),
-      contactEmail: String(r.contact_email),
-      kind: String(r.kind),
-      statement: String(r.statement),
-      confidence: Number(r.confidence),
-      extractedAt: String(r.extracted_at),
-      source: {
-        emailId: Number(r.source_email_id),
-        subject: sourcesById.get(Number(r.source_email_id))?.subject ?? null,
-        sentAt: sourcesById.get(Number(r.source_email_id))?.sentAt ?? null,
-      },
-    }));
-
-    const episodes = (episodesRes.data || []).map((r: any) => ({
-      id: String(r.id),
-      contactEmail: String(r.contact_email),
-      kind: String(r.kind),
-      summary: String(r.summary),
-      eventDate: r.event_date ?? null,
-      extractedAt: String(r.extracted_at),
-      source: {
-        emailId: Number(r.source_email_id),
-        subject: sourcesById.get(Number(r.source_email_id))?.subject ?? null,
-        sentAt: sourcesById.get(Number(r.source_email_id))?.sentAt ?? null,
-      },
-    }));
-
-    res.json({ contactEmail, facts, episodes });
-  } catch (err: any) {
-    req.log.error({ err: err?.message }, "[inboria-context] unexpected error");
     res.status(500).json({ error: "Internal error" });
   }
 });
@@ -1105,6 +1024,157 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         memoryLines.push(`- ${p.name}${ref}${desc}`);
       }
     }
+
+    // Contact-aware : si l'utilisateur mentionne un ou deux emails dans son
+    // dernier message ("qui est marc@acme.com ?", "rappelle-moi notre dernier
+    // echange avec foo@bar.fr"), on charge un sous-bloc dedie scoped a ce(s)
+    // contact(s) — derniers echanges + faits/decisions memorises. Sans ce
+    // bloc, le LLM tend a halluciner un contexte plausible alors que le
+    // contact n'apparait peut-etre meme pas dans les 25 mails recents.
+    const lastUserMsg = cleanMessages[cleanMessages.length - 1]?.content || "";
+    const targetEmails = extractContactEmails(lastUserMsg, 2);
+    if (targetEmails.length > 0) {
+      // Helper : extrait l'adresse pure d'un champ "Nom <email@x>" pour
+      // filtrer par EGALITE stricte plutot qu'avec un ILIKE substring (evite
+      // toute contamination type "marc@acme.com" matchant "marc@acme.com.fr").
+      const extractAddr = (raw: string | null | undefined): string => {
+        if (!raw) return "";
+        const s = String(raw);
+        const m = s.match(/<([^>]+)>/);
+        return (m ? m[1] : s).trim().toLowerCase();
+      };
+      // Une seule requete pour les emails recents du perimetre (scope tenant
+      // STRICT, jamais empile avec un autre .or() qui pourrait l'ecraser),
+      // puis filtre en memoire par adresse exacte. En mode admin team on
+      // exclut explicitement les mails marques prives (RGPD).
+      for (const targetEmail of targetEmails) {
+        try {
+          const recentEmailsQuery = (adminTeamCtx
+            ? supabaseAdmin
+                .from("emails")
+                .select(
+                  "sender, recipient, subject, summary, sent_at, created_at, is_private",
+                )
+                .eq("is_private", false)
+            : supabaseAdmin
+                .from("emails")
+                .select("sender, recipient, subject, summary, sent_at, created_at"))
+            .or(emailScopeFilter)
+            .order("created_at", { ascending: false })
+            .limit(80);
+
+          const [recentEmailsRes, contactFactsRes, contactEpisodesRes] = await Promise.all([
+            recentEmailsQuery,
+            supabaseAdmin
+              .from("inboria_facts")
+              .select("kind, statement, extracted_at, source_email_id")
+              .eq("contact_email", targetEmail)
+              .or(scopeFilter)
+              .order("extracted_at", { ascending: false })
+              .limit(20),
+            supabaseAdmin
+              .from("inboria_episodes")
+              .select("kind, summary, event_date, extracted_at, source_email_id")
+              .eq("contact_email", targetEmail)
+              .or(scopeFilter)
+              .order("extracted_at", { ascending: false })
+              .limit(15),
+          ]);
+
+          // Filtrage strict par adresse exacte sur sender ou recipient.
+          const allRecent = (recentEmailsRes.data as any[]) || [];
+          const contactRows = allRecent
+            .filter((e) => {
+              const s = extractAddr(e.sender);
+              const r = extractAddr(e.recipient);
+              return s === targetEmail || r === targetEmail;
+            })
+            .slice(0, 8);
+
+          let contactFacts = (contactFactsRes.data as any[]) || [];
+          let contactEpisodes = (contactEpisodesRes.data as any[]) || [];
+
+          // RGPD admin team : retirer les facts/episodes derives d'un email
+          // marque prive par un coequipier (meme regle que le bloc memoire
+          // global ligne ~430).
+          if (adminTeamCtx) {
+            const sourceIds = Array.from(new Set([
+              ...contactFacts.map((r: any) => r.source_email_id).filter(Boolean),
+              ...contactEpisodes.map((r: any) => r.source_email_id).filter(Boolean),
+            ]));
+            if (sourceIds.length > 0) {
+              const { data: priv } = await supabaseAdmin
+                .from("emails")
+                .select("id")
+                .in("id", sourceIds)
+                .eq("is_private", true);
+              const privateIds = new Set<number>(
+                (priv || []).map((r: any) => Number(r.id)),
+              );
+              if (privateIds.size > 0) {
+                contactFacts = contactFacts.filter(
+                  (r: any) => !r.source_email_id || !privateIds.has(Number(r.source_email_id)),
+                );
+                contactEpisodes = contactEpisodes.filter(
+                  (r: any) => !r.source_email_id || !privateIds.has(Number(r.source_email_id)),
+                );
+              }
+            }
+          }
+          contactFacts = contactFacts.slice(0, 8);
+          contactEpisodes = contactEpisodes.slice(0, 5);
+          if (
+            contactRows.length === 0 &&
+            contactFacts.length === 0 &&
+            contactEpisodes.length === 0
+          ) {
+            memoryLines.push("");
+            memoryLines.push(
+              `Contact cible <${targetEmail}> : aucune trace dans la memoire (pas d'echange ni de fait memorise). NE PAS INVENTER de contexte sur ce contact.`,
+            );
+            continue;
+          }
+          memoryLines.push("");
+          memoryLines.push(`Contact cible mentionne par l'utilisateur : <${targetEmail}>`);
+          if (contactRows.length > 0) {
+            memoryLines.push(`Derniers echanges avec ${targetEmail} (${contactRows.length}) :`);
+            for (const e of contactRows) {
+              const date = fmtShortDate(e.sent_at || e.created_at);
+              const dir = e.sent_at ? "envoye a" : "recu de";
+              const who = e.sent_at
+                ? truncate(e.recipient || "(inconnu)", 40)
+                : truncate(e.sender || "(inconnu)", 40);
+              const subj = truncate(e.subject || "(sans objet)", 70);
+              const sum = e.summary ? ` — ${truncate(e.summary, 80)}` : "";
+              memoryLines.push(`- ${date} ${dir} ${who} : ${subj}${sum}`);
+            }
+          }
+          if (contactFacts.length > 0) {
+            memoryLines.push(`Faits memorises sur ${targetEmail} :`);
+            for (const f of contactFacts) {
+              memoryLines.push(`- ${f.kind} : ${f.statement}`);
+            }
+          }
+          if (contactEpisodes.length > 0) {
+            memoryLines.push(`Decisions/engagements avec ${targetEmail} :`);
+            for (const e of contactEpisodes) {
+              const date = e.event_date ? ` (${e.event_date})` : "";
+              memoryLines.push(`- ${e.kind}${date} : ${e.summary}`);
+            }
+          }
+        } catch (err: any) {
+          req.log.warn(
+            { err: err?.message, contact: targetEmail },
+            "[inboria-chat] contact-aware lookup failed",
+          );
+        }
+      }
+      memoryLines.push("");
+      memoryLines.push(
+        `IMPORTANT : si la question porte sur un des contacts ci-dessus, base-toi UNIQUEMENT sur ces traces. Si aucune trace n'apparait, dis-le honnetement ("aucun echange en memoire avec ce contact") plutot que d'inventer un contexte.`,
+      );
+    }
+
     const memoryBlock = memoryLines.length > 0 ? `\n\n${memoryLines.join("\n")}` : "";
 
     // Task #176 — règle prompt pour la "Vue dossier équipe" admin.

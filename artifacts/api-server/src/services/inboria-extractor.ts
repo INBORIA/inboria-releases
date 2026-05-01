@@ -2,6 +2,7 @@ import OpenAI from "openai";
 import { z } from "zod";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
+import { isNoiseEmail } from "./auto-sync";
 
 const EXTRACT_INTERVAL_MS = 15 * 60 * 1000;
 const BATCH_SIZE = 20;
@@ -250,6 +251,12 @@ async function processEmail(
   const subject = (email.subject || "").trim();
   const rawBody = (email.body || "").trim();
   if (!contactEmail || isOutgoing || rawBody.length < MIN_BODY_CHARS) return "skipped";
+
+  // Skip transactional/noreply senders and verification/welcome subjects.
+  // These produce zero memory value and pollute the context (e.g. Stripe
+  // receipts, verification codes, "welcome" sequences). isNoiseEmail is the
+  // same heuristic used by auto-sync to suppress notification-task creation.
+  if (isNoiseEmail(email.sender || "", subject)) return "skipped";
 
   const cleanBody = stripHtml(rawBody).slice(0, MAX_BODY_CHARS);
   if (cleanBody.length < MIN_BODY_CHARS) return "skipped";

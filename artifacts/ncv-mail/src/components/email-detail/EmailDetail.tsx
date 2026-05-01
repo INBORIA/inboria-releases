@@ -195,24 +195,16 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     {(email.sender || "?")[0].toUpperCase()}
                   </div>
                   <div>
-                    {email.senderEmail ? (
-                      <Link
-                        href={`/dashboard/contacts/${encodeURIComponent(email.senderEmail)}`}
-                        className="text-[13px] font-medium text-white hover:text-primary hover:underline transition-colors block"
-                        data-testid="link-contact-sender"
-                      >
-                        {email.sender}
-                      </Link>
-                    ) : (
-                      <div className="text-[13px] font-medium text-white">{email.sender}</div>
-                    )}
+                    <div
+                      className="text-[13px] font-medium text-white"
+                      data-testid="link-contact-sender"
+                    >
+                      {email.sender}
+                    </div>
                     {email.senderEmail && email.senderEmail !== email.sender && (
-                      <Link
-                        href={`/dashboard/contacts/${encodeURIComponent(email.senderEmail)}`}
-                        className="text-[11px] text-[#8b9cb3] hover:text-primary hover:underline transition-colors block"
-                      >
+                      <div className="text-[11px] text-[#8b9cb3]">
                         {email.senderEmail}
-                      </Link>
+                      </div>
                     )}
                   </div>
                 </div>
@@ -260,13 +252,12 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     <span className="text-[10px] uppercase tracking-wider text-[#8b9cb3] font-medium mt-0.5">{t("inbox.toLabel", "À")}</span>
                     {recipients.map((r, i) => (
                       <span key={r.email} className="inline-flex items-center">
-                        <Link
-                          href={`/dashboard/contacts/${encodeURIComponent(r.email)}`}
-                          className="text-[11px] text-[#8b9cb3] hover:text-primary hover:underline transition-colors"
+                        <span
+                          className="text-[11px] text-[#8b9cb3]"
                           data-testid={`link-contact-recipient-${r.email}`}
                         >
                           {r.name}
-                        </Link>
+                        </span>
                         {i < recipients.length - 1 && <span className="text-[11px] text-[#8b9cb3] mx-0.5">,</span>}
                       </span>
                     ))}

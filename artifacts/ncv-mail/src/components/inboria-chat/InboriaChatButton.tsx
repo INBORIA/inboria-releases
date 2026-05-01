@@ -2,11 +2,7 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Sparkles, Send, Loader2, Bot, User as UserIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
-import { useSearch } from "wouter";
-import {
-  getGetProfileQueryKey,
-  useGetMyOrganisation,
-} from "@workspace/api-client-react";
+import { getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
@@ -24,18 +20,6 @@ export function InboriaChatButton() {
   const { session } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
-  const search = useSearch();
-  const { data: myOrg } = useGetMyOrganisation();
-  // Task #176 — admin "Vue dossier équipe" : when an org admin has explicitly
-  // enabled the team scope on the current page (via ?scope=team in the URL,
-  // surfaced from the contacts list / contact-detail toggle), the chat posts
-  // viewMode="team" as a hint. The server-side now auto-elargit pour TOUT
-  // admin org, donc ce flag est purement informatif côté API; on le garde
-  // pour la trace côté front et compatibilité descendante.
-  interface MyOrganisationLite { myRole?: string }
-  const isOrgAdmin = (myOrg as MyOrganisationLite | undefined)?.myRole === "admin";
-  const teamScopeActive =
-    isOrgAdmin && new URLSearchParams(search).get("scope") === "team";
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -72,9 +56,6 @@ export function InboriaChatButton() {
       const body: Record<string, unknown> = {
         messages: nextMessages.slice(-20),
       };
-      if (teamScopeActive) {
-        body.viewMode = "team";
-      }
       const res = await fetch(`${baseUrl}/api/inboria/chat`, {
         method: "POST",
         headers: {
