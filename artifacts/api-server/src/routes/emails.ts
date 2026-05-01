@@ -519,7 +519,15 @@ router.get("/emails/:id", requireAuth, async (req, res, next): Promise<void> => 
 // propriétaire reçoit 403/404.
 router.patch("/emails/:id/private", requireAuth, async (req, res): Promise<void> => {
   try {
-    const isPrivate = Boolean(req.body?.isPrivate);
+    // Accept both `is_private` (snake_case, matches the column name and the
+    // public spec) and `isPrivate` (camelCase, kept for the existing client
+    // call site to avoid a breaking rename). Either form takes precedence
+    // when explicitly provided; otherwise we default to false (un-mark).
+    const raw =
+      typeof req.body?.is_private !== "undefined"
+        ? req.body.is_private
+        : req.body?.isPrivate;
+    const isPrivate = Boolean(raw);
     const { data: email, error } = await supabaseAdmin
       .from("emails")
       .update({ is_private: isPrivate })
@@ -535,7 +543,13 @@ router.patch("/emails/:id/private", requireAuth, async (req, res): Promise<void>
       res.status(404).json({ error: "Email introuvable ou vous n'en êtes pas propriétaire." });
       return;
     }
-    res.json({ id: email.id, isPrivate: Boolean((email as any).is_private) });
+    // Return both shapes so any client (snake or camel) can read the value
+    // without a follow-up roundtrip.
+    res.json({
+      id: email.id,
+      is_private: Boolean((email as any).is_private),
+      isPrivate: Boolean((email as any).is_private),
+    });
   } catch (err: any) {
     res.status(500).json({ error: err?.message || "Failed to update privacy flag" });
   }
