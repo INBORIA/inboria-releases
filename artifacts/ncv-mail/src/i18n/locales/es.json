@@ -61,7 +61,9 @@
     "adminWaitlist": "Admin · Lista de espera",
     "adminSubscribers": "Admin · Suscriptores",
     "followups": "Recordatorios",
-    "assigned": "Asignados"
+    "assigned": "Asignados",
+    "assignedMine": "Mis asignados",
+    "assignedTeam": "Asignados al equipo"
   },
   "dashboard": {
     "expiredSubscription": "Su suscripción ha expirado",

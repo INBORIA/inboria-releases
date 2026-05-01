@@ -62,16 +62,26 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
   const totalUsed = ((user as any).emailsUsed || 0) + ((user as any).aiCreditsUsed || 0);
 
-  // Admins see ALL assigned emails across the team (theirs + ones they assigned
-  // to others). Non-admins only see their own assigned emails.
-  const assignedHref = isOrgAdmin
-    ? "/dashboard?assignee=any"
-    : "/dashboard?assignee=me";
+  // Avant : un seul libelle "Assignes" qui menait soit a la vue equipe (admin)
+  // soit a la vue personnelle (non-admin), sans que l'admin ait acces facile
+  // a "JUSTE mes mails a moi". Confusion reportee : l'utilisateur voyait 4
+  // mails dans "Assignes" (vue equipe) et 1 mail dans Inboria (vue personnelle)
+  // sans comprendre la difference. Fix : pour les admins, deux entrees
+  // distinctes "Mes assignes" et "Assignes equipe". Pour les non-admins,
+  // une seule entree "Mes assignes" (la vue equipe n'existe pas pour eux).
+  const assignedEntries: Array<{ name: string; href: string; icon: any }> = isOrgAdmin
+    ? [
+        { name: t("sidebar.assignedMine", "Mes assignés"), href: "/dashboard?assignee=me", icon: UserCheck },
+        { name: t("sidebar.assignedTeam", "Assignés équipe"), href: "/dashboard?assignee=any", icon: UserCheck },
+      ]
+    : [
+        { name: t("sidebar.assignedMine", "Mes assignés"), href: "/dashboard?assignee=me", icon: UserCheck },
+      ];
 
   const baseNavigation: Array<{ name: string; href: string; icon: any }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
-    { name: t("sidebar.assigned", "Assignés"), href: assignedHref, icon: UserCheck },
+    ...assignedEntries,
     { name: t("sidebar.snoozed", "Reportés"), href: "/dashboard/reportes", icon: BellOff },
     { name: t("sidebar.scheduled", "Programmés"), href: "/dashboard/programmes", icon: CalendarClock },
     { name: t("tasks.title"), href: "/dashboard/taches", icon: CheckSquare },

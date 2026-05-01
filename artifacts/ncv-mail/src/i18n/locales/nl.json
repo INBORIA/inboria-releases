@@ -61,7 +61,9 @@
     "adminWaitlist": "Admin · Wachtlijst",
     "adminSubscribers": "Admin · Abonnees",
     "followups": "Herinneringen",
-    "assigned": "Toegewezen"
+    "assigned": "Toegewezen",
+    "assignedMine": "Mijn toegewezen",
+    "assignedTeam": "Team toegewezen"
   },
   "dashboard": {
     "expiredSubscription": "Uw abonnement is verlopen",

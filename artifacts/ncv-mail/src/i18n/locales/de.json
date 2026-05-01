@@ -61,7 +61,9 @@
     "adminWaitlist": "Admin · Warteliste",
     "adminSubscribers": "Admin · Abonnenten",
     "followups": "Erinnerungen",
-    "assigned": "Zugewiesen"
+    "assigned": "Zugewiesen",
+    "assignedMine": "Meine zugewiesenen",
+    "assignedTeam": "Team zugewiesen"
   },
   "dashboard": {
     "expiredSubscription": "Ihr Abonnement ist abgelaufen",

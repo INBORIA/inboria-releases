@@ -61,7 +61,9 @@
     "adminWaitlist": "Admin · Waitlist",
     "adminSubscribers": "Admin · Subscribers",
     "followups": "Follow-ups",
-    "assigned": "Assigned"
+    "assigned": "Assigned",
+    "assignedMine": "My assigned",
+    "assignedTeam": "Team assigned"
   },
   "dashboard": {
     "expiredSubscription": "Your subscription has expired",
