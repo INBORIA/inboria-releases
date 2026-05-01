@@ -31,6 +31,8 @@ import {
   useGetInboriaContext,
   getGetInboriaContextQueryKey,
   useGetMyOrganisation,
+  customFetch,
+  ApiError,
 } from "@workspace/api-client-react";
 import type { InboriaFact, InboriaEpisode } from "@workspace/api-client-react";
 import { AttachmentList } from "@/components/AttachmentList";
@@ -110,8 +112,6 @@ export default function ContactDetailPage() {
     const path = `/dashboard/contacts/${encodeURIComponent(email)}${qs ? `?${qs}` : ""}`;
     setLocation(path, { replace: true });
   };
-  const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
-
   // Self view stays always-enabled so the page header + toggle + orange RGPD
   // banner remain visible even if the team-scope query fails.
   const selfQuery = useGetContact(encodeURIComponent(email), {
@@ -121,17 +121,19 @@ export default function ContactDetailPage() {
     queryKey: ["contact", email, "team"],
     enabled: !!email && teamView && isOrgAdmin,
     queryFn: async () => {
-      const res = await fetch(
-        `${baseUrl}/api/contacts/${encodeURIComponent(email)}?scope=team`,
-        { credentials: "include" },
-      );
-      if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw Object.assign(new Error(body?.error || "Erreur"), {
-          response: { status: res.status },
-        });
+      try {
+        return await customFetch<any>(
+          `/api/contacts/${encodeURIComponent(email)}?scope=team`,
+        );
+      } catch (e: any) {
+        if (e instanceof ApiError) {
+          const msg = (e.data as any)?.error || e.message || "Erreur";
+          throw Object.assign(new Error(msg), {
+            response: { status: e.status },
+          });
+        }
+        throw e;
       }
-      return res.json();
     },
   });
   // Team data wins when available AND not currently in error; otherwise we
