@@ -569,17 +569,36 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
           ),
         );
         if (otherUserIds.length > 0) {
-          const { data: profiles } = await supabaseAdmin
-            .from("profiles")
-            .select("id, full_name, email")
-            .in("id", otherUserIds);
+          // Same fallback chain as the organisation members loader :
+          // profile → email_connections → "membre #abcd1234" pour ne
+          // jamais retourner "(sans nom)" à Inboria.
+          const [profilesRes, connsRes] = await Promise.all([
+            supabaseAdmin
+              .from("profiles")
+              .select("id, full_name, email")
+              .in("id", otherUserIds),
+            supabaseAdmin
+              .from("email_connections")
+              .select("user_id, email_address")
+              .in("user_id", otherUserIds),
+          ]);
           const profById = new Map<string, { name: string; email: string }>();
-          for (const p of profiles || []) {
+          for (const p of profilesRes.data || []) {
             profById.set(String((p as any).id), {
               name: String((p as any).full_name || ""),
               email: String((p as any).email || ""),
             });
           }
+          const connByUser = new Map<string, string>();
+          for (const c of connsRes.data || []) {
+            const uid = String((c as any).user_id || "");
+            const addr = String((c as any).email_address || "").toLowerCase();
+            if (uid && addr && !connByUser.has(uid)) connByUser.set(uid, addr);
+          }
+          const localPart = (addr: string) => {
+            const at = addr.indexOf("@");
+            return at > 0 ? addr.slice(0, at) : addr;
+          };
           const mailboxNameById = new Map<string, string>();
           for (const m of (sharedMailboxesRes.data || []) as any[]) {
             mailboxNameById.set(
@@ -594,10 +613,13 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             if (seen.has(uid)) continue;
             seen.add(uid);
             const prof = profById.get(uid);
-            if (!prof) continue;
+            const fallbackAddr = prof?.email || connByUser.get(uid) || "";
+            const friendlyName = prof?.name
+              || (fallbackAddr ? localPart(fallbackAddr) : "")
+              || `membre #${uid.slice(0, 8)}`;
             teammates.push({
-              fullName: prof.name,
-              email: prof.email,
+              fullName: friendlyName,
+              email: fallbackAddr,
               mailboxLabel: mailboxNameById.get(String((row as any).shared_mailbox_id)) || "",
             });
           }
@@ -666,30 +688,75 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             .map((r: any) => String(r.user_id || ""))
             .filter(Boolean);
           let profilesById = new Map<string, { name: string; email: string }>();
+          // Fallback identity sources : profiles est souvent vide pour les
+          // comptes créés via OAuth (full_name + email à null tant que le
+          // user n'a pas rempli son profil). On enrichit donc avec
+          // email_connections (l'adresse de la boîte connectée par le user
+          // — toujours présente) puis avec auth.users.email côté admin
+          // pour récupérer un nom lisible. Sans ce fallback Inboria répond
+          // littéralement "(sans nom)" et l'admin a l'impression qu'il
+          // ignore qui est dans son équipe.
+          let connsByUser = new Map<string, string>();
+          let authEmailByUser = new Map<string, string>();
           if (memberIds.length > 0) {
-            const { data: profiles, error: profilesErr } = await supabaseAdmin
-              .from("profiles")
-              .select("id, full_name, email")
-              .in("id", memberIds);
-            if (profilesErr) {
+            const [profilesRes, connsRes] = await Promise.all([
+              supabaseAdmin
+                .from("profiles")
+                .select("id, full_name, email")
+                .in("id", memberIds),
+              supabaseAdmin
+                .from("email_connections")
+                .select("user_id, email_address")
+                .in("user_id", memberIds),
+            ]);
+            if (profilesRes.error) {
               req.log.warn(
-                { err: profilesErr.message, orgId },
+                { err: profilesRes.error.message, orgId },
                 "[inboria-chat] organisation member profiles fetch failed",
               );
             }
-            for (const p of profiles || []) {
+            for (const p of profilesRes.data || []) {
               profilesById.set(String((p as any).id), {
                 name: String((p as any).full_name || ""),
                 email: String((p as any).email || ""),
               });
             }
+            for (const c of connsRes.data || []) {
+              const uid = String((c as any).user_id || "");
+              const addr = String((c as any).email_address || "").toLowerCase();
+              if (uid && addr && !connsByUser.has(uid)) connsByUser.set(uid, addr);
+            }
+            try {
+              const { data: authRes } = await (supabaseAdmin as any).auth.admin.listUsers({
+                page: 1,
+                perPage: 200,
+              });
+              for (const u of (authRes?.users || []) as any[]) {
+                const uid = String(u.id || "");
+                const addr = String(u.email || "").toLowerCase();
+                if (uid && addr && memberIds.includes(uid)) authEmailByUser.set(uid, addr);
+              }
+            } catch (e: any) {
+              req.log.debug(
+                { err: e?.message },
+                "[inboria-chat] auth.admin.listUsers fallback unavailable",
+              );
+            }
           }
+          const localPart = (addr: string) => {
+            const at = addr.indexOf("@");
+            return at > 0 ? addr.slice(0, at) : addr;
+          };
           const members = (memberRows || []).map((r: any) => {
             const uid = String(r.user_id || "");
             const prof = profilesById.get(uid);
+            const fallbackAddr = prof?.email || connsByUser.get(uid) || authEmailByUser.get(uid) || "";
+            const friendlyName = prof?.name
+              || (fallbackAddr ? localPart(fallbackAddr) : "")
+              || `membre #${uid.slice(0, 8)}`;
             return {
-              fullName: prof?.name || "(sans nom)",
-              email: prof?.email || "",
+              fullName: friendlyName,
+              email: fallbackAddr,
               role: String(r.role || "member"),
               isCurrentUser: uid === userId,
             };
