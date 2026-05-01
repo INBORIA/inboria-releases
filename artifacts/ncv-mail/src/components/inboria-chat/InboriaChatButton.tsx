@@ -2,7 +2,11 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { Sparkles, Send, Loader2, Bot, User as UserIcon } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
-import { getGetProfileQueryKey } from "@workspace/api-client-react";
+import { useSearch } from "wouter";
+import {
+  getGetProfileQueryKey,
+  useGetMyOrganisation,
+} from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
 import { Textarea } from "@/components/ui/textarea";
@@ -20,6 +24,16 @@ export function InboriaChatButton() {
   const { session } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const search = useSearch();
+  const { data: myOrg } = useGetMyOrganisation();
+  // Task #176 — admin "Vue dossier équipe" : when an org admin has explicitly
+  // enabled the team scope on the current page (via ?scope=team in the URL,
+  // surfaced from the contacts list / contact-detail toggle), the chat must
+  // post viewMode="team" so the backend loads the elargi memory and writes
+  // the corresponding audit row.
+  const isOrgAdmin = (myOrg as any)?.myRole === "admin";
+  const teamScopeActive =
+    isOrgAdmin && new URLSearchParams(search).get("scope") === "team";
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -53,18 +67,24 @@ export function InboriaChatButton() {
 
     try {
       const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const body: Record<string, unknown> = {
+        messages: nextMessages.slice(-20),
+      };
+      if (teamScopeActive) {
+        body.viewMode = "team";
+      }
       const res = await fetch(`${baseUrl}/api/inboria/chat`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           Authorization: `Bearer ${session.access_token}`,
         },
-        body: JSON.stringify({ messages: nextMessages.slice(-20) }),
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
-        throw new Error(body?.error || "request failed");
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody?.error || "request failed");
       }
 
       const data = await res.json();

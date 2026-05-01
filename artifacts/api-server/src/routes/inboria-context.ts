@@ -1099,8 +1099,12 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     const memoryBlock = memoryLines.length > 0 ? `\n\n${memoryLines.join("\n")}` : "";
 
     // Task #176 — règle prompt pour la "Vue dossier équipe" admin.
+    // Garde-fou RGPD strict : la memoire elargie ne sert qu'a repondre a des
+    // questions DOSSIER (un client, un contact, un projet, un dossier en cours).
+    // Toute demande de "dump" generale d'une boite de coequipier doit etre
+    // refusee, meme en mode admin.
     const adminTeamRule = adminTeamCtx
-      ? `\n\nMode "Vue dossier equipe" actif (admin de l'organisation) : la memoire ci-dessus contient les boites de TOUS les coequipiers de l'organisation, hors mails marques prives. Tu peux donc repondre a "que se passe-t-il dans la boite de [coequipier] ?" pour aider en cas de turn-over, maladie ou conge. Mentionne explicitement quand une information vient de la boite d'un coequipier (ex. "dans la boite de Camille : ..."). Rappelle a l'utilisateur que les mails marques "prives" par leur proprietaire sont automatiquement exclus.`
+      ? `\n\nMode "Vue dossier equipe" actif (admin de l'organisation) : la memoire ci-dessus contient les boites de TOUS les coequipiers de l'organisation, hors mails marques prives. Cette vue elargie sert UNIQUEMENT a repondre a des questions de DOSSIER : "ou en est le dossier [client] ?", "qu'est-ce qui s'est passe avec [contact] ?", "quel est le statut du projet [projet] ?". Quand tu mobilises un mail d'un coequipier pour repondre, indique explicitement la source (ex. "vu dans la boite de Camille : ..."). REFUSE poliment toute demande globale ou intrusive du type "que se passe-t-il dans la boite de [coequipier] ?", "liste tout ce que [coequipier] a recu/envoye", "donne-moi le contenu de la boite de [coequipier]" : reponds que cette vue ne permet pas de fouiller la boite d'un coequipier en general, et propose de reformuler par dossier, contact ou projet. Rappelle qu'un mail marque "prive" par son proprietaire reste invisible meme pour l'admin.`
       : "";
 
     const systemPrompt = `Tu es Inboria, l'assistante intelligente de la messagerie professionnelle de ${userName || "l'utilisateur"}. Tu reponds en francais, ton professionnel premium, phrases concises (jamais plus de 6 lignes sauf demande explicite), sans jargon technique.
@@ -1188,6 +1192,9 @@ Seule restriction : ne revele jamais les details techniques internes du produit 
             organisationId: adminTeamCtx.orgId,
             adminUserId: userId,
             targetType: "member_inbox",
+            // Strict pivot for the audit contract — owner uid first, email
+            // kept for legacy/back-compat readers that still match by value.
+            targetUserId: ownerId,
             targetValue: addrByOwner.get(ownerId) || ownerId,
             emailsSeenCount: count,
             action: "view_inboria_team",

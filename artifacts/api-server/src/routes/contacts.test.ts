@@ -14,6 +14,19 @@ vi.mock("../lib/inbox-scope", () => ({
   buildInboxScopeOrFilter: (userId: string) => `and(user_id.eq.${userId},shared_mailbox_id.is.null)`,
 }));
 
+// Task #176 — admin team scope mocks. Each test sets `mockOrgAdminFor` to map
+// userId -> orgId (or null when the caller is not an org admin), and
+// `mockOrgMembers` to map orgId -> active member user_ids. The audit log spy
+// captures every logAdminTeamAccess call so tests can assert it was written.
+let mockOrgAdminFor: Record<string, string | null> = {};
+let mockOrgMembers: Record<string, string[]> = {};
+const mockAuditLog = vi.fn(async (_p: any) => {});
+vi.mock("../lib/org-admin", () => ({
+  getOrgIdForOrgAdmin: vi.fn(async (uid: string) => mockOrgAdminFor[uid] ?? null),
+  listOrgMemberIds: vi.fn(async (oid: string) => mockOrgMembers[oid] ?? []),
+  logAdminTeamAccess: (params: any) => mockAuditLog(params),
+}));
+
 let emailRows: any[] = [];
 let taskRows: any[] = [];
 let appointmentRows: any[] = [];
@@ -24,6 +37,10 @@ let profileRows: any[] = [];
 let connectionRows: any[] = [];
 let sharedMailboxRows: any[] = [];
 
+// Captures the last `.or(...)` filter passed to each table so cross-org
+// isolation tests can assert that the team-scope filter only references
+// member ids of the caller's own organisation.
+const lastOrFilter: Record<string, string> = {};
 function chain(table: string) {
   const c: any = {
     _filters: {} as Record<string, any>,
@@ -32,7 +49,10 @@ function chain(table: string) {
       c._filters[col] = val;
       return c;
     },
-    or: () => c,
+    or: (filter: string) => {
+      lastOrFilter[table] = String(filter);
+      return c;
+    },
     in: (col: string, vals: any[]) => {
       c._filters[`${col}__in`] = vals;
       return c;
@@ -46,7 +66,18 @@ function chain(table: string) {
     },
     then: (resolve: any) => {
       let data: any[] = [];
-      if (table === "emails") data = emailRows;
+      if (table === "emails") {
+        // Apply only filters that the chain explicitly captured. The route
+        // sets is_private=false in team mode (so private mails should be
+        // dropped from the result). For team-scope OR filters we leave the
+        // rows alone — cross-user isolation is enforced by Supabase in prod.
+        data = emailRows.filter((e: any) => {
+          if ("is_private" in c._filters && e.is_private !== c._filters.is_private) {
+            return false;
+          }
+          return true;
+        });
+      }
       else if (table === "tasks") data = taskRows.filter((t) => {
         if (c._filters.user_id && t.user_id !== c._filters.user_id) return false;
         if (c._filters.user_id__in && !c._filters.user_id__in.includes(t.user_id)) return false;
@@ -101,6 +132,10 @@ beforeEach(() => {
   connectionRows = [{ user_id: "user-1", email_address: "me@x.com" }];
   sharedMailboxRows = [];
   mockMemberMailboxIds = [];
+  mockOrgAdminFor = {};
+  mockOrgMembers = {};
+  mockAuditLog.mockClear();
+  for (const k of Object.keys(lastOrFilter)) delete lastOrFilter[k];
 });
 
 describe("GET /contacts (list)", () => {
@@ -320,5 +355,98 @@ describe("GET /contacts/:email (detail)", () => {
     expect(res.status).toBe(200);
     expect(res.json.tasks).toHaveLength(1);
     expect(res.json.tasks[0].title).toBe("Mine");
+  });
+});
+
+describe("GET /contacts?scope=team (admin team scope)", () => {
+  it("returns 403 for non-admin caller (no org admin row)", async () => {
+    mockOrgAdminFor = { "user-1": null };
+    emailRows = [
+      { id: 1, sender: '"Alice" <alice@example.com>', recipient: null, created_at: "2026-04-20T10:00:00Z" },
+    ];
+    const res = await call("/contacts?scope=team");
+    expect(res.status).toBe(403);
+    expect(mockAuditLog).not.toHaveBeenCalled();
+  });
+
+  it("returns 200 for org admin and excludes private emails", async () => {
+    mockOrgAdminFor = { "admin-1": "org-A" };
+    mockOrgMembers = { "org-A": ["admin-1", "member-2"] };
+    connectionRows = [{ user_id: "admin-1", email_address: "admin@x.com" }];
+    emailRows = [
+      { id: 1, sender: '"Alice" <alice@example.com>', recipient: null, user_id: "member-2", is_private: false, created_at: "2026-04-20T10:00:00Z" },
+      { id: 2, sender: '"Secret" <secret@example.com>', recipient: null, user_id: "member-2", is_private: true, created_at: "2026-04-21T10:00:00Z" },
+    ];
+    const res = await call("/contacts?scope=team", "admin-1");
+    expect(res.status).toBe(200);
+    const emails = res.json.contacts.map((c: any) => c.email);
+    expect(emails).toContain("alice@example.com");
+    expect(emails).not.toContain("secret@example.com");
+    expect(res.json.access).toEqual({ mode: "team", privateExcluded: true });
+  });
+
+  it("writes a member_inbox audit row per teammate whose mailbox contributed", async () => {
+    mockOrgAdminFor = { "admin-1": "org-A" };
+    mockOrgMembers = { "org-A": ["admin-1", "member-2"] };
+    connectionRows = [{ user_id: "admin-1", email_address: "admin@x.com" }];
+    emailRows = [
+      { id: 1, sender: '"Alice" <alice@example.com>', recipient: null, user_id: "member-2", is_private: false, created_at: "2026-04-20T10:00:00Z" },
+    ];
+    const res = await call("/contacts?scope=team", "admin-1");
+    expect(res.status).toBe(200);
+    const calls = mockAuditLog.mock.calls.map((c: any[]) => c[0]);
+    const memberRows = calls.filter((p: any) => p.targetType === "member_inbox");
+    expect(memberRows.length).toBeGreaterThan(0);
+    // Strict pivot: the audit row must include the owner's user_id.
+    expect(memberRows.some((p: any) => p.targetUserId === "member-2")).toBe(true);
+    // And every member_inbox row carries the admin's user_id + org id.
+    for (const r of memberRows) {
+      expect(r.adminUserId).toBe("admin-1");
+      expect(r.organisationId).toBe("org-A");
+    }
+  });
+
+  it("cross-org isolation: admin of org-A only sees org-A members in the team-scope filter (org-B users are absent)", async () => {
+    mockOrgAdminFor = {
+      "admin-A": "org-A",
+      "admin-B": "org-B",
+    };
+    mockOrgMembers = {
+      "org-A": ["admin-A", "member-A1"],
+      "org-B": ["admin-B", "member-B1"],
+    };
+    connectionRows = [{ user_id: "admin-A", email_address: "admin-a@x.com" }];
+    emailRows = [
+      { id: 1, sender: '"AliceA" <alice-a@example.com>', recipient: null, user_id: "member-A1", is_private: false, created_at: "2026-04-20T10:00:00Z" },
+    ];
+    const res = await call("/contacts?scope=team", "admin-A");
+    expect(res.status).toBe(200);
+    // The OR filter on emails must include admin-A's org members and MUST NOT
+    // include any user_id from org-B (the production isolation mechanism).
+    const orFilter = lastOrFilter["emails"] || "";
+    expect(orFilter).toContain("admin-A");
+    expect(orFilter).toContain("member-A1");
+    expect(orFilter).not.toContain("admin-B");
+    expect(orFilter).not.toContain("member-B1");
+    // Audit log rows must all carry org-A as the organisationId — never org-B.
+    const calls = mockAuditLog.mock.calls.map((c: any[]) => c[0]);
+    for (const r of calls) {
+      expect(r.organisationId).toBe("org-A");
+      expect(r.adminUserId).toBe("admin-A");
+    }
+  });
+
+  it("self scope is unaffected by team-mode plumbing — does not call the audit log", async () => {
+    mockOrgAdminFor = { "user-1": "org-A" };
+    mockOrgMembers = { "org-A": ["user-1"] };
+    emailRows = [
+      { id: 1, sender: '"Alice" <alice@example.com>', recipient: null, user_id: "user-1", is_private: true, created_at: "2026-04-20T10:00:00Z" },
+    ];
+    const res = await call("/contacts");
+    expect(res.status).toBe(200);
+    // Private emails are NOT excluded from one's own scope (the owner can
+    // always see their own private mail), so Alice still appears.
+    expect(res.json.contacts.map((c: any) => c.email)).toContain("alice@example.com");
+    expect(mockAuditLog).not.toHaveBeenCalled();
   });
 });
