@@ -9,6 +9,15 @@
 --
 -- Safe to re-run: pattern matches are deterministic and only delete rows
 -- whose contact_email obviously belongs to a no-reply / automated sender.
+--
+-- ROLLBACK :
+-- Cette migration est un DELETE pur, il n'existe pas de rollback "naturel"
+-- (les lignes effacees etaient deja du bruit, on ne les recree pas). Si on
+-- veut reproduire l'etat anterieur pour audit, restaurer depuis une
+-- sauvegarde Supabase Point-In-Time Recovery anterieure a l'execution
+-- de cette migration. Aucune contrainte FK n'est cassee : les colonnes
+-- source_email_id sont nullables et le DELETE ne touche aucune autre
+-- table que inboria_facts / inboria_episodes / inboria_signals.
 
 BEGIN;
 
