@@ -261,28 +261,60 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
       return;
     }
 
-    const { data: members } = await supabaseAdmin
+    type MemberRow = { user_id: string; role: string };
+    type ProfileRow = { id: string; full_name: string | null };
+    type EmailRow = {
+      id: number;
+      subject: string | null;
+      sender: string | null;
+      priority: string | null;
+      created_at: string;
+      assigned_to: string;
+      shared_mailbox_id: string | null;
+    };
+    type MailboxRow = { id: string; name: string | null };
+    type AssignedEmail = {
+      id: number;
+      subject: string;
+      sender: string;
+      senderEmail: string;
+      priority: string;
+      createdAt: string;
+      sharedMailboxId: string | null;
+      sharedMailboxName: string | null;
+    };
+    type MemberAssignments = {
+      userId: string;
+      fullName: string;
+      email: string;
+      role: string;
+      isCurrentUser: boolean;
+      emails: AssignedEmail[];
+    };
+
+    const { data: rawMembers } = await supabaseAdmin
       .from("organisation_members")
       .select("user_id, role")
       .eq("organisation_id", orgId)
       .eq("status", "active");
 
-    if (!members || members.length === 0) {
+    const members: MemberRow[] = (rawMembers ?? []) as MemberRow[];
+    if (members.length === 0) {
       res.json({ members: [] });
       return;
     }
 
-    const memberUserIds = members.map((m: any) => m.user_id);
+    const memberUserIds = members.map((m) => m.user_id);
 
-    // Profils + emails de connexion
-    const { data: profiles } = await supabaseAdmin
+    const { data: rawProfiles } = await supabaseAdmin
       .from("profiles")
       .select("id, full_name")
       .in("id", memberUserIds);
     const profileMap = new Map<string, string>();
-    for (const p of profiles || []) {
+    for (const p of (rawProfiles ?? []) as ProfileRow[]) {
       profileMap.set(p.id, p.full_name || "");
     }
+
     const emailMap = new Map<string, string>();
     for (const uid of memberUserIds) {
       try {
@@ -296,7 +328,7 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
     const requesterMailboxIds = await getMemberMailboxIds(req.userId!);
     const scopeOr = buildInboxScopeOrFilter(req.userId!, requesterMailboxIds);
 
-    const { data: rows, error } = await supabaseAdmin
+    const { data: rawRows, error } = await supabaseAdmin
       .from("emails")
       .select(
         "id, subject, sender, priority, created_at, assigned_to, shared_mailbox_id",
@@ -318,36 +350,37 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
       return;
     }
 
-    // Résolution des noms de boîtes partagées présentes dans le résultat.
+    const rows: EmailRow[] = (rawRows ?? []) as EmailRow[];
+
     const mailboxIds = Array.from(
       new Set(
-        (rows || [])
-          .map((r: any) => r.shared_mailbox_id)
-          .filter((v: any): v is string => !!v),
+        rows
+          .map((r) => r.shared_mailbox_id)
+          .filter((v): v is string => !!v),
       ),
     );
     const mailboxNameMap = new Map<string, string>();
     if (mailboxIds.length > 0) {
-      const { data: mboxes } = await supabaseAdmin
+      const { data: rawMboxes } = await supabaseAdmin
         .from("shared_mailboxes")
         .select("id, name")
         .in("id", mailboxIds);
-      for (const mb of mboxes || []) {
+      for (const mb of (rawMboxes ?? []) as MailboxRow[]) {
         mailboxNameMap.set(mb.id, mb.name || "");
       }
     }
 
-    const byMember = new Map<string, any[]>();
-    for (const r of rows || []) {
+    const byMember = new Map<string, AssignedEmail[]>();
+    for (const r of rows) {
       const s = parseSender(r.sender || "");
-      const item = {
+      const item: AssignedEmail = {
         id: r.id,
         subject: r.subject || "",
         sender: s.name,
         senderEmail: s.email,
         priority: r.priority || "faible",
         createdAt: r.created_at,
-        sharedMailboxId: r.shared_mailbox_id || null,
+        sharedMailboxId: r.shared_mailbox_id,
         sharedMailboxName: r.shared_mailbox_id
           ? mailboxNameMap.get(r.shared_mailbox_id) || null
           : null,
@@ -357,7 +390,7 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
       byMember.set(r.assigned_to, list);
     }
 
-    const result = members.map((m: any) => ({
+    const result: MemberAssignments[] = members.map((m) => ({
       userId: m.user_id,
       fullName: profileMap.get(m.user_id) || "",
       email: emailMap.get(m.user_id) || "",
@@ -373,8 +406,9 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
     });
 
     res.json({ members: result });
-  } catch (e: any) {
-    req.log?.warn?.({ msg: e?.message }, "[team/assignments] handler crash");
+  } catch (e) {
+    const msg = e instanceof Error ? e.message : String(e);
+    req.log?.warn?.({ msg }, "[team/assignments] handler crash");
     res.status(500).json({ error: "Erreur lors de la récupération des assignations" });
   }
 });

@@ -1,5 +1,10 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useGetTeamAssignments } from "@workspace/api-client-react";
+import {
+  useGetTeamAssignments,
+  type TeamAssignmentsResponse,
+  type TeamMemberAssignments,
+  type TeamAssignedEmail,
+} from "@workspace/api-client-react";
 import {
   Loader2,
   Users,
@@ -10,11 +15,12 @@ import {
   ExternalLink,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import type { TFunction } from "i18next";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { useLocation } from "wouter";
 import { useState, useMemo } from "react";
 
-function formatTime(dateStr: string, t: (key: string, opts?: any) => string) {
+function formatTime(dateStr: string, t: TFunction): string {
   const diff = Date.now() - new Date(dateStr).getTime();
   const mins = Math.floor(diff / 60000);
   if (mins < 1) return t("teamActivity.time.justNow");
@@ -35,18 +41,16 @@ function PriorityDot({ priority }: { priority: string }) {
   return <span className={`inline-block h-1.5 w-1.5 rounded-full ${color}`} />;
 }
 
-function MemberSection({
-  member,
-  defaultOpen,
-  onOpenEmail,
-}: {
-  member: any;
+interface MemberSectionProps {
+  member: TeamMemberAssignments;
   defaultOpen: boolean;
   onOpenEmail: (id: number) => void;
-}) {
+}
+
+function MemberSection({ member, defaultOpen, onOpenEmail }: MemberSectionProps) {
   const { t } = useTranslation();
-  const [open, setOpen] = useState(defaultOpen);
-  const count = member.emails?.length || 0;
+  const [open, setOpen] = useState<boolean>(defaultOpen);
+  const count = member.emails.length;
   const displayName = member.isCurrentUser
     ? t("teamActivity.meLabel")
     : member.fullName || t("teamActivity.noName");
@@ -92,7 +96,7 @@ function MemberSection({
           </div>
         ) : (
           <ul className="border-t border-[#1f2937] divide-y divide-[#1f2937]">
-            {member.emails.map((e: any) => (
+            {member.emails.map((e: TeamAssignedEmail) => (
               <li
                 key={e.id}
                 role="button"
@@ -143,9 +147,12 @@ export default function TeamActivitePage() {
   const [, setLocation] = useLocation();
   const { data, isLoading } = useGetTeamAssignments();
 
-  const members = useMemo(() => (data as any)?.members || [], [data]);
+  const members: TeamMemberAssignments[] = useMemo(() => {
+    const payload = data as TeamAssignmentsResponse | undefined;
+    return payload?.members ?? [];
+  }, [data]);
   const totalAssigned = useMemo(
-    () => members.reduce((s: number, m: any) => s + (m.emails?.length || 0), 0),
+    () => members.reduce((s, m) => s + m.emails.length, 0),
     [members],
   );
 
@@ -199,11 +206,9 @@ export default function TeamActivitePage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {members.map((m: any) => {
-              // Règle d'expansion : équipe ≤ 5 membres → toutes les sections
-              // ouvertes ; équipe plus grande → seul l'utilisateur courant
-              // ouvert par défaut, pour éviter une page trop longue.
-              const defaultOpen = members.length <= 5 ? true : !!m.isCurrentUser;
+            {members.map((m) => {
+              const defaultOpen =
+                members.length <= 5 ? true : m.isCurrentUser;
               return (
                 <MemberSection
                   key={m.userId}
