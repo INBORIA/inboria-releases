@@ -56,12 +56,33 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       return;
     }
 
+    // Récupère les boîtes partagées de l'org POUR LE SCOPE EMAIL : un mail
+    // arrivé dans une boîte partagée a typiquement un `user_id` qui n'est pas
+    // celui d'un membre humain (c'est le user technique de la connexion). On
+    // doit donc inclure explicitement les emails dont `shared_mailbox_id`
+    // pointe vers une boîte de l'org, en plus des emails persos des membres.
+    // Sans ça, toute org qui travaille via boîtes partagées voit l'analytics
+    // à 0. Mirror du scope inbox (lib/inbox-scope.ts).
+    const { data: orgMailboxes } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("id, name, email_address")
+      .eq("organisation_id", orgId);
+    const orgMailboxIds = (orgMailboxes || []).map((m: any) => m.id);
+
     let emailsQ = supabaseAdmin
       .from("emails")
       .select("id, sender, status, assigned_to, claimed_by, category_id, project_id, shared_mailbox_id, created_at, updated_at, user_id")
-      .in("user_id", memberIds)
       .gte("created_at", sinceIso)
       .neq("status", "supprime");
+
+    // Scope = (emails persos des membres) OU (emails de toute boîte partagée
+    // de l'org). Postgrest .or() : un seul appel additif suffit.
+    const memberIdsList = memberIds.join(",");
+    const scopeParts: string[] = [`user_id.in.(${memberIdsList})`];
+    if (orgMailboxIds.length > 0) {
+      scopeParts.push(`shared_mailbox_id.in.(${orgMailboxIds.join(",")})`);
+    }
+    emailsQ = emailsQ.or(scopeParts.join(","));
 
     if (memberFilter) emailsQ = emailsQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
     if (mailboxFilter) emailsQ = emailsQ.eq("shared_mailbox_id", mailboxFilter);
@@ -162,14 +183,11 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       evolution.push({ date: d, count: evolutionMap.get(d) || 0 });
     }
 
-    // SLA summary
-    const { data: mbs } = await supabaseAdmin
-      .from("shared_mailboxes")
-      .select("id, name, email_address")
-      .eq("organisation_id", orgId);
-    const mbIds = (mbs || []).map((m: any) => m.id);
+    // SLA summary — réutilise orgMailboxes déjà récupérées plus haut pour
+    // construire le scope email (évite un round-trip Supabase supplémentaire).
+    const mbIds = orgMailboxIds;
     const mbMap = new Map<string, { name: string; email: string }>(
-      (mbs || []).map((m: any) => [m.id, { name: m.name || "", email: m.email_address || "" }]),
+      (orgMailboxes || []).map((m: any) => [m.id, { name: m.name || "", email: m.email_address || "" }]),
     );
     let totalBreaches = 0, openBreaches = 0;
     if (mbIds.length > 0) {
@@ -297,10 +315,22 @@ router.get("/analytics/team/export.csv", requireAuth, async (req, res): Promise<
       profileMap.set(uid, p?.full_name || "");
     }
 
+    // Même scope que /analytics/team : emails persos des membres + emails de
+    // toute boîte partagée de l'org (sans cela les exports CSV/PDF des orgs
+    // qui travaillent via boîtes partagées seraient vides).
+    const { data: csvOrgMailboxes } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("id")
+      .eq("organisation_id", orgId);
+    const csvOrgMailboxIds = (csvOrgMailboxes || []).map((m: any) => m.id);
+    const csvScopeParts: string[] = [`user_id.in.(${memberIds.join(",")})`];
+    if (csvOrgMailboxIds.length > 0) {
+      csvScopeParts.push(`shared_mailbox_id.in.(${csvOrgMailboxIds.join(",")})`);
+    }
     let csvQ = supabaseAdmin
       .from("emails")
       .select("id, subject, sender, status, assigned_to, claimed_by, created_at, updated_at")
-      .in("user_id", memberIds)
+      .or(csvScopeParts.join(","))
       .gte("created_at", sinceIso)
       .neq("status", "supprime");
     if (memberFilter) csvQ = csvQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
@@ -358,10 +388,21 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
       profileMap.set(uid, p?.full_name || "");
     }
 
+    // Même scope que /analytics/team : emails persos des membres + emails de
+    // toute boîte partagée de l'org.
+    const { data: pdfOrgMailboxes } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("id")
+      .eq("organisation_id", orgId);
+    const pdfOrgMailboxIds = (pdfOrgMailboxes || []).map((m: any) => m.id);
+    const pdfScopeParts: string[] = [`user_id.in.(${memberIds.join(",")})`];
+    if (pdfOrgMailboxIds.length > 0) {
+      pdfScopeParts.push(`shared_mailbox_id.in.(${pdfOrgMailboxIds.join(",")})`);
+    }
     let pdfQ = supabaseAdmin
       .from("emails")
       .select("id, status, assigned_to, claimed_by, created_at, updated_at")
-      .in("user_id", memberIds)
+      .or(pdfScopeParts.join(","))
       .gte("created_at", sinceIso)
       .neq("status", "supprime");
     if (memberFilter) pdfQ = pdfQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
