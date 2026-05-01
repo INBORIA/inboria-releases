@@ -506,6 +506,106 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       req.log.warn({ err: err?.message }, "[inboria-chat] teammates lookup failed");
     }
 
+    // Load the user's organisation (Paramètres → Équipe) so Inboria knows the
+    // team name, plan tier, seat usage, and the list of active members with
+    // their role. Lets the assistant answer "qui est dans mon équipe ?",
+    // "combien de places me reste-t-il ?", "quel plan ai-je ?".
+    let organisation: {
+      name: string;
+      plan: string;
+      seatsTotal: number | null;
+      myRole: string;
+      members: Array<{ fullName: string; email: string; role: string; isCurrentUser: boolean }>;
+    } | null = null;
+    try {
+      const { data: myMembership, error: membershipErr } = await supabaseAdmin
+        .from("organisation_members")
+        .select("organisation_id, role")
+        .eq("user_id", userId)
+        .eq("status", "active")
+        .maybeSingle();
+      if (membershipErr) {
+        req.log.warn(
+          { err: membershipErr.message },
+          "[inboria-chat] organisation membership lookup failed",
+        );
+      }
+
+      if (myMembership?.organisation_id) {
+        const orgId = String(myMembership.organisation_id);
+        const [orgRes, memberRowsRes] = await Promise.all([
+          supabaseAdmin
+            .from("organisations")
+            .select("name, plan, seats_total")
+            .eq("id", orgId)
+            .maybeSingle(),
+          supabaseAdmin
+            .from("organisation_members")
+            .select("user_id, role")
+            .eq("organisation_id", orgId)
+            .eq("status", "active"),
+        ]);
+        if (orgRes.error) {
+          req.log.warn(
+            { err: orgRes.error.message, orgId },
+            "[inboria-chat] organisation fetch failed",
+          );
+        }
+        if (memberRowsRes.error) {
+          req.log.warn(
+            { err: memberRowsRes.error.message, orgId },
+            "[inboria-chat] organisation members fetch failed",
+          );
+        }
+        const org = orgRes.data;
+        const memberRows = memberRowsRes.data;
+
+        if (org) {
+          const memberIds = (memberRows || [])
+            .map((r: any) => String(r.user_id || ""))
+            .filter(Boolean);
+          let profilesById = new Map<string, { name: string; email: string }>();
+          if (memberIds.length > 0) {
+            const { data: profiles, error: profilesErr } = await supabaseAdmin
+              .from("profiles")
+              .select("id, full_name, email")
+              .in("id", memberIds);
+            if (profilesErr) {
+              req.log.warn(
+                { err: profilesErr.message, orgId },
+                "[inboria-chat] organisation member profiles fetch failed",
+              );
+            }
+            for (const p of profiles || []) {
+              profilesById.set(String((p as any).id), {
+                name: String((p as any).full_name || ""),
+                email: String((p as any).email || ""),
+              });
+            }
+          }
+          const members = (memberRows || []).map((r: any) => {
+            const uid = String(r.user_id || "");
+            const prof = profilesById.get(uid);
+            return {
+              fullName: prof?.name || "(sans nom)",
+              email: prof?.email || "",
+              role: String(r.role || "member"),
+              isCurrentUser: uid === userId,
+            };
+          });
+          organisation = {
+            name: String((org as any).name || "(sans nom)"),
+            plan: String((org as any).plan || ""),
+            seatsTotal: (org as any).seats_total ?? null,
+            myRole: String(myMembership.role || "member"),
+            members,
+          };
+        }
+      }
+    } catch (err: any) {
+      req.log.warn({ err: err?.message }, "[inboria-chat] organisation lookup failed");
+    }
+
     const facts = (factsRes.data || []) as Array<{
       contact_email: string;
       kind: string;
@@ -565,6 +665,32 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     };
 
     const memoryLines: string[] = [];
+
+    // Organisation / équipe (page Paramètres → Équipe). Toujours en tête car
+    // c'est le contexte de plus haut niveau : nom de l'équipe, plan, nombre
+    // de places utilisées, liste des membres avec leur rôle.
+    if (organisation) {
+      const seatsLabel =
+        organisation.seatsTotal != null
+          ? `${organisation.members.length}/${organisation.seatsTotal} places utilisees`
+          : `${organisation.members.length} membre(s)`;
+      memoryLines.push(
+        `Equipe : "${organisation.name}" — plan ${organisation.plan || "(inconnu)"} — ${seatsLabel}.`,
+      );
+      memoryLines.push(
+        `L'utilisateur est ${organisation.myRole === "admin" ? "administrateur" : "membre"} de cette equipe.`,
+      );
+      if (organisation.members.length > 0) {
+        memoryLines.push("Membres de l'equipe :");
+        for (const m of organisation.members) {
+          const roleLabel = m.role === "admin" ? "admin" : "membre";
+          const youTag = m.isCurrentUser ? " (l'utilisateur lui-meme)" : "";
+          const email = m.email ? ` <${m.email}>` : "";
+          memoryLines.push(`- ${m.fullName}${email} — ${roleLabel}${youTag}`);
+        }
+      }
+      memoryLines.push("");
+    }
 
     // Toujours lister les boîtes partagées du compte (même si l'utilisateur en
     // est seul membre), pour qu'Inboria puisse répondre "tu fais partie de
