@@ -28,10 +28,12 @@ export function InboriaChatButton() {
   const { data: myOrg } = useGetMyOrganisation();
   // Task #176 — admin "Vue dossier équipe" : when an org admin has explicitly
   // enabled the team scope on the current page (via ?scope=team in the URL,
-  // surfaced from the contacts list / contact-detail toggle), the chat must
-  // post viewMode="team" so the backend loads the elargi memory and writes
-  // the corresponding audit row.
-  const isOrgAdmin = (myOrg as any)?.myRole === "admin";
+  // surfaced from the contacts list / contact-detail toggle), the chat posts
+  // viewMode="team" as a hint. The server-side now auto-elargit pour TOUT
+  // admin org, donc ce flag est purement informatif côté API; on le garde
+  // pour la trace côté front et compatibilité descendante.
+  interface MyOrganisationLite { myRole?: string }
+  const isOrgAdmin = (myOrg as MyOrganisationLite | undefined)?.myRole === "admin";
   const teamScopeActive =
     isOrgAdmin && new URLSearchParams(search).get("scope") === "team";
   const [isOpen, setIsOpen] = useState(false);

@@ -32,10 +32,24 @@ import ScheduleSendDialog from "@/components/wave1/ScheduleSendDialog";
 import {
   getGetProfileQueryKey,
   useGetInboriaExpertSuggestion,
+  getGetInboriaExpertSuggestionQueryKey,
   useDetectAppointments,
   useUpdateAppointment,
   getListAppointmentsQueryKey,
 } from "@workspace/api-client-react";
+
+interface EmailPrivateFields {
+  isPrivate?: boolean;
+}
+interface ExpertSuggestionShape {
+  suggestion: {
+    userId: string;
+    fullName: string;
+    interactionCount: number;
+    lastInteractionAt: string | null;
+    score: number;
+  } | null;
+}
 
 import { PriorityBadge, PRIORITY_BAR_COLORS, buildForwardCitation } from "./helpers";
 
@@ -85,11 +99,12 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
   // Resync local state when navigating between emails (le composant est
   // monté une seule fois et ré-utilisé quand l'utilisateur change de mail
   // dans la liste, donc useState seul retient l'ancienne valeur).
-  const [isPrivate, setIsPrivate] = useState<boolean>(Boolean((email as any).isPrivate));
+  const emailPrivate = email as EmailPrivateFields;
+  const [isPrivate, setIsPrivate] = useState<boolean>(Boolean(emailPrivate.isPrivate));
   const [privateLoading, setPrivateLoading] = useState(false);
   useEffect(() => {
-    setIsPrivate(Boolean((email as any).isPrivate));
-  }, [email?.id, (email as any).isPrivate]);
+    setIsPrivate(Boolean(emailPrivate.isPrivate));
+  }, [email?.id, emailPrivate.isPrivate]);
   const togglePrivate = useCallback(async () => {
     if (!email?.id) return;
     const next = !isPrivate;
@@ -122,7 +137,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
       toast({
         title: t("common.error", "Erreur"),
         description: t("emailDetail.privateError", "Impossible de mettre à jour la confidentialité."),
-        variant: "destructive" as any,
+        variant: "destructive",
       });
     } finally {
       setPrivateLoading(false);
@@ -137,13 +152,14 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
     { emailId: email?.id },
     {
       query: {
+        queryKey: getGetInboriaExpertSuggestionQueryKey({ emailId: email?.id }),
         enabled: Boolean(email?.id) && !email?.assignedTo,
         staleTime: 60_000,
         retry: false,
-      } as any,
+      },
     },
   );
-  const expertSuggestion = (expertQuery.data as any)?.suggestion as
+  const expertSuggestion = (expertQuery.data as ExpertSuggestionShape | undefined)?.suggestion ?? null as
     | {
         userId: string;
         fullName: string;
