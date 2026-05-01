@@ -125,7 +125,7 @@ export default function ParametresViePrivee() {
       toast({
         title: t("common.error", "Erreur"),
         description: t("privacy.unmarkError", "Impossible de mettre à jour cet email."),
-        variant: "destructive" as any,
+        variant: "destructive",
       });
     } finally {
       setUnmarkingId(null);

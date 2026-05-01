@@ -316,28 +316,30 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       memberMailboxIds = [];
     }
 
-    // Task #176 — opt-in admin team mode pour le chat Inboria.
-    // Le front envoie viewMode="team" quand l'admin org active la "Vue
-    // dossier équipe". Si le user n'est pas admin org, on retombe en mode
-    // "self" sans erreur (et sans tracer).
-    const requestedTeamMode = req.body?.viewMode === "team";
+    // Task #176 — admin team mode pour le chat Inboria.
+    // Côté serveur on active automatiquement l'élargi équipe pour TOUT
+    // admin organisation (pas besoin que le front l'opt-in via viewMode).
+    // Les garde-fous RGPD ne reposent PAS sur ce drapeau : ils sont dans
+    // (a) le prompt système (refus des questions "boîte de [coéquipier]")
+    // et (b) la consigne dossier-only ci-dessous, plus le filtrage des
+    // facts/episodes issus de mails privés.
+    interface OrgMailboxIdRow { id: string }
+    const orgIdForAdmin = await getOrgIdForOrgAdmin(userId);
     let adminTeamCtx:
       | null
       | { orgId: string; memberIds: string[]; sharedMailboxIds: string[] } = null;
-    if (requestedTeamMode) {
-      const orgId = await getOrgIdForOrgAdmin(userId);
-      if (orgId) {
-        const memberIds = await listOrgMemberIds(orgId);
-        const { data: smbx } = await supabaseAdmin
-          .from("shared_mailboxes")
-          .select("id")
-          .eq("organisation_id", orgId);
-        adminTeamCtx = {
-          orgId,
-          memberIds: memberIds.length > 0 ? memberIds : [userId],
-          sharedMailboxIds: (smbx || []).map((m: any) => String(m.id)).filter(Boolean),
-        };
-      }
+    if (orgIdForAdmin) {
+      const memberIds = await listOrgMemberIds(orgIdForAdmin);
+      const { data: smbx } = await supabaseAdmin
+        .from("shared_mailboxes")
+        .select("id")
+        .eq("organisation_id", orgIdForAdmin);
+      const smbxRows = (smbx || []) as OrgMailboxIdRow[];
+      adminTeamCtx = {
+        orgId: orgIdForAdmin,
+        memberIds: memberIds.length > 0 ? memberIds : [userId],
+        sharedMailboxIds: smbxRows.map((m) => String(m.id)).filter(Boolean),
+      };
     }
 
     const scopeFilter = adminTeamCtx
@@ -382,12 +384,19 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         .or(scopeFilter)
         .order("extracted_at", { ascending: false })
         .limit(20),
-      supabaseAdmin
-        .from("projects")
-        .select("name, reference, description")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false })
-        .limit(8),
+      adminTeamCtx
+        ? supabaseAdmin
+            .from("projects")
+            .select("name, reference, description")
+            .in("user_id", adminTeamCtx.memberIds)
+            .order("created_at", { ascending: false })
+            .limit(24)
+        : supabaseAdmin
+            .from("projects")
+            .select("name, reference, description")
+            .eq("user_id", userId)
+            .order("created_at", { ascending: false })
+            .limit(8),
       supabaseAdmin
         .from("profiles")
         .select("full_name, ai_lang, email")
