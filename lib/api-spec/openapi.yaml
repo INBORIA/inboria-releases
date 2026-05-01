@@ -5254,27 +5254,14 @@ components:
           type: boolean
           description: True if the user's plan was set to "expired" immediately.
 
-    Contact:
-      type: object
-      required: [userId, fullName, interactionCount, score]
-      properties:
-        userId: { type: string }
-        fullName: { type: string }
-        interactionCount: { type: integer }
-        lastInteractionAt:
-          type: string
-          format: date-time
-          nullable: true
-        score: { type: integer }
-
     InboriaExpertSuggestionResponse:
       type: object
       required: [suggestion]
       properties:
         suggestion:
-          nullable: true
-          allOf:
+          oneOf:
             - $ref: "#/components/schemas/InboriaExpertSuggestion"
+            - type: "null"
 
     InboriaMailboxSetting:
       type: object

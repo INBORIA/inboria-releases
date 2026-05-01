@@ -59,7 +59,6 @@ export * from "./checkoutBody";
 export * from "./checkoutBodyPlanId";
 export * from "./checkoutResponse";
 export * from "./claimSharedEmail200";
-export * from "./contact";
 export * from "./createAppointmentBody";
 export * from "./createAutomationRuleBody";
 export * from "./createCategoryBody";

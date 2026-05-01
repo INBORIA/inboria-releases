@@ -3038,7 +3038,7 @@ export const GetInboriaExpertSuggestionQueryParams = zod.object({
 });
 
 export const GetInboriaExpertSuggestionResponse = zod.object({
-  suggestion: zod.unknown().nullable(),
+  suggestion: zod.union([zod.unknown(), zod.null()]),
 });
 
 /**

@@ -1033,16 +1033,86 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     // contact n'apparait peut-etre meme pas dans les 25 mails recents.
     const lastUserMsg = cleanMessages[cleanMessages.length - 1]?.content || "";
     const targetEmails = extractContactEmails(lastUserMsg, 2);
+    // Helper : extrait l'adresse pure d'un champ "Nom <email@x>" pour
+    // filtrer par EGALITE stricte plutot qu'avec un ILIKE substring (evite
+    // toute contamination type "marc@acme.com" matchant "marc@acme.com.fr").
+    const extractAddr = (raw: string | null | undefined): string => {
+      if (!raw) return "";
+      const s = String(raw);
+      const m = s.match(/<([^>]+)>/);
+      return (m ? m[1] : s).trim().toLowerCase();
+    };
+    // Resolution nom -> email : si l'utilisateur ecrit "raconte-moi Michel
+    // Dupont", on essaie de retrouver l'email associe en cherchant les
+    // expediteurs/destinataires recents dont le label contient ce nom. On
+    // ne fait ca que si AUCUN email explicite n'a ete extrait, et on
+    // limite a 1 nom resolu pour eviter de surcharger le contexte.
+    if (targetEmails.length === 0) {
+      const STOP_WORDS = new Set([
+        "Bonjour","Salut","Hello","Hi","Inboria","Merci","Stp","Svp",
+        "Le","La","Les","Un","Une","De","Du","Des","Mon","Ma","Mes","Ce","Cette","Ces",
+        "Que","Qui","Quoi","Quand","Comment","Pourquoi","Ou","Est","Sont","Avec","Pour","Sur",
+        "Hier","Aujourdhui","Demain","Janvier","Fevrier","Mars","Avril","Mai","Juin",
+        "Juillet","Aout","Septembre","Octobre","Novembre","Decembre",
+        "Lundi","Mardi","Mercredi","Jeudi","Vendredi","Samedi","Dimanche",
+      ]);
+      // Sequences de 1 a 3 mots commencant par majuscule (ex. "Michel Dupont",
+      // "Camille", "Jean-Pierre Martin"). Regex tolerante aux accents/tirets.
+      const NAME_RE = /\b([A-Z][a-zà-ÿ\-']{1,}(?:\s+[A-Z][a-zà-ÿ\-']{1,}){0,2})\b/g;
+      const candidates: string[] = [];
+      let m: RegExpExecArray | null;
+      while ((m = NAME_RE.exec(lastUserMsg)) !== null) {
+        const cand = m[1].trim();
+        const firstWord = cand.split(/\s+/)[0];
+        // On ignore les mots-outils tres communs en debut de phrase et les
+        // noms d'au moins 3 caracteres pour eviter le bruit.
+        if (firstWord.length < 3) continue;
+        if (STOP_WORDS.has(firstWord)) continue;
+        if (!candidates.includes(cand)) candidates.push(cand);
+        if (candidates.length >= 3) break;
+      }
+      for (const cand of candidates) {
+        if (targetEmails.length >= 1) break;
+        try {
+          // On charge un echantillon d'emails du perimetre puis on filtre
+          // en memoire (PAS de double .or() qui pourrait casser le scope).
+          const { data: poolRaw } = await supabaseAdmin
+            .from("emails")
+            .select("sender, recipient")
+            .or(emailScopeFilter)
+            .order("created_at", { ascending: false })
+            .limit(200);
+          const pool = (poolRaw as any[]) || [];
+          const candLow = cand.toLowerCase();
+          const counts = new Map<string, number>();
+          for (const e of pool) {
+            for (const field of [e.sender, e.recipient]) {
+              if (!field) continue;
+              const txt = String(field).toLowerCase();
+              if (!txt.includes(candLow)) continue;
+              const addr = extractAddr(field);
+              if (!addr || !addr.includes("@")) continue;
+              counts.set(addr, (counts.get(addr) || 0) + 1);
+            }
+          }
+          if (counts.size > 0) {
+            const sorted = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
+            const resolved = sorted[0][0];
+            if (!targetEmails.includes(resolved)) targetEmails.push(resolved);
+            req.log.debug(
+              { name: cand, resolved, sample: sorted.slice(0, 3) },
+              "[inboria-chat] resolved contact name to email",
+            );
+          }
+        } catch (err: any) {
+          req.log.warn(
+            { err: err?.message, name: cand },
+            "[inboria-chat] name resolution failed",
+          );
+        }
+      }
+    }
     if (targetEmails.length > 0) {
-      // Helper : extrait l'adresse pure d'un champ "Nom <email@x>" pour
-      // filtrer par EGALITE stricte plutot qu'avec un ILIKE substring (evite
-      // toute contamination type "marc@acme.com" matchant "marc@acme.com.fr").
-      const extractAddr = (raw: string | null | undefined): string => {
-        if (!raw) return "";
-        const s = String(raw);
-        const m = s.match(/<([^>]+)>/);
-        return (m ? m[1] : s).trim().toLowerCase();
-      };
       // Une seule requete pour les emails recents du perimetre (scope tenant
       // STRICT, jamais empile avec un autre .or() qui pourrait l'ecraser),
       // puis filtre en memoire par adresse exacte. En mode admin team on
@@ -1160,6 +1230,26 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             for (const e of contactEpisodes) {
               const date = e.event_date ? ` (${e.event_date})` : "";
               memoryLines.push(`- ${e.kind}${date} : ${e.summary}`);
+            }
+          }
+          // Rendez-vous lies au contact : on filtre la liste deja chargee
+          // (scope deja applique sur user_id) en cherchant l'adresse exacte
+          // dans les participants ou le titre. Pas de nouvelle requete DB.
+          const contactAppts = appointments
+            .filter((a) => {
+              const parts = (a.participants || "").toLowerCase();
+              const title = (a.title || "").toLowerCase();
+              const t = targetEmail.toLowerCase();
+              return parts.includes(t) || title.includes(t);
+            })
+            .slice(0, 5);
+          if (contactAppts.length > 0) {
+            memoryLines.push(`Rendez-vous avec ${targetEmail} :`);
+            for (const a of contactAppts) {
+              const when = fmtAppt(a.start_at, a.all_day);
+              const title = a.title || "Rendez-vous";
+              const where = a.location ? ` — ${a.location}` : "";
+              memoryLines.push(`- ${when} : ${title}${where}`);
             }
           }
         } catch (err: any) {
