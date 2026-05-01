@@ -543,10 +543,16 @@ export function EmailBodyRenderer({ body, emailId, sender }: EmailBodyRendererPr
     <iframe
       ref={iframeRef}
       srcDoc={wrappedHtml}
-      // allow-popups + allow-popups-to-escape-sandbox : autorise les liens
-      // (cliquables avec target="_blank") à s'ouvrir dans une nouvelle
-      // fenêtre/onglet hors du sandbox. Pas de allow-scripts : l'email
-      // reste inerte côté JavaScript.
+      // Sandbox sécurité :
+      // - allow-popups : autorise window.open / target="_blank" (sinon le
+      //   clic sur un lien email est silencieusement bloqué).
+      // - allow-popups-to-escape-sandbox : sans ce flag, la nouvelle fenêtre
+      //   hérite du sandbox (pas de allow-scripts) et la page externe
+      //   visée est cassée. Risque tabnabbing maîtrisé : l'iframe n'a pas
+      //   allow-top-navigation (le parent est inviolable depuis la popup),
+      //   et <base target="_blank"> déclenche noopener implicite sur les
+      //   navigateurs modernes (Chrome/Firefox/Safari).
+      // - PAS de allow-scripts : aucun JS ne s'exécute dans l'email.
       sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"
       referrerPolicy="no-referrer"
       style={{
