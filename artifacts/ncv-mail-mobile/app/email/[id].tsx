@@ -144,7 +144,7 @@ export default function EmailDetailScreen() {
   const [replySubject, setReplySubject] = useState("");
   const [replyText, setReplyText] = useState("");
   const [templatePickerOpen, setTemplatePickerOpen] = useState(false);
-  const { data: templatesList } = useListTemplates({ query: { enabled: replyOpen } });
+  const { data: templatesList } = useListTemplates({ query: { enabled: replyOpen } as any });
   const useTemplateMut = useIncrementTemplateUsage();
   const [showPriorityPicker, setShowPriorityPicker] = useState(false);
   const [showCategoryPicker, setShowCategoryPicker] = useState(false);
