@@ -47,10 +47,17 @@ function MemberSection({
   const { t } = useTranslation();
   const [open, setOpen] = useState(defaultOpen);
   const count = member.emails?.length || 0;
-  const initials = (member.fullName || "?").charAt(0).toUpperCase();
+  const displayName = member.isCurrentUser
+    ? t("teamActivity.meLabel")
+    : member.fullName || t("teamActivity.noName");
+  const initials = (displayName || "?").charAt(0).toUpperCase();
 
   return (
-    <div className="bg-[#141c2b] border border-[#1f2937] rounded-lg overflow-hidden">
+    <div
+      className={`bg-[#141c2b] border rounded-lg overflow-hidden ${
+        member.isCurrentUser ? "border-primary/40" : "border-[#1f2937]"
+      }`}
+    >
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
@@ -62,9 +69,7 @@ function MemberSection({
           {initials}
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[12px] font-medium text-white truncate">
-            {member.fullName || t("teamActivity.noName")}
-          </p>
+          <p className="text-[12px] font-medium text-white truncate">{displayName}</p>
           <p className="text-[10px] text-[#8b9cb3] truncate">{member.email || ""}</p>
         </div>
         <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium capitalize shrink-0">
@@ -110,7 +115,9 @@ function MemberSection({
                     {e.sharedMailboxId ? (
                       <span className="inline-flex items-center gap-1 text-[9px] px-1.5 py-0.5 rounded bg-blue-500/15 text-blue-300 font-medium">
                         <MailPlus className="h-2.5 w-2.5" />
-                        {e.sharedMailboxName || t("teamActivity.sharedMailboxBadge")}
+                        {e.sharedMailboxName
+                          ? `${t("teamActivity.sharedMailboxBadge")} — ${e.sharedMailboxName}`
+                          : t("teamActivity.sharedMailboxBadge")}
                       </span>
                     ) : null}
                   </div>
@@ -192,14 +199,20 @@ export default function TeamActivitePage() {
           </div>
         ) : (
           <div className="space-y-3">
-            {members.map((m: any, idx: number) => (
-              <MemberSection
-                key={m.userId}
-                member={m}
-                defaultOpen={idx < 3 && (m.emails?.length || 0) > 0}
-                onOpenEmail={openEmail}
-              />
-            ))}
+            {members.map((m: any) => {
+              // Règle d'expansion : équipe ≤ 5 membres → toutes les sections
+              // ouvertes ; équipe plus grande → seul l'utilisateur courant
+              // ouvert par défaut, pour éviter une page trop longue.
+              const defaultOpen = members.length <= 5 ? true : !!m.isCurrentUser;
+              return (
+                <MemberSection
+                  key={m.userId}
+                  member={m}
+                  defaultOpen={defaultOpen}
+                  onOpenEmail={openEmail}
+                />
+              );
+            })}
           </div>
         )}
       </div>

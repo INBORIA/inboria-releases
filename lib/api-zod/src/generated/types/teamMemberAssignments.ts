@@ -12,5 +12,6 @@ export interface TeamMemberAssignments {
   fullName: string;
   email?: string;
   role: string;
+  isCurrentUser: boolean;
   emails: TeamAssignedEmail[];
 }

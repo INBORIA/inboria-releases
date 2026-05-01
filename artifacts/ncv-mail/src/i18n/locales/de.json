@@ -1962,6 +1962,7 @@
     "subtitle": "Aktuell zugewiesene E-Mails, pro Teammitglied",
     "noTeammates": "Kein Teammitglied in Ihrer Organisation",
     "noName": "Kein Name",
+    "meLabel": "Ich",
     "noAssignedForMember": "Aktuell keine E-Mail zugewiesen",
     "assignedCount_one": "{{count}} E-Mail zugewiesen",
     "assignedCount_other": "{{count}} E-Mails zugewiesen",

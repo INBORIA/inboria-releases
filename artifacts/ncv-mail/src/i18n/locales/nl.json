@@ -1962,6 +1962,7 @@
     "subtitle": "Momenteel toegewezen e-mails, per teamlid",
     "noTeammates": "Geen teamlid in uw organisatie",
     "noName": "Geen naam",
+    "meLabel": "Ik",
     "noAssignedForMember": "Op dit moment geen e-mail toegewezen",
     "assignedCount_one": "{{count}} e-mail toegewezen",
     "assignedCount_other": "{{count}} e-mails toegewezen",

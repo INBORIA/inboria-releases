@@ -2599,6 +2599,7 @@ export const GetTeamAssignmentsResponse = zod.object({
       fullName: zod.string(),
       email: zod.string().optional(),
       role: zod.string(),
+      isCurrentUser: zod.boolean(),
       emails: zod.array(
         zod.object({
           id: zod.number(),

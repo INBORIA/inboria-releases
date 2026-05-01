@@ -1962,6 +1962,7 @@
     "subtitle": "Correos asignados actualmente, por compañero",
     "noTeammates": "Ningún compañero en su organización",
     "noName": "Sin nombre",
+    "meLabel": "Yo",
     "noAssignedForMember": "Sin correo asignado por ahora",
     "assignedCount_one": "{{count}} correo asignado",
     "assignedCount_other": "{{count}} correos asignados",

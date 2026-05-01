@@ -1962,6 +1962,7 @@
     "subtitle": "Currently assigned emails, by teammate",
     "noTeammates": "No teammate in your organisation",
     "noName": "No name",
+    "meLabel": "Me",
     "noAssignedForMember": "No email assigned right now",
     "assignedCount_one": "{{count}} email assigned",
     "assignedCount_other": "{{count}} emails assigned",

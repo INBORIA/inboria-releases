@@ -1,4 +1,4 @@
-import { useGetProfile } from "@workspace/api-client-react";
+import { useGetProfile, useGetMyOrganisation } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import {
@@ -54,22 +54,19 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: profile, isLoading } = useGetProfile({
     query: { refetchInterval: 30000, refetchIntervalInBackground: false } as any,
   });
+  const { data: myOrg } = useGetMyOrganisation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
   const totalUsed = ((user as any).emailsUsed || 0) + ((user as any).aiCreditsUsed || 0);
+  const hasTeam = !!(myOrg && (myOrg as any).id);
 
-  // Inboria — Le suivi des mails assignés se fait désormais dans la page
-  // « Activité équipe » (une section par coéquipier). Les anciennes entrées
-  // « Mes assignés » et « Assignés équipe » du menu ont été retirées pour
-  // éviter la confusion (compteurs incohérents, doublons). « Activité équipe »
-  // doit rester visible pour tous les plans (comme l'étaient les anciennes
-  // entrées assignées) — la page elle-même affiche un état vide si
-  // l'utilisateur n'a pas encore d'organisation.
   const baseNavigation: Array<{ name: string; href: string; icon: any }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
-    { name: t("sidebar.teamActivity"), href: "/dashboard/activite-equipe", icon: Activity },
+    ...(hasTeam
+      ? [{ name: t("sidebar.teamActivity"), href: "/dashboard/activite-equipe", icon: Activity }]
+      : []),
     { name: t("sidebar.snoozed", "Reportés"), href: "/dashboard/reportes", icon: BellOff },
     { name: t("sidebar.scheduled", "Programmés"), href: "/dashboard/programmes", icon: CalendarClock },
     { name: t("tasks.title"), href: "/dashboard/taches", icon: CheckSquare },
@@ -85,7 +82,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const isBusiness = (user as any).plan === "business";
   const isInternalAdmin = !!(user as any).isAdmin;
-  const archivesIndex = 9;
+  const archivesIndex = baseNavigation.findIndex((e) => e.href === "/dashboard/archives");
   let navigation = isBusiness
     ? [
         ...baseNavigation.slice(0, archivesIndex + 1),

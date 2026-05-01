@@ -251,13 +251,8 @@ router.get("/team/recent-comments", requireAuth, async (req, res): Promise<void>
   }
 });
 
-// Inboria — Activité équipe : pour chaque coéquipier de l'organisation, on
-// retourne la liste des mails actuellement assignés à ce coéquipier qui sont
-// visibles dans le scope du demandeur (ses mails persos + mails assignés à
-// lui-même + mails des boîtes partagées dont il est membre). On exclut les
-// statuts terminaux (archived/trashed/spam/sent/scheduled). Les mails
-// provenant d'une boîte partagée portent un libellé que le client utilise
-// pour afficher un badge.
+// GET /team/assignments — pour chaque coéquipier, mails assignés visibles
+// dans le scope du demandeur. Utilisateur courant en tête.
 router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => {
   try {
     const orgId = await getOrgIdForMember(req.userId!);
@@ -298,13 +293,9 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
       }
     }
 
-    // Scope visible par le demandeur (mêmes règles que la boîte de réception).
     const requesterMailboxIds = await getMemberMailboxIds(req.userId!);
     const scopeOr = buildInboxScopeOrFilter(req.userId!, requesterMailboxIds);
 
-    // Mails actuellement assignés à n'importe quel coéquipier, dans le scope
-    // visible du demandeur. On limite à un horizon raisonnable pour éviter de
-    // tirer des mails très anciens et garder l'UI réactive.
     const { data: rows, error } = await supabaseAdmin
       .from("emails")
       .select(
@@ -319,8 +310,7 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
       .neq("status", "scheduled")
       .neq("status", "scheduled_failed")
       .neq("status", "supprime")
-      .order("created_at", { ascending: false })
-      .limit(2000);
+      .order("created_at", { ascending: false });
 
     if (error) {
       req.log?.warn?.({ msg: error.message }, "[team/assignments] query failed");
@@ -372,12 +362,15 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
       fullName: profileMap.get(m.user_id) || "",
       email: emailMap.get(m.user_id) || "",
       role: m.role,
+      isCurrentUser: m.user_id === req.userId,
       emails: byMember.get(m.user_id) || [],
     }));
 
-    // On classe les coéquipiers par nombre de mails assignés décroissant
-    // pour mettre en haut ceux qui en ont le plus.
-    result.sort((a, b) => b.emails.length - a.emails.length);
+    result.sort((a, b) => {
+      if (a.isCurrentUser && !b.isCurrentUser) return -1;
+      if (b.isCurrentUser && !a.isCurrentUser) return 1;
+      return b.emails.length - a.emails.length;
+    });
 
     res.json({ members: result });
   } catch (e: any) {

@@ -1952,6 +1952,7 @@
     "subtitle": "Mails actuellement assignés, par coéquipier",
     "noTeammates": "Aucun coéquipier dans votre organisation",
     "noName": "Sans nom",
+    "meLabel": "Moi",
     "noAssignedForMember": "Aucun mail assigné actuellement",
     "assignedCount_one": "{{count}} mail assigné",
     "assignedCount_other": "{{count}} mails assignés",
