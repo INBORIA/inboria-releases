@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { extractEmailAddress } from "@/lib/utils";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
@@ -56,7 +57,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -4085,9 +4086,36 @@ export default function Dashboard() {
 
   const displayedEmailCount = activeEmails?.length || 0;
 
+  const assigneePageTitle = (() => {
+    if (!assigneeFilter) return null;
+    if (assigneeFilter === "me") {
+      return t("inbox.assignedPageMine", { defaultValue: "Mes emails assignés" });
+    }
+    if (assigneeFilter === "any") {
+      return t("inbox.assignedPageTeam", { defaultValue: "Emails assignés à l'équipe" });
+    }
+    const m = (orgMembers as any[] | undefined)?.find((x: any) => String(x.userId) === String(assigneeFilter));
+    const name = m?.fullName || m?.email || t("inbox.assigneeFilterMember", { defaultValue: "ce membre" });
+    return t("inbox.assignedPageMember", { name, defaultValue: `Assignés à ${name}` });
+  })();
+
   return (
     <DashboardLayout>
       <div className="flex flex-col h-full">
+        {assigneePageTitle && (
+          <div className="px-5 pt-4 pb-2 max-w-[1200px] mx-auto w-full">
+            <BackToInboxButton />
+            <div className="mt-1">
+              <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
+                <UserCheck className="w-4 h-4 text-primary" />
+                {assigneePageTitle}
+              </h1>
+              <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+                {t("inbox.assignedPageCount", { count: displayedEmailCount, defaultValue: `${displayedEmailCount} email(s)` })}
+              </p>
+            </div>
+          </div>
+        )}
         <div className="px-5 pt-4 pb-2.5 border-b border-border">
           <div className="flex items-center gap-2 mb-2.5 max-w-[1200px] mx-auto">
             <div className="flex-1 relative">
