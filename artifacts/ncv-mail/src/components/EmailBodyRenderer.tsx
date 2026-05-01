@@ -227,9 +227,42 @@ interface EmailBodyRendererProps {
   sender?: string;
 }
 
+const HEIGHT_CACHE_PREFIX = "ncvmail:bodyH:";
+
+function readCachedHeight(emailId?: number | string): number | null {
+  if (emailId === undefined || emailId === null) return null;
+  try {
+    const raw = sessionStorage.getItem(`${HEIGHT_CACHE_PREFIX}${emailId}`);
+    if (!raw) return null;
+    const n = parseInt(raw, 10);
+    return Number.isFinite(n) && n > 0 ? n : null;
+  } catch {
+    return null;
+  }
+}
+
+function writeCachedHeight(emailId: number | string | undefined, h: number) {
+  if (emailId === undefined || emailId === null) return;
+  try {
+    sessionStorage.setItem(`${HEIGHT_CACHE_PREFIX}${emailId}`, String(h));
+  } catch {}
+}
+
+function findScrollParent(el: HTMLElement | null): HTMLElement | Window {
+  let cur: HTMLElement | null = el?.parentElement ?? null;
+  while (cur) {
+    const cs = getComputedStyle(cur);
+    if (/(auto|scroll|overlay)/.test(cs.overflowY)) return cur;
+    cur = cur.parentElement;
+  }
+  return window;
+}
+
 export function EmailBodyRenderer({ body, emailId, sender }: EmailBodyRendererProps) {
   const iframeRef = useRef<HTMLIFrameElement>(null);
-  const [iframeHeight, setIframeHeight] = useState(200);
+  const initialHeight = useMemo(() => readCachedHeight(emailId) ?? 200, [emailId]);
+  const [iframeHeight, setIframeHeight] = useState(initialHeight);
+  const heightRef = useRef(initialHeight);
   const [renderFailed, setRenderFailed] = useState(false);
 
   const content = useMemo(() => cleanEmailBody(body || ""), [body]);
@@ -241,6 +274,11 @@ export function EmailBodyRenderer({ body, emailId, sender }: EmailBodyRendererPr
 
   useEffect(() => {
     setRenderFailed(false);
+    const cached = readCachedHeight(emailId);
+    if (cached) {
+      heightRef.current = cached;
+      setIframeHeight(cached);
+    }
   }, [body, emailId]);
 
   useEffect(() => {
@@ -263,8 +301,39 @@ export function EmailBodyRenderer({ body, emailId, sender }: EmailBodyRendererPr
           doc.body.getBoundingClientRect().height,
         );
         if (h > 0) {
-          setIframeHeight(Math.ceil(h) + 16);
-          if (h >= 30) measuredOk = true;
+          const newH = Math.ceil(h) + 16;
+          const oldH = heightRef.current;
+          if (newH === oldH) {
+            if (h >= 30) measuredOk = true;
+            return;
+          }
+          const delta = newH - oldH;
+          let needsCompensation = false;
+          if (delta > 0) {
+            try {
+              const rect = iframe.getBoundingClientRect();
+              const viewportH = window.innerHeight || document.documentElement.clientHeight;
+              if (rect.bottom < viewportH - 4) needsCompensation = true;
+            } catch {}
+          }
+          heightRef.current = newH;
+          setIframeHeight(newH);
+          if (needsCompensation) {
+            const scroller = findScrollParent(iframe);
+            requestAnimationFrame(() => {
+              try {
+                if (scroller === window) {
+                  window.scrollBy(0, delta);
+                } else {
+                  (scroller as HTMLElement).scrollTop += delta;
+                }
+              } catch {}
+            });
+          }
+          if (h >= 30) {
+            measuredOk = true;
+            writeCachedHeight(emailId, newH);
+          }
         }
       } catch {}
     };
