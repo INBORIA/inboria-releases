@@ -522,12 +522,20 @@ router.patch("/emails/:id/private", requireAuth, async (req, res): Promise<void>
     // Accept both `is_private` (snake_case, matches the column name and the
     // public spec) and `isPrivate` (camelCase, kept for the existing client
     // call site to avoid a breaking rename). Either form takes precedence
-    // when explicitly provided; otherwise we default to false (un-mark).
+    // when explicitly provided. We require a strict boolean so payloads
+    // like { isPrivate: "false" } don't silently coerce to true.
     const raw =
       typeof req.body?.is_private !== "undefined"
         ? req.body.is_private
         : req.body?.isPrivate;
-    const isPrivate = Boolean(raw);
+    if (typeof raw !== "boolean") {
+      res.status(400).json({
+        error:
+          "is_private (ou isPrivate) doit etre un booleen strict (true ou false).",
+      });
+      return;
+    }
+    const isPrivate = raw;
     const { data: email, error } = await supabaseAdmin
       .from("emails")
       .update({ is_private: isPrivate })

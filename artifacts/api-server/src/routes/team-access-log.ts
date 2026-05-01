@@ -127,27 +127,46 @@ router.get("/admin/team-access-log", requireAuth, async (req, res): Promise<void
       return r.target_value && myAddresses.includes(String(r.target_value).toLowerCase());
     }).slice(0, limit);
 
-    const adminIds = Array.from(new Set(filtered.map((r: any) => r.admin_user_id).filter(Boolean)));
-    const nameMap = new Map<string, string>();
-    if (adminIds.length) {
+    // Resolve admin AND target identities (name + email) for display, mirroring
+    // the contract used by scope=org.
+    const allIds = new Set<string>();
+    for (const r of filtered) {
+      if ((r as any).admin_user_id) allIds.add(String((r as any).admin_user_id));
+      if ((r as any).target_user_id) allIds.add(String((r as any).target_user_id));
+    }
+    const profMap = new Map<string, { name: string; email: string }>();
+    if (allIds.size) {
       const { data: profs } = await supabaseAdmin
         .from("profiles")
-        .select("id, full_name")
-        .in("id", adminIds);
-      for (const p of profs || []) nameMap.set(String(p.id), (p as any).full_name || "");
+        .select("id, full_name, email")
+        .in("id", Array.from(allIds));
+      for (const p of profs || []) {
+        profMap.set(String((p as any).id), {
+          name: (p as any).full_name || "",
+          email: (p as any).email || "",
+        });
+      }
     }
     res.json({
       scope: "mine",
-      entries: filtered.map((r: any) => ({
-        id: r.id,
-        adminUserId: r.admin_user_id,
-        adminName: nameMap.get(String(r.admin_user_id)) || "",
-        targetType: r.target_type,
-        targetValue: r.target_value,
-        emailsSeenCount: r.emails_seen_count,
-        action: r.action,
-        createdAt: r.created_at,
-      })),
+      entries: filtered.map((r: any) => {
+        const admin = profMap.get(String(r.admin_user_id));
+        const target = r.target_user_id ? profMap.get(String(r.target_user_id)) : null;
+        return {
+          id: r.id,
+          adminUserId: r.admin_user_id,
+          adminName: admin?.name || "",
+          adminEmail: admin?.email || "",
+          targetUserId: r.target_user_id,
+          targetName: target?.name || "",
+          targetEmail: target?.email || r.target_value || "",
+          targetType: r.target_type,
+          targetValue: r.target_value,
+          emailsSeenCount: r.emails_seen_count,
+          action: r.action,
+          createdAt: r.created_at,
+        };
+      }),
     });
   } catch (err: any) {
     res.status(500).json({ error: err?.message || "Failed to load access log" });
