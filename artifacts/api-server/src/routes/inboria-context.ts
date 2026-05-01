@@ -413,26 +413,36 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         .not("sent_at", "is", null)
         .order("sent_at", { ascending: false })
         .limit(10),
-      // Assignés à moi (action requise) : mails dont je suis assigné ET
-      // dont l'appartenance est légitime (perso ou boîte partagée membre).
-      // Le AND avec ownershipScopeFilter ferme un éventuel chemin de fuite
-      // cross-tenant en cas de dérive de la colonne `assigned_to`.
-      // En mode admin team on exclut aussi les mails marqués privés (RGPD).
+      // Assignés à moi (action requise) : mails dont assigned_to = me.
+      // IMPORTANT : on s'aligne EXACTEMENT sur ce que voit l'utilisateur
+      // dans /api/emails côté UI (cf. lib/inbox-scope.ts qui inclut la
+      // clause `assigned_to.eq.${userId}` dans le scope inbox sans la
+      // restreindre par ownership). Si Inboria n'inclut PAS un mail que
+      // l'utilisateur voit dans sa page "Assignés", elle hallucine sur le
+      // compte (cas reel : utilisateur voit 4 mails, Inboria n'en
+      // retourne qu'1, parce qu'une garde ownership filtrait les mails
+      // assignés mais loges dans une boîte partagée non-membre ou dans
+      // la boîte perso d'un coéquipier). La cohérence avec l'UI prime
+      // sur la garde théorique cross-tenant : si une dérive existe en
+      // DB, elle doit être corrigée en DB, pas masquée dans Inboria.
+      // Limite alignée sur la réception (25) pour ne pas plafonner.
+      // En mode admin team on garde le scope admin + l'exclusion privée
+      // (RGPD) intacts.
       (adminTeamCtx
         ? supabaseAdmin
             .from("emails")
             .select("sender, subject, summary, priority, created_at, shared_mailbox_id, user_id")
             .eq("is_private", false)
+            .or(ownershipScopeFilter)
         : supabaseAdmin
             .from("emails")
             .select("sender, subject, summary, priority, created_at, shared_mailbox_id")
       )
         .eq("assigned_to", userId)
-        .or(ownershipScopeFilter)
         .neq("status", "archived")
         .is("sent_at", null)
         .order("created_at", { ascending: false })
-        .limit(10),
+        .limit(25),
       // Reportés (snoozés) : mails dont la date de réveil est dans le futur.
       // En mode admin team on exclut les mails privés (RGPD).
       (adminTeamCtx
