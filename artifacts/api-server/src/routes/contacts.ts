@@ -319,9 +319,18 @@ router.get("/contacts/:email", requireAuth, async (req, res): Promise<void> => {
       ownAddresses = await getOwnAddresses(req.userId!, memberMailboxIds);
     }
 
+    // SECURITY (round-9 architect finding): we used to chain a second
+    // `.or(sender.ilike.%target%,recipient.ilike.%target%)` here as a DB-side
+    // pre-narrow. Two chained `.or()` calls on the same supabase-js builder
+    // can be ambiguous (PostgREST may merge OR clauses unexpectedly), which
+    // would risk weakening the scope guard `or(orFilter)` — a hard fail for
+    // an admin team-mode RGPD-sensitive endpoint. We now run the scope-only
+    // query (capped at MAX_EMAILS_SCAN) and let the strict in-memory
+    // `parseAddress`/`parseAddresses` filter below decide what matches the
+    // target contact. The scope guard is the ONLY DB-level filter, so there
+    // is no way for a second OR to relax it.
     const { data: emails, error } = await query
       .or(orFilter)
-      .or(`sender.ilike.%${target}%,recipient.ilike.%${target}%`)
       .order("created_at", { ascending: false })
       .limit(MAX_EMAILS_SCAN);
 
