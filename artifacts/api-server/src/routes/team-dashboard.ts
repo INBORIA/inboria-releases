@@ -315,15 +315,19 @@ router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => 
       profileMap.set(p.id, p.full_name || "");
     }
 
+    // Lookups en parallèle pour éviter une latence O(n) séquentielle.
     const emailMap = new Map<string, string>();
-    for (const uid of memberUserIds) {
-      try {
-        const { data: u } = await supabaseAdmin.auth.admin.getUserById(uid);
-        emailMap.set(uid, u.user?.email || "");
-      } catch {
-        emailMap.set(uid, "");
-      }
-    }
+    const emailLookups = await Promise.all(
+      memberUserIds.map(async (uid) => {
+        try {
+          const { data: u } = await supabaseAdmin.auth.admin.getUserById(uid);
+          return [uid, u.user?.email || ""] as const;
+        } catch {
+          return [uid, ""] as const;
+        }
+      }),
+    );
+    for (const [uid, email] of emailLookups) emailMap.set(uid, email);
 
     const requesterMailboxIds = await getMemberMailboxIds(req.userId!);
     const scopeOr = buildInboxScopeOrFilter(req.userId!, requesterMailboxIds);

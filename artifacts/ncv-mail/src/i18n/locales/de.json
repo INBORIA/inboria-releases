@@ -1978,41 +1978,6 @@
       "daysAgo": "vor {{count}} T."
     }
   },
-  "teamActivityOLD": {
-    "title": "Team-Dashboard",
-    "subtitle": "Überblick über die Aktivitäten Ihres Teams",
-    "members": "Mitglieder",
-    "assignedEmails": "Zugewiesene E-Mails",
-    "archivedEmails": "Archivierte E-Mails",
-    "comments": "Kommentare",
-    "performance": "Leistung nach Mitglied",
-    "noMembers": "Keine Mitglieder in Ihrer Organisation",
-    "noName": "Kein Name",
-    "assigned": "zugewiesen",
-    "archived": "archiviert",
-    "recentActivity": "Aktuelle Aktivitäten",
-    "noActivity": "Keine aktuellen Aktivitäten",
-    "actions": {
-      "assign_email": "hat eine E-Mail zugewiesen",
-      "add_comment": "hat einen Kommentar hinzugefügt",
-      "unassign_email": "hat eine E-Mail abgewiesen",
-      "create_shared_mailbox": "hat ein gemeinsames Postfach erstellt",
-      "archive_email": "hat eine E-Mail archiviert"
-    },
-    "time": {
-      "justNow": "gerade eben",
-      "minutesAgo": "vor {{count}}min",
-      "hoursAgo": "vor {{count}}h",
-      "daysAgo": "vor {{count}}d"
-    },
-    "commentsModalTitle": "Letzte Kommentare",
-    "commentsModalSubtitle": "Die neuesten Kommentare Ihres Teams",
-    "commentsModalEmpty": "Noch keine Kommentare",
-    "commentsModalOpenEmail": "E-Mail öffnen",
-    "commentsModalOn": "zu",
-    "commentsModalDelete": "Löschen",
-    "commentsModalDeleteConfirm": "Diese Notiz endgültig löschen?"
-  },
   "notifications": {
     "title": "Benachrichtigungen",
     "markAllRead": "Alle als gelesen markieren",

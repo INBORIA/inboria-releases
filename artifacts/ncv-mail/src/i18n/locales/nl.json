@@ -1978,41 +1978,6 @@
       "daysAgo": "{{count}} d geleden"
     }
   },
-  "teamActivityOLD": {
-    "title": "Teamdashboard",
-    "subtitle": "Overzicht van de activiteit van uw team",
-    "members": "Leden",
-    "assignedEmails": "Toegewezen e-mails",
-    "archivedEmails": "Gearchiveerde e-mails",
-    "comments": "Opmerkingen",
-    "performance": "Prestaties per lid",
-    "noMembers": "Geen leden in uw organisatie",
-    "noName": "Geen naam",
-    "assigned": "toegewezen",
-    "archived": "gearchiveerd",
-    "recentActivity": "Recente activiteit",
-    "noActivity": "Geen recente activiteit",
-    "actions": {
-      "assign_email": "heeft een e-mail toegewezen",
-      "add_comment": "heeft een opmerking toegevoegd",
-      "unassign_email": "heeft een e-mail vrijgegeven",
-      "create_shared_mailbox": "heeft een gedeelde mailbox aangemaakt",
-      "archive_email": "heeft een e-mail gearchiveerd"
-    },
-    "time": {
-      "justNow": "zojuist",
-      "minutesAgo": "{{count}}min geleden",
-      "hoursAgo": "{{count}}u geleden",
-      "daysAgo": "{{count}}d geleden"
-    },
-    "commentsModalTitle": "Laatste opmerkingen",
-    "commentsModalSubtitle": "De meest recente opmerkingen van uw team",
-    "commentsModalEmpty": "Nog geen opmerkingen",
-    "commentsModalOpenEmail": "E-mail openen",
-    "commentsModalOn": "op",
-    "commentsModalDelete": "Verwijderen",
-    "commentsModalDeleteConfirm": "Deze notitie definitief verwijderen?"
-  },
   "notifications": {
     "title": "Meldingen",
     "markAllRead": "Alles als gelezen markeren",

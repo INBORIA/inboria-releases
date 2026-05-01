@@ -1978,41 +1978,6 @@
       "daysAgo": "hace {{count}} d"
     }
   },
-  "teamActivityOLD": {
-    "title": "Panel de equipo",
-    "subtitle": "Resumen de la actividad de tu equipo",
-    "members": "Miembros",
-    "assignedEmails": "Correos asignados",
-    "archivedEmails": "Correos archivados",
-    "comments": "Comentarios",
-    "performance": "Rendimiento por miembro",
-    "noMembers": "No hay miembros en tu organización",
-    "noName": "Sin nombre",
-    "assigned": "asignados",
-    "archived": "archivados",
-    "recentActivity": "Actividad reciente",
-    "noActivity": "No hay actividad reciente",
-    "actions": {
-      "assign_email": "asignó un correo",
-      "add_comment": "agregó un comentario",
-      "unassign_email": "desasignó un correo",
-      "create_shared_mailbox": "creó un buzón compartido",
-      "archive_email": "archivó un correo"
-    },
-    "time": {
-      "justNow": "justo ahora",
-      "minutesAgo": "hace {{count}}min",
-      "hoursAgo": "hace {{count}}h",
-      "daysAgo": "hace {{count}}d"
-    },
-    "commentsModalTitle": "Últimos comentarios",
-    "commentsModalSubtitle": "Los comentarios más recientes de tu equipo",
-    "commentsModalEmpty": "Aún no hay comentarios",
-    "commentsModalOpenEmail": "Abrir el email",
-    "commentsModalOn": "en",
-    "commentsModalDelete": "Eliminar",
-    "commentsModalDeleteConfirm": "¿Eliminar definitivamente esta nota?"
-  },
   "notifications": {
     "title": "Notificaciones",
     "markAllRead": "Marcar todo como leído",
