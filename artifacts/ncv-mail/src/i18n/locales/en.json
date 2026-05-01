@@ -1976,7 +1976,9 @@
       "minutesAgo": "{{count}}m ago",
       "hoursAgo": "{{count}}h ago",
       "daysAgo": "{{count}}d ago"
-    }
+    },
+    "showMore": "Show more",
+    "shownOfTotal": "{{shown}} of {{total}}"
   },
   "notifications": {
     "title": "Notifications",

@@ -47,10 +47,21 @@ interface MemberSectionProps {
   onOpenEmail: (id: number) => void;
 }
 
+const PAGE_SIZE = 20;
+
 function MemberSection({ member, defaultOpen, onOpenEmail }: MemberSectionProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState<boolean>(defaultOpen);
+  // Pagination par section : on n'affiche que les 20 premiers e-mails par
+  // défaut, puis « Voir plus » charge 20 supplémentaires côté client. Évite
+  // de rendre des centaines de lignes dans le DOM pour les grosses files.
+  const [visibleCount, setVisibleCount] = useState<number>(PAGE_SIZE);
   const count = member.emails.length;
+  const visibleEmails = useMemo(
+    () => member.emails.slice(0, visibleCount),
+    [member.emails, visibleCount],
+  );
+  const hasMore = count > visibleCount;
   const displayName = member.isCurrentUser
     ? t("teamActivity.meLabel")
     : member.fullName || t("teamActivity.noName");
@@ -95,8 +106,9 @@ function MemberSection({ member, defaultOpen, onOpenEmail }: MemberSectionProps)
             {t("teamActivity.noAssignedForMember")}
           </div>
         ) : (
+          <>
           <ul className="border-t border-[#1f2937] divide-y divide-[#1f2937]">
-            {member.emails.map((e: TeamAssignedEmail) => (
+            {visibleEmails.map((e: TeamAssignedEmail) => (
               <li
                 key={e.id}
                 role="button"
@@ -136,6 +148,26 @@ function MemberSection({ member, defaultOpen, onOpenEmail }: MemberSectionProps)
               </li>
             ))}
           </ul>
+          {hasMore ? (
+            <div className="border-t border-[#1f2937] px-4 py-2 flex items-center justify-between gap-3 bg-[#0f1623]">
+              <span className="text-[10px] text-[#8b9cb3] tabular-nums">
+                {t("teamActivity.shownOfTotal", {
+                  shown: visibleCount,
+                  total: count,
+                })}
+              </span>
+              <button
+                type="button"
+                onClick={() =>
+                  setVisibleCount((v) => Math.min(v + PAGE_SIZE, count))
+                }
+                className="text-[11px] font-medium text-primary hover:text-primary/80 transition-colors"
+              >
+                {t("teamActivity.showMore")}
+              </button>
+            </div>
+          ) : null}
+          </>
         )
       ) : null}
     </div>

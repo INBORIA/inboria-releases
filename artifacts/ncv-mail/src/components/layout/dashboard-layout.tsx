@@ -1,4 +1,8 @@
-import { useGetProfile, useGetMyOrganisation } from "@workspace/api-client-react";
+import {
+  useGetProfile,
+  useGetMyOrganisation,
+  useGetOrganisationMembers,
+} from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import {
@@ -55,11 +59,23 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     query: { refetchInterval: 30000, refetchIntervalInBackground: false } as any,
   });
   const { data: myOrg } = useGetMyOrganisation();
+  const orgId = (myOrg as { id?: string } | undefined)?.id;
+  const { data: orgMembersData } = useGetOrganisationMembers({
+    query: { enabled: !!orgId } as any,
+  });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
   const totalUsed = ((user as any).emailsUsed || 0) + ((user as any).aiCreditsUsed || 0);
-  const hasTeam = !!(myOrg && (myOrg as any).id);
+  // Considère « équipe » uniquement s'il existe au moins un coéquipier actif
+  // en plus du compte courant — un solo avec organisation seule n'a pas
+  // besoin de la vue activité équipe.
+  const activeMembersCount = Array.isArray(orgMembersData)
+    ? (orgMembersData as Array<{ status?: string }>).filter(
+        (m) => m.status === "active",
+      ).length
+    : 0;
+  const hasTeam = !!orgId && activeMembersCount > 1;
 
   const baseNavigation: Array<{ name: string; href: string; icon: any }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },

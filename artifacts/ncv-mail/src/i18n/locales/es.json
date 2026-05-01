@@ -1976,7 +1976,9 @@
       "minutesAgo": "hace {{count}} min",
       "hoursAgo": "hace {{count}} h",
       "daysAgo": "hace {{count}} d"
-    }
+    },
+    "showMore": "Ver más",
+    "shownOfTotal": "{{shown}} de {{total}}"
   },
   "notifications": {
     "title": "Notificaciones",

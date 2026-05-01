@@ -1976,7 +1976,9 @@
       "minutesAgo": "{{count}} min geleden",
       "hoursAgo": "{{count}} u geleden",
       "daysAgo": "{{count}} d geleden"
-    }
+    },
+    "showMore": "Meer tonen",
+    "shownOfTotal": "{{shown}} van {{total}}"
   },
   "notifications": {
     "title": "Meldingen",
