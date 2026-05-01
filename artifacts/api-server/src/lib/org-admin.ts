@@ -1,6 +1,14 @@
 import { supabaseAdmin } from "./supabase";
 import { logger } from "./logger";
 
+interface OrgMembershipRow {
+  organisation_id: string | null;
+}
+
+interface MemberIdRow {
+  user_id: string | null;
+}
+
 /**
  * Returns the organisation_id where the user is an active admin, or null.
  * "admin" here is the org admin (organisation_members.role = 'admin'), NOT
@@ -14,7 +22,8 @@ export async function getOrgIdForOrgAdmin(userId: string): Promise<string | null
     .eq("status", "active")
     .eq("role", "admin")
     .maybeSingle();
-  return (data as any)?.organisation_id || null;
+  const row = data as OrgMembershipRow | null;
+  return row?.organisation_id ?? null;
 }
 
 /**
@@ -27,7 +36,8 @@ export async function listOrgMemberIds(orgId: string): Promise<string[]> {
     .select("user_id")
     .eq("organisation_id", orgId)
     .eq("status", "active");
-  return (data || []).map((r: any) => String(r.user_id)).filter(Boolean);
+  const rows = (data || []) as unknown as MemberIdRow[];
+  return rows.map((r) => String(r.user_id || "")).filter(Boolean);
 }
 
 /**
@@ -40,7 +50,8 @@ export async function getOrgIdForMember(userId: string): Promise<string | null> 
     .eq("user_id", userId)
     .eq("status", "active")
     .maybeSingle();
-  return (data as any)?.organisation_id || null;
+  const row = data as OrgMembershipRow | null;
+  return row?.organisation_id ?? null;
 }
 
 export type AdminAccessTargetType =
@@ -48,6 +59,16 @@ export type AdminAccessTargetType =
   | "inbox_overview"
   | "inboria_memory"
   | "member_inbox";
+
+interface AdminTeamAccessLogInsert {
+  organisation_id: string;
+  admin_user_id: string;
+  target_type: AdminAccessTargetType;
+  target_value: string | null;
+  emails_seen_count: number;
+  action: string;
+  target_user_id?: string | null;
+}
 
 /**
  * Append an immutable line to admin_team_access_log. Never throws — failure
@@ -71,7 +92,7 @@ export async function logAdminTeamAccess(params: {
   action?: string;
 }): Promise<void> {
   try {
-    const basePayload: Record<string, any> = {
+    const basePayload: AdminTeamAccessLogInsert = {
       organisation_id: params.organisationId,
       admin_user_id: params.adminUserId,
       target_type: params.targetType,
@@ -79,7 +100,7 @@ export async function logAdminTeamAccess(params: {
       emails_seen_count: params.emailsSeenCount ?? 0,
       action: params.action ?? "view",
     };
-    const payload = targetUserIdColumnAvailable
+    const payload: AdminTeamAccessLogInsert = targetUserIdColumnAvailable
       ? { ...basePayload, target_user_id: params.targetUserId ?? null }
       : basePayload;
     const { error } = await supabaseAdmin.from("admin_team_access_log").insert(payload);
@@ -113,9 +134,10 @@ export async function logAdminTeamAccess(params: {
         "[admin-team-access] failed to write audit row",
       );
     }
-  } catch (err: any) {
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
     logger.warn(
-      { err: err?.message, target: params.targetType },
+      { err: message, target: params.targetType },
       "[admin-team-access] unexpected error writing audit row",
     );
   }

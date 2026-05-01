@@ -465,6 +465,7 @@ router.get("/contacts/:email", requireAuth, async (req, res): Promise<void> => {
     const emailIds = matching.map((e: any) => e.id);
     const userScopeIds = scope.mode === "team" ? scope.memberIds : [req.userId!];
 
+    const emptyResult: { data: unknown[]; error: null } = { data: [], error: null };
     const [tasksRes, apptsRes, attachRes] = await Promise.all([
       emailIds.length
         ? supabaseAdmin
@@ -473,7 +474,7 @@ router.get("/contacts/:email", requireAuth, async (req, res): Promise<void> => {
             .in("email_id", emailIds)
             .in("user_id", userScopeIds)
             .order("created_at", { ascending: false })
-        : Promise.resolve({ data: [] as any[], error: null as any }),
+        : Promise.resolve(emptyResult),
       emailIds.length
         ? supabaseAdmin
             .from("appointments")
@@ -481,14 +482,14 @@ router.get("/contacts/:email", requireAuth, async (req, res): Promise<void> => {
             .in("email_id", emailIds)
             .in("user_id", userScopeIds)
             .order("start_at", { ascending: false })
-        : Promise.resolve({ data: [] as any[], error: null as any }),
+        : Promise.resolve(emptyResult),
       emailIds.length
         ? supabaseAdmin
             .from("email_attachments")
             .select("id, filename, content_type, size, email_id, created_at")
             .in("email_id", emailIds)
             .order("created_at", { ascending: false })
-        : Promise.resolve({ data: [] as any[], error: null as any }),
+        : Promise.resolve(emptyResult),
     ]);
 
     let projects: Array<{ id: string; name: string; reference: string | null }> = [];

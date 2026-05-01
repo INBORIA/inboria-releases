@@ -1,8 +1,92 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { Request, Response, NextFunction } from "express";
+
+interface EmailRow {
+  id: number;
+  sender: string | null;
+  recipient: string | null;
+  subject?: string | null;
+  body?: string | null;
+  status?: string | null;
+  priority?: string | null;
+  summary?: string | null;
+  project_id?: string | null;
+  created_at: string;
+  user_id?: string | null;
+  is_private?: boolean;
+  shared_mailbox_id?: string | null;
+  projects?: { name: string; reference: string | null } | null;
+}
+interface TaskRow {
+  id: string;
+  title: string;
+  done: boolean;
+  due_date: string | null;
+  email_id: number;
+  project_id: string | null;
+  user_id: string | null;
+  created_at: string;
+  projects?: { name: string; reference: string | null } | null;
+}
+interface AppointmentRow {
+  id: string;
+  title: string;
+  location: string | null;
+  start_at: string;
+  end_at: string;
+  all_day: boolean;
+  email_id: number;
+  user_id: string | null;
+}
+interface AttachmentRow {
+  id: string;
+  filename: string;
+  content_type: string;
+  size: number;
+  email_id: number;
+  created_at: string;
+}
+interface ProjectRow {
+  id: string;
+  name: string;
+  reference: string | null;
+}
+interface CommentRow {
+  id: string;
+  email_id: number;
+  user_id: string;
+  body: string;
+  created_at: string;
+}
+interface ProfileRow {
+  id: string;
+  plan?: string;
+  full_name?: string;
+}
+interface ConnectionRow {
+  user_id: string;
+  email_address: string;
+}
+interface SharedMailboxRow {
+  id: string;
+  email_address: string;
+  name?: string | null;
+}
+interface AuditPayload {
+  organisationId: string;
+  adminUserId: string;
+  targetType: string;
+  targetUserId?: string | null;
+  targetValue?: string | null;
+  emailsSeenCount?: number;
+  action?: string;
+}
 
 vi.mock("../middlewares/auth", () => ({
-  requireAuth: (req: any, _res: any, next: any) => {
-    req.userId = req.headers["x-test-user"] || "user-1";
+  requireAuth: (req: Request, _res: Response, next: NextFunction) => {
+    const headerVal = req.headers["x-test-user"];
+    const uid = Array.isArray(headerVal) ? headerVal[0] : headerVal;
+    (req as Request & { userId?: string }).userId = uid || "user-1";
     req.headers.authorization = "Bearer test-token";
     next();
   },
@@ -20,80 +104,109 @@ vi.mock("../lib/inbox-scope", () => ({
 // captures every logAdminTeamAccess call so tests can assert it was written.
 let mockOrgAdminFor: Record<string, string | null> = {};
 let mockOrgMembers: Record<string, string[]> = {};
-const mockAuditLog = vi.fn(async (_p: any) => {});
+const mockAuditLog = vi.fn(async (_p: AuditPayload): Promise<void> => {});
 vi.mock("../lib/org-admin", () => ({
   getOrgIdForOrgAdmin: vi.fn(async (uid: string) => mockOrgAdminFor[uid] ?? null),
   listOrgMemberIds: vi.fn(async (oid: string) => mockOrgMembers[oid] ?? []),
-  logAdminTeamAccess: (params: any) => mockAuditLog(params),
+  logAdminTeamAccess: (params: AuditPayload) => mockAuditLog(params),
 }));
 
-let emailRows: any[] = [];
-let taskRows: any[] = [];
-let appointmentRows: any[] = [];
-let attachmentRows: any[] = [];
-let projectRows: any[] = [];
-let commentRows: any[] = [];
-let profileRows: any[] = [];
-let connectionRows: any[] = [];
-let sharedMailboxRows: any[] = [];
+let emailRows: EmailRow[] = [];
+let taskRows: TaskRow[] = [];
+let appointmentRows: AppointmentRow[] = [];
+let attachmentRows: AttachmentRow[] = [];
+let projectRows: ProjectRow[] = [];
+let commentRows: CommentRow[] = [];
+let profileRows: ProfileRow[] = [];
+let connectionRows: ConnectionRow[] = [];
+let sharedMailboxRows: SharedMailboxRow[] = [];
 
 // Captures the last `.or(...)` filter passed to each table so cross-org
 // isolation tests can assert that the team-scope filter only references
 // member ids of the caller's own organisation.
 const lastOrFilter: Record<string, string> = {};
-function chain(table: string) {
-  const c: any = {
-    _filters: {} as Record<string, any>,
+
+interface ChainResult<T> {
+  data: T[] | T | null;
+  error: null;
+}
+interface QueryChain {
+  _filters: Record<string, unknown>;
+  select: () => QueryChain;
+  eq: (col: string, val: unknown) => QueryChain;
+  or: (filter: string) => QueryChain;
+  in: (col: string, vals: unknown[]) => QueryChain;
+  order: () => QueryChain;
+  limit: () => QueryChain;
+  maybeSingle: () => Promise<ChainResult<unknown>>;
+  then: (resolve: (r: ChainResult<unknown>) => void) => Promise<void>;
+}
+
+function chain(table: string): QueryChain {
+  const c: QueryChain = {
+    _filters: {},
     select: () => c,
-    eq: (col: string, val: any) => {
+    eq: (col, val) => {
       c._filters[col] = val;
       return c;
     },
-    or: (filter: string) => {
+    or: (filter) => {
       lastOrFilter[table] = String(filter);
       return c;
     },
-    in: (col: string, vals: any[]) => {
+    in: (col, vals) => {
       c._filters[`${col}__in`] = vals;
       return c;
     },
     order: () => c,
     limit: () => c,
     maybeSingle: () => {
-      let data: any[] = [];
-      if (table === "profiles") data = profileRows.filter((p: any) => !c._filters.id || p.id === c._filters.id);
-      return Promise.resolve({ data: data[0] || null, error: null });
+      let data: ProfileRow[] = [];
+      if (table === "profiles") {
+        data = profileRows.filter((p) => !c._filters.id || p.id === c._filters.id);
+      }
+      return Promise.resolve({ data: data[0] ?? null, error: null });
     },
-    then: (resolve: any) => {
-      let data: any[] = [];
+    then: (resolve) => {
+      let data: unknown[] = [];
       if (table === "emails") {
         // Apply only filters that the chain explicitly captured. The route
         // sets is_private=false in team mode (so private mails should be
         // dropped from the result). For team-scope OR filters we leave the
         // rows alone — cross-user isolation is enforced by Supabase in prod.
-        data = emailRows.filter((e: any) => {
+        data = emailRows.filter((e) => {
           if ("is_private" in c._filters && e.is_private !== c._filters.is_private) {
             return false;
           }
           return true;
         });
+      } else if (table === "tasks") {
+        data = taskRows.filter((t) => {
+          if (c._filters.user_id && t.user_id !== c._filters.user_id) return false;
+          const inIds = c._filters.user_id__in as string[] | undefined;
+          if (inIds && !inIds.includes(String(t.user_id))) return false;
+          return true;
+        });
+      } else if (table === "appointments") {
+        data = appointmentRows.filter((a) => {
+          if (c._filters.user_id && a.user_id !== c._filters.user_id) return false;
+          const inIds = c._filters.user_id__in as string[] | undefined;
+          if (inIds && !inIds.includes(String(a.user_id))) return false;
+          return true;
+        });
+      } else if (table === "email_attachments") {
+        data = attachmentRows;
+      } else if (table === "projects") {
+        data = projectRows;
+      } else if (table === "email_comments") {
+        data = commentRows;
+      } else if (table === "profiles") {
+        data = profileRows.filter((p) => !c._filters.id || p.id === c._filters.id);
+      } else if (table === "email_connections") {
+        data = connectionRows.filter((row) => !c._filters.user_id || row.user_id === c._filters.user_id);
+      } else if (table === "shared_mailboxes") {
+        data = sharedMailboxRows;
       }
-      else if (table === "tasks") data = taskRows.filter((t) => {
-        if (c._filters.user_id && t.user_id !== c._filters.user_id) return false;
-        if (c._filters.user_id__in && !c._filters.user_id__in.includes(t.user_id)) return false;
-        return true;
-      });
-      else if (table === "appointments") data = appointmentRows.filter((a) => {
-        if (c._filters.user_id && a.user_id !== c._filters.user_id) return false;
-        if (c._filters.user_id__in && !c._filters.user_id__in.includes(a.user_id)) return false;
-        return true;
-      });
-      else if (table === "email_attachments") data = attachmentRows;
-      else if (table === "projects") data = projectRows;
-      else if (table === "email_comments") data = commentRows;
-      else if (table === "profiles") data = profileRows.filter((p: any) => !c._filters.id || p.id === c._filters.id);
-      else if (table === "email_connections") data = connectionRows.filter((row: any) => !c._filters.user_id || row.user_id === c._filters.user_id);
-      else if (table === "shared_mailboxes") data = sharedMailboxRows;
       return Promise.resolve({ data, error: null }).then(resolve);
     },
   };
@@ -104,7 +217,36 @@ vi.mock("../lib/supabase", () => ({
   supabaseAdmin: { from: (t: string) => chain(t) },
 }));
 
-async function call(path: string, userId = "user-1"): Promise<{ status: number; json: any }> {
+interface ContactItem {
+  email: string;
+  name?: string;
+  count: number;
+  lastSeenAt: string;
+}
+interface ContactListBody {
+  contacts: ContactItem[];
+  total: number;
+  totalPages?: number;
+  access?: { mode: string; privateExcluded: boolean };
+}
+interface ContactDetailBody {
+  contact: { email: string; name?: string; totalCount: number; firstSeenAt: string; lastSeenAt: string };
+  conversations: Array<{ id: number; messageCount: number; direction: string; subject: string }>;
+  tasks: Array<{ title: string }>;
+  appointments: unknown[];
+  attachments: unknown[];
+  projects: Array<{ reference: string | null }>;
+  comments: Array<{ authorName: string; emailSubject: string; body: string }>;
+}
+interface CallResult<T> {
+  status: number;
+  json: T & { error?: string };
+}
+
+async function call<T = ContactListBody | ContactDetailBody>(
+  path: string,
+  userId = "user-1",
+): Promise<CallResult<T>> {
   const express = (await import("express")).default;
   const contactsRouter = (await import("./contacts")).default;
   const app = express();
@@ -112,9 +254,12 @@ async function call(path: string, userId = "user-1"): Promise<{ status: number; 
   app.use(contactsRouter);
   return await new Promise((resolve) => {
     const server = app.listen(0, async () => {
-      const port = (server.address() as any).port;
-      const r = await fetch(`http://127.0.0.1:${port}${path}`, { headers: { "x-test-user": userId } });
-      const json = await r.json().catch(() => ({}));
+      const addr = server.address();
+      const port = addr && typeof addr === "object" ? addr.port : 0;
+      const r = await fetch(`http://127.0.0.1:${port}${path}`, {
+        headers: { "x-test-user": userId },
+      });
+      const json = (await r.json().catch(() => ({}))) as CallResult<T>["json"];
       server.close();
       resolve({ status: r.status, json });
     });
@@ -145,13 +290,13 @@ describe("GET /contacts (list)", () => {
       { id: 2, sender: '"Alice" <alice@example.com>', recipient: null, created_at: "2026-04-22T10:00:00Z" },
       { id: 3, sender: "me@x.com", recipient: "bob@example.com", created_at: "2026-04-21T10:00:00Z" },
     ];
-    const res = await call("/contacts");
+    const res = await call<ContactListBody>("/contacts");
     expect(res.status).toBe(200);
     expect(res.json.total).toBe(2);
-    const alice = res.json.contacts.find((c: any) => c.email === "alice@example.com");
-    expect(alice.count).toBe(2);
-    expect(alice.name).toBe("Alice");
-    expect(alice.lastSeenAt).toBe("2026-04-22T10:00:00Z");
+    const alice = res.json.contacts.find((c) => c.email === "alice@example.com");
+    expect(alice?.count).toBe(2);
+    expect(alice?.name).toBe("Alice");
+    expect(alice?.lastSeenAt).toBe("2026-04-22T10:00:00Z");
     expect(res.json.contacts[0].email).toBe("alice@example.com");
   });
 
@@ -160,7 +305,7 @@ describe("GET /contacts (list)", () => {
       { id: 1, sender: '"Alice" <alice@example.com>', recipient: null, created_at: "2026-04-20T10:00:00Z" },
       { id: 2, sender: '"Bob" <bob@x.com>', recipient: null, created_at: "2026-04-22T10:00:00Z" },
     ];
-    const res = await call("/contacts?q=alice");
+    const res = await call<ContactListBody>("/contacts?q=alice");
     expect(res.status).toBe(200);
     expect(res.json.total).toBe(1);
     expect(res.json.contacts[0].email).toBe("alice@example.com");
@@ -171,36 +316,26 @@ describe("GET /contacts (list)", () => {
       { id: 10, sender: '"Alice" <alice@example.com>', recipient: "me@x.com", created_at: "2026-04-20T10:00:00Z" },
       { id: 11, sender: '"Alice" <alice@example.com>', recipient: "me@x.com", created_at: "2026-04-22T10:00:00Z" },
     ];
-    const res = await call("/contacts");
+    const res = await call<ContactListBody>("/contacts");
     expect(res.status).toBe(200);
     expect(res.json.total).toBe(1);
     expect(res.json.contacts[0].email).toBe("alice@example.com");
     expect(res.json.contacts[0].count).toBe(2);
-    expect(res.json.contacts.find((c: any) => c.email === "me@x.com")).toBeUndefined();
+    expect(res.json.contacts.find((c) => c.email === "me@x.com")).toBeUndefined();
   });
 
   it("isolates contacts per user — emails from another user/org are not returned (buildInboxScopeOrFilter is applied)", async () => {
-    // The mocked buildInboxScopeOrFilter returns `user_id.eq.${userId}` and the email chain
-    // returns ALL emailRows ignoring the OR filter (mock limitation), so we instead verify
-    // the route always calls supabaseAdmin with the userId. Cross-user isolation is guaranteed
-    // by the actual Supabase OR filter in production. Here we verify the contract: when the
-    // route is called as user-2 (whose email is not in connectionRows), emails from user-1's
-    // own address (me@x.com) should not be treated as outbound and Bob (recipient) should
-    // appear as an inbound contact instead of being filtered as "self".
     connectionRows = [
       { user_id: "user-1", email_address: "me@x.com" },
       { user_id: "user-2", email_address: "other@y.com" },
     ];
     emailRows = [
-      // From user-2's perspective, "me@x.com" is NOT their own address
       { id: 100, sender: "me@x.com", recipient: "bob@example.com", created_at: "2026-04-20T10:00:00Z" },
     ];
-    const res = await call("/contacts", "user-2");
+    const res = await call<ContactListBody>("/contacts", "user-2");
     expect(res.status).toBe(200);
-    // user-2 should see "me@x.com" as a contact (sender) since it's not their own address
-    const emails = res.json.contacts.map((c: any) => c.email).sort();
+    const emails = res.json.contacts.map((c) => c.email).sort();
     expect(emails).toContain("me@x.com");
-    // user-2 should NOT see their own address other@y.com as a contact
     expect(emails).not.toContain("other@y.com");
   });
 
@@ -213,10 +348,10 @@ describe("GET /contacts (list)", () => {
         created_at: "2026-04-20T10:00:00Z",
       },
     ];
-    const res = await call("/contacts");
+    const res = await call<ContactListBody>("/contacts");
     expect(res.status).toBe(200);
     expect(res.json.total).toBe(2);
-    const emails = res.json.contacts.map((c: any) => c.email).sort();
+    const emails = res.json.contacts.map((c) => c.email).sort();
     expect(emails).toEqual(["alice@example.com", "bob@example.com"]);
   });
 
@@ -227,7 +362,7 @@ describe("GET /contacts (list)", () => {
       { id: 30, sender: '"Carol" <carol@example.com>', recipient: "team@x.com", created_at: "2026-04-20T10:00:00Z", shared_mailbox_id: "mbx1" },
       { id: 31, sender: "team@x.com", recipient: "carol@example.com", created_at: "2026-04-21T10:00:00Z", shared_mailbox_id: "mbx1" },
     ];
-    const res = await call("/contacts");
+    const res = await call<ContactListBody>("/contacts");
     expect(res.status).toBe(200);
     expect(res.json.total).toBe(1);
     expect(res.json.contacts[0].email).toBe("carol@example.com");
@@ -272,7 +407,7 @@ describe("GET /contacts/:email (detail)", () => {
       { id: "u-team", full_name: "Marc" },
     ];
 
-    const res = await call("/contacts/" + encodeURIComponent("alice@example.com"));
+    const res = await call<ContactDetailBody>("/contacts/" + encodeURIComponent("alice@example.com"));
     expect(res.status).toBe(200);
     expect(res.json.contact.email).toBe("alice@example.com");
     expect(res.json.contact.name).toBe("Alice");
@@ -280,18 +415,16 @@ describe("GET /contacts/:email (detail)", () => {
     expect(res.json.contact.firstSeenAt).toBe("2026-04-20T10:00:00Z");
     expect(res.json.contact.lastSeenAt).toBe("2026-04-22T10:00:00Z");
 
-    // Threads: "Devis" + "Re: Devis" group together (2 messages, latest=11=outbound),
-    // "Relance" is its own thread (1 message, inbound)
     expect(res.json.conversations).toHaveLength(2);
-    const devisThread = res.json.conversations.find((c: any) => c.messageCount === 2);
+    const devisThread = res.json.conversations.find((c) => c.messageCount === 2);
     expect(devisThread).toBeDefined();
-    expect(devisThread.id).toBe(11);
-    expect(devisThread.direction).toBe("outbound");
-    expect(devisThread.subject).toBe("Re: Devis");
-    const relanceThread = res.json.conversations.find((c: any) => c.subject === "Relance");
+    expect(devisThread?.id).toBe(11);
+    expect(devisThread?.direction).toBe("outbound");
+    expect(devisThread?.subject).toBe("Re: Devis");
+    const relanceThread = res.json.conversations.find((c) => c.subject === "Relance");
     expect(relanceThread).toBeDefined();
-    expect(relanceThread.messageCount).toBe(1);
-    expect(relanceThread.direction).toBe("inbound");
+    expect(relanceThread?.messageCount).toBe(1);
+    expect(relanceThread?.direction).toBe("inbound");
 
     expect(res.json.tasks).toHaveLength(1);
     expect(res.json.tasks[0].title).toBe("Préparer devis");
@@ -310,7 +443,7 @@ describe("GET /contacts/:email (detail)", () => {
     emailRows = [
       { id: 60, sender: '"Plus Addr" <user+tag@example.com>', recipient: null, subject: "Hello", body: "", status: "unread", priority: "faible", summary: null, project_id: null, created_at: "2026-04-20T10:00:00Z", projects: null },
     ];
-    const res = await call("/contacts/" + encodeURIComponent("user+tag@example.com"));
+    const res = await call<ContactDetailBody>("/contacts/" + encodeURIComponent("user+tag@example.com"));
     expect(res.status).toBe(200);
     expect(res.json.contact.email).toBe("user+tag@example.com");
     expect(res.json.conversations).toHaveLength(1);
@@ -324,7 +457,7 @@ describe("GET /contacts/:email (detail)", () => {
     commentRows = [
       { id: "c-secret", email_id: 70, user_id: "user-1", body: "Confidential note", created_at: "2026-04-20T11:00:00Z" },
     ];
-    const res = await call("/contacts/" + encodeURIComponent("alice@example.com"));
+    const res = await call<ContactDetailBody>("/contacts/" + encodeURIComponent("alice@example.com"));
     expect(res.status).toBe(200);
     expect(res.json.comments).toEqual([]);
   });
@@ -337,7 +470,7 @@ describe("GET /contacts/:email (detail)", () => {
     commentRows = [
       { id: "c-team", email_id: 71, user_id: "user-1", body: "Team note", created_at: "2026-04-20T11:00:00Z" },
     ];
-    const res = await call("/contacts/" + encodeURIComponent("alice@example.com"));
+    const res = await call<ContactDetailBody>("/contacts/" + encodeURIComponent("alice@example.com"));
     expect(res.status).toBe(200);
     expect(res.json.comments).toHaveLength(1);
     expect(res.json.comments[0].body).toBe("Team note");
@@ -351,7 +484,7 @@ describe("GET /contacts/:email (detail)", () => {
       { id: "tA", title: "Mine", done: false, due_date: null, email_id: 50, project_id: null, user_id: "user-1", created_at: "z", projects: null },
       { id: "tB", title: "Other org", done: false, due_date: null, email_id: 50, project_id: null, user_id: "other-user", created_at: "z", projects: null },
     ];
-    const res = await call("/contacts/" + encodeURIComponent("bob@x.com"));
+    const res = await call<ContactDetailBody>("/contacts/" + encodeURIComponent("bob@x.com"));
     expect(res.status).toBe(200);
     expect(res.json.tasks).toHaveLength(1);
     expect(res.json.tasks[0].title).toBe("Mine");
@@ -377,9 +510,9 @@ describe("GET /contacts?scope=team (admin team scope)", () => {
       { id: 1, sender: '"Alice" <alice@example.com>', recipient: null, user_id: "member-2", is_private: false, created_at: "2026-04-20T10:00:00Z" },
       { id: 2, sender: '"Secret" <secret@example.com>', recipient: null, user_id: "member-2", is_private: true, created_at: "2026-04-21T10:00:00Z" },
     ];
-    const res = await call("/contacts?scope=team", "admin-1");
+    const res = await call<ContactListBody>("/contacts?scope=team", "admin-1");
     expect(res.status).toBe(200);
-    const emails = res.json.contacts.map((c: any) => c.email);
+    const emails = res.json.contacts.map((c) => c.email);
     expect(emails).toContain("alice@example.com");
     expect(emails).not.toContain("secret@example.com");
     expect(res.json.access).toEqual({ mode: "team", privateExcluded: true });
@@ -394,12 +527,10 @@ describe("GET /contacts?scope=team (admin team scope)", () => {
     ];
     const res = await call("/contacts?scope=team", "admin-1");
     expect(res.status).toBe(200);
-    const calls = mockAuditLog.mock.calls.map((c: any[]) => c[0]);
-    const memberRows = calls.filter((p: any) => p.targetType === "member_inbox");
+    const calls: AuditPayload[] = mockAuditLog.mock.calls.map((c) => c[0]);
+    const memberRows = calls.filter((p) => p.targetType === "member_inbox");
     expect(memberRows.length).toBeGreaterThan(0);
-    // Strict pivot: the audit row must include the owner's user_id.
-    expect(memberRows.some((p: any) => p.targetUserId === "member-2")).toBe(true);
-    // And every member_inbox row carries the admin's user_id + org id.
+    expect(memberRows.some((p) => p.targetUserId === "member-2")).toBe(true);
     for (const r of memberRows) {
       expect(r.adminUserId).toBe("admin-1");
       expect(r.organisationId).toBe("org-A");
@@ -421,15 +552,12 @@ describe("GET /contacts?scope=team (admin team scope)", () => {
     ];
     const res = await call("/contacts?scope=team", "admin-A");
     expect(res.status).toBe(200);
-    // The OR filter on emails must include admin-A's org members and MUST NOT
-    // include any user_id from org-B (the production isolation mechanism).
     const orFilter = lastOrFilter["emails"] || "";
     expect(orFilter).toContain("admin-A");
     expect(orFilter).toContain("member-A1");
     expect(orFilter).not.toContain("admin-B");
     expect(orFilter).not.toContain("member-B1");
-    // Audit log rows must all carry org-A as the organisationId — never org-B.
-    const calls = mockAuditLog.mock.calls.map((c: any[]) => c[0]);
+    const calls: AuditPayload[] = mockAuditLog.mock.calls.map((c) => c[0]);
     for (const r of calls) {
       expect(r.organisationId).toBe("org-A");
       expect(r.adminUserId).toBe("admin-A");
@@ -442,11 +570,9 @@ describe("GET /contacts?scope=team (admin team scope)", () => {
     emailRows = [
       { id: 1, sender: '"Alice" <alice@example.com>', recipient: null, user_id: "user-1", is_private: true, created_at: "2026-04-20T10:00:00Z" },
     ];
-    const res = await call("/contacts");
+    const res = await call<ContactListBody>("/contacts");
     expect(res.status).toBe(200);
-    // Private emails are NOT excluded from one's own scope (the owner can
-    // always see their own private mail), so Alice still appears.
-    expect(res.json.contacts.map((c: any) => c.email)).toContain("alice@example.com");
+    expect(res.json.contacts.map((c) => c.email)).toContain("alice@example.com");
     expect(mockAuditLog).not.toHaveBeenCalled();
   });
 });

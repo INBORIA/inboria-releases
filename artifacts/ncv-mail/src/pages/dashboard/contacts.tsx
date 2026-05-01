@@ -20,7 +20,26 @@ import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useListContacts, useGetMyOrganisation } from "@workspace/api-client-react";
 
-const LOCALE_MAP: Record<string, any> = { fr, en: enUS, nl, de, es };
+import type { Locale } from "date-fns";
+
+const LOCALE_MAP: Record<string, Locale> = { fr, en: enUS, nl, de, es };
+
+interface Contact {
+  email: string;
+  name?: string;
+  count: number;
+  lastSeenAt: string;
+}
+
+interface ContactListResponse {
+  contacts: Contact[];
+  total: number;
+  totalPages: number;
+}
+
+interface MyOrganisationLite {
+  myRole?: string;
+}
 
 export default function ContactsPage() {
   const { t, i18n } = useTranslation();
@@ -33,7 +52,7 @@ export default function ContactsPage() {
   // Task #176 — Vue dossier équipe (admin org). Toggle persisted in URL via
   // ?scope=team so the choice survives refreshes and shareable links.
   const { data: myOrg } = useGetMyOrganisation();
-  const isOrgAdmin = (myOrg as any)?.myRole === "admin";
+  const isOrgAdmin = (myOrg as MyOrganisationLite | undefined)?.myRole === "admin";
   const initialTeamView = useMemo(() => {
     return new URLSearchParams(search).get("scope") === "team";
   }, [search]);
@@ -68,15 +87,20 @@ export default function ContactsPage() {
   // the default rendering when scope=mine.
   const selfQuery = useListContacts(
     { q: q || undefined, page, pageSize: 30 },
-    { query: { enabled: !teamView } as any },
+    {
+      query: {
+        queryKey: ["contacts", "self", q, page] as const,
+        enabled: !teamView,
+      },
+    },
   );
 
   // Team scope — admin only, separate query so the URL toggle has its own
   // cache key and a failure on team mode never poisons the personal list.
-  const teamQuery = useQuery({
+  const teamQuery = useQuery<ContactListResponse, Error>({
     queryKey: ["contacts", "team", q, page],
     enabled: teamView && isOrgAdmin,
-    queryFn: async () => {
+    queryFn: async (): Promise<ContactListResponse> => {
       const params = new URLSearchParams();
       params.set("scope", "team");
       params.set("page", String(page));
@@ -86,17 +110,18 @@ export default function ContactsPage() {
         credentials: "include",
       });
       if (!res.ok) {
-        const body = await res.json().catch(() => ({}));
+        const body = (await res.json().catch(() => ({}))) as { error?: string };
         throw new Error(body?.error || `HTTP ${res.status}`);
       }
-      return res.json();
+      return (await res.json()) as ContactListResponse;
     },
   });
 
-  const activeQuery = teamView ? teamQuery : selfQuery;
-  const isLoading = (activeQuery as any).isLoading;
-  const data = (activeQuery as any).data as any;
-  const teamLoadError = teamView && (teamQuery.isError as boolean);
+  const isLoading = teamView ? teamQuery.isLoading : selfQuery.isLoading;
+  const data: ContactListResponse | undefined = teamView
+    ? teamQuery.data
+    : (selfQuery.data as ContactListResponse | undefined);
+  const teamLoadError = teamView && teamQuery.isError;
 
   const contacts = data?.contacts || [];
   const total = data?.total || 0;
@@ -190,7 +215,7 @@ export default function ContactsPage() {
                 {t("contacts.teamLoadErrorTitle", "Vue équipe indisponible")}
               </div>
               <div className="opacity-90 mt-0.5">
-                {((teamQuery.error as any)?.message) ||
+                {teamQuery.error?.message ||
                   t(
                     "contacts.teamLoadErrorBody",
                     "Impossible de charger la vue équipe. Vous pouvez revenir à « Mes contacts » ou réessayer.",
@@ -231,7 +256,7 @@ export default function ContactsPage() {
               {t("contacts.totalCount", "{{count}} contacts", { count: total })}
             </div>
             <div className="space-y-1">
-              {contacts.map((c: any) => (
+              {(contacts as Contact[]).map((c) => (
                 <Link
                   key={c.email}
                   href={`/dashboard/contacts/${encodeURIComponent(c.email)}${teamView ? "?scope=team" : ""}`}

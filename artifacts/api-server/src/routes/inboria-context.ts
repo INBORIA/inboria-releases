@@ -398,7 +398,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             .from("shared_mailboxes")
             .select("id, name, email_address")
             .in("id", memberMailboxIds)
-        : Promise.resolve({ data: [] as any[], error: null }),
+        : Promise.resolve({ data: [] as unknown[], error: null }),
       supabaseAdmin
         .from("appointments")
         .select("title, start_at, end_at, location, all_day, confirmed, participants")
