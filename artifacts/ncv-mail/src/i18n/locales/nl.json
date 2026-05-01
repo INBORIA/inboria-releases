@@ -1978,7 +1978,8 @@
       "daysAgo": "{{count}} d geleden"
     },
     "showMore": "Meer tonen",
-    "shownOfTotal": "{{shown}} van {{total}}"
+    "shownOfTotal": "{{shown}} van {{total}}",
+    "loadError": "Teamactiviteit kan momenteel niet worden geladen."
   },
   "notifications": {
     "title": "Meldingen",

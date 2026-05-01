@@ -1978,7 +1978,8 @@
       "daysAgo": "hace {{count}} d"
     },
     "showMore": "Ver más",
-    "shownOfTotal": "{{shown}} de {{total}}"
+    "shownOfTotal": "{{shown}} de {{total}}",
+    "loadError": "No se puede cargar la actividad del equipo en este momento."
   },
   "notifications": {
     "title": "Notificaciones",

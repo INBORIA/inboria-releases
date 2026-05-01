@@ -1978,7 +1978,8 @@
       "daysAgo": "{{count}}d ago"
     },
     "showMore": "Show more",
-    "shownOfTotal": "{{shown}} of {{total}}"
+    "shownOfTotal": "{{shown}} of {{total}}",
+    "loadError": "Unable to load team activity right now."
   },
   "notifications": {
     "title": "Notifications",

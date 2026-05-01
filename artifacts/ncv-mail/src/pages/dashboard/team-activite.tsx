@@ -177,7 +177,7 @@ function MemberSection({ member, defaultOpen, onOpenEmail }: MemberSectionProps)
 export default function TeamActivitePage() {
   const { t } = useTranslation();
   const [, setLocation] = useLocation();
-  const { data, isLoading } = useGetTeamAssignments();
+  const { data, isLoading, isError } = useGetTeamAssignments();
 
   const members: TeamMemberAssignments[] = useMemo(() => {
     const payload = data as TeamAssignmentsResponse | undefined;
@@ -197,6 +197,19 @@ export default function TeamActivitePage() {
       <DashboardLayout>
         <div className="flex items-center justify-center py-20">
           <Loader2 className="h-6 w-6 animate-spin text-primary" />
+        </div>
+      </DashboardLayout>
+    );
+  }
+
+  if (isError) {
+    return (
+      <DashboardLayout>
+        <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-5">
+          <BackToInboxButton />
+          <div className="bg-[#141c2b] border border-red-500/30 rounded-lg p-8 text-center text-[12px] text-red-300">
+            {t("teamActivity.loadError")}
+          </div>
         </div>
       </DashboardLayout>
     );

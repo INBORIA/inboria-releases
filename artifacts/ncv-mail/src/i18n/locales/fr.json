@@ -1968,7 +1968,8 @@
       "daysAgo": "il y a {{count}}j"
     },
     "showMore": "Voir plus",
-    "shownOfTotal": "{{shown}} sur {{total}}"
+    "shownOfTotal": "{{shown}} sur {{total}}",
+    "loadError": "Impossible de charger l'activité de l'équipe pour le moment."
   },
   "notifications": {
     "title": "Notifications",
