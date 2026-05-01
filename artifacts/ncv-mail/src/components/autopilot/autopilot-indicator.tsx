@@ -48,6 +48,11 @@ const ACCENT: Record<EventTypeKey, string> = {
   follow_up_detected: "text-orange-300",
 };
 
+// Fenetre "acting" cote client : doit refleter exactement la valeur
+// serveur (services/autopilot-events.ts ACTIVE_THRESHOLD_MS) pour que la
+// pilule transitionne au moment attendu, sans dependre du polling 60s.
+const ACTIVE_WINDOW_MS = 5_000;
+
 function formatRelative(iso: string, lang: string): string {
   const ms = Date.now() - new Date(iso).getTime();
   if (ms < 60_000) return lang === "fr" ? "à l'instant" : "just now";
@@ -71,7 +76,10 @@ export function AutopilotIndicator() {
     query: { refetchInterval: 60_000, staleTime: 10_000 } as any,
   });
 
-  // Re-render every 30s so relative timestamps stay fresh
+  // Re-render every 30s so relative timestamps stay fresh, ET tick rapide
+  // (1s) tant que la pilule est en mode "acting" pour faire transitionner
+  // la badge vers "done" pile a la fin de la fenetre active locale (5s),
+  // sans devoir attendre le prochain polling serveur (60s).
   useEffect(() => {
     const id = setInterval(() => setTick((n) => n + 1), 30_000);
     return () => clearInterval(id);
@@ -111,10 +119,27 @@ export function AutopilotIndicator() {
     };
   }, [open]);
 
-  const isActive = !!data?.isActive;
   const total = data?.todayCounts?.total ?? 0;
   const recent = useMemo(() => data?.recent ?? [], [data?.recent]);
   const latest = recent[0];
+  // On RECALCULE isActive cote client a partir du dernier evenement, avec
+  // la meme fenetre que le serveur (ACTIVE_WINDOW_MS = 5s). Cela evite
+  // que la badge "acting" reste affichee jusqu'au prochain polling 60s
+  // alors que le serveur l'a deja flippee a "done". On garde le flag
+  // serveur comme garde-fou si latest est absent.
+  const isActive = latest
+    ? Date.now() - new Date(latest.createdAt).getTime() < ACTIVE_WINDOW_MS
+    : !!data?.isActive;
+
+  // Tick rapide (1s) UNIQUEMENT tant qu'on est dans la fenetre acting :
+  // force un re-render au moment exact ou la fenetre expire, pour que la
+  // pilule passe automatiquement de "acting" (bleu) a "done" (vert) en
+  // moins de 5s, sans dependre du polling reseau.
+  useEffect(() => {
+    if (!isActive) return;
+    const id = setInterval(() => setTick((n) => n + 1), 1_000);
+    return () => clearInterval(id);
+  }, [isActive]);
 
   const labelFor = (type: EventTypeKey) => t(`autopilot.events.${type}`);
 
