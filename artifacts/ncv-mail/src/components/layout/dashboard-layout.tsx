@@ -140,11 +140,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     setLocation("/login");
   };
 
-  const usagePercent = Math.min(
-    100,
-    (totalUsed / Math.max(1, (user as any).emailsQuota)) * 100
-  );
-
   const SidebarContent = () => (
     <div className="flex h-full flex-col">
       <div className="flex h-28 shrink-0 flex-col items-center justify-center px-4 border-b border-[#1f2937]">
@@ -186,31 +181,6 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         })}
       </nav>
 
-      <div className="p-2.5 mt-auto border-t border-[#1f2937]">
-        <div className="px-2.5 py-2 mb-2">
-          <div className="flex justify-between items-center mb-1.5">
-            <span className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">
-              {t("sidebar.aiCredits")}
-            </span>
-            <span className="text-[10px] font-medium text-white">
-              {totalUsed}/{(user as any).emailsQuota}
-            </span>
-          </div>
-          <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
-            <div
-              className={cn(
-                "h-full rounded-full transition-all",
-                usagePercent >= 90 ? "bg-red-500" : usagePercent >= 80 ? "bg-amber-500" : "bg-primary"
-              )}
-              style={{ width: `${usagePercent}%` }}
-            />
-          </div>
-          <div className="mt-1 text-[9px] text-[#6b7d96] flex justify-between">
-            <span>{t("sidebar.creditsBreakdownMails", { count: (user as any).emailsUsed || 0 })}</span>
-            <span>{t("sidebar.creditsBreakdownAi", { count: (user as any).aiCreditsUsed || 0 })}</span>
-          </div>
-        </div>
-      </div>
     </div>
   );
 

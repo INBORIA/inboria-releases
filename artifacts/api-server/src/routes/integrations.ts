@@ -156,7 +156,7 @@ async function requireProPlan(userId: string): Promise<boolean> {
     .eq("id", userId)
     .single();
   if (!profile) return false;
-  return ["pro", "business", "plus"].includes(profile.plan);
+  return ["pro", "business"].includes(profile.plan);
 }
 
 router.get("/integrations", requireAuth, async (req, res): Promise<void> => {
@@ -192,7 +192,7 @@ router.get("/integrations/hubspot/connect", requireAuth, async (req, res): Promi
     res.status(400).json({ error: "HubSpot integration not configured" });
     return;
   }
-  // CRM accessible a tous les plans (Free, Solo, Pro, Business, Plus)
+  // CRM accessible a tous les plans (Free, Solo, Pro, Business)
   const state = createSignedState(req.userId!);
   const params = new URLSearchParams({
     client_id: HUBSPOT_CLIENT_ID,
@@ -677,7 +677,7 @@ router.get("/integrations/pipedrive/connect", requireAuth, async (req, res): Pro
     res.status(400).json({ error: "Pipedrive integration not configured" });
     return;
   }
-  // CRM accessible a tous les plans (Free, Solo, Pro, Business, Plus)
+  // CRM accessible a tous les plans (Free, Solo, Pro, Business)
   const state = createSignedState(req.userId!);
   const params = new URLSearchParams({
     client_id: PIPEDRIVE_CLIENT_ID,
