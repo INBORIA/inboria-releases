@@ -536,7 +536,7 @@ router.patch("/emails/:id/private", requireAuth, async (req, res): Promise<void>
       return;
     }
     const isPrivate = raw;
-    const { data: email, error } = await supabaseAdmin
+    const { data, error } = await supabaseAdmin
       .from("emails")
       .update({ is_private: isPrivate })
       .eq("id", req.params.id)
@@ -547,19 +547,22 @@ router.patch("/emails/:id/private", requireAuth, async (req, res): Promise<void>
       res.status(500).json({ error: error.message });
       return;
     }
+    const email = data as { id: string; is_private: boolean | null } | null;
     if (!email) {
       res.status(404).json({ error: "Email introuvable ou vous n'en êtes pas propriétaire." });
       return;
     }
     // Return both shapes so any client (snake or camel) can read the value
     // without a follow-up roundtrip.
+    const value = Boolean(email.is_private);
     res.json({
       id: email.id,
-      is_private: Boolean((email as any).is_private),
-      isPrivate: Boolean((email as any).is_private),
+      is_private: value,
+      isPrivate: value,
     });
-  } catch (err: any) {
-    res.status(500).json({ error: err?.message || "Failed to update privacy flag" });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : "Failed to update privacy flag";
+    res.status(500).json({ error: message });
   }
 });
 

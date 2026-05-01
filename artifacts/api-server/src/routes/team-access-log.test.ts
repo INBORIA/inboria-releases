@@ -1,8 +1,32 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
+import type { Request, Response, NextFunction } from "express";
+
+interface LogRow {
+  id: number;
+  organisation_id: string;
+  admin_user_id: string;
+  target_user_id: string | null;
+  target_type: string;
+  target_value: string | null;
+  emails_seen_count: number;
+  action: string;
+  created_at: string;
+}
+interface ConnRow {
+  user_id: string;
+  email_address: string;
+}
+interface ProfileRow {
+  id: string;
+  full_name?: string;
+  email?: string;
+}
 
 vi.mock("../middlewares/auth", () => ({
-  requireAuth: (req: any, _res: any, next: any) => {
-    req.userId = req.headers["x-test-user"] || "user-1";
+  requireAuth: (req: Request, _res: Response, next: NextFunction) => {
+    const headerVal = req.headers["x-test-user"];
+    const uid = Array.isArray(headerVal) ? headerVal[0] : headerVal;
+    (req as Request & { userId?: string }).userId = uid || "user-1";
     next();
   },
 }));
@@ -14,41 +38,54 @@ vi.mock("../lib/org-admin", () => ({
   getOrgIdForMember: vi.fn(async (uid: string) => mockOrgMemberFor[uid] ?? null),
 }));
 
-let logRows: any[] = [];
-let connectionRows: any[] = [];
-let profileRows: any[] = [];
+let logRows: LogRow[] = [];
+let connectionRows: ConnRow[] = [];
+let profileRows: ProfileRow[] = [];
 
-function chain(table: string) {
-  const c: any = {
-    _filters: {} as Record<string, any>,
+interface ChainResult {
+  data: unknown[];
+  error: null;
+}
+interface QueryChain {
+  _filters: Record<string, unknown>;
+  select: () => QueryChain;
+  eq: (col: string, val: unknown) => QueryChain;
+  in: (col: string, vals: unknown[]) => QueryChain;
+  order: () => QueryChain;
+  limit: () => QueryChain;
+  then: (resolve: (r: ChainResult) => void) => Promise<void>;
+}
+
+function chain(table: string): QueryChain {
+  const c: QueryChain = {
+    _filters: {},
     select: () => c,
-    eq: (col: string, val: any) => {
+    eq: (col, val) => {
       c._filters[col] = val;
       return c;
     },
-    in: (col: string, vals: any[]) => {
+    in: (col, vals) => {
       c._filters[`${col}__in`] = vals;
       return c;
     },
     order: () => c,
     limit: () => c,
-    then: (resolve: any) => {
-      let data: any[] = [];
+    then: (resolve) => {
+      let data: unknown[] = [];
       if (table === "admin_team_access_log") {
-        data = logRows.filter((r: any) => {
+        data = logRows.filter((r) => {
           if (c._filters.organisation_id && r.organisation_id !== c._filters.organisation_id) {
             return false;
           }
           return true;
         });
       } else if (table === "email_connections") {
-        data = connectionRows.filter((r: any) =>
+        data = connectionRows.filter((r) =>
           !c._filters.user_id || r.user_id === c._filters.user_id,
         );
       } else if (table === "profiles") {
-        data = profileRows.filter((p: any) =>
-          !c._filters.id__in || c._filters.id__in.includes(p.id),
-        );
+        const ids = c._filters.id__in as string[] | undefined;
+        data = profileRows.filter((p) => !ids || ids.includes(p.id));
       }
       return Promise.resolve({ data, error: null }).then(resolve);
     },
@@ -60,7 +97,12 @@ vi.mock("../lib/supabase", () => ({
   supabaseAdmin: { from: (t: string) => chain(t) },
 }));
 
-async function call(path: string, userId = "user-1"): Promise<{ status: number; json: any }> {
+interface CallResult {
+  status: number;
+  json: { scope?: string; entries?: Array<Record<string, unknown>>; error?: string };
+}
+
+async function call(path: string, userId = "user-1"): Promise<CallResult> {
   const express = (await import("express")).default;
   const router = (await import("./team-access-log")).default;
   const app = express();
@@ -68,11 +110,12 @@ async function call(path: string, userId = "user-1"): Promise<{ status: number; 
   app.use(router);
   return await new Promise((resolve) => {
     const server = app.listen(0, async () => {
-      const port = (server.address() as any).port;
+      const addr = server.address();
+      const port = addr && typeof addr === "object" ? addr.port : 0;
       const r = await fetch(`http://127.0.0.1:${port}${path}`, {
         headers: { "x-test-user": userId },
       });
-      const json = await r.json().catch(() => ({}));
+      const json = (await r.json().catch(() => ({}))) as CallResult["json"];
       server.close();
       resolve({ status: r.status, json });
     });
@@ -111,7 +154,7 @@ describe("GET /admin/team-access-log?scope=org", () => {
     expect(res.status).toBe(200);
     expect(res.json.scope).toBe("org");
     expect(res.json.entries).toHaveLength(1);
-    const e = res.json.entries[0];
+    const e = (res.json.entries ?? [])[0];
     expect(e.id).toBe(1);
     expect(e.adminName).toBe("Admin Alpha");
     expect(e.adminEmail).toBe("admin@a.com");
@@ -133,37 +176,32 @@ describe("GET /admin/team-access-log?scope=mine (default)", () => {
     mockOrgMemberFor = { "member-2": "org-A" };
     connectionRows = [{ user_id: "member-2", email_address: "m2@x.com" }];
     logRows = [
-      // Strict pivot match: target_user_id === caller
       { id: 10, organisation_id: "org-A", admin_user_id: "admin-1", target_user_id: "member-2", target_type: "member_inbox", target_value: "m2@x.com", emails_seen_count: 4, action: "view_inboria_team", created_at: "2026-04-20T10:00:00Z" },
-      // Different teammate — must NOT appear in member-2's journal
       { id: 11, organisation_id: "org-A", admin_user_id: "admin-1", target_user_id: "member-3", target_type: "member_inbox", target_value: "m3@x.com", emails_seen_count: 1, action: "view_inboria_team", created_at: "2026-04-21T10:00:00Z" },
-      // Org-wide aggregate — intentionally excluded from "mine"
       { id: 12, organisation_id: "org-A", admin_user_id: "admin-1", target_user_id: null, target_type: "inbox_overview", target_value: null, emails_seen_count: 50, action: "view", created_at: "2026-04-22T10:00:00Z" },
     ];
     profileRows = [{ id: "admin-1", full_name: "Admin One" }];
     const res = await call("/admin/team-access-log", "member-2");
     expect(res.status).toBe(200);
     expect(res.json.scope).toBe("mine");
-    const ids = res.json.entries.map((e: any) => e.id);
+    const ids = (res.json.entries ?? []).map((e) => e.id);
     expect(ids).toContain(10);
     expect(ids).not.toContain(11);
     expect(ids).not.toContain(12);
-    expect(res.json.entries[0].adminName).toBe("Admin One");
+    expect((res.json.entries ?? [])[0].adminName).toBe("Admin One");
   });
 
   it("legacy fallback: rows written before target_user_id existed are matched by target_value === my email", async () => {
     mockOrgMemberFor = { "member-2": "org-A" };
     connectionRows = [{ user_id: "member-2", email_address: "m2@x.com" }];
     logRows = [
-      // Legacy member_inbox row: target_user_id null, but target_value = my email
       { id: 20, organisation_id: "org-A", admin_user_id: "admin-1", target_user_id: null, target_type: "member_inbox", target_value: "m2@x.com", emails_seen_count: 7, action: "view_inboria_team", created_at: "2026-04-20T10:00:00Z" },
-      // Legacy member_inbox row for someone else — must NOT appear
       { id: 21, organisation_id: "org-A", admin_user_id: "admin-1", target_user_id: null, target_type: "member_inbox", target_value: "m3@x.com", emails_seen_count: 1, action: "view_inboria_team", created_at: "2026-04-21T10:00:00Z" },
     ];
     profileRows = [{ id: "admin-1", full_name: "Admin One" }];
     const res = await call("/admin/team-access-log", "member-2");
     expect(res.status).toBe(200);
-    const ids = res.json.entries.map((e: any) => e.id);
+    const ids = (res.json.entries ?? []).map((e) => e.id);
     expect(ids).toContain(20);
     expect(ids).not.toContain(21);
   });
@@ -172,15 +210,13 @@ describe("GET /admin/team-access-log?scope=mine (default)", () => {
     mockOrgMemberFor = { "member-2": "org-A" };
     connectionRows = [{ user_id: "member-2", email_address: "m2@x.com" }];
     logRows = [
-      // Row in my org targeting me
       { id: 30, organisation_id: "org-A", admin_user_id: "admin-A", target_user_id: "member-2", target_type: "contact", target_value: "client@x.com", emails_seen_count: 1, action: "view", created_at: "2026-04-20T10:00:00Z" },
-      // Row in a DIFFERENT org that happens to mention my email — must NOT leak.
       { id: 31, organisation_id: "org-B", admin_user_id: "admin-B", target_user_id: "member-2", target_type: "contact", target_value: "m2@x.com", emails_seen_count: 99, action: "view", created_at: "2026-04-21T10:00:00Z" },
     ];
     profileRows = [{ id: "admin-A", full_name: "Admin A" }];
     const res = await call("/admin/team-access-log", "member-2");
     expect(res.status).toBe(200);
-    const ids = res.json.entries.map((e: any) => e.id);
+    const ids = (res.json.entries ?? []).map((e) => e.id);
     expect(ids).toContain(30);
     expect(ids).not.toContain(31);
   });
