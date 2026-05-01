@@ -96,31 +96,39 @@ describe("markConnectionFailure", () => {
 });
 
 describe("runAutoSync (integration: end-to-end isolation)", () => {
-  it("processes every connection even if one provider call rejects, and records the failure for the bad one only", async () => {
-    rpcMock.mockResolvedValue({ error: null });
+  // 30s timeout: this test does a dynamic `await import("./auto-sync")` which
+  // pulls in heavy modules (`googleapis`, `imapflow`, `mailparser`, `openai`,
+  // hubspot/pipedrive clients, etc.). On cold start the import can take
+  // 4–6s on its own, occasionally pushing past Vitest's 5s default.
+  it(
+    "processes every connection even if one provider call rejects, and records the failure for the bad one only",
+    async () => {
+      rpcMock.mockResolvedValue({ error: null });
 
-    const { runAutoSync } = await import("./auto-sync");
+      const { runAutoSync } = await import("./auto-sync");
 
-    const dispatcher = vi.fn(async (conn: any) => {
-      if (conn.id === "broken") throw new Error("client.connect ECONNREFUSED");
-      return 4;
-    });
+      const dispatcher = vi.fn(async (conn: any) => {
+        if (conn.id === "broken") throw new Error("client.connect ECONNREFUSED");
+        return 4;
+      });
 
-    await runAutoSync({
-      connections: [
-        { id: "ok-1", email_address: "a@x", provider: "imap" },
-        { id: "broken", email_address: "b@x", provider: "imap" },
-        { id: "ok-2", email_address: "c@x", provider: "outlook" },
-      ],
-      dispatcher,
-      skipBackfill: true,
-    });
+      await runAutoSync({
+        connections: [
+          { id: "ok-1", email_address: "a@x", provider: "imap" },
+          { id: "broken", email_address: "b@x", provider: "imap" },
+          { id: "ok-2", email_address: "c@x", provider: "outlook" },
+        ],
+        dispatcher,
+        skipBackfill: true,
+      });
 
-    expect(dispatcher).toHaveBeenCalledTimes(3);
-    expect(rpcMock).toHaveBeenCalledTimes(1);
-    expect(rpcMock.mock.calls[0][1].p_id).toBe("broken");
-    expect(rpcMock.mock.calls[0][1].p_error_message).toContain("client.connect ECONNREFUSED");
-  });
+      expect(dispatcher).toHaveBeenCalledTimes(3);
+      expect(rpcMock).toHaveBeenCalledTimes(1);
+      expect(rpcMock.mock.calls[0][1].p_id).toBe("broken");
+      expect(rpcMock.mock.calls[0][1].p_error_message).toContain("client.connect ECONNREFUSED");
+    },
+    30_000,
+  );
 });
 
 describe("runSyncLoop (runAutoSync isolation behavior)", () => {

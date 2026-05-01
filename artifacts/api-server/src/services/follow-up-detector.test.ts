@@ -74,7 +74,12 @@ describe("follow-up-detector.detectForUser", () => {
         // inbound query path: recipient is null
         return { data: [] };
       }
-      // sent emails path
+      // sent emails path. NOTE: external_id MUST be null for the candidate
+      // to be picked up by the detector — see follow-up-detector.ts: only
+      // mails sent FROM Inboria (POST /emails/send) have external_id IS NULL.
+      // Mails synchronised from Gmail/Outlook/IMAP have a non-null
+      // external_id and are explicitly excluded (comment around L137-146)
+      // to avoid generating relance suggestions for ALL outbound mail.
       return {
         data: [
           {
@@ -83,7 +88,7 @@ describe("follow-up-detector.detectForUser", () => {
             recipient: "client@example.com",
             subject: "Devis Q2",
             created_at: oldSent,
-            external_id: "ext-42",
+            external_id: null,
           },
         ],
       };

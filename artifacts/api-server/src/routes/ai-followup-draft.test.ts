@@ -1,5 +1,12 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
+// 30s per-test timeout: the helper `callRoute` does a dynamic
+// `await import("./ai")` which transitively loads heavy modules
+// (`openai`, the inboria-prompt builder + Supabase client tree, etc.).
+// On cold start this can take 4–6s on its own and occasionally pushes
+// past Vitest's 5s default — making the assertion-only tests flake.
+vi.setConfig({ testTimeout: 30_000 });
+
 // --- Mocks ---
 const credits = {
   checkEntitlement: vi.fn(),
