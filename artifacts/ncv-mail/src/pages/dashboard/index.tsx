@@ -4116,6 +4116,15 @@ export default function Dashboard() {
             </div>
           </div>
         )}
+        {/* Toute la barre d'outils de l'inbox (recherche, actualiser, nouvel
+            email, onglets Reception/Boites partagees/Spam/Corbeille, selecteur
+            de compte, filtres priorite/categorie/tri/CRM) est masquee quand
+            la page est utilisee comme vue dediee "Mes emails assignes" /
+            "Equipe" / "Membre". Sans cela, l'utilisateur voyait tout le
+            chrome de l'inbox au-dessus de sa liste filtree, ce qui rendait
+            la page indistinguable de la reception et inutilisable comme vue
+            dediee — cf. retour utilisateur du 1 mai 2026. */}
+        {!assigneeFilter && (
         <div className="px-5 pt-4 pb-2.5 border-b border-border">
           <div className="flex items-center gap-2 mb-2.5 max-w-[1200px] mx-auto">
             <div className="flex-1 relative">
@@ -4485,6 +4494,7 @@ export default function Dashboard() {
           )}
 
         </div>
+        )}
 
         <div className="flex-1 overflow-auto">
           <div className="p-5 max-w-[1200px] mx-auto flex flex-col md:flex-row gap-5">
@@ -4652,6 +4662,12 @@ export default function Dashboard() {
                 </>
               ) : (
                 <>
+                  {/* Cartes de stats Urgents/Moyens/Faibles : visibles
+                      uniquement en vue inbox normale. En vue "Assignes",
+                      ces compteurs reflettent la priorite de TOUTE l'org
+                      (source : /emails/summary), pas du filtre assignee
+                      courant — les afficher serait trompeur. */}
+                  {!assigneeFilter && (
                   <div className="grid grid-cols-3 gap-2 mb-4">
                     <div
                       className={`rounded-lg border p-3 cursor-pointer transition-colors ${filterPriority === "urgent" ? "border-red-500/50 bg-red-500/15" : "border-red-500/20 bg-red-500/5 hover:bg-red-500/10"}`}
@@ -4681,32 +4697,12 @@ export default function Dashboard() {
                       </div>
                     </div>
                   </div>
+                  )}
 
-                  {assigneeFilter && assigneeFilter !== "me" && assigneeFilter !== "any" && (() => {
-                    const memberName = (() => {
-                            const m = (orgMembers as any[] | undefined)?.find((x: any) => String(x.userId) === String(assigneeFilter));
-                            return m?.fullName || m?.email || t("inbox.assigneeFilterMember", { defaultValue: "ce membre" });
-                          })();
-                    return (
-                      <div className="flex items-center gap-2 mb-2 p-2.5 rounded-lg border border-primary/30 bg-primary/[0.06]">
-                        <UserPlus className="w-3.5 h-3.5 text-primary shrink-0" />
-                        <span className="text-[11px] text-white">
-                          {t("inbox.assigneeFilterLabel", { defaultValue: "Filtré sur" })}{" "}
-                          <span className="font-semibold">{memberName}</span>
-                        </span>
-                        <div className="flex-1" />
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          onClick={clearAssigneeFilter}
-                          className="h-6 px-2 text-[10px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
-                        >
-                          <X className="w-3 h-3 mr-1" />
-                          {t("inbox.clearFilter", { defaultValue: "Effacer le filtre" })}
-                        </Button>
-                      </div>
-                    );
-                  })()}
+                  {/* Banniere "Filtre sur <membre>" supprimee : redondante
+                      avec l'en-tete dedie "Assignes a <membre>" affiche
+                      tout en haut de la page quand assigneeFilter cible
+                      un membre specifique. */}
 
                   <div data-selection-bar className={`flex items-center gap-2 mb-2 p-2.5 rounded-lg border h-[40px] ${selectionMode ? "bg-primary/[0.08] border-primary/20" : "bg-card/50 border-border"}`}>
                     <button
@@ -4858,6 +4854,12 @@ export default function Dashboard() {
               )}
             </div>
 
+            {/* Sidebar droite "Categories" : pas affichee sur la vue
+                "Assignes". Les compteurs viennent de /category-counts qui
+                couvre toute l'org (pas filtres par assignee), donc
+                l'afficher serait trompeur — l'utilisateur a vu "720"
+                alors que sa liste assignee comptait 0 emails. */}
+            {!assigneeFilter && (
             <div className="w-full md:w-[240px] shrink-0 space-y-3">
               {/* Note : le panneau HubSpot a été déplacé exclusivement dans la
                   vue détail (cf. branche `if (selectedEmail) return ...` plus
@@ -5001,6 +5003,7 @@ export default function Dashboard() {
                 )}
               </div>
             </div>
+            )}
           </div>
         </div>
       </div>
