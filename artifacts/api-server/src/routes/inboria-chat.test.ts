@@ -47,17 +47,22 @@ vi.mock("openai", () => ({
 
 // --- Stub Supabase chainable, override par-table ---
 // Par defaut chaque table renvoie {data: [], error: null} sur tout
-// terminal (.then / await). Les tests redefinissent le retour de la
-// table "emails" pour creer le scenario known/unknown.
+// terminal (.then / await). Les tests redefinissent le retour des tables
+// "emails" et "tasks" pour creer le scenario known/unknown.
 let emailsResult: { data: any[]; error: any } = { data: [], error: null };
+let tasksResult: { data: any[]; error: any } = { data: [], error: null };
 
 function chain(table: string) {
   const c: any = {
     _table: table,
+    _inCalled: false,
     select: () => c,
     eq: () => c,
     neq: () => c,
-    in: () => c,
+    in: () => {
+      c._inCalled = true;
+      return c;
+    },
     or: () => c,
     not: () => c,
     is: () => c,
@@ -78,6 +83,12 @@ function chain(table: string) {
     maybeSingle: async () => ({ data: null, error: null }),
     then: (resolve: (v: any) => any) => {
       if (table === "emails") return resolve(emailsResult);
+      // Pour "tasks" on differencie : la requete contact-scoped utilise
+      // .in("email_id", ids) (donc _inCalled=true), la requete globale
+      // de memoire ne l'utilise pas. On ne renvoie tasksResult que pour
+      // la version contact-scoped, sinon on retourne vide pour eviter
+      // de polluer le scenario unknown.
+      if (table === "tasks") return resolve(c._inCalled ? tasksResult : { data: [], error: null });
       return resolve({ data: [], error: null });
     },
   };
@@ -154,9 +165,10 @@ describe("POST /inboria/chat — contact-aware grounding", () => {
       usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 },
     });
     emailsResult = { data: [], error: null };
+    tasksResult = { data: [], error: null };
   });
 
-  it("known contact: injects contact context into the system prompt", async () => {
+  it("known contact: injects contact context AND scoped tasks into the system prompt", async () => {
     const target = "alice@acme.com";
     emailsResult = {
       data: [
@@ -173,6 +185,18 @@ describe("POST /inboria/chat — contact-aware grounding", () => {
       ],
       error: null,
     };
+    // Tache scopee contact (liee a email_id=1 du mail ci-dessus). Doit
+    // apparaitre dans la section "Taches liees a <email>" du prompt.
+    tasksResult = {
+      data: [
+        {
+          title: "Envoyer devis migration ERP a Alice",
+          due_date: "2026-05-10",
+          done: false,
+        },
+      ],
+      error: null,
+    };
 
     const res = await callChat([
       { role: "user", content: `Raconte-moi ce qu'on a echange avec ${target}` },
@@ -184,11 +208,22 @@ describe("POST /inboria/chat — contact-aware grounding", () => {
     expect(sys).toContain("Contact cible");
     expect(sys.toLowerCase()).toContain(target);
     expect(sys).toContain("Devis ERP Q3");
+    expect(sys).toContain(`Taches liees a ${target}`);
+    expect(sys).toContain("Envoyer devis migration ERP a Alice");
+    expect(sys).toContain("2026-05-10");
   });
 
-  it("unknown contact: injects 'aucune trace' anti-hallucination guard", async () => {
+  it("unknown contact: injects 'aucune trace' guard AND no tasks section", async () => {
     const target = "ghost@unknown.io";
     emailsResult = { data: [], error: null };
+    // Meme si la table tasks renverrait des lignes par erreur, le bloc
+    // contact-aware ne doit PAS injecter de section "Taches liees" si
+    // aucun mail recent ne matche le contact (court-circuite avant la
+    // requete tasks).
+    tasksResult = {
+      data: [{ title: "ne doit jamais apparaitre", due_date: null, done: false }],
+      error: null,
+    };
 
     const res = await callChat([
       { role: "user", content: `Que sait-on de ${target} ?` },
@@ -199,5 +234,7 @@ describe("POST /inboria/chat — contact-aware grounding", () => {
     expect(sys.toLowerCase()).toContain(target);
     expect(sys).toContain("aucune trace dans la memoire");
     expect(sys).toContain("NE PAS INVENTER");
+    expect(sys).not.toContain(`Taches liees a ${target}`);
+    expect(sys).not.toContain("ne doit jamais apparaitre");
   });
 });

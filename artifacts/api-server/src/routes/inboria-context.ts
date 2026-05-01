@@ -1144,12 +1144,12 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             ? supabaseAdmin
                 .from("emails")
                 .select(
-                  "sender, recipient, subject, summary, sent_at, created_at, is_private",
+                  "id, sender, recipient, subject, summary, sent_at, created_at, is_private",
                 )
                 .eq("is_private", false)
             : supabaseAdmin
                 .from("emails")
-                .select("sender, recipient, subject, summary, sent_at, created_at"))
+                .select("id, sender, recipient, subject, summary, sent_at, created_at"))
             .or(emailScopeFilter)
             .order("created_at", { ascending: false })
             .limit(80);
@@ -1276,6 +1276,33 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
               const title = a.title || "Rendez-vous";
               const where = a.location ? ` — ${a.location}` : "";
               memoryLines.push(`- ${when} : ${title}${where}`);
+            }
+          }
+          // Taches liees au contact : on s'appuie sur la liaison email_id
+          // (col. tasks.email_id pointe vers emails.id). On prend les ids des
+          // mails recents qui matchent EXACTEMENT le contact, puis on charge
+          // les taches scopees a l'utilisateur (idem global tasks query
+          // ligne ~464). Pas de tache => pas de section, pas de bruit.
+          const contactEmailIds = contactRows
+            .map((e: any) => e.id)
+            .filter((id: any) => id !== null && id !== undefined);
+          if (contactEmailIds.length > 0) {
+            const { data: contactTasksRaw } = await supabaseAdmin
+              .from("tasks")
+              .select("title, due_date, done")
+              .in("email_id", contactEmailIds)
+              .or(`user_id.eq.${userId},assigned_to_user_id.eq.${userId}`)
+              .eq("done", false)
+              .order("due_date", { ascending: true, nullsFirst: false } as any)
+              .limit(8);
+            const contactTasks = (contactTasksRaw as any[]) || [];
+            if (contactTasks.length > 0) {
+              memoryLines.push(`Taches liees a ${targetEmail} :`);
+              for (const t of contactTasks) {
+                const due = t.due_date ? ` (echeance ${t.due_date})` : "";
+                const title = truncate(t.title || "(sans titre)", 80);
+                memoryLines.push(`- ${title}${due}`);
+              }
             }
           }
         } catch (err: any) {
