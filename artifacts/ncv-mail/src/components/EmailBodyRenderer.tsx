@@ -493,7 +493,11 @@ export function EmailBodyRenderer({ body, emailId, sender }: EmailBodyRendererPr
 
   const useWhiteBg = hasDarkTextColors || isFullHtmlDoc;
 
+  // <base target="_blank"> force tous les liens de l'email à s'ouvrir dans
+  // un nouvel onglet du navigateur — sans cela, le sandbox empêche l'iframe
+  // de naviguer vers une URL externe et le clic semble "ne rien faire".
   const baseStyle = `
+    <base target="_blank" />
     <style>
       body {
         margin: 0;
@@ -506,13 +510,21 @@ export function EmailBodyRenderer({ body, emailId, sender }: EmailBodyRendererPr
         word-wrap: break-word;
         overflow-wrap: break-word;
       }
-      a { color: #2d7dd2; }
+      a { color: #2d7dd2; cursor: pointer; }
     </style>
   `;
 
   let wrappedHtml: string;
   if (isFullHtmlDoc) {
-    wrappedHtml = content;
+    // Pour les emails livrés en document HTML complet, injecter <base> juste
+    // après <head> (ou en créer un si absent) pour forcer target="_blank".
+    if (/<head[\s>]/i.test(content)) {
+      wrappedHtml = content.replace(/<head([^>]*)>/i, '<head$1><base target="_blank" />');
+    } else if (/<html[\s>]/i.test(content)) {
+      wrappedHtml = content.replace(/<html([^>]*)>/i, '<html$1><head><base target="_blank" /></head>');
+    } else {
+      wrappedHtml = `<head><base target="_blank" /></head>${content}`;
+    }
   } else {
     wrappedHtml = `
       <!DOCTYPE html>
@@ -531,7 +543,12 @@ export function EmailBodyRenderer({ body, emailId, sender }: EmailBodyRendererPr
     <iframe
       ref={iframeRef}
       srcDoc={wrappedHtml}
-      sandbox="allow-same-origin"
+      // allow-popups + allow-popups-to-escape-sandbox : autorise les liens
+      // (cliquables avec target="_blank") à s'ouvrir dans une nouvelle
+      // fenêtre/onglet hors du sandbox. Pas de allow-scripts : l'email
+      // reste inerte côté JavaScript.
+      sandbox="allow-same-origin allow-popups allow-popups-to-escape-sandbox"
+      referrerPolicy="no-referrer"
       style={{
         width: "100%",
         height: iframeHeight,
