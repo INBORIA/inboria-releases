@@ -61,9 +61,7 @@
     "adminWaitlist": "Admin · Waitlist",
     "adminSubscribers": "Admin · Abonnés",
     "followups": "Relances",
-    "assigned": "Assignés",
-    "assignedMine": "Mes assignés",
-    "assignedTeam": "Assignés équipe"
+    "assigned": "Assignés"
   },
   "dashboard": {
     "expiredSubscription": "Votre abonnement a expiré",
@@ -1950,39 +1948,24 @@
     "membersPlural": "membres"
   },
   "teamActivity": {
-    "title": "Tableau de bord équipe",
-    "subtitle": "Vue d'ensemble de l'activité de votre équipe",
-    "members": "Membres",
-    "assignedEmails": "Emails assignés",
-    "archivedEmails": "Emails archivés",
-    "comments": "Commentaires",
-    "performance": "Performance par membre",
-    "noMembers": "Aucun membre dans votre organisation",
+    "title": "Activité équipe",
+    "subtitle": "Mails actuellement assignés, par coéquipier",
+    "noTeammates": "Aucun coéquipier dans votre organisation",
     "noName": "Sans nom",
-    "assigned": "assignés",
-    "archived": "archivés",
-    "recentActivity": "Activité récente",
-    "noActivity": "Aucune activité récente",
-    "actions": {
-      "assign_email": "a assigné un email",
-      "add_comment": "a ajouté un commentaire",
-      "unassign_email": "a désassigné un email",
-      "create_shared_mailbox": "a créé une boîte partagée",
-      "archive_email": "a archivé un email"
-    },
+    "noAssignedForMember": "Aucun mail assigné actuellement",
+    "assignedCount_one": "{{count}} mail assigné",
+    "assignedCount_other": "{{count}} mails assignés",
+    "sharedMailboxBadge": "Boîte partagée",
+    "openEmail": "Ouvrir",
+    "totalAssigned": "Mails assignés au total",
+    "expand": "Déplier",
+    "collapse": "Replier",
     "time": {
       "justNow": "à l'instant",
       "minutesAgo": "il y a {{count}}min",
       "hoursAgo": "il y a {{count}}h",
       "daysAgo": "il y a {{count}}j"
-    },
-    "commentsModalTitle": "Derniers commentaires",
-    "commentsModalSubtitle": "Les commentaires les plus récents de votre équipe",
-    "commentsModalEmpty": "Aucun commentaire pour le moment",
-    "commentsModalOpenEmail": "Ouvrir l'email",
-    "commentsModalOn": "sur",
-    "commentsModalDelete": "Supprimer",
-    "commentsModalDeleteConfirm": "Supprimer définitivement cette note ?"
+    }
   },
   "notifications": {
     "title": "Notifications",

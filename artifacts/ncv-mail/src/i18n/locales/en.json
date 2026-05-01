@@ -61,9 +61,7 @@
     "adminWaitlist": "Admin · Waitlist",
     "adminSubscribers": "Admin · Subscribers",
     "followups": "Follow-ups",
-    "assigned": "Assigned",
-    "assignedMine": "My assigned",
-    "assignedTeam": "Team assigned"
+    "assigned": "Assigned"
   },
   "dashboard": {
     "expiredSubscription": "Your subscription has expired",
@@ -1960,6 +1958,26 @@
     "membersPlural": "members"
   },
   "teamActivity": {
+    "title": "Team activity",
+    "subtitle": "Currently assigned emails, by teammate",
+    "noTeammates": "No teammate in your organisation",
+    "noName": "No name",
+    "noAssignedForMember": "No email assigned right now",
+    "assignedCount_one": "{{count}} email assigned",
+    "assignedCount_other": "{{count}} emails assigned",
+    "sharedMailboxBadge": "Shared mailbox",
+    "openEmail": "Open",
+    "totalAssigned": "Emails assigned in total",
+    "expand": "Expand",
+    "collapse": "Collapse",
+    "time": {
+      "justNow": "just now",
+      "minutesAgo": "{{count}}m ago",
+      "hoursAgo": "{{count}}h ago",
+      "daysAgo": "{{count}}d ago"
+    }
+  },
+  "teamActivityOLD": {
     "title": "Team dashboard",
     "subtitle": "Overview of your team's activity",
     "members": "Members",

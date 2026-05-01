@@ -61,9 +61,7 @@
     "adminWaitlist": "Admin · Warteliste",
     "adminSubscribers": "Admin · Abonnenten",
     "followups": "Erinnerungen",
-    "assigned": "Zugewiesen",
-    "assignedMine": "Meine zugewiesenen",
-    "assignedTeam": "Team zugewiesen"
+    "assigned": "Zugewiesen"
   },
   "dashboard": {
     "expiredSubscription": "Ihr Abonnement ist abgelaufen",
@@ -1960,6 +1958,26 @@
     "membersPlural": "Mitglieder"
   },
   "teamActivity": {
+    "title": "Teamaktivität",
+    "subtitle": "Aktuell zugewiesene E-Mails, pro Teammitglied",
+    "noTeammates": "Kein Teammitglied in Ihrer Organisation",
+    "noName": "Kein Name",
+    "noAssignedForMember": "Aktuell keine E-Mail zugewiesen",
+    "assignedCount_one": "{{count}} E-Mail zugewiesen",
+    "assignedCount_other": "{{count}} E-Mails zugewiesen",
+    "sharedMailboxBadge": "Gemeinsames Postfach",
+    "openEmail": "Öffnen",
+    "totalAssigned": "Insgesamt zugewiesene E-Mails",
+    "expand": "Aufklappen",
+    "collapse": "Einklappen",
+    "time": {
+      "justNow": "gerade eben",
+      "minutesAgo": "vor {{count}} Min.",
+      "hoursAgo": "vor {{count}} Std.",
+      "daysAgo": "vor {{count}} T."
+    }
+  },
+  "teamActivityOLD": {
     "title": "Team-Dashboard",
     "subtitle": "Überblick über die Aktivitäten Ihres Teams",
     "members": "Mitglieder",

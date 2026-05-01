@@ -2513,6 +2513,24 @@ paths:
                 items:
                   $ref: "#/components/schemas/ActivityLog"
 
+  /team/assignments:
+    get:
+      operationId: getTeamAssignments
+      tags: [team]
+      summary: List currently-assigned emails grouped by teammate
+      description: |
+        Returns one section per teammate with the emails currently assigned to
+        them that the requester can see (personal scope + shared mailboxes
+        the requester is a member of). Archived/trashed/sent/scheduled mails
+        are excluded.
+      responses:
+        "200":
+          description: Per-teammate assignments
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TeamAssignmentsResponse"
+
   /emails/{emailId}/assign:
     post:
       operationId: assignEmail
@@ -4893,6 +4911,63 @@ components:
         - fullName
         - role
         - assignedEmails
+
+    TeamAssignedEmail:
+      type: object
+      properties:
+        id:
+          type: integer
+        subject:
+          type: string
+        sender:
+          type: string
+        senderEmail:
+          type: string
+        priority:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        sharedMailboxId:
+          type: ["string", "null"]
+        sharedMailboxName:
+          type: ["string", "null"]
+      required:
+        - id
+        - subject
+        - sender
+        - createdAt
+
+    TeamMemberAssignments:
+      type: object
+      properties:
+        userId:
+          type: string
+        fullName:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        emails:
+          type: array
+          items:
+            $ref: "#/components/schemas/TeamAssignedEmail"
+      required:
+        - userId
+        - fullName
+        - role
+        - emails
+
+    TeamAssignmentsResponse:
+      type: object
+      properties:
+        members:
+          type: array
+          items:
+            $ref: "#/components/schemas/TeamMemberAssignments"
+      required:
+        - members
 
     TeamRecentComment:
       type: object

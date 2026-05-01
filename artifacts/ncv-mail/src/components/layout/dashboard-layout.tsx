@@ -1,4 +1,4 @@
-import { useGetProfile, useGetMyOrganisation } from "@workspace/api-client-react";
+import { useGetProfile } from "@workspace/api-client-react";
 import { useAuth } from "@/lib/auth";
 import { Link, useLocation } from "wouter";
 import {
@@ -24,7 +24,6 @@ import {
   MailCheck,
   FileText,
   Wand2,
-  UserCheck,
 } from "lucide-react";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { cn } from "@/lib/utils";
@@ -55,33 +54,22 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   const { data: profile, isLoading } = useGetProfile({
     query: { refetchInterval: 30000, refetchIntervalInBackground: false } as any,
   });
-  const { data: myOrg } = useGetMyOrganisation();
-  const isOrgAdmin = (myOrg as any)?.myRole === "admin";
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
   const totalUsed = ((user as any).emailsUsed || 0) + ((user as any).aiCreditsUsed || 0);
 
-  // Avant : un seul libelle "Assignes" qui menait soit a la vue equipe (admin)
-  // soit a la vue personnelle (non-admin), sans que l'admin ait acces facile
-  // a "JUSTE mes mails a moi". Confusion reportee : l'utilisateur voyait 4
-  // mails dans "Assignes" (vue equipe) et 1 mail dans Inboria (vue personnelle)
-  // sans comprendre la difference. Fix : pour les admins, deux entrees
-  // distinctes "Mes assignes" et "Assignes equipe". Pour les non-admins,
-  // une seule entree "Mes assignes" (la vue equipe n'existe pas pour eux).
-  const assignedEntries: Array<{ name: string; href: string; icon: any }> = isOrgAdmin
-    ? [
-        { name: t("sidebar.assignedMine", "Mes assignés"), href: "/dashboard?assignee=me", icon: UserCheck },
-        { name: t("sidebar.assignedTeam", "Assignés équipe"), href: "/dashboard?assignee=any", icon: UserCheck },
-      ]
-    : [
-        { name: t("sidebar.assignedMine", "Mes assignés"), href: "/dashboard?assignee=me", icon: UserCheck },
-      ];
-
+  // Inboria — Le suivi des mails assignés se fait désormais dans la page
+  // « Activité équipe » (une section par coéquipier). Les anciennes entrées
+  // « Mes assignés » et « Assignés équipe » du menu ont été retirées pour
+  // éviter la confusion (compteurs incohérents, doublons). « Activité équipe »
+  // doit rester visible pour tous les plans (comme l'étaient les anciennes
+  // entrées assignées) — la page elle-même affiche un état vide si
+  // l'utilisateur n'a pas encore d'organisation.
   const baseNavigation: Array<{ name: string; href: string; icon: any }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
-    ...assignedEntries,
+    { name: t("sidebar.teamActivity"), href: "/dashboard/activite-equipe", icon: Activity },
     { name: t("sidebar.snoozed", "Reportés"), href: "/dashboard/reportes", icon: BellOff },
     { name: t("sidebar.scheduled", "Programmés"), href: "/dashboard/programmes", icon: CalendarClock },
     { name: t("tasks.title"), href: "/dashboard/taches", icon: CheckSquare },
@@ -97,12 +85,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
   const isBusiness = (user as any).plan === "business";
   const isInternalAdmin = !!(user as any).isAdmin;
-  const archivesIndex = 5;
+  const archivesIndex = 9;
   let navigation = isBusiness
     ? [
         ...baseNavigation.slice(0, archivesIndex + 1),
         { name: t("sidebar.sharedMailboxes"), href: "/dashboard/boites-partagees", icon: MailPlus },
-        { name: t("sidebar.teamActivity"), href: "/dashboard/activite-equipe", icon: Activity },
         ...baseNavigation.slice(archivesIndex + 1),
       ]
     : baseNavigation;

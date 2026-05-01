@@ -971,6 +971,31 @@ export interface TeamDashboard {
   recentActivity: ActivityLog[];
 }
 
+export interface TeamAssignedEmail {
+  id: number;
+  subject: string;
+  sender: string;
+  senderEmail?: string;
+  priority?: string;
+  createdAt: string;
+  /** @nullable */
+  sharedMailboxId?: string | null;
+  /** @nullable */
+  sharedMailboxName?: string | null;
+}
+
+export interface TeamMemberAssignments {
+  userId: string;
+  fullName: string;
+  email?: string;
+  role: string;
+  emails: TeamAssignedEmail[];
+}
+
+export interface TeamAssignmentsResponse {
+  members: TeamMemberAssignments[];
+}
+
 export interface TeamRecentComment {
   id: string;
   body: string;

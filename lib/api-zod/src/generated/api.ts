@@ -2585,6 +2585,37 @@ export const GetTeamActivityResponseItem = zod.object({
 export const GetTeamActivityResponse = zod.array(GetTeamActivityResponseItem);
 
 /**
+ * Returns one section per teammate with the emails currently assigned to
+them that the requester can see (personal scope + shared mailboxes
+the requester is a member of). Archived/trashed/sent/scheduled mails
+are excluded.
+
+ * @summary List currently-assigned emails grouped by teammate
+ */
+export const GetTeamAssignmentsResponse = zod.object({
+  members: zod.array(
+    zod.object({
+      userId: zod.string(),
+      fullName: zod.string(),
+      email: zod.string().optional(),
+      role: zod.string(),
+      emails: zod.array(
+        zod.object({
+          id: zod.number(),
+          subject: zod.string(),
+          sender: zod.string(),
+          senderEmail: zod.string().optional(),
+          priority: zod.string().optional(),
+          createdAt: zod.coerce.date(),
+          sharedMailboxId: zod.string().nullish(),
+          sharedMailboxName: zod.string().nullish(),
+        }),
+      ),
+    }),
+  ),
+});
+
+/**
  * @summary Assign an email to a colleague
  */
 export const AssignEmailParams = zod.object({

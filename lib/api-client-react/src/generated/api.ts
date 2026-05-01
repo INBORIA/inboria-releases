@@ -166,6 +166,7 @@ import type {
   SuggestTemplates200,
   SuggestTemplatesParams,
   Task,
+  TeamAssignmentsResponse,
   TeamDashboard,
   TeamRecentComment,
   UnassignEmail200,
@@ -9662,6 +9663,86 @@ export function useGetTeamActivity<
   },
 ): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
   const queryOptions = getGetTeamActivityQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * Returns one section per teammate with the emails currently assigned to
+them that the requester can see (personal scope + shared mailboxes
+the requester is a member of). Archived/trashed/sent/scheduled mails
+are excluded.
+
+ * @summary List currently-assigned emails grouped by teammate
+ */
+export const getGetTeamAssignmentsUrl = () => {
+  return `/api/team/assignments`;
+};
+
+export const getTeamAssignments = async (
+  options?: RequestInit,
+): Promise<TeamAssignmentsResponse> => {
+  return customFetch<TeamAssignmentsResponse>(getGetTeamAssignmentsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetTeamAssignmentsQueryKey = () => {
+  return [`/api/team/assignments`] as const;
+};
+
+export const getGetTeamAssignmentsQueryOptions = <
+  TData = Awaited<ReturnType<typeof getTeamAssignments>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getTeamAssignments>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getGetTeamAssignmentsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getTeamAssignments>>
+  > = ({ signal }) => getTeamAssignments({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof getTeamAssignments>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetTeamAssignmentsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getTeamAssignments>>
+>;
+export type GetTeamAssignmentsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List currently-assigned emails grouped by teammate
+ */
+
+export function useGetTeamAssignments<
+  TData = Awaited<ReturnType<typeof getTeamAssignments>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof getTeamAssignments>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetTeamAssignmentsQueryOptions(options);
 
   const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
     queryKey: QueryKey;

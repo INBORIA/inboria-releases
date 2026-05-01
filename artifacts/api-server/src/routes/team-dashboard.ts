@@ -1,9 +1,17 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
-import { getMemberMailboxIds } from "../lib/inbox-scope";
+import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 
 const router: IRouter = Router();
+
+function parseSender(raw: string) {
+  const match = raw.match(/^(.+?)\s*<(.+?)>$/);
+  return {
+    name: match ? match[1].trim().replace(/^"|"$/g, "") : raw,
+    email: match ? match[2].trim() : raw,
+  };
+}
 
 async function getOrgIdForMember(userId: string): Promise<string | null> {
   const { data } = await supabaseAdmin
@@ -240,6 +248,141 @@ router.get("/team/recent-comments", requireAuth, async (req, res): Promise<void>
     res.json(enriched);
   } catch {
     res.status(500).json({ error: "Erreur lors de la récupération des commentaires récents" });
+  }
+});
+
+// Inboria — Activité équipe : pour chaque coéquipier de l'organisation, on
+// retourne la liste des mails actuellement assignés à ce coéquipier qui sont
+// visibles dans le scope du demandeur (ses mails persos + mails assignés à
+// lui-même + mails des boîtes partagées dont il est membre). On exclut les
+// statuts terminaux (archived/trashed/spam/sent/scheduled). Les mails
+// provenant d'une boîte partagée portent un libellé que le client utilise
+// pour afficher un badge.
+router.get("/team/assignments", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const orgId = await getOrgIdForMember(req.userId!);
+    if (!orgId) {
+      res.json({ members: [] });
+      return;
+    }
+
+    const { data: members } = await supabaseAdmin
+      .from("organisation_members")
+      .select("user_id, role")
+      .eq("organisation_id", orgId)
+      .eq("status", "active");
+
+    if (!members || members.length === 0) {
+      res.json({ members: [] });
+      return;
+    }
+
+    const memberUserIds = members.map((m: any) => m.user_id);
+
+    // Profils + emails de connexion
+    const { data: profiles } = await supabaseAdmin
+      .from("profiles")
+      .select("id, full_name")
+      .in("id", memberUserIds);
+    const profileMap = new Map<string, string>();
+    for (const p of profiles || []) {
+      profileMap.set(p.id, p.full_name || "");
+    }
+    const emailMap = new Map<string, string>();
+    for (const uid of memberUserIds) {
+      try {
+        const { data: u } = await supabaseAdmin.auth.admin.getUserById(uid);
+        emailMap.set(uid, u.user?.email || "");
+      } catch {
+        emailMap.set(uid, "");
+      }
+    }
+
+    // Scope visible par le demandeur (mêmes règles que la boîte de réception).
+    const requesterMailboxIds = await getMemberMailboxIds(req.userId!);
+    const scopeOr = buildInboxScopeOrFilter(req.userId!, requesterMailboxIds);
+
+    // Mails actuellement assignés à n'importe quel coéquipier, dans le scope
+    // visible du demandeur. On limite à un horizon raisonnable pour éviter de
+    // tirer des mails très anciens et garder l'UI réactive.
+    const { data: rows, error } = await supabaseAdmin
+      .from("emails")
+      .select(
+        "id, subject, sender, priority, created_at, assigned_to, shared_mailbox_id",
+      )
+      .or(scopeOr)
+      .in("assigned_to", memberUserIds)
+      .neq("status", "archived")
+      .neq("status", "trashed")
+      .neq("status", "spam")
+      .neq("status", "sent")
+      .neq("status", "scheduled")
+      .neq("status", "scheduled_failed")
+      .neq("status", "supprime")
+      .order("created_at", { ascending: false })
+      .limit(2000);
+
+    if (error) {
+      req.log?.warn?.({ msg: error.message }, "[team/assignments] query failed");
+      res.status(500).json({ error: "Erreur lors de la récupération des assignations" });
+      return;
+    }
+
+    // Résolution des noms de boîtes partagées présentes dans le résultat.
+    const mailboxIds = Array.from(
+      new Set(
+        (rows || [])
+          .map((r: any) => r.shared_mailbox_id)
+          .filter((v: any): v is string => !!v),
+      ),
+    );
+    const mailboxNameMap = new Map<string, string>();
+    if (mailboxIds.length > 0) {
+      const { data: mboxes } = await supabaseAdmin
+        .from("shared_mailboxes")
+        .select("id, name")
+        .in("id", mailboxIds);
+      for (const mb of mboxes || []) {
+        mailboxNameMap.set(mb.id, mb.name || "");
+      }
+    }
+
+    const byMember = new Map<string, any[]>();
+    for (const r of rows || []) {
+      const s = parseSender(r.sender || "");
+      const item = {
+        id: r.id,
+        subject: r.subject || "",
+        sender: s.name,
+        senderEmail: s.email,
+        priority: r.priority || "faible",
+        createdAt: r.created_at,
+        sharedMailboxId: r.shared_mailbox_id || null,
+        sharedMailboxName: r.shared_mailbox_id
+          ? mailboxNameMap.get(r.shared_mailbox_id) || null
+          : null,
+      };
+      const list = byMember.get(r.assigned_to) || [];
+      list.push(item);
+      byMember.set(r.assigned_to, list);
+    }
+
+    const result = members.map((m: any) => ({
+      userId: m.user_id,
+      fullName: profileMap.get(m.user_id) || "",
+      email: emailMap.get(m.user_id) || "",
+      role: m.role,
+      emails: byMember.get(m.user_id) || [],
+    }));
+
+    // On classe les coéquipiers par nombre de mails assignés décroissant
+    // pour mettre en haut ceux qui en ont le plus.
+    result.sort((a, b) => b.emails.length - a.emails.length);
+
+    res.json({ members: result });
+  } catch (e: any) {
+    req.log?.warn?.({ msg: e?.message }, "[team/assignments] handler crash");
+    res.status(500).json({ error: "Erreur lors de la récupération des assignations" });
   }
 });
 

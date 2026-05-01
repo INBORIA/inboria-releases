@@ -61,9 +61,7 @@
     "adminWaitlist": "Admin · Wachtlijst",
     "adminSubscribers": "Admin · Abonnees",
     "followups": "Herinneringen",
-    "assigned": "Toegewezen",
-    "assignedMine": "Mijn toegewezen",
-    "assignedTeam": "Team toegewezen"
+    "assigned": "Toegewezen"
   },
   "dashboard": {
     "expiredSubscription": "Uw abonnement is verlopen",
@@ -1960,6 +1958,26 @@
     "membersPlural": "leden"
   },
   "teamActivity": {
+    "title": "Teamactiviteit",
+    "subtitle": "Momenteel toegewezen e-mails, per teamlid",
+    "noTeammates": "Geen teamlid in uw organisatie",
+    "noName": "Geen naam",
+    "noAssignedForMember": "Op dit moment geen e-mail toegewezen",
+    "assignedCount_one": "{{count}} e-mail toegewezen",
+    "assignedCount_other": "{{count}} e-mails toegewezen",
+    "sharedMailboxBadge": "Gedeelde mailbox",
+    "openEmail": "Openen",
+    "totalAssigned": "Totaal toegewezen e-mails",
+    "expand": "Uitklappen",
+    "collapse": "Inklappen",
+    "time": {
+      "justNow": "zojuist",
+      "minutesAgo": "{{count}} min geleden",
+      "hoursAgo": "{{count}} u geleden",
+      "daysAgo": "{{count}} d geleden"
+    }
+  },
+  "teamActivityOLD": {
     "title": "Teamdashboard",
     "subtitle": "Overzicht van de activiteit van uw team",
     "members": "Leden",
