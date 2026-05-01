@@ -4204,7 +4204,9 @@
     "viewTeam": "Team-Aktenansicht",
     "handledBy": "Bearbeitet von",
     "rgpdTitle": "Sie sehen die Teamakte dieses Kontakts",
-    "rgpdBody": "Sie sehen die Korrespondenz aller Ihrer Teamkolleg:innen mit diesem Kontakt (nützlich bei Abwesenheit oder Personalwechsel). Als 'privat' markierte E-Mails werden automatisch ausgeblendet. Dieser Zugriff wird protokolliert und ist für die betroffenen Teamkolleg:innen sichtbar."
+    "rgpdBody": "Sie sehen die Korrespondenz aller Ihrer Teamkolleg:innen mit diesem Kontakt (nützlich bei Abwesenheit oder Personalwechsel). Als 'privat' markierte E-Mails werden automatisch ausgeblendet. Dieser Zugriff wird protokolliert und ist für die betroffenen Teamkolleg:innen sichtbar.",
+    "teamLoadErrorTitle": "Team-Ansicht nicht verfügbar",
+    "teamLoadErrorBody": "Stattdessen wird Ihre persönliche Akte angezeigt. Technisches Detail: "
   },
   "inboria": {
     "sectionTitle": "Was Inboria bemerkt hat",

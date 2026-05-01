@@ -4204,7 +4204,9 @@
     "viewTeam": "Teamdossier weergave",
     "handledBy": "Behandeld door",
     "rgpdTitle": "Je bekijkt het teamdossier van dit contact",
-    "rgpdBody": "Je ziet de uitwisselingen van al je teamgenoten met dit contact (handig bij afwezigheid of verloop). E-mails die door de eigenaar als 'privé' zijn gemarkeerd, zijn automatisch verborgen. Deze raadpleging wordt gelogd en is zichtbaar voor de betrokken teamgenoten."
+    "rgpdBody": "Je ziet de uitwisselingen van al je teamgenoten met dit contact (handig bij afwezigheid of verloop). E-mails die door de eigenaar als 'privé' zijn gemarkeerd, zijn automatisch verborgen. Deze raadpleging wordt gelogd en is zichtbaar voor de betrokken teamgenoten.",
+    "teamLoadErrorTitle": "Teamweergave niet beschikbaar",
+    "teamLoadErrorBody": "Je persoonlijke dossier wordt in plaats daarvan getoond. Technisch detail: "
   },
   "inboria": {
     "sectionTitle": "Wat Inboria heeft opgemerkt",

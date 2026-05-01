@@ -97,8 +97,10 @@ export default function ContactDetailPage() {
   const [teamView, setTeamView] = useState(false);
   const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
 
+  // Self view stays always-enabled so the page header + toggle + orange RGPD
+  // banner remain visible even if the team-scope query fails.
   const selfQuery = useGetContact(encodeURIComponent(email), {
-    query: { enabled: !!email && !teamView } as any,
+    query: { enabled: !!email } as any,
   });
   const teamQuery = useQuery({
     queryKey: ["contact", email, "team"],
@@ -117,12 +119,19 @@ export default function ContactDetailPage() {
       return res.json();
     },
   });
-  const activeQuery = teamView ? teamQuery : selfQuery;
-  const data = activeQuery.data;
-  const isLoading = activeQuery.isLoading;
-  const isError = activeQuery.isError;
-  const error = (activeQuery as any).error;
-  const detail = data as any;
+  // Team data wins when available AND not currently in error; otherwise we
+  // fall back to self data so the contact card and conversations list keep
+  // rendering. Strict fallback: if the latest team fetch errored we always
+  // show self data even when stale team data is still in cache.
+  const detail: any =
+    teamView && teamQuery.data && !teamQuery.isError
+      ? teamQuery.data
+      : selfQuery.data || null;
+  const isLoading = !detail && (selfQuery.isLoading || (teamView && teamQuery.isLoading));
+  const isError = !detail && (selfQuery.isError || (teamView && teamQuery.isError));
+  const error = (selfQuery.isError ? selfQuery.error : teamQuery.error) as any;
+  const teamLoadError = teamView && teamQuery.isError;
+  const teamLoadErrorMessage = (teamQuery.error as any)?.message ?? null;
 
   const inboriaParams = { contactEmail: email, limit: 12 };
   const inboriaQuery = useGetInboriaContext(inboriaParams, {
@@ -284,6 +293,26 @@ export default function ContactDetailPage() {
                       "contacts.rgpdBody",
                       "Vous voyez les échanges de tous vos coéquipiers avec ce contact (utile en cas d'absence ou de turn-over). Les emails marqués « privés » par leur propriétaire sont automatiquement masqués. Cette consultation est tracée et visible par les coéquipiers concernés.",
                     )}
+                  </div>
+                </div>
+              </div>
+            )}
+            {teamLoadError && (
+              <div
+                className="mt-2 flex items-start gap-2 p-3 rounded border border-red-500/30 bg-red-500/10 text-xs text-red-200"
+                data-testid="banner-team-load-error"
+              >
+                <ShieldAlert className="w-4 h-4 mt-0.5 flex-shrink-0" />
+                <div>
+                  <div className="font-medium mb-0.5">
+                    {t("contacts.teamLoadErrorTitle", "Vue équipe indisponible")}
+                  </div>
+                  <div className="text-red-200/80">
+                    {t(
+                      "contacts.teamLoadErrorBody",
+                      "Affichage de votre dossier personnel à la place. Détail : ",
+                    )}
+                    <span className="font-mono opacity-70">{teamLoadErrorMessage || "—"}</span>
                   </div>
                 </div>
               </div>

@@ -1,0 +1,111 @@
+
+
+AI
+
+App Developement
+
+
+Invite
+
+Republish
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Library
+
+File tree
+Search
+
+New
+Apps
+NCV Mail Mobile
+NCV Mail Mobile
+Mobile
+
+NCV Mail
+NCV Mail
+Website
+
+Documents
+NCV Mail — Descriptif complet de l'application
+Text
+
+Plan complet V2 — Organisation & Collaboration Business
+Text
+
+NCV Mail — Descriptif complet de l'application
+Text
+
+Audit rentabilité Inboria — rév. 3 (pire cas + système crédits)
+Text
+
+Audit rentabilité Inboria — rev. 4 (Markdown)
+Text
+
+Audit rentabilité Inboria — rev. 4 (TXT)
+Text
+
+Audit de rentabilité Inboria — Révision 5
+Text
+
+Rapport d'audit Inboria — 22 avril 2026
+Text
+
+Note d’accompagnement et synthèse détaillée — Inboria
+Text
+
+Images
+Logo Inboria (à uploader dans Notion comme icône)
+Logo Inboria (à uploader dans Notion comme icône)
+Image
+
+Logo Inboria officiel (à uploader dans Notion)
+Logo Inboria officiel (à uploader dans Notion)
+Image
+
+Icône Inboria 512×512 (à uploader dans Notion)
+Icône Inboria 512×512 (à uploader dans Notion)
+Image
+
+generated_image
+generated_image
+Image
+
+
+Agent
+4
+
+
+
+
+#176 - Vue dossier équipe pour l'admin (RGPD-safe)
+What & Why
+Aujourd'hui, tout est cloisonné par user_id dans Inboria — la page Contact 360, les projets, et le contexte Inboria chat ne montrent à l'utilisateur que ses propres données et celles des boîtes partagées dont il est explicitement membre. Quand un membre part, est en arrêt maladie ou en congé, l'admin n'a aucun accès au savoir métier accumulé sur les dossiers que ce membre traitait depuis sa boîte personnelle. C'est un point de douleur majeur pour les PME (turn-over, continuité d'activité).
+
+Cette tâche met en place la Piste 1 discutée avec l'utilisateur : permettre à l'admin de l'organisation de consulter une vue dossier consolidée à l'échelle de l'équipe (par contact, par projet) — sans accès libre à la boîte d'un membre, et avec les garde-fous RGPD adaptés (drapeau "privé" sur les mails sensibles, journal d'audit consultable, mention claire en UI). C'est l'équivalent numérique de "l'informaticien qui ouvre la boîte du salarié parti, dans le respect de la charte RGPD".
+
+Done looks like
+Sur la page Contact 360, un admin de l'organisation voit un toggle "Mes contacts / Toute l'équipe". En mode équipe, la liste des contacts agrège ceux de tous les membres actifs ; le détail d'un contact agrège emails, tâches, RDV, projets et notes de tous les membres pour ce contact, en excluant les mails marqués privés.
+Chaque ligne d'email dans la vue admin affiche un badge "Traité par : " pour la traçabilité.
+Un bandeau permanent en haut de la vue équipe rappelle : "Vue équipe — historique consolidé de votre organisation. Toute consultation est journalisée."
+Un membre (admin ou non) peut marquer un mail comme privé depuis le détail de l'email ; un mail privé n'apparaît plus dans aucune vue consolidée admin (mais reste visible pour son propriétaire).
+Inboria chat, quand le user qui pose la question est admin, élargit son contexte mémoire aux faits/épisodes/projets de tous les membres pour répondre aux questions sur un dossier ("que sait-on sur Dupont ?"). Mails privés exclus. Le system prompt rappelle à Inboria que cet élargissement n'a lieu que pour les questions dossier/contact/projet, jamais pour livrer en bloc la boîte d'un coéquipier.
+Une nouvelle section "Vie privée & accès équipe" dans Paramètres → Équipe explique en clair : qui peut voir quoi, comment marquer un mail privé, où consulter le journal. L'admin y trouve un bouton "Voir le journal des consultations équipe" (qui a consulté quel dossier, quand). Chaque membre y trouve "Voir qui a consulté mes dossiers" (filtre du même journal sur ses données).
+Toute consultation cross-utilisateur (liste contacts équipe, détail contact équipe, contexte Inboria élargi) est tracée dans une nouvelle table d'audit admin_team_access_log.
+Un non-admin qui essaie d'appeler les endpoints équipe directement reçoit 403.
+i18n FR/EN/NL/DE/ES sur toutes les chaînes nouvelles (bandeau, toggle, badge, section Paramètres, journal).
+Tests vitest sur la route /contacts côté API : un membre standard ne voit pas les contacts d'un autre membre ; un admin voit la consolidation ; les mails is_private = true sont bien exclus ; le log d'audit est écrit ; un caller hors organisation ne voit rien.

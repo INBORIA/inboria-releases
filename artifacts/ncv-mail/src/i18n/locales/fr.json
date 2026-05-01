@@ -2560,7 +2560,9 @@
     "viewTeam": "Vue dossier équipe",
     "handledBy": "Traité par",
     "rgpdTitle": "Vous consultez le dossier équipe de ce contact",
-    "rgpdBody": "Vous voyez les échanges de tous vos coéquipiers avec ce contact (utile en cas d'absence ou de turn-over). Les emails marqués « privés » par leur propriétaire sont automatiquement masqués. Cette consultation est tracée et visible par les coéquipiers concernés."
+    "rgpdBody": "Vous voyez les échanges de tous vos coéquipiers avec ce contact (utile en cas d'absence ou de turn-over). Les emails marqués « privés » par leur propriétaire sont automatiquement masqués. Cette consultation est tracée et visible par les coéquipiers concernés.",
+    "teamLoadErrorTitle": "Vue équipe indisponible",
+    "teamLoadErrorBody": "Affichage de votre dossier personnel à la place. Détail technique : "
   },
   "inboria": {
     "sectionTitle": "Ce qu'Inboria a noté",

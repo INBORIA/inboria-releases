@@ -262,6 +262,10 @@ router.get("/contacts", requireAuth, async (req, res): Promise<void> => {
       },
     });
   } catch (err: any) {
+    req.log?.error(
+      { err: err?.message, code: err?.code, details: err?.details, hint: err?.hint, scope: req.query.scope },
+      "[contacts] list failed",
+    );
     res.status(500).json({ error: err?.message || "Failed to list contacts" });
   }
 });
@@ -321,6 +325,10 @@ router.get("/contacts/:email", requireAuth, async (req, res): Promise<void> => {
       .limit(MAX_EMAILS_SCAN);
 
     if (error) {
+      req.log?.error(
+        { err: error.message, code: (error as any).code, details: (error as any).details, hint: (error as any).hint, scope: scope.mode, target, orFilter },
+        "[contacts] detail query failed",
+      );
       res.status(500).json({ error: error.message });
       return;
     }
@@ -615,6 +623,10 @@ router.get("/contacts/:email", requireAuth, async (req, res): Promise<void> => {
       },
     });
   } catch (err: any) {
+    req.log?.error(
+      { err: err?.message, code: err?.code, details: err?.details, hint: err?.hint, stack: err?.stack, scope: req.query.scope, target: req.params.email },
+      "[contacts] detail failed",
+    );
     res.status(500).json({ error: err?.message || "Failed to load contact" });
   }
 });

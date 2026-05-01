@@ -4204,7 +4204,9 @@
     "viewTeam": "Vista expediente del equipo",
     "handledBy": "Gestionado por",
     "rgpdTitle": "Estás consultando el expediente de equipo de este contacto",
-    "rgpdBody": "Ves los intercambios de todos tus compañeros con este contacto (útil en caso de ausencia o rotación). Los correos marcados como «privados» por su propietario se ocultan automáticamente. Esta consulta queda registrada y es visible para los compañeros afectados."
+    "rgpdBody": "Ves los intercambios de todos tus compañeros con este contacto (útil en caso de ausencia o rotación). Los correos marcados como «privados» por su propietario se ocultan automáticamente. Esta consulta queda registrada y es visible para los compañeros afectados.",
+    "teamLoadErrorTitle": "Vista de equipo no disponible",
+    "teamLoadErrorBody": "Mostrando tu expediente personal en su lugar. Detalle técnico: "
   },
   "inboria": {
     "sectionTitle": "Lo que Inboria ha notado",

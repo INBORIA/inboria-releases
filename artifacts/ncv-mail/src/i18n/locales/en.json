@@ -4204,7 +4204,9 @@
     "viewTeam": "Team view",
     "handledBy": "Handled by",
     "rgpdTitle": "You're viewing the team-wide record for this contact",
-    "rgpdBody": "You can see all your teammates' exchanges with this contact (useful when someone's away or has left). Emails marked \"private\" by their owner are hidden automatically. This access is logged and visible to the teammates involved."
+    "rgpdBody": "You can see all your teammates' exchanges with this contact (useful when someone's away or has left). Emails marked \"private\" by their owner are hidden automatically. This access is logged and visible to the teammates involved.",
+    "teamLoadErrorTitle": "Team view unavailable",
+    "teamLoadErrorBody": "Showing your personal record instead. Technical detail: "
   },
   "inboria": {
     "sectionTitle": "What Inboria has noticed",
