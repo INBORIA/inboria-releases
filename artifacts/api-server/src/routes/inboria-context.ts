@@ -1042,6 +1042,20 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       const m = s.match(/<([^>]+)>/);
       return (m ? m[1] : s).trim().toLowerCase();
     };
+    // Helper multi-adresses : un champ "recipient" peut contenir plusieurs
+    // destinataires separes par virgule ou point-virgule (ex. "Alice <a@x>,
+    // Bob <b@y>"). On retourne TOUTES les adresses pures, pour un test
+    // d'egalite robuste sur chaque destinataire.
+    const extractAddrs = (raw: string | null | undefined): string[] => {
+      if (!raw) return [];
+      const out: string[] = [];
+      for (const part of String(raw).split(/[,;]+/)) {
+        const m = part.match(/<([^>]+)>/);
+        const candidate = (m ? m[1] : part).trim().toLowerCase();
+        if (candidate.includes("@")) out.push(candidate);
+      }
+      return out;
+    };
     // Resolution nom -> email : si l'utilisateur ecrit "raconte-moi Michel
     // Dupont", on essaie de retrouver l'email associe en cherchant les
     // expediteurs/destinataires recents dont le label contient ce nom. On
@@ -1076,9 +1090,16 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         try {
           // On charge un echantillon d'emails du perimetre puis on filtre
           // en memoire (PAS de double .or() qui pourrait casser le scope).
-          const { data: poolRaw } = await supabaseAdmin
-            .from("emails")
-            .select("sender, recipient")
+          // En mode admin team, on exclut les mails marques prives meme
+          // pour la resolution nom -> email (RGPD : un mail prive d'un
+          // coequipier ne doit pas servir a deviner l'adresse d'un contact).
+          const poolQuery = adminTeamCtx
+            ? supabaseAdmin
+                .from("emails")
+                .select("sender, recipient")
+                .eq("is_private", false)
+            : supabaseAdmin.from("emails").select("sender, recipient");
+          const { data: poolRaw } = await poolQuery
             .or(emailScopeFilter)
             .order("created_at", { ascending: false })
             .limit(200);
@@ -1155,9 +1176,14 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
           const allRecent = (recentEmailsRes.data as any[]) || [];
           const contactRows = allRecent
             .filter((e) => {
-              const s = extractAddr(e.sender);
-              const r = extractAddr(e.recipient);
-              return s === targetEmail || r === targetEmail;
+              // Sender = adresse unique. Recipient = peut contenir plusieurs
+              // destinataires (CC/To groupes). On compare donc l'expediteur
+              // par egalite stricte ET on teste l'appartenance dans la liste
+              // des destinataires : evite de manquer un contact qui apparait
+              // en 2e/3e position d'une liste "To: alice@x, bob@y, cible@z".
+              const sender = extractAddr(e.sender);
+              const recipients = extractAddrs(e.recipient);
+              return sender === targetEmail || recipients.includes(targetEmail);
             })
             .slice(0, 8);
 

@@ -1,5 +1,51 @@
-import { describe, expect, it } from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+
+// On mocke supabaseAdmin AVANT d'importer processEmail (qui referme dessus
+// au moment du module load).
+const insertFacts = vi.fn(() => Promise.resolve({ error: null }));
+const insertEpisodes = vi.fn(() => Promise.resolve({ error: null }));
+const insertSignals = vi.fn(() => Promise.resolve({ error: null }));
+const updateEmails = vi.fn(() => ({
+  eq: () => Promise.resolve({ error: null }),
+}));
+
+vi.mock("../lib/supabase", () => ({
+  supabaseAdmin: {
+    from: vi.fn((table: string) => {
+      if (table === "inboria_facts") return { insert: insertFacts };
+      if (table === "inboria_episodes") return { insert: insertEpisodes };
+      if (table === "inboria_signals") return { insert: insertSignals };
+      if (table === "emails") return { update: updateEmails };
+      if (table === "profiles") {
+        // userExists: .select("id").eq("id", userId).maybeSingle()
+        return {
+          select: () => ({
+            eq: () => ({
+              maybeSingle: () => Promise.resolve({ data: { id: "u1" }, error: null }),
+            }),
+          }),
+        };
+      }
+      if (table === "email_connections") {
+        // isMailboxInboriaEnabled (perso): .select("inboria_enabled").eq("user_id", uid)
+        return {
+          select: () => ({
+            eq: () => Promise.resolve({
+              data: [{ inboria_enabled: true }],
+              error: null,
+            }),
+          }),
+        };
+      }
+      // table inattendue : on echoue explicitement pour eviter qu'un insert
+      // sur une autre table inboria_* passe sous le radar.
+      throw new Error(`unexpected supabase table in test: ${table}`);
+    }),
+  },
+}));
+
 import { isNoiseEmail, NOISE_SENDER_REGEX } from "./auto-sync";
+import { processEmail } from "./inboria-extractor";
 
 // Garde-fou anti-pollution memoire Inboria :
 // processEmail() (inboria-extractor.ts) court-circuite via isNoiseEmail() AVANT
@@ -63,5 +109,50 @@ describe("inboria-extractor noise sender guard", () => {
   it("exposes a usable shared regex for SQL purge migrations", () => {
     expect(NOISE_SENDER_REGEX.test("noreply@x.com")).toBe(true);
     expect(NOISE_SENDER_REGEX.test("alex@acme.com")).toBe(false);
+  });
+});
+
+// Test d'integration : on exerce processEmail() de bout en bout sur un mail
+// noreply avec un faux client OpenAI dont AUCUNE methode ne doit etre
+// appelee. On verifie aussi qu'aucun insert n'arrive dans inboria_facts /
+// inboria_episodes / inboria_signals. C'est la garantie comportementale
+// que le garde-fou agit AVANT toute ecriture / appel LLM coute.
+describe("inboria-extractor processEmail noise short-circuit", () => {
+  beforeEach(() => {
+    insertFacts.mockClear();
+    insertEpisodes.mockClear();
+    insertSignals.mockClear();
+    updateEmails.mockClear();
+  });
+
+  it("noreply email: 0 OpenAI calls and 0 inserts (facts/episodes/signals)", async () => {
+    const openaiCreate = vi.fn();
+    const embeddingsCreate = vi.fn();
+    const fakeOpenAI = {
+      chat: { completions: { create: openaiCreate } },
+      embeddings: { create: embeddingsCreate },
+    } as any;
+
+    const noiseEmail = {
+      id: 42,
+      user_id: "u1",
+      shared_mailbox_id: null,
+      sender: '"Stripe" <noreply@stripe.com>',
+      recipient: "alice@startup.fr",
+      subject: "Your receipt from Stripe",
+      body: "Thanks for your payment. Receipt INV-001 is attached.".repeat(5),
+      sent_at: null,
+      received_at: new Date().toISOString(),
+      is_private: false,
+    } as any;
+
+    const outcome = await processEmail(fakeOpenAI, noiseEmail, new Map());
+
+    expect(outcome).toBe("skipped");
+    expect(openaiCreate).not.toHaveBeenCalled();
+    expect(embeddingsCreate).not.toHaveBeenCalled();
+    expect(insertFacts).not.toHaveBeenCalled();
+    expect(insertEpisodes).not.toHaveBeenCalled();
+    expect(insertSignals).not.toHaveBeenCalled();
   });
 });

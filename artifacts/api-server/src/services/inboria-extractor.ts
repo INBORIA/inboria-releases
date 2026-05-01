@@ -233,7 +233,7 @@ async function embedStatements(openai: OpenAI, statements: string[]): Promise<(n
 
 type ProcessOutcome = "processed" | "skipped" | "transient_error";
 
-async function processEmail(
+export async function processEmail(
   openai: OpenAI,
   email: EmailRow,
   cache: Map<string, boolean>,
