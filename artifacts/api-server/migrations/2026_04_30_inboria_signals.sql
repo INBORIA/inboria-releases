@@ -1,5 +1,10 @@
 -- Inboria Phase 3 — table de signaux par email pour le tri intelligent.
 -- À exécuter dans le SQL Editor du Dashboard Supabase.
+--
+-- IMPORTANT — si une version antérieure (incomplète) de la table existe déjà,
+-- on la remplace proprement. Sans données utiles à conserver à ce stade
+-- (Phase 1 livrée, Phase 3 pas encore alimentée).
+drop table if exists public.inboria_signals cascade;
 
 create table if not exists public.inboria_signals (
   id uuid primary key default gen_random_uuid(),

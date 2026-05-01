@@ -307,9 +307,16 @@ async function processEmail(
     }));
     const { error } = await supabaseAdmin.from("inboria_signals").insert(signalRows);
     if (error) {
-      // Silent if table not yet created in Supabase Dashboard.
+      // Silent if table not yet created or has incomplete columns
+      // (migration 2026_04_30_inboria_signals.sql not yet applied in
+      // Supabase Dashboard).
       const msg = String(error.message || "");
-      if (!/relation .*inboria_signals.* does not exist/i.test(msg)) {
+      const known =
+        /relation .*inboria_signals.* does not exist/i.test(msg) ||
+        /could not find the table.*inboria_signals/i.test(msg) ||
+        /column .*inboria_signals.* does not exist/i.test(msg) ||
+        /column .* of relation .*inboria_signals.* does not exist/i.test(msg);
+      if (!known) {
         logger.warn(
           { err: msg, emailId: email.id },
           "[inboria-extractor] signals insert failed",

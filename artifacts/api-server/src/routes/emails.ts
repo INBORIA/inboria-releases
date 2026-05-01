@@ -352,7 +352,15 @@ router.get("/emails", requireAuth, async (req, res): Promise<void> => {
         .in("source_email_id", emailIds);
       if (signalsErr) {
         const msg = String(signalsErr.message || "");
-        if (!/relation .*inboria_signals.* does not exist/i.test(msg)) {
+        // Tolerant: silence both "table missing" (migration pas encore
+        // appliquée) et "column missing" (table créée avec une version
+        // antérieure incomplète — le cas se résout dès que la migration
+        // 2026_04_30_inboria_signals.sql est appliquée dans Supabase).
+        const known =
+          /relation .*inboria_signals.* does not exist/i.test(msg) ||
+          /could not find the table.*inboria_signals/i.test(msg) ||
+          /column inboria_signals\..* does not exist/i.test(msg);
+        if (!known) {
           req.log?.warn?.({ msg }, "[inboria] signals fetch failed");
         }
       } else {
