@@ -5254,6 +5254,18 @@ components:
           type: boolean
           description: True if the user's plan was set to "expired" immediately.
 
+    InboriaExpertSuggestion:
+      type: object
+      required: [userId, fullName, interactionCount, score]
+      properties:
+        userId: { type: string }
+        fullName: { type: string }
+        interactionCount: { type: integer }
+        lastInteractionAt:
+          type: ["string", "null"]
+          format: date-time
+        score: { type: integer }
+
     InboriaExpertSuggestionResponse:
       type: object
       required: [suggestion]

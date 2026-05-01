@@ -1163,6 +1163,15 @@ export interface AdminCancelSubscriptionResult {
   revokedNow: boolean;
 }
 
+export interface InboriaExpertSuggestion {
+  userId: string;
+  fullName: string;
+  interactionCount: number;
+  /** @nullable */
+  lastInteractionAt?: string | null;
+  score: number;
+}
+
 export interface InboriaExpertSuggestionResponse {
   suggestion: InboriaExpertSuggestion | null;
 }

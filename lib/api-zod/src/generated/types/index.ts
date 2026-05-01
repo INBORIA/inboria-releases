@@ -126,6 +126,7 @@ export * from "./getTeamActivityParams";
 export * from "./getTeamRecentCommentsParams";
 export * from "./healthStatus";
 export * from "./impactedShareMember";
+export * from "./inboriaExpertSuggestion";
 export * from "./inboriaExpertSuggestionResponse";
 export * from "./inboriaMailboxSetting";
 export * from "./inboriaMailboxSettingKind";
