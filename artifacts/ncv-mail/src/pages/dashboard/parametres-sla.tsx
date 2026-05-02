@@ -120,7 +120,7 @@ export default function ParametresSla() {
         ) : (policiesQuery.data || []).length === 0 ? (
           <div className="bg-card border border-border border-dashed rounded-lg p-6 text-center">
             <p className="text-[12px] text-[#8b9cb3]">{t("sla.noMailboxes")}</p>
-            <Link href="/dashboard/boites-partagees">
+            <Link href="/dashboard/equipe">
               <Button size="sm" variant="outline" className="mt-3 h-7 text-[11px]">
                 {t("sla.gotoSharedMailboxes")} <ChevronRight className="w-3 h-3 ml-1" />
               </Button>

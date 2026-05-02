@@ -18,7 +18,6 @@ import {
   Archive,
   FolderKanban,
   AlertTriangle,
-  MailPlus,
   Activity,
   Send,
   CalendarClock,
@@ -96,16 +95,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     { name: t("rules.title"), href: "/dashboard/parametres/regles", icon: Wand2 },
   ];
 
-  const isBusiness = (user as any).plan === "business";
   const isInternalAdmin = !!(user as any).isAdmin;
-  const archivesIndex = baseNavigation.findIndex((e) => e.href === "/dashboard/archives");
-  let navigation = isBusiness
-    ? [
-        ...baseNavigation.slice(0, archivesIndex + 1),
-        { name: t("sidebar.sharedMailboxes"), href: "/dashboard/boites-partagees", icon: MailPlus },
-        ...baseNavigation.slice(archivesIndex + 1),
-      ]
-    : baseNavigation;
+  let navigation = baseNavigation;
 
   if (isInternalAdmin) {
     navigation = [

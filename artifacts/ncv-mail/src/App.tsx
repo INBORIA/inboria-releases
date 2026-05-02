@@ -48,7 +48,6 @@ import Equipe from "@/pages/dashboard/equipe";
 import AdminIndex from "@/pages/dashboard/admin";
 import AdminWaitlist from "@/pages/dashboard/admin/waitlist";
 import AdminAbonnes from "@/pages/dashboard/admin/abonnes";
-import BoitesPartagees from "@/pages/dashboard/boites-partagees";
 import TeamActivite from "@/pages/dashboard/team-activite";
 import Agenda from "@/pages/dashboard/agenda";
 
@@ -259,7 +258,7 @@ function Router() {
       <Route path="/dashboard/parametres/integrations" component={() => <ProtectedRoute component={ParametresIntegrations} />} />
       <Route path="/dashboard/abonnement" component={() => <ProtectedRoute component={Abonnement} />} />
       <Route path="/dashboard/equipe" component={() => <ProtectedRoute component={Equipe} />} />
-      <Route path="/dashboard/boites-partagees" component={() => <ProtectedRoute component={BoitesPartagees} />} />
+      <Route path="/dashboard/boites-partagees" component={() => <Redirect to="/dashboard/equipe" />} />
       <Route path="/dashboard/activite-equipe" component={() => <ProtectedRoute component={TeamActivite} />} />
       <Route path="/dashboard/agenda" component={() => <ProtectedRoute component={Agenda} />} />
       <Route path="/dashboard/admin" component={() => <ProtectedRoute component={AdminIndex} />} />

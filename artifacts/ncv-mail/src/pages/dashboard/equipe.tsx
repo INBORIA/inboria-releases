@@ -9,10 +9,17 @@ import {
   useUpdateMemberRole,
   useCreateOrganisation,
   useGetProfile,
+  useGetSharedMailboxes,
+  useDeleteSharedMailbox,
+  useGetSharedMailboxMembers,
+  useAddSharedMailboxMember,
+  useRemoveSharedMailboxMember,
   getGetMyOrganisationQueryKey,
   getGetOrganisationMembersQueryKey,
   getGetOrganisationInvitationsQueryKey,
   getGetProfileQueryKey,
+  getGetSharedMailboxesQueryKey,
+  getGetSharedMailboxMembersQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -35,6 +42,9 @@ import {
   Check,
   ChevronDown,
   X,
+  MailPlus,
+  Inbox,
+  CheckCircle2,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
@@ -50,6 +60,11 @@ export default function Equipe() {
   const cancelInvite = useCancelInvitation();
   const removeMember = useRemoveOrganisationMember();
   const updateRole = useUpdateMemberRole();
+
+  const { data: sharedMailboxes, isLoading: sharedMailboxesLoading } = useGetSharedMailboxes();
+  const deleteMailboxMut = useDeleteSharedMailbox();
+  const addMailboxMemberMut = useAddSharedMailboxMember();
+  const removeMailboxMemberMut = useRemoveSharedMailboxMember();
 
   const queryClient = useQueryClient();
   const { toast } = useToast();
@@ -150,6 +165,41 @@ export default function Equipe() {
       invalidateAll();
     } catch (e: any) {
       toast({ title: e?.response?.data?.error || t("team.error"), variant: "destructive" });
+    }
+  }
+
+  async function handleDeleteMailbox(id: string, name: string) {
+    if (!confirm(t("sharedMailboxes.deleteConfirm") + (name ? ` (${name})` : ""))) return;
+    try {
+      await deleteMailboxMut.mutateAsync({ mailboxId: id });
+      toast({ title: t("sharedMailboxes.mailboxDeleted") });
+      queryClient.invalidateQueries({ queryKey: getGetSharedMailboxesQueryKey() });
+    } catch (e: any) {
+      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
+    }
+  }
+
+  async function handleAddMailboxMember(mailboxId: string, userId: string): Promise<void> {
+    if (!userId) return;
+    try {
+      await addMailboxMemberMut.mutateAsync({ mailboxId, data: { userId, canReply: true } });
+      toast({ title: t("sharedMailboxes.memberAdded") });
+      queryClient.invalidateQueries({ queryKey: getGetSharedMailboxMembersQueryKey(mailboxId) });
+      queryClient.invalidateQueries({ queryKey: getGetSharedMailboxesQueryKey() });
+    } catch (e: any) {
+      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
+      throw e;
+    }
+  }
+
+  async function handleRemoveMailboxMember(mailboxId: string, memberId: string) {
+    try {
+      await removeMailboxMemberMut.mutateAsync({ mailboxId, memberId });
+      toast({ title: t("sharedMailboxes.memberRemoved") });
+      queryClient.invalidateQueries({ queryKey: getGetSharedMailboxMembersQueryKey(mailboxId) });
+      queryClient.invalidateQueries({ queryKey: getGetSharedMailboxesQueryKey() });
+    } catch (e: any) {
+      toast({ title: e?.response?.data?.error || t("common.error"), variant: "destructive" });
     }
   }
 
@@ -420,6 +470,48 @@ export default function Equipe() {
           </div>
         )}
 
+        {isAdmin && isBusinessPlan && (
+          <div className="bg-[#141c2b] rounded-xl border border-[#1f2937] overflow-hidden">
+            <div className="px-5 py-3 border-b border-[#1f2937]">
+              <h2 className="text-[14px] font-semibold text-white flex items-center gap-2">
+                <MailPlus className="h-4 w-4 text-[#8b9cb3]" />
+                {t("sharedMailboxes.title")} ({(sharedMailboxes as any[])?.length || 0})
+              </h2>
+              <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+                {t("sharedMailboxes.subtitle")}
+              </p>
+            </div>
+            {sharedMailboxesLoading ? (
+              <div className="flex justify-center py-6">
+                <Loader2 className="h-5 w-5 animate-spin text-[#8b9cb3]" />
+              </div>
+            ) : !sharedMailboxes || (sharedMailboxes as any[]).length === 0 ? (
+              <div className="px-5 py-6 text-center">
+                <Inbox className="h-8 w-8 text-[#8b9cb3]/40 mx-auto mb-2" />
+                <p className="text-[12px] text-[#8b9cb3]">{t("sharedMailboxes.noMailboxes")}</p>
+                <Link href="/dashboard/parametres/mon-compte">
+                  <Button size="sm" variant="outline" className="mt-3 h-7 text-[11px]">
+                    {t("sharedMailboxes.shareConnection")}
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              <div className="divide-y divide-[#1f2937]">
+                {(sharedMailboxes as any[]).map((mb: any) => (
+                  <SharedMailboxRow
+                    key={mb.id}
+                    mailbox={mb}
+                    orgMembers={(members as any[]) || []}
+                    onDelete={() => handleDeleteMailbox(mb.id, mb.name)}
+                    onAddMember={(userId) => handleAddMailboxMember(mb.id, userId)}
+                    onRemoveMember={(memberId) => handleRemoveMailboxMember(mb.id, memberId)}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+        )}
+
         {pendingInvitations.length > 0 && (
           <div className="bg-[#141c2b] rounded-xl border border-[#1f2937] overflow-hidden">
             <div className="px-5 py-3 border-b border-[#1f2937]">
@@ -482,5 +574,159 @@ export default function Equipe() {
         )}
       </div>
     </DashboardLayout>
+  );
+}
+
+function SharedMailboxRow({
+  mailbox,
+  orgMembers,
+  onDelete,
+  onAddMember,
+  onRemoveMember,
+}: {
+  mailbox: any;
+  orgMembers: any[];
+  onDelete: () => void;
+  onAddMember: (userId: string) => Promise<void> | void;
+  onRemoveMember: (memberId: string) => void;
+}) {
+  const { t } = useTranslation();
+  const [expanded, setExpanded] = useState(false);
+  const [addUserId, setAddUserId] = useState("");
+  const [addPending, setAddPending] = useState(false);
+  const { data: mbMembers, isLoading } = useGetSharedMailboxMembers(mailbox.id, {
+    query: { enabled: expanded } as any,
+  });
+
+  const memberUserIds = new Set(((mbMembers as any[]) || []).map((m: any) => m.userId));
+  const availableMembers = orgMembers.filter((om: any) => om.userId && !memberUserIds.has(om.userId));
+
+  return (
+    <div className="px-5 py-3">
+      <div className="flex items-center justify-between gap-3">
+        <button
+          type="button"
+          onClick={() => setExpanded((v) => !v)}
+          className="flex items-center gap-3 flex-1 min-w-0 text-left hover:opacity-90"
+        >
+          <div className="h-8 w-8 rounded-full bg-[#1e3a5f] flex items-center justify-center text-primary">
+            <MailPlus className="h-4 w-4" />
+          </div>
+          <div className="min-w-0">
+            <div className="flex items-center gap-2 flex-wrap">
+              <span className="text-[13px] font-medium text-white truncate">{mailbox.name}</span>
+              {mailbox.connectionId && (
+                <span className="inline-flex items-center gap-1 text-emerald-400 text-[10px]">
+                  <CheckCircle2 className="h-2.5 w-2.5" />
+                  {t("sharedMailboxes.connected", "Connectée")}
+                </span>
+              )}
+            </div>
+            <div className="flex items-center gap-3 text-[11px] text-[#8b9cb3]">
+              <span className="truncate">{mailbox.emailAddress}</span>
+              <span className="flex items-center gap-1 shrink-0">
+                <Users className="h-3 w-3" />
+                {mailbox.memberCount || 0}
+              </span>
+            </div>
+          </div>
+          <ChevronDown
+            className={`h-4 w-4 text-[#8b9cb3] transition-transform shrink-0 ${expanded ? "rotate-180" : ""}`}
+          />
+        </button>
+        <button
+          type="button"
+          onClick={onDelete}
+          className="p-1.5 rounded text-[#8b9cb3] hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
+          title={t("sharedMailboxes.delete")}
+          data-testid={`delete-shared-mailbox-${mailbox.id}`}
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </button>
+      </div>
+
+      {expanded && (
+        <div className="mt-3 ml-11 space-y-3">
+          {availableMembers.length > 0 && (
+            <div className="flex gap-2">
+              <select
+                value={addUserId}
+                onChange={(e) => setAddUserId(e.target.value)}
+                className="flex-1 bg-[#0d1117] border border-[#1f2937] text-white text-[12px] rounded-md px-2 py-1.5"
+              >
+                <option value="">{t("sharedMailboxes.selectColleague", "Choisir un coéquipier")}</option>
+                {availableMembers.map((om: any) => (
+                  <option key={om.userId} value={om.userId}>
+                    {om.fullName || om.email || om.userId}
+                  </option>
+                ))}
+              </select>
+              <Button
+                size="sm"
+                disabled={!addUserId || addPending}
+                onClick={async () => {
+                  setAddPending(true);
+                  try {
+                    await onAddMember(addUserId);
+                    setAddUserId("");
+                  } finally {
+                    setAddPending(false);
+                  }
+                }}
+                className="h-8 text-[11px]"
+              >
+                {addPending ? (
+                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                ) : (
+                  <UserPlus className="h-3 w-3 mr-1" />
+                )}
+                {t("sharedMailboxes.add", "Ajouter")}
+              </Button>
+            </div>
+          )}
+
+          {isLoading ? (
+            <div className="flex justify-center py-3">
+              <Loader2 className="h-4 w-4 animate-spin text-[#8b9cb3]" />
+            </div>
+          ) : !mbMembers || (mbMembers as any[]).length === 0 ? (
+            <p className="text-[11px] text-[#8b9cb3] py-1">
+              {t("sharedMailboxes.noMembers", "Aucun membre")}
+            </p>
+          ) : (
+            <div className="space-y-1.5">
+              {(mbMembers as any[]).map((m: any) => (
+                <div
+                  key={m.id}
+                  className="flex items-center justify-between bg-[#0d1117] rounded-md px-3 py-1.5"
+                >
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className="h-6 w-6 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
+                      <span className="text-[10px] font-semibold text-primary">
+                        {(m.fullName || m.email || "?").charAt(0).toUpperCase()}
+                      </span>
+                    </div>
+                    <div className="min-w-0">
+                      <div className="text-[12px] text-white truncate">
+                        {m.fullName || t("sharedMailboxes.noName", "Sans nom")}
+                      </div>
+                      <div className="text-[10px] text-[#8b9cb3] truncate">{m.email}</div>
+                    </div>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => onRemoveMember(m.id)}
+                    className="p-1 rounded text-[#8b9cb3] hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
+                    title={t("sharedMailboxes.removeMember", "Retirer")}
+                  >
+                    <X className="h-3.5 w-3.5" />
+                  </button>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
   );
 }
