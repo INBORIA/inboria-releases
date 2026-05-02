@@ -1355,7 +1355,7 @@
       "clearVision": "Klare Sicht",
       "clearVisionDesc": "Finden Sie sofort Ihre wichtigen E-Mails dank optimaler Organisation.",
       "autopilot": "Inboria verwaltet Ihren Posteingang über Nacht",
-      "autopilotDesc": "Aktivieren Sie Inboria, damit sie nicht-dringende E-Mails über Nacht bearbeitet, sortiert und beantwortet. Sie kommen morgens in ein verwaltetes Postfach.",
+      "autopilotDesc": "Aktivieren Sie Inboria, damit sie nicht-dringende E-Mails über Nacht sortiert, kategorisiert, archiviert und Antwortentwürfe vorbereitet. Sie kommen morgens in ein verwaltetes Postfach — Sie müssen die Entwürfe nur prüfen und versenden.",
       "teamCollab": "Teamarbeit",
       "teamCollabDesc": "Geteilte Postfächer, Zuweisung, interne Kommentare, Echtzeitaktivität. Ihr Team arbeitet zusammen, ohne sich in die Quere zu kommen.",
       "multilingual": "Nativ mehrsprachig",
@@ -1366,7 +1366,7 @@
     },
     "features": {
       "heroTitle": "Alles, was Sie brauchen, um die Kontrolle über Ihre E-Mails zurückzugewinnen",
-      "heroDesc": "Inboria sortiert, fasst zusammen und beantwortet Ihre E-Mails automatisch.",
+      "heroDesc": "Inboria sortiert, fasst zusammen und bereitet Antwortentwürfe für Ihre E-Mails vor. Sie prüfen und senden.",
       "smartSort": "Intelligente Sortierung nach Kategorien",
       "smartSortDesc": "Künstliche Intelligenz analysiert den Inhalt Ihrer E-Mails und sortiert sie automatisch in die entsprechenden Ordner, um einen sauberen Posteingang zu gewährleisten.",
       "autoSummary": "Automatische Zusammenfassungen",

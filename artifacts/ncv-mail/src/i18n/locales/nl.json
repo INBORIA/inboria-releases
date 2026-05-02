@@ -1355,7 +1355,7 @@
       "clearVision": "Helder overzicht",
       "clearVisionDesc": "Vind uw belangrijke e-mails direct terug dankzij optimale organisatie.",
       "autopilot": "Inboria beheert uw inbox 's nachts",
-      "autopilotDesc": "Activeer Inboria om niet-dringende e-mails 's nachts te verwerken, sorteren en beantwoorden. U komt 's morgens binnen in een beheerde inbox.",
+      "autopilotDesc": "Activeer Inboria om niet-dringende e-mails 's nachts te sorteren, te categoriseren, te archiveren en conceptantwoorden voor te bereiden. U komt 's morgens binnen in een beheerde inbox — u hoeft alleen de concepten te beoordelen en te versturen.",
       "teamCollab": "Teamwerk",
       "teamCollabDesc": "Gedeelde mailboxen, toewijzing, interne opmerkingen, realtime activiteit. Uw team werkt samen zonder elkaar in de weg te zitten.",
       "multilingual": "Native meertalig",
@@ -1366,7 +1366,7 @@
     },
     "features": {
       "heroTitle": "Alles wat u nodig heeft om de controle over uw e-mails terug te nemen",
-      "heroDesc": "Inboria sorteert, vat samen en beantwoordt uw e-mails automatisch.",
+      "heroDesc": "Inboria sorteert, vat samen en bereidt conceptantwoorden op uw e-mails voor. U beoordeelt en verstuurt.",
       "smartSort": "Slim sorteren op categorie",
       "smartSortDesc": "Kunstmatige intelligentie analyseert uw e-mailinhoud en sorteert ze automatisch in de juiste mappen voor een opgeruimde inbox.",
       "autoSummary": "Automatische samenvattingen",

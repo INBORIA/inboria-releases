@@ -1345,7 +1345,7 @@
       "clearVision": "Vision claire",
       "clearVisionDesc": "Retrouvez instantanément vos emails importants grâce à une organisation optimale.",
       "autopilot": "Inboria en autonomie la nuit",
-      "autopilotDesc": "Activez Inboria pour qu'elle traite, classe et réponde aux emails non urgents pendant la nuit. Vous arrivez le matin avec une boîte déjà gérée.",
+      "autopilotDesc": "Activez Inboria pour qu'elle trie, classe, archive et prépare des brouillons de réponse pour les emails non urgents pendant la nuit. Vous arrivez le matin avec une boîte déjà gérée — il vous reste à relire et envoyer les brouillons.",
       "teamCollab": "Travail en équipe",
       "teamCollabDesc": "Boîtes partagées, assignation, commentaires internes, activité en temps réel. Votre équipe collabore sans se marcher dessus.",
       "multilingual": "Multilingue natif",
@@ -1356,7 +1356,7 @@
     },
     "features": {
       "heroTitle": "Tout ce dont vous avez besoin pour reprendre le contrôle de vos emails",
-      "heroDesc": "Inboria trie, résume et répond à vos emails automatiquement.",
+      "heroDesc": "Inboria trie, résume et prépare des brouillons de réponse à vos emails. Vous relisez et envoyez.",
       "smartSort": "Tri intelligent par catégories",
       "smartSortDesc": "L'intelligence artificielle analyse le contenu de vos emails et les classe automatiquement dans les dossiers appropriés pour garder une boîte de réception propre.",
       "autoSummary": "Résumés automatiques",

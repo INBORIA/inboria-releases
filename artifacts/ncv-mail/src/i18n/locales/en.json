@@ -1355,7 +1355,7 @@
       "clearVision": "Clear vision",
       "clearVisionDesc": "Instantly find your important emails thanks to optimal organization.",
       "autopilot": "Inboria runs your inbox overnight",
-      "autopilotDesc": "Enable Inboria to process, sort and reply to non-urgent emails overnight. You walk in to a managed inbox.",
+      "autopilotDesc": "Enable Inboria to sort, categorize, archive and draft replies for non-urgent emails overnight. You walk in to a managed inbox — all that's left is reviewing and sending the drafts.",
       "teamCollab": "Teamwork",
       "teamCollabDesc": "Shared mailboxes, assignment, internal comments, real-time activity. Your team collaborates without stepping on each other.",
       "multilingual": "Native multilingual",
@@ -1366,7 +1366,7 @@
     },
     "features": {
       "heroTitle": "Everything you need to take back control of your emails",
-      "heroDesc": "Inboria sorts, summarizes and replies to your emails automatically.",
+      "heroDesc": "Inboria sorts, summarizes and drafts replies to your emails. You review and send.",
       "smartSort": "Smart sorting by categories",
       "smartSortDesc": "Artificial intelligence analyzes your email content and automatically files them in the appropriate folders to keep a clean inbox.",
       "autoSummary": "Automatic summaries",

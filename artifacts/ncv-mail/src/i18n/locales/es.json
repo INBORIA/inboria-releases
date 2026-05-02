@@ -1355,7 +1355,7 @@
       "clearVision": "Visión clara",
       "clearVisionDesc": "Encuentra instantáneamente tus correos electrónicos importantes gracias a una organización óptima.",
       "autopilot": "Inboria gestiona tu bandeja de noche",
-      "autopilotDesc": "Activa Inboria para que procese, clasifique y responda los correos no urgentes durante la noche. Llegas por la mañana con la bandeja ya gestionada.",
+      "autopilotDesc": "Activa Inboria para que clasifique, archive y prepare borradores de respuesta para los correos no urgentes durante la noche. Llegas por la mañana con la bandeja ya gestionada — solo tienes que revisar y enviar los borradores.",
       "teamCollab": "Trabajo en equipo",
       "teamCollabDesc": "Buzones compartidos, asignación, comentarios internos, actividad en tiempo real. Tu equipo colabora sin pisarse.",
       "multilingual": "Multilingüe nativo",
@@ -1366,7 +1366,7 @@
     },
     "features": {
       "heroTitle": "Todo lo que necesitas para retomar el control de tus correos electrónicos",
-      "heroDesc": "Inboria clasifica, resume y responde a tus correos electrónicos automáticamente.",
+      "heroDesc": "Inboria clasifica, resume y prepara borradores de respuesta a tus correos. Tú revisas y envías.",
       "smartSort": "Clasificación inteligente por categorías",
       "smartSortDesc": "La inteligencia artificial analiza el contenido de tus correos y los archiva automáticamente en las carpetas apropiadas para mantener una bandeja de entrada limpia.",
       "autoSummary": "Resúmenes automáticos",
