@@ -1,43 +1,43 @@
 import { Link } from "wouter";
 import { MarketingLayout } from "@/components/layout/marketing-layout";
 import {
-  Brain,
+  MessageSquare,
   ArrowRight,
-  CheckCircle2,
-  Tags,
-  FileText,
-  PenLine,
-  BarChart3,
-  AlertTriangle,
-  FolderKanban,
-  Sparkles,
-  ShieldCheck,
+  Users,
+  Calendar,
+  Settings,
+  History,
   Eye,
   Lock,
-  Zap,
+  ShieldCheck,
   Server,
-  MessageSquare,
+  Zap,
+  Sparkles,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { isPaymentsEnabled } from "@/lib/feature-flags";
 
-const aiFeatureKeys = [
-  { icon: Brain, key: "memory", highlights: ["memoryH1", "memoryH2", "memoryH3", "memoryH4"] },
-  { icon: Tags, key: "autoSort", highlights: ["autoSortH1", "autoSortH2", "autoSortH3", "autoSortH4"] },
-  { icon: FileText, key: "smartSummaries", highlights: ["smartSummariesH1", "smartSummariesH2", "smartSummariesH3", "smartSummariesH4"] },
-  { icon: PenLine, key: "aiDrafts", highlights: ["aiDraftsH1", "aiDraftsH2", "aiDraftsH3", "aiDraftsH4"] },
-  { icon: BarChart3, key: "dailyBrief", highlights: ["dailyBriefH1", "dailyBriefH2", "dailyBriefH3", "dailyBriefH4"] },
-  { icon: AlertTriangle, key: "priorityDetection", highlights: ["priorityDetectionH1", "priorityDetectionH2", "priorityDetectionH3", "priorityDetectionH4"] },
-  { icon: FolderKanban, key: "aiPacks", highlights: ["aiPacksH1", "aiPacksH2", "aiPacksH3", "aiPacksH4"] },
+const knowsKeys = [
+  { icon: Users, key: "knows1" },
+  { icon: Calendar, key: "knows2" },
+  { icon: Settings, key: "knows3" },
+  { icon: History, key: "knows4" },
 ];
 
-const assistantHighlights = ["assistantH1", "assistantH2", "assistantH3", "assistantH4"];
+const askExamples = ["ask1", "ask2", "ask3", "ask4", "ask5", "ask6"];
 
-const principleKeys = [
-  { icon: Eye, key: "transparency" },
-  { icon: Lock, key: "yourData" },
-  { icon: ShieldCheck, key: "gdprCompliant" },
-  { icon: Server, key: "secureInfra" },
+const stepsKeys = [
+  { step: "1", key: "step1" },
+  { step: "2", key: "step2" },
+  { step: "3", key: "step3" },
+  { step: "4", key: "step4" },
+];
+
+const privacyKeys = [
+  { icon: Eye, key: "privacy1" },
+  { icon: Lock, key: "privacy2" },
+  { icon: ShieldCheck, key: "privacy3" },
+  { icon: Server, key: "privacy4" },
 ];
 
 export default function IntelligenceArtificielle() {
@@ -45,24 +45,17 @@ export default function IntelligenceArtificielle() {
   const paymentsEnabled = isPaymentsEnabled();
 
   const heroStats = [
-    { value: t("marketing.ai.stats.advancedAI"), label: t("marketing.ai.stats.latestGen") },
-    { value: "<3s", label: t("marketing.ai.stats.processingTime") },
-    { value: "RGPD", label: t("marketing.ai.stats.gdpr") },
-  ];
-
-  const howItWorks = [
-    { step: "1", key: "step1" },
-    { step: "2", key: "step2" },
-    { step: "3", key: "step3" },
-    { step: "4", key: "step4" },
+    { value: t("marketing.inboriaChat.heroStat1Value"), label: t("marketing.inboriaChat.heroStat1Label") },
+    { value: t("marketing.inboriaChat.heroStat2Value"), label: t("marketing.inboriaChat.heroStat2Label") },
+    { value: t("marketing.inboriaChat.heroStat3Value"), label: t("marketing.inboriaChat.heroStat3Label") },
   ];
 
   const faqs = [
-    { q: t("marketing.ai.faq1q"), a: t("marketing.ai.faq1a") },
-    { q: t("marketing.ai.faq2q"), a: t("marketing.ai.faq2a") },
-    { q: t("marketing.ai.faq3q"), a: t("marketing.ai.faq3a") },
-    { q: t("marketing.ai.faq4q"), a: t("marketing.ai.faq4a") },
-    { q: t("marketing.ai.faq5q"), a: t("marketing.ai.faq5a") },
+    { q: t("marketing.inboriaChat.faq1q"), a: t("marketing.inboriaChat.faq1a") },
+    { q: t("marketing.inboriaChat.faq2q"), a: t("marketing.inboriaChat.faq2a") },
+    { q: t("marketing.inboriaChat.faq3q"), a: t("marketing.inboriaChat.faq3a") },
+    { q: t("marketing.inboriaChat.faq4q"), a: t("marketing.inboriaChat.faq4a") },
+    { q: t("marketing.inboriaChat.faq5q"), a: t("marketing.inboriaChat.faq5a") },
   ];
 
   return (
@@ -71,25 +64,25 @@ export default function IntelligenceArtificielle() {
         <div className="absolute inset-0 bg-gradient-to-b from-[#2d7dd2]/10 via-[#2d7dd2]/5 to-transparent" />
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center relative">
           <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#2d7dd2]/10 border border-[#2d7dd2]/20 mb-6">
-            <Brain className="w-3.5 h-3.5 text-[#2d7dd2]" />
-            <span className="text-[12px] font-medium text-[#2d7dd2]">{t("marketing.ai.badge")}</span>
+            <MessageSquare className="w-3.5 h-3.5 text-[#2d7dd2]" />
+            <span className="text-[12px] font-medium text-[#2d7dd2]">{t("marketing.inboriaChat.badge")}</span>
           </div>
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
-            {t("marketing.ai.heroTitle")}
+            {t("marketing.inboriaChat.heroTitle")}
           </h1>
           <p className="mt-5 text-[15px] sm:text-[16px] text-[#8b9cb3] max-w-2xl mx-auto leading-relaxed">
-            {t("marketing.ai.heroDesc")}
+            {t("marketing.inboriaChat.heroDesc")}
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
             <Link href="/signup">
               <button className="px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors flex items-center gap-2">
-                {paymentsEnabled ? t("marketing.ai.tryAIFree") : t("waitlist.ctaJoin")}
+                {paymentsEnabled ? t("marketing.inboriaChat.tryFree") : t("waitlist.ctaJoin")}
                 <ArrowRight className="w-4 h-4" />
               </button>
             </Link>
-            <Link href="/fonctionnalites">
+            <Link href="/tarifs">
               <button className="px-8 py-3 text-[14px] font-semibold text-[#8b9cb3] border border-[#1f2937] rounded-lg hover:text-white hover:border-[#2d7dd2]/30 transition-colors">
-                {t("marketing.ai.allFeatures")}
+                {t("marketing.inboriaChat.seePricing")}
               </button>
             </Link>
           </div>
@@ -109,40 +102,30 @@ export default function IntelligenceArtificielle() {
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              {t("marketing.ai.whatAIDoes")}
+              {t("marketing.inboriaChat.knowsTitle")}
             </h2>
             <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
-              {t("marketing.ai.whatAIDoesDesc")}
+              {t("marketing.inboriaChat.knowsDesc")}
             </p>
           </div>
 
-          <div className="space-y-6">
-            {aiFeatureKeys.map((feat) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {knowsKeys.map((k) => (
               <div
-                key={feat.key}
-                className="rounded-xl border border-[#1f2937] bg-[#141c2b] p-6 sm:p-8 hover:border-[#2d7dd2]/30 transition-colors"
+                key={k.key}
+                className="rounded-xl border border-[#1f2937] bg-[#141c2b] p-6 hover:border-[#2d7dd2]/30 transition-colors"
               >
-                <div className="flex flex-col lg:flex-row lg:items-start gap-6">
-                  <div className="flex-1">
-                    <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-lg bg-[#2d7dd2]/10 flex items-center justify-center shrink-0">
-                        <feat.icon className="w-5 h-5 text-[#2d7dd2]" />
-                      </div>
-                      <h3 className="text-[16px] font-semibold text-white">{t(`marketing.ai.${feat.key}`)}</h3>
-                    </div>
-                    <p className="text-[13px] text-[#8b9cb3] leading-relaxed">{t(`marketing.ai.${feat.key}Desc`)}</p>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="w-10 h-10 rounded-lg bg-[#2d7dd2]/10 flex items-center justify-center shrink-0">
+                    <k.icon className="w-5 h-5 text-[#2d7dd2]" />
                   </div>
-                  <div className="lg:w-64 shrink-0">
-                    <ul className="space-y-2">
-                      {feat.highlights.map((h) => (
-                        <li key={h} className="flex items-start gap-2">
-                          <CheckCircle2 className="w-4 h-4 text-[#2d7dd2] mt-0.5 shrink-0" />
-                          <span className="text-[12px] text-[#8b9cb3]">{t(`marketing.ai.${h}`)}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
+                  <h3 className="text-[15px] font-semibold text-white">
+                    {t(`marketing.inboriaChat.${k.key}Title`)}
+                  </h3>
                 </div>
+                <p className="text-[13px] text-[#8b9cb3] leading-relaxed">
+                  {t(`marketing.inboriaChat.${k.key}Desc`)}
+                </p>
               </div>
             ))}
           </div>
@@ -150,24 +133,27 @@ export default function IntelligenceArtificielle() {
       </section>
 
       <section className="border-t border-[#1f2937] bg-[#0a0e14]">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              {t("marketing.ai.howAIWorks")}
+              {t("marketing.inboriaChat.askTitle")}
             </h2>
-            <p className="mt-3 text-[14px] text-[#8b9cb3]">
-              {t("marketing.ai.howAIWorksDesc")}
+            <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
+              {t("marketing.inboriaChat.askDesc")}
             </p>
           </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {howItWorks.map((w) => (
-              <div key={w.step} className="text-center">
-                <div className="w-12 h-12 rounded-full bg-[#2d7dd2]/10 border border-[#2d7dd2]/20 flex items-center justify-center mx-auto mb-4">
-                  <span className="text-[16px] font-bold text-[#2d7dd2]">{w.step}</span>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {askExamples.map((k) => (
+              <div
+                key={k}
+                className="rounded-xl border border-[#1f2937] bg-[#141c2b] p-5 flex items-start gap-3"
+              >
+                <div className="w-8 h-8 rounded-lg bg-[#2d7dd2]/10 flex items-center justify-center shrink-0 mt-0.5">
+                  <Sparkles className="w-4 h-4 text-[#2d7dd2]" />
                 </div>
-                <h3 className="text-[14px] font-semibold text-white mb-2">{t(`marketing.ai.${w.key}`)}</h3>
-                <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{t(`marketing.ai.${w.key}Desc`)}</p>
+                <p className="text-[14px] text-white leading-relaxed">
+                  « {t(`marketing.inboriaChat.${k}`)} »
+                </p>
               </div>
             ))}
           </div>
@@ -176,54 +162,44 @@ export default function IntelligenceArtificielle() {
 
       <section className="border-t border-[#1f2937]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
-          <div className="rounded-2xl border border-[#2d7dd2]/20 bg-gradient-to-br from-[#141c2b] to-[#0d1117] p-8 sm:p-12">
-            <div className="flex flex-col lg:flex-row lg:items-start gap-8">
-              <div className="flex-1">
-                <div className="flex items-center gap-3 mb-4">
-                  <div className="w-12 h-12 rounded-lg bg-[#2d7dd2]/10 flex items-center justify-center shrink-0">
-                    <MessageSquare className="w-6 h-6 text-[#2d7dd2]" />
-                  </div>
-                  <div>
-                    <h2 className="text-xl sm:text-2xl font-bold text-white">
-                      {t("marketing.ai.assistantTitle")}
-                    </h2>
-                    <p className="text-[13px] text-[#2d7dd2] mt-0.5">
-                      {t("marketing.ai.assistantSubtitle")}
-                    </p>
-                  </div>
+          <div className="text-center mb-12">
+            <h2 className="text-2xl sm:text-3xl font-bold text-white">
+              {t("marketing.inboriaChat.howTitle")}
+            </h2>
+            <p className="mt-3 text-[14px] text-[#8b9cb3]">
+              {t("marketing.inboriaChat.howDesc")}
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {stepsKeys.map((s) => (
+              <div key={s.step} className="text-center">
+                <div className="w-12 h-12 rounded-full bg-[#2d7dd2]/10 border border-[#2d7dd2]/20 flex items-center justify-center mx-auto mb-4">
+                  <span className="text-[16px] font-bold text-[#2d7dd2]">{s.step}</span>
                 </div>
-                <p className="text-[14px] text-[#8b9cb3] leading-relaxed">
-                  {t("marketing.ai.assistantDesc")}
+                <h3 className="text-[14px] font-semibold text-white mb-2">
+                  {t(`marketing.inboriaChat.${s.key}`)}
+                </h3>
+                <p className="text-[12px] text-[#8b9cb3] leading-relaxed">
+                  {t(`marketing.inboriaChat.${s.key}Desc`)}
                 </p>
               </div>
-              <div className="lg:w-72 shrink-0">
-                <ul className="space-y-2">
-                  {assistantHighlights.map((h) => (
-                    <li key={h} className="flex items-start gap-2">
-                      <CheckCircle2 className="w-4 h-4 text-[#2d7dd2] mt-0.5 shrink-0" />
-                      <span className="text-[12px] text-[#8b9cb3]">{t(`marketing.ai.${h}`)}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="border-t border-[#1f2937]">
+      <section className="border-t border-[#1f2937] bg-[#0a0e14]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              {t("marketing.ai.securityTitle")}
+              {t("marketing.inboriaChat.privacyTitle")}
             </h2>
             <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
-              {t("marketing.ai.securityDesc")}
+              {t("marketing.inboriaChat.privacyDesc")}
             </p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            {principleKeys.map((p) => (
+            {privacyKeys.map((p) => (
               <div
                 key={p.key}
                 className="rounded-xl border border-[#1f2937] bg-[#141c2b] p-6 hover:border-[#2d7dd2]/30 transition-colors"
@@ -232,20 +208,24 @@ export default function IntelligenceArtificielle() {
                   <div className="w-10 h-10 rounded-lg bg-[#2d7dd2]/10 flex items-center justify-center shrink-0">
                     <p.icon className="w-5 h-5 text-[#2d7dd2]" />
                   </div>
-                  <h3 className="text-[15px] font-semibold text-white">{t(`marketing.ai.${p.key}`)}</h3>
+                  <h3 className="text-[15px] font-semibold text-white">
+                    {t(`marketing.inboriaChat.${p.key}`)}
+                  </h3>
                 </div>
-                <p className="text-[13px] text-[#8b9cb3] leading-relaxed">{t(`marketing.ai.${p.key}Desc`)}</p>
+                <p className="text-[13px] text-[#8b9cb3] leading-relaxed">
+                  {t(`marketing.inboriaChat.${p.key}Desc`)}
+                </p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="border-t border-[#1f2937] bg-[#0a0e14]">
+      <section className="border-t border-[#1f2937]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              {t("marketing.ai.faqTitle")}
+              {t("marketing.inboriaChat.faqTitle")}
             </h2>
           </div>
           <div className="space-y-4">
@@ -269,25 +249,25 @@ export default function IntelligenceArtificielle() {
               <Zap className="w-7 h-7 text-[#2d7dd2]" />
             </div>
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
-              {t("marketing.ai.ctaTitle")}
+              {t("marketing.inboriaChat.ctaTitle")}
             </h2>
             <p className="mt-4 text-[14px] text-[#8b9cb3] max-w-lg mx-auto">
-              {t("marketing.ai.ctaDesc")}
+              {t("marketing.inboriaChat.ctaDesc")}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link href="/signup">
                 <button className="px-8 py-3 text-[14px] font-semibold text-white bg-[#2d7dd2] rounded-lg hover:bg-[#2563b1] transition-colors">
-                  {paymentsEnabled ? t("marketing.ai.tryFree") : t("waitlist.ctaJoin")}
+                  {paymentsEnabled ? t("marketing.inboriaChat.tryFree") : t("waitlist.ctaJoin")}
                 </button>
               </Link>
               <Link href="/tarifs">
                 <button className="px-8 py-3 text-[14px] font-semibold text-[#8b9cb3] border border-[#1f2937] rounded-lg hover:text-white transition-colors">
-                  {t("marketing.ai.seePricing")}
+                  {t("marketing.inboriaChat.seePricing")}
                 </button>
               </Link>
             </div>
             <p className="mt-4 text-[11px] text-[#8b9cb3]/60">
-              {t("marketing.ai.ctaFooter")}
+              {t("marketing.inboriaChat.ctaFooter")}
             </p>
           </div>
         </div>

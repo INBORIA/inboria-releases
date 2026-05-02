@@ -46,7 +46,6 @@ export default function Fonctionnalites() {
     { icon: Shield, key: "security" },
     { icon: BellOff, key: "snoozeSchedule" },
     { icon: MailCheck, key: "aiFollowups" },
-    { icon: Users, key: "contact360" },
     { icon: CalendarDays, key: "agenda" },
     { icon: MailPlus, key: "sharedMailboxes" },
     { icon: Activity, key: "teamWork" },

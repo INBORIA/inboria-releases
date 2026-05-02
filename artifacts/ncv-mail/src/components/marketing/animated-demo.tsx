@@ -19,7 +19,6 @@ const NAV_KEYS: Array<{ key: string; fallback: string; icon: any; active?: boole
   { key: "sidebar.sharedMailboxes", fallback: "Boîtes partagées", icon: MailPlus },
   { key: "sidebar.myTeam", fallback: "Mon équipe", icon: Users },
   { key: "sidebar.teamActivity", fallback: "Activité équipe", icon: Activity },
-  { key: "sidebar.contacts", fallback: "Contact 360°", icon: Users },
   { key: "sidebar.projects", fallback: "Projets", icon: FolderKanban },
   { key: "sidebar.agenda", fallback: "Agenda", icon: CalendarDays },
   { key: "sidebar.archives", fallback: "Archives", icon: Archive },
@@ -272,7 +271,7 @@ export function AnimatedDemo() {
                     </div>
                     <div className="flex flex-col min-w-0">
                       <span className="text-[10px] font-semibold text-white">{t("inboriaChat.title", "Inboria")}</span>
-                      <span className="text-[8px] text-[#8b9cb3]">{t("inboriaChat.subtitle", "Votre copilote emails")}</span>
+                      <span className="text-[8px] text-[#8b9cb3]">{t("inboriaChat.subtitle", "Votre coéquipier emails")}</span>
                     </div>
                   </div>
                   <div className="px-3 py-2.5">
