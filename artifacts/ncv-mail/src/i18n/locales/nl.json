@@ -1962,7 +1962,8 @@
     "allTeammatesAlready": "Al je teamgenoten zijn al lid van deze mailbox. Om een nieuwe toe te voegen, nodig hem eerst uit voor het team.",
     "noTeammatesYet": "Je hebt nog geen teamgenoten. Nodig iemand uit voor je team om hem aan gedeelde mailboxen te kunnen toevoegen.",
     "inviteToTeam": "Uitnodigen voor team",
-    "inviteTeammate": "Een teamgenoot uitnodigen"
+    "inviteTeammate": "Een teamgenoot uitnodigen",
+    "assignedBadge": "Toegewezen"
   },
   "teamActivity": {
     "title": "Teamactiviteit",

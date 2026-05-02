@@ -1962,7 +1962,8 @@
     "allTeammatesAlready": "Todos tus compañeros ya son miembros de este buzón. Para añadir uno nuevo, invítalo primero al equipo.",
     "noTeammatesYet": "Aún no tienes compañeros. Invita a alguien a tu equipo para poder añadirlo a los buzones compartidos.",
     "inviteToTeam": "Invitar al equipo",
-    "inviteTeammate": "Invitar a un compañero"
+    "inviteTeammate": "Invitar a un compañero",
+    "assignedBadge": "Asignado"
   },
   "teamActivity": {
     "title": "Actividad del equipo",

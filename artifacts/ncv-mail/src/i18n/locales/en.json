@@ -1962,7 +1962,8 @@
     "allTeammatesAlready": "All your teammates are already members of this mailbox. To add a new one, invite them to the team first.",
     "noTeammatesYet": "You don't have any teammates yet. Invite someone to your team to be able to add them to shared mailboxes.",
     "inviteToTeam": "Invite to team",
-    "inviteTeammate": "Invite a teammate"
+    "inviteTeammate": "Invite a teammate",
+    "assignedBadge": "Assigned"
   },
   "teamActivity": {
     "title": "Team activity",

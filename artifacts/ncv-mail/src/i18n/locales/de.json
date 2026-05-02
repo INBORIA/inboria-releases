@@ -1962,7 +1962,8 @@
     "allTeammatesAlready": "Alle deine Teamkollegen sind bereits Mitglied dieses Postfachs. Um einen neuen hinzuzufügen, lade ihn zuerst ins Team ein.",
     "noTeammatesYet": "Du hast noch keine Teamkollegen. Lade jemanden in dein Team ein, um ihn zu gemeinsamen Postfächern hinzufügen zu können.",
     "inviteToTeam": "Ins Team einladen",
-    "inviteTeammate": "Teamkollegen einladen"
+    "inviteTeammate": "Teamkollegen einladen",
+    "assignedBadge": "Zugewiesen"
   },
   "teamActivity": {
     "title": "Teamaktivität",

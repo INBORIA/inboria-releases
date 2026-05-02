@@ -302,7 +302,7 @@
     "filteredAccountReminder": "Filtré : {{email}} (cliquez pour voir tous)",
     "claim": "Prendre en charge",
     "unclaim": "Libérer",
-    "claimedBy": "Pris par",
+    "claimedBy": "Pris en charge par",
     "assignedByPrefix": "Assigné par",
     "loadMore": "Charger plus",
     "page": "Page",
@@ -1892,7 +1892,7 @@
     "mine": "Mes emails",
     "claim": "Prendre en charge",
     "unclaim": "Libérer",
-    "claimedBy": "Pris par",
+    "claimedBy": "Pris en charge par",
     "assignedByPrefix": "Assigné par",
     "assignToColleague": "Assigner à un collègue",
     "assignSuccess": "Email assigné",
@@ -1940,7 +1940,7 @@
     "syncNoNew": "Synchronisation terminée, aucun nouvel email",
     "syncFailed": "La synchronisation a échoué",
     "loadMoreEmails": "Charger plus d'emails",
-    "claimedByOn": "Pris par {{name}} le {{date}}",
+    "claimedByOn": "Pris en charge par {{name}} le {{date}}",
     "release": "Libérer",
     "take": "Prendre en charge",
     "member": "membre",
@@ -1952,7 +1952,8 @@
     "allTeammatesAlready": "Tous tes coéquipiers sont déjà membres de cette boîte. Pour en ajouter un nouveau, invite-le d'abord à l'équipe.",
     "noTeammatesYet": "Tu n'as pas encore de coéquipiers. Invite quelqu'un à ton équipe pour pouvoir l'ajouter aux boîtes partagées.",
     "inviteToTeam": "Inviter à l'équipe",
-    "inviteTeammate": "Inviter un coéquipier"
+    "inviteTeammate": "Inviter un coéquipier",
+    "assignedBadge": "Assigné"
   },
   "teamActivity": {
     "title": "Activité équipe",
