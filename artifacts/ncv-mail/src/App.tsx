@@ -1,8 +1,6 @@
 import { Switch, Route, Router as WouterRouter, Redirect } from "wouter";
 import { useEffect } from "react";
-import { QueryClient, MutationCache } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
-import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
+import { QueryClient, MutationCache, QueryClientProvider } from "@tanstack/react-query";
 import { getGetProfileQueryKey, useGetMyOrganisation } from "@workspace/api-client-react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -150,32 +148,9 @@ const queryClient = new QueryClient({
   },
 });
 
-const persister = typeof window !== "undefined"
-  ? createSyncStoragePersister({
-      storage: window.localStorage,
-      key: PERSIST_CACHE_KEY,
-      throttleTime: 1000,
-    })
-  : undefined;
-
-const persistOptions = {
-  persister: persister!,
-  maxAge: ONE_DAY,
-  buster: CACHE_BUSTER,
-  dehydrateOptions: {
-    shouldDehydrateQuery: (query: any) => {
-      if (query.state.status !== "success") return false;
-      // Volatile / sensitive keys not worth persisting.
-      const firstKey = query.queryKey?.[0];
-      if (typeof firstKey === "string") {
-        if (firstKey.startsWith("/api/auth")) return false;
-        if (firstKey.startsWith("/auth")) return false;
-        if (firstKey === "supabase") return false;
-      }
-      return true;
-    },
-  },
-};
+// PersistQueryClientProvider temporarily disabled: hydration suspected of
+// breaking the app on page reload (ref: dev preview blank-after-reload bug).
+// Re-enable once root cause is confirmed and a safer hydration path exists.
 
 /**
  * Clears React Query cache (memory + persisted) when the user signs out so
@@ -295,7 +270,7 @@ function Router() {
 function App() {
   return (
     <AuthProvider>
-      <PersistQueryClientProvider client={queryClient} persistOptions={persistOptions}>
+      <QueryClientProvider client={queryClient}>
         <CacheCleanup />
         <TooltipProvider>
           <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, "")}>
@@ -304,7 +279,7 @@ function App() {
           </WouterRouter>
           <Toaster />
         </TooltipProvider>
-      </PersistQueryClientProvider>
+      </QueryClientProvider>
     </AuthProvider>
   );
 }
