@@ -1344,7 +1344,7 @@
       "step2Title": "Create your custom categories",
       "step2Desc": "Define your own categories according to your business and specific needs.",
       "step3Title": "Inboria tidies your inbox overnight",
-      "step3Desc": "Following your rules, Inboria sorts, categorizes, archives, prioritizes or forwards your non-urgent emails. You walk in to a tidy inbox in the morning.",
+      "step3Desc": "Based on the rules you define, Inboria archives, categorizes, marks as read, prioritizes, assigns to a teammate or creates a task. You walk in to a tidy inbox in the morning.",
       "trustTitle": "Discover why thousands of professionals trust us",
       "timeSaving": "Time saving",
       "timeSavingDesc": "Save several hours per week by automating email sorting.",
@@ -1355,7 +1355,7 @@
       "clearVision": "Clear vision",
       "clearVisionDesc": "Instantly find your important emails thanks to optimal organization.",
       "autopilot": "Inboria runs your inbox overnight",
-      "autopilotDesc": "Enable Inboria's autonomous mode: following your rules, it archives, categorizes, prioritizes, forwards or sends notifications for non-urgent emails overnight. You walk in to a tidy inbox in the morning.",
+      "autopilotDesc": "Enable Inboria's autonomous mode: based on the rules you define, it archives, categorizes, marks as read, prioritizes, assigns or creates a task overnight. You walk in to a tidy inbox in the morning.",
       "teamCollab": "Teamwork",
       "teamCollabDesc": "Shared mailboxes, assignment, internal comments, real-time activity. Your team collaborates without stepping on each other.",
       "multilingual": "Native multilingual",
@@ -1409,7 +1409,7 @@
       "multilingual": "Multilingual interface",
       "multilingualDesc": "Available in French, English, Dutch, German and Spanish. Every team member works in their own language.",
       "autopilotMode": "Inboria runs on its own",
-      "autopilotModeDesc": "Inboria automatically processes non-urgent emails overnight based on your rules. By morning, your inbox is already tidied."
+      "autopilotModeDesc": "Inboria automatically applies your rules overnight: archiving, categorization, prioritization, assignment and task creation. By morning, your inbox is already tidied."
     },
     "pricing": {
       "heroTitle": "Simple pricing, no surprises",

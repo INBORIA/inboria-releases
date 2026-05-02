@@ -1344,7 +1344,7 @@
       "step2Title": "Erstellen Sie Ihre benutzerdefinierten Kategorien",
       "step2Desc": "Definieren Sie Ihre eigenen Kategorien entsprechend Ihrem Geschäft und Ihren spezifischen Bedürfnissen.",
       "step3Title": "Inboria räumt Ihren Posteingang über Nacht auf",
-      "step3Desc": "Nach Ihren Regeln sortiert, kategorisiert, archiviert, priorisiert oder leitet Inboria Ihre nicht-dringenden E-Mails weiter. Sie kommen morgens in einen aufgeräumten Posteingang.",
+      "step3Desc": "Nach den Regeln, die Sie festlegen, archiviert, kategorisiert, markiert als gelesen, priorisiert Inboria Ihre E-Mails, weist sie einem Teammitglied zu oder erstellt eine Aufgabe. Sie kommen morgens in einen aufgeräumten Posteingang.",
       "trustTitle": "Entdecken Sie, warum Tausende von Fachleuten uns vertrauen",
       "timeSaving": "Zeitersparnis",
       "timeSavingDesc": "Sparen Sie mehrere Stunden pro Woche, indem Sie das Sortieren von E-Mails automatisieren.",
@@ -1355,7 +1355,7 @@
       "clearVision": "Klare Sicht",
       "clearVisionDesc": "Finden Sie sofort Ihre wichtigen E-Mails dank optimaler Organisation.",
       "autopilot": "Inboria verwaltet Ihren Posteingang über Nacht",
-      "autopilotDesc": "Aktivieren Sie den autonomen Modus von Inboria: nach Ihren Regeln archiviert, kategorisiert, priorisiert sie nicht-dringende E-Mails über Nacht, leitet sie weiter oder benachrichtigt darüber. Sie kommen morgens in einen aufgeräumten Posteingang.",
+      "autopilotDesc": "Aktivieren Sie den autonomen Modus von Inboria: nach den Regeln, die Sie festlegen, archiviert, kategorisiert, markiert als gelesen, priorisiert sie E-Mails, weist sie zu oder erstellt eine Aufgabe über Nacht. Sie kommen morgens in einen aufgeräumten Posteingang.",
       "teamCollab": "Teamarbeit",
       "teamCollabDesc": "Geteilte Postfächer, Zuweisung, interne Kommentare, Echtzeitaktivität. Ihr Team arbeitet zusammen, ohne sich in die Quere zu kommen.",
       "multilingual": "Nativ mehrsprachig",
@@ -1409,7 +1409,7 @@
       "multilingual": "Mehrsprachige Oberfläche",
       "multilingualDesc": "Verfügbar in Französisch, Englisch, Niederländisch, Deutsch und Spanisch. Jedes Teammitglied arbeitet in seiner eigenen Sprache.",
       "autopilotMode": "Inboria arbeitet eigenständig",
-      "autopilotModeDesc": "Inboria bearbeitet nicht-dringende E-Mails nachts automatisch nach Ihren Regeln. Am Morgen ist Ihr Postfach bereits aufgeräumt."
+      "autopilotModeDesc": "Inboria wendet Ihre Regeln nachts automatisch an: Archivierung, Kategorisierung, Priorisierung, Zuweisung und Aufgabenerstellung. Am Morgen ist Ihr Postfach bereits aufgeräumt."
     },
     "pricing": {
       "heroTitle": "Einfache Preise, keine Überraschungen",

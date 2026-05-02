@@ -1334,7 +1334,7 @@
       "step2Title": "Créez vos rubriques personnalisées",
       "step2Desc": "Définissez vos propres catégories selon votre métier et vos besoins spécifiques.",
       "step3Title": "Inboria range votre boîte pendant la nuit",
-      "step3Desc": "Selon vos règles, Inboria trie, classe, archive, priorise ou transfère vos emails non urgents. Vous arrivez le matin avec une boîte déjà rangée.",
+      "step3Desc": "Selon les règles que vous définissez, Inboria archive, classe, marque comme lu, priorise, assigne à un coéquipier ou crée une tâche. Vous arrivez le matin avec une boîte déjà rangée.",
       "trustTitle": "Découvrez pourquoi des milliers de professionnels nous font confiance",
       "timeSaving": "Gain de temps",
       "timeSavingDesc": "Économisez plusieurs heures par semaine en automatisant le tri de vos emails.",
@@ -1345,7 +1345,7 @@
       "clearVision": "Vision claire",
       "clearVisionDesc": "Retrouvez instantanément vos emails importants grâce à une organisation optimale.",
       "autopilot": "Inboria en autonomie la nuit",
-      "autopilotDesc": "Activez le mode autonome d'Inboria : selon vos règles, elle archive, classe, priorise, transfère ou notifie vos emails non urgents pendant la nuit. Vous arrivez le matin avec une boîte déjà rangée.",
+      "autopilotDesc": "Activez le mode autonome d'Inboria : selon les règles que vous définissez, elle archive, classe, marque comme lu, priorise, assigne ou crée une tâche pendant la nuit. Vous arrivez le matin avec une boîte déjà rangée.",
       "teamCollab": "Travail en équipe",
       "teamCollabDesc": "Boîtes partagées, assignation, commentaires internes, activité en temps réel. Votre équipe collabore sans se marcher dessus.",
       "multilingual": "Multilingue natif",
@@ -1399,7 +1399,7 @@
       "multilingual": "Interface multilingue",
       "multilingualDesc": "Disponible en français, anglais, néerlandais, allemand et espagnol. Chaque membre de l'équipe travaille dans sa langue.",
       "autopilotMode": "Inboria en autonomie",
-      "autopilotModeDesc": "Inboria traite automatiquement les emails non urgents pendant la nuit selon vos règles. Le matin, votre boîte est déjà rangée."
+      "autopilotModeDesc": "Inboria applique vos règles automatiquement pendant la nuit : archivage, classement, priorisation, assignation et création de tâches. Le matin, votre boîte est déjà rangée."
     },
     "pricing": {
       "heroTitle": "Des tarifs simples, sans surprise",

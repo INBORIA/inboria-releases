@@ -1344,7 +1344,7 @@
       "step2Title": "Maak uw eigen categorieën",
       "step2Desc": "Definieer uw eigen categorieën volgens uw beroep en specifieke behoeften.",
       "step3Title": "Inboria ruimt uw inbox 's nachts op",
-      "step3Desc": "Volgens uw regels sorteert, categoriseert, archiveert, prioriteert of stuurt Inboria uw niet-dringende e-mails door. U komt 's morgens binnen in een opgeruimde inbox.",
+      "step3Desc": "Op basis van de regels die u definieert, archiveert, categoriseert, markeert als gelezen, prioriteert Inboria uw e-mails, wijst ze toe aan een teamlid of maakt een taak aan. U komt 's morgens binnen in een opgeruimde inbox.",
       "trustTitle": "Ontdek waarom duizenden professionals ons vertrouwen",
       "timeSaving": "Tijdsbesparing",
       "timeSavingDesc": "Bespaar meerdere uren per week door het sorteren van uw e-mails te automatiseren.",
@@ -1355,7 +1355,7 @@
       "clearVision": "Helder overzicht",
       "clearVisionDesc": "Vind uw belangrijke e-mails direct terug dankzij optimale organisatie.",
       "autopilot": "Inboria beheert uw inbox 's nachts",
-      "autopilotDesc": "Activeer de autonome modus van Inboria: volgens uw regels archiveert, categoriseert, prioriteert, stuurt zij niet-dringende e-mails 's nachts door of stuurt zij meldingen. U komt 's morgens binnen in een opgeruimde inbox.",
+      "autopilotDesc": "Activeer de autonome modus van Inboria: op basis van de regels die u definieert, archiveert, categoriseert, markeert als gelezen, prioriteert, wijst zij toe of maakt een taak aan 's nachts. U komt 's morgens binnen in een opgeruimde inbox.",
       "teamCollab": "Teamwerk",
       "teamCollabDesc": "Gedeelde mailboxen, toewijzing, interne opmerkingen, realtime activiteit. Uw team werkt samen zonder elkaar in de weg te zitten.",
       "multilingual": "Native meertalig",
@@ -1409,7 +1409,7 @@
       "multilingual": "Meertalige interface",
       "multilingualDesc": "Beschikbaar in het Frans, Engels, Nederlands, Duits en Spaans. Elk teamlid werkt in zijn eigen taal.",
       "autopilotMode": "Inboria werkt zelfstandig",
-      "autopilotModeDesc": "Inboria verwerkt automatisch niet-dringende e-mails 's nachts volgens uw regels. 's Morgens is uw inbox al opgeruimd."
+      "autopilotModeDesc": "Inboria past 's nachts automatisch uw regels toe: archivering, categorisering, prioritering, toewijzing en taakcreatie. 's Morgens is uw inbox al opgeruimd."
     },
     "pricing": {
       "heroTitle": "Eenvoudige tarieven, geen verrassingen",
