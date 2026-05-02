@@ -1127,6 +1127,7 @@
     "shareWithTeamOffDesc": "Buzón personal. Solo usted ve los correos.",
     "inboriaPrivacyTitle": "Confidencialidad — Memoria Inboria",
     "inboriaPrivacyDesc": "Inboria recuerda preferencias, temas, decisiones y compromisos de tus correos para personalizar sus respuestas. Desactiva la memoria en un buzón para que sea ignorado — por ejemplo tu buzón personal.",
+    "inboriaPrivacyRgpdWarning": "Aviso RGPD: Inboria extrae y almacena en tu base de datos información personal de tus correos (contactos, temas, compromisos, fechas). En un buzón compartido, esta información es visible para todos los compañeros con acceso a ese buzón. Desactiva la memoria en cualquier buzón que pueda contener datos sensibles (salud, religión, opiniones, vida privada, situación administrativa).",
     "inboriaPrivacyPersonal": "Tus buzones personales",
     "inboriaPrivacyShared": "Buzones compartidos del equipo",
     "inboriaPrivacySharedHint": "Buzón compartido — afecta a todo el equipo",

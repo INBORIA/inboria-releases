@@ -1117,6 +1117,7 @@
     "shareWithTeamOffDesc": "Boîte personnelle. Seul vous voyez les emails.",
     "inboriaPrivacyTitle": "Confidentialité — Mémoire Inboria",
     "inboriaPrivacyDesc": "Inboria mémorise les préférences, sujets, décisions et engagements présents dans vos emails pour personnaliser ses réponses. Désactivez la mémoire sur une boîte pour qu'elle soit ignorée — par exemple votre boîte personnelle.",
+    "inboriaPrivacyRgpdWarning": "Avertissement RGPD : Inboria extrait et stocke dans votre base des informations personnelles issues de vos emails (contacts, sujets, engagements, dates). Sur une boîte partagée, ces informations sont visibles par tous les coéquipiers ayant accès à la boîte. Désactivez la mémoire sur toute boîte susceptible de contenir des données sensibles (santé, religion, opinions, vie privée, situation administrative).",
     "inboriaPrivacyPersonal": "Vos boîtes personnelles",
     "inboriaPrivacyShared": "Boîtes partagées de l'équipe",
     "inboriaPrivacySharedHint": "Boîte partagée — affecte toute l'équipe",

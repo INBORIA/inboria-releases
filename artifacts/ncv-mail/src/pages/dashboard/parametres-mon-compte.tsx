@@ -498,6 +498,15 @@ function InboriaPrivacySection({ t }: { t: any }) {
             "Inboria mémorise les préférences, sujets, décisions et engagements présents dans vos emails pour personnaliser ses réponses. Désactivez la mémoire sur une boîte pour qu'elle soit ignorée — par exemple votre boîte personnelle.",
           )}
         </p>
+        <div
+          className="text-[12px] text-amber-200 bg-amber-500/10 border border-amber-500/30 rounded-md px-3 py-2"
+          data-testid="inboria-privacy-rgpd-warning"
+        >
+          {t(
+            "settings.inboriaPrivacyRgpdWarning",
+            "Avertissement RGPD : Inboria extrait et stocke dans votre base des informations personnelles issues de vos emails (contacts, sujets, engagements, dates). Sur une boîte partagée, ces informations sont visibles par tous les coéquipiers ayant accès à la boîte. Désactivez la mémoire sur toute boîte susceptible de contenir des données sensibles (santé, religion, opinions, vie privée, situation administrative).",
+          )}
+        </div>
         {isLoading ? (
           <Skeleton className="h-12 w-full bg-white/5" />
         ) : all.length === 0 ? (

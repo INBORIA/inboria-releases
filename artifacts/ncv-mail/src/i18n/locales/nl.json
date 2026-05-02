@@ -1127,6 +1127,7 @@
     "shareWithTeamOffDesc": "Persoonlijke mailbox. Alleen u ziet de e-mails.",
     "inboriaPrivacyTitle": "Privacy — Inboria-geheugen",
     "inboriaPrivacyDesc": "Inboria onthoudt voorkeuren, onderwerpen, beslissingen en toezeggingen uit uw e-mails om antwoorden te personaliseren. Schakel het geheugen uit op een mailbox zodat deze wordt genegeerd — bijvoorbeeld uw persoonlijke mailbox.",
+    "inboriaPrivacyRgpdWarning": "AVG-melding: Inboria haalt persoonlijke informatie uit uw e-mails (contacten, onderwerpen, toezeggingen, data) en slaat deze op in uw eigen database. Bij een gedeelde mailbox is deze informatie zichtbaar voor alle teamleden met toegang tot die mailbox. Schakel het geheugen uit op elke mailbox die gevoelige gegevens kan bevatten (gezondheid, religie, opinies, privéleven, verblijfsstatus).",
     "inboriaPrivacyPersonal": "Uw persoonlijke mailboxen",
     "inboriaPrivacyShared": "Gedeelde teammailboxen",
     "inboriaPrivacySharedHint": "Gedeelde mailbox — geldt voor het hele team",
