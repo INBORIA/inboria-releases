@@ -1595,7 +1595,7 @@
     "inboriaChat": {
       "badge": "El chat Inboria",
       "heroTitle": "Conversa con Inboria. Pregúntale lo que quieras sobre tus correos.",
-      "heroDesc": "Inboria conoce tus contactos, tus compromisos y el historial de tus intercambios. Pregúntale lo que quieras, en español, como a un compañero de equipo.",
+      "heroDesc": "Inboria conoce tus contactos, tus compromisos y el historial de tus intercambios. Pregúntale lo que quieras, en tu idioma, como a un compañero de equipo.",
       "heroStat1Value": "100%",
       "heroStat1Label": "Tus datos, y solo los tuyos",
       "heroStat2Value": "<5s",

@@ -1585,7 +1585,7 @@
     "inboriaChat": {
       "badge": "Le chat Inboria",
       "heroTitle": "Discutez avec Inboria. Posez vos questions sur vos emails.",
-      "heroDesc": "Inboria connaît vos contacts, vos engagements et l'historique de vos échanges. Demandez-lui ce que vous voulez, en français, comme à un coéquipier.",
+      "heroDesc": "Inboria connaît vos contacts, vos engagements et l'historique de vos échanges. Demandez-lui ce que vous voulez, dans votre langue, comme à un coéquipier.",
       "heroStat1Value": "100%",
       "heroStat1Label": "Vos données, et seulement les vôtres",
       "heroStat2Value": "<5s",
