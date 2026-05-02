@@ -1127,7 +1127,6 @@
     "shareWithTeamOffDesc": "Persönliches Postfach. Nur Sie sehen die E-Mails.",
     "inboriaPrivacyTitle": "Datenschutz — Inboria-Gedächtnis",
     "inboriaPrivacyDesc": "Inboria merkt sich Präferenzen, Themen, Entscheidungen und Zusagen aus Ihren E-Mails, um Antworten zu personalisieren. Deaktivieren Sie das Gedächtnis für ein Postfach, damit es ignoriert wird — zum Beispiel Ihr persönliches Postfach.",
-    "inboriaPrivacyRgpdWarning": "DSGVO-Hinweis: Inboria extrahiert personenbezogene Informationen aus Ihren E-Mails (Kontakte, Themen, Zusagen, Termine) und speichert sie in Ihrer eigenen Datenbank. Bei einem geteilten Postfach sind diese Informationen für alle Teammitglieder sichtbar, die Zugriff auf das Postfach haben. Deaktivieren Sie das Gedächtnis für jedes Postfach, das sensible Daten enthalten kann (Gesundheit, Religion, Meinungen, Privatleben, Aufenthaltsstatus).",
     "inboriaPrivacyPersonal": "Ihre persönlichen Postfächer",
     "inboriaPrivacyShared": "Geteilte Team-Postfächer",
     "inboriaPrivacySharedHint": "Geteiltes Postfach — wirkt sich auf das gesamte Team aus",

@@ -1127,7 +1127,6 @@
     "shareWithTeamOffDesc": "Personal mailbox. Only you can see the emails.",
     "inboriaPrivacyTitle": "Privacy — Inboria Memory",
     "inboriaPrivacyDesc": "Inboria remembers preferences, topics, decisions and commitments from your emails to personalise its replies. Turn memory off on a mailbox to have it ignored — for example your personal mailbox.",
-    "inboriaPrivacyRgpdWarning": "GDPR notice: Inboria extracts and stores personal information from your emails (contacts, topics, commitments, dates) in your own database. On a shared mailbox, this information is visible to every teammate with access to that mailbox. Turn memory off on any mailbox that may contain sensitive data (health, religion, opinions, private life, immigration status).",
     "inboriaPrivacyPersonal": "Your personal mailboxes",
     "inboriaPrivacyShared": "Team shared mailboxes",
     "inboriaPrivacySharedHint": "Shared mailbox — affects the whole team",
