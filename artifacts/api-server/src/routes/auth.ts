@@ -166,7 +166,15 @@ router.post("/auth/send-password-reset", async (req, res): Promise<void> => {
         html: renderResetEmailHtml(linkData.properties.action_link, lang),
       });
       req.log.info(
-        { email, lang, messageId: info.messageId, accepted: info.accepted, rejected: info.rejected },
+        {
+          email,
+          lang,
+          messageId: info.messageId,
+          accepted: info.accepted,
+          rejected: info.rejected,
+          response: info.response,
+          envelope: info.envelope,
+        },
         "send-password-reset: email handed off to Brevo",
       );
     } catch (sendErr: any) {
