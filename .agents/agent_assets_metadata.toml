@@ -77,3 +77,9 @@ id = "TTB4Kj83I4Cyf-piho6hf"
 uri = "file://artifacts/ncv-mail/public/logo-icon-512.png"
 type = "image"
 title = "Icône Inboria 512×512 (à uploader dans Notion)"
+
+[[outputs]]
+id = "zTkmv6JvNrm1WwZD8gMkq"
+uri = "file://screenshots/proof_app_works_2030.jpg"
+type = "image"
+title = "Screenshot horodaté de ton app dev (homepage Inboria)"
