@@ -1954,7 +1954,9 @@
     "release": "Freigeben",
     "take": "Beanspruchen",
     "member": "Mitglied",
-    "membersPlural": "Mitglieder"
+    "membersPlural": "Mitglieder",
+    "removeMember": "Entfernen",
+    "deleteConfirmDescDetailed": "Deine Teamkollegen verlieren den Zugriff auf die E-Mails dieses Postfachs. Das persönliche Postfach bleibt unverändert und die Freigabe kann jederzeit über Mein Konto wieder aktiviert werden."
   },
   "teamActivity": {
     "title": "Teamaktivität",

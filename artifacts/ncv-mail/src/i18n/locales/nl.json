@@ -1954,7 +1954,9 @@
     "release": "Vrijgeven",
     "take": "Opeisen",
     "member": "lid",
-    "membersPlural": "leden"
+    "membersPlural": "leden",
+    "removeMember": "Verwijderen",
+    "deleteConfirmDescDetailed": "Je teamgenoten verliezen de toegang tot de e-mails van deze mailbox. De persoonlijke mailbox blijft intact en delen kan op elk moment opnieuw worden ingeschakeld vanuit Mijn account."
   },
   "teamActivity": {
     "title": "Teamactiviteit",

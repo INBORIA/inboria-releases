@@ -1954,7 +1954,9 @@
     "release": "Liberar",
     "take": "Reclamar",
     "member": "miembro",
-    "membersPlural": "miembros"
+    "membersPlural": "miembros",
+    "removeMember": "Eliminar",
+    "deleteConfirmDescDetailed": "Tus compañeros de equipo perderán el acceso a los correos de este buzón. El buzón personal permanece intacto y el uso compartido se puede reactivar en cualquier momento desde Mi cuenta."
   },
   "teamActivity": {
     "title": "Actividad del equipo",

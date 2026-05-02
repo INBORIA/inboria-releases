@@ -1944,7 +1944,9 @@
     "release": "Libérer",
     "take": "Prendre en charge",
     "member": "membre",
-    "membersPlural": "membres"
+    "membersPlural": "membres",
+    "removeMember": "Retirer",
+    "deleteConfirmDescDetailed": "Vos coéquipiers perdront l'accès aux emails de cette boîte. La boîte personnelle reste intacte et le partage peut être réactivé à tout moment depuis Mon compte."
   },
   "teamActivity": {
     "title": "Activité équipe",

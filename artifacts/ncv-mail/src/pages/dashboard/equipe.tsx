@@ -24,6 +24,16 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Link } from "wouter";
 import { ArrowLeft } from "lucide-react";
 import { Input } from "@/components/ui/input";
@@ -168,8 +178,7 @@ export default function Equipe() {
     }
   }
 
-  async function handleDeleteMailbox(id: string, name: string) {
-    if (!confirm(t("sharedMailboxes.deleteConfirm") + (name ? ` (${name})` : ""))) return;
+  async function handleDeleteMailbox(id: string) {
     try {
       await deleteMailboxMut.mutateAsync({ mailboxId: id });
       toast({ title: t("sharedMailboxes.mailboxDeleted") });
@@ -502,7 +511,7 @@ export default function Equipe() {
                     key={mb.id}
                     mailbox={mb}
                     orgMembers={(members as any[]) || []}
-                    onDelete={() => handleDeleteMailbox(mb.id, mb.name)}
+                    onDelete={() => handleDeleteMailbox(mb.id)}
                     onAddMember={(userId) => handleAddMailboxMember(mb.id, userId)}
                     onRemoveMember={(memberId) => handleRemoveMailboxMember(mb.id, memberId)}
                   />
@@ -594,8 +603,12 @@ function SharedMailboxRow({
   const [expanded, setExpanded] = useState(false);
   const [addUserId, setAddUserId] = useState("");
   const [addPending, setAddPending] = useState(false);
+  const [confirmDeleteOpen, setConfirmDeleteOpen] = useState(false);
   const { data: mbMembers, isLoading } = useGetSharedMailboxMembers(mailbox.id, {
-    query: { enabled: expanded } as any,
+    query: {
+      enabled: expanded,
+      queryKey: getGetSharedMailboxMembersQueryKey(mailbox.id),
+    },
   });
 
   const memberUserIds = new Set(((mbMembers as any[]) || []).map((m: any) => m.userId));
@@ -618,7 +631,12 @@ function SharedMailboxRow({
               {mailbox.connectionId && (
                 <span className="inline-flex items-center gap-1 text-emerald-400 text-[10px]">
                   <CheckCircle2 className="h-2.5 w-2.5" />
-                  {t("sharedMailboxes.connected", "Connectée")}
+                  {t("sharedMailboxes.connected")}
+                </span>
+              )}
+              {(mailbox.unclaimedCount ?? 0) > 0 && (
+                <span className="inline-flex items-center gap-1 text-amber-400 bg-amber-400/10 border border-amber-400/20 rounded-full px-2 py-[1px] text-[10px]">
+                  {t("sharedMailboxes.unprocessedCount", { count: mailbox.unclaimedCount })}
                 </span>
               )}
             </div>
@@ -636,7 +654,7 @@ function SharedMailboxRow({
         </button>
         <button
           type="button"
-          onClick={onDelete}
+          onClick={() => setConfirmDeleteOpen(true)}
           className="p-1.5 rounded text-[#8b9cb3] hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
           title={t("sharedMailboxes.delete")}
           data-testid={`delete-shared-mailbox-${mailbox.id}`}
@@ -644,6 +662,31 @@ function SharedMailboxRow({
           <Trash2 className="h-3.5 w-3.5" />
         </button>
       </div>
+
+      <AlertDialog open={confirmDeleteOpen} onOpenChange={setConfirmDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>
+              {t("sharedMailboxes.deleteConfirm")} {mailbox.name ? `(${mailbox.name})` : ""}
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("sharedMailboxes.deleteConfirmDescDetailed")}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel", "Annuler")}</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                setConfirmDeleteOpen(false);
+                onDelete();
+              }}
+              className="bg-red-500 hover:bg-red-600"
+            >
+              {t("sharedMailboxes.delete")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
 
       {expanded && (
         <div className="mt-3 ml-11 space-y-3">
@@ -654,7 +697,7 @@ function SharedMailboxRow({
                 onChange={(e) => setAddUserId(e.target.value)}
                 className="flex-1 bg-[#0d1117] border border-[#1f2937] text-white text-[12px] rounded-md px-2 py-1.5"
               >
-                <option value="">{t("sharedMailboxes.selectColleague", "Choisir un coéquipier")}</option>
+                <option value="">{t("sharedMailboxes.selectColleague")}</option>
                 {availableMembers.map((om: any) => (
                   <option key={om.userId} value={om.userId}>
                     {om.fullName || om.email || om.userId}
@@ -680,7 +723,7 @@ function SharedMailboxRow({
                 ) : (
                   <UserPlus className="h-3 w-3 mr-1" />
                 )}
-                {t("sharedMailboxes.add", "Ajouter")}
+                {t("sharedMailboxes.add")}
               </Button>
             </div>
           )}
@@ -691,7 +734,7 @@ function SharedMailboxRow({
             </div>
           ) : !mbMembers || (mbMembers as any[]).length === 0 ? (
             <p className="text-[11px] text-[#8b9cb3] py-1">
-              {t("sharedMailboxes.noMembers", "Aucun membre")}
+              {t("sharedMailboxes.noMembers")}
             </p>
           ) : (
             <div className="space-y-1.5">
@@ -708,7 +751,7 @@ function SharedMailboxRow({
                     </div>
                     <div className="min-w-0">
                       <div className="text-[12px] text-white truncate">
-                        {m.fullName || t("sharedMailboxes.noName", "Sans nom")}
+                        {m.fullName || t("sharedMailboxes.noName")}
                       </div>
                       <div className="text-[10px] text-[#8b9cb3] truncate">{m.email}</div>
                     </div>
@@ -717,7 +760,7 @@ function SharedMailboxRow({
                     type="button"
                     onClick={() => onRemoveMember(m.id)}
                     className="p-1 rounded text-[#8b9cb3] hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
-                    title={t("sharedMailboxes.removeMember", "Retirer")}
+                    title={t("sharedMailboxes.removeMember")}
                   >
                     <X className="h-3.5 w-3.5" />
                   </button>
