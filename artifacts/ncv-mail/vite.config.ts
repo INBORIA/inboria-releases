@@ -62,7 +62,21 @@ export default defineConfig({
     port,
     host: "0.0.0.0",
     allowedHosts: true,
-    hmr: false,
+    hmr: {
+      clientPort: 443,
+    },
+    // Dev-only: prevent the browser from serving any stale cached
+    // assets (HTML, JS chunks, /@vite/client, etc.) across server
+    // restarts. Without this, reloading a previously visited page
+    // can yield a blank screen because the browser reuses chunks
+    // that the new Vite server no longer knows about.
+    headers: process.env.NODE_ENV !== "production"
+      ? {
+          "Cache-Control": "no-store, no-cache, must-revalidate, max-age=0",
+          "Pragma": "no-cache",
+          "Expires": "0",
+        }
+      : undefined,
     fs: {
       strict: true,
       deny: ["**/.*"],
