@@ -1,5 +1,4 @@
 import { Router, type IRouter } from "express";
-import nodemailer from "nodemailer";
 import { supabaseAdmin } from "../lib/supabase";
 import { RegisterBody, LoginBody } from "@workspace/api-zod";
 import { requireAuth } from "../middlewares/auth";
@@ -7,92 +6,10 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-function renderResetEmailHtml(actionUrl: string, lang: string): string {
-  const t = (() => {
-    switch (lang) {
-      case "en":
-        return {
-          tagline: "Email Autopilot for SMBs",
-          heading: "Reset your password",
-          body: "You requested a password reset for your Inboria account. Click the button below to choose a new password. This link expires in 1 hour.",
-          cta: "Reset my password",
-          footer: "If you did not request this, you can safely ignore this email — your password will not change.",
-        };
-      case "nl":
-        return {
-          tagline: "Email Autopilot voor KMO's",
-          heading: "Wachtwoord opnieuw instellen",
-          body: "U heeft het opnieuw instellen van uw Inboria-wachtwoord aangevraagd. Klik op de knop hieronder om een nieuw wachtwoord te kiezen. Deze link verloopt over 1 uur.",
-          cta: "Mijn wachtwoord resetten",
-          footer: "Als u dit niet heeft aangevraagd, kunt u deze e-mail negeren — uw wachtwoord blijft ongewijzigd.",
-        };
-      case "de":
-        return {
-          tagline: "E-Mail-Autopilot für KMU",
-          heading: "Passwort zurücksetzen",
-          body: "Sie haben das Zurücksetzen Ihres Inboria-Passworts angefordert. Klicken Sie auf die Schaltfläche unten, um ein neues Passwort festzulegen. Dieser Link ist 1 Stunde gültig.",
-          cta: "Mein Passwort zurücksetzen",
-          footer: "Wenn Sie dies nicht angefordert haben, können Sie diese E-Mail ignorieren — Ihr Passwort bleibt unverändert.",
-        };
-      case "es":
-        return {
-          tagline: "Email Autopilot para PyMEs",
-          heading: "Restablecer su contraseña",
-          body: "Ha solicitado restablecer la contraseña de su cuenta Inboria. Haga clic en el botón a continuación para elegir una nueva contraseña. Este enlace caduca en 1 hora.",
-          cta: "Restablecer mi contraseña",
-          footer: "Si no ha realizado esta solicitud, puede ignorar este correo — su contraseña no se modificará.",
-        };
-      default:
-        return {
-          tagline: "Email Autopilot pour PME",
-          heading: "Réinitialisation de votre mot de passe",
-          body: "Vous avez demandé la réinitialisation du mot de passe de votre compte Inboria. Cliquez sur le bouton ci-dessous pour choisir un nouveau mot de passe. Ce lien expire dans 1 heure.",
-          cta: "Réinitialiser mon mot de passe",
-          footer: "Si vous n'êtes pas à l'origine de cette demande, vous pouvez ignorer ce message — votre mot de passe restera inchangé.",
-        };
-    }
-  })();
-
-  return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; background: #0d1117; color: #ffffff; border-radius: 8px;">
-      <div style="text-align: center; margin-bottom: 30px;">
-        <h1 style="color: #2d7dd2; margin: 0;">Inboria</h1>
-        <p style="color: #8b9cb3; margin-top: 5px;">${t.tagline}</p>
-      </div>
-      <h2 style="color: #ffffff; text-align: center;">${t.heading}</h2>
-      <p style="color: #c9d1d9; line-height: 1.6;">${t.body}</p>
-      <div style="text-align: center; margin: 30px 0;">
-        <a href="${actionUrl}" style="background: #2d7dd2; color: #ffffff; padding: 12px 30px; border-radius: 6px; text-decoration: none; font-weight: bold; display: inline-block;">
-          ${t.cta}
-        </a>
-      </div>
-      <hr style="border: none; border-top: 1px solid #1f2937; margin: 20px 0;" />
-      <p style="color: #6e7681; font-size: 12px; text-align: center;">${t.footer}</p>
-    </div>
-  `;
-}
-
-function resetEmailSubject(lang: string): string {
-  switch (lang) {
-    case "en":
-      return "Reset your Inboria password";
-    case "nl":
-      return "Stel uw Inboria-wachtwoord opnieuw in";
-    case "de":
-      return "Setzen Sie Ihr Inboria-Passwort zurück";
-    case "es":
-      return "Restablezca su contraseña de Inboria";
-    default:
-      return "Réinitialisez votre mot de passe Inboria";
-  }
-}
-
 router.post("/auth/send-password-reset", async (req, res): Promise<void> => {
   try {
     const email = String(req.body?.email || "").toLowerCase().trim();
     const redirectTo = String(req.body?.redirectTo || "");
-    const langRaw = String(req.body?.lang || "fr").toLowerCase();
-    const lang = ["fr", "en", "nl", "de", "es"].includes(langRaw) ? langRaw : "fr";
 
     if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       res.status(400).json({ error: "invalid_email" });
@@ -111,6 +28,7 @@ router.post("/auth/send-password-reset", async (req, res): Promise<void> => {
     }
     const allowedHostSuffixes = [
       "inboria.com",
+      "ncvmail.com",
       "replit.app",
       "replit.dev",
       "picard.replit.dev",
@@ -123,58 +41,17 @@ router.post("/auth/send-password-reset", async (req, res): Promise<void> => {
       return;
     }
 
-    const { data: linkData, error: linkErr } = await supabaseAdmin.auth.admin.generateLink({
-      type: "recovery",
-      email,
-      options: { redirectTo },
+    const { error: resetErr } = await supabaseAdmin.auth.resetPasswordForEmail(email, {
+      redirectTo,
     });
 
-    if (linkErr || !linkData?.properties?.action_link) {
-      req.log.info({ email, err: linkErr?.message }, "send-password-reset: no link generated (likely unknown email)");
-      res.status(200).json({ ok: true });
-      return;
-    }
-
-    const actionUrl = linkData.properties.action_link;
-    const password = process.env["BREVO_SMTP_PASSWORD"];
-    if (!password) {
-      req.log.error("BREVO_SMTP_PASSWORD missing — cannot send branded reset email");
-      res.status(500).json({ error: "mail_unavailable" });
-      return;
-    }
-
-    const transporter = nodemailer.createTransport({
-      host: "smtp-relay.brevo.com",
-      port: 587,
-      secure: false,
-      auth: {
-        user: "a74939001@smtp-brevo.com",
-        pass: password,
-      },
-    });
-
-    try {
-      const info = await transporter.sendMail({
-        from: '"NCV Mail" <noreply@ncvmail.com>',
-        to: email,
-        subject: resetEmailSubject(lang),
-        html: renderResetEmailHtml(actionUrl, lang),
-      });
-      req.log.info(
-        {
-          email,
-          lang,
-          messageId: info.messageId,
-          accepted: info.accepted,
-          rejected: info.rejected,
-          response: info.response,
-        },
-        "Password reset email submitted to Brevo",
+    if (resetErr) {
+      req.log.warn(
+        { email, err: resetErr.message },
+        "send-password-reset: Supabase reset call returned error",
       );
-    } catch (sendErr: any) {
-      req.log.error({ email, err: sendErr?.message }, "Failed to send password reset email");
-      res.status(500).json({ error: "send_failed" });
-      return;
+    } else {
+      req.log.info({ email }, "send-password-reset: Supabase reset email triggered");
     }
 
     res.status(200).json({ ok: true });

@@ -9,7 +9,7 @@ import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export default function MotDePasseOublie() {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -24,12 +24,11 @@ export default function MotDePasseOublie() {
       const origin = window.location.origin;
       const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
       const redirectTo = `${origin}${basePath}/reset-password`;
-      const lang = (i18n.language || "fr").slice(0, 2).toLowerCase();
 
       const resp = await fetch(`${import.meta.env.BASE_URL}api/auth/send-password-reset`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, redirectTo, lang }),
+        body: JSON.stringify({ email, redirectTo }),
       });
 
       if (!resp.ok) {
