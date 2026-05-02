@@ -67,7 +67,9 @@
     "trialEnded": "Votre essai gratuit est terminé",
     "resubscribe": "Réabonnez-vous pour continuer à utiliser Inboria.",
     "trialUsed": "Vous avez utilisé vos 100 crédits IA gratuits. Choisissez un plan pour continuer.",
-    "choosePlan": "Choisir un plan"
+    "choosePlan": "Choisir un plan",
+    "contactAdminTitle": "Souci d'abonnement côté équipe",
+    "contactAdminDesc": "Contactez l'admin de votre équipe pour régler ça."
   },
   "footer": {
     "solution": "Une solution Inboria",
@@ -1176,6 +1178,7 @@
     "disconnectedTooltip": "Reconnectez ce compte pour reprendre la synchronisation.",
     "followUpDelayLabel": "Délai avant suggestion de relance (jours)",
     "followUpDelayHint": "Inboria suggérera une relance pour vos mails envoyés sans réponse après ce nombre de jours (1 à 60).",
+    "adminOnlyToast": "Cette page est réservée à l'admin de l'équipe.",
     "hub": {
       "myAccount": "Mon compte",
       "myAccountDesc": "Profil, sécurité, comptes email, Inboria et notifications",

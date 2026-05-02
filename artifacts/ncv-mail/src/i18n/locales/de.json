@@ -64,6 +64,8 @@
   },
   "dashboard": {
     "expiredSubscription": "Ihr Abonnement ist abgelaufen",
+    "contactAdminTitle": "Abo-Problem auf Teamseite",
+    "contactAdminDesc": "Bitte wenden Sie sich an Ihren Team-Admin, um dies zu beheben.",
     "trialEnded": "Ihre kostenlose Testversion ist beendet",
     "resubscribe": "Erneut abonnieren, um Inboria weiterhin zu nutzen.",
     "trialUsed": "Sie haben Ihre 100 kostenlosen KI-Credits verwendet. Wählen Sie einen Plan, um fortzufahren.",
@@ -1186,6 +1188,7 @@
     "disconnectedTooltip": "Verbinden Sie dieses Konto erneut, um die Synchronisierung fortzusetzen.",
     "followUpDelayLabel": "Tage vor Erinnerungsvorschlag",
     "followUpDelayHint": "Inboria schlägt eine Erinnerung für E-Mails ohne Antwort nach dieser Anzahl Tagen vor (1 bis 60).",
+    "adminOnlyToast": "Diese Seite ist dem Team-Admin vorbehalten.",
     "hub": {
       "myAccount": "Mein Konto",
       "myAccountDesc": "Profil, Sicherheit, E-Mail-Konten, Inboria und Benachrichtigungen",

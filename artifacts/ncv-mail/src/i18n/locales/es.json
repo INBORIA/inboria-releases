@@ -64,6 +64,8 @@
   },
   "dashboard": {
     "expiredSubscription": "Su suscripción ha expirado",
+    "contactAdminTitle": "Problema de suscripción en tu equipo",
+    "contactAdminDesc": "Contacta al admin de tu equipo para resolverlo.",
     "trialEnded": "Su prueba gratuita ha terminado",
     "resubscribe": "Vuelva a suscribirse para continuar usando Inboria.",
     "trialUsed": "Ha utilizado sus 100 créditos IA gratuitos. Elija un plan para continuar.",
@@ -1186,6 +1188,7 @@
     "disconnectedTooltip": "Vuelva a conectar esta cuenta para reanudar la sincronizacion.",
     "followUpDelayLabel": "Días antes de sugerir un recordatorio",
     "followUpDelayHint": "Inboria sugerirá un recordatorio para los correos sin respuesta tras este número de días (1 a 60).",
+    "adminOnlyToast": "Esta página está reservada al admin del equipo.",
     "hub": {
       "myAccount": "Mi cuenta",
       "myAccountDesc": "Perfil, seguridad, cuentas de correo, Inboria y notificaciones",

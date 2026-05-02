@@ -64,6 +64,8 @@
   },
   "dashboard": {
     "expiredSubscription": "Uw abonnement is verlopen",
+    "contactAdminTitle": "Abonnementsprobleem aan teamzijde",
+    "contactAdminDesc": "Neem contact op met de admin van uw team om dit op te lossen.",
     "trialEnded": "Uw gratis proefperiode is beëindigd",
     "resubscribe": "Vernieuw uw abonnement om Inboria te blijven gebruiken.",
     "trialUsed": "U heeft uw 100 gratis AI-credits gebruikt. Kies een plan om door te gaan.",
@@ -1186,6 +1188,7 @@
     "disconnectedTooltip": "Verbind dit account opnieuw om de synchronisatie te hervatten.",
     "followUpDelayLabel": "Aantal dagen voor herinneringssuggestie",
     "followUpDelayHint": "Inboria stelt een herinnering voor wanneer een verzonden e-mail na zoveel dagen onbeantwoord blijft (1 tot 60).",
+    "adminOnlyToast": "Deze pagina is voorbehouden aan de teamadmin.",
     "hub": {
       "myAccount": "Mijn account",
       "myAccountDesc": "Profiel, beveiliging, e-mailaccounts, Inboria en meldingen",

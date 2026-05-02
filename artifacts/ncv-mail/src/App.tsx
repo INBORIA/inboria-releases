@@ -3,11 +3,13 @@ import { useEffect } from "react";
 import { QueryClient, MutationCache } from "@tanstack/react-query";
 import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
 import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
-import { getGetProfileQueryKey } from "@workspace/api-client-react";
+import { getGetProfileQueryKey, useGetMyOrganisation } from "@workspace/api-client-react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/lib/auth";
 import { setAuthTokenGetter } from "@workspace/api-client-react";
+import { useToast } from "@/hooks/use-toast";
+import { useTranslation } from "react-i18next";
 import { supabase } from "@/lib/supabase";
 import NotFound from "@/pages/not-found";
 import { CookieBanner } from "@/components/cookie-banner";
@@ -204,6 +206,31 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
   return <Component />;
 }
 
+function AdminOnlyRoute({ component: Component }: { component: React.ComponentType }) {
+  const { session, loading } = useAuth();
+  const { data: org, isLoading: orgLoading } = useGetMyOrganisation({
+    query: { enabled: !!session } as any,
+  });
+  const { toast } = useToast();
+  const { t } = useTranslation();
+  const orgId = (org as any)?.id;
+  const isOrgMember = !!orgId && (org as any)?.myRole !== "admin";
+  const shouldRedirect = !loading && !orgLoading && !!session && isOrgMember;
+
+  useEffect(() => {
+    if (shouldRedirect) {
+      toast({
+        title: t("settings.adminOnlyToast", "Cette page est réservée à l'admin de l'équipe."),
+      });
+    }
+  }, [shouldRedirect, toast, t]);
+
+  if (loading || (session && orgLoading)) return null;
+  if (!session) return <Redirect to="/login" />;
+  if (isOrgMember) return <Redirect to="/dashboard/parametres/mon-compte" />;
+  return <Component />;
+}
+
 function Router() {
   const { session, loading } = useAuth();
 
@@ -245,18 +272,18 @@ function Router() {
       <Route path="/dashboard/projets" component={() => <ProtectedRoute component={Projets} />} />
       <Route path="/dashboard/contacts" component={() => <Redirect to="/dashboard" />} />
       <Route path="/dashboard/contacts/:email" component={() => <Redirect to="/dashboard" />} />
-      <Route path="/dashboard/parametres" component={() => <ProtectedRoute component={Parametres} />} />
+      <Route path="/dashboard/parametres" component={() => <AdminOnlyRoute component={Parametres} />} />
       <Route path="/dashboard/parametres/mon-compte" component={() => <ProtectedRoute component={ParametresMonCompte} />} />
-      <Route path="/dashboard/parametres/vie-privee" component={() => <ProtectedRoute component={ParametresViePrivee} />} />
-      <Route path="/dashboard/parametres/crm" component={() => <ProtectedRoute component={ParametresCrm} />} />
-      <Route path="/dashboard/parametres/developpeurs" component={() => <ProtectedRoute component={ParametresDeveloppeurs} />} />
-      <Route path="/dashboard/parametres/templates" component={() => <ProtectedRoute component={Templates} />} />
-      <Route path="/dashboard/parametres/regles" component={() => <ProtectedRoute component={Regles} />} />
-      <Route path="/dashboard/parametres/sla" component={() => <ProtectedRoute component={ParametresSla} />} />
-      <Route path="/dashboard/parametres/api" component={() => <ProtectedRoute component={ParametresApi} />} />
-      <Route path="/dashboard/parametres/webhooks" component={() => <ProtectedRoute component={ParametresWebhooks} />} />
-      <Route path="/dashboard/parametres/integrations" component={() => <ProtectedRoute component={ParametresIntegrations} />} />
-      <Route path="/dashboard/abonnement" component={() => <ProtectedRoute component={Abonnement} />} />
+      <Route path="/dashboard/parametres/vie-privee" component={() => <AdminOnlyRoute component={ParametresViePrivee} />} />
+      <Route path="/dashboard/parametres/crm" component={() => <AdminOnlyRoute component={ParametresCrm} />} />
+      <Route path="/dashboard/parametres/developpeurs" component={() => <AdminOnlyRoute component={ParametresDeveloppeurs} />} />
+      <Route path="/dashboard/parametres/templates" component={() => <AdminOnlyRoute component={Templates} />} />
+      <Route path="/dashboard/parametres/regles" component={() => <AdminOnlyRoute component={Regles} />} />
+      <Route path="/dashboard/parametres/sla" component={() => <AdminOnlyRoute component={ParametresSla} />} />
+      <Route path="/dashboard/parametres/api" component={() => <AdminOnlyRoute component={ParametresApi} />} />
+      <Route path="/dashboard/parametres/webhooks" component={() => <AdminOnlyRoute component={ParametresWebhooks} />} />
+      <Route path="/dashboard/parametres/integrations" component={() => <AdminOnlyRoute component={ParametresIntegrations} />} />
+      <Route path="/dashboard/abonnement" component={() => <AdminOnlyRoute component={Abonnement} />} />
       <Route path="/dashboard/equipe" component={() => <ProtectedRoute component={Equipe} />} />
       <Route path="/dashboard/activite-equipe" component={() => <ProtectedRoute component={TeamActivite} />} />
       <Route path="/dashboard/agenda" component={() => <ProtectedRoute component={Agenda} />} />

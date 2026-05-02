@@ -59,6 +59,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
   });
   const { data: myOrg } = useGetMyOrganisation();
   const orgId = (myOrg as { id?: string } | undefined)?.id;
+  const myRole = (myOrg as { myRole?: string } | undefined)?.myRole;
+  const isOrgMember = !!orgId && myRole !== "admin";
   const { data: orgMembersData } = useGetOrganisationMembers({
     query: { enabled: !!orgId } as any,
   });
@@ -122,9 +124,11 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       !isAllowedWhenBlocked &&
       !(isInternalAdmin && isAdminRoute)
     ) {
-      setLocation("/dashboard/abonnement");
+      // Members can't fix billing — bounce them to "Mon compte" instead of
+      // /abonnement (which they can't access) to avoid a redirect loop.
+      setLocation(isOrgMember ? "/dashboard/parametres/mon-compte" : "/dashboard/abonnement");
     }
-  }, [isBlocked, isLoading, location, setLocation, isInternalAdmin, isAdminRoute, isAllowedWhenBlocked]);
+  }, [isBlocked, isLoading, location, setLocation, isInternalAdmin, isAdminRoute, isAllowedWhenBlocked, isOrgMember]);
 
   if (isLoading) {
     return (
@@ -208,18 +212,29 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild data-testid="user-menu-subscription">
-          <Link href="/dashboard/abonnement" className="cursor-pointer">
-            <CreditCard className="h-4 w-4 mr-2" />
-            {t("sidebar.subscription")}
-          </Link>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild data-testid="user-menu-settings">
-          <Link href="/dashboard/parametres" className="cursor-pointer">
-            <Settings className="h-4 w-4 mr-2" />
-            {t("sidebar.settings")}
-          </Link>
-        </DropdownMenuItem>
+        {isOrgMember ? (
+          <DropdownMenuItem asChild data-testid="user-menu-my-account">
+            <Link href="/dashboard/parametres/mon-compte" className="cursor-pointer">
+              <Settings className="h-4 w-4 mr-2" />
+              {t("settings.hub.myAccount", "Mon compte")}
+            </Link>
+          </DropdownMenuItem>
+        ) : (
+          <>
+            <DropdownMenuItem asChild data-testid="user-menu-subscription">
+              <Link href="/dashboard/abonnement" className="cursor-pointer">
+                <CreditCard className="h-4 w-4 mr-2" />
+                {t("sidebar.subscription")}
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild data-testid="user-menu-settings">
+              <Link href="/dashboard/parametres" className="cursor-pointer">
+                <Settings className="h-4 w-4 mr-2" />
+                {t("sidebar.settings")}
+              </Link>
+            </DropdownMenuItem>
+          </>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem
           onClick={handleLogout}
@@ -271,28 +286,44 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
         <main className="flex-1">
           {isBlocked && location !== "/dashboard/abonnement" && (
-            <div className="bg-red-500/10 border-b border-red-500/20 px-5 py-3">
-              <div className="flex items-center gap-3 max-w-4xl mx-auto">
-                <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
-                <div className="flex-1">
-                  <p className="text-[12px] font-medium text-red-400">
-                    {isExpired
-                      ? t("dashboard.expiredSubscription")
-                      : t("dashboard.trialEnded")}
-                  </p>
-                  <p className="text-[11px] text-[#8b9cb3] mt-0.5">
-                    {isExpired
-                      ? t("dashboard.resubscribe")
-                      : t("dashboard.trialUsed")}
-                  </p>
+            isOrgMember ? (
+              <div className="bg-amber-500/10 border-b border-amber-500/20 px-5 py-3">
+                <div className="flex items-center gap-3 max-w-4xl mx-auto">
+                  <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-[12px] font-medium text-amber-400">
+                      {t("dashboard.contactAdminTitle", "Souci d'abonnement côté équipe")}
+                    </p>
+                    <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+                      {t("dashboard.contactAdminDesc", "Contactez l'admin de votre équipe pour régler ça.")}
+                    </p>
+                  </div>
                 </div>
-                <Link href="/dashboard/abonnement">
-                  <Button size="sm" className="shrink-0 h-7 text-[12px]">
-                    {t("dashboard.choosePlan")}
-                  </Button>
-                </Link>
               </div>
-            </div>
+            ) : (
+              <div className="bg-red-500/10 border-b border-red-500/20 px-5 py-3">
+                <div className="flex items-center gap-3 max-w-4xl mx-auto">
+                  <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
+                  <div className="flex-1">
+                    <p className="text-[12px] font-medium text-red-400">
+                      {isExpired
+                        ? t("dashboard.expiredSubscription")
+                        : t("dashboard.trialEnded")}
+                    </p>
+                    <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+                      {isExpired
+                        ? t("dashboard.resubscribe")
+                        : t("dashboard.trialUsed")}
+                    </p>
+                  </div>
+                  <Link href="/dashboard/abonnement">
+                    <Button size="sm" className="shrink-0 h-7 text-[12px]">
+                      {t("dashboard.choosePlan")}
+                    </Button>
+                  </Link>
+                </div>
+              </div>
+            )
           )}
           {children}
         </main>

@@ -64,6 +64,8 @@
   },
   "dashboard": {
     "expiredSubscription": "Your subscription has expired",
+    "contactAdminTitle": "Subscription issue on your team",
+    "contactAdminDesc": "Please contact your team admin to resolve this.",
     "trialEnded": "Your free trial has ended",
     "resubscribe": "Resubscribe to continue using Inboria.",
     "trialUsed": "You have used your 100 free AI credits. Choose a plan to continue.",
@@ -1186,6 +1188,7 @@
     "disconnectedTooltip": "Reconnect this account to resume synchronization.",
     "followUpDelayLabel": "Days before follow-up suggestion",
     "followUpDelayHint": "Inboria will suggest a follow-up for emails left without a reply after this many days (1 to 60).",
+    "adminOnlyToast": "This page is reserved for the team admin.",
     "hub": {
       "myAccount": "My account",
       "myAccountDesc": "Profile, security, email accounts, Inboria and notifications",

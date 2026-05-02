@@ -542,6 +542,7 @@ export default function ParametresMonCompte() {
   const { data: connections, isLoading: connectionsLoading } = useEmailConnections();
   const { data: org } = useGetMyOrganisation();
   const isOrgAdmin = (org as any)?.myRole === "admin";
+  const isOrgMember = !!(org as any)?.id && (org as any)?.myRole !== "admin";
   const userPlan = (profile as any)?.plan;
   const canShareWithTeam = isOrgAdmin && (userPlan === "business" || userPlan === "pro");
 
@@ -1135,70 +1136,74 @@ export default function ParametresMonCompte() {
             </div>
           </section>
 
-          <InboriaPrivacySection t={t} />
+          {!isOrgMember && <InboriaPrivacySection t={t} />}
 
-          <section>
-            <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
-              <BrainCircuit className="w-4 h-4 text-primary" />
-              {t("settings.aiPreferences")}
-            </h2>
-            <div className="bg-card rounded-lg border border-border p-5 space-y-5">
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-[13px] text-white">{t("settings.urgentBilling")}</Label>
-                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.urgentBillingDesc")}</p>
+          {!isOrgMember && (
+            <section>
+              <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
+                <BrainCircuit className="w-4 h-4 text-primary" />
+                {t("settings.aiPreferences")}
+              </h2>
+              <div className="bg-card rounded-lg border border-border p-5 space-y-5">
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="text-[13px] text-white">{t("settings.urgentBilling")}</Label>
+                      <p className="text-[11px] text-[#8b9cb3]">{t("settings.urgentBillingDesc")}</p>
+                    </div>
+                    <Switch defaultChecked />
                   </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-[13px] text-white">{t("settings.taskExtraction")}</Label>
-                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.taskExtractionDesc")}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="text-[13px] text-white">{t("settings.taskExtraction")}</Label>
+                      <p className="text-[11px] text-[#8b9cb3]">{t("settings.taskExtractionDesc")}</p>
+                    </div>
+                    <Switch defaultChecked />
                   </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-[13px] text-white">{t("settings.projectDetection")}</Label>
-                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.projectDetectionDesc")}</p>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-0.5">
+                      <Label className="text-[13px] text-white">{t("settings.projectDetection")}</Label>
+                      <p className="text-[11px] text-[#8b9cb3]">{t("settings.projectDetectionDesc")}</p>
+                    </div>
+                    <Switch defaultChecked />
                   </div>
-                  <Switch defaultChecked />
                 </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
-          <section>
-            <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
-              <Shield className="w-4 h-4 text-primary" />
-              {t("settings.managementMode")}
-            </h2>
-            <div className="bg-card rounded-lg border border-border p-5 space-y-4">
-              <p className="text-[12px] text-[#8b9cb3]">
-                {t("settings.managementModeDesc")}
-              </p>
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label className="text-[13px] text-white">{t("settings.autoArchive")}</Label>
-                  <p className="text-[11px] text-[#8b9cb3]">{t("settings.autoArchiveDesc")}</p>
-                </div>
-                <Switch />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label className="text-[13px] text-white">{t("settings.autoMark")}</Label>
-                  <p className="text-[11px] text-[#8b9cb3]">{t("settings.autoMarkDesc")}</p>
-                </div>
-                <Switch />
-              </div>
-              <div className="p-3 bg-primary/[0.06] rounded-lg border border-primary/10">
-                <p className="text-[11px] text-primary">
-                  {t("settings.manualModeInfo")}
+          {!isOrgMember && (
+            <section>
+              <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
+                <Shield className="w-4 h-4 text-primary" />
+                {t("settings.managementMode")}
+              </h2>
+              <div className="bg-card rounded-lg border border-border p-5 space-y-4">
+                <p className="text-[12px] text-[#8b9cb3]">
+                  {t("settings.managementModeDesc")}
                 </p>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-[13px] text-white">{t("settings.autoArchive")}</Label>
+                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.autoArchiveDesc")}</p>
+                  </div>
+                  <Switch />
+                </div>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-[13px] text-white">{t("settings.autoMark")}</Label>
+                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.autoMarkDesc")}</p>
+                  </div>
+                  <Switch />
+                </div>
+                <div className="p-3 bg-primary/[0.06] rounded-lg border border-primary/10">
+                  <p className="text-[11px] text-primary">
+                    {t("settings.manualModeInfo")}
+                  </p>
+                </div>
               </div>
-            </div>
-          </section>
+            </section>
+          )}
 
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
@@ -1376,28 +1381,30 @@ export default function ParametresMonCompte() {
             </div>
           </section>
           
-          <section>
-            <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
-              <Bell className="w-4 h-4 text-primary" />
-              {t("settings.notifications")}
-            </h2>
-            <div className="bg-card rounded-lg border border-border p-5 space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label className="text-[13px] text-white">{t("settings.morningBrief")}</Label>
-                  <p className="text-[11px] text-[#8b9cb3]">{t("settings.morningBriefDesc")}</p>
+          {!isOrgMember && (
+            <section>
+              <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
+                <Bell className="w-4 h-4 text-primary" />
+                {t("settings.notifications")}
+              </h2>
+              <div className="bg-card rounded-lg border border-border p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-[13px] text-white">{t("settings.morningBrief")}</Label>
+                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.morningBriefDesc")}</p>
+                  </div>
+                  <Switch defaultChecked />
                 </div>
-                <Switch defaultChecked />
-              </div>
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label className="text-[13px] text-white">{t("settings.urgentAlerts")}</Label>
-                  <p className="text-[11px] text-[#8b9cb3]">{t("settings.urgentAlertsDesc")}</p>
+                <div className="flex items-center justify-between">
+                  <div className="space-y-0.5">
+                    <Label className="text-[13px] text-white">{t("settings.urgentAlerts")}</Label>
+                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.urgentAlertsDesc")}</p>
+                  </div>
+                  <Switch defaultChecked />
                 </div>
-                <Switch defaultChecked />
               </div>
-            </div>
-          </section>
+            </section>
+          )}
         </div>
       </div>
     </DashboardLayout>
