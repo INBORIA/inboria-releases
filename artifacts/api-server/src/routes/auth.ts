@@ -160,7 +160,7 @@ router.post("/auth/send-password-reset", async (req, res): Promise<void> => {
 
     try {
       const info = await transporter.sendMail({
-        from: '"Inboria" <noreply@ncvmail.com>',
+        from: '"Inboria" <jj.neybergh@gmail.com>',
         to: email,
         subject: resetEmailCopy(lang).subject,
         html: renderResetEmailHtml(linkData.properties.action_link, lang),
