@@ -487,14 +487,22 @@ export default function Equipe() {
 
         {isAdmin && isBusinessPlan && (
           <div className="bg-[#141c2b] rounded-xl border border-[#1f2937] overflow-hidden">
-            <div className="px-5 py-3 border-b border-[#1f2937]">
-              <h2 className="text-[14px] font-semibold text-white flex items-center gap-2">
-                <MailPlus className="h-4 w-4 text-[#8b9cb3]" />
-                {t("sharedMailboxes.title")} ({(sharedMailboxes as any[])?.length || 0})
-              </h2>
-              <p className="text-[11px] text-[#8b9cb3] mt-0.5">
-                {t("sharedMailboxes.subtitle")}
-              </p>
+            <div className="px-5 py-3 border-b border-[#1f2937] flex items-start justify-between gap-3">
+              <div className="min-w-0">
+                <h2 className="text-[14px] font-semibold text-white flex items-center gap-2">
+                  <MailPlus className="h-4 w-4 text-[#8b9cb3]" />
+                  {t("sharedMailboxes.title")} ({(sharedMailboxes as any[])?.length || 0})
+                </h2>
+                <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+                  {t("sharedMailboxes.subtitle")}
+                </p>
+              </div>
+              <Link href="/dashboard/parametres/mon-compte">
+                <Button size="sm" className="h-7 text-[11px] shrink-0">
+                  <MailPlus className="h-3 w-3 mr-1" />
+                  {t("sharedMailboxes.create")}
+                </Button>
+              </Link>
             </div>
             {sharedMailboxesLoading ? (
               <div className="flex justify-center py-6">
@@ -504,11 +512,9 @@ export default function Equipe() {
               <div className="px-5 py-6 text-center">
                 <Inbox className="h-8 w-8 text-[#8b9cb3]/40 mx-auto mb-2" />
                 <p className="text-[12px] text-[#8b9cb3]">{t("sharedMailboxes.noMailboxes")}</p>
-                <Link href="/dashboard/parametres/mon-compte">
-                  <Button size="sm" variant="outline" className="mt-3 h-7 text-[11px]">
-                    {t("sharedMailboxes.shareConnection")}
-                  </Button>
-                </Link>
+                <p className="text-[11px] text-[#8b9cb3]/70 mt-1 max-w-md mx-auto">
+                  {t("sharedMailboxes.shareToStart")}
+                </p>
               </div>
             ) : (
               <div className="divide-y divide-[#1f2937]">
@@ -640,11 +646,6 @@ function SharedMailboxRow({
                   {t("sharedMailboxes.connected")}
                 </span>
               )}
-              {(mailbox.unclaimedCount ?? 0) > 0 && (
-                <span className="inline-flex items-center gap-1 text-amber-400 bg-amber-400/10 border border-amber-400/20 rounded-full px-2 py-[1px] text-[10px]">
-                  {t("sharedMailboxes.unprocessedCount", { count: mailbox.unclaimedCount })}
-                </span>
-              )}
             </div>
             <div className="flex items-center gap-3 text-[11px] text-[#8b9cb3]">
               <span className="truncate">{mailbox.emailAddress}</span>
@@ -696,7 +697,7 @@ function SharedMailboxRow({
 
       {expanded && (
         <div className="mt-3 ml-11 space-y-3">
-          {availableMembers.length > 0 && (
+          {availableMembers.length > 0 ? (
             <div className="flex gap-2">
               <select
                 value={addUserId}
