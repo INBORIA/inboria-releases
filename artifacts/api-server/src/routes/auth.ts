@@ -154,13 +154,23 @@ router.post("/auth/send-password-reset", async (req, res): Promise<void> => {
     });
 
     try {
-      await transporter.sendMail({
+      const info = await transporter.sendMail({
         from: '"Inboria" <noreply@inboria.com>',
         to: email,
         subject: resetEmailSubject(lang),
         html: renderResetEmailHtml(actionUrl, lang),
       });
-      req.log.info({ email, lang }, "Password reset email sent via Brevo");
+      req.log.info(
+        {
+          email,
+          lang,
+          messageId: info.messageId,
+          accepted: info.accepted,
+          rejected: info.rejected,
+          response: info.response,
+        },
+        "Password reset email submitted to Brevo",
+      );
     } catch (sendErr: any) {
       req.log.error({ email, err: sendErr?.message }, "Failed to send password reset email");
       res.status(500).json({ error: "send_failed" });
