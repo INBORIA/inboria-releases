@@ -7,14 +7,18 @@ if (!supabaseUrl || !supabaseKey) {
   throw new Error("Missing Supabase environment variables");
 }
 
-const sessionOnlyStorage =
-  typeof window !== "undefined" ? window.sessionStorage : undefined;
+const authStorage =
+  typeof window !== "undefined"
+    ? import.meta.env.DEV
+      ? window.localStorage
+      : window.sessionStorage
+    : undefined;
 
 export const supabase = createClient(supabaseUrl, supabaseKey, {
   auth: {
     persistSession: true,
     autoRefreshToken: true,
     detectSessionInUrl: true,
-    storage: sessionOnlyStorage,
+    storage: authStorage,
   },
 });
