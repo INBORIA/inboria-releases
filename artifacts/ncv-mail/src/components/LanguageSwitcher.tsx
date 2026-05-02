@@ -29,7 +29,8 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const currentLang = languages.find((l) => l.code === i18n.language) || languages[0];
+  const activeCode = (i18n.resolvedLanguage || i18n.language || "fr").slice(0, 2).toLowerCase();
+  const currentLang = languages.find((l) => l.code === activeCode) || languages[0];
 
   return (
     <div ref={ref} className="relative">
@@ -61,7 +62,7 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
                 setOpen(false);
               }}
               className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-[13px] transition-colors ${
-                i18n.language === lang.code
+                activeCode === lang.code
                   ? "bg-[#2d7dd2]/10 text-[#2d7dd2]"
                   : "text-[#8b9cb3] hover:bg-white/[0.04] hover:text-white"
               }`}
