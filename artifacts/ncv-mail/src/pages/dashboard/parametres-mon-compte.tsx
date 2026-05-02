@@ -30,7 +30,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Pen, Lock, Globe, ArrowLeft, Sparkles } from "lucide-react";
+import { Mail, User, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Pen, Lock, Globe, ArrowLeft, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
@@ -1140,40 +1140,6 @@ export default function ParametresMonCompte() {
 
           {!isOrgMember && <InboriaPrivacySection t={t} />}
 
-          {!isOrgMember && (
-            <section>
-              <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
-                <BrainCircuit className="w-4 h-4 text-primary" />
-                {t("settings.aiPreferences")}
-              </h2>
-              <div className="bg-card rounded-lg border border-border p-5 space-y-5">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-[13px] text-white">{t("settings.urgentBilling")}</Label>
-                      <p className="text-[11px] text-[#8b9cb3]">{t("settings.urgentBillingDesc")}</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-[13px] text-white">{t("settings.taskExtraction")}</Label>
-                      <p className="text-[11px] text-[#8b9cb3]">{t("settings.taskExtractionDesc")}</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-0.5">
-                      <Label className="text-[13px] text-white">{t("settings.projectDetection")}</Label>
-                      <p className="text-[11px] text-[#8b9cb3]">{t("settings.projectDetectionDesc")}</p>
-                    </div>
-                    <Switch defaultChecked />
-                  </div>
-                </div>
-              </div>
-            </section>
-          )}
-
           <section>
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
               <User className="w-4 h-4 text-primary" />
@@ -1355,31 +1321,6 @@ export default function ParametresMonCompte() {
               </div>
             </div>
           </section>
-          
-          {!isOrgMember && (
-            <section>
-              <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
-                <Bell className="w-4 h-4 text-primary" />
-                {t("settings.notifications")}
-              </h2>
-              <div className="bg-card rounded-lg border border-border p-5 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-[13px] text-white">{t("settings.morningBrief")}</Label>
-                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.morningBriefDesc")}</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-[13px] text-white">{t("settings.urgentAlerts")}</Label>
-                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.urgentAlertsDesc")}</p>
-                  </div>
-                  <Switch defaultChecked />
-                </div>
-              </div>
-            </section>
-          )}
         </div>
       </div>
     </DashboardLayout>
