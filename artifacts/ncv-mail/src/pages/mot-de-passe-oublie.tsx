@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Link } from "wouter";
-import { supabase } from "@/lib/supabase";
 import { AuthLayout } from "@/components/layout/auth-layout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,7 +9,7 @@ import { Mail, ArrowLeft, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 
 export default function MotDePasseOublie() {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [email, setEmail] = useState("");
   const [isPending, setIsPending] = useState(false);
   const [sent, setSent] = useState(false);
@@ -24,16 +23,23 @@ export default function MotDePasseOublie() {
     try {
       const origin = window.location.origin;
       const basePath = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const redirectTo = `${origin}${basePath}/reset-password`;
+      const lang = (i18n.language || "fr").slice(0, 2).toLowerCase();
 
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${origin}${basePath}/reset-password`,
+      const resp = await fetch(`${import.meta.env.BASE_URL}api/auth/send-password-reset`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email, redirectTo, lang }),
       });
 
-      if (error) {
+      if (!resp.ok) {
+        const body = await resp.json().catch(() => ({}));
         toast({
           variant: "destructive",
           title: t("common.error"),
-          description: error.message,
+          description: body?.error === "mail_unavailable" || body?.error === "send_failed"
+            ? t("auth.resetEmailSentDesc")
+            : t("auth.resetEmailSentDesc"),
         });
       } else {
         setSent(true);
