@@ -32,13 +32,10 @@ export default function MotDePasseOublie() {
       });
 
       if (!resp.ok) {
-        const body = await resp.json().catch(() => ({}));
         toast({
           variant: "destructive",
           title: t("common.error"),
-          description: body?.error === "mail_unavailable" || body?.error === "send_failed"
-            ? t("auth.resetEmailSentDesc")
-            : t("auth.resetEmailSentDesc"),
+          description: t("auth.resetEmailSentDesc"),
         });
       } else {
         setSent(true);
