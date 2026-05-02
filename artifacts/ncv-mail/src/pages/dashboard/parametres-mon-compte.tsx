@@ -885,13 +885,15 @@ export default function ParametresMonCompte() {
   return (
     <DashboardLayout>
       <div className="p-5 max-w-4xl mx-auto w-full">
-        <div className="mb-2">
-          <Link href="/dashboard/parametres">
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#8b9cb3] hover:text-white">
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("settings.title")}
-            </Button>
-          </Link>
-        </div>
+        {!isOrgMember && (
+          <div className="mb-2">
+            <Link href="/dashboard/parametres">
+              <Button variant="ghost" size="sm" className="h-7 px-2 text-[#8b9cb3] hover:text-white">
+                <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("settings.title")}
+              </Button>
+            </Link>
+          </div>
+        )}
         <div className="mb-5">
           <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("settings.hub.myAccount", "Mon compte")}</h1>
           <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("settings.hub.myAccountDesc", "Profil, sécurité, comptes email, Inboria et notifications")}</p>
