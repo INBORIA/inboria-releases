@@ -71,7 +71,13 @@ export default function Equipe() {
   const removeMember = useRemoveOrganisationMember();
   const updateRole = useUpdateMemberRole();
 
-  const { data: sharedMailboxes, isLoading: sharedMailboxesLoading } = useGetSharedMailboxes();
+  const { data: sharedMailboxes, isLoading: sharedMailboxesLoading } = useGetSharedMailboxes({
+    query: {
+      enabled:
+        (org as any)?.myRole === "admin" && (profile as any)?.plan === "business",
+      queryKey: getGetSharedMailboxesQueryKey(),
+    },
+  });
   const deleteMailboxMut = useDeleteSharedMailbox();
   const addMailboxMemberMut = useAddSharedMailboxMember();
   const removeMailboxMemberMut = useRemoveSharedMailboxMember();
