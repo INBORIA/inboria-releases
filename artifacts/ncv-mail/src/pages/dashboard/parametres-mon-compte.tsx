@@ -30,7 +30,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Shield, Pen, Lock, Globe, ArrowLeft, Sparkles } from "lucide-react";
+import { Mail, User, Bell, BrainCircuit, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Pen, Lock, Globe, ArrowLeft, Sparkles } from "lucide-react";
 import { Link } from "wouter";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
@@ -1169,39 +1169,6 @@ export default function ParametresMonCompte() {
                     </div>
                     <Switch defaultChecked />
                   </div>
-                </div>
-              </div>
-            </section>
-          )}
-
-          {!isOrgMember && (
-            <section>
-              <h2 className="text-[14px] font-semibold text-white flex items-center gap-2 mb-3">
-                <Shield className="w-4 h-4 text-primary" />
-                {t("settings.managementMode")}
-              </h2>
-              <div className="bg-card rounded-lg border border-border p-5 space-y-4">
-                <p className="text-[12px] text-[#8b9cb3]">
-                  {t("settings.managementModeDesc")}
-                </p>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-[13px] text-white">{t("settings.autoArchive")}</Label>
-                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.autoArchiveDesc")}</p>
-                  </div>
-                  <Switch />
-                </div>
-                <div className="flex items-center justify-between">
-                  <div className="space-y-0.5">
-                    <Label className="text-[13px] text-white">{t("settings.autoMark")}</Label>
-                    <p className="text-[11px] text-[#8b9cb3]">{t("settings.autoMarkDesc")}</p>
-                  </div>
-                  <Switch />
-                </div>
-                <div className="p-3 bg-primary/[0.06] rounded-lg border border-primary/10">
-                  <p className="text-[11px] text-primary">
-                    {t("settings.manualModeInfo")}
-                  </p>
                 </div>
               </div>
             </section>
