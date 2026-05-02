@@ -26,15 +26,14 @@ router.post("/auth/send-password-reset", async (req, res): Promise<void> => {
       res.status(400).json({ error: "invalid_redirect" });
       return;
     }
-    const allowedHostSuffixes = [
-      "inboria.com",
-      "ncvmail.com",
-      "replit.app",
-      "replit.dev",
-      "picard.replit.dev",
-    ];
+    const productionHostSuffixes = ["inboria.com", "ncvmail.com"];
+    const devHostSuffixes = ["replit.app", "replit.dev", "picard.replit.dev"];
+    const allowedHostSuffixes =
+      process.env["NODE_ENV"] === "production"
+        ? productionHostSuffixes
+        : [...productionHostSuffixes, ...devHostSuffixes];
     const isAllowedHost =
-      redirectHost === "localhost" ||
+      (process.env["NODE_ENV"] !== "production" && redirectHost === "localhost") ||
       allowedHostSuffixes.some((s) => redirectHost === s || redirectHost.endsWith("." + s));
     if (!isAllowedHost) {
       res.status(400).json({ error: "invalid_redirect" });
