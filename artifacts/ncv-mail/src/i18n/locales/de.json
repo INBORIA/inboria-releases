@@ -1956,7 +1956,13 @@
     "member": "Mitglied",
     "membersPlural": "Mitglieder",
     "removeMember": "Entfernen",
-    "deleteConfirmDescDetailed": "Deine Teamkollegen verlieren den Zugriff auf die E-Mails dieses Postfachs. Das persönliche Postfach bleibt unverändert und die Freigabe kann jederzeit über Mein Konto wieder aktiviert werden."
+    "deleteConfirmDescDetailed": "Deine Teamkollegen verlieren den Zugriff auf die E-Mails dieses Postfachs. Das persönliche Postfach bleibt unverändert und die Freigabe kann jederzeit über Mein Konto wieder aktiviert werden.",
+    "manageMembers": "Mitglieder verwalten",
+    "mailboxMembers": "Postfach-Mitglieder",
+    "allTeammatesAlready": "Alle deine Teamkollegen sind bereits Mitglied dieses Postfachs. Um einen neuen hinzuzufügen, lade ihn zuerst ins Team ein.",
+    "noTeammatesYet": "Du hast noch keine Teamkollegen. Lade jemanden in dein Team ein, um ihn zu gemeinsamen Postfächern hinzufügen zu können.",
+    "inviteToTeam": "Ins Team einladen",
+    "inviteTeammate": "Teamkollegen einladen"
   },
   "teamActivity": {
     "title": "Teamaktivität",

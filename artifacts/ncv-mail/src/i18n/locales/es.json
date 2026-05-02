@@ -1956,7 +1956,13 @@
     "member": "miembro",
     "membersPlural": "miembros",
     "removeMember": "Eliminar",
-    "deleteConfirmDescDetailed": "Tus compañeros de equipo perderán el acceso a los correos de este buzón. El buzón personal permanece intacto y el uso compartido se puede reactivar en cualquier momento desde Mi cuenta."
+    "deleteConfirmDescDetailed": "Tus compañeros de equipo perderán el acceso a los correos de este buzón. El buzón personal permanece intacto y el uso compartido se puede reactivar en cualquier momento desde Mi cuenta.",
+    "manageMembers": "Gestionar miembros",
+    "mailboxMembers": "Miembros del buzón",
+    "allTeammatesAlready": "Todos tus compañeros ya son miembros de este buzón. Para añadir uno nuevo, invítalo primero al equipo.",
+    "noTeammatesYet": "Aún no tienes compañeros. Invita a alguien a tu equipo para poder añadirlo a los buzones compartidos.",
+    "inviteToTeam": "Invitar al equipo",
+    "inviteTeammate": "Invitar a un compañero"
   },
   "teamActivity": {
     "title": "Actividad del equipo",

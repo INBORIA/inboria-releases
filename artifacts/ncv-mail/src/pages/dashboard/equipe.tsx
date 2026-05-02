@@ -435,7 +435,7 @@ export default function Equipe() {
         </div>
 
         {isAdmin && (
-          <div className="bg-[#141c2b] rounded-xl border border-[#1f2937] overflow-hidden">
+          <div id="invite-section" className="bg-[#141c2b] rounded-xl border border-[#1f2937] overflow-hidden">
             <div className="px-5 py-3 border-b border-[#1f2937]">
               <h2 className="text-[14px] font-semibold text-white flex items-center gap-2">
                 <UserPlus className="h-4 w-4 text-[#8b9cb3]" />
@@ -451,6 +451,7 @@ export default function Equipe() {
                 <div className="flex gap-2">
                   <Input
                     type="email"
+                    id="invite-email-input"
                     placeholder={t("team.inviteEmailPlaceholder")}
                     value={inviteEmail}
                     onChange={(e) => setInviteEmail(e.target.value)}
@@ -526,6 +527,17 @@ export default function Equipe() {
                     onDelete={() => handleDeleteMailbox(mb.id)}
                     onAddMember={(userId) => handleAddMailboxMember(mb.id, userId)}
                     onRemoveMember={(memberId) => handleRemoveMailboxMember(mb.id, memberId)}
+                    onInviteToTeam={() => {
+                      const input = document.getElementById("invite-email-input");
+                      const section = document.getElementById("invite-section");
+                      const target = input || section;
+                      if (target) {
+                        target.scrollIntoView({ behavior: "smooth", block: "center" });
+                        if (input) {
+                          setTimeout(() => (input as HTMLInputElement).focus(), 350);
+                        }
+                      }
+                    }}
                   />
                 ))}
               </div>
@@ -604,12 +616,14 @@ function SharedMailboxRow({
   onDelete,
   onAddMember,
   onRemoveMember,
+  onInviteToTeam,
 }: {
   mailbox: any;
   orgMembers: any[];
   onDelete: () => void;
   onAddMember: (userId: string) => Promise<void> | void;
   onRemoveMember: (memberId: string) => void;
+  onInviteToTeam: () => void;
 }) {
   const { t } = useTranslation();
   const [expanded, setExpanded] = useState(false);
@@ -655,6 +669,10 @@ function SharedMailboxRow({
               </span>
             </div>
           </div>
+          <span className="inline-flex items-center gap-1 text-[11px] text-primary hover:text-primary/80 shrink-0">
+            <Users className="h-3 w-3" />
+            {t("sharedMailboxes.manageMembers")}
+          </span>
           <ChevronDown
             className={`h-4 w-4 text-[#8b9cb3] transition-transform shrink-0 ${expanded ? "rotate-180" : ""}`}
           />
@@ -697,43 +715,73 @@ function SharedMailboxRow({
 
       {expanded && (
         <div className="mt-3 ml-11 space-y-3">
-          {availableMembers.length > 0 ? (
-            <div className="flex gap-2">
-              <select
-                value={addUserId}
-                onChange={(e) => setAddUserId(e.target.value)}
-                className="flex-1 bg-[#0d1117] border border-[#1f2937] text-white text-[12px] rounded-md px-2 py-1.5"
-              >
-                <option value="">{t("sharedMailboxes.selectColleague")}</option>
-                {availableMembers.map((om: any) => (
-                  <option key={om.userId} value={om.userId}>
-                    {om.fullName || om.email || om.userId}
-                  </option>
-                ))}
-              </select>
-              <Button
-                size="sm"
-                disabled={!addUserId || addPending}
-                onClick={async () => {
-                  setAddPending(true);
-                  try {
-                    await onAddMember(addUserId);
-                    setAddUserId("");
-                  } finally {
-                    setAddPending(false);
-                  }
-                }}
-                className="h-8 text-[11px]"
-              >
-                {addPending ? (
-                  <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-                ) : (
-                  <UserPlus className="h-3 w-3 mr-1" />
-                )}
-                {t("sharedMailboxes.add")}
-              </Button>
+          <div className="bg-[#0d1117] border border-[#1f2937] rounded-md p-3">
+            <div className="text-[11px] font-semibold text-white mb-2 flex items-center gap-1.5">
+              <UserPlus className="h-3 w-3 text-primary" />
+              {t("sharedMailboxes.addMember")}
             </div>
-          )}
+            {availableMembers.length > 0 ? (
+              <div className="flex gap-2">
+                <select
+                  value={addUserId}
+                  onChange={(e) => setAddUserId(e.target.value)}
+                  className="flex-1 bg-[#141c2b] border border-[#1f2937] text-white text-[12px] rounded-md px-2 py-1.5"
+                >
+                  <option value="">{t("sharedMailboxes.selectColleague")}</option>
+                  {availableMembers.map((om: any) => (
+                    <option key={om.userId} value={om.userId}>
+                      {om.fullName || om.email || om.userId}
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  size="sm"
+                  disabled={!addUserId || addPending}
+                  onClick={async () => {
+                    setAddPending(true);
+                    try {
+                      await onAddMember(addUserId);
+                      setAddUserId("");
+                    } finally {
+                      setAddPending(false);
+                    }
+                  }}
+                  className="h-8 text-[11px]"
+                >
+                  {addPending ? (
+                    <Loader2 className="h-3 w-3 mr-1 animate-spin" />
+                  ) : (
+                    <UserPlus className="h-3 w-3 mr-1" />
+                  )}
+                  {t("sharedMailboxes.add")}
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-2">
+                <p className="text-[11px] text-[#8b9cb3] leading-relaxed">
+                  {orgMembers.length > 1
+                    ? t("sharedMailboxes.allTeammatesAlready")
+                    : t("sharedMailboxes.noTeammatesYet")}
+                </p>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={onInviteToTeam}
+                  className="h-7 text-[11px]"
+                >
+                  <UserPlus className="h-3 w-3 mr-1" />
+                  {orgMembers.length > 1
+                    ? t("sharedMailboxes.inviteToTeam")
+                    : t("sharedMailboxes.inviteTeammate")}
+                </Button>
+              </div>
+            )}
+          </div>
+
+          <div className="text-[11px] font-semibold text-white flex items-center gap-1.5">
+            <Users className="h-3 w-3 text-[#8b9cb3]" />
+            {t("sharedMailboxes.mailboxMembers")} ({((mbMembers as any[]) || []).length})
+          </div>
 
           {isLoading ? (
             <div className="flex justify-center py-3">

@@ -1956,7 +1956,13 @@
     "member": "member",
     "membersPlural": "members",
     "removeMember": "Remove",
-    "deleteConfirmDescDetailed": "Your teammates will lose access to this mailbox's emails. The personal mailbox remains intact and sharing can be re-enabled at any time from My account."
+    "deleteConfirmDescDetailed": "Your teammates will lose access to this mailbox's emails. The personal mailbox remains intact and sharing can be re-enabled at any time from My account.",
+    "manageMembers": "Manage members",
+    "mailboxMembers": "Mailbox members",
+    "allTeammatesAlready": "All your teammates are already members of this mailbox. To add a new one, invite them to the team first.",
+    "noTeammatesYet": "You don't have any teammates yet. Invite someone to your team to be able to add them to shared mailboxes.",
+    "inviteToTeam": "Invite to team",
+    "inviteTeammate": "Invite a teammate"
   },
   "teamActivity": {
     "title": "Team activity",

@@ -1956,7 +1956,13 @@
     "member": "lid",
     "membersPlural": "leden",
     "removeMember": "Verwijderen",
-    "deleteConfirmDescDetailed": "Je teamgenoten verliezen de toegang tot de e-mails van deze mailbox. De persoonlijke mailbox blijft intact en delen kan op elk moment opnieuw worden ingeschakeld vanuit Mijn account."
+    "deleteConfirmDescDetailed": "Je teamgenoten verliezen de toegang tot de e-mails van deze mailbox. De persoonlijke mailbox blijft intact en delen kan op elk moment opnieuw worden ingeschakeld vanuit Mijn account.",
+    "manageMembers": "Leden beheren",
+    "mailboxMembers": "Leden van de mailbox",
+    "allTeammatesAlready": "Al je teamgenoten zijn al lid van deze mailbox. Om een nieuwe toe te voegen, nodig hem eerst uit voor het team.",
+    "noTeammatesYet": "Je hebt nog geen teamgenoten. Nodig iemand uit voor je team om hem aan gedeelde mailboxen te kunnen toevoegen.",
+    "inviteToTeam": "Uitnodigen voor team",
+    "inviteTeammate": "Een teamgenoot uitnodigen"
   },
   "teamActivity": {
     "title": "Teamactiviteit",
