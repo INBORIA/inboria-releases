@@ -1334,7 +1334,7 @@
     "home": {
       "heroTitle1": "Tu bandeja de entrada ya está gestionada",
       "heroTitle2": "cuando llegas por la mañana.",
-      "heroTitle3": "Inboria, tu mejor amiga en el trabajo.",
+      "heroTitle3": "Inboria entiende tu bandeja de entrada.",
       "heroDesc": "Inboria lee, analiza y clasifica automáticamente tus correos electrónicos según tus propias reglas.",
       "startFree": "Comienza gratis",
       "howItWorks": "Cómo funciona",
@@ -1493,9 +1493,9 @@
       "ctaFooter": "100 créditos IA gratis para probar • No se requiere tarjeta de crédito"
     },
     "ai": {
-      "badge": "Inboria — tu mejor amigo en el trabajo",
-      "heroTitle": "Inboria, la mejor amiga que se ocupa de tus correos",
-      "heroDesc": "Inboria es la inteligencia que recuerda a tus contactos, ordena tus correos por importancia, prepara tus respuestas y libera tus mañanas. Como una mejor amiga fiable en el trabajo, cuida tu bandeja mientras tú te concentras en lo esencial.",
+      "badge": "Inboria entiende tu bandeja de entrada",
+      "heroTitle": "Inboria entiende tu bandeja de entrada.",
+      "heroDesc": "Inboria entiende tu bandeja de entrada: recuerda a tus contactos, ordena tus correos por importancia, prepara tus respuestas y libera tus mañanas. Mientras tú te concentras en lo esencial, ella se ocupa del resto.",
       "tryAIFree": "Prueba Inboria gratis",
       "allFeatures": "Todas las funciones",
       "stats": {
@@ -1505,7 +1505,7 @@
         "gdpr": "conforme y seguro"
       },
       "whatAIDoes": "Lo que Inboria hace por ti, cada día",
-      "whatAIDoesDesc": "Siete habilidades integradas de una mejor amiga digital que transforman tu relación con el correo.",
+      "whatAIDoesDesc": "Siete habilidades integradas que transforman tu relación con el correo.",
       "memory": "Memoria de contactos",
       "memoryDesc": "Inboria recuerda cada contacto: lo que prometiste, quién espera una respuesta, el contexto de un proyecto. Ningún compromiso olvidado, ningún correo llega sin contexto.",
       "memoryH1": "Hechos, episodios y señales por contacto",
@@ -1586,7 +1586,7 @@
       "faq4a": "Como toda inteligencia, los errores son posibles. Por eso cada sugerencia se presenta para validación. Corriges con un clic e Inboria aprende de tus correcciones.",
       "faq5q": "¿Qué modelos usa Inboria?",
       "faq5a": "Inboria se apoya en modelos de lenguaje de última generación, reconocidos por su fiabilidad en el procesamiento del lenguaje natural. Seleccionamos y optimizamos continuamente los mejores modelos disponibles para garantizar resultados de calidad.",
-      "ctaTitle": "Da la bienvenida a Inboria, tu nuevo mejor amigo en el trabajo",
+      "ctaTitle": "Adopta Inboria. Inboria entiende tu bandeja de entrada.",
       "ctaDesc": "Únete a las pymes que ahorran 2 horas al día gracias a Inboria.",
       "tryFree": "Probar gratis",
       "seePricing": "Ver precios",

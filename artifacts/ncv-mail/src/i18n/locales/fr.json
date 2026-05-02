@@ -1324,7 +1324,7 @@
     "home": {
       "heroTitle1": "Votre boîte est déjà gérée",
       "heroTitle2": "quand vous arrivez le matin.",
-      "heroTitle3": "Inboria, votre meilleur ami au bureau.",
+      "heroTitle3": "Inboria comprend votre boîte mail.",
       "heroDesc": "Inboria lit, analyse et classe automatiquement vos emails selon VOS propres règles.",
       "startFree": "Commencer gratuitement",
       "howItWorks": "Comment ça marche",
@@ -1483,9 +1483,9 @@
       "ctaFooter": "100 crédits IA offerts pour démarrer · Aucune carte bancaire requise"
     },
     "ai": {
-      "badge": "Inboria — votre meilleur ami au bureau",
-      "heroTitle": "Inboria, le meilleur ami qui s'occupe de vos emails",
-      "heroDesc": "Inboria est l'intelligence qui se souvient de vos contacts, trie vos emails par importance, prépare vos réponses et libère vos matinées. Comme un meilleur ami fiable au bureau, elle prend soin de votre boîte pendant que vous travaillez sur l'essentiel.",
+      "badge": "Inboria comprend votre boîte mail",
+      "heroTitle": "Inboria comprend votre boîte mail.",
+      "heroDesc": "Inboria comprend votre boîte mail : elle se souvient de vos contacts, trie vos emails par importance, prépare vos réponses et libère vos matinées. Pendant que vous travaillez sur l'essentiel, elle s'occupe de tout le reste.",
       "tryAIFree": "Essayer Inboria gratuitement",
       "allFeatures": "Toutes les fonctionnalités",
       "stats": {
@@ -1495,7 +1495,7 @@
         "gdpr": "conforme et sécurisé"
       },
       "whatAIDoes": "Ce qu'Inboria fait pour vous, chaque jour",
-      "whatAIDoesDesc": "Sept compétences intégrées d'un meilleur ami numérique qui transforment votre relation aux emails.",
+      "whatAIDoesDesc": "Sept compétences intégrées qui transforment votre relation aux emails.",
       "memory": "Mémoire des contacts",
       "memoryDesc": "Inboria se souvient de chaque contact : ce que vous avez promis, qui attend une réponse, le contexte d'un projet. Aucun engagement n'est oublié, aucun email n'arrive sans contexte.",
       "memoryH1": "Faits, épisodes et signaux par contact",
@@ -1576,7 +1576,7 @@
       "faq4a": "Comme toute intelligence, des erreurs sont possibles. C'est pourquoi chaque suggestion est présentée pour validation. Vous corrigez en un clic et Inboria apprend de vos corrections.",
       "faq5q": "Quels modèles Inboria utilise-t-elle ?",
       "faq5a": "Inboria s'appuie sur des modèles de langage de dernière génération, reconnus pour leur fiabilité en traitement du langage naturel. Nous sélectionnons et optimisons en permanence les meilleurs modèles disponibles pour garantir des résultats de qualité.",
-      "ctaTitle": "Adoptez Inboria, votre nouveau meilleur ami au bureau",
+      "ctaTitle": "Adoptez Inboria. Inboria comprend votre boîte mail.",
       "ctaDesc": "Rejoignez les PME qui gagnent 2 heures par jour grâce à Inboria.",
       "tryFree": "Essayer gratuitement",
       "seePricing": "Voir les tarifs",

@@ -1334,7 +1334,7 @@
     "home": {
       "heroTitle1": "Your inbox is already managed",
       "heroTitle2": "when you arrive in the morning.",
-      "heroTitle3": "Inboria, your best friend at work.",
+      "heroTitle3": "Inboria understands your inbox.",
       "heroDesc": "Inboria reads, analyzes and automatically sorts your emails according to YOUR own rules.",
       "startFree": "Start for free",
       "howItWorks": "How it works",
@@ -1493,9 +1493,9 @@
       "ctaFooter": "100 free AI credits to try • No credit card required"
     },
     "ai": {
-      "badge": "Inboria — your best friend at work",
-      "heroTitle": "Inboria, the best friend who handles your emails",
-      "heroDesc": "Inboria is the intelligence that remembers your contacts, sorts your emails by importance, prepares your replies and frees up your mornings. Like a reliable best friend at work, she takes care of your inbox while you focus on what matters.",
+      "badge": "Inboria understands your inbox",
+      "heroTitle": "Inboria understands your inbox.",
+      "heroDesc": "Inboria understands your inbox: she remembers your contacts, sorts your emails by importance, prepares your replies and frees up your mornings. While you focus on what matters, she takes care of everything else.",
       "tryAIFree": "Try Inboria for free",
       "allFeatures": "All features",
       "stats": {
@@ -1505,7 +1505,7 @@
         "gdpr": "compliant and secure"
       },
       "whatAIDoes": "What Inboria does for you, every day",
-      "whatAIDoesDesc": "Seven built-in skills of a digital best friend that transform your relationship with email.",
+      "whatAIDoesDesc": "Seven built-in skills that transform your relationship with email.",
       "memory": "Contact memory",
       "memoryDesc": "Inboria remembers every contact: what you promised, who's waiting on a reply, the context of a project. No commitment forgotten, no email lands without context.",
       "memoryH1": "Facts, episodes and signals per contact",
@@ -1586,7 +1586,7 @@
       "faq4a": "Like any intelligence, errors are possible. That's why every suggestion is shown for validation. You correct in one click and Inboria learns from your corrections.",
       "faq5q": "Which models does Inboria use?",
       "faq5a": "Inboria relies on the latest generation of language models, recognized for reliability in natural-language processing. We continuously select and optimize the best available models to guarantee quality results.",
-      "ctaTitle": "Welcome Inboria, your new best friend at work",
+      "ctaTitle": "Adopt Inboria. Inboria understands your inbox.",
       "ctaDesc": "Join the SMEs that save 2 hours a day thanks to Inboria.",
       "tryFree": "Try for free",
       "seePricing": "See pricing",

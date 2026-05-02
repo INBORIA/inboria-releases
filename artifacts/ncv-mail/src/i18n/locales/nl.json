@@ -1334,7 +1334,7 @@
     "home": {
       "heroTitle1": "Uw inbox is al beheerd",
       "heroTitle2": "wanneer u 's ochtends arriveert.",
-      "heroTitle3": "Inboria, uw beste vriend op het werk.",
+      "heroTitle3": "Inboria begrijpt uw inbox.",
       "heroDesc": "Inboria leest, analyseert en sorteert automatisch uw e-mails volgens UW eigen regels.",
       "startFree": "Gratis beginnen",
       "howItWorks": "Hoe het werkt",
@@ -1493,9 +1493,9 @@
       "ctaFooter": "100 gratis AI-credits om te proberen • Geen creditcard vereist"
     },
     "ai": {
-      "badge": "Inboria — uw beste vriend op het werk",
-      "heroTitle": "Inboria, de beste vriend die uw e-mails afhandelt",
-      "heroDesc": "Inboria is de intelligentie die uw contacten onthoudt, uw e-mails op belang sorteert, uw antwoorden voorbereidt en uw ochtenden vrijmaakt. Als een betrouwbare beste vriend op het werk, ze zorgt voor uw inbox terwijl u zich richt op wat telt.",
+      "badge": "Inboria begrijpt uw inbox",
+      "heroTitle": "Inboria begrijpt uw inbox.",
+      "heroDesc": "Inboria begrijpt uw inbox: ze onthoudt uw contacten, sorteert uw e-mails op belang, bereidt uw antwoorden voor en maakt uw ochtenden vrij. Terwijl u zich richt op wat telt, zorgt zij voor de rest.",
       "tryAIFree": "Probeer Inboria gratis",
       "allFeatures": "Alle functies",
       "stats": {
@@ -1505,7 +1505,7 @@
         "gdpr": "conform en veilig"
       },
       "whatAIDoes": "Wat Inboria elke dag voor u doet",
-      "whatAIDoesDesc": "Zeven ingebouwde vaardigheden van een digitale beste vriend die uw relatie met e-mail transformeren.",
+      "whatAIDoesDesc": "Zeven ingebouwde vaardigheden die uw relatie met e-mail transformeren.",
       "memory": "Contactgeheugen",
       "memoryDesc": "Inboria onthoudt elk contact: wat u beloofd hebt, wie wacht op een antwoord, de context van een project. Geen toezegging vergeten, geen e-mail zonder context.",
       "memoryH1": "Feiten, episodes en signalen per contact",
@@ -1586,7 +1586,7 @@
       "faq4a": "Zoals elke intelligentie zijn fouten mogelijk. Daarom wordt elke suggestie ter validatie aangeboden. U corrigeert met één klik en Inboria leert van uw correcties.",
       "faq5q": "Welke modellen gebruikt Inboria?",
       "faq5a": "Inboria steunt op taalmodellen van de nieuwste generatie, erkend voor hun betrouwbaarheid in natuurlijke taalverwerking. We selecteren en optimaliseren voortdurend de beste beschikbare modellen om kwaliteitsresultaten te garanderen.",
-      "ctaTitle": "Verwelkom Inboria, uw nieuwe beste vriend op het werk",
+      "ctaTitle": "Kies Inboria. Inboria begrijpt uw inbox.",
       "ctaDesc": "Sluit u aan bij de kmo's die 2 uur per dag besparen dankzij Inboria.",
       "tryFree": "Gratis proberen",
       "seePricing": "Bekijk de prijzen",
