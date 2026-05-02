@@ -1226,6 +1226,7 @@ export default function ParametresMonCompte() {
                     <Label className="text-[12px] text-[#8b9cb3]">{t("settings.fullName")}</Label>
                     <Input value={fullName} onChange={(e) => setFullName(e.target.value)} className="bg-background border-border text-white h-9 text-[13px]" />
                   </div>
+                  {!isOrgMember && (
                   <div className="space-y-1.5">
                     <Label className="text-[12px] text-[#8b9cb3] flex items-center gap-1.5">
                       <Globe className="w-3 h-3" />
@@ -1276,6 +1277,8 @@ export default function ParametresMonCompte() {
                       </SelectContent>
                     </Select>
                   </div>
+                  )}
+                  {!isOrgMember && (
                   <div className="space-y-1.5">
                     <Label className="text-[12px] text-[#8b9cb3] flex items-center gap-1.5">
                       <MailCheck className="w-3 h-3" />
@@ -1300,10 +1303,12 @@ export default function ParametresMonCompte() {
                       )}
                     </p>
                   </div>
+                  )}
                   <Button onClick={handleSaveProfile} disabled={updateProfile.isPending || (fullName === (profile?.fullName ?? "") && timezone === ((profile as any)?.timezone ?? "Europe/Brussels") && followUpDelayDays === ((profile as any)?.followUpDelayDays ?? 5))} size="sm">
                     {updateProfile.isPending ? t("settings.saving") : t("common.save")}
                   </Button>
 
+                  {!isOrgMember && (
                   <div className="pt-3 mt-3 border-t border-border/50 space-y-2">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
@@ -1318,6 +1323,7 @@ export default function ParametresMonCompte() {
                     </div>
                     <p className="text-[10px] text-[#8b9cb3] italic">{t("wave1.trackingDisclaimer")}</p>
                   </div>
+                  )}
                 </div>
               )}
             </div>

@@ -208,13 +208,10 @@ function ProtectedRoute({ component: Component }: { component: React.ComponentTy
 
 function AdminOnlyRoute({ component: Component }: { component: React.ComponentType }) {
   const { session, loading } = useAuth();
-  const { data: org, isLoading: orgLoading } = useGetMyOrganisation({
-    query: { enabled: !!session } as any,
-  });
+  const { data: org, isLoading: orgLoading } = useGetMyOrganisation();
   const { toast } = useToast();
   const { t } = useTranslation();
-  const orgId = (org as any)?.id;
-  const isOrgMember = !!orgId && (org as any)?.myRole !== "admin";
+  const isOrgMember = !!org?.id && org.myRole !== "admin";
   const shouldRedirect = !loading && !orgLoading && !!session && isOrgMember;
 
   useEffect(() => {
