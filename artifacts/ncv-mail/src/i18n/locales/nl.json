@@ -20,7 +20,9 @@
     "export": "Exporteren",
     "emailExported": "E-mail geëxporteerd",
     "exportError": "Fout bij exporteren",
-    "add": "Toevoegen"
+    "add": "Toevoegen",
+    "edit": "Bewerken",
+    "reset": "Resetten"
   },
   "nav": {
     "home": "Start",
@@ -4668,5 +4670,46 @@
     "orgLogEmpty": "Nog geen adminraadpleging in uw organisatie geregistreerd.",
     "targetOrgWide": "Hele organisatie",
     "targetUnknown": "Onbekend doel"
+  },
+  "contactsPage": {
+    "add": "Toevoegen",
+    "addTitle": "Nieuw contact",
+    "editTitle": "Contact bewerken",
+    "deleteTitle": "Dit contact verwijderen?",
+    "deleteConfirm": "De fiche wordt verwijderd. De e-mailgeschiedenis blijft bewaard.",
+    "create": "Aanmaken",
+    "created": "Contact toegevoegd",
+    "updated": "Contact bijgewerkt",
+    "deleted": "Contact verwijderd",
+    "emailRequired": "E-mailadres vereist",
+    "emptyTimeline": "Niets te tonen voor dit contact.",
+    "emptyFiltered": "Geen items voor deze filters.",
+    "searchHint": "Typ een naam of adres om een contact te zoeken.",
+    "manualBadge": "fiche",
+    "messages": "berichten",
+    "noInteraction": "Geen uitwisseling",
+    "noResults": "Geen contact gevonden",
+    "searchPlaceholder": "Zoek een contact…",
+    "selectPrompt": "Selecteer een contact om de volledige geschiedenis te zien.",
+    "timelineItems": "items in de tijdlijn",
+    "fields": {
+      "email": "E-mailadres",
+      "displayName": "Weergavenaam",
+      "phone": "Telefoon",
+      "company": "Bedrijf",
+      "notes": "Notities"
+    },
+    "types": {
+      "received": "E-mail ontvangen",
+      "sent": "E-mail verzonden",
+      "snoozed": "Uitgesteld",
+      "scheduled": "Gepland",
+      "archive": "Gearchiveerd",
+      "project": "Project",
+      "task": "Taak",
+      "followup": "Opvolging",
+      "appointment": "Agenda",
+      "team": "Teamactiviteit"
+    }
   }
 }

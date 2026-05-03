@@ -20,7 +20,9 @@
     "export": "Export",
     "emailExported": "Email exported",
     "exportError": "Error exporting",
-    "add": "Add"
+    "add": "Add",
+    "edit": "Edit",
+    "reset": "Reset"
   },
   "nav": {
     "home": "Home",
@@ -4651,5 +4653,46 @@
     "orgLogEmpty": "No admin consultation recorded in your organisation yet.",
     "targetOrgWide": "Whole organisation",
     "targetUnknown": "Unknown target"
+  },
+  "contactsPage": {
+    "add": "Add",
+    "addTitle": "New contact",
+    "editTitle": "Edit contact",
+    "deleteTitle": "Delete this contact?",
+    "deleteConfirm": "The card will be deleted. Email history is kept.",
+    "create": "Create",
+    "created": "Contact added",
+    "updated": "Contact updated",
+    "deleted": "Contact deleted",
+    "emailRequired": "Email address required",
+    "emptyTimeline": "Nothing to show for this contact.",
+    "emptyFiltered": "No items match these filters.",
+    "searchHint": "Type a name or address to search for a contact.",
+    "manualBadge": "card",
+    "messages": "messages",
+    "noInteraction": "No exchange",
+    "noResults": "No contact found",
+    "searchPlaceholder": "Search a contact…",
+    "selectPrompt": "Select a contact to see their full history.",
+    "timelineItems": "items in the timeline",
+    "fields": {
+      "email": "Email",
+      "displayName": "Display name",
+      "phone": "Phone",
+      "company": "Company",
+      "notes": "Notes"
+    },
+    "types": {
+      "received": "Email received",
+      "sent": "Email sent",
+      "snoozed": "Snoozed",
+      "scheduled": "Scheduled",
+      "archive": "Archived",
+      "project": "Project",
+      "task": "Task",
+      "followup": "Follow-up",
+      "appointment": "Calendar",
+      "team": "Team activity"
+    }
   }
 }

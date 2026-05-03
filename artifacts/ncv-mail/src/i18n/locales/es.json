@@ -20,7 +20,9 @@
     "export": "Exportar",
     "emailExported": "Email exportado",
     "exportError": "Error al exportar",
-    "add": "Agregar"
+    "add": "Agregar",
+    "edit": "Editar",
+    "reset": "Restablecer"
   },
   "nav": {
     "home": "Inicio",
@@ -4668,5 +4670,46 @@
     "orgLogEmpty": "Aún no se ha registrado ninguna consulta de administrador en tu organización.",
     "targetOrgWide": "Toda la organización",
     "targetUnknown": "Destinatario desconocido"
+  },
+  "contactsPage": {
+    "add": "Añadir",
+    "addTitle": "Nuevo contacto",
+    "editTitle": "Editar contacto",
+    "deleteTitle": "¿Eliminar este contacto?",
+    "deleteConfirm": "La ficha se eliminará. Se conserva el historial de correos.",
+    "create": "Crear",
+    "created": "Contacto añadido",
+    "updated": "Contacto actualizado",
+    "deleted": "Contacto eliminado",
+    "emailRequired": "Dirección de correo requerida",
+    "emptyTimeline": "Nada que mostrar para este contacto.",
+    "emptyFiltered": "Ningún elemento para estos filtros.",
+    "searchHint": "Escriba un nombre o dirección para buscar un contacto.",
+    "manualBadge": "ficha",
+    "messages": "mensajes",
+    "noInteraction": "Sin intercambio",
+    "noResults": "Ningún contacto encontrado",
+    "searchPlaceholder": "Buscar un contacto…",
+    "selectPrompt": "Seleccione un contacto para ver todo su historial.",
+    "timelineItems": "elementos en la cronología",
+    "fields": {
+      "email": "Correo electrónico",
+      "displayName": "Nombre mostrado",
+      "phone": "Teléfono",
+      "company": "Empresa",
+      "notes": "Notas"
+    },
+    "types": {
+      "received": "Correo recibido",
+      "sent": "Correo enviado",
+      "snoozed": "Aplazado",
+      "scheduled": "Programado",
+      "archive": "Archivado",
+      "project": "Proyecto",
+      "task": "Tarea",
+      "followup": "Seguimiento",
+      "appointment": "Agenda",
+      "team": "Actividad del equipo"
+    }
   }
 }

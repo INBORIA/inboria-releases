@@ -20,7 +20,9 @@
     "export": "Exportieren",
     "emailExported": "E-Mail exportiert",
     "exportError": "Fehler beim Exportieren",
-    "add": "Hinzufügen"
+    "add": "Hinzufügen",
+    "edit": "Bearbeiten",
+    "reset": "Zurücksetzen"
   },
   "nav": {
     "home": "Startseite",
@@ -4668,5 +4670,46 @@
     "orgLogEmpty": "Noch keine Admin-Einsicht in Ihrer Organisation erfasst.",
     "targetOrgWide": "Gesamte Organisation",
     "targetUnknown": "Unbekanntes Ziel"
+  },
+  "contactsPage": {
+    "add": "Hinzufügen",
+    "addTitle": "Neuer Kontakt",
+    "editTitle": "Kontakt bearbeiten",
+    "deleteTitle": "Diesen Kontakt löschen?",
+    "deleteConfirm": "Die Karte wird gelöscht. Der E-Mail-Verlauf bleibt erhalten.",
+    "create": "Erstellen",
+    "created": "Kontakt hinzugefügt",
+    "updated": "Kontakt aktualisiert",
+    "deleted": "Kontakt gelöscht",
+    "emailRequired": "E-Mail-Adresse erforderlich",
+    "emptyTimeline": "Nichts für diesen Kontakt anzuzeigen.",
+    "emptyFiltered": "Keine Einträge für diese Filter.",
+    "searchHint": "Geben Sie einen Namen oder eine Adresse ein, um einen Kontakt zu suchen.",
+    "manualBadge": "Karte",
+    "messages": "Nachrichten",
+    "noInteraction": "Kein Austausch",
+    "noResults": "Kein Kontakt gefunden",
+    "searchPlaceholder": "Kontakt suchen…",
+    "selectPrompt": "Wählen Sie einen Kontakt, um den gesamten Verlauf anzuzeigen.",
+    "timelineItems": "Einträge in der Chronik",
+    "fields": {
+      "email": "E-Mail-Adresse",
+      "displayName": "Anzeigename",
+      "phone": "Telefon",
+      "company": "Unternehmen",
+      "notes": "Notizen"
+    },
+    "types": {
+      "received": "E-Mail empfangen",
+      "sent": "E-Mail gesendet",
+      "snoozed": "Zurückgestellt",
+      "scheduled": "Geplant",
+      "archive": "Archiviert",
+      "project": "Projekt",
+      "task": "Aufgabe",
+      "followup": "Nachfassen",
+      "appointment": "Kalender",
+      "team": "Teamaktivität"
+    }
   }
 }
