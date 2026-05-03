@@ -166,7 +166,7 @@ export default function Contacts() {
   } | null = (timelineData as any)?.manual || null;
 
   const invalidateAll = () => {
-    // Invalidate every variant (toutes combinaisons q + categoryIds) — pas seulement la requête courante.
+    // Invalidate toutes les variantes de recherche (toutes valeurs de q).
     qc.invalidateQueries({ queryKey: ["/api/contacts/search"] });
     if (selectedEmail) {
       qc.invalidateQueries({ queryKey: getGetContactTimelineQueryKey(selectedEmail) });
