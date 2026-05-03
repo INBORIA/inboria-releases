@@ -387,12 +387,12 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       const [byUser, byAssignee] = await Promise.all([
         supabaseAdmin
           .from("tasks")
-          .select("id, user_id, assigned_to_user_id, project_id, done, due_date, updated_at, created_at")
+          .select("id, user_id, assigned_to_user_id, project_id, done, due_date, created_at")
           .in("user_id", memberIds)
           .limit(20000),
         supabaseAdmin
           .from("tasks")
-          .select("id, user_id, assigned_to_user_id, project_id, done, due_date, updated_at, created_at")
+          .select("id, user_id, assigned_to_user_id, project_id, done, due_date, created_at")
           .in("assigned_to_user_id", memberIds)
           .limit(20000),
       ]);
@@ -412,8 +412,10 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       const ownerId = t.assigned_to_user_id || t.user_id;
       if (!ownerId || !tasksPerMemberMap.has(ownerId)) continue;
       const stats = tasksPerMemberMap.get(ownerId)!;
+      // Pas de colonne updated_at sur tasks → "Terminées" = état actuel
+      // (toutes les tâches done=true du membre), pas filtré par période.
       if (t.done) {
-        if (t.updated_at && new Date(t.updated_at).toISOString() >= sinceIso) stats.done += 1;
+        stats.done += 1;
       } else {
         stats.open += 1;
         if (t.due_date && t.due_date < todayIso) stats.overdue += 1;
@@ -690,8 +692,8 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     for (const uid of memberIds) taskStats.set(uid, { open: 0, done: 0, overdue: 0 });
     if (memberIds.length > 0) {
       const [byUser, byAssignee] = await Promise.all([
-        supabaseAdmin.from("tasks").select("id, user_id, assigned_to_user_id, done, due_date, updated_at").in("user_id", memberIds).limit(20000),
-        supabaseAdmin.from("tasks").select("id, user_id, assigned_to_user_id, done, due_date, updated_at").in("assigned_to_user_id", memberIds).limit(20000),
+        supabaseAdmin.from("tasks").select("id, user_id, assigned_to_user_id, done, due_date").in("user_id", memberIds).limit(20000),
+        supabaseAdmin.from("tasks").select("id, user_id, assigned_to_user_id, done, due_date").in("assigned_to_user_id", memberIds).limit(20000),
       ]);
       const seen = new Set<string>();
       for (const t of [...(byUser.data || []), ...(byAssignee.data || [])] as any[]) {
@@ -701,7 +703,7 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
         if (!ownerId || !taskStats.has(ownerId)) continue;
         const s = taskStats.get(ownerId)!;
         if (t.done) {
-          if (t.updated_at && new Date(t.updated_at).toISOString() >= sinceIso) s.done += 1;
+          s.done += 1;
         } else {
           s.open += 1;
           if (t.due_date && t.due_date < todayIsoPdf) s.overdue += 1;
