@@ -1029,29 +1029,58 @@ async function syncOutlookForUser(conn: any): Promise<number> {
         .eq("id", conn.id);
     }
 
-    const filterDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
-    const graphUrl = `https://graph.microsoft.com/v1.0/me/messages?$top=10&$orderby=receivedDateTime desc&$select=id,internetMessageId,from,toRecipients,subject,bodyPreview,receivedDateTime&$filter=receivedDateTime ge ${filterDate}`;
+    // Email Brain Phase 3 (#216) — Premier sync : 2000 mails. Sinon
+    // sync incrémental court (10 mails / 24h).
+    const isFirstOutlookSync = !conn.last_synced_at;
+    const FIRST_SYNC_TARGET = 2000;
+    const PAGE_SIZE = isFirstOutlookSync ? 100 : 10;
 
-    const response = await fetchWithTimeout(graphUrl, {
-      headers: { Authorization: `Bearer ${accessToken}` },
-      timeoutMs: 20_000,
-    });
-
-    if (!response.ok) {
-      const msg = `Outlook Graph API error: ${response.status} ${response.statusText}`;
-      logger.error({ service: "outlook-sync", phase: "graph-api", connId: conn.id, email: conn.email_address, status: response.status }, msg);
-      await markConnectionFailure(conn.id, "graph-api", new Error(msg));
-      return -1;
+    const baseSelect = "$select=id,internetMessageId,from,toRecipients,subject,bodyPreview,receivedDateTime";
+    let graphUrl: string;
+    if (isFirstOutlookSync) {
+      graphUrl = `https://graph.microsoft.com/v1.0/me/messages?$top=${PAGE_SIZE}&$orderby=receivedDateTime desc&${baseSelect}`;
+    } else {
+      const filterDate = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+      graphUrl = `https://graph.microsoft.com/v1.0/me/messages?$top=${PAGE_SIZE}&$orderby=receivedDateTime desc&${baseSelect}&$filter=receivedDateTime ge ${filterDate}`;
     }
 
-    const data = (await response.json()) as any;
-    if (!data.value) {
+    const collected: any[] = [];
+    let nextUrl: string | null = graphUrl;
+    while (nextUrl && collected.length < (isFirstOutlookSync ? FIRST_SYNC_TARGET : PAGE_SIZE)) {
+      const response: any = await fetchWithTimeout(nextUrl, {
+        headers: { Authorization: `Bearer ${accessToken}` },
+        timeoutMs: 20_000,
+      });
+      if (!response.ok) {
+        const msg = `Outlook Graph API error: ${response.status} ${response.statusText}`;
+        logger.error({ service: "outlook-sync", phase: "graph-api", connId: conn.id, email: conn.email_address, status: response.status }, msg);
+        await markConnectionFailure(conn.id, "graph-api", new Error(msg));
+        return -1;
+      }
+      const page = (await response.json()) as any;
+      const items: any[] = page.value || [];
+      for (const m of items) {
+        if (collected.length >= (isFirstOutlookSync ? FIRST_SYNC_TARGET : PAGE_SIZE)) break;
+        collected.push(m);
+      }
+      nextUrl = isFirstOutlookSync ? (page["@odata.nextLink"] || null) : null;
+      if (items.length === 0) break;
+    }
+
+    if (isFirstOutlookSync) {
+      logger.info(
+        { service: "outlook-sync", email: conn.email_address, fetched: collected.length },
+        "[outlook-sync] first sync — bootstrapping history",
+      );
+    }
+
+    if (collected.length === 0) {
       await markConnectionSuccess(conn.id);
       return 0;
     }
 
     let synced = 0;
-    for (const msg of data.value) {
+    for (const msg of collected) {
       const senderEmail = msg.from?.emailAddress?.address || "Inconnu";
       const senderName = msg.from?.emailAddress?.name || senderEmail;
 
