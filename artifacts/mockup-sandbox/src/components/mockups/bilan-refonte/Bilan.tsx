@@ -71,8 +71,8 @@ function TaskTable({ title, note, rows, scope }: { title: string; note: string; 
 
 export function Bilan() {
   return (
-    <div className="min-h-screen bg-[#0a1020] text-white p-10 font-sans" style={{ fontSize: "20px" }}>
-      <div className="max-w-6xl mx-auto" style={{ transform: "scale(1.6)", transformOrigin: "top left", width: "62.5%" }}>
+    <div className="min-h-screen bg-[#0a1020] text-white p-6 font-sans">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <div>
