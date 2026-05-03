@@ -244,7 +244,12 @@ export default function Contacts() {
 
   const openCreateDialog = () => {
     setEditingId(null);
-    setForm(EMPTY_FORM);
+    // Si un contact email-only est sélectionné mais sans fiche, pré-remplir l'adresse.
+    setForm(
+      selectedEmail && !manualFiche
+        ? { ...EMPTY_FORM, email: selectedEmail }
+        : EMPTY_FORM,
+    );
     setDialogOpen(true);
   };
 
@@ -437,7 +442,7 @@ export default function Contacts() {
                   </p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
-                  {manualFiche ? (
+                  {manualFiche && (
                     <>
                       <Button
                         variant="ghost"
@@ -459,21 +464,6 @@ export default function Contacts() {
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     </>
-                  ) : (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => {
-                        setEditingId(null);
-                        setForm({ ...EMPTY_FORM, email: selectedEmail });
-                        setDialogOpen(true);
-                      }}
-                      className="h-7 px-2 text-[11px]"
-                      data-testid="contacts-create-fiche"
-                    >
-                      <Plus className="h-3.5 w-3.5 mr-1" />
-                      {t("contactsPage.createFiche", "Créer fiche")}
-                    </Button>
                   )}
                   <Button
                     variant="ghost"
