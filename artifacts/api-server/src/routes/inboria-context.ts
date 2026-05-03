@@ -408,7 +408,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       // Envoyés : 10 derniers mails envoyés par l'utilisateur.
       supabaseAdmin
         .from("emails")
-        .select("recipient, subject, summary, sent_at, opened_at")
+        .select("id, recipient, subject, summary, sent_at, opened_at")
         .eq("user_id", userId)
         .not("sent_at", "is", null)
         .order("sent_at", { ascending: false })
@@ -431,12 +431,12 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       (adminTeamCtx
         ? supabaseAdmin
             .from("emails")
-            .select("sender, subject, summary, priority, created_at, shared_mailbox_id, user_id")
+            .select("id, sender, subject, summary, priority, created_at, shared_mailbox_id, user_id")
             .eq("is_private", false)
             .or(ownershipScopeFilter)
         : supabaseAdmin
             .from("emails")
-            .select("sender, subject, summary, priority, created_at, shared_mailbox_id")
+            .select("id, sender, subject, summary, priority, created_at, shared_mailbox_id")
       )
         .eq("assigned_to", userId)
         .neq("status", "archived")
@@ -922,6 +922,44 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       memoryLines.push("");
     }
 
+    // Pieces jointes : on charge les filenames pour TOUS les mails du contexte
+    // operationnel (reception + assignes + envoyes) en un seul SELECT, puis on
+    // les annote inline. Sans cela l'IA repondait "je ne vois pas de PJ"
+    // alors que le mail en avait. Limite de garde : 6 PJ max par mail dans le
+    // prompt pour eviter l'explosion (un mail avec 50 PJ ferait sauter la
+    // memoire).
+    const attachmentsByEmail = new Map<number, Array<{ filename: string; content_type: string | null }>>();
+    try {
+      const allEmailIds = Array.from(new Set([
+        ...inbox.map((e) => Number(e.id)).filter((n) => Number.isFinite(n)),
+        ...assignedToMe.map((e: any) => Number(e.id)).filter((n: any) => Number.isFinite(n)),
+        ...sent.map((e: any) => Number(e.id)).filter((n: any) => Number.isFinite(n)),
+      ]));
+      if (allEmailIds.length > 0) {
+        const { data: atts } = await supabaseAdmin
+          .from("email_attachments")
+          .select("email_id, filename, content_type")
+          .in("email_id", allEmailIds)
+          .order("created_at", { ascending: true });
+        for (const a of (atts || []) as Array<any>) {
+          const eid = Number(a.email_id);
+          if (!Number.isFinite(eid)) continue;
+          const arr = attachmentsByEmail.get(eid) || [];
+          if (arr.length < 6) arr.push({ filename: String(a.filename || ""), content_type: a.content_type || null });
+          attachmentsByEmail.set(eid, arr);
+        }
+      }
+    } catch (err: any) {
+      req.log.warn({ err: err?.message }, "[inboria-chat] attachments fetch failed");
+    }
+    const fmtAttachments = (emailId: number | null | undefined): string => {
+      if (!emailId) return "";
+      const list = attachmentsByEmail.get(Number(emailId));
+      if (!list || list.length === 0) return "";
+      const names = list.map((a) => truncate(a.filename || "(sans nom)", 60)).join(", ");
+      return ` [PJ: ${names}]`;
+    };
+
     if (inbox.length > 0) {
       memoryLines.push("Mails recents en reception (les 25 derniers) :");
       for (const e of inbox) {
@@ -931,7 +969,8 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         const sender = truncate(e.sender || "(inconnu)", 50);
         const sum = e.summary ? ` — ${truncate(e.summary, 80)}` : "";
         const flag = e.assigned_to ? " *assigne*" : "";
-        memoryLines.push(`- ${date} ${prio} ${sender} : ${subj}${sum}${flag}`);
+        const att = fmtAttachments(e.id);
+        memoryLines.push(`- ${date} ${prio} ${sender} : ${subj}${sum}${flag}${att}`);
       }
       memoryLines.push("");
     }
@@ -943,7 +982,8 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         const prio = e.priority ? `[${String(e.priority).toLowerCase()}]` : "";
         const subj = truncate(e.subject || "(sans objet)", 70);
         const sender = truncate(e.sender || "(inconnu)", 50);
-        memoryLines.push(`- ${date} ${prio} ${sender} : ${subj}`);
+        const att = fmtAttachments(e.id);
+        memoryLines.push(`- ${date} ${prio} ${sender} : ${subj}${att}`);
       }
       memoryLines.push("");
     } else {
@@ -980,7 +1020,8 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         const subj = truncate(e.subject || "(sans objet)", 70);
         const to = truncate(e.recipient || "(inconnu)", 50);
         const opened = e.opened_at ? " (ouvert)" : "";
-        memoryLines.push(`- ${when} a ${to} : ${subj}${opened}`);
+        const att = fmtAttachments(e.id);
+        memoryLines.push(`- ${when} a ${to} : ${subj}${opened}${att}`);
       }
       memoryLines.push("");
     }
@@ -1336,7 +1377,11 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     // Toute demande de "dump" generale d'une boite de coequipier doit etre
     // refusee, meme en mode admin.
     const adminTeamRule = adminTeamCtx
-      ? `\n\nMode "Vue dossier equipe" actif (admin de l'organisation) : la memoire ci-dessus contient les boites de TOUS les coequipiers de l'organisation, hors mails marques prives. Cette vue elargie sert UNIQUEMENT a repondre a des questions de DOSSIER : "ou en est le dossier [client] ?", "qu'est-ce qui s'est passe avec [contact] ?", "quel est le statut du projet [projet] ?". Quand tu mobilises un mail d'un coequipier pour repondre, indique explicitement la source (ex. "vu dans la boite de Camille : ..."). REFUSE poliment toute demande globale ou intrusive du type "que se passe-t-il dans la boite de [coequipier] ?", "liste tout ce que [coequipier] a recu/envoye", "donne-moi le contenu de la boite de [coequipier]" : reponds que cette vue ne permet pas de fouiller la boite d'un coequipier en general, et propose de reformuler par dossier, contact ou projet. Rappelle qu'un mail marque "prive" par son proprietaire reste invisible meme pour l'admin.`
+      ? `\n\nMode "Vue dossier equipe" actif (admin de l'organisation) : la memoire ci-dessus contient les boites de TOUS les coequipiers de l'organisation, hors mails marques prives. Cette vue elargie sert UNIQUEMENT a repondre a des questions de DOSSIER : "ou en est le dossier [client] ?", "qu'est-ce qui s'est passe avec [contact] ?", "quel est le statut du projet [projet] ?". Quand tu mobilises un mail d'un coequipier pour repondre, indique explicitement la source (ex. "vu dans la boite de Camille : ..."). REFUSE poliment toute demande globale ou intrusive du type "que se passe-t-il dans la boite de [coequipier] ?", "liste tout ce que [coequipier] a recu/envoye", "donne-moi le contenu de la boite de [coequipier]" : reponds que cette vue ne permet pas de fouiller la boite d'un coequipier en general, et propose de reformuler par dossier, contact ou projet. Rappelle qu'un mail marque "prive" par son proprietaire reste invisible meme pour l'admin.
+
+CLARIFICATION CRUCIALE — interpretation de "le mail de [Nom]" :
+- "Le mail de Walther", "le mail de Camille", "le message de [contact]" designe TOUJOURS un mail dont [Nom] est l'EXPEDITEUR (sender), pas la boite d'un coequipier. Ces questions sont LEGITIMES et tu dois y repondre normalement en cherchant dans la memoire ci-dessus le mail dont le sender correspond. NE refuse PAS ces questions.
+- Une question est "fouille interdite" UNIQUEMENT si elle demande explicitement le contenu d'une boite ("dans la boite de X", "tout ce que X a recu/envoye", "vide la boite de X"). Dans le doute, reponds.`
       : "";
 
     const systemPrompt = `Tu es Inboria, l'assistante intelligente de la messagerie professionnelle de ${userName || "l'utilisateur"}. Tu reponds en francais, ton professionnel premium, phrases concises (jamais plus de 6 lignes sauf demande explicite), sans jargon technique.
