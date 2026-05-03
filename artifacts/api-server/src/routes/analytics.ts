@@ -549,13 +549,12 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     }
 
     const tableTop = doc.y;
-    // Mode migré : Membre / Traités / Écartés / Délai moyen.
-    // Mode legacy : on garde la colonne Assignés (proxy) pour ne pas
-    // perdre d'information avant migration.
-    const colX = handledEnabled ? [48, 260, 360, 460] : [48, 220, 310, 390, 480];
+    // Mode migré  : Membre / Traités / Écartés / Délai moyen.
+    // Mode legacy : Membre / Assignés (proxy) / Écartés / Délai moyen.
+    const colX = [48, 260, 360, 460];
     const headers = handledEnabled
       ? ["Membre", "Traités", "Écartés", "Délai moyen"]
-      : ["Membre", "Assignés (proxy)", "Écartés", "Délai moyen", "Assignés"];
+      : ["Membre", "Assignés (proxy)", "Écartés", "Délai moyen"];
     doc.fontSize(11).fillColor("#0f172a");
     headers.forEach((h, i) => doc.text(h, colX[i], tableTop));
     doc
@@ -577,11 +576,10 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
       const name = profileMap.get(uid) || uid.slice(0, 8);
       const r = respStats.get(uid);
       const avg = r && r.n > 0 ? Math.round(r.sumMin / r.n) : null;
-      doc.text(name, colX[0], y, { width: handledEnabled ? 200 : 160, ellipsis: true });
+      doc.text(name, colX[0], y, { width: 200, ellipsis: true });
       doc.text(handledEnabled ? String(s.handled) : String(s.assigned), colX[1], y);
       doc.text(String(s.archived), colX[2], y);
       doc.text(fmtDelay(avg), colX[3], y);
-      if (!handledEnabled) doc.text(String(s.assigned), colX[4], y);
       y += 18;
       if (y > 770) {
         doc.addPage();
