@@ -335,57 +335,107 @@ router.get("/contacts/:email/timeline", requireAuth, async (req, res): Promise<v
       });
     }
 
-    // Tâches liées
-    if (emailIds.length > 0) {
-      const { data: tasks } = await supabaseAdmin
-        .from("tasks")
-        .select("id, title, description, done, created_at, email_id, project_id, projects(name, reference)")
-        .eq("user_id", userId)
-        .in("email_id", emailIds);
-      for (const t of tasks || []) {
+    // Projets liés (déduits depuis les emails) — calculés tôt pour élargir
+    // les requêtes tâches / relances / RDV au-delà du seul email_id.
+    const projectIdsForLinks = Array.from(
+      new Set(
+        (emails || [])
+          .map((e: any) => e.project_id)
+          .filter((id: any) => id != null),
+      ),
+    );
+
+    const seenTaskIds = new Set<string>();
+    const seenFollowupIds = new Set<string>();
+    const seenApptIds = new Set<string>();
+
+    const pushTasks = (rows: any[] | null | undefined) => {
+      for (const t of rows || []) {
+        const id = String(t.id);
+        if (seenTaskIds.has(id)) continue;
+        seenTaskIds.add(id);
         items.push({
           type: "task",
-          id: `task-${t.id}`,
+          id: `task-${id}`,
           occurredAt: String(t.created_at),
-          title: (t as any).title || "(tâche)",
-          snippet: ((t as any).description as string | null) || null,
+          title: t.title || "(tâche)",
+          snippet: (t.description as string | null) || null,
           categoryName: null,
         });
       }
-
-      // Relances liées
-      const { data: followups } = await supabaseAdmin
-        .from("followups")
-        .select("id, scheduled_at, status, ai_suggestion, email_id, created_at")
-        .eq("user_id", userId)
-        .in("email_id", emailIds);
-      for (const f of followups || []) {
+    };
+    const pushFollowups = (rows: any[] | null | undefined) => {
+      for (const f of rows || []) {
+        const id = String(f.id);
+        if (seenFollowupIds.has(id)) continue;
+        seenFollowupIds.add(id);
         items.push({
           type: "followup",
-          id: `followup-${f.id}`,
-          occurredAt: String((f as any).scheduled_at || (f as any).created_at),
-          title: (f as any).ai_suggestion ? String((f as any).ai_suggestion).slice(0, 120) : "(relance)",
+          id: `followup-${id}`,
+          occurredAt: String(f.scheduled_at || f.created_at),
+          title: f.ai_suggestion ? String(f.ai_suggestion).slice(0, 120) : "(relance)",
           snippet: null,
           categoryName: null,
         });
       }
-
-      // RDV liés
-      const { data: appts } = await supabaseAdmin
-        .from("appointments")
-        .select("id, title, description, starts_at, ends_at, email_id, created_at")
-        .eq("user_id", userId)
-        .in("email_id", emailIds);
-      for (const a of appts || []) {
+    };
+    const pushAppts = (rows: any[] | null | undefined) => {
+      for (const a of rows || []) {
+        const id = String(a.id);
+        if (seenApptIds.has(id)) continue;
+        seenApptIds.add(id);
         items.push({
           type: "appointment",
-          id: `appt-${a.id}`,
-          occurredAt: String((a as any).starts_at || (a as any).created_at),
-          title: (a as any).title || "(rendez-vous)",
-          snippet: ((a as any).description as string | null) || null,
+          id: `appt-${id}`,
+          occurredAt: String(a.starts_at || a.created_at),
+          title: a.title || "(rendez-vous)",
+          snippet: (a.description as string | null) || null,
           categoryName: null,
         });
       }
+    };
+
+    // Tâches / relances / RDV liés via email_id
+    if (emailIds.length > 0) {
+      const [{ data: tasks1 }, { data: f1 }, { data: a1 }] = await Promise.all([
+        supabaseAdmin
+          .from("tasks")
+          .select("id, title, description, done, created_at, email_id, project_id")
+          .eq("user_id", userId)
+          .in("email_id", emailIds),
+        supabaseAdmin
+          .from("followups")
+          .select("id, scheduled_at, status, ai_suggestion, email_id, created_at")
+          .eq("user_id", userId)
+          .in("email_id", emailIds),
+        supabaseAdmin
+          .from("appointments")
+          .select("id, title, description, starts_at, ends_at, email_id, created_at")
+          .eq("user_id", userId)
+          .in("email_id", emailIds),
+      ]);
+      pushTasks(tasks1);
+      pushFollowups(f1);
+      pushAppts(a1);
+    }
+
+    // Élargissement via project_id (tâches/RDV créés directement sur un
+    // projet partagé avec ce contact). Évite les doublons via seen* sets.
+    if (projectIdsForLinks.length > 0) {
+      const [{ data: tasks2 }, { data: a2 }] = await Promise.all([
+        supabaseAdmin
+          .from("tasks")
+          .select("id, title, description, done, created_at, email_id, project_id")
+          .eq("user_id", userId)
+          .in("project_id", projectIdsForLinks),
+        supabaseAdmin
+          .from("appointments")
+          .select("id, title, description, starts_at, ends_at, email_id, created_at, project_id")
+          .eq("user_id", userId)
+          .in("project_id", projectIdsForLinks),
+      ]);
+      pushTasks(tasks2);
+      pushAppts(a2);
     }
 
     // Activité équipe (commentaires, assignations, etc. sur les emails du contact)
@@ -426,19 +476,12 @@ router.get("/contacts/:email/timeline", requireAuth, async (req, res): Promise<v
     }
 
     // Projets liés (via les emails de ce contact)
-    const projectIds = Array.from(
-      new Set(
-        (emails || [])
-          .map((e: any) => e.project_id)
-          .filter((id: any) => id != null),
-      ),
-    );
-    if (projectIds.length > 0) {
+    if (projectIdsForLinks.length > 0) {
       const { data: projects } = await supabaseAdmin
         .from("projects")
         .select("id, name, reference, created_at, description")
         .eq("user_id", userId)
-        .in("id", projectIds);
+        .in("id", projectIdsForLinks);
       for (const p of projects || []) {
         items.push({
           type: "project",
