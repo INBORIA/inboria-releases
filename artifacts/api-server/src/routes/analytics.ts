@@ -386,12 +386,28 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     const todayIso = new Date().toISOString().slice(0, 10);
     let tasksList: any[] = [];
     {
-      const { data: tasks } = await supabaseAdmin
-        .from("tasks")
-        .select("id, user_id, assigned_to_user_id, project_id, done, due_date, updated_at, created_at")
-        .or(`user_id.in.(${memberIdsList}),assigned_to_user_id.in.(${memberIdsList})`)
-        .limit(20000);
-      tasksList = (tasks || []) as any[];
+      // Deux requêtes pour éviter le bug PostgREST .or()+in.() avec UUIDs.
+      const [byUser, byAssignee] = await Promise.all([
+        supabaseAdmin
+          .from("tasks")
+          .select("id, user_id, assigned_to_user_id, project_id, done, due_date, updated_at, created_at")
+          .in("user_id", memberIds)
+          .limit(20000),
+        supabaseAdmin
+          .from("tasks")
+          .select("id, user_id, assigned_to_user_id, project_id, done, due_date, updated_at, created_at")
+          .in("assigned_to_user_id", memberIds)
+          .limit(20000),
+      ]);
+      const seen = new Set<string>();
+      for (const t of [...(byUser.data || []), ...(byAssignee.data || [])] as any[]) {
+        if (!t?.id || seen.has(t.id)) continue;
+        seen.add(t.id);
+        tasksList.push(t);
+      }
+      if (byUser.error || byAssignee.error) {
+        req.log?.warn({ byUserErr: byUser.error?.message, byAssigneeErr: byAssignee.error?.message }, "analytics tasks query partial failure");
+      }
     }
     const tasksPerMemberMap = new Map<string, { open: number; done: number; overdue: number }>();
     for (const uid of memberIds) tasksPerMemberMap.set(uid, { open: 0, done: 0, overdue: 0 });
