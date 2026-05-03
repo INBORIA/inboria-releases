@@ -155,12 +155,18 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       if (day) evolutionMap.set(day, (evolutionMap.get(day) || 0) + 1);
 
       // Évolution "Traités/jour" et délai moyen de traitement.
-      if (handledEnabled && e.handled_at) {
+      // En mode legacy (handled_at/handled_by absents), on bascule sur le
+      // proxy historique : claimed_at || assigned_at || inboria_processed_at
+      // comme date de traitement, et claimed_by || assigned_to comme acteur.
+      const handledTs = handledEnabled
+        ? e.handled_at
+        : (e.claimed_at || e.assigned_at || e.inboria_processed_at);
+      if (handledTs) {
         totalHandled += 1;
-        const handledDay = String(e.handled_at).slice(0, 10);
+        const handledDay = String(handledTs).slice(0, 10);
         if (handledDay) evolutionHandledMap.set(handledDay, (evolutionHandledMap.get(handledDay) || 0) + 1);
         if (e.created_at) {
-          const diffMin = Math.max(0, Math.floor((new Date(e.handled_at).getTime() - new Date(e.created_at).getTime()) / 60_000));
+          const diffMin = Math.max(0, Math.floor((new Date(handledTs).getTime() - new Date(e.created_at).getTime()) / 60_000));
           if (diffMin >= 0 && diffMin < 60 * 24 * 30) {
             handlingDelaySumMin += diffMin;
             handlingDelayCount += 1;
@@ -330,8 +336,12 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
         emails: list.length,
         archived: list.filter((e: any) => e.status === "archived").length,
         assigned: list.filter((e: any) => !!e.assigned_to).length,
-        handled: handledEnabled ? totalHandled : null,
-        avgHandlingMinutes: handledEnabled && handlingDelayCount > 0 ? Math.round(handlingDelaySumMin / handlingDelayCount) : null,
+        // Toujours renvoyer un nombre — en legacy les valeurs sont calculées
+        // via le proxy claimed_at/assigned_at/inboria_processed_at. Le flag
+        // handledMetricsEnabled permet au frontend d'afficher le bandeau de
+        // migration sans masquer les chiffres.
+        handled: totalHandled,
+        avgHandlingMinutes: handlingDelayCount > 0 ? Math.round(handlingDelaySumMin / handlingDelayCount) : null,
         period,
       },
       filters: { period, member: memberFilter, mailbox: mailboxFilter, project: projectFilter },
