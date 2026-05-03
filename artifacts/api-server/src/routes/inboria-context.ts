@@ -1155,6 +1155,27 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         if (!candidates.includes(cand)) candidates.push(cand);
         if (candidates.length >= 3) break;
       }
+      // Fallback declencheur : capture les noms ecrits en MINUSCULES qui
+      // suivent "mail/message/courrier/courriel de X" (ex. "y a-t-il un
+      // mail de digital ocean ?", "le message de google play ?"). Le
+      // regex NAME_RE precedent rate ces cas car il exige une majuscule
+      // initiale, et l'utilisateur tape souvent tout en minuscules.
+      const TRIGGER_RE =
+        /(?:mails?|messages?|courriers?|courriels?|email)\s+(?:de\s+la\s+part\s+(?:de\s+)?|en\s+provenance\s+de\s+|venant\s+de\s+|de\s+|du\s+|d['']\s*)([a-z0-9à-ÿ][a-z0-9à-ÿ\-'.]{1,30}(?:\s+[a-z0-9à-ÿ][a-z0-9à-ÿ\-'.]{1,30}){0,2})/gi;
+      let tm: RegExpExecArray | null;
+      while ((tm = TRIGGER_RE.exec(lastUserMsg)) !== null) {
+        const cand = tm[1].trim();
+        const firstWord = cand.split(/\s+/)[0];
+        if (firstWord.length < 3) continue;
+        // Compare case-insensitive contre la stop-list (entrees Capitalisees).
+        const firstCap =
+          firstWord.charAt(0).toUpperCase() + firstWord.slice(1).toLowerCase();
+        if (STOP_WORDS.has(firstCap)) continue;
+        if (!candidates.some((c) => c.toLowerCase() === cand.toLowerCase())) {
+          candidates.push(cand);
+        }
+        if (candidates.length >= 3) break;
+      }
       for (const cand of candidates) {
         if (targetEmails.length >= 1) break;
         try {
