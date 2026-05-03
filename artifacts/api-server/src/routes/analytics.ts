@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { hasHandledColumns } from "../lib/schema-flags";
 import PDFDocument from "pdfkit";
 
 const router: IRouter = Router();
@@ -44,6 +45,7 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     const memberFilter = req.query.member ? String(req.query.member) : null;
     const mailboxFilter = req.query.mailbox ? String(req.query.mailbox) : null;
     const projectFilter = req.query.project ? String(req.query.project) : null;
+    const handledEnabled = await hasHandledColumns();
 
     const { data: members } = await supabaseAdmin
       .from("organisation_members")
@@ -53,31 +55,25 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     const memberIds = (members || []).map((m: any) => m.user_id);
 
     if (memberIds.length === 0) {
-      res.json({ totals: {}, perMember: [], topSenders: [], topCategories: [], evolution: [], slaSummary: {} });
+      res.json({ totals: {}, perMember: [], topSenders: [], topCategories: [], evolution: [], slaSummary: {}, handledMetricsEnabled: handledEnabled });
       return;
     }
 
-    // Récupère les boîtes partagées de l'org POUR LE SCOPE EMAIL : un mail
-    // arrivé dans une boîte partagée a typiquement un `user_id` qui n'est pas
-    // celui d'un membre humain (c'est le user technique de la connexion). On
-    // doit donc inclure explicitement les emails dont `shared_mailbox_id`
-    // pointe vers une boîte de l'org, en plus des emails persos des membres.
-    // Sans ça, toute org qui travaille via boîtes partagées voit l'analytics
-    // à 0. Mirror du scope inbox (lib/inbox-scope.ts).
     const { data: orgMailboxes } = await supabaseAdmin
       .from("shared_mailboxes")
       .select("id, name, email_address")
       .eq("organisation_id", orgId);
     const orgMailboxIds = (orgMailboxes || []).map((m: any) => m.id);
 
+    // Sélection : on ajoute handled_at / handled_by si la colonne existe.
+    const baseCols = "id, sender, status, assigned_to, claimed_by, category_id, project_id, shared_mailbox_id, created_at, inboria_processed_at, claimed_at, assigned_at, user_id";
+    const cols = handledEnabled ? `${baseCols}, handled_at, handled_by` : baseCols;
     let emailsQ = supabaseAdmin
       .from("emails")
-      .select("id, sender, status, assigned_to, claimed_by, category_id, project_id, shared_mailbox_id, created_at, inboria_processed_at, claimed_at, assigned_at, user_id")
+      .select(cols)
       .gte("created_at", sinceIso)
       .neq("status", "supprime");
 
-    // Scope = (emails persos des membres) OU (emails de toute boîte partagée
-    // de l'org). Postgrest .or() : un seul appel additif suffit.
     const memberIdsList = memberIds.join(",");
     const scopeParts: string[] = [`user_id.in.(${memberIdsList})`];
     if (orgMailboxIds.length > 0) {
@@ -85,7 +81,12 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     }
     emailsQ = emailsQ.or(scopeParts.join(","));
 
-    if (memberFilter) emailsQ = emailsQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
+    if (memberFilter) {
+      // Filtre membre = "emails que ce membre a traités" (handled_by) si la
+      // colonne existe ; sinon fallback sur l'ancienne logique.
+      if (handledEnabled) emailsQ = emailsQ.eq("handled_by", memberFilter);
+      else emailsQ = emailsQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
+    }
     if (mailboxFilter) emailsQ = emailsQ.eq("shared_mailbox_id", mailboxFilter);
     if (projectFilter) emailsQ = emailsQ.eq("project_id", projectFilter);
 
@@ -95,14 +96,12 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     }
     const list = emails || [];
 
-    // Profiles for member names
     const profileMap = new Map<string, string>();
     for (const uid of memberIds) {
       const { data: p } = await supabaseAdmin.from("profiles").select("full_name").eq("id", uid).single();
       profileMap.set(uid, p?.full_name || "");
     }
 
-    // Categories
     const catIds = [...new Set(list.map((e: any) => e.category_id).filter(Boolean))];
     const catMap = new Map<string, string>();
     if (catIds.length > 0) {
@@ -110,7 +109,7 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       for (const c of cats || []) catMap.set(c.id, c.name);
     }
 
-    // Per-member stats
+    // Per-member : Traités basés sur handled_by si dispo, sinon fallback.
     const perMemberMap = new Map<string, { handled: number; archived: number; assigned: number; firstResponseSumMin: number; firstResponseCount: number }>();
     for (const uid of memberIds) {
       perMemberMap.set(uid, { handled: 0, archived: 0, assigned: 0, firstResponseSumMin: 0, firstResponseCount: 0 });
@@ -119,15 +118,31 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     const senderCounts = new Map<string, number>();
     const categoryCounts = new Map<string, number>();
     const evolutionMap = new Map<string, number>();
+    const evolutionHandledMap = new Map<string, number>();
+    let totalHandled = 0;
+    let handlingDelaySumMin = 0;
+    let handlingDelayCount = 0;
 
-    for (const e of list) {
-      const ownerId = e.assigned_to || e.claimed_by || null;
-      if (ownerId && perMemberMap.has(ownerId)) {
-        const stats = perMemberMap.get(ownerId)!;
+    for (const e of list as any[]) {
+      // Compteur "Traités" : handled_by si dispo, sinon ancien proxy.
+      const handlerId = handledEnabled ? (e.handled_at ? e.handled_by : null) : (e.assigned_to || e.claimed_by || null);
+      if (handlerId && perMemberMap.has(handlerId)) {
+        const stats = perMemberMap.get(handlerId)!;
         stats.handled += 1;
-        if (e.status === "archived") stats.archived += 1;
-        if (e.assigned_to) stats.assigned += 1;
       }
+      // "Écartés" (archived) imputé au gestionnaire si connu, sinon au
+      // claimed_by/assigned_to (sinon perdu — peu d'incidence).
+      const fallbackOwner = e.assigned_to || e.claimed_by || null;
+      if (e.status === "archived") {
+        const archOwner = handlerId || fallbackOwner;
+        if (archOwner && perMemberMap.has(archOwner)) {
+          perMemberMap.get(archOwner)!.archived += 1;
+        }
+      }
+      if (e.assigned_to && perMemberMap.has(e.assigned_to)) {
+        perMemberMap.get(e.assigned_to)!.assigned += 1;
+      }
+
       const senderEmail = (e.sender || "").match(/<([^>]+)>/)?.[1] || e.sender || "";
       if (senderEmail) {
         senderCounts.set(senderEmail, (senderCounts.get(senderEmail) || 0) + 1);
@@ -138,18 +153,41 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       }
       const day = (e.created_at || "").slice(0, 10);
       if (day) evolutionMap.set(day, (evolutionMap.get(day) || 0) + 1);
+
+      // Évolution "Traités/jour" et délai moyen de traitement.
+      if (handledEnabled && e.handled_at) {
+        totalHandled += 1;
+        const handledDay = String(e.handled_at).slice(0, 10);
+        if (handledDay) evolutionHandledMap.set(handledDay, (evolutionHandledMap.get(handledDay) || 0) + 1);
+        if (e.created_at) {
+          const diffMin = Math.max(0, Math.floor((new Date(e.handled_at).getTime() - new Date(e.created_at).getTime()) / 60_000));
+          if (diffMin >= 0 && diffMin < 60 * 24 * 30) {
+            handlingDelaySumMin += diffMin;
+            handlingDelayCount += 1;
+          }
+        }
+      }
     }
 
-    // First response time approximation : created_at -> claimed_at|assigned_at|inboria_processed_at
+    // Délai moyen de réponse par membre = handled_at - created_at si dispo.
     for (const r of list as any[]) {
-      const ownerId = r.assigned_to || r.claimed_by || null;
-      if (!ownerId || !perMemberMap.has(ownerId)) continue;
-      const handledAt = r.claimed_at || r.assigned_at || r.inboria_processed_at;
-      if (!handledAt || !r.created_at) continue;
-      const diffMin = Math.max(0, Math.floor((new Date(handledAt).getTime() - new Date(r.created_at).getTime()) / 60_000));
-      const stats = perMemberMap.get(ownerId)!;
-      stats.firstResponseSumMin += diffMin;
-      stats.firstResponseCount += 1;
+      if (handledEnabled) {
+        if (!r.handled_at || !r.handled_by || !perMemberMap.has(r.handled_by) || !r.created_at) continue;
+        const diffMin = Math.max(0, Math.floor((new Date(r.handled_at).getTime() - new Date(r.created_at).getTime()) / 60_000));
+        if (diffMin >= 60 * 24 * 30) continue;
+        const stats = perMemberMap.get(r.handled_by)!;
+        stats.firstResponseSumMin += diffMin;
+        stats.firstResponseCount += 1;
+      } else {
+        const ownerId = r.assigned_to || r.claimed_by || null;
+        if (!ownerId || !perMemberMap.has(ownerId)) continue;
+        const handledAt = r.claimed_at || r.assigned_at || r.inboria_processed_at;
+        if (!handledAt || !r.created_at) continue;
+        const diffMin = Math.max(0, Math.floor((new Date(handledAt).getTime() - new Date(r.created_at).getTime()) / 60_000));
+        const stats = perMemberMap.get(ownerId)!;
+        stats.firstResponseSumMin += diffMin;
+        stats.firstResponseCount += 1;
+      }
     }
 
     const perMember = Array.from(perMemberMap.entries())
@@ -173,15 +211,16 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       .slice(0, 10)
       .map(([name, count]) => ({ name, count }));
 
-    // Fill gaps in evolution
-    const evolution: { date: string; count: number }[] = [];
+    const evolution: { date: string; count: number; handledCount: number }[] = [];
     for (let i = days - 1; i >= 0; i--) {
       const d = new Date(Date.now() - i * 24 * 60 * 60_000).toISOString().slice(0, 10);
-      evolution.push({ date: d, count: evolutionMap.get(d) || 0 });
+      evolution.push({
+        date: d,
+        count: evolutionMap.get(d) || 0,
+        handledCount: handledEnabled ? (evolutionHandledMap.get(d) || 0) : 0,
+      });
     }
 
-    // SLA summary — réutilise orgMailboxes déjà récupérées plus haut pour
-    // construire le scope email (évite un round-trip Supabase supplémentaire).
     const mbIds = orgMailboxIds;
     const mbMap = new Map<string, { name: string; email: string }>(
       (orgMailboxes || []).map((m: any) => [m.id, { name: m.name || "", email: m.email_address || "" }]),
@@ -202,21 +241,31 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       openBreaches = openC || 0;
     }
 
-    // Per-mailbox breakdown (count + avg first-response in business minutes
-    // approximation = updated_at - created_at for archived emails).
-    const perMailboxMap = new Map<string, { count: number; archived: number; respSum: number; respN: number }>();
+    // Per-mailbox : "count" devient "Traités" quand handledEnabled, sinon
+    // c'est le volume reçu (rétro-compat). On garde le champ `count` pour
+    // ne pas casser le frontend, et on ajoute `handled` séparé.
+    const perMailboxMap = new Map<string, { count: number; handled: number; archived: number; respSum: number; respN: number }>();
     for (const e of list as any[]) {
       if (!e.shared_mailbox_id) continue;
       const mid = e.shared_mailbox_id;
       let s = perMailboxMap.get(mid);
-      if (!s) { s = { count: 0, archived: 0, respSum: 0, respN: 0 }; perMailboxMap.set(mid, s); }
+      if (!s) { s = { count: 0, handled: 0, archived: 0, respSum: 0, respN: 0 }; perMailboxMap.set(mid, s); }
       s.count += 1;
+      if (handledEnabled && e.handled_at) {
+        s.handled += 1;
+        if (e.created_at) {
+          const d = (new Date(e.handled_at).getTime() - new Date(e.created_at).getTime()) / 60000;
+          if (d > 0 && d < 60 * 24 * 30) { s.respSum += d; s.respN += 1; }
+        }
+      }
       if (e.status === "archived") {
         s.archived += 1;
-        const handledAt = e.claimed_at || e.assigned_at || e.inboria_processed_at;
-        if (e.created_at && handledAt) {
-          const d = (new Date(handledAt).getTime() - new Date(e.created_at).getTime()) / 60000;
-          if (d > 0 && d < 60 * 24 * 30) { s.respSum += d; s.respN += 1; }
+        if (!handledEnabled) {
+          const handledAt = e.claimed_at || e.assigned_at || e.inboria_processed_at;
+          if (e.created_at && handledAt) {
+            const d = (new Date(handledAt).getTime() - new Date(e.created_at).getTime()) / 60000;
+            if (d > 0 && d < 60 * 24 * 30) { s.respSum += d; s.respN += 1; }
+          }
         }
       }
     }
@@ -227,12 +276,12 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
         mailboxName: meta?.name || meta?.email || "—",
         mailboxEmail: meta?.email || "",
         count: s.count,
+        handled: s.handled,
         archived: s.archived,
         avgFirstResponseMinutes: s.respN > 0 ? Math.round(s.respSum / s.respN) : null,
       };
     }).sort((a, b) => b.count - a.count);
 
-    // Per-project breakdown
     const projIds = [...new Set(list.map((e: any) => e.project_id).filter(Boolean))] as string[];
     const projMap = new Map<string, { name: string; reference: string }>();
     if (projIds.length > 0) {
@@ -242,18 +291,27 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
         .in("id", projIds);
       for (const p of prows || []) projMap.set(p.id, { name: p.name || "", reference: p.reference || "" });
     }
-    const perProjectMap = new Map<string, { count: number; archived: number; respSum: number; respN: number }>();
+    const perProjectMap = new Map<string, { count: number; handled: number; archived: number; respSum: number; respN: number }>();
     for (const e of list as any[]) {
       if (!e.project_id) continue;
       let s = perProjectMap.get(e.project_id);
-      if (!s) { s = { count: 0, archived: 0, respSum: 0, respN: 0 }; perProjectMap.set(e.project_id, s); }
+      if (!s) { s = { count: 0, handled: 0, archived: 0, respSum: 0, respN: 0 }; perProjectMap.set(e.project_id, s); }
       s.count += 1;
+      if (handledEnabled && e.handled_at) {
+        s.handled += 1;
+        if (e.created_at) {
+          const d = (new Date(e.handled_at).getTime() - new Date(e.created_at).getTime()) / 60000;
+          if (d > 0 && d < 60 * 24 * 30) { s.respSum += d; s.respN += 1; }
+        }
+      }
       if (e.status === "archived") {
         s.archived += 1;
-        const handledAt = e.claimed_at || e.assigned_at || e.inboria_processed_at;
-        if (e.created_at && handledAt) {
-          const d = (new Date(handledAt).getTime() - new Date(e.created_at).getTime()) / 60000;
-          if (d > 0 && d < 60 * 24 * 30) { s.respSum += d; s.respN += 1; }
+        if (!handledEnabled) {
+          const handledAt = e.claimed_at || e.assigned_at || e.inboria_processed_at;
+          if (e.created_at && handledAt) {
+            const d = (new Date(handledAt).getTime() - new Date(e.created_at).getTime()) / 60000;
+            if (d > 0 && d < 60 * 24 * 30) { s.respSum += d; s.respN += 1; }
+          }
         }
       }
     }
@@ -262,6 +320,7 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       projectName: projMap.get(pid)?.name || "",
       projectReference: projMap.get(pid)?.reference || "",
       count: s.count,
+      handled: s.handled,
       archived: s.archived,
       avgFirstResponseMinutes: s.respN > 0 ? Math.round(s.respSum / s.respN) : null,
     })).sort((a, b) => b.count - a.count);
@@ -271,9 +330,12 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
         emails: list.length,
         archived: list.filter((e: any) => e.status === "archived").length,
         assigned: list.filter((e: any) => !!e.assigned_to).length,
+        handled: handledEnabled ? totalHandled : null,
+        avgHandlingMinutes: handledEnabled && handlingDelayCount > 0 ? Math.round(handlingDelaySumMin / handlingDelayCount) : null,
         period,
       },
       filters: { period, member: memberFilter, mailbox: mailboxFilter, project: projectFilter },
+      handledMetricsEnabled: handledEnabled,
       perMember,
       perMailbox,
       perProject,
@@ -301,6 +363,7 @@ router.get("/analytics/team/export.csv", requireAuth, async (req, res): Promise<
     const memberFilter = req.query.member ? String(req.query.member) : null;
     const mailboxFilter = req.query.mailbox ? String(req.query.mailbox) : null;
     const projectFilter = req.query.project ? String(req.query.project) : null;
+    const handledEnabled = await hasHandledColumns();
 
     const { data: members } = await supabaseAdmin
       .from("organisation_members")
@@ -315,9 +378,6 @@ router.get("/analytics/team/export.csv", requireAuth, async (req, res): Promise<
       profileMap.set(uid, p?.full_name || "");
     }
 
-    // Même scope que /analytics/team : emails persos des membres + emails de
-    // toute boîte partagée de l'org (sans cela les exports CSV/PDF des orgs
-    // qui travaillent via boîtes partagées seraient vides).
     const { data: csvOrgMailboxes } = await supabaseAdmin
       .from("shared_mailboxes")
       .select("id")
@@ -327,31 +387,39 @@ router.get("/analytics/team/export.csv", requireAuth, async (req, res): Promise<
     if (csvOrgMailboxIds.length > 0) {
       csvScopeParts.push(`shared_mailbox_id.in.(${csvOrgMailboxIds.join(",")})`);
     }
+    const baseCsvCols = "id, subject, sender, status, assigned_to, claimed_by, created_at, claimed_at, assigned_at, inboria_processed_at";
+    const csvCols = handledEnabled ? `${baseCsvCols}, handled_at, handled_by` : baseCsvCols;
     let csvQ = supabaseAdmin
       .from("emails")
-      .select("id, subject, sender, status, assigned_to, claimed_by, created_at, claimed_at, assigned_at, inboria_processed_at")
+      .select(csvCols)
       .or(csvScopeParts.join(","))
       .gte("created_at", sinceIso)
       .neq("status", "supprime");
-    if (memberFilter) csvQ = csvQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
+    if (memberFilter) {
+      if (handledEnabled) csvQ = csvQ.eq("handled_by", memberFilter);
+      else csvQ = csvQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
+    }
     if (mailboxFilter) csvQ = csvQ.eq("shared_mailbox_id", mailboxFilter);
     if (projectFilter) csvQ = csvQ.eq("project_id", projectFilter);
     const { data: list } = await csvQ.limit(20000);
 
     const lines: string[] = [
-      ["email_id", "subject", "sender", "status", "assigned_to", "owner_name", "created_at", "handled_at"].join(","),
+      ["email_id", "subject", "sender", "status", "handled_by", "handled_by_name", "created_at", "handled_at"].join(","),
     ];
-    for (const e of list || []) {
-      const ownerId = e.assigned_to || e.claimed_by || "";
+    for (const e of (list || []) as any[]) {
+      const handlerId = handledEnabled ? (e.handled_by || "") : (e.assigned_to || e.claimed_by || "");
+      const handledAt = handledEnabled
+        ? (e.handled_at || "")
+        : (e.claimed_at || e.assigned_at || e.inboria_processed_at || "");
       lines.push([
         csvEscape(e.id),
         csvEscape(e.subject),
         csvEscape(e.sender),
         csvEscape(e.status),
-        csvEscape(ownerId),
-        csvEscape(profileMap.get(ownerId) || ""),
+        csvEscape(handlerId),
+        csvEscape(profileMap.get(handlerId) || ""),
         csvEscape(e.created_at),
-        csvEscape(e.claimed_at || e.assigned_at || e.inboria_processed_at || ""),
+        csvEscape(handledAt),
       ].join(","));
     }
 
@@ -374,6 +442,7 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     const memberFilter = req.query.member ? String(req.query.member) : null;
     const mailboxFilter = req.query.mailbox ? String(req.query.mailbox) : null;
     const projectFilter = req.query.project ? String(req.query.project) : null;
+    const handledEnabled = await hasHandledColumns();
 
     const { data: members } = await supabaseAdmin
       .from("organisation_members")
@@ -388,8 +457,6 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
       profileMap.set(uid, p?.full_name || "");
     }
 
-    // Même scope que /analytics/team : emails persos des membres + emails de
-    // toute boîte partagée de l'org.
     const { data: pdfOrgMailboxes } = await supabaseAdmin
       .from("shared_mailboxes")
       .select("id")
@@ -399,13 +466,18 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     if (pdfOrgMailboxIds.length > 0) {
       pdfScopeParts.push(`shared_mailbox_id.in.(${pdfOrgMailboxIds.join(",")})`);
     }
+    const basePdfCols = "id, status, assigned_to, claimed_by, created_at";
+    const pdfCols = handledEnabled ? `${basePdfCols}, handled_at, handled_by` : basePdfCols;
     let pdfQ = supabaseAdmin
       .from("emails")
-      .select("id, status, assigned_to, claimed_by, created_at")
+      .select(pdfCols)
       .or(pdfScopeParts.join(","))
       .gte("created_at", sinceIso)
       .neq("status", "supprime");
-    if (memberFilter) pdfQ = pdfQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
+    if (memberFilter) {
+      if (handledEnabled) pdfQ = pdfQ.eq("handled_by", memberFilter);
+      else pdfQ = pdfQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
+    }
     if (mailboxFilter) pdfQ = pdfQ.eq("shared_mailbox_id", mailboxFilter);
     if (projectFilter) pdfQ = pdfQ.eq("project_id", projectFilter);
     const { data: list } = await pdfQ.limit(20000);
@@ -413,17 +485,19 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     const stats = new Map<string, { handled: number; archived: number; assigned: number }>();
     for (const uid of memberIds) stats.set(uid, { handled: 0, archived: 0, assigned: 0 });
     for (const e of (list || []) as any[]) {
-      const ownerId = e.assigned_to || e.claimed_by || null;
+      const handlerId = handledEnabled ? (e.handled_at ? e.handled_by : null) : (e.assigned_to || e.claimed_by || null);
       if (e.assigned_to && stats.has(e.assigned_to)) {
         stats.get(e.assigned_to)!.assigned += 1;
       }
-      if (!ownerId || !stats.has(ownerId)) continue;
-      const s = stats.get(ownerId)!;
-      s.handled += 1;
-      if (e.status === "archived") s.archived += 1;
+      if (handlerId && stats.has(handlerId)) {
+        stats.get(handlerId)!.handled += 1;
+      }
+      const archOwner = handlerId || e.assigned_to || e.claimed_by || null;
+      if (e.status === "archived" && archOwner && stats.has(archOwner)) {
+        stats.get(archOwner)!.archived += 1;
+      }
     }
 
-    // Server-rendered binary PDF (real PDF, not HTML).
     const doc = new PDFDocument({ size: "A4", margin: 48, info: { Title: `Inboria — Bilan équipe ${period}` } });
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `attachment; filename="inboria-team-${period}.pdf"`);
@@ -436,13 +510,18 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
       .fillColor("#475569")
       .text(`Période : ${period} · Généré le ${new Date().toLocaleString()}`);
     doc.moveDown(0.2);
-    doc.fontSize(11).fillColor("#475569").text(`Total emails : ${(list || []).length}`);
+    doc.fontSize(11).fillColor("#475569").text(`Total emails reçus : ${(list || []).length}`);
+    if (!handledEnabled) {
+      doc.moveDown(0.2);
+      doc.fontSize(9).fillColor("#b45309").text(
+        "Migration handled_at non appliquée — les chiffres « Traités » utilisent l'ancien proxy (assigned/claimed).",
+      );
+    }
     doc.moveDown(1);
 
-    // Table header
     const tableTop = doc.y;
     const colX = [48, 240, 340, 420, 500];
-    const headers = ["Membre", "Traités", "Archivés", "Assignés"];
+    const headers = ["Membre", "Traités", "Écartés", "Assignés"];
     doc.fontSize(11).fillColor("#0f172a");
     headers.forEach((h, i) => doc.text(h, colX[i], tableTop));
     doc
@@ -468,7 +547,7 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
 
     doc.moveDown(3);
     doc.fontSize(8).fillColor("#64748b").text(
-      "Document généré par Inboria. Données issues de votre organisation.",
+      "Document généré par Inboria. « Traité » = action humaine explicite (réponse envoyée, transfert ou clic Marquer traité).",
       48,
       Math.min(y + 16, 800),
     );

@@ -38,15 +38,24 @@ const dateLocales: Record<string, Locale> = { fr, en: enUS, nl };
 const baseUrl = () => import.meta.env.BASE_URL.replace(/\/$/, "");
 
 interface TeamAnalytics {
-  totals: { emails: number; archived: number; assigned: number; period: string };
+  totals: { emails: number; archived: number; assigned: number; handled: number | null; avgHandlingMinutes: number | null; period: string };
   filters?: { period: string; member: string | null; mailbox: string | null; project: string | null };
+  handledMetricsEnabled?: boolean;
   perMember: { userId: string; userName: string; handled: number; archived: number; assigned: number; avgFirstResponseMinutes: number | null }[];
-  perMailbox?: { mailboxId: string | null; mailboxName: string; mailboxEmail: string; count: number; archived: number; avgFirstResponseMinutes: number | null }[];
-  perProject?: { projectId: string; projectName: string; projectReference: string; count: number; archived: number; avgFirstResponseMinutes: number | null }[];
+  perMailbox?: { mailboxId: string | null; mailboxName: string; mailboxEmail: string; count: number; handled: number; archived: number; avgFirstResponseMinutes: number | null }[];
+  perProject?: { projectId: string; projectName: string; projectReference: string; count: number; handled: number; archived: number; avgFirstResponseMinutes: number | null }[];
   topSenders: { email: string; count: number }[];
   topCategories: { name: string; count: number }[];
-  evolution: { date: string; count: number }[];
+  evolution: { date: string; count: number; handledCount: number }[];
   slaSummary: { totalBreaches: number; openBreaches: number };
+}
+
+function formatDelay(min: number | null | undefined): string {
+  if (min == null) return "—";
+  if (min < 60) return `${min} min`;
+  const h = Math.round(min / 60);
+  if (h < 48) return `${h} h`;
+  return `${Math.round(h / 24)} j`;
 }
 
 const PIE_COLORS = ["#2d7dd2", "#7d4ed2", "#d2a02d", "#d24e6f", "#4ed29a", "#d2bc4e"];
@@ -364,10 +373,20 @@ export default function BilanQuotidien() {
             <div className="bg-card border border-border rounded-lg p-4 text-[12px] text-[#8b9cb3]">{t("analytics.empty")}</div>
           ) : (
             <div className="space-y-3">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+              {ta.handledMetricsEnabled === false && (
+                <div className="bg-amber-500/10 border border-amber-500/30 text-amber-200 rounded-lg p-3 text-[11px]">
+                  {t("analytics.migrationBanner")}
+                </div>
+              )}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
                 <StatCard label={t("analytics.totalEmails")} value={ta.totals.emails} />
-                <StatCard label={t("analytics.archived")} value={ta.totals.archived} />
-                <StatCard label={t("analytics.assigned")} value={ta.totals.assigned} />
+                <StatCard
+                  label={t("analytics.handled")}
+                  value={ta.totals.handled ?? 0}
+                  accent={ta.handledMetricsEnabled === false ? "muted" : "default"}
+                />
+                <StatCard label={t("analytics.dismissed")} value={ta.totals.archived} />
+                <StatCardText label={t("analytics.avgHandlingTime")} value={formatDelay(ta.totals.avgHandlingMinutes)} />
                 <StatCard label={t("analytics.openBreaches")} value={ta.slaSummary.openBreaches} accent={ta.slaSummary.openBreaches > 0 ? "red" : "default"} />
               </div>
 
@@ -380,7 +399,11 @@ export default function BilanQuotidien() {
                       <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#8b9cb3" }} />
                       <YAxis tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
                       <Tooltip contentStyle={{ background: "#0d1117", border: "1px solid #1f2937", fontSize: 11 }} />
-                      <Line type="monotone" dataKey="count" stroke="#2d7dd2" strokeWidth={2} dot={false} />
+                      <Legend wrapperStyle={{ fontSize: 10 }} />
+                      <Line type="monotone" dataKey="count" name={t("analytics.receivedPerDay")} stroke="#2d7dd2" strokeWidth={2} dot={false} />
+                      {ta.handledMetricsEnabled !== false && (
+                        <Line type="monotone" dataKey="handledCount" name={t("analytics.handledPerDay")} stroke="#4ed29a" strokeWidth={2} dot={false} />
+                      )}
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
@@ -432,15 +455,14 @@ export default function BilanQuotidien() {
                       <tr>
                         <th className="text-left p-2">{t("analytics.colMember")}</th>
                         <th className="text-right p-2">{t("analytics.colHandled")}</th>
-                        <th className="text-right p-2">{t("analytics.colArchived")}</th>
-                        <th className="text-right p-2">{t("analytics.colAssigned")}</th>
+                        <th className="text-right p-2">{t("analytics.colDismissed")}</th>
                         <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {ta.perMember.length === 0 ? (
                         <tr>
-                          <td colSpan={5} className="p-3 text-center text-[11px] text-[#8b9cb3]">
+                          <td colSpan={4} className="p-3 text-center text-[11px] text-[#8b9cb3]">
                             {t("analytics.noMemberData")}
                           </td>
                         </tr>
@@ -450,14 +472,14 @@ export default function BilanQuotidien() {
                             <td className="p-2 text-white">{m.userName || m.userId.slice(0, 8)}</td>
                             <td className="p-2 text-right text-[#c9d1d9]">{m.handled}</td>
                             <td className="p-2 text-right text-[#c9d1d9]">{m.archived}</td>
-                            <td className="p-2 text-right text-[#c9d1d9]">{m.assigned}</td>
-                            <td className="p-2 text-right text-[#c9d1d9]">{m.avgFirstResponseMinutes != null ? `${m.avgFirstResponseMinutes} min` : "—"}</td>
+                            <td className="p-2 text-right text-[#c9d1d9]">{formatDelay(m.avgFirstResponseMinutes)}</td>
                           </tr>
                         ))
                       )}
                     </tbody>
                   </table>
                 </div>
+                <p className="text-[10px] text-[#8b9cb3] mt-1">{t("analytics.legendPerMember")}</p>
               </div>
 
               {(ta.perMailbox && ta.perMailbox.length > 0) && (
@@ -470,8 +492,9 @@ export default function BilanQuotidien() {
                       <thead className="text-[#8b9cb3] border-b border-border">
                         <tr>
                           <th className="text-left p-2">{t("analytics.colMailbox", { defaultValue: "Mailbox" })}</th>
+                          <th className="text-right p-2">{t("analytics.colReceived")}</th>
                           <th className="text-right p-2">{t("analytics.colHandled")}</th>
-                          <th className="text-right p-2">{t("analytics.colArchived")}</th>
+                          <th className="text-right p-2">{t("analytics.colDismissed")}</th>
                           <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
                         </tr>
                       </thead>
@@ -483,13 +506,15 @@ export default function BilanQuotidien() {
                               {m.mailboxEmail && m.mailboxEmail !== m.mailboxName && <span className="text-[10px] text-[#8b9cb3] ml-1">{m.mailboxEmail}</span>}
                             </td>
                             <td className="p-2 text-right text-[#c9d1d9]">{m.count}</td>
+                            <td className="p-2 text-right text-[#c9d1d9]">{m.handled}</td>
                             <td className="p-2 text-right text-[#c9d1d9]">{m.archived}</td>
-                            <td className="p-2 text-right text-[#c9d1d9]">{m.avgFirstResponseMinutes != null ? `${m.avgFirstResponseMinutes} min` : "—"}</td>
+                            <td className="p-2 text-right text-[#c9d1d9]">{formatDelay(m.avgFirstResponseMinutes)}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
+                  <p className="text-[10px] text-[#8b9cb3] mt-1">{t("analytics.legendPerMailbox")}</p>
                 </div>
               )}
 
@@ -503,8 +528,9 @@ export default function BilanQuotidien() {
                       <thead className="text-[#8b9cb3] border-b border-border">
                         <tr>
                           <th className="text-left p-2">{t("analytics.colProject", { defaultValue: "Project" })}</th>
+                          <th className="text-right p-2">{t("analytics.colReceived")}</th>
                           <th className="text-right p-2">{t("analytics.colHandled")}</th>
-                          <th className="text-right p-2">{t("analytics.colArchived")}</th>
+                          <th className="text-right p-2">{t("analytics.colDismissed")}</th>
                           <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
                         </tr>
                       </thead>
@@ -515,13 +541,15 @@ export default function BilanQuotidien() {
                               {p.projectName} {p.projectReference && <span className="text-[10px] text-[#8b9cb3]">[{p.projectReference}]</span>}
                             </td>
                             <td className="p-2 text-right text-[#c9d1d9]">{p.count}</td>
+                            <td className="p-2 text-right text-[#c9d1d9]">{p.handled}</td>
                             <td className="p-2 text-right text-[#c9d1d9]">{p.archived}</td>
-                            <td className="p-2 text-right text-[#c9d1d9]">{p.avgFirstResponseMinutes != null ? `${p.avgFirstResponseMinutes} min` : "—"}</td>
+                            <td className="p-2 text-right text-[#c9d1d9]">{formatDelay(p.avgFirstResponseMinutes)}</td>
                           </tr>
                         ))}
                       </tbody>
                     </table>
                   </div>
+                  <p className="text-[10px] text-[#8b9cb3] mt-1">{t("analytics.legendPerProject")}</p>
                 </div>
               )}
             </div>
@@ -533,11 +561,22 @@ export default function BilanQuotidien() {
   );
 }
 
-function StatCard({ label, value, accent = "default" }: { label: string; value: number; accent?: "default" | "red" }) {
+function StatCard({ label, value, accent = "default" }: { label: string; value: number; accent?: "default" | "red" | "muted" }) {
+  const isRed = accent === "red";
+  const isMuted = accent === "muted";
   return (
-    <div className={`rounded-lg border p-3 ${accent === "red" ? "bg-red-500/10 border-red-500/20" : "bg-card border-border"}`}>
+    <div className={`rounded-lg border p-3 ${isRed ? "bg-red-500/10 border-red-500/20" : "bg-card border-border"}`}>
       <p className="text-[10px] uppercase tracking-wider text-[#8b9cb3]">{label}</p>
-      <p className={`text-xl font-bold ${accent === "red" ? "text-red-400" : "text-white"}`}>{value}</p>
+      <p className={`text-xl font-bold ${isRed ? "text-red-400" : isMuted ? "text-[#8b9cb3]" : "text-white"}`}>{value}</p>
+    </div>
+  );
+}
+
+function StatCardText({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="rounded-lg border bg-card border-border p-3">
+      <p className="text-[10px] uppercase tracking-wider text-[#8b9cb3]">{label}</p>
+      <p className="text-xl font-bold text-white">{value}</p>
     </div>
   );
 }

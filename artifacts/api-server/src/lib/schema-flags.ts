@@ -75,8 +75,34 @@ export async function hasTrackingProfileColumn(): Promise<boolean> {
   return result;
 }
 
+let cachedHasHandledColumns: boolean | null = null;
+let handledProbeInFlight: Promise<boolean> | null = null;
+
+export async function hasHandledColumns(): Promise<boolean> {
+  if (cachedHasHandledColumns !== null) return cachedHasHandledColumns;
+  if (handledProbeInFlight) return handledProbeInFlight;
+
+  handledProbeInFlight = (async () => {
+    try {
+      const { error } = await supabaseAdmin
+        .from("emails")
+        .select("handled_at, handled_by")
+        .limit(1);
+      cachedHasHandledColumns = !error;
+    } catch {
+      cachedHasHandledColumns = false;
+    }
+    return cachedHasHandledColumns;
+  })();
+
+  const result = await handledProbeInFlight;
+  handledProbeInFlight = null;
+  return result;
+}
+
 export function resetSchemaFlagsCache(): void {
   cachedHasJunkColumns = null;
   cachedHasWaveOneColumns = null;
   cachedHasTrackingProfile = null;
+  cachedHasHandledColumns = null;
 }

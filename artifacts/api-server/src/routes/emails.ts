@@ -9,7 +9,7 @@ import { requireAuth } from "../middlewares/auth";
 import { resolveUploadedFiles, cleanupUploadIds } from "./attachments";
 import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 import { moveImapMessage, moveOutlookMessage, discoverImapJunkFolder, isValidImapHost } from "../services/junk-sync";
-import { hasJunkColumns, hasWaveOneColumns, hasTrackingProfileColumn } from "../lib/schema-flags";
+import { hasJunkColumns, hasWaveOneColumns, hasTrackingProfileColumn, hasHandledColumns } from "../lib/schema-flags";
 import { ImapFlow } from "imapflow";
 import { emitWebhook } from "../services/webhooks";
 import { logEmailToHubspot } from "../services/hubspot";
@@ -563,6 +563,94 @@ router.patch("/emails/:id/private", requireAuth, async (req, res): Promise<void>
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to update privacy flag";
     res.status(500).json({ error: message });
+  }
+});
+
+// Task #205 — "Marquer traité" : action humaine explicite pour considérer un
+// email comme traité. assigned_to/claimed_by sont posés automatiquement par
+// Inboria à l'ingestion et ne peuvent donc pas servir d'indicateur métier.
+// Scope = membre de l'org propriétaire de l'email (perso ou boîte partagée).
+async function userCanHandleEmail(emailId: string, userId: string): Promise<boolean> {
+  const { data: e } = await supabaseAdmin
+    .from("emails")
+    .select("user_id, shared_mailbox_id")
+    .eq("id", emailId)
+    .maybeSingle();
+  if (!e) return false;
+  if (e.user_id === userId) return true;
+  // Boîte partagée : vérifier que l'utilisateur appartient à l'org
+  // propriétaire de la boîte.
+  if (e.shared_mailbox_id) {
+    const { data: mb } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("organisation_id")
+      .eq("id", e.shared_mailbox_id)
+      .maybeSingle();
+    if (!mb?.organisation_id) return false;
+    const { data: m } = await supabaseAdmin
+      .from("organisation_members")
+      .select("user_id")
+      .eq("organisation_id", mb.organisation_id)
+      .eq("user_id", userId)
+      .eq("status", "active")
+      .maybeSingle();
+    return !!m;
+  }
+  return false;
+}
+
+router.post("/emails/:id/handled", requireAuth, async (req, res): Promise<void> => {
+  try {
+    if (!(await hasHandledColumns())) {
+      res.status(503).json({ error: "Migration en attente : appliquez 2026_05_03_emails_handled.sql dans Supabase." });
+      return;
+    }
+    const emailId = String(req.params.id);
+    const allowed = await userCanHandleEmail(emailId, req.userId!);
+    if (!allowed) {
+      res.status(403).json({ error: "Vous n'avez pas accès à cet email." });
+      return;
+    }
+    const nowIso = new Date().toISOString();
+    const { data, error } = await supabaseAdmin
+      .from("emails")
+      .update({ handled_at: nowIso, handled_by: req.userId! })
+      .eq("id", emailId)
+      .select("id, handled_at, handled_by")
+      .maybeSingle();
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+    res.json({ id: data?.id, handledAt: data?.handled_at, handledBy: data?.handled_by });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "Failed to mark handled" });
+  }
+});
+
+router.delete("/emails/:id/handled", requireAuth, async (req, res): Promise<void> => {
+  try {
+    if (!(await hasHandledColumns())) {
+      res.status(503).json({ error: "Migration en attente." });
+      return;
+    }
+    const emailId = String(req.params.id);
+    const allowed = await userCanHandleEmail(emailId, req.userId!);
+    if (!allowed) {
+      res.status(403).json({ error: "Vous n'avez pas accès à cet email." });
+      return;
+    }
+    const { error } = await supabaseAdmin
+      .from("emails")
+      .update({ handled_at: null, handled_by: null })
+      .eq("id", emailId);
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+    res.json({ id: req.params.id, handledAt: null, handledBy: null });
+  } catch (err: any) {
+    res.status(500).json({ error: err?.message || "Failed to unmark handled" });
   }
 });
 
@@ -1122,6 +1210,32 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
         }
       } catch (e: any) {
         console.error("Appointment detection failed:", e.message);
+      }
+    }
+
+    // Task #205 — auto-marquer l'email d'origine comme "traité" quand on
+    // envoie une réponse (replyToEmailId). On ne touche pas si l'email a
+    // déjà handled_at posé.
+    if (replyToEmailId && (await hasHandledColumns())) {
+      try {
+        // Sécurité : ne marquer "traité" que si l'utilisateur a réellement
+        // accès à l'email parent (perso ou via boîte partagée de son org).
+        const canHandleParent = await userCanHandleEmail(String(replyToEmailId), req.userId!);
+        if (canHandleParent) {
+          const { data: orig } = await supabaseAdmin
+            .from("emails")
+            .select("id, handled_at")
+            .eq("id", replyToEmailId)
+            .maybeSingle();
+          if (orig && !orig.handled_at) {
+            await supabaseAdmin
+              .from("emails")
+              .update({ handled_at: new Date().toISOString(), handled_by: req.userId! })
+              .eq("id", replyToEmailId);
+          }
+        }
+      } catch (e: any) {
+        req.log.warn({ err: e?.message, emailId: replyToEmailId }, "[handled] auto-mark on send failed");
       }
     }
 

@@ -6,7 +6,7 @@ import { Link } from "wouter";
 import { useQueryClient } from "@tanstack/react-query";
 import {
   Inbox, Clock, Eye, Sparkles, Reply, Forward, Wand2, Loader2,
-  Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen,
+  Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -105,6 +105,60 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
   useEffect(() => {
     setIsPrivate(Boolean(emailPrivate.isPrivate));
   }, [email?.id, emailPrivate.isPrivate]);
+  // Task #205 — "Marquer traité" : action humaine explicite (à côté de
+  // Archiver / Supprimer / Marquer privé). Pose handled_at + handled_by.
+  const emailHandled = email as { handledAt?: string | null; handled_at?: string | null; handledBy?: string | null; handled_by?: string | null };
+  const initialHandledAt = emailHandled.handledAt ?? emailHandled.handled_at ?? null;
+  const initialHandledBy = emailHandled.handledBy ?? emailHandled.handled_by ?? null;
+  const [handledAt, setHandledAt] = useState<string | null>(initialHandledAt);
+  const [handledBy, setHandledBy] = useState<string | null>(initialHandledBy);
+  const [handledLoading, setHandledLoading] = useState(false);
+  useEffect(() => {
+    setHandledAt(initialHandledAt);
+    setHandledBy(initialHandledBy);
+  }, [email?.id, initialHandledAt, initialHandledBy]);
+  const handlerName = (() => {
+    if (!handledBy) return "";
+    if (currentUserId && handledBy === currentUserId) return t("inbox.handledByMe", "vous");
+    const m = (orgMembers || []).find((x: any) => x.userId === handledBy);
+    return m?.fullName || m?.email || handledBy.slice(0, 8);
+  })();
+  const toggleHandled = useCallback(async () => {
+    if (!email?.id) return;
+    setHandledLoading(true);
+    try {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const wantHandled = !handledAt;
+      const res = await fetch(`${baseUrl}/api/emails/${email.id}/handled`, {
+        method: wantHandled ? "POST" : "DELETE",
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body?.error || "Échec");
+      }
+      const body = await res.json();
+      setHandledAt(body.handledAt ?? null);
+      setHandledBy(body.handledBy ?? null);
+      queryClient.invalidateQueries({ queryKey: ["analytics-team"] });
+      queryClient.invalidateQueries({ predicate: (q) => Array.isArray(q.queryKey) && String(q.queryKey[0] || "").includes("emails") });
+      toast({
+        title: wantHandled ? t("inbox.markedHandled", "Email marqué traité") : t("inbox.unmarkedHandled", "Marquage retiré"),
+      });
+    } catch (e: any) {
+      toast({ title: t("common.error"), description: e?.message || "", variant: "destructive" });
+    } finally {
+      setHandledLoading(false);
+    }
+  }, [email?.id, handledAt, queryClient, t, toast]);
+
   const togglePrivate = useCallback(async () => {
     if (!email?.id) return;
     const next = !isPrivate;
@@ -468,6 +522,35 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 >
                   <Trash2 className="w-3 h-3" />
                   {t("inbox.deleteEmail")}
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className={`gap-1.5 h-7 text-[11px] bg-transparent ${
+                    handledAt
+                      ? "border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10"
+                      : "border-border text-emerald-400/70 hover:text-emerald-300 hover:bg-emerald-500/[0.08]"
+                  }`}
+                  onClick={toggleHandled}
+                  disabled={handledLoading}
+                  title={
+                    handledAt
+                      ? t("inbox.handledOnHint", "Cliquez pour annuler le marquage")
+                      : t("inbox.markHandledHint", "Marquer cet email comme traité (action humaine explicite, alimente le Bilan)")
+                  }
+                  data-testid="button-toggle-handled"
+                >
+                  {handledLoading ? (
+                    <Loader2 className="w-3 h-3 animate-spin" />
+                  ) : (
+                    <CheckCircle2 className="w-3 h-3" />
+                  )}
+                  {handledAt
+                    ? t("inbox.handledByOn", "Traité par {{name}} le {{date}}", {
+                        name: handlerName,
+                        date: format(new Date(handledAt), "d MMM", { locale: dateFnsLocale }),
+                      })
+                    : t("inbox.markHandled", "Marquer traité")}
                 </Button>
                 <Button
                   variant="outline"
