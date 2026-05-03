@@ -3,7 +3,6 @@ import { useLocation, useRoute } from "wouter";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import {
-  useListCategories,
   useSearchContacts,
   useGetContactTimeline,
   useCreateManualContact,
@@ -60,8 +59,6 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Category = { id: number; name: string };
-
 const TYPE_META: Record<string, { icon: any; labelKey: string; fallback: string }> = {
   received: { icon: Mail, labelKey: "contactsPage.types.received", fallback: "Email reçu" },
   sent: { icon: Send, labelKey: "contactsPage.types.sent", fallback: "Email envoyé" },
@@ -103,7 +100,6 @@ export default function Contacts() {
 
   const [query, setQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState("");
-  const [selectedCategoryIds, setSelectedCategoryIds] = useState<number[]>([]);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -115,24 +111,12 @@ export default function Contacts() {
     return () => clearTimeout(id);
   }, [query]);
 
-  const { data: categoriesData } = useListCategories();
-  // Toutes les catégories de l'abonné (incluant celles marquées système),
-  // exactement comme la sidebar du dashboard.
-  const categories: Category[] = useMemo(
-    () =>
-      Array.isArray(categoriesData)
-        ? (categoriesData as any[]).map((c) => ({ id: c.id, name: c.name }))
-        : [],
-    [categoriesData],
-  );
-
   const searchParams = useMemo(
     () => ({
       q: debouncedQuery || undefined,
-      categoryIds: selectedCategoryIds.length > 0 ? selectedCategoryIds.join(",") : undefined,
       limit: 50,
     }),
-    [debouncedQuery, selectedCategoryIds],
+    [debouncedQuery],
   );
 
   const { data: searchData, isFetching: isSearching } = useSearchContacts(searchParams as any);
@@ -227,12 +211,6 @@ export default function Contacts() {
       },
     } as any,
   });
-
-  const toggleCategory = (id: number) => {
-    setSelectedCategoryIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-    );
-  };
 
   const selectContact = (email: string) => {
     setLocation(`/dashboard/contacts/${encodeURIComponent(email)}`);
