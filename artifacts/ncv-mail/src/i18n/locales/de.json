@@ -690,6 +690,7 @@
   "tasks": {
     "title": "Aufgaben",
     "myTasks": "Meine Aufgaben",
+    "teamTasks": "Dem Team zugewiesene Aufgaben",
     "assignTo": "Zuweisen an",
     "assignMyself": "Ich",
     "assigneeNobody": "Nicht zugewiesen",

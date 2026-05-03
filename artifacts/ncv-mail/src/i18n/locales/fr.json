@@ -681,6 +681,7 @@
     "title": "Tâches",
     "subtitle": "Gérez vos tâches et suivis depuis un seul endroit.",
     "myTasks": "Mes tâches",
+    "teamTasks": "Tâches assignées à l'équipe",
     "assignTo": "Assigner à",
     "assignMyself": "Moi",
     "assigneeNobody": "Pas d'assigné",

@@ -690,6 +690,7 @@
   "tasks": {
     "title": "Tasks",
     "myTasks": "My tasks",
+    "teamTasks": "Tasks assigned to the team",
     "assignTo": "Assign to",
     "assignMyself": "Me",
     "assigneeNobody": "No assignee",
