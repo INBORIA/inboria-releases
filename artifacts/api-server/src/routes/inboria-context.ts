@@ -405,7 +405,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         .neq("status", "scheduled")
         .or(`snoozed_until.is.null,snoozed_until.lte.${nowIso}`)
         .order("created_at", { ascending: false })
-        .limit(25),
+        .limit(50),
       // Envoyés : 10 derniers mails envoyés par l'utilisateur.
       supabaseAdmin
         .from("emails")
@@ -443,7 +443,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         .neq("status", "archived")
         .is("sent_at", null)
         .order("created_at", { ascending: false })
-        .limit(25),
+        .limit(50),
       // Reportés (snoozés) : mails dont la date de réveil est dans le futur.
       // En mode admin team on exclut les mails privés (RGPD).
       (adminTeamCtx
@@ -980,7 +980,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     };
 
     if (inbox.length > 0) {
-      memoryLines.push("Mails recents en reception (les 25 derniers) :");
+      memoryLines.push("Mails recents en reception (les 50 derniers) :");
       for (const e of inbox) {
         const date = fmtShortDate(e.created_at);
         const prio = e.priority ? `[${String(e.priority).toLowerCase()}]` : "";
@@ -1576,7 +1576,7 @@ Tu es un veritable coequipier numerique : tu connais TOUT ce que l'utilisateur v
 - ses boites partagees et ses coequipiers,
 - ses rendez-vous a venir (date, heure, lieu, participants),
 - un apercu chiffre de sa boite de reception (par priorite),
-- les 25 derniers mails recus (expediteur, sujet, resume, priorite, statut, date, marque "*assigne*" si c'est le cas),
+- les 50 derniers mails recus (expediteur, sujet, resume, priorite, statut, date, marque "*assigne*" si c'est le cas),
 - les mails actuellement assignes a l'utilisateur (action requise),
 - les mails reportes/snoozes avec leur date de reveil,
 - les mails programmes a envoyer plus tard,
