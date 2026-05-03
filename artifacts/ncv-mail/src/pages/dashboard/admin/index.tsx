@@ -1,22 +1,25 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useGetProfile } from "@workspace/api-client-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Loader2, Mail, Users, ShieldCheck } from "lucide-react";
+import { Loader2, Mail, Users, ShieldCheck, Brain } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useLocation } from "wouter";
 import AdminWaitlist from "./waitlist";
 import AdminAbonnes from "./abonnes";
+import AdminEmailBrain from "./email-brain";
 
 interface ProfileWithAdmin {
   isAdmin?: boolean;
 }
 
-type AdminTab = "waitlist" | "subscribers";
+type AdminTab = "waitlist" | "subscribers" | "email-brain";
 
 function readTabFromHash(): AdminTab {
   if (typeof window === "undefined") return "waitlist";
-  return window.location.hash === "#subscribers" ? "subscribers" : "waitlist";
+  if (window.location.hash === "#subscribers") return "subscribers";
+  if (window.location.hash === "#email-brain") return "email-brain";
+  return "waitlist";
 }
 
 export default function AdminIndex() {
@@ -34,7 +37,12 @@ export default function AdminIndex() {
   }, [profileLoading, isAdmin, setLocation]);
 
   function handleTabChange(value: string) {
-    const next = value === "subscribers" ? "subscribers" : "waitlist";
+    const next: AdminTab =
+      value === "subscribers"
+        ? "subscribers"
+        : value === "email-brain"
+          ? "email-brain"
+          : "waitlist";
     setTab(next);
     if (typeof window !== "undefined") {
       window.history.replaceState(null, "", `#${next}`);
@@ -72,6 +80,10 @@ export default function AdminIndex() {
               <Users className="h-3.5 w-3.5 mr-1.5" />
               {t("admin.subscribersTitle")}
             </TabsTrigger>
+            <TabsTrigger value="email-brain" data-testid="tab-email-brain">
+              <Brain className="h-3.5 w-3.5 mr-1.5" />
+              Email Brain
+            </TabsTrigger>
           </TabsList>
 
           <TabsContent value="waitlist" className="mt-4">
@@ -79,6 +91,9 @@ export default function AdminIndex() {
           </TabsContent>
           <TabsContent value="subscribers" className="mt-4">
             <AdminAbonnes embedded />
+          </TabsContent>
+          <TabsContent value="email-brain" className="mt-4">
+            <AdminEmailBrain />
           </TabsContent>
         </Tabs>
       </div>
