@@ -479,7 +479,8 @@ export default function BilanQuotidien() {
                         {ta.perMailbox.map((m, i) => (
                           <tr key={(m.mailboxId || "none") + i} className="border-b border-border/50">
                             <td className="p-2 text-white">
-                              {m.mailboxName} {m.mailboxEmail && <span className="text-[10px] text-[#8b9cb3]">{m.mailboxEmail}</span>}
+                              {m.mailboxName === "__personal__" ? <span className="italic text-[#8b9cb3]">{t("analytics.personalMailbox")}</span> : m.mailboxName}
+                              {m.mailboxEmail && <span className="text-[10px] text-[#8b9cb3] ml-1">{m.mailboxEmail}</span>}
                             </td>
                             <td className="p-2 text-right text-[#c9d1d9]">{m.count}</td>
                             <td className="p-2 text-right text-[#c9d1d9]">{m.archived}</td>

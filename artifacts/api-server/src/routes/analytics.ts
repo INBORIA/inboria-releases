@@ -221,9 +221,10 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     }
     const perMailbox = Array.from(perMailboxMap.entries()).map(([mid, s]) => {
       const meta = mid === "__none__" ? null : mbMap.get(mid);
+      const isPersonal = mid === "__none__";
       return {
-        mailboxId: mid === "__none__" ? null : mid,
-        mailboxName: meta?.name || "—",
+        mailboxId: isPersonal ? null : mid,
+        mailboxName: isPersonal ? "__personal__" : (meta?.name || "—"),
         mailboxEmail: meta?.email || "",
         count: s.count,
         archived: s.archived,
