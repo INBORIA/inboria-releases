@@ -59,6 +59,17 @@ export function InboriaChatButton() {
 
   const openMail = useCallback(
     (id: number) => {
+      // Inboria chat → ouverture directe du mail dans le tableau de bord.
+      // 1) Si on est déjà sur /dashboard, un événement custom indique au
+      //    dashboard d'ouvrir l'email (plus fiable que d'écouter les
+      //    changements de query string avec wouter v3).
+      // 2) Sinon, on navigue vers /dashboard?emailId=X et l'init du
+      //    state via URL fait le travail.
+      try {
+        window.dispatchEvent(
+          new CustomEvent("inboria-open-mail", { detail: { id } }),
+        );
+      } catch {}
       setLocation(`/dashboard?emailId=${id}`);
       setIsOpen(false);
     },

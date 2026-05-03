@@ -2970,6 +2970,19 @@ export default function Dashboard() {
       setSelectedEmailId(num);
     }
   }, [searchString, routeLocation]);
+  // Canal direct : Inboria chat émet "inboria-open-mail" pour ouvrir un
+  // mail sans dépendre de la propagation des query strings par wouter.
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent).detail as { id?: number } | undefined;
+      const id = Number(detail?.id);
+      if (Number.isFinite(id) && id > 0) {
+        setSelectedEmailId(id);
+      }
+    };
+    window.addEventListener("inboria-open-mail", handler);
+    return () => window.removeEventListener("inboria-open-mail", handler);
+  }, []);
   const clearAssigneeFilter = () => {
     setAssigneeFilter(null);
     if (typeof window !== "undefined") {
