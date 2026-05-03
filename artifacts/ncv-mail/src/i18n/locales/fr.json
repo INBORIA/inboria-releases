@@ -3094,6 +3094,10 @@
     "selectPrompt": "Sélectionnez un contact pour voir tout son historique.",
     "timelineItems": "éléments dans la chronologie",
     "brainSummary": "Synthèse de la relation",
+    "handoverBrief": "Brief de passation",
+    "handoverBriefDesc": "Synthèse complète pour reprendre la relation sans perte d'information.",
+    "handoverPeriod": "Période :",
+    "handoverGenerating": "Génération en cours…",
     "fields": {
       "email": "Adresse e-mail",
       "displayName": "Nom affiché",

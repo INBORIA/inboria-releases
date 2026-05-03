@@ -10,6 +10,7 @@ import { recordAutopilotEvent } from "../services/autopilot-events";
 import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 import { ensureSystemCategory } from "../lib/system-categories";
 import { buildInboriaContextBlock } from "../lib/inboria-prompt";
+import { generateHandoverBrief, type Language as BriefLanguage } from "../services/handover-brief";
 import { getUserAiLang } from "../services/ai-lang";
 
 const openai = new OpenAI({
@@ -1299,6 +1300,69 @@ router.post("/ai/support-chat", requireAuth, async (req, res): Promise<void> => 
   } catch (err: any) {
     logger.error({ err: err.message, stack: err.stack }, "[support-chat] Error");
     res.status(500).json({ error: "An error occurred. Please try again." });
+  }
+});
+
+// Email Brain Phase 3 (#216) — Brief de passation pour un contact donné.
+router.post("/ai/handover-brief", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const userId = req.userId!;
+    const body = req.body || {};
+    const contactEmail = String(body.contactEmail || "").trim().toLowerCase();
+    if (!contactEmail || !contactEmail.includes("@")) {
+      res.status(400).json({ error: "contactEmail invalide" });
+      return;
+    }
+    const sinceDays = Number.isFinite(body.sinceDays) ? Number(body.sinceDays) : 30;
+    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es"];
+    let language: BriefLanguage = "fr";
+    if (typeof body.language === "string" && (allowedLangs as string[]).includes(body.language)) {
+      language = body.language as BriefLanguage;
+    } else {
+      try {
+        const userLang = await getUserAiLang(userId);
+        if ((allowedLangs as string[]).includes(userLang)) {
+          language = userLang as BriefLanguage;
+        }
+      } catch {
+        /* keep fr */
+      }
+    }
+
+    const entitlement = await checkEntitlement(userId, AI_COST.handover_brief);
+    if (entitlement.blocked) {
+      res.status(402).json({ error: entitlement.reason || "Quota IA atteint" });
+      return;
+    }
+
+    const result = await generateHandoverBrief(userId, contactEmail, {
+      sinceDays,
+      language,
+    });
+    if (!result) {
+      res.status(404).json({
+        error:
+          "Pas assez d'informations sur ce contact pour générer un brief. Attendez que quelques échanges soient analysés par Inboria.",
+      });
+      return;
+    }
+
+    const billing = await consumeAiCredits(userId, "handover_brief" as AiEventType);
+    if (!billing.ok) {
+      res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
+      return;
+    }
+    recordAutopilotEvent({
+      userId,
+      eventType: "summary_generated",
+      title: `Brief de passation : ${contactEmail}`,
+      metadata: { kind: "handover_brief", contactEmail, sinceDays, language },
+    }).catch(() => {});
+
+    res.json(result);
+  } catch (err: any) {
+    logger.error({ err: err?.message, stack: err?.stack }, "[handover-brief] failed");
+    res.status(500).json({ error: "Echec de génération du brief" });
   }
 });
 

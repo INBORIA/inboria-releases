@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { useLocation, useRoute } from "wouter";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
@@ -57,6 +58,7 @@ import {
   Building2,
   StickyNote,
   Brain,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -171,6 +173,47 @@ export default function Contacts() {
   } | null = (timelineData as any)?.manual || null;
   const brainSummary: { content: string; generatedAt: string } | null =
     (timelineData as any)?.summary || null;
+
+  // Phase 3 (#216) — Brief de passation à la demande.
+  const [briefOpen, setBriefOpen] = useState(false);
+  const [briefLoading, setBriefLoading] = useState(false);
+  const [briefContent, setBriefContent] = useState<string | null>(null);
+  const [briefError, setBriefError] = useState<string | null>(null);
+  const [briefSinceDays, setBriefSinceDays] = useState<number>(30);
+
+  async function generateHandoverBrief(days: number) {
+    if (!selectedEmail) return;
+    setBriefOpen(true);
+    setBriefLoading(true);
+    setBriefError(null);
+    setBriefContent(null);
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) {
+        setBriefError(t("common.notAuthenticated", "Non authentifié"));
+        return;
+      }
+      const res = await fetch("/api/ai/handover-brief", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ contactEmail: selectedEmail, sinceDays: days }),
+      });
+      const json = await res.json().catch(() => ({}));
+      if (!res.ok) {
+        setBriefError(json?.error || t("common.error", "Erreur"));
+        return;
+      }
+      setBriefContent(String(json?.brief || ""));
+    } catch (err: any) {
+      setBriefError(err?.message || t("common.error", "Erreur"));
+    } finally {
+      setBriefLoading(false);
+    }
+  }
 
   const invalidateAll = () => {
     // Invalidate toutes les variantes de recherche (toutes valeurs de q).
@@ -418,6 +461,16 @@ export default function Contacts() {
                   </p>
                 </div>
                 <div className="flex items-center gap-1 shrink-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => generateHandoverBrief(briefSinceDays)}
+                    className="h-7 px-2 text-[11px]"
+                    data-testid="contacts-handover-brief"
+                  >
+                    <FileText className="h-3.5 w-3.5 mr-1" />
+                    {t("contactsPage.handoverBrief", "Brief de passation")}
+                  </Button>
                   {manualFiche && (
                     <>
                       <Button
@@ -704,6 +757,79 @@ export default function Contacts() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      <Dialog open={briefOpen} onOpenChange={setBriefOpen}>
+        <DialogContent className="max-w-2xl max-h-[80vh] overflow-hidden flex flex-col">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <FileText className="h-4 w-4 text-primary" />
+              {t("contactsPage.handoverBrief", "Brief de passation")}
+              {selectedEmail && (
+                <span className="text-xs text-[#8b9cb3] font-normal truncate">
+                  — {selectedEmail}
+                </span>
+              )}
+            </DialogTitle>
+            <DialogDescription className="text-[11px]">
+              {t(
+                "contactsPage.handoverBriefDesc",
+                "Synthèse complète pour reprendre la relation sans perte d'information.",
+              )}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex items-center gap-2 text-[11px] text-[#8b9cb3] pb-2">
+            <span>{t("contactsPage.handoverPeriod", "Période :")}</span>
+            {[7, 30, 90].map((d) => (
+              <button
+                key={d}
+                disabled={briefLoading}
+                onClick={() => {
+                  setBriefSinceDays(d);
+                  void generateHandoverBrief(d);
+                }}
+                className={cn(
+                  "px-2 py-0.5 rounded border text-[11px]",
+                  briefSinceDays === d
+                    ? "bg-primary/20 border-primary/50 text-primary"
+                    : "border-[#1f2937] hover:border-[#374151]",
+                )}
+                data-testid={`contacts-handover-period-${d}`}
+              >
+                {d}j
+              </button>
+            ))}
+          </div>
+          <ScrollArea className="flex-1">
+            {briefLoading ? (
+              <div className="flex items-center justify-center py-12 text-[12px] text-[#8b9cb3]">
+                <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                {t("contactsPage.handoverGenerating", "Génération en cours…")}
+              </div>
+            ) : briefError ? (
+              <div className="px-2 py-6 text-[12px] text-red-400 whitespace-pre-wrap">
+                {briefError}
+              </div>
+            ) : briefContent ? (
+              <div
+                className="text-[12.5px] text-[#d6deea] leading-relaxed whitespace-pre-wrap"
+                data-testid="contacts-handover-content"
+              >
+                {briefContent}
+              </div>
+            ) : null}
+          </ScrollArea>
+          <DialogFooter>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setBriefOpen(false)}
+              data-testid="contacts-handover-close"
+            >
+              {t("common.close", "Fermer")}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }

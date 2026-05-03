@@ -4752,6 +4752,10 @@
     "selectPrompt": "Wählen Sie einen Kontakt, um den gesamten Verlauf anzuzeigen.",
     "timelineItems": "Einträge in der Chronik",
     "brainSummary": "Zusammenfassung der Beziehung",
+    "handoverBrief": "Übergabe-Briefing",
+    "handoverBriefDesc": "Vollständige Zusammenfassung, um die Beziehung ohne Informationsverlust zu übernehmen.",
+    "handoverPeriod": "Zeitraum:",
+    "handoverGenerating": "Wird erstellt…",
     "fields": {
       "email": "E-Mail-Adresse",
       "displayName": "Anzeigename",

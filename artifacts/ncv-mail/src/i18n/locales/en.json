@@ -4735,6 +4735,10 @@
     "selectPrompt": "Select a contact to see their full history.",
     "timelineItems": "items in the timeline",
     "brainSummary": "Relationship summary",
+    "handoverBrief": "Handover brief",
+    "handoverBriefDesc": "Complete summary to take over the relationship without losing context.",
+    "handoverPeriod": "Period:",
+    "handoverGenerating": "Generating…",
     "fields": {
       "email": "Email",
       "displayName": "Display name",

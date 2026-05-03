@@ -14,6 +14,7 @@ export const AI_COST = {
   template_suggest: 1,
   template_categorize: 1,
   rule_parse: 2,
+  handover_brief: 4,
 } as const;
 
 export type AiEventType = keyof typeof AI_COST;

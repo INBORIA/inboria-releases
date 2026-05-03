@@ -4752,6 +4752,10 @@
     "selectPrompt": "Seleccione un contacto para ver todo su historial.",
     "timelineItems": "elementos en la cronología",
     "brainSummary": "Resumen de la relación",
+    "handoverBrief": "Briefing de traspaso",
+    "handoverBriefDesc": "Resumen completo para retomar la relación sin pérdida de información.",
+    "handoverPeriod": "Período:",
+    "handoverGenerating": "Generando…",
     "fields": {
       "email": "Correo electrónico",
       "displayName": "Nombre mostrado",

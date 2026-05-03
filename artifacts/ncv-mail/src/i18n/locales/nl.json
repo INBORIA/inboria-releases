@@ -4752,6 +4752,10 @@
     "selectPrompt": "Selecteer een contact om de volledige geschiedenis te zien.",
     "timelineItems": "items in de tijdlijn",
     "brainSummary": "Samenvatting van de relatie",
+    "handoverBrief": "Overdrachtsbriefing",
+    "handoverBriefDesc": "Volledige samenvatting om de relatie zonder informatieverlies over te nemen.",
+    "handoverPeriod": "Periode:",
+    "handoverGenerating": "Genereren…",
     "fields": {
       "email": "E-mailadres",
       "displayName": "Weergavenaam",
