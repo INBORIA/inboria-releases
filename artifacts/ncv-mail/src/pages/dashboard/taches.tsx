@@ -75,7 +75,6 @@ export default function Taches() {
   }, [connections]);
 
   const [filter, setFilter] = useState<string>("all");
-  const [scope, setScope] = useState<"mine" | "assigned_to_me" | "created_by_me" | "team">("mine");
   const [emailDetailTask, setEmailDetailTask] = useState<any>(null);
   const [showAddTask, setShowAddTask] = useState(false);
   const [newTaskTitle, setNewTaskTitle] = useState("");
@@ -217,7 +216,7 @@ export default function Taches() {
   const [replyText, setReplyText] = useState("");
   const [replyAttachments, setReplyAttachments] = useState<UploadedFile[]>([]);
 
-  const { data: tasks, isLoading } = useListTasks({ scope } as any);
+  const { data: tasks, isLoading } = useListTasks({ scope: "mine" } as any);
   const { data: myOrg } = useGetMyOrganisation();
   const { data: orgMembers } = useGetOrganisationMembers({ query: { enabled: !!(myOrg as any)?.id } as any });
   const orgMembersList: any[] = Array.isArray(orgMembers) ? orgMembers : [];
@@ -309,10 +308,7 @@ export default function Taches() {
     );
   };
 
-  const rawTaskList = (tasks as any[]) || [];
-  const taskList = scope === "team"
-    ? rawTaskList.filter((tk: any) => tk.assignedToUserId && tk.assignedToUserId !== currentUserId)
-    : rawTaskList;
+  const taskList = (tasks as any[]) || [];
 
   const aiCount = taskList.filter((t: any) => t.source === "ai").length;
   const todoCount = taskList.filter((t: any) => t.status !== "done").length;
@@ -370,25 +366,6 @@ export default function Taches() {
               {t("tasks.export")}
             </Button>
           </div>
-        </div>
-
-        <div className="flex items-center gap-1.5 mb-3 flex-wrap border-b border-border">
-          {([
-            { key: "mine", label: t("tasks.myTasks", "Mes tâches") },
-            { key: "team", label: t("tasks.teamTasks", "Tâches assignées à l'équipe") },
-          ] as const).map((s) => (
-            <button
-              key={s.key}
-              onClick={() => setScope(s.key)}
-              className={`text-[12px] px-3 py-2 transition-all border-b-2 -mb-px ${
-                scope === s.key
-                  ? "border-cyan-500 text-white font-medium"
-                  : "border-transparent text-[#8b9cb3] hover:text-white"
-              }`}
-            >
-              {s.label}
-            </button>
-          ))}
         </div>
 
         <div className="flex items-center gap-1.5 mb-4">

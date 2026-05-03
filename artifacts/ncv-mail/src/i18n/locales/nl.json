@@ -690,7 +690,6 @@
   "tasks": {
     "title": "Taken",
     "myTasks": "Mijn taken",
-    "teamTasks": "Aan het team toegewezen taken",
     "assignTo": "Toewijzen aan",
     "assignMyself": "Mij",
     "assigneeNobody": "Geen toegewezene",
