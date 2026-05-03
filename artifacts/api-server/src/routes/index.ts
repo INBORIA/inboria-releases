@@ -38,6 +38,7 @@ import webhooksMgmtRouter from "./webhooks-mgmt";
 import analyticsRouter from "./analytics";
 import publicApiRouter from "./public-api";
 import teamAccessLogRouter from "./team-access-log";
+import contactsRouter from "./contacts";
 
 const router: IRouter = Router();
 
@@ -80,5 +81,6 @@ router.use(webhooksMgmtRouter);
 router.use(analyticsRouter);
 router.use(publicApiRouter);
 router.use(teamAccessLogRouter);
+router.use(contactsRouter);
 
 export default router;

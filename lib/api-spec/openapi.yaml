@@ -3314,6 +3314,48 @@ paths:
                 properties:
                   ok: { type: boolean }
 
+  /contacts/search:
+    get:
+      operationId: searchContacts
+      tags: [contacts]
+      summary: Search contacts aggregated from emails
+      parameters:
+        - name: q
+          in: query
+          schema: { type: string }
+        - name: categoryIds
+          in: query
+          description: Comma-separated category ids
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50 }
+      responses:
+        "200":
+          description: Contacts list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactSearchResponse"
+
+  /contacts/{email}/timeline:
+    get:
+      operationId: getContactTimeline
+      tags: [contacts]
+      summary: Full chronological timeline for a contact
+      parameters:
+        - name: email
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Timeline
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ContactTimelineResponse"
+
 components:
   schemas:
     HealthStatus:
@@ -5572,3 +5614,44 @@ components:
           format: date-time
         occurredAt: { type: string, format: date-time }
 
+
+    ContactSummary:
+      type: object
+      required: [email, displayName, lastInteractionAt, messageCount]
+      properties:
+        email: { type: string }
+        displayName: { type: string }
+        lastInteractionAt: { type: string, format: date-time }
+        messageCount: { type: integer }
+
+    ContactSearchResponse:
+      type: object
+      required: [contacts]
+      properties:
+        contacts:
+          type: array
+          items: { $ref: "#/components/schemas/ContactSummary" }
+
+    ContactTimelineItem:
+      type: object
+      required: [type, id, occurredAt, title]
+      properties:
+        type: { type: string }
+        id: { type: string }
+        occurredAt: { type: string, format: date-time }
+        title: { type: string }
+        snippet:
+          type: ["string", "null"]
+        categoryName:
+          type: ["string", "null"]
+        href:
+          type: ["string", "null"]
+
+    ContactTimelineResponse:
+      type: object
+      required: [email, items]
+      properties:
+        email: { type: string }
+        items:
+          type: array
+          items: { $ref: "#/components/schemas/ContactTimelineItem" }

@@ -3854,3 +3854,50 @@ export const RollbackRuleExecutionParams = zod.object({
 export const RollbackRuleExecutionResponse = zod.object({
   ok: zod.boolean(),
 });
+
+/**
+ * @summary Search contacts aggregated from emails
+ */
+export const searchContactsQueryLimitDefault = 50;
+
+export const SearchContactsQueryParams = zod.object({
+  q: zod.coerce.string().optional(),
+  categoryIds: zod.coerce
+    .string()
+    .optional()
+    .describe("Comma-separated category ids"),
+  limit: zod.coerce.number().default(searchContactsQueryLimitDefault),
+});
+
+export const SearchContactsResponse = zod.object({
+  contacts: zod.array(
+    zod.object({
+      email: zod.string(),
+      displayName: zod.string(),
+      lastInteractionAt: zod.coerce.date(),
+      messageCount: zod.number(),
+    }),
+  ),
+});
+
+/**
+ * @summary Full chronological timeline for a contact
+ */
+export const GetContactTimelineParams = zod.object({
+  email: zod.coerce.string(),
+});
+
+export const GetContactTimelineResponse = zod.object({
+  email: zod.string(),
+  items: zod.array(
+    zod.object({
+      type: zod.string(),
+      id: zod.string(),
+      occurredAt: zod.coerce.date(),
+      title: zod.string(),
+      snippet: zod.string().nullish(),
+      categoryName: zod.string().nullish(),
+      href: zod.string().nullish(),
+    }),
+  ),
+});

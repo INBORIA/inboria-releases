@@ -1419,6 +1419,35 @@ export interface RuleAuditEntry {
   occurredAt: string;
 }
 
+export interface ContactSummary {
+  email: string;
+  displayName: string;
+  lastInteractionAt: string;
+  messageCount: number;
+}
+
+export interface ContactSearchResponse {
+  contacts: ContactSummary[];
+}
+
+export interface ContactTimelineItem {
+  type: string;
+  id: string;
+  occurredAt: string;
+  title: string;
+  /** @nullable */
+  snippet?: string | null;
+  /** @nullable */
+  categoryName?: string | null;
+  /** @nullable */
+  href?: string | null;
+}
+
+export interface ContactTimelineResponse {
+  email: string;
+  items: ContactTimelineItem[];
+}
+
 export type RegisterPushToken200 = {
   success?: boolean;
 };
@@ -2031,4 +2060,13 @@ export type SimulateAutomationRuleBody = {
 
 export type RollbackRuleExecution200 = {
   ok: boolean;
+};
+
+export type SearchContactsParams = {
+  q?: string;
+  /**
+   * Comma-separated category ids
+   */
+  categoryIds?: string;
+  limit?: number;
 };

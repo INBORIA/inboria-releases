@@ -51,6 +51,8 @@ import type {
   CheckoutBody,
   CheckoutResponse,
   ClaimSharedEmail200,
+  ContactSearchResponse,
+  ContactTimelineResponse,
   CreateAppointmentBody,
   CreateAutomationRuleBody,
   CreateCategoryBody,
@@ -149,6 +151,7 @@ import type {
   RuleAuditEntry,
   ScheduleEmail200,
   ScheduleEmailBody,
+  SearchContactsParams,
   SendEmail200,
   SendEmailBody,
   ShareEmailConnection409,
@@ -12689,3 +12692,185 @@ export const useRollbackRuleExecution = <
 > => {
   return useMutation(getRollbackRuleExecutionMutationOptions(options));
 };
+
+/**
+ * @summary Search contacts aggregated from emails
+ */
+export const getSearchContactsUrl = (params?: SearchContactsParams) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/contacts/search?${stringifiedParams}`
+    : `/api/contacts/search`;
+};
+
+export const searchContacts = async (
+  params?: SearchContactsParams,
+  options?: RequestInit,
+): Promise<ContactSearchResponse> => {
+  return customFetch<ContactSearchResponse>(getSearchContactsUrl(params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getSearchContactsQueryKey = (params?: SearchContactsParams) => {
+  return [`/api/contacts/search`, ...(params ? [params] : [])] as const;
+};
+
+export const getSearchContactsQueryOptions = <
+  TData = Awaited<ReturnType<typeof searchContacts>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: SearchContactsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof searchContacts>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getSearchContactsQueryKey(params);
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof searchContacts>>> = ({
+    signal,
+  }) => searchContacts(params, { signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof searchContacts>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type SearchContactsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof searchContacts>>
+>;
+export type SearchContactsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Search contacts aggregated from emails
+ */
+
+export function useSearchContacts<
+  TData = Awaited<ReturnType<typeof searchContacts>>,
+  TError = ErrorType<unknown>,
+>(
+  params?: SearchContactsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof searchContacts>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getSearchContactsQueryOptions(params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Full chronological timeline for a contact
+ */
+export const getGetContactTimelineUrl = (email: string) => {
+  return `/api/contacts/${email}/timeline`;
+};
+
+export const getContactTimeline = async (
+  email: string,
+  options?: RequestInit,
+): Promise<ContactTimelineResponse> => {
+  return customFetch<ContactTimelineResponse>(getGetContactTimelineUrl(email), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getGetContactTimelineQueryKey = (email: string) => {
+  return [`/api/contacts/${email}/timeline`] as const;
+};
+
+export const getGetContactTimelineQueryOptions = <
+  TData = Awaited<ReturnType<typeof getContactTimeline>>,
+  TError = ErrorType<unknown>,
+>(
+  email: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getContactTimeline>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getGetContactTimelineQueryKey(email);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof getContactTimeline>>
+  > = ({ signal }) => getContactTimeline(email, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!email,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof getContactTimeline>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type GetContactTimelineQueryResult = NonNullable<
+  Awaited<ReturnType<typeof getContactTimeline>>
+>;
+export type GetContactTimelineQueryError = ErrorType<unknown>;
+
+/**
+ * @summary Full chronological timeline for a contact
+ */
+
+export function useGetContactTimeline<
+  TData = Awaited<ReturnType<typeof getContactTimeline>>,
+  TError = ErrorType<unknown>,
+>(
+  email: string,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof getContactTimeline>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getGetContactTimelineQueryOptions(email, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}

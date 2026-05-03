@@ -27,6 +27,7 @@ import {
   MailCheck,
   FileText,
   Wand2,
+  Users,
 } from "lucide-react";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { cn } from "@/lib/utils";
@@ -89,6 +90,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
     { name: t("tasks.title"), href: "/dashboard/taches", icon: CheckSquare },
     { name: t("sidebar.followups", "Relances"), href: "/dashboard/relances", icon: MailCheck },
     { name: t("sidebar.projects"), href: "/dashboard/projets", icon: FolderKanban },
+    { name: t("sidebar.contacts", "Contacts"), href: "/dashboard/contacts", icon: Users },
     { name: t("sidebar.agenda"), href: "/dashboard/agenda", icon: CalendarDays },
     { name: t("sidebar.archives"), href: "/dashboard/archives", icon: Archive },
     { name: t("sidebar.dailyBrief"), href: "/dashboard/bilan", icon: LayoutDashboard },
