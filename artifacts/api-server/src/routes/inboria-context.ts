@@ -1238,6 +1238,87 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         }
       }
     }
+    // Detection d'IDs numeriques explicites dans la question utilisateur :
+    // "mail 4165", "#4165", "mail#4165", "le 4165". Quand l'utilisateur
+    // reference un mail par son identifiant, on le force-load directement
+    // depuis la base (scope tenant strict) pour qu'il soit dans la memoire,
+    // peu importe sa position dans la fenetre des 50 derniers.
+    const requestedMailIds: number[] = [];
+    {
+      // 3 a 7 chiffres precedes optionnellement de "mail", "email",
+      // "message", "courrier", "courriel" ou "#". On exige soit le mot
+      // declencheur soit le "#" pour eviter de capturer toute date/montant
+      // ("21 avril", "15,71 $").
+      const ID_RE =
+        /(?:\b(?:mails?|emails?|messages?|courriels?|courriers?)\s*#?\s*|#)(\d{3,7})\b/gi;
+      let im: RegExpExecArray | null;
+      while ((im = ID_RE.exec(lastUserMsg)) !== null) {
+        const id = Number(im[1]);
+        if (id > 0 && !requestedMailIds.includes(id)) requestedMailIds.push(id);
+        if (requestedMailIds.length >= 5) break;
+      }
+    }
+    if (requestedMailIds.length > 0) {
+      try {
+        const baseQ = adminTeamCtx
+          ? supabaseAdmin
+              .from("emails")
+              .select(
+                "id, sender, recipient, subject, summary, sent_at, created_at, priority, is_private",
+              )
+              .eq("is_private", false)
+          : supabaseAdmin
+              .from("emails")
+              .select(
+                "id, sender, recipient, subject, summary, sent_at, created_at, priority",
+              );
+        const { data: byIdRaw, error: byIdErr } = await baseQ
+          .or(emailScopeFilter)
+          .in("id", requestedMailIds);
+        if (byIdErr) throw byIdErr;
+        const byId = (byIdRaw as any[]) || [];
+        if (byId.length > 0) {
+          memoryLines.push(
+            `Mails references explicitement par identifiant dans la question :`,
+          );
+          for (const e of byId) {
+            const date = fmtShortDate(e.sent_at || e.created_at);
+            const prio = e.priority ? `[${String(e.priority).toLowerCase()}]` : "";
+            const who = truncate(e.sender || e.recipient || "(inconnu)", 50);
+            const subj = truncate(e.subject || "(sans objet)", 80);
+            const sum = e.summary ? ` — ${truncate(e.summary, 100)}` : "";
+            memoryLines.push(
+              `- [mail#${e.id}] ${date} ${prio} ${who} : ${subj}${sum}`,
+            );
+          }
+          memoryLines.push("");
+          // Signaler explicitement les IDs introuvables (mail supprime,
+          // hors scope, ou ID invente par l'utilisateur).
+          const found = new Set(byId.map((e: any) => Number(e.id)));
+          const missing = requestedMailIds.filter((id) => !found.has(id));
+          if (missing.length > 0) {
+            memoryLines.push(
+              `IDs demandes introuvables dans le scope tenant : ${missing
+                .map((id) => `#${id}`)
+                .join(", ")}.`,
+            );
+            memoryLines.push("");
+          }
+        } else {
+          memoryLines.push(
+            `IDs demandes introuvables dans le scope tenant : ${requestedMailIds
+              .map((id) => `#${id}`)
+              .join(", ")}.`,
+          );
+          memoryLines.push("");
+        }
+      } catch (err: any) {
+        req.log.warn(
+          { err: err?.message, ids: requestedMailIds },
+          "[inboria-chat] requested mail-id lookup failed",
+        );
+      }
+    }
     // Hoiste hors du if : utilise plus bas par le bloc d'extraction de
     // contenu de PJ pour cibler en priorite les mails de contacts mentionnes.
     const contactAwareEmailIdsOuter = new Set<number>();
