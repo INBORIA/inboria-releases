@@ -12,5 +12,14 @@ export interface SendEmailBody {
   body: string;
   /** @nullable */
   replyToEmailId?: number | null;
+  /**
+   * Optional email id to mark as "handled" on the server when the send succeeds, without populating reply_to_email_id. Used by the forward flow so the original email is auto-handled while the outgoing message is not classified as a reply.
+   * @nullable
+   */
+  markHandledOfEmailId?: number | null;
+  /** @nullable */
+  connectionId?: string | null;
+  /** @nullable */
+  projectId?: string | null;
   attachments?: string[];
 }

@@ -4545,12 +4545,12 @@
     "colArchived": "Archived",
     "colAssigned": "Assigned",
     "colAvgResponse": "Avg time",
-    "legendPerMember": "\"Handled\" = explicit human action (reply sent, forwarded, or Mark handled clicked). \"Dismissed\" = archived. \"Avg time\" = elapsed time between receipt and handling.",
-    "legendPerMemberLegacy": "\"Assigned\" = emails attributed to the member (legacy). \"Dismissed\" = archived. \"Avg time\" = derived from assigned_at/claimed_at until handled_at migration is applied.",
-    "legendPerMailbox": "Received volume, handled and dismissed per shared mailbox.",
-    "legendPerMailboxLegacy": "Received volume and dismissed per shared mailbox (legacy mode, before handled_at migration).",
-    "legendPerProject": "Received volume, handled and dismissed per project.",
-    "legendPerProjectLegacy": "Received volume and dismissed per project (legacy mode, before handled_at migration).",
+    "legendPerMember": "\"Handled\" = explicit human action (reply sent, forwarded, or Mark handled clicked). \"Dismissed\" = archived. \"Avg time\" = elapsed time between receipt and handling. Includes personal and shared mailboxes: personal emails only appear in Per member.",
+    "legendPerMemberLegacy": "\"Assigned\" = emails attributed to the member (legacy, includes personal and shared). \"Dismissed\" = archived. \"Avg time\" = derived from assigned_at/claimed_at until handled_at migration is applied.",
+    "legendPerMailbox": "Received volume, handled and dismissed per shared mailbox. Personal emails (not tied to a shared mailbox) are not counted here.",
+    "legendPerMailboxLegacy": "Received volume and dismissed per shared mailbox (legacy mode, before handled_at migration). Personal emails are not counted here.",
+    "legendPerProject": "Received volume, handled and dismissed per project. Emails with no project do not appear here.",
+    "legendPerProjectLegacy": "Received volume and dismissed per project (legacy mode, before handled_at migration). Emails with no project do not appear here.",
     "migrationBanner": "Migration pending: apply 2026_05_03_emails_handled.sql in Supabase to enable \"Handled\" and \"Avg time\" counters."
   },
   "integrations": {

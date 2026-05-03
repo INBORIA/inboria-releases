@@ -4545,12 +4545,12 @@
     "colArchived": "Archiviert",
     "colAssigned": "Zugewiesen",
     "colAvgResponse": "Ø Zeit",
-    "legendPerMember": "„Bearbeitet\" = explizite menschliche Aktion (Antwort gesendet, weitergeleitet oder Klick auf Als bearbeitet markieren). „Verworfen\" = archiviert. „Ø Zeit\" = vergangene Zeit zwischen Empfang und Bearbeitung.",
-    "legendPerMemberLegacy": "„Zugewiesen\" = dem Mitglied zugewiesene E-Mails (Legacy). „Verworfen\" = archiviert. „Ø Zeit\" = abgeleitet aus assigned_at/claimed_at bis zur handled_at-Migration.",
-    "legendPerMailbox": "Empfangenes Volumen, bearbeitet und verworfen pro geteiltem Postfach.",
-    "legendPerMailboxLegacy": "Empfangenes Volumen und verworfen pro geteiltem Postfach (Legacy-Modus, vor handled_at-Migration).",
-    "legendPerProject": "Empfangenes Volumen, bearbeitet und verworfen pro Projekt.",
-    "legendPerProjectLegacy": "Empfangenes Volumen und verworfen pro Projekt (Legacy-Modus, vor handled_at-Migration).",
+    "legendPerMember": "„Bearbeitet\" = explizite menschliche Aktion (Antwort gesendet, weitergeleitet oder Klick auf Als bearbeitet markieren). „Verworfen\" = archiviert. „Ø Zeit\" = vergangene Zeit zwischen Empfang und Bearbeitung. Umfasst persönliche und geteilte Postfächer: persönliche E-Mails erscheinen nur unter Pro Mitglied.",
+    "legendPerMemberLegacy": "„Zugewiesen\" = dem Mitglied zugewiesene E-Mails (Legacy, inkl. persönlich und geteilt). „Verworfen\" = archiviert. „Ø Zeit\" = abgeleitet aus assigned_at/claimed_at bis zur handled_at-Migration.",
+    "legendPerMailbox": "Empfangenes Volumen, bearbeitet und verworfen pro geteiltem Postfach. Persönliche E-Mails (nicht an ein geteiltes Postfach gebunden) werden hier nicht gezählt.",
+    "legendPerMailboxLegacy": "Empfangenes Volumen und verworfen pro geteiltem Postfach (Legacy-Modus, vor handled_at-Migration). Persönliche E-Mails werden hier nicht gezählt.",
+    "legendPerProject": "Empfangenes Volumen, bearbeitet und verworfen pro Projekt. E-Mails ohne Projekt erscheinen hier nicht.",
+    "legendPerProjectLegacy": "Empfangenes Volumen und verworfen pro Projekt (Legacy-Modus, vor handled_at-Migration). E-Mails ohne Projekt erscheinen hier nicht.",
     "migrationBanner": "Migration ausstehend: Wenden Sie 2026_05_03_emails_handled.sql in Supabase an, um die Zähler „Bearbeitet\" und „Ø Zeit\" zu aktivieren."
   },
   "integrations": {

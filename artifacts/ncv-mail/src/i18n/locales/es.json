@@ -4545,12 +4545,12 @@
     "colArchived": "Archivados",
     "colAssigned": "Asignados",
     "colAvgResponse": "T. medio",
-    "legendPerMember": "«Atendidos» = acción humana explícita (respuesta enviada, reenviado o clic en Marcar como atendido). «Descartados» = archivados. «T. medio» = tiempo transcurrido entre la recepción y la gestión.",
-    "legendPerMemberLegacy": "«Asignados» = correos atribuidos al miembro (legacy). «Descartados» = archivados. «T. medio» = derivado de assigned_at/claimed_at hasta aplicar la migración handled_at.",
-    "legendPerMailbox": "Volumen recibido, atendido y descartado por buzón compartido.",
-    "legendPerMailboxLegacy": "Volumen recibido y descartados por buzón compartido (modo legacy, antes de la migración handled_at).",
-    "legendPerProject": "Volumen recibido, atendido y descartado por proyecto.",
-    "legendPerProjectLegacy": "Volumen recibido y descartados por proyecto (modo legacy, antes de la migración handled_at).",
+    "legendPerMember": "«Atendidos» = acción humana explícita (respuesta enviada, reenviado o clic en Marcar como atendido). «Descartados» = archivados. «T. medio» = tiempo transcurrido entre la recepción y la gestión. Incluye correos personales y buzones compartidos: los correos personales solo aparecen en Por miembro.",
+    "legendPerMemberLegacy": "«Asignados» = correos atribuidos al miembro (legacy, incluye personales y compartidos). «Descartados» = archivados. «T. medio» = derivado de assigned_at/claimed_at hasta aplicar la migración handled_at.",
+    "legendPerMailbox": "Volumen recibido, atendido y descartado por buzón compartido. Los correos personales (no vinculados a un buzón compartido) no se cuentan aquí.",
+    "legendPerMailboxLegacy": "Volumen recibido y descartados por buzón compartido (modo legacy, antes de la migración handled_at). Los correos personales no se cuentan aquí.",
+    "legendPerProject": "Volumen recibido, atendido y descartado por proyecto. Los correos sin proyecto no aparecen aquí.",
+    "legendPerProjectLegacy": "Volumen recibido y descartados por proyecto (modo legacy, antes de la migración handled_at). Los correos sin proyecto no aparecen aquí.",
     "migrationBanner": "Migración pendiente: aplique 2026_05_03_emails_handled.sql en Supabase para activar los contadores «Atendidos» y «T. medio»."
   },
   "integrations": {

@@ -1516,6 +1516,14 @@ export const SendEmailBody = zod.object({
   subject: zod.string(),
   body: zod.string(),
   replyToEmailId: zod.number().nullish(),
+  markHandledOfEmailId: zod
+    .number()
+    .nullish()
+    .describe(
+      'Optional email id to mark as \"handled\" on the server when the send succeeds, without populating reply_to_email_id. Used by the forward flow so the original email is auto-handled while the outgoing message is not classified as a reply.',
+    ),
+  connectionId: zod.string().nullish(),
+  projectId: zod.string().nullish(),
   attachments: zod.array(zod.string()).optional(),
 });
 

@@ -3835,6 +3835,17 @@ components:
           type: string
         replyToEmailId:
           type: ["integer", "null"]
+        markHandledOfEmailId:
+          type: ["integer", "null"]
+          description: >-
+            Optional email id to mark as "handled" on the server when the send
+            succeeds, without populating reply_to_email_id. Used by the forward
+            flow so the original email is auto-handled while the outgoing
+            message is not classified as a reply.
+        connectionId:
+          type: ["string", "null"]
+        projectId:
+          type: ["string", "null"]
         attachments:
           type: array
           items:
