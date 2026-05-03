@@ -9,8 +9,9 @@ import {
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
-import { Sparkles, ArrowRight, AlertTriangle, TrendingUp, RefreshCw, CheckSquare, BarChart3, CalendarDays, Clock, MapPin, Download, Users, FileText, Mail } from "lucide-react";
-import { useState } from "react";
+import { Sparkles, ArrowRight, AlertTriangle, TrendingUp, RefreshCw, CheckSquare, BarChart3, CalendarDays, Clock, MapPin, Download, Users, FileText, Mail, HelpCircle, ChevronDown, ChevronRight } from "lucide-react";
+import { useState, type ReactNode } from "react";
+import { Tooltip as InfoTooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTranslation } from "react-i18next";
 import { format, parseISO, startOfDay, endOfDay, addDays, type Locale } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
@@ -31,6 +32,7 @@ import {
   Pie,
   Cell,
   Legend,
+  type TooltipProps,
 } from "recharts";
 
 const dateLocales: Record<string, Locale> = { fr, en: enUS, nl };
@@ -62,6 +64,37 @@ function formatDelay(min: number | null | undefined): string {
 }
 
 const PIE_COLORS = ["#2d7dd2", "#7d4ed2", "#d2a02d", "#d24e6f", "#4ed29a", "#d2bc4e"];
+
+type MailMemberDatum = { name: string; openLoad: number; handled: number; delayLabel: string };
+type DelayDatum = { name: string; delay: number; label: string };
+type ScopeDatum = { name: string; received: number; handled: number; notHandled: number; delayLabel: string };
+type PersonalDatum = { name: string; received: number; handled: number; notHandled: number; delayLabel: string };
+type TaskDatum = { name: string; open: number; done: number; overdue: number };
+
+type TooltipRow = { label: string; value: ReactNode; color?: string };
+
+function TooltipBox({ title, rows }: { title: string; rows: TooltipRow[] }) {
+  return (
+    <div className="rounded border border-[#1f2937] bg-[#0d1117] px-2 py-1.5 text-[11px] shadow min-w-[160px]">
+      <p className="font-medium text-white mb-1 truncate">{title}</p>
+      {rows.map((r, i) => (
+        <div key={i} className="flex items-center justify-between gap-3">
+          <span className="text-[#8b9cb3]">{r.label}</span>
+          <span style={{ color: r.color ?? "#fff" }}>{r.value}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function makeChartTooltip<T extends { name?: string }>(buildRows: (datum: T) => TooltipRow[]) {
+  return function ChartTooltipContent(props: TooltipProps<number | string, string>) {
+    const { active, payload } = props;
+    if (!active || !payload || payload.length === 0) return null;
+    const datum = payload[0].payload as T;
+    return <TooltipBox title={datum.name ?? ""} rows={buildRows(datum)} />;
+  };
+}
 
 export default function BilanQuotidien() {
   const { t, i18n } = useTranslation();
@@ -138,6 +171,77 @@ export default function BilanQuotidien() {
   }
 
   const ta = teamAnalytics.data;
+
+  const loadPerMemberData: MailMemberDatum[] = (ta?.perMember ?? [])
+    .map((m) => ({
+      name: m.userName || m.userId.slice(0, 8),
+      openLoad: m.openLoad,
+      handled: m.handled,
+      delayLabel: formatDelay(m.avgFirstResponseMinutes),
+    }))
+    .filter((m) => m.openLoad + m.handled > 0)
+    .sort((a, b) => b.openLoad - a.openLoad);
+
+  const delayPerMemberData: DelayDatum[] = (ta?.perMember ?? [])
+    .filter((m) => m.avgFirstResponseMinutes != null)
+    .map((m) => ({
+      name: m.userName || m.userId.slice(0, 8),
+      delay: m.avgFirstResponseMinutes as number,
+      label: formatDelay(m.avgFirstResponseMinutes),
+    }))
+    .sort((a, b) => b.delay - a.delay);
+
+  const sharedMailboxData: ScopeDatum[] = (ta?.perMailbox ?? [])
+    .map((m) => ({
+      name: m.mailboxName + (m.mailboxEmail && m.mailboxEmail !== m.mailboxName ? ` (${m.mailboxEmail})` : ""),
+      received: m.received ?? m.count,
+      handled: m.handled,
+      notHandled: m.notHandled ?? Math.max(0, (m.received ?? m.count) - m.handled),
+      delayLabel: formatDelay(m.avgFirstResponseMinutes),
+    }))
+    .filter((m) => m.handled + m.notHandled > 0)
+    .sort((a, b) => b.notHandled - a.notHandled);
+
+  const projectsData: ScopeDatum[] = (ta?.perProject ?? [])
+    .map((p) => ({
+      name: p.projectName + (p.projectReference ? ` [${p.projectReference}]` : ""),
+      received: p.received ?? p.count,
+      handled: p.handled,
+      notHandled: p.notHandled ?? Math.max(0, (p.received ?? p.count) - p.handled),
+      delayLabel: formatDelay(p.avgFirstResponseMinutes),
+    }))
+    .filter((p) => p.handled + p.notHandled > 0)
+    .sort((a, b) => b.notHandled - a.notHandled);
+
+  const personalMailboxData: PersonalDatum[] = (ta?.perPersonalMailbox ?? [])
+    .map((m) => ({
+      name: m.userName || m.userId.slice(0, 8),
+      received: m.received,
+      handled: m.handled,
+      notHandled: m.notHandled,
+      delayLabel: formatDelay(m.avgFirstResponseMinutes),
+    }))
+    .filter((m) => m.received + m.handled > 0)
+    .sort((a, b) => b.received - a.received);
+
+  const tasksMemberPie: TaskDatum[] = (ta?.tasksPerMember ?? [])
+    .filter((m) => m.open + m.done + m.overdue > 0)
+    .map((m) => ({
+      name: m.userName || m.userId.slice(0, 8),
+      open: m.open,
+      done: m.done,
+      overdue: m.overdue,
+    }));
+  const totalOpenTasks = tasksMemberPie.reduce((s, m) => s + m.open, 0);
+
+  const tasksProjectData: TaskDatum[] = (ta?.tasksPerProject ?? [])
+    .filter((p) => p.open + p.done + p.overdue > 0)
+    .map((p) => ({
+      name: p.isOutOfProject ? t("analytics.outOfProject") : (p.projectName + (p.projectReference ? ` [${p.projectReference}]` : "")),
+      open: p.open,
+      done: p.done,
+      overdue: p.overdue,
+    }));
 
   return (
     <DashboardLayout>
@@ -428,7 +532,7 @@ export default function BilanQuotidien() {
                   {ta.topSenders.length === 0 ? (
                     <p className="text-[11px] text-[#8b9cb3] py-6 text-center">{t("analytics.noTopSenders")}</p>
                   ) : (
-                    <div className="h-56 w-full">
+                    <div className="h-44 sm:h-56 w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={ta.topSenders.slice(0, 8)} layout="vertical" margin={{ left: 8, right: 16 }}>
                           <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
@@ -444,7 +548,7 @@ export default function BilanQuotidien() {
 
                 <div className="bg-card rounded-lg border border-border p-3">
                   <h3 className="text-[12px] font-semibold text-white mb-2">{t("analytics.topCategories")}</h3>
-                  <div className="h-56 w-full">
+                  <div className="h-44 sm:h-56 w-full">
                     <ResponsiveContainer width="100%" height="100%">
                       <PieChart>
                         <Pie data={ta.topCategories.slice(0, 6)} dataKey="count" nameKey="name" outerRadius={70} label={{ fontSize: 10, fill: "#c9d1d9" }}>
@@ -461,115 +565,175 @@ export default function BilanQuotidien() {
               </div>
 
               {/* ===== BLOC MAILS ===== */}
-              <div className="mt-2">
-                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
-                  <Mail className="w-4 h-4 text-cyan-400" />
-                  <h2 className="text-[14px] font-semibold text-white">{t("analytics.blockMails")}</h2>
+              {(loadPerMemberData.length > 0 || delayPerMemberData.length > 0 || sharedMailboxData.length > 0 || projectsData.length > 0 || personalMailboxData.length > 0) && (
+                <div className="mt-2">
+                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
+                    <Mail className="w-4 h-4 text-cyan-400" />
+                    <h2 className="text-[14px] font-semibold text-white">{t("analytics.blockMails")}</h2>
+                  </div>
+
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {loadPerMemberData.length > 0 && (
+                      <AnalyticsChartCard title={t("analytics.chartLoadPerMember")} tooltip={t("analytics.tooltipLoadPerMember")}>
+                        <div className="h-44 sm:h-56 w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={loadPerMemberData} layout="vertical" margin={{ left: 8, right: 16 }}>
+                              <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
+                              <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
+                              <YAxis type="category" dataKey="name" width={130} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                              <Tooltip content={makeChartTooltip<MailMemberDatum>((d) => [
+                                { label: t("analytics.colOpenLoad"), value: d.openLoad, color: "#2d7dd2" },
+                                { label: t("analytics.colHandled"), value: d.handled, color: "#4ed29a" },
+                                { label: t("analytics.colAvgResponse"), value: d.delayLabel },
+                              ])} />
+                              <Legend wrapperStyle={{ fontSize: 10 }} />
+                              <Bar dataKey="openLoad" name={t("analytics.colOpenLoad")} fill="#2d7dd2" stackId="a" />
+                              <Bar dataKey="handled" name={t("analytics.colHandled")} fill="#4ed29a" stackId="a" />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </AnalyticsChartCard>
+                    )}
+
+                    {delayPerMemberData.length > 0 && (
+                      <AnalyticsChartCard title={t("analytics.chartAvgDelayPerMember")} tooltip={t("analytics.tooltipAvgDelayPerMember")}>
+                        <div className="h-44 sm:h-56 w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={delayPerMemberData} layout="vertical" margin={{ left: 8, right: 16 }}>
+                              <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
+                              <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} unit=" min" />
+                              <YAxis type="category" dataKey="name" width={130} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                              <Tooltip content={makeChartTooltip<DelayDatum>((d) => [
+                                { label: t("analytics.colAvgResponse"), value: d.label, color: d.delay > 240 ? "#d24e6f" : "#fff" },
+                                { label: "min", value: d.delay },
+                              ])} />
+                              <Bar dataKey="delay" name={t("analytics.colAvgResponse")}>
+                                {delayPerMemberData.map((d, i) => (
+                                  <Cell key={i} fill={d.delay > 240 ? "#d24e6f" : "#2d7dd2"} />
+                                ))}
+                              </Bar>
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </AnalyticsChartCard>
+                    )}
+
+                    {sharedMailboxData.length > 0 && (
+                      <AnalyticsChartCard title={t("analytics.perMailbox")} tooltip={t("analytics.tooltipSharedMailboxes")}>
+                        <div className="h-44 sm:h-56 w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={sharedMailboxData} layout="vertical" margin={{ left: 8, right: 16 }}>
+                              <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
+                              <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
+                              <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                              <Tooltip content={makeChartTooltip<ScopeDatum>((d) => [
+                                { label: t("analytics.colReceived"), value: d.received },
+                                { label: t("analytics.colHandled"), value: d.handled, color: "#4ed29a" },
+                                { label: t("analytics.colNotHandled"), value: d.notHandled, color: "#d2a02d" },
+                                { label: t("analytics.colAvgResponse"), value: d.delayLabel },
+                              ])} />
+                              <Legend wrapperStyle={{ fontSize: 10 }} />
+                              <Bar dataKey="handled" name={t("analytics.colHandled")} fill="#4ed29a" stackId="a" />
+                              <Bar dataKey="notHandled" name={t("analytics.colNotHandled")} fill="#d2a02d" stackId="a" />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </AnalyticsChartCard>
+                    )}
+
+                    {projectsData.length > 0 && (
+                      <AnalyticsChartCard title={t("analytics.perProject")} tooltip={t("analytics.tooltipProjects")}>
+                        <div className="h-44 sm:h-56 w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={projectsData} layout="vertical" margin={{ left: 8, right: 16 }}>
+                              <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
+                              <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
+                              <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                              <Tooltip content={makeChartTooltip<ScopeDatum>((d) => [
+                                { label: t("analytics.colReceived"), value: d.received },
+                                { label: t("analytics.colHandled"), value: d.handled, color: "#4ed29a" },
+                                { label: t("analytics.colNotHandled"), value: d.notHandled, color: "#d2a02d" },
+                                { label: t("analytics.colAvgResponse"), value: d.delayLabel },
+                              ])} />
+                              <Legend wrapperStyle={{ fontSize: 10 }} />
+                              <Bar dataKey="handled" name={t("analytics.colHandled")} fill="#4ed29a" stackId="a" />
+                              <Bar dataKey="notHandled" name={t("analytics.colNotHandled")} fill="#d2a02d" stackId="a" />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </AnalyticsChartCard>
+                    )}
+                  </div>
+
+                  {personalMailboxData.length > 0 && (
+                    <PersonalMailboxSection data={personalMailboxData} t={t} />
+                  )}
                 </div>
-
-                <MailTable
-                  title={t("analytics.perMember")}
-                  note={t("analytics.notePerMember")}
-                  mode="member"
-                  rows={ta.perMember.map((m) => ({
-                    name: m.userName || m.userId.slice(0, 8),
-                    openLoad: m.openLoad,
-                    handled: m.handled,
-                    delay: formatDelay(m.avgFirstResponseMinutes),
-                  }))}
-                  t={t}
-                />
-
-                {ta.perMailbox && ta.perMailbox.length > 0 && (
-                  <MailTable
-                    title={t("analytics.perMailbox")}
-                    note={t("analytics.notePerMailbox")}
-                    mode="scope"
-                    scopeLabel={t("analytics.colMailbox")}
-                    rows={ta.perMailbox.map((m) => ({
-                      name: m.mailboxName + (m.mailboxEmail && m.mailboxEmail !== m.mailboxName ? ` (${m.mailboxEmail})` : ""),
-                      received: m.received ?? m.count,
-                      handled: m.handled,
-                      notHandled: m.notHandled ?? Math.max(0, (m.received ?? m.count) - m.handled),
-                      delay: formatDelay(m.avgFirstResponseMinutes),
-                    }))}
-                    t={t}
-                  />
-                )}
-
-                {ta.perPersonalMailbox && ta.perPersonalMailbox.length > 0 && (
-                  <MailTable
-                    title={t("analytics.perPersonalMailbox")}
-                    note={t("analytics.notePerPersonalMailbox")}
-                    mode="scope"
-                    scopeLabel={t("analytics.colMember")}
-                    rows={ta.perPersonalMailbox.map((m) => ({
-                      name: m.userName || m.userId.slice(0, 8),
-                      received: m.received,
-                      handled: m.handled,
-                      notHandled: m.notHandled,
-                      delay: formatDelay(m.avgFirstResponseMinutes),
-                    }))}
-                    t={t}
-                  />
-                )}
-
-                {ta.perProject && ta.perProject.length > 0 && (
-                  <MailTable
-                    title={t("analytics.perProject")}
-                    note={t("analytics.notePerProject")}
-                    mode="scope"
-                    scopeLabel={t("analytics.colProject")}
-                    rows={ta.perProject.map((p) => ({
-                      name: p.projectName + (p.projectReference ? ` [${p.projectReference}]` : ""),
-                      received: p.received ?? p.count,
-                      handled: p.handled,
-                      notHandled: p.notHandled ?? Math.max(0, (p.received ?? p.count) - p.handled),
-                      delay: formatDelay(p.avgFirstResponseMinutes),
-                    }))}
-                    t={t}
-                  />
-                )}
-              </div>
+              )}
 
               {/* ===== BLOC TÂCHES ===== */}
-              {(ta.tasksPerMember || ta.tasksPerProject) && (
+              {(totalOpenTasks > 0 || tasksProjectData.length > 0) && (
                 <div className="mt-2">
                   <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
                     <CheckSquare className="w-4 h-4 text-violet-400" />
                     <h2 className="text-[14px] font-semibold text-white">{t("analytics.blockTasks")}</h2>
                   </div>
 
-                  {ta.tasksPerMember && (
-                    <TaskTable
-                      title={t("analytics.tasksPerMember")}
-                      note={t("analytics.noteTasksPerMember")}
-                      scope="member"
-                      rows={ta.tasksPerMember.map((m) => ({
-                        name: m.userName || m.userId.slice(0, 8),
-                        open: m.open,
-                        done: m.done,
-                        overdue: m.overdue,
-                      }))}
-                      t={t}
-                    />
-                  )}
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {totalOpenTasks > 0 && (
+                      <AnalyticsChartCard title={t("analytics.tasksPerMember")} tooltip={t("analytics.tooltipTasksPerMember")}>
+                        <div className="h-44 sm:h-56 w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <PieChart>
+                              <Pie data={tasksMemberPie} dataKey="open" nameKey="name" outerRadius={70}>
+                                {tasksMemberPie.map((_, i) => (
+                                  <Cell key={i} fill={PIE_COLORS[i % PIE_COLORS.length]} />
+                                ))}
+                              </Pie>
+                              <Tooltip content={makeChartTooltip<TaskDatum>((d) => [
+                                { label: t("analytics.colTasksOpen"), value: d.open, color: "#2d7dd2" },
+                                { label: t("analytics.colTasksDone"), value: d.done, color: "#4ed29a" },
+                                { label: t("analytics.colTasksOverdue"), value: d.overdue, color: "#d24e6f" },
+                              ])} />
+                            </PieChart>
+                          </ResponsiveContainer>
+                        </div>
+                        <div className="mt-2 space-y-1">
+                          {tasksMemberPie.map((m, i) => (
+                            <div key={i} className="flex items-center gap-2 text-[11px]">
+                              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: PIE_COLORS[i % PIE_COLORS.length] }} />
+                              <span className="text-white flex-1 truncate">{m.name}</span>
+                              <span className="px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-300 text-[10px]">{m.done} {t("analytics.colTasksDone")}</span>
+                              <span className="px-1.5 py-0.5 rounded bg-rose-500/15 text-rose-300 text-[10px]">{m.overdue} {t("analytics.colTasksOverdue")}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </AnalyticsChartCard>
+                    )}
 
-                  {ta.tasksPerProject && ta.tasksPerProject.length > 0 && (
-                    <TaskTable
-                      title={t("analytics.tasksPerProject")}
-                      note={t("analytics.noteTasksPerProject")}
-                      scope="project"
-                      rows={ta.tasksPerProject.map((p) => ({
-                        name: p.isOutOfProject ? t("analytics.outOfProject") : (p.projectName + (p.projectReference ? ` [${p.projectReference}]` : "")),
-                        open: p.open,
-                        done: p.done,
-                        overdue: p.overdue,
-                        isOutOfProject: p.isOutOfProject,
-                      }))}
-                      t={t}
-                    />
-                  )}
+                    {tasksProjectData.length > 0 && (
+                      <AnalyticsChartCard title={t("analytics.tasksPerProject")} tooltip={t("analytics.tooltipTasksPerProject")}>
+                        <div className="h-44 sm:h-56 w-full">
+                          <ResponsiveContainer width="100%" height="100%">
+                            <BarChart data={tasksProjectData} layout="vertical" margin={{ left: 8, right: 16 }}>
+                              <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
+                              <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
+                              <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                              <Tooltip content={makeChartTooltip<TaskDatum>((d) => [
+                                { label: t("analytics.colTasksOpen"), value: d.open, color: "#2d7dd2" },
+                                { label: t("analytics.colTasksDone"), value: d.done, color: "#4ed29a" },
+                                { label: t("analytics.colTasksOverdue"), value: d.overdue, color: "#d24e6f" },
+                              ])} />
+                              <Legend wrapperStyle={{ fontSize: 10 }} />
+                              <Bar dataKey="open" name={t("analytics.colTasksOpen")} fill="#2d7dd2" stackId="a" />
+                              <Bar dataKey="done" name={t("analytics.colTasksDone")} fill="#4ed29a" stackId="a" />
+                              <Bar dataKey="overdue" name={t("analytics.colTasksOverdue")} fill="#d24e6f" stackId="a" />
+                            </BarChart>
+                          </ResponsiveContainer>
+                        </div>
+                      </AnalyticsChartCard>
+                    )}
+                  </div>
                 </div>
               )}
             </div>
@@ -601,75 +765,63 @@ function StatCardText({ label, value }: { label: string; value: string }) {
   );
 }
 
-type MailRow = { name: string; received?: number; openLoad?: number; handled: number; notHandled?: number; delay: string };
-type TaskRow = { name: string; open: number; done: number; overdue: number; isOutOfProject?: boolean };
-
-function MailTable({ title, note, rows, mode, scopeLabel, t }: { title: string; note: string; rows: MailRow[]; mode: "member" | "scope"; scopeLabel?: string; t: (k: string) => string }) {
+function AnalyticsChartCard({ title, tooltip, children }: { title: string; tooltip: string; children: ReactNode }) {
   return (
-    <div className="mb-5">
-      <h3 className="text-[12px] font-semibold text-white mb-2">{title}</h3>
-      <div className="overflow-hidden rounded-lg border border-[#1f2940] bg-[#0f1729]">
-        <table className="w-full text-[12px]">
-          <thead>
-            <tr className="bg-[#141c33] text-[#8b9cb3] text-[11px]">
-              <th className="text-left px-3 py-2 font-medium">{mode === "member" ? t("analytics.colMember") : (scopeLabel || t("analytics.colMailbox"))}</th>
-              {mode === "scope" && <th className="text-right px-3 py-2 font-medium">{t("analytics.colReceived")}</th>}
-              {mode === "member" && <th className="text-right px-3 py-2 font-medium">{t("analytics.colOpenLoad")}</th>}
-              <th className="text-right px-3 py-2 font-medium">{t("analytics.colHandled")}</th>
-              {mode === "scope" && <th className="text-right px-3 py-2 font-medium">{t("analytics.colNotHandled")}</th>}
-              <th className="text-right px-3 py-2 font-medium">{t("analytics.colAvgResponse")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 ? (
-              <tr><td colSpan={mode === "scope" ? 5 : 4} className="px-3 py-3 text-center text-[#8b9cb3]">{t("analytics.empty")}</td></tr>
-            ) : rows.map((r, i) => (
-              <tr key={i} className="border-t border-[#1f2940]">
-                <td className="px-3 py-2 text-white">{r.name}</td>
-                {mode === "scope" && <td className="text-right px-3 py-2 text-[#cfd8e8]">{r.received}</td>}
-                {mode === "member" && <td className="text-right px-3 py-2 text-[#cfd8e8]">{r.openLoad}</td>}
-                <td className="text-right px-3 py-2 text-emerald-400">{r.handled}</td>
-                {mode === "scope" && <td className="text-right px-3 py-2 text-amber-400">{r.notHandled}</td>}
-                <td className="text-right px-3 py-2 text-[#cfd8e8]">{r.delay}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <div className="bg-card rounded-lg border border-border p-3">
+      <div className="flex items-center gap-1.5 mb-2">
+        <h3 className="text-[12px] font-semibold text-white">{title}</h3>
+        <InfoTooltip>
+          <TooltipTrigger asChild>
+            <button type="button" aria-label="info" className="text-[#8b9cb3] hover:text-white transition-colors">
+              <HelpCircle className="w-3 h-3" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-[260px] text-[11px] leading-snug">
+            {tooltip}
+          </TooltipContent>
+        </InfoTooltip>
       </div>
-      <p className="text-[10px] text-[#7c8aa3] mt-1.5 italic">{note}</p>
+      {children}
     </div>
   );
 }
 
-function TaskTable({ title, note, rows, scope, t }: { title: string; note: string; rows: TaskRow[]; scope: "member" | "project"; t: (k: string) => string }) {
+function PersonalMailboxSection({ data, t }: { data: PersonalDatum[]; t: (k: string) => string }) {
+  const [open, setOpen] = useState(false);
   return (
-    <div className="mb-5">
-      <h3 className="text-[12px] font-semibold text-white mb-2">{title}</h3>
-      <div className="overflow-hidden rounded-lg border border-[#1f2940] bg-[#0f1729]">
-        <table className="w-full text-[12px]">
-          <thead>
-            <tr className="bg-[#141c33] text-[#8b9cb3] text-[11px]">
-              <th className="text-left px-3 py-2 font-medium">{scope === "member" ? t("analytics.colMember") : t("analytics.colProject")}</th>
-              <th className="text-right px-3 py-2 font-medium">{t("analytics.colTasksOpen")}</th>
-              <th className="text-right px-3 py-2 font-medium">{t("analytics.colTasksDone")}</th>
-              <th className="text-right px-3 py-2 font-medium">{t("analytics.colTasksOverdue")}</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rows.length === 0 ? (
-              <tr><td colSpan={4} className="px-3 py-3 text-center text-[#8b9cb3]">{t("analytics.empty")}</td></tr>
-            ) : rows.map((r, i) => (
-              <tr key={i} className={`border-t border-[#1f2940] ${r.isOutOfProject ? "bg-[#141c33]" : ""}`}>
-                <td className={`px-3 py-2 ${r.isOutOfProject ? "text-[#8b9cb3] italic" : "text-white"}`}>{r.name}</td>
-                <td className="text-right px-3 py-2 text-cyan-400">{r.open}</td>
-                <td className="text-right px-3 py-2 text-emerald-400">{r.done}</td>
-                <td className="text-right px-3 py-2 text-rose-400">{r.overdue}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-      <p className="text-[10px] text-[#7c8aa3] mt-1.5 italic">{note}</p>
+    <div className="mt-3">
+      <button
+        type="button"
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-1.5 text-[11px] text-[#8b9cb3] hover:text-white transition-colors"
+      >
+        {open ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
+        {t("analytics.personalDetailToggle")}
+      </button>
+      {open && (
+        <div className="mt-2">
+          <AnalyticsChartCard title={t("analytics.chartPersonalMailboxes")} tooltip={t("analytics.tooltipPersonalMailboxes")}>
+            <div className="h-44 sm:h-56 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={data} layout="vertical" margin={{ left: 8, right: 16 }}>
+                  <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
+                  <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
+                  <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                  <Tooltip content={makeChartTooltip<PersonalDatum>((d) => [
+                    { label: t("analytics.colReceived"), value: d.received, color: "#2d7dd2" },
+                    { label: t("analytics.colHandled"), value: d.handled, color: "#4ed29a" },
+                    { label: t("analytics.colNotHandled"), value: d.notHandled, color: "#d2a02d" },
+                    { label: t("analytics.colAvgResponse"), value: d.delayLabel },
+                  ])} />
+                  <Legend wrapperStyle={{ fontSize: 10 }} />
+                  <Bar dataKey="received" name={t("analytics.colReceived")} fill="#2d7dd2" />
+                  <Bar dataKey="handled" name={t("analytics.colHandled")} fill="#4ed29a" />
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </AnalyticsChartCard>
+        </div>
+      )}
     </div>
   );
 }
