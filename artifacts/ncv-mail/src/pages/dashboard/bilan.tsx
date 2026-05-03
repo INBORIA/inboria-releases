@@ -389,7 +389,7 @@ export default function BilanQuotidien() {
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
                   <StatCard label={t("analytics.totalEmails")} value={ta.totals.emails} />
                   <StatCard label={t("analytics.assigned")} value={ta.totals.assigned} />
-                  <StatCard label={t("analytics.dismissed")} value={ta.totals.archived} />
+                  <StatCard label={t("analytics.notHandled")} value={Math.max(0, ta.totals.emails - (ta.totals.handled ?? ta.totals.assigned))} />
                   <StatCardText label={t("analytics.avgHandlingTime")} value={formatDelay(ta.totals.avgHandlingMinutes)} />
                   <StatCard label={t("analytics.openBreaches")} value={ta.slaSummary.openBreaches} accent={ta.slaSummary.openBreaches > 0 ? "red" : "default"} />
                 </div>
@@ -397,7 +397,7 @@ export default function BilanQuotidien() {
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
                   <StatCard label={t("analytics.totalEmails")} value={ta.totals.emails} />
                   <StatCard label={t("analytics.handled")} value={ta.totals.handled ?? 0} />
-                  <StatCard label={t("analytics.dismissed")} value={ta.totals.archived} />
+                  <StatCard label={t("analytics.notHandled")} value={Math.max(0, ta.totals.emails - (ta.totals.handled ?? 0))} />
                   <StatCardText label={t("analytics.avgHandlingTime")} value={formatDelay(ta.totals.avgHandlingMinutes)} />
                   <StatCard label={t("analytics.openBreaches")} value={ta.slaSummary.openBreaches} accent={ta.slaSummary.openBreaches > 0 ? "red" : "default"} />
                 </div>
