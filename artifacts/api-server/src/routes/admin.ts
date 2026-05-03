@@ -4,6 +4,11 @@ import { requireAuth } from "../middlewares/auth";
 import { requireAdmin } from "../middlewares/requireAdmin";
 import { getPaddleClient } from "../lib/paddle";
 import { logger } from "../lib/logger";
+import OpenAI from "openai";
+import {
+  processEmailEmbeddings,
+  dailyEmbeddingBudgetRemainingUsd,
+} from "../services/email-embedder";
 
 const router: IRouter = Router();
 
@@ -530,6 +535,179 @@ router.post(
       const message = err instanceof Error ? err.message : "Unknown error";
       logger.error({ err: message }, "[admin] cancel subscription crashed");
       res.status(500).json({ error: "Failed to cancel subscription" });
+    }
+  },
+);
+
+// Email Brain Phase 1 (#214) — backfill admin de l'indexation vectorielle
+// du corpus de mails. À hit une fois par tenant après l'application de la
+// migration 2026_05_03_email_chunks.sql.
+//
+// Réponse immédiate avec le nombre de mails enfilés ; le traitement réel
+// est lancé en arrière-plan (promise non awaitée) avec logs de progression.
+let backfillRunning = false;
+
+router.post(
+  "/admin/email-brain/backfill",
+  requireAuth,
+  requireAdmin,
+  async (req, res): Promise<void> => {
+    try {
+      const body = (req.body ?? {}) as { limit?: unknown; userId?: unknown };
+      const rawLimit = Number(body.limit);
+      const limit =
+        Number.isFinite(rawLimit) && rawLimit > 0
+          ? Math.min(Math.floor(rawLimit), 20000)
+          : 5000;
+      const targetUserId =
+        typeof body.userId === "string" && body.userId ? body.userId : null;
+
+      if (backfillRunning) {
+        res.status(409).json({
+          ok: false,
+          error: "A backfill is already running, wait for it to complete.",
+        });
+        return;
+      }
+
+      if (!process.env["OPENAI_API_KEY"]) {
+        res.status(500).json({ ok: false, error: "OPENAI_API_KEY missing" });
+        return;
+      }
+
+      let countQuery = supabaseAdmin
+        .from("emails")
+        .select("id", { count: "exact", head: true })
+        .is("embeddings_indexed_at", null)
+        .neq("status", "spam");
+      if (targetUserId) countQuery = countQuery.eq("user_id", targetUserId);
+      const { count: pendingCount, error: countErr } = await countQuery;
+      if (countErr) {
+        res.status(500).json({ ok: false, error: countErr.message });
+        return;
+      }
+
+      const enqueued = Math.min(pendingCount ?? 0, limit);
+      audit("email_brain_backfill_enqueued", {
+        adminId: req.userId ?? null,
+        targetUserId,
+        enqueued,
+        pendingTotal: pendingCount ?? 0,
+        limit,
+      });
+
+      // Réponse immédiate, traitement async en arrière-plan.
+      res.json({
+        ok: true,
+        enqueued,
+        pendingTotal: pendingCount ?? 0,
+        limit,
+      });
+
+      backfillRunning = true;
+      void (async () => {
+        const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
+        const startTs = Date.now();
+        // Compteurs basés sur des IDs uniques pour éviter qu'un email
+        // en échec transitoire (qu'on ne marque PAS indexé) soit re-fetché
+        // au cycle suivant et compté plusieurs fois (bug review SEVERE).
+        const seenIds = new Set<number>();
+        let indexed = 0;
+        let failed = 0;
+        let budgetStopped = false;
+        try {
+          const BATCH = 50;
+          // Curseur stable par id décroissant : on n'est plus dépendant
+          // de la mutation `embeddings_indexed_at` pour avancer, et un
+          // mail en échec transitoire ne bloque pas la file.
+          let cursorId: number | null = null;
+          while (seenIds.size < enqueued) {
+            if (dailyEmbeddingBudgetRemainingUsd() <= 0) {
+              budgetStopped = true;
+              logger.warn(
+                { processed: seenIds.size, indexed, failed },
+                "[email-brain-backfill] daily budget exhausted, stopping",
+              );
+              break;
+            }
+            let q = supabaseAdmin
+              .from("emails")
+              .select(
+                "id, user_id, shared_mailbox_id, sender, recipient, subject, body, status, sent_at, created_at",
+              )
+              .is("embeddings_indexed_at", null)
+              .neq("status", "spam")
+              .order("id", { ascending: false })
+              .limit(BATCH);
+            if (cursorId !== null) q = q.lt("id", cursorId);
+            if (targetUserId) q = q.eq("user_id", targetUserId);
+            const { data, error } = await q;
+            if (error) {
+              logger.warn(
+                { err: error.message },
+                "[email-brain-backfill] fetch failed",
+              );
+              break;
+            }
+            const rows = (data || []) as any[];
+            if (rows.length === 0) break;
+            cursorId = Number(rows[rows.length - 1]!.id);
+
+            for (const row of rows) {
+              const eid = Number(row.id);
+              if (seenIds.has(eid)) continue;
+              seenIds.add(eid);
+              try {
+                const outcome = await processEmailEmbeddings(openai, row);
+                if (outcome === "indexed") indexed += 1;
+                if (outcome === "transient_error") failed += 1;
+                if (outcome !== "transient_error") {
+                  await supabaseAdmin
+                    .from("emails")
+                    .update({ embeddings_indexed_at: new Date().toISOString() })
+                    .eq("id", eid);
+                }
+              } catch (err: any) {
+                failed += 1;
+                logger.warn(
+                  { err: err?.message, emailId: eid },
+                  "[email-brain-backfill] processing crashed",
+                );
+              }
+              if (seenIds.size % 500 === 0) {
+                logger.info(
+                  { processed: seenIds.size, indexed, failed, enqueued },
+                  "[email-brain-backfill] progress",
+                );
+              }
+              if (seenIds.size >= enqueued) break;
+              if (dailyEmbeddingBudgetRemainingUsd() <= 0) {
+                budgetStopped = true;
+                break;
+              }
+            }
+            if (budgetStopped) break;
+          }
+        } finally {
+          backfillRunning = false;
+          logger.info(
+            {
+              processed: seenIds.size,
+              indexed,
+              failed,
+              enqueued,
+              budgetStopped,
+              durationMs: Date.now() - startTs,
+              targetUserId,
+            },
+            "[email-brain-backfill] complete",
+          );
+        }
+      })();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Unknown error";
+      logger.error({ err: message }, "[admin] email brain backfill crashed");
+      res.status(500).json({ ok: false, error: "backfill crashed" });
     }
   },
 );

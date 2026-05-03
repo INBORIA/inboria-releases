@@ -73,6 +73,43 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
       hide them from team view + Inboria. Members audit accesses
       about them via Settings → Vie privée & accès équipe.
 
+### Email Brain — Phase 1 (RAG sémantique full-corpus, #214)
+
+Le chat Inboria peut désormais retrouver n'importe quel mail du corpus
+via une 5e voie d'accès (recherche sémantique) en plus des 4 existantes
+(fenêtre 50 mails / contact / ID / mémoire structurée). Implémentation
+invisible côté UI, aucun changement de tarif.
+
+Composants :
+- Migration : `migrations/2026_05_03_email_chunks.sql` — table
+  `email_chunks(email_id, chunk_index, content, embedding vector(1536))`,
+  index `ivfflat`, fonction RPC `search_email_chunks(query_vec,
+  scope_user_ids, scope_mailbox_ids, exclude_private, match_limit)` avec
+  filtre tenant strict + exclusion `is_private`. Ajoute aussi
+  `emails.embeddings_indexed_at` (file d'attente).
+- Worker : `services/email-embedder.ts` — chunking ~500 tokens avec
+  overlap, batch 50 mails / cycle, modèle `text-embedding-3-small`.
+  Hooké dans `startInboriaExtractor()` (cycle 15 min existant). Garde-fou
+  budget journalier `EMAIL_EMBED_DAILY_BUDGET_USD` (défaut 1 $/jour).
+- Recherche chat : `routes/inboria-context.ts` injecte la voie sémantique
+  uniquement si la question fait ≥ 12 chars ET aucun ID/contact détecté.
+  Top 8 chunks dédupliqués par mail, seuil cosine distance < 0.78.
+  Citations `[mail#ID]` cliquables (renderer existant).
+- System prompt durci : garde-fou anti-hallucination strict ("Je n'ai
+  pas trouvé d'élément correspondant" si mémoire vide).
+- Backfill admin : `POST /api/admin/email-brain/backfill` (auth admin,
+  body optionnel `{userId, limit}`), réponse immédiate + traitement
+  async avec logs de progression.
+
+**À faire manuellement après déploiement** :
+1. Appliquer `migrations/2026_05_03_email_chunks.sql` dans le SQL Editor
+   du Dashboard Supabase (le worker auto-probe et pause si la table
+   manque, sans crasher).
+2. Lancer le backfill une fois par tenant :
+   `curl -X POST -H "Cookie: <admin-session>" -H "Content-Type: application/json" \
+   -d '{"limit":5000}' https://<host>/api/admin/email-brain/backfill`.
+3. Coût estimé : ~0,10 $ par tenant 3000 mails (text-embedding-3-small).
+
 ## External Dependencies
 
 - **Supabase**: Primary database (PostgreSQL) and authentication service.

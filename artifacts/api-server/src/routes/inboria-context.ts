@@ -1319,6 +1319,105 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         );
       }
     }
+    // Email Brain Phase 1 (#214) — recherche sémantique RAG sur le corpus
+    // complet via la table email_chunks. Ne se déclenche QUE quand les
+    // heuristiques précédentes (ID explicite, contact ciblé) n'ont rien
+    // donné, pour éviter de polluer le contexte ou doubler les requêtes.
+    if (
+      lastUserMsg.length >= 12 &&
+      requestedMailIds.length === 0 &&
+      targetEmails.length === 0
+    ) {
+      try {
+        const scopeUserIds = adminTeamCtx
+          ? adminTeamCtx.memberIds
+          : [userId];
+        const scopeMailboxIds = adminTeamCtx
+          ? adminTeamCtx.sharedMailboxIds
+          : memberMailboxIds;
+        const hasAnyScope =
+          scopeUserIds.length > 0 || scopeMailboxIds.length > 0;
+        if (hasAnyScope) {
+          const embedRes = await openai.embeddings.create({
+            model: "text-embedding-3-small",
+            input: lastUserMsg.slice(0, 2000),
+          });
+          const queryVec = embedRes.data[0]?.embedding as number[] | undefined;
+          if (Array.isArray(queryVec) && queryVec.length === 1536) {
+            const { data: hitsRaw, error: ragErr } = await supabaseAdmin.rpc(
+              "search_email_chunks",
+              {
+                query_vec: queryVec as any,
+                scope_user_ids: scopeUserIds,
+                scope_mailbox_ids: scopeMailboxIds,
+                exclude_private: !!adminTeamCtx,
+                match_limit: 16,
+              },
+            );
+            if (ragErr) {
+              const msg = String(ragErr.message || "");
+              if (
+                !/relation .*email_chunks.* does not exist/i.test(msg) &&
+                !/function .*search_email_chunks.* does not exist/i.test(msg)
+              ) {
+                req.log.warn(
+                  { err: msg },
+                  "[inboria-chat] semantic search RPC failed",
+                );
+              }
+            } else {
+              const hits = (hitsRaw as any[]) || [];
+              // Déduplique par email_id en gardant le meilleur score (la RPC
+              // trie déjà par distance ASC, donc le premier hit par mail
+              // est le meilleur). Filtre seuil cosine distance < 0.78.
+              const bestByEmail = new Map<number, any>();
+              for (const h of hits) {
+                if (typeof h.distance !== "number") continue;
+                if (h.distance >= 0.78) continue;
+                const eid = Number(h.email_id);
+                if (!bestByEmail.has(eid)) bestByEmail.set(eid, h);
+              }
+              const top = Array.from(bestByEmail.values()).slice(0, 8);
+              if (top.length > 0) {
+                memoryLines.push(
+                  "Recherche dans tout l'historique des mails (correspondances semantiques) :",
+                );
+                for (const h of top) {
+                  const date = fmtShortDate(h.sent_at || h.created_at);
+                  const who = truncate(h.sender || "(inconnu)", 50);
+                  const subj = truncate(h.subject || "(sans objet)", 80);
+                  const snippet = truncate(
+                    String(h.content || "").replace(/\s+/g, " "),
+                    180,
+                  );
+                  memoryLines.push(
+                    `- [mail#${h.email_id}] ${date} ${who} : ${subj} — extrait : "${snippet}"`,
+                  );
+                }
+                memoryLines.push("");
+
+                if (adminTeamCtx) {
+                  void logAdminTeamAccess({
+                    organisationId: adminTeamCtx.orgId,
+                    adminUserId: userId,
+                    targetType: "inboria_memory",
+                    targetValue: null,
+                    emailsSeenCount: top.length,
+                    action: "view_inboria_semantic_search",
+                  });
+                }
+              }
+            }
+          }
+        }
+      } catch (err: any) {
+        req.log.warn(
+          { err: err?.message },
+          "[inboria-chat] semantic search failed",
+        );
+      }
+    }
+
     // Hoiste hors du if : utilise plus bas par le bloc d'extraction de
     // contenu de PJ pour cibler en priorite les mails de contacts mentionnes.
     const contactAwareEmailIdsOuter = new Set<number>();
@@ -1675,7 +1774,11 @@ Chaque mail de la memoire est annote avec son identifiant numerique (visible dan
 Exemples :
 - "Le mail de DigitalOcean du 1er mai [mail#4321] contient une facture PDF."
 - "Vous avez 2 mails non lus de Walther [mail#3222][mail#3187]."
-N'ajoute le marqueur QUE quand tu connais l'ID exact (presents dans la memoire ci-dessous, format "id: 1234" ou "mail #1234"). Si tu ne connais pas l'ID, n'invente rien.${adminTeamRule}${memoryBlock}`;
+N'ajoute le marqueur QUE quand tu connais l'ID exact (presents dans la memoire ci-dessous, format "id: 1234" ou "mail #1234"). Si tu ne connais pas l'ID, n'invente rien.
+
+GARDE-FOU ANTI-HALLUCINATION (absolu) :
+- Tu DOIS citer [mail#ID] pour CHAQUE fait que tu extrais d'un mail. Le marqueur est rendu en bouton cliquable cote UI.
+- Si la memoire ci-dessous ne contient AUCUN mail correspondant a ce que demande l'utilisateur, reponds exactement : "Je n'ai pas trouve d'element correspondant dans vos mails." NE JAMAIS inventer un contenu, un expediteur, une date, un montant ou une decision absente de la memoire.${adminTeamRule}${memoryBlock}`;
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",

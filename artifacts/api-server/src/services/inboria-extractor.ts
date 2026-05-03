@@ -3,6 +3,7 @@ import { z } from "zod";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { isNoiseEmail } from "./auto-sync";
+import { runEmailEmbedderOnce } from "./email-embedder";
 
 const EXTRACT_INTERVAL_MS = 15 * 60 * 1000;
 const BATCH_SIZE = 20;
@@ -452,17 +453,30 @@ export async function runInboriaExtractorOnce(): Promise<{
   }
 }
 
+async function runFullCycle(): Promise<void> {
+  // Email Brain Phase 1 (#214) : on lance l'extracteur de faits ET
+  // l'indexeur de chunks vectoriels en parallèle. Les deux pipelines
+  // sont indépendants (tables et files d'attente distinctes).
+  await Promise.allSettled([
+    runInboriaExtractorOnce().catch((err) => {
+      logger.warn({ err: err?.message }, "[inboria-extractor] cycle failed");
+    }),
+    runEmailEmbedderOnce().catch((err) => {
+      logger.warn({ err: err?.message }, "[email-embedder] cycle failed");
+    }),
+  ]);
+}
+
 export function startInboriaExtractor(): void {
   // First run after 60s to let server warm up; then every EXTRACT_INTERVAL_MS.
   setTimeout(() => {
-    runInboriaExtractorOnce().catch((err) =>
-      logger.warn({ err: err?.message }, "[inboria-extractor] initial run failed"),
-    );
+    runFullCycle();
     setInterval(() => {
-      runInboriaExtractorOnce().catch((err) =>
-        logger.warn({ err: err?.message }, "[inboria-extractor] scheduled run failed"),
-      );
+      runFullCycle();
     }, EXTRACT_INTERVAL_MS);
   }, 60_000);
-  logger.info({ intervalMs: EXTRACT_INTERVAL_MS, batchSize: BATCH_SIZE }, "[inboria-extractor] scheduled");
+  logger.info(
+    { intervalMs: EXTRACT_INTERVAL_MS, batchSize: BATCH_SIZE },
+    "[inboria-extractor] scheduled (extractor + email-embedder)",
+  );
 }
