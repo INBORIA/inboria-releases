@@ -389,17 +389,21 @@ export default function BilanQuotidien() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="bg-card rounded-lg border border-border p-3">
                   <h3 className="text-[12px] font-semibold text-white mb-2">{t("analytics.topSenders")}</h3>
-                  <div className="h-56 w-full">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={ta.topSenders.slice(0, 8)} layout="vertical">
-                        <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
-                        <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
-                        <YAxis type="category" dataKey="email" width={120} tick={{ fontSize: 9, fill: "#8b9cb3" }} />
-                        <Tooltip contentStyle={{ background: "#0d1117", border: "1px solid #1f2937", fontSize: 11 }} />
-                        <Bar dataKey="count" fill="#2d7dd2" />
-                      </BarChart>
-                    </ResponsiveContainer>
-                  </div>
+                  {ta.topSenders.length === 0 ? (
+                    <p className="text-[11px] text-[#8b9cb3] py-6 text-center">{t("analytics.noTopSenders")}</p>
+                  ) : (
+                    <div className="h-56 w-full">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <BarChart data={ta.topSenders.slice(0, 8)} layout="vertical" margin={{ left: 8, right: 16 }}>
+                          <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
+                          <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
+                          <YAxis type="category" dataKey="email" width={210} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                          <Tooltip contentStyle={{ background: "#0d1117", border: "1px solid #1f2937", fontSize: 11 }} />
+                          <Bar dataKey="count" fill="#2d7dd2" />
+                        </BarChart>
+                      </ResponsiveContainer>
+                    </div>
+                  )}
                 </div>
 
                 <div className="bg-card rounded-lg border border-border p-3">
@@ -434,15 +438,23 @@ export default function BilanQuotidien() {
                       </tr>
                     </thead>
                     <tbody>
-                      {ta.perMember.map((m) => (
-                        <tr key={m.userId} className="border-b border-border/50">
-                          <td className="p-2 text-white">{m.userName || m.userId.slice(0, 8)}</td>
-                          <td className="p-2 text-right text-[#c9d1d9]">{m.handled}</td>
-                          <td className="p-2 text-right text-[#c9d1d9]">{m.archived}</td>
-                          <td className="p-2 text-right text-[#c9d1d9]">{m.assigned}</td>
-                          <td className="p-2 text-right text-[#c9d1d9]">{m.avgFirstResponseMinutes != null ? `${m.avgFirstResponseMinutes} min` : "—"}</td>
+                      {ta.perMember.length === 0 ? (
+                        <tr>
+                          <td colSpan={5} className="p-3 text-center text-[11px] text-[#8b9cb3]">
+                            {t("analytics.noMemberData")}
+                          </td>
                         </tr>
-                      ))}
+                      ) : (
+                        ta.perMember.map((m) => (
+                          <tr key={m.userId} className="border-b border-border/50">
+                            <td className="p-2 text-white">{m.userName || m.userId.slice(0, 8)}</td>
+                            <td className="p-2 text-right text-[#c9d1d9]">{m.handled}</td>
+                            <td className="p-2 text-right text-[#c9d1d9]">{m.archived}</td>
+                            <td className="p-2 text-right text-[#c9d1d9]">{m.assigned}</td>
+                            <td className="p-2 text-right text-[#c9d1d9]">{m.avgFirstResponseMinutes != null ? `${m.avgFirstResponseMinutes} min` : "—"}</td>
+                          </tr>
+                        ))
+                      )}
                     </tbody>
                   </table>
                 </div>
