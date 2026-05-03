@@ -206,7 +206,8 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     // approximation = updated_at - created_at for archived emails).
     const perMailboxMap = new Map<string, { count: number; archived: number; respSum: number; respN: number }>();
     for (const e of list as any[]) {
-      const mid = e.shared_mailbox_id || "__none__";
+      if (!e.shared_mailbox_id) continue;
+      const mid = e.shared_mailbox_id;
       let s = perMailboxMap.get(mid);
       if (!s) { s = { count: 0, archived: 0, respSum: 0, respN: 0 }; perMailboxMap.set(mid, s); }
       s.count += 1;
@@ -220,11 +221,10 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       }
     }
     const perMailbox = Array.from(perMailboxMap.entries()).map(([mid, s]) => {
-      const meta = mid === "__none__" ? null : mbMap.get(mid);
-      const isPersonal = mid === "__none__";
+      const meta = mbMap.get(mid);
       return {
-        mailboxId: isPersonal ? null : mid,
-        mailboxName: isPersonal ? "__personal__" : (meta?.name || "—"),
+        mailboxId: mid,
+        mailboxName: meta?.name || meta?.email || "—",
         mailboxEmail: meta?.email || "",
         count: s.count,
         archived: s.archived,
