@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Loader2, Brain, AlertCircle, CheckCircle2 } from "lucide-react";
+import { supabase } from "@/lib/supabase";
 
 interface BackfillResponse {
   ok: boolean;
@@ -29,10 +30,19 @@ export default function AdminEmailBrain() {
       };
       if (userId.trim()) body["userId"] = userId.trim();
 
-      const res = await fetch("/api/admin/email-brain/backfill", {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const session = await supabase.auth.getSession();
+      const accessToken = session.data.session?.access_token;
+      if (!accessToken) {
+        setError("Session expirée, reconnectez-vous.");
+        return;
+      }
+      const res = await fetch(`${baseUrl}/api/admin/email-brain/backfill`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
         body: JSON.stringify(body),
       });
       const json = (await res.json()) as BackfillResponse;
