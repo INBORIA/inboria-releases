@@ -989,7 +989,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         const sum = e.summary ? ` — ${truncate(e.summary, 80)}` : "";
         const flag = e.assigned_to ? " *assigne*" : "";
         const att = fmtAttachments(e.id);
-        memoryLines.push(`- [#${e.id}] ${date} ${prio} ${sender} : ${subj}${sum}${flag}${att}`);
+        memoryLines.push(`- [mail#${e.id}] ${date} ${prio} ${sender} : ${subj}${sum}${flag}${att}`);
       }
       memoryLines.push("");
     }
@@ -1002,7 +1002,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         const subj = truncate(e.subject || "(sans objet)", 70);
         const sender = truncate(e.sender || "(inconnu)", 50);
         const att = fmtAttachments(e.id);
-        memoryLines.push(`- [#${e.id}] ${date} ${prio} ${sender} : ${subj}${att}`);
+        memoryLines.push(`- [mail#${e.id}] ${date} ${prio} ${sender} : ${subj}${att}`);
       }
       memoryLines.push("");
     } else {
@@ -1040,7 +1040,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         const to = truncate(e.recipient || "(inconnu)", 50);
         const opened = e.opened_at ? " (ouvert)" : "";
         const att = fmtAttachments(e.id);
-        memoryLines.push(`- [#${e.id}] ${when} a ${to} : ${subj}${opened}${att}`);
+        memoryLines.push(`- [mail#${e.id}] ${when} a ${to} : ${subj}${opened}${att}`);
       }
       memoryLines.push("");
     }
@@ -1389,7 +1389,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
               const sum = e.summary ? ` — ${truncate(e.summary, 80)}` : "";
               const pjList = contactAttachmentsMap.get(Number(e.id)) || [];
               const pj = pjList.length > 0 ? ` [PJ: ${pjList.join(", ")}]` : "";
-              memoryLines.push(`- [#${e.id}] ${date} ${dir} ${who} : ${subj}${sum}${pj}`);
+              memoryLines.push(`- [mail#${e.id}] ${date} ${dir} ${who} : ${subj}${sum}${pj}`);
             }
           }
           if (contactFacts.length > 0) {
