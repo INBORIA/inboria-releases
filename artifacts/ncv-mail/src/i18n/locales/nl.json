@@ -268,6 +268,7 @@
     "archive": "Archiveren",
     "deleteEmail": "Verwijderen",
     "markHandled": "Markeren als behandeld",
+    "unmarkHandled": "Ongedaan maken",
     "markHandledHint": "Markeer deze e-mail als behandeld (expliciete menselijke actie, voedt het Rapport)",
     "handledOnHint": "Klik om de markering ongedaan te maken",
     "handledByOn": "Behandeld door {{name}} op {{date}}",

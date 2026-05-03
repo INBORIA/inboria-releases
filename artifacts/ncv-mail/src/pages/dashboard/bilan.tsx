@@ -378,24 +378,21 @@ export default function BilanQuotidien() {
                   {t("analytics.migrationBanner")}
                 </div>
               )}
-              {ta.handledMetricsEnabled === false ? (
-                // Migration non appliquée : on garde l'ancien layout (3 tuiles)
-                // pour ne pas afficher des chiffres "Traités/Délai" qui ne
-                // veulent rien dire tant que handled_at/handled_by sont vides.
-                <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
-                  <StatCard label={t("analytics.totalEmails")} value={ta.totals.emails} />
-                  <StatCard label={t("analytics.dismissed")} value={ta.totals.archived} />
-                  <StatCard label={t("analytics.openBreaches")} value={ta.slaSummary.openBreaches} accent={ta.slaSummary.openBreaches > 0 ? "red" : "default"} />
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                  <StatCard label={t("analytics.totalEmails")} value={ta.totals.emails} />
-                  <StatCard label={t("analytics.handled")} value={ta.totals.handled ?? 0} />
-                  <StatCard label={t("analytics.dismissed")} value={ta.totals.archived} />
-                  <StatCardText label={t("analytics.avgHandlingTime")} value={formatDelay(ta.totals.avgHandlingMinutes)} />
-                  <StatCard label={t("analytics.openBreaches")} value={ta.slaSummary.openBreaches} accent={ta.slaSummary.openBreaches > 0 ? "red" : "default"} />
-                </div>
-              )}
+              {/* Migration non appliquée : l'API renvoie quand même des
+                  proxies (handled = assigned/claimed, avg basé sur
+                  inboria_processed_at). On garde donc le même layout 5
+                  tuiles mais le bandeau prévient l'utilisateur. */}
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                <StatCard label={t("analytics.totalEmails")} value={ta.totals.emails} />
+                <StatCard
+                  label={t("analytics.handled")}
+                  value={ta.totals.handled ?? 0}
+                  accent={ta.handledMetricsEnabled === false ? "muted" : "default"}
+                />
+                <StatCard label={t("analytics.dismissed")} value={ta.totals.archived} />
+                <StatCardText label={t("analytics.avgHandlingTime")} value={formatDelay(ta.totals.avgHandlingMinutes)} />
+                <StatCard label={t("analytics.openBreaches")} value={ta.slaSummary.openBreaches} accent={ta.slaSummary.openBreaches > 0 ? "red" : "default"} />
+              </div>
 
               <div className="bg-card rounded-lg border border-border p-3">
                 <h3 className="text-[12px] font-semibold text-white mb-2">{t("analytics.evolution")}</h3>
@@ -461,19 +458,15 @@ export default function BilanQuotidien() {
                     <thead className="text-[#8b9cb3] border-b border-border">
                       <tr>
                         <th className="text-left p-2">{t("analytics.colMember")}</th>
-                        {ta.handledMetricsEnabled !== false && (
-                          <th className="text-right p-2">{t("analytics.colHandled")}</th>
-                        )}
+                        <th className="text-right p-2">{t("analytics.colHandled")}</th>
                         <th className="text-right p-2">{t("analytics.colDismissed")}</th>
-                        {ta.handledMetricsEnabled !== false && (
-                          <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
-                        )}
+                        <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
                       </tr>
                     </thead>
                     <tbody>
                       {ta.perMember.length === 0 ? (
                         <tr>
-                          <td colSpan={ta.handledMetricsEnabled === false ? 2 : 4} className="p-3 text-center text-[11px] text-[#8b9cb3]">
+                          <td colSpan={4} className="p-3 text-center text-[11px] text-[#8b9cb3]">
                             {t("analytics.noMemberData")}
                           </td>
                         </tr>
@@ -481,13 +474,9 @@ export default function BilanQuotidien() {
                         ta.perMember.map((m) => (
                           <tr key={m.userId} className="border-b border-border/50">
                             <td className="p-2 text-white">{m.userName || m.userId.slice(0, 8)}</td>
-                            {ta.handledMetricsEnabled !== false && (
-                              <td className="p-2 text-right text-[#c9d1d9]">{m.handled}</td>
-                            )}
+                            <td className="p-2 text-right text-[#c9d1d9]">{m.handled}</td>
                             <td className="p-2 text-right text-[#c9d1d9]">{m.archived}</td>
-                            {ta.handledMetricsEnabled !== false && (
-                              <td className="p-2 text-right text-[#c9d1d9]">{formatDelay(m.avgFirstResponseMinutes)}</td>
-                            )}
+                            <td className="p-2 text-right text-[#c9d1d9]">{formatDelay(m.avgFirstResponseMinutes)}</td>
                           </tr>
                         ))
                       )}
@@ -508,13 +497,9 @@ export default function BilanQuotidien() {
                         <tr>
                           <th className="text-left p-2">{t("analytics.colMailbox", { defaultValue: "Mailbox" })}</th>
                           <th className="text-right p-2">{t("analytics.colReceived")}</th>
-                          {ta.handledMetricsEnabled !== false && (
-                            <th className="text-right p-2">{t("analytics.colHandled")}</th>
-                          )}
+                          <th className="text-right p-2">{t("analytics.colHandled")}</th>
                           <th className="text-right p-2">{t("analytics.colDismissed")}</th>
-                          {ta.handledMetricsEnabled !== false && (
-                            <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
-                          )}
+                          <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -525,13 +510,9 @@ export default function BilanQuotidien() {
                               {m.mailboxEmail && m.mailboxEmail !== m.mailboxName && <span className="text-[10px] text-[#8b9cb3] ml-1">{m.mailboxEmail}</span>}
                             </td>
                             <td className="p-2 text-right text-[#c9d1d9]">{m.count}</td>
-                            {ta.handledMetricsEnabled !== false && (
-                              <td className="p-2 text-right text-[#c9d1d9]">{m.handled}</td>
-                            )}
+                            <td className="p-2 text-right text-[#c9d1d9]">{m.handled}</td>
                             <td className="p-2 text-right text-[#c9d1d9]">{m.archived}</td>
-                            {ta.handledMetricsEnabled !== false && (
-                              <td className="p-2 text-right text-[#c9d1d9]">{formatDelay(m.avgFirstResponseMinutes)}</td>
-                            )}
+                            <td className="p-2 text-right text-[#c9d1d9]">{formatDelay(m.avgFirstResponseMinutes)}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -552,13 +533,9 @@ export default function BilanQuotidien() {
                         <tr>
                           <th className="text-left p-2">{t("analytics.colProject", { defaultValue: "Project" })}</th>
                           <th className="text-right p-2">{t("analytics.colReceived")}</th>
-                          {ta.handledMetricsEnabled !== false && (
-                            <th className="text-right p-2">{t("analytics.colHandled")}</th>
-                          )}
+                          <th className="text-right p-2">{t("analytics.colHandled")}</th>
                           <th className="text-right p-2">{t("analytics.colDismissed")}</th>
-                          {ta.handledMetricsEnabled !== false && (
-                            <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
-                          )}
+                          <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
                         </tr>
                       </thead>
                       <tbody>
@@ -568,13 +545,9 @@ export default function BilanQuotidien() {
                               {p.projectName} {p.projectReference && <span className="text-[10px] text-[#8b9cb3]">[{p.projectReference}]</span>}
                             </td>
                             <td className="p-2 text-right text-[#c9d1d9]">{p.count}</td>
-                            {ta.handledMetricsEnabled !== false && (
-                              <td className="p-2 text-right text-[#c9d1d9]">{p.handled}</td>
-                            )}
+                            <td className="p-2 text-right text-[#c9d1d9]">{p.handled}</td>
                             <td className="p-2 text-right text-[#c9d1d9]">{p.archived}</td>
-                            {ta.handledMetricsEnabled !== false && (
-                              <td className="p-2 text-right text-[#c9d1d9]">{formatDelay(p.avgFirstResponseMinutes)}</td>
-                            )}
+                            <td className="p-2 text-right text-[#c9d1d9]">{formatDelay(p.avgFirstResponseMinutes)}</td>
                           </tr>
                         ))}
                       </tbody>

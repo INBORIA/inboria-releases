@@ -545,12 +545,21 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   ) : (
                     <CheckCircle2 className="w-3 h-3" />
                   )}
-                  {handledAt
-                    ? t("inbox.handledByOn", "Traité par {{name}} le {{date}}", {
-                        name: handlerName,
-                        date: format(new Date(handledAt), "d MMM", { locale: dateFnsLocale }),
-                      })
-                    : t("inbox.markHandled", "Marquer traité")}
+                  {handledAt ? (
+                    <>
+                      <span>
+                        {t("inbox.handledByOn", "Traité par {{name}} le {{date}}", {
+                          name: handlerName,
+                          date: format(new Date(handledAt), "d MMM", { locale: dateFnsLocale }),
+                        })}
+                      </span>
+                      <span className="ml-1 px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-200 text-[10px] uppercase tracking-wider">
+                        {t("inbox.unmarkHandled", "Annuler")}
+                      </span>
+                    </>
+                  ) : (
+                    t("inbox.markHandled", "Marquer traité")
+                  )}
                 </Button>
                 <Button
                   variant="outline"

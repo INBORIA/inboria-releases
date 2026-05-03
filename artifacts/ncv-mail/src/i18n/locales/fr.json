@@ -268,6 +268,7 @@
     "archive": "Archiver",
     "deleteEmail": "Supprimer",
     "markHandled": "Marquer traité",
+    "unmarkHandled": "Annuler",
     "markHandledHint": "Marquer cet email comme traité (action humaine explicite, alimente le Bilan)",
     "handledOnHint": "Cliquez pour annuler le marquage",
     "handledByOn": "Traité par {{name}} le {{date}}",

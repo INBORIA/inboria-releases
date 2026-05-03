@@ -268,6 +268,7 @@
     "archive": "Archivieren",
     "deleteEmail": "Löschen",
     "markHandled": "Als bearbeitet markieren",
+    "unmarkHandled": "Rückgängig",
     "markHandledHint": "Diese E-Mail als bearbeitet markieren (explizite menschliche Aktion, fließt in den Bericht ein)",
     "handledOnHint": "Klicken, um die Markierung aufzuheben",
     "handledByOn": "Bearbeitet von {{name}} am {{date}}",
