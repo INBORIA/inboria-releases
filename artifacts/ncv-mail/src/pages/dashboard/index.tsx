@@ -3725,7 +3725,7 @@ export default function Dashboard() {
     return;
   };
 
-  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => {
+  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number) => {
     const uploadIds = attachments?.map((a) => a.uploadId).filter(Boolean);
     const data: any = {
       to,
@@ -3736,6 +3736,7 @@ export default function Dashboard() {
     };
     if (connectionId) data.connectionId = connectionId;
     if (projectId) data.projectId = projectId;
+    if (markHandledOfEmailId) data.markHandledOfEmailId = markHandledOfEmailId;
 
     let cancelled = false;
     const pendingId = (typeof crypto !== "undefined" && (crypto as any).randomUUID)

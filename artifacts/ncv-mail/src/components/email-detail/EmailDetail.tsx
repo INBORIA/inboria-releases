@@ -53,7 +53,7 @@ interface ExpertSuggestionShape {
 
 import { PriorityBadge, PRIORITY_BAR_COLORS, buildForwardCitation } from "./helpers";
 
-export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections, sharedMailboxes }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }>; sharedMailboxes?: any[] }) {
+export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections, sharedMailboxes }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }>; sharedMailboxes?: any[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
@@ -1120,33 +1120,14 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       className="gap-1.5 h-7 text-[11px]"
                       disabled={isSending || !forwardTo.trim() || !forwardSubject.trim() || !forwardText.trim()}
                       onClick={() => {
-                        // Task #205 — un transfert n'est PAS une réponse :
-                        // on ne renseigne pas replyToEmailId (ce qui éviterait
-                        // de classer l'email envoyé comme "Reply" dans Envoyés
-                        // ou de polluer reply_to_email_id en aval). À la place,
-                        // on appelle explicitement /handled juste après pour
-                        // marquer l'email d'origine comme traité.
-                        onSendReply(forwardTo, forwardSubject, forwardText, undefined, forwardAttachments, forwardConnectionId || undefined, undefined);
-                        if (!handledAt) {
-                          (async () => {
-                            try {
-                              const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
-                              const { supabase } = await import("@/lib/supabase");
-                              const { data: sd } = await supabase.auth.getSession();
-                              const token = sd?.session?.access_token;
-                              await fetch(`${baseUrl}/api/emails/${email.id}/handled`, {
-                                method: "POST",
-                                credentials: "include",
-                                headers: {
-                                  "Content-Type": "application/json",
-                                  ...(token ? { Authorization: `Bearer ${token}` } : {}),
-                                },
-                              });
-                              queryClient.invalidateQueries({ queryKey: ["analytics-team"] });
-                              queryClient.invalidateQueries({ predicate: (q) => Array.isArray(q.queryKey) && String(q.queryKey[0] || "").includes("emails") });
-                            } catch { /* silencieux : si l'utilisateur n'a pas accès, le serveur renvoie 403 */ }
-                          })();
-                        }
+                        // Task #205 — un transfert n'est PAS une réponse : on
+                        // ne renseigne pas replyToEmailId (sinon le message
+                        // sortant serait classé "Reply" dans Envoyés et
+                        // polluerait reply_to_email_id en aval). À la place,
+                        // on passe markHandledOfEmailId : le serveur marque
+                        // l'email d'origine comme "traité" UNIQUEMENT si le
+                        // POST /emails/send réussit (pas de fire-and-forget).
+                        onSendReply(forwardTo, forwardSubject, forwardText, undefined, forwardAttachments, forwardConnectionId || undefined, undefined, handledAt ? undefined : email.id);
                         setForwardText("");
                         setForwardTo("");
                         setForwardSubject("");

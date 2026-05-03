@@ -509,6 +509,9 @@ export default function BilanQuotidien() {
                       <thead className="text-[#8b9cb3] border-b border-border">
                         <tr>
                           <th className="text-left p-2">{t("analytics.colMailbox", { defaultValue: "Mailbox" })}</th>
+                          {ta.handledMetricsEnabled === false && (
+                            <th className="text-right p-2">{t("analytics.colReceived")}</th>
+                          )}
                           {ta.handledMetricsEnabled !== false && (
                             <th className="text-right p-2">{t("analytics.colHandled")}</th>
                           )}
@@ -523,6 +526,9 @@ export default function BilanQuotidien() {
                               {m.mailboxName}
                               {m.mailboxEmail && m.mailboxEmail !== m.mailboxName && <span className="text-[10px] text-[#8b9cb3] ml-1">{m.mailboxEmail}</span>}
                             </td>
+                            {ta.handledMetricsEnabled === false && (
+                              <td className="p-2 text-right text-[#c9d1d9]">{m.count}</td>
+                            )}
                             {ta.handledMetricsEnabled !== false && (
                               <td className="p-2 text-right text-[#c9d1d9]">{m.handled}</td>
                             )}
@@ -547,6 +553,9 @@ export default function BilanQuotidien() {
                       <thead className="text-[#8b9cb3] border-b border-border">
                         <tr>
                           <th className="text-left p-2">{t("analytics.colProject", { defaultValue: "Project" })}</th>
+                          {ta.handledMetricsEnabled === false && (
+                            <th className="text-right p-2">{t("analytics.colReceived")}</th>
+                          )}
                           {ta.handledMetricsEnabled !== false && (
                             <th className="text-right p-2">{t("analytics.colHandled")}</th>
                           )}
@@ -560,6 +569,9 @@ export default function BilanQuotidien() {
                             <td className="p-2 text-white">
                               {p.projectName} {p.projectReference && <span className="text-[10px] text-[#8b9cb3]">[{p.projectReference}]</span>}
                             </td>
+                            {ta.handledMetricsEnabled === false && (
+                              <td className="p-2 text-right text-[#c9d1d9]">{p.count}</td>
+                            )}
                             {ta.handledMetricsEnabled !== false && (
                               <td className="p-2 text-right text-[#c9d1d9]">{p.handled}</td>
                             )}

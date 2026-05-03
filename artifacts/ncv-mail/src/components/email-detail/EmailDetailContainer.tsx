@@ -287,7 +287,8 @@ export function EmailDetailContainer({
     replyToEmailId?: number,
     attachments?: UploadedFile[],
     connectionId?: string,
-    projectId?: string
+    projectId?: string,
+    markHandledOfEmailId?: number
   ) => {
     const uploadIds = attachments?.map((a) => a.uploadId).filter(Boolean);
     const data: any = {
@@ -299,6 +300,9 @@ export function EmailDetailContainer({
     };
     if (connectionId) data.connectionId = connectionId;
     if (projectId) data.projectId = projectId;
+    // Task #205 — transfert : marquer l'email d'origine "traité" côté serveur,
+    // mais seulement si /emails/send réussit (mutation onSuccess invalide tout).
+    if (markHandledOfEmailId) data.markHandledOfEmailId = markHandledOfEmailId;
 
     let cancelled = false;
     const pendingId =
