@@ -40,21 +40,51 @@ const SignalSchema = z.object({
   reason: z.string().min(3).max(200),
 });
 
+const DecisionSchema = z.object({
+  decision: z.string().min(3).max(280),
+  decided_at: z.string().nullable().optional(),
+  amount_eur: z.number().nullable().optional(),
+  parties: z.array(z.string()).max(10).optional(),
+  confidence: z.number().min(0).max(1),
+});
+
+const ProjectHintSchema = z.object({
+  name: z.string().min(2).max(120),
+});
+
 const ExtractionRawSchema = z.object({
   facts: z.array(z.unknown()).default([]),
   episodes: z.array(z.unknown()).default([]),
   signals: z.array(z.unknown()).default([]),
+  decisions: z.array(z.unknown()).default([]),
+  project_hints: z.array(z.unknown()).default([]),
 });
 
 interface ParsedExtraction {
   facts: z.infer<typeof FactSchema>[];
   episodes: z.infer<typeof EpisodeSchema>[];
   signals: z.infer<typeof SignalSchema>[];
+  decisions: z.infer<typeof DecisionSchema>[];
+  projectHints: z.infer<typeof ProjectHintSchema>[];
 }
 
 let extractRunning = false;
 let signalsTableMissingWarned = false;
 let signalsSchemaDriftWarned = false;
+let decisionsTableMissingWarned = false;
+let projectsTableMissingWarned = false;
+
+function isMissingTableError(err: any, tableName: string): boolean {
+  const msg = String(err?.message || "");
+  const re1 = new RegExp(`relation .*${tableName}.* does not exist`, "i");
+  const re2 = new RegExp(`could not find the table.*${tableName}`, "i");
+  const re3 = new RegExp(`column .*${tableName}.* does not exist`, "i");
+  return re1.test(msg) || re2.test(msg) || re3.test(msg);
+}
+
+function normalizeProjectName(name: string): string {
+  return name.toLowerCase().trim().replace(/\s+/g, " ");
+}
 
 interface EmailRow {
   id: number;
@@ -165,13 +195,13 @@ async function extractStructured(
     const completion = await openai.chat.completions.create({
       model: EXTRACTION_MODEL,
       temperature: 0.1,
-      max_completion_tokens: 700,
+      max_completion_tokens: 900,
       response_format: { type: "json_object" },
       messages: [
         {
           role: "system",
           content:
-            "Tu es Inboria, la mémoire contextuelle d'un assistant email B2B. Tu lis un email et tu extrais STRICTEMENT ce qui est explicitement écrit, jamais d'inférence ni de devinette. Ne JAMAIS inventer. Si rien d'extractible: renvoie des tableaux vides.\n\nFAIT (kind):\n- preference: une préférence du contact (ex: 'préfère être contacté par email', 'aime les rendez-vous le matin')\n- topic: un sujet d'intérêt récurrent du contact (ex: 'travaille sur la migration ERP', 'cherche un fournisseur logistique')\n- role: la fonction ou le rôle du contact (ex: 'directrice marketing chez Acme', 'fondateur de XYZ')\n\nÉPISODE (kind):\n- decision: une décision actée par le contact (ex: 'décide de reporter le projet à Q3')\n- commitment: un engagement pris par le contact (ex: 'envoie le devis avant vendredi')\n\nSIGNAL (kind) — qualifie l'EMAIL lui-même pour le tri intelligent du destinataire:\n- awaiting_response: le contact pose une question explicite ou demande une action et attend une réponse du destinataire\n- commitment_pending: le contact mentionne une deadline (date, jour, urgence) qui implique un délai à respecter\n- decision_needed: une décision est explicitement demandée au destinataire\n- escalation: ton qui exprime urgence, frustration, relance, blocage, ou enjeu critique\n\nRéponds en JSON strict: {\"facts\":[{\"kind\":\"preference|topic|role\",\"statement\":\"phrase courte factuelle\",\"confidence\":0.0-1.0}],\"episodes\":[{\"kind\":\"decision|commitment\",\"summary\":\"phrase courte\",\"event_date\":\"YYYY-MM-DD ou null\"}],\"signals\":[{\"kind\":\"awaiting_response|commitment_pending|decision_needed|escalation\",\"severity\":1|2|3,\"reason\":\"phrase courte FR explique pourquoi\"}]}.\n\nMaximum 6 facts, 3 épisodes, 3 signals. Statements/reasons en français, courts (<140 caractères), sans pronom de première personne. Severity 1=faible, 2=moyen, 3=fort. Pour signals: ne renvoyer QUE si le signal est explicitement présent dans l'email; sinon tableau vide. Confidence reflète à quel point la phrase est explicitement écrite (>=0.8 = formulé tel quel, 0.5 = clairement implicite, <0.5 = à éviter).",
+            "Tu es Inboria, la mémoire contextuelle d'un assistant email B2B. Tu lis un email et tu extrais STRICTEMENT ce qui est explicitement écrit, jamais d'inférence ni de devinette. Ne JAMAIS inventer. Si rien d'extractible: renvoie des tableaux vides.\n\nFAIT (kind):\n- preference: une préférence du contact (ex: 'préfère être contacté par email', 'aime les rendez-vous le matin')\n- topic: un sujet d'intérêt récurrent du contact (ex: 'travaille sur la migration ERP', 'cherche un fournisseur logistique')\n- role: la fonction ou le rôle du contact (ex: 'directrice marketing chez Acme', 'fondateur de XYZ')\n\nÉPISODE (kind):\n- decision: une décision actée par le contact (ex: 'décide de reporter le projet à Q3')\n- commitment: un engagement pris par le contact (ex: 'envoie le devis avant vendredi')\n\nSIGNAL (kind) — qualifie l'EMAIL lui-même pour le tri intelligent du destinataire:\n- awaiting_response: le contact pose une question explicite ou demande une action et attend une réponse du destinataire\n- commitment_pending: le contact mentionne une deadline (date, jour, urgence) qui implique un délai à respecter\n- decision_needed: une décision est explicitement demandée au destinataire\n- escalation: ton qui exprime urgence, frustration, relance, blocage, ou enjeu critique\n\nDÉCISION (decisions) — décisions FORMELLES actées dans le mail (devis accepté, contrat signé, report officiel, montant validé). Plus structuré qu'un episode: inclut date si mentionnée, montant en euros si chiffré, parties prenantes (emails). Ne PAS dupliquer un simple commitment. Maximum 2 par mail.\n\nPROJET (project_hints) — nom de projet/dossier explicitement mentionné dans le mail (ex: 'Migration ERP', 'Refonte site web', 'Dossier Dupont'). Nom court, 2-6 mots. Ignorer noms génériques ('projet', 'dossier'). Maximum 2 par mail.\n\nRéponds en JSON strict: {\"facts\":[{\"kind\":\"preference|topic|role\",\"statement\":\"phrase courte factuelle\",\"confidence\":0.0-1.0}],\"episodes\":[{\"kind\":\"decision|commitment\",\"summary\":\"phrase courte\",\"event_date\":\"YYYY-MM-DD ou null\"}],\"signals\":[{\"kind\":\"awaiting_response|commitment_pending|decision_needed|escalation\",\"severity\":1|2|3,\"reason\":\"phrase courte FR explique pourquoi\"}],\"decisions\":[{\"decision\":\"phrase courte FR\",\"decided_at\":\"YYYY-MM-DD ou null\",\"amount_eur\":nombre ou null,\"parties\":[\"email1\",\"email2\"],\"confidence\":0.0-1.0}],\"project_hints\":[{\"name\":\"Nom du projet\"}]}.\n\nMaximum 6 facts, 3 épisodes, 3 signals, 2 decisions, 2 project_hints. Statements/reasons en français, courts (<140 caractères), sans pronom de première personne. Severity 1=faible, 2=moyen, 3=fort. Pour signals/decisions/project_hints: ne renvoyer QUE si présent explicitement dans l'email; sinon tableau vide. Confidence reflète à quel point la phrase est explicitement écrite (>=0.8 = formulé tel quel, 0.5 = clairement implicite, <0.5 = à éviter).",
         },
         {
           role: "user",
@@ -185,10 +215,17 @@ async function extractStructured(
       json = JSON.parse(raw);
     } catch {
       // Model returned malformed JSON despite response_format. Permanent for this email.
-      return { ok: true, data: { facts: [], episodes: [], signals: [] } };
+      return {
+        ok: true,
+        data: { facts: [], episodes: [], signals: [], decisions: [], projectHints: [] },
+      };
     }
     const wrapper = ExtractionRawSchema.safeParse(json);
-    if (!wrapper.success) return { ok: true, data: { facts: [], episodes: [], signals: [] } };
+    if (!wrapper.success)
+      return {
+        ok: true,
+        data: { facts: [], episodes: [], signals: [], decisions: [], projectHints: [] },
+      };
     const facts: z.infer<typeof FactSchema>[] = [];
     for (const item of wrapper.data.facts.slice(0, 8)) {
       const r = FactSchema.safeParse(item);
@@ -204,7 +241,17 @@ async function extractStructured(
       const r = SignalSchema.safeParse(item);
       if (r.success) signals.push(r.data);
     }
-    return { ok: true, data: { facts, episodes, signals } };
+    const decisions: z.infer<typeof DecisionSchema>[] = [];
+    for (const item of wrapper.data.decisions.slice(0, 2)) {
+      const r = DecisionSchema.safeParse(item);
+      if (r.success) decisions.push(r.data);
+    }
+    const projectHints: z.infer<typeof ProjectHintSchema>[] = [];
+    for (const item of wrapper.data.project_hints.slice(0, 2)) {
+      const r = ProjectHintSchema.safeParse(item);
+      if (r.success) projectHints.push(r.data);
+    }
+    return { ok: true, data: { facts, episodes, signals, decisions, projectHints } };
   } catch (err: any) {
     const transient = isTransientError(err);
     logger.warn(
@@ -330,6 +377,123 @@ export async function processEmail(
           { err: msg, emailId: email.id },
           "[inboria-extractor] signals insert failed",
         );
+      }
+    }
+  }
+
+  // Phase 2 (#215) — décisions structurées (montant, date, parties).
+  if (parsed.decisions.length > 0) {
+    const decisionRows = parsed.decisions.map((d) => ({
+      contact_email: contactEmail,
+      user_id: email.user_id,
+      shared_mailbox_id: email.shared_mailbox_id,
+      source_email_id: email.id,
+      decision: d.decision,
+      decided_at: isValidIsoDate(d.decided_at ?? null),
+      amount_eur: typeof d.amount_eur === "number" && Number.isFinite(d.amount_eur) ? d.amount_eur : null,
+      confidence: d.confidence,
+      parties: Array.isArray(d.parties) ? d.parties.slice(0, 10) : [],
+    }));
+    const { error } = await supabaseAdmin.from("inboria_decisions").insert(decisionRows);
+    if (error) {
+      if (isMissingTableError(error, "inboria_decisions")) {
+        if (!decisionsTableMissingWarned) {
+          decisionsTableMissingWarned = true;
+          logger.warn(
+            "[inboria-extractor] inboria_decisions table not found — apply migrations/2026_05_05_inboria_decisions_projects.sql.",
+          );
+        }
+      } else {
+        logger.warn(
+          { err: error.message, emailId: email.id },
+          "[inboria-extractor] decisions insert failed",
+        );
+      }
+    }
+  }
+
+  // Phase 2 (#215) — projets inférés (merge par nom normalisé).
+  if (parsed.projectHints.length > 0) {
+    for (const hint of parsed.projectHints) {
+      const nameNormalized = normalizeProjectName(hint.name);
+      if (nameNormalized.length < 2) continue;
+      const scopeFilter = email.shared_mailbox_id
+        ? { shared_mailbox_id: email.shared_mailbox_id }
+        : { user_id: email.user_id };
+      let projectId: string | null = null;
+      const { data: existing, error: selErr } = await supabaseAdmin
+        .from("inboria_projects_inferred")
+        .select("id, email_count, participants")
+        .match({ ...scopeFilter, name_normalized: nameNormalized })
+        .maybeSingle();
+      if (selErr && isMissingTableError(selErr, "inboria_projects_inferred")) {
+        if (!projectsTableMissingWarned) {
+          projectsTableMissingWarned = true;
+          logger.warn(
+            "[inboria-extractor] inboria_projects_inferred table not found — apply migrations/2026_05_05_inboria_decisions_projects.sql.",
+          );
+        }
+        break;
+      }
+      if (existing) {
+        projectId = (existing as any).id;
+        const currentParticipants: string[] = Array.isArray((existing as any).participants)
+          ? (existing as any).participants
+          : [];
+        const mergedParticipants = Array.from(
+          new Set([...currentParticipants, contactEmail].filter(Boolean)),
+        ).slice(0, 50);
+        await supabaseAdmin
+          .from("inboria_projects_inferred")
+          .update({
+            email_count: ((existing as any).email_count ?? 0) + 1,
+            last_seen_at: new Date().toISOString(),
+            participants: mergedParticipants,
+            status: "active",
+          })
+          .eq("id", projectId);
+      } else {
+        const { data: inserted, error: insErr } = await supabaseAdmin
+          .from("inboria_projects_inferred")
+          .insert({
+            user_id: email.user_id,
+            shared_mailbox_id: email.shared_mailbox_id,
+            name: hint.name.trim().slice(0, 120),
+            name_normalized: nameNormalized,
+            email_count: 1,
+            participants: [contactEmail],
+            status: "active",
+          })
+          .select("id")
+          .maybeSingle();
+        if (insErr) {
+          if (isMissingTableError(insErr, "inboria_projects_inferred")) {
+            if (!projectsTableMissingWarned) {
+              projectsTableMissingWarned = true;
+              logger.warn(
+                "[inboria-extractor] inboria_projects_inferred table not found — apply migrations/2026_05_05_inboria_decisions_projects.sql.",
+              );
+            }
+            break;
+          }
+          // Concurrent insert race — retry select.
+          const { data: retry } = await supabaseAdmin
+            .from("inboria_projects_inferred")
+            .select("id")
+            .match({ ...scopeFilter, name_normalized: nameNormalized })
+            .maybeSingle();
+          projectId = (retry as any)?.id ?? null;
+        } else {
+          projectId = (inserted as any)?.id ?? null;
+        }
+      }
+      if (projectId) {
+        await supabaseAdmin
+          .from("inboria_project_emails")
+          .upsert(
+            { project_id: projectId, email_id: email.id },
+            { onConflict: "project_id,email_id", ignoreDuplicates: true },
+          );
       }
     }
   }
