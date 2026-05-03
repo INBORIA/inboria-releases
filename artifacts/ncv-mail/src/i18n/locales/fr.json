@@ -3093,6 +3093,7 @@
     "searchPlaceholder": "Rechercher un contact…",
     "selectPrompt": "Sélectionnez un contact pour voir tout son historique.",
     "timelineItems": "éléments dans la chronologie",
+    "brainSummary": "Synthèse de la relation",
     "fields": {
       "email": "Adresse e-mail",
       "displayName": "Nom affiché",

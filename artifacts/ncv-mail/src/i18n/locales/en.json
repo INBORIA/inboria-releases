@@ -4734,6 +4734,7 @@
     "searchPlaceholder": "Search a contact…",
     "selectPrompt": "Select a contact to see their full history.",
     "timelineItems": "items in the timeline",
+    "brainSummary": "Relationship summary",
     "fields": {
       "email": "Email",
       "displayName": "Display name",

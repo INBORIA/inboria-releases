@@ -4751,6 +4751,7 @@
     "searchPlaceholder": "Zoek een contact…",
     "selectPrompt": "Selecteer een contact om de volledige geschiedenis te zien.",
     "timelineItems": "items in de tijdlijn",
+    "brainSummary": "Samenvatting van de relatie",
     "fields": {
       "email": "E-mailadres",
       "displayName": "Weergavenaam",

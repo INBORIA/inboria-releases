@@ -280,9 +280,14 @@ export async function summarizeContact(
     return null;
   }
 
-  // 3. Charge extraits RAG (best-effort).
+  // 3. Charge extraits RAG (best-effort, timeout 600ms pour ne pas bloquer
+  // le Promise.race 800ms de la route /contacts/:email/timeline).
   const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"]! });
-  const rag = await loadRagSnippets(openai, userId, memberMailboxIds, contactEmail);
+  type RagHit = Awaited<ReturnType<typeof loadRagSnippets>>[number];
+  const rag: RagHit[] = await Promise.race([
+    loadRagSnippets(openai, userId, memberMailboxIds, contactEmail),
+    new Promise<RagHit[]>((resolve) => setTimeout(() => resolve([]), 600)),
+  ]).catch(() => [] as RagHit[]);
 
   const memoryBlock = buildMemoryBlock(memory.facts, memory.episodes, memory.decisions, rag);
 

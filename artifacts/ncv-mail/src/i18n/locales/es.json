@@ -4751,6 +4751,7 @@
     "searchPlaceholder": "Buscar un contacto…",
     "selectPrompt": "Seleccione un contacto para ver todo su historial.",
     "timelineItems": "elementos en la cronología",
+    "brainSummary": "Resumen de la relación",
     "fields": {
       "email": "Correo electrónico",
       "displayName": "Nombre mostrado",

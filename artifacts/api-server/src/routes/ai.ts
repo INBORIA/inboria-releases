@@ -114,25 +114,37 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
     let activeProjects: Array<{ name: string; email_count: number; last_seen_at: string }> = [];
     let openCommitments: Array<{ summary: string; event_date: string | null; source_email_id: number | null }> = [];
     try {
+      // Scope incluant les boîtes partagées dont l'utilisateur est membre,
+      // pour rester cohérent avec buildInboriaContextBlock et l'extracteur.
+      let brainMemberMailboxIds: string[] = [];
+      try {
+        brainMemberMailboxIds = await getMemberMailboxIds(req.userId!);
+      } catch {
+        brainMemberMailboxIds = [];
+      }
+      const brainScope = `and(user_id.eq.${req.userId!},shared_mailbox_id.is.null)`;
+      const brainScopeFilter = brainMemberMailboxIds.length > 0
+        ? `${brainScope},shared_mailbox_id.in.(${brainMemberMailboxIds.join(",")})`
+        : brainScope;
       const [decRes, projRes, commitRes] = await Promise.all([
         supabaseAdmin
           .from("inboria_decisions")
           .select("decision, decided_at, amount_eur, source_email_id, created_at")
-          .eq("user_id", req.userId!)
+          .or(brainScopeFilter)
           .gte("created_at", sevenDaysAgo)
           .order("created_at", { ascending: false })
           .limit(8),
         supabaseAdmin
           .from("inboria_projects_inferred")
           .select("name, email_count, last_seen_at")
-          .eq("user_id", req.userId!)
+          .or(brainScopeFilter)
           .eq("status", "active")
           .order("last_seen_at", { ascending: false })
           .limit(6),
         supabaseAdmin
           .from("inboria_episodes")
           .select("summary, event_date, source_email_id, extracted_at")
-          .eq("user_id", req.userId!)
+          .or(brainScopeFilter)
           .eq("kind", "commitment")
           .gte("extracted_at", sevenDaysAgo)
           .order("extracted_at", { ascending: false })
@@ -497,7 +509,7 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
       messages: [
         {
           role: "system",
-          content: `Tu es un assistant de redaction d'emails professionnels. Redige la reponse en francais avec un ton professionnel. Tu rediges des reponses claires, polies et professionnelles. Si le contexte historique mentionne une décision ou un engagement passé pertinent, tu peux le rappeler dans ta réponse mais tu DOIS supprimer toute référence [mail#ID] du brouillon final. ${signatureInstruction}`,
+          content: `Tu es un assistant de redaction d'emails professionnels. Redige la reponse en francais avec un ton professionnel. Tu rediges des reponses claires, polies et professionnelles. Si le contexte historique mentionne un fait, une décision ou un engagement passé pertinent, intègre-le naturellement dans le corps du texte ; ne mentionne jamais d'identifiant technique ou de balise [mail#ID]. ${signatureInstruction}`,
         },
         {
           role: "user",
