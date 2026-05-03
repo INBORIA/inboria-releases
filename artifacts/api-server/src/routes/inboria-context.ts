@@ -5,6 +5,7 @@ import { requireAuth } from "../middlewares/auth";
 import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 import { getOrgIdForOrgAdmin, listOrgMemberIds, logAdminTeamAccess } from "../lib/org-admin";
 import { AI_COST, checkEntitlement, consumeAiCredits } from "../services/credits";
+import { extractAttachmentText, shouldExtractAttachmentContent, type AttachmentRow } from "../lib/attachment-extract";
 
 const router: IRouter = Router();
 
@@ -928,7 +929,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     // alors que le mail en avait. Limite de garde : 6 PJ max par mail dans le
     // prompt pour eviter l'explosion (un mail avec 50 PJ ferait sauter la
     // memoire).
-    const attachmentsByEmail = new Map<number, Array<{ filename: string; content_type: string | null }>>();
+    const attachmentsByEmail = new Map<number, Array<{ filename: string; content_type: string | null; size: number | null }>>();
     try {
       const allEmailIds = Array.from(new Set([
         ...inbox.map((e) => Number(e.id)).filter((n) => Number.isFinite(n)),
@@ -938,25 +939,43 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       if (allEmailIds.length > 0) {
         const { data: atts } = await supabaseAdmin
           .from("email_attachments")
-          .select("email_id, filename, content_type")
+          .select("email_id, filename, content_type, size")
           .in("email_id", allEmailIds)
           .order("created_at", { ascending: true });
         for (const a of (atts || []) as Array<any>) {
           const eid = Number(a.email_id);
           if (!Number.isFinite(eid)) continue;
           const arr = attachmentsByEmail.get(eid) || [];
-          if (arr.length < 6) arr.push({ filename: String(a.filename || ""), content_type: a.content_type || null });
+          if (arr.length < 6) arr.push({
+            filename: String(a.filename || ""),
+            content_type: a.content_type || null,
+            size: typeof a.size === "number" ? a.size : null,
+          });
           attachmentsByEmail.set(eid, arr);
         }
       }
     } catch (err: any) {
       req.log.warn({ err: err?.message }, "[inboria-chat] attachments fetch failed");
     }
+    // Format taille humain (B/Ko/Mo) — permet a l'IA de distinguer 2 PJ
+    // homonymes (ex. Google Play envoie 2 fois "Terms_of_Service_fr_be.html"
+    // mais avec des tailles distinctes 42 Ko / 28 Ko = ce ne sont PAS des
+    // doublons mais 2 documents differents).
+    const fmtSize = (n: number | null | undefined): string => {
+      if (!n || !Number.isFinite(n) || n <= 0) return "";
+      if (n < 1024) return `${n} B`;
+      if (n < 1024 * 1024) return `${Math.round(n / 1024)} Ko`;
+      return `${(n / (1024 * 1024)).toFixed(1)} Mo`;
+    };
     const fmtAttachments = (emailId: number | null | undefined): string => {
       if (!emailId) return "";
       const list = attachmentsByEmail.get(Number(emailId));
       if (!list || list.length === 0) return "";
-      const names = list.map((a) => truncate(a.filename || "(sans nom)", 60)).join(", ");
+      const names = list.map((a) => {
+        const sz = fmtSize(a.size);
+        const nm = truncate(a.filename || "(sans nom)", 60);
+        return sz ? `${nm} (${sz})` : nm;
+      }).join(", ");
       return ` [PJ: ${names}]`;
     };
 
@@ -1198,6 +1217,9 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         }
       }
     }
+    // Hoiste hors du if : utilise plus bas par le bloc d'extraction de
+    // contenu de PJ pour cibler en priorite les mails de contacts mentionnes.
+    const contactAwareEmailIdsOuter = new Set<number>();
     if (targetEmails.length > 0) {
       // Une seule requete pour les emails recents du perimetre (scope tenant
       // STRICT, jamais empile avec un autre .or() qui pourrait l'ecraser),
@@ -1311,6 +1333,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
           const contactRowIds = contactRows
             .map((e: any) => Number(e.id))
             .filter((n: number) => Number.isFinite(n));
+          for (const id of contactRowIds) contactAwareEmailIdsOuter.add(id);
           if (contactRowIds.length > 0) {
             try {
               const { data: caRows } = await supabaseAdmin
@@ -1419,6 +1442,92 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       memoryLines.push(
         `IMPORTANT : si la question porte sur un des contacts ci-dessus, base-toi UNIQUEMENT sur ces traces. Si aucune trace n'apparait, dis-le honnetement ("aucun echange en memoire avec ce contact") plutot que d'inventer un contexte.`,
       );
+    }
+
+    // === Extraction de contenu de PJ (HTML/TXT/PDF) ===
+    // Si le message utilisateur contient un mot-cle indiquant qu'il veut LIRE
+    // le contenu d'une PJ ("contenu", "que dit", "résumé", "lis", "extrait",
+    // etc.), on telecharge et extrait jusqu'a 3 PJ pertinentes parmi :
+    //   - les PJ des mails de contact-aware (priorite max),
+    //   - les PJ des mails inbox/assignes/sent dont le sender ou un mot du
+    //     sujet apparait dans le message,
+    //   - les PJ dont le filename apparait dans le message.
+    // Bornes : 3 extractions max, timeout global 8s, 4000 chars/PJ. Cap dur
+    // pour ne pas exploser le contexte LLM ni le temps de reponse.
+    if (shouldExtractAttachmentContent(lastUserMsg)) {
+      try {
+        const lcMsg = lastUserMsg.toLowerCase();
+        const candidateIds = new Set<number>(contactAwareEmailIdsOuter);
+        const allKnownEmails: any[] = [...inbox, ...assignedToMe, ...sent];
+        for (const e of allKnownEmails) {
+          const id = Number(e.id);
+          if (!Number.isFinite(id)) continue;
+          const senderRaw = String(e.sender || "").toLowerCase();
+          const senderFirst = senderRaw.split(/[<\s@]/)[0] || "";
+          const subjLow = String(e.subject || "").toLowerCase();
+          if (senderFirst.length >= 4 && lcMsg.includes(senderFirst)) {
+            candidateIds.add(id);
+            continue;
+          }
+          const subjWords = subjLow.split(/\s+/).filter((w) => w.length >= 5);
+          if (subjWords.some((w) => lcMsg.includes(w))) candidateIds.add(id);
+        }
+        if (candidateIds.size > 0) {
+          const { data: extractRows } = await supabaseAdmin
+            .from("email_attachments")
+            .select("id, email_id, filename, content_type, size, provider, provider_attachment_id, message_uid, connection_id")
+            .in("email_id", Array.from(candidateIds));
+          const all = ((extractRows as any[]) || []) as AttachmentRow[];
+          const filenameMatch = (a: AttachmentRow) =>
+            a.filename && lcMsg.includes(a.filename.toLowerCase());
+          all.sort((a, b) => {
+            const fa = filenameMatch(a) ? 1 : 0;
+            const fb = filenameMatch(b) ? 1 : 0;
+            if (fa !== fb) return fb - fa;
+            const ca = contactAwareEmailIdsOuter.has(Number(a.email_id)) ? 1 : 0;
+            const cb = contactAwareEmailIdsOuter.has(Number(b.email_id)) ? 1 : 0;
+            if (ca !== cb) return cb - ca;
+            return (a.size || 0) - (b.size || 0);
+          });
+          const picked = all.slice(0, 3);
+          if (picked.length > 0) {
+            const settled = await Promise.race([
+              Promise.all(picked.map((a) => extractAttachmentText(a))),
+              new Promise<(string | null)[]>((resolve) =>
+                setTimeout(() => resolve(picked.map(() => null)), 8000),
+              ),
+            ]);
+            const extracted: Array<{ a: AttachmentRow; text: string }> = [];
+            for (let i = 0; i < picked.length; i++) {
+              const t = (settled as (string | null)[])[i];
+              if (t) extracted.push({ a: picked[i]!, text: t });
+            }
+            if (extracted.length > 0) {
+              memoryLines.push("");
+              memoryLines.push(
+                `Contenu extrait de pieces jointes (HTML/TXT/PDF, max ${extracted.length} fichiers, tronques a 4000 chars) :`,
+              );
+              for (const { a, text } of extracted) {
+                memoryLines.push(
+                  `--- PJ "${truncate(a.filename, 80)}" (mail #${a.email_id}, ${a.content_type || "?"}, ${a.size || "?"} octets) ---`,
+                );
+                memoryLines.push(text);
+                memoryLines.push("--- fin PJ ---");
+              }
+              memoryLines.push(
+                "IMPORTANT : ces extraits proviennent du telechargement reel des PJ. Tu peux les citer/resumer. Si l'extrait est tronque, dis-le honnetement.",
+              );
+            } else {
+              memoryLines.push("");
+              memoryLines.push(
+                "Note : extraction de contenu de PJ tentee mais aucun texte recupere (PJ non textuelles, telechargement echoue ou format non supporte). Reponds que tu ne peux pas lire le contenu et propose a l'utilisateur d'ouvrir la PJ dans l'inbox.",
+              );
+            }
+          }
+        }
+      } catch (err: any) {
+        req.log.warn({ err: err?.message }, "[inboria-chat] attachment extraction failed");
+      }
     }
 
     const memoryBlock = memoryLines.length > 0 ? `\n\n${memoryLines.join("\n")}` : "";
