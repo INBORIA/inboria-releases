@@ -11,6 +11,7 @@ const ALLOWED_SCOPES = [
   "appointments:write",
   "contacts:write",
   "rules:trigger",
+  "brain:read",
 ];
 
 router.get("/api-keys", requireAuth, async (req, res): Promise<void> => {

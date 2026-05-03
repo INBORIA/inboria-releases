@@ -1,9 +1,32 @@
 import { Router, type IRouter } from "express";
+import OpenAI from "openai";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireApiKey } from "../middlewares/api-key";
 import { emitWebhook } from "../services/webhooks";
 import { recordAutopilotEvent } from "../services/autopilot-events";
+import { getMemberMailboxIds } from "../lib/inbox-scope";
 import { logger } from "../lib/logger";
+
+// Email Brain Phase 3 (#216) — scope filter pour les tables inboria_*.
+// Personnel (user_id + shared_mailbox_id null) OU boîtes partagées dont
+// l'utilisateur est membre. Les inboria_* sont indexées par user_id ET
+// shared_mailbox_id selon l'origine du mail extrait.
+function brainScopeFilter(userId: string, mailboxIds: string[]): string {
+  const personal = `and(user_id.eq.${userId},shared_mailbox_id.is.null)`;
+  const parts = [personal];
+  if (mailboxIds.length > 0) {
+    parts.push(`shared_mailbox_id.in.(${mailboxIds.join(",")})`);
+  }
+  return parts.join(",");
+}
+
+function normalizeEmail(raw: string): string {
+  const s = String(raw || "").trim().toLowerCase();
+  const angle = s.match(/<([^>]+)>/);
+  if (angle && angle[1]) return angle[1].trim();
+  const bare = s.match(/[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}/i);
+  return bare ? bare[0].trim() : s;
+}
 
 const router: IRouter = Router();
 
@@ -506,5 +529,310 @@ const PUBLIC_OPENAPI = {
     },
   },
 };
+
+// =====================================================================
+// Email Brain Phase 3 (#216) — API agentique lecture mémoire
+// =====================================================================
+
+// GET /api/v1/public/brain/contact?email=...
+router.get(
+  "/v1/public/brain/contact",
+  requireApiKey(["brain:read"]),
+  async (req, res): Promise<void> => {
+    try {
+      const userId = req.userId!;
+      const email = normalizeEmail(String(req.query.email || ""));
+      if (!email || !email.includes("@")) {
+        res.status(400).json({ error: "email query param required" });
+        return;
+      }
+      const mailboxIds = await getMemberMailboxIds(userId);
+      const scope = brainScopeFilter(userId, mailboxIds);
+
+      // Manual contact fiche (optionnelle).
+      const { data: manualRows } = await supabaseAdmin
+        .from("contacts")
+        .select("display_name, phone, company, notes, updated_at")
+        .eq("email", email)
+        .or(scope)
+        .order("updated_at", { ascending: false })
+        .limit(1);
+      const manual = (manualRows || [])[0] || null;
+
+      // Dernière synthèse (cache contact-summarizer).
+      let summary: { content: string; generated_at: string } | null = null;
+      try {
+        const { data: summaryRow } = await supabaseAdmin
+          .from("inboria_contact_summaries")
+          .select("content, generated_at")
+          .eq("user_id", userId)
+          .eq("contact_email", email)
+          .is("shared_mailbox_id", null)
+          .maybeSingle();
+        if (summaryRow) summary = summaryRow as any;
+      } catch {
+        // table missing — ignore
+      }
+
+      // Stats : nb mails entrants/sortants connus avec ce contact.
+      const { count: inboundCount } = await supabaseAdmin
+        .from("emails")
+        .select("id", { count: "exact", head: true })
+        .ilike("sender", `%${email}%`)
+        .or(scope);
+
+      res.json({
+        email,
+        manual: manual
+          ? {
+              displayName: (manual as any).display_name || null,
+              phone: (manual as any).phone || null,
+              company: (manual as any).company || null,
+              notes: (manual as any).notes || null,
+              updatedAt: (manual as any).updated_at || null,
+            }
+          : null,
+        summary: summary
+          ? { content: summary.content, generatedAt: summary.generated_at }
+          : null,
+        stats: { knownEmails: inboundCount || 0 },
+      });
+    } catch (e: any) {
+      req.log.error({ err: e?.message }, "[brain-api] contact crashed");
+      res.status(500).json({ error: e?.message || "Internal error" });
+    }
+  },
+);
+
+// GET /api/v1/public/brain/contact/timeline?email=&limit=
+router.get(
+  "/v1/public/brain/contact/timeline",
+  requireApiKey(["brain:read"]),
+  async (req, res): Promise<void> => {
+    try {
+      const userId = req.userId!;
+      const email = normalizeEmail(String(req.query.email || ""));
+      if (!email || !email.includes("@")) {
+        res.status(400).json({ error: "email query param required" });
+        return;
+      }
+      const limit = Math.min(50, Math.max(1, parseInt(String(req.query.limit || "20"), 10) || 20));
+      const mailboxIds = await getMemberMailboxIds(userId);
+      const scope = brainScopeFilter(userId, mailboxIds);
+
+      const [factsRes, episodesRes, decisionsRes] = await Promise.all([
+        supabaseAdmin
+          .from("inboria_facts")
+          .select("kind, statement, source_email_id, extracted_at")
+          .eq("contact_email", email)
+          .or(scope)
+          .order("extracted_at", { ascending: false })
+          .limit(limit),
+        supabaseAdmin
+          .from("inboria_episodes")
+          .select("kind, summary, event_date, source_email_id, extracted_at")
+          .eq("contact_email", email)
+          .or(scope)
+          .order("extracted_at", { ascending: false })
+          .limit(limit),
+        supabaseAdmin
+          .from("inboria_decisions")
+          .select("decision, decided_at, amount_eur, source_email_id, created_at")
+          .eq("contact_email", email)
+          .or(scope)
+          .order("created_at", { ascending: false })
+          .limit(limit),
+      ]);
+
+      res.json({
+        email,
+        facts: (factsRes.data || []).map((f: any) => ({
+          kind: f.kind,
+          statement: f.statement,
+          sourceEmailId: f.source_email_id,
+          extractedAt: f.extracted_at,
+        })),
+        episodes: (episodesRes.data || []).map((e: any) => ({
+          kind: e.kind,
+          summary: e.summary,
+          eventDate: e.event_date,
+          sourceEmailId: e.source_email_id,
+          extractedAt: e.extracted_at,
+        })),
+        decisions: (decisionsRes.data || []).map((d: any) => ({
+          decision: d.decision,
+          decidedAt: d.decided_at,
+          amountEur: d.amount_eur,
+          sourceEmailId: d.source_email_id,
+          createdAt: d.created_at,
+        })),
+      });
+    } catch (e: any) {
+      req.log.error({ err: e?.message }, "[brain-api] timeline crashed");
+      res.status(500).json({ error: e?.message || "Internal error" });
+    }
+  },
+);
+
+// GET /api/v1/public/brain/projects?status=active&limit=
+router.get(
+  "/v1/public/brain/projects",
+  requireApiKey(["brain:read"]),
+  async (req, res): Promise<void> => {
+    try {
+      const userId = req.userId!;
+      const limit = Math.min(100, Math.max(1, parseInt(String(req.query.limit || "30"), 10) || 30));
+      const status = req.query.status ? String(req.query.status) : "active";
+      const mailboxIds = await getMemberMailboxIds(userId);
+      const scope = brainScopeFilter(userId, mailboxIds);
+
+      const { data, error } = await supabaseAdmin
+        .from("inboria_projects_inferred")
+        .select("id, name, status, participants, last_activity_at, created_at")
+        .eq("status", status)
+        .or(scope)
+        .order("last_activity_at", { ascending: false, nullsFirst: false })
+        .limit(limit);
+      if (error && !/relation .*inboria_projects_inferred.* does not exist/i.test(error.message)) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.json({
+        data: (data || []).map((p: any) => ({
+          id: p.id,
+          name: p.name,
+          status: p.status,
+          participants: p.participants || [],
+          lastActivityAt: p.last_activity_at,
+          createdAt: p.created_at,
+        })),
+      });
+    } catch (e: any) {
+      req.log.error({ err: e?.message }, "[brain-api] projects crashed");
+      res.status(500).json({ error: e?.message || "Internal error" });
+    }
+  },
+);
+
+// GET /api/v1/public/brain/decisions?contactEmail=&since=&limit=
+router.get(
+  "/v1/public/brain/decisions",
+  requireApiKey(["brain:read"]),
+  async (req, res): Promise<void> => {
+    try {
+      const userId = req.userId!;
+      const limit = Math.min(100, Math.max(1, parseInt(String(req.query.limit || "30"), 10) || 30));
+      const since = req.query.since ? String(req.query.since) : null;
+      const contactEmail = req.query.contactEmail
+        ? normalizeEmail(String(req.query.contactEmail))
+        : null;
+      const mailboxIds = await getMemberMailboxIds(userId);
+      const scope = brainScopeFilter(userId, mailboxIds);
+
+      let q = supabaseAdmin
+        .from("inboria_decisions")
+        .select("decision, contact_email, decided_at, amount_eur, source_email_id, created_at")
+        .or(scope)
+        .order("created_at", { ascending: false })
+        .limit(limit);
+      if (contactEmail) q = q.eq("contact_email", contactEmail);
+      if (since) q = q.gte("created_at", since);
+
+      const { data, error } = await q;
+      if (error && !/relation .*inboria_decisions.* does not exist/i.test(error.message)) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.json({
+        data: (data || []).map((d: any) => ({
+          decision: d.decision,
+          contactEmail: d.contact_email,
+          decidedAt: d.decided_at,
+          amountEur: d.amount_eur,
+          sourceEmailId: d.source_email_id,
+          createdAt: d.created_at,
+        })),
+      });
+    } catch (e: any) {
+      req.log.error({ err: e?.message }, "[brain-api] decisions crashed");
+      res.status(500).json({ error: e?.message || "Internal error" });
+    }
+  },
+);
+
+// GET /api/v1/public/brain/search?q=...&limit=
+router.get(
+  "/v1/public/brain/search",
+  requireApiKey(["brain:read"]),
+  async (req, res): Promise<void> => {
+    try {
+      const userId = req.userId!;
+      const q = String(req.query.q || "").trim();
+      if (!q || q.length < 3) {
+        res.status(400).json({ error: "q query param required (min 3 chars)" });
+        return;
+      }
+      const limit = Math.min(20, Math.max(1, parseInt(String(req.query.limit || "10"), 10) || 10));
+      const mailboxIds = await getMemberMailboxIds(userId);
+
+      const apiKey = process.env["OPENAI_API_KEY"];
+      if (!apiKey) {
+        res.status(503).json({ error: "Search unavailable: embeddings disabled" });
+        return;
+      }
+      const openai = new OpenAI({ apiKey });
+      const embed = await openai.embeddings.create({
+        model: "text-embedding-3-small",
+        input: q,
+      });
+      const queryVec = embed.data[0]?.embedding as number[] | undefined;
+      if (!Array.isArray(queryVec) || queryVec.length !== 1536) {
+        res.status(500).json({ error: "Embedding failed" });
+        return;
+      }
+      const { data, error } = await supabaseAdmin.rpc("search_email_chunks", {
+        query_vec: queryVec as any,
+        scope_user_ids: [userId],
+        scope_mailbox_ids: mailboxIds,
+        exclude_private: false,
+        match_limit: limit * 2,
+      });
+      if (error) {
+        const msg = String(error.message || "");
+        if (
+          /relation .*email_chunks.* does not exist/i.test(msg) ||
+          /function .*search_email_chunks.* does not exist/i.test(msg)
+        ) {
+          res.json({ data: [] });
+          return;
+        }
+        res.status(500).json({ error: msg });
+        return;
+      }
+      const seen = new Set<number>();
+      const hits = ((data as any[]) || [])
+        .filter((h) => typeof h.distance === "number" && h.distance < 0.78)
+        .filter((h) => {
+          const eid = Number(h.email_id);
+          if (seen.has(eid)) return false;
+          seen.add(eid);
+          return true;
+        })
+        .slice(0, limit)
+        .map((h) => ({
+          emailId: Number(h.email_id),
+          subject: String(h.subject || ""),
+          sender: String(h.sender || ""),
+          sentAt: String(h.sent_at || h.created_at || ""),
+          snippet: String(h.content || "").slice(0, 280).replace(/\s+/g, " "),
+          distance: Number(h.distance),
+        }));
+      res.json({ data: hits });
+    } catch (e: any) {
+      req.log.error({ err: e?.message }, "[brain-api] search crashed");
+      res.status(500).json({ error: e?.message || "Internal error" });
+    }
+  },
+);
 
 export default router;
