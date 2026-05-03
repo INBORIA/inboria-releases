@@ -1120,9 +1120,33 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       className="gap-1.5 h-7 text-[11px]"
                       disabled={isSending || !forwardTo.trim() || !forwardSubject.trim() || !forwardText.trim()}
                       onClick={() => {
-                        // Task #205 — passer email.id en replyToEmailId pour qu'un transfert
-                        // marque aussi automatiquement l'email d'origine comme "traité" côté API.
-                        onSendReply(forwardTo, forwardSubject, forwardText, email.id, forwardAttachments, forwardConnectionId || undefined, undefined);
+                        // Task #205 — un transfert n'est PAS une réponse :
+                        // on ne renseigne pas replyToEmailId (ce qui éviterait
+                        // de classer l'email envoyé comme "Reply" dans Envoyés
+                        // ou de polluer reply_to_email_id en aval). À la place,
+                        // on appelle explicitement /handled juste après pour
+                        // marquer l'email d'origine comme traité.
+                        onSendReply(forwardTo, forwardSubject, forwardText, undefined, forwardAttachments, forwardConnectionId || undefined, undefined);
+                        if (!handledAt) {
+                          (async () => {
+                            try {
+                              const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+                              const { supabase } = await import("@/lib/supabase");
+                              const { data: sd } = await supabase.auth.getSession();
+                              const token = sd?.session?.access_token;
+                              await fetch(`${baseUrl}/api/emails/${email.id}/handled`, {
+                                method: "POST",
+                                credentials: "include",
+                                headers: {
+                                  "Content-Type": "application/json",
+                                  ...(token ? { Authorization: `Bearer ${token}` } : {}),
+                                },
+                              });
+                              queryClient.invalidateQueries({ queryKey: ["analytics-team"] });
+                              queryClient.invalidateQueries({ predicate: (q) => Array.isArray(q.queryKey) && String(q.queryKey[0] || "").includes("emails") });
+                            } catch { /* silencieux : si l'utilisateur n'a pas accès, le serveur renvoie 403 */ }
+                          })();
+                        }
                         setForwardText("");
                         setForwardTo("");
                         setForwardSubject("");

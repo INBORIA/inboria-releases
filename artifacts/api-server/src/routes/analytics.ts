@@ -529,9 +529,31 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     }
     doc.moveDown(1);
 
+    // Délai moyen de réponse par membre (handled_at - created_at, sinon
+    // proxy claimed_at/assigned_at/inboria_processed_at en mode legacy).
+    const respStats = new Map<string, { sumMin: number; n: number }>();
+    for (const uid of memberIds) respStats.set(uid, { sumMin: 0, n: 0 });
+    for (const e of (list || []) as any[]) {
+      const handledTs = handledEnabled
+        ? (e.handled_at || null)
+        : (e.claimed_at || e.assigned_at || e.inboria_processed_at || null);
+      const ownerId = handledEnabled
+        ? (e.handled_at ? e.handled_by : null)
+        : (e.assigned_to || e.claimed_by || null);
+      if (!ownerId || !handledTs || !e.created_at || !respStats.has(ownerId)) continue;
+      const diffMin = Math.max(0, Math.floor((new Date(handledTs).getTime() - new Date(e.created_at).getTime()) / 60_000));
+      if (diffMin >= 60 * 24 * 30) continue;
+      const r = respStats.get(ownerId)!;
+      r.sumMin += diffMin;
+      r.n += 1;
+    }
+
     const tableTop = doc.y;
-    const colX = [48, 240, 340, 420, 500];
-    const headers = ["Membre", "Traités", "Écartés", "Assignés"];
+    // 5 colonnes : Membre / Traités (ou Assignés en legacy) / Écartés /
+    // Délai moyen / (PDF garde aussi Assignés à droite quand pertinent).
+    const colX = [48, 220, 310, 390, 480];
+    const handledHeader = handledEnabled ? "Traités" : "Assignés (proxy)";
+    const headers = ["Membre", handledHeader, "Écartés", "Délai moyen", "Assignés"];
     doc.fontSize(11).fillColor("#0f172a");
     headers.forEach((h, i) => doc.text(h, colX[i], tableTop));
     doc
@@ -540,14 +562,24 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
       .strokeColor("#cbd5e1")
       .stroke();
 
+    const fmtDelay = (m: number | null): string => {
+      if (m == null) return "—";
+      if (m < 60) return `${m} min`;
+      if (m < 60 * 24) return `${(m / 60).toFixed(1)} h`;
+      return `${(m / (60 * 24)).toFixed(1)} j`;
+    };
+
     let y = tableTop + 22;
     doc.fontSize(10).fillColor("#1e293b");
     for (const [uid, s] of stats.entries()) {
       const name = profileMap.get(uid) || uid.slice(0, 8);
-      doc.text(name, colX[0], y, { width: 180, ellipsis: true });
-      doc.text(String(s.handled), colX[1], y);
+      const r = respStats.get(uid);
+      const avg = r && r.n > 0 ? Math.round(r.sumMin / r.n) : null;
+      doc.text(name, colX[0], y, { width: 160, ellipsis: true });
+      doc.text(handledEnabled ? String(s.handled) : String(s.assigned), colX[1], y);
       doc.text(String(s.archived), colX[2], y);
-      doc.text(String(s.assigned), colX[3], y);
+      doc.text(fmtDelay(avg), colX[3], y);
+      doc.text(String(s.assigned), colX[4], y);
       y += 18;
       if (y > 770) {
         doc.addPage();
