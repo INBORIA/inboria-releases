@@ -2073,7 +2073,10 @@
     "placeholderMention": "Interne Notiz hinzufügen (verwenden Sie @ zum Erwähnen)…",
     "mentionPick": "Teammitglied erwähnen",
     "mentionHint": "@ zum Erwähnen",
-    "mentionedYou": "hat Sie erwähnt"
+    "mentionedYou": "hat Sie erwähnt",
+    "threadTitle_zero": "Konversation",
+    "threadTitle_one": "Konversation · {{count}} interne Notiz",
+    "threadTitle_other": "Konversation · {{count}} interne Notizen"
   },
   "attachments": {
     "title": "Anhänge",

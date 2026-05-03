@@ -2073,7 +2073,10 @@
     "placeholderMention": "Agregar una nota interna (usa @ para mencionar)…",
     "mentionPick": "Mencionar a un miembro",
     "mentionHint": "@ para mencionar",
-    "mentionedYou": "te ha mencionado"
+    "mentionedYou": "te ha mencionado",
+    "threadTitle_zero": "Conversación",
+    "threadTitle_one": "Conversación · {{count}} nota interna",
+    "threadTitle_other": "Conversación · {{count}} notas internas"
   },
   "attachments": {
     "title": "Adjuntos",

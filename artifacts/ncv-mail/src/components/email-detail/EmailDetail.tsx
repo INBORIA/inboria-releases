@@ -324,6 +324,22 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   })
                   .filter((x): x is { name: string; email: string } => !!x);
                 if (recipients.length === 0) return null;
+                const badge = resolveMailboxBadge(email, connections, sharedMailboxes);
+                let badgeAddress = "";
+                if (badge?.kind === "personal") {
+                  badgeAddress = (badge.label || "").toLowerCase();
+                } else if (badge?.kind === "shared") {
+                  const sharedId = (email as any).shared_mailbox_id || (email as any).sharedMailboxId;
+                  const mb = (sharedMailboxes || []).find((m) => String(m.id) === String(sharedId));
+                  badgeAddress = (mb?.email_address || "").toLowerCase();
+                }
+                if (
+                  badgeAddress &&
+                  recipients.length === 1 &&
+                  recipients[0].email === badgeAddress
+                ) {
+                  return null;
+                }
                 return (
                   <div className="flex items-start gap-1.5 mb-2 flex-wrap">
                     <span className="text-[10px] uppercase tracking-wider text-[#8b9cb3] font-medium mt-0.5">{t("inbox.toLabel", "À")}</span>

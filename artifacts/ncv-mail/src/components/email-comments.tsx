@@ -348,7 +348,7 @@ export function EmailComments({
           <div className="flex items-center gap-1.5">
             <MessageSquare className="w-3.5 h-3.5 text-primary" />
             <span className="text-[11px] font-medium text-primary uppercase tracking-wider">
-              {t("comments.threadTitle", { defaultValue: "Thread" })} ({commentList.length})
+              {t("comments.threadTitle", { count: commentList.length, defaultValue: "Conversation" })}
             </span>
           </div>
           {typingUsers.length > 0 && (
@@ -408,7 +408,7 @@ export function EmailComments({
                         {t("comments.emailMessage", { defaultValue: "Email" })}
                       </span>
                     </div>
-                    {e.subject && (
+                    {e.subject && e.subject !== email?.subject && (
                       <p className="text-[11px] text-white/80 mb-1 line-clamp-1">{e.subject}</p>
                     )}
                     {snippet && (

@@ -2073,7 +2073,10 @@
     "placeholderMention": "Add an internal note (use @ to mention)…",
     "mentionPick": "Mention a teammate",
     "mentionHint": "@ to mention",
-    "mentionedYou": "mentioned you"
+    "mentionedYou": "mentioned you",
+    "threadTitle_zero": "Conversation",
+    "threadTitle_one": "Conversation · {{count}} internal note",
+    "threadTitle_other": "Conversation · {{count}} internal notes"
   },
   "attachments": {
     "title": "Attachments",
