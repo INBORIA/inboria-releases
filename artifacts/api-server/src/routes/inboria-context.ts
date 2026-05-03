@@ -1323,6 +1323,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     // complet via la table email_chunks. Ne se déclenche QUE quand les
     // heuristiques précédentes (ID explicite, contact ciblé) n'ont rien
     // donné, pour éviter de polluer le contexte ou doubler les requêtes.
+    let semanticHitCount = 0;
     if (
       lastUserMsg.length >= 12 &&
       requestedMailIds.length === 0 &&
@@ -1378,6 +1379,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
                 if (!bestByEmail.has(eid)) bestByEmail.set(eid, h);
               }
               const top = Array.from(bestByEmail.values()).slice(0, 8);
+              semanticHitCount = top.length;
               if (top.length > 0) {
                 memoryLines.push(
                   "Recherche dans tout l'historique des mails (correspondances semantiques) :",
@@ -1414,6 +1416,78 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         req.log.warn(
           { err: err?.message },
           "[inboria-chat] semantic search failed",
+        );
+      }
+    }
+
+    // Email Brain Phase 3 — Fallback mot-cle : si la recherche semantique
+    // n'a rien donne (mots courts comme "bilan", "signature", ou requete
+    // < 12 chars), on tente un ILIKE sur subject/body pour ne plus jamais
+    // dire "rien trouve" alors qu'un mail evident existe.
+    if (
+      semanticHitCount === 0 &&
+      requestedMailIds.length === 0 &&
+      targetEmails.length === 0
+    ) {
+      try {
+        const STOPWORDS = new Set([
+          "ai","est","avez","avoir","mail","mails","email","emails","dans","lequel",
+          "parle","parlez","parler","trouve","trouver","cherche","montre","mes",
+          "mon","ma","les","des","une","un","et","ou","de","du","la","le","au",
+          "aux","pour","avec","sans","sur","par","ce","cette","ces","qui","que",
+          "quoi","dont","tu","vous","nous","ils","elle","elles","est-ce","ait",
+          "etait","etre","fait","faire","peux","peut","plus","moins","tres",
+          "bien","oui","non","aussi","encore","tout","tous","toute","toutes",
+          "the","and","you","for","with","email",
+        ]);
+        const words: string[] = lastUserMsg
+          .toLowerCase()
+          .replace(/[^\p{L}\p{N}\s]/gu, " ")
+          .split(/\s+/)
+          .filter((w: string) => w.length >= 4 && !STOPWORDS.has(w));
+        const uniqWords: string[] = Array.from(new Set(words)).slice(0, 5);
+        if (uniqWords.length > 0) {
+          const orParts: string[] = [];
+          for (const w of uniqWords) {
+            const safe = w.replace(/[%,()]/g, "");
+            orParts.push(`subject.ilike.%${safe}%`);
+            orParts.push(`body.ilike.%${safe}%`);
+          }
+          const baseQ = adminTeamCtx
+            ? supabaseAdmin
+                .from("emails")
+                .select("id, sender, subject, summary, sent_at, created_at, is_private")
+                .eq("is_private", false)
+            : supabaseAdmin
+                .from("emails")
+                .select("id, sender, subject, summary, sent_at, created_at");
+          const { data: kwHits, error: kwErr } = await baseQ
+            .or(emailScopeFilter)
+            .or(orParts.join(","))
+            .order("created_at", { ascending: false })
+            .limit(8);
+          if (kwErr) {
+            req.log.warn({ err: kwErr.message }, "[inboria-chat] keyword fallback failed");
+          } else if ((kwHits || []).length > 0) {
+            memoryLines.push(
+              "Recherche par mots-cles dans vos mails (objet/corps) :",
+            );
+            for (const e of kwHits as any[]) {
+              const date = fmtShortDate(e.sent_at || e.created_at);
+              const who = truncate(e.sender || "(inconnu)", 50);
+              const subj = truncate(e.subject || "(sans objet)", 80);
+              const sum = e.summary
+                ? ` — ${truncate(String(e.summary).replace(/\s+/g, " "), 140)}`
+                : "";
+              memoryLines.push(`- [mail#${e.id}] ${date} ${who} : ${subj}${sum}`);
+            }
+            memoryLines.push("");
+          }
+        }
+      } catch (err: any) {
+        req.log.warn(
+          { err: err?.message },
+          "[inboria-chat] keyword fallback crashed",
         );
       }
     }
