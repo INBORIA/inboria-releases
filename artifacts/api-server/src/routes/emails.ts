@@ -923,7 +923,7 @@ function detectAppointmentInBody(body: string): { startAt: Date; endAt: Date; ti
 router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
   const uploadIds: string[] = [];
   try {
-    const { to, subject, body, replyToEmailId, attachments: rawUploadIds, connectionId, projectId } = req.body;
+    const { to, subject, body, replyToEmailId, attachments: rawUploadIds, connectionId, projectId, markHandledOfEmailId } = req.body;
 
     const ids: string[] = Array.isArray(rawUploadIds) ? rawUploadIds.filter((x: any) => typeof x === "string") : [];
     uploadIds.push(...ids);
@@ -1232,28 +1232,29 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
     }
 
     // Task #205 — auto-marquer l'email d'origine comme "traité" quand on
-    // envoie une réponse (replyToEmailId). On ne touche pas si l'email a
-    // déjà handled_at posé.
-    if (replyToEmailId && (await hasHandledColumns())) {
+    // envoie une réponse (replyToEmailId) OU un transfert
+    // (markHandledOfEmailId, sans polluer reply_to_email_id pour ne pas
+    // classer le message envoyé comme "Reply"). On ne touche pas si
+    // handled_at est déjà posé. Couvre tous les clients (web, mobile, API).
+    const handledTargetId = replyToEmailId || markHandledOfEmailId || null;
+    if (handledTargetId && (await hasHandledColumns())) {
       try {
-        // Sécurité : ne marquer "traité" que si l'utilisateur a réellement
-        // accès à l'email parent (perso ou via boîte partagée de son org).
-        const canHandleParent = await userCanHandleEmail(String(replyToEmailId), req.userId!);
+        const canHandleParent = await userCanHandleEmail(String(handledTargetId), req.userId!);
         if (canHandleParent) {
           const { data: orig } = await supabaseAdmin
             .from("emails")
             .select("id, handled_at")
-            .eq("id", replyToEmailId)
+            .eq("id", handledTargetId)
             .maybeSingle();
           if (orig && !orig.handled_at) {
             await supabaseAdmin
               .from("emails")
               .update({ handled_at: new Date().toISOString(), handled_by: req.userId! })
-              .eq("id", replyToEmailId);
+              .eq("id", handledTargetId);
           }
         }
       } catch (e: any) {
-        req.log.warn({ err: e?.message, emailId: replyToEmailId }, "[handled] auto-mark on send failed");
+        req.log.warn({ err: e?.message, emailId: handledTargetId }, "[handled] auto-mark on send failed");
       }
     }
 
