@@ -1,5 +1,4 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { BilanRefontePreview } from "@/components/dashboard/bilan-refonte-preview";
 import {
   useGenerateDailySummary,
   useListAppointments,
@@ -42,9 +41,12 @@ interface TeamAnalytics {
   totals: { emails: number; archived: number; assigned: number; handled: number | null; avgHandlingMinutes: number | null; period: string };
   filters?: { period: string; member: string | null; mailbox: string | null; project: string | null };
   handledMetricsEnabled?: boolean;
-  perMember: { userId: string; userName: string; handled: number; archived: number; assigned: number; avgFirstResponseMinutes: number | null }[];
-  perMailbox?: { mailboxId: string | null; mailboxName: string; mailboxEmail: string; count: number; handled: number; archived: number; avgFirstResponseMinutes: number | null }[];
-  perProject?: { projectId: string; projectName: string; projectReference: string; count: number; handled: number; archived: number; avgFirstResponseMinutes: number | null }[];
+  perMember: { userId: string; userName: string; handled: number; archived: number; assigned: number; openLoad: number; avgFirstResponseMinutes: number | null }[];
+  perMailbox?: { mailboxId: string | null; mailboxName: string; mailboxEmail: string; count: number; received: number; handled: number; notHandled: number; archived: number; avgFirstResponseMinutes: number | null }[];
+  perPersonalMailbox?: { userId: string; userName: string; received: number; handled: number; notHandled: number; avgFirstResponseMinutes: number | null }[];
+  perProject?: { projectId: string; projectName: string; projectReference: string; count: number; received: number; handled: number; notHandled: number; archived: number; avgFirstResponseMinutes: number | null }[];
+  tasksPerMember?: { userId: string; userName: string; open: number; done: number; overdue: number }[];
+  tasksPerProject?: { projectId: string | null; projectName: string; projectReference: string; isOutOfProject: boolean; open: number; done: number; overdue: number }[];
   topSenders: { email: string; count: number }[];
   topCategories: { name: string; count: number }[];
   evolution: { date: string; count: number; handledCount: number }[];
@@ -62,17 +64,6 @@ function formatDelay(min: number | null | undefined): string {
 const PIE_COLORS = ["#2d7dd2", "#7d4ed2", "#d2a02d", "#d24e6f", "#4ed29a", "#d2bc4e"];
 
 export default function BilanQuotidien() {
-  if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("preview") === "1") {
-    return (
-      <DashboardLayout>
-        <BilanRefontePreview />
-      </DashboardLayout>
-    );
-  }
-  return <BilanQuotidienReal />;
-}
-
-function BilanQuotidienReal() {
   const { t, i18n } = useTranslation();
   const { session } = useAuth();
   const locale = dateLocales[i18n.language] || fr;
@@ -469,132 +460,116 @@ function BilanQuotidienReal() {
                 </div>
               </div>
 
-              <div className="bg-card rounded-lg border border-border p-3">
-                <h3 className="text-[12px] font-semibold text-white mb-2">{t("analytics.perMember")}</h3>
-                <div className="overflow-x-auto">
-                  <table className="w-full text-[11px]">
-                    <thead className="text-[#8b9cb3] border-b border-border">
-                      <tr>
-                        <th className="text-left p-2">{t("analytics.colMember")}</th>
-                        {ta.handledMetricsEnabled === false ? (
-                          // Legacy : Assignés (proxy)
-                          <th className="text-right p-2">{t("analytics.colAssigned")}</th>
-                        ) : (
-                          <th className="text-right p-2">{t("analytics.colHandled")}</th>
-                        )}
-                        <th className="text-right p-2">{t("analytics.colDismissed")}</th>
-                        <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {ta.perMember.length === 0 ? (
-                        <tr>
-                          <td colSpan={4} className="p-3 text-center text-[11px] text-[#8b9cb3]">
-                            {t("analytics.noMemberData")}
-                          </td>
-                        </tr>
-                      ) : (
-                        ta.perMember.map((m) => (
-                          <tr key={m.userId} className="border-b border-border/50">
-                            <td className="p-2 text-white">{m.userName || m.userId.slice(0, 8)}</td>
-                            <td className="p-2 text-right text-[#c9d1d9]">
-                              {ta.handledMetricsEnabled === false ? m.assigned : m.handled}
-                            </td>
-                            <td className="p-2 text-right text-[#c9d1d9]">{m.archived}</td>
-                            <td className="p-2 text-right text-[#c9d1d9]">{formatDelay(m.avgFirstResponseMinutes)}</td>
-                          </tr>
-                        ))
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-                <p className="text-[10px] text-[#8b9cb3] mt-1">{t(ta.handledMetricsEnabled === false ? "analytics.legendPerMemberLegacy" : "analytics.legendPerMember")}</p>
+              {/* ===== BLOC MAILS ===== */}
+              <div className="border-t border-border pt-3 mt-1">
+                <h2 className="text-[13px] font-semibold text-white mb-3 flex items-center gap-2">
+                  <span className="w-1 h-4 bg-cyan-400 rounded" />
+                  {t("analytics.blockMails")}
+                </h2>
+
+                <MailTable
+                  title={t("analytics.perMember")}
+                  note={t("analytics.notePerMember")}
+                  mode="member"
+                  rows={ta.perMember.map((m) => ({
+                    name: m.userName || m.userId.slice(0, 8),
+                    openLoad: m.openLoad,
+                    handled: m.handled,
+                    delay: formatDelay(m.avgFirstResponseMinutes),
+                  }))}
+                  t={t}
+                />
+
+                {ta.perMailbox && ta.perMailbox.length > 0 && (
+                  <MailTable
+                    title={t("analytics.perMailbox")}
+                    note={t("analytics.notePerMailbox")}
+                    mode="scope"
+                    scopeLabel={t("analytics.colMailbox")}
+                    rows={ta.perMailbox.map((m) => ({
+                      name: m.mailboxName + (m.mailboxEmail && m.mailboxEmail !== m.mailboxName ? ` (${m.mailboxEmail})` : ""),
+                      received: m.received ?? m.count,
+                      handled: m.handled,
+                      notHandled: m.notHandled ?? Math.max(0, (m.received ?? m.count) - m.handled),
+                      delay: formatDelay(m.avgFirstResponseMinutes),
+                    }))}
+                    t={t}
+                  />
+                )}
+
+                {ta.perPersonalMailbox && ta.perPersonalMailbox.length > 0 && (
+                  <MailTable
+                    title={t("analytics.perPersonalMailbox")}
+                    note={t("analytics.notePerPersonalMailbox")}
+                    mode="scope"
+                    scopeLabel={t("analytics.colMember")}
+                    rows={ta.perPersonalMailbox.map((m) => ({
+                      name: m.userName || m.userId.slice(0, 8),
+                      received: m.received,
+                      handled: m.handled,
+                      notHandled: m.notHandled,
+                      delay: formatDelay(m.avgFirstResponseMinutes),
+                    }))}
+                    t={t}
+                  />
+                )}
+
+                {ta.perProject && ta.perProject.length > 0 && (
+                  <MailTable
+                    title={t("analytics.perProject")}
+                    note={t("analytics.notePerProject")}
+                    mode="scope"
+                    scopeLabel={t("analytics.colProject")}
+                    rows={ta.perProject.map((p) => ({
+                      name: p.projectName + (p.projectReference ? ` [${p.projectReference}]` : ""),
+                      received: p.received ?? p.count,
+                      handled: p.handled,
+                      notHandled: p.notHandled ?? Math.max(0, (p.received ?? p.count) - p.handled),
+                      delay: formatDelay(p.avgFirstResponseMinutes),
+                    }))}
+                    t={t}
+                  />
+                )}
               </div>
 
-              {(ta.perMailbox && ta.perMailbox.length > 0) && (
-                <div className="bg-card rounded-lg border border-border p-3">
-                  <h3 className="text-[12px] font-semibold text-white mb-2">
-                    {t("analytics.perMailbox", { defaultValue: "Per shared mailbox" })}
-                  </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-[11px]">
-                      <thead className="text-[#8b9cb3] border-b border-border">
-                        <tr>
-                          <th className="text-left p-2">{t("analytics.colMailbox", { defaultValue: "Mailbox" })}</th>
-                          {ta.handledMetricsEnabled === false && (
-                            <th className="text-right p-2">{t("analytics.colReceived")}</th>
-                          )}
-                          {ta.handledMetricsEnabled !== false && (
-                            <th className="text-right p-2">{t("analytics.colHandled")}</th>
-                          )}
-                          <th className="text-right p-2">{t("analytics.colDismissed")}</th>
-                          <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {ta.perMailbox.map((m, i) => (
-                          <tr key={(m.mailboxId || "none") + i} className="border-b border-border/50">
-                            <td className="p-2 text-white">
-                              {m.mailboxName}
-                              {m.mailboxEmail && m.mailboxEmail !== m.mailboxName && <span className="text-[10px] text-[#8b9cb3] ml-1">{m.mailboxEmail}</span>}
-                            </td>
-                            {ta.handledMetricsEnabled === false && (
-                              <td className="p-2 text-right text-[#c9d1d9]">{m.count}</td>
-                            )}
-                            {ta.handledMetricsEnabled !== false && (
-                              <td className="p-2 text-right text-[#c9d1d9]">{m.handled}</td>
-                            )}
-                            <td className="p-2 text-right text-[#c9d1d9]">{m.archived}</td>
-                            <td className="p-2 text-right text-[#c9d1d9]">{formatDelay(m.avgFirstResponseMinutes)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <p className="text-[10px] text-[#8b9cb3] mt-1">{t(ta.handledMetricsEnabled === false ? "analytics.legendPerMailboxLegacy" : "analytics.legendPerMailbox")}</p>
-                </div>
-              )}
+              {/* ===== BLOC TÂCHES ===== */}
+              {(ta.tasksPerMember || ta.tasksPerProject) && (
+                <div className="border-t border-border pt-3 mt-1">
+                  <h2 className="text-[13px] font-semibold text-white mb-3 flex items-center gap-2">
+                    <span className="w-1 h-4 bg-violet-400 rounded" />
+                    {t("analytics.blockTasks")}
+                  </h2>
 
-              {(ta.perProject && ta.perProject.length > 0) && (
-                <div className="bg-card rounded-lg border border-border p-3">
-                  <h3 className="text-[12px] font-semibold text-white mb-2">
-                    {t("analytics.perProject", { defaultValue: "Per project" })}
-                  </h3>
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-[11px]">
-                      <thead className="text-[#8b9cb3] border-b border-border">
-                        <tr>
-                          <th className="text-left p-2">{t("analytics.colProject", { defaultValue: "Project" })}</th>
-                          {ta.handledMetricsEnabled === false && (
-                            <th className="text-right p-2">{t("analytics.colReceived")}</th>
-                          )}
-                          {ta.handledMetricsEnabled !== false && (
-                            <th className="text-right p-2">{t("analytics.colHandled")}</th>
-                          )}
-                          <th className="text-right p-2">{t("analytics.colDismissed")}</th>
-                          <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {ta.perProject.map((p) => (
-                          <tr key={p.projectId} className="border-b border-border/50">
-                            <td className="p-2 text-white">
-                              {p.projectName} {p.projectReference && <span className="text-[10px] text-[#8b9cb3]">[{p.projectReference}]</span>}
-                            </td>
-                            {ta.handledMetricsEnabled === false && (
-                              <td className="p-2 text-right text-[#c9d1d9]">{p.count}</td>
-                            )}
-                            {ta.handledMetricsEnabled !== false && (
-                              <td className="p-2 text-right text-[#c9d1d9]">{p.handled}</td>
-                            )}
-                            <td className="p-2 text-right text-[#c9d1d9]">{p.archived}</td>
-                            <td className="p-2 text-right text-[#c9d1d9]">{formatDelay(p.avgFirstResponseMinutes)}</td>
-                          </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                  <p className="text-[10px] text-[#8b9cb3] mt-1">{t(ta.handledMetricsEnabled === false ? "analytics.legendPerProjectLegacy" : "analytics.legendPerProject")}</p>
+                  {ta.tasksPerMember && (
+                    <TaskTable
+                      title={t("analytics.tasksPerMember")}
+                      note={t("analytics.noteTasksPerMember")}
+                      scope="member"
+                      rows={ta.tasksPerMember.map((m) => ({
+                        name: m.userName || m.userId.slice(0, 8),
+                        open: m.open,
+                        done: m.done,
+                        overdue: m.overdue,
+                      }))}
+                      t={t}
+                    />
+                  )}
+
+                  {ta.tasksPerProject && ta.tasksPerProject.length > 0 && (
+                    <TaskTable
+                      title={t("analytics.tasksPerProject")}
+                      note={t("analytics.noteTasksPerProject")}
+                      scope="project"
+                      rows={ta.tasksPerProject.map((p) => ({
+                        name: p.isOutOfProject ? t("analytics.outOfProject") : (p.projectName + (p.projectReference ? ` [${p.projectReference}]` : "")),
+                        open: p.open,
+                        done: p.done,
+                        overdue: p.overdue,
+                        isOutOfProject: p.isOutOfProject,
+                      }))}
+                      t={t}
+                    />
+                  )}
                 </div>
               )}
             </div>
@@ -622,6 +597,79 @@ function StatCardText({ label, value }: { label: string; value: string }) {
     <div className="rounded-lg border bg-card border-border p-3">
       <p className="text-[10px] uppercase tracking-wider text-[#8b9cb3]">{label}</p>
       <p className="text-xl font-bold text-white">{value}</p>
+    </div>
+  );
+}
+
+type MailRow = { name: string; received?: number; openLoad?: number; handled: number; notHandled?: number; delay: string };
+type TaskRow = { name: string; open: number; done: number; overdue: number; isOutOfProject?: boolean };
+
+function MailTable({ title, note, rows, mode, scopeLabel, t }: { title: string; note: string; rows: MailRow[]; mode: "member" | "scope"; scopeLabel?: string; t: (k: string) => string }) {
+  return (
+    <div className="bg-card rounded-lg border border-border p-3 mb-3">
+      <h3 className="text-[12px] font-semibold text-white mb-2">{title}</h3>
+      <div className="overflow-x-auto">
+        <table className="w-full text-[11px]">
+          <thead className="text-[#8b9cb3] border-b border-border">
+            <tr>
+              <th className="text-left p-2">{mode === "member" ? t("analytics.colMember") : (scopeLabel || t("analytics.colMailbox"))}</th>
+              {mode === "scope" && <th className="text-right p-2">{t("analytics.colReceived")}</th>}
+              {mode === "member" && <th className="text-right p-2">{t("analytics.colOpenLoad")}</th>}
+              <th className="text-right p-2">{t("analytics.colHandled")}</th>
+              {mode === "scope" && <th className="text-right p-2">{t("analytics.colNotHandled")}</th>}
+              <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length === 0 ? (
+              <tr><td colSpan={mode === "scope" ? 5 : 4} className="p-3 text-center text-[#8b9cb3]">{t("analytics.empty")}</td></tr>
+            ) : rows.map((r, i) => (
+              <tr key={i} className="border-b border-border/50">
+                <td className="p-2 text-white">{r.name}</td>
+                {mode === "scope" && <td className="p-2 text-right text-[#c9d1d9]">{r.received}</td>}
+                {mode === "member" && <td className="p-2 text-right text-[#c9d1d9]">{r.openLoad}</td>}
+                <td className="p-2 text-right text-emerald-400">{r.handled}</td>
+                {mode === "scope" && <td className="p-2 text-right text-amber-400">{r.notHandled}</td>}
+                <td className="p-2 text-right text-[#c9d1d9]">{r.delay}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-[10px] text-[#8b9cb3] mt-1.5 italic">{note}</p>
+    </div>
+  );
+}
+
+function TaskTable({ title, note, rows, scope, t }: { title: string; note: string; rows: TaskRow[]; scope: "member" | "project"; t: (k: string) => string }) {
+  return (
+    <div className="bg-card rounded-lg border border-border p-3 mb-3">
+      <h3 className="text-[12px] font-semibold text-white mb-2">{title}</h3>
+      <div className="overflow-x-auto">
+        <table className="w-full text-[11px]">
+          <thead className="text-[#8b9cb3] border-b border-border">
+            <tr>
+              <th className="text-left p-2">{scope === "member" ? t("analytics.colMember") : t("analytics.colProject")}</th>
+              <th className="text-right p-2">{t("analytics.colTasksOpen")}</th>
+              <th className="text-right p-2">{t("analytics.colTasksDone")}</th>
+              <th className="text-right p-2">{t("analytics.colTasksOverdue")}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length === 0 ? (
+              <tr><td colSpan={4} className="p-3 text-center text-[#8b9cb3]">{t("analytics.empty")}</td></tr>
+            ) : rows.map((r, i) => (
+              <tr key={i} className={`border-b border-border/50 ${r.isOutOfProject ? "bg-[#141c33]" : ""}`}>
+                <td className={`p-2 ${r.isOutOfProject ? "text-[#8b9cb3] italic" : "text-white"}`}>{r.name}</td>
+                <td className="p-2 text-right text-cyan-400">{r.open}</td>
+                <td className="p-2 text-right text-emerald-400">{r.done}</td>
+                <td className="p-2 text-right text-rose-400">{r.overdue}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+      <p className="text-[10px] text-[#8b9cb3] mt-1.5 italic">{note}</p>
     </div>
   );
 }

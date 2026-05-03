@@ -196,6 +196,25 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       }
     }
 
+    // ===== Charge ouverte par membre (snapshot non lié à la période) =====
+    // = emails assignés au membre ET non clôturés (pas archivé/supprimé/handled).
+    const openLoadMap = new Map<string, number>();
+    for (const uid of memberIds) openLoadMap.set(uid, 0);
+    {
+      let openQ = supabaseAdmin
+        .from("emails")
+        .select("id, assigned_to, status, handled_at")
+        .in("assigned_to", memberIds)
+        .not("status", "in", "(archived,supprime,trashed,done)");
+      if (handledEnabled) openQ = openQ.is("handled_at", null);
+      const { data: openRows } = await openQ.limit(20000);
+      for (const r of (openRows || []) as any[]) {
+        if (r.assigned_to && openLoadMap.has(r.assigned_to)) {
+          openLoadMap.set(r.assigned_to, (openLoadMap.get(r.assigned_to) || 0) + 1);
+        }
+      }
+    }
+
     const perMember = Array.from(perMemberMap.entries())
       .filter(([uid]) => !memberFilter || uid === memberFilter)
       .map(([uid, s]) => ({
@@ -204,6 +223,7 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
         handled: s.handled,
         archived: s.archived,
         assigned: s.assigned,
+        openLoad: openLoadMap.get(uid) || 0,
         avgFirstResponseMinutes: s.firstResponseCount > 0 ? Math.round(s.firstResponseSumMin / s.firstResponseCount) : null,
       }));
 
@@ -282,11 +302,40 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
         mailboxName: meta?.name || meta?.email || "—",
         mailboxEmail: meta?.email || "",
         count: s.count,
+        received: s.count,
         handled: s.handled,
+        notHandled: Math.max(0, s.count - s.handled),
         archived: s.archived,
         avgFirstResponseMinutes: s.respN > 0 ? Math.round(s.respSum / s.respN) : null,
       };
-    }).sort((a, b) => b.count - a.count);
+    }).sort((a, b) => b.received - a.received);
+
+    // ===== Par boîte personnelle (emails sans shared_mailbox_id, par membre) =====
+    const perPersonalMap = new Map<string, { count: number; handled: number; respSum: number; respN: number }>();
+    for (const e of list as any[]) {
+      if (e.shared_mailbox_id) continue;
+      const uid = e.user_id;
+      if (!uid || !memberIds.includes(uid)) continue;
+      let s = perPersonalMap.get(uid);
+      if (!s) { s = { count: 0, handled: 0, respSum: 0, respN: 0 }; perPersonalMap.set(uid, s); }
+      s.count += 1;
+      const handledTs = handledEnabled ? e.handled_at : (e.claimed_at || e.assigned_at || e.inboria_processed_at);
+      if (handledTs) {
+        s.handled += 1;
+        if (e.created_at) {
+          const d = (new Date(handledTs).getTime() - new Date(e.created_at).getTime()) / 60000;
+          if (d > 0 && d < 60 * 24 * 30) { s.respSum += d; s.respN += 1; }
+        }
+      }
+    }
+    const perPersonalMailbox = Array.from(perPersonalMap.entries()).map(([uid, s]) => ({
+      userId: uid,
+      userName: profileMap.get(uid) || "",
+      received: s.count,
+      handled: s.handled,
+      notHandled: Math.max(0, s.count - s.handled),
+      avgFirstResponseMinutes: s.respN > 0 ? Math.round(s.respSum / s.respN) : null,
+    })).sort((a, b) => b.received - a.received);
 
     const projIds = [...new Set(list.map((e: any) => e.project_id).filter(Boolean))] as string[];
     const projMap = new Map<string, { name: string; reference: string }>();
@@ -326,10 +375,85 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       projectName: projMap.get(pid)?.name || "",
       projectReference: projMap.get(pid)?.reference || "",
       count: s.count,
+      received: s.count,
       handled: s.handled,
+      notHandled: Math.max(0, s.count - s.handled),
       archived: s.archived,
       avgFirstResponseMinutes: s.respN > 0 ? Math.round(s.respSum / s.respN) : null,
-    })).sort((a, b) => b.count - a.count);
+    })).sort((a, b) => b.received - a.received);
+
+    // ===== Bloc Tâches =====
+    const todayIso = new Date().toISOString().slice(0, 10);
+    let tasksList: any[] = [];
+    {
+      const { data: tasks } = await supabaseAdmin
+        .from("tasks")
+        .select("id, user_id, assigned_to_user_id, project_id, done, due_date, updated_at, created_at")
+        .or(`user_id.in.(${memberIdsList}),assigned_to_user_id.in.(${memberIdsList})`)
+        .limit(20000);
+      tasksList = (tasks || []) as any[];
+    }
+    const tasksPerMemberMap = new Map<string, { open: number; done: number; overdue: number }>();
+    for (const uid of memberIds) tasksPerMemberMap.set(uid, { open: 0, done: 0, overdue: 0 });
+    for (const t of tasksList) {
+      const ownerId = t.assigned_to_user_id || t.user_id;
+      if (!ownerId || !tasksPerMemberMap.has(ownerId)) continue;
+      const stats = tasksPerMemberMap.get(ownerId)!;
+      if (t.done) {
+        if (t.updated_at && new Date(t.updated_at).toISOString() >= sinceIso) stats.done += 1;
+      } else {
+        stats.open += 1;
+        if (t.due_date && t.due_date < todayIso) stats.overdue += 1;
+      }
+    }
+    const tasksPerMember = Array.from(tasksPerMemberMap.entries())
+      .filter(([uid, s]) => s.open + s.done + s.overdue > 0 || !memberFilter || uid === memberFilter)
+      .map(([uid, s]) => ({
+        userId: uid,
+        userName: profileMap.get(uid) || "",
+        open: s.open,
+        done: s.done,
+        overdue: s.overdue,
+      }))
+      .sort((a, b) => (b.open + b.done) - (a.open + a.done));
+
+    // Per project (incl. ligne hors projet)
+    const tasksProjIds = [...new Set(tasksList.map((t) => t.project_id).filter(Boolean))] as string[];
+    const missingProjIds = tasksProjIds.filter((pid) => !projMap.has(pid));
+    if (missingProjIds.length > 0) {
+      const { data: extraProjects } = await supabaseAdmin
+        .from("projects")
+        .select("id, name, reference")
+        .in("id", missingProjIds);
+      for (const p of extraProjects || []) projMap.set(p.id, { name: p.name || "", reference: p.reference || "" });
+    }
+    const tasksPerProjectMap = new Map<string | null, { open: number; done: number; overdue: number }>();
+    for (const t of tasksList) {
+      const key = t.project_id || null;
+      let s = tasksPerProjectMap.get(key);
+      if (!s) { s = { open: 0, done: 0, overdue: 0 }; tasksPerProjectMap.set(key, s); }
+      if (t.done) {
+        if (t.updated_at && new Date(t.updated_at).toISOString() >= sinceIso) s.done += 1;
+      } else {
+        s.open += 1;
+        if (t.due_date && t.due_date < todayIso) s.overdue += 1;
+      }
+    }
+    const tasksPerProject = Array.from(tasksPerProjectMap.entries())
+      .map(([pid, s]) => ({
+        projectId: pid,
+        projectName: pid ? (projMap.get(pid)?.name || "—") : "Hors projet",
+        projectReference: pid ? (projMap.get(pid)?.reference || "") : "",
+        isOutOfProject: pid === null,
+        open: s.open,
+        done: s.done,
+        overdue: s.overdue,
+      }))
+      .sort((a, b) => {
+        if (a.isOutOfProject) return 1;
+        if (b.isOutOfProject) return -1;
+        return (b.open + b.done) - (a.open + a.done);
+      });
 
     res.json({
       totals: {
@@ -348,7 +472,10 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       handledMetricsEnabled: handledEnabled,
       perMember,
       perMailbox,
+      perPersonalMailbox,
       perProject,
+      tasksPerMember,
+      tasksPerProject,
       topSenders,
       topCategories,
       evolution,
