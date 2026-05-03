@@ -778,23 +778,61 @@ async function syncGmailForUser(conn: any): Promise<number> {
     });
 
     const gmail = google.gmail({ version: "v1", auth: oauth2Client });
-    const { data: messageList } = await withTimeout(
-      gmail.users.messages.list({
-        userId: "me",
-        maxResults: 50,
-        q: "is:inbox newer_than:2d",
-      }),
-      20_000,
-      "Gmail messages.list",
-    );
 
-    if (!messageList.messages) {
+    // Email Brain Phase 3 (#216) — Premier sync : on remonte jusqu'à
+    // 2000 mails de l'INBOX pour qu'Inboria connaisse l'historique du
+    // contact dès la première utilisation. Les syncs suivants restent
+    // courts (50 mails / 2 jours).
+    const isFirstSync = !conn.last_synced_at;
+    const FIRST_SYNC_TARGET = 2000;
+    const FIRST_SYNC_PAGE = 100;
+
+    const collectedMessages: Array<{ id?: string | null }> = [];
+    if (isFirstSync) {
+      let pageToken: string | undefined = undefined;
+      while (collectedMessages.length < FIRST_SYNC_TARGET) {
+        const { data: page }: { data: any } = await withTimeout(
+          gmail.users.messages.list({
+            userId: "me",
+            maxResults: FIRST_SYNC_PAGE,
+            q: "in:inbox",
+            pageToken,
+          }),
+          20_000,
+          "Gmail messages.list (first sync)",
+        );
+        const msgs = page.messages || [];
+        for (const m of msgs) {
+          if (collectedMessages.length >= FIRST_SYNC_TARGET) break;
+          collectedMessages.push(m);
+        }
+        if (!page.nextPageToken || msgs.length === 0) break;
+        pageToken = page.nextPageToken;
+      }
+      logger.info(
+        { email: conn.email_address, fetched: collectedMessages.length },
+        "[gmail-sync] first sync — bootstrapping history",
+      );
+    } else {
+      const { data: messageList } = await withTimeout(
+        gmail.users.messages.list({
+          userId: "me",
+          maxResults: 50,
+          q: "is:inbox newer_than:2d",
+        }),
+        20_000,
+        "Gmail messages.list",
+      );
+      for (const m of messageList.messages || []) collectedMessages.push(m);
+    }
+
+    if (collectedMessages.length === 0) {
       await markConnectionSuccess(conn.id);
       return 0;
     }
 
     let synced = 0;
-    for (const msg of messageList.messages) {
+    for (const msg of collectedMessages) {
       const { data: fullMsg } = await withTimeout(
         gmail.users.messages.get({ userId: "me", id: msg.id!, format: "full" }),
         20_000,
@@ -1153,7 +1191,21 @@ async function syncImapForUser(conn: any): Promise<number> {
       fetchSucceeded = true;
     }
 
-    const startSeq = Math.max(1, totalMessages - 9);
+    // Email Brain Phase 3 (#216) — Premier sync : remonter jusqu'à 2000
+    // mails de l'INBOX pour bootstrap historique. Sinon on garde la
+    // logique courte des 10 derniers (sync incrémental rapide).
+    const isFirstImapSync = !conn.last_synced_at;
+    const FIRST_SYNC_DEPTH = 2000;
+    const startSeq = Math.max(
+      1,
+      totalMessages - (isFirstImapSync ? FIRST_SYNC_DEPTH - 1 : 9),
+    );
+    if (isFirstImapSync) {
+      log.info(
+        { startSeq, totalMessages, depth: totalMessages - startSeq + 1 },
+        "[imap-sync] first sync — bootstrapping history",
+      );
+    }
     const range = `${startSeq}:*`;
     let fetchedCount = 0;
     const INBOX_FETCH_STEP_TIMEOUT_MS = 30_000;
