@@ -3356,6 +3356,80 @@ paths:
               schema:
                 $ref: "#/components/schemas/ContactTimelineResponse"
 
+  /contacts/manual:
+    get:
+      operationId: listManualContacts
+      tags: [contacts]
+      summary: List manual contacts
+      responses:
+        "200":
+          description: List
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/ManualContact" }
+    post:
+      operationId: createManualContact
+      tags: [contacts]
+      summary: Create a manual contact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ManualContactInput" }
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ManualContact" }
+        "400":
+          description: Invalid input
+        "409":
+          description: Duplicate
+
+  /contacts/manual/{id}:
+    patch:
+      operationId: updateManualContact
+      tags: [contacts]
+      summary: Update a manual contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ManualContactInput" }
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ManualContact" }
+    delete:
+      operationId: deleteManualContact
+      tags: [contacts]
+      summary: Delete a manual contact
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [ok]
+                properties:
+                  ok: { type: boolean }
+
 components:
   schemas:
     HealthStatus:
@@ -5655,3 +5729,33 @@ components:
         items:
           type: array
           items: { $ref: "#/components/schemas/ContactTimelineItem" }
+
+    ManualContact:
+      type: object
+      required: [id, email, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        email: { type: string }
+        displayName:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        company:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    ManualContactInput:
+      type: object
+      properties:
+        email: { type: string }
+        displayName:
+          type: ["string", "null"]
+        phone:
+          type: ["string", "null"]
+        company:
+          type: ["string", "null"]
+        notes:
+          type: ["string", "null"]

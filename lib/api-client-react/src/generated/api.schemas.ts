@@ -1448,6 +1448,33 @@ export interface ContactTimelineResponse {
   items: ContactTimelineItem[];
 }
 
+export interface ManualContact {
+  id: string;
+  email: string;
+  /** @nullable */
+  displayName?: string | null;
+  /** @nullable */
+  phone?: string | null;
+  /** @nullable */
+  company?: string | null;
+  /** @nullable */
+  notes?: string | null;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface ManualContactInput {
+  email?: string;
+  /** @nullable */
+  displayName?: string | null;
+  /** @nullable */
+  phone?: string | null;
+  /** @nullable */
+  company?: string | null;
+  /** @nullable */
+  notes?: string | null;
+}
+
 export type RegisterPushToken200 = {
   success?: boolean;
 };
@@ -2069,4 +2096,8 @@ export type SearchContactsParams = {
    */
   categoryIds?: string;
   limit?: number;
+};
+
+export type DeleteManualContact200 = {
+  ok: boolean;
 };

@@ -700,6 +700,7 @@ app.listen(port, (err) => {
   ensureWaveOneSchema();
   ensureAdminTeamAccessSchema();
   ensureTemplatesAndAutomationRules();
+  ensureManualContacts();
   cleanupDuplicateTasks();
   purgeNoiseTasks();
   ensureB2bTables();
@@ -711,6 +712,54 @@ app.listen(port, (err) => {
   startWebhookDispatcher();
   startCrmSyncScheduler();
 });
+
+async function ensureManualContacts() {
+  try {
+    const { error } = await supabaseAdmin.from("manual_contacts").select("id").limit(1);
+    if (!error) {
+      logger.info("manual_contacts table OK");
+      return;
+    }
+    if (!error.message.includes("does not exist") && !error.message.includes("schema cache")) {
+      return;
+    }
+    const supabaseUrl = process.env["VITE_SUPABASE_URL"] || process.env["SUPABASE_URL"] || "";
+    const serviceKey = process.env["SUPABASE_SECRET_KEY"] || "";
+    if (!supabaseUrl || !serviceKey) {
+      logger.warn("manual_contacts table missing — please run artifacts/api-server/migrations/2026_05_03_manual_contacts.sql manually");
+      return;
+    }
+    const sql = `
+      CREATE TABLE IF NOT EXISTS public.manual_contacts (
+        id           uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+        user_id      uuid NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+        email        text NOT NULL,
+        display_name text,
+        phone        text,
+        company      text,
+        notes        text,
+        created_at   timestamptz NOT NULL DEFAULT now(),
+        updated_at   timestamptz NOT NULL DEFAULT now()
+      );
+      CREATE UNIQUE INDEX IF NOT EXISTS manual_contacts_user_email_uniq ON public.manual_contacts (user_id, lower(email));
+      CREATE INDEX IF NOT EXISTS manual_contacts_user_idx ON public.manual_contacts (user_id, created_at DESC);
+      ALTER TABLE public.manual_contacts ENABLE ROW LEVEL SECURITY;
+      DO $$ BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_policies WHERE tablename = 'manual_contacts' AND policyname = 'Users manage their manual contacts') THEN
+          CREATE POLICY "Users manage their manual contacts" ON public.manual_contacts FOR ALL USING (auth.uid() = user_id) WITH CHECK (auth.uid() = user_id);
+        END IF;
+      END $$;
+    `;
+    await fetch(`${supabaseUrl}/rest/v1/rpc/exec_sql`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${serviceKey}`, "apikey": serviceKey },
+      body: JSON.stringify({ query: sql }),
+    });
+    logger.info("manual_contacts migration attempted via REST");
+  } catch (e: any) {
+    logger.warn({ error: e.message }, "manual_contacts ensure failed (non-fatal) — apply migrations/2026_05_03_manual_contacts.sql");
+  }
+}
 
 async function ensureB2bTables() {
   // Best-effort presence check for the B2B tables (sla_policies, api_keys, webhook_endpoints).

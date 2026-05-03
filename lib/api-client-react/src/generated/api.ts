@@ -73,6 +73,7 @@ import type {
   DeleteEmailComment200,
   DeleteFollowup200,
   DeleteIntegration200,
+  DeleteManualContact200,
   DeleteProject200,
   DeleteProjectNote200,
   DeleteSharedMailbox200,
@@ -123,6 +124,8 @@ import type {
   ListScheduledEmails200,
   ListTasksParams,
   LoginBody,
+  ManualContact,
+  ManualContactInput,
   MarkAllNotificationsRead200,
   MarkNotificationRead200,
   Notification,
@@ -12874,3 +12877,335 @@ export function useGetContactTimeline<
 
   return { ...query, queryKey: queryOptions.queryKey };
 }
+
+/**
+ * @summary List manual contacts
+ */
+export const getListManualContactsUrl = () => {
+  return `/api/contacts/manual`;
+};
+
+export const listManualContacts = async (
+  options?: RequestInit,
+): Promise<ManualContact[]> => {
+  return customFetch<ManualContact[]>(getListManualContactsUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListManualContactsQueryKey = () => {
+  return [`/api/contacts/manual`] as const;
+};
+
+export const getListManualContactsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listManualContacts>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listManualContacts>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListManualContactsQueryKey();
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listManualContacts>>
+  > = ({ signal }) => listManualContacts({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listManualContacts>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListManualContactsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listManualContacts>>
+>;
+export type ListManualContactsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List manual contacts
+ */
+
+export function useListManualContacts<
+  TData = Awaited<ReturnType<typeof listManualContacts>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listManualContacts>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListManualContactsQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Create a manual contact
+ */
+export const getCreateManualContactUrl = () => {
+  return `/api/contacts/manual`;
+};
+
+export const createManualContact = async (
+  manualContactInput: ManualContactInput,
+  options?: RequestInit,
+): Promise<ManualContact> => {
+  return customFetch<ManualContact>(getCreateManualContactUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(manualContactInput),
+  });
+};
+
+export const getCreateManualContactMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createManualContact>>,
+    TError,
+    { data: BodyType<ManualContactInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createManualContact>>,
+  TError,
+  { data: BodyType<ManualContactInput> },
+  TContext
+> => {
+  const mutationKey = ["createManualContact"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createManualContact>>,
+    { data: BodyType<ManualContactInput> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createManualContact(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateManualContactMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createManualContact>>
+>;
+export type CreateManualContactMutationBody = BodyType<ManualContactInput>;
+export type CreateManualContactMutationError = ErrorType<void>;
+
+/**
+ * @summary Create a manual contact
+ */
+export const useCreateManualContact = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createManualContact>>,
+    TError,
+    { data: BodyType<ManualContactInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createManualContact>>,
+  TError,
+  { data: BodyType<ManualContactInput> },
+  TContext
+> => {
+  return useMutation(getCreateManualContactMutationOptions(options));
+};
+
+/**
+ * @summary Update a manual contact
+ */
+export const getUpdateManualContactUrl = (id: string) => {
+  return `/api/contacts/manual/${id}`;
+};
+
+export const updateManualContact = async (
+  id: string,
+  manualContactInput: ManualContactInput,
+  options?: RequestInit,
+): Promise<ManualContact> => {
+  return customFetch<ManualContact>(getUpdateManualContactUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(manualContactInput),
+  });
+};
+
+export const getUpdateManualContactMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateManualContact>>,
+    TError,
+    { id: string; data: BodyType<ManualContactInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateManualContact>>,
+  TError,
+  { id: string; data: BodyType<ManualContactInput> },
+  TContext
+> => {
+  const mutationKey = ["updateManualContact"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateManualContact>>,
+    { id: string; data: BodyType<ManualContactInput> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateManualContact(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateManualContactMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateManualContact>>
+>;
+export type UpdateManualContactMutationBody = BodyType<ManualContactInput>;
+export type UpdateManualContactMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update a manual contact
+ */
+export const useUpdateManualContact = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateManualContact>>,
+    TError,
+    { id: string; data: BodyType<ManualContactInput> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateManualContact>>,
+  TError,
+  { id: string; data: BodyType<ManualContactInput> },
+  TContext
+> => {
+  return useMutation(getUpdateManualContactMutationOptions(options));
+};
+
+/**
+ * @summary Delete a manual contact
+ */
+export const getDeleteManualContactUrl = (id: string) => {
+  return `/api/contacts/manual/${id}`;
+};
+
+export const deleteManualContact = async (
+  id: string,
+  options?: RequestInit,
+): Promise<DeleteManualContact200> => {
+  return customFetch<DeleteManualContact200>(getDeleteManualContactUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteManualContactMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteManualContact>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteManualContact>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ["deleteManualContact"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteManualContact>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteManualContact(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteManualContactMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteManualContact>>
+>;
+
+export type DeleteManualContactMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a manual contact
+ */
+export const useDeleteManualContact = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteManualContact>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteManualContact>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getDeleteManualContactMutationOptions(options));
+};

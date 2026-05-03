@@ -3901,3 +3901,68 @@ export const GetContactTimelineResponse = zod.object({
     }),
   ),
 });
+
+/**
+ * @summary List manual contacts
+ */
+export const ListManualContactsResponseItem = zod.object({
+  id: zod.string(),
+  email: zod.string(),
+  displayName: zod.string().nullish(),
+  phone: zod.string().nullish(),
+  company: zod.string().nullish(),
+  notes: zod.string().nullish(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+export const ListManualContactsResponse = zod.array(
+  ListManualContactsResponseItem,
+);
+
+/**
+ * @summary Create a manual contact
+ */
+export const CreateManualContactBody = zod.object({
+  email: zod.string().optional(),
+  displayName: zod.string().nullish(),
+  phone: zod.string().nullish(),
+  company: zod.string().nullish(),
+  notes: zod.string().nullish(),
+});
+
+/**
+ * @summary Update a manual contact
+ */
+export const UpdateManualContactParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const UpdateManualContactBody = zod.object({
+  email: zod.string().optional(),
+  displayName: zod.string().nullish(),
+  phone: zod.string().nullish(),
+  company: zod.string().nullish(),
+  notes: zod.string().nullish(),
+});
+
+export const UpdateManualContactResponse = zod.object({
+  id: zod.string(),
+  email: zod.string(),
+  displayName: zod.string().nullish(),
+  phone: zod.string().nullish(),
+  company: zod.string().nullish(),
+  notes: zod.string().nullish(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete a manual contact
+ */
+export const DeleteManualContactParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const DeleteManualContactResponse = zod.object({
+  ok: zod.boolean(),
+});

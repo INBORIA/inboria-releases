@@ -4,6 +4,43 @@ import { requireAuth } from "../middlewares/auth";
 
 const router: IRouter = Router();
 
+function isMissingTableErr(err: any): boolean {
+  const msg = String(err?.message || err?.code || "");
+  return msg.includes("does not exist") || msg.includes("schema cache") || msg.includes("PGRST205");
+}
+
+function normalizeEmail(s: string | null | undefined): string {
+  return String(s || "").trim().toLowerCase();
+}
+
+function isValidEmail(s: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+}
+
+type ManualContact = {
+  id: string;
+  email: string;
+  displayName: string | null;
+  phone: string | null;
+  company: string | null;
+  notes: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+function mapManual(row: any): ManualContact {
+  return {
+    id: String(row.id),
+    email: String(row.email),
+    displayName: (row.display_name as string | null) || null,
+    phone: (row.phone as string | null) || null,
+    company: (row.company as string | null) || null,
+    notes: (row.notes as string | null) || null,
+    createdAt: String(row.created_at),
+    updatedAt: String(row.updated_at),
+  };
+}
+
 function parseSender(raw: string): { name: string; email: string } {
   if (!raw) return { name: "", email: "" };
   const m = raw.match(/^(.+?)\s*<(.+?)>$/);
@@ -160,7 +197,66 @@ router.get("/contacts/search", requireAuth, async (req, res): Promise<void> => {
       }
     }
 
-    const contacts = Array.from(map.values())
+    // Merger les contacts manuels — toujours inclus, marqués isManual.
+    const manualSet = new Map<string, ManualContact>();
+    try {
+      let mq = supabaseAdmin
+        .from("manual_contacts")
+        .select("*")
+        .eq("user_id", userId);
+      if (q) {
+        const escaped = q.replace(/[%_\\,()."']/g, (c) => `\\${c}`);
+        const pat = `%${escaped}%`;
+        mq = mq.or(
+          `email.ilike.${pat},display_name.ilike.${pat},company.ilike.${pat}`,
+        );
+      }
+      const { data: manualRows, error: manualErr } = await mq;
+      if (manualErr && !isMissingTableErr(manualErr)) {
+        req.log?.warn?.({ err: manualErr }, "[contacts] manual fetch failed");
+      }
+      for (const r of manualRows || []) {
+        manualSet.set(normalizeEmail(r.email), mapManual(r));
+      }
+    } catch {}
+
+    type Result = {
+      email: string;
+      displayName: string;
+      lastInteractionAt: string;
+      messageCount: number;
+      isManual: boolean;
+      manualId: string | null;
+    };
+
+    const results: Result[] = [];
+    for (const c of map.values()) {
+      const m = manualSet.get(c.email);
+      results.push({
+        email: c.email,
+        displayName: m?.displayName || c.displayName,
+        lastInteractionAt: c.lastInteractionAt,
+        messageCount: c.messageCount,
+        isManual: !!m,
+        manualId: m?.id || null,
+      });
+    }
+    // Manual-only (jamais reçu/envoyé d'email).
+    for (const m of manualSet.values()) {
+      const key = normalizeEmail(m.email);
+      if (map.has(key)) continue;
+      if (q && !key.includes(q) && !(m.displayName || "").toLowerCase().includes(q) && !(m.company || "").toLowerCase().includes(q)) continue;
+      results.push({
+        email: m.email,
+        displayName: m.displayName || m.email,
+        lastInteractionAt: m.updatedAt,
+        messageCount: 0,
+        isManual: true,
+        manualId: m.id,
+      });
+    }
+
+    const contacts = results
       .sort((a, b) => (a.lastInteractionAt < b.lastInteractionAt ? 1 : -1))
       .slice(0, limit);
 
@@ -323,10 +419,150 @@ router.get("/contacts/:email/timeline", requireAuth, async (req, res): Promise<v
 
     items.sort((a, b) => (a.occurredAt < b.occurredAt ? 1 : -1));
 
-    res.json({ email: rawEmail, items });
+    // Fiche manuelle si elle existe.
+    let manual: ManualContact | null = null;
+    try {
+      const { data: m, error: mErr } = await supabaseAdmin
+        .from("manual_contacts")
+        .select("*")
+        .eq("user_id", userId)
+        .eq("email", rawEmail)
+        .maybeSingle();
+      if (!mErr && m) manual = mapManual(m);
+      if (mErr && !isMissingTableErr(mErr)) {
+        req.log?.warn?.({ err: mErr }, "[contacts] timeline manual fetch failed");
+      }
+    } catch {}
+
+    res.json({ email: rawEmail, manual, items });
   } catch (err: any) {
     req.log?.error?.({ err }, "[contacts] timeline failed");
     res.status(500).json({ error: "Failed to load timeline" });
+  }
+});
+
+// ----- Manual contacts CRUD ------------------------------------------------
+
+router.get("/contacts/manual", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const userId = req.userId!;
+    const { data, error } = await supabaseAdmin
+      .from("manual_contacts")
+      .select("*")
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false });
+    if (error) {
+      if (isMissingTableErr(error)) {
+        res.json([]);
+        return;
+      }
+      res.status(500).json({ error: error.message });
+      return;
+    }
+    res.json((data || []).map(mapManual));
+  } catch (err: any) {
+    req.log?.error?.({ err }, "[contacts] list manual failed");
+    res.status(500).json({ error: "Failed to list manual contacts" });
+  }
+});
+
+router.post("/contacts/manual", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const userId = req.userId!;
+    const body = req.body || {};
+    const email = normalizeEmail(body.email);
+    if (!email || !isValidEmail(email)) {
+      res.status(400).json({ error: "Adresse e-mail invalide" });
+      return;
+    }
+    const payload = {
+      user_id: userId,
+      email,
+      display_name: body.displayName ? String(body.displayName).trim() : null,
+      phone: body.phone ? String(body.phone).trim() : null,
+      company: body.company ? String(body.company).trim() : null,
+      notes: body.notes ? String(body.notes).trim() : null,
+    };
+    const { data, error } = await supabaseAdmin
+      .from("manual_contacts")
+      .insert(payload)
+      .select("*")
+      .single();
+    if (error) {
+      if (isMissingTableErr(error)) {
+        res.status(503).json({
+          error: "Table manual_contacts absente — appliquez migrations/2026_05_03_manual_contacts.sql",
+        });
+        return;
+      }
+      if (String(error.message).toLowerCase().includes("duplicate")) {
+        res.status(409).json({ error: "Ce contact existe déjà" });
+        return;
+      }
+      res.status(500).json({ error: error.message });
+      return;
+    }
+    res.status(201).json(mapManual(data));
+  } catch (err: any) {
+    req.log?.error?.({ err }, "[contacts] create manual failed");
+    res.status(500).json({ error: "Failed to create contact" });
+  }
+});
+
+router.patch("/contacts/manual/:id", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const userId = req.userId!;
+    const id = String(req.params.id || "");
+    const body = req.body || {};
+    const updates: Record<string, any> = { updated_at: new Date().toISOString() };
+    if (body.email !== undefined) {
+      const e = normalizeEmail(body.email);
+      if (!isValidEmail(e)) {
+        res.status(400).json({ error: "Adresse e-mail invalide" });
+        return;
+      }
+      updates.email = e;
+    }
+    if (body.displayName !== undefined) updates.display_name = body.displayName ? String(body.displayName).trim() : null;
+    if (body.phone !== undefined) updates.phone = body.phone ? String(body.phone).trim() : null;
+    if (body.company !== undefined) updates.company = body.company ? String(body.company).trim() : null;
+    if (body.notes !== undefined) updates.notes = body.notes ? String(body.notes).trim() : null;
+
+    const { data, error } = await supabaseAdmin
+      .from("manual_contacts")
+      .update(updates)
+      .eq("id", id)
+      .eq("user_id", userId)
+      .select("*")
+      .single();
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+    res.json(mapManual(data));
+  } catch (err: any) {
+    req.log?.error?.({ err }, "[contacts] update manual failed");
+    res.status(500).json({ error: "Failed to update contact" });
+  }
+});
+
+router.delete("/contacts/manual/:id", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const userId = req.userId!;
+    const id = String(req.params.id || "");
+    const { error } = await supabaseAdmin
+      .from("manual_contacts")
+      .delete()
+      .eq("id", id)
+      .eq("user_id", userId);
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+    res.json({ ok: true });
+  } catch (err: any) {
+    req.log?.error?.({ err }, "[contacts] delete manual failed");
+    res.status(500).json({ error: "Failed to delete contact" });
   }
 });
 
