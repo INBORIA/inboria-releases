@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect, useCallback } from "react";
-import { Sparkles, Send, Loader2, Bot, User as UserIcon } from "lucide-react";
+import { Sparkles, Send, Loader2, Bot, User as UserIcon, Mail } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
@@ -15,12 +16,54 @@ interface ChatMessage {
   content: string;
 }
 
+// Parse "[mail#1234]" markers in assistant replies and render them as
+// inline clickable chips that open the email in the dashboard.
+function renderAssistantContent(
+  text: string,
+  onOpenMail: (id: number) => void,
+): React.ReactNode {
+  const re = /\[mail#(\d+)\]/g;
+  const parts: React.ReactNode[] = [];
+  let last = 0;
+  let m: RegExpExecArray | null;
+  let key = 0;
+  while ((m = re.exec(text)) !== null) {
+    if (m.index > last) parts.push(text.slice(last, m.index));
+    const id = Number(m[1]);
+    parts.push(
+      <button
+        key={`mail-${key++}-${id}`}
+        type="button"
+        onClick={() => onOpenMail(id)}
+        className="inline-flex items-center gap-1 px-1.5 py-0.5 mx-0.5 rounded-md bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 hover:text-purple-200 text-xs font-medium transition-colors align-baseline"
+        data-testid={`inboria-chat-mail-link-${id}`}
+        title={`Ouvrir le mail #${id}`}
+      >
+        <Mail className="h-3 w-3" />
+        Ouvrir
+      </button>,
+    );
+    last = m.index + m[0].length;
+  }
+  if (last < text.length) parts.push(text.slice(last));
+  return parts.length > 0 ? parts : text;
+}
+
 export function InboriaChatButton() {
   const { t } = useTranslation();
   const { session } = useAuth();
   const queryClient = useQueryClient();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+
+  const openMail = useCallback(
+    (id: number) => {
+      setLocation(`/dashboard?emailId=${id}`);
+      setIsOpen(false);
+    },
+    [setLocation],
+  );
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -189,7 +232,9 @@ export function InboriaChatButton() {
                     : "bg-zinc-800 text-zinc-100 rounded-bl-sm",
                 )}
               >
-                {m.content}
+                {m.role === "assistant"
+                  ? renderAssistantContent(m.content, openMail)
+                  : m.content}
               </div>
               {m.role === "user" && (
                 <div className="h-7 w-7 shrink-0 rounded-full bg-zinc-700 flex items-center justify-center">
