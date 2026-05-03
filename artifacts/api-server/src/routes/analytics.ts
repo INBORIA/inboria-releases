@@ -617,7 +617,10 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     if (pdfOrgMailboxIds.length > 0) {
       pdfScopeParts.push(`shared_mailbox_id.in.(${pdfOrgMailboxIds.join(",")})`);
     }
-    const basePdfCols = "id, status, assigned_to, claimed_by, created_at";
+    // claimed_at/assigned_at/inboria_processed_at servent de proxy de délai
+    // en mode legacy (avant la migration handled_at). Toujours sélectionnés
+    // pour ne pas dégrader silencieusement le calcul du délai moyen.
+    const basePdfCols = "id, status, assigned_to, claimed_by, created_at, claimed_at, assigned_at, inboria_processed_at, shared_mailbox_id, project_id";
     const pdfCols = handledEnabled ? `${basePdfCols}, handled_at, handled_by` : basePdfCols;
     let pdfQ = supabaseAdmin
       .from("emails")
