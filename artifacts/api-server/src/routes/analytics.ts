@@ -221,7 +221,6 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
         userId: uid,
         userName: profileMap.get(uid) || "",
         handled: s.handled,
-        archived: s.archived,
         assigned: s.assigned,
         openLoad: openLoadMap.get(uid) || 0,
         avgFirstResponseMinutes: s.firstResponseCount > 0 ? Math.round(s.firstResponseSumMin / s.firstResponseCount) : null,
@@ -305,7 +304,6 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
         received: s.count,
         handled: s.handled,
         notHandled: Math.max(0, s.count - s.handled),
-        archived: s.archived,
         avgFirstResponseMinutes: s.respN > 0 ? Math.round(s.respSum / s.respN) : null,
       };
     }).sort((a, b) => b.received - a.received);
@@ -378,7 +376,6 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       received: s.count,
       handled: s.handled,
       notHandled: Math.max(0, s.count - s.handled),
-      archived: s.archived,
       avgFirstResponseMinutes: s.respN > 0 ? Math.round(s.respSum / s.respN) : null,
     })).sort((a, b) => b.received - a.received);
 
@@ -471,11 +468,12 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
         return (b.open + b.done) - (a.open + a.done);
       });
 
+    const totalHandledNum = totalHandled ?? 0;
     res.json({
       totals: {
         emails: list.length,
-        archived: list.filter((e: any) => e.status === "archived").length,
         assigned: list.filter((e: any) => !!e.assigned_to).length,
+        notHandled: Math.max(0, list.length - totalHandledNum),
         // Toujours renvoyer un nombre — en legacy les valeurs sont calculées
         // via le proxy claimed_at/assigned_at/inboria_processed_at. Le flag
         // handledMetricsEnabled permet au frontend d'afficher le bandeau de
@@ -635,76 +633,84 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     if (projectFilter) pdfQ = pdfQ.eq("project_id", projectFilter);
     const { data: list } = await pdfQ.limit(20000);
 
-    const stats = new Map<string, { handled: number; archived: number; assigned: number }>();
-    for (const uid of memberIds) stats.set(uid, { handled: 0, archived: 0, assigned: 0 });
+    // ===== Agrégats Mails (par membre / charge ouverte / délai moyen) =====
+    const stats = new Map<string, { handled: number; assigned: number }>();
+    const respStats = new Map<string, { sumMin: number; n: number }>();
+    for (const uid of memberIds) {
+      stats.set(uid, { handled: 0, assigned: 0 });
+      respStats.set(uid, { sumMin: 0, n: 0 });
+    }
+    let totalHandled = 0;
     for (const e of (list || []) as any[]) {
       const handlerId = handledEnabled ? (e.handled_at ? e.handled_by : null) : (e.assigned_to || e.claimed_by || null);
+      const handledTs = handledEnabled
+        ? (e.handled_at || null)
+        : (e.claimed_at || e.assigned_at || e.inboria_processed_at || null);
       if (e.assigned_to && stats.has(e.assigned_to)) {
         stats.get(e.assigned_to)!.assigned += 1;
       }
       if (handlerId && stats.has(handlerId)) {
         stats.get(handlerId)!.handled += 1;
+        totalHandled += 1;
       }
-      const archOwner = handlerId || e.assigned_to || e.claimed_by || null;
-      if (e.status === "archived" && archOwner && stats.has(archOwner)) {
-        stats.get(archOwner)!.archived += 1;
+      if (handlerId && handledTs && e.created_at && respStats.has(handlerId)) {
+        const diffMin = Math.max(0, Math.floor((new Date(handledTs).getTime() - new Date(e.created_at).getTime()) / 60_000));
+        if (diffMin < 60 * 24 * 30) {
+          const r = respStats.get(handlerId)!;
+          r.sumMin += diffMin;
+          r.n += 1;
+        }
       }
     }
 
+    // Charge ouverte par membre = emails assignés non clôturés
+    const openLoadMap = new Map<string, number>();
+    for (const uid of memberIds) openLoadMap.set(uid, 0);
+    if (memberIds.length > 0) {
+      let openQ = supabaseAdmin
+        .from("emails")
+        .select("id, assigned_to")
+        .in("assigned_to", memberIds)
+        .not("status", "in", "(archived,supprime,trashed,done)");
+      if (handledEnabled) openQ = openQ.is("handled_at", null);
+      const { data: openRows } = await openQ.limit(20000);
+      for (const r of (openRows || []) as any[]) {
+        if (r.assigned_to && openLoadMap.has(r.assigned_to)) {
+          openLoadMap.set(r.assigned_to, (openLoadMap.get(r.assigned_to) || 0) + 1);
+        }
+      }
+    }
+
+    // ===== Agrégats Tâches (par membre) =====
+    const todayIsoPdf = new Date().toISOString().slice(0, 10);
+    const taskStats = new Map<string, { open: number; done: number; overdue: number }>();
+    for (const uid of memberIds) taskStats.set(uid, { open: 0, done: 0, overdue: 0 });
+    if (memberIds.length > 0) {
+      const [byUser, byAssignee] = await Promise.all([
+        supabaseAdmin.from("tasks").select("id, user_id, assigned_to_user_id, done, due_date, updated_at").in("user_id", memberIds).limit(20000),
+        supabaseAdmin.from("tasks").select("id, user_id, assigned_to_user_id, done, due_date, updated_at").in("assigned_to_user_id", memberIds).limit(20000),
+      ]);
+      const seen = new Set<string>();
+      for (const t of [...(byUser.data || []), ...(byAssignee.data || [])] as any[]) {
+        if (!t?.id || seen.has(t.id)) continue;
+        seen.add(t.id);
+        const ownerId = t.assigned_to_user_id || t.user_id;
+        if (!ownerId || !taskStats.has(ownerId)) continue;
+        const s = taskStats.get(ownerId)!;
+        if (t.done) {
+          if (t.updated_at && new Date(t.updated_at).toISOString() >= sinceIso) s.done += 1;
+        } else {
+          s.open += 1;
+          if (t.due_date && t.due_date < todayIsoPdf) s.overdue += 1;
+        }
+      }
+    }
+
+    // ===== Génération PDF =====
     const doc = new PDFDocument({ size: "A4", margin: 48, info: { Title: `Inboria — Bilan équipe ${period}` } });
     res.setHeader("Content-Type", "application/pdf");
     res.setHeader("Content-Disposition", `attachment; filename="inboria-team-${period}.pdf"`);
     doc.pipe(res);
-
-    doc.fontSize(20).fillColor("#0f172a").text("Inboria — Bilan équipe", { align: "left" });
-    doc.moveDown(0.2);
-    doc
-      .fontSize(11)
-      .fillColor("#475569")
-      .text(`Période : ${period} · Généré le ${new Date().toLocaleString()}`);
-    doc.moveDown(0.2);
-    doc.fontSize(11).fillColor("#475569").text(`Total emails reçus : ${(list || []).length}`);
-    if (!handledEnabled) {
-      doc.moveDown(0.2);
-      doc.fontSize(9).fillColor("#b45309").text(
-        "Migration handled_at non appliquée — les chiffres « Traités » utilisent l'ancien proxy (assigned/claimed).",
-      );
-    }
-    doc.moveDown(1);
-
-    // Délai moyen de réponse par membre (handled_at - created_at, sinon
-    // proxy claimed_at/assigned_at/inboria_processed_at en mode legacy).
-    const respStats = new Map<string, { sumMin: number; n: number }>();
-    for (const uid of memberIds) respStats.set(uid, { sumMin: 0, n: 0 });
-    for (const e of (list || []) as any[]) {
-      const handledTs = handledEnabled
-        ? (e.handled_at || null)
-        : (e.claimed_at || e.assigned_at || e.inboria_processed_at || null);
-      const ownerId = handledEnabled
-        ? (e.handled_at ? e.handled_by : null)
-        : (e.assigned_to || e.claimed_by || null);
-      if (!ownerId || !handledTs || !e.created_at || !respStats.has(ownerId)) continue;
-      const diffMin = Math.max(0, Math.floor((new Date(handledTs).getTime() - new Date(e.created_at).getTime()) / 60_000));
-      if (diffMin >= 60 * 24 * 30) continue;
-      const r = respStats.get(ownerId)!;
-      r.sumMin += diffMin;
-      r.n += 1;
-    }
-
-    const tableTop = doc.y;
-    // Mode migré  : Membre / Traités / Écartés / Délai moyen.
-    // Mode legacy : Membre / Assignés (proxy) / Écartés / Délai moyen.
-    const colX = [48, 260, 360, 460];
-    const headers = handledEnabled
-      ? ["Membre", "Traités", "Écartés", "Délai moyen"]
-      : ["Membre", "Assignés (proxy)", "Écartés", "Délai moyen"];
-    doc.fontSize(11).fillColor("#0f172a");
-    headers.forEach((h, i) => doc.text(h, colX[i], tableTop));
-    doc
-      .moveTo(48, tableTop + 16)
-      .lineTo(560, tableTop + 16)
-      .strokeColor("#cbd5e1")
-      .stroke();
 
     const fmtDelay = (m: number | null): string => {
       if (m == null) return "—";
@@ -713,28 +719,84 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
       return `${(m / (60 * 24)).toFixed(1)} j`;
     };
 
-    let y = tableTop + 22;
-    doc.fontSize(10).fillColor("#1e293b");
-    for (const [uid, s] of stats.entries()) {
-      const name = profileMap.get(uid) || uid.slice(0, 8);
-      const r = respStats.get(uid);
-      const avg = r && r.n > 0 ? Math.round(r.sumMin / r.n) : null;
-      doc.text(name, colX[0], y, { width: 200, ellipsis: true });
-      doc.text(handledEnabled ? String(s.handled) : String(s.assigned), colX[1], y);
-      doc.text(String(s.archived), colX[2], y);
-      doc.text(fmtDelay(avg), colX[3], y);
-      y += 18;
-      if (y > 770) {
-        doc.addPage();
-        y = 60;
+    doc.fontSize(20).fillColor("#0f172a").text("Inboria — Bilan équipe", { align: "left" });
+    doc.moveDown(0.2);
+    doc.fontSize(11).fillColor("#475569").text(`Période : ${period} · Généré le ${new Date().toLocaleString()}`);
+
+    // KPIs
+    const totalEmails = (list || []).length;
+    const totalNotHandled = Math.max(0, totalEmails - totalHandled);
+    let totalRespSum = 0, totalRespN = 0;
+    for (const r of respStats.values()) { totalRespSum += r.sumMin; totalRespN += r.n; }
+    const avgDelay = totalRespN > 0 ? Math.round(totalRespSum / totalRespN) : null;
+    doc.moveDown(0.6);
+    doc.fontSize(11).fillColor("#0f172a").text(
+      `Reçus : ${totalEmails}    ·    Traités : ${totalHandled}    ·    Non traités : ${totalNotHandled}    ·    Délai moyen : ${fmtDelay(avgDelay)}`,
+    );
+    if (!handledEnabled) {
+      doc.moveDown(0.2);
+      doc.fontSize(9).fillColor("#b45309").text(
+        "Migration handled_at non appliquée — les chiffres « Traités » utilisent l'ancien proxy (assigned/claimed).",
+      );
+    }
+    doc.moveDown(1);
+
+    // ===== Table Mails par membre =====
+    doc.fontSize(13).fillColor("#0f172a").text("Mails — par membre");
+    doc.moveDown(0.3);
+    {
+      const tableTop = doc.y;
+      const colX = [48, 260, 360, 460];
+      const headers = ["Membre", "Charge ouverte", "Traités", "Délai moyen"];
+      doc.fontSize(11).fillColor("#0f172a");
+      headers.forEach((h, i) => doc.text(h, colX[i], tableTop));
+      doc.moveTo(48, tableTop + 16).lineTo(560, tableTop + 16).strokeColor("#cbd5e1").stroke();
+      let y = tableTop + 22;
+      doc.fontSize(10).fillColor("#1e293b");
+      for (const [uid, s] of stats.entries()) {
+        const name = profileMap.get(uid) || uid.slice(0, 8);
+        const r = respStats.get(uid);
+        const avg = r && r.n > 0 ? Math.round(r.sumMin / r.n) : null;
+        doc.text(name, colX[0], y, { width: 200, ellipsis: true });
+        doc.text(String(openLoadMap.get(uid) || 0), colX[1], y);
+        doc.text(handledEnabled ? String(s.handled) : String(s.assigned), colX[2], y);
+        doc.text(fmtDelay(avg), colX[3], y);
+        y += 18;
+        if (y > 770) { doc.addPage(); y = 60; }
       }
+      doc.y = y + 10;
     }
 
-    doc.moveDown(3);
+    // ===== Table Tâches par membre =====
+    if (doc.y > 700) doc.addPage();
+    doc.fontSize(13).fillColor("#0f172a").text("Tâches — par membre");
+    doc.moveDown(0.3);
+    {
+      const tableTop = doc.y;
+      const colX = [48, 260, 360, 460];
+      const headers = ["Membre", "Ouvertes", "Terminées", "En retard"];
+      doc.fontSize(11).fillColor("#0f172a");
+      headers.forEach((h, i) => doc.text(h, colX[i], tableTop));
+      doc.moveTo(48, tableTop + 16).lineTo(560, tableTop + 16).strokeColor("#cbd5e1").stroke();
+      let y = tableTop + 22;
+      doc.fontSize(10).fillColor("#1e293b");
+      for (const [uid, s] of taskStats.entries()) {
+        const name = profileMap.get(uid) || uid.slice(0, 8);
+        doc.text(name, colX[0], y, { width: 200, ellipsis: true });
+        doc.text(String(s.open), colX[1], y);
+        doc.text(String(s.done), colX[2], y);
+        doc.text(String(s.overdue), colX[3], y);
+        y += 18;
+        if (y > 770) { doc.addPage(); y = 60; }
+      }
+      doc.y = y + 10;
+    }
+
     doc.fontSize(8).fillColor("#64748b").text(
-      "Document généré par Inboria. « Traité » = action humaine explicite (réponse envoyée, transfert ou clic Marquer traité).",
+      "Document généré par Inboria. « Traité » = action humaine explicite (réponse envoyée, transfert ou clic Marquer traité). « Charge ouverte » = emails assignés et non clôturés. « En retard » = tâches ouvertes dont l'échéance est dépassée.",
       48,
-      Math.min(y + 16, 800),
+      Math.min(doc.y + 6, 800),
+      { width: 500 },
     );
 
     doc.end();

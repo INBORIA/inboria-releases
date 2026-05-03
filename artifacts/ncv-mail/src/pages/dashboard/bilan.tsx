@@ -38,13 +38,13 @@ const dateLocales: Record<string, Locale> = { fr, en: enUS, nl };
 const baseUrl = () => import.meta.env.BASE_URL.replace(/\/$/, "");
 
 interface TeamAnalytics {
-  totals: { emails: number; archived: number; assigned: number; handled: number | null; avgHandlingMinutes: number | null; period: string };
+  totals: { emails: number; assigned: number; notHandled: number; handled: number | null; avgHandlingMinutes: number | null; period: string };
   filters?: { period: string; member: string | null; mailbox: string | null; project: string | null };
   handledMetricsEnabled?: boolean;
-  perMember: { userId: string; userName: string; handled: number; archived: number; assigned: number; openLoad: number; avgFirstResponseMinutes: number | null }[];
-  perMailbox?: { mailboxId: string | null; mailboxName: string; mailboxEmail: string; count: number; received: number; handled: number; notHandled: number; archived: number; avgFirstResponseMinutes: number | null }[];
+  perMember: { userId: string; userName: string; handled: number; assigned: number; openLoad: number; avgFirstResponseMinutes: number | null }[];
+  perMailbox?: { mailboxId: string | null; mailboxName: string; mailboxEmail: string; count: number; received: number; handled: number; notHandled: number; avgFirstResponseMinutes: number | null }[];
   perPersonalMailbox?: { userId: string; userName: string; received: number; handled: number; notHandled: number; avgFirstResponseMinutes: number | null }[];
-  perProject?: { projectId: string; projectName: string; projectReference: string; count: number; received: number; handled: number; notHandled: number; archived: number; avgFirstResponseMinutes: number | null }[];
+  perProject?: { projectId: string; projectName: string; projectReference: string; count: number; received: number; handled: number; notHandled: number; avgFirstResponseMinutes: number | null }[];
   tasksPerMember?: { userId: string; userName: string; open: number; done: number; overdue: number }[];
   tasksPerProject?: { projectId: string | null; projectName: string; projectReference: string; isOutOfProject: boolean; open: number; done: number; overdue: number }[];
   topSenders: { email: string; count: number }[];
@@ -389,7 +389,7 @@ export default function BilanQuotidien() {
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
                   <StatCard label={t("analytics.totalEmails")} value={ta.totals.emails} />
                   <StatCard label={t("analytics.assigned")} value={ta.totals.assigned} />
-                  <StatCard label={t("analytics.notHandled")} value={Math.max(0, ta.totals.emails - (ta.totals.handled ?? ta.totals.assigned))} />
+                  <StatCard label={t("analytics.notHandled")} value={ta.totals.notHandled ?? Math.max(0, ta.totals.emails - (ta.totals.handled ?? ta.totals.assigned))} />
                   <StatCardText label={t("analytics.avgHandlingTime")} value={formatDelay(ta.totals.avgHandlingMinutes)} />
                   <StatCard label={t("analytics.openBreaches")} value={ta.slaSummary.openBreaches} accent={ta.slaSummary.openBreaches > 0 ? "red" : "default"} />
                 </div>
@@ -397,7 +397,7 @@ export default function BilanQuotidien() {
                 <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
                   <StatCard label={t("analytics.totalEmails")} value={ta.totals.emails} />
                   <StatCard label={t("analytics.handled")} value={ta.totals.handled ?? 0} />
-                  <StatCard label={t("analytics.notHandled")} value={Math.max(0, ta.totals.emails - (ta.totals.handled ?? 0))} />
+                  <StatCard label={t("analytics.notHandled")} value={ta.totals.notHandled ?? Math.max(0, ta.totals.emails - (ta.totals.handled ?? 0))} />
                   <StatCardText label={t("analytics.avgHandlingTime")} value={formatDelay(ta.totals.avgHandlingMinutes)} />
                   <StatCard label={t("analytics.openBreaches")} value={ta.slaSummary.openBreaches} accent={ta.slaSummary.openBreaches > 0 ? "red" : "default"} />
                 </div>
