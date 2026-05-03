@@ -88,7 +88,12 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     if (mailboxFilter) emailsQ = emailsQ.eq("shared_mailbox_id", mailboxFilter);
     if (projectFilter) emailsQ = emailsQ.eq("project_id", projectFilter);
 
-    const { data: emails } = await emailsQ.limit(20000);
+    const { data: emails, error: emailsErr } = await emailsQ.limit(20000);
+    if (emailsErr) {
+      req.log.error({ err: emailsErr, scope: scopeParts, memberIds, orgMailboxIds }, "analytics emails query failed");
+    } else {
+      req.log.info({ count: (emails || []).length, scope: scopeParts, memberIds: memberIds.length, orgMailboxIds: orgMailboxIds.length }, "analytics emails query");
+    }
     const list = emails || [];
 
     // Profiles for member names
