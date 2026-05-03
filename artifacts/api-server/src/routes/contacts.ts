@@ -539,7 +539,13 @@ router.get("/contacts/:email/timeline", requireAuth, async (req, res): Promise<v
       }
     }
 
-    items.sort((a, b) => (a.occurredAt < b.occurredAt ? 1 : -1));
+    // Tri DESC strict par date (identique au dashboard /api/emails),
+    // avec parsing robuste (chaînes ISO non parseables → epoch 0).
+    items.sort((a, b) => {
+      const ta = Date.parse(a.occurredAt) || 0;
+      const tb = Date.parse(b.occurredAt) || 0;
+      return tb - ta;
+    });
 
     // Fiche manuelle si elle existe.
     let manual: ManualContact | null = null;
