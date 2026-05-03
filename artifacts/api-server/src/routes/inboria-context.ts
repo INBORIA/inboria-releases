@@ -1139,53 +1139,47 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       for (const cand of candidates) {
         if (targetEmails.length >= 1) break;
         try {
-          // On charge un echantillon d'emails du perimetre puis on filtre
-          // en memoire (PAS de double .or() qui pourrait casser le scope).
-          // En mode admin team, on exclut les mails marques prives meme
-          // pour la resolution nom -> email (RGPD : un mail prive d'un
-          // coequipier ne doit pas servir a deviner l'adresse d'un contact).
-          const poolQuery = adminTeamCtx
-            ? supabaseAdmin
-                .from("emails")
-                .select("sender, recipient")
-                .eq("is_private", false)
-            : supabaseAdmin.from("emails").select("sender, recipient");
-          const { data: poolRaw } = await poolQuery
-            .or(emailScopeFilter)
-            .order("created_at", { ascending: false })
-            .limit(200);
-          const pool = (poolRaw as any[]) || [];
+          // Resolution nom -> email : on interroge la base via SQL ilike
+          // DIRECT sur sender/recipient (au lieu de fetch 200 mails puis
+          // filter en memoire). Un user noye sous le spam recent a un
+          // pool de 200 qui couvre parfois moins d'une semaine, ce qui
+          // exclut tout contact pro un peu ancien. SQL ilike + scope
+          // tenant trouve le contact peu importe l'anciennete.
+          // Ordre des essais : nom complet d'abord, puis chaque mot
+          // >= 4 caracteres en fallback (tolerance typo : "Ghilain"
+          // au lieu de "Ghislain" -> "Walther" seul retrouve le contact).
           const candLow = cand.toLowerCase();
-          const counts = new Map<string, number>();
-          for (const e of pool) {
-            for (const field of [e.sender, e.recipient]) {
-              if (!field) continue;
-              const txt = String(field).toLowerCase();
-              if (!txt.includes(candLow)) continue;
-              const addr = extractAddr(field);
-              if (!addr || !addr.includes("@")) continue;
-              counts.set(addr, (counts.get(addr) || 0) + 1);
-            }
+          const tries: string[] = [candLow];
+          for (const w of candLow.split(/\s+/)) {
+            if (w.length >= 4 && !tries.includes(w)) tries.push(w);
           }
-          // Fallback typo-tolerant : si le nom complet ne matche rien
-          // (ex. "Walther Ghilain" tape au lieu de "Walther Ghislain"),
-          // on retente avec chaque mot >= 4 caracteres pris isolement.
-          // Le prenom seul ("Walther") suffit alors a retrouver le contact.
-          if (counts.size === 0) {
-            const words = candLow.split(/\s+/).filter((w) => w.length >= 4);
-            for (const w of words) {
-              for (const e of pool) {
-                for (const field of [e.sender, e.recipient]) {
-                  if (!field) continue;
-                  const txt = String(field).toLowerCase();
-                  if (!txt.includes(w)) continue;
-                  const addr = extractAddr(field);
-                  if (!addr || !addr.includes("@")) continue;
-                  counts.set(addr, (counts.get(addr) || 0) + 1);
-                }
+          const counts = new Map<string, number>();
+          for (const term of tries) {
+            const safe = term.replace(/[%,()*]/g, "");
+            if (!safe) continue;
+            const baseQ = adminTeamCtx
+              ? supabaseAdmin
+                  .from("emails")
+                  .select("sender, recipient")
+                  .eq("is_private", false)
+              : supabaseAdmin.from("emails").select("sender, recipient");
+            const { data: hitRaw } = await baseQ
+              .or(emailScopeFilter)
+              .or(`sender.ilike.%${safe}%,recipient.ilike.%${safe}%`)
+              .order("created_at", { ascending: false })
+              .limit(50);
+            const hits = (hitRaw as any[]) || [];
+            for (const e of hits) {
+              for (const field of [e.sender, e.recipient]) {
+                if (!field) continue;
+                const txt = String(field).toLowerCase();
+                if (!txt.includes(term)) continue;
+                const addr = extractAddr(field);
+                if (!addr || !addr.includes("@")) continue;
+                counts.set(addr, (counts.get(addr) || 0) + 1);
               }
-              if (counts.size > 0) break;
             }
+            if (counts.size > 0) break;
           }
           if (counts.size > 0) {
             const sorted = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
