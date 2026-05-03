@@ -475,6 +475,21 @@ router.get("/emails/:id", requireAuth, async (req, res, next): Promise<void> => 
       assignedToName = ap?.full_name || null;
     }
 
+    // Task #205 — surface handled status au client pour que le bouton
+    // "Marquer traité" reste cohérent après refresh / re-navigation.
+    const handledOn = await hasHandledColumns();
+    const handledAtVal = handledOn ? ((email as any).handled_at || null) : null;
+    const handledByVal = handledOn ? ((email as any).handled_by || null) : null;
+    let handledByName: string | null = null;
+    if (handledByVal) {
+      const { data: hp } = await supabaseAdmin
+        .from("profiles")
+        .select("full_name")
+        .eq("id", handledByVal)
+        .single();
+      handledByName = hp?.full_name || null;
+    }
+
     const { data: attachments } = await supabaseAdmin
       .from("email_attachments")
       .select("id, filename, content_type, size, created_at")
@@ -505,6 +520,9 @@ router.get("/emails/:id", requireAuth, async (req, res, next): Promise<void> => 
       attachments: attachments || [],
       attachmentCount: (attachments || []).length,
       isPrivate: Boolean((email as any).is_private),
+      handledAt: handledAtVal,
+      handledBy: handledByVal,
+      handledByName,
       createdAt: email.created_at,
     });
   } catch {
