@@ -357,9 +357,9 @@ router.get("/contacts/:email/timeline", requireAuth, async (req, res): Promise<v
         items.push({
           type: "task",
           id: `task-${id}`,
-          occurredAt: String(t.created_at),
+          occurredAt: String(t.due_date || t.created_at),
           title: t.title || "(tâche)",
-          snippet: (t.description as string | null) || null,
+          snippet: null,
           categoryName: null,
         });
       }
@@ -369,12 +369,13 @@ router.get("/contacts/:email/timeline", requireAuth, async (req, res): Promise<v
         const id = String(f.id);
         if (seenFollowupIds.has(id)) continue;
         seenFollowupIds.add(id);
+        const t = f.title || (f.ai_suggestion ? String(f.ai_suggestion).slice(0, 120) : "(relance)");
         items.push({
           type: "followup",
           id: `followup-${id}`,
-          occurredAt: String(f.scheduled_at || f.created_at),
-          title: f.ai_suggestion ? String(f.ai_suggestion).slice(0, 120) : "(relance)",
-          snippet: null,
+          occurredAt: String(f.due_date || f.created_at),
+          title: t,
+          snippet: (f.notes as string | null) || null,
           categoryName: null,
         });
       }
@@ -387,7 +388,7 @@ router.get("/contacts/:email/timeline", requireAuth, async (req, res): Promise<v
         items.push({
           type: "appointment",
           id: `appt-${id}`,
-          occurredAt: String(a.starts_at || a.created_at),
+          occurredAt: String(a.start_at || a.created_at),
           title: a.title || "(rendez-vous)",
           snippet: (a.description as string | null) || null,
           categoryName: null,
@@ -397,58 +398,86 @@ router.get("/contacts/:email/timeline", requireAuth, async (req, res): Promise<v
 
     // Tâches / relances / RDV liés via email_id
     if (emailIds.length > 0) {
-      const [{ data: tasks1 }, { data: f1 }, { data: a1 }] = await Promise.all([
+      const [r1, r2, r3] = await Promise.all([
         supabaseAdmin
           .from("tasks")
-          .select("id, title, description, done, created_at, email_id, project_id")
+          .select("id, title, done, due_date, created_at, email_id, project_id")
           .eq("user_id", userId)
           .in("email_id", emailIds),
         supabaseAdmin
           .from("followups")
-          .select("id, scheduled_at, status, ai_suggestion, email_id, created_at")
+          .select("id, title, status, ai_suggestion, notes, due_date, email_id, created_at")
           .eq("user_id", userId)
           .in("email_id", emailIds),
         supabaseAdmin
           .from("appointments")
-          .select("id, title, description, starts_at, ends_at, email_id, created_at")
+          .select("id, title, description, start_at, end_at, email_id, created_at")
           .eq("user_id", userId)
           .in("email_id", emailIds),
       ]);
-      pushTasks(tasks1);
-      pushFollowups(f1);
-      pushAppts(a1);
+      if (r1.error) req.log?.warn?.({ err: r1.error }, "[contacts/timeline] tasks email_id query failed");
+      if (r2.error) req.log?.warn?.({ err: r2.error }, "[contacts/timeline] followups email_id query failed");
+      if (r3.error) req.log?.warn?.({ err: r3.error }, "[contacts/timeline] appointments email_id query failed");
+      pushTasks(r1.data);
+      pushFollowups(r2.data);
+      pushAppts(r3.data);
     }
 
-    // Élargissement via project_id (tâches/RDV créés directement sur un
-    // projet partagé avec ce contact). Évite les doublons via seen* sets.
+    // Élargissement via project_id (tâches/RDV/relances créés directement
+    // sur un projet partagé avec ce contact). Doublons gérés via seen* sets.
     if (projectIdsForLinks.length > 0) {
-      const [{ data: tasks2 }, { data: a2 }] = await Promise.all([
+      const [r1, r2, r3] = await Promise.all([
         supabaseAdmin
           .from("tasks")
-          .select("id, title, description, done, created_at, email_id, project_id")
+          .select("id, title, done, due_date, created_at, email_id, project_id")
           .eq("user_id", userId)
           .in("project_id", projectIdsForLinks),
         supabaseAdmin
           .from("appointments")
-          .select("id, title, description, starts_at, ends_at, email_id, created_at, project_id")
+          .select("id, title, description, start_at, end_at, email_id, created_at, project_id")
+          .eq("user_id", userId)
+          .in("project_id", projectIdsForLinks),
+        supabaseAdmin
+          .from("followups")
+          .select("id, title, status, ai_suggestion, notes, due_date, email_id, created_at, project_id")
           .eq("user_id", userId)
           .in("project_id", projectIdsForLinks),
       ]);
-      pushTasks(tasks2);
-      pushAppts(a2);
+      if (r1.error) req.log?.warn?.({ err: r1.error }, "[contacts/timeline] tasks project_id query failed");
+      if (r2.error) req.log?.warn?.({ err: r2.error }, "[contacts/timeline] appointments project_id query failed");
+      if (r3.error) req.log?.warn?.({ err: r3.error }, "[contacts/timeline] followups project_id query failed");
+      pushTasks(r1.data);
+      pushAppts(r2.data);
+      pushFollowups(r3.data);
     }
 
-    // Activité équipe (commentaires, assignations, etc. sur les emails du contact)
+    // Activité équipe — table activity_logs absente du schéma chez certains
+    // tenants. On utilise email_comments (commentaires sur les emails du
+    // contact) comme source principale, et on essaye activity_logs en best-
+    // effort pour les tenants où elle existe.
     if (emailIds.length > 0) {
-      const idStrs = emailIds.map((x: any) => String(x));
-      const { data: activity } = await supabaseAdmin
-        .from("activity_logs")
-        .select("id, user_id, action, entity_type, entity_id, details, created_at")
-        .eq("entity_type", "email")
-        .in("entity_id", idStrs)
-        .order("created_at", { ascending: false })
-        .limit(200);
-      const actorIds = Array.from(new Set((activity || []).map((a: any) => a.user_id).filter(Boolean)));
+      const [comments, activityRes] = await Promise.all([
+        supabaseAdmin
+          .from("email_comments")
+          .select("id, user_id, email_id, body, created_at")
+          .in("email_id", emailIds)
+          .order("created_at", { ascending: false })
+          .limit(200),
+        supabaseAdmin
+          .from("activity_logs")
+          .select("id, user_id, action, entity_type, entity_id, details, created_at")
+          .eq("entity_type", "email")
+          .in("entity_id", emailIds.map((x: any) => String(x)))
+          .order("created_at", { ascending: false })
+          .limit(200),
+      ]);
+
+      const actorIds = Array.from(
+        new Set([
+          ...(comments.data || []).map((c: any) => c.user_id).filter(Boolean),
+          ...(activityRes.data || []).map((a: any) => a.user_id).filter(Boolean),
+        ]),
+      );
       const actorNames = new Map<string, string>();
       if (actorIds.length > 0) {
         const { data: profs } = await supabaseAdmin
@@ -457,7 +486,20 @@ router.get("/contacts/:email/timeline", requireAuth, async (req, res): Promise<v
           .in("id", actorIds);
         for (const p of profs || []) actorNames.set(String((p as any).id), String((p as any).full_name || ""));
       }
-      for (const a of activity || []) {
+
+      for (const c of comments.data || []) {
+        const who = actorNames.get(String(c.user_id)) || "Membre";
+        items.push({
+          type: "team",
+          id: `comment-${c.id}`,
+          occurredAt: String(c.created_at),
+          title: `${who} — commentaire`,
+          snippet: (c.body as string | null) || null,
+          categoryName: null,
+        });
+      }
+
+      for (const a of activityRes.data || []) {
         const who = actorNames.get(String((a as any).user_id)) || "Membre";
         const action = String((a as any).action || "");
         const detailsObj = ((a as any).details as Record<string, any> | null) || {};
