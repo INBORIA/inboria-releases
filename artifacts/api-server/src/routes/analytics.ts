@@ -5,16 +5,6 @@ import PDFDocument from "pdfkit";
 
 const router: IRouter = Router();
 
-async function getOrgIdForMember(userId: string): Promise<string | null> {
-  const { data } = await supabaseAdmin
-    .from("organisation_members")
-    .select("organisation_id")
-    .eq("user_id", userId)
-    .eq("status", "active")
-    .single();
-  return data?.organisation_id || null;
-}
-
 async function getOrgIdForAdmin(userId: string): Promise<string | null> {
   const { data } = await supabaseAdmin
     .from("organisation_members")
@@ -42,9 +32,9 @@ function csvEscape(v: any): string {
 
 router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
   try {
-    const orgId = await getOrgIdForMember(req.userId!);
+    const orgId = await getOrgIdForAdmin(req.userId!);
     if (!orgId) {
-      res.json({ totals: {}, perMember: [], topSenders: [], topCategories: [], evolution: [], slaSummary: {} });
+      res.status(403).json({ error: "forbidden" });
       return;
     }
 
@@ -301,7 +291,7 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
 
 router.get("/analytics/team/export.csv", requireAuth, async (req, res): Promise<void> => {
   try {
-    const orgId = await getOrgIdForMember(req.userId!);
+    const orgId = await getOrgIdForAdmin(req.userId!);
     if (!orgId) { res.status(403).send("forbidden"); return; }
 
     const period = String(req.query.period || "30d");
@@ -374,7 +364,7 @@ router.get("/analytics/team/export.csv", requireAuth, async (req, res): Promise<
 
 router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<void> => {
   try {
-    const orgId = await getOrgIdForMember(req.userId!);
+    const orgId = await getOrgIdForAdmin(req.userId!);
     if (!orgId) { res.status(403).send("forbidden"); return; }
 
     const period = String(req.query.period || "30d");

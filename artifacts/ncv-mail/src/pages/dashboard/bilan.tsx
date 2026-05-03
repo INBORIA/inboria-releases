@@ -5,6 +5,7 @@ import {
   useGetOrganisationMembers,
   useGetSharedMailboxes,
   useListProjects,
+  useGetMyOrganisation,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
@@ -64,6 +65,8 @@ export default function BilanQuotidien() {
   const { data: orgMembers } = useGetOrganisationMembers();
   const { data: sharedMailboxes } = useGetSharedMailboxes();
   const { data: projectsList } = useListProjects();
+  const { data: myOrg } = useGetMyOrganisation();
+  const isOrgAdmin = (myOrg as { myRole?: string } | undefined)?.myRole === "admin";
 
   const now = new Date();
   const tomorrow = addDays(now, 1);
@@ -88,7 +91,7 @@ export default function BilanQuotidien() {
 
   const teamAnalytics = useQuery<TeamAnalytics>({
     queryKey: ["analytics-team", period, memberFilter, mailboxFilter, projectFilter],
-    enabled: !!session,
+    enabled: !!session && isOrgAdmin,
     queryFn: async () => {
       const res = await fetch(`${baseUrl()}/api/analytics/team?${filterQS()}`, {
         headers: { Authorization: `Bearer ${session?.access_token}` },
@@ -287,6 +290,7 @@ export default function BilanQuotidien() {
           </div>
         )}
 
+        {isOrgAdmin && (
         <div className="border-t border-border pt-5 mt-2">
           <div className="flex items-center justify-between gap-3 mb-4">
             <div>
@@ -509,6 +513,7 @@ export default function BilanQuotidien() {
             </div>
           )}
         </div>
+        )}
       </div>
     </DashboardLayout>
   );
