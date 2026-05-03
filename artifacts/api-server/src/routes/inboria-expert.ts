@@ -12,7 +12,10 @@ interface MemberScore {
   fullName: string;
   interactionCount: number;
   lastInteractionAt: string | null;
+  projectInteractionCount: number;
+  matchedProjects: string[];
   score: number;
+  reasons: string[];
 }
 
 function extractEmailAddress(raw: string): string {
@@ -160,13 +163,70 @@ router.get("/inboria/expert-suggestion", requireAuth, async (req, res): Promise<
       tally.set(handler, cur);
     }
 
-    if (tally.size === 0) {
+    // Email Brain Phase 3 (#216) — bonus expertise projet : si ce contact
+    // figure dans un projet inféré actif de la boîte, on cherche qui a déjà
+    // traité d'autres mails de ce projet. Best-effort, table peut manquer.
+    const projectTally = new Map<string, { count: number; projects: Set<string> }>();
+    try {
+      const { data: projectRows, error: projErr } = await supabaseAdmin
+        .from("inboria_projects_inferred")
+        .select("id, name, participants")
+        .eq("shared_mailbox_id", email.shared_mailbox_id)
+        .eq("status", "active")
+        .contains("participants", [contactEmail])
+        .limit(20);
+      if (!projErr && projectRows && projectRows.length > 0) {
+        const projectIds = projectRows.map((p: any) => String(p.id));
+        const projectNameById = new Map<string, string>(
+          projectRows.map((p: any) => [String(p.id), String(p.name || "")]),
+        );
+        const { data: peRows } = await supabaseAdmin
+          .from("inboria_project_emails")
+          .select("project_id, email_id")
+          .in("project_id", projectIds)
+          .limit(2000);
+        const projectEmailIds = (peRows || []).map((r: any) => Number(r.email_id)).filter(Number.isFinite);
+        const projectIdByEmailId = new Map<number, string>();
+        for (const r of peRows || []) {
+          projectIdByEmailId.set(Number(r.email_id), String(r.project_id));
+        }
+        if (projectEmailIds.length > 0) {
+          const { data: handlerRows } = await supabaseAdmin
+            .from("emails")
+            .select("id, claimed_by, assigned_to")
+            .in("id", projectEmailIds)
+            .or(
+              `claimed_by.in.(${memberIds.join(",")}),assigned_to.in.(${memberIds.join(",")})`,
+            )
+            .limit(2000);
+          for (const row of handlerRows || []) {
+            const handler = String((row as any).claimed_by || (row as any).assigned_to || "");
+            if (!handler || !memberIds.includes(handler)) continue;
+            const pid = projectIdByEmailId.get(Number((row as any).id));
+            const pname = pid ? projectNameById.get(pid) || "" : "";
+            const cur = projectTally.get(handler) || { count: 0, projects: new Set<string>() };
+            cur.count += 1;
+            if (pname) cur.projects.add(pname);
+            projectTally.set(handler, cur);
+          }
+        }
+      }
+    } catch (err: any) {
+      req.log.warn({ err: err?.message }, "[inboria-expert] project bonus failed");
+    }
+
+    // Combine candidates: contact-history members + project-history members.
+    const allCandidates = new Set<string>([
+      ...tally.keys(),
+      ...projectTally.keys(),
+    ]);
+    if (allCandidates.size === 0) {
       res.json({ suggestion: null });
       return;
     }
 
     // Resolve names for the candidates.
-    const candidateIds = Array.from(tally.keys());
+    const candidateIds = Array.from(allCandidates);
     const { data: profiles } = await supabaseAdmin
       .from("profiles")
       .select("id, full_name, email")
@@ -179,15 +239,40 @@ router.get("/inboria/expert-suggestion", requireAuth, async (req, res): Promise<
     }
 
     const scored: MemberScore[] = [];
-    for (const [userId, t] of tally.entries()) {
+    for (const userId of allCandidates) {
+      const t = tally.get(userId) || { count: 0, last: null };
+      const pt = projectTally.get(userId) || { count: 0, projects: new Set<string>() };
       const recencyBonus = t.last !== null && t.last > recentCutoff ? 2 : 0;
-      const score = t.count * 3 + recencyBonus;
+      // Pondérations : contact direct = 3 pts/mail, projet inféré = 2 pts/mail.
+      const score = t.count * 3 + pt.count * 2 + recencyBonus;
+      const reasons: string[] = [];
+      if (t.count > 0) {
+        reasons.push(
+          t.count === 1
+            ? `1 mail déjà traité avec ce contact`
+            : `${t.count} mails déjà traités avec ce contact`,
+        );
+      }
+      if (pt.count > 0 && pt.projects.size > 0) {
+        const projList = Array.from(pt.projects).slice(0, 3).join(", ");
+        reasons.push(
+          pt.count === 1
+            ? `1 mail traité sur le projet « ${projList} »`
+            : `${pt.count} mails traités sur le(s) projet(s) « ${projList} »`,
+        );
+      }
+      if (recencyBonus > 0) {
+        reasons.push(`Interaction récente (< ${RECENT_DAYS} jours)`);
+      }
       scored.push({
         userId,
         fullName: nameById.get(userId) || "",
         interactionCount: t.count,
         lastInteractionAt: t.last !== null ? new Date(t.last).toISOString() : null,
+        projectInteractionCount: pt.count,
+        matchedProjects: Array.from(pt.projects).slice(0, 5),
         score,
+        reasons,
       });
     }
 

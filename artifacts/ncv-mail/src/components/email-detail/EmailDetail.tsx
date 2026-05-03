@@ -225,6 +225,9 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
         fullName: string;
         interactionCount: number;
         lastInteractionAt: string | null;
+        projectInteractionCount?: number;
+        matchedProjects?: string[];
+        reasons?: string[];
         score: number;
       }
     | null
@@ -766,7 +769,9 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     type="button"
                     onClick={() => onAssign?.(email.id, expertSuggestion.userId)}
                     title={
-                      expertSuggestion.lastInteractionAt
+                      (expertSuggestion as any).reasons && (expertSuggestion as any).reasons.length > 0
+                        ? ((expertSuggestion as any).reasons as string[]).join("\n")
+                        : expertSuggestion.lastInteractionAt
                         ? t("inboriaExpert.tooltip", {
                             count: expertSuggestion.interactionCount,
                             date: format(new Date(expertSuggestion.lastInteractionAt), "PP", { locale: dateFnsLocale }),
