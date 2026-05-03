@@ -1679,6 +1679,16 @@ export type DeleteProjectNote200 = {
   success?: boolean;
 };
 
+export type MarkEmailHandled200 = {
+  success?: boolean;
+  handledAt?: string;
+  handledBy?: string;
+};
+
+export type UnmarkEmailHandled200 = {
+  success?: boolean;
+};
+
 export type SnoozeEmail200 = {
   success?: boolean;
   snoozedUntil?: string;

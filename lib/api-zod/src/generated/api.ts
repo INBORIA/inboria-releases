@@ -1374,6 +1374,36 @@ export const DeleteProjectNoteResponse = zod.object({
 });
 
 /**
+ * Marque l'email comme traité (handled_at + handled_by). Action humaine
+explicite. Renvoie 503 si la migration handled_at/handled_by n'a pas
+été appliquée. Renvoie 403 si l'utilisateur n'a pas accès à l'email
+(ni propriétaire, ni membre de l'org propriétaire de la boîte
+partagée liée).
+
+ * @summary Mark an email as handled (Task
+ */
+export const MarkEmailHandledParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const MarkEmailHandledResponse = zod.object({
+  success: zod.boolean().optional(),
+  handledAt: zod.coerce.date().optional(),
+  handledBy: zod.string().uuid().optional(),
+});
+
+/**
+ * @summary Unmark an email as handled (Task
+ */
+export const UnmarkEmailHandledParams = zod.object({
+  id: zod.coerce.number(),
+});
+
+export const UnmarkEmailHandledResponse = zod.object({
+  success: zod.boolean().optional(),
+});
+
+/**
  * @summary Snooze an email until a future date
  */
 export const SnoozeEmailParams = zod.object({

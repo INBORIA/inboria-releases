@@ -1111,7 +1111,9 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       className="gap-1.5 h-7 text-[11px]"
                       disabled={isSending || !forwardTo.trim() || !forwardSubject.trim() || !forwardText.trim()}
                       onClick={() => {
-                        onSendReply(forwardTo, forwardSubject, forwardText, undefined, forwardAttachments, forwardConnectionId || undefined, undefined);
+                        // Task #205 — passer email.id en replyToEmailId pour qu'un transfert
+                        // marque aussi automatiquement l'email d'origine comme "traité" côté API.
+                        onSendReply(forwardTo, forwardSubject, forwardText, email.id, forwardAttachments, forwardConnectionId || undefined, undefined);
                         setForwardText("");
                         setForwardTo("");
                         setForwardSubject("");

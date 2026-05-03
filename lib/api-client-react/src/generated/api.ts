@@ -127,6 +127,7 @@ import type {
   ManualContact,
   ManualContactInput,
   MarkAllNotificationsRead200,
+  MarkEmailHandled200,
   MarkNotificationRead200,
   Notification,
   Organisation,
@@ -178,6 +179,7 @@ import type {
   UnassignEmail200,
   UnblockSender200,
   UnclaimSharedEmail200,
+  UnmarkEmailHandled200,
   UnreadCount,
   UnshareEmailConnection200,
   UnsnoozeEmail200,
@@ -3896,6 +3898,180 @@ export const useDeleteProjectNote = <
   TContext
 > => {
   return useMutation(getDeleteProjectNoteMutationOptions(options));
+};
+
+/**
+ * Marque l'email comme traité (handled_at + handled_by). Action humaine
+explicite. Renvoie 503 si la migration handled_at/handled_by n'a pas
+été appliquée. Renvoie 403 si l'utilisateur n'a pas accès à l'email
+(ni propriétaire, ni membre de l'org propriétaire de la boîte
+partagée liée).
+
+ * @summary Mark an email as handled (Task
+ */
+export const getMarkEmailHandledUrl = (id: number) => {
+  return `/api/emails/${id}/handled`;
+};
+
+export const markEmailHandled = async (
+  id: number,
+  options?: RequestInit,
+): Promise<MarkEmailHandled200> => {
+  return customFetch<MarkEmailHandled200>(getMarkEmailHandledUrl(id), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getMarkEmailHandledMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof markEmailHandled>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof markEmailHandled>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["markEmailHandled"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof markEmailHandled>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return markEmailHandled(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type MarkEmailHandledMutationResult = NonNullable<
+  Awaited<ReturnType<typeof markEmailHandled>>
+>;
+
+export type MarkEmailHandledMutationError = ErrorType<void>;
+
+/**
+ * @summary Mark an email as handled (Task
+ */
+export const useMarkEmailHandled = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof markEmailHandled>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof markEmailHandled>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getMarkEmailHandledMutationOptions(options));
+};
+
+/**
+ * @summary Unmark an email as handled (Task
+ */
+export const getUnmarkEmailHandledUrl = (id: number) => {
+  return `/api/emails/${id}/handled`;
+};
+
+export const unmarkEmailHandled = async (
+  id: number,
+  options?: RequestInit,
+): Promise<UnmarkEmailHandled200> => {
+  return customFetch<UnmarkEmailHandled200>(getUnmarkEmailHandledUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getUnmarkEmailHandledMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unmarkEmailHandled>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof unmarkEmailHandled>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  const mutationKey = ["unmarkEmailHandled"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof unmarkEmailHandled>>,
+    { id: number }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return unmarkEmailHandled(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UnmarkEmailHandledMutationResult = NonNullable<
+  Awaited<ReturnType<typeof unmarkEmailHandled>>
+>;
+
+export type UnmarkEmailHandledMutationError = ErrorType<void>;
+
+/**
+ * @summary Unmark an email as handled (Task
+ */
+export const useUnmarkEmailHandled = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unmarkEmailHandled>>,
+    TError,
+    { id: number },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof unmarkEmailHandled>>,
+  TError,
+  { id: number },
+  TContext
+> => {
+  return useMutation(getUnmarkEmailHandledMutationOptions(options));
 };
 
 /**
