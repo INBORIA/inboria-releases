@@ -1,6 +1,7 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
+import { summarizeContact } from "../services/contact-summarizer";
 
 const router: IRouter = Router();
 
@@ -562,7 +563,20 @@ router.get("/contacts/:email/timeline", requireAuth, async (req, res): Promise<v
       }
     } catch {}
 
-    res.json({ email: rawEmail, manual, items });
+    // Email Brain Phase 2 (#215) — synthèse Inboria de la relation.
+    // Best-effort + timeout 800ms : on n'attend jamais l'IA pour
+    // afficher la timeline.
+    let summary: { content: string; generatedAt: string } | null = null;
+    try {
+      summary = await Promise.race([
+        summarizeContact(userId, rawEmail),
+        new Promise<null>((resolve) => setTimeout(() => resolve(null), 800)),
+      ]);
+    } catch (err: any) {
+      req.log?.warn?.({ err: err?.message }, "[contacts] summary failed");
+    }
+
+    res.json({ email: rawEmail, manual, items, summary });
   } catch (err: any) {
     req.log?.error?.({ err }, "[contacts] timeline failed");
     res.status(500).json({ error: "Failed to load timeline" });

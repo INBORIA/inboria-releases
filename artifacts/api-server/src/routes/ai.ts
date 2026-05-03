@@ -107,6 +107,110 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
     const todayAppointments = (todayAppts || []).map(mapAppt);
     const tomorrowAppointments = (tomorrowAppts || []).map(mapAppt);
 
+    // Email Brain Phase 2 (#215) — enrichir le bilan avec les décisions
+    // récentes, projets actifs inférés et engagements ouverts. Best-effort.
+    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000).toISOString();
+    let recentDecisions: Array<{ decision: string; decided_at: string | null; amount_eur: number | null; source_email_id: number | null }> = [];
+    let activeProjects: Array<{ name: string; email_count: number; last_seen_at: string }> = [];
+    let openCommitments: Array<{ summary: string; event_date: string | null; source_email_id: number | null }> = [];
+    try {
+      const [decRes, projRes, commitRes] = await Promise.all([
+        supabaseAdmin
+          .from("inboria_decisions")
+          .select("decision, decided_at, amount_eur, source_email_id, created_at")
+          .eq("user_id", req.userId!)
+          .gte("created_at", sevenDaysAgo)
+          .order("created_at", { ascending: false })
+          .limit(8),
+        supabaseAdmin
+          .from("inboria_projects_inferred")
+          .select("name, email_count, last_seen_at")
+          .eq("user_id", req.userId!)
+          .eq("status", "active")
+          .order("last_seen_at", { ascending: false })
+          .limit(6),
+        supabaseAdmin
+          .from("inboria_episodes")
+          .select("summary, event_date, source_email_id, extracted_at")
+          .eq("user_id", req.userId!)
+          .eq("kind", "commitment")
+          .gte("extracted_at", sevenDaysAgo)
+          .order("extracted_at", { ascending: false })
+          .limit(6),
+      ]);
+      if (!decRes.error && decRes.data) recentDecisions = decRes.data as any[];
+      if (!projRes.error && projRes.data) activeProjects = projRes.data as any[];
+      if (!commitRes.error && commitRes.data) openCommitments = commitRes.data as any[];
+    } catch (err: any) {
+      logger.warn({ err: err?.message }, "[ai/daily-summary] brain context failed");
+    }
+
+    const formatBrainContext = (lang: string): string => {
+      const lines: string[] = [];
+      const isFr = lang === "fr";
+      const isEn = lang === "en";
+      const isNl = lang === "nl";
+      const isDe = lang === "de";
+      const isEs = lang === "es";
+      if (activeProjects.length > 0) {
+        const header = isFr
+          ? "Projets actifs (derniers 7 jours d'activité)"
+          : isEn
+            ? "Active projects (last 7 days of activity)"
+            : isNl
+              ? "Actieve projecten (laatste 7 dagen activiteit)"
+              : isDe
+                ? "Aktive Projekte (letzte 7 Tage Aktivität)"
+                : isEs
+                  ? "Proyectos activos (últimos 7 días de actividad)"
+                  : "Active projects";
+        lines.push(`\n${header} :`);
+        for (const p of activeProjects) {
+          lines.push(`- ${p.name} (${p.email_count} mails)`);
+        }
+      }
+      if (recentDecisions.length > 0) {
+        const header = isFr
+          ? "Décisions récentes (7 derniers jours)"
+          : isEn
+            ? "Recent decisions (last 7 days)"
+            : isNl
+              ? "Recente beslissingen (laatste 7 dagen)"
+              : isDe
+                ? "Aktuelle Entscheidungen (letzte 7 Tage)"
+                : isEs
+                  ? "Decisiones recientes (últimos 7 días)"
+                  : "Recent decisions";
+        lines.push(`\n${header} :`);
+        for (const d of recentDecisions) {
+          const date = d.decided_at || (d as any).created_at?.slice(0, 10) || "";
+          const amt = typeof d.amount_eur === "number" ? ` — ${d.amount_eur} €` : "";
+          const tag = d.source_email_id ? ` [mail#${d.source_email_id}]` : "";
+          lines.push(`- ${date} ${d.decision}${amt}${tag}`);
+        }
+      }
+      if (openCommitments.length > 0) {
+        const header = isFr
+          ? "Engagements en cours mentionnés cette semaine"
+          : isEn
+            ? "Commitments mentioned this week"
+            : isNl
+              ? "Toezeggingen deze week"
+              : isDe
+                ? "Verpflichtungen diese Woche"
+                : isEs
+                  ? "Compromisos mencionados esta semana"
+                  : "Commitments this week";
+        lines.push(`\n${header} :`);
+        for (const c of openCommitments) {
+          const date = c.event_date ? ` (${c.event_date})` : "";
+          const tag = c.source_email_id ? ` [mail#${c.source_email_id}]` : "";
+          lines.push(`-${date} ${c.summary}${tag}`);
+        }
+      }
+      return lines.join("\n");
+    };
+
     const briefingPrompts: Record<string, { system: string; user: string }> = {
       fr: {
         system: `Tu es un assistant de gestion d'emails et d'agenda pour Inboria.
@@ -182,13 +286,14 @@ Herinnering: de waarden van "summary" en "advice" MOETEN volledig in het Nederla
       },
     };
     const prompt = briefingPrompts[language] || briefingPrompts.fr;
+    const brainBlock = formatBrainContext(language);
 
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       max_completion_tokens: 2048,
       messages: [
         { role: "system", content: prompt.system },
-        { role: "user", content: prompt.user },
+        { role: "user", content: prompt.user + brainBlock },
       ],
     });
 
@@ -334,13 +439,65 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
       () => "",
     );
 
+    // Email Brain Phase 2 (#215) — RAG sur tout le corpus pour ancrer le
+    // brouillon sur des mails passés réels. Best-effort, timeout 1.2s.
+    let ragContext = "";
+    try {
+      const cleanForEmbed = (email.subject || "") + "\n" + String(email.body || "")
+        .replace(/<[^>]+>/g, " ")
+        .replace(/\s+/g, " ")
+        .trim()
+        .slice(0, 1500);
+      const memberMailboxIds = await getMemberMailboxIds(req.userId!);
+      const ragPromise = (async (): Promise<string> => {
+        const embedRes = await openai.embeddings.create({
+          model: "text-embedding-3-small",
+          input: cleanForEmbed,
+        });
+        const queryVec = embedRes.data[0]?.embedding as number[] | undefined;
+        if (!Array.isArray(queryVec) || queryVec.length !== 1536) return "";
+        const { data, error } = await supabaseAdmin.rpc("search_email_chunks", {
+          query_vec: queryVec as any,
+          scope_user_ids: [req.userId!],
+          scope_mailbox_ids: memberMailboxIds,
+          exclude_private: false,
+          match_limit: 12,
+        });
+        if (error) return "";
+        const hits = ((data as any[]) || [])
+          .filter((h) => typeof h.distance === "number" && h.distance < 0.78)
+          .slice(0, 5);
+        if (hits.length === 0) return "";
+        const seen = new Set<number>();
+        const lines: string[] = [
+          "\nMails passés liés (à utiliser pour ancrer le brouillon, citer une décision/engagement passé doit toujours référencer [mail#ID]) :",
+        ];
+        for (const h of hits) {
+          const eid = Number(h.email_id);
+          if (seen.has(eid) || eid === Number(email.id)) continue;
+          seen.add(eid);
+          const date = (h.sent_at || h.created_at || "").slice(0, 10);
+          const subj = String(h.subject || "(sans objet)").slice(0, 80);
+          const snippet = String(h.content || "").replace(/\s+/g, " ").slice(0, 180);
+          lines.push(`- [mail#${eid}] ${date} ${subj} — "${snippet}"`);
+        }
+        return lines.length > 1 ? lines.join("\n") : "";
+      })();
+      ragContext = await Promise.race([
+        ragPromise,
+        new Promise<string>((resolve) => setTimeout(() => resolve(""), 1200)),
+      ]);
+    } catch (err: any) {
+      logger.warn({ err: err?.message }, "[ai/draft] RAG context failed");
+    }
+
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
       max_completion_tokens: 1024,
       messages: [
         {
           role: "system",
-          content: `Tu es un assistant de redaction d'emails professionnels. Redige la reponse en francais avec un ton professionnel. Tu rediges des reponses claires, polies et professionnelles. ${signatureInstruction}`,
+          content: `Tu es un assistant de redaction d'emails professionnels. Redige la reponse en francais avec un ton professionnel. Tu rediges des reponses claires, polies et professionnelles. Si le contexte historique mentionne une décision ou un engagement passé pertinent, tu peux le rappeler dans ta réponse mais tu DOIS supprimer toute référence [mail#ID] du brouillon final. ${signatureInstruction}`,
         },
         {
           role: "user",
@@ -349,9 +506,9 @@ router.post("/ai/draft", requireAuth, async (req, res): Promise<void> => {
 Expediteur: ${email.sender}
 Sujet: ${email.subject}
 Corps:
-${email.body}${projectContext}${categoryContext}${inboriaContext}
+${email.body}${projectContext}${categoryContext}${inboriaContext}${ragContext}
 
-Redige une reponse professionnelle et adaptee au contexte. Reponds uniquement avec le texte du brouillon, sans explication supplementaire.`,
+Redige une reponse professionnelle et adaptee au contexte. Reponds uniquement avec le texte du brouillon, sans explication supplementaire et sans aucun marqueur [mail#…].`,
         },
       ],
     });

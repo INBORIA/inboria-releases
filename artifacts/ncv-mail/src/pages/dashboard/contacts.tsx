@@ -56,6 +56,7 @@ import {
   Phone,
   Building2,
   StickyNote,
+  Brain,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -168,6 +169,8 @@ export default function Contacts() {
     company: string | null;
     notes: string | null;
   } | null = (timelineData as any)?.manual || null;
+  const brainSummary: { content: string; generatedAt: string } | null =
+    (timelineData as any)?.summary || null;
 
   const invalidateAll = () => {
     // Invalidate toutes les variantes de recherche (toutes valeurs de q).
@@ -449,6 +452,22 @@ export default function Contacts() {
                   </Button>
                 </div>
               </div>
+              {brainSummary && brainSummary.content && (
+                <div
+                  className="px-5 py-3 border-b border-[#1f2937] bg-[#0b1220]"
+                  data-testid="contacts-brain-summary"
+                >
+                  <div className="flex items-center gap-1.5 mb-1.5 text-[11px] text-primary/80">
+                    <Brain className="h-3.5 w-3.5" />
+                    <span className="font-medium">
+                      {t("contactsPage.brainSummary", "Synthèse de la relation")}
+                    </span>
+                  </div>
+                  <div className="text-[12px] text-[#d6deea] leading-relaxed whitespace-pre-wrap">
+                    {brainSummary.content}
+                  </div>
+                </div>
+              )}
               <div className="px-5 py-2 border-b border-[#1f2937] flex flex-wrap gap-1.5">
                 {TIMELINE_TYPE_ORDER.map((tk) => {
                   const meta = TYPE_META[tk];
