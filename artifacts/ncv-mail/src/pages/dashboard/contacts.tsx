@@ -105,6 +105,21 @@ export default function Contacts() {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [form, setForm] = useState<ManualForm>(EMPTY_FORM);
   const [deleteAskOpen, setDeleteAskOpen] = useState(false);
+  const [activeTypes, setActiveTypes] = useState<Set<string>>(new Set());
+
+  // Ordre exact demandé par l'utilisateur pour les filtres de chronologie.
+  const TIMELINE_TYPE_ORDER = [
+    "received",
+    "sent",
+    "team",
+    "snoozed",
+    "scheduled",
+    "task",
+    "followup",
+    "project",
+    "appointment",
+    "archive",
+  ] as const;
 
   useEffect(() => {
     const id = setTimeout(() => setDebouncedQuery(query.trim()), 200);
@@ -294,37 +309,6 @@ export default function Contacts() {
                 data-testid="contacts-search-input"
               />
             </div>
-            <div>
-              <p className="text-[11px] text-[#8b9cb3] mb-1.5">
-                {t("contactsPage.filterByCategory", "Filtrer par catégorie")}
-              </p>
-              <div className="flex flex-wrap gap-1.5">
-                {categories.length === 0 ? (
-                  <span className="text-[11px] text-[#8b9cb3]">
-                    {t("contactsPage.noCategories", "Aucune catégorie")}
-                  </span>
-                ) : (
-                  categories.map((c) => {
-                    const active = selectedCategoryIds.includes(c.id);
-                    return (
-                      <button
-                        key={c.id}
-                        onClick={() => toggleCategory(c.id)}
-                        className={cn(
-                          "px-2 py-1 rounded text-[11px] border transition-colors",
-                          active
-                            ? "bg-primary/20 border-primary/50 text-primary"
-                            : "border-[#1f2937] text-[#8b9cb3] hover:text-white hover:border-[#374151]",
-                        )}
-                        data-testid={`contacts-category-toggle-${c.id}`}
-                      >
-                        {c.name}
-                      </button>
-                    );
-                  })
-                )}
-              </div>
-            </div>
           </div>
           <ScrollArea className="flex-1">
             {isSearching ? (
@@ -454,6 +438,46 @@ export default function Contacts() {
                   </Button>
                 </div>
               </div>
+              <div className="px-5 py-2 border-b border-[#1f2937] flex flex-wrap gap-1.5">
+                {TIMELINE_TYPE_ORDER.map((tk) => {
+                  const meta = TYPE_META[tk];
+                  if (!meta) return null;
+                  const count = timeline.filter((it) => it.type === tk).length;
+                  const active = activeTypes.has(tk);
+                  return (
+                    <button
+                      key={tk}
+                      onClick={() =>
+                        setActiveTypes((prev) => {
+                          const next = new Set(prev);
+                          if (next.has(tk)) next.delete(tk);
+                          else next.add(tk);
+                          return next;
+                        })
+                      }
+                      className={cn(
+                        "px-2 py-1 rounded text-[11px] border transition-colors inline-flex items-center gap-1",
+                        active
+                          ? "bg-primary/20 border-primary/50 text-primary"
+                          : "border-[#1f2937] text-[#8b9cb3] hover:text-white hover:border-[#374151]",
+                      )}
+                      data-testid={`contacts-timeline-filter-${tk}`}
+                    >
+                      <span>{t(meta.labelKey, meta.fallback)}</span>
+                      <span className="text-[10px] text-[#6b7a8f]">{count}</span>
+                    </button>
+                  );
+                })}
+                {activeTypes.size > 0 && (
+                  <button
+                    onClick={() => setActiveTypes(new Set())}
+                    className="px-2 py-1 rounded text-[11px] text-[#8b9cb3] hover:text-white"
+                    data-testid="contacts-timeline-filter-clear"
+                  >
+                    {t("common.reset", "Réinitialiser")}
+                  </button>
+                )}
+              </div>
               <ScrollArea className="flex-1">
                 {isTimelineLoading ? (
                   <div className="flex items-center justify-center py-12">
@@ -464,8 +488,24 @@ export default function Contacts() {
                     {t("contactsPage.emptyTimeline", "Rien à afficher pour ce contact.")}
                   </div>
                 ) : (
+                  (() => {
+                    const filtered =
+                      activeTypes.size === 0
+                        ? timeline
+                        : timeline.filter((it) => activeTypes.has(it.type));
+                    if (filtered.length === 0) {
+                      return (
+                        <div className="px-5 py-8 text-center text-[12px] text-[#8b9cb3]">
+                          {t(
+                            "contactsPage.emptyFiltered",
+                            "Aucun élément pour ces filtres.",
+                          )}
+                        </div>
+                      );
+                    }
+                    return (
                   <ul className="px-5 py-4 space-y-2">
-                    {timeline.map((item) => {
+                    {filtered.map((item) => {
                       const meta = TYPE_META[item.type] || TYPE_META.received;
                       const Icon = meta.icon;
                       return (
@@ -501,6 +541,8 @@ export default function Contacts() {
                       );
                     })}
                   </ul>
+                    );
+                  })()
                 )}
               </ScrollArea>
             </>
