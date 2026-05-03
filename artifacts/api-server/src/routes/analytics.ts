@@ -71,7 +71,7 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
 
     let emailsQ = supabaseAdmin
       .from("emails")
-      .select("id, sender, status, assigned_to, claimed_by, category_id, project_id, shared_mailbox_id, created_at, updated_at, user_id")
+      .select("id, sender, status, assigned_to, claimed_by, category_id, project_id, shared_mailbox_id, created_at, inboria_processed_at, claimed_at, assigned_at, user_id")
       .gte("created_at", sinceIso)
       .neq("status", "supprime");
 
@@ -90,9 +90,7 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
 
     const { data: emails, error: emailsErr } = await emailsQ.limit(20000);
     if (emailsErr) {
-      req.log.error({ err: emailsErr, scope: scopeParts, memberIds, orgMailboxIds }, "analytics emails query failed");
-    } else {
-      req.log.info({ count: (emails || []).length, scope: scopeParts, memberIds: memberIds.length, orgMailboxIds: orgMailboxIds.length }, "analytics emails query");
+      req.log.error({ err: emailsErr }, "analytics emails query failed");
     }
     const list = emails || [];
 
@@ -141,23 +139,16 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       if (day) evolutionMap.set(day, (evolutionMap.get(day) || 0) + 1);
     }
 
-    // First response time approximation: archived means handled
-    // (we use created_at -> updated_at if available; fall back to detection via archived emails)
-    const archivedIds = list.filter((e: any) => e.status === "archived").map((e: any) => e.id);
-    if (archivedIds.length > 0) {
-      const { data: archivedRows } = await supabaseAdmin
-        .from("emails")
-        .select("id, assigned_to, claimed_by, created_at, updated_at")
-        .in("id", archivedIds);
-      for (const r of archivedRows || []) {
-        const ownerId = r.assigned_to || r.claimed_by || null;
-        if (!ownerId || !perMemberMap.has(ownerId)) continue;
-        if (!r.updated_at || !r.created_at) continue;
-        const diffMin = Math.max(0, Math.floor((new Date(r.updated_at).getTime() - new Date(r.created_at).getTime()) / 60_000));
-        const stats = perMemberMap.get(ownerId)!;
-        stats.firstResponseSumMin += diffMin;
-        stats.firstResponseCount += 1;
-      }
+    // First response time approximation : created_at -> claimed_at|assigned_at|inboria_processed_at
+    for (const r of list as any[]) {
+      const ownerId = r.assigned_to || r.claimed_by || null;
+      if (!ownerId || !perMemberMap.has(ownerId)) continue;
+      const handledAt = r.claimed_at || r.assigned_at || r.inboria_processed_at;
+      if (!handledAt || !r.created_at) continue;
+      const diffMin = Math.max(0, Math.floor((new Date(handledAt).getTime() - new Date(r.created_at).getTime()) / 60_000));
+      const stats = perMemberMap.get(ownerId)!;
+      stats.firstResponseSumMin += diffMin;
+      stats.firstResponseCount += 1;
     }
 
     const perMember = Array.from(perMemberMap.entries())
@@ -220,8 +211,9 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       s.count += 1;
       if (e.status === "archived") {
         s.archived += 1;
-        if (e.created_at && e.updated_at) {
-          const d = (new Date(e.updated_at).getTime() - new Date(e.created_at).getTime()) / 60000;
+        const handledAt = e.claimed_at || e.assigned_at || e.inboria_processed_at;
+        if (e.created_at && handledAt) {
+          const d = (new Date(handledAt).getTime() - new Date(e.created_at).getTime()) / 60000;
           if (d > 0 && d < 60 * 24 * 30) { s.respSum += d; s.respN += 1; }
         }
       }
@@ -256,8 +248,9 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
       s.count += 1;
       if (e.status === "archived") {
         s.archived += 1;
-        if (e.created_at && e.updated_at) {
-          const d = (new Date(e.updated_at).getTime() - new Date(e.created_at).getTime()) / 60000;
+        const handledAt = e.claimed_at || e.assigned_at || e.inboria_processed_at;
+        if (e.created_at && handledAt) {
+          const d = (new Date(handledAt).getTime() - new Date(e.created_at).getTime()) / 60000;
           if (d > 0 && d < 60 * 24 * 30) { s.respSum += d; s.respN += 1; }
         }
       }
@@ -334,7 +327,7 @@ router.get("/analytics/team/export.csv", requireAuth, async (req, res): Promise<
     }
     let csvQ = supabaseAdmin
       .from("emails")
-      .select("id, subject, sender, status, assigned_to, claimed_by, created_at, updated_at")
+      .select("id, subject, sender, status, assigned_to, claimed_by, created_at, claimed_at, assigned_at, inboria_processed_at")
       .or(csvScopeParts.join(","))
       .gte("created_at", sinceIso)
       .neq("status", "supprime");
@@ -344,7 +337,7 @@ router.get("/analytics/team/export.csv", requireAuth, async (req, res): Promise<
     const { data: list } = await csvQ.limit(20000);
 
     const lines: string[] = [
-      ["email_id", "subject", "sender", "status", "assigned_to", "owner_name", "created_at", "updated_at"].join(","),
+      ["email_id", "subject", "sender", "status", "assigned_to", "owner_name", "created_at", "handled_at"].join(","),
     ];
     for (const e of list || []) {
       const ownerId = e.assigned_to || e.claimed_by || "";
@@ -356,7 +349,7 @@ router.get("/analytics/team/export.csv", requireAuth, async (req, res): Promise<
         csvEscape(ownerId),
         csvEscape(profileMap.get(ownerId) || ""),
         csvEscape(e.created_at),
-        csvEscape(e.updated_at || ""),
+        csvEscape(e.claimed_at || e.assigned_at || e.inboria_processed_at || ""),
       ].join(","));
     }
 
@@ -406,7 +399,7 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     }
     let pdfQ = supabaseAdmin
       .from("emails")
-      .select("id, status, assigned_to, claimed_by, created_at, updated_at")
+      .select("id, status, assigned_to, claimed_by, created_at")
       .or(pdfScopeParts.join(","))
       .gte("created_at", sinceIso)
       .neq("status", "supprime");
