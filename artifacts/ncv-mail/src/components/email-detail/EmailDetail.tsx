@@ -195,17 +195,34 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     {(email.sender || "?")[0].toUpperCase()}
                   </div>
                   <div>
-                    <div
-                      className="text-[13px] font-medium text-white"
-                      data-testid="link-contact-sender"
-                    >
-                      {email.sender}
-                    </div>
-                    {email.senderEmail && email.senderEmail !== email.sender && (
-                      <div className="text-[11px] text-[#8b9cb3]">
-                        {email.senderEmail}
-                      </div>
-                    )}
+                    {(() => {
+                      const contactEmail = (email.senderEmail || extractEmailAddress(email.sender) || "").trim();
+                      const labelDom = (
+                        <>
+                          <div className="text-[13px] font-medium text-white hover:underline">
+                            {email.sender}
+                          </div>
+                          {email.senderEmail && email.senderEmail !== email.sender && (
+                            <div className="text-[11px] text-[#8b9cb3] hover:underline">
+                              {email.senderEmail}
+                            </div>
+                          )}
+                        </>
+                      );
+                      if (!contactEmail) {
+                        return <div data-testid="link-contact-sender">{labelDom}</div>;
+                      }
+                      return (
+                        <Link
+                          href={`/dashboard/contacts/${encodeURIComponent(contactEmail)}`}
+                          className="block"
+                          data-testid="link-contact-sender"
+                          title={t("contactsPage.openContact", "Voir la fiche contact")}
+                        >
+                          {labelDom}
+                        </Link>
+                      );
+                    })()}
                   </div>
                 </div>
                 <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1">

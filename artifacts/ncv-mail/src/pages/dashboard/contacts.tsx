@@ -116,12 +116,12 @@ export default function Contacts() {
   }, [query]);
 
   const { data: categoriesData } = useListCategories();
+  // Toutes les catégories de l'abonné (incluant celles marquées système),
+  // exactement comme la sidebar du dashboard.
   const categories: Category[] = useMemo(
     () =>
       Array.isArray(categoriesData)
-        ? (categoriesData as any[])
-            .filter((c) => !c.isSystem)
-            .map((c) => ({ id: c.id, name: c.name }))
+        ? (categoriesData as any[]).map((c) => ({ id: c.id, name: c.name }))
         : [],
     [categoriesData],
   );

@@ -388,6 +388,43 @@ router.get("/contacts/:email/timeline", requireAuth, async (req, res): Promise<v
       }
     }
 
+    // Activité équipe (commentaires, assignations, etc. sur les emails du contact)
+    if (emailIds.length > 0) {
+      const idStrs = emailIds.map((x: any) => String(x));
+      const { data: activity } = await supabaseAdmin
+        .from("activity_logs")
+        .select("id, user_id, action, entity_type, entity_id, details, created_at")
+        .eq("entity_type", "email")
+        .in("entity_id", idStrs)
+        .order("created_at", { ascending: false })
+        .limit(200);
+      const actorIds = Array.from(new Set((activity || []).map((a: any) => a.user_id).filter(Boolean)));
+      const actorNames = new Map<string, string>();
+      if (actorIds.length > 0) {
+        const { data: profs } = await supabaseAdmin
+          .from("profiles")
+          .select("id, full_name")
+          .in("id", actorIds);
+        for (const p of profs || []) actorNames.set(String((p as any).id), String((p as any).full_name || ""));
+      }
+      for (const a of activity || []) {
+        const who = actorNames.get(String((a as any).user_id)) || "Membre";
+        const action = String((a as any).action || "");
+        const detailsObj = ((a as any).details as Record<string, any> | null) || {};
+        const detailStr = Object.entries(detailsObj)
+          .map(([k, v]) => `${k}: ${typeof v === "string" ? v : JSON.stringify(v)}`)
+          .join(" · ");
+        items.push({
+          type: "team",
+          id: `activity-${(a as any).id}`,
+          occurredAt: String((a as any).created_at),
+          title: `${who} — ${action}`,
+          snippet: detailStr || null,
+          categoryName: null,
+        });
+      }
+    }
+
     // Projets liés (via les emails de ce contact)
     const projectIds = Array.from(
       new Set(
