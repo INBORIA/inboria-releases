@@ -12,7 +12,7 @@ async function getOrgIdForAdmin(userId: string): Promise<string | null> {
     .eq("user_id", userId)
     .eq("status", "active")
     .maybeSingle();
-  if (!data || data.role !== "admin") return null;
+  if (!data || (data.role !== "admin" && data.role !== "owner")) return null;
   return data.organisation_id || null;
 }
 

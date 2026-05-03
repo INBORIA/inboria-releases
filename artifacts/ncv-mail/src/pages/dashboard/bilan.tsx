@@ -66,7 +66,8 @@ export default function BilanQuotidien() {
   const { data: sharedMailboxes } = useGetSharedMailboxes();
   const { data: projectsList } = useListProjects();
   const { data: myOrg } = useGetMyOrganisation();
-  const isOrgAdmin = (myOrg as { myRole?: string } | undefined)?.myRole === "admin";
+  const myRole = (myOrg as { myRole?: string } | undefined)?.myRole;
+  const isOrgAdmin = myRole === "admin" || myRole === "owner";
 
   const now = new Date();
   const tomorrow = addDays(now, 1);
