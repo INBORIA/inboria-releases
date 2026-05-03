@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { BilanRefontePreview } from "@/components/dashboard/bilan-refonte-preview";
 import {
   useGenerateDailySummary,
   useListAppointments,
@@ -61,6 +62,17 @@ function formatDelay(min: number | null | undefined): string {
 const PIE_COLORS = ["#2d7dd2", "#7d4ed2", "#d2a02d", "#d24e6f", "#4ed29a", "#d2bc4e"];
 
 export default function BilanQuotidien() {
+  if (typeof window !== "undefined" && new URLSearchParams(window.location.search).get("preview") === "1") {
+    return (
+      <DashboardLayout>
+        <BilanRefontePreview />
+      </DashboardLayout>
+    );
+  }
+  return <BilanQuotidienReal />;
+}
+
+function BilanQuotidienReal() {
   const { t, i18n } = useTranslation();
   const { session } = useAuth();
   const locale = dateLocales[i18n.language] || fr;
