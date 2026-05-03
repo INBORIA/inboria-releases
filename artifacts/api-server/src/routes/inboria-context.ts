@@ -1167,6 +1167,26 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
               counts.set(addr, (counts.get(addr) || 0) + 1);
             }
           }
+          // Fallback typo-tolerant : si le nom complet ne matche rien
+          // (ex. "Walther Ghilain" tape au lieu de "Walther Ghislain"),
+          // on retente avec chaque mot >= 4 caracteres pris isolement.
+          // Le prenom seul ("Walther") suffit alors a retrouver le contact.
+          if (counts.size === 0) {
+            const words = candLow.split(/\s+/).filter((w) => w.length >= 4);
+            for (const w of words) {
+              for (const e of pool) {
+                for (const field of [e.sender, e.recipient]) {
+                  if (!field) continue;
+                  const txt = String(field).toLowerCase();
+                  if (!txt.includes(w)) continue;
+                  const addr = extractAddr(field);
+                  if (!addr || !addr.includes("@")) continue;
+                  counts.set(addr, (counts.get(addr) || 0) + 1);
+                }
+              }
+              if (counts.size > 0) break;
+            }
+          }
           if (counts.size > 0) {
             const sorted = Array.from(counts.entries()).sort((a, b) => b[1] - a[1]);
             const resolved = sorted[0][0];
@@ -1191,6 +1211,11 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       // exclut explicitement les mails marques prives (RGPD).
       for (const targetEmail of targetEmails) {
         try {
+          // Filtre SQL DIRECT par adresse cible sur sender ou recipient :
+          // evite la fenetre "80 derniers" qui peut exclure un contact peu
+          // actif noye sous un flux de spams recents. On garde quand meme un
+          // ordre desc + limit 30 pour borner le contexte LLM.
+          const safeAddr = targetEmail.replace(/[%,()]/g, "");
           const recentEmailsQuery = (adminTeamCtx
             ? supabaseAdmin
                 .from("emails")
@@ -1202,8 +1227,9 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
                 .from("emails")
                 .select("id, sender, recipient, subject, summary, sent_at, created_at"))
             .or(emailScopeFilter)
+            .or(`sender.ilike.%${safeAddr}%,recipient.ilike.%${safeAddr}%`)
             .order("created_at", { ascending: false })
-            .limit(80);
+            .limit(30);
 
           const [recentEmailsRes, contactFactsRes, contactEpisodesRes] = await Promise.all([
             recentEmailsQuery,
@@ -1283,6 +1309,36 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
           }
           memoryLines.push("");
           memoryLines.push(`Contact cible mentionne par l'utilisateur : <${targetEmail}>`);
+          // Charge les pieces jointes des mails du contact (max 6/mail)
+          // pour annoter chaque ligne. Les contactRows pouvant etre plus
+          // anciens que la fenetre inbox/assigned/sent, leurs PJ ne sont
+          // PAS dans attachmentsByEmail global — il faut une requete dediee.
+          const contactAttachmentsMap = new Map<number, string[]>();
+          const contactRowIds = contactRows
+            .map((e: any) => Number(e.id))
+            .filter((n: number) => Number.isFinite(n));
+          if (contactRowIds.length > 0) {
+            try {
+              const { data: caRows } = await supabaseAdmin
+                .from("email_attachments")
+                .select("email_id, filename, content_type")
+                .in("email_id", contactRowIds);
+              for (const a of (caRows as any[]) || []) {
+                const id = Number(a.email_id);
+                if (!Number.isFinite(id)) continue;
+                const list = contactAttachmentsMap.get(id) || [];
+                if (list.length < 6) {
+                  list.push(a.filename || "(sans nom)");
+                  contactAttachmentsMap.set(id, list);
+                }
+              }
+            } catch (err: any) {
+              req.log.warn(
+                { err: err?.message, contact: targetEmail },
+                "[inboria-chat] contact attachments load failed",
+              );
+            }
+          }
           if (contactRows.length > 0) {
             memoryLines.push(`Derniers echanges avec ${targetEmail} (${contactRows.length}) :`);
             for (const e of contactRows) {
@@ -1293,7 +1349,9 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
                 : truncate(e.sender || "(inconnu)", 40);
               const subj = truncate(e.subject || "(sans objet)", 70);
               const sum = e.summary ? ` — ${truncate(e.summary, 80)}` : "";
-              memoryLines.push(`- ${date} ${dir} ${who} : ${subj}${sum}`);
+              const pjList = contactAttachmentsMap.get(Number(e.id)) || [];
+              const pj = pjList.length > 0 ? ` [PJ: ${pjList.join(", ")}]` : "";
+              memoryLines.push(`- ${date} ${dir} ${who} : ${subj}${sum}${pj}`);
             }
           }
           if (contactFacts.length > 0) {
