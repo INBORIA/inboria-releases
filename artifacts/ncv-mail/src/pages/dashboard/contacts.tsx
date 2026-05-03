@@ -134,7 +134,11 @@ export default function Contacts() {
     [debouncedQuery],
   );
 
-  const { data: searchData, isFetching: isSearching } = useSearchContacts(searchParams as any);
+  const hasQuery = debouncedQuery.length > 0;
+  const { data: searchData, isFetching: isSearching } = useSearchContacts(
+    searchParams as any,
+    { query: { enabled: hasQuery } as any } as any,
+  );
   const contacts: Array<{
     email: string;
     displayName: string;
@@ -311,7 +315,14 @@ export default function Contacts() {
             </div>
           </div>
           <ScrollArea className="flex-1">
-            {isSearching ? (
+            {!hasQuery ? (
+              <div className="px-4 py-6 text-center text-[12px] text-[#8b9cb3]">
+                {t(
+                  "contactsPage.searchHint",
+                  "Tapez un nom ou une adresse pour rechercher un contact.",
+                )}
+              </div>
+            ) : isSearching ? (
               <div className="flex items-center justify-center py-8">
                 <Loader2 className="h-5 w-5 animate-spin text-[#8b9cb3]" />
               </div>
