@@ -2959,6 +2959,17 @@ export default function Dashboard() {
     const a = params.get("assignee");
     setAssigneeFilter(a && a.trim() ? a.trim() : null);
   }, [searchString, routeLocation]);
+  // Inboria chat → "Ouvrir" : navigue vers /dashboard?emailId=X. Comme
+  // l'init de selectedEmailId via useState ne tourne qu'au premier mount,
+  // on doit aussi écouter les changements d'URL pour ouvrir l'email.
+  useEffect(() => {
+    const params = new URLSearchParams(searchString);
+    const id = params.get("emailId");
+    const num = id ? Number(id) : NaN;
+    if (Number.isFinite(num) && num > 0) {
+      setSelectedEmailId(num);
+    }
+  }, [searchString, routeLocation]);
   const clearAssigneeFilter = () => {
     setAssigneeFilter(null);
     if (typeof window !== "undefined") {
