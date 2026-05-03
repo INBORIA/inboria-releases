@@ -165,10 +165,16 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
     setPrivateLoading(true);
     try {
       const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
       const res = await fetch(`${baseUrl}/api/emails/${email.id}/private`, {
         method: "PATCH",
         credentials: "include",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
         body: JSON.stringify({ isPrivate: next }),
       });
       if (!res.ok) throw new Error("Échec");
