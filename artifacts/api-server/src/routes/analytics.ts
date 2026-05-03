@@ -15,6 +15,17 @@ async function getOrgIdForMember(userId: string): Promise<string | null> {
   return data?.organisation_id || null;
 }
 
+async function getOrgIdForAdmin(userId: string): Promise<string | null> {
+  const { data } = await supabaseAdmin
+    .from("organisation_members")
+    .select("organisation_id, role")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .maybeSingle();
+  if (!data || data.role !== "admin") return null;
+  return data.organisation_id || null;
+}
+
 function rangeDays(period: string): number {
   if (period === "7d") return 7;
   if (period === "90d") return 90;
