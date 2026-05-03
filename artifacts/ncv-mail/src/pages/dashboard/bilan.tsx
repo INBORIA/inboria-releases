@@ -9,7 +9,7 @@ import {
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
-import { Sparkles, ArrowRight, AlertTriangle, TrendingUp, RefreshCw, CheckSquare, BarChart3, CalendarDays, Clock, MapPin, Download, Users, FileText } from "lucide-react";
+import { Sparkles, ArrowRight, AlertTriangle, TrendingUp, RefreshCw, CheckSquare, BarChart3, CalendarDays, Clock, MapPin, Download, Users, FileText, Mail } from "lucide-react";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { format, parseISO, startOfDay, endOfDay, addDays, type Locale } from "date-fns";
@@ -461,11 +461,11 @@ export default function BilanQuotidien() {
               </div>
 
               {/* ===== BLOC MAILS ===== */}
-              <div className="border-t border-border pt-3 mt-1">
-                <h2 className="text-[13px] font-semibold text-white mb-3 flex items-center gap-2">
-                  <span className="w-1 h-4 bg-cyan-400 rounded" />
-                  {t("analytics.blockMails")}
-                </h2>
+              <div className="mt-2">
+                <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
+                  <Mail className="w-4 h-4 text-cyan-400" />
+                  <h2 className="text-[14px] font-semibold text-white">{t("analytics.blockMails")}</h2>
+                </div>
 
                 <MailTable
                   title={t("analytics.perMember")}
@@ -534,11 +534,11 @@ export default function BilanQuotidien() {
 
               {/* ===== BLOC TÂCHES ===== */}
               {(ta.tasksPerMember || ta.tasksPerProject) && (
-                <div className="border-t border-border pt-3 mt-1">
-                  <h2 className="text-[13px] font-semibold text-white mb-3 flex items-center gap-2">
-                    <span className="w-1 h-4 bg-violet-400 rounded" />
-                    {t("analytics.blockTasks")}
-                  </h2>
+                <div className="mt-2">
+                  <div className="flex items-center gap-2 mb-3 pb-2 border-b border-border">
+                    <CheckSquare className="w-4 h-4 text-violet-400" />
+                    <h2 className="text-[14px] font-semibold text-white">{t("analytics.blockTasks")}</h2>
+                  </div>
 
                   {ta.tasksPerMember && (
                     <TaskTable
@@ -606,70 +606,70 @@ type TaskRow = { name: string; open: number; done: number; overdue: number; isOu
 
 function MailTable({ title, note, rows, mode, scopeLabel, t }: { title: string; note: string; rows: MailRow[]; mode: "member" | "scope"; scopeLabel?: string; t: (k: string) => string }) {
   return (
-    <div className="bg-card rounded-lg border border-border p-3 mb-3">
+    <div className="mb-5">
       <h3 className="text-[12px] font-semibold text-white mb-2">{title}</h3>
-      <div className="overflow-x-auto">
-        <table className="w-full text-[11px]">
-          <thead className="text-[#8b9cb3] border-b border-border">
-            <tr>
-              <th className="text-left p-2">{mode === "member" ? t("analytics.colMember") : (scopeLabel || t("analytics.colMailbox"))}</th>
-              {mode === "scope" && <th className="text-right p-2">{t("analytics.colReceived")}</th>}
-              {mode === "member" && <th className="text-right p-2">{t("analytics.colOpenLoad")}</th>}
-              <th className="text-right p-2">{t("analytics.colHandled")}</th>
-              {mode === "scope" && <th className="text-right p-2">{t("analytics.colNotHandled")}</th>}
-              <th className="text-right p-2">{t("analytics.colAvgResponse")}</th>
+      <div className="overflow-hidden rounded-lg border border-[#1f2940] bg-[#0f1729]">
+        <table className="w-full text-[12px]">
+          <thead>
+            <tr className="bg-[#141c33] text-[#8b9cb3] text-[11px]">
+              <th className="text-left px-3 py-2 font-medium">{mode === "member" ? t("analytics.colMember") : (scopeLabel || t("analytics.colMailbox"))}</th>
+              {mode === "scope" && <th className="text-right px-3 py-2 font-medium">{t("analytics.colReceived")}</th>}
+              {mode === "member" && <th className="text-right px-3 py-2 font-medium">{t("analytics.colOpenLoad")}</th>}
+              <th className="text-right px-3 py-2 font-medium">{t("analytics.colHandled")}</th>
+              {mode === "scope" && <th className="text-right px-3 py-2 font-medium">{t("analytics.colNotHandled")}</th>}
+              <th className="text-right px-3 py-2 font-medium">{t("analytics.colAvgResponse")}</th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 ? (
-              <tr><td colSpan={mode === "scope" ? 5 : 4} className="p-3 text-center text-[#8b9cb3]">{t("analytics.empty")}</td></tr>
+              <tr><td colSpan={mode === "scope" ? 5 : 4} className="px-3 py-3 text-center text-[#8b9cb3]">{t("analytics.empty")}</td></tr>
             ) : rows.map((r, i) => (
-              <tr key={i} className="border-b border-border/50">
-                <td className="p-2 text-white">{r.name}</td>
-                {mode === "scope" && <td className="p-2 text-right text-[#c9d1d9]">{r.received}</td>}
-                {mode === "member" && <td className="p-2 text-right text-[#c9d1d9]">{r.openLoad}</td>}
-                <td className="p-2 text-right text-emerald-400">{r.handled}</td>
-                {mode === "scope" && <td className="p-2 text-right text-amber-400">{r.notHandled}</td>}
-                <td className="p-2 text-right text-[#c9d1d9]">{r.delay}</td>
+              <tr key={i} className="border-t border-[#1f2940]">
+                <td className="px-3 py-2 text-white">{r.name}</td>
+                {mode === "scope" && <td className="text-right px-3 py-2 text-[#cfd8e8]">{r.received}</td>}
+                {mode === "member" && <td className="text-right px-3 py-2 text-[#cfd8e8]">{r.openLoad}</td>}
+                <td className="text-right px-3 py-2 text-emerald-400">{r.handled}</td>
+                {mode === "scope" && <td className="text-right px-3 py-2 text-amber-400">{r.notHandled}</td>}
+                <td className="text-right px-3 py-2 text-[#cfd8e8]">{r.delay}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="text-[10px] text-[#8b9cb3] mt-1.5 italic">{note}</p>
+      <p className="text-[10px] text-[#7c8aa3] mt-1.5 italic">{note}</p>
     </div>
   );
 }
 
 function TaskTable({ title, note, rows, scope, t }: { title: string; note: string; rows: TaskRow[]; scope: "member" | "project"; t: (k: string) => string }) {
   return (
-    <div className="bg-card rounded-lg border border-border p-3 mb-3">
+    <div className="mb-5">
       <h3 className="text-[12px] font-semibold text-white mb-2">{title}</h3>
-      <div className="overflow-x-auto">
-        <table className="w-full text-[11px]">
-          <thead className="text-[#8b9cb3] border-b border-border">
-            <tr>
-              <th className="text-left p-2">{scope === "member" ? t("analytics.colMember") : t("analytics.colProject")}</th>
-              <th className="text-right p-2">{t("analytics.colTasksOpen")}</th>
-              <th className="text-right p-2">{t("analytics.colTasksDone")}</th>
-              <th className="text-right p-2">{t("analytics.colTasksOverdue")}</th>
+      <div className="overflow-hidden rounded-lg border border-[#1f2940] bg-[#0f1729]">
+        <table className="w-full text-[12px]">
+          <thead>
+            <tr className="bg-[#141c33] text-[#8b9cb3] text-[11px]">
+              <th className="text-left px-3 py-2 font-medium">{scope === "member" ? t("analytics.colMember") : t("analytics.colProject")}</th>
+              <th className="text-right px-3 py-2 font-medium">{t("analytics.colTasksOpen")}</th>
+              <th className="text-right px-3 py-2 font-medium">{t("analytics.colTasksDone")}</th>
+              <th className="text-right px-3 py-2 font-medium">{t("analytics.colTasksOverdue")}</th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 ? (
-              <tr><td colSpan={4} className="p-3 text-center text-[#8b9cb3]">{t("analytics.empty")}</td></tr>
+              <tr><td colSpan={4} className="px-3 py-3 text-center text-[#8b9cb3]">{t("analytics.empty")}</td></tr>
             ) : rows.map((r, i) => (
-              <tr key={i} className={`border-b border-border/50 ${r.isOutOfProject ? "bg-[#141c33]" : ""}`}>
-                <td className={`p-2 ${r.isOutOfProject ? "text-[#8b9cb3] italic" : "text-white"}`}>{r.name}</td>
-                <td className="p-2 text-right text-cyan-400">{r.open}</td>
-                <td className="p-2 text-right text-emerald-400">{r.done}</td>
-                <td className="p-2 text-right text-rose-400">{r.overdue}</td>
+              <tr key={i} className={`border-t border-[#1f2940] ${r.isOutOfProject ? "bg-[#141c33]" : ""}`}>
+                <td className={`px-3 py-2 ${r.isOutOfProject ? "text-[#8b9cb3] italic" : "text-white"}`}>{r.name}</td>
+                <td className="text-right px-3 py-2 text-cyan-400">{r.open}</td>
+                <td className="text-right px-3 py-2 text-emerald-400">{r.done}</td>
+                <td className="text-right px-3 py-2 text-rose-400">{r.overdue}</td>
               </tr>
             ))}
           </tbody>
         </table>
       </div>
-      <p className="text-[10px] text-[#8b9cb3] mt-1.5 italic">{note}</p>
+      <p className="text-[10px] text-[#7c8aa3] mt-1.5 italic">{note}</p>
     </div>
   );
 }
