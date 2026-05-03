@@ -4546,8 +4546,11 @@
     "colAssigned": "Assigned",
     "colAvgResponse": "Avg time",
     "legendPerMember": "\"Handled\" = explicit human action (reply sent, forwarded, or Mark handled clicked). \"Dismissed\" = archived. \"Avg time\" = elapsed time between receipt and handling.",
+    "legendPerMemberLegacy": "\"Assigned\" = emails attributed to the member (legacy). \"Dismissed\" = archived. \"Avg time\" = derived from assigned_at/claimed_at until handled_at migration is applied.",
     "legendPerMailbox": "Received volume, handled and dismissed per shared mailbox.",
+    "legendPerMailboxLegacy": "Received volume and dismissed per shared mailbox (legacy mode, before handled_at migration).",
     "legendPerProject": "Received volume, handled and dismissed per project.",
+    "legendPerProjectLegacy": "Received volume and dismissed per project (legacy mode, before handled_at migration).",
     "migrationBanner": "Migration pending: apply 2026_05_03_emails_handled.sql in Supabase to enable \"Handled\" and \"Avg time\" counters."
   },
   "integrations": {

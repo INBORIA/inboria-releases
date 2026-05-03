@@ -4546,8 +4546,11 @@
     "colAssigned": "Zugewiesen",
     "colAvgResponse": "Ø Zeit",
     "legendPerMember": "„Bearbeitet\" = explizite menschliche Aktion (Antwort gesendet, weitergeleitet oder Klick auf Als bearbeitet markieren). „Verworfen\" = archiviert. „Ø Zeit\" = vergangene Zeit zwischen Empfang und Bearbeitung.",
+    "legendPerMemberLegacy": "„Zugewiesen\" = dem Mitglied zugewiesene E-Mails (Legacy). „Verworfen\" = archiviert. „Ø Zeit\" = abgeleitet aus assigned_at/claimed_at bis zur handled_at-Migration.",
     "legendPerMailbox": "Empfangenes Volumen, bearbeitet und verworfen pro geteiltem Postfach.",
+    "legendPerMailboxLegacy": "Empfangenes Volumen und verworfen pro geteiltem Postfach (Legacy-Modus, vor handled_at-Migration).",
     "legendPerProject": "Empfangenes Volumen, bearbeitet und verworfen pro Projekt.",
+    "legendPerProjectLegacy": "Empfangenes Volumen und verworfen pro Projekt (Legacy-Modus, vor handled_at-Migration).",
     "migrationBanner": "Migration ausstehend: Wenden Sie 2026_05_03_emails_handled.sql in Supabase an, um die Zähler „Bearbeitet\" und „Ø Zeit\" zu aktivieren."
   },
   "integrations": {

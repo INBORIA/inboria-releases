@@ -496,7 +496,7 @@ export default function BilanQuotidien() {
                     </tbody>
                   </table>
                 </div>
-                <p className="text-[10px] text-[#8b9cb3] mt-1">{t("analytics.legendPerMember")}</p>
+                <p className="text-[10px] text-[#8b9cb3] mt-1">{t(ta.handledMetricsEnabled === false ? "analytics.legendPerMemberLegacy" : "analytics.legendPerMember")}</p>
               </div>
 
               {(ta.perMailbox && ta.perMailbox.length > 0) && (
@@ -539,7 +539,7 @@ export default function BilanQuotidien() {
                       </tbody>
                     </table>
                   </div>
-                  <p className="text-[10px] text-[#8b9cb3] mt-1">{t("analytics.legendPerMailbox")}</p>
+                  <p className="text-[10px] text-[#8b9cb3] mt-1">{t(ta.handledMetricsEnabled === false ? "analytics.legendPerMailboxLegacy" : "analytics.legendPerMailbox")}</p>
                 </div>
               )}
 
@@ -582,7 +582,7 @@ export default function BilanQuotidien() {
                       </tbody>
                     </table>
                   </div>
-                  <p className="text-[10px] text-[#8b9cb3] mt-1">{t("analytics.legendPerProject")}</p>
+                  <p className="text-[10px] text-[#8b9cb3] mt-1">{t(ta.handledMetricsEnabled === false ? "analytics.legendPerProjectLegacy" : "analytics.legendPerProject")}</p>
                 </div>
               )}
             </div>

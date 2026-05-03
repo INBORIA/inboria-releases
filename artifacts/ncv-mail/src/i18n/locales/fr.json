@@ -2905,8 +2905,11 @@
     "colAssigned": "Assignés",
     "colAvgResponse": "Délai moyen",
     "legendPerMember": "« Traités » = action humaine explicite (réponse envoyée, transfert ou clic Marquer traité). « Écartés » = archivés. « Délai moyen » = temps écoulé entre la réception et le traitement.",
+    "legendPerMemberLegacy": "« Assignés » = emails attribués au membre (legacy). « Écartés » = archivés. « Délai moyen » = mesuré via assigned_at/claimed_at en attendant la migration handled_at.",
     "legendPerMailbox": "Volume reçu, traités et écartés par boîte partagée.",
+    "legendPerMailboxLegacy": "Volume reçu et écartés par boîte partagée (mode legacy, avant migration handled_at).",
     "legendPerProject": "Volume reçu, traités et écartés par projet.",
+    "legendPerProjectLegacy": "Volume reçu et écartés par projet (mode legacy, avant migration handled_at).",
     "migrationBanner": "Migration en attente : appliquez 2026_05_03_emails_handled.sql dans Supabase pour activer les compteurs « Traités » et « Délai moyen »."
   },
   "integrations": {

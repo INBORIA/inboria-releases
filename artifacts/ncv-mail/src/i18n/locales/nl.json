@@ -4546,8 +4546,11 @@
     "colAssigned": "Toegewezen",
     "colAvgResponse": "Gem. tijd",
     "legendPerMember": "\"Behandeld\" = expliciete menselijke actie (verzonden antwoord, doorgestuurd of klik op Markeren als behandeld). \"Afgewezen\" = gearchiveerd. \"Gem. tijd\" = verstreken tijd tussen ontvangst en behandeling.",
+    "legendPerMemberLegacy": "\"Toegewezen\" = e-mails toegewezen aan het lid (legacy). \"Afgewezen\" = gearchiveerd. \"Gem. tijd\" = afgeleid van assigned_at/claimed_at tot handled_at-migratie is toegepast.",
     "legendPerMailbox": "Ontvangen volume, behandeld en afgewezen per gedeelde mailbox.",
+    "legendPerMailboxLegacy": "Ontvangen volume en afgewezen per gedeelde mailbox (legacy modus, vóór handled_at-migratie).",
     "legendPerProject": "Ontvangen volume, behandeld en afgewezen per project.",
+    "legendPerProjectLegacy": "Ontvangen volume en afgewezen per project (legacy modus, vóór handled_at-migratie).",
     "migrationBanner": "Migratie in afwachting: voer 2026_05_03_emails_handled.sql uit in Supabase om de tellers \"Behandeld\" en \"Gem. tijd\" te activeren."
   },
   "integrations": {

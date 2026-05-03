@@ -4546,8 +4546,11 @@
     "colAssigned": "Asignados",
     "colAvgResponse": "T. medio",
     "legendPerMember": "«Atendidos» = acción humana explícita (respuesta enviada, reenviado o clic en Marcar como atendido). «Descartados» = archivados. «T. medio» = tiempo transcurrido entre la recepción y la gestión.",
+    "legendPerMemberLegacy": "«Asignados» = correos atribuidos al miembro (legacy). «Descartados» = archivados. «T. medio» = derivado de assigned_at/claimed_at hasta aplicar la migración handled_at.",
     "legendPerMailbox": "Volumen recibido, atendido y descartado por buzón compartido.",
+    "legendPerMailboxLegacy": "Volumen recibido y descartados por buzón compartido (modo legacy, antes de la migración handled_at).",
     "legendPerProject": "Volumen recibido, atendido y descartado por proyecto.",
+    "legendPerProjectLegacy": "Volumen recibido y descartados por proyecto (modo legacy, antes de la migración handled_at).",
     "migrationBanner": "Migración pendiente: aplique 2026_05_03_emails_handled.sql en Supabase para activar los contadores «Atendidos» y «T. medio»."
   },
   "integrations": {
