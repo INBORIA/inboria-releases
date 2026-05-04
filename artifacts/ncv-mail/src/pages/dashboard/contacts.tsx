@@ -332,7 +332,7 @@ export default function Contacts() {
 
   return (
     <DashboardLayout>
-      <div className="flex flex-row h-[calc(100vh-4rem)]">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 flex flex-row h-[calc(100vh-4rem)]">
         <aside className="w-[300px] md:w-[340px] shrink-0 border-r border-[#1f2937] flex flex-col min-h-0">
           <div className="p-4 space-y-3 border-b border-[#1f2937]">
             <div className="flex items-center justify-between gap-2">

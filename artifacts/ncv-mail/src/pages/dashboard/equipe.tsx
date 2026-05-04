@@ -239,7 +239,7 @@ export default function Equipe() {
   if (!org) {
     return (
       <DashboardLayout>
-        <div className="max-w-xl mx-auto px-4 py-12">
+        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-[#141c2b] rounded-xl border border-[#1f2937] p-8 text-center">
             <Building2 className="mx-auto h-12 w-12 text-[#8b9cb3]/40 mb-4" />
             <h2 className="text-lg font-semibold text-white mb-2">{t("team.createOrg")}</h2>
