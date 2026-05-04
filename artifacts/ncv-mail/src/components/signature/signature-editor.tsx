@@ -1,8 +1,29 @@
 import { useEffect, useRef, useState } from "react";
-import { Bold, Italic, Underline, Link as LinkIcon, Image as ImageIcon, Type, Eraser } from "lucide-react";
+import { Bold, Italic, Underline, Link as LinkIcon, Image as ImageIcon, Eraser, Palette } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+
+const FONT_FAMILIES = [
+  { label: "Arial", value: "Arial, sans-serif" },
+  { label: "Helvetica", value: "Helvetica, Arial, sans-serif" },
+  { label: "Calibri", value: "Calibri, sans-serif" },
+  { label: "Georgia", value: "Georgia, serif" },
+  { label: "Times New Roman", value: "'Times New Roman', Times, serif" },
+  { label: "Verdana", value: "Verdana, Geneva, sans-serif" },
+  { label: "Tahoma", value: "Tahoma, Geneva, sans-serif" },
+  { label: "Courier New", value: "'Courier New', Courier, monospace" },
+];
+
+const FONT_SIZES = [
+  { label: "10", value: "1" },
+  { label: "12", value: "2" },
+  { label: "14", value: "3" },
+  { label: "16", value: "4" },
+  { label: "18", value: "5" },
+  { label: "24", value: "6" },
+  { label: "32", value: "7" },
+];
 
 const MAX_IMAGE_BYTES = 200 * 1024;
 
