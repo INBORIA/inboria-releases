@@ -469,15 +469,31 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         .order("scheduled_send_at", { ascending: true })
         .limit(10),
       // Tâches en cours (pas terminées) — créées par ou assignées à
-      // l'utilisateur lui-même (jamais élargi en mode admin team — pas de
-      // chemin de fuite vers les tâches d'un coéquipier).
-      supabaseAdmin
-        .from("tasks")
-        .select("title, due_date, created_at, done")
-        .or(`user_id.eq.${userId},assigned_to_user_id.eq.${userId}`)
-        .eq("done", false)
-        .order("created_at", { ascending: false })
-        .limit(12),
+      // l'utilisateur lui-même OU à un coéquipier d'une boîte partagée
+      // (pour pouvoir répondre "tâches de Richard Martin"). On ne fuit
+      // pas hors équipe : la liste reste bornée par memberMailboxIds.
+      (async () => {
+        const teamIds = await (async () => {
+          if (memberMailboxIds.length === 0) return [userId];
+          const { data: rows } = await supabaseAdmin
+            .from("shared_mailbox_members")
+            .select("user_id")
+            .in("shared_mailbox_id", memberMailboxIds);
+          const ids = new Set<string>([userId]);
+          for (const r of rows || []) {
+            const uid = String((r as any).user_id || "");
+            if (uid) ids.add(uid);
+          }
+          return Array.from(ids);
+        })();
+        return supabaseAdmin
+          .from("tasks")
+          .select("title, due_date, created_at, done, user_id, assigned_to_user_id")
+          .or(`user_id.in.(${teamIds.join(",")}),assigned_to_user_id.in.(${teamIds.join(",")})`)
+          .eq("done", false)
+          .order("created_at", { ascending: false })
+          .limit(20);
+      })(),
       // Relances (followups) en attente ou actives — exclu les terminées.
       // Strictement scoped à l'utilisateur courant (admin), donc l'embed
       // emails(sender, subject) ne renvoie que les mails de l'admin lui-même
@@ -1046,10 +1062,44 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     }
 
     if (tasks.length > 0) {
+      // Map userId -> nom convivial (moi + coéquipiers déjà chargés plus haut).
+      const nameByUid = new Map<string, string>();
+      nameByUid.set(userId, userName || "moi");
+      for (const tm of teammates) {
+        // On retrouve l'uid via email/profile : teammates ne porte pas
+        // l'uid, donc on rebascule via une seconde lookup légère ci-dessous.
+      }
+      // Récupère uid -> nom pour tous les assignés rencontrés dans tasks.
+      const assigneeUids = Array.from(
+        new Set(
+          tasks
+            .map((t: any) => String(t.assigned_to_user_id || t.user_id || ""))
+            .filter((u: string) => u && u !== userId),
+        ),
+      );
+      if (assigneeUids.length > 0) {
+        try {
+          const { data: profs } = await supabaseAdmin
+            .from("profiles")
+            .select("id, full_name, email")
+            .in("id", assigneeUids);
+          for (const p of (profs || []) as any[]) {
+            const nm = String(p.full_name || "").trim()
+              || String(p.email || "").split("@")[0]
+              || `membre #${String(p.id).slice(0, 8)}`;
+            nameByUid.set(String(p.id), nm);
+          }
+        } catch {}
+      }
       memoryLines.push(`Taches en cours (${tasks.length}) :`);
-      for (const t of tasks) {
+      for (const t of tasks as any[]) {
         const due = t.due_date ? ` (echeance ${fmtShortDate(t.due_date)})` : "";
-        memoryLines.push(`- ${truncate(t.title, 90)}${due}`);
+        const ownerUid = String(t.assigned_to_user_id || t.user_id || "");
+        const ownerName = nameByUid.get(ownerUid) || `membre #${ownerUid.slice(0, 8)}`;
+        const ownerTag = ownerUid && ownerUid !== userId
+          ? ` — assignee a ${ownerName}`
+          : ownerUid === userId ? " — assignee a moi" : "";
+        memoryLines.push(`- ${truncate(t.title, 90)}${due}${ownerTag}`);
       }
       memoryLines.push("");
     } else {
