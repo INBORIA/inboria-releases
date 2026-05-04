@@ -46,14 +46,38 @@ function extractDraft(text: string): {
     const line = lines[i] ?? "";
     const toM = /^to\s*:\s*(.*)$/i.exec(line);
     const subjM = /^subject\s*:\s*(.*)$/i.exec(line);
-    const bodyM = /^body\s*:\s*\|?\s*$/i.exec(line);
+    // Accepte "body:", "body: |", "body: |-", "body: >" (en-tete YAML
+    // multi-ligne) OU "body: <texte sur une seule ligne>" si le LLM
+    // n'a pas suivi le format pipe.
+    const bodyHeader = /^body\s*:\s*([|>][-+]?)?\s*(.*)$/i.exec(line);
     if (toM) {
       to = toM[1].trim().replace(/^[<\[]+|[>\]]+$/g, "");
       i++;
     } else if (subjM) {
       subject = subjM[1].trim();
       i++;
-    } else if (bodyM) {
+    } else if (bodyHeader) {
+      const inlineBody = (bodyHeader[2] ?? "").trim();
+      const hasBlockMarker = !!bodyHeader[1];
+      // Cas degrade : body sur la meme ligne, sans bloc litteral. On le
+      // prend tel quel et on continue, en concatenant aussi d'eventuelles
+      // lignes indentees suivantes.
+      if (inlineBody && !hasBlockMarker) {
+        body = inlineBody;
+        i++;
+        const extra: string[] = [];
+        while (i < lines.length) {
+          const bl = lines[i] ?? "";
+          if (/^(to|subject|body)\s*:/i.test(bl)) break;
+          if (bl.trim() === "") { extra.push(""); i++; continue; }
+          const lead = bl.match(/^(\s+)/);
+          if (!lead) break;
+          extra.push(bl.trim());
+          i++;
+        }
+        if (extra.length) body = (body + "\n" + extra.join("\n")).replace(/\s+$/, "");
+        continue;
+      }
       i++;
       const bodyLines: string[] = [];
       // Determine indent from first non-empty line
