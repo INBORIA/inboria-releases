@@ -20,8 +20,9 @@ const TEXT_COLOR_SWATCHES: string[] = [
 ];
 
 const HIGHLIGHT_SWATCHES: string[] = [
-  "transparent", "#FFFF00", "#00FF00", "#00FFFF", "#FF00FF", "#FF0000", "#0070C0",
-  "#FFC000", "#92D050", "#00B050", "#00B0F0", "#7030A0", "#C00000", "#002060",
+  "transparent", "#FFFF00", "#00FF00", "#00FFFF", "#FF00FF", "#FF0000", "#0070C0", "#000000",
+  "#FFE699", "#C6E0B4", "#BDD7EE", "#F4B084", "#F8CBAD", "#D9E1F2", "#E2EFDA", "#FFF2CC",
+  "#FFC000", "#92D050", "#00B050", "#00B0F0", "#7030A0", "#C00000", "#002060", "#A6A6A6",
 ];
 
 const FONT_FAMILIES: Array<{ label: string; stack: string }> = [
@@ -299,8 +300,9 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
               <span className="block w-3.5 h-[3px] rounded-sm border border-white/10" style={{ backgroundColor: lastHighlight === "transparent" ? "#ffffff" : lastHighlight }} />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[228px] p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
-            <ColorGrid swatches={HIGHLIGHT_SWATCHES} onPick={(c) => { applyHighlight(c); setHighlightOpen(false); }} showNoneLabel />
+          <PopoverContent className="w-[260px] p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <div className="text-[10px] uppercase tracking-wider text-[#8b9cb3] mb-1">Surlignage</div>
+            <ColorGrid swatches={HIGHLIGHT_SWATCHES} onPick={(c) => { applyHighlight(c); setHighlightOpen(false); }} showNoneLabel cols={8} />
             <button
               type="button"
               onMouseDown={(e) => e.preventDefault()}
@@ -364,25 +366,30 @@ function ColorGrid({
   swatches,
   onPick,
   showNoneLabel,
+  cols = 7,
 }: {
   swatches: string[];
   onPick: (color: string) => void;
   showNoneLabel?: boolean;
+  cols?: number;
 }) {
   return (
-    <div className="grid grid-cols-7 gap-1">
-      {swatches.map((c) => {
+    <div
+      className="grid gap-1"
+      style={{ gridTemplateColumns: `repeat(${cols}, minmax(0, 1fr))` }}
+    >
+      {swatches.map((c, idx) => {
         const isNone = c === "transparent";
         return (
           <button
-            key={c}
+            key={`${c}-${idx}`}
             type="button"
             title={isNone ? (showNoneLabel ? "Aucun" : c) : c}
             onMouseDown={(e) => e.preventDefault()}
             onClick={() => onPick(c)}
-            className="h-6 w-6 rounded border border-white/10 hover:ring-2 hover:ring-primary/60 relative"
+            className="h-7 w-7 rounded border border-white/15 hover:ring-2 hover:ring-primary/70 hover:scale-110 transition-transform shadow-sm"
             style={{
-              backgroundColor: isNone ? "transparent" : c,
+              backgroundColor: isNone ? "#1a2236" : c,
               backgroundImage: isNone
                 ? "linear-gradient(45deg, transparent 45%, #ef4444 45%, #ef4444 55%, transparent 55%)"
                 : undefined,
