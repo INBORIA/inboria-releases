@@ -279,7 +279,7 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
             <button
               type="button"
               onMouseDown={(e) => e.preventDefault()}
-              onClick={() => { setTextColorOpen(false); colorInputRef.current?.click(); }}
+              onClick={() => { colorInputRef.current?.click(); setTextColorOpen(false); }}
               className="mt-2 w-full text-[11px] text-[#8b9cb3] hover:text-white border border-border rounded px-2 py-1"
             >
               {t("signature.moreColors", "Plus de couleurs…")}
@@ -306,7 +306,7 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
             <button
               type="button"
               onMouseDown={(e) => e.preventDefault()}
-              onClick={() => { setHighlightOpen(false); highlightInputRef.current?.click(); }}
+              onClick={() => { highlightInputRef.current?.click(); setHighlightOpen(false); }}
               className="mt-2 w-full text-[11px] text-[#8b9cb3] hover:text-white border border-border rounded px-2 py-1"
             >
               {t("signature.moreColors", "Plus de couleurs…")}
