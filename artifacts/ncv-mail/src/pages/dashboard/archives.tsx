@@ -17,7 +17,7 @@ import { useTranslation } from "react-i18next";
 import { translateCategoryName } from "@/lib/category-translations";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";
-import { Archive, Clock, ArrowLeft, Trash2, RotateCcw, ChevronRight, FolderOpen, Sparkles, CheckSquare, Square } from "lucide-react";
+import { Archive, Clock, ArrowLeft, Trash2, RotateCcw, ChevronRight, FolderOpen, Sparkles, CheckSquare, Square, Loader2 } from "lucide-react";
 import { useState, useCallback, useEffect, useRef } from "react";
 import type { PaginatedEmails, Email } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
@@ -164,7 +164,7 @@ export default function Archives() {
   const [archivePage, setArchivePage] = useState(1);
   const [accumulatedArchived, setAccumulatedArchived] = useState<Email[]>([]);
 
-  const { data: archiveData, isLoading: emailsLoading, isFetching: archiveFetching } = useListEmails({ status: "archived", limit: 50, page: archivePage });
+  const { data: archiveData, isLoading: emailsLoading, isFetching: archiveFetching } = useListEmails({ status: "archived", limit: 50, page: archivePage }, { query: { placeholderData: (prev: any) => prev } as any });
   const { data: categories } = useListCategories();
   const { data: projects } = useListProjects();
   const updateEmail = useUpdateEmail();
@@ -446,14 +446,9 @@ export default function Archives() {
         </div>
 
         {emailsLoading ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            {Array(6).fill(0).map((_, i) => (
-              <div key={i} className="bg-card rounded-lg border border-border p-4">
-                <Skeleton className="w-7 h-7 rounded-lg bg-white/5 mb-2" />
-                <Skeleton className="h-4 w-3/4 mb-1.5 bg-white/5" />
-                <Skeleton className="h-3 w-1/2 bg-white/5" />
-              </div>
-            ))}
+          <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border border-dashed bg-card/50">
+            <Loader2 className="w-6 h-6 text-primary animate-spin mb-3" />
+            <h3 className="text-[13px] font-medium text-white">{t("inbox.loadingTitle", "Chargement…")}</h3>
           </div>
         ) : archivedEmails.length === 0 ? (
           <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
