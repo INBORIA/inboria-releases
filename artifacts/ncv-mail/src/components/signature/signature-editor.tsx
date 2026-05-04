@@ -275,32 +275,26 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
           </PopoverTrigger>
           <PopoverContent className="w-[228px] p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
             <ColorGrid swatches={TEXT_COLOR_SWATCHES} onPick={(c) => { applyColor(c); setTextColorOpen(false); }} />
-            <button
-              type="button"
+            <div
+              className="mt-2 relative w-full h-7 rounded border border-border hover:border-primary/60"
               onMouseDown={(e) => { e.preventDefault(); saveSelection(); }}
-              onClick={() => {
-                const el = colorInputRef.current;
-                if (!el) return;
-                try { (el as HTMLInputElement & { showPicker?: () => void }).showPicker?.(); }
-                catch { el.click(); }
-                if (!(el as HTMLInputElement & { showPicker?: () => void }).showPicker) el.click();
-              }}
-              className="mt-2 flex items-center justify-center gap-2 w-full text-[11px] text-[#8b9cb3] hover:text-white border border-border rounded px-2 py-1 cursor-pointer"
             >
-              <span
-                className="inline-block w-3 h-3 rounded-sm border border-white/20"
-                style={{ backgroundColor: lastTextColor }}
+              <div className="absolute inset-0 flex items-center justify-center gap-2 pointer-events-none text-[11px] text-[#8b9cb3]">
+                <span
+                  className="inline-block w-3 h-3 rounded-sm border border-white/20"
+                  style={{ backgroundColor: lastTextColor }}
+                />
+                {t("signature.moreColors", "Plus de couleurs…")}
+              </div>
+              <input
+                ref={colorInputRef}
+                type="color"
+                value={lastTextColor}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                onMouseDown={(e) => { e.stopPropagation(); saveSelection(); }}
+                onChange={(e) => { applyColor(e.target.value); setTextColorOpen(false); }}
               />
-              {t("signature.moreColors", "Plus de couleurs…")}
-            </button>
-            <input
-              ref={colorInputRef}
-              type="color"
-              aria-hidden
-              tabIndex={-1}
-              style={{ position: "fixed", left: -9999, top: -9999, width: 1, height: 1, opacity: 0 }}
-              onChange={(e) => { applyColor(e.target.value); setTextColorOpen(false); }}
-            />
+            </div>
           </PopoverContent>
         </Popover>
 
@@ -321,32 +315,26 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
           <PopoverContent className="w-[260px] p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
             <div className="text-[10px] uppercase tracking-wider text-[#8b9cb3] mb-1">Surlignage</div>
             <ColorGrid swatches={HIGHLIGHT_SWATCHES} onPick={(c) => { applyHighlight(c); setHighlightOpen(false); }} showNoneLabel cols={8} />
-            <button
-              type="button"
+            <div
+              className="mt-2 relative w-full h-7 rounded border border-border hover:border-primary/60"
               onMouseDown={(e) => { e.preventDefault(); saveSelection(); }}
-              onClick={() => {
-                const el = highlightInputRef.current;
-                if (!el) return;
-                try { (el as HTMLInputElement & { showPicker?: () => void }).showPicker?.(); }
-                catch { el.click(); }
-                if (!(el as HTMLInputElement & { showPicker?: () => void }).showPicker) el.click();
-              }}
-              className="mt-2 flex items-center justify-center gap-2 w-full text-[11px] text-[#8b9cb3] hover:text-white border border-border rounded px-2 py-1 cursor-pointer"
             >
-              <span
-                className="inline-block w-3 h-3 rounded-sm border border-white/20"
-                style={{ backgroundColor: lastHighlight === "transparent" ? "#1a2236" : lastHighlight }}
+              <div className="absolute inset-0 flex items-center justify-center gap-2 pointer-events-none text-[11px] text-[#8b9cb3]">
+                <span
+                  className="inline-block w-3 h-3 rounded-sm border border-white/20"
+                  style={{ backgroundColor: lastHighlight === "transparent" ? "#1a2236" : lastHighlight }}
+                />
+                {t("signature.moreColors", "Plus de couleurs…")}
+              </div>
+              <input
+                ref={highlightInputRef}
+                type="color"
+                value={lastHighlight === "transparent" ? "#ffff00" : lastHighlight}
+                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                onMouseDown={(e) => { e.stopPropagation(); saveSelection(); }}
+                onChange={(e) => { applyHighlight(e.target.value); setHighlightOpen(false); }}
               />
-              {t("signature.moreColors", "Plus de couleurs…")}
-            </button>
-            <input
-              ref={highlightInputRef}
-              type="color"
-              aria-hidden
-              tabIndex={-1}
-              style={{ position: "fixed", left: -9999, top: -9999, width: 1, height: 1, opacity: 0 }}
-              onChange={(e) => { applyHighlight(e.target.value); setHighlightOpen(false); }}
-            />
+            </div>
           </PopoverContent>
         </Popover>
 
