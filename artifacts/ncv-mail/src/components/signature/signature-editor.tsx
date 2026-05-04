@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Bold, Italic, Underline, Link as LinkIcon, Image as ImageIcon, Eraser, Palette } from "lucide-react";
+import { Bold, Italic, Underline, Link as LinkIcon, Image as ImageIcon, Eraser, Highlighter, Type } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -10,6 +10,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+
+const TEXT_COLOR_SWATCHES: string[] = [
+  "#000000", "#1f2937", "#4b5563", "#6b7280", "#9ca3af", "#d1d5db", "#ffffff",
+  "#7f1d1d", "#dc2626", "#ea580c", "#d97706", "#ca8a04", "#65a30d", "#16a34a",
+  "#0d9488", "#0891b2", "#0284c7", "#2563eb", "#4f46e5", "#7c3aed", "#9333ea",
+  "#c026d3", "#db2777", "#e11d48", "#f59e0b", "#84cc16", "#10b981", "#06b6d4",
+];
+
+const HIGHLIGHT_SWATCHES: string[] = [
+  "transparent",
+  "#fef3c7", "#fde68a", "#fcd34d", "#fdba74", "#fca5a5",
+  "#bbf7d0", "#86efac", "#a7f3d0", "#bae6fd", "#bfdbfe",
+  "#c7d2fe", "#ddd6fe", "#f5d0fe", "#fbcfe8", "#fecdd3",
+];
 
 const FONT_FAMILIES: Array<{ label: string; stack: string }> = [
   { label: "Aptos", stack: "Aptos, 'Segoe UI', Arial, sans-serif" },
@@ -55,8 +70,13 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
   const editorRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const colorInputRef = useRef<HTMLInputElement>(null);
+  const highlightInputRef = useRef<HTMLInputElement>(null);
   const savedRangeRef = useRef<Range | null>(null);
   const [isFocused, setIsFocused] = useState(false);
+  const [lastTextColor, setLastTextColor] = useState<string>("#dc2626");
+  const [lastHighlight, setLastHighlight] = useState<string>("#fde68a");
+  const [textColorOpen, setTextColorOpen] = useState(false);
+  const [highlightOpen, setHighlightOpen] = useState(false);
   const initialisedRef = useRef(false);
 
   useEffect(() => {
@@ -176,7 +196,18 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
 
   const applyFontFamily = (stack: string) => wrapSelectionWithStyle("font-family", stack);
   const applyFontSize = (px: number) => wrapSelectionWithStyle("font-size", `${px}px`);
-  const applyColor = (color: string) => wrapSelectionWithStyle("color", color);
+  const applyColor = (color: string) => {
+    setLastTextColor(color);
+    wrapSelectionWithStyle("color", color);
+  };
+  const applyHighlight = (color: string) => {
+    setLastHighlight(color);
+    if (color === "transparent") {
+      wrapSelectionWithStyle("background-color", "transparent");
+    } else {
+      wrapSelectionWithStyle("background-color", color);
+    }
+  };
 
   return (
     <div className="space-y-2">
@@ -223,13 +254,61 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
         <ToolbarBtn label={t("signature.bold", "Gras")} onMouseDown={saveSelection} onClick={() => exec("bold")}><Bold className="w-3.5 h-3.5" /></ToolbarBtn>
         <ToolbarBtn label={t("signature.italic", "Italique")} onMouseDown={saveSelection} onClick={() => exec("italic")}><Italic className="w-3.5 h-3.5" /></ToolbarBtn>
         <ToolbarBtn label={t("signature.underline", "Souligné")} onMouseDown={saveSelection} onClick={() => exec("underline")}><Underline className="w-3.5 h-3.5" /></ToolbarBtn>
-        <ToolbarBtn
-          label={t("signature.color", "Couleur du texte")}
-          onMouseDown={saveSelection}
-          onClick={() => colorInputRef.current?.click()}
-        >
-          <Palette className="w-3.5 h-3.5" />
-        </ToolbarBtn>
+
+        <Popover open={textColorOpen} onOpenChange={setTextColorOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              title={t("signature.color", "Couleur du texte")}
+              onMouseDown={(e) => { e.preventDefault(); saveSelection(); }}
+              className="h-7 w-7 p-0 flex flex-col items-center justify-center gap-0 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
+            >
+              <Type className="w-3 h-3" />
+              <span className="block w-3.5 h-[3px] rounded-sm" style={{ backgroundColor: lastTextColor }} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[228px] p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <ColorGrid swatches={TEXT_COLOR_SWATCHES} onPick={(c) => { applyColor(c); setTextColorOpen(false); }} />
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => { setTextColorOpen(false); colorInputRef.current?.click(); }}
+              className="mt-2 w-full text-[11px] text-[#8b9cb3] hover:text-white border border-border rounded px-2 py-1"
+            >
+              {t("signature.moreColors", "Plus de couleurs…")}
+            </button>
+          </PopoverContent>
+        </Popover>
+
+        <Popover open={highlightOpen} onOpenChange={setHighlightOpen}>
+          <PopoverTrigger asChild>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              title={t("signature.highlight", "Surlignage")}
+              onMouseDown={(e) => { e.preventDefault(); saveSelection(); }}
+              className="h-7 w-7 p-0 flex flex-col items-center justify-center gap-0 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
+            >
+              <Highlighter className="w-3 h-3" />
+              <span className="block w-3.5 h-[3px] rounded-sm border border-white/10" style={{ backgroundColor: lastHighlight === "transparent" ? "#ffffff" : lastHighlight }} />
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-[228px] p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
+            <ColorGrid swatches={HIGHLIGHT_SWATCHES} onPick={(c) => { applyHighlight(c); setHighlightOpen(false); }} showNoneLabel />
+            <button
+              type="button"
+              onMouseDown={(e) => e.preventDefault()}
+              onClick={() => { setHighlightOpen(false); highlightInputRef.current?.click(); }}
+              className="mt-2 w-full text-[11px] text-[#8b9cb3] hover:text-white border border-border rounded px-2 py-1"
+            >
+              {t("signature.moreColors", "Plus de couleurs…")}
+            </button>
+          </PopoverContent>
+        </Popover>
+
         <span className="w-px h-4 bg-border mx-0.5" />
         <ToolbarBtn label={t("signature.link", "Lien")} onMouseDown={saveSelection} onClick={handleInsertLink}><LinkIcon className="w-3.5 h-3.5" /></ToolbarBtn>
         <ToolbarBtn label={t("signature.image", "Image / logo")} onMouseDown={saveSelection} onClick={handleImageButton}><ImageIcon className="w-3.5 h-3.5" /></ToolbarBtn>
@@ -248,6 +327,12 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
           className="hidden"
           onChange={(e) => applyColor(e.target.value)}
         />
+        <input
+          ref={highlightInputRef}
+          type="color"
+          className="hidden"
+          onChange={(e) => applyHighlight(e.target.value)}
+        />
       </div>
       <div
         ref={editorRef}
@@ -264,6 +349,40 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
       <p className="text-[10px] text-[#8b9cb3]">
         {t("signature.imageHint", "Astuce : insérez un logo PNG/JPG (max 200 Ko). L'image est intégrée directement dans la signature.")}
       </p>
+    </div>
+  );
+}
+
+function ColorGrid({
+  swatches,
+  onPick,
+  showNoneLabel,
+}: {
+  swatches: string[];
+  onPick: (color: string) => void;
+  showNoneLabel?: boolean;
+}) {
+  return (
+    <div className="grid grid-cols-7 gap-1">
+      {swatches.map((c) => {
+        const isNone = c === "transparent";
+        return (
+          <button
+            key={c}
+            type="button"
+            title={isNone ? (showNoneLabel ? "Aucun" : c) : c}
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => onPick(c)}
+            className="h-6 w-6 rounded border border-white/10 hover:ring-2 hover:ring-primary/60 relative"
+            style={{
+              backgroundColor: isNone ? "transparent" : c,
+              backgroundImage: isNone
+                ? "linear-gradient(45deg, transparent 45%, #ef4444 45%, #ef4444 55%, transparent 55%)"
+                : undefined,
+            }}
+          />
+        );
+      })}
     </div>
   );
 }
