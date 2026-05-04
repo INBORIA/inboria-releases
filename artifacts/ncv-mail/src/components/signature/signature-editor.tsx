@@ -20,10 +20,9 @@ const TEXT_COLOR_SWATCHES: string[] = [
 ];
 
 const HIGHLIGHT_SWATCHES: string[] = [
-  "transparent",
-  "#fef3c7", "#fde68a", "#fcd34d", "#fdba74", "#fca5a5",
-  "#bbf7d0", "#86efac", "#a7f3d0", "#bae6fd", "#bfdbfe",
-  "#c7d2fe", "#ddd6fe", "#f5d0fe", "#fbcfe8", "#fecdd3",
+  "transparent", "#ffff00", "#00ff00", "#00ffff", "#ff00ff", "#0000ff", "#ff0000",
+  "#000080", "#008080", "#008000", "#800080", "#800000", "#808000", "#808080",
+  "#c0c0c0", "#ffffff", "#ffa500", "#ff69b4", "#7cfc00", "#40e0d0", "#dda0dd",
 ];
 
 const FONT_FAMILIES: Array<{ label: string; stack: string }> = [
