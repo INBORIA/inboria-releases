@@ -1186,14 +1186,6 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       mails: Array<{ subject: string; sender: string; date: string }>;
       tasks: Array<{ title: string; due: string }>;
     }> = [];
-    req.log.info(
-      {
-        teammates: teammates.map((t) => ({ uid: t.uid, name: t.fullName, email: t.email })),
-        matched: matchedTeammates.map((m) => ({ uid: m.uid, name: m.fullName })),
-        msg: lastUserMsg,
-      },
-      "[inboria-chat] teammate match debug",
-    );
     if (matchedTeammates.length > 0) {
       for (const tm of matchedTeammates) {
         try {
@@ -1201,7 +1193,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             supabaseAdmin
               .from("emails")
               .select("subject, sender, created_at")
-              .eq("assigned_to_user_id", tm.uid)
+              .eq("assigned_to", tm.uid)
               .or(emailScopeFilter)
               .order("created_at", { ascending: false })
               .limit(15),
