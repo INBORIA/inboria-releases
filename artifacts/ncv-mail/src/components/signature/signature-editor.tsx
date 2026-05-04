@@ -276,7 +276,6 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
           <PopoverContent className="w-[228px] p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
             <ColorGrid swatches={TEXT_COLOR_SWATCHES} onPick={(c) => { applyColor(c); setTextColorOpen(false); }} />
             <label
-              onMouseDown={(e) => e.preventDefault()}
               className="mt-2 flex items-center justify-center gap-2 w-full text-[11px] text-[#8b9cb3] hover:text-white border border-border rounded px-2 py-1 cursor-pointer"
             >
               <span
@@ -312,7 +311,6 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
             <div className="text-[10px] uppercase tracking-wider text-[#8b9cb3] mb-1">Surlignage</div>
             <ColorGrid swatches={HIGHLIGHT_SWATCHES} onPick={(c) => { applyHighlight(c); setHighlightOpen(false); }} showNoneLabel cols={8} />
             <label
-              onMouseDown={(e) => e.preventDefault()}
               className="mt-2 flex items-center justify-center gap-2 w-full text-[11px] text-[#8b9cb3] hover:text-white border border-border rounded px-2 py-1 cursor-pointer"
             >
               <span
