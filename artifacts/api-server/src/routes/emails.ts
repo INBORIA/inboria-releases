@@ -530,6 +530,72 @@ router.get("/emails/:id", requireAuth, async (req, res, next): Promise<void> => 
   }
 });
 
+// Export d'un mail au format RFC 822 (.eml) — utilise pour le bouton
+// "Telecharger" et pour le drag-out HTML5 vers le bureau (Chromium).
+// On ne re-encapsule PAS les pieces jointes (cout I/O / memoire) : on liste
+// leurs noms en haut du corps. Le but est de pouvoir archiver le mail dans
+// un dossier Windows/macOS et de le rouvrir dans Outlook ou Apple Mail.
+router.get("/emails/:id/export.eml", requireAuth, async (req, res, next): Promise<void> => {
+  if (!/^\d+$/.test(String(req.params.id))) { next(); return; }
+  try {
+    const { data: email, error } = await supabaseAdmin
+      .from("emails")
+      .select("id, sender, recipient, subject, body, created_at, message_id")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .single();
+    if (error || !email) {
+      res.status(404).json({ error: "Email not found" });
+      return;
+    }
+    const { data: attachments } = await supabaseAdmin
+      .from("email_attachments")
+      .select("filename, content_type, size")
+      .eq("email_id", email.id);
+
+    const escapeHeader = (v: string) => String(v || "").replace(/[\r\n]+/g, " ").trim();
+    // RFC 2047 encoding minimal pour les caracteres non-ASCII des headers.
+    const encodeHeader = (v: string) => {
+      const s = escapeHeader(v);
+      if (/^[\x20-\x7E]*$/.test(s)) return s;
+      return `=?UTF-8?B?${Buffer.from(s, "utf8").toString("base64")}?=`;
+    };
+    const dateHdr = new Date(email.created_at || Date.now()).toUTCString();
+    const subject = encodeHeader(email.subject || "(sans objet)");
+    const from = encodeHeader(email.sender || "unknown@unknown");
+    const to = encodeHeader(email.recipient || "");
+    const messageId = email.message_id ? `<${escapeHeader(email.message_id)}>` : `<inboria-${email.id}@local>`;
+
+    const body = String(email.body || "");
+    const isHtml = /<[a-z][\s\S]*>/i.test(body);
+    const attachNote = (attachments && attachments.length > 0)
+      ? `\r\n\r\n--- Pieces jointes (non incluses dans cet export) ---\r\n${attachments.map((a: any) => `* ${a.filename} (${a.content_type || "?"}, ${a.size || "?"} octets)`).join("\r\n")}\r\n`
+      : "";
+
+    const headers = [
+      `From: ${from}`,
+      `To: ${to}`,
+      `Subject: ${subject}`,
+      `Date: ${dateHdr}`,
+      `Message-ID: ${messageId}`,
+      `MIME-Version: 1.0`,
+      `Content-Type: ${isHtml ? "text/html" : "text/plain"}; charset=UTF-8`,
+      `Content-Transfer-Encoding: base64`,
+      `X-Exported-By: Inboria`,
+    ].join("\r\n");
+
+    const encodedBody = Buffer.from(body + attachNote, "utf8").toString("base64").replace(/(.{76})/g, "$1\r\n");
+    const eml = headers + "\r\n\r\n" + encodedBody + "\r\n";
+
+    const safeSubject = (email.subject || "mail").replace(/[^a-zA-Z0-9._\- ]+/g, "_").slice(0, 60).trim() || "mail";
+    res.setHeader("Content-Type", "message/rfc822; charset=utf-8");
+    res.setHeader("Content-Disposition", `attachment; filename="${safeSubject}-${email.id}.eml"`);
+    res.send(eml);
+  } catch {
+    res.status(500).json({ error: "Export failed" });
+  }
+});
+
 // Task #176 — Marquage privé d'un email par son propriétaire.
 // Un email marqué privé est exclu de la vue dossier équipe (admin) et de
 // l'élargissement du contexte mémoire d'Inboria côté admin. Seul le

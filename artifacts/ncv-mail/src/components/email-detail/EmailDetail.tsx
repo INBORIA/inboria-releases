@@ -53,6 +53,105 @@ interface ExpertSuggestionShape {
 
 import { PriorityBadge, PRIORITY_BAR_COLORS, buildForwardCitation } from "./helpers";
 
+// Bouton "Telecharger .eml" + support du drag-out HTML5 vers le bureau
+// (Chromium DownloadURL). Sur Firefox/Safari, le drag tombera silencieusement
+// en arriere-plan et l'utilisateur peut toujours cliquer sur le bouton.
+function ExportEmlButton({ emailId, subject }: { emailId: number; subject: string }) {
+  const { toast } = useToast();
+  const [busy, setBusy] = useState(false);
+  const safeName =
+    (subject || "mail").replace(/[^a-zA-Z0-9._\- ]+/g, "_").slice(0, 60).trim() || "mail";
+  const filename = `${safeName}-${emailId}.eml`;
+
+  const fetchEmlBlob = useCallback(async (): Promise<Blob | null> => {
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res = await fetch(
+        `${import.meta.env.BASE_URL}api/emails/${emailId}/export.eml`,
+        { headers: token ? { Authorization: `Bearer ${token}` } : {} },
+      );
+      if (!res.ok) throw new Error("export failed");
+      return await res.blob();
+    } catch {
+      return null;
+    }
+  }, [emailId]);
+
+  const onClick = useCallback(async () => {
+    setBusy(true);
+    try {
+      const blob = await fetchEmlBlob();
+      if (!blob) {
+        toast({ variant: "destructive", title: "Téléchargement impossible" });
+        return;
+      }
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = filename;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
+    } finally {
+      setBusy(false);
+    }
+  }, [fetchEmlBlob, filename, toast]);
+
+  // Drag-out HTML5 vers le bureau / un dossier (Chromium uniquement). On
+  // pre-fetche le .eml au moment du dragstart et on expose son URL via
+  // l'attribut DownloadURL. Si la pre-fetch n'a pas le temps de finir avant
+  // que le navigateur ne lise les donnees, le drag tombera mais le bouton
+  // reste utilisable.
+  const onDragStart = useCallback(
+    (e: React.DragEvent<HTMLButtonElement>) => {
+      // Chromium-only API ; ignoree par les autres navigateurs.
+      e.dataTransfer.effectAllowed = "copy";
+      // Placeholder immediat : on met le filename / mime pour que le drag
+      // demarre, puis on remplace par la vraie URL des qu'on l'a.
+      try {
+        e.dataTransfer.setData(
+          "DownloadURL",
+          `message/rfc822:${filename}:about:blank`,
+        );
+      } catch {
+        /* noop */
+      }
+      void (async () => {
+        const blob = await fetchEmlBlob();
+        if (!blob) return;
+        const url = URL.createObjectURL(blob);
+        try {
+          e.dataTransfer.setData("DownloadURL", `message/rfc822:${filename}:${url}`);
+        } catch {
+          /* noop */
+        }
+        setTimeout(() => URL.revokeObjectURL(url), 30_000);
+      })();
+    },
+    [fetchEmlBlob, filename],
+  );
+
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      draggable
+      onDragStart={onDragStart}
+      className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] cursor-grab active:cursor-grabbing"
+      onClick={onClick}
+      disabled={busy}
+      title="Télécharger au format .eml — vous pouvez aussi glisser ce bouton vers un dossier (Chrome/Edge sur Windows)"
+      data-testid="email-export-eml"
+    >
+      {busy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
+      .eml
+    </Button>
+  );
+}
+
 export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, onUpdatePriority, onUpdateCategory, onUpdateProject, onSendReply, isSending, onGenerateDraft, isDrafting, categories, projects, currentUserId, orgMembers, onAssign, onUnassign, onCreateTask, connections, sharedMailboxes }: { email: any; onBack: () => void; onMarkRead: (id: number) => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onUpdatePriority: (id: number, priority: string) => void; onUpdateCategory: (id: number, categoryId: string) => void; onUpdateProject: (id: number, projectId: string) => void; onSendReply: (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number) => void; isSending: boolean; onGenerateDraft: (emailId: number, callback: (draft: string) => void) => void; isDrafting: boolean; categories: any[]; projects: any[]; currentUserId?: string; orgMembers?: any[]; onAssign?: (emailId: number, userId: string) => void; onUnassign?: (emailId: number) => void; onCreateTask?: (emailId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => void; connections?: Array<{ id: string; provider: string; email_address: string; signature?: string | null }>; sharedMailboxes?: any[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
@@ -539,6 +638,8 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   <Archive className="w-3 h-3" />
                   {t("inbox.archive")}
                 </Button>
+                <ExportEmlButton emailId={email.id} subject={email.subject || "mail"} />
+
                 <Button
                   variant="outline"
                   size="sm"
