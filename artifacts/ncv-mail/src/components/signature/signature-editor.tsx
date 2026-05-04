@@ -273,7 +273,7 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
               <span className="block w-3.5 h-[3px] rounded-sm" style={{ backgroundColor: lastTextColor }} />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[228px] p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
+          <PopoverContent className="w-[228px] p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()} onFocusOutside={(e) => e.preventDefault()} onInteractOutside={(e) => { const t = e.target as HTMLElement; if (t && t.closest('input[type="color"]')) e.preventDefault(); }}>
             <ColorGrid swatches={TEXT_COLOR_SWATCHES} onPick={(c) => { applyColor(c); setTextColorOpen(false); }} />
             <div
               className="mt-2 relative w-full h-7 rounded border border-border hover:border-primary/60"
@@ -312,7 +312,7 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
               <span className="block w-3.5 h-[3px] rounded-sm border border-white/10" style={{ backgroundColor: lastHighlight === "transparent" ? "#ffffff" : lastHighlight }} />
             </Button>
           </PopoverTrigger>
-          <PopoverContent className="w-[260px] p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()}>
+          <PopoverContent className="w-[260px] p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()} onFocusOutside={(e) => e.preventDefault()} onInteractOutside={(e) => { const t = e.target as HTMLElement; if (t && t.closest('input[type="color"]')) e.preventDefault(); }}>
             <div className="text-[10px] uppercase tracking-wider text-[#8b9cb3] mb-1">Surlignage</div>
             <ColorGrid swatches={HIGHLIGHT_SWATCHES} onPick={(c) => { applyHighlight(c); setHighlightOpen(false); }} showNoneLabel cols={8} />
             <div
