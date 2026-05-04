@@ -540,7 +540,7 @@ router.get("/emails/:id/export.eml", requireAuth, async (req, res, next): Promis
   try {
     const { data: email, error } = await supabaseAdmin
       .from("emails")
-      .select("id, sender, recipient, subject, body, created_at, message_id")
+      .select("id, sender, recipient, subject, body, created_at")
       .eq("id", req.params.id)
       .eq("user_id", req.userId!)
       .single();
@@ -564,7 +564,7 @@ router.get("/emails/:id/export.eml", requireAuth, async (req, res, next): Promis
     const subject = encodeHeader(email.subject || "(sans objet)");
     const from = encodeHeader(email.sender || "unknown@unknown");
     const to = encodeHeader(email.recipient || "");
-    const messageId = email.message_id ? `<${escapeHeader(email.message_id)}>` : `<inboria-${email.id}@local>`;
+    const messageId = `<inboria-${email.id}@local>`;
 
     const body = String(email.body || "");
     const isHtml = /<[a-z][\s\S]*>/i.test(body);
