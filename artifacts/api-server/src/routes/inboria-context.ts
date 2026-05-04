@@ -1183,7 +1183,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     const teammateWorkload: Array<{
       fullName: string;
       email: string;
-      mails: Array<{ subject: string; sender: string; date: string }>;
+      mails: Array<{ subject: string; sender: string; date: string; status: string; isRead: boolean; repliedAt: string }>;
       tasks: Array<{ title: string; due: string }>;
     }> = [];
     if (matchedTeammates.length > 0) {
@@ -1192,7 +1192,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
           const [mailsRes, tasksRes] = await Promise.all([
             supabaseAdmin
               .from("emails")
-              .select("subject, sender, created_at")
+              .select("subject, sender, created_at, status, is_read, replied_at")
               .eq("assigned_to", tm.uid)
               .or(emailScopeFilter)
               .order("created_at", { ascending: false })
@@ -1212,6 +1212,9 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
               subject: String(m.subject || "(sans objet)"),
               sender: String(m.sender || "(inconnu)"),
               date: String(m.created_at || ""),
+              status: String(m.status || ""),
+              isRead: Boolean(m.is_read),
+              repliedAt: m.replied_at ? String(m.replied_at) : "",
             })),
             tasks: ((tasksRes.data as any[]) || []).map((t) => ({
               title: String(t.title || ""),
@@ -1235,7 +1238,12 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
           memoryLines.push(`  Mails assignes a ${tw.fullName} (${tw.mails.length}) :`);
           for (const m of tw.mails) {
             const d = m.date ? ` (${fmtShortDate(m.date)})` : "";
-            memoryLines.push(`  - ${truncate(m.subject, 70)} — de ${truncate(m.sender, 40)}${d}`);
+            const stateBits: string[] = [];
+            if (m.repliedAt) stateBits.push(`repondu le ${fmtShortDate(m.repliedAt)}`);
+            if (m.status) stateBits.push(`statut: ${m.status}`);
+            stateBits.push(m.isRead ? "lu" : "non lu");
+            const state = stateBits.length > 0 ? ` [${stateBits.join(", ")}]` : "";
+            memoryLines.push(`  - ${truncate(m.subject, 70)} — de ${truncate(m.sender, 40)}${d}${state}`);
           }
         } else {
           memoryLines.push(`  Mails assignes a ${tw.fullName} : aucun.`);
