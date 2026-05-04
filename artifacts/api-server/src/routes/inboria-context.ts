@@ -1183,7 +1183,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     const teammateWorkload: Array<{
       fullName: string;
       email: string;
-      mails: Array<{ subject: string; sender: string; date: string; status: string; isRead: boolean; repliedAt: string }>;
+      mails: Array<{ subject: string; sender: string; date: string; status: string }>;
       tasks: Array<{ title: string; due: string }>;
     }> = [];
     if (matchedTeammates.length > 0) {
@@ -1192,7 +1192,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
           const [mailsRes, tasksRes] = await Promise.all([
             supabaseAdmin
               .from("emails")
-              .select("subject, sender, created_at, status, is_read, replied_at")
+              .select("subject, sender, created_at, status")
               .eq("assigned_to", tm.uid)
               .or(emailScopeFilter)
               .order("created_at", { ascending: false })
@@ -1213,8 +1213,6 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
               sender: String(m.sender || "(inconnu)"),
               date: String(m.created_at || ""),
               status: String(m.status || ""),
-              isRead: Boolean(m.is_read),
-              repliedAt: m.replied_at ? String(m.replied_at) : "",
             })),
             tasks: ((tasksRes.data as any[]) || []).map((t) => ({
               title: String(t.title || ""),
@@ -1238,11 +1236,12 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
           memoryLines.push(`  Mails assignes a ${tw.fullName} (${tw.mails.length}) :`);
           for (const m of tw.mails) {
             const d = m.date ? ` (${fmtShortDate(m.date)})` : "";
-            const stateBits: string[] = [];
-            if (m.repliedAt) stateBits.push(`repondu le ${fmtShortDate(m.repliedAt)}`);
-            if (m.status) stateBits.push(`statut: ${m.status}`);
-            stateBits.push(m.isRead ? "lu" : "non lu");
-            const state = stateBits.length > 0 ? ` [${stateBits.join(", ")}]` : "";
+            const treated = ["replied", "done", "archived", "sent"].includes(m.status)
+              ? "traite"
+              : m.status === "snoozed"
+                ? "reporte"
+                : "non traite";
+            const state = m.status ? ` [${treated} — statut: ${m.status}]` : "";
             memoryLines.push(`  - ${truncate(m.subject, 70)} — de ${truncate(m.sender, 40)}${d}${state}`);
           }
         } else {
