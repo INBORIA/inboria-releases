@@ -4556,12 +4556,10 @@ export default function Dashboard() {
               {inboxMode === "shared" ? (
                 <>
                   {sharedEmailsLoading ? (
-                    Array(3).fill(0).map((_, i) => (
-                      <div key={i} className="bg-card rounded-lg border border-border p-3 mb-1">
-                        <Skeleton className="h-4 w-3/4 mb-2 bg-white/5" />
-                        <Skeleton className="h-3 w-1/2 bg-white/5" />
-                      </div>
-                    ))
+                    <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border border-dashed bg-card/50">
+                      <Loader2 className="w-6 h-6 text-primary animate-spin mb-3" />
+                      <h3 className="text-[13px] font-medium text-white">{t("inbox.loadingTitle", "Chargement de vos emails…")}</h3>
+                    </div>
                   ) : !selectedSharedMailboxId ? (
                     <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                       <Users className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
@@ -4729,7 +4727,7 @@ export default function Dashboard() {
                     >
                       <div className="text-[10px] font-medium text-red-400 uppercase tracking-wider mb-0.5">{t("inbox.priorities.urgentPlural")}</div>
                       <div className="text-xl font-bold text-white">
-                        {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.urgentCount || 0}
+                        {summaryLoading ? <span className="text-white/20">—</span> : summary?.urgentCount || 0}
                       </div>
                     </div>
                     <div
@@ -4738,7 +4736,7 @@ export default function Dashboard() {
                     >
                       <div className="text-[10px] font-medium text-amber-400 uppercase tracking-wider mb-0.5">{t("inbox.priorities.mediumPlural")}</div>
                       <div className="text-xl font-bold text-white">
-                        {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.moyenCount || 0}
+                        {summaryLoading ? <span className="text-white/20">—</span> : summary?.moyenCount || 0}
                       </div>
                     </div>
                     <div
@@ -4747,7 +4745,7 @@ export default function Dashboard() {
                     >
                       <div className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider mb-0.5">{t("inbox.priorities.lowPlural")}</div>
                       <div className="text-xl font-bold text-white">
-                        {summaryLoading ? <Skeleton className="h-6 w-8 bg-white/5" /> : summary?.faibleCount || 0}
+                        {summaryLoading ? <span className="text-white/20">—</span> : summary?.faibleCount || 0}
                       </div>
                     </div>
                   </div>
@@ -4871,17 +4869,8 @@ export default function Dashboard() {
                         {hasMorePages && (
                           <div ref={loadMoreRef} className="py-2">
                             {emailsFetching ? (
-                              <div className="space-y-2">
-                                {[...Array(3)].map((_, i) => (
-                                  <div key={i} className="flex items-center gap-3 p-3 rounded-lg border border-border bg-card animate-pulse">
-                                    <div className="w-1 h-10 rounded-full bg-white/5" />
-                                    <div className="flex-1 space-y-2">
-                                      <Skeleton className="h-3 w-32 bg-white/5" />
-                                      <Skeleton className="h-3 w-48 bg-white/5" />
-                                    </div>
-                                    <Skeleton className="h-3 w-12 bg-white/5" />
-                                  </div>
-                                ))}
+                              <div className="flex items-center justify-center py-3">
+                                <Loader2 className="w-4 h-4 text-primary/60 animate-spin" />
                               </div>
                             ) : (
                               <div className="flex items-center justify-center py-2">
@@ -4966,9 +4955,8 @@ export default function Dashboard() {
                   })()}
                 </div>
                 {categoriesLoading ? (
-                  <div className="space-y-1.5">
-                    <Skeleton className="h-5 w-full bg-white/5" />
-                    <Skeleton className="h-5 w-full bg-white/5" />
+                  <div className="py-2 text-center">
+                    <Loader2 className="w-4 h-4 text-primary/60 animate-spin mx-auto" />
                   </div>
                 ) : (
                   <div className="space-y-0.5">
