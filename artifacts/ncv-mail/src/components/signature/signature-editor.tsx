@@ -3,27 +3,43 @@ import { Bold, Italic, Underline, Link as LinkIcon, Image as ImageIcon, Eraser, 
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
-const FONT_FAMILIES = [
-  { label: "Arial", value: "Arial, sans-serif" },
-  { label: "Helvetica", value: "Helvetica, Arial, sans-serif" },
-  { label: "Calibri", value: "Calibri, sans-serif" },
-  { label: "Georgia", value: "Georgia, serif" },
-  { label: "Times New Roman", value: "'Times New Roman', Times, serif" },
-  { label: "Verdana", value: "Verdana, Geneva, sans-serif" },
-  { label: "Tahoma", value: "Tahoma, Geneva, sans-serif" },
-  { label: "Courier New", value: "'Courier New', Courier, monospace" },
+const FONT_FAMILIES: Array<{ label: string; stack: string }> = [
+  { label: "Aptos", stack: "Aptos, 'Segoe UI', Arial, sans-serif" },
+  { label: "Arial", stack: "Arial, sans-serif" },
+  { label: "Arial Black", stack: "'Arial Black', Gadget, sans-serif" },
+  { label: "Calibri", stack: "Calibri, 'Segoe UI', Arial, sans-serif" },
+  { label: "Calibri Light", stack: "'Calibri Light', Calibri, 'Segoe UI', Arial, sans-serif" },
+  { label: "Cambria", stack: "Cambria, Georgia, serif" },
+  { label: "Candara", stack: "Candara, 'Segoe UI', Arial, sans-serif" },
+  { label: "Comic Sans MS", stack: "'Comic Sans MS', 'Comic Sans', cursive" },
+  { label: "Consolas", stack: "Consolas, 'Courier New', monospace" },
+  { label: "Constantia", stack: "Constantia, Georgia, serif" },
+  { label: "Corbel", stack: "Corbel, 'Segoe UI', Arial, sans-serif" },
+  { label: "Courier New", stack: "'Courier New', Courier, monospace" },
+  { label: "Franklin Gothic", stack: "'Franklin Gothic', 'Franklin Gothic Medium', Arial, sans-serif" },
+  { label: "Garamond", stack: "Garamond, Georgia, serif" },
+  { label: "Georgia", stack: "Georgia, serif" },
+  { label: "Helvetica", stack: "Helvetica, Arial, sans-serif" },
+  { label: "Impact", stack: "Impact, Charcoal, sans-serif" },
+  { label: "Lucida Console", stack: "'Lucida Console', Monaco, monospace" },
+  { label: "Lucida Sans Unicode", stack: "'Lucida Sans Unicode', 'Lucida Grande', sans-serif" },
+  { label: "Palatino Linotype", stack: "'Palatino Linotype', 'Book Antiqua', Palatino, serif" },
+  { label: "Segoe UI", stack: "'Segoe UI', Tahoma, Geneva, Verdana, sans-serif" },
+  { label: "Tahoma", stack: "Tahoma, Geneva, sans-serif" },
+  { label: "Times New Roman", stack: "'Times New Roman', Times, serif" },
+  { label: "Trebuchet MS", stack: "'Trebuchet MS', Helvetica, sans-serif" },
+  { label: "Verdana", stack: "Verdana, Geneva, sans-serif" },
 ];
 
-const FONT_SIZES = [
-  { label: "10", value: "1" },
-  { label: "12", value: "2" },
-  { label: "14", value: "3" },
-  { label: "16", value: "4" },
-  { label: "18", value: "5" },
-  { label: "24", value: "6" },
-  { label: "32", value: "7" },
-];
+const FONT_SIZES_PX = [8, 9, 10, 11, 12, 14, 16, 18, 20, 22, 24, 26, 28, 36, 48, 72];
 
 const MAX_IMAGE_BYTES = 200 * 1024;
 
@@ -38,6 +54,8 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
   const { toast } = useToast();
   const editorRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const colorInputRef = useRef<HTMLInputElement>(null);
+  const savedRangeRef = useRef<Range | null>(null);
   const [isFocused, setIsFocused] = useState(false);
   const initialisedRef = useRef(false);
 
@@ -50,8 +68,29 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
     initialisedRef.current = true;
   }, [value]);
 
+  const saveSelection = () => {
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0) return;
+    const range = sel.getRangeAt(0);
+    if (editorRef.current && editorRef.current.contains(range.commonAncestorContainer)) {
+      savedRangeRef.current = range.cloneRange();
+    }
+  };
+
+  const restoreSelection = () => {
+    const r = savedRangeRef.current;
+    if (!r || !editorRef.current) return;
+    editorRef.current.focus();
+    const sel = window.getSelection();
+    if (!sel) return;
+    sel.removeAllRanges();
+    sel.addRange(r);
+  };
+
   const exec = (command: string, val?: string) => {
+    restoreSelection();
     editorRef.current?.focus();
+    document.execCommand("styleWithCSS", false, "true");
     document.execCommand(command, false, val);
     if (editorRef.current) onChange(editorRef.current.innerHTML);
   };
@@ -88,6 +127,7 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
       const dataUrl = String(reader.result || "");
       if (!dataUrl) return;
       const img = `<img src="${dataUrl}" alt="logo" style="max-height:80px;max-width:240px;display:inline-block;" />`;
+      restoreSelection();
       editorRef.current?.focus();
       document.execCommand("insertHTML", false, img);
       if (editorRef.current) onChange(editorRef.current.innerHTML);
@@ -95,24 +135,117 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
     reader.readAsDataURL(file);
   };
 
+  // Wrap the current selection in a <span style="..."> with the given inline
+  // CSS. If the selection is collapsed, insert an empty span so future typed
+  // text picks up the style (mimics Outlook behaviour for size/color/font).
+  const wrapSelectionWithStyle = (cssProperty: string, cssValue: string) => {
+    restoreSelection();
+    editorRef.current?.focus();
+    const sel = window.getSelection();
+    if (!sel || sel.rangeCount === 0 || !editorRef.current) return;
+    const range = sel.getRangeAt(0);
+    if (!editorRef.current.contains(range.commonAncestorContainer)) return;
+
+    if (range.collapsed) {
+      const span = document.createElement("span");
+      span.setAttribute("style", `${cssProperty}: ${cssValue};`);
+      span.appendChild(document.createTextNode("\u200B"));
+      range.insertNode(span);
+      const newRange = document.createRange();
+      newRange.setStart(span.firstChild!, 1);
+      newRange.collapse(true);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
+    } else {
+      const span = document.createElement("span");
+      span.setAttribute("style", `${cssProperty}: ${cssValue};`);
+      try {
+        span.appendChild(range.extractContents());
+        range.insertNode(span);
+        const newRange = document.createRange();
+        newRange.selectNodeContents(span);
+        sel.removeAllRanges();
+        sel.addRange(newRange);
+      } catch {
+        // surroundContents fallback
+      }
+    }
+    if (editorRef.current) onChange(editorRef.current.innerHTML);
+  };
+
+  const applyFontFamily = (stack: string) => wrapSelectionWithStyle("font-family", stack);
+  const applyFontSize = (px: number) => wrapSelectionWithStyle("font-size", `${px}px`);
+  const applyColor = (color: string) => wrapSelectionWithStyle("color", color);
+
   return (
     <div className="space-y-2">
-      <div className="flex items-center gap-1 flex-wrap rounded-md border border-border bg-card px-2 py-1.5">
-        <ToolbarBtn label={t("signature.bold", "Gras")} onClick={() => exec("bold")}><Bold className="w-3.5 h-3.5" /></ToolbarBtn>
-        <ToolbarBtn label={t("signature.italic", "Italique")} onClick={() => exec("italic")}><Italic className="w-3.5 h-3.5" /></ToolbarBtn>
-        <ToolbarBtn label={t("signature.underline", "Souligné")} onClick={() => exec("underline")}><Underline className="w-3.5 h-3.5" /></ToolbarBtn>
+      <div
+        className="flex items-center gap-1 flex-wrap rounded-md border border-border bg-card px-2 py-1.5"
+        onMouseDown={(e) => {
+          // Preserve the editor selection when interacting with the toolbar.
+          if (e.target !== editorRef.current) saveSelection();
+        }}
+      >
+        <Select onValueChange={(v) => applyFontFamily(v)}>
+          <SelectTrigger
+            onMouseDown={() => saveSelection()}
+            className="h-7 w-[140px] text-[11px] bg-background border-border text-white"
+            title={t("signature.font", "Police")}
+          >
+            <SelectValue placeholder={t("signature.font", "Police")} />
+          </SelectTrigger>
+          <SelectContent className="max-h-[320px]">
+            {FONT_FAMILIES.map((f) => (
+              <SelectItem key={f.label} value={f.stack} style={{ fontFamily: f.stack }}>
+                {f.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <Select onValueChange={(v) => applyFontSize(Number(v))}>
+          <SelectTrigger
+            onMouseDown={() => saveSelection()}
+            className="h-7 w-[64px] text-[11px] bg-background border-border text-white"
+            title={t("signature.size", "Taille")}
+          >
+            <SelectValue placeholder={t("signature.size", "Taille")} />
+          </SelectTrigger>
+          <SelectContent className="max-h-[320px]">
+            {FONT_SIZES_PX.map((px) => (
+              <SelectItem key={px} value={String(px)}>
+                {px}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
         <span className="w-px h-4 bg-border mx-0.5" />
-        <ToolbarBtn label={t("signature.link", "Lien")} onClick={handleInsertLink}><LinkIcon className="w-3.5 h-3.5" /></ToolbarBtn>
-        <ToolbarBtn label={t("signature.image", "Image / logo")} onClick={handleImageButton}><ImageIcon className="w-3.5 h-3.5" /></ToolbarBtn>
+        <ToolbarBtn label={t("signature.bold", "Gras")} onMouseDown={saveSelection} onClick={() => exec("bold")}><Bold className="w-3.5 h-3.5" /></ToolbarBtn>
+        <ToolbarBtn label={t("signature.italic", "Italique")} onMouseDown={saveSelection} onClick={() => exec("italic")}><Italic className="w-3.5 h-3.5" /></ToolbarBtn>
+        <ToolbarBtn label={t("signature.underline", "Souligné")} onMouseDown={saveSelection} onClick={() => exec("underline")}><Underline className="w-3.5 h-3.5" /></ToolbarBtn>
+        <ToolbarBtn
+          label={t("signature.color", "Couleur du texte")}
+          onMouseDown={saveSelection}
+          onClick={() => colorInputRef.current?.click()}
+        >
+          <Palette className="w-3.5 h-3.5" />
+        </ToolbarBtn>
         <span className="w-px h-4 bg-border mx-0.5" />
-        <ToolbarBtn label={t("signature.smallText", "Petit texte")} onClick={() => exec("fontSize", "2")}><Type className="w-3.5 h-3.5" /></ToolbarBtn>
-        <ToolbarBtn label={t("signature.clear", "Effacer mise en forme")} onClick={() => exec("removeFormat")}><Eraser className="w-3.5 h-3.5" /></ToolbarBtn>
+        <ToolbarBtn label={t("signature.link", "Lien")} onMouseDown={saveSelection} onClick={handleInsertLink}><LinkIcon className="w-3.5 h-3.5" /></ToolbarBtn>
+        <ToolbarBtn label={t("signature.image", "Image / logo")} onMouseDown={saveSelection} onClick={handleImageButton}><ImageIcon className="w-3.5 h-3.5" /></ToolbarBtn>
+        <span className="w-px h-4 bg-border mx-0.5" />
+        <ToolbarBtn label={t("signature.clear", "Effacer mise en forme")} onMouseDown={saveSelection} onClick={() => exec("removeFormat")}><Eraser className="w-3.5 h-3.5" /></ToolbarBtn>
         <input
           ref={fileInputRef}
           type="file"
           accept="image/*"
           className="hidden"
           onChange={handleImageChange}
+        />
+        <input
+          ref={colorInputRef}
+          type="color"
+          className="hidden"
+          onChange={(e) => applyColor(e.target.value)}
         />
       </div>
       <div
@@ -121,7 +254,9 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
         suppressContentEditableWarning
         onInput={handleInput}
         onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+        onBlur={() => { setIsFocused(false); saveSelection(); }}
+        onKeyUp={saveSelection}
+        onMouseUp={saveSelection}
         data-placeholder={placeholder || ""}
         className={`signature-editor min-h-[140px] rounded-md border bg-card px-3 py-2 text-[12px] text-white outline-none ${isFocused ? "border-primary/50" : "border-border"}`}
       />
@@ -132,14 +267,27 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
   );
 }
 
-function ToolbarBtn({ children, onClick, label }: { children: React.ReactNode; onClick: () => void; label: string }) {
+function ToolbarBtn({
+  children,
+  onClick,
+  onMouseDown,
+  label,
+}: {
+  children: React.ReactNode;
+  onClick: () => void;
+  onMouseDown?: () => void;
+  label: string;
+}) {
   return (
     <Button
       type="button"
       variant="ghost"
       size="sm"
       title={label}
-      onMouseDown={(e) => { e.preventDefault(); }}
+      onMouseDown={(e) => {
+        e.preventDefault();
+        if (onMouseDown) onMouseDown();
+      }}
       onClick={onClick}
       className="h-7 w-7 p-0 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
     >
