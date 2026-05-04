@@ -871,9 +871,11 @@ export function buildMimeWithAttachments(
   subject: string,
   bodyText: string,
   attachments: ResolvedAttachment[],
-  extraHeaders: string[] = []
+  extraHeaders: string[] = [],
+  isHtml: boolean = false,
 ): string {
   const boundary = `----=_Part_${Date.now()}_${Math.random().toString(36).slice(2)}`;
+  const bodyContentType = isHtml ? "text/html" : "text/plain";
   const lines: string[] = [
     `To: ${sanitizeMimeHeader(to)}`,
     `From: ${sanitizeMimeHeader(from)}`,
@@ -883,7 +885,7 @@ export function buildMimeWithAttachments(
     `Content-Type: multipart/mixed; boundary="${boundary}"`,
     "",
     `--${boundary}`,
-    `Content-Type: text/plain; charset=utf-8`,
+    `Content-Type: ${bodyContentType}; charset=utf-8`,
     `Content-Transfer-Encoding: base64`,
     "",
     Buffer.from(bodyText, "utf-8").toString("base64"),
@@ -1079,6 +1081,24 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
     }
     let fromAddress = conn.email_address;
 
+    // Append HTML signature (if any) to the body. We detect HTML by the
+    // presence of an opening tag — Mon Compte stores rich signatures with
+    // tags like <img>, <b>, etc. Plain-text signatures stay as-is and are
+    // already prepended client-side in the reply textarea.
+    const sigRaw: string = (conn.signature || "").toString().trim();
+    const sigIsHtml: boolean = /<[a-z][\s\S]*>/i.test(sigRaw);
+    if (sigIsHtml) {
+      const escapedBody = (bodyForSend || body)
+        .split("\n")
+        .map((line: string) => line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"))
+        .join("<br>");
+      const sep = `<br><br>-- <br>`;
+      // If we already escaped for tracking pixel, bodyForSend is HTML; preserve it.
+      const baseHtml = useHtml ? bodyForSend : escapedBody;
+      bodyForSend = `${baseHtml}${sep}${sigRaw}`;
+      useHtml = true;
+    }
+
     if (conn.provider === "gmail") {
       const oauth2Client = new google.auth.OAuth2(
         process.env["GOOGLE_CLIENT_ID"],
@@ -1107,7 +1127,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
 
       let raw: string;
       if (attachments.length > 0) {
-        const mimeMessage = buildMimeWithAttachments(to, fromAddress, subject, body, attachments, extraHeaders);
+        const mimeMessage = buildMimeWithAttachments(to, fromAddress, subject, useHtml ? bodyForSend : body, attachments, extraHeaders, useHtml);
         raw = Buffer.from(mimeMessage)
           .toString("base64")
           .replace(/\+/g, "-")
@@ -1209,7 +1229,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
         to,
         subject,
         ...(useHtml ? { html: bodyForSend } : { text: body }),
-        attachments: attachments.map((att) => ({
+        attachments: attachments.map((att: ResolvedAttachment) => ({
           filename: att.filename,
           path: att.serverPath,
           contentType: att.contentType,

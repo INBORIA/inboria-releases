@@ -227,7 +227,11 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
 
   const signatureForConnection = useCallback((connId: string): string => {
     const conn = connections?.find((c) => String(c.id) === String(connId));
-    return (conn?.signature || "").trim();
+    const raw = (conn?.signature || "").trim();
+    // If signature is HTML (contains tags), do NOT prefix it as plain text in
+    // the reply textarea. The server will append it as HTML on send.
+    if (/<[a-z][\s\S]*>/i.test(raw)) return "";
+    return raw;
   }, [connections]);
   const [taskFormOpen, setTaskFormOpen] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");

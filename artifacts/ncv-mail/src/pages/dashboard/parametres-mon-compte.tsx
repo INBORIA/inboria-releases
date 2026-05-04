@@ -37,6 +37,7 @@ import { useState, useEffect, useRef } from "react";
 import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { useTranslation } from 'react-i18next';
+import { SignatureEditor } from "@/components/signature/signature-editor";
 
 const IMAP_PROVIDERS = [
   // Gmail via App Password (contournement OAuth Google)
@@ -380,11 +381,10 @@ function AccountConnectionCard({
       {editing && (
         <div className="space-y-2 pt-2 border-t border-border">
           <Label className="text-[11px] text-[#8b9cb3]">{t("settings.accountSignatureLabel", "Signature pour ce compte")}</Label>
-          <Textarea
+          <SignatureEditor
             value={sigDraft}
-            onChange={(e) => setSigDraft(e.target.value)}
+            onChange={setSigDraft}
             placeholder={t("settings.accountSignaturePlaceholder", "Signature spécifique à ce compte (laisser vide pour aucune signature)")}
-            className="bg-card border-border text-white text-[12px] min-h-[100px] font-mono"
           />
           <div className="flex justify-end">
             <Button
