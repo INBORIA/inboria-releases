@@ -133,9 +133,9 @@ export default function Relances() {
           </div>
 
           {loadingAi ? (
-            <div className="space-y-2">
-              <Skeleton className="h-24 w-full" />
-              <Skeleton className="h-24 w-full" />
+            <div className="flex flex-col items-center justify-center py-12 rounded-lg border border-border border-dashed bg-card/40">
+              <Loader2 className="w-5 h-5 text-primary animate-spin mb-2" />
+              <p className="text-[12px] text-[#8b9cb3]">{t("inbox.loadingTitle", "Chargement…")}</p>
             </div>
           ) : aiList.length === 0 ? (
             <div className="rounded-lg border border-border bg-card/40 p-8 text-center">

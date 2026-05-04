@@ -63,7 +63,7 @@ export default function Envoyes() {
   const [page, setPage] = useState(1);
   const [accumulated, setAccumulated] = useState<any[]>([]);
 
-  const { data: emailsData, isLoading, isFetching } = useListEmails({ status: "sent" as any, limit: 50, page } as any);
+  const { data: emailsData, isLoading, isFetching } = useListEmails({ status: "sent" as any, limit: 50, page } as any, { query: { placeholderData: (prev: any) => prev } as any });
   const paged = emailsData as PaginatedEmails | undefined;
   const hasMore = paged ? page < (paged.totalPages ?? 1) : false;
 
@@ -247,13 +247,9 @@ export default function Envoyes() {
         </div>
 
         {isLoading ? (
-          <div className="space-y-2">
-            {Array(5).fill(0).map((_, i) => (
-              <div key={i} className="bg-card rounded-lg border border-border p-3">
-                <Skeleton className="h-4 w-3/4 mb-2 bg-white/5" />
-                <Skeleton className="h-3 w-1/2 bg-white/5" />
-              </div>
-            ))}
+          <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border border-dashed bg-card/50">
+            <Loader2 className="w-6 h-6 text-primary animate-spin mb-3" />
+            <h3 className="text-[13px] font-medium text-white">{t("inbox.loadingTitle", "Chargement de vos emails…")}</h3>
           </div>
         ) : sentEmails.length === 0 ? (
           <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">

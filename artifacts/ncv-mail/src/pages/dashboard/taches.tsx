@@ -217,7 +217,7 @@ export default function Taches() {
   const [replyText, setReplyText] = useState("");
   const [replyAttachments, setReplyAttachments] = useState<UploadedFile[]>([]);
 
-  const { data: tasks, isLoading } = useListTasks({ scope } as any);
+  const { data: tasks, isLoading } = useListTasks({ scope } as any, { query: { placeholderData: (prev: any) => prev } as any });
   const { data: myOrg } = useGetMyOrganisation();
   const { data: orgMembers } = useGetOrganisationMembers({ query: { enabled: !!(myOrg as any)?.id } as any });
   const orgMembersList: any[] = Array.isArray(orgMembers) ? orgMembers : [];
@@ -445,15 +445,10 @@ export default function Taches() {
 
         <div className="space-y-1.5">
           {isLoading ? (
-            Array(4).fill(0).map((_, i) => (
-              <div key={i} className="bg-card rounded-lg border border-border p-4 flex items-center gap-4">
-                <Skeleton className="w-5 h-5 rounded bg-white/5" />
-                <div className="flex-1">
-                  <Skeleton className="h-4 w-3/4 mb-2 bg-white/5" />
-                  <Skeleton className="h-3 w-1/4 bg-white/5" />
-                </div>
-              </div>
-            ))
+            <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border border-dashed bg-card/50">
+              <Loader2 className="w-6 h-6 text-primary animate-spin mb-3" />
+              <h3 className="text-[13px] font-medium text-white">{t("tasks.loadingTitle", "Chargement des tâches…")}</h3>
+            </div>
           ) : filteredTasks.length === 0 ? (
             <div className="text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
               <Plus className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
-import { BellOff, Mail, Clock } from "lucide-react";
+import { BellOff, Mail, Clock, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import {
@@ -97,7 +97,10 @@ export default function Reportes() {
           </div>
 
           {snoozedLoading ? (
-            <div className="text-[13px] text-[#8b9cb3]">…</div>
+            <div className="flex flex-col items-center justify-center py-12 border border-border border-dashed rounded-md bg-card/50">
+              <Loader2 className="w-5 h-5 text-primary animate-spin mb-2" />
+              <p className="text-[12px] text-[#8b9cb3]">{t("inbox.loadingTitle", "Chargement…")}</p>
+            </div>
           ) : snoozed.length === 0 ? (
             <div className="text-center py-8 border border-border rounded-md bg-card">
               <BellOff className="w-7 h-7 mx-auto text-[#8b9cb3] mb-2 opacity-50" />
