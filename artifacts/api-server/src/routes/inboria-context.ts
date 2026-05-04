@@ -530,7 +530,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
           const [profilesRes, connsRes] = await Promise.all([
             supabaseAdmin
               .from("profiles")
-              .select("id, full_name, email")
+              .select("id, full_name")
               .in("id", otherUserIds),
             supabaseAdmin
               .from("email_connections")
@@ -658,7 +658,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             const [profilesRes, connsRes] = await Promise.all([
               supabaseAdmin
                 .from("profiles")
-                .select("id, full_name, email")
+                .select("id, full_name")
                 .in("id", memberIds),
               supabaseAdmin
                 .from("email_connections")
@@ -1082,11 +1082,10 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         try {
           const { data: profs } = await supabaseAdmin
             .from("profiles")
-            .select("id, full_name, email")
+            .select("id, full_name")
             .in("id", assigneeUids);
           for (const p of (profs || []) as any[]) {
             const nm = String(p.full_name || "").trim()
-              || String(p.email || "").split("@")[0]
               || `membre #${String(p.id).slice(0, 8)}`;
             nameByUid.set(String(p.id), nm);
           }
