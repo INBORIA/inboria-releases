@@ -3970,7 +3970,7 @@ export default function Dashboard() {
   if (selectedEmail) {
     return (
       <DashboardLayout>
-        <div className="p-5 max-w-[1200px] mx-auto w-full flex flex-col md:flex-row gap-5">
+        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row gap-5">
           <div className="flex-1 min-w-0 max-w-[900px]">
             <EmailDetail
               email={selectedEmail}
@@ -4159,7 +4159,7 @@ export default function Dashboard() {
     <DashboardLayout>
       <div className="flex flex-col h-full">
         {assigneePageTitle && (
-          <div className="px-5 pt-4 pb-2 max-w-[1200px] mx-auto w-full">
+          <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-4 pb-2">
             <BackToInboxButton />
             <div className="mt-1">
               <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
@@ -4182,7 +4182,7 @@ export default function Dashboard() {
             dediee — cf. retour utilisateur du 1 mai 2026. */}
         {!assigneeFilter && (
         <div className="px-5 pt-4 pb-2.5 border-b border-border">
-          <div className="flex items-center gap-2 mb-2.5 max-w-[1200px] mx-auto">
+          <div className="flex items-center gap-2 mb-2.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8b9cb3]" />
               <Input
@@ -4251,7 +4251,7 @@ export default function Dashboard() {
 
           </div>
 
-          <div className="flex flex-wrap items-center gap-1 gap-y-1.5 max-w-[1200px] mx-auto mb-1.5">
+          <div className="flex flex-wrap items-center gap-1 gap-y-1.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mb-1.5">
               <button
                 onClick={() => {
                   setInboxMode("personal");
@@ -4385,7 +4385,7 @@ export default function Dashboard() {
               )}
             </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-[1200px] mx-auto">
+          <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8">
               <span className="text-[10px] text-[#8b9cb3] mr-1">{t("inbox.priority")}:</span>
               {[
                 { value: "all", label: t("inbox.allCategories") },
@@ -4482,7 +4482,7 @@ export default function Dashboard() {
 
           {(hasHubspot || hasPipedrive || hasSalesforce || hasOdoo) && (
             <div
-              className="flex flex-wrap items-center gap-1.5 max-w-[1200px] mx-auto mt-2"
+              className="flex flex-wrap items-center gap-1.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-2"
               data-testid="row-crm-filter"
             >
               <span className="text-[10px] text-[#8b9cb3] mr-1">{t("inbox.crmLabel")}:</span>
@@ -4553,7 +4553,7 @@ export default function Dashboard() {
         )}
 
         <div className="flex-1 overflow-auto">
-          <div className="p-5 max-w-[1200px] mx-auto flex flex-col md:flex-row gap-5">
+          <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row gap-5">
             <div className="flex-1 min-w-0">
               {inboxMode === "shared" ? (
                 <>
