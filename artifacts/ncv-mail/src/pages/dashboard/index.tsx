@@ -4806,12 +4806,11 @@ export default function Dashboard() {
 
                   <div className="space-y-1">
                     {emailsLoading ? (
-                      Array(5).fill(0).map((_, i) => (
-                        <div key={i} className="bg-card rounded-lg border border-border p-3">
-                          <Skeleton className="h-4 w-3/4 mb-2 bg-white/5" />
-                          <Skeleton className="h-3 w-1/2 bg-white/5" />
-                        </div>
-                      ))
+                      <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border border-dashed bg-card/50">
+                        <Loader2 className="w-6 h-6 text-primary animate-spin mb-3" />
+                        <h3 className="text-[13px] font-medium text-white">{t("inbox.loadingTitle", "Chargement de vos emails…")}</h3>
+                        <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.loadingDesc", "Inboria récupère vos derniers messages, un instant.")}</p>
+                      </div>
                     ) : activeEmails?.length === 0 ? (
                       <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
                         {crmFilter === "hubspot" ? (
