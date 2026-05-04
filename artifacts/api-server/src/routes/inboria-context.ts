@@ -509,7 +509,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
 
     // Load all teammates across the shared mailboxes the user belongs to,
     // so the assistant can answer "who is X on my team?" questions.
-    let teammates: Array<{ fullName: string; email: string; mailboxLabel: string }> = [];
+    let teammates: Array<{ uid: string; fullName: string; email: string; mailboxLabel: string }> = [];
     try {
       if (memberMailboxIds.length > 0) {
         const { data: memberRows } = await supabaseAdmin
@@ -573,6 +573,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
               || (fallbackAddr ? localPart(fallbackAddr) : "")
               || `membre #${uid.slice(0, 8)}`;
             teammates.push({
+              uid,
               fullName: friendlyName,
               email: fallbackAddr,
               mailboxLabel: mailboxNameById.get(String((row as any).shared_mailbox_id)) || "",
@@ -1153,6 +1154,105 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     // contact n'apparait peut-etre meme pas dans les 25 mails recents.
     const lastUserMsg = cleanMessages[cleanMessages.length - 1]?.content || "";
     const targetEmails = extractContactEmails(lastUserMsg, 2);
+
+    // Match teammate name in user query (ex. "Richard Martin") -> on
+    // resoud directement vers son email/uid quand le nom NE matche PAS
+    // l'adresse (cas frequent : alias pro != prenom). Pousse l'email
+    // dans targetEmails + charge ses mails assignes pour le memory.
+    const matchedTeammates: Array<{ uid: string; fullName: string; email: string }> = [];
+    {
+      const lcMsg = lastUserMsg.toLowerCase();
+      for (const tm of teammates) {
+        const fn = (tm.fullName || "").toLowerCase().trim();
+        if (!fn) continue;
+        const parts = fn.split(/\s+/).filter((p) => p.length >= 3);
+        const fullHit = fn.length >= 3 && lcMsg.includes(fn);
+        const partHit = parts.some((p) => new RegExp(`\\b${p.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}\\b`, "i").test(lastUserMsg));
+        if (fullHit || partHit) {
+          if (!matchedTeammates.find((m) => m.uid === tm.uid)) {
+            matchedTeammates.push({ uid: tm.uid, fullName: tm.fullName, email: tm.email });
+            if (tm.email && !targetEmails.includes(tm.email.toLowerCase())) {
+              targetEmails.push(tm.email.toLowerCase());
+            }
+          }
+        }
+      }
+    }
+    // Pour chaque coequipier mentionne, charge ses mails assignes
+    // (assigned_to_user_id = son uid) + ses taches en cours, pour que
+    // le LLM puisse repondre "qu'a Richard Martin sur sa pile ?".
+    const teammateWorkload: Array<{
+      fullName: string;
+      email: string;
+      mails: Array<{ subject: string; sender: string; date: string }>;
+      tasks: Array<{ title: string; due: string }>;
+    }> = [];
+    if (matchedTeammates.length > 0) {
+      for (const tm of matchedTeammates) {
+        try {
+          const [mailsRes, tasksRes] = await Promise.all([
+            supabaseAdmin
+              .from("emails")
+              .select("subject, sender, created_at")
+              .eq("assigned_to_user_id", tm.uid)
+              .or(emailScopeFilter)
+              .order("created_at", { ascending: false })
+              .limit(15),
+            supabaseAdmin
+              .from("tasks")
+              .select("title, due_date")
+              .eq("assigned_to_user_id", tm.uid)
+              .eq("done", false)
+              .order("created_at", { ascending: false })
+              .limit(15),
+          ]);
+          teammateWorkload.push({
+            fullName: tm.fullName,
+            email: tm.email,
+            mails: ((mailsRes.data as any[]) || []).map((m) => ({
+              subject: String(m.subject || "(sans objet)"),
+              sender: String(m.sender || "(inconnu)"),
+              date: String(m.created_at || ""),
+            })),
+            tasks: ((tasksRes.data as any[]) || []).map((t) => ({
+              title: String(t.title || ""),
+              due: String(t.due_date || ""),
+            })),
+          });
+        } catch (err: any) {
+          req.log.warn(
+            { err: err?.message, uid: tm.uid },
+            "[inboria-chat] teammate workload fetch failed",
+          );
+        }
+      }
+    }
+
+    if (teammateWorkload.length > 0) {
+      for (const tw of teammateWorkload) {
+        const ident = tw.email ? `${tw.fullName} <${tw.email}>` : tw.fullName;
+        memoryLines.push(`Pile de ${ident} :`);
+        if (tw.mails.length > 0) {
+          memoryLines.push(`  Mails assignes a ${tw.fullName} (${tw.mails.length}) :`);
+          for (const m of tw.mails) {
+            const d = m.date ? ` (${fmtShortDate(m.date)})` : "";
+            memoryLines.push(`  - ${truncate(m.subject, 70)} — de ${truncate(m.sender, 40)}${d}`);
+          }
+        } else {
+          memoryLines.push(`  Mails assignes a ${tw.fullName} : aucun.`);
+        }
+        if (tw.tasks.length > 0) {
+          memoryLines.push(`  Taches assignees a ${tw.fullName} (${tw.tasks.length}) :`);
+          for (const t of tw.tasks) {
+            const due = t.due ? ` (echeance ${fmtShortDate(t.due)})` : "";
+            memoryLines.push(`  - ${truncate(t.title, 80)}${due}`);
+          }
+        } else {
+          memoryLines.push(`  Taches assignees a ${tw.fullName} : aucune.`);
+        }
+        memoryLines.push("");
+      }
+    }
     // Helper : extrait l'adresse pure d'un champ "Nom <email@x>" pour
     // filtrer par EGALITE stricte plutot qu'avec un ILIKE substring (evite
     // toute contamination type "marc@acme.com" matchant "marc@acme.com.fr").
