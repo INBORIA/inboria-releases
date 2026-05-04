@@ -160,7 +160,7 @@ export default function Indesirables() {
   if (selectedEmail) {
     return (
       <DashboardLayout>
-        <div className="p-5 max-w-[900px] mx-auto w-full">
+        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
           <div className="flex items-center gap-3 mb-4">
             <Button
               variant="ghost"
@@ -239,7 +239,7 @@ export default function Indesirables() {
 
   return (
     <DashboardLayout>
-      <div className="p-5 max-w-[900px] mx-auto w-full">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <div className="mb-2">
           <Link href="/dashboard">
             <Button

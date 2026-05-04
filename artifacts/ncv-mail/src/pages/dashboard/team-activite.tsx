@@ -205,7 +205,7 @@ export default function TeamActivitePage() {
   if (isError) {
     return (
       <DashboardLayout>
-        <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-5">
+        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-5">
           <BackToInboxButton />
           <div className="bg-[#141c2b] border border-red-500/30 rounded-lg p-8 text-center text-[12px] text-red-300">
             {t("teamActivity.loadError")}
@@ -217,7 +217,7 @@ export default function TeamActivitePage() {
 
   return (
     <DashboardLayout>
-      <div className="max-w-5xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-5">
+      <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-5">
         <BackToInboxButton />
         <div>
           <h1 className="text-xl font-bold text-white">{t("teamActivity.title")}</h1>
