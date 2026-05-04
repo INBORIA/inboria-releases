@@ -292,7 +292,7 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
                 value={lastTextColor}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 onMouseDown={(e) => { e.stopPropagation(); saveSelection(); }}
-                onChange={(e) => { applyColor(e.target.value); setTextColorOpen(false); }}
+                onChange={(e) => { applyColor(e.target.value); }}
               />
             </div>
           </PopoverContent>
@@ -332,7 +332,7 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
                 value={lastHighlight === "transparent" ? "#ffff00" : lastHighlight}
                 className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 onMouseDown={(e) => { e.stopPropagation(); saveSelection(); }}
-                onChange={(e) => { applyHighlight(e.target.value); setHighlightOpen(false); }}
+                onChange={(e) => { applyHighlight(e.target.value); }}
               />
             </div>
           </PopoverContent>
