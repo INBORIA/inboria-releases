@@ -1015,17 +1015,25 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
     let trackingPixelId: string | null = null;
     let bodyForSend: string = body;
     let useHtml: boolean = false;
+    // Detect rich-text body (compose/reply/forward via the rich editor stores HTML).
+    const bodyIsHtml: boolean = /<[a-z][\s\S]*>/i.test(body || "");
+    if (bodyIsHtml) {
+      bodyForSend = body;
+      useHtml = true;
+    }
     if (trackingEnabled && wave1Supported && (!ids || ids.length === 0)) {
       try {
         const { randomUUID } = await import("crypto");
         trackingPixelId = randomUUID();
         const { getBackendUrl } = await import("../lib/urls");
         const pixelUrl = `${getBackendUrl()}/api/track/open/${encodeURIComponent(trackingPixelId)}.gif`;
-        const escaped = body
-          .split("\n")
-          .map((line: string) => line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"))
-          .join("<br>");
-        bodyForSend = `${escaped}<img src="${pixelUrl}" width="1" height="1" alt="" style="display:none;border:0;width:1px;height:1px" />`;
+        const baseHtml = bodyIsHtml
+          ? body
+          : body
+              .split("\n")
+              .map((line: string) => line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"))
+              .join("<br>");
+        bodyForSend = `${baseHtml}<img src="${pixelUrl}" width="1" height="1" alt="" style="display:none;border:0;width:1px;height:1px" />`;
         useHtml = true;
       } catch (e: any) {
         console.warn("[tracking-pixel] failed to build pixel:", e?.message);
@@ -1093,7 +1101,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
         .map((line: string) => line.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"))
         .join("<br>");
       const sep = `<br><br>-- <br>`;
-      // If we already escaped for tracking pixel, bodyForSend is HTML; preserve it.
+      // If body was already HTML (rich editor or tracking pixel), preserve it.
       const baseHtml = useHtml ? bodyForSend : escapedBody;
       bodyForSend = `${baseHtml}${sep}${sigRaw}`;
       useHtml = true;

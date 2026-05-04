@@ -61,9 +61,11 @@ type Props = {
   value: string;
   onChange: (html: string) => void;
   placeholder?: string;
+  hideHint?: boolean;
+  minHeight?: number;
 };
 
-export function SignatureEditor({ value, onChange, placeholder }: Props) {
+export function SignatureEditor({ value, onChange, placeholder, hideHint, minHeight }: Props) {
   const { t } = useTranslation();
   const { toast } = useToast();
   const editorRef = useRef<HTMLDivElement>(null);
@@ -361,11 +363,14 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
         onKeyUp={saveSelection}
         onMouseUp={saveSelection}
         data-placeholder={placeholder || ""}
-        className={`signature-editor min-h-[140px] rounded-md border bg-card px-3 py-2 text-[12px] text-white outline-none ${isFocused ? "border-primary/50" : "border-border"}`}
+        style={minHeight ? { minHeight: `${minHeight}px` } : undefined}
+        className={`signature-editor ${minHeight ? "" : "min-h-[140px]"} rounded-md border bg-card px-3 py-2 text-[13px] text-white outline-none ${isFocused ? "border-primary/50" : "border-border"}`}
       />
-      <p className="text-[10px] text-[#8b9cb3]">
-        {t("signature.imageHint", "Astuce : insérez un logo PNG/JPG (max 200 Ko). L'image est intégrée directement dans la signature.")}
-      </p>
+      {!hideHint && (
+        <p className="text-[10px] text-[#8b9cb3]">
+          {t("signature.imageHint", "Astuce : insérez un logo PNG/JPG (max 200 Ko). L'image est intégrée directement dans la signature.")}
+        </p>
+      )}
     </div>
   );
 }

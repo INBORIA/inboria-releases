@@ -7,6 +7,7 @@ import { TaskAssigneePicker } from "@/components/task-assignee-picker";
 import { AttachmentList, AttachmentBadge } from "@/components/AttachmentList";
 import { FileAttachInput, type UploadedFile } from "@/components/FileAttachInput";
 import { TemplateSuggestionBar } from "@/components/templates/template-suggestion-bar";
+import { SignatureEditor } from "@/components/signature/signature-editor";
 import { SaveAsTemplateButton } from "@/components/templates/save-as-template-button";
 import {
   useListEmails,
@@ -301,15 +302,12 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
         )}
         <div className="flex flex-col flex-1 min-h-0">
           <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.message")}</label>
-          <Textarea
+          <SignatureEditor
             value={body}
-            onChange={(e) => setBody(e.target.value)}
+            onChange={setBody}
             placeholder={t("inbox.message")}
-            className={
-              isFullscreen
-                ? "bg-background border-border text-white text-[13px] flex-1 min-h-[300px] resize-none"
-                : "bg-background border-border text-white text-[13px] min-h-[260px] resize-y"
-            }
+            hideHint
+            minHeight={isFullscreen ? 300 : 260}
           />
         </div>
         <FileAttachInput files={attachments} onChange={setAttachments} />

@@ -12,8 +12,15 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { SignatureEditor } from "@/components/signature/signature-editor";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
+
+const plainTextToHtml = (s: string): string =>
+  (s || "")
+    .split("\n")
+    .map((l) => l.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;"))
+    .join("<br>");
 
 import { extractEmailAddress } from "@/lib/utils";
 import { translateCategoryName } from "@/lib/category-translations";
@@ -579,7 +586,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       setReplyConnectionId(defConn);
                       setReplyProjectId(email.project_id ? String(email.project_id) : "");
                       const sig = signatureForConnection(defConn);
-                      setReplyText(sig ? `\n\n-- \n${sig}` : "");
+                      setReplyText(sig ? plainTextToHtml(`\n\n-- \n${sig}`) : "");
                     }
                     setReplyOpen(!replyOpen);
                   }}
@@ -622,7 +629,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       const sig = signatureForConnection(defConn);
                       const sigBlock = sig ? `\n\n-- \n${sig}` : "";
                       const citation = buildForwardCitation(email, t, dateFnsLocale);
-                      setForwardText(`${sigBlock}\n\n${citation}`);
+                      setForwardText(plainTextToHtml(`${sigBlock}\n\n${citation}`));
                       setForwardAttachments([]);
                     }
                     setForwardOpen(!forwardOpen);
@@ -661,7 +668,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       const sig = signatureForConnection(defConn);
                       const sigBlock = sig && !intro.includes(sig) ? `\n\n-- \n${sig}` : "";
                       const citation = buildForwardCitation(email, t, dateFnsLocale);
-                      setForwardText(`${intro}${sigBlock}\n\n${citation}`);
+                      setForwardText(plainTextToHtml(`${intro}${sigBlock}\n\n${citation}`));
                       if (resp.ok) {
                         queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
                       }
@@ -1106,17 +1113,12 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 </div>
                 <div>
                   <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
-                  <Textarea
+                  <SignatureEditor
                     value={replyText}
-                    onChange={(e) => setReplyText(e.target.value)}
+                    onChange={setReplyText}
                     placeholder={t("inbox.replyPlaceholder")}
-                    ref={(el) => {
-                      if (el) {
-                        el.style.height = "auto";
-                        el.style.height = Math.max(480, el.scrollHeight) + "px";
-                      }
-                    }}
-                    className="min-h-[480px] bg-background border-border text-white text-[14px] leading-relaxed resize-y overflow-hidden"
+                    hideHint
+                    minHeight={480}
                   />
                 </div>
                 <div className="flex items-center gap-2 justify-between">
@@ -1247,17 +1249,12 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 </div>
                 <div>
                   <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
-                  <Textarea
+                  <SignatureEditor
                     value={forwardText}
-                    onChange={(e) => setForwardText(e.target.value)}
+                    onChange={setForwardText}
                     placeholder={t("inbox.replyPlaceholder")}
-                    ref={(el) => {
-                      if (el) {
-                        el.style.height = "auto";
-                        el.style.height = Math.max(480, el.scrollHeight) + "px";
-                      }
-                    }}
-                    className="min-h-[480px] bg-background border-border text-white text-[14px] leading-relaxed resize-y overflow-hidden"
+                    hideHint
+                    minHeight={480}
                   />
                 </div>
                 {Array.isArray(email?.attachments) && email.attachments.length > 0 && (
