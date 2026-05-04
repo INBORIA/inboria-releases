@@ -1186,6 +1186,14 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       mails: Array<{ subject: string; sender: string; date: string }>;
       tasks: Array<{ title: string; due: string }>;
     }> = [];
+    req.log.info(
+      {
+        teammates: teammates.map((t) => ({ uid: t.uid, name: t.fullName, email: t.email })),
+        matched: matchedTeammates.map((m) => ({ uid: m.uid, name: m.fullName })),
+        msg: lastUserMsg,
+      },
+      "[inboria-chat] teammate match debug",
+    );
     if (matchedTeammates.length > 0) {
       for (const tm of matchedTeammates) {
         try {
