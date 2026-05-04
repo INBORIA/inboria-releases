@@ -3157,7 +3157,7 @@ export default function Dashboard() {
   const { data: sharedEmailsData, isLoading: sharedEmailsLoading, isFetching: sharedFetching } = useGetSharedMailboxEmails(
     selectedSharedMailboxId || "",
     { page: sharedPage, limit: 50 },
-    { query: { enabled: !!selectedSharedMailboxId && inboxMode === "shared" } as any }
+    { query: { enabled: !!selectedSharedMailboxId && inboxMode === "shared", placeholderData: (prev: any) => prev } as any }
   );
   const sharedPaged = sharedEmailsData as PaginatedSharedMailboxEmails | undefined;
   const sharedHasMore = sharedPaged ? sharedPage < (sharedPaged.totalPages ?? 1) : false;
@@ -3192,7 +3192,9 @@ export default function Dashboard() {
     if (prevFilterKey.current !== currentFilterKey) {
       prevFilterKey.current = currentFilterKey;
       setEmailPage(1);
-      setAccumulatedEmails([]);
+      // Note: on ne vide PAS accumulatedEmails ici. La nouvelle requête
+      // remplacera les emails (page === 1 → setAccumulatedEmails(newEmails)),
+      // ce qui évite un flash "liste vide → liste pleine" pendant le fetch.
     }
   }, [currentFilterKey]);
 
@@ -3204,7 +3206,7 @@ export default function Dashboard() {
     limit: 200,
     ...(crmFilter ? { crmFilter } : {}),
     ...(smartSort ? { sort: "smart" as const } : {}),
-  });
+  }, { query: { placeholderData: (prev: any) => prev } as any });
 
   useEffect(() => {
     if (emailsData) {
