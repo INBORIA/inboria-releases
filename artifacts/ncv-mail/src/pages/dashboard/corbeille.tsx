@@ -41,7 +41,7 @@ export default function Corbeille() {
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
   const [emptyConfirmOpen, setEmptyConfirmOpen] = useState(false);
 
-  const { data, isLoading } = useListEmails({ status: "trashed", limit: 200, page: 1 });
+  const { data, isLoading } = useListEmails({ status: "trashed", limit: 200, page: 1 }, { query: { placeholderData: (prev: any) => prev } as any });
   const paged = data as PaginatedEmails | undefined;
   const emails = useMemo(() => (paged?.emails || []) as Email[], [paged]);
 
@@ -190,10 +190,9 @@ export default function Corbeille() {
         </div>
 
         {isLoading ? (
-          <div className="space-y-1">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <Skeleton key={i} className="h-10 w-full" />
-            ))}
+          <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border border-dashed bg-card/50">
+            <Loader2 className="w-6 h-6 text-primary animate-spin mb-3" />
+            <h3 className="text-[13px] font-medium text-white">{t("inbox.loadingTitle", "Chargement…")}</h3>
           </div>
         ) : emails.length === 0 ? (
           <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
