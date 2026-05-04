@@ -1,5 +1,5 @@
-import { useState, useRef, useEffect, useCallback } from "react";
-import { Sparkles, Send, Loader2, Bot, User as UserIcon, Mail } from "lucide-react";
+import { useState, useRef, useEffect, useCallback, memo } from "react";
+import { Sparkles, Send, Loader2, Bot, User as UserIcon, Mail, Pencil, Check, AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -14,6 +14,78 @@ import { cn } from "@/lib/utils";
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
+}
+
+interface InboriaDraft {
+  to: string;
+  subject: string;
+  body: string;
+}
+
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+// Parse a fenced `inboria-draft` block (YAML-like) inside an assistant message.
+// Returns { draft, before, after } when found, otherwise { draft: null }.
+function extractDraft(text: string): {
+  draft: InboriaDraft | null;
+  before: string;
+  after: string;
+} {
+  const fenceRe = /```inboria-draft\s*\n([\s\S]*?)```/i;
+  const m = fenceRe.exec(text);
+  if (!m) return { draft: null, before: text, after: "" };
+  const before = text.slice(0, m.index).trim();
+  const after = text.slice(m.index + m[0].length).trim();
+  const inner = m[1].replace(/\r/g, "");
+  const lines = inner.split("\n");
+  let to = "";
+  let subject = "";
+  let body = "";
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i] ?? "";
+    const toM = /^to\s*:\s*(.*)$/i.exec(line);
+    const subjM = /^subject\s*:\s*(.*)$/i.exec(line);
+    const bodyM = /^body\s*:\s*\|?\s*$/i.exec(line);
+    if (toM) {
+      to = toM[1].trim().replace(/^[<\[]+|[>\]]+$/g, "");
+      i++;
+    } else if (subjM) {
+      subject = subjM[1].trim();
+      i++;
+    } else if (bodyM) {
+      i++;
+      const bodyLines: string[] = [];
+      // Determine indent from first non-empty line
+      let indent = -1;
+      while (i < lines.length) {
+        const bl = lines[i] ?? "";
+        if (indent < 0 && bl.trim() === "") {
+          bodyLines.push("");
+          i++;
+          continue;
+        }
+        if (indent < 0) {
+          const lead = bl.match(/^(\s*)/)?.[1] ?? "";
+          indent = lead.length > 0 ? lead.length : 0;
+        }
+        if (bl.trim() === "") {
+          bodyLines.push("");
+          i++;
+          continue;
+        }
+        const lead = bl.match(/^(\s*)/)?.[1].length ?? 0;
+        if (lead < indent && bl.trim() !== "") break;
+        bodyLines.push(bl.slice(indent));
+        i++;
+      }
+      body = bodyLines.join("\n").replace(/\s+$/, "");
+    } else {
+      i++;
+    }
+  }
+  if (!to && !subject && !body) return { draft: null, before: text, after: "" };
+  return { draft: { to, subject, body }, before, after };
 }
 
 // Parse "[mail#1234]" markers in assistant replies and render them as
@@ -49,6 +121,141 @@ function renderAssistantContent(
   return parts.length > 0 ? parts : text;
 }
 
+interface DraftCardProps {
+  draft: InboriaDraft;
+  accessToken: string;
+  baseUrl: string;
+  onEdit: (d: InboriaDraft) => void;
+  onSent: () => void;
+}
+
+const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, onEdit, onSent }: DraftCardProps) {
+  const [stage, setStage] = useState<"idle" | "confirm" | "sending" | "sent" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState<string>("");
+  const [sentAt, setSentAt] = useState<string>("");
+
+  const toValid = EMAIL_RE.test(draft.to.trim());
+  const blockReason = !toValid
+    ? draft.to.trim()
+      ? "Adresse destinataire invalide — ouvrez Modifier pour corriger."
+      : "Destinataire manquant — ouvrez Modifier pour le compléter."
+    : "";
+
+  const doSend = async () => {
+    setStage("sending");
+    setErrorMsg("");
+    try {
+      const res = await fetch(`${baseUrl}/api/emails/send`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({ to: draft.to.trim(), subject: draft.subject, body: draft.body }),
+      });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody?.error || "Échec de l'envoi");
+      }
+      const now = new Date();
+      setSentAt(now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }));
+      setStage("sent");
+      onSent();
+    } catch (err: any) {
+      setErrorMsg(String(err?.message || "Échec de l'envoi"));
+      setStage("error");
+    }
+  };
+
+  if (stage === "sent") {
+    return (
+      <div className="my-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-2.5 text-emerald-200 text-xs flex items-center gap-2">
+        <Check className="h-4 w-4 shrink-0" />
+        <span>Envoyé à <strong>{draft.to.trim()}</strong> à {sentAt}</span>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="my-2 rounded-xl border border-purple-500/30 bg-zinc-900/80 overflow-hidden"
+      data-testid="inboria-draft-card"
+    >
+      <div className="px-3 py-2 border-b border-zinc-800 flex items-center gap-2">
+        <Mail className="h-3.5 w-3.5 text-purple-300" />
+        <span className="text-[11px] uppercase tracking-wide text-purple-300 font-semibold">Brouillon prêt</span>
+      </div>
+      <div className="px-3 py-2.5 space-y-1.5 text-xs">
+        <div className="flex gap-2">
+          <span className="text-zinc-500 w-12 shrink-0">À</span>
+          <span className={cn("break-all", toValid ? "text-zinc-100" : "text-amber-300")}>{draft.to.trim() || "(vide)"}</span>
+        </div>
+        <div className="flex gap-2">
+          <span className="text-zinc-500 w-12 shrink-0">Objet</span>
+          <span className="text-zinc-100 break-words">{draft.subject || "(sans objet)"}</span>
+        </div>
+        <div className="pt-1.5 border-t border-zinc-800/70">
+          <pre className="text-zinc-300 text-xs whitespace-pre-wrap break-words font-sans max-h-32 overflow-y-auto">
+            {draft.body}
+          </pre>
+        </div>
+      </div>
+      {blockReason && (
+        <div className="px-3 py-2 border-t border-amber-500/30 bg-amber-500/10 text-amber-200 text-[11px] flex gap-2 items-start">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+          <span>{blockReason}</span>
+        </div>
+      )}
+      {stage === "error" && (
+        <div className="px-3 py-2 border-t border-red-500/30 bg-red-500/10 text-red-200 text-[11px] flex gap-2 items-start">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+      {stage === "confirm" && (
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-900 text-zinc-300 text-[11px] space-y-2">
+          <div>Envoyer ce mail à <strong className="text-zinc-100">{draft.to.trim()}</strong> depuis votre boîte connectée principale ?</div>
+          <div className="flex gap-2">
+            <Button size="sm" className="h-7 text-xs bg-purple-600 hover:bg-purple-700 flex-1" onClick={doSend} data-testid="inboria-draft-confirm">
+              Confirmer l'envoi
+            </Button>
+            <Button size="sm" variant="ghost" className="h-7 text-xs text-zinc-400" onClick={() => setStage("idle")}>
+              Annuler
+            </Button>
+          </div>
+        </div>
+      )}
+      {(stage === "idle" || stage === "error") && (
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-950/60 flex gap-2">
+          <Button
+            size="sm"
+            className="h-7 text-xs bg-purple-600 hover:bg-purple-700 flex-1 disabled:opacity-50"
+            onClick={() => setStage("confirm")}
+            disabled={!toValid}
+            data-testid="inboria-draft-send"
+          >
+            <Send className="h-3 w-3 mr-1" />
+            Envoyer
+          </Button>
+          <Button
+            size="sm"
+            variant="outline"
+            className="h-7 text-xs border-zinc-700 text-zinc-200 hover:bg-zinc-800"
+            onClick={() => onEdit(draft)}
+            data-testid="inboria-draft-edit"
+          >
+            <Pencil className="h-3 w-3 mr-1" />
+            Modifier
+          </Button>
+        </div>
+      )}
+      {stage === "sending" && (
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-950/60 flex items-center justify-center text-xs text-zinc-300 gap-2">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          Envoi en cours…
+        </div>
+      )}
+    </div>
+  );
+});
+
 export function InboriaChatButton() {
   const { t } = useTranslation();
   const { session } = useAuth();
@@ -56,6 +263,20 @@ export function InboriaChatButton() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+
+  const openComposeWithDraft = useCallback(
+    (d: InboriaDraft) => {
+      try {
+        sessionStorage.setItem(
+          "inboria.compose.prefill",
+          JSON.stringify({ to: d.to.trim(), subject: d.subject, body: d.body }),
+        );
+      } catch {}
+      setLocation(`/dashboard?compose=1`);
+      setIsOpen(false);
+    },
+    [setLocation],
+  );
 
   const openMail = useCallback(
     (id: number) => {
@@ -243,9 +464,27 @@ export function InboriaChatButton() {
                     : "bg-zinc-800 text-zinc-100 rounded-bl-sm",
                 )}
               >
-                {m.role === "assistant"
-                  ? renderAssistantContent(m.content, openMail)
-                  : m.content}
+                {m.role === "assistant" ? (() => {
+                  const { draft, before, after } = extractDraft(m.content);
+                  if (!draft) return renderAssistantContent(m.content, openMail);
+                  return (
+                    <>
+                      {before && <div>{renderAssistantContent(before, openMail)}</div>}
+                      {session?.access_token && (
+                        <DraftCard
+                          draft={draft}
+                          accessToken={session.access_token}
+                          baseUrl={import.meta.env.BASE_URL.replace(/\/$/, "")}
+                          onEdit={openComposeWithDraft}
+                          onSent={() => {
+                            toast({ title: "Mail envoyé" });
+                          }}
+                        />
+                      )}
+                      {after && <div>{renderAssistantContent(after, openMail)}</div>}
+                    </>
+                  );
+                })() : m.content}
               </div>
               {m.role === "user" && (
                 <div className="h-7 w-7 shrink-0 rounded-full bg-zinc-700 flex items-center justify-center">
