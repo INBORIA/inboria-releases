@@ -198,11 +198,10 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
   const applyColor = (color: string) => {
     setLastTextColor(color);
     exec("foreColor", color);
+    saveSelection();
   };
   const applyHighlight = (color: string) => {
     setLastHighlight(color);
-    // 'hiliteColor' is the modern command name; some browsers (Firefox) use it,
-    // others (Chrome, Edge) accept it as well. Fallback to 'backColor' if needed.
     const value = color === "transparent" ? "transparent" : color;
     restoreSelection();
     editorRef.current?.focus();
@@ -211,6 +210,7 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
       document.execCommand("backColor", false, value);
     }
     if (editorRef.current) onChange(editorRef.current.innerHTML);
+    saveSelection();
   };
 
   return (
