@@ -7,9 +7,22 @@ import {
   useUpdateEmail,
   useDeleteEmail,
   useGetEmailConversation,
-  useGetConversationSummary,
+  useGetCategoryCounts,
+  useGetOrganisationMembers,
+  useGetSharedMailboxes,
+  useGetProfile,
+  useAssignEmail,
+  useUnassignEmail,
+  useSendEmail,
+  useGenerateDraft,
+  useCreateTask,
   getListEmailsQueryKey,
+  getGetProfileQueryKey,
+  getListTasksQueryKey,
 } from "@workspace/api-client-react";
+import { useQuery } from "@tanstack/react-query";
+import { EmailDetail } from "@/components/email-detail/EmailDetail";
+import type { UploadedFile } from "@/components/FileAttachInput";
 import type { PaginatedEmails } from "@workspace/api-client-react";
 import { format } from "date-fns";
 import { fr, enUS, nl } from "date-fns/locale";
@@ -198,11 +211,10 @@ export default function Envoyes() {
     return (
       <DashboardLayout>
         <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
-          <ConversationView
+          <SentEmailDetailView
             emailId={selectedEmailId}
             onBack={() => setSelectedEmailId(null)}
             projects={projects || []}
-            onUpdateProject={handleUpdateProject}
           />
         </div>
       </DashboardLayout>
@@ -406,42 +418,140 @@ export default function Envoyes() {
   );
 }
 
-function ConversationView({
+// Vue détail Envoyés alignée sur la Réception : utilise EmailDetail pour
+// garantir une expérience identique (en-tête, actions, dropdowns, fil de
+// conversation, notes internes, panneaux CRM).
+function SentEmailDetailView({
   emailId,
   onBack,
   projects,
-  onUpdateProject,
 }: {
   emailId: number;
   onBack: () => void;
   projects: any[];
-  onUpdateProject: (id: number, projectId: string) => void;
 }) {
-  const { t, i18n } = useTranslation();
-  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const { data: convoData, isLoading } = useGetEmailConversation(emailId);
-  const [aiSummary, setAiSummary] = useState<string | null>(null);
-  const [loadingSummary, setLoadingSummary] = useState(false);
-  const summaryMut = useGetConversationSummary();
-
-  const thread = (convoData as any)?.thread || [];
   const email = (convoData as any)?.email;
 
-  const handleGenerateSummary = async () => {
-    if (thread.length === 0) return;
-    setLoadingSummary(true);
-    try {
-      const result = await summaryMut.mutateAsync({ data: { thread } });
-      setAiSummary((result as any)?.summary || "");
-    } catch {
-      setAiSummary(t("sent.summaryError"));
-    }
-    setLoadingSummary(false);
+  const { data: profile } = useGetProfile();
+  const { data: categoryCounts } = useGetCategoryCounts({ scope: "personal" as const });
+  const { data: orgMembers } = useGetOrganisationMembers();
+  const { data: sharedMailboxes } = useGetSharedMailboxes();
+  const { data: composeConnections } = useQuery<Array<{ id: string; provider: string; email_address: string; signature?: string | null }>>({
+    queryKey: ["email-connections-compose"],
+    queryFn: async () => {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const res = await fetch(`${import.meta.env.BASE_URL}api/email/connections`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+
+  const updateEmail = useUpdateEmail();
+  const deleteEmail = useDeleteEmail();
+  const assignEmailMut = useAssignEmail();
+  const unassignEmailMut = useUnassignEmail();
+  const sendEmailMut = useSendEmail();
+  const generateDraftMut = useGenerateDraft();
+  const createTaskMut = useCreateTask();
+
+  const invalidateAll = () => {
+    queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
   };
 
-  if (isLoading) {
+  const handleMarkRead = (id: number) => {
+    updateEmail.mutate({ id, data: { status: "read" } }, { onSuccess: invalidateAll });
+  };
+  const handleArchive = (id: number) => {
+    updateEmail.mutate({ id, data: { status: "archived" } }, {
+      onSuccess: () => { invalidateAll(); onBack(); toast({ title: t("inbox.emailArchived") }); },
+    });
+  };
+  const handleDelete = (id: number) => {
+    deleteEmail.mutate({ id }, {
+      onSuccess: () => { invalidateAll(); onBack(); toast({ title: t("inbox.emailDeleted") }); },
+    });
+  };
+  const handleUpdatePriority = (id: number, priority: string) => {
+    updateEmail.mutate({ id, data: { priority } as any }, {
+      onSuccess: () => { invalidateAll(); toast({ title: t("inbox.priorityChanged") }); },
+    });
+  };
+  const handleUpdateCategory = (id: number, categoryId: string) => {
+    updateEmail.mutate({ id, data: { categoryId: categoryId === "none" ? null : parseInt(categoryId) } }, {
+      onSuccess: () => { invalidateAll(); toast({ title: t("inbox.categoryUpdated") }); },
+    });
+  };
+  const handleUpdateProject = (id: number, projectId: string) => {
+    updateEmail.mutate({ id, data: { projectId: projectId === "none" ? null : projectId } as any }, {
+      onSuccess: () => { invalidateAll(); toast({ title: t("inbox.projectUpdated") }); },
+    });
+  };
+  const handleAssign = (eId: number, userId: string) => {
+    assignEmailMut.mutate({ emailId: eId, data: { assignTo: userId } }, {
+      onSuccess: (r: any) => { invalidateAll(); toast({ title: t("inbox.assignSuccess"), description: r?.assignedToName || "" }); },
+      onError: () => toast({ variant: "destructive", title: t("common.error") }),
+    });
+  };
+  const handleUnassign = (eId: number) => {
+    unassignEmailMut.mutate({ emailId: eId }, {
+      onSuccess: () => { invalidateAll(); toast({ title: t("inbox.unassignSuccess") }); },
+      onError: () => toast({ variant: "destructive", title: t("common.error") }),
+    });
+  };
+  const handleCreateTask = async (eId: number, title: string, projectId?: string, assigneeUserIds?: string[]) => {
+    const assignees = assigneeUserIds && assigneeUserIds.length > 0 ? assigneeUserIds : [null];
+    try {
+      for (const a of assignees) {
+        await createTaskMut.mutateAsync({
+          data: { title, emailId: eId, projectId: projectId || undefined, ...(a ? { assignedToUserId: a } : {}) } as any,
+        });
+      }
+      if (projectId) {
+        updateEmail.mutate({ id: eId, data: { projectId } }, { onSuccess: invalidateAll });
+      } else {
+        invalidateAll();
+      }
+      queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+      toast({ title: t("inbox.taskCreated") });
+    } catch {
+      toast({ variant: "destructive", title: t("common.error"), description: t("inbox.taskCreateError") });
+    }
+  };
+  const handleSendReply = (to: string, subject: string, body: string, replyToEmailId?: number, attachments?: UploadedFile[], connectionId?: string, projectId?: string, markHandledOfEmailId?: number) => {
+    const uploadIds = attachments?.map((a) => a.uploadId).filter(Boolean);
+    const data: any = {
+      to, subject, body,
+      replyToEmailId: replyToEmailId ?? null,
+      attachments: uploadIds && uploadIds.length > 0 ? uploadIds : undefined,
+    };
+    if (connectionId) data.connectionId = connectionId;
+    if (projectId) data.projectId = projectId;
+    if (markHandledOfEmailId) data.markHandledOfEmailId = markHandledOfEmailId;
+    sendEmailMut.mutate({ data }, {
+      onSuccess: () => { invalidateAll(); toast({ title: t("inbox.emailSent") }); },
+      onError: (err: any) => toast({ variant: "destructive", title: t("common.error"), description: err?.data?.error || err?.message || t("inbox.sendError") }),
+    });
+  };
+  const handleGenerateDraft = (eId: number, callback: (draft: string) => void) => {
+    generateDraftMut.mutate({ data: { emailId: eId } }, {
+      onSuccess: (data: any) => {
+        callback(data.draft);
+        queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+        toast({ title: t("inbox.draftGenerated") });
+      },
+      onError: () => toast({ title: t("inbox.draftError") }),
+    });
+  };
+
+  if (isLoading || !email) {
     return (
       <div className="flex justify-center py-12">
         <Loader2 className="h-6 w-6 animate-spin text-primary" />
@@ -450,121 +560,28 @@ function ConversationView({
   }
 
   return (
-    <div>
-      <div className="flex items-center gap-3 mb-4">
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={onBack}
-          className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
-        >
-          <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-          {t("sent.title")}
-        </Button>
-        <div className="flex-1" />
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={handleGenerateSummary}
-          disabled={loadingSummary || thread.length === 0}
-          className="gap-1 text-[11px] h-7 bg-transparent border-border text-primary hover:text-white"
-        >
-          {loadingSummary ? <Loader2 className="w-3 h-3 animate-spin" /> : <Sparkles className="w-3 h-3" />}
-          {t("sent.aiSummary")}
-        </Button>
-        {email && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={async () => {
-              try {
-                const { downloadExport } = await import("@/lib/export-utils");
-                await downloadExport(`export/emails?id=${email.id}`, `email_${email.id}.csv`);
-                toast({ title: t("common.emailExported") });
-              } catch {
-                toast({ title: t("common.exportError"), variant: "destructive" });
-              }
-            }}
-            className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
-          >
-            <Download className="w-3 h-3" />
-            {t("common.export")}
-          </Button>
-        )}
-      </div>
-
-      {email?.projectName && (
-        <div className="mb-4">
-          <span className="inline-block text-[10px] px-2 py-0.5 rounded-full bg-white/[0.06] text-[#8b9cb3]">
-            <FolderKanban className="w-3 h-3 inline mr-1" />
-            {email.projectReference} - {email.projectName}
-          </span>
-        </div>
-      )}
-
-      {aiSummary && (
-        <div className="mb-4 p-3 rounded-lg border border-primary/20 bg-primary/5">
-          <div className="flex items-center gap-1 mb-1">
-            <Sparkles className="w-3 h-3 text-primary" />
-            <span className="text-[11px] font-medium text-primary">{t("sent.aiSummary")}</span>
-          </div>
-          <p className="text-[12px] text-[#8b9cb3]">{aiSummary}</p>
-        </div>
-      )}
-
-      {email && !email.projectId && (
-        <div className="mb-4 flex items-center gap-2">
-          <span className="text-[11px] text-[#8b9cb3]">{t("inbox.project")}:</span>
-          <Select onValueChange={(v) => onUpdateProject(email.id, v)}>
-            <SelectTrigger className="w-[180px] h-7 text-[11px] bg-card border-border">
-              <SelectValue placeholder={t("sent.assignProject")} />
-            </SelectTrigger>
-            <SelectContent>
-              {(projects || []).map((p: any) => (
-                <SelectItem key={p.id} value={p.id} className="text-[11px]">
-                  {p.reference} - {p.name}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
-      )}
-
-      <div className="space-y-3">
-        {thread.map((msg: any, idx: number) => (
-          <div
-            key={msg.id || idx}
-            className={`rounded-lg border p-4 ${
-              msg.role === "sent"
-                ? "border-primary/20 bg-primary/5"
-                : "border-border bg-card"
-            }`}
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <div className={`w-6 h-6 rounded-full flex items-center justify-center text-[10px] font-semibold ${
-                msg.role === "sent" ? "bg-primary/20 text-primary" : "bg-white/[0.06] text-[#8b9cb3]"
-              }`}>
-                {msg.role === "sent" ? <Send className="w-3 h-3" /> : <User className="w-3 h-3" />}
-              </div>
-              <span className="text-[11px] font-medium text-white">
-                {msg.role === "sent" ? t("sent.you") : msg.sender || "?"}
-              </span>
-              <span className="text-[10px] text-[#8b9cb3]">
-                {msg.role === "sent" ? `→ ${msg.recipient || "?"}` : ""}
-              </span>
-              <span className="text-[10px] text-[#8b9cb3] ml-auto">
-                {msg.createdAt ? format(new Date(msg.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
-              </span>
-            </div>
-            <div className="text-[12px] text-[#8b9cb3] max-h-[300px] overflow-y-auto">
-              <EmailBodyRenderer body={msg.body || ""} emailId={msg.id} sender={msg.sender} />
-              {msg.attachments && msg.attachments.length > 0 && (
-                <AttachmentList attachments={msg.attachments} disableDownload={msg.role === "sent"} />
-              )}
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+    <EmailDetail
+      email={email}
+      onBack={onBack}
+      onMarkRead={handleMarkRead}
+      onArchive={handleArchive}
+      onDelete={handleDelete}
+      onUpdatePriority={handleUpdatePriority}
+      onUpdateCategory={handleUpdateCategory}
+      onUpdateProject={handleUpdateProject}
+      onSendReply={handleSendReply}
+      isSending={sendEmailMut.isPending}
+      onGenerateDraft={handleGenerateDraft}
+      isDrafting={generateDraftMut.isPending}
+      categories={categoryCounts || []}
+      projects={projects || []}
+      currentUserId={(profile as any)?.id}
+      orgMembers={(orgMembers as any[]) || []}
+      onAssign={handleAssign}
+      onUnassign={handleUnassign}
+      onCreateTask={handleCreateTask}
+      connections={composeConnections}
+      sharedMailboxes={sharedMailboxes as any[]}
+    />
   );
 }
