@@ -157,18 +157,19 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
       sel.removeAllRanges();
       sel.addRange(newRange);
     } else {
+      // Wrap the extracted contents in a styled span. extractContents handles
+      // partial-node selections (e.g. selection that crosses element boundaries)
+      // by cloning ancestors as needed, which is the deterministic behaviour
+      // we want here. We then re-insert the styled span at the original range.
+      const fragment = range.extractContents();
       const span = document.createElement("span");
       span.setAttribute("style", `${cssProperty}: ${cssValue};`);
-      try {
-        span.appendChild(range.extractContents());
-        range.insertNode(span);
-        const newRange = document.createRange();
-        newRange.selectNodeContents(span);
-        sel.removeAllRanges();
-        sel.addRange(newRange);
-      } catch {
-        // surroundContents fallback
-      }
+      span.appendChild(fragment);
+      range.insertNode(span);
+      const newRange = document.createRange();
+      newRange.selectNodeContents(span);
+      sel.removeAllRanges();
+      sel.addRange(newRange);
     }
     if (editorRef.current) onChange(editorRef.current.innerHTML);
   };
