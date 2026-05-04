@@ -206,7 +206,7 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
         <Select onValueChange={(v) => applyFontSize(Number(v))}>
           <SelectTrigger
             onMouseDown={() => saveSelection()}
-            className="h-7 w-[64px] text-[11px] bg-background border-border text-white"
+            className="h-7 w-[80px] text-[11px] bg-background border-border text-white"
             title={t("signature.size", "Taille")}
           >
             <SelectValue placeholder={t("signature.size", "Taille")} />
