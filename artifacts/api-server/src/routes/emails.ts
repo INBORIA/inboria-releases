@@ -986,14 +986,15 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
     const { data: connections } = await supabaseAdmin
       .from("email_connections")
       .select("*")
-      .eq("user_id", req.userId!);
+      .eq("user_id", req.userId!)
+      .order("created_at", { ascending: true });
 
     if (!connections || connections.length === 0) {
       res.status(400).json({ error: "Aucun compte email connecte" });
       return;
     }
 
-    let conn = connections[0];
+    let conn: any;
     if (connectionId) {
       const matched = connections.find((c: any) => String(c.id) === String(connectionId));
       if (!matched) {
@@ -1001,6 +1002,14 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
         return;
       }
       conn = matched;
+    } else {
+      // Resolution deterministe de la connexion d'envoi par defaut :
+      // prefere une connexion saine (sans erreurs consecutives), puis la
+      // plus ancienne (qui correspond a la connexion principale historique
+      // de l'utilisateur). On evite ainsi qu'une connexion ajoutee plus
+      // tard ou en echec ne devienne accidentellement l'expediteur.
+      const healthy = connections.filter((c: any) => !c.consecutive_failures || Number(c.consecutive_failures) === 0);
+      conn = healthy[0] || connections[0];
     }
     let fromAddress = conn.email_address;
 
@@ -1276,7 +1285,7 @@ router.post("/emails/send", requireAuth, async (req, res): Promise<void> => {
       }).catch(() => {});
     }
 
-    res.json({ success: true, emailId: sentEmail?.id, appointmentId });
+    res.json({ success: true, emailId: sentEmail?.id, appointmentId, from: fromAddress });
   } catch (err: any) {
     console.error("Send email error:", err);
     res.status(500).json({ error: "Echec de l'envoi: " + (err.message || "Erreur inconnue") });

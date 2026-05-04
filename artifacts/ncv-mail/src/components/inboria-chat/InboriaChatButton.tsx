@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect, useCallback, memo } from "react";
 import { Sparkles, Send, Loader2, Bot, User as UserIcon, Mail, Pencil, Check, AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
@@ -125,14 +125,16 @@ interface DraftCardProps {
   draft: InboriaDraft;
   accessToken: string;
   baseUrl: string;
+  primaryFrom: string;
   onEdit: (d: InboriaDraft) => void;
   onSent: () => void;
 }
 
-const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, onEdit, onSent }: DraftCardProps) {
+const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primaryFrom, onEdit, onSent }: DraftCardProps) {
   const [stage, setStage] = useState<"idle" | "confirm" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [sentAt, setSentAt] = useState<string>("");
+  const [resolvedFrom, setResolvedFrom] = useState<string>("");
 
   const toValid = EMAIL_RE.test(draft.to.trim());
   const blockReason = !toValid
@@ -154,6 +156,8 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, onEdit,
         const errBody = await res.json().catch(() => ({}));
         throw new Error(errBody?.error || "Échec de l'envoi");
       }
+      const ok = await res.json().catch(() => ({}));
+      if (ok?.from) setResolvedFrom(String(ok.from));
       const now = new Date();
       setSentAt(now.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }));
       setStage("sent");
@@ -165,10 +169,14 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, onEdit,
   };
 
   if (stage === "sent") {
+    const from = resolvedFrom || primaryFrom;
     return (
       <div className="my-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-2.5 text-emerald-200 text-xs flex items-center gap-2">
         <Check className="h-4 w-4 shrink-0" />
-        <span>Envoyé à <strong>{draft.to.trim()}</strong> à {sentAt}</span>
+        <span>
+          ✓ Envoyé à <strong>{draft.to.trim()}</strong> à {sentAt}
+          {from ? <span className="text-emerald-300/70"> — depuis {from}</span> : null}
+        </span>
       </div>
     );
   }
@@ -211,7 +219,13 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, onEdit,
       )}
       {stage === "confirm" && (
         <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-900 text-zinc-300 text-[11px] space-y-2">
-          <div>Envoyer ce mail à <strong className="text-zinc-100">{draft.to.trim()}</strong> depuis votre boîte connectée principale ?</div>
+          <div>
+            Envoyer ce mail&nbsp;?<br />
+            <span className="text-zinc-400">De&nbsp;:</span>{" "}
+            <strong className="text-zinc-100">{primaryFrom || "votre boîte principale"}</strong>{" "}
+            <span className="text-zinc-400">→ À&nbsp;:</span>{" "}
+            <strong className="text-zinc-100">{draft.to.trim()}</strong>
+          </div>
           <div className="flex gap-2">
             <Button size="sm" className="h-7 text-xs bg-purple-600 hover:bg-purple-700 flex-1" onClick={doSend} data-testid="inboria-draft-confirm">
               Confirmer l'envoi
@@ -263,6 +277,29 @@ export function InboriaChatButton() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
+
+  // Resoudre la connexion principale d'envoi (= la plus saine, la plus
+  // ancienne) pour pouvoir afficher "De: <adresse>" dans la mini-confirmation
+  // avant l'envoi du brouillon.
+  const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+  const { data: connectionsData } = useQuery<Array<{ id: string; email_address: string; consecutive_failures?: number | null }>>({
+    queryKey: ["inboria-chat-primary-connection"],
+    enabled: isOpen && !!session?.access_token,
+    queryFn: async () => {
+      const res = await fetch(`${baseUrl}/api/email/connections`, {
+        headers: { Authorization: `Bearer ${session?.access_token ?? ""}` },
+      });
+      if (!res.ok) return [];
+      return (await res.json()) as Array<{ id: string; email_address: string; consecutive_failures?: number | null }>;
+    },
+    staleTime: 60_000,
+  });
+  const primaryFrom = (() => {
+    const list = connectionsData || [];
+    if (list.length === 0) return "";
+    const healthy = list.filter((c) => !c.consecutive_failures || Number(c.consecutive_failures) === 0);
+    return (healthy[0] || list[0])?.email_address || "";
+  })();
 
   const openComposeWithDraft = useCallback(
     (d: InboriaDraft) => {
@@ -327,7 +364,6 @@ export function InboriaChatButton() {
     setIsLoading(true);
 
     try {
-      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
       const body: Record<string, unknown> = {
         messages: nextMessages.slice(-20),
       };
@@ -474,7 +510,8 @@ export function InboriaChatButton() {
                         <DraftCard
                           draft={draft}
                           accessToken={session.access_token}
-                          baseUrl={import.meta.env.BASE_URL.replace(/\/$/, "")}
+                          baseUrl={baseUrl}
+                          primaryFrom={primaryFrom}
                           onEdit={openComposeWithDraft}
                           onSent={() => {
                             toast({ title: "Mail envoyé" });
