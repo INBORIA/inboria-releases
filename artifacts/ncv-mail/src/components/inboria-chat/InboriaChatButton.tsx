@@ -306,14 +306,31 @@ export function InboriaChatButton() {
       try {
         sessionStorage.setItem(
           "inboria.compose.prefill",
-          JSON.stringify({ to: d.to.trim(), subject: d.subject, body: d.body }),
+          JSON.stringify({ to: d.to, subject: d.subject, body: d.body }),
         );
-      } catch {}
-      setLocation(`/dashboard?compose=1`);
+      } catch {
+        /* noop */
+      }
       setIsOpen(false);
+      // Si on est deja sur /dashboard, un changement de query string ne
+      // remonte pas la page : on emet un event custom que le dashboard
+      // ecoute pour consommer le prefill et ouvrir le composer. Sinon, on
+      // navigue vers /dashboard?compose=1 et l'effet de mount fera le job.
+      try {
+        const onDashboard =
+          typeof window !== "undefined" && window.location.pathname.replace(/\/$/, "").endsWith("/dashboard");
+        if (onDashboard) {
+          window.dispatchEvent(new CustomEvent("inboria-open-compose"));
+          return;
+        }
+      } catch {
+        /* noop */
+      }
+      setLocation("/dashboard?compose=1");
     },
     [setLocation],
   );
+
 
   const openMail = useCallback(
     (id: number) => {

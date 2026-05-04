@@ -3264,29 +3264,47 @@ export default function Dashboard() {
     if (isComposeOpen && isMobileViewport) setIsComposeFullscreen(true);
   }, [isComposeOpen, isMobileViewport]);
 
+  // Ouvre le compose avec un brouillon Inboria pre-rempli. Declenche aussi
+  // bien au montage (cas /dashboard?compose=1 depuis une autre route) que
+  // sur evenement custom "inboria-open-compose" emis par le chat lorsque
+  // l'utilisateur est deja sur le dashboard (les query params seuls ne
+  // remontent pas le composant).
   useEffect(() => {
+    const consumePrefillAndOpen = () => {
+      try {
+        const raw = sessionStorage.getItem("inboria.compose.prefill");
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          setComposePrefill({
+            to: typeof parsed?.to === "string" ? parsed.to : "",
+            subject: typeof parsed?.subject === "string" ? parsed.subject : "",
+            body: typeof parsed?.body === "string" ? parsed.body : "",
+          });
+          sessionStorage.removeItem("inboria.compose.prefill");
+        } else {
+          setComposePrefill({ to: "", subject: "", body: "" });
+        }
+        setIsComposeOpen(true);
+        const url = new URL(window.location.href);
+        if (url.searchParams.has("compose")) {
+          url.searchParams.delete("compose");
+          window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+        }
+      } catch {
+        /* noop */
+      }
+    };
+
     try {
       const params = new URLSearchParams(window.location.search);
-      if (params.get("compose") !== "1") return;
-      const raw = sessionStorage.getItem("inboria.compose.prefill");
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setComposePrefill({
-          to: typeof parsed?.to === "string" ? parsed.to : "",
-          subject: typeof parsed?.subject === "string" ? parsed.subject : "",
-          body: typeof parsed?.body === "string" ? parsed.body : "",
-        });
-        sessionStorage.removeItem("inboria.compose.prefill");
-      } else {
-        setComposePrefill({ to: "", subject: "", body: "" });
-      }
-      setIsComposeOpen(true);
-      const url = new URL(window.location.href);
-      url.searchParams.delete("compose");
-      window.history.replaceState({}, "", url.pathname + (url.search ? url.search : ""));
+      if (params.get("compose") === "1") consumePrefillAndOpen();
     } catch {
       /* noop */
     }
+
+    const handler = () => consumePrefillAndOpen();
+    window.addEventListener("inboria-open-compose", handler);
+    return () => window.removeEventListener("inboria-open-compose", handler);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
