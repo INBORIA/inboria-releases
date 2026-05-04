@@ -20,9 +20,8 @@ const TEXT_COLOR_SWATCHES: string[] = [
 ];
 
 const HIGHLIGHT_SWATCHES: string[] = [
-  "transparent", "#ffff00", "#00ff00", "#00ffff", "#ff00ff", "#0000ff", "#ff0000",
-  "#000080", "#008080", "#008000", "#800080", "#800000", "#808000", "#808080",
-  "#c0c0c0", "#ffffff", "#ffa500", "#ff69b4", "#7cfc00", "#40e0d0", "#dda0dd",
+  "transparent", "#FFFF00", "#00FF00", "#00FFFF", "#FF00FF", "#FF0000", "#0070C0",
+  "#FFC000", "#92D050", "#00B050", "#00B0F0", "#7030A0", "#C00000", "#002060",
 ];
 
 const FONT_FAMILIES: Array<{ label: string; stack: string }> = [
@@ -328,13 +327,17 @@ export function SignatureEditor({ value, onChange, placeholder }: Props) {
         <input
           ref={colorInputRef}
           type="color"
-          className="hidden"
+          aria-hidden
+          tabIndex={-1}
+          style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", left: -9999 }}
           onChange={(e) => applyColor(e.target.value)}
         />
         <input
           ref={highlightInputRef}
           type="color"
-          className="hidden"
+          aria-hidden
+          tabIndex={-1}
+          style={{ position: "absolute", width: 1, height: 1, opacity: 0, pointerEvents: "none", left: -9999 }}
           onChange={(e) => applyHighlight(e.target.value)}
         />
       </div>
