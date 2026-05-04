@@ -52,11 +52,21 @@ interface ExpertSuggestionShape {
 }
 
 import { PriorityBadge, PRIORITY_BAR_COLORS, buildForwardCitation } from "./helpers";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
-// Bouton "Telecharger .eml" + support du drag-out HTML5 vers le bureau
-// (Chromium DownloadURL). Sur Firefox/Safari, le drag tombera silencieusement
-// en arriere-plan et l'utilisateur peut toujours cliquer sur le bouton.
+// Menu "Exporter ▾" regroupant les deux exports possibles d'un mail :
+// - CSV : metadonnees pour Excel / analyse
+// - .eml : format mail standard ouvrable dans Outlook / Apple Mail
+//   + drag-out HTML5 vers le bureau (Chromium DownloadURL)
 function ExportEmlButton({ emailId, subject }: { emailId: number; subject: string }) {
+  const { t } = useTranslation();
   const { toast } = useToast();
   const [busy, setBusy] = useState(false);
   const safeName =
@@ -134,21 +144,63 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
     [fetchEmlBlob, filename],
   );
 
+  const onExportCsv = useCallback(async () => {
+    setBusy(true);
+    try {
+      const { downloadExport } = await import("@/lib/export-utils");
+      await downloadExport(`export/emails?id=${emailId}`, `email_${emailId}.csv`);
+      toast({ title: t("inbox.exportDownloaded") });
+    } catch {
+      toast({ title: t("inbox.exportError"), variant: "destructive" });
+    } finally {
+      setBusy(false);
+    }
+  }, [emailId, t, toast]);
+
   return (
-    <Button
-      variant="outline"
-      size="sm"
-      draggable
-      onDragStart={onDragStart}
-      className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] cursor-grab active:cursor-grabbing"
-      onClick={onClick}
-      disabled={busy}
-      title="Télécharger au format .eml — vous pouvez aussi glisser ce bouton vers un dossier (Chrome/Edge sur Windows)"
-      data-testid="email-export-eml"
-    >
-      {busy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
-      .eml
-    </Button>
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="outline"
+          size="sm"
+          draggable
+          onDragStart={onDragStart}
+          className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] cursor-grab active:cursor-grabbing"
+          disabled={busy}
+          title="Glissez vers un dossier pour exporter en .eml (Chrome/Edge), ou cliquez pour choisir le format"
+          data-testid="email-export-menu"
+        >
+          {busy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
+          Exporter ▾
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end" className="bg-card border-border w-64">
+        <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-[#8b9cb3]">
+          Format d'export
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem
+          className="text-[12px] text-white focus:bg-white/[0.06] cursor-pointer flex flex-col items-start gap-0.5 py-2"
+          onClick={onClick}
+          data-testid="email-export-eml"
+        >
+          <span className="font-medium">.eml — fichier mail</span>
+          <span className="text-[10px] text-[#8b9cb3]">Ouvrir dans Outlook, Apple Mail, Thunderbird</span>
+        </DropdownMenuItem>
+        <DropdownMenuItem
+          className="text-[12px] text-white focus:bg-white/[0.06] cursor-pointer flex flex-col items-start gap-0.5 py-2"
+          onClick={onExportCsv}
+          data-testid="email-export-csv"
+        >
+          <span className="font-medium">.csv — tableau Excel</span>
+          <span className="text-[10px] text-[#8b9cb3]">Métadonnées (expéditeur, objet, date, statut)</span>
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <div className="px-2 py-1.5 text-[10px] text-[#8b9cb3] leading-relaxed">
+          💡 Pour choisir le dossier de destination, activez « Toujours demander où enregistrer » dans les réglages de votre navigateur.
+        </div>
+      </DropdownMenuContent>
+    </DropdownMenu>
   );
 }
 
@@ -805,23 +857,8 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   )}
                   {t("agenda.createFromEmail")}
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
-                  onClick={async () => {
-                    try {
-                      const { downloadExport } = await import("@/lib/export-utils");
-                      await downloadExport(`export/emails?id=${email.id}`, `email_${email.id}.csv`);
-                      toast({ title: t("inbox.exportDownloaded") });
-                    } catch {
-                      toast({ title: t("inbox.exportError"), variant: "destructive" });
-                    }
-                  }}
-                >
-                  <Download className="w-3 h-3" />
-                  {t("common.export")}
-                </Button>
+                {/* Ancien bouton CSV remplace : voir le menu "Exporter" dans la
+                    barre d'actions principale (composant ExportEmlButton). */}
               </div>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <div className="flex items-center gap-1.5">
