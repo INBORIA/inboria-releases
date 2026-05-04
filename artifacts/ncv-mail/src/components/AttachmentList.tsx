@@ -58,14 +58,8 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
         setPreviewUrl(objectUrl);
         setPreviewType(att.content_type);
       } else {
-        const objectUrl = URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = objectUrl;
-        a.download = att.filename;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(objectUrl);
+        const { saveBlobAs } = await import("@/lib/export-utils");
+        await saveBlobAs(blob, att.filename);
       }
     } catch (err) {
       console.error("Attachment download error:", err);

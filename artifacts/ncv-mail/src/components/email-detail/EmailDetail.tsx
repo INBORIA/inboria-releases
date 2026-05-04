@@ -97,14 +97,8 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
         toast({ variant: "destructive", title: "Téléchargement impossible" });
         return;
       }
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = filename;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      const { saveBlobAs } = await import("@/lib/export-utils");
+      await saveBlobAs(blob, filename);
     } finally {
       setBusy(false);
     }
@@ -197,7 +191,7 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <div className="px-2 py-1.5 text-[10px] text-[#8b9cb3] leading-relaxed">
-          💡 Pour choisir le dossier de destination, activez « Toujours demander où enregistrer » dans les réglages de votre navigateur.
+          💡 Sur Chrome/Edge, une fenêtre vous demandera où enregistrer le fichier.
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

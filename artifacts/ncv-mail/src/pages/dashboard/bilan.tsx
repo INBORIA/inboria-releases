@@ -161,13 +161,8 @@ export default function BilanQuotidien() {
     });
     if (!res.ok) return;
     const blob = await res.blob();
-    const link = document.createElement("a");
-    link.href = URL.createObjectURL(blob);
-    link.download = `inboria-team-${period}.${format === "pdf" ? "pdf" : "csv"}`;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(link.href);
+    const { saveBlobAs } = await import("@/lib/export-utils");
+    await saveBlobAs(blob, `inboria-team-${period}.${format === "pdf" ? "pdf" : "csv"}`);
   }
 
   const ta = teamAnalytics.data;

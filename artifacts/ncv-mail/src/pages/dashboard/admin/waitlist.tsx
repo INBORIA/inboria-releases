@@ -83,14 +83,8 @@ export default function AdminWaitlist({ embedded = false }: AdminWaitlistProps =
       });
       if (!res.ok) throw new Error("CSV download failed");
       const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `inboria-waitlist-${new Date().toISOString().slice(0, 10)}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
+      const { saveBlobAs } = await import("@/lib/export-utils");
+      await saveBlobAs(blob, `inboria-waitlist-${new Date().toISOString().slice(0, 10)}.csv`);
     } catch {
       toast({ title: t("admin.exportError"), variant: "destructive" });
     } finally {
