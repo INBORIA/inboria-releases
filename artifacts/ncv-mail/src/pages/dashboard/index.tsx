@@ -3898,7 +3898,20 @@ export default function Dashboard() {
           toast({ title: t("inbox.syncComplete"), description: t("inbox.syncNewEmails", { count }) });
         }
       } else {
-        toast({ variant: "destructive", title: t("common.error"), description: data.error });
+        // Cas frequent pour un nouvel utilisateur (ex. Richard Martin) :
+        // aucun compte email n'a encore ete connecte. On affiche alors
+        // un message neutre + invite a se rendre dans Reglages plutot
+        // qu'une grosse erreur rouge effrayante.
+        const isNoConnection =
+          typeof data?.error === "string" && /aucun compte email connecte/i.test(data.error);
+        if (isNoConnection) {
+          toast({
+            title: "Aucune boîte connectée",
+            description: "Connectez Gmail ou Outlook dans Réglages › Connexions pour synchroniser vos mails.",
+          });
+        } else {
+          toast({ variant: "destructive", title: t("common.error"), description: data.error });
+        }
       }
     } catch {
       toast({ variant: "destructive", title: t("common.error") });
