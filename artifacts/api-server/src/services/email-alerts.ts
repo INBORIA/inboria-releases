@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -179,11 +179,21 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `메일함 ${email} 연결이 끊어졌습니다`,
     notifMessage: "설정에서 이 메일함을 다시 연결하려면 클릭하십시오.",
   },
+  vi: {
+    subject: (email) => `Inboria — Hop thu ${email} bi ngat ket noi`,
+    intro: "Inboria khong the dong bo hop thu nay sau nhieu lan thu. Email moi cua Quy khach se khong duoc xu ly cho den khi ket noi duoc khoi phuc.",
+    reasonLabel: "Loi gan day nhat",
+    cta: "Ket noi lai hop thu nay",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Email nay duoc gui toi da mot lan moi tuan cho moi hop thu. Sau khi ket noi lai thanh cong, Quy khach se khong nhan thong bao nua.",
+    notifTitle: (email) => `Hop thu ${email} bi ngat ket noi`,
+    notifMessage: "Nhan vao day de ket noi lai hop thu nay trong Cai dat.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const v = (raw || "fr").slice(0, 2).toLowerCase();
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi") return v;
   return "fr";
 }
 

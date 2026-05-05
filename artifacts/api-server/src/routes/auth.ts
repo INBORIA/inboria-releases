@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -155,6 +155,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "비밀번호 재설정",
         footer: "이 요청을 직접 하지 않으셨다면, 이 이메일을 무시하셔도 됩니다 — 비밀번호는 변경되지 않습니다.",
         subject: "Inboria 비밀번호 재설정",
+      };
+    case "vi":
+      return {
+        tagline: "Email Autopilot cho doanh nghiệp vừa và nhỏ",
+        heading: "Đặt lại mật khẩu của Quý khách",
+        body: "Quý khách đã yêu cầu đặt lại mật khẩu cho tài khoản Inboria. Vui lòng nhấn vào nút bên dưới để chọn mật khẩu mới. Liên kết này sẽ hết hạn sau 1 giờ.",
+        cta: "Đặt lại mật khẩu",
+        footer: "Nếu Quý khách không gửi yêu cầu này, vui lòng bỏ qua email này — mật khẩu của Quý khách sẽ không thay đổi.",
+        subject: "Đặt lại mật khẩu Inboria",
       };
     default:
       return {
