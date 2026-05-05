@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -110,6 +110,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Nollaa salasanani",
         footer: "Jos ette tehnyt tätä pyyntöä, voitte jättää tämän viestin huomiotta — salasananne pysyy muuttumattomana.",
         subject: "Nollatkaa Inboria-salasananne",
+      };
+    case "hu":
+      return {
+        tagline: "Email Autopilot kkv-knak",
+        heading: "Jelszó visszaállítása",
+        body: "Ön az Inboria-fiókja jelszavának visszaállítását kérte. Kérjük, kattintson az alábbi gombra új jelszó választásához. Ez a hivatkozás 1 óra múlva lejár.",
+        cta: "Jelszavam visszaállítása",
+        footer: "Ha nem Ön kérte ezt, nyugodtan figyelmen kívül hagyhatja ezt az emailt — a jelszava nem változik meg.",
+        subject: "Állítsa vissza Inboria-jelszavát",
       };
     default:
       return {

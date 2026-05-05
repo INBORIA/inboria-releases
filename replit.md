@@ -70,7 +70,7 @@ pnpm dev # Starts frontend and backend
 - Inboria Expert Suggestion for shared mailboxes.
 - Inboria Smart Sort for strategic email ranking.
 - AI Chatbot for support and contextual assistance.
-- Multi-language support (FR, EN, NL, DE, ES, IT, PT, PL, RO, SV, DA, FI).
+- Multi-language support (FR, EN, NL, DE, ES, IT, PT, PL, RO, SV, DA, FI, HU — Hungarian uses formal Ön/önözés).
 - Mobile application.
 - Admin team folder view with access logging and privacy controls.
 

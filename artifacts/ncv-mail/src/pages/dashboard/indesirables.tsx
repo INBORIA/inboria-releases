@@ -14,7 +14,7 @@ import {
 } from "@workspace/api-client-react";
 import type { Email, PaginatedEmails } from "@workspace/api-client-react";
 import { format } from "date-fns";
-import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";

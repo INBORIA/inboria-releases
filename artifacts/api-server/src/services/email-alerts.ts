@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -129,11 +129,21 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `Postilaatikko ${email} katkaistu`,
     notifMessage: "Klikatkaa yhdistaaksenne taman postilaatikon uudelleen Asetuksissa.",
   },
+  hu: {
+    subject: (email) => `Inboria — A(z) ${email} postafiok lecsatlakozott`,
+    intro: "Az Inboria tobb probalkozas utan sem tudja szinkronizalni ezt a postafiokot. Az uj emailek nem kerulnek feldolgozasra, amig a kapcsolat helyre nem all.",
+    reasonLabel: "Utolso hiba",
+    cta: "Postafiok ujracsatlakoztatasa",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Ezt az emailt postafiokonkent legfeljebb hetente egyszer kuldjuk. Ha az ujracsatlakozas sikeres, tobbe nem kap riasztast.",
+    notifTitle: (email) => `A(z) ${email} postafiok lecsatlakozott`,
+    notifMessage: "Kattintson a postafiok ujracsatlakoztatasahoz a Beallitasokban.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const v = (raw || "fr").slice(0, 2).toLowerCase();
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu") return v;
   return "fr";
 }
 

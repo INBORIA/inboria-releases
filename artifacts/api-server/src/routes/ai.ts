@@ -172,6 +172,7 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
       const isSv = lang === "sv";
       const isDa = lang === "da";
       const isFi = lang === "fi";
+      const isHu = lang === "hu";
       if (activeProjects.length > 0) {
         const header = isFr
           ? "Projets actifs (derniers 7 jours d'activité)"
@@ -197,7 +198,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                               ? "Aktive projekter (seneste 7 dages aktivitet)"
                               : isFi
                                 ? "Aktiiviset projektit (viimeiset 7 päivää aktiivisuutta)"
-                                : "Active projects";
+                                : isHu
+                                  ? "Aktív projektek (utolsó 7 nap aktivitása)"
+                                  : "Active projects";
         lines.push(`\n${header} :`);
         for (const p of activeProjects) {
           lines.push(`- ${p.name} (${p.email_count} mails)`);
@@ -228,7 +231,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                               ? "Seneste beslutninger (seneste 7 dage)"
                               : isFi
                                 ? "Viimeaikaiset päätökset (viimeiset 7 päivää)"
-                                : "Recent decisions";
+                                : isHu
+                                  ? "Friss döntések (utolsó 7 nap)"
+                                  : "Recent decisions";
         lines.push(`\n${header} :`);
         for (const d of recentDecisions) {
           const date = d.decided_at || (d as any).created_at?.slice(0, 10) || "";
@@ -262,7 +267,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                               ? "Forpligtelser nævnt denne uge"
                               : isFi
                                 ? "Tällä viikolla mainitut sitoumukset"
-                                : "Commitments this week";
+                                : isHu
+                                  ? "E heti említett kötelezettségek"
+                                  : "Commitments this week";
         lines.push(`\n${header} :`);
         for (const c of openCommitments) {
           const date = c.event_date ? ` (${c.event_date})` : "";
@@ -1363,7 +1370,7 @@ router.post("/ai/handover-brief", requireAuth, async (req, res): Promise<void> =
       return;
     }
     const sinceDays = Number.isFinite(body.sinceDays) ? Number(body.sinceDays) : 30;
-    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi"];
+    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu"];
     let language: BriefLanguage = "fr";
     if (typeof body.language === "string" && (allowedLangs as string[]).includes(body.language)) {
       language = body.language as BriefLanguage;

@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -99,6 +99,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Avoimet sitoumukset",
     "Huomioitavat seikat",
   ],
+  hu: [
+    "Kapcsolati háttér",
+    "Folyamatban lévő témák",
+    "Meghozott döntések",
+    "Nyitott kötelezettségek",
+    "Figyelendő pontok",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -114,6 +121,7 @@ const TONE: Record<Language, string> = {
   sv: "Skriv på svenska, modern professionell B2B-ton (du), saklig och professionell, utan hälsningsfraser.",
   da: "Skriv på dansk, moderne professionel B2B-tone (du), saglig og professionel, uden hilsner.",
   fi: "Kirjoittakaa suomeksi, käyttäkää teitittelyä, asiallinen ja ammattimainen sävy, ilman tervehdyksiä.",
+  hu: "Írjon magyarul, magázódó (Ön) formában, tárgyilagos és professzionális hangnemben, üdvözlések nélkül.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

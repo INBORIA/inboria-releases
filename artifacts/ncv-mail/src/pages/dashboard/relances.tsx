@@ -17,9 +17,9 @@ import { Sparkles, MailCheck, X, ArrowUpRight, Clock, Loader2, Inbox } from "luc
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu } from "date-fns/locale";
 
-const LOCALE_MAP: Record<string, any> = { fr, en: enUS, nl, de, es, it, pt, pl, ro, sv, da, fi };
+const LOCALE_MAP: Record<string, any> = { fr, en: enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu };
 
 function daysSince(iso: string | null | undefined): number {
   if (!iso) return 0;
