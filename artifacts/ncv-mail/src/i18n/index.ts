@@ -38,6 +38,7 @@ import sk from "./locales/sk.json";
 import sl from "./locales/sl.json";
 import lv from "./locales/lv.json";
 import mt from "./locales/mt.json";
+import bg from "./locales/bg.json";
 
 i18n
   .use(LanguageDetector)
@@ -80,9 +81,10 @@ i18n
       sl: { translation: sl },
       lv: { translation: lv },
       mt: { translation: mt },
+      bg: { translation: bg },
     },
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt"],
+    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg"],
     nonExplicitSupportedLngs: true,
     load: "languageOnly",
     interpolation: {

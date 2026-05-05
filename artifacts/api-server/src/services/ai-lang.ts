@@ -1,8 +1,8 @@
 import { supabaseAdmin } from "../lib/supabase";
 
-export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt";
+export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt" | "bg";
 
-const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt"];
+const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg"];
 
 export function normalizeLang(input: unknown): AiLang {
   if (typeof input !== "string") return "fr";
@@ -73,6 +73,7 @@ const NAMES: Record<AiLang, string> = {
   sl: "SLOVENŠČINA",
   lv: "LATVIEŠU",
   mt: "MALTI",
+  bg: "БЪЛГАРСКИ",
 };
 
 const SHORT_INSTRUCTION: Record<AiLang, string> = {
@@ -112,6 +113,7 @@ const SHORT_INSTRUCTION: Record<AiLang, string> = {
   sl: "Prosimo, odgovarjajte v slovenščini, uporabljajte vikanje (Vi/Vas/Vam/Vaš z veliko začetnico).",
   lv: "Lūdzu, atbildiet latviešu valodā, izmantojot pieklājīgo uzrunas formu (Jūs/Jums/Jūsu ar lielo burtu).",
   mt: "Jekk jogħġobkom, wieġbu bil-Malti, billi tużaw il-forma rispettuża (Inti/Tagħkom b'ittra kbira).",
+  bg: "Моля, отговаряйте на български език, използвайки учтивата форма (Вие/Вас/Ви/Ваш с главна буква).",
 };
 
 export function langName(lang: AiLang): string {

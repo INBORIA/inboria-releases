@@ -37,9 +37,10 @@ import sk from "./locales/sk.json";
 import sl from "./locales/sl.json";
 import lv from "./locales/lv.json";
 import mt from "./locales/mt.json";
+import bg from "./locales/bg.json";
 
 const LANGUAGE_KEY = "inboria-lang";
-const SUPPORTED = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt"] as const;
+const SUPPORTED = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg"] as const;
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -79,6 +80,7 @@ i18n.use(initReactI18next).init({
     sl: { translation: sl },
     lv: { translation: lv },
     mt: { translation: mt },
+    bg: { translation: bg },
   },
   lng: "fr",
   fallbackLng: "fr",

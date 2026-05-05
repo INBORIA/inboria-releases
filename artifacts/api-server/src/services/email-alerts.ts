@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt" | "bg";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -369,13 +369,23 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `Kaxxa tal-posta ${email} skonnettjata`,
     notifMessage: "Ikklikkjaw biex terġgħu tqabbdu din il-kaxxa tal-posta fl-Issettjar.",
   },
+  bg: {
+    subject: (email) => `Inboria — Пощенската кутия ${email} е изключена`,
+    intro: "Inboria не успя да синхронизира тази пощенска кутия след няколко опита. Докато връзката не бъде възстановена, Вашите нови съобщения няма да бъдат обработвани.",
+    reasonLabel: "Последна грешка",
+    cta: "Свържете отново пощенската кутия",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Това съобщение се изпраща не повече от веднъж седмично за пощенска кутия. След успешно повторно свързване няма да получавате повече известия.",
+    notifTitle: (email) => `Пощенската кутия ${email} е изключена`,
+    notifMessage: "Кликнете, за да свържете отново тази пощенска кутия в Настройки.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const full = (raw || "fr").trim().toLowerCase();
   if (full === "zh-tw" || full === "zh_tw" || full === "zh-hant" || full === "zh-hk") return "zh-TW";
   const v = full.slice(0, 2);
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk" || v === "et" || v === "zh" || v === "lt" || v === "sr" || v === "ru" || v === "he" || v === "ar" || v === "hr" || v === "sk" || v === "sl" || v === "lv" || v === "mt") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk" || v === "et" || v === "zh" || v === "lt" || v === "sr" || v === "ru" || v === "he" || v === "ar" || v === "hr" || v === "sk" || v === "sl" || v === "lv" || v === "mt" || v === "bg") return v;
   return "fr";
 }
 

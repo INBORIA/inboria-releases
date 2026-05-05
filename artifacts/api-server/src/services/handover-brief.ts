@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt" | "bg";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -267,6 +267,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Impenji miftuħa",
     "Mistoqsijiet li jeħtieġu attenzjoni",
   ],
+  bg: [
+    "Контекст на отношенията",
+    "Активни теми",
+    "Взети решения",
+    "Открити ангажименти",
+    "Въпроси, изискващи внимание",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -306,6 +313,7 @@ const TONE: Record<Language, string> = {
   sl: "Pišite v slovenščini, uporabljajte vikanje (Vi/Vas/Vam/Vaš z veliko začetnico), s stvarnim in profesionalnim tonom, brez pozdravov.",
   lv: "Rakstiet latviešu valodā, izmantojot pieklājīgo uzrunas formu (Jūs/Jums/Jūsu ar lielo burtu), faktiskā un profesionālā tonī, bez sveicieniem.",
   mt: "Ikteb bil-Malti, billi tuża l-forma rispettuża (Inti/Tagħkom b'ittra kbira), b'ton fattwali u professjonali, mingħajr tislim.",
+  bg: "Пишете на български език, използвайки учтивата форма (Вие/Вас/Ви/Ваш с главна буква), с фактически и професионален тон, без поздрави.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

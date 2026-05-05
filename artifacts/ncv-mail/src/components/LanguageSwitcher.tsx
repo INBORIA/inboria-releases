@@ -41,6 +41,7 @@ const languages = [
   { code: "sl", label: "SL", name: "Slovenščina" },
   { code: "lv", label: "LV", name: "Latviešu" },
   { code: "mt", label: "MT", name: "Malti" },
+  { code: "bg", label: "BG", name: "Български" },
 ];
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {

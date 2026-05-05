@@ -52,6 +52,7 @@ const LANGUAGES = [
   { code: "sl", label: "Slovenščina" },
   { code: "lv", label: "Latviešu" },
   { code: "mt", label: "Malti" },
+  { code: "bg", label: "Български" },
 ];
 
 export default function MenuScreen() {

@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -326,6 +326,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Irresetja l-password tiegħi",
         footer: "Jekk mhux Intom li bgħattu din it-talba, jekk jogħġobkom injoraw dan il-messaġġ — il-password Tagħkom se tibqa' bla bidla.",
         subject: "Irresetjaw il-password Inboria Tagħkom",
+      };
+    case "bg":
+      return {
+        tagline: "Email Autopilot за МСП",
+        heading: "Възстановяване на Вашата парола",
+        body: "Вие поискахте възстановяване на паролата за Вашия акаунт в Inboria. Кликнете върху бутона по-долу, за да изберете нова парола. Тази връзка е валидна 1 час.",
+        cta: "Възстанови моята парола",
+        footer: "Ако не сте Вие, който е изпратил тази заявка, моля игнорирайте това съобщение — Вашата парола ще остане непроменена.",
+        subject: "Възстановете Вашата парола за Inboria",
       };
     default:
       return {
