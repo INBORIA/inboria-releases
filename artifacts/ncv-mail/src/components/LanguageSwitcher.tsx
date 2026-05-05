@@ -18,6 +18,7 @@ const languages = [
   { code: "da", label: "DA", flag: "🇩🇰" },
   { code: "fi", label: "FI", flag: "🇫🇮" },
   { code: "hu", label: "HU", flag: "🇭🇺" },
+  { code: "cs", label: "CS", flag: "🇨🇿" },
 ];
 
 const nativeNames: Record<string, string> = {
@@ -34,6 +35,7 @@ const nativeNames: Record<string, string> = {
   da: "Dansk",
   fi: "Suomi",
   hu: "Magyar",
+  cs: "Čeština",
 };
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {

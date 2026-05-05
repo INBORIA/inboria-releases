@@ -15,6 +15,7 @@ import sv from "./locales/sv.json";
 import da from "./locales/da.json";
 import fi from "./locales/fi.json";
 import hu from "./locales/hu.json";
+import cs from "./locales/cs.json";
 
 i18n
   .use(LanguageDetector)
@@ -34,9 +35,10 @@ i18n
       da: { translation: da },
       fi: { translation: fi },
       hu: { translation: hu },
+      cs: { translation: cs },
     },
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu"],
+    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs"],
     nonExplicitSupportedLngs: true,
     load: "languageOnly",
     interpolation: {

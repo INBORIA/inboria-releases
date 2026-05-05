@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -119,6 +119,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Jelszavam visszaállítása",
         footer: "Ha nem Ön kérte ezt, nyugodtan figyelmen kívül hagyhatja ezt az emailt — a jelszava nem változik meg.",
         subject: "Állítsa vissza Inboria-jelszavát",
+      };
+    case "cs":
+      return {
+        tagline: "Email Autopilot pro malé a střední podniky",
+        heading: "Obnovte své heslo",
+        body: "Požádali jste o obnovení hesla k vašemu účtu Inboria. Klikněte prosím na tlačítko níže pro výběr nového hesla. Tento odkaz vyprší za 1 hodinu.",
+        cta: "Obnovit mé heslo",
+        footer: "Pokud jste tuto žádost neodeslali, můžete tuto zprávu ignorovat — vaše heslo zůstane nezměněno.",
+        subject: "Obnovte své heslo Inboria",
       };
     default:
       return {
