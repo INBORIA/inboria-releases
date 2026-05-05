@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback, memo } from "react";
-import { Sparkles, Send, Loader2, Bot, User as UserIcon, Mail, Pencil, Check, AlertCircle } from "lucide-react";
+import { Sparkles, Send, Loader2, User as UserIcon, Mail, Pencil, Check, AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -450,11 +450,13 @@ export function InboriaChatButton() {
         <Button
           variant="ghost"
           size="sm"
-          className="relative h-9 gap-1.5 px-2.5 hover:bg-cyan-500/10 text-zinc-200"
+          className="relative h-9 gap-2 px-2.5 hover:bg-cyan-500/10 text-zinc-200"
           aria-label={t("inboriaChat.openLabel")}
           data-testid="inboria-chat-button"
         >
-          <Sparkles className="h-4 w-4 text-cyan-400" />
+          <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-cyan-500/15 border border-cyan-400/30">
+            <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
+          </span>
           <span className="text-sm font-medium">
             Inbor<span className="text-cyan-400">ia</span>
           </span>
@@ -530,7 +532,7 @@ export function InboriaChatButton() {
             >
               {m.role === "assistant" && (
                 <div className="h-7 w-7 shrink-0 rounded-full bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center">
-                  <Bot className="h-4 w-4 text-cyan-300" />
+                  <Sparkles className="h-4 w-4 text-cyan-300" />
                 </div>
               )}
               <div
@@ -574,7 +576,7 @@ export function InboriaChatButton() {
           {isLoading && (
             <div className="flex gap-2 justify-start">
               <div className="h-7 w-7 shrink-0 rounded-full bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center">
-                <Bot className="h-4 w-4 text-cyan-300" />
+                <Sparkles className="h-4 w-4 text-cyan-300" />
               </div>
               <div className="bg-zinc-800 text-zinc-300 rounded-2xl rounded-bl-sm px-3.5 py-2.5 text-sm flex items-center gap-2">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
