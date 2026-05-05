@@ -199,7 +199,16 @@
     "acceptInviteDesc": "Ha sido invitado a unirse a un equipo en Inboria.",
     "pageNotFound": "Página no encontrada",
     "pageNotFoundDesc": "La página que busca no existe o ha sido movida.",
-    "backToDashboard": "Volver al panel"
+    "backToDashboard": "Volver al panel",
+    "mfa": {
+      "title": "Verificación en dos pasos",
+      "subtitle": "Introduzca el código de 6 dígitos generado por su aplicación de autenticación.",
+      "codeLabel": "Código de verificación",
+      "verifyButton": "Verificar",
+      "useAnotherAccount": "Usar otra cuenta",
+      "invalidCode": "Código no válido",
+      "codeFormat": "El código debe tener 6 dígitos."
+    }
   },
   "inbox": {
     "title": "Bandeja de entrada",
@@ -1202,7 +1211,30 @@
     "apiCard": "API pública",
     "apiCardDesc": "Claves API y documentación",
     "webhooksCard": "Webhooks",
-    "webhooksCardDesc": "Notificaciones HTTP firmadas"
+    "webhooksCardDesc": "Notificaciones HTTP firmadas",
+    "twoFactor": {
+      "title": "Autenticación en dos pasos (2FA)",
+      "toggleLabel": "Activar la autenticación en dos pasos",
+      "description": "Añada una capa de seguridad adicional a su cuenta. En cada inicio de sesión se le solicitará un código de 6 dígitos generado por su aplicación de autenticación (Google Authenticator, Authy, 1Password…).",
+      "activeBadge": "2FA activa",
+      "enrollTitle": "Activar la autenticación en dos pasos",
+      "enrollIntro": "Escanee el código QR con su aplicación de autenticación y luego introduzca el código generado para confirmar.",
+      "secretLabel": "Clave secreta (entrada manual)",
+      "secretHint": "Utilice esta clave si no puede escanear el código QR.",
+      "codeLabel": "Código de verificación",
+      "confirmEnable": "Activar 2FA",
+      "disableTitle": "Desactivar la autenticación en dos pasos",
+      "disableIntro": "Para desactivar la 2FA, introduzca el código generado por su aplicación de autenticación.",
+      "confirmDisable": "Desactivar 2FA",
+      "invalidCode": "Código no válido",
+      "codeFormat": "El código debe tener 6 dígitos.",
+      "enabledTitle": "Autenticación en dos pasos activada",
+      "enabledDesc": "Su cuenta ahora está protegida por 2FA.",
+      "disabledTitle": "Autenticación en dos pasos desactivada",
+      "disabledDesc": "La 2FA se ha eliminado de su cuenta.",
+      "loadError": "No se pudieron cargar los factores 2FA",
+      "enrollError": "No se pudo iniciar el registro"
+    }
   },
   "subscription": {
     "title": "Gestiona tu suscripción",

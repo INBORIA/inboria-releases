@@ -1,11 +1,15 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, useCallback, useRef, type ReactNode } from "react";
 import { supabase } from "./supabase";
 import type { Session, User } from "@supabase/supabase-js";
+
+type MfaState = "unknown" | "ok" | "needsMfa";
 
 interface AuthContextType {
   session: Session | null;
   user: User | null;
   loading: boolean;
+  mfaState: MfaState;
+  refreshMfaState: () => Promise<void>;
   signIn: (email: string, password: string) => Promise<{ error: string | null }>;
   signUp: (email: string, password: string, fullName: string, country: string) => Promise<{ error: string | null; needsVerification: boolean }>;
   signOut: () => Promise<void>;
@@ -17,21 +21,78 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
+  const [mfaState, setMfaState] = useState<MfaState>("unknown");
+  // Monotonic version counter so that out-of-order async completions from
+  // concurrent auth events never overwrite the latest state.
+  const authEventSeq = useRef(0);
+
+  const computeMfaState = useCallback(async (s: Session | null): Promise<MfaState> => {
+    if (!s) return "ok";
+    try {
+      const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
+      if (error) throw error;
+      if (data?.currentLevel === "aal1" && data?.nextLevel === "aal2") {
+        return "needsMfa";
+      }
+      return "ok";
+    } catch {
+      // Fail-closed: if we cannot determine the level for an authenticated
+      // user, force the MFA challenge UI rather than letting the user in.
+      return "needsMfa";
+    }
+  }, []);
+
+  const refreshMfaState = useCallback(async () => {
+    const seq = ++authEventSeq.current;
+    const { data } = await supabase.auth.getSession();
+    const next = await computeMfaState(data.session);
+    if (seq !== authEventSeq.current) return;
+    setMfaState(next);
+  }, [computeMfaState]);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session: s } }) => {
+    let cancelled = false;
+
+    void (async () => {
+      const seq = ++authEventSeq.current;
+      try {
+        const { data } = await supabase.auth.getSession();
+        const s = data.session;
+        const next = await computeMfaState(s);
+        if (cancelled || seq !== authEventSeq.current) return;
+        setSession(s);
+        setUser(s?.user ?? null);
+        setMfaState(next);
+      } catch {
+        // Fail-closed: clear session and force MFA recheck path; the user
+        // will be redirected to /login by the route guards.
+        if (cancelled || seq !== authEventSeq.current) return;
+        setSession(null);
+        setUser(null);
+        setMfaState("ok");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, s) => {
+      const seq = ++authEventSeq.current;
+      const next = await computeMfaState(s);
+      if (cancelled || seq !== authEventSeq.current) return;
       setSession(s);
       setUser(s?.user ?? null);
+      setMfaState(next);
+      // Always clear the initial loading flag — covers the case where the
+      // auth event fires before the initial getSession() resolves and that
+      // commit is then discarded by the sequence guard.
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s);
-      setUser(s?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => {
+      cancelled = true;
+      subscription.unsubscribe();
+    };
+  }, [computeMfaState]);
 
   async function signIn(email: string, password: string) {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -81,7 +142,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ session, user, loading, signIn, signUp, signOut }}>
+    <AuthContext.Provider value={{ session, user, loading, mfaState, refreshMfaState, signIn, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   );

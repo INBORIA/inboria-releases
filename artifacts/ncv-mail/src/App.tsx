@@ -1,7 +1,7 @@
 import { Switch, Route, Router as WouterRouter, Redirect } from "wouter";
 import { useEffect } from "react";
 import { QueryClient, MutationCache, QueryClientProvider } from "@tanstack/react-query";
-import { getGetProfileQueryKey, useGetMyOrganisation } from "@workspace/api-client-react";
+import { getGetProfileQueryKey, useGetMyOrganisation, getGetMyOrganisationQueryKey } from "@workspace/api-client-react";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider, useAuth } from "@/lib/auth";
@@ -175,20 +175,28 @@ function CacheCleanup() {
 }
 
 function ProtectedRoute({ component: Component }: { component: React.ComponentType }) {
-  const { session, loading } = useAuth();
+  const { session, loading, mfaState } = useAuth();
 
-  if (loading) return null;
+  if (loading || mfaState === "unknown") return null;
   if (!session) return <Redirect to="/login" />;
+  if (mfaState === "needsMfa") return <Redirect to="/login" />;
   return <Component />;
 }
 
 function AdminOnlyRoute({ component: Component }: { component: React.ComponentType }) {
-  const { session, loading } = useAuth();
-  const { data: org, isLoading: orgLoading } = useGetMyOrganisation();
+  const { session, loading, mfaState } = useAuth();
+  const needsMfa = mfaState === "needsMfa";
+  const mfaUnknown = mfaState === "unknown";
+  const fullyAuthed = !!session && mfaState === "ok";
+  // Defer the privileged org query until the user has cleared MFA so we
+  // never issue authorization-bearing requests on an AAL1 session.
+  const { data: org, isLoading: orgLoading } = useGetMyOrganisation({
+    query: { queryKey: getGetMyOrganisationQueryKey(), enabled: fullyAuthed },
+  });
   const { toast } = useToast();
   const { t } = useTranslation();
   const isOrgMember = !!org?.id && org.myRole !== "admin";
-  const shouldRedirect = !loading && !orgLoading && !!session && isOrgMember;
+  const shouldRedirect = !loading && !mfaUnknown && !needsMfa && !orgLoading && fullyAuthed && isOrgMember;
 
   useEffect(() => {
     if (shouldRedirect) {
@@ -198,20 +206,23 @@ function AdminOnlyRoute({ component: Component }: { component: React.ComponentTy
     }
   }, [shouldRedirect, toast, t]);
 
-  if (loading || (session && orgLoading)) return null;
+  if (loading || mfaUnknown || (fullyAuthed && orgLoading)) return null;
   if (!session) return <Redirect to="/login" />;
+  if (needsMfa) return <Redirect to="/login" />;
   if (isOrgMember) return <Redirect to="/dashboard/parametres/mon-compte" />;
   return <Component />;
 }
 
 function Router() {
-  const { session, loading } = useAuth();
+  const { session, loading, mfaState } = useAuth();
 
-  if (loading) return null;
+  if (loading || mfaState === "unknown") return null;
+
+  const fullyAuthed = !!session && mfaState === "ok";
 
   return (
     <Switch>
-      <Route path="/" component={() => session ? <Redirect to="/dashboard" /> : <Accueil />} />
+      <Route path="/" component={() => fullyAuthed ? <Redirect to="/dashboard" /> : <Accueil />} />
       <Route path="/fonctionnalites" component={Fonctionnalites} />
       <Route path="/entreprise" component={Entreprise} />
       <Route path="/classement" component={ClassementMarketing} />
@@ -222,7 +233,7 @@ function Router() {
       <Route path="/mentions-legales" component={MentionsLegales} />
       <Route path="/confidentialite" component={Confidentialite} />
       <Route path="/conditions" component={Conditions} />
-      <Route path="/login" component={() => session ? <Redirect to="/dashboard" /> : <Login />} />
+      <Route path="/login" component={() => fullyAuthed ? <Redirect to="/dashboard" /> : <Login />} />
       <Route path="/signup" component={() => session ? <Redirect to="/dashboard" /> : <Signup />} />
       <Route path="/verifier-email" component={VerifierEmail} />
       <Route path="/auth/callback" component={AuthCallback} />

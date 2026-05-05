@@ -199,7 +199,16 @@
     "acceptInviteDesc": "U bent uitgenodigd om lid te worden van een team op Inboria.",
     "pageNotFound": "Pagina niet gevonden",
     "pageNotFoundDesc": "De pagina die u zoekt bestaat niet of is verplaatst.",
-    "backToDashboard": "Terug naar dashboard"
+    "backToDashboard": "Terug naar dashboard",
+    "mfa": {
+      "title": "Verificatie in twee stappen",
+      "subtitle": "Voer de 6-cijferige code in die door uw authenticator-app is gegenereerd.",
+      "codeLabel": "Verificatiecode",
+      "verifyButton": "Verifiëren",
+      "useAnotherAccount": "Een ander account gebruiken",
+      "invalidCode": "Ongeldige code",
+      "codeFormat": "De code moet uit 6 cijfers bestaan."
+    }
   },
   "inbox": {
     "title": "Postvak IN",
@@ -1202,7 +1211,30 @@
     "apiCard": "Publieke API",
     "apiCardDesc": "API-sleutels & documentatie",
     "webhooksCard": "Webhooks",
-    "webhooksCardDesc": "Ondertekende HTTP-meldingen"
+    "webhooksCardDesc": "Ondertekende HTTP-meldingen",
+    "twoFactor": {
+      "title": "Tweestapsverificatie (2FA)",
+      "toggleLabel": "Tweestapsverificatie inschakelen",
+      "description": "Voeg een extra beveiligingslaag toe aan uw account. Bij elke aanmelding wordt om een 6-cijferige code gevraagd die door uw authenticator-app wordt gegenereerd (Google Authenticator, Authy, 1Password…).",
+      "activeBadge": "2FA actief",
+      "enrollTitle": "Tweestapsverificatie inschakelen",
+      "enrollIntro": "Scan de QR-code met uw authenticator-app en voer vervolgens de gegenereerde code in om te bevestigen.",
+      "secretLabel": "Geheime sleutel (handmatige invoer)",
+      "secretHint": "Gebruik deze sleutel als u de QR-code niet kunt scannen.",
+      "codeLabel": "Verificatiecode",
+      "confirmEnable": "2FA inschakelen",
+      "disableTitle": "Tweestapsverificatie uitschakelen",
+      "disableIntro": "Voer de code in die door uw authenticator-app is gegenereerd om 2FA uit te schakelen.",
+      "confirmDisable": "2FA uitschakelen",
+      "invalidCode": "Ongeldige code",
+      "codeFormat": "De code moet uit 6 cijfers bestaan.",
+      "enabledTitle": "Tweestapsverificatie ingeschakeld",
+      "enabledDesc": "Uw account is nu beschermd door 2FA.",
+      "disabledTitle": "Tweestapsverificatie uitgeschakeld",
+      "disabledDesc": "2FA is van uw account verwijderd.",
+      "loadError": "Kan 2FA-factoren niet laden",
+      "enrollError": "Kan registratie niet starten"
+    }
   },
   "subscription": {
     "title": "Beheer uw abonnement",

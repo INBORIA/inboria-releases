@@ -199,7 +199,16 @@
     "acceptInviteDesc": "Vous avez été invité à rejoindre une équipe sur Inboria.",
     "pageNotFound": "Page introuvable",
     "pageNotFoundDesc": "La page que vous cherchez n'existe pas ou a été déplacée.",
-    "backToDashboard": "Retour au tableau de bord"
+    "backToDashboard": "Retour au tableau de bord",
+    "mfa": {
+      "title": "Vérification en 2 étapes",
+      "subtitle": "Saisissez le code à 6 chiffres généré par votre application d'authentification.",
+      "codeLabel": "Code de vérification",
+      "verifyButton": "Vérifier",
+      "useAnotherAccount": "Utiliser un autre compte",
+      "invalidCode": "Code invalide",
+      "codeFormat": "Le code doit contenir 6 chiffres."
+    }
   },
   "inbox": {
     "title": "Réception",
@@ -1192,7 +1201,30 @@
     "apiCard": "API publique",
     "apiCardDesc": "Clés API & documentation",
     "webhooksCard": "Webhooks",
-    "webhooksCardDesc": "Notifications HTTP signées"
+    "webhooksCardDesc": "Notifications HTTP signées",
+    "twoFactor": {
+      "title": "Double authentification (2FA)",
+      "toggleLabel": "Activer la double authentification",
+      "description": "Ajoutez une couche de sécurité supplémentaire à votre compte. À chaque connexion, un code à 6 chiffres généré par votre application d'authentification (Google Authenticator, Authy, 1Password…) vous sera demandé.",
+      "activeBadge": "2FA active",
+      "enrollTitle": "Activer la double authentification",
+      "enrollIntro": "Scannez le QR code avec votre application d'authentification, puis saisissez le code généré pour confirmer.",
+      "secretLabel": "Clé secrète (saisie manuelle)",
+      "secretHint": "Utilisez cette clé si vous ne pouvez pas scanner le QR code.",
+      "codeLabel": "Code de vérification",
+      "confirmEnable": "Activer la 2FA",
+      "disableTitle": "Désactiver la double authentification",
+      "disableIntro": "Pour désactiver la 2FA, saisissez le code généré par votre application d'authentification.",
+      "confirmDisable": "Désactiver la 2FA",
+      "invalidCode": "Code invalide",
+      "codeFormat": "Le code doit contenir 6 chiffres.",
+      "enabledTitle": "Double authentification activée",
+      "enabledDesc": "Votre compte est désormais protégé par la 2FA.",
+      "disabledTitle": "Double authentification désactivée",
+      "disabledDesc": "La 2FA a été retirée de votre compte.",
+      "loadError": "Impossible de charger les facteurs 2FA",
+      "enrollError": "Impossible de démarrer l'enrôlement"
+    }
   },
   "subscription": {
     "title": "Gérez votre abonnement",

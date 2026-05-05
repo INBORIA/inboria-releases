@@ -38,6 +38,7 @@ import { useAuth } from "@/lib/auth";
 import { supabase } from "@/lib/supabase";
 import { useTranslation } from 'react-i18next';
 import { SignatureEditor } from "@/components/signature/signature-editor";
+import { TwoFactorSection } from "@/components/security/TwoFactorSection";
 
 const IMAP_PROVIDERS = [
   // Gmail via App Password (contournement OAuth Google)
@@ -1321,6 +1322,8 @@ export default function ParametresMonCompte() {
               </div>
             </div>
           </section>
+
+          <TwoFactorSection />
         </div>
       </div>
     </DashboardLayout>

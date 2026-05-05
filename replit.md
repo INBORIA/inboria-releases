@@ -18,7 +18,7 @@ The design system is dark-only, inspired by Linear/Superhuman. It uses Inter fon
 
 ### Technical Implementations
 
-- **Authentication**: Supabase Auth handles email+password signup and login, with API server JWT validation.
+- **Authentication**: Supabase Auth handles email+password signup and login, with API server JWT validation. Optional **two-factor authentication (TOTP)** via Supabase native MFA: users enable it from Paramètres → Mon compte (toggle Actif/Inactif) by scanning a QR code with an authenticator app (Google Authenticator, Authy, 1Password). On each subsequent sign-in, a 6-digit code is required to elevate the session from AAL1 to AAL2. Route guards (`ProtectedRoute`, `AdminOnlyRoute`) and the `/login` redirect are gated on a `mfaState` derived from `getAuthenticatorAssuranceLevel()` (fail-closed if the call errors), so an AAL1 session cannot reach the dashboard or trigger privileged data fetches. Translations: FR/EN/NL/DE/ES.
 - **Email Integration**: Supports Gmail (OAuth2), Outlook (OAuth2), and generic IMAP providers. AI Triage, powered by GPT-4o-mini, classifies emails during sync, assigning priority, summary, and category.
 - **Auto-Sync**: An internal server-side process automatically synchronizes emails, performs AI triage, deduplication, and OAuth token refreshing.
 - **Webhook**: Provides `POST /api/webhook/email` for real-time email ingestion and processing.
