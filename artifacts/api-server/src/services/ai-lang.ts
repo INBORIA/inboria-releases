@@ -1,8 +1,8 @@
 import { supabaseAdmin } from "../lib/supabase";
 
-export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et";
+export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh";
 
-const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et"];
+const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh"];
 
 export function normalizeLang(input: unknown): AiLang {
   if (typeof input !== "string") return "fr";
@@ -58,6 +58,7 @@ const NAMES: Record<AiLang, string> = {
   el: "ΕΛΛΗΝΙΚΑ",
   uk: "УКРАЇНСЬКА",
   et: "EESTI",
+  zh: "简体中文",
 };
 
 const SHORT_INSTRUCTION: Record<AiLang, string> = {
@@ -85,6 +86,7 @@ const SHORT_INSTRUCTION: Record<AiLang, string> = {
   el: "Παρακαλώ απαντήστε στα ελληνικά, χρησιμοποιώντας τον πληθυντικό ευγενείας (εσείς/σας).",
   uk: "Будь ласка, відповідайте українською мовою, використовуючи ввічливу форму (Ви/Вас з великої літери).",
   et: "Palun vastake eesti keeles, kasutades viisakat vormi (Teie/Teid).",
+  zh: "请使用简体中文回答,使用敬称『您』。",
 };
 
 export function langName(lang: AiLang): string {

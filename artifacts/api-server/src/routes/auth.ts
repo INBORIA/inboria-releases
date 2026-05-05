@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -218,6 +218,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Lähtesta minu parool",
         footer: "Kui Te ei ole seda taotlust esitanud, ignoreerige seda e-kirja — Teie parool jääb muutumatuks.",
         subject: "Lähtestage oma Inboria parool",
+      };
+    case "zh":
+      return {
+        tagline: "面向中小企业的邮件自动驾驶",
+        heading: "重置您的密码",
+        body: "您请求重置 Inboria 账户的密码。请点击下方按钮以选择新密码。此链接将在 1 小时后失效。",
+        cta: "重置我的密码",
+        footer: "如果您并未发起此请求,请忽略此邮件——您的密码将保持不变。",
+        subject: "重置您的 Inboria 密码",
       };
     default:
       return {

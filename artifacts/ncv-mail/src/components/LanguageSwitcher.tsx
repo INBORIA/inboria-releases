@@ -29,6 +29,7 @@ const languages = [
   { code: "el", label: "EL", name: "Ελληνικά" },
   { code: "uk", label: "UK", name: "Українська" },
   { code: "et", label: "ET", name: "Eesti" },
+  { code: "zh", label: "ZH", name: "简体中文" },
 ];
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {

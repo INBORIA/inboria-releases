@@ -87,7 +87,9 @@ async function translateBatch(strings, targetLang) {
                                       ? "Ukrainian (Ukrainian from Ukraine, formal B2B SaaS tone using polite address 'Ви' / 'Вас' / 'Вам' (capitalized) and 2nd person plural verbs — never informal 'ти/тебе/тобі' in UI labels; use modern Ukrainian orthography with apostrophe ' not Russian ъ; avoid russisms)"
                                       : targetLang === "et"
                                         ? "Estonian (Estonian from Estonia, formal B2B SaaS tone using polite address 'Teie' / 'Teid' / 'Teile' (capitalized) and 'Te' for verb agreement — never informal 'sina/sinu' in UI labels; use 'Palun' for polite requests; modern standard Estonian (kirjakeel) with proper õ/ä/ö/ü diacritics; avoid germanisms and russisms)"
-                                        : targetLang;
+                                        : targetLang === "zh"
+                                          ? "Simplified Chinese (简体中文, Mainland China Mandarin, formal B2B SaaS tone using polite address '您' (nín) — never informal '你' (nǐ); use '请' for polite requests; use Simplified Chinese characters only (NOT Traditional 繁體); use mainland conventions for technical terms (e.g. '邮件' not '電郵', '设置' not '設定', '登录' not '登入', '账户' not '帳戶', '软件' not '軟件'); use Chinese full-width punctuation (,。:;!?) in narrative text but keep ASCII punctuation inside placeholders/code/URLs)"
+                                          : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -271,6 +273,8 @@ const tasks = {
   "web-uk":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/uk.json",    lang: "uk" },
   "mobile-et": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/et.json", lang: "et" },
   "web-et":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/et.json",    lang: "et" },
+  "mobile-zh": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/zh.json", lang: "zh" },
+  "web-zh":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/zh.json",    lang: "zh" },
 };
 
 if (target === "all") {

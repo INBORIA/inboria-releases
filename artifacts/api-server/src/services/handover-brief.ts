@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -183,6 +183,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Täitmata kohustused",
     "Tähelepanu vajavad punktid",
   ],
+  zh: [
+    "关系背景",
+    "进行中的主题",
+    "已作出的决定",
+    "未完成的承诺",
+    "需要关注的事项",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -210,6 +217,7 @@ const TONE: Record<Language, string> = {
   el: "Γράψτε στα ελληνικά, χρησιμοποιώντας τον πληθυντικό ευγενείας (εσείς/σας), τόνος βασισμένος σε γεγονότα και επαγγελματικός, χωρίς χαιρετισμούς.",
   uk: "Пишіть українською мовою, використовуючи ввічливу форму (Ви/Вас з великої літери), фактологічним та професійним тоном, без вітань.",
   et: "Kirjutage eesti keeles, kasutades viisakat vormi (Teie/Teid), faktipõhises ja professionaalses toonis, ilma tervitusteta.",
+  zh: "请使用简体中文撰写,采用敬称『您』,以基于事实的专业语气,无需问候语。",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {
