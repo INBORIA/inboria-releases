@@ -76,7 +76,7 @@ import { useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import { format } from "date-fns";
-import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
 import { Skeleton } from "@/components/ui/skeleton";
 import { z } from "zod";

@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -137,6 +137,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Şifremi sıfırla",
         footer: "Bu talebi siz yapmadıysanız, bu mesajı yok sayabilirsiniz — şifreniz değişmeden kalacaktır.",
         subject: "Inboria şifrenizi sıfırlayın",
+      };
+    case "ja":
+      return {
+        tagline: "中小企業向けメール自動操縦",
+        heading: "パスワードをリセット",
+        body: "Inboria アカウントのパスワードリセットをリクエストされました。新しいパスワードを選択するには、下のボタンをクリックしてください。このリンクは1時間で期限切れになります。",
+        cta: "パスワードをリセットする",
+        footer: "このリクエストに心当たりがない場合は、このメールを無視してください。パスワードは変更されません。",
+        subject: "Inboria のパスワードをリセット",
       };
     default:
       return {

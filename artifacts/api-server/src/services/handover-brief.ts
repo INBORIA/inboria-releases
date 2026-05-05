@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -120,6 +120,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Açık taahhütler",
     "Dikkat edilmesi gerekenler",
   ],
+  ja: [
+    "関係の背景",
+    "進行中のトピック",
+    "決定事項",
+    "未完了のコミットメント",
+    "注意すべき点",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -138,6 +145,7 @@ const TONE: Record<Language, string> = {
   hu: "Írjon magyarul, magázódó (Ön) formában, tárgyilagos és professzionális hangnemben, üdvözlések nélkül.",
   cs: "Pište česky, používejte vykání (Vy), věcný a profesionální tón, bez pozdravů.",
   tr: "Türkçe yazın, resmi 'siz' formunu kullanın, olgusal ve profesyonel ton, selamlama olmadan.",
+  ja: "日本語で、です・ます調の丁寧な敬語で記述してください。事実に基づいた専門的なトーンで、挨拶は不要です。",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

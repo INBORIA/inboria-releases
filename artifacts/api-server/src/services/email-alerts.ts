@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -159,11 +159,21 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `${email} posta kutusunun baglantisi kesildi`,
     notifMessage: "Bu posta kutusunu Ayarlar bolumunden yeniden baglamak icin tiklayin.",
   },
+  ja: {
+    subject: (email) => `Inboria — メールボックス ${email} の接続が切断されました`,
+    intro: "Inboria は数回の試行の後、このメールボックスを同期できませんでした。接続が復旧するまで、新しいメールは処理されません。",
+    reasonLabel: "最後のエラー",
+    cta: "このメールボックスを再接続する",
+    ctaUrl: "/dashboard/parametres",
+    footer: "このメールはメールボックスごとに週に1回まで送信されます。再接続が成功すると、通知は届かなくなります。",
+    notifTitle: (email) => `メールボックス ${email} の接続が切断されました`,
+    notifMessage: "設定からこのメールボックスを再接続するにはクリックしてください。",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const v = (raw || "fr").slice(0, 2).toLowerCase();
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja") return v;
   return "fr";
 }
 

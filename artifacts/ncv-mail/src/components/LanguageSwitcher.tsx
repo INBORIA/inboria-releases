@@ -20,6 +20,7 @@ const languages = [
   { code: "hu", label: "HU", flag: "🇭🇺" },
   { code: "cs", label: "CS", flag: "🇨🇿" },
   { code: "tr", label: "TR", flag: "🇹🇷" },
+  { code: "ja", label: "JA", flag: "🇯🇵" },
 ];
 
 const nativeNames: Record<string, string> = {
@@ -38,6 +39,7 @@ const nativeNames: Record<string, string> = {
   hu: "Magyar",
   cs: "Čeština",
   tr: "Türkçe",
+  ja: "日本語",
 };
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {
