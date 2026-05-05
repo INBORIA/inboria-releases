@@ -1,8 +1,8 @@
 import { supabaseAdmin } from "../lib/supabase";
 
-export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt" | "bg";
+export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt" | "bg" | "nb" | "ca" | "ga" | "ur" | "hi" | "km";
 
-const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg"];
+const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg", "nb", "ca", "ga", "ur", "hi", "km"];
 
 export function normalizeLang(input: unknown): AiLang {
   if (typeof input !== "string") return "fr";
@@ -74,6 +74,12 @@ const NAMES: Record<AiLang, string> = {
   lv: "LATVIEŠU",
   mt: "MALTI",
   bg: "БЪЛГАРСКИ",
+  nb: "NORSK BOKMÅL",
+  ca: "CATALÀ",
+  ga: "GAEILGE",
+  ur: "اردو",
+  hi: "हिन्दी",
+  km: "ខ្មែរ",
 };
 
 const SHORT_INSTRUCTION: Record<AiLang, string> = {
@@ -114,6 +120,12 @@ const SHORT_INSTRUCTION: Record<AiLang, string> = {
   lv: "Lūdzu, atbildiet latviešu valodā, izmantojot pieklājīgo uzrunas formu (Jūs/Jums/Jūsu ar lielo burtu).",
   mt: "Jekk jogħġobkom, wieġbu bil-Malti, billi tużaw il-forma rispettuża (Inti/Tagħkom b'ittra kbira).",
   bg: "Моля, отговаряйте на български език, използвайки учтивата форма (Вие/Вас/Ви/Ваш с главна буква).",
+  nb: "Vennligst svar på norsk bokmål med en profesjonell, høflig B2B-tone.",
+  ca: "Si us plau, responeu en català utilitzant la forma de cortesia (Vostè/vostè).",
+  ga: "Le do thoil, freagair as Gaeilge ag úsáid an fhoirm bhéasach (sibh/bhur) le ton gairmiúil B2B.",
+  ur: "براہ کرم اردو میں احترام والے انداز (آپ) میں جواب دیں۔",
+  hi: "कृपया हिन्दी में औपचारिक/सम्मानजनक रूप (आप) का उपयोग करते हुए उत्तर दें।",
+  km: "សូមឆ្លើយជាភាសាខ្មែរដោយប្រើទម្រង់គួរសម (លោក/លោកស្រី)។",
 };
 
 export function langName(lang: AiLang): string {

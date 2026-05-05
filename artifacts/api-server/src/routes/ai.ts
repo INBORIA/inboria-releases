@@ -197,6 +197,12 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
       const isLv = lang === "lv";
       const isMt = lang === "mt";
       const isBg = lang === "bg";
+      const isNb = lang === "nb";
+      const isCa = lang === "ca";
+      const isGa = lang === "ga";
+      const isUr = lang === "ur";
+      const isHi = lang === "hi";
+      const isKm = lang === "km";
       if (activeProjects.length > 0) {
         const header = isFr
           ? "Projets actifs (derniers 7 jours d'activité)"
@@ -272,7 +278,19 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                                                                 ? "Proġetti attivi (attività fl-aħħar 7 ijiem)"
                                                                                 : isBg
                                                                                   ? "Активни проекти (активност през последните 7 дни)"
-                                                                                  : "Active projects";
+                                                                                  : isNb
+                                                                                    ? "Aktive prosjekter (aktivitet de siste 7 dagene)"
+                                                                                    : isCa
+                                                                                      ? "Projectes actius (activitat dels darrers 7 dies)"
+                                                                                      : isGa
+                                                                                        ? "Tionscadail ghníomhacha (gníomhaíocht le 7 lá anuas)"
+                                                                                        : isUr
+                                                                                          ? "فعال منصوبے (پچھلے 7 دنوں کی سرگرمی)"
+                                                                                          : isHi
+                                                                                            ? "सक्रिय परियोजनाएँ (पिछले 7 दिनों की गतिविधि)"
+                                                                                            : isKm
+                                                                                              ? "គម្រោងសកម្ម (សកម្មភាព 7 ថ្ងៃចុងក្រោយ)"
+                                                                                              : "Active projects";
         lines.push(`\n${header} :`);
         for (const p of activeProjects) {
           lines.push(`- ${p.name} (${p.email_count} mails)`);
@@ -353,7 +371,19 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                                                                 ? "Deċiżjonijiet riċenti (l-aħħar 7 ijiem)"
                                                                                 : isBg
                                                                                   ? "Скорошни решения (последните 7 дни)"
-                                                                                  : "Recent decisions";
+                                                                                  : isNb
+                                                                                    ? "Nylige beslutninger (siste 7 dager)"
+                                                                                    : isCa
+                                                                                      ? "Decisions recents (darrers 7 dies)"
+                                                                                      : isGa
+                                                                                        ? "Cinntí le déanaí (7 lá anuas)"
+                                                                                        : isUr
+                                                                                          ? "حالیہ فیصلے (پچھلے 7 دن)"
+                                                                                          : isHi
+                                                                                            ? "हाल के निर्णय (पिछले 7 दिन)"
+                                                                                            : isKm
+                                                                                              ? "ការសម្រេចចិត្តថ្មីៗ (7 ថ្ងៃចុងក្រោយ)"
+                                                                                              : "Recent decisions";
         lines.push(`\n${header} :`);
         for (const d of recentDecisions) {
           const date = d.decided_at || (d as any).created_at?.slice(0, 10) || "";
@@ -437,7 +467,19 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                                                                 ? "Impenji msemmija din il-ġimgħa"
                                                                                 : isBg
                                                                                   ? "Ангажименти, споменати тази седмица"
-                                                                                  : "Commitments this week";
+                                                                                  : isNb
+                                                                                    ? "Forpliktelser nevnt denne uken"
+                                                                                    : isCa
+                                                                                      ? "Compromisos esmentats aquesta setmana"
+                                                                                      : isGa
+                                                                                        ? "Gealltanais luaite an tseachtain seo"
+                                                                                        : isUr
+                                                                                          ? "اس ہفتے ذکر کیے گئے وعدے"
+                                                                                          : isHi
+                                                                                            ? "इस सप्ताह उल्लिखित प्रतिबद्धताएँ"
+                                                                                            : isKm
+                                                                                              ? "កិច្ចសន្យាដែលបានលើកឡើងសប្ដាហ៍នេះ"
+                                                                                              : "Commitments this week";
         lines.push(`\n${header} :`);
         for (const c of openCommitments) {
           const date = c.event_date ? ` (${c.event_date})` : "";
@@ -1538,7 +1580,7 @@ router.post("/ai/handover-brief", requireAuth, async (req, res): Promise<void> =
       return;
     }
     const sinceDays = Number.isFinite(body.sinceDays) ? Number(body.sinceDays) : 30;
-    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg"];
+    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg", "nb", "ca", "ga", "ur", "hi", "km"];
     let language: BriefLanguage = "fr";
     if (typeof body.language === "string" && (allowedLangs as string[]).includes(body.language)) {
       language = body.language as BriefLanguage;

@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt" | "bg";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt" | "bg" | "nb" | "ca" | "ga" | "ur" | "hi" | "km";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -274,6 +274,48 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Открити ангажименти",
     "Въпроси, изискващи внимание",
   ],
+  nb: [
+    "Relasjonskontekst",
+    "Aktive temaer",
+    "Beslutninger som er tatt",
+    "Åpne forpliktelser",
+    "Spørsmål som krever oppmerksomhet",
+  ],
+  ca: [
+    "Context de la relació",
+    "Temes actius",
+    "Decisions preses",
+    "Compromisos oberts",
+    "Qüestions que requereixen atenció",
+  ],
+  ga: [
+    "Comhthéacs an chaidrimh",
+    "Topaicí gníomhacha",
+    "Cinntí déanta",
+    "Gealltanais oscailte",
+    "Ceisteanna a éilíonn aird",
+  ],
+  ur: [
+    "تعلق کا پس منظر",
+    "فعال موضوعات",
+    "کیے گئے فیصلے",
+    "زیرِ التوا وعدے",
+    "وہ سوالات جن پر توجہ درکار ہے",
+  ],
+  hi: [
+    "संबंध का संदर्भ",
+    "सक्रिय विषय",
+    "लिए गए निर्णय",
+    "लंबित प्रतिबद्धताएँ",
+    "ध्यान देने योग्य प्रश्न",
+  ],
+  km: [
+    "បរិបទនៃទំនាក់ទំនង",
+    "ប្រធានបទសកម្ម",
+    "ការសម្រេចចិត្តដែលបានធ្វើ",
+    "កិច្ចសន្យាដែលនៅសល់",
+    "សំណួរដែលត្រូវការការយកចិត្តទុកដាក់",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -314,6 +356,12 @@ const TONE: Record<Language, string> = {
   lv: "Rakstiet latviešu valodā, izmantojot pieklājīgo uzrunas formu (Jūs/Jums/Jūsu ar lielo burtu), faktiskā un profesionālā tonī, bez sveicieniem.",
   mt: "Ikteb bil-Malti, billi tuża l-forma rispettuża (Inti/Tagħkom b'ittra kbira), b'ton fattwali u professjonali, mingħajr tislim.",
   bg: "Пишете на български език, използвайки учтивата форма (Вие/Вас/Ви/Ваш с главна буква), с фактически и професионален тон, без поздрави.",
+  nb: "Skriv på norsk bokmål med en saklig og profesjonell tone, uten hilsener.",
+  ca: "Escriviu en català utilitzant la forma de cortesia (Vostè/vostè), amb un to factual i professional, sense salutacions.",
+  ga: "Scríobh as Gaeilge ag úsáid an fhoirm bhéasach (sibh/bhur), le ton fíricí gairmiúil, gan beannachtaí.",
+  ur: "اردو میں احترام والے انداز (آپ) کے ساتھ، حقائق پر مبنی پیشہ ورانہ لہجے میں لکھیں، بغیر کسی سلام کے۔",
+  hi: "हिन्दी में औपचारिक/सम्मानजनक रूप (आप) का उपयोग करते हुए, तथ्यात्मक और पेशेवर लहजे में लिखें, बिना अभिवादन के।",
+  km: "សរសេរជាភាសាខ្មែរដោយប្រើទម្រង់គួរសម (លោក/លោកស្រី) ដោយមានសម្លេងផ្លូវការ និងផ្អែកលើការពិត ដោយគ្មានពាក្យស្វាគមន៍។",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

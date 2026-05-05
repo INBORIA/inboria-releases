@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg", "nb", "ca", "ga", "ur", "hi", "km"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -335,6 +335,60 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Възстанови моята парола",
         footer: "Ако не сте Вие, който е изпратил тази заявка, моля игнорирайте това съобщение — Вашата парола ще остане непроменена.",
         subject: "Възстановете Вашата парола за Inboria",
+      };
+    case "nb":
+      return {
+        tagline: "Email Autopilot for SMB",
+        heading: "Tilbakestilling av passordet ditt",
+        body: "Du har bedt om tilbakestilling av passordet for Inboria-kontoen din. Klikk på knappen nedenfor for å velge et nytt passord. Denne lenken er gyldig i 1 time.",
+        cta: "Tilbakestill passordet mitt",
+        footer: "Hvis det ikke var du som sendte denne forespørselen, vennligst ignorer denne meldingen — passordet ditt vil forbli uendret.",
+        subject: "Tilbakestill Inboria-passordet ditt",
+      };
+    case "ca":
+      return {
+        tagline: "Email Autopilot per a PIMES",
+        heading: "Restabliment de la vostra contrasenya",
+        body: "Heu sol·licitat el restabliment de la contrasenya del vostre compte d'Inboria. Feu clic al botó de sota per triar una nova contrasenya. Aquest enllaç és vàlid durant 1 hora.",
+        cta: "Restablir la meva contrasenya",
+        footer: "Si no heu estat Vostè qui ha enviat aquesta sol·licitud, si us plau ignoreu aquest missatge — la vostra contrasenya romandrà sense canvis.",
+        subject: "Restabliu la vostra contrasenya d'Inboria",
+      };
+    case "ga":
+      return {
+        tagline: "Email Autopilot do FBManna",
+        heading: "Athshocrú bhur bpasfhocail",
+        body: "D'iarr sibh athshocrú an phasfhocail do bhur gcuntas Inboria. Cliceáil ar an gcnaipe thíos chun pasfhocal nua a roghnú. Tá an nasc seo bailí ar feadh 1 uair an chloig.",
+        cta: "Athshocraigh mo phasfhocal",
+        footer: "Mura sibhse a sheol an iarratas seo, le bhur dtoil déan neamhaird den teachtaireacht seo — fanfaidh bhur bpasfhocal gan athrú.",
+        subject: "Athshocraigh bhur bpasfhocal Inboria",
+      };
+    case "ur":
+      return {
+        tagline: "SMEs کے لیے Email Autopilot",
+        heading: "آپ کے پاس ورڈ کی دوبارہ ترتیب",
+        body: "آپ نے اپنے Inboria اکاؤنٹ کے پاس ورڈ کی دوبارہ ترتیب کی درخواست کی ہے۔ نیا پاس ورڈ منتخب کرنے کے لیے نیچے دیے گئے بٹن پر کلک کریں۔ یہ لنک 1 گھنٹے کے لیے درست ہے۔",
+        cta: "میرا پاس ورڈ دوبارہ ترتیب دیں",
+        footer: "اگر یہ درخواست آپ نے نہیں بھیجی، تو براہ کرم اس پیغام کو نظر انداز کریں — آپ کا پاس ورڈ تبدیل نہیں ہوگا۔",
+        subject: "اپنا Inboria پاس ورڈ دوبارہ ترتیب دیں",
+      };
+    case "hi":
+      return {
+        tagline: "SMEs के लिए Email Autopilot",
+        heading: "आपके पासवर्ड का रीसेट",
+        body: "आपने अपने Inboria खाते के पासवर्ड को रीसेट करने का अनुरोध किया है। नया पासवर्ड चुनने के लिए नीचे दिए गए बटन पर क्लिक करें। यह लिंक 1 घंटे के लिए वैध है।",
+        cta: "मेरा पासवर्ड रीसेट करें",
+        footer: "यदि यह अनुरोध आपने नहीं भेजा है, तो कृपया इस संदेश को अनदेखा करें — आपका पासवर्ड अपरिवर्तित रहेगा।",
+        subject: "अपना Inboria पासवर्ड रीसेट करें",
+      };
+    case "km":
+      return {
+        tagline: "Email Autopilot សម្រាប់ SMEs",
+        heading: "ការកំណត់ពាក្យសម្ងាត់របស់លោកអ្នកឡើងវិញ",
+        body: "លោកអ្នកបានស្នើសុំការកំណត់ពាក្យសម្ងាត់ឡើងវិញសម្រាប់គណនី Inboria របស់លោកអ្នក។ សូមចុចលើប៊ូតុងខាងក្រោមដើម្បីជ្រើសរើសពាក្យសម្ងាត់ថ្មី។ តំណភ្ជាប់នេះមានសុពលភាពរយៈពេល 1 ម៉ោង។",
+        cta: "កំណត់ពាក្យសម្ងាត់របស់ខ្ញុំឡើងវិញ",
+        footer: "ប្រសិនបើលោកអ្នកមិនបានផ្ញើសំណើនេះទេ សូមមិនអើពើសារនេះ — ពាក្យសម្ងាត់របស់លោកអ្នកនឹងនៅដដែល។",
+        subject: "កំណត់ពាក្យសម្ងាត់ Inboria របស់លោកអ្នកឡើងវិញ",
       };
     default:
       return {

@@ -39,6 +39,12 @@ import sl from "./locales/sl.json";
 import lv from "./locales/lv.json";
 import mt from "./locales/mt.json";
 import bg from "./locales/bg.json";
+import nb from "./locales/nb.json";
+import ca from "./locales/ca.json";
+import ga from "./locales/ga.json";
+import ur from "./locales/ur.json";
+import hi from "./locales/hi.json";
+import km from "./locales/km.json";
 
 i18n
   .use(LanguageDetector)
@@ -82,9 +88,15 @@ i18n
       lv: { translation: lv },
       mt: { translation: mt },
       bg: { translation: bg },
+      nb: { translation: nb },
+      ca: { translation: ca },
+      ga: { translation: ga },
+      ur: { translation: ur },
+      hi: { translation: hi },
+      km: { translation: km },
     },
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg"],
+    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt", "bg", "nb", "ca", "ga", "ur", "hi", "km"],
     nonExplicitSupportedLngs: true,
     load: "languageOnly",
     interpolation: {

@@ -53,6 +53,12 @@ const LANGUAGES = [
   { code: "lv", label: "Latviešu" },
   { code: "mt", label: "Malti" },
   { code: "bg", label: "Български" },
+  { code: "nb", label: "Norsk" },
+  { code: "ca", label: "Català" },
+  { code: "ga", label: "Gaeilge" },
+  { code: "ur", label: "اردو" },
+  { code: "hi", label: "हिन्दी" },
+  { code: "km", label: "ខ្មែរ" },
 ];
 
 export default function MenuScreen() {

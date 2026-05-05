@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt" | "bg";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt" | "bg" | "nb" | "ca" | "ga" | "ur" | "hi" | "km";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -379,13 +379,73 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `Пощенската кутия ${email} е изключена`,
     notifMessage: "Кликнете, за да свържете отново тази пощенска кутия в Настройки.",
   },
+  nb: {
+    subject: (email) => `Inboria — Postkassen ${email} er frakoblet`,
+    intro: "Inboria klarte ikke å synkronisere denne postkassen etter flere forsøk. Inntil tilkoblingen er gjenopprettet, vil ikke de nye meldingene dine bli behandlet.",
+    reasonLabel: "Siste feil",
+    cta: "Koble til postkassen på nytt",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Denne meldingen sendes maksimalt én gang per uke per postkasse. Etter en vellykket gjentilkobling vil du ikke motta flere varsler.",
+    notifTitle: (email) => `Postkassen ${email} er frakoblet`,
+    notifMessage: "Klikk for å koble til denne postkassen på nytt i Innstillinger.",
+  },
+  ca: {
+    subject: (email) => `Inboria — La bústia ${email} està desconnectada`,
+    intro: "Inboria no ha pogut sincronitzar aquesta bústia després de diversos intents. Fins que la connexió no es restableixi, els vostres nous missatges no seran processats.",
+    reasonLabel: "Darrer error",
+    cta: "Torneu a connectar la bústia",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Aquest missatge s'envia com a màxim un cop per setmana per bústia. Després d'una reconnexió correcta, ja no rebreu més notificacions.",
+    notifTitle: (email) => `Bústia ${email} desconnectada`,
+    notifMessage: "Feu clic per tornar a connectar aquesta bústia a la Configuració.",
+  },
+  ga: {
+    subject: (email) => `Inboria — Tá an bosca poist ${email} dícheangailte`,
+    intro: "Theip ar Inboria an bosca poist seo a shioncronú tar éis roinnt iarrachtaí. Go dtí go n-athbhunófar an nasc, ní phróiseálfar bhur dteachtaireachtaí nua.",
+    reasonLabel: "Earráid is déanaí",
+    cta: "Athcheangail an bosca poist",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Seoltar an teachtaireacht seo uair sa tseachtain ar a mhéad in aghaidh an bhosca poist. Tar éis athcheangal rathúil, ní bhfaighidh sibh tuilleadh fógraí.",
+    notifTitle: (email) => `Bosca poist ${email} dícheangailte`,
+    notifMessage: "Cliceáil chun an bosca poist seo a athcheangal sna Socruithe.",
+  },
+  ur: {
+    subject: (email) => `Inboria — میل باکس ${email} منقطع ہو گیا ہے`,
+    intro: "Inboria کئی کوششوں کے بعد بھی اس میل باکس کو ہم آہنگ نہیں کر سکا۔ جب تک کنکشن بحال نہیں ہو جاتا، آپ کے نئے پیغامات پر کارروائی نہیں ہوگی۔",
+    reasonLabel: "تازہ ترین خرابی",
+    cta: "میل باکس کو دوبارہ منسلک کریں",
+    ctaUrl: "/dashboard/parametres",
+    footer: "یہ پیغام فی میل باکس ہفتے میں زیادہ سے زیادہ ایک بار بھیجا جاتا ہے۔ کامیاب دوبارہ کنکشن کے بعد، آپ کو مزید اطلاعات موصول نہیں ہوں گی۔",
+    notifTitle: (email) => `میل باکس ${email} منقطع`,
+    notifMessage: "ترتیبات میں اس میل باکس کو دوبارہ منسلک کرنے کے لیے کلک کریں۔",
+  },
+  hi: {
+    subject: (email) => `Inboria — मेलबॉक्स ${email} डिस्कनेक्ट हो गया है`,
+    intro: "Inboria कई प्रयासों के बाद भी इस मेलबॉक्स को सिंक्रनाइज़ नहीं कर सका। जब तक कनेक्शन बहाल नहीं हो जाता, आपके नए संदेश संसाधित नहीं किए जाएँगे।",
+    reasonLabel: "नवीनतम त्रुटि",
+    cta: "मेलबॉक्स को फिर से कनेक्ट करें",
+    ctaUrl: "/dashboard/parametres",
+    footer: "यह संदेश प्रति मेलबॉक्स सप्ताह में अधिकतम एक बार भेजा जाता है। सफल पुनः कनेक्शन के बाद, आपको और सूचनाएँ प्राप्त नहीं होंगी।",
+    notifTitle: (email) => `मेलबॉक्स ${email} डिस्कनेक्ट`,
+    notifMessage: "सेटिंग्स में इस मेलबॉक्स को फिर से कनेक्ट करने के लिए क्लिक करें।",
+  },
+  km: {
+    subject: (email) => `Inboria — ប្រអប់សំបុត្រ ${email} ត្រូវបានផ្ដាច់`,
+    intro: "Inboria មិនអាចធ្វើសមកាលកម្មប្រអប់សំបុត្រនេះបានទេ បន្ទាប់ពីការព្យាយាមជាច្រើនលើក។ រហូតដល់ការតភ្ជាប់ត្រូវបានស្ដារឡើងវិញ សារថ្មីៗរបស់លោកអ្នកនឹងមិនត្រូវបានដំណើរការទេ។",
+    reasonLabel: "កំហុសថ្មីបំផុត",
+    cta: "ភ្ជាប់ប្រអប់សំបុត្រឡើងវិញ",
+    ctaUrl: "/dashboard/parametres",
+    footer: "សារនេះត្រូវបានផ្ញើច្រើនបំផុតម្ដងក្នុងមួយសប្ដាហ៍ ក្នុងមួយប្រអប់សំបុត្រ។ បន្ទាប់ពីការតភ្ជាប់ឡើងវិញដោយជោគជ័យ លោកអ្នកនឹងមិនទទួលបានការជូនដំណឹងបន្ថែមទៀតទេ។",
+    notifTitle: (email) => `ប្រអប់សំបុត្រ ${email} ត្រូវបានផ្ដាច់`,
+    notifMessage: "ចុចដើម្បីភ្ជាប់ប្រអប់សំបុត្រនេះឡើងវិញនៅក្នុងការកំណត់។",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const full = (raw || "fr").trim().toLowerCase();
   if (full === "zh-tw" || full === "zh_tw" || full === "zh-hant" || full === "zh-hk") return "zh-TW";
   const v = full.slice(0, 2);
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk" || v === "et" || v === "zh" || v === "lt" || v === "sr" || v === "ru" || v === "he" || v === "ar" || v === "hr" || v === "sk" || v === "sl" || v === "lv" || v === "mt" || v === "bg") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk" || v === "et" || v === "zh" || v === "lt" || v === "sr" || v === "ru" || v === "he" || v === "ar" || v === "hr" || v === "sk" || v === "sl" || v === "lv" || v === "mt" || v === "bg" || v === "nb" || v === "ca" || v === "ga" || v === "ur" || v === "hi" || v === "km") return v;
   return "fr";
 }
 
