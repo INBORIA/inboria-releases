@@ -44,6 +44,7 @@ const LANGUAGES = [
   { code: "zh-TW", label: "繁體中文" },
   { code: "lt", label: "Lietuvių" },
   { code: "sr", label: "Српски" },
+  { code: "ru", label: "Русский" },
 ];
 
 export default function MenuScreen() {

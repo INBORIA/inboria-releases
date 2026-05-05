@@ -33,6 +33,7 @@ const languages = [
   { code: "zh-TW", label: "ZH-TW", name: "繁體中文" },
   { code: "lt", label: "LT", name: "Lietuvių" },
   { code: "sr", label: "SR", name: "Српски" },
+  { code: "ru", label: "RU", name: "Русский" },
 ];
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {

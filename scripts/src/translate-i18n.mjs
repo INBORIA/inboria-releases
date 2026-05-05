@@ -95,7 +95,9 @@ async function translateBatch(strings, targetLang) {
                                               ? "Lithuanian (lietuvių kalba, Lithuanian from Lithuania, formal B2B SaaS tone using polite address 'Jūs' / 'Jus' / 'Jūsų' / 'Jums' (always capitalized in formal address) and 2nd person plural verbs — never informal 'tu/tave/tavo' in UI labels; use 'prašome' for polite requests; modern standard Lithuanian (bendrinė lietuvių kalba) with proper diacritics ą/č/ę/ė/į/š/ų/ū/ž; use Lithuanian quotation marks „...“ for quotes; avoid russisms and germanisms; use native terminology where established (e.g. 'el. paštas' for email, 'nustatymai' for settings, 'prisijungti' for log in, 'paskyra' for account, 'slaptažodis' for password, 'pašto dėžutė' for mailbox))"
                                               : targetLang === "sr"
                                                 ? "Serbian (српски језик, Serbian from Serbia in CYRILLIC SCRIPT ONLY — never Latin script; formal B2B SaaS tone using polite address 'Ви' / 'Вас' / 'Вам' / 'Ваш' / 'Вашу' (always CAPITALIZED in formal address) and 2nd person plural verbs — never informal 'ти/тебе/теби' in UI labels; use 'молимо' for polite requests; standard Serbian (стандардни српски) following Matica srpska orthography; use Serbian quotation marks „...“ for quotes; do NOT use Croatian/Bosnian variants (write нема not nema, време not vrijeme, хлеб not хљеб); use native terminology where established (e.g. 'е-пошта' or 'имејл' for email, 'подешавања' for settings, 'пријава' for log in, 'налог' for account, 'лозинка' for password, 'сандуче' for mailbox))"
-                                                : targetLang;
+                                                : targetLang === "ru"
+                                                  ? "Russian (русский язык, Russian from Russia, formal B2B SaaS tone using polite address 'Вы' / 'Вас' / 'Вам' / 'Ваш' / 'Вашу' (always CAPITALIZED in formal address) and 2nd person plural verbs — never informal 'ты/тебя/тебе' in UI labels; use 'пожалуйста' for polite requests; standard modern Russian following современная орфография; use ё where applicable (e.g. подключён, отключён); use Russian quotation marks «...» for quotes (NOT „...“ which are German/Serbian); use Russian em-dash with spaces — like this; use native terminology where established (e.g. 'электронная почта' or 'email' for email, 'настройки' for settings, 'войти' for log in, 'аккаунт' or 'учётная запись' for account, 'пароль' for password, 'почтовый ящик' for mailbox, 'входящие' for inbox))"
+                                                  : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -287,6 +289,8 @@ const tasks = {
   "web-lt":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/lt.json",    lang: "lt" },
   "mobile-sr": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/sr.json", lang: "sr" },
   "web-sr":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/sr.json",    lang: "sr" },
+  "mobile-ru": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/ru.json", lang: "ru" },
+  "web-ru":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/ru.json",    lang: "ru" },
 };
 
 if (target === "all") {

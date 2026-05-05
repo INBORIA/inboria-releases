@@ -1,8 +1,8 @@
 import { supabaseAdmin } from "../lib/supabase";
 
-export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr";
+export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru";
 
-const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr"];
+const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru"];
 
 export function normalizeLang(input: unknown): AiLang {
   if (typeof input !== "string") return "fr";
@@ -65,6 +65,7 @@ const NAMES: Record<AiLang, string> = {
   "zh-TW": "繁體中文",
   lt: "LIETUVIŲ",
   sr: "СРПСКИ",
+  ru: "РУССКИЙ",
 };
 
 const SHORT_INSTRUCTION: Record<AiLang, string> = {
@@ -96,6 +97,7 @@ const SHORT_INSTRUCTION: Record<AiLang, string> = {
   "zh-TW": "請使用繁體中文回答,使用敬稱『您』。",
   lt: "Prašome atsakyti lietuvių kalba, vartojant pagarbią formą (Jūs/Jus iš didžiosios raidės).",
   sr: "Молимо одговорите на српском језику (ћирилица), користећи учтиву форму (Ви/Вас великим словом).",
+  ru: "Пожалуйста, отвечайте на русском языке, используя вежливую форму (Вы/Вас с большой буквы).",
 };
 
 export function langName(lang: AiLang): string {

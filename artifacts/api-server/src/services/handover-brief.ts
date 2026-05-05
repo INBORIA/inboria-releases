@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -211,6 +211,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Неиспуњене обавезе",
     "Питања која захтевају пажњу",
   ],
+  ru: [
+    "Контекст отношений",
+    "Текущие темы",
+    "Принятые решения",
+    "Невыполненные обязательства",
+    "Вопросы, требующие внимания",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -242,6 +249,7 @@ const TONE: Record<Language, string> = {
   "zh-TW": "請使用繁體中文撰寫,採用敬稱『您』,以基於事實的專業語氣,無需問候語。",
   lt: "Rašykite lietuvių kalba, vartodami pagarbią formą (Jūs/Jus iš didžiosios raidės), faktiniu profesionaliu tonu, be pasisveikinimų.",
   sr: "Пишите на српском језику (ћирилица), користећи учтиву форму (Ви/Вас великим словом), чињеничним и професионалним тоном, без поздрава.",
+  ru: "Пишите на русском языке, используя вежливую форму (Вы/Вас с большой буквы), фактическим профессиональным тоном, без приветствий.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

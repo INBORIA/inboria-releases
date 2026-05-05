@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -254,6 +254,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Поново постави лозинку",
         footer: "Ако нисте Ви послали овај захтев, занемарите ову поруку — Ваша лозинка ће остати непромењена.",
         subject: "Поново поставите Вашу Inboria лозинку",
+      };
+    case "ru":
+      return {
+        tagline: "Email-автопилот для МСП",
+        heading: "Сброс Вашего пароля",
+        body: "Вы запросили сброс пароля для Вашего аккаунта Inboria. Нажмите на кнопку ниже, чтобы выбрать новый пароль. Эта ссылка действительна в течение 1 часа.",
+        cta: "Сбросить мой пароль",
+        footer: "Если Вы не отправляли этот запрос, проигнорируйте это письмо — Ваш пароль останется без изменений.",
+        subject: "Сбросьте Ваш пароль Inboria",
       };
     default:
       return {

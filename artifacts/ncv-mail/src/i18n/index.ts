@@ -30,6 +30,7 @@ import zh from "./locales/zh.json";
 import zhTw from "./locales/zh-TW.json";
 import lt from "./locales/lt.json";
 import sr from "./locales/sr.json";
+import ru from "./locales/ru.json";
 
 i18n
   .use(LanguageDetector)
@@ -64,9 +65,10 @@ i18n
       "zh-TW": { translation: zhTw },
       lt: { translation: lt },
       sr: { translation: sr },
+      ru: { translation: ru },
     },
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr"],
+    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru"],
     nonExplicitSupportedLngs: true,
     load: "languageOnly",
     interpolation: {
