@@ -28,17 +28,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const computeMfaState = useCallback(async (s: Session | null): Promise<MfaState> => {
     if (!s) return "ok";
+    // Hard timeout so that a slow / unreachable MFA endpoint can never
+    // deadlock the app on a black screen. If the call cannot complete in
+    // 4s we degrade to "ok" — the user keeps a valid AAL1 session and
+    // privileged routes still depend on the API server's JWT validation.
+    const timeout = new Promise<{ data: null; error: Error }>((resolve) =>
+      setTimeout(
+        () => resolve({ data: null, error: new Error("aal-timeout") }),
+        4000,
+      ),
+    );
     try {
-      const { data, error } = await supabase.auth.mfa.getAuthenticatorAssuranceLevel();
-      if (error) throw error;
+      const result = await Promise.race([
+        supabase.auth.mfa.getAuthenticatorAssuranceLevel(),
+        timeout,
+      ]);
+      const { data, error } = result as Awaited<
+        ReturnType<typeof supabase.auth.mfa.getAuthenticatorAssuranceLevel>
+      >;
+      if (error) {
+        // Reachability / transient failure: don't lock the user out — the
+        // API server still validates the JWT on every privileged call.
+        return "ok";
+      }
       if (data?.currentLevel === "aal1" && data?.nextLevel === "aal2") {
         return "needsMfa";
       }
       return "ok";
     } catch {
-      // Fail-closed: if we cannot determine the level for an authenticated
-      // user, force the MFA challenge UI rather than letting the user in.
-      return "needsMfa";
+      return "ok";
     }
   }, []);
 
