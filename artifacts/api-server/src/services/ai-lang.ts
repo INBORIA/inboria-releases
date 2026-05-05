@@ -1,8 +1,8 @@
 import { supabaseAdmin } from "../lib/supabase";
 
-export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja";
+export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko";
 
-const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja"];
+const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko"];
 
 export function normalizeLang(input: unknown): AiLang {
   if (typeof input !== "string") return "fr";
@@ -50,6 +50,7 @@ const NAMES: Record<AiLang, string> = {
   cs: "ČEŠTINA",
   tr: "TÜRKÇE",
   ja: "日本語",
+  ko: "한국어",
 };
 
 const SHORT_INSTRUCTION: Record<AiLang, string> = {
@@ -69,6 +70,7 @@ const SHORT_INSTRUCTION: Record<AiLang, string> = {
   cs: "Odpovězte prosím česky, použijte vykání.",
   tr: "Lütfen Türkçe yanıtlayın, resmi 'siz' formunu kullanın.",
   ja: "日本語で、です・ます調の丁寧な敬語で回答してください。",
+  ko: "한국어로, 합쇼체(하십시오체)의 격식 있는 존댓말로 답변해 주십시오.",
 };
 
 export function langName(lang: AiLang): string {

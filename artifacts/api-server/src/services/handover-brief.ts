@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -127,6 +127,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "未完了のコミットメント",
     "注意すべき点",
   ],
+  ko: [
+    "관계 컨텍스트",
+    "진행 중인 주제",
+    "결정 사항",
+    "미해결 약속",
+    "주의 사항",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -146,6 +153,7 @@ const TONE: Record<Language, string> = {
   cs: "Pište česky, používejte vykání (Vy), věcný a profesionální tón, bez pozdravů.",
   tr: "Türkçe yazın, resmi 'siz' formunu kullanın, olgusal ve profesyonel ton, selamlama olmadan.",
   ja: "日本語で、です・ます調の丁寧な敬語で記述してください。事実に基づいた専門的なトーンで、挨拶は不要です。",
+  ko: "한국어로, 합쇼체(하십시오체)의 격식 있는 존댓말로 작성해 주십시오. 사실 기반의 전문적인 톤으로, 인사말 없이 작성합니다.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

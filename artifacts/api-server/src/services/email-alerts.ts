@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -169,11 +169,21 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `メールボックス ${email} の接続が切断されました`,
     notifMessage: "設定からこのメールボックスを再接続するにはクリックしてください。",
   },
+  ko: {
+    subject: (email) => `Inboria — 메일함 ${email} 연결이 끊어졌습니다`,
+    intro: "Inboria가 여러 번의 시도 후에도 이 메일함을 동기화할 수 없습니다. 연결이 복원될 때까지 새 이메일은 처리되지 않습니다.",
+    reasonLabel: "최근 오류",
+    cta: "이 메일함 다시 연결하기",
+    ctaUrl: "/dashboard/parametres",
+    footer: "이 이메일은 메일함당 주 1회까지만 발송됩니다. 다시 연결이 성공하면 더 이상 알림을 받지 않으십니다.",
+    notifTitle: (email) => `메일함 ${email} 연결이 끊어졌습니다`,
+    notifMessage: "설정에서 이 메일함을 다시 연결하려면 클릭하십시오.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const v = (raw || "fr").slice(0, 2).toLowerCase();
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko") return v;
   return "fr";
 }
 

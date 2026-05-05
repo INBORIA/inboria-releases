@@ -32,6 +32,7 @@ const LANGUAGES = [
   { code: "cs", label: "Čeština", flag: "🇨🇿" },
   { code: "tr", label: "Türkçe", flag: "🇹🇷" },
   { code: "ja", label: "日本語", flag: "🇯🇵" },
+  { code: "ko", label: "한국어", flag: "🇰🇷" },
 ];
 
 export default function MenuScreen() {

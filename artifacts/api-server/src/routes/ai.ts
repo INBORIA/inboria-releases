@@ -176,6 +176,7 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
       const isCs = lang === "cs";
       const isTr = lang === "tr";
       const isJa = lang === "ja";
+      const isKo = lang === "ko";
       if (activeProjects.length > 0) {
         const header = isFr
           ? "Projets actifs (derniers 7 jours d'activité)"
@@ -209,7 +210,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                       ? "Aktif projeler (son 7 günün aktivitesi)"
                                       : isJa
                                         ? "アクティブなプロジェクト（過去7日間のアクティビティ）"
-                                        : "Active projects";
+                                        : isKo
+                                          ? "활성 프로젝트 (최근 7일간의 활동)"
+                                          : "Active projects";
         lines.push(`\n${header} :`);
         for (const p of activeProjects) {
           lines.push(`- ${p.name} (${p.email_count} mails)`);
@@ -248,7 +251,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                       ? "Son kararlar (son 7 gün)"
                                       : isJa
                                         ? "最近の決定事項（過去7日間）"
-                                        : "Recent decisions";
+                                        : isKo
+                                          ? "최근 결정 사항 (최근 7일)"
+                                          : "Recent decisions";
         lines.push(`\n${header} :`);
         for (const d of recentDecisions) {
           const date = d.decided_at || (d as any).created_at?.slice(0, 10) || "";
@@ -290,7 +295,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                       ? "Bu hafta belirtilen taahhütler"
                                       : isJa
                                         ? "今週言及されたコミットメント"
-                                        : "Commitments this week";
+                                        : isKo
+                                          ? "이번 주 언급된 약속"
+                                          : "Commitments this week";
         lines.push(`\n${header} :`);
         for (const c of openCommitments) {
           const date = c.event_date ? ` (${c.event_date})` : "";
@@ -1391,7 +1398,7 @@ router.post("/ai/handover-brief", requireAuth, async (req, res): Promise<void> =
       return;
     }
     const sinceDays = Number.isFinite(body.sinceDays) ? Number(body.sinceDays) : 30;
-    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja"];
+    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko"];
     let language: BriefLanguage = "fr";
     if (typeof body.language === "string" && (allowedLangs as string[]).includes(body.language)) {
       language = body.language as BriefLanguage;

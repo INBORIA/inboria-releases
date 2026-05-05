@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -146,6 +146,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "パスワードをリセットする",
         footer: "このリクエストに心当たりがない場合は、このメールを無視してください。パスワードは変更されません。",
         subject: "Inboria のパスワードをリセット",
+      };
+    case "ko":
+      return {
+        tagline: "중소기업을 위한 이메일 자동 조종",
+        heading: "비밀번호 재설정",
+        body: "Inboria 계정의 비밀번호 재설정을 요청하셨습니다. 새 비밀번호를 선택하시려면 아래 버튼을 클릭하십시오. 이 링크는 1시간 후에 만료됩니다.",
+        cta: "비밀번호 재설정",
+        footer: "이 요청을 직접 하지 않으셨다면, 이 이메일을 무시하셔도 됩니다 — 비밀번호는 변경되지 않습니다.",
+        subject: "Inboria 비밀번호 재설정",
       };
     default:
       return {
