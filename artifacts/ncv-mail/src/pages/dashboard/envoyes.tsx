@@ -25,7 +25,7 @@ import { EmailDetail } from "@/components/email-detail/EmailDetail";
 import type { UploadedFile } from "@/components/FileAttachInput";
 import type { PaginatedEmails } from "@workspace/api-client-react";
 import { format } from "date-fns";
-import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient } from "@tanstack/react-query";

@@ -20,6 +20,7 @@ import tr from "./locales/tr.json";
 import ja from "./locales/ja.json";
 import ko from "./locales/ko.json";
 import vi from "./locales/vi.json";
+import th from "./locales/th.json";
 
 i18n
   .use(LanguageDetector)
@@ -44,9 +45,10 @@ i18n
       ja: { translation: ja },
       ko: { translation: ko },
       vi: { translation: vi },
+      th: { translation: th },
     },
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi"],
+    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th"],
     nonExplicitSupportedLngs: true,
     load: "languageOnly",
     interpolation: {

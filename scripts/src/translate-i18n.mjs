@@ -75,7 +75,9 @@ async function translateBatch(strings, targetLang) {
                           ? "Korean (Korean from South Korea, formal B2B SaaS tone using 합쇼체 / 하십시오체 (hapsyo-che, formal polite endings -ㅂ니다/-습니다, -십시오) — never informal 반말 or casual 해요체 in UI labels)"
                           : targetLang === "vi"
                             ? "Vietnamese (Vietnamese from Vietnam, formal B2B SaaS tone using 'Quý khách' / 'Quý vị' as polite address with 'xin vui lòng' for requests — never informal 'bạn' or familiar pronouns in user-facing copy)"
-                            : targetLang;
+                            : targetLang === "th"
+                              ? "Thai (Thai from Thailand, formal B2B SaaS tone using 'ท่าน' as polite address and formal vocabulary; use 'โปรด' / 'กรุณา' for polite requests — avoid casual particles 'จ้า/จ๊ะ' and informal 'คุณ' familiarity in UI labels; do not insert ครับ/ค่ะ in short UI button labels)"
+                              : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -247,6 +249,8 @@ const tasks = {
   "web-ko":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/ko.json",    lang: "ko" },
   "mobile-vi": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/vi.json", lang: "vi" },
   "web-vi":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/vi.json",    lang: "vi" },
+  "mobile-th": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/th.json", lang: "th" },
+  "web-th":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/th.json",    lang: "th" },
 };
 
 if (target === "all") {

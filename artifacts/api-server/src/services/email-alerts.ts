@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -189,11 +189,21 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `Hop thu ${email} bi ngat ket noi`,
     notifMessage: "Nhan vao day de ket noi lai hop thu nay trong Cai dat.",
   },
+  th: {
+    subject: (email) => `Inboria — กล่องจดหมาย ${email} ถูกตัดการเชื่อมต่อ`,
+    intro: "Inboria ไม่สามารถซิงค์กล่องจดหมายนี้ได้หลังจากพยายามหลายครั้ง อีเมลใหม่ของท่านจะไม่ถูกประมวลผลจนกว่าการเชื่อมต่อจะกลับมาใช้งานได้",
+    reasonLabel: "ข้อผิดพลาดล่าสุด",
+    cta: "เชื่อมต่อกล่องจดหมายนี้อีกครั้ง",
+    ctaUrl: "/dashboard/parametres",
+    footer: "อีเมลนี้จะถูกส่งไม่เกินสัปดาห์ละหนึ่งครั้งต่อกล่องจดหมายแต่ละกล่อง เมื่อเชื่อมต่อใหม่สำเร็จ ท่านจะไม่ได้รับการแจ้งเตือนอีก",
+    notifTitle: (email) => `กล่องจดหมาย ${email} ถูกตัดการเชื่อมต่อ`,
+    notifMessage: "โปรดคลิกเพื่อเชื่อมต่อกล่องจดหมายนี้อีกครั้งในการตั้งค่า",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const v = (raw || "fr").slice(0, 2).toLowerCase();
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th") return v;
   return "fr";
 }
 
