@@ -182,6 +182,7 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
       const isId = lang === "id";
       const isMs = lang === "ms";
       const isEl = lang === "el";
+      const isUk = lang === "uk";
       if (activeProjects.length > 0) {
         const header = isFr
           ? "Projets actifs (derniers 7 jours d'activité)"
@@ -227,7 +228,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                                   ? "Projek aktif (aktiviti 7 hari lepas)"
                                                   : isEl
                                                     ? "Ενεργά έργα (δραστηριότητα τις τελευταίες 7 ημέρες)"
-                                                    : "Active projects";
+                                                    : isUk
+                                                      ? "Активні проєкти (активність за останні 7 днів)"
+                                                      : "Active projects";
         lines.push(`\n${header} :`);
         for (const p of activeProjects) {
           lines.push(`- ${p.name} (${p.email_count} mails)`);
@@ -278,7 +281,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                                   ? "Keputusan terkini (7 hari lepas)"
                                                   : isEl
                                                     ? "Πρόσφατες αποφάσεις (τελευταίες 7 ημέρες)"
-                                                    : "Recent decisions";
+                                                    : isUk
+                                                      ? "Останні рішення (останні 7 днів)"
+                                                      : "Recent decisions";
         lines.push(`\n${header} :`);
         for (const d of recentDecisions) {
           const date = d.decided_at || (d as any).created_at?.slice(0, 10) || "";
@@ -332,7 +337,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                                   ? "Komitmen yang dinyatakan minggu ini"
                                                   : isEl
                                                     ? "Δεσμεύσεις που αναφέρθηκαν αυτή την εβδομάδα"
-                                                    : "Commitments this week";
+                                                    : isUk
+                                                      ? "Зобов'язання, згадані цього тижня"
+                                                      : "Commitments this week";
         lines.push(`\n${header} :`);
         for (const c of openCommitments) {
           const date = c.event_date ? ` (${c.event_date})` : "";
@@ -1433,7 +1440,7 @@ router.post("/ai/handover-brief", requireAuth, async (req, res): Promise<void> =
       return;
     }
     const sinceDays = Number.isFinite(body.sinceDays) ? Number(body.sinceDays) : 30;
-    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el"];
+    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk"];
     let language: BriefLanguage = "fr";
     if (typeof body.language === "string" && (allowedLangs as string[]).includes(body.language)) {
       language = body.language as BriefLanguage;

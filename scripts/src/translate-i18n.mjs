@@ -83,7 +83,9 @@ async function translateBatch(strings, targetLang) {
                                   ? "Malay (Bahasa Melayu from Malaysia, formal B2B SaaS tone using 'anda' as polite address and Bahasa Melayu baku/standard formal vocabulary; use 'sila' / 'mohon' for polite requests — never informal 'kau/awak' familiarity or colloquial bahasa pasar in UI labels)"
                                   : targetLang === "el"
                                     ? "Greek (Modern Greek from Greece, formal B2B SaaS tone using plural-of-politeness πληθυντικός ευγενείας: 'εσείς' / 'σας' / 2nd person plural verbs (κάντε/επιλέξτε/συνδεθείτε) — never informal singular 'εσύ/σου' or 2nd person singular verbs in UI labels)"
-                                    : targetLang;
+                                    : targetLang === "uk"
+                                      ? "Ukrainian (Ukrainian from Ukraine, formal B2B SaaS tone using polite address 'Ви' / 'Вас' / 'Вам' (capitalized) and 2nd person plural verbs — never informal 'ти/тебе/тобі' in UI labels; use modern Ukrainian orthography with apostrophe ' not Russian ъ; avoid russisms)"
+                                      : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -263,6 +265,8 @@ const tasks = {
   "web-ms":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/ms.json",    lang: "ms" },
   "mobile-el": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/el.json", lang: "el" },
   "web-el":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/el.json",    lang: "el" },
+  "mobile-uk": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/uk.json", lang: "uk" },
+  "web-uk":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/uk.json",    lang: "uk" },
 };
 
 if (target === "all") {

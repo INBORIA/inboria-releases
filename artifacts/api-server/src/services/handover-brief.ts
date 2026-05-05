@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -169,6 +169,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Εκκρεμείς δεσμεύσεις",
     "Σημεία προσοχής",
   ],
+  uk: [
+    "Контекст відносин",
+    "Поточні теми",
+    "Прийняті рішення",
+    "Невиконані зобов'язання",
+    "Питання, що потребують уваги",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -194,6 +201,7 @@ const TONE: Record<Language, string> = {
   id: "Tulis dalam Bahasa Indonesia formal dan baku, gunakan sapaan 'Anda', nada faktual dan profesional, tanpa salam pembuka.",
   ms: "Tulis dalam Bahasa Melayu formal dan baku, gunakan sapaan 'anda', nada berasaskan fakta dan profesional, tanpa salam pembukaan.",
   el: "Γράψτε στα ελληνικά, χρησιμοποιώντας τον πληθυντικό ευγενείας (εσείς/σας), τόνος βασισμένος σε γεγονότα και επαγγελματικός, χωρίς χαιρετισμούς.",
+  uk: "Пишіть українською мовою, використовуючи ввічливу форму (Ви/Вас з великої літери), фактологічним та професійним тоном, без вітань.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

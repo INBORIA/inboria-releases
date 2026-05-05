@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -200,6 +200,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Επαναφορά του κωδικού μου",
         footer: "Εάν δεν υποβάλατε αυτό το αίτημα, αγνοήστε αυτό το email — ο κωδικός πρόσβασής σας δεν θα αλλάξει.",
         subject: "Επαναφορά του κωδικού Inboria σας",
+      };
+    case "uk":
+      return {
+        tagline: "Email Autopilot для МСП",
+        heading: "Скиньте Ваш пароль",
+        body: "Ви запросили скидання пароля для Вашого облікового запису Inboria. Будь ласка, натисніть кнопку нижче, щоб обрати новий пароль. Це посилання діє протягом 1 години.",
+        cta: "Скинути мій пароль",
+        footer: "Якщо Ви не надсилали цього запиту, проігноруйте цей лист — Ваш пароль залишиться без змін.",
+        subject: "Скидання пароля Inboria",
       };
     default:
       return {
