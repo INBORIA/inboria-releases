@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -182,6 +182,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Atur ulang kata sandi saya",
         footer: "Jika Anda tidak membuat permintaan ini, silakan abaikan email ini — kata sandi Anda tidak akan berubah.",
         subject: "Atur ulang kata sandi Inboria Anda",
+      };
+    case "ms":
+      return {
+        tagline: "Email Autopilot untuk PKS",
+        heading: "Tetapkan semula kata laluan anda",
+        body: "Anda telah meminta untuk menetapkan semula kata laluan akaun Inboria anda. Sila klik butang di bawah untuk memilih kata laluan baharu. Pautan ini akan tamat tempoh dalam masa 1 jam.",
+        cta: "Tetapkan semula kata laluan saya",
+        footer: "Jika anda tidak membuat permintaan ini, sila abaikan e-mel ini — kata laluan anda tidak akan berubah.",
+        subject: "Tetapkan semula kata laluan Inboria anda",
       };
     default:
       return {

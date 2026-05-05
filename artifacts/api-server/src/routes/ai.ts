@@ -180,6 +180,7 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
       const isVi = lang === "vi";
       const isTh = lang === "th";
       const isId = lang === "id";
+      const isMs = lang === "ms";
       if (activeProjects.length > 0) {
         const header = isFr
           ? "Projets actifs (derniers 7 jours d'activité)"
@@ -221,7 +222,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                               ? "โครงการที่ใช้งานอยู่ (กิจกรรมใน 7 วันที่ผ่านมา)"
                                               : isId
                                                 ? "Proyek aktif (aktivitas 7 hari terakhir)"
-                                                : "Active projects";
+                                                : isMs
+                                                  ? "Projek aktif (aktiviti 7 hari lepas)"
+                                                  : "Active projects";
         lines.push(`\n${header} :`);
         for (const p of activeProjects) {
           lines.push(`- ${p.name} (${p.email_count} mails)`);
@@ -268,7 +271,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                               ? "การตัดสินใจล่าสุด (7 วันที่ผ่านมา)"
                                               : isId
                                                 ? "Keputusan terbaru (7 hari terakhir)"
-                                                : "Recent decisions";
+                                                : isMs
+                                                  ? "Keputusan terkini (7 hari lepas)"
+                                                  : "Recent decisions";
         lines.push(`\n${header} :`);
         for (const d of recentDecisions) {
           const date = d.decided_at || (d as any).created_at?.slice(0, 10) || "";
@@ -318,7 +323,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                               ? "ข้อผูกพันที่กล่าวถึงในสัปดาห์นี้"
                                               : isId
                                                 ? "Komitmen yang disebutkan minggu ini"
-                                                : "Commitments this week";
+                                                : isMs
+                                                  ? "Komitmen yang dinyatakan minggu ini"
+                                                  : "Commitments this week";
         lines.push(`\n${header} :`);
         for (const c of openCommitments) {
           const date = c.event_date ? ` (${c.event_date})` : "";
@@ -1419,7 +1426,7 @@ router.post("/ai/handover-brief", requireAuth, async (req, res): Promise<void> =
       return;
     }
     const sinceDays = Number.isFinite(body.sinceDays) ? Number(body.sinceDays) : 30;
-    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id"];
+    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms"];
     let language: BriefLanguage = "fr";
     if (typeof body.language === "string" && (allowedLangs as string[]).includes(body.language)) {
       language = body.language as BriefLanguage;

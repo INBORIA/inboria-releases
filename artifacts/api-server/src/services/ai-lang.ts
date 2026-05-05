@@ -1,8 +1,8 @@
 import { supabaseAdmin } from "../lib/supabase";
 
-export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id";
+export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms";
 
-const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id"];
+const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms"];
 
 export function normalizeLang(input: unknown): AiLang {
   if (typeof input !== "string") return "fr";
@@ -54,6 +54,7 @@ const NAMES: Record<AiLang, string> = {
   vi: "TIẾNG VIỆT",
   th: "ไทย",
   id: "BAHASA INDONESIA",
+  ms: "BAHASA MELAYU",
 };
 
 const SHORT_INSTRUCTION: Record<AiLang, string> = {
@@ -77,6 +78,7 @@ const SHORT_INSTRUCTION: Record<AiLang, string> = {
   vi: "Vui lòng trả lời bằng tiếng Việt, sử dụng giọng điệu trang trọng (Quý khách / Quý vị).",
   th: "โปรดตอบเป็นภาษาไทยด้วยน้ำเสียงสุภาพและเป็นทางการ ใช้คำว่า 'ท่าน' เมื่อเรียกผู้ใช้",
   id: "Mohon jawab dalam Bahasa Indonesia formal dan baku, gunakan sapaan 'Anda'.",
+  ms: "Sila jawab dalam Bahasa Melayu formal dan baku, gunakan sapaan 'anda'.",
 };
 
 export function langName(lang: AiLang): string {

@@ -79,7 +79,9 @@ async function translateBatch(strings, targetLang) {
                               ? "Thai (Thai from Thailand, formal B2B SaaS tone using 'ท่าน' as polite address and formal vocabulary; use 'โปรด' / 'กรุณา' for polite requests — avoid casual particles 'จ้า/จ๊ะ' and informal 'คุณ' familiarity in UI labels; do not insert ครับ/ค่ะ in short UI button labels)"
                               : targetLang === "id"
                                 ? "Indonesian (Bahasa Indonesia, formal B2B SaaS tone using 'Anda' (capitalized) as polite address and Bahasa baku/standard formal vocabulary; use 'silakan' / 'mohon' for polite requests — never informal 'kamu/lu/lo' or colloquial slang in UI labels)"
-                                : targetLang;
+                                : targetLang === "ms"
+                                  ? "Malay (Bahasa Melayu from Malaysia, formal B2B SaaS tone using 'anda' as polite address and Bahasa Melayu baku/standard formal vocabulary; use 'sila' / 'mohon' for polite requests — never informal 'kau/awak' familiarity or colloquial bahasa pasar in UI labels)"
+                                  : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -255,6 +257,8 @@ const tasks = {
   "web-th":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/th.json",    lang: "th" },
   "mobile-id": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/id.json", lang: "id" },
   "web-id":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/id.json",    lang: "id" },
+  "mobile-ms": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/ms.json", lang: "ms" },
+  "web-ms":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/ms.json",    lang: "ms" },
 };
 
 if (target === "all") {

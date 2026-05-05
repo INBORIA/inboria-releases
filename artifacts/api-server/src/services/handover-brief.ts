@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -155,6 +155,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Komitmen yang belum selesai",
     "Hal-hal yang perlu diperhatikan",
   ],
+  ms: [
+    "Konteks hubungan",
+    "Topik yang sedang berjalan",
+    "Keputusan yang diambil",
+    "Komitmen yang belum selesai",
+    "Perkara yang perlu diberi perhatian",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -178,6 +185,7 @@ const TONE: Record<Language, string> = {
   vi: "Viết bằng tiếng Việt, sử dụng giọng điệu trang trọng (Quý khách / Quý vị), văn phong dựa trên sự kiện và chuyên nghiệp, không có lời chào.",
   th: "เขียนเป็นภาษาไทยด้วยน้ำเสียงสุภาพและเป็นทางการ ใช้คำว่า 'ท่าน' โทนตามข้อเท็จจริงและเป็นมืออาชีพ ไม่ต้องมีคำทักทาย",
   id: "Tulis dalam Bahasa Indonesia formal dan baku, gunakan sapaan 'Anda', nada faktual dan profesional, tanpa salam pembuka.",
+  ms: "Tulis dalam Bahasa Melayu formal dan baku, gunakan sapaan 'anda', nada berasaskan fakta dan profesional, tanpa salam pembukaan.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

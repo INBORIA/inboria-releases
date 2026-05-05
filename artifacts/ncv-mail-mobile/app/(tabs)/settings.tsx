@@ -36,6 +36,7 @@ const LANGUAGES = [
   { code: "vi", label: "Tiếng Việt", flag: "🇻🇳" },
   { code: "th", label: "ไทย", flag: "🇹🇭" },
   { code: "id", label: "Bahasa Indonesia", flag: "🇮🇩" },
+  { code: "ms", label: "Bahasa Melayu", flag: "🇲🇾" },
 ];
 
 export default function MenuScreen() {

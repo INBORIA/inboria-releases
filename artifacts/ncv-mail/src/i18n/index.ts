@@ -22,6 +22,7 @@ import ko from "./locales/ko.json";
 import vi from "./locales/vi.json";
 import th from "./locales/th.json";
 import id from "./locales/id.json";
+import ms from "./locales/ms.json";
 
 i18n
   .use(LanguageDetector)
@@ -48,9 +49,10 @@ i18n
       vi: { translation: vi },
       th: { translation: th },
       id: { translation: id },
+      ms: { translation: ms },
     },
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id"],
+    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms"],
     nonExplicitSupportedLngs: true,
     load: "languageOnly",
     interpolation: {
