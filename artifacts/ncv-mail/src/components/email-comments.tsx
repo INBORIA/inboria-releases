@@ -29,7 +29,7 @@ import { fr, enUS, nl, de, es, it, pt } from "date-fns/locale";
 import type { Locale } from "date-fns";
 import { useTranslation } from "react-i18next";
 
-const dateFnsLocales: Record<string, Locale> = { fr, en: enUS, nl };
+const dateFnsLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es, it, pt };
 
 interface OrgMember {
   id?: string;

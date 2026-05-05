@@ -40,7 +40,7 @@ import { Users } from "lucide-react";
 
 type ViewMode = "month" | "week" | "day";
 
-const dateLocales: Record<string, Locale> = { fr, en: enUS, nl };
+const dateLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es, it, pt };
 
 export default function Agenda() {
   const { t, i18n } = useTranslation();

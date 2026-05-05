@@ -35,7 +35,7 @@ import {
   type TooltipProps,
 } from "recharts";
 
-const dateLocales: Record<string, Locale> = { fr, en: enUS, nl };
+const dateLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es, it, pt };
 
 const baseUrl = () => import.meta.env.BASE_URL.replace(/\/$/, "");
 
