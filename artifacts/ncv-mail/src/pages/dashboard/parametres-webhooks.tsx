@@ -139,7 +139,7 @@ export default function ParametresWebhooks() {
             <Webhook className="w-4 h-4 text-primary" />
             {t("webhooks.title")}
           </h1>
-          <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("webhooks.subtitle")}</p>
+          <p className="text-[12px] text-[#b8c5d6] mt-0.5">{t("webhooks.subtitle")}</p>
         </div>
 
         {createdSecret && (
@@ -153,7 +153,7 @@ export default function ParametresWebhooks() {
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
               </Button>
             </div>
-            <Button variant="ghost" size="sm" className="h-6 text-[11px] mt-2 text-[#8b9cb3]" onClick={() => setCreatedSecret(null)}>
+            <Button variant="ghost" size="sm" className="h-6 text-[11px] mt-2 text-[#b8c5d6]" onClick={() => setCreatedSecret(null)}>
               {t("webhooks.dismissCreated")}
             </Button>
           </div>
@@ -166,18 +166,18 @@ export default function ParametresWebhooks() {
         ) : (
           <div className="bg-card border border-border rounded-lg p-4 space-y-3">
             <div>
-              <Label className="text-[11px] text-[#8b9cb3]">{t("webhooks.url")}</Label>
+              <Label className="text-[11px] text-[#b8c5d6]">{t("webhooks.url")}</Label>
               <Input value={url} onChange={(e) => setUrl(e.target.value)} placeholder="https://example.com/inboria" className="h-8 text-[12px]" />
             </div>
             <div>
-              <Label className="text-[11px] text-[#8b9cb3]">{t("webhooks.events")}</Label>
+              <Label className="text-[11px] text-[#b8c5d6]">{t("webhooks.events")}</Label>
               <div className="flex flex-wrap gap-1.5 mt-1">
                 {ALL_EVENTS.map((s) => (
                   <button
                     key={s}
                     type="button"
                     onClick={() => toggleEvent(s)}
-                    className={`text-[10px] rounded border px-2 py-0.5 ${events.includes(s) ? "bg-primary text-white border-primary" : "bg-background text-[#8b9cb3] border-border"}`}
+                    className={`text-[10px] rounded border px-2 py-0.5 ${events.includes(s) ? "bg-primary text-white border-primary" : "bg-background text-[#b8c5d6] border-border"}`}
                   >
                     {s}
                   </button>
@@ -196,7 +196,7 @@ export default function ParametresWebhooks() {
         {endpointsQuery.isLoading ? (
           <div className="flex justify-center py-6"><Loader2 className="w-4 h-4 animate-spin" /></div>
         ) : (endpointsQuery.data || []).length === 0 ? (
-          <div className="bg-card border border-border rounded-lg p-4 text-[12px] text-[#8b9cb3]">{t("webhooks.empty")}</div>
+          <div className="bg-card border border-border rounded-lg p-4 text-[12px] text-[#b8c5d6]">{t("webhooks.empty")}</div>
         ) : (
           <div className="space-y-2">
             {(endpointsQuery.data || []).map((ep) => (
@@ -204,17 +204,17 @@ export default function ParametresWebhooks() {
                 <div className="flex items-center justify-between p-3">
                   <div className="flex-1 min-w-0">
                     <div className="text-[12px] text-white font-medium truncate">{ep.url}</div>
-                    <div className="text-[10px] text-[#8b9cb3] mt-0.5 truncate">{(ep.events || []).join(", ")}</div>
+                    <div className="text-[10px] text-[#b8c5d6] mt-0.5 truncate">{(ep.events || []).join(", ")}</div>
                   </div>
                   <div className="flex items-center gap-2 shrink-0">
                     <Switch
                       checked={ep.enabled}
                       onCheckedChange={(checked) => updateMutation.mutate({ id: ep.id, payload: { enabled: checked } })}
                     />
-                    <Button variant="ghost" size="sm" className="h-7 px-2 text-[#8b9cb3]" onClick={() => setExpandedId(expandedId === ep.id ? null : ep.id)}>
+                    <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6]" onClick={() => setExpandedId(expandedId === ep.id ? null : ep.id)}>
                       {expandedId === ep.id ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
                     </Button>
-                    <Button variant="ghost" size="sm" className="h-7 px-2 text-[#8b9cb3] hover:text-red-400" onClick={() => deleteMutation.mutate(ep.id)} disabled={deleteMutation.isPending}>
+                    <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-red-400" onClick={() => deleteMutation.mutate(ep.id)} disabled={deleteMutation.isPending}>
                       <Trash2 className="w-3.5 h-3.5" />
                     </Button>
                   </div>
@@ -249,11 +249,11 @@ function Deliveries({ endpointId, sessionToken }: { endpointId: string; sessionT
       {isLoading ? (
         <Loader2 className="w-3.5 h-3.5 animate-spin" />
       ) : (data || []).length === 0 ? (
-        <div className="text-[11px] text-[#8b9cb3]">{t("webhooks.noDeliveries")}</div>
+        <div className="text-[11px] text-[#b8c5d6]">{t("webhooks.noDeliveries")}</div>
       ) : (
         <table className="w-full text-[10px]">
           <thead>
-            <tr className="text-[#8b9cb3]">
+            <tr className="text-[#b8c5d6]">
               <th className="text-left p-1">{t("webhooks.colEvent")}</th>
               <th className="text-left p-1">{t("webhooks.colStatus")}</th>
               <th className="text-right p-1">{t("webhooks.colAttempts")}</th>
@@ -268,7 +268,7 @@ function Deliveries({ endpointId, sessionToken }: { endpointId: string; sessionT
                 <td className={`p-1 ${d.status === "success" ? "text-emerald-400" : d.status === "exhausted" ? "text-red-400" : "text-amber-400"}`}>{d.status}</td>
                 <td className="p-1 text-right">{d.attempts}</td>
                 <td className="p-1 text-right">{d.lastStatusCode ?? "—"}</td>
-                <td className="p-1 text-right text-[#8b9cb3]">{new Date(d.createdAt).toLocaleString()}</td>
+                <td className="p-1 text-right text-[#b8c5d6]">{new Date(d.createdAt).toLocaleString()}</td>
               </tr>
             ))}
           </tbody>

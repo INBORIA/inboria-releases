@@ -198,7 +198,7 @@ export function AnimatedDemo() {
             <div className="w-2.5 h-2.5 rounded-full bg-[#10b981]/60" />
           </div>
           <div className="flex-1 text-center">
-            <span className="text-[11px] text-[#8b9cb3]">Inboria — Dashboard</span>
+            <span className="text-[11px] text-[#b8c5d6]">Inboria — Dashboard</span>
           </div>
         </div>
 
@@ -215,10 +215,10 @@ export function AnimatedDemo() {
                   className={`flex items-center gap-1.5 px-2 py-[5px] rounded-md text-[10px] font-medium ${
                     item.active
                       ? "bg-[#1e3a5f] text-[#2d7dd2]"
-                      : "text-[#8b9cb3]"
+                      : "text-[#b8c5d6]"
                   }`}
                 >
-                  <item.icon className={`w-3 h-3 shrink-0 ${item.active ? "text-[#2d7dd2]" : "text-[#8b9cb3]"}`} />
+                  <item.icon className={`w-3 h-3 shrink-0 ${item.active ? "text-[#2d7dd2]" : "text-[#b8c5d6]"}`} />
                   <span className="truncate">{t(item.key, item.fallback)}</span>
                   {item.active && (
                     <span className="ml-auto shrink-0 text-[8px] bg-[#2d7dd2]/20 text-[#2d7dd2] px-1.5 py-0.5 rounded-full font-medium">
@@ -237,7 +237,7 @@ export function AnimatedDemo() {
             <div className="p-2 mt-auto border-t border-[#1f2937]">
               <div className="px-2.5 py-2">
                 <div className="flex justify-between items-center mb-1.5">
-                  <span className="text-[9px] font-medium text-[#8b9cb3] uppercase tracking-wider">{t("demo.quota")}</span>
+                  <span className="text-[9px] font-medium text-[#b8c5d6] uppercase tracking-wider">{t("demo.quota")}</span>
                   <span className="text-[9px] font-medium text-white">782/10000</span>
                 </div>
                 <div className="w-full h-1 bg-white/10 rounded-full overflow-hidden">
@@ -254,9 +254,9 @@ export function AnimatedDemo() {
                 </div>
                 <div className="flex flex-col min-w-0">
                   <span className="text-[11px] font-medium text-white truncate">Jean Dupont</span>
-                  <span className="text-[9px] text-[#8b9cb3]">Solo</span>
+                  <span className="text-[9px] text-[#b8c5d6]">Solo</span>
                 </div>
-                <LogOut className="w-3 h-3 text-[#8b9cb3] ml-auto shrink-0" />
+                <LogOut className="w-3 h-3 text-[#b8c5d6] ml-auto shrink-0" />
               </div>
             </div>
           </div>
@@ -271,12 +271,12 @@ export function AnimatedDemo() {
                     </div>
                     <div className="flex flex-col min-w-0">
                       <span className="text-[10px] font-semibold text-white">{t("inboriaChat.title", "Inboria")}</span>
-                      <span className="text-[8px] text-[#8b9cb3]">{t("inboriaChat.subtitle", "Votre coéquipier emails")}</span>
+                      <span className="text-[8px] text-[#b8c5d6]">{t("inboriaChat.subtitle", "Votre coéquipier emails")}</span>
                     </div>
                   </div>
                   <div className="px-3 py-2.5">
                     <p className="text-[10px] font-semibold text-white mb-1">{t("inboriaChat.greetingTitle", "Bonjour, je suis Inboria.")}</p>
-                    <p className="text-[9px] text-[#8b9cb3] leading-snug mb-2">{t("inboriaChat.greetingDesc", "Je connais vos contacts, vos préférences et vos engagements en cours. Posez-moi une question.")}</p>
+                    <p className="text-[9px] text-[#b8c5d6] leading-snug mb-2">{t("inboriaChat.greetingDesc", "Je connais vos contacts, vos préférences et vos engagements en cours. Posez-moi une question.")}</p>
                     <div className="space-y-1">
                       {[
                         t("inboriaChat.suggest1", "Quels engagements ai-je pris cette semaine ?"),
@@ -292,8 +292,8 @@ export function AnimatedDemo() {
                   </div>
                   <div className="px-3 pb-2 pt-1 border-t border-[#1f2937]">
                     <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#141c2b] border border-[#1f2937]">
-                      <Search className="w-2.5 h-2.5 text-[#8b9cb3] shrink-0" />
-                      <span className="text-[9px] text-[#8b9cb3] truncate">{t("inboriaChat.inputPlaceholder", "Demandez quelque chose à Inboria…")}</span>
+                      <Search className="w-2.5 h-2.5 text-[#b8c5d6] shrink-0" />
+                      <span className="text-[9px] text-[#b8c5d6] truncate">{t("inboriaChat.inputPlaceholder", "Demandez quelque chose à Inboria…")}</span>
                     </div>
                   </div>
                 </div>
@@ -303,14 +303,14 @@ export function AnimatedDemo() {
             <div className="px-3 sm:px-4 pt-3 sm:pt-4 pb-2 border-b border-[#1f2937]">
               <div className="flex items-center gap-2 mb-2.5">
                 <div className="flex-1 flex items-center gap-2 bg-[#141c2b] border border-[#1f2937] rounded-lg px-3 py-1.5 min-w-0">
-                  <Search className="w-3.5 h-3.5 text-[#8b9cb3] shrink-0" />
-                  <span className="text-[11px] text-[#8b9cb3] truncate">{t("demo.search")}</span>
+                  <Search className="w-3.5 h-3.5 text-[#b8c5d6] shrink-0" />
+                  <span className="text-[11px] text-[#b8c5d6] truncate">{t("demo.search")}</span>
                 </div>
                 <div className="hidden md:flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-[#2d7dd2]/30 bg-[#2d7dd2]/10 text-[10px] font-medium text-[#2d7dd2] shrink-0">
                   <MessageCircleQuestion className="w-3 h-3" />
                   <span>Inboria</span>
                 </div>
-                <div className="hidden md:flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[10px] font-medium text-[#8b9cb3] shrink-0">
+                <div className="hidden md:flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-[#1f2937] bg-[#141c2b] text-[10px] font-medium text-[#b8c5d6] shrink-0">
                   <RefreshCw className="w-3 h-3" />
                   <span>{t("inbox.refresh", "Actualiser")}</span>
                 </div>
@@ -325,7 +325,7 @@ export function AnimatedDemo() {
                     ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
                     : phase === "selecting" || phase === "deleting"
                     ? "border-red-500/30 bg-red-500/10 text-red-400"
-                    : "border-[#1f2937] bg-[#141c2b] text-[#8b9cb3]"
+                    : "border-[#1f2937] bg-[#141c2b] text-[#b8c5d6]"
                 }`}>
                   {phase === "sorting" ? (
                     <RefreshCw className="w-3 h-3 animate-spin" />
@@ -346,18 +346,18 @@ export function AnimatedDemo() {
                 <div className="text-[10px] px-2 py-0.5 rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
                   {t("sidebar.inbox", "Réception")}
                 </div>
-                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#8b9cb3] border border-[#1f2937] shrink-0">
+                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#b8c5d6] border border-[#1f2937] shrink-0">
                   {t("sidebar.sharedMailboxes", "Boîtes partagées")}
                 </div>
-                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#8b9cb3] border border-[#1f2937] shrink-0 flex items-center gap-1">
+                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#b8c5d6] border border-[#1f2937] shrink-0 flex items-center gap-1">
                   <span>{t("inbox.junk", "Courrier indésirable")}</span>
                   <span className="bg-[#2a3441] text-white px-1 rounded text-[8px]">40</span>
                 </div>
-                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#8b9cb3] border border-[#1f2937] shrink-0 flex items-center gap-1">
+                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#b8c5d6] border border-[#1f2937] shrink-0 flex items-center gap-1">
                   <span>{t("inbox.trash", "Corbeille")}</span>
                   <span className="bg-[#2a3441] text-white px-1 rounded text-[8px]">11</span>
                 </div>
-                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#8b9cb3] border border-[#1f2937] shrink-0">
+                <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#b8c5d6] border border-[#1f2937] shrink-0">
                   {t("inbox.allAccounts", "Tous les comptes")}
                 </div>
               </div>
@@ -374,32 +374,32 @@ export function AnimatedDemo() {
               ) : (
                 <div className="space-y-1.5">
                   <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
-                    <span className="text-[10px] text-[#8b9cb3] mr-1 shrink-0">{t("demo.priority")}</span>
+                    <span className="text-[10px] text-[#b8c5d6] mr-1 shrink-0">{t("demo.priority")}</span>
                     {priorityFilters.map((f, i) => (
                       <div
                         key={f}
                         className={`text-[10px] px-2 py-0.5 rounded-md font-medium shrink-0 ${
                           i === 0
                             ? "bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20"
-                            : "text-[#8b9cb3] border border-[#1f2937]"
+                            : "text-[#b8c5d6] border border-[#1f2937]"
                         }`}
                       >
                         {f}
                       </div>
                     ))}
-                    <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#8b9cb3] border border-[#1f2937] shrink-0">
+                    <div className="text-[10px] px-2 py-0.5 rounded-md font-medium text-[#b8c5d6] border border-[#1f2937] shrink-0">
                       {t("demo.allCategories", "Toutes les catégories")}
                     </div>
                   </div>
                   <div className="flex items-center gap-1.5 overflow-x-auto pb-0.5">
-                    <span className="text-[10px] text-[#8b9cb3] mr-1 shrink-0">{t("demo.crm", "CRM :")}</span>
+                    <span className="text-[10px] text-[#b8c5d6] mr-1 shrink-0">{t("demo.crm", "CRM :")}</span>
                     {["HubSpot", "Pipedrive", "Salesforce", "Odoo"].map((f, i) => (
                       <div
                         key={f}
                         className={`text-[10px] px-2 py-0.5 rounded-md font-medium shrink-0 ${
                           i === 0
                             ? "bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20"
-                            : "text-[#8b9cb3] border border-[#1f2937]"
+                            : "text-[#b8c5d6] border border-[#1f2937]"
                         }`}
                       >
                         {f}
@@ -440,12 +440,12 @@ export function AnimatedDemo() {
                     <div className="flex items-start gap-2 flex-1 min-w-0 px-2.5 py-2">
                       {isSelectingOrAfter && isJunk && !isHidden ? (
                         <div className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 mt-0.5 transition-all duration-300 ${
-                          isJunkSelected ? "bg-red-500" : "border-2 border-[#8b9cb3]/30"
+                          isJunkSelected ? "bg-red-500" : "border-2 border-[#b8c5d6]/30"
                         }`}>
                           {isJunkSelected ? (
                             <Check className="w-3.5 h-3.5 text-white" />
                           ) : (
-                            <Square className="w-3 h-3 text-[#8b9cb3]/40" />
+                            <Square className="w-3 h-3 text-[#b8c5d6]/40" />
                           )}
                         </div>
                       ) : (
@@ -464,16 +464,16 @@ export function AnimatedDemo() {
                         {sorted && !isJunkSelected && (
                           <div className="flex items-center gap-1 mt-0.5">
                             <Sparkles className="w-3 h-3 text-[#2d7dd2] shrink-0" />
-                            <p className="text-[10px] text-[#8b9cb3] truncate">{email.summary}</p>
+                            <p className="text-[10px] text-[#b8c5d6] truncate">{email.summary}</p>
                           </div>
                         )}
                       </div>
                       <div className="flex items-center gap-1.5 shrink-0">
-                        <span className="text-[9px] text-[#8b9cb3] whitespace-nowrap items-center gap-0.5 hidden sm:flex">
+                        <span className="text-[9px] text-[#b8c5d6] whitespace-nowrap items-center gap-0.5 hidden sm:flex">
                           <Clock className="w-2.5 h-2.5" />
                           {i < 2 ? t("demo.today") : i < 4 ? t("demo.yesterday") : t("demo.olderDate")}
                         </span>
-                        <ChevronRight className={`w-3.5 h-3.5 transition-colors ${visible ? "text-[#8b9cb3]/40" : "text-transparent"}`} />
+                        <ChevronRight className={`w-3.5 h-3.5 transition-colors ${visible ? "text-[#b8c5d6]/40" : "text-transparent"}`} />
                       </div>
                     </div>
                   </div>
@@ -496,7 +496,7 @@ export function AnimatedDemo() {
                   ].map((stat) => (
                     <div key={stat.label} className={`text-center py-2 px-1 rounded-lg border border-[#1f2937] border-l-2 ${stat.borderColor} bg-[#141c2b]`}>
                       <div className={`text-[13px] font-bold ${stat.color}`}>{stat.count}</div>
-                      <div className="text-[9px] text-[#8b9cb3]">{stat.label}</div>
+                      <div className="text-[9px] text-[#b8c5d6]">{stat.label}</div>
                     </div>
                   ))}
                 </div>

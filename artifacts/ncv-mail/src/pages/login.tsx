@@ -76,7 +76,7 @@ export default function Login() {
     <AuthLayout>
       <div className="mb-6 text-center">
         <h1 className="text-2xl font-bold text-white">{t("auth.welcome")}</h1>
-        <p className="text-[#8b9cb3] mt-2 text-sm">{t("auth.loginSubtitle")}</p>
+        <p className="text-[#b8c5d6] mt-2 text-sm">{t("auth.loginSubtitle")}</p>
       </div>
 
       <Form {...form}>
@@ -86,7 +86,7 @@ export default function Login() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[#8b9cb3]">{t("auth.email")}</FormLabel>
+                <FormLabel className="text-[#b8c5d6]">{t("auth.email")}</FormLabel>
                 <FormControl>
                   <Input placeholder={t("auth.emailPlaceholder")} type="email" className="bg-background border-border text-white" {...field} />
                 </FormControl>
@@ -100,7 +100,7 @@ export default function Login() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center justify-between">
-                  <FormLabel className="text-[#8b9cb3]">{t("auth.password")}</FormLabel>
+                  <FormLabel className="text-[#b8c5d6]">{t("auth.password")}</FormLabel>
                   <Link href="/mot-de-passe-oublie" className="text-xs text-primary hover:text-primary/80 font-medium" tabIndex={-1}>
                     {t("auth.forgotPassword")}
                   </Link>
@@ -111,7 +111,7 @@ export default function Login() {
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b8c5d6] hover:text-white transition-colors"
                       tabIndex={-1}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -132,7 +132,7 @@ export default function Login() {
         </form>
       </Form>
 
-      <div className="mt-6 text-center text-sm text-[#8b9cb3]">
+      <div className="mt-6 text-center text-sm text-[#b8c5d6]">
         {t("auth.noAccount")}{" "}
         <Link href={`/signup${searchString ? `?${searchString}` : ""}`} className="font-semibold text-primary hover:text-primary/80">
           {t("auth.createAccount")}

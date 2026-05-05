@@ -125,7 +125,7 @@ export default function AdminWaitlist({ embedded = false }: AdminWaitlistProps =
               <Mail className="h-5 w-5 text-primary" />
               {t("admin.waitlistTitle")}
             </h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+            <p className="text-[12px] text-[#b8c5d6] mt-0.5">
               {t("admin.waitlistSubtitle", { count: total })}
             </p>
           </div>
@@ -145,7 +145,7 @@ export default function AdminWaitlist({ embedded = false }: AdminWaitlistProps =
 
         <div className="flex items-center gap-2">
           <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8b9cb3]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#b8c5d6]" />
             <Input
               placeholder={t("admin.waitlistSearchPlaceholder")}
               value={search}
@@ -167,13 +167,13 @@ export default function AdminWaitlist({ embedded = false }: AdminWaitlistProps =
               ))}
             </div>
           ) : signups.length === 0 ? (
-            <div className="p-10 text-center text-[13px] text-[#8b9cb3]">
+            <div className="p-10 text-center text-[13px] text-[#b8c5d6]">
               {t("admin.waitlistEmpty")}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-[12px]">
-                <thead className="bg-[#0d1117] text-[#8b9cb3]">
+                <thead className="bg-[#0d1117] text-[#b8c5d6]">
                   <tr>
                     <th className="text-left px-4 py-2 font-medium">{t("admin.colDate")}</th>
                     <th className="text-left px-4 py-2 font-medium">{t("admin.colEmail")}</th>
@@ -190,16 +190,16 @@ export default function AdminWaitlist({ embedded = false }: AdminWaitlistProps =
                       className="hover:bg-white/[0.02]"
                       data-testid={`row-waitlist-${s.id}`}
                     >
-                      <td className="px-4 py-2 text-[#8b9cb3] whitespace-nowrap">
+                      <td className="px-4 py-2 text-[#b8c5d6] whitespace-nowrap">
                         {new Date(s.createdAt).toLocaleString(i18n.language)}
                       </td>
                       <td className="px-4 py-2 text-white font-medium">{s.email}</td>
-                      <td className="px-4 py-2 text-[#8b9cb3]">{s.plan || "—"}</td>
-                      <td className="px-4 py-2 text-[#8b9cb3]">{s.seats ?? "—"}</td>
-                      <td className="px-4 py-2 text-[#8b9cb3] uppercase">
+                      <td className="px-4 py-2 text-[#b8c5d6]">{s.plan || "—"}</td>
+                      <td className="px-4 py-2 text-[#b8c5d6]">{s.seats ?? "—"}</td>
+                      <td className="px-4 py-2 text-[#b8c5d6] uppercase">
                         {s.locale || "—"}
                       </td>
-                      <td className="px-4 py-2 text-[#8b9cb3]">{s.source || "—"}</td>
+                      <td className="px-4 py-2 text-[#b8c5d6]">{s.source || "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -210,7 +210,7 @@ export default function AdminWaitlist({ embedded = false }: AdminWaitlistProps =
 
         {totalPages > 1 && (
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-[#8b9cb3]">
+            <span className="text-[11px] text-[#b8c5d6]">
               {t("admin.paginationLabel", { page, totalPages })}
             </span>
             <div className="flex items-center gap-2">

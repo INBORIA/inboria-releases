@@ -255,7 +255,7 @@ export default function Categories() {
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
             <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("classification.title")}</h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("classification.manageCategoriesDesc")}</p>
+            <p className="text-[12px] text-[#b8c5d6] mt-0.5">{t("classification.manageCategoriesDesc")}</p>
           </div>
           
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
@@ -276,7 +276,7 @@ export default function Categories() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#8b9cb3]">{t("classification.nameLabel")}</FormLabel>
+                        <FormLabel className="text-[#b8c5d6]">{t("classification.nameLabel")}</FormLabel>
                         <FormControl>
                           <Input placeholder={t("classification.namePlaceholder")} className="bg-background border-border text-white" {...field} />
                         </FormControl>
@@ -289,7 +289,7 @@ export default function Categories() {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#8b9cb3]">{t("classification.descriptionHelp")}</FormLabel>
+                        <FormLabel className="text-[#b8c5d6]">{t("classification.descriptionHelp")}</FormLabel>
                         <FormControl>
                           <Textarea 
                             placeholder={t("classification.descriptionPlaceholder")} 
@@ -316,7 +316,7 @@ export default function Categories() {
           <AlertDialogContent className="bg-card border-border">
             <AlertDialogHeader>
               <AlertDialogTitle className="text-white">{t("classification.duplicateWarning.title")}</AlertDialogTitle>
-              <AlertDialogDescription className="text-[#8b9cb3]">
+              <AlertDialogDescription className="text-[#b8c5d6]">
                 {t("classification.duplicateWarning.desc", { name: nearDup?.name ?? "" })}
               </AlertDialogDescription>
             </AlertDialogHeader>
@@ -325,13 +325,13 @@ export default function Categories() {
                 <div key={s.id} className="flex items-center gap-2 text-[13px] text-white bg-white/[0.04] rounded-md px-3 py-2">
                   <Tags className="w-3.5 h-3.5 text-primary" />
                   <span className="font-medium">{s.name}</span>
-                  <span className="ml-auto text-[11px] text-[#8b9cb3]">{Math.round(s.similarity * 100)}%</span>
+                  <span className="ml-auto text-[11px] text-[#b8c5d6]">{Math.round(s.similarity * 100)}%</span>
                 </div>
               ))}
             </div>
-            <p className="text-[12px] text-[#8b9cb3]">{t("classification.duplicateWarning.help")}</p>
+            <p className="text-[12px] text-[#b8c5d6]">{t("classification.duplicateWarning.help")}</p>
             <AlertDialogFooter className="gap-2">
-              <AlertDialogCancel disabled={forcing} className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">
+              <AlertDialogCancel disabled={forcing} className="bg-background border-border text-[#b8c5d6] hover:bg-white/[0.04]">
                 {t("common.cancel")}
               </AlertDialogCancel>
               <Button
@@ -366,7 +366,7 @@ export default function Categories() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">{t("classification.nameLabel")}</FormLabel>
+                      <FormLabel className="text-[#b8c5d6]">{t("classification.nameLabel")}</FormLabel>
                       <FormControl>
                         <Input className="bg-background border-border text-white" {...field} />
                       </FormControl>
@@ -379,7 +379,7 @@ export default function Categories() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">{t("classification.descriptionLabel")}</FormLabel>
+                      <FormLabel className="text-[#b8c5d6]">{t("classification.descriptionLabel")}</FormLabel>
                       <FormControl>
                         <Textarea className="resize-none h-24 bg-background border-border text-white" {...field} />
                       </FormControl>
@@ -406,7 +406,7 @@ export default function Categories() {
                 </div>
                 <div>
                   <h3 className="text-[14px] font-semibold text-white">{t("classification.suggestedCategoriesTitle")}</h3>
-                  <p className="text-[12px] text-[#8b9cb3]">{t("classification.suggestedCategoriesDesc")}</p>
+                  <p className="text-[12px] text-[#b8c5d6]">{t("classification.suggestedCategoriesDesc")}</p>
                 </div>
               </div>
               <div className="flex items-center gap-2">
@@ -422,7 +422,7 @@ export default function Categories() {
                 <Button 
                   variant="ghost" 
                   size="sm" 
-                  className="text-[12px] text-[#8b9cb3] hover:text-white"
+                  className="text-[12px] text-[#b8c5d6] hover:text-white"
                   onClick={() => setShowSuggestions(false)}
                 >
                   {t("classification.hide")}
@@ -445,7 +445,7 @@ export default function Categories() {
                     </div>
                     <div>
                       <p className="text-[12px] font-medium text-white">{s.name}</p>
-                      <p className="text-[10px] text-[#8b9cb3] line-clamp-1 mt-0.5">{s.description}</p>
+                      <p className="text-[10px] text-[#b8c5d6] line-clamp-1 mt-0.5">{s.description}</p>
                     </div>
                   </button>
                 );
@@ -459,7 +459,7 @@ export default function Categories() {
             <Button 
               variant="ghost" 
               size="sm" 
-              className="text-[12px] text-[#8b9cb3] hover:text-white gap-1.5"
+              className="text-[12px] text-[#b8c5d6] hover:text-white gap-1.5"
               onClick={() => setShowSuggestions(true)}
             >
               <Sparkles className="w-3 h-3" />
@@ -479,9 +479,9 @@ export default function Categories() {
             ))
           ) : categories?.length === 0 ? (
             <div className="col-span-full text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
-              <Tags className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
+              <Tags className="mx-auto h-12 w-12 text-[#b8c5d6]/20 mb-3" />
               <h3 className="text-sm font-medium text-white mb-1">{t("classification.noCategories")}</h3>
-              <p className="text-[13px] text-[#8b9cb3] mb-4">{t("classification.noCategoriesAltDesc")}</p>
+              <p className="text-[13px] text-[#b8c5d6] mb-4">{t("classification.noCategoriesAltDesc")}</p>
               <Button onClick={() => setIsCreateOpen(true)} size="sm">
                 <Plus className="w-3.5 h-3.5 mr-2" />
                 {t("classification.createFirst")}
@@ -496,12 +496,12 @@ export default function Categories() {
                   </div>
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-7 w-7 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/[0.06]">
+                      <Button variant="ghost" size="icon" className="h-7 w-7 text-[#b8c5d6] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/[0.06]">
                         <MoreVertical className="h-3.5 w-3.5" />
                       </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end" className="bg-card border-border">
-                      <DropdownMenuItem onClick={() => handleOpenEdit(cat)} className="gap-2 cursor-pointer text-[#8b9cb3] hover:text-white">
+                      <DropdownMenuItem onClick={() => handleOpenEdit(cat)} className="gap-2 cursor-pointer text-[#b8c5d6] hover:text-white">
                         <Edit2 className="h-3.5 w-3.5" /> {t("classification.editCategory")}
                       </DropdownMenuItem>
                       <AlertDialog>
@@ -513,12 +513,12 @@ export default function Categories() {
                         <AlertDialogContent className="bg-card border-border">
                           <AlertDialogHeader>
                             <AlertDialogTitle className="text-white">{t("classification.deleteConfirmTitle")}</AlertDialogTitle>
-                            <AlertDialogDescription className="text-[#8b9cb3]">
+                            <AlertDialogDescription className="text-[#b8c5d6]">
                               {t("classification.deleteConfirmCatDesc", { name: cat.name })}
                             </AlertDialogDescription>
                           </AlertDialogHeader>
                           <AlertDialogFooter>
-                            <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">{t("common.cancel")}</AlertDialogCancel>
+                            <AlertDialogCancel className="bg-background border-border text-[#b8c5d6] hover:bg-white/[0.04]">{t("common.cancel")}</AlertDialogCancel>
                             <AlertDialogAction 
                               onClick={() => handleDelete(cat.id)}
                               className="bg-red-500 text-white hover:bg-red-600"
@@ -533,11 +533,11 @@ export default function Categories() {
                 </div>
                 
                 <h3 className="text-[14px] font-semibold text-white mb-1">{translateCategoryName(cat.name, lang)}</h3>
-                <p className="text-[12px] text-[#8b9cb3] line-clamp-2 h-9 mb-3">
+                <p className="text-[12px] text-[#b8c5d6] line-clamp-2 h-9 mb-3">
                   {translateCategory(cat.name, cat.description, lang).description || <span className="italic opacity-50">{t("classification.noDescription")}</span>}
                 </p>
                 
-                <div className="flex items-center text-[12px] text-[#8b9cb3] bg-white/[0.04] px-2.5 py-1 rounded-md inline-flex w-fit">
+                <div className="flex items-center text-[12px] text-[#b8c5d6] bg-white/[0.04] px-2.5 py-1 rounded-md inline-flex w-fit">
                   <span className="text-primary font-medium mr-1">{cat.emailCount || 0}</span> 
                   {t("classification.emailsLabel")}
                 </div>

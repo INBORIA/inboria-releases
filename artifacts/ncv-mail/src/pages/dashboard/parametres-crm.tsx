@@ -220,7 +220,7 @@ export default function ParametresCrm() {
                   </Badge>
                 )}
               </div>
-              <p className="text-xs text-[#8b9cb3] mt-1">{t(descKey)}</p>
+              <p className="text-xs text-[#b8c5d6] mt-1">{t(descKey)}</p>
               {row?.lastError && (
                 <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
@@ -228,7 +228,7 @@ export default function ParametresCrm() {
                 </p>
               )}
               {row?.lastSyncedAt && (
-                <p className="text-xs text-[#8b9cb3] mt-1">
+                <p className="text-xs text-[#b8c5d6] mt-1">
                   {t("integrations.lastSynced")}: {new Date(row.lastSyncedAt).toLocaleString()}
                 </p>
               )}
@@ -273,7 +273,7 @@ export default function ParametresCrm() {
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-4">
         <div>
           <Link href="/dashboard/parametres">
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#8b9cb3] hover:text-white">
+            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white">
               <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("settings.title")}
             </Button>
           </Link>
@@ -283,7 +283,7 @@ export default function ParametresCrm() {
             <Building2 className="w-4 h-4 text-primary" />
             {t("settings.hub.crm", "CRM")}
           </h1>
-          <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+          <p className="text-[12px] text-[#b8c5d6] mt-0.5">
             {t("settings.hub.crmDesc", "HubSpot, Pipedrive, Salesforce, Odoo")}
           </p>
         </div>
@@ -324,7 +324,7 @@ export default function ParametresCrm() {
                           </Badge>
                         )}
                       </div>
-                      <p className="text-xs text-[#8b9cb3] mt-1">
+                      <p className="text-xs text-[#b8c5d6] mt-1">
                         {t(
                           "settings.hub.salesforceDesc",
                           "Synchronisation des contacts, comptes et opportunités Salesforce.",
@@ -337,13 +337,13 @@ export default function ParametresCrm() {
                         </p>
                       )}
                       {row?.lastSyncedAt && (
-                        <p className="text-xs text-[#8b9cb3] mt-1">
+                        <p className="text-xs text-[#b8c5d6] mt-1">
                           {t("integrations.lastSynced")}: {new Date(row.lastSyncedAt).toLocaleString()}
                         </p>
                       )}
                       {!isConnected && (
                         <label
-                          className="flex items-center gap-2 mt-3 text-xs text-[#8b9cb3] cursor-pointer select-none"
+                          className="flex items-center gap-2 mt-3 text-xs text-[#b8c5d6] cursor-pointer select-none"
                           data-testid="label-salesforce-sandbox"
                         >
                           <input
@@ -439,7 +439,7 @@ export default function ParametresCrm() {
                           </Badge>
                         )}
                       </div>
-                      <p className="text-xs text-[#8b9cb3] mt-1">
+                      <p className="text-xs text-[#b8c5d6] mt-1">
                         {t("integrations.odoo.desc")}
                       </p>
                       {row?.lastError && (
@@ -449,7 +449,7 @@ export default function ParametresCrm() {
                         </p>
                       )}
                       {row?.lastSyncedAt && (
-                        <p className="text-xs text-[#8b9cb3] mt-1">
+                        <p className="text-xs text-[#b8c5d6] mt-1">
                           {t("integrations.lastSynced")}: {new Date(row.lastSyncedAt).toLocaleString()}
                         </p>
                       )}
@@ -557,7 +557,7 @@ export default function ParametresCrm() {
                   data-testid="input-odoo-apikey"
                 />
               </div>
-              <p className="text-[11px] text-[#8b9cb3] mt-2">
+              <p className="text-[11px] text-[#b8c5d6] mt-2">
                 <span className="font-medium">{t("integrations.odoo.helpText")}</span>{" "}
                 {t("integrations.odoo.helpDetail")}
               </p>

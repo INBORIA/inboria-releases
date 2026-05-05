@@ -35,7 +35,7 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
                   key={link.href}
                   href={link.href}
                   className={`text-[14px] font-medium transition-colors ${
-                    location === link.href ? "text-[#2d7dd2]" : "text-[#8b9cb3] hover:text-white"
+                    location === link.href ? "text-[#2d7dd2]" : "text-[#b8c5d6] hover:text-white"
                   }`}
                 >
                   {link.label}
@@ -72,7 +72,7 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
                   key={link.href}
                   href={link.href}
                   className={`block text-[14px] font-medium px-2 py-1.5 rounded ${
-                    location === link.href ? "text-[#2d7dd2]" : "text-[#8b9cb3]"
+                    location === link.href ? "text-[#2d7dd2]" : "text-[#b8c5d6]"
                   }`}
                   onClick={() => setMobileOpen(false)}
                 >
@@ -113,16 +113,16 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
             <div>
               <h4 className="text-[13px] font-semibold text-white mb-3">{t("footer.legalInfo")}</h4>
               <div className="space-y-2">
-                <Link href="/mentions-legales" className="block text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
+                <Link href="/mentions-legales" className="block text-[13px] text-[#b8c5d6] hover:text-white transition-colors">
                   {t("footer.legalNotice")}
                 </Link>
-                <Link href="/confidentialite" className="block text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
+                <Link href="/confidentialite" className="block text-[13px] text-[#b8c5d6] hover:text-white transition-colors">
                   {t("footer.privacyPolicy")}
                 </Link>
-                <Link href="/conditions" className="block text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
+                <Link href="/conditions" className="block text-[13px] text-[#b8c5d6] hover:text-white transition-colors">
                   {t("footer.termsOfUse")}
                 </Link>
-                <Link href="/login" className="block text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
+                <Link href="/login" className="block text-[13px] text-[#b8c5d6] hover:text-white transition-colors">
                   {t("footer.accessAccount")}
                 </Link>
               </div>
@@ -130,14 +130,14 @@ export function MarketingLayout({ children }: { children: React.ReactNode }) {
 
             <div>
               <h4 className="text-[13px] font-semibold text-white mb-3">{t("footer.contact")}</h4>
-              <a href="mailto:support@inboria.com" className="text-[13px] text-[#8b9cb3] hover:text-white transition-colors">
+              <a href="mailto:support@inboria.com" className="text-[13px] text-[#b8c5d6] hover:text-white transition-colors">
                 support@inboria.com
               </a>
             </div>
           </div>
 
           <div className="mt-8 pt-6 border-t border-[#1f2937] text-center">
-            <p className="text-[12px] text-[#8b9cb3]">{t("footer.allRightsReserved")}</p>
+            <p className="text-[12px] text-[#b8c5d6]">{t("footer.allRightsReserved")}</p>
           </div>
         </div>
       </footer>

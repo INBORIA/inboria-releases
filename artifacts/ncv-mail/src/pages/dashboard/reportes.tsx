@@ -92,22 +92,22 @@ export default function Reportes() {
               {t("wave1.snoozedSectionTitle", "Emails reportés")}
             </h1>
             {snoozed.length > 0 && (
-              <span className="text-[11px] text-[#8b9cb3]">({snoozed.length})</span>
+              <span className="text-[11px] text-[#b8c5d6]">({snoozed.length})</span>
             )}
           </div>
 
           {snoozedLoading ? (
             <div className="flex flex-col items-center justify-center py-12 border border-border border-dashed rounded-md bg-card/50">
               <Loader2 className="w-5 h-5 text-primary animate-spin mb-2" />
-              <p className="text-[12px] text-[#8b9cb3]">{t("inbox.loadingTitle", "Chargement…")}</p>
+              <p className="text-[12px] text-[#b8c5d6]">{t("inbox.loadingTitle", "Chargement…")}</p>
             </div>
           ) : snoozed.length === 0 ? (
             <div className="text-center py-8 border border-border rounded-md bg-card">
-              <BellOff className="w-7 h-7 mx-auto text-[#8b9cb3] mb-2 opacity-50" />
+              <BellOff className="w-7 h-7 mx-auto text-[#b8c5d6] mb-2 opacity-50" />
               <p className="text-[13px] text-white font-medium">
                 {t("wave1.snoozedSectionEmpty", "Aucun email reporté")}
               </p>
-              <p className="text-[12px] text-[#8b9cb3] mt-1">
+              <p className="text-[12px] text-[#b8c5d6] mt-1">
                 {t(
                   "wave1.snoozedSectionEmptyHint",
                   "Les emails que vous reportez réapparaîtront ici jusqu'à leur réveil."
@@ -127,7 +127,7 @@ export default function Reportes() {
                       {e.subject || "(sans sujet)"}
                     </div>
                     {e.sender && (
-                      <div className="text-[11px] text-[#8b9cb3] mt-0.5 truncate">
+                      <div className="text-[11px] text-[#b8c5d6] mt-0.5 truncate">
                         {e.sender}
                       </div>
                     )}

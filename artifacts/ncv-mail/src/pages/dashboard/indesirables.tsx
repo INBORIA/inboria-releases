@@ -44,7 +44,7 @@ function getRisk(email: any): RiskLevel {
 }
 
 const RISK_DOT: Record<RiskLevel, string> = {
-  low: "bg-[#8b9cb3]",
+  low: "bg-[#b8c5d6]",
   medium: "bg-amber-500",
   veryHigh: "bg-red-500",
 };
@@ -166,7 +166,7 @@ export default function Indesirables() {
               variant="ghost"
               size="sm"
               onClick={() => setSelectedEmailId(null)}
-              className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
+              className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
             >
               <ArrowLeft className="w-3.5 h-3.5 mr-1" />
               {t("junk.title")}
@@ -191,11 +191,11 @@ export default function Indesirables() {
                   <div>
                     <div className="text-[12px] font-medium text-white">{(selectedEmail as any).sender}</div>
                     {(selectedEmail as any).senderEmail && (
-                      <div className="text-[10px] text-[#8b9cb3]">{(selectedEmail as any).senderEmail}</div>
+                      <div className="text-[10px] text-[#b8c5d6]">{(selectedEmail as any).senderEmail}</div>
                     )}
                   </div>
                 </div>
-                <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1">
+                <span className="text-[10px] text-[#b8c5d6] flex items-center gap-1">
                   <Clock className="w-3 h-3" />
                   {format(new Date((selectedEmail as any).createdAt), "d MMMM yyyy HH:mm", { locale: dateFnsLocale })}
                 </span>
@@ -245,7 +245,7 @@ export default function Indesirables() {
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
+              className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
             >
               <ArrowLeft className="w-3.5 h-3.5 mr-1" />
               {t("inbox.title")}
@@ -255,7 +255,7 @@ export default function Indesirables() {
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-baseline gap-3">
             <h1 className="text-[18px] font-semibold text-white">{t("junk.title")}</h1>
-            <span className="text-[12px] text-[#8b9cb3]">
+            <span className="text-[12px] text-[#b8c5d6]">
               {t("junk.count", { count: emails.length })}
             </span>
           </div>
@@ -278,8 +278,8 @@ export default function Indesirables() {
           </div>
         ) : emails.length === 0 ? (
           <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
-            <Shield className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
-            <p className="text-[12px] text-[#8b9cb3]">{t("junk.noEmails")}</p>
+            <Shield className="mx-auto h-8 w-8 text-[#b8c5d6]/40 mb-2" />
+            <p className="text-[12px] text-[#b8c5d6]">{t("junk.noEmails")}</p>
           </div>
         ) : (
           <>
@@ -313,21 +313,21 @@ export default function Indesirables() {
                       <span className="text-primary font-semibold text-[10px]">{(email.sender || "?")[0].toUpperCase()}</span>
                     </div>
                     <span className="text-[12px] font-medium text-white truncate min-w-[120px] max-w-[200px]">{email.sender}</span>
-                    <span className="text-[12px] text-[#8b9cb3] truncate flex-1">{email.subject}</span>
-                    <span className="text-[10px] text-[#8b9cb3]/70 shrink-0 hidden sm:inline">
+                    <span className="text-[12px] text-[#b8c5d6] truncate flex-1">{email.subject}</span>
+                    <span className="text-[10px] text-[#b8c5d6]/70 shrink-0 hidden sm:inline">
                       {format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale })}
                     </span>
                     <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
                       <button
                         onClick={(e) => { e.stopPropagation(); handleRestore(email.id); }}
-                        className="p-1 rounded hover:bg-white/[0.08] text-[#8b9cb3] hover:text-white"
+                        className="p-1 rounded hover:bg-white/[0.08] text-[#b8c5d6] hover:text-white"
                         title={t("junk.restore")}
                       >
                         <RotateCcw className="w-3.5 h-3.5" />
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); handleBlock(email); }}
-                        className="p-1 rounded hover:bg-amber-500/[0.12] text-[#8b9cb3] hover:text-amber-300"
+                        className="p-1 rounded hover:bg-amber-500/[0.12] text-[#b8c5d6] hover:text-amber-300"
                         title={t("junk.blockSender")}
                         disabled={blockSender.isPending}
                       >
@@ -335,7 +335,7 @@ export default function Indesirables() {
                       </button>
                       <button
                         onClick={(e) => { e.stopPropagation(); handleDelete(email.id); }}
-                        className="p-1 rounded hover:bg-red-500/[0.12] text-[#8b9cb3] hover:text-red-400"
+                        className="p-1 rounded hover:bg-red-500/[0.12] text-[#b8c5d6] hover:text-red-400"
                         title={t("junk.permanentDelete")}
                       >
                         <Trash2 className="w-3.5 h-3.5" />

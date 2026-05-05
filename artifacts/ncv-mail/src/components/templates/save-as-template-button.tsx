@@ -91,7 +91,7 @@ export function SaveAsTemplateButton({
         type="button"
         variant="ghost"
         size="sm"
-        className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
+        className="text-[#b8c5d6] hover:text-white h-7 text-[11px]"
         disabled={!body?.trim()}
         onClick={() => {
           setName(subject ? subject.slice(0, 80) : "");

@@ -64,7 +64,7 @@ export default function ClassementMarketing() {
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
             {t("marketing.classification.heroTitle")}
           </h1>
-          <p className="mt-5 text-[15px] sm:text-[16px] text-[#8b9cb3] max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-5 text-[15px] sm:text-[16px] text-[#b8c5d6] max-w-2xl mx-auto leading-relaxed">
             {t("marketing.classification.heroDesc")}
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -75,7 +75,7 @@ export default function ClassementMarketing() {
               </button>
             </Link>
             <Link href="/tarifs">
-              <button className="px-8 py-3 text-[14px] font-semibold text-[#8b9cb3] border border-[#1f2937] rounded-lg hover:text-white hover:border-[#2d7dd2]/30 transition-colors">
+              <button className="px-8 py-3 text-[14px] font-semibold text-[#b8c5d6] border border-[#1f2937] rounded-lg hover:text-white hover:border-[#2d7dd2]/30 transition-colors">
                 {t("marketing.classification.seePricing")}
               </button>
             </Link>
@@ -90,7 +90,7 @@ export default function ClassementMarketing() {
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
               {t("marketing.classification.familiesTitle")}
             </h2>
-            <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
+            <p className="mt-3 text-[14px] text-[#b8c5d6] max-w-xl mx-auto">
               {t("marketing.classification.familiesDesc")}
             </p>
             <p className="mt-4 text-[13px] text-[#2d7dd2] max-w-2xl mx-auto leading-relaxed">
@@ -110,15 +110,15 @@ export default function ClassementMarketing() {
                   </div>
                   <div>
                     <h3 className="text-[15px] font-semibold text-white">{t(`marketing.classification.${f.key}`)}</h3>
-                    <p className="text-[11px] text-[#8b9cb3]">{t("marketing.classification.packsCount", { count: f.packs.length })}</p>
+                    <p className="text-[11px] text-[#b8c5d6]">{t("marketing.classification.packsCount", { count: f.packs.length })}</p>
                   </div>
                 </div>
-                <p className="text-[13px] text-[#8b9cb3] leading-relaxed mb-4">{t(`marketing.classification.${f.key}Desc`)}</p>
+                <p className="text-[13px] text-[#b8c5d6] leading-relaxed mb-4">{t(`marketing.classification.${f.key}Desc`)}</p>
                 <div className="flex flex-wrap gap-2">
                   {f.packs.map((p) => (
                     <span
                       key={p}
-                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#0d1117] border border-[#1f2937] text-[11px] text-[#8b9cb3]"
+                      className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#0d1117] border border-[#1f2937] text-[11px] text-[#b8c5d6]"
                     >
                       <Package className="w-3 h-3 text-[#2d7dd2]" />
                       {p}
@@ -139,7 +139,7 @@ export default function ClassementMarketing() {
                       {t("marketing.classification.notListedTitle")}
                     </h3>
                   </div>
-                  <p className="text-[13px] text-[#8b9cb3] leading-relaxed">
+                  <p className="text-[13px] text-[#b8c5d6] leading-relaxed">
                     {t("marketing.classification.notListedDesc")}
                   </p>
                 </div>
@@ -161,7 +161,7 @@ export default function ClassementMarketing() {
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
               {t("marketing.classification.advantagesTitle")}
             </h2>
-            <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
+            <p className="mt-3 text-[14px] text-[#b8c5d6] max-w-xl mx-auto">
               {t("marketing.classification.advantagesDesc")}
             </p>
           </div>
@@ -180,14 +180,14 @@ export default function ClassementMarketing() {
                       </div>
                       <h3 className="text-[16px] font-semibold text-white">{t(`marketing.classification.${adv.key}`)}</h3>
                     </div>
-                    <p className="text-[13px] text-[#8b9cb3] leading-relaxed">{t(`marketing.classification.${adv.key}Desc`)}</p>
+                    <p className="text-[13px] text-[#b8c5d6] leading-relaxed">{t(`marketing.classification.${adv.key}Desc`)}</p>
                   </div>
                   <div className="lg:w-64 shrink-0">
                     <ul className="space-y-2">
                       {adv.highlights.map((h) => (
                         <li key={h} className="flex items-start gap-2">
                           <CheckCircle2 className="w-4 h-4 text-[#2d7dd2] mt-0.5 shrink-0" />
-                          <span className="text-[12px] text-[#8b9cb3]">{t(`marketing.classification.${h}`)}</span>
+                          <span className="text-[12px] text-[#b8c5d6]">{t(`marketing.classification.${h}`)}</span>
                         </li>
                       ))}
                     </ul>
@@ -205,7 +205,7 @@ export default function ClassementMarketing() {
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
               {t("marketing.classification.howItWorksTitle")}
             </h2>
-            <p className="mt-3 text-[14px] text-[#8b9cb3]">
+            <p className="mt-3 text-[14px] text-[#b8c5d6]">
               {t("marketing.classification.howItWorksDesc")}
             </p>
           </div>
@@ -217,7 +217,7 @@ export default function ClassementMarketing() {
                   <span className="text-[16px] font-bold text-[#2d7dd2]">{w.step}</span>
                 </div>
                 <h3 className="text-[14px] font-semibold text-white mb-2">{t(`marketing.classification.${w.key}`)}</h3>
-                <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{t(`marketing.classification.${w.key}Desc`)}</p>
+                <p className="text-[12px] text-[#b8c5d6] leading-relaxed">{t(`marketing.classification.${w.key}Desc`)}</p>
               </div>
             ))}
           </div>
@@ -233,7 +233,7 @@ export default function ClassementMarketing() {
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
               {t("marketing.classification.ctaTitle")}
             </h2>
-            <p className="mt-4 text-[14px] text-[#8b9cb3] max-w-lg mx-auto">
+            <p className="mt-4 text-[14px] text-[#b8c5d6] max-w-lg mx-auto">
               {t("marketing.classification.ctaDesc")}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -243,12 +243,12 @@ export default function ClassementMarketing() {
                 </button>
               </Link>
               <Link href="/tarifs">
-                <button className="px-8 py-3 text-[14px] font-semibold text-[#8b9cb3] border border-[#1f2937] rounded-lg hover:text-white transition-colors">
+                <button className="px-8 py-3 text-[14px] font-semibold text-[#b8c5d6] border border-[#1f2937] rounded-lg hover:text-white transition-colors">
                   {t("marketing.classification.seePricingAlt")}
                 </button>
               </Link>
             </div>
-            <p className="mt-4 text-[11px] text-[#8b9cb3]/60">
+            <p className="mt-4 text-[11px] text-[#b8c5d6]/60">
               {t("marketing.classification.ctaFooter")}
             </p>
           </div>

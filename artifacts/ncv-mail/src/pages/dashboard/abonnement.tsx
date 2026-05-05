@@ -195,7 +195,7 @@ export default function Abonnement() {
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <div className="mb-2">
           <Link href="/dashboard">
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#8b9cb3] hover:text-white" data-testid="back-to-inbox">
+            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white" data-testid="back-to-inbox">
               <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("sidebar.inbox", "Boîte de réception")}
             </Button>
           </Link>
@@ -204,7 +204,7 @@ export default function Abonnement() {
           <h1 className="text-xl font-bold text-white tracking-tight mb-1.5">
             {t("subscription.title")}
           </h1>
-          <p className="text-[12px] text-[#8b9cb3]">
+          <p className="text-[12px] text-[#b8c5d6]">
             {t("subscription.subtitle")}
           </p>
         </div>
@@ -222,7 +222,7 @@ export default function Abonnement() {
                 <h3 className="text-[14px] font-semibold text-white mb-1">
                   {t("waitlist.paymentsFrozenTitle")}
                 </h3>
-                <p className="text-[12px] text-[#8b9cb3] leading-relaxed mb-4">
+                <p className="text-[12px] text-[#b8c5d6] leading-relaxed mb-4">
                   {t("waitlist.paymentsFrozenDesc")}
                 </p>
                 <WaitlistForm compact source="dashboard-abonnement" />
@@ -240,7 +240,7 @@ export default function Abonnement() {
                   ? t("dashboard.expiredSubscription")
                   : t("dashboard.trialEnded")}
               </p>
-              <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+              <p className="text-[12px] text-[#b8c5d6] mt-0.5">
                 {profile.plan === "expired"
                   ? t("dashboard.resubscribe")
                   : t("dashboard.trialUsed")}
@@ -260,7 +260,7 @@ export default function Abonnement() {
                   {profile.plan === "expired" ? t("subscription.expired") : profile.plan}
                 </span>
               </h3>
-              <p className="text-[12px] text-[#8b9cb3]">
+              <p className="text-[12px] text-[#b8c5d6]">
                 {t("subscription.renewalDate")}{" "}
                 {new Date(
                   new Date().setMonth(new Date().getMonth() + 1)
@@ -277,7 +277,7 @@ export default function Abonnement() {
                   return (
                     <>
                       <div className="flex justify-between text-[12px] font-medium mb-1.5">
-                        <span className="text-[#8b9cb3]">{t("subscription.aiConsumption")}</span>
+                        <span className="text-[#b8c5d6]">{t("subscription.aiConsumption")}</span>
                         <span className="text-white">
                           {total} / {profile.emailsQuota}
                         </span>
@@ -364,7 +364,7 @@ export default function Abonnement() {
                 )}
 
                 <div
-                  className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${isCurrentPlan ? "bg-primary/10 text-primary" : "bg-white/[0.04] text-[#8b9cb3]"}`}
+                  className={`w-10 h-10 rounded-lg flex items-center justify-center mb-4 ${isCurrentPlan ? "bg-primary/10 text-primary" : "bg-white/[0.04] text-[#b8c5d6]"}`}
                 >
                   <plan.icon className="w-5 h-5" />
                 </div>
@@ -372,7 +372,7 @@ export default function Abonnement() {
                 <h3 className="text-[15px] font-bold text-white">
                   {plan.name}
                 </h3>
-                <p className="text-[12px] text-[#8b9cb3] mb-4 h-8">
+                <p className="text-[12px] text-[#b8c5d6] mb-4 h-8">
                   {plan.description}
                 </p>
 
@@ -385,14 +385,14 @@ export default function Abonnement() {
                         <span className="text-3xl font-extrabold text-white">
                           {price}€
                         </span>
-                        <span className="text-[#8b9cb3] text-[13px]">
+                        <span className="text-[#b8c5d6] text-[13px]">
                           {isBusiness ? "/ mois" : "/mois"}
                         </span>
                       </>
                     )}
                   </div>
                   {isBusiness && (
-                    <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+                    <p className="text-[11px] text-[#b8c5d6] mt-0.5">
                       {t("subscription.perSeatPerMonth")}
                     </p>
                   )}
@@ -400,7 +400,7 @@ export default function Abonnement() {
 
                 {isBusiness && (
                   <div className="mb-4 p-3 bg-background rounded-lg border border-border">
-                    <label className="text-[12px] font-medium text-[#8b9cb3] block mb-2">
+                    <label className="text-[12px] font-medium text-[#b8c5d6] block mb-2">
                       {t("subscription.seatCount")}
                     </label>
                     <div className="flex items-center gap-3">
@@ -431,7 +431,7 @@ export default function Abonnement() {
                       <Check
                         className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isCurrentPlan ? "text-primary" : "text-emerald-400"}`}
                       />
-                      <span className="text-[12px] text-[#8b9cb3]">
+                      <span className="text-[12px] text-[#b8c5d6]">
                         {feature}
                       </span>
                     </li>
@@ -459,7 +459,7 @@ export default function Abonnement() {
                 ) : !paymentsEnabled && !hasPaidPlan ? (
                   <Button
                     variant="ghost"
-                    className="w-full text-[#8b9cb3] cursor-not-allowed"
+                    className="w-full text-[#b8c5d6] cursor-not-allowed"
                     size="sm"
                     disabled
                     data-testid={`button-coming-soon-${plan.id}`}
@@ -491,7 +491,7 @@ export default function Abonnement() {
         </div>
 
         <div className="mt-6 text-center">
-          <p className="text-[12px] text-[#8b9cb3] leading-relaxed">
+          <p className="text-[12px] text-[#b8c5d6] leading-relaxed">
             {t("subscription.seatsExample")}
           </p>
         </div>
@@ -505,7 +505,7 @@ export default function Abonnement() {
               <h3 className="text-[14px] font-semibold text-white mb-1">
                 {t("subscription.quotaOverage")}
               </h3>
-              <p className="text-[12px] text-[#8b9cb3] leading-relaxed">
+              <p className="text-[12px] text-[#b8c5d6] leading-relaxed">
                 {t("subscription.quotaOverageDesc")}
               </p>
             </div>
@@ -521,7 +521,7 @@ export default function Abonnement() {
               <h3 className="text-[14px] font-semibold text-white mb-1">
                 {t("subscription.noCommitment")}
               </h3>
-              <p className="text-[12px] text-[#8b9cb3] leading-relaxed">
+              <p className="text-[12px] text-[#b8c5d6] leading-relaxed">
                 {t("subscription.noCommitmentDesc")}
               </p>
             </div>
@@ -534,7 +534,7 @@ export default function Abonnement() {
               <Shield className="w-4 h-4 text-primary" />
               {t("subscription.securityTitle")}
             </h3>
-            <p className="text-[12px] text-[#8b9cb3] max-w-2xl">
+            <p className="text-[12px] text-[#b8c5d6] max-w-2xl">
               {t("subscription.securityDesc")}
             </p>
           </div>

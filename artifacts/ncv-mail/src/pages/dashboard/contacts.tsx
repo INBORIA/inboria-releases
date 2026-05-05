@@ -350,7 +350,7 @@ export default function Contacts() {
               </Button>
             </div>
             <div className="relative">
-              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8b9cb3]" />
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-[#b8c5d6]" />
               <Input
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
@@ -362,7 +362,7 @@ export default function Contacts() {
           </div>
           <ScrollArea className="flex-1">
             {!hasQuery ? (
-              <div className="px-4 py-6 text-center text-[12px] text-[#8b9cb3]">
+              <div className="px-4 py-6 text-center text-[12px] text-[#b8c5d6]">
                 {t(
                   "contactsPage.searchHint",
                   "Tapez un nom ou une adresse pour rechercher un contact.",
@@ -370,10 +370,10 @@ export default function Contacts() {
               </div>
             ) : isSearching ? (
               <div className="flex items-center justify-center py-8">
-                <Loader2 className="h-5 w-5 animate-spin text-[#8b9cb3]" />
+                <Loader2 className="h-5 w-5 animate-spin text-[#b8c5d6]" />
               </div>
             ) : contacts.length === 0 ? (
-              <div className="px-4 py-6 text-center text-[12px] text-[#8b9cb3]">
+              <div className="px-4 py-6 text-center text-[12px] text-[#b8c5d6]">
                 {t("contactsPage.noResults", "Aucun contact trouvé")}
               </div>
             ) : (
@@ -400,7 +400,7 @@ export default function Contacts() {
                             </Badge>
                           )}
                         </div>
-                        <div className="text-[11px] text-[#8b9cb3] truncate">
+                        <div className="text-[11px] text-[#b8c5d6] truncate">
                           {c.email}
                         </div>
                         <div className="text-[10px] text-[#6b7a8f] mt-0.5">
@@ -420,7 +420,7 @@ export default function Contacts() {
         <section className="flex-1 min-w-0 flex flex-col">
           {!selectedEmail ? (
             <div className="flex-1 flex items-center justify-center text-center px-6">
-              <p className="text-[13px] text-[#8b9cb3]">
+              <p className="text-[13px] text-[#b8c5d6]">
                 {t("contactsPage.selectPrompt", "Sélectionnez un contact pour voir tout son historique.")}
               </p>
             </div>
@@ -431,9 +431,9 @@ export default function Contacts() {
                   <h2 className="text-[14px] font-semibold text-white truncate">
                     {manualFiche?.displayName || selectedEmail}
                   </h2>
-                  <p className="text-[11px] text-[#8b9cb3] truncate">{selectedEmail}</p>
+                  <p className="text-[11px] text-[#b8c5d6] truncate">{selectedEmail}</p>
                   {manualFiche && (
-                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[11px] text-[#8b9cb3]">
+                    <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[11px] text-[#b8c5d6]">
                       {manualFiche.company && (
                         <span className="flex items-center gap-1">
                           <Building2 className="h-3 w-3" />
@@ -449,7 +449,7 @@ export default function Contacts() {
                     </div>
                   )}
                   {manualFiche?.notes && (
-                    <div className="flex items-start gap-1.5 mt-2 text-[11px] text-[#8b9cb3]">
+                    <div className="flex items-start gap-1.5 mt-2 text-[11px] text-[#b8c5d6]">
                       <StickyNote className="h-3 w-3 mt-0.5 shrink-0" />
                       <p className="whitespace-pre-wrap">{manualFiche.notes}</p>
                     </div>
@@ -542,7 +542,7 @@ export default function Contacts() {
                         "px-2 py-1 rounded text-[11px] border transition-colors inline-flex items-center gap-1",
                         active
                           ? "bg-primary/20 border-primary/50 text-primary"
-                          : "border-[#1f2937] text-[#8b9cb3] hover:text-white hover:border-[#374151]",
+                          : "border-[#1f2937] text-[#b8c5d6] hover:text-white hover:border-[#374151]",
                       )}
                       data-testid={`contacts-timeline-filter-${tk}`}
                     >
@@ -554,7 +554,7 @@ export default function Contacts() {
                 {activeTypes.size > 0 && (
                   <button
                     onClick={() => setActiveTypes(new Set())}
-                    className="px-2 py-1 rounded text-[11px] text-[#8b9cb3] hover:text-white"
+                    className="px-2 py-1 rounded text-[11px] text-[#b8c5d6] hover:text-white"
                     data-testid="contacts-timeline-filter-clear"
                   >
                     {t("common.reset", "Réinitialiser")}
@@ -564,10 +564,10 @@ export default function Contacts() {
               <ScrollArea className="flex-1">
                 {isTimelineLoading ? (
                   <div className="flex items-center justify-center py-12">
-                    <Loader2 className="h-5 w-5 animate-spin text-[#8b9cb3]" />
+                    <Loader2 className="h-5 w-5 animate-spin text-[#b8c5d6]" />
                   </div>
                 ) : timeline.length === 0 ? (
-                  <div className="px-5 py-8 text-center text-[12px] text-[#8b9cb3]">
+                  <div className="px-5 py-8 text-center text-[12px] text-[#b8c5d6]">
                     {t("contactsPage.emptyTimeline", "Rien à afficher pour ce contact.")}
                   </div>
                 ) : (
@@ -578,7 +578,7 @@ export default function Contacts() {
                         : timeline.filter((it) => activeTypes.has(it.type));
                     if (filtered.length === 0) {
                       return (
-                        <div className="px-5 py-8 text-center text-[12px] text-[#8b9cb3]">
+                        <div className="px-5 py-8 text-center text-[12px] text-[#b8c5d6]">
                           {t(
                             "contactsPage.emptyFiltered",
                             "Aucun élément pour ces filtres.",
@@ -596,7 +596,7 @@ export default function Contacts() {
                           key={`${item.type}-${item.id}`}
                           className="flex gap-3 p-3 rounded-md border border-[#1f2937] hover:bg-white/[0.02] transition-colors"
                         >
-                          <Icon className="h-4 w-4 text-[#8b9cb3] mt-0.5 shrink-0" />
+                          <Icon className="h-4 w-4 text-[#b8c5d6] mt-0.5 shrink-0" />
                           <div className="flex-1 min-w-0">
                             <div className="flex items-baseline gap-2">
                               <span className="text-[11px] font-medium text-primary">
@@ -615,7 +615,7 @@ export default function Contacts() {
                               {item.title}
                             </div>
                             {item.snippet && (
-                              <div className="text-[11px] text-[#8b9cb3] mt-1 line-clamp-2">
+                              <div className="text-[11px] text-[#b8c5d6] mt-1 line-clamp-2">
                                 {item.snippet}
                               </div>
                             )}
@@ -765,7 +765,7 @@ export default function Contacts() {
               <FileText className="h-4 w-4 text-primary" />
               {t("contactsPage.handoverBrief", "Brief de passation")}
               {selectedEmail && (
-                <span className="text-xs text-[#8b9cb3] font-normal truncate">
+                <span className="text-xs text-[#b8c5d6] font-normal truncate">
                   — {selectedEmail}
                 </span>
               )}
@@ -777,7 +777,7 @@ export default function Contacts() {
               )}
             </DialogDescription>
           </DialogHeader>
-          <div className="flex items-center gap-2 text-[11px] text-[#8b9cb3] pb-2">
+          <div className="flex items-center gap-2 text-[11px] text-[#b8c5d6] pb-2">
             <span>{t("contactsPage.handoverPeriod", "Période :")}</span>
             {[7, 30, 90].map((d) => (
               <button
@@ -801,7 +801,7 @@ export default function Contacts() {
           </div>
           <ScrollArea className="flex-1">
             {briefLoading ? (
-              <div className="flex items-center justify-center py-12 text-[12px] text-[#8b9cb3]">
+              <div className="flex items-center justify-center py-12 text-[12px] text-[#b8c5d6]">
                 <Loader2 className="h-4 w-4 animate-spin mr-2" />
                 {t("contactsPage.handoverGenerating", "Génération en cours…")}
               </div>

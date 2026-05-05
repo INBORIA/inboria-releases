@@ -179,7 +179,7 @@ export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {
               <Users className="h-5 w-5 text-primary" />
               {t("admin.subscribersTitle")}
             </h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+            <p className="text-[12px] text-[#b8c5d6] mt-0.5">
               {t("admin.subscribersSubtitle", { count: total })}
             </p>
           </div>
@@ -190,7 +190,7 @@ export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {
 
         <div className="flex flex-wrap items-center gap-3">
           <div className="relative flex-1 min-w-[240px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#8b9cb3]" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#b8c5d6]" />
             <Input
               placeholder={t("admin.subscribersSearchPlaceholder")}
               value={search}
@@ -228,13 +228,13 @@ export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {
               ))}
             </div>
           ) : users.length === 0 ? (
-            <div className="p-10 text-center text-[13px] text-[#8b9cb3]">
+            <div className="p-10 text-center text-[13px] text-[#b8c5d6]">
               {t("admin.subscribersEmpty")}
             </div>
           ) : (
             <div className="overflow-x-auto">
               <table className="w-full text-[12px]">
-                <thead className="bg-[#0d1117] text-[#8b9cb3]">
+                <thead className="bg-[#0d1117] text-[#b8c5d6]">
                   <tr>
                     <th className="text-left px-4 py-2 font-medium">{t("admin.colUser")}</th>
                     <th className="text-left px-4 py-2 font-medium">{t("admin.colPlan")}</th>
@@ -273,7 +273,7 @@ export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {
                               </span>
                             )}
                           </div>
-                          <div className="text-[#8b9cb3] text-[11px]">{u.email}</div>
+                          <div className="text-[#b8c5d6] text-[11px]">{u.email}</div>
                         </td>
                         <td className="px-4 py-2">
                           <span
@@ -284,16 +284,16 @@ export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {
                             {u.plan}
                           </span>
                           {u.plan === "business" && seats > 1 && (
-                            <span className="text-[#8b9cb3] text-[11px]">
+                            <span className="text-[#b8c5d6] text-[11px]">
                               {" "}
                               · {seats} {t("admin.seatsShort")}
                             </span>
                           )}
                         </td>
-                        <td className="px-4 py-2 text-[#8b9cb3]">
+                        <td className="px-4 py-2 text-[#b8c5d6]">
                           {u.organisationName || "—"}
                         </td>
-                        <td className="px-4 py-2 text-[#8b9cb3] whitespace-nowrap">
+                        <td className="px-4 py-2 text-[#b8c5d6] whitespace-nowrap">
                           {totalUsed} / {u.emailsQuota}
                         </td>
                         <td className="px-4 py-2">
@@ -304,7 +304,7 @@ export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {
                               </span>
                               {u.paddleStatus && (
                                 <span
-                                  className="text-[10px] text-[#8b9cb3] capitalize"
+                                  className="text-[10px] text-[#b8c5d6] capitalize"
                                   data-testid={`paddle-status-${u.id}`}
                                 >
                                   {u.paddleStatus.replace(/_/g, " ")}
@@ -317,12 +317,12 @@ export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {
                             </span>
                           )}
                         </td>
-                        <td className="px-4 py-2 text-[#8b9cb3] whitespace-nowrap">
+                        <td className="px-4 py-2 text-[#b8c5d6] whitespace-nowrap">
                           {new Date(u.createdAt).toLocaleDateString(i18n.language)}
                         </td>
                         <td className="px-4 py-2 text-right">
                           {isExpired || isSelf ? (
-                            <span className="text-[11px] text-[#8b9cb3]">
+                            <span className="text-[11px] text-[#b8c5d6]">
                               {isSelf
                                 ? t("admin.youCannotCancelSelf")
                                 : t("admin.alreadyExpired")}
@@ -396,7 +396,7 @@ export default function AdminAbonnes({ embedded = false }: AdminAbonnesProps = {
 
         {totalPages > 1 && (
           <div className="flex items-center justify-between">
-            <span className="text-[11px] text-[#8b9cb3]">
+            <span className="text-[11px] text-[#b8c5d6]">
               {t("admin.paginationLabel", { page, totalPages })}
             </span>
             <div className="flex items-center gap-2">

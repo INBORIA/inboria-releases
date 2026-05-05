@@ -113,7 +113,7 @@ export default function Relances() {
             <MailCheck className="w-5 h-5 text-primary" />
             {t("relances.pageTitle", "Relances")}
           </h1>
-          <p className="text-[12px] text-[#8b9cb3] mt-1">
+          <p className="text-[12px] text-[#b8c5d6] mt-1">
             {t(
               "relances.pageSubtitle",
               "Inboria détecte les mails que vous avez envoyés et qui sont restés sans réponse. Validez ou ignorez les suggestions.",
@@ -127,7 +127,7 @@ export default function Relances() {
             <h2 className="text-[13px] font-medium text-white uppercase tracking-wider">
               {t("relances.suggestionsTitle", "Suggestions Inboria")}
             </h2>
-            <span className="text-[11px] text-[#8b9cb3]">
+            <span className="text-[11px] text-[#b8c5d6]">
               ({aiList.length})
             </span>
           </div>
@@ -135,15 +135,15 @@ export default function Relances() {
           {loadingAi ? (
             <div className="flex flex-col items-center justify-center py-12 rounded-lg border border-border border-dashed bg-card/40">
               <Loader2 className="w-5 h-5 text-primary animate-spin mb-2" />
-              <p className="text-[12px] text-[#8b9cb3]">{t("inbox.loadingTitle", "Chargement…")}</p>
+              <p className="text-[12px] text-[#b8c5d6]">{t("inbox.loadingTitle", "Chargement…")}</p>
             </div>
           ) : aiList.length === 0 ? (
             <div className="rounded-lg border border-border bg-card/40 p-8 text-center">
-              <Inbox className="w-8 h-8 text-[#8b9cb3] mx-auto mb-2" />
+              <Inbox className="w-8 h-8 text-[#b8c5d6] mx-auto mb-2" />
               <p className="text-[13px] text-white">
                 {t("relances.emptySuggestionsTitle", "Aucune relance à proposer")}
               </p>
-              <p className="text-[12px] text-[#8b9cb3] mt-1">
+              <p className="text-[12px] text-[#b8c5d6] mt-1">
                 {t(
                   "relances.emptySuggestionsDesc",
                   "Tous vos mails envoyés ont reçu une réponse, ou aucun n'est assez ancien pour être relancé.",
@@ -177,12 +177,12 @@ export default function Relances() {
                           {email.subject || t("relances.noSubject", "(sans objet)")}
                         </p>
                         {email.summary && (
-                          <p className="text-[11px] text-[#8b9cb3] mt-1 line-clamp-2">
+                          <p className="text-[11px] text-[#b8c5d6] mt-1 line-clamp-2">
                             {email.summary}
                           </p>
                         )}
                         {sentAt && (
-                          <p className="text-[10px] text-[#8b9cb3] mt-1">
+                          <p className="text-[10px] text-[#b8c5d6] mt-1">
                             {t("relances.sentOn", "Envoyé")} {formatDistanceToNow(new Date(sentAt), { addSuffix: true, locale: dateLocale })}
                           </p>
                         )}
@@ -217,7 +217,7 @@ export default function Relances() {
                         variant="ghost"
                         onClick={() => handleDismiss(f.id)}
                         disabled={isBusy}
-                        className="h-8 text-[11px] text-[#8b9cb3] hover:text-white"
+                        className="h-8 text-[11px] text-[#b8c5d6] hover:text-white"
                       >
                         <X className="w-3 h-3 mr-1" />
                         {t("relances.dismiss", "Ignorer")}

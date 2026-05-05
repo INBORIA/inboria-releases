@@ -38,8 +38,8 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
         onClick={() => setOpen(!open)}
         className={`flex items-center gap-1.5 rounded-lg transition-colors ${
           variant === "compact"
-            ? "px-2 py-1.5 text-[11px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
-            : "px-3 py-2 text-[13px] text-[#8b9cb3] hover:text-white border border-transparent hover:border-[#1f2937]"
+            ? "px-2 py-1.5 text-[11px] text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
+            : "px-3 py-2 text-[13px] text-[#b8c5d6] hover:text-white border border-transparent hover:border-[#1f2937]"
         }`}
       >
         <Globe className={variant === "compact" ? "w-3.5 h-3.5" : "w-4 h-4"} />
@@ -64,7 +64,7 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
               className={`w-full flex items-center gap-2.5 px-3 py-2.5 text-[13px] transition-colors ${
                 activeCode === lang.code
                   ? "bg-[#2d7dd2]/10 text-[#2d7dd2]"
-                  : "text-[#8b9cb3] hover:bg-white/[0.04] hover:text-white"
+                  : "text-[#b8c5d6] hover:bg-white/[0.04] hover:text-white"
               }`}
             >
               <span className="text-base">{lang.flag}</span>

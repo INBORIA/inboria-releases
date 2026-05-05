@@ -109,7 +109,7 @@ export function FileAttachInput({ files, onChange, maxFiles = 10, maxSizeMb = 10
         disabled={uploading || files.length >= maxFiles}
         className="flex items-center gap-1.5 px-2 py-1 text-xs rounded transition-colors"
         style={{
-          color: uploading ? "#555" : "#8b9cb3",
+          color: uploading ? "#555" : "#b8c5d6",
           background: "transparent",
           border: "1px solid #1f2937",
         }}
@@ -133,7 +133,7 @@ export function FileAttachInput({ files, onChange, maxFiles = 10, maxSizeMb = 10
             >
               <File size={12} style={{ color: "#2d7dd2" }} />
               <span className="truncate max-w-[150px]">{f.filename}</span>
-              <span style={{ color: "#8b9cb3" }}>{formatSize(f.size)}</span>
+              <span style={{ color: "#b8c5d6" }}>{formatSize(f.size)}</span>
               <button
                 type="button"
                 onClick={() => removeFile(i)}

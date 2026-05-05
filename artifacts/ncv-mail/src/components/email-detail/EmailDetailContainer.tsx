@@ -386,7 +386,7 @@ export function EmailDetailContainer({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center p-12 text-[#8b9cb3]">
+      <div className="flex items-center justify-center p-12 text-[#b8c5d6]">
         <Loader2 className="w-6 h-6 animate-spin mr-2" />
         {t("inbox.loadingEmail", "Chargement de l'email...")}
       </div>
@@ -396,7 +396,7 @@ export function EmailDetailContainer({
   if (isError || !email) {
     return (
       <div className="flex flex-col items-center justify-center p-12 gap-3">
-        <p className="text-[#8b9cb3]">
+        <p className="text-[#b8c5d6]">
           {t("inbox.loadEmailError", "Impossible de charger l'email.")}
         </p>
         <button

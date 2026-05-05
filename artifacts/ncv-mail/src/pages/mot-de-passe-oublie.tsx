@@ -60,10 +60,10 @@ export default function MotDePasseOublie() {
             <CheckCircle className="w-7 h-7 text-emerald-400" />
           </div>
           <h1 className="text-xl font-bold text-white">{t("auth.resetEmailSent")}</h1>
-          <p className="text-sm text-[#8b9cb3] leading-relaxed">
+          <p className="text-sm text-[#b8c5d6] leading-relaxed">
             {t("auth.resetEmailSentIfExists", { email }).replace(/<1>|<\/1>/g, "")}
           </p>
-          <p className="text-xs text-[#8b9cb3]">
+          <p className="text-xs text-[#b8c5d6]">
             {t("auth.checkSpam")}
           </p>
           <div className="pt-2">
@@ -83,14 +83,14 @@ export default function MotDePasseOublie() {
           <Mail className="w-7 h-7 text-primary" />
         </div>
         <h1 className="text-2xl font-bold text-white">{t("auth.forgotPasswordTitle")}</h1>
-        <p className="text-[#8b9cb3] mt-2 text-sm">
+        <p className="text-[#b8c5d6] mt-2 text-sm">
           {t("auth.forgotPasswordSubtitle")}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
-          <Label className="text-[12px] text-[#8b9cb3]">{t("auth.emailAddress")}</Label>
+          <Label className="text-[12px] text-[#b8c5d6]">{t("auth.emailAddress")}</Label>
           <Input
             type="email"
             placeholder={t("auth.emailPlaceholder")}
@@ -106,7 +106,7 @@ export default function MotDePasseOublie() {
       </form>
 
       <div className="mt-6 text-center">
-        <Link href="/login" className="text-sm text-[#8b9cb3] hover:text-white inline-flex items-center gap-1.5 transition-colors">
+        <Link href="/login" className="text-sm text-[#b8c5d6] hover:text-white inline-flex items-center gap-1.5 transition-colors">
           <ArrowLeft className="w-3.5 h-3.5" />
           {t("auth.backToLogin")}
         </Link>

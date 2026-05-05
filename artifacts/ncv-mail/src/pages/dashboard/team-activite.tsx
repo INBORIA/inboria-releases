@@ -85,24 +85,24 @@ function MemberSection({ member, defaultOpen, onOpenEmail }: MemberSectionProps)
         </div>
         <div className="flex-1 min-w-0">
           <p className="text-[12px] font-medium text-white truncate">{displayName}</p>
-          <p className="text-[10px] text-[#8b9cb3] truncate">{member.email || ""}</p>
+          <p className="text-[10px] text-[#b8c5d6] truncate">{member.email || ""}</p>
         </div>
         <span className="text-[10px] px-2 py-0.5 rounded-full bg-primary/10 text-primary font-medium capitalize shrink-0">
           {member.role}
         </span>
-        <span className="text-[11px] text-[#8b9cb3] shrink-0 tabular-nums">
+        <span className="text-[11px] text-[#b8c5d6] shrink-0 tabular-nums">
           {t("teamActivity.assignedCount", { count })}
         </span>
         {open ? (
-          <ChevronDown className="h-4 w-4 text-[#8b9cb3] shrink-0" />
+          <ChevronDown className="h-4 w-4 text-[#b8c5d6] shrink-0" />
         ) : (
-          <ChevronRight className="h-4 w-4 text-[#8b9cb3] shrink-0" />
+          <ChevronRight className="h-4 w-4 text-[#b8c5d6] shrink-0" />
         )}
       </button>
 
       {open ? (
         count === 0 ? (
-          <div className="px-4 py-6 text-center text-[11px] text-[#8b9cb3] border-t border-[#1f2937]">
+          <div className="px-4 py-6 text-center text-[11px] text-[#b8c5d6] border-t border-[#1f2937]">
             {t("teamActivity.noAssignedForMember")}
           </div>
         ) : (
@@ -137,20 +137,20 @@ function MemberSection({ member, defaultOpen, onOpenEmail }: MemberSectionProps)
                       </span>
                     ) : null}
                   </div>
-                  <p className="text-[10px] text-[#8b9cb3] truncate">
+                  <p className="text-[10px] text-[#b8c5d6] truncate">
                     {e.sender || e.senderEmail || ""}
                   </p>
                 </div>
-                <span className="text-[10px] text-[#8b9cb3] shrink-0">
+                <span className="text-[10px] text-[#b8c5d6] shrink-0">
                   {formatTime(e.createdAt, t)}
                 </span>
-                <ExternalLink className="h-3 w-3 text-[#8b9cb3] shrink-0" />
+                <ExternalLink className="h-3 w-3 text-[#b8c5d6] shrink-0" />
               </li>
             ))}
           </ul>
           {hasMore ? (
             <div className="border-t border-[#1f2937] px-4 py-2 flex items-center justify-between gap-3 bg-[#0f1623]">
-              <span className="text-[10px] text-[#8b9cb3] tabular-nums">
+              <span className="text-[10px] text-[#b8c5d6] tabular-nums">
                 {t("teamActivity.shownOfTotal", {
                   shown: visibleCount,
                   total: count,
@@ -221,14 +221,14 @@ export default function TeamActivitePage() {
         <BackToInboxButton />
         <div>
           <h1 className="text-xl font-bold text-white">{t("teamActivity.title")}</h1>
-          <p className="text-[12px] text-[#8b9cb3] mt-1">{t("teamActivity.subtitle")}</p>
+          <p className="text-[12px] text-[#b8c5d6] mt-1">{t("teamActivity.subtitle")}</p>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
           <div className="bg-[#141c2b] border border-[#1f2937] rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               <Users className="h-4 w-4 text-primary" />
-              <span className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">
+              <span className="text-[10px] font-medium text-[#b8c5d6] uppercase tracking-wider">
                 {t("sidebar.myTeam")}
               </span>
             </div>
@@ -237,7 +237,7 @@ export default function TeamActivitePage() {
           <div className="bg-[#141c2b] border border-[#1f2937] rounded-lg p-4">
             <div className="flex items-center gap-2 mb-2">
               <Mail className="h-4 w-4 text-blue-400" />
-              <span className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">
+              <span className="text-[10px] font-medium text-[#b8c5d6] uppercase tracking-wider">
                 {t("teamActivity.totalAssigned")}
               </span>
             </div>
@@ -246,7 +246,7 @@ export default function TeamActivitePage() {
         </div>
 
         {members.length === 0 ? (
-          <div className="bg-[#141c2b] border border-[#1f2937] rounded-lg p-8 text-center text-[12px] text-[#8b9cb3]">
+          <div className="bg-[#141c2b] border border-[#1f2937] rounded-lg p-8 text-center text-[12px] text-[#b8c5d6]">
             {t("teamActivity.noTeammates")}
           </div>
         ) : (

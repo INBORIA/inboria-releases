@@ -48,7 +48,7 @@ export default function VerifierEmail() {
 
         <h1 className="text-2xl font-bold text-white">{t("auth.verifyEmailTitle")}</h1>
 
-        <p className="text-[#8b9cb3] text-sm leading-relaxed">
+        <p className="text-[#b8c5d6] text-sm leading-relaxed">
           {t("auth.verifyEmailDesc")}
           {email && (
             <>
@@ -59,18 +59,18 @@ export default function VerifierEmail() {
         </p>
 
         <div className="bg-[#0d1117] rounded-lg border border-[#1f2937] p-4 text-left space-y-2">
-          <p className="text-[12px] text-[#8b9cb3]">
+          <p className="text-[12px] text-[#b8c5d6]">
             1. {t("auth.verifyStep1")}
           </p>
-          <p className="text-[12px] text-[#8b9cb3]">
+          <p className="text-[12px] text-[#b8c5d6]">
             2. {t("auth.verifyStep2")}
           </p>
-          <p className="text-[12px] text-[#8b9cb3]">
+          <p className="text-[12px] text-[#b8c5d6]">
             3. {t("auth.verifyStep3")}
           </p>
         </div>
 
-        <p className="text-[11px] text-[#8b9cb3]">
+        <p className="text-[11px] text-[#b8c5d6]">
           {t("auth.cantFindEmail")}{" "}
           <button
             onClick={handleResend}
@@ -83,7 +83,7 @@ export default function VerifierEmail() {
 
         <div className="pt-2">
           <Link href="/login">
-            <Button variant="ghost" size="sm" className="text-[#8b9cb3] hover:text-white">
+            <Button variant="ghost" size="sm" className="text-[#b8c5d6] hover:text-white">
               <ArrowLeft className="w-4 h-4 mr-1" />
               {t("auth.backToLogin")}
             </Button>

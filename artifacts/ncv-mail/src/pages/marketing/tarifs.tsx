@@ -73,7 +73,7 @@ export default function Tarifs() {
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white">
             {t("marketing.pricing.heroTitle")}
           </h1>
-          <p className="mt-4 text-[16px] text-[#8b9cb3] max-w-2xl mx-auto">
+          <p className="mt-4 text-[16px] text-[#b8c5d6] max-w-2xl mx-auto">
             {t("marketing.pricing.heroDesc")}
           </p>
         </div>
@@ -95,7 +95,7 @@ export default function Tarifs() {
               <h2 className="text-xl sm:text-2xl font-bold text-white">
                 {t("waitlist.bannerTitle")}
               </h2>
-              <p className="mt-2 text-[14px] text-[#8b9cb3] max-w-2xl">
+              <p className="mt-2 text-[14px] text-[#b8c5d6] max-w-2xl">
                 {t("waitlist.bannerDesc")}
               </p>
               <div className="mt-5">
@@ -135,7 +135,7 @@ export default function Tarifs() {
                   )}
 
                   <h3 className="text-[16px] font-bold text-white">{t(`plans.${plan.id}`)}</h3>
-                  <p className="text-[12px] text-[#8b9cb3] mb-4 h-8">{t(`plans.${plan.id}Desc`)}</p>
+                  <p className="text-[12px] text-[#b8c5d6] mb-4 h-8">{t(`plans.${plan.id}Desc`)}</p>
 
                   <div className="mb-4">
                     <div className="flex items-baseline gap-0.5">
@@ -144,14 +144,14 @@ export default function Tarifs() {
                       ) : (
                         <>
                           <span className="text-3xl font-extrabold text-white">{price}€</span>
-                          <span className="text-[#8b9cb3] text-[13px]">
+                          <span className="text-[#b8c5d6] text-[13px]">
                             {isBusiness ? t("plans.perSeatMonth") : t("plans.perMonth")}
                           </span>
                         </>
                       )}
                     </div>
                     {isBusiness && (
-                      <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+                      <p className="text-[11px] text-[#b8c5d6] mt-0.5">
                         {t("plans.perSeatDetail")}
                       </p>
                     )}
@@ -159,7 +159,7 @@ export default function Tarifs() {
 
                   {isBusiness && (
                     <div className="mb-4 p-3 bg-[#0d1117] rounded-lg border border-[#1f2937]">
-                      <label className="text-[12px] font-medium text-[#8b9cb3] block mb-2">
+                      <label className="text-[12px] font-medium text-[#b8c5d6] block mb-2">
                         {t("plans.numberOfCollaborators")}
                       </label>
                       <div className="flex items-center gap-3">
@@ -175,11 +175,11 @@ export default function Tarifs() {
                           {businessSeats}
                         </span>
                       </div>
-                      <p className="text-[11px] text-[#8b9cb3] mt-1">
+                      <p className="text-[11px] text-[#b8c5d6] mt-1">
                         <span className="font-medium">{t("plans.total")} : </span>
                         <span className="text-[#2d7dd2] font-bold">{(businessSeats * 12.99).toFixed(2)}€</span> {t("plans.perMonth")}
                       </p>
-                      <p className="text-[10px] text-[#8b9cb3] mt-1">
+                      <p className="text-[10px] text-[#b8c5d6] mt-1">
                         {t("plans.seatsExample")}
                       </p>
                     </div>
@@ -189,7 +189,7 @@ export default function Tarifs() {
                     {featureKeys.map((fKey) => (
                       <li key={fKey} className="flex items-start gap-2">
                         <Check className={`w-3.5 h-3.5 shrink-0 mt-0.5 ${isRecommended ? "text-[#2d7dd2]" : "text-emerald-400"}`} />
-                        <span className="text-[12px] text-[#8b9cb3]">{t(`plans.${plan.id}Features.${fKey}`)}</span>
+                        <span className="text-[12px] text-[#b8c5d6]">{t(`plans.${plan.id}Features.${fKey}`)}</span>
                       </li>
                     ))}
                   </ul>
@@ -215,7 +215,7 @@ export default function Tarifs() {
             })}
           </div>
 
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-[13px] text-[#8b9cb3]">
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-6 text-[13px] text-[#b8c5d6]">
             <div className="flex items-center gap-2">
               <Shield className="w-4 h-4" />
               <span>{t("marketing.pricing.noCommitment")}</span>

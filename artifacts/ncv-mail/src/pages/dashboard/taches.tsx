@@ -368,7 +368,7 @@ export default function Taches() {
                   toast({ title: t("tasks.exportError"), variant: "destructive" });
                 }
               }}
-              className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
+              className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#b8c5d6] hover:text-white"
             >
               <Download className="w-3 h-3" />
               {t("tasks.export")}
@@ -387,7 +387,7 @@ export default function Taches() {
               className={`text-[12px] px-3 py-2 transition-all border-b-2 -mb-px ${
                 scope === s.key
                   ? "border-cyan-500 text-white font-medium"
-                  : "border-transparent text-[#8b9cb3] hover:text-white"
+                  : "border-transparent text-[#b8c5d6] hover:text-white"
               }`}
             >
               {s.label}
@@ -403,7 +403,7 @@ export default function Taches() {
               className={`text-[12px] px-3 py-1.5 rounded-md transition-all inline-flex items-center gap-1.5 ${
                 filter === f.key
                   ? f.key === "ai" ? "bg-violet-600 text-white font-medium" : "bg-primary text-white font-medium"
-                  : "bg-card text-[#8b9cb3] hover:bg-[#1a2235] hover:text-white border border-border"
+                  : "bg-card text-[#b8c5d6] hover:bg-[#1a2235] hover:text-white border border-border"
               }`}
             >
               {f.key === "ai" && <Sparkles className="w-3 h-3" />}
@@ -429,7 +429,7 @@ export default function Taches() {
           </button>
           {taskSelectionMode && (
             <>
-              <span className="text-[11px] text-[#8b9cb3]">
+              <span className="text-[11px] text-[#b8c5d6]">
                 {t("inbox.selectedCount", { count: selectedTaskIds.size })}
               </span>
               <div className="flex-1" />
@@ -451,9 +451,9 @@ export default function Taches() {
             </div>
           ) : filteredTasks.length === 0 ? (
             <div className="text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
-              <Plus className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
+              <Plus className="mx-auto h-12 w-12 text-[#b8c5d6]/20 mb-3" />
               <h3 className="text-sm font-medium text-white mb-1">{t("tasks.noTasks")}</h3>
-              <p className="text-[13px] text-[#8b9cb3]">{t("tasks.noTasksDesc")}</p>
+              <p className="text-[13px] text-[#b8c5d6]">{t("tasks.noTasksDesc")}</p>
             </div>
           ) : (
             filteredTasks.map((task: any) => {
@@ -486,10 +486,10 @@ export default function Taches() {
                     {isTaskSelected && <Check className="w-3.5 h-3.5 text-primary" />}
                   </button>
                   <div className="flex-1 min-w-0">
-                    <p className={`text-[13px] font-medium text-white mb-1.5 ${taskStatus === "done" ? "line-through text-[#8b9cb3]" : ""}`}>
+                    <p className={`text-[13px] font-medium text-white mb-1.5 ${taskStatus === "done" ? "line-through text-[#b8c5d6]" : ""}`}>
                       {task.title}
                     </p>
-                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#8b9cb3]">
+                    <div className="flex flex-wrap items-center gap-2 text-[11px] text-[#b8c5d6]">
                       <Badge className={`text-[10px] px-1.5 py-0 h-[18px] font-medium border ${statusStyle.bg} ${statusStyle.color} ${statusStyle.border}`}>
                         {taskStatus === "done" ? t("tasks.done") : t("tasks.todo")}
                       </Badge>
@@ -570,7 +570,7 @@ export default function Taches() {
                     )}
                     <button
                       onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }}
-                      className="p-1.5 rounded-md text-[#8b9cb3] hover:text-red-400 hover:bg-red-500/10 transition-colors"
+                      className="p-1.5 rounded-md text-[#b8c5d6] hover:text-red-400 hover:bg-red-500/10 transition-colors"
                       title={t("common.delete")}
                     >
                       <Trash2 className="w-3.5 h-3.5" />
@@ -583,14 +583,14 @@ export default function Taches() {
         </div>
         {taskSelectionMode && (
           <div data-selection-bar className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#141c2b] border border-[#1f2937] rounded-lg shadow-2xl px-4 py-2 flex items-center gap-3">
-            <span className="text-[11px] text-[#8b9cb3]">{t("inbox.selectedCount", { count: selectedTaskIds.size })}</span>
+            <span className="text-[11px] text-[#b8c5d6]">{t("inbox.selectedCount", { count: selectedTaskIds.size })}</span>
             <button onClick={handleBulkMarkDone} className="flex items-center gap-1.5 text-[11px] text-emerald-400 hover:text-emerald-300 transition-colors">
               <CheckCircle2 className="w-3 h-3" />{t("tasks.markDone")}
             </button>
             <button onClick={handleBulkDeleteTasks} className="flex items-center gap-1.5 text-[11px] text-red-400 hover:text-red-300 transition-colors">
               <Trash2 className="w-3 h-3" />{t("common.delete")}
             </button>
-            <button onClick={() => setSelectedTaskIds(new Set())} className="text-[11px] text-[#8b9cb3] hover:text-white transition-colors ml-2">{t("common.cancel")}</button>
+            <button onClick={() => setSelectedTaskIds(new Set())} className="text-[11px] text-[#b8c5d6] hover:text-white transition-colors ml-2">{t("common.cancel")}</button>
           </div>
         )}
       </div>
@@ -602,7 +602,7 @@ export default function Taches() {
           style={{ top: Math.min(contextMenu.y, window.innerHeight - 200), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
         >
           <div className="px-3 py-2 border-b border-[#1f2937]">
-            <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider font-medium">
+            <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider font-medium">
               {selectedTaskIds.size > 1
                 ? t("inbox.selectedCount", { count: selectedTaskIds.size })
                 : filteredTasks.find((t: any) => t.id === contextMenu.taskId)?.title?.substring(0, 30) + "..."
@@ -612,7 +612,7 @@ export default function Taches() {
           <div className="py-1">
             <button
               onClick={() => { handleBulkMarkDone(); setContextMenu(null); }}
-              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
             >
               <CheckCircle2 className="w-3.5 h-3.5" />
               {t("tasks.markDone")}
@@ -652,7 +652,7 @@ export default function Taches() {
               onChange={setNewTaskAssignees}
             />
             <div className="flex justify-end gap-2">
-              <Button variant="ghost" size="sm" onClick={() => { setShowAddTask(false); setNewTaskTitle(""); setNewTaskAssignees([]); }} className="text-[#8b9cb3] hover:text-white h-8 text-[12px]">
+              <Button variant="ghost" size="sm" onClick={() => { setShowAddTask(false); setNewTaskTitle(""); setNewTaskAssignees([]); }} className="text-[#b8c5d6] hover:text-white h-8 text-[12px]">
                 {t("common.cancel")}
               </Button>
               <Button size="sm" onClick={handleAddTask} disabled={createTask.isPending || newTaskTitle.trim().length < 2} className="h-8 text-[12px] gap-1.5">
@@ -680,7 +680,7 @@ export default function Taches() {
                 <div className="flex-1 min-w-0">
                   <div className="text-[12px] font-medium text-white">{emailDetailTask.emailSender}</div>
                   {emailDetailTask.emailSenderEmail && (
-                    <div className="text-[10px] text-[#8b9cb3]">{emailDetailTask.emailSenderEmail}</div>
+                    <div className="text-[10px] text-[#b8c5d6]">{emailDetailTask.emailSenderEmail}</div>
                   )}
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -693,7 +693,7 @@ export default function Taches() {
                     );
                   })()}
                   {emailDetailTask.emailCreatedAt && (
-                    <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1">
+                    <span className="text-[10px] text-[#b8c5d6] flex items-center gap-1">
                       <Clock className="w-3 h-3" />
                       {format(new Date(emailDetailTask.emailCreatedAt), "d MMM yyyy HH:mm", { locale: dateFnsLocale })}
                     </span>
@@ -707,7 +707,7 @@ export default function Taches() {
                     <Sparkles className="w-3 h-3 text-primary" />
                     <span className="text-[10px] font-medium text-primary uppercase tracking-wider">{t("inbox.aiSummary")}</span>
                   </div>
-                  <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{emailDetailTask.emailSummary}</p>
+                  <p className="text-[12px] text-[#b8c5d6] leading-relaxed">{emailDetailTask.emailSummary}</p>
                 </div>
               )}
 
@@ -749,21 +749,21 @@ export default function Taches() {
               {replyOpen && (
                 <div className="space-y-2.5 border-t border-border pt-3">
                   <div>
-                    <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
+                    <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
                     <Input value={replyTo} onChange={(e) => setReplyTo(e.target.value)} placeholder="email@exemple.com" className="bg-background border-border text-white text-[12px] h-8" />
                   </div>
                   <div>
-                    <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.subject")}</label>
+                    <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.subject")}</label>
                     <Input value={replySubject} onChange={(e) => setReplySubject(e.target.value)} placeholder={t("inbox.subject")} className="bg-background border-border text-white text-[12px] h-8" />
                   </div>
                   <div>
-                    <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
+                    <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
                     <Textarea value={replyText} onChange={(e) => setReplyText(e.target.value)} placeholder={t("inbox.replyPlaceholder")} className="min-h-[180px] bg-background border-border text-white text-[12px] resize-y" />
                   </div>
                   <div className="flex items-center gap-2 justify-between">
                     <FileAttachInput files={replyAttachments} onChange={setReplyAttachments} />
                     <div className="flex items-center gap-2">
-                      <Button variant="ghost" size="sm" onClick={() => { setReplyOpen(false); setReplyText(""); setReplyTo(""); setReplySubject(""); setReplyAttachments([]); }} className="text-[#8b9cb3] hover:text-white h-7 text-[11px]">{t("common.cancel")}</Button>
+                      <Button variant="ghost" size="sm" onClick={() => { setReplyOpen(false); setReplyText(""); setReplyTo(""); setReplySubject(""); setReplyAttachments([]); }} className="text-[#b8c5d6] hover:text-white h-7 text-[11px]">{t("common.cancel")}</Button>
                       <Button size="sm" className="gap-1.5 h-7 text-[11px]" disabled={sendEmailMut.isPending || !replyTo.trim() || !replySubject.trim() || !replyText.trim()} onClick={handleSendReply}>
                         <Send className="w-3 h-3" />
                         {sendEmailMut.isPending ? t("inbox.sending") : t("inbox.send")}

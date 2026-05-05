@@ -758,7 +758,7 @@ export default function Classement() {
             <h1 className="text-[16px] font-semibold text-white tracking-tight">
               {t("classification.title")}
             </h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+            <p className="text-[12px] text-[#b8c5d6] mt-0.5">
               {t("classification.subtitle")}
             </p>
           </div>
@@ -800,7 +800,7 @@ export default function Classement() {
                     name="name"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#8b9cb3]">{t("classification.nameLabel")}</FormLabel>
+                        <FormLabel className="text-[#b8c5d6]">{t("classification.nameLabel")}</FormLabel>
                         <FormControl>
                           <Input
                             placeholder="Ex: Factures, Fournisseurs..."
@@ -817,7 +817,7 @@ export default function Classement() {
                     name="description"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#8b9cb3]">
+                        <FormLabel className="text-[#b8c5d6]">
                           {t("classification.descriptionHelp")}
                         </FormLabel>
                         <FormControl>
@@ -866,7 +866,7 @@ export default function Classement() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">{t("classification.nameLabel")}</FormLabel>
+                      <FormLabel className="text-[#b8c5d6]">{t("classification.nameLabel")}</FormLabel>
                       <FormControl>
                         <Input
                           className="bg-background border-border text-white"
@@ -882,7 +882,7 @@ export default function Classement() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">
+                      <FormLabel className="text-[#b8c5d6]">
                         {t("classification.descriptionLabel")}
                       </FormLabel>
                       <FormControl>
@@ -919,7 +919,7 @@ export default function Classement() {
             </DialogHeader>
             {selectedPack && (
               <div className="space-y-4">
-                <p className="text-[13px] text-[#8b9cb3]">
+                <p className="text-[13px] text-[#b8c5d6]">
                   {t("classification.packWillAddDesc", { count: getNewCategoriesCount(selectedPack) })}
                 </p>
                 {selectedPack.categories.length -
@@ -951,7 +951,7 @@ export default function Classement() {
                               {t("classification.alreadyExists")}
                             </span>
                           )}
-                          <p className="text-[#8b9cb3] text-[11px]">
+                          <p className="text-[#b8c5d6] text-[11px]">
                             {translateCategory(cat.name, cat.description, lang).description}
                           </p>
                         </div>
@@ -963,7 +963,7 @@ export default function Classement() {
                   <Button
                     variant="ghost"
                     onClick={() => setIsApplyDialogOpen(false)}
-                    className="text-[#8b9cb3]"
+                    className="text-[#b8c5d6]"
                   >
                     {t("common.cancel")}
                   </Button>
@@ -1013,7 +1013,7 @@ export default function Classement() {
             <div className="space-y-4">
               {!aiGeneratedPack ? (
                 <>
-                  <p className="text-[13px] text-[#8b9cb3]">
+                  <p className="text-[13px] text-[#b8c5d6]">
                     {t("classification.generateCustomDesc")}
                   </p>
                   <Textarea
@@ -1026,7 +1026,7 @@ export default function Classement() {
                     <Button
                       variant="ghost"
                       onClick={() => setIsAiDialogOpen(false)}
-                      className="text-[#8b9cb3]"
+                      className="text-[#b8c5d6]"
                     >
                       {t("common.cancel")}
                     </Button>
@@ -1053,7 +1053,7 @@ export default function Classement() {
                 </>
               ) : (
                 <>
-                  <p className="text-[13px] text-[#8b9cb3]">
+                  <p className="text-[13px] text-[#b8c5d6]">
                     {t("classification.packGeneratedDesc", { name: aiGeneratedPack.packName, count: aiGeneratedPack.categories.length })}
                   </p>
                   <div className="max-h-60 overflow-y-auto space-y-1.5 pr-1">
@@ -1080,7 +1080,7 @@ export default function Classement() {
                                 {t("classification.alreadyExists")}
                               </span>
                             )}
-                            <p className="text-[#8b9cb3] text-[11px]">
+                            <p className="text-[#b8c5d6] text-[11px]">
                               {translateCategory(cat.name, cat.description, lang).description}
                             </p>
                           </div>
@@ -1092,7 +1092,7 @@ export default function Classement() {
                     <Button
                       variant="ghost"
                       onClick={() => setAiGeneratedPack(null)}
-                      className="text-[#8b9cb3]"
+                      className="text-[#b8c5d6]"
                     >
                       {t("classification.regenerate")}
                     </Button>
@@ -1131,7 +1131,7 @@ export default function Classement() {
                 <h2 className="text-[14px] font-semibold text-white">
                   {t("classification.myCategories")}
                 </h2>
-                <p className="text-[12px] text-[#8b9cb3]">
+                <p className="text-[12px] text-[#b8c5d6]">
                   {t("classification.countCategories", { count: categories?.length ?? 0 })}
                   {unusedCount > 0 && (
                     <span className="ml-2 text-amber-400/80">
@@ -1150,7 +1150,7 @@ export default function Classement() {
                 />
                 <label
                   htmlFor="show-unused"
-                  className="text-[12px] text-[#8b9cb3] flex items-center gap-1.5 cursor-pointer"
+                  className="text-[12px] text-[#b8c5d6] flex items-center gap-1.5 cursor-pointer"
                 >
                   {showUnused ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
                   {showUnused
@@ -1199,11 +1199,11 @@ export default function Classement() {
             </div>
           ) : (categories?.length ?? 0) === 0 ? (
             <div className="text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
-              <Tags className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
+              <Tags className="mx-auto h-12 w-12 text-[#b8c5d6]/20 mb-3" />
               <h3 className="text-sm font-medium text-white mb-1">
                 {t("classification.noCategories")}
               </h3>
-              <p className="text-[13px] text-[#8b9cb3] mb-4">
+              <p className="text-[13px] text-[#b8c5d6] mb-4">
                 {t("classification.noCategoriesAltDesc")}
               </p>
               <Button onClick={() => setIsCreateOpen(true)} size="sm">
@@ -1227,10 +1227,10 @@ export default function Classement() {
                         ) : (
                           <UserIcon className="w-3.5 h-3.5 text-purple-400/70" />
                         )}
-                        <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[#8b9cb3]">
+                        <h3 className="text-[11px] font-semibold uppercase tracking-wide text-[#b8c5d6]">
                           {group.label}
                         </h3>
-                        <span className="text-[11px] text-[#8b9cb3]/50">
+                        <span className="text-[11px] text-[#b8c5d6]/50">
                           ({group.items.length})
                         </span>
                       </div>
@@ -1253,7 +1253,7 @@ export default function Classement() {
                                 ? t("classification.origin.standard")
                                 : t("classification.origin.manual");
                           const originColor = isSystemCat
-                            ? "bg-white/[0.06] text-[#8b9cb3]"
+                            ? "bg-white/[0.06] text-[#b8c5d6]"
                             : cat.sourcePack
                               ? "bg-primary/10 text-primary/80"
                               : group.kind === "standard"
@@ -1319,7 +1319,7 @@ export default function Classement() {
                                         <Button
                                           variant="ghost"
                                           size="icon"
-                                          className="h-7 w-7 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/[0.06]"
+                                          className="h-7 w-7 text-[#b8c5d6] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/[0.06]"
                                         >
                                           <MoreVertical className="h-3.5 w-3.5" />
                                         </Button>
@@ -1330,7 +1330,7 @@ export default function Classement() {
                                       >
                                         <DropdownMenuItem
                                           onClick={() => handleOpenEdit(cat)}
-                                          className="gap-2 cursor-pointer text-[#8b9cb3] hover:text-white"
+                                          className="gap-2 cursor-pointer text-[#b8c5d6] hover:text-white"
                                         >
                                           <Edit2 className="h-3.5 w-3.5" />{" "}
                                           {t("classification.edit")}
@@ -1350,14 +1350,14 @@ export default function Classement() {
                                               <AlertDialogTitle className="text-white">
                                                 {t("classification.deleteConfirmTitle")}
                                               </AlertDialogTitle>
-                                              <AlertDialogDescription className="text-[#8b9cb3]">
+                                              <AlertDialogDescription className="text-[#b8c5d6]">
                                                 {t("classification.deleteConfirmCatDesc", {
                                                   name: cat.name,
                                                 })}
                                               </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <AlertDialogFooter>
-                                              <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">
+                                              <AlertDialogCancel className="bg-background border-border text-[#b8c5d6] hover:bg-white/[0.04]">
                                                 {t("common.cancel")}
                                               </AlertDialogCancel>
                                               <AlertDialogAction
@@ -1378,7 +1378,7 @@ export default function Classement() {
                               <h3 className="text-[14px] font-semibold text-white mb-1">
                                 {displayName}
                               </h3>
-                              <p className="text-[12px] text-[#8b9cb3] line-clamp-2 h-9 mb-3">
+                              <p className="text-[12px] text-[#b8c5d6] line-clamp-2 h-9 mb-3">
                                 {displayDescription || (
                                   <span className="italic opacity-50">
                                     {t("classification.noDescription")}
@@ -1387,7 +1387,7 @@ export default function Classement() {
                               </p>
 
                               <div className="flex items-center justify-between gap-2">
-                                <div className="flex items-center text-[12px] text-[#8b9cb3] bg-white/[0.04] px-2.5 py-1 rounded-md inline-flex w-fit">
+                                <div className="flex items-center text-[12px] text-[#b8c5d6] bg-white/[0.04] px-2.5 py-1 rounded-md inline-flex w-fit">
                                   <span className="text-primary font-medium mr-1">
                                     {cat.emailCount || 0}
                                   </span>
@@ -1430,7 +1430,7 @@ export default function Classement() {
                   <h2 className="text-[14px] font-semibold text-white">
                     {t("classification.industryPacksAccordion")}
                   </h2>
-                  <p className="text-[12px] text-[#8b9cb3] font-normal">
+                  <p className="text-[12px] text-[#b8c5d6] font-normal">
                     {t("classification.industryPacksAccordionDesc")}
                   </p>
                 </div>
@@ -1449,7 +1449,7 @@ export default function Classement() {
                 </Button>
               </div>
               <div className="relative mb-4">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8b9cb3]" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#b8c5d6]" />
                 <Input
                   placeholder={t("classification.searchJobs")}
                   value={packSearch}
@@ -1459,7 +1459,7 @@ export default function Classement() {
               </div>
               {filteredFamilles.length === 0 && (
                 <div className="text-center py-8">
-                  <p className="text-[13px] text-[#8b9cb3]">
+                  <p className="text-[13px] text-[#b8c5d6]">
                     {t("classification.noJobFound")}{" "}
                     <button
                       onClick={() => setIsAiDialogOpen(true)}
@@ -1482,14 +1482,14 @@ export default function Classement() {
                     >
                       <span className="text-[13px] font-medium text-white">
                         {famille.name}
-                        <span className="text-[#8b9cb3] font-normal ml-2">
+                        <span className="text-[#b8c5d6] font-normal ml-2">
                           ({famille.packs.length})
                         </span>
                       </span>
                       {expandedFamilles.has(famille.key) ? (
-                        <ChevronUp className="w-4 h-4 text-[#8b9cb3]" />
+                        <ChevronUp className="w-4 h-4 text-[#b8c5d6]" />
                       ) : (
-                        <ChevronDown className="w-4 h-4 text-[#8b9cb3]" />
+                        <ChevronDown className="w-4 h-4 text-[#b8c5d6]" />
                       )}
                     </button>
                     {expandedFamilles.has(famille.key) && (
@@ -1510,7 +1510,7 @@ export default function Classement() {
                                   <p className="text-[12px] font-medium text-white truncate">
                                     {pack.name}
                                   </p>
-                                  <p className="text-[10px] text-[#8b9cb3]">
+                                  <p className="text-[10px] text-[#b8c5d6]">
                                     {t("classification.categoriesCount", {
                                       count: pack.categories.length,
                                     })}
@@ -1558,7 +1558,7 @@ export default function Classement() {
                     <h2 className="text-[14px] font-semibold text-white">
                       {t("classification.suggestionsAccordion")}
                     </h2>
-                    <p className="text-[12px] text-[#8b9cb3] font-normal">
+                    <p className="text-[12px] text-[#b8c5d6] font-normal">
                       {t("classification.suggestionsAccordionDesc")}
                     </p>
                   </div>
@@ -1600,7 +1600,7 @@ export default function Classement() {
                           <p className="text-[12px] font-medium text-white">
                             {s.name}
                           </p>
-                          <p className="text-[10px] text-[#8b9cb3] line-clamp-1 mt-0.5">
+                          <p className="text-[10px] text-[#b8c5d6] line-clamp-1 mt-0.5">
                             {s.description}
                           </p>
                         </div>
@@ -1624,7 +1624,7 @@ export default function Classement() {
             </DialogHeader>
             {nearDup && (
               <div className="space-y-4">
-                <p className="text-[13px] text-[#8b9cb3]">
+                <p className="text-[13px] text-[#b8c5d6]">
                   {t("classification.nearDup.desc", { name: nearDup.name })}
                 </p>
                 <div className="space-y-2">
@@ -1637,13 +1637,13 @@ export default function Classement() {
                         <p className="text-[13px] font-medium text-white truncate">
                           {s.name}
                         </p>
-                        <p className="text-[11px] text-[#8b9cb3]">
+                        <p className="text-[11px] text-[#b8c5d6]">
                           {t("classification.nearDup.similarity", {
                             pct: Math.round(s.similarity * 100),
                           })}
                         </p>
                       </div>
-                      <ArrowRight className="w-4 h-4 text-[#8b9cb3] shrink-0" />
+                      <ArrowRight className="w-4 h-4 text-[#b8c5d6] shrink-0" />
                     </div>
                   ))}
                 </div>
@@ -1651,7 +1651,7 @@ export default function Classement() {
                   <Button
                     variant="ghost"
                     onClick={() => setNearDup(null)}
-                    className="text-[#8b9cb3]"
+                    className="text-[#b8c5d6]"
                   >
                     {t("common.cancel")}
                   </Button>
@@ -1688,13 +1688,13 @@ export default function Classement() {
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-3">
-              <p className="text-[13px] text-[#8b9cb3]">
+              <p className="text-[13px] text-[#b8c5d6]">
                 {t("classification.cleanupDuplicates.desc")}
               </p>
               {duplicatePairs.length === 0 ? (
                 <div className="text-center py-8">
                   <Check className="mx-auto h-10 w-10 text-emerald-400/40 mb-2" />
-                  <p className="text-[13px] text-[#8b9cb3]">
+                  <p className="text-[13px] text-[#b8c5d6]">
                     {t("classification.cleanupDuplicates.empty")}
                   </p>
                 </div>
@@ -1710,7 +1710,7 @@ export default function Classement() {
                           <span className="text-[13px] text-white font-medium truncate">
                             {pair.a.name}
                           </span>
-                          <ArrowLeftRight className="w-3.5 h-3.5 text-[#8b9cb3] shrink-0" />
+                          <ArrowLeftRight className="w-3.5 h-3.5 text-[#b8c5d6] shrink-0" />
                           <span className="text-[13px] text-white font-medium truncate">
                             {pair.b.name}
                           </span>
@@ -1762,7 +1762,7 @@ export default function Classement() {
               <Button
                 variant="ghost"
                 onClick={() => setIsCleanupOpen(false)}
-                className="text-[#8b9cb3]"
+                className="text-[#b8c5d6]"
               >
                 {t("common.close")}
               </Button>
@@ -1780,7 +1780,7 @@ export default function Classement() {
               <AlertDialogTitle className="text-white">
                 {t("classification.cleanupDuplicates.confirmTitle")}
               </AlertDialogTitle>
-              <AlertDialogDescription className="text-[#8b9cb3]">
+              <AlertDialogDescription className="text-[#b8c5d6]">
                 {mergeConfirm &&
                   t("classification.cleanupDuplicates.confirmDesc", {
                     source: mergeConfirm.source.name,
@@ -1789,7 +1789,7 @@ export default function Classement() {
               </AlertDialogDescription>
             </AlertDialogHeader>
             <AlertDialogFooter>
-              <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">
+              <AlertDialogCancel className="bg-background border-border text-[#b8c5d6] hover:bg-white/[0.04]">
                 {t("common.cancel")}
               </AlertDialogCancel>
               <AlertDialogAction

@@ -290,13 +290,13 @@ export default function Archives() {
               variant="ghost"
               size="sm"
               onClick={() => setSelectedCategory(null)}
-              className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
+              className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
             >
               <ArrowLeft className="w-3.5 h-3.5 mr-1" />
               {t("archives.title")}
             </Button>
             <div className="flex-1" />
-            <span className="text-[11px] text-[#8b9cb3]">{t("archives.emailCount", { count: selectedEmails.length })}</span>
+            <span className="text-[11px] text-[#b8c5d6]">{t("archives.emailCount", { count: selectedEmails.length })}</span>
           </div>
 
           <h2 className="text-[15px] font-semibold text-white mb-3">
@@ -306,8 +306,8 @@ export default function Archives() {
           <div className="space-y-1">
             {selectedEmails.length === 0 ? (
               <div className="text-center py-12 rounded-lg border border-border border-dashed bg-card/50">
-                <FolderOpen className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
-                <p className="text-[12px] text-[#8b9cb3]">{t("inbox.noEmails")}</p>
+                <FolderOpen className="mx-auto h-8 w-8 text-[#b8c5d6]/40 mb-2" />
+                <p className="text-[12px] text-[#b8c5d6]">{t("inbox.noEmails")}</p>
               </div>
             ) : (
               selectedEmails.map((email) => {
@@ -347,24 +347,24 @@ export default function Archives() {
                         {email.summary && (
                           <div className="flex items-center gap-1 mt-0.5">
                             <Sparkles className="w-3 h-3 text-primary shrink-0" />
-                            <p className="text-[11px] text-[#8b9cb3] line-clamp-1">{email.summary}</p>
+                            <p className="text-[11px] text-[#b8c5d6] line-clamp-1">{email.summary}</p>
                           </div>
                         )}
                       </div>
                       <div className="flex items-center gap-2 shrink-0 self-center">
                         <PriorityBadge priority={email.priority} />
-                        <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1 hidden sm:flex">
+                        <span className="text-[10px] text-[#b8c5d6] flex items-center gap-1 hidden sm:flex">
                           <Clock className="w-3 h-3" />
                           {format(new Date(email.createdAt), "d MMM HH:mm", { locale: dateFnsLocale })}
                         </span>
                         <button
                           onClick={(e) => { e.stopPropagation(); handleRestore(email.id); }}
-                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-white/[0.08] text-[#8b9cb3] hover:text-white"
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-white/[0.08] text-[#b8c5d6] hover:text-white"
                           title="Restaurer"
                         >
                           <RotateCcw className="w-3.5 h-3.5" />
                         </button>
-                        <ChevronRight className="w-3.5 h-3.5 text-[#8b9cb3]/40 group-hover:text-[#8b9cb3] transition-colors" />
+                        <ChevronRight className="w-3.5 h-3.5 text-[#b8c5d6]/40 group-hover:text-[#b8c5d6] transition-colors" />
                       </div>
                     </div>
                   </div>
@@ -374,14 +374,14 @@ export default function Archives() {
           </div>
           {selectionMode && (
             <div data-selection-bar className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#141c2b] border border-[#1f2937] rounded-lg shadow-2xl px-4 py-2 flex items-center gap-3">
-              <span className="text-[11px] text-[#8b9cb3]">{t("inbox.selectedCount", { count: selectedIds.size })}</span>
+              <span className="text-[11px] text-[#b8c5d6]">{t("inbox.selectedCount", { count: selectedIds.size })}</span>
               <button onClick={handleBulkRestore} className="flex items-center gap-1.5 text-[11px] text-primary hover:text-white transition-colors">
                 <RotateCcw className="w-3 h-3" />{t("archives.restoreToInbox")}
               </button>
               <button onClick={handleBulkDeleteArchive} className="flex items-center gap-1.5 text-[11px] text-red-400 hover:text-red-300 transition-colors">
                 <Trash2 className="w-3 h-3" />{t("inbox.deleteEmail")}
               </button>
-              <button onClick={() => setSelectedIds(new Set())} className="text-[11px] text-[#8b9cb3] hover:text-white transition-colors ml-2">{t("common.cancel")}</button>
+              <button onClick={() => setSelectedIds(new Set())} className="text-[11px] text-[#b8c5d6] hover:text-white transition-colors ml-2">{t("common.cancel")}</button>
             </div>
           )}
         </div>
@@ -393,7 +393,7 @@ export default function Archives() {
             style={{ top: Math.min(contextMenu.y, window.innerHeight - 240), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
           >
             <div className="px-3 py-2 border-b border-[#1f2937]">
-              <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider font-medium">
+              <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider font-medium">
                 {selectedIds.size > 1
                   ? t("inbox.selectedCount", { count: selectedIds.size })
                   : selectedEmails?.find(e => e.id === contextMenu.emailId)?.subject?.substring(0, 30) + "..."
@@ -404,7 +404,7 @@ export default function Archives() {
               {selectedIds.size <= 1 && (
                 <button
                   onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
                   {t("inbox.openEmail")}
@@ -412,7 +412,7 @@ export default function Archives() {
               )}
               <button
                 onClick={() => { handleBulkRestore(); setContextMenu(null); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
               >
                 <RotateCcw className="w-3.5 h-3.5" />
                 {t("archives.restoreToInbox")}
@@ -440,7 +440,7 @@ export default function Archives() {
         <BackToInboxButton />
         <div className="mb-5">
           <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("archives.title")}</h1>
-          <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+          <p className="text-[12px] text-[#b8c5d6] mt-0.5">
             {t("archives.archivedByAI")} {t("archives.emailCount", { count: paged?.total || archivedEmails.length })}
           </p>
         </div>
@@ -452,9 +452,9 @@ export default function Archives() {
           </div>
         ) : archivedEmails.length === 0 ? (
           <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
-            <Archive className="mx-auto h-8 w-8 text-[#8b9cb3]/20 mb-2" />
+            <Archive className="mx-auto h-8 w-8 text-[#b8c5d6]/20 mb-2" />
             <h3 className="text-[13px] font-medium text-white mb-1">{t("archives.noEmails")}</h3>
-            <p className="text-[12px] text-[#8b9cb3]">{t("archives.noEmailsDesc")}</p>
+            <p className="text-[12px] text-[#b8c5d6]">{t("archives.noEmailsDesc")}</p>
           </div>
         ) : (
           <>
@@ -472,10 +472,10 @@ export default function Archives() {
                       <div className={`w-8 h-8 rounded-lg flex items-center justify-center ${categoryColors[i % categoryColors.length]}`}>
                         <FolderOpen className="w-3.5 h-3.5" />
                       </div>
-                      <ChevronRight className="w-3.5 h-3.5 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity" />
+                      <ChevronRight className="w-3.5 h-3.5 text-[#b8c5d6] opacity-0 group-hover:opacity-100 transition-opacity" />
                     </div>
                     <h3 className="text-[13px] font-semibold text-white mb-0.5">{displayName}</h3>
-                    <div className="flex items-center text-[11px] text-[#8b9cb3] bg-white/[0.04] px-2 py-0.5 rounded-md inline-flex w-fit">
+                    <div className="flex items-center text-[11px] text-[#b8c5d6] bg-white/[0.04] px-2 py-0.5 rounded-md inline-flex w-fit">
                       <span className="text-primary font-medium mr-1">{count}</span>
                       {t("classification.emailsLabel")}
                     </div>

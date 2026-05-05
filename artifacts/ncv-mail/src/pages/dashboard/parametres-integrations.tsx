@@ -207,7 +207,7 @@ export default function ParametresIntegrations() {
                   </Badge>
                 )}
               </div>
-              <p className="text-xs text-[#8b9cb3] mt-1">{t(meta.descKey)}</p>
+              <p className="text-xs text-[#b8c5d6] mt-1">{t(meta.descKey)}</p>
               {row?.lastError && (
                 <p className="text-xs text-red-400 mt-1 flex items-center gap-1">
                   <AlertCircle className="h-3 w-3" />
@@ -215,7 +215,7 @@ export default function ParametresIntegrations() {
                 </p>
               )}
               {row?.lastSyncedAt && (
-                <p className="text-xs text-[#8b9cb3] mt-1">
+                <p className="text-xs text-[#b8c5d6] mt-1">
                   {t("integrations.lastSynced")}: {new Date(row.lastSyncedAt).toLocaleString()}
                 </p>
               )}
@@ -262,7 +262,7 @@ export default function ParametresIntegrations() {
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-6">
         <div>
           <h1 className="text-2xl font-bold">{t("integrations.pageTitle")}</h1>
-          <p className="text-sm text-[#8b9cb3]">{t("integrations.pageDesc")}</p>
+          <p className="text-sm text-[#b8c5d6]">{t("integrations.pageDesc")}</p>
         </div>
 
         {/* CRM section */}
@@ -277,7 +277,7 @@ export default function ParametresIntegrations() {
         {/* Automation section */}
         <section data-testid="section-automation">
           <h2 className="text-lg font-semibold mb-3">{t("integrations.categoryAutomation")}</h2>
-          <p className="text-xs text-[#8b9cb3] mb-3">{t("integrations.automationDesc")}</p>
+          <p className="text-xs text-[#b8c5d6] mb-3">{t("integrations.automationDesc")}</p>
           <div className="grid gap-3 md:grid-cols-2">
             <ApiKeysCard
               keys={apiKeys.data || []}
@@ -348,7 +348,7 @@ function ApiKeysCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        <p className="text-xs text-[#8b9cb3]">{t("integrations.apiKeys.desc")}</p>
+        <p className="text-xs text-[#b8c5d6]">{t("integrations.apiKeys.desc")}</p>
         {revealedKey && (
           <div className="rounded-md border border-amber-500/40 bg-amber-500/10 p-3 text-xs">
             <p className="mb-2 font-semibold text-amber-300">{t("integrations.apiKeys.copyNow")}</p>
@@ -406,7 +406,7 @@ function ApiKeysCard({
         )}
 
         <div className="space-y-2">
-          {keys.length === 0 && <p className="text-xs text-[#8b9cb3]">{t("integrations.apiKeys.empty")}</p>}
+          {keys.length === 0 && <p className="text-xs text-[#b8c5d6]">{t("integrations.apiKeys.empty")}</p>}
           {keys.map((k) => (
             <div
               key={k.id}
@@ -414,7 +414,7 @@ function ApiKeysCard({
             >
               <div>
                 <div className="font-medium">{k.name}</div>
-                <div className="text-[#8b9cb3]">
+                <div className="text-[#b8c5d6]">
                   {k.keyPrefix}…
                   {k.lastUsedAt && (
                     <span className="ml-2">
@@ -506,7 +506,7 @@ function WebhooksCard({
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-3">
-        <p className="text-xs text-[#8b9cb3]">{t("integrations.webhooks.desc")}</p>
+        <p className="text-xs text-[#b8c5d6]">{t("integrations.webhooks.desc")}</p>
 
         {!creating ? (
           <Button size="sm" onClick={() => setCreating(true)} data-testid="button-new-webhook">
@@ -547,7 +547,7 @@ function WebhooksCard({
         )}
 
         <div className="space-y-2">
-          {hooks.length === 0 && <p className="text-xs text-[#8b9cb3]">{t("integrations.webhooks.empty")}</p>}
+          {hooks.length === 0 && <p className="text-xs text-[#b8c5d6]">{t("integrations.webhooks.empty")}</p>}
           {hooks.map((h) => (
             <div key={h.id} className="border border-[#1a2332] rounded p-2 text-xs space-y-1">
               <div className="flex items-center justify-between">
@@ -557,7 +557,7 @@ function WebhooksCard({
                   <Trash2 className="h-3 w-3" />
                 </Button>
               </div>
-              <div className="text-[#8b9cb3] truncate">{h.targetUrl}</div>
+              <div className="text-[#b8c5d6] truncate">{h.targetUrl}</div>
               {h.lastError && <div className="text-red-400">{h.lastError}</div>}
             </div>
           ))}

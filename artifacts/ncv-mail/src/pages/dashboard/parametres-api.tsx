@@ -114,7 +114,7 @@ export default function ParametresApi() {
               <Key className="w-4 h-4 text-primary" />
               {t("apiKeys.title")}
             </h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("apiKeys.subtitle")}</p>
+            <p className="text-[12px] text-[#b8c5d6] mt-0.5">{t("apiKeys.subtitle")}</p>
           </div>
           <a href={`${baseUrl()}/api/dev`} target="_blank" rel="noreferrer">
             <Button variant="outline" size="sm" className="h-7 text-[11px]">
@@ -133,7 +133,7 @@ export default function ParametresApi() {
                 {copied ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
               </Button>
             </div>
-            <Button variant="ghost" size="sm" className="h-6 text-[11px] mt-2 text-[#8b9cb3]" onClick={() => setCreatedKey(null)}>
+            <Button variant="ghost" size="sm" className="h-6 text-[11px] mt-2 text-[#b8c5d6]" onClick={() => setCreatedKey(null)}>
               {t("apiKeys.dismissCreated")}
             </Button>
           </div>
@@ -146,18 +146,18 @@ export default function ParametresApi() {
         ) : (
           <div className="bg-card border border-border rounded-lg p-4 space-y-3">
             <div>
-              <Label className="text-[11px] text-[#8b9cb3]">{t("apiKeys.name")}</Label>
+              <Label className="text-[11px] text-[#b8c5d6]">{t("apiKeys.name")}</Label>
               <Input value={name} onChange={(e) => setName(e.target.value)} className="h-8 text-[12px]" placeholder={t("apiKeys.namePlaceholder")} />
             </div>
             <div>
-              <Label className="text-[11px] text-[#8b9cb3]">{t("apiKeys.scopes")}</Label>
+              <Label className="text-[11px] text-[#b8c5d6]">{t("apiKeys.scopes")}</Label>
               <div className="flex flex-wrap gap-1.5 mt-1">
                 {ALL_SCOPES.map((s) => (
                   <button
                     key={s}
                     type="button"
                     onClick={() => toggleScope(s)}
-                    className={`text-[10px] rounded border px-2 py-0.5 ${scopes.includes(s) ? "bg-primary text-white border-primary" : "bg-background text-[#8b9cb3] border-border"}`}
+                    className={`text-[10px] rounded border px-2 py-0.5 ${scopes.includes(s) ? "bg-primary text-white border-primary" : "bg-background text-[#b8c5d6] border-border"}`}
                   >
                     {s}
                   </button>
@@ -177,16 +177,16 @@ export default function ParametresApi() {
           {keysQuery.isLoading ? (
             <div className="flex justify-center py-6"><Loader2 className="w-4 h-4 animate-spin" /></div>
           ) : (keysQuery.data || []).length === 0 ? (
-            <div className="text-[12px] text-[#8b9cb3] p-4">{t("apiKeys.empty")}</div>
+            <div className="text-[12px] text-[#b8c5d6] p-4">{t("apiKeys.empty")}</div>
           ) : (
             <table className="w-full text-[11px]">
               <thead className="bg-background border-b border-border">
                 <tr>
-                  <th className="text-left p-2 text-[#8b9cb3]">{t("apiKeys.colName")}</th>
-                  <th className="text-left p-2 text-[#8b9cb3]">{t("apiKeys.colPrefix")}</th>
-                  <th className="text-left p-2 text-[#8b9cb3]">{t("apiKeys.colScopes")}</th>
-                  <th className="text-left p-2 text-[#8b9cb3]">{t("apiKeys.colLastUsed")}</th>
-                  <th className="text-left p-2 text-[#8b9cb3]">{t("apiKeys.colStatus")}</th>
+                  <th className="text-left p-2 text-[#b8c5d6]">{t("apiKeys.colName")}</th>
+                  <th className="text-left p-2 text-[#b8c5d6]">{t("apiKeys.colPrefix")}</th>
+                  <th className="text-left p-2 text-[#b8c5d6]">{t("apiKeys.colScopes")}</th>
+                  <th className="text-left p-2 text-[#b8c5d6]">{t("apiKeys.colLastUsed")}</th>
+                  <th className="text-left p-2 text-[#b8c5d6]">{t("apiKeys.colStatus")}</th>
                   <th className="text-right p-2"></th>
                 </tr>
               </thead>
@@ -195,12 +195,12 @@ export default function ParametresApi() {
                   <tr key={k.id} className="border-b border-border/60">
                     <td className="p-2 text-white">{k.name}</td>
                     <td className="p-2 text-[#c9d1d9] font-mono">{k.keyPrefix}…</td>
-                    <td className="p-2 text-[#8b9cb3]">{(k.scopes || []).join(", ")}</td>
-                    <td className="p-2 text-[#8b9cb3]">{k.lastUsedAt ? new Date(k.lastUsedAt).toLocaleString() : "—"}</td>
+                    <td className="p-2 text-[#b8c5d6]">{(k.scopes || []).join(", ")}</td>
+                    <td className="p-2 text-[#b8c5d6]">{k.lastUsedAt ? new Date(k.lastUsedAt).toLocaleString() : "—"}</td>
                     <td className="p-2">{k.revokedAt ? <span className="text-red-400">{t("apiKeys.statusRevoked")}</span> : <span className="text-emerald-400">{t("apiKeys.statusActive")}</span>}</td>
                     <td className="p-2 text-right">
                       {!k.revokedAt && (
-                        <Button variant="ghost" size="sm" className="h-6 px-1 text-[#8b9cb3] hover:text-red-400" onClick={() => revokeMutation.mutate(k.id)} disabled={revokeMutation.isPending}>
+                        <Button variant="ghost" size="sm" className="h-6 px-1 text-[#b8c5d6] hover:text-red-400" onClick={() => revokeMutation.mutate(k.id)} disabled={revokeMutation.isPending}>
                           <Trash2 className="w-3 h-3" />
                         </Button>
                       )}
@@ -212,7 +212,7 @@ export default function ParametresApi() {
           )}
         </div>
 
-        <div className="bg-card border border-border rounded-lg p-4 text-[11px] text-[#8b9cb3]">
+        <div className="bg-card border border-border rounded-lg p-4 text-[11px] text-[#b8c5d6]">
           <div className="font-semibold text-white mb-1 text-[12px]">{t("apiKeys.usageTitle")}</div>
           <pre className="bg-background border border-border rounded p-2 overflow-x-auto text-[10px] leading-relaxed">
 {`curl -H "X-API-Key: ibk_..." \\

@@ -364,7 +364,7 @@ export default function Agenda() {
               <CalendarDays className="w-4 h-4 text-primary" />
               {t("agenda.title")}
             </h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("agenda.subtitle")}</p>
+            <p className="text-[12px] text-[#b8c5d6] mt-0.5">{t("agenda.subtitle")}</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button onClick={handleDetect} disabled={detectAppointments.isPending} size="sm" variant="outline" className="h-8 text-[12px]">
@@ -407,7 +407,7 @@ export default function Agenda() {
                 className={`px-3 py-1 text-[11px] font-medium transition-colors ${
                   viewMode === mode
                     ? "bg-primary text-white"
-                    : "text-[#8b9cb3] hover:text-white"
+                    : "text-[#b8c5d6] hover:text-white"
                 }`}
               >
                 {t(`agenda.${mode}`)}
@@ -418,14 +418,14 @@ export default function Agenda() {
 
         {(projectsWithAppointments.list.length > 0 || projectsWithAppointments.hasUnassigned) && (
           <div className="flex items-center gap-1.5 flex-wrap mb-3 text-[11px]">
-            <span className="text-[#8b9cb3] mr-1">{t("agenda.filterByProject", "Filtrer par projet :")}</span>
+            <span className="text-[#b8c5d6] mr-1">{t("agenda.filterByProject", "Filtrer par projet :")}</span>
             <button
               type="button"
               onClick={clearProjectFilter}
               className={`px-2 py-0.5 rounded-full border transition-colors ${
                 projectFilter.size === 0
                   ? "bg-primary/20 border-primary/40 text-primary"
-                  : "bg-transparent border-border text-[#8b9cb3] hover:text-white"
+                  : "bg-transparent border-border text-[#b8c5d6] hover:text-white"
               }`}
             >
               {t("agenda.allProjects", "Tous")}
@@ -442,7 +442,7 @@ export default function Agenda() {
                   className={`px-2 py-0.5 rounded-full border transition-colors flex items-center gap-1.5 ${
                     active
                       ? "border-transparent text-white"
-                      : "bg-transparent border-border text-[#8b9cb3] hover:text-white"
+                      : "bg-transparent border-border text-[#b8c5d6] hover:text-white"
                   }`}
                   style={active ? { backgroundColor: `${color}30`, borderColor: `${color}80`, color } : undefined}
                 >
@@ -457,8 +457,8 @@ export default function Agenda() {
                 onClick={() => toggleProjectFilter("__none__")}
                 className={`px-2 py-0.5 rounded-full border transition-colors ${
                   projectFilter.has("__none__")
-                    ? "bg-[#8b9cb3]/20 border-[#8b9cb3]/40 text-white"
-                    : "bg-transparent border-border text-[#8b9cb3] hover:text-white"
+                    ? "bg-[#b8c5d6]/20 border-[#b8c5d6]/40 text-white"
+                    : "bg-transparent border-border text-[#b8c5d6] hover:text-white"
                 }`}
               >
                 {t("agenda.noProject", "Aucun projet")}
@@ -478,7 +478,7 @@ export default function Agenda() {
                 <div key={apt.id} className="flex items-center justify-between gap-2 bg-card/50 rounded px-3 py-2 border border-border">
                   <div className="flex-1 min-w-0">
                     <span className="text-[12px] font-medium text-white truncate block">{apt.title}</span>
-                    <span className="text-[10px] text-[#8b9cb3]">
+                    <span className="text-[10px] text-[#b8c5d6]">
                       {format(parseISO(apt.startAt), "dd/MM/yyyy HH:mm", { locale })}
                       {apt.location && ` · ${apt.location}`}
                     </span>
@@ -505,7 +505,7 @@ export default function Agenda() {
           <div className="bg-card rounded-lg border border-border overflow-hidden">
             <div className="grid grid-cols-7 border-b border-border">
               {weekDays.map((d, i) => (
-                <div key={i} className="px-2 py-1.5 text-[10px] font-medium text-[#8b9cb3] text-center uppercase">
+                <div key={i} className="px-2 py-1.5 text-[10px] font-medium text-[#b8c5d6] text-center uppercase">
                   {format(d, "EEE", { locale })}
                 </div>
               ))}
@@ -524,7 +524,7 @@ export default function Agenda() {
                     }`}
                   >
                     <div className={`text-[11px] font-medium mb-0.5 w-6 h-6 flex items-center justify-center rounded-full ${
-                      today ? "bg-primary text-white" : "text-[#8b9cb3]"
+                      today ? "bg-primary text-white" : "text-[#b8c5d6]"
                     }`}>
                       {format(day, "d")}
                     </div>
@@ -543,7 +543,7 @@ export default function Agenda() {
                       );
                     })}
                     {dayAppts.length > 3 && (
-                      <div className="text-[9px] text-[#8b9cb3] pl-1">+{dayAppts.length - 3}</div>
+                      <div className="text-[9px] text-[#b8c5d6] pl-1">+{dayAppts.length - 3}</div>
                     )}
                   </div>
                 );
@@ -556,7 +556,7 @@ export default function Agenda() {
               <div className="border-r border-border" />
               {weekDays.map((d, i) => (
                 <div key={i} className={`px-2 py-1.5 text-center border-r border-border last:border-r-0 ${isToday(d) ? "bg-primary/10" : ""}`}>
-                  <div className="text-[10px] text-[#8b9cb3] uppercase">{format(d, "EEE", { locale })}</div>
+                  <div className="text-[10px] text-[#b8c5d6] uppercase">{format(d, "EEE", { locale })}</div>
                   <div className={`text-[13px] font-medium ${isToday(d) ? "text-primary" : "text-white"}`}>{format(d, "d")}</div>
                 </div>
               ))}
@@ -564,7 +564,7 @@ export default function Agenda() {
             <div className="max-h-[500px] overflow-y-auto">
               {hours.map((hour) => (
                 <div key={hour} className="grid grid-cols-[60px_repeat(7,1fr)] border-b border-border last:border-b-0">
-                  <div className="px-2 py-2 text-[10px] text-[#8b9cb3] text-right pr-2 border-r border-border">
+                  <div className="px-2 py-2 text-[10px] text-[#b8c5d6] text-right pr-2 border-r border-border">
                     {String(hour).padStart(2, "0")}:00
                   </div>
                   {weekDays.map((d, i) => {
@@ -617,7 +617,7 @@ export default function Agenda() {
                 });
                 return (
                   <div key={hour} className="flex border-b border-border last:border-b-0">
-                    <div className="w-16 px-2 py-3 text-[11px] text-[#8b9cb3] text-right pr-3 border-r border-border shrink-0">
+                    <div className="w-16 px-2 py-3 text-[11px] text-[#b8c5d6] text-right pr-3 border-r border-border shrink-0">
                       {String(hour).padStart(2, "0")}:00
                     </div>
                     <div
@@ -639,12 +639,12 @@ export default function Agenda() {
                         >
                           <div className="text-[12px] font-medium text-white">{apt.title}</div>
                           <div className="flex items-center gap-3 mt-0.5">
-                            <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1">
+                            <span className="text-[10px] text-[#b8c5d6] flex items-center gap-1">
                               <Clock className="w-3 h-3" />
                               {format(parseISO(apt.startAt), "HH:mm")} - {format(parseISO(apt.endAt), "HH:mm")}
                             </span>
                             {apt.location && (
-                              <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1">
+                              <span className="text-[10px] text-[#b8c5d6] flex items-center gap-1">
                                 <MapPin className="w-3 h-3" />
                                 {apt.location}
                               </span>
@@ -666,38 +666,38 @@ export default function Agenda() {
             <div className="bg-card border border-border rounded-lg w-full max-w-md p-5" onClick={(e) => e.stopPropagation()}>
               <div className="flex justify-between items-start mb-4">
                 <h3 className="text-[14px] font-semibold text-white">{selectedAppointment.title}</h3>
-                <button onClick={() => setSelectedAppointment(null)} className="text-[#8b9cb3] hover:text-white">
+                <button onClick={() => setSelectedAppointment(null)} className="text-[#b8c5d6] hover:text-white">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div className="space-y-2 mb-4">
-                <div className="flex items-center gap-2 text-[12px] text-[#8b9cb3]">
+                <div className="flex items-center gap-2 text-[12px] text-[#b8c5d6]">
                   <Clock className="w-3.5 h-3.5" />
                   {selectedAppointment.allDay
                     ? t("agenda.allDay")
                     : `${format(parseISO(selectedAppointment.startAt), "dd/MM/yyyy HH:mm", { locale })} - ${format(parseISO(selectedAppointment.endAt), "HH:mm", { locale })}`}
                 </div>
                 {selectedAppointment.location && (
-                  <div className="flex items-center gap-2 text-[12px] text-[#8b9cb3]">
+                  <div className="flex items-center gap-2 text-[12px] text-[#b8c5d6]">
                     <MapPin className="w-3.5 h-3.5" />
                     {selectedAppointment.location}
                   </div>
                 )}
                 {selectedAppointment.projects && (
-                  <div className="flex items-center gap-2 text-[12px] text-[#8b9cb3]">
+                  <div className="flex items-center gap-2 text-[12px] text-[#b8c5d6]">
                     <span className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: selectedAppointment.projects.color || '#2d7dd2' }} />
                     {selectedAppointment.projects.name}
                   </div>
                 )}
                 {selectedAppointment.participants && (
-                  <div className="flex items-center gap-2 text-[12px] text-[#8b9cb3]">
+                  <div className="flex items-center gap-2 text-[12px] text-[#b8c5d6]">
                     <Users className="w-3.5 h-3.5" />
                     {selectedAppointment.participants}
                   </div>
                 )}
                 {selectedAppointment.description && (
-                  <p className="text-[12px] text-[#8b9cb3] bg-background rounded p-2 border border-border mt-2">
+                  <p className="text-[12px] text-[#b8c5d6] bg-background rounded p-2 border border-border mt-2">
                     {selectedAppointment.description}
                   </p>
                 )}
@@ -745,14 +745,14 @@ export default function Agenda() {
                 <h3 className="text-[14px] font-semibold text-white">
                   {editingId ? t("agenda.editAppointment") : t("agenda.newAppointment")}
                 </h3>
-                <button onClick={resetForm} className="text-[#8b9cb3] hover:text-white">
+                <button onClick={resetForm} className="text-[#b8c5d6] hover:text-white">
                   <X className="w-4 h-4" />
                 </button>
               </div>
 
               <div className="space-y-3">
                 <div>
-                  <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("agenda.appointmentTitle")}</label>
+                  <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("agenda.appointmentTitle")}</label>
                   <Input
                     value={formTitle}
                     onChange={(e) => setFormTitle(e.target.value)}
@@ -762,7 +762,7 @@ export default function Agenda() {
                 </div>
 
                 <div>
-                  <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("agenda.description")}</label>
+                  <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("agenda.description")}</label>
                   <Textarea
                     value={formDescription}
                     onChange={(e) => setFormDescription(e.target.value)}
@@ -772,7 +772,7 @@ export default function Agenda() {
                 </div>
 
                 <div>
-                  <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("agenda.location")}</label>
+                  <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("agenda.location")}</label>
                   <Input
                     value={formLocation}
                     onChange={(e) => setFormLocation(e.target.value)}
@@ -783,7 +783,7 @@ export default function Agenda() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("agenda.startDate")}</label>
+                    <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("agenda.startDate")}</label>
                     <Input
                       type="datetime-local"
                       value={formStartAt}
@@ -792,7 +792,7 @@ export default function Agenda() {
                     />
                   </div>
                   <div>
-                    <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("agenda.endDate")}</label>
+                    <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("agenda.endDate")}</label>
                     <Input
                       type="datetime-local"
                       value={formEndAt}
@@ -803,7 +803,7 @@ export default function Agenda() {
                 </div>
 
                 <div className="flex items-center gap-4">
-                  <label className="flex items-center gap-2 text-[12px] text-[#8b9cb3] cursor-pointer">
+                  <label className="flex items-center gap-2 text-[12px] text-[#b8c5d6] cursor-pointer">
                     <input
                       type="checkbox"
                       checked={formAllDay}
@@ -816,7 +816,7 @@ export default function Agenda() {
 
                 <div className="grid grid-cols-2 gap-3">
                   <div>
-                    <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("agenda.project")}</label>
+                    <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("agenda.project")}</label>
                     <select
                       value={formProjectId}
                       onChange={(e) => setFormProjectId(e.target.value)}
@@ -829,7 +829,7 @@ export default function Agenda() {
                     </select>
                   </div>
                   <div>
-                    <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("agenda.reminder")}</label>
+                    <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("agenda.reminder")}</label>
                     <select
                       value={formReminder}
                       onChange={(e) => setFormReminder(e.target.value)}
@@ -845,7 +845,7 @@ export default function Agenda() {
                 </div>
 
                 <div>
-                  <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("agenda.participants")}</label>
+                  <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("agenda.participants")}</label>
                   <Input
                     value={formParticipants}
                     onChange={(e) => setFormParticipants(e.target.value)}

@@ -78,7 +78,7 @@ export default function AuthCallback() {
           <>
             <Loader2 className="w-10 h-10 animate-spin text-[#2d7dd2] mx-auto" />
             <h1 className="text-xl font-bold text-white">Verification en cours...</h1>
-            <p className="text-sm text-[#8b9cb3]">
+            <p className="text-sm text-[#b8c5d6]">
               Nous confirmons votre adresse email
             </p>
           </>
@@ -88,7 +88,7 @@ export default function AuthCallback() {
           <>
             <CheckCircle className="w-10 h-10 text-emerald-400 mx-auto" />
             <h1 className="text-xl font-bold text-white">Email verifie !</h1>
-            <p className="text-sm text-[#8b9cb3]">
+            <p className="text-sm text-[#b8c5d6]">
               Redirection vers votre espace...
             </p>
           </>
@@ -98,7 +98,7 @@ export default function AuthCallback() {
           <>
             <XCircle className="w-10 h-10 text-red-400 mx-auto" />
             <h1 className="text-xl font-bold text-white">Lien invalide ou expire</h1>
-            <p className="text-sm text-[#8b9cb3]">
+            <p className="text-sm text-[#b8c5d6]">
               Ce lien de verification n'est plus valide. Veuillez vous reconnecter ou vous reinscrire.
             </p>
             <a

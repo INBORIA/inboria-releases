@@ -53,22 +53,22 @@ export default function Programmes() {
               {t("wave1.scheduledPageTitle", "Envois programmés")}
             </h1>
             {emails.length > 0 && (
-              <span className="text-[11px] text-[#8b9cb3]">({emails.length})</span>
+              <span className="text-[11px] text-[#b8c5d6]">({emails.length})</span>
             )}
           </div>
 
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 border border-border border-dashed rounded-md bg-card/50">
               <Loader2 className="w-5 h-5 text-primary animate-spin mb-2" />
-              <p className="text-[12px] text-[#8b9cb3]">{t("inbox.loadingTitle", "Chargement…")}</p>
+              <p className="text-[12px] text-[#b8c5d6]">{t("inbox.loadingTitle", "Chargement…")}</p>
             </div>
           ) : emails.length === 0 ? (
             <div className="text-center py-8 border border-border rounded-md bg-card">
-              <CalendarClock className="w-7 h-7 mx-auto text-[#8b9cb3] mb-2 opacity-50" />
+              <CalendarClock className="w-7 h-7 mx-auto text-[#b8c5d6] mb-2 opacity-50" />
               <p className="text-[13px] text-white font-medium">
                 {t("wave1.scheduledPageEmpty", "Aucun envoi programmé")}
               </p>
-              <p className="text-[12px] text-[#8b9cb3] mt-1">
+              <p className="text-[12px] text-[#b8c5d6] mt-1">
                 {t(
                   "wave1.scheduledPageEmptyHint",
                   "Utilisez « Programmer » dans le composer pour planifier un envoi à une date/heure précise."
@@ -93,7 +93,7 @@ export default function Programmes() {
                           {e.subject || "(sans sujet)"}
                         </div>
                         <div
-                          className={`text-[11px] text-[#8b9cb3] mt-0.5 ${isOpen ? "break-all" : "truncate"}`}
+                          className={`text-[11px] text-[#b8c5d6] mt-0.5 ${isOpen ? "break-all" : "truncate"}`}
                         >
                           → {e.recipient}
                         </div>
@@ -109,7 +109,7 @@ export default function Programmes() {
                           size="sm"
                           variant="ghost"
                           onClick={() => toggleExpand(e.id)}
-                          className="h-7 gap-1 text-[11px] text-[#8b9cb3] hover:text-white hover:bg-white/5"
+                          className="h-7 gap-1 text-[11px] text-[#b8c5d6] hover:text-white hover:bg-white/5"
                           data-testid={`scheduled-toggle-${e.id}`}
                         >
                           {isOpen ? (
@@ -139,7 +139,7 @@ export default function Programmes() {
                     </div>
                     {isOpen && (
                       <div className="mt-3 pt-3 border-t border-border">
-                        <div className="text-[10px] uppercase tracking-wide text-[#8b9cb3] mb-1">
+                        <div className="text-[10px] uppercase tracking-wide text-[#b8c5d6] mb-1">
                           {t("wave1.scheduledBodyLabel", "Contenu de l'email")}
                         </div>
                         <div
@@ -147,7 +147,7 @@ export default function Programmes() {
                           data-testid={`scheduled-body-${e.id}`}
                         >
                           {e.body || (
-                            <span className="text-[#8b9cb3] italic">
+                            <span className="text-[#b8c5d6] italic">
                               {t("wave1.scheduledBodyEmpty", "(corps vide)")}
                             </span>
                           )}

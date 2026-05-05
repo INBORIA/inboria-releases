@@ -269,7 +269,7 @@ export function SignatureEditor({ value, onChange, placeholder, hideHint, minHei
               size="sm"
               title={t("signature.color", "Couleur du texte")}
               onMouseDown={(e) => { e.preventDefault(); saveSelection(); }}
-              className="h-7 w-7 p-0 flex flex-col items-center justify-center gap-0 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
+              className="h-7 w-7 p-0 flex flex-col items-center justify-center gap-0 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
             >
               <Type className="w-3 h-3" />
               <span className="block w-3.5 h-[3px] rounded-sm" style={{ backgroundColor: lastTextColor }} />
@@ -281,7 +281,7 @@ export function SignatureEditor({ value, onChange, placeholder, hideHint, minHei
               className="mt-2 relative w-full h-7 rounded border border-border hover:border-primary/60"
               onMouseDown={(e) => { e.preventDefault(); saveSelection(); }}
             >
-              <div className="absolute inset-0 flex items-center justify-center gap-2 pointer-events-none text-[11px] text-[#8b9cb3]">
+              <div className="absolute inset-0 flex items-center justify-center gap-2 pointer-events-none text-[11px] text-[#b8c5d6]">
                 <span
                   className="inline-block w-3 h-3 rounded-sm border border-white/20"
                   style={{ backgroundColor: lastTextColor }}
@@ -308,20 +308,20 @@ export function SignatureEditor({ value, onChange, placeholder, hideHint, minHei
               size="sm"
               title={t("signature.highlight", "Surlignage")}
               onMouseDown={(e) => { e.preventDefault(); saveSelection(); }}
-              className="h-7 w-7 p-0 flex flex-col items-center justify-center gap-0 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
+              className="h-7 w-7 p-0 flex flex-col items-center justify-center gap-0 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
             >
               <Highlighter className="w-3 h-3" />
               <span className="block w-3.5 h-[3px] rounded-sm border border-white/10" style={{ backgroundColor: lastHighlight === "transparent" ? "#ffffff" : lastHighlight }} />
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[260px] p-2" align="start" onOpenAutoFocus={(e) => e.preventDefault()} onFocusOutside={(e) => e.preventDefault()} onInteractOutside={(e) => { const t = e.target as HTMLElement; if (t && t.closest('input[type="color"]')) e.preventDefault(); }}>
-            <div className="text-[10px] uppercase tracking-wider text-[#8b9cb3] mb-1">Surlignage</div>
+            <div className="text-[10px] uppercase tracking-wider text-[#b8c5d6] mb-1">Surlignage</div>
             <ColorGrid swatches={HIGHLIGHT_SWATCHES} onPick={(c) => { applyHighlight(c); setHighlightOpen(false); }} showNoneLabel cols={8} />
             <div
               className="mt-2 relative w-full h-7 rounded border border-border hover:border-primary/60"
               onMouseDown={(e) => { e.preventDefault(); saveSelection(); }}
             >
-              <div className="absolute inset-0 flex items-center justify-center gap-2 pointer-events-none text-[11px] text-[#8b9cb3]">
+              <div className="absolute inset-0 flex items-center justify-center gap-2 pointer-events-none text-[11px] text-[#b8c5d6]">
                 <span
                   className="inline-block w-3 h-3 rounded-sm border border-white/20"
                   style={{ backgroundColor: lastHighlight === "transparent" ? "#1a2236" : lastHighlight }}
@@ -367,7 +367,7 @@ export function SignatureEditor({ value, onChange, placeholder, hideHint, minHei
         className={`signature-editor ${minHeight ? "" : "min-h-[140px]"} rounded-md border bg-card px-3 py-2 text-[13px] text-white outline-none ${isFocused ? "border-primary/50" : "border-border"}`}
       />
       {!hideHint && (
-        <p className="text-[10px] text-[#8b9cb3]">
+        <p className="text-[10px] text-[#b8c5d6]">
           {t("signature.imageHint", "Astuce : insérez un logo PNG/JPG (max 200 Ko). L'image est intégrée directement dans la signature.")}
         </p>
       )}
@@ -436,7 +436,7 @@ function ToolbarBtn({
         if (onMouseDown) onMouseDown();
       }}
       onClick={onClick}
-      className="h-7 w-7 p-0 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06]"
+      className="h-7 w-7 p-0 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
     >
       {children}
     </Button>

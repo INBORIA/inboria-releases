@@ -79,14 +79,14 @@ export default function Parametres() {
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <div className="mb-2">
           <Link href="/dashboard">
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#8b9cb3] hover:text-white" data-testid="back-to-inbox">
+            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white" data-testid="back-to-inbox">
               <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("sidebar.inbox", "Boîte de réception")}
             </Button>
           </Link>
         </div>
         <div className="mb-6">
           <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("settings.title")}</h1>
-          <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("settings.subtitle")}</p>
+          <p className="text-[12px] text-[#b8c5d6] mt-0.5">{t("settings.subtitle")}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -104,9 +104,9 @@ export default function Parametres() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[13px] font-medium text-white">{t(c.titleKey, c.titleFallback)}</div>
-                  <div className="text-[11px] text-[#8b9cb3] mt-0.5">{t(c.descKey, c.descFallback)}</div>
+                  <div className="text-[11px] text-[#b8c5d6] mt-0.5">{t(c.descKey, c.descFallback)}</div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#8b9cb3] group-hover:text-white transition-colors shrink-0" />
+                <ChevronRight className="w-4 h-4 text-[#b8c5d6] group-hover:text-white transition-colors shrink-0" />
               </Link>
             );
           })}

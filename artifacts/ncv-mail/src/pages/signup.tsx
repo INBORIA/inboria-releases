@@ -125,14 +125,14 @@ export default function Signup() {
             {t("waitlist.title")}
           </div>
           <h1 className="text-2xl font-bold text-white">{t("waitlist.signupClosedTitle")}</h1>
-          <p className="text-[#8b9cb3] mt-2 text-sm">
+          <p className="text-[#b8c5d6] mt-2 text-sm">
             {t("waitlist.signupClosedDesc")}
           </p>
         </div>
 
         <WaitlistForm source="signup-closed" />
 
-        <p className="mt-6 text-center text-[13px] text-[#8b9cb3]">
+        <p className="mt-6 text-center text-[13px] text-[#b8c5d6]">
           {t("waitlist.haveAccountLogin")}{" "}
           <Link href="/login" className="text-[#2d7dd2] hover:underline">
             {t("auth.login")}
@@ -146,7 +146,7 @@ export default function Signup() {
     <AuthLayout>
       <div className="mb-6 text-center">
         <h1 className="text-2xl font-bold text-white">{t("auth.signupTitle")}</h1>
-        <p className="text-[#8b9cb3] mt-2 text-sm">
+        <p className="text-[#b8c5d6] mt-2 text-sm">
           {selectedPlan && selectedPlan !== "essai"
             ? t("auth.signupForPlan", { plan: selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1) })
             : t("auth.signupSubtitle")}
@@ -160,7 +160,7 @@ export default function Signup() {
             name="fullName"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[#8b9cb3]">{t("auth.fullName")}</FormLabel>
+                <FormLabel className="text-[#b8c5d6]">{t("auth.fullName")}</FormLabel>
                 <FormControl>
                   <Input placeholder={t("auth.fullNamePlaceholder")} className="bg-background border-border text-white" {...field} />
                 </FormControl>
@@ -173,7 +173,7 @@ export default function Signup() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[#8b9cb3]">{t("auth.professionalEmail")}</FormLabel>
+                <FormLabel className="text-[#b8c5d6]">{t("auth.professionalEmail")}</FormLabel>
                 <FormControl>
                   <Input placeholder={t("auth.professionalEmailPlaceholder")} type="email" className="bg-background border-border text-white" {...field} />
                 </FormControl>
@@ -186,15 +186,15 @@ export default function Signup() {
             name="country"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[#8b9cb3]">{t("auth.country")}</FormLabel>
+                <FormLabel className="text-[#b8c5d6]">{t("auth.country")}</FormLabel>
                 <FormControl>
                   <div className="relative">
-                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#8b9cb3] pointer-events-none" />
+                    <Globe className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#b8c5d6] pointer-events-none" />
                     <select
                       {...field}
                       className="w-full h-10 pl-9 pr-3 rounded-md border border-border bg-background text-white text-sm appearance-none cursor-pointer focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 focus:ring-offset-background"
                     >
-                      <option value="" disabled className="text-[#8b9cb3]">{t("auth.selectCountry")}</option>
+                      <option value="" disabled className="text-[#b8c5d6]">{t("auth.selectCountry")}</option>
                       {EU_EEE_COUNTRIES.map((c) => (
                         <option key={c.code} value={c.code} className="bg-[#141c2b] text-white">
                           {c.name}
@@ -203,7 +203,7 @@ export default function Signup() {
                     </select>
                   </div>
                 </FormControl>
-                <p className="text-[10px] text-[#8b9cb3]/60 mt-1">
+                <p className="text-[10px] text-[#b8c5d6]/60 mt-1">
                   {t("auth.countryAvailability")}
                 </p>
                 <FormMessage />
@@ -215,14 +215,14 @@ export default function Signup() {
             name="password"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[#8b9cb3]">{t("auth.password")}</FormLabel>
+                <FormLabel className="text-[#b8c5d6]">{t("auth.password")}</FormLabel>
                 <FormControl>
                   <div className="relative">
                     <Input type={showPassword ? "text" : "password"} placeholder="" className="bg-background border-border text-white pr-10" {...field} />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white transition-colors"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b8c5d6] hover:text-white transition-colors"
                       tabIndex={-1}
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -241,7 +241,7 @@ export default function Signup() {
                     </p>
                     <div className="grid grid-cols-2 gap-x-2 gap-y-0.5">
                       {strength.checks.map((check) => (
-                        <p key={check.label} className={`text-[10px] ${check.passed ? "text-emerald-400" : "text-[#8b9cb3]"}`}>
+                        <p key={check.label} className={`text-[10px] ${check.passed ? "text-emerald-400" : "text-[#b8c5d6]"}`}>
                           {check.passed ? "✓" : "○"} {check.label}
                         </p>
                       ))}
@@ -257,7 +257,7 @@ export default function Signup() {
             name="confirmPassword"
             render={({ field }) => (
               <FormItem>
-                <FormLabel className="text-[#8b9cb3]">{t("auth.confirmPassword")}</FormLabel>
+                <FormLabel className="text-[#b8c5d6]">{t("auth.confirmPassword")}</FormLabel>
                 <FormControl>
                   <Input type="password" placeholder="" className="bg-background border-border text-white" {...field} />
                 </FormControl>
@@ -275,7 +275,7 @@ export default function Signup() {
         </form>
       </Form>
 
-      <div className="mt-4 text-center text-[10px] text-[#8b9cb3] leading-relaxed">
+      <div className="mt-4 text-center text-[10px] text-[#b8c5d6] leading-relaxed">
         {t("auth.termsAccept")}{" "}
         <Link href="/conditions" className="text-[#2d7dd2] hover:underline">
           {t("auth.termsLink")}
@@ -286,7 +286,7 @@ export default function Signup() {
         </Link>
       </div>
 
-      <div className="mt-4 text-center text-sm text-[#8b9cb3]">
+      <div className="mt-4 text-center text-sm text-[#b8c5d6]">
         {t("auth.alreadyAccount")}{" "}
         <Link href={`/login${searchString ? `?${searchString}` : ""}`} className="font-semibold text-primary hover:text-primary/80">
           {t("auth.loginButton")}

@@ -11,7 +11,7 @@ export function BackToInboxButton() {
         <Button
           variant="ghost"
           size="sm"
-          className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
+          className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
         >
           <ArrowLeft className="w-3.5 h-3.5 mr-1" />
           {t("inbox.title")}

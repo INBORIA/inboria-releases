@@ -161,8 +161,8 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               className={cn(
                 isActive
                   ? "bg-[#1e3a5f] text-primary"
-                  : "text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]",
-                "group flex items-center gap-x-2.5 rounded-md px-2.5 py-[7px] text-[12px] font-medium transition-colors"
+                  : "text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]",
+                "group flex items-center gap-x-2.5 rounded-md px-2.5 py-[7px] text-[13px] font-medium transition-colors"
               )}
               onClick={() => {
                 setMobileMenuOpen(false);
@@ -175,7 +175,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
             >
               <item.icon
                 className={cn(
-                  isActive ? "text-primary" : "text-[#8b9cb3] group-hover:text-white",
+                  isActive ? "text-primary" : "text-[#b8c5d6] group-hover:text-white",
                   "h-4 w-4 shrink-0 transition-colors"
                 )}
                 aria-hidden="true"
@@ -205,10 +205,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
       <DropdownMenuContent side="bottom" align="end" className="w-56 mt-1">
         <DropdownMenuLabel className="font-normal">
           <div className="flex flex-col">
-            <span className="text-[12px] font-medium text-white truncate">
+            <span className="text-[13px] font-medium text-white truncate">
               {(user as any).fullName || t("sidebar.user")}
             </span>
-            <span className="text-[10px] text-[#8b9cb3] capitalize">
+            <span className="text-[11px] text-[#b8c5d6] capitalize">
               {(user as any).plan}
             </span>
           </div>
@@ -293,10 +293,10 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <div className="flex items-center gap-3 max-w-4xl mx-auto">
                   <AlertTriangle className="w-4 h-4 text-amber-400 shrink-0" />
                   <div className="flex-1">
-                    <p className="text-[12px] font-medium text-amber-400">
+                    <p className="text-[13px] font-medium text-amber-400">
                       {t("dashboard.contactAdminTitle", "Souci d'abonnement côté équipe")}
                     </p>
-                    <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+                    <p className="text-[12px] text-[#b8c5d6] mt-0.5">
                       {t("dashboard.contactAdminDesc", "Contactez l'admin de votre équipe pour régler ça.")}
                     </p>
                   </div>
@@ -307,12 +307,12 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
                 <div className="flex items-center gap-3 max-w-4xl mx-auto">
                   <AlertTriangle className="w-4 h-4 text-red-400 shrink-0" />
                   <div className="flex-1">
-                    <p className="text-[12px] font-medium text-red-400">
+                    <p className="text-[13px] font-medium text-red-400">
                       {isExpired
                         ? t("dashboard.expiredSubscription")
                         : t("dashboard.trialEnded")}
                     </p>
-                    <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+                    <p className="text-[12px] text-[#b8c5d6] mt-0.5">
                       {isExpired
                         ? t("dashboard.resubscribe")
                         : t("dashboard.trialUsed")}

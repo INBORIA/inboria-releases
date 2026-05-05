@@ -9,7 +9,7 @@ export default function Confidentialite() {
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
         <h1 className="text-2xl sm:text-3xl font-extrabold text-white mb-8">{t("marketing.legal.privacyTitle")}</h1>
 
-        <div className="space-y-8 text-[14px] text-[#8b9cb3] leading-relaxed">
+        <div className="space-y-8 text-[14px] text-[#b8c5d6] leading-relaxed">
           <div>
             <h2 className="text-[16px] font-semibold text-white mb-2">{t("marketing.legal.dataController")}</h2>
             <p>{t("marketing.legal.betaPlaceholder")}</p>

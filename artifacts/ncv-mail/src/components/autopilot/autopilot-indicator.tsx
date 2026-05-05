@@ -168,7 +168,7 @@ export function AutopilotIndicator() {
       ? "border-[#2d7dd2]/30 bg-[#2d7dd2]/10 text-[#2d7dd2]"
       : phase === "done"
         ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
-        : "border-[#1f2937] bg-card text-[#8b9cb3]";
+        : "border-[#1f2937] bg-card text-[#b8c5d6]";
 
   return (
     <div className="relative">

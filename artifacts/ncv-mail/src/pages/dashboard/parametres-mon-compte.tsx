@@ -203,7 +203,7 @@ function AccountConnectionCard({
           <div className={`w-9 h-9 rounded-lg flex items-center justify-center font-bold text-sm ${
             conn.provider === "gmail" ? "bg-red-500/10 text-red-400" :
             conn.provider === "outlook" ? "bg-blue-500/10 text-blue-400" :
-            "bg-white/[0.06] text-[#8b9cb3]"
+            "bg-white/[0.06] text-[#b8c5d6]"
           }`}>
             {conn.provider === "gmail" ? "G" : conn.provider === "outlook" ? "O" : "@"}
           </div>
@@ -232,7 +232,7 @@ function AccountConnectionCard({
                         {t("settings.disconnectedTooltip", "Reconnectez ce compte pour reprendre la synchronisation.")}
                       </p>
                       {conn.last_error_message && (
-                        <p className="text-[10px] mt-1 text-[#8b9cb3] break-words">
+                        <p className="text-[10px] mt-1 text-[#b8c5d6] break-words">
                           {conn.last_error_message}
                         </p>
                       )}
@@ -240,7 +240,7 @@ function AccountConnectionCard({
                   </Tooltip>
                 </TooltipProvider>
                 {conn.last_error_at && (
-                  <span className="text-[#8b9cb3] ml-1.5">
+                  <span className="text-[#b8c5d6] ml-1.5">
                     — {new Date(conn.last_error_at).toLocaleString()}
                   </span>
                 )}
@@ -250,7 +250,7 @@ function AccountConnectionCard({
                 <CheckCircle2 className="w-3 h-3" />
                 {t("settings.connected")}
                 {conn.last_synced_at && (
-                  <span className="text-[#8b9cb3] ml-1.5">
+                  <span className="text-[#b8c5d6] ml-1.5">
                     — {t("settings.sync")} : {new Date(conn.last_synced_at).toLocaleString()}
                   </span>
                 )}
@@ -262,7 +262,7 @@ function AccountConnectionCard({
           <Button
             variant="ghost"
             size="sm"
-            className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]"
+            className="text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]"
             onClick={() => setEditing((v) => !v)}
           >
             <Pen className="w-3.5 h-3.5 mr-1.5" />
@@ -277,12 +277,12 @@ function AccountConnectionCard({
       {showToggle && (
         <div className="flex items-center justify-between gap-3 pt-2 border-t border-border">
           <div className="flex items-start gap-2">
-            <Users2 className="w-3.5 h-3.5 text-[#8b9cb3] mt-0.5" />
+            <Users2 className="w-3.5 h-3.5 text-[#b8c5d6] mt-0.5" />
             <div>
               <Label className="text-[12px] text-white">
                 {t("settings.shareWithTeam", "Partager avec l'équipe")}
               </Label>
-              <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+              <p className="text-[11px] text-[#b8c5d6] mt-0.5">
                 {isShared
                   ? t("settings.shareWithTeamOnDesc", "Vos collègues membres voient les emails et peuvent les traiter.")
                   : t("settings.shareWithTeamOffDesc", "Boîte personnelle. Seul vous voyez les emails.")}
@@ -341,7 +341,7 @@ function AccountConnectionCard({
                   {t("settings.unshareConfirmDesc", "Les membres de votre organisation ne verront plus les emails de {{email}}. Vos emails restent disponibles dans votre boîte personnelle.", { email: conn.email_address })}
                 </p>
                 {unshareMembersLoading && (
-                  <p className="text-[12px] text-[#8b9cb3]">
+                  <p className="text-[12px] text-[#b8c5d6]">
                     {t("settings.unshareMembersLoading", "Chargement des membres concernés…")}
                   </p>
                 )}
@@ -355,7 +355,7 @@ function AccountConnectionCard({
                         <li key={m.userId} className="truncate">
                           {m.fullName || m.email || m.userId}
                           {m.fullName && m.email && (
-                            <span className="text-[#8b9cb3]"> — {m.email}</span>
+                            <span className="text-[#b8c5d6]"> — {m.email}</span>
                           )}
                         </li>
                       ))}
@@ -363,7 +363,7 @@ function AccountConnectionCard({
                   </div>
                 )}
                 {!unshareMembersLoading && unshareMembers && unshareMembers.length === 0 && (
-                  <p className="text-[12px] text-[#8b9cb3]">
+                  <p className="text-[12px] text-[#b8c5d6]">
                     {t("settings.unshareMembersNone", "Aucun autre membre n'a actuellement accès à cette boîte.")}
                   </p>
                 )}
@@ -380,7 +380,7 @@ function AccountConnectionCard({
       </AlertDialog>
       {editing && (
         <div className="space-y-2 pt-2 border-t border-border">
-          <Label className="text-[11px] text-[#8b9cb3]">{t("settings.accountSignatureLabel", "Signature pour ce compte")}</Label>
+          <Label className="text-[11px] text-[#b8c5d6]">{t("settings.accountSignatureLabel", "Signature pour ce compte")}</Label>
           <SignatureEditor
             value={sigDraft}
             onChange={setSigDraft}
@@ -468,7 +468,7 @@ function InboriaPrivacySection({ t }: { t: any }) {
           <Sparkles className="w-3.5 h-3.5 text-primary mt-0.5 flex-shrink-0" />
           <div className="min-w-0">
             <div className="text-[13px] text-white truncate">{item.label}</div>
-            <div className="text-[11px] text-[#8b9cb3] truncate">
+            <div className="text-[11px] text-[#b8c5d6] truncate">
               {item.kind === "shared"
                 ? t("settings.inboriaPrivacySharedHint", "Boîte partagée — affecte toute l'équipe")
                 : item.emailAddress}
@@ -492,7 +492,7 @@ function InboriaPrivacySection({ t }: { t: any }) {
         {t("settings.inboriaPrivacyTitle", "Confidentialité — Mémoire Inboria")}
       </h2>
       <div className="bg-card rounded-lg border border-border p-5 space-y-3">
-        <p className="text-[12px] text-[#8b9cb3]">
+        <p className="text-[12px] text-[#b8c5d6]">
           {t(
             "settings.inboriaPrivacyDesc",
             "Inboria mémorise les préférences, sujets, décisions et engagements présents dans vos emails pour personnaliser ses réponses. Désactivez la mémoire sur une boîte pour qu'elle soit ignorée — par exemple votre boîte personnelle.",
@@ -501,7 +501,7 @@ function InboriaPrivacySection({ t }: { t: any }) {
         {isLoading ? (
           <Skeleton className="h-12 w-full bg-white/5" />
         ) : all.length === 0 ? (
-          <p className="text-[12px] text-[#8b9cb3] py-4 text-center">
+          <p className="text-[12px] text-[#b8c5d6] py-4 text-center">
             {t(
               "settings.inboriaPrivacyEmpty",
               "Aucune boîte mail connectée pour l'instant.",
@@ -511,7 +511,7 @@ function InboriaPrivacySection({ t }: { t: any }) {
           <>
             {personal.length > 0 && (
               <div className="space-y-2">
-                <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#8b9cb3]">
+                <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#b8c5d6]">
                   {t("settings.inboriaPrivacyPersonal", "Vos boîtes personnelles")}
                 </h3>
                 {personal.map(renderRow)}
@@ -519,7 +519,7 @@ function InboriaPrivacySection({ t }: { t: any }) {
             )}
             {shared.length > 0 && (
               <div className="space-y-2 pt-2">
-                <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#8b9cb3]">
+                <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#b8c5d6]">
                   {t("settings.inboriaPrivacyShared", "Boîtes partagées de l'équipe")}
                 </h3>
                 {shared.map(renderRow)}
@@ -888,7 +888,7 @@ export default function ParametresMonCompte() {
         {!isOrgMember && (
           <div className="mb-2">
             <Link href="/dashboard/parametres">
-              <Button variant="ghost" size="sm" className="h-7 px-2 text-[#8b9cb3] hover:text-white">
+              <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white">
                 <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("settings.title")}
               </Button>
             </Link>
@@ -896,7 +896,7 @@ export default function ParametresMonCompte() {
         )}
         <div className="mb-5">
           <h1 className="text-[16px] font-semibold text-white tracking-tight">{t("settings.hub.myAccount", "Mon compte")}</h1>
-          <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("settings.hub.myAccountDesc", "Profil, sécurité, comptes email, Inboria et notifications")}</p>
+          <p className="text-[12px] text-[#b8c5d6] mt-0.5">{t("settings.hub.myAccountDesc", "Profil, sécurité, comptes email, Inboria et notifications")}</p>
         </div>
 
         <div className="space-y-6">
@@ -911,7 +911,7 @@ export default function ParametresMonCompte() {
               ) : (
                 <>
                   {connections && connections.length > 0 && (
-                    <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#8b9cb3] mb-1">
+                    <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#b8c5d6] mb-1">
                       {t("settings.connectedAccounts", "Comptes connectés")}
                     </h3>
                   )}
@@ -931,7 +931,7 @@ export default function ParametresMonCompte() {
                   ))}
 
                   <div className={connections && connections.length > 0 ? "pt-4 mt-2 border-t border-border space-y-3" : "space-y-3"}>
-                    <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#8b9cb3]">
+                    <h3 className="text-[12px] font-semibold uppercase tracking-wide text-[#b8c5d6]">
                       {t("settings.addNewAccount", "Ajouter un compte")}
                     </h3>
 
@@ -940,13 +940,13 @@ export default function ParametresMonCompte() {
                       <div className="w-9 h-9 bg-red-500/10 rounded-lg flex items-center justify-center text-red-400 font-bold text-sm">G</div>
                       <div>
                         <h4 className="font-medium text-[13px] text-white">Gmail / Google Workspace</h4>
-                        <p className="text-[11px] text-[#8b9cb3]">{t("settings.gmailAppPasswordDesc")}</p>
+                        <p className="text-[11px] text-[#b8c5d6]">{t("settings.gmailAppPasswordDesc")}</p>
                       </div>
                     </div>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]"
+                      className="bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]"
                       onClick={() => {
                         setSelectedProvider("gmail");
                         setImapHost("imap.gmail.com");
@@ -964,10 +964,10 @@ export default function ParametresMonCompte() {
                       <div className="w-9 h-9 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 font-bold text-sm">M</div>
                       <div>
                         <h4 className="font-medium text-[13px] text-white">{t("settings.microsoftTitle", "Outlook / Microsoft 365")}</h4>
-                        <p className="text-[11px] text-[#8b9cb3]">{t("settings.microsoftDesc", "Compte personnel ou professionnel (Exchange, Office 365)")}</p>
+                        <p className="text-[11px] text-[#b8c5d6]">{t("settings.microsoftDesc", "Compte personnel ou professionnel (Exchange, Office 365)")}</p>
                       </div>
                     </div>
-                    <Button variant="outline" size="sm" className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]" onClick={() => handleOAuthConnect("outlook")}>
+                    <Button variant="outline" size="sm" className="bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]" onClick={() => handleOAuthConnect("outlook")}>
                       {t("settings.connectMicrosoft", "Connecter Microsoft")}
                     </Button>
                   </div>
@@ -977,13 +977,13 @@ export default function ParametresMonCompte() {
                       <div className="w-9 h-9 bg-blue-500/10 rounded-lg flex items-center justify-center text-blue-400 font-bold text-sm">@</div>
                       <div>
                         <h4 className="font-medium text-[13px] text-white">{t("settings.imapTitle", "Autre fournisseur (IMAP)")}</h4>
-                        <p className="text-[11px] text-[#8b9cb3]">{t("settings.imapDesc", "OVH, GoDaddy, Yahoo, iCloud, Free, Orange et plus")}</p>
+                        <p className="text-[11px] text-[#b8c5d6]">{t("settings.imapDesc", "OVH, GoDaddy, Yahoo, iCloud, Free, Orange et plus")}</p>
                       </div>
                     </div>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]"
+                      className="bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] h-8 text-[12px]"
                       onClick={() => {
                         setSelectedProvider("ovh");
                         setImapHost("ssl0.ovh.net");
@@ -1021,7 +1021,7 @@ export default function ParametresMonCompte() {
 
                       <div className="space-y-2.5">
                         <div className="space-y-1">
-                          <Label className="text-[12px] text-[#8b9cb3]">{t("settings.provider", "Fournisseur")}</Label>
+                          <Label className="text-[12px] text-[#b8c5d6]">{t("settings.provider", "Fournisseur")}</Label>
                           <Select
                             value={selectedProvider ?? undefined}
                             onValueChange={(value) => {
@@ -1048,7 +1048,7 @@ export default function ParametresMonCompte() {
                           </Select>
                         </div>
                         <div className="space-y-1">
-                          <Label className="text-[12px] text-[#8b9cb3]">{t("settings.emailAddress")}</Label>
+                          <Label className="text-[12px] text-[#b8c5d6]">{t("settings.emailAddress")}</Label>
                           <Input
                             type="email"
                             placeholder={t("auth.emailPlaceholder")}
@@ -1073,7 +1073,7 @@ export default function ParametresMonCompte() {
                         {selectedProvider === "gmail" && (
                           <div className="p-3 bg-background rounded-lg border border-primary/20 space-y-2">
                             <p className="text-[12px] font-semibold text-white">{t("settings.gmailWizardTitle")}</p>
-                            <ol className="text-[11px] text-[#8b9cb3] space-y-1.5 list-decimal list-inside">
+                            <ol className="text-[11px] text-[#b8c5d6] space-y-1.5 list-decimal list-inside">
                               <li>
                                 {t("settings.gmailWizardStep1")}{" "}
                                 <a href="https://myaccount.google.com/security" target="_blank" rel="noopener noreferrer" className="text-primary hover:underline">
@@ -1089,15 +1089,15 @@ export default function ParametresMonCompte() {
                               <li>{t("settings.gmailWizardStep3")}</li>
                               <li>{t("settings.gmailWizardStep4")}</li>
                             </ol>
-                            <p className="text-[11px] text-[#8b9cb3] italic">{t("settings.gmailWizardNote")}</p>
+                            <p className="text-[11px] text-[#b8c5d6] italic">{t("settings.gmailWizardNote")}</p>
                           </div>
                         )}
 
                         <div className="space-y-1">
-                          <Label className="text-[12px] text-[#8b9cb3]">{t("settings.appPassword")}</Label>
+                          <Label className="text-[12px] text-[#b8c5d6]">{t("settings.appPassword")}</Label>
                           <div className="relative">
                             <Input type={showPassword ? "text" : "password"} placeholder={t("settings.appPassword")} className="bg-background border-border text-white h-9 text-[13px] pr-10" value={imapPassword} onChange={(e) => setImapPassword(e.target.value)} />
-                            <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white" onClick={() => setShowPassword(!showPassword)}>
+                            <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b8c5d6] hover:text-white" onClick={() => setShowPassword(!showPassword)}>
                               {showPassword ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                             </button>
                           </div>
@@ -1106,11 +1106,11 @@ export default function ParametresMonCompte() {
                         {selectedProvider !== "gmail" && (selectedProvider === "autre" || showAdvanced) && (
                           <div className="grid grid-cols-2 gap-2.5">
                             <div className="space-y-1">
-                              <Label className="text-[12px] text-[#8b9cb3]">{t("settings.imapServer")}</Label>
+                              <Label className="text-[12px] text-[#b8c5d6]">{t("settings.imapServer")}</Label>
                               <Input placeholder="imap.exemple.com" className="bg-background border-border text-white h-9 text-[13px]" value={imapHost} onChange={(e) => setImapHost(e.target.value)} />
                             </div>
                             <div className="space-y-1">
-                              <Label className="text-[12px] text-[#8b9cb3]">{t("settings.port")}</Label>
+                              <Label className="text-[12px] text-[#b8c5d6]">{t("settings.port")}</Label>
                               <Input type="number" placeholder="993" className="bg-background border-border text-white h-9 text-[13px]" value={imapPort} onChange={(e) => setImapPort(e.target.value)} />
                             </div>
                           </div>
@@ -1127,7 +1127,7 @@ export default function ParametresMonCompte() {
                         <Button onClick={handleImapConnect} disabled={connecting} size="sm">
                           {connecting ? t("settings.connecting") : t("settings.connect")}
                         </Button>
-                        <Button variant="ghost" size="sm" className="text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]" onClick={() => { setSelectedProvider(null); setConnectError(""); setImapEmail(""); setImapPassword(""); setImapHost(""); setImapPort(""); }}>
+                        <Button variant="ghost" size="sm" className="text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]" onClick={() => { setSelectedProvider(null); setConnectError(""); setImapEmail(""); setImapPassword(""); setImapHost(""); setImapPort(""); }}>
                           {t("common.cancel")}
                         </Button>
                       </div>
@@ -1154,16 +1154,16 @@ export default function ParametresMonCompte() {
               ) : (
                 <div className="space-y-3 max-w-md">
                   <div className="space-y-1.5">
-                    <Label className="text-[12px] text-[#8b9cb3]">{t("settings.email")}</Label>
-                    <Input value={profile?.email} disabled className="bg-background border-border text-[#8b9cb3] h-9 text-[13px]" />
+                    <Label className="text-[12px] text-[#b8c5d6]">{t("settings.email")}</Label>
+                    <Input value={profile?.email} disabled className="bg-background border-border text-[#b8c5d6] h-9 text-[13px]" />
                   </div>
                   <div className="space-y-1.5">
-                    <Label className="text-[12px] text-[#8b9cb3]">{t("settings.fullName")}</Label>
+                    <Label className="text-[12px] text-[#b8c5d6]">{t("settings.fullName")}</Label>
                     <Input value={fullName} onChange={(e) => setFullName(e.target.value)} className="bg-background border-border text-white h-9 text-[13px]" />
                   </div>
                   {!isOrgMember && (
                   <div className="space-y-1.5">
-                    <Label className="text-[12px] text-[#8b9cb3] flex items-center gap-1.5">
+                    <Label className="text-[12px] text-[#b8c5d6] flex items-center gap-1.5">
                       <Globe className="w-3 h-3" />
                       {t("settings.timezone")}
                     </Label>
@@ -1215,7 +1215,7 @@ export default function ParametresMonCompte() {
                   )}
                   {!isOrgMember && (
                   <div className="space-y-1.5">
-                    <Label className="text-[12px] text-[#8b9cb3] flex items-center gap-1.5">
+                    <Label className="text-[12px] text-[#b8c5d6] flex items-center gap-1.5">
                       <MailCheck className="w-3 h-3" />
                       {t("settings.followUpDelayLabel", "Délai avant suggestion de relance (jours)")}
                     </Label>
@@ -1231,7 +1231,7 @@ export default function ParametresMonCompte() {
                       onBlur={() => setFollowUpDelayDays((d) => Math.max(1, Math.min(60, Math.round(d || 5))))}
                       className="bg-background border-border text-white h-9 text-[13px] max-w-[120px]"
                     />
-                    <p className="text-[11px] text-[#8b9cb3]">
+                    <p className="text-[11px] text-[#b8c5d6]">
                       {t(
                         "settings.followUpDelayHint",
                         "Inboria suggérera une relance pour vos mails envoyés sans réponse après ce nombre de jours (1 à 60).",
@@ -1248,7 +1248,7 @@ export default function ParametresMonCompte() {
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <Label className="text-[12px] text-white">{t("wave1.trackingSectionTitle")}</Label>
-                        <p className="text-[11px] text-[#8b9cb3] mt-0.5">{t("wave1.trackingSectionDesc")}</p>
+                        <p className="text-[11px] text-[#b8c5d6] mt-0.5">{t("wave1.trackingSectionDesc")}</p>
                       </div>
                       <Switch
                         checked={trackingEnabled}
@@ -1256,7 +1256,7 @@ export default function ParametresMonCompte() {
                         disabled={updateProfile.isPending}
                       />
                     </div>
-                    <p className="text-[10px] text-[#8b9cb3] italic">{t("wave1.trackingDisclaimer")}</p>
+                    <p className="text-[10px] text-[#b8c5d6] italic">{t("wave1.trackingDisclaimer")}</p>
                   </div>
                   )}
                 </div>
@@ -1272,7 +1272,7 @@ export default function ParametresMonCompte() {
             <div className="bg-card rounded-lg border border-border p-5">
               <div className="space-y-3 max-w-md">
                 <div className="space-y-1.5">
-                  <Label className="text-[12px] text-[#8b9cb3]">{t("settings.currentPassword")}</Label>
+                  <Label className="text-[12px] text-[#b8c5d6]">{t("settings.currentPassword")}</Label>
                   <div className="relative">
                     <Input
                       type={showCurrentPwd ? "text" : "password"}
@@ -1281,13 +1281,13 @@ export default function ParametresMonCompte() {
                       className="bg-background border-border text-white h-9 text-[13px] pr-10"
                       placeholder={t("settings.currentPasswordPlaceholder")}
                     />
-                    <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white" onClick={() => setShowCurrentPwd(!showCurrentPwd)}>
+                    <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b8c5d6] hover:text-white" onClick={() => setShowCurrentPwd(!showCurrentPwd)}>
                       {showCurrentPwd ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                     </button>
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[12px] text-[#8b9cb3]">{t("settings.newPassword")}</Label>
+                  <Label className="text-[12px] text-[#b8c5d6]">{t("settings.newPassword")}</Label>
                   <div className="relative">
                     <Input
                       type={showNewPwd ? "text" : "password"}
@@ -1296,13 +1296,13 @@ export default function ParametresMonCompte() {
                       className="bg-background border-border text-white h-9 text-[13px] pr-10"
                       placeholder={t("settings.newPasswordPlaceholder")}
                     />
-                    <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white" onClick={() => setShowNewPwd(!showNewPwd)}>
+                    <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b8c5d6] hover:text-white" onClick={() => setShowNewPwd(!showNewPwd)}>
                       {showNewPwd ? <EyeOff className="w-3.5 h-3.5" /> : <Eye className="w-3.5 h-3.5" />}
                     </button>
                   </div>
                 </div>
                 <div className="space-y-1.5">
-                  <Label className="text-[12px] text-[#8b9cb3]">{t("settings.confirmNewPassword")}</Label>
+                  <Label className="text-[12px] text-[#b8c5d6]">{t("settings.confirmNewPassword")}</Label>
                   <Input
                     type={showNewPwd ? "text" : "password"}
                     value={confirmNewPassword}

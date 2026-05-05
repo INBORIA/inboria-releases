@@ -165,7 +165,7 @@ export default function ParametresViePrivee() {
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 px-2 text-[#8b9cb3] hover:text-white"
+              className="h-7 px-2 text-[#b8c5d6] hover:text-white"
               data-testid="back-to-settings"
             >
               <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("settings.title", "Paramètres")}
@@ -181,7 +181,7 @@ export default function ParametresViePrivee() {
             <h1 className="text-[18px] font-semibold text-white tracking-tight">
               {t("privacy.title", "Vie privée et accès équipe")}
             </h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5 max-w-2xl">
+            <p className="text-[12px] text-[#b8c5d6] mt-0.5 max-w-2xl">
               {t(
                 "privacy.subtitle",
                 "Vos emails restent les vôtres. Les administrateurs de votre organisation peuvent ouvrir un « dossier équipe » par contact (utile en cas d'absence ou de turn-over) — vous voyez ici quand cela arrive et vous pouvez masquer un email à tout moment.",
@@ -198,7 +198,7 @@ export default function ParametresViePrivee() {
               <div className="font-medium text-white mb-1">
                 {t("privacy.howTitle", "Ce que vos admins peuvent voir — et pas voir")}
               </div>
-              <ul className="list-disc list-inside space-y-0.5 text-[#8b9cb3]">
+              <ul className="list-disc list-inside space-y-0.5 text-[#b8c5d6]">
                 <li>
                   {t(
                     "privacy.how1",
@@ -247,14 +247,14 @@ export default function ParametresViePrivee() {
                     <Lock className="w-3.5 h-3.5 text-amber-300 shrink-0" />
                     <div className="flex-1 min-w-0">
                       <div className="text-[13px] text-white truncate">{e.subject || "(Sans objet)"}</div>
-                      <div className="text-[11px] text-[#8b9cb3] truncate">
+                      <div className="text-[11px] text-[#b8c5d6] truncate">
                         {e.sender} · {format(new Date(e.createdAt), "Pp", { locale: dateLocale })}
                       </div>
                     </div>
                     <Button
                       variant="outline"
                       size="sm"
-                      className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white"
+                      className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white"
                       disabled={unmarkingId === e.id}
                       onClick={() => unmarkPrivate(e.id)}
                       data-testid={`button-unmark-${e.id}`}
@@ -270,7 +270,7 @@ export default function ParametresViePrivee() {
                 ))}
               </ul>
             ) : (
-              <div className="p-4 text-[12px] text-[#8b9cb3]">
+              <div className="p-4 text-[12px] text-[#b8c5d6]">
                 {t(
                   "privacy.privateEmpty",
                   "Aucun email marqué privé pour l'instant. Vous pouvez en marquer un depuis sa fiche email (bouton « Marquer privé »).",
@@ -310,10 +310,10 @@ export default function ParametresViePrivee() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="text-[13px] text-white">{describeAction(e)}</div>
-                        <div className="text-[11px] text-[#8b9cb3] mt-0.5">
+                        <div className="text-[11px] text-[#b8c5d6] mt-0.5">
                           {formatDistanceToNow(new Date(e.createdAt), { addSuffix: true, locale: dateLocale })}
                           {e.targetValue && (
-                            <span className="ml-2 text-[#8b9cb3]/80">· {e.targetValue}</span>
+                            <span className="ml-2 text-[#b8c5d6]/80">· {e.targetValue}</span>
                           )}
                         </div>
                       </div>
@@ -322,7 +322,7 @@ export default function ParametresViePrivee() {
                 })}
               </ul>
             ) : (
-              <div className="p-4 text-[12px] text-[#8b9cb3]">
+              <div className="p-4 text-[12px] text-[#b8c5d6]">
                 {t(
                   "privacy.logEmpty",
                   "Aucune consultation admin vous concernant pour l'instant.",
@@ -341,7 +341,7 @@ export default function ParametresViePrivee() {
                 {t("privacy.orgLogTitle", "Journal des consultations admin (toute l'organisation)")}
               </h2>
             </div>
-            <p className="text-[12px] text-[#8b9cb3] mb-2">
+            <p className="text-[12px] text-[#b8c5d6] mb-2">
               {t(
                 "privacy.orgLogSubtitle",
                 "En tant qu'administrateur, vous voyez ici l'ensemble des consultations « vue équipe » faites par tous les admins de votre organisation, avec l'admin et le coéquipier concerné.",
@@ -383,7 +383,7 @@ export default function ParametresViePrivee() {
                               target: targetLabel,
                             })}
                           </div>
-                          <div className="text-[11px] text-[#8b9cb3] mt-0.5">
+                          <div className="text-[11px] text-[#b8c5d6] mt-0.5">
                             <span>{describeAction(e)}</span>
                             <span className="mx-1.5">·</span>
                             <span>
@@ -399,7 +399,7 @@ export default function ParametresViePrivee() {
                   })}
                 </ul>
               ) : (
-                <div className="p-4 text-[12px] text-[#8b9cb3]">
+                <div className="p-4 text-[12px] text-[#b8c5d6]">
                   {t(
                     "privacy.orgLogEmpty",
                     "Aucune consultation admin enregistrée dans votre organisation pour l'instant.",

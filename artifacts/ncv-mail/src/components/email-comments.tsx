@@ -352,7 +352,7 @@ export function EmailComments({
             </span>
           </div>
           {typingUsers.length > 0 && (
-            <span className="text-[10px] italic text-[#8b9cb3] mr-2">
+            <span className="text-[10px] italic text-[#b8c5d6] mr-2">
               {typingUsers.length === 1
                 ? t("comments.typingOne", { defaultValue: "{{name}} is typing…", name: typingUsers[0] })
                 : t("comments.typingMany", { defaultValue: "Several people are typing…" })}
@@ -400,7 +400,7 @@ export function EmailComments({
                         {e.sender || t("comments.anonymous")}
                       </span>
                       {e.createdAt && (
-                        <span className="text-[10px] text-[#8b9cb3]">
+                        <span className="text-[10px] text-[#b8c5d6]">
                           {format(new Date(e.createdAt), "d MMM yyyy HH:mm", { locale: dateLocale })}
                         </span>
                       )}
@@ -433,11 +433,11 @@ export function EmailComments({
                       <span className="text-[11px] font-medium text-white">
                         {comment.authorName || t("comments.anonymous")}
                       </span>
-                      <span className="text-[10px] text-[#8b9cb3]">
+                      <span className="text-[10px] text-[#b8c5d6]">
                         {format(new Date(comment.createdAt), "d MMM yyyy HH:mm", { locale: dateLocale })}
                       </span>
                       {comment.updatedAt !== comment.createdAt && (
-                        <span className="text-[9px] text-[#8b9cb3] italic">{t("comments.edited")}</span>
+                        <span className="text-[9px] text-[#b8c5d6] italic">{t("comments.edited")}</span>
                       )}
                       <span className="text-[9px] text-primary/80 uppercase tracking-wider">
                         {t("comments.internalNote", { defaultValue: "Note" })}
@@ -445,10 +445,10 @@ export function EmailComments({
                     </div>
                     {isOwn && !isEditing && (
                       <div className="flex items-center gap-1">
-                        <button onClick={() => { setEditingId(comment.id); setEditingText(comment.body); }} className="text-[#8b9cb3] hover:text-white p-0.5">
+                        <button onClick={() => { setEditingId(comment.id); setEditingText(comment.body); }} className="text-[#b8c5d6] hover:text-white p-0.5">
                           <Pencil className="w-3 h-3" />
                         </button>
-                        <button onClick={() => handleDelete(comment.id)} className="text-[#8b9cb3] hover:text-red-400 p-0.5">
+                        <button onClick={() => handleDelete(comment.id)} className="text-[#b8c5d6] hover:text-red-400 p-0.5">
                           <Trash2 className="w-3 h-3" />
                         </button>
                       </div>
@@ -458,7 +458,7 @@ export function EmailComments({
                     <div className="space-y-2">
                       <Textarea value={editingText} onChange={(e) => setEditingText(e.target.value)} className="h-16 bg-card border-border text-white text-[12px] resize-none" autoFocus />
                       <div className="flex items-center gap-1.5 justify-end">
-                        <Button variant="ghost" size="sm" onClick={() => { setEditingId(null); setEditingText(""); }} className="h-6 text-[10px] text-[#8b9cb3]">
+                        <Button variant="ghost" size="sm" onClick={() => { setEditingId(null); setEditingText(""); }} className="h-6 text-[10px] text-[#b8c5d6]">
                           <X className="w-3 h-3 mr-0.5" /> {t("comments.cancel")}
                         </Button>
                         <Button size="sm" onClick={() => handleUpdate(comment.id)} disabled={!editingText.trim() || updateComment.isPending} className="h-6 text-[10px]">
@@ -499,7 +499,7 @@ export function EmailComments({
           </div>
           {showSuggest && filteredMembers.length > 0 && (
             <div className="absolute left-0 bottom-full mb-1 z-30 bg-card border border-border rounded shadow-lg w-64 max-h-56 overflow-y-auto">
-              <div className="text-[10px] uppercase tracking-wider text-[#8b9cb3] px-2 pt-1.5 flex items-center gap-1">
+              <div className="text-[10px] uppercase tracking-wider text-[#b8c5d6] px-2 pt-1.5 flex items-center gap-1">
                 <AtSign className="w-3 h-3" /> {t("comments.mentionPick")}
               </div>
               {filteredMembers.map((m) => (
@@ -514,13 +514,13 @@ export function EmailComments({
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="text-[11px] text-white truncate">{m.fullName || m.email}</div>
-                    {m.fullName && m.email && <div className="text-[10px] text-[#8b9cb3] truncate">{m.email}</div>}
+                    {m.fullName && m.email && <div className="text-[10px] text-[#b8c5d6] truncate">{m.email}</div>}
                   </div>
                 </button>
               ))}
             </div>
           )}
-          <p className="text-[9px] text-[#8b9cb3] mt-1">
+          <p className="text-[9px] text-[#b8c5d6] mt-1">
             {t("comments.ctrlEnter")} · {t("comments.mentionHint")}
             {mentionedIds.length > 0 && <span className="ml-2 text-primary">· {mentionedIds.length} @</span>}
           </p>

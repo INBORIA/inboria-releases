@@ -79,7 +79,7 @@ function TooltipBox({ title, rows }: { title: string; rows: TooltipRow[] }) {
       <p className="font-medium text-white mb-1 truncate">{title}</p>
       {rows.map((r, i) => (
         <div key={i} className="flex items-center justify-between gap-3">
-          <span className="text-[#8b9cb3]">{r.label}</span>
+          <span className="text-[#b8c5d6]">{r.label}</span>
           <span style={{ color: r.color ?? "#fff" }}>{r.value}</span>
         </div>
       ))}
@@ -248,7 +248,7 @@ export default function BilanQuotidien() {
               <Sparkles className="w-4 h-4 text-primary" />
               {t("brief.aiDailyBrief")}
             </h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("brief.personalizedSummary")}</p>
+            <p className="text-[12px] text-[#b8c5d6] mt-0.5">{t("brief.personalizedSummary")}</p>
           </div>
           <Button onClick={fetchSummary} disabled={generateSummary.isPending} size="sm" className="shrink-0 h-8 text-[12px]">
             <RefreshCw className={`w-3 h-3 mr-1.5 ${generateSummary.isPending ? "animate-spin" : ""}`} />
@@ -260,13 +260,13 @@ export default function BilanQuotidien() {
           <div className="bg-card rounded-lg border border-border p-8 flex flex-col items-center justify-center text-center">
             <RefreshCw className="w-8 h-8 text-primary animate-spin mb-3" />
             <h3 className="text-[13px] font-medium text-white">{t("brief.analyzing")}</h3>
-            <p className="text-[12px] text-[#8b9cb3] mt-1 max-w-md">{t("brief.analyzingDesc")}</p>
+            <p className="text-[12px] text-[#b8c5d6] mt-1 max-w-md">{t("brief.analyzingDesc")}</p>
           </div>
         ) : !summaryData ? (
           <div className="bg-card rounded-lg border border-border border-dashed p-8 flex flex-col items-center justify-center text-center mb-4">
-            <BarChart3 className="w-8 h-8 text-[#8b9cb3]/30 mb-3" />
+            <BarChart3 className="w-8 h-8 text-[#b8c5d6]/30 mb-3" />
             <h3 className="text-[13px] font-medium text-white mb-1">{t("brief.noBrief")}</h3>
-            <p className="text-[12px] text-[#8b9cb3] mb-3">{t("brief.clickRegenerate")}</p>
+            <p className="text-[12px] text-[#b8c5d6] mb-3">{t("brief.clickRegenerate")}</p>
             <Button onClick={fetchSummary} size="sm" className="h-7 text-[11px]">
               <Sparkles className="w-3 h-3 mr-1.5" />
               {t("brief.generateBrief")}
@@ -279,7 +279,7 @@ export default function BilanQuotidien() {
                 <p className="text-[10px] font-medium text-primary uppercase tracking-wider mb-0.5">{t("brief.serenityScore")}</p>
                 <div className="flex items-end gap-1">
                   <span className="text-2xl font-bold text-white tracking-tighter">{summaryData.score}</span>
-                  <span className="text-[12px] text-[#8b9cb3] mb-0.5">/100</span>
+                  <span className="text-[12px] text-[#b8c5d6] mb-0.5">/100</span>
                 </div>
                 <div className="w-full h-1 bg-white/10 rounded-full mt-2 overflow-hidden">
                   <div className="h-full bg-primary rounded-full" style={{ width: `${summaryData.score}%` }} />
@@ -292,7 +292,7 @@ export default function BilanQuotidien() {
                   <span className="text-[10px] font-medium text-red-400 uppercase tracking-wider">{t("brief.urgencies")}</span>
                 </div>
                 <div className="text-xl font-bold text-white">
-                  {summaryData.stats.urgent} <span className="text-[11px] font-normal text-[#8b9cb3]">{t("brief.toHandle")}</span>
+                  {summaryData.stats.urgent} <span className="text-[11px] font-normal text-[#b8c5d6]">{t("brief.toHandle")}</span>
                 </div>
               </div>
 
@@ -302,7 +302,7 @@ export default function BilanQuotidien() {
                   <span className="text-[10px] font-medium text-primary uppercase tracking-wider">{t("brief.tasksLabel")}</span>
                 </div>
                 <div className="text-xl font-bold text-white">
-                  {summaryData.stats.pending} <span className="text-[11px] font-normal text-[#8b9cb3]">{t("brief.newTasks")}</span>
+                  {summaryData.stats.pending} <span className="text-[11px] font-normal text-[#b8c5d6]">{t("brief.newTasks")}</span>
                 </div>
               </div>
             </div>
@@ -322,7 +322,7 @@ export default function BilanQuotidien() {
                       </div>
                       <span className="text-white font-medium truncate">{apt.title}</span>
                       {apt.location && (
-                        <span className="text-[#8b9cb3] flex items-center gap-1 shrink-0">
+                        <span className="text-[#b8c5d6] flex items-center gap-1 shrink-0">
                           <MapPin className="w-3 h-3" />
                           {apt.location}
                         </span>
@@ -355,7 +355,7 @@ export default function BilanQuotidien() {
 
             <div className="bg-card rounded-lg border border-border border-l-2 border-l-primary p-4">
               <h2 className="text-[13px] font-semibold text-white mb-2">{t("brief.overview")}</h2>
-              <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{summaryData.summary}</p>
+              <p className="text-[12px] text-[#b8c5d6] leading-relaxed">{summaryData.summary}</p>
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
@@ -375,13 +375,13 @@ export default function BilanQuotidien() {
                           <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium border bg-amber-500/15 text-amber-400 border-amber-500/20">{t("brief.important")}</span>
                         )}
                       </div>
-                      <h4 className="text-[12px] text-[#8b9cb3] mb-1.5">{email.subject}</h4>
-                      <p className="text-[11px] text-[#8b9cb3]/70 bg-background rounded p-2 border border-border">{email.summary}</p>
+                      <h4 className="text-[12px] text-[#b8c5d6] mb-1.5">{email.subject}</h4>
+                      <p className="text-[11px] text-[#b8c5d6]/70 bg-background rounded p-2 border border-border">{email.summary}</p>
                     </div>
                   ))
                 ) : (
                   <div className="bg-card rounded-lg border border-border border-dashed p-6 text-center">
-                    <p className="text-[12px] text-[#8b9cb3]">{t("brief.noCriticalEmail")}</p>
+                    <p className="text-[12px] text-[#b8c5d6]">{t("brief.noCriticalEmail")}</p>
                   </div>
                 )}
               </div>
@@ -395,7 +395,7 @@ export default function BilanQuotidien() {
                   <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center mb-2">
                     <Sparkles className="w-4 h-4 text-primary" />
                   </div>
-                  <p className="text-[12px] text-[#8b9cb3] leading-relaxed italic">"{summaryData.advice}"</p>
+                  <p className="text-[12px] text-[#b8c5d6] leading-relaxed italic">"{summaryData.advice}"</p>
                 </div>
               </div>
             </div>
@@ -410,7 +410,7 @@ export default function BilanQuotidien() {
                 <Users className="w-4 h-4 text-primary" />
                 {t("analytics.title")}
               </h2>
-              <p className="text-[11px] text-[#8b9cb3] mt-0.5">{t("analytics.subtitle")}</p>
+              <p className="text-[11px] text-[#b8c5d6] mt-0.5">{t("analytics.subtitle")}</p>
             </div>
             <div className="flex flex-wrap items-center gap-2">
               <div className="flex items-center bg-card border border-border rounded p-0.5">
@@ -419,7 +419,7 @@ export default function BilanQuotidien() {
                     key={p}
                     type="button"
                     onClick={() => setPeriod(p)}
-                    className={`text-[10px] px-2 py-1 rounded ${period === p ? "bg-primary text-white" : "text-[#8b9cb3] hover:text-white"}`}
+                    className={`text-[10px] px-2 py-1 rounded ${period === p ? "bg-primary text-white" : "text-[#b8c5d6] hover:text-white"}`}
                   >
                     {p}
                   </button>
@@ -472,7 +472,7 @@ export default function BilanQuotidien() {
           {teamAnalytics.isLoading ? (
             <div className="flex justify-center py-6"><RefreshCw className="w-4 h-4 animate-spin text-muted-foreground" /></div>
           ) : !ta ? (
-            <div className="bg-card border border-border rounded-lg p-4 text-[12px] text-[#8b9cb3]">{t("analytics.empty")}</div>
+            <div className="bg-card border border-border rounded-lg p-4 text-[12px] text-[#b8c5d6]">{t("analytics.empty")}</div>
           ) : (
             <div className="space-y-3">
               {ta.handledMetricsEnabled === false && (
@@ -508,8 +508,8 @@ export default function BilanQuotidien() {
                   <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={ta.evolution}>
                       <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
-                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#8b9cb3" }} />
-                      <YAxis tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
+                      <XAxis dataKey="date" tick={{ fontSize: 10, fill: "#b8c5d6" }} />
+                      <YAxis tick={{ fontSize: 10, fill: "#b8c5d6" }} allowDecimals={false} />
                       <Tooltip contentStyle={{ background: "#0d1117", border: "1px solid #1f2937", fontSize: 11 }} />
                       <Legend wrapperStyle={{ fontSize: 10 }} />
                       <Line type="monotone" dataKey="count" name={t("analytics.receivedPerDay")} stroke="#2d7dd2" strokeWidth={2} dot={false} />
@@ -525,14 +525,14 @@ export default function BilanQuotidien() {
                 <div className="bg-card rounded-lg border border-border p-3">
                   <h3 className="text-[12px] font-semibold text-white mb-2">{t("analytics.topSenders")}</h3>
                   {ta.topSenders.length === 0 ? (
-                    <p className="text-[11px] text-[#8b9cb3] py-6 text-center">{t("analytics.noTopSenders")}</p>
+                    <p className="text-[11px] text-[#b8c5d6] py-6 text-center">{t("analytics.noTopSenders")}</p>
                   ) : (
                     <div className="h-44 sm:h-56 w-full">
                       <ResponsiveContainer width="100%" height="100%">
                         <BarChart data={ta.topSenders.slice(0, 8)} layout="vertical" margin={{ left: 8, right: 16 }}>
                           <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
-                          <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
-                          <YAxis type="category" dataKey="email" width={210} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                          <XAxis type="number" tick={{ fontSize: 10, fill: "#b8c5d6" }} allowDecimals={false} />
+                          <YAxis type="category" dataKey="email" width={210} tick={{ fontSize: 10, fill: "#b8c5d6" }} interval={0} />
                           <Tooltip contentStyle={{ background: "#0d1117", border: "1px solid #1f2937", fontSize: 11 }} />
                           <Bar dataKey="count" fill="#2d7dd2" />
                         </BarChart>
@@ -574,8 +574,8 @@ export default function BilanQuotidien() {
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={loadPerMemberData} layout="vertical" margin={{ left: 8, right: 16 }}>
                               <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
-                              <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
-                              <YAxis type="category" dataKey="name" width={130} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                              <XAxis type="number" tick={{ fontSize: 10, fill: "#b8c5d6" }} allowDecimals={false} />
+                              <YAxis type="category" dataKey="name" width={130} tick={{ fontSize: 10, fill: "#b8c5d6" }} interval={0} />
                               <Tooltip content={makeChartTooltip<MailMemberDatum>((d) => [
                                 { label: t("analytics.colOpenLoad"), value: d.openLoad, color: "#2d7dd2" },
                                 { label: t("analytics.colHandled"), value: d.handled, color: "#4ed29a" },
@@ -596,8 +596,8 @@ export default function BilanQuotidien() {
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={delayPerMemberData} layout="vertical" margin={{ left: 8, right: 16 }}>
                               <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
-                              <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} unit=" min" />
-                              <YAxis type="category" dataKey="name" width={130} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                              <XAxis type="number" tick={{ fontSize: 10, fill: "#b8c5d6" }} allowDecimals={false} unit=" min" />
+                              <YAxis type="category" dataKey="name" width={130} tick={{ fontSize: 10, fill: "#b8c5d6" }} interval={0} />
                               <Tooltip content={makeChartTooltip<DelayDatum>((d) => [
                                 { label: t("analytics.colAvgResponse"), value: d.label, color: d.delay > 240 ? "#d24e6f" : "#fff" },
                                 { label: "min", value: d.delay },
@@ -619,8 +619,8 @@ export default function BilanQuotidien() {
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={sharedMailboxData} layout="vertical" margin={{ left: 8, right: 16 }}>
                               <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
-                              <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
-                              <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                              <XAxis type="number" tick={{ fontSize: 10, fill: "#b8c5d6" }} allowDecimals={false} />
+                              <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#b8c5d6" }} interval={0} />
                               <Tooltip content={makeChartTooltip<ScopeDatum>((d) => [
                                 { label: t("analytics.colReceived"), value: d.received },
                                 { label: t("analytics.colHandled"), value: d.handled, color: "#4ed29a" },
@@ -642,8 +642,8 @@ export default function BilanQuotidien() {
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={projectsData} layout="vertical" margin={{ left: 8, right: 16 }}>
                               <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
-                              <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
-                              <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                              <XAxis type="number" tick={{ fontSize: 10, fill: "#b8c5d6" }} allowDecimals={false} />
+                              <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#b8c5d6" }} interval={0} />
                               <Tooltip content={makeChartTooltip<ScopeDatum>((d) => [
                                 { label: t("analytics.colReceived"), value: d.received },
                                 { label: t("analytics.colHandled"), value: d.handled, color: "#4ed29a" },
@@ -712,8 +712,8 @@ export default function BilanQuotidien() {
                           <ResponsiveContainer width="100%" height="100%">
                             <BarChart data={tasksProjectData} layout="vertical" margin={{ left: 8, right: 16 }}>
                               <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
-                              <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
-                              <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                              <XAxis type="number" tick={{ fontSize: 10, fill: "#b8c5d6" }} allowDecimals={false} />
+                              <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#b8c5d6" }} interval={0} />
                               <Tooltip content={makeChartTooltip<TaskDatum>((d) => [
                                 { label: t("analytics.colTasksOpen"), value: d.open, color: "#2d7dd2" },
                                 { label: t("analytics.colTasksDone"), value: d.done, color: "#4ed29a" },
@@ -745,8 +745,8 @@ function StatCard({ label, value, accent = "default" }: { label: string; value: 
   const isMuted = accent === "muted";
   return (
     <div className={`rounded-lg border p-3 ${isRed ? "bg-red-500/10 border-red-500/20" : "bg-card border-border"}`}>
-      <p className="text-[10px] uppercase tracking-wider text-[#8b9cb3]">{label}</p>
-      <p className={`text-xl font-bold ${isRed ? "text-red-400" : isMuted ? "text-[#8b9cb3]" : "text-white"}`}>{value}</p>
+      <p className="text-[10px] uppercase tracking-wider text-[#b8c5d6]">{label}</p>
+      <p className={`text-xl font-bold ${isRed ? "text-red-400" : isMuted ? "text-[#b8c5d6]" : "text-white"}`}>{value}</p>
     </div>
   );
 }
@@ -754,7 +754,7 @@ function StatCard({ label, value, accent = "default" }: { label: string; value: 
 function StatCardText({ label, value }: { label: string; value: string }) {
   return (
     <div className="rounded-lg border bg-card border-border p-3">
-      <p className="text-[10px] uppercase tracking-wider text-[#8b9cb3]">{label}</p>
+      <p className="text-[10px] uppercase tracking-wider text-[#b8c5d6]">{label}</p>
       <p className="text-xl font-bold text-white">{value}</p>
     </div>
   );
@@ -767,7 +767,7 @@ function AnalyticsChartCard({ title, tooltip, children }: { title: string; toolt
         <h3 className="text-[12px] font-semibold text-white">{title}</h3>
         <InfoTooltip>
           <TooltipTrigger asChild>
-            <button type="button" aria-label="info" className="text-[#8b9cb3] hover:text-white transition-colors">
+            <button type="button" aria-label="info" className="text-[#b8c5d6] hover:text-white transition-colors">
               <HelpCircle className="w-3 h-3" />
             </button>
           </TooltipTrigger>
@@ -788,7 +788,7 @@ function PersonalMailboxSection({ data, t }: { data: PersonalDatum[]; t: (k: str
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
-        className="flex items-center gap-1.5 text-[11px] text-[#8b9cb3] hover:text-white transition-colors"
+        className="flex items-center gap-1.5 text-[11px] text-[#b8c5d6] hover:text-white transition-colors"
       >
         {open ? <ChevronDown className="w-3 h-3" /> : <ChevronRight className="w-3 h-3" />}
         {t("analytics.personalDetailToggle")}
@@ -800,8 +800,8 @@ function PersonalMailboxSection({ data, t }: { data: PersonalDatum[]; t: (k: str
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={data} layout="vertical" margin={{ left: 8, right: 16 }}>
                   <CartesianGrid stroke="#1f2937" strokeDasharray="3 3" />
-                  <XAxis type="number" tick={{ fontSize: 10, fill: "#8b9cb3" }} allowDecimals={false} />
-                  <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#8b9cb3" }} interval={0} />
+                  <XAxis type="number" tick={{ fontSize: 10, fill: "#b8c5d6" }} allowDecimals={false} />
+                  <YAxis type="category" dataKey="name" width={140} tick={{ fontSize: 10, fill: "#b8c5d6" }} interval={0} />
                   <Tooltip content={makeChartTooltip<PersonalDatum>((d) => [
                     { label: t("analytics.colReceived"), value: d.received, color: "#2d7dd2" },
                     { label: t("analytics.colHandled"), value: d.handled, color: "#4ed29a" },

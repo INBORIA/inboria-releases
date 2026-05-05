@@ -107,14 +107,14 @@ export function SupportChatWidget() {
                 <p className="text-[13px] font-semibold text-white">
                   {t("supportChat.title")}
                 </p>
-                <p className="text-[10px] text-[#8b9cb3]">
+                <p className="text-[10px] text-[#b8c5d6]">
                   {t("supportChat.subtitle")}
                 </p>
               </div>
             </div>
             <button
               onClick={() => setIsOpen(false)}
-              className="text-[#8b9cb3] hover:text-white transition-colors p-1 rounded-md hover:bg-white/[0.06]"
+              className="text-[#b8c5d6] hover:text-white transition-colors p-1 rounded-md hover:bg-white/[0.06]"
             >
               <X className="h-4 w-4" />
             </button>
@@ -129,7 +129,7 @@ export function SupportChatWidget() {
                 <p className="text-[13px] font-medium text-white mb-1">
                   {t("supportChat.welcomeTitle")}
                 </p>
-                <p className="text-[11px] text-[#8b9cb3] leading-relaxed">
+                <p className="text-[11px] text-[#b8c5d6] leading-relaxed">
                   {t("supportChat.welcomeMessage")}
                 </p>
               </div>
@@ -191,7 +191,7 @@ export function SupportChatWidget() {
                 onKeyDown={handleKeyDown}
                 placeholder={t("supportChat.placeholder")}
                 disabled={isLoading}
-                className="flex-1 bg-white/[0.06] border border-[#1f2937] rounded-lg px-3 py-2 text-[12px] text-white placeholder:text-[#8b9cb3] focus:outline-none focus:border-primary/50 disabled:opacity-50"
+                className="flex-1 bg-white/[0.06] border border-[#1f2937] rounded-lg px-3 py-2 text-[12px] text-white placeholder:text-[#b8c5d6] focus:outline-none focus:border-primary/50 disabled:opacity-50"
                 maxLength={2000}
               />
               <button
@@ -202,7 +202,7 @@ export function SupportChatWidget() {
                 <Send className="h-3.5 w-3.5 text-white" />
               </button>
             </div>
-            <p className="text-[9px] text-[#8b9cb3] mt-1.5 text-center">
+            <p className="text-[9px] text-[#b8c5d6] mt-1.5 text-center">
               {t("supportChat.poweredBy")}
             </p>
           </div>

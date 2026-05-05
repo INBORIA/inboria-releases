@@ -84,7 +84,7 @@ export function NotificationBell() {
     <div className="relative" ref={panelRef}>
       <button
         onClick={() => setOpen(!open)}
-        className="relative p-1.5 rounded-md text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] transition-colors"
+        className="relative p-1.5 rounded-md text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] transition-colors"
       >
         <Bell className="h-4 w-4" />
         {unreadCount > 0 && (
@@ -109,7 +109,7 @@ export function NotificationBell() {
           </div>
           <div className="flex-1 overflow-y-auto">
             {!notifications || (notifications as any[]).length === 0 ? (
-              <div className="p-6 text-center text-[11px] text-[#8b9cb3]">
+              <div className="p-6 text-center text-[11px] text-[#b8c5d6]">
                 {t("notifications.noNotifications")}
               </div>
             ) : (
@@ -130,9 +130,9 @@ export function NotificationBell() {
                     <div className="flex-1 min-w-0">
                       <p className={cn("text-[11px] font-medium truncate", n.type === "connection_disconnected" ? "text-red-300" : "text-white")}>{n.title}</p>
                       {n.message && (
-                        <p className="text-[10px] text-[#8b9cb3] mt-0.5 line-clamp-2">{n.message}</p>
+                        <p className="text-[10px] text-[#b8c5d6] mt-0.5 line-clamp-2">{n.message}</p>
                       )}
-                      <p className="text-[9px] text-[#8b9cb3]/70 mt-1">{formatTime(n.createdAt)}</p>
+                      <p className="text-[9px] text-[#b8c5d6]/70 mt-1">{formatTime(n.createdAt)}</p>
                     </div>
                   </div>
                 </button>

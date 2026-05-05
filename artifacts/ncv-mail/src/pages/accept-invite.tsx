@@ -91,17 +91,17 @@ export default function AcceptInvite() {
           {status === "loading" && (
             <>
               <Loader2 className="h-8 w-8 animate-spin text-[#2d7dd2]" />
-              <p className="text-[#8b9cb3]">{t("auth.acceptingInvite")}</p>
+              <p className="text-[#b8c5d6]">{t("auth.acceptingInvite")}</p>
             </>
           )}
 
           {status === "wrong-account" && (
             <>
               <Mail className="h-8 w-8 text-yellow-500" />
-              <p className="text-[#8b9cb3] text-center">
+              <p className="text-[#b8c5d6] text-center">
                 {t("auth.inviteForEmail", { email: inviteEmail }).replace(/<1>|<\/1>/g, "")}
               </p>
-              <p className="text-[#8b9cb3] text-center text-sm">
+              <p className="text-[#b8c5d6] text-center text-sm">
                 {t("auth.wrongAccountDesc")}
               </p>
               <Button
@@ -116,7 +116,7 @@ export default function AcceptInvite() {
                   await supabase.auth.signOut();
                   window.location.href = import.meta.env.BASE_URL + `login?redirect=${encodedRedirect}`;
                 }}
-                className="border-[#1f2937] text-[#8b9cb3] w-full"
+                className="border-[#1f2937] text-[#b8c5d6] w-full"
               >
                 {t("auth.loginWith", { email: inviteEmail })}
               </Button>
@@ -126,7 +126,7 @@ export default function AcceptInvite() {
           {status === "login-required" && (
             <>
               <Mail className="h-8 w-8 text-[#2d7dd2]" />
-              <p className="text-[#8b9cb3] text-center">
+              <p className="text-[#b8c5d6] text-center">
                 {t("auth.loginRequired")}
               </p>
               <Button
@@ -138,7 +138,7 @@ export default function AcceptInvite() {
               <Button
                 variant="outline"
                 onClick={() => navigate(`/login?redirect=${encodedRedirect}`)}
-                className="border-[#1f2937] text-[#8b9cb3] w-full"
+                className="border-[#1f2937] text-[#b8c5d6] w-full"
               >
                 {t("auth.alreadyAccount")}
               </Button>

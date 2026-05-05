@@ -166,7 +166,7 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
           size="sm"
           draggable
           onDragStart={onDragStart}
-          className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04] cursor-grab active:cursor-grabbing"
+          className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] cursor-grab active:cursor-grabbing"
           disabled={busy}
           title="Glissez vers un dossier pour exporter en .eml (Chrome/Edge), ou cliquez pour choisir le format"
           data-testid="email-export-menu"
@@ -176,7 +176,7 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="bg-card border-border w-64">
-        <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-[#8b9cb3]">
+        <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-[#b8c5d6]">
           Format d'export
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
@@ -186,7 +186,7 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
           data-testid="email-export-eml"
         >
           <span className="font-medium">.eml — fichier mail</span>
-          <span className="text-[10px] text-[#8b9cb3]">Ouvrir dans Outlook, Apple Mail, Thunderbird</span>
+          <span className="text-[10px] text-[#b8c5d6]">Ouvrir dans Outlook, Apple Mail, Thunderbird</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className="text-[12px] text-white focus:bg-white/[0.06] cursor-pointer flex flex-col items-start gap-0.5 py-2"
@@ -194,10 +194,10 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
           data-testid="email-export-csv"
         >
           <span className="font-medium">.csv — tableau Excel</span>
-          <span className="text-[10px] text-[#8b9cb3]">Métadonnées (expéditeur, objet, date, statut)</span>
+          <span className="text-[10px] text-[#b8c5d6]">Métadonnées (expéditeur, objet, date, statut)</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <div className="px-2 py-1.5 text-[10px] text-[#8b9cb3] leading-relaxed">
+        <div className="px-2 py-1.5 text-[10px] text-[#b8c5d6] leading-relaxed">
           💡 Sur Chrome/Edge, une fenêtre vous demandera où enregistrer le fichier.
         </div>
       </DropdownMenuContent>
@@ -422,7 +422,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                             {email.sender}
                           </div>
                           {email.senderEmail && email.senderEmail !== email.sender && (
-                            <div className="text-[11px] text-[#8b9cb3] hover:underline">
+                            <div className="text-[11px] text-[#b8c5d6] hover:underline">
                               {email.senderEmail}
                             </div>
                           )}
@@ -444,7 +444,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     })()}
                   </div>
                 </div>
-                <span className="text-[10px] text-[#8b9cb3] flex items-center gap-1">
+                <span className="text-[10px] text-[#b8c5d6] flex items-center gap-1">
                   <Clock className="w-3 h-3" />
                   {format(new Date(email.createdAt), "d MMMM yyyy a HH:mm", { locale: dateFnsLocale })}
                 </span>
@@ -454,7 +454,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 if (!badge) return null;
                 return (
                   <div className="flex items-center gap-1.5 mb-2">
-                    <span className="text-[10px] uppercase tracking-wider text-[#8b9cb3] font-medium">{t("inbox.receivedOn")}</span>
+                    <span className="text-[10px] uppercase tracking-wider text-[#b8c5d6] font-medium">{t("inbox.receivedOn")}</span>
                     <span
                       title={badge.label}
                       aria-label={badge.label}
@@ -501,22 +501,22 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 }
                 return (
                   <div className="flex items-start gap-1.5 mb-2 flex-wrap">
-                    <span className="text-[10px] uppercase tracking-wider text-[#8b9cb3] font-medium mt-0.5">{t("inbox.toLabel", "À")}</span>
+                    <span className="text-[10px] uppercase tracking-wider text-[#b8c5d6] font-medium mt-0.5">{t("inbox.toLabel", "À")}</span>
                     {recipients.map((r, i) => (
                       <span key={r.email} className="inline-flex items-center">
                         <span
-                          className="text-[11px] text-[#8b9cb3]"
+                          className="text-[11px] text-[#b8c5d6]"
                           data-testid={`link-contact-recipient-${r.email}`}
                         >
                           {r.name}
                         </span>
-                        {i < recipients.length - 1 && <span className="text-[11px] text-[#8b9cb3] mx-0.5">,</span>}
+                        {i < recipients.length - 1 && <span className="text-[11px] text-[#b8c5d6] mx-0.5">,</span>}
                       </span>
                     ))}
                   </div>
                 );
               })()}
-              <div className="text-[10px] uppercase tracking-wider text-[#8b9cb3] font-medium mb-1">{t("inbox.subjectLabel")}</div>
+              <div className="text-[10px] uppercase tracking-wider text-[#b8c5d6] font-medium mb-1">{t("inbox.subjectLabel")}</div>
               <h2 className="text-[16px] font-bold text-white leading-snug">{email.subject || "(Sans objet)"}</h2>
               {(() => {
                 const sn = (email as any).snoozedUntil;
@@ -552,7 +552,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   <Sparkles className="w-3 h-3 text-primary" />
                   <span className="text-[10px] font-medium text-primary uppercase tracking-wider">{t("inbox.aiSummary")}</span>
                 </div>
-                <p className="text-[12px] text-[#8b9cb3] leading-relaxed">{email.summary}</p>
+                <p className="text-[12px] text-[#b8c5d6] leading-relaxed">{email.summary}</p>
               </div>
             )}
 
@@ -617,7 +617,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
                   onClick={() => {
                     if (!forwardOpen) {
                       const defConn = resolveDefaultConnectionId();
@@ -689,7 +689,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
                   onClick={() => onArchive(email.id)}
                 >
                   <Archive className="w-3 h-3" />
@@ -750,7 +750,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   className={`gap-1.5 h-7 text-[11px] bg-transparent ${
                     isPrivate
                       ? "border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
-                      : "border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                      : "border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
                   }`}
                   onClick={togglePrivate}
                   disabled={privateLoading}
@@ -867,7 +867,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
               </div>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.priority")}:</span>
+                  <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider">{t("inbox.priority")}:</span>
                   <Select value={email.priority} onValueChange={(val) => onUpdatePriority(email.id, val)}>
                     <SelectTrigger className="w-[100px] h-6 bg-card border-border text-[11px] text-white">
                       <SelectValue />
@@ -880,7 +880,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   </Select>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.category")}:</span>
+                  <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider">{t("inbox.category")}:</span>
                   <Select value={email.categoryId?.toString() || "none"} onValueChange={(val) => onUpdateCategory(email.id, val)}>
                     <SelectTrigger className="w-[130px] h-6 bg-card border-border text-[11px] text-white">
                       <SelectValue />
@@ -894,7 +894,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   </Select>
                 </div>
                 <div className="flex items-center gap-1.5">
-                  <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.project")}:</span>
+                  <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider">{t("inbox.project")}:</span>
                   <Select value={email.projectId || "none"} onValueChange={(val) => onUpdateProject(email.id, val)}>
                     <SelectTrigger className="w-[140px] h-6 bg-card border-border text-[11px] text-white">
                       <SelectValue />
@@ -926,12 +926,12 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     <Sparkles className="w-3 h-3" />
                     <span className="font-medium">{t("inboriaExpert.suggested")}</span>
                     <span className="text-white">{expertSuggestion.fullName || t("inboriaExpert.aTeammate")}</span>
-                    <span className="text-[#8b9cb3]">· {t("inboriaExpert.assignThisOne")}</span>
+                    <span className="text-[#b8c5d6]">· {t("inboriaExpert.assignThisOne")}</span>
                   </button>
                 )}
                 {orgMembers && orgMembers.length > 0 && (
                   <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider">{t("inbox.assignedTo")}:</span>
+                    <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider">{t("inbox.assignedTo")}:</span>
                     <Select
                       value={email.assignedTo || "none"}
                       onValueChange={(val) => {
@@ -968,7 +968,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   <span className="text-[11px] font-medium text-cyan-400 uppercase tracking-wider">{t("inbox.newTask")}</span>
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.taskTitle")}</label>
+                  <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.taskTitle")}</label>
                   <Input
                     value={taskTitle}
                     onChange={(e) => setTaskTitle(e.target.value)}
@@ -977,7 +977,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.taskProjectOptional")}</label>
+                  <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.taskProjectOptional")}</label>
                   <Select value={taskProjectId} onValueChange={setTaskProjectId}>
                     <SelectTrigger className="w-full h-8 bg-background border-border text-[12px] text-white">
                       <SelectValue placeholder={t("inbox.noProject")} />
@@ -991,7 +991,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   </Select>
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("tasks.assignTo", "Assigner à")}</label>
+                  <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("tasks.assignTo", "Assigner à")}</label>
                   <TaskAssigneePicker
                     members={(orgMembers as any[]) || []}
                     currentUserId={currentUserId || null}
@@ -1004,7 +1004,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     variant="ghost"
                     size="sm"
                     onClick={() => { setTaskFormOpen(false); setTaskTitle(""); setTaskProjectId("none"); setTaskAssignees([]); }}
-                    className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
+                    className="text-[#b8c5d6] hover:text-white h-7 text-[11px]"
                   >
                     {t("common.cancel")}
                   </Button>
@@ -1047,7 +1047,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 />
                 {connections && connections.length > 1 && (
                   <div>
-                    <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.from", "De")}</label>
+                    <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.from", "De")}</label>
                     <Select
                       value={replyConnectionId}
                       onValueChange={(v) => {
@@ -1078,7 +1078,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   </div>
                 )}
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
+                  <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
                   <Input
                     value={replyTo}
                     onChange={(e) => setReplyTo(e.target.value)}
@@ -1088,7 +1088,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 </div>
                 {projects && projects.length > 0 && (
                   <div>
-                    <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.project")}</label>
+                    <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.project")}</label>
                     <Select value={replyProjectId || "__none__"} onValueChange={(v) => setReplyProjectId(v === "__none__" ? "" : v)}>
                       <SelectTrigger className="bg-background border-border text-white text-[12px] h-8">
                         <SelectValue placeholder={t("inbox.noProject")} />
@@ -1103,7 +1103,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   </div>
                 )}
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.subject")}</label>
+                  <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.subject")}</label>
                   <Input
                     value={replySubject}
                     onChange={(e) => setReplySubject(e.target.value)}
@@ -1112,7 +1112,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
+                  <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
                   <SignatureEditor
                     value={replyText}
                     onChange={setReplyText}
@@ -1129,7 +1129,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       variant="ghost"
                       size="sm"
                       onClick={() => { setReplyOpen(false); setReplyText(""); setReplyTo(""); setReplySubject(""); setReplyAttachments([]); }}
-                      className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
+                      className="text-[#b8c5d6] hover:text-white h-7 text-[11px]"
                     >
                       {t("common.cancel")}
                     </Button>
@@ -1191,7 +1191,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">
                 {connections && connections.length > 1 && (
                   <div>
-                    <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.from", "De")}</label>
+                    <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.from", "De")}</label>
                     <Select
                       value={forwardConnectionId}
                       onValueChange={(v) => {
@@ -1230,7 +1230,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   </div>
                 )}
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
+                  <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.replyTo")}</label>
                   <Input
                     value={forwardTo}
                     onChange={(e) => setForwardTo(e.target.value)}
@@ -1239,7 +1239,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.subject")}</label>
+                  <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.subject")}</label>
                   <Input
                     value={forwardSubject}
                     onChange={(e) => setForwardSubject(e.target.value)}
@@ -1248,7 +1248,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] text-[#8b9cb3] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
+                  <label className="text-[10px] text-[#b8c5d6] uppercase tracking-wider mb-1 block">{t("inbox.message")}</label>
                   <SignatureEditor
                     value={forwardText}
                     onChange={setForwardText}
@@ -1258,10 +1258,10 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   />
                 </div>
                 {Array.isArray(email?.attachments) && email.attachments.length > 0 && (
-                  <div className="text-[11px] text-[#8b9cb3] bg-white/[0.02] border border-border rounded-md p-2">
+                  <div className="text-[11px] text-[#b8c5d6] bg-white/[0.02] border border-border rounded-md p-2">
                     <div className="font-medium text-white/80 mb-1">{t("inbox.forwardOriginalAttachments")} ({email.attachments.length})</div>
-                    <div className="text-[#8b9cb3]">{email.attachments.map((a: any) => a.filename || a.name || "").filter(Boolean).join(", ")}</div>
-                    <div className="mt-1 text-[10px] text-[#8b9cb3]/80">{t("inbox.forwardReattachHint")}</div>
+                    <div className="text-[#b8c5d6]">{email.attachments.map((a: any) => a.filename || a.name || "").filter(Boolean).join(", ")}</div>
+                    <div className="mt-1 text-[10px] text-[#b8c5d6]/80">{t("inbox.forwardReattachHint")}</div>
                   </div>
                 )}
                 <div className="flex items-center gap-2 justify-between">
@@ -1271,7 +1271,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       variant="ghost"
                       size="sm"
                       onClick={() => { setForwardOpen(false); setForwardText(""); setForwardTo(""); setForwardSubject(""); setForwardAttachments([]); }}
-                      className="text-[#8b9cb3] hover:text-white h-7 text-[11px]"
+                      className="text-[#b8c5d6] hover:text-white h-7 text-[11px]"
                     >
                       {t("common.cancel")}
                     </Button>

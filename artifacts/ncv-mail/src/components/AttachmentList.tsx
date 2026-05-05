@@ -70,7 +70,7 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
 
   return (
     <div className="mt-3">
-      <div className="flex items-center gap-1.5 text-xs font-medium mb-2" style={{ color: "#8b9cb3" }}>
+      <div className="flex items-center gap-1.5 text-xs font-medium mb-2" style={{ color: "#b8c5d6" }}>
         <Paperclip size={13} />
         <span>{t("attachments.count", { count: attachments.length })}</span>
       </div>
@@ -96,7 +96,7 @@ export function AttachmentList({ attachments, disableDownload }: { attachments: 
               <Icon size={16} style={{ color: "#2d7dd2", flexShrink: 0 }} />
               <div className="flex-1 min-w-0">
                 <div className="truncate font-medium">{att.filename}</div>
-                <div style={{ color: "#8b9cb3" }}>{formatSize(att.size)}</div>
+                <div style={{ color: "#b8c5d6" }}>{formatSize(att.size)}</div>
               </div>
               {!disableDownload && (
                 <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
@@ -156,7 +156,7 @@ export function AttachmentBadge({ count }: { count: number }) {
   return (
     <span
       className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium hidden sm:inline-flex"
-      style={{ background: "rgba(139,156,179,0.12)", color: "#8b9cb3", border: "1px solid rgba(139,156,179,0.15)" }}
+      style={{ background: "rgba(139,156,179,0.12)", color: "#b8c5d6", border: "1px solid rgba(139,156,179,0.15)" }}
       title={t("attachments.count", { count })}
     >
       <Paperclip size={10} />

@@ -111,7 +111,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
           {email.summary && (
             <div className="flex items-center gap-1 mt-0.5">
               <Sparkles className="w-3 h-3 text-primary shrink-0" />
-              <p className="text-[11px] text-[#8b9cb3] line-clamp-1">{email.summary}</p>
+              <p className="text-[11px] text-[#b8c5d6] line-clamp-1">{email.summary}</p>
             </div>
           )}
         </div>
@@ -146,25 +146,25 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
             </span>
           )}
           <PriorityBadge priority={(email.priority || "faible") as any} />
-          <span className="text-[10px] text-[#8b9cb3] whitespace-nowrap items-center gap-1 hidden sm:flex">
+          <span className="text-[10px] text-[#b8c5d6] whitespace-nowrap items-center gap-1 hidden sm:flex">
             <Clock className="w-3 h-3" />
             {format(new Date(email.createdAt), "d MMM HH:mm", { locale: dateFnsLocale })}
           </span>
           <button
             onClick={(e) => { e.stopPropagation(); onArchive(email.id); }}
-            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-white/[0.08] text-[#8b9cb3] hover:text-white"
+            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-white/[0.08] text-[#b8c5d6] hover:text-white"
             title={t("inbox.archive")}
           >
             <Archive className="w-3.5 h-3.5" />
           </button>
           <button
             onClick={(e) => { e.stopPropagation(); onDelete(email.id); }}
-            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-red-500/[0.08] text-[#8b9cb3] hover:text-red-400"
+            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-red-500/[0.08] text-[#b8c5d6] hover:text-red-400"
             title={t("inbox.deleteEmail")}
           >
             <Trash2 className="w-3.5 h-3.5" />
           </button>
-          <ChevronRight className="w-3.5 h-3.5 text-[#8b9cb3]/40 group-hover:text-[#8b9cb3] transition-colors" />
+          <ChevronRight className="w-3.5 h-3.5 text-[#b8c5d6]/40 group-hover:text-[#b8c5d6] transition-colors" />
         </div>
       </div>
     </div>
@@ -254,7 +254,7 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
         <button
           type="button"
           onClick={() => setIsFullscreen((v: boolean) => !v)}
-          className="text-[#8b9cb3] hover:text-white p-1 rounded hover:bg-white/[0.04] mr-2"
+          className="text-[#b8c5d6] hover:text-white p-1 rounded hover:bg-white/[0.04] mr-2"
           aria-label={isFullscreen ? t("inbox.exitFullscreen", "Quitter plein écran") : t("inbox.fullscreen", "Plein écran")}
         >
           {isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
@@ -263,7 +263,7 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
       <div className="space-y-3 p-5 overflow-y-auto flex-1">
         {connections.length > 1 && (
           <div>
-            <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.from", "De")}</label>
+            <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("inbox.from", "De")}</label>
             <Select value={fromId} onValueChange={setFromId}>
               <SelectTrigger className="bg-background border-border text-white text-[12px] h-8">
                 <SelectValue />
@@ -277,16 +277,16 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
           </div>
         )}
         <div>
-          <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.to")}</label>
+          <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("inbox.to")}</label>
           <Input value={to} onChange={(e) => setTo(e.target.value)} placeholder="email@exemple.com" className="bg-background border-border text-white text-[12px] h-8" />
         </div>
         <div>
-          <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.subject")}</label>
+          <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("inbox.subject")}</label>
           <Input value={subject} onChange={(e) => setSubject(e.target.value)} placeholder={t("inbox.subject")} className="bg-background border-border text-white text-[12px] h-8" />
         </div>
         {projects && projects.length > 0 && (
           <div>
-            <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.project")}</label>
+            <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("inbox.project")}</label>
             <Select value={projectId || "__none__"} onValueChange={(v) => setProjectId(v === "__none__" ? "" : v)}>
               <SelectTrigger className="bg-background border-border text-white text-[12px] h-8">
                 <SelectValue placeholder={t("inbox.noProject")} />
@@ -301,7 +301,7 @@ const ComposeDialogBody = memo(function ComposeDialogBody({
           </div>
         )}
         <div className="flex flex-col flex-1 min-h-0">
-          <label className="text-[11px] text-[#8b9cb3] mb-1 block">{t("inbox.message")}</label>
+          <label className="text-[11px] text-[#b8c5d6] mb-1 block">{t("inbox.message")}</label>
           <SignatureEditor
             value={body}
             onChange={setBody}
@@ -728,7 +728,7 @@ function HubspotContextPanel({
         <button
           onClick={onToggleCollapsed}
           title={t("inbox.crmExpand")}
-          className="text-[#8b9cb3] hover:text-white"
+          className="text-[#b8c5d6] hover:text-white"
           data-testid="button-hubspot-expand"
         >
           <Maximize2 className="w-3 h-3" />
@@ -759,7 +759,7 @@ function HubspotContextPanel({
           <button
             onClick={onToggleCollapsed}
             title={t("inbox.crmCollapse")}
-            className="text-[#8b9cb3] hover:text-white"
+            className="text-[#b8c5d6] hover:text-white"
             data-testid="button-hubspot-collapse"
           >
             <Minimize2 className="w-3 h-3" />
@@ -767,7 +767,7 @@ function HubspotContextPanel({
           <button
             onClick={onHide}
             title={t("inbox.crmHide")}
-            className="text-[#8b9cb3] hover:text-white"
+            className="text-[#b8c5d6] hover:text-white"
             data-testid="button-hubspot-hide"
           >
             <X className="w-3 h-3" />
@@ -776,17 +776,17 @@ function HubspotContextPanel({
       </div>
 
       {!senderEmail && (
-        <p className="text-[10px] text-[#8b9cb3] leading-relaxed">
+        <p className="text-[10px] text-[#b8c5d6] leading-relaxed">
           {t("inbox.crmSelectEmailHint")}
         </p>
       )}
 
       {senderEmail && isLoading && (
-        <p className="text-[10px] text-[#8b9cb3]">…</p>
+        <p className="text-[10px] text-[#b8c5d6]">…</p>
       )}
 
       {senderEmail && !isLoading && (ctx === null || isError) && (
-        <p className="text-[10px] text-[#8b9cb3] leading-relaxed" data-testid="text-hubspot-no-match">
+        <p className="text-[10px] text-[#b8c5d6] leading-relaxed" data-testid="text-hubspot-no-match">
           {t("inbox.crmNoMatch")}
         </p>
       )}
@@ -800,7 +800,7 @@ function HubspotContextPanel({
             <div className="min-w-0">
               <p className="text-[12px] text-white font-medium truncate" data-testid="text-hubspot-contact-name">{fullName}</p>
               {ctx.contact.email && (
-                <p className="text-[10px] text-[#8b9cb3] truncate">{ctx.contact.email}</p>
+                <p className="text-[10px] text-[#b8c5d6] truncate">{ctx.contact.email}</p>
               )}
             </div>
           </div>
@@ -892,7 +892,7 @@ function HubspotContextPanel({
                 <button
                   type="button"
                   onClick={() => setShowDealForm(false)}
-                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                  className="text-[10px] text-[#b8c5d6] hover:text-white px-1.5"
                 >
                   {t("inbox.crmActionCancel")}
                 </button>
@@ -939,7 +939,7 @@ function HubspotContextPanel({
                 <button
                   type="button"
                   onClick={() => setShowTaskForm(false)}
-                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                  className="text-[10px] text-[#b8c5d6] hover:text-white px-1.5"
                 >
                   {t("inbox.crmActionCancel")}
                 </button>
@@ -949,26 +949,26 @@ function HubspotContextPanel({
 
           {ctx.contact.company && (
             <div className="text-[11px]">
-              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmCompany")}</div>
+              <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmCompany")}</div>
               <div className="text-white">{ctx.contact.company}</div>
             </div>
           )}
           {ctx.contact.jobTitle && (
             <div className="text-[11px]">
-              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmJobTitle")}</div>
+              <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmJobTitle")}</div>
               <div className="text-white">{ctx.contact.jobTitle}</div>
             </div>
           )}
           {ctx.contact.ownerId && (
             <div className="text-[11px]">
-              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmOwner")}</div>
+              <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmOwner")}</div>
               <div className="text-white">{ctx.contact.ownerId}</div>
             </div>
           )}
 
           {/* Lifecycle stage éditable (PATCH HubSpot) */}
           <div className="text-[11px]">
-            <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLifecycle")}</div>
+            <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmLifecycle")}</div>
             <select
               value={ctx.contact.lifecycleStage || ""}
               onChange={(e) => updateContactPropsMut.mutate({ lifecycleStage: e.target.value })}
@@ -985,7 +985,7 @@ function HubspotContextPanel({
 
           {/* Lead status éditable (PATCH HubSpot) */}
           <div className="text-[11px]">
-            <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLeadStatus")}</div>
+            <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmLeadStatus")}</div>
             <select
               value={ctx.contact.leadStatus || ""}
               onChange={(e) => updateContactPropsMut.mutate({ leadStatus: e.target.value })}
@@ -1002,7 +1002,7 @@ function HubspotContextPanel({
 
           {ctx.contact.lastContactedAt && (
             <div className="text-[11px]">
-              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLastInteraction")}</div>
+              <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmLastInteraction")}</div>
               <div className="text-white">
                 {new Date(ctx.contact.lastContactedAt).toLocaleDateString()}
               </div>
@@ -1010,17 +1010,17 @@ function HubspotContextPanel({
           )}
 
           <div className="pt-2 border-t border-[#1f2937]">
-            <div className="text-[#8b9cb3] text-[10px] uppercase tracking-wider mb-1.5">
+            <div className="text-[#b8c5d6] text-[10px] uppercase tracking-wider mb-1.5">
               {t("inbox.crmDealsTitle")}
             </div>
             {ctx.deals.length === 0 ? (
-              <p className="text-[10px] text-[#8b9cb3]">{t("inbox.crmNoDeals")}</p>
+              <p className="text-[10px] text-[#b8c5d6]">{t("inbox.crmNoDeals")}</p>
             ) : (
               <ul className="space-y-1.5" data-testid="list-hubspot-deals">
                 {ctx.deals.map((d) => (
                   <li key={d.externalId} className="text-[11px] bg-[#0f1729] rounded p-1.5 space-y-1">
                     <div className="text-white font-medium truncate">{d.title || "—"}</div>
-                    <div className="text-[10px] text-[#8b9cb3] flex flex-wrap gap-x-2">
+                    <div className="text-[10px] text-[#b8c5d6] flex flex-wrap gap-x-2">
                       {d.amount != null && (
                         <span>
                           {t("inbox.crmDealAmount")}: {d.amount} {d.currency || ""}
@@ -1050,7 +1050,7 @@ function HubspotContextPanel({
                       </select>
                     ) : (
                       d.stage && (
-                        <div className="text-[10px] text-[#8b9cb3]">
+                        <div className="text-[10px] text-[#b8c5d6]">
                           {t("inbox.crmDealStage")}: {d.stage}
                         </div>
                       )
@@ -1322,7 +1322,7 @@ function PipedriveContextPanel({
         <button
           onClick={onToggleCollapsed}
           title={t("inbox.crmExpand")}
-          className="text-[#8b9cb3] hover:text-white"
+          className="text-[#b8c5d6] hover:text-white"
           data-testid="button-pipedrive-expand"
         >
           <Maximize2 className="w-3 h-3" />
@@ -1353,7 +1353,7 @@ function PipedriveContextPanel({
           <button
             onClick={onToggleCollapsed}
             title={t("inbox.crmCollapse")}
-            className="text-[#8b9cb3] hover:text-white"
+            className="text-[#b8c5d6] hover:text-white"
             data-testid="button-pipedrive-collapse"
           >
             <Minimize2 className="w-3 h-3" />
@@ -1361,7 +1361,7 @@ function PipedriveContextPanel({
           <button
             onClick={onHide}
             title={t("inbox.crmHide")}
-            className="text-[#8b9cb3] hover:text-white"
+            className="text-[#b8c5d6] hover:text-white"
             data-testid="button-pipedrive-hide"
           >
             <X className="w-3 h-3" />
@@ -1370,17 +1370,17 @@ function PipedriveContextPanel({
       </div>
 
       {!senderEmail && (
-        <p className="text-[10px] text-[#8b9cb3] leading-relaxed">
+        <p className="text-[10px] text-[#b8c5d6] leading-relaxed">
           {t("inbox.crmSelectEmailHintPipedrive")}
         </p>
       )}
 
       {senderEmail && isLoading && (
-        <p className="text-[10px] text-[#8b9cb3]">…</p>
+        <p className="text-[10px] text-[#b8c5d6]">…</p>
       )}
 
       {senderEmail && !isLoading && (ctx === null || isError) && (
-        <p className="text-[10px] text-[#8b9cb3] leading-relaxed" data-testid="text-pipedrive-no-match">
+        <p className="text-[10px] text-[#b8c5d6] leading-relaxed" data-testid="text-pipedrive-no-match">
           {t("inbox.crmNoMatchPipedrive")}
         </p>
       )}
@@ -1394,7 +1394,7 @@ function PipedriveContextPanel({
             <div className="min-w-0">
               <p className="text-[12px] text-white font-medium truncate" data-testid="text-pipedrive-contact-name">{fullName}</p>
               {ctx.contact.email && (
-                <p className="text-[10px] text-[#8b9cb3] truncate">{ctx.contact.email}</p>
+                <p className="text-[10px] text-[#b8c5d6] truncate">{ctx.contact.email}</p>
               )}
             </div>
           </div>
@@ -1484,7 +1484,7 @@ function PipedriveContextPanel({
                 <button
                   type="button"
                   onClick={() => setShowDealForm(false)}
-                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                  className="text-[10px] text-[#b8c5d6] hover:text-white px-1.5"
                 >
                   {t("inbox.crmActionCancel")}
                 </button>
@@ -1530,7 +1530,7 @@ function PipedriveContextPanel({
                 <button
                   type="button"
                   onClick={() => setShowTaskForm(false)}
-                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                  className="text-[10px] text-[#b8c5d6] hover:text-white px-1.5"
                 >
                   {t("inbox.crmActionCancel")}
                 </button>
@@ -1540,20 +1540,20 @@ function PipedriveContextPanel({
 
           {ctx.contact.company && (
             <div className="text-[11px]">
-              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmCompany")}</div>
+              <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmCompany")}</div>
               <div className="text-white">{ctx.contact.company}</div>
             </div>
           )}
           {ctx.contact.ownerName && (
             <div className="text-[11px]">
-              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmOwnerPipedrive")}</div>
+              <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmOwnerPipedrive")}</div>
               <div className="text-white">{ctx.contact.ownerName}</div>
             </div>
           )}
 
           {/* Label Pipedrive éditable (équivalent Person.label) — soumis sur blur */}
           <div className="text-[11px]">
-            <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmLabelPipedrive")}</div>
+            <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmLabelPipedrive")}</div>
             <input
               type="text"
               value={labelDraft}
@@ -1572,17 +1572,17 @@ function PipedriveContextPanel({
           </div>
 
           <div className="pt-2 border-t border-[#1f2937]">
-            <div className="text-[#8b9cb3] text-[10px] uppercase tracking-wider mb-1.5">
+            <div className="text-[#b8c5d6] text-[10px] uppercase tracking-wider mb-1.5">
               {t("inbox.crmDealsTitle")}
             </div>
             {ctx.deals.length === 0 ? (
-              <p className="text-[10px] text-[#8b9cb3]">{t("inbox.crmNoDeals")}</p>
+              <p className="text-[10px] text-[#b8c5d6]">{t("inbox.crmNoDeals")}</p>
             ) : (
               <ul className="space-y-1.5" data-testid="list-pipedrive-deals">
                 {ctx.deals.map((d) => (
                   <li key={d.externalId} className="text-[11px] bg-[#0f1729] rounded p-1.5 space-y-1">
                     <div className="text-white font-medium truncate">{d.title || "—"}</div>
-                    <div className="text-[10px] text-[#8b9cb3] flex flex-wrap gap-x-2">
+                    <div className="text-[10px] text-[#b8c5d6] flex flex-wrap gap-x-2">
                       {d.amount != null && (
                         <span>
                           {t("inbox.crmDealAmount")}: {d.amount} {d.currency || ""}
@@ -1611,7 +1611,7 @@ function PipedriveContextPanel({
                       </select>
                     ) : (
                       d.stage && (
-                        <div className="text-[10px] text-[#8b9cb3]">
+                        <div className="text-[10px] text-[#b8c5d6]">
                           {t("inbox.crmDealStage")}: {d.stage}
                         </div>
                       )
@@ -1627,11 +1627,11 @@ function PipedriveContextPanel({
               toujours présente : section vide affichée si pas d'activité.
               Mirroir de l'historique attendu en parité du panneau HubSpot. */}
           <div className="pt-2 border-t border-[#1f2937]">
-            <div className="text-[#8b9cb3] text-[10px] uppercase tracking-wider mb-1.5">
+            <div className="text-[#b8c5d6] text-[10px] uppercase tracking-wider mb-1.5">
               {t("inbox.crmPipedriveActivitiesTitle")}
             </div>
             {!ctx.activities || ctx.activities.length === 0 ? (
-              <p className="text-[10px] text-[#8b9cb3]" data-testid="text-pipedrive-no-activities">
+              <p className="text-[10px] text-[#b8c5d6]" data-testid="text-pipedrive-no-activities">
                 {t("inbox.crmPipedriveNoActivities")}
               </p>
             ) : (
@@ -1649,7 +1649,7 @@ function PipedriveContextPanel({
                       <div className="min-w-0 flex-1">
                         <div className="text-white truncate">{a.subject || a.type || "—"}</div>
                         {(a.dueDate || a.addTime) && (
-                          <div className="text-[#8b9cb3] text-[9px]">
+                          <div className="text-[#b8c5d6] text-[9px]">
                             {a.dueDate
                               ? new Date(a.dueDate).toLocaleDateString()
                               : a.addTime
@@ -1923,7 +1923,7 @@ function SalesforceContextPanel({
         <button
           onClick={onToggleCollapsed}
           title={t("inbox.crmExpand")}
-          className="text-[#8b9cb3] hover:text-white"
+          className="text-[#b8c5d6] hover:text-white"
           data-testid="button-salesforce-expand"
         >
           <Maximize2 className="w-3 h-3" />
@@ -1954,7 +1954,7 @@ function SalesforceContextPanel({
           <button
             onClick={onToggleCollapsed}
             title={t("inbox.crmCollapse")}
-            className="text-[#8b9cb3] hover:text-white"
+            className="text-[#b8c5d6] hover:text-white"
             data-testid="button-salesforce-collapse"
           >
             <Minimize2 className="w-3 h-3" />
@@ -1962,7 +1962,7 @@ function SalesforceContextPanel({
           <button
             onClick={onHide}
             title={t("inbox.crmHide")}
-            className="text-[#8b9cb3] hover:text-white"
+            className="text-[#b8c5d6] hover:text-white"
             data-testid="button-salesforce-hide"
           >
             <X className="w-3 h-3" />
@@ -1971,17 +1971,17 @@ function SalesforceContextPanel({
       </div>
 
       {!senderEmail && (
-        <p className="text-[10px] text-[#8b9cb3] leading-relaxed">
+        <p className="text-[10px] text-[#b8c5d6] leading-relaxed">
           {t("inbox.crmSelectEmailHintSalesforce")}
         </p>
       )}
 
       {senderEmail && isLoading && (
-        <p className="text-[10px] text-[#8b9cb3]">…</p>
+        <p className="text-[10px] text-[#b8c5d6]">…</p>
       )}
 
       {senderEmail && !isLoading && (ctx === null || isError) && (
-        <p className="text-[10px] text-[#8b9cb3] leading-relaxed" data-testid="text-salesforce-no-match">
+        <p className="text-[10px] text-[#b8c5d6] leading-relaxed" data-testid="text-salesforce-no-match">
           {t("inbox.crmNoMatchSalesforce")}
         </p>
       )}
@@ -1995,7 +1995,7 @@ function SalesforceContextPanel({
             <div className="min-w-0">
               <p className="text-[12px] text-white font-medium truncate" data-testid="text-salesforce-contact-name">{fullName}</p>
               {ctx.contact.email && (
-                <p className="text-[10px] text-[#8b9cb3] truncate">{ctx.contact.email}</p>
+                <p className="text-[10px] text-[#b8c5d6] truncate">{ctx.contact.email}</p>
               )}
             </div>
           </div>
@@ -2085,7 +2085,7 @@ function SalesforceContextPanel({
                 <button
                   type="button"
                   onClick={() => setShowDealForm(false)}
-                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                  className="text-[10px] text-[#b8c5d6] hover:text-white px-1.5"
                 >
                   {t("inbox.crmActionCancel")}
                 </button>
@@ -2131,7 +2131,7 @@ function SalesforceContextPanel({
                 <button
                   type="button"
                   onClick={() => setShowTaskForm(false)}
-                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                  className="text-[10px] text-[#b8c5d6] hover:text-white px-1.5"
                 >
                   {t("inbox.crmActionCancel")}
                 </button>
@@ -2141,26 +2141,26 @@ function SalesforceContextPanel({
 
           {ctx.contact.company && (
             <div className="text-[11px]">
-              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmCompany")}</div>
+              <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmCompany")}</div>
               <div className="text-white">{ctx.contact.company}</div>
             </div>
           )}
           {ctx.contact.jobTitle && (
             <div className="text-[11px]">
-              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmJobTitleSalesforce")}</div>
+              <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmJobTitleSalesforce")}</div>
               <div className="text-white">{ctx.contact.jobTitle}</div>
             </div>
           )}
           {ctx.contact.ownerName && (
             <div className="text-[11px]">
-              <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmOwnerSalesforce")}</div>
+              <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmOwnerSalesforce")}</div>
               <div className="text-white">{ctx.contact.ownerName}</div>
             </div>
           )}
 
           {/* Description Salesforce éditable (équivalent du label Pipedrive) */}
           <div className="text-[11px]">
-            <div className="text-[#8b9cb3] text-[10px]">{t("inbox.crmDescriptionSalesforce")}</div>
+            <div className="text-[#b8c5d6] text-[10px]">{t("inbox.crmDescriptionSalesforce")}</div>
             <textarea
               value={descriptionDraft}
               onChange={(e) => setDescriptionDraft(e.target.value)}
@@ -2179,17 +2179,17 @@ function SalesforceContextPanel({
           </div>
 
           <div className="pt-2 border-t border-[#1f2937]">
-            <div className="text-[#8b9cb3] text-[10px] uppercase tracking-wider mb-1.5">
+            <div className="text-[#b8c5d6] text-[10px] uppercase tracking-wider mb-1.5">
               {t("inbox.crmDealsTitle")}
             </div>
             {ctx.deals.length === 0 ? (
-              <p className="text-[10px] text-[#8b9cb3]">{t("inbox.crmNoDeals")}</p>
+              <p className="text-[10px] text-[#b8c5d6]">{t("inbox.crmNoDeals")}</p>
             ) : (
               <ul className="space-y-1.5" data-testid="list-salesforce-deals">
                 {ctx.deals.map((d) => (
                   <li key={d.externalId} className="text-[11px] bg-[#0f1729] rounded p-1.5 space-y-1">
                     <div className="text-white font-medium truncate">{d.title || "—"}</div>
-                    <div className="text-[10px] text-[#8b9cb3] flex flex-wrap gap-x-2">
+                    <div className="text-[10px] text-[#b8c5d6] flex flex-wrap gap-x-2">
                       {d.amount != null && (
                         <span>
                           {t("inbox.crmDealAmount")}: {d.amount} {d.currency || ""}
@@ -2218,7 +2218,7 @@ function SalesforceContextPanel({
                       </select>
                     ) : (
                       d.stage && (
-                        <div className="text-[10px] text-[#8b9cb3]">
+                        <div className="text-[10px] text-[#b8c5d6]">
                           {t("inbox.crmDealStage")}: {d.stage}
                         </div>
                       )
@@ -2231,11 +2231,11 @@ function SalesforceContextPanel({
 
           {/* Activités récentes — 5 dernières Tasks Salesforce du contact */}
           <div className="pt-2 border-t border-[#1f2937]">
-            <div className="text-[#8b9cb3] text-[10px] uppercase tracking-wider mb-1.5">
+            <div className="text-[#b8c5d6] text-[10px] uppercase tracking-wider mb-1.5">
               {t("inbox.crmSalesforceTasksTitle")}
             </div>
             {!ctx.tasks || ctx.tasks.length === 0 ? (
-              <p className="text-[10px] text-[#8b9cb3]" data-testid="text-salesforce-no-tasks">
+              <p className="text-[10px] text-[#b8c5d6]" data-testid="text-salesforce-no-tasks">
                 {t("inbox.crmSalesforceNoTasks")}
               </p>
             ) : (
@@ -2253,7 +2253,7 @@ function SalesforceContextPanel({
                       <div className="min-w-0 flex-1">
                         <div className="text-white truncate">{tk.subject || "—"}</div>
                         {(tk.activityDate || tk.createdDate) && (
-                          <div className="text-[#8b9cb3] text-[9px]">
+                          <div className="text-[#b8c5d6] text-[9px]">
                             {tk.activityDate
                               ? new Date(tk.activityDate).toLocaleDateString()
                               : tk.createdDate
@@ -2537,7 +2537,7 @@ function OdooContextPanel({
         <button
           onClick={onToggleCollapsed}
           title={t("inbox.crmExpand")}
-          className="text-[#8b9cb3] hover:text-white"
+          className="text-[#b8c5d6] hover:text-white"
           data-testid="button-odoo-expand"
         >
           <Maximize2 className="w-3 h-3" />
@@ -2568,7 +2568,7 @@ function OdooContextPanel({
           <button
             onClick={onToggleCollapsed}
             title={t("inbox.crmCollapse")}
-            className="text-[#8b9cb3] hover:text-white"
+            className="text-[#b8c5d6] hover:text-white"
             data-testid="button-odoo-collapse"
           >
             <Minimize2 className="w-3 h-3" />
@@ -2576,7 +2576,7 @@ function OdooContextPanel({
           <button
             onClick={onHide}
             title={t("inbox.crmHide")}
-            className="text-[#8b9cb3] hover:text-white"
+            className="text-[#b8c5d6] hover:text-white"
             data-testid="button-odoo-hide"
           >
             <X className="w-3 h-3" />
@@ -2585,17 +2585,17 @@ function OdooContextPanel({
       </div>
 
       {!senderEmail && (
-        <p className="text-[10px] text-[#8b9cb3] leading-relaxed">
+        <p className="text-[10px] text-[#b8c5d6] leading-relaxed">
           {t("inbox.crmSelectEmailHintOdoo")}
         </p>
       )}
 
       {senderEmail && isLoading && (
-        <p className="text-[10px] text-[#8b9cb3]">…</p>
+        <p className="text-[10px] text-[#b8c5d6]">…</p>
       )}
 
       {senderEmail && !isLoading && (ctx === null || isError) && (
-        <p className="text-[10px] text-[#8b9cb3] leading-relaxed" data-testid="text-odoo-no-match">
+        <p className="text-[10px] text-[#b8c5d6] leading-relaxed" data-testid="text-odoo-no-match">
           {t("inbox.crmNoMatchOdoo")}
         </p>
       )}
@@ -2609,13 +2609,13 @@ function OdooContextPanel({
             <div className="min-w-0">
               <p className="text-[12px] text-white font-medium truncate" data-testid="text-odoo-contact-name">{fullName}</p>
               {ctx.contact.email && (
-                <p className="text-[10px] text-[#8b9cb3] truncate">{ctx.contact.email}</p>
+                <p className="text-[10px] text-[#b8c5d6] truncate">{ctx.contact.email}</p>
               )}
             </div>
           </div>
 
           {(ctx.contact.company || ctx.contact.jobTitle || ctx.contact.phone || ctx.contact.city) && (
-            <div className="text-[10px] text-[#8b9cb3] space-y-0.5">
+            <div className="text-[10px] text-[#b8c5d6] space-y-0.5">
               {ctx.contact.company && (
                 <div className="truncate"><span className="text-[#5b6b85]">{t("inbox.crmCompany")} :</span> <span className="text-white">{ctx.contact.company}</span></div>
               )}
@@ -2702,7 +2702,7 @@ function OdooContextPanel({
                 <button
                   type="button"
                   onClick={() => setShowOdooDealForm(false)}
-                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                  className="text-[10px] text-[#b8c5d6] hover:text-white px-1.5"
                 >
                   {t("inbox.crmActionCancel")}
                 </button>
@@ -2761,7 +2761,7 @@ function OdooContextPanel({
                 <button
                   type="button"
                   onClick={() => setShowOdooActivityForm(false)}
-                  className="text-[10px] text-[#8b9cb3] hover:text-white px-1.5"
+                  className="text-[10px] text-[#b8c5d6] hover:text-white px-1.5"
                 >
                   {t("inbox.crmActionCancel")}
                 </button>
@@ -2782,7 +2782,7 @@ function OdooContextPanel({
                     <span className={d.status === "won" ? "text-emerald-400" : d.status === "lost" ? "text-rose-400" : "text-amber-400"}>•</span>
                     <div className="min-w-0 flex-1">
                       <div className="text-white truncate">{d.title || "—"}</div>
-                      <div className="text-[#8b9cb3] text-[9px] flex items-center gap-2">
+                      <div className="text-[#b8c5d6] text-[9px] flex items-center gap-2">
                         {d.stage && <span>{d.stage}</span>}
                         {d.amount != null && (
                           <span>{d.amount.toLocaleString()} {d.currency || ""}</span>
@@ -2811,7 +2811,7 @@ function OdooContextPanel({
                     <div className="min-w-0 flex-1">
                       <div className="text-white truncate">{a.summary || a.activityType || "—"}</div>
                       {a.dueDate && (
-                        <div className="text-[#8b9cb3] text-[9px]">
+                        <div className="text-[#b8c5d6] text-[9px]">
                           {new Date(a.dueDate).toLocaleDateString()}
                         </div>
                       )}
@@ -4026,7 +4026,7 @@ export default function Dashboard() {
                       className={`flex-1 text-[10px] uppercase tracking-wider rounded px-2 py-1 ${
                         activeCrmDetailPanel === "hubspot"
                           ? "bg-orange-500/20 text-orange-400"
-                          : "text-[#8b9cb3] hover:text-white"
+                          : "text-[#b8c5d6] hover:text-white"
                       }`}
                       data-testid="tab-crm-detail-hubspot"
                     >
@@ -4040,7 +4040,7 @@ export default function Dashboard() {
                       className={`flex-1 text-[10px] uppercase tracking-wider rounded px-2 py-1 ${
                         activeCrmDetailPanel === "pipedrive"
                           ? "bg-primary/20 text-primary"
-                          : "text-[#8b9cb3] hover:text-white"
+                          : "text-[#b8c5d6] hover:text-white"
                       }`}
                       data-testid="tab-crm-detail-pipedrive"
                     >
@@ -4054,7 +4054,7 @@ export default function Dashboard() {
                       className={`flex-1 text-[10px] uppercase tracking-wider rounded px-2 py-1 ${
                         activeCrmDetailPanel === "salesforce"
                           ? "bg-sky-500/20 text-sky-400"
-                          : "text-[#8b9cb3] hover:text-white"
+                          : "text-[#b8c5d6] hover:text-white"
                       }`}
                       data-testid="tab-crm-detail-salesforce"
                     >
@@ -4068,7 +4068,7 @@ export default function Dashboard() {
                       className={`flex-1 text-[10px] uppercase tracking-wider rounded px-2 py-1 ${
                         activeCrmDetailPanel === "odoo"
                           ? "bg-indigo-500/20 text-indigo-400"
-                          : "text-[#8b9cb3] hover:text-white"
+                          : "text-[#b8c5d6] hover:text-white"
                       }`}
                       data-testid="tab-crm-detail-odoo"
                     >
@@ -4166,7 +4166,7 @@ export default function Dashboard() {
                 <UserCheck className="w-4 h-4 text-primary" />
                 {assigneePageTitle}
               </h1>
-              <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+              <p className="text-[12px] text-[#b8c5d6] mt-0.5">
                 {t("inbox.assignedPageCount", { count: displayedEmailCount, defaultValue: `${displayedEmailCount} email(s)` })}
               </p>
             </div>
@@ -4184,17 +4184,17 @@ export default function Dashboard() {
         <div className="pt-4 pb-2.5 border-b border-border">
           <div className="flex items-center gap-2 mb-2.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8b9cb3]" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#b8c5d6]" />
               <Input
                 value={searchInput}
                 onChange={(e) => setSearchInput(e.target.value)}
                 placeholder={t("inbox.searchPlaceholder")}
-                className="pl-9 bg-card border-border text-white placeholder:text-[#8b9cb3]/50 h-8 text-[12px]"
+                className="pl-9 bg-card border-border text-white placeholder:text-[#b8c5d6]/50 h-8 text-[12px]"
               />
               {searchInput && (
                 <button
                   onClick={() => setSearchInput("")}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b8c5d6] hover:text-white"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -4204,7 +4204,7 @@ export default function Dashboard() {
             <Button
               variant="outline"
               size="sm"
-              className="gap-1.5 h-8 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+              className="gap-1.5 h-8 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
               onClick={handleSync}
               disabled={isSyncing}
             >
@@ -4263,7 +4263,7 @@ export default function Dashboard() {
                 className={`flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
                   inboxMode === "personal"
                     ? "bg-primary/15 text-primary border border-primary/20"
-                    : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                    : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
                 }`}
               >
                 <Inbox className="w-3 h-3" />
@@ -4284,7 +4284,7 @@ export default function Dashboard() {
                   className={`flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
                     inboxMode === "shared"
                       ? "bg-primary/15 text-primary border border-primary/20"
-                      : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
                   }`}
                 >
                   <Users className="w-3 h-3" />
@@ -4293,7 +4293,7 @@ export default function Dashboard() {
               )}
               <Link
                 href="/dashboard/indesirables"
-                className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
               >
                 <ShieldAlert className="w-3 h-3" />
                 {t("inbox.spam")}
@@ -4303,7 +4303,7 @@ export default function Dashboard() {
               </Link>
               <Link
                 href="/dashboard/corbeille"
-                className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
               >
                 <Trash2 className="w-3 h-3" />
                 {t("inbox.trash")}
@@ -4313,7 +4313,7 @@ export default function Dashboard() {
               </Link>
               {inboxMode === "personal" && (composeConnections?.length || 0) >= 2 && (
                 <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
-                  <SelectTrigger className="w-auto min-w-[140px] h-6 bg-card border-border text-[#8b9cb3] text-[10px] ml-1">
+                  <SelectTrigger className="w-auto min-w-[140px] h-6 bg-card border-border text-[#b8c5d6] text-[10px] ml-1">
                     <SelectValue placeholder={t("inbox.accountFilter")} />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
@@ -4358,12 +4358,12 @@ export default function Dashboard() {
                         <p className="text-[11px] font-medium mb-1">
                           {t("inbox.disconnectedTooltipTitle", { defaultValue: "Compte(s) déconnecté(s)" })}
                         </p>
-                        <ul className="text-[10px] text-[#8b9cb3] space-y-0.5">
+                        <ul className="text-[10px] text-[#b8c5d6] space-y-0.5">
                           {downConns.map((c) => (
                             <li key={c.id}>• {c.email_address}</li>
                           ))}
                         </ul>
-                        <p className="text-[10px] mt-1.5 text-[#8b9cb3]">
+                        <p className="text-[10px] mt-1.5 text-[#b8c5d6]">
                           {t("inbox.disconnectedTooltipCta", { defaultValue: "Cliquez pour reconnecter dans Paramètres." })}
                         </p>
                       </TooltipContent>
@@ -4373,7 +4373,7 @@ export default function Dashboard() {
               })()}
               {inboxMode === "shared" && (sharedMailboxes as any[])?.length > 1 && (
                 <Select value={selectedSharedMailboxId || ""} onValueChange={setSelectedSharedMailboxId}>
-                  <SelectTrigger className="w-auto min-w-[120px] h-6 bg-card border-border text-[#8b9cb3] text-[10px] ml-1">
+                  <SelectTrigger className="w-auto min-w-[120px] h-6 bg-card border-border text-[#b8c5d6] text-[10px] ml-1">
                     <SelectValue placeholder={t("inbox.sharedMailbox")} />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
@@ -4386,7 +4386,7 @@ export default function Dashboard() {
             </div>
 
           <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8">
-              <span className="text-[10px] text-[#8b9cb3] mr-1">{t("inbox.priority")}:</span>
+              <span className="text-[10px] text-[#b8c5d6] mr-1">{t("inbox.priority")}:</span>
               {[
                 { value: "all", label: t("inbox.allCategories") },
                 { value: "urgent", label: t("inbox.priorities.urgent") },
@@ -4399,7 +4399,7 @@ export default function Dashboard() {
                   className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
                     filterPriority === f.value
                       ? "bg-primary/15 text-primary border border-primary/20"
-                      : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
                   }`}
                 >
                   {f.label}
@@ -4416,7 +4416,7 @@ export default function Dashboard() {
                 className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
                   smartSort
                     ? "bg-primary/15 text-primary border border-primary/20"
-                    : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                    : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
                 }`}
                 data-testid="btn-inboria-smart-sort"
               >
@@ -4442,7 +4442,7 @@ export default function Dashboard() {
                     ? "text-[#5a6478] border border-[#1f2937] opacity-50 cursor-not-allowed"
                     : sortMode !== "priority"
                     ? "bg-primary/15 text-primary border border-primary/20"
-                    : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                    : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
                 }`}
               >
                 {sortMode === "priority" ? (
@@ -4462,7 +4462,7 @@ export default function Dashboard() {
               <div className="basis-full h-0 sm:hidden" />
               <div className="hidden sm:block w-px h-4 bg-[#1f2937] mx-1" />
               <Select value={filterCategory} onValueChange={setFilterCategory}>
-                <SelectTrigger className="w-auto min-w-[130px] h-6 bg-card border-border text-[#8b9cb3] text-[10px]">
+                <SelectTrigger className="w-auto min-w-[130px] h-6 bg-card border-border text-[#b8c5d6] text-[10px]">
                   <SelectValue placeholder={t("inbox.category")} />
                 </SelectTrigger>
                 {/* max-h-[50vh] borne explicitement la hauteur du menu pour
@@ -4485,7 +4485,7 @@ export default function Dashboard() {
               className="flex flex-wrap items-center gap-1.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-2"
               data-testid="row-crm-filter"
             >
-              <span className="text-[10px] text-[#8b9cb3] mr-1">{t("inbox.crmLabel")}:</span>
+              <span className="text-[10px] text-[#b8c5d6] mr-1">{t("inbox.crmLabel")}:</span>
               {hasHubspot && (
                 <button
                   onClick={() => setCrmFilter((c) => (c === "hubspot" ? null : "hubspot"))}
@@ -4494,7 +4494,7 @@ export default function Dashboard() {
                   className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
                     crmFilter === "hubspot"
                       ? "bg-primary/15 text-primary border border-primary/20"
-                      : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
                   }`}
                 >
                   <Building2 className="w-3 h-3" />
@@ -4509,7 +4509,7 @@ export default function Dashboard() {
                   className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
                     crmFilter === "pipedrive"
                       ? "bg-primary/15 text-primary border border-primary/20"
-                      : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
                   }`}
                 >
                   <Briefcase className="w-3 h-3" />
@@ -4524,7 +4524,7 @@ export default function Dashboard() {
                   className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
                     crmFilter === "salesforce"
                       ? "bg-primary/15 text-primary border border-primary/20"
-                      : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
                   }`}
                 >
                   <Cloud className="w-3 h-3" />
@@ -4539,7 +4539,7 @@ export default function Dashboard() {
                   className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
                     crmFilter === "odoo"
                       ? "bg-primary/15 text-primary border border-primary/20"
-                      : "text-[#8b9cb3] border border-[#1f2937] hover:text-white hover:border-[#8b9cb3]/30"
+                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
                   }`}
                 >
                   <Database className="w-3 h-3" />
@@ -4564,14 +4564,14 @@ export default function Dashboard() {
                     </div>
                   ) : !selectedSharedMailboxId ? (
                     <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
-                      <Users className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
+                      <Users className="mx-auto h-8 w-8 text-[#b8c5d6]/40 mb-2" />
                       <h3 className="text-[13px] font-medium text-white">{t("inbox.sharedMailbox")}</h3>
                     </div>
                   ) : sharedEmailsList.length === 0 ? (
                     <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
-                      <Inbox className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
+                      <Inbox className="mx-auto h-8 w-8 text-[#b8c5d6]/40 mb-2" />
                       <h3 className="text-[13px] font-medium text-white">{t("inbox.noEmails")}</h3>
-                      <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.noEmailsDesc")}</p>
+                      <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.noEmailsDesc")}</p>
                     </div>
                   ) : (
                     <div className="space-y-1">
@@ -4617,7 +4617,7 @@ export default function Dashboard() {
                                     </span>
                                   )}
                                   {isClaimed && (
-                                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${isClaimedByMe ? "bg-primary/15 text-primary" : "bg-white/[0.06] text-[#8b9cb3]"}`}>
+                                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${isClaimedByMe ? "bg-primary/15 text-primary" : "bg-white/[0.06] text-[#b8c5d6]"}`}>
                                       {t("inbox.claimedBy")} {isClaimedByMe ? t("emails.me", { defaultValue: "moi" }) : ((email as any).claimedByName || t("sharedMailboxes.colleague"))}
                                     </span>
                                   )}
@@ -4631,7 +4631,7 @@ export default function Dashboard() {
                                 {email.summary && (
                                   <div className="flex items-center gap-1 mt-0.5">
                                     <Sparkles className="w-3 h-3 text-primary shrink-0" />
-                                    <p className="text-[11px] text-[#8b9cb3] line-clamp-1">{email.summary}</p>
+                                    <p className="text-[11px] text-[#b8c5d6] line-clamp-1">{email.summary}</p>
                                   </div>
                                 )}
                               </div>
@@ -4684,7 +4684,7 @@ export default function Dashboard() {
                                   <Button
                                     size="sm"
                                     variant="outline"
-                                    className="gap-1 h-7 text-[10px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                                    className="gap-1 h-7 text-[10px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
                                     onClick={() => handleUnclaimEmail(email.id as any)}
                                     disabled={unclaimEmailMut.isPending}
                                   >
@@ -4692,7 +4692,7 @@ export default function Dashboard() {
                                     {t("inbox.unclaim")}
                                   </Button>
                                 ) : null}
-                                <span className="text-[10px] text-[#8b9cb3] ml-1">
+                                <span className="text-[10px] text-[#b8c5d6] ml-1">
                                   {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
                                 </span>
                               </div>
@@ -4768,14 +4768,14 @@ export default function Dashboard() {
                     </button>
                     {selectionMode && (
                       <>
-                        <span className="text-[11px] text-[#8b9cb3]">
+                        <span className="text-[11px] text-[#b8c5d6]">
                           {t("inbox.selectedCount", { count: selectedIds.size })}
                         </span>
                         <div className="flex-1" />
                         <Button
                           size="sm"
                           variant="outline"
-                          className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#8b9cb3] hover:text-white hover:bg-white/[0.04]"
+                          className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
                           onClick={() => handleBulkAction("archive")}
                           disabled={bulkUpdateMut.isPending}
                         >
@@ -4795,7 +4795,7 @@ export default function Dashboard() {
                         <Button
                           size="sm"
                           variant="ghost"
-                          className="h-7 px-2 text-[#8b9cb3] hover:text-white"
+                          className="h-7 px-2 text-[#b8c5d6] hover:text-white"
                           onClick={() => setSelectedIds(new Set())}
                         >
                           <X className="w-3.5 h-3.5" />
@@ -4809,7 +4809,7 @@ export default function Dashboard() {
                       <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border border-dashed bg-card/50">
                         <Loader2 className="w-6 h-6 text-primary animate-spin mb-3" />
                         <h3 className="text-[13px] font-medium text-white">{t("inbox.loadingTitle", "Chargement de vos emails…")}</h3>
-                        <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.loadingDesc", "Inboria récupère vos derniers messages, un instant.")}</p>
+                        <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.loadingDesc", "Inboria récupère vos derniers messages, un instant.")}</p>
                       </div>
                     ) : activeEmails?.length === 0 ? (
                       <div className="text-center py-14 rounded-lg border border-border border-dashed bg-card/50">
@@ -4817,31 +4817,31 @@ export default function Dashboard() {
                           <>
                             <Building2 className="mx-auto h-8 w-8 text-primary/40 mb-2" />
                             <h3 className="text-[13px] font-medium text-white">{t("inbox.crmEmptyHubspotTitle")}</h3>
-                            <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.crmEmptyHubspotDesc")}</p>
+                            <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.crmEmptyHubspotDesc")}</p>
                           </>
                         ) : crmFilter === "pipedrive" ? (
                           <>
                             <Briefcase className="mx-auto h-8 w-8 text-primary/40 mb-2" />
                             <h3 className="text-[13px] font-medium text-white">{t("inbox.crmEmptyPipedriveTitle")}</h3>
-                            <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.crmEmptyPipedriveDesc")}</p>
+                            <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.crmEmptyPipedriveDesc")}</p>
                           </>
                         ) : crmFilter === "salesforce" ? (
                           <>
                             <Cloud className="mx-auto h-8 w-8 text-primary/40 mb-2" />
                             <h3 className="text-[13px] font-medium text-white">{t("inbox.crmEmptySalesforceTitle")}</h3>
-                            <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.crmEmptySalesforceDesc")}</p>
+                            <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.crmEmptySalesforceDesc")}</p>
                           </>
                         ) : crmFilter === "odoo" ? (
                           <>
                             <Database className="mx-auto h-8 w-8 text-primary/40 mb-2" />
                             <h3 className="text-[13px] font-medium text-white">{t("inbox.crmEmptyOdooTitle")}</h3>
-                            <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.crmEmptyOdooDesc")}</p>
+                            <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.crmEmptyOdooDesc")}</p>
                           </>
                         ) : (
                           <>
-                            <Inbox className="mx-auto h-8 w-8 text-[#8b9cb3]/40 mb-2" />
+                            <Inbox className="mx-auto h-8 w-8 text-[#b8c5d6]/40 mb-2" />
                             <h3 className="text-[13px] font-medium text-white">{t("inbox.noEmails")}</h3>
-                            <p className="text-[12px] text-[#8b9cb3] mt-1">{t("inbox.noEmailsDesc")}</p>
+                            <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.noEmailsDesc")}</p>
                           </>
                         )}
                       </div>
@@ -4888,7 +4888,7 @@ export default function Dashboard() {
                         )}
                         {!hasMorePages && emails.length > 50 && (
                           <div className="text-center py-3">
-                            <span className="text-[10px] text-[#8b9cb3]/60">Tous les emails chargés ({totalEmails})</span>
+                            <span className="text-[10px] text-[#b8c5d6]/60">Tous les emails chargés ({totalEmails})</span>
                           </div>
                         )}
                       </>
@@ -4913,7 +4913,7 @@ export default function Dashboard() {
                   l'utilisateur. */}
               <div className="bg-card rounded-lg border border-border p-3">
                 <div className="flex items-center justify-between mb-2.5">
-                  <h3 className="text-[10px] font-medium text-[#8b9cb3] uppercase tracking-wider">
+                  <h3 className="text-[10px] font-medium text-[#b8c5d6] uppercase tracking-wider">
                     {t("inbox.category")}
                   </h3>
                   {(() => {
@@ -5032,15 +5032,15 @@ export default function Dashboard() {
                       >
                         <div className="flex items-center gap-1.5">
                           <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                          <span className="text-[11px] text-[#8b9cb3]">{translateCategoryName(cat.categoryName, lang)}</span>
+                          <span className="text-[11px] text-[#b8c5d6]">{translateCategoryName(cat.categoryName, lang)}</span>
                         </div>
-                        <span className="text-[10px] text-[#8b9cb3] bg-white/[0.06] px-1.5 py-0.5 rounded">
+                        <span className="text-[10px] text-[#b8c5d6] bg-white/[0.06] px-1.5 py-0.5 rounded">
                           {cat.count}
                         </span>
                       </div>
                     ))}
                     {categoryCounts?.length === 0 && (
-                      <p className="text-[11px] text-[#8b9cb3]/60 italic py-1.5">{t("inbox.noEmails")}</p>
+                      <p className="text-[11px] text-[#b8c5d6]/60 italic py-1.5">{t("inbox.noEmails")}</p>
                     )}
                   </div>
                 )}
@@ -5069,7 +5069,7 @@ export default function Dashboard() {
         >
           {selectedIds.size > 1 && (
             <div className="px-3 py-2 border-b border-[#1f2937]">
-              <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider font-medium">
+              <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider font-medium">
                 {t("inbox.selectedCount", { count: selectedIds.size })}
               </span>
             </div>
@@ -5079,21 +5079,21 @@ export default function Dashboard() {
               <>
                 <button
                   onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
                 >
                   <ChevronRight className="w-3.5 h-3.5" />
                   {t("inbox.openEmail")}
                 </button>
                 <button
                   onClick={() => { handleArchive(contextMenu.emailId); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
                 >
                   <Archive className="w-3.5 h-3.5" />
                   {t("inbox.archive")}
                 </button>
                 <button
                   onClick={() => { handleBlockSender(contextMenu.emailId); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
                 >
                   <ShieldAlert className="w-3.5 h-3.5" />
                   {t("junk.blockSender")}
@@ -5111,7 +5111,7 @@ export default function Dashboard() {
               <>
                 <button
                   onClick={() => { handleBulkAction("archive"); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
                 >
                   <Archive className="w-3.5 h-3.5" />
                   {t("inbox.bulkArchive")} ({selectedIds.size})

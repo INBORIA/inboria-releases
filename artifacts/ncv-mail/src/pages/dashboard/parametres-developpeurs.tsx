@@ -52,7 +52,7 @@ export default function ParametresDeveloppeurs() {
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-4">
         <div>
           <Link href="/dashboard/parametres">
-            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#8b9cb3] hover:text-white">
+            <Button variant="ghost" size="sm" className="h-7 px-2 text-[#b8c5d6] hover:text-white">
               <ArrowLeft className="w-3.5 h-3.5 mr-1" /> {t("settings.title")}
             </Button>
           </Link>
@@ -62,7 +62,7 @@ export default function ParametresDeveloppeurs() {
             <Code2 className="w-4 h-4 text-primary" />
             {t("settings.hub.developers", "Pour développeurs")}
           </h1>
-          <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+          <p className="text-[12px] text-[#b8c5d6] mt-0.5">
             {t("settings.hub.developersDesc", "API, Webhooks, SLA")}
           </p>
         </div>
@@ -82,9 +82,9 @@ export default function ParametresDeveloppeurs() {
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="text-[13px] font-medium text-white">{t(c.titleKey, c.titleFallback)}</div>
-                  <div className="text-[11px] text-[#8b9cb3] mt-0.5">{t(c.descKey, c.descFallback)}</div>
+                  <div className="text-[11px] text-[#b8c5d6] mt-0.5">{t(c.descKey, c.descFallback)}</div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-[#8b9cb3] group-hover:text-white transition-colors shrink-0" />
+                <ChevronRight className="w-4 h-4 text-[#b8c5d6] group-hover:text-white transition-colors shrink-0" />
               </Link>
             );
           })}

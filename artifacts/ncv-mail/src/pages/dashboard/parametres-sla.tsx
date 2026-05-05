@@ -110,7 +110,7 @@ export default function ParametresSla() {
             <Clock className="w-4 h-4 text-primary" />
             {t("sla.title")}
           </h1>
-          <p className="text-[12px] text-[#8b9cb3] mt-0.5">{t("sla.subtitle")}</p>
+          <p className="text-[12px] text-[#b8c5d6] mt-0.5">{t("sla.subtitle")}</p>
         </div>
 
         {policiesQuery.isLoading ? (
@@ -119,7 +119,7 @@ export default function ParametresSla() {
           </div>
         ) : (policiesQuery.data || []).length === 0 ? (
           <div className="bg-card border border-border border-dashed rounded-lg p-6 text-center">
-            <p className="text-[12px] text-[#8b9cb3]">{t("sla.noMailboxes")}</p>
+            <p className="text-[12px] text-[#b8c5d6]">{t("sla.noMailboxes")}</p>
             <Link href="/dashboard/equipe">
               <Button size="sm" variant="outline" className="mt-3 h-7 text-[11px]">
                 {t("sla.gotoSharedMailboxes")} <ChevronRight className="w-3 h-3 ml-1" />
@@ -147,7 +147,7 @@ export default function ParametresSla() {
           {breachesQuery.isLoading ? (
             <div className="flex justify-center py-4"><Loader2 className="w-4 h-4 animate-spin" /></div>
           ) : (breachesQuery.data || []).length === 0 ? (
-            <div className="bg-card border border-border rounded-lg p-4 text-[12px] text-[#8b9cb3]">
+            <div className="bg-card border border-border rounded-lg p-4 text-[12px] text-[#b8c5d6]">
               {t("sla.noBreaches")}
             </div>
           ) : (
@@ -155,11 +155,11 @@ export default function ParametresSla() {
               <table className="w-full text-[11px]">
                 <thead className="bg-background border-b border-border">
                   <tr>
-                    <th className="text-left p-2 text-[#8b9cb3]">{t("sla.thMailbox")}</th>
-                    <th className="text-left p-2 text-[#8b9cb3]">{t("sla.thSender")}</th>
-                    <th className="text-left p-2 text-[#8b9cb3]">{t("sla.thSubject")}</th>
-                    <th className="text-right p-2 text-[#8b9cb3]">{t("sla.thElapsed")}</th>
-                    <th className="text-right p-2 text-[#8b9cb3]">{t("sla.thStatus")}</th>
+                    <th className="text-left p-2 text-[#b8c5d6]">{t("sla.thMailbox")}</th>
+                    <th className="text-left p-2 text-[#b8c5d6]">{t("sla.thSender")}</th>
+                    <th className="text-left p-2 text-[#b8c5d6]">{t("sla.thSubject")}</th>
+                    <th className="text-right p-2 text-[#b8c5d6]">{t("sla.thElapsed")}</th>
+                    <th className="text-right p-2 text-[#b8c5d6]">{t("sla.thStatus")}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -236,33 +236,33 @@ function PolicyCard({
       <div className="flex items-center justify-between">
         <div>
           <div className="text-[13px] font-semibold text-white">{mailbox.mailboxName}</div>
-          <div className="text-[11px] text-[#8b9cb3]">{mailbox.mailboxEmail}</div>
+          <div className="text-[11px] text-[#b8c5d6]">{mailbox.mailboxEmail}</div>
         </div>
         <div className="flex items-center gap-2">
-          <Label htmlFor={`enabled-${mailbox.sharedMailboxId}`} className="text-[11px] text-[#8b9cb3]">{t("sla.enabled")}</Label>
+          <Label htmlFor={`enabled-${mailbox.sharedMailboxId}`} className="text-[11px] text-[#b8c5d6]">{t("sla.enabled")}</Label>
           <Switch id={`enabled-${mailbox.sharedMailboxId}`} checked={enabled} onCheckedChange={setEnabled} />
         </div>
       </div>
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <div>
-          <Label className="text-[11px] text-[#8b9cb3]">{t("sla.targetMinutes")}</Label>
+          <Label className="text-[11px] text-[#b8c5d6]">{t("sla.targetMinutes")}</Label>
           <Input type="number" min={5} max={10080} value={target} onChange={(e) => setTarget(parseInt(e.target.value, 10) || 240)} className="h-8 text-[12px]" />
         </div>
         <div>
-          <Label className="text-[11px] text-[#8b9cb3]">{t("sla.timezone")}</Label>
+          <Label className="text-[11px] text-[#b8c5d6]">{t("sla.timezone")}</Label>
           <Input value={tz} onChange={(e) => setTz(e.target.value)} className="h-8 text-[12px]" />
         </div>
         <div>
-          <Label className="text-[11px] text-[#8b9cb3]">{t("sla.start")}</Label>
+          <Label className="text-[11px] text-[#b8c5d6]">{t("sla.start")}</Label>
           <Input type="time" value={start} onChange={(e) => setStart(e.target.value)} className="h-8 text-[12px]" />
         </div>
         <div>
-          <Label className="text-[11px] text-[#8b9cb3]">{t("sla.end")}</Label>
+          <Label className="text-[11px] text-[#b8c5d6]">{t("sla.end")}</Label>
           <Input type="time" value={end} onChange={(e) => setEnd(e.target.value)} className="h-8 text-[12px]" />
         </div>
       </div>
       <div>
-        <Label className="text-[11px] text-[#8b9cb3]">{t("sla.businessDays")}</Label>
+        <Label className="text-[11px] text-[#b8c5d6]">{t("sla.businessDays")}</Label>
         <div className="flex gap-1 mt-1">
           {dayLabels.map((lbl, idx) => (
             <button
@@ -270,7 +270,7 @@ function PolicyCard({
               type="button"
               onClick={() => toggleDay(idx)}
               className={`w-7 h-7 rounded text-[11px] font-medium border transition-colors ${
-                days.includes(idx) ? "bg-primary text-white border-primary" : "bg-background text-[#8b9cb3] border-border"
+                days.includes(idx) ? "bg-primary text-white border-primary" : "bg-background text-[#b8c5d6] border-border"
               }`}
             >
               {lbl}

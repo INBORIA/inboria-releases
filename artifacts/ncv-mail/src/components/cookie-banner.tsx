@@ -62,11 +62,11 @@ export function CookieBanner() {
             <div className="flex-1 min-w-0">
               <div className="flex items-center justify-between mb-1">
                 <h3 className="text-[14px] font-semibold text-white">Gestion des cookies</h3>
-                <button onClick={reject} className="text-[#8b9cb3] hover:text-white transition-colors p-1 -m-1" aria-label="Fermer">
+                <button onClick={reject} className="text-[#b8c5d6] hover:text-white transition-colors p-1 -m-1" aria-label="Fermer">
                   <X className="w-4 h-4" />
                 </button>
               </div>
-              <p className="text-[12px] text-[#8b9cb3] leading-relaxed mb-3">
+              <p className="text-[12px] text-[#b8c5d6] leading-relaxed mb-3">
                 Inboria utilise des cookies pour assurer le bon fonctionnement du site et améliorer votre expérience.
                 Vous pouvez accepter tous les cookies ou uniquement les cookies essentiels.{" "}
                 <Link href="/confidentialite" className="text-[#2d7dd2] hover:underline">
@@ -79,7 +79,7 @@ export function CookieBanner() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-[12px] font-medium text-white">Cookies essentiels</p>
-                      <p className="text-[11px] text-[#8b9cb3]">Authentification, session, sécurité</p>
+                      <p className="text-[11px] text-[#b8c5d6]">Authentification, session, sécurité</p>
                     </div>
                     <span className="text-[10px] font-medium text-emerald-400 bg-emerald-400/10 px-2 py-0.5 rounded-full">Toujours actifs</span>
                   </div>
@@ -87,17 +87,17 @@ export function CookieBanner() {
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-[12px] font-medium text-white">Cookies analytiques</p>
-                      <p className="text-[11px] text-[#8b9cb3]">Statistiques d'utilisation anonymes</p>
+                      <p className="text-[11px] text-[#b8c5d6]">Statistiques d'utilisation anonymes</p>
                     </div>
-                    <span className="text-[10px] font-medium text-[#8b9cb3] bg-white/5 px-2 py-0.5 rounded-full">Optionnels</span>
+                    <span className="text-[10px] font-medium text-[#b8c5d6] bg-white/5 px-2 py-0.5 rounded-full">Optionnels</span>
                   </div>
                   <div className="border-t border-[#1f2937]" />
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-[12px] font-medium text-white">Cookies de préférences</p>
-                      <p className="text-[11px] text-[#8b9cb3]">Mémorisation de vos choix d'interface</p>
+                      <p className="text-[11px] text-[#b8c5d6]">Mémorisation de vos choix d'interface</p>
                     </div>
-                    <span className="text-[10px] font-medium text-[#8b9cb3] bg-white/5 px-2 py-0.5 rounded-full">Optionnels</span>
+                    <span className="text-[10px] font-medium text-[#b8c5d6] bg-white/5 px-2 py-0.5 rounded-full">Optionnels</span>
                   </div>
                 </div>
               )}
@@ -117,7 +117,7 @@ export function CookieBanner() {
                 </button>
                 <button
                   onClick={reject}
-                  className="px-4 py-2 text-[12px] font-semibold text-[#8b9cb3] hover:text-white transition-colors"
+                  className="px-4 py-2 text-[12px] font-semibold text-[#b8c5d6] hover:text-white transition-colors"
                 >
                   Refuser
                 </button>

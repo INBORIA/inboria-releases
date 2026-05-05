@@ -78,7 +78,7 @@ export default function Accueil() {
             <span className="text-white">{t("marketing.home.heroTitle2")}</span><br />
             <span className="text-[#2d7dd2]">{t("marketing.home.heroTitle3")}</span>
           </h1>
-          <p className="mt-6 text-[16px] sm:text-[18px] text-[#8b9cb3] max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-6 text-[16px] sm:text-[18px] text-[#b8c5d6] max-w-2xl mx-auto leading-relaxed">
             {t("marketing.home.heroDesc")}
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -97,7 +97,7 @@ export default function Accueil() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
             <h2 className="text-2xl sm:text-3xl font-bold text-white">{t("marketing.home.howItWorks")}</h2>
-            <p className="text-[14px] text-[#8b9cb3] mt-2">
+            <p className="text-[14px] text-[#b8c5d6] mt-2">
               {t("marketing.home.howItWorksDesc")}
             </p>
           </div>
@@ -111,7 +111,7 @@ export default function Accueil() {
                   </div>
                   <div>
                     <h3 className="text-[16px] font-semibold text-white">{step.title}</h3>
-                    <p className="text-[14px] text-[#8b9cb3] mt-1 max-w-lg">{step.desc}</p>
+                    <p className="text-[14px] text-[#b8c5d6] mt-1 max-w-lg">{step.desc}</p>
                   </div>
                 </div>
               </div>
@@ -123,7 +123,7 @@ export default function Accueil() {
       <section className="border-t border-[#1f2937]">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24">
           <div className="text-center mb-12">
-            <p className="text-[14px] text-[#8b9cb3]">
+            <p className="text-[14px] text-[#b8c5d6]">
               {t("marketing.home.trustTitle")}
             </p>
           </div>
@@ -134,7 +134,7 @@ export default function Accueil() {
                   <b.icon className="w-5 h-5 text-[#2d7dd2]" />
                 </div>
                 <h3 className="text-[15px] font-semibold text-white mb-2">{b.title}</h3>
-                <p className="text-[13px] text-[#8b9cb3] leading-relaxed">{b.desc}</p>
+                <p className="text-[13px] text-[#b8c5d6] leading-relaxed">{b.desc}</p>
               </div>
             ))}
           </div>
@@ -144,7 +144,7 @@ export default function Accueil() {
       <section className="border-t border-[#1f2937] bg-[#0a0e14]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-white">{t("marketing.home.ctaTitle")}</h2>
-          <p className="text-[14px] text-[#8b9cb3] mt-3">
+          <p className="text-[14px] text-[#b8c5d6] mt-3">
             {t("marketing.home.ctaDesc")}
           </p>
           <Link href="/signup">

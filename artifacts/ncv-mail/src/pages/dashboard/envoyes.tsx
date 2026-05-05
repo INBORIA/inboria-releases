@@ -231,7 +231,7 @@ export default function Envoyes() {
               <Send className="w-4 h-4 text-primary" />
               {t("sent.title")}
             </h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+            <p className="text-[12px] text-[#b8c5d6] mt-0.5">
               {t("sent.emailsSentCount", { count: paged?.total || sentEmails.length })}
             </p>
           </div>
@@ -239,7 +239,7 @@ export default function Envoyes() {
             variant="outline"
             size="sm"
             onClick={handleExport}
-            className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
+            className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#b8c5d6] hover:text-white"
           >
             <Download className="w-3 h-3" />
             {t("sent.exportCSV")}
@@ -253,9 +253,9 @@ export default function Envoyes() {
           </div>
         ) : sentEmails.length === 0 ? (
           <div className="text-center py-16 rounded-lg border border-border border-dashed bg-card/50">
-            <Send className="mx-auto h-8 w-8 text-[#8b9cb3]/20 mb-2" />
+            <Send className="mx-auto h-8 w-8 text-[#b8c5d6]/20 mb-2" />
             <h3 className="text-[13px] font-medium text-white mb-1">{t("sent.noEmails")}</h3>
-            <p className="text-[12px] text-[#8b9cb3]">{t("sent.noEmailsDesc")}</p>
+            <p className="text-[12px] text-[#b8c5d6]">{t("sent.noEmailsDesc")}</p>
           </div>
         ) : (
           <>
@@ -313,13 +313,13 @@ export default function Envoyes() {
                         {email.summary && (
                           <div className="flex items-center gap-1 mt-0.5">
                             <Sparkles className="w-3 h-3 text-primary shrink-0" />
-                            <p className="text-[11px] text-[#8b9cb3] line-clamp-1">{email.summary}</p>
+                            <p className="text-[11px] text-[#b8c5d6] line-clamp-1">{email.summary}</p>
                           </div>
                         )}
                       </div>
                       <div className="flex items-center gap-2 shrink-0">
                         {email.projectName && (
-                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/[0.06] text-[#8b9cb3]">
+                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/[0.06] text-[#b8c5d6]">
                             {email.projectReference || email.projectName}
                           </span>
                         )}
@@ -341,7 +341,7 @@ export default function Envoyes() {
                             </span>
                           );
                         })()}
-                        <span className="text-[10px] text-[#8b9cb3]">
+                        <span className="text-[10px] text-[#b8c5d6]">
                           {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
                         </span>
                       </div>
@@ -365,11 +365,11 @@ export default function Envoyes() {
         )}
         {selectionMode && (
           <div data-selection-bar className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#141c2b] border border-[#1f2937] rounded-lg shadow-2xl px-4 py-2 flex items-center gap-3">
-            <span className="text-[11px] text-[#8b9cb3]">{t("inbox.selectedCount", { count: selectedIds.size })}</span>
+            <span className="text-[11px] text-[#b8c5d6]">{t("inbox.selectedCount", { count: selectedIds.size })}</span>
             <button onClick={handleBulkDelete} className="flex items-center gap-1.5 text-[11px] text-red-400 hover:text-red-300 transition-colors">
               <Trash2 className="w-3 h-3" />{t("inbox.deleteEmail")}
             </button>
-            <button onClick={() => setSelectedIds(new Set())} className="text-[11px] text-[#8b9cb3] hover:text-white transition-colors ml-2">{t("common.cancel")}</button>
+            <button onClick={() => setSelectedIds(new Set())} className="text-[11px] text-[#b8c5d6] hover:text-white transition-colors ml-2">{t("common.cancel")}</button>
           </div>
         )}
       </div>
@@ -381,7 +381,7 @@ export default function Envoyes() {
           style={{ top: Math.min(contextMenu.y, window.innerHeight - 200), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
         >
           <div className="px-3 py-2 border-b border-[#1f2937]">
-            <span className="text-[10px] text-[#8b9cb3] uppercase tracking-wider font-medium">
+            <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider font-medium">
               {selectedIds.size > 1
                 ? t("inbox.selectedCount", { count: selectedIds.size })
                 : sentEmails.find(e => e.id === contextMenu.emailId)?.subject?.substring(0, 30) + "..."
@@ -392,7 +392,7 @@ export default function Envoyes() {
             {selectedIds.size <= 1 && (
               <button
                 onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#8b9cb3] hover:bg-white/[0.06] hover:text-white transition-colors"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
               >
                 <ChevronRight className="w-3.5 h-3.5" />
                 {t("inbox.openEmail")}

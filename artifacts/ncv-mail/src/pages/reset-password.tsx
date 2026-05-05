@@ -146,7 +146,7 @@ export default function ResetPassword() {
             <Lock className="w-7 h-7 text-red-400" />
           </div>
           <h1 className="text-xl font-bold text-white">{t("auth.linkExpired")}</h1>
-          <p className="text-sm text-[#8b9cb3]">
+          <p className="text-sm text-[#b8c5d6]">
             {t("auth.linkExpiredDesc")}
           </p>
           <a href="/mot-de-passe-oublie" className="inline-block text-sm text-primary hover:text-primary/80 font-semibold">
@@ -163,7 +163,7 @@ export default function ResetPassword() {
         <div className="text-center space-y-4">
           <Loader2 className="w-10 h-10 animate-spin text-primary mx-auto" />
           <h1 className="text-xl font-bold text-white">{t("auth.verifying")}</h1>
-          <p className="text-sm text-[#8b9cb3]">{t("auth.verifyingLink")}</p>
+          <p className="text-sm text-[#b8c5d6]">{t("auth.verifyingLink")}</p>
         </div>
       </AuthLayout>
     );
@@ -177,7 +177,7 @@ export default function ResetPassword() {
             <CheckCircle className="w-7 h-7 text-emerald-400" />
           </div>
           <h1 className="text-xl font-bold text-white">{t("auth.passwordChanged")}</h1>
-          <p className="text-sm text-[#8b9cb3]">
+          <p className="text-sm text-[#b8c5d6]">
             {t("auth.redirectingToSpace")}
           </p>
         </div>
@@ -192,14 +192,14 @@ export default function ResetPassword() {
           <Lock className="w-7 h-7 text-primary" />
         </div>
         <h1 className="text-2xl font-bold text-white">{t("auth.resetPasswordTitle")}</h1>
-        <p className="text-[#8b9cb3] mt-2 text-sm">
+        <p className="text-[#b8c5d6] mt-2 text-sm">
           {t("auth.resetPasswordSubtitle")}
         </p>
       </div>
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div className="space-y-1.5">
-          <Label className="text-[12px] text-[#8b9cb3]">{t("auth.newPassword")}</Label>
+          <Label className="text-[12px] text-[#b8c5d6]">{t("auth.newPassword")}</Label>
           <div className="relative">
             <Input
               type={showPassword ? "text" : "password"}
@@ -212,7 +212,7 @@ export default function ResetPassword() {
             <button
               type="button"
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8b9cb3] hover:text-white transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-[#b8c5d6] hover:text-white transition-colors"
               tabIndex={-1}
             >
               {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
@@ -220,7 +220,7 @@ export default function ResetPassword() {
           </div>
         </div>
         <div className="space-y-1.5">
-          <Label className="text-[12px] text-[#8b9cb3]">{t("auth.confirmPassword")}</Label>
+          <Label className="text-[12px] text-[#b8c5d6]">{t("auth.confirmPassword")}</Label>
           <Input
             type={showPassword ? "text" : "password"}
             value={confirmPassword}

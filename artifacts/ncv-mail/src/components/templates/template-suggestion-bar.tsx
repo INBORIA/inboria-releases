@@ -62,7 +62,7 @@ export function TemplateSuggestionBar({
 
   return (
     <div className="border border-border/60 rounded-md p-2 bg-muted/30">
-      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-[#8b9cb3] mb-1.5">
+      <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-wider text-[#b8c5d6] mb-1.5">
         <Sparkles className="h-3 w-3" /> {t("templates.suggestionTitle")}
       </div>
       <div className="flex flex-wrap gap-1.5">

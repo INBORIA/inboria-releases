@@ -241,9 +241,9 @@ export default function Equipe() {
       <DashboardLayout>
         <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-12">
           <div className="bg-[#141c2b] rounded-xl border border-[#1f2937] p-8 text-center">
-            <Building2 className="mx-auto h-12 w-12 text-[#8b9cb3]/40 mb-4" />
+            <Building2 className="mx-auto h-12 w-12 text-[#b8c5d6]/40 mb-4" />
             <h2 className="text-lg font-semibold text-white mb-2">{t("team.createOrg")}</h2>
-            <p className="text-[13px] text-[#8b9cb3] mb-6">
+            <p className="text-[13px] text-[#b8c5d6] mb-6">
               {isBusinessPlan
                 ? t("team.subtitle")
                 : t("team.businessRequiredDesc")}
@@ -289,7 +289,7 @@ export default function Equipe() {
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 px-2 text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] text-[12px]"
+              className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
               data-testid="back-to-settings"
             >
               <ArrowLeft className="w-3.5 h-3.5 mr-1" />
@@ -303,7 +303,7 @@ export default function Equipe() {
               <Building2 className="h-5 w-5 text-primary" />
               {(org as any)?.name}
             </h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+            <p className="text-[12px] text-[#b8c5d6] mt-0.5">
               {(org as any)?.plan} — {seatsUsed}/{seatsTotal}
             </p>
           </div>
@@ -320,7 +320,7 @@ export default function Equipe() {
         <div className="bg-[#141c2b] rounded-xl border border-[#1f2937] overflow-hidden">
           <div className="px-5 py-3 border-b border-[#1f2937] flex items-center justify-between">
             <h2 className="text-[14px] font-semibold text-white flex items-center gap-2">
-              <Users className="h-4 w-4 text-[#8b9cb3]" />
+              <Users className="h-4 w-4 text-[#b8c5d6]" />
               {t("team.members")} ({seatsUsed})
             </h2>
           </div>
@@ -347,10 +347,10 @@ export default function Equipe() {
                         </span>
                       )}
                       {member.userId === (profile as any)?.id && (
-                        <span className="text-[10px] text-[#8b9cb3]">{t("team.you")}</span>
+                        <span className="text-[10px] text-[#b8c5d6]">{t("team.you")}</span>
                       )}
                     </div>
-                    <span className="text-[11px] text-[#8b9cb3]">{member.email}</span>
+                    <span className="text-[11px] text-[#b8c5d6]">{member.email}</span>
                   </div>
                 </div>
 
@@ -359,7 +359,7 @@ export default function Equipe() {
                     <div className="relative">
                       <button
                         onClick={(e) => openRoleDropdown(member.id, e)}
-                        className="flex items-center gap-1 px-2 py-1 rounded text-[11px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] transition-colors"
+                        className="flex items-center gap-1 px-2 py-1 rounded text-[11px] text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] transition-colors"
                       >
                         <Shield className="h-3 w-3" />
                         {member.role === "admin" ? t("team.admin") : t("team.member")}
@@ -384,7 +384,7 @@ export default function Equipe() {
                               <div className="text-[11px] font-medium text-white">
                                 {t("team.changeRole") || "Changer le rôle"}
                               </div>
-                              <div className="text-[10px] text-[#8b9cb3] truncate">
+                              <div className="text-[10px] text-[#b8c5d6] truncate">
                                 {member.fullName || member.email}
                               </div>
                             </div>
@@ -397,7 +397,7 @@ export default function Equipe() {
                               <Crown className="h-3.5 w-3.5 mt-0.5 shrink-0" />
                               <div className="flex-1">
                                 <div className="font-medium">{t("team.admin")}</div>
-                                <div className="text-[10px] text-[#8b9cb3] leading-snug">
+                                <div className="text-[10px] text-[#b8c5d6] leading-snug">
                                   {t("team.adminDesc") || "Peut gérer l'équipe, l'abonnement et tous les emails"}
                                 </div>
                               </div>
@@ -411,7 +411,7 @@ export default function Equipe() {
                               <Shield className="h-3.5 w-3.5 mt-0.5 shrink-0" />
                               <div className="flex-1">
                                 <div className="font-medium">{t("team.member")}</div>
-                                <div className="text-[10px] text-[#8b9cb3] leading-snug">
+                                <div className="text-[10px] text-[#b8c5d6] leading-snug">
                                   {t("team.memberDesc") || "Accès à ses emails et aux tâches partagées"}
                                 </div>
                               </div>
@@ -422,7 +422,7 @@ export default function Equipe() {
                     </div>
                     <button
                       onClick={() => handleRemoveMember(member.id, member.fullName)}
-                      className="p-1 rounded text-[#8b9cb3] hover:text-red-400 hover:bg-red-400/10 transition-colors"
+                      className="p-1 rounded text-[#b8c5d6] hover:text-red-400 hover:bg-red-400/10 transition-colors"
                       title={t("team.removeMember")}
                     >
                       <Trash2 className="h-3.5 w-3.5" />
@@ -438,13 +438,13 @@ export default function Equipe() {
           <div id="invite-section" className="bg-[#141c2b] rounded-xl border border-[#1f2937] overflow-hidden">
             <div className="px-5 py-3 border-b border-[#1f2937]">
               <h2 className="text-[14px] font-semibold text-white flex items-center gap-2">
-                <UserPlus className="h-4 w-4 text-[#8b9cb3]" />
+                <UserPlus className="h-4 w-4 text-[#b8c5d6]" />
                 {t("team.invite")}
               </h2>
             </div>
             <div className="p-5">
               {seatsUsed >= seatsTotal ? (
-                <p className="text-[12px] text-[#8b9cb3]">
+                <p className="text-[12px] text-[#b8c5d6]">
                   {t("team.businessRequired")}
                 </p>
               ) : (
@@ -491,10 +491,10 @@ export default function Equipe() {
             <div className="px-5 py-3 border-b border-[#1f2937] flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <h2 className="text-[14px] font-semibold text-white flex items-center gap-2">
-                  <MailPlus className="h-4 w-4 text-[#8b9cb3]" />
+                  <MailPlus className="h-4 w-4 text-[#b8c5d6]" />
                   {t("sharedMailboxes.title")} ({(sharedMailboxes as any[])?.length || 0})
                 </h2>
-                <p className="text-[11px] text-[#8b9cb3] mt-0.5">
+                <p className="text-[11px] text-[#b8c5d6] mt-0.5">
                   {t("sharedMailboxes.subtitle")}
                 </p>
               </div>
@@ -507,13 +507,13 @@ export default function Equipe() {
             </div>
             {sharedMailboxesLoading ? (
               <div className="flex justify-center py-6">
-                <Loader2 className="h-5 w-5 animate-spin text-[#8b9cb3]" />
+                <Loader2 className="h-5 w-5 animate-spin text-[#b8c5d6]" />
               </div>
             ) : !sharedMailboxes || (sharedMailboxes as any[]).length === 0 ? (
               <div className="px-5 py-6 text-center">
-                <Inbox className="h-8 w-8 text-[#8b9cb3]/40 mx-auto mb-2" />
-                <p className="text-[12px] text-[#8b9cb3]">{t("sharedMailboxes.noMailboxes")}</p>
-                <p className="text-[11px] text-[#8b9cb3]/70 mt-1 max-w-md mx-auto">
+                <Inbox className="h-8 w-8 text-[#b8c5d6]/40 mx-auto mb-2" />
+                <p className="text-[12px] text-[#b8c5d6]">{t("sharedMailboxes.noMailboxes")}</p>
+                <p className="text-[11px] text-[#b8c5d6]/70 mt-1 max-w-md mx-auto">
                   {t("sharedMailboxes.shareToStart")}
                 </p>
               </div>
@@ -549,7 +549,7 @@ export default function Equipe() {
           <div className="bg-[#141c2b] rounded-xl border border-[#1f2937] overflow-hidden">
             <div className="px-5 py-3 border-b border-[#1f2937]">
               <h2 className="text-[14px] font-semibold text-white flex items-center gap-2">
-                <Clock className="h-4 w-4 text-[#8b9cb3]" />
+                <Clock className="h-4 w-4 text-[#b8c5d6]" />
                 {t("team.invitations")} ({pendingInvitations.length})
               </h2>
             </div>
@@ -561,11 +561,11 @@ export default function Equipe() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-full bg-[#1f2937] flex items-center justify-center">
-                      <Mail className="h-3.5 w-3.5 text-[#8b9cb3]" />
+                      <Mail className="h-3.5 w-3.5 text-[#b8c5d6]" />
                     </div>
                     <div>
                       <span className="text-[13px] text-white">{inv.email}</span>
-                      <span className="text-[11px] text-[#8b9cb3] ml-2">
+                      <span className="text-[11px] text-[#b8c5d6] ml-2">
                         {inv.role === "admin" ? t("team.admin") : t("team.member")}
                       </span>
                     </div>
@@ -574,7 +574,7 @@ export default function Equipe() {
                     {inv.token && (
                       <button
                         onClick={() => copyInviteLink(inv.token!)}
-                        className="flex items-center gap-1 px-2 py-1 rounded text-[11px] text-[#8b9cb3] hover:text-white hover:bg-white/[0.06] transition-colors"
+                        className="flex items-center gap-1 px-2 py-1 rounded text-[11px] text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] transition-colors"
                         title={t("team.copyInviteLink")}
                       >
                         {copiedToken === inv.token ? (
@@ -593,7 +593,7 @@ export default function Equipe() {
                     {isAdmin && (
                       <button
                         onClick={() => handleCancelInvite(inv.id)}
-                        className="p-1 rounded text-[#8b9cb3] hover:text-red-400 hover:bg-red-400/10 transition-colors"
+                        className="p-1 rounded text-[#b8c5d6] hover:text-red-400 hover:bg-red-400/10 transition-colors"
                         title={t("team.cancelInvite")}
                       >
                         <X className="h-3.5 w-3.5" />
@@ -661,7 +661,7 @@ function SharedMailboxRow({
                 </span>
               )}
             </div>
-            <div className="flex items-center gap-3 text-[11px] text-[#8b9cb3]">
+            <div className="flex items-center gap-3 text-[11px] text-[#b8c5d6]">
               <span className="truncate">{mailbox.emailAddress}</span>
               <span className="flex items-center gap-1 shrink-0">
                 <Users className="h-3 w-3" />
@@ -674,13 +674,13 @@ function SharedMailboxRow({
             {t("sharedMailboxes.manageMembers")}
           </span>
           <ChevronDown
-            className={`h-4 w-4 text-[#8b9cb3] transition-transform shrink-0 ${expanded ? "rotate-180" : ""}`}
+            className={`h-4 w-4 text-[#b8c5d6] transition-transform shrink-0 ${expanded ? "rotate-180" : ""}`}
           />
         </button>
         <button
           type="button"
           onClick={() => setConfirmDeleteOpen(true)}
-          className="p-1.5 rounded text-[#8b9cb3] hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
+          className="p-1.5 rounded text-[#b8c5d6] hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
           title={t("sharedMailboxes.delete")}
           data-testid={`delete-shared-mailbox-${mailbox.id}`}
         >
@@ -758,7 +758,7 @@ function SharedMailboxRow({
               </div>
             ) : (
               <div className="space-y-2">
-                <p className="text-[11px] text-[#8b9cb3] leading-relaxed">
+                <p className="text-[11px] text-[#b8c5d6] leading-relaxed">
                   {orgMembers.length > 1
                     ? t("sharedMailboxes.allTeammatesAlready")
                     : t("sharedMailboxes.noTeammatesYet")}
@@ -779,16 +779,16 @@ function SharedMailboxRow({
           </div>
 
           <div className="text-[11px] font-semibold text-white flex items-center gap-1.5">
-            <Users className="h-3 w-3 text-[#8b9cb3]" />
+            <Users className="h-3 w-3 text-[#b8c5d6]" />
             {t("sharedMailboxes.mailboxMembers")} ({((mbMembers as any[]) || []).length})
           </div>
 
           {isLoading ? (
             <div className="flex justify-center py-3">
-              <Loader2 className="h-4 w-4 animate-spin text-[#8b9cb3]" />
+              <Loader2 className="h-4 w-4 animate-spin text-[#b8c5d6]" />
             </div>
           ) : !mbMembers || (mbMembers as any[]).length === 0 ? (
-            <p className="text-[11px] text-[#8b9cb3] py-1">
+            <p className="text-[11px] text-[#b8c5d6] py-1">
               {t("sharedMailboxes.noMembers")}
             </p>
           ) : (
@@ -808,13 +808,13 @@ function SharedMailboxRow({
                       <div className="text-[12px] text-white truncate">
                         {m.fullName || t("sharedMailboxes.noName")}
                       </div>
-                      <div className="text-[10px] text-[#8b9cb3] truncate">{m.email}</div>
+                      <div className="text-[10px] text-[#b8c5d6] truncate">{m.email}</div>
                     </div>
                   </div>
                   <button
                     type="button"
                     onClick={() => onRemoveMember(m.id)}
-                    className="p-1 rounded text-[#8b9cb3] hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
+                    className="p-1 rounded text-[#b8c5d6] hover:text-red-400 hover:bg-red-400/10 transition-colors shrink-0"
                     title={t("sharedMailboxes.removeMember")}
                   >
                     <X className="h-3.5 w-3.5" />

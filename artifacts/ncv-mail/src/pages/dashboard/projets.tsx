@@ -118,7 +118,7 @@ function getProjectColors(t: (key: string) => string) {
 function getStatusLabels(t: (key: string) => string) {
   return {
     actif: { label: t("projects.statusActive"), class: "bg-emerald-500/10 text-emerald-400" },
-    termine: { label: t("projects.statusComplete"), class: "bg-[#8b9cb3]/10 text-[#8b9cb3]" },
+    termine: { label: t("projects.statusComplete"), class: "bg-[#b8c5d6]/10 text-[#b8c5d6]" },
     en_pause: { label: t("projects.statusPaused"), class: "bg-amber-500/10 text-amber-400" },
   };
 }
@@ -187,19 +187,19 @@ function ProjectNotes({ projectId }: { projectId: string }) {
       {isLoading ? (
         <Skeleton className="h-12 w-full bg-white/5" />
       ) : (notes || []).length === 0 ? (
-        <p className="text-[11px] text-[#8b9cb3]/60 italic">{t("projects.noNotes")}</p>
+        <p className="text-[11px] text-[#b8c5d6]/60 italic">{t("projects.noNotes")}</p>
       ) : (
         <div className="space-y-1.5">
           {(notes || []).map((note: any) => (
             <div key={note.id} className="bg-card border border-border rounded-lg px-3 py-2 flex items-start gap-2 group">
-              <p className="text-[12px] text-[#8b9cb3] flex-1 whitespace-pre-wrap">{note.content}</p>
+              <p className="text-[12px] text-[#b8c5d6] flex-1 whitespace-pre-wrap">{note.content}</p>
               <div className="flex items-center gap-2 shrink-0">
-                <span className="text-[10px] text-[#8b9cb3]/50">
+                <span className="text-[10px] text-[#b8c5d6]/50">
                   {new Date(note.createdAt).toLocaleDateString(i18n.language)}
                 </span>
                 <button
                   onClick={() => handleDeleteNote(note.id)}
-                  className="p-1 rounded-md text-[#8b9cb3]/40 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                  className="p-1 rounded-md text-[#b8c5d6]/40 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
                   title={t("common.delete")}
                 >
                   <Trash2 className="w-3 h-3" />
@@ -333,11 +333,11 @@ function ProjectDetailView({
             variant="ghost"
             size="sm"
             onClick={onBack}
-            className="text-[#8b9cb3] hover:text-white mb-3 gap-1.5 h-7 text-[12px]"
+            className="text-[#b8c5d6] hover:text-white mb-3 gap-1.5 h-7 text-[12px]"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> {t("common.back")}
           </Button>
-          <p className="text-[12px] text-[#8b9cb3]">Projet introuvable.</p>
+          <p className="text-[12px] text-[#b8c5d6]">Projet introuvable.</p>
         </div>
       </DashboardLayout>
     );
@@ -377,7 +377,7 @@ function ProjectDetailView({
             variant="ghost"
             size="sm"
             onClick={onBack}
-            className="text-[#8b9cb3] hover:text-white gap-1.5 h-7 text-[12px]"
+            className="text-[#b8c5d6] hover:text-white gap-1.5 h-7 text-[12px]"
           >
             <ArrowLeft className="w-3.5 h-3.5" /> {t("common.back")}
           </Button>
@@ -393,7 +393,7 @@ function ProjectDetailView({
                 toast({ title: t("projects.exportError"), variant: "destructive" });
               }
             }}
-            className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#8b9cb3] hover:text-white"
+            className="gap-1 text-[11px] h-7 bg-transparent border-border text-[#b8c5d6] hover:text-white"
           >
             <Download className="w-3 h-3" />
             {t("projects.export")}
@@ -417,7 +417,7 @@ function ProjectDetailView({
                 {statusInfo.label}
               </span>
             </div>
-            <div className="flex items-center gap-2.5 text-[12px] text-[#8b9cb3]">
+            <div className="flex items-center gap-2.5 text-[12px] text-[#b8c5d6]">
               <span className="flex items-center gap-1">
                 <Hash className="w-3 h-3" /> {project.reference}
               </span>
@@ -430,7 +430,7 @@ function ProjectDetailView({
 
         <div className="grid grid-cols-3 gap-2 mb-5">
           <div className="bg-card rounded-lg border border-border p-3">
-            <div className="flex items-center gap-1.5 text-[#8b9cb3] mb-0.5">
+            <div className="flex items-center gap-1.5 text-[#b8c5d6] mb-0.5">
               <Mail className="w-3.5 h-3.5" />
               <span className="text-[11px]">{t("projects.emails")}</span>
             </div>
@@ -439,7 +439,7 @@ function ProjectDetailView({
             </p>
           </div>
           <div className="bg-card rounded-lg border border-border p-3">
-            <div className="flex items-center gap-1.5 text-[#8b9cb3] mb-0.5">
+            <div className="flex items-center gap-1.5 text-[#b8c5d6] mb-0.5">
               <CheckSquare className="w-3.5 h-3.5" />
               <span className="text-[11px]">{t("projects.tasks")}</span>
             </div>
@@ -479,9 +479,9 @@ function ProjectDetailView({
                     <div className="flex items-center gap-2.5 flex-1 min-w-0 px-3 py-2">
                       <div className="flex-1 min-w-0">
                         <p className="text-[12px] text-white truncate">{email.subject}</p>
-                        <p className="text-[10px] text-[#8b9cb3]">{email.sender}</p>
+                        <p className="text-[10px] text-[#b8c5d6]">{email.sender}</p>
                       </div>
-                      <span className="text-[10px] text-[#8b9cb3] shrink-0">
+                      <span className="text-[10px] text-[#b8c5d6] shrink-0">
                         {new Date(email.createdAt).toLocaleDateString(i18n.language)}
                       </span>
                     </div>
@@ -538,19 +538,19 @@ function ProjectDetailView({
                 >
                   <button
                     onClick={() => handleToggleTask(String(task.id), task.done)}
-                    className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 cursor-pointer transition-colors ${task.done ? "bg-emerald-500 border-emerald-500" : "border-[#8b9cb3]/30 hover:border-primary/60"}`}
+                    className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 cursor-pointer transition-colors ${task.done ? "bg-emerald-500 border-emerald-500" : "border-[#b8c5d6]/30 hover:border-primary/60"}`}
                   >
                     {task.done && (
                       <CheckSquare className="w-2.5 h-2.5 text-white" />
                     )}
                   </button>
                   <p
-                    className={`text-[12px] flex-1 ${task.done ? "line-through text-[#8b9cb3]" : "text-white"}`}
+                    className={`text-[12px] flex-1 ${task.done ? "line-through text-[#b8c5d6]" : "text-white"}`}
                   >
                     {task.title}
                   </p>
                   {task.emailSubject && (
-                    <span className="text-[10px] text-[#8b9cb3] truncate max-w-[140px]">
+                    <span className="text-[10px] text-[#b8c5d6] truncate max-w-[140px]">
                       {task.emailSubject}
                     </span>
                   )}
@@ -580,7 +580,7 @@ function ProjectDetailView({
                   )}
                   <button
                     onClick={() => handleDeleteTask(String(task.id))}
-                    className="p-1.5 rounded-md text-[#8b9cb3]/40 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
+                    className="p-1.5 rounded-md text-[#b8c5d6]/40 hover:text-red-400 hover:bg-red-500/10 transition-colors opacity-0 group-hover:opacity-100"
                     title={t("common.delete")}
                   >
                     <Trash2 className="w-3.5 h-3.5" />
@@ -590,7 +590,7 @@ function ProjectDetailView({
               })}
             </div>
           ) : (
-            <p className="text-[11px] text-[#8b9cb3]/60 italic">{t("projects.noTasksInProject")}</p>
+            <p className="text-[11px] text-[#b8c5d6]/60 italic">{t("projects.noTasksInProject")}</p>
           )}
         </div>
 
@@ -601,11 +601,11 @@ function ProjectDetailView({
         {(project.emails || []).length === 0 &&
           (project.tasks || []).length === 0 && (
             <div className="text-center py-12 rounded-lg border border-border border-dashed bg-card/50">
-              <FolderKanban className="mx-auto h-8 w-8 text-[#8b9cb3]/20 mb-2" />
-              <p className="text-[12px] text-[#8b9cb3]">
+              <FolderKanban className="mx-auto h-8 w-8 text-[#b8c5d6]/20 mb-2" />
+              <p className="text-[12px] text-[#b8c5d6]">
                 {t("projects.noEmailsInProject")}
               </p>
-              <p className="text-[11px] text-[#8b9cb3]/60 mt-0.5">
+              <p className="text-[11px] text-[#b8c5d6]/60 mt-0.5">
                 {t("projects.noProjectsDesc")}
               </p>
             </div>
@@ -750,7 +750,7 @@ export default function Projets() {
             <h1 className="text-[16px] font-semibold text-white tracking-tight">
               {t("projects.title")}
             </h1>
-            <p className="text-[12px] text-[#8b9cb3] mt-0.5">
+            <p className="text-[12px] text-[#b8c5d6] mt-0.5">
               {t("projects.noProjectsDesc")}
             </p>
           </div>
@@ -767,7 +767,7 @@ export default function Projets() {
                   toast({ title: t("projects.exportError"), variant: "destructive" });
                 }
               }}
-              className="gap-1 text-[11px] h-8 bg-transparent border-border text-[#8b9cb3] hover:text-white"
+              className="gap-1 text-[11px] h-8 bg-transparent border-border text-[#b8c5d6] hover:text-white"
             >
               <Download className="w-3 h-3" />
               {t("projects.export")}
@@ -809,7 +809,7 @@ export default function Projets() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">
+                      <FormLabel className="text-[#b8c5d6]">
                         {t("projects.name")}
                       </FormLabel>
                       <FormControl>
@@ -828,7 +828,7 @@ export default function Projets() {
                   name="reference"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">
+                      <FormLabel className="text-[#b8c5d6]">
                         {t("projects.reference")}
                       </FormLabel>
                       <FormControl>
@@ -838,7 +838,7 @@ export default function Projets() {
                           {...field}
                         />
                       </FormControl>
-                      <p className="text-[11px] text-[#8b9cb3]/60">
+                      <p className="text-[11px] text-[#b8c5d6]/60">
                         Laissez vide pour une reference automatique
                       </p>
                     </FormItem>
@@ -849,7 +849,7 @@ export default function Projets() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">
+                      <FormLabel className="text-[#b8c5d6]">
                         {t("projects.description")}
                       </FormLabel>
                       <FormControl>
@@ -868,7 +868,7 @@ export default function Projets() {
                     name="color"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#8b9cb3]">
+                        <FormLabel className="text-[#b8c5d6]">
                           {t("projects.color")}
                         </FormLabel>
                         <Select
@@ -901,7 +901,7 @@ export default function Projets() {
                     name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#8b9cb3]">{t("projects.status")}</FormLabel>
+                        <FormLabel className="text-[#b8c5d6]">{t("projects.status")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
@@ -951,7 +951,7 @@ export default function Projets() {
                   name="name"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">{t("projects.name")}</FormLabel>
+                      <FormLabel className="text-[#b8c5d6]">{t("projects.name")}</FormLabel>
                       <FormControl>
                         <Input
                           className="bg-background border-border text-white"
@@ -967,7 +967,7 @@ export default function Projets() {
                   name="reference"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">
+                      <FormLabel className="text-[#b8c5d6]">
                         {t("projects.reference")}
                       </FormLabel>
                       <FormControl>
@@ -984,7 +984,7 @@ export default function Projets() {
                   name="description"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-[#8b9cb3]">
+                      <FormLabel className="text-[#b8c5d6]">
                         {t("projects.description")}
                       </FormLabel>
                       <FormControl>
@@ -1002,7 +1002,7 @@ export default function Projets() {
                     name="color"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#8b9cb3]">
+                        <FormLabel className="text-[#b8c5d6]">
                           {t("projects.color")}
                         </FormLabel>
                         <Select
@@ -1035,7 +1035,7 @@ export default function Projets() {
                     name="status"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel className="text-[#8b9cb3]">{t("projects.status")}</FormLabel>
+                        <FormLabel className="text-[#b8c5d6]">{t("projects.status")}</FormLabel>
                         <Select
                           onValueChange={field.onChange}
                           value={field.value}
@@ -1084,11 +1084,11 @@ export default function Projets() {
           </div>
         ) : (projects || []).length === 0 ? (
           <div className="text-center py-20 rounded-lg border border-border border-dashed bg-card/50">
-            <FolderKanban className="mx-auto h-12 w-12 text-[#8b9cb3]/20 mb-3" />
+            <FolderKanban className="mx-auto h-12 w-12 text-[#b8c5d6]/20 mb-3" />
             <h3 className="text-sm font-medium text-white mb-1">
               {t("projects.noProjects")}
             </h3>
-            <p className="text-[13px] text-[#8b9cb3] mb-4">
+            <p className="text-[13px] text-[#b8c5d6] mb-4">
               {t("projects.noProjectsDesc")}
             </p>
             <Button
@@ -1104,7 +1104,7 @@ export default function Projets() {
           <>
             {activeProjects.length > 0 && (
               <div className="mb-6">
-                <h2 className="text-[13px] font-medium text-[#8b9cb3] uppercase tracking-wider mb-3">
+                <h2 className="text-[13px] font-medium text-[#b8c5d6] uppercase tracking-wider mb-3">
                   {t("projects.statusActive")} ({activeProjects.length})
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -1116,7 +1116,7 @@ export default function Projets() {
             )}
             {otherProjects.length > 0 && (
               <div>
-                <h2 className="text-[13px] font-medium text-[#8b9cb3] uppercase tracking-wider mb-3">
+                <h2 className="text-[13px] font-medium text-[#b8c5d6] uppercase tracking-wider mb-3">
                   {t("projects.statusComplete")} ({otherProjects.length})
                 </h2>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -1158,7 +1158,7 @@ export default function Projets() {
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-7 w-7 text-[#8b9cb3] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/[0.06]"
+                  className="h-7 w-7 text-[#b8c5d6] opacity-0 group-hover:opacity-100 transition-opacity hover:bg-white/[0.06]"
                   onClick={(e) => e.stopPropagation()}
                 >
                   <MoreVertical className="h-3.5 w-3.5" />
@@ -1170,7 +1170,7 @@ export default function Projets() {
                     e.stopPropagation();
                     handleOpenEdit(project);
                   }}
-                  className="gap-2 cursor-pointer text-[#8b9cb3] hover:text-white"
+                  className="gap-2 cursor-pointer text-[#b8c5d6] hover:text-white"
                 >
                   <Edit2 className="h-3.5 w-3.5" /> {t("classification.edit")}
                 </DropdownMenuItem>
@@ -1192,12 +1192,12 @@ export default function Projets() {
                       <AlertDialogTitle className="text-white">
                         {t("projects.deleteConfirmTitle")}
                       </AlertDialogTitle>
-                      <AlertDialogDescription className="text-[#8b9cb3]">
+                      <AlertDialogDescription className="text-[#b8c5d6]">
                         {t("projects.deleteConfirmDesc")}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel className="bg-background border-border text-[#8b9cb3] hover:bg-white/[0.04]">
+                      <AlertDialogCancel className="bg-background border-border text-[#b8c5d6] hover:bg-white/[0.04]">
                         {t("common.cancel")}
                       </AlertDialogCancel>
                       <AlertDialogAction
@@ -1221,20 +1221,20 @@ export default function Projets() {
           {project.reference}
         </p>
         {project.description && (
-          <p className="text-[12px] text-[#8b9cb3] line-clamp-2 mb-3">
+          <p className="text-[12px] text-[#b8c5d6] line-clamp-2 mb-3">
             {project.description}
           </p>
         )}
 
         <div className="flex items-center gap-3 text-[12px]">
-          <span className="flex items-center gap-1 text-[#8b9cb3] bg-white/[0.04] px-2 py-1 rounded-md">
+          <span className="flex items-center gap-1 text-[#b8c5d6] bg-white/[0.04] px-2 py-1 rounded-md">
             <Mail className="w-3 h-3" />
             <span className="text-primary font-medium">
               {project.emailCount}
             </span>{" "}
             {t("projects.emails").toLowerCase()}
           </span>
-          <span className="flex items-center gap-1 text-[#8b9cb3] bg-white/[0.04] px-2 py-1 rounded-md">
+          <span className="flex items-center gap-1 text-[#b8c5d6] bg-white/[0.04] px-2 py-1 rounded-md">
             <CheckSquare className="w-3 h-3" />
             <span className="text-primary font-medium">
               {project.pendingTaskCount}

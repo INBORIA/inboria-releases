@@ -62,7 +62,7 @@ export default function Fonctionnalites() {
           <h1 className="text-3xl sm:text-4xl font-extrabold text-white leading-tight">
             {t("marketing.features.heroTitle")}
           </h1>
-          <p className="mt-4 text-[16px] text-[#8b9cb3] max-w-2xl mx-auto">
+          <p className="mt-4 text-[16px] text-[#b8c5d6] max-w-2xl mx-auto">
             {t("marketing.features.heroDesc")}
           </p>
         </div>
@@ -80,7 +80,7 @@ export default function Fonctionnalites() {
                   <f.icon className="w-5 h-5 text-[#2d7dd2]" />
                 </div>
                 <h3 className="text-[15px] font-semibold text-white mb-2">{t(`marketing.features.${f.key}`)}</h3>
-                <p className="text-[13px] text-[#8b9cb3] leading-relaxed">{t(`marketing.features.${f.key}Desc`)}</p>
+                <p className="text-[13px] text-[#b8c5d6] leading-relaxed">{t(`marketing.features.${f.key}Desc`)}</p>
               </div>
             ))}
           </div>
@@ -90,7 +90,7 @@ export default function Fonctionnalites() {
       <section className="border-t border-[#1f2937] bg-[#0a0e14]">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-24 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-white">{t("marketing.features.ctaTitle")}</h2>
-          <p className="text-[14px] text-[#8b9cb3] mt-3">
+          <p className="text-[14px] text-[#b8c5d6] mt-3">
             {t("marketing.features.ctaDesc")}
           </p>
           <Link href="/signup">

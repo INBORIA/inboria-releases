@@ -70,7 +70,7 @@ export default function IntelligenceArtificielle() {
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight">
             {t("marketing.inboriaChat.heroTitle")}
           </h1>
-          <p className="mt-5 text-[15px] sm:text-[16px] text-[#8b9cb3] max-w-2xl mx-auto leading-relaxed">
+          <p className="mt-5 text-[15px] sm:text-[16px] text-[#b8c5d6] max-w-2xl mx-auto leading-relaxed">
             {t("marketing.inboriaChat.heroDesc")}
           </p>
           <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -81,7 +81,7 @@ export default function IntelligenceArtificielle() {
               </button>
             </Link>
             <Link href="/tarifs">
-              <button className="px-8 py-3 text-[14px] font-semibold text-[#8b9cb3] border border-[#1f2937] rounded-lg hover:text-white hover:border-[#2d7dd2]/30 transition-colors">
+              <button className="px-8 py-3 text-[14px] font-semibold text-[#b8c5d6] border border-[#1f2937] rounded-lg hover:text-white hover:border-[#2d7dd2]/30 transition-colors">
                 {t("marketing.inboriaChat.seePricing")}
               </button>
             </Link>
@@ -91,7 +91,7 @@ export default function IntelligenceArtificielle() {
             {heroStats.map((s) => (
               <div key={s.label}>
                 <p className="text-2xl font-bold text-white">{s.value}</p>
-                <p className="text-[11px] text-[#8b9cb3] mt-1">{s.label}</p>
+                <p className="text-[11px] text-[#b8c5d6] mt-1">{s.label}</p>
               </div>
             ))}
           </div>
@@ -104,7 +104,7 @@ export default function IntelligenceArtificielle() {
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
               {t("marketing.inboriaChat.knowsTitle")}
             </h2>
-            <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
+            <p className="mt-3 text-[14px] text-[#b8c5d6] max-w-xl mx-auto">
               {t("marketing.inboriaChat.knowsDesc")}
             </p>
           </div>
@@ -123,7 +123,7 @@ export default function IntelligenceArtificielle() {
                     {t(`marketing.inboriaChat.${k.key}Title`)}
                   </h3>
                 </div>
-                <p className="text-[13px] text-[#8b9cb3] leading-relaxed">
+                <p className="text-[13px] text-[#b8c5d6] leading-relaxed">
                   {t(`marketing.inboriaChat.${k.key}Desc`)}
                 </p>
               </div>
@@ -138,7 +138,7 @@ export default function IntelligenceArtificielle() {
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
               {t("marketing.inboriaChat.askTitle")}
             </h2>
-            <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
+            <p className="mt-3 text-[14px] text-[#b8c5d6] max-w-xl mx-auto">
               {t("marketing.inboriaChat.askDesc")}
             </p>
           </div>
@@ -166,7 +166,7 @@ export default function IntelligenceArtificielle() {
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
               {t("marketing.inboriaChat.howTitle")}
             </h2>
-            <p className="mt-3 text-[14px] text-[#8b9cb3]">
+            <p className="mt-3 text-[14px] text-[#b8c5d6]">
               {t("marketing.inboriaChat.howDesc")}
             </p>
           </div>
@@ -179,7 +179,7 @@ export default function IntelligenceArtificielle() {
                 <h3 className="text-[14px] font-semibold text-white mb-2">
                   {t(`marketing.inboriaChat.${s.key}`)}
                 </h3>
-                <p className="text-[12px] text-[#8b9cb3] leading-relaxed">
+                <p className="text-[12px] text-[#b8c5d6] leading-relaxed">
                   {t(`marketing.inboriaChat.${s.key}Desc`)}
                 </p>
               </div>
@@ -194,7 +194,7 @@ export default function IntelligenceArtificielle() {
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
               {t("marketing.inboriaChat.privacyTitle")}
             </h2>
-            <p className="mt-3 text-[14px] text-[#8b9cb3] max-w-xl mx-auto">
+            <p className="mt-3 text-[14px] text-[#b8c5d6] max-w-xl mx-auto">
               {t("marketing.inboriaChat.privacyDesc")}
             </p>
           </div>
@@ -212,7 +212,7 @@ export default function IntelligenceArtificielle() {
                     {t(`marketing.inboriaChat.${p.key}`)}
                   </h3>
                 </div>
-                <p className="text-[13px] text-[#8b9cb3] leading-relaxed">
+                <p className="text-[13px] text-[#b8c5d6] leading-relaxed">
                   {t(`marketing.inboriaChat.${p.key}Desc`)}
                 </p>
               </div>
@@ -235,7 +235,7 @@ export default function IntelligenceArtificielle() {
                 className="rounded-xl border border-[#1f2937] bg-[#141c2b] p-5"
               >
                 <h3 className="text-[14px] font-semibold text-white mb-2">{faq.q}</h3>
-                <p className="text-[13px] text-[#8b9cb3] leading-relaxed">{faq.a}</p>
+                <p className="text-[13px] text-[#b8c5d6] leading-relaxed">{faq.a}</p>
               </div>
             ))}
           </div>
@@ -251,7 +251,7 @@ export default function IntelligenceArtificielle() {
             <h2 className="text-2xl sm:text-3xl font-bold text-white">
               {t("marketing.inboriaChat.ctaTitle")}
             </h2>
-            <p className="mt-4 text-[14px] text-[#8b9cb3] max-w-lg mx-auto">
+            <p className="mt-4 text-[14px] text-[#b8c5d6] max-w-lg mx-auto">
               {t("marketing.inboriaChat.ctaDesc")}
             </p>
             <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -261,12 +261,12 @@ export default function IntelligenceArtificielle() {
                 </button>
               </Link>
               <Link href="/tarifs">
-                <button className="px-8 py-3 text-[14px] font-semibold text-[#8b9cb3] border border-[#1f2937] rounded-lg hover:text-white transition-colors">
+                <button className="px-8 py-3 text-[14px] font-semibold text-[#b8c5d6] border border-[#1f2937] rounded-lg hover:text-white transition-colors">
                   {t("marketing.inboriaChat.seePricing")}
                 </button>
               </Link>
             </div>
-            <p className="mt-4 text-[11px] text-[#8b9cb3]/60">
+            <p className="mt-4 text-[11px] text-[#b8c5d6]/60">
               {t("marketing.inboriaChat.ctaFooter")}
             </p>
           </div>
