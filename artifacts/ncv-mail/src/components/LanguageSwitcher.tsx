@@ -65,7 +65,7 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-44 rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-xl z-50 max-h-80 overflow-y-auto overscroll-contain">
+        <div className="absolute right-0 top-full mt-1 w-56 rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-xl z-50 max-h-80 overflow-y-auto overscroll-contain">
           {languages.map((lang) => (
             <button
               key={lang.code}
@@ -85,8 +85,8 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
                   : "text-[#b8c5d6] hover:bg-white/[0.04] hover:text-white"
               }`}
             >
-              <span className="font-medium w-7">{lang.label}</span>
-              <span className="text-[12px] opacity-70">{lang.name}</span>
+              <span className="font-medium w-7 shrink-0">{lang.label}</span>
+              <span className="text-[12px] opacity-70 whitespace-nowrap">{lang.name}</span>
             </button>
           ))}
         </div>
