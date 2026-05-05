@@ -14,6 +14,9 @@ const languages = [
   { code: "pt", label: "PT", flag: "🇵🇹" },
   { code: "pl", label: "PL", flag: "🇵🇱" },
   { code: "ro", label: "RO", flag: "🇷🇴" },
+  { code: "sv", label: "SV", flag: "🇸🇪" },
+  { code: "da", label: "DA", flag: "🇩🇰" },
+  { code: "fi", label: "FI", flag: "🇫🇮" },
 ];
 
 const nativeNames: Record<string, string> = {
@@ -26,6 +29,9 @@ const nativeNames: Record<string, string> = {
   pt: "Português",
   pl: "Polski",
   ro: "Română",
+  sv: "Svenska",
+  da: "Dansk",
+  fi: "Suomi",
 };
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {

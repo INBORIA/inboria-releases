@@ -11,7 +11,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, subMonths, addWeeks, subWeeks, isSameDay, isSameMonth, parseISO, isToday, type Locale } from "date-fns";
-import { fr, enUS, nl, de, es, it, pt, pl, ro } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi } from "date-fns/locale";
 import type { Appointment, Project } from "@workspace/api-client-react";
 import {
   CalendarDays,
@@ -40,7 +40,7 @@ import { Users } from "lucide-react";
 
 type ViewMode = "month" | "week" | "day";
 
-const dateLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es, it, pt, pl, ro };
+const dateLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es, it, pt, pl, ro, sv, da, fi };
 
 export default function Agenda() {
   const { t, i18n } = useTranslation();

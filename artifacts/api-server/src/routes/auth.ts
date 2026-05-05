@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -83,6 +83,33 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Resetați-mi parola",
         footer: "Dacă nu dumneavoastră ați făcut această solicitare, puteți ignora acest email — parola va rămâne neschimbată.",
         subject: "Resetați-vă parola Inboria",
+      };
+    case "sv":
+      return {
+        tagline: "Email Autopilot för små och medelstora företag",
+        heading: "Återställ ditt lösenord",
+        body: "Du har begärt återställning av lösenordet för ditt Inboria-konto. Klicka på knappen nedan för att välja ett nytt lösenord. Denna länk går ut om 1 timme.",
+        cta: "Återställ mitt lösenord",
+        footer: "Om du inte gjorde denna begäran kan du ignorera detta meddelande — ditt lösenord förblir oförändrat.",
+        subject: "Återställ ditt Inboria-lösenord",
+      };
+    case "da":
+      return {
+        tagline: "Email Autopilot for SMV'er",
+        heading: "Nulstil din adgangskode",
+        body: "Du har anmodet om nulstilling af adgangskoden til din Inboria-konto. Klik på knappen nedenfor for at vælge en ny adgangskode. Dette link udløber om 1 time.",
+        cta: "Nulstil min adgangskode",
+        footer: "Hvis du ikke har anmodet om dette, kan du ignorere denne besked — din adgangskode forbliver uændret.",
+        subject: "Nulstil din Inboria-adgangskode",
+      };
+    case "fi":
+      return {
+        tagline: "Email Autopilot pk-yrityksille",
+        heading: "Nollatkaa salasananne",
+        body: "Olette pyytänyt Inboria-tilinne salasanan nollausta. Klikatkaa alla olevaa painiketta valitaksenne uuden salasanan. Tämä linkki vanhenee 1 tunnin kuluttua.",
+        cta: "Nollaa salasanani",
+        footer: "Jos ette tehnyt tätä pyyntöä, voitte jättää tämän viestin huomiotta — salasananne pysyy muuttumattomana.",
+        subject: "Nollatkaa Inboria-salasananne",
       };
     default:
       return {

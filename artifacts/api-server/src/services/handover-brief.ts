@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -78,6 +78,27 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Angajamente deschise",
     "Puncte de atenție",
   ],
+  sv: [
+    "Relationskontext",
+    "Pågående ämnen",
+    "Fattade beslut",
+    "Öppna åtaganden",
+    "Att uppmärksamma",
+  ],
+  da: [
+    "Relationskontekst",
+    "Aktuelle emner",
+    "Trufne beslutninger",
+    "Åbne forpligtelser",
+    "Opmærksomhedspunkter",
+  ],
+  fi: [
+    "Suhteen konteksti",
+    "Käynnissä olevat aiheet",
+    "Tehdyt päätökset",
+    "Avoimet sitoumukset",
+    "Huomioitavat seikat",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -90,6 +111,9 @@ const TONE: Record<Language, string> = {
   pt: "Escreva em português europeu, forma formal (você), tom factual e profissional, sem saudações.",
   pl: "Pisz po polsku, forma grzecznościowa (Pan/Pani), ton rzeczowy i profesjonalny, bez powitań.",
   ro: "Scrieți în limba română, folosiți forma de politețe (dumneavoastră), ton factual și profesional, fără formule de salut.",
+  sv: "Skriv på svenska, modern professionell B2B-ton (du), saklig och professionell, utan hälsningsfraser.",
+  da: "Skriv på dansk, moderne professionel B2B-tone (du), saglig og professionel, uden hilsner.",
+  fi: "Kirjoittakaa suomeksi, käyttäkää teitittelyä, asiallinen ja ammattimainen sävy, ilman tervehdyksiä.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

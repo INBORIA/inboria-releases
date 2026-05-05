@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -99,11 +99,41 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `Casuta ${email} deconectata`,
     notifMessage: "Faceti clic pentru a reconecta aceasta casuta in Setari.",
   },
+  sv: {
+    subject: (email) => `Inboria — Brevladan ${email} fran kopplad`,
+    intro: "Inboria kan inte langre synkronisera denna brevlada efter flera forsok. Dina nya mejl behandlas inte forran anslutningen ar aterstalld.",
+    reasonLabel: "Senaste fel",
+    cta: "Aterans lut denna brevlada",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Detta mejl skickas hogst en gang per vecka och brevlada. Om aterans lutningen lyckas slutar du fa varningar.",
+    notifTitle: (email) => `Brevladan ${email} frankopplad`,
+    notifMessage: "Klicka for att ateransluta denna brevlada i Installningar.",
+  },
+  da: {
+    subject: (email) => `Inboria — Postkassen ${email} afbrudt`,
+    intro: "Inboria kan ikke laengere synkronisere denne postkasse efter flere forsog. Dine nye mails behandles ikke laengere, indtil forbindelsen er genoprettet.",
+    reasonLabel: "Seneste fejl",
+    cta: "Tilslut denne postkasse igen",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Denne mail sendes hojst en gang om ugen pr. postkasse. Hvis genoprettelsen lykkes, modtager du ikke flere advarsler.",
+    notifTitle: (email) => `Postkassen ${email} afbrudt`,
+    notifMessage: "Klik for at tilslutte denne postkasse igen i Indstillinger.",
+  },
+  fi: {
+    subject: (email) => `Inboria — Postilaatikko ${email} katkaistu`,
+    intro: "Inboria ei pysty enaa synkronoimaan tata postilaatikkoa useiden yritysten jalkeen. Uusia sahkoposteja ei kasitella ennen yhteyden palauttamista.",
+    reasonLabel: "Viimeisin virhe",
+    cta: "Yhdista tama postilaatikko uudelleen",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Tama sahkoposti lahetetaan korkeintaan kerran viikossa postilaatikkoa kohden. Jos uudelleenyhdistaminen onnistuu, et saa enaa varoituksia.",
+    notifTitle: (email) => `Postilaatikko ${email} katkaistu`,
+    notifMessage: "Klikatkaa yhdistaaksenne taman postilaatikon uudelleen Asetuksissa.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const v = (raw || "fr").slice(0, 2).toLowerCase();
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi") return v;
   return "fr";
 }
 

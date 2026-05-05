@@ -57,7 +57,13 @@ async function translateBatch(strings, targetLang) {
         ? "Polish (Polish from Poland, formal Pan/Pani form for B2B SaaS — always use polite formal address, never informal ty)"
         : targetLang === "ro"
           ? "Romanian (Romanian from Romania, formal dumneavoastră form for B2B SaaS — always use polite formal address, never informal tu)"
-          : targetLang;
+          : targetLang === "sv"
+            ? "Swedish (Swedish from Sweden, modern professional B2B SaaS tone using 'du' which is standard polite form in Swedish business context — NOT the archaic 'ni')"
+            : targetLang === "da"
+              ? "Danish (Danish from Denmark, modern professional B2B SaaS tone using 'du' which is standard polite form in Danish business context — NOT the archaic 'De')"
+              : targetLang === "fi"
+                ? "Finnish (Finnish from Finland, polite B2B SaaS tone using 'te' formal address (teitittely) and verb in 2nd person plural — never informal 'sinä')"
+                : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -152,6 +158,12 @@ const tasks = {
   "web-pl":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/pl.json",    lang: "pl" },
   "mobile-ro": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/ro.json", lang: "ro" },
   "web-ro":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/ro.json",    lang: "ro" },
+  "mobile-sv": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/sv.json", lang: "sv" },
+  "web-sv":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/sv.json",    lang: "sv" },
+  "mobile-da": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/da.json", lang: "da" },
+  "web-da":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/da.json",    lang: "da" },
+  "mobile-fi": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/fi.json", lang: "fi" },
+  "web-fi":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/fi.json",    lang: "fi" },
 };
 
 if (target === "all") {
