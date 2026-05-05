@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -263,6 +263,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Сбросить мой пароль",
         footer: "Если Вы не отправляли этот запрос, проигнорируйте это письмо — Ваш пароль останется без изменений.",
         subject: "Сбросьте Ваш пароль Inboria",
+      };
+    case "he":
+      return {
+        tagline: "טייס אוטומטי לדואר אלקטרוני לעסקים קטנים ובינוניים",
+        heading: "איפוס הסיסמה שלך",
+        body: "ביקשת לאפס את הסיסמה לחשבון Inboria שלך. לחץ על הכפתור למטה כדי לבחור סיסמה חדשה. הקישור תקף למשך שעה אחת.",
+        cta: "אפס את הסיסמה שלי",
+        footer: "אם לא ביקשת זאת, אנא התעלם מהודעה זו — הסיסמה שלך תישאר ללא שינוי.",
+        subject: "אפס את סיסמת Inboria שלך",
       };
     default:
       return {

@@ -97,7 +97,9 @@ async function translateBatch(strings, targetLang) {
                                                 ? "Serbian (српски језик, Serbian from Serbia in CYRILLIC SCRIPT ONLY — never Latin script; formal B2B SaaS tone using polite address 'Ви' / 'Вас' / 'Вам' / 'Ваш' / 'Вашу' (always CAPITALIZED in formal address) and 2nd person plural verbs — never informal 'ти/тебе/теби' in UI labels; use 'молимо' for polite requests; standard Serbian (стандардни српски) following Matica srpska orthography; use Serbian quotation marks „...“ for quotes; do NOT use Croatian/Bosnian variants (write нема not nema, време not vrijeme, хлеб not хљеб); use native terminology where established (e.g. 'е-пошта' or 'имејл' for email, 'подешавања' for settings, 'пријава' for log in, 'налог' for account, 'лозинка' for password, 'сандуче' for mailbox))"
                                                 : targetLang === "ru"
                                                   ? "Russian (русский язык, Russian from Russia, formal B2B SaaS tone using polite address 'Вы' / 'Вас' / 'Вам' / 'Ваш' / 'Вашу' (always CAPITALIZED in formal address) and 2nd person plural verbs — never informal 'ты/тебя/тебе' in UI labels; use 'пожалуйста' for polite requests; standard modern Russian following современная орфография; use ё where applicable (e.g. подключён, отключён); use Russian quotation marks «...» for quotes (NOT „...“ which are German/Serbian); use Russian em-dash with spaces — like this; use native terminology where established (e.g. 'электронная почта' or 'email' for email, 'настройки' for settings, 'войти' for log in, 'аккаунт' or 'учётная запись' for account, 'пароль' for password, 'почтовый ящик' for mailbox, 'входящие' for inbox))"
-                                                  : targetLang;
+                                                  : targetLang === "he"
+                                                    ? "Hebrew (עברית, Modern Israeli Hebrew, formal B2B SaaS tone — Hebrew has no T-V distinction so use standard direct address with respectful professional register as customary in Israeli business communication; use 'אנא' or 'נא' for polite requests; standard modern Hebrew (עברית תקנית) following Academy of the Hebrew Language conventions; write WITHOUT vowel points (ניקוד) — UI text is unpointed; do NOT add nikud; use Hebrew geresh ׳ and gershayim ״ for abbreviations (not ASCII '/\"); use Hebrew quotation marks \"...\" (standard double quotes are fine); RTL text — keep ASCII placeholders/code/URLs/numbers as-is, the rendering layer handles direction; use native terminology where established (e.g. 'דוא״ל' or 'אימייל' for email, 'הגדרות' for settings, 'התחבר/התחברות' for log in, 'חשבון' for account, 'סיסמה' for password, 'תיבת דואר' for mailbox, 'דואר נכנס' for inbox, 'אפליקציה' for app); use feminine/masculine forms appropriately — default to masculine generic form as standard in Hebrew UI unless context implies otherwise; avoid English loanwords when good Hebrew equivalents exist)"
+                                                    : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -291,6 +293,8 @@ const tasks = {
   "web-sr":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/sr.json",    lang: "sr" },
   "mobile-ru": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/ru.json", lang: "ru" },
   "web-ru":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/ru.json",    lang: "ru" },
+  "mobile-he": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/he.json", lang: "he" },
+  "web-he":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/he.json",    lang: "he" },
 };
 
 if (target === "all") {

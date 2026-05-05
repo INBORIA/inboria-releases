@@ -189,6 +189,7 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
       const isLt = lang === "lt";
       const isSr = lang === "sr";
       const isRu = lang === "ru";
+      const isHe = lang === "he";
       if (activeProjects.length > 0) {
         const header = isFr
           ? "Projets actifs (derniers 7 jours d'activité)"
@@ -248,7 +249,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                                                 ? "Активни пројекти (активност последњих 7 дана)"
                                                                 : isRu
                                                                   ? "Активные проекты (активность за последние 7 дней)"
-                                                                  : "Active projects";
+                                                                  : isHe
+                                                                    ? "פרויקטים פעילים (פעילות ב-7 הימים האחרונים)"
+                                                                    : "Active projects";
         lines.push(`\n${header} :`);
         for (const p of activeProjects) {
           lines.push(`- ${p.name} (${p.email_count} mails)`);
@@ -313,7 +316,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                                                 ? "Недавне одлуке (последњих 7 дана)"
                                                                 : isRu
                                                                   ? "Недавние решения (за последние 7 дней)"
-                                                                  : "Recent decisions";
+                                                                  : isHe
+                                                                    ? "החלטות אחרונות (7 הימים האחרונים)"
+                                                                    : "Recent decisions";
         lines.push(`\n${header} :`);
         for (const d of recentDecisions) {
           const date = d.decided_at || (d as any).created_at?.slice(0, 10) || "";
@@ -381,7 +386,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                                                 ? "Обавезе поменуте ове недеље"
                                                                 : isRu
                                                                   ? "Обязательства, упомянутые на этой неделе"
-                                                                  : "Commitments this week";
+                                                                  : isHe
+                                                                    ? "התחייבויות שהוזכרו השבוע"
+                                                                    : "Commitments this week";
         lines.push(`\n${header} :`);
         for (const c of openCommitments) {
           const date = c.event_date ? ` (${c.event_date})` : "";
@@ -1482,7 +1489,7 @@ router.post("/ai/handover-brief", requireAuth, async (req, res): Promise<void> =
       return;
     }
     const sinceDays = Number.isFinite(body.sinceDays) ? Number(body.sinceDays) : 30;
-    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru"];
+    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he"];
     let language: BriefLanguage = "fr";
     if (typeof body.language === "string" && (allowedLangs as string[]).includes(body.language)) {
       language = body.language as BriefLanguage;
