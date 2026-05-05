@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -162,6 +162,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Komitmen yang belum selesai",
     "Perkara yang perlu diberi perhatian",
   ],
+  el: [
+    "Πλαίσιο σχέσης",
+    "Τρέχοντα θέματα",
+    "Αποφάσεις που ελήφθησαν",
+    "Εκκρεμείς δεσμεύσεις",
+    "Σημεία προσοχής",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -186,6 +193,7 @@ const TONE: Record<Language, string> = {
   th: "เขียนเป็นภาษาไทยด้วยน้ำเสียงสุภาพและเป็นทางการ ใช้คำว่า 'ท่าน' โทนตามข้อเท็จจริงและเป็นมืออาชีพ ไม่ต้องมีคำทักทาย",
   id: "Tulis dalam Bahasa Indonesia formal dan baku, gunakan sapaan 'Anda', nada faktual dan profesional, tanpa salam pembuka.",
   ms: "Tulis dalam Bahasa Melayu formal dan baku, gunakan sapaan 'anda', nada berasaskan fakta dan profesional, tanpa salam pembukaan.",
+  el: "Γράψτε στα ελληνικά, χρησιμοποιώντας τον πληθυντικό ευγενείας (εσείς/σας), τόνος βασισμένος σε γεγονότα και επαγγελματικός, χωρίς χαιρετισμούς.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

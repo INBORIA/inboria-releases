@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -219,11 +219,21 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `Peti mel ${email} terputus`,
     notifMessage: "Sila klik untuk menyambung semula peti mel ini dalam Tetapan.",
   },
+  el: {
+    subject: (email) => `Inboria — Το γραμματοκιβώτιο ${email} αποσυνδέθηκε`,
+    intro: "Το Inboria δεν μπόρεσε να συγχρονίσει αυτό το γραμματοκιβώτιο μετά από αρκετές προσπάθειες. Τα νέα σας email δεν θα επεξεργάζονται έως ότου αποκατασταθεί η σύνδεση.",
+    reasonLabel: "Τελευταίο σφάλμα",
+    cta: "Επανασυνδέστε αυτό το γραμματοκιβώτιο",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Αυτό το email αποστέλλεται έως μία φορά την εβδομάδα ανά γραμματοκιβώτιο. Μόλις επιτευχθεί η επανασύνδεση, δεν θα λαμβάνετε πλέον ειδοποιήσεις.",
+    notifTitle: (email) => `Το γραμματοκιβώτιο ${email} αποσυνδέθηκε`,
+    notifMessage: "Παρακαλώ κάντε κλικ για να επανασυνδέσετε αυτό το γραμματοκιβώτιο από τις Ρυθμίσεις.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const v = (raw || "fr").slice(0, 2).toLowerCase();
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el") return v;
   return "fr";
 }
 

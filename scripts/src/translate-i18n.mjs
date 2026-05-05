@@ -81,7 +81,9 @@ async function translateBatch(strings, targetLang) {
                                 ? "Indonesian (Bahasa Indonesia, formal B2B SaaS tone using 'Anda' (capitalized) as polite address and Bahasa baku/standard formal vocabulary; use 'silakan' / 'mohon' for polite requests — never informal 'kamu/lu/lo' or colloquial slang in UI labels)"
                                 : targetLang === "ms"
                                   ? "Malay (Bahasa Melayu from Malaysia, formal B2B SaaS tone using 'anda' as polite address and Bahasa Melayu baku/standard formal vocabulary; use 'sila' / 'mohon' for polite requests — never informal 'kau/awak' familiarity or colloquial bahasa pasar in UI labels)"
-                                  : targetLang;
+                                  : targetLang === "el"
+                                    ? "Greek (Modern Greek from Greece, formal B2B SaaS tone using plural-of-politeness πληθυντικός ευγενείας: 'εσείς' / 'σας' / 2nd person plural verbs (κάντε/επιλέξτε/συνδεθείτε) — never informal singular 'εσύ/σου' or 2nd person singular verbs in UI labels)"
+                                    : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -259,6 +261,8 @@ const tasks = {
   "web-id":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/id.json",    lang: "id" },
   "mobile-ms": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/ms.json", lang: "ms" },
   "web-ms":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/ms.json",    lang: "ms" },
+  "mobile-el": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/el.json", lang: "el" },
+  "web-el":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/el.json",    lang: "el" },
 };
 
 if (target === "all") {

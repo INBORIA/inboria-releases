@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -191,6 +191,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Tetapkan semula kata laluan saya",
         footer: "Jika anda tidak membuat permintaan ini, sila abaikan e-mel ini — kata laluan anda tidak akan berubah.",
         subject: "Tetapkan semula kata laluan Inboria anda",
+      };
+    case "el":
+      return {
+        tagline: "Email Autopilot για ΜμΕ",
+        heading: "Επαναφορά του κωδικού πρόσβασής σας",
+        body: "Ζητήσατε την επαναφορά του κωδικού πρόσβασης για τον λογαριασμό σας στο Inboria. Παρακαλώ κάντε κλικ στο παρακάτω κουμπί για να επιλέξετε νέο κωδικό πρόσβασης. Αυτός ο σύνδεσμος θα λήξει σε 1 ώρα.",
+        cta: "Επαναφορά του κωδικού μου",
+        footer: "Εάν δεν υποβάλατε αυτό το αίτημα, αγνοήστε αυτό το email — ο κωδικός πρόσβασής σας δεν θα αλλάξει.",
+        subject: "Επαναφορά του κωδικού Inboria σας",
       };
     default:
       return {
