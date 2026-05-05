@@ -156,7 +156,7 @@ export function AttachmentBadge({ count }: { count: number }) {
   return (
     <span
       className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-full font-medium hidden sm:inline-flex"
-      style={{ background: "rgba(139,156,179,0.12)", color: "#b8c5d6", border: "1px solid rgba(139,156,179,0.15)" }}
+      style={{ background: "rgba(184,197,214,0.12)", color: "#b8c5d6", border: "1px solid rgba(184,197,214,0.15)" }}
       title={t("attachments.count", { count })}
     >
       <Paperclip size={10} />
