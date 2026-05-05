@@ -9,9 +9,10 @@ import es from "./locales/es.json";
 import it from "./locales/it.json";
 import pt from "./locales/pt.json";
 import pl from "./locales/pl.json";
+import ro from "./locales/ro.json";
 
 const LANGUAGE_KEY = "inboria-lang";
-const SUPPORTED = ["fr", "en", "nl", "de", "es", "it", "pt", "pl"] as const;
+const SUPPORTED = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro"] as const;
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -23,6 +24,7 @@ i18n.use(initReactI18next).init({
     it: { translation: it },
     pt: { translation: pt },
     pl: { translation: pl },
+    ro: { translation: ro },
   },
   lng: "fr",
   fallbackLng: "fr",

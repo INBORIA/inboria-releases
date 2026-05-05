@@ -14,7 +14,7 @@ import { useState, type ReactNode } from "react";
 import { Tooltip as InfoTooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTranslation } from "react-i18next";
 import { format, parseISO, startOfDay, endOfDay, addDays, type Locale } from "date-fns";
-import { fr, enUS, nl, de, es, it, pt, pl } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt, pl, ro } from "date-fns/locale";
 import { Link } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useQuery } from "@tanstack/react-query";
@@ -35,7 +35,7 @@ import {
   type TooltipProps,
 } from "recharts";
 
-const dateLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es, it, pt, pl };
+const dateLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es, it, pt, pl, ro };
 
 const baseUrl = () => import.meta.env.BASE_URL.replace(/\/$/, "");
 

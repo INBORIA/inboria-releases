@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -71,6 +71,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Otwarte zobowiązania",
     "Kwestie wymagające uwagi",
   ],
+  ro: [
+    "Contextul relației",
+    "Subiecte în curs",
+    "Decizii luate",
+    "Angajamente deschise",
+    "Puncte de atenție",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -82,6 +89,7 @@ const TONE: Record<Language, string> = {
   it: "Scrivi in italiano, forma di cortesia (Lei), tono fattuale e professionale, senza formule di saluto.",
   pt: "Escreva em português europeu, forma formal (você), tom factual e profissional, sem saudações.",
   pl: "Pisz po polsku, forma grzecznościowa (Pan/Pani), ton rzeczowy i profesjonalny, bez powitań.",
+  ro: "Scrieți în limba română, folosiți forma de politețe (dumneavoastră), ton factual și profesional, fără formule de salut.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

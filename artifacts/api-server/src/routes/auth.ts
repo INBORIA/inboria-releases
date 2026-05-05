@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -74,6 +74,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Zresetuj moje hasło",
         footer: "Jeśli to nie Pan/Pani złożył(a) tę prośbę, można zignorować tę wiadomość — hasło pozostanie bez zmian.",
         subject: "Zresetuj swoje hasło Inboria",
+      };
+    case "ro":
+      return {
+        tagline: "Email Autopilot pentru IMM-uri",
+        heading: "Resetați-vă parola",
+        body: "Ați solicitat resetarea parolei pentru contul dumneavoastră Inboria. Vă rugăm să faceți clic pe butonul de mai jos pentru a alege o parolă nouă. Acest link expiră în 1 oră.",
+        cta: "Resetați-mi parola",
+        footer: "Dacă nu dumneavoastră ați făcut această solicitare, puteți ignora acest email — parola va rămâne neschimbată.",
+        subject: "Resetați-vă parola Inboria",
       };
     default:
       return {

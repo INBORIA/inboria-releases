@@ -18,7 +18,7 @@ import {
 } from "@workspace/api-client-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { fr, enUS, nl, de, es, it, pt, pl } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt, pl, ro } from "date-fns/locale";
 import {
   Calendar, Mail, Clock, Trash2, User, Sparkles, Tag, Download,
   Reply, Send, Wand2, Loader2, Plus, ArrowRight, RotateCcw, CheckCircle2,

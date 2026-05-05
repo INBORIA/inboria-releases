@@ -12,7 +12,7 @@ import {
   getGetDashboardSummaryQueryKey,
 } from "@workspace/api-client-react";
 import { format } from "date-fns";
-import { fr, enUS, nl, de, es, it, pt, pl } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt, pl, ro } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { translateCategoryName } from "@/lib/category-translations";
 import { Skeleton } from "@/components/ui/skeleton";

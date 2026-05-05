@@ -25,11 +25,11 @@ import {
   Mail,
 } from "lucide-react";
 import { format } from "date-fns";
-import { fr, enUS, nl, de, es, it, pt, pl } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt, pl, ro } from "date-fns/locale";
 import type { Locale } from "date-fns";
 import { useTranslation } from "react-i18next";
 
-const dateFnsLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es, it, pt, pl };
+const dateFnsLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es, it, pt, pl, ro };
 
 interface OrgMember {
   id?: string;

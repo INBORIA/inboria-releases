@@ -55,7 +55,9 @@ async function translateBatch(strings, targetLang) {
       ? "European Portuguese (pt-PT from Portugal, formal você/forma polida for B2B SaaS, NOT Brazilian Portuguese)"
       : targetLang === "pl"
         ? "Polish (Polish from Poland, formal Pan/Pani form for B2B SaaS — always use polite formal address, never informal ty)"
-        : targetLang;
+        : targetLang === "ro"
+          ? "Romanian (Romanian from Romania, formal dumneavoastră form for B2B SaaS — always use polite formal address, never informal tu)"
+          : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -148,6 +150,8 @@ const tasks = {
   "web-it":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/it.json",    lang: "it" },
   "web-pt":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/pt.json",    lang: "pt" },
   "web-pl":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/pl.json",    lang: "pl" },
+  "mobile-ro": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/ro.json", lang: "ro" },
+  "web-ro":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/ro.json",    lang: "ro" },
 };
 
 if (target === "all") {

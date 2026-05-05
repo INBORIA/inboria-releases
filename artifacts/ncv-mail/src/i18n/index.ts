@@ -10,6 +10,7 @@ import es from "./locales/es.json";
 import it from "./locales/it.json";
 import pt from "./locales/pt.json";
 import pl from "./locales/pl.json";
+import ro from "./locales/ro.json";
 
 i18n
   .use(LanguageDetector)
@@ -24,9 +25,10 @@ i18n
       it: { translation: it },
       pt: { translation: pt },
       pl: { translation: pl },
+      ro: { translation: ro },
     },
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl"],
+    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro"],
     nonExplicitSupportedLngs: true,
     load: "languageOnly",
     interpolation: {

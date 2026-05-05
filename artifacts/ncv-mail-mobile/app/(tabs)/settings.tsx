@@ -24,6 +24,7 @@ const LANGUAGES = [
   { code: "it", label: "Italiano", flag: "🇮🇹" },
   { code: "pt", label: "Português", flag: "🇵🇹" },
   { code: "pl", label: "Polski", flag: "🇵🇱" },
+  { code: "ro", label: "Română", flag: "🇷🇴" },
 ];
 
 export default function MenuScreen() {
