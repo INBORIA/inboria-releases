@@ -101,34 +101,98 @@ CRITICAL RULES:
   return strings.map((s, i) => ({ key: s.key, value: parsed[String(i)] ?? s.value }));
 }
 
+function getByPath(obj, fullPath) {
+  const tokens = [];
+  let buf = "";
+  for (let i = 0; i < fullPath.length; i++) {
+    const c = fullPath[i];
+    if (c === ".") { if (buf) { tokens.push(buf); buf = ""; } }
+    else if (c === "[") { if (buf) { tokens.push(buf); buf = ""; } buf = "["; }
+    else if (c === "]") { buf += "]"; tokens.push(buf); buf = ""; }
+    else buf += c;
+  }
+  if (buf) tokens.push(buf);
+  let cur = obj;
+  for (const t of tokens) {
+    if (cur == null) return undefined;
+    if (t.startsWith("[")) cur = cur[parseInt(t.slice(1, -1), 10)];
+    else cur = cur[t];
+  }
+  return cur;
+}
+
 async function translateFile(srcPath, destPath, targetLang, batchSize = 50, concurrency = 6) {
   const fr = JSON.parse(await fs.readFile(srcPath, "utf-8"));
   const flat = flattenStrings(fr);
-  console.log(`[${targetLang}] ${path.basename(srcPath)}: ${flat.length} strings, batch=${batchSize}, concurrency=${concurrency}`);
 
+  let existing = Array.isArray(fr) ? [] : {};
+  try {
+    const prev = JSON.parse(await fs.readFile(destPath, "utf-8"));
+    if (prev && typeof prev === "object") existing = prev;
+  } catch { /* fresh */ }
+
+  const out = existing;
   const translated = new Array(flat.length);
+  const todo = [];
+  for (let i = 0; i < flat.length; i++) {
+    const item = flat[i];
+    const cur = getByPath(out, item.key);
+    if (typeof cur === "string" && cur !== item.value) {
+      translated[i] = { key: item.key, value: cur };
+    } else {
+      todo.push(i);
+    }
+  }
+  console.log(`[${targetLang}] ${path.basename(srcPath)}: ${flat.length} strings (${todo.length} todo, ${flat.length - todo.length} cached), batch=${batchSize}, concurrency=${concurrency}`);
+
+  if (todo.length === 0) {
+    console.log(`✓ already complete: ${destPath}`);
+    return;
+  }
+
   let cursor = 0;
   let completed = 0;
+  const SAVE_EVERY = 5;
+  let batchesSinceFlush = 0;
+
+  async function flush() {
+    const snapshot = Array.isArray(fr) ? [] : {};
+    for (const item of translated) {
+      if (item && item.key) setByPath(snapshot, item.key, item.value);
+    }
+    for (let i = 0; i < flat.length; i++) {
+      if (translated[i]) continue;
+      const cur = getByPath(out, flat[i].key);
+      if (typeof cur === "string" && cur !== flat[i].value) setByPath(snapshot, flat[i].key, cur);
+    }
+    await fs.writeFile(destPath, JSON.stringify(snapshot, null, 2) + "\n");
+  }
 
   async function worker(workerId) {
     while (true) {
-      const i = cursor;
-      if (i >= flat.length) return;
+      const ti = cursor;
+      if (ti >= todo.length) return;
       cursor += batchSize;
-      const batch = flat.slice(i, Math.min(i + batchSize, flat.length));
+      const indices = todo.slice(ti, Math.min(ti + batchSize, todo.length));
+      const batch = indices.map(i => flat[i]);
       let attempt = 0;
       while (attempt < 5) {
         try {
           const result = await translateBatch(batch, targetLang);
-          for (let j = 0; j < result.length; j++) translated[i + j] = result[j];
+          for (let j = 0; j < result.length; j++) translated[indices[j]] = result[j];
           completed += batch.length;
-          process.stdout.write(`  [${targetLang} ${path.basename(destPath)}] ${completed}/${flat.length}\n`);
+          process.stdout.write(`  [${targetLang} ${path.basename(destPath)}] ${completed}/${todo.length}\n`);
+          batchesSinceFlush++;
+          if (batchesSinceFlush >= SAVE_EVERY) {
+            batchesSinceFlush = 0;
+            await flush();
+          }
           break;
         } catch (e) {
           attempt++;
-          console.log(`  retry ${attempt} (${targetLang} batch @${i}): ${String(e.message || e).slice(0, 100)}`);
+          console.log(`  retry ${attempt} (${targetLang} batch @${ti}): ${String(e.message || e).slice(0, 100)}`);
           if (attempt >= 5) {
-            for (let j = 0; j < batch.length; j++) translated[i + j] = batch[j];
+            for (let j = 0; j < batch.length; j++) translated[indices[j]] = batch[j];
             break;
           }
           await new Promise(r => setTimeout(r, 2000 * attempt));
@@ -137,12 +201,7 @@ async function translateFile(srcPath, destPath, targetLang, batchSize = 50, conc
     }
   }
   await Promise.all(Array.from({ length: concurrency }, (_, i) => worker(i)));
-
-  const out = Array.isArray(fr) ? [] : {};
-  for (const item of translated) {
-    if (item && item.key) setByPath(out, item.key, item.value);
-  }
-  await fs.writeFile(destPath, JSON.stringify(out, null, 2) + "\n");
+  await flush();
   console.log(`✓ wrote ${destPath}`);
 }
 
