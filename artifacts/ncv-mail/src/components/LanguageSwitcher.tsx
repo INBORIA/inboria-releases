@@ -24,6 +24,7 @@ const languages = [
   { code: "ko", label: "KO", flag: "🇰🇷" },
   { code: "vi", label: "VI", flag: "🇻🇳" },
   { code: "th", label: "TH", flag: "🇹🇭" },
+  { code: "id", label: "ID", flag: "🇮🇩" },
 ];
 
 const nativeNames: Record<string, string> = {
@@ -46,6 +47,7 @@ const nativeNames: Record<string, string> = {
   ko: "한국어",
   vi: "Tiếng Việt",
   th: "ไทย",
+  id: "Bahasa Indonesia",
 };
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {

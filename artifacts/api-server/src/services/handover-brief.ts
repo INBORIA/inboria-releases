@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -148,6 +148,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "ข้อผูกพันที่ยังไม่เสร็จสิ้น",
     "ประเด็นที่ต้องให้ความสนใจ",
   ],
+  id: [
+    "Konteks hubungan",
+    "Topik yang sedang berlangsung",
+    "Keputusan yang diambil",
+    "Komitmen yang belum selesai",
+    "Hal-hal yang perlu diperhatikan",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -170,6 +177,7 @@ const TONE: Record<Language, string> = {
   ko: "한국어로, 합쇼체(하십시오체)의 격식 있는 존댓말로 작성해 주십시오. 사실 기반의 전문적인 톤으로, 인사말 없이 작성합니다.",
   vi: "Viết bằng tiếng Việt, sử dụng giọng điệu trang trọng (Quý khách / Quý vị), văn phong dựa trên sự kiện và chuyên nghiệp, không có lời chào.",
   th: "เขียนเป็นภาษาไทยด้วยน้ำเสียงสุภาพและเป็นทางการ ใช้คำว่า 'ท่าน' โทนตามข้อเท็จจริงและเป็นมืออาชีพ ไม่ต้องมีคำทักทาย",
+  id: "Tulis dalam Bahasa Indonesia formal dan baku, gunakan sapaan 'Anda', nada faktual dan profesional, tanpa salam pembuka.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

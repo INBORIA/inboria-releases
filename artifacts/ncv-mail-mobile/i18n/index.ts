@@ -20,9 +20,10 @@ import ja from "./locales/ja.json";
 import ko from "./locales/ko.json";
 import vi from "./locales/vi.json";
 import th from "./locales/th.json";
+import id from "./locales/id.json";
 
 const LANGUAGE_KEY = "inboria-lang";
-const SUPPORTED = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th"] as const;
+const SUPPORTED = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id"] as const;
 
 i18n.use(initReactI18next).init({
   resources: {
@@ -45,6 +46,7 @@ i18n.use(initReactI18next).init({
     ko: { translation: ko },
     vi: { translation: vi },
     th: { translation: th },
+    id: { translation: id },
   },
   lng: "fr",
   fallbackLng: "fr",

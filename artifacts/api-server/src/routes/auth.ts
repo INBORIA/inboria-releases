@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -173,6 +173,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "รีเซ็ตรหัสผ่าน",
         footer: "หากท่านไม่ได้ส่งคำขอนี้ โปรดเพิกเฉยต่ออีเมลฉบับนี้ — รหัสผ่านของท่านจะไม่ถูกเปลี่ยนแปลง",
         subject: "รีเซ็ตรหัสผ่าน Inboria ของท่าน",
+      };
+    case "id":
+      return {
+        tagline: "Email Autopilot untuk UKM",
+        heading: "Atur ulang kata sandi Anda",
+        body: "Anda telah meminta pengaturan ulang kata sandi untuk akun Inboria Anda. Silakan klik tombol di bawah ini untuk memilih kata sandi baru. Tautan ini akan kedaluwarsa dalam 1 jam.",
+        cta: "Atur ulang kata sandi saya",
+        footer: "Jika Anda tidak membuat permintaan ini, silakan abaikan email ini — kata sandi Anda tidak akan berubah.",
+        subject: "Atur ulang kata sandi Inboria Anda",
       };
     default:
       return {
