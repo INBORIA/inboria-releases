@@ -23,6 +23,7 @@ const LANGUAGES = [
   { code: "es", label: "Español", flag: "🇪🇸" },
   { code: "it", label: "Italiano", flag: "🇮🇹" },
   { code: "pt", label: "Português", flag: "🇵🇹" },
+  { code: "pl", label: "Polski", flag: "🇵🇱" },
 ];
 
 export default function MenuScreen() {

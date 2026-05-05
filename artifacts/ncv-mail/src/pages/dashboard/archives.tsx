@@ -12,7 +12,7 @@ import {
   getGetDashboardSummaryQueryKey,
 } from "@workspace/api-client-react";
 import { format } from "date-fns";
-import { fr, enUS, nl, de, es, it, pt } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt, pl } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { translateCategoryName } from "@/lib/category-translations";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -62,7 +62,7 @@ const categoryColors = [
 export default function Archives() {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
-  const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
+  const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
   const queryClient = useQueryClient();
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);

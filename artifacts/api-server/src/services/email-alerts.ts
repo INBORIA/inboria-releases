@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -79,11 +79,21 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `Caixa ${email} desligada`,
     notifMessage: "Clique para reconectar esta caixa nas Definicoes.",
   },
+  pl: {
+    subject: (email) => `Inboria — Skrzynka ${email} odlaczona`,
+    intro: "Inboria nie moze juz zsynchronizowac tej skrzynki pocztowej od kilku prob. Nowe wiadomosci nie sa przetwarzane do momentu przywrocenia polaczenia.",
+    reasonLabel: "Ostatni blad",
+    cta: "Polacz ponownie te skrzynke",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Ten email jest wysylany maksymalnie raz w tygodniu dla kazdej skrzynki. Po pomyslnym ponownym polaczeniu nie beda Panstwo otrzymywac powiadomien.",
+    notifTitle: (email) => `Skrzynka ${email} odlaczona`,
+    notifMessage: "Prosze kliknac, aby ponownie polaczyc te skrzynke w Ustawieniach.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const v = (raw || "fr").slice(0, 2).toLowerCase();
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl") return v;
   return "fr";
 }
 

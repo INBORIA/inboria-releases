@@ -14,7 +14,7 @@ import {
 } from "@workspace/api-client-react";
 import type { Email, PaginatedEmails } from "@workspace/api-client-react";
 import { format } from "date-fns";
-import { fr, enUS, nl, de, es, it, pt } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt, pl } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
@@ -57,7 +57,7 @@ function filteredByLabel(spamSource: string | null | undefined, t: (k: string) =
 
 export default function Indesirables() {
   const { t, i18n } = useTranslation();
-  const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
+  const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 

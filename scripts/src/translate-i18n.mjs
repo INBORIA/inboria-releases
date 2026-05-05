@@ -51,7 +51,11 @@ function setByPath(obj, fullPath, value) {
 async function translateBatch(strings, targetLang) {
   const langName = targetLang === "it"
     ? "Italian (Italian from Italy, formal Lei form for B2B SaaS)"
-    : "European Portuguese (pt-PT from Portugal, formal você/forma polida for B2B SaaS, NOT Brazilian Portuguese)";
+    : targetLang === "pt"
+      ? "European Portuguese (pt-PT from Portugal, formal você/forma polida for B2B SaaS, NOT Brazilian Portuguese)"
+      : targetLang === "pl"
+        ? "Polish (Polish from Poland, formal Pan/Pani form for B2B SaaS — always use polite formal address, never informal ty)"
+        : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -62,7 +66,7 @@ CRITICAL RULES:
 4. Use FORMAL B2B tone (vouvoiement equivalent).
 5. Preserve emojis exactly.
 6. Preserve newlines as \\n.
-7. Keep technical terms consistent: "Boîte de réception" → "Posta in arrivo" (IT) / "Caixa de entrada" (PT). "Brouillons" → "Bozze" / "Rascunhos". "Envoyés" → "Inviati" / "Enviados". "Tâches" → "Attività" / "Tarefas". "Archives" → "Archivio" / "Arquivo". "Indésirables" → "Spam" / "Spam". "Paramètres" → "Impostazioni" / "Definições". "Tableau de bord" → "Dashboard" / "Painel".
+7. Keep technical terms consistent: "Boîte de réception" → "Posta in arrivo" (IT) / "Caixa de entrada" (PT) / "Skrzynka odbiorcza" (PL). "Brouillons" → "Bozze" / "Rascunhos" / "Wersje robocze". "Envoyés" → "Inviati" / "Enviados" / "Wysłane". "Tâches" → "Attività" / "Tarefas" / "Zadania". "Archives" → "Archivio" / "Arquivo" / "Archiwum". "Indésirables" → "Spam" / "Spam" / "Spam". "Paramètres" → "Impostazioni" / "Definições" / "Ustawienia". "Tableau de bord" → "Dashboard" / "Painel" / "Pulpit".
 8. Output JSON object only with same keys as input. No explanations.`;
 
   const user = JSON.stringify(Object.fromEntries(strings.map((s, i) => [String(i), s.value])));
@@ -140,8 +144,10 @@ const concurrency = parseInt(process.argv[3] || "6", 10);
 const tasks = {
   "mobile-it": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/it.json", lang: "it" },
   "mobile-pt": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/pt.json", lang: "pt" },
+  "mobile-pl": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/pl.json", lang: "pl" },
   "web-it":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/it.json",    lang: "it" },
   "web-pt":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/pt.json",    lang: "pt" },
+  "web-pl":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/pl.json",    lang: "pl" },
 };
 
 if (target === "all") {
