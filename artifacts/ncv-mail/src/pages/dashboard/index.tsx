@@ -4260,7 +4260,7 @@ export default function Dashboard() {
                   // ramène TOUJOURS la liste complète de la boîte.
                   setCrmFilter(null);
                 }}
-                className={`flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
+                className={`flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md font-medium transition-colors ${
                   inboxMode === "personal"
                     ? "bg-primary/15 text-primary border border-primary/20"
                     : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -4281,7 +4281,7 @@ export default function Dashboard() {
                       setSelectedSharedMailboxId(mbs[0].id);
                     }
                   }}
-                  className={`flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors ${
+                  className={`flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md font-medium transition-colors ${
                     inboxMode === "shared"
                       ? "bg-primary/15 text-primary border border-primary/20"
                       : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -4293,27 +4293,27 @@ export default function Dashboard() {
               )}
               <Link
                 href="/dashboard/indesirables"
-                className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                className="flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
               >
                 <ShieldAlert className="w-3 h-3" />
                 {t("inbox.spam")}
                 {spamCountFromApi > 0 && (
-                  <span className="text-[9px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded-full">{spamCountFromApi}</span>
+                  <span className="text-[10px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded-full">{spamCountFromApi}</span>
                 )}
               </Link>
               <Link
                 href="/dashboard/corbeille"
-                className="flex items-center gap-1 text-[10px] px-2.5 py-1 rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                className="flex items-center gap-1 text-[11px] px-2.5 py-1 rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
               >
                 <Trash2 className="w-3 h-3" />
                 {t("inbox.trash")}
                 {trashCountFromApi > 0 && (
-                  <span className="text-[9px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded-full">{trashCountFromApi}</span>
+                  <span className="text-[10px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded-full">{trashCountFromApi}</span>
                 )}
               </Link>
               {inboxMode === "personal" && (composeConnections?.length || 0) >= 2 && (
                 <Select value={selectedAccountId} onValueChange={setSelectedAccountId}>
-                  <SelectTrigger className="w-auto min-w-[140px] h-6 bg-card border-border text-[#b8c5d6] text-[10px] ml-1">
+                  <SelectTrigger className="w-auto min-w-[140px] h-7 bg-card border-border text-[#b8c5d6] text-[11px] ml-1">
                     <SelectValue placeholder={t("inbox.accountFilter")} />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
@@ -4347,7 +4347,7 @@ export default function Dashboard() {
                       <TooltipTrigger asChild>
                         <Link
                           href="/dashboard/parametres"
-                          className="inline-flex items-center gap-1 ml-1 px-2 py-0.5 rounded-md border border-red-500/30 bg-red-500/10 text-red-400 text-[10px] font-medium hover:bg-red-500/20 transition-colors"
+                          className="inline-flex items-center gap-1 ml-1 px-2 py-0.5 rounded-md border border-red-500/30 bg-red-500/10 text-red-400 text-[11px] font-medium hover:bg-red-500/20 transition-colors"
                           aria-label={t("inbox.disconnectedAccountsLabel", { count: downConns.length, defaultValue_one: "1 boîte hors service", defaultValue_other: "{{count}} boîtes hors service" })}
                         >
                           <AlertCircle className="w-3 h-3 shrink-0" />
@@ -4358,12 +4358,12 @@ export default function Dashboard() {
                         <p className="text-[11px] font-medium mb-1">
                           {t("inbox.disconnectedTooltipTitle", { defaultValue: "Compte(s) déconnecté(s)" })}
                         </p>
-                        <ul className="text-[10px] text-[#b8c5d6] space-y-0.5">
+                        <ul className="text-[11px] text-[#b8c5d6] space-y-0.5">
                           {downConns.map((c) => (
                             <li key={c.id}>• {c.email_address}</li>
                           ))}
                         </ul>
-                        <p className="text-[10px] mt-1.5 text-[#b8c5d6]">
+                        <p className="text-[11px] mt-1.5 text-[#b8c5d6]">
                           {t("inbox.disconnectedTooltipCta", { defaultValue: "Cliquez pour reconnecter dans Paramètres." })}
                         </p>
                       </TooltipContent>
@@ -4373,7 +4373,7 @@ export default function Dashboard() {
               })()}
               {inboxMode === "shared" && (sharedMailboxes as any[])?.length > 1 && (
                 <Select value={selectedSharedMailboxId || ""} onValueChange={setSelectedSharedMailboxId}>
-                  <SelectTrigger className="w-auto min-w-[120px] h-6 bg-card border-border text-[#b8c5d6] text-[10px] ml-1">
+                  <SelectTrigger className="w-auto min-w-[120px] h-7 bg-card border-border text-[#b8c5d6] text-[11px] ml-1">
                     <SelectValue placeholder={t("inbox.sharedMailbox")} />
                   </SelectTrigger>
                   <SelectContent className="bg-card border-border">
@@ -4386,7 +4386,7 @@ export default function Dashboard() {
             </div>
 
           <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8">
-              <span className="text-[10px] text-[#b8c5d6] mr-1">{t("inbox.priority")}:</span>
+              <span className="text-[11px] text-[#b8c5d6] mr-1">{t("inbox.priority")}:</span>
               {[
                 { value: "all", label: t("inbox.allCategories") },
                 { value: "urgent", label: t("inbox.priorities.urgent") },
@@ -4396,7 +4396,7 @@ export default function Dashboard() {
                 <button
                   key={f.value}
                   onClick={() => setFilterPriority(f.value)}
-                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors ${
+                  className={`text-[11px] px-2 py-0.5 rounded-md font-medium transition-colors ${
                     filterPriority === f.value
                       ? "bg-primary/15 text-primary border border-primary/20"
                       : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -4413,7 +4413,7 @@ export default function Dashboard() {
                     ? t("inboriaSort.smartTooltipOn", "Tri intelligent activé : Inboria pousse en haut les emails stratégiques.")
                     : t("inboriaSort.smartTooltipOff", "Tri intelligent désactivé.")
                 }
-                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                className={`text-[11px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
                   smartSort
                     ? "bg-primary/15 text-primary border border-primary/20"
                     : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -4437,7 +4437,7 @@ export default function Dashboard() {
                       ? t("inbox.sortByDateDesc", "Tri : Date ↓ (récent)")
                       : t("inbox.sortByDateAsc", "Tri : Date ↑ (ancien)")
                 }
-                className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                className={`text-[11px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
                   smartSort
                     ? "text-[#5a6478] border border-[#1f2937] opacity-50 cursor-not-allowed"
                     : sortMode !== "priority"
@@ -4462,7 +4462,7 @@ export default function Dashboard() {
               <div className="basis-full h-0 sm:hidden" />
               <div className="hidden sm:block w-px h-4 bg-[#1f2937] mx-1" />
               <Select value={filterCategory} onValueChange={setFilterCategory}>
-                <SelectTrigger className="w-auto min-w-[130px] h-6 bg-card border-border text-[#b8c5d6] text-[10px]">
+                <SelectTrigger className="w-auto min-w-[130px] h-7 bg-card border-border text-[#b8c5d6] text-[11px]">
                   <SelectValue placeholder={t("inbox.category")} />
                 </SelectTrigger>
                 {/* max-h-[50vh] borne explicitement la hauteur du menu pour
@@ -4485,13 +4485,13 @@ export default function Dashboard() {
               className="flex flex-wrap items-center gap-1.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-2"
               data-testid="row-crm-filter"
             >
-              <span className="text-[10px] text-[#b8c5d6] mr-1">{t("inbox.crmLabel")}:</span>
+              <span className="text-[11px] text-[#b8c5d6] mr-1">{t("inbox.crmLabel")}:</span>
               {hasHubspot && (
                 <button
                   onClick={() => setCrmFilter((c) => (c === "hubspot" ? null : "hubspot"))}
                   title={t("inbox.crmHubspotTooltip")}
                   data-testid="button-crm-hubspot"
-                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                  className={`text-[11px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
                     crmFilter === "hubspot"
                       ? "bg-primary/15 text-primary border border-primary/20"
                       : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -4506,7 +4506,7 @@ export default function Dashboard() {
                   onClick={() => setCrmFilter((c) => (c === "pipedrive" ? null : "pipedrive"))}
                   title={t("inbox.crmPipedriveTooltip")}
                   data-testid="button-crm-pipedrive"
-                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                  className={`text-[11px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
                     crmFilter === "pipedrive"
                       ? "bg-primary/15 text-primary border border-primary/20"
                       : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -4521,7 +4521,7 @@ export default function Dashboard() {
                   onClick={() => setCrmFilter((c) => (c === "salesforce" ? null : "salesforce"))}
                   title={t("inbox.crmSalesforceTooltip")}
                   data-testid="button-crm-salesforce"
-                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                  className={`text-[11px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
                     crmFilter === "salesforce"
                       ? "bg-primary/15 text-primary border border-primary/20"
                       : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -4536,7 +4536,7 @@ export default function Dashboard() {
                   onClick={() => setCrmFilter((c) => (c === "odoo" ? null : "odoo"))}
                   title={t("inbox.crmOdooTooltip")}
                   data-testid="button-crm-odoo"
-                  className={`text-[10px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
+                  className={`text-[11px] px-2 py-0.5 rounded-md font-medium transition-colors flex items-center gap-1 ${
                     crmFilter === "odoo"
                       ? "bg-primary/15 text-primary border border-primary/20"
                       : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
