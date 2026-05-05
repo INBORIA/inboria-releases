@@ -36,6 +36,11 @@ const languages = [
   { code: "ru", label: "RU", name: "Русский" },
   { code: "he", label: "HE", name: "עברית" },
   { code: "ar", label: "AR", name: "العربية" },
+  { code: "hr", label: "HR", name: "Hrvatski" },
+  { code: "sk", label: "SK", name: "Slovenčina" },
+  { code: "sl", label: "SL", name: "Slovenščina" },
+  { code: "lv", label: "LV", name: "Latviešu" },
+  { code: "mt", label: "MT", name: "Malti" },
 ];
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {

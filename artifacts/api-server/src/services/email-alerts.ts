@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -319,13 +319,63 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `صندوق البريد ${email} غير متصل`,
     notifMessage: "انقر لإعادة ربط صندوق البريد هذا من الإعدادات.",
   },
+  hr: {
+    subject: (email) => `Inboria — Poštanski sandučić ${email} odspojen`,
+    intro: "Inboria nije uspjela sinkronizirati ovaj poštanski sandučić nakon nekoliko pokušaja. Dok se veza ne uspostavi ponovno, Vaše nove poruke neće biti obrađene.",
+    reasonLabel: "Posljednja pogreška",
+    cta: "Ponovno poveži poštanski sandučić",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Ova poruka šalje se najviše jednom tjedno po poštanskom sandučiću. Nakon uspješnog ponovnog povezivanja više nećete primati obavijesti.",
+    notifTitle: (email) => `Poštanski sandučić ${email} odspojen`,
+    notifMessage: "Kliknite za ponovno povezivanje ovog poštanskog sandučića u Postavkama.",
+  },
+  sk: {
+    subject: (email) => `Inboria — Poštová schránka ${email} odpojená`,
+    intro: "Inboria nedokázala synchronizovať túto poštovú schránku po niekoľkých pokusoch. Kým sa spojenie neobnoví, Vaše nové správy nebudú spracované.",
+    reasonLabel: "Posledná chyba",
+    cta: "Znovu pripojiť poštovú schránku",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Táto správa sa odosiela najviac raz týždenne na poštovú schránku. Po úspešnom obnovení spojenia už ďalšie upozornenia nedostanete.",
+    notifTitle: (email) => `Poštová schránka ${email} odpojená`,
+    notifMessage: "Kliknite pre opätovné pripojenie tejto poštovej schránky v Nastaveniach.",
+  },
+  sl: {
+    subject: (email) => `Inboria — Poštni predal ${email} odklopljen`,
+    intro: "Inboria po več poskusih ni uspela sinhronizirati tega poštnega predala. Dokler povezava ne bo obnovljena, Vaša nova sporočila ne bodo obdelana.",
+    reasonLabel: "Zadnja napaka",
+    cta: "Ponovno poveži poštni predal",
+    ctaUrl: "/dashboard/parametres",
+    footer: "To sporočilo se pošlje največ enkrat tedensko na poštni predal. Po uspešni ponovni vzpostavitvi povezave ne boste več prejemali obvestil.",
+    notifTitle: (email) => `Poštni predal ${email} odklopljen`,
+    notifMessage: "Kliknite za ponovno povezavo tega poštnega predala v Nastavitvah.",
+  },
+  lv: {
+    subject: (email) => `Inboria — Pastkaste ${email} atvienota`,
+    intro: "Inboria pēc vairākiem mēģinājumiem nevarēja sinhronizēt šo pastkasti. Kamēr savienojums netiks atjaunots, Jūsu jaunās ziņas netiks apstrādātas.",
+    reasonLabel: "Pēdējā kļūda",
+    cta: "Atkārtoti pievienot pastkasti",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Šis paziņojums tiek nosūtīts ne biežāk kā reizi nedēļā uz pastkasti. Pēc veiksmīgas atkārtotas pieslēgšanās Jūs vairs nesaņemsiet paziņojumus.",
+    notifTitle: (email) => `Pastkaste ${email} atvienota`,
+    notifMessage: "Noklikšķiniet, lai atkārtoti pievienotu šo pastkasti Iestatījumos.",
+  },
+  mt: {
+    subject: (email) => `Inboria — Kaxxa tal-posta ${email} skonnettjata`,
+    intro: "Inboria ma rnexxilhiex tissinkronizza din il-kaxxa tal-posta wara diversi tentattivi. Sakemm il-konnessjoni ma terġax tiġi stabbilita, il-messaġġi l-ġodda Tagħkom mhux se jiġu pproċessati.",
+    reasonLabel: "L-aħħar żball",
+    cta: "Erġa' qabbad il-kaxxa tal-posta",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Dan il-messaġġ jintbagħat l-aktar darba fil-ġimgħa għal kull kaxxa tal-posta. Wara konnessjoni mill-ġdid b'suċċess, m'għandkomx tirċievu aktar notifiki.",
+    notifTitle: (email) => `Kaxxa tal-posta ${email} skonnettjata`,
+    notifMessage: "Ikklikkjaw biex terġgħu tqabbdu din il-kaxxa tal-posta fl-Issettjar.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const full = (raw || "fr").trim().toLowerCase();
   if (full === "zh-tw" || full === "zh_tw" || full === "zh-hant" || full === "zh-hk") return "zh-TW";
   const v = full.slice(0, 2);
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk" || v === "et" || v === "zh" || v === "lt" || v === "sr" || v === "ru" || v === "he" || v === "ar") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk" || v === "et" || v === "zh" || v === "lt" || v === "sr" || v === "ru" || v === "he" || v === "ar" || v === "hr" || v === "sk" || v === "sl" || v === "lv" || v === "mt") return v;
   return "fr";
 }
 

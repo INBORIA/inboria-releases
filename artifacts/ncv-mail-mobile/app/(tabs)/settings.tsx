@@ -47,6 +47,11 @@ const LANGUAGES = [
   { code: "ru", label: "Русский" },
   { code: "he", label: "עברית" },
   { code: "ar", label: "العربية" },
+  { code: "hr", label: "Hrvatski" },
+  { code: "sk", label: "Slovenčina" },
+  { code: "sl", label: "Slovenščina" },
+  { code: "lv", label: "Latviešu" },
+  { code: "mt", label: "Malti" },
 ];
 
 export default function MenuScreen() {

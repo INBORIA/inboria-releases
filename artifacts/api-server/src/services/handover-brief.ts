@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "bg" | "hr" | "sk" | "sl" | "lv";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -232,6 +232,41 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "الالتزامات المعلقة",
     "المسائل التي تستدعي الانتباه",
   ],
+  hr: [
+    "Kontekst odnosa",
+    "Aktivne teme",
+    "Donesene odluke",
+    "Otvorene obveze",
+    "Pitanja koja zahtijevaju pozornost",
+  ],
+  sk: [
+    "Kontext vzťahu",
+    "Aktívne témy",
+    "Prijaté rozhodnutia",
+    "Otvorené záväzky",
+    "Otázky vyžadujúce pozornosť",
+  ],
+  sl: [
+    "Kontekst odnosa",
+    "Aktivne teme",
+    "Sprejete odločitve",
+    "Odprte obveznosti",
+    "Vprašanja, ki zahtevajo pozornost",
+  ],
+  lv: [
+    "Attiecību konteksts",
+    "Aktīvās tēmas",
+    "Pieņemtie lēmumi",
+    "Atvērtās saistības",
+    "Jautājumi, kas prasa uzmanību",
+  ],
+  mt: [
+    "Kuntest tar-relazzjoni",
+    "Suġġetti attivi",
+    "Deċiżjonijiet meħuda",
+    "Impenji miftuħa",
+    "Mistoqsijiet li jeħtieġu attenzjoni",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -266,6 +301,11 @@ const TONE: Record<Language, string> = {
   ru: "Пишите на русском языке, используя вежливую форму (Вы/Вас с большой буквы), фактическим профессиональным тоном, без приветствий.",
   he: "כתוב בעברית, בסגנון עובדתי ומקצועי המקובל בעברית עסקית, ללא ברכות פתיחה.",
   ar: "اكتب باللغة العربية الفصحى، بأسلوب مهني وموضوعي، دون عبارات تحية أو مجاملات افتتاحية.",
+  hr: "Pišite na hrvatskom jeziku, koristeći učtivu formu (Vi/Vas/Vam/Vaš velikim slovom), činjeničnim i profesionalnim tonom, bez pozdrava.",
+  sk: "Píšte v slovenčine, používajte zdvorilé vykanie (Vy/Vás/Vám/Váš s veľkým písmenom), vecným a profesionálnym tónom, bez pozdravov.",
+  sl: "Pišite v slovenščini, uporabljajte vikanje (Vi/Vas/Vam/Vaš z veliko začetnico), s stvarnim in profesionalnim tonom, brez pozdravov.",
+  lv: "Rakstiet latviešu valodā, izmantojot pieklājīgo uzrunas formu (Jūs/Jums/Jūsu ar lielo burtu), faktiskā un profesionālā tonī, bez sveicieniem.",
+  mt: "Ikteb bil-Malti, billi tuża l-forma rispettuża (Inti/Tagħkom b'ittra kbira), b'ton fattwali u professjonali, mingħajr tislim.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

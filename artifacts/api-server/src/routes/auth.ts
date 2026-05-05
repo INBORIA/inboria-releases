@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "hr", "sk", "sl", "lv", "mt"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -281,6 +281,51 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "إعادة تعيين كلمة المرور",
         footer: "إذا لم تكونوا قد قدّمتم هذا الطلب، فيرجى تجاهل هذه الرسالة — وستبقى كلمة المرور الخاصة بكم دون تغيير.",
         subject: "إعادة تعيين كلمة مرور Inboria الخاصة بكم",
+      };
+    case "hr":
+      return {
+        tagline: "Email Autopilot za MSP-ove",
+        heading: "Resetiranje Vaše lozinke",
+        body: "Zatražili ste resetiranje lozinke za Vaš Inboria račun. Kliknite gumb u nastavku za odabir nove lozinke. Ova poveznica vrijedi 1 sat.",
+        cta: "Resetiraj moju lozinku",
+        footer: "Ako niste Vi poslali ovaj zahtjev, zanemarite ovu poruku — Vaša lozinka ostat će nepromijenjena.",
+        subject: "Resetirajte Vašu Inboria lozinku",
+      };
+    case "sk":
+      return {
+        tagline: "Email Autopilot pre MSP",
+        heading: "Resetovanie Vášho hesla",
+        body: "Požiadali ste o resetovanie hesla pre Váš účet Inboria. Kliknite na tlačidlo nižšie pre výber nového hesla. Tento odkaz je platný 1 hodinu.",
+        cta: "Resetovať moje heslo",
+        footer: "Ak ste túto žiadosť neposlali Vy, túto správu ignorujte — Vaše heslo zostane nezmenené.",
+        subject: "Resetujte Vaše heslo Inboria",
+      };
+    case "sl":
+      return {
+        tagline: "Email Autopilot za MSP",
+        heading: "Ponastavitev Vašega gesla",
+        body: "Zahtevali ste ponastavitev gesla za Vaš račun Inboria. Kliknite spodnji gumb za izbiro novega gesla. Ta povezava velja 1 uro.",
+        cta: "Ponastavi moje geslo",
+        footer: "Če te zahteve niste poslali Vi, prosimo prezrite to sporočilo — Vaše geslo bo ostalo nespremenjeno.",
+        subject: "Ponastavite Vaše geslo Inboria",
+      };
+    case "lv":
+      return {
+        tagline: "Email Autopilot MVU",
+        heading: "Jūsu paroles atiestatīšana",
+        body: "Jūs esat pieprasījis paroles atiestatīšanu Jūsu Inboria kontam. Noklikšķiniet uz zemāk esošās pogas, lai izvēlētos jaunu paroli. Šī saite ir derīga 1 stundu.",
+        cta: "Atiestatīt manu paroli",
+        footer: "Ja Jūs neesat iesniedzis šo pieprasījumu, lūdzu ignorējiet šo ziņu — Jūsu parole paliks nemainīta.",
+        subject: "Atiestatiet Jūsu Inboria paroli",
+      };
+    case "mt":
+      return {
+        tagline: "Email Autopilot għall-SMEs",
+        heading: "Reset tal-password Tagħkom",
+        body: "Intom tlabtu reset tal-password għall-kont Inboria Tagħkom. Ikklikkjaw fuq il-buttuna t'hawn taħt biex tagħżlu password ġdida. Din il-link hija valida għal siegħa.",
+        cta: "Irresetja l-password tiegħi",
+        footer: "Jekk mhux Intom li bgħattu din it-talba, jekk jogħġobkom injoraw dan il-messaġġ — il-password Tagħkom se tibqa' bla bidla.",
+        subject: "Irresetjaw il-password Inboria Tagħkom",
       };
     default:
       return {
