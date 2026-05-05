@@ -89,7 +89,9 @@ async function translateBatch(strings, targetLang) {
                                         ? "Estonian (Estonian from Estonia, formal B2B SaaS tone using polite address 'Teie' / 'Teid' / 'Teile' (capitalized) and 'Te' for verb agreement — never informal 'sina/sinu' in UI labels; use 'Palun' for polite requests; modern standard Estonian (kirjakeel) with proper õ/ä/ö/ü diacritics; avoid germanisms and russisms)"
                                         : targetLang === "zh"
                                           ? "Simplified Chinese (简体中文, Mainland China Mandarin, formal B2B SaaS tone using polite address '您' (nín) — never informal '你' (nǐ); use '请' for polite requests; use Simplified Chinese characters only (NOT Traditional 繁體); use mainland conventions for technical terms (e.g. '邮件' not '電郵', '设置' not '設定', '登录' not '登入', '账户' not '帳戶', '软件' not '軟件'); use Chinese full-width punctuation (,。:;!?) in narrative text but keep ASCII punctuation inside placeholders/code/URLs)"
-                                          : targetLang;
+                                          : targetLang === "zh-TW"
+                                            ? "Traditional Chinese (繁體中文, Taiwan Mandarin 國語, formal B2B SaaS tone using polite address '您' (nín) — never informal '你' (nǐ); use '請' for polite requests; use Traditional Chinese characters ONLY (NEVER Simplified 简体 — e.g. write 設定 not 设置, 電子郵件/郵件 not 邮件, 登入 not 登录, 帳戶 not 账户, 軟體 not 软件, 資訊 not 信息, 檔案 not 文件, 連線 not 连接, 點擊 not 点击, 確認 not 确认, 應用程式 not 应用程序); use Taiwan terminology conventions (軟體 not 軟件, 網路 not 網絡, 滑鼠 not 鼠標, 印表機 not 打印機, 視訊 not 視頻, 解析度 not 分辨率, 程式 not 程序, 資料庫 not 數據庫, 預設 not 默認); use Chinese full-width punctuation (,。:;!?「」『』) in narrative text but keep ASCII punctuation inside placeholders/code/URLs; use 「」 for quotes not '\"'; do NOT use Hong Kong colloquialisms)"
+                                            : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -275,6 +277,8 @@ const tasks = {
   "web-et":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/et.json",    lang: "et" },
   "mobile-zh": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/zh.json", lang: "zh" },
   "web-zh":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/zh.json",    lang: "zh" },
+  "mobile-zh-TW": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/zh-TW.json", lang: "zh-TW" },
+  "web-zh-TW":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/zh-TW.json",    lang: "zh-TW" },
 };
 
 if (target === "all") {

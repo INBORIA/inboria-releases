@@ -30,6 +30,7 @@ const languages = [
   { code: "uk", label: "UK", name: "Українська" },
   { code: "et", label: "ET", name: "Eesti" },
   { code: "zh", label: "ZH", name: "简体中文" },
+  { code: "zh-TW", label: "ZH-TW", name: "繁體中文" },
 ];
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {
@@ -49,7 +50,10 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  const activeCode = (i18n.resolvedLanguage || i18n.language || "fr").slice(0, 2).toLowerCase();
+  const rawLang = (i18n.resolvedLanguage || i18n.language || "fr");
+  const lowerFull = rawLang.toLowerCase();
+  const normalized = (lowerFull === "zh-tw" || lowerFull === "zh_tw" || lowerFull === "zh-hant" || lowerFull === "zh-hk") ? "zh-TW" : rawLang.slice(0, 2).toLowerCase();
+  const activeCode = normalized;
   const currentLang = languages.find((l) => l.code === activeCode) || languages[0];
 
   return (

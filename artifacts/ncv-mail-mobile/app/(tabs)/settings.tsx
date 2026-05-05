@@ -41,6 +41,7 @@ const LANGUAGES = [
   { code: "uk", label: "Українська" },
   { code: "et", label: "Eesti" },
   { code: "zh", label: "简体中文" },
+  { code: "zh-TW", label: "繁體中文" },
 ];
 
 export default function MenuScreen() {
@@ -52,7 +53,10 @@ export default function MenuScreen() {
   const isWeb = Platform.OS === "web";
   const [showLangPicker, setShowLangPicker] = useState(false);
 
-  const currentLang = LANGUAGES.find((l) => l.code === (i18n.resolvedLanguage || i18n.language || "fr").substring(0, 2)) || LANGUAGES[0];
+  const rawLangCode = (i18n.resolvedLanguage || i18n.language || "fr");
+  const lowerFullLang = rawLangCode.toLowerCase();
+  const normalizedLangCode = (lowerFullLang === "zh-tw" || lowerFullLang === "zh_tw" || lowerFullLang === "zh-hant" || lowerFullLang === "zh-hk") ? "zh-TW" : rawLangCode.substring(0, 2);
+  const currentLang = LANGUAGES.find((l) => l.code === normalizedLangCode) || LANGUAGES[0];
 
   const MENU_ITEMS = [
     {

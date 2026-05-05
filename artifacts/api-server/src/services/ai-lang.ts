@@ -1,12 +1,15 @@
 import { supabaseAdmin } from "../lib/supabase";
 
-export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh";
+export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW";
 
-const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh"];
+const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW"];
 
 export function normalizeLang(input: unknown): AiLang {
   if (typeof input !== "string") return "fr";
-  const code = input.substring(0, 2).toLowerCase() as AiLang;
+  const raw = input.trim();
+  const lowerFull = raw.toLowerCase();
+  if (lowerFull === "zh-tw" || lowerFull === "zh_tw" || lowerFull === "zh-hant" || lowerFull === "zh-hk") return "zh-TW";
+  const code = raw.substring(0, 2).toLowerCase() as AiLang;
   return SUPPORTED.includes(code) ? code : "fr";
 }
 
@@ -59,6 +62,7 @@ const NAMES: Record<AiLang, string> = {
   uk: "УКРАЇНСЬКА",
   et: "EESTI",
   zh: "简体中文",
+  "zh-TW": "繁體中文",
 };
 
 const SHORT_INSTRUCTION: Record<AiLang, string> = {
@@ -87,6 +91,7 @@ const SHORT_INSTRUCTION: Record<AiLang, string> = {
   uk: "Будь ласка, відповідайте українською мовою, використовуючи ввічливу форму (Ви/Вас з великої літери).",
   et: "Palun vastake eesti keeles, kasutades viisakat vormi (Teie/Teid).",
   zh: "请使用简体中文回答,使用敬称『您』。",
+  "zh-TW": "請使用繁體中文回答,使用敬稱『您』。",
 };
 
 export function langName(lang: AiLang): string {

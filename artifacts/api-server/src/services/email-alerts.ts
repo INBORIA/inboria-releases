@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -259,10 +259,22 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `邮箱 ${email} 已断开连接`,
     notifMessage: "请点击以在设置中重新连接此邮箱。",
   },
+  "zh-TW": {
+    subject: (email) => `Inboria — 信箱 ${email} 已中斷連線`,
+    intro: "Inboria 多次嘗試後仍無法同步此信箱。在重新建立連線之前,您的新郵件將不會被處理。",
+    reasonLabel: "最後一次錯誤",
+    cta: "重新連線此信箱",
+    ctaUrl: "/dashboard/parametres",
+    footer: "此郵件每個信箱每週最多發送一次。一旦連線成功恢復,您將不再收到通知。",
+    notifTitle: (email) => `信箱 ${email} 已中斷連線`,
+    notifMessage: "請點擊以在設定中重新連線此信箱。",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
-  const v = (raw || "fr").slice(0, 2).toLowerCase();
+  const full = (raw || "fr").trim().toLowerCase();
+  if (full === "zh-tw" || full === "zh_tw" || full === "zh-hant" || full === "zh-hk") return "zh-TW";
+  const v = full.slice(0, 2);
   if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk" || v === "et" || v === "zh") return v;
   return "fr";
 }

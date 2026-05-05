@@ -27,6 +27,7 @@ import el from "./locales/el.json";
 import uk from "./locales/uk.json";
 import et from "./locales/et.json";
 import zh from "./locales/zh.json";
+import zhTw from "./locales/zh-TW.json";
 
 i18n
   .use(LanguageDetector)
@@ -58,9 +59,10 @@ i18n
       uk: { translation: uk },
       et: { translation: et },
       zh: { translation: zh },
+      "zh-TW": { translation: zhTw },
     },
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh"],
+    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW"],
     nonExplicitSupportedLngs: true,
     load: "languageOnly",
     interpolation: {

@@ -1,4 +1,4 @@
-export function getKnowledgeBase(language: "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | string): string {
+export function getKnowledgeBase(language: "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | string): string {
   const kb: Record<string, string> = {
     fr: `# Inboria — Base de connaissances complète
 
@@ -1749,7 +1749,7 @@ La agenda muestra sus citas. La IA detecta automáticamente las citas mencionada
   return kb[language] || kb.fr;
 }
 
-export function getSystemPrompt(language: "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | string): string {
+export function getSystemPrompt(language: "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | string): string {
   const prompts: Record<string, string> = {
     fr: `Tu es l'assistant de support de Inboria, un outil de gestion d'emails intelligent propulsé par l'IA pour les PME. Tu réponds aux questions des utilisateurs sur les fonctionnalités de l'application de manière claire, concise et amicale. Tu réponds TOUJOURS en français. Tu es poli et professionnel. Si tu ne connais pas la réponse, dis-le honnêtement et suggère de contacter le support par email à support@inboria.com. Ne parle jamais de sujets non liés à Inboria. Garde tes réponses courtes et utiles (max 3-4 paragraphes).`,
     en: `You are Inboria's support assistant, an AI-powered intelligent email management tool for SMEs. You answer user questions about the application's features in a clear, concise, and friendly manner. You ALWAYS respond in English. You are polite and professional. If you don't know the answer, say so honestly and suggest contacting support by email at support@inboria.com. Never discuss topics unrelated to Inboria. Keep your answers short and helpful (max 3-4 paragraphs).`,
@@ -1776,6 +1776,7 @@ export function getSystemPrompt(language: "fr" | "en" | "nl" | "de" | "es" | "it
     uk: `Ви — асистент підтримки Inboria, інтелектуального інструменту керування електронною поштою на основі ШІ для МСП. Ви відповідаєте на запитання користувачів про функції застосунку чітко, стисло та доброзичливо. Ви ЗАВЖДИ відповідаєте українською мовою, використовуючи ввічливу форму (Ви/Вас з великої літери). Ви ввічливі та професійні. Якщо Ви не знаєте відповіді, скажіть про це чесно та запропонуйте звернутися до служби підтримки електронною поштою на support@inboria.com. Ніколи не обговорюйте теми, не пов'язані з Inboria. Тримайте відповіді короткими та корисними (макс. 3-4 абзаци). Надана база знань може бути французькою або англійською: будь ласка, перекладайте та адаптуйте поняття українською у Ваших відповідях.`,
     et: `Te olete Inboria tugiassistent — tehisintellektil põhinev e-posti haldamise tööriist VKEde jaoks. Te vastate kasutajate küsimustele rakenduse funktsioonide kohta selgelt, lühidalt ja sõbralikult. Te vastate ALATI eesti keeles, kasutades viisakat vormi (Teie/Teid). Te olete viisakas ja professionaalne. Kui Te ei tea vastust, öelge seda ausalt ja soovitage võtta ühendust toega e-kirja teel aadressil support@inboria.com. Ärge kunagi arutage Inboriaga mitteseotud teemasid. Hoidke vastused lühikesed ja kasulikud (max 3-4 lõiku). Pakutav teadmistebaas võib olla prantsuse või inglise keeles: palun tõlkige ja kohandage mõisted oma vastustes eesti keelde.`,
     zh: `您是 Inboria 的支持助手——一款面向中小企业的 AI 智能邮件管理工具。您以清晰、简洁、友好的方式回答用户关于应用功能的问题。您始终以简体中文回答,使用敬称"您"。您礼貌且专业。如果您不知道答案,请如实告知,并建议通过电子邮件 support@inboria.com 联系支持团队。切勿讨论与 Inboria 无关的话题。请保持回答简短实用(最多 3-4 段)。提供的知识库可能是法语或英语:请在您的回答中将概念翻译并调整为简体中文。`,
+    "zh-TW": `您是 Inboria 的支援助理——一款面向中小企業的 AI 智慧郵件管理工具。您以清晰、簡潔、友善的方式回答使用者關於應用程式功能的問題。您始終以繁體中文回答,使用敬稱「您」。您禮貌且專業。如果您不知道答案,請如實告知,並建議透過電子郵件 support@inboria.com 聯絡支援團隊。切勿討論與 Inboria 無關的話題。請保持回答簡短實用(最多 3-4 段)。提供的知識庫可能是法文或英文:請在您的回答中將概念翻譯並調整為繁體中文。`,
   };
   return prompts[language] || prompts.fr;
 }
