@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -309,13 +309,23 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `תיבת הדואר ${email} מנותקת`,
     notifMessage: "לחץ כדי לחבר מחדש את תיבת הדואר בהגדרות.",
   },
+  ar: {
+    subject: (email) => `Inboria — صندوق البريد ${email} غير متصل`,
+    intro: "تعذّر على Inboria مزامنة صندوق البريد هذا بعد عدة محاولات. وإلى حين استعادة الاتصال، لن تتم معالجة رسائلكم الجديدة.",
+    reasonLabel: "آخر خطأ",
+    cta: "إعادة ربط صندوق البريد",
+    ctaUrl: "/dashboard/parametres",
+    footer: "تُرسَل هذه الرسالة مرة واحدة في الأسبوع كحد أقصى لكل صندوق بريد. وبمجرد استعادة الاتصال بنجاح، لن تتلقوا المزيد من الإشعارات.",
+    notifTitle: (email) => `صندوق البريد ${email} غير متصل`,
+    notifMessage: "انقر لإعادة ربط صندوق البريد هذا من الإعدادات.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const full = (raw || "fr").trim().toLowerCase();
   if (full === "zh-tw" || full === "zh_tw" || full === "zh-hant" || full === "zh-hk") return "zh-TW";
   const v = full.slice(0, 2);
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk" || v === "et" || v === "zh" || v === "lt" || v === "sr" || v === "ru" || v === "he") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk" || v === "et" || v === "zh" || v === "lt" || v === "sr" || v === "ru" || v === "he" || v === "ar") return v;
   return "fr";
 }
 

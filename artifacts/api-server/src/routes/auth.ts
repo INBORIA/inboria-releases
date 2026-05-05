@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -272,6 +272,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "אפס את הסיסמה שלי",
         footer: "אם לא ביקשת זאת, אנא התעלם מהודעה זו — הסיסמה שלך תישאר ללא שינוי.",
         subject: "אפס את סיסמת Inboria שלך",
+      };
+    case "ar":
+      return {
+        tagline: "الطيار الآلي للبريد الإلكتروني للشركات الصغيرة والمتوسطة",
+        heading: "إعادة تعيين كلمة المرور الخاصة بكم",
+        body: "لقد طلبتم إعادة تعيين كلمة المرور لحساب Inboria الخاص بكم. انقروا على الزر أدناه لاختيار كلمة مرور جديدة. هذا الرابط صالح لمدة ساعة واحدة.",
+        cta: "إعادة تعيين كلمة المرور",
+        footer: "إذا لم تكونوا قد قدّمتم هذا الطلب، فيرجى تجاهل هذه الرسالة — وستبقى كلمة المرور الخاصة بكم دون تغيير.",
+        subject: "إعادة تعيين كلمة مرور Inboria الخاصة بكم",
       };
     default:
       return {

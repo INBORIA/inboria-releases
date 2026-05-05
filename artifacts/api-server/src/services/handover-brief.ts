@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -225,6 +225,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "התחייבויות פתוחות",
     "סוגיות הדורשות תשומת לב",
   ],
+  ar: [
+    "سياق العلاقة",
+    "المواضيع النشطة",
+    "القرارات المتخذة",
+    "الالتزامات المعلقة",
+    "المسائل التي تستدعي الانتباه",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -258,6 +265,7 @@ const TONE: Record<Language, string> = {
   sr: "Пишите на српском језику (ћирилица), користећи учтиву форму (Ви/Вас великим словом), чињеничним и професионалним тоном, без поздрава.",
   ru: "Пишите на русском языке, используя вежливую форму (Вы/Вас с большой буквы), фактическим профессиональным тоном, без приветствий.",
   he: "כתוב בעברית, בסגנון עובדתי ומקצועי המקובל בעברית עסקית, ללא ברכות פתיחה.",
+  ar: "اكتب باللغة العربية الفصحى، بأسلوب مهني وموضوعي، دون عبارات تحية أو مجاملات افتتاحية.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

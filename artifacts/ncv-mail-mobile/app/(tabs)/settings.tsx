@@ -46,6 +46,7 @@ const LANGUAGES = [
   { code: "sr", label: "Српски" },
   { code: "ru", label: "Русский" },
   { code: "he", label: "עברית" },
+  { code: "ar", label: "العربية" },
 ];
 
 export default function MenuScreen() {

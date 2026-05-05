@@ -35,6 +35,7 @@ const languages = [
   { code: "sr", label: "SR", name: "Српски" },
   { code: "ru", label: "RU", name: "Русский" },
   { code: "he", label: "HE", name: "עברית" },
+  { code: "ar", label: "AR", name: "العربية" },
 ];
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {

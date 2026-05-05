@@ -32,6 +32,7 @@ import lt from "./locales/lt.json";
 import sr from "./locales/sr.json";
 import ru from "./locales/ru.json";
 import he from "./locales/he.json";
+import ar from "./locales/ar.json";
 
 i18n
   .use(LanguageDetector)
@@ -68,9 +69,10 @@ i18n
       sr: { translation: sr },
       ru: { translation: ru },
       he: { translation: he },
+      ar: { translation: ar },
     },
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he"],
+    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar"],
     nonExplicitSupportedLngs: true,
     load: "languageOnly",
     interpolation: {
