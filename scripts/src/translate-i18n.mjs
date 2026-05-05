@@ -93,7 +93,9 @@ async function translateBatch(strings, targetLang) {
                                             ? "Traditional Chinese (繁體中文, Taiwan Mandarin 國語, formal B2B SaaS tone using polite address '您' (nín) — never informal '你' (nǐ); use '請' for polite requests; use Traditional Chinese characters ONLY (NEVER Simplified 简体 — e.g. write 設定 not 设置, 電子郵件/郵件 not 邮件, 登入 not 登录, 帳戶 not 账户, 軟體 not 软件, 資訊 not 信息, 檔案 not 文件, 連線 not 连接, 點擊 not 点击, 確認 not 确认, 應用程式 not 应用程序); use Taiwan terminology conventions (軟體 not 軟件, 網路 not 網絡, 滑鼠 not 鼠標, 印表機 not 打印機, 視訊 not 視頻, 解析度 not 分辨率, 程式 not 程序, 資料庫 not 數據庫, 預設 not 默認); use Chinese full-width punctuation (,。:;!?「」『』) in narrative text but keep ASCII punctuation inside placeholders/code/URLs; use 「」 for quotes not '\"'; do NOT use Hong Kong colloquialisms)"
                                             : targetLang === "lt"
                                               ? "Lithuanian (lietuvių kalba, Lithuanian from Lithuania, formal B2B SaaS tone using polite address 'Jūs' / 'Jus' / 'Jūsų' / 'Jums' (always capitalized in formal address) and 2nd person plural verbs — never informal 'tu/tave/tavo' in UI labels; use 'prašome' for polite requests; modern standard Lithuanian (bendrinė lietuvių kalba) with proper diacritics ą/č/ę/ė/į/š/ų/ū/ž; use Lithuanian quotation marks „...“ for quotes; avoid russisms and germanisms; use native terminology where established (e.g. 'el. paštas' for email, 'nustatymai' for settings, 'prisijungti' for log in, 'paskyra' for account, 'slaptažodis' for password, 'pašto dėžutė' for mailbox))"
-                                              : targetLang;
+                                              : targetLang === "sr"
+                                                ? "Serbian (српски језик, Serbian from Serbia in CYRILLIC SCRIPT ONLY — never Latin script; formal B2B SaaS tone using polite address 'Ви' / 'Вас' / 'Вам' / 'Ваш' / 'Вашу' (always CAPITALIZED in formal address) and 2nd person plural verbs — never informal 'ти/тебе/теби' in UI labels; use 'молимо' for polite requests; standard Serbian (стандардни српски) following Matica srpska orthography; use Serbian quotation marks „...“ for quotes; do NOT use Croatian/Bosnian variants (write нема not nema, време not vrijeme, хлеб not хљеб); use native terminology where established (e.g. 'е-пошта' or 'имејл' for email, 'подешавања' for settings, 'пријава' for log in, 'налог' for account, 'лозинка' for password, 'сандуче' for mailbox))"
+                                                : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -283,6 +285,8 @@ const tasks = {
   "web-zh-TW":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/zh-TW.json",    lang: "zh-TW" },
   "mobile-lt": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/lt.json", lang: "lt" },
   "web-lt":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/lt.json",    lang: "lt" },
+  "mobile-sr": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/sr.json", lang: "sr" },
+  "web-sr":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/sr.json",    lang: "sr" },
 };
 
 if (target === "all") {

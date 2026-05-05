@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -245,6 +245,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Iš naujo nustatyti slaptažodį",
         footer: "Jei šios užklausos nepateikėte Jūs, ignoruokite šį laišką — Jūsų slaptažodis nepasikeis.",
         subject: "Iš naujo nustatykite savo Inboria slaptažodį",
+      };
+    case "sr":
+      return {
+        tagline: "Аутопилот за е-пошту за МСП",
+        heading: "Поново поставите Вашу лозинку",
+        body: "Захтевали сте поновно постављање лозинке за Ваш Inboria налог. Кликните на дугме испод да изаберете нову лозинку. Ова веза истиче за 1 сат.",
+        cta: "Поново постави лозинку",
+        footer: "Ако нисте Ви послали овај захтев, занемарите ову поруку — Ваша лозинка ће остати непромењена.",
+        subject: "Поново поставите Вашу Inboria лозинку",
       };
     default:
       return {
