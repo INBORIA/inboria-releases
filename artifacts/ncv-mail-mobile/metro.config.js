@@ -1,5 +1,4 @@
 const { getDefaultConfig } = require("expo/metro-config");
-const path = require("path");
 
 const config = getDefaultConfig(__dirname);
 
@@ -8,11 +7,19 @@ const config = getDefaultConfig(__dirname);
 // directories during web builds, which Metro tries to watch and then
 // crashes when they disappear (ENOENT). Block them out — Metro has no
 // business looking at web-only build artifacts anyway.
-config.resolver = config.resolver || {};
-config.resolver.blockList = [
+const pwaBlocks = [
   /\/node_modules\/.*\/vite-plugin-pwa\/.*/,
   /\/node_modules\/.*vite-plugin-pwa_tmp_.*/,
   /\/node_modules\/.pnpm\/vite-plugin-pwa[^/]*\/.*/,
 ];
+
+config.resolver = config.resolver || {};
+const existingBlockList = config.resolver.blockList;
+const existingBlocks = Array.isArray(existingBlockList)
+  ? existingBlockList
+  : existingBlockList
+    ? [existingBlockList]
+    : [];
+config.resolver.blockList = [...existingBlocks, ...pwaBlocks];
 
 module.exports = config;
