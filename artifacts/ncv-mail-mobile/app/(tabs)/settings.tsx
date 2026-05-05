@@ -21,6 +21,8 @@ const LANGUAGES = [
   { code: "nl", label: "Nederlands", flag: "🇳🇱" },
   { code: "de", label: "Deutsch", flag: "🇩🇪" },
   { code: "es", label: "Español", flag: "🇪🇸" },
+  { code: "it", label: "Italiano", flag: "🇮🇹" },
+  { code: "pt", label: "Português", flag: "🇵🇹" },
 ];
 
 export default function MenuScreen() {

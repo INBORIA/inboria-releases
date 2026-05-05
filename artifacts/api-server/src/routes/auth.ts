@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -47,6 +47,24 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Restablecer mi contraseña",
         footer: "Si no ha realizado esta solicitud, puede ignorar este correo — su contraseña no se modificará.",
         subject: "Restablezca su contraseña de Inboria",
+      };
+    case "it":
+      return {
+        tagline: "Email Autopilot per le PMI",
+        heading: "Reimposta la sua password",
+        body: "Ha richiesto la reimpostazione della password del suo account Inboria. Clicchi sul pulsante qui sotto per scegliere una nuova password. Questo link scade tra 1 ora.",
+        cta: "Reimposta la mia password",
+        footer: "Se non ha effettuato questa richiesta, puo ignorare questa email — la sua password non verra modificata.",
+        subject: "Reimposti la sua password Inboria",
+      };
+    case "pt":
+      return {
+        tagline: "Email Autopilot para PMEs",
+        heading: "Redefinir a sua palavra-passe",
+        body: "Solicitou a redefinição da palavra-passe da sua conta Inboria. Clique no botão abaixo para escolher uma nova palavra-passe. Este link expira em 1 hora.",
+        cta: "Redefinir a minha palavra-passe",
+        footer: "Se não foi você quem fez este pedido, pode ignorar este email — a sua palavra-passe não será alterada.",
+        subject: "Redefina a sua palavra-passe Inboria",
       };
     default:
       return {

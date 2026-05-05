@@ -14,7 +14,7 @@ import { useState, type ReactNode } from "react";
 import { Tooltip as InfoTooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { useTranslation } from "react-i18next";
 import { format, parseISO, startOfDay, endOfDay, addDays, type Locale } from "date-fns";
-import { fr, enUS, nl } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt } from "date-fns/locale";
 import { Link } from "wouter";
 import { useAuth } from "@/lib/auth";
 import { useQuery } from "@tanstack/react-query";

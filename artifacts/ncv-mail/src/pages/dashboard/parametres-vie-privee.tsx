@@ -3,7 +3,7 @@ import { Link } from "wouter";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { format, formatDistanceToNow } from "date-fns";
-import { fr, enUS, nl, de, es } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt } from "date-fns/locale";
 import {
   ArrowLeft,
   ShieldCheck,

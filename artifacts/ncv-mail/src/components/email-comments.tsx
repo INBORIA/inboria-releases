@@ -25,7 +25,7 @@ import {
   Mail,
 } from "lucide-react";
 import { format } from "date-fns";
-import { fr, enUS, nl } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt } from "date-fns/locale";
 import type { Locale } from "date-fns";
 import { useTranslation } from "react-i18next";
 

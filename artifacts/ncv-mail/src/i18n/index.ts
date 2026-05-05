@@ -7,6 +7,8 @@ import en from "./locales/en.json";
 import nl from "./locales/nl.json";
 import de from "./locales/de.json";
 import es from "./locales/es.json";
+import it from "./locales/it.json";
+import pt from "./locales/pt.json";
 
 i18n
   .use(LanguageDetector)
@@ -18,9 +20,11 @@ i18n
       nl: { translation: nl },
       de: { translation: de },
       es: { translation: es },
+      it: { translation: it },
+      pt: { translation: pt },
     },
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en", "nl", "de", "es"],
+    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt"],
     nonExplicitSupportedLngs: true,
     load: "languageOnly",
     interpolation: {

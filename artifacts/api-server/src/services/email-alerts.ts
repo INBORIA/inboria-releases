@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -59,11 +59,31 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `Buzon ${email} desconectado`,
     notifMessage: "Haga clic para reconectar este buzon en Configuracion.",
   },
+  it: {
+    subject: (email) => `Inboria — Casella ${email} disconnessa`,
+    intro: "Inboria non riesce piu a sincronizzare questa casella di posta da diversi tentativi. Le sue nuove email non vengono piu elaborate finche la connessione non viene ripristinata.",
+    reasonLabel: "Ultimo errore",
+    cta: "Riconnettere questa casella",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Questa email viene inviata al massimo una volta a settimana per casella. Se la riconnessione ha esito positivo, non ricevera piu avvisi.",
+    notifTitle: (email) => `Casella ${email} disconnessa`,
+    notifMessage: "Clicchi per riconnettere questa casella in Impostazioni.",
+  },
+  pt: {
+    subject: (email) => `Inboria — Caixa ${email} desligada`,
+    intro: "O Inboria nao consegue sincronizar esta caixa de correio ha varias tentativas. Os seus novos emails deixaram de ser processados ate a ligacao ser restabelecida.",
+    reasonLabel: "Ultimo erro",
+    cta: "Reconectar esta caixa",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Este email e enviado no maximo uma vez por semana por caixa. Se a reconexao for bem-sucedida, deixara de receber alertas.",
+    notifTitle: (email) => `Caixa ${email} desligada`,
+    notifMessage: "Clique para reconectar esta caixa nas Definicoes.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const v = (raw || "fr").slice(0, 2).toLowerCase();
-  if (v === "en" || v === "nl" || v === "de" || v === "es") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt") return v;
   return "fr";
 }
 

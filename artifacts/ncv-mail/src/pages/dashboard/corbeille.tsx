@@ -12,7 +12,7 @@ import {
 } from "@workspace/api-client-react";
 import type { Email, PaginatedEmails } from "@workspace/api-client-react";
 import { format } from "date-fns";
-import { fr, enUS, nl } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt } from "date-fns/locale";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
@@ -34,7 +34,7 @@ import {
 
 export default function Corbeille() {
   const { t, i18n } = useTranslation();
-  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
+  const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
   const queryClient = useQueryClient();
   const { toast } = useToast();
 

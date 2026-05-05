@@ -1,8 +1,8 @@
 import { supabaseAdmin } from "../lib/supabase";
 
-export type AiLang = "fr" | "en" | "nl" | "de" | "es";
+export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt";
 
-const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es"];
+const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt"];
 
 export function normalizeLang(input: unknown): AiLang {
   if (typeof input !== "string") return "fr";
@@ -39,6 +39,8 @@ const NAMES: Record<AiLang, string> = {
   nl: "NEDERLANDS",
   de: "DEUTSCH",
   es: "ESPAÑOL",
+  it: "ITALIANO",
+  pt: "PORTUGUÊS",
 };
 
 const SHORT_INSTRUCTION: Record<AiLang, string> = {
@@ -47,6 +49,8 @@ const SHORT_INSTRUCTION: Record<AiLang, string> = {
   nl: "Antwoord in het Nederlands.",
   de: "Antworte auf Deutsch.",
   es: "Responde en español.",
+  it: "Rispondi in italiano.",
+  pt: "Responda em português.",
 };
 
 export function langName(lang: AiLang): string {

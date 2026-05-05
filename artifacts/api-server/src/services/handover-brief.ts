@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -50,6 +50,20 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Compromisos abiertos",
     "Puntos de atención",
   ],
+  it: [
+    "Contesto della relazione",
+    "Argomenti in corso",
+    "Decisioni prese",
+    "Impegni aperti",
+    "Punti di attenzione",
+  ],
+  pt: [
+    "Contexto da relação",
+    "Tópicos em curso",
+    "Decisões tomadas",
+    "Compromissos em aberto",
+    "Pontos de atenção",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -58,6 +72,8 @@ const TONE: Record<Language, string> = {
   nl: "Schrijf in het Nederlands, zakelijk en feitelijk, zonder begroetingen.",
   de: "Schreibe auf Deutsch, sachlich und professionell, ohne Begrüßungen.",
   es: "Redacta en español, tono profesional y factual, sin saludos.",
+  it: "Scrivi in italiano, forma di cortesia (Lei), tono fattuale e professionale, senza formule di saluto.",
+  pt: "Escreva em português europeu, forma formal (você), tom factual e profissional, sem saudações.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

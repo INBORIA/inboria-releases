@@ -10,7 +10,19 @@ const languages = [
   { code: "nl", label: "NL", flag: "🇧🇪" },
   { code: "de", label: "DE", flag: "🇩🇪" },
   { code: "es", label: "ES", flag: "🇪🇸" },
+  { code: "it", label: "IT", flag: "🇮🇹" },
+  { code: "pt", label: "PT", flag: "🇵🇹" },
 ];
+
+const nativeNames: Record<string, string> = {
+  fr: "Français",
+  en: "English",
+  nl: "Nederlands",
+  de: "Deutsch",
+  es: "Español",
+  it: "Italiano",
+  pt: "Português",
+};
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {
   const { i18n } = useTranslation();
@@ -70,7 +82,7 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
               <span className="text-base">{lang.flag}</span>
               <span className="font-medium">{lang.label}</span>
               <span className="text-[11px] opacity-60">
-                {lang.code === "fr" ? "Français" : lang.code === "en" ? "English" : lang.code === "nl" ? "Nederlands" : lang.code === "de" ? "Deutsch" : "Español"}
+                {nativeNames[lang.code] ?? lang.label}
               </span>
             </button>
           ))}

@@ -18,7 +18,7 @@ import {
 } from "@workspace/api-client-react";
 import { Badge } from "@/components/ui/badge";
 import { format } from "date-fns";
-import { fr, enUS, nl } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt } from "date-fns/locale";
 import {
   Calendar, Mail, Clock, Trash2, User, Sparkles, Tag, Download,
   Reply, Send, Wand2, Loader2, Plus, ArrowRight, RotateCcw, CheckCircle2,
@@ -50,7 +50,7 @@ const STATUS_STYLES = {
 
 export default function Taches() {
   const { t, i18n } = useTranslation();
-  const dateFnsLocale = i18n.language === "nl" ? nl : i18n.language === "en" ? enUS : fr;
+  const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
   const queryClient = useQueryClient();
   const { data: profile } = useGetProfile();
   const { session } = useAuth();

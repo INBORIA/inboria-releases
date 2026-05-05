@@ -17,7 +17,7 @@ import { Sparkles, MailCheck, X, ArrowUpRight, Clock, Loader2, Inbox } from "luc
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { formatDistanceToNow } from "date-fns";
-import { fr, enUS, nl, de, es } from "date-fns/locale";
+import { fr, enUS, nl, de, es, it, pt } from "date-fns/locale";
 
 const LOCALE_MAP: Record<string, any> = { fr, en: enUS, nl, de, es };
 
