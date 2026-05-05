@@ -30,6 +30,7 @@ const LANGUAGES = [
   { code: "fi", label: "Suomi", flag: "🇫🇮" },
   { code: "hu", label: "Magyar", flag: "🇭🇺" },
   { code: "cs", label: "Čeština", flag: "🇨🇿" },
+  { code: "tr", label: "Türkçe", flag: "🇹🇷" },
 ];
 
 export default function MenuScreen() {

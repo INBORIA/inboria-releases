@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -149,11 +149,21 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `Schranka ${email} odpojena`,
     notifMessage: "Kliknete pro znovupripojeni teto schranky v Nastaveni.",
   },
+  tr: {
+    subject: (email) => `Inboria — ${email} posta kutusunun baglantisi kesildi`,
+    intro: "Inboria, bu posta kutusunu birkac denemeden sonra senkronize edemiyor. Baglanti yeniden kurulana kadar yeni e-postalariniz islenmeyecektir.",
+    reasonLabel: "Son hata",
+    cta: "Bu posta kutusunu yeniden baglayin",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Bu e-posta, posta kutusu basina haftada en fazla bir kez gonderilir. Yeniden baglanti basarili olursa artik uyari almazsiniz.",
+    notifTitle: (email) => `${email} posta kutusunun baglantisi kesildi`,
+    notifMessage: "Bu posta kutusunu Ayarlar bolumunden yeniden baglamak icin tiklayin.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const v = (raw || "fr").slice(0, 2).toLowerCase();
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr") return v;
   return "fr";
 }
 

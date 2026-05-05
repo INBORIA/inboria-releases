@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -128,6 +128,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Obnovit mé heslo",
         footer: "Pokud jste tuto žádost neodeslali, můžete tuto zprávu ignorovat — vaše heslo zůstane nezměněno.",
         subject: "Obnovte své heslo Inboria",
+      };
+    case "tr":
+      return {
+        tagline: "KOBİ'ler için Email Autopilot",
+        heading: "Şifrenizi sıfırlayın",
+        body: "Inboria hesabınızın şifresinin sıfırlanmasını talep ettiniz. Yeni bir şifre seçmek için lütfen aşağıdaki düğmeye tıklayın. Bu bağlantı 1 saat içinde sona erer.",
+        cta: "Şifremi sıfırla",
+        footer: "Bu talebi siz yapmadıysanız, bu mesajı yok sayabilirsiniz — şifreniz değişmeden kalacaktır.",
+        subject: "Inboria şifrenizi sıfırlayın",
       };
     default:
       return {
