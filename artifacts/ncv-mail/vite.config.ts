@@ -3,6 +3,7 @@ import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
 import path from "path";
 import runtimeErrorOverlay from "@replit/vite-plugin-runtime-error-modal";
+import { VitePWA } from "vite-plugin-pwa";
 
 const rawPort = process.env.PORT;
 
@@ -32,6 +33,83 @@ export default defineConfig({
     react(),
     tailwindcss(),
     runtimeErrorOverlay(),
+    VitePWA({
+      registerType: "autoUpdate",
+      injectRegister: "auto",
+      includeAssets: [
+        "favicon.svg",
+        "apple-touch-icon.png",
+        "logo-icon-192.png",
+        "logo-icon-512.png",
+        "logo-maskable-512.png",
+      ],
+      manifest: {
+        name: "Inboria",
+        short_name: "Inboria",
+        description:
+          "Inboria — votre boîte mail B2B sous pilote intelligent.",
+        theme_color: "#0b1220",
+        background_color: "#0b1220",
+        display: "standalone",
+        orientation: "portrait-primary",
+        scope: "/",
+        start_url: "/dashboard",
+        lang: "fr",
+        categories: ["productivity", "business"],
+        icons: [
+          {
+            src: "logo-icon-192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            src: "logo-icon-512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any",
+          },
+          {
+            src: "logo-maskable-512.png",
+            sizes: "640x640",
+            type: "image/png",
+            purpose: "maskable",
+          },
+        ],
+      },
+      workbox: {
+        // Pre-cache only the static app shell. NEVER cache anything
+        // dynamic (API responses, Supabase calls, mail content) — those
+        // must always hit the network so the user sees fresh data.
+        // The main JS bundle is currently > 3 MB (heavy SPA), so bump
+        // the precache size limit to 6 MB to accommodate it.
+        maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
+        globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
+        navigateFallback: "/index.html",
+        navigateFallbackDenylist: [/^\/api\//],
+        runtimeCaching: [
+          {
+            // Static assets (hashed by Vite) → cache-first.
+            urlPattern: ({ request }) =>
+              request.destination === "script" ||
+              request.destination === "style" ||
+              request.destination === "font" ||
+              request.destination === "image",
+            handler: "CacheFirst",
+            options: {
+              cacheName: "inboria-static-v1",
+              expiration: { maxEntries: 200, maxAgeSeconds: 60 * 60 * 24 * 30 },
+            },
+          },
+        ],
+        // Critical: never let the SW intercept API or auth traffic.
+        navigateFallbackAllowlist: [/^(?!\/api\/).*/],
+      },
+      devOptions: {
+        // Disable SW in dev to avoid caching weirdness with HMR.
+        enabled: false,
+      },
+    }),
     ...(process.env.NODE_ENV !== "production" &&
     process.env.REPL_ID !== undefined
       ? [
