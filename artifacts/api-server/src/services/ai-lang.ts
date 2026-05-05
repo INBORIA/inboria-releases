@@ -1,8 +1,8 @@
 import { supabaseAdmin } from "../lib/supabase";
 
-export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar";
+export type AiLang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "bg" | "hr" | "sk" | "sl" | "lv";
 
-const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar"];
+const SUPPORTED: AiLang[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt", "sr", "ru", "he", "ar", "bg", "hr", "sk", "sl", "lv"];
 
 export function normalizeLang(input: unknown): AiLang {
   if (typeof input !== "string") return "fr";
@@ -68,6 +68,11 @@ const NAMES: Record<AiLang, string> = {
   ru: "РУССКИЙ",
   he: "עברית",
   ar: "العربية",
+  bg: "БЪЛГАРСКИ",
+  hr: "HRVATSKI",
+  sk: "SLOVENČINA",
+  sl: "SLOVENŠČINA",
+  lv: "LATVIEŠU",
 };
 
 const SHORT_INSTRUCTION: Record<AiLang, string> = {
@@ -102,6 +107,11 @@ const SHORT_INSTRUCTION: Record<AiLang, string> = {
   ru: "Пожалуйста, отвечайте на русском языке, используя вежливую форму (Вы/Вас с большой буквы).",
   he: "אנא השב בעברית, בסגנון מקצועי ומכובד (לשון פנייה ישירה אך מנומסת, כמקובל בעברית עסקית).",
   ar: "يرجى الرد باللغة العربية الفصحى، بأسلوب مهني ومهذب يناسب التواصل التجاري بين الشركات.",
+  bg: "Моля, отговаряйте на български език, използвайки учтивата форма (Вие/Вас с главна буква).",
+  hr: "Molimo odgovorite na hrvatskom jeziku, koristeći učtivu formu (Vi/Vas/Vam/Vaš velikim slovom).",
+  sk: "Prosím, odpovedajte v slovenčine, používajte zdvorilé vykanie (Vy/Vás/Vám/Váš s veľkým písmenom).",
+  sl: "Prosimo, odgovarjajte v slovenščini, uporabljajte vikanje (Vi/Vas/Vam/Vaš z veliko začetnico).",
+  lv: "Lūdzu, atbildiet latviešu valodā, lietojot pieklājīgo uzrunas formu (Jūs/Jums/Jūsu ar lielo burtu).",
 };
 
 export function langName(lang: AiLang): string {
