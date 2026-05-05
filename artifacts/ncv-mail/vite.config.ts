@@ -90,11 +90,20 @@ export default defineConfig({
         runtimeCaching: [
           {
             // Static assets (hashed by Vite) → cache-first.
-            urlPattern: ({ request }) =>
-              request.destination === "script" ||
-              request.destination === "style" ||
-              request.destination === "font" ||
-              request.destination === "image",
+            // CRITICAL: explicitly exclude anything served from /api/*
+            // (some endpoints can return images, e.g. inline avatars or
+            // attachment thumbnails) so dynamic API responses are never
+            // cached by the service worker.
+            urlPattern: ({ url, request, sameOrigin }) => {
+              if (!sameOrigin) return false;
+              if (url.pathname.startsWith("/api/")) return false;
+              return (
+                request.destination === "script" ||
+                request.destination === "style" ||
+                request.destination === "font" ||
+                request.destination === "image"
+              );
+            },
             handler: "CacheFirst",
             options: {
               cacheName: "inboria-static-v1",

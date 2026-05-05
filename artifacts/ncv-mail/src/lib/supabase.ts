@@ -13,14 +13,22 @@ if (!supabaseUrl || !supabaseKey) {
 // tab we still persist the session in localStorage but the Supabase
 // refresh token TTL (configured in the Supabase project) acts as the
 // hard ceiling.
+
+// `Navigator.standalone` is a non-standard property only present on
+// iOS Safari; declare a typed view of it instead of casting to `any`.
+interface IosNavigator extends Navigator {
+  readonly standalone?: boolean;
+}
+
 function isStandalonePwa(): boolean {
   if (typeof window === "undefined") return false;
   try {
-    return (
-      window.matchMedia?.("(display-mode: standalone)").matches === true ||
-      // iOS Safari "Add to home screen"
-      (window.navigator as any).standalone === true
-    );
+    if (window.matchMedia?.("(display-mode: standalone)").matches === true) {
+      return true;
+    }
+    // iOS Safari "Add to home screen"
+    const nav: IosNavigator = window.navigator;
+    return nav.standalone === true;
   } catch {
     return false;
   }
