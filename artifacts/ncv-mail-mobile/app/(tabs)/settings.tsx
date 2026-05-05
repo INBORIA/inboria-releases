@@ -16,28 +16,28 @@ import { useTranslation } from "react-i18next";
 import { changeLanguage } from "@/i18n";
 
 const LANGUAGES = [
-  { code: "fr", label: "Français", flag: "🇫🇷" },
-  { code: "en", label: "English", flag: "🇬🇧" },
-  { code: "nl", label: "Nederlands", flag: "🇳🇱" },
-  { code: "de", label: "Deutsch", flag: "🇩🇪" },
-  { code: "es", label: "Español", flag: "🇪🇸" },
-  { code: "it", label: "Italiano", flag: "🇮🇹" },
-  { code: "pt", label: "Português", flag: "🇵🇹" },
-  { code: "pl", label: "Polski", flag: "🇵🇱" },
-  { code: "ro", label: "Română", flag: "🇷🇴" },
-  { code: "sv", label: "Svenska", flag: "🇸🇪" },
-  { code: "da", label: "Dansk", flag: "🇩🇰" },
-  { code: "fi", label: "Suomi", flag: "🇫🇮" },
-  { code: "hu", label: "Magyar", flag: "🇭🇺" },
-  { code: "cs", label: "Čeština", flag: "🇨🇿" },
-  { code: "tr", label: "Türkçe", flag: "🇹🇷" },
-  { code: "ja", label: "日本語", flag: "🇯🇵" },
-  { code: "ko", label: "한국어", flag: "🇰🇷" },
-  { code: "vi", label: "Tiếng Việt", flag: "🇻🇳" },
-  { code: "th", label: "ไทย", flag: "🇹🇭" },
-  { code: "id", label: "Bahasa Indonesia", flag: "🇮🇩" },
-  { code: "ms", label: "Bahasa Melayu", flag: "🇲🇾" },
-  { code: "el", label: "Ελληνικά", flag: "🇬🇷" },
+  { code: "fr", label: "Français" },
+  { code: "en", label: "English" },
+  { code: "nl", label: "Nederlands" },
+  { code: "de", label: "Deutsch" },
+  { code: "es", label: "Español" },
+  { code: "it", label: "Italiano" },
+  { code: "pt", label: "Português" },
+  { code: "pl", label: "Polski" },
+  { code: "ro", label: "Română" },
+  { code: "sv", label: "Svenska" },
+  { code: "da", label: "Dansk" },
+  { code: "fi", label: "Suomi" },
+  { code: "hu", label: "Magyar" },
+  { code: "cs", label: "Čeština" },
+  { code: "tr", label: "Türkçe" },
+  { code: "ja", label: "日本語" },
+  { code: "ko", label: "한국어" },
+  { code: "vi", label: "Tiếng Việt" },
+  { code: "th", label: "ไทย" },
+  { code: "id", label: "Bahasa Indonesia" },
+  { code: "ms", label: "Bahasa Melayu" },
+  { code: "el", label: "Ελληνικά" },
 ];
 
 export default function MenuScreen() {
@@ -151,7 +151,7 @@ export default function MenuScreen() {
             <Text style={[s.menuDesc, { color: colors.mutedForeground }]}>{t("settings.languageDesc")}</Text>
           </View>
           <View style={s.langCurrent}>
-            <Text style={s.langFlag}>{currentLang.flag}</Text>
+            
             <Text style={[s.langCurrentLabel, { color: colors.primary }]}>{currentLang.label}</Text>
             <MaterialCommunityIcons
               name={showLangPicker ? "chevron-up" : "chevron-down"}
@@ -177,7 +177,7 @@ export default function MenuScreen() {
                   }}
                   activeOpacity={0.7}
                 >
-                  <Text style={s.langFlag}>{lang.flag}</Text>
+                  
                   <Text style={[s.langOptionLabel, { color: isActive ? colors.primary : colors.foreground }]}>
                     {lang.label}
                   </Text>

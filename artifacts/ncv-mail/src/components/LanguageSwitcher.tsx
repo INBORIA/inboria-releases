@@ -5,54 +5,29 @@ import { useAuth } from "../lib/auth";
 import { useUpdateProfile } from "@workspace/api-client-react";
 
 const languages = [
-  { code: "fr", label: "FR", flag: "🇫🇷" },
-  { code: "en", label: "EN", flag: "🇬🇧" },
-  { code: "nl", label: "NL", flag: "🇧🇪" },
-  { code: "de", label: "DE", flag: "🇩🇪" },
-  { code: "es", label: "ES", flag: "🇪🇸" },
-  { code: "it", label: "IT", flag: "🇮🇹" },
-  { code: "pt", label: "PT", flag: "🇵🇹" },
-  { code: "pl", label: "PL", flag: "🇵🇱" },
-  { code: "ro", label: "RO", flag: "🇷🇴" },
-  { code: "sv", label: "SV", flag: "🇸🇪" },
-  { code: "da", label: "DA", flag: "🇩🇰" },
-  { code: "fi", label: "FI", flag: "🇫🇮" },
-  { code: "hu", label: "HU", flag: "🇭🇺" },
-  { code: "cs", label: "CS", flag: "🇨🇿" },
-  { code: "tr", label: "TR", flag: "🇹🇷" },
-  { code: "ja", label: "JA", flag: "🇯🇵" },
-  { code: "ko", label: "KO", flag: "🇰🇷" },
-  { code: "vi", label: "VI", flag: "🇻🇳" },
-  { code: "th", label: "TH", flag: "🇹🇭" },
-  { code: "id", label: "ID", flag: "🇮🇩" },
-  { code: "ms", label: "MS", flag: "🇲🇾" },
-  { code: "el", label: "EL", flag: "🇬🇷" },
+  { code: "fr", label: "FR", name: "Français" },
+  { code: "en", label: "EN", name: "English" },
+  { code: "nl", label: "NL", name: "Nederlands" },
+  { code: "de", label: "DE", name: "Deutsch" },
+  { code: "es", label: "ES", name: "Español" },
+  { code: "it", label: "IT", name: "Italiano" },
+  { code: "pt", label: "PT", name: "Português" },
+  { code: "pl", label: "PL", name: "Polski" },
+  { code: "ro", label: "RO", name: "Română" },
+  { code: "sv", label: "SV", name: "Svenska" },
+  { code: "da", label: "DA", name: "Dansk" },
+  { code: "fi", label: "FI", name: "Suomi" },
+  { code: "hu", label: "HU", name: "Magyar" },
+  { code: "cs", label: "CS", name: "Čeština" },
+  { code: "tr", label: "TR", name: "Türkçe" },
+  { code: "ja", label: "JA", name: "日本語" },
+  { code: "ko", label: "KO", name: "한국어" },
+  { code: "vi", label: "VI", name: "Tiếng Việt" },
+  { code: "th", label: "TH", name: "ไทย" },
+  { code: "id", label: "ID", name: "Bahasa Indonesia" },
+  { code: "ms", label: "MS", name: "Bahasa Melayu" },
+  { code: "el", label: "EL", name: "Ελληνικά" },
 ];
-
-const nativeNames: Record<string, string> = {
-  fr: "Français",
-  en: "English",
-  nl: "Nederlands",
-  de: "Deutsch",
-  es: "Español",
-  it: "Italiano",
-  pt: "Português",
-  pl: "Polski",
-  ro: "Română",
-  sv: "Svenska",
-  da: "Dansk",
-  fi: "Suomi",
-  hu: "Magyar",
-  cs: "Čeština",
-  tr: "Türkçe",
-  ja: "日本語",
-  ko: "한국어",
-  vi: "Tiếng Việt",
-  th: "ไทย",
-  id: "Bahasa Indonesia",
-  ms: "Bahasa Melayu",
-  el: "Ελληνικά",
-};
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {
   const { i18n } = useTranslation();
@@ -89,7 +64,7 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
       </button>
 
       {open && (
-        <div className="absolute right-0 top-full mt-1 w-36 rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-xl z-50 overflow-hidden">
+        <div className="absolute right-0 top-full mt-1 w-44 rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-xl z-50 overflow-hidden max-h-[60vh] overflow-y-auto">
           {languages.map((lang) => (
             <button
               key={lang.code}
@@ -109,11 +84,8 @@ export function LanguageSwitcher({ variant = "default" }: { variant?: "default" 
                   : "text-[#b8c5d6] hover:bg-white/[0.04] hover:text-white"
               }`}
             >
-              <span className="text-base">{lang.flag}</span>
-              <span className="font-medium">{lang.label}</span>
-              <span className="text-[11px] opacity-60">
-                {nativeNames[lang.code] ?? lang.label}
-              </span>
+              <span className="font-medium w-7">{lang.label}</span>
+              <span className="text-[12px] opacity-70">{lang.name}</span>
             </button>
           ))}
         </div>
