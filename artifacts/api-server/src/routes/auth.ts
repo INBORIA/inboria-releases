@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -209,6 +209,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "Скинути мій пароль",
         footer: "Якщо Ви не надсилали цього запиту, проігноруйте цей лист — Ваш пароль залишиться без змін.",
         subject: "Скидання пароля Inboria",
+      };
+    case "et":
+      return {
+        tagline: "E-posti autopilot VKEde jaoks",
+        heading: "Lähtestage oma parool",
+        body: "Te taotlesite oma Inboria konto parooli lähtestamist. Palun klõpsake allpool oleval nupul, et valida uus parool. See link kehtib 1 tunni.",
+        cta: "Lähtesta minu parool",
+        footer: "Kui Te ei ole seda taotlust esitanud, ignoreerige seda e-kirja — Teie parool jääb muutumatuks.",
+        subject: "Lähtestage oma Inboria parool",
       };
     default:
       return {

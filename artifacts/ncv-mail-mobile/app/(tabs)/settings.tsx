@@ -39,6 +39,7 @@ const LANGUAGES = [
   { code: "ms", label: "Bahasa Melayu" },
   { code: "el", label: "Ελληνικά" },
   { code: "uk", label: "Українська" },
+  { code: "et", label: "Eesti" },
 ];
 
 export default function MenuScreen() {

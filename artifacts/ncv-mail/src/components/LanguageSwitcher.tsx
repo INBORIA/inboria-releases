@@ -28,6 +28,7 @@ const languages = [
   { code: "ms", label: "MS", name: "Bahasa Melayu" },
   { code: "el", label: "EL", name: "Ελληνικά" },
   { code: "uk", label: "UK", name: "Українська" },
+  { code: "et", label: "ET", name: "Eesti" },
 ];
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {

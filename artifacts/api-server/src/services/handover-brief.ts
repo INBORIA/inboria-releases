@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -176,6 +176,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "Невиконані зобов'язання",
     "Питання, що потребують уваги",
   ],
+  et: [
+    "Suhte kontekst",
+    "Käimasolevad teemad",
+    "Tehtud otsused",
+    "Täitmata kohustused",
+    "Tähelepanu vajavad punktid",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -202,6 +209,7 @@ const TONE: Record<Language, string> = {
   ms: "Tulis dalam Bahasa Melayu formal dan baku, gunakan sapaan 'anda', nada berasaskan fakta dan profesional, tanpa salam pembukaan.",
   el: "Γράψτε στα ελληνικά, χρησιμοποιώντας τον πληθυντικό ευγενείας (εσείς/σας), τόνος βασισμένος σε γεγονότα και επαγγελματικός, χωρίς χαιρετισμούς.",
   uk: "Пишіть українською мовою, використовуючи ввічливу форму (Ви/Вас з великої літери), фактологічним та професійним тоном, без вітань.",
+  et: "Kirjutage eesti keeles, kasutades viisakat vormi (Teie/Teid), faktipõhises ja professionaalses toonis, ilma tervitusteta.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

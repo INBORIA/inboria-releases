@@ -85,7 +85,9 @@ async function translateBatch(strings, targetLang) {
                                     ? "Greek (Modern Greek from Greece, formal B2B SaaS tone using plural-of-politeness πληθυντικός ευγενείας: 'εσείς' / 'σας' / 2nd person plural verbs (κάντε/επιλέξτε/συνδεθείτε) — never informal singular 'εσύ/σου' or 2nd person singular verbs in UI labels)"
                                     : targetLang === "uk"
                                       ? "Ukrainian (Ukrainian from Ukraine, formal B2B SaaS tone using polite address 'Ви' / 'Вас' / 'Вам' (capitalized) and 2nd person plural verbs — never informal 'ти/тебе/тобі' in UI labels; use modern Ukrainian orthography with apostrophe ' not Russian ъ; avoid russisms)"
-                                      : targetLang;
+                                      : targetLang === "et"
+                                        ? "Estonian (Estonian from Estonia, formal B2B SaaS tone using polite address 'Teie' / 'Teid' / 'Teile' (capitalized) and 'Te' for verb agreement — never informal 'sina/sinu' in UI labels; use 'Palun' for polite requests; modern standard Estonian (kirjakeel) with proper õ/ä/ö/ü diacritics; avoid germanisms and russisms)"
+                                        : targetLang;
 
   const sys = `You are a professional B2B SaaS translator. Translate UI strings from French to ${langName}.
 
@@ -267,6 +269,8 @@ const tasks = {
   "web-el":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/el.json",    lang: "el" },
   "mobile-uk": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/uk.json", lang: "uk" },
   "web-uk":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/uk.json",    lang: "uk" },
+  "mobile-et": { src: "artifacts/ncv-mail-mobile/i18n/locales/fr.json", out: "artifacts/ncv-mail-mobile/i18n/locales/et.json", lang: "et" },
+  "web-et":    { src: "artifacts/ncv-mail/src/i18n/locales/fr.json",    out: "artifacts/ncv-mail/src/i18n/locales/et.json",    lang: "et" },
 };
 
 if (target === "all") {

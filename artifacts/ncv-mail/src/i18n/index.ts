@@ -25,6 +25,7 @@ import id from "./locales/id.json";
 import ms from "./locales/ms.json";
 import el from "./locales/el.json";
 import uk from "./locales/uk.json";
+import et from "./locales/et.json";
 
 i18n
   .use(LanguageDetector)
@@ -54,9 +55,10 @@ i18n
       ms: { translation: ms },
       el: { translation: el },
       uk: { translation: uk },
+      et: { translation: et },
     },
     fallbackLng: "fr",
-    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk"],
+    supportedLngs: ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et"],
     nonExplicitSupportedLngs: true,
     load: "languageOnly",
     interpolation: {

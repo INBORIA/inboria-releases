@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -239,11 +239,21 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `Поштову скриньку ${email} відключено`,
     notifMessage: "Будь ласка, натисніть, щоб повторно підключити цю поштову скриньку в Налаштуваннях.",
   },
+  et: {
+    subject: (email) => `Inboria — Postkast ${email} on lahti ühendatud`,
+    intro: "Inboria ei suutnud seda postkasti pärast mitut katset sünkroonida. Teie uusi e-kirju ei töödelda, kuni ühendus on taastatud.",
+    reasonLabel: "Viimane viga",
+    cta: "Ühenda see postkast uuesti",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Seda e-kirja saadetakse maksimaalselt üks kord nädalas postkasti kohta. Kui ühendus on edukalt taastatud, ei saa Te enam teavitusi.",
+    notifTitle: (email) => `Postkast ${email} on lahti ühendatud`,
+    notifMessage: "Palun klõpsake, et see postkast Seadetes uuesti ühendada.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const v = (raw || "fr").slice(0, 2).toLowerCase();
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk" || v === "et") return v;
   return "fr";
 }
 
