@@ -131,7 +131,7 @@ function renderAssistantContent(
         key={`mail-${key++}-${id}`}
         type="button"
         onClick={() => onOpenMail(id)}
-        className="inline-flex items-center gap-1 px-1.5 py-0.5 mx-0.5 rounded-md bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 hover:text-purple-200 text-xs font-medium transition-colors align-baseline"
+        className="inline-flex items-center gap-1 px-1.5 py-0.5 mx-0.5 rounded-md bg-cyan-500/15 hover:bg-cyan-500/25 border border-cyan-400/30 text-cyan-300 hover:text-cyan-200 text-xs font-medium transition-colors align-baseline"
         data-testid={`inboria-chat-mail-link-${id}`}
         title={`Ouvrir le mail #${id}`}
       >
@@ -207,12 +207,12 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primary
 
   return (
     <div
-      className="my-2 rounded-xl border border-purple-500/30 bg-zinc-900/80 overflow-hidden"
+      className="my-2 rounded-xl border border-cyan-400/30 bg-zinc-900/80 overflow-hidden"
       data-testid="inboria-draft-card"
     >
       <div className="px-3 py-2 border-b border-zinc-800 flex items-center gap-2">
-        <Mail className="h-3.5 w-3.5 text-purple-300" />
-        <span className="text-[11px] uppercase tracking-wide text-purple-300 font-semibold">Brouillon prêt</span>
+        <Mail className="h-3.5 w-3.5 text-cyan-300" />
+        <span className="text-[11px] uppercase tracking-wide text-cyan-300 font-semibold">Brouillon prêt</span>
       </div>
       <div className="px-3 py-2.5 space-y-1.5 text-xs">
         <div className="flex gap-2">
@@ -251,7 +251,7 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primary
             <strong className="text-zinc-100">{draft.to.trim()}</strong>
           </div>
           <div className="flex gap-2">
-            <Button size="sm" className="h-7 text-xs bg-purple-600 hover:bg-purple-700 flex-1" onClick={doSend} data-testid="inboria-draft-confirm">
+            <Button size="sm" className="h-7 text-xs bg-cyan-600 hover:bg-cyan-700 flex-1" onClick={doSend} data-testid="inboria-draft-confirm">
               Confirmer l'envoi
             </Button>
             <Button size="sm" variant="ghost" className="h-7 text-xs text-zinc-400" onClick={() => setStage("idle")}>
@@ -264,7 +264,7 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primary
         <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-950/60 flex gap-2">
           <Button
             size="sm"
-            className="h-7 text-xs bg-purple-600 hover:bg-purple-700 flex-1 disabled:opacity-50"
+            className="h-7 text-xs bg-cyan-600 hover:bg-cyan-700 flex-1 disabled:opacity-50"
             onClick={() => setStage("confirm")}
             disabled={!toValid}
             data-testid="inboria-draft-send"
@@ -450,11 +450,11 @@ export function InboriaChatButton() {
         <Button
           variant="ghost"
           size="sm"
-          className="relative h-9 gap-1.5 px-2.5 hover:bg-purple-500/10 text-zinc-200"
+          className="relative h-9 gap-1.5 px-2.5 hover:bg-cyan-500/10 text-zinc-200"
           aria-label={t("inboriaChat.openLabel")}
           data-testid="inboria-chat-button"
         >
-          <Sparkles className="h-4 w-4 text-purple-400" />
+          <Sparkles className="h-4 w-4 text-cyan-400" />
           <span className="text-sm font-medium">
             Inbor<span className="text-cyan-400">ia</span>
           </span>
@@ -466,8 +466,8 @@ export function InboriaChatButton() {
       >
         <div className="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-              <Sparkles className="h-4 w-4 text-white" />
+            <div className="h-8 w-8 rounded-full bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center">
+              <Sparkles className="h-4 w-4 text-cyan-300" />
             </div>
             <div>
               <SheetTitle className="text-sm font-semibold text-zinc-100 leading-tight">
@@ -493,8 +493,8 @@ export function InboriaChatButton() {
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-3">
           {messages.length === 0 && (
             <div className="flex flex-col items-center justify-center h-full text-center px-4">
-              <div className="h-12 w-12 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center mb-3">
-                <Sparkles className="h-6 w-6 text-white" />
+              <div className="h-12 w-12 rounded-full bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center mb-3">
+                <Sparkles className="h-6 w-6 text-cyan-300" />
               </div>
               <p className="text-sm font-medium text-zinc-200">
                 {t("inboriaChat.greetingTitle")}
@@ -529,15 +529,15 @@ export function InboriaChatButton() {
               )}
             >
               {m.role === "assistant" && (
-                <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                  <Bot className="h-4 w-4 text-white" />
+                <div className="h-7 w-7 shrink-0 rounded-full bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center">
+                  <Bot className="h-4 w-4 text-cyan-300" />
                 </div>
               )}
               <div
                 className={cn(
                   "max-w-[80%] rounded-2xl px-3.5 py-2 text-sm whitespace-pre-wrap break-words",
                   m.role === "user"
-                    ? "bg-purple-600 text-white rounded-br-sm"
+                    ? "bg-cyan-600 text-white rounded-br-sm"
                     : "bg-zinc-800 text-zinc-100 rounded-bl-sm",
                 )}
               >
@@ -573,8 +573,8 @@ export function InboriaChatButton() {
           ))}
           {isLoading && (
             <div className="flex gap-2 justify-start">
-              <div className="h-7 w-7 shrink-0 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center">
-                <Bot className="h-4 w-4 text-white" />
+              <div className="h-7 w-7 shrink-0 rounded-full bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center">
+                <Bot className="h-4 w-4 text-cyan-300" />
               </div>
               <div className="bg-zinc-800 text-zinc-300 rounded-2xl rounded-bl-sm px-3.5 py-2.5 text-sm flex items-center gap-2">
                 <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -603,7 +603,7 @@ export function InboriaChatButton() {
               size="icon"
               onClick={sendMessage}
               disabled={isLoading || !input.trim()}
-              className="bg-purple-600 hover:bg-purple-700 h-9 w-9 shrink-0"
+              className="bg-cyan-600 hover:bg-cyan-700 h-9 w-9 shrink-0"
               data-testid="inboria-chat-send"
             >
               {isLoading ? (
