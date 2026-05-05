@@ -7,7 +7,7 @@ const MODEL = "gpt-4o-mini";
 const EMBEDDING_MODEL = "text-embedding-3-small";
 const MAX_TOKENS = 900;
 
-export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW";
+export type Language = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt";
 
 export interface HandoverBriefResult {
   brief: string;
@@ -197,6 +197,13 @@ const SECTION_HEADERS: Record<Language, [string, string, string, string, string]
     "未完成的承諾",
     "需要關注的事項",
   ],
+  lt: [
+    "Santykių kontekstas",
+    "Vykstančios temos",
+    "Priimti sprendimai",
+    "Neįvykdyti įsipareigojimai",
+    "Dėmesio reikalaujantys klausimai",
+  ],
 };
 
 const TONE: Record<Language, string> = {
@@ -226,6 +233,7 @@ const TONE: Record<Language, string> = {
   et: "Kirjutage eesti keeles, kasutades viisakat vormi (Teie/Teid), faktipõhises ja professionaalses toonis, ilma tervitusteta.",
   zh: "请使用简体中文撰写,采用敬称『您』,以基于事实的专业语气,无需问候语。",
   "zh-TW": "請使用繁體中文撰寫,採用敬稱『您』,以基於事實的專業語氣,無需問候語。",
+  lt: "Rašykite lietuvių kalba, vartodami pagarbią formą (Jūs/Jus iš didžiosios raidės), faktiniu profesionaliu tonu, be pasisveikinimų.",
 };
 
 function buildScopeFilter(userId: string, memberMailboxIds: string[]): string {

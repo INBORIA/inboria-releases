@@ -7,7 +7,7 @@ import { isAllowedCountry } from "../lib/eu-countries";
 
 const router: IRouter = Router();
 
-const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW"] as const;
+const RESET_LANGS = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt"] as const;
 type ResetLang = (typeof RESET_LANGS)[number];
 
 function resetEmailCopy(lang: ResetLang) {
@@ -236,6 +236,15 @@ function resetEmailCopy(lang: ResetLang) {
         cta: "重設我的密碼",
         footer: "如果您並未發起此要求,請忽略此郵件——您的密碼將保持不變。",
         subject: "重設您的 Inboria 密碼",
+      };
+    case "lt":
+      return {
+        tagline: "El. pašto autopilotas MVĮ",
+        heading: "Iš naujo nustatykite savo slaptažodį",
+        body: "Jūs paprašėte iš naujo nustatyti savo Inboria paskyros slaptažodį. Spustelėkite žemiau esantį mygtuką, kad pasirinktumėte naują slaptažodį. Ši nuoroda galioja 1 valandą.",
+        cta: "Iš naujo nustatyti slaptažodį",
+        footer: "Jei šios užklausos nepateikėte Jūs, ignoruokite šį laišką — Jūsų slaptažodis nepasikeis.",
+        subject: "Iš naujo nustatykite savo Inboria slaptažodį",
       };
     default:
       return {

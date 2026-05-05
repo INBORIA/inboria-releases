@@ -6,7 +6,7 @@ import { sanitizeErrorMessage } from "./connection-health";
 const FAILURE_THRESHOLD = 3;
 const ALERT_COOLDOWN_MS = 7 * 24 * 60 * 60 * 1000;
 
-type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW";
+type Lang = "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt";
 
 const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: string; reasonLabel: string; cta: string; ctaUrl: string; footer: string; notifTitle: (email: string) => string; notifMessage: string }> = {
   fr: {
@@ -269,13 +269,23 @@ const TEMPLATES: Record<Lang, { subject: (email: string) => string; intro: strin
     notifTitle: (email) => `信箱 ${email} 已中斷連線`,
     notifMessage: "請點擊以在設定中重新連線此信箱。",
   },
+  lt: {
+    subject: (email) => `Inboria — Pašto dėžutė ${email} atjungta`,
+    intro: "Inboria po kelių bandymų nepavyko sinchronizuoti šios pašto dėžutės. Kol ryšys nebus atkurtas, Jūsų nauji laiškai nebus apdorojami.",
+    reasonLabel: "Paskutinė klaida",
+    cta: "Iš naujo prijungti pašto dėžutę",
+    ctaUrl: "/dashboard/parametres",
+    footer: "Šis laiškas siunčiamas ne dažniau kaip kartą per savaitę kiekvienai pašto dėžutei. Kai ryšys bus sėkmingai atkurtas, daugiau pranešimų negausite.",
+    notifTitle: (email) => `Pašto dėžutė ${email} atjungta`,
+    notifMessage: "Spustelėkite, kad iš naujo prijungtumėte šią pašto dėžutę Nustatymuose.",
+  },
 };
 
 function pickLang(raw: string | null | undefined): Lang {
   const full = (raw || "fr").trim().toLowerCase();
   if (full === "zh-tw" || full === "zh_tw" || full === "zh-hant" || full === "zh-hk") return "zh-TW";
   const v = full.slice(0, 2);
-  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk" || v === "et" || v === "zh") return v;
+  if (v === "en" || v === "nl" || v === "de" || v === "es" || v === "it" || v === "pt" || v === "pl" || v === "ro" || v === "sv" || v === "da" || v === "fi" || v === "hu" || v === "cs" || v === "tr" || v === "ja" || v === "ko" || v === "vi" || v === "th" || v === "id" || v === "ms" || v === "el" || v === "uk" || v === "et" || v === "zh" || v === "lt") return v;
   return "fr";
 }
 

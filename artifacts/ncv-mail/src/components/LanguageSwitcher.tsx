@@ -31,6 +31,7 @@ const languages = [
   { code: "et", label: "ET", name: "Eesti" },
   { code: "zh", label: "ZH", name: "简体中文" },
   { code: "zh-TW", label: "ZH-TW", name: "繁體中文" },
+  { code: "lt", label: "LT", name: "Lietuvių" },
 ];
 
 export function LanguageSwitcher({ variant = "default" }: { variant?: "default" | "compact" }) {

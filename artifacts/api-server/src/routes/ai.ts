@@ -186,6 +186,7 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
       const isEt = lang === "et";
       const isZh = lang === "zh";
       const isZhTw = lang === "zh-TW";
+      const isLt = lang === "lt";
       if (activeProjects.length > 0) {
         const header = isFr
           ? "Projets actifs (derniers 7 jours d'activité)"
@@ -239,7 +240,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                                           ? "活跃项目(过去 7 天的活动)"
                                                           : isZhTw
                                                             ? "活躍專案(過去 7 天的活動)"
-                                                            : "Active projects";
+                                                            : isLt
+                                                              ? "Aktyvūs projektai (paskutinių 7 dienų veikla)"
+                                                              : "Active projects";
         lines.push(`\n${header} :`);
         for (const p of activeProjects) {
           lines.push(`- ${p.name} (${p.email_count} mails)`);
@@ -298,7 +301,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                                           ? "近期决定(过去 7 天)"
                                                           : isZhTw
                                                             ? "近期決定(過去 7 天)"
-                                                            : "Recent decisions";
+                                                            : isLt
+                                                              ? "Naujausi sprendimai (paskutinės 7 dienos)"
+                                                              : "Recent decisions";
         lines.push(`\n${header} :`);
         for (const d of recentDecisions) {
           const date = d.decided_at || (d as any).created_at?.slice(0, 10) || "";
@@ -360,7 +365,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
                                                           ? "本周提及的承诺"
                                                           : isZhTw
                                                             ? "本週提及的承諾"
-                                                            : "Commitments this week";
+                                                            : isLt
+                                                              ? "Šią savaitę paminėti įsipareigojimai"
+                                                              : "Commitments this week";
         lines.push(`\n${header} :`);
         for (const c of openCommitments) {
           const date = c.event_date ? ` (${c.event_date})` : "";
@@ -1461,7 +1468,7 @@ router.post("/ai/handover-brief", requireAuth, async (req, res): Promise<void> =
       return;
     }
     const sinceDays = Number.isFinite(body.sinceDays) ? Number(body.sinceDays) : 30;
-    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW"];
+    const allowedLangs: BriefLanguage[] = ["fr", "en", "nl", "de", "es", "it", "pt", "pl", "ro", "sv", "da", "fi", "hu", "cs", "tr", "ja", "ko", "vi", "th", "id", "ms", "el", "uk", "et", "zh", "zh-TW", "lt"];
     let language: BriefLanguage = "fr";
     if (typeof body.language === "string" && (allowedLangs as string[]).includes(body.language)) {
       language = body.language as BriefLanguage;
