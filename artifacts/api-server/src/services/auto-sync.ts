@@ -12,6 +12,7 @@ import { preClassifyEmail, recordAIClassification, bumpMetrics } from "./pre-fil
 import { consumeAiCredits, logTriageEvent, checkEntitlement } from "./credits";
 import { getEmailOAuthRedirectUri } from "../lib/urls";
 import { syncImapJunk, syncOutlookJunk, type JunkEmailPayload } from "./junk-sync";
+import { recordAutopilotEvent } from "./autopilot-events";
 import { hasJunkColumns } from "../lib/schema-flags";
 import { getUserAiLang, summaryLangInstruction } from "./ai-lang";
 import {
@@ -635,6 +636,23 @@ export async function saveEmailWithTriage(
     subject,
     summary: triage.summary,
     priority: triage.priority,
+  }).catch(() => {});
+
+  // Trace dans le tableau de bord Inboria (panneau "Activite") : chaque
+  // email entrant trie automatiquement par le worker doit apparaitre comme
+  // un evenement `email_sorted`, sinon les compteurs Tries/Brouillons/etc.
+  // restent a 0 alors que le worker fonctionne — cf. retour utilisateur
+  // 6 mai 2026.
+  recordAutopilotEvent({
+    userId,
+    eventType: "email_sorted",
+    emailId: inserted.id,
+    title: subject,
+    metadata: {
+      priority: triage.priority,
+      categoryId: categoryId || null,
+      source: "auto-sync",
+    },
   }).catch(() => {});
 
   // Push to CRMs (no-op if not connected)
