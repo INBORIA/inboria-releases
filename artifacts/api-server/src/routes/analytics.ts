@@ -23,6 +23,24 @@ function rangeDays(period: string): number {
   return 30;
 }
 
+// Supabase/PostgREST plafonne à 1000 lignes par requête (db-max-rows).
+// Ce helper récupère TOUTES les lignes via .range() pour éviter des KPI faux.
+async function fetchAllRows<T = any>(buildQuery: () => any, hardCap = 50000): Promise<T[]> {
+  const PAGE_SIZE = 1000;
+  const out: T[] = [];
+  let from = 0;
+  while (from < hardCap) {
+    const to = from + PAGE_SIZE - 1;
+    const { data, error } = await buildQuery().range(from, to);
+    if (error) break;
+    const rows = (data || []) as T[];
+    out.push(...rows);
+    if (rows.length < PAGE_SIZE) break;
+    from += PAGE_SIZE;
+  }
+  return out;
+}
+
 function csvEscape(v: any): string {
   const s = v == null ? "" : String(v);
   if (s.includes(",") || s.includes("\"") || s.includes("\n")) {
@@ -68,33 +86,29 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     // Sélection : on ajoute handled_at / handled_by si la colonne existe.
     const baseCols = "id, sender, status, assigned_to, claimed_by, category_id, project_id, shared_mailbox_id, created_at, inboria_processed_at, claimed_at, assigned_at, user_id";
     const cols = handledEnabled ? `${baseCols}, handled_at, handled_by` : baseCols;
-    let emailsQ = supabaseAdmin
-      .from("emails")
-      .select(cols)
-      .gte("created_at", sinceIso)
-      .neq("status", "supprime");
-
     const memberIdsList = memberIds.join(",");
     const scopeParts: string[] = [`user_id.in.(${memberIdsList})`];
     if (orgMailboxIds.length > 0) {
       scopeParts.push(`shared_mailbox_id.in.(${orgMailboxIds.join(",")})`);
     }
-    emailsQ = emailsQ.or(scopeParts.join(","));
 
-    if (memberFilter) {
-      // Filtre membre = "emails que ce membre a traités" (handled_by) si la
-      // colonne existe ; sinon fallback sur l'ancienne logique.
-      if (handledEnabled) emailsQ = emailsQ.eq("handled_by", memberFilter);
-      else emailsQ = emailsQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
+    function buildEmailsQuery() {
+      let q = supabaseAdmin
+        .from("emails")
+        .select(cols)
+        .gte("created_at", sinceIso)
+        .neq("status", "supprime")
+        .or(scopeParts.join(","));
+      if (memberFilter) {
+        if (handledEnabled) q = q.eq("handled_by", memberFilter);
+        else q = q.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
+      }
+      if (mailboxFilter) q = q.eq("shared_mailbox_id", mailboxFilter);
+      if (projectFilter) q = q.eq("project_id", projectFilter);
+      return q;
     }
-    if (mailboxFilter) emailsQ = emailsQ.eq("shared_mailbox_id", mailboxFilter);
-    if (projectFilter) emailsQ = emailsQ.eq("project_id", projectFilter);
 
-    const { data: emails, error: emailsErr } = await emailsQ.limit(20000);
-    if (emailsErr) {
-      req.log.error({ err: emailsErr }, "analytics emails query failed");
-    }
-    const list = emails || [];
+    const list = await fetchAllRows<any>(buildEmailsQuery);
 
     const profileMap = new Map<string, string>();
     for (const uid of memberIds) {
@@ -201,14 +215,16 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     const openLoadMap = new Map<string, number>();
     for (const uid of memberIds) openLoadMap.set(uid, 0);
     {
-      let openQ = supabaseAdmin
-        .from("emails")
-        .select("id, assigned_to, status, handled_at")
-        .in("assigned_to", memberIds)
-        .not("status", "in", "(archived,supprime,trashed,done)");
-      if (handledEnabled) openQ = openQ.is("handled_at", null);
-      const { data: openRows } = await openQ.limit(20000);
-      for (const r of (openRows || []) as any[]) {
+      const openRows = await fetchAllRows<any>(() => {
+        let openQ = supabaseAdmin
+          .from("emails")
+          .select("id, assigned_to, status, handled_at")
+          .in("assigned_to", memberIds)
+          .not("status", "in", "(archived,supprime,trashed,done)");
+        if (handledEnabled) openQ = openQ.is("handled_at", null);
+        return openQ;
+      });
+      for (const r of openRows as any[]) {
         if (r.assigned_to && openLoadMap.has(r.assigned_to)) {
           openLoadMap.set(r.assigned_to, (openLoadMap.get(r.assigned_to) || 0) + 1);
         }
@@ -384,26 +400,21 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
     let tasksList: any[] = [];
     {
       // Deux requêtes pour éviter le bug PostgREST .or()+in.() avec UUIDs.
-      const [byUser, byAssignee] = await Promise.all([
-        supabaseAdmin
+      const [byUserRows, byAssigneeRows] = await Promise.all([
+        fetchAllRows<any>(() => supabaseAdmin
           .from("tasks")
           .select("id, user_id, assigned_to_user_id, project_id, done, due_date, created_at")
-          .in("user_id", memberIds)
-          .limit(20000),
-        supabaseAdmin
+          .in("user_id", memberIds)),
+        fetchAllRows<any>(() => supabaseAdmin
           .from("tasks")
           .select("id, user_id, assigned_to_user_id, project_id, done, due_date, created_at")
-          .in("assigned_to_user_id", memberIds)
-          .limit(20000),
+          .in("assigned_to_user_id", memberIds)),
       ]);
       const seen = new Set<string>();
-      for (const t of [...(byUser.data || []), ...(byAssignee.data || [])] as any[]) {
+      for (const t of [...byUserRows, ...byAssigneeRows] as any[]) {
         if (!t?.id || seen.has(t.id)) continue;
         seen.add(t.id);
         tasksList.push(t);
-      }
-      if (byUser.error || byAssignee.error) {
-        req.log?.warn({ byUserErr: byUser.error?.message, byAssigneeErr: byAssignee.error?.message }, "analytics tasks query partial failure");
       }
     }
     const tasksPerMemberMap = new Map<string, { open: number; done: number; overdue: number }>();
@@ -546,19 +557,21 @@ router.get("/analytics/team/export.csv", requireAuth, async (req, res): Promise<
     }
     const baseCsvCols = "id, subject, sender, status, assigned_to, claimed_by, created_at, claimed_at, assigned_at, inboria_processed_at";
     const csvCols = handledEnabled ? `${baseCsvCols}, handled_at, handled_by` : baseCsvCols;
-    let csvQ = supabaseAdmin
-      .from("emails")
-      .select(csvCols)
-      .or(csvScopeParts.join(","))
-      .gte("created_at", sinceIso)
-      .neq("status", "supprime");
-    if (memberFilter) {
-      if (handledEnabled) csvQ = csvQ.eq("handled_by", memberFilter);
-      else csvQ = csvQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
-    }
-    if (mailboxFilter) csvQ = csvQ.eq("shared_mailbox_id", mailboxFilter);
-    if (projectFilter) csvQ = csvQ.eq("project_id", projectFilter);
-    const { data: list } = await csvQ.limit(20000);
+    const list = await fetchAllRows<any>(() => {
+      let csvQ = supabaseAdmin
+        .from("emails")
+        .select(csvCols)
+        .or(csvScopeParts.join(","))
+        .gte("created_at", sinceIso)
+        .neq("status", "supprime");
+      if (memberFilter) {
+        if (handledEnabled) csvQ = csvQ.eq("handled_by", memberFilter);
+        else csvQ = csvQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
+      }
+      if (mailboxFilter) csvQ = csvQ.eq("shared_mailbox_id", mailboxFilter);
+      if (projectFilter) csvQ = csvQ.eq("project_id", projectFilter);
+      return csvQ;
+    });
 
     const lines: string[] = [
       ["email_id", "subject", "sender", "status", "handled_by", "handled_by_name", "created_at", "handled_at"].join(","),
@@ -628,19 +641,21 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     // pour ne pas dégrader silencieusement le calcul du délai moyen.
     const basePdfCols = "id, status, assigned_to, claimed_by, created_at, claimed_at, assigned_at, inboria_processed_at, shared_mailbox_id, project_id";
     const pdfCols = handledEnabled ? `${basePdfCols}, handled_at, handled_by` : basePdfCols;
-    let pdfQ = supabaseAdmin
-      .from("emails")
-      .select(pdfCols)
-      .or(pdfScopeParts.join(","))
-      .gte("created_at", sinceIso)
-      .neq("status", "supprime");
-    if (memberFilter) {
-      if (handledEnabled) pdfQ = pdfQ.eq("handled_by", memberFilter);
-      else pdfQ = pdfQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
-    }
-    if (mailboxFilter) pdfQ = pdfQ.eq("shared_mailbox_id", mailboxFilter);
-    if (projectFilter) pdfQ = pdfQ.eq("project_id", projectFilter);
-    const { data: list } = await pdfQ.limit(20000);
+    const list = await fetchAllRows<any>(() => {
+      let pdfQ = supabaseAdmin
+        .from("emails")
+        .select(pdfCols)
+        .or(pdfScopeParts.join(","))
+        .gte("created_at", sinceIso)
+        .neq("status", "supprime");
+      if (memberFilter) {
+        if (handledEnabled) pdfQ = pdfQ.eq("handled_by", memberFilter);
+        else pdfQ = pdfQ.or(`assigned_to.eq.${memberFilter},claimed_by.eq.${memberFilter}`);
+      }
+      if (mailboxFilter) pdfQ = pdfQ.eq("shared_mailbox_id", mailboxFilter);
+      if (projectFilter) pdfQ = pdfQ.eq("project_id", projectFilter);
+      return pdfQ;
+    });
 
     // ===== Agrégats Mails (par membre / charge ouverte / délai moyen) =====
     const stats = new Map<string, { handled: number; assigned: number }>();
@@ -676,14 +691,16 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     const openLoadMap = new Map<string, number>();
     for (const uid of memberIds) openLoadMap.set(uid, 0);
     if (memberIds.length > 0) {
-      let openQ = supabaseAdmin
-        .from("emails")
-        .select("id, assigned_to")
-        .in("assigned_to", memberIds)
-        .not("status", "in", "(archived,supprime,trashed,done)");
-      if (handledEnabled) openQ = openQ.is("handled_at", null);
-      const { data: openRows } = await openQ.limit(20000);
-      for (const r of (openRows || []) as any[]) {
+      const openRows = await fetchAllRows<any>(() => {
+        let openQ = supabaseAdmin
+          .from("emails")
+          .select("id, assigned_to, handled_at")
+          .in("assigned_to", memberIds)
+          .not("status", "in", "(archived,supprime,trashed,done)");
+        if (handledEnabled) openQ = openQ.is("handled_at", null);
+        return openQ;
+      });
+      for (const r of openRows as any[]) {
         if (r.assigned_to && openLoadMap.has(r.assigned_to)) {
           openLoadMap.set(r.assigned_to, (openLoadMap.get(r.assigned_to) || 0) + 1);
         }
@@ -695,12 +712,12 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     const taskStats = new Map<string, { open: number; done: number; overdue: number }>();
     for (const uid of memberIds) taskStats.set(uid, { open: 0, done: 0, overdue: 0 });
     if (memberIds.length > 0) {
-      const [byUser, byAssignee] = await Promise.all([
-        supabaseAdmin.from("tasks").select("id, user_id, assigned_to_user_id, done, due_date").in("user_id", memberIds).limit(20000),
-        supabaseAdmin.from("tasks").select("id, user_id, assigned_to_user_id, done, due_date").in("assigned_to_user_id", memberIds).limit(20000),
+      const [byUserRows, byAssigneeRows] = await Promise.all([
+        fetchAllRows<any>(() => supabaseAdmin.from("tasks").select("id, user_id, assigned_to_user_id, done, due_date").in("user_id", memberIds)),
+        fetchAllRows<any>(() => supabaseAdmin.from("tasks").select("id, user_id, assigned_to_user_id, done, due_date").in("assigned_to_user_id", memberIds)),
       ]);
       const seen = new Set<string>();
-      for (const t of [...(byUser.data || []), ...(byAssignee.data || [])] as any[]) {
+      for (const t of [...byUserRows, ...byAssigneeRows] as any[]) {
         if (!t?.id || seen.has(t.id)) continue;
         seen.add(t.id);
         const ownerId = t.assigned_to_user_id || t.user_id;
