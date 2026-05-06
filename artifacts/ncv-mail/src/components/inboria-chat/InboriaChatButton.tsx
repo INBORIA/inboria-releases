@@ -5,7 +5,8 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import { Sheet, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
+import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
@@ -462,10 +463,10 @@ export function InboriaChatButton() {
           </span>
         </Button>
       </SheetTrigger>
-      <SheetContent
-        side="right"
-        className="w-full sm:max-w-md p-0 flex flex-col gap-0 bg-zinc-950 border-zinc-800"
-      >
+      <SheetPrimitive.Portal>
+        <SheetPrimitive.Content
+          className="fixed inset-y-0 right-0 z-50 h-full w-full sm:max-w-md border-l border-zinc-800 bg-zinc-950 p-0 shadow-lg flex flex-col gap-0 transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right"
+        >
         <div className="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-full bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center">
@@ -619,7 +620,8 @@ export function InboriaChatButton() {
             {t("inboriaChat.footerHint")}
           </p>
         </div>
-      </SheetContent>
+        </SheetPrimitive.Content>
+      </SheetPrimitive.Portal>
     </Sheet>
   );
 }
