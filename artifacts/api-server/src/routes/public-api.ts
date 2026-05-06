@@ -391,9 +391,9 @@ devDocsRouter.get("/dev", (_req, res) => {
 <body>
   <div class="header">
     <h1>Inboria — API publique v1</h1>
-    <a href="/v1/public/openapi.json">Télécharger OpenAPI spec</a>
+    <a href="/api/v1/public/openapi.json">Télécharger OpenAPI spec</a>
   </div>
-  <redoc spec-url="/v1/public/openapi.json"></redoc>
+  <redoc spec-url="/api/v1/public/openapi.json"></redoc>
   <script src="https://cdn.redoc.ly/redoc/latest/bundles/redoc.standalone.js"></script>
 </body>
 </html>`);
