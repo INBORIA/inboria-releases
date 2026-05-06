@@ -1,0 +1,184 @@
+nboria — API publique v1
+Télécharger OpenAPI spec
+Search...
+get
+List emails
+get
+Get one email
+post
+Create a task
+post
+Create an appointment
+post
+Create or upsert a contact
+post
+Manually trigger a rule by id
+redocly logoAPI docs by Redocly
+Inboria Public API (1.0.0)
+Download OpenAPI specification:Download
+
+Public REST API for Inboria. Authenticate with X-API-Key: <key> (or Authorization: Bearer <key>). Rate limit: 60 requests / minute / key. Generate keys at /dashboard/parametres/api.
+
+List emails
+Authorizations:
+ApiKeyAuth
+query Parameters
+limit	
+integer <= 100
+Default: 50
+offset	
+integer
+Default: 0
+since	
+string <date-time>
+Responses
+200 OK
+401 Unauthorized
+429 Rate limited
+
+get
+/emails
+
+Get one email
+Authorizations:
+ApiKeyAuth
+path Parameters
+id
+required
+integer
+Responses
+200 OK
+404 Not found
+
+get
+/emails/{id}
+
+Create a task
+Authorizations:
+ApiKeyAuth
+Request Body schema: application/json
+required
+id	
+integer
+title
+required
+string
+done	
+boolean
+dueDate	
+string or null <date-time>
+emailId	
+integer or null
+projectId	
+string or null
+createdAt	
+string <date-time>
+Responses
+201 Created
+400 Bad request
+
+post
+/tasks
+
+Request samples
+Payload
+Content type
+application/json
+
+Copy
+{
+"id": 0,
+"title": "string",
+"done": true,
+"dueDate": "2019-08-24T14:15:22Z",
+"emailId": 0,
+"projectId": "string",
+"createdAt": "2019-08-24T14:15:22Z"
+}
+Create an appointment
+Authorizations:
+ApiKeyAuth
+Request Body schema: application/json
+required
+id	
+string
+title
+required
+string
+startAt
+required
+string <date-time>
+endAt
+required
+string <date-time>
+allDay	
+boolean
+location	
+string or null
+description	
+string or null
+Responses
+201 Created
+400 Bad request
+
+post
+/appointments
+
+Request samples
+Payload
+Content type
+application/json
+
+Copy
+{
+"id": "string",
+"title": "string",
+"startAt": "2019-08-24T14:15:22Z",
+"endAt": "2019-08-24T14:15:22Z",
+"allDay": true,
+"location": "string",
+"description": "string"
+}
+Create or upsert a contact
+Authorizations:
+ApiKeyAuth
+Request Body schema: application/json
+required
+email
+required
+string
+name	
+string or null
+phone	
+string or null
+notes	
+string or null
+Responses
+200 Accepted (no persistence)
+201 Created
+400 Bad request
+
+post
+/contacts
+
+Request samples
+Payload
+Content type
+application/json
+
+Copy
+{
+"email": "string",
+"name": "string",
+"phone": "string",
+"notes": "string"
+}
+Manually trigger a rule by id
+Authorizations:
+ApiKeyAuth
+path Parameters
+id
+required
+string
+Responses
+202 Accepted
