@@ -4524,7 +4524,9 @@ export default function Dashboard() {
                   {f.label}
                 </button>
               ))}
-              <div className="w-px h-4 bg-[#1f2937] mx-1" />
+            </div>
+
+          <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-2">
               <button
                 onClick={() => setSmartSort((v) => !v)}
                 title={
