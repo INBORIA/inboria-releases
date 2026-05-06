@@ -250,7 +250,7 @@ export default function ParametresApi() {
           <div className="font-semibold text-white mb-1 text-[12px]">{t("apiKeys.usageTitle")}</div>
           <pre className="bg-background border border-border rounded p-2 overflow-x-auto text-[10px] leading-relaxed">
 {`curl -H "X-API-Key: ibk_..." \\
-     ${window.location.origin}${baseUrl()}/api/v1/public/emails`}
+     https://inboria.com/api/v1/public/emails`}
           </pre>
           <div className="mt-2">{t("apiKeys.rateLimitNotice")}</div>
         </div>
