@@ -258,14 +258,8 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
         </div>
       </div>
 
-      {/* Sidebar droite optionnelle (ex. panneau Categories de l'inbox) :
-          mirror EXACT de la structure de la sidebar gauche — bloc h-28
-          vide qui mime le bandeau logo, puis zone scrollable avec
-          padding `px-2 py-2.5` identique a la nav gauche. Garantit que
-          le premier element de `rightSidebar` s'aligne pixel-pres avec
-          « Reception » (premier item nav). Look 3 colonnes Outlook. */}
       {rightSidebar && (
-        <aside className="hidden lg:flex lg:fixed lg:inset-y-0 lg:right-0 lg:w-[260px] flex-col bg-sidebar border-l border-[#1f2937]">
+        <aside className="hidden md:flex md:fixed md:inset-y-0 md:right-0 md:w-[260px] flex-col bg-sidebar border-l border-[#1f2937]">
           <div className="h-28 shrink-0 border-b border-[#1f2937]" />
           <div className="flex-1 overflow-y-auto px-2 py-2.5">
             {rightSidebar}
@@ -273,7 +267,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
         </aside>
       )}
 
-      <div className={cn("lg:pl-[200px] flex flex-col flex-1 min-w-0", rightSidebar && "lg:pr-[260px]")}>
+      <div className={cn("lg:pl-[200px] flex flex-col flex-1 min-w-0", rightSidebar && "md:pr-[260px]")}>
         <div className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4">
           <div className="lg:hidden flex items-center">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>

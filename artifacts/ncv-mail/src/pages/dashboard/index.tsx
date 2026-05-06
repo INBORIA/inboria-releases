@@ -4155,11 +4155,8 @@ export default function Dashboard() {
     return t("inbox.assignedPageMember", { name, defaultValue: `Assignés à ${name}` });
   })();
 
-  // Panneau Categories rendu comme sidebar droite fixe par DashboardLayout.
-  // Aligne pixel-pres avec le haut de la sidebar gauche (au niveau de
-  // « Reception ») — look 3 colonnes type Outlook/Linear. Cache quand
-  // assigneeFilter est actif (vue "assignes" : compteurs trompeurs car
-  // /category-counts couvre toute l'org, pas filtre par assignee).
+  // Cache quand assigneeFilter actif : /category-counts couvre toute
+  // l'org, pas filtre par assignee, donc afficher serait trompeur.
   const categoriesPanel = !assigneeFilter ? (
     <>
       <div className="flex items-center justify-between mb-2.5">
