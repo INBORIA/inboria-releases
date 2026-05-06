@@ -263,7 +263,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
           son haut au pixel pres avec le premier item de la sidebar
           gauche (« Reception »). Look 3 colonnes type Outlook/Linear. */}
       {rightSidebar && (
-        <aside className="hidden lg:flex lg:fixed lg:top-28 lg:bottom-0 lg:right-0 lg:w-[260px] flex-col overflow-y-auto bg-sidebar border-l border-[#1f2937] p-4">
+        <aside className="hidden lg:flex lg:fixed lg:top-28 lg:bottom-0 lg:right-0 lg:w-[260px] flex-col overflow-y-auto bg-sidebar border-l border-[#1f2937] px-3 pt-[10px] pb-4">
           {rightSidebar}
         </aside>
       )}
