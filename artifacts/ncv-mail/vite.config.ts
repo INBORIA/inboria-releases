@@ -35,7 +35,7 @@ export default defineConfig({
     runtimeErrorOverlay(),
     VitePWA({
       registerType: "autoUpdate",
-      injectRegister: "auto",
+      injectRegister: false,
       includeAssets: [
         "favicon.svg",
         "favicon.ico",
@@ -88,6 +88,12 @@ export default defineConfig({
         globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/api\//],
+        // Force the new SW to activate immediately on install so the
+        // PWA picks up the latest deployment without requiring the
+        // user to fully close + reopen the installed app.
+        skipWaiting: true,
+        clientsClaim: true,
+        cleanupOutdatedCaches: true,
         runtimeCaching: [
           {
             // Static assets (hashed by Vite) → cache-first.
