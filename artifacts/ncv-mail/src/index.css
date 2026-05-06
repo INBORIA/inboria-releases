@@ -173,6 +173,11 @@
 }
 html {
   scrollbar-gutter: stable;
+  overflow-x: hidden;
+}
+body {
+  overflow-x: hidden !important;
+  width: 100% !important;
 }
 html,
 html[data-scroll-locked],
