@@ -1433,8 +1433,8 @@
       "teamWorkDesc": "E-Mail-Zuweisung, private interne Kommentare, Kollegen-Erwähnungen. Schluss mit endlosen Weiterleitungen und \"hast du diese E-Mail gesehen?\"-Nachrichten.",
       "realtimeNotifications": "Echtzeit-Benachrichtigungen",
       "realtimeNotificationsDesc": "Benachrichtigungsglocke, Ungelesen-Badge, Zuweisungswarnungen. Bleiben Sie informiert, ohne den Bildschirm zu wechseln.",
-      "multilingual": "Mehrsprachige Oberfläche",
-      "multilingualDesc": "Verfügbar in 43 Sprachen — von Französisch bis Japanisch, einschließlich Arabisch, Koreanisch und Chinesisch. Jedes Teammitglied arbeitet in seiner eigenen Sprache.",
+      "multilingual": "Nativ mehrsprachig",
+      "multilingualDesc": "Oberfläche und KI verfügbar in 43 Sprachen — von Französisch bis Japanisch, einschließlich Arabisch, Koreanisch und Chinesisch. Jedes Teammitglied arbeitet in seiner eigenen Sprache.",
       "autopilotMode": "Automatische Sortierung im Hintergrund",
       "autopilotModeDesc": "Inboria verarbeitet jede eingehende E-Mail: Priorität, Kategorie, Zusammenfassung, Erkennung unbezahlter Rechnungen, Aufgabenextraktion. Sie entscheiden anschließend, was Sie archivieren, löschen oder beantworten."
     },

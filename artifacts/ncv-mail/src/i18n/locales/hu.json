@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "Emailek hozzárendelése, belső privát megjegyzések, kollégák említése. Véget értek a hosszú átkonfigurálások és a \"láttad ezt az emailt?\" körök.",
       "realtimeNotifications": "Valós idejű értesítések",
       "realtimeNotificationsDesc": "Értesítési csengő, nem olvasott üzenetek jelzése, hozzárendelési figyelmeztetések. Informált marad anélkül, hogy képernyőt váltana.",
-      "multilingual": "Többnyelvű felület",
-      "multilingualDesc": "43 nyelven elérhető — a franciától a japánig, beleértve az arabot, a koreait és a kínait. Csapatunk minden tagja a saját nyelvén dolgozik.",
+      "multilingual": "Anyanyelvi többnyelvűség",
+      "multilingualDesc": "A felület és a mesterséges intelligencia 43 nyelven érhető el — a franciától a japánig, beleértve az arabot, a koreait és a kínait is. Csapata minden tagja a saját nyelvén dolgozhat.",
       "autopilotMode": "Automatikus háttérszűrés",
       "autopilotModeDesc": "Az Inboria minden bejövő e-mailt kezel: prioritás, kategória, összefoglaló, nem kifizetett számla és feladatok kinyerése. Ön dönt arról, hogy mit archivál, töröl vagy mire válaszol."
     },

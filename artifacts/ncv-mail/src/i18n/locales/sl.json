@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "Dodeljevanje e-pošt, notranji zasebni komentarji, omemba kolegov. Konec dolgotrajnih posredovanj in „ali si videl to e-pošto?“ v neskončnost.",
       "realtimeNotifications": "Obvestila v realnem času",
       "realtimeNotificationsDesc": "Zvonjenje obvestil, oznaka neprebranih, opozorila o dodelitvi. Ostajate obveščeni, ne da bi spremenili zaslon.",
-      "multilingual": "Večjezični vmesnik",
-      "multilingualDesc": "Na voljo v 43 jezikih — od francoščine do japonščine, vključno z arabščino, korejščino in kitajščino. Vsak član ekipe dela v svojem jeziku.",
+      "multilingual": "Nativno večjezično",
+      "multilingualDesc": "Vmesnik in UI sta na voljo v 43 jezikih — od francoščine do japonščine, vključno z arabščino, korejščino in kitajščino. Vsak član Vaše ekipe dela v svojem jeziku.",
       "autopilotMode": "Samodejno razvrščanje v ozadju",
       "autopilotModeDesc": "Inboria obdeluje vsako dohodno e-pošto: prioriteta, kategorija, povzetek, zaznavanje neplačanih računov, izvlečenje nalog. Nato se odločite, kaj arhivirate, izbrišete ali na kaj odgovorite."
     },

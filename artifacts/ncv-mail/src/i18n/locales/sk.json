@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "Priradenie e-mailov, interné súkromné komentáre, zmienka o kolegoch. Konec dlhých presunov a „videl si tento e-mail?“ v nekonečne.",
       "realtimeNotifications": "Oznámenia v reálnom čase",
       "realtimeNotificationsDesc": "Ikona oznámení, odznak neprečítaných, upozornenia na priradenie. Zostávate informovaní bez zmeny obrazovky.",
-      "multilingual": "Viacjazyčné rozhranie",
-      "multilingualDesc": "Dostupné v 43 jazykoch — od francúzštiny po japončinu, vrátane arabčiny, kórejčiny a čínštiny. Každý člen tímu pracuje vo svojom jazyku.",
+      "multilingual": "Nativne viacjazyčné",
+      "multilingualDesc": "Rozhranie a AI sú dostupné v 43 jazykoch — od francúzštiny po japončinu, vrátane arabčiny, kórejčiny a čínštiny. Každý člen Vášho tímu pracuje vo svojom jazyku.",
       "autopilotMode": "Automatické triedenie na pozadí",
       "autopilotModeDesc": "Inboria spracováva každý prichádzajúci e-mail: priorita, kategória, súhrn, detekcia nezaplatenej faktúry, extrakcia úloh. Potom sa rozhodnete, čo archivujete, mažete alebo na čo odpoviete."
     },

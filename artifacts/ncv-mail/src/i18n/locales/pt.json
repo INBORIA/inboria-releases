@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "Atribuição de emails, comentários internos privados, menção de colegas. Acabaram-se os encaminhamentos intermináveis e os \"você viu este email?\" em loop.",
       "realtimeNotifications": "Notificações em tempo real",
       "realtimeNotificationsDesc": "Sino de notificações, ícone de não lidos, alertas de atribuição. Você permanece informado sem mudar de ecrã.",
-      "multilingual": "Interface multilíngue",
-      "multilingualDesc": "Disponível em 43 idiomas — do francês ao japonês, passando pelo árabe, coreano e chinês. Cada membro da equipa trabalha no seu idioma.",
+      "multilingual": "Multilingue nativo",
+      "multilingualDesc": "Interface e IA disponíveis em 43 idiomas — do francês ao japonês, passando pelo árabe, coreano e chinês. Cada membro da equipa trabalha no seu idioma.",
       "autopilotMode": "Triagem automática em segundo plano",
       "autopilotModeDesc": "O Inboria processa cada email recebido: prioridade, categoria, resumo, deteção de fatura não paga, extração de tarefas. Você decide depois o que arquivar, eliminar ou a que responder."
     },

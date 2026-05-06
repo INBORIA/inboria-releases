@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "E-postaların atanması, özel iç yorumlar, meslektaşların etiketlenmesi. Uzun iletimler ve 'bu e-postayı gördün mü?' döngüsü sona erdi.",
       "realtimeNotifications": "Gerçek zamanlı bildirimler",
       "realtimeNotificationsDesc": "Bildirim çanı, okunmamışlar için rozet, atama uyarıları. Ekranı değiştirmeden bilgilendirilirsiniz.",
-      "multilingual": "Çok dilli arayüz",
-      "multilingualDesc": "43 dilde mevcut — Fransızcadan Japoncaya, Arapça, Korece ve Çince dahil. Ekibinizin her üyesi kendi dilinde çalışır.",
+      "multilingual": "Yerel çok dilli",
+      "multilingualDesc": "Arayüz ve yapay zeka 43 dilde mevcut — Fransızcadan Japoncaya, Arapça, Korece ve Çince dahil. Ekibinizin her üyesi kendi dilinde çalışır.",
       "autopilotMode": "Arka planda otomatik sıralama",
       "autopilotModeDesc": "Inboria, her gelen e-postayı işler: öncelik, kategori, özet, ödenmemiş fatura tespiti, görev çıkarımı. Ardından neyi arşivleyeceğinize, sileceğinize veya neye yanıt vereceğinize siz karar verirsiniz."
     },

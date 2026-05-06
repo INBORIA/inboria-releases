@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "Assignació de correus electrònics, comentaris interns privats, menció de companys. S'ha acabat el trasllat llarg i els «has vist aquest correu electrònic?» en bucle.",
       "realtimeNotifications": "Notificacions en temps real",
       "realtimeNotificationsDesc": "Campana de notificacions, distintiu dels no llegits, alertes d'assignació. Us manteniu informat sense canviar d'ecrà.",
-      "multilingual": "Interfície multilingüe",
-      "multilingualDesc": "Disponible en 43 idiomes — del francès al japonès, passant per l'àrab, el coreà i el xinès. Cada membre de l'equip treballa en el seu idioma.",
+      "multilingual": "Multilingüe natiu",
+      "multilingualDesc": "Interfície i IA disponibles en 43 idiomes — del francès al japonès, passant per l'àrab, el coreà i el xinès. Cada membre del seu equip treballa en el seu propi idioma.",
       "autopilotMode": "Classificació automàtica en segon pla",
       "autopilotModeDesc": "Inboria processa cada correu electrònic entrant: prioritat, categoria, resum, detecció de factura impagada, extracció de tasques. Vostè decideix després què arxiveu, suprimiu o a què responeu."
     },

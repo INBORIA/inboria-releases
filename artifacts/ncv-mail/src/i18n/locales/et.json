@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "E-kirjade määramine, sisemised privaatsed kommentaarid, kolleegide mainimine. Lõpp pikkaealiste edastamiste ja „kas oled seda e-kirja näinud?” ringidele.",
       "realtimeNotifications": "Reaalajas teavitused",
       "realtimeNotificationsDesc": "Teavituste kell, lugemata teatiste ikoon, määramisalased teated. Te jääte informeerituks ilma ekraani vahetamata.",
-      "multilingual": "Mitmekeelne liides",
-      "multilingualDesc": "Saadaval 43 keeles — prantsuse keelest jaapani keeleni, sealhulgas araabia, korea ja hiina keeles. Iga meeskonnaliige töötab oma keeles.",
+      "multilingual": "Emakeelne mitmekeelsus",
+      "multilingualDesc": "Liides ja tehisintellekt on saadaval 43 keeles — prantsuse keelest jaapani keeleni, sealhulgas araabia, korea ja hiina keel. Iga Teie meeskonnaliige töötab oma keeles.",
       "autopilotMode": "Automaatne sorteerimine taustal",
       "autopilotModeDesc": "Inboria töötleb iga sissetulevat e-kirja: prioriteet, kategooria, kokkuvõte, maksmata arve tuvastamine, ülesannete väljavõtt. Te otsustate seejärel, mida arhiveerida, kustutada või millele vastata."
     },

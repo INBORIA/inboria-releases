@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "Atribuirea emailurilor, comentarii interne private, menționarea colegilor. Fără transferuri lungi și fără \"ai văzut acest email?\" în buclă.",
       "realtimeNotifications": "Notificări în timp real",
       "realtimeNotificationsDesc": "Clopot de notificări, badge-uri pentru emailurile necitite, alerte de atribuire. Rămâneți informat fără a schimba ecranul.",
-      "multilingual": "Interfață multilingvă",
-      "multilingualDesc": "Disponibil în 43 de limbi — de la franceză la japoneză, inclusiv arabă, coreeană și chineză. Fiecare membru al echipei lucrează în limba sa.",
+      "multilingual": "Multilingv nativ",
+      "multilingualDesc": "Interfață și IA disponibile în 43 de limbi — de la franceză la japoneză, inclusiv arabă, coreeană și chineză. Fiecare membru al echipei lucrează în limba sa.",
       "autopilotMode": "Sortare automată în fundal",
       "autopilotModeDesc": "Inboria procesează fiecare email primit: prioritate, categorie, rezumat, detectare de facturi neplătite, extracție de sarcini. Apoi decideți ce arhivați, ștergeți sau la ce răspundeți."
     },

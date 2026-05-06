@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "電子郵件指派、內部私人評論、提及同事。再也不需要冗長的轉發和「您看到這封電子郵件了嗎？」的循環。",
       "realtimeNotifications": "即時通知",
       "realtimeNotificationsDesc": "通知鈴聲、未讀徽章、指派警報。您無需更換螢幕即可保持資訊更新。",
-      "multilingual": "多語言介面",
-      "multilingualDesc": "支援 43 種語言 — 從法語到日語，包括阿拉伯語、韓語和中文。團隊的每位成員都可以用自己的語言工作。",
+      "multilingual": "本地多語言",
+      "multilingualDesc": "介面和 AI 提供 43 種語言 — 從法語到日語，包括阿拉伯語、韓語和中文。您的團隊每位成員都能以自己的語言工作。",
       "autopilotMode": "背景自動分類",
       "autopilotModeDesc": "Inboria 處理每封進來的電子郵件：優先級、類別、摘要、未付款發票檢測、任務提取。然後您決定要歸檔、刪除或回覆的內容。"
     },

@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "E-pastu piešķiršana, iekšējie privātie komentāri, kolēģu pieminēšana. Beidzot garie pārsūtījumi un „vai esi redzējis šo e-pastu?” bezgalīgi.",
       "realtimeNotifications": "Reāllaika paziņojumi",
       "realtimeNotificationsDesc": "Paziņojumu zvans, neizlasīto ziņojumu ikona, piešķiršanas brīdinājumi. Jūs paliekat informēti, nemainot ekrānu.",
-      "multilingual": "Daudzvalodu saskarne",
-      "multilingualDesc": "Pieejams 43 valodās — no franču līdz japāņu, ieskaitot arābu, korejiešu un ķīniešu. Katrs komandas dalībnieks strādā savā valodā.",
+      "multilingual": "Dzimtā valoda",
+      "multilingualDesc": "Saskarne un mākslīgais intelekts pieejami 43 valodās — no franču līdz japāņu valodai, ieskaitot arābu, korejiešu un ķīniešu valodas. Katrs Jūsu komandas loceklis strādā savā valodā.",
       "autopilotMode": "Automātiska šķirošana fona režīmā",
       "autopilotModeDesc": "Inboria apstrādā katru ienākošo e-pastu: prioritāte, kategorija, kopsavilkums, neapmaksātas rēķina atklāšana, uzdevumu izvilkšana. Jūs pēc tam izlemjat, ko arhivēt, dzēst vai uz ko atbildēt."
     },

@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "Tildeling af e-mails, private interne kommentarer, nævn af kolleger. Slut med lange videresendelser og \"har du set denne e-mail?\" i loop.",
       "realtimeNotifications": "Notifikationer i realtid",
       "realtimeNotificationsDesc": "Notifikationsklokke, badge for ulæste, tildelingsalarmer. Du forbliver informeret uden at skifte skærm.",
-      "multilingual": "Flersproget grænseflade",
-      "multilingualDesc": "Tilgængelig på 43 sprog — fra fransk til japansk, herunder arabisk, koreansk og kinesisk. Hvert teammedlem arbejder på sit eget sprog.",
+      "multilingual": "Nativt flersproget",
+      "multilingualDesc": "Grænseflade og AI tilgængelig på 43 sprog — fra fransk til japansk, herunder arabisk, koreansk og kinesisk. Hvert teammedlem arbejder på sit eget sprog.",
       "autopilotMode": "Automatisk sortering i baggrunden",
       "autopilotModeDesc": "Inboria behandler hver indkommende e-mail: prioritet, kategori, resumé, detektion af ubetalte fakturaer, opgaveudtrækning. Du beslutter derefter, hvad du arkiverer, sletter eller svarer på."
     },

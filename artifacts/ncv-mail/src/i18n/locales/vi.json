@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "Gán email, bình luận nội bộ riêng tư, đề cập đến đồng nghiệp. Không còn việc chuyển tiếp dài dòng và những câu hỏi \"Quý vị đã thấy email này chưa?\" lặp đi lặp lại.",
       "realtimeNotifications": "Thông báo theo thời gian thực",
       "realtimeNotificationsDesc": "Chuông thông báo, biểu tượng thông báo chưa đọc, cảnh báo gán. Quý khách luôn được thông báo mà không cần thay đổi màn hình.",
-      "multilingual": "Giao diện đa ngôn ngữ",
-      "multilingualDesc": "Có sẵn bằng 43 ngôn ngữ — từ tiếng Pháp đến tiếng Nhật, bao gồm tiếng Ả Rập, tiếng Hàn và tiếng Trung. Mỗi thành viên trong nhóm làm việc bằng ngôn ngữ của riêng mình.",
+      "multilingual": "Đa ngôn ngữ bản địa",
+      "multilingualDesc": "Giao diện và AI có sẵn bằng 43 ngôn ngữ — từ tiếng Pháp đến tiếng Nhật, bao gồm tiếng Ả Rập, tiếng Hàn và tiếng Trung. Mỗi thành viên trong đội ngũ của Quý khách làm việc bằng ngôn ngữ riêng.",
       "autopilotMode": "Phân loại tự động trong nền",
       "autopilotModeDesc": "Inboria xử lý từng email đến: ưu tiên, danh mục, tóm tắt, phát hiện hóa đơn chưa thanh toán, trích xuất công việc. Quý khách quyết định sau đó những gì Quý khách lưu trữ, xóa hoặc trả lời."
     },

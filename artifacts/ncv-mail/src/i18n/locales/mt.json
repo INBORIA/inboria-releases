@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "Assenjazzjoni ta' emails, kummenti interni privati, mensioni ta' kollegi. L-aħħar trasferimenti twal u l-'rajt dan l-email?' f'ċiklu.",
       "realtimeNotifications": "Notifiki f'ħin reali",
       "realtimeNotificationsDesc": "Kampanji ta' notifiki, badge ta' mhux mqiegħda, allerta ta' assenjazzjoni. Inti tibqa' infurmat mingħajr ma tbiddel l-iskrin.",
-      "multilingual": "Interfaċċa multilingwi",
-      "multilingualDesc": "Disponibbli f'43 lingwa — mill-Franċiż sal-Ġappuniż, inkluż l-Għarbi, il-Korean u ċ-Ċiniż. Kull membru tat-tim jaħdem bil-lingwa tiegħu.",
+      "multilingual": "Multilingwi nativ",
+      "multilingualDesc": "L-interfaċċa u l-IA huma disponibbli f'43 lingwa — mill-Franċiż għall-Ġappuniż, inklużi l-Għarbi, il-Korean u ċ-Ċiniż. Kull membru tat-tim Tagħkom jaħdem fil-lingwa tiegħu.",
       "autopilotMode": "Tqassim awtomatiku fil-fond",
       "autopilotModeDesc": "Inboria ttratta kull email li jidħol: prijorità, kategorija, sommarju, detezzjoni ta' fattura mhux imħallsa, estrazzjoni ta' attivitajiet. Inti tiddeċiedi mbagħad x'tiġi arċivjat, imħassar jew x'jewġbu."
     },

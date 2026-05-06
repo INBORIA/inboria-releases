@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "Dodjela e-poruka, privatni unutarnji komentari, spominjanje kolega. Kraj dugih prosljeđivanja i „jesi li vidio ovu e-poruku?“ u krug.",
       "realtimeNotifications": "Obavijesti u stvarnom vremenu",
       "realtimeNotificationsDesc": "Zvonjenje obavijesti, oznaka nepročitanih, upozorenja o dodjeli. Ostanite informirani bez promjene ekrana.",
-      "multilingual": "Višenamjensko sučelje",
-      "multilingualDesc": "Dostupno na 43 jezika — od francuskog do japanskog, uključujući arapski, korejski i kineski. Svaki član tima radi na svom jeziku.",
+      "multilingual": "Izvorni višejezični",
+      "multilingualDesc": "Sučelje i AI dostupni su na 43 jezika — od francuskog do japanskog, uključujući arapski, korejski i kineski. Svaki član Vašeg tima radi na vlastitom jeziku.",
       "autopilotMode": "Automatsko sortiranje u pozadini",
       "autopilotModeDesc": "Inboria obrađuje svaku dolaznu e-poruku: prioritet, kategorija, sažetak, otkrivanje neplaćenih računa, izvlačenje zadataka. Vi odlučujete što arhivirate, brišete ili na što odgovarate."
     },

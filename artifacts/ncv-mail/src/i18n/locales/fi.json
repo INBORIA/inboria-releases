@@ -1423,8 +1423,8 @@
       "teamWorkDesc": "Sähköpostien osoittaminen, sisäiset yksityiset kommentit, kollegoiden maininta. Ei enää pitkiä siirtoja ja kysymyksiä \"näitkö tämän sähköpostin?\".",
       "realtimeNotifications": "Reaaliaikaiset ilmoitukset",
       "realtimeNotificationsDesc": "Ilmoitusääni, lukemattomien merkitseminen, osoittamisilmoitukset. Pysytte ajan tasalla ilman näytön vaihtamista.",
-      "multilingual": "Monikielinen käyttöliittymä",
-      "multilingualDesc": "Saatavilla 43 kielellä — ranskasta japaniin, mukaan lukien arabia, korea ja kiina. Jokainen tiimin jäsen työskentelee omalla kielellään.",
+      "multilingual": "Äidinkielinen monikielisyys",
+      "multilingualDesc": "Käyttöliittymä ja tekoäly saatavilla 43 kielellä — ranskasta japaniin, mukaan lukien arabia, korea ja kiina. Jokainen tiimin jäsen työskentelee omalla kielellään.",
       "autopilotMode": "Automaattinen taustaluokittelu",
       "autopilotModeDesc": "Inboria käsittelee jokaisen saapuvan sähköpostin: prioriteetti, kategoria, yhteenveto, maksamattoman laskun tunnistus, tehtävien poiminta. Te päätätte sitten, mitä arkistoitte, poistatte tai mihin vastaatte."
     },
