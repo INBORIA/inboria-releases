@@ -4459,25 +4459,6 @@ export default function Dashboard() {
                     : t("inbox.sortDate", "Date")}
                 </span>
               </button>
-              <div className="basis-full h-0 sm:hidden" />
-              <div className="hidden sm:block w-px h-4 bg-[#1f2937] mx-1" />
-              <Select value={filterCategory} onValueChange={setFilterCategory}>
-                <SelectTrigger className="w-auto min-w-[130px] h-7 bg-card border-border text-[#b8c5d6] text-[11px]">
-                  <SelectValue placeholder={t("inbox.category")} />
-                </SelectTrigger>
-                {/* max-h-[50vh] borne explicitement la hauteur du menu pour
-                    qu'il reste clairement scrollable même quand l'utilisateur
-                    a beaucoup de catégories. Sans cette borne, le menu
-                    s'étirait jusqu'au bas de la fenêtre et la barre de
-                    défilement n'apparaissait pas, donnant l'impression que
-                    les catégories du bas étaient inaccessibles. */}
-                <SelectContent className="bg-card border-border max-h-[50vh] overflow-y-auto">
-                  <SelectItem value="all">{t("inbox.allCategories")}</SelectItem>
-                  {categoryCounts?.map((cat) => (
-                    <SelectItem key={cat.categoryId} value={cat.categoryName}>{translateCategoryName(cat.categoryName, lang)}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
             </div>
 
           {(hasHubspot || hasPipedrive || hasSalesforce || hasOdoo) && (
