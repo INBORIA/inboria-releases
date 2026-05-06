@@ -364,8 +364,8 @@ export function AnimatedDemo() {
                   <Search className="w-3.5 h-3.5 text-[#b8c5d6] shrink-0" />
                   <span className="text-[11px] text-[#b8c5d6] truncate">{t("demo.search")}</span>
                 </div>
-                <div className="hidden md:flex items-center gap-1.5 px-2 py-1.5 rounded-lg border border-cyan-400/30 bg-cyan-500/10 text-[10px] font-medium text-zinc-200 shrink-0">
-                  <span className="inline-flex items-center justify-center h-3.5 w-3.5 rounded-full bg-cyan-500/15 border border-cyan-400/30">
+                <div className="hidden md:flex items-center gap-1.5 px-2 py-1.5 rounded-lg text-[10px] font-medium text-zinc-200 shrink-0">
+                  <span className="inline-flex items-center justify-center h-4 w-4 rounded-full bg-cyan-500/15 border border-cyan-400/30">
                     <Sparkles className="w-2 h-2 text-cyan-300" />
                   </span>
                   <span>Inbor<span className="text-cyan-400">ia</span></span>
