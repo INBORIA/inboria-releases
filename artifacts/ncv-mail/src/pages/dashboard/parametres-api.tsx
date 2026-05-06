@@ -7,6 +7,16 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Key, Plus, Loader2, Trash2, Copy, Check, ArrowLeft, ExternalLink } from "lucide-react";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { useState } from "react";
 import { Link } from "wouter";
 
@@ -35,6 +45,7 @@ export default function ParametresApi() {
   const [scopes, setScopes] = useState<string[]>(ALL_SCOPES);
   const [createdKey, setCreatedKey] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [keyToDelete, setKeyToDelete] = useState<{ id: string; name: string } | null>(null);
 
   const keysQuery = useQuery<ApiKey[]>({
     queryKey: ["api-keys"],
@@ -227,11 +238,7 @@ export default function ParametresApi() {
                           variant="ghost"
                           size="sm"
                           className="h-6 px-1 text-red-400 hover:text-red-500 hover:bg-red-500/10"
-                          onClick={() => {
-                            if (window.confirm(t("apiKeys.deletePermanentlyConfirm"))) {
-                              hardDeleteMutation.mutate(k.id);
-                            }
-                          }}
+                          onClick={() => setKeyToDelete({ id: k.id, name: k.name })}
                           disabled={hardDeleteMutation.isPending}
                           title={t("apiKeys.deletePermanently")}
                         >
@@ -255,6 +262,34 @@ export default function ParametresApi() {
           <div className="mt-2">{t("apiKeys.rateLimitNotice")}</div>
         </div>
       </div>
+
+      <AlertDialog open={!!keyToDelete} onOpenChange={(open) => !open && setKeyToDelete(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t("apiKeys.deletePermanently")}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t("apiKeys.deletePermanentlyConfirm")}
+              {keyToDelete?.name && (
+                <span className="block mt-2 font-mono text-white">« {keyToDelete.name} »</span>
+              )}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+            <AlertDialogAction
+              className="bg-red-500 hover:bg-red-600 text-white"
+              onClick={() => {
+                if (keyToDelete) {
+                  hardDeleteMutation.mutate(keyToDelete.id);
+                  setKeyToDelete(null);
+                }
+              }}
+            >
+              {t("apiKeys.deletePermanently")}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </DashboardLayout>
   );
 }
