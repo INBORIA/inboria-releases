@@ -4365,7 +4365,7 @@ export default function Dashboard() {
 
           </div>
 
-          <div className="flex flex-wrap items-center gap-1 gap-y-1.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mb-1.5">
+          <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mb-2">
               <button
                 onClick={() => {
                   setInboxMode("personal");
