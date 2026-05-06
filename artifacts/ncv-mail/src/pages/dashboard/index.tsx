@@ -3253,6 +3253,18 @@ export default function Dashboard() {
   });
   const spamCountFromApi = (spamCountData as PaginatedEmails)?.total ?? 0;
 
+  // Compteur total Reception (inbox perso, sans filtre) pour parité visuelle
+  // avec les badges Spam/Corbeille.
+  const { data: inboxCountData } = useListEmails({
+    page: 1,
+    limit: 1,
+  });
+  const inboxCountFromApi = (inboxCountData as PaginatedEmails)?.total ?? 0;
+
+  // Nombre de boites partagees accessibles (count des mailboxes,
+  // pas des emails — pas de endpoint d'agregat dispo).
+  const sharedMailboxesCount = (sharedMailboxes as any[])?.length ?? 0;
+
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
   const [composePrefill, setComposePrefill] = useState<{ to: string; subject: string; body: string } | null>(null);
@@ -4370,6 +4382,9 @@ export default function Dashboard() {
               >
                 <Inbox className="w-3 h-3" />
                 {t("inbox.title")}
+                {inboxCountFromApi > 0 && (
+                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{inboxCountFromApi}</span>
+                )}
               </button>
               {hasSharedMailboxes && (
                 <button
@@ -4390,7 +4405,10 @@ export default function Dashboard() {
                   }`}
                 >
                   <Users className="w-3 h-3" />
-                  {t("inbox.sharedMailbox")}
+                  {t("inbox.sharedMailboxShort", "Partagées")}
+                  {sharedMailboxesCount > 0 && (
+                    <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{sharedMailboxesCount}</span>
+                  )}
                 </button>
               )}
               <Link
@@ -4398,9 +4416,9 @@ export default function Dashboard() {
                 className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
               >
                 <ShieldAlert className="w-3 h-3" />
-                {t("inbox.spam")}
+                {t("inbox.spamShort", "Indésirables")}
                 {spamCountFromApi > 0 && (
-                  <span className="text-[10px] bg-orange-500/20 text-orange-400 px-1.5 py-0.5 rounded-full">{spamCountFromApi}</span>
+                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{spamCountFromApi}</span>
                 )}
               </Link>
               <Link
@@ -4410,7 +4428,7 @@ export default function Dashboard() {
                 <Trash2 className="w-3 h-3" />
                 {t("inbox.trash")}
                 {trashCountFromApi > 0 && (
-                  <span className="text-[10px] bg-red-500/20 text-red-400 px-1.5 py-0.5 rounded-full">{trashCountFromApi}</span>
+                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{trashCountFromApi}</span>
                 )}
               </Link>
               {inboxMode === "personal" && (composeConnections?.length || 0) >= 2 && (
