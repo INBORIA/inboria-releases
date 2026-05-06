@@ -190,7 +190,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
   );
 
   const UserMenu = () => (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         <button
           className="flex items-center justify-center h-8 w-8 rounded-full hover:ring-2 hover:ring-primary/40 transition-all"

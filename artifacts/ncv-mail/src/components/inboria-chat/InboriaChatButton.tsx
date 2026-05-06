@@ -445,7 +445,7 @@ export function InboriaChatButton() {
   const clearConversation = () => setMessages([]);
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+    <Sheet open={isOpen} onOpenChange={setIsOpen} modal={false}>
       <SheetTrigger asChild>
         <Button
           variant="ghost"
