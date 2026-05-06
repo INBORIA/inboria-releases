@@ -4295,7 +4295,7 @@ export default function Dashboard() {
             la page indistinguable de la reception et inutilisable comme vue
             dediee — cf. retour utilisateur du 1 mai 2026. */}
         {!assigneeFilter && (
-        <div className="pt-4 pb-2.5 border-b border-border">
+        <div className="sticky top-16 z-10 bg-background pt-4 pb-2.5 border-b border-border">
           <div className="flex items-center gap-2 mb-2.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#b8c5d6]" />
