@@ -4608,7 +4608,17 @@
     "tooltipProjects": "Handled and not-handled volume per project. Emails without a project are not counted here.",
     "tooltipPersonalMailboxes": "Emails received in personal mailboxes (not tied to a shared mailbox), grouped by member.",
     "tooltipTasksPerMember": "Distribution of open tasks per member. Pills show tasks done and overdue over the period.",
-    "tooltipTasksPerProject": "Tasks stacked per project (open, done, overdue). The \"No project\" row aggregates tasks without an associated project."
+    "tooltipTasksPerProject": "Tasks stacked per project (open, done, overdue). The \"No project\" row aggregates tasks without an associated project.",
+    "notHandled": "Not handled",
+    "tooltipTotalEmails": "All emails received by the team during the period (personal + shared mailboxes), all statuses except deleted.",
+    "tooltipHandled": "Explicit human action: reply sent, forwarded, or Mark handled clicked.",
+    "tooltipAssigned": "Emails assigned to a member (legacy mode, pending the handled_at migration).",
+    "tooltipNotHandled": "Emails received during the period that have not yet been marked as handled.",
+    "tooltipAvgHandling": "Average time between reception and handling (computed on ≥ 5 handled emails).",
+    "tooltipOpenBreaches": "Replies past their target SLA and still not sent.",
+    "lowSampleHint": "Not enough data for a reliable average (fewer than 5 handled emails in the period).",
+    "scopeLegend": "Scope: whole team over the selected period, all statuses except deleted. Differs from Inbox, which only shows your open emails.",
+    "migrationBannerActionable": "handled_at migration pending in Supabase (2026_05_03_emails_handled.sql) — apply it to enable the real \"Handled\" and \"Avg time\" counters. Meanwhile figures use the legacy proxy."
   },
   "integrations": {
     "pageTitle": "Integrations",

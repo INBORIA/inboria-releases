@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Käsiteltyjen ja käsittelemättömien volyymi projektissa. Sähköpostit ilman projektia eivät näy täällä.",
     "tooltipPersonalMailboxes": "Henkilökohtaisiin laatikoihin saapuneet sähköpostit (ei liitetty jaettuun laatikkoon), ryhmitelty jäsenittäin.",
     "tooltipTasksPerMember": "Avoimien tehtävien jakautuminen jäsenittäin. Pisteet osoittavat valmiit ja myöhässä olevat tehtävät ajanjaksolla.",
-    "tooltipTasksPerProject": "Pinoitetut tehtävät projektissa (avoimet, valmiit, myöhässä). Rivi « Projektin ulkopuolella » ryhmittelee tehtävät ilman liitettyä projektia."
+    "tooltipTasksPerProject": "Pinoitetut tehtävät projektissa (avoimet, valmiit, myöhässä). Rivi « Projektin ulkopuolella » ryhmittelee tehtävät ilman liitettyä projektia.",
+    "notHandled": "Käsittelemättömät",
+    "tooltipTotalEmails": "Kaikki tiimin jaksolla saamat sähköpostit (henkilökohtaiset + jaetut postilaatikot), kaikki tilat paitsi poistetut.",
+    "tooltipHandled": "Selkeä ihmistoiminta: vastaus lähetetty, edelleenlähetetty tai Merkitse käsitellyksi -klikkaus.",
+    "tooltipAssigned": "Jäsenelle osoitetut sähköpostit (legacy-tila, odottaa handled_at-migraatiota).",
+    "tooltipNotHandled": "Jakson aikana saadut sähköpostit, joita ei ole vielä merkitty käsitellyiksi.",
+    "tooltipAvgHandling": "Keskimääräinen aika vastaanoton ja käsittelyn välillä (laskettu ≥ 5 käsitellystä viestistä).",
+    "tooltipOpenBreaches": "Vastaukset, joiden SLA-aika on ylittynyt eikä niitä ole vielä lähetetty.",
+    "lowSampleHint": "Liian vähän tietoa luotettavalle keskiarvolle (alle 5 käsiteltyä viestiä jaksolla).",
+    "scopeLegend": "Laajuus: koko tiimi valitulla jaksolla, kaikki tilat paitsi poistetut. Poikkeaa Saapuneista, joka näyttää vain teidän avoimet viestinne.",
+    "migrationBannerActionable": "handled_at-migraatio on otettava käyttöön Supabasessa (2026_05_03_emails_handled.sql), jotta oikeat ”Käsitellyt”- ja ”Keskimäärä”-laskurit aktivoituvat. Sitä ennen luvut käyttävät vanhaa välityskerrosta."
   },
   "integrations": {
     "pageTitle": "Integraatiot",

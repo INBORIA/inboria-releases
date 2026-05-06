@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Obrađeni i neobrađeni volumen po projektu. E-mailovi bez projekta nisu uključeni ovdje.",
     "tooltipPersonalMailboxes": "E-mailovi primljeni u osobnim poštama (nepriključeni na dijeljenu poštu), grupirani po članu.",
     "tooltipTasksPerMember": "Raspodjela otvorenih zadataka po članu. Točkice označavaju završene i zakašnjele zadatke u razdoblju.",
-    "tooltipTasksPerProject": "Složeni zadaci po projektu (otvoreni, završeni, zakašnjeli). Linija „Izvan projekta” grupira zadatke bez povezanog projekta."
+    "tooltipTasksPerProject": "Složeni zadaci po projektu (otvoreni, završeni, zakašnjeli). Linija „Izvan projekta” grupira zadatke bez povezanog projekta.",
+    "notHandled": "Neobrađeni",
+    "tooltipTotalEmails": "Sve e-poruke koje je tim primio tijekom razdoblja (osobni + dijeljeni sandučići), svi statusi osim obrisanih.",
+    "tooltipHandled": "Izričita ljudska radnja: poslan odgovor, proslijeđeno ili klik Označi kao obrađeno.",
+    "tooltipAssigned": "E-poruke dodijeljene članu (zastarjeli način, do završetka migracije handled_at).",
+    "tooltipNotHandled": "E-poruke primljene u razdoblju koje još nisu označene kao obrađene.",
+    "tooltipAvgHandling": "Prosječno vrijeme između primitka i obrade (izračunato na ≥ 5 obrađenih poruka).",
+    "tooltipOpenBreaches": "Odgovori kojima je istekao ciljani SLA rok, a još nisu poslani.",
+    "lowSampleHint": "Nedovoljno podataka za pouzdan prosjek (u razdoblju manje od 5 obrađenih poruka).",
+    "scopeLegend": "Opseg: cijeli tim u odabranom razdoblju, svi statusi osim obrisanih. Razlikuje se od Pristigle pošte koja prikazuje samo Vaše otvorene poruke.",
+    "migrationBannerActionable": "Molimo primijenite handled_at migraciju u Supabase (2026_05_03_emails_handled.sql) kako biste aktivirali stvarne brojače „Obrađeno\" i „Pros. vrijeme\". Do tada brojevi koriste stari proxy."
   },
   "integrations": {
     "pageTitle": "Integracije",

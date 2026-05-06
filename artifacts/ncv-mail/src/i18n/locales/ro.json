@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Volum procesat și neprocesat pe proiect. Emailurile fără proiect nu sunt contabilizate aici.",
     "tooltipPersonalMailboxes": "Emailuri primite în cutiile personale (nelegate de o cutie partajată), grupate pe membru.",
     "tooltipTasksPerMember": "Distribuția sarcinilor deschise pe membru. Punctele indică sarcinile finalizate și întârziate pe perioada respectivă.",
-    "tooltipTasksPerProject": "Sarcini înghesuite pe proiect (deschise, finalizate, întârziate). Linia „În afara proiectului” grupează sarcinile fără proiect asociat."
+    "tooltipTasksPerProject": "Sarcini înghesuite pe proiect (deschise, finalizate, întârziate). Linia „În afara proiectului” grupează sarcinile fără proiect asociat.",
+    "notHandled": "Neprocesate",
+    "tooltipTotalEmails": "Toate e-mailurile primite de echipă în perioadă (cutii personale + partajate), toate statusurile cu excepția celor șterse.",
+    "tooltipHandled": "Acțiune umană explicită: răspuns trimis, redirecționat sau clic pe Marchează ca tratat.",
+    "tooltipAssigned": "E-mailuri atribuite unui membru (mod legacy, în așteptarea migrării handled_at).",
+    "tooltipNotHandled": "E-mailuri primite în perioadă, încă nemarcate ca tratate.",
+    "tooltipAvgHandling": "Timp mediu între primire și tratare (calculat pe ≥ 5 e-mailuri tratate).",
+    "tooltipOpenBreaches": "Răspunsuri cu termenul SLA depășit și încă netrimise.",
+    "lowSampleHint": "Date insuficiente pentru o medie fiabilă (mai puțin de 5 e-mailuri tratate în perioadă).",
+    "scopeLegend": "Domeniu: întreaga echipă în perioada selectată, toate statusurile cu excepția celor șterse. Diferă de Inbox, care afișează doar e-mailurile dvs. deschise.",
+    "migrationBannerActionable": "Migrare handled_at de aplicat în Supabase (2026_05_03_emails_handled.sql) pentru a activa contoarele reale „Tratate\" și „Timp mediu\". Între timp, cifrele folosesc proxy-ul vechi."
   },
   "integrations": {
     "pageTitle": "Integrări",

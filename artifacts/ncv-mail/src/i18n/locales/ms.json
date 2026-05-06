@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Jumlah diproses dan tidak diproses mengikut projek. Emel tanpa projek tidak dikira di sini.",
     "tooltipPersonalMailboxes": "Emel diterima dalam petak peribadi (tidak dikaitkan dengan petak bersama), dikelompokkan mengikut ahli.",
     "tooltipTasksPerMember": "Pembahagian tugas terbuka mengikut ahli. Titik menunjukkan tugas yang telah selesai dan tertangguh dalam tempoh tersebut.",
-    "tooltipTasksPerProject": "Tugas berkumpul mengikut projek (terbuka, selesai, tertangguh). Baris « Luar projek » mengumpulkan tugas tanpa projek yang dikaitkan."
+    "tooltipTasksPerProject": "Tugas berkumpul mengikut projek (terbuka, selesai, tertangguh). Baris « Luar projek » mengumpulkan tugas tanpa projek yang dikaitkan.",
+    "notHandled": "Tidak diproses",
+    "tooltipTotalEmails": "Semua e-mel yang diterima pasukan dalam tempoh (peti peribadi + dikongsi), semua status kecuali dipadam.",
+    "tooltipHandled": "Tindakan manusia yang jelas: balasan dihantar, dimajukan, atau klik Tandakan dikendalikan.",
+    "tooltipAssigned": "E-mel yang ditugaskan kepada ahli (mod warisan, menunggu pemindahan handled_at).",
+    "tooltipNotHandled": "E-mel yang diterima dalam tempoh dan belum ditandakan sebagai dikendalikan.",
+    "tooltipAvgHandling": "Purata masa antara penerimaan dan pengendalian (dikira atas ≥ 5 e-mel dikendalikan).",
+    "tooltipOpenBreaches": "Balasan yang melepasi tempoh SLA sasaran dan masih belum dihantar.",
+    "lowSampleHint": "Data tidak mencukupi untuk purata yang boleh dipercayai (kurang daripada 5 e-mel dikendalikan dalam tempoh).",
+    "scopeLegend": "Skop: seluruh pasukan dalam tempoh dipilih, semua status kecuali dipadam. Berbeza daripada Peti Masuk yang hanya menunjukkan e-mel terbuka anda.",
+    "migrationBannerActionable": "Sila gunakan pemindahan handled_at dalam Supabase (2026_05_03_emails_handled.sql) untuk mengaktifkan kaunter sebenar «Dikendalikan» dan «Masa purata». Sementara itu, angka menggunakan proksi lama."
   },
   "integrations": {
     "pageTitle": "Integrasi",

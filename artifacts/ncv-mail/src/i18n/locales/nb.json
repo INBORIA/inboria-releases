@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Behandlet og ikke behandlet volum per prosjekt. E-poster uten prosjekt er ikke inkludert her.",
     "tooltipPersonalMailboxes": "E-poster mottatt i personlige bokser (ikke knyttet til en delt boks), gruppert per medlem.",
     "tooltipTasksPerMember": "Fordeling av åpne oppgaver per medlem. Prikkene indikerer oppgaver som er fullført og forsinket i perioden.",
-    "tooltipTasksPerProject": "Stablede oppgaver per prosjekt (åpne, fullførte, forsinkede). Linjen «Utenfor prosjekt» grupperer oppgaver uten tilknyttet prosjekt."
+    "tooltipTasksPerProject": "Stablede oppgaver per prosjekt (åpne, fullførte, forsinkede). Linjen «Utenfor prosjekt» grupperer oppgaver uten tilknyttet prosjekt.",
+    "notHandled": "Ikke behandlet",
+    "tooltipTotalEmails": "Alle e-poster teamet mottok i perioden (personlige + delte postkasser), alle statuser unntatt slettede.",
+    "tooltipHandled": "Eksplisitt menneskelig handling: svar sendt, videresendt eller klikk på Merk som behandlet.",
+    "tooltipAssigned": "E-poster tildelt et medlem (eldre modus, venter på handled_at-migrering).",
+    "tooltipNotHandled": "E-poster mottatt i perioden som ennå ikke er merket som behandlet.",
+    "tooltipAvgHandling": "Gjennomsnittlig tid mellom mottak og behandling (beregnet på ≥ 5 behandlede e-poster).",
+    "tooltipOpenBreaches": "Svar med overskredet SLA-frist som fortsatt ikke er sendt.",
+    "lowSampleHint": "Ikke nok data til et pålitelig gjennomsnitt (færre enn 5 behandlede e-poster i perioden).",
+    "scopeLegend": "Omfang: hele teamet i valgt periode, alle statuser unntatt slettede. Skiller seg fra Innboks som bare viser dine åpne e-poster.",
+    "migrationBannerActionable": "Vennligst bruk handled_at-migreringen i Supabase (2026_05_03_emails_handled.sql) for å aktivere de ekte tellerne «Behandlet» og «Gj.snitt». Inntil da bruker tallene den gamle proxyen."
   },
   "integrations": {
     "pageTitle": "Integrasjoner",

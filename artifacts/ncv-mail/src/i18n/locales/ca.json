@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Volum tractat i no tractat per projecte. Els correus electrònics sense projecte no es compten aquí.",
     "tooltipPersonalMailboxes": "Correus electrònics rebuts a les bústies personals (no vinculats a una bústia compartida), agrupats per membre.",
     "tooltipTasksPerMember": "Distribució de les tasques obertes per membre. Les pastilles indiquen les tasques finalitzades i endarrerides durant el període.",
-    "tooltipTasksPerProject": "Tasques apilades per projecte (obertes, finalitzades, endarrerides). La línia « Fora de projecte » agrupa les tasques sense projecte associat."
+    "tooltipTasksPerProject": "Tasques apilades per projecte (obertes, finalitzades, endarrerides). La línia « Fora de projecte » agrupa les tasques sense projecte associat.",
+    "notHandled": "No tractats",
+    "tooltipTotalEmails": "Tots els correus rebuts per l'equip durant el període (bústies personals + compartides), tots els estats excepte eliminats.",
+    "tooltipHandled": "Acció humana explícita: resposta enviada, reenviament o clic a Marca com a tractat.",
+    "tooltipAssigned": "Correus assignats a un membre (mode llegat, a l'espera de la migració handled_at).",
+    "tooltipNotHandled": "Correus rebuts en el període i encara no marcats com a tractats.",
+    "tooltipAvgHandling": "Temps mitjà entre la recepció i el tractament (calculat sobre ≥ 5 correus tractats).",
+    "tooltipOpenBreaches": "Respostes amb el termini SLA superat i encara no enviades.",
+    "lowSampleHint": "No hi ha dades suficients per a una mitjana fiable (menys de 5 correus tractats en el període).",
+    "scopeLegend": "Abast: tot l'equip en el període seleccionat, tots els estats excepte eliminats. Es diferencia de la Safata d'entrada, que només mostra els seus correus oberts.",
+    "migrationBannerActionable": "Si us plau, apliqueu la migració handled_at a Supabase (2026_05_03_emails_handled.sql) per activar els comptadors reals «Tractats» i «T. mitjà». Mentrestant, les xifres utilitzen el proxy llegat."
   },
   "integrations": {
     "pageTitle": "Integracions",

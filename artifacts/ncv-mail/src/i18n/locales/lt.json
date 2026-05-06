@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Apdorotų ir neapdorotų el. laiškų kiekis pagal projektą. El. laiškai be projekto čia neskaičiuojami.",
     "tooltipPersonalMailboxes": "Asmeninėse pašto dėžutėse gauti el. laiškai (nepriklausantys bendrai pašto dėžutei), sugrupuoti pagal narį.",
     "tooltipTasksPerMember": "Atvirų užduočių pasiskirstymas pagal narį. Taškai rodo užbaigtas ir vėluojančias užduotis per laikotarpį.",
-    "tooltipTasksPerProject": "Užduotys sukrautos pagal projektą (atviros, baigtos, vėluojančios). Eilutė „Už projekto“ sujungia užduotis be susijusio projekto."
+    "tooltipTasksPerProject": "Užduotys sukrautos pagal projektą (atviros, baigtos, vėluojančios). Eilutė „Už projekto“ sujungia užduotis be susijusio projekto.",
+    "notHandled": "Neapdoroti",
+    "tooltipTotalEmails": "Visi laiškai, kuriuos komanda gavo per laikotarpį (asmeninės + bendros dėžutės), visos būsenos, išskyrus ištrintus.",
+    "tooltipHandled": "Aiškus žmogaus veiksmas: atsakymas išsiųstas, persiųstas arba spustelėta Pažymėti kaip apdorotą.",
+    "tooltipAssigned": "Laiškai, priskirti nariui (senas režimas, laukiant handled_at migracijos).",
+    "tooltipNotHandled": "Laikotarpiu gauti laiškai, dar nepažymėti kaip apdoroti.",
+    "tooltipAvgHandling": "Vidutinis laikas tarp gavimo ir apdorojimo (skaičiuojama nuo ≥ 5 apdorotų laiškų).",
+    "tooltipOpenBreaches": "Atsakymai, viršiję tikslinį SLA terminą ir vis dar neišsiųsti.",
+    "lowSampleHint": "Duomenų neužtenka patikimam vidurkiui (laikotarpiu mažiau nei 5 apdoroti laiškai).",
+    "scopeLegend": "Apimtis: visa komanda per pasirinktą laikotarpį, visos būsenos, išskyrus ištrintus. Skiriasi nuo Gautųjų, kurie rodo tik Jūsų atvirus laiškus.",
+    "migrationBannerActionable": "Prašome Supabase'e pritaikyti handled_at migraciją (2026_05_03_emails_handled.sql), kad būtų aktyvuoti tikrieji „Apdoroti\" ir „Vid. laikas\" skaitikliai. Iki tol skaičiai naudoja seną tarpinį sluoksnį."
   },
   "integrations": {
     "pageTitle": "Integracijos",

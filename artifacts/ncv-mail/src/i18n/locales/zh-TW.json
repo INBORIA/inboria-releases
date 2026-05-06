@@ -2967,7 +2967,17 @@
     "tooltipProjects": "按專案處理和未處理的郵件量。沒有專案的電子郵件不會出現在此。",
     "tooltipPersonalMailboxes": "在個人郵箱中接收的電子郵件（未關聯到共享郵箱），按成員分組。",
     "tooltipTasksPerMember": "按成員分配的開放任務分佈。圓點表示在此期間已完成和逾期的任務。",
-    "tooltipTasksPerProject": "按專案堆疊的任務（開放、已完成、逾期）。「不在專案中」行顯示未關聯專案的任務。"
+    "tooltipTasksPerProject": "按專案堆疊的任務（開放、已完成、逾期）。「不在專案中」行顯示未關聯專案的任務。",
+    "notHandled": "未處理",
+    "tooltipTotalEmails": "團隊在所選期間收到的所有電郵（個人 + 共用信箱），除已刪除外的所有狀態。",
+    "tooltipHandled": "明確的人為操作：已傳送回覆、轉寄或點擊「標記為已處理」。",
+    "tooltipAssigned": "已指派給成員的電郵（舊模式，待 handled_at 遷移完成）。",
+    "tooltipNotHandled": "於該期間收到但尚未標記為已處理的電郵。",
+    "tooltipAvgHandling": "從接收至處理的平均時間（依據 ≥ 5 封已處理電郵計算）。",
+    "tooltipOpenBreaches": "已超過目標 SLA 期限且仍未傳送的回覆。",
+    "lowSampleHint": "資料不足，無法計算可靠的平均值（該期間已處理電郵少於 5 封）。",
+    "scopeLegend": "範圍：所選期間內整個團隊，除已刪除外的所有狀態。與僅顯示您未處理電郵的「收件匣」不同。",
+    "migrationBannerActionable": "請於 Supabase 中套用 handled_at 遷移（2026_05_03_emails_handled.sql），以啟用真實的「已處理」與「平均時間」計數器。在此之前，數字會使用舊代理。"
   },
   "integrations": {
     "pageTitle": "整合",

@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Töödeldud ja töötlemata maht projekti järgi. E-kirjad, millel ei ole projekti, ei arvestata siin.",
     "tooltipPersonalMailboxes": "Isiklikesse postkastidesse saabunud e-kirjad (mis ei ole seotud jagatud postkastiga), rühmitatud liikme järgi.",
     "tooltipTasksPerMember": "Avatud ülesannete jaotus liikme järgi. Punktid näitavad lõpetatud ja hilinenud ülesandeid perioodi jooksul.",
-    "tooltipTasksPerProject": "Kuhjatud ülesanded projekti järgi (avatud, lõpetatud, hilinenud). Rida 'Projektist väljas' koondab ülesanded, millel ei ole seotud projekti."
+    "tooltipTasksPerProject": "Kuhjatud ülesanded projekti järgi (avatud, lõpetatud, hilinenud). Rida 'Projektist väljas' koondab ülesanded, millel ei ole seotud projekti.",
+    "notHandled": "Töötlemata",
+    "tooltipTotalEmails": "Kõik e-kirjad, mille meeskond perioodi jooksul sai (isiklikud + jagatud postkastid), kõik olekud peale kustutatute.",
+    "tooltipHandled": "Selge inimtegevus: vastus saadetud, edastatud või Märgi käsitletuks klõpsatud.",
+    "tooltipAssigned": "Liikmele määratud e-kirjad (vana režiim, ootame handled_at migratsiooni).",
+    "tooltipNotHandled": "Perioodi jooksul saabunud kirjad, mida pole veel käsitletuks märgitud.",
+    "tooltipAvgHandling": "Keskmine aeg vastuvõtu ja käsitlemise vahel (arvutatud ≥ 5 käsitletud kirjalt).",
+    "tooltipOpenBreaches": "Vastused, mille SLA tähtaeg on möödas ja mida pole veel saadetud.",
+    "lowSampleHint": "Usaldusväärseks keskmiseks pole piisavalt andmeid (perioodis alla 5 käsitletud kirja).",
+    "scopeLegend": "Ulatus: kogu meeskond valitud perioodil, kõik olekud peale kustutatute. Erineb Saabunud kaustast, mis kuvab ainult Teie avatud kirjad.",
+    "migrationBannerActionable": "Palun rakendage Supabase'is handled_at migratsioon (2026_05_03_emails_handled.sql), et aktiveerida tõelised loendurid „Käsitletud\" ja „Keskmine aeg\". Seni kasutavad arvud vana puhverteenust."
   },
   "integrations": {
     "pageTitle": "Integratsioonid",

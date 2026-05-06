@@ -4608,7 +4608,17 @@
     "tooltipProjects": "Behandeld en niet-behandeld volume per project. E-mails zonder project tellen hier niet mee.",
     "tooltipPersonalMailboxes": "E-mails ontvangen in persoonlijke mailboxen (niet gekoppeld aan een gedeelde mailbox), gegroepeerd per lid.",
     "tooltipTasksPerMember": "Verdeling van open taken per lid. De pillen tonen voltooide en achterstallige taken in de periode.",
-    "tooltipTasksPerProject": "Taken gestapeld per project (open, voltooid, achterstallig). De rij \"Geen project\" bundelt taken zonder gekoppeld project."
+    "tooltipTasksPerProject": "Taken gestapeld per project (open, voltooid, achterstallig). De rij \"Geen project\" bundelt taken zonder gekoppeld project.",
+    "notHandled": "Niet behandeld",
+    "tooltipTotalEmails": "Alle e-mails die het team tijdens de periode ontvangen heeft (persoonlijke + gedeelde postvakken), alle statussen behalve verwijderd.",
+    "tooltipHandled": "Expliciete menselijke actie: antwoord verzonden, doorgestuurd, of Markeren als behandeld aangeklikt.",
+    "tooltipAssigned": "E-mails toegewezen aan een lid (legacy modus, in afwachting van de handled_at-migratie).",
+    "tooltipNotHandled": "E-mails ontvangen tijdens de periode die nog niet als behandeld gemarkeerd zijn.",
+    "tooltipAvgHandling": "Gemiddelde tijd tussen ontvangst en behandeling (berekend op ≥ 5 behandelde e-mails).",
+    "tooltipOpenBreaches": "Antwoorden waarvan de SLA-deadline overschreden is en nog niet verstuurd.",
+    "lowSampleHint": "Onvoldoende gegevens voor een betrouwbaar gemiddelde (minder dan 5 behandelde e-mails in de periode).",
+    "scopeLegend": "Bereik: het hele team over de geselecteerde periode, alle statussen behalve verwijderd. Verschilt van het Postvak IN dat alleen uw openstaande e-mails toont.",
+    "migrationBannerActionable": "handled_at-migratie nog uit te voeren in Supabase (2026_05_03_emails_handled.sql) om de echte tellers \"Behandeld\" en \"Gem. tijd\" te activeren. Intussen gebruiken de cijfers de legacy proxy."
   },
   "integrations": {
     "pageTitle": "Integraties",

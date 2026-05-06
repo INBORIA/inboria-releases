@@ -4608,7 +4608,17 @@
     "tooltipProjects": "Volumen atendido y no atendido por proyecto. Los correos sin proyecto no se cuentan aquí.",
     "tooltipPersonalMailboxes": "Correos recibidos en buzones personales (no vinculados a un buzón compartido), agrupados por miembro.",
     "tooltipTasksPerMember": "Distribución de las tareas abiertas por miembro. Las píldoras muestran tareas completadas y atrasadas en el período.",
-    "tooltipTasksPerProject": "Tareas apiladas por proyecto (abiertas, completadas, atrasadas). La fila «Sin proyecto» agrupa las tareas sin proyecto asociado."
+    "tooltipTasksPerProject": "Tareas apiladas por proyecto (abiertas, completadas, atrasadas). La fila «Sin proyecto» agrupa las tareas sin proyecto asociado.",
+    "notHandled": "No atendidos",
+    "tooltipTotalEmails": "Todos los correos recibidos por el equipo durante el período (buzones personales + compartidos), todos los estados salvo eliminados.",
+    "tooltipHandled": "Acción humana explícita: respuesta enviada, reenviada o clic en Marcar atendido.",
+    "tooltipAssigned": "Correos asignados a un miembro (modo legacy, a la espera de la migración handled_at).",
+    "tooltipNotHandled": "Correos recibidos en el período que aún no se han marcado como atendidos.",
+    "tooltipAvgHandling": "Tiempo medio entre la recepción y la atención (calculado sobre ≥ 5 correos atendidos).",
+    "tooltipOpenBreaches": "Respuestas cuyo plazo SLA objetivo se ha superado y que aún no se han enviado.",
+    "lowSampleHint": "No hay datos suficientes para una media fiable (menos de 5 correos atendidos en el período).",
+    "scopeLegend": "Alcance: todo el equipo durante el período seleccionado, todos los estados salvo eliminados. Difiere de la Bandeja de entrada, que solo muestra sus correos abiertos.",
+    "migrationBannerActionable": "Migración handled_at pendiente en Supabase (2026_05_03_emails_handled.sql) — aplíquela para activar los contadores reales «Atendidos» y «T. medio». Mientras tanto, las cifras usan el proxy legacy."
   },
   "integrations": {
     "pageTitle": "Integraciones",

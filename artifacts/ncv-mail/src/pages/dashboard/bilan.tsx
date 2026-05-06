@@ -40,7 +40,7 @@ const dateLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es, it, pt, 
 const baseUrl = () => import.meta.env.BASE_URL.replace(/\/$/, "");
 
 interface TeamAnalytics {
-  totals: { emails: number; assigned: number; notHandled: number; handled: number | null; avgHandlingMinutes: number | null; period: string };
+  totals: { emails: number; assigned: number; notHandled: number; handled: number | null; avgHandlingMinutes: number | null; avgHandlingSampleSize?: number; period: string };
   filters?: { period: string; member: string | null; mailbox: string | null; project: string | null };
   handledMetricsEnabled?: boolean;
   perMember: { userId: string; userName: string; handled: number; assigned: number; openLoad: number; avgFirstResponseMinutes: number | null }[];
@@ -477,30 +477,41 @@ export default function BilanQuotidien() {
             <div className="space-y-3">
               {ta.handledMetricsEnabled === false && (
                 <div className="bg-amber-500/10 border border-amber-500/30 text-amber-200 rounded-lg p-3 text-[11px]">
-                  {t("analytics.migrationBanner")}
+                  {t("analytics.migrationBannerActionable")}
                 </div>
               )}
-              {ta.handledMetricsEnabled === false ? (
-                // Migration non appliquée : on conserve l'ancien rendu —
-                // Total / Assignés / Écartés / Délai moyen (proxy
-                // claimed_at/assigned_at/inboria_processed_at) /
-                // Dépassements SLA. Le bandeau prévient l'utilisateur.
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                  <StatCard label={t("analytics.totalEmails")} value={ta.totals.emails} />
-                  <StatCard label={t("analytics.assigned")} value={ta.totals.assigned} />
-                  <StatCard label={t("analytics.notHandled")} value={ta.totals.notHandled ?? Math.max(0, ta.totals.emails - (ta.totals.handled ?? ta.totals.assigned))} />
-                  <StatCardText label={t("analytics.avgHandlingTime")} value={formatDelay(ta.totals.avgHandlingMinutes)} />
-                  <StatCard label={t("analytics.openBreaches")} value={ta.slaSummary.openBreaches} accent={ta.slaSummary.openBreaches > 0 ? "red" : "default"} />
-                </div>
-              ) : (
-                <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-                  <StatCard label={t("analytics.totalEmails")} value={ta.totals.emails} />
-                  <StatCard label={t("analytics.handled")} value={ta.totals.handled ?? 0} />
-                  <StatCard label={t("analytics.notHandled")} value={ta.totals.notHandled ?? Math.max(0, ta.totals.emails - (ta.totals.handled ?? 0))} />
-                  <StatCardText label={t("analytics.avgHandlingTime")} value={formatDelay(ta.totals.avgHandlingMinutes)} />
-                  <StatCard label={t("analytics.openBreaches")} value={ta.slaSummary.openBreaches} accent={ta.slaSummary.openBreaches > 0 ? "red" : "default"} />
-                </div>
-              )}
+              {(() => {
+                const sample = ta.totals.avgHandlingSampleSize ?? 0;
+                const lowSample = ta.totals.avgHandlingMinutes == null && sample < 5;
+                const avgTooltip = lowSample
+                  ? t("analytics.lowSampleHint")
+                  : t("analytics.tooltipAvgHandling");
+                if (ta.handledMetricsEnabled === false) {
+                  // Migration non appliquée : on conserve l'ancien rendu —
+                  // Total / Assignés / Non traités / Délai moyen (proxy) / SLA.
+                  return (
+                    <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                      <StatCard label={t("analytics.totalEmails")} value={ta.totals.emails} tooltip={t("analytics.tooltipTotalEmails")} />
+                      <StatCard label={t("analytics.assigned")} value={ta.totals.assigned} tooltip={t("analytics.tooltipAssigned")} />
+                      <StatCard label={t("analytics.notHandled")} value={ta.totals.notHandled ?? Math.max(0, ta.totals.emails - (ta.totals.handled ?? ta.totals.assigned))} tooltip={t("analytics.tooltipNotHandled")} />
+                      <StatCardText label={t("analytics.avgHandlingTime")} value={formatDelay(ta.totals.avgHandlingMinutes)} tooltip={avgTooltip} />
+                      <StatCard label={t("analytics.openBreaches")} value={ta.slaSummary.openBreaches} accent={ta.slaSummary.openBreaches > 0 ? "red" : "default"} tooltip={t("analytics.tooltipOpenBreaches")} />
+                    </div>
+                  );
+                }
+                return (
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+                    <StatCard label={t("analytics.totalEmails")} value={ta.totals.emails} tooltip={t("analytics.tooltipTotalEmails")} />
+                    <StatCard label={t("analytics.handled")} value={ta.totals.handled ?? 0} tooltip={t("analytics.tooltipHandled")} />
+                    <StatCard label={t("analytics.notHandled")} value={ta.totals.notHandled ?? Math.max(0, ta.totals.emails - (ta.totals.handled ?? 0))} tooltip={t("analytics.tooltipNotHandled")} />
+                    <StatCardText label={t("analytics.avgHandlingTime")} value={formatDelay(ta.totals.avgHandlingMinutes)} tooltip={avgTooltip} />
+                    <StatCard label={t("analytics.openBreaches")} value={ta.slaSummary.openBreaches} accent={ta.slaSummary.openBreaches > 0 ? "red" : "default"} tooltip={t("analytics.tooltipOpenBreaches")} />
+                  </div>
+                );
+              })()}
+              <p className="text-[10px] text-[#8b95a8] leading-snug">
+                {t("analytics.scopeLegend")}
+              </p>
 
               <div className="bg-card rounded-lg border border-border p-3">
                 <h3 className="text-[12px] font-semibold text-white mb-2">{t("analytics.evolution")}</h3>
@@ -740,21 +751,41 @@ export default function BilanQuotidien() {
   );
 }
 
-function StatCard({ label, value, accent = "default" }: { label: string; value: number; accent?: "default" | "red" | "muted" }) {
+function StatLabel({ label, tooltip }: { label: string; tooltip?: string }) {
+  return (
+    <div className="flex items-center gap-1">
+      <p className="text-[10px] uppercase tracking-wider text-[#b8c5d6]">{label}</p>
+      {tooltip && (
+        <InfoTooltip>
+          <TooltipTrigger asChild>
+            <button type="button" aria-label="info" className="text-[#6b7280] hover:text-white transition-colors">
+              <HelpCircle className="w-3 h-3" />
+            </button>
+          </TooltipTrigger>
+          <TooltipContent className="max-w-[260px] text-[11px] leading-snug">
+            {tooltip}
+          </TooltipContent>
+        </InfoTooltip>
+      )}
+    </div>
+  );
+}
+
+function StatCard({ label, value, accent = "default", tooltip }: { label: string; value: number; accent?: "default" | "red" | "muted"; tooltip?: string }) {
   const isRed = accent === "red";
   const isMuted = accent === "muted";
   return (
     <div className={`rounded-lg border p-3 ${isRed ? "bg-red-500/10 border-red-500/20" : "bg-card border-border"}`}>
-      <p className="text-[10px] uppercase tracking-wider text-[#b8c5d6]">{label}</p>
+      <StatLabel label={label} tooltip={tooltip} />
       <p className={`text-xl font-bold ${isRed ? "text-red-400" : isMuted ? "text-[#b8c5d6]" : "text-white"}`}>{value}</p>
     </div>
   );
 }
 
-function StatCardText({ label, value }: { label: string; value: string }) {
+function StatCardText({ label, value, tooltip }: { label: string; value: string; tooltip?: string }) {
   return (
     <div className="rounded-lg border bg-card border-border p-3">
-      <p className="text-[10px] uppercase tracking-wider text-[#b8c5d6]">{label}</p>
+      <StatLabel label={label} tooltip={tooltip} />
       <p className="text-xl font-bold text-white">{value}</p>
     </div>
   );

@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Apstrādāto un neapstrādāto apjoms pēc projekta. E-pasti bez projekta šeit netiek skaitīti.",
     "tooltipPersonalMailboxes": "E-pasti, kas saņemti personīgajās pastkastēs (nav piesaistīti koplietotai pastkastei), grupēti pēc dalībnieka.",
     "tooltipTasksPerMember": "Atvērto uzdevumu sadalījums pēc dalībnieka. Punkti norāda uz pabeigtajiem un aizkavētajiem uzdevumiem noteiktajā periodā.",
-    "tooltipTasksPerProject": "Uzdevumi pa projektiem (atvērti, pabeigti, aizkavēti). Rindā „Bez projekta” apkopoti uzdevumi bez saistīta projekta."
+    "tooltipTasksPerProject": "Uzdevumi pa projektiem (atvērti, pabeigti, aizkavēti). Rindā „Bez projekta” apkopoti uzdevumi bez saistīta projekta.",
+    "notHandled": "Nepārvaldīti",
+    "tooltipTotalEmails": "Visi e-pasti, ko komanda saņēma periodā (personīgās + koplietotās pastkastes), visi statusi, izņemot dzēstos.",
+    "tooltipHandled": "Skaidra cilvēka darbība: atbilde nosūtīta, pārsūtīta vai noklikšķināts Atzīmēt kā apstrādātu.",
+    "tooltipAssigned": "E-pasti, kas piešķirti dalībniekam (mantotais režīms, gaidot handled_at migrāciju).",
+    "tooltipNotHandled": "Periodā saņemtie e-pasti, kas vēl nav atzīmēti kā apstrādāti.",
+    "tooltipAvgHandling": "Vidējais laiks starp saņemšanu un apstrādi (aprēķināts uz ≥ 5 apstrādātiem e-pastiem).",
+    "tooltipOpenBreaches": "Atbildes ar pārsniegtu mērķa SLA termiņu, kas vēl nav nosūtītas.",
+    "lowSampleHint": "Pietiekamu datu nav uzticamam vidējam rādītājam (periodā mazāk nekā 5 apstrādāti e-pasti).",
+    "scopeLegend": "Tvērums: visa komanda izvēlētajā periodā, visi statusi, izņemot dzēstos. Atšķiras no Iesūtnes, kas rāda tikai Jūsu atvērtos e-pastus.",
+    "migrationBannerActionable": "Lūdzu, lietojiet handled_at migrāciju Supabase (2026_05_03_emails_handled.sql), lai aktivizētu īstos „Apstrādāti\" un „Vid. laiks\" skaitītājus. Līdz tam skaitļi izmanto veco starpniekserveri."
   },
   "integrations": {
     "pageTitle": "Integrācijas",

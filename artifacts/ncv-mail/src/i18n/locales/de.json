@@ -4608,7 +4608,17 @@
     "tooltipProjects": "Bearbeitetes und nicht bearbeitetes Volumen pro Projekt. E-Mails ohne Projekt werden hier nicht gezählt.",
     "tooltipPersonalMailboxes": "In persönlichen Postfächern empfangene E-Mails (nicht an ein geteiltes Postfach gebunden), pro Mitglied gruppiert.",
     "tooltipTasksPerMember": "Verteilung der offenen Aufgaben pro Mitglied. Die Pillen zeigen erledigte und überfällige Aufgaben im Zeitraum.",
-    "tooltipTasksPerProject": "Aufgaben gestapelt pro Projekt (offen, erledigt, überfällig). Die Zeile „Ohne Projekt\" fasst Aufgaben ohne zugeordnetes Projekt zusammen."
+    "tooltipTasksPerProject": "Aufgaben gestapelt pro Projekt (offen, erledigt, überfällig). Die Zeile „Ohne Projekt\" fasst Aufgaben ohne zugeordnetes Projekt zusammen.",
+    "notHandled": "Nicht bearbeitet",
+    "tooltipTotalEmails": "Alle E-Mails, die das Team im Zeitraum erhalten hat (persönliche + freigegebene Postfächer), alle Status außer gelöscht.",
+    "tooltipHandled": "Explizite Aktion: Antwort gesendet, weitergeleitet oder „Als bearbeitet markieren\" geklickt.",
+    "tooltipAssigned": "E-Mails, die einem Mitglied zugewiesen sind (Legacy-Modus, bis zur handled_at-Migration).",
+    "tooltipNotHandled": "Im Zeitraum eingegangene E-Mails, die noch nicht als bearbeitet markiert sind.",
+    "tooltipAvgHandling": "Durchschnittliche Zeit zwischen Eingang und Bearbeitung (berechnet ab ≥ 5 bearbeiteten E-Mails).",
+    "tooltipOpenBreaches": "Antworten, deren SLA-Frist überschritten und die noch nicht gesendet wurden.",
+    "lowSampleHint": "Nicht genug Daten für einen verlässlichen Durchschnitt (weniger als 5 bearbeitete E-Mails im Zeitraum).",
+    "scopeLegend": "Umfang: gesamtes Team über den gewählten Zeitraum, alle Status außer gelöscht. Unterscheidet sich vom Posteingang, der nur Ihre offenen E-Mails zeigt.",
+    "migrationBannerActionable": "handled_at-Migration in Supabase ausstehend (2026_05_03_emails_handled.sql) — bitte anwenden, um die echten Zähler „Bearbeitet\" und „Ø Zeit\" zu aktivieren. Bis dahin nutzen die Zahlen den Legacy-Proxy."
   },
   "integrations": {
     "pageTitle": "Integrationen",

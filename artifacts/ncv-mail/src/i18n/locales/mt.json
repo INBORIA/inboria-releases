@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Volum trattat u mhux trattat skont il-proġett. L-emails mingħajr proġett mhumiex ikkunsidrati hawn.",
     "tooltipPersonalMailboxes": "Emails riċevuti fil-kaxxi personali (mhux marbuta ma' kaxxa maqsuma), gruppati skont il-membru.",
     "tooltipTasksPerMember": "Distribuzzjoni tal-attivitajiet miftuħa skont il-membru. Il-pastilli jindukaw l-attivitajiet it-tlestew u fil-lag matul il-perjodu.",
-    "tooltipTasksPerProject": "Attivitajiet imwaħħla skont il-proġett (miftuħa, it-tlestew, fil-lag). Il-linja « Barra mill-proġett » tikkumplimenta l-attivitajiet mingħajr proġett assoċjat."
+    "tooltipTasksPerProject": "Attivitajiet imwaħħla skont il-proġett (miftuħa, it-tlestew, fil-lag). Il-linja « Barra mill-proġett » tikkumplimenta l-attivitajiet mingħajr proġett assoċjat.",
+    "notHandled": "Mhux trattati",
+    "tooltipTotalEmails": "L-emails kollha li t-tim irċieva matul il-perjodu (kaxxi personali + kondiviżi), l-istatusi kollha ħlief imħassra.",
+    "tooltipHandled": "Azzjoni umana espliċita: tweġiba mibgħuta, mgħoddija jew klikk Immarka bħala ttrattat.",
+    "tooltipAssigned": "Emails assenjati lil membru (modalità antika, sakemm titlesta l-migrazzjoni handled_at).",
+    "tooltipNotHandled": "Emails irċevuti fil-perjodu li għadhom ma ġewx immarkati bħala ttrattati.",
+    "tooltipAvgHandling": "Ħin medju bejn il-wasla u t-trattament (ikkalkolat fuq ≥ 5 emails ittrattati).",
+    "tooltipOpenBreaches": "Tweġibiet li qabżu l-iskadenza tas-SLA u li għadhom ma ntbagħtux.",
+    "lowSampleHint": "Mhux biżżejjed dejta għal medja affidabbli (inqas minn 5 emails ittrattati fil-perjodu).",
+    "scopeLegend": "Skop: it-tim sħiħ fil-perjodu magħżul, l-istatusi kollha ħlief imħassra. Differenti mill-Inbox li juri biss l-emails miftuħin tagħkom.",
+    "migrationBannerActionable": "Jekk jogħġobkom applikaw il-migrazzjoni handled_at f'Supabase (2026_05_03_emails_handled.sql) biex jiġu attivati l-counters veri „Ittrattati\" u „Ħin medju\". Sa dakinhar, in-numri jużaw il-proxy l-antik."
   },
   "integrations": {
     "pageTitle": "Integrazjonijiet",

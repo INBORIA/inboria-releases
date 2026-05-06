@@ -481,7 +481,11 @@ router.get("/analytics/team", requireAuth, async (req, res): Promise<void> => {
         // handledMetricsEnabled permet au frontend d'afficher le bandeau de
         // migration sans masquer les chiffres.
         handled: totalHandled,
-        avgHandlingMinutes: handlingDelayCount > 0 ? Math.round(handlingDelaySumMin / handlingDelayCount) : null,
+        // Garde statistique : on n'expose une moyenne que si l'échantillon
+        // est >= 5 traités, sinon "—" côté client. Évite les "26 min sur 2"
+        // trompeurs.
+        avgHandlingMinutes: handlingDelayCount >= 5 ? Math.round(handlingDelaySumMin / handlingDelayCount) : null,
+        avgHandlingSampleSize: handlingDelayCount,
         period,
       },
       filters: { period, member: memberFilter, mailbox: mailboxFilter, project: projectFilter },
@@ -733,7 +737,8 @@ router.get("/analytics/team/export.pdf", requireAuth, async (req, res): Promise<
     const totalNotHandled = Math.max(0, totalEmails - totalHandled);
     let totalRespSum = 0, totalRespN = 0;
     for (const r of respStats.values()) { totalRespSum += r.sumMin; totalRespN += r.n; }
-    const avgDelay = totalRespN > 0 ? Math.round(totalRespSum / totalRespN) : null;
+    // Même garde statistique que l'API JSON : N >= 5 sinon "—".
+    const avgDelay = totalRespN >= 5 ? Math.round(totalRespSum / totalRespN) : null;
     doc.moveDown(0.6);
     doc.fontSize(11).fillColor("#0f172a").text(
       `Reçus : ${totalEmails}    ·    Traités : ${totalHandled}    ·    Non traités : ${totalNotHandled}    ·    Délai moyen : ${fmtDelay(avgDelay)}`,

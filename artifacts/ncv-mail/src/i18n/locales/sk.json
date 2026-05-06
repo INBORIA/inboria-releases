@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Objem spracovaných a nespracovaných e-mailov podľa projektu. E-maily bez projektu sa tu nezohľadňujú.",
     "tooltipPersonalMailboxes": "E-maily prijaté v osobných schránkach (nepriradené k zdieľanej schránke), zoskupené podľa člena.",
     "tooltipTasksPerMember": "Rozdelenie otvorených úloh podľa člena. Bodky označujú úlohy dokončené a po termíne za obdobie.",
-    "tooltipTasksPerProject": "Naskladané úlohy podľa projektu (otvorené, dokončené, po termíne). Riadok „Mimo projektu“ zhromažďuje úlohy bez priradeného projektu."
+    "tooltipTasksPerProject": "Naskladané úlohy podľa projektu (otvorené, dokončené, po termíne). Riadok „Mimo projektu“ zhromažďuje úlohy bez priradeného projektu.",
+    "notHandled": "Nespracované",
+    "tooltipTotalEmails": "Všetky e-maily, ktoré tím v období prijal (osobné + zdieľané schránky), všetky stavy okrem zmazaných.",
+    "tooltipHandled": "Výslovná ľudská akcia: odoslaná odpoveď, preposlanie alebo kliknutie Označiť ako vybavené.",
+    "tooltipAssigned": "E-maily pridelené členovi (starší režim, čakanie na migráciu handled_at).",
+    "tooltipNotHandled": "E-maily prijaté v období, ešte neoznačené ako vybavené.",
+    "tooltipAvgHandling": "Priemerný čas medzi prijatím a vybavením (počítaný z ≥ 5 vybavených e-mailov).",
+    "tooltipOpenBreaches": "Odpovede s prekročeným cieľovým termínom SLA, ešte neodoslané.",
+    "lowSampleHint": "Nedostatok údajov pre spoľahlivý priemer (v období menej než 5 vybavených e-mailov).",
+    "scopeLegend": "Rozsah: celý tím v zvolenom období, všetky stavy okrem zmazaných. Líši sa od Doručenej pošty, ktorá zobrazuje iba Vaše otvorené e-maily.",
+    "migrationBannerActionable": "Prosím, aplikujte migráciu handled_at v Supabase (2026_05_03_emails_handled.sql), aby sa aktivovali skutočné počítadlá „Vybavené\" a „Prie. čas\". Dovtedy čísla používajú staršiu proxy."
   },
   "integrations": {
     "pageTitle": "Integrácie",

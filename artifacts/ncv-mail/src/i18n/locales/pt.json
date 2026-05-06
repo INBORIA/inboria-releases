@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Volume tratado e não tratado por projeto. Os emails sem projeto não são contabilizados aqui.",
     "tooltipPersonalMailboxes": "Emails recebidos nas caixas pessoais (não associados a uma caixa partilhada), agrupados por membro.",
     "tooltipTasksPerMember": "Distribuição das tarefas abertas por membro. As pastilhas indicam as tarefas concluídas e em atraso no período.",
-    "tooltipTasksPerProject": "Tarefas empilhadas por projeto (abertas, concluídas, em atraso). A linha « Fora do projeto » agrupa as tarefas sem projeto associado."
+    "tooltipTasksPerProject": "Tarefas empilhadas por projeto (abertas, concluídas, em atraso). A linha « Fora do projeto » agrupa as tarefas sem projeto associado.",
+    "notHandled": "Não tratados",
+    "tooltipTotalEmails": "Todos os e-mails recebidos pela equipa no período (caixas pessoais + partilhadas), todos os estados exceto eliminados.",
+    "tooltipHandled": "Ação humana explícita: resposta enviada, reencaminhada ou clique em Marcar como tratado.",
+    "tooltipAssigned": "E-mails atribuídos a um membro (modo legacy, a aguardar a migração handled_at).",
+    "tooltipNotHandled": "E-mails recebidos no período ainda não marcados como tratados.",
+    "tooltipAvgHandling": "Tempo médio entre a receção e o tratamento (calculado sobre ≥ 5 e-mails tratados).",
+    "tooltipOpenBreaches": "Respostas com o prazo SLA ultrapassado e ainda por enviar.",
+    "lowSampleHint": "Dados insuficientes para uma média fiável (menos de 5 e-mails tratados no período).",
+    "scopeLegend": "Âmbito: equipa inteira no período selecionado, todos os estados exceto eliminados. Difere da Caixa de entrada, que apenas mostra os seus e-mails abertos.",
+    "migrationBannerActionable": "Migração handled_at pendente no Supabase (2026_05_03_emails_handled.sql) — aplique-a para ativar os contadores reais « Tratados » e « Prazo médio ». Entretanto, os valores usam o proxy legacy."
   },
   "integrations": {
     "pageTitle": "Integrações",

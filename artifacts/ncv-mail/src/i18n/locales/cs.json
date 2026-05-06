@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Objem zpracovaných a nezpracovaných e-mailů podle projektu. E-maily bez projektu se zde nepočítají.",
     "tooltipPersonalMailboxes": "E-maily přijaté v osobních schránkách (nepřipojené k sdílené schránce), seskupené podle člena.",
     "tooltipTasksPerMember": "Rozdělení otevřených úkolů podle člena. Tečky označují úkoly dokončené a po termínu za období.",
-    "tooltipTasksPerProject": "Skládané úkoly podle projektu (otevřené, dokončené, po termínu). Řádek „Mimo projekt“ sdružuje úkoly bez přidruženého projektu."
+    "tooltipTasksPerProject": "Skládané úkoly podle projektu (otevřené, dokončené, po termínu). Řádek „Mimo projekt“ sdružuje úkoly bez přidruženého projektu.",
+    "notHandled": "Nezpracované",
+    "tooltipTotalEmails": "Všechny e-maily, které tým v období obdržel (osobní + sdílené schránky), všechny stavy kromě smazaných.",
+    "tooltipHandled": "Výslovná lidská akce: odeslaná odpověď, přeposlání nebo klik Označit jako vyřešené.",
+    "tooltipAssigned": "E-maily přiřazené členovi (starší režim, do dokončení migrace handled_at).",
+    "tooltipNotHandled": "E-maily přijaté v období, ještě neoznačené jako vyřešené.",
+    "tooltipAvgHandling": "Průměrný čas mezi přijetím a vyřešením (počítán z ≥ 5 vyřešených e-mailů).",
+    "tooltipOpenBreaches": "Odpovědi s překročeným cílovým termínem SLA, dosud neodeslané.",
+    "lowSampleHint": "Nedostatek dat pro spolehlivý průměr (méně než 5 vyřešených e-mailů v období).",
+    "scopeLegend": "Rozsah: celý tým ve zvoleném období, všechny stavy kromě smazaných. Liší se od Doručené pošty, která zobrazuje pouze Vaše otevřené e-maily.",
+    "migrationBannerActionable": "Migrace handled_at je třeba aplikovat v Supabase (2026_05_03_emails_handled.sql) pro aktivaci skutečných počítadel „Vyřešené\" a „Prům. čas\". Do té doby čísla používají starší proxy."
   },
   "integrations": {
     "pageTitle": "Integrace",

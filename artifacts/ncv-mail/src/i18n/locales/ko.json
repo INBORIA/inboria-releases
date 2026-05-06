@@ -2967,7 +2967,17 @@
     "tooltipProjects": "프로젝트별 처리된 및 미처리된 작업량. 프로젝트가 없는 이메일은 여기서 계산되지 않습니다.",
     "tooltipPersonalMailboxes": "개인 메일함에서 수신된 이메일(공유 메일함에 연결되지 않음), 회원별로 그룹화됨.",
     "tooltipTasksPerMember": "회원별로 열린 작업의 분포. 원형 아이콘은 기간 동안 완료된 작업과 지연된 작업을 나타냅니다.",
-    "tooltipTasksPerProject": "프로젝트별 누적 작업(열림, 완료, 지연). '프로젝트 외' 행은 연결된 프로젝트가 없는 작업을 그룹화합니다."
+    "tooltipTasksPerProject": "프로젝트별 누적 작업(열림, 완료, 지연). '프로젝트 외' 행은 연결된 프로젝트가 없는 작업을 그룹화합니다.",
+    "notHandled": "처리되지 않음",
+    "tooltipTotalEmails": "기간 동안 팀이 수신한 모든 이메일입니다(개인 + 공유 메일함), 삭제됨을 제외한 모든 상태.",
+    "tooltipHandled": "명시적인 사람의 동작입니다: 답장 발송, 전달 또는 처리됨으로 표시 클릭.",
+    "tooltipAssigned": "구성원에게 할당된 이메일입니다(레거시 모드, handled_at 마이그레이션 대기 중).",
+    "tooltipNotHandled": "기간 중에 수신되었으나 아직 처리됨으로 표시되지 않은 이메일입니다.",
+    "tooltipAvgHandling": "수신부터 처리까지의 평균 시간입니다(처리된 이메일 5건 이상 기준).",
+    "tooltipOpenBreaches": "목표 SLA 기한을 초과하고 아직 발송되지 않은 답장입니다.",
+    "lowSampleHint": "신뢰 가능한 평균을 산출하기에 데이터가 부족합니다(해당 기간의 처리된 이메일이 5건 미만).",
+    "scopeLegend": "범위: 선택 기간의 팀 전체, 삭제됨을 제외한 모든 상태입니다. 귀하의 열린 이메일만 표시하는 받은편지함과는 다릅니다.",
+    "migrationBannerActionable": "실제 「처리됨」 및 「평균 시간」 카운터를 활성화하려면 Supabase에서 handled_at 마이그레이션(2026_05_03_emails_handled.sql)을 적용하십시오. 그때까지 수치는 레거시 프록시를 사용합니다."
   },
   "integrations": {
     "pageTitle": "통합",

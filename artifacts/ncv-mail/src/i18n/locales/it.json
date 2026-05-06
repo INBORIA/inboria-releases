@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Volume trattato e non trattato per progetto. Le email senza progetto non sono conteggiate qui.",
     "tooltipPersonalMailboxes": "Email ricevute nelle caselle personali (non collegate a una casella condivisa), raggruppate per membro.",
     "tooltipTasksPerMember": "Distribuzione delle attività aperte per membro. I pallini indicano le attività completate e in ritardo nel periodo.",
-    "tooltipTasksPerProject": "Attività impilate per progetto (aperte, completate, in ritardo). La linea « Fuori progetto » raggruppa le attività senza progetto associato."
+    "tooltipTasksPerProject": "Attività impilate per progetto (aperte, completate, in ritardo). La linea « Fuori progetto » raggruppa le attività senza progetto associato.",
+    "notHandled": "Non trattati",
+    "tooltipTotalEmails": "Tutte le email ricevute dal team nel periodo (caselle personali + condivise), tutti gli stati salvo eliminati.",
+    "tooltipHandled": "Azione umana esplicita: risposta inviata, inoltrata o clic su Segna come trattata.",
+    "tooltipAssigned": "Email assegnate a un membro (modalità legacy, in attesa della migrazione handled_at).",
+    "tooltipNotHandled": "Email ricevute nel periodo non ancora contrassegnate come trattate.",
+    "tooltipAvgHandling": "Tempo medio tra la ricezione e il trattamento (calcolato su ≥ 5 email trattate).",
+    "tooltipOpenBreaches": "Risposte oltre la scadenza SLA obiettivo e ancora non inviate.",
+    "lowSampleHint": "Dati insufficienti per una media affidabile (meno di 5 email trattate nel periodo).",
+    "scopeLegend": "Ambito: intero team nel periodo selezionato, tutti gli stati salvo eliminati. Differisce dalla Posta in arrivo, che mostra solo le sue email aperte.",
+    "migrationBannerActionable": "Migrazione handled_at in attesa in Supabase (2026_05_03_emails_handled.sql) — la applichi per attivare i contatori reali « Trattati » e « Tempo medio ». Nel frattempo, le cifre usano il proxy legacy."
   },
   "integrations": {
     "pageTitle": "Integrazioni",

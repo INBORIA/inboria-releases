@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Khối lượng đã xử lý và chưa xử lý theo dự án. Email không có dự án không được tính ở đây.",
     "tooltipPersonalMailboxes": "Email nhận được trong các hộp cá nhân (không liên kết với hộp chia sẻ), được nhóm theo thành viên.",
     "tooltipTasksPerMember": "Phân bổ nhiệm vụ mở theo thành viên. Các chấm chỉ ra nhiệm vụ đã hoàn thành và trễ hạn trong khoảng thời gian.",
-    "tooltipTasksPerProject": "Nhiệm vụ chồng chất theo dự án (mở, hoàn thành, trễ hạn). Dòng « Ngoài dự án » nhóm các nhiệm vụ không có dự án liên kết."
+    "tooltipTasksPerProject": "Nhiệm vụ chồng chất theo dự án (mở, hoàn thành, trễ hạn). Dòng « Ngoài dự án » nhóm các nhiệm vụ không có dự án liên kết.",
+    "notHandled": "Chưa được xử lý",
+    "tooltipTotalEmails": "Tất cả email mà nhóm đã nhận trong kỳ (hộp cá nhân + chia sẻ), tất cả trạng thái trừ đã xóa.",
+    "tooltipHandled": "Thao tác rõ ràng của con người: đã gửi trả lời, chuyển tiếp hoặc nhấp Đánh dấu đã xử lý.",
+    "tooltipAssigned": "Email được giao cho một thành viên (chế độ cũ, đang chờ di chuyển handled_at).",
+    "tooltipNotHandled": "Email nhận trong kỳ và chưa được đánh dấu là đã xử lý.",
+    "tooltipAvgHandling": "Thời gian trung bình giữa nhận và xử lý (tính trên ≥ 5 email đã xử lý).",
+    "tooltipOpenBreaches": "Các phản hồi đã quá hạn SLA và vẫn chưa được gửi.",
+    "lowSampleHint": "Không đủ dữ liệu để tính trung bình đáng tin cậy (dưới 5 email đã xử lý trong kỳ).",
+    "scopeLegend": "Phạm vi: toàn bộ nhóm trong kỳ đã chọn, tất cả trạng thái trừ đã xóa. Khác với Hộp thư đến chỉ hiển thị email đang mở của Quý khách.",
+    "migrationBannerActionable": "Cần áp dụng di chuyển handled_at trong Supabase (2026_05_03_emails_handled.sql) để kích hoạt bộ đếm thực « Đã xử lý » và « TG TB ». Trong thời gian chờ, số liệu dùng proxy cũ."
   },
   "integrations": {
     "pageTitle": "Tích hợp",

@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Toirt conradh agus neamhchomhoibrithe de réir tionscadail. Ní áirítear na ríomhphoist gan tionscadal anseo.",
     "tooltipPersonalMailboxes": "Ríomhphoist faighte i mboscaí pearsanta (nach bhfuil ceangailte le bosca roinnte), grúpáilte de réir baill.",
     "tooltipTasksPerMember": "Roinnt na tascanna oscailte de réir baill. Taispeánann na ciorcail na tascanna críochnaithe agus ar an moill ar an tréimhse.",
-    "tooltipTasksPerProject": "Tascanna stáit de réir tionscadail (oscailte, críochnaithe, ar an moill). Taispeánann an líne ‘Lasmuigh den tionscadal’ na tascanna gan tionscadal ceangailte."
+    "tooltipTasksPerProject": "Tascanna stáit de réir tionscadail (oscailte, críochnaithe, ar an moill). Taispeánann an líne ‘Lasmuigh den tionscadal’ na tascanna gan tionscadal ceangailte.",
+    "notHandled": "Neamhchomhoibrithe",
+    "tooltipTotalEmails": "Gach ríomhphost a fuair an fhoireann le linn na tréimhse (boscaí pearsanta + comhroinnte), gach stádas seachas iad scriosta.",
+    "tooltipHandled": "Gníomh daonna follasach: freagra seolta, ar aghaidh nó cliceáil ar Marcáil mar láimhseáilte.",
+    "tooltipAssigned": "Ríomhphoist a sannadh do chomhalta (mód oidhreachta, ag fanacht le himirce handled_at).",
+    "tooltipNotHandled": "Ríomhphoist a fuarthas sa tréimhse nár marcáladh fós mar láimhseáilte.",
+    "tooltipAvgHandling": "Meánam idir glacadh agus láimhseáil (ríofa ar ≥ 5 ríomhphost láimhseáilte).",
+    "tooltipOpenBreaches": "Freagraí a sháraigh sprioc SLA agus nach bhfuil seolta fós.",
+    "lowSampleHint": "Níl go leor sonraí ann le haghaidh meán iontaofa (níos lú ná 5 ríomhphost láimhseáilte sa tréimhse).",
+    "scopeLegend": "Scóip: an fhoireann iomlán le linn na tréimhse roghnaithe, gach stádas seachas iad scriosta. Difriúil ón mBosca Isteach a thaispeánann do ríomhphoist oscailte amháin.",
+    "migrationBannerActionable": "Le bhur dtoil, cuirigí imirce handled_at i bhfeidhm in Supabase (2026_05_03_emails_handled.sql) chun na fíorchuntair „Láimhseáilte\" agus „Meánam\" a ghníomhachtú. Idir an dá linn, úsáideann na figiúirí an seansheachfhreastalaí."
   },
   "integrations": {
     "pageTitle": "Comhoibrithe",

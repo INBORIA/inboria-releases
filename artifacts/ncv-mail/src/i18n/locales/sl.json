@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Obdelan in neobdelan volumen po projektu. E-pošte brez projekta niso vključene tukaj.",
     "tooltipPersonalMailboxes": "E-pošte prejete v osebnih predalih (niso povezane s skupnim predalom), razvrščene po članu.",
     "tooltipTasksPerMember": "Porazdelitev odprtih nalog po članu. Pikice označujejo zaključene in zamujene naloge v obdobju.",
-    "tooltipTasksPerProject": "Zložene naloge po projektu (odprte, zaključene, zamujene). Vrstica „Izven projekta“ združuje naloge brez povezanega projekta."
+    "tooltipTasksPerProject": "Zložene naloge po projektu (odprte, zaključene, zamujene). Vrstica „Izven projekta“ združuje naloge brez povezanega projekta.",
+    "notHandled": "Neobdelani",
+    "tooltipTotalEmails": "Vsa e-poštna sporočila, ki jih je ekipa prejela v obdobju (osebni + skupni nabiralniki), vsi statusi razen izbrisanih.",
+    "tooltipHandled": "Izrecno človeško dejanje: poslan odgovor, posredovano ali klik Označi kot obravnavano.",
+    "tooltipAssigned": "Sporočila, dodeljena članu (zastarel način, do migracije handled_at).",
+    "tooltipNotHandled": "Sporočila, prejeta v obdobju, ki še niso označena kot obravnavana.",
+    "tooltipAvgHandling": "Povprečni čas med prejemom in obravnavo (izračunano na ≥ 5 obravnavanih sporočilih).",
+    "tooltipOpenBreaches": "Odgovori s prekoračenim ciljnim rokom SLA, ki še niso bili poslani.",
+    "lowSampleHint": "Ni dovolj podatkov za zanesljivo povprečje (v obdobju manj kot 5 obravnavanih sporočil).",
+    "scopeLegend": "Obseg: celotna ekipa v izbranem obdobju, vsi statusi razen izbrisanih. Razlikuje se od Prejeto, ki prikazuje samo Vaša odprta sporočila.",
+    "migrationBannerActionable": "Prosimo, uporabite migracijo handled_at v Supabase (2026_05_03_emails_handled.sql) za aktiviranje pravih števcev „Obravnavano\" in „Povp. čas\". Do takrat številke uporabljajo starejši posrednik."
   },
   "integrations": {
     "pageTitle": "Integracije",

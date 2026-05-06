@@ -2967,7 +2967,17 @@
     "tooltipProjects": "按项目处理和未处理的邮件量。未关联项目的邮件不在此统计范围内。",
     "tooltipPersonalMailboxes": "在个人邮箱中收到的邮件（未关联共享邮箱），按成员分组。",
     "tooltipTasksPerMember": "按成员分配的开放任务分布。小圆点表示在此期间完成和延迟的任务。",
-    "tooltipTasksPerProject": "按项目堆叠的任务（开放、完成、延迟）。“超出项目”行汇总了没有关联项目的任务。"
+    "tooltipTasksPerProject": "按项目堆叠的任务（开放、完成、延迟）。“超出项目”行汇总了没有关联项目的任务。",
+    "notHandled": "未处理",
+    "tooltipTotalEmails": "团队在所选时段内收到的所有邮件（个人 + 共享邮箱），除已删除外的所有状态。",
+    "tooltipHandled": "明确的人工操作：已发送回复、转发或点击「标记为已处理」。",
+    "tooltipAssigned": "已分配给成员的邮件（旧模式，等待 handled_at 迁移完成）。",
+    "tooltipNotHandled": "在该时段内收到但尚未标记为已处理的邮件。",
+    "tooltipAvgHandling": "从接收至处理的平均时长（基于 ≥ 5 封已处理邮件计算）。",
+    "tooltipOpenBreaches": "已超过目标 SLA 时限且仍未发送的回复。",
+    "lowSampleHint": "数据不足，无法计算可靠的平均值（该时段内已处理邮件少于 5 封）。",
+    "scopeLegend": "范围：所选时段内的整个团队，除已删除外的所有状态。与仅显示您打开邮件的「收件箱」不同。",
+    "migrationBannerActionable": "请在 Supabase 中应用 handled_at 迁移（2026_05_03_emails_handled.sql），以启用真实的「已处理」和「平均时长」计数器。在此之前，数字使用旧代理。"
   },
   "integrations": {
     "pageTitle": "集成",

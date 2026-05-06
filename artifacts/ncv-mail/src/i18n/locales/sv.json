@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Behandlad och obehandlad volym per projekt. E-post utan projekt räknas inte här.",
     "tooltipPersonalMailboxes": "E-post mottagna i personliga inkorgar (inte kopplade till en delad inkorg), grupperade per medlem.",
     "tooltipTasksPerMember": "Fördelning av öppna uppgifter per medlem. Prickarna indikerar avslutade och försenade uppgifter under perioden.",
-    "tooltipTasksPerProject": "Staplade uppgifter per projekt (öppna, avslutade, försenade). Raden 'Utanför projekt' grupperar uppgifter utan kopplat projekt."
+    "tooltipTasksPerProject": "Staplade uppgifter per projekt (öppna, avslutade, försenade). Raden 'Utanför projekt' grupperar uppgifter utan kopplat projekt.",
+    "notHandled": "Obehandlade",
+    "tooltipTotalEmails": "Alla e-postmeddelanden som teamet tagit emot under perioden (personliga + delade brevlådor), alla statusar utom borttagna.",
+    "tooltipHandled": "Tydlig mänsklig åtgärd: svar skickat, vidarebefordrat eller Markera som hanterat.",
+    "tooltipAssigned": "E-post tilldelad en medlem (legacy-läge, i väntan på handled_at-migreringen).",
+    "tooltipNotHandled": "E-post mottagen under perioden som ännu inte markerats som hanterad.",
+    "tooltipAvgHandling": "Genomsnittlig tid mellan mottagning och hantering (beräknat på ≥ 5 hanterade meddelanden).",
+    "tooltipOpenBreaches": "Svar vars SLA-tid passerats och som ännu inte skickats.",
+    "lowSampleHint": "Otillräckliga data för ett tillförlitligt medelvärde (färre än 5 hanterade meddelanden under perioden).",
+    "scopeLegend": "Omfattning: hela teamet under vald period, alla statusar utom borttagna. Skiljer sig från Inkorgen som endast visar era öppna meddelanden.",
+    "migrationBannerActionable": "handled_at-migrering att tillämpa i Supabase (2026_05_03_emails_handled.sql) för att aktivera de riktiga räknarna ”Hanterade” och ”Snitt-tid”. Tills vidare använder siffrorna den äldre proxyn."
   },
   "integrations": {
     "pageTitle": "Integrationer",

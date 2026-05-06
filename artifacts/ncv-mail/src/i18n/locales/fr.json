@@ -2968,7 +2968,17 @@
     "tooltipProjects": "Volume traité et non traité par projet. Les emails sans projet ne sont pas comptés ici.",
     "tooltipPersonalMailboxes": "Emails reçus dans les boîtes personnelles (non rattachés à une boîte partagée), groupés par membre.",
     "tooltipTasksPerMember": "Répartition des tâches ouvertes par membre. Les pastilles indiquent les tâches terminées et en retard sur la période.",
-    "tooltipTasksPerProject": "Tâches empilées par projet (ouvertes, terminées, en retard). La ligne « Hors projet » regroupe les tâches sans projet associé."
+    "tooltipTasksPerProject": "Tâches empilées par projet (ouvertes, terminées, en retard). La ligne « Hors projet » regroupe les tâches sans projet associé.",
+    "notHandled": "Non traités",
+    "tooltipTotalEmails": "Tous les emails reçus par l'équipe sur la période (boîtes personnelles + partagées), tous statuts sauf supprimés.",
+    "tooltipHandled": "Action humaine explicite : réponse envoyée, transfert ou clic Marquer traité.",
+    "tooltipAssigned": "Emails attribués à un membre (mode legacy, en attendant la migration handled_at).",
+    "tooltipNotHandled": "Emails reçus sur la période et pas encore marqués comme traités.",
+    "tooltipAvgHandling": "Temps moyen entre la réception et le traitement (calculé sur ≥ 5 emails traités).",
+    "tooltipOpenBreaches": "Réponses dont le délai SLA cible est dépassé et toujours non envoyées.",
+    "lowSampleHint": "Pas assez de données pour une moyenne fiable (moins de 5 emails traités sur la période).",
+    "scopeLegend": "Périmètre : équipe entière sur la période sélectionnée, tous statuts sauf supprimés. Diffère de la Réception qui n'affiche que vos emails ouverts.",
+    "migrationBannerActionable": "Migration handled_at à appliquer dans Supabase (2026_05_03_emails_handled.sql) pour activer les vrais compteurs « Traités » et « Délai moyen ». En attendant, les chiffres utilisent l'ancien proxy."
   },
   "integrations": {
     "pageTitle": "Intégrations",

@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Proje başına işlenmiş ve işlenmemiş hacim. Projesiz e-postalar burada sayılmamaktadır.",
     "tooltipPersonalMailboxes": "Kişisel kutularda alınan e-postalar (paylaşılan kutuya bağlı olmayan), üye bazında gruplandırılmıştır.",
     "tooltipTasksPerMember": "Açık görevlerin üye bazında dağılımı. Daireler, dönem içindeki tamamlanan ve gecikmiş görevleri göstermektedir.",
-    "tooltipTasksPerProject": "Projeye göre yığılmış görevler (açık, tamamlanmış, gecikmiş). 'Proje dışı' satırı, ilişkilendirilmemiş görevleri gruplar."
+    "tooltipTasksPerProject": "Projeye göre yığılmış görevler (açık, tamamlanmış, gecikmiş). 'Proje dışı' satırı, ilişkilendirilmemiş görevleri gruplar.",
+    "notHandled": "İşlenmemiş",
+    "tooltipTotalEmails": "Ekibin dönem boyunca aldığı tüm e-postalar (kişisel + paylaşılan kutular), silinmiş hariç tüm durumlar.",
+    "tooltipHandled": "Açık insan eylemi: yanıt gönderildi, iletildi veya İşlendi olarak işaretlendi.",
+    "tooltipAssigned": "Bir üyeye atanmış e-postalar (eski mod, handled_at geçişi beklenirken).",
+    "tooltipNotHandled": "Dönem içinde alınan ve henüz işlenmiş olarak işaretlenmemiş e-postalar.",
+    "tooltipAvgHandling": "Alma ile işleme arasındaki ortalama süre (≥ 5 işlenen e-posta üzerinden hesaplanır).",
+    "tooltipOpenBreaches": "Hedef SLA süresi aşılmış ve hâlâ gönderilmemiş yanıtlar.",
+    "lowSampleHint": "Güvenilir bir ortalama için yeterli veri yok (dönemde 5'ten az işlenen e-posta).",
+    "scopeLegend": "Kapsam: seçilen dönemde tüm ekip, silinmiş hariç tüm durumlar. Yalnızca açık e-postalarınızı gösteren Gelen Kutusu'ndan farklıdır.",
+    "migrationBannerActionable": "Gerçek „İşlendi\" ve „Ort. süre\" sayaçlarını etkinleştirmek için Supabase'de handled_at geçişini (2026_05_03_emails_handled.sql) uygulayın. O zamana kadar rakamlar eski proxy'yi kullanır."
   },
   "integrations": {
     "pageTitle": "Entegrasyonlar",

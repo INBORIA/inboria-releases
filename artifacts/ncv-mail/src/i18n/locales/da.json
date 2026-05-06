@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Behandlet og ikke behandlet volumen pr. projekt. E-mails uden projekt tælles ikke her.",
     "tooltipPersonalMailboxes": "E-mails modtaget i personlige postkasser (ikke knyttet til en delt postkasse), grupperet pr. medlem.",
     "tooltipTasksPerMember": "Fordeling af åbne opgaver pr. medlem. De små cirkler angiver afsluttede og forsinkede opgaver i perioden.",
-    "tooltipTasksPerProject": "Stablede opgaver pr. projekt (åbne, afsluttede, forsinkede). Linjen « Uden projekt » grupperer opgaver uden tilknyttet projekt."
+    "tooltipTasksPerProject": "Stablede opgaver pr. projekt (åbne, afsluttede, forsinkede). Linjen « Uden projekt » grupperer opgaver uden tilknyttet projekt.",
+    "notHandled": "Ikke behandlet",
+    "tooltipTotalEmails": "Alle mails modtaget af teamet i perioden (personlige + delte postkasser), alle statusser undtagen slettede.",
+    "tooltipHandled": "Eksplicit menneskelig handling: svar sendt, videresendt eller klik på Marker som håndteret.",
+    "tooltipAssigned": "Mails tildelt et medlem (legacy-tilstand, afventer handled_at-migreringen).",
+    "tooltipNotHandled": "Mails modtaget i perioden, der endnu ikke er markeret som håndteret.",
+    "tooltipAvgHandling": "Gennemsnitlig tid mellem modtagelse og håndtering (beregnet på ≥ 5 håndterede mails).",
+    "tooltipOpenBreaches": "Svar, hvis SLA-frist er overskredet og stadig ikke sendt.",
+    "lowSampleHint": "Ikke nok data til et pålideligt gennemsnit (færre end 5 håndterede mails i perioden).",
+    "scopeLegend": "Omfang: hele teamet i den valgte periode, alle statusser undtagen slettede. Adskiller sig fra Indbakken, som kun viser jeres åbne mails.",
+    "migrationBannerActionable": "handled_at-migrering skal anvendes i Supabase (2026_05_03_emails_handled.sql) for at aktivere de rigtige tællere „Håndteret\" og „Gns. tid\". Indtil da bruger tallene den gamle proxy."
   },
   "integrations": {
     "pageTitle": "Integrationer",

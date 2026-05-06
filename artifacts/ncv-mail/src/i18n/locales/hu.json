@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Feldolgozott és feldolgozatlan volumen projektenként. A projekt nélküli e-mailek nem jelennek meg itt.",
     "tooltipPersonalMailboxes": "Személyes postafiókba érkezett e-mailek (nem kapcsolódnak megosztott postafiókhoz), tag szerint csoportosítva.",
     "tooltipTasksPerMember": "Nyitott feladatok eloszlása tag szerint. A pöttyök a befejezett és késésben lévő feladatokat jelzik az időszak alatt.",
-    "tooltipTasksPerProject": "Halmozott feladatok projektenként (nyitott, befejezett, késésben). A « Projekt nélküli » sor a projekt nélküli feladatokat csoportosítja."
+    "tooltipTasksPerProject": "Halmozott feladatok projektenként (nyitott, befejezett, késésben). A « Projekt nélküli » sor a projekt nélküli feladatokat csoportosítja.",
+    "notHandled": "Feldolgozatlan",
+    "tooltipTotalEmails": "Minden e-mail, amelyet a csapat az időszakban kapott (személyes + megosztott postafiókok), a törölt állapot kivételével.",
+    "tooltipHandled": "Kifejezett emberi művelet: válasz elküldve, továbbítás vagy a Kezeltnek jelölés gomb.",
+    "tooltipAssigned": "Egy taghoz rendelt e-mailek (régi mód, a handled_at migrációra várva).",
+    "tooltipNotHandled": "Az időszakban érkezett, még nem kezeltnek jelölt e-mailek.",
+    "tooltipAvgHandling": "Átlagos idő a fogadás és a kezelés között (≥ 5 kezelt e-mailen számolva).",
+    "tooltipOpenBreaches": "A célzott SLA-határidőt túllépett, még el nem küldött válaszok.",
+    "lowSampleHint": "Nincs elég adat megbízható átlaghoz (kevesebb mint 5 kezelt e-mail az időszakban).",
+    "scopeLegend": "Hatókör: a teljes csapat a kiválasztott időszakban, a törölt állapot kivételével. Eltér a Beérkezettektől, amely csak az Ön nyitott e-mailjeit mutatja.",
+    "migrationBannerActionable": "A handled_at migrációt alkalmazni kell a Supabase-ben (2026_05_03_emails_handled.sql), hogy a valódi „Kezelt\" és „Átl. idő\" számlálók aktiválódjanak. Addig az adatok a régi proxyt használják."
   },
   "integrations": {
     "pageTitle": "Integrációk",

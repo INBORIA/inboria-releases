@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Volume yang diproses dan tidak diproses per proyek. Email tanpa proyek tidak dihitung di sini.",
     "tooltipPersonalMailboxes": "Email yang diterima di kotak pribadi (tidak terhubung ke kotak bersama), dikelompokkan per anggota.",
     "tooltipTasksPerMember": "Distribusi tugas terbuka per anggota. Titik menunjukkan tugas yang telah selesai dan terlambat selama periode tersebut.",
-    "tooltipTasksPerProject": "Tugas terakumulasi per proyek (terbuka, selesai, terlambat). Baris 'Di luar proyek' mengelompokkan tugas tanpa proyek terkait."
+    "tooltipTasksPerProject": "Tugas terakumulasi per proyek (terbuka, selesai, terlambat). Baris 'Di luar proyek' mengelompokkan tugas tanpa proyek terkait.",
+    "notHandled": "Belum diproses",
+    "tooltipTotalEmails": "Semua email yang diterima tim selama periode (kotak pribadi + bersama), semua status kecuali terhapus.",
+    "tooltipHandled": "Tindakan manusia eksplisit: balasan terkirim, diteruskan, atau klik Tandai ditangani.",
+    "tooltipAssigned": "Email yang ditugaskan kepada anggota (mode lawas, menunggu migrasi handled_at).",
+    "tooltipNotHandled": "Email yang diterima dalam periode dan belum ditandai sebagai ditangani.",
+    "tooltipAvgHandling": "Rata-rata waktu antara penerimaan dan penanganan (dihitung dari ≥ 5 email yang ditangani).",
+    "tooltipOpenBreaches": "Balasan yang melewati tenggat SLA dan masih belum terkirim.",
+    "lowSampleHint": "Data tidak cukup untuk rata-rata yang andal (kurang dari 5 email yang ditangani dalam periode).",
+    "scopeLegend": "Cakupan: seluruh tim selama periode terpilih, semua status kecuali terhapus. Berbeda dengan Kotak Masuk yang hanya menampilkan email terbuka Anda.",
+    "migrationBannerActionable": "Silakan terapkan migrasi handled_at di Supabase (2026_05_03_emails_handled.sql) untuk mengaktifkan penghitung sebenarnya «Ditangani» dan «Waktu rata-rata». Sementara itu, angka menggunakan proksi lama."
   },
   "integrations": {
     "pageTitle": "Integrasi",

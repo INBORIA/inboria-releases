@@ -2967,7 +2967,17 @@
     "tooltipProjects": "Objętość przetworzona i nieprzetworzona według projektu. Maile bez projektu nie są tutaj uwzględniane.",
     "tooltipPersonalMailboxes": "Maile otrzymane w skrzynkach osobistych (nieprzypisane do skrzynki współdzielonej), zgrupowane według członka.",
     "tooltipTasksPerMember": "Rozkład otwartych zadań według członka. Kropki wskazują na zadania zakończone i spóźnione w danym okresie.",
-    "tooltipTasksPerProject": "Zadania zgrupowane według projektu (otwarte, zakończone, spóźnione). Linia „Poza projektem” grupuje zadania bez przypisanego projektu."
+    "tooltipTasksPerProject": "Zadania zgrupowane według projektu (otwarte, zakończone, spóźnione). Linia „Poza projektem” grupuje zadania bez przypisanego projektu.",
+    "notHandled": "Nieprzetworzone",
+    "tooltipTotalEmails": "Wszystkie e-maile odebrane przez zespół w okresie (skrzynki osobiste + wspólne), wszystkie statusy oprócz usuniętych.",
+    "tooltipHandled": "Wyraźne działanie człowieka: wysłana odpowiedź, przekazanie lub kliknięcie Oznacz jako obsłużone.",
+    "tooltipAssigned": "E-maile przypisane do członka (tryb legacy, w oczekiwaniu na migrację handled_at).",
+    "tooltipNotHandled": "E-maile odebrane w okresie i jeszcze nie oznaczone jako obsłużone.",
+    "tooltipAvgHandling": "Średni czas między odbiorem a obsługą (liczony na ≥ 5 obsłużonych e-mailach).",
+    "tooltipOpenBreaches": "Odpowiedzi po terminie SLA, wciąż niewysłane.",
+    "lowSampleHint": "Za mało danych, aby uzyskać wiarygodną średnią (mniej niż 5 obsłużonych e-maili w okresie).",
+    "scopeLegend": "Zakres: cały zespół w wybranym okresie, wszystkie statusy oprócz usuniętych. Różni się od Skrzynki odbiorczej, która pokazuje tylko Państwa otwarte e-maile.",
+    "migrationBannerActionable": "Migracja handled_at do wdrożenia w Supabase (2026_05_03_emails_handled.sql) — proszę ją zastosować, aby aktywować właściwe liczniki „Obsłużone\" i „Śr. czas\". Tymczasem liczby używają starego proxy."
   },
   "integrations": {
     "pageTitle": "Integracje",
