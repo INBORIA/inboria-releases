@@ -260,7 +260,11 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
 
       {rightSidebar && (
         <aside className="hidden md:flex md:fixed md:inset-y-0 md:right-0 md:w-[260px] flex-col bg-sidebar border-l border-[#1f2937]">
-          <div className="h-28 shrink-0 border-b border-[#1f2937]" />
+          <div className="h-16 shrink-0 border-b border-[#1f2937] px-3 flex items-center justify-end gap-1.5">
+            <NotificationBell />
+            <LanguageSwitcher />
+            <UserMenu />
+          </div>
           <div className="flex-1 overflow-y-auto px-2 py-2.5">
             {rightSidebar}
           </div>
@@ -289,9 +293,11 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
           <div className="flex items-center gap-2">
             <InboriaChatButton />
             <AutopilotIndicator />
-            <NotificationBell />
-            <LanguageSwitcher />
-            <UserMenu />
+            <div className={cn("flex items-center gap-2", rightSidebar && "md:hidden")}>
+              <NotificationBell />
+              <LanguageSwitcher />
+              <UserMenu />
+            </div>
           </div>
         </div>
 
