@@ -6,6 +6,38 @@ import { isPaymentsEnabled } from "@/lib/feature-flags";
 import { ErrorBoundary } from "@/components/error-boundary";
 import { registerSW } from "virtual:pwa-register";
 
+if (typeof document !== "undefined") {
+  const neutralizeBodyLock = () => {
+    const body = document.body;
+    if (!body) return;
+    const style = body.style;
+    if (style.paddingRight) style.paddingRight = "";
+    if (style.marginRight) style.marginRight = "";
+    if (style.overflow === "hidden") style.overflow = "";
+    if (style.overflowY === "hidden") style.overflowY = "";
+    const html = document.documentElement;
+    if (html.style.paddingRight) html.style.paddingRight = "";
+    if (html.style.overflow === "hidden") html.style.overflow = "";
+    if (html.hasAttribute("data-scroll-locked")) {
+      html.removeAttribute("data-scroll-locked");
+    }
+  };
+  const observer = new MutationObserver(neutralizeBodyLock);
+  const start = () => {
+    neutralizeBodyLock();
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ["style", "data-scroll-locked"],
+    });
+    observer.observe(document.body, {
+      attributes: true,
+      attributeFilter: ["style", "data-scroll-locked"],
+    });
+  };
+  if (document.body) start();
+  else document.addEventListener("DOMContentLoaded", start, { once: true });
+}
+
 if (typeof window !== "undefined") {
   if (import.meta.env.DEV) {
     // In development, actively unregister any previously installed service
