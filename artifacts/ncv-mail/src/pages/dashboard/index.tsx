@@ -4883,13 +4883,9 @@ export default function Dashboard() {
                 "Assignes". Les compteurs viennent de /category-counts qui
                 couvre toute l'org (pas filtres par assignee), donc
                 l'afficher serait trompeur — l'utilisateur a vu "720"
-                alors que sa liste assignee comptait 0 emails.
-                Negative margin md:-mt-[178px] : lift le panneau pour
-                aligner son haut avec la sidebar gauche du DashboardLayout
-                (compense la hauteur du header inbox : search+tabs+Priorite
-                +CRM bands ≈ 178px). Look premium type Outlook/Linear. */}
+                alors que sa liste assignee comptait 0 emails. */}
             {!assigneeFilter && (
-            <div className="w-full md:w-[240px] shrink-0 space-y-3 md:-mt-[178px] md:relative md:z-[1]">
+            <div className="w-full md:w-[240px] shrink-0 space-y-3">
               {/* Note : le panneau HubSpot a été déplacé exclusivement dans la
                   vue détail (cf. branche `if (selectedEmail) return ...` plus
                   haut). Ici on est forcément en vue liste (selectedEmail
