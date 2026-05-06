@@ -1424,7 +1424,7 @@
       "realtimeNotifications": "Obvestila v realnem času",
       "realtimeNotificationsDesc": "Zvonjenje obvestil, oznaka neprebranih, opozorila o dodelitvi. Ostajate obveščeni, ne da bi spremenili zaslon.",
       "multilingual": "Večjezični vmesnik",
-      "multilingualDesc": "Na voljo v francoščini, angleščini, nizozemščini, nemščini in španščini. Vsak član ekipe dela v svojem jeziku.",
+      "multilingualDesc": "Na voljo v 43 jezikih — od francoščine do japonščine, vključno z arabščino, korejščino in kitajščino. Vsak član ekipe dela v svojem jeziku.",
       "autopilotMode": "Samodejno razvrščanje v ozadju",
       "autopilotModeDesc": "Inboria obdeluje vsako dohodno e-pošto: prioriteta, kategorija, povzetek, zaznavanje neplačanih računov, izvlečenje nalog. Nato se odločite, kaj arhivirate, izbrišete ali na kaj odgovorite."
     },
@@ -1581,7 +1581,7 @@
       "assistantH1": "Takojšnji odgovori o funkcionalnostih",
       "assistantH2": "Na voljo 24/7 iz nadzornega plošče",
       "assistantH3": "Kontekstualno glede na Vaš načrt in nastavitve",
-      "assistantH4": "V francoščini, angleščini, nizozemščini, nemščini in španščini",
+      "assistantH4": "V 43 jezikih, vključno z arabščino, japonščino in kitajščino",
       "securityTitle": "Varnost in zaupnost",
       "securityDesc": "Zaščito Vaših podatkov jemljemo tako resno kot zmogljivost Inboria.",
       "transparency": "Popolna preglednost",

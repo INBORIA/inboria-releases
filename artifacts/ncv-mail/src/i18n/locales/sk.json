@@ -1424,7 +1424,7 @@
       "realtimeNotifications": "Oznámenia v reálnom čase",
       "realtimeNotificationsDesc": "Ikona oznámení, odznak neprečítaných, upozornenia na priradenie. Zostávate informovaní bez zmeny obrazovky.",
       "multilingual": "Viacjazyčné rozhranie",
-      "multilingualDesc": "Dostupné vo francúzštine, angličtine, holandčine, nemčine a španielčine. Každý člen tímu pracuje vo svojom jazyku.",
+      "multilingualDesc": "Dostupné v 43 jazykoch — od francúzštiny po japončinu, vrátane arabčiny, kórejčiny a čínštiny. Každý člen tímu pracuje vo svojom jazyku.",
       "autopilotMode": "Automatické triedenie na pozadí",
       "autopilotModeDesc": "Inboria spracováva každý prichádzajúci e-mail: priorita, kategória, súhrn, detekcia nezaplatenej faktúry, extrakcia úloh. Potom sa rozhodnete, čo archivujete, mažete alebo na čo odpoviete."
     },
@@ -1581,7 +1581,7 @@
       "assistantH1": "Okamžité odpovede na funkcie",
       "assistantH2": "Dostupný 24 hodín denne z dashboardu",
       "assistantH3": "Kontextový k Vášmu plánu a nastaveniam",
-      "assistantH4": "V angličtine, holandčine, nemčine a španielčine",
+      "assistantH4": "V 43 jazykoch, vrátane arabčiny, japončiny a čínštiny",
       "securityTitle": "Bezpečnosť a ochrana súkromia",
       "securityDesc": "Ochranu Vašich údajov berieme rovnako vážne ako výkon Inboria.",
       "transparency": "Úplná transparentnosť",

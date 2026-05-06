@@ -1424,7 +1424,7 @@
       "realtimeNotifications": "Reaalajas teavitused",
       "realtimeNotificationsDesc": "Teavituste kell, lugemata teatiste ikoon, määramisalased teated. Te jääte informeerituks ilma ekraani vahetamata.",
       "multilingual": "Mitmekeelne liides",
-      "multilingualDesc": "Saadaval prantsuse, inglise, hollandi, saksa ja hispaania keeles. Iga meeskonna liige töötab oma keeles.",
+      "multilingualDesc": "Saadaval 43 keeles — prantsuse keelest jaapani keeleni, sealhulgas araabia, korea ja hiina keeles. Iga meeskonnaliige töötab oma keeles.",
       "autopilotMode": "Automaatne sorteerimine taustal",
       "autopilotModeDesc": "Inboria töötleb iga sissetulevat e-kirja: prioriteet, kategooria, kokkuvõte, maksmata arve tuvastamine, ülesannete väljavõtt. Te otsustate seejärel, mida arhiveerida, kustutada või millele vastata."
     },
@@ -1581,7 +1581,7 @@
       "assistantH1": "Kohesed vastused funktsioonide kohta",
       "assistantH2": "Saadaval 24/7 dashboardilt",
       "assistantH3": "Kontekstuaalne Teie plaani ja seadistuste järgi",
-      "assistantH4": "Prantsuse, inglise, hollandi, saksa ja hispaania keeles",
+      "assistantH4": "43 keeles, sealhulgas araabia, jaapani ja hiina keeles",
       "securityTitle": "Turvalisus ja privaatsus",
       "securityDesc": "Me võtame Teie andmete kaitse sama tõsiselt kui Inboria jõudlust.",
       "transparency": "Täielik läbipaistvus",

@@ -1424,7 +1424,7 @@
       "realtimeNotifications": "Notifikationer i realtid",
       "realtimeNotificationsDesc": "Notifikationsklokke, badge for ulæste, tildelingsalarmer. Du forbliver informeret uden at skifte skærm.",
       "multilingual": "Flersproget grænseflade",
-      "multilingualDesc": "Tilgængelig på fransk, engelsk, hollandsk, tysk og spansk. Hvert teammedlem arbejder på sit eget sprog.",
+      "multilingualDesc": "Tilgængelig på 43 sprog — fra fransk til japansk, herunder arabisk, koreansk og kinesisk. Hvert teammedlem arbejder på sit eget sprog.",
       "autopilotMode": "Automatisk sortering i baggrunden",
       "autopilotModeDesc": "Inboria behandler hver indkommende e-mail: prioritet, kategori, resumé, detektion af ubetalte fakturaer, opgaveudtrækning. Du beslutter derefter, hvad du arkiverer, sletter eller svarer på."
     },
@@ -1581,7 +1581,7 @@
       "assistantH1": "Øjeblikkelige svar om funktionerne",
       "assistantH2": "Tilgængelig 24/7 fra dashboardet",
       "assistantH3": "Kontekstuel til din plan og dine indstillinger",
-      "assistantH4": "På fransk, engelsk, hollandsk, tysk og spansk",
+      "assistantH4": "På 43 sprog, herunder arabisk, japansk og kinesisk",
       "securityTitle": "Sikkerhed og fortrolighed",
       "securityDesc": "Vi tager beskyttelsen af dine data lige så alvorligt som Inborias ydeevne.",
       "transparency": "Total gennemsigtighed",

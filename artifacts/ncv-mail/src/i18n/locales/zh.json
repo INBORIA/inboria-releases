@@ -1424,7 +1424,7 @@
       "realtimeNotifications": "实时通知",
       "realtimeNotificationsDesc": "通知铃声、未读邮件徽章、分配提醒。您无需切换屏幕即可保持信息更新。",
       "multilingual": "多语言界面",
-      "multilingualDesc": "支持法语、英语、荷兰语、德语和西班牙语。每个团队成员都可以使用自己的语言工作。",
+      "multilingualDesc": "支持 43 种语言 — 从法语到日语，包括阿拉伯语、韩语和中文。团队的每位成员都可以用自己的语言工作。",
       "autopilotMode": "后台自动分类",
       "autopilotModeDesc": "Inboria 处理每封收到的邮件：优先级、类别、摘要、未付款发票检测、任务提取。然后您决定归档、删除或回复什么。"
     },
@@ -1581,7 +1581,7 @@
       "assistantH1": "关于功能的即时回答",
       "assistantH2": "全天候 24 小时在仪表板上可用",
       "assistantH3": "与您的计划和设置相关",
-      "assistantH4": "支持法语、英语、荷兰语、德语和西班牙语",
+      "assistantH4": "支持 43 种语言，包括阿拉伯语、日语和中文",
       "securityTitle": "安全与隐私",
       "securityDesc": "我们对您的数据保护的重视程度与 Inboria 的性能同样重要。",
       "transparency": "完全透明",
