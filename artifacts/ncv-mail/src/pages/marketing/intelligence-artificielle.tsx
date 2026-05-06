@@ -44,11 +44,6 @@ export default function IntelligenceArtificielle() {
   const { t } = useTranslation();
   const paymentsEnabled = isPaymentsEnabled();
 
-  const heroStats = [
-    { value: t("marketing.inboriaChat.heroStat1Value"), label: t("marketing.inboriaChat.heroStat1Label") },
-    { value: t("marketing.inboriaChat.heroStat3Value"), label: t("marketing.inboriaChat.heroStat3Label") },
-  ];
-
   const faqs = [
     { q: t("marketing.inboriaChat.faq1q"), a: t("marketing.inboriaChat.faq1a") },
     { q: t("marketing.inboriaChat.faq2q"), a: t("marketing.inboriaChat.faq2a") },
@@ -86,14 +81,6 @@ export default function IntelligenceArtificielle() {
             </Link>
           </div>
 
-          <div className="mt-12 grid grid-cols-3 gap-6 max-w-lg mx-auto">
-            {heroStats.map((s) => (
-              <div key={s.label}>
-                <p className="text-2xl font-bold text-white">{s.value}</p>
-                <p className="text-[11px] text-[#b8c5d6] mt-1">{s.label}</p>
-              </div>
-            ))}
-          </div>
         </div>
       </section>
 
