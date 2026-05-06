@@ -259,12 +259,17 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
       </div>
 
       {/* Sidebar droite optionnelle (ex. panneau Categories de l'inbox) :
-          positionnee en fixed top-28 (sous le bandeau logo) pour aligner
-          son haut au pixel pres avec le premier item de la sidebar
-          gauche (« Reception »). Look 3 colonnes type Outlook/Linear. */}
+          mirror EXACT de la structure de la sidebar gauche — bloc h-28
+          vide qui mime le bandeau logo, puis zone scrollable avec
+          padding `px-2 py-2.5` identique a la nav gauche. Garantit que
+          le premier element de `rightSidebar` s'aligne pixel-pres avec
+          « Reception » (premier item nav). Look 3 colonnes Outlook. */}
       {rightSidebar && (
-        <aside className="hidden lg:flex lg:fixed lg:top-28 lg:bottom-0 lg:right-0 lg:w-[260px] flex-col overflow-y-auto bg-sidebar border-l border-[#1f2937] px-3 pt-[10px] pb-4">
-          {rightSidebar}
+        <aside className="hidden lg:flex lg:fixed lg:inset-y-0 lg:right-0 lg:w-[260px] flex-col bg-sidebar border-l border-[#1f2937]">
+          <div className="h-28 shrink-0 border-b border-[#1f2937]" />
+          <div className="flex-1 overflow-y-auto px-2 py-2.5">
+            {rightSidebar}
+          </div>
         </aside>
       )}
 
