@@ -162,15 +162,18 @@
     @apply font-sans antialiased bg-background text-foreground;
   }
 
-  /* Empeche le shift horizontal premium-killer quand un dropdown/dialog
-     Radix verrouille le scroll : Radix ajoute padding-right=scrollbar-width
-     pour compenser le scrollbar masque, mais `scrollbar-gutter: stable`
-     reserve deja la gouttiere → le padding fait sauter le contenu.
-     On neutralise systematiquement les compensations Radix. */
-  body[data-scroll-locked] {
-    padding-right: 0 !important;
-    margin-right: 0 !important;
-  }
+}
+
+/* Anti-shift premium : sort du @layer car react-remove-scroll (utilise par
+   Sheet/Dialog/DropdownMenu Radix) injecte des regles !important
+   non-layered qui battent les regles layered. Tout doit rester ici en
+   global. Cf. retours utilisateur 6 mai 2026 — chat Inboria + profil. */
+html[data-scroll-locked],
+body[data-scroll-locked],
+html[data-scroll-locked] body {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+  --removed-body-scroll-bar-size: 0px !important;
 }
 
 @layer utilities {
