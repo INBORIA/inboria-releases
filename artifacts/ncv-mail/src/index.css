@@ -171,6 +171,9 @@
 :root {
   --removed-body-scroll-bar-size: 0px !important;
 }
+html {
+  scrollbar-gutter: stable;
+}
 html,
 html[data-scroll-locked],
 body,
