@@ -15,7 +15,7 @@ const NAV_KEYS: Array<{ key: string; fallback: string; icon: any; active?: boole
   { key: "sidebar.snoozed", fallback: "Reportés", icon: BellOff },
   { key: "sidebar.scheduled", fallback: "Programmés", icon: CalendarClock },
   { key: "tasks.title", fallback: "Tâches", icon: CheckSquare },
-  { key: "sidebar.followups", fallback: "Relances", icon: MailCheck, badge: 7 },
+  { key: "sidebar.followups", fallback: "Relances", icon: MailCheck },
   { key: "sidebar.sharedMailboxes", fallback: "Boîtes partagées", icon: MailPlus },
   { key: "sidebar.myTeam", fallback: "Mon équipe", icon: Users },
   { key: "sidebar.teamActivity", fallback: "Activité équipe", icon: Activity },
