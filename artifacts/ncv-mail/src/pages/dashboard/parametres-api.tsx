@@ -87,6 +87,25 @@ export default function ParametresApi() {
     onError: (e: any) => toast({ title: e.message, variant: "destructive" }),
   });
 
+  const hardDeleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await fetch(`${baseUrl()}/api/api-keys/${id}/permanent`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error || t("common.error"));
+      }
+      return res.json();
+    },
+    onSuccess: () => {
+      toast({ title: t("apiKeys.deletedToast") });
+      queryClient.invalidateQueries({ queryKey: ["api-keys"] });
+    },
+    onError: (e: any) => toast({ title: e.message, variant: "destructive" }),
+  });
+
   function toggleScope(s: string) {
     setScopes((prev) => prev.includes(s) ? prev.filter((x) => x !== s) : [...prev, s]);
   }
@@ -199,8 +218,23 @@ export default function ParametresApi() {
                     <td className="p-2 text-[#b8c5d6]">{k.lastUsedAt ? new Date(k.lastUsedAt).toLocaleString() : "—"}</td>
                     <td className="p-2">{k.revokedAt ? <span className="text-red-400">{t("apiKeys.statusRevoked")}</span> : <span className="text-emerald-400">{t("apiKeys.statusActive")}</span>}</td>
                     <td className="p-2 text-right">
-                      {!k.revokedAt && (
-                        <Button variant="ghost" size="sm" className="h-6 px-1 text-[#b8c5d6] hover:text-red-400" onClick={() => revokeMutation.mutate(k.id)} disabled={revokeMutation.isPending}>
+                      {!k.revokedAt ? (
+                        <Button variant="ghost" size="sm" className="h-6 px-1 text-[#b8c5d6] hover:text-red-400" onClick={() => revokeMutation.mutate(k.id)} disabled={revokeMutation.isPending} title={t("apiKeys.statusRevoked")}>
+                          <Trash2 className="w-3 h-3" />
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 px-1 text-red-400 hover:text-red-500 hover:bg-red-500/10"
+                          onClick={() => {
+                            if (window.confirm(t("apiKeys.deletePermanentlyConfirm"))) {
+                              hardDeleteMutation.mutate(k.id);
+                            }
+                          }}
+                          disabled={hardDeleteMutation.isPending}
+                          title={t("apiKeys.deletePermanently")}
+                        >
                           <Trash2 className="w-3 h-3" />
                         </Button>
                       )}

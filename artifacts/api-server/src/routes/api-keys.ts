@@ -92,6 +92,31 @@ router.delete("/api-keys/:id", requireAuth, async (req, res): Promise<void> => {
   }
 });
 
+router.delete("/api-keys/:id/permanent", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data: existing } = await supabaseAdmin
+      .from("api_keys")
+      .select("id, revoked_at")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .maybeSingle();
+    if (!existing) { res.status(404).json({ error: "Clé introuvable" }); return; }
+    if (!(existing as any).revoked_at) {
+      res.status(400).json({ error: "Révoquez la clé avant suppression définitive" });
+      return;
+    }
+    const { error } = await supabaseAdmin
+      .from("api_keys")
+      .delete()
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!);
+    if (error) { res.status(500).json({ error: error.message }); return; }
+    res.json({ success: true });
+  } catch {
+    res.status(500).json({ error: "Erreur lors de la suppression définitive" });
+  }
+});
+
 router.get("/api-keys/scopes", requireAuth, (_req, res) => {
   res.json(ALLOWED_SCOPES);
 });
