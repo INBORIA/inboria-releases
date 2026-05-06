@@ -2410,7 +2410,14 @@
         "summary": "Speciaal dossier: e-mailautomatisering, GPT-5 en de toekomst van B2B SaaS."
       }
     ],
-    "allCategories": "Alle categorieën"
+    "allCategories": "Alle categorieën",
+    "chat": {
+      "answerIntro": "3 prioritaire opvolgingen vandaag:",
+      "bullet1": "offerte 5 dagen geleden verstuurd, zonder reactie.",
+      "bullet2": "factuur 12 dagen onbetaald.",
+      "bullet3": "afspraak in afwachting sinds maandag.",
+      "cta": "Zal ik de 3 concepten voorbereiden?"
+    }
   },
   "agenda": {
     "title": "Agenda",

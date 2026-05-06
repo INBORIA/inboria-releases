@@ -2400,7 +2400,14 @@
         "summary": "特别报告：电子邮件自动化、GPT-5与B2B SaaS的未来。"
       }
     ],
-    "allCategories": "所有类别"
+    "allCategories": "所有类别",
+    "chat": {
+      "answerIntro": "今日 3 项优先跟进：",
+      "bullet1": "5 天前发送的报价，无回复。",
+      "bullet2": "12 天未付款的发票。",
+      "bullet3": "自周一起待定的会议。",
+      "cta": "需要我准备这 3 份草稿吗？"
+    }
   },
   "agenda": {
     "title": "日程",

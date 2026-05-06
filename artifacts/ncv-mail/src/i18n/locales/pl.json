@@ -2400,7 +2400,14 @@
         "summary": "Specjalny raport: automatyzacja e-maili, GPT-5 i przyszłość SaaS B2B."
       }
     ],
-    "allCategories": "Wszystkie kategorie"
+    "allCategories": "Wszystkie kategorie",
+    "chat": {
+      "answerIntro": "3 priorytetowe ponaglenia na dziś:",
+      "bullet1": "oferta wysłana 5 dni temu, bez odpowiedzi.",
+      "bullet2": "faktura niezapłacona od 12 dni.",
+      "bullet3": "spotkanie oczekuje od poniedziałku.",
+      "cta": "Mam przygotować 3 szkice?"
+    }
   },
   "agenda": {
     "title": "Agenda",

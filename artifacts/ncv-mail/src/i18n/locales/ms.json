@@ -2400,7 +2400,14 @@
         "summary": "Dossier khas: automasi email, GPT-5, dan masa depan SaaS B2B."
       }
     ],
-    "allCategories": "Semua kategori"
+    "allCategories": "Semua kategori",
+    "chat": {
+      "answerIntro": "3 susulan keutamaan hari ini:",
+      "bullet1": "sebut harga dihantar 5 hari lalu, tanpa balasan.",
+      "bullet2": "invois belum dibayar selama 12 hari.",
+      "bullet3": "mesyuarat tertangguh sejak Isnin.",
+      "cta": "Sila, saya sediakan 3 draf?"
+    }
   },
   "agenda": {
     "title": "Agenda",

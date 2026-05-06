@@ -2400,7 +2400,14 @@
         "summary": "Erifail: e-kirjade automatiseerimine, GPT-5 ja B2B SaaS tulevik."
       }
     ],
-    "allCategories": "Kõik kategooriad"
+    "allCategories": "Kõik kategooriad",
+    "chat": {
+      "answerIntro": "3 prioriteetset järelmeeldetuletust täna:",
+      "bullet1": "pakkumine saadetud 5 päeva tagasi, vastuseta.",
+      "bullet2": "arve maksmata 12 päeva.",
+      "bullet3": "kohtumine ootel esmaspäevast.",
+      "cta": "Kas valmistan ette 3 mustandit?"
+    }
   },
   "agenda": {
     "title": "Kalender",

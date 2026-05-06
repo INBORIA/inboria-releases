@@ -2400,7 +2400,14 @@
         "summary": "Posebno poročilo: avtomatizacija e-pošte, GPT-5 in prihodnost B2B SaaS."
       }
     ],
-    "allCategories": "Vse kategorije"
+    "allCategories": "Vse kategorije",
+    "chat": {
+      "answerIntro": "3 prednostni opomniki danes:",
+      "bullet1": "ponudba poslana pred 5 dnevi, brez odgovora.",
+      "bullet2": "račun neplačan 12 dni.",
+      "bullet3": "sestanek čaka od ponedeljka.",
+      "cta": "Naj pripravim 3 osnutke?"
+    }
   },
   "agenda": {
     "title": "Koledar",

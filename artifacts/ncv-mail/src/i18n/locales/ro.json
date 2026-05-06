@@ -2400,7 +2400,14 @@
         "summary": "Dosar special: automatizarea emailurilor, GPT-5 și viitorul SaaS B2B."
       }
     ],
-    "allCategories": "Toate categoriile"
+    "allCategories": "Toate categoriile",
+    "chat": {
+      "answerIntro": "3 urmăriri prioritare astăzi:",
+      "bullet1": "ofertă trimisă acum 5 zile, fără răspuns.",
+      "bullet2": "factură neplătită de 12 zile.",
+      "bullet3": "întâlnire în așteptare de luni.",
+      "cta": "Pregătesc cele 3 ciorne?"
+    }
   },
   "agenda": {
     "title": "Agendă",

@@ -2400,7 +2400,14 @@
         "summary": "Dossier spécial : automatisation email, GPT-5, et l'avenir du SaaS B2B."
       }
     ],
-    "allCategories": "Toutes les catégories"
+    "allCategories": "Toutes les catégories",
+    "chat": {
+      "answerIntro": "3 relances prioritaires aujourd'hui :",
+      "bullet1": "devis envoyé il y a 5 jours, sans réponse.",
+      "bullet2": "facture impayée depuis 12 jours.",
+      "bullet3": "rendez-vous en attente depuis lundi.",
+      "cta": "Je prépare les 3 brouillons ?"
+    }
   },
   "agenda": {
     "title": "Agenda",

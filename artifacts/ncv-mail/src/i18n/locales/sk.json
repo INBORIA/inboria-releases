@@ -2400,7 +2400,14 @@
         "summary": "Špeciálny súbor: automatizácia e-mailov, GPT-5 a budúcnosť B2B SaaS."
       }
     ],
-    "allCategories": "Všetky kategórie"
+    "allCategories": "Všetky kategórie",
+    "chat": {
+      "answerIntro": "3 prioritné pripomienky dnes:",
+      "bullet1": "ponuka odoslaná pred 5 dňami, bez odpovede.",
+      "bullet2": "faktúra neuhradená 12 dní.",
+      "bullet3": "stretnutie čaká od pondelka.",
+      "cta": "Mám pripraviť 3 návrhy?"
+    }
   },
   "agenda": {
     "title": "Kalendár",

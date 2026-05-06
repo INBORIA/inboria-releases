@@ -2400,7 +2400,14 @@
         "summary": "Tài liệu đặc biệt: tự động hóa email, GPT-5, và tương lai của SaaS B2B."
       }
     ],
-    "allCategories": "Tất cả các danh mục"
+    "allCategories": "Tất cả các danh mục",
+    "chat": {
+      "answerIntro": "3 việc cần theo dõi ưu tiên hôm nay:",
+      "bullet1": "báo giá đã gửi 5 ngày trước, chưa có phản hồi.",
+      "bullet2": "hóa đơn chưa thanh toán 12 ngày.",
+      "bullet3": "cuộc họp đang chờ từ thứ Hai.",
+      "cta": "Quý khách có muốn tôi soạn 3 bản nháp không?"
+    }
   },
   "agenda": {
     "title": "Lịch trình",

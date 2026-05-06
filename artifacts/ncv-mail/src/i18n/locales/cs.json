@@ -2400,7 +2400,14 @@
         "summary": "Speciální zpráva: automatizace e-mailů, GPT-5 a budoucnost B2B SaaS."
       }
     ],
-    "allCategories": "Všechny kategorie"
+    "allCategories": "Všechny kategorie",
+    "chat": {
+      "answerIntro": "3 prioritní upomínky dnes:",
+      "bullet1": "nabídka odeslána před 5 dny, bez odpovědi.",
+      "bullet2": "faktura neuhrazena 12 dní.",
+      "bullet3": "schůzka čeká od pondělí.",
+      "cta": "Mám připravit 3 návrhy?"
+    }
   },
   "agenda": {
     "title": "Agenda",

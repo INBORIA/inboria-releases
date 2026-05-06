@@ -2400,7 +2400,14 @@
         "summary": "Specialdossier: automatisering af e-mails, GPT-5, og fremtiden for B2B SaaS."
       }
     ],
-    "allCategories": "Alle kategorier"
+    "allCategories": "Alle kategorier",
+    "chat": {
+      "answerIntro": "3 prioriterede opfølgninger i dag:",
+      "bullet1": "tilbud sendt for 5 dage siden, uden svar.",
+      "bullet2": "faktura ubetalt i 12 dage.",
+      "bullet3": "møde afventer siden mandag.",
+      "cta": "Skal jeg forberede de 3 udkast?"
+    }
   },
   "agenda": {
     "title": "Agenda",

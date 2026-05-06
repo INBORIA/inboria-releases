@@ -2400,7 +2400,14 @@
         "summary": "Specialus leidinys: el. pašto automatizavimas, GPT-5 ir B2B SaaS ateitis."
       }
     ],
-    "allCategories": "Visos kategorijos"
+    "allCategories": "Visos kategorijos",
+    "chat": {
+      "answerIntro": "3 prioritetiniai priminimai šiandien:",
+      "bullet1": "pasiūlymas išsiųstas prieš 5 dienas, be atsakymo.",
+      "bullet2": "sąskaita neapmokėta 12 dienų.",
+      "bullet3": "susitikimas laukia nuo pirmadienio.",
+      "cta": "Ar paruošti 3 juodraščius?"
+    }
   },
   "agenda": {
     "title": "Kalendorius",

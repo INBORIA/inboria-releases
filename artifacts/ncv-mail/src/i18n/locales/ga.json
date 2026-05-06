@@ -2400,7 +2400,14 @@
         "summary": "Comhoibriú speisialta: uathoibriú ríomhphoist, GPT-5, agus todhchaí an SaaS B2B."
       }
     ],
-    "allCategories": "Gach catagóir"
+    "allCategories": "Gach catagóir",
+    "chat": {
+      "answerIntro": "3 leantaí tosaíochta inniu:",
+      "bullet1": "luachan seolta 5 lá ó shin, gan freagra.",
+      "bullet2": "sonrasc gan íoc le 12 lá.",
+      "bullet3": "cruinniú ar feitheamh ón Luan.",
+      "cta": "An ullmhóidh mé na 3 dhréacht?"
+    }
   },
   "agenda": {
     "title": "Clár",

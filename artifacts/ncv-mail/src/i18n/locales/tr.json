@@ -2400,7 +2400,14 @@
         "summary": "Özel dosya: e-posta otomasyonu, GPT-5 ve B2B SaaS'ın geleceği."
       }
     ],
-    "allCategories": "Tüm kategoriler"
+    "allCategories": "Tüm kategoriler",
+    "chat": {
+      "answerIntro": "Bugün 3 öncelikli takip:",
+      "bullet1": "5 gün önce gönderilen teklif, yanıt yok.",
+      "bullet2": "12 gündür ödenmemiş fatura.",
+      "bullet3": "pazartesiden beri bekleyen toplantı.",
+      "cta": "3 taslağı hazırlayayım mı?"
+    }
   },
   "agenda": {
     "title": "Ajanda",

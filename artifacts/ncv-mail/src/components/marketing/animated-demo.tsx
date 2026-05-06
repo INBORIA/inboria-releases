@@ -33,7 +33,12 @@ const EMAIL_COUNT = 6;
 const JUNK_COUNT = JUNK_INDICES.length;
 const ARRIVAL_DELAY = 350;
 const PANEL_OPEN_TIME = EMAIL_COUNT * ARRIVAL_DELAY + 500;
-const PANEL_CLOSE_TIME = PANEL_OPEN_TIME + 2400;
+// Chat sub-steps (relative to PANEL_OPEN_TIME)
+const CHAT_STEP_USER = 2600;     // user picks a suggestion -> shows as bubble
+const CHAT_STEP_TYPING = 3300;   // Inboria typing dots
+const CHAT_STEP_ANSWER = 4100;   // Inboria's smart answer appears
+const CHAT_VISIBLE_DURATION = 8200; // total chat panel visible time
+const PANEL_CLOSE_TIME = PANEL_OPEN_TIME + CHAT_VISIBLE_DURATION;
 const SORT_START = PANEL_CLOSE_TIME + 200;
 const SORT_INTERVAL = 450;
 const SORT_DONE = SORT_START + EMAIL_COUNT * SORT_INTERVAL;
@@ -76,6 +81,7 @@ export function AnimatedDemo() {
   const [selectedJunk, setSelectedJunk] = useState(reducedMotion ? JUNK_COUNT : 0);
   const [deletedJunk, setDeletedJunk] = useState(reducedMotion);
   const [inboriaPanelOpen, setInboriaPanelOpen] = useState(false);
+  const [chatStep, setChatStep] = useState<0 | 1 | 2 | 3>(0);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const mountedRef = useRef(true);
   const visibleRef = useRef(true);
@@ -97,6 +103,7 @@ export function AnimatedDemo() {
     setSelectedJunk(0);
     setDeletedJunk(false);
     setInboriaPanelOpen(false);
+    setChatStep(0);
 
     const startTimer = setTimeout(() => {
       if (!mountedRef.current || !visibleRef.current) return;
@@ -104,7 +111,10 @@ export function AnimatedDemo() {
       for (let i = 1; i <= EMAIL_COUNT; i++) {
         t.push(setTimeout(() => setVisibleEmails(i), i * ARRIVAL_DELAY));
       }
-      t.push(setTimeout(() => setInboriaPanelOpen(true), PANEL_OPEN_TIME));
+      t.push(setTimeout(() => { setInboriaPanelOpen(true); setChatStep(0); }, PANEL_OPEN_TIME));
+      t.push(setTimeout(() => setChatStep(1), PANEL_OPEN_TIME + CHAT_STEP_USER));
+      t.push(setTimeout(() => setChatStep(2), PANEL_OPEN_TIME + CHAT_STEP_TYPING));
+      t.push(setTimeout(() => setChatStep(3), PANEL_OPEN_TIME + CHAT_STEP_ANSWER));
       t.push(setTimeout(() => setInboriaPanelOpen(false), PANEL_CLOSE_TIME));
       t.push(setTimeout(() => setPhase("sorting"), SORT_START));
       for (let i = 1; i <= EMAIL_COUNT; i++) {
@@ -274,21 +284,74 @@ export function AnimatedDemo() {
                       <span className="text-[8px] text-[#b8c5d6]">{t("inboriaChat.subtitle", "Votre coéquipier emails")}</span>
                     </div>
                   </div>
-                  <div className="px-3 py-2.5">
-                    <p className="text-[10px] font-semibold text-white mb-1">{t("inboriaChat.greetingTitle", "Bonjour, je suis Inboria.")}</p>
-                    <p className="text-[9px] text-[#b8c5d6] leading-snug mb-2">{t("inboriaChat.greetingDesc", "Je connais vos contacts, vos préférences et vos engagements en cours. Posez-moi une question.")}</p>
-                    <div className="space-y-1">
-                      {[
-                        t("inboriaChat.suggest1", "Quels engagements ai-je pris cette semaine ?"),
-                        t("inboriaChat.suggest2", "De quoi devrais-je relancer en priorité ?"),
-                        t("inboriaChat.suggest3", "Résume ce que je sais de mon dernier client."),
-                      ].map((q, i) => (
-                        <div key={i} className="flex items-start gap-1.5 px-2 py-1.5 rounded-md border border-[#1f2937] bg-[#141c2b] text-[9px] text-white/85 leading-snug">
-                          <MessageCircleQuestion className="w-2.5 h-2.5 text-[#2d7dd2] shrink-0 mt-[1px]" />
-                          <span>{q}</span>
+                  <div className="px-3 py-2.5 space-y-2 max-h-[280px] overflow-hidden">
+                    <p className="text-[10px] font-semibold text-white">{t("inboriaChat.greetingTitle", "Bonjour, je suis Inboria.")}</p>
+                    <p className="text-[9px] text-[#b8c5d6] leading-snug">{t("inboriaChat.greetingDesc", "Je connais vos contacts, vos préférences et vos engagements en cours. Posez-moi une question.")}</p>
+                    {chatStep === 0 && (
+                      <div className="space-y-1 animate-in fade-in duration-200">
+                        {[
+                          t("inboriaChat.suggest1", "Quels engagements ai-je pris cette semaine ?"),
+                          t("inboriaChat.suggest2", "De quoi devrais-je relancer en priorité ?"),
+                          t("inboriaChat.suggest3", "Résume ce que je sais de mon dernier client."),
+                        ].map((q, i) => (
+                          <div
+                            key={i}
+                            className={`flex items-start gap-1.5 px-2 py-1.5 rounded-md border text-[9px] leading-snug transition-all ${
+                              i === 1
+                                ? "border-[#2d7dd2]/40 bg-[#2d7dd2]/[0.10] text-white"
+                                : "border-[#1f2937] bg-[#141c2b] text-white/85"
+                            }`}
+                          >
+                            <MessageCircleQuestion className="w-2.5 h-2.5 text-[#2d7dd2] shrink-0 mt-[1px]" />
+                            <span>{q}</span>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                    {chatStep >= 1 && (
+                      <div className="flex justify-end animate-in fade-in slide-in-from-bottom-1 duration-200">
+                        <div className="max-w-[85%] px-2 py-1.5 rounded-md rounded-tr-sm bg-[#2d7dd2] text-white text-[9px] leading-snug">
+                          {t("inboriaChat.suggest2", "De quoi devrais-je relancer en priorité ?")}
                         </div>
-                      ))}
-                    </div>
+                      </div>
+                    )}
+                    {chatStep === 2 && (
+                      <div className="flex items-center gap-1 px-2 py-1.5 rounded-md border border-[#1f2937] bg-[#141c2b] w-fit animate-in fade-in duration-150">
+                        <span className="w-1 h-1 rounded-full bg-[#2d7dd2] animate-bounce" style={{ animationDelay: "0ms" }} />
+                        <span className="w-1 h-1 rounded-full bg-[#2d7dd2] animate-bounce" style={{ animationDelay: "150ms" }} />
+                        <span className="w-1 h-1 rounded-full bg-[#2d7dd2] animate-bounce" style={{ animationDelay: "300ms" }} />
+                        <span className="text-[8px] text-[#b8c5d6] ml-1">{t("inboriaChat.thinking", "Inboria réfléchit…")}</span>
+                      </div>
+                    )}
+                    {chatStep === 3 && (
+                      <div className="flex items-start gap-1.5 animate-in fade-in slide-in-from-bottom-1 duration-200">
+                        <div className="w-4 h-4 rounded-full bg-[#2d7dd2] flex items-center justify-center shrink-0 mt-px">
+                          <Sparkles className="w-2 h-2 text-white" />
+                        </div>
+                        <div className="flex-1 min-w-0 space-y-1">
+                          <p className="text-[9px] text-white leading-snug">
+                            {t("demo.chat.answerIntro", "3 relances prioritaires aujourd'hui :")}
+                          </p>
+                          <ul className="space-y-0.5 text-[9px] text-white/90 leading-snug">
+                            <li className="flex items-start gap-1">
+                              <span className="text-[#2d7dd2] shrink-0">•</span>
+                              <span><strong className="text-white">Marie Lemoine</strong> — {t("demo.chat.bullet1", "devis envoyé il y a 5 jours, sans réponse.")}</span>
+                            </li>
+                            <li className="flex items-start gap-1">
+                              <span className="text-[#2d7dd2] shrink-0">•</span>
+                              <span><strong className="text-white">Beta Corp</strong> — {t("demo.chat.bullet2", "facture impayée depuis 12 jours.")}</span>
+                            </li>
+                            <li className="flex items-start gap-1">
+                              <span className="text-[#2d7dd2] shrink-0">•</span>
+                              <span><strong className="text-white">Jean Mercier</strong> — {t("demo.chat.bullet3", "rendez-vous en attente depuis lundi.")}</span>
+                            </li>
+                          </ul>
+                          <p className="text-[9px] text-[#2d7dd2] font-medium leading-snug pt-0.5">
+                            {t("demo.chat.cta", "Je prépare les 3 brouillons ?")}
+                          </p>
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="px-3 pb-2 pt-1 border-t border-[#1f2937]">
                     <div className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-[#141c2b] border border-[#1f2937]">

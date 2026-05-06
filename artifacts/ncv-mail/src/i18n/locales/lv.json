@@ -2400,7 +2400,14 @@
         "summary": "Īpašs fails: e-pasta automatizācija, GPT-5 un B2B SaaS nākotne."
       }
     ],
-    "allCategories": "Visas kategorijas"
+    "allCategories": "Visas kategorijas",
+    "chat": {
+      "answerIntro": "3 prioritārie atgādinājumi šodien:",
+      "bullet1": "piedāvājums nosūtīts pirms 5 dienām, bez atbildes.",
+      "bullet2": "rēķins neapmaksāts 12 dienas.",
+      "bullet3": "tikšanās gaida kopš pirmdienas.",
+      "cta": "Vai sagatavot 3 melnrakstus?"
+    }
   },
   "agenda": {
     "title": "Kalendārs",

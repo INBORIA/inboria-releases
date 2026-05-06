@@ -2400,7 +2400,14 @@
         "summary": "Posebna tema: automatizacija e-pošte, GPT-5 i budućnost B2B SaaS-a."
       }
     ],
-    "allCategories": "Sve kategorije"
+    "allCategories": "Sve kategorije",
+    "chat": {
+      "answerIntro": "3 prioritetna podsjetnika danas:",
+      "bullet1": "ponuda poslana prije 5 dana, bez odgovora.",
+      "bullet2": "račun neplaćen 12 dana.",
+      "bullet3": "sastanak na čekanju od ponedjeljka.",
+      "cta": "Da pripremim 3 nacrta?"
+    }
   },
   "agenda": {
     "title": "Agenda",

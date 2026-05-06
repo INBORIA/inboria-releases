@@ -2400,7 +2400,14 @@
         "summary": "Dossier speċjali: awtomazzjoni tal-email, GPT-5, u l-futur tal-SaaS B2B."
       }
     ],
-    "allCategories": "Kategoriji kollha"
+    "allCategories": "Kategoriji kollha",
+    "chat": {
+      "answerIntro": "3 segwiti prijoritarji llum:",
+      "bullet1": "kwotazzjoni mibgħuta 5 ijiem ilu, mingħajr risposta.",
+      "bullet2": "fattura mhux imħallsa għal 12-il jum.",
+      "bullet3": "laqgħa pendenti mit-Tnejn.",
+      "cta": "Inħejji t-3 abbozzi?"
+    }
   },
   "agenda": {
     "title": "Agenda",

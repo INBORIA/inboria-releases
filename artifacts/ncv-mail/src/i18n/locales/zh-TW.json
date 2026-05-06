@@ -2400,7 +2400,14 @@
         "summary": "特別檔案：電子郵件自動化、GPT-5 及 B2B SaaS 的未來。"
       }
     ],
-    "allCategories": "所有類別"
+    "allCategories": "所有類別",
+    "chat": {
+      "answerIntro": "今日 3 項優先跟進：",
+      "bullet1": "5 天前發送的報價，無回覆。",
+      "bullet2": "12 天未付款的發票。",
+      "bullet3": "自週一起待定的會議。",
+      "cta": "需要我準備這 3 份草稿嗎？"
+    }
   },
   "agenda": {
     "title": "日曆",

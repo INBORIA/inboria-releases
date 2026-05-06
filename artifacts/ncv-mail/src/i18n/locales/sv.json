@@ -2400,7 +2400,14 @@
         "summary": "Specialrapport: e-postautomatisering, GPT-5 och framtiden för B2B SaaS."
       }
     ],
-    "allCategories": "Alla kategorier"
+    "allCategories": "Alla kategorier",
+    "chat": {
+      "answerIntro": "3 prioriterade uppföljningar idag:",
+      "bullet1": "offert skickad för 5 dagar sedan, inget svar.",
+      "bullet2": "faktura obetald i 12 dagar.",
+      "bullet3": "möte väntar sedan måndag.",
+      "cta": "Ska jag förbereda de 3 utkasten?"
+    }
   },
   "agenda": {
     "title": "Agenda",

@@ -2400,7 +2400,14 @@
         "summary": "Erikoisraportti: sähköpostiautomaatiot, GPT-5 ja B2B SaaS:n tulevaisuus."
       }
     ],
-    "allCategories": "Kaikki kategoriat"
+    "allCategories": "Kaikki kategoriat",
+    "chat": {
+      "answerIntro": "3 ensisijaista seurantaa tänään:",
+      "bullet1": "tarjous lähetetty 5 päivää sitten, ei vastausta.",
+      "bullet2": "lasku maksamatta 12 päivää.",
+      "bullet3": "tapaaminen odottaa maanantaista.",
+      "cta": "Valmistelenko 3 luonnosta?"
+    }
   },
   "agenda": {
     "title": "Agenda",

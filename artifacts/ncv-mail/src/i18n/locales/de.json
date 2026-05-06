@@ -2410,7 +2410,14 @@
         "summary": "Sonderbericht: E-Mail-Automatisierung, GPT-5 und die Zukunft von B2B SaaS."
       }
     ],
-    "allCategories": "Alle Kategorien"
+    "allCategories": "Alle Kategorien",
+    "chat": {
+      "answerIntro": "3 vorrangige Nachfassaktionen heute:",
+      "bullet1": "Angebot vor 5 Tagen gesendet, keine Antwort.",
+      "bullet2": "Rechnung seit 12 Tagen unbezahlt.",
+      "bullet3": "Termin seit Montag offen.",
+      "cta": "Soll ich die 3 Entwürfe vorbereiten?"
+    }
   },
   "agenda": {
     "title": "Agenda",

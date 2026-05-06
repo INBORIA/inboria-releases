@@ -2400,7 +2400,14 @@
         "summary": "Dossier especial: automatització de correu electrònic, GPT-5, i el futur del SaaS B2B."
       }
     ],
-    "allCategories": "Totes les categories"
+    "allCategories": "Totes les categories",
+    "chat": {
+      "answerIntro": "3 seguiments prioritaris avui:",
+      "bullet1": "pressupost enviat fa 5 dies, sense resposta.",
+      "bullet2": "factura impagada des de fa 12 dies.",
+      "bullet3": "reunió pendent des de dilluns.",
+      "cta": "Prepareu els 3 esborranys?"
+    }
   },
   "agenda": {
     "title": "Agenda",

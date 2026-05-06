@@ -2400,7 +2400,14 @@
         "summary": "특별 보고서: 이메일 자동화, GPT-5 및 B2B SaaS의 미래."
       }
     ],
-    "allCategories": "모든 카테고리"
+    "allCategories": "모든 카테고리",
+    "chat": {
+      "answerIntro": "오늘의 우선 후속 조치 3건:",
+      "bullet1": "5일 전 발송한 견적, 회신 없음.",
+      "bullet2": "12일째 미납 청구서.",
+      "bullet3": "월요일부터 대기 중인 미팅.",
+      "cta": "3건의 초안을 준비할까요?"
+    }
   },
   "agenda": {
     "title": "일정",

@@ -2410,7 +2410,14 @@
         "summary": "Special report: email automation, GPT-5, and the future of B2B SaaS."
       }
     ],
-    "allCategories": "All categories"
+    "allCategories": "All categories",
+    "chat": {
+      "answerIntro": "3 priority follow-ups today:",
+      "bullet1": "quote sent 5 days ago, no reply.",
+      "bullet2": "invoice unpaid for 12 days.",
+      "bullet3": "meeting pending since Monday.",
+      "cta": "Shall I draft the 3 replies?"
+    }
   },
   "agenda": {
     "title": "Agenda",

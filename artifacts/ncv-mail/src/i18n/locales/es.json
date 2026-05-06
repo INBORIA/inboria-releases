@@ -2410,7 +2410,14 @@
         "summary": "Informe especial: automatización de correos, GPT-5, y el futuro del SaaS B2B."
       }
     ],
-    "allCategories": "Todas las categorías"
+    "allCategories": "Todas las categorías",
+    "chat": {
+      "answerIntro": "3 seguimientos prioritarios hoy:",
+      "bullet1": "presupuesto enviado hace 5 días, sin respuesta.",
+      "bullet2": "factura impagada desde hace 12 días.",
+      "bullet3": "reunión pendiente desde el lunes.",
+      "cta": "¿Preparo los 3 borradores?"
+    }
   },
   "agenda": {
     "title": "Agenda",
