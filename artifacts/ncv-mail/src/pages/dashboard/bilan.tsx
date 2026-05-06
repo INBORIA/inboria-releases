@@ -65,7 +65,7 @@ function formatDelay(min: number | null | undefined): string {
 
 const PIE_COLORS = ["#2d7dd2", "#7d4ed2", "#d2a02d", "#d24e6f", "#4ed29a", "#d2bc4e"];
 
-type MailMemberDatum = { name: string; openLoad: number; handled: number; delayLabel: string };
+type MailMemberDatum = { name: string; openLoad: number; handled: number; assigned: number; delayLabel: string };
 type DelayDatum = { name: string; delay: number; label: string };
 type ScopeDatum = { name: string; received: number; handled: number; notHandled: number; delayLabel: string };
 type PersonalDatum = { name: string; received: number; handled: number; notHandled: number; delayLabel: string };
@@ -172,9 +172,10 @@ export default function BilanQuotidien() {
       name: m.userName || m.userId.slice(0, 8),
       openLoad: m.openLoad,
       handled: m.handled,
+      assigned: m.assigned,
       delayLabel: formatDelay(m.avgFirstResponseMinutes),
     }))
-    .filter((m) => m.openLoad + m.handled > 0)
+    .filter((m) => m.openLoad + m.handled + m.assigned > 0)
     .sort((a, b) => b.openLoad - a.openLoad);
 
   const delayPerMemberData: DelayDatum[] = (ta?.perMember ?? [])
