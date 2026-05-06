@@ -4943,18 +4943,10 @@ export default function Dashboard() {
                   </div>
                 ) : (
                   <div className="space-y-0.5">
-                    <div
-                      className={`flex items-center justify-between py-1 px-1.5 rounded transition-colors cursor-pointer ${filterCategory === "all" ? "bg-primary/10 text-primary" : "hover:bg-white/[0.04]"}`}
-                      onClick={() => setFilterCategory("all")}
-                    >
-                      <span className="text-[11px]">{t("inbox.allCategories")}</span>
-                      <span className="text-[10px] bg-white/[0.06] px-1.5 py-0.5 rounded">
-                        {(() => {
-                          const s = summary as { urgentCount?: number; moyenCount?: number; faibleCount?: number } | undefined;
-                          return (s?.urgentCount || 0) + (s?.moyenCount || 0) + (s?.faibleCount || 0);
-                        })()}
-                      </span>
-                    </div>
+                    {/* Ligne "Toutes les catégories" supprimée : doublonnait
+                        avec le titre du panneau "Catégories". Pour
+                        désélectionner une catégorie active, recliquer
+                        dessus (toggle déjà géré ligne ~5012). */}
                     {/* Entree "Non classe" : meme style bleu que "Toutes",
                         positionnee juste en dessous. Permet a l'utilisateur
                         de filtrer les emails que l'IA n'a pas reussi a
