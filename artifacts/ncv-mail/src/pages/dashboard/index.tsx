@@ -4155,16 +4155,114 @@ export default function Dashboard() {
     return t("inbox.assignedPageMember", { name, defaultValue: `Assignés à ${name}` });
   })();
 
+  // Panneau Categories rendu comme sidebar droite fixe par DashboardLayout.
+  // Aligne pixel-pres avec le haut de la sidebar gauche (au niveau de
+  // « Reception ») — look 3 colonnes type Outlook/Linear. Cache quand
+  // assigneeFilter est actif (vue "assignes" : compteurs trompeurs car
+  // /category-counts couvre toute l'org, pas filtre par assignee).
+  const categoriesPanel = !assigneeFilter ? (
+    <>
+      <div className="flex items-center justify-between mb-2.5">
+        <h3 className="text-[10px] font-medium text-[#b8c5d6] uppercase tracking-wider">
+          {t("inbox.category")}
+        </h3>
+        {(() => {
+          const summaryData = summary as { uncategorizedCount?: number } | undefined;
+          const uncategorizedCount = summaryData?.uncategorizedCount || 0;
+          if (uncategorizedCount === 0) return null;
+          return (
+            <button
+              onClick={() => {
+                recategorizeMut.mutate({ data: { lang } }, {
+                  onSuccess: (data: any) => {
+                    invalidateAll();
+                    toast({
+                      title: t("inbox.recategorizeSuccess", { count: data.recategorized }),
+                      description: data.created?.length > 0 ? data.created.join(", ") : undefined,
+                    });
+                  },
+                  onError: () => {
+                    toast({ title: t("common.error"), variant: "destructive" });
+                  },
+                });
+              }}
+              disabled={recategorizeMut.isPending}
+              className="flex items-center gap-1 text-[9px] text-primary hover:text-white transition-colors disabled:opacity-50"
+              title={t("inbox.recategorize")}
+            >
+              {recategorizeMut.isPending ? (
+                <Loader2 className="w-3 h-3 animate-spin" />
+              ) : (
+                <Tags className="w-3 h-3" />
+              )}
+              <span>{uncategorizedCount} {t("inbox.uncategorized")}</span>
+            </button>
+          );
+        })()}
+      </div>
+      {categoriesLoading ? (
+        <div className="py-2 text-center">
+          <Loader2 className="w-4 h-4 text-primary/60 animate-spin mx-auto" />
+        </div>
+      ) : (
+        <div className="space-y-0.5">
+          {(() => {
+            const summaryData = summary as { uncategorizedCount?: number } | undefined;
+            const uncategorizedCount = summaryData?.uncategorizedCount || 0;
+            const hasItems = uncategorizedCount > 0;
+            const isSelected = filterCategory === "__uncategorized__";
+            return (
+              <div
+                className={`flex items-center justify-between py-1 px-1.5 rounded transition-colors cursor-pointer ${
+                  isSelected
+                    ? "bg-primary/10 text-primary"
+                    : hasItems
+                      ? "hover:bg-white/[0.04] text-primary"
+                      : "hover:bg-white/[0.04] text-muted-foreground"
+                }`}
+                onClick={() => setFilterCategory(isSelected ? "all" : "__uncategorized__")}
+              >
+                <div className="flex items-center gap-1.5">
+                  <div className={`w-1.5 h-1.5 rounded-full ${hasItems ? "bg-primary" : "bg-white/20"}`} />
+                  <span className="text-[11px]">{t("inbox.uncategorized")}</span>
+                </div>
+                <span className={`text-[10px] px-1.5 py-0.5 rounded ${hasItems ? "bg-primary/15 text-primary" : "bg-white/[0.06] text-muted-foreground"}`}>
+                  {uncategorizedCount}
+                </span>
+              </div>
+            );
+          })()}
+          {categoryCounts
+            ?.filter((cat) => {
+              const JUNK = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
+              return !JUNK.includes((cat.categoryName || "").toLowerCase());
+            })
+            .map((cat) => (
+            <div
+              key={cat.categoryId}
+              className={`flex items-center justify-between py-1 px-1.5 rounded transition-colors cursor-pointer ${filterCategory === cat.categoryName ? "bg-primary/10 text-primary" : "hover:bg-white/[0.04]"}`}
+              onClick={() => setFilterCategory(filterCategory === cat.categoryName ? "all" : cat.categoryName)}
+            >
+              <div className="flex items-center gap-1.5">
+                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                <span className="text-[11px] text-[#b8c5d6]">{translateCategoryName(cat.categoryName, lang)}</span>
+              </div>
+              <span className="text-[10px] text-[#b8c5d6] bg-white/[0.06] px-1.5 py-0.5 rounded">
+                {cat.count}
+              </span>
+            </div>
+          ))}
+          {categoryCounts?.length === 0 && (
+            <p className="text-[11px] text-[#b8c5d6]/60 italic py-1.5">{t("inbox.noEmails")}</p>
+          )}
+        </div>
+      )}
+    </>
+  ) : undefined;
+
   return (
-    <DashboardLayout>
-      {/* Layout 2 colonnes plein-hauteur : contenu inbox (gauche) +
-          sidebar Categories (droite). Categories sort de l'inner flex
-          split pour s'aligner verticalement avec le header inbox (search
-          + onglets + bandes Priorite/CRM) — look premium type
-          Outlook/Linear. La sidebar fait toute la hauteur, donc son haut
-          touche le haut du header au pixel pres. */}
-      <div className="flex flex-row h-full">
-        <div className="flex-1 flex flex-col min-w-0">
+    <DashboardLayout rightSidebar={categoriesPanel}>
+      <div className="flex flex-col h-full">
         {assigneePageTitle && (
           <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-4 pb-2">
             <BackToInboxButton />
@@ -4888,106 +4986,6 @@ export default function Dashboard() {
 
           </div>
         </div>
-        </div>
-        {!assigneeFilter && (
-          <aside className="hidden md:flex w-[260px] shrink-0 flex-col border-l border-border bg-card/30 overflow-y-auto p-4">
-              <div className="flex items-center justify-between mb-2.5">
-                <h3 className="text-[10px] font-medium text-[#b8c5d6] uppercase tracking-wider">
-                  {t("inbox.category")}
-                </h3>
-                {(() => {
-                  const summaryData = summary as { uncategorizedCount?: number } | undefined;
-                  const uncategorizedCount = summaryData?.uncategorizedCount || 0;
-                  if (uncategorizedCount === 0) return null;
-                  return (
-                    <button
-                      onClick={() => {
-                        recategorizeMut.mutate({ data: { lang } }, {
-                          onSuccess: (data: any) => {
-                            invalidateAll();
-                            toast({
-                              title: t("inbox.recategorizeSuccess", { count: data.recategorized }),
-                              description: data.created?.length > 0 ? data.created.join(", ") : undefined,
-                            });
-                          },
-                          onError: () => {
-                            toast({ title: t("common.error"), variant: "destructive" });
-                          },
-                        });
-                      }}
-                      disabled={recategorizeMut.isPending}
-                      className="flex items-center gap-1 text-[9px] text-primary hover:text-white transition-colors disabled:opacity-50"
-                      title={t("inbox.recategorize")}
-                    >
-                      {recategorizeMut.isPending ? (
-                        <Loader2 className="w-3 h-3 animate-spin" />
-                      ) : (
-                        <Tags className="w-3 h-3" />
-                      )}
-                      <span>{uncategorizedCount} {t("inbox.uncategorized")}</span>
-                    </button>
-                  );
-                })()}
-              </div>
-              {categoriesLoading ? (
-                <div className="py-2 text-center">
-                  <Loader2 className="w-4 h-4 text-primary/60 animate-spin mx-auto" />
-                </div>
-              ) : (
-                <div className="space-y-0.5">
-                  {(() => {
-                    const summaryData = summary as { uncategorizedCount?: number } | undefined;
-                    const uncategorizedCount = summaryData?.uncategorizedCount || 0;
-                    const hasItems = uncategorizedCount > 0;
-                    const isSelected = filterCategory === "__uncategorized__";
-                    return (
-                      <div
-                        className={`flex items-center justify-between py-1 px-1.5 rounded transition-colors cursor-pointer ${
-                          isSelected
-                            ? "bg-primary/10 text-primary"
-                            : hasItems
-                              ? "hover:bg-white/[0.04] text-primary"
-                              : "hover:bg-white/[0.04] text-muted-foreground"
-                        }`}
-                        onClick={() => setFilterCategory(isSelected ? "all" : "__uncategorized__")}
-                      >
-                        <div className="flex items-center gap-1.5">
-                          <div className={`w-1.5 h-1.5 rounded-full ${hasItems ? "bg-primary" : "bg-white/20"}`} />
-                          <span className="text-[11px]">{t("inbox.uncategorized")}</span>
-                        </div>
-                        <span className={`text-[10px] px-1.5 py-0.5 rounded ${hasItems ? "bg-primary/15 text-primary" : "bg-white/[0.06] text-muted-foreground"}`}>
-                          {uncategorizedCount}
-                        </span>
-                      </div>
-                    );
-                  })()}
-                  {categoryCounts
-                    ?.filter((cat) => {
-                      const JUNK = ["non classé", "non classe", "uncategorized", "niet geclassificeerd"];
-                      return !JUNK.includes((cat.categoryName || "").toLowerCase());
-                    })
-                    .map((cat) => (
-                    <div
-                      key={cat.categoryId}
-                      className={`flex items-center justify-between py-1 px-1.5 rounded transition-colors cursor-pointer ${filterCategory === cat.categoryName ? "bg-primary/10 text-primary" : "hover:bg-white/[0.04]"}`}
-                      onClick={() => setFilterCategory(filterCategory === cat.categoryName ? "all" : cat.categoryName)}
-                    >
-                      <div className="flex items-center gap-1.5">
-                        <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                        <span className="text-[11px] text-[#b8c5d6]">{translateCategoryName(cat.categoryName, lang)}</span>
-                      </div>
-                      <span className="text-[10px] text-[#b8c5d6] bg-white/[0.06] px-1.5 py-0.5 rounded">
-                        {cat.count}
-                      </span>
-                    </div>
-                  ))}
-                  {categoryCounts?.length === 0 && (
-                    <p className="text-[11px] text-[#b8c5d6]/60 italic py-1.5">{t("inbox.noEmails")}</p>
-                  )}
-                </div>
-              )}
-          </aside>
-        )}
       </div>
       {contextMenu && (
         <div

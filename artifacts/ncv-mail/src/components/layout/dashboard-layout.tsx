@@ -51,7 +51,7 @@ import { NotificationBell } from "@/components/notifications/notification-bell";
 import { AutopilotIndicator } from "@/components/autopilot/autopilot-indicator";
 import { InboriaChatButton } from "@/components/inboria-chat/InboriaChatButton";
 
-export function DashboardLayout({ children }: { children: React.ReactNode }) {
+export function DashboardLayout({ children, rightSidebar }: { children: React.ReactNode; rightSidebar?: React.ReactNode }) {
   const { t } = useTranslation();
   const [location, setLocation] = useLocation();
   const { signOut } = useAuth();
@@ -258,7 +258,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
         </div>
       </div>
 
-      <div className="lg:pl-[200px] flex flex-col flex-1 min-w-0">
+      {/* Sidebar droite optionnelle (ex. panneau Categories de l'inbox) :
+          positionnee en fixed top-28 (sous le bandeau logo) pour aligner
+          son haut au pixel pres avec le premier item de la sidebar
+          gauche (« Reception »). Look 3 colonnes type Outlook/Linear. */}
+      {rightSidebar && (
+        <aside className="hidden lg:flex lg:fixed lg:top-28 lg:bottom-0 lg:right-0 lg:w-[260px] flex-col overflow-y-auto bg-sidebar border-l border-[#1f2937] p-4">
+          {rightSidebar}
+        </aside>
+      )}
+
+      <div className={cn("lg:pl-[200px] flex flex-col flex-1 min-w-0", rightSidebar && "lg:pr-[260px]")}>
         <div className="sticky top-0 z-10 flex h-16 shrink-0 items-center gap-x-4 border-b border-border bg-background px-4">
           <div className="lg:hidden flex items-center">
             <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
