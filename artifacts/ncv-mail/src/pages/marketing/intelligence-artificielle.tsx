@@ -46,7 +46,6 @@ export default function IntelligenceArtificielle() {
 
   const heroStats = [
     { value: t("marketing.inboriaChat.heroStat1Value"), label: t("marketing.inboriaChat.heroStat1Label") },
-    { value: t("marketing.inboriaChat.heroStat2Value"), label: t("marketing.inboriaChat.heroStat2Label") },
     { value: t("marketing.inboriaChat.heroStat3Value"), label: t("marketing.inboriaChat.heroStat3Label") },
   ];
 
