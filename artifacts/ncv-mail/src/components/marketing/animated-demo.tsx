@@ -230,11 +230,6 @@ export function AnimatedDemo() {
                 >
                   <item.icon className={`w-3 h-3 shrink-0 ${item.active ? "text-[#2d7dd2]" : "text-[#b8c5d6]"}`} />
                   <span className="truncate">{t(item.key, item.fallback)}</span>
-                  {item.active && (
-                    <span className="ml-auto shrink-0 text-[8px] bg-[#2d7dd2]/20 text-[#2d7dd2] px-1.5 py-0.5 rounded-full font-medium">
-                      {inboxCount}
-                    </span>
-                  )}
                   {item.badge && !item.active && (
                     <span className="ml-auto shrink-0 text-[8px] bg-[#2a3441] text-white px-1.5 py-0.5 rounded-full font-medium">
                       {item.badge}
