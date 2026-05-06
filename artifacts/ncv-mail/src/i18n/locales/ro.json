@@ -255,7 +255,8 @@
       "low": "Scăzut",
       "urgentPlural": "Urgente",
       "mediumPlural": "Mijlocii",
-      "lowPlural": "Scăzute"
+      "lowPlural": "Scăzute",
+      "all": "Toate"
     },
     "reply": "Răspundeți",
     "aiReply": "Răspuns Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Ecran complet",
     "exitFullscreen": "Ieșiți din ecran complet",
     "appointmentProposed": "Întâlnire propusă creată în agendă",
-    "assigneeFilterMe": "email-urile mele atribuite"
+    "assigneeFilterMe": "email-urile mele atribuite",
+    "sharedMailboxShort": "Partajate",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Email-uri trimise",

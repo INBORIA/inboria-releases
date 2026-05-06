@@ -501,7 +501,9 @@
     "fullscreen": "Plein écran",
     "exitFullscreen": "Quitter le plein écran",
     "appointmentProposed": "Rendez-vous proposé créé dans l'agenda",
-    "assigneeFilterMe": "mes emails assignés"
+    "assigneeFilterMe": "mes emails assignés",
+    "sharedMailboxShort": "Partagées",
+    "spamShort": "Indésirables"
   },
   "sent": {
     "title": "Emails envoyés",

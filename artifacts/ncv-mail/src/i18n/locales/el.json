@@ -255,7 +255,8 @@
       "low": "Χαμηλό",
       "urgentPlural": "Επείγοντα",
       "mediumPlural": "Μέσα",
-      "lowPlural": "Χαμηλά"
+      "lowPlural": "Χαμηλά",
+      "all": "Όλα"
     },
     "reply": "Απαντήστε",
     "aiReply": "Απάντηση Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Πλήρης οθόνη",
     "exitFullscreen": "Έξοδος από την πλήρη οθόνη",
     "appointmentProposed": "Η προτεινόμενη συνάντηση δημιουργήθηκε στο ημερολόγιο",
-    "assigneeFilterMe": "τα emails σας που έχουν ανατεθεί"
+    "assigneeFilterMe": "τα emails σας που έχουν ανατεθεί",
+    "sharedMailboxShort": "Κοινόχρηστα",
+    "spamShort": "Ανεπιθύμητα"
   },
   "sent": {
     "title": "Τα emails που εστάλησαν",

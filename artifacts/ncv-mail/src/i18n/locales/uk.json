@@ -255,7 +255,8 @@
       "low": "Низький",
       "urgentPlural": "Термінові",
       "mediumPlural": "Середні",
-      "lowPlural": "Низькі"
+      "lowPlural": "Низькі",
+      "all": "Усі"
     },
     "reply": "Відповісти",
     "aiReply": "Відповідь Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "На весь екран",
     "exitFullscreen": "Вийти з повноекранного режиму",
     "appointmentProposed": "Запропоновану зустріч створено в календарі",
-    "assigneeFilterMe": "мої призначені електронні листи"
+    "assigneeFilterMe": "мої призначені електронні листи",
+    "sharedMailboxShort": "Спільні",
+    "spamShort": "Спам"
   },
   "sent": {
     "title": "Відправлені електронні листи",

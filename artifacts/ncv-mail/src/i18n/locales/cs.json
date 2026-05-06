@@ -255,7 +255,8 @@
       "low": "Nízké",
       "urgentPlural": "Urgentní",
       "mediumPlural": "Střední",
-      "lowPlural": "Nízké"
+      "lowPlural": "Nízké",
+      "all": "Vše"
     },
     "reply": "Odpovědět",
     "aiReply": "Odpověď Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Celá obrazovka",
     "exitFullscreen": "Opustit celou obrazovku",
     "appointmentProposed": "Navržená schůzka vytvořena v kalendáři",
-    "assigneeFilterMe": "moje přiřazené emaily"
+    "assigneeFilterMe": "moje přiřazené emaily",
+    "sharedMailboxShort": "Sdílené",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Odeslané emaily",

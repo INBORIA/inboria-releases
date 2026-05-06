@@ -255,7 +255,8 @@
       "low": "Rendah",
       "urgentPlural": "Mendesak",
       "mediumPlural": "Sedang",
-      "lowPlural": "Rendah"
+      "lowPlural": "Rendah",
+      "all": "Semua"
     },
     "reply": "Balas",
     "aiReply": "Balasan Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Layar penuh",
     "exitFullscreen": "Keluar dari layar penuh",
     "appointmentProposed": "Janji yang diusulkan dibuat di kalender",
-    "assigneeFilterMe": "email saya yang ditugaskan"
+    "assigneeFilterMe": "email saya yang ditugaskan",
+    "sharedMailboxShort": "Dibagikan",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Email yang dikirim",

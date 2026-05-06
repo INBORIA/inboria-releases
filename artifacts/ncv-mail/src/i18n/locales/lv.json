@@ -255,7 +255,8 @@
       "low": "Zemi",
       "urgentPlural": "Steidzami",
       "mediumPlural": "Vidēji",
-      "lowPlural": "Zemi"
+      "lowPlural": "Zemi",
+      "all": "Visi"
     },
     "reply": "Atbildēt",
     "aiReply": "Atbilde Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Pilnekrāna režīms",
     "exitFullscreen": "Iziet no pilnekrāna režīma",
     "appointmentProposed": "Ieteiktais tikšanās laiks izveidots kalendārā",
-    "assigneeFilterMe": "mani piešķirtie e-pasti"
+    "assigneeFilterMe": "mani piešķirtie e-pasti",
+    "sharedMailboxShort": "Kopīgi",
+    "spamShort": "Mēstules"
   },
   "sent": {
     "title": "Nosūtītie e-pasti",

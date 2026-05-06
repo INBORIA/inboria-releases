@@ -255,7 +255,8 @@
       "low": "Низак",
       "urgentPlural": "Хитни",
       "mediumPlural": "Просечни",
-      "lowPlural": "Ниски"
+      "lowPlural": "Ниски",
+      "all": "Све"
     },
     "reply": "Одговори",
     "aiReply": "Одговор на Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Пун екран",
     "exitFullscreen": "Изађите из пуног екрана",
     "appointmentProposed": "Предложени састанак је креиран у календару",
-    "assigneeFilterMe": "моји додељени имејлови"
+    "assigneeFilterMe": "моји додељени имејлови",
+    "sharedMailboxShort": "Дељени",
+    "spamShort": "Нежељена пошта"
   },
   "sent": {
     "title": "Послати имејлови",

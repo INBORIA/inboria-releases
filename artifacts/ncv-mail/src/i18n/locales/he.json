@@ -255,7 +255,8 @@
       "low": "נמוך",
       "urgentPlural": "דחופים",
       "mediumPlural": "בינוניים",
-      "lowPlural": "נמוכים"
+      "lowPlural": "נמוכים",
+      "all": "הכול"
     },
     "reply": "ענה",
     "aiReply": "תגובה מ-Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "מסך מלא",
     "exitFullscreen": "צא ממסך מלא",
     "appointmentProposed": "פגישה מוצעת נוצרה בלוח השנה",
-    "assigneeFilterMe": "הדוא״לים המוקצים שלי"
+    "assigneeFilterMe": "הדוא״לים המוקצים שלי",
+    "sharedMailboxShort": "משותפות",
+    "spamShort": "דואר זבל"
   },
   "sent": {
     "title": "דוא״לים שנשלחו",

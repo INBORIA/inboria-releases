@@ -255,7 +255,8 @@
       "low": "Madala",
       "urgentPlural": "Hädad",
       "mediumPlural": "Keskmised",
-      "lowPlural": "Madala"
+      "lowPlural": "Madala",
+      "all": "Kõik"
     },
     "reply": "Vasta",
     "aiReply": "Vastus Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Täisekraan",
     "exitFullscreen": "Täisekraanist väljumine",
     "appointmentProposed": "Ettepanekud kohtumiste loomine kalendris",
-    "assigneeFilterMe": "minu määratud e-kirjad"
+    "assigneeFilterMe": "minu määratud e-kirjad",
+    "sharedMailboxShort": "Jagatud",
+    "spamShort": "Rämpspost"
   },
   "sent": {
     "title": "Saadetud e-kirjad",

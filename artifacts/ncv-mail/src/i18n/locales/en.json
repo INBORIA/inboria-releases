@@ -255,7 +255,8 @@
       "low": "Low",
       "urgentPlural": "Urgent",
       "mediumPlural": "Medium",
-      "lowPlural": "Low"
+      "lowPlural": "Low",
+      "all": "All"
     },
     "reply": "Reply",
     "aiReply": "Inboria reply",
@@ -500,7 +501,9 @@
     "fullscreen": "Fullscreen",
     "exitFullscreen": "Exit fullscreen",
     "appointmentProposed": "Proposed appointment added to calendar",
-    "assigneeFilterMe": "my assigned emails"
+    "assigneeFilterMe": "my assigned emails",
+    "sharedMailboxShort": "Shared",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Sent emails",

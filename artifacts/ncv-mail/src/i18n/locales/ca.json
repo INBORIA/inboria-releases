@@ -255,7 +255,8 @@
       "low": "Baix",
       "urgentPlural": "Urgents",
       "mediumPlural": "Mitjans",
-      "lowPlural": "Bajos"
+      "lowPlural": "Bajos",
+      "all": "Totes"
     },
     "reply": "Respondre",
     "aiReply": "Resposta Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Pantalla completa",
     "exitFullscreen": "Sortir de la pantalla completa",
     "appointmentProposed": "Cita proposada creada a l'agenda",
-    "assigneeFilterMe": "els meus correus electrònics assignats"
+    "assigneeFilterMe": "els meus correus electrònics assignats",
+    "sharedMailboxShort": "Compartides",
+    "spamShort": "Brossa"
   },
   "sent": {
     "title": "Correu electrònic enviats",

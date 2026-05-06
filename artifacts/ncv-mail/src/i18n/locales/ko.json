@@ -255,7 +255,8 @@
       "low": "낮음",
       "urgentPlural": "긴급한",
       "mediumPlural": "중간인",
-      "lowPlural": "낮은"
+      "lowPlural": "낮은",
+      "all": "전체"
     },
     "reply": "답장하기",
     "aiReply": "Inboria 답변",
@@ -500,7 +501,9 @@
     "fullscreen": "전체 화면",
     "exitFullscreen": "전체 화면 종료",
     "appointmentProposed": "제안된 약속이 일정에 생성되었습니다.",
-    "assigneeFilterMe": "내가 할당된 이메일"
+    "assigneeFilterMe": "내가 할당된 이메일",
+    "sharedMailboxShort": "공유",
+    "spamShort": "스팸"
   },
   "sent": {
     "title": "보낸 이메일",

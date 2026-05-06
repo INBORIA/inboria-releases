@@ -255,7 +255,8 @@
       "low": "Baxx",
       "urgentPlural": "Urgenti",
       "mediumPlural": "Medi",
-      "lowPlural": "Baxxi"
+      "lowPlural": "Baxxi",
+      "all": "Kollha"
     },
     "reply": "Iwieġeb",
     "aiReply": "Risposta Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Skrin sħiħ",
     "exitFullscreen": "Oħroġ mill-iskrin sħiħ",
     "appointmentProposed": "Appunt propost maħluq fl-agenda",
-    "assigneeFilterMe": "l-emails assenjati lilija"
+    "assigneeFilterMe": "l-emails assenjati lilija",
+    "sharedMailboxShort": "Kondiviżi",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Emails inviati",

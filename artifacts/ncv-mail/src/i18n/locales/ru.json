@@ -255,7 +255,8 @@
       "low": "Низкий",
       "urgentPlural": "Срочные",
       "mediumPlural": "Средние",
-      "lowPlural": "Низкие"
+      "lowPlural": "Низкие",
+      "all": "Все"
     },
     "reply": "Ответить",
     "aiReply": "Ответ Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Полный экран",
     "exitFullscreen": "Выйти из полного экрана",
     "appointmentProposed": "Создано предложенное событие в календаре",
-    "assigneeFilterMe": "мои назначенные электронные почты"
+    "assigneeFilterMe": "мои назначенные электронные почты",
+    "sharedMailboxShort": "Общие",
+    "spamShort": "Спам"
   },
   "sent": {
     "title": "Отправленные электронные почты",

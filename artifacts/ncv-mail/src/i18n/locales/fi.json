@@ -255,7 +255,8 @@
       "low": "Matala",
       "urgentPlural": "Kiireelliset",
       "mediumPlural": "Keskitasoiset",
-      "lowPlural": "Matalat"
+      "lowPlural": "Matalat",
+      "all": "Kaikki"
     },
     "reply": "Vastaa",
     "aiReply": "Vastaus Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Koko näyttö",
     "exitFullscreen": "Poistu koko näytöstä",
     "appointmentProposed": "Ehdotettu tapaaminen luotu kalenteriin",
-    "assigneeFilterMe": "minun osoitteeni"
+    "assigneeFilterMe": "minun osoitteeni",
+    "sharedMailboxShort": "Jaetut",
+    "spamShort": "Roskaposti"
   },
   "sent": {
     "title": "Lähetetyt sähköpostit",

@@ -255,7 +255,8 @@
       "low": "Baixo",
       "urgentPlural": "Urgentes",
       "mediumPlural": "Médios",
-      "lowPlural": "Baixos"
+      "lowPlural": "Baixos",
+      "all": "Todas"
     },
     "reply": "Responder",
     "aiReply": "Resposta Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Ecrã completo",
     "exitFullscreen": "Sair do ecrã completo",
     "appointmentProposed": "Compromisso proposto criado na agenda",
-    "assigneeFilterMe": "meus emails atribuídos"
+    "assigneeFilterMe": "meus emails atribuídos",
+    "sharedMailboxShort": "Partilhadas",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Emails enviados",

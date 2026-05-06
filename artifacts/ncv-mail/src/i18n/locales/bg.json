@@ -255,7 +255,8 @@
       "low": "Нисък",
       "urgentPlural": "Спешни",
       "mediumPlural": "Средни",
-      "lowPlural": "Ниски"
+      "lowPlural": "Ниски",
+      "all": "Всички"
     },
     "reply": "Отговорете",
     "aiReply": "Отговор Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Пълен екран",
     "exitFullscreen": "Изход от пълен екран",
     "appointmentProposed": "Създадено предложено събитие в календара",
-    "assigneeFilterMe": "моите имейли, назначени на мен"
+    "assigneeFilterMe": "моите имейли, назначени на мен",
+    "sharedMailboxShort": "Споделени",
+    "spamShort": "Спам"
   },
   "sent": {
     "title": "Изпратени имейли",

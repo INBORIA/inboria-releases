@@ -255,7 +255,8 @@
       "low": "Nizko",
       "urgentPlural": "Nujni",
       "mediumPlural": "Srednji",
-      "lowPlural": "Nizki"
+      "lowPlural": "Nizki",
+      "all": "Vse"
     },
     "reply": "Odgovori",
     "aiReply": "Odgovor Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Celozaslonski način",
     "exitFullscreen": "Zapustite celozaslonski način",
     "appointmentProposed": "Predlagani sestanek je bil ustvarjen v koledarju",
-    "assigneeFilterMe": "moje dodeljene e-pošte"
+    "assigneeFilterMe": "moje dodeljene e-pošte",
+    "sharedMailboxShort": "Skupni",
+    "spamShort": "Neželena pošta"
   },
   "sent": {
     "title": "Poslane e-pošte",

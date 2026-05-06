@@ -255,7 +255,8 @@
       "low": "Lav",
       "urgentPlural": "Haster",
       "mediumPlural": "Moderat",
-      "lowPlural": "Lav"
+      "lowPlural": "Lav",
+      "all": "Alle"
     },
     "reply": "Svar",
     "aiReply": "Svar Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Fullskjerm",
     "exitFullscreen": "Avslutt fullskjerm",
     "appointmentProposed": "Foreslått avtale opprettet i kalenderen",
-    "assigneeFilterMe": "mine tildelte e-poster"
+    "assigneeFilterMe": "mine tildelte e-poster",
+    "sharedMailboxShort": "Delte",
+    "spamShort": "Søppelpost"
   },
   "sent": {
     "title": "Sendte e-poster",

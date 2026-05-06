@@ -255,7 +255,8 @@
       "low": "Alacsony",
       "urgentPlural": "Sürgősek",
       "mediumPlural": "Közepesek",
-      "lowPlural": "Alacsonyak"
+      "lowPlural": "Alacsonyak",
+      "all": "Összes"
     },
     "reply": "Válasz",
     "aiReply": "Inboria válasz",
@@ -500,7 +501,9 @@
     "fullscreen": "Teljes képernyő",
     "exitFullscreen": "Kilépés a teljes képernyőből",
     "appointmentProposed": "Javasolt találkozó létrehozva a naptárban",
-    "assigneeFilterMe": "az Ön által kijelölt emailek"
+    "assigneeFilterMe": "az Ön által kijelölt emailek",
+    "sharedMailboxShort": "Megosztott",
+    "spamShort": "Levélszemét"
   },
   "sent": {
     "title": "Küldött emailek",

@@ -255,7 +255,8 @@
       "low": "Rendah",
       "urgentPlural": "Penting",
       "mediumPlural": "Sederhana",
-      "lowPlural": "Rendah"
+      "lowPlural": "Rendah",
+      "all": "Semua"
     },
     "reply": "Balas",
     "aiReply": "Jawapan Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Paparan penuh",
     "exitFullscreen": "Keluar dari paparan penuh",
     "appointmentProposed": "Janji temu yang dicadangkan telah dicipta dalam kalendar",
-    "assigneeFilterMe": "emel-emel saya yang ditugaskan"
+    "assigneeFilterMe": "emel-emel saya yang ditugaskan",
+    "sharedMailboxShort": "Dikongsi",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Emel yang dihantar",

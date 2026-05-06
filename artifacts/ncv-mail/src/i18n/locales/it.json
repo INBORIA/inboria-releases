@@ -255,7 +255,8 @@
       "low": "Basso",
       "urgentPlural": "Urgenti",
       "mediumPlural": "Medi",
-      "lowPlural": "Bassi"
+      "lowPlural": "Bassi",
+      "all": "Tutte"
     },
     "reply": "Rispondi",
     "aiReply": "Risposta Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Schermo intero",
     "exitFullscreen": "Uscire dallo schermo intero",
     "appointmentProposed": "Appuntamento proposto creato nel calendario",
-    "assigneeFilterMe": "le mie email assegnate"
+    "assigneeFilterMe": "le mie email assegnate",
+    "sharedMailboxShort": "Condivise",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Email inviate",

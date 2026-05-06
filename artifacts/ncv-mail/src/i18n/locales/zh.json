@@ -255,7 +255,8 @@
       "low": "低",
       "urgentPlural": "紧急邮件",
       "mediumPlural": "中等邮件",
-      "lowPlural": "低优先级邮件"
+      "lowPlural": "低优先级邮件",
+      "all": "全部"
     },
     "reply": "回复",
     "aiReply": "Inboria 回复",
@@ -500,7 +501,9 @@
     "fullscreen": "全屏",
     "exitFullscreen": "退出全屏",
     "appointmentProposed": "已在日历中创建的提议会议",
-    "assigneeFilterMe": "我的分配邮件"
+    "assigneeFilterMe": "我的分配邮件",
+    "sharedMailboxShort": "共享",
+    "spamShort": "垃圾邮件"
   },
   "sent": {
     "title": "已发送邮件",

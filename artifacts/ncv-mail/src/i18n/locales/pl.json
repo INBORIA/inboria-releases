@@ -255,7 +255,8 @@
       "low": "Niskie",
       "urgentPlural": "Pilne",
       "mediumPlural": "Średnie",
-      "lowPlural": "Niskie"
+      "lowPlural": "Niskie",
+      "all": "Wszystkie"
     },
     "reply": "Odpowiedz",
     "aiReply": "Odpowiedź Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Pełny ekran",
     "exitFullscreen": "Wyjdź z pełnego ekranu",
     "appointmentProposed": "Utworzono zaproponowane spotkanie w kalendarzu",
-    "assigneeFilterMe": "moje przypisane emaile"
+    "assigneeFilterMe": "moje przypisane emaile",
+    "sharedMailboxShort": "Współdzielone",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Wysłane emaile",

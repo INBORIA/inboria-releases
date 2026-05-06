@@ -255,7 +255,8 @@
       "low": "ទាប",
       "urgentPlural": "បន្ទាន់",
       "mediumPlural": "មធ្យម",
-      "lowPlural": "ទាប"
+      "lowPlural": "ទាប",
+      "all": "ទាំងអស់"
     },
     "reply": "ឆ្លើយតប",
     "aiReply": "ឆ្លើយតប Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "ទំហំពេញ",
     "exitFullscreen": "ចាកចេញពីទំហំពេញ",
     "appointmentProposed": "ការណាត់ជួបដែលបានផ្តល់បានបង្កើតក្នុងកាលវិភាគ",
-    "assigneeFilterMe": "អ៊ីមែលរបស់ខ្ញុំដែលបានចាត់តាំង"
+    "assigneeFilterMe": "អ៊ីមែលរបស់ខ្ញុំដែលបានចាត់តាំង",
+    "sharedMailboxShort": "បានចែករំលែក",
+    "spamShort": "សារឥតបានការ"
   },
   "sent": {
     "title": "អ៊ីមែលដែលបានផ្ញើ",

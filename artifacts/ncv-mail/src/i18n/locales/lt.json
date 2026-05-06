@@ -255,7 +255,8 @@
       "low": "Žemas",
       "urgentPlural": "Skubūs",
       "mediumPlural": "Vidutiniai",
-      "lowPlural": "Žemi"
+      "lowPlural": "Žemi",
+      "all": "Visi"
     },
     "reply": "Atsakyti",
     "aiReply": "Atsakymas Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Visas ekranas",
     "exitFullscreen": "Išeiti iš viso ekrano",
     "appointmentProposed": "Pasiūlytas susitikimas sukurtas kalendoriuje",
-    "assigneeFilterMe": "mano priskirti el. paštai"
+    "assigneeFilterMe": "mano priskirti el. paštai",
+    "sharedMailboxShort": "Bendri",
+    "spamShort": "Šlamštas"
   },
   "sent": {
     "title": "Išsiųsti el. paštai",

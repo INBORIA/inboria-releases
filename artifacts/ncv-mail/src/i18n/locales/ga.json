@@ -255,7 +255,8 @@
       "low": "Íseal",
       "urgentPlural": "Tábhachtaí",
       "mediumPlural": "Meán",
-      "lowPlural": "Íseal"
+      "lowPlural": "Íseal",
+      "all": "Gach ceann"
     },
     "reply": "Freagair",
     "aiReply": "Freagra Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Líonra iomlán",
     "exitFullscreen": "Fág an líonra iomlán",
     "appointmentProposed": "Cruinniú molta cruthaithe sa chláir",
-    "assigneeFilterMe": "mo ríomhphoist atá ceangailte"
+    "assigneeFilterMe": "mo ríomhphoist atá ceangailte",
+    "sharedMailboxShort": "Comhroinnte",
+    "spamShort": "Turscar"
   },
   "sent": {
     "title": "Ríomhphoist seolta",

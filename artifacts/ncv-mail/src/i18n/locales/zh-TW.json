@@ -255,7 +255,8 @@
       "low": "低",
       "urgentPlural": "緊急的",
       "mediumPlural": "中等的",
-      "lowPlural": "低的"
+      "lowPlural": "低的",
+      "all": "全部"
     },
     "reply": "回覆",
     "aiReply": "Inboria 回覆",
@@ -500,7 +501,9 @@
     "fullscreen": "全螢幕",
     "exitFullscreen": "退出全螢幕",
     "appointmentProposed": "已在日曆中創建提議的約會",
-    "assigneeFilterMe": "我的指派電子郵件"
+    "assigneeFilterMe": "我的指派電子郵件",
+    "sharedMailboxShort": "共用",
+    "spamShort": "垃圾郵件"
   },
   "sent": {
     "title": "已發送的電子郵件",

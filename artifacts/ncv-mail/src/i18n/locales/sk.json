@@ -255,7 +255,8 @@
       "low": "Nízke",
       "urgentPlural": "Urgentné",
       "mediumPlural": "Stredné",
-      "lowPlural": "Nízke"
+      "lowPlural": "Nízke",
+      "all": "Všetky"
     },
     "reply": "Odpovedať",
     "aiReply": "Odpoveď Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Celá obrazovka",
     "exitFullscreen": "Opustiť celú obrazovku",
     "appointmentProposed": "Navrhnutý termín vytvorený v kalendári",
-    "assigneeFilterMe": "moje priradené e-maily"
+    "assigneeFilterMe": "moje priradené e-maily",
+    "sharedMailboxShort": "Zdieľané",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Odoslané e-maily",

@@ -255,7 +255,8 @@
       "low": "کم",
       "urgentPlural": "فوری",
       "mediumPlural": "درمیانے",
-      "lowPlural": "کم"
+      "lowPlural": "کم",
+      "all": "سب"
     },
     "reply": "جواب دیں",
     "aiReply": "Inboria کا جواب",
@@ -500,7 +501,9 @@
     "fullscreen": "پوری اسکرین",
     "exitFullscreen": "پوری اسکرین سے باہر نکلیں",
     "appointmentProposed": "ایجنڈے میں تجویز کردہ ملاقات تخلیق کر لی گئی",
-    "assigneeFilterMe": "میرے تفویض کردہ ای میلز"
+    "assigneeFilterMe": "میرے تفویض کردہ ای میلز",
+    "sharedMailboxShort": "مشترکہ",
+    "spamShort": "اسپام"
   },
   "sent": {
     "title": "بھیجے گئے ای میلز",

@@ -255,7 +255,8 @@
       "low": "Laag",
       "urgentPlural": "Dringend",
       "mediumPlural": "Gemiddeld",
-      "lowPlural": "Laag"
+      "lowPlural": "Laag",
+      "all": "Alle"
     },
     "reply": "Antwoorden",
     "aiReply": "Inboria-antwoord",
@@ -500,7 +501,9 @@
     "fullscreen": "Volledig scherm",
     "exitFullscreen": "Volledig scherm afsluiten",
     "appointmentProposed": "Voorgestelde afspraak toegevoegd aan agenda",
-    "assigneeFilterMe": "mijn toegewezen e-mails"
+    "assigneeFilterMe": "mijn toegewezen e-mails",
+    "sharedMailboxShort": "Gedeeld",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Verzonden e-mails",

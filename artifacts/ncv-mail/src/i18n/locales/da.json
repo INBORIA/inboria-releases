@@ -255,7 +255,8 @@
       "low": "Lav",
       "urgentPlural": "Haster",
       "mediumPlural": "Middel",
-      "lowPlural": "Lav"
+      "lowPlural": "Lav",
+      "all": "Alle"
     },
     "reply": "Svar",
     "aiReply": "Svar Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Fuld skærm",
     "exitFullscreen": "Forlad fuld skærm",
     "appointmentProposed": "Foreslået møde oprettet i kalenderen",
-    "assigneeFilterMe": "mine tildelte emails"
+    "assigneeFilterMe": "mine tildelte emails",
+    "sharedMailboxShort": "Delte",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Sendte emails",

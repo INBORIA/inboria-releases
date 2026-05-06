@@ -255,7 +255,8 @@
       "low": "低",
       "urgentPlural": "緊急の",
       "mediumPlural": "中程度の",
-      "lowPlural": "低い"
+      "lowPlural": "低い",
+      "all": "すべて"
     },
     "reply": "返信",
     "aiReply": "Inboriaへの返信",
@@ -500,7 +501,9 @@
     "fullscreen": "全画面",
     "exitFullscreen": "全画面を終了する",
     "appointmentProposed": "提案されたアポイントメントがカレンダーに作成されました",
-    "assigneeFilterMe": "私の割り当てられたメール"
+    "assigneeFilterMe": "私の割り当てられたメール",
+    "sharedMailboxShort": "共有",
+    "spamShort": "迷惑メール"
   },
   "sent": {
     "title": "送信済みのメール",

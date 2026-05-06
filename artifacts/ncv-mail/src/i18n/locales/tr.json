@@ -255,7 +255,8 @@
       "low": "Düşük",
       "urgentPlural": "Acelesi olanlar",
       "mediumPlural": "Orta öncelikli",
-      "lowPlural": "Düşük öncelikli"
+      "lowPlural": "Düşük öncelikli",
+      "all": "Tümü"
     },
     "reply": "Yanıtla",
     "aiReply": "Inboria Yanıtı",
@@ -500,7 +501,9 @@
     "fullscreen": "Tam ekran",
     "exitFullscreen": "Tam ekrandan çık",
     "appointmentProposed": "Takvimde önerilen randevu oluşturuldu",
-    "assigneeFilterMe": "atanmış e-postalarım"
+    "assigneeFilterMe": "atanmış e-postalarım",
+    "sharedMailboxShort": "Paylaşılan",
+    "spamShort": "Spam"
   },
   "sent": {
     "title": "Gönderilen e-postalar",

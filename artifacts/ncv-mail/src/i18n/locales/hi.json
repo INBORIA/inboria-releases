@@ -255,7 +255,8 @@
       "low": "कम",
       "urgentPlural": "तत्काल",
       "mediumPlural": "मध्यम",
-      "lowPlural": "कम"
+      "lowPlural": "कम",
+      "all": "सभी"
     },
     "reply": "उत्तर दें",
     "aiReply": "Inboria उत्तर",
@@ -500,7 +501,9 @@
     "fullscreen": "पूर्ण स्क्रीन",
     "exitFullscreen": "पूर्ण स्क्रीन से बाहर निकलें",
     "appointmentProposed": "कैलेंडर में प्रस्तावित नियुक्ति बनाई गई",
-    "assigneeFilterMe": "मेरे असाइन किए गए ईमेल"
+    "assigneeFilterMe": "मेरे असाइन किए गए ईमेल",
+    "sharedMailboxShort": "साझा",
+    "spamShort": "स्पैम"
   },
   "sent": {
     "title": "भेजे गए ईमेल",

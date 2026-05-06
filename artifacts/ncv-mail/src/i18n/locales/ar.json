@@ -255,7 +255,8 @@
       "low": "منخفض",
       "urgentPlural": "عاجلون",
       "mediumPlural": "معتدلون",
-      "lowPlural": "منخفضون"
+      "lowPlural": "منخفضون",
+      "all": "الكل"
     },
     "reply": "رد",
     "aiReply": "رد عبر Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "ملء الشاشة",
     "exitFullscreen": "الخروج من ملء الشاشة",
     "appointmentProposed": "تم إنشاء موعد مقترح في التقويم",
-    "assigneeFilterMe": "بريدي الإلكتروني المعين"
+    "assigneeFilterMe": "بريدي الإلكتروني المعين",
+    "sharedMailboxShort": "مشتركة",
+    "spamShort": "البريد العشوائي"
   },
   "sent": {
     "title": "البريد الإلكتروني المرسل",

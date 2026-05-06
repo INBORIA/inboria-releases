@@ -255,7 +255,8 @@
       "low": "Låg",
       "urgentPlural": "Brådskande",
       "mediumPlural": "Mellan",
-      "lowPlural": "Låg"
+      "lowPlural": "Låg",
+      "all": "Alla"
     },
     "reply": "Svara",
     "aiReply": "Svar Inboria",
@@ -500,7 +501,9 @@
     "fullscreen": "Helskärm",
     "exitFullscreen": "Avsluta helskärm",
     "appointmentProposed": "Föreslagen möte skapat i kalendern",
-    "assigneeFilterMe": "mina tilldelade e-postmeddelanden"
+    "assigneeFilterMe": "mina tilldelade e-postmeddelanden",
+    "sharedMailboxShort": "Delade",
+    "spamShort": "Skräppost"
   },
   "sent": {
     "title": "Skickade e-postmeddelanden",
