@@ -83,3 +83,9 @@ id = "zTkmv6JvNrm1WwZD8gMkq"
 uri = "file://screenshots/proof_app_works_2030.jpg"
 type = "image"
 title = "Screenshot horodaté de ton app dev (homepage Inboria)"
+
+[[outputs]]
+id = "R1bk6hwC3pIM0kBVRz0dD"
+uri = "file://attached_assets/inboria_icon_512_1778109660532.png"
+type = "image"
+title = "Nouveau favicon Inboria - aperçu"
