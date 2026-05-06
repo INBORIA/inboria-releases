@@ -250,6 +250,7 @@
     "noProject": "Aucun projet",
     "notAssigned": "Non assigné",
     "priorities": {
+      "all": "Toutes",
       "urgent": "Urgent",
       "medium": "Moyen",
       "low": "Faible",

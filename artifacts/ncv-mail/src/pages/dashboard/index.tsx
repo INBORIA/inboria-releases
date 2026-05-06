@@ -4388,7 +4388,7 @@ export default function Dashboard() {
           <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8">
               <span className="text-[11px] text-[#b8c5d6] mr-1">{t("inbox.priority")}:</span>
               {[
-                { value: "all", label: t("inbox.allCategories") },
+                { value: "all", label: t("inbox.priorities.all", "Toutes") },
                 { value: "urgent", label: t("inbox.priorities.urgent") },
                 { value: "moyen", label: t("inbox.priorities.medium") },
                 { value: "faible", label: t("inbox.priorities.low") },
