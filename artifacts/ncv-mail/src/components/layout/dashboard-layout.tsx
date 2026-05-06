@@ -296,7 +296,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
       </div>
 
       {rightSidebar && (
-        <aside className="hidden md:flex md:fixed md:inset-y-0 md:right-0 md:w-[260px] flex-col bg-sidebar border-l border-[#1f2937]">
+        <aside className="hidden md:flex md:fixed md:inset-y-0 md:right-0 md:w-[260px] flex-col bg-sidebar border-l border-[#1f2937] z-30">
           <div className="h-16 shrink-0 border-b border-[#1f2937] px-3 flex items-center justify-end gap-1.5">
             <NotificationBell />
             <LanguageSwitcher />
