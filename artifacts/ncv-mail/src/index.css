@@ -168,12 +168,26 @@
    Sheet/Dialog/DropdownMenu Radix) injecte des regles !important
    non-layered qui battent les regles layered. Tout doit rester ici en
    global. Cf. retours utilisateur 6 mai 2026 — chat Inboria + profil. */
+:root {
+  --removed-body-scroll-bar-size: 0px !important;
+}
+html,
 html[data-scroll-locked],
+body,
 body[data-scroll-locked],
 html[data-scroll-locked] body {
   padding-right: 0 !important;
   margin-right: 0 !important;
   --removed-body-scroll-bar-size: 0px !important;
+  overflow-y: auto !important;
+}
+/* react-remove-scroll injecte un inline style sur body : on le neutralise. */
+body[style*="padding-right"],
+body[style*="margin-right"],
+body[style*="overflow"] {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+  overflow-y: auto !important;
 }
 
 @layer utilities {
