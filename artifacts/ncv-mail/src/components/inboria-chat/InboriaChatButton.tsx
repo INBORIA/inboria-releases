@@ -5,8 +5,6 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
-import { Sheet, SheetTrigger, SheetTitle } from "@/components/ui/sheet";
-import * as SheetPrimitive from "@radix-ui/react-dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
@@ -446,26 +444,27 @@ export function InboriaChatButton() {
   const clearConversation = () => setMessages([]);
 
   return (
-    <Sheet open={isOpen} onOpenChange={setIsOpen} modal={false}>
-      <SheetTrigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          className="relative h-9 gap-2 px-2.5 hover:bg-cyan-500/10 text-zinc-200"
-          aria-label={t("inboriaChat.openLabel")}
-          data-testid="inboria-chat-button"
-        >
-          <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-cyan-500/15 border border-cyan-400/30">
-            <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
-          </span>
-          <span className="text-sm font-medium">
-            Inbor<span className="text-cyan-400">ia</span>
-          </span>
-        </Button>
-      </SheetTrigger>
-      <SheetPrimitive.Portal>
-        <SheetPrimitive.Content
-          className="fixed inset-y-0 right-0 z-50 h-full w-full sm:max-w-md border-l border-zinc-800 bg-zinc-950 p-0 shadow-lg flex flex-col gap-0 transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:slide-out-to-right data-[state=open]:slide-in-from-right"
+    <>
+      <Button
+        variant="ghost"
+        size="sm"
+        className="relative h-9 gap-2 px-2.5 hover:bg-cyan-500/10 text-zinc-200"
+        aria-label={t("inboriaChat.openLabel")}
+        data-testid="inboria-chat-button"
+        onClick={() => setIsOpen((v) => !v)}
+      >
+        <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-cyan-500/15 border border-cyan-400/30">
+          <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
+        </span>
+        <span className="text-sm font-medium">
+          Inbor<span className="text-cyan-400">ia</span>
+        </span>
+      </Button>
+      {isOpen && (
+        <div
+          className="fixed inset-y-0 right-0 z-50 h-full w-full sm:max-w-md border-l border-zinc-800 bg-zinc-950 p-0 shadow-2xl flex flex-col gap-0"
+          role="dialog"
+          aria-modal="false"
         >
         <div className="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
@@ -473,9 +472,9 @@ export function InboriaChatButton() {
               <Sparkles className="h-4 w-4 text-cyan-300" />
             </div>
             <div>
-              <SheetTitle className="text-sm font-semibold text-zinc-100 leading-tight">
+              <h2 className="text-sm font-semibold text-zinc-100 leading-tight">
                 Inbor<span className="text-cyan-400">ia</span>
-              </SheetTitle>
+              </h2>
               <p className="text-xs text-zinc-500 leading-tight">{t("inboriaChat.subtitle")}</p>
             </div>
           </div>
@@ -620,8 +619,8 @@ export function InboriaChatButton() {
             {t("inboriaChat.footerHint")}
           </p>
         </div>
-        </SheetPrimitive.Content>
-      </SheetPrimitive.Portal>
-    </Sheet>
+        </div>
+      )}
+    </>
   );
 }

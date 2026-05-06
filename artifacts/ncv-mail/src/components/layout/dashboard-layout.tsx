@@ -31,7 +31,7 @@ import {
 } from "lucide-react";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { cn } from "@/lib/utils";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
@@ -189,66 +189,103 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
     </div>
   );
 
-  const UserMenu = () => (
-    <DropdownMenu modal={false}>
-      <DropdownMenuTrigger asChild>
+  const UserMenu = () => {
+    const [open, setOpen] = useState(false);
+    const wrapRef = useRef<HTMLDivElement>(null);
+    useEffect(() => {
+      if (!open) return;
+      const onDocClick = (e: MouseEvent) => {
+        if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
+          setOpen(false);
+        }
+      };
+      const onEsc = (e: KeyboardEvent) => {
+        if (e.key === "Escape") setOpen(false);
+      };
+      document.addEventListener("mousedown", onDocClick);
+      document.addEventListener("keydown", onEsc);
+      return () => {
+        document.removeEventListener("mousedown", onDocClick);
+        document.removeEventListener("keydown", onEsc);
+      };
+    }, [open]);
+    return (
+      <div ref={wrapRef} className="relative">
         <button
+          type="button"
           className="flex items-center justify-center h-8 w-8 rounded-full hover:ring-2 hover:ring-primary/40 transition-all"
           data-testid="user-menu-trigger"
           aria-label={t("sidebar.user")}
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
         >
           <div className="h-8 w-8 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[12px] font-semibold text-primary shrink-0">
             {((user as any).fullName || t("sidebar.user")).charAt(0).toUpperCase()}
           </div>
         </button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent side="bottom" align="end" className="w-56 mt-1">
-        <DropdownMenuLabel className="font-normal">
-          <div className="flex flex-col">
-            <span className="text-[13px] font-medium text-white truncate">
-              {(user as any).fullName || t("sidebar.user")}
-            </span>
-            <span className="text-[11px] text-[#b8c5d6] capitalize">
-              {(user as any).plan}
-            </span>
-          </div>
-        </DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {isOrgMember ? (
-          <DropdownMenuItem asChild data-testid="user-menu-my-account">
-            <Link href="/dashboard/parametres/mon-compte" className="cursor-pointer">
-              <Settings className="h-4 w-4 mr-2" />
-              {t("settings.hub.myAccount", "Mon compte")}
-            </Link>
-          </DropdownMenuItem>
-        ) : (
-          <>
-            <DropdownMenuItem asChild data-testid="user-menu-subscription">
-              <Link href="/dashboard/abonnement" className="cursor-pointer">
-                <CreditCard className="h-4 w-4 mr-2" />
-                {t("sidebar.subscription")}
-              </Link>
-            </DropdownMenuItem>
-            <DropdownMenuItem asChild data-testid="user-menu-settings">
-              <Link href="/dashboard/parametres" className="cursor-pointer">
+        {open && (
+          <div
+            role="menu"
+            className="absolute right-0 top-full mt-1 w-56 rounded-md border border-border bg-popover text-popover-foreground shadow-md z-50 p-1"
+          >
+            <div className="px-2 py-1.5">
+              <div className="flex flex-col">
+                <span className="text-[13px] font-medium text-white truncate">
+                  {(user as any).fullName || t("sidebar.user")}
+                </span>
+                <span className="text-[11px] text-[#b8c5d6] capitalize">
+                  {(user as any).plan}
+                </span>
+              </div>
+            </div>
+            <div className="my-1 h-px bg-border" />
+            {isOrgMember ? (
+              <Link
+                href="/dashboard/parametres/mon-compte"
+                onClick={() => setOpen(false)}
+                className="flex items-center px-2 py-1.5 text-sm rounded-sm cursor-pointer hover:bg-accent hover:text-accent-foreground"
+                data-testid="user-menu-my-account"
+              >
                 <Settings className="h-4 w-4 mr-2" />
-                {t("sidebar.settings")}
+                {t("settings.hub.myAccount", "Mon compte")}
               </Link>
-            </DropdownMenuItem>
-          </>
+            ) : (
+              <>
+                <Link
+                  href="/dashboard/abonnement"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center px-2 py-1.5 text-sm rounded-sm cursor-pointer hover:bg-accent hover:text-accent-foreground"
+                  data-testid="user-menu-subscription"
+                >
+                  <CreditCard className="h-4 w-4 mr-2" />
+                  {t("sidebar.subscription")}
+                </Link>
+                <Link
+                  href="/dashboard/parametres"
+                  onClick={() => setOpen(false)}
+                  className="flex items-center px-2 py-1.5 text-sm rounded-sm cursor-pointer hover:bg-accent hover:text-accent-foreground"
+                  data-testid="user-menu-settings"
+                >
+                  <Settings className="h-4 w-4 mr-2" />
+                  {t("sidebar.settings")}
+                </Link>
+              </>
+            )}
+            <div className="my-1 h-px bg-border" />
+            <button
+              type="button"
+              onClick={() => { setOpen(false); handleLogout(); }}
+              className="w-full flex items-center px-2 py-1.5 text-sm rounded-sm cursor-pointer text-red-400 hover:text-red-300 hover:bg-red-500/10"
+              data-testid="user-menu-logout"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              {t("nav.logout")}
+            </button>
+          </div>
         )}
-        <DropdownMenuSeparator />
-        <DropdownMenuItem
-          onClick={handleLogout}
-          className="cursor-pointer text-red-400 focus:text-red-300 focus:bg-red-500/10"
-          data-testid="user-menu-logout"
-        >
-          <LogOut className="h-4 w-4 mr-2" />
-          {t("nav.logout")}
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+      </div>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-background flex">
