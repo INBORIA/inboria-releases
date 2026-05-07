@@ -7,6 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   Inbox, Clock, Eye, Sparkles, Reply, Forward, Wand2, Loader2,
   Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
+  MoreHorizontal,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -597,7 +598,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 <Button
                   size="sm"
                   variant="outline"
-                  className="gap-1.5 h-7 text-[11px] bg-transparent border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
                   disabled={isDrafting}
                   onClick={() => {
                     setReplyTo(email.senderEmail || extractEmailAddress(email.sender) || "");
@@ -641,7 +642,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 <Button
                   variant="outline"
                   size="sm"
-                  className="gap-1.5 h-7 text-[11px] bg-transparent border-primary/30 text-primary hover:bg-primary/10 hover:text-primary"
+                  className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
                   disabled={forwardIntroLoading}
                   onClick={async () => {
                     const defConn = forwardConnectionId || resolveDefaultConnectionId();
@@ -706,164 +707,153 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   <Trash2 className="w-3 h-3" />
                   {t("inbox.deleteEmail")}
                 </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={`gap-1.5 h-7 text-[11px] bg-transparent ${
-                    handledAt
-                      ? "border-emerald-500/40 text-emerald-300 hover:bg-emerald-500/10"
-                      : "border-border text-emerald-400/70 hover:text-emerald-300 hover:bg-emerald-500/[0.08]"
-                  }`}
-                  onClick={toggleHandled}
-                  disabled={handledLoading}
-                  title={
-                    handledAt
-                      ? t("inbox.handledOnHint", "Cliquez pour annuler le marquage")
-                      : t("inbox.markHandledHint", "Marquer cet email comme traité (action humaine explicite, alimente le Bilan)")
-                  }
-                  data-testid="button-toggle-handled"
-                >
-                  {handledLoading ? (
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                  ) : (
+                {handledAt && (
+                  <span
+                    className="inline-flex items-center gap-1.5 h-7 px-2 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-[11px]"
+                    title={t("inbox.handledOnHint", "Cliquez « Plus » pour annuler le marquage") as string}
+                  >
                     <CheckCircle2 className="w-3 h-3" />
-                  )}
-                  {handledAt ? (
-                    <>
-                      <span>
-                        {t("inbox.handledByOn", "Traité par {{name}} le {{date}}", {
-                          name: handlerName,
-                          date: format(new Date(handledAt), "d MMM", { locale: dateFnsLocale }),
-                        })}
-                      </span>
-                      <span className="ml-1 px-1.5 py-0.5 rounded bg-emerald-500/15 text-emerald-200 text-[10px] uppercase tracking-wider">
-                        {t("inbox.unmarkHandled", "Annuler")}
-                      </span>
-                    </>
-                  ) : (
-                    t("inbox.markHandled", "Marquer traité")
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className={`gap-1.5 h-7 text-[11px] bg-transparent ${
-                    isPrivate
-                      ? "border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
-                      : "border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
-                  }`}
-                  onClick={togglePrivate}
-                  disabled={privateLoading}
-                  title={
-                    isPrivate
-                      ? t("emailDetail.unmarkPrivateHint", "Rendre cet email visible pour vos admins")
-                      : t("emailDetail.markPrivateHint", "Cacher cet email à vos admins (vue équipe + Inboria)")
-                  }
-                  data-testid="button-toggle-private"
-                >
-                  {privateLoading ? (
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                  ) : isPrivate ? (
-                    <LockOpen className="w-3 h-3" />
-                  ) : (
+                    {t("inbox.handledByOn", "Traité par {{name}} le {{date}}", {
+                      name: handlerName,
+                      date: format(new Date(handledAt), "d MMM", { locale: dateFnsLocale }),
+                    })}
+                  </span>
+                )}
+                {isPrivate && (
+                  <span
+                    className="inline-flex items-center gap-1.5 h-7 px-2 rounded-md bg-amber-500/10 border border-amber-500/30 text-amber-300 text-[11px]"
+                    title={t("emailDetail.unmarkPrivateHint", "Cliquez « Plus » pour rendre visible") as string}
+                  >
                     <Lock className="w-3 h-3" />
-                  )}
-                  {isPrivate
-                    ? t("emailDetail.unmarkPrivate", "Rendre visible")
-                    : t("emailDetail.markPrivate", "Marquer privé")}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="gap-1.5 h-7 text-[11px] bg-transparent border-cyan-500/30 text-cyan-400 hover:bg-cyan-500/10 hover:text-cyan-300"
-                  onClick={() => {
-                    if (!taskFormOpen) {
-                      setTaskTitle(`${t("inbox.handlePrefix")} ${email.subject}`);
-                      setTaskProjectId(email.projectId || "none");
-                    }
-                    setTaskFormOpen(!taskFormOpen);
-                  }}
-                >
-                  <ListTodo className="w-3 h-3" />
-                  {t("inbox.createTask")}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  disabled={appointmentRunning || detectAppointments.isPending}
-                  className="gap-1.5 h-7 text-[11px] bg-transparent border-emerald-500/30 text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
-                  onClick={() => {
-                    if (appointmentRunning) return;
-                    setAppointmentRunning(true);
-                    detectAppointments.mutate(
-                      { data: { emailId: email.id, lang: i18n.language } },
-                      {
-                        onSuccess: async (data) => {
-                          const created = ((data as { appointments?: any[] })?.appointments) || [];
-                          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
-                          queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
-                          if (created.length === 0) {
-                            toast({ title: t("agenda.noDetectedForEmail", "Aucun rendez-vous detecte dans cet email."), variant: "default" });
-                            setAppointmentRunning(false);
-                            return;
-                          }
-                          // Auto-confirm every appointment created from this
-                          // email so the user truly only needs one click.
-                          await Promise.all(
-                            created.map((apt: any) =>
-                              new Promise<void>((resolve) => {
-                                updateAppointment.mutate(
-                                  { id: String(apt.id), data: { confirmed: true } },
-                                  { onSettled: () => resolve() },
-                                );
-                              }),
-                            ),
-                          );
-                          queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
-                          const first = created[0];
-                          let detail = "";
-                          try {
-                            if (first?.startAt) {
-                              detail = format(new Date(first.startAt), "PPP p", { locale: dateFnsLocale });
-                            }
-                          } catch {
-                            detail = "";
-                          }
-                          const titlePart = created.length === 1
-                            ? `${first?.title || ""}${detail ? " — " + detail : ""}`
-                            : t("agenda.detectedCount", { count: created.length });
-                          toast({
-                            title: t("agenda.createdFromEmail", "Rendez-vous ajoute a l'agenda"),
-                            description: titlePart,
-                            action: (
-                              <Link
-                                to="/dashboard/agenda"
-                                className="text-emerald-400 hover:text-emerald-300 underline text-xs"
-                              >
-                                {t("agenda.viewInAgenda", "Voir l'agenda")}
-                              </Link>
-                            ),
-                          });
-                          setAppointmentRunning(false);
-                        },
-                        onError: (err: any) => {
-                          const msg = err?.response?.data?.error || t("agenda.detectError", "Detection impossible. Reessayez.");
-                          toast({ title: msg, variant: "destructive" });
-                          setAppointmentRunning(false);
-                        },
-                      },
-                    );
-                  }}
-                >
-                  {appointmentRunning || detectAppointments.isPending ? (
-                    <Loader2 className="w-3 h-3 animate-spin" />
-                  ) : (
-                    <CalendarDays className="w-3 h-3" />
-                  )}
-                  {t("agenda.createFromEmail")}
-                </Button>
-                {/* Ancien bouton CSV remplace : voir le menu "Exporter" dans la
-                    barre d'actions principale (composant ExportEmlButton). */}
+                    {t("emailDetail.markPrivate", "Privé")}
+                  </span>
+                )}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
+                      data-testid="email-more-menu"
+                    >
+                      <MoreHorizontal className="w-3.5 h-3.5" />
+                      {t("common.more", "Plus")}
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="bg-card border-border w-60">
+                    <DropdownMenuItem
+                      className="text-[12px] text-white focus:bg-white/[0.06] cursor-pointer gap-2"
+                      onClick={() => { if (!handledLoading) toggleHandled(); }}
+                      disabled={handledLoading}
+                      data-testid="menu-toggle-handled"
+                    >
+                      {handledLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />}
+                      {handledAt
+                        ? t("inbox.unmarkHandled", "Annuler « traité »")
+                        : t("inbox.markHandled", "Marquer traité")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-[12px] text-white focus:bg-white/[0.06] cursor-pointer gap-2"
+                      onClick={() => { if (!privateLoading) togglePrivate(); }}
+                      disabled={privateLoading}
+                      data-testid="menu-toggle-private"
+                    >
+                      {privateLoading
+                        ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        : isPrivate
+                          ? <LockOpen className="w-3.5 h-3.5 text-amber-400" />
+                          : <Lock className="w-3.5 h-3.5 text-amber-400" />}
+                      {isPrivate
+                        ? t("emailDetail.unmarkPrivate", "Rendre visible")
+                        : t("emailDetail.markPrivate", "Marquer privé")}
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-[12px] text-white focus:bg-white/[0.06] cursor-pointer gap-2"
+                      onClick={() => {
+                        if (!taskFormOpen) {
+                          setTaskTitle(`${t("inbox.handlePrefix")} ${email.subject}`);
+                          setTaskProjectId(email.projectId || "none");
+                        }
+                        setTaskFormOpen(!taskFormOpen);
+                      }}
+                      data-testid="menu-create-task"
+                    >
+                      <ListTodo className="w-3.5 h-3.5 text-cyan-400" />
+                      {t("inbox.createTask")}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem
+                      className="text-[12px] text-white focus:bg-white/[0.06] cursor-pointer gap-2"
+                      disabled={appointmentRunning || detectAppointments.isPending}
+                      onClick={() => {
+                        if (appointmentRunning) return;
+                        setAppointmentRunning(true);
+                        detectAppointments.mutate(
+                          { data: { emailId: email.id, lang: i18n.language } },
+                          {
+                            onSuccess: async (data) => {
+                              const created = ((data as { appointments?: any[] })?.appointments) || [];
+                              queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+                              queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
+                              if (created.length === 0) {
+                                toast({ title: t("agenda.noDetectedForEmail", "Aucun rendez-vous detecte dans cet email."), variant: "default" });
+                                setAppointmentRunning(false);
+                                return;
+                              }
+                              await Promise.all(
+                                created.map((apt: any) =>
+                                  new Promise<void>((resolve) => {
+                                    updateAppointment.mutate(
+                                      { id: String(apt.id), data: { confirmed: true } },
+                                      { onSettled: () => resolve() },
+                                    );
+                                  }),
+                                ),
+                              );
+                              queryClient.invalidateQueries({ queryKey: getListAppointmentsQueryKey() });
+                              const first = created[0];
+                              let detail = "";
+                              try {
+                                if (first?.startAt) {
+                                  detail = format(new Date(first.startAt), "PPP p", { locale: dateFnsLocale });
+                                }
+                              } catch {
+                                detail = "";
+                              }
+                              const titlePart = created.length === 1
+                                ? `${first?.title || ""}${detail ? " — " + detail : ""}`
+                                : t("agenda.detectedCount", { count: created.length });
+                              toast({
+                                title: t("agenda.createdFromEmail", "Rendez-vous ajoute a l'agenda"),
+                                description: titlePart,
+                                action: (
+                                  <Link
+                                    to="/dashboard/agenda"
+                                    className="text-emerald-400 hover:text-emerald-300 underline text-xs"
+                                  >
+                                    {t("agenda.viewInAgenda", "Voir l'agenda")}
+                                  </Link>
+                                ),
+                              });
+                              setAppointmentRunning(false);
+                            },
+                            onError: (err: any) => {
+                              const msg = err?.response?.data?.error || t("agenda.detectError", "Detection impossible. Reessayez.");
+                              toast({ title: msg, variant: "destructive" });
+                              setAppointmentRunning(false);
+                            },
+                          },
+                        );
+                      }}
+                      data-testid="menu-create-appointment"
+                    >
+                      {appointmentRunning || detectAppointments.isPending
+                        ? <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                        : <CalendarDays className="w-3.5 h-3.5 text-emerald-400" />}
+                      {t("agenda.createFromEmail")}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
               </div>
               <div className="flex items-center gap-2.5 flex-wrap">
                 <div className="flex items-center gap-1.5">
