@@ -1298,10 +1298,11 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
       <div className="flex justify-start mt-4">
         <button
           onClick={onBack}
-          className="flex items-center gap-1 text-[11px] px-3 py-1.5 rounded-md font-medium transition-colors bg-primary/15 text-primary border border-primary/20 hover:bg-primary/25"
+          className="flex items-center gap-1.5 text-[11px] px-2.5 py-1.5 rounded-md font-medium transition-colors text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
+          title={t("inbox.backHint", "Retour (Échap) — J/K pour naviguer, R répondre, E archiver") as string}
         >
-          <Inbox className="w-3.5 h-3.5" />
-          {t("inbox.title")}
+          <ChevronLeft className="w-3.5 h-3.5" />
+          {t("common.back", "Retour")}
         </button>
       </div>
     </div>
