@@ -117,7 +117,7 @@ export function SnoozeButton({ emailId, snoozedUntil, variant = "full", onAfter 
   return (
     <Popover open={open} onOpenChange={(v) => { setOpen(v); if (!v) setShowCustom(false); }}>
       <PopoverTrigger asChild>
-        <Button size="sm" variant="ghost" className={variant === "icon" ? "h-7 w-7 p-0" : "h-7 text-[11px] gap-1"}>
+        <Button size="sm" variant="outline" className={variant === "icon" ? "h-7 w-7 p-0 bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]" : "gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"}>
           <Clock className="w-3 h-3" />
           {variant === "full" && t("wave1.snoozeButton")}
         </Button>
