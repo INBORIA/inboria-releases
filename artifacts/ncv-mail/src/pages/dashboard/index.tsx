@@ -4389,7 +4389,7 @@ export default function Dashboard() {
   ) : undefined;
 
   return (
-    <DashboardLayout rightSidebar={SUPERHUMAN_CLEAN ? undefined : categoriesPanel}>
+    <DashboardLayout rightSidebar={SUPERHUMAN_CLEAN || categoriesCollapsed ? undefined : categoriesPanel}>
       <div className="flex flex-col h-full">
         {assigneePageTitle && (
           <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-4 pb-2">
@@ -4775,6 +4775,25 @@ export default function Dashboard() {
                 </DropdownMenu>
               );
             })()}
+
+            {/* Étape 5 — bouton Catégories : permet de ré-ouvrir le panneau
+                de droite quand il a été replié (sinon il disparaît). */}
+            <button
+              type="button"
+              onClick={() => setCategoriesCollapsed((v) => !v)}
+              className={`inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md font-medium border transition-colors ${
+                categoriesCollapsed
+                  ? "text-[#b8c5d6] border-[#1f2630] hover:text-white hover:border-[#b8c5d6]/30 bg-transparent"
+                  : "bg-primary/15 text-primary border-primary/20"
+              }`}
+              title={categoriesCollapsed
+                ? t("common.expand", { defaultValue: "Afficher les catégories" })
+                : t("common.collapse", { defaultValue: "Masquer les catégories" })}
+            >
+              <Tags className="w-3.5 h-3.5" />
+              <span>{t("inbox.category")}</span>
+              {categoriesCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
 
             {/* Pastilles rappel filtres actifs (cliquables pour retirer) */}
             {filterPriority !== "all" && (
@@ -5193,16 +5212,8 @@ export default function Dashboard() {
           >
             ?
           </button>
-          <button
-            type="button"
-            title={t("inbox.askInboria")}
-            onClick={() => window.dispatchEvent(new CustomEvent("inboria-chat-open"))}
-            className="fixed bottom-16 right-4 z-40 h-9 px-3 rounded-full border border-[#4F46E5]/40 bg-[#4F46E5]/10 text-[#e6e9ef] hover:bg-[#4F46E5]/20 transition-colors flex items-center gap-1.5 text-[12px] font-medium shadow-lg"
-            aria-label={t("inbox.askInboria")}
-          >
-            <Sparkles className="w-3.5 h-3.5 text-[#4F46E5]" />
-            {t("inbox.askInboria")}
-          </button>
+          {/* Bouton flottant « Demander à Inboria » retiré : doublon avec le
+              chat Inboria déjà disponible en haut de la page. */}
         </>
       )}
       {contextMenu && (
