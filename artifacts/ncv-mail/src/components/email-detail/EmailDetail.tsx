@@ -861,13 +861,13 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                           )
                         : null,
                       email.projectId
-                        ? (projects.find((p: any) => String(p.id) === String(email.projectId))?.reference || t("inbox.noProject", "Aucun projet"))
-                        : t("inbox.noProject", "Aucun projet"),
+                        ? (projects.find((p: any) => String(p.id) === String(email.projectId))?.reference || null)
+                        : null,
                       email.assignedTo && orgMembers
                         ? (orgMembers.find((m: any) => m.userId === email.assignedTo)?.fullName
                             || orgMembers.find((m: any) => m.userId === email.assignedTo)?.email
-                            || t("inbox.notAssigned", "Non assigné"))
-                        : t("inbox.notAssigned", "Non assigné"),
+                            || null)
+                        : null,
                     ].filter(Boolean).join(" · ")}
                   </span>
                 )}
