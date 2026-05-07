@@ -141,10 +141,9 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
         )}
       </div>
 
-      {/* Avatar — un seul ton indigo discret, cohérent avec l'accent global.
-          Lisible en clair comme en sombre. */}
-      <div className="w-7 h-7 rounded-full bg-[#4F46E5]/15 border border-[#4F46E5]/30 flex items-center justify-center shrink-0">
-        <span className="text-[#4F46E5] text-[11px] font-semibold">
+      {/* Avatar — même bleu que les boutons sélectionnés (bg-primary). */}
+      <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+        <span className="text-primary text-[11px] font-semibold">
           {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
         </span>
       </div>
