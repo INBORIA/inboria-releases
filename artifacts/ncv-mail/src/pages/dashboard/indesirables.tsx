@@ -299,48 +299,59 @@ export default function Indesirables() {
               </button>
             )}
 
-            <div className="space-y-0.5">
+            <div>
               {visible.map((email: any) => {
                 const risk = getRisk(email);
                 return (
                   <div
                     key={email.id}
-                    className="group flex items-center gap-3 rounded-md border border-border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer px-3 py-2"
+                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 hover:bg-white/[0.03] transition-colors ${
+                      risk === "veryHigh" ? "border-l-red-500/70" : risk === "medium" ? "border-l-amber-500/60" : "border-l-transparent"
+                    }`}
                     onClick={() => setSelectedEmailId(email.id)}
                   >
-                    <span className={`w-2 h-2 rounded-full shrink-0 ${RISK_DOT[risk]}`} title={t(`junk.risk.${risk}`)} />
-                    <div className="w-6 h-6 rounded-full bg-[#1e3a5f] flex items-center justify-center shrink-0">
-                      <span className="text-primary font-semibold text-[10px]">{(email.sender || "?")[0].toUpperCase()}</span>
+                    <div className="w-4 flex items-center justify-center shrink-0">
+                      <span className={`w-1.5 h-1.5 rounded-full ${RISK_DOT[risk]}`} title={t(`junk.risk.${risk}`)} />
                     </div>
-                    <span className="text-[12px] font-medium text-white truncate min-w-[120px] max-w-[200px]">{email.sender}</span>
-                    <span className="text-[12px] text-[#b8c5d6] truncate flex-1">{email.subject}</span>
-                    <span className="text-[10px] text-[#b8c5d6]/70 shrink-0 hidden sm:inline">
+                    <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                      <span className="text-primary text-[11px] font-semibold">
+                        {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
+                      </span>
+                    </div>
+                    <div className="w-[140px] shrink-0 min-w-0">
+                      <span className="text-[13px] truncate text-[#c2c8d4] block">{email.sender}</span>
+                    </div>
+                    <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
+                      <span className="text-[13px] truncate text-[#c2c8d4]">{email.subject}</span>
+                      {email.summary && (
+                        <span className="text-[13px] truncate text-[#8b95a7]">— {email.summary}</span>
+                      )}
+                    </div>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleRestore(email.id); }}
+                      className="shrink-0 p-1.5 rounded text-[#6b7480] hover:text-primary hover:bg-primary/10"
+                      title={t("junk.restore")}
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleBlock(email); }}
+                      className="shrink-0 p-1.5 rounded text-[#6b7480] hover:text-amber-300 hover:bg-amber-500/10 disabled:opacity-40"
+                      title={t("junk.blockSender")}
+                      disabled={blockSender.isPending}
+                    >
+                      <ShieldX className="w-3.5 h-3.5" />
+                    </button>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDelete(email.id); }}
+                      className="shrink-0 p-1.5 rounded text-[#6b7480] hover:text-red-400 hover:bg-red-500/10"
+                      title={t("junk.permanentDelete")}
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                    <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline shrink-0">
                       {format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale })}
                     </span>
-                    <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity shrink-0">
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleRestore(email.id); }}
-                        className="p-1 rounded hover:bg-white/[0.08] text-[#b8c5d6] hover:text-white"
-                        title={t("junk.restore")}
-                      >
-                        <RotateCcw className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleBlock(email); }}
-                        className="p-1 rounded hover:bg-amber-500/[0.12] text-[#b8c5d6] hover:text-amber-300"
-                        title={t("junk.blockSender")}
-                        disabled={blockSender.isPending}
-                      >
-                        <ShieldX className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        onClick={(e) => { e.stopPropagation(); handleDelete(email.id); }}
-                        className="p-1 rounded hover:bg-red-500/[0.12] text-[#b8c5d6] hover:text-red-400"
-                        title={t("junk.permanentDelete")}
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
-                    </div>
                   </div>
                 );
               })}
