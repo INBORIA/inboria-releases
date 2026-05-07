@@ -421,11 +421,11 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       const contactEmail = (email.senderEmail || extractEmailAddress(email.sender) || "").trim();
                       const labelDom = (
                         <>
-                          <div className="text-[13px] font-medium text-white">
+                          <div className="text-[13px] font-medium" style={{ color: "#ffffff" }}>
                             {email.sender}
                           </div>
                           {email.senderEmail && email.senderEmail !== email.sender && (
-                            <div className="text-[11px] text-[#b8c5d6]">
+                            <div className="text-[11px]" style={{ color: "#b8c5d6" }}>
                               {email.senderEmail}
                             </div>
                           )}
