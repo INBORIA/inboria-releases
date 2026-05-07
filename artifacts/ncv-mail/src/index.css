@@ -266,6 +266,20 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] .hover\:bg-white\/\[0\.08\]:
 /* Logo-icon block in the user menu uses #1e3a5f as background */
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#1e3a5f\] { background-color: rgba(79, 70, 229, 0.10) !important; }
 
+/* Étape 6 — Logo Inboria : le PNG est blanc/clair sur fond sombre. En mode
+   clair, on l'inverse pour qu'il devienne sombre et reste lisible. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] img[alt="Inboria"] {
+  filter: invert(1) hue-rotate(180deg) saturate(1.2) brightness(0.85);
+}
+
+/* Étape 6 — Bouton « Demander à Inboria » du header : les classes cyan/zinc
+   ne sont pas couvertes par l'overlay générique. On les force en mode clair. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-testid="inboria-chat-button"] { color: #1a1f2e !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-testid="inboria-chat-button"]:hover { background-color: rgba(8, 145, 178, 0.08) !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-testid="inboria-chat-button"] .bg-cyan-500\/15 { background-color: rgba(8, 145, 178, 0.12) !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-testid="inboria-chat-button"] .border-cyan-400\/30 { border-color: rgba(8, 145, 178, 0.35) !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-testid="inboria-chat-button"] .text-cyan-300 { color: #0891b2 !important; }
+
 @layer base {
   * {
     @apply border-border;
