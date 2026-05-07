@@ -2906,6 +2906,7 @@ export default function Dashboard() {
   // dans le CRM choisi. crmFilter = null désactive le filtre.
   const [crmFilter, setCrmFilter] = useState<"hubspot" | "pipedrive" | "salesforce" | "odoo" | null>(null);
   const [crmPanelCollapsed, setCrmPanelCollapsed] = useState(false);
+  const [crmPanelOpen, setCrmPanelOpen] = useState(false);
   const [detailHubspotPanelHidden, setDetailHubspotPanelHidden] = useState(false);
   const [detailPipedrivePanelHidden, setDetailPipedrivePanelHidden] = useState(false);
   const [detailSalesforcePanelHidden, setDetailSalesforcePanelHidden] = useState(false);
@@ -4164,11 +4165,33 @@ export default function Dashboard() {
               Les deux panneaux ne s'affichent JAMAIS simultanément.
               Le bouton "masquer" ferme la branche correspondante ; la
               recharge de la page rétablit l'état par défaut. */}
-          {((hasHubspot && !detailHubspotPanelHidden && activeCrmDetailPanel === "hubspot") ||
+          {(hasHubspot || hasPipedrive || hasSalesforce || hasOdoo) && !crmPanelOpen && (
+            <button
+              type="button"
+              onClick={() => setCrmPanelOpen(true)}
+              className="hidden md:flex shrink-0 items-center gap-1.5 self-start mt-1 px-2 py-2 rounded-md text-[10px] uppercase tracking-wider font-medium text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] border border-border [writing-mode:vertical-rl] rotate-180"
+              data-testid="button-open-crm-panel"
+              title="Afficher le panneau CRM"
+            >
+              CRM
+            </button>
+          )}
+          {crmPanelOpen && ((hasHubspot && !detailHubspotPanelHidden && activeCrmDetailPanel === "hubspot") ||
             (hasPipedrive && !detailPipedrivePanelHidden && activeCrmDetailPanel === "pipedrive") ||
             (hasSalesforce && !detailSalesforcePanelHidden && activeCrmDetailPanel === "salesforce") ||
             (hasOdoo && !detailOdooPanelHidden && activeCrmDetailPanel === "odoo")) && (
             <div className="w-full md:w-[280px] shrink-0 space-y-2">
+              <div className="flex items-center justify-end">
+                <button
+                  type="button"
+                  onClick={() => setCrmPanelOpen(false)}
+                  className="text-[10px] text-[#b8c5d6] hover:text-white px-2 py-1 rounded hover:bg-white/[0.04]"
+                  data-testid="button-close-crm-panel"
+                  title="Masquer le panneau CRM"
+                >
+                  Masquer ›
+                </button>
+              </div>
               {/* Onglets de bascule — affichés dès que 2+ CRM coexistent.
                   Chaque onglet est rendu uniquement si le CRM correspondant
                   est connecté. Le clic sur un onglet bascule la sélection
