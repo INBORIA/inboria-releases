@@ -5121,14 +5121,18 @@ export default function Dashboard() {
                           return (
                             <>
                               {important.length > 0 && (
-                                <div className="pt-1 pb-1.5 px-1 text-[10px] font-semibold uppercase tracking-wider text-[#8b95a7]">
-                                  {t("inbox.sections.important")} <span className="text-[#8b95a7]/60 font-normal">({important.length})</span>
+                                <div className="flex items-center gap-2 pt-2 pb-2 px-2 text-[12px] font-semibold uppercase tracking-wider text-primary border-b border-primary/20 bg-primary/[0.04]">
+                                  <span className="w-1 h-3 bg-primary rounded-full" />
+                                  {t("inbox.sections.important")}
+                                  <span className="text-primary/60 font-normal normal-case tracking-normal">· {important.length}</span>
                                 </div>
                               )}
                               {important.map(renderRow)}
                               {other.length > 0 && (
-                                <div className="pt-3 pb-1.5 px-1 text-[10px] font-semibold uppercase tracking-wider text-[#8b95a7]">
-                                  {t("inbox.sections.other")} <span className="text-[#8b95a7]/60 font-normal">({other.length})</span>
+                                <div className="flex items-center gap-2 pt-3 pb-2 px-2 text-[12px] font-semibold uppercase tracking-wider text-[#8b95a7] border-b border-border/40">
+                                  <span className="w-1 h-3 bg-[#8b95a7]/40 rounded-full" />
+                                  {t("inbox.sections.other")}
+                                  <span className="text-[#8b95a7]/60 font-normal normal-case tracking-normal">· {other.length}</span>
                                 </div>
                               )}
                               {other.map(renderRow)}
