@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
-import { useMarkInboxPage } from "@/lib/inbox-theme";
+import { useMarkInboxPage, useNcvTheme } from "@/lib/inbox-theme";
+import { Sun, Moon } from "lucide-react";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { extractEmailAddress } from "@/lib/utils";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
@@ -2889,6 +2890,7 @@ function OdooContextPanel({
 export default function Dashboard() {
   // #247 — active la palette light/dark uniquement sur la Réception.
   useMarkInboxPage();
+  const { theme: ncvTheme, toggle: toggleNcvTheme } = useNcvTheme();
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
@@ -4449,6 +4451,24 @@ export default function Dashboard() {
               <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin" : ""}`} />
               <span className="hidden sm:inline">{isSyncing ? t("inbox.refreshing") : t("inbox.refresh")}</span>
             </Button>
+
+            {/* Étape 6 — toggle clair/sombre dans l'en-tête de la Réception. */}
+            <button
+              type="button"
+              onClick={toggleNcvTheme}
+              className="inline-flex items-center justify-center w-9 h-9 rounded-md border border-[#1f2630] bg-transparent text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] transition-colors shrink-0"
+              title={ncvTheme === "dark"
+                ? t("inbox.theme.switchLight", "Mode clair")
+                : t("inbox.theme.switchDark", "Mode sombre")}
+              aria-label={ncvTheme === "dark"
+                ? t("inbox.theme.switchLight", "Mode clair")
+                : t("inbox.theme.switchDark", "Mode sombre")}
+              data-testid="ncv-theme-toggle-header"
+            >
+              {ncvTheme === "dark"
+                ? <Sun className="w-3.5 h-3.5" />
+                : <Moon className="w-3.5 h-3.5" />}
+            </button>
 
             <Dialog open={isComposeOpen} onOpenChange={(open) => {
               setIsComposeOpen(open);
