@@ -103,7 +103,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
   // toutes les fonctions restent (sélection, contextmenu, drag-select, SLA,
   // assignation, pièces jointes, projet, tâches, badge boîte partagée).
   const categoryLabel: string | undefined = email.categoryName || email.category;
-  const isUnread = email.isRead === false || email.unread === true;
+  const isUnread = email.status === "non_lu" || email.isRead === false || email.unread === true;
 
   return (
     <div
@@ -4911,7 +4911,7 @@ export default function Dashboard() {
                         const isClaimed = !!email.claimedBy;
                         const isClaimedByMe = email.claimedBy === (profile as any)?.id;
                         const isSlaBreach = slaBreachIds.has(Number(email.id));
-                        const isUnread = (email as any).isRead === false || (email as any).unread === true;
+                        const isUnread = (email as any).status === "non_lu" || (email as any).isRead === false || (email as any).unread === true;
                         return (
                           <div
                             key={email.id}
