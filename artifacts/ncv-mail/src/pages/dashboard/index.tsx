@@ -4937,42 +4937,10 @@ export default function Dashboard() {
                 </>
               ) : (
                 <>
-                  {/* Cartes de stats Urgents/Moyens/Faibles : visibles
-                      uniquement en vue inbox normale. En vue "Assignes",
-                      ces compteurs reflettent la priorite de TOUTE l'org
-                      (source : /emails/summary), pas du filtre assignee
-                      courant — les afficher serait trompeur. */}
-                  {!SUPERHUMAN_CLEAN && !assigneeFilter && (
-                  <div className="grid grid-cols-3 gap-2 mb-4">
-                    <div
-                      className={`rounded-lg border p-3 cursor-pointer transition-colors ${filterPriority === "urgent" ? "border-red-500/50 bg-red-500/15" : "border-red-500/20 bg-red-500/5 hover:bg-red-500/10"}`}
-                      onClick={() => setFilterPriority(filterPriority === "urgent" ? "all" : "urgent")}
-                    >
-                      <div className="text-[10px] font-medium text-red-400 uppercase tracking-wider mb-0.5">{t("inbox.priorities.urgentPlural")}</div>
-                      <div className="text-xl font-bold text-white">
-                        {summaryLoading ? <span className="text-white/20">—</span> : summary?.urgentCount || 0}
-                      </div>
-                    </div>
-                    <div
-                      className={`rounded-lg border p-3 cursor-pointer transition-colors ${filterPriority === "moyen" ? "border-amber-500/50 bg-amber-500/15" : "border-amber-500/20 bg-amber-500/5 hover:bg-amber-500/10"}`}
-                      onClick={() => setFilterPriority(filterPriority === "moyen" ? "all" : "moyen")}
-                    >
-                      <div className="text-[10px] font-medium text-amber-400 uppercase tracking-wider mb-0.5">{t("inbox.priorities.mediumPlural")}</div>
-                      <div className="text-xl font-bold text-white">
-                        {summaryLoading ? <span className="text-white/20">—</span> : summary?.moyenCount || 0}
-                      </div>
-                    </div>
-                    <div
-                      className={`rounded-lg border p-3 cursor-pointer transition-colors ${filterPriority === "faible" ? "border-emerald-500/50 bg-emerald-500/15" : "border-emerald-500/20 bg-emerald-500/5 hover:bg-emerald-500/10"}`}
-                      onClick={() => setFilterPriority(filterPriority === "faible" ? "all" : "faible")}
-                    >
-                      <div className="text-[10px] font-medium text-emerald-400 uppercase tracking-wider mb-0.5">{t("inbox.priorities.lowPlural")}</div>
-                      <div className="text-xl font-bold text-white">
-                        {summaryLoading ? <span className="text-white/20">—</span> : summary?.faibleCount || 0}
-                      </div>
-                    </div>
-                  </div>
-                  )}
+                  {/* Étape 3 refonte Superhuman — cartes Urgents/Moyens/Faibles
+                      retirées : la liste ci-dessous est déjà groupée en
+                      « Important » / « Autres » (#244) et le filtre par
+                      priorité reste disponible via le menu Filtres unifié. */}
 
                   {/* Banniere "Filtre sur <membre>" supprimee : redondante
                       avec l'en-tete dedie "Assignes a <membre>" affiche
