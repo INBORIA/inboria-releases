@@ -159,7 +159,9 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
               SLA
             </span>
           )}
-          <PriorityBadge priority={(email.priority || "faible") as any} />
+          {/* Étape 3 — badge Urgent/Moyen/Faible retiré : doublon avec la
+              section « Important » / « Autres ». La priorité reste visible
+              via le filet de couleur à gauche en vue inbox-classic. */}
           <span className="text-[10px] text-[#b8c5d6] whitespace-nowrap items-center gap-1 hidden sm:flex">
             <Clock className="w-3 h-3" />
             {format(new Date(email.createdAt), "d MMM HH:mm", { locale: dateFnsLocale })}
