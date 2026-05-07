@@ -306,17 +306,13 @@ export function EmailComments({
 
   const timeline: TimelineItem[] = useMemo(() => {
     const items: TimelineItem[] = [];
-    if (email && (email.sender || email.subject || email.body)) {
-      const ts = email.createdAt ? new Date(email.createdAt).getTime() : 0;
-      items.push({ kind: "email", ts, data: email });
-    }
     for (const c of commentList) {
       const ts = c?.createdAt ? new Date(c.createdAt).getTime() : 0;
       items.push({ kind: "comment", ts, data: c });
     }
     items.sort((a, b) => a.ts - b.ts);
     return items;
-  }, [email, commentList]);
+  }, [commentList]);
 
   function plainSnippet(html: string | undefined): string {
     if (!html) return "";
