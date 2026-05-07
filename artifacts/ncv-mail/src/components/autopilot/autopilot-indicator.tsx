@@ -188,7 +188,11 @@ export function AutopilotIndicator() {
         aria-label={t("autopilot.openPanel")}
         title={phaseText}
       >
-        <PhaseIcon className={cn("w-3 h-3", iconColor, phase === "acting" && "animate-spin")} />
+        {/* Icône retirée à la demande utilisateur — la couleur du texte
+            (gris/indigo/vert discret) suffit à indiquer l'état. */}
+        {phase === "acting" && (
+          <PhaseIcon className={cn("w-3 h-3", iconColor, "animate-spin")} />
+        )}
         <span className="hidden sm:inline max-w-[260px] truncate">{phaseText}</span>
         <span className="sm:hidden">{t("autopilot.title")}</span>
         {phase === "acting" && total > 0 && (
