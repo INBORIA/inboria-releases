@@ -4597,6 +4597,7 @@ export default function Dashboard() {
                   )}
                 </button>
               )}
+              <span className="w-px h-5 bg-border/60 mx-1" aria-hidden="true" />
               <Link
                 href="/dashboard/indesirables"
                 className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
