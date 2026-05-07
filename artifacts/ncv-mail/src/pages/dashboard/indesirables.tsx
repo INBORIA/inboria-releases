@@ -311,7 +311,9 @@ export default function Indesirables() {
                     onClick={() => setSelectedEmailId(email.id)}
                   >
                     <div className="w-4 flex items-center justify-center shrink-0">
-                      <span className={`w-1.5 h-1.5 rounded-full ${RISK_DOT[risk]}`} title={t(`junk.risk.${risk}`)} />
+                      {risk !== "low" && (
+                        <span className={`w-1.5 h-1.5 rounded-full ${RISK_DOT[risk]}`} title={t(`junk.risk.${risk}`)} />
+                      )}
                     </div>
                     <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
                       <span className="text-primary text-[11px] font-semibold">
