@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   Inbox, Clock, Eye, Sparkles, Reply, Forward, Wand2, Loader2,
   Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
-  MoreHorizontal,
+  MoreHorizontal, ChevronDown, ChevronUp,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -225,6 +225,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
   const [forwardConnectionId, setForwardConnectionId] = useState<string>("");
   const [forwardIntroLoading, setForwardIntroLoading] = useState(false);
   const [scheduleDialogOpen, setScheduleDialogOpen] = useState(false);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   const resolveDefaultConnectionId = useCallback(() => {
     if (!connections || connections.length === 0) return "";
@@ -855,7 +856,62 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
-              <div className="flex items-center gap-2.5 flex-wrap">
+              {orgMembers && orgMembers.length > 0 && expertSuggestion && !email.assignedTo && expertSuggestion.userId !== currentUserId && (
+                <div className="mb-2">
+                  <button
+                    type="button"
+                    onClick={() => onAssign?.(email.id, expertSuggestion.userId)}
+                    title={
+                      (expertSuggestion as any).reasons && (expertSuggestion as any).reasons.length > 0
+                        ? ((expertSuggestion as any).reasons as string[]).join("\n")
+                        : expertSuggestion.lastInteractionAt
+                        ? t("inboriaExpert.tooltip", {
+                            count: expertSuggestion.interactionCount,
+                            date: format(new Date(expertSuggestion.lastInteractionAt), "PP", { locale: dateFnsLocale }),
+                          })
+                        : t("inboriaExpert.tooltipNoDate", { count: expertSuggestion.interactionCount })
+                    }
+                    className="inline-flex items-center gap-1.5 px-2 py-1 rounded-md bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-[11px] transition-colors"
+                  >
+                    <Sparkles className="w-3 h-3" />
+                    <span className="font-medium">{t("inboriaExpert.suggested")}</span>
+                    <span className="text-white">{expertSuggestion.fullName || t("inboriaExpert.aTeammate")}</span>
+                    <span className="text-[#b8c5d6]">· {t("inboriaExpert.assignThisOne")}</span>
+                  </button>
+                </div>
+              )}
+              <button
+                type="button"
+                onClick={() => setDetailsOpen(!detailsOpen)}
+                className="flex items-center gap-2 text-[11px] text-[#b8c5d6] hover:text-white transition-colors"
+                data-testid="toggle-email-details"
+              >
+                {detailsOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                <span className="uppercase tracking-wider">{t("emailDetail.details", "Détails")}</span>
+                {!detailsOpen && (
+                  <span className="text-[#7a8699] normal-case tracking-normal">
+                    {[
+                      t(`inbox.priorities.${email.priority === "moyen" ? "medium" : email.priority === "faible" ? "low" : "urgent"}`),
+                      email.categoryId
+                        ? translateCategoryName(
+                            categories.find((c: any) => String(c.categoryId) === String(email.categoryId))?.categoryName || "",
+                            lang,
+                          )
+                        : null,
+                      email.projectId
+                        ? (projects.find((p: any) => String(p.id) === String(email.projectId))?.reference || null)
+                        : null,
+                      email.assignedTo && orgMembers
+                        ? (orgMembers.find((m: any) => m.userId === email.assignedTo)?.fullName
+                            || orgMembers.find((m: any) => m.userId === email.assignedTo)?.email
+                            || null)
+                        : null,
+                    ].filter(Boolean).join(" · ")}
+                  </span>
+                )}
+              </button>
+              {detailsOpen && (
+              <div className="flex items-center gap-2.5 flex-wrap mt-2">
                 <div className="flex items-center gap-1.5">
                   <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider">{t("inbox.priority")}:</span>
                   <Select value={email.priority} onValueChange={(val) => onUpdatePriority(email.id, val)}>
@@ -897,28 +953,6 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                     </SelectContent>
                   </Select>
                 </div>
-                {orgMembers && orgMembers.length > 0 && expertSuggestion && !email.assignedTo && expertSuggestion.userId !== currentUserId && (
-                  <button
-                    type="button"
-                    onClick={() => onAssign?.(email.id, expertSuggestion.userId)}
-                    title={
-                      (expertSuggestion as any).reasons && (expertSuggestion as any).reasons.length > 0
-                        ? ((expertSuggestion as any).reasons as string[]).join("\n")
-                        : expertSuggestion.lastInteractionAt
-                        ? t("inboriaExpert.tooltip", {
-                            count: expertSuggestion.interactionCount,
-                            date: format(new Date(expertSuggestion.lastInteractionAt), "PP", { locale: dateFnsLocale }),
-                          })
-                        : t("inboriaExpert.tooltipNoDate", { count: expertSuggestion.interactionCount })
-                    }
-                    className="flex items-center gap-1.5 px-2 py-1 rounded-md bg-cyan-500/10 hover:bg-cyan-500/20 border border-cyan-500/30 text-cyan-300 text-[11px] transition-colors"
-                  >
-                    <Sparkles className="w-3 h-3" />
-                    <span className="font-medium">{t("inboriaExpert.suggested")}</span>
-                    <span className="text-white">{expertSuggestion.fullName || t("inboriaExpert.aTeammate")}</span>
-                    <span className="text-[#b8c5d6]">· {t("inboriaExpert.assignThisOne")}</span>
-                  </button>
-                )}
                 {orgMembers && orgMembers.length > 0 && (
                   <div className="flex items-center gap-1.5">
                     <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider">{t("inbox.assignedTo")}:</span>
@@ -947,6 +981,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                   </div>
                 )}
               </div>
+              )}
             </div>
 
             <EmailComments emailId={email.id} currentUserId={currentUserId} email={email} />
