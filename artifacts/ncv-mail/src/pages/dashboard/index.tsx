@@ -3337,6 +3337,9 @@ export default function Dashboard() {
   // Nombre de boites partagees accessibles (count des mailboxes,
   // pas des emails — pas de endpoint d'agregat dispo).
   const sharedMailboxesCount = (sharedMailboxes as any[])?.length ?? 0;
+  // Nombre d'emails dans la boîte partagée actuellement sélectionnée
+  // (affiché en badge sur l'onglet Partagées, comme inboxCountFromApi).
+  const sharedEmailsCount = sharedPaged?.total ?? sharedEmailsList.length;
 
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
@@ -4556,8 +4559,8 @@ export default function Dashboard() {
                 >
                   <Users className="w-3 h-3" />
                   {t("inbox.sharedMailboxShort", "Partagées")}
-                  {sharedMailboxesCount > 0 && (
-                    <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{sharedMailboxesCount}</span>
+                  {sharedEmailsCount > 0 && (
+                    <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{sharedEmailsCount}</span>
                   )}
                 </button>
               )}
