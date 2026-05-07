@@ -5157,11 +5157,7 @@ export default function Dashboard() {
                             )}
                           </div>
                         )}
-                        {!hasMorePages && emails.length > 50 && (
-                          <div className="text-center py-3">
-                            <span className="text-[10px] text-[#b8c5d6]/60">Tous les emails chargés ({totalEmails})</span>
-                          </div>
-                        )}
+                        {/* Étape 4 — bandeau « Tous les emails chargés » retiré (jugé bruité). */}
                       </>
                     )}
                   </div>
@@ -5174,21 +5170,9 @@ export default function Dashboard() {
       </div>
       {!routeLocation.includes("inbox-classic") && (
         <>
-          <div className="fixed bottom-0 left-[200px] right-0 z-30 pointer-events-none">
-            <div className="mx-auto max-w-full px-4 pb-2">
-              <div className="pointer-events-auto inline-flex items-center gap-3 rounded-md border border-[#1f2630] bg-[#0b0d10]/95 backdrop-blur px-3 py-1.5 text-[10px] text-[#8b95a7] shadow-lg">
-                <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-[#161b22] border border-[#1f2630] text-[#e6e9ef] font-mono text-[10px]">J</kbd><kbd className="px-1.5 py-0.5 rounded bg-[#161b22] border border-[#1f2630] text-[#e6e9ef] font-mono text-[10px]">K</kbd> {t("inbox.shortcuts.navigate")}</span>
-                <span className="w-px h-3 bg-[#1f2630]" />
-                <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-[#161b22] border border-[#1f2630] text-[#e6e9ef] font-mono text-[10px]">E</kbd> {t("inbox.shortcuts.done")}</span>
-                <span className="w-px h-3 bg-[#1f2630]" />
-                <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-[#161b22] border border-[#1f2630] text-[#e6e9ef] font-mono text-[10px]">R</kbd> {t("inbox.shortcuts.reply")}</span>
-                <span className="w-px h-3 bg-[#1f2630]" />
-                <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-[#161b22] border border-[#1f2630] text-[#e6e9ef] font-mono text-[10px]">⌘K</kbd> {t("inbox.shortcuts.commands")}</span>
-                <span className="w-px h-3 bg-[#1f2630]" />
-                <Link href="/dashboard/inbox-classic" className="text-[#8b95a7] hover:text-[#e6e9ef] underline-offset-2 hover:underline">{t("inbox.classicInboxLink")}</Link>
-              </div>
-            </div>
-          </div>
+          {/* Étape 4 — bandeau de raccourcis clavier retiré (utilisateur non-technique).
+              Les raccourcis J/K/E/R/⌘K restent actifs, ils sont juste cachés.
+              Le lien Réception classique a été déplacé dans le bouton « ? ». */}
           <button
             type="button"
             title={t("inbox.help.tooltip")}
