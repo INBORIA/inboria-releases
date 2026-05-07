@@ -148,9 +148,9 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
         </span>
       </div>
 
-      {/* Expéditeur (largeur fixe) */}
+      {/* Expéditeur (largeur fixe) — style Outlook : non-lu blanc gras, lu gris discret */}
       <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">
-        <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#c2c8d4]"}`}>
+        <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
           {email.sender}
         </span>
         {email.assignedTo && (
@@ -162,11 +162,11 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
 
       {/* Sujet — extrait — catégorie */}
       <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
-        <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#c2c8d4]"}`}>
+        <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
           {email.subject}
         </span>
         {(email.summary || email.snippet) && (
-          <span className="text-[13px] truncate text-[#8b95a7]">— {email.summary || email.snippet}</span>
+          <span className={`text-[13px] truncate ${isUnread ? "text-[#8b95a7]" : "text-[#5a6270]"}`}>— {email.summary || email.snippet}</span>
         )}
         {categoryLabel && (
           <button
@@ -4935,17 +4935,17 @@ export default function Dashboard() {
                             </div>
 
                             <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">
-                              <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#c2c8d4]"}`}>
+                              <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
                                 {email.sender}
                               </span>
                             </div>
 
                             <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
-                              <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#c2c8d4]"}`}>
+                              <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
                                 {email.subject}
                               </span>
                               {email.summary && (
-                                <span className="text-[13px] truncate text-[#8b95a7]">— {email.summary}</span>
+                                <span className={`text-[13px] truncate ${isUnread ? "text-[#8b95a7]" : "text-[#5a6270]"}`}>— {email.summary}</span>
                               )}
                             </div>
 
