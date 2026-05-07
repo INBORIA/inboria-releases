@@ -107,3 +107,9 @@ id = "lmnFjF3rGGJABSzyRdWTg"
 uri = "file://.local/previews/favicon-preview-32.png"
 type = "image"
 title = "Taille onglet navigateur (32px)"
+
+[[outputs]]
+id = "48KY6AYfxeatnZk6po6iZ"
+uri = "file://screenshots/inbox-superhuman.jpg"
+type = "image"
+title = "Réception — style Superhuman"
