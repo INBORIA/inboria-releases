@@ -70,10 +70,9 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
   });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme: ncvTheme, toggle: toggleNcvTheme } = useNcvTheme();
-  // Le toggle light/dark (#247) ne concerne que la page Réception : on
-  // l'affiche uniquement quand on est sur /dashboard pour éviter de laisser
-  // croire qu'il agit sur toute l'app (qui reste dark-only).
-  const showThemeToggle = location === "/dashboard";
+  // Toggle light/dark retiré de la sidebar à la demande utilisateur.
+  const showThemeToggle = false;
+  void ncvTheme; void toggleNcvTheme;
 
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
   const totalUsed = ((user as any).emailsUsed || 0) + ((user as any).aiCreditsUsed || 0);
