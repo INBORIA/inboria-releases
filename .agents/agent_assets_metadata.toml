@@ -143,3 +143,9 @@ id = "rD3guqB3rjOXQyTshw8wn"
 uri = "file://screenshots/inbox-superhuman-indigo.jpg"
 type = "image"
 title = "Réception — indigo #4F46E5"
+
+[[outputs]]
+id = "Zy_PLAkBdSNmk2aVxKYMf"
+uri = "file://screenshots/inbox-superhuman-dark.jpg"
+type = "image"
+title = "Réception — dark indigo (livrée)"
