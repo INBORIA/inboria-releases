@@ -301,42 +301,6 @@ export function InboriaChatButton() {
   const { toast } = useToast();
   const [, setLocation] = useLocation();
   const [isOpen, setIsOpen] = useState(false);
-  const PANEL_W = 420;
-  const PANEL_H = 640;
-  const [panelPos, setPanelPos] = useState<{ x: number; y: number }>(() => {
-    try {
-      const raw = localStorage.getItem("inboria-chat-pos");
-      if (raw) {
-        const p = JSON.parse(raw);
-        if (typeof p.x === "number" && typeof p.y === "number") return p;
-      }
-    } catch {}
-    if (typeof window !== "undefined") {
-      return { x: Math.max(16, window.innerWidth - PANEL_W - 24), y: Math.max(16, window.innerHeight - PANEL_H - 24) };
-    }
-    return { x: 100, y: 100 };
-  });
-  const dragRef = useRef<{ dx: number; dy: number } | null>(null);
-  const onHeaderMouseDown = useCallback((e: React.MouseEvent) => {
-    if ((e.target as HTMLElement).closest("button")) return;
-    dragRef.current = { dx: e.clientX - panelPos.x, dy: e.clientY - panelPos.y };
-    const onMove = (ev: MouseEvent) => {
-      if (!dragRef.current) return;
-      const nx = Math.max(0, Math.min(window.innerWidth - PANEL_W, ev.clientX - dragRef.current.dx));
-      const ny = Math.max(0, Math.min(window.innerHeight - 80, ev.clientY - dragRef.current.dy));
-      setPanelPos({ x: nx, y: ny });
-    };
-    const onUp = () => {
-      dragRef.current = null;
-      try { localStorage.setItem("inboria-chat-pos", JSON.stringify(panelPosRef.current)); } catch {}
-      window.removeEventListener("mousemove", onMove);
-      window.removeEventListener("mouseup", onUp);
-    };
-    window.addEventListener("mousemove", onMove);
-    window.addEventListener("mouseup", onUp);
-  }, [panelPos]);
-  const panelPosRef = useRef(panelPos);
-  useEffect(() => { panelPosRef.current = panelPos; }, [panelPos]);
 
   // Resoudre la connexion principale d'envoi (= la plus saine, la plus
   // ancienne) pour pouvoir afficher "De: <adresse>" dans la mini-confirmation
@@ -499,12 +463,11 @@ export function InboriaChatButton() {
       </Button>
       {isOpen && createPortal(
         <div
-          className="fixed z-[100] border border-zinc-800 bg-zinc-950 rounded-lg shadow-2xl flex flex-col gap-0 overflow-hidden"
-          style={{ left: panelPos.x, top: panelPos.y, width: PANEL_W, height: PANEL_H }}
+          className="fixed inset-y-0 right-0 z-[100] h-full w-full sm:max-w-md border-l border-zinc-800 bg-zinc-950 p-0 shadow-2xl flex flex-col gap-0"
           role="dialog"
           aria-modal="false"
         >
-        <div className="px-5 py-4 border-b border-zinc-800 flex items-center justify-between cursor-move select-none" onMouseDown={onHeaderMouseDown} title="Glisser pour déplacer">
+        <div className="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-full bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center">
               <Sparkles className="h-4 w-4 text-cyan-300" />

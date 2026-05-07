@@ -20,6 +20,44 @@ export function SupportChatWidget() {
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const [offset, setOffset] = useState<{ x: number; y: number }>(() => {
+    try {
+      const raw = localStorage.getItem("inboria-assistant-offset");
+      if (raw) {
+        const p = JSON.parse(raw);
+        if (typeof p.x === "number" && typeof p.y === "number") return p;
+      }
+    } catch {}
+    return { x: 0, y: 0 };
+  });
+  const dragState = useRef<{ startX: number; startY: number; baseX: number; baseY: number; moved: boolean } | null>(null);
+  const onButtonPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
+    dragState.current = { startX: e.clientX, startY: e.clientY, baseX: offset.x, baseY: offset.y, moved: false };
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+  };
+  const onButtonPointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
+    if (!dragState.current) return;
+    const dx = e.clientX - dragState.current.startX;
+    const dy = e.clientY - dragState.current.startY;
+    if (!dragState.current.moved && Math.hypot(dx, dy) < 5) return;
+    dragState.current.moved = true;
+    const nx = dragState.current.baseX + dx;
+    const ny = dragState.current.baseY + dy;
+    setOffset({
+      x: Math.max(-(window.innerWidth - 80), Math.min(0, nx)),
+      y: Math.max(-(window.innerHeight - 80), Math.min(0, ny)),
+    });
+  };
+  const onButtonPointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
+    const wasDrag = dragState.current?.moved ?? false;
+    if (wasDrag) {
+      try { localStorage.setItem("inboria-assistant-offset", JSON.stringify(offset)); } catch {}
+    } else {
+      setIsOpen((v) => !v);
+    }
+    dragState.current = null;
+    try { (e.target as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+  };
 
   const scrollToBottom = useCallback(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -97,7 +135,10 @@ export function SupportChatWidget() {
   return (
     <>
       {isOpen && (
-        <div className="fixed bottom-20 right-4 z-50 w-[360px] max-w-[calc(100vw-2rem)] h-[480px] max-h-[calc(100vh-8rem)] bg-[#141c2b] border border-[#1f2937] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+        <div
+          className="fixed bottom-20 right-4 z-50 w-[360px] max-w-[calc(100vw-2rem)] h-[480px] max-h-[calc(100vh-8rem)] bg-[#141c2b] border border-[#1f2937] rounded-xl shadow-2xl flex flex-col overflow-hidden"
+          style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
+        >
           <div className="flex items-center justify-between px-4 py-3 bg-[#1a2435] border-b border-[#1f2937]">
             <div className="flex items-center gap-2.5">
               <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
@@ -210,13 +251,16 @@ export function SupportChatWidget() {
       )}
 
       <button
-        onClick={() => setIsOpen(!isOpen)}
-        className={`fixed bottom-4 right-4 z-50 h-12 w-12 rounded-full shadow-lg flex items-center justify-center transition-all duration-200 ${
+        onPointerDown={onButtonPointerDown}
+        onPointerMove={onButtonPointerMove}
+        onPointerUp={onButtonPointerUp}
+        style={{ transform: `translate(${offset.x}px, ${offset.y}px)`, touchAction: "none" }}
+        className={`fixed bottom-4 right-4 z-50 h-12 w-12 rounded-full shadow-lg flex items-center justify-center transition-colors duration-200 cursor-grab active:cursor-grabbing ${
           isOpen
             ? "bg-[#1f2937] hover:bg-[#2a3545]"
-            : "bg-primary hover:bg-primary/90 hover:scale-105"
+            : "bg-primary hover:bg-primary/90"
         }`}
-        title={t("supportChat.title")}
+        title={t("supportChat.title") + " — Glisser pour déplacer"}
       >
         {isOpen ? (
           <X className="h-5 w-5 text-white" />
