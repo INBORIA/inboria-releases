@@ -59,7 +59,7 @@ interface ExpertSuggestionShape {
   } | null;
 }
 
-import { PriorityBadge, PRIORITY_BAR_COLORS, buildForwardCitation } from "./helpers";
+import { PRIORITY_BAR_COLORS, buildForwardCitation } from "./helpers";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -393,29 +393,17 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
 
   return (
     <div className="flex flex-col h-full">
-      <div className="sticky top-12 z-[5] flex items-center gap-3 mb-4 pb-2 pt-2 bg-[#0d1117]">
+      <div className="sticky top-12 z-[5] flex items-center gap-2 mb-4 pb-2 pt-2 bg-[#0d1117]">
         <button
           onClick={onBack}
           className="flex items-center gap-1.5 text-[11px] px-2.5 py-1.5 rounded-md font-medium transition-colors text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
-          title={t("inbox.backHint", "Retour à la boîte de réception (Échap)") as string}
+          title={t("inbox.backHint", "Retour (Échap) — J/K pour naviguer, R répondre, E archiver") as string}
           data-testid="button-back-to-inbox"
         >
           <ChevronLeft className="w-3.5 h-3.5" />
           {t("common.back", "Retour")}
         </button>
-        <span className="hidden md:inline-flex items-center gap-1.5 text-[10px] text-[#7a8699]">
-          <kbd className="px-1.5 py-0.5 rounded border border-border bg-card font-mono text-[10px]">J</kbd>
-          <kbd className="px-1.5 py-0.5 rounded border border-border bg-card font-mono text-[10px]">K</kbd>
-          {t("inbox.navigateHint", "naviguer")}
-          <span className="mx-1 text-border">·</span>
-          <kbd className="px-1.5 py-0.5 rounded border border-border bg-card font-mono text-[10px]">R</kbd>
-          {t("inbox.reply")}
-          <span className="mx-1 text-border">·</span>
-          <kbd className="px-1.5 py-0.5 rounded border border-border bg-card font-mono text-[10px]">E</kbd>
-          {t("inbox.archive")}
-        </span>
         <div className="flex-1" />
-        <PriorityBadge priority={(email.priority || "faible") as any} />
       </div>
 
       <div className="bg-card rounded-lg border border-border overflow-hidden">
@@ -433,11 +421,11 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       const contactEmail = (email.senderEmail || extractEmailAddress(email.sender) || "").trim();
                       const labelDom = (
                         <>
-                          <div className="text-[13px] font-medium text-white hover:underline">
+                          <div className="text-[13px] font-medium text-white">
                             {email.sender}
                           </div>
                           {email.senderEmail && email.senderEmail !== email.sender && (
-                            <div className="text-[11px] text-[#b8c5d6] hover:underline">
+                            <div className="text-[11px] text-[#b8c5d6]">
                               {email.senderEmail}
                             </div>
                           )}
@@ -449,7 +437,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       return (
                         <Link
                           href={`/dashboard/contacts/${encodeURIComponent(contactEmail)}`}
-                          className="block"
+                          className="block !text-white no-underline hover:no-underline"
                           data-testid="link-contact-sender"
                           title={t("contactsPage.openContact", "Voir la fiche contact")}
                         >

@@ -4169,11 +4169,11 @@ export default function Dashboard() {
             <button
               type="button"
               onClick={() => setCrmPanelOpen(true)}
-              className="hidden md:flex shrink-0 items-center gap-1.5 self-start mt-1 px-2 py-2 rounded-md text-[10px] uppercase tracking-wider font-medium text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] border border-border [writing-mode:vertical-rl] rotate-180"
+              className="hidden md:inline-flex shrink-0 items-center gap-1.5 self-start mt-1 h-8 px-3 rounded-md text-[11px] font-medium text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] border border-border"
               data-testid="button-open-crm-panel"
               title="Afficher le panneau CRM"
             >
-              CRM
+              ‹ CRM
             </button>
           )}
           {crmPanelOpen && ((hasHubspot && !detailHubspotPanelHidden && activeCrmDetailPanel === "hubspot") ||
