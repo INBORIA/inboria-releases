@@ -4970,7 +4970,12 @@ export default function Dashboard() {
                             )}
 
                             {isSlaBreach && (
-                              <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                              <span
+                                className="shrink-0 inline-flex"
+                                title={t("inbox.slaOverdue", { defaultValue: "Délai de réponse dépassé (SLA)" })}
+                              >
+                                <AlertCircle className="w-3 h-3 text-red-400" />
+                              </span>
                             )}
 
                             <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline shrink-0">
