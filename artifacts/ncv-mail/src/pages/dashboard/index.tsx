@@ -4418,7 +4418,7 @@ export default function Dashboard() {
             la page indistinguable de la reception et inutilisable comme vue
             dediee — cf. retour utilisateur du 1 mai 2026. */}
         {!assigneeFilter && (
-        <div className="sticky top-16 z-30 bg-background pt-4 pb-2.5 border-b border-border">
+        <div className="sticky top-16 z-[5] bg-background pt-4 pb-2.5 border-b border-border">
           {/* Étape 1 refonte Superhuman — header compact :
               titre Réception + compteur, recherche fine avec hint ⌘K,
               Actualiser en icône, Composer en bouton indigo discret.
