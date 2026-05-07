@@ -137,3 +137,9 @@ id = "6eYrjGWughf2s0SiAZfNQ"
 uri = "file://screenshots/inbox-superhuman-sarcelle.jpg"
 type = "image"
 title = "Réception — sarcelle profonde #0891b2"
+
+[[outputs]]
+id = "rD3guqB3rjOXQyTshw8wn"
+uri = "file://screenshots/inbox-superhuman-indigo.jpg"
+type = "image"
+title = "Réception — indigo #4F46E5"

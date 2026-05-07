@@ -36,8 +36,8 @@ const OTHER: Row[] = [
   { id: "8", from: "Marine Caron", initials: "MC", subject: "Demande de devis — refonte site", preview: "Bonjour, nous souhaiterions un devis pour la refonte de notre site corporate.", time: "Dim.", category: { label: "Prospect", color: "#a855f7" } },
 ];
 
-const ACCENT = "#0891b2";
-const ACCENT_SOFT = "rgba(8, 145, 178, 0.10)";
+const ACCENT = "#4F46E5";
+const ACCENT_SOFT = "rgba(79, 70, 229, 0.10)";
 
 function Kbd({ children }: { children: React.ReactNode }) {
   return (
@@ -444,7 +444,7 @@ export function Superhuman() {
         </button>
         <button
           className="h-11 px-4 rounded-full shadow-lg flex items-center gap-2 text-white text-[13px] font-medium hover:scale-[1.02] transition-transform"
-          style={{ background: ACCENT, boxShadow: "0 8px 24px rgba(8,145,178,0.35)" }}
+          style={{ background: ACCENT, boxShadow: "0 8px 24px rgba(79,70,229,0.35)" }}
           title="Inboria — votre assistant données (emails, contacts, projets, RDV)">
           <Sparkles className="w-4 h-4" strokeWidth={2} />
           Demander à Inboria
