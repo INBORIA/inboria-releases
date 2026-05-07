@@ -119,3 +119,9 @@ id = "TOoEv2ncsbwWi10PhrC2z"
 uri = "file://screenshots/inbox-superhuman-v2.jpg"
 type = "image"
 title = "Réception v2 — tout gardé, style Superhuman"
+
+[[outputs]]
+id = "x09VPigcnDyg6mR29PnI8"
+uri = "file://screenshots/inbox-superhuman-v3.jpg"
+type = "image"
+title = "Réception v3 — logo NCV + tous les boutons visibles"

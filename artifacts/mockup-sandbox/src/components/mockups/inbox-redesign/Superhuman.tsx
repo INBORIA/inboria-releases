@@ -118,9 +118,9 @@ export function Superhuman() {
       <div className="flex h-screen w-full">
         {/* Rail gauche : navigation principale + équipes/étiquettes en menu déroulant */}
         <aside className="w-[56px] shrink-0 bg-[#f5f5f1] border-r border-[#eceae3] flex flex-col items-center py-3 gap-1">
-          <div className="w-8 h-8 rounded-md flex items-center justify-center mb-2"
-               style={{ background: ACCENT }}>
-            <span className="text-[12px] font-semibold text-white">N</span>
+          <div className="w-9 h-9 rounded-md flex items-center justify-center mb-2 p-1"
+               style={{ background: "#0b0d10" }} title="NCV Mail">
+            <img src={`${import.meta.env.BASE_URL}logo-ncv.png`} alt="NCV" className="w-full h-full object-contain" />
           </div>
           {[
             { I: Plus, k: "C", primary: true, title: "Nouveau message" },
@@ -214,40 +214,56 @@ export function Superhuman() {
 
         {/* Volet de lecture */}
         <section className="flex-1 min-w-0 bg-white flex flex-col">
-          {/* Toolbar : actions principales visibles, secondaires dans "..." */}
-          <div className="h-12 px-5 flex items-center gap-1 border-b border-[#f1f3f5]">
-            <button className="h-7 px-2.5 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1.5">
+          {/* Toolbar : TOUS les boutons visibles, aucun caché */}
+          <div className="px-4 py-2 flex flex-wrap items-center gap-y-1 gap-x-0.5 border-b border-[#f1f3f5]">
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1 shrink-0">
               <Reply className="w-3.5 h-3.5" strokeWidth={1.75} /> Répondre <Kbd>R</Kbd>
             </button>
-            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1" title="Répondre à tous (A)">
-              <ReplyAll className="w-3.5 h-3.5" strokeWidth={1.75} />
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1 shrink-0">
+              <ReplyAll className="w-3.5 h-3.5" strokeWidth={1.75} /> Tous <Kbd>A</Kbd>
             </button>
-            <button className="h-7 px-2.5 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1.5">
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1 shrink-0">
               <Forward className="w-3.5 h-3.5" strokeWidth={1.75} /> Transférer <Kbd>F</Kbd>
             </button>
-            <span className="mx-1 h-4 w-px bg-[#eceef1]" />
-            <button className="h-7 px-2.5 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1.5">
+            <span className="mx-1 h-4 w-px bg-[#eceef1] shrink-0" />
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1 shrink-0">
               <Archive className="w-3.5 h-3.5" strokeWidth={1.75} /> Done <Kbd>E</Kbd>
             </button>
-            <button className="h-7 px-2.5 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1.5">
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1 shrink-0">
               <Clock className="w-3.5 h-3.5" strokeWidth={1.75} /> Snooze <Kbd>H</Kbd>
             </button>
-            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1" title="Étiqueter (L)">
-              <Tag className="w-3.5 h-3.5" strokeWidth={1.75} />
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1 shrink-0">
+              <Mail className="w-3.5 h-3.5" strokeWidth={1.75} /> Non-lu <Kbd>U</Kbd>
             </button>
-            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1" title="Assigner (A)">
-              <UserPlus className="w-3.5 h-3.5" strokeWidth={1.75} />
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1 shrink-0">
+              <Star className="w-3.5 h-3.5" strokeWidth={1.75} /> Suivre <Kbd>S</Kbd>
             </button>
-            {/* Plus → menu déroulant : marquer non-lu, étoile, déplacer, imprimer, signaler spam, bloquer */}
-            <button className="w-7 h-7 rounded-md flex items-center justify-center text-[#6b7280] hover:bg-[#f4f6f8]" title="Plus d'actions (.)">
-              <MoreHorizontal className="w-4 h-4" />
+            <span className="mx-1 h-4 w-px bg-[#eceef1] shrink-0" />
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1 shrink-0">
+              <Tag className="w-3.5 h-3.5" strokeWidth={1.75} /> Étiquette <Kbd>L</Kbd>
             </button>
-            <div className="ml-auto flex items-center gap-1">
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1 shrink-0">
+              <UserPlus className="w-3.5 h-3.5" strokeWidth={1.75} /> Assigner <Kbd>;</Kbd>
+            </button>
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1 shrink-0">
+              <FolderInput className="w-3.5 h-3.5" strokeWidth={1.75} /> Déplacer <Kbd>V</Kbd>
+            </button>
+            <span className="mx-1 h-4 w-px bg-[#eceef1] shrink-0" />
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1 shrink-0">
+              <Printer className="w-3.5 h-3.5" strokeWidth={1.75} /> Imprimer
+            </button>
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#3b4250] hover:bg-[#f4f6f8] flex items-center gap-1 shrink-0">
+              <ShieldAlert className="w-3.5 h-3.5" strokeWidth={1.75} /> Spam
+            </button>
+            <button className="h-7 px-2 rounded-md text-[12px] text-[#b04545] hover:bg-[#fcecec] flex items-center gap-1 shrink-0">
+              <Trash2 className="w-3.5 h-3.5" strokeWidth={1.75} /> Suppr <Kbd>#</Kbd>
+            </button>
+            <span className="ml-auto shrink-0">
               <button className="h-7 px-2.5 rounded-md text-[12px] flex items-center gap-1.5 text-white"
                       style={{ background: ACCENT }} title="Brouillon IA (D)">
                 <Sparkles className="w-3.5 h-3.5" strokeWidth={2} /> Brouillon IA <Kbd>D</Kbd>
               </button>
-            </div>
+            </span>
           </div>
 
           <div className="flex-1 overflow-y-auto px-8 py-6">
