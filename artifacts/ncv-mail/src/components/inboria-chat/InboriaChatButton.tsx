@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback, memo } from "react";
+import { createPortal } from "react-dom";
 import { Sparkles, Send, Loader2, User as UserIcon, Mail, Pencil, Check, AlertCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
@@ -460,9 +461,9 @@ export function InboriaChatButton() {
           Inbor<span className="text-cyan-400">ia</span>
         </span>
       </Button>
-      {isOpen && (
+      {isOpen && createPortal(
         <div
-          className="fixed inset-y-0 right-0 z-50 h-full w-full sm:max-w-md border-l border-zinc-800 bg-zinc-950 p-0 shadow-2xl flex flex-col gap-0"
+          className="fixed inset-y-0 right-0 z-[100] h-full w-full sm:max-w-md border-l border-zinc-800 bg-zinc-950 p-0 shadow-2xl flex flex-col gap-0"
           role="dialog"
           aria-modal="false"
         >
@@ -619,7 +620,8 @@ export function InboriaChatButton() {
             {t("inboriaChat.footerHint")}
           </p>
         </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
