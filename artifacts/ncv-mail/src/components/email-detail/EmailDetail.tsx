@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   Inbox, Clock, Eye, Sparkles, Reply, Forward, Wand2, Loader2,
   Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
-  MoreHorizontal, ChevronDown, ChevronUp,
+  MoreHorizontal, ChevronDown, ChevronUp, ChevronLeft,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -393,14 +393,27 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
 
   return (
     <div className="flex flex-col h-full">
-      <div className="sticky top-12 z-[5] flex items-center gap-2 mb-4 pb-2 pt-2 bg-[#0d1117]">
+      <div className="sticky top-12 z-[5] flex items-center gap-3 mb-4 pb-2 pt-2 bg-[#0d1117]">
         <button
           onClick={onBack}
-          className="flex items-center gap-1 text-[11px] px-3 py-1.5 rounded-md font-medium transition-colors bg-primary/15 text-primary border border-primary/20"
+          className="flex items-center gap-1.5 text-[11px] px-2.5 py-1.5 rounded-md font-medium transition-colors text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
+          title={t("inbox.backHint", "Retour à la boîte de réception (Échap)") as string}
+          data-testid="button-back-to-inbox"
         >
-          <Inbox className="w-3.5 h-3.5" />
-          {t("inbox.title")}
+          <ChevronLeft className="w-3.5 h-3.5" />
+          {t("common.back", "Retour")}
         </button>
+        <span className="hidden md:inline-flex items-center gap-1.5 text-[10px] text-[#7a8699]">
+          <kbd className="px-1.5 py-0.5 rounded border border-border bg-card font-mono text-[10px]">J</kbd>
+          <kbd className="px-1.5 py-0.5 rounded border border-border bg-card font-mono text-[10px]">K</kbd>
+          {t("inbox.navigateHint", "naviguer")}
+          <span className="mx-1 text-border">·</span>
+          <kbd className="px-1.5 py-0.5 rounded border border-border bg-card font-mono text-[10px]">R</kbd>
+          {t("inbox.reply")}
+          <span className="mx-1 text-border">·</span>
+          <kbd className="px-1.5 py-0.5 rounded border border-border bg-card font-mono text-[10px]">E</kbd>
+          {t("inbox.archive")}
+        </span>
         <div className="flex-1" />
         <PriorityBadge priority={(email.priority || "faible") as any} />
       </div>

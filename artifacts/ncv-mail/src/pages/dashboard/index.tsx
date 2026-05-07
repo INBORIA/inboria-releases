@@ -3808,6 +3808,9 @@ export default function Dashboard() {
         e.preventDefault();
         const prev = list[Math.max(0, currentIdx - 1)] || list[0];
         if (prev) setSelectedEmailId(prev.id);
+      } else if (k === "escape" && selectedEmailId) {
+        e.preventDefault();
+        setSelectedEmailId(null);
       } else if (k === "e" && selectedEmailId) {
         e.preventDefault();
         handleArchive(selectedEmailId);
@@ -4126,8 +4129,8 @@ export default function Dashboard() {
   if (selectedEmail) {
     return (
       <DashboardLayout>
-        <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row gap-5">
-          <div className="flex-1 min-w-0 max-w-[900px]">
+        <div className="w-full px-4 sm:px-6 lg:px-10 py-5 flex flex-col md:flex-row gap-5">
+          <div className="flex-1 min-w-0">
             <EmailDetail
               email={selectedEmail}
               onBack={() => setSelectedEmailId(null)}
