@@ -39,7 +39,10 @@ if (typeof document !== "undefined") {
 }
 
 if (typeof window !== "undefined") {
-  if (import.meta.env.DEV) {
+  const isReplitDevPreview =
+    typeof window.location !== "undefined" &&
+    /\.(picard|replit)\.dev$/.test(window.location.hostname);
+  if (import.meta.env.DEV || isReplitDevPreview) {
     // In development, actively unregister any previously installed service
     // worker and wipe its caches so editors always see the latest content
     // without manual cache clearing.
