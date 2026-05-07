@@ -3613,6 +3613,25 @@ export default function Dashboard() {
     }
   }, [selectedEmailId]);
 
+  // Auto-marquage comme lu à l'ouverture (style Outlook/Superhuman) :
+  // dès que l'email ouvert est non-lu, on bascule son statut en "read"
+  // et on met à jour la liste localement pour griser la ligne immédiatement.
+  useEffect(() => {
+    if (!selectedEmailId || !selectedEmail) return;
+    const status = (selectedEmail as any).status;
+    const isUnread = status === "non_lu" || (selectedEmail as any).isRead === false || (selectedEmail as any).unread === true;
+    if (!isUnread) return;
+    setAccumulatedEmails((prev) => prev.map((e: any) => e.id === selectedEmailId ? { ...e, status: "read" } : e));
+    updateEmail.mutate(
+      { id: selectedEmailId, data: { status: "read" } },
+      { onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getGetCategoryCountsQueryKey() });
+          queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
+        } }
+    );
+  }, [selectedEmailId, (selectedEmail as any)?.status]);
+
   const loadMoreRef = useRef<HTMLDivElement>(null);
   const loadMore = useCallback(() => {
     if (hasMorePages && !emailsFetching) {
