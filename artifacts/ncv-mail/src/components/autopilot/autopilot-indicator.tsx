@@ -163,12 +163,17 @@ export function AutopilotIndicator() {
         ? t("autopilot.todayDone", { count: total })
         : t("autopilot.ready");
 
+  // Pilule rendue plus discrète : pas de fond coloré, juste l'icône qui
+  // change de couleur selon l'état. Évite l'effet "bandeau vert" agressif.
   const pillClass =
     phase === "acting"
-      ? "border-[#2d7dd2]/30 bg-[#2d7dd2]/10 text-[#2d7dd2]"
+      ? "border-[#1f2937] bg-card text-[#b8c5d6]"
       : phase === "done"
-        ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-400"
+        ? "border-[#1f2937] bg-card text-[#b8c5d6]"
         : "border-[#1f2937] bg-card text-[#b8c5d6]";
+
+  const iconColor =
+    phase === "acting" ? "text-[#4F46E5]" : phase === "done" ? "text-emerald-400" : "text-[#8b95a7]";
 
   return (
     <div className="relative">
@@ -183,7 +188,7 @@ export function AutopilotIndicator() {
         aria-label={t("autopilot.openPanel")}
         title={phaseText}
       >
-        <PhaseIcon className={cn("w-3 h-3", phase === "acting" && "animate-spin")} />
+        <PhaseIcon className={cn("w-3 h-3", iconColor, phase === "acting" && "animate-spin")} />
         <span className="hidden sm:inline max-w-[260px] truncate">{phaseText}</span>
         <span className="sm:hidden">{t("autopilot.title")}</span>
         {phase === "acting" && total > 0 && (

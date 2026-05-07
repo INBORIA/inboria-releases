@@ -59,7 +59,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -176,24 +176,15 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
         )}
       </div>
 
-      {/* Badges discrets + temps (cachés au survol pour laisser place aux actions) */}
-      <div className="flex items-center gap-1.5 shrink-0 group-hover:hidden">
-        {email.projectReference && (
-          <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-purple-500/15 text-purple-400 hidden md:inline-flex" title={email.projectReference}>
-            {email.projectReference}
-          </span>
-        )}
-        {(email.taskCount ?? 0) > 0 && (
-          <span className="text-[10px] text-violet-400 inline-flex items-center gap-0.5" title={`${email.taskCount} ${email.taskCount === 1 ? t("inbox.taskBadgeSingular") : t("inbox.taskBadgePlural")}`}>
-            <ListTodo className="w-3 h-3" />
-            {email.taskCount}
-          </span>
-        )}
-        {email.assignedTo && (
-          <UserPlus className="w-3 h-3 text-indigo-400 hidden md:inline" />
-        )}
+      {/* Indicateurs discrets + temps. Pour rester cohérent avec la vue
+          détail (qui ne ré-affiche pas ces badges), on garde uniquement
+          des icônes monochromes pour pièce jointe / SLA. La référence
+          projet, le compteur de tâches et l'avatar « assigné » ont été
+          retirés de la liste — ils restent visibles dans le panneau
+          détail à droite. */}
+      <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
         {(email.attachmentCount ?? 0) > 0 && (
-          <AttachmentBadge count={email.attachmentCount} />
+          <Paperclip className="w-3 h-3 text-[#8b95a7]" />
         )}
         {isSlaBreach && (
           <span
@@ -4451,7 +4442,8 @@ export default function Dashboard() {
               <DialogTrigger asChild>
                 <Button
                   size="sm"
-                  className="gap-1.5 h-9 px-3 text-[12px] bg-[#4F46E5] hover:bg-[#4338CA] text-white shrink-0 rounded-md font-medium"
+                  variant="outline"
+                  className="gap-1.5 h-9 px-3 text-[12px] bg-card hover:bg-white/[0.04] text-[#e6e9ef] border-[#1f2937] hover:border-[#2a3441] shrink-0 rounded-md font-medium"
                 >
                   <PenSquare className="w-3.5 h-3.5" />
                   <span className="hidden sm:inline">{t("inbox.newEmail")}</span>
