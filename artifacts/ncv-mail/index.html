@@ -22,6 +22,29 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>html,body,#root{background-color:#0b1220;color:#fff;margin:0;min-height:100vh}</style>
+    <script>
+      // Pre-paint theme application for the Réception page (#247).
+      // Reads ncv-theme from localStorage and applies data-ncv-theme to <html>
+      // before first paint to avoid a white flash, but ONLY when the initial
+      // route is the inbox (/dashboard). Other pages stay dark-only.
+      // Defaults to dark.
+      (function () {
+        try {
+          var t = localStorage.getItem('ncv-theme');
+          if (t !== 'light' && t !== 'dark') t = 'dark';
+          var p = window.location.pathname || '';
+          var isInbox = p === '/dashboard' || p === '/dashboard/';
+          if (isInbox) {
+            document.documentElement.setAttribute('data-ncv-page', 'inbox');
+            document.documentElement.setAttribute('data-ncv-theme', t);
+          } else {
+            document.documentElement.setAttribute('data-ncv-theme', 'dark');
+          }
+        } catch (e) {
+          document.documentElement.setAttribute('data-ncv-theme', 'dark');
+        }
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -28,9 +28,12 @@ import {
   FileText,
   Wand2,
   Users,
+  Sun,
+  Moon,
 } from "lucide-react";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
 import { cn } from "@/lib/utils";
+import { useNcvTheme } from "@/lib/inbox-theme";
 import { useState, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
@@ -66,6 +69,11 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
     query: { enabled: !!orgId } as any,
   });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const { theme: ncvTheme, toggle: toggleNcvTheme } = useNcvTheme();
+  // Le toggle light/dark (#247) ne concerne que la page Réception : on
+  // l'affiche uniquement quand on est sur /dashboard pour éviter de laisser
+  // croire qu'il agit sur toute l'app (qui reste dark-only).
+  const showThemeToggle = location === "/dashboard";
 
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
   const totalUsed = ((user as any).emailsUsed || 0) + ((user as any).aiCreditsUsed || 0);
@@ -186,6 +194,29 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
         })}
       </nav>
 
+      {showThemeToggle && (
+        <div className="px-2 pb-3 pt-2 border-t border-[#1f2937] mt-auto">
+          <button
+            type="button"
+            onClick={toggleNcvTheme}
+            className="w-full flex items-center gap-x-2.5 rounded-md px-2.5 py-[7px] text-[13px] font-medium text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] transition-colors"
+            title={ncvTheme === "dark" ? t("inbox.theme.switchLight", "Mode clair") : t("inbox.theme.switchDark", "Mode sombre")}
+            aria-label={ncvTheme === "dark" ? t("inbox.theme.switchLight", "Mode clair") : t("inbox.theme.switchDark", "Mode sombre")}
+            data-testid="ncv-theme-toggle"
+          >
+            {ncvTheme === "dark" ? (
+              <Sun className="h-4 w-4 shrink-0" aria-hidden="true" />
+            ) : (
+              <Moon className="h-4 w-4 shrink-0" aria-hidden="true" />
+            )}
+            <span className="flex-1 truncate text-left">
+              {ncvTheme === "dark"
+                ? t("inbox.theme.switchLight", "Mode clair")
+                : t("inbox.theme.switchDark", "Mode sombre")}
+            </span>
+          </button>
+        </div>
+      )}
     </div>
   );
 

@@ -149,6 +149,123 @@
   --destructive-border: hsl(from hsl(var(--destructive)) h s calc(l + var(--opaque-button-border-intensity)) / alpha);
 }
 
+/* ---------------------------------------------------------------------------
+ * Réception (#247) — Light/Dark theme overlay.
+ *
+ * The whole product is dark-only. The Réception page (and its surrounding
+ * dashboard chrome) supports an optional light palette, toggled from the rail.
+ * Activated by `data-ncv-theme="light"` on <html> (set pre-paint by an inline
+ * script in index.html and managed by useNcvTheme()).
+ *
+ * Strategy:
+ *  - Override shadcn theme HSL vars under html[data-ncv-page="inbox"][data-ncv-theme="light"] so that
+ *    every Tailwind class using bg-background / bg-card / text-foreground /
+ *    border-border / bg-sidebar etc. picks up the new palette automatically.
+ *  - Then explicitly remap the hardcoded hex Tailwind arbitrary classes that
+ *    the Réception page uses heavily (#0b0d10, #1a2235, #b8c5d6, #1f2630…).
+ *
+ * Palette references are the two mockups:
+ *  - artifacts/mockup-sandbox/.../inbox-redesign/Superhuman.tsx (light)
+ *  - artifacts/mockup-sandbox/.../inbox-redesign/SuperhumanDark.tsx (dark)
+ * Accent indigo #4F46E5 is identical across both modes.
+ * ------------------------------------------------------------------------- */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] {
+  --background: 60 14% 98%;       /* #fbfbfa */
+  --foreground: 222 23% 14%;      /* #1a1f2e */
+
+  --border: 220 15% 91%;          /* #e5e7ec */
+  --input: 220 15% 91%;
+  --ring: 243 75% 59%;            /* indigo */
+
+  --card: 0 0% 100%;
+  --card-foreground: 222 23% 14%;
+  --card-border: 220 15% 91%;
+
+  --sidebar: 0 0% 100%;
+  --sidebar-foreground: 222 23% 14%;
+  --sidebar-border: 220 15% 91%;
+  --sidebar-primary: 243 75% 59%;
+  --sidebar-primary-foreground: 0 0% 100%;
+  --sidebar-accent: 240 60% 96%;  /* indigo 8% */
+  --sidebar-accent-foreground: 243 75% 30%;
+  --sidebar-ring: 243 75% 59%;
+
+  --popover: 0 0% 100%;
+  --popover-foreground: 222 23% 14%;
+  --popover-border: 220 15% 91%;
+
+  --secondary: 30 14% 96%;        /* #f5f5f1 */
+  --secondary-foreground: 220 9% 30%;
+
+  --muted: 30 14% 96%;
+  --muted-foreground: 220 9% 46%; /* #6b7280 */
+
+  --accent: 30 14% 96%;
+  --accent-foreground: 222 23% 14%;
+}
+
+/* Smooth color transitions when toggling. Scoped tightly to background &
+   color & border-color & fill so we don't animate transforms / layout. */
+html[data-ncv-page="inbox"] body,
+html[data-ncv-page="inbox"] body * {
+  transition:
+    background-color 150ms ease,
+    color 150ms ease,
+    border-color 150ms ease,
+    fill 150ms ease;
+}
+
+/* Hardcoded hex remaps for the Réception page. The `:not(.fixed)` guard
+   excludes the floating Inboria help / context menu widgets — per task,
+   they keep their dark style on top of the light page. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#0b0d10\]:not(.fixed),
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#11151b\]:not(.fixed),
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#0d1218\]:not(.fixed) { background-color: #fbfbfa !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#06080a\]:not(.fixed) { background-color: #f5f5f1 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#161b22\]:not(.fixed),
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#0f1729\]:not(.fixed),
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#11161d\]:not(.fixed) { background-color: #ffffff !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#1a2235\]:not(.fixed),
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#1a2030\]:not(.fixed) { background-color: #f0f0ec !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#1e3a5f\]:not(.fixed) { background-color: rgba(79, 70, 229, 0.10) !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#222a35\]:not(.fixed) { background-color: #eef0f3 !important; }
+
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#e6e9ef\] { color: #1a1f2e !important; }
+/* `.text-white` is heavily reused on indigo / colored action buttons
+   (bg-primary, bg-indigo-*, bg-red-*, bg-amber-*, badge backgrounds…).
+   Only remap it when the SAME element does not also carry a colored
+   background utility, otherwise the label would become unreadable on
+   the colored chip. The `:not()` chain is a same-element class match,
+   which is exactly the pattern Tailwind buttons use. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"]
+  .text-white:not(.bg-primary):not([class*="bg-primary/"]):not([class*="bg-indigo"]):not([class*="bg-violet"]):not([class*="bg-purple"]):not([class*="bg-fuchsia"]):not([class*="bg-pink"]):not([class*="bg-rose"]):not([class*="bg-red"]):not([class*="bg-orange"]):not([class*="bg-amber"]):not([class*="bg-yellow"]):not([class*="bg-lime"]):not([class*="bg-green"]):not([class*="bg-emerald"]):not([class*="bg-teal"]):not([class*="bg-cyan"]):not([class*="bg-sky"]):not([class*="bg-blue"]):not([class*="bg-destructive"]):not([class*="bg-\[\#4F46E5\]"]) {
+  color: #1a1f2e !important;
+}
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#8b95a7\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#b8c5d6\] { color: #6b7280 !important; }
+/* Faint detail tones */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#6b7480\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#c2c8d4\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#d2d7e0\] { color: #6b7280 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#3b4250\] { color: #3b4250 !important; }
+
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#1f2630\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#1f2937\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#2a3441\],
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#2a3340\] { border-color: #e5e7ec !important; }
+
+/* kbd chips inside the inbox shortcut bar (#161b22 / #1f2630) */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] kbd.bg-\[\#161b22\] { background-color: #ffffff !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] kbd.border-\[\#1f2630\] { border-color: #e5e7ec !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] kbd.text-\[\#e6e9ef\] { color: #1a1f2e !important; }
+
+/* Hover layer overlay used in many spots (white/[0.04] / [0.08] etc.) */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .hover\:bg-white\/\[0\.04\]:hover { background-color: rgba(0, 0, 0, 0.04) !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .hover\:bg-white\/\[0\.08\]:hover { background-color: rgba(0, 0, 0, 0.06) !important; }
+
+/* Logo-icon block in the user menu uses #1e3a5f as background */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .bg-\[\#1e3a5f\] { background-color: rgba(79, 70, 229, 0.10) !important; }
+
 @layer base {
   * {
     @apply border-border;

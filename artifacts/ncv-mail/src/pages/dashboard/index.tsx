@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useMarkInboxPage } from "@/lib/inbox-theme";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { extractEmailAddress } from "@/lib/utils";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
@@ -2839,6 +2840,8 @@ function OdooContextPanel({
 }
 
 export default function Dashboard() {
+  // #247 — active la palette light/dark uniquement sur la Réception.
+  useMarkInboxPage();
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
