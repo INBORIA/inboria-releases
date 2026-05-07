@@ -123,7 +123,8 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
       {/* Filet de couleur priorité — visible uniquement en vue inbox-classic */}
       {isClassicMirror && <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${barColor}`} />}
 
-      {/* Pastille non-lu OU case à cocher en mode sélection */}
+      {/* Case à cocher en mode sélection (pas de pastille non-lu :
+          le contraste blanc gras / gris suffit à distinguer les non-lus). */}
       <div className="w-4 flex items-center justify-center shrink-0">
         {selectionMode || isSelected ? (
           <button
@@ -135,7 +136,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
           </button>
         ) : (
           <span
-            className={`w-1.5 h-1.5 rounded-full ${isUnread ? "bg-primary" : "bg-transparent"}`}
+            className="w-3 h-3 cursor-pointer"
             onClick={(e) => { e.stopPropagation(); onToggleSelect(email.id); }}
           />
         )}
