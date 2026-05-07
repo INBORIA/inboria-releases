@@ -60,6 +60,46 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
     const rawLang = parsed.success && parsed.data.language ? parsed.data.language : "fr";
     const language = rawLang.substring(0, 2).toLowerCase();
 
+    // #244 Fix bug fuseau horaire RDV : récupérer le TZ utilisateur et formater
+    // les heures dans son fuseau (sinon GPT lit l'ISO UTC brut et se trompe de
+    // 1-2h selon CET/CEST).
+    let userTz = "Europe/Brussels";
+    try {
+      const { data: profileTz } = await supabaseAdmin
+        .from("users")
+        .select("timezone")
+        .eq("id", req.userId!)
+        .maybeSingle();
+      if (profileTz?.timezone) userTz = profileTz.timezone as string;
+    } catch {}
+    const fmtTimeTz = (iso: string | null | undefined): string => {
+      if (!iso) return "";
+      try {
+        const d = new Date(iso);
+        if (isNaN(d.getTime())) return String(iso);
+        return new Intl.DateTimeFormat("fr-FR", {
+          timeZone: userTz,
+          year: "numeric", month: "2-digit", day: "2-digit",
+          hour: "2-digit", minute: "2-digit", hour12: false,
+        }).format(d);
+      } catch { return String(iso); }
+    };
+    const localDayBounds = (offsetDays: number): { start: string; end: string } => {
+      const parts = new Intl.DateTimeFormat("en-CA", {
+        timeZone: userTz, year: "numeric", month: "2-digit", day: "2-digit",
+      }).formatToParts(new Date(Date.now() + offsetDays * 86400000));
+      const y = parts.find(p => p.type === "year")?.value;
+      const m = parts.find(p => p.type === "month")?.value;
+      const d = parts.find(p => p.type === "day")?.value;
+      const startLocal = new Date(`${y}-${m}-${d}T00:00:00`);
+      const endLocal = new Date(`${y}-${m}-${d}T23:59:59`);
+      const tzOffsetMs = startLocal.getTime() - new Date(startLocal.toLocaleString("en-US", { timeZone: userTz })).getTime();
+      return {
+        start: new Date(startLocal.getTime() + tzOffsetMs).toISOString(),
+        end: new Date(endLocal.getTime() + tzOffsetMs).toISOString(),
+      };
+    };
+
     const { data: emails } = await supabaseAdmin
       .from("emails")
       .select("id, sender, subject, priority, summary, status")
@@ -73,11 +113,12 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
     const faible = allEmails.filter(e => e.priority === "faible").length;
     const pending = allEmails.filter(e => e.status === "classe").length;
 
-    const now = new Date();
-    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
-    const todayEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59).toISOString();
-    const tomorrowStart = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1).toISOString();
-    const tomorrowEnd = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 23, 59, 59).toISOString();
+    const todayBounds = localDayBounds(0);
+    const tomorrowBounds = localDayBounds(1);
+    const todayStart = todayBounds.start;
+    const todayEnd = todayBounds.end;
+    const tomorrowStart = tomorrowBounds.start;
+    const tomorrowEnd = tomorrowBounds.end;
 
     const { data: todayAppts } = await supabaseAdmin
       .from("appointments")
@@ -99,7 +140,9 @@ router.post("/ai/daily-summary", requireAuth, async (req, res): Promise<void> =>
       id: a.id,
       title: a.title,
       startAt: a.start_at,
+      startAtLocal: fmtTimeTz(a.start_at),
       endAt: a.end_at,
+      endAtLocal: fmtTimeTz(a.end_at),
       location: a.location,
       allDay: a.all_day,
       confirmed: a.confirmed,
@@ -503,7 +546,7 @@ ${allEmails.map(e => `- [${e.priority}] ${e.sender}: ${e.subject} ${e.summary ? 
 
 Statistiques : ${urgent} urgents, ${moyen} moyens, ${faible} faibles, ${pending} en attente.${
           todayAppointments.length > 0 || tomorrowAppointments.length > 0
-            ? `\n\nRendez-vous aujourd'hui (${todayAppointments.length}) : ${todayAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "aucun"}\nRendez-vous demain (${tomorrowAppointments.length}) : ${tomorrowAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "aucun"}`
+            ? `\n\nRendez-vous aujourd'hui (${todayAppointments.length}) : ${todayAppointments.map(a => `${a.title} (${a.startAtLocal})`).join(", ") || "aucun"}\nRendez-vous demain (${tomorrowAppointments.length}) : ${tomorrowAppointments.map(a => `${a.title} (${a.startAtLocal})`).join(", ") || "aucun"}`
             : ""
         }
 
@@ -527,7 +570,7 @@ ${allEmails.map(e => `- [${e.priority}] ${e.sender}: ${e.subject} ${e.summary ? 
 
 Stats: ${urgent} urgent, ${moyen} medium, ${faible} low, ${pending} pending.${
           todayAppointments.length > 0 || tomorrowAppointments.length > 0
-            ? `\n\nToday's appointments (${todayAppointments.length}): ${todayAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "none"}\nTomorrow's appointments (${tomorrowAppointments.length}): ${tomorrowAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "none"}`
+            ? `\n\nToday's appointments (${todayAppointments.length}): ${todayAppointments.map(a => `${a.title} (${a.startAtLocal})`).join(", ") || "none"}\nTomorrow's appointments (${tomorrowAppointments.length}): ${tomorrowAppointments.map(a => `${a.title} (${a.startAtLocal})`).join(", ") || "none"}`
             : ""
         }
 
@@ -551,7 +594,7 @@ ${allEmails.map(e => `- [${e.priority}] ${e.sender}: ${e.subject} ${e.summary ? 
 
 Statistieken: ${urgent} urgent, ${moyen} gemiddeld, ${faible} laag, ${pending} in afwachting.${
           todayAppointments.length > 0 || tomorrowAppointments.length > 0
-            ? `\n\nAfspraken vandaag (${todayAppointments.length}): ${todayAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "geen"}\nAfspraken morgen (${tomorrowAppointments.length}): ${tomorrowAppointments.map(a => `${a.title} (${a.startAt})`).join(", ") || "geen"}`
+            ? `\n\nAfspraken vandaag (${todayAppointments.length}): ${todayAppointments.map(a => `${a.title} (${a.startAtLocal})`).join(", ") || "geen"}\nAfspraken morgen (${tomorrowAppointments.length}): ${tomorrowAppointments.map(a => `${a.title} (${a.startAtLocal})`).join(", ") || "geen"}`
             : ""
         }
 
