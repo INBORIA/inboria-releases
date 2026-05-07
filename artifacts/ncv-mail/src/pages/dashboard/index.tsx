@@ -4939,51 +4939,43 @@ export default function Dashboard() {
                               )}
                             </div>
 
-                            {/* Bloc droit fixe : badges + heure (toujours
-                                visibles). Évite le décalage de layout qui
-                                renvoyait le clic sur la ligne du dessous. */}
-                            <div className="flex items-center gap-2 shrink-0 group-hover:invisible">
-                              {isClaimed && (
-                                <span
-                                  className={`text-[10px] shrink-0 ${isClaimedByMe ? "text-primary" : "text-[#8b95a7]"}`}
-                                  title={`${t("inbox.claimedBy")} ${isClaimedByMe ? t("emails.me", { defaultValue: "moi" }) : ((email as any).claimedByName || t("sharedMailboxes.colleague"))}`}
-                                >
-                                  <UserCheck className="w-3 h-3" />
-                                </span>
-                              )}
-                              {isSlaBreach && (
-                                <AlertCircle className="w-3 h-3 text-red-400" />
-                              )}
-                              <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline">
-                                {email.createdAt ? format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale }) : ""}
+                            {/* Bouton Prendre/Libérer : toujours visible
+                                (plus discret au repos, coloré au survol).
+                                Évite tout décalage et reste cliquable. */}
+                            {!isClaimed ? (
+                              <button
+                                className="shrink-0 p-1.5 rounded text-[#6b7480] hover:text-primary hover:bg-primary/10 disabled:opacity-40"
+                                onClick={(e) => { e.stopPropagation(); handleClaimEmail(email.id as any); }}
+                                disabled={claimEmailMut.isPending}
+                                title={t("inbox.claim")}
+                              >
+                                <UserPlus className="w-3.5 h-3.5" />
+                              </button>
+                            ) : isClaimedByMe ? (
+                              <button
+                                className="shrink-0 p-1.5 rounded text-primary hover:text-white hover:bg-white/[0.08] disabled:opacity-40"
+                                onClick={(e) => { e.stopPropagation(); handleUnclaimEmail(email.id as any); }}
+                                disabled={unclaimEmailMut.isPending}
+                                title={t("inbox.unclaim")}
+                              >
+                                <UserCheck className="w-3.5 h-3.5" />
+                              </button>
+                            ) : (
+                              <span
+                                className="shrink-0 p-1.5 text-[#6b7480]"
+                                title={`${t("inbox.claimedBy")} ${(email as any).claimedByName || t("sharedMailboxes.colleague")}`}
+                              >
+                                <UserCheck className="w-3.5 h-3.5" />
                               </span>
-                            </div>
+                            )}
 
-                            {/* Actions en overlay absolu : pas de décalage. */}
-                            <div
-                              className="hidden group-hover:flex items-center gap-0.5 absolute right-3 top-1/2 -translate-y-1/2 bg-[#1a2235] rounded pl-2"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              {!isClaimed ? (
-                                <button
-                                  className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-primary disabled:opacity-40"
-                                  onClick={(e) => { e.stopPropagation(); handleClaimEmail(email.id as any); }}
-                                  disabled={claimEmailMut.isPending}
-                                  title={t("inbox.claim")}
-                                >
-                                  <UserPlus className="w-3.5 h-3.5" />
-                                </button>
-                              ) : isClaimedByMe ? (
-                                <button
-                                  className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white disabled:opacity-40"
-                                  onClick={(e) => { e.stopPropagation(); handleUnclaimEmail(email.id as any); }}
-                                  disabled={unclaimEmailMut.isPending}
-                                  title={t("inbox.unclaim")}
-                                >
-                                  <UserX className="w-3.5 h-3.5" />
-                                </button>
-                              ) : null}
-                            </div>
+                            {isSlaBreach && (
+                              <AlertCircle className="w-3 h-3 text-red-400 shrink-0" />
+                            )}
+
+                            <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline shrink-0">
+                              {email.createdAt ? format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale }) : ""}
+                            </span>
                           </div>
                         );
                       })}
