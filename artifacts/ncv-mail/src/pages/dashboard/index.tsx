@@ -111,8 +111,6 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
       className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors ${
         isSelected
           ? "border-l-primary bg-primary/[0.10]"
-          : isSlaBreach
-          ? "border-l-red-500/70 hover:bg-white/[0.03]"
           : "border-l-transparent hover:bg-white/[0.03]"
       }`}
       onClick={onClick}
@@ -4945,11 +4943,7 @@ export default function Dashboard() {
                             key={email.id}
                             data-email-row
                             data-row-id={email.id}
-                            className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors ${
-                              isSlaBreach
-                                ? "border-l-red-500/70 hover:bg-white/[0.03]"
-                                : "border-l-transparent hover:bg-white/[0.03]"
-                            }`}
+                            className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 border-l-transparent hover:bg-white/[0.03] transition-colors`}
                             onClick={() => setSelectedEmailId(email.id)}
                           >
                             <div className="w-4 flex items-center justify-center shrink-0">
