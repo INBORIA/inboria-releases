@@ -4912,7 +4912,7 @@ export default function Dashboard() {
                                 ? "border-l-red-500/70 hover:bg-white/[0.03]"
                                 : "border-l-transparent hover:bg-white/[0.03]"
                             }`}
-                            onClick={() => handleEmailClick(email as any)}
+                            onClick={() => setSelectedEmailId(email.id)}
                           >
                             <div className="w-4 flex items-center justify-center shrink-0">
                               <span className={`w-1.5 h-1.5 rounded-full ${isUnread ? "bg-primary" : "bg-transparent"}`} />
