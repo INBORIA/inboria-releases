@@ -393,10 +393,10 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
 
   return (
     <div className="flex flex-col h-full">
-      <div className="sticky top-12 z-[5] flex items-center gap-2 mb-4 pb-2 pt-2 bg-[#0d1117]">
+      <div className="sticky top-12 z-[5] flex items-center gap-2 mb-4 pb-2 pt-2 bg-background">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 text-[11px] px-2.5 py-1.5 rounded-md font-medium transition-colors text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
+          className="flex items-center gap-1.5 text-[11px] px-2.5 py-1.5 rounded-md font-medium transition-colors text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04]"
           title={t("inbox.backHint", "Retour (Échap) — J/K pour naviguer, R répondre, E archiver") as string}
           data-testid="button-back-to-inbox"
         >
