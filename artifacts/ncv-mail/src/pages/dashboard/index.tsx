@@ -59,10 +59,21 @@ import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuCheckboxItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
@@ -4580,150 +4591,197 @@ export default function Dashboard() {
               )}
             </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8">
-              {[
-                { value: "all", label: t("inbox.priorities.all", "Toutes") },
-                { value: "urgent", label: t("inbox.priorities.urgent") },
-                { value: "moyen", label: t("inbox.priorities.medium") },
-                { value: "faible", label: t("inbox.priorities.low") },
-              ].map((f) => (
-                <button
-                  key={f.value}
-                  onClick={() => setFilterPriority(f.value)}
-                  className={`inline-flex items-center justify-center w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
-                    filterPriority === f.value
-                      ? "bg-primary/15 text-primary border border-primary/20"
-                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                  }`}
-                >
-                  {f.label}
-                </button>
-              ))}
-            </div>
+          {/* Étape 2 refonte Superhuman — menu Filtres unifié.
+              Regroupe Priorité + Tri Inboria + Tri Date + CRM dans un seul
+              bouton déroulant. Aucune fonction retirée.
+              Les filtres actifs sont rappelés sous forme de pastilles à droite
+              avec un bouton X pour les retirer individuellement. */}
+          <div className="flex flex-wrap items-center gap-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8" data-testid="row-filters-unified">
+            {(() => {
+              const activeCount =
+                (filterPriority !== "all" ? 1 : 0) +
+                (smartSort ? 1 : 0) +
+                (!smartSort && sortMode !== "priority" ? 1 : 0) +
+                (crmFilter ? 1 : 0);
+              return (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <button
+                      type="button"
+                      className={`inline-flex items-center gap-1.5 h-8 px-3 text-[12px] rounded-md font-medium border transition-colors ${
+                        activeCount > 0
+                          ? "bg-primary/15 text-primary border-primary/20"
+                          : "text-[#b8c5d6] border-[#1f2630] hover:text-white hover:border-[#b8c5d6]/30 bg-transparent"
+                      }`}
+                      data-testid="btn-filters-unified"
+                    >
+                      <SlidersHorizontal className="w-3.5 h-3.5" />
+                      <span>{t("inbox.filtersLabel", "Filtres")}</span>
+                      {activeCount > 0 && (
+                        <span className="ml-0.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-primary text-[10px] text-white font-semibold">
+                          {activeCount}
+                        </span>
+                      )}
+                    </button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="start" className="w-64 bg-card border-border">
+                    <DropdownMenuLabel className="text-[10.5px] uppercase tracking-[0.08em] text-[#8b95a7] font-semibold">
+                      {t("inbox.priorityLabel", "Priorité")}
+                    </DropdownMenuLabel>
+                    <DropdownMenuRadioGroup value={filterPriority} onValueChange={setFilterPriority}>
+                      <DropdownMenuRadioItem value="all" className="text-[12px]">{t("inbox.priorities.all", "Toutes")}</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="urgent" className="text-[12px]">{t("inbox.priorities.urgent")}</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="moyen" className="text-[12px]">{t("inbox.priorities.medium")}</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="faible" className="text-[12px]">{t("inbox.priorities.low")}</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
 
-          <div className="flex flex-wrap items-center gap-1.5 gap-y-2 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-2">
+                    <DropdownMenuSeparator />
+                    <DropdownMenuLabel className="text-[10.5px] uppercase tracking-[0.08em] text-[#8b95a7] font-semibold">
+                      {t("inbox.sortLabel", "Tri")}
+                    </DropdownMenuLabel>
+                    <DropdownMenuCheckboxItem
+                      checked={smartSort}
+                      onCheckedChange={(v) => setSmartSort(!!v)}
+                      className="text-[12px]"
+                      data-testid="menu-inboria-smart-sort"
+                    >
+                      <Sparkles className="w-3 h-3 mr-1.5 text-primary" />
+                      {t("inboriaSort.smartLabel", "Tri Inboria (intelligent)")}
+                    </DropdownMenuCheckboxItem>
+                    <DropdownMenuRadioGroup
+                      value={sortMode}
+                      onValueChange={(v) => setSortMode(v as "priority" | "date_desc" | "date_asc")}
+                    >
+                      <DropdownMenuRadioItem value="priority" disabled={smartSort} className="text-[12px]">
+                        {t("inbox.sortPriority", "Priorité")}
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="date_desc" disabled={smartSort} className="text-[12px]">
+                        {t("inbox.sortByDateDesc", "Date (récent → ancien)")}
+                      </DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="date_asc" disabled={smartSort} className="text-[12px]">
+                        {t("inbox.sortByDateAsc", "Date (ancien → récent)")}
+                      </DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+
+                    {(hasHubspot || hasPipedrive || hasSalesforce || hasOdoo) && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuLabel className="text-[10.5px] uppercase tracking-[0.08em] text-[#8b95a7] font-semibold">CRM</DropdownMenuLabel>
+                        {hasHubspot && (
+                          <DropdownMenuCheckboxItem
+                            checked={crmFilter === "hubspot"}
+                            onCheckedChange={(v) => setCrmFilter(v ? "hubspot" : null)}
+                            className="text-[12px]"
+                            data-testid="menu-crm-hubspot"
+                          >
+                            <Building2 className="w-3 h-3 mr-1.5" />HubSpot
+                          </DropdownMenuCheckboxItem>
+                        )}
+                        {hasPipedrive && (
+                          <DropdownMenuCheckboxItem
+                            checked={crmFilter === "pipedrive"}
+                            onCheckedChange={(v) => setCrmFilter(v ? "pipedrive" : null)}
+                            className="text-[12px]"
+                            data-testid="menu-crm-pipedrive"
+                          >
+                            <Briefcase className="w-3 h-3 mr-1.5" />Pipedrive
+                          </DropdownMenuCheckboxItem>
+                        )}
+                        {hasSalesforce && (
+                          <DropdownMenuCheckboxItem
+                            checked={crmFilter === "salesforce"}
+                            onCheckedChange={(v) => setCrmFilter(v ? "salesforce" : null)}
+                            className="text-[12px]"
+                            data-testid="menu-crm-salesforce"
+                          >
+                            <Cloud className="w-3 h-3 mr-1.5" />Salesforce
+                          </DropdownMenuCheckboxItem>
+                        )}
+                        {hasOdoo && (
+                          <DropdownMenuCheckboxItem
+                            checked={crmFilter === "odoo"}
+                            onCheckedChange={(v) => setCrmFilter(v ? "odoo" : null)}
+                            className="text-[12px]"
+                            data-testid="menu-crm-odoo"
+                          >
+                            <Database className="w-3 h-3 mr-1.5" />Odoo
+                          </DropdownMenuCheckboxItem>
+                        )}
+                      </>
+                    )}
+
+                    {activeCount > 0 && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          onSelect={() => {
+                            setFilterPriority("all");
+                            setSmartSort(false);
+                            setSortMode("priority");
+                            setCrmFilter(null);
+                          }}
+                          className="text-[12px] text-[#b8c5d6]"
+                          data-testid="menu-filters-reset"
+                        >
+                          <X className="w-3 h-3 mr-1.5" />
+                          {t("inbox.filtersReset", "Réinitialiser les filtres")}
+                        </DropdownMenuItem>
+                      </>
+                    )}
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              );
+            })()}
+
+            {/* Pastilles rappel filtres actifs (cliquables pour retirer) */}
+            {filterPriority !== "all" && (
               <button
-                onClick={() => setSmartSort((v) => !v)}
-                title={
-                  smartSort
-                    ? t("inboriaSort.smartTooltipOn", "Tri intelligent activé : Inboria pousse en haut les emails stratégiques.")
-                    : t("inboriaSort.smartTooltipOff", "Tri intelligent désactivé.")
-                }
-                className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
-                  smartSort
-                    ? "bg-primary/15 text-primary border border-primary/20"
-                    : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                }`}
-                data-testid="btn-inboria-smart-sort"
+                onClick={() => setFilterPriority("all")}
+                className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20"
+              >
+                {filterPriority === "urgent" ? t("inbox.priorities.urgent")
+                  : filterPriority === "moyen" ? t("inbox.priorities.medium")
+                  : t("inbox.priorities.low")}
+                <X className="w-3 h-3" />
+              </button>
+            )}
+            {smartSort && (
+              <button
+                onClick={() => setSmartSort(false)}
+                className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20"
               >
                 <Sparkles className="w-3 h-3" />
-                <span>{t("inboriaSort.smartLabel", "Tri Inboria")}</span>
+                {t("inboriaSort.smartLabel", "Tri Inboria")}
+                <X className="w-3 h-3" />
               </button>
+            )}
+            {!smartSort && sortMode !== "priority" && (
               <button
-                onClick={() => {
-                  setSortMode((m) => (m === "priority" ? "date_desc" : m === "date_desc" ? "date_asc" : "priority"));
-                }}
-                disabled={smartSort}
-                title={
-                  smartSort
-                    ? t("inboriaSort.disabledByInboria", "Désactivé tant que le tri Inboria est actif.")
-                    : sortMode === "priority"
-                    ? t("inbox.sortByPriority", "Tri : Priorité")
-                    : sortMode === "date_desc"
-                      ? t("inbox.sortByDateDesc", "Tri : Date ↓ (récent)")
-                      : t("inbox.sortByDateAsc", "Tri : Date ↑ (ancien)")
-                }
-                className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
-                  smartSort
-                    ? "text-[#5a6478] border border-[#1f2937] opacity-50 cursor-not-allowed"
-                    : sortMode !== "priority"
-                    ? "bg-primary/15 text-primary border border-primary/20"
-                    : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                }`}
+                onClick={() => setSortMode("priority")}
+                className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20"
               >
-                {sortMode === "priority" ? (
-                  <ArrowUpDown className="w-3 h-3" />
-                ) : sortMode === "date_desc" ? (
-                  <ArrowDown className="w-3 h-3" />
-                ) : (
-                  <ArrowUp className="w-3 h-3" />
-                )}
-                <span>
-                  {t("inbox.sortLabel", "Tri")}:{" "}
-                  {sortMode === "priority"
-                    ? t("inbox.sortPriority", "Priorité")
-                    : t("inbox.sortDate", "Date")}
-                </span>
+                {sortMode === "date_desc" ? <ArrowDown className="w-3 h-3" /> : <ArrowUp className="w-3 h-3" />}
+                {sortMode === "date_desc" ? t("inbox.sortByDateDesc", "Date ↓") : t("inbox.sortByDateAsc", "Date ↑")}
+                <X className="w-3 h-3" />
               </button>
-            </div>
-
-          {!SUPERHUMAN_CLEAN && (hasHubspot || hasPipedrive || hasSalesforce || hasOdoo) && (
-            <div
-              className="flex flex-wrap items-center gap-1.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-2"
-              data-testid="row-crm-filter"
-            >
-              {hasHubspot && (
-                <button
-                  onClick={() => setCrmFilter((c) => (c === "hubspot" ? null : "hubspot"))}
-                  title={t("inbox.crmHubspotTooltip")}
-                  data-testid="button-crm-hubspot"
-                  className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
-                    crmFilter === "hubspot"
-                      ? "bg-primary/15 text-primary border border-primary/20"
-                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                  }`}
-                >
-                  <Building2 className="w-3 h-3" />
-                  <span>HubSpot</span>
-                </button>
-              )}
-              {hasPipedrive && (
-                <button
-                  onClick={() => setCrmFilter((c) => (c === "pipedrive" ? null : "pipedrive"))}
-                  title={t("inbox.crmPipedriveTooltip")}
-                  data-testid="button-crm-pipedrive"
-                  className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
-                    crmFilter === "pipedrive"
-                      ? "bg-primary/15 text-primary border border-primary/20"
-                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                  }`}
-                >
-                  <Briefcase className="w-3 h-3" />
-                  <span>Pipedrive</span>
-                </button>
-              )}
-              {hasSalesforce && (
-                <button
-                  onClick={() => setCrmFilter((c) => (c === "salesforce" ? null : "salesforce"))}
-                  title={t("inbox.crmSalesforceTooltip")}
-                  data-testid="button-crm-salesforce"
-                  className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
-                    crmFilter === "salesforce"
-                      ? "bg-primary/15 text-primary border border-primary/20"
-                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                  }`}
-                >
-                  <Cloud className="w-3 h-3" />
-                  <span>Salesforce</span>
-                </button>
-              )}
-              {hasOdoo && (
-                <button
-                  onClick={() => setCrmFilter((c) => (c === "odoo" ? null : "odoo"))}
-                  title={t("inbox.crmOdooTooltip")}
-                  data-testid="button-crm-odoo"
-                  className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
-                    crmFilter === "odoo"
-                      ? "bg-primary/15 text-primary border border-primary/20"
-                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                  }`}
-                >
-                  <Database className="w-3 h-3" />
-                  <span>Odoo</span>
-                </button>
-              )}
-            </div>
-          )}
+            )}
+            {crmFilter && (
+              <button
+                onClick={() => setCrmFilter(null)}
+                className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20"
+              >
+                {crmFilter === "hubspot" ? <Building2 className="w-3 h-3" />
+                  : crmFilter === "pipedrive" ? <Briefcase className="w-3 h-3" />
+                  : crmFilter === "salesforce" ? <Cloud className="w-3 h-3" />
+                  : <Database className="w-3 h-3" />}
+                {crmFilter === "hubspot" ? "HubSpot"
+                  : crmFilter === "pipedrive" ? "Pipedrive"
+                  : crmFilter === "salesforce" ? "Salesforce"
+                  : "Odoo"}
+                <X className="w-3 h-3" />
+              </button>
+            )}
+          </div>
 
         </div>
         )}
