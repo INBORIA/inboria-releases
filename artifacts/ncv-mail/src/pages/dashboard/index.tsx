@@ -4376,40 +4376,27 @@ export default function Dashboard() {
                 placeholder={t("inbox.searchPlaceholder")}
                 className="pl-8 pr-16 bg-[#0d1218] border-[#1f2630] text-white placeholder:text-[#8b95a7]/70 h-9 text-[13px] rounded-md"
               />
-              {searchInput ? (
+              {searchInput && (
                 <button
                   onClick={() => setSearchInput("")}
                   className="absolute right-2.5 top-1/2 -translate-y-1/2 text-[#8b95a7] hover:text-white"
-                  aria-label={t("common.clear", "Effacer")}
+                  aria-label="Effacer"
                 >
                   <X className="w-3.5 h-3.5" />
                 </button>
-              ) : (
-                <span className="absolute right-2.5 top-1/2 -translate-y-1/2 hidden sm:flex items-center gap-0.5 pointer-events-none select-none">
-                  <kbd className="px-1.5 py-0.5 text-[10px] font-medium text-[#8b95a7] bg-[#161b22] border border-[#1f2630] rounded">⌘</kbd>
-                  <kbd className="px-1.5 py-0.5 text-[10px] font-medium text-[#8b95a7] bg-[#161b22] border border-[#1f2630] rounded">K</kbd>
-                </span>
               )}
             </div>
 
-            <TooltipProvider delayDuration={150}>
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <button
-                    type="button"
-                    onClick={handleSync}
-                    disabled={isSyncing}
-                    aria-label={isSyncing ? t("inbox.refreshing") : t("inbox.refresh")}
-                    className="h-9 w-9 shrink-0 inline-flex items-center justify-center rounded-md text-[#8b95a7] hover:text-white hover:bg-white/[0.04] disabled:opacity-50 transition-colors"
-                  >
-                    <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin" : ""}`} />
-                  </button>
-                </TooltipTrigger>
-                <TooltipContent side="bottom" className="text-[11px]">
-                  {isSyncing ? t("inbox.refreshing") : t("inbox.refresh")}
-                </TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
+            <Button
+              variant="outline"
+              size="sm"
+              className="gap-1.5 h-9 text-[12px] bg-transparent border-[#1f2630] text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] shrink-0"
+              onClick={handleSync}
+              disabled={isSyncing}
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isSyncing ? "animate-spin" : ""}`} />
+              <span className="hidden sm:inline">{isSyncing ? t("inbox.refreshing") : t("inbox.refresh")}</span>
+            </Button>
 
             <Dialog open={isComposeOpen} onOpenChange={(open) => {
               setIsComposeOpen(open);
