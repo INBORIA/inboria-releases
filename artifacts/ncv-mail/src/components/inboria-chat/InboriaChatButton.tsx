@@ -458,7 +458,7 @@ export function InboriaChatButton() {
           <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
         </span>
         <span className="text-sm font-medium">
-          Inbor<span className="text-cyan-400">ia</span>
+          {t("inbox.askInboria", "Demander à Inboria")}
         </span>
       </Button>
       {isOpen && createPortal(
