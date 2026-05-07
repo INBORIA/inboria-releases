@@ -4939,7 +4939,10 @@ export default function Dashboard() {
                               )}
                             </div>
 
-                            <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
+                            {/* Bloc droit fixe : badges + heure (toujours
+                                visibles). Évite le décalage de layout qui
+                                renvoyait le clic sur la ligne du dessous. */}
+                            <div className="flex items-center gap-2 shrink-0 group-hover:invisible">
                               {isClaimed && (
                                 <span
                                   className={`text-[10px] shrink-0 ${isClaimedByMe ? "text-primary" : "text-[#8b95a7]"}`}
@@ -4956,11 +4959,15 @@ export default function Dashboard() {
                               </span>
                             </div>
 
-                            <div className="hidden group-hover:flex items-center gap-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+                            {/* Actions en overlay absolu : pas de décalage. */}
+                            <div
+                              className="hidden group-hover:flex items-center gap-0.5 absolute right-3 top-1/2 -translate-y-1/2 bg-[#1a2235] rounded pl-2"
+                              onClick={(e) => e.stopPropagation()}
+                            >
                               {!isClaimed ? (
                                 <button
                                   className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-primary disabled:opacity-40"
-                                  onClick={() => handleClaimEmail(email.id as any)}
+                                  onClick={(e) => { e.stopPropagation(); handleClaimEmail(email.id as any); }}
                                   disabled={claimEmailMut.isPending}
                                   title={t("inbox.claim")}
                                 >
@@ -4969,7 +4976,7 @@ export default function Dashboard() {
                               ) : isClaimedByMe ? (
                                 <button
                                   className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white disabled:opacity-40"
-                                  onClick={() => handleUnclaimEmail(email.id as any)}
+                                  onClick={(e) => { e.stopPropagation(); handleUnclaimEmail(email.id as any); }}
                                   disabled={unclaimEmailMut.isPending}
                                   title={t("inbox.unclaim")}
                                 >
