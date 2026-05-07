@@ -19,6 +19,7 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { useAuth } from "@/lib/auth";
+import { useMarkInboxPage } from "@/lib/inbox-theme";
 import { ChevronLeft, RotateCcw, Trash2, ShieldX, Shield, Eye, EyeOff, Clock, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -56,6 +57,7 @@ function filteredByLabel(spamSource: string | null | undefined, t: (k: string) =
 }
 
 export default function Indesirables() {
+  useMarkInboxPage();
   const { t, i18n } = useTranslation();
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
   const queryClient = useQueryClient();
