@@ -20,7 +20,7 @@ import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { useAuth } from "@/lib/auth";
 import { useMarkInboxPage } from "@/lib/inbox-theme";
-import { ChevronLeft, RotateCcw, Trash2, ShieldX, Shield, Eye, EyeOff, Clock, Loader2 } from "lucide-react";
+import { ChevronLeft, RotateCcw, Trash2, ShieldX, Shield, Eye, EyeOff, Clock, Loader2, Download } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -67,6 +67,28 @@ export default function Indesirables() {
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
   const [showDangerous, setShowDangerous] = useState(false);
   const [emptyConfirmOpen, setEmptyConfirmOpen] = useState(false);
+  const [refetchingBody, setRefetchingBody] = useState(false);
+
+  const handleRefetchBody = async (id: number) => {
+    setRefetchingBody(true);
+    try {
+      const baseUrl = import.meta.env.BASE_URL.replace(/\/$/, "");
+      const res = await fetch(`${baseUrl}/api/emails/${id}/refetch-body`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session?.access_token}` },
+      });
+      if (!res.ok) {
+        const j = await res.json().catch(() => ({}));
+        throw new Error(j.error || "Échec");
+      }
+      await queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+      toast({ title: t("junk.contentFetched", "Contenu récupéré") });
+    } catch (e: any) {
+      toast({ title: t("common.error"), description: e?.message, variant: "destructive" });
+    } finally {
+      setRefetchingBody(false);
+    }
+  };
 
   const { data: connections } = useQuery<any[]>({
     queryKey: ["email-connections"],
@@ -175,9 +197,9 @@ export default function Indesirables() {
             </Button>
           </div>
 
-          <div className="mb-3 rounded-md border border-amber-500/20 bg-amber-500/[0.06] px-3 py-2 flex items-center gap-2">
-            <Shield className="w-3.5 h-3.5 text-amber-400" />
-            <span className="text-[11px] text-amber-300">
+          <div className="mb-3 rounded-md border border-border bg-muted/30 px-3 py-2 flex items-center gap-2">
+            <Shield className="w-3.5 h-3.5 text-muted-foreground" />
+            <span className="text-[11px] text-muted-foreground">
               {filteredByLabel((selectedEmail as any).spamSource, t)}
             </span>
           </div>
@@ -205,7 +227,25 @@ export default function Indesirables() {
             </div>
 
             <div className="p-4">
-              <EmailBodyRenderer body={(selectedEmail as any).body || ""} emailId={selectedEmail.id} sender={(selectedEmail as any).sender} />
+              {((selectedEmail as any).body || "").trim().length < 30 ? (
+                <div className="rounded-md border border-border bg-muted/20 px-4 py-6 text-center">
+                  <p className="text-[12px] text-muted-foreground mb-3">
+                    {t("junk.noContent", "Le contenu de ce mail n'a pas été synchronisé.")}
+                  </p>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    className="gap-1.5 h-7 text-[11px]"
+                    disabled={refetchingBody}
+                    onClick={() => handleRefetchBody(selectedEmail.id)}
+                  >
+                    {refetchingBody ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
+                    {t("junk.fetchFromProvider", "Récupérer depuis le fournisseur")}
+                  </Button>
+                </div>
+              ) : (
+                <EmailBodyRenderer body={(selectedEmail as any).body || ""} emailId={selectedEmail.id} sender={(selectedEmail as any).sender} />
+              )}
             </div>
 
             <div className="px-4 py-3 border-t border-border flex items-center gap-1.5 flex-wrap">
@@ -216,7 +256,7 @@ export default function Indesirables() {
               <Button
                 variant="outline"
                 size="sm"
-                className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-amber-300 hover:text-amber-200 hover:bg-amber-500/[0.08]"
+                className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04]"
                 onClick={() => handleBlock(selectedEmail)}
                 disabled={blockSender.isPending}
               >

@@ -9,6 +9,7 @@ import { requireAuth } from "../middlewares/auth";
 import { resolveUploadedFiles, cleanupUploadIds } from "./attachments";
 import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 import { moveImapMessage, moveOutlookMessage, discoverImapJunkFolder, isValidImapHost } from "../services/junk-sync";
+import { extractGmailBody } from "../services/auto-sync";
 import { hasJunkColumns, hasWaveOneColumns, hasTrackingProfileColumn, hasHandledColumns } from "../lib/schema-flags";
 import { ImapFlow } from "imapflow";
 import { emitWebhook } from "../services/webhooks";
@@ -527,6 +528,110 @@ router.get("/emails/:id", requireAuth, async (req, res, next): Promise<void> => 
     });
   } catch {
     res.status(500).json({ error: "Failed to get email" });
+  }
+});
+
+// Refetch le corps complet d'un email depuis le fournisseur (Gmail/Outlook).
+// Utile surtout pour les mails du courrier indésirable, où le contenu est
+// souvent vide après le sync (le fournisseur ne renvoie qu'un preview).
+router.post("/emails/:id/refetch-body", requireAuth, async (req, res, next): Promise<void> => {
+  if (!/^\d+$/.test(String(req.params.id))) { next(); return; }
+  try {
+    const { data: email, error } = await supabaseAdmin
+      .from("emails")
+      .select("id, external_id, body, user_id")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .single();
+    if (error || !email) {
+      res.status(404).json({ error: "Email not found" });
+      return;
+    }
+
+    const extId: string = (email as any).external_id || "";
+    let newBody: string | null = null;
+
+    if (extId.startsWith("gmail:")) {
+      const msgId = extId.slice("gmail:".length);
+      const { data: conn } = await supabaseAdmin
+        .from("email_connections")
+        .select("access_token, refresh_token")
+        .eq("user_id", req.userId!)
+        .eq("provider", "gmail")
+        .limit(1)
+        .maybeSingle();
+      if (!conn) { res.status(400).json({ error: "Aucune connexion Gmail" }); return; }
+      const oauth2Client = new google.auth.OAuth2(
+        process.env["GOOGLE_CLIENT_ID"],
+        process.env["GOOGLE_CLIENT_SECRET"],
+      );
+      oauth2Client.setCredentials({
+        access_token: (conn as any).access_token,
+        refresh_token: (conn as any).refresh_token,
+      });
+      const gmail = google.gmail({ version: "v1", auth: oauth2Client });
+      try {
+        const { data: fullMsg } = await gmail.users.messages.get({ userId: "me", id: msgId, format: "full" });
+        newBody = extractGmailBody((fullMsg as any).payload) || (fullMsg as any).snippet || "";
+      } catch (e: any) {
+        res.status(502).json({ error: "Gmail a refusé la requête", detail: e?.message });
+        return;
+      }
+    } else if (extId.startsWith("outlook:")) {
+      const msgId = extId.slice("outlook:".length);
+      const { data: conn } = await supabaseAdmin
+        .from("email_connections")
+        .select("id, access_token, refresh_token, token_expires_at")
+        .eq("user_id", req.userId!)
+        .eq("provider", "outlook")
+        .limit(1)
+        .maybeSingle();
+      if (!conn) { res.status(400).json({ error: "Aucune connexion Outlook" }); return; }
+      let accessToken = (conn as any).access_token;
+      if ((conn as any).token_expires_at && new Date((conn as any).token_expires_at) < new Date()) {
+        const tokenResp = await fetch("https://login.microsoftonline.com/common/oauth2/v2.0/token", {
+          method: "POST",
+          headers: { "Content-Type": "application/x-www-form-urlencoded" },
+          body: new URLSearchParams({
+            client_id: process.env["MICROSOFT_CLIENT_ID"] || "",
+            client_secret: process.env["MICROSOFT_CLIENT_SECRET"] || "",
+            refresh_token: (conn as any).refresh_token,
+            grant_type: "refresh_token",
+            scope: "openid email Mail.Read Mail.Send offline_access",
+          }),
+        });
+        const newTokens = await tokenResp.json() as any;
+        if (newTokens.access_token) {
+          accessToken = newTokens.access_token;
+          await supabaseAdmin.from("email_connections").update({
+            access_token: newTokens.access_token,
+            token_expires_at: new Date(Date.now() + newTokens.expires_in * 1000).toISOString(),
+          }).eq("id", (conn as any).id);
+        }
+      }
+      const url = `https://graph.microsoft.com/v1.0/me/messages/${encodeURIComponent(msgId)}?$select=body,bodyPreview`;
+      const resp = await fetch(url, { headers: { Authorization: `Bearer ${accessToken}` } });
+      if (!resp.ok) {
+        res.status(502).json({ error: "Outlook a refusé la requête", status: resp.status });
+        return;
+      }
+      const m = await resp.json() as any;
+      newBody = (m.body?.content || m.bodyPreview || "").trim();
+    } else {
+      res.status(400).json({ error: "Récupération non supportée pour ce type de mail" });
+      return;
+    }
+
+    if (!newBody) {
+      res.status(404).json({ error: "Le fournisseur n'a renvoyé aucun contenu" });
+      return;
+    }
+
+    await supabaseAdmin.from("emails").update({ body: newBody }).eq("id", (email as any).id);
+    res.json({ ok: true, body: newBody });
+  } catch (err: any) {
+    req.log?.error?.({ err: err?.message }, "refetch-body failed");
+    res.status(500).json({ error: "Échec de la récupération" });
   }
 });
 

@@ -66,7 +66,7 @@ function extractGmailAttachments(payload: any): AttachmentMeta[] {
   return attachments;
 }
 
-function extractGmailBody(payload: any): string {
+export function extractGmailBody(payload: any): string {
   if (!payload) return "";
 
   function decodeBase64(data: string): string {
