@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   Inbox, Clock, Eye, Sparkles, Reply, Forward, Wand2, Loader2,
   Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
-  MoreHorizontal, ChevronDown, ChevronUp, ChevronLeft,
+  MoreHorizontal, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -849,7 +849,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 className="flex items-center gap-2 text-[11px] text-[#b8c5d6] hover:text-white transition-colors"
                 data-testid="toggle-email-details"
               >
-                {detailsOpen ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                {detailsOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
                 <span className="uppercase tracking-wider">{t("emailDetail.details", "Détails")}</span>
                 {!detailsOpen && (
                   <span className="text-[#7a8699] normal-case tracking-normal">
