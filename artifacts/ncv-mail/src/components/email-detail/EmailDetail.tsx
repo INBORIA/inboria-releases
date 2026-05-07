@@ -466,7 +466,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 if (recipients.length === 0) return null;
                 return (
                   <div className="flex items-start gap-1.5 mb-2 flex-wrap">
-                    <span className="text-[10px] uppercase tracking-wider text-[#b8c5d6] font-medium mt-0.5">{t("inbox.toLabel", "À")}</span>
+                    <span className="text-[10px] uppercase tracking-wider text-[#b8c5d6] font-medium mt-0.5">À</span>
                     {recipients.map((r, i) => (
                       <span key={r.email} className="inline-flex items-center">
                         <span
