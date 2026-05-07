@@ -96,92 +96,135 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
   const isClassicMirror = rowLocation.includes("inbox-classic");
   const barColor = PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible;
 
+  // Étape 4 refonte Superhuman — ligne d'email aplatie style maquette :
+  // dot non-lu | avatar | expéditeur | sujet — extrait — catégorie | temps
+  // Les actions (archiver, supprimer) apparaissent au survol à droite,
+  // toutes les fonctions restent (sélection, contextmenu, drag-select, SLA,
+  // assignation, pièces jointes, projet, tâches, badge boîte partagée).
+  const categoryLabel: string | undefined = email.categoryName || email.category;
+  const isUnread = email.isRead === false || email.unread === true;
+
   return (
     <div
       data-email-row
       data-row-id={email.id}
-      className={`group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden select-none ${isSelected ? "border-primary/50 bg-primary/[0.06]" : isSlaBreach ? "border-red-500/40" : "border-border"}`}
+      className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors ${
+        isSelected
+          ? "border-l-primary bg-primary/[0.10]"
+          : isSlaBreach
+          ? "border-l-red-500/70 hover:bg-white/[0.03]"
+          : "border-l-transparent hover:bg-white/[0.03]"
+      }`}
       onClick={onClick}
       onContextMenu={(e) => { e.preventDefault(); onContextMenu?.(e, email.id); }}
       onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); onDragSelectStart?.(email.id); } }}
     >
-      <div className={isClassicMirror ? `w-1 shrink-0 ${barColor}` : `w-0 shrink-0 hidden ${barColor}`} />
-      <div className="flex items-center gap-2 flex-1 min-w-0 p-3">
-        <button
-          className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all cursor-pointer border border-[#2a3441] hover:border-primary select-none"
-          onClick={(e) => { e.stopPropagation(); onToggleSelect(email.id); }}
-          onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onDragSelectStart?.(email.id); }}
-        >
-          {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
-        </button>
-        <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-          <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
-        </div>
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-0.5">
-            <span className="text-[12px] truncate font-semibold text-white">{email.sender}</span>
-          </div>
-          <h3 className="text-[12px] truncate text-white/80">{email.subject}</h3>
-          {email.summary && (
-            <div className="flex items-center gap-1 mt-0.5">
-              <Sparkles className="w-3 h-3 text-primary shrink-0" />
-              <p className="text-[11px] text-[#b8c5d6] line-clamp-1">{email.summary}</p>
-            </div>
-          )}
-        </div>
-        <div className="flex items-center gap-2 shrink-0 self-center">
-          {email.projectReference && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-purple-500/15 text-purple-400 border border-purple-500/20 hidden sm:inline-flex">
-              {email.projectReference}
-            </span>
-          )}
-          {(email.attachmentCount ?? 0) > 0 && (
-            <AttachmentBadge count={email.attachmentCount} />
-          )}
-          {(email.taskCount ?? 0) > 0 && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-violet-500/15 text-violet-400 border border-violet-500/20 inline-flex items-center gap-1">
-              <Sparkles className="w-2.5 h-2.5" />
-              {email.taskCount} {email.taskCount === 1 ? t("inbox.taskBadgeSingular") : t("inbox.taskBadgePlural")}
-            </span>
-          )}
-          {email.assignedTo && (
-            <span className="text-[10px] px-1.5 py-0.5 rounded-full font-medium bg-indigo-500/15 text-indigo-400 border border-indigo-500/20 hidden sm:inline-flex items-center gap-1">
-              <UserPlus className="w-2.5 h-2.5" />
-              {t("inbox.assignedBadge")}
-            </span>
-          )}
-          {isSlaBreach && (
-            <span
-              className="text-[10px] px-1.5 py-0.5 rounded-full font-semibold bg-red-500/15 text-red-400 border border-red-500/30 inline-flex items-center gap-1"
-              title={t("inbox.slaOverdue", { defaultValue: "SLA overdue" })}
-            >
-              <AlertCircle className="w-2.5 h-2.5" />
-              SLA
-            </span>
-          )}
-          {/* Étape 3 — badge Urgent/Moyen/Faible retiré : doublon avec la
-              section « Important » / « Autres ». La priorité reste visible
-              via le filet de couleur à gauche en vue inbox-classic. */}
-          <span className="text-[10px] text-[#b8c5d6] whitespace-nowrap items-center gap-1 hidden sm:flex">
-            <Clock className="w-3 h-3" />
-            {format(new Date(email.createdAt), "d MMM HH:mm", { locale: dateFnsLocale })}
+      {/* Filet de couleur priorité — visible uniquement en vue inbox-classic */}
+      {isClassicMirror && <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${barColor}`} />}
+
+      {/* Pastille non-lu OU case à cocher en mode sélection */}
+      <div className="w-4 flex items-center justify-center shrink-0">
+        {selectionMode || isSelected ? (
+          <button
+            className="w-4 h-4 rounded flex items-center justify-center transition-all cursor-pointer border border-[#2a3441] hover:border-primary"
+            onClick={(e) => { e.stopPropagation(); onToggleSelect(email.id); }}
+            onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); onDragSelectStart?.(email.id); }}
+          >
+            {isSelected && <Check className="w-3 h-3 text-primary" />}
+          </button>
+        ) : (
+          <span
+            className={`w-1.5 h-1.5 rounded-full ${isUnread ? "bg-primary" : "bg-transparent"}`}
+            onClick={(e) => { e.stopPropagation(); onToggleSelect(email.id); }}
+          />
+        )}
+      </div>
+
+      {/* Avatar */}
+      <div className="w-7 h-7 rounded-full bg-[#222a35] flex items-center justify-center shrink-0">
+        <span className="text-white/90 text-[11px] font-medium">{(email.sender || "?")[0].toUpperCase()}</span>
+      </div>
+
+      {/* Expéditeur (largeur fixe) */}
+      <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">
+        <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#c2c8d4]"}`}>
+          {email.sender}
+        </span>
+        {email.assignedTo && (
+          <span className="text-[10px] text-[#8b95a7] shrink-0" title={t("inbox.assignedBadge")}>
+            →
           </span>
+        )}
+      </div>
+
+      {/* Sujet — extrait — catégorie */}
+      <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
+        <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#c2c8d4]"}`}>
+          {email.subject}
+        </span>
+        {(email.summary || email.snippet) && (
+          <span className="text-[13px] truncate text-[#8b95a7]">— {email.summary || email.snippet}</span>
+        )}
+        {categoryLabel && (
           <button
-            onClick={(e) => { e.stopPropagation(); onArchive(email.id); }}
-            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-white/[0.08] text-[#b8c5d6] hover:text-white"
-            title={t("inbox.archive")}
+            className="text-[11px] lowercase shrink-0 text-[#6b7280] hover:text-[#b8c5d6] hover:underline"
+            title={`${t("inbox.filterByCategory", { defaultValue: "Filtrer" })} ${categoryLabel}`}
+            onClick={(e) => { e.stopPropagation(); onCategoryClick?.(categoryLabel); }}
           >
-            <Archive className="w-3.5 h-3.5" />
+            {categoryLabel}
           </button>
-          <button
-            onClick={(e) => { e.stopPropagation(); onDelete(email.id); }}
-            className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-red-500/[0.08] text-[#b8c5d6] hover:text-red-400"
-            title={t("inbox.deleteEmail")}
+        )}
+      </div>
+
+      {/* Badges discrets + temps (cachés au survol pour laisser place aux actions) */}
+      <div className="flex items-center gap-1.5 shrink-0 group-hover:hidden">
+        {email.projectReference && (
+          <span className="text-[10px] px-1.5 py-0.5 rounded font-medium bg-purple-500/15 text-purple-400 hidden md:inline-flex" title={email.projectReference}>
+            {email.projectReference}
+          </span>
+        )}
+        {(email.taskCount ?? 0) > 0 && (
+          <span className="text-[10px] text-violet-400 inline-flex items-center gap-0.5" title={`${email.taskCount} ${email.taskCount === 1 ? t("inbox.taskBadgeSingular") : t("inbox.taskBadgePlural")}`}>
+            <ListTodo className="w-3 h-3" />
+            {email.taskCount}
+          </span>
+        )}
+        {email.assignedTo && (
+          <UserPlus className="w-3 h-3 text-indigo-400 hidden md:inline" />
+        )}
+        {(email.attachmentCount ?? 0) > 0 && (
+          <AttachmentBadge count={email.attachmentCount} />
+        )}
+        {isSlaBreach && (
+          <span
+            className="text-[10px] px-1.5 py-0.5 rounded font-semibold bg-red-500/15 text-red-400 border border-red-500/30 inline-flex items-center gap-1"
+            title={t("inbox.slaOverdue", { defaultValue: "SLA overdue" })}
           >
-            <Trash2 className="w-3.5 h-3.5" />
-          </button>
-          <ChevronRight className="w-3.5 h-3.5 text-[#b8c5d6]/40 group-hover:text-[#b8c5d6] transition-colors" />
-        </div>
+            <AlertCircle className="w-2.5 h-2.5" />
+            SLA
+          </span>
+        )}
+        <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline">
+          {format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale })}
+        </span>
+      </div>
+
+      {/* Actions au survol */}
+      <div className="hidden group-hover:flex items-center gap-0.5 shrink-0">
+        <button
+          onClick={(e) => { e.stopPropagation(); onArchive(email.id); }}
+          className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
+          title={t("inbox.archive")}
+        >
+          <Archive className="w-3.5 h-3.5" />
+        </button>
+        <button
+          onClick={(e) => { e.stopPropagation(); onDelete(email.id); }}
+          className="p-1.5 rounded hover:bg-red-500/[0.08] text-[#8b95a7] hover:text-red-400"
+          title={t("inbox.deleteEmail")}
+        >
+          <Trash2 className="w-3.5 h-3.5" />
+        </button>
       </div>
     </div>
   );
