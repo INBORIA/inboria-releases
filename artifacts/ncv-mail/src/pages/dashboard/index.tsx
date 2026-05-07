@@ -4891,128 +4891,91 @@ export default function Dashboard() {
                       <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.noEmailsDesc")}</p>
                     </div>
                   ) : (
-                    <div className="space-y-1">
+                    /* Liste des boîtes partagées — refonte Superhuman :
+                       ligne compacte 52px, dot non-lu, avatar primary,
+                       sender, sujet—résumé, actions au survol uniquement.
+                       Le badge « Pris en charge par X » et le sélecteur
+                       d'assignation restent disponibles via le détail. */
+                    <div>
                       {sharedEmailsList.map((email) => {
                         const isClaimed = !!email.claimedBy;
                         const isClaimedByMe = email.claimedBy === (profile as any)?.id;
                         const isSlaBreach = slaBreachIds.has(Number(email.id));
+                        const isUnread = (email as any).isRead === false || (email as any).unread === true;
                         return (
                           <div
                             key={email.id}
-                            className={`group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors overflow-hidden ${isSlaBreach ? "border-red-500/40" : "border-border"}`}
+                            data-email-row
+                            data-row-id={email.id}
+                            className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors ${
+                              isSlaBreach
+                                ? "border-l-red-500/70 hover:bg-white/[0.03]"
+                                : "border-l-transparent hover:bg-white/[0.03]"
+                            }`}
+                            onClick={() => handleEmailClick(email as any)}
                           >
-                            <div className={`w-0 shrink-0 hidden ${PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible}`} />
-                            <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
-                              <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-primary/20">
-                                <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
-                              </div>
-                              <div className="flex-1 min-w-0">
-                                <div className="flex items-center gap-2 mb-0.5">
-                                  <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>
-                                  <PriorityBadge priority={(email.priority || "faible") as any} />
-                                  {isSlaBreach && (
-                                    <span
-                                      className="text-[9px] px-1.5 py-0.5 rounded-full font-semibold bg-red-500/15 text-red-400 border border-red-500/30 inline-flex items-center gap-1"
-                                      title={t("inbox.slaOverdue", { defaultValue: "SLA overdue" })}
-                                    >
-                                      <AlertCircle className="w-2.5 h-2.5" />
-                                      SLA
-                                    </span>
-                                  )}
-                                  {((email as any).inboriaScore ?? 0) >= 3 && (
-                                    <span
-                                      className="text-[9px] px-1.5 py-0.5 rounded-full font-semibold bg-primary/15 text-primary border border-primary/30 inline-flex items-center gap-1"
-                                      title={
-                                        ((email as any).inboriaReasons as string[] | undefined)?.length
-                                          ? `${t("inboriaSort.strategicTooltip", "Inboria considère cet email comme stratégique :")}\n• ${((email as any).inboriaReasons as string[]).join("\n• ")}`
-                                          : t("inboriaSort.strategic", "Stratégique")
-                                      }
-                                      data-testid={`badge-inboria-strategic-${email.id}`}
-                                    >
-                                      <Sparkles className="w-2.5 h-2.5" />
-                                      {t("inboriaSort.strategic", "Stratégique")}
-                                    </span>
-                                  )}
-                                  {isClaimed && (
-                                    <span className={`text-[9px] px-1.5 py-0.5 rounded-full font-medium ${isClaimedByMe ? "bg-primary/15 text-primary" : "bg-white/[0.06] text-[#b8c5d6]"}`}>
-                                      {t("inbox.claimedBy")} {isClaimedByMe ? t("emails.me", { defaultValue: "moi" }) : ((email as any).claimedByName || t("sharedMailboxes.colleague"))}
-                                    </span>
-                                  )}
-                                  {(email as any).assignedTo && (email as any).assignedTo === (email as any).claimedBy && (
-                                    <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium bg-indigo-500/15 text-indigo-400 border border-indigo-500/20">
-                                      {t("sharedMailboxes.assignedBadge")}
-                                    </span>
-                                  )}
-                                </div>
-                                <h3 className="text-[12px] text-white/80 truncate">{email.subject}</h3>
-                                {email.summary && (
-                                  <div className="flex items-center gap-1 mt-0.5">
-                                    <Sparkles className="w-3 h-3 text-primary shrink-0" />
-                                    <p className="text-[11px] text-[#b8c5d6] line-clamp-1">{email.summary}</p>
-                                  </div>
-                                )}
-                              </div>
-                              <div className="flex items-center gap-1 shrink-0" onClick={(e) => e.stopPropagation()}>
-                                {!isClaimed ? (
-                                  <>
-                                    <Button
-                                      size="sm"
-                                      variant="outline"
-                                      className="gap-1 h-7 text-[10px] bg-transparent border-border text-primary hover:text-white hover:bg-primary/10"
-                                      onClick={() => handleClaimEmail(email.id as any)}
-                                      disabled={claimEmailMut.isPending}
-                                    >
-                                      <UserPlus className="w-3 h-3" />
-                                      {t("inbox.claim")}
-                                    </Button>
-                                    {isOrgAdmin && (
-                                      assigningInboxEmailId === email.id ? (
-                                        <select
-                                          autoFocus
-                                          defaultValue=""
-                                          onBlur={() => setAssigningInboxEmailId(null)}
-                                          onChange={(e) => handleAssignInboxEmail(Number(email.id), e.target.value)}
-                                          className="bg-card border border-border rounded-md text-[10px] h-7 px-2 text-white"
-                                        >
-                                          <option value="" disabled>{t("sharedMailboxes.selectColleague")}</option>
-                                          {((orgMembers as any[]) || [])
-                                            .filter((m: any) => m.userId && m.userId !== profile?.id)
-                                            .map((m: any) => (
-                                              <option key={m.userId} value={m.userId}>
-                                                {m.fullName || m.email || m.userId}
-                                              </option>
-                                            ))}
-                                        </select>
-                                      ) : (
-                                        <Button
-                                          size="sm"
-                                          variant="outline"
-                                          className="gap-1 h-7 text-[10px] bg-transparent border-indigo-400/30 text-indigo-400 hover:text-white hover:bg-indigo-400/10"
-                                          onClick={() => setAssigningInboxEmailId(email.id as any)}
-                                          title={t("sharedMailboxes.assignToColleague")}
-                                        >
-                                          <UserPlus className="w-3 h-3" />
-                                          {t("sharedMailboxes.assignToColleague")}
-                                        </Button>
-                                      )
-                                    )}
-                                  </>
-                                ) : isClaimedByMe ? (
-                                  <Button
-                                    size="sm"
-                                    variant="outline"
-                                    className="gap-1 h-7 text-[10px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
-                                    onClick={() => handleUnclaimEmail(email.id as any)}
-                                    disabled={unclaimEmailMut.isPending}
-                                  >
-                                    <UserX className="w-3 h-3" />
-                                    {t("inbox.unclaim")}
-                                  </Button>
-                                ) : null}
-                                <span className="text-[10px] text-[#b8c5d6] ml-1">
-                                  {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
+                            <div className="w-4 flex items-center justify-center shrink-0">
+                              <span className={`w-1.5 h-1.5 rounded-full ${isUnread ? "bg-primary" : "bg-transparent"}`} />
+                            </div>
+
+                            <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                              <span className="text-primary text-[11px] font-semibold">
+                                {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
+                              </span>
+                            </div>
+
+                            <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">
+                              <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#c2c8d4]"}`}>
+                                {email.sender}
+                              </span>
+                            </div>
+
+                            <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
+                              <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#c2c8d4]"}`}>
+                                {email.subject}
+                              </span>
+                              {email.summary && (
+                                <span className="text-[13px] truncate text-[#8b95a7]">— {email.summary}</span>
+                              )}
+                            </div>
+
+                            <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
+                              {isClaimed && (
+                                <span
+                                  className={`text-[10px] shrink-0 ${isClaimedByMe ? "text-primary" : "text-[#8b95a7]"}`}
+                                  title={`${t("inbox.claimedBy")} ${isClaimedByMe ? t("emails.me", { defaultValue: "moi" }) : ((email as any).claimedByName || t("sharedMailboxes.colleague"))}`}
+                                >
+                                  <UserCheck className="w-3 h-3" />
                                 </span>
-                              </div>
+                              )}
+                              {isSlaBreach && (
+                                <AlertCircle className="w-3 h-3 text-red-400" />
+                              )}
+                              <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline">
+                                {email.createdAt ? format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale }) : ""}
+                              </span>
+                            </div>
+
+                            <div className="hidden group-hover:flex items-center gap-0.5 shrink-0" onClick={(e) => e.stopPropagation()}>
+                              {!isClaimed ? (
+                                <button
+                                  className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-primary disabled:opacity-40"
+                                  onClick={() => handleClaimEmail(email.id as any)}
+                                  disabled={claimEmailMut.isPending}
+                                  title={t("inbox.claim")}
+                                >
+                                  <UserPlus className="w-3.5 h-3.5" />
+                                </button>
+                              ) : isClaimedByMe ? (
+                                <button
+                                  className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white disabled:opacity-40"
+                                  onClick={() => handleUnclaimEmail(email.id as any)}
+                                  disabled={unclaimEmailMut.isPending}
+                                  title={t("inbox.unclaim")}
+                                >
+                                  <UserX className="w-3.5 h-3.5" />
+                                </button>
+                              ) : null}
                             </div>
                           </div>
                         );
