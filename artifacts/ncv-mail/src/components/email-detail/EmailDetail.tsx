@@ -453,28 +453,6 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                 </span>
               </div>
               {(() => {
-                const badge = resolveMailboxBadge(email, connections, sharedMailboxes);
-                if (!badge) return null;
-                return (
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <span className="text-[10px] uppercase tracking-wider text-[#b8c5d6] font-medium">{t("inbox.receivedOn")}</span>
-                    <span
-                      title={badge.label}
-                      aria-label={badge.label}
-                      className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium border inline-flex items-center gap-1 ${badge.bgClass} ${badge.textClass} ${badge.borderClass}`}
-                    >
-                      <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${badge.dotClass}`} aria-hidden="true" />
-                      <span className="truncate max-w-[260px]">{badge.label}</span>
-                    </span>
-                    {badge.isShared && (
-                      <span className="text-[9px] px-1 py-0.5 rounded-full font-medium bg-zinc-700/60 text-zinc-200 border border-zinc-500/30">
-                        {t("inbox.sharedShort")}
-                      </span>
-                    )}
-                  </div>
-                );
-              })()}
-              {(() => {
                 const recipients = String(email.recipient || "")
                   .split(/\s*[,;]\s*/)
                   .map((p: string) => {
