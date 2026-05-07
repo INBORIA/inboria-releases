@@ -435,14 +435,21 @@ export function Superhuman() {
         )}
       </div>
 
-      {/* Bouton flottant Chat Inboria — en bas à droite, accent */}
-      <button
-        className="absolute bottom-5 right-5 h-11 px-4 rounded-full shadow-lg flex items-center gap-2 text-white text-[13px] font-medium hover:scale-[1.02] transition-transform"
-        style={{ background: ACCENT, boxShadow: "0 8px 24px rgba(94,99,238,0.35)" }}
-        title="Chat Inboria (⌘J)">
-        <MessageSquare className="w-4 h-4" strokeWidth={2} />
-        Inboria
-      </button>
+      {/* 2 chats distincts en bas à droite */}
+      <div className="absolute bottom-5 right-5 flex items-center gap-2">
+        <button
+          className="h-9 w-9 rounded-full bg-white border border-[#eceae3] shadow-sm flex items-center justify-center text-[#6b7280] hover:bg-[#f4f6f8] text-[14px] font-semibold"
+          title="Aide & support app — comment utiliser NCV Mail">
+          ?
+        </button>
+        <button
+          className="h-11 px-4 rounded-full shadow-lg flex items-center gap-2 text-white text-[13px] font-medium hover:scale-[1.02] transition-transform"
+          style={{ background: ACCENT, boxShadow: "0 8px 24px rgba(94,99,238,0.35)" }}
+          title="Inboria — votre assistant données (emails, contacts, projets, RDV)">
+          <Sparkles className="w-4 h-4" strokeWidth={2} />
+          Demander à Inboria
+        </button>
+      </div>
     </div>
   );
 }

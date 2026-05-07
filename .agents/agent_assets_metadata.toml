@@ -125,3 +125,9 @@ id = "x09VPigcnDyg6mR29PnI8"
 uri = "file://screenshots/inbox-superhuman-v3.jpg"
 type = "image"
 title = "Réception v3 — logo NCV + tous les boutons visibles"
+
+[[outputs]]
+id = "R9wyK5N1EB9qBd0MTaOba"
+uri = "file://screenshots/inbox-superhuman-v4.jpg"
+type = "image"
+title = "Réception v4 — 2 chats distincts (Inboria + Aide app)"
