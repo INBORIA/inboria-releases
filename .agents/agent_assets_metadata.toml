@@ -113,3 +113,9 @@ id = "48KY6AYfxeatnZk6po6iZ"
 uri = "file://screenshots/inbox-superhuman.jpg"
 type = "image"
 title = "Réception — style Superhuman"
+
+[[outputs]]
+id = "TOoEv2ncsbwWi10PhrC2z"
+uri = "file://screenshots/inbox-superhuman-v2.jpg"
+type = "image"
+title = "Réception v2 — tout gardé, style Superhuman"
