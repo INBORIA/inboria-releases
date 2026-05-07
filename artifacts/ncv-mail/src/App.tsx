@@ -241,6 +241,7 @@ function Router() {
       <Route path="/reset-password" component={ResetPassword} />
       <Route path="/accept-invite" component={AcceptInvite} />
       <Route path="/dashboard" component={() => <ProtectedRoute component={Dashboard} />} />
+      <Route path="/dashboard/inbox-classic" component={() => <ProtectedRoute component={Dashboard} />} />
       <Route path="/dashboard/envoyes" component={() => <ProtectedRoute component={Envoyes} />} />
       <Route path="/dashboard/suivi" component={() => <ProtectedRoute component={Suivi} />} />
       <Route path="/dashboard/programmes" component={() => <ProtectedRoute component={Programmes} />} />

@@ -80,6 +80,8 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
+  const [rowLocation] = useLocation();
+  const isClassicMirror = rowLocation.includes("inbox-classic");
   const barColor = PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible;
 
   return (
@@ -91,7 +93,7 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
       onContextMenu={(e) => { e.preventDefault(); onContextMenu?.(e, email.id); }}
       onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); onDragSelectStart?.(email.id); } }}
     >
-      <div className={`w-1 shrink-0 ${barColor}`} />
+      <div className={isClassicMirror ? `w-1 shrink-0 ${barColor}` : `w-0 shrink-0 hidden ${barColor}`} />
       <div className="flex items-center gap-2 flex-1 min-w-0 p-3">
         <button
           className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all cursor-pointer border border-[#2a3441] hover:border-primary select-none"
@@ -3676,6 +3678,49 @@ export default function Dashboard() {
     );
   };
 
+  // Task #244 — Inbox keyboard shortcuts (Superhuman-style). Disabled while
+  // the user types in inputs/textareas/contenteditable, while modifier keys
+  // are held (so Cmd+R reload still works), and on the classic mirror.
+  useEffect(() => {
+    if (routeLocation.includes("inbox-classic")) return;
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (target) {
+        const tag = target.tagName;
+        if (tag === "INPUT" || tag === "TEXTAREA" || tag === "SELECT") return;
+        if (target.isContentEditable) return;
+      }
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        const el = document.querySelector<HTMLInputElement>('input[type="search"], input[placeholder*="echerch" i], input[placeholder*="earch" i]');
+        el?.focus();
+        return;
+      }
+      if (e.metaKey || e.ctrlKey || e.altKey) return;
+      const list = activeEmails || [];
+      if (list.length === 0) return;
+      const currentIdx = selectedEmailId ? list.findIndex((x: any) => x.id === selectedEmailId) : -1;
+      const k = e.key.toLowerCase();
+      if (k === "j" || k === "arrowdown") {
+        e.preventDefault();
+        const next = list[Math.min(list.length - 1, currentIdx + 1)] || list[0];
+        if (next) setSelectedEmailId(next.id);
+      } else if (k === "k" || k === "arrowup") {
+        e.preventDefault();
+        const prev = list[Math.max(0, currentIdx - 1)] || list[0];
+        if (prev) setSelectedEmailId(prev.id);
+      } else if (k === "e" && selectedEmailId) {
+        e.preventDefault();
+        handleArchive(selectedEmailId);
+      } else if (k === "r" && selectedEmailId) {
+        e.preventDefault();
+        window.dispatchEvent(new CustomEvent("inbox-reply-shortcut", { detail: { emailId: selectedEmailId } }));
+      }
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [activeEmails, selectedEmailId, routeLocation]);
+
   const handleUpdatePriority = (id: number, priority: string) => {
     updateEmail.mutate(
       { id, data: { priority } as any },
@@ -4685,7 +4730,7 @@ export default function Dashboard() {
                             key={email.id}
                             className={`group flex items-stretch rounded-lg border bg-card hover:bg-[#1a2235] transition-colors overflow-hidden ${isSlaBreach ? "border-red-500/40" : "border-border"}`}
                           >
-                            <div className={`w-1 shrink-0 ${PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible}`} />
+                            <div className={`w-0 shrink-0 hidden ${PRIORITY_BAR_COLORS[(email.priority || "faible") as keyof typeof PRIORITY_BAR_COLORS] || PRIORITY_BAR_COLORS.faible}`} />
                             <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
                               <div className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-0.5 bg-primary/20">
                                 <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
@@ -4948,27 +4993,60 @@ export default function Dashboard() {
                       </div>
                     ) : (
                       <>
-                        {activeEmails?.map((email) => {
-                          const badge = resolveMailboxBadge(email, composeConnections, sharedMailboxes);
-                          return (
-                            <EmailRow
-                              key={email.id}
-                              email={email}
-                              onClick={() => { if (didDragRef.current) return; if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(email.id); } }}
-                              onArchive={handleArchive}
-                              onDelete={handleDelete}
-                              onCategoryClick={(name: string) => setFilterCategory(name)}
-                              isSelected={selectedIds.has(email.id)}
-                              onToggleSelect={toggleSelect}
-                              selectionMode={selectionMode}
-                              onContextMenu={handleContextMenu}
-                              onDragSelectStart={handleDragSelectStart}
-                              mailboxBadge={badge}
-                              showMailboxBadge={selectedAccountId === "all" && (composeConnections?.length || 0) >= 2}
-                              isSlaBreach={slaBreachIds.has(Number(email.id))}
-                            />
+                        {(() => {
+                          const isClassic = routeLocation.includes("inbox-classic");
+                          const renderRow = (email: any) => {
+                            const badge = resolveMailboxBadge(email, composeConnections, sharedMailboxes);
+                            return (
+                              <EmailRow
+                                key={email.id}
+                                email={email}
+                                onClick={() => { if (didDragRef.current) return; if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(email.id); } }}
+                                onArchive={handleArchive}
+                                onDelete={handleDelete}
+                                onCategoryClick={(name: string) => setFilterCategory(name)}
+                                isSelected={selectedIds.has(email.id)}
+                                onToggleSelect={toggleSelect}
+                                selectionMode={selectionMode}
+                                onContextMenu={handleContextMenu}
+                                onDragSelectStart={handleDragSelectStart}
+                                mailboxBadge={badge}
+                                showMailboxBadge={selectedAccountId === "all" && (composeConnections?.length || 0) >= 2}
+                                isSlaBreach={slaBreachIds.has(Number(email.id))}
+                              />
+                            );
+                          };
+                          if (isClassic) return (activeEmails || []).map(renderRow);
+                          // Inboria-aware Important: priority urgent OR SLA
+                          // breach OR awaiting reply OR explicit "important"
+                          // boolean from server smart-sort score. Falls back
+                          // to urgent+moyen when no Inboria signals present.
+                          const isImportant = (e: any) => (
+                            e.priority === "urgent" ||
+                            slaBreachIds.has(Number(e.id)) ||
+                            !!e.awaitingReply || !!e.awaiting_reply ||
+                            !!e.isImportant || !!e.important ||
+                            e.priority === "moyen"
                           );
-                        })}
+                          const important = (activeEmails || []).filter(isImportant);
+                          const other = (activeEmails || []).filter((e: any) => !isImportant(e));
+                          return (
+                            <>
+                              {important.length > 0 && (
+                                <div className="pt-1 pb-1.5 px-1 text-[10px] font-semibold uppercase tracking-wider text-[#8b95a7]">
+                                  {t("inbox.sections.important")} <span className="text-[#8b95a7]/60 font-normal">({important.length})</span>
+                                </div>
+                              )}
+                              {important.map(renderRow)}
+                              {other.length > 0 && (
+                                <div className="pt-3 pb-1.5 px-1 text-[10px] font-semibold uppercase tracking-wider text-[#8b95a7]">
+                                  {t("inbox.sections.other")} <span className="text-[#8b95a7]/60 font-normal">({other.length})</span>
+                                </div>
+                              )}
+                              {other.map(renderRow)}
+                            </>
+                          );
+                        })()}
                         {hasMorePages && (
                           <div ref={loadMoreRef} className="py-2">
                             {emailsFetching ? (
@@ -5002,6 +5080,44 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+      {!routeLocation.includes("inbox-classic") && (
+        <>
+          <div className="fixed bottom-0 left-[200px] right-0 z-30 pointer-events-none">
+            <div className="mx-auto max-w-full px-4 pb-2">
+              <div className="pointer-events-auto inline-flex items-center gap-3 rounded-md border border-[#1f2630] bg-[#0b0d10]/95 backdrop-blur px-3 py-1.5 text-[10px] text-[#8b95a7] shadow-lg">
+                <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-[#161b22] border border-[#1f2630] text-[#e6e9ef] font-mono text-[10px]">J</kbd><kbd className="px-1.5 py-0.5 rounded bg-[#161b22] border border-[#1f2630] text-[#e6e9ef] font-mono text-[10px]">K</kbd> {t("inbox.shortcuts.navigate")}</span>
+                <span className="w-px h-3 bg-[#1f2630]" />
+                <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-[#161b22] border border-[#1f2630] text-[#e6e9ef] font-mono text-[10px]">E</kbd> {t("inbox.shortcuts.done")}</span>
+                <span className="w-px h-3 bg-[#1f2630]" />
+                <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-[#161b22] border border-[#1f2630] text-[#e6e9ef] font-mono text-[10px]">R</kbd> {t("inbox.shortcuts.reply")}</span>
+                <span className="w-px h-3 bg-[#1f2630]" />
+                <span className="flex items-center gap-1"><kbd className="px-1.5 py-0.5 rounded bg-[#161b22] border border-[#1f2630] text-[#e6e9ef] font-mono text-[10px]">⌘K</kbd> {t("inbox.shortcuts.commands")}</span>
+                <span className="w-px h-3 bg-[#1f2630]" />
+                <Link href="/dashboard/inbox-classic" className="text-[#8b95a7] hover:text-[#e6e9ef] underline-offset-2 hover:underline">{t("inbox.classicInboxLink")}</Link>
+              </div>
+            </div>
+          </div>
+          <button
+            type="button"
+            title={t("inbox.help.tooltip")}
+            onClick={() => toast({ title: t("inbox.help.comingSoonTitle"), description: t("inbox.help.comingSoonDesc") })}
+            className="fixed bottom-4 right-4 z-40 w-9 h-9 rounded-full border border-[#1f2630] bg-[#11151b] text-[#8b95a7] hover:text-[#e6e9ef] hover:border-[#4F46E5]/40 transition-colors flex items-center justify-center text-[13px] font-semibold shadow-lg"
+            aria-label={t("inbox.help.tooltip")}
+          >
+            ?
+          </button>
+          <button
+            type="button"
+            title={t("inbox.askInboria")}
+            onClick={() => window.dispatchEvent(new CustomEvent("inboria-chat-open"))}
+            className="fixed bottom-16 right-4 z-40 h-9 px-3 rounded-full border border-[#4F46E5]/40 bg-[#4F46E5]/10 text-[#e6e9ef] hover:bg-[#4F46E5]/20 transition-colors flex items-center gap-1.5 text-[12px] font-medium shadow-lg"
+            aria-label={t("inbox.askInboria")}
+          >
+            <Sparkles className="w-3.5 h-3.5 text-[#4F46E5]" />
+            {t("inbox.askInboria")}
+          </button>
+        </>
+      )}
       {contextMenu && (
         <div
           ref={contextMenuRef}

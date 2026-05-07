@@ -212,6 +212,23 @@
   },
   "inbox": {
     "title": "Réception",
+    "sections": {
+      "important": "Important",
+      "other": "Autres"
+    },
+    "help": {
+      "tooltip": "Aide (bientôt disponible)",
+      "comingSoonTitle": "Aide en ligne — bientôt disponible",
+      "comingSoonDesc": "Le centre d'aide intégré arrive très vite. En attendant, contactez-nous depuis Paramètres."
+    },
+    "askInboria": "Demander à Inboria",
+    "shortcuts": {
+      "navigate": "Naviguer",
+      "done": "Terminé",
+      "reply": "Répondre",
+      "commands": "Commandes"
+    },
+    "classicInboxLink": "Ancienne réception",
     "disconnectedAccountsLabel_one": "1 boîte hors service",
     "disconnectedAccountsLabel_other": "{{count}} boîtes hors service",
     "disconnectedTooltipTitle": "Boîtes déconnectées",

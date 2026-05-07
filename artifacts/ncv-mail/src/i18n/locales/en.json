@@ -212,6 +212,23 @@
   },
   "inbox": {
     "title": "Inbox",
+    "sections": {
+      "important": "Important",
+      "other": "Other"
+    },
+    "help": {
+      "tooltip": "Help (coming soon)",
+      "comingSoonTitle": "Help center — coming soon",
+      "comingSoonDesc": "The in-app help center is on its way. In the meantime, reach us from Settings."
+    },
+    "askInboria": "Ask Inboria",
+    "shortcuts": {
+      "navigate": "Navigate",
+      "done": "Done",
+      "reply": "Reply",
+      "commands": "Commands"
+    },
+    "classicInboxLink": "Classic inbox",
     "disconnectedAccountsLabel_one": "1 mailbox down",
     "disconnectedAccountsLabel_other": "{{count}} mailboxes down",
     "disconnectedTooltipTitle": "Disconnected mailboxes",
