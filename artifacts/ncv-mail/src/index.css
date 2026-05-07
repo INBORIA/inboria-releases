@@ -241,12 +241,14 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"]
   .text-white:not(.bg-primary):not([class*="bg-primary/"]):not([class*="bg-indigo"]):not([class*="bg-violet"]):not([class*="bg-purple"]):not([class*="bg-fuchsia"]):not([class*="bg-pink"]):not([class*="bg-rose"]):not([class*="bg-red"]):not([class*="bg-orange"]):not([class*="bg-amber"]):not([class*="bg-yellow"]):not([class*="bg-lime"]):not([class*="bg-green"]):not([class*="bg-emerald"]):not([class*="bg-teal"]):not([class*="bg-cyan"]):not([class*="bg-sky"]):not([class*="bg-blue"]):not([class*="bg-destructive"]):not([class*="bg-\[\#4F46E5\]"]) {
   color: #1a1f2e !important;
 }
-html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#8b95a7\],
-html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#b8c5d6\] { color: #6b7280 !important; }
-/* Faint detail tones */
-html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#6b7480\],
+/* Étape 6 — assombri pour meilleur contraste en mode clair (retours utilisateur). */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#8b95a7\] { color: #4b5563 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#b8c5d6\] { color: #1f2937 !important; }
+/* Expéditeurs / sujets (texte « principal ») — quasi noir pour lisibilité. */
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#c2c8d4\],
-html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#d2d7e0\] { color: #6b7280 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#d2d7e0\] { color: #111827 !important; }
+/* Détails très discrets (extraits, métadonnées) restent en gris moyen. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#6b7480\] { color: #4b5563 !important; }
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#3b4250\] { color: #3b4250 !important; }
 
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .border-\[\#1f2630\],
