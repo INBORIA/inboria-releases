@@ -2845,6 +2845,12 @@ export default function Dashboard() {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
+  // Nettoyage visuel Superhuman (#253) : on masque les blocs visuellement
+  // les plus bruyants (3 cartes URGENTS/MOYENS/FAIBLES, barre CRM, sidebar
+  // CATÉGORIES). Les fonctions restent accessibles via les pilules de
+  // filtre priorité, le menu contextuel et la palette ⌘K. Mettre à `false`
+  // pour revenir à l'ancien décor.
+  const SUPERHUMAN_CLEAN = true;
   const [filterPriority, setFilterPriority] = useState<string>("all");
   // Wave HubSpot/Pipedrive — filtre Réception sur les expéditeurs présents
   // dans le CRM choisi. crmFilter = null désactive le filtre.
@@ -4318,7 +4324,7 @@ export default function Dashboard() {
   ) : undefined;
 
   return (
-    <DashboardLayout rightSidebar={categoriesPanel}>
+    <DashboardLayout rightSidebar={SUPERHUMAN_CLEAN ? undefined : categoriesPanel}>
       <div className="flex flex-col h-full">
         {assigneePageTitle && (
           <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-4 pb-2">
@@ -4630,7 +4636,7 @@ export default function Dashboard() {
               </button>
             </div>
 
-          {(hasHubspot || hasPipedrive || hasSalesforce || hasOdoo) && (
+          {!SUPERHUMAN_CLEAN && (hasHubspot || hasPipedrive || hasSalesforce || hasOdoo) && (
             <div
               className="flex flex-wrap items-center gap-1.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 mt-2"
               data-testid="row-crm-filter"
@@ -4870,7 +4876,7 @@ export default function Dashboard() {
                       ces compteurs reflettent la priorite de TOUTE l'org
                       (source : /emails/summary), pas du filtre assignee
                       courant — les afficher serait trompeur. */}
-                  {!assigneeFilter && (
+                  {!SUPERHUMAN_CLEAN && !assigneeFilter && (
                   <div className="grid grid-cols-3 gap-2 mb-4">
                     <div
                       className={`rounded-lg border p-3 cursor-pointer transition-colors ${filterPriority === "urgent" ? "border-red-500/50 bg-red-500/15" : "border-red-500/20 bg-red-500/5 hover:bg-red-500/10"}`}
