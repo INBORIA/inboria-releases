@@ -4366,19 +4366,6 @@ export default function Dashboard() {
               Actualiser en icône, Composer en bouton indigo discret.
               Aucune fonction retirée. */}
           <div className="flex items-center gap-2 mb-2.5 max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8">
-            <div className="hidden sm:flex items-baseline gap-2 shrink-0 mr-1">
-              <h1 className="text-[14px] font-semibold text-white tracking-tight">
-                {t("inbox.title")}
-              </h1>
-              {inboxCountFromApi > 0 && (
-                <span className="text-[12px] text-[#8b95a7] tabular-nums">
-                  {displayedEmailCount > 0 && displayedEmailCount !== inboxCountFromApi
-                    ? `${displayedEmailCount} / ${inboxCountFromApi}`
-                    : inboxCountFromApi}
-                </span>
-              )}
-            </div>
-
             <div className="flex-1 relative">
               <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-[#8b95a7]" />
               <Input
