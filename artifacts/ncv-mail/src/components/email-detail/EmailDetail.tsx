@@ -408,7 +408,6 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
 
       <div className="bg-card rounded-lg border border-border overflow-hidden">
         <div className="flex">
-          <div className={`w-1 shrink-0 ${barColor}`} />
           <div className="flex-1 min-w-0">
             <div className="p-4 border-b border-border">
               <div className="flex items-center justify-between mb-3">
