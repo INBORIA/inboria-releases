@@ -4500,9 +4500,10 @@ export default function Dashboard() {
               >
                 <Inbox className="w-3 h-3" />
                 {t("inbox.title")}
-                {inboxCountFromApi > 0 && (
-                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{inboxCountFromApi}</span>
-                )}
+                {/* Compteur retiré : il affichait le total serveur (incluant
+                    anciens emails) qui pouvait paraître incohérent avec la
+                    liste affichée. Le décompte précis figure sur les
+                    sections « Important » et « Autres ». */}
               </button>
               {hasSharedMailboxes && (
                 <button
