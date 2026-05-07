@@ -3202,6 +3202,13 @@ export default function Dashboard() {
   const plan = (profile as any)?.plan;
   const { data: sharedMailboxes } = useGetSharedMailboxes({ query: { enabled: plan === "business" } as any });
 
+  useEffect(() => {
+    const mbs = sharedMailboxes as any[] | undefined;
+    if (mbs && mbs.length > 0 && !selectedSharedMailboxId) {
+      setSelectedSharedMailboxId(mbs[0].id);
+    }
+  }, [sharedMailboxes, selectedSharedMailboxId]);
+
   // Active SLA breaches (unresolved) — used to flag overdue rows in the inbox.
   const { data: slaBreachList } = useQuery<any[]>({
     queryKey: ["sla-breaches-active"],
@@ -3230,7 +3237,7 @@ export default function Dashboard() {
   const { data: sharedEmailsData, isLoading: sharedEmailsLoading, isFetching: sharedFetching } = useGetSharedMailboxEmails(
     selectedSharedMailboxId || "",
     { page: sharedPage, limit: 50 },
-    { query: { enabled: !!selectedSharedMailboxId && inboxMode === "shared", placeholderData: (prev: any) => prev } as any }
+    { query: { enabled: !!selectedSharedMailboxId, placeholderData: (prev: any) => prev } as any }
   );
   const sharedPaged = sharedEmailsData as PaginatedSharedMailboxEmails | undefined;
   const sharedHasMore = sharedPaged ? sharedPage < (sharedPaged.totalPages ?? 1) : false;
