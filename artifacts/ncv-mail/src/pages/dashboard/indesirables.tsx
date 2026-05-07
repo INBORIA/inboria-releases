@@ -19,7 +19,7 @@ import { useTranslation } from "react-i18next";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useState, useMemo } from "react";
 import { useAuth } from "@/lib/auth";
-import { ArrowLeft, RotateCcw, Trash2, ShieldX, Shield, Eye, EyeOff, Clock, Loader2 } from "lucide-react";
+import { ChevronLeft, RotateCcw, Trash2, ShieldX, Shield, Eye, EyeOff, Clock, Loader2 } from "lucide-react";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -166,10 +166,10 @@ export default function Indesirables() {
               variant="ghost"
               size="sm"
               onClick={() => setSelectedEmailId(null)}
-              className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
+              className="h-7 px-2 text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] text-[12px]"
             >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              {t("junk.title")}
+              <ChevronLeft className="w-3.5 h-3.5 mr-1" />
+              {t("common.back", "Retour")}
             </Button>
           </div>
 
@@ -245,10 +245,10 @@ export default function Indesirables() {
             <Button
               variant="ghost"
               size="sm"
-              className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
+              className="h-7 px-2 text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04] text-[12px]"
             >
-              <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              {t("inbox.title")}
+              <ChevronLeft className="w-3.5 h-3.5 mr-1" />
+              {t("common.back", "Retour")}
             </Button>
           </Link>
         </div>
