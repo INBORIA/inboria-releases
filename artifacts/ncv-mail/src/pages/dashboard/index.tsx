@@ -59,7 +59,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -3077,6 +3077,17 @@ export default function Dashboard() {
   const [inboxMode, setInboxMode] = useState<InboxMode>("personal");
   const [selectedSharedMailboxId, setSelectedSharedMailboxId] = useState<string | null>(null);
   const [filterCategory, setFilterCategory] = useState<string>("all");
+  // Étape 5 — la section CATÉGORIES de la sidebar droite est repliable.
+  // L'état est mémorisé en localStorage pour rester stable entre les visites.
+  const [categoriesCollapsed, setCategoriesCollapsed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.localStorage.getItem("ncv.categoriesCollapsed") === "1";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("ncv.categoriesCollapsed", categoriesCollapsed ? "1" : "0");
+    }
+  }, [categoriesCollapsed]);
   const [selectedAccountId, setSelectedAccountId] = useState<string>("all");
 
   const { data: composeConnections } = useQuery<Array<{ id: string; provider: string; email_address: string; signature?: string | null; consecutive_failures?: number | null; last_error_message?: string | null }>>({
@@ -4273,12 +4284,19 @@ export default function Dashboard() {
   const categoriesPanel = !assigneeFilter ? (
     <>
       <div className="flex items-center justify-between mb-2.5">
-        <h3 className="text-[10px] font-medium text-[#b8c5d6] uppercase tracking-wider">
-          {t("inbox.category")}
-        </h3>
+        <button
+          type="button"
+          onClick={() => setCategoriesCollapsed((v) => !v)}
+          className="flex items-center gap-1.5 text-[10px] font-medium text-[#b8c5d6] uppercase tracking-wider hover:text-white transition-colors"
+          title={categoriesCollapsed ? t("common.expand", { defaultValue: "Déplier" }) : t("common.collapse", { defaultValue: "Replier" })}
+        >
+          {categoriesCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          <span>{t("inbox.category")}</span>
+        </button>
         {(() => {
           const summaryData = summary as { uncategorizedCount?: number } | undefined;
           const uncategorizedCount = summaryData?.uncategorizedCount || 0;
+          if (categoriesCollapsed) return null;
           if (uncategorizedCount === 0) return null;
           return (
             <button
@@ -4310,7 +4328,7 @@ export default function Dashboard() {
           );
         })()}
       </div>
-      {categoriesLoading ? (
+      {categoriesCollapsed ? null : categoriesLoading ? (
         <div className="py-2 text-center">
           <Loader2 className="w-4 h-4 text-primary/60 animate-spin mx-auto" />
         </div>
