@@ -131,3 +131,9 @@ id = "R9wyK5N1EB9qBd0MTaOba"
 uri = "file://screenshots/inbox-superhuman-v4.jpg"
 type = "image"
 title = "Réception v4 — 2 chats distincts (Inboria + Aide app)"
+
+[[outputs]]
+id = "6eYrjGWughf2s0SiAZfNQ"
+uri = "file://screenshots/inbox-superhuman-sarcelle.jpg"
+type = "image"
+title = "Réception — sarcelle profonde #0891b2"
