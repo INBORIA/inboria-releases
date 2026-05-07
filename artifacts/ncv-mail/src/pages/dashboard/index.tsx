@@ -2850,7 +2850,7 @@ export default function Dashboard() {
   // CATÉGORIES). Les fonctions restent accessibles via les pilules de
   // filtre priorité, le menu contextuel et la palette ⌘K. Mettre à `false`
   // pour revenir à l'ancien décor.
-  const SUPERHUMAN_CLEAN = true;
+  const SUPERHUMAN_CLEAN = false;
   const [filterPriority, setFilterPriority] = useState<string>("all");
   // Wave HubSpot/Pipedrive — filtre Réception sur les expéditeurs présents
   // dans le CRM choisi. crmFilter = null désactive le filtre.
