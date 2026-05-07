@@ -141,10 +141,28 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
         )}
       </div>
 
-      {/* Avatar */}
-      <div className="w-7 h-7 rounded-full bg-[#222a35] flex items-center justify-center shrink-0">
-        <span className="text-white/90 text-[11px] font-medium">{(email.sender || "?")[0].toUpperCase()}</span>
-      </div>
+      {/* Avatar — palette déterministe basée sur l'expéditeur pour rester
+          lisible en clair comme en sombre (style Gmail/Superhuman). */}
+      {(() => {
+        const palette = [
+          "#4F46E5", "#0891B2", "#059669", "#D97706",
+          "#DC2626", "#DB2777", "#7C3AED", "#0284C7",
+        ];
+        const src = (email.sender || "?").trim();
+        let h = 0;
+        for (let i = 0; i < src.length; i++) h = (h * 31 + src.charCodeAt(i)) >>> 0;
+        const bg = palette[h % palette.length];
+        return (
+          <div
+            className="w-7 h-7 rounded-full flex items-center justify-center shrink-0"
+            style={{ backgroundColor: bg }}
+          >
+            <span className="text-white text-[11px] font-semibold">
+              {(src || "?")[0].toUpperCase()}
+            </span>
+          </div>
+        );
+      })()}
 
       {/* Expéditeur (largeur fixe) */}
       <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">
