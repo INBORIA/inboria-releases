@@ -228,7 +228,7 @@ export default function Envoyes() {
         <div className="flex items-center justify-between mb-5">
           <div>
             <h1 className="text-[16px] font-semibold text-white tracking-tight flex items-center gap-2">
-              <Send className="w-4 h-4 text-primary" />
+              <Send className="w-4 h-4 text-[#b8c5d6]" />
               {t("sent.title")}
             </h1>
             <p className="text-[12px] text-[#b8c5d6] mt-0.5">
@@ -294,17 +294,17 @@ export default function Envoyes() {
                       >
                         {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
                       </button>
-                      <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                        {isReply ? <Reply className="w-3.5 h-3.5 text-primary" /> : <Send className="w-3.5 h-3.5 text-primary" />}
+                      <div className="w-8 h-8 rounded-full bg-white/[0.06] flex items-center justify-center shrink-0">
+                        {isReply ? <Reply className="w-3.5 h-3.5 text-[#b8c5d6]" /> : <Send className="w-3.5 h-3.5 text-[#b8c5d6]" />}
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
                           <span className="font-semibold text-[12px] text-white truncate flex items-center gap-1">
-                            <ArrowRight className="w-3 h-3 text-primary" />
+                            <ArrowRight className="w-3 h-3 text-[#b8c5d6]" />
                             {email.recipient || t("sent.unknownRecipient")}
                           </span>
                           {isReply && (
-                            <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium bg-primary/15 text-primary">
+                            <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium bg-white/[0.06] text-[#b8c5d6]">
                               {t("sent.reply")}
                             </span>
                           )}
@@ -312,7 +312,7 @@ export default function Envoyes() {
                         <h3 className="text-[12px] text-white/80 truncate">{email.subject}</h3>
                         {email.summary && (
                           <div className="flex items-center gap-1 mt-0.5">
-                            <Sparkles className="w-3 h-3 text-primary shrink-0" />
+                            <Sparkles className="w-3 h-3 text-[#b8c5d6] shrink-0" />
                             <p className="text-[11px] text-[#b8c5d6] line-clamp-1">{email.summary}</p>
                           </div>
                         )}
@@ -332,7 +332,7 @@ export default function Envoyes() {
                           if (typeof oc !== "number" || oc <= 0) return null;
                           return (
                             <span
-                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-[10px]"
+                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-white/[0.06] border border-[#1f2937] text-[#b8c5d6] text-[10px]"
                               data-testid={`badge-opened-row-${email.id}`}
                               title={oa ? (t("wave1.openedAtLabel", { date: format(new Date(oa), "PPp", { locale: dateFnsLocale }) }) as string) : undefined}
                             >
