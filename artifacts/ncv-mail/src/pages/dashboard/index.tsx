@@ -5557,24 +5557,9 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-      {!routeLocation.includes("inbox-classic") && (
-        <>
-          {/* Étape 4 — bandeau de raccourcis clavier retiré (utilisateur non-technique).
-              Les raccourcis J/K/E/R/⌘K restent actifs, ils sont juste cachés.
-              Le lien Réception classique a été déplacé dans le bouton « ? ». */}
-          <button
-            type="button"
-            title={t("inbox.help.tooltip")}
-            onClick={() => toast({ title: t("inbox.help.comingSoonTitle"), description: t("inbox.help.comingSoonDesc") })}
-            className="fixed bottom-4 right-4 z-40 w-9 h-9 rounded-full border border-[#1f2630] bg-[#11151b] text-[#8b95a7] hover:text-[#e6e9ef] hover:border-[#4F46E5]/40 transition-colors flex items-center justify-center text-[13px] font-semibold shadow-lg"
-            aria-label={t("inbox.help.tooltip")}
-          >
-            ?
-          </button>
-          {/* Bouton flottant « Demander à Inboria » retiré : doublon avec le
-              chat Inboria déjà disponible en haut de la page. */}
-        </>
-      )}
+      {/* Bouton « ? » retiré : l'assistant flottant déplaçable
+          (SupportChatWidget) est rendu globalement par DashboardLayout
+          et offre déjà la même entrée d'aide. */}
       {renderContextMenu()}
     </DashboardLayout>
   );

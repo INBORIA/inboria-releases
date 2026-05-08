@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, memo } from "react";
 import { createPortal } from "react-dom";
-import { Sparkles, Send, Loader2, User as UserIcon, Mail, Pencil, Check, AlertCircle } from "lucide-react";
+import { Sparkles, Send, Loader2, User as UserIcon, Mail, Pencil, Check, AlertCircle, X } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -394,6 +394,15 @@ export function InboriaChatButton() {
     }
   }, [isOpen]);
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setIsOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [isOpen]);
+
   const sendMessage = async () => {
     const trimmed = input.trim();
     if (!trimmed || isLoading || !session?.access_token) return;
@@ -462,11 +471,17 @@ export function InboriaChatButton() {
         </span>
       </Button>
       {isOpen && createPortal(
-        <div
-          className="fixed inset-y-0 right-0 z-[100] h-full w-full sm:max-w-md border-l border-zinc-800 bg-zinc-950 p-0 shadow-2xl flex flex-col gap-0"
-          role="dialog"
-          aria-modal="false"
-        >
+        <>
+          <div
+            className="fixed inset-0 z-[99] bg-black/30"
+            onClick={() => setIsOpen(false)}
+            aria-hidden="true"
+          />
+          <div
+            className="fixed inset-y-0 right-0 z-[100] h-full w-full sm:max-w-md border-l border-zinc-800 bg-zinc-950 p-0 shadow-2xl flex flex-col gap-0"
+            role="dialog"
+            aria-modal="false"
+          >
         <div className="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <div className="h-8 w-8 rounded-full bg-cyan-500/15 border border-cyan-400/30 flex items-center justify-center">
@@ -479,7 +494,7 @@ export function InboriaChatButton() {
               <p className="text-xs text-zinc-500 leading-tight">{t("inboriaChat.subtitle")}</p>
             </div>
           </div>
-          <div className="flex items-center gap-1 pr-7">
+          <div className="flex items-center gap-1">
             {messages.length > 0 && (
               <Button
                 variant="ghost"
@@ -490,6 +505,15 @@ export function InboriaChatButton() {
                 {t("inboriaChat.clear")}
               </Button>
             )}
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              aria-label={t("common.close", "Fermer")}
+              className="h-7 w-7 rounded-md flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/[0.06]"
+              data-testid="inboria-chat-close"
+            >
+              <X className="h-4 w-4" />
+            </button>
           </div>
         </div>
 
@@ -620,7 +644,8 @@ export function InboriaChatButton() {
             {t("inboriaChat.footerHint")}
           </p>
         </div>
-        </div>,
+          </div>
+        </>,
         document.body
       )}
     </>
