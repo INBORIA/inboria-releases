@@ -136,7 +136,7 @@ export function SupportChatWidget() {
     <>
       {isOpen && (
         <div
-          className="fixed bottom-20 right-4 z-50 w-[360px] max-w-[calc(100vw-2rem)] h-[480px] max-h-[calc(100vh-8rem)] bg-[#141c2b] border border-[#1f2937] rounded-xl shadow-2xl flex flex-col overflow-hidden"
+          className="fixed bottom-20 right-4 z-[120] w-[360px] max-w-[calc(100vw-2rem)] h-[480px] max-h-[calc(100vh-8rem)] bg-[#141c2b] border border-[#1f2937] rounded-xl shadow-2xl flex flex-col overflow-hidden"
           style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
         >
           <div className="flex items-center justify-between px-4 py-3 bg-[#1a2435] border-b border-[#1f2937]">
@@ -255,7 +255,7 @@ export function SupportChatWidget() {
         onPointerMove={onButtonPointerMove}
         onPointerUp={onButtonPointerUp}
         style={{ transform: `translate(${offset.x}px, ${offset.y}px)`, touchAction: "none" }}
-        className={`fixed bottom-4 right-4 z-50 h-12 w-12 rounded-full shadow-lg flex items-center justify-center transition-colors duration-200 cursor-grab active:cursor-grabbing ${
+        className={`fixed bottom-4 right-4 z-[121] h-12 w-12 rounded-full shadow-lg flex items-center justify-center transition-colors duration-200 cursor-grab active:cursor-grabbing ${
           isOpen
             ? "bg-[#1f2937] hover:bg-[#2a3545]"
             : "bg-primary hover:bg-primary/90"
