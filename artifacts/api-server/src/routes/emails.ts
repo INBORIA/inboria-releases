@@ -10,6 +10,7 @@ import { resolveUploadedFiles, cleanupUploadIds } from "./attachments";
 import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 import { moveImapMessage, moveOutlookMessage, discoverImapJunkFolder, isValidImapHost } from "../services/junk-sync";
 import { extractGmailBody } from "../services/auto-sync";
+import { simpleParser } from "mailparser";
 import { hasJunkColumns, hasWaveOneColumns, hasTrackingProfileColumn, hasHandledColumns } from "../lib/schema-flags";
 import { ImapFlow } from "imapflow";
 import { emitWebhook } from "../services/webhooks";
@@ -617,6 +618,67 @@ router.post("/emails/:id/refetch-body", requireAuth, async (req, res, next): Pro
       }
       const m = await resp.json() as any;
       newBody = (m.body?.content || m.bodyPreview || "").trim();
+    } else if (extId.startsWith("imap-junk:") || extId.startsWith("imap:")) {
+      const isJunk = extId.startsWith("imap-junk:");
+      const rest = extId.slice(isJunk ? "imap-junk:".length : "imap:".length);
+      const lastColon = rest.lastIndexOf(":");
+      if (lastColon < 0) { res.status(400).json({ error: "Identifiant IMAP invalide" }); return; }
+      const emailAddr = rest.slice(0, lastColon);
+      const uid = parseInt(rest.slice(lastColon + 1), 10);
+      if (!uid) { res.status(400).json({ error: "UID IMAP invalide" }); return; }
+      const { data: conn } = await supabaseAdmin
+        .from("email_connections")
+        .select("id, email_address, access_token, refresh_token, junk_folder_path")
+        .eq("user_id", req.userId!)
+        .eq("provider", "imap")
+        .eq("email_address", emailAddr)
+        .limit(1)
+        .maybeSingle();
+      if (!conn) { res.status(400).json({ error: "Aucune connexion IMAP" }); return; }
+      let cfg: { host: string; port: number } = { host: "", port: 993 };
+      try { cfg = JSON.parse((conn as any).refresh_token); } catch {}
+      if (!cfg.host || !isValidImapHost(cfg.host)) {
+        res.status(400).json({ error: "Configuration IMAP invalide" });
+        return;
+      }
+      const client = new ImapFlow({
+        host: cfg.host,
+        port: cfg.port || 993,
+        secure: true,
+        auth: { user: (conn as any).email_address, pass: (conn as any).access_token },
+        logger: false as any,
+      });
+      client.on("error", () => {});
+      try {
+        await client.connect();
+        let folderPath: string | null = isJunk ? ((conn as any).junk_folder_path || null) : "INBOX";
+        if (isJunk && !folderPath) {
+          folderPath = await discoverImapJunkFolder(client, null);
+        }
+        if (!folderPath) {
+          res.status(404).json({ error: "Dossier introuvable sur le serveur" });
+          return;
+        }
+        const lock = await client.getMailboxLock(folderPath);
+        try {
+          const msg: any = await client.fetchOne(String(uid), { source: true }, { uid: true });
+          if (!msg?.source) {
+            res.status(404).json({ error: "Message introuvable côté serveur" });
+            return;
+          }
+          const parsed = await simpleParser(msg.source);
+          newBody = parsed.html
+            ? (typeof parsed.html === "string" ? parsed.html : "")
+            : (parsed.text || "");
+        } finally {
+          lock.release();
+        }
+      } catch (e: any) {
+        res.status(502).json({ error: "Le serveur IMAP a refusé la requête", detail: e?.message });
+        return;
+      } finally {
+        await client.logout().catch(() => {});
+      }
     } else {
       res.status(400).json({ error: "Récupération non supportée pour ce type de mail" });
       return;
