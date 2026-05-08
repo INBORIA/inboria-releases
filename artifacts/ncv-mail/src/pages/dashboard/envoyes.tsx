@@ -46,6 +46,9 @@ import {
   Square,
   Check,
   Eye,
+  Forward,
+  Printer,
+  Copy,
 } from "lucide-react";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
@@ -390,13 +393,71 @@ export default function Envoyes() {
           </div>
           <div className="py-1">
             {selectedIds.size <= 1 && (
-              <button
-                onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-              >
-                <ChevronRight className="w-3.5 h-3.5" />
-                {t("inbox.openEmail")}
-              </button>
+              <>
+                <button
+                  onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <ChevronRight className="w-3.5 h-3.5" />
+                  {t("inbox.openEmail")}
+                </button>
+                <button
+                  onClick={() => {
+                    const id = contextMenu.emailId;
+                    setSelectedEmailId(id);
+                    setContextMenu(null);
+                    setSelectedIds(new Set());
+                    setTimeout(() => {
+                      window.dispatchEvent(new CustomEvent("inbox-forward-shortcut", { detail: { emailId: id } }));
+                    }, 150);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Forward className="w-3.5 h-3.5" />
+                  {t("inbox.forward", "Transférer")}
+                </button>
+                <button
+                  onClick={() => {
+                    const email = sentEmails.find((e: any) => e.id === contextMenu.emailId);
+                    setContextMenu(null);
+                    if (!email) return;
+                    const w = window.open("", "_blank", "width=800,height=900");
+                    if (!w) {
+                      toast({ variant: "destructive", title: t("inbox.printPopupBlocked", "Impossible d'ouvrir la fenêtre d'impression") });
+                      return;
+                    }
+                    const safeBody = ((email as any).body || (email as any).summary || "").toString();
+                    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${(email.subject || "").replace(/[<>]/g, "")}</title>
+                      <style>body{font-family:-apple-system,Segoe UI,sans-serif;color:#111;padding:24px;line-height:1.5}h1{font-size:18px;margin:0 0 12px}.meta{font-size:12px;color:#555;margin-bottom:18px;border-bottom:1px solid #ddd;padding-bottom:10px}img{max-width:100%}</style>
+                      </head><body>
+                      <h1>${(email.subject || "(sans sujet)").replace(/[<>]/g, "")}</h1>
+                      <div class="meta"><b>${(email.recipient || "").replace(/[<>]/g, "")}</b><br/>${email.createdAt ? new Date(email.createdAt).toLocaleString() : ""}</div>
+                      <div>${safeBody}</div>
+                      </body></html>`);
+                    w.document.close();
+                    setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 300);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  {t("inbox.print", "Imprimer")}
+                </button>
+                <button
+                  onClick={async () => {
+                    const email = sentEmails.find((e: any) => e.id === contextMenu.emailId);
+                    setContextMenu(null);
+                    if (!email?.recipient) return;
+                    try {
+                      await navigator.clipboard.writeText(String(email.recipient));
+                      toast({ title: t("inbox.copied", "Copié") });
+                    } catch {}
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  {t("inbox.copyAddress", "Copier l'adresse")}
+                </button>
+              </>
             )}
             <div className="border-t border-[#1f2937] my-1" />
             <button
