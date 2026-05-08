@@ -13,6 +13,11 @@ import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
+import DOMPurify from "dompurify";
+
+function looksLikeHtml(s: string): boolean {
+  return /<\/?[a-z][\s\S]*>|&[a-z#0-9]+;/i.test(s);
+}
 
 export default function Programmes() {
   useEnableLightTheme();
@@ -168,16 +173,37 @@ export default function Programmes() {
                 </button>
               </div>
               <div className="px-5 py-4 overflow-y-auto">
-                <div
-                  className="text-[13px] text-white/90 whitespace-pre-wrap break-words"
-                  data-testid={`scheduled-body-${openedEmail.id}`}
-                >
-                  {openedEmail.body || (
+                {openedEmail.body ? (
+                  looksLikeHtml(openedEmail.body) ? (
+                    <div
+                      className="text-[13px] text-white/90 break-words ncv-email-html"
+                      data-testid={`scheduled-body-${openedEmail.id}`}
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(openedEmail.body, {
+                          USE_PROFILES: { html: true },
+                          FORBID_TAGS: ["script", "style", "iframe", "object", "embed"],
+                          FORBID_ATTR: ["onerror", "onload", "onclick"],
+                        }),
+                      }}
+                    />
+                  ) : (
+                    <div
+                      className="text-[13px] text-white/90 whitespace-pre-wrap break-words"
+                      data-testid={`scheduled-body-${openedEmail.id}`}
+                    >
+                      {openedEmail.body}
+                    </div>
+                  )
+                ) : (
+                  <div
+                    className="text-[13px]"
+                    data-testid={`scheduled-body-${openedEmail.id}`}
+                  >
                     <span className="text-[#b8c5d6] italic">
                       {t("wave1.scheduledBodyEmpty", "(corps vide)")}
                     </span>
-                  )}
-                </div>
+                  </div>
+                )}
               </div>
               <div className="flex justify-end gap-2 px-5 py-3 border-t border-border">
                 <Button
