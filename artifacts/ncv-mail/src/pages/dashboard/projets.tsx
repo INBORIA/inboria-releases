@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import {
   useListProjects,
   useCreateProject,
@@ -117,7 +118,7 @@ function getProjectColors(t: (key: string) => string) {
 
 function getStatusLabels(t: (key: string) => string) {
   return {
-    actif: { label: t("projects.statusActive"), class: "bg-emerald-500/10 text-emerald-400" },
+    actif: { label: t("projects.statusActive"), class: "bg-white/[0.06] text-foreground" },
     termine: { label: t("projects.statusComplete"), class: "bg-[#b8c5d6]/10 text-[#b8c5d6]" },
     en_pause: { label: t("projects.statusPaused"), class: "bg-amber-500/10 text-amber-400" },
   };
@@ -616,6 +617,7 @@ function ProjectDetailView({
 }
 
 export default function Projets() {
+  useEnableLightTheme();
   const { t, i18n } = useTranslation();
   const PROJECT_COLORS = getProjectColors(t);
   const STATUS_LABELS: Record<string, { label: string; class: string }> = getStatusLabels(t);
