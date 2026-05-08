@@ -25,7 +25,17 @@ export function SupportChatWidget() {
       const raw = localStorage.getItem("inboria-assistant-offset");
       if (raw) {
         const p = JSON.parse(raw);
-        if (typeof p.x === "number" && typeof p.y === "number") return p;
+        if (typeof p.x === "number" && typeof p.y === "number") {
+          const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
+          const vh = typeof window !== "undefined" ? window.innerHeight : 720;
+          const visibleX = vw + p.x - 20;
+          const visibleY = vh + p.y - 20;
+          if (visibleX < 40 || visibleY < 40 || p.x > 0 || p.y > 0) {
+            try { localStorage.removeItem("inboria-assistant-offset"); } catch {}
+            return { x: 0, y: 0 };
+          }
+          return p;
+        }
       }
     } catch {}
     return { x: 0, y: 0 };
