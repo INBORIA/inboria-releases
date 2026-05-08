@@ -40,10 +40,11 @@ export function SupportChatWidget() {
     } catch {}
     return { x: 0, y: 0 };
   });
-  const dragState = useRef<{ startX: number; startY: number; baseX: number; baseY: number; moved: boolean } | null>(null);
+  const dragState = useRef<{ startX: number; startY: number; baseX: number; baseY: number; moved: boolean; pointerId: number } | null>(null);
+  const justDraggedRef = useRef(false);
   const onButtonPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
-    dragState.current = { startX: e.clientX, startY: e.clientY, baseX: offset.x, baseY: offset.y, moved: false };
-    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    dragState.current = { startX: e.clientX, startY: e.clientY, baseX: offset.x, baseY: offset.y, moved: false, pointerId: e.pointerId };
+    try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
   };
   const onButtonPointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!dragState.current) return;
@@ -61,12 +62,16 @@ export function SupportChatWidget() {
   const onButtonPointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
     const wasDrag = dragState.current?.moved ?? false;
     if (wasDrag) {
+      justDraggedRef.current = true;
       try { localStorage.setItem("inboria-assistant-offset", JSON.stringify(offset)); } catch {}
-    } else {
-      setIsOpen((v) => !v);
+      window.setTimeout(() => { justDraggedRef.current = false; }, 0);
     }
+    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
     dragState.current = null;
-    try { (e.target as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
+  };
+  const onButtonClick = () => {
+    if (justDraggedRef.current) return;
+    setIsOpen((v) => !v);
   };
 
   const scrollToBottom = useCallback(() => {
@@ -264,6 +269,7 @@ export function SupportChatWidget() {
         onPointerDown={onButtonPointerDown}
         onPointerMove={onButtonPointerMove}
         onPointerUp={onButtonPointerUp}
+        onClick={onButtonClick}
         style={{ transform: `translate(${offset.x}px, ${offset.y}px)`, touchAction: "none" }}
         className={`fixed bottom-5 right-5 z-[60] h-14 w-14 rounded-full shadow-2xl ring-2 ring-white/10 flex items-center justify-center transition-colors duration-200 cursor-grab active:cursor-grabbing ${
           isOpen
