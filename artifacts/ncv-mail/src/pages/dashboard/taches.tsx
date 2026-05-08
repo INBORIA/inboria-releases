@@ -570,33 +570,30 @@ export default function Taches() {
                         )}
                       </div>
 
-                      {/* Actions au survol */}
-                      <div className="hidden group-hover:flex items-center gap-1 shrink-0">
+                      {/* Actions au survol — icônes nues, tooltip natif sur l'icône. */}
+                      <div className="hidden group-hover:flex items-center gap-0.5 shrink-0">
                         <button
                           onClick={(e) => { e.stopPropagation(); handleToggleDone(task.id, isDone); }}
-                          className="flex items-center gap-1 px-1.5 h-6 rounded text-[11px] text-[#b8c5d6] hover:bg-white/[0.08] hover:text-white"
-                          title={`${isDone ? t("tasks.markTodo") : t("tasks.markDone")} (E)`}
+                          className="p-1.5 rounded text-[#b8c5d6] hover:bg-white/[0.08] hover:text-white"
+                          title={isDone ? t("tasks.markTodo") : t("tasks.markDone")}
                         >
                           {isDone ? <RotateCcw className="w-3.5 h-3.5" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
-                          <Kbd>E</Kbd>
                         </button>
                         {task.emailSubject && (
                           <button
                             onClick={(e) => { e.stopPropagation(); setEmailDetailTask(task); setShowComments(false); }}
-                            className="flex items-center gap-1 px-1.5 h-6 rounded text-[11px] text-[#b8c5d6] hover:bg-white/[0.08] hover:text-white"
-                            title={`${t("tasks.viewEmail")} (O)`}
+                            className="p-1.5 rounded text-[#b8c5d6] hover:bg-white/[0.08] hover:text-white"
+                            title={t("tasks.viewEmail")}
                           >
                             <Mail className="w-3.5 h-3.5" />
-                            <Kbd>O</Kbd>
                           </button>
                         )}
                         <button
                           onClick={(e) => { e.stopPropagation(); handleDeleteTask(task.id); }}
-                          className="flex items-center gap-1 px-1.5 h-6 rounded text-[11px] text-[#8b95a7] hover:bg-white/[0.08] hover:text-white"
-                          title={`${t("common.delete")} (#)`}
+                          className="p-1.5 rounded text-[#8b95a7] hover:bg-white/[0.08] hover:text-white"
+                          title={t("common.delete")}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
-                          <Kbd>#</Kbd>
                         </button>
                       </div>
                     </div>
