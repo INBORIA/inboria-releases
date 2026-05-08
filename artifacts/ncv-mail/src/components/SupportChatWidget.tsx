@@ -25,26 +25,15 @@ export function SupportChatWidget() {
       const raw = localStorage.getItem("inboria-assistant-offset");
       if (raw) {
         const p = JSON.parse(raw);
-        if (typeof p.x === "number" && typeof p.y === "number") {
-          const vw = typeof window !== "undefined" ? window.innerWidth : 1280;
-          const vh = typeof window !== "undefined" ? window.innerHeight : 720;
-          const visibleX = vw + p.x - 20;
-          const visibleY = vh + p.y - 20;
-          if (visibleX < 40 || visibleY < 40 || p.x > 0 || p.y > 0) {
-            try { localStorage.removeItem("inboria-assistant-offset"); } catch {}
-            return { x: 0, y: 0 };
-          }
-          return p;
-        }
+        if (typeof p.x === "number" && typeof p.y === "number") return p;
       }
     } catch {}
     return { x: 0, y: 0 };
   });
-  const dragState = useRef<{ startX: number; startY: number; baseX: number; baseY: number; moved: boolean; pointerId: number } | null>(null);
-  const justDraggedRef = useRef(false);
+  const dragState = useRef<{ startX: number; startY: number; baseX: number; baseY: number; moved: boolean } | null>(null);
   const onButtonPointerDown = (e: React.PointerEvent<HTMLButtonElement>) => {
-    dragState.current = { startX: e.clientX, startY: e.clientY, baseX: offset.x, baseY: offset.y, moved: false, pointerId: e.pointerId };
-    try { e.currentTarget.setPointerCapture(e.pointerId); } catch {}
+    dragState.current = { startX: e.clientX, startY: e.clientY, baseX: offset.x, baseY: offset.y, moved: false };
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
   };
   const onButtonPointerMove = (e: React.PointerEvent<HTMLButtonElement>) => {
     if (!dragState.current) return;
@@ -62,17 +51,12 @@ export function SupportChatWidget() {
   const onButtonPointerUp = (e: React.PointerEvent<HTMLButtonElement>) => {
     const wasDrag = dragState.current?.moved ?? false;
     if (wasDrag) {
-      justDraggedRef.current = true;
       try { localStorage.setItem("inboria-assistant-offset", JSON.stringify(offset)); } catch {}
-      window.setTimeout(() => { justDraggedRef.current = false; }, 50);
     } else {
       setIsOpen((v) => !v);
     }
-    try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
     dragState.current = null;
-  };
-  const onButtonClick = (e: React.MouseEvent) => {
-    e.preventDefault();
+    try { (e.target as HTMLElement).releasePointerCapture(e.pointerId); } catch {}
   };
 
   const scrollToBottom = useCallback(() => {
@@ -152,7 +136,7 @@ export function SupportChatWidget() {
     <>
       {isOpen && (
         <div
-          className="fixed bottom-20 right-4 z-[110] w-[360px] max-w-[calc(100vw-2rem)] h-[480px] max-h-[calc(100vh-8rem)] bg-[#141c2b] border border-[#1f2937] rounded-xl shadow-2xl flex flex-col overflow-hidden"
+          className="fixed bottom-20 right-4 z-50 w-[360px] max-w-[calc(100vw-2rem)] h-[480px] max-h-[calc(100vh-8rem)] bg-[#141c2b] border border-[#1f2937] rounded-xl shadow-2xl flex flex-col overflow-hidden"
           style={{ transform: `translate(${offset.x}px, ${offset.y}px)` }}
         >
           <div className="flex items-center justify-between px-4 py-3 bg-[#1a2435] border-b border-[#1f2937]">
@@ -270,20 +254,18 @@ export function SupportChatWidget() {
         onPointerDown={onButtonPointerDown}
         onPointerMove={onButtonPointerMove}
         onPointerUp={onButtonPointerUp}
-        onClick={onButtonClick}
         style={{ transform: `translate(${offset.x}px, ${offset.y}px)`, touchAction: "none" }}
-        className={`fixed bottom-4 right-4 z-[111] h-10 w-10 rounded-full shadow-xl ring-1 ring-white/10 flex items-center justify-center transition-colors duration-200 cursor-grab active:cursor-grabbing ${
+        className={`fixed bottom-4 right-4 z-50 h-12 w-12 rounded-full shadow-lg flex items-center justify-center transition-colors duration-200 cursor-grab active:cursor-grabbing ${
           isOpen
             ? "bg-[#1f2937] hover:bg-[#2a3545]"
             : "bg-primary hover:bg-primary/90"
         }`}
         title={t("supportChat.title") + " — Glisser pour déplacer"}
-        aria-label={t("supportChat.title")}
       >
         {isOpen ? (
-          <X className="h-6 w-6 text-white" />
+          <X className="h-5 w-5 text-white" />
         ) : (
-          <MessageCircleQuestion className="h-6 w-6 text-white" />
+          <MessageCircleQuestion className="h-5 w-5 text-white" />
         )}
       </button>
     </>
