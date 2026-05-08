@@ -4969,10 +4969,8 @@ export default function Dashboard() {
                       return (
                         <SelectItem key={c.id} value={String(c.id)}>
                           <span className="inline-flex items-center gap-1.5">
-                            {isDown ? (
+                            {isDown && (
                               <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                            ) : (
-                              badge && <span className={`w-1.5 h-1.5 rounded-full ${badge.dotClass}`} />
                             )}
                             <span className={isDown ? "text-red-400" : ""}>{c.email_address}</span>
                             {isDown && <AlertCircle className="w-3 h-3 text-red-400 ml-1" />}
