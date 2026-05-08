@@ -69,9 +69,10 @@ export default function Indesirables() {
   const [emptyConfirmOpen, setEmptyConfirmOpen] = useState(false);
   const [refetchingBody, setRefetchingBody] = useState(false);
   const [refetchError, setRefetchError] = useState<string | null>(null);
+  const [recoveredBodies, setRecoveredBodies] = useState<Record<number, string>>({});
   const autoFetchedRef = useRef<Set<number>>(new Set());
 
-  const handleRefetchBody = async (id: number, opts: { silent?: boolean } = {}) => {
+  const handleRefetchBody = async (id: number) => {
     setRefetchingBody(true);
     setRefetchError(null);
     try {
@@ -84,20 +85,13 @@ export default function Indesirables() {
       if (!res.ok) {
         throw new Error(j.error || `Échec (HTTP ${res.status})`);
       }
-      await queryClient.refetchQueries({ queryKey: getListEmailsQueryKey() });
-      if (!opts.silent) {
-        const len = (j.length ?? (j.body || "").length) as number;
-        toast({
-          title: t("junk.contentFetched", "Contenu récupéré"),
-          description: len > 0 ? `${len} caractères récupérés` : "Le serveur n'a renvoyé aucun contenu",
-          duration: 5000,
-        });
+      const body = String(j.body || "");
+      if (!body || body.trim().length === 0) {
+        throw new Error("Le fournisseur n'a renvoyé aucun contenu");
       }
+      setRecoveredBodies((prev) => ({ ...prev, [id]: body }));
     } catch (e: any) {
       setRefetchError(e?.message || "Échec");
-      if (!opts.silent) {
-        toast({ title: t("common.error"), description: e?.message, variant: "destructive" });
-      }
     } finally {
       setRefetchingBody(false);
     }
@@ -223,9 +217,10 @@ export default function Indesirables() {
     const id = selectedEmail.id;
     const bodyLen = ((selectedEmail as any).body || "").trim().length;
     if (bodyLen >= 30) return;
+    if (recoveredBodies[id]) return;
     if (autoFetchedRef.current.has(id)) return;
     autoFetchedRef.current.add(id);
-    handleRefetchBody(id, { silent: true });
+    handleRefetchBody(id);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedEmailId]);
 
@@ -275,49 +270,51 @@ export default function Indesirables() {
             </div>
 
             <div className="p-4">
-              {((selectedEmail as any).body || "").trim().length < 30 ? (
-                refetchingBody ? (
-                  <div className="rounded-md border border-border bg-muted/20 px-4 py-8 text-center flex flex-col items-center gap-2">
+              {(() => {
+                const localBody = recoveredBodies[selectedEmail.id];
+                const liveBody = (selectedEmail as any).body || "";
+                const effectiveBody = (localBody && localBody.trim().length >= 30) ? localBody : liveBody;
+                if (effectiveBody.trim().length >= 30) {
+                  return <EmailBodyRenderer body={effectiveBody} emailId={selectedEmail.id} sender={(selectedEmail as any).sender} />;
+                }
+                if (refetchingBody) {
+                  return (
+                    <div className="rounded-md border border-border bg-muted/20 px-4 py-8 text-center flex flex-col items-center gap-2">
+                      <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
+                      <p className="text-[12px] text-muted-foreground">
+                        {t("junk.fetchingFromProvider", "Récupération du contenu depuis votre fournisseur…")}
+                      </p>
+                    </div>
+                  );
+                }
+                if (refetchError) {
+                  return (
+                    <div className="rounded-md border border-border bg-muted/20 px-4 py-6 text-center">
+                      <p className="text-[12px] text-muted-foreground mb-1">
+                        {t("junk.fetchFailed", "Impossible de récupérer le contenu de ce mail.")}
+                      </p>
+                      <p className="text-[11px] text-muted-foreground/70 mb-3">{refetchError}</p>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="gap-1.5 h-7 text-[11px]"
+                        onClick={() => { autoFetchedRef.current.delete(selectedEmail.id); handleRefetchBody(selectedEmail.id); }}
+                      >
+                        <Download className="w-3 h-3" />
+                        {t("junk.retryFetch", "Réessayer")}
+                      </Button>
+                    </div>
+                  );
+                }
+                return (
+                  <div className="rounded-md border border-border bg-muted/20 px-4 py-6 text-center flex flex-col items-center gap-2">
                     <Loader2 className="w-4 h-4 animate-spin text-muted-foreground" />
                     <p className="text-[12px] text-muted-foreground">
                       {t("junk.fetchingFromProvider", "Récupération du contenu depuis votre fournisseur…")}
                     </p>
                   </div>
-                ) : refetchError ? (
-                  <div className="rounded-md border border-border bg-muted/20 px-4 py-6 text-center">
-                    <p className="text-[12px] text-muted-foreground mb-1">
-                      {t("junk.fetchFailed", "Impossible de récupérer le contenu.")}
-                    </p>
-                    <p className="text-[11px] text-muted-foreground/70 mb-3">{refetchError}</p>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="gap-1.5 h-7 text-[11px]"
-                      onClick={() => handleRefetchBody(selectedEmail.id)}
-                    >
-                      <Download className="w-3 h-3" />
-                      {t("junk.retryFetch", "Réessayer")}
-                    </Button>
-                  </div>
-                ) : (
-                  <div className="rounded-md border border-border bg-muted/20 px-4 py-6 text-center">
-                    <p className="text-[12px] text-muted-foreground mb-3">
-                      {t("junk.noContent", "Le contenu de ce mail n'a pas été synchronisé.")}
-                    </p>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="gap-1.5 h-7 text-[11px]"
-                      onClick={() => handleRefetchBody(selectedEmail.id)}
-                    >
-                      <Download className="w-3 h-3" />
-                      {t("junk.fetchFromProvider", "Récupérer depuis le fournisseur")}
-                    </Button>
-                  </div>
-                )
-              ) : (
-                <EmailBodyRenderer body={(selectedEmail as any).body || ""} emailId={selectedEmail.id} sender={(selectedEmail as any).sender} />
-              )}
+                );
+              })()}
             </div>
 
             <div className="px-4 py-3 border-t border-border flex items-center gap-1.5 flex-wrap">
