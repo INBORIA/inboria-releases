@@ -242,6 +242,38 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
     if (/<[a-z][\s\S]*>/i.test(raw)) return "";
     return raw;
   }, [connections]);
+
+  // Raccourcis externes (clic droit liste -> Répondre / Transférer).
+  useEffect(() => {
+    const onReply = (e: Event) => {
+      const ev = e as CustomEvent<{ emailId?: number }>;
+      if (!ev.detail || ev.detail.emailId !== email.id) return;
+      setReplyTo(email.senderEmail || extractEmailAddress(email.sender) || "");
+      setReplySubject(email.subject?.startsWith("Re:") ? email.subject : `Re: ${email.subject}`);
+      setReplyOpen(true);
+    };
+    const onForward = (e: Event) => {
+      const ev = e as CustomEvent<{ emailId?: number }>;
+      if (!ev.detail || ev.detail.emailId !== email.id) return;
+      const defConn = resolveDefaultConnectionId();
+      setForwardConnectionId(defConn);
+      setForwardTo("");
+      const subj = email.subject || "";
+      const prefix = t("inbox.forwardSubjectPrefix");
+      setForwardSubject(subj.toLowerCase().startsWith(prefix.trim().toLowerCase()) ? subj : `${prefix}${subj}`);
+      const sig = signatureForConnection(defConn);
+      const sigBlock = sig ? `\n\n-- \n${sig}` : "";
+      const citation = buildForwardCitation(email, t, dateFnsLocale);
+      setForwardText(plainTextToHtml(`${sigBlock}\n\n${citation}`));
+      setForwardOpen(true);
+    };
+    window.addEventListener("inbox-reply-shortcut", onReply);
+    window.addEventListener("inbox-forward-shortcut", onForward);
+    return () => {
+      window.removeEventListener("inbox-reply-shortcut", onReply);
+      window.removeEventListener("inbox-forward-shortcut", onForward);
+    };
+  }, [email.id, email.subject, email.sender, email.senderEmail, resolveDefaultConnectionId, signatureForConnection, t, dateFnsLocale]);
   const [taskFormOpen, setTaskFormOpen] = useState(false);
   const [taskTitle, setTaskTitle] = useState("");
   const [taskProjectId, setTaskProjectId] = useState("none");

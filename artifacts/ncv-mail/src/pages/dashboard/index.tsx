@@ -60,7 +60,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip, MailOpen, Mail, BellOff, Bell, Copy } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip, MailOpen, Mail, BellOff, Bell, Copy, Printer, Folder, Type as TypeIcon } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -3426,6 +3426,7 @@ export default function Dashboard() {
 
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
+  const [categorySubmenuOpen, setCategorySubmenuOpen] = useState(false);
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const contextMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -3819,10 +3820,99 @@ export default function Dashboard() {
     setSelectedEmailId(id);
     setContextMenu(null);
     setSelectedIds(new Set());
-    // Une fois le mail ouvert, déclenche le raccourci Répondre.
     setTimeout(() => {
       window.dispatchEvent(new CustomEvent("inbox-reply-shortcut", { detail: { emailId: id } }));
     }, 150);
+  };
+
+  const handleQuickForward = (id: number) => {
+    setSelectedEmailId(id);
+    setContextMenu(null);
+    setSelectedIds(new Set());
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("inbox-forward-shortcut", { detail: { emailId: id } }));
+    }, 150);
+  };
+
+  const handleQuickSetCategory = (id: number, categoryId: string, categoryName: string) => {
+    updateEmail.mutate(
+      { id, data: { categoryId } },
+      {
+        onSuccess: () => {
+          invalidateAll();
+          toast({ title: t("inbox.categoryUpdated", "Catégorie mise à jour"), description: categoryName });
+        },
+      },
+    );
+  };
+
+  const handleCopySubject = async (id: number) => {
+    const email = (emails as any[]).find((e: any) => e.id === id);
+    const subject = (email?.subject || "").trim();
+    if (!subject) {
+      toast({ variant: "destructive", title: t("common.error"), description: "Aucun sujet" });
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(subject);
+      toast({ title: t("inbox.copied", "Copié"), description: subject });
+    } catch {
+      toast({ variant: "destructive", title: "Copie impossible" });
+    }
+  };
+
+  const handleDownloadEml = async (id: number) => {
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const baseUrl = import.meta.env.VITE_API_URL || `https://${window.location.host}`;
+      const res = await fetch(`${baseUrl}/api/emails/${id}/export.eml`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const { saveBlobAs } = await import("@/lib/export-utils");
+      await saveBlobAs(blob, `email_${id}.eml`);
+      toast({ title: t("inbox.exportDownloaded", "Téléchargé") });
+    } catch (e: any) {
+      toast({ variant: "destructive", title: t("inbox.exportError", "Échec du téléchargement"), description: e?.message });
+    }
+  };
+
+  const handlePrintEmail = (id: number) => {
+    const email = (emails as any[]).find((e: any) => e.id === id);
+    if (!email) return;
+    const w = window.open("", "_blank", "width=800,height=900");
+    if (!w) {
+      toast({ variant: "destructive", title: "Impossible d'ouvrir la fenêtre d'impression" });
+      return;
+    }
+    const safeBody = (email.body || email.summary || "").toString();
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${(email.subject || "").replace(/[<>]/g, "")}</title>
+      <style>body{font-family:-apple-system,Segoe UI,sans-serif;color:#111;padding:24px;line-height:1.5}h1{font-size:18px;margin:0 0 12px}.meta{font-size:12px;color:#555;margin-bottom:18px;border-bottom:1px solid #ddd;padding-bottom:10px}img{max-width:100%}</style>
+      </head><body>
+      <h1>${(email.subject || "(sans sujet)").replace(/[<>]/g, "")}</h1>
+      <div class="meta"><b>${(email.sender || "").replace(/[<>]/g, "")}</b> &lt;${(email.senderEmail || "").replace(/[<>]/g, "")}&gt;<br/>${new Date(email.createdAt).toLocaleString()}</div>
+      <div>${safeBody}</div>
+      </body></html>`);
+    w.document.close();
+    setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 300);
+  };
+
+  const handleQuickCreateTask = (id: number) => {
+    const email = (emails as any[]).find((e: any) => e.id === id);
+    const title = (email?.subject || "Tâche").slice(0, 200);
+    createTaskMut.mutate(
+      { data: { title, emailId: id } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+          toast({ title: t("inbox.taskCreated", "Tâche créée"), description: title });
+        },
+        onError: (e: any) => toast({ variant: "destructive", title: t("common.error"), description: e?.message }),
+      },
+    );
   };
 
   const handleArchive = (id: number) => {
@@ -4207,7 +4297,18 @@ export default function Dashboard() {
     return (
       <DashboardLayout>
         <div className="w-full px-4 sm:px-6 lg:px-10 py-5 flex flex-col md:flex-row gap-5">
-          <div className="flex-1 min-w-0">
+          <div
+            className="flex-1 min-w-0"
+            onContextMenu={(e) => {
+              const tgt = e.target as HTMLElement;
+              // Laisse le clic droit natif sur les zones éditables / liens / images.
+              if (tgt.closest('input, textarea, [contenteditable="true"], a, img, button, select')) return;
+              e.preventDefault();
+              setSelectedIds(new Set());
+              setCategorySubmenuOpen(false);
+              setContextMenu({ x: e.clientX, y: e.clientY, emailId: selectedEmail.id });
+            }}
+          >
             <EmailDetail
               email={selectedEmail}
               onBack={() => setSelectedEmailId(null)}
@@ -5360,6 +5461,20 @@ export default function Dashboard() {
                   {t("inbox.reply", "Répondre")}
                 </button>
                 <button
+                  onClick={() => handleQuickForward(contextMenu.emailId)}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Forward className="w-3.5 h-3.5" />
+                  {t("inbox.forward", "Transférer")}
+                </button>
+                <button
+                  onClick={() => { handleQuickCreateTask(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <ListTodo className="w-3.5 h-3.5" />
+                  {t("inbox.createTask", "Créer une tâche")}
+                </button>
+                <button
                   onClick={() => { handleToggleRead(contextMenu.emailId); setContextMenu(null); }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
                 >
@@ -5399,12 +5514,64 @@ export default function Dashboard() {
                   <Archive className="w-3.5 h-3.5" />
                   {t("inbox.archive")}
                 </button>
+                {(categoryCounts && categoryCounts.length > 0) && (
+                  <div
+                    className="relative"
+                    onMouseEnter={() => setCategorySubmenuOpen(true)}
+                    onMouseLeave={() => setCategorySubmenuOpen(false)}
+                  >
+                    <button
+                      className="w-full flex items-center justify-between gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                    >
+                      <span className="flex items-center gap-2.5">
+                        <Folder className="w-3.5 h-3.5" />
+                        {t("inbox.category", "Catégorie")}
+                      </span>
+                      <ChevronRight className="w-3 h-3 opacity-60" />
+                    </button>
+                    {categorySubmenuOpen && (
+                      <div className="absolute left-full top-0 ml-1 min-w-[180px] max-h-[260px] overflow-y-auto rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1">
+                        {categoryCounts.map((c: any) => (
+                          <button
+                            key={c.categoryId}
+                            onClick={() => { handleQuickSetCategory(contextMenu.emailId, c.categoryId, c.categoryName); setContextMenu(null); }}
+                            className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
+                          >
+                            {c.color && <span className="w-2 h-2 rounded-full" style={{ background: c.color }} />}
+                            <span className="truncate">{c.categoryName}</span>
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
                 <button
                   onClick={() => { handleCopySender(contextMenu.emailId); setContextMenu(null); }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
                 >
                   <Copy className="w-3.5 h-3.5" />
                   {t("inbox.copySenderEmail", "Copier l'adresse de l'expéditeur")}
+                </button>
+                <button
+                  onClick={() => { handleCopySubject(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <TypeIcon className="w-3.5 h-3.5" />
+                  {t("inbox.copySubject", "Copier le sujet")}
+                </button>
+                <button
+                  onClick={() => { handleDownloadEml(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  {t("inbox.downloadEml", "Télécharger en .eml")}
+                </button>
+                <button
+                  onClick={() => { handlePrintEmail(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Printer className="w-3.5 h-3.5" />
+                  {t("inbox.print", "Imprimer")}
                 </button>
                 <button
                   onClick={() => { handleBlockSender(contextMenu.emailId); setContextMenu(null); }}
