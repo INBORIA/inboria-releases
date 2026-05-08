@@ -306,14 +306,14 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] .ncv-tab-count {
 /* Étape 6 — Bouton « Demander à Inboria » du header : les classes cyan/zinc
    ne sont pas couvertes par l'overlay générique. On les force en mode clair. */
 html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] { color: #1a1f2e !important; }
-/* Pastille Sparkles : on aligne la couleur exactement sur le « ia » du logo
-   (cyan-400 → après filtre invert/hue-rotate/saturate du logo en mode clair,
-   le cyan rend ~ #0891b2). On force la même teinte sur l'icône Sparkles. */
-html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] .text-cyan-400 { color: #0891b2 !important; }
-html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] .bg-cyan-500\/15 { background-color: rgba(8, 145, 178, 0.12) !important; }
-html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] .border-cyan-400\/30 { border-color: rgba(8, 145, 178, 0.40) !important; }
+/* Pastille Sparkles : on aligne la couleur exactement sur le « ia » du logo.
+   Le cyan #00BFE5 du PNG rend ≈ #00a7f5 après filtre invert+hue-rotate(180)
+   +saturate(1.8)+contrast(1.15). On applique cette teinte (calcul exact). */
+html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] .text-cyan-400 { color: #00a7f5 !important; }
+html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] .bg-cyan-500\/15 { background-color: rgba(0, 167, 245, 0.14) !important; }
+html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] .border-cyan-400\/30 { border-color: rgba(0, 167, 245, 0.45) !important; }
 html[data-ncv-theme="light"] [data-testid="inboria-chat-button"].hover\:bg-cyan-500\/10:hover,
-html[data-ncv-theme="light"] [data-testid="inboria-chat-button"]:hover { background-color: rgba(8, 145, 178, 0.08) !important; }
+html[data-ncv-theme="light"] [data-testid="inboria-chat-button"]:hover { background-color: rgba(0, 167, 245, 0.08) !important; }
 
 /* Étape 6bis — Panneau de chat « Inboria » (portail dans <body>) :
    les classes Tailwind preset (zinc-*) ne sont pas couvertes par
