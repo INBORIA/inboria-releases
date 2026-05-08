@@ -77,12 +77,17 @@ export default function Indesirables() {
         method: "POST",
         headers: { Authorization: `Bearer ${session?.access_token}` },
       });
+      const j = await res.json().catch(() => ({}));
       if (!res.ok) {
-        const j = await res.json().catch(() => ({}));
-        throw new Error(j.error || "Échec");
+        throw new Error(j.error || `Échec (HTTP ${res.status})`);
       }
-      await queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-      toast({ title: t("junk.contentFetched", "Contenu récupéré") });
+      await queryClient.refetchQueries({ queryKey: getListEmailsQueryKey() });
+      const len = (j.length ?? (j.body || "").length) as number;
+      toast({
+        title: t("junk.contentFetched", "Contenu récupéré"),
+        description: len > 0 ? `${len} caractères récupérés` : "Le serveur n'a renvoyé aucun contenu",
+        duration: 5000,
+      });
     } catch (e: any) {
       toast({ title: t("common.error"), description: e?.message, variant: "destructive" });
     } finally {

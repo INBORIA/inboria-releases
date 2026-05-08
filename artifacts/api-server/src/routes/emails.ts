@@ -537,6 +537,7 @@ router.get("/emails/:id", requireAuth, async (req, res, next): Promise<void> => 
 // souvent vide après le sync (le fournisseur ne renvoie qu'un preview).
 router.post("/emails/:id/refetch-body", requireAuth, async (req, res, next): Promise<void> => {
   if (!/^\d+$/.test(String(req.params.id))) { next(); return; }
+  req.log?.info?.({ emailId: req.params.id }, "[refetch-body] request received");
   try {
     const { data: email, error } = await supabaseAdmin
       .from("emails")
@@ -690,7 +691,8 @@ router.post("/emails/:id/refetch-body", requireAuth, async (req, res, next): Pro
     }
 
     await supabaseAdmin.from("emails").update({ body: newBody }).eq("id", (email as any).id);
-    res.json({ ok: true, body: newBody });
+    req.log?.info?.({ emailId: req.params.id, bodyLen: newBody.length }, "[refetch-body] success");
+    res.json({ ok: true, body: newBody, length: newBody.length });
   } catch (err: any) {
     req.log?.error?.({ err: err?.message }, "refetch-body failed");
     res.status(500).json({ error: "Échec de la récupération" });
