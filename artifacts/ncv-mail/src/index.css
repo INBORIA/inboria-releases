@@ -298,9 +298,10 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] img[alt="Inboria"] {
 /* Étape 6 — Bouton « Demander à Inboria » du header : les classes cyan/zinc
    ne sont pas couvertes par l'overlay générique. On les force en mode clair. */
 html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] { color: #1a1f2e !important; }
-/* Pastille Sparkles : cyan-300/400 trop pâles sur fond clair → on remonte
-   en cyan-600 saturé pour matcher la vivacité du « ia » du logo. */
-html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] .text-cyan-300 { color: #0891b2 !important; }
+/* Pastille Sparkles : on aligne la couleur exactement sur le « ia » du logo
+   (cyan-400 → après filtre invert/hue-rotate/saturate du logo en mode clair,
+   le cyan rend ~ #0891b2). On force la même teinte sur l'icône Sparkles. */
+html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] .text-cyan-400 { color: #0891b2 !important; }
 html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] .bg-cyan-500\/15 { background-color: rgba(8, 145, 178, 0.12) !important; }
 html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] .border-cyan-400\/30 { border-color: rgba(8, 145, 178, 0.40) !important; }
 html[data-ncv-theme="light"] [data-testid="inboria-chat-button"].hover\:bg-cyan-500\/10:hover,

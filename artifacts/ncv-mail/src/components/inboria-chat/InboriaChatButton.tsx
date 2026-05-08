@@ -464,7 +464,7 @@ export function InboriaChatButton() {
         onClick={() => setIsOpen((v) => !v)}
       >
         <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-cyan-500/15 border border-cyan-400/30">
-          <Sparkles className="h-3.5 w-3.5 text-cyan-300" />
+          <Sparkles className="h-3.5 w-3.5 text-cyan-400" />
         </span>
         <span className="text-sm font-medium">
           {t("inbox.askInboria", "Demander à Inboria")}
