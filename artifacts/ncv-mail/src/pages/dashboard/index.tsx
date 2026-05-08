@@ -4785,7 +4785,7 @@ export default function Dashboard() {
 
   return (
     <DashboardLayout rightSidebar={SUPERHUMAN_CLEAN || categoriesCollapsed ? undefined : categoriesPanel}>
-      <div className="flex flex-col h-full">
+      <div className="flex flex-col h-[calc(100vh-4rem)]">
         {assigneePageTitle && (
           <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-4 pb-2">
             <BackToInboxButton />
