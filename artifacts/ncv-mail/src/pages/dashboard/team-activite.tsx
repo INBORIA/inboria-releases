@@ -13,13 +13,17 @@ import {
   ChevronRight,
   MailPlus,
   ExternalLink,
+  Forward,
+  Printer,
+  Copy,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import type { TFunction } from "i18next";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { useLocation } from "wouter";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
+import { useToast } from "@/hooks/use-toast";
 
 function formatTime(dateStr: string, t: TFunction): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -36,11 +40,12 @@ interface MemberSectionProps {
   member: TeamMemberAssignments;
   defaultOpen: boolean;
   onOpenEmail: (id: number) => void;
+  onContextMenu: (e: React.MouseEvent, email: TeamAssignedEmail) => void;
 }
 
 const PAGE_SIZE = 20;
 
-function MemberSection({ member, defaultOpen, onOpenEmail }: MemberSectionProps) {
+function MemberSection({ member, defaultOpen, onOpenEmail, onContextMenu }: MemberSectionProps) {
   const { t } = useTranslation();
   const [open, setOpen] = useState<boolean>(defaultOpen);
   // Pagination par section : on n'affiche que les 20 premiers e-mails par
@@ -104,7 +109,9 @@ function MemberSection({ member, defaultOpen, onOpenEmail }: MemberSectionProps)
                 key={e.id}
                 role="button"
                 tabIndex={0}
+                title={`${e.sender || ""}${e.senderEmail ? ` <${e.senderEmail}>` : ""}\n${e.subject || ""}${e.createdAt ? `\n${new Date(e.createdAt).toLocaleString()}` : ""}`}
                 onClick={() => onOpenEmail(e.id)}
+                onContextMenu={(ev) => { ev.preventDefault(); onContextMenu(ev, e); }}
                 onKeyDown={(ev) => {
                   if (ev.key === "Enter" || ev.key === " ") {
                     ev.preventDefault();
@@ -168,7 +175,27 @@ export default function TeamActivitePage() {
   useEnableLightTheme();
   const { t } = useTranslation();
   const [, setLocation] = useLocation();
+  const { toast } = useToast();
   const { data, isLoading, isError } = useGetTeamAssignments();
+  const [contextMenu, setContextMenu] = useState<{ x: number; y: number; email: TeamAssignedEmail } | null>(null);
+  const contextMenuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!contextMenu) return;
+    const onDown = (e: MouseEvent) => {
+      if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
+        setContextMenu(null);
+      }
+    };
+    const onEsc = (e: KeyboardEvent) => { if (e.key === "Escape") setContextMenu(null); };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onEsc);
+    return () => { document.removeEventListener("mousedown", onDown); document.removeEventListener("keydown", onEsc); };
+  }, [contextMenu]);
+
+  function handleRowContextMenu(ev: React.MouseEvent, email: TeamAssignedEmail) {
+    setContextMenu({ x: ev.clientX, y: ev.clientY, email });
+  }
 
   const members: TeamMemberAssignments[] = useMemo(() => {
     const payload = data as TeamAssignmentsResponse | undefined;
@@ -251,12 +278,90 @@ export default function TeamActivitePage() {
                   member={m}
                   defaultOpen={defaultOpen}
                   onOpenEmail={openEmail}
+                  onContextMenu={handleRowContextMenu}
                 />
               );
             })}
           </div>
         )}
       </div>
+      {contextMenu && (
+        <div
+          ref={contextMenuRef}
+          data-context-menu
+          className="fixed z-[9999] min-w-[200px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+          style={{ top: Math.min(contextMenu.y, window.innerHeight - 240), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
+        >
+          <div className="px-3 py-2 border-b border-[#1f2937]">
+            <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider font-medium truncate block">
+              {(contextMenu.email.subject || "—").substring(0, 36)}
+            </span>
+          </div>
+          <div className="py-1">
+            <button
+              onClick={() => { openEmail(contextMenu.email.id); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <ChevronRight className="w-3.5 h-3.5" />
+              {t("inbox.openEmail", "Ouvrir")}
+            </button>
+            <button
+              onClick={() => {
+                const id = contextMenu.email.id;
+                setContextMenu(null);
+                openEmail(id);
+                setTimeout(() => {
+                  window.dispatchEvent(new CustomEvent("inbox-forward-shortcut", { detail: { emailId: id } }));
+                }, 250);
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Forward className="w-3.5 h-3.5" />
+              {t("inbox.forward", "Transférer")}
+            </button>
+            <button
+              onClick={() => {
+                const email = contextMenu.email;
+                setContextMenu(null);
+                const w = window.open("", "_blank", "width=800,height=900");
+                if (!w) {
+                  toast({ variant: "destructive", title: t("inbox.printPopupBlocked", "Impossible d'ouvrir la fenêtre d'impression") });
+                  return;
+                }
+                const safeBody = ((email as any).body || (email as any).summary || "").toString();
+                w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${(email.subject || "").replace(/[<>]/g, "")}</title>
+                  <style>body{font-family:-apple-system,Segoe UI,sans-serif;color:#111;padding:24px;line-height:1.5}h1{font-size:18px;margin:0 0 12px}.meta{font-size:12px;color:#555;margin-bottom:18px;border-bottom:1px solid #ddd;padding-bottom:10px}img{max-width:100%}</style>
+                  </head><body>
+                  <h1>${(email.subject || "(sans sujet)").replace(/[<>]/g, "")}</h1>
+                  <div class="meta"><b>${(email.sender || email.senderEmail || "").replace(/[<>]/g, "")}</b><br/>${email.createdAt ? new Date(email.createdAt).toLocaleString() : ""}</div>
+                  <div>${safeBody}</div>
+                  </body></html>`);
+                w.document.close();
+                setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 300);
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              {t("inbox.print", "Imprimer")}
+            </button>
+            <button
+              onClick={async () => {
+                const addr = contextMenu.email.senderEmail || contextMenu.email.sender || "";
+                setContextMenu(null);
+                if (!addr) return;
+                try {
+                  await navigator.clipboard.writeText(String(addr));
+                  toast({ title: t("inbox.copied", "Copié") });
+                } catch {}
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Copy className="w-3.5 h-3.5" />
+              {t("inbox.copyAddress", "Copier l'adresse")}
+            </button>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
