@@ -3427,18 +3427,38 @@ export default function Dashboard() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
   const [categorySubmenuOpen, setCategorySubmenuOpen] = useState(false);
+  const categorySubmenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const openCategorySubmenu = () => {
+    if (categorySubmenuTimerRef.current) { clearTimeout(categorySubmenuTimerRef.current); categorySubmenuTimerRef.current = null; }
+    setCategorySubmenuOpen(true);
+  };
+  const scheduleCloseCategorySubmenu = () => {
+    if (categorySubmenuTimerRef.current) clearTimeout(categorySubmenuTimerRef.current);
+    categorySubmenuTimerRef.current = setTimeout(() => setCategorySubmenuOpen(false), 220);
+  };
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const contextMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const closeContextMenu = () => {
+    if (categorySubmenuTimerRef.current) { clearTimeout(categorySubmenuTimerRef.current); categorySubmenuTimerRef.current = null; }
+    if (contextMenuCloseTimer.current) { clearTimeout(contextMenuCloseTimer.current); contextMenuCloseTimer.current = null; }
+    setCategorySubmenuOpen(false);
+    setContextMenu(null);
+  };
+
+  useEffect(() => () => {
+    if (categorySubmenuTimerRef.current) clearTimeout(categorySubmenuTimerRef.current);
+    if (contextMenuCloseTimer.current) clearTimeout(contextMenuCloseTimer.current);
+  }, []);
 
   useEffect(() => {
     if (!contextMenu) return;
     const handler = (e: MouseEvent) => {
       if (contextMenuRef.current && !contextMenuRef.current.contains(e.target as Node)) {
-        setContextMenu(null);
+        closeContextMenu();
       }
     };
     const keyHandler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setContextMenu(null);
+      if (e.key === "Escape") closeContextMenu();
     };
     document.addEventListener("mousedown", handler);
     document.addEventListener("keydown", keyHandler);
@@ -4293,6 +4313,144 @@ export default function Dashboard() {
 
   const hasSharedMailboxes = plan === "business" && sharedMailboxes && (sharedMailboxes as any[]).length > 0;
 
+  // Menu contextuel rendu via fonction pour être utilisable dans les deux
+  // branches (vue liste ET vue mail ouvert).
+  const renderContextMenu = () => contextMenu && (
+    <div
+      ref={contextMenuRef}
+      data-context-menu
+      className="fixed z-[9999] min-w-[180px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+      style={{ top: Math.min(contextMenu.y, window.innerHeight - 320), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
+      onMouseLeave={() => {
+        if (contextMenuCloseTimer.current) clearTimeout(contextMenuCloseTimer.current);
+        contextMenuCloseTimer.current = setTimeout(() => { setContextMenu(null); setCategorySubmenuOpen(false); }, 250);
+      }}
+      onMouseEnter={() => {
+        if (contextMenuCloseTimer.current) { clearTimeout(contextMenuCloseTimer.current); contextMenuCloseTimer.current = null; }
+      }}
+    >
+      {selectedIds.size > 1 && (
+        <div className="px-3 py-2 border-b border-[#1f2937]">
+          <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider font-medium">
+            {t("inbox.selectedCount", { count: selectedIds.size })}
+          </span>
+        </div>
+      )}
+      <div className="py-1">
+        {selectedIds.size <= 1 ? (() => {
+          const ctxEmail = (emails as any[]).find((e: any) => e.id === contextMenu.emailId)
+            || (selectedEmailId === contextMenu.emailId ? selectedEmail : null);
+          const ctxIsUnread = (ctxEmail as any)?.status === "non_lu" || (ctxEmail as any)?.isRead === false || (ctxEmail as any)?.unread === true;
+          return (
+          <>
+            <button onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <ChevronRight className="w-3.5 h-3.5" />{t("inbox.openEmail")}
+            </button>
+            <button onClick={() => handleQuickReply(contextMenu.emailId)}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <Reply className="w-3.5 h-3.5" />{t("inbox.reply", "Répondre")}
+            </button>
+            <button onClick={() => handleQuickForward(contextMenu.emailId)}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <Forward className="w-3.5 h-3.5" />{t("inbox.forward", "Transférer")}
+            </button>
+            <button onClick={() => { handleQuickCreateTask(contextMenu.emailId); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <ListTodo className="w-3.5 h-3.5" />{t("inbox.createTask", "Créer une tâche")}
+            </button>
+            <button onClick={() => { handleToggleRead(contextMenu.emailId); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              {ctxIsUnread ? <MailOpen className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
+              {ctxIsUnread ? t("inbox.markAsRead", "Marquer comme lu") : t("inbox.markAsUnread", "Marquer comme non lu")}
+            </button>
+            <div className="border-t border-[#1f2937] my-1" />
+            <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-[#6b7480]">{t("inbox.snooze", "Reporter")}</div>
+            <button onClick={() => { handleQuickSnooze(contextMenu.emailId, 1, t("wave1.snooze1h", "Dans 1 h")); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <Clock className="w-3.5 h-3.5" />{t("wave1.snooze1h", "Dans 1 h")}
+            </button>
+            <button onClick={() => { handleQuickSnooze(contextMenu.emailId, 24, t("wave1.snoozeTomorrow", "Demain matin")); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <Bell className="w-3.5 h-3.5" />{t("wave1.snoozeTomorrow", "Demain matin")}
+            </button>
+            <button onClick={() => { handleQuickSnooze(contextMenu.emailId, 168, t("wave1.snoozeNextWeek", "Semaine prochaine")); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <CalendarDays className="w-3.5 h-3.5" />{t("wave1.snoozeNextWeek", "Semaine prochaine")}
+            </button>
+            <div className="border-t border-[#1f2937] my-1" />
+            <button onClick={() => { handleArchive(contextMenu.emailId); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <Archive className="w-3.5 h-3.5" />{t("inbox.archive")}
+            </button>
+            {(categoryCounts && categoryCounts.length > 0) && (
+              <div className="relative">
+                <button onMouseEnter={openCategorySubmenu} onMouseLeave={scheduleCloseCategorySubmenu} onClick={openCategorySubmenu}
+                  className="w-full flex items-center justify-between gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <span className="flex items-center gap-2.5"><Folder className="w-3.5 h-3.5" />{t("inbox.category", "Catégorie")}</span>
+                  <ChevronRight className="w-3 h-3 opacity-60" />
+                </button>
+                {categorySubmenuOpen && (
+                  <div className="absolute left-full top-0 -ml-px pl-2 min-w-[200px] max-h-[260px] overflow-y-auto"
+                    onMouseEnter={openCategorySubmenu} onMouseLeave={scheduleCloseCategorySubmenu}>
+                    <div className="rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1">
+                      {categoryCounts.map((c: any) => (
+                        <button key={c.categoryId}
+                          onClick={() => { handleQuickSetCategory(contextMenu.emailId, c.categoryId, c.categoryName); setContextMenu(null); setCategorySubmenuOpen(false); }}
+                          className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left">
+                          {c.color && <span className="w-2 h-2 rounded-full shrink-0" style={{ background: c.color }} />}
+                          <span className="truncate">{c.categoryName}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+            <button onClick={() => { handleCopySender(contextMenu.emailId); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <Copy className="w-3.5 h-3.5" />{t("inbox.copySenderEmail", "Copier l'adresse de l'expéditeur")}
+            </button>
+            <button onClick={() => { handleCopySubject(contextMenu.emailId); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <TypeIcon className="w-3.5 h-3.5" />{t("inbox.copySubject", "Copier le sujet")}
+            </button>
+            <button onClick={() => { handleDownloadEml(contextMenu.emailId); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <Download className="w-3.5 h-3.5" />{t("inbox.downloadEml", "Télécharger en .eml")}
+            </button>
+            <button onClick={() => { handlePrintEmail(contextMenu.emailId); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <Printer className="w-3.5 h-3.5" />{t("inbox.print", "Imprimer")}
+            </button>
+            <button onClick={() => { handleBlockSender(contextMenu.emailId); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <ShieldAlert className="w-3.5 h-3.5" />{t("junk.blockSender")}
+            </button>
+            <div className="border-t border-[#1f2937] my-1" />
+            <button onClick={() => { handleDelete(contextMenu.emailId); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors">
+              <Trash2 className="w-3.5 h-3.5" />{t("inbox.deleteEmail")}
+            </button>
+          </>
+          );
+        })() : (
+          <>
+            <button onClick={() => { handleBulkAction("archive"); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+              <Archive className="w-3.5 h-3.5" />{t("inbox.bulkArchive")} ({selectedIds.size})
+            </button>
+            <div className="border-t border-[#1f2937] my-1" />
+            <button onClick={() => { handleBulkAction("delete"); setContextMenu(null); }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors">
+              <Trash2 className="w-3.5 h-3.5" />{t("inbox.deleteEmail")} ({selectedIds.size})
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+
   if (selectedEmail) {
     return (
       <DashboardLayout>
@@ -4495,6 +4653,7 @@ export default function Dashboard() {
             </div>
           )}
         </div>
+        {renderContextMenu()}
       </DashboardLayout>
     );
   }
@@ -5416,202 +5575,7 @@ export default function Dashboard() {
               chat Inboria déjà disponible en haut de la page. */}
         </>
       )}
-      {contextMenu && (
-        <div
-          ref={contextMenuRef}
-          data-context-menu
-          className="fixed z-[9999] min-w-[180px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
-          style={{ top: Math.min(contextMenu.y, window.innerHeight - 220), left: Math.min(contextMenu.x, window.innerWidth - 200) }}
-          onMouseLeave={() => {
-            if (contextMenuCloseTimer.current) clearTimeout(contextMenuCloseTimer.current);
-            contextMenuCloseTimer.current = setTimeout(() => setContextMenu(null), 250);
-          }}
-          onMouseEnter={() => {
-            if (contextMenuCloseTimer.current) {
-              clearTimeout(contextMenuCloseTimer.current);
-              contextMenuCloseTimer.current = null;
-            }
-          }}
-        >
-          {selectedIds.size > 1 && (
-            <div className="px-3 py-2 border-b border-[#1f2937]">
-              <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider font-medium">
-                {t("inbox.selectedCount", { count: selectedIds.size })}
-              </span>
-            </div>
-          )}
-          <div className="py-1">
-            {selectedIds.size <= 1 ? (() => {
-              const ctxEmail = (emails as any[]).find((e: any) => e.id === contextMenu.emailId);
-              const ctxIsUnread = ctxEmail?.status === "non_lu" || ctxEmail?.isRead === false || ctxEmail?.unread === true;
-              return (
-              <>
-                <button
-                  onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <ChevronRight className="w-3.5 h-3.5" />
-                  {t("inbox.openEmail")}
-                </button>
-                <button
-                  onClick={() => handleQuickReply(contextMenu.emailId)}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Reply className="w-3.5 h-3.5" />
-                  {t("inbox.reply", "Répondre")}
-                </button>
-                <button
-                  onClick={() => handleQuickForward(contextMenu.emailId)}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Forward className="w-3.5 h-3.5" />
-                  {t("inbox.forward", "Transférer")}
-                </button>
-                <button
-                  onClick={() => { handleQuickCreateTask(contextMenu.emailId); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <ListTodo className="w-3.5 h-3.5" />
-                  {t("inbox.createTask", "Créer une tâche")}
-                </button>
-                <button
-                  onClick={() => { handleToggleRead(contextMenu.emailId); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  {ctxIsUnread ? <MailOpen className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
-                  {ctxIsUnread ? t("inbox.markAsRead", "Marquer comme lu") : t("inbox.markAsUnread", "Marquer comme non lu")}
-                </button>
-                <div className="border-t border-[#1f2937] my-1" />
-                <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-[#6b7480]">
-                  {t("inbox.snooze", "Reporter")}
-                </div>
-                <button
-                  onClick={() => { handleQuickSnooze(contextMenu.emailId, 1, t("wave1.snooze1h", "Dans 1 h")); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Clock className="w-3.5 h-3.5" />
-                  {t("wave1.snooze1h", "Dans 1 h")}
-                </button>
-                <button
-                  onClick={() => { handleQuickSnooze(contextMenu.emailId, 24, t("wave1.snoozeTomorrow", "Demain matin")); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Bell className="w-3.5 h-3.5" />
-                  {t("wave1.snoozeTomorrow", "Demain matin")}
-                </button>
-                <button
-                  onClick={() => { handleQuickSnooze(contextMenu.emailId, 168, t("wave1.snoozeNextWeek", "Semaine prochaine")); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <CalendarDays className="w-3.5 h-3.5" />
-                  {t("wave1.snoozeNextWeek", "Semaine prochaine")}
-                </button>
-                <div className="border-t border-[#1f2937] my-1" />
-                <button
-                  onClick={() => { handleArchive(contextMenu.emailId); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Archive className="w-3.5 h-3.5" />
-                  {t("inbox.archive")}
-                </button>
-                {(categoryCounts && categoryCounts.length > 0) && (
-                  <div
-                    className="relative"
-                    onMouseEnter={() => setCategorySubmenuOpen(true)}
-                    onMouseLeave={() => setCategorySubmenuOpen(false)}
-                  >
-                    <button
-                      className="w-full flex items-center justify-between gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                    >
-                      <span className="flex items-center gap-2.5">
-                        <Folder className="w-3.5 h-3.5" />
-                        {t("inbox.category", "Catégorie")}
-                      </span>
-                      <ChevronRight className="w-3 h-3 opacity-60" />
-                    </button>
-                    {categorySubmenuOpen && (
-                      <div className="absolute left-full top-0 ml-1 min-w-[180px] max-h-[260px] overflow-y-auto rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1">
-                        {categoryCounts.map((c: any) => (
-                          <button
-                            key={c.categoryId}
-                            onClick={() => { handleQuickSetCategory(contextMenu.emailId, c.categoryId, c.categoryName); setContextMenu(null); }}
-                            className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left"
-                          >
-                            {c.color && <span className="w-2 h-2 rounded-full" style={{ background: c.color }} />}
-                            <span className="truncate">{c.categoryName}</span>
-                          </button>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-                )}
-                <button
-                  onClick={() => { handleCopySender(contextMenu.emailId); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                  {t("inbox.copySenderEmail", "Copier l'adresse de l'expéditeur")}
-                </button>
-                <button
-                  onClick={() => { handleCopySubject(contextMenu.emailId); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <TypeIcon className="w-3.5 h-3.5" />
-                  {t("inbox.copySubject", "Copier le sujet")}
-                </button>
-                <button
-                  onClick={() => { handleDownloadEml(contextMenu.emailId); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  {t("inbox.downloadEml", "Télécharger en .eml")}
-                </button>
-                <button
-                  onClick={() => { handlePrintEmail(contextMenu.emailId); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  {t("inbox.print", "Imprimer")}
-                </button>
-                <button
-                  onClick={() => { handleBlockSender(contextMenu.emailId); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <ShieldAlert className="w-3.5 h-3.5" />
-                  {t("junk.blockSender")}
-                </button>
-                <div className="border-t border-[#1f2937] my-1" />
-                <button
-                  onClick={() => { handleDelete(contextMenu.emailId); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  {t("inbox.deleteEmail")}
-                </button>
-              </>
-              );
-            })() : (
-              <>
-                <button
-                  onClick={() => { handleBulkAction("archive"); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Archive className="w-3.5 h-3.5" />
-                  {t("inbox.bulkArchive")} ({selectedIds.size})
-                </button>
-                <div className="border-t border-[#1f2937] my-1" />
-                <button
-                  onClick={() => { handleBulkAction("delete"); setContextMenu(null); }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors"
-                >
-                  <Trash2 className="w-3.5 h-3.5" />
-                  {t("inbox.deleteEmail")} ({selectedIds.size})
-                </button>
-              </>
-            )}
-          </div>
-        </div>
-      )}
+      {renderContextMenu()}
     </DashboardLayout>
   );
 }
