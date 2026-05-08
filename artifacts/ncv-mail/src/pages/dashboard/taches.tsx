@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { extractEmailAddress } from "@/lib/utils";
+import { avatarColor } from "@/lib/avatar-color";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
@@ -532,12 +533,17 @@ export default function Taches() {
                         )}
                       </div>
 
-                      {/* Avatar — aligné Réception (bleu primary) */}
-                      <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-                        <span className="text-primary text-[11px] font-semibold">
-                          {senderInitial}
-                        </span>
-                      </div>
+                      {/* Avatar — couleur par expéditeur (hash → palette 8 couleurs) */}
+                      {(() => {
+                        const c = avatarColor(senderName);
+                        return (
+                          <div className={`w-7 h-7 rounded-full ${c.bg} border ${c.border} flex items-center justify-center shrink-0`}>
+                            <span className={`${c.text} text-[11px] font-semibold`}>
+                              {senderInitial}
+                            </span>
+                          </div>
+                        );
+                      })()}
 
                       {/* Titre + sujet email source */}
                       <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">

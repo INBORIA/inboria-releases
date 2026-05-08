@@ -2,6 +2,7 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useMarkInboxPage } from "@/lib/inbox-theme";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { extractEmailAddress } from "@/lib/utils";
+import { avatarColor, avatarInitial } from "@/lib/avatar-color";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
@@ -141,12 +142,17 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
         )}
       </div>
 
-      {/* Avatar — même bleu que les boutons sélectionnés (bg-primary). */}
-      <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-        <span className="text-primary text-[11px] font-semibold">
-          {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
-        </span>
-      </div>
+      {/* Avatar — couleur par expéditeur (hash → palette 8 couleurs) */}
+      {(() => {
+        const c = avatarColor(email.sender);
+        return (
+          <div className={`w-7 h-7 rounded-full ${c.bg} border ${c.border} flex items-center justify-center shrink-0`}>
+            <span className={`${c.text} text-[11px] font-semibold`}>
+              {avatarInitial(email.sender)}
+            </span>
+          </div>
+        );
+      })()}
 
       {/* Expéditeur (largeur fixe) — style Outlook : non-lu blanc gras, lu gris discret */}
       <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">
@@ -5289,11 +5295,16 @@ export default function Dashboard() {
                               <span className={`w-1.5 h-1.5 rounded-full ${isUnread ? "bg-primary" : "bg-transparent"}`} />
                             </div>
 
-                            <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-                              <span className="text-primary text-[11px] font-semibold">
-                                {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
-                              </span>
-                            </div>
+                            {(() => {
+                              const c = avatarColor(email.sender);
+                              return (
+                                <div className={`w-7 h-7 rounded-full ${c.bg} border ${c.border} flex items-center justify-center shrink-0`}>
+                                  <span className={`${c.text} text-[11px] font-semibold`}>
+                                    {avatarInitial(email.sender)}
+                                  </span>
+                                </div>
+                              );
+                            })()}
 
                             <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">
                               <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
