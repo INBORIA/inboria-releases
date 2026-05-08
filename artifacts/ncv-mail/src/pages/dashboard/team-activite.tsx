@@ -19,6 +19,7 @@ import type { TFunction } from "i18next";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { useLocation } from "wouter";
 import { useState, useMemo } from "react";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 
 function formatTime(dateStr: string, t: TFunction): string {
   const diff = Date.now() - new Date(dateStr).getTime();
@@ -29,16 +30,6 @@ function formatTime(dateStr: string, t: TFunction): string {
   if (hours < 24) return t("teamActivity.time.hoursAgo", { count: hours });
   const days = Math.floor(hours / 24);
   return t("teamActivity.time.daysAgo", { count: days });
-}
-
-function PriorityDot({ priority }: { priority: string }) {
-  const color =
-    priority === "urgent"
-      ? "bg-red-400"
-      : priority === "moyen"
-        ? "bg-amber-400"
-        : "bg-slate-500";
-  return <span className={`inline-block h-1.5 w-1.5 rounded-full ${color}`} />;
 }
 
 interface MemberSectionProps {
@@ -122,7 +113,6 @@ function MemberSection({ member, defaultOpen, onOpenEmail }: MemberSectionProps)
                 }}
                 className="px-4 py-2.5 flex items-center gap-3 hover:bg-[#172033] transition-colors cursor-pointer focus:outline-none focus:bg-[#172033]"
               >
-                <PriorityDot priority={e.priority || "faible"} />
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
                     <p className="text-[12px] font-medium text-white truncate">
@@ -175,6 +165,7 @@ function MemberSection({ member, defaultOpen, onOpenEmail }: MemberSectionProps)
 }
 
 export default function TeamActivitePage() {
+  useEnableLightTheme();
   const { t } = useTranslation();
   const [, setLocation] = useLocation();
   const { data, isLoading, isError } = useGetTeamAssignments();

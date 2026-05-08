@@ -10,11 +10,12 @@ export function BackToInboxButton() {
       <Link href="/dashboard">
         <Button
           variant="ghost"
-          size="sm"
-          className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
+          size="icon"
+          aria-label={t("inbox.title")}
+          title={t("inbox.title")}
+          className="h-7 w-7 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
         >
-          <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-          {t("inbox.title")}
+          <ArrowLeft className="w-4 h-4" />
         </Button>
       </Link>
     </div>
