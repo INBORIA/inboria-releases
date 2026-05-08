@@ -52,8 +52,8 @@ export function CookieBanner() {
   };
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-[100] p-4 sm:p-6 animate-in slide-in-from-bottom-4 duration-500">
-      <div className="max-w-2xl mx-auto bg-[#141c2b] border border-[#1f2937] rounded-xl shadow-2xl shadow-black/40">
+    <div className="fixed bottom-0 left-0 right-0 z-[100] p-4 sm:p-6 animate-in slide-in-from-bottom-4 duration-500 pointer-events-none">
+      <div className="max-w-2xl mx-auto bg-[#141c2b] border border-[#1f2937] rounded-xl shadow-2xl shadow-black/40 pointer-events-auto">
         <div className="p-4 sm:p-5">
           <div className="flex items-start gap-3">
             <div className="w-9 h-9 rounded-lg bg-[#2d7dd2]/15 flex items-center justify-center shrink-0 mt-0.5">
