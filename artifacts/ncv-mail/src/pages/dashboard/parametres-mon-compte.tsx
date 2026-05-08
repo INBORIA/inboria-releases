@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import {
   useGetProfile,
   useUpdateProfile,
@@ -534,6 +535,7 @@ function InboriaPrivacySection({ t }: { t: any }) {
 }
 
 export default function ParametresMonCompte() {
+  useEnableLightTheme();
   const { t } = useTranslation();
   const { data: profile, isLoading } = useGetProfile();
   const updateProfile = useUpdateProfile();

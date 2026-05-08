@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
 import { Button } from "@/components/ui/button";
@@ -15,6 +16,7 @@ interface DevCard {
 }
 
 export default function ParametresDeveloppeurs() {
+  useEnableLightTheme();
   const { t } = useTranslation();
 
   const cards: DevCard[] = [

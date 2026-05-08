@@ -38,6 +38,9 @@ export function useMarkInboxPage(): void {
   }, []);
 }
 
+/** Alias sémantique : active la capacité « light » sur la page hôte. */
+export const useEnableLightTheme = useMarkInboxPage;
+
 export function useNcvTheme(): { theme: NcvTheme; toggle: () => void; setTheme: (t: NcvTheme) => void } {
   const [theme, setThemeState] = useState<NcvTheme>(() => readStored());
 

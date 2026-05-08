@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import {
   useListAutomationRules,
@@ -94,6 +95,7 @@ function describeAction(a: RuleActionShape, t: TFunction): string {
 }
 
 export default function Regles() {
+  useEnableLightTheme();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { toast } = useToast();

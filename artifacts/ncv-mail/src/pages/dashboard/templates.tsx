@@ -1,4 +1,5 @@
 import { useState, useMemo } from "react";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import {
   useListTemplates,
@@ -36,6 +37,7 @@ import { useTranslation } from "react-i18next";
 import { FileText, Plus, Pencil, Trash2, Variable } from "lucide-react";
 
 export default function Templates() {
+  useEnableLightTheme();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const { toast } = useToast();

@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/lib/auth";
 import { useToast } from "@/hooks/use-toast";
@@ -35,6 +36,7 @@ const ALL_SCOPES = ["emails:read", "tasks:write", "appointments:write", "contact
 const baseUrl = () => import.meta.env.BASE_URL.replace(/\/$/, "");
 
 export default function ParametresApi() {
+  useEnableLightTheme();
   const { t } = useTranslation();
   const { session } = useAuth();
   const { toast } = useToast();

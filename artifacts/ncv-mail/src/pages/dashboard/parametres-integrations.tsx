@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
@@ -77,6 +78,7 @@ const PROVIDER_META: Record<
 };
 
 export default function ParametresIntegrations() {
+  useEnableLightTheme();
   const { t } = useTranslation();
   const { session } = useAuth();
   const { toast } = useToast();

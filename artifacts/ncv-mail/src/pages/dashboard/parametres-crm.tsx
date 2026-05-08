@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
@@ -53,6 +54,7 @@ function authHeaders(token?: string): Record<string, string> {
 }
 
 export default function ParametresCrm() {
+  useEnableLightTheme();
   const { t } = useTranslation();
   const { session } = useAuth();
   const { toast } = useToast();

@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { useGetProfile, useCreateCheckoutSession, getGetProfileQueryKey } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { Check, Shield, Info, CreditCard, Loader2, AlertTriangle, XCircle, ArrowLeft } from "lucide-react";
@@ -31,6 +32,7 @@ declare global {
 }
 
 export default function Abonnement() {
+  useEnableLightTheme();
   const { t, i18n } = useTranslation();
   const { data: profile, isLoading } = useGetProfile();
   const checkout = useCreateCheckoutSession();

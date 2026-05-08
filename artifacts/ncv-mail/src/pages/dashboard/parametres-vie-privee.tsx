@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { Link } from "wouter";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
@@ -58,6 +59,7 @@ const TARGET_ICON: Record<string, any> = {
 };
 
 export default function ParametresViePrivee() {
+  useEnableLightTheme();
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateLocale = LOCALE_MAP[lang] || fr;
