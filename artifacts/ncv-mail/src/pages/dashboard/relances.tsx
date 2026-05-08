@@ -184,15 +184,10 @@ export default function Relances() {
                     </div>
 
                     <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
-                      <span className="inline-flex items-center gap-1 text-[10px] px-1.5 h-5 rounded bg-amber-500/10 text-amber-400">
-                        <Clock className="w-2.5 h-2.5" />
+                      <span className="inline-flex items-center gap-1 text-[11px] tabular-nums text-[#b8c5d6] whitespace-nowrap">
+                        <Clock className="w-2.5 h-2.5 text-[#8b95a7]" />
                         {t("relances.daysWithoutReply", "{{count}} j sans réponse", { count: days })}
                       </span>
-                      {sentAt && (
-                        <span className="text-[11px] tabular-nums text-[#8b95a7] whitespace-nowrap hidden sm:inline">
-                          {formatDistanceToNow(new Date(sentAt), { addSuffix: true, locale: dateLocale })}
-                        </span>
-                      )}
                     </div>
 
                     <div className="hidden group-hover:flex items-center gap-0.5 shrink-0">
