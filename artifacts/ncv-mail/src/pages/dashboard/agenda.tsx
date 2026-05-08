@@ -475,7 +475,7 @@ export default function Agenda() {
             </h3>
             <div className="space-y-1.5">
               {suggestions.map((apt) => (
-                <div key={apt.id} className="flex items-center justify-between gap-2 bg-card/50 rounded px-3 py-2 border border-border">
+                <div key={apt.id} className="flex items-center justify-between gap-2 bg-primary/5 rounded px-3 py-2 border border-primary/15">
                   <div className="flex-1 min-w-0">
                     <span className="text-[12px] font-medium text-white truncate block">{apt.title}</span>
                     <span className="text-[10px] text-[#b8c5d6]">
