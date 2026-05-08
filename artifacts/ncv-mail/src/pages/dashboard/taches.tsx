@@ -354,8 +354,10 @@ export default function Taches() {
 
   return (
     <DashboardLayout>
-      <div className={`mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 ${detailOpen ? "max-w-[1400px]" : "max-w-6xl"}`}>
+      <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 max-w-6xl">
         <BackToInboxButton />
+        {!detailOpen && (
+        <>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
           <div>
             <h1 className="text-[16px] font-semibold text-foreground tracking-tight">
@@ -453,9 +455,12 @@ export default function Taches() {
             </span>
           )}
         </div>
+        </>
+        )}
 
-        <div className={`grid gap-4 ${detailOpen ? "grid-cols-1 lg:grid-cols-[1fr_520px]" : "grid-cols-1"}`}>
-          {/* Liste */}
+        <div className="grid gap-4 grid-cols-1">
+          {/* Liste — masquée quand un email est ouvert (vue pleine page) */}
+          {!detailOpen && (
           <div className="min-w-0">
             {isLoading ? (
               <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-[#1f2937] border-dashed bg-white/[0.02]">
@@ -602,15 +607,24 @@ export default function Taches() {
               </div>
             )}
           </div>
+          )}
 
-          {/* Panneau détail email lié — split view */}
+          {/* Panneau détail email lié — pleine page */}
           {detailOpen && emailDetailTask && (() => {
             const senderName = emailDetailTask.emailSender || emailDetailTask.emailSenderEmail || "?";
             const initial = senderName.trim().charAt(0).toUpperCase();
             const taskStatus = emailDetailTask.status || "todo";
             const isDone = taskStatus === "done";
             return (
-              <div data-detail-panel className="rounded-lg border border-[#1f2937] bg-white/[0.02] flex flex-col overflow-hidden lg:sticky lg:top-4 lg:max-h-[calc(100vh-2rem)]">
+              <div data-detail-panel className="rounded-lg border border-[#1f2937] bg-white/[0.02] flex flex-col overflow-hidden">
+                {/* Barre retour */}
+                <button
+                  onClick={() => { setEmailDetailTask(null); setShowComments(false); }}
+                  className="flex items-center gap-1.5 px-4 py-2 text-[12px] text-[#8b95a7] hover:text-white hover:bg-white/[0.04] border-b border-[#1f2937] transition-colors"
+                >
+                  <ChevronRight className="w-3 h-3 rotate-180" />
+                  {t("tasks.backToList", "Retour aux tâches")}
+                </button>
                 {/* Bloc tâche */}
                 <div className="px-4 py-3 border-b border-[#1f2937] flex items-start gap-3">
                   <div className="flex-1 min-w-0">
