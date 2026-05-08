@@ -11,6 +11,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { supabase } from "@/lib/supabase";
+import { useLocation } from "wouter";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 
 const baseUrl = () => import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -22,9 +24,11 @@ interface SnoozedEmail {
 }
 
 export default function Reportes() {
+  useEnableLightTheme();
   const { t, i18n } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
+  const [, setLocation] = useLocation();
   const unsnoozeMut = useUnsnoozeEmail();
   const fmt = new Intl.DateTimeFormat(i18n.language, { dateStyle: "medium", timeStyle: "short" });
 
@@ -72,7 +76,7 @@ export default function Reportes() {
         onSuccess: () => {
           toast({ title: t("wave1.unsnoozeSuccess") });
           qc.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-          loadSnoozed();
+          setLocation(`/dashboard?emailId=${id}`);
         },
         onError: (e: any) => {
           toast({ variant: "destructive", title: e?.message || "Wake failed" });
@@ -87,7 +91,7 @@ export default function Reportes() {
         <BackToInboxButton />
         <section>
           <div className="flex items-center gap-2 mb-3">
-            <BellOff className="w-5 h-5 text-amber-400" />
+            <BellOff className="w-5 h-5 text-[#b8c5d6]" />
             <h1 className="text-[16px] font-semibold text-white">
               {t("wave1.snoozedSectionTitle", "Emails reportés")}
             </h1>
@@ -132,7 +136,7 @@ export default function Reportes() {
                       </div>
                     )}
                     {e.snoozedUntil && (
-                      <div className="text-[11px] text-amber-300 mt-1 flex items-center gap-1">
+                      <div className="text-[11px] text-[#b8c5d6] mt-1 flex items-center gap-1">
                         <Clock className="w-3 h-3" />
                         {t("wave1.snoozedUntilLabel", {
                           date: fmt.format(new Date(e.snoozedUntil)),
@@ -145,7 +149,7 @@ export default function Reportes() {
                     variant="ghost"
                     onClick={() => handleWake(e.id)}
                     disabled={unsnoozeMut.isPending}
-                    className="h-7 gap-1 text-[11px] text-amber-400 hover:text-amber-300 hover:bg-amber-500/10"
+                    className="h-7 gap-1 text-[11px] text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
                     data-testid={`button-wake-${e.id}`}
                   >
                     <Mail className="w-3 h-3" />
