@@ -255,17 +255,18 @@ export function SupportChatWidget() {
         onPointerMove={onButtonPointerMove}
         onPointerUp={onButtonPointerUp}
         style={{ transform: `translate(${offset.x}px, ${offset.y}px)`, touchAction: "none" }}
-        className={`fixed bottom-4 right-4 z-50 h-12 w-12 rounded-full shadow-lg flex items-center justify-center transition-colors duration-200 cursor-grab active:cursor-grabbing ${
+        className={`fixed bottom-5 right-5 z-[60] h-14 w-14 rounded-full shadow-2xl ring-2 ring-white/10 flex items-center justify-center transition-colors duration-200 cursor-grab active:cursor-grabbing ${
           isOpen
             ? "bg-[#1f2937] hover:bg-[#2a3545]"
             : "bg-primary hover:bg-primary/90"
         }`}
         title={t("supportChat.title") + " — Glisser pour déplacer"}
+        aria-label={t("supportChat.title")}
       >
         {isOpen ? (
-          <X className="h-5 w-5 text-white" />
+          <X className="h-6 w-6 text-white" />
         ) : (
-          <MessageCircleQuestion className="h-5 w-5 text-white" />
+          <MessageCircleQuestion className="h-6 w-6 text-white" />
         )}
       </button>
     </>
