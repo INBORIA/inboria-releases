@@ -167,7 +167,7 @@ function ProjectNotes({ projectId }: { projectId: string }) {
   return (
     <div>
       <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
-        <StickyNote className="w-3.5 h-3.5 text-amber-400" /> {t("projects.notesLabel")}
+        <StickyNote className="w-3.5 h-3.5 text-primary" /> {t("projects.notesLabel")}
       </h2>
       <div className="flex gap-2 mb-3">
         <Textarea
@@ -449,7 +449,7 @@ function ProjectDetailView({
             </p>
           </div>
           <div className="bg-card rounded-lg border border-border p-3">
-            <div className="flex items-center gap-1.5 text-amber-400 mb-0.5">
+            <div className="flex items-center gap-1.5 text-foreground mb-0.5">
               <Clock className="w-3.5 h-3.5" />
               <span className="text-[11px]">{t("projects.statusPaused")}</span>
             </div>
@@ -464,11 +464,6 @@ function ProjectDetailView({
             </h2>
             <div className="space-y-1">
               {project.emails.map((email: any) => {
-                const barColors: Record<string, string> = {
-                  urgent: "bg-red-500",
-                  moyen: "bg-amber-500",
-                  faible: "bg-emerald-500",
-                };
                 return (
                   <button
                     key={email.id}
@@ -476,7 +471,6 @@ function ProjectDetailView({
                     onClick={() => setSelectedEmailId(email.id)}
                     className="flex items-stretch bg-card border border-border rounded-lg overflow-hidden w-full text-left hover:bg-card/80 hover:border-primary/40 transition-colors cursor-pointer"
                   >
-                    <div className={`w-1 shrink-0 ${barColors[email.priority] || barColors.faible}`} />
                     <div className="flex items-center gap-2.5 flex-1 min-w-0 px-3 py-2">
                       <div className="flex-1 min-w-0">
                         <p className="text-[12px] text-white truncate">{email.subject}</p>
