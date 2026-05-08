@@ -664,8 +664,8 @@ export default function Taches() {
                 {emailDetailTask.emailSubject ? (
                   <>
                     <div className="px-4 py-3 border-b border-[#1f2937] flex items-start gap-3">
-                      <div className="w-9 h-9 rounded-full bg-white/[0.06] border border-[#1f2937] flex items-center justify-center shrink-0">
-                        <span className="text-[#b8c5d6] text-[12px] font-semibold">{initial}</span>
+                      <div className="w-9 h-9 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                        <span className="text-primary text-[12px] font-semibold">{initial}</span>
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="text-[13px] font-medium text-white truncate">
