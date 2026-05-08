@@ -503,7 +503,8 @@
     "appointmentProposed": "Cita proposada creada a l'agenda",
     "assigneeFilterMe": "els meus correus electrònics assignats",
     "sharedMailboxShort": "Compartides",
-    "spamShort": "Brossa"
+    "spamShort": "Brossa",
+    "askInboria": "Pregunteu a Inboria"
   },
   "sent": {
     "title": "Correu electrònic enviats",

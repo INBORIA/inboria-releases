@@ -503,7 +503,8 @@
     "appointmentProposed": "Janji yang diusulkan dibuat di kalender",
     "assigneeFilterMe": "email saya yang ditugaskan",
     "sharedMailboxShort": "Dibagikan",
-    "spamShort": "Spam"
+    "spamShort": "Spam",
+    "askInboria": "Tanyakan kepada Inboria"
   },
   "sent": {
     "title": "Email yang dikirim",

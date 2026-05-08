@@ -503,7 +503,8 @@
     "appointmentProposed": "제안된 약속이 일정에 생성되었습니다.",
     "assigneeFilterMe": "내가 할당된 이메일",
     "sharedMailboxShort": "공유",
-    "spamShort": "스팸"
+    "spamShort": "스팸",
+    "askInboria": "Inboria에게 질문하기"
   },
   "sent": {
     "title": "보낸 이메일",

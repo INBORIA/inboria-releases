@@ -503,7 +503,8 @@
     "appointmentProposed": "Cruinniú molta cruthaithe sa chláir",
     "assigneeFilterMe": "mo ríomhphoist atá ceangailte",
     "sharedMailboxShort": "Comhroinnte",
-    "spamShort": "Turscar"
+    "spamShort": "Turscar",
+    "askInboria": "Cuir ceist ar Inboria"
   },
   "sent": {
     "title": "Ríomhphoist seolta",

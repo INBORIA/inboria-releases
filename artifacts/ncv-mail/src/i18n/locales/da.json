@@ -503,7 +503,8 @@
     "appointmentProposed": "Foreslået møde oprettet i kalenderen",
     "assigneeFilterMe": "mine tildelte emails",
     "sharedMailboxShort": "Delte",
-    "spamShort": "Spam"
+    "spamShort": "Spam",
+    "askInboria": "Spørg Inboria"
   },
   "sent": {
     "title": "Sendte emails",

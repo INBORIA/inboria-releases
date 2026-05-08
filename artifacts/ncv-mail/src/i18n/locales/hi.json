@@ -503,7 +503,8 @@
     "appointmentProposed": "कैलेंडर में प्रस्तावित नियुक्ति बनाई गई",
     "assigneeFilterMe": "मेरे असाइन किए गए ईमेल",
     "sharedMailboxShort": "साझा",
-    "spamShort": "स्पैम"
+    "spamShort": "स्पैम",
+    "askInboria": "Inboria से पूछें"
   },
   "sent": {
     "title": "भेजे गए ईमेल",

@@ -503,7 +503,8 @@
     "appointmentProposed": "提案されたアポイントメントがカレンダーに作成されました",
     "assigneeFilterMe": "私の割り当てられたメール",
     "sharedMailboxShort": "共有",
-    "spamShort": "迷惑メール"
+    "spamShort": "迷惑メール",
+    "askInboria": "Inboriaに質問する"
   },
   "sent": {
     "title": "送信済みのメール",

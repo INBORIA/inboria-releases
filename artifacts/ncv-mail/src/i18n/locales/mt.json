@@ -503,7 +503,8 @@
     "appointmentProposed": "Appunt propost maħluq fl-agenda",
     "assigneeFilterMe": "l-emails assenjati lilija",
     "sharedMailboxShort": "Kondiviżi",
-    "spamShort": "Spam"
+    "spamShort": "Spam",
+    "askInboria": "Staqsi lil Inboria"
   },
   "sent": {
     "title": "Emails inviati",

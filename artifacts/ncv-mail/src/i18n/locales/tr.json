@@ -503,7 +503,8 @@
     "appointmentProposed": "Takvimde önerilen randevu oluşturuldu",
     "assigneeFilterMe": "atanmış e-postalarım",
     "sharedMailboxShort": "Paylaşılan",
-    "spamShort": "Spam"
+    "spamShort": "Spam",
+    "askInboria": "Inboria'ya sorun"
   },
   "sent": {
     "title": "Gönderilen e-postalar",

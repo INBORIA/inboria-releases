@@ -503,7 +503,8 @@
     "appointmentProposed": "已在日历中创建的提议会议",
     "assigneeFilterMe": "我的分配邮件",
     "sharedMailboxShort": "共享",
-    "spamShort": "垃圾邮件"
+    "spamShort": "垃圾邮件",
+    "askInboria": "询问 Inboria"
   },
   "sent": {
     "title": "已发送邮件",

@@ -503,7 +503,8 @@
     "appointmentProposed": "Javasolt találkozó létrehozva a naptárban",
     "assigneeFilterMe": "az Ön által kijelölt emailek",
     "sharedMailboxShort": "Megosztott",
-    "spamShort": "Levélszemét"
+    "spamShort": "Levélszemét",
+    "askInboria": "Kérdezze Inboriát"
   },
   "sent": {
     "title": "Küldött emailek",

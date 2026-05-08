@@ -503,7 +503,8 @@
     "appointmentProposed": "Foreslått avtale opprettet i kalenderen",
     "assigneeFilterMe": "mine tildelte e-poster",
     "sharedMailboxShort": "Delte",
-    "spamShort": "Søppelpost"
+    "spamShort": "Søppelpost",
+    "askInboria": "Spør Inboria"
   },
   "sent": {
     "title": "Sendte e-poster",

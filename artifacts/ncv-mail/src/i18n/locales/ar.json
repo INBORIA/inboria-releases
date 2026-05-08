@@ -503,7 +503,8 @@
     "appointmentProposed": "تم إنشاء موعد مقترح في التقويم",
     "assigneeFilterMe": "بريدي الإلكتروني المعين",
     "sharedMailboxShort": "مشتركة",
-    "spamShort": "البريد العشوائي"
+    "spamShort": "البريد العشوائي",
+    "askInboria": "اسألوا Inboria"
   },
   "sent": {
     "title": "البريد الإلكتروني المرسل",

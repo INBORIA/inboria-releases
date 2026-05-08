@@ -503,7 +503,8 @@
     "appointmentProposed": "Η προτεινόμενη συνάντηση δημιουργήθηκε στο ημερολόγιο",
     "assigneeFilterMe": "τα emails σας που έχουν ανατεθεί",
     "sharedMailboxShort": "Κοινόχρηστα",
-    "spamShort": "Ανεπιθύμητα"
+    "spamShort": "Ανεπιθύμητα",
+    "askInboria": "Ρωτήστε το Inboria"
   },
   "sent": {
     "title": "Τα emails που εστάλησαν",

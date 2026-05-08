@@ -503,7 +503,8 @@
     "appointmentProposed": "Ettepanekud kohtumiste loomine kalendris",
     "assigneeFilterMe": "minu määratud e-kirjad",
     "sharedMailboxShort": "Jagatud",
-    "spamShort": "Rämpspost"
+    "spamShort": "Rämpspost",
+    "askInboria": "Küsige Inborialt"
   },
   "sent": {
     "title": "Saadetud e-kirjad",

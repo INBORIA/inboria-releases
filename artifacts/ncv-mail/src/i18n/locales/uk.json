@@ -503,7 +503,8 @@
     "appointmentProposed": "Запропоновану зустріч створено в календарі",
     "assigneeFilterMe": "мої призначені електронні листи",
     "sharedMailboxShort": "Спільні",
-    "spamShort": "Спам"
+    "spamShort": "Спам",
+    "askInboria": "Запитайте Inboria"
   },
   "sent": {
     "title": "Відправлені електронні листи",

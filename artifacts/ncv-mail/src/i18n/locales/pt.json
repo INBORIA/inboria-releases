@@ -503,7 +503,8 @@
     "appointmentProposed": "Compromisso proposto criado na agenda",
     "assigneeFilterMe": "meus emails atribuídos",
     "sharedMailboxShort": "Partilhadas",
-    "spamShort": "Spam"
+    "spamShort": "Spam",
+    "askInboria": "Perguntar à Inboria"
   },
   "sent": {
     "title": "Emails enviados",

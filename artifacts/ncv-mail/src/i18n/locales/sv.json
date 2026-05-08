@@ -503,7 +503,8 @@
     "appointmentProposed": "Föreslagen möte skapat i kalendern",
     "assigneeFilterMe": "mina tilldelade e-postmeddelanden",
     "sharedMailboxShort": "Delade",
-    "spamShort": "Skräppost"
+    "spamShort": "Skräppost",
+    "askInboria": "Fråga Inboria"
   },
   "sent": {
     "title": "Skickade e-postmeddelanden",

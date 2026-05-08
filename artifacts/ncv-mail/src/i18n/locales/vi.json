@@ -503,7 +503,8 @@
     "appointmentProposed": "Cuộc hẹn được đề xuất đã được tạo trong lịch",
     "assigneeFilterMe": "các email của tôi được phân công",
     "sharedMailboxShort": "Đã chia sẻ",
-    "spamShort": "Thư rác"
+    "spamShort": "Thư rác",
+    "askInboria": "Hỏi Inboria"
   },
   "sent": {
     "title": "Email đã gửi",

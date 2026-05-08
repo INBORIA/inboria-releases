@@ -503,7 +503,8 @@
     "appointmentProposed": "Pasiūlytas susitikimas sukurtas kalendoriuje",
     "assigneeFilterMe": "mano priskirti el. paštai",
     "sharedMailboxShort": "Bendri",
-    "spamShort": "Šlamštas"
+    "spamShort": "Šlamštas",
+    "askInboria": "Klauskite Inborios"
   },
   "sent": {
     "title": "Išsiųsti el. paštai",

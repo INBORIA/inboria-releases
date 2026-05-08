@@ -503,7 +503,8 @@
     "appointmentProposed": "Întâlnire propusă creată în agendă",
     "assigneeFilterMe": "email-urile mele atribuite",
     "sharedMailboxShort": "Partajate",
-    "spamShort": "Spam"
+    "spamShort": "Spam",
+    "askInboria": "Întrebați Inboria"
   },
   "sent": {
     "title": "Email-uri trimise",

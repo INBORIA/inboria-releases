@@ -503,7 +503,8 @@
     "appointmentProposed": "פגישה מוצעת נוצרה בלוח השנה",
     "assigneeFilterMe": "הדוא״לים המוקצים שלי",
     "sharedMailboxShort": "משותפות",
-    "spamShort": "דואר זבל"
+    "spamShort": "דואר זבל",
+    "askInboria": "שאלו את Inboria"
   },
   "sent": {
     "title": "דוא״לים שנשלחו",

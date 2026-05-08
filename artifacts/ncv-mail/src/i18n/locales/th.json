@@ -503,7 +503,8 @@
     "appointmentProposed": "การนัดหมายที่เสนอถูกสร้างในปฏิทิน",
     "assigneeFilterMe": "อีเมลที่มอบหมายให้ฉัน",
     "sharedMailboxShort": "ที่แชร์",
-    "spamShort": "สแปม"
+    "spamShort": "สแปม",
+    "askInboria": "ถาม Inboria"
   },
   "sent": {
     "title": "อีเมลที่ส่ง",

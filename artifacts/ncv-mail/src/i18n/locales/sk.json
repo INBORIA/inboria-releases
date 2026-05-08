@@ -503,7 +503,8 @@
     "appointmentProposed": "Navrhnutý termín vytvorený v kalendári",
     "assigneeFilterMe": "moje priradené e-maily",
     "sharedMailboxShort": "Zdieľané",
-    "spamShort": "Spam"
+    "spamShort": "Spam",
+    "askInboria": "Opýtajte sa Inboria"
   },
   "sent": {
     "title": "Odoslané e-maily",

@@ -503,7 +503,8 @@
     "appointmentProposed": "Predloženi sastanak kreiran u kalendaru",
     "assigneeFilterMe": "moje e-pošte dodijeljene",
     "sharedMailboxShort": "Dijeljeni",
-    "spamShort": "Neželjena pošta"
+    "spamShort": "Neželjena pošta",
+    "askInboria": "Pitajte Inboria"
   },
   "sent": {
     "title": "Poslane e-pošte",

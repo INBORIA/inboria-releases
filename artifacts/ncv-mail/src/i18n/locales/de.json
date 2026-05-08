@@ -503,7 +503,8 @@
     "appointmentProposed": "Vorgeschlagener Termin im Kalender erstellt",
     "assigneeFilterMe": "meine zugewiesenen E-Mails",
     "sharedMailboxShort": "Geteilt",
-    "spamShort": "Spam"
+    "spamShort": "Spam",
+    "askInboria": "Inboria fragen"
   },
   "sent": {
     "title": "Gesendete E-Mails",

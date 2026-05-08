@@ -503,7 +503,8 @@
     "appointmentProposed": "Ieteiktais tikšanās laiks izveidots kalendārā",
     "assigneeFilterMe": "mani piešķirtie e-pasti",
     "sharedMailboxShort": "Kopīgi",
-    "spamShort": "Mēstules"
+    "spamShort": "Mēstules",
+    "askInboria": "Jautāt Inboria"
   },
   "sent": {
     "title": "Nosūtītie e-pasti",

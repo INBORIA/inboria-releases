@@ -503,7 +503,8 @@
     "appointmentProposed": "Navržená schůzka vytvořena v kalendáři",
     "assigneeFilterMe": "moje přiřazené emaily",
     "sharedMailboxShort": "Sdílené",
-    "spamShort": "Spam"
+    "spamShort": "Spam",
+    "askInboria": "Zeptejte se Inboria"
   },
   "sent": {
     "title": "Odeslané emaily",

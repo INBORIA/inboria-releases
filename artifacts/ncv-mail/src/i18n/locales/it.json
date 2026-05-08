@@ -503,7 +503,8 @@
     "appointmentProposed": "Appuntamento proposto creato nel calendario",
     "assigneeFilterMe": "le mie email assegnate",
     "sharedMailboxShort": "Condivise",
-    "spamShort": "Spam"
+    "spamShort": "Spam",
+    "askInboria": "Chiedi a Inboria"
   },
   "sent": {
     "title": "Email inviate",

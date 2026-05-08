@@ -503,7 +503,8 @@
     "appointmentProposed": "ایجنڈے میں تجویز کردہ ملاقات تخلیق کر لی گئی",
     "assigneeFilterMe": "میرے تفویض کردہ ای میلز",
     "sharedMailboxShort": "مشترکہ",
-    "spamShort": "اسپام"
+    "spamShort": "اسپام",
+    "askInboria": "Inboria سے پوچھیں"
   },
   "sent": {
     "title": "بھیجے گئے ای میلز",

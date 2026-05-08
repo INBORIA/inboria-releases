@@ -503,7 +503,8 @@
     "appointmentProposed": "Създадено предложено събитие в календара",
     "assigneeFilterMe": "моите имейли, назначени на мен",
     "sharedMailboxShort": "Споделени",
-    "spamShort": "Спам"
+    "spamShort": "Спам",
+    "askInboria": "Попитайте Inboria"
   },
   "sent": {
     "title": "Изпратени имейли",

@@ -503,7 +503,8 @@
     "appointmentProposed": "Ehdotettu tapaaminen luotu kalenteriin",
     "assigneeFilterMe": "minun osoitteeni",
     "sharedMailboxShort": "Jaetut",
-    "spamShort": "Roskaposti"
+    "spamShort": "Roskaposti",
+    "askInboria": "Kysy Inborialta"
   },
   "sent": {
     "title": "Lähetetyt sähköpostit",
