@@ -128,25 +128,35 @@ export default function Indesirables() {
     queryClient.invalidateQueries({ queryKey: getGetInboxHealthQueryKey() });
   };
 
+  const describeEmail = (id: number): string => {
+    const e = emails.find((x) => x.id === id) as any;
+    if (!e) return "";
+    const subj = (e.subject || "").trim() || "(sans objet)";
+    const sender = (e.senderEmail || e.sender || "").trim();
+    return sender ? `${subj} — ${sender}` : subj;
+  };
+
   const handleRestore = (id: number) => {
+    const desc = describeEmail(id);
     restore.mutate({ id }, {
       onSuccess: () => {
         if (selectedEmailId === id) setSelectedEmailId(null);
         invalidate();
-        toast({ title: t("junk.restored") });
+        toast({ title: t("junk.restored"), description: desc });
       },
-      onError: () => toast({ title: t("common.error"), variant: "destructive" }),
+      onError: () => toast({ title: t("common.error"), description: desc, variant: "destructive" }),
     });
   };
 
   const handleDelete = (id: number) => {
+    const desc = describeEmail(id);
     permDelete.mutate({ id }, {
       onSuccess: () => {
         if (selectedEmailId === id) setSelectedEmailId(null);
         invalidate();
-        toast({ title: t("junk.deleted") });
+        toast({ title: t("junk.deleted"), description: desc });
       },
-      onError: () => toast({ title: t("common.error"), variant: "destructive" }),
+      onError: () => toast({ title: t("common.error"), description: desc, variant: "destructive" }),
     });
   };
 
