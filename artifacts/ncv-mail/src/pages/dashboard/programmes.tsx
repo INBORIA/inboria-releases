@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-import { CalendarClock, Trash2, ChevronDown, ChevronUp, Loader2 } from "lucide-react";
+import { CalendarClock, Trash2, Eye, Loader2, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import {
@@ -11,17 +11,21 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { Dialog, DialogContent } from "@/components/ui/dialog";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 
 export default function Programmes() {
+  useEnableLightTheme();
   const { t, i18n } = useTranslation();
   const qc = useQueryClient();
   const { toast } = useToast();
   const { data, isLoading } = useListScheduledEmails();
   const cancelMut = useCancelScheduledEmail();
   const fmt = new Intl.DateTimeFormat(i18n.language, { dateStyle: "medium", timeStyle: "short" });
-  const [expanded, setExpanded] = useState<Record<number, boolean>>({});
+  const [openId, setOpenId] = useState<number | null>(null);
 
   const emails = (data as any)?.emails || [];
+  const openedEmail = emails.find((e: any) => e.id === openId) || null;
 
   const handleCancel = (id: number) => {
     cancelMut.mutate(
@@ -30,6 +34,7 @@ export default function Programmes() {
         onSuccess: () => {
           toast({ title: t("wave1.scheduledCancelSuccess") });
           qc.invalidateQueries({ queryKey: getListScheduledEmailsQueryKey() });
+          if (openId === id) setOpenId(null);
         },
         onError: (e: any) => {
           toast({ variant: "destructive", title: e?.message || "Cancel failed" });
@@ -38,17 +43,13 @@ export default function Programmes() {
     );
   };
 
-  const toggleExpand = (id: number) => {
-    setExpanded((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
-
   return (
     <DashboardLayout>
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-6">
         <BackToInboxButton />
         <section>
           <div className="flex items-center gap-2 mb-3">
-            <CalendarClock className="w-5 h-5 text-primary" />
+            <CalendarClock className="w-5 h-5 text-[#b8c5d6]" />
             <h1 className="text-[16px] font-semibold text-white">
               {t("wave1.scheduledPageTitle", "Envois programmés")}
             </h1>
@@ -59,7 +60,7 @@ export default function Programmes() {
 
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 border border-border border-dashed rounded-md bg-card/50">
-              <Loader2 className="w-5 h-5 text-primary animate-spin mb-2" />
+              <Loader2 className="w-5 h-5 text-[#b8c5d6] animate-spin mb-2" />
               <p className="text-[12px] text-[#b8c5d6]">{t("inbox.loadingTitle", "Chargement…")}</p>
             </div>
           ) : emails.length === 0 ? (
@@ -78,58 +79,49 @@ export default function Programmes() {
           ) : (
             <div className="space-y-2">
               {emails.map((e: any) => {
-                const isOpen = !!expanded[e.id];
+                const tooltip = `${e.recipient || ""}\n${e.subject || "(sans sujet)"}\n${
+                  e.scheduledSendAt ? fmt.format(new Date(e.scheduledSendAt)) : ""
+                }`;
                 return (
                   <div
                     key={e.id}
-                    className="border border-border rounded-md bg-card p-3"
+                    className="border border-border rounded-md bg-card p-3 hover:bg-white/[0.02] cursor-pointer"
                     data-testid={`scheduled-email-${e.id}`}
+                    title={tooltip}
+                    onClick={() => setOpenId(e.id)}
                   >
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0 flex-1">
-                        <div
-                          className={`text-[13px] text-white font-medium ${isOpen ? "" : "truncate"}`}
-                        >
+                        <div className="text-[13px] text-white font-medium truncate">
                           {e.subject || "(sans sujet)"}
                         </div>
-                        <div
-                          className={`text-[11px] text-[#b8c5d6] mt-0.5 ${isOpen ? "break-all" : "truncate"}`}
-                        >
+                        <div className="text-[11px] text-[#b8c5d6] mt-0.5 truncate">
                           → {e.recipient}
                         </div>
-                        <div className="text-[11px] text-amber-300 mt-1 flex items-center gap-1">
+                        <div className="text-[11px] text-[#b8c5d6] mt-1 flex items-center gap-1">
                           <CalendarClock className="w-3 h-3" />
                           {t("wave1.scheduledSentAt", {
                             date: fmt.format(new Date(e.scheduledSendAt)),
                           })}
                         </div>
                       </div>
-                      <div className="flex flex-col gap-1 shrink-0">
+                      <div className="flex flex-col gap-1 shrink-0" onClick={(ev) => ev.stopPropagation()}>
                         <Button
                           size="sm"
                           variant="ghost"
-                          onClick={() => toggleExpand(e.id)}
-                          className="h-7 gap-1 text-[11px] text-[#b8c5d6] hover:text-white hover:bg-white/5"
-                          data-testid={`scheduled-toggle-${e.id}`}
+                          onClick={() => setOpenId(e.id)}
+                          className="h-7 gap-1 text-[11px] text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
+                          data-testid={`scheduled-open-${e.id}`}
                         >
-                          {isOpen ? (
-                            <>
-                              <ChevronUp className="w-3 h-3" />
-                              {t("wave1.scheduledHide", "Masquer")}
-                            </>
-                          ) : (
-                            <>
-                              <ChevronDown className="w-3 h-3" />
-                              {t("wave1.scheduledShow", "Voir l'email")}
-                            </>
-                          )}
+                          <Eye className="w-3 h-3" />
+                          {t("wave1.scheduledShow", "Voir l'email")}
                         </Button>
                         <Button
                           size="sm"
                           variant="ghost"
                           onClick={() => handleCancel(e.id)}
                           disabled={cancelMut.isPending}
-                          className="h-7 gap-1 text-[11px] text-red-400 hover:text-red-300 hover:bg-red-500/10"
+                          className="h-7 gap-1 text-[11px] text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
                           data-testid={`scheduled-cancel-${e.id}`}
                         >
                           <Trash2 className="w-3 h-3" />
@@ -137,23 +129,6 @@ export default function Programmes() {
                         </Button>
                       </div>
                     </div>
-                    {isOpen && (
-                      <div className="mt-3 pt-3 border-t border-border">
-                        <div className="text-[10px] uppercase tracking-wide text-[#b8c5d6] mb-1">
-                          {t("wave1.scheduledBodyLabel", "Contenu de l'email")}
-                        </div>
-                        <div
-                          className="text-[12px] text-white/90 whitespace-pre-wrap break-words max-h-80 overflow-y-auto bg-black/20 rounded p-2 border border-border/40"
-                          data-testid={`scheduled-body-${e.id}`}
-                        >
-                          {e.body || (
-                            <span className="text-[#b8c5d6] italic">
-                              {t("wave1.scheduledBodyEmpty", "(corps vide)")}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    )}
                   </div>
                 );
               })}
@@ -161,6 +136,73 @@ export default function Programmes() {
           )}
         </section>
       </div>
+
+      <Dialog open={!!openedEmail} onOpenChange={(o) => !o && setOpenId(null)}>
+        <DialogContent
+          aria-describedby={undefined}
+          className="bg-card border-border w-[95vw] sm:max-w-2xl p-0 flex flex-col max-h-[85vh]"
+        >
+          {openedEmail && (
+            <>
+              <div className="flex items-start justify-between gap-3 px-5 py-4 border-b border-border">
+                <div className="min-w-0 flex-1">
+                  <div className="text-[15px] font-semibold text-white truncate">
+                    {openedEmail.subject || "(sans sujet)"}
+                  </div>
+                  <div className="text-[12px] text-[#b8c5d6] mt-1 truncate">
+                    → {openedEmail.recipient}
+                  </div>
+                  <div className="text-[11px] text-[#b8c5d6] mt-1 flex items-center gap-1">
+                    <CalendarClock className="w-3 h-3" />
+                    {t("wave1.scheduledSentAt", {
+                      date: fmt.format(new Date(openedEmail.scheduledSendAt)),
+                    })}
+                  </div>
+                </div>
+                <button
+                  onClick={() => setOpenId(null)}
+                  className="text-[#b8c5d6] hover:text-white shrink-0"
+                  aria-label="Fermer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+              <div className="px-5 py-4 overflow-y-auto">
+                <div
+                  className="text-[13px] text-white/90 whitespace-pre-wrap break-words"
+                  data-testid={`scheduled-body-${openedEmail.id}`}
+                >
+                  {openedEmail.body || (
+                    <span className="text-[#b8c5d6] italic">
+                      {t("wave1.scheduledBodyEmpty", "(corps vide)")}
+                    </span>
+                  )}
+                </div>
+              </div>
+              <div className="flex justify-end gap-2 px-5 py-3 border-t border-border">
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  onClick={() => handleCancel(openedEmail.id)}
+                  disabled={cancelMut.isPending}
+                  className="h-8 gap-1 text-[12px] text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
+                >
+                  <Trash2 className="w-3.5 h-3.5" />
+                  {t("wave1.scheduledCancel")}
+                </Button>
+                <Button
+                  size="sm"
+                  variant="outline"
+                  onClick={() => setOpenId(null)}
+                  className="h-8 text-[12px] bg-transparent border-[#1f2937] text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
+                >
+                  {t("common.close", "Fermer")}
+                </Button>
+              </div>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </DashboardLayout>
   );
 }
