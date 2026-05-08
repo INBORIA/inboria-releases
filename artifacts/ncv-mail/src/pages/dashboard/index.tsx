@@ -43,6 +43,7 @@ import {
   usePermanentDeleteEmail,
   useEmptyTrash,
   useBlockSender,
+  useSnoozeEmail,
   useListIntegrations,
   useGetDashboardBootstrap,
   getGetMyOrganisationQueryKey,
@@ -59,7 +60,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip, MailOpen, Mail, BellOff, Bell, Copy } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -3757,6 +3758,73 @@ export default function Dashboard() {
     );
   };
 
+  const snoozeMutCtx = useSnoozeEmail();
+  const handleQuickSnooze = (id: number, hours: number, label: string) => {
+    let date: Date;
+    if (hours === 24) {
+      // Demain matin 9h
+      date = new Date();
+      date.setDate(date.getDate() + 1);
+      date.setHours(9, 0, 0, 0);
+    } else if (hours === 168) {
+      // Lundi prochain 9h
+      date = new Date();
+      const day = date.getDay();
+      const diff = (8 - day) % 7 || 7;
+      date.setDate(date.getDate() + diff);
+      date.setHours(9, 0, 0, 0);
+    } else {
+      date = new Date(Date.now() + hours * 60 * 60 * 1000);
+    }
+    snoozeMutCtx.mutate(
+      { id, data: { snoozeUntil: date.toISOString() } },
+      {
+        onSuccess: () => { invalidateAll(); toast({ title: t("wave1.snoozeSuccess", "Reporté"), description: label }); },
+        onError: (e: any) => toast({ variant: "destructive", title: e?.message || "Échec" }),
+      },
+    );
+  };
+
+  const handleToggleRead = (id: number) => {
+    const email = (emails as any[]).find((e: any) => e.id === id);
+    const isUnread = email?.status === "non_lu" || email?.isRead === false || email?.unread === true;
+    const newStatus = isUnread ? "read" : "non_lu";
+    updateEmail.mutate(
+      { id, data: { status: newStatus } },
+      {
+        onSuccess: () => {
+          invalidateAll();
+          toast({ title: isUnread ? t("inbox.markedAsRead", "Marqué comme lu") : t("inbox.markedAsUnread", "Marqué comme non lu") });
+        },
+      },
+    );
+  };
+
+  const handleCopySender = async (id: number) => {
+    const email = (emails as any[]).find((e: any) => e.id === id);
+    const addr = (email?.senderEmail || extractEmailAddress(email?.sender || "") || "").trim();
+    if (!addr) {
+      toast({ variant: "destructive", title: t("common.error"), description: "Adresse introuvable" });
+      return;
+    }
+    try {
+      await navigator.clipboard.writeText(addr);
+      toast({ title: t("inbox.copied", "Copié"), description: addr });
+    } catch {
+      toast({ variant: "destructive", title: "Copie impossible" });
+    }
+  };
+
+  const handleQuickReply = (id: number) => {
+    setSelectedEmailId(id);
+    setContextMenu(null);
+    setSelectedIds(new Set());
+    // Une fois le mail ouvert, déclenche le raccourci Répondre.
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("inbox-reply-shortcut", { detail: { emailId: id } }));
+    }, 150);
+  };
+
   const handleArchive = (id: number) => {
     updateEmail.mutate(
       { id, data: { status: "archived" } },
@@ -5272,7 +5340,10 @@ export default function Dashboard() {
             </div>
           )}
           <div className="py-1">
-            {selectedIds.size <= 1 ? (
+            {selectedIds.size <= 1 ? (() => {
+              const ctxEmail = (emails as any[]).find((e: any) => e.id === contextMenu.emailId);
+              const ctxIsUnread = ctxEmail?.status === "non_lu" || ctxEmail?.isRead === false || ctxEmail?.unread === true;
+              return (
               <>
                 <button
                   onClick={() => { setSelectedEmailId(contextMenu.emailId); setContextMenu(null); setSelectedIds(new Set()); }}
@@ -5282,11 +5353,58 @@ export default function Dashboard() {
                   {t("inbox.openEmail")}
                 </button>
                 <button
+                  onClick={() => handleQuickReply(contextMenu.emailId)}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Reply className="w-3.5 h-3.5" />
+                  {t("inbox.reply", "Répondre")}
+                </button>
+                <button
+                  onClick={() => { handleToggleRead(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  {ctxIsUnread ? <MailOpen className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
+                  {ctxIsUnread ? t("inbox.markAsRead", "Marquer comme lu") : t("inbox.markAsUnread", "Marquer comme non lu")}
+                </button>
+                <div className="border-t border-[#1f2937] my-1" />
+                <div className="px-3 py-1 text-[10px] uppercase tracking-wider text-[#6b7480]">
+                  {t("inbox.snooze", "Reporter")}
+                </div>
+                <button
+                  onClick={() => { handleQuickSnooze(contextMenu.emailId, 1, t("wave1.snooze1h", "Dans 1 h")); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Clock className="w-3.5 h-3.5" />
+                  {t("wave1.snooze1h", "Dans 1 h")}
+                </button>
+                <button
+                  onClick={() => { handleQuickSnooze(contextMenu.emailId, 24, t("wave1.snoozeTomorrow", "Demain matin")); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Bell className="w-3.5 h-3.5" />
+                  {t("wave1.snoozeTomorrow", "Demain matin")}
+                </button>
+                <button
+                  onClick={() => { handleQuickSnooze(contextMenu.emailId, 168, t("wave1.snoozeNextWeek", "Semaine prochaine")); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <CalendarDays className="w-3.5 h-3.5" />
+                  {t("wave1.snoozeNextWeek", "Semaine prochaine")}
+                </button>
+                <div className="border-t border-[#1f2937] my-1" />
+                <button
                   onClick={() => { handleArchive(contextMenu.emailId); setContextMenu(null); }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
                 >
                   <Archive className="w-3.5 h-3.5" />
                   {t("inbox.archive")}
+                </button>
+                <button
+                  onClick={() => { handleCopySender(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Copy className="w-3.5 h-3.5" />
+                  {t("inbox.copySenderEmail", "Copier l'adresse de l'expéditeur")}
                 </button>
                 <button
                   onClick={() => { handleBlockSender(contextMenu.emailId); setContextMenu(null); }}
@@ -5304,7 +5422,8 @@ export default function Dashboard() {
                   {t("inbox.deleteEmail")}
                 </button>
               </>
-            ) : (
+              );
+            })() : (
               <>
                 <button
                   onClick={() => { handleBulkAction("archive"); setContextMenu(null); }}
