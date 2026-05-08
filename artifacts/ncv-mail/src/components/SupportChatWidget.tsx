@@ -64,14 +64,15 @@ export function SupportChatWidget() {
     if (wasDrag) {
       justDraggedRef.current = true;
       try { localStorage.setItem("inboria-assistant-offset", JSON.stringify(offset)); } catch {}
-      window.setTimeout(() => { justDraggedRef.current = false; }, 0);
+      window.setTimeout(() => { justDraggedRef.current = false; }, 50);
+    } else {
+      setIsOpen((v) => !v);
     }
     try { e.currentTarget.releasePointerCapture(e.pointerId); } catch {}
     dragState.current = null;
   };
-  const onButtonClick = () => {
-    if (justDraggedRef.current) return;
-    setIsOpen((v) => !v);
+  const onButtonClick = (e: React.MouseEvent) => {
+    e.preventDefault();
   };
 
   const scrollToBottom = useCallback(() => {
