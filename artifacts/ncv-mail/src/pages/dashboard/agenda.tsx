@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import {
   useListAppointments,
   useCreateAppointment,
@@ -43,6 +44,7 @@ type ViewMode = "month" | "week" | "day";
 const dateLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el };
 
 export default function Agenda() {
+  useEnableLightTheme();
   const { t, i18n } = useTranslation();
   const { toast } = useToast();
   const queryClient = useQueryClient();
