@@ -532,9 +532,9 @@ export default function Taches() {
                         )}
                       </div>
 
-                      {/* Avatar — aligné Réception (bleu primary) */}
-                      <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-                        <span className="text-primary text-[11px] font-semibold">
+                      {/* Avatar — aligné Envoyés (gris) */}
+                      <div className="w-7 h-7 rounded-full bg-white/[0.06] flex items-center justify-center shrink-0">
+                        <span className="text-[#b8c5d6] text-[11px] font-semibold">
                           {senderInitial}
                         </span>
                       </div>
@@ -822,7 +822,7 @@ export default function Taches() {
                   else if (ctxTask) handleDeleteTask(ctxTask.id);
                   setContextMenu(null);
                 }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors"
               >
                 <Trash2 className="w-3.5 h-3.5" />
                 {t("common.delete")}
