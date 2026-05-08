@@ -324,6 +324,25 @@ html[data-ncv-theme="light"] [data-inboria-activity-panel] .hover\:text-white:ho
 html[data-ncv-theme="light"] [data-inboria-activity-panel] .bg-zinc-700\/40 { background-color: #e5e7eb !important; }
 html[data-ncv-theme="light"] [data-inboria-activity-panel] .text-zinc-400 { color: #6b7280 !important; }
 html[data-ncv-theme="light"] [data-inboria-activity-panel] .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.15) !important; }
+
+/* Étape 6quater — Panneau Support Inboria (« ? » du header → Assistant
+   Inboria 24h/24). Utilise bg-[#141c2b] / bg-[#1a2435] / border-[#1f2937]
+   non couverts par l'overlay générique. */
+html[data-ncv-theme="light"] [data-inboria-support-panel],
+html[data-ncv-theme="light"] [data-inboria-support-panel].bg-\[\#141c2b\] {
+  background-color: #ffffff !important;
+  border-color: #e5e7ec !important;
+}
+html[data-ncv-theme="light"] [data-inboria-support-panel] .bg-\[\#141c2b\] { background-color: #ffffff !important; }
+html[data-ncv-theme="light"] [data-inboria-support-panel] .bg-\[\#1a2435\] { background-color: #f5f5f1 !important; }
+html[data-ncv-theme="light"] [data-inboria-support-panel] .border-\[\#1f2937\] { border-color: #e5e7ec !important; }
+html[data-ncv-theme="light"] [data-inboria-support-panel] .text-white { color: #111827 !important; }
+html[data-ncv-theme="light"] [data-inboria-support-panel] .text-\[\#b8c5d6\] { color: #4b5563 !important; }
+html[data-ncv-theme="light"] [data-inboria-support-panel] .text-\[\#c9d1d9\] { color: #1f2937 !important; }
+html[data-ncv-theme="light"] [data-inboria-support-panel] .placeholder\:text-\[\#b8c5d6\]::placeholder { color: #6b7280 !important; }
+html[data-ncv-theme="light"] [data-inboria-support-panel] .bg-white\/\[0\.06\] { background-color: #f0f0ec !important; }
+html[data-ncv-theme="light"] [data-inboria-support-panel] .hover\:bg-white\/\[0\.06\]:hover { background-color: rgba(0, 0, 0, 0.06) !important; }
+html[data-ncv-theme="light"] [data-inboria-support-panel] .bg-\[\#1e3a5f\] { background-color: rgba(79, 70, 229, 0.10) !important; }
 html[data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-950,
 html[data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-950\/60 { background-color: #f5f5f1 !important; }
 html[data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-900,

@@ -116,6 +116,7 @@ export function SupportChatWidget() {
             className="fixed top-16 right-4 z-[120] w-[360px] max-w-[calc(100vw-2rem)] h-[480px] max-h-[calc(100vh-5rem)] bg-[#141c2b] border border-[#1f2937] rounded-xl shadow-2xl flex flex-col overflow-hidden"
             role="dialog"
             aria-modal="false"
+            data-inboria-support-panel
           >
             <div className="flex items-center justify-between px-4 py-3 bg-[#1a2435] border-b border-[#1f2937]">
               <div className="flex items-center gap-2.5">
