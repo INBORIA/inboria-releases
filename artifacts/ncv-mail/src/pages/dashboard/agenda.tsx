@@ -468,8 +468,8 @@ export default function Agenda() {
         )}
 
         {suggestions.length > 0 && (
-          <div className="bg-amber-500/10 border border-amber-500/20 rounded-lg p-3 mb-4">
-            <h3 className="text-[12px] font-semibold text-amber-400 mb-2 flex items-center gap-1.5">
+          <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 mb-4">
+            <h3 className="text-[12px] font-semibold text-primary mb-2 flex items-center gap-1.5">
               <Sparkles className="w-3.5 h-3.5" />
               {t("agenda.suggestionsDetected", { count: suggestions.length })}
             </h3>
@@ -534,7 +534,7 @@ export default function Agenda() {
                       <div
                         key={apt.id}
                         onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                        className={`text-[10px] px-1 py-0.5 rounded truncate mb-0.5 cursor-pointer ${apt.confirmed === false ? "bg-amber-500/20 text-amber-400" : ""}`}
+                        className={`text-[10px] px-1 py-0.5 rounded truncate mb-0.5 cursor-pointer ${apt.confirmed === false ? "bg-primary/20 text-primary" : ""}`}
                         style={apt.confirmed !== false ? { backgroundColor: projectColor ? `${projectColor}20` : undefined, color: projectColor || undefined } : undefined}
                       >
                         {projectColor && <span className="inline-block w-1.5 h-1.5 rounded-full mr-0.5" style={{ backgroundColor: projectColor }} />}
@@ -588,7 +588,7 @@ export default function Agenda() {
                           <div
                             key={apt.id}
                             onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                            className={`text-[10px] px-1 py-0.5 rounded truncate cursor-pointer ${apt.confirmed === false ? "bg-amber-500/20 text-amber-400" : "bg-primary/20 text-primary hover:bg-primary/30"}`}
+                            className={`text-[10px] px-1 py-0.5 rounded truncate cursor-pointer ${apt.confirmed === false ? "bg-primary/20 text-primary" : "bg-primary/20 text-primary hover:bg-primary/30"}`}
                             style={pc && apt.confirmed !== false ? { backgroundColor: `${pc}20`, color: pc } : undefined}
                           >
                             {format(parseISO(apt.startAt), "HH:mm")} {apt.title}
@@ -634,7 +634,7 @@ export default function Agenda() {
                         <div
                           key={apt.id}
                           onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                          className={`rounded px-2 py-1.5 cursor-pointer mb-1 border ${apt.confirmed === false ? "bg-amber-500/10 border-amber-500/30" : "bg-primary/15 border-primary/30 hover:bg-primary/25"}`}
+                          className={`rounded px-2 py-1.5 cursor-pointer mb-1 border ${apt.confirmed === false ? "bg-primary/10 border-primary/30" : "bg-primary/15 border-primary/30 hover:bg-primary/25"}`}
                           style={pc && apt.confirmed !== false ? { backgroundColor: `${pc}15`, borderColor: `${pc}30` } : undefined}
                         >
                           <div className="text-[12px] font-medium text-white">{apt.title}</div>
@@ -713,8 +713,8 @@ export default function Agenda() {
                 )}
                 {selectedAppointment.confirmed === false && (
                   <div className="flex items-center gap-1.5 mt-1">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                    <span className="text-[11px] text-amber-400 font-medium">{t("agenda.aiSuggestion")}</span>
+                    <Sparkles className="w-3.5 h-3.5 text-primary" />
+                    <span className="text-[11px] text-primary font-medium">{t("agenda.aiSuggestion")}</span>
                   </div>
                 )}
               </div>
