@@ -45,7 +45,6 @@ import {
   CheckSquare,
   Square,
   Check,
-  Eye,
   Forward,
   Printer,
   Copy,
@@ -266,11 +265,18 @@ export default function Envoyes() {
               {sentEmails.map((email) => {
                 const isReply = !!email.replyToEmailId;
                 const isSelected = selectedIds.has(email.id);
+                const openedCount = (email as any).openedCount as number | undefined;
+                const openedAtStr = (email as any).openedAt as string | undefined;
+                const isOpened = typeof openedCount === "number" && openedCount > 0;
+                const openedTitle = isOpened && openedAtStr
+                  ? (t("wave1.openedAtLabel", { date: format(new Date(openedAtStr), "PPp", { locale: dateFnsLocale }) }) as string)
+                  : undefined;
                 return (
                   <div
                     key={email.id}
                     data-email-row
-                    className={`group flex items-stretch rounded-lg border transition-colors cursor-pointer overflow-hidden select-none ${isSelected ? "border-primary/50 bg-primary/[0.08]" : "border-border bg-card hover:bg-[#1a2235]"}`}
+                    title={openedTitle}
+                    className={`group flex items-stretch rounded-lg border transition-colors cursor-pointer overflow-hidden select-none ${isSelected ? "border-primary/50 bg-primary/[0.08]" : "border-border bg-card hover:bg-[#1a2235]"} ${isOpened && !isSelected ? "opacity-60" : ""}`}
                     onClick={() => {
                       if (didDragRef.current) return;
                       if (selectionMode) {
@@ -329,21 +335,6 @@ export default function Envoyes() {
                         {(email as any).attachmentCount > 0 && (
                           <AttachmentBadge count={(email as any).attachmentCount} />
                         )}
-                        {(() => {
-                          const oc = (email as any).openedCount as number | undefined;
-                          const oa = (email as any).openedAt as string | undefined;
-                          if (typeof oc !== "number" || oc <= 0) return null;
-                          return (
-                            <span
-                              className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded-md bg-white/[0.06] border border-[#1f2937] text-[#b8c5d6] text-[10px]"
-                              data-testid={`badge-opened-row-${email.id}`}
-                              title={oa ? (t("wave1.openedAtLabel", { date: format(new Date(oa), "PPp", { locale: dateFnsLocale }) }) as string) : undefined}
-                            >
-                              <Eye className="w-2.5 h-2.5" />
-                              {t("wave1.openedBadgeCount", { count: oc })}
-                            </span>
-                          );
-                        })()}
                         <span className="text-[10px] text-[#b8c5d6]">
                           {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
                         </span>
