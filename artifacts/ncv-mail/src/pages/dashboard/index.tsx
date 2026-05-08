@@ -143,8 +143,8 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
       </div>
 
       {/* Avatar — bleu */}
-      <div className="w-7 h-7 rounded-full bg-blue-600 border border-blue-500 flex items-center justify-center shrink-0">
-        <span className="text-white text-[11px] font-semibold">
+      <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+        <span className="text-primary text-[11px] font-semibold">
           {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
         </span>
       </div>
@@ -5290,8 +5290,8 @@ export default function Dashboard() {
                               <span className={`w-1.5 h-1.5 rounded-full ${isUnread ? "bg-primary" : "bg-transparent"}`} />
                             </div>
 
-                            <div className="w-7 h-7 rounded-full bg-blue-600 border border-blue-500 flex items-center justify-center shrink-0">
-                              <span className="text-white text-[11px] font-semibold">
+                            <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                              <span className="text-primary text-[11px] font-semibold">
                                 {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
                               </span>
                             </div>
