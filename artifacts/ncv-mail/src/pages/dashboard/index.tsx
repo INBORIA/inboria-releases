@@ -3176,9 +3176,19 @@ export default function Dashboard() {
         defaultValue_one: "1 boîte déconnectée",
         defaultValue_other: "{{count}} boîtes déconnectées",
       }),
-      description: t("inbox.disconnectedToastDescription", {
-        defaultValue: "Cliquez pour reconnecter dans Paramètres.",
-      }),
+      description: (
+        <div className="space-y-1">
+          <ul className="text-[11px] space-y-0.5">
+            {downConns.slice(0, 5).map((c) => (
+              <li key={c.id}>• {c.email_address}</li>
+            ))}
+            {downConns.length > 5 && <li>+ {downConns.length - 5}…</li>}
+          </ul>
+          <p className="text-[11px] opacity-90">
+            {t("inbox.disconnectedToastDescription", { defaultValue: "Cliquez pour reconnecter dans Paramètres." })}
+          </p>
+        </div>
+      ) as any,
       action: (
         <Link
           href="/dashboard/parametres"
