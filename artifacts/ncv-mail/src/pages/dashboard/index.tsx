@@ -2,7 +2,6 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useMarkInboxPage } from "@/lib/inbox-theme";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { extractEmailAddress } from "@/lib/utils";
-import { avatarColor, avatarInitial } from "@/lib/avatar-color";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
 import { TaskAssigneePicker } from "@/components/task-assignee-picker";
