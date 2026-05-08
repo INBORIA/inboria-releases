@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/lib/supabase";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { useLocation, useRoute } from "wouter";
 import { useTranslation } from "react-i18next";
 import { useQueryClient } from "@tanstack/react-query";
@@ -94,6 +95,7 @@ type ManualForm = {
 const EMPTY_FORM: ManualForm = { email: "", displayName: "", phone: "", company: "", notes: "" };
 
 export default function Contacts() {
+  useEnableLightTheme();
   const { t } = useTranslation();
   const { toast } = useToast();
   const qc = useQueryClient();
