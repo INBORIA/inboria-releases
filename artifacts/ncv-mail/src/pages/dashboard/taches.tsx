@@ -532,9 +532,9 @@ export default function Taches() {
                         )}
                       </div>
 
-                      {/* Avatar mono */}
-                      <div className="w-7 h-7 rounded-full bg-white/[0.06] border border-[#1f2937] flex items-center justify-center shrink-0">
-                        <span className="text-[#b8c5d6] text-[11px] font-semibold">
+                      {/* Avatar — aligné Réception (bleu primary) */}
+                      <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                        <span className="text-primary text-[11px] font-semibold">
                           {senderInitial}
                         </span>
                       </div>
