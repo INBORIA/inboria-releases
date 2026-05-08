@@ -176,7 +176,7 @@ export default function Programmes() {
                 {openedEmail.body ? (
                   looksLikeHtml(openedEmail.body) ? (
                     <div
-                      className="text-[13px] text-white/90 break-words ncv-email-html"
+                      className="text-[13px] text-foreground break-words ncv-email-html"
                       data-testid={`scheduled-body-${openedEmail.id}`}
                       dangerouslySetInnerHTML={{
                         __html: DOMPurify.sanitize(openedEmail.body, {
@@ -188,7 +188,7 @@ export default function Programmes() {
                     />
                   ) : (
                     <div
-                      className="text-[13px] text-white/90 whitespace-pre-wrap break-words"
+                      className="text-[13px] text-foreground whitespace-pre-wrap break-words"
                       data-testid={`scheduled-body-${openedEmail.id}`}
                     >
                       {openedEmail.body}

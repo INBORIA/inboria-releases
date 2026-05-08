@@ -245,6 +245,22 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"]
   .text-white:not(.bg-primary):not([class*="bg-primary/"]):not([class*="bg-indigo"]):not([class*="bg-violet"]):not([class*="bg-purple"]):not([class*="bg-fuchsia"]):not([class*="bg-pink"]):not([class*="bg-rose"]):not([class*="bg-red"]):not([class*="bg-orange"]):not([class*="bg-amber"]):not([class*="bg-yellow"]):not([class*="bg-lime"]):not([class*="bg-green"]):not([class*="bg-emerald"]):not([class*="bg-teal"]):not([class*="bg-cyan"]):not([class*="bg-sky"]):not([class*="bg-blue"]):not([class*="bg-destructive"]):not([class*="bg-\[\#4F46E5\]"]) {
   color: #1a1f2e !important;
 }
+/* Variantes d'opacité de text-white (text-white/90, /80, /70, /60) :
+   non couvertes par la chaîne :not() ci-dessus → invisible sur fond clair.
+   Mêmes garde-fous (pas sur boutons colorés). */
+html[data-ncv-page="inbox"][data-ncv-theme="light"]
+  .text-white\/90:not(.bg-primary):not([class*="bg-primary/"]):not([class*="bg-indigo"]):not([class*="bg-violet"]):not([class*="bg-purple"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-destructive"]),
+html[data-ncv-page="inbox"][data-ncv-theme="light"]
+  .text-white\/80:not(.bg-primary):not([class*="bg-primary/"]):not([class*="bg-indigo"]):not([class*="bg-violet"]):not([class*="bg-purple"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-destructive"]),
+html[data-ncv-page="inbox"][data-ncv-theme="light"]
+  .text-white\/70:not(.bg-primary):not([class*="bg-primary/"]):not([class*="bg-indigo"]):not([class*="bg-violet"]):not([class*="bg-purple"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-destructive"]),
+html[data-ncv-page="inbox"][data-ncv-theme="light"]
+  .text-white\/60:not(.bg-primary):not([class*="bg-primary/"]):not([class*="bg-indigo"]):not([class*="bg-violet"]):not([class*="bg-purple"]):not([class*="bg-red"]):not([class*="bg-amber"]):not([class*="bg-blue"]):not([class*="bg-destructive"]) {
+  color: rgba(26, 31, 46, 0.85) !important;
+}
+/* Hover discret sur fond clair pour les items qui utilisent bg-white/[0.02|0.06] */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .hover\:bg-white\/\[0\.02\]:hover { background-color: rgba(0, 0, 0, 0.03) !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .hover\:bg-white\/\[0\.06\]:hover { background-color: rgba(0, 0, 0, 0.05) !important; }
 /* Étape 6 — assombri pour meilleur contraste en mode clair (retours utilisateur). */
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#8b95a7\] { color: #4b5563 !important; }
 html[data-ncv-page="inbox"][data-ncv-theme="light"] .text-\[\#b8c5d6\] { color: #1f2937 !important; }
