@@ -533,8 +533,8 @@ export default function Taches() {
                       </div>
 
                       {/* Avatar — bleu */}
-                      <div className="w-7 h-7 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center shrink-0">
-                        <span className="text-blue-300 text-[11px] font-semibold">
+                      <div className="w-7 h-7 rounded-full bg-blue-600 border border-blue-500 flex items-center justify-center shrink-0">
+                        <span className="text-white text-[11px] font-semibold">
                           {senderInitial}
                         </span>
                       </div>
@@ -664,8 +664,8 @@ export default function Taches() {
                 {emailDetailTask.emailSubject ? (
                   <>
                     <div className="px-4 py-3 border-b border-[#1f2937] flex items-start gap-3">
-                      <div className="w-9 h-9 rounded-full bg-blue-500/20 border border-blue-400/40 flex items-center justify-center shrink-0">
-                        <span className="text-blue-300 text-[12px] font-semibold">{initial}</span>
+                      <div className="w-9 h-9 rounded-full bg-blue-600 border border-blue-500 flex items-center justify-center shrink-0">
+                        <span className="text-white text-[12px] font-semibold">{initial}</span>
                       </div>
                       <div className="min-w-0 flex-1">
                         <div className="text-[13px] font-medium text-white truncate">
