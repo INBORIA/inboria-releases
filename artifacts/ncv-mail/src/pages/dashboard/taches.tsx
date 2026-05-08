@@ -424,7 +424,7 @@ export default function Taches() {
             >
               {f.key === "ai" && <Sparkles className="w-3 h-3" />}
               {f.label}
-              {!isLoading && <span className="text-[10px] opacity-60">{f.count}</span>}
+              {!isLoading && <span className="text-[10px] opacity-60 ncv-tab-count">{f.count}</span>}
             </button>
           ))}
         </div>

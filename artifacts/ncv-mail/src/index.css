@@ -295,6 +295,14 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] img[alt="Inboria"] {
   filter: invert(1) hue-rotate(180deg) saturate(1.8) contrast(1.15);
 }
 
+/* Tâches : compteurs des onglets/filtres ("Toutes 10", "À faire 10", etc.).
+   En sombre, opacity-60 sur fond sombre est lisible. En clair, le gris devient
+   trop pâle → on force une couleur sombre opaque. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] .ncv-tab-count {
+  opacity: 1 !important;
+  color: #111827 !important;
+}
+
 /* Étape 6 — Bouton « Demander à Inboria » du header : les classes cyan/zinc
    ne sont pas couvertes par l'overlay générique. On les force en mode clair. */
 html[data-ncv-theme="light"] [data-testid="inboria-chat-button"] { color: #1a1f2e !important; }
