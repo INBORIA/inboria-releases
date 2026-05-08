@@ -314,6 +314,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
               {ncvTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
             </button>
             <LanguageSwitcher />
+            <SupportChatWidget />
             <UserMenu />
           </div>
           <div className="flex-1 overflow-y-auto px-2 py-2.5">
@@ -357,6 +358,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
                 {ncvTheme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
               </button>
               <LanguageSwitcher />
+              <SupportChatWidget />
               <UserMenu />
             </div>
           </div>
@@ -406,7 +408,6 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
           {children}
         </main>
       </div>
-      <SupportChatWidget />
     </div>
   );
 }
