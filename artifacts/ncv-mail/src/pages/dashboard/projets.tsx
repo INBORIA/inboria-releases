@@ -403,7 +403,7 @@ function ProjectDetailView({
 
         <div className="flex items-start gap-3 mb-5">
           <div
-            className={`w-10 h-10 rounded-lg ${getColorClass(project.color, PROJECT_COLORS)} flex items-center justify-center text-white font-bold text-[15px] shrink-0`}
+            className="w-10 h-10 rounded-lg bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-semibold text-[15px] shrink-0"
           >
             {project.name.charAt(0).toUpperCase()}
           </div>
@@ -1145,7 +1145,7 @@ export default function Projets() {
       >
         <div className="flex justify-between items-start mb-3">
           <div
-            className={`w-10 h-10 rounded-xl ${getColorClass(project.color, PROJECT_COLORS)} flex items-center justify-center text-white font-bold text-sm`}
+            className="w-10 h-10 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center text-primary font-semibold text-sm"
           >
             {project.name.charAt(0).toUpperCase()}
           </div>
