@@ -207,12 +207,17 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] {
 /* Smooth color transitions when toggling. Scoped tightly to background &
    color & border-color & fill so we don't animate transforms / layout. */
 html[data-ncv-page="inbox"] body,
-html[data-ncv-page="inbox"] body * {
+html[data-ncv-page="inbox"] body *,
+html[data-ncv-page="inbox"] body *::before,
+html[data-ncv-page="inbox"] body *::after {
   transition:
-    background-color 150ms ease,
-    color 150ms ease,
-    border-color 150ms ease,
-    fill 150ms ease;
+    background-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    border-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    outline-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    fill 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    stroke 220ms cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 /* Hardcoded hex remaps for the Réception page. The `:not(.fixed)` guard
