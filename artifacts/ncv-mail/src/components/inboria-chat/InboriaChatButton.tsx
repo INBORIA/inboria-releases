@@ -481,6 +481,7 @@ export function InboriaChatButton() {
             className="fixed inset-y-0 right-0 z-[100] h-full w-full sm:max-w-md border-l border-zinc-800 bg-zinc-950 p-0 shadow-2xl flex flex-col gap-0"
             role="dialog"
             aria-modal="false"
+            data-inboria-chat-panel
           >
         <div className="px-5 py-4 border-b border-zinc-800 flex items-center justify-between">
           <div className="flex items-center gap-2">

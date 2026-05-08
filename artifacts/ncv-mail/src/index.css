@@ -286,6 +286,41 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-testid="inboria-chat-b
 html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-testid="inboria-chat-button"] .border-cyan-400\/30 { border-color: rgba(8, 145, 178, 0.35) !important; }
 html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-testid="inboria-chat-button"] .text-cyan-300 { color: #0891b2 !important; }
 
+/* Étape 6bis — Panneau de chat « Inboria » (portail dans <body>) :
+   les classes Tailwind preset (zinc-*) ne sont pas couvertes par
+   l'overlay générique. On force le mode clair sur le panneau via
+   l'attribut data-inboria-chat-panel. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] {
+  background-color: #ffffff !important;
+  border-left-color: #e5e7ec !important;
+}
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-950,
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-950\/60 { background-color: #f5f5f1 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-900,
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-900\/50,
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-900\/80 { background-color: #fbfbfa !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-800 { background-color: #f0f0ec !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .hover\:bg-zinc-900:hover { background-color: #eef0f3 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-700 { background-color: #d1d5db !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .border-zinc-800,
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .border-zinc-800\/70,
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .border-zinc-700 { border-color: #e5e7ec !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .text-zinc-100,
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .text-zinc-200 { color: #111827 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .text-zinc-300 { color: #1f2937 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .text-zinc-400 { color: #4b5563 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .text-zinc-500,
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .text-zinc-600 { color: #6b7280 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .hover\:text-zinc-100:hover { color: #111827 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .hover\:bg-white\/\[0\.06\]:hover { background-color: rgba(0, 0, 0, 0.06) !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .bg-cyan-500\/15 { background-color: rgba(8, 145, 178, 0.12) !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .border-cyan-400\/30 { border-color: rgba(8, 145, 178, 0.35) !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .text-cyan-300 { color: #0891b2 !important; }
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .text-cyan-400 { color: #0891b2 !important; }
+/* Bulles de message : l'utilisateur garde le cyan, l'assistant passe en clair. */
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-800.text-zinc-100,
+html[data-ncv-page="inbox"][data-ncv-theme="light"] [data-inboria-chat-panel] .bg-zinc-800.text-zinc-300 { background-color: #f0f0ec !important; color: #111827 !important; }
+
 @layer base {
   * {
     @apply border-border;
