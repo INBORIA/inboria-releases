@@ -75,7 +75,7 @@ export function WaitlistForm({ defaultPlan, defaultSeats, source, compact }: Wai
           placeholder={t("waitlist.emailPlaceholder")}
           required
           aria-label={t("waitlist.emailPlaceholder")}
-          className="w-full px-3 py-2.5 text-[13px] bg-[#0d1117] border border-[#1f2937] rounded-lg text-white placeholder:text-[#6b7d96] focus:outline-none focus:border-[#2d7dd2]"
+          className="w-full px-3 py-2.5 text-[13px] bg-[#11151b] border border-[#1f2630] rounded-lg text-[#e6e9ef] placeholder:text-[#8b95a7] focus:outline-none focus:border-[#2d7dd2]"
           data-testid="input-waitlist-email"
         />
         {error && (
