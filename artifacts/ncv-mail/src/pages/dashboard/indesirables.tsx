@@ -142,7 +142,19 @@ export default function Indesirables() {
       onSuccess: () => {
         if (selectedEmailId === id) setSelectedEmailId(null);
         invalidate();
-        toast({ title: t("junk.restored"), description: desc });
+        toast({
+          title: t("junk.restored"),
+          description: desc,
+          duration: 8000,
+          action: (
+            <Link
+              href={`/dashboard?emailId=${id}`}
+              className="inline-flex items-center justify-center rounded-md border border-border bg-card px-3 py-1.5 text-[11px] font-medium text-foreground hover:bg-muted transition-colors whitespace-nowrap"
+            >
+              {t("junk.openRestored", "Ouvrir")}
+            </Link>
+          ) as any,
+        });
       },
       onError: () => toast({ title: t("common.error"), description: desc, variant: "destructive" }),
     });
