@@ -206,19 +206,14 @@ html[data-ncv-page="inbox"][data-ncv-theme="light"] {
 
 /* Smooth color transitions when toggling. Scoped tightly to background &
    color & border-color & fill so we don't animate transforms / layout. */
-html[data-ncv-page="inbox"] body,
-html[data-ncv-page="inbox"] body *,
-html[data-ncv-page="inbox"] body *::before,
-html[data-ncv-page="inbox"] body *::after {
-  transition:
-    background-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    color 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    border-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    outline-color 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    fill 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    stroke 220ms cubic-bezier(0.4, 0, 0.2, 1),
-    box-shadow 220ms cubic-bezier(0.4, 0, 0.2, 1) !important;
+/* View-Transitions API : crossfade global premium au toggle. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 280ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
+::view-transition-old(root) { z-index: 1; }
+::view-transition-new(root) { z-index: 2; }
 
 /* Hardcoded hex remaps for the Réception page. The `:not(.fixed)` guard
    excludes the floating Inboria help / context menu widgets — per task,

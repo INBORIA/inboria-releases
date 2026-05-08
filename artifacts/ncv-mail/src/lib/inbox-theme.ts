@@ -71,10 +71,21 @@ export function useNcvTheme(): { theme: NcvTheme; toggle: () => void; setTheme: 
   }, []);
 
   const setTheme = useCallback((t: NcvTheme) => {
-    setThemeState(t);
-    try {
-      window.dispatchEvent(new CustomEvent("ncv-theme-change", { detail: t }));
-    } catch {}
+    const apply = () => {
+      setThemeState(t);
+      applyToDom(t);
+      try {
+        window.dispatchEvent(new CustomEvent("ncv-theme-change", { detail: t }));
+      } catch {}
+    };
+    const doc = typeof document !== "undefined" ? (document as any) : null;
+    if (doc && typeof doc.startViewTransition === "function") {
+      doc.startViewTransition(() => {
+        apply();
+      });
+    } else {
+      apply();
+    }
   }, []);
 
   const toggle = useCallback(() => {
