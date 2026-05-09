@@ -154,10 +154,12 @@ export default function Taches() {
     const startIdx = ids.indexOf(dragStartIdRef.current!);
     const endIdx = ids.indexOf(currentId);
     if (startIdx === -1 || endIdx === -1) return;
-    const lo = Math.min(startIdx, endIdx);
-    const hi = Math.max(startIdx, endIdx);
     const keep = new Set(preSelectRef.current);
-    for (let i = lo; i <= hi; i++) keep.add(ids[i]);
+    if (startIdx !== endIdx) {
+      const lo = Math.min(startIdx, endIdx);
+      const hi = Math.max(startIdx, endIdx);
+      for (let i = lo; i <= hi; i++) keep.add(ids[i]);
+    }
     setSelectedTaskIds(keep);
   }, []);
 
@@ -521,11 +523,11 @@ export default function Taches() {
                       <div className="w-4 flex items-center justify-center shrink-0">
                         {taskSelectionMode || isTaskSelected ? (
                           <button
-                            className="w-4 h-4 rounded flex items-center justify-center transition-all cursor-pointer border border-[#2a3441] hover:border-white/60"
+                            className="w-4 h-4 rounded flex items-center justify-center transition-all cursor-pointer border border-[#2a3441] hover:border-primary"
                             onClick={(e) => { e.stopPropagation(); setSelectedTaskIds((prev) => { const next = new Set(prev); if (next.has(task.id)) next.delete(task.id); else next.add(task.id); return next; }); }}
                             onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); handleDragSelectStart(task.id); }}
                           >
-                            {isTaskSelected && <Check className="w-3 h-3 text-white" />}
+                            {isTaskSelected && <Check className="w-3 h-3 text-primary" />}
                           </button>
                         ) : (
                           <span className="w-3 h-3" />
