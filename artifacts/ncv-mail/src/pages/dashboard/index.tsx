@@ -3859,7 +3859,7 @@ export default function Dashboard() {
 
   const handleQuickSetCategory = (id: number, categoryId: string, categoryName: string) => {
     updateEmail.mutate(
-      { id, data: { categoryId } },
+      { id, data: { categoryId: categoryId ? Number(categoryId) : null } },
       {
         onSuccess: () => {
           invalidateAll();
@@ -5283,9 +5283,9 @@ export default function Dashboard() {
                             key={email.id}
                             data-email-row
                             data-row-id={email.id}
-                            title={`${email.sender || ""}${email.senderEmail ? ` <${email.senderEmail}>` : ""}\n${email.subject || ""}${email.createdAt ? `\n${format(new Date(email.createdAt), "PPp", { locale: dateFnsLocale })}` : ""}${email.summary ? `\n\n${email.summary}` : ""}`}
+                            title={`${email.sender || ""}${(email as any).senderEmail ? ` <${(email as any).senderEmail}>` : ""}\n${email.subject || ""}${email.createdAt ? `\n${format(new Date(email.createdAt), "PPp", { locale: dateFnsLocale })}` : ""}${email.summary ? `\n\n${email.summary}` : ""}`}
                             className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 border-l-transparent hover:bg-white/[0.03] transition-colors`}
-                            onClick={() => setSelectedEmailId(email.id)}
+                            onClick={() => setSelectedEmailId(Number(email.id))}
                           >
                             <div className="w-4 flex items-center justify-center shrink-0">
                               <span className={`w-1.5 h-1.5 rounded-full ${isUnread ? "bg-primary" : "bg-transparent"}`} />

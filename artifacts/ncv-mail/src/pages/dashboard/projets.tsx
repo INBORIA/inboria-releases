@@ -242,6 +242,14 @@ function ProjectDetailView({
   const deleteTaskMut = useDeleteTask();
   const updateEmailMut = useUpdateEmail();
   const deleteEmailMut = useDeleteEmail();
+  const [selectedEmailIds, setSelectedEmailIds] = useState<Set<number>>(new Set());
+  const toggleEmailSelected = (id: number) => {
+    setSelectedEmailIds((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id); else next.add(id);
+      return next;
+    });
+  };
   const [emailContextMenu, setEmailContextMenu] = useState<{ x: number; y: number; emailId: number; subject: string } | null>(null);
   const emailCtxRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -513,18 +521,29 @@ function ProjectDetailView({
             </h2>
             <div className="space-y-1">
               {project.emails.map((email: any) => {
+                const isSelected = selectedEmailIds.has(email.id);
                 return (
-                  <button
+                  <div
                     key={email.id}
-                    type="button"
-                    onClick={() => setSelectedEmailId(email.id)}
+                    onClick={() => {
+                      if (selectedEmailIds.size > 0) toggleEmailSelected(email.id);
+                      else setSelectedEmailId(email.id);
+                    }}
                     onContextMenu={(e) => {
                       e.preventDefault();
                       setEmailContextMenu({ x: e.clientX, y: e.clientY, emailId: email.id, subject: email.subject || "" });
                     }}
-                    className="flex items-stretch bg-card border border-border rounded-lg overflow-hidden w-full text-left hover:bg-card/80 hover:border-primary/40 transition-colors cursor-pointer"
+                    className={`group flex items-stretch bg-card border rounded-lg overflow-hidden w-full text-left transition-colors cursor-pointer ${isSelected ? "border-primary/60 bg-primary/5" : "border-border hover:bg-card/80 hover:border-primary/40"}`}
                   >
                     <div className="flex items-center gap-2.5 flex-1 min-w-0 px-3 py-2">
+                      <button
+                        type="button"
+                        onClick={(e) => { e.stopPropagation(); toggleEmailSelected(email.id); }}
+                        className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 cursor-pointer transition-colors ${isSelected ? "border-primary" : "border-[#2a3441] hover:border-primary opacity-0 group-hover:opacity-100"}`}
+                        aria-label={t("common.select", "Sélectionner")}
+                      >
+                        {isSelected && <Check className="w-3 h-3 text-primary" />}
+                      </button>
                       <div className="flex-1 min-w-0">
                         <p className="text-[12px] text-white truncate">{email.subject}</p>
                         <p className="text-[10px] text-[#b8c5d6]">{email.sender}</p>
@@ -533,7 +552,7 @@ function ProjectDetailView({
                         {new Date(email.createdAt).toLocaleDateString(i18n.language)}
                       </span>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>
