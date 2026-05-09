@@ -976,7 +976,7 @@ export default function Agenda() {
                     >
                       {hourAppts.map((apt) => {
                         const pc = apt.projects?.color;
-                        const aptStatus = (apt as any).status as string | undefined;
+                        const aptStatus = apt.status;
                         const isPending = aptStatus === "pending";
                         const isCounter = aptStatus === "counter_proposed";
                         const isDeclined = aptStatus === "declined";

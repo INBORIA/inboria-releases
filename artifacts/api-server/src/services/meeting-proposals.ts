@@ -5,6 +5,93 @@ import { randomUUID } from "crypto";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { consumeAiCredits } from "./credits";
+import {
+  getActiveCalendarAccountsForUser,
+  getValidAccessToken,
+  type CalendarAccountRow,
+} from "./calendar-tokens";
+
+const GOOGLE_CLIENT_ID = process.env["GOOGLE_CLIENT_ID"] || "";
+const GOOGLE_CLIENT_SECRET = process.env["GOOGLE_CLIENT_SECRET"] || "";
+
+/**
+ * Vérifie qu'un créneau (start, end) est libre sur tous les calendriers
+ * connectés (Google + Outlook) de l'utilisateur. Best-effort : si le freebusy
+ * échoue pour un compte, on l'ignore (on ne bloque pas la proposition à cause
+ * d'une panne API tierce). Retourne `null` si libre, sinon un message décrivant
+ * le conflit.
+ */
+async function checkSlotAvailability(
+  userId: string,
+  startAt: string,
+  endAt: string,
+): Promise<string | null> {
+  const start = new Date(startAt);
+  const end = new Date(endAt);
+  if (isNaN(start.getTime()) || isNaN(end.getTime()) || end <= start) return null;
+
+  const accounts = await getActiveCalendarAccountsForUser(userId);
+  if (accounts.length === 0) return null;
+
+  const startMs = start.getTime();
+  const endMs = end.getTime();
+
+  for (const account of accounts) {
+    let busy: Array<{ start: string; end: string }> = [];
+    try {
+      if (account.provider === "google") {
+        const token = await getValidAccessToken(account);
+        if (!token) continue;
+        const client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
+        client.setCredentials({ access_token: token });
+        const cal = google.calendar({ version: "v3", auth: client });
+        const { data } = await cal.freebusy.query({
+          requestBody: { timeMin: start.toISOString(), timeMax: end.toISOString(), items: [{ id: "primary" }] },
+        });
+        busy = ((data.calendars?.["primary"]?.busy || []) as Array<{ start: string; end: string }>)
+          .filter((b) => !!b.start && !!b.end);
+      } else if (account.provider === "outlook") {
+        const token = await getValidAccessToken(account);
+        if (!token) continue;
+        const resp = await fetch("https://graph.microsoft.com/v1.0/me/calendar/getSchedule", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            schedules: [account.email_address],
+            startTime: { dateTime: start.toISOString(), timeZone: "UTC" },
+            endTime: { dateTime: end.toISOString(), timeZone: "UTC" },
+            availabilityViewInterval: 30,
+          }),
+        });
+        if (!resp.ok) continue;
+        const data = (await resp.json()) as { value?: Array<{ scheduleItems?: Array<{ start?: { dateTime?: string }; end?: { dateTime?: string } }> }> };
+        const items = data.value?.[0]?.scheduleItems || [];
+        busy = items
+          .map((it) => {
+            const s = it.start?.dateTime;
+            const e = it.end?.dateTime;
+            if (!s || !e) return null;
+            const sIso = /Z$|[+-]\d{2}:?\d{2}$/.test(s) ? s : s + "Z";
+            const eIso = /Z$|[+-]\d{2}:?\d{2}$/.test(e) ? e : e + "Z";
+            return { start: sIso, end: eIso };
+          })
+          .filter((x): x is { start: string; end: string } => !!x);
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      logger.warn({ accountId: (account as CalendarAccountRow).id, err: msg }, "[meeting-proposals] freebusy lookup failed (best-effort skip)");
+      continue;
+    }
+    for (const b of busy) {
+      const bs = new Date(b.start).getTime();
+      const be = new Date(b.end).getTime();
+      if (!isNaN(bs) && !isNaN(be) && bs < endMs && be > startMs) {
+        return `slot_conflict:${account.email_address}`;
+      }
+    }
+  }
+  return null;
+}
 
 const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 
@@ -257,6 +344,45 @@ ${fromName}`,
 }
 
 /**
+ * Envoie un mail court de confirmation au contact quand l'utilisateur accepte
+ * une contre-proposition reçue. Ferme la boucle "1 clic" côté UI.
+ */
+export async function sendCounterAcceptedEmail(args: {
+  userId: string;
+  to: string;
+  subject: string;
+  startAt: string;
+  endAt: string;
+  lang: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  const conn = await getPrimaryConnection(args.userId);
+  if (!conn) return { ok: false, error: "no email connection" };
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("full_name")
+    .eq("id", args.userId)
+    .maybeSingle();
+  const fromName = (profile as { full_name?: string } | null)?.full_name || conn.email_address;
+  const lang = (args.lang || "fr").toLowerCase();
+  const dateLocale = lang === "en" ? "en-GB" : lang === "nl" ? "nl-NL" : "fr-FR";
+  const startDate = new Date(args.startAt);
+  const endDate = new Date(args.endAt);
+  const slot = `${startDate.toLocaleDateString(dateLocale, { weekday: "long", day: "numeric", month: "long", year: "numeric" })} ${startDate.toLocaleTimeString(dateLocale, { hour: "2-digit", minute: "2-digit" })} – ${endDate.toLocaleTimeString(dateLocale, { hour: "2-digit", minute: "2-digit" })}`;
+  const greeting = lang === "en" ? "Hello," : lang === "nl" ? "Hallo," : "Bonjour,";
+  const confirm =
+    lang === "en"
+      ? `Thanks for the new slot — it works for me. I confirm our meeting: ${slot}.`
+      : lang === "nl"
+        ? `Bedankt voor het nieuwe voorstel — het past me. Ik bevestig onze afspraak: ${slot}.`
+        : `Merci pour le nouveau créneau — il me convient. Je confirme notre rendez-vous : ${slot}.`;
+  const closing = lang === "en" ? "Best regards," : lang === "nl" ? "Met vriendelijke groet," : "Bien à vous,";
+  const subject = lang === "en" ? `Confirmed — ${args.subject}` : `Confirmé — ${args.subject}`;
+  const body = `${greeting}\n\n${confirm}\n\n${closing}\n${fromName}`;
+  const sendRes = await sendProposalEmail(conn, args.to, subject, body);
+  return sendRes.ok ? { ok: true } : { ok: false, error: sendRes.error };
+}
+
+/**
  * Coeur Phase 3 : crée un RDV `pending`, envoie le mail de proposition,
  * stocke le Message-ID pour la détection ultérieure de la réponse. Programme
  * la relance auto à +48h si l'utilisateur l'a activée.
@@ -264,6 +390,15 @@ ${fromName}`,
 export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> {
   const conn = await getPrimaryConnection(args.userId);
   if (!conn) return { ok: false, error: "no email connection" };
+
+  // Phase 1 freebusy guard : on refuse silencieusement la proposition si le
+  // créneau chevauche un événement déjà inscrit dans un calendrier connecté.
+  // Retour explicite côté API pour que le frontend puisse afficher un message.
+  const conflict = await checkSlotAvailability(args.userId, args.startAt, args.endAt);
+  if (conflict) {
+    logger.info({ userId: args.userId, conflict }, "[meeting-proposals] slot conflict, propose blocked");
+    return { ok: false, error: conflict };
+  }
 
   const { data: profile } = await supabaseAdmin
     .from("profiles")

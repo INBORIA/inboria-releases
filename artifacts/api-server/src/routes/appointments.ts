@@ -11,7 +11,7 @@ import {
   pullExternalEventsAndUpsert,
   type AppointmentPushPayload,
 } from "../services/calendar-sync";
-import { proposeMeeting } from "../services/meeting-proposals";
+import { proposeMeeting, sendCounterAcceptedEmail } from "../services/meeting-proposals";
 
 const isoDateTime = z
   .string()
@@ -570,6 +570,23 @@ router.post(
       if (error) {
         res.status(500).json({ error: error.message });
         return;
+      }
+      // Best-effort : envoyer la confirmation au contact pour clore la boucle
+      // en 1 clic. Échec silencieux (le RDV reste confirmé en base).
+      if (appt.proposal_recipient) {
+        try {
+          await sendCounterAcceptedEmail({
+            userId: req.userId!,
+            to: appt.proposal_recipient,
+            subject: appt.title || "Rendez-vous",
+            startAt: String(appt.counter_start_at),
+            endAt: String(appt.counter_end_at),
+            lang: appt.proposal_lang || "fr",
+          });
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          req.log?.warn?.({ err: msg, apptId: req.params.id }, "[appointments] accept-counter confirmation email failed (best-effort)");
+        }
       }
       res.json(mapAppointment(updated));
     } catch (err) {
