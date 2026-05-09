@@ -514,31 +514,39 @@ export async function saveEmailWithTriage(
     return null;
   }
 
-  // Cross-folder dedup (INBOX <-> Junk move) via RFC 822 Message-ID
-  if (providerMessageId && junkColumnsAvailable) {
-    const { data: existingByMsgId } = await supabaseAdmin
-      .from("emails")
-      .select("id, status, external_id")
-      .eq("user_id", userId)
-      .eq("provider_message_id", providerMessageId)
-      .limit(1)
-      .maybeSingle();
-    if (existingByMsgId) {
-      const update: Record<string, any> = {};
-      if ((existingByMsgId as any).external_id !== externalId) {
-        update.external_id = externalId;
+  // Dedup ULTIME via RFC 822 Message-ID — stable entre providers, comptes,
+  // reconnexions et changements de UIDVALIDITY (IMAP). Activé même sans
+  // colonne `provider_message_id` (la requête tolère l'absence de colonne).
+  if (providerMessageId) {
+    try {
+      const { data: existingByMsgId, error: msgIdErr } = await supabaseAdmin
+        .from("emails")
+        .select("id, status, external_id")
+        .eq("user_id", userId)
+        .eq("provider_message_id", providerMessageId)
+        .limit(1)
+        .maybeSingle();
+      if (!msgIdErr && existingByMsgId) {
+        const update: Record<string, any> = {};
+        if ((existingByMsgId as any).external_id !== externalId) {
+          update.external_id = externalId;
+        }
+        if (junkColumnsAvailable) {
+          if (forceSpam && (existingByMsgId as any).status !== "spam") {
+            update.status = "spam";
+            update.spam_source = "provider";
+          } else if (!forceSpam && (existingByMsgId as any).status === "spam") {
+            update.status = "non_lu";
+            update.spam_source = "user";
+          }
+        }
+        if (Object.keys(update).length > 0) {
+          await supabaseAdmin.from("emails").update(update).eq("id", existingByMsgId.id);
+        }
+        return null;
       }
-      if (forceSpam && (existingByMsgId as any).status !== "spam") {
-        update.status = "spam";
-        update.spam_source = "provider";
-      } else if (!forceSpam && (existingByMsgId as any).status === "spam") {
-        update.status = "non_lu";
-        update.spam_source = "user";
-      }
-      if (Object.keys(update).length > 0) {
-        await supabaseAdmin.from("emails").update(update).eq("id", existingByMsgId.id);
-      }
-      return null;
+    } catch {
+      // Colonne absente — on ignore et on poursuit avec le dedup par external_id.
     }
   }
 
@@ -662,9 +670,11 @@ export async function saveEmailWithTriage(
     } else if (triage.is_spam) {
       insertPayload.spam_source = "ai";
     }
-    if (providerMessageId) {
-      insertPayload.provider_message_id = providerMessageId;
-    }
+  }
+  // Toujours persister provider_message_id si dispo — c'est notre garde-fou
+  // anti-doublons le plus fiable (RFC Message-ID, stable cross-provider).
+  if (providerMessageId) {
+    insertPayload.provider_message_id = providerMessageId;
   }
   if (sharedMailboxId) {
     insertPayload.shared_mailbox_id = sharedMailboxId;
