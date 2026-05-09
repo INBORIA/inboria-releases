@@ -2525,6 +2525,36 @@
       "counter_proposed": "Contre-prop.",
       "confirmed": "Confirmé",
       "declined": "Refusé"
+    },
+    "multi": {
+      "title": "Multi-participants",
+      "addParticipants": "Ajouter des participants",
+      "participantsLabel": "Participants (séparés par virgule ou retour ligne)",
+      "findCommonSlot": "Chercher un créneau commun",
+      "internalParticipants": "Participants internes",
+      "externalParticipants": "Participants externes",
+      "candidateSlots": "Créneaux proposés",
+      "noCommonSlot": "Aucun créneau commun trouvé sur la fenêtre choisie.",
+      "send": "Envoyer les invitations",
+      "sent": "{{count}} invitations envoyées",
+      "participantStatus": {
+        "pending": "En attente",
+        "accepted": "Accepté",
+        "declined": "Refusé",
+        "tentative": "Provisoire"
+      },
+      "remindParticipant": "Relancer",
+      "remindSent": "Relance envoyée",
+      "required": "Requis",
+      "optional": "Facultatif",
+      "multiStatus": {
+        "pending": "En attente",
+        "partially_confirmed": "Partiellement confirmé",
+        "confirmed": "Confirmé",
+        "declined": "Refusé"
+      },
+      "lastReminder": "Dernière relance",
+      "neverReminded": "Aucune relance"
     }
   },
   "supportChat": {

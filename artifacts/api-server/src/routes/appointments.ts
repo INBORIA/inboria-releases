@@ -14,6 +14,12 @@ import {
   type VideoProvider,
 } from "../services/calendar-sync";
 import { proposeMeeting, sendCounterAcceptedEmail } from "../services/meeting-proposals";
+import {
+  proposeMultiMeeting,
+  findMultiCommonSlots,
+  remindParticipant,
+  updateParticipantStatus,
+} from "../services/multi-meeting";
 
 const isoDateTime = z
   .string()
@@ -761,6 +767,190 @@ router.post(
       res.json(mapAppointment(updated));
     } catch (err) {
       const msg = err instanceof Error ? err.message : "cancel_proposal_crashed";
+      res.status(500).json({ error: msg });
+    }
+  },
+);
+
+// ---------------------------------------------------------------------------
+// RDV Phase 5 (#263) — Multi-participants avec créneau commun
+// ---------------------------------------------------------------------------
+
+const participantInputSchema = z.object({
+  email: z.string().trim().email(),
+  name: z.string().trim().min(1).max(200).optional().nullable(),
+  isRequired: z.boolean().optional(),
+});
+
+const multiProposeSchema = z
+  .object({
+    subject: z.string().trim().min(1).max(200),
+    description: z.string().max(2000).optional().nullable(),
+    location: z.string().max(500).optional().nullable(),
+    startAt: isoDateTime,
+    endAt: isoDateTime,
+    participants: z.array(participantInputSchema).min(2).max(50),
+    lang: z.string().min(2).max(10).optional(),
+    videoProvider: videoProviderSchema.optional().nullable(),
+  })
+  .refine((b) => Date.parse(b.endAt) > Date.parse(b.startAt), {
+    message: "endAt must be after startAt",
+    path: ["endAt"],
+  });
+
+router.post("/appointments/multi-propose", requireAuth, async (req, res): Promise<void> => {
+  const parsed = multiProposeSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "invalid_payload", details: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const result = await proposeMultiMeeting({ userId: req.userId!, ...parsed.data });
+    if (!result.ok) {
+      res.status(502).json({ error: result.error || "multi_propose_failed" });
+      return;
+    }
+    const { data } = await supabaseAdmin
+      .from("appointments")
+      .select("*, projects(id, name, reference, color)")
+      .eq("id", result.appointmentId!)
+      .eq("user_id", req.userId!)
+      .single();
+    res.status(201).json({
+      ...mapAppointment(data),
+      participantsCreated: result.participantsCreated || 0,
+      invitesSent: result.invitesSent || 0,
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "multi_propose_crashed";
+    req.log?.error?.({ err: msg }, "[appointments] multi-propose crashed");
+    res.status(500).json({ error: msg });
+  }
+});
+
+const findCommonSlotsSchema = z.object({
+  emails: z.array(z.string().email()).min(1).max(50),
+  durationMinutes: z.coerce.number().int().min(15).max(480),
+  windowDays: z.coerce.number().int().min(1).max(60).optional(),
+});
+
+router.post("/appointments/find-common-slots", requireAuth, async (req, res): Promise<void> => {
+  const parsed = findCommonSlotsSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "invalid_payload", details: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const result = await findMultiCommonSlots(
+      req.userId!,
+      parsed.data.emails,
+      parsed.data.durationMinutes,
+      parsed.data.windowDays ?? 14,
+    );
+    res.json(result);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "find_common_slots_crashed";
+    req.log?.error?.({ err: msg }, "[appointments] find-common-slots crashed");
+    res.status(500).json({ error: msg });
+  }
+});
+
+router.get("/appointments/:id/participants", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const { data: appt } = await supabaseAdmin
+      .from("appointments")
+      .select("id")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .maybeSingle();
+    if (!appt) {
+      res.status(404).json({ error: "not_found" });
+      return;
+    }
+    const { data: rows, error } = await supabaseAdmin
+      .from("appointment_participants")
+      .select("*")
+      .eq("appointment_id", req.params.id)
+      .order("created_at", { ascending: true });
+    if (error) {
+      res.status(500).json({ error: error.message });
+      return;
+    }
+    res.json(
+      (rows || []).map((r: any) => ({
+        id: r.id,
+        appointmentId: r.appointment_id,
+        email: r.email,
+        name: r.name,
+        isRequired: r.is_required,
+        responseStatus: r.response_status,
+        respondedAt: r.responded_at,
+        lastReminderSentAt: r.last_reminder_sent_at,
+        reminderCount: r.reminder_count,
+        createdAt: r.created_at,
+      })),
+    );
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "participants_crashed";
+    res.status(500).json({ error: msg });
+  }
+});
+
+const patchParticipantSchema = z.object({
+  responseStatus: z.enum(["accepted", "declined", "tentative"]),
+});
+
+router.patch(
+  "/appointments/:id/participants/:pid",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    const parsed = patchParticipantSchema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: "invalid_payload", details: parsed.error.flatten() });
+      return;
+    }
+    try {
+      const { data: appt } = await supabaseAdmin
+        .from("appointments")
+        .select("id")
+        .eq("id", req.params.id)
+        .eq("user_id", req.userId!)
+        .maybeSingle();
+      if (!appt) {
+        res.status(404).json({ error: "not_found" });
+        return;
+      }
+      const result = await updateParticipantStatus(
+        String(req.params.id),
+        String(req.params.pid),
+        parsed.data.responseStatus,
+      );
+      if (!result.ok) {
+        res.status(500).json({ error: result.error || "update_failed" });
+        return;
+      }
+      res.json({ ok: true });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "patch_participant_crashed";
+      res.status(500).json({ error: msg });
+    }
+  },
+);
+
+router.post(
+  "/appointments/:id/participants/:pid/remind",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const result = await remindParticipant(req.userId!, String(req.params.id), String(req.params.pid));
+      if (!result.ok) {
+        res.status(400).json({ error: result.error || "remind_failed" });
+        return;
+      }
+      res.json({ ok: true });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "remind_crashed";
+      req.log?.error?.({ err: msg }, "[appointments] remind crashed");
       res.status(500).json({ error: msg });
     }
   },
