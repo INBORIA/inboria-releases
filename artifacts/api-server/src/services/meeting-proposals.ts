@@ -648,15 +648,26 @@ export async function runMeetingFollowupSweep(): Promise<number> {
       const body = `${greeting}\n\n${ask}\n\n${closing}\n${fromName}`;
       const subject = lang === "en" ? `Reminder — ${row.title}` : `Rappel — ${row.title}`;
       const sendRes = await sendProposalEmail(conn, row.proposal_recipient, subject, body);
-      await supabaseAdmin
-        .from("appointments")
-        .update({
-          reminder_sent_at: new Date().toISOString(),
-          awaiting_reminder_at: null,
-        })
-        .eq("id", row.id);
-      if (sendRes.ok) sent++;
-      else logger.warn({ apptId: row.id, err: sendRes.error }, "[meeting-proposals] reminder send failed");
+      if (sendRes.ok) {
+        await supabaseAdmin
+          .from("appointments")
+          .update({
+            reminder_sent_at: new Date().toISOString(),
+            awaiting_reminder_at: null,
+          })
+          .eq("id", row.id);
+        sent++;
+      } else {
+        // Backoff 6h for retry — do NOT mark reminder_sent_at, otherwise the
+        // sweep would skip this row forever and the user would think a
+        // reminder was sent when it never reached the contact.
+        const retryAt = new Date(Date.now() + 6 * 60 * 60 * 1000).toISOString();
+        await supabaseAdmin
+          .from("appointments")
+          .update({ awaiting_reminder_at: retryAt })
+          .eq("id", row.id);
+        logger.warn({ apptId: row.id, err: sendRes.error, retryAt }, "[meeting-proposals] reminder send failed, will retry");
+      }
     } catch (err) {
       const msg = err instanceof Error ? err.message : String(err);
       logger.warn({ apptId: row.id, err: msg }, "[meeting-proposals] reminder loop crashed");
