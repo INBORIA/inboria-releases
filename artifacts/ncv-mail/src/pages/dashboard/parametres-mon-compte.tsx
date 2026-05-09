@@ -751,7 +751,15 @@ export default function ParametresMonCompte() {
         setImapPort("");
       } else {
         const isGmail = selectedProvider === "gmail" || imapEmail.toLowerCase().endsWith("@gmail.com") || imapEmail.toLowerCase().endsWith("@googlemail.com");
-        setConnectError(isGmail ? t("settings.gmailConnectError") : (data.error || t("settings.connectionFailed")));
+        const serverMsg = data.error || t("settings.connectionFailed");
+        // Only show the "check your app password" hint on auth failures (401).
+        // Timeouts (408) and other errors keep the server's real message so the
+        // user isn't misled into thinking their password is wrong.
+        if (isGmail && res.status === 401) {
+          setConnectError(t("settings.gmailConnectError"));
+        } else {
+          setConnectError(serverMsg);
+        }
         if (data.needsManualConfig && selectedProvider !== "gmail") setShowAdvanced(true);
       }
     } catch {

@@ -443,9 +443,9 @@ router.post("/email/connect/imap", requireAuth, async (req, res): Promise<void> 
       try { await client.logout(); } catch {}
       const msg = connErr?.message || "";
       if (msg.includes("timeout")) {
-        res.status(408).json({ error: "Connexion trop lente. Verifiez le serveur IMAP ou reessayez.", needsManualConfig: true });
+        res.status(408).json({ error: `Le serveur ${host} n'a pas répondu en 15s. Réessayez dans un instant — si le problème persiste, contactez le support.`, needsManualConfig: true });
       } else {
-        res.status(401).json({ error: "Connexion echouee. Verifiez vos identifiants ou le serveur IMAP.", needsManualConfig: true });
+        res.status(401).json({ error: "Identifiants refusés par le serveur de messagerie. Vérifiez votre adresse et votre mot de passe d'application.", needsManualConfig: true });
       }
       return;
     }
