@@ -69,6 +69,25 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
     query: { enabled: !!orgId } as any,
   });
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const userMenuWrapRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!open) return;
+    const onDocClick = (e: MouseEvent) => {
+      if (userMenuWrapRef.current && !userMenuWrapRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, [open]);
   const { theme: ncvTheme, toggle: toggleNcvTheme } = useNcvTheme();
 
   const user = profile || { fullName: "", plan: "essai", emailsUsed: 0, aiCreditsUsed: 0, emailsQuota: 100 };
@@ -194,27 +213,8 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
   );
 
   const UserMenu = () => {
-    const [open, setOpen] = useState(false);
-    const wrapRef = useRef<HTMLDivElement>(null);
-    useEffect(() => {
-      if (!open) return;
-      const onDocClick = (e: MouseEvent) => {
-        if (wrapRef.current && !wrapRef.current.contains(e.target as Node)) {
-          setOpen(false);
-        }
-      };
-      const onEsc = (e: KeyboardEvent) => {
-        if (e.key === "Escape") setOpen(false);
-      };
-      document.addEventListener("mousedown", onDocClick);
-      document.addEventListener("keydown", onEsc);
-      return () => {
-        document.removeEventListener("mousedown", onDocClick);
-        document.removeEventListener("keydown", onEsc);
-      };
-    }, [open]);
     return (
-      <div ref={wrapRef} className="relative">
+      <div ref={userMenuWrapRef} className="relative">
         <button
           type="button"
           className="flex items-center justify-center h-8 w-8 rounded-full hover:ring-2 hover:ring-primary/40 transition-all"
