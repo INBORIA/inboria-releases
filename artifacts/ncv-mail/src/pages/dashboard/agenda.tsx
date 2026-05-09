@@ -605,13 +605,14 @@ export default function Agenda() {
                         data-testid={`suggestion-row-${apt.id}`}
                       >
                         <div
-                          className="shrink-0"
+                          className="shrink-0 flex items-center"
                           onClick={(e) => { e.stopPropagation(); toggleSuggestion(apt.id, idx, e); }}
                         >
                           <Checkbox
                             checked={isSelected}
-                            onCheckedChange={() => toggleSuggestion(apt.id, idx)}
+                            tabIndex={-1}
                             aria-label={t("common.select", "Sélectionner")}
+                            className="pointer-events-none"
                           />
                         </div>
                         <div
