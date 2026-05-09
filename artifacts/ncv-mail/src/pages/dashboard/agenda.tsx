@@ -637,10 +637,12 @@ export default function Agenda() {
                         className={`flex items-center justify-between gap-2 rounded px-3 py-2 transition-colors select-none ${
                           isSelected ? "bg-primary/10 border border-primary/30" : "border border-transparent hover:bg-white/[0.02]"
                         }`}
+                        style={{ touchAction: "none" }}
                         data-testid={`suggestion-row-${apt.id}`}
                         onPointerDown={(e) => {
                           if (e.button !== 0) return;
                           if ((e.target as HTMLElement).closest("button,a")) return;
+                          e.preventDefault();
                           if (e.shiftKey) {
                             toggleSuggestion(apt.id, idx, e as any);
                             return;
@@ -655,9 +657,13 @@ export default function Agenda() {
                           });
                           setLastClickedIdx(idx);
                         }}
-                        onPointerEnter={() => {
-                          if (dragState) applyDragRange(idx);
+                        onPointerEnter={(e) => {
+                          if (dragState) {
+                            e.preventDefault();
+                            applyDragRange(idx);
+                          }
                         }}
+                        onDragStart={(e) => e.preventDefault()}
                       >
                         <div className="shrink-0 flex items-center pointer-events-none">
                           <Checkbox
