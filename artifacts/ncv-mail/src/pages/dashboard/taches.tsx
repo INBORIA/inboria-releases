@@ -716,10 +716,10 @@ export default function Taches() {
                     </div>
 
                     <div className="flex items-center justify-between gap-2 px-4 py-3 border-t border-[#1f2937]">
-                      <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-2 flex-wrap">
                         <Button
                           size="sm"
-                          className="gap-1.5 h-8 text-[12px] rounded-full bg-white/[0.08] border border-[#2a3441] text-white hover:bg-white/[0.12]"
+                          className="gap-1.5 h-8 text-[12px] rounded-full bg-white/[0.08] border border-[#2a3441] text-white hover:bg-white/[0.12] shrink-0 whitespace-nowrap"
                           onClick={() => {
                             setReplyTo(extractEmailAddress(emailDetailTask.emailSenderEmail) || extractEmailAddress(emailDetailTask.emailSender) || "");
                             setReplySubject(emailDetailTask.emailSubject?.startsWith("Re:") ? emailDetailTask.emailSubject : `Re: ${emailDetailTask.emailSubject}`);
@@ -734,7 +734,7 @@ export default function Taches() {
                         <Button
                           size="sm"
                           variant="outline"
-                          className="gap-1.5 h-8 text-[12px] rounded-full bg-transparent border-[#1f2937] text-[#b8c5d6] hover:bg-white/[0.04] hover:text-white"
+                          className="gap-1.5 h-8 text-[12px] rounded-full bg-transparent border-[#1f2937] text-[#b8c5d6] hover:bg-white/[0.04] hover:text-white shrink-0 whitespace-nowrap"
                           disabled={generateDraftMut.isPending}
                           onClick={handleGenerateDraftForTask}
                         >
