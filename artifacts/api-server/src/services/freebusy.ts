@@ -138,9 +138,36 @@ export async function resolveInternalParticipants(
     if (e) memberMap.set(e, row.user_id);
   }
 
+  const candidateUids: string[] = [];
+  const emailByUid = new Map<string, string>();
   for (const e of norm) {
     const uid = memberMap.get(e);
-    if (uid) internal.push({ userId: uid, email: e });
+    if (uid) {
+      candidateUids.push(uid);
+      emailByUid.set(uid, e);
+    } else {
+      external.push(e);
+    }
+  }
+
+  // Vérifie qu'au moins un calendrier connecté est actif pour chaque candidat.
+  // Sinon, on ne peut pas intersecter sa disponibilité — il bascule en externe.
+  const uidsWithCalendar = new Set<string>();
+  if (candidateUids.length > 0) {
+    const { data: cals } = await supabaseAdmin
+      .from("calendar_accounts")
+      .select("user_id, status")
+      .in("user_id", candidateUids);
+    for (const row of (cals as Array<{ user_id: string; status: string | null }> | null) || []) {
+      if (!row.status || row.status === "active" || row.status === "connected") {
+        uidsWithCalendar.add(row.user_id);
+      }
+    }
+  }
+
+  for (const uid of candidateUids) {
+    const e = emailByUid.get(uid)!;
+    if (uidsWithCalendar.has(uid)) internal.push({ userId: uid, email: e });
     else external.push(e);
   }
   return { internal, external };
