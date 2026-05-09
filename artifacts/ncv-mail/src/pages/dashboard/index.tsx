@@ -2972,9 +2972,9 @@ export default function Dashboard() {
     }
   }, [hasHubspot, hasPipedrive, hasSalesforce, hasOdoo, activeCrmDetailPanel]);
   const [sortMode, setSortMode] = useState<"priority" | "date_desc" | "date_asc">(() => {
-    if (typeof window === "undefined") return "priority";
+    if (typeof window === "undefined") return "date_desc";
     const saved = window.localStorage.getItem("inbox.sortMode");
-    return saved === "date_desc" || saved === "date_asc" || saved === "priority" ? saved : "priority";
+    return saved === "date_desc" || saved === "date_asc" || saved === "priority" ? saved : "date_desc";
   });
   useEffect(() => {
     if (typeof window !== "undefined") {
@@ -2985,9 +2985,9 @@ export default function Dashboard() {
   // by Inboria strategic score (deadline, awaiting reply, escalation…)
   // and we skip the client-side sort to preserve that order.
   const [smartSort, setSmartSort] = useState<boolean>(() => {
-    if (typeof window === "undefined") return true;
+    if (typeof window === "undefined") return false;
     const saved = window.localStorage.getItem("inbox.smartSort");
-    return saved === null ? true : saved === "1";
+    return saved === null ? false : saved === "1";
   });
   useEffect(() => {
     if (typeof window !== "undefined") {
