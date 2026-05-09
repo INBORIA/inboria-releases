@@ -68,7 +68,10 @@
     "dayThu": "พ",
     "dayFri": "ศ",
     "daySat": "ส",
-    "daySun": "อ"
+    "daySun": "อ",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement",
+    "syncedBadge": "Synchronisé"
   },
   "inbox": {
     "urgent": "เร่งด่วน",

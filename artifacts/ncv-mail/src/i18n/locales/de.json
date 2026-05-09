@@ -2481,7 +2481,11 @@
     "viewInAgenda": "Kalender oeffnen",
     "detectError": "Erkennung fehlgeschlagen. Bitte erneut versuchen.",
     "filterByProject": "Nach Projekt filtern:",
-    "allProjects": "Alle"
+    "allProjects": "Alle",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Inboria Assistant",

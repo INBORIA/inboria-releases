@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Xem lịch",
     "detectError": "Không thể phát hiện. Xin vui lòng thử lại.",
     "filterByProject": "Lọc theo dự án:",
-    "allProjects": "Tất cả"
+    "allProjects": "Tất cả",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Trợ lý Inboria",

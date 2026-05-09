@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Δείτε το ημερολόγιο",
     "detectError": "Αδυναμία ανίχνευσης. Δοκιμάστε ξανά.",
     "filterByProject": "Φιλτράρισμα κατά έργο:",
-    "allProjects": "Όλα"
+    "allProjects": "Όλα",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Βοηθός Inboria",

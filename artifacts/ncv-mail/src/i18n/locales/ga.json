@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Féach ar an gclár",
     "detectError": "Ní féidir an fhaire a dhéanamh. Déan iarracht arís.",
     "filterByProject": "Scagadh de réir tionscadail:",
-    "allProjects": "Gach duine"
+    "allProjects": "Gach duine",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Cabhair Inboria",

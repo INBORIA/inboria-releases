@@ -2807,6 +2807,44 @@ paths:
                   success:
                     type: boolean
 
+  /appointments/sync:
+    post:
+      operationId: syncAppointmentsFromCalendars
+      tags: [appointments]
+      summary: Pull external calendar events into appointments (idempotent upsert)
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                start:
+                  type: string
+                  format: date-time
+                end:
+                  type: string
+                  format: date-time
+      responses:
+        "200":
+          description: Sync result
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  imported: { type: integer }
+                  updated: { type: integer }
+                  deleted: { type: integer }
+                  accounts: { type: integer }
+                  errors:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        accountId: { type: string }
+                        error: { type: string }
+
   /export/appointments:
     get:
       operationId: exportAppointments

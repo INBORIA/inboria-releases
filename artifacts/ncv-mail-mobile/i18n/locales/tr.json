@@ -68,7 +68,10 @@
     "dayThu": "P",
     "dayFri": "C",
     "daySat": "C",
-    "daySun": "P"
+    "daySun": "P",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement",
+    "syncedBadge": "Synchronisé"
   },
   "inbox": {
     "urgent": "Acelesi Olanlar",

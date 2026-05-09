@@ -68,7 +68,10 @@
     "dayThu": "Ч",
     "dayFri": "П",
     "daySat": "С",
-    "daySun": "Н"
+    "daySun": "Н",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement",
+    "syncedBadge": "Synchronisé"
   },
   "inbox": {
     "urgent": "Спешни",

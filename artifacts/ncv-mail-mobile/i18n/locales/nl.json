@@ -68,7 +68,10 @@
     "dayThu": "D",
     "dayFri": "V",
     "daySat": "Z",
-    "daySun": "Z"
+    "daySun": "Z",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement",
+    "syncedBadge": "Synchronisé"
   },
   "inbox": {
     "urgent": "Dringend",

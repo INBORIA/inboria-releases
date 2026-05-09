@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Zobacz kalendarz",
     "detectError": "Wykrywanie niemożliwe. Proszę spróbować ponownie.",
     "filterByProject": "Filtruj według projektu:",
-    "allProjects": "Wszystkie"
+    "allProjects": "Wszystkie",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Asystent Inboria",

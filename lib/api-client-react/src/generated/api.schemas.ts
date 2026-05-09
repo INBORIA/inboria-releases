@@ -2041,6 +2041,24 @@ export type DeleteAppointment200 = {
   success?: boolean;
 };
 
+export type SyncAppointmentsFromCalendarsBody = {
+  start?: string;
+  end?: string;
+};
+
+export type SyncAppointmentsFromCalendars200ErrorsItem = {
+  accountId?: string;
+  error?: string;
+};
+
+export type SyncAppointmentsFromCalendars200 = {
+  imported?: number;
+  updated?: number;
+  deleted?: number;
+  accounts?: number;
+  errors?: SyncAppointmentsFromCalendars200ErrorsItem[];
+};
+
 export type JoinWaitlist200 = {
   success: boolean;
   /** True if the email was already on the waitlist before this call. */

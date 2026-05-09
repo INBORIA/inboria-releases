@@ -3007,6 +3007,29 @@ export const DeleteAppointmentResponse = zod.object({
 });
 
 /**
+ * @summary Pull external calendar events into appointments (idempotent upsert)
+ */
+export const SyncAppointmentsFromCalendarsBody = zod.object({
+  start: zod.coerce.date().optional(),
+  end: zod.coerce.date().optional(),
+});
+
+export const SyncAppointmentsFromCalendarsResponse = zod.object({
+  imported: zod.number().optional(),
+  updated: zod.number().optional(),
+  deleted: zod.number().optional(),
+  accounts: zod.number().optional(),
+  errors: zod
+    .array(
+      zod.object({
+        accountId: zod.string().optional(),
+        error: zod.string().optional(),
+      }),
+    )
+    .optional(),
+});
+
+/**
  * Public endpoint that records an email for the future payment plans launch.
  * @summary Subscribe to the payments waitlist
  */

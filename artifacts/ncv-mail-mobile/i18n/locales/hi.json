@@ -68,7 +68,10 @@
     "dayThu": "गुरु",
     "dayFri": "शुक्र",
     "daySat": "शनिवार",
-    "daySun": "रविवार"
+    "daySun": "रविवार",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement",
+    "syncedBadge": "Synchronisé"
   },
   "inbox": {
     "urgent": "तत्काल",

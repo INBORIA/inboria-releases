@@ -2471,7 +2471,11 @@
     "viewInAgenda": "कैलेंडर देखें",
     "detectError": "पता लगाना असंभव। कृपया पुनः प्रयास करें।",
     "filterByProject": "प्रोजेक्ट द्वारा फ़िल्टर करें:",
-    "allProjects": "सभी"
+    "allProjects": "सभी",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Inboria सहायक",

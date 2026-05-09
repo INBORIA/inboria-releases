@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Zobraziť kalendár",
     "detectError": "Detekcia nemožná. Skúste znova.",
     "filterByProject": "Filtrovať podľa projektu:",
-    "allProjects": "Všetko"
+    "allProjects": "Všetko",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Asistent Inboria",

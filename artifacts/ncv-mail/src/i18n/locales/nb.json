@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Se kalenderen",
     "detectError": "Oppdagelse umulig. Vennligst prøv igjen.",
     "filterByProject": "Filtrer etter prosjekt:",
-    "allProjects": "Alle"
+    "allProjects": "Alle",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Inboria-assistent",

@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Naptár megtekintése",
     "detectError": "Észlelés lehetetlen. Kérjük, próbálja újra.",
     "filterByProject": "Szűrés projekt szerint:",
-    "allProjects": "Minden"
+    "allProjects": "Minden",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Inboria asszisztens",

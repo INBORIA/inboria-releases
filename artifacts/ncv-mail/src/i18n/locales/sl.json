@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Oglejte si koledar",
     "detectError": "Zaznavanje nemogoče. Poskusite znova.",
     "filterByProject": "Filtrirajte po projektu:",
-    "allProjects": "Vsi"
+    "allProjects": "Vsi",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Asistent Inboria",

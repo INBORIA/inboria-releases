@@ -68,7 +68,10 @@
     "dayThu": "الأربعاء",
     "dayFri": "الخميس",
     "daySat": "الجمعة",
-    "daySun": "السبت"
+    "daySun": "السبت",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement",
+    "syncedBadge": "Synchronisé"
   },
   "inbox": {
     "urgent": "عاجل",

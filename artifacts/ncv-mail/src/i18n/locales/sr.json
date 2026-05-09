@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Погледајте агенду",
     "detectError": "Детекција није могућа. Покушајте поново.",
     "filterByProject": "Филтрирајте по пројекту:",
-    "allProjects": "Сви"
+    "allProjects": "Сви",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Асистент Inboria",

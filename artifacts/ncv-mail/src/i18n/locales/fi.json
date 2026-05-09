@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Näytä kalenteri",
     "detectError": "Havaintoa ei voitu tehdä. Yrittäkää uudelleen.",
     "filterByProject": "Suodata projektin mukaan:",
-    "allProjects": "Kaikki"
+    "allProjects": "Kaikki",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Inboria-avustaja",

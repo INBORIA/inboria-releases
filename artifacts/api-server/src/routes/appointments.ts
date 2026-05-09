@@ -1,4 +1,5 @@
 import { Router, type IRouter } from "express";
+import { z } from "zod";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { recordAutopilotEvent } from "../services/autopilot-events";
@@ -7,8 +8,57 @@ import {
   pushAppointmentToProvider,
   patchAppointmentOnProvider,
   deleteAppointmentOnProvider,
+  pullExternalEventsAndUpsert,
   type AppointmentPushPayload,
 } from "../services/calendar-sync";
+
+const isoDateTime = z
+  .string()
+  .refine((v) => !Number.isNaN(Date.parse(v)), "must be an ISO 8601 date-time");
+
+const participantsSchema = z
+  .string()
+  .max(2000)
+  .refine(
+    (v) =>
+      v
+        .split(/[,;\n]/)
+        .map((s) => s.trim())
+        .filter(Boolean)
+        .every((e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e)),
+    "participants must be a list of valid email addresses",
+  );
+
+const createAppointmentSchema = z.object({
+  title: z.string().trim().min(1).max(500),
+  description: z.string().max(5000).optional().nullable(),
+  location: z.string().max(500).optional().nullable(),
+  startAt: isoDateTime,
+  endAt: isoDateTime,
+  allDay: z.boolean().optional(),
+  emailId: z.union([z.number().int(), z.string()]).optional().nullable(),
+  projectId: z.union([z.number().int(), z.string()]).optional().nullable(),
+  reminderMinutes: z.number().int().min(0).max(10080).optional(),
+  participants: participantsSchema.optional().nullable(),
+  calendarAccountId: z.string().uuid().optional().nullable(),
+}).refine((b) => Date.parse(b.endAt) >= Date.parse(b.startAt), {
+  message: "endAt must be after startAt",
+  path: ["endAt"],
+});
+
+const updateAppointmentSchema = z.object({
+  title: z.string().trim().min(1).max(500).optional(),
+  description: z.string().max(5000).optional().nullable(),
+  location: z.string().max(500).optional().nullable(),
+  startAt: isoDateTime.optional(),
+  endAt: isoDateTime.optional(),
+  allDay: z.boolean().optional(),
+  emailId: z.union([z.number().int(), z.string()]).optional().nullable(),
+  projectId: z.union([z.number().int(), z.string()]).optional().nullable(),
+  reminderMinutes: z.number().int().min(0).max(10080).optional(),
+  confirmed: z.boolean().optional(),
+  participants: participantsSchema.optional().nullable(),
+});
 
 const router: IRouter = Router();
 
@@ -101,13 +151,27 @@ router.get("/appointments/:id", requireAuth, async (req, res): Promise<void> => 
 
 router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
   try {
+    const parsed = createAppointmentSchema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: "invalid_payload", details: parsed.error.flatten() });
+      return;
+    }
     const {
       title, description, location, startAt, endAt, allDay, emailId, projectId,
       reminderMinutes, participants, calendarAccountId,
-    } = req.body;
-    if (!title || !startAt || !endAt) {
-      res.status(400).json({ error: "title, startAt and endAt are required" });
-      return;
+    } = parsed.data;
+
+    if (calendarAccountId) {
+      const { data: acc } = await supabaseAdmin
+        .from("calendar_accounts")
+        .select("id")
+        .eq("id", calendarAccountId)
+        .eq("user_id", req.userId!)
+        .maybeSingle();
+      if (!acc) {
+        res.status(403).json({ error: "calendar_account_not_owned" });
+        return;
+      }
     }
 
     const { data, error } = await supabaseAdmin
@@ -190,18 +254,28 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
 
 router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> => {
   try {
+    const parsed = updateAppointmentSchema.safeParse(req.body);
+    if (!parsed.success) {
+      res.status(400).json({ error: "invalid_payload", details: parsed.error.flatten() });
+      return;
+    }
+    const body = parsed.data;
+    if (body.startAt && body.endAt && Date.parse(body.endAt) < Date.parse(body.startAt)) {
+      res.status(400).json({ error: "endAt must be after startAt" });
+      return;
+    }
     const updates: Record<string, any> = {};
-    if (req.body.title !== undefined) updates.title = req.body.title;
-    if (req.body.description !== undefined) updates.description = req.body.description;
-    if (req.body.location !== undefined) updates.location = req.body.location;
-    if (req.body.startAt !== undefined) updates.start_at = req.body.startAt;
-    if (req.body.endAt !== undefined) updates.end_at = req.body.endAt;
-    if (req.body.allDay !== undefined) updates.all_day = req.body.allDay;
-    if (req.body.emailId !== undefined) updates.email_id = req.body.emailId || null;
-    if (req.body.projectId !== undefined) updates.project_id = req.body.projectId || null;
-    if (req.body.reminderMinutes !== undefined) updates.reminder_minutes = req.body.reminderMinutes;
-    if (req.body.confirmed !== undefined) updates.confirmed = req.body.confirmed;
-    if (req.body.participants !== undefined) updates.participants = req.body.participants || null;
+    if (body.title !== undefined) updates.title = body.title;
+    if (body.description !== undefined) updates.description = body.description;
+    if (body.location !== undefined) updates.location = body.location;
+    if (body.startAt !== undefined) updates.start_at = body.startAt;
+    if (body.endAt !== undefined) updates.end_at = body.endAt;
+    if (body.allDay !== undefined) updates.all_day = body.allDay;
+    if (body.emailId !== undefined) updates.email_id = body.emailId || null;
+    if (body.projectId !== undefined) updates.project_id = body.projectId || null;
+    if (body.reminderMinutes !== undefined) updates.reminder_minutes = body.reminderMinutes;
+    if (body.confirmed !== undefined) updates.confirmed = body.confirmed;
+    if (body.participants !== undefined) updates.participants = body.participants || null;
     updates.updated_at = new Date().toISOString();
 
     const { data, error } = await supabaseAdmin
@@ -279,6 +353,24 @@ router.delete("/appointments/:id", requireAuth, async (req, res): Promise<void> 
 
     res.json({ success: true });
   } catch (err: any) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// Phase 2 — pull inbound: importe les events externes en local appointments
+// (idempotent via unique idx (user_id, external_provider, external_id)).
+router.post("/appointments/sync", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const start = (req.body?.start as string) || new Date(Date.now() - 7 * 24 * 3600 * 1000).toISOString();
+    const end = (req.body?.end as string) || new Date(Date.now() + 30 * 24 * 3600 * 1000).toISOString();
+    if (Number.isNaN(Date.parse(start)) || Number.isNaN(Date.parse(end))) {
+      res.status(400).json({ error: "invalid_range" });
+      return;
+    }
+    const result = await pullExternalEventsAndUpsert(req.userId!, start, end);
+    res.json(result);
+  } catch (err: any) {
+    req.log?.error?.({ err: err?.message }, "[appointments] sync pull failed");
     res.status(500).json({ error: err.message });
   }
 });

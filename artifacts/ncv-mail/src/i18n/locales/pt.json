@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Ver a agenda",
     "detectError": "Deteção impossível. Tente novamente.",
     "filterByProject": "Filtrar por projeto:",
-    "allProjects": "Todos"
+    "allProjects": "Todos",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Assistente Inboria",

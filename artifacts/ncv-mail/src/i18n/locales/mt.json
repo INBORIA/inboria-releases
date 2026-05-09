@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Ara l-agenda",
     "detectError": "Id-detekzjoni impossibbli. Ikkonferma mill-ġdid.",
     "filterByProject": "Filtra skont il-proġett:",
-    "allProjects": "Kollha"
+    "allProjects": "Kollha",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Assistenti Inboria",

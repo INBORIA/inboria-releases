@@ -2471,7 +2471,11 @@
     "viewInAgenda": "查看日曆",
     "detectError": "偵測失敗。請重試。",
     "filterByProject": "按專案過濾：",
-    "allProjects": "所有"
+    "allProjects": "所有",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Inboria 助手",

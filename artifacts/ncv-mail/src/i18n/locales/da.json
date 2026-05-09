@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Se kalenderen",
     "detectError": "Registrering umulig. Prøv igen.",
     "filterByProject": "Filtrer efter projekt:",
-    "allProjects": "Alle"
+    "allProjects": "Alle",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Assistent Inboria",

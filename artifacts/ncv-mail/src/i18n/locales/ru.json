@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Посмотреть календарь",
     "detectError": "Обнаружение невозможно. Пожалуйста, попробуйте снова.",
     "filterByProject": "Фильтровать по проекту:",
-    "allProjects": "Все"
+    "allProjects": "Все",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Ассистент Inboria",

@@ -2481,7 +2481,11 @@
     "viewInAgenda": "Agenda openen",
     "detectError": "Detectie mislukt. Probeer opnieuw.",
     "filterByProject": "Filteren op project:",
-    "allProjects": "Alle"
+    "allProjects": "Alle",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Inboria Assistent",

@@ -2471,7 +2471,11 @@
     "viewInAgenda": "عرض التقويم",
     "detectError": "لا يمكن الكشف. يرجى المحاولة مرة أخرى.",
     "filterByProject": "تصفية حسب المشروع:",
-    "allProjects": "الجميع"
+    "allProjects": "الجميع",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "مساعد Inboria",

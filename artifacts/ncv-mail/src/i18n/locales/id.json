@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Lihat agenda",
     "detectError": "Deteksi tidak mungkin. Silakan coba lagi.",
     "filterByProject": "Saring berdasarkan proyek:",
-    "allProjects": "Semua"
+    "allProjects": "Semua",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Asisten Inboria",

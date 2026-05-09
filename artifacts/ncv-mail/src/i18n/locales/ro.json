@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Vizualizați agenda",
     "detectError": "Detecție imposibilă. Vă rugăm să încercați din nou.",
     "filterByProject": "Filtrați după proiect:",
-    "allProjects": "Toate"
+    "allProjects": "Toate",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Asistent Inboria",

@@ -2471,7 +2471,11 @@
     "viewInAgenda": "មើលកាលវិភាគ",
     "detectError": "មិនអាចរកឃើញបាន។ សូមព្យាយាមម្តងទៀត។",
     "filterByProject": "តម្រងតាមគម្រោង៖",
-    "allProjects": "ទាំងអស់"
+    "allProjects": "ទាំងអស់",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "ជំនួយ Inboria",

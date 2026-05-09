@@ -68,7 +68,10 @@
     "dayThu": "Π",
     "dayFri": "Π",
     "daySat": "Σ",
-    "daySun": "Κ"
+    "daySun": "Κ",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement",
+    "syncedBadge": "Synchronisé"
   },
   "inbox": {
     "urgent": "Επείγοντα",

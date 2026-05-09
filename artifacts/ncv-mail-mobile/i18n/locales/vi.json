@@ -68,7 +68,10 @@
     "dayThu": "N",
     "dayFri": "S",
     "daySat": "B",
-    "daySun": "C"
+    "daySun": "C",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement",
+    "syncedBadge": "Synchronisé"
   },
   "inbox": {
     "urgent": "Khẩn cấp",

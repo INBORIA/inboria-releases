@@ -2471,7 +2471,11 @@
     "viewInAgenda": "ดูปฏิทิน",
     "detectError": "ไม่สามารถตรวจจับได้ กรุณาลองอีกครั้ง",
     "filterByProject": "กรองตามโครงการ:",
-    "allProjects": "ทั้งหมด"
+    "allProjects": "ทั้งหมด",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "ผู้ช่วย Inboria",

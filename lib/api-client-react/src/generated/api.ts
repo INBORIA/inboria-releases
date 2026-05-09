@@ -172,6 +172,8 @@ import type {
   SuggestTemplateNameBody,
   SuggestTemplates200,
   SuggestTemplatesParams,
+  SyncAppointmentsFromCalendars200,
+  SyncAppointmentsFromCalendarsBody,
   Task,
   TeamAssignmentsResponse,
   TeamDashboard,
@@ -10704,6 +10706,96 @@ export const useDeleteAppointment = <
   TContext
 > => {
   return useMutation(getDeleteAppointmentMutationOptions(options));
+};
+
+/**
+ * @summary Pull external calendar events into appointments (idempotent upsert)
+ */
+export const getSyncAppointmentsFromCalendarsUrl = () => {
+  return `/api/appointments/sync`;
+};
+
+export const syncAppointmentsFromCalendars = async (
+  syncAppointmentsFromCalendarsBody?: SyncAppointmentsFromCalendarsBody,
+  options?: RequestInit,
+): Promise<SyncAppointmentsFromCalendars200> => {
+  return customFetch<SyncAppointmentsFromCalendars200>(
+    getSyncAppointmentsFromCalendarsUrl(),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(syncAppointmentsFromCalendarsBody),
+    },
+  );
+};
+
+export const getSyncAppointmentsFromCalendarsMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof syncAppointmentsFromCalendars>>,
+    TError,
+    { data: BodyType<SyncAppointmentsFromCalendarsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof syncAppointmentsFromCalendars>>,
+  TError,
+  { data: BodyType<SyncAppointmentsFromCalendarsBody> },
+  TContext
+> => {
+  const mutationKey = ["syncAppointmentsFromCalendars"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof syncAppointmentsFromCalendars>>,
+    { data: BodyType<SyncAppointmentsFromCalendarsBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return syncAppointmentsFromCalendars(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type SyncAppointmentsFromCalendarsMutationResult = NonNullable<
+  Awaited<ReturnType<typeof syncAppointmentsFromCalendars>>
+>;
+export type SyncAppointmentsFromCalendarsMutationBody =
+  BodyType<SyncAppointmentsFromCalendarsBody>;
+export type SyncAppointmentsFromCalendarsMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Pull external calendar events into appointments (idempotent upsert)
+ */
+export const useSyncAppointmentsFromCalendars = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof syncAppointmentsFromCalendars>>,
+    TError,
+    { data: BodyType<SyncAppointmentsFromCalendarsBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof syncAppointmentsFromCalendars>>,
+  TError,
+  { data: BodyType<SyncAppointmentsFromCalendarsBody> },
+  TContext
+> => {
+  return useMutation(getSyncAppointmentsFromCalendarsMutationOptions(options));
 };
 
 /**

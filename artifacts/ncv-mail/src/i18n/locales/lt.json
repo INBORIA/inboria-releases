@@ -2471,7 +2471,11 @@
     "viewInAgenda": "Peržiūrėti kalendorių",
     "detectError": "Aptikti neįmanoma. Prašome bandyti dar kartą.",
     "filterByProject": "Filtruoti pagal projektą:",
-    "allProjects": "Visi"
+    "allProjects": "Visi",
+    "destinationCalendar": "Calendrier de destination",
+    "localOnly": "Inboria uniquement (pas de sync)",
+    "connectCalendarHint": "Connectez un calendrier dans Réglages pour synchroniser.",
+    "syncedWith": "Synchronisé avec {{provider}}"
   },
   "supportChat": {
     "title": "Inboria asistentas",
