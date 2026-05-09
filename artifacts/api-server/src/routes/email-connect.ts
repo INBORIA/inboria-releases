@@ -401,12 +401,16 @@ router.get("/email/callback/outlook", async (req, res): Promise<void> => {
 
 router.post("/email/connect/imap", requireAuth, async (req, res): Promise<void> => {
   try {
-    const { email, password, imapHost, imapPort } = req.body;
+    const { email, password: rawPassword, imapHost, imapPort } = req.body;
 
-    if (!email || !password) {
+    if (!email || !rawPassword) {
       res.status(400).json({ error: "Email et mot de passe requis" });
       return;
     }
+
+    // Google displays app passwords as "abcd efgh ijkl mnop" — users copy
+    // the spaces. Strip all whitespace so the auth attempt actually works.
+    const password = String(rawPassword).replace(/\s+/g, "");
 
     const domain = email.split("@")[1]?.toLowerCase() || "";
     let host = imapHost;
