@@ -539,7 +539,7 @@ function ProjectDetailView({
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); toggleEmailSelected(email.id); }}
-                        className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 cursor-pointer transition-colors ${isSelected ? "border-primary" : "border-[#2a3441] hover:border-primary opacity-0 group-hover:opacity-100"}`}
+                        className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 cursor-pointer transition-colors ${isSelected ? "border-primary" : "border-[#2a3441] hover:border-primary"}`}
                         aria-label={t("common.select", "Sélectionner")}
                       >
                         {isSelected && <Check className="w-3 h-3 text-primary" />}
