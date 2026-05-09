@@ -59,6 +59,7 @@ import {
   ArrowLeft,
   Mail,
   CheckSquare,
+  Check,
   Clock,
   Hash,
   ListTodo,
@@ -533,10 +534,10 @@ function ProjectDetailView({
                 >
                   <button
                     onClick={() => handleToggleTask(String(task.id), task.done)}
-                    className={`w-4 h-4 rounded border-2 flex items-center justify-center shrink-0 cursor-pointer transition-colors ${task.done ? "bg-emerald-500 border-emerald-500" : "border-[#b8c5d6]/30 hover:border-primary/60"}`}
+                    className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 cursor-pointer transition-colors ${task.done ? "border-primary" : "border-[#2a3441] hover:border-primary"}`}
                   >
                     {task.done && (
-                      <CheckSquare className="w-2.5 h-2.5 text-white" />
+                      <Check className="w-3 h-3 text-primary" />
                     )}
                   </button>
                   <p
