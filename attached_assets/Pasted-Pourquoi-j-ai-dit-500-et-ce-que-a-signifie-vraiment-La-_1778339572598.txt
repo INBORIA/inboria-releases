@@ -1,0 +1,14 @@
+Pourquoi j'ai dit 500 — et ce que ça signifie vraiment
+La limite n'est pas un chiffre magique inscrit dans la documentation Replit. C'est une limite économique et architecturale, pas une limite technique absolue.
+Ce que Replit peut techniquement faire
+Avec les Autoscale Deployments, Replit peut théoriquement scaler à des dizaines de milliers d'utilisateurs simultanés. La plateforme tourne sur Google Cloud en coulisses. Ce n'est pas la puissance brute qui manque.
+Les 3 vraies limites pour Inboria spécifiquement
+1. Le coût devient imprévisible et élevé
+Replit facture à la consommation de "compute units". Pour une application email IA avec des appels OpenAI fréquents, du traitement de données en arrière-plan et des connexions actives, la facture peut exploser sans prévenir. À 500 abonnés actifs qui utilisent l'app quotidiennement, vous pouvez vous retrouver à payer 300-600 €/mois d'hébergement Replit — contre 30-50 €/mois sur Railway ou Render pour les mêmes ressources.
+2. Les tâches de fond (background jobs) sont instables
+Inboria a besoin de tâches asynchrones permanentes : synchronisation IMAP en temps réel, traitement des emails entrants, génération de brouillons IA en arrière-plan, envoi automatique via le chat agentique. Replit Autoscale scale à zéro quand il n'y a pas de trafic HTTP — ce qui tue les processus de fond. Vos abonnés recevraient leurs emails avec retard ou les brouillons ne se généreraient pas.
+3. Les connexions IMAP persistantes
+Inboria se connecte en permanence aux serveurs IMAP de vos abonnés (Gmail, Outlook, etc.) pour surveiller les nouvelles emails en temps réel. Ces connexions sont persistantes et longue durée — exactement ce que Replit Autoscale ne gère pas bien, car il est conçu pour des requêtes HTTP courtes et stateless.
+La nuance importante
+Si votre architecture utilise Supabase Realtime pour les notifications et des webhooks plutôt que des connexions IMAP persistantes côté serveur, Replit peut tenir bien au-delà de 500 abonnés. La limite dépend donc directement de comment Inboria est architecturé en interne.
+La vraie question à vous poser : Est-ce que votre serveur Replit maintient des connexions IMAP ouvertes en permanence pour chaque abonné ? Si oui, la limite est réelle. Si la synchronisation est événementielle (polling toutes les X minutes), Replit peut tenir beaucoup plus longtemps.
