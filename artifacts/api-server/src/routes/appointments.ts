@@ -128,34 +128,43 @@ function buildPushPayload(row: any): AppointmentPushPayload {
 }
 
 /**
- * Vérifie qu'un compte calendrier connecté correspond au fournisseur visio
- * demandé (Meet→google, Teams→outlook). Renvoie l'erreur API si mismatch.
+ * Résout le fournisseur visio effectif pour un RDV : si Meet/Teams est demandé
+ * mais que le calendrier de destination ne le supporte pas (ou est absent), on
+ * retombe automatiquement sur Jitsi pour garantir qu'un lien visio est toujours
+ * présent (objectif Phase 4 : "ajouter automatiquement un lien à tout RDV").
+ * Si l'appelant n'a rien demandé, on utilise la préférence utilisateur, avec
+ * Jitsi comme défaut final.
  */
-async function validateVideoVsCalendar(
+async function resolveEffectiveVideoProvider(
   userId: string,
-  videoProvider: VideoProvider | null | undefined,
+  requested: VideoProvider | null | undefined,
   calendarAccountId: string | null | undefined,
-): Promise<{ ok: true } | { ok: false; error: string }> {
-  if (!videoProvider || videoProvider === "none" || videoProvider === "jitsi") {
-    return { ok: true };
+): Promise<VideoProvider> {
+  let chosen: VideoProvider;
+  if (requested === undefined || requested === null) {
+    const { data: prof } = await supabaseAdmin
+      .from("profiles")
+      .select("preferred_video_provider")
+      .eq("id", userId)
+      .maybeSingle();
+    const pref = (prof as { preferred_video_provider?: string | null } | null)?.preferred_video_provider;
+    chosen = (pref as VideoProvider) || "jitsi";
+  } else {
+    chosen = requested;
   }
-  if (!calendarAccountId) {
-    return { ok: false, error: "video_requires_calendar_account" };
-  }
+  if (chosen === "none" || chosen === "jitsi") return chosen;
+  // Meet/Teams require a matching calendar — fall back to Jitsi otherwise.
+  if (!calendarAccountId) return "jitsi";
   const { data: acc } = await supabaseAdmin
     .from("calendar_accounts")
     .select("provider")
     .eq("id", calendarAccountId)
     .eq("user_id", userId)
     .maybeSingle();
-  if (!acc) return { ok: false, error: "calendar_account_not_owned" };
-  if (videoProvider === "meet" && acc.provider !== "google") {
-    return { ok: false, error: "meet_requires_google_calendar" };
-  }
-  if (videoProvider === "teams" && acc.provider !== "outlook") {
-    return { ok: false, error: "teams_requires_outlook_calendar" };
-  }
-  return { ok: true };
+  if (!acc) return "jitsi";
+  if (chosen === "meet" && acc.provider !== "google") return "jitsi";
+  if (chosen === "teams" && acc.provider !== "outlook") return "jitsi";
+  return chosen;
 }
 
 router.get("/appointments", requireAuth, async (req, res): Promise<void> => {
@@ -229,19 +238,20 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
       }
     }
 
-    const videoCheck = await validateVideoVsCalendar(req.userId!, videoProvider, calendarAccountId);
-    if (!videoCheck.ok) {
-      res.status(400).json({ error: videoCheck.error });
-      return;
-    }
+    // Phase 4 : résolution automatique du fournisseur visio. Si Meet/Teams
+    // ne peut pas être honoré (pas de calendrier compatible) on retombe sur
+    // Jitsi. Si rien n'est demandé on prend la préférence utilisateur, défaut
+    // Jitsi — ainsi tout RDV créé reçoit automatiquement un lien visio.
+    const effVideoProvider = await resolveEffectiveVideoProvider(
+      req.userId!,
+      videoProvider,
+      calendarAccountId,
+    );
 
-    // Pour Jitsi on génère l'URL nous-mêmes (pas d'API). Pour Meet/Teams le
-    // lien définitif sera obtenu après push calendrier ; on stocke null en
-    // attendant et on remplit ci-dessous.
     const initialVideoUrl =
-      videoProvider === "jitsi"
+      effVideoProvider === "jitsi"
         ? videoUrl || generateJitsiUrl()
-        : videoProvider === "none" || !videoProvider
+        : effVideoProvider === "none"
           ? null
           : videoUrl || null;
 
@@ -260,7 +270,7 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
         reminder_minutes: reminderMinutes ?? 30,
         participants: participants || null,
         calendar_account_id: calendarAccountId || null,
-        video_provider: videoProvider || null,
+        video_provider: effVideoProvider === "none" ? null : effVideoProvider,
         video_url: initialVideoUrl,
       })
       .select("*, projects(id, name, reference, color)")
@@ -373,22 +383,20 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
       }
     }
 
-    // Effective video provider after this PATCH (used to validate consistency
-    // with the destination calendar — Meet exige Google, Teams exige Outlook).
-    const effVideoProvider: VideoProvider | null =
-      body.videoProvider !== undefined
-        ? (body.videoProvider as VideoProvider | null)
-        : ((existing.video_provider as VideoProvider | null) ?? null);
+    // Phase 4 : si le client demande Meet/Teams sans calendrier compatible,
+    // on retombe sur Jitsi plutôt que d'échouer (un RDV doit toujours pouvoir
+    // recevoir un lien visio).
     const effCalendarAccountId =
       body.calendarAccountId !== undefined ? body.calendarAccountId : existing.calendar_account_id;
-    const videoCheck = await validateVideoVsCalendar(
-      req.userId!,
-      effVideoProvider,
-      effCalendarAccountId,
-    );
-    if (!videoCheck.ok) {
-      res.status(400).json({ error: videoCheck.error });
-      return;
+    let effVideoProvider: VideoProvider | null;
+    if (body.videoProvider !== undefined) {
+      effVideoProvider = await resolveEffectiveVideoProvider(
+        req.userId!,
+        body.videoProvider as VideoProvider | null,
+        effCalendarAccountId,
+      );
+    } else {
+      effVideoProvider = (existing.video_provider as VideoProvider | null) ?? null;
     }
 
     const updates: Record<string, any> = {};
@@ -404,20 +412,19 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
     if (body.confirmed !== undefined) updates.confirmed = body.confirmed;
     if (body.participants !== undefined) updates.participants = body.participants || null;
     if (body.videoProvider !== undefined) {
-      updates.video_provider = body.videoProvider || null;
-      // Si on désactive la visio, on purge l'URL.
-      if (!body.videoProvider || body.videoProvider === "none") {
+      // Persister la valeur EFFECTIVE (post-fallback), pas la valeur brute,
+      // sinon on enregistrerait "meet" alors que l'on a basculé en Jitsi.
+      updates.video_provider = effVideoProvider === "none" ? null : effVideoProvider;
+      if (effVideoProvider === "none" || effVideoProvider === null) {
         updates.video_url = null;
         updates.video_join_url = null;
-      } else if (body.videoProvider === "jitsi" && body.videoUrl === undefined) {
-        // Bascule vers Jitsi sans URL fournie → on en génère une.
+      } else if (effVideoProvider === "jitsi" && body.videoUrl === undefined) {
         if (!existing.video_url || existing.video_provider !== "jitsi") {
           updates.video_url = generateJitsiUrl();
           updates.video_join_url = null;
         }
-      } else if (body.videoProvider === "meet" || body.videoProvider === "teams") {
-        // Le lien sera (re)généré par le push calendrier ci-dessous.
-        if (existing.video_provider !== body.videoProvider) {
+      } else if (effVideoProvider === "meet" || effVideoProvider === "teams") {
+        if (existing.video_provider !== effVideoProvider) {
           updates.video_url = null;
           updates.video_join_url = null;
         }

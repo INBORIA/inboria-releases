@@ -63,6 +63,23 @@ async function loadAccount(
   return (data as CalendarAccountRow) || null;
 }
 
+function videoLine(url: string): string {
+  return `Lien visio : ${url}`;
+}
+
+function descriptionWithVideo(p: AppointmentPushPayload): string | undefined {
+  const base = p.description || "";
+  // For Jitsi we always inject the link into the description because Google
+  // Meet / Teams have native fields, but Jitsi events have nowhere else to
+  // surface the URL to invite recipients / calendar viewers.
+  if (p.videoProvider === "jitsi" && p.videoUrl) {
+    const line = videoLine(p.videoUrl);
+    if (base.includes(p.videoUrl)) return base;
+    return base ? `${base}\n\n${line}` : line;
+  }
+  return base || undefined;
+}
+
 function eventTimes(p: AppointmentPushPayload, providerKind: "google" | "outlook") {
   if (p.allDay) {
     const startDate = p.startAt.slice(0, 10);
@@ -111,7 +128,7 @@ async function pushGoogle(
     const wantsMeet = payload.videoProvider === "meet";
     const requestBody: Record<string, unknown> = {
       summary: payload.title,
-      description: payload.description || undefined,
+      description: descriptionWithVideo(payload),
       location: payload.location || undefined,
       ...times,
       attendees: parseParticipantsList(payload.participants).map((email) => ({ email })),
@@ -162,7 +179,7 @@ async function patchGoogle(
       eventId: externalId,
       requestBody: {
         summary: payload.title,
-        description: payload.description || undefined,
+        description: descriptionWithVideo(payload),
         location: payload.location || undefined,
         ...times,
         attendees: parseParticipantsList(payload.participants).map((email) => ({ email })),
@@ -206,9 +223,10 @@ interface OutlookTimes {
 
 function outlookBody(payload: AppointmentPushPayload, includeOnlineMeeting: boolean) {
   const times = eventTimes(payload, "outlook") as OutlookTimes;
+  const enrichedDesc = descriptionWithVideo(payload);
   const body: Record<string, unknown> = {
     subject: payload.title,
-    body: payload.description ? { contentType: "Text", content: payload.description } : undefined,
+    body: enrichedDesc ? { contentType: "Text", content: enrichedDesc } : undefined,
     location: payload.location ? { displayName: payload.location } : undefined,
     start: times.start,
     end: times.end,
