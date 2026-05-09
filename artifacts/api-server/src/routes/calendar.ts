@@ -1,4 +1,5 @@
 import { Router, type IRouter } from "express";
+import crypto from "node:crypto";
 import { google } from "googleapis";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
@@ -22,6 +23,60 @@ const GOOGLE_CLIENT_SECRET = process.env["GOOGLE_CLIENT_SECRET"] || "";
 
 const FREEBUSY_CACHE = new Map<string, { at: number; busy: Array<{ start: string; end: string }> }>();
 const FREEBUSY_CACHE_TTL_MS = 5 * 60 * 1000;
+
+// ---------------------------------------------------------------------------
+// OAuth state signé (anti-CSRF / anti account-linking forgery)
+// Format : base64url(userId|provider|issuedAtMs|nonce).hex(hmac)
+// TTL 10 minutes, single-use enregistré en mémoire.
+// ---------------------------------------------------------------------------
+const STATE_TTL_MS = 10 * 60 * 1000;
+const STATE_SECRET = process.env["SESSION_SECRET"] || process.env["SUPABASE_SECRET_KEY"] || "calendar-oauth-fallback-secret-change-me";
+const USED_STATES = new Map<string, number>();
+
+function pruneUsedStates() {
+  const now = Date.now();
+  for (const [k, t] of USED_STATES) {
+    if (now - t > STATE_TTL_MS) USED_STATES.delete(k);
+  }
+}
+
+function signCalendarState(userId: string, provider: "google" | "outlook"): string {
+  const nonce = crypto.randomBytes(16).toString("hex");
+  const payload = `${userId}|${provider}|${Date.now()}|${nonce}`;
+  const payloadB64 = Buffer.from(payload, "utf8").toString("base64url");
+  const sig = crypto.createHmac("sha256", STATE_SECRET).update(payloadB64).digest("hex");
+  return `${payloadB64}.${sig}`;
+}
+
+function verifyCalendarState(state: string | undefined, expectedProvider: "google" | "outlook"): { userId: string } | null {
+  if (!state || typeof state !== "string" || !state.includes(".")) return null;
+  const [payloadB64, sig] = state.split(".");
+  if (!payloadB64 || !sig) return null;
+  const expected = crypto.createHmac("sha256", STATE_SECRET).update(payloadB64).digest("hex");
+  let ok = false;
+  try {
+    ok = sig.length === expected.length && crypto.timingSafeEqual(Buffer.from(sig, "hex"), Buffer.from(expected, "hex"));
+  } catch {
+    return null;
+  }
+  if (!ok) return null;
+  let payload: string;
+  try {
+    payload = Buffer.from(payloadB64, "base64url").toString("utf8");
+  } catch {
+    return null;
+  }
+  const parts = payload.split("|");
+  if (parts.length !== 4) return null;
+  const [userId, provider, issuedAtRaw] = parts;
+  if (!userId || provider !== expectedProvider) return null;
+  const issuedAt = Number(issuedAtRaw);
+  if (!Number.isFinite(issuedAt) || Date.now() - issuedAt > STATE_TTL_MS) return null;
+  pruneUsedStates();
+  if (USED_STATES.has(state)) return null; // anti-replay
+  USED_STATES.set(state, Date.now());
+  return { userId };
+}
 
 function escHtml(s: string): string {
   return s
@@ -61,7 +116,7 @@ router.get("/calendar/connect/google", requireAuth, async (req, res): Promise<vo
       access_type: "offline",
       prompt: "consent",
       scope: GOOGLE_CALENDAR_SCOPES,
-      state: req.userId,
+      state: signCalendarState(req.userId!, "google"),
     });
     res.json({ url });
   } catch (err: any) {
@@ -73,11 +128,18 @@ router.get("/calendar/connect/google", requireAuth, async (req, res): Promise<vo
 router.get("/calendar/callback/google", async (req, res): Promise<void> => {
   try {
     const code = req.query["code"] as string | undefined;
-    const userId = req.query["state"] as string | undefined;
-    if (!code || !userId) {
+    const stateRaw = req.query["state"] as string | undefined;
+    if (!code || !stateRaw) {
       res.status(400).send(popupHtml("Connexion impossible", "google", false, "Paramètres manquants."));
       return;
     }
+    const verified = verifyCalendarState(stateRaw, "google");
+    if (!verified) {
+      logger.warn("[calendar] google callback: invalid or expired state");
+      res.status(400).send(popupHtml("Lien expiré", "google", false, "Veuillez relancer la connexion depuis NCV Mail."));
+      return;
+    }
+    const userId = verified.userId;
     const client = getGoogleCalendarOAuth2Client();
     const { tokens } = await client.getToken(code);
     client.setCredentials(tokens);
@@ -150,7 +212,7 @@ router.get("/calendar/connect/outlook", requireAuth, async (req, res): Promise<v
       redirect_uri: redirectUri,
       response_mode: "query",
       scope: OUTLOOK_CALENDAR_SCOPES.join(" "),
-      state: req.userId || "",
+      state: signCalendarState(req.userId!, "outlook"),
       prompt: "consent",
     });
     const url = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?${params.toString()}`;
@@ -164,11 +226,18 @@ router.get("/calendar/connect/outlook", requireAuth, async (req, res): Promise<v
 router.get("/calendar/callback/outlook", async (req, res): Promise<void> => {
   try {
     const code = req.query["code"] as string | undefined;
-    const userId = req.query["state"] as string | undefined;
-    if (!code || !userId) {
+    const stateRaw = req.query["state"] as string | undefined;
+    if (!code || !stateRaw) {
       res.status(400).send(popupHtml("Connexion impossible", "outlook", false, "Paramètres manquants."));
       return;
     }
+    const verified = verifyCalendarState(stateRaw, "outlook");
+    if (!verified) {
+      logger.warn("[calendar] outlook callback: invalid or expired state");
+      res.status(400).send(popupHtml("Lien expiré", "outlook", false, "Veuillez relancer la connexion depuis NCV Mail."));
+      return;
+    }
+    const userId = verified.userId;
     const redirectUri = getCalendarOAuthRedirectUri("outlook");
     const tokenParams = new URLSearchParams({
       client_id: MICROSOFT_CLIENT_ID,
@@ -290,11 +359,21 @@ router.delete("/calendar/accounts/:id", requireAuth, async (req, res): Promise<v
       return;
     }
 
-    // Best-effort revoke
+    // Best-effort revoke côté provider (parité Google / Outlook)
     try {
       if (account.provider === "google" && (account.refresh_token || account.access_token)) {
         const token = account.refresh_token || account.access_token;
-        await fetch(`https://oauth2.googleapis.com/revoke?token=${encodeURIComponent(token)}`, { method: "POST" });
+        const r = await fetch(`https://oauth2.googleapis.com/revoke?token=${encodeURIComponent(token)}`, { method: "POST" });
+        logger.info({ accountId: id, status: r.status }, "[calendar] google token revoked");
+      } else if (account.provider === "outlook" && account.access_token) {
+        // Microsoft Graph : invalidation des refresh tokens de la session courante.
+        // Nécessite User.Read par défaut ; sans le scope adéquat, l'appel échoue
+        // proprement (best-effort, parité avec Google).
+        const r = await fetch("https://graph.microsoft.com/v1.0/me/revokeSignInSessions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${account.access_token}` },
+        });
+        logger.info({ accountId: id, status: r.status }, "[calendar] outlook revoke best-effort");
       }
     } catch (e: any) {
       logger.warn({ err: e.message }, "[calendar] revoke failed (ignored)");
