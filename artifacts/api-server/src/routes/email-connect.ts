@@ -250,12 +250,32 @@ router.get("/email/callback/gmail", async (req, res): Promise<void> => {
     const hasReadScope = grantedScope.includes("gmail.readonly") || grantedScope.includes("mail.google.com");
     if (!hasReadScope) {
       console.error("[email-connect] Gmail OAuth granted scopes missing gmail.readonly:", grantedScope);
-      res.status(400).send(`<html><body style="font-family: sans-serif; background:#0d1117; color:#fff; padding: 40px; max-width: 600px; margin: 0 auto;">
-<h2 style="color:#ef4444;">Permission Gmail incomplète</h2>
-<p>Pour qu'Inboria puisse lire vos emails, vous devez cocher <strong>"Voir, modifier et créer vos messages Gmail"</strong> sur l'écran de consentement Google.</p>
-<p>Cette permission n'a pas été accordée. Veuillez recommencer la connexion et bien cocher TOUTES les cases proposées par Google.</p>
-<p>Permissions accordées : <code style="background:#141c2b; padding:4px 8px; border-radius:4px;">${grantedScope || "(aucune)"}</code></p>
-<button onclick="window.close()" style="background:#2d7dd2; color:#fff; border:none; padding: 10px 24px; border-radius:6px; cursor:pointer; font-size: 14px;">Fermer</button>
+      res.status(400).send(`<html><body style="font-family: -apple-system, sans-serif; background:#0d1117; color:#fff; padding: 40px; max-width: 640px; margin: 0 auto; line-height: 1.6;">
+<h2 style="color:#ef4444; margin-top:0;">Une case n'a pas été cochée</h2>
+<p>Sur la page Google, il y avait plusieurs cases à cocher pour autoriser Inboria. La case pour <strong>lire vos emails</strong> n'a pas été cochée, donc nous ne pouvons pas accéder à votre boîte mail.</p>
+<div style="background:#141c2b; padding:16px 20px; border-radius:8px; border-left:3px solid #2d7dd2; margin: 20px 0;">
+  <p style="margin:0 0 8px 0; font-weight:600;">Pour réussir, recommencez et :</p>
+  <ol style="margin:0; padding-left:20px;">
+    <li>Cliquez sur <strong>« Tout sélectionner »</strong> en haut de la liste, OU</li>
+    <li>Cochez manuellement <strong>toutes les cases</strong>, en particulier <strong>« Voir, modifier et créer vos messages Gmail »</strong></li>
+    <li>Puis cliquez sur <strong>Continuer</strong></li>
+  </ol>
+</div>
+<div style="display:flex; gap:10px; margin-top: 24px;">
+  <button id="retry" style="background:#2d7dd2; color:#fff; border:none; padding: 12px 24px; border-radius:6px; cursor:pointer; font-size: 14px; font-weight:600;">Recommencer</button>
+  <button onclick="window.close()" style="background:transparent; color:#b8c5d6; border:1px solid #2a3441; padding: 12px 24px; border-radius:6px; cursor:pointer; font-size: 14px;">Fermer</button>
+</div>
+<p style="color:#6b7280; font-size:11px; margin-top: 24px;">Permissions accordées : <code style="background:#141c2b; padding:2px 6px; border-radius:3px;">${grantedScope || "(aucune)"}</code></p>
+<script>
+document.getElementById('retry').onclick = async () => {
+  try {
+    const r = await fetch('/api/email/connect/gmail', { credentials: 'include' });
+    const d = await r.json();
+    if (d.url) window.location.href = d.url;
+    else alert('Erreur : ' + (d.error || 'inconnue'));
+  } catch (e) { alert('Erreur réseau'); }
+};
+</script>
 </body></html>`);
       return;
     }
