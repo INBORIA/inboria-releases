@@ -9,7 +9,9 @@ import {
   patchAppointmentOnProvider,
   deleteAppointmentOnProvider,
   pullExternalEventsAndUpsert,
+  generateJitsiUrl,
   type AppointmentPushPayload,
+  type VideoProvider,
 } from "../services/calendar-sync";
 import { proposeMeeting, sendCounterAcceptedEmail } from "../services/meeting-proposals";
 
@@ -30,6 +32,8 @@ const participantsSchema = z
     "participants must be a list of valid email addresses",
   );
 
+const videoProviderSchema = z.enum(["meet", "teams", "jitsi", "none"]);
+
 const createAppointmentSchema = z.object({
   title: z.string().trim().min(1).max(500),
   description: z.string().max(5000).optional().nullable(),
@@ -42,6 +46,8 @@ const createAppointmentSchema = z.object({
   reminderMinutes: z.number().int().min(0).max(10080).optional(),
   participants: participantsSchema.optional().nullable(),
   calendarAccountId: z.string().uuid().optional().nullable(),
+  videoProvider: videoProviderSchema.optional().nullable(),
+  videoUrl: z.string().url().max(2000).optional().nullable(),
 }).refine((b) => Date.parse(b.endAt) >= Date.parse(b.startAt), {
   message: "endAt must be after startAt",
   path: ["endAt"],
@@ -60,6 +66,8 @@ const updateAppointmentSchema = z.object({
   confirmed: z.boolean().optional(),
   participants: participantsSchema.optional().nullable(),
   calendarAccountId: z.string().uuid().optional().nullable(),
+  videoProvider: videoProviderSchema.optional().nullable(),
+  videoUrl: z.string().url().max(2000).optional().nullable(),
 });
 
 const router: IRouter = Router();
@@ -96,6 +104,9 @@ function mapAppointment(row: any) {
     counterEndAt: row.counter_end_at ?? null,
     proposalRecipient: row.proposal_recipient ?? null,
     proposalLang: row.proposal_lang ?? null,
+    videoProvider: row.video_provider ?? null,
+    videoUrl: row.video_url ?? null,
+    videoJoinUrl: row.video_join_url ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     projects: row.projects,
@@ -111,7 +122,40 @@ function buildPushPayload(row: any): AppointmentPushPayload {
     endAt: row.end_at,
     allDay: row.all_day,
     participants: row.participants,
+    videoProvider: (row.video_provider as VideoProvider | null) ?? null,
+    videoUrl: row.video_url ?? null,
   };
+}
+
+/**
+ * Vérifie qu'un compte calendrier connecté correspond au fournisseur visio
+ * demandé (Meet→google, Teams→outlook). Renvoie l'erreur API si mismatch.
+ */
+async function validateVideoVsCalendar(
+  userId: string,
+  videoProvider: VideoProvider | null | undefined,
+  calendarAccountId: string | null | undefined,
+): Promise<{ ok: true } | { ok: false; error: string }> {
+  if (!videoProvider || videoProvider === "none" || videoProvider === "jitsi") {
+    return { ok: true };
+  }
+  if (!calendarAccountId) {
+    return { ok: false, error: "video_requires_calendar_account" };
+  }
+  const { data: acc } = await supabaseAdmin
+    .from("calendar_accounts")
+    .select("provider")
+    .eq("id", calendarAccountId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (!acc) return { ok: false, error: "calendar_account_not_owned" };
+  if (videoProvider === "meet" && acc.provider !== "google") {
+    return { ok: false, error: "meet_requires_google_calendar" };
+  }
+  if (videoProvider === "teams" && acc.provider !== "outlook") {
+    return { ok: false, error: "teams_requires_outlook_calendar" };
+  }
+  return { ok: true };
 }
 
 router.get("/appointments", requireAuth, async (req, res): Promise<void> => {
@@ -169,7 +213,7 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
     }
     const {
       title, description, location, startAt, endAt, allDay, emailId, projectId,
-      reminderMinutes, participants, calendarAccountId,
+      reminderMinutes, participants, calendarAccountId, videoProvider, videoUrl,
     } = parsed.data;
 
     if (calendarAccountId) {
@@ -184,6 +228,22 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
         return;
       }
     }
+
+    const videoCheck = await validateVideoVsCalendar(req.userId!, videoProvider, calendarAccountId);
+    if (!videoCheck.ok) {
+      res.status(400).json({ error: videoCheck.error });
+      return;
+    }
+
+    // Pour Jitsi on génère l'URL nous-mêmes (pas d'API). Pour Meet/Teams le
+    // lien définitif sera obtenu après push calendrier ; on stocke null en
+    // attendant et on remplit ci-dessous.
+    const initialVideoUrl =
+      videoProvider === "jitsi"
+        ? videoUrl || generateJitsiUrl()
+        : videoProvider === "none" || !videoProvider
+          ? null
+          : videoUrl || null;
 
     const { data, error } = await supabaseAdmin
       .from("appointments")
@@ -200,6 +260,8 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
         reminder_minutes: reminderMinutes ?? 30,
         participants: participants || null,
         calendar_account_id: calendarAccountId || null,
+        video_provider: videoProvider || null,
+        video_url: initialVideoUrl,
       })
       .select("*, projects(id, name, reference, color)")
       .single();
@@ -221,6 +283,8 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
               external_calendar_id: pushed.calendarId,
               last_synced_at: new Date().toISOString(),
               last_sync_error: null,
+              ...(pushed.videoUrl ? { video_url: pushed.videoUrl } : {}),
+              ...(pushed.videoJoinUrl ? { video_join_url: pushed.videoJoinUrl } : {}),
             })
             .eq("id", data.id)
             .select("*, projects(id, name, reference, color)")
@@ -309,6 +373,24 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
       }
     }
 
+    // Effective video provider after this PATCH (used to validate consistency
+    // with the destination calendar — Meet exige Google, Teams exige Outlook).
+    const effVideoProvider: VideoProvider | null =
+      body.videoProvider !== undefined
+        ? (body.videoProvider as VideoProvider | null)
+        : ((existing.video_provider as VideoProvider | null) ?? null);
+    const effCalendarAccountId =
+      body.calendarAccountId !== undefined ? body.calendarAccountId : existing.calendar_account_id;
+    const videoCheck = await validateVideoVsCalendar(
+      req.userId!,
+      effVideoProvider,
+      effCalendarAccountId,
+    );
+    if (!videoCheck.ok) {
+      res.status(400).json({ error: videoCheck.error });
+      return;
+    }
+
     const updates: Record<string, any> = {};
     if (body.title !== undefined) updates.title = body.title;
     if (body.description !== undefined) updates.description = body.description;
@@ -321,6 +403,29 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
     if (body.reminderMinutes !== undefined) updates.reminder_minutes = body.reminderMinutes;
     if (body.confirmed !== undefined) updates.confirmed = body.confirmed;
     if (body.participants !== undefined) updates.participants = body.participants || null;
+    if (body.videoProvider !== undefined) {
+      updates.video_provider = body.videoProvider || null;
+      // Si on désactive la visio, on purge l'URL.
+      if (!body.videoProvider || body.videoProvider === "none") {
+        updates.video_url = null;
+        updates.video_join_url = null;
+      } else if (body.videoProvider === "jitsi" && body.videoUrl === undefined) {
+        // Bascule vers Jitsi sans URL fournie → on en génère une.
+        if (!existing.video_url || existing.video_provider !== "jitsi") {
+          updates.video_url = generateJitsiUrl();
+          updates.video_join_url = null;
+        }
+      } else if (body.videoProvider === "meet" || body.videoProvider === "teams") {
+        // Le lien sera (re)généré par le push calendrier ci-dessous.
+        if (existing.video_provider !== body.videoProvider) {
+          updates.video_url = null;
+          updates.video_join_url = null;
+        }
+      }
+    }
+    if (body.videoUrl !== undefined) {
+      updates.video_url = body.videoUrl || null;
+    }
     if (wantsCalendarChange) {
       // Detach from previous external link; new push will happen below if a
       // new calendar account was provided.
@@ -377,6 +482,8 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
               external_calendar_id: pushed.calendarId,
               last_synced_at: new Date().toISOString(),
               last_sync_error: null,
+              ...(pushed.videoUrl ? { video_url: pushed.videoUrl } : {}),
+              ...(pushed.videoJoinUrl ? { video_join_url: pushed.videoJoinUrl } : {}),
             })
             .eq("id", data.id)
             .select("*, projects(id, name, reference, color)")
@@ -400,7 +507,8 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
       body.title !== undefined || body.description !== undefined ||
       body.location !== undefined || body.startAt !== undefined ||
       body.endAt !== undefined || body.allDay !== undefined ||
-      body.participants !== undefined;
+      body.participants !== undefined ||
+      body.videoProvider !== undefined || body.videoUrl !== undefined;
     if (!wantsCalendarChange && touchesContent && data.calendar_account_id && data.external_provider && data.external_id) {
       try {
         const ok = await patchAppointmentOnProvider(
@@ -495,6 +603,7 @@ const proposeMeetingSchema = z
     location: z.string().max(500).optional().nullable(),
     description: z.string().max(2000).optional().nullable(),
     lang: z.string().min(2).max(10).optional(),
+    videoProvider: videoProviderSchema.optional().nullable(),
   })
   .refine((b) => Date.parse(b.endAt) > Date.parse(b.startAt), {
     message: "endAt must be after startAt",

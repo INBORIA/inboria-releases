@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA telah dikeluarkan dari akaun anda.",
       "loadError": "Tidak dapat memuatkan faktor 2FA",
       "enrollError": "Tidak dapat memulakan pendaftaran"
-    }
+    },
+    "preferredVideoTitle": "Mesyuarat video lalai",
+    "preferredVideoDesc": "Sila pilih pembekal mesyuarat video lalai anda untuk temu janji baharu. Meet memerlukan kalendar Google yang disambungkan; Teams memerlukan Outlook. Jitsi berfungsi tanpa akaun."
   },
   "subscription": {
     "title": "Urus langganan anda",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Tawaran balas",
       "confirmed": "Disahkan",
       "declined": "Ditolak"
-    }
+    },
+    "video": "Mesyuarat video",
+    "videoNone": "Tiada",
+    "videoJitsi": "Jitsi (pautan Inboria, tanpa akaun)",
+    "videoMeet": "Google Meet (memerlukan kalendar Google)",
+    "videoTeams": "Microsoft Teams (memerlukan kalendar Outlook)",
+    "videoJoin": "Sertai mesyuarat video"
   },
   "supportChat": {
     "title": "Pembantu Inboria",

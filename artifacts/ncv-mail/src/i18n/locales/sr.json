@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA је уклоњена из Вашег налога.",
       "loadError": "Није могуће учитати 2FA факторе",
       "enrollError": "Није могуће започети уписивање"
-    }
+    },
+    "preferredVideoTitle": "Подразумевани видео-састанак",
+    "preferredVideoDesc": "Молимо Вас да изаберете подразумеваног добављача видео-састанака за нове састанке. Meet захтева повезан Google календар; Teams захтева Outlook. Jitsi ради без налога."
   },
   "subscription": {
     "title": "Управљајте својом претплатом",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Контра",
       "confirmed": "Потврђено",
       "declined": "Одбијено"
-    }
+    },
+    "video": "Видео-састанак",
+    "videoNone": "Ниједан",
+    "videoJitsi": "Jitsi (Inboria веза, без налога)",
+    "videoMeet": "Google Meet (потребан је Google календар)",
+    "videoTeams": "Microsoft Teams (потребан је Outlook календар)",
+    "videoJoin": "Придружи се видео-састанку"
   },
   "supportChat": {
     "title": "Асистент Inboria",

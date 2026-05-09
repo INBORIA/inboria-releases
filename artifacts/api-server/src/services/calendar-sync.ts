@@ -1,4 +1,5 @@
 import { google } from "googleapis";
+import { randomUUID } from "node:crypto";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import {
@@ -9,6 +10,8 @@ import {
 const GOOGLE_CLIENT_ID = process.env["GOOGLE_CLIENT_ID"] || "";
 const GOOGLE_CLIENT_SECRET = process.env["GOOGLE_CLIENT_SECRET"] || "";
 
+export type VideoProvider = "meet" | "teams" | "jitsi" | "none";
+
 export interface AppointmentPushPayload {
   title: string;
   description?: string | null;
@@ -17,6 +20,19 @@ export interface AppointmentPushPayload {
   endAt: string;
   allDay?: boolean | null;
   participants?: string | null;
+  videoProvider?: VideoProvider | null;
+  videoUrl?: string | null;
+}
+
+export interface AppointmentPushResult {
+  externalId: string;
+  calendarId: string;
+  videoUrl?: string | null;
+  videoJoinUrl?: string | null;
+}
+
+export function generateJitsiUrl(): string {
+  return `https://meet.jit.si/ncv-${randomUUID()}`;
 }
 
 function parseParticipantsList(raw: string | null | undefined): string[] {
@@ -84,7 +100,7 @@ function eventTimes(p: AppointmentPushPayload, providerKind: "google" | "outlook
 async function pushGoogle(
   account: CalendarAccountRow,
   payload: AppointmentPushPayload,
-): Promise<{ externalId: string; calendarId: string } | null> {
+): Promise<AppointmentPushResult | null> {
   const token = await getValidAccessToken(account);
   if (!token) return null;
   const client = new google.auth.OAuth2(GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET);
@@ -92,18 +108,37 @@ async function pushGoogle(
   const calendar = google.calendar({ version: "v3", auth: client });
   try {
     const times = eventTimes(payload, "google");
+    const wantsMeet = payload.videoProvider === "meet";
+    const requestBody: Record<string, unknown> = {
+      summary: payload.title,
+      description: payload.description || undefined,
+      location: payload.location || undefined,
+      ...times,
+      attendees: parseParticipantsList(payload.participants).map((email) => ({ email })),
+    };
+    if (wantsMeet) {
+      requestBody["conferenceData"] = {
+        createRequest: {
+          requestId: randomUUID(),
+          conferenceSolutionKey: { type: "hangoutsMeet" },
+        },
+      };
+    }
     const { data } = await calendar.events.insert({
       calendarId: "primary",
-      requestBody: {
-        summary: payload.title,
-        description: payload.description || undefined,
-        location: payload.location || undefined,
-        ...times,
-        attendees: parseParticipantsList(payload.participants).map((email) => ({ email })),
-      },
+      conferenceDataVersion: wantsMeet ? 1 : 0,
+      requestBody,
     });
     if (!data.id) return null;
-    return { externalId: data.id, calendarId: "primary" };
+    const meetUrl =
+      data.hangoutLink ||
+      data.conferenceData?.entryPoints?.find((e) => e.entryPointType === "video")?.uri ||
+      null;
+    return {
+      externalId: data.id,
+      calendarId: "primary",
+      videoUrl: wantsMeet ? meetUrl : payload.videoUrl ?? null,
+    };
   } catch (err: any) {
     logger.warn({ accountId: account.id, err: err.message }, "[calendar-sync] google insert failed");
     return null;
@@ -133,6 +168,9 @@ async function patchGoogle(
         attendees: parseParticipantsList(payload.participants).map((email) => ({ email })),
       },
     });
+    // Note: on patch we do NOT recreate the conference (Google ne supporte
+    // pas la mise à jour conference via patch sans risque de casser le
+    // hangoutLink déjà partagé). On laisse l'URL existante intacte.
     return true;
   } catch (err: any) {
     logger.warn({ accountId: account.id, externalId, err: err.message }, "[calendar-sync] google patch failed");
@@ -166,9 +204,9 @@ interface OutlookTimes {
   isAllDay?: boolean;
 }
 
-function outlookBody(payload: AppointmentPushPayload) {
+function outlookBody(payload: AppointmentPushPayload, includeOnlineMeeting: boolean) {
   const times = eventTimes(payload, "outlook") as OutlookTimes;
-  return {
+  const body: Record<string, unknown> = {
     subject: payload.title,
     body: payload.description ? { contentType: "Text", content: payload.description } : undefined,
     location: payload.location ? { displayName: payload.location } : undefined,
@@ -180,28 +218,45 @@ function outlookBody(payload: AppointmentPushPayload) {
       type: "required",
     })),
   };
+  if (includeOnlineMeeting) {
+    body["isOnlineMeeting"] = true;
+    body["onlineMeetingProvider"] = "teamsForBusiness";
+  }
+  return body;
 }
 
 async function pushOutlook(
   account: CalendarAccountRow,
   payload: AppointmentPushPayload,
-): Promise<{ externalId: string; calendarId: string } | null> {
+): Promise<AppointmentPushResult | null> {
   const token = await getValidAccessToken(account);
   if (!token) return null;
+  const wantsTeams = payload.videoProvider === "teams";
   try {
     const resp = await fetch("https://graph.microsoft.com/v1.0/me/events", {
       method: "POST",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify(outlookBody(payload)),
+      body: JSON.stringify(outlookBody(payload, wantsTeams)),
     });
     if (!resp.ok) {
       const txt = await resp.text();
       logger.warn({ accountId: account.id, status: resp.status, body: txt.slice(0, 200) }, "[calendar-sync] outlook insert failed");
       return null;
     }
-    const data = (await resp.json()) as { id?: string; calendar?: { id?: string } };
+    const data = (await resp.json()) as {
+      id?: string;
+      calendar?: { id?: string };
+      onlineMeeting?: { joinUrl?: string };
+      onlineMeetingUrl?: string;
+    };
     if (!data.id) return null;
-    return { externalId: data.id, calendarId: data.calendar?.id || "primary" };
+    const teamsUrl = data.onlineMeeting?.joinUrl || data.onlineMeetingUrl || null;
+    return {
+      externalId: data.id,
+      calendarId: data.calendar?.id || "primary",
+      videoUrl: wantsTeams ? teamsUrl : payload.videoUrl ?? null,
+      videoJoinUrl: wantsTeams ? teamsUrl : null,
+    };
   } catch (err: any) {
     logger.warn({ accountId: account.id, err: err.message }, "[calendar-sync] outlook insert crashed");
     return null;
@@ -216,10 +271,12 @@ async function patchOutlook(
   const token = await getValidAccessToken(account);
   if (!token) return false;
   try {
+    // PATCH garde isOnlineMeeting tel quel (Graph rejette le retoggle d'un
+    // online meeting déjà créé). On envoie le body sans le flag.
     const resp = await fetch(`https://graph.microsoft.com/v1.0/me/events/${encodeURIComponent(externalId)}`, {
       method: "PATCH",
       headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json" },
-      body: JSON.stringify(outlookBody(payload)),
+      body: JSON.stringify(outlookBody(payload, false)),
     });
     if (!resp.ok) {
       logger.warn({ accountId: account.id, externalId, status: resp.status }, "[calendar-sync] outlook patch failed");
@@ -260,7 +317,7 @@ export async function pushAppointmentToProvider(
   userId: string,
   accountId: string,
   payload: AppointmentPushPayload,
-): Promise<{ provider: "google" | "outlook"; externalId: string; calendarId: string } | null> {
+): Promise<({ provider: "google" | "outlook" } & AppointmentPushResult) | null> {
   const account = await loadAccount(userId, accountId);
   if (!account || account.status !== "connected") return null;
   if (account.provider === "google") {

@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA आपके खाते से हटा दिया गया है।",
       "loadError": "2FA कारकों को लोड करना असंभव है",
       "enrollError": "पंजीकरण प्रारंभ करना असंभव है"
-    }
+    },
+    "preferredVideoTitle": "डिफ़ॉल्ट वीडियो मीटिंग",
+    "preferredVideoDesc": "कृपया नई मुलाकातों के लिए डिफ़ॉल्ट वीडियो मीटिंग प्रदाता चुनें। Meet के लिए कनेक्टेड Google कैलेंडर आवश्यक है; Teams के लिए Outlook आवश्यक है। Jitsi बिना खाते के काम करता है।"
   },
   "subscription": {
     "title": "अपने सब्सक्रिप्शन का प्रबंधन करें",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "प्रति-प्रस्ताव",
       "confirmed": "पुष्टि की",
       "declined": "अस्वीकृत"
-    }
+    },
+    "video": "वीडियो मीटिंग",
+    "videoNone": "कोई नहीं",
+    "videoJitsi": "Jitsi (Inboria लिंक, खाते की आवश्यकता नहीं)",
+    "videoMeet": "Google Meet (Google कैलेंडर आवश्यक)",
+    "videoTeams": "Microsoft Teams (Outlook कैलेंडर आवश्यक)",
+    "videoJoin": "वीडियो मीटिंग में शामिल हों"
   },
   "supportChat": {
     "title": "Inboria सहायक",

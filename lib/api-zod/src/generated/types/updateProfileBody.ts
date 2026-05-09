@@ -6,6 +6,7 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { UpdateProfileBodyAiLanguage } from "./updateProfileBodyAiLanguage";
+import type { UpdateProfileBodyPreferredVideoProvider } from "./updateProfileBodyPreferredVideoProvider";
 
 export interface UpdateProfileBody {
   fullName?: string;
@@ -21,4 +22,5 @@ export interface UpdateProfileBody {
   followUpDelayDays?: number;
   trackingEnabled?: boolean;
   meetingRemindersEnabled?: boolean;
+  preferredVideoProvider?: UpdateProfileBodyPreferredVideoProvider;
 }

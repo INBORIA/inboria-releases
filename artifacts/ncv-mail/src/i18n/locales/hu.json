@@ -1228,7 +1228,9 @@
       "disabledDesc": "A 2FA eltávolításra került a fiókjából.",
       "loadError": "Nem lehet betölteni a 2FA tényezőket",
       "enrollError": "Nem lehet elindítani a regisztrációt"
-    }
+    },
+    "preferredVideoTitle": "Alapértelmezett videohívás",
+    "preferredVideoDesc": "Válassza ki az új találkozók alapértelmezett videoszolgáltatóját. A Meet csatlakoztatott Google-naptárat igényel; a Teams Outlookot igényel. A Jitsi fiók nélkül is működik."
   },
   "subscription": {
     "title": "Kezelje az előfizetését",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Ellenjavaslat",
       "confirmed": "Megerősítve",
       "declined": "Elutasítva"
-    }
+    },
+    "video": "Videohívás",
+    "videoNone": "Nincs",
+    "videoJitsi": "Jitsi (Inboria-link, fiók nélkül)",
+    "videoMeet": "Google Meet (Google-naptár szükséges)",
+    "videoTeams": "Microsoft Teams (Outlook-naptár szükséges)",
+    "videoJoin": "Csatlakozás a videohíváshoz"
   },
   "supportChat": {
     "title": "Inboria asszisztens",

@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA bola odstránená z Vášho účtu.",
       "loadError": "Nemožno načítať faktory 2FA",
       "enrollError": "Nemožno spustiť registráciu"
-    }
+    },
+    "preferredVideoTitle": "Predvolený videohovor",
+    "preferredVideoDesc": "Prosím, vyberte predvoleného poskytovateľa videohovorov pre nové stretnutia. Meet vyžaduje pripojený kalendár Google; Teams vyžaduje Outlook. Jitsi funguje bez účtu."
   },
   "subscription": {
     "title": "Spravujte svoje predplatné",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Protinávrh",
       "confirmed": "Potvrdené",
       "declined": "Odmietnuté"
-    }
+    },
+    "video": "Videohovor",
+    "videoNone": "Žiadny",
+    "videoJitsi": "Jitsi (odkaz Inboria, bez účtu)",
+    "videoMeet": "Google Meet (vyžaduje kalendár Google)",
+    "videoTeams": "Microsoft Teams (vyžaduje kalendár Outlook)",
+    "videoJoin": "Pripojiť sa k videohovoru"
   },
   "supportChat": {
     "title": "Asistent Inboria",

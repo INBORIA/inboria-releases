@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA on poistettu tililtänne.",
       "loadError": "2FA-tekijöitä ei voitu ladata",
       "enrollError": "Rekisteröintiä ei voitu aloittaa"
-    }
+    },
+    "preferredVideoTitle": "Oletusvideoneuvottelu",
+    "preferredVideoDesc": "Valitse uusien tapaamisten oletusvideopalveluntarjoaja. Meet vaatii yhdistetyn Google-kalenterin; Teams vaatii Outlookin. Jitsi toimii ilman tiliä."
   },
   "subscription": {
     "title": "Hallinnoi tilaustanne",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Vastaehdotus",
       "confirmed": "Vahvistettu",
       "declined": "Hylätty"
-    }
+    },
+    "video": "Videoneuvottelu",
+    "videoNone": "Ei mitään",
+    "videoJitsi": "Jitsi (Inboria-linkki, ilman tiliä)",
+    "videoMeet": "Google Meet (Google-kalenteri vaaditaan)",
+    "videoTeams": "Microsoft Teams (Outlook-kalenteri vaaditaan)",
+    "videoJoin": "Liity videoneuvotteluun"
   },
   "supportChat": {
     "title": "Inboria-avustaja",

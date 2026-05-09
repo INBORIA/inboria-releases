@@ -1228,7 +1228,9 @@
       "disabledDesc": "تمت إزالة المصادقة الثنائية من حسابكم.",
       "loadError": "تعذر تحميل عوامل المصادقة الثنائية",
       "enrollError": "تعذر بدء عملية التسجيل"
-    }
+    },
+    "preferredVideoTitle": "اجتماع الفيديو الافتراضي",
+    "preferredVideoDesc": "يرجى اختيار مزوّد اجتماعات الفيديو الافتراضي للمواعيد الجديدة. يتطلب Meet تقويم Google متصلاً؛ ويتطلب Teams حساب Outlook. أما Jitsi فيعمل دون الحاجة إلى حساب."
   },
   "subscription": {
     "title": "إدارة اشتراككم",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "اقتراح مضاد",
       "confirmed": "مؤكد",
       "declined": "مرفوض"
-    }
+    },
+    "video": "اجتماع فيديو",
+    "videoNone": "لا شيء",
+    "videoJitsi": "Jitsi (رابط Inboria، بدون حساب)",
+    "videoMeet": "Google Meet (يتطلب تقويم Google)",
+    "videoTeams": "Microsoft Teams (يتطلب تقويم Outlook)",
+    "videoJoin": "الانضمام إلى اجتماع الفيديو"
   },
   "supportChat": {
     "title": "مساعد Inboria",

@@ -569,6 +569,8 @@ export default function ParametresMonCompte() {
   const [followUpDelayDays, setFollowUpDelayDays] = useState<number>(5);
   const [trackingEnabled, setTrackingEnabled] = useState<boolean>(false);
   const [meetingRemindersEnabled, setMeetingRemindersEnabled] = useState<boolean>(true);
+  type VideoProv = "none" | "jitsi" | "meet" | "teams";
+  const [preferredVideoProvider, setPreferredVideoProvider] = useState<VideoProv>("none");
 
   const WIZARD_STORAGE_KEY = "inboria.imapWizard.v1";
   const WIZARD_TTL_MS = 30 * 60 * 1000;
@@ -625,8 +627,27 @@ export default function ParametresMonCompte() {
       setTrackingEnabled(!!(profile as any).trackingEnabled);
       const mr = (profile as any).meetingRemindersEnabled;
       setMeetingRemindersEnabled(mr !== false);
+      const pv = (profile as any).preferredVideoProvider;
+      if (pv === "meet" || pv === "teams" || pv === "jitsi" || pv === "none") {
+        setPreferredVideoProvider(pv);
+      }
     }
   }, [profile]);
+
+  const handleChangePreferredVideo = (next: VideoProv) => {
+    const prev = preferredVideoProvider;
+    setPreferredVideoProvider(next);
+    updateProfile.mutate(
+      { data: { preferredVideoProvider: next } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+          toast({ title: t("settings.profileUpdated") });
+        },
+        onError: () => setPreferredVideoProvider(prev),
+      },
+    );
+  };
 
   const handleToggleMeetingReminders = (next: boolean) => {
     setMeetingRemindersEnabled(next);
@@ -1327,6 +1348,34 @@ export default function ParametresMonCompte() {
                         disabled={updateProfile.isPending}
                         data-testid="settings-meeting-reminders-toggle"
                       />
+                    </div>
+                  </div>
+
+                  <div className="pt-3 mt-3 border-t border-border/50 space-y-2">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0 flex-1">
+                        <Label className="text-[12px] text-white">
+                          {t("settings.preferredVideoTitle", "Visioconférence par défaut")}
+                        </Label>
+                        <p className="text-[11px] text-[#b8c5d6] mt-0.5">
+                          {t(
+                            "settings.preferredVideoDesc",
+                            "Choisissez le fournisseur de visio par défaut pour les nouveaux RDV. Meet exige un calendrier Google connecté ; Teams exige Outlook. Jitsi fonctionne sans compte.",
+                          )}
+                        </p>
+                      </div>
+                      <select
+                        value={preferredVideoProvider}
+                        onChange={(e) => handleChangePreferredVideo(e.target.value as VideoProv)}
+                        disabled={updateProfile.isPending}
+                        className="h-8 rounded-md border border-border bg-background px-2 text-[12px] text-white shrink-0"
+                        data-testid="settings-preferred-video-select"
+                      >
+                        <option value="none">{t("agenda.videoNone", "Aucune")}</option>
+                        <option value="jitsi">{t("agenda.videoJitsi", "Jitsi (lien Inboria, sans compte)")}</option>
+                        <option value="meet">{t("agenda.videoMeet", "Google Meet (calendrier Google requis)")}</option>
+                        <option value="teams">{t("agenda.videoTeams", "Microsoft Teams (calendrier Outlook requis)")}</option>
+                      </select>
                     </div>
                   </div>
                 </div>

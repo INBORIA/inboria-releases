@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA ถูกลบออกจากบัญชีของท่าน",
       "loadError": "ไม่สามารถโหลดปัจจัย 2FA ได้",
       "enrollError": "ไม่สามารถเริ่มการลงทะเบียนได้"
-    }
+    },
+    "preferredVideoTitle": "การประชุมทางวิดีโอเริ่มต้น",
+    "preferredVideoDesc": "โปรดเลือกผู้ให้บริการการประชุมทางวิดีโอเริ่มต้นสำหรับการนัดหมายใหม่ Meet ต้องเชื่อมต่อกับปฏิทิน Google และ Teams ต้องใช้ Outlook ส่วน Jitsi ใช้งานได้โดยไม่ต้องมีบัญชี"
   },
   "subscription": {
     "title": "จัดการการสมัครสมาชิกของท่าน",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "เสนอกลับ",
       "confirmed": "ยืนยันแล้ว",
       "declined": "ปฏิเสธ"
-    }
+    },
+    "video": "การประชุมทางวิดีโอ",
+    "videoNone": "ไม่มี",
+    "videoJitsi": "Jitsi (ลิงก์ Inboria ไม่ต้องมีบัญชี)",
+    "videoMeet": "Google Meet (ต้องใช้ปฏิทิน Google)",
+    "videoTeams": "Microsoft Teams (ต้องใช้ปฏิทิน Outlook)",
+    "videoJoin": "เข้าร่วมการประชุมทางวิดีโอ"
   },
   "supportChat": {
     "title": "ผู้ช่วย Inboria",

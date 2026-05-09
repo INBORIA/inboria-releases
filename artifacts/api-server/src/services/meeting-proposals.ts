@@ -5,6 +5,7 @@ import { randomUUID } from "crypto";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { consumeAiCredits } from "./credits";
+import { generateJitsiUrl } from "./calendar-sync";
 import {
   getActiveCalendarAccountsForUser,
   getValidAccessToken,
@@ -105,6 +106,7 @@ interface ProposeArgs {
   location?: string | null;
   description?: string | null;
   lang?: string;
+  videoProvider?: "meet" | "teams" | "jitsi" | "none" | null;
 }
 
 interface ProposeResult {
@@ -286,9 +288,19 @@ function langInstruction(lang: string | undefined): string {
  * + signature ouverte). Le destinataire répond en clair "ok / non / et si on
  * faisait plutôt …" — le worker classera la réponse.
  */
+function videoLineForLang(lang: string, url: string): string {
+  if (lang === "en") return `Video link: ${url}`;
+  if (lang === "nl") return `Videolink: ${url}`;
+  if (lang === "de") return `Videolink: ${url}`;
+  if (lang === "es") return `Enlace de videollamada: ${url}`;
+  if (lang === "it") return `Link videochiamata: ${url}`;
+  return `Lien visio : ${url}`;
+}
+
 async function generateProposalEmailBody(
   args: ProposeArgs,
   fromName: string,
+  videoUrl: string | null,
 ): Promise<{ subject: string; body: string }> {
   const startDate = new Date(args.startAt);
   const endDate = new Date(args.endAt);
@@ -321,8 +333,13 @@ Rédige le corps du mail. Mentionne clairement le créneau et invite poliment à
         },
       ],
     });
-    const body = completion.choices[0]?.message?.content?.trim() || "";
-    if (body.length > 0) return { subject: args.subject, body };
+    const llmBody = completion.choices[0]?.message?.content?.trim() || "";
+    if (llmBody.length > 0) {
+      const finalBody = videoUrl
+        ? `${llmBody}\n\n${videoLineForLang((args.lang || "fr").toLowerCase(), videoUrl)}`
+        : llmBody;
+      return { subject: args.subject, body: finalBody };
+    }
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     logger.warn({ err: msg }, "[meeting-proposals] LLM body generation failed, using fallback");
@@ -330,11 +347,12 @@ Rédige le corps du mail. Mentionne clairement le créneau et invite poliment à
 
   // Fallback déterministe.
   const greeting = args.contactName ? `Bonjour ${args.contactName},` : "Bonjour,";
+  const videoLine = videoUrl ? `\n${videoLineForLang(lang, videoUrl)}` : "";
   return {
     subject: args.subject,
     body: `${greeting}
 
-Je vous propose un rendez-vous : ${slot}.${args.location ? `\nLieu : ${args.location}.` : ""}
+Je vous propose un rendez-vous : ${slot}.${args.location ? `\nLieu : ${args.location}.` : ""}${videoLine}
 
 Cela vous convient-il ? N'hésitez pas à proposer un autre créneau si besoin.
 
@@ -402,11 +420,13 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
 
   const { data: profile } = await supabaseAdmin
     .from("profiles")
-    .select("full_name, meeting_reminders_enabled")
+    .select("full_name, meeting_reminders_enabled, preferred_video_provider")
     .eq("id", args.userId)
     .maybeSingle();
   const fromName = (profile as { full_name?: string } | null)?.full_name || conn.email_address;
   const remindersEnabled = (profile as { meeting_reminders_enabled?: boolean } | null)?.meeting_reminders_enabled !== false;
+  const preferredVideo = (profile as { preferred_video_provider?: string | null } | null)?.preferred_video_provider as
+    | "meet" | "teams" | "jitsi" | "none" | null | undefined;
 
   const billing = await consumeAiCredits(args.userId, "inboria_chat", {
     source: "meeting-proposal",
@@ -414,7 +434,44 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
   });
   if (!billing.ok) return { ok: false, error: "billing failed" };
 
-  const { subject, body } = await generateProposalEmailBody(args, fromName);
+  // Effective video provider for this proposal: explicit arg wins; otherwise
+  // user preference. Meet/Teams require a connected calendar of the right
+  // type — if not available, we gracefully fall back to Jitsi so the link is
+  // still included in the email.
+  let effVideo: "meet" | "teams" | "jitsi" | "none" =
+    (args.videoProvider as "meet" | "teams" | "jitsi" | "none" | null | undefined) ||
+    preferredVideo ||
+    "none";
+  let videoUrl: string | null = null;
+  if (effVideo === "jitsi") {
+    videoUrl = generateJitsiUrl();
+  } else if (effVideo === "meet" || effVideo === "teams") {
+    const wantedProvider = effVideo === "meet" ? "google" : "outlook";
+    const { data: calAcc } = await supabaseAdmin
+      .from("calendar_accounts")
+      .select("id")
+      .eq("user_id", args.userId)
+      .eq("provider", wantedProvider)
+      .eq("status", "connected")
+      .limit(1)
+      .maybeSingle();
+    if (!calAcc) {
+      // Pas de calendrier compatible : on retombe sur Jitsi pour ne pas
+      // bloquer la proposition (le contact aura quand même un lien visio).
+      logger.info(
+        { userId: args.userId, requested: effVideo },
+        "[meeting-proposals] no matching calendar, falling back to jitsi",
+      );
+      effVideo = "jitsi";
+      videoUrl = generateJitsiUrl();
+    }
+  }
+
+  const { subject, body } = await generateProposalEmailBody(
+    { ...args, videoProvider: effVideo },
+    fromName,
+    videoUrl,
+  );
 
   const awaitingReminderAt = remindersEnabled
     ? new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString()
@@ -441,6 +498,8 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
       proposal_lang: (args.lang || "fr").toLowerCase(),
       awaiting_reminder_at: awaitingReminderAt,
       confirmed: false,
+      video_provider: effVideo === "none" ? null : effVideo,
+      video_url: videoUrl,
     })
     .select("id")
     .single();

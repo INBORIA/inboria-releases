@@ -1228,7 +1228,9 @@
       "disabledDesc": "La 2FA ha estat retirada del vostre compte.",
       "loadError": "Impossible de carregar els factors 2FA",
       "enrollError": "Impossible d'iniciar l'enrolament"
-    }
+    },
+    "preferredVideoTitle": "Videoconferència per defecte",
+    "preferredVideoDesc": "Si us plau, escolliu el proveïdor de videoconferència per defecte per a les cites noves. Meet necessita un calendari de Google connectat; Teams necessita Outlook. Jitsi funciona sense compte."
   },
   "subscription": {
     "title": "Gereu la vostra subscripció",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Contraproposta",
       "confirmed": "Confirmat",
       "declined": "Rebutjat"
-    }
+    },
+    "video": "Videoconferència",
+    "videoNone": "Cap",
+    "videoJitsi": "Jitsi (enllaç Inboria, sense compte)",
+    "videoMeet": "Google Meet (cal un calendari Google)",
+    "videoTeams": "Microsoft Teams (cal un calendari Outlook)",
+    "videoJoin": "Uniu-vos a la videoconferència"
   },
   "supportChat": {
     "title": "Assistència Inboria",

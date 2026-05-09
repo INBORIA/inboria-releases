@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA buvo pašalinta iš Jūsų paskyros.",
       "loadError": "Nepavyko įkelti 2FA veiksnių",
       "enrollError": "Nepavyko pradėti registracijos"
-    }
+    },
+    "preferredVideoTitle": "Numatytoji vaizdo konferencija",
+    "preferredVideoDesc": "Prašome pasirinkti numatytąjį vaizdo konferencijų teikėją naujiems susitikimams. „Meet“ reikalauja prijungto „Google“ kalendoriaus; „Teams“ reikalauja „Outlook“. „Jitsi“ veikia be paskyros."
   },
   "subscription": {
     "title": "Tvarkykite Jūsų prenumeratą",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Priešp.",
       "confirmed": "Patvirtinta",
       "declined": "Atmesta"
-    }
+    },
+    "video": "Vaizdo konferencija",
+    "videoNone": "Nėra",
+    "videoJitsi": "„Jitsi“ (Inboria nuoroda, paskyros nereikia)",
+    "videoMeet": "„Google Meet“ (reikalingas „Google“ kalendorius)",
+    "videoTeams": "„Microsoft Teams“ (reikalingas „Outlook“ kalendorius)",
+    "videoJoin": "Prisijungti prie vaizdo konferencijos"
   },
   "supportChat": {
     "title": "Inboria asistentas",

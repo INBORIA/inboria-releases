@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA آپ کے اکاؤنٹ سے ہٹا دی گئی ہے۔",
       "loadError": "2FA کے عوامل لوڈ کرنے میں ناکامی",
       "enrollError": "رجسٹریشن شروع کرنے میں ناکامی"
-    }
+    },
+    "preferredVideoTitle": "طے شدہ ویڈیو میٹنگ",
+    "preferredVideoDesc": "براہ کرم نئی ملاقاتوں کے لیے طے شدہ ویڈیو میٹنگ فراہم کنندہ منتخب کریں۔ Meet کے لیے منسلک Google کیلنڈر ضروری ہے؛ Teams کے لیے Outlook ضروری ہے۔ Jitsi بغیر اکاؤنٹ کے کام کرتا ہے۔"
   },
   "subscription": {
     "title": "اپنی رکنیت کا انتظام کریں",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "جوابی تجویز",
       "confirmed": "تصدیق شدہ",
       "declined": "مسترد"
-    }
+    },
+    "video": "ویڈیو میٹنگ",
+    "videoNone": "کوئی نہیں",
+    "videoJitsi": "Jitsi (Inboria لنک، اکاؤنٹ کی ضرورت نہیں)",
+    "videoMeet": "Google Meet (Google کیلنڈر درکار)",
+    "videoTeams": "Microsoft Teams (Outlook کیلنڈر درکار)",
+    "videoJoin": "ویڈیو میٹنگ میں شامل ہوں"
   },
   "supportChat": {
     "title": "Inboria کا معاون",

@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA е премахната от Вашия акаунт.",
       "loadError": "Не е възможно да се заредят факторите за 2FA",
       "enrollError": "Не е възможно да се стартира регистрацията"
-    }
+    },
+    "preferredVideoTitle": "Видеоконференция по подразбиране",
+    "preferredVideoDesc": "Моля, изберете доставчика на видеоконференции по подразбиране за нови срещи. Meet изисква свързан календар Google; Teams изисква Outlook. Jitsi работи без акаунт."
   },
   "subscription": {
     "title": "Управлявайте Вашата абонаментна услуга",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Контрапред.",
       "confirmed": "Потвърдено",
       "declined": "Отказано"
-    }
+    },
+    "video": "Видеоконференция",
+    "videoNone": "Няма",
+    "videoJitsi": "Jitsi (връзка Inboria, без акаунт)",
+    "videoMeet": "Google Meet (необходим е календар Google)",
+    "videoTeams": "Microsoft Teams (необходим е календар Outlook)",
+    "videoJoin": "Присъедини се към видеоконференцията"
   },
   "supportChat": {
     "title": "Асистент Inboria",

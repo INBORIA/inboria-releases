@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA已從您的帳戶中移除。",
       "loadError": "無法加載2FA因素",
       "enrollError": "無法啟動註冊"
-    }
+    },
+    "preferredVideoTitle": "預設視訊會議",
+    "preferredVideoDesc": "請為您的新約會選擇預設的視訊會議服務。Meet 需要已連接的 Google 行事曆；Teams 需要 Outlook。Jitsi 無需帳戶即可使用。"
   },
   "subscription": {
     "title": "管理您的訂閱",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "反提議",
       "confirmed": "已確認",
       "declined": "已拒絕"
-    }
+    },
+    "video": "視訊會議",
+    "videoNone": "無",
+    "videoJitsi": "Jitsi（Inboria 連結，無需帳戶）",
+    "videoMeet": "Google Meet（需要 Google 行事曆）",
+    "videoTeams": "Microsoft Teams（需要 Outlook 行事曆）",
+    "videoJoin": "加入視訊會議"
   },
   "supportChat": {
     "title": "Inboria 助手",

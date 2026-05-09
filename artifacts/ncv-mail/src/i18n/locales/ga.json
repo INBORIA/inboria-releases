@@ -1228,7 +1228,9 @@
       "disabledDesc": "Tugadh an 2FA ar shiúl ó bhur cuntas.",
       "loadError": "Ní féidir na tosca 2FA a luchtú",
       "enrollError": "Ní féidir an clárú a thosú"
-    }
+    },
+    "preferredVideoTitle": "Cruinniú físe réamhshocraithe",
+    "preferredVideoDesc": "Le bhur dtoil, roghnaigh an soláthraí cruinnithe físe réamhshocraithe do na coinní nua. Éilíonn Meet féilire Google atá ceangailte; éilíonn Teams Outlook. Oibríonn Jitsi gan cuntas."
   },
   "subscription": {
     "title": "Bainistigh bhur síntiús",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Frith-mholadh",
       "confirmed": "Deimhnithe",
       "declined": "Diúltaithe"
-    }
+    },
+    "video": "Cruinniú físe",
+    "videoNone": "Gan ceann",
+    "videoJitsi": "Jitsi (nasc Inboria, gan cuntas)",
+    "videoMeet": "Google Meet (féilire Google ag teastáil)",
+    "videoTeams": "Microsoft Teams (féilire Outlook ag teastáil)",
+    "videoJoin": "Glac páirt sa chruinniú físe"
   },
   "supportChat": {
     "title": "Cabhair Inboria",

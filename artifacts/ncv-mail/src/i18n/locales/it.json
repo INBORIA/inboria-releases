@@ -1228,7 +1228,9 @@
       "disabledDesc": "La 2FA è stata rimossa dal Suo account.",
       "loadError": "Impossibile caricare i fattori 2FA",
       "enrollError": "Impossibile avviare l'enrolment"
-    }
+    },
+    "preferredVideoTitle": "Videoconferenza predefinita",
+    "preferredVideoDesc": "Scegli il fornitore di videoconferenza predefinito per i nuovi appuntamenti. Meet richiede un calendario Google connesso; Teams richiede Outlook. Jitsi funziona senza account."
   },
   "subscription": {
     "title": "Gestisca il Suo abbonamento",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Controproposta",
       "confirmed": "Confermato",
       "declined": "Rifiutato"
-    }
+    },
+    "video": "Videoconferenza",
+    "videoNone": "Nessuna",
+    "videoJitsi": "Jitsi (link Inboria, senza account)",
+    "videoMeet": "Google Meet (calendario Google richiesto)",
+    "videoTeams": "Microsoft Teams (calendario Outlook richiesto)",
+    "videoJoin": "Partecipa alla videoconferenza"
   },
   "supportChat": {
     "title": "Assistente Inboria",

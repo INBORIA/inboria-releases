@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA已从您的账户中移除。",
       "loadError": "无法加载2FA因素",
       "enrollError": "无法启动注册"
-    }
+    },
+    "preferredVideoTitle": "默认视频会议",
+    "preferredVideoDesc": "请为您的新约会选择默认的视频会议服务。Meet 需要已连接的 Google 日历；Teams 需要 Outlook。Jitsi 无需账户即可使用。"
   },
   "subscription": {
     "title": "管理您的订阅",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "反提议",
       "confirmed": "已确认",
       "declined": "已拒绝"
-    }
+    },
+    "video": "视频会议",
+    "videoNone": "无",
+    "videoJitsi": "Jitsi（Inboria 链接，无需账户）",
+    "videoMeet": "Google Meet（需要 Google 日历）",
+    "videoTeams": "Microsoft Teams（需要 Outlook 日历）",
+    "videoJoin": "加入视频会议"
   },
   "supportChat": {
     "title": "Inboria 助手",

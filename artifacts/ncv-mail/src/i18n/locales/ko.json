@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA가 귀하의 계정에서 제거되었습니다.",
       "loadError": "2FA 요소를 로드할 수 없습니다.",
       "enrollError": "등록을 시작할 수 없습니다."
-    }
+    },
+    "preferredVideoTitle": "기본 화상 회의",
+    "preferredVideoDesc": "새 약속의 기본 화상 회의 제공자를 선택하십시오. Meet은 연결된 Google 캘린더가 필요하며, Teams는 Outlook이 필요합니다. Jitsi는 계정 없이 사용할 수 있습니다."
   },
   "subscription": {
     "title": "구독 관리",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "역제안",
       "confirmed": "확정됨",
       "declined": "거절됨"
-    }
+    },
+    "video": "화상 회의",
+    "videoNone": "없음",
+    "videoJitsi": "Jitsi(Inboria 링크, 계정 불필요)",
+    "videoMeet": "Google Meet(Google 캘린더 필요)",
+    "videoTeams": "Microsoft Teams(Outlook 캘린더 필요)",
+    "videoJoin": "화상 회의 참여"
   },
   "supportChat": {
     "title": "Inboria 어시스턴트",

@@ -1228,7 +1228,9 @@
       "disabledDesc": "Il-2FA ġiet imħassra mill-kont tagħkom.",
       "loadError": "Impossibbli li titlesta l-fatturi 2FA",
       "enrollError": "Impossibbli li tibda l-enrôlement"
-    }
+    },
+    "preferredVideoTitle": "Laqgħa bil-video awtomatika",
+    "preferredVideoDesc": "Jekk jogħġobkom agħżlu l-fornitur tal-laqgħat bil-video awtomatiku għall-appuntamenti l-ġodda. Meet jeħtieġ kalendarju Google konness; Teams jeħtieġ Outlook. Jitsi jaħdem mingħajr kont."
   },
   "subscription": {
     "title": "Immaniġġa l-abbonament tagħkom",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Kontroproposta",
       "confirmed": "Ikkonfermat",
       "declined": "Imċaħħad"
-    }
+    },
+    "video": "Laqgħa bil-video",
+    "videoNone": "Xejn",
+    "videoJitsi": "Jitsi (link Inboria, mingħajr kont)",
+    "videoMeet": "Google Meet (jeħtieġ kalendarju Google)",
+    "videoTeams": "Microsoft Teams (jeħtieġ kalendarju Outlook)",
+    "videoJoin": "Ingħaqad mal-laqgħa bil-video"
   },
   "supportChat": {
     "title": "Assistenti Inboria",

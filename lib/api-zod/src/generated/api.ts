@@ -52,6 +52,7 @@ export const loginResponseUserFollowUpDelayDaysMax = 60;
 
 export const loginResponseUserTrackingEnabledDefault = false;
 export const loginResponseUserMeetingRemindersEnabledDefault = true;
+export const loginResponseUserPreferredVideoProviderDefault = `none`;
 
 export const LoginResponse = zod.object({
   user: zod.object({
@@ -99,6 +100,12 @@ export const LoginResponse = zod.object({
       .describe(
         "True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3).",
       ),
+    preferredVideoProvider: zod
+      .enum(["meet", "teams", "jitsi", "none"])
+      .default(loginResponseUserPreferredVideoProviderDefault)
+      .describe(
+        "Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4).",
+      ),
   }),
 });
 
@@ -115,6 +122,7 @@ export const getMeResponseFollowUpDelayDaysMax = 60;
 
 export const getMeResponseTrackingEnabledDefault = false;
 export const getMeResponseMeetingRemindersEnabledDefault = true;
+export const getMeResponsePreferredVideoProviderDefault = `none`;
 
 export const GetMeResponse = zod.object({
   id: zod.number(),
@@ -161,6 +169,12 @@ export const GetMeResponse = zod.object({
     .describe(
       "True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3).",
     ),
+  preferredVideoProvider: zod
+    .enum(["meet", "teams", "jitsi", "none"])
+    .default(getMeResponsePreferredVideoProviderDefault)
+    .describe(
+      "Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4).",
+    ),
 });
 
 /**
@@ -176,6 +190,7 @@ export const getProfileResponseFollowUpDelayDaysMax = 60;
 
 export const getProfileResponseTrackingEnabledDefault = false;
 export const getProfileResponseMeetingRemindersEnabledDefault = true;
+export const getProfileResponsePreferredVideoProviderDefault = `none`;
 
 export const GetProfileResponse = zod.object({
   id: zod.number(),
@@ -222,6 +237,12 @@ export const GetProfileResponse = zod.object({
     .describe(
       "True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3).",
     ),
+  preferredVideoProvider: zod
+    .enum(["meet", "teams", "jitsi", "none"])
+    .default(getProfileResponsePreferredVideoProviderDefault)
+    .describe(
+      "Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4).",
+    ),
 });
 
 /**
@@ -243,6 +264,9 @@ export const UpdateProfileBody = zod.object({
     .optional(),
   trackingEnabled: zod.boolean().optional(),
   meetingRemindersEnabled: zod.boolean().optional(),
+  preferredVideoProvider: zod
+    .enum(["meet", "teams", "jitsi", "none"])
+    .optional(),
 });
 
 export const updateProfileResponseAiCreditsUsedDefault = 0;
@@ -255,6 +279,7 @@ export const updateProfileResponseFollowUpDelayDaysMax = 60;
 
 export const updateProfileResponseTrackingEnabledDefault = false;
 export const updateProfileResponseMeetingRemindersEnabledDefault = true;
+export const updateProfileResponsePreferredVideoProviderDefault = `none`;
 
 export const UpdateProfileResponse = zod.object({
   id: zod.number(),
@@ -302,6 +327,12 @@ export const UpdateProfileResponse = zod.object({
     .default(updateProfileResponseMeetingRemindersEnabledDefault)
     .describe(
       "True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3).",
+    ),
+  preferredVideoProvider: zod
+    .enum(["meet", "teams", "jitsi", "none"])
+    .default(updateProfileResponsePreferredVideoProviderDefault)
+    .describe(
+      "Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4).",
     ),
 });
 
@@ -1054,6 +1085,7 @@ export const getDashboardBootstrapResponseProfileFollowUpDelayDaysMax = 60;
 
 export const getDashboardBootstrapResponseProfileTrackingEnabledDefault = false;
 export const getDashboardBootstrapResponseProfileMeetingRemindersEnabledDefault = true;
+export const getDashboardBootstrapResponseProfilePreferredVideoProviderDefault = `none`;
 
 export const GetDashboardBootstrapResponse = zod
   .object({
@@ -1109,6 +1141,14 @@ export const GetDashboardBootstrapResponse = zod
         )
         .describe(
           "True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3).",
+        ),
+      preferredVideoProvider: zod
+        .enum(["meet", "teams", "jitsi", "none"])
+        .default(
+          getDashboardBootstrapResponseProfilePreferredVideoProviderDefault,
+        )
+        .describe(
+          "Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4).",
         ),
     }),
     organisation: zod
@@ -2856,6 +2896,26 @@ export const DetectAppointmentsResponse = zod.object({
         counterEndAt: zod.coerce.date().nullish(),
         proposalRecipient: zod.string().nullish(),
         proposalLang: zod.string().nullish(),
+        videoProvider: zod
+          .union([
+            zod.literal("meet"),
+            zod.literal("teams"),
+            zod.literal("jitsi"),
+            zod.literal("none"),
+            zod.literal(null),
+          ])
+          .nullish()
+          .describe("Fournisseur visio (RDV Phase 4)."),
+        videoUrl: zod
+          .string()
+          .nullish()
+          .describe("URL canonique de la visio à partager."),
+        videoJoinUrl: zod
+          .string()
+          .nullish()
+          .describe(
+            'URL \"Rejoindre maintenant\" si différente du lien canonique (Teams).',
+          ),
         projects: zod
           .object({
             id: zod.number().optional(),
@@ -2923,6 +2983,26 @@ export const ListAppointmentsResponseItem = zod.object({
   counterEndAt: zod.coerce.date().nullish(),
   proposalRecipient: zod.string().nullish(),
   proposalLang: zod.string().nullish(),
+  videoProvider: zod
+    .union([
+      zod.literal("meet"),
+      zod.literal("teams"),
+      zod.literal("jitsi"),
+      zod.literal("none"),
+      zod.literal(null),
+    ])
+    .nullish()
+    .describe("Fournisseur visio (RDV Phase 4)."),
+  videoUrl: zod
+    .string()
+    .nullish()
+    .describe("URL canonique de la visio à partager."),
+  videoJoinUrl: zod
+    .string()
+    .nullish()
+    .describe(
+      'URL \"Rejoindre maintenant\" si différente du lien canonique (Teams).',
+    ),
   projects: zod
     .object({
       id: zod.number().optional(),
@@ -2951,6 +3031,16 @@ export const CreateAppointmentBody = zod.object({
   reminderMinutes: zod.number().optional(),
   participants: zod.string().optional(),
   calendarAccountId: zod.string().nullish(),
+  videoProvider: zod
+    .union([
+      zod.literal("meet"),
+      zod.literal("teams"),
+      zod.literal("jitsi"),
+      zod.literal("none"),
+      zod.literal(null),
+    ])
+    .nullish(),
+  videoUrl: zod.string().nullish(),
 });
 
 /**
@@ -2999,6 +3089,26 @@ export const GetAppointmentResponse = zod.object({
   counterEndAt: zod.coerce.date().nullish(),
   proposalRecipient: zod.string().nullish(),
   proposalLang: zod.string().nullish(),
+  videoProvider: zod
+    .union([
+      zod.literal("meet"),
+      zod.literal("teams"),
+      zod.literal("jitsi"),
+      zod.literal("none"),
+      zod.literal(null),
+    ])
+    .nullish()
+    .describe("Fournisseur visio (RDV Phase 4)."),
+  videoUrl: zod
+    .string()
+    .nullish()
+    .describe("URL canonique de la visio à partager."),
+  videoJoinUrl: zod
+    .string()
+    .nullish()
+    .describe(
+      'URL \"Rejoindre maintenant\" si différente du lien canonique (Teams).',
+    ),
   projects: zod
     .object({
       id: zod.number().optional(),
@@ -3031,6 +3141,16 @@ export const UpdateAppointmentBody = zod.object({
   confirmed: zod.boolean().optional(),
   participants: zod.string().optional(),
   calendarAccountId: zod.string().nullish(),
+  videoProvider: zod
+    .union([
+      zod.literal("meet"),
+      zod.literal("teams"),
+      zod.literal("jitsi"),
+      zod.literal("none"),
+      zod.literal(null),
+    ])
+    .nullish(),
+  videoUrl: zod.string().nullish(),
 });
 
 export const UpdateAppointmentResponse = zod.object({
@@ -3072,6 +3192,26 @@ export const UpdateAppointmentResponse = zod.object({
   counterEndAt: zod.coerce.date().nullish(),
   proposalRecipient: zod.string().nullish(),
   proposalLang: zod.string().nullish(),
+  videoProvider: zod
+    .union([
+      zod.literal("meet"),
+      zod.literal("teams"),
+      zod.literal("jitsi"),
+      zod.literal("none"),
+      zod.literal(null),
+    ])
+    .nullish()
+    .describe("Fournisseur visio (RDV Phase 4)."),
+  videoUrl: zod
+    .string()
+    .nullish()
+    .describe("URL canonique de la visio à partager."),
+  videoJoinUrl: zod
+    .string()
+    .nullish()
+    .describe(
+      'URL \"Rejoindre maintenant\" si différente du lien canonique (Teams).',
+    ),
   projects: zod
     .object({
       id: zod.number().optional(),
@@ -3183,6 +3323,26 @@ export const AcceptMeetingCounterProposalResponse = zod.object({
   counterEndAt: zod.coerce.date().nullish(),
   proposalRecipient: zod.string().nullish(),
   proposalLang: zod.string().nullish(),
+  videoProvider: zod
+    .union([
+      zod.literal("meet"),
+      zod.literal("teams"),
+      zod.literal("jitsi"),
+      zod.literal("none"),
+      zod.literal(null),
+    ])
+    .nullish()
+    .describe("Fournisseur visio (RDV Phase 4)."),
+  videoUrl: zod
+    .string()
+    .nullish()
+    .describe("URL canonique de la visio à partager."),
+  videoJoinUrl: zod
+    .string()
+    .nullish()
+    .describe(
+      'URL \"Rejoindre maintenant\" si différente du lien canonique (Teams).',
+    ),
   projects: zod
     .object({
       id: zod.number().optional(),
@@ -3241,6 +3401,26 @@ export const CancelMeetingProposalResponse = zod.object({
   counterEndAt: zod.coerce.date().nullish(),
   proposalRecipient: zod.string().nullish(),
   proposalLang: zod.string().nullish(),
+  videoProvider: zod
+    .union([
+      zod.literal("meet"),
+      zod.literal("teams"),
+      zod.literal("jitsi"),
+      zod.literal("none"),
+      zod.literal(null),
+    ])
+    .nullish()
+    .describe("Fournisseur visio (RDV Phase 4)."),
+  videoUrl: zod
+    .string()
+    .nullish()
+    .describe("URL canonique de la visio à partager."),
+  videoJoinUrl: zod
+    .string()
+    .nullish()
+    .describe(
+      'URL \"Rejoindre maintenant\" si différente du lien canonique (Teams).',
+    ),
   projects: zod
     .object({
       id: zod.number().optional(),

@@ -7,6 +7,7 @@
  */
 import type { UserProfileAiLanguage } from "./userProfileAiLanguage";
 import type { UserProfileOrganisationRole } from "./userProfileOrganisationRole";
+import type { UserProfilePreferredVideoProvider } from "./userProfilePreferredVideoProvider";
 
 export interface UserProfile {
   id: number;
@@ -41,4 +42,6 @@ export interface UserProfile {
   trackingEnabled?: boolean;
   /** True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3). */
   meetingRemindersEnabled?: boolean;
+  /** Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4). */
+  preferredVideoProvider?: UserProfilePreferredVideoProvider;
 }

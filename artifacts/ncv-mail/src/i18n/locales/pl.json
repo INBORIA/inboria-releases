@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA została usunięta z Państwa konta.",
       "loadError": "Nie można załadować czynników 2FA",
       "enrollError": "Nie można rozpocząć rejestracji"
-    }
+    },
+    "preferredVideoTitle": "Domyślna wideokonferencja",
+    "preferredVideoDesc": "Wybierz domyślnego dostawcę wideokonferencji dla nowych spotkań. Meet wymaga połączonego kalendarza Google; Teams wymaga Outlooka. Jitsi działa bez konta."
   },
   "subscription": {
     "title": "Zarządzaj swoim abonamentem",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Kontrpropozycja",
       "confirmed": "Potwierdzone",
       "declined": "Odrzucone"
-    }
+    },
+    "video": "Wideokonferencja",
+    "videoNone": "Brak",
+    "videoJitsi": "Jitsi (link Inboria, bez konta)",
+    "videoMeet": "Google Meet (wymagany kalendarz Google)",
+    "videoTeams": "Microsoft Teams (wymagany kalendarz Outlook)",
+    "videoJoin": "Dołącz do wideokonferencji"
   },
   "supportChat": {
     "title": "Asystent Inboria",

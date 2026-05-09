@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA a fost eliminată din contul dumneavoastră.",
       "loadError": "Imposibil de încărcat factorii 2FA",
       "enrollError": "Imposibil de început înrolarea"
-    }
+    },
+    "preferredVideoTitle": "Videoconferință implicită",
+    "preferredVideoDesc": "Alegeți furnizorul implicit de videoconferință pentru noile întâlniri. Meet necesită un calendar Google conectat; Teams necesită Outlook. Jitsi funcționează fără cont."
   },
   "subscription": {
     "title": "Gestionați abonamentul dumneavoastră",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Contrapropunere",
       "confirmed": "Confirmat",
       "declined": "Refuzat"
-    }
+    },
+    "video": "Videoconferință",
+    "videoNone": "Niciuna",
+    "videoJitsi": "Jitsi (link Inboria, fără cont)",
+    "videoMeet": "Google Meet (calendar Google necesar)",
+    "videoTeams": "Microsoft Teams (calendar Outlook necesar)",
+    "videoJoin": "Alăturați-vă videoconferinței"
   },
   "supportChat": {
     "title": "Asistent Inboria",

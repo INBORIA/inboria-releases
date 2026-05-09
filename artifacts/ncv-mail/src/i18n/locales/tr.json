@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA hesabınızdan kaldırıldı.",
       "loadError": "2FA faktörleri yüklenemedi",
       "enrollError": "Kayıt işlemi başlatılamadı"
-    }
+    },
+    "preferredVideoTitle": "Varsayılan görüntülü toplantı",
+    "preferredVideoDesc": "Yeni randevular için varsayılan görüntülü toplantı sağlayıcısını seçin. Meet bağlı bir Google takvimi gerektirir; Teams Outlook gerektirir. Jitsi hesap olmadan çalışır."
   },
   "subscription": {
     "title": "Aboneliğinizi yönetin",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Karşı teklif",
       "confirmed": "Onaylandı",
       "declined": "Reddedildi"
-    }
+    },
+    "video": "Görüntülü toplantı",
+    "videoNone": "Yok",
+    "videoJitsi": "Jitsi (Inboria bağlantısı, hesap gerekmez)",
+    "videoMeet": "Google Meet (Google takvimi gerekir)",
+    "videoTeams": "Microsoft Teams (Outlook takvimi gerekir)",
+    "videoJoin": "Görüntülü toplantıya katıl"
   },
   "supportChat": {
     "title": "Inboria Asistanı",

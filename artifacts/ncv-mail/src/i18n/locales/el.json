@@ -1228,7 +1228,9 @@
       "disabledDesc": "Η 2FA έχει αφαιρεθεί από τον λογαριασμό σας.",
       "loadError": "Αδύνατη η φόρτωση των παραγόντων 2FA",
       "enrollError": "Αδύνατη η εκκίνηση της διαδικασίας εγγραφής"
-    }
+    },
+    "preferredVideoTitle": "Προεπιλεγμένη βιντεοδιάσκεψη",
+    "preferredVideoDesc": "Επιλέξτε τον προεπιλεγμένο πάροχο βιντεοδιάσκεψης για τα νέα σας ραντεβού. Το Meet απαιτεί συνδεδεμένο ημερολόγιο Google· το Teams απαιτεί Outlook. Το Jitsi λειτουργεί χωρίς λογαριασμό."
   },
   "subscription": {
     "title": "Διαχειριστείτε την συνδρομή σας",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Αντιπρόταση",
       "confirmed": "Επιβεβαιώθηκε",
       "declined": "Απορρίφθηκε"
-    }
+    },
+    "video": "Βιντεοδιάσκεψη",
+    "videoNone": "Καμία",
+    "videoJitsi": "Jitsi (σύνδεσμος Inboria, χωρίς λογαριασμό)",
+    "videoMeet": "Google Meet (απαιτείται ημερολόγιο Google)",
+    "videoTeams": "Microsoft Teams (απαιτείται ημερολόγιο Outlook)",
+    "videoJoin": "Συμμετοχή στη βιντεοδιάσκεψη"
   },
   "supportChat": {
     "title": "Βοηθός Inboria",

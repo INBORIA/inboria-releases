@@ -1228,7 +1228,9 @@
       "disabledDesc": "ה-2FA הוסרה מהחשבון שלכם.",
       "loadError": "לא ניתן לטעון את גורמי ה-2FA",
       "enrollError": "לא ניתן להתחיל את ההרשמה"
-    }
+    },
+    "preferredVideoTitle": "שיחת וידאו ברירת מחדל",
+    "preferredVideoDesc": "אנא בחרו את ספק שיחת הווידאו ברירת המחדל לפגישות חדשות. Meet דורש יומן Google מחובר; Teams דורש Outlook. Jitsi עובד ללא חשבון."
   },
   "subscription": {
     "title": "נהל את המנוי שלך",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "הצעה נגדית",
       "confirmed": "אושר",
       "declined": "נדחה"
-    }
+    },
+    "video": "שיחת וידאו",
+    "videoNone": "ללא",
+    "videoJitsi": "Jitsi (קישור Inboria, ללא חשבון)",
+    "videoMeet": "Google Meet (נדרש יומן Google)",
+    "videoTeams": "Microsoft Teams (נדרש יומן Outlook)",
+    "videoJoin": "הצטרפו לשיחת הווידאו"
   },
   "supportChat": {
     "title": "עוזר Inboria",

@@ -31,6 +31,7 @@ import {
   Mail,
   ExternalLink,
   Check,
+  Video,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -77,6 +78,8 @@ export default function Agenda() {
   const [formParticipants, setFormParticipants] = useState("");
   const [formEmailId, setFormEmailId] = useState<number | undefined>(undefined);
   const [formCalendarAccountId, setFormCalendarAccountId] = useState<string>("");
+  type VideoProv = "none" | "jitsi" | "meet" | "teams";
+  const [formVideoProvider, setFormVideoProvider] = useState<VideoProv>("none");
 
   type CalAccount = { id: string; provider: "google" | "outlook"; email_address: string; status: string };
   const [calendarAccounts, setCalendarAccounts] = useState<CalAccount[]>([]);
@@ -256,6 +259,7 @@ export default function Agenda() {
     setFormParticipants("");
     setFormEmailId(undefined);
     setFormCalendarAccountId(calendarAccounts[0]?.id || "");
+    setFormVideoProvider("none");
     setEditingId(null);
     setShowForm(false);
   };
@@ -282,6 +286,7 @@ export default function Agenda() {
     setFormReminder(String(apt.reminderMinutes ?? 30));
     setFormParticipants(apt.participants || "");
     setFormCalendarAccountId((apt as Appointment).calendarAccountId || "");
+    setFormVideoProvider(((apt as Appointment).videoProvider as VideoProv | null) || "none");
     setShowForm(true);
     setSelectedAppointment(null);
   };
@@ -300,6 +305,7 @@ export default function Agenda() {
       participants: formParticipants || undefined,
       emailId: formEmailId,
       calendarAccountId: formCalendarAccountId || undefined,
+      videoProvider: formVideoProvider,
     };
 
     if (editingId) {
@@ -1124,6 +1130,22 @@ export default function Agenda() {
                     {selectedAppointment.participants}
                   </div>
                 )}
+                {selectedAppointment.videoUrl && (
+                  <div className="flex items-center gap-2 text-[12px]">
+                    <Video className="w-3.5 h-3.5 text-primary" />
+                    <a
+                      href={selectedAppointment.videoJoinUrl || selectedAppointment.videoUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-primary hover:text-primary/80 underline"
+                    >
+                      {t("agenda.videoJoin", "Rejoindre la visio")}
+                    </a>
+                    <span className="text-[10px] text-[#b8c5d6] uppercase">
+                      {selectedAppointment.videoProvider}
+                    </span>
+                  </div>
+                )}
                 {selectedAppointment.description && (
                   <p className="text-[12px] text-[#b8c5d6] bg-background rounded p-2 border border-border mt-2">
                     {selectedAppointment.description}
@@ -1304,6 +1326,22 @@ export default function Agenda() {
                       {t("agenda.connectCalendarHint", "Connectez un calendrier dans Réglages pour synchroniser.")}
                     </p>
                   )}
+                </div>
+
+                <div>
+                  <label className="text-[11px] text-[#b8c5d6] mb-1 block">
+                    {t("agenda.video", "Visioconférence")}
+                  </label>
+                  <select
+                    value={formVideoProvider}
+                    onChange={(e) => setFormVideoProvider(e.target.value as VideoProv)}
+                    className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-white"
+                  >
+                    <option value="none">{t("agenda.videoNone", "Aucune")}</option>
+                    <option value="jitsi">{t("agenda.videoJitsi", "Jitsi (lien Inboria, sans compte)")}</option>
+                    <option value="meet">{t("agenda.videoMeet", "Google Meet (calendrier Google requis)")}</option>
+                    <option value="teams">{t("agenda.videoTeams", "Microsoft Teams (calendrier Outlook requis)")}</option>
+                  </select>
                 </div>
 
                 <div className="flex justify-end gap-2 pt-2">

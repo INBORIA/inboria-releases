@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA je bila odstranjena z vašega računa.",
       "loadError": "Nalaganje 2FA dejavnikov ni mogoče",
       "enrollError": "Zagon registracije ni mogoč"
-    }
+    },
+    "preferredVideoTitle": "Privzeti videosestanek",
+    "preferredVideoDesc": "Prosimo, izberite privzetega ponudnika videosestankov za nove sestanke. Meet zahteva povezan Googlov koledar; Teams zahteva Outlook. Jitsi deluje brez računa."
   },
   "subscription": {
     "title": "Upravljajte svojo naročnino",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Protipredlog",
       "confirmed": "Potrjeno",
       "declined": "Zavrnjeno"
-    }
+    },
+    "video": "Videosestanek",
+    "videoNone": "Brez",
+    "videoJitsi": "Jitsi (povezava Inboria, brez računa)",
+    "videoMeet": "Google Meet (potreben je Googlov koledar)",
+    "videoTeams": "Microsoft Teams (potreben je Outlookov koledar)",
+    "videoJoin": "Pridružite se videosestanku"
   },
   "supportChat": {
     "title": "Asistent Inboria",

@@ -1256,7 +1256,9 @@
       "disabledDesc": "2FA has been removed from your account.",
       "loadError": "Could not load 2FA factors",
       "enrollError": "Could not start enrollment"
-    }
+    },
+    "preferredVideoTitle": "Default video meeting",
+    "preferredVideoDesc": "Choose the default video provider for new appointments. Meet requires a connected Google calendar; Teams requires Outlook. Jitsi works without an account."
   },
   "subscription": {
     "title": "Manage your subscription",
@@ -2518,7 +2520,13 @@
       "counter_proposed": "Counter",
       "confirmed": "Confirmed",
       "declined": "Declined"
-    }
+    },
+    "video": "Video meeting",
+    "videoNone": "None",
+    "videoJitsi": "Jitsi (Inboria link, no account)",
+    "videoMeet": "Google Meet (Google calendar required)",
+    "videoTeams": "Microsoft Teams (Outlook calendar required)",
+    "videoJoin": "Join video meeting"
   },
   "supportChat": {
     "title": "Inboria Assistant",

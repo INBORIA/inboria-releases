@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA telah dihapus dari akun Anda.",
       "loadError": "Tidak dapat memuat faktor 2FA",
       "enrollError": "Tidak dapat memulai pendaftaran"
-    }
+    },
+    "preferredVideoTitle": "Rapat video bawaan",
+    "preferredVideoDesc": "Silakan pilih penyedia rapat video bawaan Anda untuk janji temu baru. Meet memerlukan kalender Google yang terhubung; Teams memerlukan Outlook. Jitsi berfungsi tanpa akun."
   },
   "subscription": {
     "title": "Kelola langganan Anda",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Tandingan",
       "confirmed": "Dikonfirmasi",
       "declined": "Ditolak"
-    }
+    },
+    "video": "Rapat video",
+    "videoNone": "Tidak ada",
+    "videoJitsi": "Jitsi (tautan Inboria, tanpa akun)",
+    "videoMeet": "Google Meet (memerlukan kalender Google)",
+    "videoTeams": "Microsoft Teams (memerlukan kalender Outlook)",
+    "videoJoin": "Gabung rapat video"
   },
   "supportChat": {
     "title": "Asisten Inboria",

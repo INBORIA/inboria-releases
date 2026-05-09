@@ -48,6 +48,19 @@ export const UserProfileOrganisationRole = {
   member: "member",
 } as const;
 
+/**
+ * Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4).
+ */
+export type UserProfilePreferredVideoProvider =
+  (typeof UserProfilePreferredVideoProvider)[keyof typeof UserProfilePreferredVideoProvider];
+
+export const UserProfilePreferredVideoProvider = {
+  meet: "meet",
+  teams: "teams",
+  jitsi: "jitsi",
+  none: "none",
+} as const;
+
 export interface UserProfile {
   id: number;
   email: string;
@@ -81,6 +94,8 @@ export interface UserProfile {
   trackingEnabled?: boolean;
   /** True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3). */
   meetingRemindersEnabled?: boolean;
+  /** Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4). */
+  preferredVideoProvider?: UserProfilePreferredVideoProvider;
 }
 
 export interface AuthResponse {
@@ -94,6 +109,16 @@ export const UpdateProfileBodyAiLanguage = {
   fr: "fr",
   en: "en",
   nl: "nl",
+} as const;
+
+export type UpdateProfileBodyPreferredVideoProvider =
+  (typeof UpdateProfileBodyPreferredVideoProvider)[keyof typeof UpdateProfileBodyPreferredVideoProvider];
+
+export const UpdateProfileBodyPreferredVideoProvider = {
+  meet: "meet",
+  teams: "teams",
+  jitsi: "jitsi",
+  none: "none",
 } as const;
 
 export interface UpdateProfileBody {
@@ -110,6 +135,7 @@ export interface UpdateProfileBody {
   followUpDelayDays?: number;
   trackingEnabled?: boolean;
   meetingRemindersEnabled?: boolean;
+  preferredVideoProvider?: UpdateProfileBodyPreferredVideoProvider;
 }
 
 export interface RegisterPushTokenBody {
@@ -1055,6 +1081,21 @@ export const AppointmentStatus = {
 } as const;
 
 /**
+ * Fournisseur visio (RDV Phase 4).
+ * @nullable
+ */
+export type AppointmentVideoProvider =
+  | (typeof AppointmentVideoProvider)[keyof typeof AppointmentVideoProvider]
+  | null;
+
+export const AppointmentVideoProvider = {
+  meet: "meet",
+  teams: "teams",
+  jitsi: "jitsi",
+  none: "none",
+} as const;
+
+/**
  * @nullable
  */
 export type AppointmentProjects = {
@@ -1114,11 +1155,40 @@ export interface Appointment {
   proposalRecipient?: string | null;
   /** @nullable */
   proposalLang?: string | null;
+  /**
+   * Fournisseur visio (RDV Phase 4).
+   * @nullable
+   */
+  videoProvider?: AppointmentVideoProvider;
+  /**
+   * URL canonique de la visio à partager.
+   * @nullable
+   */
+  videoUrl?: string | null;
+  /**
+   * URL "Rejoindre maintenant" si différente du lien canonique (Teams).
+   * @nullable
+   */
+  videoJoinUrl?: string | null;
   /** @nullable */
   projects?: AppointmentProjects;
   createdAt?: string;
   updatedAt?: string;
 }
+
+/**
+ * @nullable
+ */
+export type CreateAppointmentBodyVideoProvider =
+  | (typeof CreateAppointmentBodyVideoProvider)[keyof typeof CreateAppointmentBodyVideoProvider]
+  | null;
+
+export const CreateAppointmentBodyVideoProvider = {
+  meet: "meet",
+  teams: "teams",
+  jitsi: "jitsi",
+  none: "none",
+} as const;
 
 export interface CreateAppointmentBody {
   title: string;
@@ -1133,7 +1203,25 @@ export interface CreateAppointmentBody {
   participants?: string;
   /** @nullable */
   calendarAccountId?: string | null;
+  /** @nullable */
+  videoProvider?: CreateAppointmentBodyVideoProvider;
+  /** @nullable */
+  videoUrl?: string | null;
 }
+
+/**
+ * @nullable
+ */
+export type UpdateAppointmentBodyVideoProvider =
+  | (typeof UpdateAppointmentBodyVideoProvider)[keyof typeof UpdateAppointmentBodyVideoProvider]
+  | null;
+
+export const UpdateAppointmentBodyVideoProvider = {
+  meet: "meet",
+  teams: "teams",
+  jitsi: "jitsi",
+  none: "none",
+} as const;
 
 export interface UpdateAppointmentBody {
   title?: string;
@@ -1149,6 +1237,10 @@ export interface UpdateAppointmentBody {
   participants?: string;
   /** @nullable */
   calendarAccountId?: string | null;
+  /** @nullable */
+  videoProvider?: UpdateAppointmentBodyVideoProvider;
+  /** @nullable */
+  videoUrl?: string | null;
 }
 
 export type WaitlistSignupBodyPlan =

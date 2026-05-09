@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA er blevet fjernet fra din konto.",
       "loadError": "Kunne ikke indlæse 2FA-faktorer",
       "enrollError": "Kunne ikke starte tilmeldingen"
-    }
+    },
+    "preferredVideoTitle": "Standard videomøde",
+    "preferredVideoDesc": "Vælg standardudbyder af videomøder til nye aftaler. Meet kræver en forbundet Google-kalender; Teams kræver Outlook. Jitsi fungerer uden konto."
   },
   "subscription": {
     "title": "Administrer dit abonnement",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Modforslag",
       "confirmed": "Bekræftet",
       "declined": "Afvist"
-    }
+    },
+    "video": "Videomøde",
+    "videoNone": "Ingen",
+    "videoJitsi": "Jitsi (Inboria-link, uden konto)",
+    "videoMeet": "Google Meet (Google-kalender kræves)",
+    "videoTeams": "Microsoft Teams (Outlook-kalender kræves)",
+    "videoJoin": "Deltag i videomøde"
   },
   "supportChat": {
     "title": "Assistent Inboria",

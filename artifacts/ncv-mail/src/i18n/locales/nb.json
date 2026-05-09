@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA har blitt fjernet fra din konto.",
       "loadError": "Kunne ikke laste 2FA-faktorer",
       "enrollError": "Kunne ikke starte registreringen"
-    }
+    },
+    "preferredVideoTitle": "Standard videomøte",
+    "preferredVideoDesc": "Velg standard videomøteleverandør for nye avtaler. Meet krever en tilkoblet Google-kalender; Teams krever Outlook. Jitsi fungerer uten konto."
   },
   "subscription": {
     "title": "Administrer abonnementet ditt",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Motforslag",
       "confirmed": "Bekreftet",
       "declined": "Avvist"
-    }
+    },
+    "video": "Videomøte",
+    "videoNone": "Ingen",
+    "videoJitsi": "Jitsi (Inboria-lenke, uten konto)",
+    "videoMeet": "Google Meet (Google-kalender kreves)",
+    "videoTeams": "Microsoft Teams (Outlook-kalender kreves)",
+    "videoJoin": "Bli med i videomøtet"
   },
   "supportChat": {
     "title": "Inboria-assistent",

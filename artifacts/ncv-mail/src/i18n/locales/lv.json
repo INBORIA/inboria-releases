@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA ir noņemta no Jūsu konta.",
       "loadError": "Neizdevās ielādēt 2FA faktorus",
       "enrollError": "Neizdevās uzsākt reģistrāciju"
-    }
+    },
+    "preferredVideoTitle": "Noklusētā videokonference",
+    "preferredVideoDesc": "Lūdzu, izvēlieties noklusēto videokonferenču pakalpojumu sniedzēju jaunām tikšanās reizēm. Meet ir nepieciešams pievienots Google kalendārs; Teams ir nepieciešams Outlook. Jitsi darbojas bez konta."
   },
   "subscription": {
     "title": "Pārvaldiet savu abonementu",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Pretpiedāv.",
       "confirmed": "Apstiprināts",
       "declined": "Noraidīts"
-    }
+    },
+    "video": "Videokonference",
+    "videoNone": "Nav",
+    "videoJitsi": "Jitsi (Inboria saite, bez konta)",
+    "videoMeet": "Google Meet (nepieciešams Google kalendārs)",
+    "videoTeams": "Microsoft Teams (nepieciešams Outlook kalendārs)",
+    "videoJoin": "Pievienoties videokonferencei"
   },
   "supportChat": {
     "title": "Inboria asistents",

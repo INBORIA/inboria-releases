@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA on teie kontolt eemaldatud.",
       "loadError": "2FA tegureid ei õnnestunud laadida",
       "enrollError": "Registreerimise alustamine ebaõnnestus"
-    }
+    },
+    "preferredVideoTitle": "Vaikimisi videokoosolek",
+    "preferredVideoDesc": "Valige uute kohtumiste jaoks vaikimisi videokoosoleku pakkuja. Meet nõuab ühendatud Google'i kalendrit; Teams nõuab Outlooki. Jitsi töötab ilma kontota."
   },
   "subscription": {
     "title": "Halda oma tellimust",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Vastupakk.",
       "confirmed": "Kinnitatud",
       "declined": "Tagasi lükatud"
-    }
+    },
+    "video": "Videokoosolek",
+    "videoNone": "Puudub",
+    "videoJitsi": "Jitsi (Inboria link, kontot pole vaja)",
+    "videoMeet": "Google Meet (vajalik on Google'i kalender)",
+    "videoTeams": "Microsoft Teams (vajalik on Outlooki kalender)",
+    "videoJoin": "Liitu videokoosolekuga"
   },
   "supportChat": {
     "title": "Inboria assistent",

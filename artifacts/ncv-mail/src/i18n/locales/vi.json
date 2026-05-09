@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FA đã được gỡ bỏ khỏi tài khoản của Quý khách.",
       "loadError": "Không thể tải các yếu tố 2FA",
       "enrollError": "Không thể bắt đầu quá trình đăng ký"
-    }
+    },
+    "preferredVideoTitle": "Họp trực tuyến mặc định",
+    "preferredVideoDesc": "Quý khách vui lòng chọn nhà cung cấp họp trực tuyến mặc định cho các cuộc hẹn mới. Meet yêu cầu lịch Google đã kết nối; Teams yêu cầu Outlook. Jitsi hoạt động không cần tài khoản."
   },
   "subscription": {
     "title": "Quản lý đăng ký của Quý khách",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "Đề xuất khác",
       "confirmed": "Đã xác nhận",
       "declined": "Đã từ chối"
-    }
+    },
+    "video": "Họp trực tuyến",
+    "videoNone": "Không có",
+    "videoJitsi": "Jitsi (liên kết Inboria, không cần tài khoản)",
+    "videoMeet": "Google Meet (yêu cầu lịch Google)",
+    "videoTeams": "Microsoft Teams (yêu cầu lịch Outlook)",
+    "videoJoin": "Tham gia cuộc họp trực tuyến"
   },
   "supportChat": {
     "title": "Trợ lý Inboria",

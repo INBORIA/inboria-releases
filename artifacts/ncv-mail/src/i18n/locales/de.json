@@ -1238,7 +1238,9 @@
       "disabledDesc": "2FA wurde von Ihrem Konto entfernt.",
       "loadError": "2FA-Faktoren konnten nicht geladen werden",
       "enrollError": "Registrierung konnte nicht gestartet werden"
-    }
+    },
+    "preferredVideoTitle": "Standard-Videokonferenz",
+    "preferredVideoDesc": "Wählen Sie den Standardanbieter für Videokonferenzen für neue Termine. Meet erfordert einen verbundenen Google-Kalender; Teams erfordert Outlook. Jitsi funktioniert ohne Konto."
   },
   "subscription": {
     "title": "Verwalten Sie Ihr Abonnement",
@@ -2493,7 +2495,13 @@
       "counter_proposed": "Gegenvorschlag",
       "confirmed": "Bestätigt",
       "declined": "Abgelehnt"
-    }
+    },
+    "video": "Videokonferenz",
+    "videoNone": "Keine",
+    "videoJitsi": "Jitsi (Inboria-Link, ohne Konto)",
+    "videoMeet": "Google Meet (Google-Kalender erforderlich)",
+    "videoTeams": "Microsoft Teams (Outlook-Kalender erforderlich)",
+    "videoJoin": "Videokonferenz beitreten"
   },
   "supportChat": {
     "title": "Inboria Assistant",

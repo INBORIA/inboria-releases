@@ -8,6 +8,7 @@
 import type { AppointmentExternalProvider } from "./appointmentExternalProvider";
 import type { AppointmentProjects } from "./appointmentProjects";
 import type { AppointmentStatus } from "./appointmentStatus";
+import type { AppointmentVideoProvider } from "./appointmentVideoProvider";
 
 export interface Appointment {
   id: string;
@@ -59,6 +60,21 @@ export interface Appointment {
   proposalRecipient?: string | null;
   /** @nullable */
   proposalLang?: string | null;
+  /**
+   * Fournisseur visio (RDV Phase 4).
+   * @nullable
+   */
+  videoProvider?: AppointmentVideoProvider;
+  /**
+   * URL canonique de la visio à partager.
+   * @nullable
+   */
+  videoUrl?: string | null;
+  /**
+   * URL "Rejoindre maintenant" si différente du lien canonique (Teams).
+   * @nullable
+   */
+  videoJoinUrl?: string | null;
   /** @nullable */
   projects?: AppointmentProjects;
   createdAt?: Date;

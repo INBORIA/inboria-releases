@@ -5,6 +5,7 @@
  * NCV Mail API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { UpdateAppointmentBodyVideoProvider } from "./updateAppointmentBodyVideoProvider";
 
 export interface UpdateAppointmentBody {
   title?: string;
@@ -20,4 +21,8 @@ export interface UpdateAppointmentBody {
   participants?: string;
   /** @nullable */
   calendarAccountId?: string | null;
+  /** @nullable */
+  videoProvider?: UpdateAppointmentBodyVideoProvider;
+  /** @nullable */
+  videoUrl?: string | null;
 }

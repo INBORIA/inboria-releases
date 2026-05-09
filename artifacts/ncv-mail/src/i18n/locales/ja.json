@@ -1228,7 +1228,9 @@
       "disabledDesc": "2FAがあなたのアカウントから削除されました。",
       "loadError": "2FAの要素を読み込むことができません",
       "enrollError": "登録を開始できません"
-    }
+    },
+    "preferredVideoTitle": "既定のビデオ会議",
+    "preferredVideoDesc": "新しい予定の既定のビデオ会議プロバイダーを選択してください。Meet には接続済みの Google カレンダーが必要です。Teams には Outlook が必要です。Jitsi はアカウントなしで利用できます。"
   },
   "subscription": {
     "title": "サブスクリプションを管理する",
@@ -2483,7 +2485,13 @@
       "counter_proposed": "対案",
       "confirmed": "確定",
       "declined": "辞退"
-    }
+    },
+    "video": "ビデオ会議",
+    "videoNone": "なし",
+    "videoJitsi": "Jitsi（Inboriaのリンク、アカウント不要）",
+    "videoMeet": "Google Meet（Google カレンダーが必要です）",
+    "videoTeams": "Microsoft Teams（Outlook カレンダーが必要です）",
+    "videoJoin": "ビデオ会議に参加"
   },
   "supportChat": {
     "title": "Inboriaアシスタント",

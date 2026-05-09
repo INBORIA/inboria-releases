@@ -1238,7 +1238,9 @@
       "disabledDesc": "2FA is van uw account verwijderd.",
       "loadError": "Kan 2FA-factoren niet laden",
       "enrollError": "Kan registratie niet starten"
-    }
+    },
+    "preferredVideoTitle": "Standaard videovergadering",
+    "preferredVideoDesc": "Kies de standaard video-aanbieder voor nieuwe afspraken. Meet vereist een verbonden Google-agenda; Teams vereist Outlook. Jitsi werkt zonder account."
   },
   "subscription": {
     "title": "Beheer uw abonnement",
@@ -2493,7 +2495,13 @@
       "counter_proposed": "Tegenvoorstel",
       "confirmed": "Bevestigd",
       "declined": "Afgewezen"
-    }
+    },
+    "video": "Videovergadering",
+    "videoNone": "Geen",
+    "videoJitsi": "Jitsi (Inboria-link, zonder account)",
+    "videoMeet": "Google Meet (Google-agenda vereist)",
+    "videoTeams": "Microsoft Teams (Outlook-agenda vereist)",
+    "videoJoin": "Deelnemen aan videogesprek"
   },
   "supportChat": {
     "title": "Inboria Assistent",
