@@ -19,6 +19,7 @@ const planFeatureKeys: Record<string, string[]> = {
 export default function Tarifs() {
   const { t } = useTranslation();
   const [businessSeats, setBusinessSeats] = useState(3);
+  const [billingCycle, setBillingCycle] = useState<"month" | "year">("month");
   const { session } = useAuth();
   const checkout = useCreateCheckoutSession();
   const [, navigate] = useLocation();
@@ -108,11 +109,44 @@ export default function Tarifs() {
 
       <section className="border-t border-[#1f2937]">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="flex justify-center mb-8">
+            <div className="inline-flex items-center gap-1 p-1 rounded-full border border-[#1f2937] bg-[#0d1117]">
+              <button
+                onClick={() => setBillingCycle("month")}
+                className={`px-4 py-1.5 text-[12px] font-semibold rounded-full transition-colors ${
+                  billingCycle === "month" ? "bg-[#2d7dd2] text-white" : "text-[#b8c5d6] hover:text-white"
+                }`}
+                data-testid="toggle-billing-month"
+              >
+                {t("plans.billingMonthly", "Mensuel")}
+              </button>
+              <button
+                onClick={() => setBillingCycle("year")}
+                className={`px-4 py-1.5 text-[12px] font-semibold rounded-full transition-colors flex items-center gap-1.5 ${
+                  billingCycle === "year" ? "bg-[#2d7dd2] text-white" : "text-[#b8c5d6] hover:text-white"
+                }`}
+                data-testid="toggle-billing-year"
+              >
+                {t("plans.billingYearly", "Annuel")}
+                <span className={`text-[10px] font-bold px-1.5 py-0.5 rounded-full ${
+                  billingCycle === "year" ? "bg-white/20 text-white" : "bg-emerald-500/20 text-emerald-400"
+                }`}>−20%</span>
+              </button>
+            </div>
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {plans.map((plan) => {
               const isBusiness = "hasSeats" in plan && plan.hasSeats;
               const isRecommended = plan.id === "pro";
-              const price = isBusiness ? (businessSeats * 14.99).toFixed(2) : plan.price;
+              const hasYearly = "priceYear" in plan && !!plan.priceYear;
+              const yearly = billingCycle === "year" && hasYearly;
+              // Per-seat (or per-plan) effective monthly price displayed.
+              // Yearly = -20% on the monthly rate (rounded to 2 decimals).
+              const monthlyUnit = parseFloat(plan.price) || 0;
+              const effectiveUnit = yearly ? +(monthlyUnit * 0.8).toFixed(2) : monthlyUnit;
+              const price = isBusiness
+                ? (businessSeats * effectiveUnit).toFixed(2)
+                : (plan.id === "essai" ? plan.price : effectiveUnit.toFixed(2));
               const featureKeys = planFeatureKeys[plan.id] || [];
               const isPaid = plan.id !== "essai";
               const ctaDisabled = !paymentsEnabled || loadingPlan === plan.id;
@@ -177,7 +211,7 @@ export default function Tarifs() {
                       </div>
                       <p className="text-[11px] text-[#b8c5d6] mt-1">
                         <span className="font-medium">{t("plans.total")} : </span>
-                        <span className="text-[#2d7dd2] font-bold">{(businessSeats * 14.99).toFixed(2)}€</span> {t("plans.perMonth")}
+                        <span className="text-[#2d7dd2] font-bold">{(businessSeats * effectiveUnit).toFixed(2)}€</span> {yearly ? t("plans.perMonthBilledYearly", "/mois (facturé annuellement)") : t("plans.perMonth")}
                       </p>
                       <p className="text-[10px] text-[#b8c5d6] mt-1">
                         {t("plans.seatsExample")}

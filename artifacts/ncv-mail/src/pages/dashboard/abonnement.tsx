@@ -422,7 +422,7 @@ export default function Abonnement() {
                     </div>
                     <p className="text-[11px] text-primary mt-2">
                       {businessSeats} {businessSeats > 1 ? t("subscription.collaborators") : t("subscription.collaborator")} ={" "}
-                      {(businessSeats * 14.99).toFixed(2)}€/{t("common.perMonth").replace("/", "")}
+                      {(businessSeats * 21.99).toFixed(2)}€/{t("common.perMonth").replace("/", "")}
                     </p>
                   </div>
                 )}

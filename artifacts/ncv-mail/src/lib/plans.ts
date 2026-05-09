@@ -35,7 +35,8 @@ export const plans = [
   {
     id: "pro",
     name: "Pro",
-    price: "19",
+    price: "21.99",
+    priceYear: "211.10",
     quota: 10000,
     description: "Idéal pour les professionnels",
     features: [
@@ -53,7 +54,8 @@ export const plans = [
   {
     id: "business",
     name: "Business",
-    price: "14.99",
+    price: "21.99",
+    priceYear: "211.10",
     quota: 10000,
     description: "Pour les équipes",
     features: [

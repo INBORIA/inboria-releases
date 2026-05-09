@@ -1259,8 +1259,8 @@
     "seatCount": "Paikkojen määrä",
     "collaborators": "työntekijät",
     "collaborator": "työntekijä",
-    "perSeatPerMonth": "Eli 14,99€ per paikka / kuukausi (vähintään 3 paikkaa)",
-    "seatsExample": "Esimerkki: 3 työntekijää = 44,97€/kuukausi — muokattavissa milloin tahansa henkilökohtaisesta tilistänne.",
+    "perSeatPerMonth": "Eli 21,99€ per paikka / kuukausi (vähintään 3 paikkaa)",
+    "seatsExample": "Esimerkki: 3 työntekijää = 65,97€/kuukausi — muokattavissa milloin tahansa henkilökohtaisesta tilistänne.",
     "expiredSubscription": "Tilaustanne on vanhentunut",
     "trialEndedFull": "Ilmainen kokeilunne on päättynyt",
     "resubscribe": "Tilataksenne maksullisen suunnitelman jatkaaksenne Inborian käyttöä.",
@@ -1341,12 +1341,12 @@
     "free": "Ilmainen",
     "perMonth": "/kuukausi",
     "perSeatMonth": "/käyttäjä/kuukausi",
-    "perSeatDetail": "Eli 14,99€ per käyttäjä/kuukausi",
+    "perSeatDetail": "Eli 21,99€ per käyttäjä/kuukausi",
     "redirecting": "Ohjataan...",
     "start": "Aloita",
     "numberOfCollaborators": "Työntekijöiden määrä",
     "total": "Yhteensä",
-    "seatsExample": "Esimerkki: 3 työntekijää = 44,97€/kuukausi — muokattavissa milloin tahansa omasta tilasta."
+    "seatsExample": "Esimerkki: 3 työntekijää = 65,97€/kuukausi — muokattavissa milloin tahansa omasta tilasta."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Oletteko valmiita muuttamaan tiiminne sähköpostinhallintaa?",
       "ctaDesc": "Liity tiimeihin, jotka ovat valinneet Inborian sujuvampaan yhteistyöhön ja kymmenkertaiseen tuottavuuteen — ympäri maailmaa, 43 kielellä.",
       "discoverBusiness": "Tutustu Business-suunnitelmaan",
-      "ctaFooter": "Business-suunnitelma alkaen 44,97€/kuukausi (3 paikkaa 14,99€/paikka) • Laajennettavissa 50 paikkaan asti • Määritys 2 minuutissa",
+      "ctaFooter": "Business-suunnitelma alkaen 65,97€/kuukausi (3 paikkaa 21,99€/paikka) • Laajennettavissa 50 paikkaan asti • Määritys 2 minuutissa",
       "faqTitle": "Usein kysytyt kysymykset",
       "faq1q": "Kuinka monta jäsentä voin lisätä tiimiini?",
       "faq1a": "Business-suunnitelma sisältää peruspaikkoja, ja voitte lisätä niin monta kuin tarvitsette suoraan tilinhallintaportaalistanne. Rajoituksia ei ole.",
@@ -2287,7 +2287,7 @@
       "subscription": "Tilaukset",
       "subscriptionDesc": "Hallitse Inboria-tilaussuunnitelmaasi. Vertaa tarjouksia ja siirry korkeampaan suunnitelmaan.",
       "subscriptionFeatures": [
-        "4 suunnitelmaa: Ilmainen kokeilu, Solo (9€/kk), Pro (19€/kk), Business (alkaen 44,97€/kk)",
+        "4 suunnitelmaa: Ilmainen kokeilu, Solo (9€/kk), Pro (19€/kk), Business (alkaen 65,97€/kk)",
         "Ilmainen kokeilu, joka sisältää 100 IA-credits",
         "Turvallinen maksaminen Paddle:n kautta",
         "Näe kiintiösi ja nykyinen kulutuksesi",

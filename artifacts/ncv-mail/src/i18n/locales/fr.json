@@ -1275,8 +1275,8 @@
     "seatCount": "Nombre de sièges",
     "collaborators": "collaborateurs",
     "collaborator": "collaborateur",
-    "perSeatPerMonth": "Soit 14,99€ par siège / mois (minimum 3 sièges)",
-    "seatsExample": "Exemple : 3 collaborateurs = 44,97€/mois — modifiable à tout moment depuis votre espace.",
+    "perSeatPerMonth": "Soit 21,99€ par siège / mois (minimum 3 sièges)",
+    "seatsExample": "Exemple : 3 collaborateurs = 65,97€/mois — modifiable à tout moment depuis votre espace.",
     "expiredSubscription": "Votre abonnement a expiré",
     "trialEndedFull": "Votre essai gratuit est terminé",
     "resubscribe": "Réabonnez-vous à un plan payant pour continuer à utiliser Inboria.",
@@ -1357,12 +1357,12 @@
     "free": "Gratuit",
     "perMonth": "/mois",
     "perSeatMonth": "/siège/mois",
-    "perSeatDetail": "Soit 14,99€ par siège/mois",
+    "perSeatDetail": "Soit 21,99€ par siège/mois",
     "redirecting": "Redirection...",
     "start": "Commencer",
     "numberOfCollaborators": "Nombre de collaborateurs",
     "total": "Total",
-    "seatsExample": "Exemple : 3 collaborateurs = 44,97€/mois — modifiable à tout moment depuis votre espace."
+    "seatsExample": "Exemple : 3 collaborateurs = 65,97€/mois — modifiable à tout moment depuis votre espace."
   },
   "marketing": {
     "home": {
@@ -1850,7 +1850,7 @@
       "ctaTitle": "Prêt à transformer la gestion email de votre équipe ?",
       "ctaDesc": "Rejoignez les équipes qui ont adopté Inboria pour une collaboration plus fluide et une productivité décuplée — partout dans le monde, dans 43 langues.",
       "discoverBusiness": "Découvrir le plan Business",
-      "ctaFooter": "Plan Business à partir de 44,97€/mois (3 sièges à 14,99€/siège) • Extensible jusqu'à 50 sièges • Configuration en 2 minutes",
+      "ctaFooter": "Plan Business à partir de 65,97€/mois (3 sièges à 21,99€/siège) • Extensible jusqu'à 50 sièges • Configuration en 2 minutes",
       "faqTitle": "Questions fréquentes",
       "faq1q": "Combien de membres puis-je ajouter à mon équipe ?",
       "faq1a": "Le plan Business inclut des sièges de base, et vous pouvez en ajouter autant que nécessaire directement depuis votre portail d'abonnement. Il n'y a pas de limite imposée.",
@@ -2303,7 +2303,7 @@
       "subscription": "Abonnement",
       "subscriptionDesc": "Gérez votre plan d'abonnement Inboria. Comparez les offres et passez à un plan supérieur.",
       "subscriptionFeatures": [
-        "4 plans : Essai (gratuit), Solo (9€/mois), Pro (19€/mois), Business (à partir de 44,97€/mois)",
+        "4 plans : Essai (gratuit), Solo (9€/mois), Pro (19€/mois), Business (à partir de 65,97€/mois)",
         "Essai gratuit de 100 crédits IA inclus",
         "Paiement sécurisé via Paddle",
         "Voir votre quota et votre consommation actuelle",

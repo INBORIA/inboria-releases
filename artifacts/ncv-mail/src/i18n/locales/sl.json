@@ -1259,8 +1259,8 @@
     "seatCount": "Število sedežev",
     "collaborators": "sodelavcev",
     "collaborator": "sodelavec",
-    "perSeatPerMonth": "To je 14,99€ na sedež / mesec (najmanj 3 sedeži)",
-    "seatsExample": "Primer: 3 sodelavci = 44,97€/mesec — spremenljivo kadarkoli iz vašega prostora.",
+    "perSeatPerMonth": "To je 21,99€ na sedež / mesec (najmanj 3 sedeži)",
+    "seatsExample": "Primer: 3 sodelavci = 65,97€/mesec — spremenljivo kadarkoli iz vašega prostora.",
     "expiredSubscription": "Vaša naročnina je potekla",
     "trialEndedFull": "Vaš brezplačni preizkus je končan",
     "resubscribe": "Ponovno se naročite na plačljiv načrt, da nadaljujete z uporabo Inboria.",
@@ -1341,12 +1341,12 @@
     "free": "Brezplačno",
     "perMonth": "/mesec",
     "perSeatMonth": "/sedež/mesec",
-    "perSeatDetail": "To je 14,99€ na sedež/mesec",
+    "perSeatDetail": "To je 21,99€ na sedež/mesec",
     "redirecting": "Preusmerjanje...",
     "start": "Začnite",
     "numberOfCollaborators": "Število sodelavcev",
     "total": "Skupaj",
-    "seatsExample": "Primer: 3 sodelavci = 44,97€/mesec — spremenljivo kadarkoli iz Vašega prostora."
+    "seatsExample": "Primer: 3 sodelavci = 65,97€/mesec — spremenljivo kadarkoli iz Vašega prostora."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Ste pripravljeni spremeniti upravljanje e-pošte Vaše ekipe?",
       "ctaDesc": "Pridružite se ekipam, ki so izbrale Inboria za bolj tekoče sodelovanje in deseterno produktivnost — po vsem svetu, v 43 jezikih.",
       "discoverBusiness": "Odkrijte poslovni načrt",
-      "ctaFooter": "Poslovni načrt od 44,97€/mesec (3 sedeži po 14,99€/sedež) • Razširljiv do 50 sedežev • Nastavitev v 2 minutah",
+      "ctaFooter": "Poslovni načrt od 65,97€/mesec (3 sedeži po 21,99€/sedež) • Razširljiv do 50 sedežev • Nastavitev v 2 minutah",
       "faqTitle": "Pogosta vprašanja",
       "faq1q": "Koliko članov lahko dodam svoji ekipi?",
       "faq1a": "Poslovni načrt vključuje osnovne sedeže, dodatne pa lahko dodate po potrebi neposredno iz Vašega naročniškega portala. Ni omejitev.",
@@ -2287,7 +2287,7 @@
       "subscription": "Naročnina",
       "subscriptionDesc": "Upravljajte Vaš načrt naročnine Inboria. Primerjajte ponudbe in preklopite na višji načrt.",
       "subscriptionFeatures": [
-        "4 načrti: Preizkus (brezplačno), Solo (9€/mesec), Pro (19€/mesec), Poslovni (od 44,97€/mesec)",
+        "4 načrti: Preizkus (brezplačno), Solo (9€/mesec), Pro (19€/mesec), Poslovni (od 65,97€/mesec)",
         "Brezplačen preizkus z 100 krediti AI vključen",
         "Varno plačilo preko Paddle",
         "Oglejte si Vašo kvoto in trenutno porabo",

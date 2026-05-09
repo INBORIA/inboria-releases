@@ -1269,8 +1269,8 @@
     "seatCount": "Aantal zetels",
     "collaborators": "medewerkers",
     "collaborator": "medewerker",
-    "perSeatPerMonth": "€14,99 per zetel/maand (minimaal 3 zetels)",
-    "seatsExample": "Voorbeeld: 3 medewerkers = €44,97/maand — op elk moment aanpasbaar vanuit uw ruimte.",
+    "perSeatPerMonth": "€21,99 per zetel/maand (minimaal 3 zetels)",
+    "seatsExample": "Voorbeeld: 3 medewerkers = €65,97/maand — op elk moment aanpasbaar vanuit uw ruimte.",
     "expiredSubscription": "Uw abonnement is verlopen",
     "trialEndedFull": "Uw gratis proefperiode is beëindigd",
     "resubscribe": "Vernieuw naar een betaald plan om Inboria te blijven gebruiken.",
@@ -1351,12 +1351,12 @@
     "free": "Gratis",
     "perMonth": "/maand",
     "perSeatMonth": "/zetel/maand",
-    "perSeatDetail": "Namelijk €14,99 per zetel/maand",
+    "perSeatDetail": "Namelijk €21,99 per zetel/maand",
     "redirecting": "Doorverwijzen...",
     "start": "Beginnen",
     "numberOfCollaborators": "Aantal medewerkers",
     "total": "Totaal",
-    "seatsExample": "Voorbeeld: 3 medewerkers = €44,97/maand — op elk moment aanpasbaar vanuit uw ruimte."
+    "seatsExample": "Voorbeeld: 3 medewerkers = €65,97/maand — op elk moment aanpasbaar vanuit uw ruimte."
   },
   "marketing": {
     "home": {
@@ -1844,7 +1844,7 @@
       "ctaTitle": "Klaar om het e-mailbeheer van uw team te transformeren?",
       "ctaDesc": "Sluit u aan bij de teams die Inboria hebben omarmd voor vlottere samenwerking en tienvoudige productiviteit — wereldwijd, in 43 talen.",
       "discoverBusiness": "Business-plan ontdekken",
-      "ctaFooter": "Business-plan vanaf €44,97/maand (3 zetels à €14,99/zetel) • Schaalbaar tot 50 zetels • 2 minuten installatie",
+      "ctaFooter": "Business-plan vanaf €65,97/maand (3 zetels à €21,99/zetel) • Schaalbaar tot 50 zetels • 2 minuten installatie",
       "faqTitle": "Veelgestelde vragen",
       "faq1q": "Hoeveel leden kan ik aan mijn team toevoegen?",
       "faq1a": "Het Business-plan omvat basiszetels, en u kunt er zoveel toevoegen als nodig direct vanuit uw abonnementsportaal. Er is geen opgelegde limiet.",
@@ -2297,7 +2297,7 @@
       ],
       "subscriptionDesc": "Beheer uw Inboria-abonnementsplan. Vergelijk aanbiedingen en upgrade.",
       "subscriptionFeatures": [
-        "4 plannen: Proef (gratis), Solo (€9/maand), Pro (€19/maand), Business (vanaf €44,97/maand)",
+        "4 plannen: Proef (gratis), Solo (€9/maand), Pro (€19/maand), Business (vanaf €65,97/maand)",
         "Gratis proef van 100 e-mails inbegrepen",
         "Veilige betaling via Paddle",
         "Uw quota en huidig verbruik bekijken",

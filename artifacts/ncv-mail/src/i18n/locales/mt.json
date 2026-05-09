@@ -1259,8 +1259,8 @@
     "seatCount": "Numru ta' siġġijiet",
     "collaborators": "kollaboraturi",
     "collaborator": "kollaboratur",
-    "perSeatPerMonth": "Jiġifieri 14,99€ għal siġġu / xahar (minimu ta' 3 siġġijiet)",
-    "seatsExample": "Eżempju: 3 kollaboraturi = 44,97€/xahar — modifikabbli fi kwalunkwe ħin minn spazju tiegħek.",
+    "perSeatPerMonth": "Jiġifieri 21,99€ għal siġġu / xahar (minimu ta' 3 siġġijiet)",
+    "seatsExample": "Eżempju: 3 kollaboraturi = 65,97€/xahar — modifikabbli fi kwalunkwe ħin minn spazju tiegħek.",
     "expiredSubscription": "L-abbonament tagħkom skadit",
     "trialEndedFull": "L-eżami ħieles tagħkom tlesta",
     "resubscribe": "Irreġistra għal pjan mħallas biex tkompli tuża Inboria.",
@@ -1341,12 +1341,12 @@
     "free": "B'xejn",
     "perMonth": "/xahar",
     "perSeatMonth": "/post/ix-xahar",
-    "perSeatDetail": "Jekk jogħġobkom 14,99€ għal kull post/xahar",
+    "perSeatDetail": "Jekk jogħġobkom 21,99€ għal kull post/xahar",
     "redirecting": "Ridirizzjoni...",
     "start": "Ibda",
     "numberOfCollaborators": "Numru ta' kollegi",
     "total": "Totali",
-    "seatsExample": "Eżempju: 3 kollegi = 44,97€/xahar — modifikabbli fi kwalunkwe ħin minn spazju Tagħkom."
+    "seatsExample": "Eżempju: 3 kollegi = 65,97€/xahar — modifikabbli fi kwalunkwe ħin minn spazju Tagħkom."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Lesti biex tibdlu l-ġestjoni tal-email tat-tim tagħkom?",
       "ctaDesc": "Ingħaqdu mal-PMEs Belġjani u Franċiżi li diġà adottaw Inboria għal kollaborazzjoni aktar faċli u produttività akbar.",
       "discoverBusiness": "Skopri l-pjan Business",
-      "ctaFooter": "Pjan Business minn 44,97€/xahar (3 siġġijiet għal 14,99€/siġġa) • Estensibbli sa 50 siġġa • Isettjar f'2 minuti",
+      "ctaFooter": "Pjan Business minn 65,97€/xahar (3 siġġijiet għal 21,99€/siġġa) • Estensibbli sa 50 siġġa • Isettjar f'2 minuti",
       "faqTitle": "Mistoqsijiet frekwenti",
       "faq1q": "Kemm membru nista' nżid mal-tim tiegħi?",
       "faq1a": "Il-pjan Business jinkludi siġġijiet bażiċi, u tista' żżid kemm trid direttament mill-porta ta' abbonament tiegħek. M'hemm l-ebda limitu impost.",
@@ -2287,7 +2287,7 @@
       "subscription": "Abbonament",
       "subscriptionDesc": "Iġġestixxi l-pjan ta' abbonament Tagħkom ma' Inboria. Kkompara l-offerti u għaddi għal pjan ogħla.",
       "subscriptionFeatures": [
-        "4 pjani: Prova (b'xejn), Solo (9€/xahar), Pro (19€/xahar), Business (minn 44,97€/xahar)",
+        "4 pjani: Prova (b'xejn), Solo (9€/xahar), Pro (19€/xahar), Business (minn 65,97€/xahar)",
         "Prova b'xejn ta' 100 kreditu IA inklużi",
         "Ħlas sigur permezz ta' Paddle",
         "Ara l-kwota Tagħkom u l-konsum attwali",

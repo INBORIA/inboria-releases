@@ -1259,8 +1259,8 @@
     "seatCount": "Broj mjesta",
     "collaborators": "suradnici",
     "collaborator": "suradnik",
-    "perSeatPerMonth": "To je 14,99€ po mjestu / mjesec (minimalno 3 mjesta)",
-    "seatsExample": "Primjer: 3 suradnika = 44,97€/mjesečno — promjenjivo u bilo kojem trenutku iz Vašeg prostora.",
+    "perSeatPerMonth": "To je 21,99€ po mjestu / mjesec (minimalno 3 mjesta)",
+    "seatsExample": "Primjer: 3 suradnika = 65,97€/mjesečno — promjenjivo u bilo kojem trenutku iz Vašeg prostora.",
     "expiredSubscription": "Vaša pretplata je istekla",
     "trialEndedFull": "Vaše besplatno probno razdoblje je završeno",
     "resubscribe": "Ponovno se pretplatite na plaćeni plan kako biste nastavili koristiti Inboria.",
@@ -1341,12 +1341,12 @@
     "free": "Besplatno",
     "perMonth": "/mjesečno",
     "perSeatMonth": "/mjesto/mjesečno",
-    "perSeatDetail": "Iznosi 14,99€ po mjestu/mjesečno",
+    "perSeatDetail": "Iznosi 21,99€ po mjestu/mjesečno",
     "redirecting": "Preusmjeravanje...",
     "start": "Započnite",
     "numberOfCollaborators": "Broj suradnika",
     "total": "Ukupno",
-    "seatsExample": "Primjer: 3 suradnika = 44,97€/mjesečno — moguće promijeniti u bilo kojem trenutku iz Vašeg prostora."
+    "seatsExample": "Primjer: 3 suradnika = 65,97€/mjesečno — moguće promijeniti u bilo kojem trenutku iz Vašeg prostora."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Spremni za transformaciju upravljanja e-poštom Vašeg tima?",
       "ctaDesc": "Pridružite se timovima koji su odabrali Inboria za lakšu suradnju i deseterostruko veću produktivnost — diljem svijeta, na 43 jezika.",
       "discoverBusiness": "Otkrijte Business plan",
-      "ctaFooter": "Business plan od 44,97€/mjesečno (3 sjedala po 14,99€/sjedalo) • Proširivo do 50 sjedala • Konfiguracija u 2 minute",
+      "ctaFooter": "Business plan od 65,97€/mjesečno (3 sjedala po 21,99€/sjedalo) • Proširivo do 50 sjedala • Konfiguracija u 2 minute",
       "faqTitle": "Česta pitanja",
       "faq1q": "Koliko članova mogu dodati u svoj tim?",
       "faq1a": "Business plan uključuje osnovna sjedala, a možete dodati koliko god želite izravno s Vašeg pretplatničkog portala. Nema nametnutih ograničenja.",
@@ -2287,7 +2287,7 @@
       "subscription": "Pretplata",
       "subscriptionDesc": "Upravljajte svojom Inboria pretplatom. Usporedite ponude i prebacite se na viši plan.",
       "subscriptionFeatures": [
-        "4 plana: Probni (besplatan), Solo (9€/mj), Pro (19€/mj), Business (od 44,97€/mj)",
+        "4 plana: Probni (besplatan), Solo (9€/mj), Pro (19€/mj), Business (od 65,97€/mj)",
         "Besplatno probno razdoblje s 100 AI kredita uključeno",
         "Sigurno plaćanje putem Paddle",
         "Pogledajte svoj kvotu i trenutnu potrošnju",

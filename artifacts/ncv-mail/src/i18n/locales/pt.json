@@ -1259,8 +1259,8 @@
     "seatCount": "Número de lugares",
     "collaborators": "colaboradores",
     "collaborator": "colaborador",
-    "perSeatPerMonth": "Ou seja, 14,99€ por lugar / mês (mínimo 3 lugares)",
-    "seatsExample": "Exemplo: 3 colaboradores = 44,97€/mês — modificável a qualquer momento a partir do seu espaço.",
+    "perSeatPerMonth": "Ou seja, 21,99€ por lugar / mês (mínimo 3 lugares)",
+    "seatsExample": "Exemplo: 3 colaboradores = 65,97€/mês — modificável a qualquer momento a partir do seu espaço.",
     "expiredSubscription": "A sua subscrição expirou",
     "trialEndedFull": "O seu teste gratuito terminou",
     "resubscribe": "Reinscreva-se num plano pago para continuar a utilizar a Inboria.",
@@ -1341,12 +1341,12 @@
     "free": "Gratuito",
     "perMonth": "/mês",
     "perSeatMonth": "/utilizador/mês",
-    "perSeatDetail": "Ou seja, 14,99€ por utilizador/mês",
+    "perSeatDetail": "Ou seja, 21,99€ por utilizador/mês",
     "redirecting": "Redirecionando...",
     "start": "Começar",
     "numberOfCollaborators": "Número de colaboradores",
     "total": "Total",
-    "seatsExample": "Exemplo: 3 colaboradores = 44,97€/mês — modificável a qualquer momento a partir do seu espaço."
+    "seatsExample": "Exemplo: 3 colaboradores = 65,97€/mês — modificável a qualquer momento a partir do seu espaço."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Pronto para transformar a gestão de email da sua equipe?",
       "ctaDesc": "Junte-se às equipas que adotaram o Inboria para uma colaboração mais fluida e uma produtividade multiplicada por dez — em todo o mundo, em 43 idiomas.",
       "discoverBusiness": "Descubra o plano Business",
-      "ctaFooter": "Plano Business a partir de 44,97€/mês (3 lugares a 14,99€/lugar) • Expansível até 50 lugares • Configuração em 2 minutos",
+      "ctaFooter": "Plano Business a partir de 65,97€/mês (3 lugares a 21,99€/lugar) • Expansível até 50 lugares • Configuração em 2 minutos",
       "faqTitle": "Perguntas frequentes",
       "faq1q": "Quantos membros posso adicionar à minha equipe?",
       "faq1a": "O plano Business inclui lugares base, e você pode adicionar quantos forem necessários diretamente a partir do seu portal de subscrição. Não há limite imposto.",
@@ -2287,7 +2287,7 @@
       "subscription": "Assinatura",
       "subscriptionDesc": "Gerencie o seu plano de assinatura Inboria. Compare as ofertas e faça upgrade para um plano superior.",
       "subscriptionFeatures": [
-        "4 planos: Experiência (gratuita), Solo (9€/mês), Pro (19€/mês), Business (a partir de 44,97€/mês)",
+        "4 planos: Experiência (gratuita), Solo (9€/mês), Pro (19€/mês), Business (a partir de 65,97€/mês)",
         "Experiência gratuita de 100 créditos de IA incluída",
         "Pagamento seguro via Paddle",
         "Veja o seu quota e o seu consumo atual",

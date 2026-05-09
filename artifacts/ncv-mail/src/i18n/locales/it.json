@@ -1259,8 +1259,8 @@
     "seatCount": "Numero di posti",
     "collaborators": "collaboratori",
     "collaborator": "collaboratore",
-    "perSeatPerMonth": "Cioè 14,99€ per posto / mese (minimo 3 posti)",
-    "seatsExample": "Esempio: 3 collaboratori = 44,97€/mese — modificabile in qualsiasi momento dal Suo spazio.",
+    "perSeatPerMonth": "Cioè 21,99€ per posto / mese (minimo 3 posti)",
+    "seatsExample": "Esempio: 3 collaboratori = 65,97€/mese — modificabile in qualsiasi momento dal Suo spazio.",
     "expiredSubscription": "Il Suo abbonamento è scaduto",
     "trialEndedFull": "La Sua prova gratuita è terminata",
     "resubscribe": "Rinnovi il Suo abbonamento a un piano a pagamento per continuare a utilizzare Inboria.",
@@ -1341,12 +1341,12 @@
     "free": "Gratuito",
     "perMonth": "/mese",
     "perSeatMonth": "/utente/mese",
-    "perSeatDetail": "Cioè 14,99€ per utente/mese",
+    "perSeatDetail": "Cioè 21,99€ per utente/mese",
     "redirecting": "Reindirizzamento...",
     "start": "Iniziare",
     "numberOfCollaborators": "Numero di collaboratori",
     "total": "Totale",
-    "seatsExample": "Esempio: 3 collaboratori = 44,97€/mese — modificabile in qualsiasi momento dal Suo spazio."
+    "seatsExample": "Esempio: 3 collaboratori = 65,97€/mese — modificabile in qualsiasi momento dal Suo spazio."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Pronto a trasformare la gestione email del suo team?",
       "ctaDesc": "Unitevi ai team che hanno adottato Inboria per una collaborazione più fluida e una produttività decuplicata — in tutto il mondo, in 43 lingue.",
       "discoverBusiness": "Scoprire il piano Business",
-      "ctaFooter": "Piano Business a partire da 44,97€/mese (3 posti a 14,99€/posto) • Scalabile fino a 50 posti • Configurazione in 2 minuti",
+      "ctaFooter": "Piano Business a partire da 65,97€/mese (3 posti a 21,99€/posto) • Scalabile fino a 50 posti • Configurazione in 2 minuti",
       "faqTitle": "Domande frequenti",
       "faq1q": "Quanti membri posso aggiungere al mio team?",
       "faq1a": "Il piano Business include posti base, e può aggiungerne quanti ne ha bisogno direttamente dal suo portale di abbonamento. Non ci sono limiti imposti.",
@@ -2287,7 +2287,7 @@
       "subscription": "Abbonamento",
       "subscriptionDesc": "Gestisca il suo piano di abbonamento Inboria. Confronti le offerte e passi a un piano superiore.",
       "subscriptionFeatures": [
-        "4 piani: Prova (gratuita), Solo (9€/mese), Pro (19€/mese), Business (a partire da 44,97€/mese)",
+        "4 piani: Prova (gratuita), Solo (9€/mese), Pro (19€/mese), Business (a partire da 65,97€/mese)",
         "Prova gratuita di 100 crediti IA inclusi",
         "Pagamento sicuro tramite Paddle",
         "Veda il suo quota e il suo consumo attuale",

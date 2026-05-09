@@ -1259,8 +1259,8 @@
     "seatCount": "Uimhir suíochán",
     "collaborators": "comhoibritheoirí",
     "collaborator": "comhoibritheoir",
-    "perSeatPerMonth": "Is é 14,99€ in aghaidh na suíocháin / mí (is í an íosmhéid 3 suíochán)",
-    "seatsExample": "Sampla: 3 comhoibritheoirí = 44,97€/mí — is féidir é a athrú ag am ar bith ó bhur spás.",
+    "perSeatPerMonth": "Is é 21,99€ in aghaidh na suíocháin / mí (is í an íosmhéid 3 suíochán)",
+    "seatsExample": "Sampla: 3 comhoibritheoirí = 65,97€/mí — is féidir é a athrú ag am ar bith ó bhur spás.",
     "expiredSubscription": "Tá bhur síntiús imithe in éag",
     "trialEndedFull": "Tá bhur thriail saor in aisce críochnaithe",
     "resubscribe": "Athshínigh chuig plean íoctha chun leanúint ar aghaidh ag úsáid Inboria.",
@@ -1341,12 +1341,12 @@
     "free": "Saor",
     "perMonth": "/mí",
     "perSeatMonth": "/suíochán/mí",
-    "perSeatDetail": "Is é 14,99€ in aghaidh an tsuíocháin in aghaidh na míosa",
+    "perSeatDetail": "Is é 21,99€ in aghaidh an tsuíocháin in aghaidh na míosa",
     "redirecting": "Athrú... ",
     "start": "Tús a chur",
     "numberOfCollaborators": "Uimhir na gcomhoibrithe",
     "total": "Iomlán",
-    "seatsExample": "Sampla: 3 comhoibrithe = 44,97€/mí — is féidir é a athrú ag am ar bith ó bhur spás."
+    "seatsExample": "Sampla: 3 comhoibrithe = 65,97€/mí — is féidir é a athrú ag am ar bith ó bhur spás."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Réidh le hathrú ar bhainistíocht ríomhphoist bhur foireann?",
       "ctaDesc": "Bí páirteach le SMEanna na Beilge agus na Fraince atá tar éis Inboria a ghlacadh cheana le haghaidh comhoibrithe níos réidh agus táirgiúlachta méadaithe.",
       "discoverBusiness": "Féach ar an plean Gnó",
-      "ctaFooter": "Plean Gnó ó 44,97€/mí (3 suíochán ag 14,99€/suíochán) • Le leathnú suas go 50 suíochán • Socrú i 2 nóiméad",
+      "ctaFooter": "Plean Gnó ó 65,97€/mí (3 suíochán ag 21,99€/suíochán) • Le leathnú suas go 50 suíochán • Socrú i 2 nóiméad",
       "faqTitle": "Ceisteanna coitianta",
       "faq1q": "Cé mhéad ball is féidir liom a chur le mo fhoireann?",
       "faq1a": "Cuireann an plean Gnó suíocháin bhunúsacha ar fáil, agus is féidir leat a chur isteach go leor mar is gá go díreach ó do phortail síntiúis. Níl aon teorainn curtha i bhfeidhm.",
@@ -2287,7 +2287,7 @@
       "subscription": "Suíomh",
       "subscriptionDesc": "Bainistigh bhur bplean síntiúis Inboria. Comparáid na dtairiscintí agus bogadh chuig plean níos airde.",
       "subscriptionFeatures": [
-        "4 phlean: Triail (saor), Duine (9€/mí), Pro (19€/mí), Gnó (ó 44,97€/mí)",
+        "4 phlean: Triail (saor), Duine (9€/mí), Pro (19€/mí), Gnó (ó 65,97€/mí)",
         "Triail saor in aisce le 100 creidmheas AI san áireamh",
         "Íocaíocht shlán trí Paddle",
         "Féach ar bhur gcion agus bhur n-úsáid reatha",

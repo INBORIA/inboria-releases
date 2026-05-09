@@ -1259,8 +1259,8 @@
     "seatCount": "Helyek száma",
     "collaborators": "munkatársak",
     "collaborator": "munkatárs",
-    "perSeatPerMonth": "Ez 14,99€ helyenként / hónap (minimum 3 hely)",
-    "seatsExample": "Példa: 3 munkatárs = 44,97€/hónap — bármikor módosítható a fiókjából.",
+    "perSeatPerMonth": "Ez 21,99€ helyenként / hónap (minimum 3 hely)",
+    "seatsExample": "Példa: 3 munkatárs = 65,97€/hónap — bármikor módosítható a fiókjából.",
     "expiredSubscription": "Az előfizetése lejárt",
     "trialEndedFull": "A próbaidőszaka véget ért",
     "resubscribe": "Iratkozzon fel egy fizetős tervre, hogy továbbra is használhassa az Inboria-t.",
@@ -1341,12 +1341,12 @@
     "free": "Ingyenes",
     "perMonth": "/hónap",
     "perSeatMonth": "/munkatárs/hónap",
-    "perSeatDetail": "Ez 14,99€ munkatársonként/hónap",
+    "perSeatDetail": "Ez 21,99€ munkatársonként/hónap",
     "redirecting": "Átirányítás...",
     "start": "Kezdés",
     "numberOfCollaborators": "Munkatársak száma",
     "total": "Összesen",
-    "seatsExample": "Példa: 3 munkatárs = 44,97€/hónap — bármikor módosítható az Ön felületén."
+    "seatsExample": "Példa: 3 munkatárs = 65,97€/hónap — bármikor módosítható az Ön felületén."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Készen áll az e-mail kezelésének átalakítására a csapatában?",
       "ctaDesc": "Csatlakozzon a csapatokhoz, amelyek az Inboriát választották a gördülékenyebb együttműködésért és a tízszeres termelékenységért — világszerte, 43 nyelven.",
       "discoverBusiness": "Fedezze fel a Business tervet",
-      "ctaFooter": "Business terv 44,97€/hó-tól (3 hely 14,99€/hely) • Bővíthető 50 helyig • Beállítás 2 perc alatt",
+      "ctaFooter": "Business terv 65,97€/hó-tól (3 hely 21,99€/hely) • Bővíthető 50 helyig • Beállítás 2 perc alatt",
       "faqTitle": "Gyakran ismételt kérdések",
       "faq1q": "Hány tagot adhatok hozzá a csapatomhoz?",
       "faq1a": "A Business terv alaphelyeket tartalmaz, és annyit adhat hozzá, amennyit csak szükséges közvetlenül az előfizetési portálján. Nincs megszabott korlát.",
@@ -2287,7 +2287,7 @@
       "subscription": "Előfizetés",
       "subscriptionDesc": "Kezelje az Inboria előfizetési tervét. Hasonlítsa össze az ajánlatokat, és lépjen egy magasabb tervre.",
       "subscriptionFeatures": [
-        "4 terv: Próbaverzió (ingyenes), Solo (9€/hó), Pro (19€/hó), Business (44,97€/hó-tól)",
+        "4 terv: Próbaverzió (ingyenes), Solo (9€/hó), Pro (19€/hó), Business (65,97€/hó-tól)",
         "Ingyenes próbaverzió 100 AI kredittel",
         "Biztonságos fizetés a Paddle-en keresztül",
         "Tekintse meg kvótáját és aktuális fogyasztását",

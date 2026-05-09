@@ -1259,8 +1259,8 @@
     "seatCount": "Jumlah kursi",
     "collaborators": "kolaborator",
     "collaborator": "kolaborator",
-    "perSeatPerMonth": "Yaitu 14,99€ per kursi / bulan (minimum 3 kursi)",
-    "seatsExample": "Contoh: 3 kolaborator = 44,97€/bulan — dapat diubah kapan saja dari ruang Anda.",
+    "perSeatPerMonth": "Yaitu 21,99€ per kursi / bulan (minimum 3 kursi)",
+    "seatsExample": "Contoh: 3 kolaborator = 65,97€/bulan — dapat diubah kapan saja dari ruang Anda.",
     "expiredSubscription": "Langganan Anda telah kedaluwarsa",
     "trialEndedFull": "Percobaan gratis Anda telah selesai",
     "resubscribe": "Daftar kembali ke rencana berbayar untuk terus menggunakan Inboria.",
@@ -1341,12 +1341,12 @@
     "free": "Gratis",
     "perMonth": "/bulan",
     "perSeatMonth": "/kursi/bulan",
-    "perSeatDetail": "Yaitu 14,99€ per kursi/bulan",
+    "perSeatDetail": "Yaitu 21,99€ per kursi/bulan",
     "redirecting": "Pengalihan...",
     "start": "Mulai",
     "numberOfCollaborators": "Jumlah kolaborator",
     "total": "Total",
-    "seatsExample": "Contoh: 3 kolaborator = 44,97€/bulan — dapat diubah kapan saja dari ruang Anda."
+    "seatsExample": "Contoh: 3 kolaborator = 65,97€/bulan — dapat diubah kapan saja dari ruang Anda."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Siap untuk mengubah manajemen email tim Anda?",
       "ctaDesc": "Bergabunglah dengan tim yang telah memilih Inboria untuk kolaborasi yang lebih lancar dan produktivitas sepuluh kali lipat — di seluruh dunia, dalam 43 bahasa.",
       "discoverBusiness": "Temukan rencana Bisnis",
-      "ctaFooter": "Rencana Bisnis mulai dari 44,97€/bulan (3 kursi di 14,99€/kursi) • Dapat diperluas hingga 50 kursi • Konfigurasi dalam 2 menit",
+      "ctaFooter": "Rencana Bisnis mulai dari 65,97€/bulan (3 kursi di 21,99€/kursi) • Dapat diperluas hingga 50 kursi • Konfigurasi dalam 2 menit",
       "faqTitle": "Pertanyaan yang sering diajukan",
       "faq1q": "Berapa banyak anggota yang dapat saya tambahkan ke tim saya?",
       "faq1a": "Rencana Bisnis mencakup kursi dasar, dan Anda dapat menambahkannya sebanyak yang diperlukan langsung dari portal langganan Anda. Tidak ada batasan yang diberlakukan.",
@@ -2287,7 +2287,7 @@
       "subscription": "Langganan",
       "subscriptionDesc": "Kelola paket langganan Inboria Anda. Bandingkan penawaran dan tingkatkan ke paket yang lebih tinggi.",
       "subscriptionFeatures": [
-        "4 paket: Uji coba (gratis), Solo (9€/bulan), Pro (19€/bulan), Bisnis (mulai dari 44,97€/bulan)",
+        "4 paket: Uji coba (gratis), Solo (9€/bulan), Pro (19€/bulan), Bisnis (mulai dari 65,97€/bulan)",
         "Uji coba gratis dengan 100 kredit AI termasuk",
         "Pembayaran aman melalui Paddle",
         "Lihat kuota dan konsumsi Anda saat ini",
