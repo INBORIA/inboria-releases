@@ -327,6 +327,44 @@ html[data-ncv-theme="light"] [data-inboria-chat-panel].bg-zinc-950 {
   color: #111827 !important;
 }
 
+/* Étape 7 — Menus contextuels (clic droit) sur emails / tâches.
+   Ce sont des div .fixed avec couleurs hardcodées, donc l'overlay générique
+   (qui exclut .fixed) ne les touche pas. On force tout sous [data-context-menu]
+   en mode clair, indépendamment de data-ncv-page. */
+html[data-ncv-theme="light"] [data-context-menu] {
+  background-color: #ffffff !important;
+  border-color: #e5e7ec !important;
+  color: #111827 !important;
+  box-shadow: 0 10px 38px -10px rgba(15, 20, 30, 0.18), 0 8px 16px -10px rgba(15, 20, 30, 0.12) !important;
+}
+html[data-ncv-theme="light"] [data-context-menu] .border-\[\#1f2937\],
+html[data-ncv-theme="light"] [data-context-menu] .border-\[\#2a3441\] {
+  border-color: #e5e7ec !important;
+}
+html[data-ncv-theme="light"] [data-context-menu] .bg-\[\#141c2b\],
+html[data-ncv-theme="light"] [data-context-menu] .bg-\[\#0f141b\] {
+  background-color: #ffffff !important;
+}
+html[data-ncv-theme="light"] [data-context-menu] .text-\[\#b8c5d6\] {
+  color: #1f2937 !important;
+}
+html[data-ncv-theme="light"] [data-context-menu] .text-\[\#6b7480\],
+html[data-ncv-theme="light"] [data-context-menu] .text-\[\#6b7280\] {
+  color: #6b7280 !important;
+}
+html[data-ncv-theme="light"] [data-context-menu] .hover\:bg-white\/\[0\.06\]:hover,
+html[data-ncv-theme="light"] [data-context-menu] .hover\:bg-white\/\[0\.04\]:hover,
+html[data-ncv-theme="light"] [data-context-menu] .hover\:bg-white\/\[0\.08\]:hover {
+  background-color: #f3f4f6 !important;
+}
+html[data-ncv-theme="light"] [data-context-menu] .hover\:text-white:hover {
+  color: #0f172a !important;
+}
+/* L'item Supprimer (rouge) garde sa teinte mais s'éclaircit en hover */
+html[data-ncv-theme="light"] [data-context-menu] .text-red-400\/80 { color: #dc2626 !important; }
+html[data-ncv-theme="light"] [data-context-menu] .hover\:text-red-400:hover { color: #b91c1c !important; }
+html[data-ncv-theme="light"] [data-context-menu] .hover\:bg-red-500\/\[0\.08\]:hover { background-color: rgba(220, 38, 38, 0.08) !important; }
+
 /* Étape 6ter — Panneau d'activité Autopilot (« EN VEILLE / Triés / Brouillons / Tâches / RDV »).
    Utilise bg-[#0b0d12] + de nombreuses classes text-white/X non couvertes. */
 html[data-ncv-theme="light"] [data-inboria-activity-panel],
