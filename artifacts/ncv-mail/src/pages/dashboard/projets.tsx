@@ -243,7 +243,9 @@ function ProjectDetailView({
   const updateEmailMut = useUpdateEmail();
   const deleteEmailMut = useDeleteEmail();
   const [selectedEmailIds, setSelectedEmailIds] = useState<Set<number>>(new Set());
-  const toggleEmailSelected = (id: number) => {
+  const selectionMode = selectedEmailIds.size > 0;
+  const toggleEmailSelected = (rawId: any) => {
+    const id = Number(rawId);
     setSelectedEmailIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id); else next.add(id);
@@ -521,37 +523,36 @@ function ProjectDetailView({
             </h2>
             <div className="space-y-1">
               {project.emails.map((email: any) => {
-                const isSelected = selectedEmailIds.has(email.id);
+                const emailIdNum = Number(email.id);
+                const isSelected = selectedEmailIds.has(emailIdNum);
                 return (
                   <div
                     key={email.id}
                     onClick={() => {
-                      if (selectedEmailIds.size > 0) toggleEmailSelected(email.id);
-                      else setSelectedEmailId(email.id);
+                      if (selectionMode) toggleEmailSelected(email.id);
+                      else setSelectedEmailId(emailIdNum);
                     }}
                     onContextMenu={(e) => {
                       e.preventDefault();
-                      setEmailContextMenu({ x: e.clientX, y: e.clientY, emailId: email.id, subject: email.subject || "" });
+                      setEmailContextMenu({ x: e.clientX, y: e.clientY, emailId: emailIdNum, subject: email.subject || "" });
                     }}
-                    className={`group flex items-stretch bg-card border rounded-lg overflow-hidden w-full text-left transition-colors cursor-pointer ${isSelected ? "border-primary/60 bg-primary/5" : "border-border hover:bg-card/80 hover:border-primary/40"}`}
+                    className={`group flex items-center gap-2.5 px-3 py-2 bg-card border rounded-lg w-full text-left transition-colors cursor-pointer ${isSelected ? "border-primary/60 bg-primary/5" : "border-border hover:bg-card/80 hover:border-primary/40"}`}
                   >
-                    <div className="flex items-center gap-2.5 flex-1 min-w-0 px-3 py-2">
-                      <button
-                        type="button"
-                        onClick={(e) => { e.stopPropagation(); toggleEmailSelected(email.id); }}
-                        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 cursor-pointer transition-colors ${isSelected ? "border-primary bg-primary/10" : "border-[#94a3b8] hover:border-primary bg-white/80"}`}
-                        aria-label={t("common.select", "Sélectionner")}
-                      >
-                        {isSelected && <Check className="w-3.5 h-3.5 text-primary stroke-[3]" />}
-                      </button>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-[12px] text-white truncate">{email.subject}</p>
-                        <p className="text-[10px] text-[#b8c5d6]">{email.sender}</p>
-                      </div>
-                      <span className="text-[10px] text-[#b8c5d6] shrink-0">
-                        {new Date(email.createdAt).toLocaleDateString(i18n.language)}
-                      </span>
+                    <button
+                      type="button"
+                      onClick={(e) => { e.stopPropagation(); toggleEmailSelected(email.id); }}
+                      className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 cursor-pointer transition-colors ${isSelected ? "border-primary" : "border-[#2a3441] hover:border-primary"}`}
+                      aria-label={t("common.select", "Sélectionner")}
+                    >
+                      {isSelected && <Check className="w-3 h-3 text-primary" />}
+                    </button>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-[12px] text-white truncate">{email.subject}</p>
+                      <p className="text-[10px] text-[#b8c5d6]">{email.sender}</p>
                     </div>
+                    <span className="text-[10px] text-[#b8c5d6] shrink-0">
+                      {new Date(email.createdAt).toLocaleDateString(i18n.language)}
+                    </span>
                   </div>
                 );
               })}
