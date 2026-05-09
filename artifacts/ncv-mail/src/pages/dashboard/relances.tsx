@@ -107,10 +107,12 @@ export default function Relances() {
     const startIdx = ids.indexOf(dragStartIdRef.current!);
     const endIdx = ids.indexOf(currentId);
     if (startIdx === -1 || endIdx === -1) return;
-    const lo = Math.min(startIdx, endIdx);
-    const hi = Math.max(startIdx, endIdx);
     const keep = new Set(preSelectRef.current);
-    for (let i = lo; i <= hi; i++) keep.add(ids[i]);
+    if (startIdx !== endIdx) {
+      const lo = Math.min(startIdx, endIdx);
+      const hi = Math.max(startIdx, endIdx);
+      for (let i = lo; i <= hi; i++) keep.add(ids[i]);
+    }
     setSelectedIds(keep);
   }, []);
 
@@ -363,7 +365,7 @@ export default function Relances() {
                           }}
                           onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); handleDragSelectStart(f.id); }}
                         >
-                          {isSelected && <Check className="w-3 h-3 text-white" />}
+                          {isSelected && <Check className="w-3 h-3 text-primary" />}
                         </button>
                       ) : (
                         <span className="w-3 h-3" />
