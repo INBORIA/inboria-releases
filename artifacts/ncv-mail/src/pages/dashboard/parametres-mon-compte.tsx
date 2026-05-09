@@ -1082,6 +1082,25 @@ export default function ParametresMonCompte() {
                         </div>
 
                         {selectedProvider === "gmail" && (
+                          <>
+                            <div className="p-3 bg-primary/5 rounded-lg border border-primary/30 space-y-2">
+                              <p className="text-[12px] font-semibold text-white">Méthode recommandée — Connexion en 1 clic</p>
+                              <p className="text-[11px] text-[#b8c5d6]">Aucun mot de passe à copier. Google ouvre une fenêtre, vous validez, c'est connecté.</p>
+                              <Button
+                                type="button"
+                                size="sm"
+                                className="h-8 text-[12px] w-full"
+                                onClick={() => handleOAuthConnect("gmail")}
+                                data-testid="btn-connect-gmail-oauth"
+                              >
+                                Se connecter avec Google
+                              </Button>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1 h-px bg-border" />
+                              <span className="text-[10px] uppercase tracking-wider text-[#6b7280]">ou</span>
+                              <div className="flex-1 h-px bg-border" />
+                            </div>
                           <div className="p-3 bg-background rounded-lg border border-primary/20 space-y-2">
                             <p className="text-[12px] font-semibold text-white">{t("settings.gmailWizardTitle")}</p>
                             <ol className="text-[11px] text-[#b8c5d6] space-y-1.5 list-decimal list-inside">
@@ -1102,6 +1121,7 @@ export default function ParametresMonCompte() {
                             </ol>
                             <p className="text-[11px] text-[#b8c5d6] italic">{t("settings.gmailWizardNote")}</p>
                           </div>
+                          </>
                         )}
 
                         <div className="space-y-1">
