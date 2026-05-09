@@ -3510,10 +3510,12 @@ export default function Dashboard() {
     const startIdx = ids.indexOf(dragStartIdRef.current!);
     const endIdx = ids.indexOf(currentId);
     if (startIdx === -1 || endIdx === -1) return;
-    const lo = Math.min(startIdx, endIdx);
-    const hi = Math.max(startIdx, endIdx);
     const keep = new Set(preSelectRef.current);
-    for (let i = lo; i <= hi; i++) keep.add(ids[i]);
+    if (startIdx !== endIdx) {
+      const lo = Math.min(startIdx, endIdx);
+      const hi = Math.max(startIdx, endIdx);
+      for (let i = lo; i <= hi; i++) keep.add(ids[i]);
+    }
     setSelectedIds(keep);
   }, []);
 
