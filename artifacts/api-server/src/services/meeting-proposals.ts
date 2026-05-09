@@ -438,10 +438,16 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
   // user preference. Meet/Teams require a connected calendar of the right
   // type — if not available, we gracefully fall back to Jitsi so the link is
   // still included in the email.
-  let effVideo: "meet" | "teams" | "jitsi" | "none" =
-    (args.videoProvider as "meet" | "teams" | "jitsi" | "none" | null | undefined) ||
-    preferredVideo ||
-    "none";
+  // Phase 4 : par défaut TOUTE proposition Inboria reçoit un lien visio (Jitsi).
+  // Seul l'appelant qui passe explicitement "none" peut désactiver le lien.
+  let effVideo: "meet" | "teams" | "jitsi" | "none";
+  if (args.videoProvider !== undefined && args.videoProvider !== null) {
+    effVideo = args.videoProvider;
+  } else if (preferredVideo) {
+    effVideo = preferredVideo;
+  } else {
+    effVideo = "jitsi";
+  }
   let videoUrl: string | null = null;
   if (effVideo === "jitsi") {
     videoUrl = generateJitsiUrl();

@@ -395,9 +395,30 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
         body.videoProvider as VideoProvider | null,
         effCalendarAccountId,
       );
+    } else if (wantsCalendarChange) {
+      // Le calendrier change mais le client n'a pas re-spécifié la visio :
+      // on recompute pour éviter de garder un Meet/Teams incompatible avec
+      // le nouveau calendrier (fallback Jitsi le cas échéant).
+      const current = (existing.video_provider as VideoProvider | null) ?? null;
+      if (current && current !== "none") {
+        effVideoProvider = await resolveEffectiveVideoProvider(
+          req.userId!,
+          current,
+          effCalendarAccountId,
+        );
+      } else {
+        effVideoProvider = current;
+      }
     } else {
       effVideoProvider = (existing.video_provider as VideoProvider | null) ?? null;
     }
+
+    // Si le recompute a basculé sur un autre fournisseur sans demande explicite
+    // du client, on persiste tout de même la nouvelle valeur effective.
+    const providerChangedByFallback =
+      body.videoProvider === undefined &&
+      wantsCalendarChange &&
+      effVideoProvider !== ((existing.video_provider as VideoProvider | null) ?? null);
 
     const updates: Record<string, any> = {};
     if (body.title !== undefined) updates.title = body.title;
@@ -411,7 +432,7 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
     if (body.reminderMinutes !== undefined) updates.reminder_minutes = body.reminderMinutes;
     if (body.confirmed !== undefined) updates.confirmed = body.confirmed;
     if (body.participants !== undefined) updates.participants = body.participants || null;
-    if (body.videoProvider !== undefined) {
+    if (body.videoProvider !== undefined || providerChangedByFallback) {
       // Persister la valeur EFFECTIVE (post-fallback), pas la valeur brute,
       // sinon on enregistrerait "meet" alors que l'on a basculé en Jitsi.
       updates.video_provider = effVideoProvider === "none" ? null : effVideoProvider;
