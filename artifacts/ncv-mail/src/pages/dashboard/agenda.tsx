@@ -137,6 +137,13 @@ export default function Agenda() {
     from: rangeStart.toISOString(),
     to: rangeEnd.toISOString(),
   });
+  const suggestionsRange = useMemo(() => {
+    const now = new Date();
+    const start = new Date(now.getFullYear() - 1, 0, 1).toISOString();
+    const end = new Date(now.getFullYear() + 2, 11, 31, 23, 59, 59).toISOString();
+    return { from: start, to: end };
+  }, []);
+  const { data: allAppointmentsForSuggestions = [] } = useListAppointments(suggestionsRange);
   const { data: projects = [] } = useListProjects();
 
   const appointments = useMemo(() => {
@@ -301,8 +308,8 @@ export default function Agenda() {
   const [bulkBusy, setBulkBusy] = useState(false);
 
   const suggestions = useMemo(() => {
-    return appointments.filter((apt) => apt.confirmed === false);
-  }, [appointments]);
+    return (allAppointmentsForSuggestions as any[]).filter((apt) => apt.confirmed === false);
+  }, [allAppointmentsForSuggestions]);
 
   useEffect(() => {
     setSelectedSuggestionIds((prev) => {
