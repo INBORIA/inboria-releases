@@ -713,26 +713,6 @@ export default function Agenda() {
                         <ExternalLink className="w-3.5 h-3.5 mr-2" />
                         {t("agenda.viewDetails", "Voir les détails")}
                       </ContextMenuItem>
-                      {selectedSuggestionIds.size > 1 && isSelected && (
-                        <>
-                          <ContextMenuSeparator />
-                          <ContextMenuItem
-                            onClick={() => handleBulkConfirm(Array.from(selectedSuggestionIds))}
-                            disabled={bulkBusy}
-                          >
-                            <Check className="w-3.5 h-3.5 mr-2" />
-                            {t("agenda.confirmSelected", "Confirmer la sélection")} ({selectedSuggestionIds.size})
-                          </ContextMenuItem>
-                          <ContextMenuItem
-                            onClick={() => handleBulkDismiss(Array.from(selectedSuggestionIds))}
-                            disabled={bulkBusy}
-                            className="text-red-400 focus:text-red-300"
-                          >
-                            <X className="w-3.5 h-3.5 mr-2" />
-                            {t("agenda.dismissSelected", "Ignorer la sélection")} ({selectedSuggestionIds.size})
-                          </ContextMenuItem>
-                        </>
-                      )}
                     </ContextMenuContent>
                   </ContextMenu>
                 );
