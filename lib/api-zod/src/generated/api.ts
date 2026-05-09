@@ -2953,6 +2953,7 @@ export const UpdateAppointmentBody = zod.object({
   reminderMinutes: zod.number().optional(),
   confirmed: zod.boolean().optional(),
   participants: zod.string().optional(),
+  calendarAccountId: zod.string().nullish(),
 });
 
 export const UpdateAppointmentResponse = zod.object({

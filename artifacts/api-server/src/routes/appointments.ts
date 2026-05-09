@@ -58,6 +58,7 @@ const updateAppointmentSchema = z.object({
   reminderMinutes: z.number().int().min(0).max(10080).optional(),
   confirmed: z.boolean().optional(),
   participants: participantsSchema.optional().nullable(),
+  calendarAccountId: z.string().uuid().optional().nullable(),
 });
 
 const router: IRouter = Router();
@@ -220,7 +221,7 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
             .from("appointments")
             .update({ last_sync_error: "push_failed" })
             .eq("id", data.id);
-          (data as any).last_sync_error = "push_failed";
+          data.last_sync_error = "push_failed";
         }
       } catch (e: any) {
         req.log?.warn?.({ err: e?.message }, "[appointments] push to provider crashed");
@@ -260,10 +261,44 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
       return;
     }
     const body = parsed.data;
-    if (body.startAt && body.endAt && Date.parse(body.endAt) < Date.parse(body.startAt)) {
+
+    // Load existing row first to validate the *effective* interval and to
+    // know whether we are switching the destination calendar.
+    const { data: existing, error: existingErr } = await supabaseAdmin
+      .from("appointments")
+      .select("*")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .single();
+    if (existingErr || !existing) {
+      res.status(404).json({ error: "Appointment not found" });
+      return;
+    }
+
+    const effStart = body.startAt ?? existing.start_at;
+    const effEnd = body.endAt ?? existing.end_at;
+    if (Date.parse(effEnd) < Date.parse(effStart)) {
       res.status(400).json({ error: "endAt must be after startAt" });
       return;
     }
+
+    // If destination calendar is being changed, validate ownership.
+    const wantsCalendarChange =
+      body.calendarAccountId !== undefined &&
+      (body.calendarAccountId || null) !== (existing.calendar_account_id || null);
+    if (wantsCalendarChange && body.calendarAccountId) {
+      const { data: acc } = await supabaseAdmin
+        .from("calendar_accounts")
+        .select("id")
+        .eq("id", body.calendarAccountId)
+        .eq("user_id", req.userId!)
+        .maybeSingle();
+      if (!acc) {
+        res.status(403).json({ error: "calendar_account_not_owned" });
+        return;
+      }
+    }
+
     const updates: Record<string, any> = {};
     if (body.title !== undefined) updates.title = body.title;
     if (body.description !== undefined) updates.description = body.description;
@@ -276,6 +311,16 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
     if (body.reminderMinutes !== undefined) updates.reminder_minutes = body.reminderMinutes;
     if (body.confirmed !== undefined) updates.confirmed = body.confirmed;
     if (body.participants !== undefined) updates.participants = body.participants || null;
+    if (wantsCalendarChange) {
+      // Detach from previous external link; new push will happen below if a
+      // new calendar account was provided.
+      updates.calendar_account_id = body.calendarAccountId || null;
+      updates.external_provider = null;
+      updates.external_id = null;
+      updates.external_calendar_id = null;
+      updates.last_synced_at = null;
+      updates.last_sync_error = null;
+    }
     updates.updated_at = new Date().toISOString();
 
     const { data, error } = await supabaseAdmin
@@ -288,13 +333,65 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
 
     if (error) { res.status(500).json({ error: error.message }); return; }
 
-    // Propage la modification vers le calendrier externe (Phase 2, best-effort).
+    // If we detached from a previous external event, delete it remotely.
+    if (
+      wantsCalendarChange &&
+      existing.calendar_account_id &&
+      existing.external_provider &&
+      existing.external_id
+    ) {
+      try {
+        await deleteAppointmentOnProvider(
+          req.userId!,
+          existing.calendar_account_id,
+          existing.external_provider,
+          existing.external_id,
+        );
+      } catch (e: any) {
+        req.log?.warn?.({ err: e?.message }, "[appointments] detach delete crashed");
+      }
+    }
+
+    // If a new calendar destination was set, push as a fresh event.
+    if (wantsCalendarChange && body.calendarAccountId) {
+      try {
+        const pushed = await pushAppointmentToProvider(
+          req.userId!, body.calendarAccountId, buildPushPayload(data),
+        );
+        if (pushed) {
+          const { data: updated } = await supabaseAdmin
+            .from("appointments")
+            .update({
+              external_provider: pushed.provider,
+              external_id: pushed.externalId,
+              external_calendar_id: pushed.calendarId,
+              last_synced_at: new Date().toISOString(),
+              last_sync_error: null,
+            })
+            .eq("id", data.id)
+            .select("*, projects(id, name, reference, color)")
+            .single();
+          if (updated) Object.assign(data, updated);
+        } else {
+          await supabaseAdmin
+            .from("appointments")
+            .update({ last_sync_error: "push_failed" })
+            .eq("id", data.id);
+          data.last_sync_error = "push_failed";
+        }
+      } catch (e: any) {
+        req.log?.warn?.({ err: e?.message }, "[appointments] re-push crashed");
+      }
+    }
+
+    // Otherwise, if content changed and we still have an existing link,
+    // propagate the patch to the provider.
     const touchesContent =
-      req.body.title !== undefined || req.body.description !== undefined ||
-      req.body.location !== undefined || req.body.startAt !== undefined ||
-      req.body.endAt !== undefined || req.body.allDay !== undefined ||
-      req.body.participants !== undefined;
-    if (touchesContent && data.calendar_account_id && data.external_provider && data.external_id) {
+      body.title !== undefined || body.description !== undefined ||
+      body.location !== undefined || body.startAt !== undefined ||
+      body.endAt !== undefined || body.allDay !== undefined ||
+      body.participants !== undefined;
+    if (!wantsCalendarChange && touchesContent && data.calendar_account_id && data.external_provider && data.external_id) {
       try {
         const ok = await patchAppointmentOnProvider(
           req.userId!,

@@ -1116,6 +1116,8 @@ export interface UpdateAppointmentBody {
   reminderMinutes?: number;
   confirmed?: boolean;
   participants?: string;
+  /** @nullable */
+  calendarAccountId?: string | null;
 }
 
 export type WaitlistSignupBodyPlan =

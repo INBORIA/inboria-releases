@@ -5407,6 +5407,8 @@ components:
           type: boolean
         participants:
           type: string
+        calendarAccountId:
+          type: ["string", "null"]
 
     WaitlistSignupBody:
       type: object

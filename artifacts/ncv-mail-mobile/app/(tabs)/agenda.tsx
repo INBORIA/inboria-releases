@@ -198,9 +198,9 @@ export default function AgendaScreen() {
                 <Text style={{ color: "#f59e0b", fontSize: 9, fontFamily: "Inter_500Medium" }}>{t("agenda.suggestion")}</Text>
               </View>
             )}
-            {(item as any).externalProvider && (item as any).externalId && (
-              <View style={{ backgroundColor: ((item as any).externalProvider === "google" ? "#34a853" : "#0078d4") + "20", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4 }}>
-                <Text style={{ color: (item as any).externalProvider === "google" ? "#34a853" : "#0078d4", fontSize: 9, fontFamily: "Inter_500Medium" }}>
+            {item.externalProvider && item.externalId && (
+              <View style={{ backgroundColor: (item.externalProvider === "google" ? "#34a853" : "#0078d4") + "20", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4 }}>
+                <Text style={{ color: item.externalProvider === "google" ? "#34a853" : "#0078d4", fontSize: 9, fontFamily: "Inter_500Medium" }}>
                   {t("agenda.syncedBadge")}
                 </Text>
               </View>
