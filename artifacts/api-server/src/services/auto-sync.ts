@@ -28,9 +28,73 @@ import { runFollowupDetectionForAllUsers } from "./follow-up-detector";
 interface SaveEmailOptions {
   forceSpam?: boolean;
   providerMessageId?: string | null;
+  nativeMessageId?: string | null;
 }
 
 const IMAP_BODY_MAX_BYTES = 200_000;
+
+// Cache pour ne dédoublonner qu'une fois par sync par user (perf)
+const dedupedUsersThisProcess = new Set<string>();
+
+/**
+ * Supprime les emails en double pour un user, basé sur le suffixe natif de external_id
+ * (msg.id Gmail/Outlook ou UID IMAP). Garde l'email le plus ancien (le legitime).
+ * Idempotent. À appeler une fois par cycle de sync.
+ */
+async function dedupeUserEmailsByNativeId(userId: string): Promise<number> {
+  if (dedupedUsersThisProcess.has(userId)) return 0;
+  dedupedUsersThisProcess.add(userId);
+  try {
+    const { data: rows, error } = await supabaseAdmin
+      .from("emails")
+      .select("id, external_id, created_at")
+      .eq("user_id", userId)
+      .not("external_id", "is", null)
+      .order("created_at", { ascending: true });
+    if (error || !rows || rows.length === 0) return 0;
+
+    // Group par suffixe (la portion après le dernier ":")
+    const groups = new Map<string, Array<{ id: number; created_at: string }>>();
+    for (const r of rows as any[]) {
+      const ext = String(r.external_id || "");
+      const idx = ext.lastIndexOf(":");
+      if (idx < 0 || idx === ext.length - 1) continue;
+      const suffix = ext.slice(idx + 1);
+      if (!suffix || suffix.length < 4) continue;
+      const arr = groups.get(suffix) || [];
+      arr.push({ id: r.id, created_at: r.created_at });
+      groups.set(suffix, arr);
+    }
+
+    const idsToDelete: number[] = [];
+    for (const arr of groups.values()) {
+      if (arr.length < 2) continue;
+      // Garde le premier (plus ancien), supprime le reste
+      for (let i = 1; i < arr.length; i++) idsToDelete.push(arr[i].id);
+    }
+
+    if (idsToDelete.length === 0) return 0;
+
+    // Supprime par batches de 500
+    let deleted = 0;
+    for (let i = 0; i < idsToDelete.length; i += 500) {
+      const batch = idsToDelete.slice(i, i + 500);
+      const { error: delErr } = await supabaseAdmin.from("emails").delete().in("id", batch);
+      if (delErr) {
+        logger.error({ userId, err: delErr.message }, "[dedupe] delete batch error");
+        break;
+      }
+      deleted += batch.length;
+    }
+    if (deleted > 0) {
+      logger.warn({ userId, deleted }, "[dedupe] removed duplicate emails by native msg id");
+    }
+    return deleted;
+  } catch (err: any) {
+    logger.error({ userId, err: err.message }, "[dedupe] crashed");
+    return 0;
+  }
+}
 
 interface AttachmentMeta {
   filename: string;
@@ -374,6 +438,7 @@ export async function saveEmailWithTriage(
 ): Promise<number | null> {
   const forceSpam = options?.forceSpam === true;
   const providerMessageId = options?.providerMessageId || null;
+  const nativeMessageId = options?.nativeMessageId || null;
 
   const { data: existing } = await supabaseAdmin
     .from("emails")
@@ -381,6 +446,29 @@ export async function saveEmailWithTriage(
     .eq("user_id", userId)
     .eq("external_id", externalId)
     .maybeSingle();
+
+  // Dedup robuste : si un email existe avec un external_id finissant par ":${nativeMessageId}"
+  // (ancien format ${connId}:${msgId}), on le considère comme le même message — évite les
+  // doublons massifs après reconnexion d'un compte (Gmail/Outlook/IMAP).
+  if (!existing && nativeMessageId) {
+    const escaped = nativeMessageId.replace(/[%_\\]/g, (m) => `\\${m}`);
+    const { data: existingByNative } = await supabaseAdmin
+      .from("emails")
+      .select("id, status, external_id")
+      .eq("user_id", userId)
+      .like("external_id", `%:${escaped}`)
+      .limit(1)
+      .maybeSingle();
+    if (existingByNative) {
+      const update: Record<string, any> = {};
+      if ((existingByNative as any).external_id !== externalId) update.external_id = externalId;
+      if (forceSpam && (existingByNative as any).status !== "spam") update.status = "spam";
+      if (Object.keys(update).length > 0) {
+        await supabaseAdmin.from("emails").update(update).eq("id", existingByNative.id);
+      }
+      return null;
+    }
+  }
 
   const junkColumnsAvailable = await hasJunkColumns();
 
@@ -879,7 +967,11 @@ async function syncGmailForUser(conn: any): Promise<number> {
         new Date(parseInt(fullMsg.internalDate || "0")).toISOString(),
         (conn as any)._sharedMailboxId,
         headerMap,
-        recipientHeader
+        recipientHeader,
+        {
+          nativeMessageId: msg.id!,
+          providerMessageId: headerMap["message-id"] || null,
+        },
       );
 
       if (savedId) {
@@ -892,6 +984,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
     }
 
     await markConnectionSuccess(conn.id);
+    await dedupeUserEmailsByNativeId(conn.user_id);
 
     try {
       const { data: allUserEmails } = await supabaseAdmin
@@ -1119,7 +1212,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
         (conn as any)._sharedMailboxId,
         undefined,
         recipientHeader,
-        { providerMessageId: msg.internetMessageId || null },
+        { providerMessageId: msg.internetMessageId || null, nativeMessageId: msg.id || null },
       );
 
       if (savedId) synced++;
@@ -1152,6 +1245,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
     }
 
     await markConnectionSuccess(conn.id);
+    await dedupeUserEmailsByNativeId(conn.user_id);
     return synced;
   } catch (err: any) {
     logger.error({ service: "outlook-sync", connId: conn.id, email: conn.email_address, err: sanitizeErrorMessage(err.message) }, "Outlook sync error");
@@ -1342,7 +1436,7 @@ async function syncImapForUser(conn: any): Promise<number> {
         (conn as any)._sharedMailboxId,
         imapHeaders,
         recipientHeader,
-        { providerMessageId },
+        { providerMessageId, nativeMessageId: String(msg.uid) },
       );
 
       if (savedId) {
@@ -1508,6 +1602,7 @@ async function syncImapForUser(conn: any): Promise<number> {
 
   if (fetchSucceeded) {
     await markConnectionSuccess(conn.id);
+    await dedupeUserEmailsByNativeId(conn.user_id);
     return synced;
   }
 
