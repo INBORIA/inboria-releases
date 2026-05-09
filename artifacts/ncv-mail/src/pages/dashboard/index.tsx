@@ -5199,25 +5199,6 @@ export default function Dashboard() {
               );
             })()}
 
-            {/* Étape 5 — bouton Catégories : permet de ré-ouvrir le panneau
-                de droite quand il a été replié (sinon il disparaît). */}
-            <button
-              type="button"
-              onClick={() => setCategoriesCollapsed((v) => !v)}
-              className={`inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md font-medium border transition-colors ${
-                categoriesCollapsed
-                  ? "text-[#b8c5d6] border-[#1f2630] hover:text-white hover:border-[#b8c5d6]/30 bg-transparent"
-                  : "bg-primary/15 text-primary border-primary/20"
-              }`}
-              title={categoriesCollapsed
-                ? t("common.expand", { defaultValue: "Afficher les catégories" })
-                : t("common.collapse", { defaultValue: "Masquer les catégories" })}
-            >
-              <Tags className="w-3.5 h-3.5" />
-              <span>{t("inbox.category")}</span>
-              {categoriesCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-            </button>
-
             {/* Pastilles informatives — affichent ce qui est sélectionné dans
                 le menu Filtres (Affichage, Priorité, Tri Inboria, Tri date).
                 Toujours visibles, même en valeur par défaut. */}
@@ -5245,6 +5226,25 @@ export default function Dashboard() {
                   : t("inbox.sortByDateDesc", "Date ↓")}
               </span>
             )}
+
+            {/* Étape 5 — bouton Catégories : déplacé à droite des pastilles
+                de filtres choisis pour regrouper toutes les commandes d'affichage. */}
+            <button
+              type="button"
+              onClick={() => setCategoriesCollapsed((v) => !v)}
+              className={`inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md font-medium border transition-colors ${
+                categoriesCollapsed
+                  ? "text-[#b8c5d6] border-[#1f2630] hover:text-white hover:border-[#b8c5d6]/30 bg-transparent"
+                  : "bg-primary/15 text-primary border-primary/20"
+              }`}
+              title={categoriesCollapsed
+                ? t("common.expand", { defaultValue: "Afficher les catégories" })
+                : t("common.collapse", { defaultValue: "Masquer les catégories" })}
+            >
+              <Tags className="w-3.5 h-3.5" />
+              <span>{t("inbox.category")}</span>
+              {categoriesCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+            </button>
             {crmFilter && (
               <button
                 onClick={() => setCrmFilter(null)}
