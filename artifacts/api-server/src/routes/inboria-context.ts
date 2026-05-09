@@ -319,7 +319,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             .limit(8),
       supabaseAdmin
         .from("profiles")
-        .select("full_name, ai_lang, email")
+        .select("full_name, ai_lang, email, timezone")
         .eq("id", userId)
         .maybeSingle(),
       memberMailboxIds.length > 0
@@ -774,6 +774,26 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     }>;
     const userName = (profileRes.data as any)?.full_name || null;
     const userEmail = (profileRes.data as any)?.email || null;
+    const userTz = (profileRes.data as any)?.timezone || "Europe/Brussels";
+    const nowLocal = new Date().toLocaleString("fr-FR", {
+      timeZone: userTz,
+      dateStyle: "full",
+      timeStyle: "short",
+    });
+    // Calcule l'offset UTC actuel pour le fuseau utilisateur (ex. "+02:00").
+    const tzOffsetStr = (() => {
+      try {
+        const dtf = new Intl.DateTimeFormat("en-US", {
+          timeZone: userTz,
+          timeZoneName: "longOffset",
+        });
+        const parts = dtf.formatToParts(new Date());
+        const off = parts.find((p) => p.type === "timeZoneName")?.value || "GMT+00:00";
+        return off.replace("GMT", "").replace(/^([+-])(\d):/, "$10$2:") || "+00:00";
+      } catch {
+        return "+00:00";
+      }
+    })();
 
     // Formatte une date ISO en libellé lisible FR : "lundi 5 mai à 14h30".
     const fmtAppt = (iso: string | null, allDay: boolean | null): string => {
@@ -2046,13 +2066,13 @@ REGLE PROACTIVE — organisation de rendez-vous 1 a 1 (RDV Phase 3) :
   to: prenom.nom@domaine.com
   contactName: Prenom Nom
   subject: Objet court du rendez-vous
-  startAt: 2026-05-13T10:00:00.000Z
-  endAt: 2026-05-13T10:30:00.000Z
+  startAt: 2026-05-13T11:00:00${tzOffsetStr}
+  endAt: 2026-05-13T11:30:00${tzOffsetStr}
   location: Visio / Bureau / 12 rue de Paris
   \`\`\`
 
 - AVANT le bloc, ecris une phrase d'introduction ("Voici une proposition de rendez-vous pour [Nom] :"). APRES le bloc, ecris : "Cliquez sur Envoyer la proposition pour transmettre le creneau. Inboria detectera automatiquement la reponse."
-- "to" et "startAt"/"endAt" sont OBLIGATOIRES, en ISO 8601 UTC. Duree par defaut 30 min sauf demande contraire de l'utilisateur. "location" est optionnel. Ne propose JAMAIS un creneau qui chevauche un RDV existant en memoire.
+- "to" et "startAt"/"endAt" sont OBLIGATOIRES, en ISO 8601 AVEC offset (PAS de Z brut). L'utilisateur est en fuseau ${userTz} (offset actuel ${tzOffsetStr}, heure locale courante : ${nowLocal}). Quand l'utilisateur dit "11h", il parle de SON heure locale : tu dois donc ecrire startAt avec l'offset ${tzOffsetStr} (ex. pour 11h00 le 13 mai : "2026-05-13T11:00:00${tzOffsetStr}"). NE METS JAMAIS un Z apres une heure locale, sinon le RDV apparaitra decale dans l'agenda. Duree par defaut 30 min sauf demande contraire. "location" optionnel. Ne propose JAMAIS un creneau qui chevauche un RDV existant en memoire.
 - Si l'utilisateur n'a pas precise le contact ou le creneau, demande-le en UNE phrase au lieu d'emettre le bloc.
 - "to" doit TOUJOURS contenir une vraie adresse email valide presente dans la memoire (expediteur d'un mail liste, contact de l'equipe, etc.). PAS de placeholder, PAS de crochets, PAS de nom seul, PAS d'adresse inventee. Si tu n'as pas l'adresse exacte, n'emets PAS le bloc et demande-la a l'utilisateur en une phrase.
 - "subject" sur UNE seule ligne, sans crochets ni points de suspension, max 80 caracteres.
