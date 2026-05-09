@@ -548,20 +548,9 @@ export default function Agenda() {
           </div>
         </div>
 
-        {(projectsWithAppointments.list.length > 0 || projectsWithAppointments.hasUnassigned) && (
+        {projectsWithAppointments.list.length > 0 && (
           <div className="flex items-center gap-1.5 flex-wrap mb-3 text-[11px]">
             <span className="text-[#b8c5d6] mr-1">{t("agenda.filterByProject", "Filtrer par projet :")}</span>
-            <button
-              type="button"
-              onClick={clearProjectFilter}
-              className={`px-2 py-0.5 rounded-full border transition-colors ${
-                projectFilter.size === 0
-                  ? "bg-primary/20 border-primary/40 text-primary"
-                  : "bg-transparent border-border text-[#b8c5d6] hover:text-white"
-              }`}
-            >
-              {t("agenda.allProjects", "Tous")}
-            </button>
             {projectsWithAppointments.list.map((p) => {
               const id = String(p.id);
               const active = projectFilter.has(id);
@@ -583,19 +572,6 @@ export default function Agenda() {
                 </button>
               );
             })}
-            {projectsWithAppointments.hasUnassigned && (
-              <button
-                type="button"
-                onClick={() => toggleProjectFilter("__none__")}
-                className={`px-2 py-0.5 rounded-full border transition-colors ${
-                  projectFilter.has("__none__")
-                    ? "bg-[#b8c5d6]/20 border-[#b8c5d6]/40 text-white"
-                    : "bg-transparent border-border text-[#b8c5d6] hover:text-white"
-                }`}
-              >
-                {t("agenda.noProject", "Aucun projet")}
-              </button>
-            )}
           </div>
         )}
 
