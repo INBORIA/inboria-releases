@@ -40,7 +40,7 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/components/ui/context-menu";
-import { useState, useMemo, useEffect } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Input } from "@/components/ui/input";
@@ -306,29 +306,46 @@ export default function Agenda() {
   const [selectedSuggestionIds, setSelectedSuggestionIds] = useState<Set<string>>(new Set());
   const [lastClickedIdx, setLastClickedIdx] = useState<number | null>(null);
   const [bulkBusy, setBulkBusy] = useState(false);
-  const [dragState, setDragState] = useState<{ startIdx: number; mode: "add" | "remove"; base: Set<string> } | null>(null);
+  const dragRef = useRef<{ startIdx: number; startId: string; mode: "add" | "remove"; base: Set<string>; moved: boolean } | null>(null);
+  const [, forceRender] = useState(0);
 
   useEffect(() => {
-    if (!dragState) return;
-    const onUp = () => setDragState(null);
+    const onUp = () => {
+      const d = dragRef.current;
+      if (!d) return;
+      if (!d.moved) {
+        const next = new Set(d.base);
+        if (d.mode === "add") next.add(d.startId);
+        else next.delete(d.startId);
+        setSelectedSuggestionIds(next);
+      }
+      dragRef.current = null;
+      forceRender((v) => v + 1);
+    };
     window.addEventListener("mouseup", onUp);
     window.addEventListener("pointerup", onUp);
     return () => {
       window.removeEventListener("mouseup", onUp);
       window.removeEventListener("pointerup", onUp);
     };
-  }, [dragState]);
+  }, []);
 
   const applyDragRange = (toIdx: number) => {
-    if (!dragState) return;
-    const { startIdx, mode, base } = dragState;
-    const [a, b] = startIdx < toIdx ? [startIdx, toIdx] : [toIdx, startIdx];
+    const d = dragRef.current;
+    if (!d) return;
+    d.moved = true;
+    const { startIdx, mode, base } = d;
     const next = new Set(base);
-    for (let i = a; i <= b; i++) {
-      const sid = suggestions[i]?.id;
-      if (!sid) continue;
-      if (mode === "add") next.add(sid);
-      else next.delete(sid);
+    if (toIdx !== startIdx) {
+      const [a, b] = startIdx < toIdx ? [startIdx + 1, toIdx] : [toIdx, startIdx - 1];
+      for (let i = a; i <= b; i++) {
+        const sid = suggestions[i]?.id;
+        if (!sid) continue;
+        if (mode === "add") next.add(sid);
+        else next.delete(sid);
+      }
+      if (mode === "add") next.add(d.startId);
+      else next.delete(d.startId);
     }
     setSelectedSuggestionIds(next);
   };
@@ -647,15 +664,11 @@ export default function Agenda() {
                           }
                           const mode: "add" | "remove" = isSelected ? "remove" : "add";
                           const base = new Set(selectedSuggestionIds);
-                          setDragState({ startIdx: idx, mode, base });
-                          const next = new Set(base);
-                          if (mode === "add") next.add(apt.id);
-                          else next.delete(apt.id);
-                          setSelectedSuggestionIds(next);
+                          dragRef.current = { startIdx: idx, startId: apt.id, mode, base, moved: false };
                           setLastClickedIdx(idx);
                         }}
                         onPointerEnter={(e) => {
-                          if (dragState) {
+                          if (dragRef.current) {
                             e.preventDefault();
                             applyDragRange(idx);
                           }
