@@ -5,6 +5,7 @@
  * NCV Mail API specification
  * OpenAPI spec version: 0.1.0
  */
+import type { AppointmentExternalProvider } from "./appointmentExternalProvider";
 import type { AppointmentProjects } from "./appointmentProjects";
 
 export interface Appointment {
@@ -26,6 +27,20 @@ export interface Appointment {
   confirmed?: boolean;
   /** @nullable */
   participants?: string | null;
+  /** @nullable */
+  calendarAccountId?: string | null;
+  /** @nullable */
+  externalProvider?: AppointmentExternalProvider;
+  /** @nullable */
+  externalId?: string | null;
+  /** @nullable */
+  externalCalendarId?: string | null;
+  /** @nullable */
+  organizerEmail?: string | null;
+  /** @nullable */
+  lastSyncedAt?: Date | null;
+  /** @nullable */
+  lastSyncError?: string | null;
   /** @nullable */
   projects?: AppointmentProjects;
   createdAt?: Date;

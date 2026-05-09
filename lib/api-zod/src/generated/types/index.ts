@@ -27,6 +27,7 @@ export * from "./applyPackBody";
 export * from "./applyPackBodyCategoriesItem";
 export * from "./applyPackResponse";
 export * from "./appointment";
+export * from "./appointmentExternalProvider";
 export * from "./appointmentProjects";
 export * from "./assignEmailBody";
 export * from "./assignEmailResult";

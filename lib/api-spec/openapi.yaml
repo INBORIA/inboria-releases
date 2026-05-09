@@ -5271,6 +5271,22 @@ components:
           type: boolean
         participants:
           type: ["string", "null"]
+        calendarAccountId:
+          type: ["string", "null"]
+        externalProvider:
+          type: ["string", "null"]
+          enum: [google, outlook, native, null]
+        externalId:
+          type: ["string", "null"]
+        externalCalendarId:
+          type: ["string", "null"]
+        organizerEmail:
+          type: ["string", "null"]
+        lastSyncedAt:
+          type: ["string", "null"]
+          format: date-time
+        lastSyncError:
+          type: ["string", "null"]
         projects:
           type: ["object", "null"]
           properties:
@@ -5319,6 +5335,8 @@ components:
           type: integer
         participants:
           type: string
+        calendarAccountId:
+          type: ["string", "null"]
       required:
         - title
         - startAt

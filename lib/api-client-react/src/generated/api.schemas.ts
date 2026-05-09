@@ -1030,6 +1030,19 @@ export interface AssignEmailResult {
 /**
  * @nullable
  */
+export type AppointmentExternalProvider =
+  | (typeof AppointmentExternalProvider)[keyof typeof AppointmentExternalProvider]
+  | null;
+
+export const AppointmentExternalProvider = {
+  google: "google",
+  outlook: "outlook",
+  native: "native",
+} as const;
+
+/**
+ * @nullable
+ */
 export type AppointmentProjects = {
   id?: number;
   name?: string;
@@ -1057,6 +1070,20 @@ export interface Appointment {
   /** @nullable */
   participants?: string | null;
   /** @nullable */
+  calendarAccountId?: string | null;
+  /** @nullable */
+  externalProvider?: AppointmentExternalProvider;
+  /** @nullable */
+  externalId?: string | null;
+  /** @nullable */
+  externalCalendarId?: string | null;
+  /** @nullable */
+  organizerEmail?: string | null;
+  /** @nullable */
+  lastSyncedAt?: string | null;
+  /** @nullable */
+  lastSyncError?: string | null;
+  /** @nullable */
   projects?: AppointmentProjects;
   createdAt?: string;
   updatedAt?: string;
@@ -1073,6 +1100,8 @@ export interface CreateAppointmentBody {
   projectId?: number;
   reminderMinutes?: number;
   participants?: string;
+  /** @nullable */
+  calendarAccountId?: string | null;
 }
 
 export interface UpdateAppointmentBody {

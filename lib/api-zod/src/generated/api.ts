@@ -2787,6 +2787,20 @@ export const DetectAppointmentsResponse = zod.object({
         reminderMinutes: zod.number().optional(),
         confirmed: zod.boolean().optional(),
         participants: zod.string().nullish(),
+        calendarAccountId: zod.string().nullish(),
+        externalProvider: zod
+          .union([
+            zod.literal("google"),
+            zod.literal("outlook"),
+            zod.literal("native"),
+            zod.literal(null),
+          ])
+          .nullish(),
+        externalId: zod.string().nullish(),
+        externalCalendarId: zod.string().nullish(),
+        organizerEmail: zod.string().nullish(),
+        lastSyncedAt: zod.coerce.date().nullish(),
+        lastSyncError: zod.string().nullish(),
         projects: zod
           .object({
             id: zod.number().optional(),
@@ -2829,6 +2843,20 @@ export const ListAppointmentsResponseItem = zod.object({
   reminderMinutes: zod.number().optional(),
   confirmed: zod.boolean().optional(),
   participants: zod.string().nullish(),
+  calendarAccountId: zod.string().nullish(),
+  externalProvider: zod
+    .union([
+      zod.literal("google"),
+      zod.literal("outlook"),
+      zod.literal("native"),
+      zod.literal(null),
+    ])
+    .nullish(),
+  externalId: zod.string().nullish(),
+  externalCalendarId: zod.string().nullish(),
+  organizerEmail: zod.string().nullish(),
+  lastSyncedAt: zod.coerce.date().nullish(),
+  lastSyncError: zod.string().nullish(),
   projects: zod
     .object({
       id: zod.number().optional(),
@@ -2856,6 +2884,7 @@ export const CreateAppointmentBody = zod.object({
   projectId: zod.number().optional(),
   reminderMinutes: zod.number().optional(),
   participants: zod.string().optional(),
+  calendarAccountId: zod.string().nullish(),
 });
 
 /**
@@ -2879,6 +2908,20 @@ export const GetAppointmentResponse = zod.object({
   reminderMinutes: zod.number().optional(),
   confirmed: zod.boolean().optional(),
   participants: zod.string().nullish(),
+  calendarAccountId: zod.string().nullish(),
+  externalProvider: zod
+    .union([
+      zod.literal("google"),
+      zod.literal("outlook"),
+      zod.literal("native"),
+      zod.literal(null),
+    ])
+    .nullish(),
+  externalId: zod.string().nullish(),
+  externalCalendarId: zod.string().nullish(),
+  organizerEmail: zod.string().nullish(),
+  lastSyncedAt: zod.coerce.date().nullish(),
+  lastSyncError: zod.string().nullish(),
   projects: zod
     .object({
       id: zod.number().optional(),
@@ -2926,6 +2969,20 @@ export const UpdateAppointmentResponse = zod.object({
   reminderMinutes: zod.number().optional(),
   confirmed: zod.boolean().optional(),
   participants: zod.string().nullish(),
+  calendarAccountId: zod.string().nullish(),
+  externalProvider: zod
+    .union([
+      zod.literal("google"),
+      zod.literal("outlook"),
+      zod.literal("native"),
+      zod.literal(null),
+    ])
+    .nullish(),
+  externalId: zod.string().nullish(),
+  externalCalendarId: zod.string().nullish(),
+  organizerEmail: zod.string().nullish(),
+  lastSyncedAt: zod.coerce.date().nullish(),
+  lastSyncError: zod.string().nullish(),
   projects: zod
     .object({
       id: zod.number().optional(),

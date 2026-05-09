@@ -76,6 +76,34 @@ export default function Agenda() {
   const [formReminder, setFormReminder] = useState("30");
   const [formParticipants, setFormParticipants] = useState("");
   const [formEmailId, setFormEmailId] = useState<number | undefined>(undefined);
+  const [formCalendarAccountId, setFormCalendarAccountId] = useState<string>("");
+
+  type CalAccount = { id: string; provider: "google" | "outlook"; email_address: string; status: string };
+  const [calendarAccounts, setCalendarAccounts] = useState<CalAccount[]>([]);
+  type ExternalEvent = {
+    id: string; source: "google" | "outlook"; account_id: string; account_email: string;
+    title: string; description: string | null; location: string | null;
+    start: string; end: string; all_day: boolean;
+    organizer: string | null; participants: string[]; html_link: string | null;
+  };
+  const [externalEvents, setExternalEvents] = useState<ExternalEvent[]>([]);
+
+  useEffect(() => {
+    let aborted = false;
+    fetch("/api/calendar/accounts", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : { accounts: [] }))
+      .then((data) => {
+        if (aborted) return;
+        const list = (data.accounts || []).filter((a: CalAccount) => a.status === "connected");
+        setCalendarAccounts(list);
+        if (!formCalendarAccountId && list.length > 0) {
+          setFormCalendarAccountId(list[0].id);
+        }
+      })
+      .catch(() => {});
+    return () => { aborted = true; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -146,6 +174,27 @@ export default function Agenda() {
   const { data: allAppointmentsForSuggestions = [] } = useListAppointments(suggestionsRange);
   const { data: projects = [] } = useListProjects();
 
+  // Pull les événements des calendriers externes (Phase 2 sync lecture).
+  useEffect(() => {
+    if (calendarAccounts.length === 0) {
+      setExternalEvents([]);
+      return;
+    }
+    let aborted = false;
+    const params = new URLSearchParams({
+      start: rangeStart.toISOString(),
+      end: rangeEnd.toISOString(),
+    });
+    fetch(`/api/calendar/events?${params}`, { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : { events: [] }))
+      .then((data) => {
+        if (aborted) return;
+        setExternalEvents((data.events || []) as ExternalEvent[]);
+      })
+      .catch(() => { if (!aborted) setExternalEvents([]); });
+    return () => { aborted = true; };
+  }, [rangeStart.getTime(), rangeEnd.getTime(), calendarAccounts.length]);
+
   const appointments = useMemo(() => {
     if (projectFilter.size === 0) return rawAppointments;
     return rawAppointments.filter((apt: any) => {
@@ -197,6 +246,7 @@ export default function Agenda() {
     setFormReminder("30");
     setFormParticipants("");
     setFormEmailId(undefined);
+    setFormCalendarAccountId(calendarAccounts[0]?.id || "");
     setEditingId(null);
     setShowForm(false);
   };
@@ -222,6 +272,7 @@ export default function Agenda() {
     setFormProjectId(apt.projectId ? String(apt.projectId) : "");
     setFormReminder(String(apt.reminderMinutes ?? 30));
     setFormParticipants(apt.participants || "");
+    setFormCalendarAccountId((apt as any).calendarAccountId || "");
     setShowForm(true);
     setSelectedAppointment(null);
   };
@@ -239,6 +290,7 @@ export default function Agenda() {
       reminderMinutes: parseInt(formReminder) || 30,
       participants: formParticipants || undefined,
       emailId: formEmailId,
+      calendarAccountId: formCalendarAccountId || undefined,
     };
 
     if (editingId) {
@@ -466,6 +518,59 @@ export default function Agenda() {
       const start = parseISO(apt.startAt);
       return isSameDay(start, day);
     });
+  };
+
+  // External (Google/Outlook) events not already linked to a local appointment.
+  const linkedExternalIds = useMemo(() => {
+    const s = new Set<string>();
+    for (const a of rawAppointments as any[]) {
+      if (a.externalId) s.add(`${a.externalProvider}:${a.externalId}`);
+    }
+    return s;
+  }, [rawAppointments]);
+
+  const externalEventsToShow = useMemo(() => {
+    return externalEvents.filter((e) => !linkedExternalIds.has(`${e.source}:${e.id}`));
+  }, [externalEvents, linkedExternalIds]);
+
+  const getExternalEventsForDay = (day: Date) => {
+    return externalEventsToShow.filter((e) => isSameDay(parseISO(e.start), day));
+  };
+
+  const externalEventColor = (source: "google" | "outlook") =>
+    source === "google" ? "#34a853" : "#0078d4";
+
+  // Drag & drop : déplace un RDV sur un autre jour (vue mois) en gardant l'heure.
+  const [draggedApptId, setDraggedApptId] = useState<string | null>(null);
+  const handleApptDragStart = (apt: Appointment, e: React.DragEvent) => {
+    setDraggedApptId(apt.id);
+    e.dataTransfer.effectAllowed = "move";
+    e.dataTransfer.setData("text/plain", apt.id);
+  };
+  const handleDayDragOver = (e: React.DragEvent) => {
+    if (draggedApptId) { e.preventDefault(); e.dataTransfer.dropEffect = "move"; }
+  };
+  const handleDayDrop = (day: Date, e: React.DragEvent) => {
+    e.preventDefault();
+    const id = draggedApptId || e.dataTransfer.getData("text/plain");
+    setDraggedApptId(null);
+    if (!id) return;
+    const apt = (rawAppointments as any[]).find((a) => a.id === id);
+    if (!apt) return;
+    const oldStart = parseISO(apt.startAt);
+    if (isSameDay(oldStart, day)) return;
+    const oldEnd = parseISO(apt.endAt);
+    const durationMs = oldEnd.getTime() - oldStart.getTime();
+    const newStart = new Date(day);
+    newStart.setHours(oldStart.getHours(), oldStart.getMinutes(), 0, 0);
+    const newEnd = new Date(newStart.getTime() + durationMs);
+    updateAppointment.mutate(
+      { id, data: { startAt: newStart.toISOString(), endAt: newEnd.toISOString() } },
+      {
+        onSuccess: () => invalidate(),
+        onError: () => invalidate(),
+      },
+    );
   };
 
   const monthDays = useMemo(() => {
@@ -716,15 +821,19 @@ export default function Agenda() {
             <div className="grid grid-cols-7">
               {monthDays.map((day, i) => {
                 const dayAppts = getAppointmentsForDay(day);
+                const dayExt = getExternalEventsForDay(day);
                 const isCurrentMonth = isSameMonth(day, currentDate);
                 const today = isToday(day);
+                const totalCount = dayAppts.length + dayExt.length;
                 return (
                   <div
                     key={i}
                     onClick={() => openCreateForm(day)}
+                    onDragOver={handleDayDragOver}
+                    onDrop={(e) => handleDayDrop(day, e)}
                     className={`min-h-[80px] border-b border-r border-border p-1 cursor-pointer hover:bg-[#1a2235] transition-colors ${
                       !isCurrentMonth ? "opacity-40" : ""
-                    }`}
+                    } ${draggedApptId ? "hover:bg-primary/10" : ""}`}
                   >
                     <div className={`text-[11px] font-medium mb-0.5 w-6 h-6 flex items-center justify-center rounded-full ${
                       today ? "bg-primary text-white" : "text-[#b8c5d6]"
@@ -736,17 +845,35 @@ export default function Agenda() {
                       return (
                       <div
                         key={apt.id}
+                        draggable
+                        onDragStart={(e) => { e.stopPropagation(); handleApptDragStart(apt, e); }}
+                        onDragEnd={() => setDraggedApptId(null)}
                         onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
                         className={`text-[10px] px-1 py-0.5 rounded truncate mb-0.5 cursor-pointer ${apt.confirmed === false ? "bg-primary/20 text-primary" : ""}`}
                         style={apt.confirmed !== false ? { backgroundColor: projectColor ? `${projectColor}20` : undefined, color: projectColor || undefined } : undefined}
+                        title={apt.title}
                       >
                         {projectColor && <span className="inline-block w-1.5 h-1.5 rounded-full mr-0.5" style={{ backgroundColor: projectColor }} />}
                         {apt.allDay ? "" : format(parseISO(apt.startAt), "HH:mm") + " "}{apt.title}
                       </div>
                       );
                     })}
-                    {dayAppts.length > 3 && (
-                      <div className="text-[9px] text-[#b8c5d6] pl-1">+{dayAppts.length - 3}</div>
+                    {dayAppts.length < 3 && dayExt.slice(0, 3 - dayAppts.length).map((ev) => {
+                      const c = externalEventColor(ev.source);
+                      return (
+                        <div
+                          key={`ext-${ev.id}`}
+                          onClick={(e) => { e.stopPropagation(); }}
+                          className="text-[10px] px-1 py-0.5 rounded truncate mb-0.5 italic"
+                          style={{ backgroundColor: `${c}20`, color: c, borderLeft: `2px solid ${c}` }}
+                          title={`${ev.title} (${ev.source === "google" ? "Google" : "Outlook"} · ${ev.account_email})`}
+                        >
+                          {ev.all_day ? "" : format(parseISO(ev.start), "HH:mm") + " "}{ev.title}
+                        </div>
+                      );
+                    })}
+                    {totalCount > 3 && (
+                      <div className="text-[9px] text-[#b8c5d6] pl-1">+{totalCount - 3}</div>
                     )}
                   </div>
                 );
@@ -775,6 +902,7 @@ export default function Agenda() {
                       const h = parseISO(apt.startAt).getHours();
                       return h === hour;
                     });
+                    const dayExt = getExternalEventsForDay(d).filter((ev) => parseISO(ev.start).getHours() === hour);
                     return (
                       <div
                         key={i}
@@ -798,6 +926,20 @@ export default function Agenda() {
                           </div>
                           );
                         })}
+                        {dayExt.map((ev) => {
+                          const c = externalEventColor(ev.source);
+                          return (
+                            <div
+                              key={`ext-${ev.id}`}
+                              onClick={(e) => { e.stopPropagation(); }}
+                              className="text-[10px] px-1 py-0.5 rounded truncate italic"
+                              style={{ backgroundColor: `${c}20`, color: c, borderLeft: `2px solid ${c}` }}
+                              title={`${ev.title} · ${ev.source === "google" ? "Google" : "Outlook"} · ${ev.account_email}`}
+                            >
+                              {format(parseISO(ev.start), "HH:mm")} {ev.title}
+                            </div>
+                          );
+                        })}
                       </div>
                     );
                   })}
@@ -818,6 +960,7 @@ export default function Agenda() {
                   const h = parseISO(apt.startAt).getHours();
                   return h === hour;
                 });
+                const hourExt = getExternalEventsForDay(currentDate).filter((ev) => parseISO(ev.start).getHours() === hour);
                 return (
                   <div key={hour} className="flex border-b border-border last:border-b-0">
                     <div className="w-16 px-2 py-3 text-[11px] text-[#b8c5d6] text-right pr-3 border-r border-border shrink-0">
@@ -854,6 +997,28 @@ export default function Agenda() {
                             )}
                           </div>
                         </div>
+                        );
+                      })}
+                      {hourExt.map((ev) => {
+                        const c = externalEventColor(ev.source);
+                        return (
+                          <div
+                            key={`ext-${ev.id}`}
+                            onClick={(e) => { e.stopPropagation(); }}
+                            className="rounded px-2 py-1.5 mb-1 border italic"
+                            style={{ backgroundColor: `${c}15`, borderColor: `${c}40`, borderLeftWidth: 3, borderLeftColor: c }}
+                          >
+                            <div className="text-[12px] font-medium" style={{ color: c }}>{ev.title}</div>
+                            <div className="flex items-center gap-3 mt-0.5">
+                              <span className="text-[10px] text-[#b8c5d6] flex items-center gap-1">
+                                <Clock className="w-3 h-3" />
+                                {format(parseISO(ev.start), "HH:mm")} - {format(parseISO(ev.end), "HH:mm")}
+                              </span>
+                              <span className="text-[10px] text-[#b8c5d6]">
+                                {ev.source === "google" ? "Google" : "Outlook"} · {ev.account_email}
+                              </span>
+                            </div>
+                          </div>
                         );
                       })}
                     </div>
@@ -1055,6 +1220,30 @@ export default function Agenda() {
                     placeholder={t("agenda.participantsPlaceholder")}
                     className="h-8 text-[12px]"
                   />
+                </div>
+
+                <div>
+                  <label className="text-[11px] text-[#b8c5d6] mb-1 block">
+                    {t("agenda.destinationCalendar", "Calendrier de destination")}
+                  </label>
+                  <select
+                    value={formCalendarAccountId}
+                    onChange={(e) => setFormCalendarAccountId(e.target.value)}
+                    className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-white"
+                    disabled={!!editingId && !!(rawAppointments as any[]).find((a) => a.id === editingId)?.externalId}
+                  >
+                    <option value="">{t("agenda.localOnly", "Inboria uniquement (pas de sync)")}</option>
+                    {calendarAccounts.map((acc) => (
+                      <option key={acc.id} value={acc.id}>
+                        {acc.provider === "google" ? "Google" : "Outlook"} · {acc.email_address}
+                      </option>
+                    ))}
+                  </select>
+                  {calendarAccounts.length === 0 && (
+                    <p className="text-[10px] text-[#b8c5d6] mt-1">
+                      {t("agenda.connectCalendarHint", "Connectez un calendrier dans Réglages pour synchroniser.")}
+                    </p>
+                  )}
                 </div>
 
                 <div className="flex justify-end gap-2 pt-2">

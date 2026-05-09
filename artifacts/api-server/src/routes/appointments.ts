@@ -3,6 +3,12 @@ import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { recordAutopilotEvent } from "../services/autopilot-events";
 import { emitWebhook } from "../services/webhooks";
+import {
+  pushAppointmentToProvider,
+  patchAppointmentOnProvider,
+  deleteAppointmentOnProvider,
+  type AppointmentPushPayload,
+} from "../services/calendar-sync";
 
 const router: IRouter = Router();
 
@@ -22,9 +28,28 @@ function mapAppointment(row: any) {
     reminderMinutes: row.reminder_minutes,
     confirmed: row.confirmed ?? true,
     participants: row.participants,
+    calendarAccountId: row.calendar_account_id ?? null,
+    externalProvider: row.external_provider ?? null,
+    externalId: row.external_id ?? null,
+    externalCalendarId: row.external_calendar_id ?? null,
+    organizerEmail: row.organizer_email ?? null,
+    lastSyncedAt: row.last_synced_at ?? null,
+    lastSyncError: row.last_sync_error ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     projects: row.projects,
+  };
+}
+
+function buildPushPayload(row: any): AppointmentPushPayload {
+  return {
+    title: row.title,
+    description: row.description,
+    location: row.location,
+    startAt: row.start_at,
+    endAt: row.end_at,
+    allDay: row.all_day,
+    participants: row.participants,
   };
 }
 
@@ -76,7 +101,10 @@ router.get("/appointments/:id", requireAuth, async (req, res): Promise<void> => 
 
 router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
   try {
-    const { title, description, location, startAt, endAt, allDay, emailId, projectId, reminderMinutes, participants } = req.body;
+    const {
+      title, description, location, startAt, endAt, allDay, emailId, projectId,
+      reminderMinutes, participants, calendarAccountId,
+    } = req.body;
     if (!title || !startAt || !endAt) {
       res.status(400).json({ error: "title, startAt and endAt are required" });
       return;
@@ -96,11 +124,45 @@ router.post("/appointments", requireAuth, async (req, res): Promise<void> => {
         project_id: projectId || null,
         reminder_minutes: reminderMinutes ?? 30,
         participants: participants || null,
+        calendar_account_id: calendarAccountId || null,
       })
       .select("*, projects(id, name, reference, color)")
       .single();
 
     if (error) { res.status(500).json({ error: error.message }); return; }
+
+    // Push best-effort vers le calendrier externe choisi (Phase 2).
+    if (calendarAccountId) {
+      try {
+        const pushed = await pushAppointmentToProvider(
+          req.userId!, calendarAccountId, buildPushPayload(data),
+        );
+        if (pushed) {
+          const { data: updated } = await supabaseAdmin
+            .from("appointments")
+            .update({
+              external_provider: pushed.provider,
+              external_id: pushed.externalId,
+              external_calendar_id: pushed.calendarId,
+              last_synced_at: new Date().toISOString(),
+              last_sync_error: null,
+            })
+            .eq("id", data.id)
+            .select("*, projects(id, name, reference, color)")
+            .single();
+          if (updated) Object.assign(data, updated);
+        } else {
+          await supabaseAdmin
+            .from("appointments")
+            .update({ last_sync_error: "push_failed" })
+            .eq("id", data.id);
+          (data as any).last_sync_error = "push_failed";
+        }
+      } catch (e: any) {
+        req.log?.warn?.({ err: e?.message }, "[appointments] push to provider crashed");
+      }
+    }
+
     recordAutopilotEvent({
       userId: req.userId!,
       eventType: "appointment_extracted",
@@ -151,6 +213,34 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
       .single();
 
     if (error) { res.status(500).json({ error: error.message }); return; }
+
+    // Propage la modification vers le calendrier externe (Phase 2, best-effort).
+    const touchesContent =
+      req.body.title !== undefined || req.body.description !== undefined ||
+      req.body.location !== undefined || req.body.startAt !== undefined ||
+      req.body.endAt !== undefined || req.body.allDay !== undefined ||
+      req.body.participants !== undefined;
+    if (touchesContent && data.calendar_account_id && data.external_provider && data.external_id) {
+      try {
+        const ok = await patchAppointmentOnProvider(
+          req.userId!,
+          data.calendar_account_id,
+          data.external_provider,
+          data.external_id,
+          buildPushPayload(data),
+        );
+        await supabaseAdmin
+          .from("appointments")
+          .update({
+            last_synced_at: new Date().toISOString(),
+            last_sync_error: ok ? null : "patch_failed",
+          })
+          .eq("id", data.id);
+      } catch (e: any) {
+        req.log?.warn?.({ err: e?.message }, "[appointments] patch provider crashed");
+      }
+    }
+
     res.json(mapAppointment(data));
   } catch (err: any) {
     res.status(500).json({ error: err.message });
@@ -159,6 +249,13 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
 
 router.delete("/appointments/:id", requireAuth, async (req, res): Promise<void> => {
   try {
+    const { data: existing } = await supabaseAdmin
+      .from("appointments")
+      .select("id, calendar_account_id, external_provider, external_id")
+      .eq("id", req.params.id)
+      .eq("user_id", req.userId!)
+      .maybeSingle();
+
     const { error } = await supabaseAdmin
       .from("appointments")
       .delete()
@@ -166,6 +263,20 @@ router.delete("/appointments/:id", requireAuth, async (req, res): Promise<void> 
       .eq("user_id", req.userId!);
 
     if (error) { res.status(500).json({ error: error.message }); return; }
+
+    if (existing?.calendar_account_id && existing.external_provider && existing.external_id) {
+      try {
+        await deleteAppointmentOnProvider(
+          req.userId!,
+          existing.calendar_account_id,
+          existing.external_provider,
+          existing.external_id,
+        );
+      } catch (e: any) {
+        req.log?.warn?.({ err: e?.message }, "[appointments] delete provider crashed");
+      }
+    }
+
     res.json({ success: true });
   } catch (err: any) {
     res.status(500).json({ error: err.message });

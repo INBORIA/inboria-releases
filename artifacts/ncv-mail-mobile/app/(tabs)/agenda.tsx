@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useMemo } from "react";
+import React, { useState, useCallback, useMemo, useEffect } from "react";
 import {
   View,
   Text,
@@ -51,7 +51,24 @@ export default function AgendaScreen() {
   const [formDescription, setFormDescription] = useState("");
   const [formLocation, setFormLocation] = useState("");
   const [formParticipants, setFormParticipants] = useState("");
+  const [formCalendarAccountId, setFormCalendarAccountId] = useState<string>("");
   const [viewMode, setViewMode] = useState<ViewMode>("calendar");
+
+  type CalAccount = { id: string; provider: "google" | "outlook"; email_address: string; status: string };
+  const [calendarAccounts, setCalendarAccounts] = useState<CalAccount[]>([]);
+  useEffect(() => {
+    let aborted = false;
+    fetch("/api/calendar/accounts", { credentials: "include" })
+      .then((r) => (r.ok ? r.json() : { accounts: [] }))
+      .then((data) => {
+        if (aborted) return;
+        const list = (data.accounts || []).filter((a: CalAccount) => a.status === "connected");
+        setCalendarAccounts(list);
+        if (list.length > 0) setFormCalendarAccountId(list[0].id);
+      })
+      .catch(() => {});
+    return () => { aborted = true; };
+  }, []);
 
   const rangeStart = startOfMonth(currentDate);
   const rangeEnd = endOfMonth(currentDate);
@@ -132,6 +149,7 @@ export default function AgendaScreen() {
           endAt: endAt.toISOString(),
           allDay: false,
           participants: formParticipants || undefined,
+          calendarAccountId: formCalendarAccountId || undefined,
         },
       },
       {
@@ -178,6 +196,13 @@ export default function AgendaScreen() {
             {item.confirmed === false && (
               <View style={{ backgroundColor: "#f59e0b20", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4 }}>
                 <Text style={{ color: "#f59e0b", fontSize: 9, fontFamily: "Inter_500Medium" }}>{t("agenda.suggestion")}</Text>
+              </View>
+            )}
+            {(item as any).externalProvider && (item as any).externalId && (
+              <View style={{ backgroundColor: ((item as any).externalProvider === "google" ? "#34a853" : "#0078d4") + "20", paddingHorizontal: 6, paddingVertical: 1, borderRadius: 4 }}>
+                <Text style={{ color: (item as any).externalProvider === "google" ? "#34a853" : "#0078d4", fontSize: 9, fontFamily: "Inter_500Medium" }}>
+                  {t("agenda.syncedBadge")}
+                </Text>
               </View>
             )}
           </View>
@@ -336,6 +361,41 @@ export default function AgendaScreen() {
                   multiline
                   numberOfLines={2}
                 />
+                {calendarAccounts.length > 0 && (
+                  <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
+                    <TouchableOpacity
+                      onPress={() => setFormCalendarAccountId("")}
+                      style={{
+                        paddingHorizontal: 10, paddingVertical: 6, borderRadius: 6, borderWidth: 1,
+                        borderColor: formCalendarAccountId === "" ? colors.primary : colors.border,
+                        backgroundColor: formCalendarAccountId === "" ? colors.primary + "20" : "transparent",
+                      }}
+                    >
+                      <Text style={{ fontSize: 11, color: formCalendarAccountId === "" ? colors.primary : colors.mutedForeground, fontFamily: "Inter_500Medium" }}>
+                        {t("agenda.localOnly")}
+                      </Text>
+                    </TouchableOpacity>
+                    {calendarAccounts.map((acc) => {
+                      const c = acc.provider === "google" ? "#34a853" : "#0078d4";
+                      const active = formCalendarAccountId === acc.id;
+                      return (
+                        <TouchableOpacity
+                          key={acc.id}
+                          onPress={() => setFormCalendarAccountId(acc.id)}
+                          style={{
+                            paddingHorizontal: 10, paddingVertical: 6, borderRadius: 6, borderWidth: 1,
+                            borderColor: active ? c : colors.border,
+                            backgroundColor: active ? c + "20" : "transparent",
+                          }}
+                        >
+                          <Text style={{ fontSize: 11, color: active ? c : colors.mutedForeground, fontFamily: "Inter_500Medium" }}>
+                            {acc.provider === "google" ? "Google" : "Outlook"} · {acc.email_address}
+                          </Text>
+                        </TouchableOpacity>
+                      );
+                    })}
+                  </View>
+                )}
                 <TouchableOpacity
                   style={[s.createBtnStyle, { backgroundColor: colors.primary, opacity: !formTitle.trim() || createAppointment.isPending ? 0.5 : 1 }]}
                   onPress={handleCreate}
