@@ -161,7 +161,8 @@ export async function getActiveCalendarAccountsForUser(userId: string): Promise<
     .select(
       "id, user_id, provider, email_address, access_token, refresh_token, token_expires_at, scope, status, last_error_message, last_error_at, consecutive_failures",
     )
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .eq("status", "connected");
   if (error) {
     if (/does not exist/i.test(error.message)) return [];
     logger.warn({ userId, err: error.message }, "[calendar-tokens] list accounts failed");
