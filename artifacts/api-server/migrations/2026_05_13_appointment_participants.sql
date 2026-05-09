@@ -36,7 +36,17 @@ create index if not exists appointment_participants_reminder_idx
 alter table public.appointments
   add column if not exists multi_status text null
     check (multi_status in ('pending','partially_confirmed','confirmed','declined') or multi_status is null),
-  add column if not exists is_multi boolean not null default false;
+  add column if not exists is_multi boolean not null default false,
+  add column if not exists multi_reminders_enabled boolean not null default true;
+
+-- Opt-out global au niveau du profil utilisateur (organisateur).
+alter table public.profiles
+  add column if not exists multi_reminders_enabled boolean not null default true;
+
+comment on column public.appointments.multi_reminders_enabled is
+  'Phase 5 : si false, désactive les relances J+2 pour ce RDV multi.';
+comment on column public.profiles.multi_reminders_enabled is
+  'Phase 5 : si false, l''utilisateur désactive globalement les relances J+2 sur tous ses RDV multi.';
 
 comment on column public.appointments.multi_status is
   'Phase 5 : statut consolidé pour les RDV multi-participants. NULL pour les RDV mono.';

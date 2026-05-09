@@ -876,8 +876,20 @@ router.get("/appointments/:id/participants", requireAuth, async (req, res): Prom
       res.status(500).json({ error: error.message });
       return;
     }
+    interface ParticipantDbRow {
+      id: string;
+      appointment_id: string;
+      email: string;
+      name: string | null;
+      is_required: boolean;
+      response_status: string;
+      responded_at: string | null;
+      last_reminder_sent_at: string | null;
+      reminder_count: number;
+      created_at: string;
+    }
     res.json(
-      (rows || []).map((r: any) => ({
+      ((rows ?? []) as ParticipantDbRow[]).map((r) => ({
         id: r.id,
         appointmentId: r.appointment_id,
         email: r.email,

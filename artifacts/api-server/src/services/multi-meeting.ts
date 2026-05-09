@@ -441,11 +441,22 @@ export async function remindParticipant(
 ): Promise<{ ok: boolean; error?: string }> {
   const { data: appt } = await supabaseAdmin
     .from("appointments")
-    .select("id, user_id, title, start_at, end_at, location, video_url, proposal_lang, is_multi")
+    .select("id, user_id, title, start_at, end_at, location, video_url, proposal_lang, is_multi, multi_reminders_enabled")
     .eq("id", apptId)
     .eq("user_id", organizerUserId)
     .maybeSingle();
   if (!appt) return { ok: false, error: "appointment not found" };
+  if ((appt as { multi_reminders_enabled?: boolean | null }).multi_reminders_enabled === false) {
+    return { ok: false, error: "reminders_disabled_for_appointment" };
+  }
+  const { data: organizerProfile } = await supabaseAdmin
+    .from("profiles")
+    .select("multi_reminders_enabled")
+    .eq("id", organizerUserId)
+    .maybeSingle();
+  if ((organizerProfile as { multi_reminders_enabled?: boolean | null } | null)?.multi_reminders_enabled === false) {
+    return { ok: false, error: "reminders_disabled_for_user" };
+  }
 
   const { data: part } = await supabaseAdmin
     .from("appointment_participants")
@@ -541,32 +552,63 @@ export async function remindParticipant(
  * relance individuelle. Limite à 3 relances par participant.
  */
 export async function runMultiParticipantReminderSweep(): Promise<number> {
-  const cutoff = new Date(Date.now() - 48 * 3600 * 1000).toISOString();
-  const { data: rows } = await supabaseAdmin
-    .from("appointment_participants")
-    .select("id, appointment_id, reminder_count, last_reminder_sent_at, created_at, appointments!inner(id, user_id, is_multi, start_at)")
-    .eq("response_status", "pending")
-    .lt("reminder_count", 3)
-    .limit(50);
-  if (!rows || rows.length === 0) return 0;
-
-  let sent = 0;
-  for (const r of rows as unknown as Array<{
+  interface ApptJoin {
+    id: string;
+    user_id: string;
+    is_multi: boolean;
+    start_at: string;
+    multi_reminders_enabled: boolean | null;
+  }
+  interface ParticipantRow {
     id: string;
     appointment_id: string;
     reminder_count: number;
     last_reminder_sent_at: string | null;
     created_at: string;
-    appointments:
-      | { id: string; user_id: string; is_multi: boolean; start_at: string }
-      | Array<{ id: string; user_id: string; is_multi: boolean; start_at: string }>
-      | null;
-  }>) {
+    appointments: ApptJoin | ApptJoin[] | null;
+  }
+
+  const cutoff = new Date(Date.now() - 48 * 3600 * 1000).toISOString();
+  const { data: rows } = await supabaseAdmin
+    .from("appointment_participants")
+    .select(
+      "id, appointment_id, reminder_count, last_reminder_sent_at, created_at, appointments!inner(id, user_id, is_multi, start_at, multi_reminders_enabled)",
+    )
+    .eq("response_status", "pending")
+    .lt("reminder_count", 3)
+    .limit(50);
+  const list = (rows ?? []) as ParticipantRow[];
+  if (list.length === 0) return 0;
+
+  // Profils opt-out globaux : on les charge en lot.
+  const organizerIds = Array.from(
+    new Set(
+      list
+        .map((r) => (Array.isArray(r.appointments) ? r.appointments[0] : r.appointments))
+        .filter((a): a is ApptJoin => !!a)
+        .map((a) => a.user_id),
+    ),
+  );
+  const profileOptOut = new Set<string>();
+  if (organizerIds.length > 0) {
+    const { data: profs } = await supabaseAdmin
+      .from("profiles")
+      .select("id, multi_reminders_enabled")
+      .in("id", organizerIds);
+    for (const p of (profs ?? []) as Array<{ id: string; multi_reminders_enabled: boolean | null }>) {
+      if (p.multi_reminders_enabled === false) profileOptOut.add(p.id);
+    }
+  }
+
+  let sent = 0;
+  for (const r of list) {
     const apptRaw = r.appointments;
-    const appt = Array.isArray(apptRaw) ? apptRaw[0] || null : apptRaw;
+    const appt = Array.isArray(apptRaw) ? apptRaw[0] ?? null : apptRaw;
     if (!appt || !appt.is_multi) continue;
+    if (appt.multi_reminders_enabled === false) continue;
+    if (profileOptOut.has(appt.user_id)) continue;
     if (new Date(appt.start_at).getTime() < Date.now()) continue;
-    const lastTouch = r.last_reminder_sent_at || r.created_at;
+    const lastTouch = r.last_reminder_sent_at ?? r.created_at;
     if (lastTouch > cutoff) continue;
     try {
       const res = await remindParticipant(appt.user_id, appt.id, r.id);
