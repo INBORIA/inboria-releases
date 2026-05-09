@@ -5526,40 +5526,9 @@ export default function Dashboard() {
                               />
                             );
                           };
-                          if (isClassic) return (activeEmails || []).map(renderRow);
-                          // Inboria-aware Important: priority urgent OR SLA
-                          // breach OR awaiting reply OR explicit "important"
-                          // boolean from server smart-sort score. Falls back
-                          // to urgent+moyen when no Inboria signals present.
-                          const isImportant = (e: any) => (
-                            e.priority === "urgent" ||
-                            slaBreachIds.has(Number(e.id)) ||
-                            !!e.awaitingReply || !!e.awaiting_reply ||
-                            !!e.isImportant || !!e.important ||
-                            e.priority === "moyen"
-                          );
-                          const important = (activeEmails || []).filter(isImportant);
-                          const other = (activeEmails || []).filter((e: any) => !isImportant(e));
-                          return (
-                            <>
-                              {important.length > 0 && (
-                                <div className="flex items-center gap-2 pt-2 pb-2 px-2 text-[12px] font-semibold uppercase tracking-wider text-primary border-b border-primary/20 bg-primary/[0.04]">
-                                  <span className="w-1 h-3 bg-primary rounded-full" />
-                                  {t("inbox.sections.important")}
-                                  <span className="text-primary/60 font-normal normal-case tracking-normal">· {important.length}</span>
-                                </div>
-                              )}
-                              {important.map(renderRow)}
-                              {other.length > 0 && (
-                                <div className="flex items-center gap-2 pt-3 pb-2 px-2 text-[12px] font-semibold uppercase tracking-wider text-[#8b95a7] border-b border-border/40">
-                                  <span className="w-1 h-3 bg-[#8b95a7]/40 rounded-full" />
-                                  {t("inbox.sections.other")}
-                                  <span className="text-[#8b95a7]/60 font-normal normal-case tracking-normal">· {other.length}</span>
-                                </div>
-                              )}
-                              {other.map(renderRow)}
-                            </>
-                          );
+                          // Le filtre "Affichage" (Tous / Importants) gère
+                          // déjà la séparation. On rend une liste plate.
+                          return (activeEmails || []).map(renderRow);
                         })()}
                         {hasMorePages && (
                           <div ref={loadMoreRef} className="py-2">
