@@ -295,7 +295,6 @@ export default function Envoyes() {
                     onMouseEnter={() => handleDragSelectEnter(email.id)}
                     onContextMenu={(e) => handleContextMenu(e, email.id)}
                   >
-                    <div className="w-1 shrink-0 bg-primary" />
                     <div className="flex items-center gap-2 flex-1 min-w-0 p-3">
                       <button
                         onClick={(e) => { e.stopPropagation(); setSelectedIds((prev) => { const next = new Set(prev); if (next.has(email.id)) next.delete(email.id); else next.add(email.id); return next; }); }}
