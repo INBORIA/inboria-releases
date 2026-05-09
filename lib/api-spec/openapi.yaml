@@ -2845,6 +2845,97 @@ paths:
                         accountId: { type: string }
                         error: { type: string }
 
+  /appointments/propose:
+    post:
+      operationId: proposeMeeting
+      tags: [appointments]
+      summary: Inboria proposes a 1:1 meeting (RDV Phase 3 #261)
+      description: |
+        Creates a `pending` appointment, sends a proposal email to the contact
+        from the user's primary connected mailbox (Gmail/Outlook/SMTP), stores
+        the proposal Message-ID for reply detection, and schedules an auto
+        reminder at +48h if the user has it enabled.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [to, subject, startAt, endAt]
+              properties:
+                to:
+                  type: string
+                  format: email
+                contactName:
+                  type: string
+                subject:
+                  type: string
+                startAt:
+                  type: string
+                  format: date-time
+                endAt:
+                  type: string
+                  format: date-time
+                location:
+                  type: ["string", "null"]
+                description:
+                  type: ["string", "null"]
+                lang:
+                  type: string
+      responses:
+        "201":
+          description: Created proposal
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+        "400":
+          description: Invalid payload
+        "502":
+          description: Email send failed
+
+  /appointments/{id}/accept-counter:
+    post:
+      operationId: acceptMeetingCounterProposal
+      tags: [appointments]
+      summary: Accept the contact's counter-proposed slot in one click
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Updated appointment (now confirmed at the counter slot)
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+        "404":
+          description: Not found
+        "409":
+          description: No counter proposal pending
+
+  /appointments/{id}/cancel-proposal:
+    post:
+      operationId: cancelMeetingProposal
+      tags: [appointments]
+      summary: Cancel a pending meeting proposal (no follow-up reminder)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Cancelled appointment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+
   /export/appointments:
     get:
       operationId: exportAppointments
@@ -3639,6 +3730,10 @@ components:
           type: boolean
           default: false
           description: True if the user opted in to read-receipt tracking pixels on sent emails.
+        meetingRemindersEnabled:
+          type: boolean
+          default: true
+          description: True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3).
       required:
         - id
         - email
@@ -3670,6 +3765,8 @@ components:
           minimum: 1
           maximum: 60
         trackingEnabled:
+          type: boolean
+        meetingRemindersEnabled:
           type: boolean
 
     RegisterPushTokenBody:
@@ -5324,6 +5421,29 @@ components:
           type: ["string", "null"]
           format: date-time
         lastSyncError:
+          type: ["string", "null"]
+        status:
+          type: string
+          enum: [pending, confirmed, declined, counter_proposed, cancelled]
+        proposalMessageId:
+          type: ["string", "null"]
+        responseMessageId:
+          type: ["string", "null"]
+        awaitingReminderAt:
+          type: ["string", "null"]
+          format: date-time
+        reminderSentAt:
+          type: ["string", "null"]
+          format: date-time
+        counterStartAt:
+          type: ["string", "null"]
+          format: date-time
+        counterEndAt:
+          type: ["string", "null"]
+          format: date-time
+        proposalRecipient:
+          type: ["string", "null"]
+        proposalLang:
           type: ["string", "null"]
         projects:
           type: ["object", "null"]

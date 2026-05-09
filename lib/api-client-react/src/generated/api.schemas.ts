@@ -79,6 +79,8 @@ export interface UserProfile {
   followUpDelayDays?: number;
   /** True if the user opted in to read-receipt tracking pixels on sent emails. */
   trackingEnabled?: boolean;
+  /** True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3). */
+  meetingRemindersEnabled?: boolean;
 }
 
 export interface AuthResponse {
@@ -107,6 +109,7 @@ export interface UpdateProfileBody {
    */
   followUpDelayDays?: number;
   trackingEnabled?: boolean;
+  meetingRemindersEnabled?: boolean;
 }
 
 export interface RegisterPushTokenBody {
@@ -1040,6 +1043,17 @@ export const AppointmentExternalProvider = {
   native: "native",
 } as const;
 
+export type AppointmentStatus =
+  (typeof AppointmentStatus)[keyof typeof AppointmentStatus];
+
+export const AppointmentStatus = {
+  pending: "pending",
+  confirmed: "confirmed",
+  declined: "declined",
+  counter_proposed: "counter_proposed",
+  cancelled: "cancelled",
+} as const;
+
 /**
  * @nullable
  */
@@ -1083,6 +1097,23 @@ export interface Appointment {
   lastSyncedAt?: string | null;
   /** @nullable */
   lastSyncError?: string | null;
+  status?: AppointmentStatus;
+  /** @nullable */
+  proposalMessageId?: string | null;
+  /** @nullable */
+  responseMessageId?: string | null;
+  /** @nullable */
+  awaitingReminderAt?: string | null;
+  /** @nullable */
+  reminderSentAt?: string | null;
+  /** @nullable */
+  counterStartAt?: string | null;
+  /** @nullable */
+  counterEndAt?: string | null;
+  /** @nullable */
+  proposalRecipient?: string | null;
+  /** @nullable */
+  proposalLang?: string | null;
   /** @nullable */
   projects?: AppointmentProjects;
   createdAt?: string;
@@ -2059,6 +2090,19 @@ export type SyncAppointmentsFromCalendars200 = {
   deleted?: number;
   accounts?: number;
   errors?: SyncAppointmentsFromCalendars200ErrorsItem[];
+};
+
+export type ProposeMeetingBody = {
+  to: string;
+  contactName?: string;
+  subject: string;
+  startAt: string;
+  endAt: string;
+  /** @nullable */
+  location?: string | null;
+  /** @nullable */
+  description?: string | null;
+  lang?: string;
 };
 
 export type JoinWaitlist200 = {

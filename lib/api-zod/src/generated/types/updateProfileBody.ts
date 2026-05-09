@@ -20,4 +20,5 @@ export interface UpdateProfileBody {
    */
   followUpDelayDays?: number;
   trackingEnabled?: boolean;
+  meetingRemindersEnabled?: boolean;
 }

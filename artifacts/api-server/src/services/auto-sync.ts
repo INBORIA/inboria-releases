@@ -769,6 +769,31 @@ export async function saveEmailWithTriage(
     priority: triage.priority,
   }).catch(() => {});
 
+  // RDV Phase 3 (#261) — si ce mail entrant est une réponse à une proposition
+  // de RDV envoyée par Inboria (In-Reply-To matche un proposal_message_id
+  // pending), on classe la réponse (oui/non/contre-prop) et on met à jour le
+  // statut du RDV. Best-effort, jamais bloquant pour la sync.
+  try {
+    const inReplyTo =
+      typeof headers?.["in-reply-to"] === "string"
+        ? (headers["in-reply-to"] as string)
+        : Array.isArray(headers?.["in-reply-to"])
+          ? (headers["in-reply-to"] as string[])[0]
+          : null;
+    if (inReplyTo) {
+      const { handleIncomingEmailForMeeting } = await import("./meeting-proposals");
+      handleIncomingEmailForMeeting(
+        userId,
+        inserted.id,
+        inReplyTo,
+        providerMessageId,
+        body,
+      ).catch(() => {});
+    }
+  } catch {
+    /* meeting hook optional */
+  }
+
   // Trace dans le tableau de bord Inboria (panneau "Activite") : chaque
   // email entrant trie automatiquement par le worker doit apparaitre comme
   // un evenement `email_sorted`, sinon les compteurs Tries/Brouillons/etc.

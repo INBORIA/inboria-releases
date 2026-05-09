@@ -568,6 +568,7 @@ export default function ParametresMonCompte() {
   const [timezone, setTimezone] = useState("Europe/Brussels");
   const [followUpDelayDays, setFollowUpDelayDays] = useState<number>(5);
   const [trackingEnabled, setTrackingEnabled] = useState<boolean>(false);
+  const [meetingRemindersEnabled, setMeetingRemindersEnabled] = useState<boolean>(true);
 
   const WIZARD_STORAGE_KEY = "inboria.imapWizard.v1";
   const WIZARD_TTL_MS = 30 * 60 * 1000;
@@ -622,8 +623,24 @@ export default function ParametresMonCompte() {
       const d = (profile as any).followUpDelayDays;
       setFollowUpDelayDays(typeof d === "number" && d >= 1 && d <= 60 ? d : 5);
       setTrackingEnabled(!!(profile as any).trackingEnabled);
+      const mr = (profile as any).meetingRemindersEnabled;
+      setMeetingRemindersEnabled(mr !== false);
     }
   }, [profile]);
+
+  const handleToggleMeetingReminders = (next: boolean) => {
+    setMeetingRemindersEnabled(next);
+    updateProfile.mutate(
+      { data: { meetingRemindersEnabled: next } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+          toast({ title: t("settings.profileUpdated") });
+        },
+        onError: () => setMeetingRemindersEnabled(!next),
+      },
+    );
+  };
 
   const handleToggleTracking = (next: boolean) => {
     setTrackingEnabled(next);
@@ -1290,6 +1307,28 @@ export default function ParametresMonCompte() {
                     <p className="text-[10px] text-[#b8c5d6] italic">{t("wave1.trackingDisclaimer")}</p>
                   </div>
                   )}
+
+                  <div className="pt-3 mt-3 border-t border-border/50 space-y-2">
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="min-w-0">
+                        <Label className="text-[12px] text-white">
+                          {t("settings.meetingRemindersTitle", "Relances automatiques de RDV")}
+                        </Label>
+                        <p className="text-[11px] text-[#b8c5d6] mt-0.5">
+                          {t(
+                            "settings.meetingRemindersDesc",
+                            "Inboria envoie un rappel poli au contact 48 h après une proposition de rendez-vous restée sans réponse.",
+                          )}
+                        </p>
+                      </div>
+                      <Switch
+                        checked={meetingRemindersEnabled}
+                        onCheckedChange={handleToggleMeetingReminders}
+                        disabled={updateProfile.isPending}
+                        data-testid="settings-meeting-reminders-toggle"
+                      />
+                    </div>
+                  </div>
                 </div>
               )}
             </div>

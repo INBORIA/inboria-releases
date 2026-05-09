@@ -51,6 +51,7 @@ export const loginResponseUserFollowUpDelayDaysDefault = 5;
 export const loginResponseUserFollowUpDelayDaysMax = 60;
 
 export const loginResponseUserTrackingEnabledDefault = false;
+export const loginResponseUserMeetingRemindersEnabledDefault = true;
 
 export const LoginResponse = zod.object({
   user: zod.object({
@@ -92,6 +93,12 @@ export const LoginResponse = zod.object({
       .describe(
         "True if the user opted in to read-receipt tracking pixels on sent emails.",
       ),
+    meetingRemindersEnabled: zod
+      .boolean()
+      .default(loginResponseUserMeetingRemindersEnabledDefault)
+      .describe(
+        "True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3).",
+      ),
   }),
 });
 
@@ -107,6 +114,7 @@ export const getMeResponseFollowUpDelayDaysDefault = 5;
 export const getMeResponseFollowUpDelayDaysMax = 60;
 
 export const getMeResponseTrackingEnabledDefault = false;
+export const getMeResponseMeetingRemindersEnabledDefault = true;
 
 export const GetMeResponse = zod.object({
   id: zod.number(),
@@ -147,6 +155,12 @@ export const GetMeResponse = zod.object({
     .describe(
       "True if the user opted in to read-receipt tracking pixels on sent emails.",
     ),
+  meetingRemindersEnabled: zod
+    .boolean()
+    .default(getMeResponseMeetingRemindersEnabledDefault)
+    .describe(
+      "True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3).",
+    ),
 });
 
 /**
@@ -161,6 +175,7 @@ export const getProfileResponseFollowUpDelayDaysDefault = 5;
 export const getProfileResponseFollowUpDelayDaysMax = 60;
 
 export const getProfileResponseTrackingEnabledDefault = false;
+export const getProfileResponseMeetingRemindersEnabledDefault = true;
 
 export const GetProfileResponse = zod.object({
   id: zod.number(),
@@ -201,6 +216,12 @@ export const GetProfileResponse = zod.object({
     .describe(
       "True if the user opted in to read-receipt tracking pixels on sent emails.",
     ),
+  meetingRemindersEnabled: zod
+    .boolean()
+    .default(getProfileResponseMeetingRemindersEnabledDefault)
+    .describe(
+      "True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3).",
+    ),
 });
 
 /**
@@ -221,6 +242,7 @@ export const UpdateProfileBody = zod.object({
     .max(updateProfileBodyFollowUpDelayDaysMax)
     .optional(),
   trackingEnabled: zod.boolean().optional(),
+  meetingRemindersEnabled: zod.boolean().optional(),
 });
 
 export const updateProfileResponseAiCreditsUsedDefault = 0;
@@ -232,6 +254,7 @@ export const updateProfileResponseFollowUpDelayDaysDefault = 5;
 export const updateProfileResponseFollowUpDelayDaysMax = 60;
 
 export const updateProfileResponseTrackingEnabledDefault = false;
+export const updateProfileResponseMeetingRemindersEnabledDefault = true;
 
 export const UpdateProfileResponse = zod.object({
   id: zod.number(),
@@ -273,6 +296,12 @@ export const UpdateProfileResponse = zod.object({
     .default(updateProfileResponseTrackingEnabledDefault)
     .describe(
       "True if the user opted in to read-receipt tracking pixels on sent emails.",
+    ),
+  meetingRemindersEnabled: zod
+    .boolean()
+    .default(updateProfileResponseMeetingRemindersEnabledDefault)
+    .describe(
+      "True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3).",
     ),
 });
 
@@ -1024,6 +1053,7 @@ export const getDashboardBootstrapResponseProfileFollowUpDelayDaysDefault = 5;
 export const getDashboardBootstrapResponseProfileFollowUpDelayDaysMax = 60;
 
 export const getDashboardBootstrapResponseProfileTrackingEnabledDefault = false;
+export const getDashboardBootstrapResponseProfileMeetingRemindersEnabledDefault = true;
 
 export const GetDashboardBootstrapResponse = zod
   .object({
@@ -1071,6 +1101,14 @@ export const GetDashboardBootstrapResponse = zod
         .default(getDashboardBootstrapResponseProfileTrackingEnabledDefault)
         .describe(
           "True if the user opted in to read-receipt tracking pixels on sent emails.",
+        ),
+      meetingRemindersEnabled: zod
+        .boolean()
+        .default(
+          getDashboardBootstrapResponseProfileMeetingRemindersEnabledDefault,
+        )
+        .describe(
+          "True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3).",
         ),
     }),
     organisation: zod
@@ -2801,6 +2839,23 @@ export const DetectAppointmentsResponse = zod.object({
         organizerEmail: zod.string().nullish(),
         lastSyncedAt: zod.coerce.date().nullish(),
         lastSyncError: zod.string().nullish(),
+        status: zod
+          .enum([
+            "pending",
+            "confirmed",
+            "declined",
+            "counter_proposed",
+            "cancelled",
+          ])
+          .optional(),
+        proposalMessageId: zod.string().nullish(),
+        responseMessageId: zod.string().nullish(),
+        awaitingReminderAt: zod.coerce.date().nullish(),
+        reminderSentAt: zod.coerce.date().nullish(),
+        counterStartAt: zod.coerce.date().nullish(),
+        counterEndAt: zod.coerce.date().nullish(),
+        proposalRecipient: zod.string().nullish(),
+        proposalLang: zod.string().nullish(),
         projects: zod
           .object({
             id: zod.number().optional(),
@@ -2857,6 +2912,17 @@ export const ListAppointmentsResponseItem = zod.object({
   organizerEmail: zod.string().nullish(),
   lastSyncedAt: zod.coerce.date().nullish(),
   lastSyncError: zod.string().nullish(),
+  status: zod
+    .enum(["pending", "confirmed", "declined", "counter_proposed", "cancelled"])
+    .optional(),
+  proposalMessageId: zod.string().nullish(),
+  responseMessageId: zod.string().nullish(),
+  awaitingReminderAt: zod.coerce.date().nullish(),
+  reminderSentAt: zod.coerce.date().nullish(),
+  counterStartAt: zod.coerce.date().nullish(),
+  counterEndAt: zod.coerce.date().nullish(),
+  proposalRecipient: zod.string().nullish(),
+  proposalLang: zod.string().nullish(),
   projects: zod
     .object({
       id: zod.number().optional(),
@@ -2922,6 +2988,17 @@ export const GetAppointmentResponse = zod.object({
   organizerEmail: zod.string().nullish(),
   lastSyncedAt: zod.coerce.date().nullish(),
   lastSyncError: zod.string().nullish(),
+  status: zod
+    .enum(["pending", "confirmed", "declined", "counter_proposed", "cancelled"])
+    .optional(),
+  proposalMessageId: zod.string().nullish(),
+  responseMessageId: zod.string().nullish(),
+  awaitingReminderAt: zod.coerce.date().nullish(),
+  reminderSentAt: zod.coerce.date().nullish(),
+  counterStartAt: zod.coerce.date().nullish(),
+  counterEndAt: zod.coerce.date().nullish(),
+  proposalRecipient: zod.string().nullish(),
+  proposalLang: zod.string().nullish(),
   projects: zod
     .object({
       id: zod.number().optional(),
@@ -2984,6 +3061,17 @@ export const UpdateAppointmentResponse = zod.object({
   organizerEmail: zod.string().nullish(),
   lastSyncedAt: zod.coerce.date().nullish(),
   lastSyncError: zod.string().nullish(),
+  status: zod
+    .enum(["pending", "confirmed", "declined", "counter_proposed", "cancelled"])
+    .optional(),
+  proposalMessageId: zod.string().nullish(),
+  responseMessageId: zod.string().nullish(),
+  awaitingReminderAt: zod.coerce.date().nullish(),
+  reminderSentAt: zod.coerce.date().nullish(),
+  counterStartAt: zod.coerce.date().nullish(),
+  counterEndAt: zod.coerce.date().nullish(),
+  proposalRecipient: zod.string().nullish(),
+  proposalLang: zod.string().nullish(),
   projects: zod
     .object({
       id: zod.number().optional(),
@@ -3028,6 +3116,141 @@ export const SyncAppointmentsFromCalendarsResponse = zod.object({
       }),
     )
     .optional(),
+});
+
+/**
+ * Creates a `pending` appointment, sends a proposal email to the contact
+from the user's primary connected mailbox (Gmail/Outlook/SMTP), stores
+the proposal Message-ID for reply detection, and schedules an auto
+reminder at +48h if the user has it enabled.
+
+ * @summary Inboria proposes a 1:1 meeting (RDV Phase 3
+ */
+export const ProposeMeetingBody = zod.object({
+  to: zod.string().email(),
+  contactName: zod.string().optional(),
+  subject: zod.string(),
+  startAt: zod.coerce.date(),
+  endAt: zod.coerce.date(),
+  location: zod.string().nullish(),
+  description: zod.string().nullish(),
+  lang: zod.string().optional(),
+});
+
+/**
+ * @summary Accept the contact's counter-proposed slot in one click
+ */
+export const AcceptMeetingCounterProposalParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const AcceptMeetingCounterProposalResponse = zod.object({
+  id: zod.string(),
+  userId: zod.string().optional(),
+  title: zod.string(),
+  description: zod.string().nullish(),
+  location: zod.string().nullish(),
+  startAt: zod.coerce.date(),
+  endAt: zod.coerce.date(),
+  allDay: zod.boolean().optional(),
+  emailId: zod.number().nullish(),
+  projectId: zod.number().nullish(),
+  reminderMinutes: zod.number().optional(),
+  confirmed: zod.boolean().optional(),
+  participants: zod.string().nullish(),
+  calendarAccountId: zod.string().nullish(),
+  externalProvider: zod
+    .union([
+      zod.literal("google"),
+      zod.literal("outlook"),
+      zod.literal("native"),
+      zod.literal(null),
+    ])
+    .nullish(),
+  externalId: zod.string().nullish(),
+  externalCalendarId: zod.string().nullish(),
+  organizerEmail: zod.string().nullish(),
+  lastSyncedAt: zod.coerce.date().nullish(),
+  lastSyncError: zod.string().nullish(),
+  status: zod
+    .enum(["pending", "confirmed", "declined", "counter_proposed", "cancelled"])
+    .optional(),
+  proposalMessageId: zod.string().nullish(),
+  responseMessageId: zod.string().nullish(),
+  awaitingReminderAt: zod.coerce.date().nullish(),
+  reminderSentAt: zod.coerce.date().nullish(),
+  counterStartAt: zod.coerce.date().nullish(),
+  counterEndAt: zod.coerce.date().nullish(),
+  proposalRecipient: zod.string().nullish(),
+  proposalLang: zod.string().nullish(),
+  projects: zod
+    .object({
+      id: zod.number().optional(),
+      name: zod.string().optional(),
+      reference: zod.string().optional(),
+      color: zod.string().optional(),
+    })
+    .nullish(),
+  createdAt: zod.coerce.date().optional(),
+  updatedAt: zod.coerce.date().optional(),
+});
+
+/**
+ * @summary Cancel a pending meeting proposal (no follow-up reminder)
+ */
+export const CancelMeetingProposalParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const CancelMeetingProposalResponse = zod.object({
+  id: zod.string(),
+  userId: zod.string().optional(),
+  title: zod.string(),
+  description: zod.string().nullish(),
+  location: zod.string().nullish(),
+  startAt: zod.coerce.date(),
+  endAt: zod.coerce.date(),
+  allDay: zod.boolean().optional(),
+  emailId: zod.number().nullish(),
+  projectId: zod.number().nullish(),
+  reminderMinutes: zod.number().optional(),
+  confirmed: zod.boolean().optional(),
+  participants: zod.string().nullish(),
+  calendarAccountId: zod.string().nullish(),
+  externalProvider: zod
+    .union([
+      zod.literal("google"),
+      zod.literal("outlook"),
+      zod.literal("native"),
+      zod.literal(null),
+    ])
+    .nullish(),
+  externalId: zod.string().nullish(),
+  externalCalendarId: zod.string().nullish(),
+  organizerEmail: zod.string().nullish(),
+  lastSyncedAt: zod.coerce.date().nullish(),
+  lastSyncError: zod.string().nullish(),
+  status: zod
+    .enum(["pending", "confirmed", "declined", "counter_proposed", "cancelled"])
+    .optional(),
+  proposalMessageId: zod.string().nullish(),
+  responseMessageId: zod.string().nullish(),
+  awaitingReminderAt: zod.coerce.date().nullish(),
+  reminderSentAt: zod.coerce.date().nullish(),
+  counterStartAt: zod.coerce.date().nullish(),
+  counterEndAt: zod.coerce.date().nullish(),
+  proposalRecipient: zod.string().nullish(),
+  proposalLang: zod.string().nullish(),
+  projects: zod
+    .object({
+      id: zod.number().optional(),
+      name: zod.string().optional(),
+      reference: zod.string().optional(),
+      color: zod.string().optional(),
+    })
+    .nullish(),
+  createdAt: zod.coerce.date().optional(),
+  updatedAt: zod.coerce.date().optional(),
 });
 
 /**

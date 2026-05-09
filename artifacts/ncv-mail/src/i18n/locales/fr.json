@@ -1086,6 +1086,8 @@
   },
   "settings": {
     "title": "Paramètres",
+    "meetingRemindersTitle": "Relances automatiques de RDV",
+    "meetingRemindersDesc": "Inboria envoie un rappel poli au contact 48 h après une proposition de rendez-vous restée sans réponse.",
     "subtitle": "Gérez votre compte et les préférences d'Inboria.",
     "emailConnection": "Connexion Email",
     "connected": "Connecté",
@@ -2430,6 +2432,12 @@
   },
   "agenda": {
     "title": "Agenda",
+    "statusPending": "En attente de réponse",
+    "statusPendingShort": "En attente",
+    "statusCounter": "Contre-proposition reçue",
+    "statusCounterShort": "Contre-prop.",
+    "statusDeclined": "Refusé par le contact",
+    "statusDeclinedShort": "Refusé",
     "subtitle": "Gérez vos rendez-vous et réunions",
     "noAppointments": "Aucun rendez-vous",
     "noAppointmentsDesc": "Créez un rendez-vous manuellement ou laissez Inboria les détecter depuis vos emails.",

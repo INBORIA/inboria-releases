@@ -39,4 +39,6 @@ export interface UserProfile {
   followUpDelayDays?: number;
   /** True if the user opted in to read-receipt tracking pixels on sent emails. */
   trackingEnabled?: boolean;
+  /** True if Inboria should auto-send a +48h reminder to contacts who haven't replied to a meeting proposal (RDV Phase 3). */
+  meetingRemindersEnabled?: boolean;
 }

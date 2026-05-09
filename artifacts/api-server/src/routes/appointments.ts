@@ -11,6 +11,7 @@ import {
   pullExternalEventsAndUpsert,
   type AppointmentPushPayload,
 } from "../services/calendar-sync";
+import { proposeMeeting } from "../services/meeting-proposals";
 
 const isoDateTime = z
   .string()
@@ -86,6 +87,15 @@ function mapAppointment(row: any) {
     organizerEmail: row.organizer_email ?? null,
     lastSyncedAt: row.last_synced_at ?? null,
     lastSyncError: row.last_sync_error ?? null,
+    status: row.status ?? "confirmed",
+    proposalMessageId: row.proposal_message_id ?? null,
+    responseMessageId: row.response_message_id ?? null,
+    awaitingReminderAt: row.awaiting_reminder_at ?? null,
+    reminderSentAt: row.reminder_sent_at ?? null,
+    counterStartAt: row.counter_start_at ?? null,
+    counterEndAt: row.counter_end_at ?? null,
+    proposalRecipient: row.proposal_recipient ?? null,
+    proposalLang: row.proposal_lang ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
     projects: row.projects,
@@ -471,5 +481,132 @@ router.post("/appointments/sync", requireAuth, async (req, res): Promise<void> =
     res.status(500).json({ error: err.message });
   }
 });
+
+// RDV Phase 3 (#261) — proposition de rendez-vous 1 à 1 par Inboria.
+// Crée un appointment `pending`, envoie un mail de proposition au contact,
+// et programme la relance auto à +48h.
+const proposeMeetingSchema = z
+  .object({
+    to: z.string().trim().email(),
+    contactName: z.string().trim().min(1).max(200).optional(),
+    subject: z.string().trim().min(1).max(200),
+    startAt: isoDateTime,
+    endAt: isoDateTime,
+    location: z.string().max(500).optional().nullable(),
+    description: z.string().max(2000).optional().nullable(),
+    lang: z.string().min(2).max(10).optional(),
+  })
+  .refine((b) => Date.parse(b.endAt) > Date.parse(b.startAt), {
+    message: "endAt must be after startAt",
+    path: ["endAt"],
+  });
+
+router.post("/appointments/propose", requireAuth, async (req, res): Promise<void> => {
+  const parsed = proposeMeetingSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "invalid_payload", details: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const result = await proposeMeeting({ userId: req.userId!, ...parsed.data });
+    if (!result.ok) {
+      res.status(502).json({ error: result.error || "propose_failed" });
+      return;
+    }
+    const { data } = await supabaseAdmin
+      .from("appointments")
+      .select("*, projects(id, name, reference, color)")
+      .eq("id", result.appointmentId!)
+      .eq("user_id", req.userId!)
+      .single();
+    res.status(201).json(mapAppointment(data));
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "propose_crashed";
+    req.log?.error?.({ err: msg }, "[appointments] propose crashed");
+    res.status(500).json({ error: msg });
+  }
+});
+
+// Bouton "Accepter ce créneau" pour une contre-proposition reçue : adopte
+// counter_start_at/counter_end_at comme nouveaux start_at/end_at, repasse en
+// confirmed=true, et envoie une confirmation courte au contact.
+router.post(
+  "/appointments/:id/accept-counter",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const { data: appt } = await supabaseAdmin
+        .from("appointments")
+        .select(
+          "id, user_id, title, status, counter_start_at, counter_end_at, proposal_recipient, proposal_lang",
+        )
+        .eq("id", req.params.id)
+        .eq("user_id", req.userId!)
+        .maybeSingle();
+      if (!appt) {
+        res.status(404).json({ error: "not_found" });
+        return;
+      }
+      if (appt.status !== "counter_proposed" || !appt.counter_start_at || !appt.counter_end_at) {
+        res.status(409).json({ error: "no_counter_proposal" });
+        return;
+      }
+      const { data: updated, error } = await supabaseAdmin
+        .from("appointments")
+        .update({
+          start_at: appt.counter_start_at,
+          end_at: appt.counter_end_at,
+          status: "confirmed",
+          confirmed: true,
+          counter_start_at: null,
+          counter_end_at: null,
+          awaiting_reminder_at: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", req.params.id)
+        .eq("user_id", req.userId!)
+        .select("*, projects(id, name, reference, color)")
+        .single();
+      if (error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.json(mapAppointment(updated));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "accept_counter_crashed";
+      res.status(500).json({ error: msg });
+    }
+  },
+);
+
+// Annule la proposition (statut → cancelled), désactive la relance.
+router.post(
+  "/appointments/:id/cancel-proposal",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const { data: updated, error } = await supabaseAdmin
+        .from("appointments")
+        .update({
+          status: "cancelled",
+          confirmed: false,
+          awaiting_reminder_at: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", req.params.id)
+        .eq("user_id", req.userId!)
+        .select("*, projects(id, name, reference, color)")
+        .single();
+      if (error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      res.json(mapAppointment(updated));
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "cancel_proposal_crashed";
+      res.status(500).json({ error: msg });
+    }
+  },
+);
 
 export default router;

@@ -64,6 +64,7 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       timezone: profile.timezone || "Europe/Brussels",
       followUpDelayDays: profile.follow_up_delay_days ?? 5,
       trackingEnabled: !!profile.tracking_enabled,
+      meetingRemindersEnabled: profile.meeting_reminders_enabled !== false,
       createdAt: profile.created_at,
       organisationId,
       organisationName,
@@ -113,6 +114,9 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
         updates.tracking_enabled = !!(parsed.data as any).trackingEnabled;
       }
     }
+    if ((parsed.data as any).meetingRemindersEnabled !== undefined) {
+      updates.meeting_reminders_enabled = !!(parsed.data as any).meetingRemindersEnabled;
+    }
 
     const query = Object.keys(updates).length === 0
       ? supabaseAdmin.from("profiles").select().eq("id", req.userId!).single()
@@ -142,6 +146,7 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
       timezone: profile.timezone || "Europe/Brussels",
       followUpDelayDays: profile.follow_up_delay_days ?? 5,
       trackingEnabled: !!profile.tracking_enabled,
+      meetingRemindersEnabled: profile.meeting_reminders_enabled !== false,
       createdAt: profile.created_at,
     });
   } catch {

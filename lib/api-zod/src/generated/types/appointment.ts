@@ -7,6 +7,7 @@
  */
 import type { AppointmentExternalProvider } from "./appointmentExternalProvider";
 import type { AppointmentProjects } from "./appointmentProjects";
+import type { AppointmentStatus } from "./appointmentStatus";
 
 export interface Appointment {
   id: string;
@@ -41,6 +42,23 @@ export interface Appointment {
   lastSyncedAt?: Date | null;
   /** @nullable */
   lastSyncError?: string | null;
+  status?: AppointmentStatus;
+  /** @nullable */
+  proposalMessageId?: string | null;
+  /** @nullable */
+  responseMessageId?: string | null;
+  /** @nullable */
+  awaitingReminderAt?: Date | null;
+  /** @nullable */
+  reminderSentAt?: Date | null;
+  /** @nullable */
+  counterStartAt?: Date | null;
+  /** @nullable */
+  counterEndAt?: Date | null;
+  /** @nullable */
+  proposalRecipient?: string | null;
+  /** @nullable */
+  proposalLang?: string | null;
   /** @nullable */
   projects?: AppointmentProjects;
   createdAt?: Date;

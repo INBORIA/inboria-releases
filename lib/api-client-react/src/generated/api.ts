@@ -143,6 +143,7 @@ import type {
   Project,
   ProjectDetail,
   ProjectNote,
+  ProposeMeetingBody,
   RecategorizeUncategorized200,
   RecategorizeUncategorizedBody,
   RegisterBody,
@@ -10796,6 +10797,265 @@ export const useSyncAppointmentsFromCalendars = <
   TContext
 > => {
   return useMutation(getSyncAppointmentsFromCalendarsMutationOptions(options));
+};
+
+/**
+ * Creates a `pending` appointment, sends a proposal email to the contact
+from the user's primary connected mailbox (Gmail/Outlook/SMTP), stores
+the proposal Message-ID for reply detection, and schedules an auto
+reminder at +48h if the user has it enabled.
+
+ * @summary Inboria proposes a 1:1 meeting (RDV Phase 3
+ */
+export const getProposeMeetingUrl = () => {
+  return `/api/appointments/propose`;
+};
+
+export const proposeMeeting = async (
+  proposeMeetingBody: ProposeMeetingBody,
+  options?: RequestInit,
+): Promise<Appointment> => {
+  return customFetch<Appointment>(getProposeMeetingUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(proposeMeetingBody),
+  });
+};
+
+export const getProposeMeetingMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof proposeMeeting>>,
+    TError,
+    { data: BodyType<ProposeMeetingBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof proposeMeeting>>,
+  TError,
+  { data: BodyType<ProposeMeetingBody> },
+  TContext
+> => {
+  const mutationKey = ["proposeMeeting"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof proposeMeeting>>,
+    { data: BodyType<ProposeMeetingBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return proposeMeeting(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type ProposeMeetingMutationResult = NonNullable<
+  Awaited<ReturnType<typeof proposeMeeting>>
+>;
+export type ProposeMeetingMutationBody = BodyType<ProposeMeetingBody>;
+export type ProposeMeetingMutationError = ErrorType<void>;
+
+/**
+ * @summary Inboria proposes a 1:1 meeting (RDV Phase 3
+ */
+export const useProposeMeeting = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof proposeMeeting>>,
+    TError,
+    { data: BodyType<ProposeMeetingBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof proposeMeeting>>,
+  TError,
+  { data: BodyType<ProposeMeetingBody> },
+  TContext
+> => {
+  return useMutation(getProposeMeetingMutationOptions(options));
+};
+
+/**
+ * @summary Accept the contact's counter-proposed slot in one click
+ */
+export const getAcceptMeetingCounterProposalUrl = (id: string) => {
+  return `/api/appointments/${id}/accept-counter`;
+};
+
+export const acceptMeetingCounterProposal = async (
+  id: string,
+  options?: RequestInit,
+): Promise<Appointment> => {
+  return customFetch<Appointment>(getAcceptMeetingCounterProposalUrl(id), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getAcceptMeetingCounterProposalMutationOptions = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof acceptMeetingCounterProposal>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof acceptMeetingCounterProposal>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ["acceptMeetingCounterProposal"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof acceptMeetingCounterProposal>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return acceptMeetingCounterProposal(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AcceptMeetingCounterProposalMutationResult = NonNullable<
+  Awaited<ReturnType<typeof acceptMeetingCounterProposal>>
+>;
+
+export type AcceptMeetingCounterProposalMutationError = ErrorType<void>;
+
+/**
+ * @summary Accept the contact's counter-proposed slot in one click
+ */
+export const useAcceptMeetingCounterProposal = <
+  TError = ErrorType<void>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof acceptMeetingCounterProposal>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof acceptMeetingCounterProposal>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getAcceptMeetingCounterProposalMutationOptions(options));
+};
+
+/**
+ * @summary Cancel a pending meeting proposal (no follow-up reminder)
+ */
+export const getCancelMeetingProposalUrl = (id: string) => {
+  return `/api/appointments/${id}/cancel-proposal`;
+};
+
+export const cancelMeetingProposal = async (
+  id: string,
+  options?: RequestInit,
+): Promise<Appointment> => {
+  return customFetch<Appointment>(getCancelMeetingProposalUrl(id), {
+    ...options,
+    method: "POST",
+  });
+};
+
+export const getCancelMeetingProposalMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof cancelMeetingProposal>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof cancelMeetingProposal>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ["cancelMeetingProposal"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof cancelMeetingProposal>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return cancelMeetingProposal(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CancelMeetingProposalMutationResult = NonNullable<
+  Awaited<ReturnType<typeof cancelMeetingProposal>>
+>;
+
+export type CancelMeetingProposalMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Cancel a pending meeting proposal (no follow-up reminder)
+ */
+export const useCancelMeetingProposal = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof cancelMeetingProposal>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof cancelMeetingProposal>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getCancelMeetingProposalMutationOptions(options));
 };
 
 /**

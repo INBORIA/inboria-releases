@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, memo } from "react";
 import { createPortal } from "react-dom";
-import { Sparkles, Send, Loader2, User as UserIcon, Mail, Pencil, Check, AlertCircle, X } from "lucide-react";
+import { Sparkles, Send, Loader2, User as UserIcon, Mail, Pencil, Check, AlertCircle, X, Calendar, MapPin } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { useLocation } from "wouter";
@@ -20,6 +20,64 @@ interface InboriaDraft {
   to: string;
   subject: string;
   body: string;
+}
+
+interface InboriaMeeting {
+  to: string;
+  contactName: string;
+  subject: string;
+  startAt: string;
+  endAt: string;
+  location: string;
+}
+
+// Parse a fenced `inboria-meeting` block (YAML-like) inside an assistant
+// message. Returns { meeting, before, after } when found, otherwise null.
+function extractMeeting(text: string): {
+  meeting: InboriaMeeting | null;
+  before: string;
+  after: string;
+} {
+  const fenceRe = /```inboria-meeting\s*\n([\s\S]*?)```/i;
+  const m = fenceRe.exec(text);
+  if (!m) return { meeting: null, before: text, after: "" };
+  const before = text.slice(0, m.index).trim();
+  const after = text.slice(m.index + m[0].length).trim();
+  const inner = m[1].replace(/\r/g, "");
+  const KEY_MAP: Record<string, keyof InboriaMeeting> = {
+    to: "to",
+    contactname: "contactName",
+    subject: "subject",
+    startat: "startAt",
+    endat: "endAt",
+    location: "location",
+  };
+  const fields: Partial<Record<keyof InboriaMeeting, string>> = {};
+  for (const line of inner.split("\n")) {
+    const fm = /^\s*(to|contactName|subject|startAt|endAt|location)\s*:\s*(.*)$/i.exec(line);
+    if (fm) {
+      const key = KEY_MAP[fm[1].toLowerCase()];
+      if (key) fields[key] = fm[2].trim().replace(/^["'<\[]+|["'>\]]+$/g, "");
+    }
+  }
+  // Require to + parseable startAt/endAt before taking precedence over draft rendering.
+  const startMs = fields.startAt ? Date.parse(fields.startAt) : NaN;
+  const endMs = fields.endAt ? Date.parse(fields.endAt) : NaN;
+  if (!fields.to || !Number.isFinite(startMs) || !Number.isFinite(endMs)) {
+    return { meeting: null, before: text, after: "" };
+  }
+  return {
+    meeting: {
+      to: fields.to,
+      contactName: fields.contactName || "",
+      subject: fields.subject || "",
+      startAt: fields.startAt || "",
+      endAt: fields.endAt || "",
+      location: fields.location || "",
+    },
+    before,
+    after,
+  };
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -281,6 +339,167 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primary
           >
             <Pencil className="h-3 w-3 mr-1" />
             Modifier
+          </Button>
+        </div>
+      )}
+      {stage === "sending" && (
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-950/60 flex items-center justify-center text-xs text-zinc-300 gap-2">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          Envoi en cours…
+        </div>
+      )}
+    </div>
+  );
+});
+
+interface MeetingCardProps {
+  meeting: InboriaMeeting;
+  accessToken: string;
+  baseUrl: string;
+  lang: string;
+  onSent: () => void;
+}
+
+const MeetingProposalCard = memo(function MeetingProposalCard({
+  meeting,
+  accessToken,
+  baseUrl,
+  lang,
+  onSent,
+}: MeetingCardProps) {
+  const [stage, setStage] = useState<"idle" | "confirm" | "sending" | "sent" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const toValid = EMAIL_RE.test(meeting.to.trim());
+  const startDate = meeting.startAt ? new Date(meeting.startAt) : null;
+  const endDate = meeting.endAt ? new Date(meeting.endAt) : null;
+  const dateValid = !!(startDate && endDate && !isNaN(startDate.getTime()) && !isNaN(endDate.getTime()) && endDate > startDate);
+  const blockReason = !toValid
+    ? "Adresse destinataire invalide ou manquante."
+    : !dateValid
+      ? "Créneau invalide."
+      : "";
+  const slotLabel = dateValid && startDate && endDate
+    ? `${startDate.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })} ${startDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} – ${endDate.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`
+    : "(créneau invalide)";
+
+  const doSend = async () => {
+    setStage("sending");
+    setErrorMsg("");
+    try {
+      const res = await fetch(`${baseUrl}/api/appointments/propose`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({
+          to: meeting.to.trim(),
+          contactName: meeting.contactName || undefined,
+          subject: meeting.subject || "Rendez-vous",
+          startAt: meeting.startAt,
+          endAt: meeting.endAt,
+          location: meeting.location || undefined,
+          lang,
+        }),
+      });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        throw new Error(errBody?.error || "Échec de l'envoi");
+      }
+      setStage("sent");
+      onSent();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Échec de l'envoi";
+      setErrorMsg(msg);
+      setStage("error");
+    }
+  };
+
+  if (stage === "sent") {
+    return (
+      <div className="my-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 px-3 py-2.5 text-emerald-200 text-xs flex items-center gap-2">
+        <Check className="h-4 w-4 shrink-0" />
+        <span>
+          ✓ Proposition envoyée à <strong>{meeting.contactName || meeting.to.trim()}</strong>. Inboria détectera la réponse automatiquement.
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="my-2 rounded-xl border border-cyan-400/30 bg-zinc-900/80 overflow-hidden"
+      data-testid="inboria-meeting-card"
+    >
+      <div className="px-3 py-2 border-b border-zinc-800 flex items-center gap-2">
+        <Calendar className="h-3.5 w-3.5 text-cyan-300" />
+        <span className="text-[11px] uppercase tracking-wide text-cyan-300 font-semibold">
+          Proposition de rendez-vous
+        </span>
+      </div>
+      <div className="px-3 py-2.5 space-y-1.5 text-xs">
+        <div className="flex gap-2">
+          <span className="text-zinc-500 w-16 shrink-0">À</span>
+          <span className={cn("break-all", toValid ? "text-zinc-100" : "text-amber-300")}>
+            {meeting.contactName ? `${meeting.contactName} <${meeting.to.trim()}>` : meeting.to.trim() || "(vide)"}
+          </span>
+        </div>
+        <div className="flex gap-2">
+          <span className="text-zinc-500 w-16 shrink-0">Objet</span>
+          <span className="text-zinc-100 break-words">{meeting.subject || "(sans objet)"}</span>
+        </div>
+        <div className="flex gap-2">
+          <span className="text-zinc-500 w-16 shrink-0">Créneau</span>
+          <span className={cn(dateValid ? "text-zinc-100" : "text-amber-300")}>{slotLabel}</span>
+        </div>
+        {meeting.location && (
+          <div className="flex gap-2">
+            <span className="text-zinc-500 w-16 shrink-0 flex items-center gap-1">
+              <MapPin className="h-3 w-3" />Lieu
+            </span>
+            <span className="text-zinc-100 break-words">{meeting.location}</span>
+          </div>
+        )}
+      </div>
+      {blockReason && (
+        <div className="px-3 py-2 border-t border-amber-500/30 bg-amber-500/10 text-amber-200 text-[11px] flex gap-2 items-start">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+          <span>{blockReason}</span>
+        </div>
+      )}
+      {stage === "error" && (
+        <div className="px-3 py-2 border-t border-red-500/30 bg-red-500/10 text-red-200 text-[11px] flex gap-2 items-start">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+      {stage === "confirm" && (
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-900 text-zinc-300 text-[11px] space-y-2">
+          <div>Inboria va envoyer la proposition à <strong className="text-zinc-100">{meeting.to.trim()}</strong> et créer un RDV en attente. Confirmer ?</div>
+          <div className="flex gap-2">
+            <Button
+              size="sm"
+              className="h-7 text-xs bg-cyan-600 hover:bg-cyan-700 flex-1"
+              onClick={doSend}
+              data-testid="inboria-meeting-confirm"
+            >
+              Confirmer l'envoi
+            </Button>
+            <Button size="sm" variant="ghost" className="h-7 text-xs text-zinc-400" onClick={() => setStage("idle")}>
+              Annuler
+            </Button>
+          </div>
+        </div>
+      )}
+      {(stage === "idle" || stage === "error") && (
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-950/60 flex gap-2">
+          <Button
+            size="sm"
+            className="h-7 text-xs bg-cyan-600 hover:bg-cyan-700 flex-1 disabled:opacity-50"
+            onClick={() => setStage("confirm")}
+            disabled={!toValid || !dateValid}
+            data-testid="inboria-meeting-send"
+          >
+            <Send className="h-3 w-3 mr-1" />
+            Envoyer la proposition
           </Button>
         </div>
       )}
@@ -570,6 +789,27 @@ export function InboriaChatButton() {
                 )}
               >
                 {m.role === "assistant" ? (() => {
+                  const meet = extractMeeting(m.content);
+                  if (meet.meeting) {
+                    return (
+                      <>
+                        {meet.before && <div>{renderAssistantContent(meet.before, openMail)}</div>}
+                        {session?.access_token && (
+                          <MeetingProposalCard
+                            meeting={meet.meeting}
+                            accessToken={session.access_token}
+                            baseUrl={baseUrl}
+                            lang={(typeof window !== "undefined" && window.navigator?.language?.slice(0, 2)) || "fr"}
+                            onSent={() => {
+                              toast({ title: "Proposition envoyée" });
+                              queryClient.invalidateQueries({ queryKey: ["appointments"] });
+                            }}
+                          />
+                        )}
+                        {meet.after && <div>{renderAssistantContent(meet.after, openMail)}</div>}
+                      </>
+                    );
+                  }
                   const { draft, before, after } = extractDraft(m.content);
                   if (!draft) return renderAssistantContent(m.content, openMail);
                   return (

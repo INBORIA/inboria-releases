@@ -9,6 +9,7 @@ import { supabaseAdmin } from "./lib/supabase";
 import { getEmailOAuthRedirectUri } from "./lib/urls";
 import { startSlaWorker } from "./services/sla";
 import { startWebhookDispatcher } from "./services/webhooks";
+import { startMeetingFollowupWorker } from "./services/meeting-followup-worker";
 
 async function ensureEmailsUniqueIndex() {
   try {
@@ -711,6 +712,7 @@ app.listen(port, (err) => {
   startSlaWorker();
   startWebhookDispatcher();
   startCrmSyncScheduler();
+  startMeetingFollowupWorker();
 });
 
 async function ensureManualContacts() {

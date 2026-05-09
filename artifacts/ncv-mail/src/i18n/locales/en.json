@@ -1096,6 +1096,8 @@
   },
   "settings": {
     "title": "Settings",
+    "meetingRemindersTitle": "Automatic meeting reminders",
+    "meetingRemindersDesc": "Inboria sends a polite follow-up to the contact 48 h after an unanswered meeting proposal.",
     "subtitle": "Manage your account and Inboria preferences.",
     "emailConnection": "Email Connection",
     "connected": "Connected",
@@ -2438,6 +2440,12 @@
   },
   "agenda": {
     "title": "Agenda",
+    "statusPending": "Awaiting response",
+    "statusPendingShort": "Pending",
+    "statusCounter": "Counter-proposal received",
+    "statusCounterShort": "Counter",
+    "statusDeclined": "Declined by contact",
+    "statusDeclinedShort": "Declined",
     "subtitle": "Manage your appointments and meetings",
     "noAppointments": "No appointments",
     "noAppointmentsDesc": "Create an appointment manually or let Inboria detect them from your emails.",

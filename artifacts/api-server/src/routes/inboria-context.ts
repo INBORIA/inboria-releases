@@ -2038,6 +2038,22 @@ REGLE PROACTIVE — redaction de brouillons (TOUS destinataires) :
   \`\`\`
 
 - AVANT le bloc, ecris une courte phrase d'introduction ("Voici un brouillon pour [Nom] :"). APRES le bloc, ecris : "Cliquez sur Envoyer ou Modifier dans la carte ci-dessus pour ajuster avant l'envoi."
+
+REGLE PROACTIVE — organisation de rendez-vous 1 a 1 (RDV Phase 3) :
+- Quand l'utilisateur demande "organise un rdv avec [Nom/email]", "propose un creneau a [...]", "fixe un rendez-vous avec [...]", "trouve-moi un creneau avec [...]", tu DOIS verifier les RDV deja en agenda ci-dessus pour eviter les doublons et proposer un creneau LIBRE dans les 7 jours ouvres a venir, en heure de bureau (9h-18h, hors week-end). Une fois le creneau choisi, rends une carte 1-clic dans un BLOC BALISE STRICT que l'application convertira en bouton "Envoyer la proposition". Format obligatoire (ne change rien aux balises) :
+
+  \`\`\`inboria-meeting
+  to: prenom.nom@domaine.com
+  contactName: Prenom Nom
+  subject: Objet court du rendez-vous
+  startAt: 2026-05-13T10:00:00.000Z
+  endAt: 2026-05-13T10:30:00.000Z
+  location: Visio / Bureau / 12 rue de Paris
+  \`\`\`
+
+- AVANT le bloc, ecris une phrase d'introduction ("Voici une proposition de rendez-vous pour [Nom] :"). APRES le bloc, ecris : "Cliquez sur Envoyer la proposition pour transmettre le creneau. Inboria detectera automatiquement la reponse."
+- "to" et "startAt"/"endAt" sont OBLIGATOIRES, en ISO 8601 UTC. Duree par defaut 30 min sauf demande contraire de l'utilisateur. "location" est optionnel. Ne propose JAMAIS un creneau qui chevauche un RDV existant en memoire.
+- Si l'utilisateur n'a pas precise le contact ou le creneau, demande-le en UNE phrase au lieu d'emettre le bloc.
 - "to" doit TOUJOURS contenir une vraie adresse email valide presente dans la memoire (expediteur d'un mail liste, contact de l'equipe, etc.). PAS de placeholder, PAS de crochets, PAS de nom seul, PAS d'adresse inventee. Si tu n'as pas l'adresse exacte, n'emets PAS le bloc et demande-la a l'utilisateur en une phrase.
 - "subject" sur UNE seule ligne, sans crochets ni points de suspension, max 80 caracteres.
 - "body" utilise le YAML bloc litteral pipe : chaque ligne du corps est indentee de 4 espaces. Conserve les sauts de ligne entre paragraphes. Pas de balises HTML.

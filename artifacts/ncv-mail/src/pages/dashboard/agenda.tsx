@@ -976,14 +976,46 @@ export default function Agenda() {
                     >
                       {hourAppts.map((apt) => {
                         const pc = apt.projects?.color;
+                        const aptStatus = (apt as any).status as string | undefined;
+                        const isPending = aptStatus === "pending";
+                        const isCounter = aptStatus === "counter_proposed";
+                        const isDeclined = aptStatus === "declined";
                         return (
                         <div
                           key={apt.id}
                           onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                          className={`rounded px-2 py-1.5 cursor-pointer mb-1 border ${apt.confirmed === false ? "bg-primary/10 border-primary/30" : "bg-primary/15 border-primary/30 hover:bg-primary/25"}`}
-                          style={pc && apt.confirmed !== false ? { backgroundColor: `${pc}15`, borderColor: `${pc}30` } : undefined}
+                          className={`rounded px-2 py-1.5 cursor-pointer mb-1 border ${
+                            isDeclined
+                              ? "bg-zinc-800/40 border-zinc-700 opacity-60"
+                              : isCounter
+                                ? "bg-amber-500/15 border-amber-500/40 hover:bg-amber-500/25"
+                                : isPending
+                                  ? "bg-zinc-700/30 border-zinc-600 border-dashed hover:bg-zinc-700/40"
+                                  : apt.confirmed === false
+                                    ? "bg-primary/10 border-primary/30"
+                                    : "bg-primary/15 border-primary/30 hover:bg-primary/25"
+                          }`}
+                          style={pc && !isPending && !isCounter && !isDeclined && apt.confirmed !== false ? { backgroundColor: `${pc}15`, borderColor: `${pc}30` } : undefined}
+                          data-testid={`agenda-appt-${apt.id}`}
                         >
-                          <div className="text-[12px] font-medium text-white">{apt.title}</div>
+                          <div className="text-[12px] font-medium text-white flex items-center gap-1.5">
+                            <span className="truncate">{apt.title}</span>
+                            {isPending && (
+                              <span className="text-[9px] uppercase tracking-wide px-1 py-px rounded bg-zinc-600/60 text-zinc-200 shrink-0" title={t("agenda.statusPending", "En attente de réponse")}>
+                                {t("agenda.statusPendingShort", "En attente")}
+                              </span>
+                            )}
+                            {isCounter && (
+                              <span className="text-[9px] uppercase tracking-wide px-1 py-px rounded bg-amber-500/30 text-amber-200 shrink-0" title={t("agenda.statusCounter", "Contre-proposition reçue")}>
+                                {t("agenda.statusCounterShort", "Contre-prop.")}
+                              </span>
+                            )}
+                            {isDeclined && (
+                              <span className="text-[9px] uppercase tracking-wide px-1 py-px rounded bg-red-500/20 text-red-200 shrink-0" title={t("agenda.statusDeclined", "Refusé par le contact")}>
+                                {t("agenda.statusDeclinedShort", "Refusé")}
+                              </span>
+                            )}
+                          </div>
                           <div className="flex items-center gap-3 mt-0.5">
                             <span className="text-[10px] text-[#b8c5d6] flex items-center gap-1">
                               <Clock className="w-3 h-3" />
