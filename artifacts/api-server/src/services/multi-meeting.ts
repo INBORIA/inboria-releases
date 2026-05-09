@@ -207,8 +207,8 @@ export interface MultiProposeResult {
  * d'invitation distinct à chaque destinataire avec l'ICS en pièce jointe.
  */
 export async function proposeMultiMeeting(args: MultiProposeArgs): Promise<MultiProposeResult> {
-  if (!args.participants || args.participants.length < 2) {
-    return { ok: false, error: "multi requires at least 2 participants" };
+  if (!args.participants || args.participants.length < 3) {
+    return { ok: false, error: "multi requires at least 3 participants" };
   }
   const conn = await getPrimaryConnection(args.userId);
   if (!conn) return { ok: false, error: "no email connection" };
