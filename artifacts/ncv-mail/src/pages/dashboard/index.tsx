@@ -2902,6 +2902,19 @@ export default function Dashboard() {
   // pour revenir à l'ancien décor.
   const SUPERHUMAN_CLEAN = false;
   const [filterPriority, setFilterPriority] = useState<string>("all");
+  // Filtre "Affichage" indépendant du filtre Priorité — permet de masquer
+  // les emails non-importants (urgent + SLA breach + awaiting reply + flag IA)
+  // tout en gardant un sous-filtre par niveau de priorité.
+  const [filterImportance, setFilterImportance] = useState<"all" | "important">(() => {
+    if (typeof window === "undefined") return "all";
+    const saved = window.localStorage.getItem("inbox.filterImportance");
+    return saved === "important" ? "important" : "all";
+  });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      window.localStorage.setItem("inbox.filterImportance", filterImportance);
+    }
+  }, [filterImportance]);
   // Wave HubSpot/Pipedrive — filtre Réception sur les expéditeurs présents
   // dans le CRM choisi. crmFilter = null désactive le filtre.
   const [crmFilter, setCrmFilter] = useState<"hubspot" | "pipedrive" | "salesforce" | "odoo" | null>(null);
@@ -3582,9 +3595,17 @@ export default function Dashboard() {
     return c ? (c.email_address || "").toLowerCase() : null;
   })();
 
+  const isEmailImportant = (e: any): boolean => (
+    e.priority === "urgent" ||
+    slaBreachIds.has(Number(e.id)) ||
+    !!e.awaitingReply || !!e.awaiting_reply ||
+    !!e.isImportant || !!e.important ||
+    e.priority === "moyen"
+  );
   const activeEmails = emails
     ?.slice()
     .filter((e: any) => {
+      if (filterImportance === "important" && !isEmailImportant(e)) return false;
       if (assigneeFilter) {
         const meId = (profile as any)?.id;
         if (assigneeFilter === "any") {
@@ -5040,6 +5061,7 @@ export default function Dashboard() {
             {(() => {
               const activeCount =
                 (filterPriority !== "all" ? 1 : 0) +
+                (filterImportance !== "all" ? 1 : 0) +
                 (smartSort ? 1 : 0) +
                 (!smartSort && sortMode !== "priority" ? 1 : 0) +
                 (crmFilter ? 1 : 0);
@@ -5065,6 +5087,15 @@ export default function Dashboard() {
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-64 bg-card border-border">
+                    <DropdownMenuLabel className="text-[10.5px] uppercase tracking-[0.08em] text-[#8b95a7] font-semibold">
+                      {t("inbox.importanceLabel", "Affichage")}
+                    </DropdownMenuLabel>
+                    <DropdownMenuRadioGroup value={filterImportance} onValueChange={(v) => setFilterImportance(v as "all" | "important")}>
+                      <DropdownMenuRadioItem value="all" className="text-[12px]">{t("inbox.importance.all", "Tous les mails")}</DropdownMenuRadioItem>
+                      <DropdownMenuRadioItem value="important" className="text-[12px]">{t("inbox.importance.important", "Importants uniquement")}</DropdownMenuRadioItem>
+                    </DropdownMenuRadioGroup>
+
+                    <DropdownMenuSeparator />
                     <DropdownMenuLabel className="text-[10.5px] uppercase tracking-[0.08em] text-[#8b95a7] font-semibold">
                       {t("inbox.priorityLabel", "Priorité")}
                     </DropdownMenuLabel>
