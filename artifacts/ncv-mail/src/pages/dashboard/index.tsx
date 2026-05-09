@@ -5079,11 +5079,6 @@ export default function Dashboard() {
                     >
                       <SlidersHorizontal className="w-3.5 h-3.5" />
                       <span>{t("inbox.filtersLabel", "Filtres")}</span>
-                      {activeCount > 0 && (
-                        <span className="ml-0.5 inline-flex items-center justify-center min-w-[18px] h-[18px] px-1 rounded-full bg-primary text-[10px] text-white font-semibold">
-                          {activeCount}
-                        </span>
-                      )}
                     </button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="start" className="w-64 bg-card border-border">
