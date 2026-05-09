@@ -45,40 +45,73 @@ async function dedupeUserEmailsByNativeId(userId: string): Promise<number> {
   if (dedupedUsersThisProcess.has(userId)) return 0;
   dedupedUsersThisProcess.add(userId);
   try {
-    const { data: rows, error } = await supabaseAdmin
-      .from("emails")
-      .select("id, external_id, created_at")
-      .eq("user_id", userId)
-      .not("external_id", "is", null)
-      .order("created_at", { ascending: true });
-    if (error || !rows || rows.length === 0) return 0;
+    // Paginé — Supabase limite à 1000 lignes par défaut
+    const rows: any[] = [];
+    const PAGE = 1000;
+    for (let from = 0; ; from += PAGE) {
+      const { data: page, error } = await supabaseAdmin
+        .from("emails")
+        .select("id, external_id, sender, subject, created_at, shared_mailbox_id")
+        .eq("user_id", userId)
+        .order("created_at", { ascending: true })
+        .range(from, from + PAGE - 1);
+      if (error) {
+        logger.error({ userId, err: error.message }, "[dedupe] select page error");
+        return 0;
+      }
+      if (!page || page.length === 0) break;
+      rows.push(...page);
+      if (page.length < PAGE) break;
+    }
+    if (rows.length === 0) return 0;
 
-    // Group par suffixe (la portion après le dernier ":")
-    const groups = new Map<string, Array<{ id: number; created_at: string }>>();
+    const idsToDelete = new Set<number>();
+
+    // Pass 1 — Group par suffixe natif d'external_id
+    const bySuffix = new Map<string, Array<{ id: number }>>();
     for (const r of rows as any[]) {
       const ext = String(r.external_id || "");
       const idx = ext.lastIndexOf(":");
       if (idx < 0 || idx === ext.length - 1) continue;
       const suffix = ext.slice(idx + 1);
       if (!suffix || suffix.length < 4) continue;
-      const arr = groups.get(suffix) || [];
-      arr.push({ id: r.id, created_at: r.created_at });
-      groups.set(suffix, arr);
+      const arr = bySuffix.get(suffix) || [];
+      arr.push({ id: r.id });
+      bySuffix.set(suffix, arr);
     }
-
-    const idsToDelete: number[] = [];
-    for (const arr of groups.values()) {
+    for (const arr of bySuffix.values()) {
       if (arr.length < 2) continue;
-      // Garde le premier (plus ancien), supprime le reste
-      for (let i = 1; i < arr.length; i++) idsToDelete.push(arr[i].id);
+      for (let i = 1; i < arr.length; i++) idsToDelete.add(arr[i].id);
     }
 
-    if (idsToDelete.length === 0) return 0;
+    // Pass 2 — Group par (sharedMailboxId, sender, subject, créé à la même seconde)
+    // Catche les doublons issus de re-syncs où l'external_id diffère totalement.
+    const byContent = new Map<string, Array<{ id: number }>>();
+    for (const r of rows as any[]) {
+      if (idsToDelete.has(r.id)) continue;
+      const sender = String(r.sender || "").trim().toLowerCase();
+      const subject = String(r.subject || "").trim().toLowerCase();
+      const ts = r.created_at ? new Date(r.created_at).getTime() : 0;
+      if (!sender || !subject || !ts) continue;
+      // Bucket par seconde — tolère un léger décalage
+      const bucket = Math.floor(ts / 1000);
+      const sharedKey = r.shared_mailbox_id || "_";
+      const key = `${sharedKey}|${sender}|${subject}|${bucket}`;
+      const arr = byContent.get(key) || [];
+      arr.push({ id: r.id });
+      byContent.set(key, arr);
+    }
+    for (const arr of byContent.values()) {
+      if (arr.length < 2) continue;
+      for (let i = 1; i < arr.length; i++) idsToDelete.add(arr[i].id);
+    }
 
-    // Supprime par batches de 500
+    if (idsToDelete.size === 0) return 0;
+
+    const idsArr = Array.from(idsToDelete);
     let deleted = 0;
-    for (let i = 0; i < idsToDelete.length; i += 500) {
-      const batch = idsToDelete.slice(i, i + 500);
+    for (let i = 0; i < idsArr.length; i += 500) {
+      const batch = idsArr.slice(i, i + 500);
       const { error: delErr } = await supabaseAdmin.from("emails").delete().in("id", batch);
       if (delErr) {
         logger.error({ userId, err: delErr.message }, "[dedupe] delete batch error");
@@ -87,7 +120,7 @@ async function dedupeUserEmailsByNativeId(userId: string): Promise<number> {
       deleted += batch.length;
     }
     if (deleted > 0) {
-      logger.warn({ userId, deleted }, "[dedupe] removed duplicate emails by native msg id");
+      logger.warn({ userId, deleted, scanned: rows.length }, "[dedupe] removed duplicate emails");
     }
     return deleted;
   } catch (err: any) {
@@ -862,6 +895,9 @@ async function saveAttachmentsMeta(
 
 async function syncGmailForUser(conn: any): Promise<number> {
   try {
+    // Dédoublonnage one-shot par user/process — déclenché tôt pour ne pas dépendre
+    // du résultat du sync (early-return si 0 nouveau mail).
+    await dedupeUserEmailsByNativeId(conn.user_id);
     const oauth2Client = getGoogleOAuth2Client();
     oauth2Client.setCredentials({
       access_token: conn.access_token,
@@ -1087,6 +1123,7 @@ async function syncGmailForUser(conn: any): Promise<number> {
 
 async function syncOutlookForUser(conn: any): Promise<number> {
   try {
+    await dedupeUserEmailsByNativeId(conn.user_id);
     let accessToken = conn.access_token;
     const MICROSOFT_CLIENT_ID = process.env["MICROSOFT_CLIENT_ID"] || "";
     const MICROSOFT_CLIENT_SECRET = process.env["MICROSOFT_CLIENT_SECRET"] || "";
@@ -1256,6 +1293,7 @@ async function syncOutlookForUser(conn: any): Promise<number> {
 
 async function syncImapForUser(conn: any): Promise<number> {
   const log = logger.child({ service: "imap-sync", email: conn.email_address, connId: conn.id });
+  await dedupeUserEmailsByNativeId(conn.user_id);
 
   let imapConfig: { host: string; port: number } = { host: "imap.gmail.com", port: 993 };
   try {
