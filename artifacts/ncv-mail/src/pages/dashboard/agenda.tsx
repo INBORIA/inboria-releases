@@ -162,11 +162,14 @@ export default function Agenda() {
       if (apt.projectId) ids.add(String(apt.projectId));
       else hasUnassigned = true;
     }
+    for (const apt of (allAppointmentsForSuggestions as any[]) || []) {
+      if (apt.projectId) ids.add(String(apt.projectId));
+    }
     return {
       list: (projects as Project[]).filter((p) => ids.has(String(p.id))),
       hasUnassigned,
     };
-  }, [rawAppointments, projects]);
+  }, [rawAppointments, allAppointmentsForSuggestions, projects]);
 
   const toggleProjectFilter = (id: string) => {
     setProjectFilter((prev) => {
