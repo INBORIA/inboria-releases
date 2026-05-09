@@ -2,7 +2,7 @@ import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
 import { useTranslation } from "react-i18next";
 import { Link } from "wouter";
-import { User, Building2, Code2, Users, ChevronRight, ArrowLeft, ShieldCheck } from "lucide-react";
+import { User, Building2, Code2, Users, ChevronRight, ArrowLeft, ShieldCheck, Calendar as CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useGetProfile, useGetMyOrganisation } from "@workspace/api-client-react";
 
@@ -47,6 +47,15 @@ export default function Parametres() {
           },
         ]
       : []),
+    {
+      href: "/dashboard/parametres/calendriers",
+      icon: CalendarIcon,
+      titleKey: "settings.hub.calendars",
+      titleFallback: "Calendriers",
+      descKey: "settings.hub.calendarsDesc",
+      descFallback: "Connecter Google Calendar et Outlook Calendar",
+      testId: "hub-card-calendriers",
+    },
     {
       href: "/dashboard/parametres/vie-privee",
       icon: ShieldCheck,

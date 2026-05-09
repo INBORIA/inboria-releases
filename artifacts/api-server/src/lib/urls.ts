@@ -42,3 +42,7 @@ export function getEmailOAuthRedirectUri(provider: string): string {
 export function getIntegrationsOAuthRedirectUri(provider: string): string {
   return `${getBackendUrl()}/api/integrations/${provider}/callback`;
 }
+
+export function getCalendarOAuthRedirectUri(provider: string): string {
+  return `${getBackendUrl()}/api/calendar/callback/${provider}`;
+}

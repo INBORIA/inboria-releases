@@ -4830,5 +4830,25 @@
       "appointment": "Calendar",
       "team": "Team activity"
     }
+  },
+  "calendars": {
+    "title": "Connected calendars",
+    "subtitle": "Link Google Calendar or Outlook Calendar so NCV Mail can see your availability and write meetings there.",
+    "empty": "No calendar connected yet.",
+    "connectGoogle": "Connect Google Calendar",
+    "connectGoogleDesc": "Read events and write new meetings.",
+    "connectOutlook": "Connect Outlook Calendar",
+    "connectOutlookDesc": "Read events and write new meetings.",
+    "disconnect": "Disconnect",
+    "statusConnected": "Connected",
+    "statusReauth": "Reconnect needed",
+    "connectedToastTitle": "Calendar connected",
+    "connectedToastDesc": "Sync is now active.",
+    "connectFailedTitle": "Connection failed",
+    "connectFailedDesc": "Please try again.",
+    "disconnectedToast": "Calendar disconnected",
+    "disconnectFailed": "Removal failed",
+    "schemaMissing": "The calendar_accounts table is missing. Apply migration 2026_05_09_calendar_accounts.sql in Supabase.",
+    "help": "Inboria uses your calendars to check availability and create the meetings scheduled from NCV Mail."
   }
 }

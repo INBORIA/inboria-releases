@@ -39,6 +39,7 @@ import analyticsRouter from "./analytics";
 import publicApiRouter from "./public-api";
 import teamAccessLogRouter from "./team-access-log";
 import contactsRouter from "./contacts";
+import calendarRouter from "./calendar";
 
 const router: IRouter = Router();
 
@@ -82,5 +83,6 @@ router.use(analyticsRouter);
 router.use(publicApiRouter);
 router.use(teamAccessLogRouter);
 router.use(contactsRouter);
+router.use(calendarRouter);
 
 export default router;

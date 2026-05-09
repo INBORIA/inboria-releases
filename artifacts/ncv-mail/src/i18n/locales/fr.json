@@ -1213,7 +1213,9 @@
       "salesforceDesc": "Synchronisation des contacts, comptes et opportunités Salesforce.",
       "salesforceSandbox": "Connecter une org Sandbox (test.salesforce.com)",
       "privacy": "Vie privée et accès équipe",
-      "privacyDesc": "Vos emails privés et le journal des consultations admin"
+      "privacyDesc": "Vos emails privés et le journal des consultations admin",
+      "calendars": "Calendriers",
+      "calendarsDesc": "Connecter Google Calendar et Outlook Calendar"
     },
     "b2bSection": "Crédibilité B2B",
     "slaCard": "SLA boîtes partagées",
@@ -3196,5 +3198,25 @@
       "appointment": "Agenda",
       "team": "Activité équipe"
     }
+  },
+  "calendars": {
+    "title": "Calendriers connectés",
+    "subtitle": "Reliez Google Calendar ou Outlook Calendar pour que NCV Mail voie vos disponibilités et y inscrive vos rendez-vous.",
+    "empty": "Aucun calendrier connecté pour le moment.",
+    "connectGoogle": "Connecter Google Calendar",
+    "connectGoogleDesc": "Lecture des événements et écriture des nouveaux RDV.",
+    "connectOutlook": "Connecter Outlook Calendar",
+    "connectOutlookDesc": "Lecture des événements et écriture des nouveaux RDV.",
+    "disconnect": "Déconnecter",
+    "statusConnected": "Connecté",
+    "statusReauth": "À reconnecter",
+    "connectedToastTitle": "Calendrier connecté",
+    "connectedToastDesc": "La synchronisation est active.",
+    "connectFailedTitle": "Connexion échouée",
+    "connectFailedDesc": "Veuillez réessayer.",
+    "disconnectedToast": "Calendrier déconnecté",
+    "disconnectFailed": "Suppression impossible",
+    "schemaMissing": "La table calendar_accounts n'est pas encore créée dans la base. Exécutez la migration 2026_05_09_calendar_accounts.sql dans Supabase.",
+    "help": "Inboria utilise vos calendriers pour vérifier vos disponibilités et y créer les rendez-vous fixés depuis NCV Mail."
   }
 }
