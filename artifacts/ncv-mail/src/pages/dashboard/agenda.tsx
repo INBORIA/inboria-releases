@@ -586,7 +586,7 @@ export default function Agenda() {
 
         {suggestions.length > 0 && (
           <div className="bg-card border border-border rounded-lg p-3 mb-4">
-            <div className="flex items-center justify-between mb-2 gap-2">
+            <div className="flex items-center justify-between mb-2 gap-2 min-h-7">
               <h3 className="text-[12px] font-semibold text-primary flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 {t("agenda.suggestionsDetected", { count: suggestions.length })}
