@@ -5223,74 +5223,32 @@ export default function Dashboard() {
               {categoriesCollapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
             </button>
 
-            {/* Pastilles permanentes — segmentées pour Affichage et Priorité.
-                Visibles en continu pour que l'utilisateur sache toujours
-                ce qui filtre la liste, même en valeur par défaut. */}
-            <div className="inline-flex items-center h-7 rounded-md border border-[#1f2630] overflow-hidden">
-              {([
-                ["all", t("inbox.importance.all", "Tous")],
-                ["important", t("inbox.importance.important", "Importants")],
-              ] as const).map(([value, label]) => (
-                <button
-                  key={value}
-                  onClick={() => setFilterImportance(value as "all" | "important")}
-                  className={`px-2 h-full text-[11px] font-medium transition-colors ${
-                    filterImportance === value
-                      ? "bg-primary/15 text-primary"
-                      : "text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            <div className="inline-flex items-center h-7 rounded-md border border-[#1f2630] overflow-hidden">
-              {([
-                ["all", t("inbox.priorities.all", "Toutes")],
-                ["urgent", t("inbox.priorities.urgent")],
-                ["moyen", t("inbox.priorities.medium")],
-                ["faible", t("inbox.priorities.low")],
-              ] as const).map(([value, label]) => (
-                <button
-                  key={value}
-                  onClick={() => setFilterPriority(value)}
-                  className={`px-2 h-full text-[11px] font-medium transition-colors ${
-                    filterPriority === value
-                      ? "bg-primary/15 text-primary"
-                      : "text-[#b8c5d6] hover:text-white hover:bg-white/[0.04]"
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
-
-            {/* Toggle Tri Inboria toujours visible — cliquable pour activer/désactiver.
-                Si désactivé, le sortMode reste actif (date_desc par défaut). */}
-            <button
-              onClick={() => setSmartSort((v) => !v)}
-              className={`inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md font-medium border transition-colors ${
-                smartSort
-                  ? "bg-primary/15 text-primary border-primary/20"
-                  : "text-[#b8c5d6] border-[#1f2630] hover:text-white hover:border-[#b8c5d6]/30"
-              }`}
-              title={smartSort
-                ? t("inboriaSort.disable", { defaultValue: "Désactiver le tri Inboria" })
-                : t("inboriaSort.enable", { defaultValue: "Activer le tri Inboria" })}
-            >
-              <Sparkles className="w-3 h-3" />
-              {t("inboriaSort.smartLabel", "Tri Inboria")}
-            </button>
-            {!smartSort && sortMode !== "priority" && (
-              <button
-                onClick={() => setSortMode("priority")}
-                className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20"
-              >
-                {sortMode === "date_desc" ? <ArrowDown className="w-3 h-3" /> : <ArrowUp className="w-3 h-3" />}
-                {sortMode === "date_desc" ? t("inbox.sortByDateDesc", "Date ↓") : t("inbox.sortByDateAsc", "Date ↑")}
-                <X className="w-3 h-3" />
-              </button>
+            {/* Pastilles informatives — affichent ce qui est sélectionné dans
+                le menu Filtres (Affichage, Priorité, Tri Inboria, Tri date).
+                Toujours visibles, même en valeur par défaut. */}
+            <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
+              {filterImportance === "important"
+                ? t("inbox.importance.important", "Importants")
+                : t("inbox.importance.all", "Tous")}
+            </span>
+            <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
+              {filterPriority === "urgent" ? t("inbox.priorities.urgent")
+                : filterPriority === "moyen" ? t("inbox.priorities.medium")
+                : filterPriority === "faible" ? t("inbox.priorities.low")
+                : t("inbox.priorities.all", "Toutes")}
+            </span>
+            {smartSort ? (
+              <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
+                <Sparkles className="w-3 h-3" />
+                {t("inboriaSort.smartLabel", "Tri Inboria")}
+              </span>
+            ) : (
+              <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
+                {sortMode === "date_asc" ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
+                {sortMode === "date_asc" ? t("inbox.sortByDateAsc", "Date ↑")
+                  : sortMode === "priority" ? t("inbox.sortPriority", "Priorité")
+                  : t("inbox.sortByDateDesc", "Date ↓")}
+              </span>
             )}
             {crmFilter && (
               <button
