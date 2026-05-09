@@ -207,7 +207,7 @@ export default function Agenda() {
   const projectsWithAppointments = useMemo(() => {
     const ids = new Set<string>();
     let hasUnassigned = false;
-    for (const apt of rawAppointments as any[]) {
+    for (const apt of rawAppointments as Appointment[]) {
       if (apt.projectId) ids.add(String(apt.projectId));
       else hasUnassigned = true;
     }
@@ -272,7 +272,7 @@ export default function Agenda() {
     setFormProjectId(apt.projectId ? String(apt.projectId) : "");
     setFormReminder(String(apt.reminderMinutes ?? 30));
     setFormParticipants(apt.participants || "");
-    setFormCalendarAccountId((apt as any).calendarAccountId || "");
+    setFormCalendarAccountId((apt as Appointment).calendarAccountId || "");
     setShowForm(true);
     setSelectedAppointment(null);
   };
@@ -523,7 +523,7 @@ export default function Agenda() {
   // External (Google/Outlook) events not already linked to a local appointment.
   const linkedExternalIds = useMemo(() => {
     const s = new Set<string>();
-    for (const a of rawAppointments as any[]) {
+    for (const a of rawAppointments as Appointment[]) {
       if (a.externalId) s.add(`${a.externalProvider}:${a.externalId}`);
     }
     return s;
@@ -555,7 +555,7 @@ export default function Agenda() {
     const id = draggedApptId || e.dataTransfer.getData("text/plain");
     setDraggedApptId(null);
     if (!id) return;
-    const apt = (rawAppointments as any[]).find((a) => a.id === id);
+    const apt = (rawAppointments as Appointment[]).find((a) => a.id === id);
     if (!apt) return;
     const oldStart = parseISO(apt.startAt);
     if (isSameDay(oldStart, day)) return;
@@ -1230,7 +1230,7 @@ export default function Agenda() {
                     value={formCalendarAccountId}
                     onChange={(e) => setFormCalendarAccountId(e.target.value)}
                     className="w-full h-8 rounded-md border border-border bg-background px-2 text-[12px] text-white"
-                    disabled={!!editingId && !!(rawAppointments as any[]).find((a) => a.id === editingId)?.externalId}
+                    disabled={!!editingId && !!(rawAppointments as Appointment[]).find((a) => a.id === editingId)?.externalId}
                   >
                     <option value="">{t("agenda.localOnly", "Inboria uniquement (pas de sync)")}</option>
                     {calendarAccounts.map((acc) => (

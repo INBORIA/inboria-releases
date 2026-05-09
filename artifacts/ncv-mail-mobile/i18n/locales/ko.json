@@ -69,9 +69,9 @@
     "dayFri": "금",
     "daySat": "토",
     "daySun": "일",
-    "destinationCalendar": "Calendrier de destination",
-    "localOnly": "Inboria uniquement",
-    "syncedBadge": "Synchronisé"
+    "destinationCalendar": "Destination calendar",
+    "localOnly": "Inboria only",
+    "syncedBadge": "Synced"
   },
   "inbox": {
     "urgent": "긴급",

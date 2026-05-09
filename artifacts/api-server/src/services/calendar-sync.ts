@@ -160,8 +160,14 @@ async function deleteGoogle(account: CalendarAccountRow, externalId: string): Pr
 // Outlook (Microsoft Graph) push / patch / delete
 // ---------------------------------------------------------------------------
 
+interface OutlookTimes {
+  start: { dateTime: string; timeZone: string };
+  end: { dateTime: string; timeZone: string };
+  isAllDay?: boolean;
+}
+
 function outlookBody(payload: AppointmentPushPayload) {
-  const times = eventTimes(payload, "outlook") as any;
+  const times = eventTimes(payload, "outlook") as OutlookTimes;
   return {
     subject: payload.title,
     body: payload.description ? { contentType: "Text", content: payload.description } : undefined,
@@ -193,7 +199,7 @@ async function pushOutlook(
       logger.warn({ accountId: account.id, status: resp.status, body: txt.slice(0, 200) }, "[calendar-sync] outlook insert failed");
       return null;
     }
-    const data = (await resp.json()) as any;
+    const data = (await resp.json()) as { id?: string; calendar?: { id?: string } };
     if (!data.id) return null;
     return { externalId: data.id, calendarId: data.calendar?.id || "primary" };
   } catch (err: any) {
@@ -388,7 +394,21 @@ async function pullOutlookEvents(
         logger.warn({ accountId: account.id, status: resp.status }, "[calendar-sync] outlook list failed");
         return null;
       }
-      const data = (await resp.json()) as any;
+      interface OutlookEvent {
+        id?: string;
+        subject?: string;
+        bodyPreview?: string;
+        location?: { displayName?: string };
+        start?: { dateTime?: string };
+        end?: { dateTime?: string };
+        isAllDay?: boolean;
+        isCancelled?: boolean;
+      }
+      interface OutlookListResponse {
+        value?: OutlookEvent[];
+        "@odata.nextLink"?: string;
+      }
+      const data = (await resp.json()) as OutlookListResponse;
       for (const ev of data.value || []) {
         if (!ev.id || !ev.start?.dateTime || !ev.end?.dateTime) continue;
         out.push({

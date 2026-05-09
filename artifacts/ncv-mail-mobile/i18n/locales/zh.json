@@ -69,9 +69,9 @@
     "dayFri": "五",
     "daySat": "六",
     "daySun": "日",
-    "destinationCalendar": "Calendrier de destination",
-    "localOnly": "Inboria uniquement",
-    "syncedBadge": "Synchronisé"
+    "destinationCalendar": "Destination calendar",
+    "localOnly": "Inboria only",
+    "syncedBadge": "Synced"
   },
   "inbox": {
     "urgent": "紧急",

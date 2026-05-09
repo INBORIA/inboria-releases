@@ -27,6 +27,7 @@ import { useTranslation } from "react-i18next";
 import { format, parseISO, startOfMonth, endOfMonth, addMonths, subMonths, addDays, isToday, isSameDay, type Locale } from "date-fns";
 import { fr, enUS, nl, de, es } from "date-fns/locale";
 import type { Appointment } from "@workspace/api-client-react";
+import { useAuth } from "@/contexts/AuthContext";
 
 const dateLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es };
 
@@ -55,20 +56,27 @@ export default function AgendaScreen() {
   const [viewMode, setViewMode] = useState<ViewMode>("calendar");
 
   type CalAccount = { id: string; provider: "google" | "outlook"; email_address: string; status: string };
+  type CalAccountsResponse = { accounts?: CalAccount[] };
+  const { session } = useAuth();
   const [calendarAccounts, setCalendarAccounts] = useState<CalAccount[]>([]);
   useEffect(() => {
+    if (!session?.access_token) return;
     let aborted = false;
-    fetch("/api/calendar/accounts", { credentials: "include" })
-      .then((r) => (r.ok ? r.json() : { accounts: [] }))
+    const domain = process.env.EXPO_PUBLIC_DOMAIN;
+    const baseUrl = domain ? `https://${domain}` : "";
+    fetch(`${baseUrl}/api/calendar/accounts`, {
+      headers: { Authorization: `Bearer ${session.access_token}` },
+    })
+      .then((r) => (r.ok ? (r.json() as Promise<CalAccountsResponse>) : { accounts: [] as CalAccount[] }))
       .then((data) => {
         if (aborted) return;
-        const list = (data.accounts || []).filter((a: CalAccount) => a.status === "connected");
+        const list = (data.accounts || []).filter((a) => a.status === "connected");
         setCalendarAccounts(list);
-        if (list.length > 0) setFormCalendarAccountId(list[0].id);
+        if (list.length > 0 && list[0]) setFormCalendarAccountId(list[0].id);
       })
       .catch(() => {});
     return () => { aborted = true; };
-  }, []);
+  }, [session?.access_token]);
 
   const rangeStart = startOfMonth(currentDate);
   const rangeEnd = endOfMonth(currentDate);
