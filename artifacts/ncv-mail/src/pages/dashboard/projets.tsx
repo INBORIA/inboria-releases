@@ -539,10 +539,10 @@ function ProjectDetailView({
                       <button
                         type="button"
                         onClick={(e) => { e.stopPropagation(); toggleEmailSelected(email.id); }}
-                        className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 cursor-pointer transition-colors ${isSelected ? "border-primary" : "border-[#2a3441] hover:border-primary"}`}
+                        className={`w-5 h-5 rounded-md border-2 flex items-center justify-center shrink-0 cursor-pointer transition-colors ${isSelected ? "border-primary bg-primary/10" : "border-[#94a3b8] hover:border-primary bg-white/80"}`}
                         aria-label={t("common.select", "Sélectionner")}
                       >
-                        {isSelected && <Check className="w-3 h-3 text-primary" />}
+                        {isSelected && <Check className="w-3.5 h-3.5 text-primary stroke-[3]" />}
                       </button>
                       <div className="flex-1 min-w-0">
                         <p className="text-[12px] text-white truncate">{email.subject}</p>
