@@ -79,7 +79,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import { format } from "date-fns";
@@ -252,6 +252,95 @@ function ProjectDetailView({
       return next;
     });
   };
+  // Drag-select rubber band (pattern Relances)
+  const isDraggingRef = useRef(false);
+  const didDragRef = useRef(false);
+  const dragStartIdRef = useRef<string | null>(null);
+  const preSelectRef = useRef<Set<string>>(new Set());
+  const autoScrollRaf = useRef<number>(0);
+  const lastMouseYRef = useRef(0);
+  const getRowIdFromPoint = useCallback((y: number, x: number): string | null => {
+    const el = document.elementFromPoint(x, y);
+    if (!el) return null;
+    const row = (el as HTMLElement).closest?.("[data-project-email-row]");
+    if (!row) return null;
+    return row.getAttribute("data-row-id");
+  }, []);
+  const selectRange = useCallback((currentId: string) => {
+    const rows = Array.from(document.querySelectorAll("[data-project-email-row][data-row-id]"));
+    const ids = rows.map((r) => r.getAttribute("data-row-id")!);
+    const startIdx = ids.indexOf(dragStartIdRef.current!);
+    const endIdx = ids.indexOf(currentId);
+    if (startIdx === -1 || endIdx === -1) return;
+    const keep = new Set(preSelectRef.current);
+    if (startIdx !== endIdx) {
+      const lo = Math.min(startIdx, endIdx);
+      const hi = Math.max(startIdx, endIdx);
+      for (let i = lo; i <= hi; i++) keep.add(ids[i]);
+    }
+    setSelectedEmailIds(keep);
+  }, []);
+  useEffect(() => {
+    const threshold = 60;
+    const speed = 14;
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      lastMouseYRef.current = e.clientY;
+      if (!didDragRef.current) didDragRef.current = true;
+      const hoverId = getRowIdFromPoint(e.clientY, e.clientX);
+      if (hoverId !== null) selectRange(hoverId);
+      cancelAnimationFrame(autoScrollRaf.current);
+      const scroll = () => {
+        if (!isDraggingRef.current) return;
+        const y = lastMouseYRef.current;
+        if (y > window.innerHeight - threshold) {
+          window.scrollBy(0, speed);
+          const id = getRowIdFromPoint(y, window.innerWidth / 2);
+          if (id !== null) selectRange(id);
+          autoScrollRaf.current = requestAnimationFrame(scroll);
+        } else if (y < threshold) {
+          window.scrollBy(0, -speed);
+          const id = getRowIdFromPoint(y, window.innerWidth / 2);
+          if (id !== null) selectRange(id);
+          autoScrollRaf.current = requestAnimationFrame(scroll);
+        }
+      };
+      scroll();
+    };
+    document.addEventListener("mousemove", handleMouseMove);
+    return () => { document.removeEventListener("mousemove", handleMouseMove); cancelAnimationFrame(autoScrollRaf.current); };
+  }, [getRowIdFromPoint, selectRange]);
+  const handleDragSelectStart = useCallback((id: string) => {
+    isDraggingRef.current = true;
+    didDragRef.current = false;
+    dragStartIdRef.current = id;
+    setSelectedEmailIds((prev) => { preSelectRef.current = new Set(prev); return prev; });
+    const handleMouseUp = () => {
+      isDraggingRef.current = false;
+      cancelAnimationFrame(autoScrollRaf.current);
+      document.removeEventListener("mouseup", handleMouseUp);
+    };
+    document.addEventListener("mouseup", handleMouseUp);
+  }, []);
+  // Échap = vider sélection
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setSelectedEmailIds(new Set());
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, []);
+  // Clic extérieur = vider sélection
+  useEffect(() => {
+    if (selectedEmailIds.size === 0) return;
+    const handler = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-project-email-row]") || target.closest("[data-context-menu]")) return;
+      setSelectedEmailIds(new Set());
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [selectedEmailIds.size]);
   const [emailContextMenu, setEmailContextMenu] = useState<{ x: number; y: number; emailId: number; subject: string } | null>(null);
   const emailCtxRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -524,28 +613,45 @@ function ProjectDetailView({
             <div className="space-y-1">
               {project.emails.map((email: any) => {
                 const emailIdNum = Number(email.id);
-                const isSelected = selectedEmailIds.has(String(email.id));
+                const emailIdStr = String(email.id);
+                const isSelected = selectedEmailIds.has(emailIdStr);
                 return (
                   <div
                     key={email.id}
+                    data-project-email-row
+                    data-row-id={emailIdStr}
                     onClick={() => {
+                      if (didDragRef.current) return;
                       if (selectionMode) toggleEmailSelected(email.id);
                       else setSelectedEmailId(emailIdNum);
                     }}
+                    onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); handleDragSelectStart(emailIdStr); } }}
                     onContextMenu={(e) => {
                       e.preventDefault();
+                      if (selectedEmailIds.size === 0) {
+                        setSelectedEmailIds(new Set([emailIdStr]));
+                      } else if (!selectedEmailIds.has(emailIdStr)) {
+                        setSelectedEmailIds((prev) => new Set(prev).add(emailIdStr));
+                      }
                       setEmailContextMenu({ x: e.clientX, y: e.clientY, emailId: emailIdNum, subject: email.subject || "" });
                     }}
-                    className={`group flex items-center gap-2.5 px-3 py-2 bg-card border rounded-lg w-full text-left transition-colors cursor-pointer ${isSelected ? "border-primary/60 bg-primary/5" : "border-border hover:bg-card/80 hover:border-primary/40"}`}
+                    className={`group flex items-center gap-2.5 px-3 py-2 bg-card border rounded-lg w-full text-left transition-colors cursor-pointer select-none ${isSelected ? "border-primary/60 bg-primary/5" : "border-border hover:bg-card/80 hover:border-primary/40"}`}
                   >
-                    <button
-                      type="button"
-                      onClick={(e) => { e.stopPropagation(); toggleEmailSelected(email.id); }}
-                      className={`w-4 h-4 rounded border flex items-center justify-center shrink-0 cursor-pointer transition-colors ${isSelected ? "border-primary" : "border-[#2a3441] hover:border-primary"}`}
-                      aria-label={t("common.select", "Sélectionner")}
-                    >
-                      {isSelected && <Check className="w-3 h-3 text-primary" />}
-                    </button>
+                    <div className="w-4 flex items-center justify-center shrink-0">
+                      {(selectionMode || isSelected) ? (
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); toggleEmailSelected(email.id); }}
+                          onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); handleDragSelectStart(emailIdStr); }}
+                          className={`w-4 h-4 rounded border flex items-center justify-center cursor-pointer transition-colors ${isSelected ? "border-primary" : "border-[#2a3441] hover:border-primary"}`}
+                          aria-label={t("common.select", "Sélectionner")}
+                        >
+                          {isSelected && <Check className="w-3 h-3 text-primary" />}
+                        </button>
+                      ) : (
+                        <span className="w-3 h-3" />
+                      )}
+                    </div>
                     <div className="flex-1 min-w-0">
                       <p className="text-[12px] text-white truncate">{email.subject}</p>
                       <p className="text-[10px] text-[#b8c5d6]">{email.sender}</p>
