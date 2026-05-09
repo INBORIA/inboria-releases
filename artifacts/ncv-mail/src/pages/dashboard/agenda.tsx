@@ -306,6 +306,34 @@ export default function Agenda() {
   const [selectedSuggestionIds, setSelectedSuggestionIds] = useState<Set<string>>(new Set());
   const [lastClickedIdx, setLastClickedIdx] = useState<number | null>(null);
   const [bulkBusy, setBulkBusy] = useState(false);
+  const [dragState, setDragState] = useState<{ startIdx: number; mode: "add" | "remove" } | null>(null);
+
+  useEffect(() => {
+    if (!dragState) return;
+    const onUp = () => setDragState(null);
+    window.addEventListener("mouseup", onUp);
+    window.addEventListener("pointerup", onUp);
+    return () => {
+      window.removeEventListener("mouseup", onUp);
+      window.removeEventListener("pointerup", onUp);
+    };
+  }, [dragState]);
+
+  const applyDragRange = (toIdx: number) => {
+    if (!dragState) return;
+    const { startIdx, mode } = dragState;
+    const [a, b] = startIdx < toIdx ? [startIdx, toIdx] : [toIdx, startIdx];
+    setSelectedSuggestionIds((prev) => {
+      const next = new Set(prev);
+      for (let i = a; i <= b; i++) {
+        const sid = suggestions[i]?.id;
+        if (!sid) continue;
+        if (mode === "add") next.add(sid);
+        else next.delete(sid);
+      }
+      return next;
+    });
+  };
 
   const suggestions = useMemo(() => {
     return (allAppointmentsForSuggestions as any[]).filter((apt) => apt.confirmed === false);
@@ -606,15 +634,32 @@ export default function Agenda() {
                   <ContextMenu key={apt.id}>
                     <ContextMenuTrigger asChild>
                       <div
-                        className={`flex items-center justify-between gap-2 rounded px-3 py-2 transition-colors ${
+                        className={`flex items-center justify-between gap-2 rounded px-3 py-2 transition-colors select-none ${
                           isSelected ? "bg-primary/10 border border-primary/30" : "border border-transparent hover:bg-white/[0.02]"
                         }`}
                         data-testid={`suggestion-row-${apt.id}`}
+                        onPointerDown={(e) => {
+                          if (e.button !== 0) return;
+                          if ((e.target as HTMLElement).closest("button,a")) return;
+                          if (e.shiftKey) {
+                            toggleSuggestion(apt.id, idx, e as any);
+                            return;
+                          }
+                          const mode: "add" | "remove" = isSelected ? "remove" : "add";
+                          setDragState({ startIdx: idx, mode });
+                          setSelectedSuggestionIds((prev) => {
+                            const next = new Set(prev);
+                            if (mode === "add") next.add(apt.id);
+                            else next.delete(apt.id);
+                            return next;
+                          });
+                          setLastClickedIdx(idx);
+                        }}
+                        onPointerEnter={() => {
+                          if (dragState) applyDragRange(idx);
+                        }}
                       >
-                        <div
-                          className="shrink-0 flex items-center"
-                          onClick={(e) => { e.stopPropagation(); toggleSuggestion(apt.id, idx, e); }}
-                        >
+                        <div className="shrink-0 flex items-center pointer-events-none">
                           <Checkbox
                             checked={isSelected}
                             tabIndex={-1}
@@ -622,10 +667,7 @@ export default function Agenda() {
                             className="pointer-events-none"
                           />
                         </div>
-                        <div
-                          className="flex-1 min-w-0 cursor-pointer"
-                          onClick={(e) => toggleSuggestion(apt.id, idx, e)}
-                        >
+                        <div className="flex-1 min-w-0">
                           <span className="text-[12px] font-medium text-white truncate block">{apt.title}</span>
                           <span className="text-[10px] text-[#b8c5d6]">
                             {format(parseISO(apt.startAt), "dd/MM/yyyy HH:mm", { locale })}
