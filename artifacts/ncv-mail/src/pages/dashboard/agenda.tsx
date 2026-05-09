@@ -306,7 +306,7 @@ export default function Agenda() {
   const [selectedSuggestionIds, setSelectedSuggestionIds] = useState<Set<string>>(new Set());
   const [lastClickedIdx, setLastClickedIdx] = useState<number | null>(null);
   const [bulkBusy, setBulkBusy] = useState(false);
-  const [dragState, setDragState] = useState<{ startIdx: number; mode: "add" | "remove" } | null>(null);
+  const [dragState, setDragState] = useState<{ startIdx: number; mode: "add" | "remove"; base: Set<string> } | null>(null);
 
   useEffect(() => {
     if (!dragState) return;
@@ -321,18 +321,16 @@ export default function Agenda() {
 
   const applyDragRange = (toIdx: number) => {
     if (!dragState) return;
-    const { startIdx, mode } = dragState;
+    const { startIdx, mode, base } = dragState;
     const [a, b] = startIdx < toIdx ? [startIdx, toIdx] : [toIdx, startIdx];
-    setSelectedSuggestionIds((prev) => {
-      const next = new Set(prev);
-      for (let i = a; i <= b; i++) {
-        const sid = suggestions[i]?.id;
-        if (!sid) continue;
-        if (mode === "add") next.add(sid);
-        else next.delete(sid);
-      }
-      return next;
-    });
+    const next = new Set(base);
+    for (let i = a; i <= b; i++) {
+      const sid = suggestions[i]?.id;
+      if (!sid) continue;
+      if (mode === "add") next.add(sid);
+      else next.delete(sid);
+    }
+    setSelectedSuggestionIds(next);
   };
 
   const suggestions = useMemo(() => {
@@ -648,13 +646,12 @@ export default function Agenda() {
                             return;
                           }
                           const mode: "add" | "remove" = isSelected ? "remove" : "add";
-                          setDragState({ startIdx: idx, mode });
-                          setSelectedSuggestionIds((prev) => {
-                            const next = new Set(prev);
-                            if (mode === "add") next.add(apt.id);
-                            else next.delete(apt.id);
-                            return next;
-                          });
+                          const base = new Set(selectedSuggestionIds);
+                          setDragState({ startIdx: idx, mode, base });
+                          const next = new Set(base);
+                          if (mode === "add") next.add(apt.id);
+                          else next.delete(apt.id);
+                          setSelectedSuggestionIds(next);
                           setLastClickedIdx(idx);
                         }}
                         onPointerEnter={(e) => {
