@@ -2971,11 +2971,10 @@ export default function Dashboard() {
       setActiveCrmDetailPanel(connected[0]!);
     }
   }, [hasHubspot, hasPipedrive, hasSalesforce, hasOdoo, activeCrmDetailPanel]);
-  const [sortMode, setSortMode] = useState<"priority" | "date_desc" | "date_asc">(() => {
-    if (typeof window === "undefined") return "date_desc";
-    const saved = window.localStorage.getItem("inbox.sortMode");
-    return saved === "date_desc" || saved === "date_asc" || saved === "priority" ? saved : "date_desc";
-  });
+  // Réception = boîte chronologique pure (date desc, comme Gmail/Outlook).
+  // Le génie d'Inboria s'exprime dans Tâches/Relances/Agenda + pastilles
+  // de priorité, pas en re-triant la boîte de réception.
+  const [sortMode, setSortMode] = useState<"priority" | "date_desc" | "date_asc">("date_desc");
   useEffect(() => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem("inbox.sortMode", sortMode);
@@ -2984,11 +2983,10 @@ export default function Dashboard() {
   // Inboria Phase 3 — Smart sort. When enabled, the server orders the page
   // by Inboria strategic score (deadline, awaiting reply, escalation…)
   // and we skip the client-side sort to preserve that order.
-  const [smartSort, setSmartSort] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    const saved = window.localStorage.getItem("inbox.smartSort");
-    return saved === null ? false : saved === "1";
-  });
+  // Tri Inboria retiré de Réception : la boîte reste chronologique pure.
+  // Les signaux Inboria alimentent Tâches/Relances/Agenda et la pastille
+  // de priorité visible sur chaque mail — sans réordonner la liste.
+  const [smartSort, setSmartSort] = useState<boolean>(false);
   useEffect(() => {
     if (typeof window !== "undefined") {
       window.localStorage.setItem("inbox.smartSort", smartSort ? "1" : "0");
@@ -5062,8 +5060,6 @@ export default function Dashboard() {
               const activeCount =
                 (filterPriority !== "all" ? 1 : 0) +
                 (filterImportance !== "all" ? 1 : 0) +
-                (smartSort ? 1 : 0) +
-                (!smartSort && sortMode !== "priority" ? 1 : 0) +
                 (crmFilter ? 1 : 0);
               return (
                 <DropdownMenu>
@@ -5099,32 +5095,6 @@ export default function Dashboard() {
                       <DropdownMenuRadioItem value="urgent" className="text-[12px]">{t("inbox.priorities.urgent")}</DropdownMenuRadioItem>
                       <DropdownMenuRadioItem value="moyen" className="text-[12px]">{t("inbox.priorities.medium")}</DropdownMenuRadioItem>
                       <DropdownMenuRadioItem value="faible" className="text-[12px]">{t("inbox.priorities.low")}</DropdownMenuRadioItem>
-                    </DropdownMenuRadioGroup>
-
-                    <DropdownMenuSeparator />
-                    <DropdownMenuLabel className="text-[10.5px] uppercase tracking-[0.08em] text-[#8b95a7] font-semibold">
-                      {t("inbox.sortLabel", "Tri")}
-                    </DropdownMenuLabel>
-                    <DropdownMenuCheckboxItem
-                      checked={smartSort}
-                      onCheckedChange={(v) => setSmartSort(!!v)}
-                      onSelect={(e) => e.preventDefault()}
-                      className="text-[12px]"
-                      data-testid="menu-inboria-smart-sort"
-                    >
-                      <Sparkles className="w-3 h-3 mr-1.5 text-primary" />
-                      {t("inboriaSort.smartLabel", "Tri Inboria (intelligent)")}
-                    </DropdownMenuCheckboxItem>
-                    <DropdownMenuRadioGroup
-                      value={sortMode}
-                      onValueChange={(v) => setSortMode(v as "priority" | "date_desc" | "date_asc")}
-                    >
-                      <DropdownMenuRadioItem value="priority" disabled={smartSort} onSelect={(e) => e.preventDefault()} className="text-[12px]">
-                        {t("inbox.sortPriority", "Priorité")}
-                      </DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="date_desc" disabled={smartSort} onSelect={(e) => e.preventDefault()} className="text-[12px]">
-                        {t("inbox.sortByDateDesc", "Date (récent → ancien)")}
-                      </DropdownMenuRadioItem>
                     </DropdownMenuRadioGroup>
 
                     {(hasHubspot || hasPipedrive || hasSalesforce || hasOdoo) && (
@@ -5180,8 +5150,7 @@ export default function Dashboard() {
                         <DropdownMenuItem
                           onSelect={() => {
                             setFilterPriority("all");
-                            setSmartSort(false);
-                            setSortMode("priority");
+                            setFilterImportance("all");
                             setCrmFilter(null);
                           }}
                           className="text-[12px] text-[#b8c5d6]"
@@ -5198,8 +5167,7 @@ export default function Dashboard() {
             })()}
 
             {/* Pastilles informatives — affichent ce qui est sélectionné dans
-                le menu Filtres (Affichage, Priorité, Tri Inboria, Tri date).
-                Toujours visibles, même en valeur par défaut. */}
+                le menu Filtres (Affichage, Priorité). Toujours visibles. */}
             <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
               {filterImportance === "important"
                 ? t("inbox.importance.important", "Importants")
@@ -5211,19 +5179,6 @@ export default function Dashboard() {
                 : filterPriority === "faible" ? t("inbox.priorities.low")
                 : t("inbox.priorities.all", "Toutes")}
             </span>
-            {smartSort ? (
-              <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
-                <Sparkles className="w-3 h-3" />
-                {t("inboriaSort.smartLabel", "Tri Inboria")}
-              </span>
-            ) : (
-              <span className="inline-flex items-center gap-1 h-7 px-2 text-[11px] rounded-md bg-primary/15 text-primary border border-primary/20">
-                {sortMode === "date_asc" ? <ArrowUp className="w-3 h-3" /> : <ArrowDown className="w-3 h-3" />}
-                {sortMode === "date_asc" ? t("inbox.sortByDateAsc", "Date ↑")
-                  : sortMode === "priority" ? t("inbox.sortPriority", "Priorité")
-                  : t("inbox.sortByDateDesc", "Date ↓")}
-              </span>
-            )}
 
             {/* Étape 5 — bouton Catégories : déplacé à droite des pastilles
                 de filtres choisis pour regrouper toutes les commandes d'affichage. */}
