@@ -20,6 +20,9 @@ import {
   useGetMyOrganisation,
   useGetOrganisationMembers,
   useGetProfile,
+  useUpdateEmail,
+  useDeleteEmail,
+  getListEmailsQueryKey,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
@@ -67,6 +70,8 @@ import {
   Send,
   Download,
   Sparkles,
+  FolderMinus,
+  Eye,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -74,7 +79,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import { format } from "date-fns";
@@ -235,6 +240,49 @@ function ProjectDetailView({
   const createTaskMut = useCreateTask();
   const updateTaskMut = useUpdateTask();
   const deleteTaskMut = useDeleteTask();
+  const updateEmailMut = useUpdateEmail();
+  const deleteEmailMut = useDeleteEmail();
+  const [emailContextMenu, setEmailContextMenu] = useState<{ x: number; y: number; emailId: number; subject: string } | null>(null);
+  const emailCtxRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!emailContextMenu) return;
+    const onDown = (e: MouseEvent) => {
+      if (emailCtxRef.current && !emailCtxRef.current.contains(e.target as Node)) setEmailContextMenu(null);
+    };
+    const onEsc = (e: KeyboardEvent) => { if (e.key === "Escape") setEmailContextMenu(null); };
+    document.addEventListener("mousedown", onDown);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDown);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, [emailContextMenu]);
+  const handleDetachEmail = (id: number) => {
+    updateEmailMut.mutate(
+      { id, data: { projectId: null } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          toast({ title: t("projects.emailDetached", "Email retiré du projet") });
+        },
+        onError: (e: any) => toast({ variant: "destructive", title: t("common.error"), description: e?.message }),
+      }
+    );
+  };
+  const handleDeleteEmail = (id: number) => {
+    deleteEmailMut.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProjectQueryKey(projectId) });
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          toast({ title: t("inbox.emailDeleted", "Email supprimé") });
+        },
+        onError: (e: any) => toast({ variant: "destructive", title: t("common.error"), description: e?.message }),
+      }
+    );
+  };
   const { data: myOrg } = useGetMyOrganisation();
   const { data: orgMembers } = useGetOrganisationMembers({ query: { enabled: !!(myOrg as any)?.id } as any });
   const { data: profile } = useGetProfile();
@@ -470,6 +518,10 @@ function ProjectDetailView({
                     key={email.id}
                     type="button"
                     onClick={() => setSelectedEmailId(email.id)}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      setEmailContextMenu({ x: e.clientX, y: e.clientY, emailId: email.id, subject: email.subject || "" });
+                    }}
                     className="flex items-stretch bg-card border border-border rounded-lg overflow-hidden w-full text-left hover:bg-card/80 hover:border-primary/40 transition-colors cursor-pointer"
                   >
                     <div className="flex items-center gap-2.5 flex-1 min-w-0 px-3 py-2">
@@ -607,6 +659,55 @@ function ProjectDetailView({
             </div>
           )}
       </div>
+      {emailContextMenu && (
+        <div
+          ref={emailCtxRef}
+          className="fixed z-[9999] min-w-[220px] rounded-lg border border-[#2a3441] bg-[#0f141b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
+          style={{
+            top: Math.min(emailContextMenu.y, window.innerHeight - 200),
+            left: Math.min(emailContextMenu.x, window.innerWidth - 240),
+          }}
+        >
+          <div className="px-3 py-2 border-b border-[#1f2937]">
+            <span className="text-[10px] text-[#6b7280] uppercase tracking-wider font-medium">
+              {emailContextMenu.subject.substring(0, 30)}{emailContextMenu.subject.length > 30 ? "…" : ""}
+            </span>
+          </div>
+          <div className="py-1">
+            <button
+              onClick={() => {
+                setSelectedEmailId(emailContextMenu.emailId);
+                setEmailContextMenu(null);
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <Eye className="w-3.5 h-3.5 text-primary" />
+              {t("projects.openEmail", "Ouvrir l'email")}
+            </button>
+            <button
+              onClick={() => {
+                handleDetachEmail(emailContextMenu.emailId);
+                setEmailContextMenu(null);
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+            >
+              <FolderMinus className="w-3.5 h-3.5" />
+              {t("projects.detachEmail", "Retirer du projet")}
+            </button>
+            <div className="border-t border-[#1f2937] my-1" />
+            <button
+              onClick={() => {
+                handleDeleteEmail(emailContextMenu.emailId);
+                setEmailContextMenu(null);
+              }}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400 hover:bg-red-500/10 transition-colors"
+            >
+              <Trash2 className="w-3.5 h-3.5" />
+              {t("common.delete", "Supprimer")}
+            </button>
+          </div>
+        </div>
+      )}
     </DashboardLayout>
   );
 }
