@@ -443,7 +443,9 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
   let effVideo: "meet" | "teams" | "jitsi" | "none";
   if (args.videoProvider !== undefined && args.videoProvider !== null) {
     effVideo = args.videoProvider;
-  } else if (preferredVideo) {
+  } else if (preferredVideo && preferredVideo !== "none") {
+    // Une préférence "none" ne doit PAS désactiver le lien implicitement :
+    // seul un appel explicite avec videoProvider="none" peut le faire.
     effVideo = preferredVideo;
   } else {
     effVideo = "jitsi";
@@ -467,6 +469,17 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
       logger.info(
         { userId: args.userId, requested: effVideo },
         "[meeting-proposals] no matching calendar, falling back to jitsi",
+      );
+      effVideo = "jitsi";
+      videoUrl = generateJitsiUrl();
+    } else {
+      // Calendrier compatible existe, mais le vrai lien Meet/Teams n'est créé
+      // que lors du push event côté calendrier — flux non exécuté ici. Pour
+      // garantir la présence d'un lien dans l'email de proposition, on
+      // bascule sur Jitsi (déterministe, sans dépendance externe).
+      logger.info(
+        { userId: args.userId, requested: effVideo },
+        "[meeting-proposals] using jitsi for proposal email (no provider push)",
       );
       effVideo = "jitsi";
       videoUrl = generateJitsiUrl();

@@ -148,7 +148,10 @@ async function resolveEffectiveVideoProvider(
       .eq("id", userId)
       .maybeSingle();
     const pref = (prof as { preferred_video_provider?: string | null } | null)?.preferred_video_provider;
-    chosen = (pref as VideoProvider) || "jitsi";
+    // Si l'utilisateur n'a pas explicitement choisi, on garantit un lien (Jitsi)
+    // — une préférence "none" en base ne doit pas implicitement désactiver la
+    // visio quand le client n'a rien demandé.
+    chosen = pref && pref !== "none" ? (pref as VideoProvider) : "jitsi";
   } else {
     chosen = requested;
   }
