@@ -30,7 +30,11 @@ const FREEBUSY_CACHE_TTL_MS = 5 * 60 * 1000;
 // TTL 10 minutes, single-use enregistré en mémoire.
 // ---------------------------------------------------------------------------
 const STATE_TTL_MS = 10 * 60 * 1000;
-const STATE_SECRET = process.env["SESSION_SECRET"] || process.env["SUPABASE_SECRET_KEY"] || "calendar-oauth-fallback-secret-change-me";
+const STATE_SECRET = process.env["SESSION_SECRET"] || process.env["SUPABASE_SECRET_KEY"] || "";
+if (!STATE_SECRET) {
+  // Fail-fast : impossible de signer/vérifier les states OAuth sans secret.
+  throw new Error("[calendar] SESSION_SECRET (ou SUPABASE_SECRET_KEY) requis pour signer les states OAuth calendrier");
+}
 const USED_STATES = new Map<string, number>();
 
 function pruneUsedStates() {
@@ -95,7 +99,11 @@ function popupHtml(title: string, providerKey: string, ok: boolean, message: str
 <p>${escHtml(message)}</p>
 <p style="color:#6b7280;font-size:11px;margin-top:24px;">Vous pouvez fermer cette fenêtre.</p>
 <script>
-try { window.opener && window.opener.postMessage({ type: 'calendar-connected', provider: ${JSON.stringify(provSafe)}, ok: ${ok ? "true" : "false"} }, '*'); } catch (e) {}
+try {
+  // Restreint l'origine cible au strict nécessaire (l'opener qui a ouvert ce popup).
+  var targetOrigin = (window.opener && window.opener.location && window.opener.location.origin) || window.location.origin;
+  window.opener && window.opener.postMessage({ type: 'calendar-connected', provider: ${JSON.stringify(provSafe)}, ok: ${ok ? "true" : "false"} }, targetOrigin);
+} catch (e) {}
 setTimeout(function(){ window.close(); }, 800);
 </script>
 </body></html>`;

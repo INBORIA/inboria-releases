@@ -56,6 +56,9 @@ export default function ParametresCalendriers() {
 
   useEffect(() => {
     function onMsg(ev: MessageEvent) {
+      // Sécurité : on n'accepte que les messages provenant de notre propre origine
+      // (le popup OAuth est servi par le proxy Replit sous le même domaine que l'app).
+      if (ev.origin !== window.location.origin) return;
       const d = ev.data;
       if (!d || typeof d !== "object" || d.type !== "calendar-connected") return;
       if (d.ok) {
