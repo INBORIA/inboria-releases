@@ -416,7 +416,7 @@ export async function recomputeMultiStatus(apptId: string): Promise<void> {
   let multiStatus: "pending" | "partially_confirmed" | "confirmed" | "declined" = "pending";
   if (anyRequiredDeclined) multiStatus = "declined";
   else if (allAccepted) multiStatus = "confirmed";
-  else if (anyAccepted && anyPending) multiStatus = "partially_confirmed";
+  else if (anyAccepted) multiStatus = "partially_confirmed";
   else multiStatus = "pending";
   await supabaseAdmin
     .from("appointments")

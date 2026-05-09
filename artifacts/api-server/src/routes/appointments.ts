@@ -789,7 +789,7 @@ const multiProposeSchema = z
     location: z.string().max(500).optional().nullable(),
     startAt: isoDateTime,
     endAt: isoDateTime,
-    participants: z.array(participantInputSchema).min(2).max(50),
+    participants: z.array(participantInputSchema).min(3),
     lang: z.string().min(2).max(10).optional(),
     videoProvider: videoProviderSchema.optional().nullable(),
   })
@@ -829,7 +829,7 @@ router.post("/appointments/multi-propose", requireAuth, async (req, res): Promis
 });
 
 const findCommonSlotsSchema = z.object({
-  emails: z.array(z.string().email()).min(1).max(50),
+  emails: z.array(z.string().email()).min(1),
   durationMinutes: z.coerce.number().int().min(15).max(480),
   windowDays: z.coerce.number().int().min(1).max(60).optional(),
 });
