@@ -224,7 +224,10 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
           onClick={() => setOpen((v) => !v)}
         >
           <div className="h-8 w-8 rounded-full bg-[#1e3a5f] flex items-center justify-center text-[12px] font-semibold text-primary shrink-0">
-            {((user as any).fullName || t("sidebar.user")).charAt(0).toUpperCase()}
+            {(((user as any).fullName || "").trim().charAt(0)
+              || ((user as any).email || "").trim().charAt(0)
+              || t("sidebar.user").charAt(0)
+            ).toUpperCase()}
           </div>
         </button>
         {open && (
@@ -235,7 +238,7 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
             <div className="px-2 py-1.5">
               <div className="flex flex-col">
                 <span className="text-[13px] font-medium text-white truncate">
-                  {(user as any).fullName || t("sidebar.user")}
+                  {(user as any).fullName || (user as any).email || t("sidebar.user")}
                 </span>
                 <span className="text-[11px] text-[#b8c5d6] capitalize">
                   {(user as any).plan}
