@@ -2475,7 +2475,15 @@
     "destinationCalendar": "Destination calendar",
     "localOnly": "Inboria only (no sync)",
     "connectCalendarHint": "Connect a calendar in Settings to sync.",
-    "syncedWith": "Synced with {{provider}}"
+    "syncedWith": "Synced with {{provider}}",
+    "filterByStatus": "Durum:",
+    "statusFilter": {
+      "all": "Tümü",
+      "pending": "Bekliyor",
+      "counter_proposed": "Karşı teklif",
+      "confirmed": "Onaylandı",
+      "declined": "Reddedildi"
+    }
   },
   "supportChat": {
     "title": "Inboria Asistanı",

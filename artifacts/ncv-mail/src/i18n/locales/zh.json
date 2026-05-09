@@ -2475,7 +2475,15 @@
     "destinationCalendar": "Destination calendar",
     "localOnly": "Inboria only (no sync)",
     "connectCalendarHint": "Connect a calendar in Settings to sync.",
-    "syncedWith": "Synced with {{provider}}"
+    "syncedWith": "Synced with {{provider}}",
+    "filterByStatus": "状态：",
+    "statusFilter": {
+      "all": "全部",
+      "pending": "待处理",
+      "counter_proposed": "反提议",
+      "confirmed": "已确认",
+      "declined": "已拒绝"
+    }
   },
   "supportChat": {
     "title": "Inboria 助手",

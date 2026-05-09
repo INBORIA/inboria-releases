@@ -2475,7 +2475,15 @@
     "destinationCalendar": "Destination calendar",
     "localOnly": "Inboria only (no sync)",
     "connectCalendarHint": "Connect a calendar in Settings to sync.",
-    "syncedWith": "Synced with {{provider}}"
+    "syncedWith": "Synced with {{provider}}",
+    "filterByStatus": "Stav:",
+    "statusFilter": {
+      "all": "Všetky",
+      "pending": "Čaká",
+      "counter_proposed": "Protinávrh",
+      "confirmed": "Potvrdené",
+      "declined": "Odmietnuté"
+    }
   },
   "supportChat": {
     "title": "Asistent Inboria",

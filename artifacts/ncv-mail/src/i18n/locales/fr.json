@@ -2509,7 +2509,15 @@
     "viewInAgenda": "Voir l'agenda",
     "detectError": "Detection impossible. Reessayez.",
     "filterByProject": "Filtrer par projet :",
-    "allProjects": "Tous"
+    "allProjects": "Tous",
+    "filterByStatus": "Statut :",
+    "statusFilter": {
+      "all": "Tous",
+      "pending": "En attente",
+      "counter_proposed": "Contre-prop.",
+      "confirmed": "Confirmé",
+      "declined": "Refusé"
+    }
   },
   "supportChat": {
     "title": "Assistant Inboria",

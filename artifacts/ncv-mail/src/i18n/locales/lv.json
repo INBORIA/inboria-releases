@@ -2475,7 +2475,15 @@
     "destinationCalendar": "Destination calendar",
     "localOnly": "Inboria only (no sync)",
     "connectCalendarHint": "Connect a calendar in Settings to sync.",
-    "syncedWith": "Synced with {{provider}}"
+    "syncedWith": "Synced with {{provider}}",
+    "filterByStatus": "Statuss:",
+    "statusFilter": {
+      "all": "Visi",
+      "pending": "Gaida",
+      "counter_proposed": "Pretpiedāv.",
+      "confirmed": "Apstiprināts",
+      "declined": "Noraidīts"
+    }
   },
   "supportChat": {
     "title": "Inboria asistents",

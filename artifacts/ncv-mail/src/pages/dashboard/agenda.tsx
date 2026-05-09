@@ -195,14 +195,23 @@ export default function Agenda() {
     return () => { aborted = true; };
   }, [rangeStart.getTime(), rangeEnd.getTime(), calendarAccounts.length]);
 
+  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "counter_proposed" | "confirmed" | "declined">("all");
+
   const appointments = useMemo(() => {
-    if (projectFilter.size === 0) return rawAppointments;
-    return rawAppointments.filter((apt: any) => {
+    let list = rawAppointments as Appointment[];
+    if (statusFilter !== "all") {
+      list = list.filter((apt) => {
+        const s = apt.status || (apt.confirmed ? "confirmed" : "pending");
+        return s === statusFilter;
+      });
+    }
+    if (projectFilter.size === 0) return list;
+    return list.filter((apt) => {
       const pid = apt.projectId ? String(apt.projectId) : "";
       if (!pid) return projectFilter.has("__none__");
       return projectFilter.has(pid);
     });
-  }, [rawAppointments, projectFilter]);
+  }, [rawAppointments, projectFilter, statusFilter]);
 
   const projectsWithAppointments = useMemo(() => {
     const ids = new Set<string>();
@@ -654,6 +663,25 @@ export default function Agenda() {
               </button>
             ))}
           </div>
+        </div>
+
+        <div className="flex items-center gap-1.5 flex-wrap mb-3 text-[11px]">
+          <span className="text-[#b8c5d6] mr-1">{t("agenda.filterByStatus", "Statut :")}</span>
+          {(["all", "pending", "counter_proposed", "confirmed", "declined"] as const).map((s) => (
+            <button
+              key={s}
+              type="button"
+              onClick={() => setStatusFilter(s)}
+              data-testid={`status-filter-${s}`}
+              className={`px-2 py-0.5 rounded-full border transition-colors ${
+                statusFilter === s
+                  ? "bg-primary/20 border-primary/60 text-primary"
+                  : "bg-transparent border-border text-[#b8c5d6] hover:text-white"
+              }`}
+            >
+              {t(`agenda.statusFilter.${s}`, s === "all" ? "Tous" : s)}
+            </button>
+          ))}
         </div>
 
         {projectsWithAppointments.list.length > 0 && (

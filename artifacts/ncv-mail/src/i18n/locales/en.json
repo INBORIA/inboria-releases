@@ -2510,7 +2510,15 @@
     "viewInAgenda": "Open agenda",
     "detectError": "Detection failed. Please try again.",
     "filterByProject": "Filter by project:",
-    "allProjects": "All"
+    "allProjects": "All",
+    "filterByStatus": "Status:",
+    "statusFilter": {
+      "all": "All",
+      "pending": "Pending",
+      "counter_proposed": "Counter",
+      "confirmed": "Confirmed",
+      "declined": "Declined"
+    }
   },
   "supportChat": {
     "title": "Inboria Assistant",

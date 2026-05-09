@@ -2475,7 +2475,15 @@
     "destinationCalendar": "Destination calendar",
     "localOnly": "Inboria only (no sync)",
     "connectCalendarHint": "Connect a calendar in Settings to sync.",
-    "syncedWith": "Synced with {{provider}}"
+    "syncedWith": "Synced with {{provider}}",
+    "filterByStatus": "ステータス：",
+    "statusFilter": {
+      "all": "すべて",
+      "pending": "保留中",
+      "counter_proposed": "対案",
+      "confirmed": "確定",
+      "declined": "辞退"
+    }
   },
   "supportChat": {
     "title": "Inboriaアシスタント",

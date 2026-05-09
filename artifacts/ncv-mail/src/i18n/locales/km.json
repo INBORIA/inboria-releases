@@ -2475,7 +2475,15 @@
     "destinationCalendar": "Destination calendar",
     "localOnly": "Inboria only (no sync)",
     "connectCalendarHint": "Connect a calendar in Settings to sync.",
-    "syncedWith": "Synced with {{provider}}"
+    "syncedWith": "Synced with {{provider}}",
+    "filterByStatus": "ស្ថានភាព៖",
+    "statusFilter": {
+      "all": "ទាំងអស់",
+      "pending": "កំពុងរង់ចាំ",
+      "counter_proposed": "សំណើតបវិញ",
+      "confirmed": "បានបញ្ជាក់",
+      "declined": "បានបដិសេធ"
+    }
   },
   "supportChat": {
     "title": "ជំនួយ Inboria",

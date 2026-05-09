@@ -2475,7 +2475,15 @@
     "destinationCalendar": "Destination calendar",
     "localOnly": "Inboria only (no sync)",
     "connectCalendarHint": "Connect a calendar in Settings to sync.",
-    "syncedWith": "Synced with {{provider}}"
+    "syncedWith": "Synced with {{provider}}",
+    "filterByStatus": "Trạng thái:",
+    "statusFilter": {
+      "all": "Tất cả",
+      "pending": "Đang chờ",
+      "counter_proposed": "Đề xuất khác",
+      "confirmed": "Đã xác nhận",
+      "declined": "Đã từ chối"
+    }
   },
   "supportChat": {
     "title": "Trợ lý Inboria",

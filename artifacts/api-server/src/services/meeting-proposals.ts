@@ -415,16 +415,14 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
   if (!billing.ok) return { ok: false, error: "billing failed" };
 
   const { subject, body } = await generateProposalEmailBody(args, fromName);
-  const sendRes = await sendProposalEmail(conn, args.to, subject, body);
-  if (!sendRes.ok) {
-    logger.warn({ userId: args.userId, err: sendRes.error }, "[meeting-proposals] send failed");
-    return { ok: false, error: sendRes.error || "send failed" };
-  }
 
   const awaitingReminderAt = remindersEnabled
     ? new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString()
     : null;
 
+  // Insert FIRST so we never lose tracking if the send succeeds but the DB
+  // write fails. We then update with the real Message-ID after sending and
+  // delete the row if the send itself fails.
   const { data: appt, error: insertErr } = await supabaseAdmin
     .from("appointments")
     .insert({
@@ -438,7 +436,7 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
       reminder_minutes: 30,
       participants: args.to,
       status: "pending",
-      proposal_message_id: sendRes.messageId || null,
+      proposal_message_id: null,
       proposal_recipient: args.to,
       proposal_lang: (args.lang || "fr").toLowerCase(),
       awaiting_reminder_at: awaitingReminderAt,
@@ -450,6 +448,20 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
   if (insertErr || !appt) {
     logger.error({ err: insertErr?.message }, "[meeting-proposals] insert appointment failed");
     return { ok: false, error: insertErr?.message || "insert failed" };
+  }
+
+  const sendRes = await sendProposalEmail(conn, args.to, subject, body);
+  if (!sendRes.ok) {
+    await supabaseAdmin.from("appointments").delete().eq("id", appt.id);
+    logger.warn({ userId: args.userId, err: sendRes.error }, "[meeting-proposals] send failed, row rolled back");
+    return { ok: false, error: sendRes.error || "send failed" };
+  }
+
+  if (sendRes.messageId) {
+    await supabaseAdmin
+      .from("appointments")
+      .update({ proposal_message_id: sendRes.messageId })
+      .eq("id", appt.id);
   }
   return { ok: true, appointmentId: String(appt.id) };
 }

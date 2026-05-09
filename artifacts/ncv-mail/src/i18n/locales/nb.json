@@ -2475,7 +2475,15 @@
     "destinationCalendar": "Destination calendar",
     "localOnly": "Inboria only (no sync)",
     "connectCalendarHint": "Connect a calendar in Settings to sync.",
-    "syncedWith": "Synced with {{provider}}"
+    "syncedWith": "Synced with {{provider}}",
+    "filterByStatus": "Status:",
+    "statusFilter": {
+      "all": "Alle",
+      "pending": "Venter",
+      "counter_proposed": "Motforslag",
+      "confirmed": "Bekreftet",
+      "declined": "Avvist"
+    }
   },
   "supportChat": {
     "title": "Inboria-assistent",
