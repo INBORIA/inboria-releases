@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import {
   Inbox, Archive, LayoutDashboard, CheckSquare, FolderKanban, Tags, Settings, CreditCard,
-  LogOut, Search, Clock, ChevronRight, Sparkles, Zap, CheckCircle, RefreshCw, Trash2, Check, Square,
+  LogOut, Search, Clock, ChevronRight, ChevronDown, Sparkles, Zap, CheckCircle, RefreshCw, Trash2, Check, Square,
   Send, BellOff, CalendarClock, MailCheck, MailPlus, Users, Activity, CalendarDays, FileText, Wand2, ShieldCheck, Plus,
-  MessageCircleQuestion, UserCheck, ShieldAlert, ArrowUpDown,
+  MessageCircleQuestion, UserCheck, ShieldAlert, ArrowUpDown, SlidersHorizontal, X,
 } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import appLogo from "@assets/inboria_logo_transparent_fix_v1_1775916067670.png";
@@ -189,13 +189,6 @@ export function AnimatedDemo() {
     : phase === "clean"
     ? t("demo.status.clean", { count: EMAIL_COUNT - JUNK_COUNT })
     : t("demo.status.received", { count: visibleEmails });
-
-  const priorityFilters = [
-    t("demo.priorityAll"),
-    t("demo.priorityUrgent"),
-    t("demo.priorityMedium"),
-    t("demo.priorityLow"),
-  ];
 
   return (
     <div ref={containerRef} className="relative max-w-5xl mx-auto mt-12" aria-label={t("demo.ariaLabel")} role="img">
@@ -403,27 +396,27 @@ export function AnimatedDemo() {
               </div>
 
               <div className="flex flex-wrap items-center gap-1.5 mb-2">
-                <div className="inline-flex items-center justify-center gap-1 w-[110px] h-6 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
                   <Inbox className="w-2.5 h-2.5" />
                   <span>{t("sidebar.inbox", "Réception")}</span>
-                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">12</span>
+                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">857</span>
                 </div>
-                <div className="inline-flex items-center justify-center gap-1 w-[110px] h-6 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2937] shrink-0">
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
                   <Users className="w-2.5 h-2.5" />
                   <span>{t("inbox.sharedMailboxShort", "Partagées")}</span>
                   <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">3</span>
                 </div>
-                <div className="inline-flex items-center justify-center gap-1 w-[110px] h-6 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2937] shrink-0">
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
                   <ShieldAlert className="w-2.5 h-2.5" />
                   <span>{t("inbox.spamShort", "Indésirables")}</span>
-                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">40</span>
+                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">97</span>
                 </div>
-                <div className="inline-flex items-center justify-center gap-1 w-[110px] h-6 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2937] shrink-0">
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
                   <Trash2 className="w-2.5 h-2.5" />
                   <span>{t("inbox.trash", "Corbeille")}</span>
-                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">11</span>
+                  <span className="text-[9px] bg-white/10 text-white px-1 py-px rounded-full">153</span>
                 </div>
-                <div className="inline-flex items-center justify-center gap-1 w-[110px] h-6 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2937] shrink-0">
+                <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2630] shrink-0">
                   <span className="truncate">{t("inbox.allAccounts", "Tous les comptes")}</span>
                 </div>
               </div>
@@ -438,44 +431,21 @@ export function AnimatedDemo() {
                   </div>
                 </div>
               ) : (
-                <div className="space-y-1.5">
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {priorityFilters.map((f, i) => (
-                      <div
-                        key={f}
-                        className={`inline-flex items-center justify-center w-[110px] h-6 text-[10px] rounded-md font-medium shrink-0 ${
-                          i === 0
-                            ? "bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20"
-                            : "text-[#b8c5d6] border border-[#1f2937]"
-                        }`}
-                      >
-                        {f}
-                      </div>
-                    ))}
+                <div className="flex flex-wrap items-center gap-1.5">
+                  <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
+                    <SlidersHorizontal className="w-2.5 h-2.5" />
+                    <span>{t("inbox.filtersLabel", "Filtres")}</span>
+                    <span className="ml-0.5 inline-flex items-center justify-center min-w-[14px] h-[14px] px-1 rounded-full bg-[#2d7dd2] text-[8px] text-white font-semibold">1</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    <div className="inline-flex items-center justify-center gap-1 w-[110px] h-6 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
-                      <Sparkles className="w-2.5 h-2.5" />
-                      <span>{t("inboriaSort.smartLabel", "Tri Inboria")}</span>
-                    </div>
-                    <div className="inline-flex items-center justify-center gap-1 w-[110px] h-6 text-[10px] rounded-md font-medium text-[#b8c5d6] border border-[#1f2937] shrink-0">
-                      <ArrowUpDown className="w-2.5 h-2.5" />
-                      <span>{t("inbox.sortLabel", "Tri")}: {t("inbox.sortPriority", "Priorité")}</span>
-                    </div>
+                  <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
+                    <Tags className="w-2.5 h-2.5" />
+                    <span>{t("inbox.category", "Catégories")}</span>
+                    <ChevronDown className="w-2.5 h-2.5" />
                   </div>
-                  <div className="flex flex-wrap items-center gap-1.5">
-                    {["HubSpot", "Pipedrive", "Salesforce", "Odoo"].map((f, i) => (
-                      <div
-                        key={f}
-                        className={`inline-flex items-center justify-center w-[110px] h-6 text-[10px] rounded-md font-medium shrink-0 ${
-                          i === 0
-                            ? "bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20"
-                            : "text-[#b8c5d6] border border-[#1f2937]"
-                        }`}
-                      >
-                        {f}
-                      </div>
-                    ))}
+                  <div className="inline-flex items-center gap-1 h-6 px-2 text-[10px] rounded-md font-medium bg-[#2d7dd2]/15 text-[#2d7dd2] border border-[#2d7dd2]/20 shrink-0">
+                    <Sparkles className="w-2.5 h-2.5" />
+                    <span>{t("inboriaSort.smartLabel", "Tri Inboria")}</span>
+                    <X className="w-2.5 h-2.5 opacity-70" />
                   </div>
                 </div>
               )}
