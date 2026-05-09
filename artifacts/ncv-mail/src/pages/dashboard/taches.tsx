@@ -742,6 +742,26 @@ export default function Taches() {
                           {generateDraftMut.isPending ? t("inbox.generating") : t("inbox.aiReply")}
                         </Button>
                       </div>
+                      <div className="flex items-center gap-2 flex-wrap justify-end">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-1.5 h-8 text-[12px] rounded-full bg-transparent border-[#1f2937] text-[#b8c5d6] hover:bg-white/[0.04] hover:text-white shrink-0 whitespace-nowrap"
+                          onClick={() => handleToggleDone(emailDetailTask.id, isDone)}
+                        >
+                          {isDone ? <RotateCcw className="w-3.5 h-3.5" /> : <CheckCircle2 className="w-3.5 h-3.5" />}
+                          {isDone ? t("tasks.markTodo") : t("tasks.markDone")}
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="gap-1.5 h-8 text-[12px] rounded-full bg-transparent border-[#1f2937] text-red-400 hover:bg-red-500/10 hover:text-red-300 hover:border-red-500/40 shrink-0 whitespace-nowrap"
+                          onClick={() => handleDeleteTask(emailDetailTask.id)}
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                          {t("common.delete")}
+                        </Button>
+                      </div>
                     </div>
                   </>
                 ) : (
