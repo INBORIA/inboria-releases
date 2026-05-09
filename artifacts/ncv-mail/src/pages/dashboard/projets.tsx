@@ -242,10 +242,10 @@ function ProjectDetailView({
   const deleteTaskMut = useDeleteTask();
   const updateEmailMut = useUpdateEmail();
   const deleteEmailMut = useDeleteEmail();
-  const [selectedEmailIds, setSelectedEmailIds] = useState<Set<number>>(new Set());
+  const [selectedEmailIds, setSelectedEmailIds] = useState<Set<string>>(new Set());
   const selectionMode = selectedEmailIds.size > 0;
   const toggleEmailSelected = (rawId: any) => {
-    const id = Number(rawId);
+    const id = String(rawId);
     setSelectedEmailIds((prev) => {
       const next = new Set(prev);
       if (next.has(id)) next.delete(id); else next.add(id);
@@ -524,7 +524,7 @@ function ProjectDetailView({
             <div className="space-y-1">
               {project.emails.map((email: any) => {
                 const emailIdNum = Number(email.id);
-                const isSelected = selectedEmailIds.has(emailIdNum);
+                const isSelected = selectedEmailIds.has(String(email.id));
                 return (
                   <div
                     key={email.id}
