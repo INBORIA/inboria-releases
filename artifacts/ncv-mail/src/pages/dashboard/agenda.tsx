@@ -30,7 +30,16 @@ import {
   Calendar,
   Mail,
   ExternalLink,
+  Check,
 } from "lucide-react";
+import { Checkbox } from "@/components/ui/checkbox";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { useState, useMemo, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
@@ -287,9 +296,80 @@ export default function Agenda() {
     );
   };
 
+  const [selectedSuggestionIds, setSelectedSuggestionIds] = useState<Set<string>>(new Set());
+  const [lastClickedIdx, setLastClickedIdx] = useState<number | null>(null);
+  const [bulkBusy, setBulkBusy] = useState(false);
+
   const suggestions = useMemo(() => {
     return appointments.filter((apt) => apt.confirmed === false);
   }, [appointments]);
+
+  useEffect(() => {
+    setSelectedSuggestionIds((prev) => {
+      const valid = new Set(suggestions.map((s) => s.id));
+      const next = new Set<string>();
+      prev.forEach((id) => { if (valid.has(id)) next.add(id); });
+      return next.size === prev.size ? prev : next;
+    });
+  }, [suggestions]);
+
+  const toggleSuggestion = (id: string, idx: number, e?: React.MouseEvent) => {
+    setSelectedSuggestionIds((prev) => {
+      const next = new Set(prev);
+      if (e?.shiftKey && lastClickedIdx !== null) {
+        const [a, b] = lastClickedIdx < idx ? [lastClickedIdx, idx] : [idx, lastClickedIdx];
+        for (let i = a; i <= b; i++) {
+          const sid = suggestions[i]?.id;
+          if (sid) next.add(sid);
+        }
+      } else {
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+      }
+      return next;
+    });
+    setLastClickedIdx(idx);
+  };
+
+  const allSelected = suggestions.length > 0 && selectedSuggestionIds.size === suggestions.length;
+  const someSelected = selectedSuggestionIds.size > 0 && !allSelected;
+
+  const toggleSelectAll = () => {
+    if (allSelected || someSelected) setSelectedSuggestionIds(new Set());
+    else setSelectedSuggestionIds(new Set(suggestions.map((s) => s.id)));
+  };
+
+  const handleBulkConfirm = async (ids: string[]) => {
+    if (ids.length === 0 || bulkBusy) return;
+    setBulkBusy(true);
+    let ok = 0;
+    for (const id of ids) {
+      try {
+        await updateAppointment.mutateAsync({ id, data: { confirmed: true } });
+        ok++;
+      } catch {}
+    }
+    setBulkBusy(false);
+    setSelectedSuggestionIds(new Set());
+    invalidate();
+    toast({ title: t("agenda.bulkConfirmed", { count: ok }) });
+  };
+
+  const handleBulkDismiss = async (ids: string[]) => {
+    if (ids.length === 0 || bulkBusy) return;
+    setBulkBusy(true);
+    let ok = 0;
+    for (const id of ids) {
+      try {
+        await deleteAppointment.mutateAsync({ id });
+        ok++;
+      } catch {}
+    }
+    setBulkBusy(false);
+    setSelectedSuggestionIds(new Set());
+    invalidate();
+    toast({ title: t("agenda.bulkDismissed", { count: ok }) });
+  };
 
   const handleDetect = () => {
     detectAppointments.mutate(
@@ -471,30 +551,126 @@ export default function Agenda() {
 
         {suggestions.length > 0 && (
           <div className="bg-card border border-border rounded-lg p-3 mb-4">
-            <h3 className="text-[12px] font-semibold text-primary mb-2 flex items-center gap-1.5">
-              <Sparkles className="w-3.5 h-3.5" />
-              {t("agenda.suggestionsDetected", { count: suggestions.length })}
-            </h3>
+            <div className="flex items-center justify-between mb-2 gap-2">
+              <h3 className="text-[12px] font-semibold text-primary flex items-center gap-1.5">
+                <Sparkles className="w-3.5 h-3.5" />
+                {t("agenda.suggestionsDetected", { count: suggestions.length })}
+              </h3>
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-1.5 text-[11px] text-[#b8c5d6] cursor-pointer select-none" data-testid="suggestion-select-all">
+                  <Checkbox
+                    checked={allSelected ? true : someSelected ? "indeterminate" : false}
+                    onCheckedChange={toggleSelectAll}
+                    aria-label={t("agenda.selectAll", "Tout sélectionner")}
+                  />
+                  {selectedSuggestionIds.size > 0
+                    ? t("agenda.selectedCount", { count: selectedSuggestionIds.size })
+                    : t("agenda.selectAll", "Tout sélectionner")}
+                </label>
+                {selectedSuggestionIds.size > 0 && (
+                  <>
+                    <Button
+                      size="sm"
+                      className="h-6 text-[10px] px-2"
+                      disabled={bulkBusy}
+                      onClick={() => handleBulkConfirm(Array.from(selectedSuggestionIds))}
+                      data-testid="suggestion-bulk-confirm"
+                    >
+                      {t("agenda.confirmSelected", "Confirmer la sélection")}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-6 text-[10px] px-2"
+                      disabled={bulkBusy}
+                      onClick={() => handleBulkDismiss(Array.from(selectedSuggestionIds))}
+                      data-testid="suggestion-bulk-dismiss"
+                    >
+                      {t("agenda.dismissSelected", "Ignorer la sélection")}
+                    </Button>
+                  </>
+                )}
+              </div>
+            </div>
             <div className="space-y-1.5">
-              {suggestions.map((apt) => (
-                <div key={apt.id} className="flex items-center justify-between gap-2 rounded px-3 py-2">
-                  <div className="flex-1 min-w-0">
-                    <span className="text-[12px] font-medium text-white truncate block">{apt.title}</span>
-                    <span className="text-[10px] text-[#b8c5d6]">
-                      {format(parseISO(apt.startAt), "dd/MM/yyyy HH:mm", { locale })}
-                      {apt.location && ` · ${apt.location}`}
-                    </span>
-                  </div>
-                  <div className="flex gap-1.5 shrink-0">
-                    <Button size="sm" className="h-6 text-[10px] px-2" onClick={() => handleConfirm(apt.id)}>
-                      {t("agenda.confirmAppointment")}
-                    </Button>
-                    <Button size="sm" variant="outline" className="h-6 text-[10px] px-2" onClick={() => handleDismiss(apt.id)}>
-                      {t("agenda.dismissAppointment")}
-                    </Button>
-                  </div>
-                </div>
-              ))}
+              {suggestions.map((apt, idx) => {
+                const isSelected = selectedSuggestionIds.has(apt.id);
+                return (
+                  <ContextMenu key={apt.id}>
+                    <ContextMenuTrigger asChild>
+                      <div
+                        className={`flex items-center justify-between gap-2 rounded px-3 py-2 transition-colors ${
+                          isSelected ? "bg-primary/10 border border-primary/30" : "border border-transparent hover:bg-white/[0.02]"
+                        }`}
+                        data-testid={`suggestion-row-${apt.id}`}
+                      >
+                        <div
+                          className="shrink-0"
+                          onClick={(e) => { e.stopPropagation(); toggleSuggestion(apt.id, idx, e); }}
+                        >
+                          <Checkbox
+                            checked={isSelected}
+                            onCheckedChange={() => toggleSuggestion(apt.id, idx)}
+                            aria-label={t("common.select", "Sélectionner")}
+                          />
+                        </div>
+                        <div
+                          className="flex-1 min-w-0 cursor-pointer"
+                          onClick={(e) => toggleSuggestion(apt.id, idx, e)}
+                        >
+                          <span className="text-[12px] font-medium text-white truncate block">{apt.title}</span>
+                          <span className="text-[10px] text-[#b8c5d6]">
+                            {format(parseISO(apt.startAt), "dd/MM/yyyy HH:mm", { locale })}
+                            {apt.location && ` · ${apt.location}`}
+                          </span>
+                        </div>
+                        <div className="flex gap-1.5 shrink-0">
+                          <Button size="sm" className="h-6 text-[10px] px-2" onClick={() => handleConfirm(apt.id)}>
+                            {t("agenda.confirmAppointment")}
+                          </Button>
+                          <Button size="sm" variant="outline" className="h-6 text-[10px] px-2" onClick={() => handleDismiss(apt.id)}>
+                            {t("agenda.dismissAppointment")}
+                          </Button>
+                        </div>
+                      </div>
+                    </ContextMenuTrigger>
+                    <ContextMenuContent className="w-56">
+                      <ContextMenuItem onClick={() => handleConfirm(apt.id)}>
+                        <Check className="w-3.5 h-3.5 mr-2" />
+                        {t("agenda.confirmAppointment")}
+                      </ContextMenuItem>
+                      <ContextMenuItem onClick={() => handleDismiss(apt.id)} className="text-red-400 focus:text-red-300">
+                        <X className="w-3.5 h-3.5 mr-2" />
+                        {t("agenda.dismissAppointment")}
+                      </ContextMenuItem>
+                      <ContextMenuItem onClick={() => setSelectedAppointment(apt)}>
+                        <ExternalLink className="w-3.5 h-3.5 mr-2" />
+                        {t("agenda.viewDetails", "Voir les détails")}
+                      </ContextMenuItem>
+                      {selectedSuggestionIds.size > 1 && isSelected && (
+                        <>
+                          <ContextMenuSeparator />
+                          <ContextMenuItem
+                            onClick={() => handleBulkConfirm(Array.from(selectedSuggestionIds))}
+                            disabled={bulkBusy}
+                          >
+                            <Check className="w-3.5 h-3.5 mr-2" />
+                            {t("agenda.confirmSelected", "Confirmer la sélection")} ({selectedSuggestionIds.size})
+                          </ContextMenuItem>
+                          <ContextMenuItem
+                            onClick={() => handleBulkDismiss(Array.from(selectedSuggestionIds))}
+                            disabled={bulkBusy}
+                            className="text-red-400 focus:text-red-300"
+                          >
+                            <X className="w-3.5 h-3.5 mr-2" />
+                            {t("agenda.dismissSelected", "Ignorer la sélection")} ({selectedSuggestionIds.size})
+                          </ContextMenuItem>
+                        </>
+                      )}
+                    </ContextMenuContent>
+                  </ContextMenu>
+                );
+              })}
             </div>
           </div>
         )}
