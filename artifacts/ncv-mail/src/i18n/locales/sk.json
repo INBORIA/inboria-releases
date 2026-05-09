@@ -1259,8 +1259,8 @@
     "seatCount": "Počet miest",
     "collaborators": "spolupracovníci",
     "collaborator": "spolupracovník",
-    "perSeatPerMonth": "T.j. 12,99€ za miesto / mesiac (minimálne 3 miesta)",
-    "seatsExample": "Príklad: 3 spolupracovníci = 38,97€/mesiac — zmeniteľné kedykoľvek zo Vášho priestoru.",
+    "perSeatPerMonth": "T.j. 14,99€ za miesto / mesiac (minimálne 3 miesta)",
+    "seatsExample": "Príklad: 3 spolupracovníci = 44,97€/mesiac — zmeniteľné kedykoľvek zo Vášho priestoru.",
     "expiredSubscription": "Vaše predplatné vypršalo",
     "trialEndedFull": "Vaša bezplatná skúšobná verzia skončila",
     "resubscribe": "Obnovte sa na platený plán, aby ste mohli pokračovať v používaní Inboria.",
@@ -1341,12 +1341,12 @@
     "free": "Bezplatné",
     "perMonth": "/mesiac",
     "perSeatMonth": "/miesto/mesiac",
-    "perSeatDetail": "Teda 12,99€ za miesto/mesiac",
+    "perSeatDetail": "Teda 14,99€ za miesto/mesiac",
     "redirecting": "Presmerovanie...",
     "start": "Začať",
     "numberOfCollaborators": "Počet spolupracovníkov",
     "total": "Celkom",
-    "seatsExample": "Príklad: 3 spolupracovníci = 38,97€/mesiac — zmeniteľné kedykoľvek z Vášho priestoru."
+    "seatsExample": "Príklad: 3 spolupracovníci = 44,97€/mesiac — zmeniteľné kedykoľvek z Vášho priestoru."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Ste pripravení transformovať správu e-mailov vášho tímu?",
       "ctaDesc": "Pridajte sa k tímom, ktoré si zvolili Inboria pre plynulejšiu spoluprácu a desaťnásobnú produktivitu — po celom svete, v 43 jazykoch.",
       "discoverBusiness": "Objavte plán Business",
-      "ctaFooter": "Plán Business od 38,97€/mesiac (3 miesta za 12,99€/miesto) • Rozšíriteľný až na 50 miest • Nastavenie za 2 minúty",
+      "ctaFooter": "Plán Business od 44,97€/mesiac (3 miesta za 14,99€/miesto) • Rozšíriteľný až na 50 miest • Nastavenie za 2 minúty",
       "faqTitle": "Často kladené otázky",
       "faq1q": "Koľko členov môžem pridať do svojho tímu?",
       "faq1a": "Plán Business zahŕňa základné miesta a môžete pridať toľko, koľko potrebujete priamo z vášho predplatného portálu. Nie sú stanovené žiadne obmedzenia.",
@@ -2287,7 +2287,7 @@
       "subscription": "Predplatné",
       "subscriptionDesc": "Spravujte svoj plán predplatného Inboria. Porovnajte ponuky a prejdite na vyšší plán.",
       "subscriptionFeatures": [
-        "4 plány: Skúšobný (zadarmo), Solo (9€/mesiac), Pro (19€/mesiac), Business (od 38,97€/mesiac)",
+        "4 plány: Skúšobný (zadarmo), Solo (9€/mesiac), Pro (19€/mesiac), Business (od 44,97€/mesiac)",
         "Bezplatná skúška s 100 kreditmi AI zahrnutá",
         "Bezpečná platba cez Paddle",
         "Zobraziť svoj kvót a aktuálnu spotrebu",

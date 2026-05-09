@@ -1259,8 +1259,8 @@
     "seatCount": "Antall seter",
     "collaborators": "medarbeidere",
     "collaborator": "medarbeider",
-    "perSeatPerMonth": "Det vil si 12,99€ per sete / måned (minimum 3 seter)",
-    "seatsExample": "Eksempel: 3 medarbeidere = 38,97€/måned — kan endres når som helst fra din konto.",
+    "perSeatPerMonth": "Det vil si 14,99€ per sete / måned (minimum 3 seter)",
+    "seatsExample": "Eksempel: 3 medarbeidere = 44,97€/måned — kan endres når som helst fra din konto.",
     "expiredSubscription": "Abonnementet ditt har utløpt",
     "trialEndedFull": "Din gratis prøveperiode er over",
     "resubscribe": "Abonner på en betalt plan for å fortsette å bruke Inboria.",
@@ -1341,12 +1341,12 @@
     "free": "Gratis",
     "perMonth": "/måned",
     "perSeatMonth": "/bruker/måned",
-    "perSeatDetail": "Det vil si 12,99€ per bruker/måned",
+    "perSeatDetail": "Det vil si 14,99€ per bruker/måned",
     "redirecting": "Omadressering...",
     "start": "Begynn",
     "numberOfCollaborators": "Antall medarbeidere",
     "total": "Totalt",
-    "seatsExample": "Eksempel: 3 medarbeidere = 38,97€/måned — kan endres når som helst fra din konto."
+    "seatsExample": "Eksempel: 3 medarbeidere = 44,97€/måned — kan endres når som helst fra din konto."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Klar til å transformere e-posthåndteringen til teamet ditt?",
       "ctaDesc": "Bli med i teamene som har valgt Inboria for smidigere samarbeid og tidoblet produktivitet — over hele verden, på 43 språk.",
       "discoverBusiness": "Oppdag Business-planen",
-      "ctaFooter": "Business-plan fra 38,97€/måned (3 seter til 12,99€/sete) • Utvidbar opp til 50 seter • Konfigurasjon på 2 minutter",
+      "ctaFooter": "Business-plan fra 44,97€/måned (3 seter til 14,99€/sete) • Utvidbar opp til 50 seter • Konfigurasjon på 2 minutter",
       "faqTitle": "Ofte stilte spørsmål",
       "faq1q": "Hvor mange medlemmer kan jeg legge til i teamet mitt?",
       "faq1a": "Business-planen inkluderer grunnleggende seter, og du kan legge til så mange du trenger direkte fra abonnementsportalen din. Det er ingen pålagt grense.",
@@ -2287,7 +2287,7 @@
       "subscription": "Abonnement",
       "subscriptionDesc": "Administrer abonnementet ditt på Inboria. Sammenlign tilbudene og oppgrader til en høyere plan.",
       "subscriptionFeatures": [
-        "4 planer: Prøve (gratis), Solo (9€/måned), Pro (19€/måned), Business (fra 38,97€/måned)",
+        "4 planer: Prøve (gratis), Solo (9€/måned), Pro (19€/måned), Business (fra 44,97€/måned)",
         "Gratis prøve med 100 AI-kreditter inkludert",
         "Sikker betaling via Paddle",
         "Se kvoten din og nåværende forbruk",

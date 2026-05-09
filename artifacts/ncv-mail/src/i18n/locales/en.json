@@ -1285,8 +1285,8 @@
     "seatCount": "Number of seats",
     "collaborators": "collaborators",
     "collaborator": "collaborator",
-    "perSeatPerMonth": "€12.99 per seat/month (minimum 3 seats)",
-    "seatsExample": "Example: 3 collaborators = €38.97/month — adjustable at any time from your space.",
+    "perSeatPerMonth": "€14.99 per seat/month (minimum 3 seats)",
+    "seatsExample": "Example: 3 collaborators = €44.97/month — adjustable at any time from your space.",
     "expiredSubscription": "Your subscription has expired",
     "trialEndedFull": "Your free trial has ended",
     "resubscribe": "Resubscribe to a paid plan to continue using Inboria.",
@@ -1367,12 +1367,12 @@
     "free": "Free",
     "perMonth": "/month",
     "perSeatMonth": "/seat/month",
-    "perSeatDetail": "i.e. €12.99 per seat/month",
+    "perSeatDetail": "i.e. €14.99 per seat/month",
     "redirecting": "Redirecting...",
     "start": "Get started",
     "numberOfCollaborators": "Number of collaborators",
     "total": "Total",
-    "seatsExample": "Example: 3 collaborators = €38.97/month — adjustable at any time from your space."
+    "seatsExample": "Example: 3 collaborators = €44.97/month — adjustable at any time from your space."
   },
   "marketing": {
     "home": {
@@ -1860,7 +1860,7 @@
       "ctaTitle": "Ready to transform your team's email management?",
       "ctaDesc": "Join the teams that have adopted Inboria for smoother collaboration and tenfold productivity — worldwide, in 43 languages.",
       "discoverBusiness": "Discover Business plan",
-      "ctaFooter": "Business plan from €38.97/month (3 seats at €12.99/seat) • Scalable up to 50 seats • 2-minute setup",
+      "ctaFooter": "Business plan from €44.97/month (3 seats at €14.99/seat) • Scalable up to 50 seats • 2-minute setup",
       "faqTitle": "Frequently asked questions",
       "faq1q": "How many members can I add to my team?",
       "faq1a": "The Business plan includes base seats, and you can add as many as needed directly from your subscription portal. There is no imposed limit.",
@@ -2313,7 +2313,7 @@
       ],
       "subscriptionDesc": "Manage your Inboria subscription plan. Compare offers and upgrade.",
       "subscriptionFeatures": [
-        "4 plans: Trial (free), Solo (€9/mo), Pro (€19/mo), Business (from €38.97/mo)",
+        "4 plans: Trial (free), Solo (€9/mo), Pro (€19/mo), Business (from €44.97/mo)",
         "Free trial of 100 AI credits included",
         "Secure payment via Paddle",
         "View your quota and current consumption",

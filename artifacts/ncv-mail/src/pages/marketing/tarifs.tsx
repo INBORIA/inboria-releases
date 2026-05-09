@@ -112,7 +112,7 @@ export default function Tarifs() {
             {plans.map((plan) => {
               const isBusiness = "hasSeats" in plan && plan.hasSeats;
               const isRecommended = plan.id === "pro";
-              const price = isBusiness ? (businessSeats * 12.99).toFixed(2) : plan.price;
+              const price = isBusiness ? (businessSeats * 14.99).toFixed(2) : plan.price;
               const featureKeys = planFeatureKeys[plan.id] || [];
               const isPaid = plan.id !== "essai";
               const ctaDisabled = !paymentsEnabled || loadingPlan === plan.id;
@@ -177,7 +177,7 @@ export default function Tarifs() {
                       </div>
                       <p className="text-[11px] text-[#b8c5d6] mt-1">
                         <span className="font-medium">{t("plans.total")} : </span>
-                        <span className="text-[#2d7dd2] font-bold">{(businessSeats * 12.99).toFixed(2)}€</span> {t("plans.perMonth")}
+                        <span className="text-[#2d7dd2] font-bold">{(businessSeats * 14.99).toFixed(2)}€</span> {t("plans.perMonth")}
                       </p>
                       <p className="text-[10px] text-[#b8c5d6] mt-1">
                         {t("plans.seatsExample")}

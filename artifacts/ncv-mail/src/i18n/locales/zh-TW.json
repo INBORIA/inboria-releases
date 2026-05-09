@@ -1259,8 +1259,8 @@
     "seatCount": "席位數",
     "collaborators": "合作者",
     "collaborator": "合作者",
-    "perSeatPerMonth": "每席位每月12.99歐元（最低3席位）",
-    "seatsExample": "例如：3位合作者 = 38.97歐元/月 — 可隨時從您的空間修改。",
+    "perSeatPerMonth": "每席位每月14.99歐元（最低3席位）",
+    "seatsExample": "例如：3位合作者 = 44.97歐元/月 — 可隨時從您的空間修改。",
     "expiredSubscription": "您的訂閱已過期",
     "trialEndedFull": "您的免費試用已結束",
     "resubscribe": "請重新訂閱付費計劃以繼續使用Inboria。",
@@ -1341,12 +1341,12 @@
     "free": "免費",
     "perMonth": "/月",
     "perSeatMonth": "/每位/每月",
-    "perSeatDetail": "即每位每月 12.99€",
+    "perSeatDetail": "即每位每月 14.99€",
     "redirecting": "重定向中...",
     "start": "開始",
     "numberOfCollaborators": "合作人數",
     "total": "總計",
-    "seatsExample": "例如：3 位合作人 = 38.97€/月 — 可隨時在您的空間中修改。"
+    "seatsExample": "例如：3 位合作人 = 44.97€/月 — 可隨時在您的空間中修改。"
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "準備好改變您團隊的電子郵件管理了嗎？",
       "ctaDesc": "加入選擇 Inboria 的團隊，享受更流暢的協作與十倍的生產力 — 遍佈全球，支援 43 種語言。",
       "discoverBusiness": "了解商業計劃",
-      "ctaFooter": "商業計劃從每月 38.97 歐元起（3 個席位，每席 12.99 歐元）• 可擴展至 50 個席位 • 2 分鐘內完成設置",
+      "ctaFooter": "商業計劃從每月 44.97 歐元起（3 個席位，每席 14.99 歐元）• 可擴展至 50 個席位 • 2 分鐘內完成設置",
       "faqTitle": "常見問題",
       "faq1q": "我可以為我的團隊添加多少成員？",
       "faq1a": "商業計劃包括基本席位，您可以直接從您的訂閱門戶添加所需的席位。沒有強制限制。",
@@ -2287,7 +2287,7 @@
       "subscription": "訂閱",
       "subscriptionDesc": "管理您的Inboria訂閱計畫。比較方案並升級到更高的計畫。",
       "subscriptionFeatures": [
-        "4個計畫：試用（免費）、個人（每月9歐元）、專業（每月19歐元）、商業（每月起38.97歐元）",
+        "4個計畫：試用（免費）、個人（每月9歐元）、專業（每月19歐元）、商業（每月起44.97歐元）",
         "包含100個人工智慧信用的免費試用",
         "通過Paddle進行安全付款",
         "查看您的配額和當前消耗",

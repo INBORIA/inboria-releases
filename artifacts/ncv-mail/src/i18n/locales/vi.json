@@ -1259,8 +1259,8 @@
     "seatCount": "Số lượng chỗ ngồi",
     "collaborators": "cộng tác viên",
     "collaborator": "cộng tác viên",
-    "perSeatPerMonth": "Tương đương 12,99€ mỗi chỗ ngồi / tháng (tối thiểu 3 chỗ ngồi)",
-    "seatsExample": "Ví dụ: 3 cộng tác viên = 38,97€/tháng — có thể thay đổi bất cứ lúc nào từ không gian của Quý khách.",
+    "perSeatPerMonth": "Tương đương 14,99€ mỗi chỗ ngồi / tháng (tối thiểu 3 chỗ ngồi)",
+    "seatsExample": "Ví dụ: 3 cộng tác viên = 44,97€/tháng — có thể thay đổi bất cứ lúc nào từ không gian của Quý khách.",
     "expiredSubscription": "Đăng ký của Quý khách đã hết hạn",
     "trialEndedFull": "Thử nghiệm miễn phí của Quý khách đã kết thúc",
     "resubscribe": "Quý khách hãy đăng ký lại một gói trả phí để tiếp tục sử dụng Inboria.",
@@ -1341,12 +1341,12 @@
     "free": "Miễn phí",
     "perMonth": "/tháng",
     "perSeatMonth": "/người dùng/tháng",
-    "perSeatDetail": "Tương đương 12,99€ mỗi người dùng/tháng",
+    "perSeatDetail": "Tương đương 14,99€ mỗi người dùng/tháng",
     "redirecting": "Chuyển tiếp...",
     "start": "Bắt đầu",
     "numberOfCollaborators": "Số lượng nhân viên",
     "total": "Tổng cộng",
-    "seatsExample": "Ví dụ: 3 nhân viên = 38,97€/tháng — có thể thay đổi bất cứ lúc nào từ không gian của Quý khách."
+    "seatsExample": "Ví dụ: 3 nhân viên = 44,97€/tháng — có thể thay đổi bất cứ lúc nào từ không gian của Quý khách."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Quý vị đã sẵn sàng để chuyển đổi quản lý email của đội ngũ mình chưa?",
       "ctaDesc": "Xin vui lòng tham gia cùng các doanh nghiệp vừa và nhỏ của Bỉ và Pháp đã áp dụng Inboria để có sự hợp tác mượt mà hơn và năng suất tăng gấp bội.",
       "discoverBusiness": "Khám phá gói Business",
-      "ctaFooter": "Gói Business từ 38,97€/tháng (3 ghế với 12,99€/ghế) • Có thể mở rộng lên đến 50 ghế • Cấu hình trong 2 phút",
+      "ctaFooter": "Gói Business từ 44,97€/tháng (3 ghế với 14,99€/ghế) • Có thể mở rộng lên đến 50 ghế • Cấu hình trong 2 phút",
       "faqTitle": "Câu hỏi thường gặp",
       "faq1q": "Tôi có thể thêm bao nhiêu thành viên vào đội ngũ của mình?",
       "faq1a": "Gói Business bao gồm các ghế cơ bản, và Quý vị có thể thêm bao nhiêu tùy thích trực tiếp từ cổng thông tin đăng ký của mình. Không có giới hạn nào được áp dụng.",
@@ -2287,7 +2287,7 @@
       "subscription": "Đăng ký",
       "subscriptionDesc": "Xin vui lòng quản lý gói đăng ký Inboria của Quý khách. So sánh các gói và nâng cấp lên gói cao hơn.",
       "subscriptionFeatures": [
-        "4 gói: Dùng thử (miễn phí), Solo (9€/tháng), Pro (19€/tháng), Business (từ 38,97€/tháng)",
+        "4 gói: Dùng thử (miễn phí), Solo (9€/tháng), Pro (19€/tháng), Business (từ 44,97€/tháng)",
         "Dùng thử miễn phí 100 tín dụng AI bao gồm",
         "Thanh toán an toàn qua Paddle",
         "Xem hạn ngạch và mức tiêu thụ hiện tại của Quý khách",

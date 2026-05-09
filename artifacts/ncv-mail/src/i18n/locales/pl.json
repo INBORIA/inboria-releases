@@ -1259,8 +1259,8 @@
     "seatCount": "Liczba miejsc",
     "collaborators": "współpracowników",
     "collaborator": "współpracownik",
-    "perSeatPerMonth": "Czyli 12,99€ za miejsce / miesiąc (minimum 3 miejsca)",
-    "seatsExample": "Przykład: 3 współpracowników = 38,97€/miesiąc — możliwe do zmiany w dowolnym momencie z poziomu Państwa konta.",
+    "perSeatPerMonth": "Czyli 14,99€ za miejsce / miesiąc (minimum 3 miejsca)",
+    "seatsExample": "Przykład: 3 współpracowników = 44,97€/miesiąc — możliwe do zmiany w dowolnym momencie z poziomu Państwa konta.",
     "expiredSubscription": "Państwa abonament wygasł",
     "trialEndedFull": "Państwa bezpłatny okres próbny dobiegł końca",
     "resubscribe": "Zarejestruj się ponownie w płatnym planie, aby kontynuować korzystanie z Inboria.",
@@ -1341,12 +1341,12 @@
     "free": "Darmowe",
     "perMonth": "/miesiąc",
     "perSeatMonth": "/stanowisko/miesiąc",
-    "perSeatDetail": "Czyli 12,99€ za stanowisko/miesiąc",
+    "perSeatDetail": "Czyli 14,99€ za stanowisko/miesiąc",
     "redirecting": "Przekierowywanie...",
     "start": "Rozpocznij",
     "numberOfCollaborators": "Liczba współpracowników",
     "total": "Całkowita kwota",
-    "seatsExample": "Przykład: 3 współpracowników = 38,97€/miesiąc — możliwe do zmiany w dowolnym momencie z Państwa konta."
+    "seatsExample": "Przykład: 3 współpracowników = 44,97€/miesiąc — możliwe do zmiany w dowolnym momencie z Państwa konta."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Gotowy na transformację zarządzania e-mailem w swoim zespole?",
       "ctaDesc": "Dołącz do zespołów, które wybrały Inboria dla płynniejszej współpracy i dziesięciokrotnie większej produktywności — na całym świecie, w 43 językach.",
       "discoverBusiness": "Odkryj plan Business",
-      "ctaFooter": "Plan Business od 38,97€/miesiąc (3 miejsca po 12,99€/miejsce) • Rozszerzalny do 50 miejsc • Konfiguracja w 2 minuty",
+      "ctaFooter": "Plan Business od 44,97€/miesiąc (3 miejsca po 14,99€/miejsce) • Rozszerzalny do 50 miejsc • Konfiguracja w 2 minuty",
       "faqTitle": "Najczęściej zadawane pytania",
       "faq1q": "Ile członków mogę dodać do mojego zespołu?",
       "faq1a": "Plan Business obejmuje miejsca podstawowe, a Ty możesz dodać tyle, ile potrzebujesz, bezpośrednio z portalu subskrypcyjnego. Nie ma nałożonych ograniczeń.",
@@ -2287,7 +2287,7 @@
       "subscription": "Subskrypcja",
       "subscriptionDesc": "Zarządzaj swoim planem subskrypcyjnym Inboria. Porównaj oferty i przejdź na wyższy plan.",
       "subscriptionFeatures": [
-        "4 plany: Bezpłatny okres próbny, Solo (9€/miesiąc), Pro (19€/miesiąc), Business (od 38,97€/miesiąc)",
+        "4 plany: Bezpłatny okres próbny, Solo (9€/miesiąc), Pro (19€/miesiąc), Business (od 44,97€/miesiąc)",
         "Bezpłatny okres próbny z 100 kredytami AI w zestawie",
         "Bezpieczna płatność przez Paddle",
         "Zobacz swój limit i aktualne zużycie",

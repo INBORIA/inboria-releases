@@ -1259,8 +1259,8 @@
     "seatCount": "Vietų skaičius",
     "collaborators": "bendradarbiai",
     "collaborator": "bendradarbis",
-    "perSeatPerMonth": "Tai 12,99€ už vietą / mėnesį (minimali 3 vietų sąlyga)",
-    "seatsExample": "Pavyzdys: 3 bendradarbiai = 38,97€/mėn — keičiamas bet kada iš Jūsų erdvės.",
+    "perSeatPerMonth": "Tai 14,99€ už vietą / mėnesį (minimali 3 vietų sąlyga)",
+    "seatsExample": "Pavyzdys: 3 bendradarbiai = 44,97€/mėn — keičiamas bet kada iš Jūsų erdvės.",
     "expiredSubscription": "Jūsų prenumerata pasibaigė",
     "trialEndedFull": "Jūsų nemokamas bandomasis laikotarpis baigėsi",
     "resubscribe": "Atsinaujinkite į mokamą planą, kad galėtumėte toliau naudotis Inboria.",
@@ -1341,12 +1341,12 @@
     "free": "Nemokamai",
     "perMonth": "/mėn.",
     "perSeatMonth": "/vietą/mėn.",
-    "perSeatDetail": "Tai 12,99€ už vietą/mėn.",
+    "perSeatDetail": "Tai 14,99€ už vietą/mėn.",
     "redirecting": "Peradresavimas...",
     "start": "Pradėti",
     "numberOfCollaborators": "Bendradarbių skaičius",
     "total": "Iš viso",
-    "seatsExample": "Pavyzdys: 3 bendradarbiai = 38,97€/mėn. — keičiamas bet kada Jūsų erdvėje."
+    "seatsExample": "Pavyzdys: 3 bendradarbiai = 44,97€/mėn. — keičiamas bet kada Jūsų erdvėje."
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "Ar pasiruošę transformuoti savo komandos el. laiškų valdymą?",
       "ctaDesc": "Prisijunkite prie komandų, pasirinkusių Inboria sklandesniam bendradarbiavimui ir dešimteriopam našumui — visame pasaulyje, 43 kalbomis.",
       "discoverBusiness": "Sužinoti apie verslo planą",
-      "ctaFooter": "Verslo planas nuo 38,97€/mėn (3 vietos po 12,99€/vietą) • Išplėstinas iki 50 vietų • Nustatymas per 2 minutes",
+      "ctaFooter": "Verslo planas nuo 44,97€/mėn (3 vietos po 14,99€/vietą) • Išplėstinas iki 50 vietų • Nustatymas per 2 minutes",
       "faqTitle": "Dažnai užduodami klausimai",
       "faq1q": "Kiek narių galiu pridėti prie savo komandos?",
       "faq1a": "Verslo planas apima pagrindines vietas, ir Jūs galite pridėti tiek, kiek reikia, tiesiai iš savo prenumeratos portalo. Nėra nustatytos ribos.",
@@ -2287,7 +2287,7 @@
       "subscription": "Prenumerata",
       "subscriptionDesc": "Tvarkykite savo Inboria prenumeratos planą. Palyginkite pasiūlymus ir pereikite prie aukštesnio plano.",
       "subscriptionFeatures": [
-        "4 planai: Bandymas (nemokamai), Solo (9€/mėn.), Pro (19€/mėn.), Verslas (nuo 38,97€/mėn.)",
+        "4 planai: Bandymas (nemokamai), Solo (9€/mėn.), Pro (19€/mėn.), Verslas (nuo 44,97€/mėn.)",
         "Nemokamas 100 dirbtinio intelekto kreditų bandymas",
         "Saugus mokėjimas per Paddle",
         "Peržiūrėti savo kvotą ir dabartinį vartojimą",

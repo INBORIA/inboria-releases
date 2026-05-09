@@ -1259,8 +1259,8 @@
     "seatCount": "席位数量",
     "collaborators": "合作者",
     "collaborator": "合作者",
-    "perSeatPerMonth": "每个席位12.99€ / 月（最低3个席位）",
-    "seatsExample": "示例：3个合作者 = 38.97€/月 — 可随时在您的空间中修改。",
+    "perSeatPerMonth": "每个席位14.99€ / 月（最低3个席位）",
+    "seatsExample": "示例：3个合作者 = 44.97€/月 — 可随时在您的空间中修改。",
     "expiredSubscription": "您的订阅已过期",
     "trialEndedFull": "您的免费试用已结束",
     "resubscribe": "请重新订阅付费计划以继续使用Inboria。",
@@ -1341,12 +1341,12 @@
     "free": "免费",
     "perMonth": "/月",
     "perSeatMonth": "/座/月",
-    "perSeatDetail": "即每座 12.99€ / 月",
+    "perSeatDetail": "即每座 14.99€ / 月",
     "redirecting": "重定向中...",
     "start": "开始",
     "numberOfCollaborators": "员工数量",
     "total": "总计",
-    "seatsExample": "例如：3名员工 = 38.97€/月 — 可随时在您的空间中修改。"
+    "seatsExample": "例如：3名员工 = 44.97€/月 — 可随时在您的空间中修改。"
   },
   "marketing": {
     "home": {
@@ -1834,7 +1834,7 @@
       "ctaTitle": "准备好改变您团队的邮件管理方式了吗？",
       "ctaDesc": "加入选择 Inboria 的团队，享受更顺畅的协作和十倍的生产力 — 遍布全球，支持 43 种语言。",
       "discoverBusiness": "了解商业计划",
-      "ctaFooter": "商业计划起价为 38.97€/月（3 个席位，每个席位 12.99€）• 可扩展至 50 个席位 • 2 分钟内完成设置",
+      "ctaFooter": "商业计划起价为 44.97€/月（3 个席位，每个席位 14.99€）• 可扩展至 50 个席位 • 2 分钟内完成设置",
       "faqTitle": "常见问题",
       "faq1q": "我可以为我的团队添加多少成员？",
       "faq1a": "商业计划包括基本席位，您可以直接从您的订阅门户添加所需的席位。没有限制。",
@@ -2287,7 +2287,7 @@
       "subscription": "订阅",
       "subscriptionDesc": "管理您的Inboria订阅计划。比较不同的套餐并升级到更高的计划。",
       "subscriptionFeatures": [
-        "4个计划：试用（免费）、个人（9€/月）、专业（19€/月）、商务（起价38.97€/月）",
+        "4个计划：试用（免费）、个人（9€/月）、专业（19€/月）、商务（起价44.97€/月）",
         "包含100个AI积分的免费试用",
         "通过Paddle进行安全支付",
         "查看您的配额和当前消费",
