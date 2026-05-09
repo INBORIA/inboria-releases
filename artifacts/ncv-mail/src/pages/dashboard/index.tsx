@@ -5108,6 +5108,7 @@ export default function Dashboard() {
                     <DropdownMenuCheckboxItem
                       checked={smartSort}
                       onCheckedChange={(v) => setSmartSort(!!v)}
+                      onSelect={(e) => e.preventDefault()}
                       className="text-[12px]"
                       data-testid="menu-inboria-smart-sort"
                     >
@@ -5118,14 +5119,11 @@ export default function Dashboard() {
                       value={sortMode}
                       onValueChange={(v) => setSortMode(v as "priority" | "date_desc" | "date_asc")}
                     >
-                      <DropdownMenuRadioItem value="priority" disabled={smartSort} className="text-[12px]">
+                      <DropdownMenuRadioItem value="priority" disabled={smartSort} onSelect={(e) => e.preventDefault()} className="text-[12px]">
                         {t("inbox.sortPriority", "Priorité")}
                       </DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="date_desc" disabled={smartSort} className="text-[12px]">
+                      <DropdownMenuRadioItem value="date_desc" disabled={smartSort} onSelect={(e) => e.preventDefault()} className="text-[12px]">
                         {t("inbox.sortByDateDesc", "Date (récent → ancien)")}
-                      </DropdownMenuRadioItem>
-                      <DropdownMenuRadioItem value="date_asc" disabled={smartSort} className="text-[12px]">
-                        {t("inbox.sortByDateAsc", "Date (ancien → récent)")}
                       </DropdownMenuRadioItem>
                     </DropdownMenuRadioGroup>
 
