@@ -507,18 +507,18 @@ export default function Relances() {
               </span>
             </div>
             <div className="py-1">
-              <button
-                onClick={() => {
-                  if (multi) handleBulkCreateDraft();
-                  else if (ctxRow) handleCreateDraft(ctxRow.id);
-                  setContextMenu(null);
-                }}
-                className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-              >
-                <Sparkles className="w-3.5 h-3.5 text-primary" />
-                {t("relances.createDraft", "Créer la relance")}
-                {multi && ` (1)`}
-              </button>
+              {!multi && (
+                <button
+                  onClick={() => {
+                    if (ctxRow) handleCreateDraft(ctxRow.id);
+                    setContextMenu(null);
+                  }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-primary" />
+                  {t("relances.createDraft", "Créer la relance")}
+                </button>
+              )}
               <button
                 onClick={() => {
                   if (multi) handleBulkMarkReplied();
