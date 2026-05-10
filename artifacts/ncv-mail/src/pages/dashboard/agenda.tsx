@@ -654,11 +654,27 @@ export default function Agenda() {
             <Button onClick={navigateNext} size="sm" variant="ghost" className="h-7 w-7 p-0 flex-shrink-0">
               <ChevronRight className="w-4 h-4" />
             </Button>
-            <span className="text-[14px] font-medium text-foreground ml-2 capitalize whitespace-nowrap">
-              {viewMode === "day"
-                ? format(currentDate, "EEEE d MMMM yyyy", { locale })
-                : format(currentDate, "MMMM yyyy", { locale })}
-            </span>
+            <label className="relative ml-2 cursor-pointer">
+              <span className="text-[14px] font-medium text-foreground capitalize whitespace-nowrap hover:text-primary transition-colors inline-flex items-center gap-1">
+                {viewMode === "day"
+                  ? format(currentDate, "EEEE d MMMM yyyy", { locale })
+                  : format(currentDate, "MMMM yyyy", { locale })}
+                <CalendarDays className="w-3.5 h-3.5 opacity-60" />
+              </span>
+              <input
+                type="date"
+                value={format(currentDate, "yyyy-MM-dd")}
+                onChange={(e) => {
+                  const v = e.target.value;
+                  if (v) {
+                    const [y, m, d] = v.split("-").map(Number);
+                    setCurrentDate(new Date(y, m - 1, d));
+                  }
+                }}
+                className="absolute inset-0 opacity-0 cursor-pointer"
+                title={t("agenda.pickDate", "Choisir une date")}
+              />
+            </label>
           </div>
           <div className="flex bg-card border border-border rounded-lg overflow-hidden flex-shrink-0">
             {(["day", "week", "month"] as ViewMode[]).map((mode) => (
