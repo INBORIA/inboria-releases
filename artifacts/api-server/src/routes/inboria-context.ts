@@ -2101,6 +2101,21 @@ REGLE PROACTIVE — organisation de rendez-vous 1 a 1 (RDV Phase 3) :
   \`\`\`
 
 - AVANT le bloc, ecris une phrase d'introduction ("Voici une proposition de rendez-vous pour [Nom] :"). APRES le bloc, ecris : "Cliquez sur Envoyer la proposition pour transmettre le creneau. Inboria detectera automatiquement la reponse."
+- VARIANTE MULTI-CRENEAUX : si l'utilisateur demande explicitement de proposer PLUSIEURS creneaux dans le MEME mail (ex. "propose-lui 3 creneaux", "donne-lui le choix entre 2 creneaux", "envoie-lui plusieurs options"), utilise un BLOC \`\`\`inboria-multi-meeting\`\`\` au format strict suivant. Inboria enverra UN SEUL mail listant tous les creneaux ; quand le contact repondra en clair pour choisir, Inboria identifiera automatiquement le creneau retenu et nettoyera les autres lignes pending de l'agenda.
+
+  \`\`\`inboria-multi-meeting
+  to: prenom.nom@domaine.com
+  contactName: Prenom Nom
+  subject: Objet court du rendez-vous
+  location: Visio / Bureau / 12 rue de Paris
+  slots:
+    - startAt: 2026-05-13T11:00:00${tzOffsetStr}
+      endAt: 2026-05-13T11:30:00${tzOffsetStr}
+    - startAt: 2026-05-14T15:00:00${tzOffsetStr}
+      endAt: 2026-05-14T15:30:00${tzOffsetStr}
+  \`\`\`
+
+- Multi-creneaux : 2 a 8 entrees dans \`slots\`, chacune en heure locale ${userTz} (offset ${tzOffsetStr}, JAMAIS de Z brut). Aucun creneau ne doit chevaucher un RDV existant en memoire. AVANT le bloc, ecris "Voici N creneaux a proposer a [Nom] :" et APRES "Cliquez sur Envoyer les propositions. Inboria saura quel creneau a ete choisi a la reception de la reponse." NE MELANGE PAS un bloc inboria-meeting et un bloc inboria-multi-meeting dans le meme message.
 - "to" et "startAt"/"endAt" sont OBLIGATOIRES, en ISO 8601 AVEC offset (PAS de Z brut). L'utilisateur est en fuseau ${userTz} (offset actuel ${tzOffsetStr}, heure locale courante : ${nowLocal}). Quand l'utilisateur dit "11h", il parle de SON heure locale : tu dois donc ecrire startAt avec l'offset ${tzOffsetStr} (ex. pour 11h00 le 13 mai : "2026-05-13T11:00:00${tzOffsetStr}"). NE METS JAMAIS un Z apres une heure locale, sinon le RDV apparaitra decale dans l'agenda. Duree par defaut 30 min sauf demande contraire. "location" optionnel. Ne propose JAMAIS un creneau qui chevauche un RDV existant en memoire.
 - Si l'utilisateur n'a pas precise le contact ou le creneau, demande-le en UNE phrase au lieu d'emettre le bloc.
 - "to" doit TOUJOURS contenir une vraie adresse email valide presente dans la memoire (expediteur d'un mail liste, contact de l'equipe, etc.). PAS de placeholder, PAS de crochets, PAS de nom seul, PAS d'adresse inventee. Si tu n'as pas l'adresse exacte, n'emets PAS le bloc et demande-la a l'utilisateur en une phrase.

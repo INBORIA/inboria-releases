@@ -13,7 +13,7 @@ import {
   type AppointmentPushPayload,
   type VideoProvider,
 } from "../services/calendar-sync";
-import { proposeMeeting, sendCounterAcceptedEmail } from "../services/meeting-proposals";
+import { proposeMeeting, proposeMeetingMulti, sendCounterAcceptedEmail } from "../services/meeting-proposals";
 import {
   proposeMultiMeeting,
   findMultiCommonSlots,
@@ -669,6 +669,44 @@ router.post("/appointments/propose", requireAuth, async (req, res): Promise<void
   } catch (err) {
     const msg = err instanceof Error ? err.message : "propose_crashed";
     req.log?.error?.({ err: msg }, "[appointments] propose crashed");
+    res.status(500).json({ error: msg });
+  }
+});
+
+// Multi-créneaux : un seul mail propose N créneaux à choisir. Toutes les
+// lignes appointments créées partagent un proposal_group_id pour que le
+// classifier puisse résoudre la réponse libre du contact.
+const proposeMultiSlotSchema = z
+  .object({ startAt: isoDateTime, endAt: isoDateTime })
+  .refine((s) => Date.parse(s.endAt) > Date.parse(s.startAt), {
+    message: "endAt must be after startAt",
+    path: ["endAt"],
+  });
+const proposeMultiSchema = z.object({
+  to: z.string().trim().email(),
+  contactName: z.string().trim().min(1).max(200).optional(),
+  subject: z.string().trim().min(1).max(200),
+  location: z.string().max(500).optional().nullable(),
+  description: z.string().max(2000).optional().nullable(),
+  lang: z.string().min(2).max(10).optional(),
+  slots: z.array(proposeMultiSlotSchema).min(2).max(8),
+});
+router.post("/appointments/propose-multi", requireAuth, async (req, res): Promise<void> => {
+  const parsed = proposeMultiSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "invalid_payload", details: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const result = await proposeMeetingMulti({ userId: req.userId!, ...parsed.data });
+    if (!result.ok) {
+      res.status(502).json({ error: result.error || "propose_multi_failed" });
+      return;
+    }
+    res.status(201).json({ ok: true, appointmentIds: result.appointmentIds || [] });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "propose_multi_crashed";
+    req.log?.error?.({ err: msg }, "[appointments] propose-multi crashed");
     res.status(500).json({ error: msg });
   }
 });

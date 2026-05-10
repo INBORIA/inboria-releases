@@ -83,6 +83,7 @@ I prefer simple language and detailed explanations. I want iterative development
 ## Gotchas
 
 - **Supabase Migrations**: Ensure `migrations/2026_05_03_email_chunks.sql` is applied manually in Supabase Dashboard for Inboria Email Brain to function. The worker will pause if the table is missing.
+- **Multi-créneaux RDV (groupe)**: appliquer manuellement `artifacts/api-server/migrations/2026_05_14_appointment_proposal_group.sql` dans Supabase (ajoute la colonne `appointments.proposal_group_id` + index partiel). Sans ça, l'envoi de plusieurs créneaux dans un seul mail (`/api/appointments/propose-multi`) échouera à l'INSERT.
 - **Inboria Email Brain Backfill**: After migration, trigger the backfill process for existing tenants via the admin API.
 - **AI Cost Management**: Be mindful of `EMAIL_EMBED_DAILY_BUDGET_USD` to control embedding costs.
 

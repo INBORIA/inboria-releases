@@ -200,23 +200,16 @@ export default function Agenda() {
     return () => { aborted = true; };
   }, [rangeStart.getTime(), rangeEnd.getTime(), calendarAccounts.length]);
 
-  const [statusFilter, setStatusFilter] = useState<"all" | "pending" | "counter_proposed" | "confirmed" | "declined">("all");
 
   const appointments = useMemo(() => {
-    let list = rawAppointments as Appointment[];
-    if (statusFilter !== "all") {
-      list = list.filter((apt) => {
-        const s = apt.status || (apt.confirmed ? "confirmed" : "pending");
-        return s === statusFilter;
-      });
-    }
+    const list = rawAppointments as Appointment[];
     if (projectFilter.size === 0) return list;
     return list.filter((apt) => {
       const pid = apt.projectId ? String(apt.projectId) : "";
       if (!pid) return projectFilter.has("__none__");
       return projectFilter.has(pid);
     });
-  }, [rawAppointments, projectFilter, statusFilter]);
+  }, [rawAppointments, projectFilter]);
 
   const projectsWithAppointments = useMemo(() => {
     const ids = new Set<string>();
@@ -695,25 +688,6 @@ export default function Agenda() {
           </div>
         </div>
 
-        <div className="flex items-center gap-1.5 flex-wrap mb-3 text-[11px]">
-          <span className="text-muted-foreground mr-1">{t("agenda.filterByStatus", "Statut :")}</span>
-          {(["all", "pending", "counter_proposed", "confirmed", "declined"] as const).map((s) => (
-            <button
-              key={s}
-              type="button"
-              onClick={() => setStatusFilter(s)}
-              data-testid={`status-filter-${s}`}
-              className={`px-2 py-0.5 rounded-full border transition-colors ${
-                statusFilter === s
-                  ? "bg-primary/20 border-primary/60 text-primary"
-                  : "bg-transparent border-border text-muted-foreground hover:text-foreground"
-              }`}
-            >
-              {t(`agenda.statusFilter.${s}`, s === "all" ? "Tous" : s)}
-            </button>
-          ))}
-        </div>
-
         {projectsWithAppointments.list.length > 0 && (
           <div className="flex items-center gap-1.5 flex-wrap mb-3 text-[11px]">
             <span className="text-muted-foreground mr-1">{t("agenda.filterByProject", "Filtrer par projet :")}</span>
@@ -1044,36 +1018,28 @@ export default function Agenda() {
                           onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
                           className={`rounded px-2 py-1.5 cursor-pointer mb-1 border ${
                             isDeclined
-                              ? "bg-zinc-800/40 border-zinc-700 opacity-60"
-                              : isCounter
-                                ? "bg-amber-500/15 border-amber-500/40 hover:bg-amber-500/25"
-                                : isPending
-                                  ? "bg-zinc-700/30 border-zinc-600 border-dashed hover:bg-zinc-700/40"
-                                  : apt.confirmed === false
-                                    ? "bg-primary/10 border-primary/30"
-                                    : "bg-primary/15 border-primary/30 hover:bg-primary/25"
+                              ? "bg-card border-border opacity-60"
+                              : isPending || isCounter
+                                ? "bg-card border-border border-dashed hover:bg-[#1a2235]"
+                                : apt.confirmed === false
+                                  ? "bg-primary/10 border-primary/30"
+                                  : "bg-primary/15 border-primary/30 hover:bg-primary/25"
                           }`}
                           style={pc && !isPending && !isCounter && !isDeclined && apt.confirmed !== false ? { backgroundColor: `${pc}15`, borderColor: `${pc}30` } : undefined}
                           data-testid={`agenda-appt-${apt.id}`}
                         >
-                          <div className="text-[12px] font-medium text-foreground flex items-center gap-1.5">
+                          <div className="text-[12px] font-medium text-foreground">
                             <span className="truncate">{apt.title}</span>
-                            {isPending && (
-                              <span className="text-[9px] uppercase tracking-wide px-1 py-px rounded bg-zinc-600/60 text-zinc-200 shrink-0" title={t("agenda.statusPending", "En attente de réponse")}>
-                                {t("agenda.statusPendingShort", "En attente")}
-                              </span>
-                            )}
-                            {isCounter && (
-                              <span className="text-[9px] uppercase tracking-wide px-1 py-px rounded bg-amber-500/30 text-amber-200 shrink-0" title={t("agenda.statusCounter", "Contre-proposition reçue")}>
-                                {t("agenda.statusCounterShort", "Contre-prop.")}
-                              </span>
-                            )}
-                            {isDeclined && (
-                              <span className="text-[9px] uppercase tracking-wide px-1 py-px rounded bg-red-500/20 text-red-200 shrink-0" title={t("agenda.statusDeclined", "Refusé par le contact")}>
-                                {t("agenda.statusDeclinedShort", "Refusé")}
-                              </span>
-                            )}
                           </div>
+                          {(isPending || isCounter || isDeclined) && (
+                            <div className="text-[10px] text-muted-foreground mt-0.5">
+                              {isPending
+                                ? t("agenda.statusPending", "En attente de réponse")
+                                : isCounter
+                                  ? t("agenda.statusCounter", "Contre-proposition reçue")
+                                  : t("agenda.statusDeclined", "Refusé par le contact")}
+                            </div>
+                          )}
                           <div className="flex items-center gap-3 mt-0.5">
                             <span className="text-[10px] text-muted-foreground flex items-center gap-1">
                               <Clock className="w-3 h-3" />
