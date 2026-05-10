@@ -797,13 +797,15 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     })();
 
     // Formatte une date ISO en libellé lisible FR : "lundi 5 mai à 14h30".
+    // IMPORTANT : on force le timeZone de l'utilisateur (sinon Node tombe sur
+    // UTC en container et l'heure affichee est decalee de 2h en ete Brussels).
     const fmtAppt = (iso: string | null, allDay: boolean | null): string => {
       if (!iso) return "(date inconnue)";
       try {
         const d = new Date(iso);
-        const day = d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" });
+        const day = d.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: userTz });
         if (allDay) return day;
-        const time = d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" }).replace(":", "h");
+        const time = d.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: userTz }).replace(":", "h");
         return `${day} à ${time}`;
       } catch {
         return iso;
@@ -950,7 +952,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       if (!iso) return "";
       try {
         const d = new Date(iso);
-        return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short" });
+        return d.toLocaleDateString("fr-FR", { day: "numeric", month: "short", timeZone: userTz });
       } catch {
         return "";
       }
