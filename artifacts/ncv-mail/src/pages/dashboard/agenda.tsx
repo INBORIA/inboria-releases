@@ -886,7 +886,7 @@ export default function Agenda() {
                           ? t("agenda.statusCounterMonth", "Contre-prop.")
                           : s === "declined"
                             ? t("agenda.statusDeclinedMonth", "Refusé")
-                            : "";
+                            : t("agenda.statusConfirmedShort", "Confirmé");
                       return (
                       <div
                         key={apt.id}
@@ -896,13 +896,13 @@ export default function Agenda() {
                         onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
                         className={`text-[10px] px-1 py-0.5 rounded mb-0.5 cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border" : apt.confirmed === false ? "bg-primary/20 text-primary" : `text-foreground ${!projectColor ? "bg-primary/20" : ""}`}`}
                         style={!nonConfirmed && apt.confirmed !== false && projectColor ? { backgroundColor: `${projectColor}20` } : undefined}
-                        title={monthLabel ? `${apt.title} — ${monthLabel}` : apt.title}
+                        title={`${apt.title} — ${monthLabel}`}
                       >
                         <div className="truncate">
                           {projectColor && !nonConfirmed && <span className="inline-block w-1.5 h-1.5 rounded-full mr-0.5" style={{ backgroundColor: projectColor }} />}
                           {apt.allDay ? "" : format(parseISO(apt.startAt), "HH:mm") + " "}{apt.title}
                         </div>
-                        {monthLabel && <div className="text-[9px] text-primary truncate">{monthLabel}</div>}
+                        <div className={`text-[9px] truncate ${nonConfirmed ? "text-primary" : "text-muted-foreground"}`}>{monthLabel}</div>
                       </div>
                       );
                     })}
@@ -971,7 +971,7 @@ export default function Agenda() {
                               ? t("agenda.statusCounterShort", "Contre-prop.")
                               : s === "declined"
                                 ? t("agenda.statusDeclinedShort", "Refusé")
-                                : "";
+                                : t("agenda.statusConfirmedShort", "Confirmé");
                           return (
                           <div
                             key={apt.id}
@@ -981,7 +981,7 @@ export default function Agenda() {
                             title={shortLabel ? `${apt.title} — ${shortLabel}` : apt.title}
                           >
                             <div className="truncate text-foreground">{format(parseISO(apt.startAt), "HH:mm")} {apt.title}</div>
-                            {shortLabel && <div className="text-primary truncate">{shortLabel}</div>}
+                            <div className={`truncate ${nonConfirmed ? "text-primary" : "text-muted-foreground"}`}>{shortLabel}</div>
                           </div>
                           );
                         })}
