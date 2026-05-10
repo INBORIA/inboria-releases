@@ -316,6 +316,12 @@ async function detectAppointmentFromEmail(
       );
       return;
     }
+    const { data: tzProfile } = await supabaseAdmin
+      .from("profiles")
+      .select("timezone")
+      .eq("id", userId)
+      .maybeSingle();
+    const userTz = tzProfile?.timezone || "Europe/Brussels";
     const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
     const cleanBody = (body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 800);
     const completion = await openai.chat.completions.create({
@@ -328,10 +334,11 @@ async function detectAppointmentFromEmail(
           content: `Tu analyses un email professionnel pour détecter si un rendez-vous, une réunion ou un événement est mentionné avec une date/heure concrète.
 La date actuelle est le ${new Date().toISOString().split("T")[0]} (année ${new Date().getFullYear()}).
 IMPORTANT: Utilise l'année ${new Date().getFullYear()} pour les dates si aucune année n'est précisée.
+FUSEAU HORAIRE: Les heures mentionnées dans l'email sont dans le fuseau "${userTz}". Tu DOIS retourner les datetimes ISO avec le décalage horaire correspondant (ex pour Europe/Brussels en mai: "2026-05-14T13:00:00+02:00"). N'utilise JAMAIS le suffixe "Z" (UTC) pour les heures locales.
 Réponds en JSON strict:
 { "hasAppointment": false }
 OU
-{ "hasAppointment": true, "title": "...", "description": "...", "location": "...", "startAt": "ISO datetime", "endAt": "ISO datetime", "allDay": false, "participants": "..." }
+{ "hasAppointment": true, "title": "...", "description": "...", "location": "...", "startAt": "ISO datetime avec offset", "endAt": "ISO datetime avec offset", "allDay": false, "participants": "..." }
 N'invente PAS de RDV. Détecte uniquement si une date/heure précise est mentionnée (ex: "réunion le 15 mars à 14h", "call mardi 10h").`,
         },
         {
