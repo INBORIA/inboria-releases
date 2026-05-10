@@ -441,7 +441,24 @@ router.patch("/appointments/:id", requireAuth, async (req, res): Promise<void> =
     if (body.emailId !== undefined) updates.email_id = body.emailId || null;
     if (body.projectId !== undefined) updates.project_id = body.projectId || null;
     if (body.reminderMinutes !== undefined) updates.reminder_minutes = body.reminderMinutes;
-    if (body.confirmed !== undefined) updates.confirmed = body.confirmed;
+    if (body.confirmed !== undefined) {
+      updates.confirmed = body.confirmed;
+      // Si on confirme une contre-proposition, promouvoir en "confirmed"
+      // et appliquer les créneaux contre-proposés comme nouveaux start/end.
+      if (
+        body.confirmed === true &&
+        existing.status === "counter_proposed" &&
+        existing.counter_start_at &&
+        existing.counter_end_at
+      ) {
+        updates.status = "confirmed";
+        if (body.startAt === undefined) updates.start_at = existing.counter_start_at;
+        if (body.endAt === undefined) updates.end_at = existing.counter_end_at;
+        updates.counter_start_at = null;
+        updates.counter_end_at = null;
+        updates.awaiting_reminder_at = null;
+      }
+    }
     if (body.participants !== undefined) updates.participants = body.participants || null;
     if (body.videoProvider !== undefined || providerChangedByFallback) {
       // Persister la valeur EFFECTIVE (post-fallback), pas la valeur brute,
