@@ -824,8 +824,26 @@ export async function saveEmailWithTriage(
   }
 
   // Skip appointment detection pour les hits pre-filtre evidents (newsletters, notifications)
-  // -> ces mails ne contiennent jamais de RDV, evite un appel OpenAI inutile
-  if (!pre.hit) {
+  // -> ces mails ne contiennent jamais de RDV, evite un appel OpenAI inutile.
+  // Skip aussi quand le mail est une reponse a une proposition Inboria existante :
+  // sinon on cree un doublon en plus du RDV qui passe en confirme via le hook RDV.
+  const inReplyToHdr =
+    typeof headers?.["in-reply-to"] === "string"
+      ? (headers["in-reply-to"] as string)
+      : Array.isArray(headers?.["in-reply-to"])
+        ? (headers["in-reply-to"] as string[])[0]
+        : null;
+  let isReplyToProposal = false;
+  if (inReplyToHdr) {
+    const { data: matchedProposal } = await supabaseAdmin
+      .from("appointments")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("proposal_message_id", inReplyToHdr)
+      .maybeSingle();
+    isReplyToProposal = Boolean(matchedProposal);
+  }
+  if (!pre.hit && !isReplyToProposal) {
     detectAppointmentFromEmail(inserted.id, sender, subject, body, userId).catch(() => {});
   }
 
