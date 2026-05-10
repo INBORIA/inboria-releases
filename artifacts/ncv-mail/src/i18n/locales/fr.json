@@ -2522,7 +2522,7 @@
     "statusFilter": {
       "all": "Tous",
       "pending": "En attente",
-      "counter_proposed": "Contre-prop.",
+      "counter_proposed": "Contre-proposition",
       "confirmed": "Confirmé",
       "declined": "Refusé"
     },
