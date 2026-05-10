@@ -275,7 +275,7 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primary
       <div className="px-3 py-2.5 space-y-1.5 text-xs">
         <div className="flex gap-2">
           <span className="text-zinc-500 w-12 shrink-0">À</span>
-          <span className={cn("break-all", toValid ? "text-zinc-100" : "text-amber-300")}>{draft.to.trim() || "(vide)"}</span>
+          <span className={cn("break-all", toValid ? "text-zinc-100" : "text-zinc-300 underline decoration-dotted")}>{draft.to.trim() || "(vide)"}</span>
         </div>
         <div className="flex gap-2">
           <span className="text-zinc-500 w-12 shrink-0">Objet</span>
@@ -288,13 +288,13 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primary
         </div>
       </div>
       {blockReason && (
-        <div className="px-3 py-2 border-t border-amber-500/30 bg-amber-500/10 text-amber-200 text-[11px] flex gap-2 items-start">
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-900 text-zinc-200 text-[11px] flex gap-2 items-start">
           <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
           <span>{blockReason}</span>
         </div>
       )}
       {stage === "error" && (
-        <div className="px-3 py-2 border-t border-red-500/30 bg-red-500/10 text-red-200 text-[11px] flex gap-2 items-start">
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-900 text-zinc-200 text-[11px] flex gap-2 items-start">
           <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
           <span>{errorMsg}</span>
         </div>
@@ -438,7 +438,7 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
       <div className="px-3 py-2.5 space-y-1.5 text-xs">
         <div className="flex gap-2">
           <span className="text-zinc-500 w-16 shrink-0">À</span>
-          <span className={cn("break-all", toValid ? "text-zinc-100" : "text-amber-300")}>
+          <span className={cn("break-all", toValid ? "text-zinc-100" : "text-zinc-300 underline decoration-dotted")}>
             {meeting.contactName ? `${meeting.contactName} <${meeting.to.trim()}>` : meeting.to.trim() || "(vide)"}
           </span>
         </div>
@@ -448,7 +448,7 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
         </div>
         <div className="flex gap-2">
           <span className="text-zinc-500 w-16 shrink-0">Créneau</span>
-          <span className={cn(dateValid ? "text-zinc-100" : "text-amber-300")}>{slotLabel}</span>
+          <span className={cn(dateValid ? "text-zinc-100" : "text-zinc-300 underline decoration-dotted")}>{slotLabel}</span>
         </div>
         {meeting.location && (
           <div className="flex gap-2">
@@ -460,13 +460,13 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
         )}
       </div>
       {blockReason && (
-        <div className="px-3 py-2 border-t border-amber-500/30 bg-amber-500/10 text-amber-200 text-[11px] flex gap-2 items-start">
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-900 text-zinc-200 text-[11px] flex gap-2 items-start">
           <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
           <span>{blockReason}</span>
         </div>
       )}
       {stage === "error" && (
-        <div className="px-3 py-2 border-t border-red-500/30 bg-red-500/10 text-red-200 text-[11px] flex gap-2 items-start">
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-900 text-zinc-200 text-[11px] flex gap-2 items-start">
           <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
           <span>{errorMsg}</span>
         </div>
