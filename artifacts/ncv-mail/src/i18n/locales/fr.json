@@ -3260,7 +3260,7 @@
   },
   "calendars": {
     "title": "Calendriers connectés",
-    "subtitle": "Reliez Google Calendar ou Outlook Calendar pour que NCV Mail voie vos disponibilités et y inscrive vos rendez-vous.",
+    "subtitle": "Reliez Google Calendar ou Outlook Calendar pour qu'Inboria voie vos disponibilités et y inscrive vos rendez-vous.",
     "empty": "Aucun calendrier connecté pour le moment.",
     "connectGoogle": "Connecter Google Calendar",
     "connectGoogleDesc": "Lecture des événements et écriture des nouveaux RDV.",
@@ -3276,6 +3276,6 @@
     "disconnectedToast": "Calendrier déconnecté",
     "disconnectFailed": "Suppression impossible",
     "schemaMissing": "La table calendar_accounts n'est pas encore créée dans la base. Exécutez la migration 2026_05_09_calendar_accounts.sql dans Supabase.",
-    "help": "Inboria utilise vos calendriers pour vérifier vos disponibilités et y créer les rendez-vous fixés depuis NCV Mail."
+    "help": "Inboria utilise vos calendriers pour vérifier vos disponibilités et y créer les rendez-vous fixés depuis Inboria."
   }
 }
