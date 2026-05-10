@@ -254,7 +254,7 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primary
     const from = resolvedFrom || primaryFrom;
     return (
       <div className="my-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-zinc-100 text-xs flex items-center gap-2">
-        <Check className="h-4 w-4 shrink-0 text-emerald-400" />
+        <Check className="h-4 w-4 shrink-0 text-zinc-100" />
         <span>
           ✓ Envoyé à <strong>{draft.to.trim()}</strong> à {sentAt}
           {from ? <span className="text-zinc-400"> — depuis {from}</span> : null}
@@ -416,7 +416,7 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
   if (stage === "sent") {
     return (
       <div className="my-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-zinc-100 text-xs flex items-center gap-2">
-        <Check className="h-4 w-4 shrink-0 text-emerald-400" />
+        <Check className="h-4 w-4 shrink-0 text-zinc-100" />
         <span>
           ✓ Proposition envoyée à <strong>{meeting.contactName || meeting.to.trim()}</strong>. Inboria détectera la réponse automatiquement.
         </span>
