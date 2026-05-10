@@ -207,7 +207,7 @@ export default function TeamActivitePage() {
   );
 
   function openEmail(id: number) {
-    setLocation(`/dashboard?emailId=${id}`);
+    setLocation(`/dashboard?emailId=${id}&from=${encodeURIComponent("/dashboard/activite-equipe")}`);
   }
 
   if (isLoading) {

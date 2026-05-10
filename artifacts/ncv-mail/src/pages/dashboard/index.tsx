@@ -3005,7 +3005,7 @@ export default function Dashboard() {
     const a = params.get("assignee");
     return a && a.trim() ? a.trim() : null;
   });
-  const [routeLocation] = useLocation();
+  const [routeLocation, navigate] = useLocation();
   // Subscribe to URL changes — wouter v3 only tracks pathname, but query
   // strings change too (e.g. clicking "Assignés" → /dashboard?assignee=me).
   // wouter dispatches custom "pushState"/"replaceState" events on window for
@@ -4491,7 +4491,15 @@ export default function Dashboard() {
           >
             <EmailDetail
               email={selectedEmail}
-              onBack={() => setSelectedEmailId(null)}
+              onBack={() => {
+                const params = new URLSearchParams(window.location.search);
+                const from = params.get("from");
+                if (from && from.startsWith("/")) {
+                  navigate(from);
+                  return;
+                }
+                setSelectedEmailId(null);
+              }}
               onMarkRead={handleMarkAsRead}
               onArchive={handleArchive}
               onDelete={handleDelete}
