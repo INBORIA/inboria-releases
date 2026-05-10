@@ -879,12 +879,16 @@ export default function Agenda() {
                     {dayAppts.slice(0, 3).map((apt) => {
                       const projectColor = apt.projects?.color;
                       const s = apt.status;
-                      const nonConfirmed = s === "pending" || s === "counter_proposed" || s === "declined";
-                      const monthLabel = s === "pending"
+                      const isPendingFallback = apt.confirmed === false && s !== "counter_proposed" && s !== "declined";
+                      const effective = s === "counter_proposed" || s === "declined"
+                        ? s
+                        : isPendingFallback ? "pending" : "confirmed";
+                      const nonConfirmed = effective !== "confirmed";
+                      const monthLabel = effective === "pending"
                         ? t("agenda.statusPendingMonth", "En att.")
-                        : s === "counter_proposed"
+                        : effective === "counter_proposed"
                           ? t("agenda.statusCounterMonth", "Contre-prop.")
-                          : s === "declined"
+                          : effective === "declined"
                             ? t("agenda.statusDeclinedMonth", "Refusé")
                             : t("agenda.statusConfirmedShort", "Confirmé");
                       return (
@@ -964,12 +968,16 @@ export default function Agenda() {
                         {dayAppts.map((apt) => {
                           const pc = apt.projects?.color;
                           const s = apt.status;
-                          const nonConfirmed = s === "pending" || s === "counter_proposed" || s === "declined";
-                          const shortLabel = s === "pending"
+                          const isPendingFallback = apt.confirmed === false && s !== "counter_proposed" && s !== "declined";
+                          const effective = s === "counter_proposed" || s === "declined"
+                            ? s
+                            : isPendingFallback ? "pending" : "confirmed";
+                          const nonConfirmed = effective !== "confirmed";
+                          const shortLabel = effective === "pending"
                             ? t("agenda.statusPendingShort", "En attente")
-                            : s === "counter_proposed"
+                            : effective === "counter_proposed"
                               ? t("agenda.statusCounterShort", "Contre-prop.")
-                              : s === "declined"
+                              : effective === "declined"
                                 ? t("agenda.statusDeclinedShort", "Refusé")
                                 : t("agenda.statusConfirmedShort", "Confirmé");
                           return (
@@ -1036,9 +1044,9 @@ export default function Agenda() {
                       {hourAppts.map((apt) => {
                         const pc = apt.projects?.color;
                         const aptStatus = apt.status;
-                        const isPending = aptStatus === "pending";
                         const isCounter = aptStatus === "counter_proposed";
                         const isDeclined = aptStatus === "declined";
+                        const isPending = aptStatus === "pending" || (apt.confirmed === false && !isCounter && !isDeclined);
                         return (
                         <div
                           key={apt.id}
