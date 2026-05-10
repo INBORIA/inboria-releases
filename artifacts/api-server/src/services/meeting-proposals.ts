@@ -1006,22 +1006,43 @@ ${cleanBody}
 export async function handleIncomingEmailForMeeting(
   userId: string,
   emailId: number,
-  inReplyTo: string | null | undefined,
+  threadMessageIds: string | string[] | null | undefined,
   responseMessageId: string | null,
   body: string,
 ): Promise<void> {
-  if (!inReplyTo) return;
+  const candidates = Array.isArray(threadMessageIds)
+    ? threadMessageIds.filter((s) => typeof s === "string" && s.length > 0)
+    : threadMessageIds
+      ? [threadMessageIds]
+      : [];
+  if (candidates.length === 0) return;
   try {
     const { data: rows } = await supabaseAdmin
       .from("appointments")
-      .select("id, start_at, end_at, status, proposal_group_id")
+      .select("id, start_at, end_at, status, proposal_group_id, proposal_message_id")
       .eq("user_id", userId)
-      .eq("proposal_message_id", inReplyTo);
+      .in("proposal_message_id", candidates);
     if (!rows || rows.length === 0) return;
     const active = rows.filter(
       (r: any) => r.status === "pending" || r.status === "counter_proposed",
     );
-    if (active.length === 0) return;
+    if (active.length === 0) {
+      logger.info(
+        { emailId, userId, matchedCount: rows.length },
+        "[meeting-proposals] reply matched but proposal already resolved — skipping",
+      );
+      return;
+    }
+    logger.info(
+      {
+        emailId,
+        userId,
+        matchedAppointmentIds: active.map((r: any) => r.id),
+        groupId: (active[0] as any).proposal_group_id,
+        multi: active.length > 1,
+      },
+      "[meeting-proposals] reply detected for RDV proposal — classifying",
+    );
 
     // Multi-slot : toutes les lignes partagent le même proposal_group_id.
     const groupId = (active[0] as any).proposal_group_id as string | null;

@@ -136,6 +136,33 @@ interface AttachmentMeta {
   providerAttachmentId: string;
 }
 
+/**
+ * Construit la liste des Message-IDs candidats du thread depuis les headers
+ * In-Reply-To et References du mail entrant. Inclut chaque variante avec et
+ * sans chevrons, pour matcher quelle que soit la convention de stockage.
+ */
+function collectThreadMessageIds(headers: Record<string, unknown> | undefined | null): string[] {
+  if (!headers) return [];
+  const out = new Set<string>();
+  const push = (raw: unknown) => {
+    if (typeof raw !== "string") return;
+    for (const tok of raw.split(/[\s,]+/)) {
+      const t = tok.trim();
+      if (!t) continue;
+      out.add(t);
+      if (t.startsWith("<") && t.endsWith(">")) out.add(t.slice(1, -1));
+      else out.add(`<${t}>`);
+    }
+  };
+  const inReply = (headers as any)["in-reply-to"];
+  if (Array.isArray(inReply)) inReply.forEach(push);
+  else push(inReply);
+  const refs = (headers as any)["references"];
+  if (Array.isArray(refs)) refs.forEach(push);
+  else push(refs);
+  return Array.from(out);
+}
+
 function extractGmailAttachments(payload: any): AttachmentMeta[] {
   const attachments: AttachmentMeta[] = [];
   if (!payload) return attachments;
@@ -777,22 +804,19 @@ export async function saveEmailWithTriage(
   }).catch(() => {});
 
   // RDV Phase 3 (#261) — si ce mail entrant est une réponse à une proposition
-  // de RDV envoyée par Inboria (In-Reply-To matche un proposal_message_id
-  // pending), on classe la réponse (oui/non/contre-prop) et on met à jour le
-  // statut du RDV. Best-effort, jamais bloquant pour la sync.
+  // de RDV envoyée par Inboria (In-Reply-To OU References matche un
+  // proposal_message_id pending), on classe la réponse (oui/non/contre-prop)
+  // et on met à jour le statut du RDV. Best-effort, jamais bloquant pour la
+  // sync. On accepte la chaîne References car certains clients (Outlook web,
+  // Apple Mail) ne renvoient pas In-Reply-To sur une réponse-de-réponse.
+  const candidateMessageIds = collectThreadMessageIds(headers);
   try {
-    const inReplyTo =
-      typeof headers?.["in-reply-to"] === "string"
-        ? (headers["in-reply-to"] as string)
-        : Array.isArray(headers?.["in-reply-to"])
-          ? (headers["in-reply-to"] as string[])[0]
-          : null;
-    if (inReplyTo) {
+    if (candidateMessageIds.length > 0) {
       const { handleIncomingEmailForMeeting } = await import("./meeting-proposals");
       handleIncomingEmailForMeeting(
         userId,
         inserted.id,
-        inReplyTo,
+        candidateMessageIds,
         providerMessageId,
         body,
       ).catch(() => {});
@@ -834,21 +858,23 @@ export async function saveEmailWithTriage(
   // -> ces mails ne contiennent jamais de RDV, evite un appel OpenAI inutile.
   // Skip aussi quand le mail est une reponse a une proposition Inboria existante :
   // sinon on cree un doublon en plus du RDV qui passe en confirme via le hook RDV.
-  const inReplyToHdr =
-    typeof headers?.["in-reply-to"] === "string"
-      ? (headers["in-reply-to"] as string)
-      : Array.isArray(headers?.["in-reply-to"])
-        ? (headers["in-reply-to"] as string[])[0]
-        : null;
+  // On regarde In-Reply-To ET References (et leurs variantes avec/sans <>),
+  // car certains clients ne propagent que References sur une réponse-de-réponse.
   let isReplyToProposal = false;
-  if (inReplyToHdr) {
+  if (candidateMessageIds.length > 0) {
     const { data: matchedProposal } = await supabaseAdmin
       .from("appointments")
       .select("id")
       .eq("user_id", userId)
-      .eq("proposal_message_id", inReplyToHdr)
-      .maybeSingle();
-    isReplyToProposal = Boolean(matchedProposal);
+      .in("proposal_message_id", candidateMessageIds)
+      .limit(1);
+    isReplyToProposal = Boolean(matchedProposal && matchedProposal.length > 0);
+    if (isReplyToProposal) {
+      logger.info(
+        { emailId: inserted.id, userId },
+        "[auto-sync] reply to RDV proposal detected — skipping appointment auto-extract",
+      );
+    }
   }
   if (!pre.hit && !isReplyToProposal) {
     detectAppointmentFromEmail(inserted.id, sender, subject, body, userId).catch(() => {});
