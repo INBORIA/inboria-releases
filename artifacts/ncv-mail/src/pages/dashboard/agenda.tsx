@@ -1175,7 +1175,7 @@ export default function Agenda() {
                 )}
                 {selectedAppointment.emailId && (
                   <a
-                    href={`/inbox?emailId=${selectedAppointment.emailId}`}
+                    href={`/dashboard?emailId=${selectedAppointment.emailId}`}
                     className="flex items-center gap-2 text-[12px] text-primary hover:text-primary/80 mt-1"
                   >
                     <Mail className="w-3.5 h-3.5" />
