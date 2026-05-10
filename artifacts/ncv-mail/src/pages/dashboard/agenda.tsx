@@ -62,12 +62,6 @@ export default function Agenda() {
 
   const [currentDate, setCurrentDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<ViewMode>("month");
-  const [workWeekOnly, setWorkWeekOnly] = useState<boolean>(() => {
-    try { return localStorage.getItem("ncv-agenda-workweek") === "1"; } catch { return false; }
-  });
-  useEffect(() => {
-    try { localStorage.setItem("ncv-agenda-workweek", workWeekOnly ? "1" : "0"); } catch {}
-  }, [workWeekOnly]);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
@@ -620,12 +614,6 @@ export default function Agenda() {
     return days;
   }, [currentDate]);
 
-  const weekViewDays = useMemo(
-    () => (workWeekOnly ? weekDays.slice(0, 5) : weekDays),
-    [weekDays, workWeekOnly],
-  );
-  const weekCols = workWeekOnly ? 5 : 7;
-
   const hours = Array.from({ length: 14 }, (_, i) => i + 7);
 
   return (
@@ -672,46 +660,19 @@ export default function Agenda() {
                 : format(currentDate, "MMMM yyyy", { locale })}
             </span>
           </div>
-          <div className="flex bg-card border border-border rounded-lg overflow-hidden flex-shrink-0 relative">
+          <div className="flex bg-card border border-border rounded-lg overflow-hidden flex-shrink-0">
             {(["day", "week", "month"] as ViewMode[]).map((mode) => (
-              <div key={mode} className="relative">
-                <button
-                  onClick={() => {
-                    if (mode === "week") {
-                      setWeekMenuOpen((o) => (viewMode === "week" ? !o : true));
-                    } else {
-                      setWeekMenuOpen(false);
-                    }
-                    setViewMode(mode);
-                  }}
-                  className={`px-3 py-1 text-[11px] font-medium transition-colors ${
-                    viewMode === mode
-                      ? "bg-primary text-foreground"
-                      : "text-muted-foreground hover:text-foreground"
-                  }`}
-                >
-                  {t(`agenda.${mode}`)}
-                  {mode === "week" && viewMode === "week" && (
-                    <span className="ml-1 text-[9px] opacity-80">{workWeekOnly ? "(5 j) ▾" : "(7 j) ▾"}</span>
-                  )}
-                </button>
-                {mode === "week" && weekMenuOpen && viewMode === "week" && (
-                  <div className="absolute right-0 top-full mt-1 z-50 w-40 bg-popover border border-border rounded-md shadow-md p-1">
-                    <button
-                      onClick={() => { setWorkWeekOnly(false); setWeekMenuOpen(false); }}
-                      className={`w-full text-left px-2 py-1.5 text-[11px] rounded hover:bg-accent ${!workWeekOnly ? "text-primary font-medium" : "text-foreground"}`}
-                    >
-                      {t("agenda.fullWeek", "7 jours (lun–dim)")}
-                    </button>
-                    <button
-                      onClick={() => { setWorkWeekOnly(true); setWeekMenuOpen(false); }}
-                      className={`w-full text-left px-2 py-1.5 text-[11px] rounded hover:bg-accent ${workWeekOnly ? "text-primary font-medium" : "text-foreground"}`}
-                    >
-                      {t("agenda.workWeek", "5 jours (lun–ven)")}
-                    </button>
-                  </div>
-                )}
-              </div>
+              <button
+                key={mode}
+                onClick={() => setViewMode(mode)}
+                className={`px-3 py-1 text-[11px] font-medium transition-colors ${
+                  viewMode === mode
+                    ? "bg-primary text-foreground"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {t(`agenda.${mode}`)}
+              </button>
             ))}
           </div>
         </div>
@@ -961,9 +922,9 @@ export default function Agenda() {
           </div>
         ) : viewMode === "week" ? (
           <div className="bg-card rounded-lg border border-border overflow-hidden">
-            <div className="grid border-b border-border" style={{ gridTemplateColumns: `60px repeat(${weekCols}, 1fr)` }}>
+            <div className="grid grid-cols-[60px_repeat(7,1fr)] border-b border-border">
               <div className="border-r border-border" />
-              {weekViewDays.map((d, i) => (
+              {weekDays.map((d, i) => (
                 <div key={i} className={`px-2 py-1.5 text-center border-r border-border last:border-r-0 ${isToday(d) ? "bg-primary/10" : ""}`}>
                   <div className="text-[10px] text-muted-foreground uppercase">{format(d, "EEE", { locale })}</div>
                   <div className={`text-[13px] font-medium ${isToday(d) ? "text-primary" : "text-foreground"}`}>{format(d, "d")}</div>
@@ -972,11 +933,11 @@ export default function Agenda() {
             </div>
             <div className="max-h-[500px] overflow-y-auto">
               {hours.map((hour) => (
-                <div key={hour} className="grid border-b border-border last:border-b-0" style={{ gridTemplateColumns: `60px repeat(${weekCols}, 1fr)` }}>
+                <div key={hour} className="grid grid-cols-[60px_repeat(7,1fr)] border-b border-border last:border-b-0">
                   <div className="px-2 py-2 text-[10px] text-muted-foreground text-right pr-2 border-r border-border">
                     {String(hour).padStart(2, "0")}:00
                   </div>
-                  {weekViewDays.map((d, i) => {
+                  {weekDays.map((d, i) => {
                     const dayAppts = getAppointmentsForDay(d).filter((apt) => {
                       const h = parseISO(apt.startAt).getHours();
                       return h === hour;
