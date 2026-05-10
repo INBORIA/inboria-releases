@@ -773,7 +773,7 @@ export default function Agenda() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-6 text-[10px] px-2 whitespace-nowrap text-neutral-900 dark:text-white"
+                      className="h-6 text-[10px] px-2 whitespace-nowrap text-foreground"
                       disabled={bulkBusy}
                       onClick={() => handleBulkDismiss(Array.from(selectedSuggestionIds))}
                       data-testid="suggestion-bulk-dismiss"
@@ -836,7 +836,7 @@ export default function Agenda() {
                           <Button size="sm" className="h-6 text-[10px] px-2" onClick={() => handleConfirm(apt.id)}>
                             {t("agenda.confirmAppointment")}
                           </Button>
-                          <Button size="sm" variant="outline" className="h-6 text-[10px] px-2 text-neutral-900 dark:text-white" onClick={() => handleDismiss(apt.id)}>
+                          <Button size="sm" variant="outline" className="h-6 text-[10px] px-2 text-foreground" onClick={() => handleDismiss(apt.id)}>
                             {t("agenda.dismissAppointment")}
                           </Button>
                         </div>
