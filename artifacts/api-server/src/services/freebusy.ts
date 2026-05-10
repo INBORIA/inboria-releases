@@ -20,7 +20,7 @@ export interface CommonSlotResult {
   end: string;
 }
 
-async function fetchUserBusy(userId: string, startMs: number, endMs: number): Promise<BusySlot[]> {
+export async function fetchUserBusy(userId: string, startMs: number, endMs: number): Promise<BusySlot[]> {
   const accounts = await getActiveCalendarAccountsForUser(userId);
   if (accounts.length === 0) return [];
   const startIso = new Date(startMs).toISOString();

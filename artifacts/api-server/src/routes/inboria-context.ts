@@ -5,6 +5,7 @@ import { requireAuth } from "../middlewares/auth";
 import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 import { getOrgIdForOrgAdmin, listOrgMemberIds, logAdminTeamAccess } from "../lib/org-admin";
 import { AI_COST, checkEntitlement, consumeAiCredits } from "../services/credits";
+import { fetchUserBusy } from "../services/freebusy";
 import { extractAttachmentText, shouldExtractAttachmentContent, type AttachmentRow } from "../lib/attachment-extract";
 
 const router: IRouter = Router();
@@ -916,6 +917,42 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       memoryLines.push("");
       memoryLines.push("REGLE IMPORTANTE : un RDV refuse, en attente ou contre-propose EXISTE TOUJOURS dans l'agenda — tu dois le mentionner si l'utilisateur t'interroge dessus, en precisant son STATUT. Ne reponds JAMAIS \"il n'y a pas de rendez-vous\" pour un RDV present dans la liste ci-dessus, meme s'il a ete refuse.");
       memoryLines.push("");
+    }
+
+    // Calendrier externe (Google/Outlook) — fenêtre 14 jours pour aider Inboria
+    // à proposer des créneaux RÉELLEMENT libres, pas seulement vis-à-vis des
+    // RDV créés depuis NCV Mail. Best-effort : si freebusy échoue (API non
+    // activée, token expiré, panne tierce), on ignore silencieusement plutôt
+    // que de bloquer le contexte.
+    try {
+      const nowMs = Date.now();
+      const horizonMs = nowMs + 14 * 24 * 60 * 60 * 1000;
+      const busy = await fetchUserBusy(userId, nowMs, horizonMs);
+      if (busy.length > 0) {
+        const merged = busy
+          .sort((a, b) => a.start - b.start)
+          .reduce<Array<{ start: number; end: number }>>((acc, s) => {
+            const last = acc[acc.length - 1];
+            if (last && s.start <= last.end) last.end = Math.max(last.end, s.end);
+            else acc.push({ ...s });
+            return acc;
+          }, []);
+        memoryLines.push("Calendrier externe (Google/Outlook) — creneaux DEJA OCCUPES dans les 14 prochains jours :");
+        for (const b of merged.slice(0, 60)) {
+          const sd = new Date(b.start);
+          const ed = new Date(b.end);
+          const day = sd.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long", timeZone: userTz });
+          const sh = sd.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: userTz });
+          const eh = ed.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit", timeZone: userTz });
+          memoryLines.push(`- ${day} ${sh} → ${eh}`);
+        }
+        memoryLines.push("");
+        memoryLines.push("REGLE STRICTE : avant de proposer un creneau (inboria-meeting OU inboria-multi-meeting), tu DOIS verifier qu'il ne chevauche AUCUN creneau ci-dessus NI un RDV NCV liste plus haut. Si l'horaire demande par l'utilisateur est occupe, propose le creneau libre le plus proche et explique brievement le decalage.");
+        memoryLines.push("");
+      }
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      req.log?.warn?.({ err: msg }, "[inboria-context] external freebusy fetch failed (best-effort skip)");
     }
 
     // ========================================================================
