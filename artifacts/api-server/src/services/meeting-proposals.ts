@@ -1057,7 +1057,7 @@ ${cleanBody}
         .eq("user_id", userId)
         .maybeSingle();
       if (tplErr) {
-        logger.warn({ userId, groupId, err: tplErr.message }, "[meeting-proposals] counter: template fetch failed");
+        logger.warn({ userId, groupIds, err: tplErr.message }, "[meeting-proposals] counter: template fetch failed");
       }
       const { data: cancelled, error: updErr } = await supabaseAdmin
         .from("appointments")
@@ -1074,9 +1074,9 @@ ${cleanBody}
         .in("status", ["pending", "counter_proposed"])
         .select("id");
       if (updErr) {
-        logger.warn({ userId, groupId, err: updErr.message }, "[meeting-proposals] counter: cancel update failed");
+        logger.warn({ userId, groupIds, err: updErr.message }, "[meeting-proposals] counter: cancel update failed");
       } else {
-        logger.info({ userId, groupId, cancelledCount: cancelled?.length || 0, groupSize: groupIds.length }, "[meeting-proposals] counter: group cancelled");
+        logger.info({ userId, groupIds, cancelledCount: cancelled?.length || 0, groupSize: groupIds.length }, "[meeting-proposals] counter: group cancelled");
       }
       if (template && parsed.counterStartAt && parsed.counterEndAt) {
         const { data: inserted, error: insErr } = await supabaseAdmin
@@ -1106,18 +1106,18 @@ ${cleanBody}
           .select("id");
         if (insErr) {
           logger.warn(
-            { userId, groupId, err: insErr.message, counterStart: parsed.counterStartAt },
+            { userId, groupIds, err: insErr.message, counterStart: parsed.counterStartAt },
             "[meeting-proposals] counter: insert failed",
           );
         } else {
           logger.info(
-            { userId, groupId, newApptId: inserted?.[0]?.id, counterStart: parsed.counterStartAt },
+            { userId, groupIds, newApptId: inserted?.[0]?.id, counterStart: parsed.counterStartAt },
             "[meeting-proposals] counter: new counter_proposed inserted",
           );
         }
       } else {
         logger.warn(
-          { userId, groupId, hasTemplate: !!template, counterStart: parsed.counterStartAt, counterEnd: parsed.counterEndAt },
+          { userId, groupIds, hasTemplate: !!template, counterStart: parsed.counterStartAt, counterEnd: parsed.counterEndAt },
           "[meeting-proposals] counter: skipping insert (missing template or counter dates)",
         );
       }
