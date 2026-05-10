@@ -330,7 +330,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         : Promise.resolve({ data: [] as unknown[], error: null }),
       supabaseAdmin
         .from("appointments")
-        .select("title, start_at, end_at, location, all_day, confirmed, participants")
+        .select("title, start_at, end_at, location, all_day, confirmed, status, participants")
         .eq("user_id", userId)
         .gte("start_at", apptStart)
         .lte("start_at", apptEnd)
@@ -770,6 +770,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       location: string | null;
       all_day: boolean | null;
       confirmed: boolean | null;
+      status: string | null;
       participants: string | null;
     }>;
     const userName = (profileRes.data as any)?.full_name || null;
@@ -885,15 +886,33 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     }
 
     if (appointments.length > 0) {
-      memoryLines.push("Rendez-vous a venir (30 prochains jours) :");
+      memoryLines.push("Rendez-vous des 30 prochains jours (TOUS statuts confondus — confirmes, en attente, refuses, contre-proposes) :");
       for (const a of appointments) {
         const when = fmtAppt(a.start_at, a.all_day);
         const title = a.title || "Rendez-vous";
         const where = a.location ? ` — lieu : ${a.location}` : "";
         const who = a.participants ? ` — avec ${a.participants}` : "";
-        const status = a.confirmed === false ? " (non confirme)" : "";
-        memoryLines.push(`- ${when} : ${title}${who}${where}${status}`);
+        const statusLabel = (() => {
+          switch ((a.status || "").toLowerCase()) {
+            case "confirmed":
+              return " — STATUT : confirme par le destinataire";
+            case "declined":
+              return " — STATUT : REFUSE par le destinataire (le RDV existe toujours dans l'agenda mais n'aura pas lieu)";
+            case "counter_proposed":
+              return " — STATUT : contre-proposition recue (autre creneau suggere)";
+            case "pending":
+              return " — STATUT : en attente de reponse du destinataire";
+            case "cancelled":
+            case "canceled":
+              return " — STATUT : annule";
+            default:
+              return a.confirmed === false ? " — STATUT : non confirme" : " — STATUT : confirme";
+          }
+        })();
+        memoryLines.push(`- ${when} : ${title}${who}${where}${statusLabel}`);
       }
+      memoryLines.push("");
+      memoryLines.push("REGLE IMPORTANTE : un RDV refuse, en attente ou contre-propose EXISTE TOUJOURS dans l'agenda — tu dois le mentionner si l'utilisateur t'interroge dessus, en precisant son STATUT. Ne reponds JAMAIS \"il n'y a pas de rendez-vous\" pour un RDV present dans la liste ci-dessus, meme s'il a ete refuse.");
       memoryLines.push("");
     }
 
@@ -1847,12 +1866,20 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             })
             .slice(0, 5);
           if (contactAppts.length > 0) {
-            memoryLines.push(`Rendez-vous avec ${targetEmail} :`);
+            memoryLines.push(`Rendez-vous avec ${targetEmail} (TOUS statuts — meme refuses ou en attente) :`);
             for (const a of contactAppts) {
               const when = fmtAppt(a.start_at, a.all_day);
               const title = a.title || "Rendez-vous";
               const where = a.location ? ` — ${a.location}` : "";
-              memoryLines.push(`- ${when} : ${title}${where}`);
+              const st = (a.status || "").toLowerCase();
+              const stLabel =
+                st === "declined" ? " — REFUSE par le destinataire" :
+                st === "counter_proposed" ? " — contre-proposition recue" :
+                st === "pending" ? " — en attente de reponse" :
+                st === "cancelled" || st === "canceled" ? " — annule" :
+                st === "confirmed" ? " — confirme" :
+                a.confirmed === false ? " — non confirme" : "";
+              memoryLines.push(`- ${when} : ${title}${where}${stLabel}`);
             }
           }
           // Taches liees au contact : on s'appuie sur la liaison email_id
