@@ -1052,7 +1052,7 @@ ${cleanBody}
       // groupe pour dupliquer titre/description/email_id/etc.
       const { data: template, error: tplErr } = await supabaseAdmin
         .from("appointments")
-        .select("title, description, location, email_id, project_id, participants, proposal_recipient, proposal_lang, proposal_message_id, organizer_email")
+        .select("title, description, location, email_id, project_id, participants, proposal_recipient, proposal_lang, proposal_message_id")
         .eq("id", group[0].id)
         .eq("user_id", userId)
         .maybeSingle();
@@ -1078,6 +1078,13 @@ ${cleanBody}
       } else {
         logger.info({ userId, groupIds, cancelledCount: cancelled?.length || 0, groupSize: groupIds.length }, "[meeting-proposals] counter: group cancelled");
       }
+      if (parsed.counterStartAt) {
+        const csMs = Date.parse(parsed.counterStartAt);
+        const ceMs = parsed.counterEndAt ? Date.parse(parsed.counterEndAt) : NaN;
+        if (!Number.isFinite(ceMs) || ceMs <= csMs) {
+          parsed.counterEndAt = new Date(csMs + 30 * 60 * 1000).toISOString();
+        }
+      }
       if (template && parsed.counterStartAt && parsed.counterEndAt) {
         const { data: inserted, error: insErr } = await supabaseAdmin
           .from("appointments")
@@ -1092,7 +1099,6 @@ ${cleanBody}
             proposal_recipient: template.proposal_recipient,
             proposal_lang: template.proposal_lang,
             proposal_message_id: template.proposal_message_id,
-            organizer_email: template.organizer_email,
             start_at: parsed.counterStartAt,
             end_at: parsed.counterEndAt,
             status: "counter_proposed",
