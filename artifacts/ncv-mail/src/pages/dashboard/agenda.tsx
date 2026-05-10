@@ -614,7 +614,7 @@ export default function Agenda() {
     return days;
   }, [currentDate]);
 
-  const hours = Array.from({ length: 14 }, (_, i) => i + 7);
+  const hours = Array.from({ length: 24 }, (_, i) => i);
 
   return (
     <DashboardLayout>
