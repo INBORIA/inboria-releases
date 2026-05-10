@@ -890,7 +890,7 @@ export default function Agenda() {
                         onDragEnd={() => setDraggedApptId(null)}
                         onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
                         className={`text-[10px] px-1 py-0.5 rounded truncate mb-0.5 cursor-pointer ${apt.confirmed === false ? "bg-primary/20 text-primary" : ""}`}
-                        style={apt.confirmed !== false ? { backgroundColor: projectColor ? `${projectColor}20` : undefined, color: projectColor || undefined } : undefined}
+                        style={apt.confirmed !== false && projectColor ? { backgroundColor: `${projectColor}20` } : undefined}
                         title={apt.title}
                       >
                         {projectColor && <span className="inline-block w-1.5 h-1.5 rounded-full mr-0.5" style={{ backgroundColor: projectColor }} />}
@@ -905,7 +905,7 @@ export default function Agenda() {
                           key={`ext-${ev.id}`}
                           onClick={(e) => { e.stopPropagation(); }}
                           className="text-[10px] px-1 py-0.5 rounded truncate mb-0.5 italic"
-                          style={{ backgroundColor: `${c}20`, color: c, borderLeft: `2px solid ${c}` }}
+                          style={{ backgroundColor: `${c}20`, borderLeft: `2px solid ${c}` }}
                           title={`${ev.title} (${ev.source === "google" ? "Google" : "Outlook"} · ${ev.account_email})`}
                         >
                           {ev.all_day ? "" : format(parseISO(ev.start), "HH:mm") + " "}{ev.title}
@@ -960,7 +960,7 @@ export default function Agenda() {
                             key={apt.id}
                             onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
                             className={`text-[10px] px-1 py-0.5 rounded truncate cursor-pointer ${apt.confirmed === false ? "bg-primary/20 text-primary" : "bg-primary/20 text-primary hover:bg-primary/30"}`}
-                            style={pc && apt.confirmed !== false ? { backgroundColor: `${pc}20`, color: pc } : undefined}
+                            style={pc && apt.confirmed !== false ? { backgroundColor: `${pc}20` } : undefined}
                           >
                             {format(parseISO(apt.startAt), "HH:mm")} {apt.title}
                           </div>
@@ -973,7 +973,7 @@ export default function Agenda() {
                               key={`ext-${ev.id}`}
                               onClick={(e) => { e.stopPropagation(); }}
                               className="text-[10px] px-1 py-0.5 rounded truncate italic"
-                              style={{ backgroundColor: `${c}20`, color: c, borderLeft: `2px solid ${c}` }}
+                              style={{ backgroundColor: `${c}20`, borderLeft: `2px solid ${c}` }}
                               title={`${ev.title} · ${ev.source === "google" ? "Google" : "Outlook"} · ${ev.account_email}`}
                             >
                               {format(parseISO(ev.start), "HH:mm")} {ev.title}
@@ -1080,7 +1080,7 @@ export default function Agenda() {
                             className="rounded px-2 py-1.5 mb-1 border italic"
                             style={{ backgroundColor: `${c}15`, borderColor: `${c}40`, borderLeftWidth: 3, borderLeftColor: c }}
                           >
-                            <div className="text-[12px] font-medium" style={{ color: c }}>{ev.title}</div>
+                            <div className="text-[12px] font-medium text-foreground">{ev.title}</div>
                             <div className="flex items-center gap-3 mt-0.5">
                               <span className="text-[10px] text-muted-foreground flex items-center gap-1">
                                 <Clock className="w-3 h-3" />
