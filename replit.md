@@ -78,6 +78,8 @@ pnpm dev # Starts frontend and backend
 
 I prefer simple language and detailed explanations. I want iterative development and will provide feedback at each stage. Ask before making major changes.
 
+**TOUJOURS redémarrer automatiquement le workflow concerné après toute modif backend (api-server, services, routes). Ne jamais demander, ne jamais oublier.**
+
 ## Gotchas
 
 - **Supabase Migrations**: Ensure `migrations/2026_05_03_email_chunks.sql` is applied manually in Supabase Dashboard for Inboria Email Brain to function. The worker will pause if the table is missing.
