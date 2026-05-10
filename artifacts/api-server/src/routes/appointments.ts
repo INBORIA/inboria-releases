@@ -187,6 +187,7 @@ router.get("/appointments", requireAuth, async (req, res): Promise<void> => {
       .from("appointments")
       .select("*, projects(id, name, reference, color)")
       .eq("user_id", req.userId!)
+      .neq("status", "cancelled")
       .order("start_at", { ascending: true });
 
     if (from) {
