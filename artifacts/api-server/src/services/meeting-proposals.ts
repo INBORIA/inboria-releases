@@ -853,10 +853,14 @@ Renvoie un JSON STRICT :
   "counterStartAt": "ISO datetime ou null",
   "counterEndAt": "ISO datetime ou null" }
 Règles :
-- "accept" : l'auteur choisit UN SEUL des créneaux proposés (jamais plusieurs). Renseigne acceptedIndex (0-based) correspondant au créneau choisi dans la liste fournie. Si plusieurs créneaux semblent acceptés, renvoie "unknown".
+- "accept" : l'auteur choisit UN SEUL des créneaux proposés. Renseigne acceptedIndex (0-based).
+  IMPORTANT : un créneau est considéré comme accepté si l'auteur cite une date/heure qui tombe DANS l'intervalle [start, end] OU qui correspond à l'heure de début OU à l'heure de fin du créneau. Exemples qui valent ACCEPT :
+    * Créneau "2026-05-14T15:00 → 2026-05-14T15:30" → "OK pour le 14 mai 15h", "OK 14 mai 15h30", "le 14 à 15h15", "jeudi 15h", "le créneau de jeudi" → accept (index correspondant).
+    * "Le 2e me convient", "le dernier", "celui de mardi" → accept.
+  Si plusieurs créneaux semblent acceptés, renvoie "unknown".
 - "decline_all" : l'auteur refuse TOUS les créneaux sans en proposer d'autre.
-- "counter" : l'auteur propose un AUTRE créneau (date+heure précis ou "plutôt mardi 15h"). Déduis la date/heure complète et remplis counterStartAt et counterEndAt.
-- "unknown" : ce n'est ni l'un ni l'autre, ou la réponse est ambiguë.`,
+- "counter" : l'auteur propose une date/heure qui ne correspond à AUCUN des créneaux listés (ni dans l'intervalle, ni au début, ni à la fin). Exemple : créneaux les 12/13/14 mai et l'auteur dit "plutôt le 19 mai" → counter. Déduis la date/heure complète et remplis counterStartAt et counterEndAt.
+- "unknown" : ambigu ou ni l'un ni l'autre.`,
         },
         {
           role: "user",
@@ -876,18 +880,44 @@ ${cleanBody}
       counterStartAt?: string | null;
       counterEndAt?: string | null;
     };
-    const decision = parsed.decision;
+    let decision = parsed.decision;
+    let acceptedIndex = parsed.acceptedIndex;
     if (!decision || decision === "unknown") return;
+
+    // Filet de sécurité déterministe : si le LLM décide "counter" mais que la
+    // date/heure qu'il a extraite tombe dans un créneau proposé (ou colle à
+    // son start/end), c'est en réalité un ACCEPT — pas une contre-proposition.
+    // Évite de cancel un groupe et d'inventer un counter quand l'utilisateur
+    // a juste cité l'heure de fin (ex: "OK 14 mai 15h30" pour le créneau
+    // 15:00–15:30).
+    if (decision === "counter" && parsed.counterStartAt) {
+      const cs = Date.parse(parsed.counterStartAt);
+      if (!Number.isNaN(cs)) {
+        const matchIdx = group.findIndex((g) => {
+          const s = Date.parse(g.start_at);
+          const e = Date.parse(g.end_at);
+          return !Number.isNaN(s) && !Number.isNaN(e) && cs >= s && cs <= e;
+        });
+        if (matchIdx >= 0) {
+          logger.info(
+            { userId, matchIdx, llmCounter: parsed.counterStartAt },
+            "[meeting-proposals] override counter→accept (counter falls inside a proposed slot)",
+          );
+          decision = "accept";
+          acceptedIndex = matchIdx;
+        }
+      }
+    }
 
     const groupIds = group.map((g) => g.id);
     const nowIso = new Date().toISOString();
 
     if (decision === "accept") {
       const idx =
-        typeof parsed.acceptedIndex === "number" &&
-        parsed.acceptedIndex >= 0 &&
-        parsed.acceptedIndex < group.length
-          ? parsed.acceptedIndex
+        typeof acceptedIndex === "number" &&
+        acceptedIndex >= 0 &&
+        acceptedIndex < group.length
+          ? acceptedIndex
           : -1;
       if (idx < 0) return;
       const winner = group[idx];
