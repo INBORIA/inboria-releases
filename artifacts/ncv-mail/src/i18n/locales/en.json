@@ -2442,8 +2442,12 @@
   },
   "agenda": {
     "title": "Agenda",
+    "statusConfirmedShort": "Confirmed",
     "statusPending": "Awaiting response",
     "statusPendingShort": "Pending",
+    "statusPendingMonth": "Pending",
+    "statusCounterMonth": "Counter",
+    "statusDeclinedMonth": "Declined",
     "statusCounter": "Counter-proposal received",
     "statusCounterShort": "Counter",
     "statusDeclined": "Declined by contact",

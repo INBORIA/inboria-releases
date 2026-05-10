@@ -2434,8 +2434,12 @@
   },
   "agenda": {
     "title": "Agenda",
+    "statusConfirmedShort": "Confirmé",
     "statusPending": "En attente de réponse",
     "statusPendingShort": "En attente",
+    "statusPendingMonth": "En att.",
+    "statusCounterMonth": "Contre-prop.",
+    "statusDeclinedMonth": "Refusé",
     "statusCounter": "Contre-proposition reçue",
     "statusCounterShort": "Contre-prop.",
     "statusDeclined": "Refusé par le contact",

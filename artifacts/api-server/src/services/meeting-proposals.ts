@@ -943,29 +943,54 @@ ${cleanBody}
         .in("id", groupIds)
         .eq("user_id", userId);
     } else if (decision === "counter") {
-      // Garde la 1re ligne en counter_proposed (avec contre-créneau), supprime
-      // les autres pour que l'agenda n'affiche qu'un seul "Contre-prop." actif.
-      const [first, ...rest] = group;
+      // Spec : tous les créneaux du groupe → cancelled, puis on insère 1
+      // nouvelle ligne dédiée counter_proposed (créneau alternatif proposé
+      // par le contact). Récupère d'abord les métadonnées d'une ligne du
+      // groupe pour dupliquer titre/description/email_id/etc.
+      const { data: template } = await supabaseAdmin
+        .from("appointments")
+        .select("title, description, location, email_id, project_id, participants, proposal_recipient, proposal_lang, proposal_message_id, organizer_email")
+        .eq("id", group[0].id)
+        .eq("user_id", userId)
+        .maybeSingle();
       await supabaseAdmin
         .from("appointments")
         .update({
-          status: "counter_proposed",
+          status: "cancelled",
           confirmed: false,
-          counter_start_at: parsed.counterStartAt || null,
-          counter_end_at: parsed.counterEndAt || null,
           response_message_id: responseMessageId,
           awaiting_reminder_at: null,
           proposal_group_id: null,
           updated_at: nowIso,
         })
-        .eq("id", first.id)
-        .eq("user_id", userId);
-      if (rest.length > 0) {
+        .in("id", groupIds)
+        .eq("user_id", userId)
+        .in("status", ["pending", "counter_proposed"]);
+      if (template && parsed.counterStartAt && parsed.counterEndAt) {
         await supabaseAdmin
           .from("appointments")
-          .delete()
-          .in("id", rest.map((r) => r.id))
-          .eq("user_id", userId);
+          .insert({
+            user_id: userId,
+            title: template.title,
+            description: template.description,
+            location: template.location,
+            email_id: template.email_id,
+            project_id: template.project_id,
+            participants: template.participants,
+            proposal_recipient: template.proposal_recipient,
+            proposal_lang: template.proposal_lang,
+            proposal_message_id: template.proposal_message_id,
+            organizer_email: template.organizer_email,
+            start_at: parsed.counterStartAt,
+            end_at: parsed.counterEndAt,
+            status: "counter_proposed",
+            confirmed: false,
+            counter_start_at: parsed.counterStartAt,
+            counter_end_at: parsed.counterEndAt,
+            response_message_id: responseMessageId,
+            created_at: nowIso,
+            updated_at: nowIso,
+          });
       }
     }
 

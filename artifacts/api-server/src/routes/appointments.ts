@@ -103,6 +103,7 @@ function mapAppointment(row: any) {
     lastSyncError: row.last_sync_error ?? null,
     status: row.status ?? "confirmed",
     proposalMessageId: row.proposal_message_id ?? null,
+    proposalGroupId: row.proposal_group_id ?? null,
     responseMessageId: row.response_message_id ?? null,
     awaitingReminderAt: row.awaiting_reminder_at ?? null,
     reminderSentAt: row.reminder_sent_at ?? null,

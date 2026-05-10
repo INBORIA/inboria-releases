@@ -422,7 +422,11 @@ export default function Agenda() {
     // et n'ont rien a faire dans "Suggestions a confirmer" : ils apparaissent
     // deja dans la grille avec leur badge "En attente".
     return (allAppointmentsForSuggestions as any[]).filter(
-      (apt) => apt.confirmed === false && !apt.proposalRecipient,
+      (apt) =>
+        apt.confirmed === false &&
+        !apt.proposalRecipient &&
+        !apt.proposalGroupId &&
+        !apt.proposalMessageId,
     );
   }, [allAppointmentsForSuggestions]);
 
@@ -874,6 +878,15 @@ export default function Agenda() {
                     </div>
                     {dayAppts.slice(0, 3).map((apt) => {
                       const projectColor = apt.projects?.color;
+                      const s = apt.status;
+                      const nonConfirmed = s === "pending" || s === "counter_proposed" || s === "declined";
+                      const monthLabel = s === "pending"
+                        ? t("agenda.statusPendingMonth", "En att.")
+                        : s === "counter_proposed"
+                          ? t("agenda.statusCounterMonth", "Contre-prop.")
+                          : s === "declined"
+                            ? t("agenda.statusDeclinedMonth", "Refusé")
+                            : "";
                       return (
                       <div
                         key={apt.id}
@@ -881,12 +894,13 @@ export default function Agenda() {
                         onDragStart={(e) => { e.stopPropagation(); handleApptDragStart(apt, e); }}
                         onDragEnd={() => setDraggedApptId(null)}
                         onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                        className={`text-[10px] px-1 py-0.5 rounded truncate mb-0.5 cursor-pointer ${apt.confirmed === false ? "bg-primary/20 text-primary" : `text-foreground ${!projectColor ? "bg-primary/20" : ""}`}`}
-                        style={apt.confirmed !== false && projectColor ? { backgroundColor: `${projectColor}20` } : undefined}
-                        title={apt.title}
+                        className={`text-[10px] px-1 py-0.5 rounded truncate mb-0.5 cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border text-primary" : apt.confirmed === false ? "bg-primary/20 text-primary" : `text-foreground ${!projectColor ? "bg-primary/20" : ""}`}`}
+                        style={!nonConfirmed && apt.confirmed !== false && projectColor ? { backgroundColor: `${projectColor}20` } : undefined}
+                        title={monthLabel ? `${apt.title} — ${monthLabel}` : apt.title}
                       >
-                        {projectColor && <span className="inline-block w-1.5 h-1.5 rounded-full mr-0.5" style={{ backgroundColor: projectColor }} />}
+                        {projectColor && !nonConfirmed && <span className="inline-block w-1.5 h-1.5 rounded-full mr-0.5" style={{ backgroundColor: projectColor }} />}
                         {apt.allDay ? "" : format(parseISO(apt.startAt), "HH:mm") + " "}{apt.title}
+                        {monthLabel && <span className="ml-1">· {monthLabel}</span>}
                       </div>
                       );
                     })}
@@ -947,14 +961,25 @@ export default function Agenda() {
                       >
                         {dayAppts.map((apt) => {
                           const pc = apt.projects?.color;
+                          const s = apt.status;
+                          const nonConfirmed = s === "pending" || s === "counter_proposed" || s === "declined";
+                          const shortLabel = s === "pending"
+                            ? t("agenda.statusPendingShort", "En attente")
+                            : s === "counter_proposed"
+                              ? t("agenda.statusCounterShort", "Contre-prop.")
+                              : s === "declined"
+                                ? t("agenda.statusDeclinedShort", "Refusé")
+                                : "";
                           return (
                           <div
                             key={apt.id}
                             onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                            className={`text-[10px] px-1 py-0.5 rounded truncate cursor-pointer ${apt.confirmed === false ? "bg-primary/20 text-primary" : `text-foreground ${!pc ? "bg-primary/20 hover:bg-primary/30" : ""}`}`}
-                            style={pc && apt.confirmed !== false ? { backgroundColor: `${pc}20` } : undefined}
+                            className={`text-[10px] px-1 py-0.5 rounded truncate cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border text-primary" : apt.confirmed === false ? "bg-primary/20 text-primary" : `text-foreground ${!pc ? "bg-primary/20 hover:bg-primary/30" : ""}`}`}
+                            style={pc && !nonConfirmed && apt.confirmed !== false ? { backgroundColor: `${pc}20` } : undefined}
+                            title={shortLabel ? `${apt.title} — ${shortLabel}` : apt.title}
                           >
                             {format(parseISO(apt.startAt), "HH:mm")} {apt.title}
+                            {shortLabel && <span className="ml-1 text-primary">· {shortLabel}</span>}
                           </div>
                           );
                         })}
@@ -1031,15 +1056,15 @@ export default function Agenda() {
                           <div className="text-[12px] font-medium text-foreground">
                             <span className="truncate">{apt.title}</span>
                           </div>
-                          {(isPending || isCounter || isDeclined) && (
-                            <div className="text-[10px] text-muted-foreground mt-0.5">
-                              {isPending
-                                ? t("agenda.statusPending", "En attente de réponse")
-                                : isCounter
-                                  ? t("agenda.statusCounter", "Contre-proposition reçue")
-                                  : t("agenda.statusDeclined", "Refusé par le contact")}
-                            </div>
-                          )}
+                          <div className={`text-[10px] mt-0.5 ${isPending || isCounter || isDeclined ? "text-primary" : "text-muted-foreground"}`}>
+                            {isPending
+                              ? t("agenda.statusPending", "En attente de réponse")
+                              : isCounter
+                                ? t("agenda.statusCounter", "Contre-proposition reçue")
+                                : isDeclined
+                                  ? t("agenda.statusDeclined", "Refusé par le contact")
+                                  : t("agenda.statusConfirmedShort", "Confirmé")}
+                          </div>
                           <div className="flex items-center gap-3 mt-0.5">
                             <span className="text-[10px] text-muted-foreground flex items-center gap-1">
                               <Clock className="w-3 h-3" />
