@@ -359,12 +359,12 @@ export default function Envoyes() {
           </>
         )}
         {selectionMode && (
-          <div data-selection-bar className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-[#141c2b] border border-[#1f2937] rounded-lg shadow-2xl px-4 py-2 flex items-center gap-3">
-            <span className="text-[11px] text-[#b8c5d6]">{t("inbox.selectedCount", { count: selectedIds.size })}</span>
-            <button onClick={handleBulkDelete} className="flex items-center gap-1.5 text-[11px] text-red-400 hover:text-red-300 transition-colors">
+          <div data-selection-bar className="fixed bottom-4 left-1/2 -translate-x-1/2 z-50 bg-card border border-border rounded-lg shadow-2xl px-4 py-2 flex items-center gap-3">
+            <span className="text-[11px] text-foreground">{t("inbox.selectedCount", { count: selectedIds.size })}</span>
+            <button onClick={handleBulkDelete} className="flex items-center gap-1.5 text-[11px] text-red-500 hover:text-red-600 dark:text-red-400 dark:hover:text-red-300 transition-colors">
               <Trash2 className="w-3 h-3" />{t("inbox.deleteEmail")}
             </button>
-            <button onClick={() => setSelectedIds(new Set())} className="text-[11px] text-[#b8c5d6] hover:text-white transition-colors ml-2">{t("common.cancel")}</button>
+            <button onClick={() => setSelectedIds(new Set())} className="text-[11px] text-foreground/70 hover:text-foreground transition-colors ml-2">{t("common.cancel")}</button>
           </div>
         )}
       </div>
