@@ -348,9 +348,12 @@ export default function Agenda() {
     const appt = (rawAppointments as Appointment[]).find((a) => a.id === id);
     if (appt?.status === "counter_proposed") {
       try {
-        const res = await fetch(`/api/appointments/${id}/accept-counter`, {
+        const { supabase } = await import("@/lib/supabase");
+        const { data: sessionData } = await supabase.auth.getSession();
+        const token = sessionData?.session?.access_token;
+        const res = await fetch(`${import.meta.env.BASE_URL}api/appointments/${id}/accept-counter`, {
           method: "POST",
-          credentials: "include",
+          headers: token ? { Authorization: `Bearer ${token}` } : {},
         });
         if (!res.ok) throw new Error(await res.text());
         toast({ title: t("agenda.appointmentConfirmed") });
