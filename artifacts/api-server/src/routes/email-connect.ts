@@ -967,17 +967,23 @@ router.post("/email/sync", requireAuth, async (req, res): Promise<void> => {
       }
     }
 
-    let totalSynced = 0;
+    res.status(202).json({ accepted: true, connections: connections.length });
 
-    for (const conn of connections) {
-      const result = await triggerSyncForConnection(conn.id);
-      if (result.success) totalSynced += result.synced;
-    }
-
-    res.json({ synced: totalSynced });
+    (async () => {
+      let totalSynced = 0;
+      for (const conn of connections) {
+        try {
+          const result = await triggerSyncForConnection(conn.id);
+          if (result.success) totalSynced += result.synced;
+        } catch (e: any) {
+          req.log.warn({ connId: conn.id, err: e?.message }, "[email/sync] connection sync failed");
+        }
+      }
+      req.log.info({ totalSynced, connections: connections.length }, "[email/sync] background sync complete");
+    })().catch((e) => req.log.error({ err: e?.message }, "[email/sync] background sync error"));
   } catch (err: any) {
-    console.error("Sync error:", err);
-    res.status(500).json({ error: "Erreur lors de la synchronisation" });
+    req.log.error({ err: err?.message }, "Sync error");
+    if (!res.headersSent) res.status(500).json({ error: "Erreur lors de la synchronisation" });
   }
 });
 
