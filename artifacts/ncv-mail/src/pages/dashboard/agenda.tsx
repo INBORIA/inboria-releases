@@ -10,6 +10,7 @@ import {
   getListAppointmentsQueryKey,
 } from "@workspace/api-client-react";
 import { useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "wouter";
 import { useTranslation } from "react-i18next";
 import { format, startOfMonth, endOfMonth, startOfWeek, endOfWeek, addDays, addMonths, subMonths, addWeeks, subWeeks, isSameDay, isSameMonth, parseISO, isToday, type Locale } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
@@ -54,6 +55,7 @@ type ViewMode = "month" | "week" | "day";
 const dateLocales: Record<string, Locale> = { fr, en: enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el };
 
 export default function Agenda() {
+  const [, setLocation] = useLocation();
   useEnableLightTheme();
   const { t, i18n } = useTranslation();
   const { toast } = useToast();
@@ -1174,14 +1176,19 @@ export default function Agenda() {
                   </p>
                 )}
                 {selectedAppointment.emailId && (
-                  <a
-                    href={`/dashboard?emailId=${selectedAppointment.emailId}`}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const id = selectedAppointment.emailId;
+                      setSelectedAppointment(null);
+                      setLocation(`/dashboard?emailId=${id}`);
+                    }}
                     className="flex items-center gap-2 text-[12px] text-primary hover:text-primary/80 mt-1"
                   >
                     <Mail className="w-3.5 h-3.5" />
                     {t("agenda.viewSourceEmail")}
                     <ExternalLink className="w-3 h-3" />
-                  </a>
+                  </button>
                 )}
                 {selectedAppointment.confirmed === false && (
                   <div className="flex items-center gap-1.5 mt-1">
