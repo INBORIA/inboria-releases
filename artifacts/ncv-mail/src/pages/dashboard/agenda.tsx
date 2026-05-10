@@ -886,7 +886,7 @@ export default function Agenda() {
                           ? t("agenda.statusCounterMonth", "Contre-prop.")
                           : s === "declined"
                             ? t("agenda.statusDeclinedMonth", "Refusé")
-                            : t("agenda.statusConfirmedShort", "Confirmé");
+                            : "";
                       return (
                       <div
                         key={apt.id}
@@ -894,13 +894,15 @@ export default function Agenda() {
                         onDragStart={(e) => { e.stopPropagation(); handleApptDragStart(apt, e); }}
                         onDragEnd={() => setDraggedApptId(null)}
                         onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                        className={`text-[10px] px-1 py-0.5 rounded truncate mb-0.5 cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border text-primary" : apt.confirmed === false ? "bg-primary/20 text-primary" : `text-foreground ${!projectColor ? "bg-primary/20" : ""}`}`}
+                        className={`text-[10px] px-1 py-0.5 rounded mb-0.5 cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border" : apt.confirmed === false ? "bg-primary/20 text-primary" : `text-foreground ${!projectColor ? "bg-primary/20" : ""}`}`}
                         style={!nonConfirmed && apt.confirmed !== false && projectColor ? { backgroundColor: `${projectColor}20` } : undefined}
-                        title={`${apt.title} — ${monthLabel}`}
+                        title={monthLabel ? `${apt.title} — ${monthLabel}` : apt.title}
                       >
-                        {projectColor && !nonConfirmed && <span className="inline-block w-1.5 h-1.5 rounded-full mr-0.5" style={{ backgroundColor: projectColor }} />}
-                        {apt.allDay ? "" : format(parseISO(apt.startAt), "HH:mm") + " "}{apt.title}
-                        <span className={`ml-1 ${nonConfirmed ? "text-primary" : "text-muted-foreground"}`}>· {monthLabel}</span>
+                        <div className="truncate">
+                          {projectColor && !nonConfirmed && <span className="inline-block w-1.5 h-1.5 rounded-full mr-0.5" style={{ backgroundColor: projectColor }} />}
+                          {apt.allDay ? "" : format(parseISO(apt.startAt), "HH:mm") + " "}{apt.title}
+                        </div>
+                        {monthLabel && <div className="text-[9px] text-primary truncate">{monthLabel}</div>}
                       </div>
                       );
                     })}
@@ -969,17 +971,17 @@ export default function Agenda() {
                               ? t("agenda.statusCounterShort", "Contre-prop.")
                               : s === "declined"
                                 ? t("agenda.statusDeclinedShort", "Refusé")
-                                : t("agenda.statusConfirmedShort", "Confirmé");
+                                : "";
                           return (
                           <div
                             key={apt.id}
                             onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                            className={`text-[10px] px-1 py-0.5 rounded truncate cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border text-primary" : apt.confirmed === false ? "bg-primary/20 text-primary" : `text-foreground ${!pc ? "bg-primary/20 hover:bg-primary/30" : ""}`}`}
+                            className={`text-[10px] px-1 py-0.5 rounded cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border" : apt.confirmed === false ? "bg-primary/20 text-primary" : `text-foreground ${!pc ? "bg-primary/20 hover:bg-primary/30" : ""}`}`}
                             style={pc && !nonConfirmed && apt.confirmed !== false ? { backgroundColor: `${pc}20` } : undefined}
                             title={shortLabel ? `${apt.title} — ${shortLabel}` : apt.title}
                           >
-                            {format(parseISO(apt.startAt), "HH:mm")} {apt.title}
-                            <span className={`ml-1 ${nonConfirmed ? "text-primary" : "text-muted-foreground"}`}>· {shortLabel}</span>
+                            <div className="truncate text-foreground">{format(parseISO(apt.startAt), "HH:mm")} {apt.title}</div>
+                            {shortLabel && <div className="text-primary truncate">{shortLabel}</div>}
                           </div>
                           );
                         })}
