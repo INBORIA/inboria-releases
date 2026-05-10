@@ -31,19 +31,9 @@ interface InboriaMeeting {
   location: string;
 }
 
-// Parse a fenced `inboria-meeting` block (YAML-like) inside an assistant
-// message. Returns { meeting, before, after } when found, otherwise null.
-function extractMeeting(text: string): {
-  meeting: InboriaMeeting | null;
-  before: string;
-  after: string;
-} {
-  const fenceRe = /```inboria-meeting\s*\n([\s\S]*?)```/i;
-  const m = fenceRe.exec(text);
-  if (!m) return { meeting: null, before: text, after: "" };
-  const before = text.slice(0, m.index).trim();
-  const after = text.slice(m.index + m[0].length).trim();
-  const inner = m[1].replace(/\r/g, "");
+// Parse one fenced `inboria-meeting` block body (YAML-like) into an
+// InboriaMeeting object, or null if the block is incomplete.
+function parseMeetingBlock(inner: string): InboriaMeeting | null {
   const KEY_MAP: Record<string, keyof InboriaMeeting> = {
     to: "to",
     contactname: "contactName",
@@ -53,31 +43,50 @@ function extractMeeting(text: string): {
     location: "location",
   };
   const fields: Partial<Record<keyof InboriaMeeting, string>> = {};
-  for (const line of inner.split("\n")) {
+  for (const line of inner.replace(/\r/g, "").split("\n")) {
     const fm = /^\s*(to|contactName|subject|startAt|endAt|location)\s*:\s*(.*)$/i.exec(line);
     if (fm) {
       const key = KEY_MAP[fm[1].toLowerCase()];
       if (key) fields[key] = fm[2].trim().replace(/^["'<\[]+|["'>\]]+$/g, "");
     }
   }
-  // Require to + parseable startAt/endAt before taking precedence over draft rendering.
   const startMs = fields.startAt ? Date.parse(fields.startAt) : NaN;
   const endMs = fields.endAt ? Date.parse(fields.endAt) : NaN;
-  if (!fields.to || !Number.isFinite(startMs) || !Number.isFinite(endMs)) {
-    return { meeting: null, before: text, after: "" };
-  }
+  if (!fields.to || !Number.isFinite(startMs) || !Number.isFinite(endMs)) return null;
   return {
-    meeting: {
-      to: fields.to,
-      contactName: fields.contactName || "",
-      subject: fields.subject || "",
-      startAt: fields.startAt || "",
-      endAt: fields.endAt || "",
-      location: fields.location || "",
-    },
-    before,
-    after,
+    to: fields.to,
+    contactName: fields.contactName || "",
+    subject: fields.subject || "",
+    startAt: fields.startAt || "",
+    endAt: fields.endAt || "",
+    location: fields.location || "",
   };
+}
+
+// Splits an assistant message into ordered segments of plain text and meeting
+// cards, supporting MULTIPLE `inboria-meeting` blocks in the same message
+// (e.g. when Inboria proposes 3 alternative slots in one go).
+type MeetingSegment =
+  | { kind: "text"; text: string }
+  | { kind: "meeting"; meeting: InboriaMeeting };
+
+function extractMeetings(text: string): MeetingSegment[] {
+  const fenceRe = /```inboria-meeting\s*\n([\s\S]*?)```/gi;
+  const segments: MeetingSegment[] = [];
+  let cursor = 0;
+  let m: RegExpExecArray | null;
+  while ((m = fenceRe.exec(text)) !== null) {
+    const meeting = parseMeetingBlock(m[1]);
+    if (!meeting) continue; // ignore malformed blocks (cursor unchanged)
+    const before = text.slice(cursor, m.index).trim();
+    if (before) segments.push({ kind: "text", text: before });
+    segments.push({ kind: "meeting", meeting });
+    cursor = m.index + m[0].length;
+  }
+  if (segments.length === 0) return [];
+  const tail = text.slice(cursor).trim();
+  if (tail) segments.push({ kind: "text", text: tail });
+  return segments;
 }
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -789,25 +798,28 @@ export function InboriaChatButton() {
                 )}
               >
                 {m.role === "assistant" ? (() => {
-                  const meet = extractMeeting(m.content);
-                  if (meet.meeting) {
+                  const segments = extractMeetings(m.content);
+                  if (segments.length > 0) {
                     return (
-                      <>
-                        {meet.before && <div>{renderAssistantContent(meet.before, openMail)}</div>}
-                        {session?.access_token && (
-                          <MeetingProposalCard
-                            meeting={meet.meeting}
-                            accessToken={session.access_token}
-                            baseUrl={baseUrl}
-                            lang={(typeof window !== "undefined" && window.navigator?.language?.slice(0, 2)) || "fr"}
-                            onSent={() => {
-                              toast({ title: "Proposition envoyée" });
-                              queryClient.invalidateQueries({ queryKey: ["appointments"] });
-                            }}
-                          />
+                      <div className="space-y-2">
+                        {segments.map((seg, i) =>
+                          seg.kind === "text" ? (
+                            <div key={`t-${i}`}>{renderAssistantContent(seg.text, openMail)}</div>
+                          ) : session?.access_token ? (
+                            <MeetingProposalCard
+                              key={`m-${i}`}
+                              meeting={seg.meeting}
+                              accessToken={session.access_token}
+                              baseUrl={baseUrl}
+                              lang={(typeof window !== "undefined" && window.navigator?.language?.slice(0, 2)) || "fr"}
+                              onSent={() => {
+                                toast({ title: "Proposition envoyée" });
+                                queryClient.invalidateQueries({ queryKey: ["appointments"] });
+                              }}
+                            />
+                          ) : null,
                         )}
-                        {meet.after && <div>{renderAssistantContent(meet.after, openMail)}</div>}
-                      </>
+                      </div>
                     );
                   }
                   const { draft, before, after } = extractDraft(m.content);
