@@ -421,7 +421,14 @@ export default function Agenda() {
   };
 
   const suggestions = useMemo(() => {
-    return (allAppointmentsForSuggestions as any[]).filter((apt) => apt.confirmed === false);
+    // N'affiche QUE les suggestions detectees dans des mails entrants
+    // (proposalRecipient null). Les RDV proposes par l'utilisateur lui-meme
+    // (proposalRecipient renseigne) sont en attente d'une reponse du contact
+    // et n'ont rien a faire dans "Suggestions a confirmer" : ils apparaissent
+    // deja dans la grille avec leur badge "En attente".
+    return (allAppointmentsForSuggestions as any[]).filter(
+      (apt) => apt.confirmed === false && !apt.proposalRecipient,
+    );
   }, [allAppointmentsForSuggestions]);
 
   useEffect(() => {
