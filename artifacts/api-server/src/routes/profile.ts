@@ -66,6 +66,7 @@ router.get("/profile", requireAuth, async (req, res): Promise<void> => {
       trackingEnabled: !!profile.tracking_enabled,
       meetingRemindersEnabled: profile.meeting_reminders_enabled !== false,
       preferredVideoProvider: (profile.preferred_video_provider as string | null) || "none",
+      personalVideoUrl: (profile.personal_video_url as string | null) || null,
       createdAt: profile.created_at,
       organisationId,
       organisationName,
@@ -124,6 +125,17 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
         updates.preferred_video_provider = v;
       }
     }
+    if ((parsed.data as any).personalVideoUrl !== undefined) {
+      const raw = (parsed.data as any).personalVideoUrl;
+      if (raw === null || raw === "") {
+        updates.personal_video_url = null;
+      } else if (typeof raw === "string") {
+        const trimmed = raw.trim();
+        if (/^https:\/\/[^\s]+$/i.test(trimmed) && trimmed.length <= 2048) {
+          updates.personal_video_url = trimmed;
+        }
+      }
+    }
 
     const query = Object.keys(updates).length === 0
       ? supabaseAdmin.from("profiles").select().eq("id", req.userId!).single()
@@ -155,6 +167,7 @@ router.patch("/profile", requireAuth, async (req, res): Promise<void> => {
       trackingEnabled: !!profile.tracking_enabled,
       meetingRemindersEnabled: profile.meeting_reminders_enabled !== false,
       preferredVideoProvider: (profile.preferred_video_provider as string | null) || "none",
+      personalVideoUrl: (profile.personal_video_url as string | null) || null,
       createdAt: profile.created_at,
     });
   } catch {

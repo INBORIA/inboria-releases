@@ -221,12 +221,13 @@ export async function proposeMultiMeeting(args: MultiProposeArgs): Promise<Multi
 
   const { data: profile } = await supabaseAdmin
     .from("profiles")
-    .select("full_name, preferred_video_provider")
+    .select("full_name, preferred_video_provider, personal_video_url")
     .eq("id", args.userId)
     .maybeSingle();
   const fromName = (profile as { full_name?: string } | null)?.full_name || conn.email_address;
   const preferredVideo = (profile as { preferred_video_provider?: string | null } | null)?.preferred_video_provider as
     | "meet" | "teams" | "jitsi" | "none" | null | undefined;
+  const personalVideoUrl = ((profile as { personal_video_url?: string | null } | null)?.personal_video_url || "").trim() || null;
 
   let effVideo: "meet" | "teams" | "jitsi" | "none";
   if (args.videoProvider !== undefined && args.videoProvider !== null) {
@@ -236,12 +237,18 @@ export async function proposeMultiMeeting(args: MultiProposeArgs): Promise<Multi
   } else {
     effVideo = "jitsi";
   }
-  // Pour le mail multi on garantit un lien (même si Meet/Teams n'a pas été
-  // créé via le calendrier). On reste sur Jitsi pour cette phase, comme la
-  // proposition mono Phase 4.
+  // Pour le mail multi on garantit un lien. Si l'utilisateur a configuré un
+  // lien visio personnel (Teams/Meet permanent), on l'utilise quand le
+  // fournisseur choisi est Teams ou Meet ; sinon fallback Jitsi.
   let videoUrl: string | null = null;
-  if (effVideo !== "none") {
-    effVideo = "jitsi";
+  if (effVideo === "meet" || effVideo === "teams") {
+    if (personalVideoUrl) {
+      videoUrl = personalVideoUrl;
+    } else {
+      effVideo = "jitsi";
+      videoUrl = generateJitsiUrl();
+    }
+  } else if (effVideo === "jitsi") {
     videoUrl = generateJitsiUrl();
   }
 

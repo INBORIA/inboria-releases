@@ -571,6 +571,8 @@ export default function ParametresMonCompte() {
   const [meetingRemindersEnabled, setMeetingRemindersEnabled] = useState<boolean>(true);
   type VideoProv = "none" | "jitsi" | "meet" | "teams";
   const [preferredVideoProvider, setPreferredVideoProvider] = useState<VideoProv>("none");
+  const [personalVideoUrl, setPersonalVideoUrl] = useState<string>("");
+  const [personalVideoUrlSaved, setPersonalVideoUrlSaved] = useState<string>("");
 
   const WIZARD_STORAGE_KEY = "inboria.imapWizard.v1";
   const WIZARD_TTL_MS = 30 * 60 * 1000;
@@ -631,8 +633,31 @@ export default function ParametresMonCompte() {
       if (pv === "meet" || pv === "teams" || pv === "jitsi" || pv === "none") {
         setPreferredVideoProvider(pv);
       }
+      const pvu = (profile as any).personalVideoUrl;
+      const next = typeof pvu === "string" ? pvu : "";
+      setPersonalVideoUrl(next);
+      setPersonalVideoUrlSaved(next);
     }
   }, [profile]);
+
+  const handleSavePersonalVideoUrl = () => {
+    const trimmed = personalVideoUrl.trim();
+    if (trimmed && !/^https:\/\/[^\s]+$/i.test(trimmed)) {
+      toast({ title: t("settings.personalVideoUrlInvalid", "Lien invalide (https:// requis)") });
+      return;
+    }
+    const payload = trimmed === "" ? null : trimmed;
+    updateProfile.mutate(
+      { data: { personalVideoUrl: payload } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
+          setPersonalVideoUrlSaved(trimmed);
+          toast({ title: t("settings.profileUpdated") });
+        },
+      },
+    );
+  };
 
   const handleChangePreferredVideo = (next: VideoProv) => {
     const prev = preferredVideoProvider;
@@ -1360,7 +1385,7 @@ export default function ParametresMonCompte() {
                         <p className="text-[11px] text-[#b8c5d6] mt-0.5">
                           {t(
                             "settings.preferredVideoDesc",
-                            "Choisissez le fournisseur de visio par défaut pour les nouveaux RDV. Meet exige un calendrier Google connecté ; Teams exige Outlook. Jitsi fonctionne sans compte.",
+                            "Inboria insère par défaut un lien Jitsi (sans compte requis). Pour Teams ou Meet, collez votre lien de salle permanente ci-dessous, sinon Inboria retombera sur Jitsi.",
                           )}
                         </p>
                       </div>
@@ -1373,10 +1398,43 @@ export default function ParametresMonCompte() {
                       >
                         <option value="none">{t("agenda.videoNone", "Aucune")}</option>
                         <option value="jitsi">{t("agenda.videoJitsi", "Jitsi (lien Inboria, sans compte)")}</option>
-                        <option value="meet">{t("agenda.videoMeet", "Google Meet (calendrier Google requis)")}</option>
-                        <option value="teams">{t("agenda.videoTeams", "Microsoft Teams (calendrier Outlook requis)")}</option>
+                        <option value="meet">{t("agenda.videoMeet", "Google Meet (lien personnel requis)")}</option>
+                        <option value="teams">{t("agenda.videoTeams", "Microsoft Teams (lien personnel requis)")}</option>
                       </select>
                     </div>
+                    {(preferredVideoProvider === "meet" || preferredVideoProvider === "teams") && (
+                      <div className="space-y-1.5 pt-2">
+                        <Label className="text-[12px] text-white">
+                          {t("settings.personalVideoUrlLabel", "Lien visio personnel")}
+                        </Label>
+                        <p className="text-[11px] text-[#b8c5d6]">
+                          {t(
+                            "settings.personalVideoUrlDesc",
+                            "Collez le lien de votre salle permanente Teams ou Meet (https://...). Inboria l'utilisera dans toutes les propositions de RDV.",
+                          )}
+                        </p>
+                        <div className="flex gap-2">
+                          <Input
+                            type="url"
+                            value={personalVideoUrl}
+                            onChange={(e) => setPersonalVideoUrl(e.target.value)}
+                            placeholder="https://teams.microsoft.com/l/meetup-join/..."
+                            className="bg-background border-border text-white h-8 text-[12px] flex-1"
+                            data-testid="settings-personal-video-url-input"
+                          />
+                          <Button
+                            type="button"
+                            size="sm"
+                            variant="outline"
+                            onClick={handleSavePersonalVideoUrl}
+                            disabled={updateProfile.isPending || personalVideoUrl.trim() === personalVideoUrlSaved.trim()}
+                            data-testid="settings-personal-video-url-save"
+                          >
+                            {t("common.save", "Enregistrer")}
+                          </Button>
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}

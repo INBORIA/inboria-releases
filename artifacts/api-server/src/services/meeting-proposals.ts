@@ -439,6 +439,7 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
   const remindersEnabled = (profile as { meeting_reminders_enabled?: boolean } | null)?.meeting_reminders_enabled !== false;
   const preferredVideo = (profile as { preferred_video_provider?: string | null } | null)?.preferred_video_provider as
     | "meet" | "teams" | "jitsi" | "none" | null | undefined;
+  const personalVideoUrl = ((profile as { personal_video_url?: string | null } | null)?.personal_video_url || "").trim() || null;
 
   const billing = await consumeAiCredits(args.userId, "inboria_chat", {
     source: "meeting-proposal",
@@ -466,32 +467,21 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
   if (effVideo === "jitsi") {
     videoUrl = generateJitsiUrl();
   } else if (effVideo === "meet" || effVideo === "teams") {
-    const wantedProvider = effVideo === "meet" ? "google" : "outlook";
-    const { data: calAcc } = await supabaseAdmin
-      .from("calendar_accounts")
-      .select("id")
-      .eq("user_id", args.userId)
-      .eq("provider", wantedProvider)
-      .eq("status", "connected")
-      .limit(1)
-      .maybeSingle();
-    if (!calAcc) {
-      // Pas de calendrier compatible : on retombe sur Jitsi pour ne pas
-      // bloquer la proposition (le contact aura quand même un lien visio).
+    // Priorité 1 : si l'utilisateur a configuré un lien visio personnel
+    // (salle permanente Teams ou Meet), on l'utilise tel quel.
+    if (personalVideoUrl) {
+      videoUrl = personalVideoUrl;
       logger.info(
         { userId: args.userId, requested: effVideo },
-        "[meeting-proposals] no matching calendar, falling back to jitsi",
+        "[meeting-proposals] using personal video url",
       );
-      effVideo = "jitsi";
-      videoUrl = generateJitsiUrl();
     } else {
-      // Calendrier compatible existe, mais le vrai lien Meet/Teams n'est créé
-      // que lors du push event côté calendrier — flux non exécuté ici. Pour
-      // garantir la présence d'un lien dans l'email de proposition, on
-      // bascule sur Jitsi (déterministe, sans dépendance externe).
+      // Priorité 2 : fallback Jitsi (déterministe, sans dépendance externe).
+      // La création d'un vrai lien Meet/Teams via le calendrier n'est pas
+      // exécutée ici — on garantit néanmoins un lien dans le mail.
       logger.info(
         { userId: args.userId, requested: effVideo },
-        "[meeting-proposals] using jitsi for proposal email (no provider push)",
+        "[meeting-proposals] no personal url, falling back to jitsi",
       );
       effVideo = "jitsi";
       videoUrl = generateJitsiUrl();

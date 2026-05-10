@@ -44,4 +44,9 @@ export interface UserProfile {
   meetingRemindersEnabled?: boolean;
   /** Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4). */
   preferredVideoProvider?: UserProfilePreferredVideoProvider;
+  /**
+   * Lien visio permanent personnel (Teams ou Meet) utilisé quand le fournisseur choisi est Teams ou Meet. Si null, fallback Jitsi.
+   * @nullable
+   */
+  personalVideoUrl?: string | null;
 }

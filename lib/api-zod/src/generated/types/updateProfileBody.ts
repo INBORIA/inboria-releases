@@ -23,4 +23,6 @@ export interface UpdateProfileBody {
   trackingEnabled?: boolean;
   meetingRemindersEnabled?: boolean;
   preferredVideoProvider?: UpdateProfileBodyPreferredVideoProvider;
+  /** @nullable */
+  personalVideoUrl?: string | null;
 }

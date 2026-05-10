@@ -106,6 +106,12 @@ export const LoginResponse = zod.object({
       .describe(
         "Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4).",
       ),
+    personalVideoUrl: zod
+      .string()
+      .nullish()
+      .describe(
+        "Lien visio permanent personnel (Teams ou Meet) utilisé quand le fournisseur choisi est Teams ou Meet. Si null, fallback Jitsi.",
+      ),
   }),
 });
 
@@ -175,6 +181,12 @@ export const GetMeResponse = zod.object({
     .describe(
       "Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4).",
     ),
+  personalVideoUrl: zod
+    .string()
+    .nullish()
+    .describe(
+      "Lien visio permanent personnel (Teams ou Meet) utilisé quand le fournisseur choisi est Teams ou Meet. Si null, fallback Jitsi.",
+    ),
 });
 
 /**
@@ -243,6 +255,12 @@ export const GetProfileResponse = zod.object({
     .describe(
       "Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4).",
     ),
+  personalVideoUrl: zod
+    .string()
+    .nullish()
+    .describe(
+      "Lien visio permanent personnel (Teams ou Meet) utilisé quand le fournisseur choisi est Teams ou Meet. Si null, fallback Jitsi.",
+    ),
 });
 
 /**
@@ -267,6 +285,7 @@ export const UpdateProfileBody = zod.object({
   preferredVideoProvider: zod
     .enum(["meet", "teams", "jitsi", "none"])
     .optional(),
+  personalVideoUrl: zod.string().nullish(),
 });
 
 export const updateProfileResponseAiCreditsUsedDefault = 0;
@@ -333,6 +352,12 @@ export const UpdateProfileResponse = zod.object({
     .default(updateProfileResponsePreferredVideoProviderDefault)
     .describe(
       "Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4).",
+    ),
+  personalVideoUrl: zod
+    .string()
+    .nullish()
+    .describe(
+      "Lien visio permanent personnel (Teams ou Meet) utilisé quand le fournisseur choisi est Teams ou Meet. Si null, fallback Jitsi.",
     ),
 });
 
@@ -1149,6 +1174,12 @@ export const GetDashboardBootstrapResponse = zod
         )
         .describe(
           "Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4).",
+        ),
+      personalVideoUrl: zod
+        .string()
+        .nullish()
+        .describe(
+          "Lien visio permanent personnel (Teams ou Meet) utilisé quand le fournisseur choisi est Teams ou Meet. Si null, fallback Jitsi.",
         ),
     }),
     organisation: zod

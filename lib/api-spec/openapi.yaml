@@ -3739,6 +3739,9 @@ components:
           enum: [meet, teams, jitsi, none]
           default: none
           description: Fournisseur visio par défaut pour les nouveaux RDV (RDV Phase 4).
+        personalVideoUrl:
+          type: ["string", "null"]
+          description: Lien visio permanent personnel (Teams ou Meet) utilisé quand le fournisseur choisi est Teams ou Meet. Si null, fallback Jitsi.
       required:
         - id
         - email
@@ -3776,6 +3779,8 @@ components:
         preferredVideoProvider:
           type: string
           enum: [meet, teams, jitsi, none]
+        personalVideoUrl:
+          type: ["string", "null"]
 
     RegisterPushTokenBody:
       type: object
