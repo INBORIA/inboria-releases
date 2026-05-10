@@ -885,11 +885,11 @@ export default function Agenda() {
                         : isPendingFallback ? "pending" : "confirmed";
                       const nonConfirmed = effective !== "confirmed";
                       const monthLabel = effective === "pending"
-                        ? t("agenda.statusPendingMonth", "En att.")
+                        ? t("agenda.statusPendingShort", "En attente")
                         : effective === "counter_proposed"
-                          ? t("agenda.statusCounterMonth", "Contre-prop.")
+                          ? t("agenda.statusCounterShort", "Contre-prop.")
                           : effective === "declined"
-                            ? t("agenda.statusDeclinedMonth", "Refusé")
+                            ? t("agenda.statusDeclinedShort", "Refusé")
                             : t("agenda.statusConfirmedShort", "Confirmé");
                       return (
                       <div
@@ -898,7 +898,7 @@ export default function Agenda() {
                         onDragStart={(e) => { e.stopPropagation(); handleApptDragStart(apt, e); }}
                         onDragEnd={() => setDraggedApptId(null)}
                         onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                        className={`text-[10px] px-1 py-0.5 rounded mb-0.5 cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border" : apt.confirmed === false ? "bg-primary/20 text-primary" : `text-foreground ${!projectColor ? "bg-primary/20" : ""}`}`}
+                        className={`text-[10px] px-1 py-0.5 rounded mb-0.5 cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border text-primary" : `text-foreground ${!projectColor ? "bg-primary/20" : ""}`}`}
                         style={!nonConfirmed && apt.confirmed !== false && projectColor ? { backgroundColor: `${projectColor}20` } : undefined}
                         title={`${apt.title} — ${monthLabel}`}
                       >
@@ -984,11 +984,11 @@ export default function Agenda() {
                           <div
                             key={apt.id}
                             onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                            className={`text-[10px] px-1 py-0.5 rounded cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border" : apt.confirmed === false ? "bg-primary/20 text-primary" : `text-foreground ${!pc ? "bg-primary/20 hover:bg-primary/30" : ""}`}`}
-                            style={pc && !nonConfirmed && apt.confirmed !== false ? { backgroundColor: `${pc}20` } : undefined}
-                            title={shortLabel ? `${apt.title} — ${shortLabel}` : apt.title}
+                            className={`text-[10px] px-1 py-0.5 rounded cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border text-primary" : `text-foreground ${!pc ? "bg-primary/20 hover:bg-primary/30" : ""}`}`}
+                            style={pc && !nonConfirmed ? { backgroundColor: `${pc}20` } : undefined}
+                            title={`${apt.title} — ${shortLabel}`}
                           >
-                            <div className="truncate text-foreground">{format(parseISO(apt.startAt), "HH:mm")} {apt.title}</div>
+                            <div className={`truncate ${nonConfirmed ? "text-primary" : "text-foreground"}`}>{format(parseISO(apt.startAt), "HH:mm")} {apt.title}</div>
                             <div className={`truncate ${nonConfirmed ? "text-primary" : "text-muted-foreground"}`}>{shortLabel}</div>
                           </div>
                           );
