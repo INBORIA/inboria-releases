@@ -626,7 +626,6 @@ export default function Agenda() {
               <CalendarDays className="w-4 h-4 text-primary" />
               {t("agenda.title")}
             </h1>
-            <p className="text-[12px] text-[#b8c5d6] mt-0.5">{t("agenda.subtitle")}</p>
           </div>
           <div className="flex items-center gap-2 flex-wrap">
             <Button onClick={handleDetect} disabled={detectAppointments.isPending} size="sm" variant="outline" className="h-8 text-[12px]">
