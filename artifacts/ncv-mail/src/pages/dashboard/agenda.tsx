@@ -889,7 +889,7 @@ export default function Agenda() {
                         onDragStart={(e) => { e.stopPropagation(); handleApptDragStart(apt, e); }}
                         onDragEnd={() => setDraggedApptId(null)}
                         onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                        className={`text-[10px] px-1 py-0.5 rounded truncate mb-0.5 cursor-pointer ${apt.confirmed === false ? "bg-primary/20 text-primary" : ""}`}
+                        className={`text-[10px] px-1 py-0.5 rounded truncate mb-0.5 cursor-pointer text-foreground ${apt.confirmed === false ? "bg-primary/20" : !projectColor ? "bg-primary/20" : ""}`}
                         style={apt.confirmed !== false && projectColor ? { backgroundColor: `${projectColor}20` } : undefined}
                         title={apt.title}
                       >
@@ -959,7 +959,7 @@ export default function Agenda() {
                           <div
                             key={apt.id}
                             onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
-                            className={`text-[10px] px-1 py-0.5 rounded truncate cursor-pointer ${apt.confirmed === false ? "bg-primary/20 text-primary" : "bg-primary/20 text-primary hover:bg-primary/30"}`}
+                            className={`text-[10px] px-1 py-0.5 rounded truncate cursor-pointer text-foreground ${apt.confirmed === false ? "bg-primary/20" : !pc ? "bg-primary/20 hover:bg-primary/30" : ""}`}
                             style={pc && apt.confirmed !== false ? { backgroundColor: `${pc}20` } : undefined}
                           >
                             {format(parseISO(apt.startAt), "HH:mm")} {apt.title}
