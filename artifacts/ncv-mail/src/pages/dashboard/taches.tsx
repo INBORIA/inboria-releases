@@ -357,7 +357,19 @@ export default function Taches() {
   return (
     <DashboardLayout>
       <div className="mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 max-w-6xl">
-        <BackToInboxButton />
+        {detailOpen ? (
+          <div className="mb-3">
+            <button
+              onClick={() => { setEmailDetailTask(null); setShowComments(false); }}
+              className="inline-flex items-center gap-1.5 h-7 px-2 rounded text-[12px] text-[#b8c5d6] hover:text-foreground hover:bg-foreground/[0.06] transition-colors"
+            >
+              <ChevronRight className="w-3.5 h-3.5 rotate-180" />
+              {t("tasks.backToList", "Retour aux tâches")}
+            </button>
+          </div>
+        ) : (
+          <BackToInboxButton />
+        )}
         {!detailOpen && (
         <>
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-5">
