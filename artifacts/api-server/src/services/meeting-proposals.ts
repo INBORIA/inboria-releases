@@ -924,26 +924,44 @@ ${cleanBody}
       if (!m) return null;
       return Date.UTC(+m[1]!, +m[2]! - 1, +m[3]!, +m[4]!, +m[5]!);
     };
+    // Convertit un instant ISO en clé "minutes-since-epoch dans la TZ
+     // utilisateur" : on extrait Y-M-D h:m tels que vus dans userTz, puis on
+    // les recombine via Date.UTC pour obtenir un nombre comparable. Ça neutralise
+    // les divergences d'offset (Z vs +02:00) entre LLM et BDD.
+    const tzKey = (iso: string | null | undefined): number | null => {
+      if (!iso) return null;
+      const d = new Date(iso);
+      if (Number.isNaN(d.getTime())) return null;
+      try {
+        const parts = new Intl.DateTimeFormat("en-CA", {
+          timeZone: userTz,
+          year: "numeric",
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        }).formatToParts(d);
+        const m: Record<string, string> = {};
+        for (const p of parts) if (p.type !== "literal") m[p.type] = p.value;
+        // Intl peut renvoyer "24" pour minuit selon le runtime → normalise
+        const hour = m.hour === "24" ? "00" : m.hour;
+        return Date.UTC(+m.year!, +m.month! - 1, +m.day!, +hour!, +m.minute!);
+      } catch {
+        return null;
+      }
+    };
     if (decision === "counter" && parsed.counterStartAt) {
       const csAbs = Date.parse(parsed.counterStartAt);
       const csLoc = localKey(parsed.counterStartAt);
-      // Date locale (Y-M-D) du counter dans la TZ profil — pour matcher
-      // "même jour" même si l'offset LLM est faux.
-      const dayInTz = (iso: string): string | null => {
-        const d = new Date(iso);
-        if (Number.isNaN(d.getTime())) return null;
-        try {
-          return d.toLocaleDateString("en-CA", { timeZone: userTz });
-        } catch {
-          return null;
-        }
-      };
-      const csDay = dayInTz(parsed.counterStartAt);
-      let matchIdx = group.findIndex((g) => {
+      const csTz = tzKey(parsed.counterStartAt);
+      const matchIdx = group.findIndex((g) => {
         const sA = Date.parse(g.start_at);
         const eA = Date.parse(g.end_at);
         const sL = localKey(g.start_at);
         const eL = localKey(g.end_at);
+        const sT = tzKey(g.start_at);
+        const eT = tzKey(g.end_at);
         const inAbs =
           !Number.isNaN(csAbs) &&
           !Number.isNaN(sA) &&
@@ -952,21 +970,9 @@ ${cleanBody}
           csAbs <= eA;
         const inLoc =
           csLoc !== null && sL !== null && eL !== null && csLoc >= sL && csLoc <= eL;
-        return inAbs || inLoc;
+        const inTz = csTz !== null && sT !== null && eT !== null && csTz >= sT && csTz <= eT;
+        return inAbs || inLoc || inTz;
       });
-      // 3e tentative : même jour local en TZ profil. Si un seul slot ce
-      // jour-là, c'est lui ; sinon le plus proche en absolu.
-      if (matchIdx < 0 && csDay && !Number.isNaN(csAbs)) {
-        const sameDay = group
-          .map((g, i) => ({ i, day: dayInTz(g.start_at), absStart: Date.parse(g.start_at) }))
-          .filter((x) => x.day === csDay && !Number.isNaN(x.absStart));
-        if (sameDay.length === 1) {
-          matchIdx = sameDay[0]!.i;
-        } else if (sameDay.length > 1) {
-          sameDay.sort((a, b) => Math.abs(a.absStart - csAbs) - Math.abs(b.absStart - csAbs));
-          matchIdx = sameDay[0]!.i;
-        }
-      }
       logger.info(
         {
           userId,
