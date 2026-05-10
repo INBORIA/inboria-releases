@@ -672,12 +672,18 @@ export default function Agenda() {
                 : format(currentDate, "MMMM yyyy", { locale })}
             </span>
           </div>
-          <div className="flex items-center gap-2 flex-shrink-0">
-            <div className="flex bg-card border border-border rounded-lg overflow-hidden">
-              {(["day", "week", "month"] as ViewMode[]).map((mode) => (
+          <div className="flex bg-card border border-border rounded-lg overflow-hidden flex-shrink-0 relative">
+            {(["day", "week", "month"] as ViewMode[]).map((mode) => (
+              <div key={mode} className="relative">
                 <button
-                  key={mode}
-                  onClick={() => setViewMode(mode)}
+                  onClick={() => {
+                    if (mode === "week") {
+                      setWeekMenuOpen((o) => (viewMode === "week" ? !o : true));
+                    } else {
+                      setWeekMenuOpen(false);
+                    }
+                    setViewMode(mode);
+                  }}
                   className={`px-3 py-1 text-[11px] font-medium transition-colors ${
                     viewMode === mode
                       ? "bg-primary text-foreground"
@@ -685,22 +691,28 @@ export default function Agenda() {
                   }`}
                 >
                   {t(`agenda.${mode}`)}
+                  {mode === "week" && viewMode === "week" && (
+                    <span className="ml-1 text-[9px] opacity-80">{workWeekOnly ? "(5 j) ▾" : "(7 j) ▾"}</span>
+                  )}
                 </button>
-              ))}
-            </div>
-            {viewMode === "week" && (
-              <button
-                onClick={() => setWorkWeekOnly((v) => !v)}
-                title={workWeekOnly ? t("agenda.show7Days", "Afficher 7 jours") : t("agenda.show5Days", "Semaine de travail (5 j)")}
-                className={`px-2.5 py-1 text-[11px] font-medium rounded-lg border transition-colors ${
-                  workWeekOnly
-                    ? "bg-primary text-foreground border-primary"
-                    : "bg-card text-muted-foreground border-border hover:text-foreground"
-                }`}
-              >
-                {workWeekOnly ? "5 j" : "7 j"}
-              </button>
-            )}
+                {mode === "week" && weekMenuOpen && viewMode === "week" && (
+                  <div className="absolute right-0 top-full mt-1 z-50 w-40 bg-popover border border-border rounded-md shadow-md p-1">
+                    <button
+                      onClick={() => { setWorkWeekOnly(false); setWeekMenuOpen(false); }}
+                      className={`w-full text-left px-2 py-1.5 text-[11px] rounded hover:bg-accent ${!workWeekOnly ? "text-primary font-medium" : "text-foreground"}`}
+                    >
+                      {t("agenda.fullWeek", "7 jours (lun–dim)")}
+                    </button>
+                    <button
+                      onClick={() => { setWorkWeekOnly(true); setWeekMenuOpen(false); }}
+                      className={`w-full text-left px-2 py-1.5 text-[11px] rounded hover:bg-accent ${workWeekOnly ? "text-primary font-medium" : "text-foreground"}`}
+                    >
+                      {t("agenda.workWeek", "5 jours (lun–ven)")}
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
           </div>
         </div>
 
