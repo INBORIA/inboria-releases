@@ -683,7 +683,7 @@ export default function Agenda() {
                 onClick={() => setViewMode(mode)}
                 className={`px-3 py-1 text-[11px] font-medium transition-colors ${
                   viewMode === mode
-                    ? "bg-primary text-foreground"
+                    ? "bg-primary text-white"
                     : "text-muted-foreground hover:text-foreground"
                 }`}
               >
@@ -892,7 +892,7 @@ export default function Agenda() {
                     } ${draggedApptId ? "hover:bg-primary/10" : ""}`}
                   >
                     <div className={`text-[11px] font-medium mb-0.5 w-6 h-6 flex items-center justify-center rounded-full ${
-                      today ? "bg-primary text-foreground" : "text-muted-foreground"
+                      today ? "bg-primary text-white" : "text-muted-foreground"
                     }`}>
                       {format(day, "d")}
                     </div>
