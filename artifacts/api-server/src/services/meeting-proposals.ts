@@ -306,7 +306,13 @@ async function generateProposalEmailBody(
   const endDate = new Date(args.endAt);
   const lang = (args.lang || "fr").toLowerCase();
   const dateLocale = lang === "en" ? "en-GB" : lang === "nl" ? "nl-NL" : "fr-FR";
-  const slot = `${startDate.toLocaleDateString(dateLocale, { weekday: "long", day: "numeric", month: "long", year: "numeric" })} ${startDate.toLocaleTimeString(dateLocale, { hour: "2-digit", minute: "2-digit" })} – ${endDate.toLocaleTimeString(dateLocale, { hour: "2-digit", minute: "2-digit" })}`;
+  const { data: tzProfile } = await supabaseAdmin
+    .from("profiles")
+    .select("timezone")
+    .eq("id", args.userId)
+    .maybeSingle();
+  const timeZone = (tzProfile as { timezone?: string } | null)?.timezone || "Europe/Brussels";
+  const slot = `${startDate.toLocaleDateString(dateLocale, { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone })} ${startDate.toLocaleTimeString(dateLocale, { hour: "2-digit", minute: "2-digit", timeZone })} – ${endDate.toLocaleTimeString(dateLocale, { hour: "2-digit", minute: "2-digit", timeZone })}`;
 
   try {
     const completion = await openai.chat.completions.create({
@@ -385,7 +391,13 @@ export async function sendCounterAcceptedEmail(args: {
   const dateLocale = lang === "en" ? "en-GB" : lang === "nl" ? "nl-NL" : "fr-FR";
   const startDate = new Date(args.startAt);
   const endDate = new Date(args.endAt);
-  const slot = `${startDate.toLocaleDateString(dateLocale, { weekday: "long", day: "numeric", month: "long", year: "numeric" })} ${startDate.toLocaleTimeString(dateLocale, { hour: "2-digit", minute: "2-digit" })} – ${endDate.toLocaleTimeString(dateLocale, { hour: "2-digit", minute: "2-digit" })}`;
+  const { data: tzProfile } = await supabaseAdmin
+    .from("profiles")
+    .select("timezone")
+    .eq("id", args.userId)
+    .maybeSingle();
+  const timeZone = (tzProfile as { timezone?: string } | null)?.timezone || "Europe/Brussels";
+  const slot = `${startDate.toLocaleDateString(dateLocale, { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone })} ${startDate.toLocaleTimeString(dateLocale, { hour: "2-digit", minute: "2-digit", timeZone })} – ${endDate.toLocaleTimeString(dateLocale, { hour: "2-digit", minute: "2-digit", timeZone })}`;
   const greeting = lang === "en" ? "Hello," : lang === "nl" ? "Hallo," : "Bonjour,";
   const confirm =
     lang === "en"
