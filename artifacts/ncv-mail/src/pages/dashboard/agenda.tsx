@@ -344,7 +344,22 @@ export default function Agenda() {
     );
   };
 
-  const handleConfirm = (id: string) => {
+  const handleConfirm = async (id: string) => {
+    const appt = (rawAppointments as Appointment[]).find((a) => a.id === id);
+    if (appt?.status === "counter_proposed") {
+      try {
+        const res = await fetch(`/api/appointments/${id}/accept-counter`, {
+          method: "POST",
+          credentials: "include",
+        });
+        if (!res.ok) throw new Error(await res.text());
+        toast({ title: t("agenda.appointmentConfirmed") });
+        invalidate();
+      } catch {
+        toast({ title: t("agenda.confirmError", "Erreur lors de la confirmation"), variant: "destructive" });
+      }
+      return;
+    }
     updateAppointment.mutate(
       { id, data: { confirmed: true } },
       {
