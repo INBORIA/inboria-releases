@@ -887,25 +887,49 @@ ${cleanBody}
     // Filet de sécurité déterministe : si le LLM décide "counter" mais que la
     // date/heure qu'il a extraite tombe dans un créneau proposé (ou colle à
     // son start/end), c'est en réalité un ACCEPT — pas une contre-proposition.
-    // Évite de cancel un groupe et d'inventer un counter quand l'utilisateur
-    // a juste cité l'heure de fin (ex: "OK 14 mai 15h30" pour le créneau
-    // 15:00–15:30).
+    // On compare à la fois en absolu (timestamps) ET en composants locaux
+    // (Y-M-D h:m), car le LLM omet souvent l'offset timezone alors que le
+    // créneau stocké l'a — un même 11:00 local apparaîtrait 2h plus tôt en
+    // UTC et raterait la fenêtre.
+    const localKey = (iso: string | null | undefined): number | null => {
+      const m = String(iso || "").match(/(\d{4})-(\d{2})-(\d{2})T(\d{2}):(\d{2})/);
+      if (!m) return null;
+      return Date.UTC(+m[1]!, +m[2]! - 1, +m[3]!, +m[4]!, +m[5]!);
+    };
     if (decision === "counter" && parsed.counterStartAt) {
-      const cs = Date.parse(parsed.counterStartAt);
-      if (!Number.isNaN(cs)) {
-        const matchIdx = group.findIndex((g) => {
-          const s = Date.parse(g.start_at);
-          const e = Date.parse(g.end_at);
-          return !Number.isNaN(s) && !Number.isNaN(e) && cs >= s && cs <= e;
-        });
-        if (matchIdx >= 0) {
-          logger.info(
-            { userId, matchIdx, llmCounter: parsed.counterStartAt },
-            "[meeting-proposals] override counter→accept (counter falls inside a proposed slot)",
-          );
-          decision = "accept";
-          acceptedIndex = matchIdx;
-        }
+      const csAbs = Date.parse(parsed.counterStartAt);
+      const csLoc = localKey(parsed.counterStartAt);
+      const matchIdx = group.findIndex((g) => {
+        const sA = Date.parse(g.start_at);
+        const eA = Date.parse(g.end_at);
+        const sL = localKey(g.start_at);
+        const eL = localKey(g.end_at);
+        const inAbs =
+          !Number.isNaN(csAbs) &&
+          !Number.isNaN(sA) &&
+          !Number.isNaN(eA) &&
+          csAbs >= sA &&
+          csAbs <= eA;
+        const inLoc =
+          csLoc !== null && sL !== null && eL !== null && csLoc >= sL && csLoc <= eL;
+        return inAbs || inLoc;
+      });
+      logger.info(
+        {
+          userId,
+          llmCounter: parsed.counterStartAt,
+          slots: group.map((g) => `${g.start_at}→${g.end_at}`),
+          matchIdx,
+        },
+        "[meeting-proposals] counter detected — checking if it falls in a proposed slot",
+      );
+      if (matchIdx >= 0) {
+        logger.info(
+          { userId, matchIdx },
+          "[meeting-proposals] override counter→accept (counter falls inside a proposed slot)",
+        );
+        decision = "accept";
+        acceptedIndex = matchIdx;
       }
     }
 
