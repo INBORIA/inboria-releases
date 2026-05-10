@@ -595,7 +595,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       plan: string;
       seatsTotal: number | null;
       myRole: string;
-      members: Array<{ fullName: string; email: string; role: string; isCurrentUser: boolean }>;
+      members: Array<{ uid: string; fullName: string; email: string; role: string; isCurrentUser: boolean }>;
     } | null = null;
     try {
       const { data: myMembership, error: membershipErr } = await supabaseAdmin
@@ -712,12 +712,28 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
               || (fallbackAddr ? localPart(fallbackAddr) : "")
               || `membre #${uid.slice(0, 8)}`;
             return {
+              uid,
               fullName: friendlyName,
               email: fallbackAddr,
               role: String(r.role || "member"),
               isCurrentUser: uid === userId,
             };
           });
+          // Promeut les membres de l'organisation (hors moi) en "teammates"
+          // potentiels pour la résolution de nom dans la requête utilisateur :
+          // sans cela, Inboria ne peut pas répondre "tâches assignées à
+          // Richard Martin" si Richard n'est pas dans une boîte partagée
+          // commune.
+          for (const m of members) {
+            if (m.isCurrentUser) continue;
+            if (teammates.find((t) => t.uid === m.uid)) continue;
+            teammates.push({
+              uid: m.uid,
+              fullName: m.fullName,
+              email: m.email,
+              mailboxLabel: "",
+            });
+          }
           organisation = {
             name: String((org as any).name || "(sans nom)"),
             plan: String((org as any).plan || ""),
