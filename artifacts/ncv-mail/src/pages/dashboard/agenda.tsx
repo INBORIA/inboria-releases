@@ -886,7 +886,7 @@ export default function Agenda() {
                           ? t("agenda.statusCounterMonth", "Contre-prop.")
                           : s === "declined"
                             ? t("agenda.statusDeclinedMonth", "Refusé")
-                            : "";
+                            : t("agenda.statusConfirmedShort", "Confirmé");
                       return (
                       <div
                         key={apt.id}
@@ -896,11 +896,11 @@ export default function Agenda() {
                         onClick={(e) => { e.stopPropagation(); setSelectedAppointment(apt); }}
                         className={`text-[10px] px-1 py-0.5 rounded truncate mb-0.5 cursor-pointer ${nonConfirmed ? "bg-card border border-dashed border-border text-primary" : apt.confirmed === false ? "bg-primary/20 text-primary" : `text-foreground ${!projectColor ? "bg-primary/20" : ""}`}`}
                         style={!nonConfirmed && apt.confirmed !== false && projectColor ? { backgroundColor: `${projectColor}20` } : undefined}
-                        title={monthLabel ? `${apt.title} — ${monthLabel}` : apt.title}
+                        title={`${apt.title} — ${monthLabel}`}
                       >
                         {projectColor && !nonConfirmed && <span className="inline-block w-1.5 h-1.5 rounded-full mr-0.5" style={{ backgroundColor: projectColor }} />}
                         {apt.allDay ? "" : format(parseISO(apt.startAt), "HH:mm") + " "}{apt.title}
-                        {monthLabel && <span className="ml-1">· {monthLabel}</span>}
+                        <span className={`ml-1 ${nonConfirmed ? "text-primary" : "text-muted-foreground"}`}>· {monthLabel}</span>
                       </div>
                       );
                     })}
@@ -969,7 +969,7 @@ export default function Agenda() {
                               ? t("agenda.statusCounterShort", "Contre-prop.")
                               : s === "declined"
                                 ? t("agenda.statusDeclinedShort", "Refusé")
-                                : "";
+                                : t("agenda.statusConfirmedShort", "Confirmé");
                           return (
                           <div
                             key={apt.id}
@@ -979,7 +979,7 @@ export default function Agenda() {
                             title={shortLabel ? `${apt.title} — ${shortLabel}` : apt.title}
                           >
                             {format(parseISO(apt.startAt), "HH:mm")} {apt.title}
-                            {shortLabel && <span className="ml-1 text-primary">· {shortLabel}</span>}
+                            <span className={`ml-1 ${nonConfirmed ? "text-primary" : "text-muted-foreground"}`}>· {shortLabel}</span>
                           </div>
                           );
                         })}
