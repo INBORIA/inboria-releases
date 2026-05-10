@@ -78,7 +78,7 @@ pnpm dev # Starts frontend and backend
 
 I prefer simple language and detailed explanations. I want iterative development and will provide feedback at each stage. Ask before making major changes.
 
-**TOUJOURS redémarrer automatiquement le workflow concerné après toute modif backend (api-server, services, routes). Ne jamais demander, ne jamais oublier.**
+**TOUJOURS redémarrer automatiquement le workflow concerné après TOUTE modification de code (backend ET frontend, même si Vite est censé recharger). Ne jamais demander, ne jamais oublier, ne jamais supposer que le HMR suffit.**
 
 ## Gotchas
 
