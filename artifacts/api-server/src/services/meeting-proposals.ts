@@ -5,7 +5,7 @@ import { randomUUID } from "crypto";
 import { supabaseAdmin } from "../lib/supabase";
 import { logger } from "../lib/logger";
 import { consumeAiCredits } from "./credits";
-import { generateJitsiUrl } from "./calendar-sync";
+import { generateJitsiUrl, pushAppointmentToProvider } from "./calendar-sync";
 import {
   getActiveCalendarAccountsForUser,
   getValidAccessToken,
@@ -114,6 +114,8 @@ interface ProposeResult {
   ok: boolean;
   appointmentId?: string;
   error?: string;
+  mirrored?: boolean;
+  mirrorReason?: string;
 }
 
 interface EmailConnRow {
@@ -157,6 +159,51 @@ async function resolveSendingConnection(
     // primaire plutôt que d'échouer silencieusement.
   }
   return getPrimaryConnection(userId);
+}
+
+/**
+ * Détermine quel calendrier externe doit recevoir le miroir sortant pour un
+ * RDV envoyé depuis la connexion `conn`. Principe : Inboria = source de
+ * vérité ; le calendrier externe lié au compte d'envoi est un miroir.
+ *
+ * Stratégie de résolution :
+ *   1) Compte calendrier `connected` dont l'email matche EXACTEMENT la
+ *      connexion d'envoi (cas idéal : Gmail+Google Cal liés sur la même
+ *      adresse, Outlook mail+cal liés).
+ *   2) À défaut : premier compte calendrier `connected` du user, par ordre
+ *      de création (= calendrier par défaut implicite).
+ *   3) Sinon `null` — l'insert se fait quand même sans miroir.
+ */
+async function resolveCalendarAccountForConnection(
+  userId: string,
+  conn: EmailConnRow | null,
+): Promise<string | null> {
+  if (!conn) return null;
+  try {
+    const { data: byEmail } = await supabaseAdmin
+      .from("calendar_accounts")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("email_address", conn.email_address)
+      .eq("status", "connected")
+      .order("created_at", { ascending: true })
+      .limit(1);
+    if (byEmail && byEmail.length > 0) return String((byEmail[0] as { id: string }).id);
+    const { data: anyConn } = await supabaseAdmin
+      .from("calendar_accounts")
+      .select("id")
+      .eq("user_id", userId)
+      .eq("status", "connected")
+      .order("created_at", { ascending: true })
+      .limit(1);
+    if (anyConn && anyConn.length > 0) return String((anyConn[0] as { id: string }).id);
+  } catch (err) {
+    logger.warn(
+      { err: err instanceof Error ? err.message : String(err), userId },
+      "[meeting-proposals] resolveCalendarAccountForConnection failed",
+    );
+  }
+  return null;
 }
 
 // Détecte si la `location` saisie correspond à un lieu PHYSIQUE (bureau,
@@ -580,6 +627,9 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
     ? new Date(Date.now() + 48 * 60 * 60 * 1000).toISOString()
     : null;
 
+  // Résolution du calendrier externe miroir (best-effort, jamais bloquant).
+  const calendarAccountId = await resolveCalendarAccountForConnection(args.userId, conn);
+
   // Insert FIRST so we never lose tracking if the send succeeds but the DB
   // write fails. We then update with the real Message-ID after sending and
   // delete the row if the send itself fails.
@@ -603,6 +653,7 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
       confirmed: false,
       video_provider: effVideo === "none" ? null : effVideo,
       video_url: videoUrl,
+      calendar_account_id: calendarAccountId,
     })
     .select("id")
     .single();
@@ -625,7 +676,57 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
       .update({ proposal_message_id: sendRes.messageId })
       .eq("id", appt.id);
   }
-  return { ok: true, appointmentId: String(appt.id) };
+
+  // Miroir sortant best-effort vers le calendrier externe lié. Inboria
+  // reste source de vérité : un échec de push n'annule JAMAIS la ligne.
+  let mirrored = false;
+  let mirrorReason: string | undefined;
+  if (calendarAccountId) {
+    try {
+      const pushed = await pushAppointmentToProvider(args.userId, calendarAccountId, {
+        title: args.subject,
+        description: args.description || null,
+        location: args.location || null,
+        startAt: args.startAt,
+        endAt: args.endAt,
+        allDay: false,
+        participants: args.to,
+        videoProvider: effVideo === "none" ? null : effVideo,
+        videoUrl: videoUrl,
+      });
+      if (pushed) {
+        await supabaseAdmin
+          .from("appointments")
+          .update({
+            external_provider: pushed.provider,
+            external_id: pushed.externalId,
+            external_calendar_id: pushed.calendarId,
+            last_synced_at: new Date().toISOString(),
+            last_sync_error: null,
+            ...(pushed.videoUrl ? { video_url: pushed.videoUrl } : {}),
+            ...(pushed.videoJoinUrl ? { video_join_url: pushed.videoJoinUrl } : {}),
+          })
+          .eq("id", appt.id);
+        mirrored = true;
+      } else {
+        mirrorReason = "push_failed";
+        await supabaseAdmin
+          .from("appointments")
+          .update({ last_sync_error: "push_failed" })
+          .eq("id", appt.id);
+      }
+    } catch (err) {
+      mirrorReason = "push_crashed";
+      logger.warn(
+        { err: err instanceof Error ? err.message : String(err), apptId: appt.id },
+        "[meeting-proposals] push to provider crashed (best-effort)",
+      );
+    }
+  } else {
+    mirrorReason = "no_calendar_connected";
+  }
+
+  return { ok: true, appointmentId: String(appt.id), mirrored, mirrorReason };
 }
 
 /**
@@ -732,9 +833,13 @@ export async function proposeMeetingMulti(args: {
   lang?: string;
   slots: Array<{ startAt: string; endAt: string }>;
   fromConnectionId?: string | null;
-}): Promise<{ ok: boolean; appointmentIds?: string[]; error?: string }> {
+}): Promise<{ ok: boolean; appointmentIds?: string[]; error?: string; mirrored?: boolean; mirrorReason?: string }> {
   const conn = await resolveSendingConnection(args.userId, args.fromConnectionId);
   if (!conn) return { ok: false, error: "no email connection" };
+  // Calendrier externe miroir cible (résolu dès maintenant pour le persister
+  // sur les N lignes pending — le push effectif sera fait à la confirmation
+  // d'un créneau pour ne pas créer N tentatives dans Google/Outlook).
+  const calendarAccountId = await resolveCalendarAccountForConnection(args.userId, conn);
   if (!args.slots || args.slots.length < 2) {
     return { ok: false, error: "need at least 2 slots (use /propose for 1 slot)" };
   }
@@ -839,6 +944,7 @@ Rédige le corps du mail. Invite poliment à indiquer le créneau choisi, ou à 
     proposal_group_id: groupId,
     awaiting_reminder_at: awaitingReminderAt,
     confirmed: false,
+    calendar_account_id: calendarAccountId,
   }));
   const { data: inserted, error: insertErr } = await supabaseAdmin
     .from("appointments")
@@ -873,7 +979,17 @@ Rédige le corps du mail. Invite poliment à indiquer le créneau choisi, ou à 
       .eq("user_id", args.userId)
       .eq("proposal_group_id", groupId);
   }
-  return { ok: true, appointmentIds: inserted.map((r) => String((r as any).id)) };
+  // Pour le multi, on NE PUSH PAS les N créneaux pending vers Google/Outlook
+  // (cela créerait N tentatives en doublon). Le push est différé : il aura
+  // lieu lors de la confirmation d'un créneau (acceptCounter ou classifier).
+  // `mirrored: false` ici signifie juste "pas encore poussé" — le calendrier
+  // est bien lié via calendar_account_id, prêt pour la confirmation.
+  return {
+    ok: true,
+    appointmentIds: inserted.map((r) => String((r as any).id)),
+    mirrored: false,
+    mirrorReason: calendarAccountId ? "multi_pending_deferred" : "no_calendar_connected",
+  };
 }
 
 /**

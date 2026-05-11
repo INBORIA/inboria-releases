@@ -306,15 +306,27 @@ interface DraftCardProps {
   accessToken: string;
   baseUrl: string;
   primaryFrom: string;
+  connections: Array<{ id: string; email_address: string }>;
+  defaultConnectionId: string;
   onEdit: (d: InboriaDraft) => void;
   onSent: () => void;
 }
 
-const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primaryFrom, onEdit, onSent }: DraftCardProps) {
+const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primaryFrom, connections, defaultConnectionId, onEdit, onSent }: DraftCardProps) {
   const [stage, setStage] = useState<"idle" | "confirm" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState<string>("");
   const [sentAt, setSentAt] = useState<string>("");
   const [resolvedFrom, setResolvedFrom] = useState<string>("");
+  const [fromConnectionId, setFromConnectionId] = useState<string>(defaultConnectionId);
+  // Resync si `connectionsData` arrive après le 1er render et que l'utilisateur
+  // n'a pas encore touché au sélecteur.
+  useEffect(() => {
+    if (!defaultConnectionId) return;
+    if (!fromConnectionId || !connections.some((c) => c.id === fromConnectionId)) {
+      setFromConnectionId(defaultConnectionId);
+    }
+  }, [defaultConnectionId, connections, fromConnectionId]);
+  const fromEmail = connections.find((c) => c.id === fromConnectionId)?.email_address || primaryFrom;
 
   const toValid = EMAIL_RE.test(draft.to.trim());
   const blockReason = !toValid
@@ -330,7 +342,12 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primary
       const res = await fetch(`${baseUrl}/api/emails/send`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
-        body: JSON.stringify({ to: draft.to.trim(), subject: draft.subject, body: draft.body }),
+        body: JSON.stringify({
+          to: draft.to.trim(),
+          subject: draft.subject,
+          body: draft.body,
+          connectionId: fromConnectionId || undefined,
+        }),
       });
       if (!res.ok) {
         const errBody = await res.json().catch(() => ({}));
@@ -349,7 +366,7 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primary
   };
 
   if (stage === "sent") {
-    const from = resolvedFrom || primaryFrom;
+    const from = resolvedFrom || fromEmail || primaryFrom;
     return (
       <div className="my-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-zinc-100 text-xs flex items-center gap-2">
         <Check className="h-4 w-4 shrink-0 text-zinc-100" />
@@ -371,6 +388,23 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primary
         <span className="text-[11px] uppercase tracking-wide text-cyan-300 font-semibold">Brouillon prêt</span>
       </div>
       <div className="px-3 py-2.5 space-y-1.5 text-xs">
+        <div className="flex gap-2 items-center">
+          <span className="text-zinc-500 w-12 shrink-0">De</span>
+          {connections.length > 1 ? (
+            <select
+              value={fromConnectionId}
+              onChange={(e) => setFromConnectionId(e.target.value)}
+              className="bg-zinc-950 border border-zinc-700 rounded px-1.5 py-0.5 text-zinc-100 text-xs flex-1 min-w-0"
+              data-testid="inboria-draft-from"
+            >
+              {connections.map((c) => (
+                <option key={c.id} value={c.id}>{c.email_address}</option>
+              ))}
+            </select>
+          ) : (
+            <span className="text-zinc-100 break-all">{fromEmail || "(aucun compte)"}</span>
+          )}
+        </div>
         <div className="flex gap-2">
           <span className="text-zinc-500 w-12 shrink-0">À</span>
           <span className={cn("break-all", toValid ? "text-zinc-100" : "text-zinc-300 underline decoration-dotted")}>{draft.to.trim() || "(vide)"}</span>
@@ -402,7 +436,7 @@ const DraftCard = memo(function DraftCard({ draft, accessToken, baseUrl, primary
           <div>
             Envoyer ce mail&nbsp;?<br />
             <span className="text-zinc-400">De&nbsp;:</span>{" "}
-            <strong className="text-zinc-100">{primaryFrom || "votre boîte principale"}</strong>{" "}
+            <strong className="text-zinc-100">{fromEmail || "votre boîte principale"}</strong>{" "}
             <span className="text-zinc-400">→ À&nbsp;:</span>{" "}
             <strong className="text-zinc-100">{draft.to.trim()}</strong>
           </div>
@@ -471,6 +505,7 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
 }: MeetingCardProps) {
   const [stage, setStage] = useState<"idle" | "confirm" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [mirrorWarning, setMirrorWarning] = useState<string>("");
   const [fromConnectionId, setFromConnectionId] = useState<string>(defaultConnectionId);
   // `connectionsData` peut être chargé APRES le 1er render de la carte : on
   // resynchronise alors fromConnectionId si l'utilisateur n'a pas encore
@@ -518,6 +553,14 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
         const errBody = await res.json().catch(() => ({}));
         throw new Error(errBody?.error || "Échec de l'envoi");
       }
+      const okBody = await res.json().catch(() => ({} as { mirrored?: boolean; mirrorReason?: string | null }));
+      if (okBody && okBody.mirrored === false) {
+        setMirrorWarning(
+          okBody.mirrorReason === "no_calendar_connected"
+            ? "RDV créé dans Inboria — non synchronisé vers Google/Outlook (aucun calendrier connecté pour cette boîte)."
+            : "RDV créé dans Inboria — la synchronisation vers Google/Outlook a échoué (sera retentée).",
+        );
+      }
       setStage("sent");
       onSent();
     } catch (err) {
@@ -529,11 +572,19 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
 
   if (stage === "sent") {
     return (
-      <div className="my-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-zinc-100 text-xs flex items-center gap-2">
-        <Check className="h-4 w-4 shrink-0 text-zinc-100" />
-        <span>
-          Proposition envoyée à <strong>{meeting.contactName || meeting.to.trim()}</strong>. Inboria détectera la réponse automatiquement.
-        </span>
+      <div className="my-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-zinc-100 text-xs flex items-start gap-2">
+        <Check className="h-4 w-4 shrink-0 text-zinc-100 mt-0.5" />
+        <div className="flex-1 space-y-1">
+          <span>
+            Proposition envoyée à <strong>{meeting.contactName || meeting.to.trim()}</strong>. Inboria détectera la réponse automatiquement.
+          </span>
+          {mirrorWarning && (
+            <div className="text-[11px] text-zinc-400 flex gap-1.5 items-start">
+              <AlertCircle className="h-3 w-3 shrink-0 mt-0.5" />
+              <span>{mirrorWarning}</span>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
@@ -665,6 +716,7 @@ const MultiMeetingProposalCard = memo(function MultiMeetingProposalCard({
 }: MultiMeetingCardProps) {
   const [stage, setStage] = useState<"idle" | "confirm" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [mirrorWarning, setMirrorWarning] = useState<string>("");
   const [fromConnectionId, setFromConnectionId] = useState<string>(defaultConnectionId);
   useEffect(() => {
     if (!defaultConnectionId) return;
@@ -720,6 +772,12 @@ const MultiMeetingProposalCard = memo(function MultiMeetingProposalCard({
               : code || "Échec de l'envoi";
         throw new Error(friendly);
       }
+      const okBody = await res.json().catch(() => ({} as { mirrored?: boolean; mirrorReason?: string | null }));
+      if (okBody && okBody.mirrorReason === "no_calendar_connected") {
+        setMirrorWarning(
+          "Créneaux créés dans Inboria — non synchronisés vers Google/Outlook (aucun calendrier connecté pour cette boîte). Le créneau confirmé y sera ajouté quand le contact répondra.",
+        );
+      }
       setStage("sent");
       onSent();
     } catch (err) {
@@ -731,11 +789,19 @@ const MultiMeetingProposalCard = memo(function MultiMeetingProposalCard({
 
   if (stage === "sent") {
     return (
-      <div className="my-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-zinc-100 text-xs flex items-center gap-2">
-        <Check className="h-4 w-4 shrink-0 text-zinc-100" />
-        <span>
-          {multi.slots.length} propositions envoyées à <strong>{multi.contactName || multi.to.trim()}</strong>. Inboria identifiera le créneau choisi automatiquement.
-        </span>
+      <div className="my-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-zinc-100 text-xs flex items-start gap-2">
+        <Check className="h-4 w-4 shrink-0 text-zinc-100 mt-0.5" />
+        <div className="flex-1 space-y-1">
+          <span>
+            {multi.slots.length} propositions envoyées à <strong>{multi.contactName || multi.to.trim()}</strong>. Inboria identifiera le créneau choisi automatiquement.
+          </span>
+          {mirrorWarning && (
+            <div className="text-[11px] text-zinc-400 flex gap-1.5 items-start">
+              <AlertCircle className="h-3 w-3 shrink-0 mt-0.5" />
+              <span>{mirrorWarning}</span>
+            </div>
+          )}
+        </div>
       </div>
     );
   }
@@ -1213,6 +1279,8 @@ export function InboriaChatButton() {
                           accessToken={session.access_token}
                           baseUrl={baseUrl}
                           primaryFrom={primaryFrom}
+                          connections={connectionsData || []}
+                          defaultConnectionId={primaryConnectionId}
                           onEdit={openComposeWithDraft}
                           onSent={() => {
                             toast({ title: "Mail envoyé" });

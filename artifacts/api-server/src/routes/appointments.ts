@@ -685,7 +685,11 @@ router.post("/appointments/propose", requireAuth, async (req, res): Promise<void
       .eq("id", result.appointmentId!)
       .eq("user_id", req.userId!)
       .single();
-    res.status(201).json(mapAppointment(data));
+    res.status(201).json({
+      ...mapAppointment(data),
+      mirrored: result.mirrored ?? false,
+      mirrorReason: result.mirrorReason ?? null,
+    });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "propose_crashed";
     req.log?.error?.({ err: msg }, "[appointments] propose crashed");
@@ -724,7 +728,12 @@ router.post("/appointments/propose-multi", requireAuth, async (req, res): Promis
       res.status(502).json({ error: result.error || "propose_multi_failed" });
       return;
     }
-    res.status(201).json({ ok: true, appointmentIds: result.appointmentIds || [] });
+    res.status(201).json({
+      ok: true,
+      appointmentIds: result.appointmentIds || [],
+      mirrored: result.mirrored ?? false,
+      mirrorReason: result.mirrorReason ?? null,
+    });
   } catch (err) {
     const msg = err instanceof Error ? err.message : "propose_multi_crashed";
     req.log?.error?.({ err: msg }, "[appointments] propose-multi crashed");
@@ -775,6 +784,45 @@ router.post(
       if (error) {
         res.status(500).json({ error: error.message });
         return;
+      }
+      // Filet de sécurité : si la ligne n'a pas encore été miroirée vers
+      // Google/Outlook (cas typique des RDV multi-créneaux où le push est
+      // différé jusqu'à la confirmation, ou des anciens RDV créés avant le
+      // fix calendar_account_id), on push maintenant — best-effort, jamais
+      // bloquant. Le RDV reste source de vérité dans Inboria.
+      if (updated && !updated.external_id && updated.calendar_account_id) {
+        try {
+          const pushed = await pushAppointmentToProvider(
+            req.userId!,
+            updated.calendar_account_id,
+            buildPushPayload(updated),
+          );
+          if (pushed) {
+            const { data: repushed } = await supabaseAdmin
+              .from("appointments")
+              .update({
+                external_provider: pushed.provider,
+                external_id: pushed.externalId,
+                external_calendar_id: pushed.calendarId,
+                last_synced_at: new Date().toISOString(),
+                last_sync_error: null,
+                ...(pushed.videoUrl ? { video_url: pushed.videoUrl } : {}),
+                ...(pushed.videoJoinUrl ? { video_join_url: pushed.videoJoinUrl } : {}),
+              })
+              .eq("id", updated.id)
+              .select("*, projects(id, name, reference, color)")
+              .single();
+            if (repushed) Object.assign(updated, repushed);
+          } else {
+            await supabaseAdmin
+              .from("appointments")
+              .update({ last_sync_error: "push_failed" })
+              .eq("id", updated.id);
+          }
+        } catch (e) {
+          const msg = e instanceof Error ? e.message : String(e);
+          req.log?.warn?.({ err: msg, apptId: updated.id }, "[appointments] accept-counter deferred push crashed");
+        }
       }
       // Best-effort : envoyer la confirmation au contact pour clore la boucle
       // en 1 clic. Échec silencieux (le RDV reste confirmé en base).
