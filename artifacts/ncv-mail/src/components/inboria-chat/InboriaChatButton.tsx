@@ -506,6 +506,7 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
   const [stage, setStage] = useState<"idle" | "confirm" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
   const [mirrorWarning, setMirrorWarning] = useState<string>("");
+  const [sentVideoUrl, setSentVideoUrl] = useState<string>("");
   const [fromConnectionId, setFromConnectionId] = useState<string>(defaultConnectionId);
   // `connectionsData` peut être chargé APRES le 1er render de la carte : on
   // resynchronise alors fromConnectionId si l'utilisateur n'a pas encore
@@ -553,7 +554,7 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
         const errBody = await res.json().catch(() => ({}));
         throw new Error(errBody?.error || "Échec de l'envoi");
       }
-      const okBody = await res.json().catch(() => ({} as { mirrored?: boolean; mirrorReason?: string | null }));
+      const okBody = await res.json().catch(() => ({} as { mirrored?: boolean; mirrorReason?: string | null; videoUrl?: string | null; videoJoinUrl?: string | null }));
       if (okBody && okBody.mirrored === false) {
         setMirrorWarning(
           okBody.mirrorReason === "no_calendar_connected"
@@ -561,6 +562,8 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
             : "RDV créé dans Inboria — la synchronisation vers Google/Outlook a échoué (sera retentée).",
         );
       }
+      const vUrl = (okBody && (okBody.videoJoinUrl || okBody.videoUrl)) || "";
+      if (vUrl) setSentVideoUrl(vUrl);
       setStage("sent");
       onSent();
     } catch (err) {
@@ -578,6 +581,19 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
           <span>
             Proposition envoyée à <strong>{meeting.contactName || meeting.to.trim()}</strong>. Inboria détectera la réponse automatiquement.
           </span>
+          {sentVideoUrl && (
+            <div className="text-[11px] text-zinc-300 flex gap-1.5 items-start">
+              <span className="shrink-0">Lien visio :</span>
+              <a
+                href={sentVideoUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-cyan-300 hover:text-cyan-200 underline break-all"
+              >
+                {sentVideoUrl}
+              </a>
+            </div>
+          )}
           {mirrorWarning && (
             <div className="text-[11px] text-zinc-400 flex gap-1.5 items-start">
               <AlertCircle className="h-3 w-3 shrink-0 mt-0.5" />
