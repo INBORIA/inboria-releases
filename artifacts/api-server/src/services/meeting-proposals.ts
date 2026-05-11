@@ -929,9 +929,13 @@ Règles :
   "je vous proposerai d'autres dates plus tard", "je reviens vers vous à mon retour",
   "pas dispo cette semaine, je vous recontacte". Tant qu'aucune date+heure précise
   n'est donnée, c'est un "decline".
-- "counter" : l'auteur propose un autre créneau précis (date ET heure : "plutôt
-  mardi 15h", "le 14 mai à 10h", "jeudi prochain 9h-10h"). Déduis la date/heure
-  complète et remplis counterStartAt et counterEndAt.
+- "counter" : l'auteur propose un AUTRE créneau précis, DIFFÉRENT du créneau
+  d'origine (date ET heure : "plutôt mardi 15h", "le 14 mai à 10h",
+  "jeudi prochain 9h-10h"). Déduis la date/heure complète et remplis
+  counterStartAt et counterEndAt.
+  ATTENTION : si l'auteur RÉPÈTE explicitement le créneau d'origine pour
+  confirmer (ex: "OK pour moi le 12 mai à 14h00" alors que le créneau proposé
+  est bien le 12 mai à 14h00), c'est "accept", PAS "counter".
 - "unknown" : hors-sujet, simple question, accusé de réception sans réponse claire.`,
         },
         {
@@ -959,13 +963,34 @@ ${cleanBody}`,
       updated_at: new Date().toISOString(),
     };
 
-    if (decision === "accept") {
+    // Re-qualification : si le LLM a dit "counter" mais que l'heure proposée
+    // coïncide en réalité avec le créneau d'origine (±15 min), c'est une
+    // confirmation (l'auteur a juste répété l'horaire pour être explicite,
+    // ex: "OK pour moi le 12 mai à 14h00").
+    let effectiveDecision = decision;
+    if (decision === "counter" && parsed.counterStartAt) {
+      const counterMs = Date.parse(parsed.counterStartAt);
+      const originalMs = Date.parse(originalStart);
+      if (
+        Number.isFinite(counterMs) &&
+        Number.isFinite(originalMs) &&
+        Math.abs(counterMs - originalMs) <= 15 * 60 * 1000
+      ) {
+        effectiveDecision = "accept";
+        logger.info(
+          { appointmentId, counterStartAt: parsed.counterStartAt, originalStart },
+          "[meeting-proposals] counter re-qualified as accept (same slot)",
+        );
+      }
+    }
+
+    if (effectiveDecision === "accept") {
       update.status = "confirmed";
       update.confirmed = true;
-    } else if (decision === "decline") {
+    } else if (effectiveDecision === "decline") {
       update.status = "declined";
       update.confirmed = false;
-    } else if (decision === "counter") {
+    } else if (effectiveDecision === "counter") {
       update.status = "counter_proposed";
       update.confirmed = false;
       if (parsed.counterStartAt) update.counter_start_at = parsed.counterStartAt;
