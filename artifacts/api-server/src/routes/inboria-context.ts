@@ -333,6 +333,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         .from("appointments")
         .select("title, start_at, end_at, location, all_day, confirmed, status, participants")
         .eq("user_id", userId)
+        .neq("status", "cancelled")
         .gte("start_at", apptStart)
         .lte("start_at", apptEnd)
         .order("start_at", { ascending: true })
