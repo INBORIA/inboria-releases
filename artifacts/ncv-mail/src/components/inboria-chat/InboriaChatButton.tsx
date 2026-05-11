@@ -507,6 +507,7 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
   const [errorMsg, setErrorMsg] = useState("");
   const [mirrorWarning, setMirrorWarning] = useState<string>("");
   const [sentVideoUrl, setSentVideoUrl] = useState<string>("");
+  const [videoProvider, setVideoProvider] = useState<"jitsi" | "meet" | "teams" | "none">("jitsi");
   const [fromConnectionId, setFromConnectionId] = useState<string>(defaultConnectionId);
   // `connectionsData` peut être chargé APRES le 1er render de la carte : on
   // resynchronise alors fromConnectionId si l'utilisateur n'a pas encore
@@ -547,6 +548,7 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
           endAt: meeting.endAt,
           location: meeting.location || undefined,
           lang,
+          videoProvider,
           fromConnectionId: fromConnectionId || undefined,
         }),
       });
@@ -656,6 +658,20 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
             <span className="text-zinc-100 break-words">{meeting.location}</span>
           </div>
         )}
+        <div className="flex gap-2 items-center">
+          <span className="text-zinc-500 w-16 shrink-0">Visio</span>
+          <select
+            value={videoProvider}
+            onChange={(e) => setVideoProvider(e.target.value as "jitsi" | "meet" | "teams" | "none")}
+            className="bg-zinc-950 border border-zinc-700 rounded px-1.5 py-0.5 text-zinc-100 text-xs flex-1 min-w-0"
+            data-testid="inboria-meeting-video-provider"
+          >
+            <option value="jitsi">Jitsi (par défaut)</option>
+            <option value="meet">Google Meet</option>
+            <option value="teams">Microsoft Teams</option>
+            <option value="none">Aucun lien visio</option>
+          </select>
+        </div>
       </div>
       {blockReason && (
         <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-900 text-zinc-200 text-[11px] flex gap-2 items-start">
