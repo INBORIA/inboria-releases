@@ -412,6 +412,47 @@ export async function sendCounterAcceptedEmail(args: {
   return sendRes.ok ? { ok: true } : { ok: false, error: sendRes.error };
 }
 
+export async function sendCounterDeclinedEmail(args: {
+  userId: string;
+  to: string;
+  subject: string;
+  startAt: string;
+  endAt: string;
+  lang: string;
+}): Promise<{ ok: boolean; error?: string }> {
+  const conn = await getPrimaryConnection(args.userId);
+  if (!conn) return { ok: false, error: "no email connection" };
+  const { data: profile } = await supabaseAdmin
+    .from("profiles")
+    .select("full_name, timezone")
+    .eq("id", args.userId)
+    .maybeSingle();
+  const fromName = (profile as { full_name?: string } | null)?.full_name || conn.email_address;
+  const timeZone = (profile as { timezone?: string } | null)?.timezone || "Europe/Brussels";
+  const lang = (args.lang || "fr").toLowerCase();
+  const dateLocale = lang === "en" ? "en-GB" : lang === "nl" ? "nl-NL" : "fr-FR";
+  const startDate = new Date(args.startAt);
+  const endDate = new Date(args.endAt);
+  const slot = `${startDate.toLocaleDateString(dateLocale, { weekday: "long", day: "numeric", month: "long", year: "numeric", timeZone })} ${startDate.toLocaleTimeString(dateLocale, { hour: "2-digit", minute: "2-digit", timeZone })} – ${endDate.toLocaleTimeString(dateLocale, { hour: "2-digit", minute: "2-digit", timeZone })}`;
+  const greeting = lang === "en" ? "Hello," : lang === "nl" ? "Hallo," : "Bonjour,";
+  const decline =
+    lang === "en"
+      ? `Thanks for the new slot proposal (${slot}), but unfortunately it doesn't work for me either. I'll come back to you shortly with another option.`
+      : lang === "nl"
+        ? `Bedankt voor het nieuwe voorstel (${slot}), maar helaas past het me ook niet. Ik kom binnenkort bij u terug met een ander voorstel.`
+        : `Merci pour la nouvelle proposition (${slot}), mais elle ne me convient malheureusement pas non plus. Je reviens vers vous très prochainement avec une autre option.`;
+  const closing = lang === "en" ? "Best regards," : lang === "nl" ? "Met vriendelijke groet," : "Bien à vous,";
+  const hasRePrefix = /^re\s*:/i.test(args.subject.trim());
+  const subject = hasRePrefix
+    ? args.subject
+    : lang === "en"
+      ? `Re: ${args.subject}`
+      : `Re : ${args.subject}`;
+  const body = `${greeting}\n\n${decline}\n\n${closing}\n${fromName}`;
+  const sendRes = await sendProposalEmail(conn, args.to, subject, body);
+  return sendRes.ok ? { ok: true } : { ok: false, error: sendRes.error };
+}
+
 /**
  * Coeur Phase 3 : crée un RDV `pending`, envoie le mail de proposition,
  * stocke le Message-ID pour la détection ultérieure de la réponse. Programme

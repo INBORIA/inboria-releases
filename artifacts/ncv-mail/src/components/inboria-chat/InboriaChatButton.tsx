@@ -896,6 +896,35 @@ export function InboriaChatButton() {
     return () => window.removeEventListener("keydown", onKey);
   }, [isOpen]);
 
+  useEffect(() => {
+    const consumePrefill = () => {
+      try {
+        const raw = sessionStorage.getItem("inboria.chat.prefill");
+        if (raw) {
+          sessionStorage.removeItem("inboria.chat.prefill");
+          setIsOpen(true);
+          setInput(raw);
+          setTimeout(() => textareaRef.current?.focus(), 80);
+        }
+      } catch {
+        /* noop */
+      }
+    };
+    consumePrefill();
+    const onOpen = (e: Event) => {
+      const detail = (e as CustomEvent<{ prefill?: string }>).detail;
+      setIsOpen(true);
+      if (detail?.prefill) {
+        setInput(detail.prefill);
+        setTimeout(() => textareaRef.current?.focus(), 80);
+      } else {
+        consumePrefill();
+      }
+    };
+    window.addEventListener("inboria-open-chat", onOpen as EventListener);
+    return () => window.removeEventListener("inboria-open-chat", onOpen as EventListener);
+  }, []);
+
   const sendMessage = async () => {
     const trimmed = input.trim();
     if (!trimmed || isLoading || !session?.access_token) return;

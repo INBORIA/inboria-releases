@@ -13,7 +13,7 @@ import {
   type AppointmentPushPayload,
   type VideoProvider,
 } from "../services/calendar-sync";
-import { proposeMeeting, proposeMeetingMulti, sendCounterAcceptedEmail } from "../services/meeting-proposals";
+import { proposeMeeting, proposeMeetingMulti, sendCounterAcceptedEmail, sendCounterDeclinedEmail } from "../services/meeting-proposals";
 import {
   proposeMultiMeeting,
   findMultiCommonSlots,
@@ -794,6 +794,71 @@ router.post(
       res.json(mapAppointment(updated));
     } catch (err) {
       const msg = err instanceof Error ? err.message : "accept_counter_crashed";
+      res.status(500).json({ error: msg });
+    }
+  },
+);
+
+// Refuse une contre-proposition reçue : envoie un mail de refus poli au
+// contact, puis bascule le RDV en `cancelled` (la ligne disparaîtra de
+// l'agenda grâce au filtre GET /appointments).
+router.post(
+  "/appointments/:id/decline-counter",
+  requireAuth,
+  async (req, res): Promise<void> => {
+    try {
+      const { data: appt } = await supabaseAdmin
+        .from("appointments")
+        .select(
+          "id, user_id, title, status, counter_start_at, counter_end_at, proposal_recipient, proposal_lang",
+        )
+        .eq("id", req.params.id)
+        .eq("user_id", req.userId!)
+        .maybeSingle();
+      if (!appt) {
+        res.status(404).json({ error: "not_found" });
+        return;
+      }
+      if (appt.status !== "counter_proposed" || !appt.counter_start_at || !appt.counter_end_at) {
+        res.status(409).json({ error: "no_counter_proposal" });
+        return;
+      }
+      // 1) On bascule d'abord la ligne en cancelled pour garantir la cohérence
+      //    DB. Si l'update échoue, on n'envoie PAS de mail de refus (sinon
+      //    contact reçoit un refus mais la ligne reste counter_proposed).
+      const { error } = await supabaseAdmin
+        .from("appointments")
+        .update({
+          status: "cancelled",
+          confirmed: false,
+          awaiting_reminder_at: null,
+          updated_at: new Date().toISOString(),
+        })
+        .eq("id", req.params.id)
+        .eq("user_id", req.userId!);
+      if (error) {
+        res.status(500).json({ error: error.message });
+        return;
+      }
+      // 2) Best-effort : envoyer le mail de refus poli au contact.
+      if (appt.proposal_recipient) {
+        try {
+          await sendCounterDeclinedEmail({
+            userId: req.userId!,
+            to: appt.proposal_recipient,
+            subject: appt.title || "Rendez-vous",
+            startAt: String(appt.counter_start_at),
+            endAt: String(appt.counter_end_at),
+            lang: appt.proposal_lang || "fr",
+          });
+        } catch (err) {
+          const msg = err instanceof Error ? err.message : String(err);
+          req.log?.warn?.({ err: msg, apptId: req.params.id }, "[appointments] decline-counter email failed (best-effort)");
+        }
+      }
+      res.json({ ok: true });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "decline_counter_crashed";
       res.status(500).json({ error: msg });
     }
   },

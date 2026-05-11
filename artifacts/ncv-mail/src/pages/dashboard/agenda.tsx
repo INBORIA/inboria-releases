@@ -1217,20 +1217,93 @@ export default function Agenda() {
                 )}
               </div>
 
-              <div className="flex gap-2">
-                {selectedAppointment.confirmed === false && (
-                  <Button size="sm" className="h-7 text-[11px]" onClick={() => { handleConfirm(selectedAppointment.id); setSelectedAppointment(null); }}>
-                    {t("agenda.confirmAppointment")}
-                  </Button>
+              <div className="flex gap-2 flex-wrap">
+                {selectedAppointment.status === "counter_proposed" ? (
+                  <>
+                    <Button
+                      size="sm"
+                      className="h-7 text-[11px]"
+                      onClick={() => { handleConfirm(selectedAppointment.id); setSelectedAppointment(null); }}
+                    >
+                      <Sparkles className="w-3 h-3 mr-1" />
+                      {t("agenda.confirmWithInboria", "Confirmer avec Inboria")}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="outline"
+                      className="h-7 text-[11px]"
+                      onClick={() => {
+                        const apt = selectedAppointment;
+                        const slot = apt.counterStartAt
+                          ? format(new Date(apt.counterStartAt), "EEEE d MMMM yyyy 'à' HH:mm", { locale })
+                          : "";
+                        const contact = apt.proposalRecipient || t("agenda.theContact", "le contact");
+                        const prefill = t(
+                          "agenda.askInboriaNewSlotPrefill",
+                          "La contre-proposition de {{contact}}{{slot}} ne me convient pas. Propose-lui d'autres créneaux compatibles avec mon agenda.",
+                          { contact, slot: slot ? ` (${slot})` : "" },
+                        );
+                        const emailId = apt.emailId;
+                        try {
+                          sessionStorage.setItem("inboria.chat.prefill", prefill);
+                        } catch {
+                          /* noop */
+                        }
+                        setSelectedAppointment(null);
+                        if (emailId) {
+                          setLocation(`/dashboard?emailId=${emailId}`);
+                        }
+                        // Le listener dans InboriaChatButton consommera le prefill au mount
+                        // (déjà monté = via l'event ; nouveau mount = via sessionStorage).
+                        window.dispatchEvent(new CustomEvent("inboria-open-chat"));
+                      }}
+                    >
+                      <Sparkles className="w-3 h-3 mr-1" />
+                      {t("agenda.askInboriaNewSlot", "Demander à Inboria nouveau RDV")}
+                    </Button>
+                    <Button
+                      size="sm"
+                      variant="destructive"
+                      className="h-7 text-[11px]"
+                      onClick={async () => {
+                        try {
+                          const { supabase } = await import("@/lib/supabase");
+                          const { data: sessionData } = await supabase.auth.getSession();
+                          const token = sessionData?.session?.access_token;
+                          const res = await fetch(
+                            `${import.meta.env.BASE_URL}api/appointments/${selectedAppointment.id}/decline-counter`,
+                            { method: "POST", headers: token ? { Authorization: `Bearer ${token}` } : {} },
+                          );
+                          if (!res.ok) throw new Error(await res.text());
+                          toast({ title: t("agenda.counterDeclined", "Refus envoyé au contact") });
+                          invalidate();
+                          setSelectedAppointment(null);
+                        } catch {
+                          toast({ title: t("agenda.deleteError"), variant: "destructive" });
+                        }
+                      }}
+                    >
+                      <Trash2 className="w-3 h-3 mr-1" />
+                      {t("agenda.deleteAppointment")}
+                    </Button>
+                  </>
+                ) : (
+                  <>
+                    {selectedAppointment.confirmed === false && (
+                      <Button size="sm" className="h-7 text-[11px]" onClick={() => { handleConfirm(selectedAppointment.id); setSelectedAppointment(null); }}>
+                        {t("agenda.confirmAppointment")}
+                      </Button>
+                    )}
+                    <Button size="sm" variant="outline" className="h-7 text-[11px]" onClick={() => openEditForm(selectedAppointment)}>
+                      <Pencil className="w-3 h-3 mr-1" />
+                      {t("agenda.editAppointment")}
+                    </Button>
+                    <Button size="sm" variant="destructive" className="h-7 text-[11px]" onClick={() => handleDelete(selectedAppointment.id)}>
+                      <Trash2 className="w-3 h-3 mr-1" />
+                      {t("agenda.deleteAppointment")}
+                    </Button>
+                  </>
                 )}
-                <Button size="sm" variant="outline" className="h-7 text-[11px]" onClick={() => openEditForm(selectedAppointment)}>
-                  <Pencil className="w-3 h-3 mr-1" />
-                  {t("agenda.editAppointment")}
-                </Button>
-                <Button size="sm" variant="destructive" className="h-7 text-[11px]" onClick={() => handleDelete(selectedAppointment.id)}>
-                  <Trash2 className="w-3 h-3 mr-1" />
-                  {t("agenda.deleteAppointment")}
-                </Button>
               </div>
             </div>
           </div>
