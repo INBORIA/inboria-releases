@@ -824,10 +824,18 @@ function stripQuotedReply(raw: string): string {
     .replace(/\r\n/g, "\n");
 
   // 2. Coupe au premier marqueur de citation reconnu.
+  // Les variantes "De: ... Envoyé:" (Outlook FR/EN/NL) acceptent aussi un
+  // expéditeur SANS <email@addr> (cas où l'alias serveur, ex: "Legal &
+  // Compliance" injecté par OVH, est utilisé seul comme nom). On détecte
+  // alors le bloc d'en-têtes typique d'Outlook : "De :" suivi d'un
+  // "Envoyé :"/"Sent:"/"Verzonden:" dans les ~300 caractères suivants.
   const markers: RegExp[] = [
     /^\s*-{2,}\s*Original Message\s*-{2,}/im,
     /^\s*-{2,}\s*Message d'origine\s*-{2,}/im,
     /^\s*-{2,}\s*Message original\s*-{2,}/im,
+    /^\s*De\s*:\s[\s\S]{1,300}?Envoy[ée]\s*:\s/im,
+    /^\s*From\s*:\s[\s\S]{1,300}?Sent\s*:\s/im,
+    /^\s*Van\s*:\s[\s\S]{1,300}?Verzonden\s*:\s/im,
     /^\s*De\s*:\s.+<.+@.+>/im,
     /^\s*From\s*:\s.+<.+@.+>/im,
     /^\s*Van\s*:\s.+<.+@.+>/im,
