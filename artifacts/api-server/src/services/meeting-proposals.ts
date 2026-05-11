@@ -908,6 +908,15 @@ export async function classifyMeetingReply(
       }
     }
 
+    // Récupère la timezone du profil pour que le LLM produise des ISO datetime
+    // avec le bon offset (ex: "13 mai à 9h" → 2026-05-13T09:00:00+02:00 si
+    // Europe/Brussels, pas T09:00:00Z qui décale de 2h en été).
+    const { data: prof } = await supabaseAdmin
+      .from("profiles")
+      .select("timezone")
+      .eq("id", userId)
+      .maybeSingle();
+    const tz = (prof as { timezone?: string } | null)?.timezone || "Europe/Brussels";
     const today = new Date().toISOString().split("T")[0];
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
@@ -918,6 +927,10 @@ export async function classifyMeetingReply(
         {
           role: "system",
           content: `Tu analyses la réponse à une proposition de rendez-vous. Date du jour : ${today}.
+Fuseau horaire du destinataire : ${tz}. TOUTES les heures mentionnées dans la
+réponse sont à interpréter dans ce fuseau. Produis les ISO datetime AVEC
+l'offset correspondant (ex: "2026-05-13T09:00:00+02:00" pour Europe/Brussels
+en été), JAMAIS en UTC sec ("Z") sauf si l'auteur écrit explicitement "UTC".
 Renvoie un JSON STRICT :
 { "decision": "accept" | "decline" | "counter" | "unknown",
   "counterStartAt": "ISO datetime ou null",
@@ -971,14 +984,31 @@ ${cleanBody}`,
     if (decision === "counter" && parsed.counterStartAt) {
       const counterMs = Date.parse(parsed.counterStartAt);
       const originalMs = Date.parse(originalStart);
-      if (
+      // Comparaison 1 : UTC strict ±15 min (cas où le LLM a bien mis l'offset).
+      const sameUtc =
         Number.isFinite(counterMs) &&
         Number.isFinite(originalMs) &&
-        Math.abs(counterMs - originalMs) <= 15 * 60 * 1000
-      ) {
+        Math.abs(counterMs - originalMs) <= 15 * 60 * 1000;
+      // Comparaison 2 : même date+heure locale dans la TZ profil (cas où le
+      // LLM a oublié l'offset et écrit "T09:00:00Z" alors que l'auteur disait
+      // "9h" en heure locale Europe/Brussels = 07:00 UTC).
+      let sameLocal = false;
+      try {
+        const fmt = new Intl.DateTimeFormat("en-CA", {
+          timeZone: tz,
+          year: "numeric", month: "2-digit", day: "2-digit",
+          hour: "2-digit", minute: "2-digit", hour12: false,
+        });
+        const counterLocal = fmt.format(new Date(counterMs));
+        const originalLocal = fmt.format(new Date(originalMs));
+        sameLocal = counterLocal === originalLocal;
+      } catch {
+        /* ignore */
+      }
+      if (sameUtc || sameLocal) {
         effectiveDecision = "accept";
         logger.info(
-          { appointmentId, counterStartAt: parsed.counterStartAt, originalStart },
+          { appointmentId, counterStartAt: parsed.counterStartAt, originalStart, sameUtc, sameLocal },
           "[meeting-proposals] counter re-qualified as accept (same slot)",
         );
       }
