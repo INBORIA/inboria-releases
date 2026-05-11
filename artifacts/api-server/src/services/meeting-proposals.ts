@@ -355,6 +355,37 @@ async function sendProposalEmail(
   }
 }
 
+/**
+ * Persiste la copie du mail de proposition dans la table `emails` afin qu'il
+ * apparaisse dans l'onglet "Envoyés" d'Inboria (l'envoi via Gmail/Graph place
+ * déjà le mail dans le Sent du fournisseur côté serveur, mais Inboria affiche
+ * son propre store local).
+ */
+async function recordSentProposal(
+  conn: EmailConnRow,
+  to: string,
+  subject: string,
+  body: string,
+  messageId: string | undefined,
+): Promise<void> {
+  try {
+    await supabaseAdmin.from("emails").insert({
+      user_id: conn.user_id,
+      sender: conn.email_address,
+      recipient: to,
+      subject,
+      body,
+      status: "sent",
+      priority: "faible",
+      external_id: messageId || null,
+      sent_at: new Date().toISOString(),
+    });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    logger.warn({ err: msg }, "[meeting-proposals] recordSentProposal failed");
+  }
+}
+
 function langInstruction(lang: string | undefined): string {
   const map: Record<string, string> = {
     fr: "Rédige en français avec vouvoiement (vous), ton professionnel et bienveillant.",
@@ -493,6 +524,7 @@ export async function sendCounterAcceptedEmail(args: {
   const subject = lang === "en" ? `Confirmed — ${args.subject}` : `Confirmé — ${args.subject}`;
   const body = `${greeting}\n\n${confirm}\n\n${closing}\n${fromName}`;
   const sendRes = await sendProposalEmail(conn, args.to, subject, body);
+  if (sendRes.ok) await recordSentProposal(conn, args.to, subject, body, sendRes.messageId);
   return sendRes.ok ? { ok: true } : { ok: false, error: sendRes.error };
 }
 
@@ -534,6 +566,7 @@ export async function sendCounterDeclinedEmail(args: {
       : `Re : ${args.subject}`;
   const body = `${greeting}\n\n${decline}\n\n${closing}\n${fromName}`;
   const sendRes = await sendProposalEmail(conn, args.to, subject, body);
+  if (sendRes.ok) await recordSentProposal(conn, args.to, subject, body, sendRes.messageId);
   return sendRes.ok ? { ok: true } : { ok: false, error: sendRes.error };
 }
 
@@ -669,6 +702,7 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
     logger.warn({ userId: args.userId, err: sendRes.error }, "[meeting-proposals] send failed, row rolled back");
     return { ok: false, error: sendRes.error || "send failed" };
   }
+  await recordSentProposal(conn, args.to, subject, body, sendRes.messageId);
 
   if (sendRes.messageId) {
     await supabaseAdmin
@@ -761,10 +795,15 @@ Renvoie un JSON STRICT :
   "counterEndAt": "ISO datetime ou null" }
 Règles :
 - "accept" : l'auteur confirme le créneau proposé.
-- "decline" : l'auteur refuse sans proposer d'alternative.
-- "counter" : l'auteur propose un autre créneau (date+heure précis ou demande "plutôt mardi 15h").
-  Dans ce cas, déduis la date/heure complète et remplis counterStartAt et counterEndAt.
-- "unknown" : ce n'est ni l'un ni l'autre (hors-sujet, simple question…).`,
+- "decline" : l'auteur refuse le créneau proposé SANS donner de date alternative précise.
+  Inclut aussi les reports/différés : "je ne suis pas libre", "indisponible",
+  "je vous proposerai d'autres dates plus tard", "je reviens vers vous à mon retour",
+  "pas dispo cette semaine, je vous recontacte". Tant qu'aucune date+heure précise
+  n'est donnée, c'est un "decline".
+- "counter" : l'auteur propose un autre créneau précis (date ET heure : "plutôt
+  mardi 15h", "le 14 mai à 10h", "jeudi prochain 9h-10h"). Déduis la date/heure
+  complète et remplis counterStartAt et counterEndAt.
+- "unknown" : hors-sujet, simple question, accusé de réception sans réponse claire.`,
         },
         {
           role: "user",
@@ -959,6 +998,7 @@ Rédige le corps du mail. Invite poliment à indiquer le créneau choisi, ou à 
   }
 
   const sendRes = await sendProposalEmail(conn, args.to, args.subject, body);
+  if (sendRes.ok) await recordSentProposal(conn, args.to, args.subject, body, sendRes.messageId);
   if (!sendRes.ok) {
     await supabaseAdmin
       .from("appointments")
@@ -1481,6 +1521,7 @@ export async function runMeetingFollowupSweep(): Promise<number> {
       const subject = lang === "en" ? `Reminder — ${row.title}` : `Rappel — ${row.title}`;
       const sendRes = await sendProposalEmail(conn, row.proposal_recipient, subject, body);
       if (sendRes.ok) {
+        await recordSentProposal(conn, row.proposal_recipient, subject, body, sendRes.messageId);
         await supabaseAdmin
           .from("appointments")
           .update({
