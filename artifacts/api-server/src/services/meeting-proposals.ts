@@ -291,8 +291,36 @@ async function sendProposalEmail(
         .replace(/\+/g, "-")
         .replace(/\//g, "_")
         .replace(/=+$/, "");
-      await gmail.users.messages.send({ userId: "me", requestBody: { raw } });
-      return { ok: true, messageId };
+      const sent = await gmail.users.messages.send({ userId: "me", requestBody: { raw } });
+      // Gmail réécrit systématiquement le header Message-ID quel que soit ce
+      // qu'on a mis dans `raw`. Pour pouvoir matcher l'In-Reply-To de la
+      // réponse plus tard, on doit récupérer le VRAI Message-ID assigné par
+      // Gmail (sinon classifyMeetingReply ne trouve jamais le RDV à mettre à
+      // jour, et auto-sync recrée un doublon pending depuis la réponse qui
+      // cite la date d'origine).
+      let realMessageId = messageId;
+      try {
+        const sentId = sent.data?.id;
+        if (sentId) {
+          const meta = await gmail.users.messages.get({
+            userId: "me",
+            id: sentId,
+            format: "metadata",
+            metadataHeaders: ["Message-ID", "Message-Id"],
+          });
+          const headers = meta.data?.payload?.headers || [];
+          const h = headers.find((x) => /^message-id$/i.test(x.name || ""));
+          if (h?.value) {
+            realMessageId = h.value.startsWith("<") ? h.value : `<${h.value}>`;
+          }
+        }
+      } catch (err) {
+        logger.warn(
+          { err: err instanceof Error ? err.message : String(err) },
+          "[meeting-proposals] gmail get-real-message-id failed",
+        );
+      }
+      return { ok: true, messageId: realMessageId };
     }
 
     if (conn.provider === "outlook") {
