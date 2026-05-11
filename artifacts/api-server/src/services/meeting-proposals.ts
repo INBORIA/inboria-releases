@@ -265,9 +265,15 @@ async function sendProposalEmail(
   to: string,
   subject: string,
   body: string,
+  fromName?: string,
 ): Promise<{ ok: boolean; messageId?: string; error?: string }> {
   const domain = conn.email_address.split("@")[1] || "inboria.app";
   const messageId = buildMessageId(domain);
+  // Force le display name dans le header From pour éviter qu'un alias serveur
+  // (OVH "Legal & Compliance", carnet d'adresses du destinataire, etc.) ne
+  // remplace silencieusement le nom affiché. Échappe les " dans le nom RFC 5322.
+  const safeName = (fromName || "").replace(/"/g, "").trim();
+  const fromHeader = safeName ? `"${safeName}" <${conn.email_address}>` : conn.email_address;
   try {
     if (conn.provider === "gmail") {
       const oauth2 = new google.auth.OAuth2(
@@ -279,7 +285,7 @@ async function sendProposalEmail(
       const raw = Buffer.from(
         [
           `To: ${to}`,
-          `From: ${conn.email_address}`,
+          `From: ${fromHeader}`,
           `Subject: ${subject}`,
           `Message-ID: ${messageId}`,
           `Content-Type: text/plain; charset=utf-8`,
@@ -335,6 +341,9 @@ async function sendProposalEmail(
           subject,
           body: { contentType: "Text", content: body },
           toRecipients: [{ emailAddress: { address: to } }],
+          ...(safeName
+            ? { from: { emailAddress: { name: safeName, address: conn.email_address } } }
+            : {}),
         }),
       });
       if (!draftResp.ok) {
@@ -370,7 +379,7 @@ async function sendProposalEmail(
       tls: { rejectUnauthorized: true },
     });
     await transporter.sendMail({
-      from: conn.email_address,
+      from: fromHeader,
       to,
       subject,
       text: body,
@@ -551,7 +560,7 @@ export async function sendCounterAcceptedEmail(args: {
   const closing = lang === "en" ? "Best regards," : lang === "nl" ? "Met vriendelijke groet," : "Bien à vous,";
   const subject = lang === "en" ? `Confirmed — ${args.subject}` : `Confirmé — ${args.subject}`;
   const body = `${greeting}\n\n${confirm}\n\n${closing}\n${fromName}`;
-  const sendRes = await sendProposalEmail(conn, args.to, subject, body);
+  const sendRes = await sendProposalEmail(conn, args.to, subject, body, fromName);
   if (sendRes.ok) await recordSentProposal(conn, args.to, subject, body, sendRes.messageId);
   return sendRes.ok ? { ok: true } : { ok: false, error: sendRes.error };
 }
@@ -593,7 +602,7 @@ export async function sendCounterDeclinedEmail(args: {
       ? `Re: ${args.subject}`
       : `Re : ${args.subject}`;
   const body = `${greeting}\n\n${decline}\n\n${closing}\n${fromName}`;
-  const sendRes = await sendProposalEmail(conn, args.to, subject, body);
+  const sendRes = await sendProposalEmail(conn, args.to, subject, body, fromName);
   if (sendRes.ok) await recordSentProposal(conn, args.to, subject, body, sendRes.messageId);
   return sendRes.ok ? { ok: true } : { ok: false, error: sendRes.error };
 }
@@ -724,7 +733,7 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
     return { ok: false, error: insertErr?.message || "insert failed" };
   }
 
-  const sendRes = await sendProposalEmail(conn, args.to, subject, body);
+  const sendRes = await sendProposalEmail(conn, args.to, subject, body, fromName);
   if (!sendRes.ok) {
     await supabaseAdmin.from("appointments").delete().eq("id", appt.id);
     logger.warn({ userId: args.userId, err: sendRes.error }, "[meeting-proposals] send failed, row rolled back");
@@ -1078,7 +1087,7 @@ Rédige le corps du mail. Invite poliment à indiquer le créneau choisi, ou à 
     return { ok: false, error: insertErr?.message || "insert failed" };
   }
 
-  const sendRes = await sendProposalEmail(conn, args.to, args.subject, body);
+  const sendRes = await sendProposalEmail(conn, args.to, args.subject, body, fromName);
   if (sendRes.ok) await recordSentProposal(conn, args.to, args.subject, body, sendRes.messageId);
   if (!sendRes.ok) {
     await supabaseAdmin
@@ -1600,7 +1609,7 @@ export async function runMeetingFollowupSweep(): Promise<number> {
       const closing = lang === "en" ? "Best regards," : lang === "nl" ? "Met vriendelijke groet," : "Bien à vous,";
       const body = `${greeting}\n\n${ask}\n\n${closing}\n${fromName}`;
       const subject = lang === "en" ? `Reminder — ${row.title}` : `Rappel — ${row.title}`;
-      const sendRes = await sendProposalEmail(conn, row.proposal_recipient, subject, body);
+      const sendRes = await sendProposalEmail(conn, row.proposal_recipient, subject, body, fromName);
       if (sendRes.ok) {
         await recordSentProposal(conn, row.proposal_recipient, subject, body, sendRes.messageId);
         await supabaseAdmin
