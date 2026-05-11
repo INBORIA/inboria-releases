@@ -933,6 +933,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       }
       memoryLines.push("");
       memoryLines.push("REGLE IMPORTANTE : un RDV refuse, en attente ou contre-propose EXISTE TOUJOURS dans l'agenda — tu dois le mentionner si l'utilisateur t'interroge dessus, en precisant son STATUT. Ne reponds JAMAIS \"il n'y a pas de rendez-vous\" pour un RDV present dans la liste ci-dessus, meme s'il a ete refuse.");
+      memoryLines.push("INTERDICTION ABSOLUE D'INVENTER : tu n'as le droit de mentionner que les RDV ci-dessus, EN COPIANT EXACTEMENT leur date et heure. Si l'utilisateur demande un creneau qui n'apparait dans AUCUNE ligne ci-dessus, le creneau est LIBRE — ne dis JAMAIS \"vous avez deja un rendez-vous le [date] a [heure]\" si cette date/heure exacte n'est pas listee. Toute date/heure que tu \"crois te souvenir\" mais qui n'est pas dans la liste est une hallucination interdite.");
       memoryLines.push("");
     }
 
@@ -2194,7 +2195,7 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       // un contexte d'entrée de 128k, donc le memoryBlock élargi (ex. 25
       // mails reçus + tâches + relances) tient sans souci.
       max_completion_tokens: 900,
-      temperature: 0.4,
+      temperature: 0.2,
       messages: [
         { role: "system", content: systemPrompt },
         ...cleanMessages,
