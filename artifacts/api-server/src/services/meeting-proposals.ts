@@ -877,6 +877,37 @@ export async function classifyMeetingReply(
 ): Promise<void> {
   try {
     const cleanBody = stripQuotedReply(replyBody || "").slice(0, 1500);
+
+    // Fast-path heuristique pour les acceptations / refus évidents : évite que
+    // GPT-4o-mini hallucine "decline" sur "ok pour moi, c'est parfait" ou
+    // "accept" sur "non merci". On ne déclenche le fast-path que si AUCUN
+    // indice contraire (négation, mention d'heure/date alternative) n'est
+    // présent — sinon on laisse le LLM trancher.
+    const lowerBody = cleanBody.toLowerCase();
+    const hasTimeMention = /\b\d{1,2}\s*[h:]\s*\d{0,2}\b/.test(lowerBody) ||
+      /\b(lundi|mardi|mercredi|jeudi|vendredi|samedi|dimanche|monday|tuesday|wednesday|thursday|friday|saturday|sunday|maandag|dinsdag|woensdag|donderdag|vrijdag|zaterdag|zondag)\b/.test(lowerBody) ||
+      /\b(plut[oô]t|rather|liever|au lieu|instead|alternative|autre cr[eé]neau|other slot|other date|reporter|reschedul)/.test(lowerBody);
+    const acceptPatterns = /\b(j'accepte|j accepte|i accept|ik accepteer|c'est parfait|c est parfait|parfait pour moi|parfait,? merci|ok pour moi|ok,? c'est|ok pour le|d'accord pour|daccord pour|je confirme|i confirm|ik bevestig|cela me convient|ça me convient|ca me convient|that works|that's perfect|that is perfect|works for me|fine with me|sounds good|perfect,? thanks|c'est bon pour moi|c est bon pour moi)\b/;
+    const declinePatterns = /\b(je refuse|i refuse|ik weiger|je ne peux pas|je ne suis pas (libre|disponible)|indisponible|pas disponible|impossible pour moi|cela ne (me )?convient pas|ne me convient pas|ça ne (me )?conviendra pas|i can't|i cannot|i'm not available|not available|unavailable|sorry,? i can|désolé,? je ne|desole,? je ne|niet beschikbaar|kan niet)\b/;
+    const negation = /\b(non|no|nee|pas|jamais|never|nooit)\b/;
+    if (!hasTimeMention) {
+      const looksAccept = acceptPatterns.test(lowerBody) && !negation.test(lowerBody) && !declinePatterns.test(lowerBody);
+      const looksDecline = declinePatterns.test(lowerBody) && !acceptPatterns.test(lowerBody);
+      if (looksAccept || looksDecline) {
+        const decision = looksAccept ? "accept" : "decline";
+        const update: Record<string, unknown> = {
+          response_message_id: responseMessageId,
+          awaiting_reminder_at: null,
+          updated_at: new Date().toISOString(),
+          status: looksAccept ? "confirmed" : "declined",
+          confirmed: looksAccept,
+        };
+        await supabaseAdmin.from("appointments").update(update).eq("id", appointmentId).eq("user_id", userId);
+        logger.info({ userId, appointmentId, decision, fastPath: true }, "[meeting-proposals] reply classified (heuristic)");
+        return;
+      }
+    }
+
     const today = new Date().toISOString().split("T")[0];
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
