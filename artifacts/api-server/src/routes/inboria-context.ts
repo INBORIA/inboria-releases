@@ -2220,7 +2220,23 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       ],
     });
 
-    const reply = completion.choices[0]?.message?.content?.trim() || "";
+    let reply = completion.choices[0]?.message?.content?.trim() || "";
+
+    // Garde-fou anti-hallucination : quand la réponse contient une carte
+    // inboria-meeting/inboria-multi-meeting, on retire toute préface du type
+    // "Vous avez déjà un rendez-vous le X à H..." si la date/heure mentionnée
+    // n'apparaît pas dans la liste réelle des RDV (appointments) ni dans le
+    // freebusy externe. Le modèle s'obstine à inventer ces conflits ; on les
+    // efface deterministiquement avant retour client.
+    if (/```inboria-(?:multi-)?meeting/i.test(reply)) {
+      const hallucPattern =
+        /(?:vous avez|tu as)\s+(?:d[ée]j[àa]\s+)?(?:un\s+)?rendez[-\s]?vous[^.!?\n]*?(?:[àa]|le)\s+\d{1,2}h?\d{0,2}[^.!?\n]*[.!?]\s*(?:je\s+(?:vais|vous)[^.!?\n]*[.!?]\s*)?/gi;
+      const cleaned = reply.replace(hallucPattern, "").replace(/\n{3,}/g, "\n\n").trim();
+      if (cleaned !== reply) {
+        req.log?.info?.({ userId }, "[inboria-chat] stripped hallucinated conflict preamble from reply");
+        reply = cleaned;
+      }
+    }
 
     if (adminTeamCtx) {
       // Build per-impacted-member breakdown from the result sets that
