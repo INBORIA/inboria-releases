@@ -269,10 +269,13 @@ async function sendProposalEmail(
 ): Promise<{ ok: boolean; messageId?: string; error?: string }> {
   const domain = conn.email_address.split("@")[1] || "inboria.app";
   const messageId = buildMessageId(domain);
-  // Préférence utilisateur : seul l'email brut doit apparaître dans From,
-  // sans display name (évite "Legal & Compliance" hérité de l'alias OVH ou
-  // du carnet d'adresses du destinataire).
-  const fromHeader = conn.email_address;
+  // Préférence utilisateur : seule l'adresse de l'expéditeur doit apparaître.
+  // OVH (et certains serveurs) réécrivent le From en injectant l'alias mailbox
+  // (ex: "Legal & Compliance") quand on n'envoie aucun display name. On met
+  // donc explicitement le display name = l'adresse elle-même : la plupart des
+  // clients (Gmail, Outlook, Apple Mail) rendent alors juste l'adresse, et
+  // OVH ne peut plus surcharger.
+  const fromHeader = `"${conn.email_address}" <${conn.email_address}>`;
   try {
     if (conn.provider === "gmail") {
       const oauth2 = new google.auth.OAuth2(
@@ -340,7 +343,7 @@ async function sendProposalEmail(
           subject,
           body: { contentType: "Text", content: body },
           toRecipients: [{ emailAddress: { address: to } }],
-          from: { emailAddress: { name: "", address: conn.email_address } },
+          from: { emailAddress: { name: conn.email_address, address: conn.email_address } },
         }),
       });
       if (!draftResp.ok) {
