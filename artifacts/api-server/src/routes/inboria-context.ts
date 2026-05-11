@@ -945,6 +945,10 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       const nowMs = Date.now();
       const horizonMs = nowMs + 14 * 24 * 60 * 60 * 1000;
       const busy = await fetchUserBusy(userId, nowMs, horizonMs);
+      req.log?.info?.(
+        { userId, count: busy.length, sample: busy.slice(0, 10).map(b => ({ s: new Date(b.start).toISOString(), e: new Date(b.end).toISOString() })) },
+        "[inboria-context] external freebusy result",
+      );
       if (busy.length > 0) {
         const merged = busy
           .sort((a, b) => a.start - b.start)
