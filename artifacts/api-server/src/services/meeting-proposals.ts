@@ -265,15 +265,14 @@ async function sendProposalEmail(
   to: string,
   subject: string,
   body: string,
-  fromName?: string,
+  _fromName?: string,
 ): Promise<{ ok: boolean; messageId?: string; error?: string }> {
   const domain = conn.email_address.split("@")[1] || "inboria.app";
   const messageId = buildMessageId(domain);
-  // Force le display name dans le header From pour éviter qu'un alias serveur
-  // (OVH "Legal & Compliance", carnet d'adresses du destinataire, etc.) ne
-  // remplace silencieusement le nom affiché. Échappe les " dans le nom RFC 5322.
-  const safeName = (fromName || "").replace(/"/g, "").trim();
-  const fromHeader = safeName ? `"${safeName}" <${conn.email_address}>` : conn.email_address;
+  // Préférence utilisateur : seul l'email brut doit apparaître dans From,
+  // sans display name (évite "Legal & Compliance" hérité de l'alias OVH ou
+  // du carnet d'adresses du destinataire).
+  const fromHeader = conn.email_address;
   try {
     if (conn.provider === "gmail") {
       const oauth2 = new google.auth.OAuth2(
@@ -341,9 +340,7 @@ async function sendProposalEmail(
           subject,
           body: { contentType: "Text", content: body },
           toRecipients: [{ emailAddress: { address: to } }],
-          ...(safeName
-            ? { from: { emailAddress: { name: safeName, address: conn.email_address } } }
-            : {}),
+          from: { emailAddress: { name: "", address: conn.email_address } },
         }),
       });
       if (!draftResp.ok) {
