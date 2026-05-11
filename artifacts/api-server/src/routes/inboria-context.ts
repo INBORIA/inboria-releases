@@ -211,6 +211,19 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     }
 
     const rawMessages = Array.isArray(req.body?.messages) ? req.body.messages : [];
+    // Strip past assistant hallucinations about appointment conflicts so the
+    // model can't propagate them across turns. The model sometimes invents
+    // "vous avez déjà un rendez-vous le X à H" — once it appears in history,
+    // it will keep echoing it. We remove such sentences from prior turns
+    // (kept only on the LAST user message intact).
+    const stripFakeConflicts = (text: string): string =>
+      text
+        .replace(
+          /(?:vous avez|tu as)\s+(?:d[ée]j[àa]\s+)?(?:un\s+)?rendez[-\s]?vous[^.!?\n]*?(?:[àa]|le)\s+\d{1,2}h?\d{0,2}[^.!?\n]*[.!?]?/gi,
+          "",
+        )
+        .replace(/\s{2,}/g, " ")
+        .trim();
     const cleanMessages = rawMessages
       .filter(
         (m: any) =>
@@ -220,10 +233,14 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
           m.content.trim().length > 0,
       )
       .slice(-20)
-      .map((m: any) => ({
+      .map((m: any, idx: number, arr: any[]) => ({
         role: m.role as "user" | "assistant",
-        content: String(m.content).slice(0, 4000),
-      }));
+        content:
+          m.role === "assistant" && idx < arr.length - 1
+            ? stripFakeConflicts(String(m.content)).slice(0, 4000)
+            : String(m.content).slice(0, 4000),
+      }))
+      .filter((m: any) => m.content.length > 0);
 
     if (cleanMessages.length === 0 || cleanMessages[cleanMessages.length - 1]!.role !== "user") {
       res.status(400).json({ error: "Aucun message utilisateur fourni." });
