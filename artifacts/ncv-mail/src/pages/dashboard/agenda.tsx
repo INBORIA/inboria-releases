@@ -1230,7 +1230,7 @@ export default function Agenda() {
                     </Button>
                     <Button
                       size="sm"
-                      variant="outline"
+                      variant="secondary"
                       className="h-7 text-[11px]"
                       onClick={() => {
                         const apt = selectedAppointment;
