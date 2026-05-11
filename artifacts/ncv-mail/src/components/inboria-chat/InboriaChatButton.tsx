@@ -455,6 +455,8 @@ interface MeetingCardProps {
   accessToken: string;
   baseUrl: string;
   lang: string;
+  connections: Array<{ id: string; email_address: string }>;
+  defaultConnectionId: string;
   onSent: () => void;
 }
 
@@ -463,10 +465,23 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
   accessToken,
   baseUrl,
   lang,
+  connections,
+  defaultConnectionId,
   onSent,
 }: MeetingCardProps) {
   const [stage, setStage] = useState<"idle" | "confirm" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [fromConnectionId, setFromConnectionId] = useState<string>(defaultConnectionId);
+  // `connectionsData` peut être chargé APRES le 1er render de la carte : on
+  // resynchronise alors fromConnectionId si l'utilisateur n'a pas encore
+  // touché au sélecteur (= il vaut encore "" ou un id absent de la liste).
+  useEffect(() => {
+    if (!defaultConnectionId) return;
+    if (!fromConnectionId || !connections.some((c) => c.id === fromConnectionId)) {
+      setFromConnectionId(defaultConnectionId);
+    }
+  }, [defaultConnectionId, connections, fromConnectionId]);
+  const fromEmail = connections.find((c) => c.id === fromConnectionId)?.email_address || "";
 
   const toValid = EMAIL_RE.test(meeting.to.trim());
   const startDate = meeting.startAt ? new Date(meeting.startAt) : null;
@@ -496,6 +511,7 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
           endAt: meeting.endAt,
           location: meeting.location || undefined,
           lang,
+          fromConnectionId: fromConnectionId || undefined,
         }),
       });
       if (!res.ok) {
@@ -534,6 +550,23 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
         </span>
       </div>
       <div className="px-3 py-2.5 space-y-1.5 text-xs">
+        <div className="flex gap-2 items-center">
+          <span className="text-zinc-500 w-16 shrink-0">De</span>
+          {connections.length > 1 ? (
+            <select
+              value={fromConnectionId}
+              onChange={(e) => setFromConnectionId(e.target.value)}
+              className="bg-zinc-950 border border-zinc-700 rounded px-1.5 py-0.5 text-zinc-100 text-xs flex-1 min-w-0"
+              data-testid="inboria-meeting-from"
+            >
+              {connections.map((c) => (
+                <option key={c.id} value={c.id}>{c.email_address}</option>
+              ))}
+            </select>
+          ) : (
+            <span className="text-zinc-100 break-all">{fromEmail || "(aucun compte)"}</span>
+          )}
+        </div>
         <div className="flex gap-2">
           <span className="text-zinc-500 w-16 shrink-0">À</span>
           <span className={cn("break-all", toValid ? "text-zinc-100" : "text-zinc-300 underline decoration-dotted")}>
@@ -616,6 +649,8 @@ interface MultiMeetingCardProps {
   accessToken: string;
   baseUrl: string;
   lang: string;
+  connections: Array<{ id: string; email_address: string }>;
+  defaultConnectionId: string;
   onSent: () => void;
 }
 
@@ -624,10 +659,20 @@ const MultiMeetingProposalCard = memo(function MultiMeetingProposalCard({
   accessToken,
   baseUrl,
   lang,
+  connections,
+  defaultConnectionId,
   onSent,
 }: MultiMeetingCardProps) {
   const [stage, setStage] = useState<"idle" | "confirm" | "sending" | "sent" | "error">("idle");
   const [errorMsg, setErrorMsg] = useState("");
+  const [fromConnectionId, setFromConnectionId] = useState<string>(defaultConnectionId);
+  useEffect(() => {
+    if (!defaultConnectionId) return;
+    if (!fromConnectionId || !connections.some((c) => c.id === fromConnectionId)) {
+      setFromConnectionId(defaultConnectionId);
+    }
+  }, [defaultConnectionId, connections, fromConnectionId]);
+  const fromEmail = connections.find((c) => c.id === fromConnectionId)?.email_address || "";
 
   const toValid = EMAIL_RE.test(multi.to.trim());
   const slotsValid = multi.slots.every((s) => {
@@ -661,6 +706,7 @@ const MultiMeetingProposalCard = memo(function MultiMeetingProposalCard({
           location: multi.location || undefined,
           lang,
           slots: multi.slots,
+          fromConnectionId: fromConnectionId || undefined,
         }),
       });
       if (!res.ok) {
@@ -706,6 +752,23 @@ const MultiMeetingProposalCard = memo(function MultiMeetingProposalCard({
         </span>
       </div>
       <div className="px-3 py-2.5 space-y-1.5 text-xs">
+        <div className="flex gap-2 items-center">
+          <span className="text-zinc-500 w-16 shrink-0">De</span>
+          {connections.length > 1 ? (
+            <select
+              value={fromConnectionId}
+              onChange={(e) => setFromConnectionId(e.target.value)}
+              className="bg-zinc-950 border border-zinc-700 rounded px-1.5 py-0.5 text-zinc-100 text-xs flex-1 min-w-0"
+              data-testid="inboria-multi-meeting-from"
+            >
+              {connections.map((c) => (
+                <option key={c.id} value={c.id}>{c.email_address}</option>
+              ))}
+            </select>
+          ) : (
+            <span className="text-zinc-100 break-all">{fromEmail || "(aucun compte)"}</span>
+          )}
+        </div>
         <div className="flex gap-2">
           <span className="text-zinc-500 w-16 shrink-0">À</span>
           <span className={cn("break-all", toValid ? "text-zinc-100" : "text-zinc-300 underline decoration-dotted")}>
@@ -811,12 +874,14 @@ export function InboriaChatButton() {
     },
     staleTime: 60_000,
   });
-  const primaryFrom = (() => {
+  const primaryConnection = (() => {
     const list = connectionsData || [];
-    if (list.length === 0) return "";
+    if (list.length === 0) return null;
     const healthy = list.filter((c) => !c.consecutive_failures || Number(c.consecutive_failures) === 0);
-    return (healthy[0] || list[0])?.email_address || "";
+    return healthy[0] || list[0] || null;
   })();
+  const primaryFrom = primaryConnection?.email_address || "";
+  const primaryConnectionId = primaryConnection?.id || "";
 
   const openComposeWithDraft = useCallback(
     (d: InboriaDraft) => {
@@ -1109,6 +1174,8 @@ export function InboriaChatButton() {
                                 accessToken={session.access_token}
                                 baseUrl={baseUrl}
                                 lang={(typeof window !== "undefined" && window.navigator?.language?.slice(0, 2)) || "fr"}
+                                connections={connectionsData || []}
+                                defaultConnectionId={primaryConnectionId}
                                 onSent={() => {
                                   toast({ title: "Propositions envoyées" });
                                   queryClient.invalidateQueries({ queryKey: ["appointments"] });
@@ -1123,6 +1190,8 @@ export function InboriaChatButton() {
                               accessToken={session.access_token}
                               baseUrl={baseUrl}
                               lang={(typeof window !== "undefined" && window.navigator?.language?.slice(0, 2)) || "fr"}
+                              connections={connectionsData || []}
+                              defaultConnectionId={primaryConnectionId}
                               onSent={() => {
                                 toast({ title: "Proposition envoyée" });
                                 queryClient.invalidateQueries({ queryKey: ["appointments"] });

@@ -107,6 +107,7 @@ interface ProposeArgs {
   description?: string | null;
   lang?: string;
   videoProvider?: "meet" | "teams" | "jitsi" | "none" | null;
+  fromConnectionId?: string | null;
 }
 
 interface ProposeResult {
@@ -133,6 +134,42 @@ async function getPrimaryConnection(userId: string): Promise<EmailConnRow | null
     .order("created_at", { ascending: true })
     .limit(1);
   return (data?.[0] as EmailConnRow | undefined) || null;
+}
+
+// Si l'appelant fournit un `fromConnectionId` explicite (ex. l'utilisateur a
+// choisi le compte d'envoi dans la carte Inboria), on charge cette connexion
+// précise — on vérifie qu'elle appartient bien au user. Sinon fallback sur la
+// connexion principale (la plus ancienne).
+async function resolveSendingConnection(
+  userId: string,
+  fromConnectionId?: string | null,
+): Promise<EmailConnRow | null> {
+  if (fromConnectionId) {
+    const { data } = await supabaseAdmin
+      .from("email_connections")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("id", fromConnectionId)
+      .limit(1);
+    const row = (data?.[0] as EmailConnRow | undefined) || null;
+    if (row) return row;
+    // Si l'id ne correspond à aucune connexion du user, on retombe sur la
+    // primaire plutôt que d'échouer silencieusement.
+  }
+  return getPrimaryConnection(userId);
+}
+
+// Détecte si la `location` saisie correspond à un lieu PHYSIQUE (bureau,
+// adresse, café…) plutôt qu'à un rendez-vous en visio. Si oui, on n'ajoute
+// PAS de lien Jitsi/Teams/Meet par défaut au mail. L'appelant peut toujours
+// forcer un lien en passant `videoProvider` explicitement.
+function locationLooksPhysical(loc: string | null | undefined): boolean {
+  if (!loc) return false;
+  const s = String(loc).trim();
+  if (!s) return false;
+  return !/(visio|vid[ée]o|teams|google ?meet|\bmeet\b|zoom|jitsi|webex|whereby|skype|en ligne|online|distanciel|remote|call|appel|virtuel|virtual)/i.test(
+    s,
+  );
 }
 
 function buildMessageId(domain: string): string {
@@ -459,7 +496,7 @@ export async function sendCounterDeclinedEmail(args: {
  * la relance auto à +48h si l'utilisateur l'a activée.
  */
 export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> {
-  const conn = await getPrimaryConnection(args.userId);
+  const conn = await resolveSendingConnection(args.userId, args.fromConnectionId);
   if (!conn) return { ok: false, error: "no email connection" };
 
   // Phase 1 freebusy guard : on refuse silencieusement la proposition si le
@@ -497,6 +534,10 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
   let effVideo: "meet" | "teams" | "jitsi" | "none";
   if (args.videoProvider !== undefined && args.videoProvider !== null) {
     effVideo = args.videoProvider;
+  } else if (locationLooksPhysical(args.location)) {
+    // L'utilisateur a fixé un lieu physique (Bureau, adresse…) : pas de
+    // lien visio par défaut. Seul un videoProvider explicite peut l'imposer.
+    effVideo = "none";
   } else if (preferredVideo && preferredVideo !== "none") {
     // Une préférence "none" ne doit PAS désactiver le lien implicitement :
     // seul un appel explicite avec videoProvider="none" peut le faire.
@@ -690,8 +731,9 @@ export async function proposeMeetingMulti(args: {
   description?: string | null;
   lang?: string;
   slots: Array<{ startAt: string; endAt: string }>;
+  fromConnectionId?: string | null;
 }): Promise<{ ok: boolean; appointmentIds?: string[]; error?: string }> {
-  const conn = await getPrimaryConnection(args.userId);
+  const conn = await resolveSendingConnection(args.userId, args.fromConnectionId);
   if (!conn) return { ok: false, error: "no email connection" };
   if (!args.slots || args.slots.length < 2) {
     return { ok: false, error: "need at least 2 slots (use /propose for 1 slot)" };

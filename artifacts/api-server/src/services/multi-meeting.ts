@@ -28,6 +28,34 @@ async function getPrimaryConnection(userId: string): Promise<EmailConnRow | null
   return (data?.[0] as EmailConnRow | undefined) || null;
 }
 
+async function resolveSendingConnection(
+  userId: string,
+  fromConnectionId?: string | null,
+): Promise<EmailConnRow | null> {
+  if (fromConnectionId) {
+    const { data } = await supabaseAdmin
+      .from("email_connections")
+      .select("*")
+      .eq("user_id", userId)
+      .eq("id", fromConnectionId)
+      .limit(1);
+    const row = (data?.[0] as EmailConnRow | undefined) || null;
+    if (row) return row;
+  }
+  return getPrimaryConnection(userId);
+}
+
+// Voir meeting-proposals.ts : un lieu physique (Bureau, adresse) doit
+// désactiver le lien visio par défaut.
+function locationLooksPhysical(loc: string | null | undefined): boolean {
+  if (!loc) return false;
+  const s = String(loc).trim();
+  if (!s) return false;
+  return !/(visio|vid[ée]o|teams|google ?meet|\bmeet\b|zoom|jitsi|webex|whereby|skype|en ligne|online|distanciel|remote|call|appel|virtuel|virtual)/i.test(
+    s,
+  );
+}
+
 async function refreshOutlookIfNeeded(conn: EmailConnRow): Promise<string> {
   if (!conn.token_expires_at || new Date(conn.token_expires_at) >= new Date()) {
     return conn.access_token;
@@ -190,6 +218,7 @@ export interface MultiProposeArgs {
   participants: Array<{ email: string; name?: string | null; isRequired?: boolean }>;
   lang?: string;
   videoProvider?: "meet" | "teams" | "jitsi" | "none" | null;
+  fromConnectionId?: string | null;
 }
 
 export interface MultiProposeResult {
@@ -210,7 +239,7 @@ export async function proposeMultiMeeting(args: MultiProposeArgs): Promise<Multi
   if (!args.participants || args.participants.length < 3) {
     return { ok: false, error: "multi requires at least 3 participants" };
   }
-  const conn = await getPrimaryConnection(args.userId);
+  const conn = await resolveSendingConnection(args.userId, args.fromConnectionId);
   if (!conn) return { ok: false, error: "no email connection" };
 
   const billing = await consumeAiCredits(args.userId, "inboria_chat", {
@@ -232,6 +261,8 @@ export async function proposeMultiMeeting(args: MultiProposeArgs): Promise<Multi
   let effVideo: "meet" | "teams" | "jitsi" | "none";
   if (args.videoProvider !== undefined && args.videoProvider !== null) {
     effVideo = args.videoProvider;
+  } else if (locationLooksPhysical(args.location)) {
+    effVideo = "none";
   } else if (preferredVideo && preferredVideo !== "none") {
     effVideo = preferredVideo;
   } else {

@@ -660,6 +660,7 @@ const proposeMeetingSchema = z
     description: z.string().max(2000).optional().nullable(),
     lang: z.string().min(2).max(10).optional(),
     videoProvider: videoProviderSchema.optional().nullable(),
+    fromConnectionId: z.string().uuid().optional().nullable(),
   })
   .refine((b) => Date.parse(b.endAt) > Date.parse(b.startAt), {
     message: "endAt must be after startAt",
@@ -709,6 +710,7 @@ const proposeMultiSchema = z.object({
   description: z.string().max(2000).optional().nullable(),
   lang: z.string().min(2).max(10).optional(),
   slots: z.array(proposeMultiSlotSchema).min(2).max(8),
+  fromConnectionId: z.string().uuid().optional().nullable(),
 });
 router.post("/appointments/propose-multi", requireAuth, async (req, res): Promise<void> => {
   const parsed = proposeMultiSchema.safeParse(req.body);
