@@ -792,6 +792,59 @@ export async function proposeMeeting(args: ProposeArgs): Promise<ProposeResult> 
 }
 
 /**
+ * Strippe le texte cité d'une réponse email (Outlook "De: / Envoyé:",
+ * Gmail "Le ... a écrit :", chevrons "> ", séparateurs "-----Original Message-----")
+ * et convertit le HTML résiduel en texte. Sans ça, le classifier voit le mail
+ * d'origine cité et hallucine une contre-proposition à partir des heures citées.
+ */
+function stripQuotedReply(raw: string): string {
+  if (!raw) return "";
+  // 1. HTML → texte : retire blocs <style>/<script>, <br> → \n, autres tags → espace.
+  let text = raw
+    .replace(/<style[\s\S]*?<\/style>/gi, " ")
+    .replace(/<script[\s\S]*?<\/script>/gi, " ")
+    .replace(/<\/(p|div|li|tr|h[1-6])>/gi, "\n")
+    .replace(/<br\s*\/?>/gi, "\n")
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&lt;/gi, "<")
+    .replace(/&gt;/gi, ">")
+    .replace(/&quot;/gi, '"')
+    .replace(/&#39;/gi, "'")
+    .replace(/\r\n/g, "\n");
+
+  // 2. Coupe au premier marqueur de citation reconnu.
+  const markers: RegExp[] = [
+    /^\s*-{2,}\s*Original Message\s*-{2,}/im,
+    /^\s*-{2,}\s*Message d'origine\s*-{2,}/im,
+    /^\s*-{2,}\s*Message original\s*-{2,}/im,
+    /^\s*De\s*:\s.+<.+@.+>/im,
+    /^\s*From\s*:\s.+<.+@.+>/im,
+    /^\s*Van\s*:\s.+<.+@.+>/im,
+    /^\s*Le\s+.+\s+a\s+écrit\s*:/im,
+    /^\s*On\s+.+\s+wrote\s*:/im,
+    /^\s*Op\s+.+\s+schreef\s+.+:/im,
+    /^\s*Envoyé\s+depuis\s+mon\s+/im,
+    /^\s*Sent\s+from\s+my\s+/im,
+  ];
+  let cutIdx = text.length;
+  for (const re of markers) {
+    const m = text.match(re);
+    if (m && m.index !== undefined && m.index < cutIdx) cutIdx = m.index;
+  }
+  text = text.slice(0, cutIdx);
+
+  // 3. Retire les lignes citées avec '>'.
+  text = text
+    .split("\n")
+    .filter((l) => !/^\s*>/.test(l))
+    .join("\n");
+
+  return text.replace(/\s+/g, " ").trim();
+}
+
+/**
  * Classifie une réponse à une proposition de RDV (oui / non / contre-prop).
  * Appelé par le worker de triage email quand un mail entrant a un In-Reply-To
  * qui matche un proposal_message_id stocké.
@@ -806,7 +859,7 @@ export async function classifyMeetingReply(
   originalEnd: string,
 ): Promise<void> {
   try {
-    const cleanBody = (replyBody || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 1500);
+    const cleanBody = stripQuotedReply(replyBody || "").slice(0, 1500);
     const today = new Date().toISOString().split("T")[0];
     const completion = await openai.chat.completions.create({
       model: "gpt-4o-mini",
