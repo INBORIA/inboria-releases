@@ -111,7 +111,9 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
     // menu latéral pour éviter la redondance.
     { name: t("sidebar.snoozed", "Reportés"), href: "/dashboard/reportes", icon: BellOff },
     { name: t("sidebar.scheduled", "Programmés"), href: "/dashboard/programmes", icon: CalendarClock },
-    { name: t("tasks.title"), href: "/dashboard/taches", icon: CheckSquare },
+    // Note (task #290) : « Tâches » a été déplacé dans la barre d'onglets
+    // de la Réception, à côté d'Assignés. Retiré de la sidebar pour éviter
+    // la redondance, comme « Activité équipe » avant lui (#286).
     { name: t("sidebar.followups", "Relances"), href: "/dashboard/relances", icon: MailCheck },
     { name: t("sidebar.projects"), href: "/dashboard/projets", icon: FolderKanban },
     { name: t("sidebar.contacts", "Contacts"), href: "/dashboard/contacts", icon: Users },

@@ -5098,6 +5098,15 @@ export default function Dashboard() {
                       )}
                     </Link>
                   )}
+                  {/* Onglet Tâches — déplacé depuis la sidebar (task #290).
+                      Toujours visible : les tâches existent même en solo. */}
+                  <Link
+                    href="/dashboard/taches"
+                    className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                  >
+                    <CheckSquare className="w-3 h-3" />
+                    {t("tasks.title")}
+                  </Link>
                 </>
               )}
             </div>
