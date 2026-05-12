@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Notatki wewnętrzne",
-    "placeholder": "Dodaj notatkę wewnętrzną...",
+    "placeholder": "Wpisz swoją wiadomość (użyj @, aby wspomnieć)…",
     "send": "Wyślij",
     "edit": "Edytuj",
     "delete": "Usuń",
@@ -2098,7 +2098,7 @@
     "cancel": "Anuluj",
     "save": "Zapisz",
     "ctrlEnter": "Ctrl+Enter, aby wysłać",
-    "placeholderMention": "Dodaj notatkę wewnętrzną (użyj @, aby wspomnieć)…",
+    "placeholderMention": "Wpisz swoją wiadomość (użyj @, aby wspomnieć)…",
     "mentionPick": "Wspomnij członka",
     "mentionHint": "@, aby wspomnieć",
     "mentionedYou": "wspomniał Cię",

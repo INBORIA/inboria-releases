@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "내부 메모",
-    "placeholder": "내부 메모 추가...",
+    "placeholder": "메시지를 입력하십시오 (@로 멘션)…",
     "send": "전송",
     "edit": "수정",
     "delete": "삭제",
@@ -2098,7 +2098,7 @@
     "cancel": "취소",
     "save": "저장",
     "ctrlEnter": "전송하려면 Ctrl+Enter를 누르십시오",
-    "placeholderMention": "내부 메모 추가 (@를 사용하여 언급하십시오)…",
+    "placeholderMention": "메시지를 입력하십시오 (@로 멘션)…",
     "mentionPick": "구성원 언급하기",
     "mentionHint": "@로 언급하기",
     "mentionedYou": "귀하를 언급하였습니다",

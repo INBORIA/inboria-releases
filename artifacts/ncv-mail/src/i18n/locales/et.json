@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Sisemised märkmed",
-    "placeholder": "Lisa sisemine märkme...",
+    "placeholder": "Sisestage oma sõnum (kasutage @-d mainimiseks)…",
     "send": "Saada",
     "edit": "Muuda",
     "delete": "Kustuta",
@@ -2098,7 +2098,7 @@
     "cancel": "Tühista",
     "save": "Salvesta",
     "ctrlEnter": "Ctrl+Enter, et saata",
-    "placeholderMention": "Lisa sisemine märkme (kasutage @, et mainida)…",
+    "placeholderMention": "Sisestage oma sõnum (kasutage @-d mainimiseks)…",
     "mentionPick": "Maini liiget",
     "mentionHint": "@, et mainida",
     "mentionedYou": "on Teid maininud",

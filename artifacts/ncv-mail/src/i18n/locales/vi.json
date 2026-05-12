@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Ghi chú nội bộ",
-    "placeholder": "Thêm ghi chú nội bộ...",
+    "placeholder": "Nhập tin nhắn của Quý vị (dùng @ để nhắc đến)…",
     "send": "Gửi",
     "edit": "Chỉnh sửa",
     "delete": "Xóa",
@@ -2098,7 +2098,7 @@
     "cancel": "Hủy",
     "save": "Lưu",
     "ctrlEnter": "Ctrl+Enter để gửi",
-    "placeholderMention": "Thêm ghi chú nội bộ (sử dụng @ để đề cập)…",
+    "placeholderMention": "Nhập tin nhắn của Quý vị (dùng @ để nhắc đến)…",
     "mentionPick": "Đề cập một thành viên",
     "mentionHint": "@ để đề cập",
     "mentionedYou": "Quý khách đã được đề cập",

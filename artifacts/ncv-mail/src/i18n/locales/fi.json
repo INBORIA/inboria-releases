@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Sisäiset muistiinpanot",
-    "placeholder": "Lisää sisäinen muistiinpano...",
+    "placeholder": "Kirjoittakaa viestinne (käyttäkää @-merkkiä mainitaksenne)…",
     "send": "Lähetä",
     "edit": "Muokkaa",
     "delete": "Poista",
@@ -2098,7 +2098,7 @@
     "cancel": "Peruuta",
     "save": "Tallenna",
     "ctrlEnter": "Ctrl+Enter lähettää",
-    "placeholderMention": "Lisää sisäinen muistiinpano (käytä @ mainitaksesi)…",
+    "placeholderMention": "Kirjoittakaa viestinne (käyttäkää @-merkkiä mainitaksenne)…",
     "mentionPick": "Mainitse jäsen",
     "mentionHint": "@ mainitaksesi",
     "mentionedYou": "on maininnut teidät",

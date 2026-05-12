@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Interne notater",
-    "placeholder": "Legg til et internt notat...",
+    "placeholder": "Skriv inn meldingen din (bruk @ for å nevne)…",
     "send": "Send",
     "edit": "Rediger",
     "delete": "Slett",
@@ -2098,7 +2098,7 @@
     "cancel": "Avbryt",
     "save": "Lagre",
     "ctrlEnter": "Ctrl+Enter for å sende",
-    "placeholderMention": "Legg til et internt notat (bruk @ for å nevne)…",
+    "placeholderMention": "Skriv inn meldingen din (bruk @ for å nevne)…",
     "mentionPick": "Nevn et medlem",
     "mentionHint": "@ for å nevne",
     "mentionedYou": "har nevnt deg",

@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Notes internes",
-    "placeholder": "Afegir una nota interna...",
+    "placeholder": "Escriviu el vostre missatge (utilitzeu @ per mencionar)…",
     "send": "Enviar",
     "edit": "Modificar",
     "delete": "Suprimir",
@@ -2098,7 +2098,7 @@
     "cancel": "Cancel·la",
     "save": "Desa",
     "ctrlEnter": "Ctrl+Entrar per enviar",
-    "placeholderMention": "Afegir una nota interna (utilitzeu @ per mencionar)…",
+    "placeholderMention": "Escriviu el vostre missatge (utilitzeu @ per mencionar)…",
     "mentionPick": "Mencionar un membre",
     "mentionHint": "@ per mencionar",
     "mentionedYou": "Vostè ha mencionat",

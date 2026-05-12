@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Notas interni",
-    "placeholder": "Żid nota interna...",
+    "placeholder": "Jekk jogħġobkom daħħlu l-messaġġ tagħkom (użaw @ biex issemmu)…",
     "send": "Ibgħat",
     "edit": "Ipprova",
     "delete": "Ħassar",
@@ -2098,7 +2098,7 @@
     "cancel": "Annulla",
     "save": "Salva",
     "ctrlEnter": "Ctrl+Enter biex tibgħat",
-    "placeholderMention": "Żid nota interna (uża @ biex issemmi)…",
+    "placeholderMention": "Jekk jogħġobkom daħħlu l-messaġġ tagħkom (użaw @ biex issemmu)…",
     "mentionPick": "Issemmi membru",
     "mentionHint": "@ biex issemmi",
     "mentionedYou": "isemmek",

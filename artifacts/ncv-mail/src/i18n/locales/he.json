@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "הערות פנימיות",
-    "placeholder": "הוסף הערה פנימית...",
+    "placeholder": "הזינו את ההודעה שלכם (השתמשו ב-@ לאזכור)…",
     "send": "שלח",
     "edit": "ערוך",
     "delete": "מחק",
@@ -2098,7 +2098,7 @@
     "cancel": "בטל",
     "save": "שמור",
     "ctrlEnter": "Ctrl+Enter לשליחה",
-    "placeholderMention": "הוסף הערה פנימית (השתמש ב-@ כדי להזכיר)…",
+    "placeholderMention": "הזינו את ההודעה שלכם (השתמשו ב-@ לאזכור)…",
     "mentionPick": "להזכיר חבר צוות",
     "mentionHint": "@ כדי להזכיר",
     "mentionedYou": "הזכיר אותך",

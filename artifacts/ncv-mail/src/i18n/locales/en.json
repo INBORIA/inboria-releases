@@ -2116,7 +2116,7 @@
   },
   "comments": {
     "title": "Internal notes",
-    "placeholder": "Add an internal note...",
+    "placeholder": "Enter your message (use @ to mention)…",
     "send": "Send",
     "edit": "Edit",
     "delete": "Delete",
@@ -2126,7 +2126,7 @@
     "cancel": "Cancel",
     "save": "Save",
     "ctrlEnter": "Ctrl+Enter to send",
-    "placeholderMention": "Add an internal note (use @ to mention)…",
+    "placeholderMention": "Enter your message (use @ to mention)…",
     "mentionPick": "Mention a teammate",
     "mentionHint": "@ to mention",
     "mentionedYou": "mentioned you",

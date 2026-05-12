@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Interné poznámky",
-    "placeholder": "Pridať internú poznámku...",
+    "placeholder": "Zadajte Vašu správu (použite @ na zmienku)…",
     "send": "Odoslať",
     "edit": "Upraviť",
     "delete": "Odstrániť",
@@ -2098,7 +2098,7 @@
     "cancel": "Zrušiť",
     "save": "Uložiť",
     "ctrlEnter": "Ctrl+Enter na odoslanie",
-    "placeholderMention": "Pridať internú poznámku (použite @ na zmienku)…",
+    "placeholderMention": "Zadajte Vašu správu (použite @ na zmienku)…",
     "mentionPick": "Zmienka o členovi",
     "mentionHint": "@ na zmienku",
     "mentionedYou": "Vás spomenul",

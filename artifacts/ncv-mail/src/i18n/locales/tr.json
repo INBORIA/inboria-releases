@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "İç notlar",
-    "placeholder": "İç nota ekleyin...",
+    "placeholder": "Mesajınızı girin (bahsetmek için @ kullanın)…",
     "send": "Gönder",
     "edit": "Düzenle",
     "delete": "Sil",
@@ -2098,7 +2098,7 @@
     "cancel": "İptal",
     "save": "Kaydet",
     "ctrlEnter": "Göndermek için Ctrl+Enter",
-    "placeholderMention": "İç nota ekleyin (bahsetmek için @ kullanın)…",
+    "placeholderMention": "Mesajınızı girin (bahsetmek için @ kullanın)…",
     "mentionPick": "Bir üyeyi bahset",
     "mentionHint": "@ ile bahsetmek",
     "mentionedYou": "sizi bahsetti",

@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Noter notes",
-    "placeholder": "Dodajte interno opombo...",
+    "placeholder": "Vnesite svoje sporočilo (uporabite @ za omembo)…",
     "send": "Pošlji",
     "edit": "Uredi",
     "delete": "Izbriši",
@@ -2098,7 +2098,7 @@
     "cancel": "Prekliči",
     "save": "Shrani",
     "ctrlEnter": "Ctrl+Enter za pošiljanje",
-    "placeholderMention": "Dodajte interno opombo (uporabite @ za omembo)…",
+    "placeholderMention": "Vnesite svoje sporočilo (uporabite @ za omembo)…",
     "mentionPick": "Omeniti člana",
     "mentionHint": "@ za omembo",
     "mentionedYou": "Vas je omenil",

@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Interna anteckningar",
-    "placeholder": "Lägg till en intern anteckning...",
+    "placeholder": "Skriv ditt meddelande (använd @ för att nämna)…",
     "send": "Skicka",
     "edit": "Ändra",
     "delete": "Ta bort",
@@ -2098,7 +2098,7 @@
     "cancel": "Avbryt",
     "save": "Spara",
     "ctrlEnter": "Ctrl+Enter för att skicka",
-    "placeholderMention": "Lägg till en intern anteckning (använd @ för att nämna)…",
+    "placeholderMention": "Skriv ditt meddelande (använd @ för att nämna)…",
     "mentionPick": "Nämna en medlem",
     "mentionHint": "@ för att nämna",
     "mentionedYou": "har nämnt dig",

@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Interne noter",
-    "placeholder": "Tilføj en intern note...",
+    "placeholder": "Skriv din besked (brug @ for at nævne)…",
     "send": "Send",
     "edit": "Rediger",
     "delete": "Slet",
@@ -2098,7 +2098,7 @@
     "cancel": "Annuller",
     "save": "Gem",
     "ctrlEnter": "Ctrl+Enter for at sende",
-    "placeholderMention": "Tilføj en intern note (brug @ for at nævne)…",
+    "placeholderMention": "Skriv din besked (brug @ for at nævne)…",
     "mentionPick": "Nævn et medlem",
     "mentionHint": "@ for at nævne",
     "mentionedYou": "har nævnt dig",

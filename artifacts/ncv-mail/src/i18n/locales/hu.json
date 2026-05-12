@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Belső megjegyzések",
-    "placeholder": "Belső megjegyzés hozzáadása...",
+    "placeholder": "Írja be az üzenetét (használja a @ jelet említéshez)…",
     "send": "Küldés",
     "edit": "Szerkesztés",
     "delete": "Törlés",
@@ -2098,7 +2098,7 @@
     "cancel": "Mégse",
     "save": "Mentés",
     "ctrlEnter": "Ctrl+Enter a küldéshez",
-    "placeholderMention": "Belső megjegyzés hozzáadása (használja az @-t a megemlítéshez)…",
+    "placeholderMention": "Írja be az üzenetét (használja a @ jelet említéshez)…",
     "mentionPick": "Megemlíteni egy tagot",
     "mentionHint": "@ a megemlítéshez",
     "mentionedYou": "megemlítette Önt",

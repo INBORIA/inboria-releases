@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Nótaí inmheánacha",
-    "placeholder": "Cuir nóta inmheánach leis...",
+    "placeholder": "Cuir isteach bhur dteachtaireacht (úsáidigí @ chun lua)…",
     "send": "Seol",
     "edit": "Cuir in eagar",
     "delete": "Scrios",
@@ -2098,7 +2098,7 @@
     "cancel": "Cealaigh",
     "save": "Sábháil",
     "ctrlEnter": "Ctrl+Iontráil chun a sheoladh",
-    "placeholderMention": "Cuir nóta inmheánach leis (úsáid @ chun tagairt a dhéanamh)…",
+    "placeholderMention": "Cuir isteach bhur dteachtaireacht (úsáidigí @ chun lua)…",
     "mentionPick": "Tagairt a dhéanamh do bhall",
     "mentionHint": "@ chun tagairt a dhéanamh",
     "mentionedYou": "d'áitigh sibh",

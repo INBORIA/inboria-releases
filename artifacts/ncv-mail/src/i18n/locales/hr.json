@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Interni bilješke",
-    "placeholder": "Dodajte internu bilješku...",
+    "placeholder": "Unesite Vašu poruku (koristite @ za spominjanje)…",
     "send": "Pošaljite",
     "edit": "Uredite",
     "delete": "Izbrišite",
@@ -2098,7 +2098,7 @@
     "cancel": "Odustani",
     "save": "Spremi",
     "ctrlEnter": "Ctrl+Enter za slanje",
-    "placeholderMention": "Dodajte internu bilješku (koristite @ za spominjanje)…",
+    "placeholderMention": "Unesite Vašu poruku (koristite @ za spominjanje)…",
     "mentionPick": "Spomenite člana",
     "mentionHint": "@ za spominjanje",
     "mentionedYou": "Vas je spomenuo",

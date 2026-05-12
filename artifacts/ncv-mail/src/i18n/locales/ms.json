@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Nota dalaman",
-    "placeholder": "Tambah nota dalaman...",
+    "placeholder": "Sila masukkan mesej anda (gunakan @ untuk menyebut)…",
     "send": "Hantar",
     "edit": "Edit",
     "delete": "Padam",
@@ -2098,7 +2098,7 @@
     "cancel": "Batal",
     "save": "Simpan",
     "ctrlEnter": "Ctrl+Enter untuk menghantar",
-    "placeholderMention": "Tambah nota dalaman (gunakan @ untuk menyebut)…",
+    "placeholderMention": "Sila masukkan mesej anda (gunakan @ untuk menyebut)…",
     "mentionPick": "Sebut ahli",
     "mentionHint": "@ untuk menyebut",
     "mentionedYou": "anda telah disebut",

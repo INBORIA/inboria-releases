@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "內部備註",
-    "placeholder": "添加內部備註...",
+    "placeholder": "請輸入您的訊息（使用 @ 提及）…",
     "send": "發送",
     "edit": "編輯",
     "delete": "刪除",
@@ -2098,7 +2098,7 @@
     "cancel": "取消",
     "save": "儲存",
     "ctrlEnter": "Ctrl+Enter 發送",
-    "placeholderMention": "添加內部備註（使用 @ 提及）…",
+    "placeholderMention": "請輸入您的訊息（使用 @ 提及）…",
     "mentionPick": "提及成員",
     "mentionHint": "@ 提及",
     "mentionedYou": "已提及您",

@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Iekšējās piezīmes",
-    "placeholder": "Pievienot iekšējo piezīmi...",
+    "placeholder": "Lūdzu, ievadiet savu ziņu (izmantojiet @, lai pieminētu)…",
     "send": "Sūtīt",
     "edit": "Rediģēt",
     "delete": "Dzēst",
@@ -2098,7 +2098,7 @@
     "cancel": "Atcelt",
     "save": "Saglabāt",
     "ctrlEnter": "Ctrl+Enter, lai sūtītu",
-    "placeholderMention": "Pievienot iekšējo piezīmi (izmantojiet @, lai pieminētu)…",
+    "placeholderMention": "Lūdzu, ievadiet savu ziņu (izmantojiet @, lai pieminētu)…",
     "mentionPick": "Pieminēt dalībnieku",
     "mentionHint": "@, lai pieminētu",
     "mentionedYou": "Jūs pieminēja",

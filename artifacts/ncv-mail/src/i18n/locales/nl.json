@@ -2098,7 +2098,7 @@
   },
   "comments": {
     "title": "Interne notities",
-    "placeholder": "Interne notitie toevoegen...",
+    "placeholder": "Voer uw bericht in (gebruik @ om te vermelden)…",
     "send": "Verzenden",
     "edit": "Bewerken",
     "delete": "Verwijderen",
@@ -2108,7 +2108,7 @@
     "cancel": "Annuleren",
     "save": "Opslaan",
     "ctrlEnter": "Ctrl+Enter om te verzenden",
-    "placeholderMention": "Interne notitie toevoegen (gebruik @ om te vermelden)…",
+    "placeholderMention": "Voer uw bericht in (gebruik @ om te vermelden)…",
     "mentionPick": "Een teamlid vermelden",
     "mentionHint": "@ om te vermelden",
     "mentionedYou": "heeft u vermeld",

@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Note interne",
-    "placeholder": "Adăugați o notă internă...",
+    "placeholder": "Introduceți mesajul dumneavoastră (folosiți @ pentru a menționa)…",
     "send": "Trimiteți",
     "edit": "Modificați",
     "delete": "Ștergeți",
@@ -2098,7 +2098,7 @@
     "cancel": "Anulați",
     "save": "Salvați",
     "ctrlEnter": "Ctrl+Enter pentru a trimite",
-    "placeholderMention": "Adăugați o notă internă (folosiți @ pentru a menționa)…",
+    "placeholderMention": "Introduceți mesajul dumneavoastră (folosiți @ pentru a menționa)…",
     "mentionPick": "Menționați un membru",
     "mentionHint": "@ pentru a menționa",
     "mentionedYou": "v-a menționat",

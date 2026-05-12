@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Catatan internal",
-    "placeholder": "Tambahkan catatan internal...",
+    "placeholder": "Silakan masukkan pesan Anda (gunakan @ untuk menyebut)…",
     "send": "Kirim",
     "edit": "Ubah",
     "delete": "Hapus",
@@ -2098,7 +2098,7 @@
     "cancel": "Batalkan",
     "save": "Simpan",
     "ctrlEnter": "Ctrl+Enter untuk mengirim",
-    "placeholderMention": "Tambahkan catatan internal (gunakan @ untuk menyebut)…",
+    "placeholderMention": "Silakan masukkan pesan Anda (gunakan @ untuk menyebut)…",
     "mentionPick": "Sebut anggota",
     "mentionHint": "@ untuk menyebut",
     "mentionedYou": "Anda disebut",

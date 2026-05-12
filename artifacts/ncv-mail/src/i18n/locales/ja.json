@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "内部メモ",
-    "placeholder": "内部メモを追加...",
+    "placeholder": "メッセージを入力してください（@ でメンション）…",
     "send": "送信",
     "edit": "編集",
     "delete": "削除",
@@ -2098,7 +2098,7 @@
     "cancel": "キャンセル",
     "save": "保存",
     "ctrlEnter": "Ctrl+Enterで送信",
-    "placeholderMention": "内部メモを追加（@を使用してメンションしてください）...",
+    "placeholderMention": "メッセージを入力してください（@ でメンション）…",
     "mentionPick": "メンバーをメンションする",
     "mentionHint": "@でメンション",
     "mentionedYou": "あなたがメンションされました",

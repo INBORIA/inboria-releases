@@ -2098,7 +2098,7 @@
   },
   "comments": {
     "title": "Interne Notizen",
-    "placeholder": "Fügen Sie eine interne Notiz hinzu...",
+    "placeholder": "Geben Sie Ihre Nachricht ein (mit @ erwähnen)…",
     "send": "Senden",
     "edit": "Bearbeiten",
     "delete": "Löschen",
@@ -2108,7 +2108,7 @@
     "cancel": "Abbrechen",
     "save": "Speichern",
     "ctrlEnter": "Strg+Eingabe zum Senden",
-    "placeholderMention": "Interne Notiz hinzufügen (verwenden Sie @ zum Erwähnen)…",
+    "placeholderMention": "Geben Sie Ihre Nachricht ein (mit @ erwähnen)…",
     "mentionPick": "Teammitglied erwähnen",
     "mentionHint": "@ zum Erwähnen",
     "mentionedYou": "hat Sie erwähnt",

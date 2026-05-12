@@ -2088,7 +2088,7 @@
   },
   "comments": {
     "title": "Vidinės pastabos",
-    "placeholder": "Pridėti vidinę pastabą...",
+    "placeholder": "Įveskite savo žinutę (naudokite @, kad paminėtumėte)…",
     "send": "Siųsti",
     "edit": "Redaguoti",
     "delete": "Ištrinti",
@@ -2098,7 +2098,7 @@
     "cancel": "Atšaukti",
     "save": "Išsaugoti",
     "ctrlEnter": "Ctrl+Enter siųsti",
-    "placeholderMention": "Pridėti vidinę pastabą (naudokite @, kad paminėtumėte)…",
+    "placeholderMention": "Įveskite savo žinutę (naudokite @, kad paminėtumėte)…",
     "mentionPick": "Paminėti narį",
     "mentionHint": "@, kad paminėtumėte",
     "mentionedYou": "Jūs paminėjote",
