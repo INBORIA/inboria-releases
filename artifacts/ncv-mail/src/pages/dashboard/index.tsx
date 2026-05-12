@@ -4960,6 +4960,10 @@ export default function Dashboard() {
                   <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{inboxCountFromApi}</span>
                 )}
               </button>
+              {/* Saut de ligne — Partagées + Assignés sur la ligne 2 */}
+              {(hasSharedMailboxes || hasTeamForAssigned) && (
+                <div className="basis-full h-0" aria-hidden="true" />
+              )}
               {hasSharedMailboxes && (
                 <button
                   onClick={() => {
@@ -4997,7 +5001,8 @@ export default function Dashboard() {
                   )}
                 </Link>
               )}
-              <span className="w-px h-5 bg-border/60 mx-1" aria-hidden="true" />
+              {/* Saut de ligne — Indésirables / Corbeille / Filtres sur la ligne 3 */}
+              <div className="basis-full h-0" aria-hidden="true" />
               <Link
                 href="/dashboard/indesirables"
                 className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
