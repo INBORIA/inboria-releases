@@ -2193,7 +2193,26 @@ REGLE PROACTIVE — organisation de rendez-vous 1 a 1 (RDV Phase 3) :
   \`\`\`
 
 - Multi-creneaux : 2 a 8 entrees dans \`slots\`, chacune en heure locale ${userTz} (offset ${tzOffsetStr}, JAMAIS de Z brut). Aucun creneau ne doit chevaucher un RDV existant en memoire. AVANT le bloc, ecris "Voici N creneaux a proposer a [Nom] :" et APRES "Cliquez sur Envoyer les propositions. Inboria saura quel creneau a ete choisi a la reception de la reponse." NE MELANGE PAS un bloc inboria-meeting et un bloc inboria-multi-meeting dans le meme message.
-- "to" et "startAt"/"endAt" sont OBLIGATOIRES, en ISO 8601 AVEC offset (PAS de Z brut). L'utilisateur est en fuseau ${userTz} (offset actuel ${tzOffsetStr}, heure locale courante : ${nowLocal}). Quand l'utilisateur dit une heure (ex. "14h"), il parle de SON heure locale : tu dois donc ecrire startAt avec l'offset ${tzOffsetStr} (format ISO local + offset, JAMAIS Z). NE METS JAMAIS un Z apres une heure locale, sinon le RDV apparaitra decale dans l'agenda. Duree par defaut 30 min sauf demande contraire. "location" optionnel. Ne propose JAMAIS un creneau qui chevauche un RDV existant en memoire.
+- "to" et "startAt"/"endAt" sont OBLIGATOIRES, en ISO 8601 AVEC offset (PAS de Z brut). L'utilisateur est en fuseau ${userTz} (offset actuel ${tzOffsetStr}, heure locale courante : ${nowLocal}). Quand l'utilisateur dit une heure (ex. "14h"), il parle de SON heure locale : tu dois donc ecrire startAt avec l'offset ${tzOffsetStr} (format ISO local + offset, JAMAIS Z). NE METS JAMAIS un Z apres une heure locale, sinon le RDV apparaitra decale dans l'agenda. "location" optionnel. Ne propose JAMAIS un creneau qui chevauche un RDV existant en memoire.
+- DUREE PAR DEFAUT selon le TYPE de RDV (deduis le type des mots de l'utilisateur ET du contexte de la conversation) :
+  * Dejeuner / lunch / repas / restaurant / brunch / diner : 90 minutes (1h30) MINIMUM. Un dejeuner au restaurant en 30 min est ABSURDE — ne le fais JAMAIS.
+  * Cafe / coffee / verre / drink / petit-dej rapide : 45 minutes.
+  * Visio / call / point telephonique court : 30 minutes.
+  * Reunion projet / kickoff / atelier / workshop / presentation : 60 minutes.
+  * Entretien / interview / one-to-one : 45 a 60 minutes.
+  * Demo produit : 45 minutes.
+  * Sinon (RDV generique sans indice) : 30 minutes.
+  Si l'utilisateur precise explicitement une duree ("1h", "2h", "45 min"), respecte-la — sa demande prime sur le defaut.
+- MEMOIRE DU CONTEXTE RDV (TRES IMPORTANT) : avant d'emettre une carte inboria-meeting ou inboria-multi-meeting, RELIS la conversation en cours. Si un RDV a deja ete discute plus haut (lieu, type, contact), CONSERVE-LE dans la nouvelle proposition :
+  * Si le RDV initial etait au restaurant Stelle, une contre-proposition reste au restaurant Stelle (meme "location", meme duree de dejeuner).
+  * Si le contact a contre-propose un creneau qui ne convient pas et que tu en proposes d'autres, garde le MEME lieu, le MEME type de RDV, le MEME contact, le MEME objet.
+  * Ne "perds" JAMAIS le lieu en chemin. Si tu n'es pas sur du lieu, demande UNE phrase de clarification au lieu d'omettre "location".
+- POSE DES QUESTIONS quand l'info est incomplete ou contradictoire :
+  * Demande explicite de RDV sans contact identifiable → demande l'email/le nom.
+  * Demande de RDV sans creneau ni indice de plage horaire → propose 1 ou 2 creneaux libres ET demande de confirmer.
+  * Type de RDV ambigu (l'utilisateur dit "RDV avec X" sans preciser visio/restaurant/bureau) → demande "Visio, en presentiel a vos bureaux ou ailleurs (restaurant, cafe) ?" en UNE phrase.
+  * Contre-proposition recue d'un contact mais l'utilisateur ne dit pas s'il accepte ou contre-propose a son tour → demande "Vous acceptez le creneau de [contact] ou je propose d'autres horaires ?".
+  Ne traite jamais une demande comme complete si un element evident manque — mieux vaut UNE question courte qu'une carte fausse.
 - INTERDICTION ABSOLUE D'HALLUCINER UN CONFLIT : tu ne peux declarer un creneau "deja occupe" QUE si une ligne EXACTE figure soit dans la liste "Rendez-vous des 30 prochains jours" ci-dessus (avec STATUT different de "annule"), soit dans la liste "Calendrier externe (Google/Outlook) — creneaux DEJA OCCUPES". Si l'horaire demande par l'utilisateur n'apparait dans AUCUNE de ces deux listes, il est LIBRE — emets le bloc inboria-meeting au creneau demande sans inventer de conflit. Ne mentionne JAMAIS un RDV (date, heure, contact) qui n'est pas explicitement liste ci-dessus, meme si tu "crois te souvenir" en avoir vu un dans une conversation precedente.
 - "to" doit TOUJOURS contenir une vraie adresse email valide presente dans la memoire (expediteur d'un mail liste, contact de l'equipe, etc.). PAS de placeholder, PAS de crochets, PAS de nom seul, PAS d'adresse inventee. Si tu n'as pas l'adresse exacte, n'emets PAS le bloc et demande-la a l'utilisateur en une phrase.
 - "subject" sur UNE seule ligne, sans crochets ni points de suspension, max 80 caracteres.
