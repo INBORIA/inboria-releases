@@ -1283,19 +1283,13 @@ export default function Classement() {
                           return (
                             <div key={cat.id} className={cardClasses}>
                               <div className="flex justify-between items-start mb-3 gap-2">
-                                <div
-                                  className={`w-9 h-9 rounded-lg flex items-center justify-center shrink-0 ${
-                                    isSystemCat
-                                      ? "bg-amber-500/15 text-amber-300"
-                                      : categoryColors[colorIdx]
-                                  }`}
-                                >
-                                  {isSystemCat ? (
+                                {isSystemCat ? (
+                                  <div className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0 bg-amber-500/15 text-amber-300">
                                     <ShieldCheck className="w-4 h-4" />
-                                  ) : (
-                                    <Tags className="w-4 h-4" />
-                                  )}
-                                </div>
+                                  </div>
+                                ) : (
+                                  <div />
+                                )}
                                 <div className="flex items-center gap-1 flex-wrap justify-end">
                                   <span
                                     className={`text-[10px] px-1.5 py-0.5 rounded font-medium ${originColor}`}
