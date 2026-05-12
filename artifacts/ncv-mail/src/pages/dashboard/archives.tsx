@@ -252,7 +252,7 @@ export default function Archives() {
               variant="ghost"
               size="sm"
               onClick={() => handleRestore(selectedEmailId)}
-              className="h-8 px-3 text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 text-[12px] gap-1.5"
+              className="h-8 px-3 text-white hover:text-white hover:bg-white/[0.08] text-[12px] gap-1.5"
               data-testid="button-restore-from-archive"
             >
               <RotateCcw className="w-3.5 h-3.5" />
