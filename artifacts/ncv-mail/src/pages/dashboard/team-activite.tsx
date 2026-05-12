@@ -238,8 +238,7 @@ export default function TeamActivitePage() {
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-5">
         <BackToInboxButton />
         <div>
-          <h1 className="text-xl font-bold text-white">{t("teamActivity.title")}</h1>
-          <p className="text-[12px] text-[#b8c5d6] mt-1">{t("teamActivity.subtitle")}</p>
+          <h1 className="text-xl font-bold text-white">{t("inbox.assignedShort", "Assignés")}</h1>
         </div>
 
         <div className="grid gap-3 sm:grid-cols-2">
