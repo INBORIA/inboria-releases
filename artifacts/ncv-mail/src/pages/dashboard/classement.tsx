@@ -771,7 +771,7 @@ export default function Classement() {
                 variant="outline"
                 size="sm"
                 onClick={() => setIsCleanupOpen(true)}
-                className="gap-2 border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
+                className="gap-2 border-white/30 text-white hover:bg-white/[0.06]"
               >
                 <Combine className="w-3.5 h-3.5" />
                 {t("classification.cleanupDuplicates.buttonCount", {
@@ -1164,10 +1164,10 @@ export default function Classement() {
           </div>
 
           {duplicatePairs.length > 0 && (
-            <div className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/[0.04] p-3 flex items-center justify-between gap-3">
+            <div className="mb-4 rounded-lg border border-white/15 bg-white/[0.04] p-3 flex items-center justify-between gap-3">
               <div className="flex items-center gap-2 min-w-0">
-                <Combine className="w-4 h-4 text-amber-400 shrink-0" />
-                <p className="text-[12px] text-amber-200">
+                <Combine className="w-4 h-4 text-white shrink-0" />
+                <p className="text-[12px] text-white/90">
                   {t("classification.cleanupDuplicates.desc", {
                     count: duplicatePairs.length,
                   })}
@@ -1176,7 +1176,7 @@ export default function Classement() {
               <Button
                 size="sm"
                 variant="outline"
-                className="shrink-0 border-amber-500/40 text-amber-300 hover:bg-amber-500/10"
+                className="shrink-0 border-white/30 text-white hover:bg-white/[0.06]"
                 onClick={() => setIsCleanupOpen(true)}
               >
                 {t("classification.cleanupDuplicates.button")}
