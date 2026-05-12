@@ -3394,6 +3394,25 @@ export default function Dashboard() {
     return me?.emails?.length ?? 0;
   })();
 
+  // Compteur tâches ouvertes (mes tâches non terminées) — alimente le badge
+  // de l'onglet Tâches dans la barre de Réception (task #290).
+  const { data: openTasksData } = useQuery<any[]>({
+    queryKey: ["tasks-open-mine"],
+    refetchInterval: 60_000,
+    queryFn: async () => {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) return [];
+      const res = await fetch(`${import.meta.env.BASE_URL}api/tasks?scope=mine&status=pending`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+  const openTasksCount = Array.isArray(openTasksData) ? openTasksData.length : 0;
+
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
   const [composePrefill, setComposePrefill] = useState<{ to: string; subject: string; body: string } | null>(null);
@@ -5057,58 +5076,68 @@ export default function Dashboard() {
                 </Select>
               )}
               {/* Ligne 2 — Partagées + Assignés (équipe), avant la barre Filtres en dessous. */}
-              {(hasSharedMailboxes || hasTeamForAssigned) && (
-                <>
-                  <div
-                    aria-hidden="true"
-                    style={{ flexBasis: "100%", width: "100%", height: 0 }}
-                  />
-                  {hasSharedMailboxes && (
-                    <button
-                      onClick={() => {
-                        setInboxMode("shared");
-                        setCrmFilter(null);
-                        const mbs = sharedMailboxes as any[];
-                        if (mbs?.length > 0 && !selectedSharedMailboxId) {
-                          setSelectedSharedMailboxId(mbs[0].id);
-                        }
-                      }}
-                      className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
-                        inboxMode === "shared"
-                          ? "bg-primary/15 text-primary border border-primary/20"
-                          : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                      }`}
-                    >
-                      <Users className="w-3 h-3" />
-                      {t("inbox.sharedMailboxShort", "Partagées")}
-                      {sharedEmailsCount > 0 && (
-                        <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{sharedEmailsCount}</span>
-                      )}
-                    </button>
+              {/* Ligne 2 — onglets équipe & productivité.
+                  Tâches est TOUJOURS visible (existe même en solo).
+                  Partagées / Assignés sont conditionnels. */}
+              <div
+                aria-hidden="true"
+                style={{ flexBasis: "100%", width: "100%", height: 0 }}
+              />
+              {hasSharedMailboxes && (
+                <button
+                  onClick={() => {
+                    setInboxMode("shared");
+                    setCrmFilter(null);
+                    const mbs = sharedMailboxes as any[];
+                    if (mbs?.length > 0 && !selectedSharedMailboxId) {
+                      setSelectedSharedMailboxId(mbs[0].id);
+                    }
+                  }}
+                  className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                    inboxMode === "shared"
+                      ? "bg-primary/15 text-primary border border-primary/20"
+                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                  }`}
+                >
+                  <Users className="w-3 h-3" />
+                  {t("inbox.sharedMailboxShort", "Partagées")}
+                  {sharedEmailsCount > 0 && (
+                    <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{sharedEmailsCount}</span>
                   )}
-                  {hasTeamForAssigned && (
-                    <Link
-                      href="/dashboard/activite-equipe"
-                      className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                    >
-                      <Activity className="w-3 h-3" />
-                      {t("inbox.assignedShort", "Assignés")}
-                      {assignedToMeCount > 0 && (
-                        <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{assignedToMeCount}</span>
-                      )}
-                    </Link>
-                  )}
-                  {/* Onglet Tâches — déplacé depuis la sidebar (task #290).
-                      Toujours visible : les tâches existent même en solo. */}
-                  <Link
-                    href="/dashboard/taches"
-                    className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                  >
-                    <CheckSquare className="w-3 h-3" />
-                    {t("tasks.title")}
-                  </Link>
-                </>
+                </button>
               )}
+              {hasTeamForAssigned && (
+                <Link
+                  href="/dashboard/activite-equipe"
+                  className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                    routeLocation === "/dashboard/activite-equipe"
+                      ? "bg-primary/15 text-primary border border-primary/20"
+                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                  }`}
+                >
+                  <Activity className="w-3 h-3" />
+                  {t("inbox.assignedShort", "Assignés")}
+                  {assignedToMeCount > 0 && (
+                    <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{assignedToMeCount}</span>
+                  )}
+                </Link>
+              )}
+              {/* Onglet Tâches — déplacé depuis la sidebar (task #290).
+                  Toujours visible (perso + équipe) avec badge ouverts. */}
+              <Link
+                href="/dashboard/taches"
+                className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                  routeLocation === "/dashboard/taches"
+                    ? "bg-primary/15 text-primary border border-primary/20"
+                    : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                }`}
+              >
+                <CheckSquare className="w-3 h-3" />
+                {t("tasks.title")}
+                {openTasksCount > 0 && (
+                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{openTasksCount}</span>
+                )}
+              </Link>
             </div>
 
           {/* Étape 2 refonte Superhuman — menu Filtres unifié.
