@@ -4960,55 +4960,7 @@ export default function Dashboard() {
                   <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{inboxCountFromApi}</span>
                 )}
               </button>
-              {/* Saut de ligne — Partagées + Assignés sur la ligne 2 */}
-              {(hasSharedMailboxes || hasTeamForAssigned) && (
-                <div
-                  aria-hidden="true"
-                  style={{ flexBasis: "100%", width: "100%", height: 0 }}
-                />
-              )}
-              {hasSharedMailboxes && (
-                <button
-                  onClick={() => {
-                    setInboxMode("shared");
-                    // Idem Réception : on lève le filtre CRM en basculant sur
-                    // boîte partagée pour ne pas masquer des emails.
-                    setCrmFilter(null);
-                    const mbs = sharedMailboxes as any[];
-                    if (mbs?.length > 0 && !selectedSharedMailboxId) {
-                      setSelectedSharedMailboxId(mbs[0].id);
-                    }
-                  }}
-                  className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
-                    inboxMode === "shared"
-                      ? "bg-primary/15 text-primary border border-primary/20"
-                      : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                  }`}
-                >
-                  <Users className="w-3 h-3" />
-                  {t("inbox.sharedMailboxShort", "Partagées")}
-                  {sharedEmailsCount > 0 && (
-                    <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{sharedEmailsCount}</span>
-                  )}
-                </button>
-              )}
-              {hasTeamForAssigned && (
-                <Link
-                  href="/dashboard/activite-equipe"
-                  className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
-                >
-                  <Activity className="w-3 h-3" />
-                  {t("inbox.assignedShort", "Assignés")}
-                  {assignedToMeCount > 0 && (
-                    <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{assignedToMeCount}</span>
-                  )}
-                </Link>
-              )}
-              {/* Saut de ligne — Indésirables / Corbeille / Filtres sur la ligne 3 */}
-              <div
-                aria-hidden="true"
-                style={{ flexBasis: "100%", width: "100%", height: 0 }}
-              />
+              <span className="w-px h-5 bg-border/60 mx-1" aria-hidden="true" />
               <Link
                 href="/dashboard/indesirables"
                 className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
@@ -5098,6 +5050,50 @@ export default function Dashboard() {
                     ))}
                   </SelectContent>
                 </Select>
+              )}
+              {/* Ligne 2 — Partagées + Assignés (équipe), avant la barre Filtres en dessous. */}
+              {(hasSharedMailboxes || hasTeamForAssigned) && (
+                <>
+                  <div
+                    aria-hidden="true"
+                    style={{ flexBasis: "100%", width: "100%", height: 0 }}
+                  />
+                  {hasSharedMailboxes && (
+                    <button
+                      onClick={() => {
+                        setInboxMode("shared");
+                        setCrmFilter(null);
+                        const mbs = sharedMailboxes as any[];
+                        if (mbs?.length > 0 && !selectedSharedMailboxId) {
+                          setSelectedSharedMailboxId(mbs[0].id);
+                        }
+                      }}
+                      className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                        inboxMode === "shared"
+                          ? "bg-primary/15 text-primary border border-primary/20"
+                          : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                      }`}
+                    >
+                      <Users className="w-3 h-3" />
+                      {t("inbox.sharedMailboxShort", "Partagées")}
+                      {sharedEmailsCount > 0 && (
+                        <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{sharedEmailsCount}</span>
+                      )}
+                    </button>
+                  )}
+                  {hasTeamForAssigned && (
+                    <Link
+                      href="/dashboard/activite-equipe"
+                      className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                    >
+                      <Activity className="w-3 h-3" />
+                      {t("inbox.assignedShort", "Assignés")}
+                      {assignedToMeCount > 0 && (
+                        <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{assignedToMeCount}</span>
+                      )}
+                    </Link>
+                  )}
+                </>
               )}
             </div>
 
