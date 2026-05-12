@@ -1259,8 +1259,8 @@ export default function Classement() {
                             : cat.sourcePack
                               ? "bg-primary/10 text-primary/80"
                               : group.kind === "standard"
-                                ? "bg-blue-500/10 text-blue-300"
-                                : "bg-purple-500/10 text-purple-300";
+                                ? "bg-primary/10 text-primary"
+                                : "bg-primary/10 text-primary";
                           // La carte système n'est jamais "grisée" (elle peut être
                           // vide volontairement, c'est une bonne nouvelle).
                           const cardClasses = isSystemCat
