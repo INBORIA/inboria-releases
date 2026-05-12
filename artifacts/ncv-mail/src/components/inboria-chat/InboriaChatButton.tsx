@@ -507,7 +507,26 @@ const MeetingProposalCard = memo(function MeetingProposalCard({
   const [errorMsg, setErrorMsg] = useState("");
   const [mirrorWarning, setMirrorWarning] = useState<string>("");
   const [sentVideoUrl, setSentVideoUrl] = useState<string>("");
-  const [videoProvider, setVideoProvider] = useState<"jitsi" | "meet" | "teams" | "none">("jitsi");
+  // Détecte un lieu physique (bureau, présentiel, adresse, etc.) pour ne PAS
+  // proposer de visio par défaut. L'utilisateur peut toujours forcer un lien
+  // visio via le sélecteur si le RDV est hybride.
+  const locationLooksPhysical = (() => {
+    const loc = (meeting.location || "").toLowerCase().trim();
+    if (!loc) return false;
+    const physicalHints = [
+      "bureau", "bureaux", "office", "kantoor",
+      "présentiel", "presentiel", "in person", "in-person", "on site", "onsite", "on-site",
+      "rue ", "avenue ", "boulevard ", "place ", "chaussée", "chaussee",
+      "street", "road", "ave ", "blvd ",
+      "chez ", "siège", "siege", "headquarters", "hq",
+      "salle ", "room ", "meeting room",
+      "restaurant", "café", "cafe", "hôtel", "hotel",
+    ];
+    return physicalHints.some((h) => loc.includes(h));
+  })();
+  const [videoProvider, setVideoProvider] = useState<"jitsi" | "meet" | "teams" | "none">(
+    locationLooksPhysical ? "none" : "jitsi",
+  );
   const [fromConnectionId, setFromConnectionId] = useState<string>(defaultConnectionId);
   // `connectionsData` peut être chargé APRES le 1er render de la carte : on
   // resynchronise alors fromConnectionId si l'utilisateur n'a pas encore
