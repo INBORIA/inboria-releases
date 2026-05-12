@@ -4962,7 +4962,10 @@ export default function Dashboard() {
               </button>
               {/* Saut de ligne — Partagées + Assignés sur la ligne 2 */}
               {(hasSharedMailboxes || hasTeamForAssigned) && (
-                <div className="basis-full h-0" aria-hidden="true" />
+                <div
+                  aria-hidden="true"
+                  style={{ flexBasis: "100%", width: "100%", height: 0 }}
+                />
               )}
               {hasSharedMailboxes && (
                 <button
@@ -5002,7 +5005,10 @@ export default function Dashboard() {
                 </Link>
               )}
               {/* Saut de ligne — Indésirables / Corbeille / Filtres sur la ligne 3 */}
-              <div className="basis-full h-0" aria-hidden="true" />
+              <div
+                aria-hidden="true"
+                style={{ flexBasis: "100%", width: "100%", height: 0 }}
+              />
               <Link
                 href="/dashboard/indesirables"
                 className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
