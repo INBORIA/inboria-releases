@@ -293,7 +293,7 @@ export default function Archives() {
               className="h-7 px-2 text-[#b8c5d6] hover:text-white hover:bg-white/[0.06] text-[12px]"
             >
               <ArrowLeft className="w-3.5 h-3.5 mr-1" />
-              {t("archives.title")}
+              {t("common.back", "Retour")}
             </Button>
             <div className="flex-1" />
             <span className="text-[11px] text-[#b8c5d6]">{t("archives.emailCount", { count: selectedEmails.length })}</span>
@@ -311,7 +311,6 @@ export default function Archives() {
               </div>
             ) : (
               selectedEmails.map((email) => {
-                const barColor = PRIORITY_BAR_COLORS[email.priority] || PRIORITY_BAR_COLORS.faible;
                 const isSelected = selectedIds.has(email.id);
                 return (
                   <div
@@ -334,7 +333,6 @@ export default function Archives() {
                     onMouseEnter={() => handleDragSelectEnter(email.id)}
                     onContextMenu={(e) => handleContextMenuArchive(e, email.id)}
                   >
-                    <div className={`w-1 shrink-0 ${barColor}`} />
                     <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
                       <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
                         <span className="text-primary font-semibold text-[12px]">{(email.sender || "?")[0].toUpperCase()}</span>
