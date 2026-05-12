@@ -1136,7 +1136,7 @@ export default function Classement() {
                 <p className="text-[12px] text-[#b8c5d6]">
                   {t("classification.countCategories", { count: categories?.length ?? 0 })}
                   {unusedCount > 0 && (
-                    <span className="ml-2 text-amber-400/80">
+                    <span className="ml-2 text-white/80">
                       · {t("classification.countUnused", { count: unusedCount })}
                     </span>
                   )}
