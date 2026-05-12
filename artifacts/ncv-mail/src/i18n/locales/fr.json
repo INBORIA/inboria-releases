@@ -2584,6 +2584,7 @@
     "inputPlaceholder": "Demandez quelque chose à Inboria…",
     "thinking": "Inboria réfléchit…",
     "footerHint": "Entrée pour envoyer • Maj+Entrée pour aller à la ligne",
+    "memoryHint": "Astuce : Inboria ne mémorise rien de vous par défaut. Si vous voulez qu'elle retienne une préférence (durée d'un déjeuner, lieu favori, formule de politesse…), dites-le explicitement, par ex. « Retiens que mes déjeuners durent 1h30 ».",
     "errorGeneric": "Désolé, une erreur est survenue. Réessayez dans un instant.",
     "errorQuota": "Quota Inboria atteint pour cette période. Voyez votre abonnement."
   },

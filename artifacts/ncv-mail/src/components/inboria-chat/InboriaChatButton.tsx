@@ -1250,6 +1250,12 @@ export function InboriaChatButton() {
                   </button>
                 ))}
               </div>
+              <p className="text-[11px] text-zinc-500 mt-4 max-w-xs leading-relaxed">
+                {t("inboriaChat.memoryHint", {
+                  defaultValue:
+                    "Astuce : Inboria ne mémorise rien de vous par défaut. Si vous voulez qu'elle retienne une préférence (durée d'un déjeuner, lieu favori, formule de politesse…), dites-le explicitement, par ex. « Retiens que mes déjeuners durent 1h30 ».",
+                })}
+              </p>
             </div>
           )}
           {messages.map((m, i) => (
