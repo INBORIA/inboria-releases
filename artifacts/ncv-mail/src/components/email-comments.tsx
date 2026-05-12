@@ -222,22 +222,15 @@ export function EmailComments({
 
   const commentList = (comments as any[]) || [];
 
-  // Visibilité conditionnelle du Chat équipe :
-  // - Boîte partagée → toujours visible (toute l'équipe peut participer)
-  // - Mail assigné (à n'importe qui) → visible (collab assignant ↔ assigné)
-  // - Sinon, si des messages existent déjà (historique) → visible
-  // - Sinon (mail perso sans assignation) → masqué (rien à dire à personne)
-  // On exclut les bulles système du compte des "vrais" messages : sinon
-  // un assign + unassign laisserait le chat ouvert sur un mail perso non
-  // assigné juste à cause des bulles système restantes (cf. exigence
-  // "fermer le chat à la désassignation hors boîte partagée").
-  const userCommentCount = commentList.filter(
-    (c: any) => !(typeof c?.body === "string" && c.body.startsWith("__SYS__:")),
-  ).length;
-  const hasUserComments = userCommentCount > 0;
+  // Visibilité conditionnelle du Chat équipe — règle STRICTE :
+  // - boîte partagée → toujours visible (toute l'équipe peut participer)
+  // - mail perso assigné à un AUTRE membre → visible (collab assignant ↔ assigné)
+  // - sinon (perso non assigné, ou auto-assigné à soi-même seul) → masqué
+  // L'historique de commentaires (y compris bulles système) ne maintient
+  // PAS le chat ouvert : à la désassignation d'un mail perso, il se ferme.
   const isShared = Boolean(sharedMailboxId);
-  const isAssigned = Boolean(assignedTo);
-  const chatVisible = isShared || isAssigned || hasUserComments;
+  const hasOtherAssignee = Boolean(assignedTo) && assignedTo !== currentUserId;
+  const chatVisible = isShared || hasOtherAssignee;
 
   // ---------------------------------------------------------------
   // Realtime presence: who else is viewing this thread right now.
