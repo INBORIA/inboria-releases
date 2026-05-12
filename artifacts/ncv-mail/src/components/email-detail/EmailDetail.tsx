@@ -1011,7 +1011,7 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
               email={email}
               assignedTo={email.assignedTo || null}
               sharedMailboxId={email.sharedMailboxId || null}
-              ownerId={(email as any).userId || null}
+              ownerId={email.userId || null}
             />
 
             {taskFormOpen && (

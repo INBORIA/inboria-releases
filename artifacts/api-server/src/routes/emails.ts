@@ -457,10 +457,27 @@ router.get("/emails/:id", requireAuth, async (req, res, next): Promise<void> => 
       .from("emails")
       .select("*, categories(name), projects(name, reference)")
       .eq("id", req.params.id)
-      .eq("user_id", req.userId!)
       .single();
 
     if (error || !email) {
+      res.status(404).json({ error: "Email not found" });
+      return;
+    }
+
+    // Accès autorisé pour : (a) le propriétaire, (b) le coéquipier
+    // assigné (Chat équipe — task #286), (c) un membre de la boîte
+    // partagée propriétaire du mail.
+    let allowed = email.user_id === req.userId! || email.assigned_to === req.userId!;
+    if (!allowed && (email as any).shared_mailbox_id) {
+      const { data: m } = await supabaseAdmin
+        .from("shared_mailbox_members")
+        .select("id")
+        .eq("shared_mailbox_id", (email as any).shared_mailbox_id)
+        .eq("user_id", req.userId!)
+        .single();
+      if (m) allowed = true;
+    }
+    if (!allowed) {
       res.status(404).json({ error: "Email not found" });
       return;
     }
