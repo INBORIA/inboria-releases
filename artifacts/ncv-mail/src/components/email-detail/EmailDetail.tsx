@@ -7,7 +7,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   Inbox, Clock, Eye, Sparkles, Reply, Forward, Wand2, Loader2, Printer,
   Archive, Trash2, ListTodo, CalendarDays, Download, Send, Lock, LockOpen, CheckCircle2,
-  MoreHorizontal, ChevronDown, ChevronUp, ChevronLeft, ChevronRight,
+  MoreHorizontal, ChevronDown, ChevronUp, ChevronLeft, ChevronRight, ArrowLeft,
 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
@@ -428,11 +428,11 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
       <div className="sticky top-12 z-[5] flex items-center gap-2 mb-4 pb-2 pt-2 bg-background">
         <button
           onClick={onBack}
-          className="flex items-center gap-1.5 text-[11px] px-2.5 py-1.5 rounded-md font-medium transition-colors text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04]"
+          className="flex items-center gap-1 text-[12px] h-7 px-2 rounded-md font-medium transition-colors text-[#b8c5d6] hover:text-white hover:bg-white/[0.06]"
           title={t("inbox.backHint", "Retour (Échap) — J/K pour naviguer, R répondre, E archiver") as string}
           data-testid="button-back-to-inbox"
         >
-          <ChevronLeft className="w-3.5 h-3.5" />
+          <ArrowLeft className="w-3.5 h-3.5 mr-1" />
           {t("common.back", "Retour")}
         </button>
         <div className="flex-1" />

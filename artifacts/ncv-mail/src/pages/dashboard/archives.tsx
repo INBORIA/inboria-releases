@@ -1,5 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import {
   useListEmails,
   useListCategories,
@@ -60,6 +61,7 @@ const categoryColors = [
 
 
 export default function Archives() {
+  useEnableLightTheme();
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
