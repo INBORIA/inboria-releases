@@ -1,11 +1,13 @@
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import React from "react";
-import { Image, Platform, StyleSheet, View } from "react-native";
+import { Image, Platform, Pressable, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useTranslation } from "react-i18next";
+import { useGetProfile } from "@workspace/api-client-react";
 
 import { useColors } from "@/hooks/useColors";
+import { useAuth } from "@/contexts/AuthContext";
 
 const logoSource = require("@/assets/images/inboria-logo.png");
 
@@ -15,8 +17,47 @@ function LogoIcon() {
   );
 }
 
+function HeaderProfileButton() {
+  const colors = useColors();
+  const router = useRouter();
+  const { session } = useAuth();
+  const { data: profile } = useGetProfile({ query: { enabled: !!session } });
+  const name = profile?.fullName || session?.user?.email || "";
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((s) => s[0]?.toUpperCase() || "")
+    .join("") || "?";
+  return (
+    <Pressable
+      onPress={() => router.push("/parametres")}
+      hitSlop={8}
+      style={({ pressed }) => [
+        hStyles.avatar,
+        { backgroundColor: colors.primary, opacity: pressed ? 0.7 : 1 },
+      ]}
+      accessibilityRole="button"
+      accessibilityLabel="Profil"
+    >
+      <Text style={[hStyles.avatarText, { color: colors.primaryForeground }]}>
+        {initials}
+      </Text>
+    </Pressable>
+  );
+}
+
 const hStyles = StyleSheet.create({
   logo: { width: 120, height: 40, marginLeft: 8 },
+  avatar: {
+    width: 32,
+    height: 32,
+    borderRadius: 16,
+    marginRight: 12,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  avatarText: { fontFamily: "Inter_600SemiBold", fontSize: 13 },
 });
 
 export default function TabLayout() {
@@ -39,6 +80,7 @@ export default function TabLayout() {
         headerTintColor: colors.foreground,
         headerTitleStyle: { fontFamily: "Inter_600SemiBold", fontSize: 17 },
         headerLeft: () => <LogoIcon />,
+        headerRight: () => <HeaderProfileButton />,
         tabBarStyle: {
           backgroundColor: colors.background,
           borderTopWidth: 1,
