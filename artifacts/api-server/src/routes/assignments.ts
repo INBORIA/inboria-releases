@@ -2,6 +2,16 @@ import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { createNotification, logActivity, getUserName } from "../lib/activity";
+import { assignNotifCopy, unassignNotifCopy } from "../lib/notif-i18n";
+
+async function getUserLang(userId: string): Promise<string> {
+  const { data } = await supabaseAdmin
+    .from("profiles")
+    .select("ai_language")
+    .eq("id", userId)
+    .single();
+  return (data?.ai_language as string) || "fr";
+}
 
 const router: IRouter = Router();
 
@@ -176,16 +186,34 @@ router.post("/emails/:emailId/assign", requireAuth, async (req, res): Promise<vo
       });
     }
 
-    // Notification in-app enrichie : on invite explicitement à ouvrir le
-    // chat équipe (au lieu de la simple "vous a assigné: ...").
+    // Notification in-app enrichie + localisée selon profiles.ai_language
+    // du destinataire (43 langues, défaut fr).
+    const subjectText = emailSubject?.subject || "Sans sujet";
+    const assigneeLang = await getUserLang(assignTo);
+    const assignCopy = assignNotifCopy(assigneeLang, assignerName, subjectText);
     createNotification({
       userId: assignTo,
       type: "email_assigned",
-      title: "Email assigné · Chat équipe ouvert",
-      message: `${assignerName} vous a assigné « ${emailSubject?.subject || "Sans sujet"} » · cliquer pour ouvrir le chat équipe`,
+      title: assignCopy.title,
+      message: assignCopy.message,
       emailId,
       triggeredBy: req.userId!,
     });
+
+    // Si réassignation, on prévient aussi l'ancien assigné qu'il a été
+    // retiré du dossier (texte localisé via la copy "unassign").
+    if (previousAssignee && previousAssignee !== assignTo && previousAssignee !== req.userId!) {
+      const prevLang = await getUserLang(previousAssignee);
+      const prevCopy = unassignNotifCopy(prevLang, assignerName, subjectText);
+      createNotification({
+        userId: previousAssignee,
+        type: "email_assigned",
+        title: prevCopy.title,
+        message: prevCopy.message,
+        emailId,
+        triggeredBy: req.userId!,
+      });
+    }
 
     logActivity({
       organisationId: orgId,
@@ -289,6 +317,25 @@ router.post("/emails/:emailId/unassign", requireAuth, async (req, res): Promise<
         previous: previousAssignee,
         previousName,
       });
+
+      // Notification localisée à l'ex-assigné (sauf s'il s'auto-désassigne).
+      if (previousAssignee !== req.userId!) {
+        const { data: subj } = await supabaseAdmin
+          .from("emails")
+          .select("subject")
+          .eq("id", emailId)
+          .single();
+        const prevLang = await getUserLang(previousAssignee);
+        const copy = unassignNotifCopy(prevLang, actorName, subj?.subject || "Sans sujet");
+        createNotification({
+          userId: previousAssignee,
+          type: "email_assigned",
+          title: copy.title,
+          message: copy.message,
+          emailId,
+          triggeredBy: req.userId!,
+        });
+      }
     }
 
     res.json({ success: true });

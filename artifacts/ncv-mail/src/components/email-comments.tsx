@@ -227,10 +227,17 @@ export function EmailComments({
   // - Mail assigné (à n'importe qui) → visible (collab assignant ↔ assigné)
   // - Sinon, si des messages existent déjà (historique) → visible
   // - Sinon (mail perso sans assignation) → masqué (rien à dire à personne)
-  const hasComments = commentList.length > 0;
+  // On exclut les bulles système du compte des "vrais" messages : sinon
+  // un assign + unassign laisserait le chat ouvert sur un mail perso non
+  // assigné juste à cause des bulles système restantes (cf. exigence
+  // "fermer le chat à la désassignation hors boîte partagée").
+  const userCommentCount = commentList.filter(
+    (c: any) => !(typeof c?.body === "string" && c.body.startsWith("__SYS__:")),
+  ).length;
+  const hasUserComments = userCommentCount > 0;
   const isShared = Boolean(sharedMailboxId);
   const isAssigned = Boolean(assignedTo);
-  const chatVisible = isShared || isAssigned || hasComments;
+  const chatVisible = isShared || isAssigned || hasUserComments;
 
   // ---------------------------------------------------------------
   // Realtime presence: who else is viewing this thread right now.
