@@ -2132,7 +2132,11 @@
     "mentionedYou": "mentioned you",
     "threadTitle_zero": "Team chat",
     "threadTitle_one": "Team chat",
-    "threadTitle_other": "Team chat"
+    "threadTitle_other": "Team chat",
+    "systemAssigned": "{{actor}} assigned this email to {{target}}",
+    "systemSelfAssigned": "{{actor}} took this email",
+    "systemReassigned": "{{actor}} reassigned from {{previous}} to {{target}}",
+    "systemUnassigned": "{{actor}} unassigned {{previous}}"
   },
   "attachments": {
     "title": "Attachments",

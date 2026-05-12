@@ -2104,7 +2104,11 @@
     "mentionedYou": "आपका उल्लेख किया गया है",
     "threadTitle_zero": "टीम चैट",
     "threadTitle_one": "टीम चैट",
-    "threadTitle_other": "टीम चैट"
+    "threadTitle_other": "टीम चैट",
+    "systemAssigned": "{{actor}} ने यह ईमेल {{target}} को सौंपा",
+    "systemSelfAssigned": "{{actor}} ने यह ईमेल स्वयं ले लिया",
+    "systemReassigned": "{{actor}} ने असाइनमेंट {{previous}} से {{target}} को स्थानांतरित किया",
+    "systemUnassigned": "{{actor}} ने {{previous}} का असाइनमेंट हटा दिया"
   },
   "attachments": {
     "title": "संलग्नक",

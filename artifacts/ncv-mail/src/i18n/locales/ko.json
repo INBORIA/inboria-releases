@@ -2104,7 +2104,11 @@
     "mentionedYou": "귀하를 언급하였습니다",
     "threadTitle_zero": "팀 채팅",
     "threadTitle_one": "팀 채팅",
-    "threadTitle_other": "팀 채팅"
+    "threadTitle_other": "팀 채팅",
+    "systemAssigned": "{{actor}}님이 이 메일을 {{target}}님께 배정하였습니다",
+    "systemSelfAssigned": "{{actor}}님이 이 메일을 맡았습니다",
+    "systemReassigned": "{{actor}}님이 {{previous}}님에서 {{target}}님으로 재배정하였습니다",
+    "systemUnassigned": "{{actor}}님이 {{previous}}님의 배정을 해제하였습니다"
   },
   "attachments": {
     "title": "첨부파일",

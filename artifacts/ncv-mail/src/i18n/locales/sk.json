@@ -2104,7 +2104,11 @@
     "mentionedYou": "Vás spomenul",
     "threadTitle_zero": "Tímový chat",
     "threadTitle_one": "Tímový chat",
-    "threadTitle_other": "Tímový chat"
+    "threadTitle_other": "Tímový chat",
+    "systemAssigned": "{{actor}} pridelil(a) tento e-mail používateľovi {{target}}",
+    "systemSelfAssigned": "{{actor}} si prevzal(a) tento e-mail",
+    "systemReassigned": "{{actor}} prepridelil(a) z {{previous}} na {{target}}",
+    "systemUnassigned": "{{actor}} zrušil(a) pridelenie {{previous}}"
   },
   "attachments": {
     "title": "Prílohy",

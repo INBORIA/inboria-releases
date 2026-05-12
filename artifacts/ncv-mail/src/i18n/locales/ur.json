@@ -2104,7 +2104,11 @@
     "mentionedYou": "آپ کو ذکر کیا ہے",
     "threadTitle_zero": "ٹیم چیٹ",
     "threadTitle_one": "ٹیم چیٹ",
-    "threadTitle_other": "ٹیم چیٹ"
+    "threadTitle_other": "ٹیم چیٹ",
+    "systemAssigned": "{{actor}} نے یہ ای میل {{target}} کو تفویض کی",
+    "systemSelfAssigned": "{{actor}} نے یہ ای میل خود سنبھال لی",
+    "systemReassigned": "{{actor}} نے تفویض {{previous}} سے {{target}} کو منتقل کی",
+    "systemUnassigned": "{{actor}} نے {{previous}} کی تفویض ختم کر دی"
   },
   "attachments": {
     "title": "منسلکات",

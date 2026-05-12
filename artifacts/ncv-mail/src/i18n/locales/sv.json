@@ -2104,7 +2104,11 @@
     "mentionedYou": "har nämnt dig",
     "threadTitle_zero": "Teamchatt",
     "threadTitle_one": "Teamchatt",
-    "threadTitle_other": "Teamchatt"
+    "threadTitle_other": "Teamchatt",
+    "systemAssigned": "{{actor}} tilldelade detta e-postmeddelande till {{target}}",
+    "systemSelfAssigned": "{{actor}} tog över detta e-postmeddelande",
+    "systemReassigned": "{{actor}} omtilldelade från {{previous}} till {{target}}",
+    "systemUnassigned": "{{actor}} tog bort tilldelningen av {{previous}}"
   },
   "attachments": {
     "title": "Bifogade filer",

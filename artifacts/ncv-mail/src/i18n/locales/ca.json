@@ -2104,7 +2104,11 @@
     "mentionedYou": "Vostè ha mencionat",
     "threadTitle_zero": "Xat de l'equip",
     "threadTitle_one": "Xat de l'equip",
-    "threadTitle_other": "Xat de l'equip"
+    "threadTitle_other": "Xat de l'equip",
+    "systemAssigned": "{{actor}} ha assignat aquest correu a {{target}}",
+    "systemSelfAssigned": "{{actor}} s'ha fet càrrec d'aquest correu",
+    "systemReassigned": "{{actor}} ha reassignat de {{previous}} a {{target}}",
+    "systemUnassigned": "{{actor}} ha tret l'assignació a {{previous}}"
   },
   "attachments": {
     "title": "Fitxers adjunts",

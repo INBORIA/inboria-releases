@@ -2104,7 +2104,11 @@
     "mentionedYou": "Вас је поменуо",
     "threadTitle_zero": "Тимски чет",
     "threadTitle_one": "Тимски чет",
-    "threadTitle_other": "Тимски чет"
+    "threadTitle_other": "Тимски чет",
+    "systemAssigned": "{{actor}} је доделио(ла) овај имејл кориснику {{target}}",
+    "systemSelfAssigned": "{{actor}} је преузео(ла) овај имејл",
+    "systemReassigned": "{{actor}} је пребацио(ла) доделу са {{previous}} на {{target}}",
+    "systemUnassigned": "{{actor}} је уклонио(ла) доделу за {{previous}}"
   },
   "attachments": {
     "title": "Прикачени фајлови",

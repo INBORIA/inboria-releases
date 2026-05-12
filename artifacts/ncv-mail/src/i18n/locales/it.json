@@ -2104,7 +2104,11 @@
     "mentionedYou": "Le ha menzionato",
     "threadTitle_zero": "Chat del team",
     "threadTitle_one": "Chat del team",
-    "threadTitle_other": "Chat del team"
+    "threadTitle_other": "Chat del team",
+    "systemAssigned": "{{actor}} ha assegnato questa email a {{target}}",
+    "systemSelfAssigned": "{{actor}} ha preso in carico questa email",
+    "systemReassigned": "{{actor}} ha riassegnato da {{previous}} a {{target}}",
+    "systemUnassigned": "{{actor}} ha rimosso l'assegnazione di {{previous}}"
   },
   "attachments": {
     "title": "Allegati",

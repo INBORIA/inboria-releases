@@ -2104,7 +2104,11 @@
     "mentionedYou": "提及了您",
     "threadTitle_zero": "团队聊天",
     "threadTitle_one": "团队聊天",
-    "threadTitle_other": "团队聊天"
+    "threadTitle_other": "团队聊天",
+    "systemAssigned": "{{actor}} 已将此邮件分配给 {{target}}",
+    "systemSelfAssigned": "{{actor}} 已认领此邮件",
+    "systemReassigned": "{{actor}} 已将此邮件从 {{previous}} 重新分配给 {{target}}",
+    "systemUnassigned": "{{actor}} 已取消 {{previous}} 的分配"
   },
   "attachments": {
     "title": "附件",

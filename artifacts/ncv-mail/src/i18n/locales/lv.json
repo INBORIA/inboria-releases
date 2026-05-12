@@ -2104,7 +2104,11 @@
     "mentionedYou": "Jūs pieminēja",
     "threadTitle_zero": "Komandas tērzēšana",
     "threadTitle_one": "Komandas tērzēšana",
-    "threadTitle_other": "Komandas tērzēšana"
+    "threadTitle_other": "Komandas tērzēšana",
+    "systemAssigned": "{{actor}} piešķīra šo e-pastu lietotājam {{target}}",
+    "systemSelfAssigned": "{{actor}} pārņēma šo e-pastu",
+    "systemReassigned": "{{actor}} pārpiešķīra no {{previous}} uz {{target}}",
+    "systemUnassigned": "{{actor}} atcēla {{previous}} piešķiršanu"
   },
   "attachments": {
     "title": "Pielikumi",

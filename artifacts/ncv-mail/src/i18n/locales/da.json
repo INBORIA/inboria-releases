@@ -2104,7 +2104,11 @@
     "mentionedYou": "har nævnt dig",
     "threadTitle_zero": "Teamchat",
     "threadTitle_one": "Teamchat",
-    "threadTitle_other": "Teamchat"
+    "threadTitle_other": "Teamchat",
+    "systemAssigned": "{{actor}} tildelte denne e-mail til {{target}}",
+    "systemSelfAssigned": "{{actor}} overtog denne e-mail",
+    "systemReassigned": "{{actor}} omfordelte fra {{previous}} til {{target}}",
+    "systemUnassigned": "{{actor}} fjernede tildelingen af {{previous}}"
   },
   "attachments": {
     "title": "Vedhæftninger",

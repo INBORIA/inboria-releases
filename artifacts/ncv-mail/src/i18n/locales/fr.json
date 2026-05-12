@@ -2124,7 +2124,11 @@
     "mentionedYou": "vous a mentionné",
     "threadTitle_zero": "Chat équipe",
     "threadTitle_one": "Chat équipe",
-    "threadTitle_other": "Chat équipe"
+    "threadTitle_other": "Chat équipe",
+    "systemAssigned": "{{actor}} a assigné ce mail à {{target}}",
+    "systemSelfAssigned": "{{actor}} a pris ce mail en charge",
+    "systemReassigned": "{{actor}} a réassigné de {{previous}} à {{target}}",
+    "systemUnassigned": "{{actor}} a désassigné {{previous}}"
   },
   "attachments": {
     "title": "Pièces jointes",

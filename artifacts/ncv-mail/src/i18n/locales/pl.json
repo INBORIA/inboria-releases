@@ -2104,7 +2104,11 @@
     "mentionedYou": "wspomniał Cię",
     "threadTitle_zero": "Czat zespołu",
     "threadTitle_one": "Czat zespołu",
-    "threadTitle_other": "Czat zespołu"
+    "threadTitle_other": "Czat zespołu",
+    "systemAssigned": "{{actor}} przypisał(a) tę wiadomość do {{target}}",
+    "systemSelfAssigned": "{{actor}} przejął(-ęła) tę wiadomość",
+    "systemReassigned": "{{actor}} przeniósł(-osła) przypisanie z {{previous}} na {{target}}",
+    "systemUnassigned": "{{actor}} usunął(-ęła) przypisanie {{previous}}"
   },
   "attachments": {
     "title": "Załączniki",

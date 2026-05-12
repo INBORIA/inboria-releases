@@ -2104,7 +2104,11 @@
     "mentionedYou": "ได้กล่าวถึงท่าน",
     "threadTitle_zero": "แชทของทีม",
     "threadTitle_one": "แชทของทีม",
-    "threadTitle_other": "แชทของทีม"
+    "threadTitle_other": "แชทของทีม",
+    "systemAssigned": "{{actor}} ได้มอบหมายอีเมลนี้ให้ {{target}}",
+    "systemSelfAssigned": "{{actor}} ได้รับอีเมลนี้ไปดูแล",
+    "systemReassigned": "{{actor}} ได้เปลี่ยนการมอบหมายจาก {{previous}} เป็น {{target}}",
+    "systemUnassigned": "{{actor}} ได้ยกเลิกการมอบหมาย {{previous}}"
   },
   "attachments": {
     "title": "ไฟล์แนบ",

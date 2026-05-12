@@ -2104,7 +2104,11 @@
     "mentionedYou": "megemlítette Önt",
     "threadTitle_zero": "Csapatchat",
     "threadTitle_one": "Csapatchat",
-    "threadTitle_other": "Csapatchat"
+    "threadTitle_other": "Csapatchat",
+    "systemAssigned": "{{actor}} hozzárendelte ezt az e-mailt Önhöz: {{target}}",
+    "systemSelfAssigned": "{{actor}} átvette ezt az e-mailt",
+    "systemReassigned": "{{actor}} áthelyezte a hozzárendelést {{previous}} helyett {{target}} részére",
+    "systemUnassigned": "{{actor}} visszavonta {{previous}} hozzárendelését"
   },
   "attachments": {
     "title": "Csatolmányok",

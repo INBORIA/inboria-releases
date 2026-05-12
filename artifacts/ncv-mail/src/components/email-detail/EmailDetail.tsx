@@ -1005,7 +1005,13 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
               )}
             </div>
 
-            <EmailComments emailId={email.id} currentUserId={currentUserId} email={email} />
+            <EmailComments
+              emailId={email.id}
+              currentUserId={currentUserId}
+              email={email}
+              assignedTo={email.assignedTo || null}
+              sharedMailboxId={email.sharedMailboxId || null}
+            />
 
             {taskFormOpen && (
               <div className="px-4 pb-4 border-t border-border pt-3 space-y-2.5">

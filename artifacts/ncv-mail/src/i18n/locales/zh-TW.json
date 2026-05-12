@@ -2104,7 +2104,11 @@
     "mentionedYou": "已提及您",
     "threadTitle_zero": "團隊聊天",
     "threadTitle_one": "團隊聊天",
-    "threadTitle_other": "團隊聊天"
+    "threadTitle_other": "團隊聊天",
+    "systemAssigned": "{{actor}} 已將此電郵指派給 {{target}}",
+    "systemSelfAssigned": "{{actor}} 已接手此電郵",
+    "systemReassigned": "{{actor}} 已將指派從 {{previous}} 改為 {{target}}",
+    "systemUnassigned": "{{actor}} 已取消 {{previous}} 的指派"
   },
   "attachments": {
     "title": "附件",

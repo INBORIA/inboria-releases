@@ -2104,7 +2104,11 @@
     "mentionedYou": "упомянул(а) Вас",
     "threadTitle_zero": "Командный чат",
     "threadTitle_one": "Командный чат",
-    "threadTitle_other": "Командный чат"
+    "threadTitle_other": "Командный чат",
+    "systemAssigned": "{{actor}} назначил(а) это письмо пользователю {{target}}",
+    "systemSelfAssigned": "{{actor}} взял(а) это письмо",
+    "systemReassigned": "{{actor}} переназначил(а) с {{previous}} на {{target}}",
+    "systemUnassigned": "{{actor}} снял(а) назначение с {{previous}}"
   },
   "attachments": {
     "title": "Вложения",

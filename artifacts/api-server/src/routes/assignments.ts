@@ -1,9 +1,34 @@
 import { Router, type IRouter } from "express";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
-import { createNotification, logActivity, getOrgIdForUser, getUserName } from "../lib/activity";
+import { createNotification, logActivity, getUserName } from "../lib/activity";
 
 const router: IRouter = Router();
+
+// Préfixe-sentinelle pour les "bulles système" du chat équipe.
+// Le body d'un email_comment commence par ce préfixe + un JSON sérialisé
+// décrivant l'événement. Le frontend reconnaît ce marqueur et rend
+// la bulle d'une manière distincte (centrée, sans avatar). Permet
+// d'ajouter ce nouveau type de message sans migrer le schéma.
+const SYS_PREFIX = "__SYS__:";
+
+type SysEvent =
+  | { event: "assign"; actor: string; actorName: string; target: string; targetName: string; selfAssign?: boolean }
+  | { event: "reassign"; actor: string; actorName: string; previous: string; previousName: string; target: string; targetName: string }
+  | { event: "unassign"; actor: string; actorName: string; previous: string; previousName: string };
+
+async function insertSystemComment(emailId: number, actorUserId: string, payload: SysEvent) {
+  try {
+    await supabaseAdmin.from("email_comments").insert({
+      email_id: emailId,
+      user_id: actorUserId,
+      body: SYS_PREFIX + JSON.stringify(payload),
+      mentions: [],
+    });
+  } catch (e) {
+    console.error("Failed to insert system comment:", e);
+  }
+}
 
 async function getOrgIdForMember(userId: string): Promise<string | null> {
   const { data } = await supabaseAdmin
@@ -50,7 +75,7 @@ router.post("/emails/:emailId/assign", requireAuth, async (req, res): Promise<vo
 
     const { data: email } = await supabaseAdmin
       .from("emails")
-      .select("id, user_id, shared_mailbox_id")
+      .select("id, user_id, shared_mailbox_id, assigned_to")
       .eq("id", emailId)
       .single();
 
@@ -58,6 +83,8 @@ router.post("/emails/:emailId/assign", requireAuth, async (req, res): Promise<vo
       res.status(404).json({ error: "Email introuvable" });
       return;
     }
+
+    const previousAssignee: string | null = (email as any).assigned_to || null;
 
     const { data: emailOwnerOrg } = await supabaseAdmin
       .from("organisation_members")
@@ -119,17 +146,43 @@ router.post("/emails/:emailId/assign", requireAuth, async (req, res): Promise<vo
       .single();
 
     const assignerName = await getUserName(req.userId!);
+    const assigneeName = assigneeProfile?.full_name || (await getUserName(assignTo));
     const { data: emailSubject } = await supabaseAdmin
       .from("emails")
       .select("subject")
       .eq("id", emailId)
       .single();
 
+    // Bulle système dans le Chat équipe : assignation ou réassignation.
+    if (previousAssignee && previousAssignee !== assignTo) {
+      const previousName = await getUserName(previousAssignee);
+      await insertSystemComment(emailId, req.userId!, {
+        event: "reassign",
+        actor: req.userId!,
+        actorName: assignerName,
+        previous: previousAssignee,
+        previousName,
+        target: assignTo,
+        targetName: assigneeName,
+      });
+    } else if (!previousAssignee) {
+      await insertSystemComment(emailId, req.userId!, {
+        event: "assign",
+        actor: req.userId!,
+        actorName: assignerName,
+        target: assignTo,
+        targetName: assigneeName,
+        selfAssign: assignTo === req.userId!,
+      });
+    }
+
+    // Notification in-app enrichie : on invite explicitement à ouvrir le
+    // chat équipe (au lieu de la simple "vous a assigné: ...").
     createNotification({
       userId: assignTo,
       type: "email_assigned",
-      title: "Email assigné",
-      message: `${assignerName} vous a assigné: "${emailSubject?.subject || "Sans sujet"}"`,
+      title: "Email assigné · Chat équipe ouvert",
+      message: `${assignerName} vous a assigné « ${emailSubject?.subject || "Sans sujet"} » · cliquer pour ouvrir le chat équipe`,
       emailId,
       triggeredBy: req.userId!,
     });
@@ -206,6 +259,8 @@ router.post("/emails/:emailId/unassign", requireAuth, async (req, res): Promise<
       }
     }
 
+    const previousAssignee: string | null = email.assigned_to || null;
+
     const unassignUpdates: Record<string, unknown> = { assigned_to: null, assigned_at: null };
     // For shared mailbox emails, releasing assignment also releases the
     // implicit claim, so the email returns to the "unclaimed" pool.
@@ -222,6 +277,18 @@ router.post("/emails/:emailId/unassign", requireAuth, async (req, res): Promise<
     if (error) {
       res.status(500).json({ error: "Erreur lors du retrait de l'assignation" });
       return;
+    }
+
+    if (previousAssignee) {
+      const actorName = await getUserName(req.userId!);
+      const previousName = await getUserName(previousAssignee);
+      await insertSystemComment(emailId, req.userId!, {
+        event: "unassign",
+        actor: req.userId!,
+        actorName,
+        previous: previousAssignee,
+        previousName,
+      });
     }
 
     res.json({ success: true });

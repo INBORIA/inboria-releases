@@ -2104,7 +2104,11 @@
     "mentionedYou": "σας ανέφερε",
     "threadTitle_zero": "Συνομιλία ομάδας",
     "threadTitle_one": "Συνομιλία ομάδας",
-    "threadTitle_other": "Συνομιλία ομάδας"
+    "threadTitle_other": "Συνομιλία ομάδας",
+    "systemAssigned": "Ο/Η {{actor}} ανέθεσε αυτό το email στον/στην {{target}}",
+    "systemSelfAssigned": "Ο/Η {{actor}} ανέλαβε αυτό το email",
+    "systemReassigned": "Ο/Η {{actor}} επανέθεσε από {{previous}} σε {{target}}",
+    "systemUnassigned": "Ο/Η {{actor}} κατάργησε την ανάθεση του/της {{previous}}"
   },
   "attachments": {
     "title": "Συνημμένα",

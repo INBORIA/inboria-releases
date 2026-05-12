@@ -2104,7 +2104,11 @@
     "mentionedYou": "v-a menționat",
     "threadTitle_zero": "Chat de echipă",
     "threadTitle_one": "Chat de echipă",
-    "threadTitle_other": "Chat de echipă"
+    "threadTitle_other": "Chat de echipă",
+    "systemAssigned": "{{actor}} a atribuit acest e-mail lui {{target}}",
+    "systemSelfAssigned": "{{actor}} a preluat acest e-mail",
+    "systemReassigned": "{{actor}} a reatribuit de la {{previous}} la {{target}}",
+    "systemUnassigned": "{{actor}} a retras atribuirea lui {{previous}}"
   },
   "attachments": {
     "title": "Atașamente",

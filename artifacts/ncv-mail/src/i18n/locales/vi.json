@@ -2104,7 +2104,11 @@
     "mentionedYou": "Quý khách đã được đề cập",
     "threadTitle_zero": "Trò chuyện nhóm",
     "threadTitle_one": "Trò chuyện nhóm",
-    "threadTitle_other": "Trò chuyện nhóm"
+    "threadTitle_other": "Trò chuyện nhóm",
+    "systemAssigned": "{{actor}} đã giao thư này cho {{target}}",
+    "systemSelfAssigned": "{{actor}} đã nhận thư này",
+    "systemReassigned": "{{actor}} đã chuyển giao từ {{previous}} sang {{target}}",
+    "systemUnassigned": "{{actor}} đã hủy giao cho {{previous}}"
   },
   "attachments": {
     "title": "Tập tin đính kèm",

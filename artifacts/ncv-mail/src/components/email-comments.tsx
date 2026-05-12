@@ -50,14 +50,34 @@ interface ThreadEmailMeta {
   createdAt?: string;
 }
 
+type SystemEventPayload =
+  | { event: "assign"; actor: string; actorName: string; target: string; targetName: string; selfAssign?: boolean }
+  | { event: "reassign"; actor: string; actorName: string; previous: string; previousName: string; target: string; targetName: string }
+  | { event: "unassign"; actor: string; actorName: string; previous: string; previousName: string };
+
+const SYS_PREFIX = "__SYS__:";
+
+function parseSystemBody(body: string): SystemEventPayload | null {
+  if (!body || !body.startsWith(SYS_PREFIX)) return null;
+  try {
+    return JSON.parse(body.slice(SYS_PREFIX.length)) as SystemEventPayload;
+  } catch {
+    return null;
+  }
+}
+
 export function EmailComments({
   emailId,
   currentUserId,
   email,
+  assignedTo,
+  sharedMailboxId,
 }: {
   emailId: number;
   currentUserId?: string;
   email?: ThreadEmailMeta;
+  assignedTo?: string | null;
+  sharedMailboxId?: string | null;
 }) {
   const { t, i18n } = useTranslation();
   const { session } = useAuth();
@@ -202,6 +222,16 @@ export function EmailComments({
 
   const commentList = (comments as any[]) || [];
 
+  // Visibilité conditionnelle du Chat équipe :
+  // - Boîte partagée → toujours visible (toute l'équipe peut participer)
+  // - Mail assigné (à n'importe qui) → visible (collab assignant ↔ assigné)
+  // - Sinon, si des messages existent déjà (historique) → visible
+  // - Sinon (mail perso sans assignation) → masqué (rien à dire à personne)
+  const hasComments = commentList.length > 0;
+  const isShared = Boolean(sharedMailboxId);
+  const isAssigned = Boolean(assignedTo);
+  const chatVisible = isShared || isAssigned || hasComments;
+
   // ---------------------------------------------------------------
   // Realtime presence: who else is viewing this thread right now.
   // Uses Supabase Realtime channel "email-thread-<id>".
@@ -340,6 +370,8 @@ export function EmailComments({
     return s;
   }
 
+  if (!chatVisible) return null;
+
   return (
     <div className="border-t border-border">
       <div className="px-4 py-3">
@@ -426,6 +458,44 @@ export function EmailComments({
                 );
               }
               const comment = item.data;
+              const sys = parseSystemBody(comment.body);
+              if (sys) {
+                let label = "";
+                if (sys.event === "assign") {
+                  label = sys.selfAssign
+                    ? t("comments.systemSelfAssigned", { defaultValue: "{{actor}} a pris ce mail en charge", actor: sys.actorName })
+                    : t("comments.systemAssigned", { defaultValue: "{{actor}} a assigné ce mail à {{target}}", actor: sys.actorName, target: sys.targetName });
+                } else if (sys.event === "reassign") {
+                  label = t("comments.systemReassigned", {
+                    defaultValue: "{{actor}} a réassigné de {{previous}} à {{target}}",
+                    actor: sys.actorName,
+                    previous: sys.previousName,
+                    target: sys.targetName,
+                  });
+                } else if (sys.event === "unassign") {
+                  label = t("comments.systemUnassigned", {
+                    defaultValue: "{{actor}} a désassigné {{previous}}",
+                    actor: sys.actorName,
+                    previous: sys.previousName,
+                  });
+                }
+                return (
+                  <div key={`sys-${comment.id}`} className="relative flex items-center justify-center py-1">
+                    <span className="absolute -left-[19px] top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-[#374151] border-2 border-card" />
+                    <span
+                      className="text-[10px] text-[#b8c5d6] italic px-2 py-0.5 rounded bg-white/[0.03] border border-border/50"
+                      data-testid={`system-bubble-${sys.event}`}
+                    >
+                      {label}
+                      {comment.createdAt && (
+                        <span className="ml-1.5 text-[#7a8699] not-italic">
+                          · {format(new Date(comment.createdAt), "d MMM HH:mm", { locale: dateLocale })}
+                        </span>
+                      )}
+                    </span>
+                  </div>
+                );
+              }
               const isOwn = comment.userId === currentUserId;
               const isEditing = editingId === comment.id;
               return (

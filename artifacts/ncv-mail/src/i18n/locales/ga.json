@@ -2104,7 +2104,11 @@
     "mentionedYou": "d'áitigh sibh",
     "threadTitle_zero": "Comhrá foirne",
     "threadTitle_one": "Comhrá foirne",
-    "threadTitle_other": "Comhrá foirne"
+    "threadTitle_other": "Comhrá foirne",
+    "systemAssigned": "Sann {{actor}} an ríomhphost seo do {{target}}",
+    "systemSelfAssigned": "Ghlac {{actor}} cúram an ríomhphoist seo",
+    "systemReassigned": "D'athshann {{actor}} ó {{previous}} go {{target}}",
+    "systemUnassigned": "Bhain {{actor}} sannadh {{previous}}"
   },
   "attachments": {
     "title": "Ceangaltáin",

@@ -2104,7 +2104,11 @@
     "mentionedYou": "Вам згадали",
     "threadTitle_zero": "Командний чат",
     "threadTitle_one": "Командний чат",
-    "threadTitle_other": "Командний чат"
+    "threadTitle_other": "Командний чат",
+    "systemAssigned": "{{actor}} призначив(-ла) цей лист {{target}}",
+    "systemSelfAssigned": "{{actor}} взяв(-ла) цей лист",
+    "systemReassigned": "{{actor}} перепризначив(-ла) з {{previous}} на {{target}}",
+    "systemUnassigned": "{{actor}} зняв(-ла) призначення {{previous}}"
   },
   "attachments": {
     "title": "Вкладення",

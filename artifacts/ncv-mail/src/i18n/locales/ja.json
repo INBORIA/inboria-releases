@@ -2104,7 +2104,11 @@
     "mentionedYou": "あなたがメンションされました",
     "threadTitle_zero": "チームチャット",
     "threadTitle_one": "チームチャット",
-    "threadTitle_other": "チームチャット"
+    "threadTitle_other": "チームチャット",
+    "systemAssigned": "{{actor}}さんがこのメールを{{target}}さんに割り当てました",
+    "systemSelfAssigned": "{{actor}}さんがこのメールを引き受けました",
+    "systemReassigned": "{{actor}}さんが{{previous}}さんから{{target}}さんへ再割り当てしました",
+    "systemUnassigned": "{{actor}}さんが{{previous}}さんの割り当てを解除しました"
   },
   "attachments": {
     "title": "添付ファイル",

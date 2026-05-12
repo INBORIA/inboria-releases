@@ -2104,7 +2104,11 @@
     "mentionedYou": "har nevnt deg",
     "threadTitle_zero": "Teamchat",
     "threadTitle_one": "Teamchat",
-    "threadTitle_other": "Teamchat"
+    "threadTitle_other": "Teamchat",
+    "systemAssigned": "{{actor}} tildelte denne e-posten til {{target}}",
+    "systemSelfAssigned": "{{actor}} tok over denne e-posten",
+    "systemReassigned": "{{actor}} omfordelte fra {{previous}} til {{target}}",
+    "systemUnassigned": "{{actor}} fjernet tildelingen av {{previous}}"
   },
   "attachments": {
     "title": "Vedlegg",

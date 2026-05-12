@@ -2104,7 +2104,11 @@
     "mentionedYou": "Vas je spomenuo",
     "threadTitle_zero": "Timski chat",
     "threadTitle_one": "Timski chat",
-    "threadTitle_other": "Timski chat"
+    "threadTitle_other": "Timski chat",
+    "systemAssigned": "{{actor}} je dodijelio(la) ovu e-poštu korisniku {{target}}",
+    "systemSelfAssigned": "{{actor}} je preuzeo(la) ovu e-poštu",
+    "systemReassigned": "{{actor}} je prebacio(la) dodjelu s {{previous}} na {{target}}",
+    "systemUnassigned": "{{actor}} je uklonio(la) dodjelu za {{previous}}"
   },
   "attachments": {
     "title": "Privitci",

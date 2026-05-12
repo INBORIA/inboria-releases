@@ -2104,7 +2104,11 @@
     "mentionedYou": "លោកអ្នកបានរាយការណ៍",
     "threadTitle_zero": "ការជជែកក្រុម",
     "threadTitle_one": "ការជជែកក្រុម",
-    "threadTitle_other": "ការជជែកក្រុម"
+    "threadTitle_other": "ការជជែកក្រុម",
+    "systemAssigned": "{{actor}} បានចាត់តាំងអ៊ីមែលនេះទៅ {{target}}",
+    "systemSelfAssigned": "{{actor}} បានទទួលយកអ៊ីមែលនេះ",
+    "systemReassigned": "{{actor}} បានចាត់តាំងឡើងវិញពី {{previous}} ទៅ {{target}}",
+    "systemUnassigned": "{{actor}} បានដកការចាត់តាំងពី {{previous}}"
   },
   "attachments": {
     "title": "ឯកសារភ្ជាប់",

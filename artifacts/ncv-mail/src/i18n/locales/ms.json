@@ -2104,7 +2104,11 @@
     "mentionedYou": "anda telah disebut",
     "threadTitle_zero": "Sembang pasukan",
     "threadTitle_one": "Sembang pasukan",
-    "threadTitle_other": "Sembang pasukan"
+    "threadTitle_other": "Sembang pasukan",
+    "systemAssigned": "{{actor}} telah menugaskan e-mel ini kepada {{target}}",
+    "systemSelfAssigned": "{{actor}} telah mengambil alih e-mel ini",
+    "systemReassigned": "{{actor}} telah menugaskan semula daripada {{previous}} kepada {{target}}",
+    "systemUnassigned": "{{actor}} telah membatalkan penugasan {{previous}}"
   },
   "attachments": {
     "title": "Lampiran",

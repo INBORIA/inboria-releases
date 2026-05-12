@@ -2114,7 +2114,11 @@
     "mentionedYou": "te ha mencionado",
     "threadTitle_zero": "Chat de equipo",
     "threadTitle_one": "Chat de equipo",
-    "threadTitle_other": "Chat de equipo"
+    "threadTitle_other": "Chat de equipo",
+    "systemAssigned": "{{actor}} ha asignado este correo a {{target}}",
+    "systemSelfAssigned": "{{actor}} se ha encargado de este correo",
+    "systemReassigned": "{{actor}} ha reasignado de {{previous}} a {{target}}",
+    "systemUnassigned": "{{actor}} ha quitado la asignación a {{previous}}"
   },
   "attachments": {
     "title": "Adjuntos",

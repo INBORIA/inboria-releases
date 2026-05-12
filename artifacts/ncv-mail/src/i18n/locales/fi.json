@@ -2104,7 +2104,11 @@
     "mentionedYou": "on maininnut teidät",
     "threadTitle_zero": "Tiimichat",
     "threadTitle_one": "Tiimichat",
-    "threadTitle_other": "Tiimichat"
+    "threadTitle_other": "Tiimichat",
+    "systemAssigned": "{{actor}} osoitti tämän sähköpostin käyttäjälle {{target}}",
+    "systemSelfAssigned": "{{actor}} otti tämän sähköpostin hoitaakseen",
+    "systemReassigned": "{{actor}} siirsi osoituksen käyttäjältä {{previous}} käyttäjälle {{target}}",
+    "systemUnassigned": "{{actor}} poisti käyttäjän {{previous}} osoituksen"
   },
   "attachments": {
     "title": "Liitteet",

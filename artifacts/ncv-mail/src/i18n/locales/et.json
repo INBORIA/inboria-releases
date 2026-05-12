@@ -2104,7 +2104,11 @@
     "mentionedYou": "on Teid maininud",
     "threadTitle_zero": "Meeskonna vestlus",
     "threadTitle_one": "Meeskonna vestlus",
-    "threadTitle_other": "Meeskonna vestlus"
+    "threadTitle_other": "Meeskonna vestlus",
+    "systemAssigned": "{{actor}} määras selle e-kirja kasutajale {{target}}",
+    "systemSelfAssigned": "{{actor}} võttis selle e-kirja enda peale",
+    "systemReassigned": "{{actor}} määras ümber kasutajalt {{previous}} kasutajale {{target}}",
+    "systemUnassigned": "{{actor}} eemaldas kasutaja {{previous}} määrangu"
   },
   "attachments": {
     "title": "Manused",

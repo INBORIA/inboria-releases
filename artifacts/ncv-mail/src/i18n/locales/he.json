@@ -2104,7 +2104,11 @@
     "mentionedYou": "הזכיר אותך",
     "threadTitle_zero": "צ'אט צוות",
     "threadTitle_one": "צ'אט צוות",
-    "threadTitle_other": "צ'אט צוות"
+    "threadTitle_other": "צ'אט צוות",
+    "systemAssigned": "{{actor}} הקצה דוא״ל זה אל {{target}}",
+    "systemSelfAssigned": "{{actor}} לקח אחריות על דוא״ל זה",
+    "systemReassigned": "{{actor}} העביר את ההקצאה מ-{{previous}} אל {{target}}",
+    "systemUnassigned": "{{actor}} ביטל את ההקצאה של {{previous}}"
   },
   "attachments": {
     "title": "קבצים מצורפים",

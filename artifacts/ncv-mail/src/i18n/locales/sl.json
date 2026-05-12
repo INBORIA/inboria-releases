@@ -2104,7 +2104,11 @@
     "mentionedYou": "Vas je omenil",
     "threadTitle_zero": "Ekipni klepet",
     "threadTitle_one": "Ekipni klepet",
-    "threadTitle_other": "Ekipni klepet"
+    "threadTitle_other": "Ekipni klepet",
+    "systemAssigned": "{{actor}} je dodelil(a) to e-pošto uporabniku {{target}}",
+    "systemSelfAssigned": "{{actor}} je prevzel(a) to e-pošto",
+    "systemReassigned": "{{actor}} je prerazporedil(a) z {{previous}} na {{target}}",
+    "systemUnassigned": "{{actor}} je odstranil(a) dodelitev za {{previous}}"
   },
   "attachments": {
     "title": "Priponke",

@@ -2104,7 +2104,11 @@
     "mentionedYou": "lhe mencionou",
     "threadTitle_zero": "Chat da equipa",
     "threadTitle_one": "Chat da equipa",
-    "threadTitle_other": "Chat da equipa"
+    "threadTitle_other": "Chat da equipa",
+    "systemAssigned": "{{actor}} atribuiu este e-mail a {{target}}",
+    "systemSelfAssigned": "{{actor}} assumiu este e-mail",
+    "systemReassigned": "{{actor}} reatribuiu de {{previous}} para {{target}}",
+    "systemUnassigned": "{{actor}} retirou a atribuição de {{previous}}"
   },
   "attachments": {
     "title": "Anexos",

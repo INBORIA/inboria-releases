@@ -2104,7 +2104,11 @@
     "mentionedYou": "قام أحدهم بالإشارة إليكم",
     "threadTitle_zero": "محادثة الفريق",
     "threadTitle_one": "محادثة الفريق",
-    "threadTitle_other": "محادثة الفريق"
+    "threadTitle_other": "محادثة الفريق",
+    "systemAssigned": "قام {{actor}} بإسناد هذا البريد الإلكتروني إلى {{target}}",
+    "systemSelfAssigned": "تولى {{actor}} هذا البريد الإلكتروني",
+    "systemReassigned": "قام {{actor}} بإعادة الإسناد من {{previous}} إلى {{target}}",
+    "systemUnassigned": "ألغى {{actor}} إسناد {{previous}}"
   },
   "attachments": {
     "title": "المرفقات",

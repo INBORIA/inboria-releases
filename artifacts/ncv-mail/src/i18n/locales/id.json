@@ -2104,7 +2104,11 @@
     "mentionedYou": "Anda disebut",
     "threadTitle_zero": "Obrolan tim",
     "threadTitle_one": "Obrolan tim",
-    "threadTitle_other": "Obrolan tim"
+    "threadTitle_other": "Obrolan tim",
+    "systemAssigned": "{{actor}} menugaskan email ini kepada {{target}}",
+    "systemSelfAssigned": "{{actor}} mengambil alih email ini",
+    "systemReassigned": "{{actor}} menugaskan ulang dari {{previous}} kepada {{target}}",
+    "systemUnassigned": "{{actor}} membatalkan penugasan {{previous}}"
   },
   "attachments": {
     "title": "Lampiran",

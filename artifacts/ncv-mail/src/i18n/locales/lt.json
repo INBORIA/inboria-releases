@@ -2104,7 +2104,11 @@
     "mentionedYou": "Jūs paminėjote",
     "threadTitle_zero": "Komandos pokalbis",
     "threadTitle_one": "Komandos pokalbis",
-    "threadTitle_other": "Komandos pokalbis"
+    "threadTitle_other": "Komandos pokalbis",
+    "systemAssigned": "{{actor}} priskyrė šį laišką naudotojui {{target}}",
+    "systemSelfAssigned": "{{actor}} perėmė šį laišką",
+    "systemReassigned": "{{actor}} perskyrė nuo {{previous}} į {{target}}",
+    "systemUnassigned": "{{actor}} panaikino {{previous}} priskyrimą"
   },
   "attachments": {
     "title": "Prisegtukai",

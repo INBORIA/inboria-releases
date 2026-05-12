@@ -15,7 +15,7 @@ router.get("/emails/:emailId/comments", requireAuth, async (req, res): Promise<v
 
     const { data: email } = await supabaseAdmin
       .from("emails")
-      .select("id, user_id, shared_mailbox_id")
+      .select("id, user_id, shared_mailbox_id, assigned_to")
       .eq("id", emailId)
       .single();
 
@@ -89,6 +89,11 @@ router.post("/emails/:emailId/comments", requireAuth, async (req, res): Promise<
     const { body, mentions } = req.body;
     if (!body || !body.trim()) {
       res.status(400).json({ error: "Le commentaire ne peut pas être vide" });
+      return;
+    }
+
+    if (body.trim().startsWith("__SYS__:")) {
+      res.status(400).json({ error: "Format de commentaire réservé" });
       return;
     }
 
@@ -234,9 +239,14 @@ router.put("/emails/:emailId/comments/:commentId", requireAuth, async (req, res)
       return;
     }
 
+    if (body.trim().startsWith("__SYS__:")) {
+      res.status(400).json({ error: "Format de commentaire réservé" });
+      return;
+    }
+
     const { data: comment } = await supabaseAdmin
       .from("email_comments")
-      .select("id, user_id")
+      .select("id, user_id, body")
       .eq("id", req.params.commentId)
       .single();
 
@@ -247,6 +257,11 @@ router.put("/emails/:emailId/comments/:commentId", requireAuth, async (req, res)
 
     if (comment.user_id !== req.userId!) {
       res.status(403).json({ error: "Vous ne pouvez modifier que vos propres commentaires" });
+      return;
+    }
+
+    if (typeof comment.body === "string" && comment.body.startsWith("__SYS__:")) {
+      res.status(403).json({ error: "Ce message système ne peut pas être modifié" });
       return;
     }
 
@@ -270,7 +285,7 @@ router.delete("/emails/:emailId/comments/:commentId", requireAuth, async (req, r
   try {
     const { data: comment } = await supabaseAdmin
       .from("email_comments")
-      .select("id, user_id")
+      .select("id, user_id, body")
       .eq("id", req.params.commentId)
       .single();
 
@@ -281,6 +296,11 @@ router.delete("/emails/:emailId/comments/:commentId", requireAuth, async (req, r
 
     if (comment.user_id !== req.userId!) {
       res.status(403).json({ error: "Vous ne pouvez supprimer que vos propres commentaires" });
+      return;
+    }
+
+    if (typeof comment.body === "string" && comment.body.startsWith("__SYS__:")) {
+      res.status(403).json({ error: "Ce message système ne peut pas être supprimé" });
       return;
     }
 
@@ -295,8 +315,12 @@ router.delete("/emails/:emailId/comments/:commentId", requireAuth, async (req, r
   }
 });
 
-async function checkEmailAccess(email: { user_id: string; shared_mailbox_id: string | null }, userId: string): Promise<boolean> {
+async function checkEmailAccess(
+  email: { user_id: string; shared_mailbox_id: string | null; assigned_to?: string | null },
+  userId: string,
+): Promise<boolean> {
   if (email.user_id === userId) return true;
+  if (email.assigned_to && email.assigned_to === userId) return true;
 
   if (email.shared_mailbox_id) {
     const { data: member } = await supabaseAdmin

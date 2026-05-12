@@ -2104,7 +2104,11 @@
     "mentionedYou": "sizi bahsetti",
     "threadTitle_zero": "Takım sohbeti",
     "threadTitle_one": "Takım sohbeti",
-    "threadTitle_other": "Takım sohbeti"
+    "threadTitle_other": "Takım sohbeti",
+    "systemAssigned": "{{actor}}, bu e-postayı {{target}} kişisine atadı",
+    "systemSelfAssigned": "{{actor}}, bu e-postayı üstlendi",
+    "systemReassigned": "{{actor}}, atamayı {{previous}} kişisinden {{target}} kişisine aktardı",
+    "systemUnassigned": "{{actor}}, {{previous}} için atamayı kaldırdı"
   },
   "attachments": {
     "title": "Ekler",

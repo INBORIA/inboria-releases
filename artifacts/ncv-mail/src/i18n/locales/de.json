@@ -2114,7 +2114,11 @@
     "mentionedYou": "hat Sie erwähnt",
     "threadTitle_zero": "Team-Chat",
     "threadTitle_one": "Team-Chat",
-    "threadTitle_other": "Team-Chat"
+    "threadTitle_other": "Team-Chat",
+    "systemAssigned": "{{actor}} hat diese E-Mail {{target}} zugewiesen",
+    "systemSelfAssigned": "{{actor}} hat diese E-Mail übernommen",
+    "systemReassigned": "{{actor}} hat von {{previous}} an {{target}} neu zugewiesen",
+    "systemUnassigned": "{{actor}} hat die Zuweisung von {{previous}} aufgehoben"
   },
   "attachments": {
     "title": "Anhänge",

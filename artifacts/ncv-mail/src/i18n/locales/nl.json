@@ -2114,7 +2114,11 @@
     "mentionedYou": "heeft u vermeld",
     "threadTitle_zero": "Teamchat",
     "threadTitle_one": "Teamchat",
-    "threadTitle_other": "Teamchat"
+    "threadTitle_other": "Teamchat",
+    "systemAssigned": "{{actor}} heeft deze e-mail toegewezen aan {{target}}",
+    "systemSelfAssigned": "{{actor}} heeft deze e-mail opgepakt",
+    "systemReassigned": "{{actor}} heeft opnieuw toegewezen van {{previous}} aan {{target}}",
+    "systemUnassigned": "{{actor}} heeft de toewijzing van {{previous}} ingetrokken"
   },
   "attachments": {
     "title": "Bijlagen",

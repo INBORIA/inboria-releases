@@ -2104,7 +2104,11 @@
     "mentionedYou": "Ви е споменал",
     "threadTitle_zero": "Чат на екипа",
     "threadTitle_one": "Чат на екипа",
-    "threadTitle_other": "Чат на екипа"
+    "threadTitle_other": "Чат на екипа",
+    "systemAssigned": "{{actor}} възложи този имейл на {{target}}",
+    "systemSelfAssigned": "{{actor}} пое този имейл",
+    "systemReassigned": "{{actor}} прехвърли възлагането от {{previous}} на {{target}}",
+    "systemUnassigned": "{{actor}} премахна възлагането на {{previous}}"
   },
   "attachments": {
     "title": "Прикачени файлове",
