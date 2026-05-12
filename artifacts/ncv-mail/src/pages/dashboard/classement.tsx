@@ -1308,7 +1308,7 @@ export default function Classement() {
                                     </span>
                                   )}
                                   {!isSystemCat && isUnused && (
-                                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-300 font-medium">
+                                    <span className="text-[10px] px-1.5 py-0.5 rounded bg-white/10 text-white font-medium">
                                       {t("classification.unusedBadge")}
                                     </span>
                                   )}
