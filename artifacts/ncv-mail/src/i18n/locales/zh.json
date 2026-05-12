@@ -505,7 +505,19 @@
     "sharedMailboxShort": "共享",
     "spamShort": "垃圾邮件",
     "askInboria": "询问 Inboria",
-    "assignedShort": "已分配"
+    "assignedShort": "已分配",
+    "sharedClaim": {
+      "all": "全部",
+      "unclaimed": "未认领",
+      "me": "我"
+    },
+    "sharedStatus": {
+      "all": "全部",
+      "open": "未处理",
+      "done": "已处理",
+      "slaBreach": "SLA 已超时",
+      "snoozed": "已推迟"
+    }
   },
   "sent": {
     "title": "已发送邮件",

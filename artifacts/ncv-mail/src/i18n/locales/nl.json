@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Gedeeld",
     "spamShort": "Spam",
     "askInboria": "Vraag Inboria",
-    "assignedShort": "Toegewezen"
+    "assignedShort": "Toegewezen",
+    "sharedClaim": {
+      "all": "Alle",
+      "unclaimed": "Niet opgenomen",
+      "me": "Mij"
+    },
+    "sharedStatus": {
+      "all": "Alle",
+      "open": "Open",
+      "done": "Afgehandeld",
+      "slaBreach": "SLA overschreden",
+      "snoozed": "Uitgesteld"
+    }
   },
   "sent": {
     "title": "Verzonden e-mails",

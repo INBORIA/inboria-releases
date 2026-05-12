@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Общие",
     "spamShort": "Спам",
     "askInboria": "Спросите Inboria",
-    "assignedShort": "Назначенные"
+    "assignedShort": "Назначенные",
+    "sharedClaim": {
+      "all": "Все",
+      "unclaimed": "Не взяты",
+      "me": "Я"
+    },
+    "sharedStatus": {
+      "all": "Все",
+      "open": "Не обработаны",
+      "done": "Обработаны",
+      "slaBreach": "Просрочен SLA",
+      "snoozed": "Отложены"
+    }
   },
   "sent": {
     "title": "Отправленные электронные почты",

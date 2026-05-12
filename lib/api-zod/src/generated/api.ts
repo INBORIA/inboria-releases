@@ -2487,7 +2487,24 @@ export const getSharedMailboxEmailsQueryLimitDefault = 50;
 export const getSharedMailboxEmailsQueryLimitMax = 100;
 
 export const GetSharedMailboxEmailsQueryParams = zod.object({
-  filter: zod.enum(["all", "unclaimed", "mine"]).optional(),
+  filter: zod
+    .enum(["all", "unclaimed", "mine"])
+    .optional()
+    .describe(
+      "Legacy filter (all\/unclaimed\/mine). Prefer claimedBy + status.",
+    ),
+  claimedBy: zod.coerce
+    .string()
+    .optional()
+    .describe(
+      '\"all\" = no filter, \"unclaimed\" = claimed_by IS NULL, \"me\" = current user,\notherwise interpreted as a user UUID.\n',
+    ),
+  status: zod
+    .enum(["all", "open", "done", "sla_breach", "snoozed"])
+    .optional()
+    .describe(
+      '\"all\" = no filter, \"open\" = not archived\/treated and not snoozed,\n\"done\" = archived\/treated, \"sla_breach\" = active SLA breach,\n\"snoozed\" = currently snoozed.\nWhen set to anything other than \"all\", emails received before the\nshared mailbox tracking_started_at are excluded.\n',
+    ),
   page: zod.coerce
     .number()
     .min(1)

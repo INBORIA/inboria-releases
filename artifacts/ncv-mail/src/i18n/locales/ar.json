@@ -505,7 +505,19 @@
     "sharedMailboxShort": "مشتركة",
     "spamShort": "البريد العشوائي",
     "askInboria": "اسألوا Inboria",
-    "assignedShort": "المُسندة"
+    "assignedShort": "المُسندة",
+    "sharedClaim": {
+      "all": "الكل",
+      "unclaimed": "غير معيّنة",
+      "me": "أنا"
+    },
+    "sharedStatus": {
+      "all": "الكل",
+      "open": "قيد المعالجة",
+      "done": "تمت المعالجة",
+      "slaBreach": "تجاوز SLA",
+      "snoozed": "مؤجلة"
+    }
   },
   "sent": {
     "title": "البريد الإلكتروني المرسل",

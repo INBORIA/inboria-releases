@@ -505,7 +505,19 @@
     "sharedMailboxShort": "مشترکہ",
     "spamShort": "اسپام",
     "askInboria": "Inboria سے پوچھیں",
-    "assignedShort": "تفویض شدہ"
+    "assignedShort": "تفویض شدہ",
+    "sharedClaim": {
+      "all": "تمام",
+      "unclaimed": "غیر تفویض شدہ",
+      "me": "میں"
+    },
+    "sharedStatus": {
+      "all": "تمام",
+      "open": "غیر حل شدہ",
+      "done": "حل شدہ",
+      "slaBreach": "SLA کی خلاف ورزی",
+      "snoozed": "ملتوی"
+    }
   },
   "sent": {
     "title": "بھیجے گئے ای میلز",

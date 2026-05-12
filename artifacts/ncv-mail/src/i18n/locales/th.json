@@ -505,7 +505,19 @@
     "sharedMailboxShort": "ที่แชร์",
     "spamShort": "สแปม",
     "askInboria": "ถาม Inboria",
-    "assignedShort": "ที่มอบหมาย"
+    "assignedShort": "ที่มอบหมาย",
+    "sharedClaim": {
+      "all": "ทั้งหมด",
+      "unclaimed": "ยังไม่รับเรื่อง",
+      "me": "ฉัน"
+    },
+    "sharedStatus": {
+      "all": "ทั้งหมด",
+      "open": "ยังไม่ดำเนินการ",
+      "done": "ดำเนินการแล้ว",
+      "slaBreach": "เกิน SLA",
+      "snoozed": "เลื่อนไว้"
+    }
   },
   "sent": {
     "title": "อีเมลที่ส่ง",

@@ -6,9 +6,28 @@
  * OpenAPI spec version: 0.1.0
  */
 import type { GetSharedMailboxEmailsFilter } from "./getSharedMailboxEmailsFilter";
+import type { GetSharedMailboxEmailsStatus } from "./getSharedMailboxEmailsStatus";
 
 export type GetSharedMailboxEmailsParams = {
+  /**
+   * Legacy filter (all/unclaimed/mine). Prefer claimedBy + status.
+   */
   filter?: GetSharedMailboxEmailsFilter;
+  /**
+ * "all" = no filter, "unclaimed" = claimed_by IS NULL, "me" = current user,
+otherwise interpreted as a user UUID.
+
+ */
+  claimedBy?: string;
+  /**
+ * "all" = no filter, "open" = not archived/treated and not snoozed,
+"done" = archived/treated, "sla_breach" = active SLA breach,
+"snoozed" = currently snoozed.
+When set to anything other than "all", emails received before the
+shared mailbox tracking_started_at are excluded.
+
+ */
+  status?: GetSharedMailboxEmailsStatus;
   /**
    * @minimum 1
    */

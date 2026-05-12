@@ -521,7 +521,19 @@
     "assigneeFilterMe": "mes emails assignés",
     "sharedMailboxShort": "Partagées",
     "spamShort": "Indésirables",
-    "assignedShort": "Assignés"
+    "assignedShort": "Assignés",
+    "sharedClaim": {
+      "all": "Tous",
+      "unclaimed": "Non pris en charge",
+      "me": "Moi"
+    },
+    "sharedStatus": {
+      "all": "Tous",
+      "open": "Non traités",
+      "done": "Traités",
+      "slaBreach": "SLA dépassé",
+      "snoozed": "Reportés"
+    }
   },
   "sent": {
     "title": "Emails envoyés",

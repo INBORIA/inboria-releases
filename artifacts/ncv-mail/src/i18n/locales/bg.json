@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Споделени",
     "spamShort": "Спам",
     "askInboria": "Попитайте Inboria",
-    "assignedShort": "Възложени"
+    "assignedShort": "Възложени",
+    "sharedClaim": {
+      "all": "Всички",
+      "unclaimed": "Непоети",
+      "me": "Аз"
+    },
+    "sharedStatus": {
+      "all": "Всички",
+      "open": "Необработени",
+      "done": "Обработени",
+      "slaBreach": "Просрочено SLA",
+      "snoozed": "Отложени"
+    }
   },
   "sent": {
     "title": "Изпратени имейли",

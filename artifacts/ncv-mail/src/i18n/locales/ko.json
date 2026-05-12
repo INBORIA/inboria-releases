@@ -505,7 +505,19 @@
     "sharedMailboxShort": "공유",
     "spamShort": "스팸",
     "askInboria": "Inboria에게 질문하기",
-    "assignedShort": "할당됨"
+    "assignedShort": "할당됨",
+    "sharedClaim": {
+      "all": "전체",
+      "unclaimed": "미할당",
+      "me": "나"
+    },
+    "sharedStatus": {
+      "all": "전체",
+      "open": "미처리",
+      "done": "처리됨",
+      "slaBreach": "SLA 초과",
+      "snoozed": "보류됨"
+    }
   },
   "sent": {
     "title": "보낸 이메일",

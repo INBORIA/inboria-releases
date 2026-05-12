@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Delade",
     "spamShort": "Skräppost",
     "askInboria": "Fråga Inboria",
-    "assignedShort": "Tilldelade"
+    "assignedShort": "Tilldelade",
+    "sharedClaim": {
+      "all": "Alla",
+      "unclaimed": "Ej tilldelade",
+      "me": "Jag"
+    },
+    "sharedStatus": {
+      "all": "Alla",
+      "open": "Obehandlade",
+      "done": "Behandlade",
+      "slaBreach": "SLA överskridet",
+      "snoozed": "Senarelagda"
+    }
   },
   "sent": {
     "title": "Skickade e-postmeddelanden",

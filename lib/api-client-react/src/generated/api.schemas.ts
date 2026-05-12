@@ -2076,7 +2076,25 @@ export type RemoveSharedMailboxMember200 = {
 };
 
 export type GetSharedMailboxEmailsParams = {
+  /**
+   * Legacy filter (all/unclaimed/mine). Prefer claimedBy + status.
+   */
   filter?: GetSharedMailboxEmailsFilter;
+  /**
+ * "all" = no filter, "unclaimed" = claimed_by IS NULL, "me" = current user,
+otherwise interpreted as a user UUID.
+
+ */
+  claimedBy?: string;
+  /**
+ * "all" = no filter, "open" = not archived/treated and not snoozed,
+"done" = archived/treated, "sla_breach" = active SLA breach,
+"snoozed" = currently snoozed.
+When set to anything other than "all", emails received before the
+shared mailbox tracking_started_at are excluded.
+
+ */
+  status?: GetSharedMailboxEmailsStatus;
   /**
    * @minimum 1
    */
@@ -2095,6 +2113,17 @@ export const GetSharedMailboxEmailsFilter = {
   all: "all",
   unclaimed: "unclaimed",
   mine: "mine",
+} as const;
+
+export type GetSharedMailboxEmailsStatus =
+  (typeof GetSharedMailboxEmailsStatus)[keyof typeof GetSharedMailboxEmailsStatus];
+
+export const GetSharedMailboxEmailsStatus = {
+  all: "all",
+  open: "open",
+  done: "done",
+  sla_breach: "sla_breach",
+  snoozed: "snoozed",
 } as const;
 
 export type ClaimSharedEmail200 = {

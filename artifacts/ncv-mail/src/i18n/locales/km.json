@@ -505,7 +505,19 @@
     "sharedMailboxShort": "បានចែករំលែក",
     "spamShort": "សារឥតបានការ",
     "askInboria": "សួរ Inboria",
-    "assignedShort": "បានចាត់តាំង"
+    "assignedShort": "បានចាត់តាំង",
+    "sharedClaim": {
+      "all": "ទាំងអស់",
+      "unclaimed": "មិនទាន់ទទួល",
+      "me": "ខ្ញុំ"
+    },
+    "sharedStatus": {
+      "all": "ទាំងអស់",
+      "open": "មិនទាន់ដោះស្រាយ",
+      "done": "បានដោះស្រាយ",
+      "slaBreach": "លើស SLA",
+      "snoozed": "បានពន្យារ"
+    }
   },
   "sent": {
     "title": "អ៊ីមែលដែលបានផ្ញើ",

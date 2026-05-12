@@ -458,7 +458,19 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
     const limit = Math.min(100, Math.max(1, parseInt(req.query.limit as string, 10) || 50));
     const from = (page - 1) * limit;
     const to = from + limit - 1;
-    const filter = req.query.filter as string;
+    const legacyFilter = req.query.filter as string | undefined;
+    const claimedByParam = (req.query.claimedBy as string | undefined) || undefined;
+    const statusParam = ((req.query.status as string | undefined) || "all").toLowerCase();
+    const nowIso = new Date().toISOString();
+
+    // Récupère le tracking_started_at de la boîte pour exclure l'historique
+    // pré-connexion sur les filtres « actifs ».
+    const { data: mbMeta } = await supabaseAdmin
+      .from("shared_mailboxes")
+      .select("tracking_started_at")
+      .eq("id", req.params.mailboxId)
+      .single();
+    const trackingStartedAt: string | null = (mbMeta as any)?.tracking_started_at || null;
 
     let countQuery = supabaseAdmin
       .from("emails")
@@ -468,17 +480,60 @@ router.get("/shared-mailboxes/:mailboxId/emails", requireAuth, async (req, res):
 
     let query = supabaseAdmin
       .from("emails")
-      .select("id, sender, subject, body, status, priority, summary, category_id, claimed_by, claimed_at, assigned_to, assigned_at, created_at")
+      .select("id, sender, subject, body, status, priority, summary, category_id, claimed_by, claimed_at, assigned_to, assigned_at, created_at, snoozed_until")
       .eq("shared_mailbox_id", req.params.mailboxId)
       .neq("status", "supprime")
       .order("created_at", { ascending: false });
 
-    if (filter === "unclaimed") {
+    // --- Filtre « Pris en charge par » -----------------------------------
+    // Compat: ancien param `filter` (all/unclaimed/mine).
+    const claim = claimedByParam || (legacyFilter === "mine" ? "me" : legacyFilter === "unclaimed" ? "unclaimed" : "all");
+    if (claim === "unclaimed") {
       query = query.is("claimed_by", null);
       countQuery = countQuery.is("claimed_by", null);
-    } else if (filter === "mine") {
+    } else if (claim === "me") {
       query = query.eq("claimed_by", req.userId!);
       countQuery = countQuery.eq("claimed_by", req.userId!);
+    } else if (claim && claim !== "all") {
+      // userId spécifique
+      query = query.eq("claimed_by", claim);
+      countQuery = countQuery.eq("claimed_by", claim);
+    }
+
+    // --- Filtre « Statut » -----------------------------------------------
+    // Sur tout statut ≠ all, on exclut l'historique pré-tracking pour ne pas
+    // noyer les nouveaux clients dans 2000 anciens mails « non traités ».
+    if (statusParam !== "all" && trackingStartedAt) {
+      query = query.gte("created_at", trackingStartedAt);
+      countQuery = countQuery.gte("created_at", trackingStartedAt);
+    }
+
+    if (statusParam === "open") {
+      // Non traité = pas archivé/traité ET pas snoozé.
+      query = query.not("status", "in", "(archived,traite,spam)").or(`snoozed_until.is.null,snoozed_until.lte.${nowIso}`);
+      countQuery = countQuery.not("status", "in", "(archived,traite,spam)").or(`snoozed_until.is.null,snoozed_until.lte.${nowIso}`);
+    } else if (statusParam === "done") {
+      query = query.in("status", ["archived", "traite"]);
+      countQuery = countQuery.in("status", ["archived", "traite"]);
+    } else if (statusParam === "snoozed") {
+      query = query.not("snoozed_until", "is", null).gt("snoozed_until", nowIso);
+      countQuery = countQuery.not("snoozed_until", "is", null).gt("snoozed_until", nowIso);
+    } else if (statusParam === "sla_breach") {
+      // Récupère les ids en breach actif POUR CETTE BOÎTE uniquement, via un
+      // join (PostgREST embed) sur emails.shared_mailbox_id — évite de charger
+      // l'ensemble global des breaches non résolues du tenant.
+      const { data: breachRows } = await supabaseAdmin
+        .from("sla_breaches")
+        .select("email_id, emails!inner(shared_mailbox_id)")
+        .is("resolved_at", null)
+        .eq("emails.shared_mailbox_id", req.params.mailboxId);
+      const breachIds = Array.from(new Set((breachRows || []).map((b: any) => Number(b.email_id)).filter((n: number) => Number.isFinite(n))));
+      if (breachIds.length === 0) {
+        res.json({ emails: [], total: 0, page, totalPages: 0 });
+        return;
+      }
+      query = query.in("id", breachIds as any);
+      countQuery = countQuery.in("id", breachIds as any);
     }
 
     query = query.range(from, to);

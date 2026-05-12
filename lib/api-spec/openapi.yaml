@@ -2252,9 +2252,30 @@ paths:
         - name: filter
           in: query
           required: false
+          description: Legacy filter (all/unclaimed/mine). Prefer claimedBy + status.
           schema:
             type: string
             enum: [all, unclaimed, mine]
+        - name: claimedBy
+          in: query
+          required: false
+          description: |
+            "all" = no filter, "unclaimed" = claimed_by IS NULL, "me" = current user,
+            otherwise interpreted as a user UUID.
+          schema:
+            type: string
+        - name: status
+          in: query
+          required: false
+          description: |
+            "all" = no filter, "open" = not archived/treated and not snoozed,
+            "done" = archived/treated, "sla_breach" = active SLA breach,
+            "snoozed" = currently snoozed.
+            When set to anything other than "all", emails received before the
+            shared mailbox tracking_started_at are excluded.
+          schema:
+            type: string
+            enum: [all, open, done, sla_breach, snoozed]
         - name: page
           in: query
           schema:

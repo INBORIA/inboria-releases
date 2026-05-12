@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Delte",
     "spamShort": "Søppelpost",
     "askInboria": "Spør Inboria",
-    "assignedShort": "Tildelt"
+    "assignedShort": "Tildelt",
+    "sharedClaim": {
+      "all": "Alle",
+      "unclaimed": "Ikke tildelt",
+      "me": "Meg"
+    },
+    "sharedStatus": {
+      "all": "Alle",
+      "open": "Ubehandlede",
+      "done": "Behandlede",
+      "slaBreach": "SLA overskredet",
+      "snoozed": "Utsatt"
+    }
   },
   "sent": {
     "title": "Sendte e-poster",

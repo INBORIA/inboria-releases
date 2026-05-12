@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Compartides",
     "spamShort": "Brossa",
     "askInboria": "Pregunteu a Inboria",
-    "assignedShort": "Assignats"
+    "assignedShort": "Assignats",
+    "sharedClaim": {
+      "all": "Tots",
+      "unclaimed": "Sense assignar",
+      "me": "Jo"
+    },
+    "sharedStatus": {
+      "all": "Tots",
+      "open": "Sense tractar",
+      "done": "Tractats",
+      "slaBreach": "SLA superat",
+      "snoozed": "Ajornats"
+    }
   },
   "sent": {
     "title": "Correu electrònic enviats",

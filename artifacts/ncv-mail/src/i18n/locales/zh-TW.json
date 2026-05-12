@@ -505,7 +505,19 @@
     "sharedMailboxShort": "共用",
     "spamShort": "垃圾郵件",
     "askInboria": "詢問 Inboria",
-    "assignedShort": "已指派"
+    "assignedShort": "已指派",
+    "sharedClaim": {
+      "all": "全部",
+      "unclaimed": "未認領",
+      "me": "我"
+    },
+    "sharedStatus": {
+      "all": "全部",
+      "open": "未處理",
+      "done": "已處理",
+      "slaBreach": "SLA 已逾時",
+      "snoozed": "已延後"
+    }
   },
   "sent": {
     "title": "已發送的電子郵件",

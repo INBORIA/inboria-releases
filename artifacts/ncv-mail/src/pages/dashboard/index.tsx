@@ -3092,6 +3092,11 @@ export default function Dashboard() {
 
   const [inboxMode, setInboxMode] = useState<InboxMode>("personal");
   const [selectedSharedMailboxId, setSelectedSharedMailboxId] = useState<string | null>(null);
+  // Vue Partagées « type Missive » — filtres serveur
+  // « Pris en charge par » : "all" | "unclaimed" | "me" | userId
+  // « Statut »            : "all" | "open" | "done" | "sla_breach" | "snoozed"
+  const [sharedClaimedBy, setSharedClaimedBy] = useState<string>("all");
+  const [sharedStatus, setSharedStatus] = useState<"all" | "open" | "done" | "sla_breach" | "snoozed">("all");
   const [filterCategory, setFilterCategory] = useState<string>("all");
   // Étape 5 — la section CATÉGORIES de la sidebar droite est repliable.
   // L'état est mémorisé en localStorage pour rester stable entre les visites.
@@ -3258,7 +3263,7 @@ export default function Dashboard() {
   const [sharedPage, setSharedPage] = useState(1);
   const { data: sharedEmailsData, isLoading: sharedEmailsLoading, isFetching: sharedFetching } = useGetSharedMailboxEmails(
     selectedSharedMailboxId || "",
-    { page: sharedPage, limit: 50 },
+    { page: sharedPage, limit: 50, claimedBy: sharedClaimedBy, status: sharedStatus } as any,
     { query: { enabled: !!selectedSharedMailboxId, placeholderData: (prev: any) => prev } as any }
   );
   const sharedPaged = sharedEmailsData as PaginatedSharedMailboxEmails | undefined;
@@ -3267,7 +3272,7 @@ export default function Dashboard() {
 
   useEffect(() => {
     setSharedPage(1);
-  }, [selectedSharedMailboxId]);
+  }, [selectedSharedMailboxId, sharedClaimedBy, sharedStatus]);
 
   const loadMoreShared = useCallback(() => {
     if (sharedHasMore && !sharedFetching) {
@@ -5271,6 +5276,41 @@ export default function Dashboard() {
             <div className="flex-1 min-w-0">
               {inboxMode === "shared" ? (
                 <>
+                  {/* Vue Partagées « type Missive » — 2 sélecteurs serveur :
+                      Pris en charge par + Statut. Filtres exhaustifs sur tout
+                      l'historique de la boîte (sauf statut ≠ Tous, qui
+                      ignore les emails antérieurs au tracking_started_at). */}
+                  {selectedSharedMailboxId && (
+                    <div className="flex flex-wrap items-center gap-2 mb-2">
+                      <Select value={sharedClaimedBy} onValueChange={setSharedClaimedBy}>
+                        <SelectTrigger className="w-[200px] h-7 bg-card border-border text-[#b8c5d6] text-[11px]" data-testid="select-shared-claimed-by">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border">
+                          <SelectItem value="all">{t("inbox.sharedClaim.all", "Tous")}</SelectItem>
+                          <SelectItem value="unclaimed">{t("inbox.sharedClaim.unclaimed", "Non pris en charge")}</SelectItem>
+                          <SelectItem value="me">{t("inbox.sharedClaim.me", "Moi")}</SelectItem>
+                          {(orgMembers as any[] | undefined)?.filter((m: any) => m.status === "active" && m.userId && m.userId !== (profile as any)?.id).map((m: any) => (
+                            <SelectItem key={m.userId} value={m.userId}>
+                              {m.fullName || m.email || m.userId}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <Select value={sharedStatus} onValueChange={(v) => setSharedStatus(v as any)}>
+                        <SelectTrigger className="w-[180px] h-7 bg-card border-border text-[#b8c5d6] text-[11px]" data-testid="select-shared-status">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-card border-border">
+                          <SelectItem value="all">{t("inbox.sharedStatus.all", "Tous")}</SelectItem>
+                          <SelectItem value="open">{t("inbox.sharedStatus.open", "Non traités")}</SelectItem>
+                          <SelectItem value="done">{t("inbox.sharedStatus.done", "Traités")}</SelectItem>
+                          <SelectItem value="sla_breach">{t("inbox.sharedStatus.slaBreach", "SLA dépassé")}</SelectItem>
+                          <SelectItem value="snoozed">{t("inbox.sharedStatus.snoozed", "Reportés")}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  )}
                   {sharedEmailsLoading ? (
                     <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border border-dashed bg-card/50">
                       <Loader2 className="w-6 h-6 text-primary animate-spin mb-3" />
@@ -5297,7 +5337,6 @@ export default function Dashboard() {
                       {sharedEmailsList.map((email) => {
                         const isClaimed = !!email.claimedBy;
                         const isClaimedByMe = email.claimedBy === (profile as any)?.id;
-                        const isSlaBreach = slaBreachIds.has(Number(email.id));
                         const isUnread = (email as any).status === "non_lu" || (email as any).isRead === false || (email as any).unread === true;
                         return (
                           <div
@@ -5333,6 +5372,29 @@ export default function Dashboard() {
                               )}
                             </div>
 
+                            {/* Colonne « Pris en charge par » — toujours visible
+                                pour identifier en un coup d'œil qui traite quoi
+                                (style Missive). Grisée si non pris en charge. */}
+                            <div
+                              className={`shrink-0 hidden md:flex items-center gap-1.5 w-[140px] text-[11px] ${isClaimed ? (isClaimedByMe ? "text-primary" : "text-[#b8c5d6]") : "text-[#5a6270] italic"}`}
+                              title={isClaimed ? `${t("inbox.claimedBy")} ${(email as any).claimedByName || t("sharedMailboxes.colleague")}` : t("inbox.sharedClaim.unclaimed", "Non pris en charge")}
+                            >
+                              {isClaimed ? (
+                                <>
+                                  <span className={`w-5 h-5 rounded-full ${isClaimedByMe ? "bg-primary/20 border border-primary/40" : "bg-white/[0.06] border border-white/10"} flex items-center justify-center shrink-0`}>
+                                    <span className="text-[9.5px] font-semibold uppercase">
+                                      {((email as any).claimedByName || "?").trim()[0] || "?"}
+                                    </span>
+                                  </span>
+                                  <span className="truncate">
+                                    {isClaimedByMe ? t("inbox.sharedClaim.me", "Moi") : ((email as any).claimedByName || t("sharedMailboxes.colleague"))}
+                                  </span>
+                                </>
+                              ) : (
+                                <span className="truncate">{t("inbox.sharedClaim.unclaimed", "Non pris en charge")}</span>
+                              )}
+                            </div>
+
                             {/* Bouton Prendre/Libérer : toujours visible
                                 (plus discret au repos, coloré au survol).
                                 Évite tout décalage et reste cliquable. */}
@@ -5363,15 +5425,10 @@ export default function Dashboard() {
                               </span>
                             )}
 
-                            {isSlaBreach && (
-                              <span
-                                className="shrink-0 inline-flex"
-                                title={t("inbox.slaOverdue", { defaultValue: "Délai de réponse dépassé (SLA)" })}
-                              >
-                                <AlertCircle className="w-3 h-3 text-red-400" />
-                              </span>
-                            )}
-
+                            {/* Indicateur SLA visuel retiré (Phase 1).
+                                Le statut « SLA dépassé » est désormais
+                                accessible uniquement via le sélecteur Statut
+                                au-dessus de la liste. */}
                             <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline shrink-0">
                               {email.createdAt ? format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale }) : ""}
                             </span>

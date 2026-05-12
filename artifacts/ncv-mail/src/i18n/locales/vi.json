@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Đã chia sẻ",
     "spamShort": "Thư rác",
     "askInboria": "Hỏi Inboria",
-    "assignedShort": "Đã giao"
+    "assignedShort": "Đã giao",
+    "sharedClaim": {
+      "all": "Tất cả",
+      "unclaimed": "Chưa nhận",
+      "me": "Tôi"
+    },
+    "sharedStatus": {
+      "all": "Tất cả",
+      "open": "Chưa xử lý",
+      "done": "Đã xử lý",
+      "slaBreach": "Vượt SLA",
+      "snoozed": "Đã hoãn"
+    }
   },
   "sent": {
     "title": "Email đã gửi",

@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Współdzielone",
     "spamShort": "Spam",
     "askInboria": "Zapytaj Inboria",
-    "assignedShort": "Przypisane"
+    "assignedShort": "Przypisane",
+    "sharedClaim": {
+      "all": "Wszystkie",
+      "unclaimed": "Nieprzejęte",
+      "me": "Ja"
+    },
+    "sharedStatus": {
+      "all": "Wszystkie",
+      "open": "Nieobsłużone",
+      "done": "Obsłużone",
+      "slaBreach": "Naruszenie SLA",
+      "snoozed": "Odłożone"
+    }
   },
   "sent": {
     "title": "Wysłane emaile",

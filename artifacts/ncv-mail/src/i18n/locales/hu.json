@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Megosztott",
     "spamShort": "Levélszemét",
     "askInboria": "Kérdezze Inboriát",
-    "assignedShort": "Hozzárendelt"
+    "assignedShort": "Hozzárendelt",
+    "sharedClaim": {
+      "all": "Összes",
+      "unclaimed": "Nem kezeltek",
+      "me": "Én"
+    },
+    "sharedStatus": {
+      "all": "Összes",
+      "open": "Feldolgozatlanok",
+      "done": "Feldolgozva",
+      "slaBreach": "SLA túllépés",
+      "snoozed": "Elhalasztva"
+    }
   },
   "sent": {
     "title": "Küldött emailek",

@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Dijeljeni",
     "spamShort": "Neželjena pošta",
     "askInboria": "Pitajte Inboria",
-    "assignedShort": "Dodijeljeno"
+    "assignedShort": "Dodijeljeno",
+    "sharedClaim": {
+      "all": "Sve",
+      "unclaimed": "Nepreuzeto",
+      "me": "Ja"
+    },
+    "sharedStatus": {
+      "all": "Sve",
+      "open": "Neobrađeno",
+      "done": "Obrađeno",
+      "slaBreach": "Prekoračen SLA",
+      "snoozed": "Odgođeno"
+    }
   },
   "sent": {
     "title": "Poslane e-pošte",

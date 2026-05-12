@@ -131,6 +131,7 @@ export * from "./getInvitationByToken200";
 export * from "./getNotificationsParams";
 export * from "./getSharedMailboxEmailsFilter";
 export * from "./getSharedMailboxEmailsParams";
+export * from "./getSharedMailboxEmailsStatus";
 export * from "./getTeamActivityParams";
 export * from "./getTeamRecentCommentsParams";
 export * from "./healthStatus";

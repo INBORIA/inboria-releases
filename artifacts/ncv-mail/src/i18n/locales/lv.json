@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Kopīgi",
     "spamShort": "Mēstules",
     "askInboria": "Jautāt Inboria",
-    "assignedShort": "Piešķirtie"
+    "assignedShort": "Piešķirtie",
+    "sharedClaim": {
+      "all": "Visi",
+      "unclaimed": "Neuzņemtie",
+      "me": "Es"
+    },
+    "sharedStatus": {
+      "all": "Visi",
+      "open": "Neapstrādāti",
+      "done": "Apstrādāti",
+      "slaBreach": "SLA pārsniegts",
+      "snoozed": "Atlikti"
+    }
   },
   "sent": {
     "title": "Nosūtītie e-pasti",

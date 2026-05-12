@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Κοινόχρηστα",
     "spamShort": "Ανεπιθύμητα",
     "askInboria": "Ρωτήστε το Inboria",
-    "assignedShort": "Ανατεθειμένα"
+    "assignedShort": "Ανατεθειμένα",
+    "sharedClaim": {
+      "all": "Όλα",
+      "unclaimed": "Μη ανατεθειμένα",
+      "me": "Εγώ"
+    },
+    "sharedStatus": {
+      "all": "Όλα",
+      "open": "Σε εκκρεμότητα",
+      "done": "Ολοκληρωμένα",
+      "slaBreach": "Υπέρβαση SLA",
+      "snoozed": "Σε αναβολή"
+    }
   },
   "sent": {
     "title": "Τα emails που εστάλησαν",

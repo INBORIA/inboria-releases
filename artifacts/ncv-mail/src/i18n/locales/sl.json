@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Skupni",
     "spamShort": "Neželena pošta",
     "askInboria": "Vprašajte Inboria",
-    "assignedShort": "Dodeljeno"
+    "assignedShort": "Dodeljeno",
+    "sharedClaim": {
+      "all": "Vsi",
+      "unclaimed": "Neprevzeti",
+      "me": "Jaz"
+    },
+    "sharedStatus": {
+      "all": "Vsi",
+      "open": "Neobdelani",
+      "done": "Obdelani",
+      "slaBreach": "Prekoračen SLA",
+      "snoozed": "Preloženi"
+    }
   },
   "sent": {
     "title": "Poslane e-pošte",

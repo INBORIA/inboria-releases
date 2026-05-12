@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Bendri",
     "spamShort": "Šlamštas",
     "askInboria": "Klauskite Inborios",
-    "assignedShort": "Priskirti"
+    "assignedShort": "Priskirti",
+    "sharedClaim": {
+      "all": "Visi",
+      "unclaimed": "Nepriimti",
+      "me": "Aš"
+    },
+    "sharedStatus": {
+      "all": "Visi",
+      "open": "Neatlikti",
+      "done": "Atlikti",
+      "slaBreach": "SLA viršytas",
+      "snoozed": "Atidėti"
+    }
   },
   "sent": {
     "title": "Išsiųsti el. paštai",

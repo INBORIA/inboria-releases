@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Delte",
     "spamShort": "Spam",
     "askInboria": "Spørg Inboria",
-    "assignedShort": "Tildelte"
+    "assignedShort": "Tildelte",
+    "sharedClaim": {
+      "all": "Alle",
+      "unclaimed": "Ikke tildelt",
+      "me": "Mig"
+    },
+    "sharedStatus": {
+      "all": "Alle",
+      "open": "Ubehandlede",
+      "done": "Behandlede",
+      "slaBreach": "SLA overskredet",
+      "snoozed": "Udsat"
+    }
   },
   "sent": {
     "title": "Sendte emails",

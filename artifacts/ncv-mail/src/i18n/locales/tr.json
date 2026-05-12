@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Paylaşılan",
     "spamShort": "Spam",
     "askInboria": "Inboria'ya sorun",
-    "assignedShort": "Atananlar"
+    "assignedShort": "Atananlar",
+    "sharedClaim": {
+      "all": "Tümü",
+      "unclaimed": "Üstlenilmemiş",
+      "me": "Ben"
+    },
+    "sharedStatus": {
+      "all": "Tümü",
+      "open": "İşlenmemiş",
+      "done": "İşlenmiş",
+      "slaBreach": "SLA aşıldı",
+      "snoozed": "Ertelenmiş"
+    }
   },
   "sent": {
     "title": "Gönderilen e-postalar",

@@ -505,7 +505,19 @@
     "sharedMailboxShort": "共有",
     "spamShort": "迷惑メール",
     "askInboria": "Inboriaに質問する",
-    "assignedShort": "担当"
+    "assignedShort": "担当",
+    "sharedClaim": {
+      "all": "すべて",
+      "unclaimed": "未対応",
+      "me": "自分"
+    },
+    "sharedStatus": {
+      "all": "すべて",
+      "open": "未処理",
+      "done": "処理済み",
+      "slaBreach": "SLA超過",
+      "snoozed": "延期"
+    }
   },
   "sent": {
     "title": "送信済みのメール",

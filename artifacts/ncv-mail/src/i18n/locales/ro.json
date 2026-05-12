@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Partajate",
     "spamShort": "Spam",
     "askInboria": "Întrebați Inboria",
-    "assignedShort": "Atribuite"
+    "assignedShort": "Atribuite",
+    "sharedClaim": {
+      "all": "Toate",
+      "unclaimed": "Nepreluate",
+      "me": "Eu"
+    },
+    "sharedStatus": {
+      "all": "Toate",
+      "open": "Netratate",
+      "done": "Tratate",
+      "slaBreach": "SLA depășit",
+      "snoozed": "Amânate"
+    }
   },
   "sent": {
     "title": "Email-uri trimise",

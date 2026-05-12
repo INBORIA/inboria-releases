@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Jagatud",
     "spamShort": "Rämpspost",
     "askInboria": "Küsige Inborialt",
-    "assignedShort": "Määratud"
+    "assignedShort": "Määratud",
+    "sharedClaim": {
+      "all": "Kõik",
+      "unclaimed": "Vastu võtmata",
+      "me": "Mina"
+    },
+    "sharedStatus": {
+      "all": "Kõik",
+      "open": "Töötlemata",
+      "done": "Töödeldud",
+      "slaBreach": "SLA ületatud",
+      "snoozed": "Edasi lükatud"
+    }
   },
   "sent": {
     "title": "Saadetud e-kirjad",

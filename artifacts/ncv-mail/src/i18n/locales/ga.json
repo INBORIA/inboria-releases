@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Comhroinnte",
     "spamShort": "Turscar",
     "askInboria": "Cuir ceist ar Inboria",
-    "assignedShort": "Sannta"
+    "assignedShort": "Sannta",
+    "sharedClaim": {
+      "all": "Uile",
+      "unclaimed": "Gan tógáil",
+      "me": "Mise"
+    },
+    "sharedStatus": {
+      "all": "Uile",
+      "open": "Neamhláimhseáilte",
+      "done": "Láimhseáilte",
+      "slaBreach": "Sárú SLA",
+      "snoozed": "Curtha siar"
+    }
   },
   "sent": {
     "title": "Ríomhphoist seolta",

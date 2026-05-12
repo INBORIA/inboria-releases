@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Zdieľané",
     "spamShort": "Spam",
     "askInboria": "Opýtajte sa Inboria",
-    "assignedShort": "Priradené"
+    "assignedShort": "Priradené",
+    "sharedClaim": {
+      "all": "Všetky",
+      "unclaimed": "Neprevzaté",
+      "me": "Ja"
+    },
+    "sharedStatus": {
+      "all": "Všetky",
+      "open": "Nespracované",
+      "done": "Spracované",
+      "slaBreach": "Prekročené SLA",
+      "snoozed": "Odložené"
+    }
   },
   "sent": {
     "title": "Odoslané e-maily",

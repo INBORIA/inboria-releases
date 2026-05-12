@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Jaetut",
     "spamShort": "Roskaposti",
     "askInboria": "Kysy Inborialta",
-    "assignedShort": "Määritetyt"
+    "assignedShort": "Määritetyt",
+    "sharedClaim": {
+      "all": "Kaikki",
+      "unclaimed": "Ottamattomat",
+      "me": "Minä"
+    },
+    "sharedStatus": {
+      "all": "Kaikki",
+      "open": "Käsittelemättä",
+      "done": "Käsitelty",
+      "slaBreach": "SLA ylitetty",
+      "snoozed": "Lykätyt"
+    }
   },
   "sent": {
     "title": "Lähetetyt sähköpostit",

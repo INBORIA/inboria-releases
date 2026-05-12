@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Dibagikan",
     "spamShort": "Spam",
     "askInboria": "Tanyakan kepada Inboria",
-    "assignedShort": "Ditugaskan"
+    "assignedShort": "Ditugaskan",
+    "sharedClaim": {
+      "all": "Semua",
+      "unclaimed": "Belum ditangani",
+      "me": "Saya"
+    },
+    "sharedStatus": {
+      "all": "Semua",
+      "open": "Belum diproses",
+      "done": "Sudah diproses",
+      "slaBreach": "SLA terlampaui",
+      "snoozed": "Ditunda"
+    }
   },
   "sent": {
     "title": "Email yang dikirim",

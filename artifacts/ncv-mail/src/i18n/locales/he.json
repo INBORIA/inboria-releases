@@ -505,7 +505,19 @@
     "sharedMailboxShort": "משותפות",
     "spamShort": "דואר זבל",
     "askInboria": "שאלו את Inboria",
-    "assignedShort": "שהוקצו"
+    "assignedShort": "שהוקצו",
+    "sharedClaim": {
+      "all": "הכול",
+      "unclaimed": "לא טופלו",
+      "me": "אני"
+    },
+    "sharedStatus": {
+      "all": "הכול",
+      "open": "ממתינים",
+      "done": "טופלו",
+      "slaBreach": "חריגת SLA",
+      "snoozed": "נדחו"
+    }
   },
   "sent": {
     "title": "דוא״לים שנשלחו",

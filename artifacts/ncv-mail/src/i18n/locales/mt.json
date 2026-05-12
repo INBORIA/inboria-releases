@@ -505,7 +505,19 @@
     "sharedMailboxShort": "Kondiviżi",
     "spamShort": "Spam",
     "askInboria": "Staqsi lil Inboria",
-    "assignedShort": "Assenjati"
+    "assignedShort": "Assenjati",
+    "sharedClaim": {
+      "all": "Kollha",
+      "unclaimed": "Mhux meħuda",
+      "me": "Jien"
+    },
+    "sharedStatus": {
+      "all": "Kollha",
+      "open": "Mhux ipproċessati",
+      "done": "Ipproċessati",
+      "slaBreach": "SLA maqbuż",
+      "snoozed": "Posposti"
+    }
   },
   "sent": {
     "title": "Emails inviati",
