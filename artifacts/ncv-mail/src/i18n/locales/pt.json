@@ -504,7 +504,8 @@
     "assigneeFilterMe": "meus emails atribuídos",
     "sharedMailboxShort": "Partilhadas",
     "spamShort": "Spam",
-    "askInboria": "Perguntar à Inboria"
+    "askInboria": "Perguntar à Inboria",
+    "assignedShort": "Atribuídos"
   },
   "sent": {
     "title": "Emails enviados",

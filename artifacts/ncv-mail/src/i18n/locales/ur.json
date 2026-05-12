@@ -504,7 +504,8 @@
     "assigneeFilterMe": "میرے تفویض کردہ ای میلز",
     "sharedMailboxShort": "مشترکہ",
     "spamShort": "اسپام",
-    "askInboria": "Inboria سے پوچھیں"
+    "askInboria": "Inboria سے پوچھیں",
+    "assignedShort": "تفویض شدہ"
   },
   "sent": {
     "title": "بھیجے گئے ای میلز",

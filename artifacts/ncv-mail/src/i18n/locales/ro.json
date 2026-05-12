@@ -504,7 +504,8 @@
     "assigneeFilterMe": "email-urile mele atribuite",
     "sharedMailboxShort": "Partajate",
     "spamShort": "Spam",
-    "askInboria": "Întrebați Inboria"
+    "askInboria": "Întrebați Inboria",
+    "assignedShort": "Atribuite"
   },
   "sent": {
     "title": "Email-uri trimise",

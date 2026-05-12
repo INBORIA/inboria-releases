@@ -504,7 +504,8 @@
     "assigneeFilterMe": "email saya yang ditugaskan",
     "sharedMailboxShort": "Dibagikan",
     "spamShort": "Spam",
-    "askInboria": "Tanyakan kepada Inboria"
+    "askInboria": "Tanyakan kepada Inboria",
+    "assignedShort": "Ditugaskan"
   },
   "sent": {
     "title": "Email yang dikirim",

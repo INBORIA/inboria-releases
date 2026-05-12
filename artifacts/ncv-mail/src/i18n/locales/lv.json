@@ -504,7 +504,8 @@
     "assigneeFilterMe": "mani piešķirtie e-pasti",
     "sharedMailboxShort": "Kopīgi",
     "spamShort": "Mēstules",
-    "askInboria": "Jautāt Inboria"
+    "askInboria": "Jautāt Inboria",
+    "assignedShort": "Piešķirtie"
   },
   "sent": {
     "title": "Nosūtītie e-pasti",

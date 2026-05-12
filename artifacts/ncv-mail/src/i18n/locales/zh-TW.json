@@ -504,7 +504,8 @@
     "assigneeFilterMe": "我的指派電子郵件",
     "sharedMailboxShort": "共用",
     "spamShort": "垃圾郵件",
-    "askInboria": "詢問 Inboria"
+    "askInboria": "詢問 Inboria",
+    "assignedShort": "已指派"
   },
   "sent": {
     "title": "已發送的電子郵件",

@@ -504,7 +504,8 @@
     "assigneeFilterMe": "我的分配邮件",
     "sharedMailboxShort": "共享",
     "spamShort": "垃圾邮件",
-    "askInboria": "询问 Inboria"
+    "askInboria": "询问 Inboria",
+    "assignedShort": "已分配"
   },
   "sent": {
     "title": "已发送邮件",

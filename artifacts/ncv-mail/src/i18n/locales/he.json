@@ -504,7 +504,8 @@
     "assigneeFilterMe": "הדוא״לים המוקצים שלי",
     "sharedMailboxShort": "משותפות",
     "spamShort": "דואר זבל",
-    "askInboria": "שאלו את Inboria"
+    "askInboria": "שאלו את Inboria",
+    "assignedShort": "שהוקצו"
   },
   "sent": {
     "title": "דוא״לים שנשלחו",

@@ -504,7 +504,8 @@
     "assigneeFilterMe": "az Ön által kijelölt emailek",
     "sharedMailboxShort": "Megosztott",
     "spamShort": "Levélszemét",
-    "askInboria": "Kérdezze Inboriát"
+    "askInboria": "Kérdezze Inboriát",
+    "assignedShort": "Hozzárendelt"
   },
   "sent": {
     "title": "Küldött emailek",

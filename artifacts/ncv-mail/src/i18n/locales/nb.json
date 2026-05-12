@@ -504,7 +504,8 @@
     "assigneeFilterMe": "mine tildelte e-poster",
     "sharedMailboxShort": "Delte",
     "spamShort": "Søppelpost",
-    "askInboria": "Spør Inboria"
+    "askInboria": "Spør Inboria",
+    "assignedShort": "Tildelt"
   },
   "sent": {
     "title": "Sendte e-poster",

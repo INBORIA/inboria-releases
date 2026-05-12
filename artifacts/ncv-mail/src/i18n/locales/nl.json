@@ -504,7 +504,8 @@
     "assigneeFilterMe": "mijn toegewezen e-mails",
     "sharedMailboxShort": "Gedeeld",
     "spamShort": "Spam",
-    "askInboria": "Vraag Inboria"
+    "askInboria": "Vraag Inboria",
+    "assignedShort": "Toegewezen"
   },
   "sent": {
     "title": "Verzonden e-mails",

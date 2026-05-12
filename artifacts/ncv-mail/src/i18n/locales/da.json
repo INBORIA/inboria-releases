@@ -504,7 +504,8 @@
     "assigneeFilterMe": "mine tildelte emails",
     "sharedMailboxShort": "Delte",
     "spamShort": "Spam",
-    "askInboria": "Spørg Inboria"
+    "askInboria": "Spørg Inboria",
+    "assignedShort": "Tildelte"
   },
   "sent": {
     "title": "Sendte emails",

@@ -105,9 +105,10 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
   const baseNavigation: Array<{ name: string; href: string; icon: any }> = [
     { name: t("sidebar.inbox"), href: "/dashboard", icon: Inbox },
     { name: t("sidebar.sent"), href: "/dashboard/envoyes", icon: Send },
-    ...(hasTeam
-      ? [{ name: t("sidebar.teamActivity"), href: "/dashboard/activite-equipe", icon: Activity }]
-      : []),
+    // Note (task #286 / refonte sidebar) : « Activité équipe » a été
+    // renommé « Assignés » et déplacé dans la barre d'onglets de la
+    // Réception (cf. pages/dashboard/index.tsx). On le garde hors du
+    // menu latéral pour éviter la redondance.
     { name: t("sidebar.snoozed", "Reportés"), href: "/dashboard/reportes", icon: BellOff },
     { name: t("sidebar.scheduled", "Programmés"), href: "/dashboard/programmes", icon: CalendarClock },
     { name: t("tasks.title"), href: "/dashboard/taches", icon: CheckSquare },

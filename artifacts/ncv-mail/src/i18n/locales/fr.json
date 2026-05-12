@@ -520,7 +520,8 @@
     "appointmentProposed": "Rendez-vous proposé créé dans l'agenda",
     "assigneeFilterMe": "mes emails assignés",
     "sharedMailboxShort": "Partagées",
-    "spamShort": "Indésirables"
+    "spamShort": "Indésirables",
+    "assignedShort": "Assignés"
   },
   "sent": {
     "title": "Emails envoyés",

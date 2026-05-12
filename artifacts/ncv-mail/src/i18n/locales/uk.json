@@ -504,7 +504,8 @@
     "assigneeFilterMe": "мої призначені електронні листи",
     "sharedMailboxShort": "Спільні",
     "spamShort": "Спам",
-    "askInboria": "Запитайте Inboria"
+    "askInboria": "Запитайте Inboria",
+    "assignedShort": "Призначені"
   },
   "sent": {
     "title": "Відправлені електронні листи",

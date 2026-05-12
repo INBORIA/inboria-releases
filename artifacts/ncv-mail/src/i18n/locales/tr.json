@@ -504,7 +504,8 @@
     "assigneeFilterMe": "atanmış e-postalarım",
     "sharedMailboxShort": "Paylaşılan",
     "spamShort": "Spam",
-    "askInboria": "Inboria'ya sorun"
+    "askInboria": "Inboria'ya sorun",
+    "assignedShort": "Atananlar"
   },
   "sent": {
     "title": "Gönderilen e-postalar",

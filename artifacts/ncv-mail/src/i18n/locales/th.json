@@ -504,7 +504,8 @@
     "assigneeFilterMe": "อีเมลที่มอบหมายให้ฉัน",
     "sharedMailboxShort": "ที่แชร์",
     "spamShort": "สแปม",
-    "askInboria": "ถาม Inboria"
+    "askInboria": "ถาม Inboria",
+    "assignedShort": "ที่มอบหมาย"
   },
   "sent": {
     "title": "อีเมลที่ส่ง",

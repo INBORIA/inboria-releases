@@ -504,7 +504,8 @@
     "assigneeFilterMe": "l-emails assenjati lilija",
     "sharedMailboxShort": "Kondiviżi",
     "spamShort": "Spam",
-    "askInboria": "Staqsi lil Inboria"
+    "askInboria": "Staqsi lil Inboria",
+    "assignedShort": "Assenjati"
   },
   "sent": {
     "title": "Emails inviati",

@@ -504,7 +504,8 @@
     "assigneeFilterMe": "អ៊ីមែលរបស់ខ្ញុំដែលបានចាត់តាំង",
     "sharedMailboxShort": "បានចែករំលែក",
     "spamShort": "សារឥតបានការ",
-    "askInboria": "សួរ Inboria"
+    "askInboria": "សួរ Inboria",
+    "assignedShort": "បានចាត់តាំង"
   },
   "sent": {
     "title": "អ៊ីមែលដែលបានផ្ញើ",

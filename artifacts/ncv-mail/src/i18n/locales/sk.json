@@ -504,7 +504,8 @@
     "assigneeFilterMe": "moje priradené e-maily",
     "sharedMailboxShort": "Zdieľané",
     "spamShort": "Spam",
-    "askInboria": "Opýtajte sa Inboria"
+    "askInboria": "Opýtajte sa Inboria",
+    "assignedShort": "Priradené"
   },
   "sent": {
     "title": "Odoslané e-maily",

@@ -504,7 +504,8 @@
     "assigneeFilterMe": "mo ríomhphoist atá ceangailte",
     "sharedMailboxShort": "Comhroinnte",
     "spamShort": "Turscar",
-    "askInboria": "Cuir ceist ar Inboria"
+    "askInboria": "Cuir ceist ar Inboria",
+    "assignedShort": "Sannta"
   },
   "sent": {
     "title": "Ríomhphoist seolta",

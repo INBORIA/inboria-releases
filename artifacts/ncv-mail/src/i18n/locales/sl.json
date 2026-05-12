@@ -504,7 +504,8 @@
     "assigneeFilterMe": "moje dodeljene e-pošte",
     "sharedMailboxShort": "Skupni",
     "spamShort": "Neželena pošta",
-    "askInboria": "Vprašajte Inboria"
+    "askInboria": "Vprašajte Inboria",
+    "assignedShort": "Dodeljeno"
   },
   "sent": {
     "title": "Poslane e-pošte",

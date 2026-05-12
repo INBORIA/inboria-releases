@@ -520,7 +520,8 @@
     "appointmentProposed": "Proposed appointment added to calendar",
     "assigneeFilterMe": "my assigned emails",
     "sharedMailboxShort": "Shared",
-    "spamShort": "Spam"
+    "spamShort": "Spam",
+    "assignedShort": "Assigned"
   },
   "sent": {
     "title": "Sent emails",

@@ -504,7 +504,8 @@
     "assigneeFilterMe": "các email của tôi được phân công",
     "sharedMailboxShort": "Đã chia sẻ",
     "spamShort": "Thư rác",
-    "askInboria": "Hỏi Inboria"
+    "askInboria": "Hỏi Inboria",
+    "assignedShort": "Đã giao"
   },
   "sent": {
     "title": "Email đã gửi",

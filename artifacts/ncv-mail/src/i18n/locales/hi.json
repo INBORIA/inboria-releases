@@ -504,7 +504,8 @@
     "assigneeFilterMe": "मेरे असाइन किए गए ईमेल",
     "sharedMailboxShort": "साझा",
     "spamShort": "स्पैम",
-    "askInboria": "Inboria से पूछें"
+    "askInboria": "Inboria से पूछें",
+    "assignedShort": "असाइन किए गए"
   },
   "sent": {
     "title": "भेजे गए ईमेल",

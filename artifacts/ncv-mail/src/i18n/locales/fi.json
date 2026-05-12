@@ -504,7 +504,8 @@
     "assigneeFilterMe": "minun osoitteeni",
     "sharedMailboxShort": "Jaetut",
     "spamShort": "Roskaposti",
-    "askInboria": "Kysy Inborialta"
+    "askInboria": "Kysy Inborialta",
+    "assignedShort": "Määritetyt"
   },
   "sent": {
     "title": "Lähetetyt sähköpostit",

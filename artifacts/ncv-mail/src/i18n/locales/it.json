@@ -504,7 +504,8 @@
     "assigneeFilterMe": "le mie email assegnate",
     "sharedMailboxShort": "Condivise",
     "spamShort": "Spam",
-    "askInboria": "Chiedi a Inboria"
+    "askInboria": "Chiedi a Inboria",
+    "assignedShort": "Assegnati"
   },
   "sent": {
     "title": "Email inviate",

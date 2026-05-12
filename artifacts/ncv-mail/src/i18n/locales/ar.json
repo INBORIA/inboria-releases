@@ -504,7 +504,8 @@
     "assigneeFilterMe": "بريدي الإلكتروني المعين",
     "sharedMailboxShort": "مشتركة",
     "spamShort": "البريد العشوائي",
-    "askInboria": "اسألوا Inboria"
+    "askInboria": "اسألوا Inboria",
+    "assignedShort": "المُسندة"
   },
   "sent": {
     "title": "البريد الإلكتروني المرسل",

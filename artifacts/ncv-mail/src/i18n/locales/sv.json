@@ -504,7 +504,8 @@
     "assigneeFilterMe": "mina tilldelade e-postmeddelanden",
     "sharedMailboxShort": "Delade",
     "spamShort": "Skräppost",
-    "askInboria": "Fråga Inboria"
+    "askInboria": "Fråga Inboria",
+    "assignedShort": "Tilldelade"
   },
   "sent": {
     "title": "Skickade e-postmeddelanden",

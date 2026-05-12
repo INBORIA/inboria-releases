@@ -29,6 +29,7 @@ import {
   useBulkUpdateEmails,
   useGetMyOrganisation,
   useGetOrganisationMembers,
+  useGetTeamAssignments,
   useAssignEmail,
   useUnassignEmail,
   useGetSharedMailboxes,
@@ -60,7 +61,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip, MailOpen, Mail, BellOff, Bell, Copy, Printer, Folder, Type as TypeIcon } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip, MailOpen, Mail, BellOff, Bell, Copy, Printer, Folder, Type as TypeIcon, Activity } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -3369,6 +3370,25 @@ export default function Dashboard() {
   // (affiché en badge sur l'onglet Partagées, comme inboxCountFromApi).
   const sharedEmailsCount = sharedPaged?.total ?? sharedEmailsList.length;
 
+  // Onglet « Assignés » (anciennement Activité équipe). On ne charge la
+  // liste que si l'utilisateur fait partie d'une orga ; le compteur =
+  // nombre d'emails assignés à l'utilisateur courant.
+  const teamMembersActiveCount = Array.isArray(orgMembers)
+    ? (orgMembers as Array<{ status?: string }>).filter((m) => m.status === "active").length
+    : 0;
+  const hasTeamForAssigned = !!(myOrg as any)?.id && teamMembersActiveCount > 1;
+  const { data: teamAssignmentsData } = useGetTeamAssignments({
+    query: { enabled: hasTeamForAssigned } as any,
+  });
+  const assignedToMeCount = (() => {
+    const members = (teamAssignmentsData as any)?.members as
+      | Array<{ isCurrentUser?: boolean; emails?: any[] }>
+      | undefined;
+    if (!members) return 0;
+    const me = members.find((m) => m.isCurrentUser);
+    return me?.emails?.length ?? 0;
+  })();
+
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
   const [composePrefill, setComposePrefill] = useState<{ to: string; subject: string; body: string } | null>(null);
@@ -4964,6 +4984,18 @@ export default function Dashboard() {
                     <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{sharedEmailsCount}</span>
                   )}
                 </button>
+              )}
+              {hasTeamForAssigned && (
+                <Link
+                  href="/dashboard/activite-equipe"
+                  className="inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                >
+                  <Activity className="w-3 h-3" />
+                  {t("inbox.assignedShort", "Assignés")}
+                  {assignedToMeCount > 0 && (
+                    <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{assignedToMeCount}</span>
+                  )}
+                </Link>
               )}
               <span className="w-px h-5 bg-border/60 mx-1" aria-hidden="true" />
               <Link

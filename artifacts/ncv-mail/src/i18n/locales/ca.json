@@ -504,7 +504,8 @@
     "assigneeFilterMe": "els meus correus electrònics assignats",
     "sharedMailboxShort": "Compartides",
     "spamShort": "Brossa",
-    "askInboria": "Pregunteu a Inboria"
+    "askInboria": "Pregunteu a Inboria",
+    "assignedShort": "Assignats"
   },
   "sent": {
     "title": "Correu electrònic enviats",

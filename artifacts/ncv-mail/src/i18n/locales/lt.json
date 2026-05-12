@@ -504,7 +504,8 @@
     "assigneeFilterMe": "mano priskirti el. paštai",
     "sharedMailboxShort": "Bendri",
     "spamShort": "Šlamštas",
-    "askInboria": "Klauskite Inborios"
+    "askInboria": "Klauskite Inborios",
+    "assignedShort": "Priskirti"
   },
   "sent": {
     "title": "Išsiųsti el. paštai",

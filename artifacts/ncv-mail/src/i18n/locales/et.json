@@ -504,7 +504,8 @@
     "assigneeFilterMe": "minu määratud e-kirjad",
     "sharedMailboxShort": "Jagatud",
     "spamShort": "Rämpspost",
-    "askInboria": "Küsige Inborialt"
+    "askInboria": "Küsige Inborialt",
+    "assignedShort": "Määratud"
   },
   "sent": {
     "title": "Saadetud e-kirjad",

@@ -504,7 +504,8 @@
     "assigneeFilterMe": "τα emails σας που έχουν ανατεθεί",
     "sharedMailboxShort": "Κοινόχρηστα",
     "spamShort": "Ανεπιθύμητα",
-    "askInboria": "Ρωτήστε το Inboria"
+    "askInboria": "Ρωτήστε το Inboria",
+    "assignedShort": "Ανατεθειμένα"
   },
   "sent": {
     "title": "Τα emails που εστάλησαν",

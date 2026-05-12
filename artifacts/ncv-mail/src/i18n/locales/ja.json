@@ -504,7 +504,8 @@
     "assigneeFilterMe": "私の割り当てられたメール",
     "sharedMailboxShort": "共有",
     "spamShort": "迷惑メール",
-    "askInboria": "Inboriaに質問する"
+    "askInboria": "Inboriaに質問する",
+    "assignedShort": "担当"
   },
   "sent": {
     "title": "送信済みのメール",
