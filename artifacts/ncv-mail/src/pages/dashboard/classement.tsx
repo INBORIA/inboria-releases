@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import {
   useListCategories,
   useCreateCategory,
@@ -179,6 +180,7 @@ const categoryColors = [
 ];
 
 export default function Classement() {
+  useEnableLightTheme();
   const { t, i18n } = useTranslation();
   const lang = (i18n.resolvedLanguage ?? i18n.language.split("-")[0]).substring(0, 2);
   const translatedFamilles = useTranslatedPacks(t, lang);
