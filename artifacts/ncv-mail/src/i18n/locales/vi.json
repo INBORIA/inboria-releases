@@ -2511,13 +2511,14 @@
     "greetingTitle": "Xin chào, tôi là Inboria.",
     "greetingDesc": "Tôi biết các liên hệ, sở thích và các cam kết hiện tại của Quý khách. Xin vui lòng đặt câu hỏi cho tôi.",
     "suggest1": "Quý khách đã có những cam kết nào trong tuần này?",
-    "suggest2": "Quý khách nên nhắc lại điều gì trước tiên?",
+    "suggest2": "Tôi nên theo dõi việc gì trước tiên?",
     "suggest3": "Tóm tắt những gì tôi biết về khách hàng gần đây nhất của Quý khách.",
     "inputPlaceholder": "Hãy yêu cầu điều gì đó từ Inboria…",
     "thinking": "Inboria đang suy nghĩ…",
     "footerHint": "Nhấn Enter để gửi • Shift+Enter để xuống dòng",
     "errorGeneric": "Xin lỗi, đã xảy ra lỗi. Xin vui lòng thử lại trong giây lát.",
-    "errorQuota": "Đã đạt hạn mức Inboria cho thời gian này. Xin vui lòng xem đăng ký của Quý khách."
+    "errorQuota": "Đã đạt hạn mức Inboria cho thời gian này. Xin vui lòng xem đăng ký của Quý khách.",
+    "memoryHint": "Inboria không tự động lưu bất kỳ tùy chọn cá nhân nào. Để một chỉ dẫn được áp dụng giữa các phiên, Quý vị vui lòng bắt đầu yêu cầu bằng “Hãy ghi nhớ rằng…”."
   },
   "packs": {
     "families": {

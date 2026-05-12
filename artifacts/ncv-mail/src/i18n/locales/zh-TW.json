@@ -2517,7 +2517,8 @@
     "thinking": "Inboria 正在思考…",
     "footerHint": "按 Enter 發送 • Shift+Enter 換行",
     "errorGeneric": "抱歉，發生錯誤。請稍後再試。",
-    "errorQuota": "此期間 Inboria 配額已達上限。請查看您的訂閱。"
+    "errorQuota": "此期間 Inboria 配額已達上限。請查看您的訂閱。",
+    "memoryHint": "Inboria 不會自動儲存任何個人偏好。若希望某條指令在不同工作階段間持續生效，請以「請記住……」開頭向 Inboria 提出請求。"
   },
   "packs": {
     "families": {

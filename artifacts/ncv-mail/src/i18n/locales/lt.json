@@ -2511,13 +2511,14 @@
     "greetingTitle": "Sveiki, aš esu Inboria.",
     "greetingDesc": "Aš žinau Jūsų kontaktus, Jūsų pageidavimus ir esamus įsipareigojimus. Užduokite man klausimą.",
     "suggest1": "Kokius įsipareigojimus aš prisiėmiau šią savaitę?",
-    "suggest2": "Ką turėčiau pirmiausia priminti?",
+    "suggest2": "Ką turėčiau priminti pirmiausia?",
     "suggest3": "Apibendrinkite, ką žinau apie savo paskutinį klientą.",
     "inputPlaceholder": "Klausykite kažko iš Inboria…",
     "thinking": "Inboria galvoja…",
     "footerHint": "Įvestis siuntimui • Shift+Enter, kad pereitumėte į naują eilutę",
     "errorGeneric": "Atsiprašome, įvyko klaida. Bandykite vėl po akimirkos.",
-    "errorQuota": "Inboria kvota šiam laikotarpiui pasiekta. Peržiūrėkite savo prenumeratą."
+    "errorQuota": "Inboria kvota šiam laikotarpiui pasiekta. Peržiūrėkite savo prenumeratą.",
+    "memoryHint": "Inboria automatiškai nesaugo jokių asmeninių nuostatų. Kad nurodymas būtų taikomas iš vieno seanso į kitą, pradėkite Jūsų prašymą žodžiais „Įsidėmėk, kad…”."
   },
   "packs": {
     "families": {

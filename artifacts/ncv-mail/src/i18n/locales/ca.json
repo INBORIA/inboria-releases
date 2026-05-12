@@ -2511,13 +2511,14 @@
     "greetingTitle": "Hola, sóc Inboria.",
     "greetingDesc": "Conec els vostres contactes, les vostres preferències i els vostres compromisos en curs. Feu-me una pregunta.",
     "suggest1": "Quins compromisos he pres aquesta setmana?",
-    "suggest2": "De què hauria de fer un seguiment en prioritat?",
+    "suggest2": "Què hauria de tornar a contactar primer?",
     "suggest3": "Resumeix el que sé del meu darrer client.",
     "inputPlaceholder": "Pregunteu alguna cosa a Inboria...",
     "thinking": "Inboria reflexiona...",
     "footerHint": "Entrada per enviar • Maj+Entrada per anar a la línia",
     "errorGeneric": "Ho sento, ha ocorregut un error. Torneu-ho a provar d'aquí a un moment.",
-    "errorQuota": "Quota d'Inboria assolida per a aquest període. Vegeu la vostra subscripció."
+    "errorQuota": "Quota d'Inboria assolida per a aquest període. Vegeu la vostra subscripció.",
+    "memoryHint": "Inboria no desa cap preferència personal de manera automàtica. Perquè una instrucció s'apliqui d'una sessió a una altra, inicieu la vostra sol·licitud amb «Recorda que…»."
   },
   "packs": {
     "families": {

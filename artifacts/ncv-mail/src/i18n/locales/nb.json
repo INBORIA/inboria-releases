@@ -2517,7 +2517,8 @@
     "thinking": "Inboria tenker…",
     "footerHint": "Trykk Enter for å sende • Shift+Enter for å gå til neste linje",
     "errorGeneric": "Beklager, det oppstod en feil. Vennligst prøv igjen om et øyeblikk.",
-    "errorQuota": "Inboria-kvoten er nådd for denne perioden. Se abonnementet ditt."
+    "errorQuota": "Inboria-kvoten er nådd for denne perioden. Se abonnementet ditt.",
+    "memoryHint": "Inboria lagrer ikke personlige preferanser automatisk. For at en instruksjon skal gjelde mellom økter, begynn forespørselen med «Husk at …»."
   },
   "packs": {
     "families": {

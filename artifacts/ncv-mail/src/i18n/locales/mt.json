@@ -2511,13 +2511,14 @@
     "greetingTitle": "Bongu, jien Inboria.",
     "greetingDesc": "Naf il-kuntatti tiegħek, il-preferenzi tiegħek u l-impennijiet attwali tiegħek. Staqsi lili mistoqsija.",
     "suggest1": "X'ħtiġijiet għandi din il-ġimgħa?",
-    "suggest2": "X'għandi nġib lura b'priorità?",
+    "suggest2": "X'għandi nsegwi l-ewwel?",
     "suggest3": "Irrisumi dak li naf dwar l-aħħar klijent tiegħi.",
     "inputPlaceholder": "Staqsi xi ħaġa lil Inboria...",
     "thinking": "Inboria qed taħseb...",
     "footerHint": "Daħħal biex tibgħat • Shift+Daħħal biex tmur fil-linja",
     "errorGeneric": "Skużani, seħħet żball. Ikkonferma mill-ġdid fi ftit.",
-    "errorQuota": "Quota Inboria kisbet għal dan il-perjodu. Ara l-abbonament tiegħek."
+    "errorQuota": "Quota Inboria kisbet għal dan il-perjodu. Ara l-abbonament tiegħek.",
+    "memoryHint": "Inboria ma tissejvjax awtomatikament l-ebda preferenza personali. Biex struzzjoni tiġi applikata bejn is-sessjonijiet, jekk jogħġobkom ibdew it-talba tagħkom bi “Ftakar li…”."
   },
   "packs": {
     "families": {

@@ -2511,13 +2511,14 @@
     "greetingTitle": "Tere, mina olen Inboria.",
     "greetingDesc": "Ma tunnen Teie kontakte, eelistusi ja käimasolevaid kohustusi. Küsi minult küsimus.",
     "suggest1": "Milliseid kohustusi olen ma sellel nädalal võtnud?",
-    "suggest2": "Millistele asjadele peaksin prioriteeti andma?",
+    "suggest2": "Millele peaksin esmajärjekorras meelde tuletama?",
     "suggest3": "Kokkuvõte sellest, mida ma tean oma viimase kliendi kohta.",
     "inputPlaceholder": "Küsi midagi Inboria…",
     "thinking": "Inboria mõtleb…",
     "footerHint": "Sisestage saatmiseks • Shift+Enter uuele reale",
     "errorGeneric": "Kahjuks tekkis viga. Palun proovige mõne hetke pärast uuesti.",
-    "errorQuota": "Inboria kvoot on selle perioodi jaoks täis. Vaadake oma tellimust."
+    "errorQuota": "Inboria kvoot on selle perioodi jaoks täis. Vaadake oma tellimust.",
+    "memoryHint": "Inboria ei salvesta isiklikke eelistusi automaatselt. Et juhis kehtiks ühest seansist teise, alustage Teie päringut sõnadega „Pea meeles, et …”."
   },
   "packs": {
     "families": {

@@ -2511,13 +2511,14 @@
     "greetingTitle": "Merhaba, ben Inboria.",
     "greetingDesc": "İletişimlerinizi, tercihlerinizi ve mevcut taahhütlerinizi biliyorum. Bana bir soru sorun.",
     "suggest1": "Bu hafta hangi taahhütlerde bulundum?",
-    "suggest2": "Öncelikle hangi konularda hatırlatma yapmalıyım?",
+    "suggest2": "Önce neyi takip etmeliyim?",
     "suggest3": "Son müşterim hakkında bildiklerimi özetleyin.",
     "inputPlaceholder": "Inboria'dan bir şey isteyin...",
     "thinking": "Inboria düşünüyor...",
     "footerHint": "Göndermek için Enter • Satır atlamak için Maj+Enter",
     "errorGeneric": "Üzgünüm, bir hata oluştu. Lütfen bir süre sonra tekrar deneyin.",
-    "errorQuota": "Bu dönem için Inboria kotası aşıldı. Aboneliğinizi kontrol edin."
+    "errorQuota": "Bu dönem için Inboria kotası aşıldı. Aboneliğinizi kontrol edin.",
+    "memoryHint": "Inboria hiçbir kişisel tercihi otomatik olarak kaydetmez. Bir talimatın oturumlar arası uygulanması için lütfen isteğinize “Şunu hatırla:…” ifadesiyle başlayın."
   },
   "packs": {
     "families": {

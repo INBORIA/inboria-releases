@@ -2511,13 +2511,14 @@
     "greetingTitle": "Üdvözlöm, én vagyok az Inboria.",
     "greetingDesc": "Ismerem az Ön kapcsolatait, preferenciáit és folyamatban lévő kötelezettségeit. Kérdezzen tőlem.",
     "suggest1": "Milyen kötelezettségeket vállaltam ezen a héten?",
-    "suggest2": "Mivel kellene elsőként foglalkoznom?",
+    "suggest2": "Mit érdemes először követnem?",
     "suggest3": "Foglalja össze, amit tudok az utolsó ügyfelemről.",
     "inputPlaceholder": "Kérjen valamit az Inboria-tól…",
     "thinking": "Az Inboria gondolkodik…",
     "footerHint": "Bejegyzés küldéséhez • Shift+Enter az új sorhoz",
     "errorGeneric": "Sajnáljuk, hiba történt. Kérjük, próbálja újra egy pillanat múlva.",
-    "errorQuota": "Az Inboria kvótája elérte a határt erre az időszakra. Tekintse meg az előfizetését."
+    "errorQuota": "Az Inboria kvótája elérte a határt erre az időszakra. Tekintse meg az előfizetését.",
+    "memoryHint": "Az Inboria nem ment el automatikusan személyes beállításokat. Ahhoz, hogy egy utasítás a következő munkamenetekre is érvényes maradjon, kérjük, kezdje a kérést a „Jegyezd meg, hogy…” kifejezéssel."
   },
   "packs": {
     "families": {

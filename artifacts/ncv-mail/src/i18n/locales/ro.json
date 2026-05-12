@@ -2511,13 +2511,14 @@
     "greetingTitle": "Bună, sunt Inboria.",
     "greetingDesc": "Cunosc contactele dumneavoastră, preferințele și angajamentele curente. Puneți-mi o întrebare.",
     "suggest1": "Ce angajamente am luat săptămâna aceasta?",
-    "suggest2": "Ce ar trebui să reînnod în prioritate?",
+    "suggest2": "Ce ar trebui să relansez cu prioritate?",
     "suggest3": "Rezumați ce știu despre ultimul meu client.",
     "inputPlaceholder": "Întrebați ceva Inboria...",
     "thinking": "Inboria gândește...",
     "footerHint": "Apăsați Enter pentru a trimite • Shift+Enter pentru a merge pe linia următoare",
     "errorGeneric": "Ne pare rău, a apărut o eroare. Încercați din nou în câteva momente.",
-    "errorQuota": "Cota Inboria a fost atinsă pentru această perioadă. Vedeți abonamentul dumneavoastră."
+    "errorQuota": "Cota Inboria a fost atinsă pentru această perioadă. Vedeți abonamentul dumneavoastră.",
+    "memoryHint": "Inboria nu stochează automat nicio preferință personală. Pentru ca o instrucțiune să fie aplicată de la o sesiune la alta, începeți cererea cu „Reține că…”."
   },
   "packs": {
     "families": {

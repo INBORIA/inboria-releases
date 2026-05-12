@@ -2511,13 +2511,14 @@
     "greetingTitle": "Buongiorno, sono Inboria.",
     "greetingDesc": "Conosco i Suoi contatti, le Sue preferenze e i Suoi impegni in corso. Mi faccia una domanda.",
     "suggest1": "Quali impegni ho preso questa settimana?",
-    "suggest2": "Di cosa dovrei sollecitare priorità?",
+    "suggest2": "Cosa dovrei sollecitare per primo?",
     "suggest3": "Riassuma ciò che so del mio ultimo cliente.",
     "inputPlaceholder": "Chieda qualcosa a Inboria…",
     "thinking": "Inboria sta riflettendo…",
     "footerHint": "Invio per inviare • Maiusc+Invio per andare a capo",
     "errorGeneric": "Ci scusiamo, si è verificato un errore. Riprovi tra un momento.",
-    "errorQuota": "Quota Inboria raggiunta per questo periodo. Veda il Suo abbonamento."
+    "errorQuota": "Quota Inboria raggiunta per questo periodo. Veda il Suo abbonamento.",
+    "memoryHint": "Inboria non memorizza automaticamente alcuna preferenza personale. Affinché un'istruzione venga applicata da una sessione all'altra, inizi la sua richiesta con «Ricorda che…»."
   },
   "packs": {
     "families": {

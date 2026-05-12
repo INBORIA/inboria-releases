@@ -2550,13 +2550,14 @@
     "greetingTitle": "Hi, I'm Inboria.",
     "greetingDesc": "I know your contacts, your preferences and your active commitments. Ask me anything.",
     "suggest1": "What did I commit to this week?",
-    "suggest2": "Who should I follow up with first?",
+    "suggest2": "What should I follow up on first?",
     "suggest3": "Summarize what I know about my latest client.",
     "inputPlaceholder": "Ask Inboria anything…",
     "thinking": "Inboria is thinking…",
     "footerHint": "Enter to send • Shift+Enter for new line",
     "errorGeneric": "Sorry, something went wrong. Please try again in a moment.",
-    "errorQuota": "Inboria quota reached for this period. Check your subscription."
+    "errorQuota": "Inboria quota reached for this period. Check your subscription.",
+    "memoryHint": "Inboria does not store any personal preferences automatically. For an instruction to apply from one session to the next, start your request with “Remember that…”."
   },
   "packs": {
     "families": {

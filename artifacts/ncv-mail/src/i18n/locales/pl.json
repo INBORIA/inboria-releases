@@ -2511,13 +2511,14 @@
     "greetingTitle": "Witam, jestem Inboria.",
     "greetingDesc": "Znam Twoje kontakty, preferencje i bieżące zobowiązania. Zadaj mi pytanie.",
     "suggest1": "Jakie zobowiązania podjąłem w tym tygodniu?",
-    "suggest2": "Co powinienem priorytetowo przypomnieć?",
+    "suggest2": "Co powinienem ponowić w pierwszej kolejności?",
     "suggest3": "Podsumuj, co wiem o moim ostatnim kliencie.",
     "inputPlaceholder": "Zapytaj coś Inboria...",
     "thinking": "Inboria myśli...",
     "footerHint": "Wciśnij Enter, aby wysłać • Maj+Enter, aby przejść do nowej linii",
     "errorGeneric": "Przykro mi, wystąpił błąd. Proszę spróbować za chwilę.",
-    "errorQuota": "Osiągnięto limit Inboria na ten okres. Zobacz swoją subskrypcję."
+    "errorQuota": "Osiągnięto limit Inboria na ten okres. Zobacz swoją subskrypcję.",
+    "memoryHint": "Inboria nie zapisuje automatycznie żadnych preferencji osobistych. Aby instrukcja obowiązywała między sesjami, prosimy rozpocząć żądanie od „Zapamiętaj, że…”."
   },
   "packs": {
     "families": {

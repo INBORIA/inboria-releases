@@ -2521,13 +2521,14 @@
     "greetingTitle": "Hallo, ich bin Inboria.",
     "greetingDesc": "Ich kenne Ihre Kontakte, Präferenzen und offenen Zusagen. Stellen Sie mir gerne eine Frage.",
     "suggest1": "Welche Zusagen habe ich diese Woche gemacht?",
-    "suggest2": "Bei wem sollte ich zuerst nachhaken?",
+    "suggest2": "Was sollte ich zuerst nachfassen?",
     "suggest3": "Fassen Sie zusammen, was ich über meinen neuesten Kunden weiß.",
     "inputPlaceholder": "Fragen Sie Inboria etwas…",
     "thinking": "Inboria denkt nach…",
     "footerHint": "Enter zum Senden • Umschalt+Enter für neue Zeile",
     "errorGeneric": "Es ist ein Fehler aufgetreten. Bitte gleich noch einmal versuchen.",
-    "errorQuota": "Inboria-Kontingent für diesen Zeitraum erreicht. Überprüfen Sie Ihr Abonnement."
+    "errorQuota": "Inboria-Kontingent für diesen Zeitraum erreicht. Überprüfen Sie Ihr Abonnement.",
+    "memoryHint": "Inboria speichert keine persönlichen Präferenzen automatisch. Damit eine Anweisung sitzungsübergreifend gilt, beginnen Sie Ihre Anfrage mit „Merke dir, dass…“."
   },
   "packs": {
     "families": {

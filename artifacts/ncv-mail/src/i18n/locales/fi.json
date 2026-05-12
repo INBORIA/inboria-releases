@@ -2511,13 +2511,14 @@
     "greetingTitle": "Hei, olen Inboria.",
     "greetingDesc": "Tunnen kontaktinne, mieltymyksenne ja käynnissä olevat sitoumuksenne. Kysykää minulta kysymys.",
     "suggest1": "Mitä sitoumuksia olen tehnyt tällä viikolla?",
-    "suggest2": "Mistä minun pitäisi muistuttaa ensisijaisesti?",
+    "suggest2": "Mitä minun pitäisi muistuttaa ensin?",
     "suggest3": "Tiivistä, mitä tiedän viimeisestä asiakkaastani.",
     "inputPlaceholder": "Kysykää jotain Inborialta…",
     "thinking": "Inboria miettii…",
     "footerHint": "Paina lähetä • Shift+Enter siirtyäksesi riville",
     "errorGeneric": "Anteeksi, tapahtui virhe. Yrittäkää hetken kuluttua uudelleen.",
-    "errorQuota": "Inboria-kiintiö saavutettu tälle ajanjaksolle. Tarkistakaa tilauksenne."
+    "errorQuota": "Inboria-kiintiö saavutettu tälle ajanjaksolle. Tarkistakaa tilauksenne.",
+    "memoryHint": "Inboria ei tallenna henkilökohtaisia asetuksia automaattisesti. Jotta ohje pysyy voimassa istunnosta toiseen, aloita pyyntö sanoilla ”Muista, että…”."
   },
   "packs": {
     "families": {

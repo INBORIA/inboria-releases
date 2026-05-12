@@ -2521,13 +2521,14 @@
     "greetingTitle": "Hola, soy Inboria.",
     "greetingDesc": "Conozco tus contactos, tus preferencias y tus compromisos en curso. Pregúntame lo que quieras.",
     "suggest1": "¿Qué compromisos he asumido esta semana?",
-    "suggest2": "¿A quién debo dar seguimiento primero?",
+    "suggest2": "¿Qué debería retomar con prioridad?",
     "suggest3": "Resume lo que sé de mi último cliente.",
     "inputPlaceholder": "Pregunta algo a Inboria…",
     "thinking": "Inboria está pensando…",
     "footerHint": "Enter para enviar • Mayús+Enter para nueva línea",
     "errorGeneric": "Algo salió mal. Inténtalo de nuevo en un momento.",
-    "errorQuota": "Cuota de Inboria alcanzada para este período. Revisa tu suscripción."
+    "errorQuota": "Cuota de Inboria alcanzada para este período. Revisa tu suscripción.",
+    "memoryHint": "Inboria no almacena ninguna preferencia personal de forma automática. Para que una instrucción se aplique de una sesión a otra, comience su solicitud con «Recuerda que…»."
   },
   "packs": {
     "families": {

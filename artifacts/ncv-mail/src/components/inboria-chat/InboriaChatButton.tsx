@@ -1253,7 +1253,7 @@ export function InboriaChatButton() {
               <p className="text-[11px] text-zinc-500 mt-4 max-w-xs leading-relaxed">
                 {t("inboriaChat.memoryHint", {
                   defaultValue:
-                    "Astuce : Inboria ne mémorise rien de vous par défaut. Si vous voulez qu'elle retienne une préférence (durée d'un déjeuner, lieu favori, formule de politesse…), dites-le explicitement, par ex. « Retiens que mes déjeuners durent 1h30 ».",
+                    "Inboria ne conserve aucune préférence personnelle de manière automatique. Pour qu'une consigne soit appliquée d'une session à l'autre, commencez votre demande par « Retiens que… ».",
                 })}
               </p>
             </div>

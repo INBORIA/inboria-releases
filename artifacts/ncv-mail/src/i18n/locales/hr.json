@@ -2511,13 +2511,14 @@
     "greetingTitle": "Pozdrav, ja sam Inboria.",
     "greetingDesc": "Poznajem Vaše kontakte, Vaše preferencije i Vaše tekuće obveze. Postavite mi pitanje.",
     "suggest1": "Koje obveze sam preuzeo ovaj tjedan?",
-    "suggest2": "Što bih trebao prioritetno ponovo pokrenuti?",
+    "suggest2": "Što bih trebao prvo podsjetiti?",
     "suggest3": "Sažmite što znam o svom posljednjem klijentu.",
     "inputPlaceholder": "Pitajte nešto Inboria…",
     "thinking": "Inboria razmišlja…",
     "footerHint": "Enter za slanje • Shift+Enter za novi red",
     "errorGeneric": "Žao nam je, došlo je do pogreške. Pokušajte ponovo za trenutak.",
-    "errorQuota": "Inboria kvota dostignuta za ovaj period. Pogledajte svoju pretplatu."
+    "errorQuota": "Inboria kvota dostignuta za ovaj period. Pogledajte svoju pretplatu.",
+    "memoryHint": "Inboria automatski ne pohranjuje nikakve osobne postavke. Kako bi se uputa primjenjivala između sesija, započnite Vaš zahtjev sa „Zapamti da…”."
   },
   "packs": {
     "families": {

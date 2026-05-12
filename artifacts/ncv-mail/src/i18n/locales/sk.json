@@ -2511,13 +2511,14 @@
     "greetingTitle": "Dobrý deň, som Inboria.",
     "greetingDesc": "Poznám Vaše kontakty, Vaše preferencie a Vaše aktuálne záväzky. Opýtajte sa ma na niečo.",
     "suggest1": "Aké záväzky som mal tento týždeň?",
-    "suggest2": "Na čo by som sa mal prioritne opýtať?",
+    "suggest2": "Čo by som mal pripomenúť ako prvé?",
     "suggest3": "Zhrňte, čo viem o svojom poslednom klientovi.",
     "inputPlaceholder": "Opýtajte sa niečo na Inboria…",
     "thinking": "Inboria premýšľa…",
     "footerHint": "Stlačte Enter na odoslanie • Shift+Enter na nový riadok",
     "errorGeneric": "Je nám ľúto, došlo k chybe. Skúste to znova o chvíľu.",
-    "errorQuota": "Limit Inboria bol dosiahnutý pre toto obdobie. Pozrite si svoje predplatné."
+    "errorQuota": "Limit Inboria bol dosiahnutý pre toto obdobie. Pozrite si svoje predplatné.",
+    "memoryHint": "Inboria automaticky neukladá žiadne osobné predvoľby. Aby sa pokyn uplatňoval medzi reláciami, začnite Vašu požiadavku slovami „Zapamätaj si, že…”."
   },
   "packs": {
     "families": {

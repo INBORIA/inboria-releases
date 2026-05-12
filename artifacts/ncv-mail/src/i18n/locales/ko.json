@@ -2511,13 +2511,14 @@
     "greetingTitle": "안녕하세요, 저는 Inboria입니다.",
     "greetingDesc": "귀하의 연락처, 선호도 및 진행 중인 약속을 알고 있습니다. 질문을 하십시오.",
     "suggest1": "이번 주에 제가 어떤 약속을 했습니까?",
-    "suggest2": "우선적으로 어떤 사항을 재촉해야 합니까?",
+    "suggest2": "무엇을 먼저 후속 조치해야 합니까?",
     "suggest3": "마지막 고객에 대해 제가 아는 내용을 요약하십시오.",
     "inputPlaceholder": "Inboria에 무언가 요청하십시오…",
     "thinking": "Inboria가 생각하고 있습니다…",
     "footerHint": "전송하려면 Enter • 줄 바꾸려면 Shift+Enter",
     "errorGeneric": "죄송합니다, 오류가 발생했습니다. 잠시 후에 다시 시도하십시오.",
-    "errorQuota": "이번 기간 동안 Inboria 할당량에 도달했습니다. 귀하의 구독을 확인하십시오."
+    "errorQuota": "이번 기간 동안 Inboria 할당량에 도달했습니다. 귀하의 구독을 확인하십시오.",
+    "memoryHint": "Inboria는 개인 환경설정을 자동으로 저장하지 않습니다. 지시가 세션 간에 유지되도록 하시려면 요청을 “기억해 둬…”로 시작해 주십시오."
   },
   "packs": {
     "families": {

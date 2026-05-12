@@ -2511,13 +2511,14 @@
     "greetingTitle": "Dobrý den, jsem Inboria.",
     "greetingDesc": "Znám vaše kontakty, vaše preference a vaše aktuální závazky. Položte mi otázku.",
     "suggest1": "Jaké závazky jsem přijal tento týden?",
-    "suggest2": "Na co bych měl prioritně upozornit?",
+    "suggest2": "Na co bych měl navázat jako první?",
     "suggest3": "Shrňte, co vím o mém posledním klientovi.",
     "inputPlaceholder": "Zeptejte se Inboria na něco…",
     "thinking": "Inboria přemýšlí…",
     "footerHint": "Enter pro odeslání • Shift+Enter pro nový řádek",
     "errorGeneric": "Omlouváme se, došlo k chybě. Zkuste to prosím za chvíli znovu.",
-    "errorQuota": "Byl dosažen limit Inboria pro toto období. Podívejte se na své předplatné."
+    "errorQuota": "Byl dosažen limit Inboria pro toto období. Podívejte se na své předplatné.",
+    "memoryHint": "Inboria automaticky neukládá žádné osobní předvolby. Aby se pokyn uplatňoval i v dalších relacích, zahajte svůj požadavek slovy „Zapamatuj si, že…”."
   },
   "packs": {
     "families": {

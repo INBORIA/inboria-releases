@@ -2511,13 +2511,14 @@
     "greetingTitle": "Sveiki, esmu Inboria.",
     "greetingDesc": "Es zinu Jūsu kontaktus, Jūsu preferences un Jūsu pašreizējos pienākumus. Uzdodiet man jautājumu.",
     "suggest1": "Kādus pienākumus esmu uzņēmis šajā nedēļā?",
-    "suggest2": "Par ko man vajadzētu vispirms atgādināt?",
+    "suggest2": "Ko man vajadzētu atgādināt vispirms?",
     "suggest3": "Kopsavilkums par to, ko zinu par savu pēdējo klientu.",
     "inputPlaceholder": "Lūdzu, uzdodiet kaut ko Inboria…",
     "thinking": "Inboria domā…",
     "footerHint": "Ievade, lai nosūtītu • Maj+Ievade, lai pārietu uz jaunu rindu",
     "errorGeneric": "Atvainojiet, notika kļūda. Lūdzu, mēģiniet vēlreiz pēc brīža.",
-    "errorQuota": "Inboria kvota šajā periodā ir sasniegta. Lūdzu, pārbaudiet savu abonementu."
+    "errorQuota": "Inboria kvota šajā periodā ir sasniegta. Lūdzu, pārbaudiet savu abonementu.",
+    "memoryHint": "Inboria automātiski nesaglabā nekādas personīgās izvēles. Lai norādījums tiktu piemērots starp sesijām, lūdzu, sāciet Jūsu pieprasījumu ar „Atceries, ka…”."
   },
   "packs": {
     "families": {

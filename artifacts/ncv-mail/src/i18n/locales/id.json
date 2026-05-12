@@ -2511,13 +2511,14 @@
     "greetingTitle": "Halo, saya Inboria.",
     "greetingDesc": "Saya mengenal kontak Anda, preferensi Anda, dan komitmen yang sedang berlangsung. Ajukan pertanyaan kepada saya.",
     "suggest1": "Komitmen apa yang telah saya buat minggu ini?",
-    "suggest2": "Apa yang harus saya tindak lanjuti sebagai prioritas?",
+    "suggest2": "Apa yang harus saya tindak lanjuti terlebih dahulu?",
     "suggest3": "Ringkaskan apa yang saya ketahui tentang klien terakhir saya.",
     "inputPlaceholder": "Tanyakan sesuatu kepada Inboria…",
     "thinking": "Inboria sedang berpikir…",
     "footerHint": "Tekan Enter untuk mengirim • Shift+Enter untuk pindah ke baris baru",
     "errorGeneric": "Maaf, terjadi kesalahan. Silakan coba lagi dalam beberapa saat.",
-    "errorQuota": "Kuota Inboria telah tercapai untuk periode ini. Lihat langganan Anda."
+    "errorQuota": "Kuota Inboria telah tercapai untuk periode ini. Lihat langganan Anda.",
+    "memoryHint": "Inboria tidak menyimpan preferensi pribadi secara otomatis. Agar instruksi tetap berlaku antar sesi, silakan awali permintaan Anda dengan “Ingat bahwa…”."
   },
   "packs": {
     "families": {

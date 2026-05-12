@@ -2511,13 +2511,14 @@
     "greetingTitle": "Dia dhuit, is mise Inboria.",
     "greetingDesc": "Tá a fhios agam faoi bhur gcontaetha, bhur gconhoidigh agus bhur n-íocaíochtaí atá ar siúl. Cuir ceist orm.",
     "suggest1": "Cén íocaíocht a rinne mé an tseachtain seo?",
-    "suggest2": "Cad ba chóir dom a athdhéanamh ar dtús?",
+    "suggest2": "Cad ar cheart dom leantóireacht a dhéanamh air ar dtús?",
     "suggest3": "Déanaigí achoimre ar an méid atá ar eolas agam faoi mo chliant deireanach.",
     "inputPlaceholder": "Iarr rud éigin ar Inboria…",
     "thinking": "Tá Inboria ag smaoineamh…",
     "footerHint": "Iontráil chun a sheoladh • Shift+Iontráil chun dul go dtí an líne eile",
     "errorGeneric": "Tá brón orm, tharla earráid. Déan iarracht arís i nóiméad.",
-    "errorQuota": "Sceideal Inboria sroichte don tréimhse seo. Féach ar bhur síntiús."
+    "errorQuota": "Sceideal Inboria sroichte don tréimhse seo. Féach ar bhur síntiús.",
+    "memoryHint": "Ní choinníonn Inboria aon roghanna pearsanta go huathoibríoch. Chun treoir a chur i bhfeidhm ó sheisiún go seisiún, cuirigí tús le bhur n-iarratas le “Cuimhnigh go…”."
   },
   "packs": {
     "families": {

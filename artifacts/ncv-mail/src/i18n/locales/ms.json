@@ -2511,13 +2511,14 @@
     "greetingTitle": "Halo, saya Inboria.",
     "greetingDesc": "Saya mengenali kontak anda, pilihan anda dan komitmen yang sedang berlangsung. Sila ajukan soalan.",
     "suggest1": "Apakah komitmen yang telah saya buat minggu ini?",
-    "suggest2": "Apa yang perlu saya utamakan untuk diikuti semula?",
+    "suggest2": "Apa yang patut saya susuli dahulu?",
     "suggest3": "Ringkaskan apa yang saya tahu tentang pelanggan terakhir saya.",
     "inputPlaceholder": "Tanya sesuatu kepada Inboria...",
     "thinking": "Inboria sedang berfikir...",
     "footerHint": "Tekan Enter untuk menghantar • Shift+Enter untuk pergi ke baris seterusnya",
     "errorGeneric": "Maaf, berlaku ralat. Sila cuba lagi dalam seketika.",
-    "errorQuota": "Kuota Inboria telah dicapai untuk tempoh ini. Lihat langganan anda."
+    "errorQuota": "Kuota Inboria telah dicapai untuk tempoh ini. Lihat langganan anda.",
+    "memoryHint": "Inboria tidak menyimpan sebarang keutamaan peribadi secara automatik. Agar arahan diguna pakai antara sesi, sila mulakan permintaan anda dengan “Ingat bahawa…”."
   },
   "packs": {
     "families": {

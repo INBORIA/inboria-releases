@@ -2511,13 +2511,14 @@
     "greetingTitle": "Hej, jeg er Inboria.",
     "greetingDesc": "Jeg kender dine kontakter, dine præferencer og dine aktuelle forpligtelser. Stil mig et spørgsmål.",
     "suggest1": "Hvilke forpligtelser har jeg påtaget mig denne uge?",
-    "suggest2": "Hvad skal jeg følge op på som det første?",
+    "suggest2": "Hvad bør jeg følge op på først?",
     "suggest3": "Opsummer hvad jeg ved om min seneste kunde.",
     "inputPlaceholder": "Spørg noget til Inboria…",
     "thinking": "Inboria tænker…",
     "footerHint": "Indtast for at sende • Shift+Enter for at gå til næste linje",
     "errorGeneric": "Beklager, der opstod en fejl. Prøv igen om et øjeblik.",
-    "errorQuota": "Inboria kvote nået for denne periode. Se dit abonnement."
+    "errorQuota": "Inboria kvote nået for denne periode. Se dit abonnement.",
+    "memoryHint": "Inboria gemmer ingen personlige præferencer automatisk. For at en instruktion skal gælde fra en session til den næste, indled anmodningen med »Husk at…«."
   },
   "packs": {
     "families": {
