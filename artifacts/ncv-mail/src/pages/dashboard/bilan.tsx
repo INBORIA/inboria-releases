@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { useEnableLightTheme } from "@/lib/inbox-theme";
 import {
   useGenerateDailySummary,
   useListAppointments,
@@ -97,6 +98,7 @@ function makeChartTooltip<T extends { name?: string }>(buildRows: (datum: T) => 
 }
 
 export default function BilanQuotidien() {
+  useEnableLightTheme();
   const { t, i18n } = useTranslation();
   const { session } = useAuth();
   const locale = dateLocales[i18n.language] || fr;
