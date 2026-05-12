@@ -2102,9 +2102,9 @@
     "mentionPick": "Pieminēt dalībnieku",
     "mentionHint": "@, lai pieminētu",
     "mentionedYou": "Jūs pieminēja",
-    "threadTitle_zero": "Saruna",
-    "threadTitle_one": "Saruna · {{count}} iekšējā piezīme",
-    "threadTitle_other": "Saruna · {{count}} iekšējās piezīmes"
+    "threadTitle_zero": "Komandas tērzēšana",
+    "threadTitle_one": "Komandas tērzēšana",
+    "threadTitle_other": "Komandas tērzēšana"
   },
   "attachments": {
     "title": "Pielikumi",

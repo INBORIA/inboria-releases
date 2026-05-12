@@ -2102,9 +2102,9 @@
     "mentionPick": "Menzionare un membro",
     "mentionHint": "@ per menzionare",
     "mentionedYou": "Le ha menzionato",
-    "threadTitle_zero": "Conversazione",
-    "threadTitle_one": "Conversazione · {{count}} nota interna",
-    "threadTitle_other": "Conversazione · {{count}} note interne"
+    "threadTitle_zero": "Chat del team",
+    "threadTitle_one": "Chat del team",
+    "threadTitle_other": "Chat del team"
   },
   "attachments": {
     "title": "Allegati",

@@ -2102,9 +2102,9 @@
     "mentionPick": "Згадати учасника",
     "mentionHint": "@ для згадки",
     "mentionedYou": "Вам згадали",
-    "threadTitle_zero": "Розмова",
-    "threadTitle_one": "Розмова · {{count}} внутрішня нотатка",
-    "threadTitle_other": "Розмова · {{count}} внутрішні нотатки"
+    "threadTitle_zero": "Командний чат",
+    "threadTitle_one": "Командний чат",
+    "threadTitle_other": "Командний чат"
   },
   "attachments": {
     "title": "Вкладення",

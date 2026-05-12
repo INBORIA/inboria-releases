@@ -2102,9 +2102,9 @@
     "mentionPick": "Tagairt a dhéanamh do bhall",
     "mentionHint": "@ chun tagairt a dhéanamh",
     "mentionedYou": "d'áitigh sibh",
-    "threadTitle_zero": "Comhrá",
-    "threadTitle_one": "Comhrá · {{count}} nóta inmheánach",
-    "threadTitle_other": "Comhrá · {{count}} nótaí inmheánacha"
+    "threadTitle_zero": "Comhrá foirne",
+    "threadTitle_one": "Comhrá foirne",
+    "threadTitle_other": "Comhrá foirne"
   },
   "attachments": {
     "title": "Ceangaltáin",

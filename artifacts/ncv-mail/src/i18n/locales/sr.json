@@ -2102,9 +2102,9 @@
     "mentionPick": "Помените члана",
     "mentionHint": "@ за помињање",
     "mentionedYou": "Вас је поменуо",
-    "threadTitle_zero": "Разговор",
-    "threadTitle_one": "Разговор · {{count}} унутрашња белешка",
-    "threadTitle_other": "Разговор · {{count}} унутрашње белешке"
+    "threadTitle_zero": "Тимски чет",
+    "threadTitle_one": "Тимски чет",
+    "threadTitle_other": "Тимски чет"
   },
   "attachments": {
     "title": "Прикачени фајлови",

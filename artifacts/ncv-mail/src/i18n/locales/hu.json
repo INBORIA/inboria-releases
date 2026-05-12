@@ -2102,9 +2102,9 @@
     "mentionPick": "Megemlíteni egy tagot",
     "mentionHint": "@ a megemlítéshez",
     "mentionedYou": "megemlítette Önt",
-    "threadTitle_zero": "Beszélgetés",
-    "threadTitle_one": "Beszélgetés · {{count}} belső megjegyzés",
-    "threadTitle_other": "Beszélgetés · {{count}} belső megjegyzések"
+    "threadTitle_zero": "Csapatchat",
+    "threadTitle_one": "Csapatchat",
+    "threadTitle_other": "Csapatchat"
   },
   "attachments": {
     "title": "Csatolmányok",

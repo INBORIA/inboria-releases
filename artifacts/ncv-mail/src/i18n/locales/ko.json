@@ -2102,9 +2102,9 @@
     "mentionPick": "구성원 언급하기",
     "mentionHint": "@로 언급하기",
     "mentionedYou": "귀하를 언급하였습니다",
-    "threadTitle_zero": "대화",
-    "threadTitle_one": "대화 · {{count}} 내부 메모",
-    "threadTitle_other": "대화 · {{count}} 내부 메모"
+    "threadTitle_zero": "팀 채팅",
+    "threadTitle_one": "팀 채팅",
+    "threadTitle_other": "팀 채팅"
   },
   "attachments": {
     "title": "첨부파일",

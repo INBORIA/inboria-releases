@@ -2102,9 +2102,9 @@
     "mentionPick": "Αναφορά ενός μέλους",
     "mentionHint": "@ για αναφορά",
     "mentionedYou": "σας ανέφερε",
-    "threadTitle_zero": "Συζήτηση",
-    "threadTitle_one": "Συζήτηση · {{count}} εσωτερική σημείωση",
-    "threadTitle_other": "Συζήτηση · {{count}} εσωτερικές σημειώσεις"
+    "threadTitle_zero": "Συνομιλία ομάδας",
+    "threadTitle_one": "Συνομιλία ομάδας",
+    "threadTitle_other": "Συνομιλία ομάδας"
   },
   "attachments": {
     "title": "Συνημμένα",

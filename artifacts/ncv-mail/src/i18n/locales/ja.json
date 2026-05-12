@@ -2102,9 +2102,9 @@
     "mentionPick": "メンバーをメンションする",
     "mentionHint": "@でメンション",
     "mentionedYou": "あなたがメンションされました",
-    "threadTitle_zero": "会話",
-    "threadTitle_one": "会話 · {{count}} 内部メモ",
-    "threadTitle_other": "会話 · {{count}} 内部メモ"
+    "threadTitle_zero": "チームチャット",
+    "threadTitle_one": "チームチャット",
+    "threadTitle_other": "チームチャット"
   },
   "attachments": {
     "title": "添付ファイル",

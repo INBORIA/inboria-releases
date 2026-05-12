@@ -2102,9 +2102,9 @@
     "mentionPick": "提及成員",
     "mentionHint": "@ 提及",
     "mentionedYou": "已提及您",
-    "threadTitle_zero": "對話",
-    "threadTitle_one": "對話 · {{count}} 條內部備註",
-    "threadTitle_other": "對話 · {{count}} 條內部備註"
+    "threadTitle_zero": "團隊聊天",
+    "threadTitle_one": "團隊聊天",
+    "threadTitle_other": "團隊聊天"
   },
   "attachments": {
     "title": "附件",

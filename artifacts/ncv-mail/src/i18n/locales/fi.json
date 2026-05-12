@@ -2102,9 +2102,9 @@
     "mentionPick": "Mainitse jäsen",
     "mentionHint": "@ mainitaksesi",
     "mentionedYou": "on maininnut teidät",
-    "threadTitle_zero": "Keskustelu",
-    "threadTitle_one": "Keskustelu · {{count}} sisäinen muistiinpano",
-    "threadTitle_other": "Keskustelu · {{count}} sisäistä muistiinpanoa"
+    "threadTitle_zero": "Tiimichat",
+    "threadTitle_one": "Tiimichat",
+    "threadTitle_other": "Tiimichat"
   },
   "attachments": {
     "title": "Liitteet",

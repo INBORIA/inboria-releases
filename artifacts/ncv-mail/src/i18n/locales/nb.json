@@ -2102,9 +2102,9 @@
     "mentionPick": "Nevn et medlem",
     "mentionHint": "@ for å nevne",
     "mentionedYou": "har nevnt deg",
-    "threadTitle_zero": "Samtale",
-    "threadTitle_one": "Samtale · {{count}} internt notat",
-    "threadTitle_other": "Samtale · {{count}} interne notater"
+    "threadTitle_zero": "Teamchat",
+    "threadTitle_one": "Teamchat",
+    "threadTitle_other": "Teamchat"
   },
   "attachments": {
     "title": "Vedlegg",

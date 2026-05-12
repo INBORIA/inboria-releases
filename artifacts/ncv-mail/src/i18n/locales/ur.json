@@ -2102,9 +2102,9 @@
     "mentionPick": "ایک رکن کو ذکر کریں",
     "mentionHint": "@ ذکر کرنے کے لیے",
     "mentionedYou": "آپ کو ذکر کیا ہے",
-    "threadTitle_zero": "گفتگو",
-    "threadTitle_one": "گفتگو · {{count}} داخلی نوٹ",
-    "threadTitle_other": "گفتگو · {{count}} داخلی نوٹس"
+    "threadTitle_zero": "ٹیم چیٹ",
+    "threadTitle_one": "ٹیم چیٹ",
+    "threadTitle_other": "ٹیم چیٹ"
   },
   "attachments": {
     "title": "منسلکات",

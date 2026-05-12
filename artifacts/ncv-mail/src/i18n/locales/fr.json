@@ -2122,9 +2122,9 @@
     "mentionPick": "Mentionner un membre",
     "mentionHint": "@ pour mentionner",
     "mentionedYou": "vous a mentionné",
-    "threadTitle_zero": "Conversation",
-    "threadTitle_one": "Conversation · {{count}} note interne",
-    "threadTitle_other": "Conversation · {{count}} notes internes"
+    "threadTitle_zero": "Chat équipe",
+    "threadTitle_one": "Chat équipe",
+    "threadTitle_other": "Chat équipe"
   },
   "attachments": {
     "title": "Pièces jointes",

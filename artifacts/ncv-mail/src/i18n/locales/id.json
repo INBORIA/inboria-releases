@@ -2102,9 +2102,9 @@
     "mentionPick": "Sebut anggota",
     "mentionHint": "@ untuk menyebut",
     "mentionedYou": "Anda disebut",
-    "threadTitle_zero": "Percakapan",
-    "threadTitle_one": "Percakapan · {{count}} catatan internal",
-    "threadTitle_other": "Percakapan · {{count}} catatan internal"
+    "threadTitle_zero": "Obrolan tim",
+    "threadTitle_one": "Obrolan tim",
+    "threadTitle_other": "Obrolan tim"
   },
   "attachments": {
     "title": "Lampiran",

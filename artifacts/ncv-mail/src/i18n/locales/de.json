@@ -2112,9 +2112,9 @@
     "mentionPick": "Teammitglied erwähnen",
     "mentionHint": "@ zum Erwähnen",
     "mentionedYou": "hat Sie erwähnt",
-    "threadTitle_zero": "Konversation",
-    "threadTitle_one": "Konversation · {{count}} interne Notiz",
-    "threadTitle_other": "Konversation · {{count}} interne Notizen"
+    "threadTitle_zero": "Team-Chat",
+    "threadTitle_one": "Team-Chat",
+    "threadTitle_other": "Team-Chat"
   },
   "attachments": {
     "title": "Anhänge",

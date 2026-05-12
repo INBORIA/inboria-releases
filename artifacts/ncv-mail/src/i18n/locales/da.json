@@ -2102,9 +2102,9 @@
     "mentionPick": "Nævn et medlem",
     "mentionHint": "@ for at nævne",
     "mentionedYou": "har nævnt dig",
-    "threadTitle_zero": "Samtale",
-    "threadTitle_one": "Samtale · {{count}} intern note",
-    "threadTitle_other": "Samtale · {{count}} interne noter"
+    "threadTitle_zero": "Teamchat",
+    "threadTitle_one": "Teamchat",
+    "threadTitle_other": "Teamchat"
   },
   "attachments": {
     "title": "Vedhæftninger",

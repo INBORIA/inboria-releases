@@ -2130,9 +2130,9 @@
     "mentionPick": "Mention a teammate",
     "mentionHint": "@ to mention",
     "mentionedYou": "mentioned you",
-    "threadTitle_zero": "Conversation",
-    "threadTitle_one": "Conversation · {{count}} internal note",
-    "threadTitle_other": "Conversation · {{count}} internal notes"
+    "threadTitle_zero": "Team chat",
+    "threadTitle_one": "Team chat",
+    "threadTitle_other": "Team chat"
   },
   "attachments": {
     "title": "Attachments",

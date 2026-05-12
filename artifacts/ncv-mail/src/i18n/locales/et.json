@@ -2102,9 +2102,9 @@
     "mentionPick": "Maini liiget",
     "mentionHint": "@, et mainida",
     "mentionedYou": "on Teid maininud",
-    "threadTitle_zero": "Vestlus",
-    "threadTitle_one": "Vestlus · {{count}} sisemine märkme",
-    "threadTitle_other": "Vestlus · {{count}} sisemist märkmeid"
+    "threadTitle_zero": "Meeskonna vestlus",
+    "threadTitle_one": "Meeskonna vestlus",
+    "threadTitle_other": "Meeskonna vestlus"
   },
   "attachments": {
     "title": "Manused",

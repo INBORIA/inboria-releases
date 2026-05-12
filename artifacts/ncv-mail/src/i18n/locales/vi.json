@@ -2102,9 +2102,9 @@
     "mentionPick": "Đề cập một thành viên",
     "mentionHint": "@ để đề cập",
     "mentionedYou": "Quý khách đã được đề cập",
-    "threadTitle_zero": "Cuộc trò chuyện",
-    "threadTitle_one": "Cuộc trò chuyện · {{count}} ghi chú nội bộ",
-    "threadTitle_other": "Cuộc trò chuyện · {{count}} ghi chú nội bộ"
+    "threadTitle_zero": "Trò chuyện nhóm",
+    "threadTitle_one": "Trò chuyện nhóm",
+    "threadTitle_other": "Trò chuyện nhóm"
   },
   "attachments": {
     "title": "Tập tin đính kèm",

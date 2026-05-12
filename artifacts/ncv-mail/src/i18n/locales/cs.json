@@ -2102,9 +2102,9 @@
     "mentionPick": "Zmínit člena",
     "mentionHint": "@ pro zmínku",
     "mentionedYou": "Vás zmínil",
-    "threadTitle_zero": "Konverzace",
-    "threadTitle_one": "Konverzace · {{count}} interní poznámka",
-    "threadTitle_other": "Konverzace · {{count}} interní poznámky"
+    "threadTitle_zero": "Tímový chat",
+    "threadTitle_one": "Tímový chat",
+    "threadTitle_other": "Tímový chat"
   },
   "attachments": {
     "title": "Přílohy",

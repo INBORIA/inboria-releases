@@ -2102,9 +2102,9 @@
     "mentionPick": "Paminėti narį",
     "mentionHint": "@, kad paminėtumėte",
     "mentionedYou": "Jūs paminėjote",
-    "threadTitle_zero": "Pokalbiai",
-    "threadTitle_one": "Pokalbis · {{count}} vidinė pastaba",
-    "threadTitle_other": "Pokalbis · {{count}} vidinės pastabos"
+    "threadTitle_zero": "Komandos pokalbis",
+    "threadTitle_one": "Komandos pokalbis",
+    "threadTitle_other": "Komandos pokalbis"
   },
   "attachments": {
     "title": "Prisegtukai",

@@ -2102,9 +2102,9 @@
     "mentionPick": "Menționați un membru",
     "mentionHint": "@ pentru a menționa",
     "mentionedYou": "v-a menționat",
-    "threadTitle_zero": "Conversație",
-    "threadTitle_one": "Conversație · {{count}} notă internă",
-    "threadTitle_other": "Conversație · {{count}} note interne"
+    "threadTitle_zero": "Chat de echipă",
+    "threadTitle_one": "Chat de echipă",
+    "threadTitle_other": "Chat de echipă"
   },
   "attachments": {
     "title": "Atașamente",

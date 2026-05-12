@@ -2112,9 +2112,9 @@
     "mentionPick": "Een teamlid vermelden",
     "mentionHint": "@ om te vermelden",
     "mentionedYou": "heeft u vermeld",
-    "threadTitle_zero": "Conversatie",
-    "threadTitle_one": "Conversatie · {{count}} interne notitie",
-    "threadTitle_other": "Conversatie · {{count}} interne notities"
+    "threadTitle_zero": "Teamchat",
+    "threadTitle_one": "Teamchat",
+    "threadTitle_other": "Teamchat"
   },
   "attachments": {
     "title": "Bijlagen",

@@ -353,13 +353,8 @@ export function EmailComments({
             {collapsed ? <ChevronRight className="w-3 h-3 text-[#b8c5d6]" /> : <ChevronDown className="w-3 h-3 text-[#b8c5d6]" />}
             <MessageSquare className="w-3.5 h-3.5 text-[#b8c5d6]" />
             <span className="text-[11px] font-medium text-[#b8c5d6] uppercase tracking-wider">
-              {t("comments.threadTitle", { count: commentList.length, defaultValue: "Notes internes" })}
+              {t("comments.threadTitle", { count: commentList.length, defaultValue: "Chat équipe" })}
             </span>
-            {commentList.length > 0 && (
-              <span className="text-[10px] text-[#b8c5d6] bg-white/[0.06] px-1.5 py-0.5 rounded-full">
-                {commentList.length}
-              </span>
-            )}
           </button>
           {typingUsers.length > 0 && (
             <span className="text-[10px] italic text-[#b8c5d6] mr-2">

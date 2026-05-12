@@ -2102,9 +2102,9 @@
     "mentionPick": "Mencionar un membre",
     "mentionHint": "@ per mencionar",
     "mentionedYou": "Vostè ha mencionat",
-    "threadTitle_zero": "Conversació",
-    "threadTitle_one": "Conversació · {{count}} nota interna",
-    "threadTitle_other": "Conversació · {{count}} notes internes"
+    "threadTitle_zero": "Xat de l'equip",
+    "threadTitle_one": "Xat de l'equip",
+    "threadTitle_other": "Xat de l'equip"
   },
   "attachments": {
     "title": "Fitxers adjunts",

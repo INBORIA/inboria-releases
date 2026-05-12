@@ -2102,9 +2102,9 @@
     "mentionPick": "Bir üyeyi bahset",
     "mentionHint": "@ ile bahsetmek",
     "mentionedYou": "sizi bahsetti",
-    "threadTitle_zero": "Sohbet",
-    "threadTitle_one": "Sohbet · {{count}} iç nota",
-    "threadTitle_other": "Sohbet · {{count}} iç notlar"
+    "threadTitle_zero": "Takım sohbeti",
+    "threadTitle_one": "Takım sohbeti",
+    "threadTitle_other": "Takım sohbeti"
   },
   "attachments": {
     "title": "Ekler",

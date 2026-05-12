@@ -2102,9 +2102,9 @@
     "mentionPick": "Nämna en medlem",
     "mentionHint": "@ för att nämna",
     "mentionedYou": "har nämnt dig",
-    "threadTitle_zero": "Konversation",
-    "threadTitle_one": "Konversation · {{count}} intern anteckning",
-    "threadTitle_other": "Konversation · {{count}} interna anteckningar"
+    "threadTitle_zero": "Teamchatt",
+    "threadTitle_one": "Teamchatt",
+    "threadTitle_other": "Teamchatt"
   },
   "attachments": {
     "title": "Bifogade filer",

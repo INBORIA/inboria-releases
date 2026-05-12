@@ -2102,9 +2102,9 @@
     "mentionPick": "រាយការណ៍សមាជិក",
     "mentionHint": "@ ដើម្បីរាយការណ៍",
     "mentionedYou": "លោកអ្នកបានរាយការណ៍",
-    "threadTitle_zero": "ការសន្ទនា",
-    "threadTitle_one": "ការសន្ទនា · {{count}} កំណត់ចំណាំក្នុង",
-    "threadTitle_other": "ការសន្ទនា · {{count}} កំណត់ចំណាំក្នុង"
+    "threadTitle_zero": "ការជជែកក្រុម",
+    "threadTitle_one": "ការជជែកក្រុម",
+    "threadTitle_other": "ការជជែកក្រុម"
   },
   "attachments": {
     "title": "ឯកសារភ្ជាប់",

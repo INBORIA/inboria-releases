@@ -2102,9 +2102,9 @@
     "mentionPick": "กล่าวถึงสมาชิก",
     "mentionHint": "@ เพื่อกล่าวถึง",
     "mentionedYou": "ได้กล่าวถึงท่าน",
-    "threadTitle_zero": "การสนทนา",
-    "threadTitle_one": "การสนทนา · {{count}} หมายเหตุภายใน",
-    "threadTitle_other": "การสนทนา · {{count}} หมายเหตุภายใน"
+    "threadTitle_zero": "แชทของทีม",
+    "threadTitle_one": "แชทของทีม",
+    "threadTitle_other": "แชทของทีม"
   },
   "attachments": {
     "title": "ไฟล์แนบ",

@@ -2102,9 +2102,9 @@
     "mentionPick": "Споменете член",
     "mentionHint": "@ за споменаване",
     "mentionedYou": "Ви е споменал",
-    "threadTitle_zero": "Разговор",
-    "threadTitle_one": "Разговор · {{count}} вътрешна бележка",
-    "threadTitle_other": "Разговор · {{count}} вътрешни бележки"
+    "threadTitle_zero": "Чат на екипа",
+    "threadTitle_one": "Чат на екипа",
+    "threadTitle_other": "Чат на екипа"
   },
   "attachments": {
     "title": "Прикачени файлове",

@@ -2102,9 +2102,9 @@
     "mentionPick": "Spomenite člana",
     "mentionHint": "@ za spominjanje",
     "mentionedYou": "Vas je spomenuo",
-    "threadTitle_zero": "Razgovor",
-    "threadTitle_one": "Razgovor · {{count}} interna bilješka",
-    "threadTitle_other": "Razgovor · {{count}} interne bilješke"
+    "threadTitle_zero": "Timski chat",
+    "threadTitle_one": "Timski chat",
+    "threadTitle_other": "Timski chat"
   },
   "attachments": {
     "title": "Privitci",

@@ -2102,9 +2102,9 @@
     "mentionPick": "Issemmi membru",
     "mentionHint": "@ biex issemmi",
     "mentionedYou": "isemmek",
-    "threadTitle_zero": "Konversazzjoni",
-    "threadTitle_one": "Konversazzjoni · {{count}} nota interna",
-    "threadTitle_other": "Konversazzjoni · {{count}} noti interni"
+    "threadTitle_zero": "Chat tat-tim",
+    "threadTitle_one": "Chat tat-tim",
+    "threadTitle_other": "Chat tat-tim"
   },
   "attachments": {
     "title": "Ħlasijiet",

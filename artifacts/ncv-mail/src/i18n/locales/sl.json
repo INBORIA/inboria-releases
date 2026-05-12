@@ -2102,9 +2102,9 @@
     "mentionPick": "Omeniti člana",
     "mentionHint": "@ za omembo",
     "mentionedYou": "Vas je omenil",
-    "threadTitle_zero": "Pogovor",
-    "threadTitle_one": "Pogovor · {{count}} interna opomba",
-    "threadTitle_other": "Pogovor · {{count}} interne opombe"
+    "threadTitle_zero": "Ekipni klepet",
+    "threadTitle_one": "Ekipni klepet",
+    "threadTitle_other": "Ekipni klepet"
   },
   "attachments": {
     "title": "Priponke",

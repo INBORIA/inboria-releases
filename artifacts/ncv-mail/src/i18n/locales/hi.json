@@ -2102,9 +2102,9 @@
     "mentionPick": "एक सदस्य का उल्लेख करें",
     "mentionHint": "@ का उपयोग करके उल्लेख करें",
     "mentionedYou": "आपका उल्लेख किया गया है",
-    "threadTitle_zero": "वार्तालाप",
-    "threadTitle_one": "वार्तालाप · {{count}} आंतरिक नोट",
-    "threadTitle_other": "वार्तालाप · {{count}} आंतरिक नोट्स"
+    "threadTitle_zero": "टीम चैट",
+    "threadTitle_one": "टीम चैट",
+    "threadTitle_other": "टीम चैट"
   },
   "attachments": {
     "title": "संलग्नक",

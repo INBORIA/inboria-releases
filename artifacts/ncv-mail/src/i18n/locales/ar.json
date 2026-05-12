@@ -2102,9 +2102,9 @@
     "mentionPick": "الإشارة إلى عضو",
     "mentionHint": "@ للإشارة",
     "mentionedYou": "قام أحدهم بالإشارة إليكم",
-    "threadTitle_zero": "محادثة",
-    "threadTitle_one": "محادثة · {{count}} ملاحظة داخلية",
-    "threadTitle_other": "محادثة · {{count}} ملاحظات داخلية"
+    "threadTitle_zero": "محادثة الفريق",
+    "threadTitle_one": "محادثة الفريق",
+    "threadTitle_other": "محادثة الفريق"
   },
   "attachments": {
     "title": "المرفقات",

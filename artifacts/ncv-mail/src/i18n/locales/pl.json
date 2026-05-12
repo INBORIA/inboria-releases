@@ -2102,9 +2102,9 @@
     "mentionPick": "Wspomnij członka",
     "mentionHint": "@, aby wspomnieć",
     "mentionedYou": "wspomniał Cię",
-    "threadTitle_zero": "Rozmowa",
-    "threadTitle_one": "Rozmowa · {{count}} notatka wewnętrzna",
-    "threadTitle_other": "Rozmowa · {{count}} notatek wewnętrznych"
+    "threadTitle_zero": "Czat zespołu",
+    "threadTitle_one": "Czat zespołu",
+    "threadTitle_other": "Czat zespołu"
   },
   "attachments": {
     "title": "Załączniki",

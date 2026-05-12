@@ -2102,9 +2102,9 @@
     "mentionPick": "Mencionar um membro",
     "mentionHint": "@ para mencionar",
     "mentionedYou": "lhe mencionou",
-    "threadTitle_zero": "Conversa",
-    "threadTitle_one": "Conversa · {{count}} nota interna",
-    "threadTitle_other": "Conversa · {{count}} notas internas"
+    "threadTitle_zero": "Chat da equipa",
+    "threadTitle_one": "Chat da equipa",
+    "threadTitle_other": "Chat da equipa"
   },
   "attachments": {
     "title": "Anexos",
