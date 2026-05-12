@@ -72,12 +72,14 @@ export function EmailComments({
   email,
   assignedTo,
   sharedMailboxId,
+  ownerId,
 }: {
   emailId: number;
   currentUserId?: string;
   email?: ThreadEmailMeta;
   assignedTo?: string | null;
   sharedMailboxId?: string | null;
+  ownerId?: string | null;
 }) {
   const { t, i18n } = useTranslation();
   const { session } = useAuth();
@@ -224,13 +226,16 @@ export function EmailComments({
 
   // Visibilité conditionnelle du Chat équipe — règle STRICTE :
   // - boîte partagée → toujours visible (toute l'équipe peut participer)
-  // - mail perso assigné à un AUTRE membre → visible (collab assignant ↔ assigné)
-  // - sinon (perso non assigné, ou auto-assigné à soi-même seul) → masqué
+  // - mail perso assigné à un coéquipier ≠ propriétaire → visible des
+  //   DEUX côtés (assignant/propriétaire ET assigné)
+  // - sinon (perso non assigné, ou propriétaire qui s'auto-assigne seul)
+  //   → masqué (pas de second interlocuteur)
   // L'historique de commentaires (y compris bulles système) ne maintient
   // PAS le chat ouvert : à la désassignation d'un mail perso, il se ferme.
   const isShared = Boolean(sharedMailboxId);
-  const hasOtherAssignee = Boolean(assignedTo) && assignedTo !== currentUserId;
-  const chatVisible = isShared || hasOtherAssignee;
+  const isCollabAssignment =
+    Boolean(assignedTo) && Boolean(ownerId) && assignedTo !== ownerId;
+  const chatVisible = isShared || isCollabAssignment;
 
   // ---------------------------------------------------------------
   // Realtime presence: who else is viewing this thread right now.

@@ -511,6 +511,7 @@ router.get("/emails/:id", requireAuth, async (req, res, next): Promise<void> => 
       projectId: email.project_id,
       projectName: email.projects?.name || null,
       projectReference: email.projects?.reference || null,
+      userId: email.user_id || null,
       assignedTo: email.assigned_to || null,
       assignedToName,
       assignedAt: email.assigned_at || null,
