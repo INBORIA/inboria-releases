@@ -24,6 +24,7 @@ import {
   sanitizeErrorMessage,
 } from "./connection-health";
 import { runFollowupDetectionForAllUsers } from "./follow-up-detector";
+import { repairMojibake } from "../lib/text-encoding";
 
 interface SaveEmailOptions {
   forceSpam?: boolean;
@@ -506,6 +507,13 @@ export async function saveEmailWithTriage(
   const forceSpam = options?.forceSpam === true;
   const providerMessageId = options?.providerMessageId || null;
   const nativeMessageId = options?.nativeMessageId || null;
+
+  // Réparation mojibake (double-encodage UTF-8) sur les champs texte ingérés.
+  // Couvre Gmail / Outlook / IMAP via ce point d'entrée unique.
+  sender = repairMojibake(sender);
+  subject = repairMojibake(subject);
+  body = repairMojibake(body);
+  if (recipient) recipient = repairMojibake(recipient);
 
   const { data: existing } = await supabaseAdmin
     .from("emails")
