@@ -117,7 +117,7 @@ type HoverActionsCb = {
 
 function HoverActions({ isUnread, categoryCounts, userFolders, cb }: { isUnread: boolean; categoryCounts: any[] | undefined; userFolders: any[] | undefined; cb: HoverActionsCb }) {
   const { t } = useTranslation();
-  const [openMenu, setOpenMenu] = useState<null | "snooze" | "category" | "move">(null);
+  const [openMenu, setOpenMenu] = useState<null | "snooze" | "category" | "move" | "more">(null);
   const wrapRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!openMenu) return;
@@ -190,11 +190,22 @@ function HoverActions({ isUnread, categoryCounts, userFolders, cb }: { isUnread:
           )}
         </div>
       )}
-      <button className={btn} title={t("inbox.copySenderEmail", "Copier l'adresse de l'expéditeur")} onMouseDown={stopMD} onClick={click(cb.onCopySender)}><Copy className="w-3.5 h-3.5" /></button>
-      <button className={btn} title={t("inbox.copySubject", "Copier le sujet")} onMouseDown={stopMD} onClick={click(cb.onCopySubject)}><TypeIcon className="w-3.5 h-3.5" /></button>
-      <button className={btn} title={t("inbox.downloadEml", "Télécharger en .eml")} onMouseDown={stopMD} onClick={click(cb.onDownloadEml)}><Download className="w-3.5 h-3.5" /></button>
-      <button className={btn} title={t("inbox.print", "Imprimer")} onMouseDown={stopMD} onClick={click(cb.onPrint)}><Printer className="w-3.5 h-3.5" /></button>
-      <button className={btn} title={t("junk.blockSender")} onMouseDown={stopMD} onClick={click(cb.onBlockSender)}><ShieldAlert className="w-3.5 h-3.5" /></button>
+      {/* Actions secondaires regroupées dans un menu « ⋯ » pour rester
+          compact sur largeur de colonne usuelle (cf. tâche #298). */}
+      <div className="relative">
+        <button className={btn} title={t("inbox.moreActions", { defaultValue: "Plus d'actions" })} onMouseDown={stopMD} onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === "more" ? null : "more"); }}>
+          <span className="inline-flex items-center justify-center w-3.5 h-3.5 leading-none text-[14px] font-semibold tracking-tighter">⋯</span>
+        </button>
+        {openMenu === "more" && (
+          <div className={popover} onMouseDown={stopMD}>
+            <button className={popoverItem} onMouseDown={stopMD} onClick={click(cb.onCopySender)}><Copy className="w-3.5 h-3.5" />{t("inbox.copySenderEmail", "Copier l'adresse de l'expéditeur")}</button>
+            <button className={popoverItem} onMouseDown={stopMD} onClick={click(cb.onCopySubject)}><TypeIcon className="w-3.5 h-3.5" />{t("inbox.copySubject", "Copier le sujet")}</button>
+            <button className={popoverItem} onMouseDown={stopMD} onClick={click(cb.onDownloadEml)}><Download className="w-3.5 h-3.5" />{t("inbox.downloadEml", "Télécharger en .eml")}</button>
+            <button className={popoverItem} onMouseDown={stopMD} onClick={click(cb.onPrint)}><Printer className="w-3.5 h-3.5" />{t("inbox.print", "Imprimer")}</button>
+            <button className={popoverItem} onMouseDown={stopMD} onClick={click(cb.onBlockSender)}><ShieldAlert className="w-3.5 h-3.5" />{t("junk.blockSender")}</button>
+          </div>
+        )}
+      </div>
       <button className="p-1 rounded hover:bg-red-500/[0.08] text-[#8b95a7] hover:text-red-400" title={t("inbox.deleteEmail")} onMouseDown={stopMD} onClick={click(cb.onDelete)}><Trash2 className="w-3.5 h-3.5" /></button>
     </div>
   );
