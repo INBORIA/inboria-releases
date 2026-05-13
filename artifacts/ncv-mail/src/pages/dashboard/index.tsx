@@ -3383,6 +3383,19 @@ export default function Dashboard() {
   const emails = accumulatedEmails;
   const hasMorePages = emailPage < totalPages;
 
+  // Lookup unifié : un email peut venir de la liste perso (`emails`) OU
+  // de la liste partagée (`sharedEmailsList`). Tous les handlers du clic
+  // droit / survol doivent passer par ce helper sinon ils échouent
+  // silencieusement sur la vue Partagées (id introuvable, lookup ⇒ undefined).
+  const findEmailAnywhere = (id: number | string): any => {
+    const numId = typeof id === "string" ? Number(id) : id;
+    return (
+      (emails as any[]).find((e: any) => e.id === id || Number(e.id) === numId) ||
+      (sharedEmailsList as any[]).find((e: any) => e.id === id || Number(e.id) === numId) ||
+      undefined
+    );
+  };
+
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
   const sendEmailMut = useSendEmail();
@@ -3941,7 +3954,7 @@ export default function Dashboard() {
 
   const blockSenderMut = useBlockSender();
   const handleBlockSender = (id: number) => {
-    const email = (emails as any[]).find((e: any) => e.id === id);
+    const email = findEmailAnywhere(id);
     const addr = (email?.senderEmail || "").trim();
     if (!addr) {
       toast({ title: t("junk.blockFailed"), description: t("junk.blockNoEmail"), variant: "destructive" });
@@ -4010,7 +4023,7 @@ export default function Dashboard() {
   };
 
   const handleToggleRead = (id: number) => {
-    const email = (emails as any[]).find((e: any) => e.id === id);
+    const email = findEmailAnywhere(id);
     const isUnread = email?.status === "non_lu" || email?.isRead === false || email?.unread === true;
     const newStatus = isUnread ? "read" : "non_lu";
     updateEmail.mutate(
@@ -4054,7 +4067,7 @@ export default function Dashboard() {
   };
 
   const handleCopySender = async (id: number) => {
-    const email = (emails as any[]).find((e: any) => e.id === id);
+    const email = findEmailAnywhere(id);
     const addr = (email?.senderEmail || extractEmailAddress(email?.sender || "") || "").trim();
     if (!addr) {
       toast({ variant: "destructive", title: t("common.error"), description: "Adresse introuvable" });
@@ -4096,7 +4109,7 @@ export default function Dashboard() {
   };
 
   const handleCopySubject = async (id: number) => {
-    const email = (emails as any[]).find((e: any) => e.id === id);
+    const email = findEmailAnywhere(id);
     const subject = (email?.subject || "").trim();
     if (!subject) {
       toast({ variant: "destructive", title: t("common.error"), description: "Aucun sujet" });
@@ -4112,8 +4125,7 @@ export default function Dashboard() {
       const { supabase } = await import("@/lib/supabase");
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData?.session?.access_token;
-      const baseUrl = import.meta.env.VITE_API_URL || `https://${window.location.host}`;
-      const res = await fetch(`${baseUrl}/api/emails/${id}/export.eml`, {
+      const res = await fetch(`${import.meta.env.BASE_URL}api/emails/${id}/export.eml`, {
         headers: token ? { Authorization: `Bearer ${token}` } : {},
       });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
@@ -4127,7 +4139,7 @@ export default function Dashboard() {
   };
 
   const handlePrintEmail = (id: number) => {
-    const email = (emails as any[]).find((e: any) => e.id === id);
+    const email = findEmailAnywhere(id);
     if (!email) return;
     const w = window.open("", "_blank", "width=800,height=900");
     if (!w) {
@@ -4147,7 +4159,7 @@ export default function Dashboard() {
   };
 
   const handleQuickCreateTask = (id: number) => {
-    const email = (emails as any[]).find((e: any) => e.id === id);
+    const email = findEmailAnywhere(id);
     const title = (email?.subject || "Tâche").slice(0, 200);
     createTaskMut.mutate(
       { data: { title, emailId: id } as any },
@@ -4577,7 +4589,7 @@ export default function Dashboard() {
       )}
       <div className="py-1">
         {selectedIds.size <= 1 ? (() => {
-          const ctxEmail = (emails as any[]).find((e: any) => e.id === contextMenu.emailId)
+          const ctxEmail = findEmailAnywhere(contextMenu.emailId)
             || (selectedEmailId === contextMenu.emailId ? selectedEmail : null);
           const ctxIsUnread = (ctxEmail as any)?.status === "non_lu" || (ctxEmail as any)?.isRead === false || (ctxEmail as any)?.unread === true;
           return (
