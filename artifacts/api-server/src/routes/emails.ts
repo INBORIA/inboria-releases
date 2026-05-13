@@ -25,6 +25,63 @@ function parseSender(raw: string) {
   };
 }
 
+// Lot B — accès en écriture sur un email : soit l'utilisateur est le
+// propriétaire (emails.user_id = userId), soit l'email est dans une boîte
+// partagée dont il est membre actif. Tous les handlers PATCH/DELETE/snooze
+// doivent appeler ce helper AVANT toute mutation, puis retirer le filtre
+// `.eq("user_id", req.userId!)` de leurs queries (sinon les emails partagés
+// renvoient systématiquement 404 pour les membres non-propriétaires).
+async function assertEmailWritable(
+  userId: string,
+  emailIdRaw: string | number | string[] | undefined,
+): Promise<{ ok: true } | { ok: false; status: number; error: string }> {
+  const emailId = Array.isArray(emailIdRaw) ? emailIdRaw[0] : emailIdRaw;
+  if (emailId === undefined || emailId === null || emailId === "") {
+    return { ok: false, status: 400, error: "Missing email id" };
+  }
+  const { data: email } = await supabaseAdmin
+    .from("emails")
+    .select("user_id, shared_mailbox_id")
+    .eq("id", emailId)
+    .maybeSingle();
+  if (!email) return { ok: false, status: 404, error: "Email not found" };
+  if ((email as any).user_id === userId) return { ok: true };
+  const sharedMbId = (email as any).shared_mailbox_id;
+  if (!sharedMbId) return { ok: false, status: 403, error: "Forbidden" };
+
+  // Membre actif explicite de la boîte partagée.
+  const { data: member } = await supabaseAdmin
+    .from("shared_mailbox_members")
+    .select("id")
+    .eq("shared_mailbox_id", sharedMbId)
+    .eq("user_id", userId)
+    .maybeSingle();
+  if (member) return { ok: true };
+
+  // Admin de l'organisation propriétaire de la boîte partagée — cohérence
+  // avec shared-mailboxes.ts qui autorise déjà l'admin org à voir/agir sur
+  // toutes les boîtes de son org sans être membre explicite.
+  const { data: mbOrg } = await supabaseAdmin
+    .from("shared_mailboxes")
+    .select("organisation_id")
+    .eq("id", sharedMbId)
+    .maybeSingle();
+  const orgId = (mbOrg as any)?.organisation_id;
+  if (orgId) {
+    const { data: adminRow } = await supabaseAdmin
+      .from("organisation_members")
+      .select("id")
+      .eq("organisation_id", orgId)
+      .eq("user_id", userId)
+      .eq("status", "active")
+      .in("role", ["admin", "owner"])
+      .maybeSingle();
+    if (adminRow) return { ok: true };
+  }
+
+  return { ok: false, status: 403, error: "Forbidden" };
+}
+
 async function moveProviderMessage(
   emailRowId: string | number,
   userId: string,
@@ -726,11 +783,12 @@ router.post("/emails/:id/refetch-body", requireAuth, async (req, res, next): Pro
 router.get("/emails/:id/export.eml", requireAuth, async (req, res, next): Promise<void> => {
   if (!/^\d+$/.test(String(req.params.id))) { next(); return; }
   try {
+    const access = await assertEmailWritable(req.userId!, req.params.id);
+    if (!access.ok) { res.status(access.status).json({ error: access.error }); return; }
     const { data: email, error } = await supabaseAdmin
       .from("emails")
       .select("id, sender, recipient, subject, body, created_at")
       .eq("id", req.params.id)
-      .eq("user_id", req.userId!)
       .single();
     if (error || !email) {
       res.status(404).json({ error: "Email not found" });
@@ -928,11 +986,12 @@ router.delete("/emails/:id/handled", requireAuth, async (req, res): Promise<void
 
 router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
   try {
+    const access = await assertEmailWritable(req.userId!, req.params.id);
+    if (!access.ok) { res.status(access.status).json({ error: access.error }); return; }
     const { data: oldEmail } = await supabaseAdmin
       .from("emails")
       .select("sender, priority, category_id, status, external_id")
       .eq("id", req.params.id)
-      .eq("user_id", req.userId!)
       .single();
 
     const updates: Record<string, unknown> = {};
@@ -958,7 +1017,6 @@ router.patch("/emails/:id", requireAuth, async (req, res): Promise<void> => {
       .from("emails")
       .update(updates)
       .eq("id", req.params.id)
-      .eq("user_id", req.userId!)
       .select("*, categories(name)")
       .single();
 
@@ -1849,11 +1907,12 @@ router.delete("/emails/spam/empty", requireAuth, async (req, res): Promise<void>
 
 router.delete("/emails/:id", requireAuth, async (req, res): Promise<void> => {
   try {
+    const access = await assertEmailWritable(req.userId!, req.params.id);
+    if (!access.ok) { res.status(access.status).json({ error: access.error }); return; }
     const { data: existing } = await supabaseAdmin
       .from("emails")
       .select("status, external_id")
       .eq("id", req.params.id)
-      .eq("user_id", req.userId!)
       .maybeSingle();
 
     if (existing && (existing as any).external_id && (existing as any).status !== "trashed") {
@@ -1868,8 +1927,7 @@ router.delete("/emails/:id", requireAuth, async (req, res): Promise<void> => {
     const { error } = await supabaseAdmin
       .from("emails")
       .update({ status: "trashed" })
-      .eq("id", req.params.id)
-      .eq("user_id", req.userId!);
+      .eq("id", req.params.id);
 
     if (error) {
       res.status(500).json({ error: error.message });
@@ -1884,11 +1942,12 @@ router.delete("/emails/:id", requireAuth, async (req, res): Promise<void> => {
 
 router.post("/emails/:id/restore", requireAuth, async (req, res): Promise<void> => {
   try {
+    const access = await assertEmailWritable(req.userId!, req.params.id);
+    if (!access.ok) { res.status(access.status).json({ error: access.error }); return; }
     const { data: existing } = await supabaseAdmin
       .from("emails")
       .select("status, external_id")
       .eq("id", req.params.id)
-      .eq("user_id", req.userId!)
       .maybeSingle();
 
     if (existing && (existing as any).external_id &&
@@ -1905,7 +1964,6 @@ router.post("/emails/:id/restore", requireAuth, async (req, res): Promise<void> 
       .from("emails")
       .update({ status: "non_lu" })
       .eq("id", req.params.id)
-      .eq("user_id", req.userId!)
       .in("status", ["trashed", "spam"]);
 
     if (error) {
@@ -1921,11 +1979,12 @@ router.post("/emails/:id/restore", requireAuth, async (req, res): Promise<void> 
 
 router.delete("/emails/:id/permanent", requireAuth, async (req, res): Promise<void> => {
   try {
+    const access = await assertEmailWritable(req.userId!, req.params.id);
+    if (!access.ok) { res.status(access.status).json({ error: access.error }); return; }
     const { data: existing } = await supabaseAdmin
       .from("emails")
       .select("status, external_id")
       .eq("id", req.params.id)
-      .eq("user_id", req.userId!)
       .maybeSingle();
 
     if (existing && (existing as any).external_id) {
@@ -1953,7 +2012,6 @@ router.delete("/emails/:id/permanent", requireAuth, async (req, res): Promise<vo
       .from("emails")
       .delete()
       .eq("id", req.params.id)
-      .eq("user_id", req.userId!)
       .in("status", ["trashed", "spam"]);
 
     if (error) {
@@ -1992,11 +2050,12 @@ router.post("/emails/:id/snooze", requireAuth, async (req, res): Promise<void> =
       return;
     }
 
+    const access = await assertEmailWritable(req.userId!, emailId);
+    if (!access.ok) { res.status(access.status).json({ error: access.error }); return; }
     const { error } = await supabaseAdmin
       .from("emails")
       .update({ snoozed_until: snoozeDate.toISOString() })
-      .eq("id", emailId)
-      .eq("user_id", req.userId!);
+      .eq("id", emailId);
     if (error) { res.status(500).json({ error: error.message }); return; }
     res.json({ success: true, snoozedUntil: snoozeDate.toISOString() });
   } catch (e: any) {
@@ -2012,11 +2071,12 @@ router.post("/emails/:id/unsnooze", requireAuth, async (req, res): Promise<void>
     }
     const emailId = parseInt(req.params.id as string, 10);
     if (Number.isNaN(emailId)) { res.status(400).json({ error: "ID invalide" }); return; }
+    const access = await assertEmailWritable(req.userId!, emailId);
+    if (!access.ok) { res.status(access.status).json({ error: access.error }); return; }
     const { error } = await supabaseAdmin
       .from("emails")
       .update({ snoozed_until: null })
-      .eq("id", emailId)
-      .eq("user_id", req.userId!);
+      .eq("id", emailId);
     if (error) { res.status(500).json({ error: error.message }); return; }
     res.json({ success: true });
   } catch (e: any) {
