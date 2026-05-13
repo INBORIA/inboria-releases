@@ -2142,7 +2142,16 @@ OUTILS DISPONIBLES (function calling) :
 Strategie de raisonnement :
 1. Lis la question. Si la reponse est evidente depuis la memoire courte (compter les mails, citer un sujet, dire qui a ecrit), reponds directement.
 2. Sinon, choisis l'outil adapte ET APPELLE-LE. Si plusieurs sources sont a recouper (ex. "bloque les RDV proposes par Petit Zoo" : il faut lire CHACUN des mails pour extraire la vraie date), commence par list_emails_from_contact puis itere si besoin avec read_email.
-3. Pour les questions sur des CRENEAUX/RDV/dates proposes par un contact, tu dois IMPERATIVEMENT lire chaque mail concerne avant d'emettre une carte inboria-hold-meeting/inboria-hold-multi-meeting : un slot par creneau REELLEMENT EXTRAIT du corps, jamais de duplication d'un meme creneau.
+3. Pour les questions sur des CRENEAUX/RDV/dates proposes par un contact, tu dois IMPERATIVEMENT appeler read_email sur CHACUN des mails concernes (ne te contente JAMAIS de l'extrait tronque renvoye par list_emails_from_contact ni du resume court de la memoire) avant d'emettre une carte inboria-hold-meeting/inboria-hold-multi-meeting. Un slot par creneau REELLEMENT extrait du corps, jamais de duplication.
+
+REGLE DATE EXACTE (cartes hold-meeting / hold-multi-meeting) — extraction litterale obligatoire :
+- La date et l'heure que tu mets dans le slot DOIVENT etre une copie litterale, mot pour mot, de ce qui est ecrit dans le corps du mail que tu viens de lire avec read_email. Tu n'as PAS le droit de :
+  * recalculer un jour de la semaine ("jeudi 21 mai" alors que le mail dit "mardi 19 mai"),
+  * arrondir, decaler ou "corriger" une date,
+  * inferer une date a partir d'un jour de la semaine seul,
+  * traduire ou reformater au point de changer le chiffre du jour.
+- Avant d'emettre chaque slot, verifie mentalement que la chaine "<jour de semaine> <numero> <mois>" que tu vas afficher est PRESENTE TELLE QUELLE dans le corps du mail lu. Si ce n'est pas le cas, ne mets PAS ce slot et signale a l'utilisateur que la date est ambigue.
+- Si plusieurs mails proposent des dates, traite-les un par un, en gardant pour chaque slot une trace mentale du [mail#ID] source — tu n'as pas le droit de melanger les dates entre mails.
 4. Si la demande est ambigue (contact non precise, periode floue), pose UNE question de clarification courte au lieu de deviner.
 5. Cite toujours les [mail#ID] consultes dans ta reponse finale, pour que l'utilisateur puisse verifier la source.
 
@@ -2304,7 +2313,11 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       const completion = await openai.chat.completions.create({
         model: "gpt-4o-mini",
         max_completion_tokens: 900,
-        temperature: 0.2,
+        // temperature: 0 -> deterministic extraction (dates, montants, citations).
+        // On 0.2 le modele "lissait" les dates du jour de la semaine en
+        // recalculant (ex. "mardi 19 mai" -> "jeudi 21 mai"). A 0 il copie
+        // litteralement ce qu'il a lu via read_email.
+        temperature: 0,
         messages: convo,
         tools: INBORIA_TOOLS,
         tool_choice: "auto",
@@ -2375,7 +2388,7 @@ REGLE SPECIFIQUE — questions sur un coequipier :
         const finalCompletion = await openai.chat.completions.create({
           model: "gpt-4o-mini",
           max_completion_tokens: 900,
-          temperature: 0.2,
+          temperature: 0,
           messages: convo,
         });
         reply = (finalCompletion.choices[0]?.message?.content || "").trim();
