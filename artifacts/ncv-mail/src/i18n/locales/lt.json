@@ -3245,5 +3245,15 @@
     "keywordsShort": "Raktažodžiai (kableliai)",
     "confirmDeleteTitle": "Ištrinti šį aplanką?",
     "confirmDeleteDesc": "Laiškai bus pašalinti iš aplanko, bet nebus ištrinti."
+  },
+  "emailExport": {
+    "button": "Eksportuoti",
+    "title": "Eksporto formatas",
+    "emlLabel": ".eml — laiško failas",
+    "emlDesc": "Atidaryti Outlook, Apple Mail, Thunderbird programose",
+    "csvLabel": ".csv — Excel lentelė",
+    "csvDesc": "Metaduomenys (siuntėjas, tema, data, būsena)",
+    "dragHint": "Prašome nuvilkti į aplanką, kad eksportuotumėte kaip .eml (Chrome/Edge), arba spustelėkite formatui pasirinkti",
+    "chromeHint": "💡 Chrome/Edge naršyklėje langas paklaus, kur išsaugoti failą."
   }
 }

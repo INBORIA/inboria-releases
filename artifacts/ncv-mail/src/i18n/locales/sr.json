@@ -3245,5 +3245,15 @@
     "keywordsShort": "Кључне речи (зарези)",
     "confirmDeleteTitle": "Обрисати ову фасциклу?",
     "confirmDeleteDesc": "Е-пошта ће бити уклоњена из фасцикле, али не и обрисана."
+  },
+  "emailExport": {
+    "button": "Извези",
+    "title": "Формат извоза",
+    "emlLabel": ".eml — фајл поруке",
+    "emlDesc": "Отворите у Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — Excel табела",
+    "csvDesc": "Метаподаци (пошиљалац, тема, датум, статус)",
+    "dragHint": "Молимо превуците у фасциклу за извоз као .eml (Chrome/Edge), или кликните за избор формата",
+    "chromeHint": "💡 На Chrome/Edge прозор ће вас питати где сачувати фајл."
   }
 }

@@ -3245,5 +3245,15 @@
     "keywordsShort": "Ключови думи (запетаи)",
     "confirmDeleteTitle": "Изтриване на тази папка?",
     "confirmDeleteDesc": "Имейлите ще бъдат премахнати от папката, но не и изтрити."
+  },
+  "emailExport": {
+    "button": "Експорт",
+    "title": "Формат за експорт",
+    "emlLabel": ".eml — файл на имейл",
+    "emlDesc": "Отворете в Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — Excel таблица",
+    "csvDesc": "Метаданни (подател, тема, дата, статус)",
+    "dragHint": "Моля плъзнете в папка за експорт като .eml (Chrome/Edge), или щракнете за избор на формат",
+    "chromeHint": "💡 В Chrome/Edge прозорец ще попита къде да запази файла."
   }
 }

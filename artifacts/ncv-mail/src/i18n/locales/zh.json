@@ -3245,5 +3245,15 @@
     "keywordsShort": "关键词（逗号）",
     "confirmDeleteTitle": "删除此文件夹？",
     "confirmDeleteDesc": "邮件将从文件夹中移除，但不会被删除。"
+  },
+  "emailExport": {
+    "button": "导出",
+    "title": "导出格式",
+    "emlLabel": ".eml — 邮件文件",
+    "emlDesc": "在 Outlook、Apple Mail、Thunderbird 中打开",
+    "csvLabel": ".csv — Excel 表格",
+    "csvDesc": "元数据（发件人、主题、日期、状态）",
+    "dragHint": "请拖到文件夹以导出 .eml（Chrome/Edge），或点击选择格式",
+    "chromeHint": "💡 在 Chrome/Edge 上，窗口将询问您文件保存位置。"
   }
 }

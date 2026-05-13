@@ -3245,5 +3245,15 @@
     "keywordsShort": "कीवर्ड (अल्पविराम)",
     "confirmDeleteTitle": "यह फ़ोल्डर हटाएँ?",
     "confirmDeleteDesc": "ईमेल फ़ोल्डर से हटा दी जाएँगी लेकिन हटाई नहीं जाएँगी।"
+  },
+  "emailExport": {
+    "button": "निर्यात",
+    "title": "निर्यात प्रारूप",
+    "emlLabel": ".eml — मेल फ़ाइल",
+    "emlDesc": "Outlook, Apple Mail, Thunderbird में खोलें",
+    "csvLabel": ".csv — Excel शीट",
+    "csvDesc": "मेटाडेटा (प्रेषक, विषय, दिनांक, स्थिति)",
+    "dragHint": "कृपया .eml के रूप में निर्यात करने के लिए फ़ोल्डर में खींचें (Chrome/Edge), या प्रारूप चुनने के लिए क्लिक करें",
+    "chromeHint": "💡 Chrome/Edge पर एक विंडो पूछेगी कि फ़ाइल कहाँ सहेजी जाए।"
   }
 }

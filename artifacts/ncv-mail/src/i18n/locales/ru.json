@@ -3245,5 +3245,15 @@
     "keywordsShort": "Ключевые слова (запятые)",
     "confirmDeleteTitle": "Удалить эту папку?",
     "confirmDeleteDesc": "Письма будут убраны из папки, но не удалены."
+  },
+  "emailExport": {
+    "button": "Экспорт",
+    "title": "Формат экспорта",
+    "emlLabel": ".eml — файл письма",
+    "emlDesc": "Открыть в Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — таблица Excel",
+    "csvDesc": "Метаданные (отправитель, тема, дата, статус)",
+    "dragHint": "Перетащите в папку для экспорта в .eml (Chrome/Edge), или нажмите для выбора формата",
+    "chromeHint": "💡 В Chrome/Edge окно спросит, куда сохранить файл."
   }
 }

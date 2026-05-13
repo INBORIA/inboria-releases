@@ -3245,5 +3245,15 @@
     "keywordsShort": "Ključne riječi (zarezi)",
     "confirmDeleteTitle": "Obrisati ovu mapu?",
     "confirmDeleteDesc": "E-poruke će biti uklonjene iz mape, ali ne i obrisane."
+  },
+  "emailExport": {
+    "button": "Izvoz",
+    "title": "Format izvoza",
+    "emlLabel": ".eml — datoteka e-pošte",
+    "emlDesc": "Otvorite u Outlooku, Apple Mailu, Thunderbirdu",
+    "csvLabel": ".csv — Excel tablica",
+    "csvDesc": "Metapodaci (pošiljatelj, tema, datum, status)",
+    "dragHint": "Molimo povucite u mapu za izvoz kao .eml (Chrome/Edge), ili kliknite za odabir formata",
+    "chromeHint": "💡 U Chromeu/Edgeu prozor će vas pitati gdje spremiti datoteku."
   }
 }

@@ -3245,5 +3245,15 @@
     "keywordsShort": "Λέξεις-κλειδιά (κόμματα)",
     "confirmDeleteTitle": "Διαγραφή φακέλου;",
     "confirmDeleteDesc": "Τα email θα αφαιρεθούν από τον φάκελο αλλά δεν θα διαγραφούν."
+  },
+  "emailExport": {
+    "button": "Εξαγωγή",
+    "title": "Μορφή εξαγωγής",
+    "emlLabel": ".eml — αρχείο email",
+    "emlDesc": "Άνοιγμα σε Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — υπολογιστικό φύλλο Excel",
+    "csvDesc": "Μεταδεδομένα (αποστολέας, θέμα, ημερομηνία, κατάσταση)",
+    "dragHint": "Σύρετε σε φάκελο για εξαγωγή ως .eml (Chrome/Edge), ή κάντε κλικ για επιλογή μορφής",
+    "chromeHint": "💡 Σε Chrome/Edge, ένα παράθυρο θα σας ρωτήσει πού να αποθηκεύσετε το αρχείο."
   }
 }

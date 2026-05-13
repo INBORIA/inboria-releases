@@ -3245,5 +3245,15 @@
     "keywordsShort": "Avainsanat (pilkut)",
     "confirmDeleteTitle": "Poistetaanko tämä kansio?",
     "confirmDeleteDesc": "Sähköpostit poistetaan kansiosta mutta ei tuhota."
+  },
+  "emailExport": {
+    "button": "Vie",
+    "title": "Vientimuoto",
+    "emlLabel": ".eml — sähköpostitiedosto",
+    "emlDesc": "Avaa Outlookissa, Apple Mailissa, Thunderbirdissa",
+    "csvLabel": ".csv — Excel-taulukko",
+    "csvDesc": "Metatiedot (lähettäjä, aihe, päivämäärä, tila)",
+    "dragHint": "Vetäkää kansioon viedäksenne .eml-muotoon (Chrome/Edge), tai napsauttakaa valitaksenne muodon",
+    "chromeHint": "💡 Chromessa/Edgessä ikkuna kysyy, mihin tiedosto tallennetaan."
   }
 }

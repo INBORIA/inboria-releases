@@ -3245,5 +3245,15 @@
     "keywordsShort": "Kliem ewlieni (virgoli)",
     "confirmDeleteTitle": "Ħassar dan il-folder?",
     "confirmDeleteDesc": "L-emails jitneħħew mill-folder iżda ma jitħassrux."
+  },
+  "emailExport": {
+    "button": "Esporta",
+    "title": "Format tal-esportazzjoni",
+    "emlLabel": ".eml — fajl tal-email",
+    "emlDesc": "Iftaħ f'Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — folja tal-Excel",
+    "csvDesc": "Metadata (mittent, suġġett, data, status)",
+    "dragHint": "Jekk jogħġobkom irbattaw f'folder biex tesportaw bħala .eml (Chrome/Edge), jew ikklikkjaw biex tagħżlu l-format",
+    "chromeHint": "💡 F'Chrome/Edge tieqa tistaqsi fejn tissejvja l-fajl."
   }
 }

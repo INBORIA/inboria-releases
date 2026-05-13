@@ -3245,5 +3245,15 @@
     "keywordsShort": "Parole chiave (virgole)",
     "confirmDeleteTitle": "Eliminare questa cartella?",
     "confirmDeleteDesc": "Le email saranno rimosse dalla cartella ma non eliminate."
+  },
+  "emailExport": {
+    "button": "Esporta",
+    "title": "Formato di esportazione",
+    "emlLabel": ".eml — file e-mail",
+    "emlDesc": "Aprire in Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — foglio Excel",
+    "csvDesc": "Metadati (mittente, oggetto, data, stato)",
+    "dragHint": "Trascini in una cartella per esportare in .eml (Chrome/Edge), o clicchi per scegliere il formato",
+    "chromeHint": "💡 Su Chrome/Edge, una finestra chiederà dove salvare il file."
   }
 }

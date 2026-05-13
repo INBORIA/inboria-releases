@@ -3245,5 +3245,15 @@
     "keywordsShort": "Słowa kluczowe (przecinki)",
     "confirmDeleteTitle": "Usunąć ten folder?",
     "confirmDeleteDesc": "E-maile zostaną usunięte z folderu, ale nie skasowane."
+  },
+  "emailExport": {
+    "button": "Eksportuj",
+    "title": "Format eksportu",
+    "emlLabel": ".eml — plik wiadomości",
+    "emlDesc": "Otwórz w Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — arkusz Excel",
+    "csvDesc": "Metadane (nadawca, temat, data, status)",
+    "dragHint": "Przeciągnij do folderu, aby eksportować jako .eml (Chrome/Edge), lub kliknij aby wybrać format",
+    "chromeHint": "💡 W Chrome/Edge okno zapyta, gdzie zapisać plik."
   }
 }

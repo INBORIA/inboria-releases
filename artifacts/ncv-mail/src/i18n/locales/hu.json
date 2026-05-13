@@ -3245,5 +3245,15 @@
     "keywordsShort": "Kulcsszavak (vesszők)",
     "confirmDeleteTitle": "Törli ezt a mappát?",
     "confirmDeleteDesc": "Az e-mailek kikerülnek a mappából, de nem törlődnek."
+  },
+  "emailExport": {
+    "button": "Exportálás",
+    "title": "Exportformátum",
+    "emlLabel": ".eml — levélfájl",
+    "emlDesc": "Megnyitás Outlook, Apple Mail, Thunderbird programban",
+    "csvLabel": ".csv — Excel-táblázat",
+    "csvDesc": "Metaadatok (feladó, tárgy, dátum, állapot)",
+    "dragHint": "Húzza egy mappába .eml exporthoz (Chrome/Edge), vagy kattintson a formátum választásához",
+    "chromeHint": "💡 Chrome/Edge alatt egy ablak kérdezi, hova mentse a fájlt."
   }
 }

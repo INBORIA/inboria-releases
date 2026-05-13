@@ -3245,5 +3245,15 @@
     "keywordsShort": "Từ khóa (dấu phẩy)",
     "confirmDeleteTitle": "Xóa thư mục này?",
     "confirmDeleteDesc": "Email sẽ bị xóa khỏi thư mục nhưng không bị xóa hẳn."
+  },
+  "emailExport": {
+    "button": "Xuất",
+    "title": "Định dạng xuất",
+    "emlLabel": ".eml — tệp thư",
+    "emlDesc": "Mở trong Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — bảng tính Excel",
+    "csvDesc": "Siêu dữ liệu (người gửi, chủ đề, ngày, trạng thái)",
+    "dragHint": "Quý khách hãy kéo vào thư mục để xuất .eml (Chrome/Edge), hoặc nhấp để chọn định dạng",
+    "chromeHint": "💡 Trên Chrome/Edge, một cửa sổ sẽ hỏi nơi lưu tệp."
   }
 }

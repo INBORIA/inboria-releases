@@ -3245,5 +3245,15 @@
     "keywordsShort": "מילות מפתח (פסיקים)",
     "confirmDeleteTitle": "למחוק תיקייה זו?",
     "confirmDeleteDesc": "ההודעות יוסרו מהתיקייה אך לא יימחקו."
+  },
+  "emailExport": {
+    "button": "ייצוא",
+    "title": "פורמט ייצוא",
+    "emlLabel": ".eml — קובץ דוא״ל",
+    "emlDesc": "פתיחה ב-Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — גיליון Excel",
+    "csvDesc": "מטא-נתונים (שולח, נושא, תאריך, סטטוס)",
+    "dragHint": "אנא גררו לתיקייה לייצוא כ-.eml (Chrome/Edge), או לחצו לבחירת פורמט",
+    "chromeHint": "💡 ב-Chrome/Edge יישאל היכן לשמור את הקובץ."
   }
 }

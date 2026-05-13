@@ -3245,5 +3245,15 @@
     "keywordsShort": "Klíčová slova (čárky)",
     "confirmDeleteTitle": "Smazat tuto složku?",
     "confirmDeleteDesc": "E-maily budou ze složky odebrány, ale nesmazány."
+  },
+  "emailExport": {
+    "button": "Exportovat",
+    "title": "Formát exportu",
+    "emlLabel": ".eml — soubor mailu",
+    "emlDesc": "Otevřít v Outlooku, Apple Mailu, Thunderbirdu",
+    "csvLabel": ".csv — tabulka Excel",
+    "csvDesc": "Metadata (odesílatel, předmět, datum, stav)",
+    "dragHint": "Přetáhněte do složky pro export jako .eml (Chrome/Edge), nebo klikněte pro výběr formátu",
+    "chromeHint": "💡 V Chromu/Edge vás okno zeptá, kam soubor uložit."
   }
 }

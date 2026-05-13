@@ -3245,5 +3245,15 @@
     "keywordsShort": "Eochairfhocail (camóga)",
     "confirmDeleteTitle": "Scrios an fillteán seo?",
     "confirmDeleteDesc": "Bainfear na ríomhphoist as an bhfillteán ach ní scriosfar iad."
+  },
+  "emailExport": {
+    "button": "Easpórtáil",
+    "title": "Formáid easpórtála",
+    "emlLabel": ".eml — comhad ríomhphoist",
+    "emlDesc": "Oscail in Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — scarbhileog Excel",
+    "csvDesc": "Meiteashonraí (seoltóir, ábhar, dáta, stádas)",
+    "dragHint": "Le bhur dtoil tarraingígí go fillteán le heaspórtáil mar .eml (Chrome/Edge), nó cliceáil chun formáid a roghnú",
+    "chromeHint": "💡 Ar Chrome/Edge fiafróidh fuinneog cá sábhálfaí an comhad."
   }
 }

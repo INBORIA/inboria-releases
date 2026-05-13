@@ -3245,5 +3245,15 @@
     "keywordsShort": "کلیدی الفاظ (کوما)",
     "confirmDeleteTitle": "یہ فولڈر حذف کریں؟",
     "confirmDeleteDesc": "ای میلز فولڈر سے ہٹا دی جائیں گی لیکن حذف نہیں ہوں گی۔"
+  },
+  "emailExport": {
+    "button": "ایکسپورٹ",
+    "title": "ایکسپورٹ فارمیٹ",
+    "emlLabel": ".eml — میل فائل",
+    "emlDesc": "Outlook، Apple Mail، Thunderbird میں کھولیں",
+    "csvLabel": ".csv — ایکسل شیٹ",
+    "csvDesc": "میٹا ڈیٹا (بھیجنے والا، موضوع، تاریخ، حالت)",
+    "dragHint": "براہ کرم فولڈر میں گھسیٹیں تاکہ .eml کے طور پر ایکسپورٹ ہو (Chrome/Edge)، یا فارمیٹ منتخب کرنے کے لیے کلک کریں",
+    "chromeHint": "💡 Chrome/Edge پر ایک ونڈو پوچھے گی کہ فائل کہاں محفوظ کی جائے۔"
   }
 }

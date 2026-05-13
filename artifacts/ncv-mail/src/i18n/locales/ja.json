@@ -3245,5 +3245,15 @@
     "keywordsShort": "キーワード（カンマ）",
     "confirmDeleteTitle": "このフォルダを削除しますか？",
     "confirmDeleteDesc": "メールはフォルダから外されますが削除はされません。"
+  },
+  "emailExport": {
+    "button": "エクスポート",
+    "title": "エクスポート形式",
+    "emlLabel": ".eml — メールファイル",
+    "emlDesc": "Outlook、Apple Mail、Thunderbird で開けます",
+    "csvLabel": ".csv — Excel 表",
+    "csvDesc": "メタデータ（送信者、件名、日付、ステータス）",
+    "dragHint": "フォルダへドラッグして .eml で書き出せます（Chrome/Edge）、またはクリックして形式を選択してください",
+    "chromeHint": "💡 Chrome/Edge ではダイアログで保存先を尋ねられます。"
   }
 }

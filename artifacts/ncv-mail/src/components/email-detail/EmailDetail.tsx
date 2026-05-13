@@ -169,16 +169,16 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
           onDragStart={onDragStart}
           className="gap-1.5 h-7 text-[11px] bg-transparent border-border text-[#b8c5d6] hover:text-white hover:bg-white/[0.04] cursor-grab active:cursor-grabbing"
           disabled={busy}
-          title="Glissez vers un dossier pour exporter en .eml (Chrome/Edge), ou cliquez pour choisir le format"
+          title={t("emailExport.dragHint")}
           data-testid="email-export-menu"
         >
           {busy ? <Loader2 className="w-3 h-3 animate-spin" /> : <Download className="w-3 h-3" />}
-          Exporter ▾
+          {t("emailExport.button")} ▾
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="bg-card border-border w-64">
         <DropdownMenuLabel className="text-[10px] uppercase tracking-wider text-[#b8c5d6]">
-          Format d'export
+          {t("emailExport.title")}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
@@ -186,20 +186,20 @@ function ExportEmlButton({ emailId, subject }: { emailId: number; subject: strin
           onClick={onClick}
           data-testid="email-export-eml"
         >
-          <span className="font-medium">.eml — fichier mail</span>
-          <span className="text-[10px] text-[#b8c5d6]">Ouvrir dans Outlook, Apple Mail, Thunderbird</span>
+          <span className="font-medium">{t("emailExport.emlLabel")}</span>
+          <span className="text-[10px] text-[#b8c5d6]">{t("emailExport.emlDesc")}</span>
         </DropdownMenuItem>
         <DropdownMenuItem
           className="text-[12px] text-white focus:bg-white/[0.06] cursor-pointer flex flex-col items-start gap-0.5 py-2"
           onClick={onExportCsv}
           data-testid="email-export-csv"
         >
-          <span className="font-medium">.csv — tableau Excel</span>
-          <span className="text-[10px] text-[#b8c5d6]">Métadonnées (expéditeur, objet, date, statut)</span>
+          <span className="font-medium">{t("emailExport.csvLabel")}</span>
+          <span className="text-[10px] text-[#b8c5d6]">{t("emailExport.csvDesc")}</span>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <div className="px-2 py-1.5 text-[10px] text-[#b8c5d6] leading-relaxed">
-          💡 Sur Chrome/Edge, une fenêtre vous demandera où enregistrer le fichier.
+          {t("emailExport.chromeHint")}
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

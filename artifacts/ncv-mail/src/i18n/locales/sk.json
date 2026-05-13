@@ -3245,5 +3245,15 @@
     "keywordsShort": "Kľúčové slová (čiarky)",
     "confirmDeleteTitle": "Zmazať tento priečinok?",
     "confirmDeleteDesc": "E-maily budú odstránené z priečinka, ale nie zmazané."
+  },
+  "emailExport": {
+    "button": "Exportovať",
+    "title": "Formát exportu",
+    "emlLabel": ".eml — súbor e-mailu",
+    "emlDesc": "Otvoriť v Outlooku, Apple Maile, Thunderbirde",
+    "csvLabel": ".csv — tabuľka Excel",
+    "csvDesc": "Metadáta (odosielateľ, predmet, dátum, stav)",
+    "dragHint": "Prosím potiahnite do priečinka na export ako .eml (Chrome/Edge), alebo kliknite na výber formátu",
+    "chromeHint": "💡 V Chrome/Edge sa okno opýta, kam súbor uložiť."
   }
 }

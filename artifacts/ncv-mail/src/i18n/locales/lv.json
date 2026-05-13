@@ -3245,5 +3245,15 @@
     "keywordsShort": "Atslēgvārdi (komati)",
     "confirmDeleteTitle": "Dzēst šo mapi?",
     "confirmDeleteDesc": "E-pasti tiks noņemti no mapes, bet netiks dzēsti."
+  },
+  "emailExport": {
+    "button": "Eksportēt",
+    "title": "Eksporta formāts",
+    "emlLabel": ".eml — pasta fails",
+    "emlDesc": "Atvērt programmā Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — Excel tabula",
+    "csvDesc": "Metadati (sūtītājs, temats, datums, statuss)",
+    "dragHint": "Lūdzu velciet mapē, lai eksportētu kā .eml (Chrome/Edge), vai noklikšķiniet, lai izvēlētos formātu",
+    "chromeHint": "💡 Chrome/Edge logā jautās, kur saglabāt failu."
   }
 }

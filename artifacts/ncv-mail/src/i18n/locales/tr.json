@@ -3245,5 +3245,15 @@
     "keywordsShort": "Anahtar kelimeler (virgül)",
     "confirmDeleteTitle": "Bu klasör silinsin mi?",
     "confirmDeleteDesc": "E-postalar klasörden çıkarılır, silinmez."
+  },
+  "emailExport": {
+    "button": "Dışa aktar",
+    "title": "Dışa aktarım biçimi",
+    "emlLabel": ".eml — e-posta dosyası",
+    "emlDesc": "Outlook, Apple Mail, Thunderbird'de açın",
+    "csvLabel": ".csv — Excel tablosu",
+    "csvDesc": "Üst veri (gönderen, konu, tarih, durum)",
+    "dragHint": ".eml olarak dışa aktarmak için bir klasöre sürükleyin (Chrome/Edge), veya biçim seçmek için tıklayın",
+    "chromeHint": "💡 Chrome/Edge'de bir pencere dosyayı nereye kaydedeceğinizi soracaktır."
   }
 }

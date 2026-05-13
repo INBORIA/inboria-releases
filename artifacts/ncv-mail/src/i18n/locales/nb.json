@@ -3245,5 +3245,15 @@
     "keywordsShort": "Nøkkelord (komma)",
     "confirmDeleteTitle": "Slette denne mappen?",
     "confirmDeleteDesc": "E-postene fjernes fra mappen, men slettes ikke."
+  },
+  "emailExport": {
+    "button": "Eksporter",
+    "title": "Eksportformat",
+    "emlLabel": ".eml — e-postfil",
+    "emlDesc": "Åpne i Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — Excel-regneark",
+    "csvDesc": "Metadata (avsender, emne, dato, status)",
+    "dragHint": "Dra til en mappe for å eksportere som .eml (Chrome/Edge), eller klikk for å velge format",
+    "chromeHint": "💡 I Chrome/Edge spør et vindu hvor filen skal lagres."
   }
 }

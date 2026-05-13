@@ -4903,5 +4903,15 @@
     "keywordsShort": "Trefwoorden (komma's)",
     "confirmDeleteTitle": "Deze map verwijderen?",
     "confirmDeleteDesc": "E-mails worden uit de map gehaald maar niet verwijderd."
+  },
+  "emailExport": {
+    "button": "Exporteren",
+    "title": "Exportformaat",
+    "emlLabel": ".eml — e-mailbestand",
+    "emlDesc": "Openen in Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — Excel-spreadsheet",
+    "csvDesc": "Metadata (afzender, onderwerp, datum, status)",
+    "dragHint": "Sleep naar een map om als .eml te exporteren (Chrome/Edge), of klik om een formaat te kiezen",
+    "chromeHint": "💡 In Chrome/Edge vraagt een venster waar het bestand moet worden opgeslagen."
   }
 }

@@ -3245,5 +3245,15 @@
     "keywordsShort": "Nyckelord (kommatecken)",
     "confirmDeleteTitle": "Ta bort denna mapp?",
     "confirmDeleteDesc": "E-posten tas bort från mappen men raderas inte."
+  },
+  "emailExport": {
+    "button": "Exportera",
+    "title": "Exportformat",
+    "emlLabel": ".eml — e-postfil",
+    "emlDesc": "Öppna i Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — Excel-kalkylblad",
+    "csvDesc": "Metadata (avsändare, ämne, datum, status)",
+    "dragHint": "Dra till en mapp för att exportera som .eml (Chrome/Edge), eller klicka för att välja format",
+    "chromeHint": "💡 I Chrome/Edge frågar ett fönster var filen ska sparas."
   }
 }

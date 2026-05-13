@@ -3245,5 +3245,15 @@
     "keywordsShort": "Märksõnad (komad)",
     "confirmDeleteTitle": "Kustutada see kaust?",
     "confirmDeleteDesc": "E-kirjad eemaldatakse kaustast, kuid neid ei kustutata."
+  },
+  "emailExport": {
+    "button": "Eksport",
+    "title": "Ekspordi vorming",
+    "emlLabel": ".eml — kirjafail",
+    "emlDesc": "Avada Outlookis, Apple Mailis, Thunderbirdis",
+    "csvLabel": ".csv — Exceli tabel",
+    "csvDesc": "Metaandmed (saatja, teema, kuupäev, olek)",
+    "dragHint": "Lohistage kausta, et eksportida .eml-na (Chrome/Edge), või klõpsake vormingu valimiseks",
+    "chromeHint": "💡 Chrome'is/Edge'is küsib aken, kuhu fail salvestada."
   }
 }

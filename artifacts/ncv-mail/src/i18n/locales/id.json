@@ -3245,5 +3245,15 @@
     "keywordsShort": "Kata kunci (koma)",
     "confirmDeleteTitle": "Hapus folder ini?",
     "confirmDeleteDesc": "Email akan dikeluarkan dari folder tapi tidak dihapus."
+  },
+  "emailExport": {
+    "button": "Ekspor",
+    "title": "Format ekspor",
+    "emlLabel": ".eml — berkas surel",
+    "emlDesc": "Buka di Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — lembar Excel",
+    "csvDesc": "Metadata (pengirim, subjek, tanggal, status)",
+    "dragHint": "Silakan seret ke folder untuk ekspor sebagai .eml (Chrome/Edge), atau klik untuk memilih format",
+    "chromeHint": "💡 Di Chrome/Edge, jendela akan menanyakan lokasi penyimpanan berkas."
   }
 }

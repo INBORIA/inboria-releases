@@ -3245,5 +3245,15 @@
     "keywordsShort": "คำสำคัญ (จุลภาค)",
     "confirmDeleteTitle": "ลบโฟลเดอร์นี้?",
     "confirmDeleteDesc": "อีเมลจะถูกนำออกจากโฟลเดอร์แต่ไม่ถูกลบ"
+  },
+  "emailExport": {
+    "button": "ส่งออก",
+    "title": "รูปแบบการส่งออก",
+    "emlLabel": ".eml — ไฟล์อีเมล",
+    "emlDesc": "เปิดใน Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — ตาราง Excel",
+    "csvDesc": "เมตาดาต้า (ผู้ส่ง, หัวข้อ, วันที่, สถานะ)",
+    "dragHint": "โปรดลากไปยังโฟลเดอร์เพื่อส่งออกเป็น .eml (Chrome/Edge) หรือคลิกเพื่อเลือกรูปแบบ",
+    "chromeHint": "💡 บน Chrome/Edge จะมีหน้าต่างถามว่าจะบันทึกไฟล์ไว้ที่ใด"
   }
 }

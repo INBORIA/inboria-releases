@@ -3245,5 +3245,15 @@
     "keywordsShort": "Palavras-chave (vírgulas)",
     "confirmDeleteTitle": "Excluir esta pasta?",
     "confirmDeleteDesc": "Os e-mails serão removidos da pasta, mas não excluídos."
+  },
+  "emailExport": {
+    "button": "Exportar",
+    "title": "Formato de exportação",
+    "emlLabel": ".eml — ficheiro de e-mail",
+    "emlDesc": "Abrir no Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — folha Excel",
+    "csvDesc": "Metadados (remetente, assunto, data, estado)",
+    "dragHint": "Arraste para uma pasta para exportar como .eml (Chrome/Edge), ou clique para escolher o formato",
+    "chromeHint": "💡 No Chrome/Edge, uma janela perguntará onde guardar o ficheiro."
   }
 }

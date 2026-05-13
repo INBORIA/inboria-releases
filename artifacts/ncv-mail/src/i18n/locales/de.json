@@ -4903,5 +4903,15 @@
     "keywordsShort": "Schlüsselwörter (Kommas)",
     "confirmDeleteTitle": "Diesen Ordner löschen?",
     "confirmDeleteDesc": "Die E-Mails werden aus dem Ordner entfernt, aber nicht gelöscht."
+  },
+  "emailExport": {
+    "button": "Exportieren",
+    "title": "Exportformat",
+    "emlLabel": ".eml — Mail-Datei",
+    "emlDesc": "In Outlook, Apple Mail, Thunderbird öffnen",
+    "csvLabel": ".csv — Excel-Tabelle",
+    "csvDesc": "Metadaten (Absender, Betreff, Datum, Status)",
+    "dragHint": "Ziehen Sie in einen Ordner, um als .eml zu exportieren (Chrome/Edge), oder klicken Sie zur Formatwahl",
+    "chromeHint": "💡 In Chrome/Edge werden Sie gefragt, wo die Datei gespeichert werden soll."
   }
 }

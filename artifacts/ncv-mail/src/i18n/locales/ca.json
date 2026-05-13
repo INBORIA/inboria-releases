@@ -3245,5 +3245,15 @@
     "keywordsShort": "Paraules clau (comes)",
     "confirmDeleteTitle": "Eliminar aquesta carpeta?",
     "confirmDeleteDesc": "Els correus es trauran de la carpeta però no s'eliminaran."
+  },
+  "emailExport": {
+    "button": "Exporta",
+    "title": "Format d'exportació",
+    "emlLabel": ".eml — fitxer de correu",
+    "emlDesc": "Obriu a Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — full d'Excel",
+    "csvDesc": "Metadades (remitent, assumpte, data, estat)",
+    "dragHint": "Si us plau arrossegueu a una carpeta per exportar com a .eml (Chrome/Edge), o feu clic per triar el format",
+    "chromeHint": "💡 A Chrome/Edge una finestra preguntarà on desar el fitxer."
   }
 }

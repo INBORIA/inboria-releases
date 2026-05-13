@@ -3245,5 +3245,15 @@
     "keywordsShort": "關鍵字（逗號）",
     "confirmDeleteTitle": "刪除此資料夾？",
     "confirmDeleteDesc": "電郵將自資料夾中移除，但不會被刪除。"
+  },
+  "emailExport": {
+    "button": "匯出",
+    "title": "匯出格式",
+    "emlLabel": ".eml — 電郵檔案",
+    "emlDesc": "在 Outlook、Apple Mail、Thunderbird 中開啟",
+    "csvLabel": ".csv — Excel 表格",
+    "csvDesc": "中繼資料（寄件者、主旨、日期、狀態）",
+    "dragHint": "請拖至資料夾以匯出 .eml（Chrome/Edge），或點擊選擇格式",
+    "chromeHint": "💡 在 Chrome/Edge 上，視窗會詢問您檔案儲存位置。"
   }
 }

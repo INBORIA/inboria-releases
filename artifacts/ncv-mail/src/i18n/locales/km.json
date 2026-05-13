@@ -3245,5 +3245,15 @@
     "keywordsShort": "ពាក្យគន្លឹះ (ក្បៀស)",
     "confirmDeleteTitle": "លុបថតនេះ?",
     "confirmDeleteDesc": "អ៊ីមែលនឹងត្រូវយកចេញពីថត ប៉ុន្តែមិនត្រូវលុបទេ។"
+  },
+  "emailExport": {
+    "button": "នាំចេញ",
+    "title": "ទម្រង់នាំចេញ",
+    "emlLabel": ".eml — ឯកសារសំបុត្រ",
+    "emlDesc": "បើកនៅ Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — តារាង Excel",
+    "csvDesc": "ទិន្នន័យមេតា (អ្នកផ្ញើ ប្រធានបទ កាលបរិច្ឆេទ ស្ថានភាព)",
+    "dragHint": "សូមអូសទៅថតដើម្បីនាំចេញជា .eml (Chrome/Edge) ឬចុចដើម្បីជ្រើសទម្រង់",
+    "chromeHint": "💡 នៅ Chrome/Edge បង្អួចនឹងសួរទីកន្លែងរក្សាទុកឯកសារ។"
   }
 }

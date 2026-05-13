@@ -3336,5 +3336,15 @@
     "keywordsShort": "Mots-clés (virgules)",
     "confirmDeleteTitle": "Supprimer ce dossier ?",
     "confirmDeleteDesc": "Les emails seront retirés du dossier mais pas supprimés."
+  },
+  "emailExport": {
+    "button": "Exporter",
+    "title": "Format d'export",
+    "emlLabel": ".eml — fichier mail",
+    "emlDesc": "Ouvrir dans Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — tableau Excel",
+    "csvDesc": "Métadonnées (expéditeur, objet, date, statut)",
+    "dragHint": "Glissez vers un dossier pour exporter en .eml (Chrome/Edge), ou cliquez pour choisir le format",
+    "chromeHint": "💡 Sur Chrome/Edge, une fenêtre vous demandera où enregistrer le fichier."
   }
 }

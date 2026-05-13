@@ -3245,5 +3245,15 @@
     "keywordsShort": "الكلمات المفتاحية (فواصل)",
     "confirmDeleteTitle": "حذف هذا المجلد؟",
     "confirmDeleteDesc": "ستُزال الرسائل من المجلد لكنها لن تُحذف."
+  },
+  "emailExport": {
+    "button": "تصدير",
+    "title": "صيغة التصدير",
+    "emlLabel": ".eml — ملف بريد",
+    "emlDesc": "فتح في Outlook وApple Mail وThunderbird",
+    "csvLabel": ".csv — جدول Excel",
+    "csvDesc": "بيانات وصفية (المرسل، الموضوع، التاريخ، الحالة)",
+    "dragHint": "يرجى السحب إلى مجلد لتصديره بصيغة .eml (Chrome/Edge)، أو النقر لاختيار الصيغة",
+    "chromeHint": "💡 على Chrome/Edge ستظهر نافذة تسألكم أين تحفظون الملف."
   }
 }

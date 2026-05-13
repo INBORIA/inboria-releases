@@ -3245,5 +3245,15 @@
     "keywordsShort": "Ключові слова (коми)",
     "confirmDeleteTitle": "Видалити цю теку?",
     "confirmDeleteDesc": "Листи буде вилучено з теки, але не видалено."
+  },
+  "emailExport": {
+    "button": "Експорт",
+    "title": "Формат експорту",
+    "emlLabel": ".eml — файл листа",
+    "emlDesc": "Відкрити в Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — таблиця Excel",
+    "csvDesc": "Метадані (відправник, тема, дата, статус)",
+    "dragHint": "Перетягніть до теки для експорту в .eml (Chrome/Edge), або клацніть для вибору формату",
+    "chromeHint": "💡 У Chrome/Edge вікно запитає, де зберегти файл."
   }
 }

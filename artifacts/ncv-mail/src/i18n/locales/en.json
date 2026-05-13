@@ -4938,5 +4938,15 @@
     "keywordsShort": "Keywords (comma-separated)",
     "confirmDeleteTitle": "Delete this folder?",
     "confirmDeleteDesc": "Emails will be removed from the folder but not deleted."
+  },
+  "emailExport": {
+    "button": "Export",
+    "title": "Export format",
+    "emlLabel": ".eml — mail file",
+    "emlDesc": "Open in Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — Excel spreadsheet",
+    "csvDesc": "Metadata (sender, subject, date, status)",
+    "dragHint": "Drag to a folder to export as .eml (Chrome/Edge), or click to choose a format",
+    "chromeHint": "💡 On Chrome/Edge, a dialog will ask where to save the file."
   }
 }

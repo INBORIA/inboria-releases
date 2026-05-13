@@ -3245,5 +3245,15 @@
     "keywordsShort": "키워드 (쉼표)",
     "confirmDeleteTitle": "이 폴더를 삭제하시겠습니까?",
     "confirmDeleteDesc": "이메일은 폴더에서 제거되지만 삭제되지 않습니다."
+  },
+  "emailExport": {
+    "button": "내보내기",
+    "title": "내보내기 형식",
+    "emlLabel": ".eml — 메일 파일",
+    "emlDesc": "Outlook, Apple Mail, Thunderbird에서 열기",
+    "csvLabel": ".csv — Excel 표",
+    "csvDesc": "메타데이터 (보낸 사람, 제목, 날짜, 상태)",
+    "dragHint": "폴더로 끌어 .eml로 내보내거나 (Chrome/Edge), 클릭해 형식을 선택하십시오",
+    "chromeHint": "💡 Chrome/Edge에서는 저장 위치를 묻는 창이 표시됩니다."
   }
 }

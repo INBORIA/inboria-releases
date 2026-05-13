@@ -3245,5 +3245,15 @@
     "keywordsShort": "Cuvinte-cheie (virgule)",
     "confirmDeleteTitle": "Ștergeți acest folder?",
     "confirmDeleteDesc": "E-mailurile vor fi eliminate din folder, dar nu șterse."
+  },
+  "emailExport": {
+    "button": "Exportă",
+    "title": "Format de export",
+    "emlLabel": ".eml — fișier e-mail",
+    "emlDesc": "Deschideți în Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — foaie Excel",
+    "csvDesc": "Metadate (expeditor, subiect, dată, stare)",
+    "dragHint": "Trageți într-un dosar pentru a exporta ca .eml (Chrome/Edge), sau faceți clic pentru a alege formatul",
+    "chromeHint": "💡 În Chrome/Edge, o fereastră vă va întreba unde să salvați fișierul."
   }
 }

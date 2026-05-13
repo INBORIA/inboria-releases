@@ -3245,5 +3245,15 @@
     "keywordsShort": "Kata kunci (koma)",
     "confirmDeleteTitle": "Padam folder ini?",
     "confirmDeleteDesc": "E-mel akan dikeluarkan dari folder tetapi tidak dipadam."
+  },
+  "emailExport": {
+    "button": "Eksport",
+    "title": "Format eksport",
+    "emlLabel": ".eml — fail mel",
+    "emlDesc": "Buka di Outlook, Apple Mail, Thunderbird",
+    "csvLabel": ".csv — helaian Excel",
+    "csvDesc": "Metadata (pengirim, subjek, tarikh, status)",
+    "dragHint": "Sila seret ke folder untuk eksport sebagai .eml (Chrome/Edge), atau klik untuk memilih format",
+    "chromeHint": "💡 Di Chrome/Edge, tetingkap akan bertanya di mana hendak menyimpan fail."
   }
 }

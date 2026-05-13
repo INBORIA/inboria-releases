@@ -3245,5 +3245,15 @@
     "keywordsShort": "Ključne besede (vejice)",
     "confirmDeleteTitle": "Izbrisati to mapo?",
     "confirmDeleteDesc": "E-pošta bo odstranjena iz mape, vendar ne izbrisana."
+  },
+  "emailExport": {
+    "button": "Izvozi",
+    "title": "Format izvoza",
+    "emlLabel": ".eml — datoteka e-pošte",
+    "emlDesc": "Odprite v Outlooku, Apple Mailu, Thunderbirdu",
+    "csvLabel": ".csv — Excelova preglednica",
+    "csvDesc": "Metapodatki (pošiljatelj, zadeva, datum, stanje)",
+    "dragHint": "Prosimo povlecite v mapo za izvoz kot .eml (Chrome/Edge), ali kliknite za izbiro formata",
+    "chromeHint": "💡 V Chromu/Edgeu bo okno vprašalo, kam shraniti datoteko."
   }
 }
