@@ -48,7 +48,10 @@ import {
   Forward,
   Printer,
   Copy,
+  ListTodo,
+  Type as TypeIcon,
 } from "lucide-react";
+import { extractEmailAddress } from "@/lib/utils";
 import { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
@@ -92,6 +95,7 @@ export default function Envoyes() {
   const { data: projects } = useListProjects();
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
+  const createTaskMut = useCreateTask();
 
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
@@ -199,6 +203,128 @@ export default function Envoyes() {
         },
       }
     );
+  };
+
+  // Helpers parité Réception : copie compatible iframe + actions rapides
+  // (transférer, créer une tâche, copier destinataire/sujet, télécharger
+  // .eml, imprimer). Mêmes patterns que dashboard/index.tsx.
+  const copyToClipboardSafe = async (text: string): Promise<boolean> => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch {/* fallback */}
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.top = "-1000px";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch { return false; }
+  };
+
+  const handleQuickForward = (id: number) => {
+    setSelectedEmailId(id);
+    setContextMenu(null);
+    setSelectedIds(new Set());
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("inbox-forward-shortcut", { detail: { emailId: id } }));
+    }, 150);
+  };
+
+  const handleQuickReply = (id: number) => {
+    setSelectedEmailId(id);
+    setContextMenu(null);
+    setSelectedIds(new Set());
+    setTimeout(() => {
+      window.dispatchEvent(new CustomEvent("inbox-reply-shortcut", { detail: { emailId: id } }));
+    }, 150);
+  };
+
+  const handleQuickCreateTask = (id: number) => {
+    const email = sentEmails.find((e: any) => e.id === id);
+    const title = (email?.subject || "Tâche").slice(0, 200);
+    createTaskMut.mutate(
+      { data: { title, emailId: id } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListTasksQueryKey() });
+          toast({ title: t("inbox.taskCreated", "Tâche créée"), description: title });
+        },
+        onError: (e: any) => toast({ variant: "destructive", title: t("common.error"), description: e?.message }),
+      },
+    );
+  };
+
+  const handleCopyRecipient = async (id: number) => {
+    const email = sentEmails.find((e: any) => e.id === id);
+    const addr = (extractEmailAddress(email?.recipient || "") || email?.recipient || "").trim();
+    if (!addr) {
+      toast({ variant: "destructive", title: t("common.error"), description: "Adresse introuvable" });
+      return;
+    }
+    const ok = await copyToClipboardSafe(addr);
+    if (ok) toast({ title: t("inbox.copied", "Copié"), description: addr });
+    else toast({ variant: "destructive", title: t("common.error"), description: "Copie impossible" });
+  };
+
+  const handleCopySubject = async (id: number) => {
+    const email = sentEmails.find((e: any) => e.id === id);
+    const subject = (email?.subject || "").trim();
+    if (!subject) {
+      toast({ variant: "destructive", title: t("common.error"), description: "Aucun sujet" });
+      return;
+    }
+    const ok = await copyToClipboardSafe(subject);
+    if (ok) toast({ title: t("inbox.copied", "Copié"), description: subject });
+    else toast({ variant: "destructive", title: t("common.error"), description: "Copie impossible" });
+  };
+
+  const handleDownloadEml = async (id: number) => {
+    try {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      const baseUrl = import.meta.env.VITE_API_URL || `https://${window.location.host}`;
+      const res = await fetch(`${baseUrl}/api/emails/${id}/export.eml`, {
+        headers: token ? { Authorization: `Bearer ${token}` } : {},
+      });
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const blob = await res.blob();
+      const { saveBlobAs } = await import("@/lib/export-utils");
+      await saveBlobAs(blob, `email_${id}.eml`);
+      toast({ title: t("inbox.exportDownloaded", "Téléchargé") });
+    } catch (e: any) {
+      toast({ variant: "destructive", title: t("inbox.exportError", "Échec du téléchargement"), description: e?.message });
+    }
+  };
+
+  const handlePrintEmail = (id: number) => {
+    const email = sentEmails.find((e: any) => e.id === id);
+    if (!email) return;
+    const w = window.open("", "_blank", "width=800,height=900");
+    if (!w) {
+      toast({ variant: "destructive", title: t("inbox.printPopupBlocked", "Impossible d'ouvrir la fenêtre d'impression") });
+      return;
+    }
+    const safeBody = ((email as any).body || (email as any).summary || "").toString();
+    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${(email.subject || "").replace(/[<>]/g, "")}</title>
+      <style>body{font-family:-apple-system,Segoe UI,sans-serif;color:#111;padding:24px;line-height:1.5}h1{font-size:18px;margin:0 0 12px}.meta{font-size:12px;color:#555;margin-bottom:18px;border-bottom:1px solid #ddd;padding-bottom:10px}img{max-width:100%}</style>
+      </head><body>
+      <h1>${(email.subject || "(sans sujet)").replace(/[<>]/g, "")}</h1>
+      <div class="meta"><b>${(email.recipient || "").replace(/[<>]/g, "")}</b><br/>${email.createdAt ? new Date(email.createdAt).toLocaleString() : ""}</div>
+      <div>${safeBody}</div>
+      </body></html>`);
+    w.document.close();
+    setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 300);
   };
 
   const handleExport = async () => {
@@ -327,7 +453,7 @@ export default function Envoyes() {
                           </div>
                         )}
                       </div>
-                      <div className="flex items-center gap-2 shrink-0">
+                      <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
                         {email.projectName && (
                           <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/[0.06] text-[#b8c5d6]">
                             {email.projectReference || email.projectName}
@@ -339,6 +465,66 @@ export default function Envoyes() {
                         <span className="text-[10px] text-[#b8c5d6]">
                           {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
                         </span>
+                      </div>
+                      {/* Barre d'actions au survol — parité avec Réception */}
+                      <div
+                        className="hidden group-hover:flex items-center gap-0 shrink-0"
+                        onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        {(() => {
+                          const btn = "p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white";
+                          const stopMD = (e: React.MouseEvent) => { e.stopPropagation(); e.preventDefault(); };
+                          return (
+                            <>
+                              <button className={btn} title={t("inbox.openEmail")} onMouseDown={stopMD}
+                                onClick={(e) => { e.stopPropagation(); setSelectedEmailId(email.id); }}>
+                                <ChevronRight className="w-3.5 h-3.5" />
+                              </button>
+                              <button className={btn} title={t("inbox.reply", "Répondre")} onMouseDown={stopMD}
+                                onClick={(e) => { e.stopPropagation(); handleQuickReply(email.id); }}>
+                                <Reply className="w-3.5 h-3.5" />
+                              </button>
+                              <button className={btn} title={t("inbox.forward", "Transférer")} onMouseDown={stopMD}
+                                onClick={(e) => { e.stopPropagation(); handleQuickForward(email.id); }}>
+                                <Forward className="w-3.5 h-3.5" />
+                              </button>
+                              <button className={btn} title={t("inbox.createTask", "Créer une tâche")} onMouseDown={stopMD}
+                                onClick={(e) => { e.stopPropagation(); handleQuickCreateTask(email.id); }}>
+                                <ListTodo className="w-3.5 h-3.5" />
+                              </button>
+                              <button className={btn} title={t("inbox.print", "Imprimer")} onMouseDown={stopMD}
+                                onClick={(e) => { e.stopPropagation(); handlePrintEmail(email.id); }}>
+                                <Printer className="w-3.5 h-3.5" />
+                              </button>
+                              <button className={btn} title={t("inbox.copyAddress", "Copier l'adresse")} onMouseDown={stopMD}
+                                onClick={(e) => { e.stopPropagation(); handleCopyRecipient(email.id); }}>
+                                <Copy className="w-3.5 h-3.5" />
+                              </button>
+                              <button className={btn} title={t("inbox.copySubject", "Copier le sujet")} onMouseDown={stopMD}
+                                onClick={(e) => { e.stopPropagation(); handleCopySubject(email.id); }}>
+                                <TypeIcon className="w-3.5 h-3.5" />
+                              </button>
+                              <button className={btn} title={t("inbox.downloadEml", "Télécharger en .eml")} onMouseDown={stopMD}
+                                onClick={(e) => { e.stopPropagation(); handleDownloadEml(email.id); }}>
+                                <Download className="w-3.5 h-3.5" />
+                              </button>
+                              <button className="p-1 rounded hover:bg-red-500/[0.08] text-[#8b95a7] hover:text-red-400"
+                                title={t("inbox.deleteEmail")} onMouseDown={stopMD}
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteEmail.mutate({ id: email.id }, {
+                                    onSuccess: () => {
+                                      queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+                                      toast({ title: t("inbox.emailDeleted") });
+                                    },
+                                  });
+                                }}>
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            </>
+                          );
+                        })()}
                       </div>
                     </div>
                   </div>
@@ -393,61 +579,34 @@ export default function Envoyes() {
                   <ChevronRight className="w-3.5 h-3.5" />
                   {t("inbox.openEmail")}
                 </button>
-                <button
-                  onClick={() => {
-                    const id = contextMenu.emailId;
-                    setSelectedEmailId(id);
-                    setContextMenu(null);
-                    setSelectedIds(new Set());
-                    setTimeout(() => {
-                      window.dispatchEvent(new CustomEvent("inbox-forward-shortcut", { detail: { emailId: id } }));
-                    }, 150);
-                  }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Forward className="w-3.5 h-3.5" />
-                  {t("inbox.forward", "Transférer")}
+                <button onClick={() => handleQuickReply(contextMenu.emailId)}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <Reply className="w-3.5 h-3.5" />{t("inbox.reply", "Répondre")}
                 </button>
-                <button
-                  onClick={() => {
-                    const email = sentEmails.find((e: any) => e.id === contextMenu.emailId);
-                    setContextMenu(null);
-                    if (!email) return;
-                    const w = window.open("", "_blank", "width=800,height=900");
-                    if (!w) {
-                      toast({ variant: "destructive", title: t("inbox.printPopupBlocked", "Impossible d'ouvrir la fenêtre d'impression") });
-                      return;
-                    }
-                    const safeBody = ((email as any).body || (email as any).summary || "").toString();
-                    w.document.write(`<!doctype html><html><head><meta charset="utf-8"><title>${(email.subject || "").replace(/[<>]/g, "")}</title>
-                      <style>body{font-family:-apple-system,Segoe UI,sans-serif;color:#111;padding:24px;line-height:1.5}h1{font-size:18px;margin:0 0 12px}.meta{font-size:12px;color:#555;margin-bottom:18px;border-bottom:1px solid #ddd;padding-bottom:10px}img{max-width:100%}</style>
-                      </head><body>
-                      <h1>${(email.subject || "(sans sujet)").replace(/[<>]/g, "")}</h1>
-                      <div class="meta"><b>${(email.recipient || "").replace(/[<>]/g, "")}</b><br/>${email.createdAt ? new Date(email.createdAt).toLocaleString() : ""}</div>
-                      <div>${safeBody}</div>
-                      </body></html>`);
-                    w.document.close();
-                    setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 300);
-                  }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Printer className="w-3.5 h-3.5" />
-                  {t("inbox.print", "Imprimer")}
+                <button onClick={() => handleQuickForward(contextMenu.emailId)}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <Forward className="w-3.5 h-3.5" />{t("inbox.forward", "Transférer")}
                 </button>
-                <button
-                  onClick={async () => {
-                    const email = sentEmails.find((e: any) => e.id === contextMenu.emailId);
-                    setContextMenu(null);
-                    if (!email?.recipient) return;
-                    try {
-                      await navigator.clipboard.writeText(String(email.recipient));
-                      toast({ title: t("inbox.copied", "Copié") });
-                    } catch {}
-                  }}
-                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors"
-                >
-                  <Copy className="w-3.5 h-3.5" />
-                  {t("inbox.copyAddress", "Copier l'adresse")}
+                <button onClick={() => { handleQuickCreateTask(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <ListTodo className="w-3.5 h-3.5" />{t("inbox.createTask", "Créer une tâche")}
+                </button>
+                <div className="border-t border-[#1f2937] my-1" />
+                <button onClick={() => { handleCopyRecipient(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <Copy className="w-3.5 h-3.5" />{t("inbox.copyAddress", "Copier l'adresse")}
+                </button>
+                <button onClick={() => { handleCopySubject(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <TypeIcon className="w-3.5 h-3.5" />{t("inbox.copySubject", "Copier le sujet")}
+                </button>
+                <button onClick={() => { handleDownloadEml(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <Download className="w-3.5 h-3.5" />{t("inbox.downloadEml", "Télécharger en .eml")}
+                </button>
+                <button onClick={() => { handlePrintEmail(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <Printer className="w-3.5 h-3.5" />{t("inbox.print", "Imprimer")}
                 </button>
               </>
             )}
