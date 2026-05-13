@@ -11,6 +11,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { MailPageHeader } from "@/components/email-list/MailPageHeader";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
 import DOMPurify from "dompurify";
@@ -50,6 +51,7 @@ export default function Programmes() {
 
   return (
     <DashboardLayout>
+      <MailPageHeader currentTab="programmes" />
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-6">
         <BackToInboxButton />
         <section>

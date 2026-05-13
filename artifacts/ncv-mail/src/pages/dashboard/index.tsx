@@ -270,8 +270,8 @@ function useDebounce(value: string, delay: number) {
 
 type InboxMode = "personal" | "shared";
 
-type ComposeConnection = { id: string; provider: string; email_address: string; signature?: string | null };
-type ComposeSendPayload = {
+export type ComposeConnection = { id: string; provider: string; email_address: string; signature?: string | null };
+export type ComposeSendPayload = {
   to: string;
   subject: string;
   body: string;
@@ -280,7 +280,7 @@ type ComposeSendPayload = {
   projectId: string;
 };
 
-const ComposeDialogBody = memo(function ComposeDialogBody({
+export const ComposeDialogBody = memo(function ComposeDialogBody({
   isFullscreen,
   setIsFullscreen,
   connections,
@@ -3124,7 +3124,20 @@ export default function Dashboard() {
   const queryClient = useQueryClient();
   const { toast } = useToast();
 
-  const [inboxMode, setInboxMode] = useState<InboxMode>("personal");
+  const [inboxMode, setInboxMode] = useState<InboxMode>(() => {
+    if (typeof window === "undefined") return "personal";
+    const params = new URLSearchParams(window.location.search);
+    return params.get("mode") === "shared" ? "shared" : "personal";
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (inboxMode !== "shared") return;
+    const url = new URL(window.location.href);
+    if (url.searchParams.get("mode") === "shared") {
+      url.searchParams.delete("mode");
+      window.history.replaceState({}, "", url.pathname + url.search + url.hash);
+    }
+  }, [inboxMode]);
   const [selectedSharedMailboxId, setSelectedSharedMailboxId] = useState<string | null>(null);
   // Vue Partagées « type Missive » — filtres serveur
   // « Pris en charge par » : "all" | "unclaimed" | "me" | userId

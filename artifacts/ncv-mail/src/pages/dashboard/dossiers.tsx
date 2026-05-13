@@ -1,4 +1,5 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
+import { MailPageHeader } from "@/components/email-list/MailPageHeader";
 import { EmailDetailContainer } from "@/components/email-detail/EmailDetailContainer";
 import { useEnableLightTheme } from "@/lib/inbox-theme";
 import {
@@ -724,6 +725,7 @@ export default function MesDossiers() {
   // Vue liste des dossiers
   return (
     <DashboardLayout>
+      <MailPageHeader currentTab="dossiers" />
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton />
         <div className="flex items-center justify-between mb-5">
