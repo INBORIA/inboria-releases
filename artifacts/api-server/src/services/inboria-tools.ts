@@ -196,12 +196,15 @@ async function handleReadEmail(
   if (!Number.isFinite(id) || id <= 0) {
     return JSON.stringify({ error: "emailId invalide" });
   }
-  const { data, error } = await supabaseAdmin
+  let q1: any = supabaseAdmin
     .from("emails")
     .select("id, sender, recipient, subject, body, summary, status, priority, created_at, sent_at, snoozed_until, assigned_to, category_id, project_id, user_id, shared_mailbox_id, is_private")
     .eq("id", id)
-    .or(ctx.emailScopeFilter)
-    .maybeSingle();
+    .or(ctx.emailScopeFilter);
+  // RGPD: en mode admin team, masquer totalement les mails marques prives
+  // d'un collaborateur. L'admin ne doit jamais y acceder via tool call.
+  if (ctx.adminTeamCtx) q1 = q1.eq("is_private", false);
+  const { data, error } = await q1.maybeSingle();
   if (error) return JSON.stringify({ error: `db: ${error.message}` });
   if (!data) {
     return JSON.stringify({
@@ -245,12 +248,13 @@ async function handleReadThread(
     return JSON.stringify({ error: "emailId invalide" });
   }
   // Anchor email
-  const { data: anchor, error } = await supabaseAdmin
+  let qa: any = supabaseAdmin
     .from("emails")
     .select("id, sender, recipient, subject, body, status, created_at, sent_at, reply_to_email_id, user_id, shared_mailbox_id, is_private")
     .eq("id", id)
-    .or(ctx.emailScopeFilter)
-    .maybeSingle();
+    .or(ctx.emailScopeFilter);
+  if (ctx.adminTeamCtx) qa = qa.eq("is_private", false);
+  const { data: anchor, error } = await qa.maybeSingle();
   if (error) return JSON.stringify({ error: `db: ${error.message}` });
   if (!anchor) {
     return JSON.stringify({
@@ -264,12 +268,13 @@ async function handleReadThread(
   for (let i = 0; i < 8 && (cursor as any).reply_to_email_id; i++) {
     const parentId = Number((cursor as any).reply_to_email_id);
     if (!parentId || seen.has(parentId)) break;
-    const { data: parent } = await supabaseAdmin
+    let qp: any = supabaseAdmin
       .from("emails")
       .select("id, sender, recipient, subject, body, status, created_at, sent_at, reply_to_email_id, user_id, shared_mailbox_id, is_private")
       .eq("id", parentId)
-      .or(ctx.emailScopeFilter)
-      .maybeSingle();
+      .or(ctx.emailScopeFilter);
+    if (ctx.adminTeamCtx) qp = qp.eq("is_private", false);
+    const { data: parent } = await qp.maybeSingle();
     if (!parent) break;
     collected.push(parent);
     seen.add(parentId);
@@ -278,12 +283,13 @@ async function handleReadThread(
   // Walk down (replies pointing to anything in seen)
   for (let depth = 0; depth < 4; depth++) {
     const ids = Array.from(seen);
-    const { data: replies } = await supabaseAdmin
+    let qr: any = supabaseAdmin
       .from("emails")
       .select("id, sender, recipient, subject, body, status, created_at, sent_at, reply_to_email_id, user_id, shared_mailbox_id, is_private")
       .in("reply_to_email_id", ids)
-      .or(ctx.emailScopeFilter)
-      .order("created_at", { ascending: true });
+      .or(ctx.emailScopeFilter);
+    if (ctx.adminTeamCtx) qr = qr.eq("is_private", false);
+    const { data: replies } = await qr.order("created_at", { ascending: true });
     let added = 0;
     for (const r of replies || []) {
       const rid = Number((r as any).id);
@@ -327,12 +333,14 @@ async function handleListFromContact(
   const daysBack = Math.min(Math.max(Number(args.daysBack) || 90, 1), 365);
   const limit = Math.min(Math.max(Number(args.limit) || 10, 1), 20);
   const sinceIso = new Date(Date.now() - daysBack * 86400000).toISOString();
-  const { data, error } = await supabaseAdmin
+  let qc: any = supabaseAdmin
     .from("emails")
     .select("id, sender, recipient, subject, body, status, created_at, sent_at, summary, user_id, shared_mailbox_id, is_private")
     .or(ctx.emailScopeFilter)
     .or(`sender.ilike.%${email}%,recipient.ilike.%${email}%`)
-    .gte("created_at", sinceIso)
+    .gte("created_at", sinceIso);
+  if (ctx.adminTeamCtx) qc = qc.eq("is_private", false);
+  const { data, error } = await qc
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) return JSON.stringify({ error: `db: ${error.message}` });
@@ -422,12 +430,14 @@ async function handleSearchEmails(
   // Keyword fallback / supplement
   if (merged.size < limit) {
     const safe = query.replace(/[%,()]/g, "");
-    const { data: kw } = await supabaseAdmin
+    let qk: any = supabaseAdmin
       .from("emails")
       .select("id, sender, subject, body, summary, created_at, sent_at, status")
       .or(ctx.emailScopeFilter)
       .or(`subject.ilike.%${safe}%,body.ilike.%${safe}%,summary.ilike.%${safe}%`)
-      .gte("created_at", sinceIso)
+      .gte("created_at", sinceIso);
+    if (ctx.adminTeamCtx) qk = qk.eq("is_private", false);
+    const { data: kw } = await qk
       .order("created_at", { ascending: false })
       .limit(limit * 2);
     for (const e of (kw as any[]) || []) {
@@ -467,12 +477,13 @@ async function handleReadAttachment(
     return JSON.stringify({ error: "emailId ou filename invalide" });
   }
   // Ownership via emails scope
-  const { data: own } = await supabaseAdmin
+  let qo: any = supabaseAdmin
     .from("emails")
     .select("id")
     .eq("id", id)
-    .or(ctx.emailScopeFilter)
-    .maybeSingle();
+    .or(ctx.emailScopeFilter);
+  if (ctx.adminTeamCtx) qo = qo.eq("is_private", false);
+  const { data: own } = await qo.maybeSingle();
   if (!own) {
     return JSON.stringify({
       error: `Mail #${id} hors perimetre, lecture PJ refusee.`,

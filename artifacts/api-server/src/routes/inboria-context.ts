@@ -374,13 +374,13 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       adminTeamCtx
         ? supabaseAdmin
             .from("projects")
-            .select("name, reference, description")
+            .select("name, reference, description, user_id")
             .in("user_id", adminTeamCtx.memberIds)
             .order("created_at", { ascending: false })
-            .limit(24)
+            .limit(40)
         : supabaseAdmin
             .from("projects")
-            .select("name, reference, description")
+            .select("name, reference, description, user_id")
             .eq("user_id", userId)
             .order("created_at", { ascending: false })
             .limit(8),
@@ -574,6 +574,45 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
         .order("created_at", { ascending: false })
         .limit(10),
     ]);
+
+    // Reequilibrage admin team : la requete inbox globale est triee par
+    // created_at desc et plafonnee a 50. Si l'admin a 2400 mails recents et
+    // un coequipier en a 200 plus anciens, le coequipier est totalement
+    // ecrase. On charge donc en plus les 30 mails les plus recents de chaque
+    // autre membre, puis on merge dans inboxRes.data (dedup par id).
+    if (adminTeamCtx && adminTeamCtx.memberIds.length > 1) {
+      const otherMembers = adminTeamCtx.memberIds.filter((m) => m !== userId);
+      const perMember = await Promise.all(
+        otherMembers.map((mid) =>
+          supabaseAdmin
+            .from("emails")
+            .select(
+              "id, sender, subject, summary, priority, status, created_at, snoozed_until, assigned_to, shared_mailbox_id, user_id",
+            )
+            .eq("user_id", mid)
+            .eq("is_private", false)
+            .is("sent_at", null)
+            .neq("status", "archived")
+            .neq("status", "scheduled")
+            .or(`snoozed_until.is.null,snoozed_until.lte.${nowIso}`)
+            .order("created_at", { ascending: false })
+            .limit(30),
+        ),
+      );
+      const existing = ((inboxRes as { data?: Array<{ id: number | string }> }).data || []);
+      const seen = new Set(existing.map((r) => String(r.id)));
+      const merged: Array<{ id: number | string; created_at: string }> = [...(existing as Array<{ id: number | string; created_at: string }>)];
+      for (const r of perMember) {
+        for (const row of (r.data || []) as Array<{ id: number | string; created_at: string }>) {
+          if (!seen.has(String(row.id))) {
+            merged.push(row);
+            seen.add(String(row.id));
+          }
+        }
+      }
+      merged.sort((a, b) => (b.created_at || "").localeCompare(a.created_at || ""));
+      (inboxRes as { data: unknown }).data = merged;
+    }
 
     // Load all teammates across the shared mailboxes the user belongs to,
     // so the assistant can answer "who is X on my team?" questions.
@@ -1303,11 +1342,44 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     }
     if (projects.length > 0) {
       memoryLines.push("");
-      memoryLines.push("Projets actifs de l'utilisateur :");
-      for (const p of projects) {
+      // En mode admin team : prefixe chaque projet par le nom du proprietaire.
+      // Indispensable pour que l'admin (JJ) puisse demander "quels projets
+      // gere Richard ?" et recevoir une reponse correcte (sinon Inboria voit
+      // un pool melange et ne peut pas attribuer).
+      const ownerNameByUid = new Map<string, string>();
+      if (adminTeamCtx && adminTeamCtx.memberIds.length > 0) {
+        const { data: ownerProfiles } = await supabaseAdmin
+          .from("profiles")
+          .select("id, full_name")
+          .in("id", adminTeamCtx.memberIds);
+        for (const p of (ownerProfiles || []) as Array<{ id: string; full_name: string | null }>) {
+          if (p.full_name) ownerNameByUid.set(String(p.id), p.full_name);
+        }
+        // Fallback : adresse email via email_connections (1ere trouvee).
+        const missing = adminTeamCtx.memberIds.filter((m) => !ownerNameByUid.has(m));
+        if (missing.length > 0) {
+          const { data: conns } = await supabaseAdmin
+            .from("email_connections")
+            .select("user_id, email_address")
+            .in("user_id", missing);
+          for (const c of (conns || []) as Array<{ user_id: string; email_address: string | null }>) {
+            if (!ownerNameByUid.has(String(c.user_id)) && c.email_address) {
+              ownerNameByUid.set(String(c.user_id), c.email_address);
+            }
+          }
+          for (const m of missing) {
+            if (!ownerNameByUid.has(m)) ownerNameByUid.set(m, `membre ${m.slice(0, 8)}`);
+          }
+        }
+      }
+      memoryLines.push(adminTeamCtx ? "Projets actifs de l'equipe (par proprietaire) :" : "Projets actifs de l'utilisateur :");
+      for (const p of projects as Array<{ name: string; reference?: string | null; description?: string | null; user_id?: string | null }>) {
         const ref = p.reference ? ` (ref ${p.reference})` : "";
         const desc = p.description ? ` — ${p.description.slice(0, 120)}` : "";
-        memoryLines.push(`- ${p.name}${ref}${desc}`);
+        const ownerPrefix = adminTeamCtx && p.user_id
+          ? `[${ownerNameByUid.get(String(p.user_id)) || "membre"}] `
+          : "";
+        memoryLines.push(`- ${ownerPrefix}${p.name}${ref}${desc}`);
       }
     }
 
