@@ -577,8 +577,7 @@ export default function Envoyes() {
                       </div>
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2 mb-0.5">
-                          <span className="font-semibold text-[12px] text-white truncate flex items-center gap-1">
-                            <ArrowRight className="w-3 h-3 text-[#b8c5d6]" />
+                          <span className="font-semibold text-[12px] text-white truncate">
                             {email.recipient || t("sent.unknownRecipient")}
                           </span>
                           {isReply && (
