@@ -53,6 +53,9 @@ import {
   getGetSharedMailboxesQueryKey,
   getListProjectsQueryKey,
   getListIntegrationsQueryKey,
+  useListFolders,
+  useAssignEmailsToFolder,
+  getListFoldersQueryKey,
 } from "@workspace/api-client-react";
 import type { Email, PaginatedEmails, PaginatedSharedMailboxEmails, Integration } from "@workspace/api-client-react";
 import { getGetProfileQueryKey } from "@workspace/api-client-react";
@@ -3504,7 +3507,9 @@ export default function Dashboard() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
   const [categorySubmenuOpen, setCategorySubmenuOpen] = useState(false);
+  const [folderSubmenuOpen, setFolderSubmenuOpen] = useState(false);
   const categorySubmenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const folderSubmenuTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const openCategorySubmenu = () => {
     if (categorySubmenuTimerRef.current) { clearTimeout(categorySubmenuTimerRef.current); categorySubmenuTimerRef.current = null; }
     setCategorySubmenuOpen(true);
@@ -3512,6 +3517,25 @@ export default function Dashboard() {
   const scheduleCloseCategorySubmenu = () => {
     if (categorySubmenuTimerRef.current) clearTimeout(categorySubmenuTimerRef.current);
     categorySubmenuTimerRef.current = setTimeout(() => setCategorySubmenuOpen(false), 220);
+  };
+  const openFolderSubmenu = () => {
+    if (folderSubmenuTimerRef.current) { clearTimeout(folderSubmenuTimerRef.current); folderSubmenuTimerRef.current = null; }
+    setFolderSubmenuOpen(true);
+  };
+  const scheduleCloseFolderSubmenu = () => {
+    if (folderSubmenuTimerRef.current) clearTimeout(folderSubmenuTimerRef.current);
+    folderSubmenuTimerRef.current = setTimeout(() => setFolderSubmenuOpen(false), 220);
+  };
+  const { data: userFolders } = useListFolders();
+  const assignToFolderMut = useAssignEmailsToFolder();
+  const handleMoveToFolder = async (emailIds: number[], folderId: string, folderName: string) => {
+    try {
+      await assignToFolderMut.mutateAsync({ data: { folderId, emailIds } });
+      toast({ title: t("folders.movedToast", { defaultValue: "Déplacé dans « {{name}} »", name: folderName }) });
+      queryClient.invalidateQueries({ queryKey: getListFoldersQueryKey() });
+    } catch {
+      toast({ title: t("folders.moveFailed", { defaultValue: "Échec du déplacement." }), variant: "destructive" });
+    }
   };
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const contextMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -4410,7 +4434,7 @@ export default function Dashboard() {
       style={{ top: Math.min(contextMenu.y, window.innerHeight - 320), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
       onMouseLeave={() => {
         if (contextMenuCloseTimer.current) clearTimeout(contextMenuCloseTimer.current);
-        contextMenuCloseTimer.current = setTimeout(() => { setContextMenu(null); setCategorySubmenuOpen(false); }, 250);
+        contextMenuCloseTimer.current = setTimeout(() => { setContextMenu(null); setCategorySubmenuOpen(false); setFolderSubmenuOpen(false); }, 250);
       }}
       onMouseEnter={() => {
         if (contextMenuCloseTimer.current) { clearTimeout(contextMenuCloseTimer.current); contextMenuCloseTimer.current = null; }
@@ -4494,6 +4518,30 @@ export default function Dashboard() {
                 )}
               </div>
             )}
+            {(userFolders && userFolders.length > 0) && (
+              <div className="relative">
+                <button onMouseEnter={openFolderSubmenu} onMouseLeave={scheduleCloseFolderSubmenu} onClick={openFolderSubmenu}
+                  className="w-full flex items-center justify-between gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <span className="flex items-center gap-2.5"><FolderKanban className="w-3.5 h-3.5" />{t("inbox.moveToFolder", { defaultValue: "Déplacer vers" })}</span>
+                  <ChevronRight className="w-3 h-3 opacity-60" />
+                </button>
+                {folderSubmenuOpen && (
+                  <div className="absolute left-full top-0 -ml-px pl-2 min-w-[200px] max-h-[260px] overflow-y-auto"
+                    onMouseEnter={openFolderSubmenu} onMouseLeave={scheduleCloseFolderSubmenu}>
+                    <div className="rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1">
+                      {userFolders.map((f) => (
+                        <button key={f.id}
+                          onClick={() => { handleMoveToFolder([contextMenu.emailId], f.id, f.name); setContextMenu(null); setFolderSubmenuOpen(false); }}
+                          className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left">
+                          <Folder className="w-3 h-3 shrink-0 text-primary/70" />
+                          <span className="truncate">{f.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             <button onClick={() => { handleCopySender(contextMenu.emailId); setContextMenu(null); }}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
               <Copy className="w-3.5 h-3.5" />{t("inbox.copySenderEmail", "Copier l'adresse de l'expéditeur")}
@@ -4527,6 +4575,30 @@ export default function Dashboard() {
               className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
               <Archive className="w-3.5 h-3.5" />{t("inbox.bulkArchive")} ({selectedIds.size})
             </button>
+            {(userFolders && userFolders.length > 0) && (
+              <div className="relative">
+                <button onMouseEnter={openFolderSubmenu} onMouseLeave={scheduleCloseFolderSubmenu} onClick={openFolderSubmenu}
+                  className="w-full flex items-center justify-between gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <span className="flex items-center gap-2.5"><FolderKanban className="w-3.5 h-3.5" />{t("inbox.moveToFolder", { defaultValue: "Déplacer vers" })} ({selectedIds.size})</span>
+                  <ChevronRight className="w-3 h-3 opacity-60" />
+                </button>
+                {folderSubmenuOpen && (
+                  <div className="absolute left-full top-0 -ml-px pl-2 min-w-[200px] max-h-[260px] overflow-y-auto"
+                    onMouseEnter={openFolderSubmenu} onMouseLeave={scheduleCloseFolderSubmenu}>
+                    <div className="rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1">
+                      {userFolders.map((f) => (
+                        <button key={f.id}
+                          onClick={() => { handleMoveToFolder([...selectedIds], f.id, f.name); setContextMenu(null); setFolderSubmenuOpen(false); setSelectedIds(new Set()); }}
+                          className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left">
+                          <Folder className="w-3 h-3 shrink-0 text-primary/70" />
+                          <span className="truncate">{f.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
             <div className="border-t border-[#1f2937] my-1" />
             <button onClick={() => { handleBulkAction("delete"); setContextMenu(null); }}
               className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-red-400/80 hover:bg-red-500/[0.08] hover:text-red-400 transition-colors">

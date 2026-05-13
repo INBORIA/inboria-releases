@@ -106,8 +106,9 @@ export default function MesDossiers() {
     {},
     {
       query: {
-        enabled: !!selectedFolderId && !selectedEmailId,
-      } as any,
+        enabled: Boolean(selectedFolderId) && !selectedEmailId,
+        queryKey: getListFolderEmailsQueryKey(selectedFolderId || ""),
+      },
     },
   );
 

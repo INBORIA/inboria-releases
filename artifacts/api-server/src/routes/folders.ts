@@ -3,12 +3,40 @@ import OpenAI from "openai";
 import { supabaseAdmin } from "../lib/supabase";
 import { requireAuth } from "../middlewares/auth";
 import { logger } from "../lib/logger";
+import { getMemberMailboxIds } from "../lib/inbox-scope";
 import {
   CreateFolderBody,
   UpdateFolderBody,
   GenerateFolderPromptBody,
   AssignEmailsToFolderBody,
 } from "@workspace/api-zod";
+
+/**
+ * Renvoie le sous-ensemble des `emailIds` qui sont VISIBLES par `userId` :
+ * - emails personnels (user_id = userId)
+ * - emails assignés à userId
+ * - emails d'une boîte partagée dont userId est membre
+ *
+ * Permet de classer dans un dossier privé un mail reçu sur une boîte
+ * partagée tout en empêchant un user d'assigner des mails qu'il ne voit pas.
+ */
+async function filterVisibleEmailIds(
+  userId: string,
+  emailIds: number[],
+): Promise<number[]> {
+  if (emailIds.length === 0) return [];
+  const memberMailboxes = await getMemberMailboxIds(userId);
+  const orParts = [`user_id.eq.${userId}`, `assigned_to.eq.${userId}`];
+  if (memberMailboxes.length > 0) {
+    orParts.push(`shared_mailbox_id.in.(${memberMailboxes.join(",")})`);
+  }
+  const { data } = await supabaseAdmin
+    .from("emails")
+    .select("id")
+    .in("id", emailIds)
+    .or(orParts.join(","));
+  return (data || []).map((r: any) => r.id as number);
+}
 
 const openai = new OpenAI({ apiKey: process.env["OPENAI_API_KEY"] });
 const router: IRouter = Router();
@@ -219,11 +247,13 @@ router.get("/folders/:id/emails", requireAuth, async (req, res): Promise<void> =
     return;
   }
 
+  // Pas de restriction `.eq("user_id", userId)` ici : un dossier privé peut
+  // contenir des emails reçus sur une boîte partagée. La privacy est
+  // garantie par la jointure via email_folder_assignments (RLS user_id).
   const { data: emailRows } = await supabaseAdmin
     .from("emails")
     .select("id, sender, subject, status, priority, summary, category_id, project_id, recipient, assigned_to, assigned_at, created_at, shared_mailbox_id, categories(name), projects(name, reference)")
     .in("id", emailIds)
-    .eq("user_id", req.userId!)
     .order("created_at", { ascending: false });
 
   const emails = (emailRows || []).map((e: any) => ({
@@ -306,7 +336,7 @@ router.post("/folders/assign", requireAuth, async (req, res): Promise<void> => {
     return;
   }
   const { folderId, emailIds } = parsed.data;
-  // Ownership check
+  // Ownership check sur le dossier (RLS-safe).
   const { data: owns } = await supabaseAdmin
     .from("user_folders")
     .select("id")
@@ -317,23 +347,31 @@ router.post("/folders/assign", requireAuth, async (req, res): Promise<void> => {
     res.status(404).json({ error: "Folder not found" });
     return;
   }
-  // Only emails user owns can be assigned (privacy: dossiers privés).
   const sanitized = [...new Set(emailIds.map(Number).filter((n) => Number.isInteger(n) && n > 0))].slice(0, 500);
   if (sanitized.length === 0) {
     res.json({ assigned: 0 });
     return;
   }
-  const { data: ownEmails } = await supabaseAdmin
-    .from("emails")
-    .select("id")
-    .in("id", sanitized)
-    .eq("user_id", req.userId!);
-  const ownedIds = (ownEmails || []).map((e: any) => e.id);
-  if (ownedIds.length === 0) {
+  // Visibilité (perso + assignés + boîtes partagées dont user est membre).
+  const visibleIds = await filterVisibleEmailIds(req.userId!, sanitized);
+  if (visibleIds.length === 0) {
     res.json({ assigned: 0 });
     return;
   }
-  const rows = ownedIds.map((eid) => ({
+  // MOVE semantics : un email = au plus UN dossier par user.
+  // Supprime toute assignation antérieure de cet user pour ces emails,
+  // puis insère la nouvelle. Atomic au sens RLS (user_id scope).
+  const { error: delErr } = await supabaseAdmin
+    .from("email_folder_assignments")
+    .delete()
+    .eq("user_id", req.userId!)
+    .in("email_id", visibleIds);
+  if (delErr) {
+    logger.error({ err: delErr.message }, "[folders] assign clear failed");
+    res.status(500).json({ error: "Failed to assign emails" });
+    return;
+  }
+  const rows = visibleIds.map((eid) => ({
     user_id: req.userId!,
     folder_id: folderId,
     email_id: eid,
@@ -341,13 +379,13 @@ router.post("/folders/assign", requireAuth, async (req, res): Promise<void> => {
   }));
   const { error } = await supabaseAdmin
     .from("email_folder_assignments")
-    .upsert(rows, { onConflict: "folder_id,email_id" });
+    .insert(rows);
   if (error) {
     logger.error({ err: error.message }, "[folders] assign failed");
     res.status(500).json({ error: "Failed to assign emails" });
     return;
   }
-  res.json({ assigned: ownedIds.length });
+  res.json({ assigned: visibleIds.length });
 });
 
 router.post("/folders/unassign", requireAuth, async (req, res): Promise<void> => {
@@ -399,77 +437,97 @@ export async function classifyEmailIntoUserFolders(params: {
 }): Promise<void> {
   if (!(await hasFoldersTable())) return;
   try {
+    // Move semantics : si l'email est déjà classé manuellement par l'user,
+    // on respecte ce choix et on ne touche à rien.
+    const { data: existing } = await supabaseAdmin
+      .from("email_folder_assignments")
+      .select("id")
+      .eq("user_id", params.userId)
+      .eq("email_id", params.emailId)
+      .limit(1);
+    if (existing && existing.length > 0) return;
+
+    // Ordre déterministe = priorité utilisateur (position asc, puis created_at).
     const { data: folders } = await supabaseAdmin
       .from("user_folders")
-      .select("id, name, keywords, ai_prompt, enabled")
+      .select("id, name, keywords, ai_prompt, enabled, position, created_at")
       .eq("user_id", params.userId)
-      .eq("enabled", true);
+      .eq("enabled", true)
+      .order("position", { ascending: true })
+      .order("created_at", { ascending: true });
     if (!folders || folders.length === 0) return;
 
     const haystack = `${params.sender}\n${params.subject}\n${params.summary || ""}\n${(params.body || "").replace(/<[^>]+>/g, " ")}`.toLowerCase();
-    const matched = new Set<string>();
 
+    // 1) Premier dossier qui matche par mots-clés (ordre user).
+    let firstMatch: string | null = null;
     for (const f of folders as any[]) {
       const kws: string[] = Array.isArray(f.keywords) ? f.keywords : [];
       const kw = kws.find((k) => k && haystack.includes(String(k).toLowerCase().trim()));
-      if (kw) matched.add(f.id);
+      if (kw) {
+        firstMatch = f.id;
+        break;
+      }
     }
 
-    const aiCandidates = (folders as any[]).filter(
-      (f) => !matched.has(f.id) && f.ai_prompt && String(f.ai_prompt).trim().length > 0,
-    );
-    if (aiCandidates.length > 0) {
-      const list = aiCandidates
-        .map((f, i) => `${i + 1}) "${f.name}" — ${String(f.ai_prompt).slice(0, 400)}`)
-        .join("\n");
-      try {
-        const completion = await openai.chat.completions.create({
-          model: "gpt-4o-mini",
-          max_completion_tokens: 200,
-          messages: [
-            {
-              role: "system",
-              content:
-                "Tu classes un email dans 0, 1 ou plusieurs dossiers personnels selon des descriptions. Sois STRICT : ne renvoie un dossier QUE si la description s'applique vraiment. Réponds JSON STRICT : {\"folders\":[\"nom1\",\"nom2\"]}",
-            },
-            {
-              role: "user",
-              content: `Email :
+    // 2) Fallback IA si pas de match keywords. L'IA renvoie le PREMIER dossier
+    //    pertinent ; on respecte l'ordre utilisateur dans le prompt.
+    if (!firstMatch) {
+      const aiCandidates = (folders as any[]).filter(
+        (f) => f.ai_prompt && String(f.ai_prompt).trim().length > 0,
+      );
+      if (aiCandidates.length > 0) {
+        const list = aiCandidates
+          .map((f, i) => `${i + 1}) "${f.name}" — ${String(f.ai_prompt).slice(0, 400)}`)
+          .join("\n");
+        try {
+          const completion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            max_completion_tokens: 80,
+            messages: [
+              {
+                role: "system",
+                content:
+                  "Tu classes un email dans AU PLUS UN dossier personnel selon des descriptions ordonnées par priorité. Sois STRICT : ne renvoie un dossier QUE si la description s'applique vraiment. En cas de doute, renvoie une chaîne vide. Réponds JSON STRICT : {\"folder\":\"nom\"} ou {\"folder\":\"\"}.",
+              },
+              {
+                role: "user",
+                content: `Email :
 De: ${params.sender}
 Sujet: ${params.subject}
 Résumé: ${params.summary || ""}
 Corps (extrait): ${(params.body || "").replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim().slice(0, 600)}
 
-Dossiers candidats :
+Dossiers candidats (ordre de priorité) :
 ${list}
 
-Renvoie le ou les noms exacts qui s'appliquent (tableau vide si aucun).`,
-            },
-          ],
-        });
-        const content = completion.choices[0]?.message?.content ?? "{}";
-        const m = content.match(/\{[\s\S]*\}/);
-        const result = JSON.parse(m ? m[0] : "{}");
-        const names: string[] = Array.isArray(result.folders) ? result.folders : [];
-        for (const name of names) {
-          const f = aiCandidates.find((x: any) => String(x.name).toLowerCase() === String(name).toLowerCase());
-          if (f) matched.add(f.id);
+Renvoie UN SEUL nom exact (le plus pertinent) ou "".`,
+              },
+            ],
+          });
+          const content = completion.choices[0]?.message?.content ?? "{}";
+          const m = content.match(/\{[\s\S]*\}/);
+          const result = JSON.parse(m ? m[0] : "{}");
+          const name: string = typeof result.folder === "string" ? result.folder : "";
+          if (name) {
+            const f = aiCandidates.find((x: any) => String(x.name).toLowerCase() === name.toLowerCase());
+            if (f) firstMatch = f.id;
+          }
+        } catch (e: any) {
+          logger.warn({ err: e?.message, emailId: params.emailId }, "[folders] AI classify failed");
         }
-      } catch (e: any) {
-        logger.warn({ err: e?.message, emailId: params.emailId }, "[folders] AI classify failed");
       }
     }
 
-    if (matched.size === 0) return;
-    const rows = [...matched].map((fid) => ({
-      user_id: params.userId,
-      folder_id: fid,
-      email_id: params.emailId,
-      source: "auto",
-    }));
+    if (!firstMatch) return;
     await supabaseAdmin
       .from("email_folder_assignments")
-      .upsert(rows, { onConflict: "folder_id,email_id" });
+      .insert({
+        user_id: params.userId,
+        folder_id: firstMatch,
+        email_id: params.emailId,
+        source: "auto",
+      });
   } catch (e: any) {
     logger.warn({ err: e?.message, emailId: params.emailId }, "[folders] classify failed");
   }

@@ -5,9 +5,11 @@
 -- même si la boîte est partagée. Classement automatique :
 --   - keywords (array de mots-clés simples) OU
 --   - ai_prompt (description riche, évaluée par gpt-4o-mini)
--- email_folder_assignments : pivot many-to-many email <-> folder. Un email
--- peut appartenir à plusieurs dossiers. Source = "auto" (worker IA) ou
--- "manual" (drag-and-drop / menu contextuel).
+--
+-- email_folder_assignments : pivot email <-> folder. UN email ne peut
+-- appartenir qu'à UN SEUL dossier par utilisateur (move semantics, pas
+-- many-to-many). Source = "auto" (worker IA) ou "manual" (drag-and-drop /
+-- menu contextuel "Déplacer vers").
 
 BEGIN;
 
@@ -50,9 +52,33 @@ CREATE TABLE IF NOT EXISTS public.email_folder_assignments (
   folder_id    uuid NOT NULL REFERENCES public.user_folders(id) ON DELETE CASCADE,
   email_id     integer NOT NULL REFERENCES public.emails(id) ON DELETE CASCADE,
   source       text NOT NULL DEFAULT 'auto',
-  created_at   timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (folder_id, email_id)
+  created_at   timestamptz NOT NULL DEFAULT now()
 );
+
+-- Move semantics : un email ne peut appartenir qu'à UN dossier par user.
+-- Drop ancienne contrainte many-to-many si présente, puis ajoute la bonne.
+DO $$
+BEGIN
+  IF EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'email_folder_assignments_folder_id_email_id_key'
+  ) THEN
+    ALTER TABLE public.email_folder_assignments
+      DROP CONSTRAINT email_folder_assignments_folder_id_email_id_key;
+  END IF;
+END $$;
+
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM pg_constraint
+    WHERE conname = 'email_folder_assignments_user_email_uniq'
+  ) THEN
+    ALTER TABLE public.email_folder_assignments
+      ADD CONSTRAINT email_folder_assignments_user_email_uniq
+      UNIQUE (user_id, email_id);
+  END IF;
+END $$;
 
 CREATE INDEX IF NOT EXISTS efa_user_folder_idx
   ON public.email_folder_assignments (user_id, folder_id, created_at DESC);
