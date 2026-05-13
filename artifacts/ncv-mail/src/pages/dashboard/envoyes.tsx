@@ -16,10 +16,15 @@ import {
   useSendEmail,
   useGenerateDraft,
   useCreateTask,
+  useSnoozeEmail,
+  useListFolders,
+  useAssignEmailsToFolder,
   getListEmailsQueryKey,
   getGetProfileQueryKey,
   getListTasksQueryKey,
+  getListFoldersQueryKey,
 } from "@workspace/api-client-react";
+import { HoverActions, type HoverActionsCb } from "@/components/email-list/HoverActions";
 import { useQuery } from "@tanstack/react-query";
 import { EmailDetail } from "@/components/email-detail/EmailDetail";
 import type { UploadedFile } from "@/components/FileAttachInput";
@@ -50,6 +55,13 @@ import {
   Copy,
   ListTodo,
   Type as TypeIcon,
+  Archive,
+  Mail,
+  MailOpen,
+  Clock,
+  Bell,
+  Folder,
+  ShieldAlert,
 } from "lucide-react";
 import { extractEmailAddress } from "@/lib/utils";
 import { useState, useEffect, useCallback, useRef } from "react";
@@ -96,6 +108,10 @@ export default function Envoyes() {
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
   const createTaskMut = useCreateTask();
+  const snoozeMut = useSnoozeEmail();
+  const { data: categoryCounts } = useGetCategoryCounts({ scope: "personal" } as any);
+  const { data: userFolders } = useListFolders();
+  const assignToFolderMut = useAssignEmailsToFolder();
 
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
@@ -327,6 +343,108 @@ export default function Envoyes() {
     setTimeout(() => { try { w.focus(); w.print(); } catch {} }, 300);
   };
 
+  // Parité Réception — Marquer lu/non lu, Reporter, Archiver, Catégorie,
+  // Déplacer vers dossier. Block sender masqué côté Envoyés (n'a pas de
+  // sens : on ne se bloque pas soi-même).
+  const handleToggleRead = (id: number) => {
+    const email = sentEmails.find((e: any) => e.id === id);
+    const isUnread = email?.status === "non_lu" || email?.isRead === false || (email as any)?.unread === true;
+    const newStatus = isUnread ? "read" : "non_lu";
+    updateEmail.mutate(
+      { id, data: { status: newStatus } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          toast({ title: isUnread ? t("inbox.markedAsRead", "Marqué comme lu") : t("inbox.markedAsUnread", "Marqué comme non lu") });
+        },
+      },
+    );
+  };
+
+  const handleQuickSnooze = (id: number, hours: number, label: string) => {
+    let date: Date;
+    if (hours === 24) {
+      date = new Date(); date.setDate(date.getDate() + 1); date.setHours(9, 0, 0, 0);
+    } else if (hours === 168) {
+      date = new Date(); const day = date.getDay(); const diff = (8 - day) % 7 || 7;
+      date.setDate(date.getDate() + diff); date.setHours(9, 0, 0, 0);
+    } else {
+      date = new Date(Date.now() + hours * 60 * 60 * 1000);
+    }
+    snoozeMut.mutate(
+      { id, data: { snoozeUntil: date.toISOString() } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          toast({ title: t("wave1.snoozeSuccess", "Reporté"), description: label });
+        },
+        onError: (e: any) => toast({ variant: "destructive", title: e?.message || "Échec" }),
+      },
+    );
+  };
+
+  const handleArchiveOne = (id: number) => {
+    updateEmail.mutate(
+      { id, data: { status: "archived" } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          toast({ title: t("inbox.archived", "Archivé") });
+        },
+      },
+    );
+  };
+
+  const handleQuickSetCategory = (id: number, categoryId: string, categoryName: string) => {
+    updateEmail.mutate(
+      { id, data: { categoryId } as any },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+          toast({ title: t("inbox.categorized", "Catégorisé"), description: categoryName });
+        },
+      },
+    );
+  };
+
+  const handleMoveToFolder = async (emailIds: number[], folderId: string, folderName: string) => {
+    try {
+      await assignToFolderMut.mutateAsync({ data: { folderId, emailIds } as any });
+      toast({ title: t("folders.movedToast", { defaultValue: "Déplacé dans « {{name}} »", name: folderName }) });
+      queryClient.invalidateQueries({ queryKey: getListFoldersQueryKey() });
+      queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+    } catch {
+      toast({ title: t("folders.moveFailed", { defaultValue: "Échec du déplacement." }), variant: "destructive" });
+    }
+  };
+
+  const handleDeleteOne = (id: number) => {
+    deleteEmail.mutate({ id }, {
+      onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
+        toast({ title: t("inbox.emailDeleted") });
+      },
+    });
+  };
+
+  const buildHoverCb = (email: any): HoverActionsCb => ({
+    onOpen: () => setSelectedEmailId(email.id),
+    onReply: () => handleQuickReply(email.id),
+    onForward: () => handleQuickForward(email.id),
+    onCreateTask: () => handleQuickCreateTask(email.id),
+    onToggleRead: () => handleToggleRead(email.id),
+    onSnooze: (hours, label) => handleQuickSnooze(email.id, hours, label),
+    onArchive: () => handleArchiveOne(email.id),
+    onSetCategory: (categoryId, name) => handleQuickSetCategory(email.id, categoryId, name),
+    onMove: (folderId, name) => handleMoveToFolder([email.id], folderId, name),
+    onCopySender: () => handleCopyRecipient(email.id),
+    onCopySubject: () => handleCopySubject(email.id),
+    onDownloadEml: () => handleDownloadEml(email.id),
+    onPrint: () => handlePrintEmail(email.id),
+    onBlockSender: () => { /* non applicable côté Envoyés */ },
+    onDelete: () => handleDeleteOne(email.id),
+  });
+
   const handleExport = async () => {
     try {
       const { downloadExport } = await import("@/lib/export-utils");
@@ -466,66 +584,15 @@ export default function Envoyes() {
                           {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
                         </span>
                       </div>
-                      {/* Barre d'actions au survol — parité avec Réception */}
-                      <div
-                        className="hidden group-hover:flex items-center gap-0 shrink-0"
-                        onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
-                        onClick={(e) => e.stopPropagation()}
-                      >
-                        {(() => {
-                          const btn = "p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white";
-                          const stopMD = (e: React.MouseEvent) => { e.stopPropagation(); e.preventDefault(); };
-                          return (
-                            <>
-                              <button className={btn} title={t("inbox.openEmail")} onMouseDown={stopMD}
-                                onClick={(e) => { e.stopPropagation(); setSelectedEmailId(email.id); }}>
-                                <ChevronRight className="w-3.5 h-3.5" />
-                              </button>
-                              <button className={btn} title={t("inbox.reply", "Répondre")} onMouseDown={stopMD}
-                                onClick={(e) => { e.stopPropagation(); handleQuickReply(email.id); }}>
-                                <Reply className="w-3.5 h-3.5" />
-                              </button>
-                              <button className={btn} title={t("inbox.forward", "Transférer")} onMouseDown={stopMD}
-                                onClick={(e) => { e.stopPropagation(); handleQuickForward(email.id); }}>
-                                <Forward className="w-3.5 h-3.5" />
-                              </button>
-                              <button className={btn} title={t("inbox.createTask", "Créer une tâche")} onMouseDown={stopMD}
-                                onClick={(e) => { e.stopPropagation(); handleQuickCreateTask(email.id); }}>
-                                <ListTodo className="w-3.5 h-3.5" />
-                              </button>
-                              <button className={btn} title={t("inbox.print", "Imprimer")} onMouseDown={stopMD}
-                                onClick={(e) => { e.stopPropagation(); handlePrintEmail(email.id); }}>
-                                <Printer className="w-3.5 h-3.5" />
-                              </button>
-                              <button className={btn} title={t("inbox.copyAddress", "Copier l'adresse")} onMouseDown={stopMD}
-                                onClick={(e) => { e.stopPropagation(); handleCopyRecipient(email.id); }}>
-                                <Copy className="w-3.5 h-3.5" />
-                              </button>
-                              <button className={btn} title={t("inbox.copySubject", "Copier le sujet")} onMouseDown={stopMD}
-                                onClick={(e) => { e.stopPropagation(); handleCopySubject(email.id); }}>
-                                <TypeIcon className="w-3.5 h-3.5" />
-                              </button>
-                              <button className={btn} title={t("inbox.downloadEml", "Télécharger en .eml")} onMouseDown={stopMD}
-                                onClick={(e) => { e.stopPropagation(); handleDownloadEml(email.id); }}>
-                                <Download className="w-3.5 h-3.5" />
-                              </button>
-                              <button className="p-1 rounded hover:bg-red-500/[0.08] text-[#8b95a7] hover:text-red-400"
-                                title={t("inbox.deleteEmail")} onMouseDown={stopMD}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  deleteEmail.mutate({ id: email.id }, {
-                                    onSuccess: () => {
-                                      queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey() });
-                                      toast({ title: t("inbox.emailDeleted") });
-                                    },
-                                  });
-                                }}>
-                                <Trash2 className="w-3.5 h-3.5" />
-                              </button>
-                            </>
-                          );
-                        })()}
-                      </div>
+                      {/* Barre d'actions au survol — parité 1:1 avec Réception
+                          via le composant partagé HoverActions. */}
+                      <HoverActions
+                        isUnread={(email as any).status === "non_lu" || (email as any).isRead === false || (email as any).unread === true}
+                        categoryCounts={categoryCounts as any[] | undefined}
+                        userFolders={userFolders as any[] | undefined}
+                        cb={buildHoverCb(email)}
+                        showBlockSender={false}
+                      />
                     </div>
                   </div>
                 );
@@ -591,6 +658,55 @@ export default function Envoyes() {
                   className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
                   <ListTodo className="w-3.5 h-3.5" />{t("inbox.createTask", "Créer une tâche")}
                 </button>
+                <div className="border-t border-[#1f2937] my-1" />
+                <button onClick={() => { handleToggleRead(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  {(() => {
+                    const email = sentEmails.find((e: any) => e.id === contextMenu.emailId);
+                    const isUnread = email?.status === "non_lu" || (email as any)?.isRead === false || (email as any)?.unread === true;
+                    return isUnread
+                      ? (<><MailOpen className="w-3.5 h-3.5" />{t("inbox.markAsRead", "Marquer comme lu")}</>)
+                      : (<><Mail className="w-3.5 h-3.5" />{t("inbox.markAsUnread", "Marquer comme non lu")}</>);
+                  })()}
+                </button>
+                <button onClick={() => { handleQuickSnooze(contextMenu.emailId, 1, t("wave1.snooze1h", "Dans 1 h")); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <Clock className="w-3.5 h-3.5" />{t("wave1.snooze1h", "Reporter — Dans 1 h")}
+                </button>
+                <button onClick={() => { handleQuickSnooze(contextMenu.emailId, 24, t("wave1.snoozeTomorrow", "Demain matin")); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <Bell className="w-3.5 h-3.5" />{t("wave1.snoozeTomorrow", "Reporter — Demain matin")}
+                </button>
+                <button onClick={() => { handleQuickSnooze(contextMenu.emailId, 168, t("wave1.snoozeNextWeek", "Semaine prochaine")); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <CalendarDays className="w-3.5 h-3.5" />{t("wave1.snoozeNextWeek", "Reporter — Semaine prochaine")}
+                </button>
+                <button onClick={() => { handleArchiveOne(contextMenu.emailId); setContextMenu(null); }}
+                  className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                  <Archive className="w-3.5 h-3.5" />{t("inbox.archive")}
+                </button>
+                {categoryCounts && (categoryCounts as any[]).length > 0 && (
+                  <div className="px-3 py-1.5 text-[10px] text-[#6b7280] uppercase tracking-wider">{t("inbox.category", "Catégorie")}</div>
+                )}
+                {(categoryCounts as any[] | undefined)?.slice(0, 8).map((c: any) => (
+                  <button key={c.categoryId}
+                    onClick={() => { handleQuickSetCategory(contextMenu.emailId, c.categoryId, c.categoryName); setContextMenu(null); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                    {c.color && <span className="w-2 h-2 rounded-full shrink-0" style={{ background: c.color }} />}
+                    <span className="truncate">{c.categoryName}</span>
+                  </button>
+                ))}
+                {userFolders && (userFolders as any[]).length > 0 && (
+                  <div className="px-3 py-1.5 text-[10px] text-[#6b7280] uppercase tracking-wider">{t("inbox.moveToFolder", { defaultValue: "Déplacer vers" })}</div>
+                )}
+                {(userFolders as any[] | undefined)?.slice(0, 8).map((f: any) => (
+                  <button key={f.id}
+                    onClick={() => { handleMoveToFolder([contextMenu.emailId], f.id, f.name); setContextMenu(null); }}
+                    className="w-full flex items-center gap-2.5 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
+                    <Folder className="w-3.5 h-3.5 text-primary/70" />
+                    <span className="truncate">{f.name}</span>
+                  </button>
+                ))}
                 <div className="border-t border-[#1f2937] my-1" />
                 <button onClick={() => { handleCopyRecipient(contextMenu.emailId); setContextMenu(null); }}
                   className="w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors">
