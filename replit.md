@@ -87,6 +87,14 @@ I prefer simple language and detailed explanations. I want iterative development
 - Clic droit : menu contextuel `min-w-[220px] max-w-[280px]` avec auto-flip (`useLayoutEffect`, bornes margin 8px, `maxHeight: calc(100vh - 16px)`, `overflow-y-auto`, `opacity 0` jusqu'à mesure).
 - Référence d'implémentation : `artifacts/ncv-mail/src/pages/dashboard/index.tsx` (EmailRow L105+) et `artifacts/ncv-mail/src/pages/dashboard/envoyes.tsx` (L547+). À recopier tel quel pour Programmés / Reportés / Tâches / Archives / Mes dossiers / Partagées / Assignés.
 
+## Header sticky mail (composant partagé)
+
+Le bandeau sticky des pages mail (recherche + Actualiser + Nouvel email, onglets boîtes/équipe, ligne Filtres+pastilles+Catégories) existe en deux implémentations :
+- **Réception (`pages/dashboard/index.tsx`)** : implémentation **inline historique** — référence visuelle/fonctionnelle source-of-truth, branchée à toutes les queries de la page (filtres, recherche, mode personal/shared, etc.). **À NE PAS modifier sans demande explicite** (cf. instruction utilisateur Task #300).
+- **Envoyés / Programmés / Mes dossiers (vue racine)** : composant partagé `artifacts/ncv-mail/src/components/email-list/MailPageHeader.tsx` qui **reproduit visuellement** le bandeau de Réception. La recherche, les filtres et les pastilles ont un état **local** (non branché aux datasets de ces pages — wire-up futur via la prop `onSearchChange`). Les onglets et l'action « Partagées » naviguent vers `/dashboard?mode=shared` ; `index.tsx` lit ce paramètre et active le mode shared.
+
+Convention : toute nouvelle page de liste mails (Programmés / Reportés / Tâches / Archives / Partagées / Mes dossiers / Assignés …) doit monter `<MailPageHeader currentTab="..." />` immédiatement après `<DashboardLayout>` (avant le `<div className="max-w-6xl ...">`). N'ajouter le header que sur la **vue racine** d'une page (jamais sur une vue détail/sous-dossier).
+
 ## Gotchas
 
 - **Supabase Migrations**: Ensure `migrations/2026_05_03_email_chunks.sql` is applied manually in Supabase Dashboard for Inboria Email Brain to function. The worker will pause if the table is missing.

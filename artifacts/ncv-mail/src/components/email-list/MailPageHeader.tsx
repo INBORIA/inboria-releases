@@ -38,7 +38,15 @@ import {
   useListIntegrations,
   useSendEmail,
 } from "@workspace/api-client-react";
-import type { PaginatedEmails, Integration } from "@workspace/api-client-react";
+import type {
+  PaginatedEmails,
+  Integration,
+  SendEmailBody,
+  SendEmail200,
+  Project,
+  SharedMailbox,
+  OrganisationMember,
+} from "@workspace/api-client-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -205,24 +213,26 @@ export function MailPageHeader({
   const handleComposeSend = useCallback(
     (p: ComposeSendPayload) => {
       if (!p.to.trim() || !p.subject.trim() || !p.body.trim()) return;
-      const payload: any = {
+      const payload: SendEmailBody = {
         to: p.to,
         subject: p.subject,
         body: p.body,
         replyToEmailId: null,
         attachments:
           p.attachments.length > 0 ? p.attachments.map((a) => a.uploadId) : undefined,
+        ...(p.connectionId ? { connectionId: p.connectionId } : {}),
+        ...(p.projectId ? { projectId: p.projectId } : {}),
       };
-      if (p.connectionId) payload.connectionId = p.connectionId;
-      if (p.projectId) payload.projectId = p.projectId;
       sendEmailMut.mutate(
         { data: payload },
         {
-          onSuccess: (resp: any) => {
+          onSuccess: (resp: SendEmail200) => {
             qc.invalidateQueries();
             setIsComposeOpen(false);
             setIsComposeFullscreen(false);
-            if (resp?.appointmentId) {
+            const appointmentId = (resp as { appointmentId?: number | string })
+              ?.appointmentId;
+            if (appointmentId) {
               toast({
                 title: t("inbox.emailSent"),
                 description: t(
@@ -234,8 +244,11 @@ export function MailPageHeader({
               toast({ title: t("inbox.emailSent") });
             }
           },
-          onError: (err: any) => {
-            const msg = err?.data?.error || err?.message || t("inbox.sendError");
+          onError: (err: unknown) => {
+            const e = err as
+              | { data?: { error?: string }; message?: string }
+              | undefined;
+            const msg = e?.data?.error || e?.message || t("inbox.sendError");
             toast({
               variant: "destructive",
               title: t("common.error"),
@@ -260,37 +273,45 @@ export function MailPageHeader({
 
   // ─── Profil / orga / partagées ───────────────────────────────────────────
   const { data: profile } = useGetProfile();
+  const profileTyped = profile as
+    | { id?: string; plan?: string }
+    | undefined;
   const { data: myOrg } = useGetMyOrganisation();
+  const myOrgId = (myOrg as { id?: string } | undefined)?.id;
   const { data: orgMembers } = useGetOrganisationMembers({
-    query: { enabled: !!(myOrg as any)?.id } as any,
+    query: { enabled: !!myOrgId } as NonNullable<Parameters<typeof useGetOrganisationMembers>[0]>["query"],
   });
   const teamMembersActiveCount = Array.isArray(orgMembers)
-    ? (orgMembers as Array<{ status?: string }>).filter((m) => m.status === "active").length
+    ? (orgMembers as OrganisationMember[]).filter(
+        (m) => (m as { status?: string }).status === "active",
+      ).length
     : 0;
-  const hasTeamForAssigned = !!(myOrg as any)?.id && teamMembersActiveCount > 1;
+  const hasTeamForAssigned = !!myOrgId && teamMembersActiveCount > 1;
 
   const { data: teamAssignmentsData } = useGetTeamAssignments({
-    query: { enabled: hasTeamForAssigned } as any,
+    query: { enabled: hasTeamForAssigned } as NonNullable<Parameters<typeof useGetTeamAssignments>[0]>["query"],
   });
   const assignedToMeCount = (() => {
-    const members = (teamAssignmentsData as any)?.members as
-      | Array<{ isCurrentUser?: boolean; emails?: any[] }>
-      | undefined;
+    const members = (
+      teamAssignmentsData as
+        | { members?: Array<{ isCurrentUser?: boolean; emails?: unknown[] }> }
+        | undefined
+    )?.members;
     if (!members) return 0;
     const me = members.find((m) => m.isCurrentUser);
     return me?.emails?.length ?? 0;
   })();
 
-  const plan = ((profile as any)?.plan as string | undefined) || "starter";
+  const plan = profileTyped?.plan ?? "starter";
   const { data: sharedMailboxes } = useGetSharedMailboxes({
-    query: { enabled: plan === "business" } as any,
+    query: { enabled: plan === "business" } as NonNullable<Parameters<typeof useGetSharedMailboxes>[0]>["query"],
   });
-  const hasSharedMailboxes =
-    plan === "business" && sharedMailboxes && (sharedMailboxes as any[]).length > 0;
-  const sharedMailboxesCount = (sharedMailboxes as any[])?.length ?? 0;
+  const sharedList = (sharedMailboxes as SharedMailbox[] | undefined) ?? [];
+  const hasSharedMailboxes = plan === "business" && sharedList.length > 0;
+  const sharedMailboxesCount = sharedList.length;
 
   // Compteur emails reportés (snoozed)
-  const { data: snoozedData } = useQuery<{ emails?: any[]; total?: number }>({
+  const { data: snoozedData } = useQuery<{ emails?: unknown[]; total?: number }>({
     queryKey: ["emails-snoozed-count"],
     refetchInterval: 60_000,
     queryFn: async () => {
@@ -309,7 +330,7 @@ export function MailPageHeader({
   const snoozedCount = snoozedData?.total ?? snoozedData?.emails?.length ?? 0;
 
   // Compteur tâches ouvertes
-  const { data: openTasksData } = useQuery<any[]>({
+  const { data: openTasksData } = useQuery<unknown[]>({
     queryKey: ["tasks-open-mine"],
     refetchInterval: 60_000,
     queryFn: async () => {
@@ -331,23 +352,23 @@ export function MailPageHeader({
   const [selectedAccountId, setSelectedAccountId] = useState<string>("all");
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const uid = (profile as { id?: string } | undefined)?.id;
+    const uid = profileTyped?.id;
     if (!uid) {
       setSelectedAccountId("all");
       return;
     }
     const stored = window.localStorage.getItem(`inboria.selectedAccount:${uid}`);
     setSelectedAccountId(stored || "all");
-  }, [profile]);
+  }, [profileTyped?.id]);
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const uid = (profile as { id?: string } | undefined)?.id;
+    const uid = profileTyped?.id;
     if (!uid) return;
     window.localStorage.setItem(
       `inboria.selectedAccount:${uid}`,
       selectedAccountId,
     );
-  }, [selectedAccountId, profile]);
+  }, [selectedAccountId, profileTyped?.id]);
 
   // ─── Filtres ──────────────────────────────────────────────────────────────
   const [filterPriority, setFilterPriority] = useState<string>("all");
@@ -368,17 +389,19 @@ export function MailPageHeader({
 
   const { data: integrationsList = [] } = useListIntegrations();
   const integrations = (integrationsList as Integration[]) || [];
+  const isEnabled = (i: Integration): boolean =>
+    Boolean((i as Integration & { enabled?: boolean }).enabled);
   const hasHubspot = integrations.some(
-    (i) => String(i.provider) === "hubspot" && (i as any).enabled,
+    (i) => String(i.provider) === "hubspot" && isEnabled(i),
   );
   const hasPipedrive = integrations.some(
-    (i) => String(i.provider) === "pipedrive" && (i as any).enabled,
+    (i) => String(i.provider) === "pipedrive" && isEnabled(i),
   );
   const hasSalesforce = integrations.some(
-    (i) => String(i.provider) === "salesforce" && (i as any).enabled,
+    (i) => String(i.provider) === "salesforce" && isEnabled(i),
   );
   const hasOdoo = integrations.some(
-    (i) => String(i.provider) === "odoo" && (i as any).enabled,
+    (i) => String(i.provider) === "odoo" && isEnabled(i),
   );
 
   // ─── Helpers UI ───────────────────────────────────────────────────────────
@@ -458,7 +481,7 @@ export function MailPageHeader({
                 isFullscreen={isComposeFullscreen}
                 setIsFullscreen={setIsComposeFullscreen}
                 connections={composeConnections || []}
-                projects={(projects as any[]) || []}
+                projects={(projects as Project[] | undefined) ?? []}
                 isPending={sendEmailMut.isPending}
                 onSend={handleComposeSend}
               />
