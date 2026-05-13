@@ -6,6 +6,9 @@ import {
   usePermanentDeleteEmail,
   useEmptySpam,
   useBlockSender,
+  useListBlockedSenders,
+  useUnblockSender,
+  getListBlockedSendersQueryKey,
   getListEmailsQueryKey,
   getGetSpamCountQueryKey,
   getGetCategoryCountsQueryKey,
@@ -193,6 +196,24 @@ export default function Indesirables() {
     );
   };
 
+  // --- Bloqués (unblock UI) ---
+  const [showBlocked, setShowBlocked] = useState(false);
+  const { data: blockedList } = useListBlockedSenders({}, { query: { enabled: showBlocked } as any });
+  const unblockMut = useUnblockSender();
+  const handleUnblock = (id: string, addr: string) => {
+    unblockMut.mutate(
+      { id },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({ queryKey: getListBlockedSendersQueryKey({} as any) });
+          toast({ title: t("junk.unblocked", { defaultValue: "Expéditeur débloqué" }), description: addr });
+        },
+        onError: (e: any) =>
+          toast({ variant: "destructive", title: t("common.error"), description: e?.message || "Échec" }),
+      },
+    );
+  };
+
   const handleEmpty = () => {
     emptySpam.mutate(undefined, {
       onSuccess: () => {
@@ -370,17 +391,84 @@ export default function Indesirables() {
               {t("junk.count", { count: emails.length })}
             </span>
           </div>
-          <Button
-            variant="outline"
-            size="sm"
-            className="h-7 text-[11px] bg-transparent border-border text-red-400/80 hover:text-red-400 hover:bg-red-500/[0.08]"
-            onClick={() => setEmptyConfirmOpen(true)}
-            disabled={emails.length === 0 || emptySpam.isPending}
-          >
-            <Trash2 className="w-3 h-3 mr-1" />
-            {t("junk.empty")}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 text-[11px] bg-transparent border-border text-muted-foreground hover:text-foreground hover:bg-foreground/[0.04]"
+              onClick={() => setShowBlocked((v) => !v)}
+            >
+              <Shield className="w-3 h-3 mr-1" />
+              {t("junk.blockedList", { defaultValue: "Bloqués" })}
+              {blockedList && blockedList.length > 0 && (
+                <span className="ml-1.5 inline-flex items-center justify-center rounded bg-amber-500/20 text-amber-300 text-[10px] px-1.5 py-px tabular-nums">
+                  {blockedList.length}
+                </span>
+              )}
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-7 text-[11px] bg-transparent border-border text-red-400/80 hover:text-red-400 hover:bg-red-500/[0.08]"
+              onClick={() => setEmptyConfirmOpen(true)}
+              disabled={emails.length === 0 || emptySpam.isPending}
+            >
+              <Trash2 className="w-3 h-3 mr-1" />
+              {t("junk.empty")}
+            </Button>
+          </div>
         </div>
+
+        {showBlocked && (
+          <div className="mb-3 rounded-md border border-border bg-card/40">
+            <div className="px-3 py-2 border-b border-border flex items-center justify-between">
+              <span className="text-[11px] font-medium text-white flex items-center gap-1.5">
+                <Shield className="w-3 h-3 text-amber-300" />
+                {t("junk.blockedList", { defaultValue: "Expéditeurs bloqués" })}
+              </span>
+              <button
+                onClick={() => setShowBlocked(false)}
+                className="text-[11px] text-muted-foreground hover:text-foreground"
+              >
+                {t("common.close", { defaultValue: "Fermer" })}
+              </button>
+            </div>
+            {!blockedList ? (
+              <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
+                <Loader2 className="w-3 h-3 animate-spin inline mr-1.5" />
+                {t("common.loading", { defaultValue: "Chargement…" })}
+              </div>
+            ) : blockedList.length === 0 ? (
+              <div className="px-3 py-4 text-center text-[11px] text-muted-foreground">
+                {t("junk.noBlocked", { defaultValue: "Aucun expéditeur bloqué" })}
+              </div>
+            ) : (
+              <ul className="divide-y divide-border/60 max-h-[300px] overflow-y-auto">
+                {blockedList.map((b: any) => (
+                  <li key={b.id} className="px-3 py-2 flex items-center gap-2">
+                    <ShieldX className="w-3 h-3 text-amber-300 shrink-0" />
+                    <div className="flex-1 min-w-0">
+                      <div className="text-[12px] text-white truncate">{b.emailAddress}</div>
+                      <div className="text-[10px] text-muted-foreground">
+                        {b.provider}
+                        {b.blockedAt && ` · ${format(new Date(b.blockedAt), "d MMM yyyy", { locale: dateFnsLocale })}`}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleUnblock(b.id, b.emailAddress)}
+                      disabled={unblockMut.isPending}
+                      className="shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded text-[11px] text-primary hover:bg-primary/10 disabled:opacity-40"
+                      title={t("junk.unblock", { defaultValue: "Débloquer" })}
+                    >
+                      <RotateCcw className="w-3 h-3" />
+                      {t("junk.unblock", { defaultValue: "Débloquer" })}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
+        )}
 
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-16 rounded-lg border border-border border-dashed bg-card/50">

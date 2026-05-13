@@ -4099,6 +4099,35 @@ export default function Dashboard() {
     );
   };
 
+  // Fallback compatible iframe — `navigator.clipboard` est souvent bloqué
+  // dans une iframe cross-origin (preview Replit). On retombe sur un
+  // textarea + execCommand("copy") afin que la copie fonctionne quand même.
+  const copyToClipboardSafe = async (text: string): Promise<boolean> => {
+    try {
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return true;
+      }
+    } catch {/* fallback below */}
+    try {
+      const ta = document.createElement("textarea");
+      ta.value = text;
+      ta.setAttribute("readonly", "");
+      ta.style.position = "fixed";
+      ta.style.top = "-1000px";
+      ta.style.left = "0";
+      ta.style.opacity = "0";
+      document.body.appendChild(ta);
+      ta.select();
+      ta.setSelectionRange(0, text.length);
+      const ok = document.execCommand("copy");
+      document.body.removeChild(ta);
+      return ok;
+    } catch {
+      return false;
+    }
+  };
+
   const handleCopySender = async (id: number) => {
     const email = (emails as any[]).find((e: any) => e.id === id);
     const addr = (email?.senderEmail || extractEmailAddress(email?.sender || "") || "").trim();
@@ -4106,12 +4135,9 @@ export default function Dashboard() {
       toast({ variant: "destructive", title: t("common.error"), description: "Adresse introuvable" });
       return;
     }
-    try {
-      await navigator.clipboard.writeText(addr);
-      toast({ title: t("inbox.copied", "Copié"), description: addr });
-    } catch {
-      toast({ variant: "destructive", title: "Copie impossible" });
-    }
+    const ok = await copyToClipboardSafe(addr);
+    if (ok) toast({ title: t("inbox.copied", "Copié"), description: addr });
+    else toast({ variant: "destructive", title: t("common.error"), description: "Copie impossible" });
   };
 
   const handleQuickReply = (id: number) => {
@@ -4151,12 +4177,9 @@ export default function Dashboard() {
       toast({ variant: "destructive", title: t("common.error"), description: "Aucun sujet" });
       return;
     }
-    try {
-      await navigator.clipboard.writeText(subject);
-      toast({ title: t("inbox.copied", "Copié"), description: subject });
-    } catch {
-      toast({ variant: "destructive", title: "Copie impossible" });
-    }
+    const ok = await copyToClipboardSafe(subject);
+    if (ok) toast({ title: t("inbox.copied", "Copié"), description: subject });
+    else toast({ variant: "destructive", title: t("common.error"), description: "Copie impossible" });
   };
 
   const handleDownloadEml = async (id: number) => {
@@ -4219,8 +4242,17 @@ export default function Dashboard() {
       {
         onSuccess: () => {
           setSelectedEmailId(null);
+          setSelectedIds(new Set());
           invalidateAll();
+          // Invalidate la page Archives aussi (clé partielle déjà couverte
+          // par getListEmailsQueryKey() sans param, mais on force un refetch
+          // de la variante {status:"archived"} pour que la liste apparaisse
+          // immédiatement quand l'utilisateur clique sur "Archives".
+          queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey({ status: "archived" } as any) });
           toast({ title: t("inbox.emailArchived") });
+        },
+        onError: (e: any) => {
+          toast({ variant: "destructive", title: t("common.error"), description: e?.message || "Échec de l'archivage" });
         },
       }
     );
