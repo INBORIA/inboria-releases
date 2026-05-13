@@ -64,7 +64,7 @@ import {
   ShieldAlert,
 } from "lucide-react";
 import { extractEmailAddress } from "@/lib/utils";
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useLayoutEffect, useCallback, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
 import { Input } from "@/components/ui/input";
@@ -116,6 +116,30 @@ export default function Envoyes() {
   const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const [contextMenu, setContextMenu] = useState<{ x: number; y: number; emailId: number } | null>(null);
   const contextMenuRef = useRef<HTMLDivElement>(null);
+  // Auto-flip du menu contextuel — même logique que dashboard/index.tsx :
+  // on mesure la hauteur réelle après render et on remonte le menu si pas
+  // la place dessous, on le décale à gauche si pas la place à droite. Le
+  // menu reste invisible (opacity 0) tant que la position n'est pas prête
+  // pour éviter le flash de bascule.
+  const [ctxMenuPos, setCtxMenuPos] = useState<{ top: number; left: number; ready: boolean }>({ top: 0, left: 0, ready: false });
+  useLayoutEffect(() => {
+    if (!contextMenu) { setCtxMenuPos({ top: 0, left: 0, ready: false }); return; }
+    const el = contextMenuRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const margin = 8;
+    let top = contextMenu.y;
+    let left = contextMenu.x;
+    if (top + rect.height > window.innerHeight - margin) {
+      top = Math.max(margin, contextMenu.y - rect.height);
+    }
+    if (top < margin) top = margin;
+    if (left + rect.width > window.innerWidth - margin) {
+      left = Math.max(margin, contextMenu.x - rect.width);
+    }
+    if (left < margin) left = margin;
+    setCtxMenuPos({ top, left, ready: true });
+  }, [contextMenu]);
   const selectionMode = selectedIds.size > 0;
 
   useEffect(() => {
@@ -625,8 +649,13 @@ export default function Envoyes() {
         <div
           ref={contextMenuRef}
           data-context-menu
-          className="fixed z-[9999] min-w-[200px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
-          style={{ top: Math.min(contextMenu.y, window.innerHeight - 200), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
+          className="fixed z-[9999] min-w-[220px] max-w-[280px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-y-auto animate-in fade-in zoom-in-95 duration-100"
+          style={{
+            top: ctxMenuPos.ready ? ctxMenuPos.top : contextMenu.y,
+            left: ctxMenuPos.ready ? ctxMenuPos.left : contextMenu.x,
+            maxHeight: `calc(100vh - 16px)`,
+            opacity: ctxMenuPos.ready ? 1 : 0,
+          }}
         >
           <div className="px-3 py-2 border-b border-[#1f2937]">
             <span className="text-[10px] text-[#b8c5d6] uppercase tracking-wider font-medium">
