@@ -28,7 +28,7 @@
   "nav": {
     "home": "ہوم",
     "features": "خصوصیات",
-    "classification": "درجہ بندی",
+    "classification": "زمرہ جات",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "کاروبار",
@@ -50,7 +50,7 @@
     "tasks": "کام",
     "tasksAndFollowup": "کام اور نگرانی",
     "projects": "پروجیکٹس",
-    "classification": "درجہ بندی",
+    "classification": "زمرہ جات",
     "settings": "ترتیبات",
     "subscription": "سبسکرپشن",
     "agenda": "ایجنڈا",
@@ -808,7 +808,7 @@
     "viewDetail": "تفصیل دیکھیں"
   },
   "classification": {
-    "title": "درجہ بندی",
+    "title": "زمرہ جات",
     "categories": "زمرے",
     "addCategory": "زمرہ شامل کریں",
     "categoryName": "زمرے کا نام",
@@ -2266,7 +2266,7 @@
         "ایک کلک میں ایک پروجیکٹ کے تمام ای میلز دیکھیں",
         "پروجیکٹ کے لحاظ سے ای میلز کا کاؤنٹر"
       ],
-      "classification": "درجہ بندی",
+      "classification": "زمرہ جات",
       "classificationDesc": "اپنی ای میل کی اقسام کا انتظام کریں۔ AI خود بخود متعلقہ اقسام بناتا ہے، لیکن آپ انہیں اپنی مرضی کے مطابق بنا سکتے ہیں۔ 50 پیش سیٹ کاروباری پیکجوں میں سے منتخب کریں۔",
       "classificationFeatures": [
         "آپ کی تمام اقسام کی فہرست کے ساتھ کاؤنٹر",

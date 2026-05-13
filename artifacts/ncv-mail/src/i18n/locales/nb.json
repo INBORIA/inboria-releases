@@ -28,7 +28,7 @@
   "nav": {
     "home": "Hjem",
     "features": "Funksjoner",
-    "classification": "Rangering",
+    "classification": "Kategorier",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Bedrift",
@@ -50,7 +50,7 @@
     "tasks": "Oppgaver",
     "tasksAndFollowup": "Oppgaver & Oppfølging",
     "projects": "Prosjekter",
-    "classification": "Rangering",
+    "classification": "Kategorier",
     "settings": "Innstillinger",
     "subscription": "Abonnement",
     "agenda": "Kalender",
@@ -808,7 +808,7 @@
     "viewDetail": "Se detaljene"
   },
   "classification": {
-    "title": "Klassifisering",
+    "title": "Kategorier",
     "categories": "Kategorier",
     "addCategory": "Legg til en kategori",
     "categoryName": "Navn på kategorien",
@@ -2266,7 +2266,7 @@
         "Se alle e-poster fra et prosjekt med ett klikk",
         "Antall e-poster per prosjekt"
       ],
-      "classification": "Klassifisering",
+      "classification": "Kategorier",
       "classificationDesc": "Administrer kategoriene dine for e-poster. IA oppretter automatisk relevante kategorier, men du kan tilpasse dem. Velg blant 50 forhåndsdefinerte bransjepakker.",
       "classificationFeatures": [
         "Liste over alle kategoriene dine med tellere",

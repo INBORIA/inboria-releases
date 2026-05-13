@@ -28,7 +28,7 @@
   "nav": {
     "home": "Avaleht",
     "features": "Funktsioonid",
-    "classification": "Reiting",
+    "classification": "Kategooriad",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Ettevõte",
@@ -50,7 +50,7 @@
     "tasks": "Ülesanded",
     "tasksAndFollowup": "Ülesanded & Jälgimine",
     "projects": "Projektid",
-    "classification": "Reiting",
+    "classification": "Kategooriad",
     "settings": "Seaded",
     "subscription": "Tellimus",
     "agenda": "Kalender",
@@ -808,7 +808,7 @@
     "viewDetail": "Vaadake detaile"
   },
   "classification": {
-    "title": "Klassifikatsioon",
+    "title": "Kategooriad",
     "categories": "Kategooriad",
     "addCategory": "Lisage kategooria",
     "categoryName": "Kategooria nimi",
@@ -2266,7 +2266,7 @@
         "Vaadake kõiki projekti e-kirju ühe klikiga",
         "E-kirjade arv projekti kaupa"
       ],
-      "classification": "Klassifikatsioon",
+      "classification": "Kategooriad",
       "classificationDesc": "Haldage oma e-kirjade kategooriaid. Tehisintellekt loob automaatselt asjakohased kategooriad, kuid Te saate neid kohandada. Valige 50 eeldefineeritud ametipaketti.",
       "classificationFeatures": [
         "Loetelu kõigist Teie kategooriatest koos arvestitega",

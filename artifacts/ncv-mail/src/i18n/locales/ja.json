@@ -28,7 +28,7 @@
   "nav": {
     "home": "ホーム",
     "features": "機能",
-    "classification": "ランキング",
+    "classification": "カテゴリー",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "企業",
@@ -50,7 +50,7 @@
     "tasks": "タスク",
     "tasksAndFollowup": "タスク & フォローアップ",
     "projects": "プロジェクト",
-    "classification": "ランキング",
+    "classification": "カテゴリー",
     "settings": "設定",
     "subscription": "サブスクリプション",
     "agenda": "カレンダー",
@@ -808,7 +808,7 @@
     "viewDetail": "詳細を見る"
   },
   "classification": {
-    "title": "分類",
+    "title": "カテゴリー",
     "categories": "カテゴリ",
     "addCategory": "カテゴリを追加する",
     "categoryName": "カテゴリ名",
@@ -2266,7 +2266,7 @@
         "1クリックでプロジェクトのすべてのメールを見る",
         "プロジェクトごとのメールカウンター"
       ],
-      "classification": "分類",
+      "classification": "カテゴリー",
       "classificationDesc": "メールのカテゴリを管理します。AIは自動的に関連するカテゴリを作成しますが、カスタマイズすることもできます。50の事業用プリセットパックから選択してください。",
       "classificationFeatures": [
         "カウンター付きのすべてのカテゴリのリスト",

@@ -28,7 +28,7 @@
   "nav": {
     "home": "Trang chủ",
     "features": "Tính năng",
-    "classification": "Xếp hạng",
+    "classification": "Danh mục",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Doanh nghiệp",
@@ -50,7 +50,7 @@
     "tasks": "Công việc",
     "tasksAndFollowup": "Công việc & Theo dõi",
     "projects": "Dự án",
-    "classification": "Xếp hạng",
+    "classification": "Danh mục",
     "settings": "Cài đặt",
     "subscription": "Gói đăng ký",
     "agenda": "Lịch",
@@ -808,7 +808,7 @@
     "viewDetail": "Xem chi tiết"
   },
   "classification": {
-    "title": "Phân loại",
+    "title": "Danh mục",
     "categories": "Danh mục",
     "addCategory": "Thêm danh mục",
     "categoryName": "Tên danh mục",
@@ -2266,7 +2266,7 @@
         "Xem tất cả email của một dự án chỉ với một cú nhấp chuột",
         "Đếm email theo dự án"
       ],
-      "classification": "Phân loại",
+      "classification": "Danh mục",
       "classificationDesc": "Quý khách quản lý các danh mục email của mình. AI tự động tạo ra các danh mục phù hợp, nhưng Quý khách có thể tùy chỉnh. Chọn từ 50 gói nghề nghiệp đã được định sẵn.",
       "classificationFeatures": [
         "Danh sách tất cả các danh mục của Quý khách với số đếm",

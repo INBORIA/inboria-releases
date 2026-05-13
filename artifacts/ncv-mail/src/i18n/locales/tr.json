@@ -28,7 +28,7 @@
   "nav": {
     "home": "Ana sayfa",
     "features": "Özellikler",
-    "classification": "Sıralama",
+    "classification": "Kategoriler",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Şirket",
@@ -50,7 +50,7 @@
     "tasks": "Attività",
     "tasksAndFollowup": "Attività & Takip",
     "projects": "Projeler",
-    "classification": "Sıralama",
+    "classification": "Kategoriler",
     "settings": "Impostazioni",
     "subscription": "Abonelik",
     "agenda": "Takvim",
@@ -808,7 +808,7 @@
     "viewDetail": "Detayı görün"
   },
   "classification": {
-    "title": "Sıralama",
+    "title": "Kategoriler",
     "categories": "Kategoriler",
     "addCategory": "Kategori ekle",
     "categoryName": "Kategori adı",
@@ -2266,7 +2266,7 @@
         "Bir projedeki tüm e-postaları tek tıklamayla görün",
         "Proje başına e-posta sayacı"
       ],
-      "classification": "Sıralama",
+      "classification": "Kategoriler",
       "classificationDesc": "E-posta kategorilerinizi yönetin. IA, otomatik olarak ilgili kategoriler oluşturur, ancak bunları özelleştirebilirsiniz. Önceden tanımlanmış 50 meslek paketi arasından seçim yapın.",
       "classificationFeatures": [
         "Tüm kategorilerinizin listesi ile sayaçlar",

@@ -28,7 +28,7 @@
   "nav": {
     "home": "Home",
     "features": "Features",
-    "classification": "Classification",
+    "classification": "Categories",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Enterprise",
@@ -50,7 +50,7 @@
     "tasks": "Tasks",
     "tasksAndFollowup": "Tasks & Follow-up",
     "projects": "Projects",
-    "classification": "Classification",
+    "classification": "Categories",
     "settings": "Settings",
     "subscription": "Subscription",
     "agenda": "Agenda",
@@ -834,7 +834,7 @@
     "viewDetail": "View detail"
   },
   "classification": {
-    "title": "Classification",
+    "title": "Categories",
     "categories": "Categories",
     "addCategory": "Add a category",
     "categoryName": "Category name",
@@ -2294,7 +2294,7 @@
         "View all project emails in one click",
         "Email counter per project"
       ],
-      "classification": "Classification",
+      "classification": "Categories",
       "classificationDesc": "Manage your email categories. AI auto-creates relevant categories, but you can customize them. Choose from 50 pre-built industry packs.",
       "classificationFeatures": [
         "List of all your categories with counters",

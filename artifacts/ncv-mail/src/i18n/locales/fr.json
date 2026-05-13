@@ -28,7 +28,7 @@
   "nav": {
     "home": "Accueil",
     "features": "Fonctionnalités",
-    "classification": "Classement",
+    "classification": "Catégories",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Entreprise",
@@ -50,7 +50,7 @@
     "tasks": "Tâches",
     "tasksAndFollowup": "Tâches & Suivi",
     "projects": "Projets",
-    "classification": "Classement",
+    "classification": "Catégories",
     "settings": "Paramètres",
     "subscription": "Abonnement",
     "agenda": "Agenda",
@@ -824,7 +824,7 @@
     "viewDetail": "Voir le détail"
   },
   "classification": {
-    "title": "Classement",
+    "title": "Catégories",
     "categories": "Catégories",
     "addCategory": "Ajouter une catégorie",
     "categoryName": "Nom de la catégorie",
@@ -2286,7 +2286,7 @@
         "Voir tous les emails d'un projet en un clic",
         "Compteur d'emails par projet"
       ],
-      "classification": "Classement",
+      "classification": "Catégories",
       "classificationDesc": "Gérez vos catégories d'emails. L'IA crée automatiquement des catégories pertinentes, mais vous pouvez les personnaliser. Choisissez parmi 50 packs métiers prédéfinis.",
       "classificationFeatures": [
         "Liste de toutes vos catégories avec compteurs",

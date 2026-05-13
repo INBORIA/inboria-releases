@@ -28,7 +28,7 @@
   "nav": {
     "home": "홈",
     "features": "기능",
-    "classification": "순위",
+    "classification": "카테고리",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "기업",
@@ -50,7 +50,7 @@
     "tasks": "업무",
     "tasksAndFollowup": "업무 및 추적",
     "projects": "프로젝트",
-    "classification": "순위",
+    "classification": "카테고리",
     "settings": "설정",
     "subscription": "구독",
     "agenda": "일정",
@@ -808,7 +808,7 @@
     "viewDetail": "세부정보 보기"
   },
   "classification": {
-    "title": "분류",
+    "title": "카테고리",
     "categories": "카테고리",
     "addCategory": "카테고리 추가",
     "categoryName": "카테고리 이름",
@@ -2266,7 +2266,7 @@
         "한 번의 클릭으로 프로젝트의 모든 이메일 보기",
         "프로젝트별 이메일 카운터"
       ],
-      "classification": "분류",
+      "classification": "카테고리",
       "classificationDesc": "이메일 카테고리를 관리하십시오. AI는 자동으로 관련 카테고리를 생성하지만, 귀하가 개인화할 수 있습니다. 50개의 미리 정의된 비즈니스 패키지 중에서 선택하십시오.",
       "classificationFeatures": [
         "카운터와 함께 모든 카테고리 목록",

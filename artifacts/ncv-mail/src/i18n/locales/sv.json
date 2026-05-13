@@ -28,7 +28,7 @@
   "nav": {
     "home": "Hem",
     "features": "Funktioner",
-    "classification": "Ranking",
+    "classification": "Kategorier",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Företag",
@@ -50,7 +50,7 @@
     "tasks": "Uppgifter",
     "tasksAndFollowup": "Uppgifter & Uppföljning",
     "projects": "Projekt",
-    "classification": "Ranking",
+    "classification": "Kategorier",
     "settings": "Inställningar",
     "subscription": "Prenumeration",
     "agenda": "Kalender",
@@ -808,7 +808,7 @@
     "viewDetail": "Se detaljer"
   },
   "classification": {
-    "title": "Klassificering",
+    "title": "Kategorier",
     "categories": "Kategorier",
     "addCategory": "Lägg till en kategori",
     "categoryName": "Kategorinamn",
@@ -2266,7 +2266,7 @@
         "Se alla e-postmeddelanden från ett projekt med ett klick",
         "Räknare av e-postmeddelanden per projekt"
       ],
-      "classification": "Klassificering",
+      "classification": "Kategorier",
       "classificationDesc": "Hantera dina e-postkategorier. AI skapar automatiskt relevanta kategorier, men du kan anpassa dem. Välj bland 50 fördefinierade branschpaket.",
       "classificationFeatures": [
         "Lista över alla dina kategorier med räknare",

@@ -28,7 +28,7 @@
   "nav": {
     "home": "דף הבית",
     "features": "תכונות",
-    "classification": "דירוג",
+    "classification": "קטגוריות",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "עסק",
@@ -50,7 +50,7 @@
     "tasks": "משימות",
     "tasksAndFollowup": "משימות & מעקב",
     "projects": "פרויקטים",
-    "classification": "דירוג",
+    "classification": "קטגוריות",
     "settings": "הגדרות",
     "subscription": "מנוי",
     "agenda": "יומן",
@@ -808,7 +808,7 @@
     "viewDetail": "ראה פרטים"
   },
   "classification": {
-    "title": "סיווג",
+    "title": "קטגוריות",
     "categories": "קטגוריות",
     "addCategory": "הוסף קטגוריה",
     "categoryName": "שם הקטגוריה",
@@ -2266,7 +2266,7 @@
         "ראה את כל הדוא״לים של פרויקט בלחיצה אחת",
         "ספירת דוא״לים לפי פרויקט"
       ],
-      "classification": "סיווג",
+      "classification": "קטגוריות",
       "classificationDesc": "נהל את הקטגוריות של הדוא״לים שלך. ה-IA יוצרת אוטומטית קטגוריות רלוונטיות, אך אתה יכול להתאים אותן אישית. בחר מתוך 50 חבילות מקצועיות מוגדרות מראש.",
       "classificationFeatures": [
         "רשימה של כל הקטגוריות שלך עם ספירות",

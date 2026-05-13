@@ -28,7 +28,7 @@
   "nav": {
     "home": "Sākums",
     "features": "Funkcijas",
-    "classification": "Klasifikācija",
+    "classification": "Kategorijas",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Uzņēmums",
@@ -50,7 +50,7 @@
     "tasks": "Uzdevumi",
     "tasksAndFollowup": "Uzdevumi & Sekot",
     "projects": "Projekti",
-    "classification": "Klasifikācija",
+    "classification": "Kategorijas",
     "settings": "Iestatījumi",
     "subscription": "Abonements",
     "agenda": "Kalendārs",
@@ -808,7 +808,7 @@
     "viewDetail": "Skatīt detaļas"
   },
   "classification": {
-    "title": "Klasifikācija",
+    "title": "Kategorijas",
     "categories": "Kategorijas",
     "addCategory": "Pievienot kategoriju",
     "categoryName": "Kategorijas nosaukums",
@@ -2266,7 +2266,7 @@
         "Redzēt visus projekta e-pastus ar vienu klikšķi",
         "E-pastu skaitītājs pa projektiem"
       ],
-      "classification": "Klasifikācija",
+      "classification": "Kategorijas",
       "classificationDesc": "Pārvaldiet savas e-pastu kategorijas. IA automātiski izveido atbilstošas kategorijas, taču Jūs varat tās pielāgot. Izvēlieties no 50 iepriekš definētiem profesionālajiem komplektiem.",
       "classificationFeatures": [
         "Visu Jūsu kategoriju saraksts ar skaitītājiem",

@@ -28,7 +28,7 @@
   "nav": {
     "home": "Inici",
     "features": "Funcionalitats",
-    "classification": "Classificació",
+    "classification": "Categories",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Empresa",
@@ -50,7 +50,7 @@
     "tasks": "Tarees",
     "tasksAndFollowup": "Tarees i Seguiment",
     "projects": "Projectes",
-    "classification": "Classificació",
+    "classification": "Categories",
     "settings": "Configuració",
     "subscription": "Subscripció",
     "agenda": "Agenda",
@@ -808,7 +808,7 @@
     "viewDetail": "Veure el detall"
   },
   "classification": {
-    "title": "Classificació",
+    "title": "Categories",
     "categories": "Categories",
     "addCategory": "Afegir una categoria",
     "categoryName": "Nom de la categoria",
@@ -2266,7 +2266,7 @@
         "Veure tots els correus electrònics d'un projecte amb un clic",
         "Comptador de correus electrònics per projecte"
       ],
-      "classification": "Classificació",
+      "classification": "Categories",
       "classificationDesc": "Gestioneu les vostres categories de correus electrònics. L'IA crea automàticament categories pertinents, però podeu personalitzar-les. Trieu entre 50 paquets de professions predeterminats.",
       "classificationFeatures": [
         "Llista de totes les vostres categories amb comptadors",

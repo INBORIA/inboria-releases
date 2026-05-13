@@ -28,7 +28,7 @@
   "nav": {
     "home": "Dar",
     "features": "Karatteristiċi",
-    "classification": "Klassifika",
+    "classification": "Kategoriji",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Kumpanija",
@@ -50,7 +50,7 @@
     "tasks": "Attività",
     "tasksAndFollowup": "Attività & Segwitu",
     "projects": "Proġetti",
-    "classification": "Klassifika",
+    "classification": "Kategoriji",
     "settings": "Impostazzjonijiet",
     "subscription": "Abbonament",
     "agenda": "Agenda",
@@ -808,7 +808,7 @@
     "viewDetail": "Ara d-dettalji"
   },
   "classification": {
-    "title": "Klassifikazzjoni",
+    "title": "Kategoriji",
     "categories": "Kategoriji",
     "addCategory": "Żid kategorija",
     "categoryName": "Isem tal-kategorija",
@@ -2266,7 +2266,7 @@
         "Ara l-emails kollha ta' proġett b'klik waħda",
         "Kont ta' emails skont il-proġett"
       ],
-      "classification": "Klassifikazzjoni",
+      "classification": "Kategoriji",
       "classificationDesc": "Iġġestixxi l-kategoriji tal-emails Tagħkom. L-IA toħloq awtomatikament kategoriji relevanti, iżda tista' tippersonalizzahom. Agħżel minn 50 pakkett ta' negozji predefiniti.",
       "classificationFeatures": [
         "Lista ta' kull kategorija Tagħkom bil-kontijiet",

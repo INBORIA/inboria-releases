@@ -28,7 +28,7 @@
   "nav": {
     "home": "Strona główna",
     "features": "Funkcje",
-    "classification": "Ranking",
+    "classification": "Kategorie",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Firma",
@@ -50,7 +50,7 @@
     "tasks": "Zadania",
     "tasksAndFollowup": "Zadania i Śledzenie",
     "projects": "Projekty",
-    "classification": "Ranking",
+    "classification": "Kategorie",
     "settings": "Ustawienia",
     "subscription": "Subskrypcja",
     "agenda": "Kalendarz",
@@ -808,7 +808,7 @@
     "viewDetail": "Zobacz szczegóły"
   },
   "classification": {
-    "title": "Klasyfikacja",
+    "title": "Kategorie",
     "categories": "Kategorie",
     "addCategory": "Dodaj kategorię",
     "categoryName": "Nazwa kategorii",
@@ -2266,7 +2266,7 @@
         "Zobacz wszystkie e-maile projektu jednym kliknięciem",
         "Licznik e-maili według projektu"
       ],
-      "classification": "Klasyfikacja",
+      "classification": "Kategorie",
       "classificationDesc": "Zarządzaj swoimi kategoriami e-maili. AI automatycznie tworzy odpowiednie kategorie, ale możesz je dostosować. Wybierz spośród 50 predefiniowanych pakietów branżowych.",
       "classificationFeatures": [
         "Lista wszystkich Twoich kategorii z licznikami",

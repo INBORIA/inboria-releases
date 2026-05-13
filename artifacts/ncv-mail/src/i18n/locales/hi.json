@@ -28,7 +28,7 @@
   "nav": {
     "home": "मुख्य पृष्ठ",
     "features": "विशेषताएँ",
-    "classification": "क्रम",
+    "classification": "श्रेणियाँ",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "संस्थान",
@@ -50,7 +50,7 @@
     "tasks": "कार्य",
     "tasksAndFollowup": "कार्य & अनुसरण",
     "projects": "परियोजनाएँ",
-    "classification": "क्रम",
+    "classification": "श्रेणियाँ",
     "settings": "सेटिंग्स",
     "subscription": "सदस्यता",
     "agenda": "कार्यसूची",
@@ -808,7 +808,7 @@
     "viewDetail": "विवरण देखें"
   },
   "classification": {
-    "title": "श्रेणीकरण",
+    "title": "श्रेणियाँ",
     "categories": "श्रेणियाँ",
     "addCategory": "श्रेणी जोड़ें",
     "categoryName": "श्रेणी का नाम",
@@ -2266,7 +2266,7 @@
         "एक क्लिक में एक परियोजना के सभी ईमेल देखें",
         "प्रत्येक परियोजना के लिए ईमेल की गिनती"
       ],
-      "classification": "श्रेणीकरण",
+      "classification": "श्रेणियाँ",
       "classificationDesc": "अपने ईमेल श्रेणियों का प्रबंधन करें। IA स्वचालित रूप से प्रासंगिक श्रेणियाँ बनाता है, लेकिन आप उन्हें व्यक्तिगत रूप से अनुकूलित कर सकते हैं। 50 पूर्वनिर्धारित व्यवसाय पैक में से चुनें।",
       "classificationFeatures": [
         "आपकी सभी श्रेणियों की सूची गिनती के साथ",

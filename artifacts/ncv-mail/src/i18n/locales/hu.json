@@ -28,7 +28,7 @@
   "nav": {
     "home": "Kezdőlap",
     "features": "Funkciók",
-    "classification": "Rangsorolás",
+    "classification": "Kategóriák",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Vállalat",
@@ -50,7 +50,7 @@
     "tasks": "Feladatok",
     "tasksAndFollowup": "Feladatok & Követés",
     "projects": "Projektek",
-    "classification": "Rangsorolás",
+    "classification": "Kategóriák",
     "settings": "Beállítások",
     "subscription": "Előfizetés",
     "agenda": "Naptár",
@@ -808,7 +808,7 @@
     "viewDetail": "Részletek megtekintése"
   },
   "classification": {
-    "title": "Osztályozás",
+    "title": "Kategóriák",
     "categories": "Kategóriák",
     "addCategory": "Kategória hozzáadása",
     "categoryName": "A kategória neve",
@@ -2266,7 +2266,7 @@
         "Minden e-mail megtekintése egy projekten belül egy kattintással",
         "E-mailek számlálója projektenként"
       ],
-      "classification": "Kategorizálás",
+      "classification": "Kategóriák",
       "classificationDesc": "Kezelje az e-mail kategóriáit. Az AI automatikusan létrehoz releváns kategóriákat, de Ön testre szabhatja azokat. Válasszon 50 előre definiált szakmai csomag közül.",
       "classificationFeatures": [
         "Minden kategória listája számlálókkal",

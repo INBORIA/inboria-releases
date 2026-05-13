@@ -28,7 +28,7 @@
   "nav": {
     "home": "Domov",
     "features": "Funkcie",
-    "classification": "Hodnotenie",
+    "classification": "Kategórie",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Firma",
@@ -50,7 +50,7 @@
     "tasks": "Úlohy",
     "tasksAndFollowup": "Úlohy & Sledovanie",
     "projects": "Projekt",
-    "classification": "Hodnotenie",
+    "classification": "Kategórie",
     "settings": "Nastavenia",
     "subscription": "Predplatné",
     "agenda": "Kalendár",
@@ -808,7 +808,7 @@
     "viewDetail": "Zobraziť podrobnosti"
   },
   "classification": {
-    "title": "Klasifikácia",
+    "title": "Kategórie",
     "categories": "Kategórie",
     "addCategory": "Pridať kategóriu",
     "categoryName": "Názov kategórie",
@@ -2266,7 +2266,7 @@
         "Zobraziť všetky e-maily projektu jedným kliknutím",
         "Počítadlo e-mailov podľa projektu"
       ],
-      "classification": "Klasifikácia",
+      "classification": "Kategórie",
       "classificationDesc": "Spravujte svoje kategórie e-mailov. AI automaticky vytvára relevantné kategórie, ale môžete ich prispôsobiť. Vyberte si z 50 preddefinovaných balíkov profesií.",
       "classificationFeatures": [
         "Zoznam všetkých vašich kategórií s počítadlami",

@@ -28,7 +28,7 @@
   "nav": {
     "home": "Acasă",
     "features": "Funcționalități",
-    "classification": "Clasament",
+    "classification": "Categorii",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Companie",
@@ -50,7 +50,7 @@
     "tasks": "Attività",
     "tasksAndFollowup": "Attività & Urmărire",
     "projects": "Proiecte",
-    "classification": "Clasament",
+    "classification": "Categorii",
     "settings": "Impostazioni",
     "subscription": "Abonament",
     "agenda": "Agendă",
@@ -808,7 +808,7 @@
     "viewDetail": "Vezi detaliile"
   },
   "classification": {
-    "title": "Clasificare",
+    "title": "Categorii",
     "categories": "Categorii",
     "addCategory": "Adăugați o categorie",
     "categoryName": "Numele categoriei",
@@ -2266,7 +2266,7 @@
         "Vezi toate emailurile unui proiect cu un singur clic",
         "Contor de emailuri pe proiect"
       ],
-      "classification": "Clasificare",
+      "classification": "Categorii",
       "classificationDesc": "Gestionați categoriile de emailuri. IA creează automat categorii relevante, dar le puteți personaliza. Alegeți din 50 de pachete de meserii prestabilite.",
       "classificationFeatures": [
         "Listă cu toate categoriile dumneavoastră cu contoare",

@@ -28,7 +28,7 @@
   "nav": {
     "home": "Αρχική",
     "features": "Λειτουργίες",
-    "classification": "Κατάταξη",
+    "classification": "Κατηγορίες",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Επιχείρηση",
@@ -50,7 +50,7 @@
     "tasks": "Attività",
     "tasksAndFollowup": "Attività & Παρακολούθηση",
     "projects": "Έργα",
-    "classification": "Κατάταξη",
+    "classification": "Κατηγορίες",
     "settings": "Impostazioni",
     "subscription": "Συνδρομή",
     "agenda": "Ημερολόγιο",
@@ -808,7 +808,7 @@
     "viewDetail": "Δείτε τις λεπτομέρειες"
   },
   "classification": {
-    "title": "Κατηγοριοποίηση",
+    "title": "Κατηγορίες",
     "categories": "Κατηγορίες",
     "addCategory": "Προσθέστε μια κατηγορία",
     "categoryName": "Όνομα κατηγορίας",

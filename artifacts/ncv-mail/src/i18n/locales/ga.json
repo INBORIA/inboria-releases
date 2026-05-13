@@ -28,7 +28,7 @@
   "nav": {
     "home": "Baile",
     "features": "Feidhmeanna",
-    "classification": "Rangú",
+    "classification": "Catagóirí",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Podhóireacht",
@@ -50,7 +50,7 @@
     "tasks": "Tascanna",
     "tasksAndFollowup": "Tascanna & Súil",
     "projects": "Tionscadail",
-    "classification": "Rangú",
+    "classification": "Catagóirí",
     "settings": "Socruithe",
     "subscription": "Conradh",
     "agenda": "Clár",
@@ -808,7 +808,7 @@
     "viewDetail": "Féach ar an miondealadh"
   },
   "classification": {
-    "title": "Rangú",
+    "title": "Catagóirí",
     "categories": "Catagóirí",
     "addCategory": "Cuir le chatagóir",
     "categoryName": "Ainm na chatagóire",
@@ -2266,7 +2266,7 @@
         "Féach ar gach ríomhphost de thionscadal le cliceáil amháin",
         "Comhoibriú ríomhphoist de réir tionscadail"
       ],
-      "classification": "Rangú",
+      "classification": "Catagóirí",
       "classificationDesc": "Bainistigh bhur gcatagóirí ríomhphoist. Cruthaíonn an AI catagóirí ábhartha go huathoibríoch, ach is féidir libh iad a shaincheapadh. Roghnaigh ó 50 pacáiste gairme réamhshocraithe.",
       "classificationFeatures": [
         "Liosta de gach catagóir le comhoibrithe",

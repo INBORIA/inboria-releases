@@ -28,7 +28,7 @@
   "nav": {
     "home": "首页",
     "features": "功能",
-    "classification": "排名",
+    "classification": "类别",
     "ai": "Inboria",
     "crm": "客户关系管理",
     "enterprise": "企业",
@@ -50,7 +50,7 @@
     "tasks": "任务",
     "tasksAndFollowup": "任务与跟踪",
     "projects": "项目",
-    "classification": "排名",
+    "classification": "类别",
     "settings": "设置",
     "subscription": "订阅",
     "agenda": "日历",
@@ -808,7 +808,7 @@
     "viewDetail": "查看详情"
   },
   "classification": {
-    "title": "分类",
+    "title": "类别",
     "categories": "类别",
     "addCategory": "添加类别",
     "categoryName": "类别名称",
@@ -2266,7 +2266,7 @@
         "一键查看项目中的所有邮件",
         "按项目计数的邮件"
       ],
-      "classification": "分类",
+      "classification": "类别",
       "classificationDesc": "管理您的邮件类别。 AI自动创建相关类别，但您可以自定义。 从50个预定义的行业包中选择。",
       "classificationFeatures": [
         "所有类别的列表及其计数",

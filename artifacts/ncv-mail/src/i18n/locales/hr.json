@@ -28,7 +28,7 @@
   "nav": {
     "home": "Početna",
     "features": "Značajke",
-    "classification": "Rangiranje",
+    "classification": "Kategorije",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Tvrtka",
@@ -50,7 +50,7 @@
     "tasks": "Zadaci",
     "tasksAndFollowup": "Zadaci & Praćenje",
     "projects": "Projekti",
-    "classification": "Rangiranje",
+    "classification": "Kategorije",
     "settings": "Postavke",
     "subscription": "Pretplata",
     "agenda": "Kalendar",
@@ -808,7 +808,7 @@
     "viewDetail": "Pogledajte detalje"
   },
   "classification": {
-    "title": "Klasifikacija",
+    "title": "Kategorije",
     "categories": "Kategorije",
     "addCategory": "Dodajte kategoriju",
     "categoryName": "Naziv kategorije",
@@ -2266,7 +2266,7 @@
         "Pogledajte sve e-mailove projekta jednim klikom",
         "Brojač e-mailova po projektu"
       ],
-      "classification": "Kategorizacija",
+      "classification": "Kategorije",
       "classificationDesc": "Upravljajte svojim kategorijama e-mailova. AI automatski stvara relevantne kategorije, ali ih možete prilagoditi. Odaberite iz 50 unaprijed definiranih paketa.",
       "classificationFeatures": [
         "Popis svih Vaših kategorija s brojačima",

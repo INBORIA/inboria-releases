@@ -28,7 +28,7 @@
   "nav": {
     "home": "Start",
     "features": "Functies",
-    "classification": "Classificatie",
+    "classification": "Categorieën",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Bedrijf",
@@ -50,7 +50,7 @@
     "tasks": "Taken",
     "tasksAndFollowup": "Taken & Opvolging",
     "projects": "Projecten",
-    "classification": "Classificatie",
+    "classification": "Categorieën",
     "settings": "Instellingen",
     "subscription": "Abonnement",
     "agenda": "Agenda",
@@ -818,7 +818,7 @@
     "viewDetail": "Detail bekijken"
   },
   "classification": {
-    "title": "Classificatie",
+    "title": "Categorieën",
     "categories": "Categorieën",
     "addCategory": "Categorie toevoegen",
     "categoryName": "Categorienaam",
@@ -2276,7 +2276,7 @@
         "Alle project-e-mails bekijken met één klik",
         "E-mailteller per project"
       ],
-      "classification": "Classificatie",
+      "classification": "Categorieën",
       "classificationDesc": "Beheer uw e-mailcategorieën. AI maakt automatisch relevante categorieën, maar u kunt ze aanpassen. Kies uit 50 vooraf gebouwde branchepakketten.",
       "classificationFeatures": [
         "Lijst van al uw categorieën met tellers",

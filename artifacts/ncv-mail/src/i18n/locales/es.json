@@ -28,7 +28,7 @@
   "nav": {
     "home": "Inicio",
     "features": "Características",
-    "classification": "Clasificación",
+    "classification": "Categorías",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Empresa",
@@ -50,7 +50,7 @@
     "tasks": "Tareas",
     "tasksAndFollowup": "Tareas & Seguimiento",
     "projects": "Proyectos",
-    "classification": "Clasificación",
+    "classification": "Categorías",
     "settings": "Configuraciones",
     "subscription": "Suscripción",
     "agenda": "Agenda",
@@ -818,7 +818,7 @@
     "viewDetail": "Ver detalle"
   },
   "classification": {
-    "title": "Clasificación",
+    "title": "Categorías",
     "categories": "Categorías",
     "addCategory": "Agregar una categoría",
     "categoryName": "Nombre de la categoría",
@@ -2276,7 +2276,7 @@
         "Ver todos los correos electrónicos del proyecto con un clic",
         "Contador de correos electrónicos por proyecto"
       ],
-      "classification": "Clasificación",
+      "classification": "Categorías",
       "classificationDesc": "Gestiona tus categorías de correos electrónicos. La IA crea automáticamente categorías relevantes, pero puedes personalizarlas. Elige entre 50 paquetes de industria predefinidos.",
       "classificationFeatures": [
         "Lista de todas tus categorías con contadores",

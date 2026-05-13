@@ -28,7 +28,7 @@
   "nav": {
     "home": "Halaman Utama",
     "features": "Ciri-ciri",
-    "classification": "Peringkat",
+    "classification": "Kategori",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Syarikat",
@@ -50,7 +50,7 @@
     "tasks": "Tugas",
     "tasksAndFollowup": "Tâches & Pemantauan",
     "projects": "Projek",
-    "classification": "Peringkat",
+    "classification": "Kategori",
     "settings": "Impostazioni",
     "subscription": "Langganan",
     "agenda": "Agenda",
@@ -808,7 +808,7 @@
     "viewDetail": "Lihat butiran"
   },
   "classification": {
-    "title": "Pengelasan",
+    "title": "Kategori",
     "categories": "Kategori",
     "addCategory": "Tambah kategori",
     "categoryName": "Nama kategori",
@@ -2266,7 +2266,7 @@
         "Lihat semua email bagi sebuah projek dengan satu klik",
         "Pengira email mengikut projek"
       ],
-      "classification": "Pengelasan",
+      "classification": "Kategori",
       "classificationDesc": "Uruskan kategori email anda. AI secara automatik mencipta kategori yang relevan, tetapi anda boleh menyesuaikannya. Pilih dari 50 pek perniagaan yang telah ditetapkan.",
       "classificationFeatures": [
         "Senarai semua kategori anda dengan pengira",

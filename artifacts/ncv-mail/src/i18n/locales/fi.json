@@ -28,7 +28,7 @@
   "nav": {
     "home": "Koti",
     "features": "Ominaisuudet",
-    "classification": "Luokitus",
+    "classification": "Luokat",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Yritys",
@@ -50,7 +50,7 @@
     "tasks": "Tehtävät",
     "tasksAndFollowup": "Tehtävät & Seuranta",
     "projects": "Projektit",
-    "classification": "Luokitus",
+    "classification": "Luokat",
     "settings": "Asetukset",
     "subscription": "Tilaukset",
     "agenda": "Kalenteri",
@@ -808,7 +808,7 @@
     "viewDetail": "Näytä yksityiskohdat"
   },
   "classification": {
-    "title": "Luokittelu",
+    "title": "Luokat",
     "categories": "Kategoriat",
     "addCategory": "Lisää kategoria",
     "categoryName": "Kategorian nimi",
@@ -2266,7 +2266,7 @@
         "Näe kaikki projektin sähköpostit yhdellä napsautuksella",
         "Sähköpostilaskuri projektin mukaan"
       ],
-      "classification": "Luokittelu",
+      "classification": "Luokat",
       "classificationDesc": "Hallinnoi sähköpostikategorioitasi. IA luo automaattisesti merkityksellisiä kategorioita, mutta voit mukauttaa niitä. Valitse 50 valmiiksi määriteltyä ammattipakettia.",
       "classificationFeatures": [
         "Luettelo kaikista kategorioistasi laskureineen",

@@ -28,7 +28,7 @@
   "nav": {
     "home": "Domovská stránka",
     "features": "Funkce",
-    "classification": "Hodnocení",
+    "classification": "Kategorie",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Společnost",
@@ -50,7 +50,7 @@
     "tasks": "Zadania",
     "tasksAndFollowup": "Zadania & Sledování",
     "projects": "Projekty",
-    "classification": "Hodnocení",
+    "classification": "Kategorie",
     "settings": "Nastavení",
     "subscription": "Předplatné",
     "agenda": "Kalendář",
@@ -808,7 +808,7 @@
     "viewDetail": "Zobrazit detail"
   },
   "classification": {
-    "title": "Klasifikace",
+    "title": "Kategorie",
     "categories": "Kategorie",
     "addCategory": "Přidat kategorii",
     "categoryName": "Název kategorie",
@@ -2266,7 +2266,7 @@
         "Zobrazit všechny e-maily projektu jedním kliknutím",
         "Počítadlo e-mailů podle projektu"
       ],
-      "classification": "Klasifikace",
+      "classification": "Kategorie",
       "classificationDesc": "Spravujte své kategorie e-mailů. AI automaticky vytváří relevantní kategorie, ale můžete je přizpůsobit. Vyberte si z 50 předdefinovaných oborových balíčků.",
       "classificationFeatures": [
         "Seznam všech vašich kategorií s počítadly",

@@ -28,7 +28,7 @@
   "nav": {
     "home": "Hjem",
     "features": "Funktioner",
-    "classification": "Rangering",
+    "classification": "Kategorier",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Virksomhed",
@@ -50,7 +50,7 @@
     "tasks": "Opgaver",
     "tasksAndFollowup": "Opgaver & Opfølgning",
     "projects": "Projekter",
-    "classification": "Rangering",
+    "classification": "Kategorier",
     "settings": "Indstillinger",
     "subscription": "Abonnement",
     "agenda": "Kalender",
@@ -808,7 +808,7 @@
     "viewDetail": "Se detaljerne"
   },
   "classification": {
-    "title": "Klassificering",
+    "title": "Kategorier",
     "categories": "Kategorier",
     "addCategory": "Tilføj en kategori",
     "categoryName": "Kategorinavn",
@@ -2266,7 +2266,7 @@
         "Se alle e-mails fra et projekt med et klik",
         "E-mail tæller pr. projekt"
       ],
-      "classification": "Klassificering",
+      "classification": "Kategorier",
       "classificationDesc": "Administrer dine e-mailkategorier. AI'en opretter automatisk relevante kategorier, men du kan tilpasse dem. Vælg blandt 50 foruddefinerede branchepakker.",
       "classificationFeatures": [
         "Liste over alle dine kategorier med tællere",

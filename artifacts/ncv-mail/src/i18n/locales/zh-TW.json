@@ -28,7 +28,7 @@
   "nav": {
     "home": "首頁",
     "features": "功能",
-    "classification": "排名",
+    "classification": "類別",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "企業",
@@ -50,7 +50,7 @@
     "tasks": "任務",
     "tasksAndFollowup": "任務與追蹤",
     "projects": "專案",
-    "classification": "排名",
+    "classification": "類別",
     "settings": "設定",
     "subscription": "訂閱",
     "agenda": "日曆",
@@ -808,7 +808,7 @@
     "viewDetail": "查看詳細資訊"
   },
   "classification": {
-    "title": "分類",
+    "title": "類別",
     "categories": "類別",
     "addCategory": "新增類別",
     "categoryName": "類別名稱",
@@ -2266,7 +2266,7 @@
         "一鍵查看專案中的所有電子郵件",
         "每個專案的電子郵件計數器"
       ],
-      "classification": "排名",
+      "classification": "類別",
       "classificationDesc": "管理您的電子郵件類別。人工智慧會自動創建相關類別，但您可以進行自訂。從50個預設的行業包中選擇。",
       "classificationFeatures": [
         "所有類別的列表及計數器",

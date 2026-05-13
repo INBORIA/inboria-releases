@@ -28,7 +28,7 @@
   "nav": {
     "home": "Pradžia",
     "features": "Funkcijos",
-    "classification": "Reitingas",
+    "classification": "Kategorijos",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Įmonė",
@@ -50,7 +50,7 @@
     "tasks": "Užduotys",
     "tasksAndFollowup": "Užduotys ir sekimas",
     "projects": "Projektai",
-    "classification": "Reitingas",
+    "classification": "Kategorijos",
     "settings": "Nustatymai",
     "subscription": "Prenumerata",
     "agenda": "Kalendorius",
@@ -808,7 +808,7 @@
     "viewDetail": "Peržiūrėti detales"
   },
   "classification": {
-    "title": "Klasifikacija",
+    "title": "Kategorijos",
     "categories": "Kategorijos",
     "addCategory": "Pridėti kategoriją",
     "categoryName": "Kategorijos pavadinimas",
@@ -2266,7 +2266,7 @@
         "Peržiūrėti visus projekto el. laiškus vienu spustelėjimu",
         "El. laiškų skaičius pagal projektą"
       ],
-      "classification": "Klasifikacija",
+      "classification": "Kategorijos",
       "classificationDesc": "Tvarkykite savo el. laiškų kategorijas. Dirbtinis intelektas automatiškai sukuria tinkamas kategorijas, tačiau galite jas pritaikyti. Pasirinkite iš 50 iš anksto paruoštų verslo paketų.",
       "classificationFeatures": [
         "Visų jūsų kategorijų sąrašas su skaičiuotuvais",

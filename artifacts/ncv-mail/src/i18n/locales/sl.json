@@ -28,7 +28,7 @@
   "nav": {
     "home": "Domov",
     "features": "Funkcije",
-    "classification": "Razvrstitev",
+    "classification": "Kategorije",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "Podjetje",
@@ -50,7 +50,7 @@
     "tasks": "Zadania",
     "tasksAndFollowup": "Zadania & Spremljanje",
     "projects": "Projekti",
-    "classification": "Razvrstitev",
+    "classification": "Kategorije",
     "settings": "Nastavitve",
     "subscription": "Naročnina",
     "agenda": "Koledar",
@@ -808,7 +808,7 @@
     "viewDetail": "Oglejte si podrobnosti"
   },
   "classification": {
-    "title": "Razvrstitev",
+    "title": "Kategorije",
     "categories": "Kategorije",
     "addCategory": "Dodajte kategorijo",
     "categoryName": "Ime kategorije",
@@ -2266,7 +2266,7 @@
         "Oglejte si vsa e-poštna sporočila projekta z enim klikom",
         "Števec e-poštnih sporočil po projektu"
       ],
-      "classification": "Razvrstitev",
+      "classification": "Kategorije",
       "classificationDesc": "Upravljajte svoje kategorije e-poštnih sporočil. AI samodejno ustvari ustrezne kategorije, vendar jih lahko prilagodite. Izberite med 50 prednastavljenimi paketi za poklice.",
       "classificationFeatures": [
         "Seznam vseh Vaših kategorij s števci",

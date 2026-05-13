@@ -28,7 +28,7 @@
   "nav": {
     "home": "الرئيسية",
     "features": "الميزات",
-    "classification": "تصنيف",
+    "classification": "الفئات",
     "ai": "Inboria",
     "crm": "إدارة علاقات العملاء",
     "enterprise": "شركة",
@@ -50,7 +50,7 @@
     "tasks": "المهام",
     "tasksAndFollowup": "المهام والتتبع",
     "projects": "المشاريع",
-    "classification": "التصنيف",
+    "classification": "الفئات",
     "settings": "الإعدادات",
     "subscription": "الاشتراك",
     "agenda": "التقويم",
@@ -808,7 +808,7 @@
     "viewDetail": "عرض التفاصيل"
   },
   "classification": {
-    "title": "التصنيف",
+    "title": "الفئات",
     "categories": "الفئات",
     "addCategory": "إضافة فئة",
     "categoryName": "اسم الفئة",
@@ -2266,7 +2266,7 @@
         "عرض جميع رسائل البريد الإلكتروني لمشروع بنقرة واحدة",
         "عداد الرسائل الإلكترونية لكل مشروع"
       ],
-      "classification": "التصنيف",
+      "classification": "الفئات",
       "classificationDesc": "إدارة فئات رسائلكم الإلكترونية. يقوم الذكاء الاصطناعي بإنشاء فئات ذات صلة تلقائيًا ، ولكن يمكنكم تخصيصها. اختر من بين 50 حزمة مهنية محددة مسبقًا.",
       "classificationFeatures": [
         "قائمة بجميع فئاتكم مع العدادات",

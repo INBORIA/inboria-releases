@@ -23,7 +23,7 @@ const NAV_KEYS: Array<{ key: string; fallback: string; icon: any; active?: boole
   { key: "sidebar.agenda", fallback: "Agenda", icon: CalendarDays },
   { key: "sidebar.archives", fallback: "Archives", icon: Archive },
   { key: "sidebar.dailyBrief", fallback: "Bilan quotidien", icon: LayoutDashboard },
-  { key: "sidebar.classification", fallback: "Classement", icon: Tags },
+  { key: "sidebar.classification", fallback: "Catégories", icon: Tags },
   { key: "templates.title", fallback: "Templates", icon: FileText },
   { key: "rules.title", fallback: "Règles automatiques", icon: Wand2 },
 ];

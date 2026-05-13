@@ -28,7 +28,7 @@
   "nav": {
     "home": "หน้าแรก",
     "features": "ฟีเจอร์",
-    "classification": "การจัดอันดับ",
+    "classification": "หมวดหมู่",
     "ai": "Inboria",
     "crm": "CRM",
     "enterprise": "บริษัท",
@@ -50,7 +50,7 @@
     "tasks": "งาน",
     "tasksAndFollowup": "งาน & การติดตาม",
     "projects": "โครงการ",
-    "classification": "การจัดอันดับ",
+    "classification": "หมวดหมู่",
     "settings": "การตั้งค่า",
     "subscription": "การสมัครสมาชิก",
     "agenda": "ปฏิทิน",
@@ -808,7 +808,7 @@
     "viewDetail": "ดูรายละเอียด"
   },
   "classification": {
-    "title": "การจัดอันดับ",
+    "title": "หมวดหมู่",
     "categories": "หมวดหมู่",
     "addCategory": "เพิ่มหมวดหมู่",
     "categoryName": "ชื่อหมวดหมู่",
@@ -2266,7 +2266,7 @@
         "ดูอีเมลทั้งหมดของโครงการในคลิกเดียว",
         "จำนวนอีเมลตามโครงการ"
       ],
-      "classification": "การจัดประเภท",
+      "classification": "หมวดหมู่",
       "classificationDesc": "จัดการหมวดหมู่อีเมลของท่าน AI จะสร้างหมวดหมู่ที่เกี่ยวข้องโดยอัตโนมัติ แต่ท่านสามารถปรับแต่งได้ เลือกจาก 50 แพ็คธุรกิจที่กำหนดไว้ล่วงหน้า",
       "classificationFeatures": [
         "รายการหมวดหมู่ทั้งหมดของท่านพร้อมจำนวน",
