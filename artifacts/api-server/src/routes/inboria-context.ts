@@ -45,11 +45,17 @@ function detectLangSteer(text: string): string | null {
   if (frStrong.filter((w) => new RegExp(`(^|[\\s'"])${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=[\\s'".,!?;:]|$)`, "i").test(t)).length >= 2) {
     return null; // French → use default FR system prompt, no steer needed.
   }
+  // JAPONAIS d'abord (hiragana/katakana exclusifs au japonais) — sinon les
+  // kanji japonais déclencheraient à tort le détecteur chinois (T46 JA).
+  if (script(/[\u3040-\u309f\u30a0-\u30ff]/)) return "重要：ユーザーは日本語で書きました。必ず日本語の敬語（です/ます調）で全文を回答してください。フランス語や英語、中国語は使わないでください。";
   if (script(/[\u4e00-\u9fff]/)) return "CRITICAL: The user wrote in Chinese. You MUST reply ENTIRELY in Chinese (formal 您 + 请). Do NOT use French or English.";
-  if (script(/[\u3040-\u30ff]/)) return "重要：ユーザーは日本語で書きました。必ず日本語の敬語（です/ます調）で全文を回答してください。フランス語や英語は使わないでください。";
   if (script(/[\uac00-\ud7af]/)) return "중요: 사용자는 한국어로 작성했습니다. 반드시 한국어 합쇼체(하십시오체)로 전체 답변하세요. 프랑스어나 영어를 사용하지 마세요.";
   if (script(/[\u0590-\u05ff]/)) return "חשוב: המשתמש כתב בעברית. עליך לענות כולה בעברית מודרנית, טון עסקי. אל תשתמש בצרפתית או באנגלית.";
   if (script(/[\u0600-\u06ff]/)) return "هام: كتب المستخدم بالعربية. يجب أن تجيب بالكامل بالعربية الفصحى الرسمية. لا تستخدم الفرنسية أو الإنجليزية.";
+  // Cyrillique : russe / ukrainien / serbe / bulgare. On défaut sur russe (le
+  // plus courant). Si l'utilisateur écrit dans un autre cyrillique, le LLM
+  // s'adaptera à partir des indices texte.
+  if (script(/[А-Яа-яЁё]/)) return "ВАЖНО: пользователь написал на русском языке. Вы ДОЛЖНЫ ответить ПОЛНОСТЬЮ на русском языке (формальное Вы/Вас/Ваш с заглавной буквы + пожалуйста). НЕ используйте французский или английский язык.";
   if (script(/[\u0e00-\u0e7f]/)) return "สำคัญ: ผู้ใช้เขียนเป็นภาษาไทย คุณต้องตอบเป็นภาษาไทยทั้งหมด (ใช้ ท่าน + โปรด/กรุณา) ห้ามใช้ภาษาฝรั่งเศสหรืออังกฤษ";
   if (script(/[\u0900-\u097f]/)) return "महत्वपूर्ण: उपयोगकर्ता ने हिंदी में लिखा है। आपको पूरी तरह हिंदी (आप + कृपया) में उत्तर देना है। फ्रेंच या अंग्रेजी का उपयोग न करें।";
   if (script(/[\u1780-\u17ff]/)) return "សំខាន់៖ អ្នកប្រើប្រាស់បានសរសេរជាភាសាខ្មែរ។ អ្នកត្រូវឆ្លើយជាភាសាខ្មែរទាំងស្រុង (លោក/លោកស្រី + សូម)។";
@@ -60,6 +66,10 @@ function detectLangSteer(text: string): string | null {
   if (has("o", "que", "podes", "dizer", "obrigado", "obrigada", "onde", "quando", "como")) return "IMPORTANTE: O utilizador escreveu em português. DEVE responder INTEIRAMENTE em português com você/o senhor (formal). NÃO use francês nem inglês.";
   if (has("co", "mozesz", "powiedziec", "prosze", "dziekuje", "gdzie", "kiedy", "jak")) return "WAŻNE: Użytkownik napisał po polsku. MUSI Pan/Pani odpowiedzieć W CAŁOŚCI po polsku z formą Pan/Pani. NIE używaj francuskiego ani angielskiego.";
   if (has("ce", "poti", "spune", "despre", "multumesc", "unde", "cand", "cum")) return "IMPORTANT: Utilizatorul a scris în română. TREBUIE să răspundeți COMPLET în română cu dumneavoastră (formal). NU folosiți franceza sau engleza.";
+  // Turc — UNIQUEMENT marqueurs SPÉCIFIQUES (les diacritiques ğ/ı/İ
+  // sont uniques au turc, pas dans le latin commun). On ÉVITE "ne"
+  // (faux positif sur français "ne" de négation).
+  if (script(/[ğıİĞ]/) || has("hakkinda", "hakkında", "soyleyebilirsin", "söyleyebilirsin", "lütfen", "tesekkurler", "teşekkürler", "merhaba", "nedir", "nasıl", "nerede", "nezaman", "siz", "sizin", "size", "bilgi", "bana")) return "ÖNEMLİ: Kullanıcı Türkçe yazdı. TAMAMEN Türkçe (resmi siz/sizin/lütfen) yanıt VERMELİSİNİZ. Fransızca veya İngilizce KULLANMAYIN.";
   // English fallback (very common words). Place AFTER other languages.
   if (has("what", "can", "you", "tell", "about", "the", "is", "are", "please", "thanks", "where", "when", "how", "why", "who")) return "CRITICAL: The user wrote in English. You MUST reply ENTIRELY in English (formal 'you'). Do NOT use French.";
   return null;
@@ -2267,7 +2277,9 @@ Seule restriction : ne revele jamais les details techniques internes du produit 
 
 REGLE ABSOLUE — CRM EXTERNES (HubSpot, Pipedrive, Salesforce, Odoo, Zoho, Sellsy, etc.). Tu n'as AUCUN acces direct (lecture ou ecriture) aux donnees stockees dans un CRM externe : pas de deals, pas de pipelines, pas de lead scores, pas d'activites, pas de comptes, pas de factures, pas de stock, pas de contacts CRM. Si l'utilisateur te demande une info CRM (ex. "statut du deal X dans HubSpot", "lead score Salesforce", "factures Odoo", "activites Pipedrive", "pousse ce contact dans le CRM"), tu DOIS repondre clairement : "Je n'ai pas acces direct a votre [HubSpot/Pipedrive/Salesforce/Odoo]. Vous pouvez verifier ou modifier cette information directement dans l'outil, ou via Parametres > Integrations dans Inboria." NE devine JAMAIS un statut/montant/score/etape de pipeline. Tu peux en revanche aider a redacter un mail, un resume ou une note a copier-coller dans le CRM.
 
-REGLE ABSOLUE — CATEGORIES & ARCHIVES. Tu n'as pas la liste exhaustive des categories configurees ni le compteur exact de mails par categorie dans ta memoire courte (sauf si une categorie apparait sur un mail liste). Si on te demande "combien de mails dans la categorie X" ou "liste mes categories", reponds : "Je n'ai pas le detail des categories dans mon contexte — vous pouvez les voir dans la sidebar (section Categories) ou Parametres > Categories." Pareil pour les archives : tu peux chercher dedans via search_emails (qui couvre TOUS les mails, archives inclus), mais tu n'as pas de liste pre-chargee. Ne devine JAMAIS un compteur ni une liste de categories.
+REGLE ABSOLUE — CATEGORIES & ARCHIVES. Tu n'as pas la liste exhaustive des categories configurees ni le compteur exact de mails par categorie dans ta memoire courte (sauf si une categorie apparait sur un mail liste). Si on te demande UNIQUEMENT "combien de mails dans la categorie X" ou "liste mes categories", reponds : "Je n'ai pas le detail des categories dans mon contexte — vous pouvez les voir dans la sidebar (section Categories) ou Parametres > Categories." Pareil pour les archives : tu peux chercher dedans via search_emails (qui couvre TOUS les mails, archives inclus), mais tu n'as pas de liste pre-chargee. Ne devine JAMAIS un compteur ni une liste de categories. ATTENTION : cette regle ne s'applique QU'AUX categories et archives. Toute autre demande (bilan quotidien, brief, synthese, urgences du jour, mails non lus, projets en cours, RDV a venir, relances, etc.) DOIT etre repondue en utilisant la memoire courte ci-dessous + tools — JAMAIS de refus generique "verifiez dans l'application" pour ces sujets.
+
+REGLE ABSOLUE — BILAN QUOTIDIEN / BRIEF / SYNTHESE. Quand l'utilisateur demande "mon bilan quotidien", "mon brief", "fais-moi un point", "resume ma journee", "qu'est-ce qui est urgent aujourd'hui", "ou j'en suis", "synthese du jour" — tu DOIS generer la synthese depuis la memoire courte ci-dessous (mails non lus + urgents + relances + RDV proches + tasks). Tu cites chaque element avec son [mail#ID]. Tu n'as JAMAIS le droit de refuser en disant "verifiez dans l'app" — c'est ton role principal de produire ce brief. Format suggere : 3-5 puces courtes regroupees par theme (Urgences, Relances en attente, RDV du jour, A faire). Si la memoire courte est vide, dis "Aucun mail recent dans votre pile — vous etes a jour."
 
 REGLE ABSOLUE — LANGUE MIROIR. Tu DOIS toujours repondre dans la MEME langue que le DERNIER message de l'utilisateur, peu importe la langue par defaut. Si le message est en anglais, tu reponds integralement en anglais. Si en allemand, integralement en allemand (avec Sie/Ihnen formels). Si en neerlandais, integralement en neerlandais (avec u formel). Si en espagnol, integralement en espagnol (avec usted formel). Idem pour toutes les autres langues supportees. JAMAIS de reponse en francais quand la question est dans une autre langue. Garde la meme langue pour les phrases d'introduction des cartes (inboria-meeting, inboria-hold-meeting, inboria-draft, etc.) — seules les CLES YAML des blocs (emailId, to, subject, startAt…) restent en anglais.
 
@@ -2454,9 +2466,30 @@ REGLE SPECIFIQUE — questions sur un coequipier :
     const lastUserMsgForLang = [...cleanMessages].reverse().find((m) => m.role === "user");
     const lastUserTextForLang = typeof lastUserMsgForLang?.content === "string" ? lastUserMsgForLang.content : "";
     const langSteer = detectLangSteer(lastUserTextForLang);
+    // Fix langue miroir (T43/T46/T50/T51) — TRIPLE injection :
+    // (1) en tête, avant le system prompt FR de ~5000 tokens (sinon le
+    //     modèle est totalement amorcé en français)
+    // (2) juste avant l'appel (system tardif)
+    // (3) PRÉFIXÉ DANS LE DERNIER MESSAGE USER lui-même — c'est le seul
+    //     niveau que gpt-4o-mini suit de façon fiable quand un system
+    //     prompt massif dans une autre langue est présent.
+    const messagesWithLangPrefix = (() => {
+      if (!langSteer) return cleanMessages;
+      const out = [...cleanMessages];
+      for (let i = out.length - 1; i >= 0; i--) {
+        const m = out[i]!;
+        if (m.role === "user") {
+          const original = typeof m.content === "string" ? m.content : "";
+          out[i] = { ...m, content: `[${langSteer}]\n\n${original}` } as typeof m;
+          break;
+        }
+      }
+      return out;
+    })();
     const convo: OpenAI.Chat.Completions.ChatCompletionMessageParam[] = [
+      ...(langSteer ? [{ role: "system" as const, content: langSteer }] : []),
       { role: "system", content: systemPrompt },
-      ...cleanMessages,
+      ...messagesWithLangPrefix,
       ...(langSteer ? [{ role: "system" as const, content: langSteer }] : []),
     ];
     let reply = "";
