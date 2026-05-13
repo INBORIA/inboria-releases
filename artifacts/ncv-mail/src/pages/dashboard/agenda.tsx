@@ -63,7 +63,15 @@ export default function Agenda() {
   const locale = dateLocales[i18n.language] || fr;
 
   const [currentDate, setCurrentDate] = useState(new Date());
-  const [viewMode, setViewMode] = useState<ViewMode>("month");
+  const [viewMode, setViewMode] = useState<ViewMode>(() => {
+    if (typeof window === "undefined") return "month";
+    const saved = window.localStorage.getItem("agenda.viewMode");
+    return saved === "day" || saved === "week" || saved === "month" ? saved : "month";
+  });
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem("agenda.viewMode", viewMode);
+  }, [viewMode]);
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [selectedAppointment, setSelectedAppointment] = useState<Appointment | null>(null);
