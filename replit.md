@@ -80,6 +80,13 @@ I prefer simple language and detailed explanations. I want iterative development
 
 **TOUJOURS redémarrer automatiquement le workflow concerné après TOUTE modification de code (backend ET frontend, même si Vite est censé recharger). Ne jamais demander, ne jamais oublier, ne jamais supposer que le HMR suffit.**
 
+**Convention présentation lignes de mails (Réception, Envoyés, et toute future liste type Programmés / Reportés / Tâches / Archives / Partagées / Mes dossiers …) — ligne plate 52px, style Superhuman :**
+- Container : `group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors`. Sélectionné = `border-l-primary bg-primary/[0.10]`, sinon `border-l-transparent hover:bg-white/[0.03]`.
+- Colonnes dans l'ordre : (1) case à cocher 4×4 (visible uniquement en mode sélection ou si ligne sélectionnée, sinon zone cliquable invisible 3×3), (2) avatar rond 7×7 `bg-primary/15 border border-primary/30` avec **première lettre** de l'expéditeur/destinataire en `text-primary text-[11px] font-semibold` (JAMAIS d'icône Send/Reply/ArrowRight — ces flèches sont interdites comme avatar), (3) expéditeur/destinataire largeur fixe `w-[140px]` `text-[13px] truncate` (blanc gras si non-lu, `text-[#7a8290] font-normal` si lu), (4) sujet flex-1 même style + `— extrait` en `text-[#8b95a7]` (ou `text-[#5a6270]` si lu) + bouton catégorie `text-[11px] lowercase text-[#6b7280] hover:text-[#b8c5d6] hover:underline`, (5) indicateurs droite `group-hover:hidden` : Paperclip 3×3 si pj, badge SLA si applicable, date `text-[11px] tabular-nums text-[#8b95a7] w-12 text-right` au format `d MMM`.
+- Au survol : composant partagé `<HoverActions>` (`@/components/email-list/HoverActions`) — parité 1:1 avec le clic droit (Reply / Forward / Snooze / Archive / Delete / Catégorie / Move to folder / Block sender). Prop `showBlockSender={false}` côté Envoyés.
+- Clic droit : menu contextuel `min-w-[220px] max-w-[280px]` avec auto-flip (`useLayoutEffect`, bornes margin 8px, `maxHeight: calc(100vh - 16px)`, `overflow-y-auto`, `opacity 0` jusqu'à mesure).
+- Référence d'implémentation : `artifacts/ncv-mail/src/pages/dashboard/index.tsx` (EmailRow L105+) et `artifacts/ncv-mail/src/pages/dashboard/envoyes.tsx` (L547+). À recopier tel quel pour Programmés / Reportés / Tâches / Archives / Mes dossiers / Partagées / Assignés.
+
 ## Gotchas
 
 - **Supabase Migrations**: Ensure `migrations/2026_05_03_email_chunks.sql` is applied manually in Supabase Dashboard for Inboria Email Brain to function. The worker will pause if the table is missing.
