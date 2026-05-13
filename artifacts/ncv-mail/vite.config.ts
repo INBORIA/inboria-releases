@@ -84,7 +84,7 @@ export default defineConfig({
         // must always hit the network so the user sees fresh data.
         // The main JS bundle is currently > 3 MB (heavy SPA), so bump
         // the precache size limit to 6 MB to accommodate it.
-        maximumFileSizeToCacheInBytes: 10 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 16 * 1024 * 1024,
         globPatterns: ["**/*.{js,css,html,svg,png,ico,woff2}"],
         navigateFallback: "/index.html",
         navigateFallbackDenylist: [/^\/api\//],
