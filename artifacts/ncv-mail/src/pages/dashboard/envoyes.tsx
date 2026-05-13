@@ -1,6 +1,6 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
-import { AttachmentList, AttachmentBadge } from "@/components/AttachmentList";
+import { AttachmentList } from "@/components/AttachmentList";
 import {
   useListEmails,
   useListProjects,
@@ -37,13 +37,12 @@ import { useQueryClient } from "@tanstack/react-query";
 import {
   Send,
   ArrowLeft,
-  Sparkles,
   Reply,
   FolderKanban,
   Download,
   Loader2,
   User,
-  ArrowRight,
+  Paperclip,
   CalendarDays,
   Trash2,
   ChevronRight,
@@ -546,7 +545,11 @@ export default function Envoyes() {
                     key={email.id}
                     data-email-row
                     title={openedTitle}
-                    className={`group flex items-stretch rounded-lg border transition-colors cursor-pointer overflow-hidden select-none ${isSelected ? "border-primary/50 bg-primary/[0.08]" : "border-border bg-card hover:bg-[#1a2235]"} ${isOpened && !isSelected ? "opacity-60" : ""}`}
+                    className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 transition-colors ${
+                      isSelected
+                        ? "border-l-primary bg-primary/[0.10]"
+                        : "border-l-transparent hover:bg-white/[0.03]"
+                    } ${isOpened && !isSelected ? "opacity-60" : ""}`}
                     onClick={() => {
                       if (didDragRef.current) return;
                       if (selectionMode) {
@@ -559,64 +562,78 @@ export default function Envoyes() {
                         setSelectedEmailId(email.id);
                       }
                     }}
-                    onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); handleDragSelectStart(email.id); } }}
+                    onMouseDown={(e) => {
+                      if ((e.target as HTMLElement).closest('button,[role="button"],a,input,textarea,select')) return;
+                      if (e.button === 0) { e.preventDefault(); handleDragSelectStart(email.id); }
+                    }}
                     onMouseEnter={() => handleDragSelectEnter(email.id)}
                     onContextMenu={(e) => handleContextMenu(e, email.id)}
                   >
-                    <div className="flex items-center gap-2 flex-1 min-w-0 p-3">
-                      <button
-                        onClick={(e) => { e.stopPropagation(); setSelectedIds((prev) => { const next = new Set(prev); if (next.has(email.id)) next.delete(email.id); else next.add(email.id); return next; }); }}
-                        onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); handleDragSelectStart(email.id); }}
-                        onMouseEnter={() => handleDragSelectEnter(email.id)}
-                        className="w-5 h-5 rounded flex items-center justify-center shrink-0 transition-all cursor-pointer border border-[#2a3441] hover:border-primary select-none"
-                      >
-                        {isSelected && <Check className="w-3.5 h-3.5 text-primary" />}
-                      </button>
-                      <div className="w-8 h-8 rounded-full bg-white/[0.06] flex items-center justify-center shrink-0">
-                        {isReply ? <Reply className="w-3.5 h-3.5 text-[#b8c5d6]" /> : <Send className="w-3.5 h-3.5 text-[#b8c5d6]" />}
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="font-semibold text-[12px] text-white truncate">
-                            {email.recipient || t("sent.unknownRecipient")}
-                          </span>
-                          {isReply && (
-                            <span className="text-[9px] px-1.5 py-0.5 rounded-full font-medium bg-white/[0.06] text-[#b8c5d6]">
-                              {t("sent.reply")}
-                            </span>
-                          )}
-                        </div>
-                        <h3 className="text-[12px] text-white/80 truncate">{email.subject}</h3>
-                        {email.summary && (
-                          <div className="flex items-center gap-1 mt-0.5">
-                            <Sparkles className="w-3 h-3 text-[#b8c5d6] shrink-0" />
-                            <p className="text-[11px] text-[#b8c5d6] line-clamp-1">{email.summary}</p>
-                          </div>
-                        )}
-                      </div>
-                      <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
-                        {email.projectName && (
-                          <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/[0.06] text-[#b8c5d6]">
-                            {email.projectReference || email.projectName}
-                          </span>
-                        )}
-                        {(email as any).attachmentCount > 0 && (
-                          <AttachmentBadge count={(email as any).attachmentCount} />
-                        )}
-                        <span className="text-[10px] text-[#b8c5d6]">
-                          {email.createdAt ? format(new Date(email.createdAt), "dd MMM HH:mm", { locale: dateFnsLocale }) : ""}
-                        </span>
-                      </div>
-                      {/* Barre d'actions au survol — parité 1:1 avec Réception
-                          via le composant partagé HoverActions. */}
-                      <HoverActions
-                        isUnread={(email as any).status === "non_lu" || (email as any).isRead === false || (email as any).unread === true}
-                        categoryCounts={categoryCounts as any[] | undefined}
-                        userFolders={userFolders as any[] | undefined}
-                        cb={buildHoverCb(email)}
-                        showBlockSender={false}
-                      />
+                    {/* Case à cocher */}
+                    <div className="w-4 flex items-center justify-center shrink-0">
+                      {selectionMode || isSelected ? (
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setSelectedIds((prev) => { const next = new Set(prev); if (next.has(email.id)) next.delete(email.id); else next.add(email.id); return next; }); }}
+                          onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); handleDragSelectStart(email.id); }}
+                          className="w-4 h-4 rounded flex items-center justify-center transition-all cursor-pointer border border-[#2a3441] hover:border-primary"
+                        >
+                          {isSelected && <Check className="w-3 h-3 text-primary" />}
+                        </button>
+                      ) : (
+                        <span
+                          className="w-3 h-3 cursor-pointer"
+                          onClick={(e) => { e.stopPropagation(); setSelectedIds((prev) => { const next = new Set(prev); next.add(email.id); return next; }); }}
+                        />
+                      )}
                     </div>
+
+                    {/* Avatar — bleu, première lettre du destinataire */}
+                    <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
+                      <span className="text-primary text-[11px] font-semibold">
+                        {(email.recipient || "?").trim()[0]?.toUpperCase() || "?"}
+                      </span>
+                    </div>
+
+                    {/* Destinataire (largeur fixe) */}
+                    <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">
+                      <span className="text-[13px] truncate text-white font-semibold">
+                        {email.recipient || t("sent.unknownRecipient")}
+                      </span>
+                      {isReply && (
+                        <span className="text-[10px] text-[#8b95a7] shrink-0" title={t("sent.reply")}>
+                          ↩
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Sujet — extrait */}
+                    <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
+                      <span className="text-[13px] truncate text-white font-semibold">
+                        {email.subject}
+                      </span>
+                      {email.summary && (
+                        <span className="text-[13px] truncate text-[#8b95a7]">— {email.summary}</span>
+                      )}
+                    </div>
+
+                    {/* Indicateurs + date */}
+                    <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
+                      {(email as any).attachmentCount > 0 && (
+                        <Paperclip className="w-3 h-3 text-[#8b95a7]" />
+                      )}
+                      <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline">
+                        {email.createdAt ? format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale }) : ""}
+                      </span>
+                    </div>
+
+                    {/* Barre d'actions au survol — parité 1:1 avec Réception. */}
+                    <HoverActions
+                      isUnread={(email as any).status === "non_lu" || (email as any).isRead === false || (email as any).unread === true}
+                      categoryCounts={categoryCounts as any[] | undefined}
+                      userFolders={userFolders as any[] | undefined}
+                      cb={buildHoverCb(email)}
+                      showBlockSender={false}
+                    />
                   </div>
                 );
               })}
