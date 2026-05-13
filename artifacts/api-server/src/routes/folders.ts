@@ -247,13 +247,24 @@ router.get("/folders/:id/emails", requireAuth, async (req, res): Promise<void> =
     return;
   }
 
-  // Pas de restriction `.eq("user_id", userId)` ici : un dossier privé peut
-  // contenir des emails reçus sur une boîte partagée. La privacy est
-  // garantie par la jointure via email_folder_assignments (RLS user_id).
+  // Re-vérification de visibilité au moment du READ : si l'user a perdu
+  // l'accès à une boîte partagée depuis le classement, on n'expose plus les
+  // mails. Les lignes d'assignation orphelines sont silencieusement omises.
+  const visibleNow = new Set(await filterVisibleEmailIds(req.userId!, emailIds));
+  const visibleEmailIds = emailIds.filter((id: number) => visibleNow.has(id));
+  if (visibleEmailIds.length === 0) {
+    res.json({
+      emails: [],
+      total: count || 0,
+      page,
+      totalPages: Math.ceil((count || 0) / limit),
+    });
+    return;
+  }
   const { data: emailRows } = await supabaseAdmin
     .from("emails")
     .select("id, sender, subject, status, priority, summary, category_id, project_id, recipient, assigned_to, assigned_at, created_at, shared_mailbox_id, categories(name), projects(name, reference)")
-    .in("id", emailIds)
+    .in("id", visibleEmailIds)
     .order("created_at", { ascending: false });
 
   const emails = (emailRows || []).map((e: any) => ({
