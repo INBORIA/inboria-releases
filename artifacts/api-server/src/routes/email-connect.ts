@@ -297,6 +297,24 @@ document.getElementById('retry').onclick = async () => {
       last_error_message: null,
       last_alert_sent_at: null,
     };
+    // Guard: ne jamais écraser une ligne existante d'un AUTRE provider avec le même email.
+    // Sinon un compte Microsoft dont l'email principal = adresse Gmail viendrait casser
+    // la connexion Gmail (et inversement).
+    const { data: existingDiff } = await supabaseAdmin
+      .from("email_connections")
+      .select("id, provider")
+      .eq("user_id", userId)
+      .eq("email_address", userInfo.email!)
+      .neq("provider", "gmail")
+      .maybeSingle();
+    if (existingDiff) {
+      res.status(409).send(`<html><body style="font-family:-apple-system,sans-serif;background:#0d1117;color:#fff;padding:40px;max-width:640px;margin:0 auto;line-height:1.6;">
+<h2 style="color:#ef4444;margin-top:0;">Adresse déjà utilisée</h2>
+<p>L'adresse <strong>${userInfo.email}</strong> est déjà connectée comme compte <strong>${existingDiff.provider}</strong>. Supprimez d'abord cette connexion avant de la reconnecter en Gmail.</p>
+<button onclick="window.close()" style="background:#2d7dd2;color:#fff;border:none;padding:12px 24px;border-radius:6px;cursor:pointer;font-size:14px;">Fermer</button>
+</body></html>`);
+      return;
+    }
     let { data: connData, error: connErr } = await supabaseAdmin.from("email_connections").upsert(gmailRow, { onConflict: "user_id,email_address" }).select("id").single();
     if (connErr) {
       console.error("[email-connect] Gmail upsert failed, trying insert:", connErr.message);
@@ -382,14 +400,21 @@ router.get("/email/callback/outlook", async (req, res): Promise<void> => {
         const payloadB64 = String(tokens.id_token).split(".")[1];
         if (payloadB64) {
           const decoded = JSON.parse(Buffer.from(payloadB64.replace(/-/g, "+").replace(/_/g, "/"), "base64").toString("utf8"));
-          emailFromIdToken = decoded.email || decoded.preferred_username || null;
+          // preferred_username = alias de connexion réel (ex: neybergh.jj@hotmail.com),
+          // tandis que decoded.email peut être l'email principal du compte Microsoft
+          // (parfois une adresse Gmail), donc on préfère preferred_username.
+          emailFromIdToken = decoded.preferred_username || decoded.email || null;
         }
       } catch (e) {
         console.warn("[email-connect] Failed to decode Outlook id_token:", (e as Error).message);
       }
     }
 
-    const resolvedEmail = profile.mail || profile.userPrincipalName || emailFromIdToken;
+    // Pour les comptes Microsoft personnels (hotmail/outlook.com), profile.mail
+    // peut renvoyer l'email PRINCIPAL du compte (parfois une adresse Gmail/autre)
+    // au lieu de l'alias avec lequel l'utilisateur s'est connecté. preferred_username
+    // (id_token) = alias de connexion réel → on le préfère.
+    const resolvedEmail = emailFromIdToken || profile.userPrincipalName || profile.mail;
     if (!resolvedEmail) {
       console.error("[email-connect] Outlook: could not resolve email from profile or id_token", { profile });
       res.status(400).send("Connexion Outlook echouee: adresse email introuvable dans le profil Microsoft");
@@ -409,6 +434,23 @@ router.get("/email/callback/outlook", async (req, res): Promise<void> => {
       last_error_message: null,
       last_alert_sent_at: null,
     };
+    // Guard: ne jamais écraser une ligne d'un AUTRE provider avec le même email.
+    const { data: existingDiffOut } = await supabaseAdmin
+      .from("email_connections")
+      .select("id, provider")
+      .eq("user_id", userId)
+      .eq("email_address", resolvedEmail)
+      .neq("provider", "outlook")
+      .maybeSingle();
+    if (existingDiffOut) {
+      res.status(409).send(`<html><body style="font-family:-apple-system,sans-serif;background:#0d1117;color:#fff;padding:40px;max-width:640px;margin:0 auto;line-height:1.6;">
+<h2 style="color:#ef4444;margin-top:0;">Adresse déjà utilisée</h2>
+<p>L'adresse <strong>${resolvedEmail}</strong> est déjà connectée comme compte <strong>${existingDiffOut.provider}</strong>. Supprimez d'abord cette connexion avant de la reconnecter en Outlook.</p>
+<p style="color:#b8c5d6;font-size:13px;">Astuce : si vous vouliez connecter une autre adresse (ex. hotmail), Microsoft vous a peut-être reconnecté automatiquement avec un autre compte. Déconnectez-vous d'abord sur <a href="https://login.microsoftonline.com/logout" target="_blank" style="color:#2d7dd2;">login.microsoftonline.com</a>.</p>
+<button onclick="window.close()" style="background:#2d7dd2;color:#fff;border:none;padding:12px 24px;border-radius:6px;cursor:pointer;font-size:14px;">Fermer</button>
+</body></html>`);
+      return;
+    }
     let { data: outlookConn, error: outlookErr } = await supabaseAdmin.from("email_connections").upsert(outlookRow, { onConflict: "user_id,email_address" }).select("id").single();
     if (outlookErr) {
       console.error("[email-connect] Outlook upsert failed, trying insert:", outlookErr.message);
