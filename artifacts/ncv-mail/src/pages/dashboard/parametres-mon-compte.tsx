@@ -31,7 +31,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient, useQuery } from "@tanstack/react-query";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Mail, User, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Pen, Lock, Globe, ArrowLeft, Sparkles } from "lucide-react";
+import { Mail, User, CheckCircle2, Trash2, Eye, EyeOff, AlertCircle, Pen, Lock, Globe, ArrowLeft, Sparkles, RefreshCw } from "lucide-react";
 import { Link } from "wouter";
 import { Textarea } from "@/components/ui/textarea";
 import { useState, useEffect, useRef } from "react";
@@ -128,6 +128,7 @@ type ImpactedMember = { userId: string; fullName: string | null; email: string |
 function AccountConnectionCard({
   conn,
   onDisconnect,
+  onReconnect,
   onSaveSignature,
   onShare,
   onUnshare,
@@ -138,6 +139,7 @@ function AccountConnectionCard({
 }: {
   conn: EmailConnection;
   onDisconnect: () => void;
+  onReconnect?: () => void;
   onSaveSignature: (value: string) => void;
   onShare: () => Promise<void>;
   onUnshare: () => Promise<void>;
@@ -270,6 +272,17 @@ function AccountConnectionCard({
             <Pen className="w-3.5 h-3.5 mr-1.5" />
             {editing ? t("common.close", "Fermer") : t("settings.accountSignature", "Signature")}
           </Button>
+          {(conn.consecutive_failures ?? 0) >= 3 && onReconnect && (
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-emerald-400 hover:text-emerald-300 hover:bg-emerald-500/10 h-8 text-[12px]"
+              onClick={onReconnect}
+            >
+              <RefreshCw className="w-3.5 h-3.5 mr-1.5" />
+              {t("settings.reconnect", "Reconnecter")}
+            </Button>
+          )}
           <Button variant="ghost" size="sm" className="text-red-400 hover:text-red-300 hover:bg-red-500/10 h-8 text-[12px]" onClick={onDisconnect}>
             <Trash2 className="w-3.5 h-3.5 mr-1.5" />
             {t("settings.disconnect")}
@@ -994,6 +1007,11 @@ export default function ParametresMonCompte() {
                       key={conn.id}
                       conn={conn}
                       onDisconnect={() => handleDisconnect(conn.id)}
+                      onReconnect={
+                        conn.provider === "gmail" || conn.provider === "outlook"
+                          ? () => handleOAuthConnect(conn.provider as "gmail" | "outlook")
+                          : undefined
+                      }
                       onSaveSignature={(val) => handleSaveAccountSignature(conn.id, val)}
                       onShare={() => handleShareConnection(conn.id)}
                       onUnshare={() => handleUnshareConnection(conn.id)}
