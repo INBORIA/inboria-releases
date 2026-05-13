@@ -1152,12 +1152,12 @@ const HoldMeetingCard = memo(function HoldMeetingCard({
 
   return (
     <div
-      className="my-2 rounded-xl border border-amber-400/30 bg-zinc-900/80 overflow-hidden"
+      className="my-2 rounded-xl border border-white/20 bg-zinc-900/80 overflow-hidden"
       data-testid="inboria-hold-meeting-card"
     >
       <div className="px-3 py-2 border-b border-zinc-800 flex items-center gap-2">
-        <Calendar className="h-3.5 w-3.5 text-amber-300" />
-        <span className="text-[11px] uppercase tracking-wide text-amber-300 font-semibold">
+        <Calendar className="h-3.5 w-3.5 text-white" />
+        <span className="text-[11px] uppercase tracking-wide text-white font-semibold">
           Bloquer en agenda — en attente
         </span>
       </div>
@@ -1195,7 +1195,7 @@ const HoldMeetingCard = memo(function HoldMeetingCard({
         <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-950/60 flex gap-2">
           <Button
             size="sm"
-            className="h-7 text-xs bg-amber-600 hover:bg-amber-700 flex-1 disabled:opacity-50"
+            className="h-7 text-xs bg-cyan-600 hover:bg-cyan-700 text-white flex-1 disabled:opacity-50"
             onClick={doHold}
             disabled={!toValid || !dateValid}
             data-testid="inboria-hold-meeting-confirm"
@@ -1295,12 +1295,12 @@ const HoldMultiMeetingCard = memo(function HoldMultiMeetingCard({
 
   return (
     <div
-      className="my-2 rounded-xl border border-amber-400/30 bg-zinc-900/80 overflow-hidden"
+      className="my-2 rounded-xl border border-white/20 bg-zinc-900/80 overflow-hidden"
       data-testid="inboria-hold-multi-meeting-card"
     >
       <div className="px-3 py-2 border-b border-zinc-800 flex items-center gap-2">
-        <Calendar className="h-3.5 w-3.5 text-amber-300" />
-        <span className="text-[11px] uppercase tracking-wide text-amber-300 font-semibold">
+        <Calendar className="h-3.5 w-3.5 text-white" />
+        <span className="text-[11px] uppercase tracking-wide text-white font-semibold">
           Bloquer {holdMulti.slots.length} créneaux — en attente
         </span>
       </div>
@@ -1342,7 +1342,7 @@ const HoldMultiMeetingCard = memo(function HoldMultiMeetingCard({
         <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-950/60 flex gap-2">
           <Button
             size="sm"
-            className="h-7 text-xs bg-amber-600 hover:bg-amber-700 flex-1 disabled:opacity-50"
+            className="h-7 text-xs bg-cyan-600 hover:bg-cyan-700 text-white flex-1 disabled:opacity-50"
             onClick={doHold}
             disabled={!toValid || !slotsValid}
             data-testid="inboria-hold-multi-meeting-confirm"
