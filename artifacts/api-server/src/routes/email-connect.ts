@@ -348,7 +348,11 @@ router.get("/email/connect/outlook", requireAuth, async (req, res): Promise<void
 
     const redirectUri = getRedirectUri("outlook");
     const scope = encodeURIComponent("openid email Mail.Read Mail.Send offline_access");
-    const url = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${MICROSOFT_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${req.userId}&response_mode=query`;
+    // prompt=select_account force Microsoft à afficher le sélecteur de compte
+    // au lieu de reconnecter silencieusement avec le dernier compte utilisé.
+    // Indispensable pour les utilisateurs qui ont plusieurs alias (ex. gmail
+    // comme email principal + hotmail comme alias de communication).
+    const url = `https://login.microsoftonline.com/common/oauth2/v2.0/authorize?client_id=${MICROSOFT_CLIENT_ID}&response_type=code&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${req.userId}&response_mode=query&prompt=select_account`;
 
     res.json({ url });
   } catch {
