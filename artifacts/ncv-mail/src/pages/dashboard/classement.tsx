@@ -8,6 +8,7 @@ import {
   getListCategoriesQueryKey,
   useApplyPack,
   useGeneratePack,
+  useGetMyOrganisation,
 } from "@workspace/api-client-react";
 import { Button } from "@/components/ui/button";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
@@ -75,6 +76,7 @@ import {
   ArrowRight,
   Folder,
   User as UserIcon,
+  Info,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -194,6 +196,9 @@ export default function Classement() {
   const deleteCategory = useDeleteCategory();
   const applyPack = useApplyPack();
   const generatePack = useGeneratePack();
+  const { data: myOrg } = useGetMyOrganisation();
+  const myRole = (myOrg as { myRole?: string } | undefined)?.myRole;
+  const isOrgAdmin = !myOrg || myRole === "admin" || myRole === "owner";
 
   const [isCreateOpen, setIsCreateOpen] = useState(false);
   const [editCategory, setEditCategory] = useState<any>(null);
@@ -766,7 +771,7 @@ export default function Classement() {
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {duplicatePairs.length > 0 && (
+            {isOrgAdmin && duplicatePairs.length > 0 && (
               <Button
                 variant="outline"
                 size="sm"
@@ -779,6 +784,7 @@ export default function Classement() {
                 })}
               </Button>
             )}
+            {isOrgAdmin && (
             <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
               <DialogTrigger asChild>
                 <Button size="sm" className="gap-2">
@@ -845,8 +851,21 @@ export default function Classement() {
               </Form>
             </DialogContent>
           </Dialog>
+            )}
           </div>
         </div>
+
+        {!isOrgAdmin && (
+          <div className="mb-5 rounded-lg border border-border bg-card p-3 flex items-start gap-2.5">
+            <Info className="w-4 h-4 text-primary shrink-0 mt-0.5" />
+            <p className="text-[12px] text-[#b8c5d6] leading-relaxed">
+              {t("classification.adminOnlyNotice", {
+                defaultValue:
+                  "La gestion des catégories (création, modification, suppression, packs métier) est réservée à l'Admin Équipe pour garantir une classification cohérente. Vous pouvez consulter les catégories et leurs emails.",
+              })}
+            </p>
+          </div>
+        )}
 
         <Dialog
           open={!!editCategory}
@@ -1173,6 +1192,7 @@ export default function Classement() {
                   })}
                 </p>
               </div>
+              {isOrgAdmin && (
               <Button
                 size="sm"
                 variant="outline"
@@ -1181,6 +1201,7 @@ export default function Classement() {
               >
                 {t("classification.cleanupDuplicates.button")}
               </Button>
+              )}
             </div>
           )}
 
@@ -1324,6 +1345,7 @@ export default function Classement() {
                                         align="end"
                                         className="bg-card border-border"
                                       >
+                                        {isOrgAdmin && (
                                         <DropdownMenuItem
                                           onClick={() => handleOpenEdit(cat)}
                                           className="gap-2 cursor-pointer text-[#b8c5d6] hover:text-white"
@@ -1331,6 +1353,8 @@ export default function Classement() {
                                           <Edit2 className="h-3.5 w-3.5" />{" "}
                                           {t("classification.edit")}
                                         </DropdownMenuItem>
+                                        )}
+                                        {isOrgAdmin && (
                                         <AlertDialog>
                                           <AlertDialogTrigger asChild>
                                             <DropdownMenuItem
@@ -1365,6 +1389,7 @@ export default function Classement() {
                                             </AlertDialogFooter>
                                           </AlertDialogContent>
                                         </AlertDialog>
+                                        )}
                                       </DropdownMenuContent>
                                     </DropdownMenu>
                                   )}
@@ -1413,6 +1438,7 @@ export default function Classement() {
 
         {/* === ACCORDION BOTTOM (Packs métiers + Suggestions) === */}
         <Accordion type="multiple" className="space-y-3">
+          {isOrgAdmin && (
           <AccordionItem
             value="industry-packs"
             className="rounded-lg border border-border bg-card/50 px-4"
@@ -1539,8 +1565,9 @@ export default function Classement() {
               </div>
             </AccordionContent>
           </AccordionItem>
+          )}
 
-          {availableSuggestions.length > 0 && (
+          {isOrgAdmin && availableSuggestions.length > 0 && (
             <AccordionItem
               value="suggestions"
               className="rounded-lg border border-border bg-card/50 px-4"

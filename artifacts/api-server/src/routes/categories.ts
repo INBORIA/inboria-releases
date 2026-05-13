@@ -24,6 +24,30 @@ const openai = new OpenAI({
 
 const router: IRouter = Router();
 
+// Restriction "Admin Équipe" : si l'utilisateur appartient à une organisation,
+// seul le rôle 'admin' (ou 'owner', par sécurité) peut écrire (créer / modifier /
+// supprimer / appliquer un pack). Les utilisateurs sans organisation (solo,
+// legacy) restent autorisés. Lecture ouverte à tous les membres.
+async function isOrgAdminOrSolo(userId: string): Promise<boolean> {
+  const { data } = await supabaseAdmin
+    .from("organisation_members")
+    .select("role")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .maybeSingle();
+  if (!data) return true;
+  return data.role === "admin" || data.role === "owner";
+}
+
+async function denyIfNotAdmin(userId: string, res: any): Promise<boolean> {
+  const ok = await isOrgAdminOrSolo(userId);
+  if (!ok) {
+    res.status(403).json({ error: "forbidden", reason: "team_admin_only" });
+    return true;
+  }
+  return false;
+}
+
 router.get("/categories", requireAuth, async (req, res): Promise<void> => {
   try {
     // Garantit qu'on retourne TOUJOURS la catégorie système "Non classé".
@@ -58,6 +82,7 @@ router.get("/categories", requireAuth, async (req, res): Promise<void> => {
 
 router.post("/categories", requireAuth, async (req, res): Promise<void> => {
   try {
+    if (await denyIfNotAdmin(req.userId!, res)) return;
     const parsed = CreateCategoryBody.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({ error: parsed.error.message });
@@ -113,6 +138,7 @@ router.post("/categories", requireAuth, async (req, res): Promise<void> => {
 
 router.patch("/categories/:id", requireAuth, async (req, res): Promise<void> => {
   try {
+    if (await denyIfNotAdmin(req.userId!, res)) return;
     const parsed = UpdateCategoryBody.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({ error: parsed.error.message });
@@ -170,6 +196,7 @@ router.patch("/categories/:id", requireAuth, async (req, res): Promise<void> => 
 
 router.delete("/categories/:id", requireAuth, async (req, res): Promise<void> => {
   try {
+    if (await denyIfNotAdmin(req.userId!, res)) return;
     const catId = parseInt(req.params.id as string, 10);
     if (isNaN(catId)) {
       res.status(400).json({ error: "ID invalide" });
@@ -267,6 +294,7 @@ router.post(
   requireAuth,
   async (req, res): Promise<void> => {
     try {
+      if (await denyIfNotAdmin(req.userId!, res)) return;
       const sourceId = parseInt(req.params.id as string, 10);
       const targetId = parseInt(req.params.targetId as string, 10);
       if (isNaN(sourceId) || isNaN(targetId)) {
@@ -363,6 +391,7 @@ router.post(
 
 router.post("/categories/apply-pack", requireAuth, async (req, res): Promise<void> => {
   try {
+    if (await denyIfNotAdmin(req.userId!, res)) return;
     const parsed = ApplyPackBody.safeParse(req.body);
     if (!parsed.success) {
       res.status(400).json({ error: parsed.error.message });
@@ -479,6 +508,7 @@ router.post("/categories/apply-pack", requireAuth, async (req, res): Promise<voi
 
 router.post("/categories/generate-pack", requireAuth, async (req, res): Promise<void> => {
   try {
+    if (await denyIfNotAdmin(req.userId!, res)) return;
     const entitlement = await checkEntitlement(req.userId!, AI_COST.generate_pack);
     if (entitlement.blocked) { res.status(403).json({ error: entitlement.reason }); return; }
 
