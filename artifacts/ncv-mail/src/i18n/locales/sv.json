@@ -22,7 +22,8 @@
     "exportError": "Fel vid export",
     "add": "Lägg till",
     "edit": "Ändra",
-    "reset": "Återställ"
+    "reset": "Återställ",
+    "more": "Mer"
   },
   "nav": {
     "home": "Hem",

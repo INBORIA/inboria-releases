@@ -22,7 +22,8 @@
     "exportError": "Ekspordi ajal tekkis viga",
     "add": "Lisa",
     "edit": "Muuda",
-    "reset": "Taasta"
+    "reset": "Taasta",
+    "more": "Veel"
   },
   "nav": {
     "home": "Avaleht",

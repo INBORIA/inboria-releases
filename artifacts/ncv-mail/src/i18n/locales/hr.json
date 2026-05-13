@@ -22,7 +22,8 @@
     "exportError": "Greška prilikom izvoza",
     "add": "Dodaj",
     "edit": "Uredi",
-    "reset": "Ponovno postavi"
+    "reset": "Ponovno postavi",
+    "more": "Više"
   },
   "nav": {
     "home": "Početna",

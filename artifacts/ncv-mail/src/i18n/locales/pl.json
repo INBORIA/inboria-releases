@@ -22,7 +22,8 @@
     "exportError": "Błąd podczas eksportu",
     "add": "Dodaj",
     "edit": "Edytuj",
-    "reset": "Zresetuj"
+    "reset": "Zresetuj",
+    "more": "Więcej"
   },
   "nav": {
     "home": "Strona główna",

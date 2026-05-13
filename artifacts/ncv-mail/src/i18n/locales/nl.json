@@ -22,7 +22,8 @@
     "exportError": "Fout bij exporteren",
     "add": "Toevoegen",
     "edit": "Bewerken",
-    "reset": "Resetten"
+    "reset": "Resetten",
+    "more": "Meer"
   },
   "nav": {
     "home": "Start",

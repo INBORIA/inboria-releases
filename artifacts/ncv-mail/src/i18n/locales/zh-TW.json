@@ -22,7 +22,8 @@
     "exportError": "匯出時發生錯誤",
     "add": "新增",
     "edit": "修改",
-    "reset": "重設"
+    "reset": "重設",
+    "more": "更多"
   },
   "nav": {
     "home": "首頁",

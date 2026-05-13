@@ -22,7 +22,8 @@
     "exportError": "Fejl under eksport",
     "add": "Tilføj",
     "edit": "Rediger",
-    "reset": "Nulstil"
+    "reset": "Nulstil",
+    "more": "Mere"
   },
   "nav": {
     "home": "Hjem",

@@ -22,7 +22,8 @@
     "exportError": "Dışa aktarım sırasında hata",
     "add": "Ekle",
     "edit": "Düzenle",
-    "reset": "Sıfırla"
+    "reset": "Sıfırla",
+    "more": "Daha fazla"
   },
   "nav": {
     "home": "Ana sayfa",

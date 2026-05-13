@@ -22,7 +22,8 @@
     "exportError": "Error durant l'exportació",
     "add": "Afegir",
     "edit": "Modificar",
-    "reset": "Reiniciar"
+    "reset": "Reiniciar",
+    "more": "Més"
   },
   "nav": {
     "home": "Inici",

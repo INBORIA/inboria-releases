@@ -22,7 +22,8 @@
     "exportError": "Chyba při exportu",
     "add": "Přidat",
     "edit": "Upravit",
-    "reset": "Obnovit"
+    "reset": "Obnovit",
+    "more": "Více"
   },
   "nav": {
     "home": "Domovská stránka",

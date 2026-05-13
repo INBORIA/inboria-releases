@@ -22,7 +22,8 @@
     "exportError": "Virhe viennissä",
     "add": "Lisää",
     "edit": "Muokkaa",
-    "reset": "Nollaa"
+    "reset": "Nollaa",
+    "more": "Lisää"
   },
   "nav": {
     "home": "Koti",

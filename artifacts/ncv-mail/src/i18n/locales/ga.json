@@ -22,7 +22,8 @@
     "exportError": "Earráid le linn na honnmhairiúcháin",
     "add": "Cuir leis",
     "edit": "Cuir in eagar",
-    "reset": "Athshocraigh"
+    "reset": "Athshocraigh",
+    "more": "Tuilleadh"
   },
   "nav": {
     "home": "Baile",
