@@ -26,11 +26,22 @@ export default function Programmes() {
   const qc = useQueryClient();
   const { toast } = useToast();
   const { data, isLoading } = useListScheduledEmails();
+  const [headerSearch, setHeaderSearch] = useState("");
   const cancelMut = useCancelScheduledEmail();
   const fmt = new Intl.DateTimeFormat(i18n.language, { dateStyle: "medium", timeStyle: "short" });
   const [openId, setOpenId] = useState<number | null>(null);
 
-  const emails = (data as any)?.emails || [];
+  const allScheduled = (data as any)?.emails || [];
+  const emails = (() => {
+    const q = headerSearch.trim().toLowerCase();
+    if (!q) return allScheduled;
+    return allScheduled.filter((e: any) => {
+      const subject = String(e.subject ?? "").toLowerCase();
+      const recipient = String(e.recipient ?? "").toLowerCase();
+      const body = String(e.body ?? "").toLowerCase();
+      return subject.includes(q) || recipient.includes(q) || body.includes(q);
+    });
+  })();
   const openedEmail = emails.find((e: any) => e.id === openId) || null;
 
   const handleCancel = (id: number) => {
@@ -51,7 +62,11 @@ export default function Programmes() {
 
   return (
     <DashboardLayout>
-      <MailPageHeader currentTab="programmes" />
+      <MailPageHeader
+        currentTab="programmes"
+        searchValue={headerSearch}
+        onSearchChange={setHeaderSearch}
+      />
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-6">
         <BackToInboxButton />
         <section>

@@ -103,7 +103,17 @@ export default function Envoyes() {
     if (hasMore && !isFetching) setPage((p) => p + 1);
   }, [hasMore, isFetching]);
 
-  const sentEmails = accumulated;
+  const [headerSearch, setHeaderSearch] = useState("");
+  const sentEmails = (() => {
+    const q = headerSearch.trim().toLowerCase();
+    if (!q) return accumulated;
+    return accumulated.filter((e: any) => {
+      const subject = String(e.subject ?? "").toLowerCase();
+      const recipient = String(e.recipient ?? e.to ?? "").toLowerCase();
+      const preview = String(e.preview ?? e.bodyText ?? "").toLowerCase();
+      return subject.includes(q) || recipient.includes(q) || preview.includes(q);
+    });
+  })();
   const { data: projects } = useListProjects();
   const updateEmail = useUpdateEmail();
   const deleteEmail = useDeleteEmail();
@@ -495,7 +505,11 @@ export default function Envoyes() {
 
   return (
     <DashboardLayout>
-      <MailPageHeader currentTab="envoyes" />
+      <MailPageHeader
+        currentTab="envoyes"
+        searchValue={headerSearch}
+        onSearchChange={setHeaderSearch}
+      />
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton />
         <div className="flex items-center justify-between mb-5">

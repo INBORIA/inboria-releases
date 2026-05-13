@@ -117,6 +117,7 @@ export default function MesDossiers() {
   const [folderToDelete, setFolderToDelete] = useState<UserFolder | null>(null);
   const [selectedFolderId, setSelectedFolderId] = useState<string | null>(null);
   const [selectedEmailId, setSelectedEmailId] = useState<number | null>(null);
+  const [headerSearch, setHeaderSearch] = useState("");
 
   const { data: folders, isLoading } = useListFolders();
   const createFolder = useCreateFolder();
@@ -725,7 +726,11 @@ export default function MesDossiers() {
   // Vue liste des dossiers
   return (
     <DashboardLayout>
-      <MailPageHeader currentTab="dossiers" />
+      <MailPageHeader
+        currentTab="dossiers"
+        searchValue={headerSearch}
+        onSearchChange={setHeaderSearch}
+      />
       <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5">
         <BackToInboxButton />
         <div className="flex items-center justify-between mb-5">
@@ -768,7 +773,16 @@ export default function MesDossiers() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-            {folders.map((f) => (
+            {folders
+              .filter((f) => {
+                const q = headerSearch.trim().toLowerCase();
+                if (!q) return true;
+                return (
+                  String(f.name ?? "").toLowerCase().includes(q) ||
+                  String((f as any).description ?? "").toLowerCase().includes(q)
+                );
+              })
+              .map((f) => (
               <div
                 key={f.id}
                 className="bg-card rounded-lg border border-border p-4 hover:border-primary/30 transition-colors cursor-pointer group relative"
