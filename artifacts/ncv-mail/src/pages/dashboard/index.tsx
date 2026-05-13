@@ -65,7 +65,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip, MailOpen, Mail, BellOff, Bell, Copy, Printer, Folder, FolderKanban, MailCheck, Type as TypeIcon, Activity } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip, MailOpen, Mail, BellOff, Bell, Copy, Printer, Folder, FolderKanban, MailCheck, MoreHorizontal, Type as TypeIcon, Activity } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -80,7 +80,7 @@ import {
   DropdownMenuCheckboxItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { useState, useEffect, useRef, useCallback, useMemo, memo } from "react";
+import { useState, useEffect, useLayoutEffect, useRef, useCallback, useMemo, memo } from "react";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -94,7 +94,7 @@ import { resolveMailboxBadge, recipientMatchesAddress, type MailboxBadge } from 
 import { EmailDetail } from "@/components/email-detail/EmailDetail";
 import { PriorityBadge, PRIORITY_BAR_COLORS } from "@/components/email-detail/helpers";
 
-function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean }) {
+function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, onReply, onForward, onToggleRead, onMore }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; onReply?: (id: number) => void; onForward?: (id: number) => void; onToggleRead?: (id: number) => void; onMore?: (e: React.MouseEvent, emailId: number) => void }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
@@ -122,7 +122,14 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
       }`}
       onClick={onClick}
       onContextMenu={(e) => { e.preventDefault(); onContextMenu?.(e, email.id); }}
-      onMouseDown={(e) => { if (e.button === 0) { e.preventDefault(); onDragSelectStart?.(email.id); } }}
+      onMouseDown={(e) => {
+        // Ne pas démarrer le drag-select quand on clique sur un bouton
+        // d'action (icônes au survol : Reply/Forward/Archive/Delete/More…)
+        // sinon le mouvement involontaire de la souris pendant le clic
+        // peut sélectionner une plage de mails.
+        if ((e.target as HTMLElement).closest('button,[role="button"],a,input,textarea,select')) return;
+        if (e.button === 0) { e.preventDefault(); onDragSelectStart?.(email.id); }
+      }}
     >
       {/* Filet de couleur priorité — visible uniquement en vue inbox-classic */}
       {isClassicMirror && <div className={`absolute left-0 top-0 bottom-0 w-0.5 ${barColor}`} />}
@@ -208,8 +215,38 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
         </span>
       </div>
 
-      {/* Actions au survol */}
+      {/* Actions au survol — parité avec le clic droit. Les actions
+          principales sont en icônes ; le bouton « ⋯ » ouvre le menu
+          contextuel complet (Reporter, Catégorie, Déplacer vers, Copier,
+          Télécharger, Imprimer, Bloquer expéditeur). */}
       <div className="hidden group-hover:flex items-center gap-0.5 shrink-0">
+        {onReply && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onReply(email.id); }}
+            className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
+            title={t("inbox.reply", "Répondre")}
+          >
+            <Reply className="w-3.5 h-3.5" />
+          </button>
+        )}
+        {onForward && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onForward(email.id); }}
+            className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
+            title={t("inbox.forward", "Transférer")}
+          >
+            <Forward className="w-3.5 h-3.5" />
+          </button>
+        )}
+        {onToggleRead && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onToggleRead(email.id); }}
+            className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
+            title={isUnread ? t("inbox.markAsRead", "Marquer comme lu") : t("inbox.markAsUnread", "Marquer comme non lu")}
+          >
+            {isUnread ? <MailOpen className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
+          </button>
+        )}
         <button
           onClick={(e) => { e.stopPropagation(); onArchive(email.id); }}
           className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
@@ -224,6 +261,15 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
         >
           <Trash2 className="w-3.5 h-3.5" />
         </button>
+        {onMore && (
+          <button
+            onClick={(e) => { e.stopPropagation(); onMore(e, email.id); }}
+            className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
+            title={t("inbox.moreActions", { defaultValue: "Plus d'actions" })}
+          >
+            <MoreHorizontal className="w-3.5 h-3.5" />
+          </button>
+        )}
       </div>
     </div>
   );
@@ -3539,6 +3585,34 @@ export default function Dashboard() {
   };
   const contextMenuRef = useRef<HTMLDivElement>(null);
   const contextMenuCloseTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Auto-flip du menu contextuel : on mesure la hauteur réelle après render
+  // et on ancre le menu au-dessus du curseur si pas la place dessous,
+  // à gauche si pas la place à droite. Pas de scroll interne.
+  const [ctxMenuPos, setCtxMenuPos] = useState<{ top: number; left: number; ready: boolean; flipSubLeft: boolean }>({ top: 0, left: 0, ready: false, flipSubLeft: false });
+  useLayoutEffect(() => {
+    if (!contextMenu) {
+      setCtxMenuPos({ top: 0, left: 0, ready: false, flipSubLeft: false });
+      return;
+    }
+    const el = contextMenuRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const margin = 8;
+    let top = contextMenu.y;
+    let left = contextMenu.x;
+    if (top + rect.height > window.innerHeight - margin) {
+      top = Math.max(margin, contextMenu.y - rect.height);
+    }
+    if (left + rect.width > window.innerWidth - margin) {
+      left = Math.max(margin, contextMenu.x - rect.width);
+    }
+    // Si le menu est dans la moitié droite de l'écran, les sous-menus
+    // (Catégorie / Reporter / Déplacer vers) doivent s'ouvrir à gauche
+    // pour ne pas déborder.
+    const subWidth = 220;
+    const flipSubLeft = left + rect.width + subWidth > window.innerWidth - margin;
+    setCtxMenuPos({ top, left, ready: true, flipSubLeft });
+  }, [contextMenu]);
   const closeContextMenu = () => {
     if (categorySubmenuTimerRef.current) { clearTimeout(categorySubmenuTimerRef.current); categorySubmenuTimerRef.current = null; }
     if (contextMenuCloseTimer.current) { clearTimeout(contextMenuCloseTimer.current); contextMenuCloseTimer.current = null; }
@@ -4431,7 +4505,11 @@ export default function Dashboard() {
       ref={contextMenuRef}
       data-context-menu
       className="fixed z-[9999] min-w-[180px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-100"
-      style={{ top: Math.min(contextMenu.y, window.innerHeight - 320), left: Math.min(contextMenu.x, window.innerWidth - 220) }}
+      style={{
+        top: ctxMenuPos.ready ? ctxMenuPos.top : contextMenu.y,
+        left: ctxMenuPos.ready ? ctxMenuPos.left : contextMenu.x,
+        visibility: ctxMenuPos.ready ? "visible" : "hidden",
+      }}
       onMouseLeave={() => {
         if (contextMenuCloseTimer.current) clearTimeout(contextMenuCloseTimer.current);
         contextMenuCloseTimer.current = setTimeout(() => { setContextMenu(null); setCategorySubmenuOpen(false); setFolderSubmenuOpen(false); }, 250);
@@ -4502,7 +4580,7 @@ export default function Dashboard() {
                   <ChevronRight className="w-3 h-3 opacity-60" />
                 </button>
                 {categorySubmenuOpen && (
-                  <div className="absolute left-full top-0 -ml-px pl-2 min-w-[200px] max-h-[260px] overflow-y-auto"
+                  <div className={`absolute top-0 ${ctxMenuPos.flipSubLeft ? "right-full -mr-px pr-2" : "left-full -ml-px pl-2"} min-w-[200px] max-h-[260px] overflow-y-auto`}
                     onMouseEnter={openCategorySubmenu} onMouseLeave={scheduleCloseCategorySubmenu}>
                     <div className="rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1">
                       {categoryCounts.map((c: any) => (
@@ -4526,7 +4604,7 @@ export default function Dashboard() {
                   <ChevronRight className="w-3 h-3 opacity-60" />
                 </button>
                 {folderSubmenuOpen && (
-                  <div className="absolute left-full top-0 -ml-px pl-2 min-w-[200px] max-h-[260px] overflow-y-auto"
+                  <div className={`absolute top-0 ${ctxMenuPos.flipSubLeft ? "right-full -mr-px pr-2" : "left-full -ml-px pl-2"} min-w-[200px] max-h-[260px] overflow-y-auto`}
                     onMouseEnter={openFolderSubmenu} onMouseLeave={scheduleCloseFolderSubmenu}>
                     <div className="rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1">
                       {userFolders.map((f) => (
@@ -4583,7 +4661,7 @@ export default function Dashboard() {
                   <ChevronRight className="w-3 h-3 opacity-60" />
                 </button>
                 {folderSubmenuOpen && (
-                  <div className="absolute left-full top-0 -ml-px pl-2 min-w-[200px] max-h-[260px] overflow-y-auto"
+                  <div className={`absolute top-0 ${ctxMenuPos.flipSubLeft ? "right-full -mr-px pr-2" : "left-full -ml-px pl-2"} min-w-[200px] max-h-[260px] overflow-y-auto`}
                     onMouseEnter={openFolderSubmenu} onMouseLeave={scheduleCloseFolderSubmenu}>
                     <div className="rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1">
                       {userFolders.map((f) => (
@@ -5721,6 +5799,10 @@ export default function Dashboard() {
                                 mailboxBadge={badge}
                                 showMailboxBadge={selectedAccountId === "all" && (composeConnections?.length || 0) >= 2}
                                 isSlaBreach={slaBreachIds.has(Number(email.id))}
+                                onReply={handleQuickReply}
+                                onForward={handleQuickForward}
+                                onToggleRead={handleToggleRead}
+                                onMore={handleContextMenu}
                               />
                             );
                           };
