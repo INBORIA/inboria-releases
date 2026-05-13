@@ -3413,6 +3413,25 @@ export default function Dashboard() {
   });
   const openTasksCount = Array.isArray(openTasksData) ? openTasksData.length : 0;
 
+  // Compteur emails reportés (snoozed) — alimente le badge de l'onglet
+  // Reportés dans la barre de Réception (task #293).
+  const { data: snoozedData } = useQuery<any[]>({
+    queryKey: ["emails-snoozed-count"],
+    refetchInterval: 60_000,
+    queryFn: async () => {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) return [];
+      const res = await fetch(`${import.meta.env.BASE_URL}api/emails?snoozed=1&limit=200`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+  const snoozedCount = Array.isArray(snoozedData) ? snoozedData.length : 0;
+
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
   const [composePrefill, setComposePrefill] = useState<{ to: string; subject: string; body: string } | null>(null);
@@ -5122,6 +5141,22 @@ export default function Dashboard() {
                   )}
                 </Link>
               )}
+              {/* Onglet Reportés — déplacé depuis la sidebar (task #293).
+                  Toujours visible avec badge du nombre de mails reportés. */}
+              <Link
+                href="/dashboard/reportes"
+                className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                  routeLocation === "/dashboard/reportes"
+                    ? "bg-primary/15 text-primary border border-primary/20"
+                    : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                }`}
+              >
+                <BellOff className="w-3 h-3" />
+                {t("sidebar.snoozed", "Reportés")}
+                {snoozedCount > 0 && (
+                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{snoozedCount}</span>
+                )}
+              </Link>
               {/* Onglet Tâches — déplacé depuis la sidebar (task #290).
                   Toujours visible (perso + équipe) avec badge ouverts. */}
               <Link

@@ -109,7 +109,9 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
     // renommé « Assignés » et déplacé dans la barre d'onglets de la
     // Réception (cf. pages/dashboard/index.tsx). On le garde hors du
     // menu latéral pour éviter la redondance.
-    { name: t("sidebar.snoozed", "Reportés"), href: "/dashboard/reportes", icon: BellOff },
+    // Note (task #293) : « Reportés » a été déplacé dans la barre d'onglets
+    // de la Réception, à côté de Tâches. Retiré de la sidebar pour éviter
+    // la redondance, comme « Tâches » avant lui (#290).
     { name: t("sidebar.scheduled", "Programmés"), href: "/dashboard/programmes", icon: CalendarClock },
     // Note (task #290) : « Tâches » a été déplacé dans la barre d'onglets
     // de la Réception, à côté d'Assignés. Retiré de la sidebar pour éviter
