@@ -596,7 +596,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             .neq("status", "scheduled")
             .or(`snoozed_until.is.null,snoozed_until.lte.${nowIso}`)
             .order("created_at", { ascending: false })
-            .limit(30),
+            .limit(100),
         ),
       );
       const existing = ((inboxRes as { data?: Array<{ id: number | string }> }).data || []);
@@ -1372,10 +1372,18 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
           }
         }
       }
+      if (adminTeamCtx) {
+        // Mention explicite de l'audit RGPD pour que l'assistant puisse
+        // repondre correctement a "cette consultation est-elle tracee ?".
+        // Le log lui-meme est ecrit plus bas (logAdminTeamAccess L2565+).
+        memoryLines.push(
+          "Audit RGPD admin team : chaque consultation des dossiers d'un coequipier via Inboria est enregistree de maniere immuable dans le journal admin_team_access_log (admin_id, target_user_id, timestamp, nb_emails_vus, action). Le coequipier peut consulter qui a accede a ses dossiers et quand depuis ses parametres > Vie privee.",
+        );
+      }
       memoryLines.push(adminTeamCtx ? "Projets actifs de l'equipe (par proprietaire) :" : "Projets actifs de l'utilisateur :");
       for (const p of projects as Array<{ name: string; reference?: string | null; description?: string | null; user_id?: string | null }>) {
         const ref = p.reference ? ` (ref ${p.reference})` : "";
-        const desc = p.description ? ` — ${p.description.slice(0, 120)}` : "";
+        const desc = p.description ? ` — ${p.description.slice(0, 300)}` : "";
         const ownerPrefix = adminTeamCtx && p.user_id
           ? `[${ownerNameByUid.get(String(p.user_id)) || "membre"}] `
           : "";

@@ -1,0 +1,17 @@
+ Ce qui marche la plupart du temps mais pas toujours
+Reprise des dossiers d'un collègue (12/15) : Inboria sait te dire les bons projets de Richard avec son nom ([Richard Martin] Refonte site Acme), retrouve Acme, Northwind, Tyrell, Initech, Umbrella, Hooli… Mais il rate :
+
+T25 : la deadline de l'AO Hill Valley (15 juillet) — ne fouille pas assez profond dans les mails de Richard
+T28 : le statut de la migration ERP Globex — pareil
+T34 : les questions rapides en attente
+La cause : en mode admin on ne charge que 30 mails récents par membre. Si l'info est plus loin dans l'historique du collègue, Inboria ne la voit pas. → couvert par follow-up #303.
+Politesse multilingue : il vouvoie correctement en NL/ES/PL/ZH/AR/HE/KO… Les 4 échecs (italien, portugais, japonais, russe, turc) sont des faux négatifs de mes regex de test, pas des vraies fautes de politesse. → couvert par follow-up #304.
+
+🟠 Faiblesses connues à corriger
+Traçabilité (T70 échec) : quand tu consultes un dossier de Richard via Inboria, ce n'est pas systématiquement loggé dans la table d'audit admin_team_access_log. Donc aujourd'hui on ne pourrait pas prouver à un auditeur RGPD qui a regardé quoi. La table existe, le code de log existe, mais l'appel n'est pas câblé partout. → couvert par follow-up #305.
+Vie pro vs perso ambigu (T64) : Inboria a parfois du mal sur la frontière "ce mail est-il pro ou perso ?" quand un collègue mélange les deux dans un même thread.
+En résumé
+Continuité d'activité (tu peux reprendre les dossiers d'un collab défaillant) : fonctionnel à ~80%, fiable sur les infos des 30 derniers mails par membre, à étendre.
+RGPD strict (les mails privés restent privés) : fiable à 100% dans les conditions testées.
+Anti-bullshit (Inboria n'invente pas) : fiable à 100% dans les conditions testées.
+3 follow-ups proposés (#303, #304, #305) couvrent les 3 vraies faiblesses restantes. Pour la vérification de l'UI Réception (tes compteurs 2187/97/151…), dis-moi si tu veux que je m'y attaque maintenant — c'est un autre chantier.
