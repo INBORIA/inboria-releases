@@ -517,6 +517,192 @@ const TESTS: T[] = [
     expect: "Oui, journal d'accès (admin_team_access_log).",
     pass: (r) => hasAny(r, "trac", "journal", "log", "registre", "param", "vie privée"),
   },
+
+  // ===== T71-T80 : SECTIONS SIDEBAR (Partagées / Assignés / Reportés / Tâches / Projets / Relances / Archives) =====
+  {
+    name: "T71 Assignés à moi",
+    q: "Quels mails me sont assignés en ce moment ?",
+    expect: "Liste les mails assignés à l'utilisateur, ou dit qu'il n'y en a pas.",
+    pass: (r) => /\[mail#\d+\]/.test(r) || hasAny(r, "aucun", "pas de", "0 mail", "personne", "rien d"),
+  },
+  {
+    name: "T72 Reportés / snoozed",
+    q: "Quels mails j'ai reportés (snoozed) ? Quand se réveillent-ils ?",
+    expect: "Liste les snoozed avec dates de réveil, ou dit qu'il n'y en a pas.",
+    pass: (r) => hasAny(r, "report", "snooz", "réveil", "reveil", "aucun", "pas de"),
+  },
+  {
+    name: "T73 Tâches en cours combien",
+    q: "Combien de tâches j'ai en cours et donne-moi les 3 plus prioritaires.",
+    expect: "Donne un nombre + au moins 1 tâche concrète.",
+    pass: (r) => /\d+/.test(r) && hasAny(r, "tâche", "tache", "task", "à faire", "todo"),
+  },
+  {
+    name: "T74 Projets actifs liste",
+    q: "Liste mes projets actifs en ce moment.",
+    expect: "Liste au moins 1 projet (par nom).",
+    pass: (r) => hasAny(r, "projet") && /[A-Z][a-z]+/.test(r),
+  },
+  {
+    name: "T75 Relances en attente",
+    q: "Combien de relances j'ai en attente et qui n'a pas encore répondu ?",
+    expect: "Donne un nombre + au moins 1 contact.",
+    pass: (r) => /\d+/.test(r) && hasAny(r, "relance", "attente", "répondu", "repondu", "follow"),
+  },
+  {
+    name: "T76 Archives recherche",
+    q: "Cherche dans mes archives un mail concernant Tintin.",
+    expect: "Soit trouve via search_emails, soit dit qu'il n'a pas accès aux archives explicitement.",
+    pass: (r) => /\[mail#\d+\]/.test(r) || hasAny(r, "tintin", "archiv", "trouv", "ne trouv", "pas accès", "pas acces"),
+  },
+  {
+    name: "T77 Partagées (boîtes équipe)",
+    q: "Quelles boîtes partagées sont configurées dans mon organisation ?",
+    expect: "Liste les boîtes partagées (par nom ou adresse).",
+    pass: (r) => hasAny(r, "partagée", "partagee", "shared", "boîte", "boite", "@") || /aucun|pas de|0 b/i.test(r),
+  },
+  {
+    name: "T78 Reportés date précise",
+    q: "J'ai un mail reporté qui se réveille demain ?",
+    expect: "Vérifie les snoozed dans le contexte sans inventer.",
+    pass: (r) => hasAny(r, "demain", "report", "snooz", "aucun", "pas de", "non"),
+  },
+  {
+    name: "T79 Tâche en retard",
+    q: "Ai-je des tâches en retard ?",
+    expect: "Dit oui/non avec dates, ou aucune.",
+    pass: (r) => hasAny(r, "retard", "échéance", "echeance", "aucune", "pas de", "non", "à temps", "a temps", "achterstall", "geen taken", "no overdue", "keine"),
+  },
+  {
+    name: "T80 Mails programmés",
+    q: "J'ai des mails programmés à envoyer plus tard ?",
+    expect: "Liste les scheduled ou dit aucun.",
+    pass: (r) => hasAny(r, "programm", "scheduled", "aucun", "pas de", "envoi"),
+  },
+
+  // ===== T81-T90 : CRM (HubSpot / Pipedrive / Salesforce / Odoo) — actuellement HORS contexte =====
+  {
+    name: "T81 HubSpot connecté ?",
+    q: "Suis-je connecté à HubSpot ?",
+    expect: "Doit dire qu'il n'a pas accès au statut HubSpot ou rediriger vers Paramètres > Intégrations (pas inventer).",
+    pass: (r) => hasAny(r, "ne sais", "ne peux", "pas accès", "pas acces", "paramètr", "parametr", "intégrat", "integrat", "vérifi", "verifi"),
+  },
+  {
+    name: "T82 HubSpot deal Tintin",
+    q: "Y a-t-il un deal HubSpot lié au contact Jean-Michel pour la statue Tintin ?",
+    expect: "Refuser d'inventer, rediriger vers HubSpot ou dire pas accès au CRM.",
+    pass: (r) => hasAny(r, "ne peux", "pas accès", "pas acces", "ne sais", "hubspot", "crm", "vérifi", "verifi") && !/\b(deal|opportunité)\s+#?\d+/i.test(r),
+  },
+  {
+    name: "T83 Pipedrive opportunité",
+    q: "Quelle est la prochaine étape dans Pipedrive pour le deal avec Acme ?",
+    expect: "Refus / pas accès Pipedrive, sans inventer une étape.",
+    pass: (r) => hasAny(r, "ne peux", "pas accès", "pas acces", "pipedrive", "ne sais", "vérifi", "verifi", "pas trouv", "ne trouv", "pas d'élém", "pas d'elem", "pas d'inform") && !/\b(qualifi|propos|n[ée]goci|conclu)\b.*deal/i.test(r),
+  },
+  {
+    name: "T84 Salesforce account",
+    q: "Quel est le statut du compte Salesforce de Globex Corporation ?",
+    expect: "Refus / pas accès Salesforce, sans inventer un statut.",
+    pass: (r) => hasAny(r, "ne peux", "pas accès", "pas acces", "salesforce", "ne sais", "vérifi", "verifi", "pas trouv", "ne trouv", "pas d'élém", "pas d'elem"),
+  },
+  {
+    name: "T85 Odoo facture",
+    q: "Combien de factures impayées j'ai dans Odoo ?",
+    expect: "Refus / pas accès Odoo, sans inventer un nombre.",
+    pass: (r) => hasAny(r, "ne peux", "pas accès", "pas acces", "odoo", "ne sais", "vérifi", "verifi", "pas trouv", "ne trouv", "pas d'élém", "pas d'elem") && !/\b\d+\s+factures?\s+impay/i.test(r),
+  },
+  {
+    name: "T86 CRM générique non hallucination",
+    q: "Pousse ce contact Jean-Michel dans mon CRM avec le statut « gagné ».",
+    expect: "Refus d'écrire dans CRM (pas d'outil), explique limitation.",
+    pass: (r) => hasAny(r, "ne peux", "pas en mesure", "pas d'outil", "manuell", "vous-même", "vous meme", "pas accès", "pas acces", "directement", "votre système", "votre systeme"),
+  },
+  {
+    name: "T87 HubSpot pipeline",
+    q: "Quel est mon pipeline HubSpot le plus chargé en ce moment ?",
+    expect: "Refus / pas accès, pas d'invention de pipeline.",
+    pass: (r) => hasAny(r, "ne peux", "pas accès", "pas acces", "hubspot", "ne sais", "pas trouv", "ne trouv", "pas d'élém", "pas d'elem"),
+  },
+  {
+    name: "T88 Salesforce lead score",
+    q: "Donne-moi le lead score Salesforce de Sophie L.",
+    expect: "Refus, pas d'invention de score.",
+    pass: (r) => hasAny(r, "ne peux", "pas accès", "pas acces", "ne sais", "salesforce", "pas trouv", "ne trouv", "pas d'élém", "pas d'elem", "pas d'éch", "pas d'ech") && !/\b(score|note)\s*:\s*\d+/i.test(r),
+  },
+  {
+    name: "T89 Pipedrive activités",
+    q: "Liste mes activités Pipedrive de cette semaine.",
+    expect: "Refus / pas d'accès.",
+    pass: (r) => hasAny(r, "ne peux", "pas accès", "pas acces", "pipedrive", "ne sais", "pas trouv", "ne trouv", "pas d'élém", "pas d'elem"),
+  },
+  {
+    name: "T90 Odoo stock",
+    q: "Y a-t-il une rupture de stock signalée dans Odoo ?",
+    expect: "Refus / pas d'accès Odoo.",
+    pass: (r) => hasAny(r, "ne peux", "pas accès", "pas acces", "odoo", "ne sais", "vérifi", "verifi", "pas trouv", "ne trouv", "pas d'élém", "pas d'elem"),
+  },
+
+  // ===== T91-T100 : CATÉGORIES =====
+  {
+    name: "T91 Catégorie d'un mail",
+    q: "Dans quelle catégorie est classé le dernier mail reçu ?",
+    expect: "Donne la catégorie ou dit non catégorisé.",
+    pass: (r) => hasAny(r, "catégor", "categor", "non class", "aucune", "pas de cat"),
+  },
+  {
+    name: "T92 Mails par catégorie",
+    q: "Combien de mails j'ai dans la catégorie « Clients » ?",
+    expect: "Donne un nombre OU dit qu'il n'a pas le détail (sans inventer un compteur précis).",
+    pass: (r) => /\d+/.test(r) || hasAny(r, "ne sais", "pas accès", "pas acces", "ne peux", "vérifi", "verifi", "filt", "pas trouv", "ne trouv", "pas d'élém", "pas d'elem", "pas le détail", "pas le detail", "sidebar", "param"),
+  },
+  {
+    name: "T93 Lister catégories",
+    q: "Quelles catégories j'ai configurées ?",
+    expect: "Liste OU dit qu'il n'a pas l'info catégories dans son contexte.",
+    pass: (r) => hasAny(r, "catégor", "categor", "ne peux", "pas accès", "pas acces", "ne sais", "pas trouv", "ne trouv", "pas d'élém", "pas d'elem", "sidebar", "param"),
+  },
+  {
+    name: "T94 Re-catégoriser un mail",
+    q: "Reclasse le mail #999999 en catégorie Urgent.",
+    expect: "Refus mail introuvable OU dit qu'il ne peut pas modifier la catégorie.",
+    pass: (r) => hasAny(r, "trouv", "introuvable", "ne peux", "pas en mesure", "périmètre", "perimetre"),
+  },
+  {
+    name: "T95 Recherche par catégorie",
+    q: "Trouve-moi tous les mails marqués « facture » de cette semaine.",
+    expect: "Soit recherche par mot-clé, soit dit qu'il n'a pas le filtre catégorie.",
+    pass: (r) => /\[mail#\d+\]/.test(r) || hasAny(r, "factur", "ne peux", "pas accès", "pas acces", "ne trouv", "vérifi", "verifi"),
+  },
+  {
+    name: "T96 Catégorie inventée",
+    q: "Liste les mails dans la catégorie « Vacances Maldives ».",
+    expect: "Doit dire qu'il n'a pas trouvé / pas cette catégorie, sans inventer de mails.",
+    pass: (r) => hasAny(r, "trouv", "aucun", "pas de", "introuvable", "ne sais", "pas cette", "n'existe"),
+  },
+  {
+    name: "T97 Catégorie auto IA",
+    q: "Comment Inboria classe automatiquement les mails ?",
+    expect: "Explique brièvement le classement IA (priorité, catégorie, triage).",
+    pass: (r) => hasAny(r, "priorit", "catégor", "categor", "triage", "tri", "ia", "automat", "smart sort"),
+  },
+  {
+    name: "T98 Action mail catégorie",
+    q: "Marque tous mes mails non lus comme lus dans la catégorie « Newsletter ».",
+    expect: "Refus action bulk catégorie OU explique limitation.",
+    pass: (r) => hasAny(r, "ne peux", "pas en mesure", "manuell", "filtr", "interface", "réglage", "reglage"),
+  },
+  {
+    name: "T99 Catégorie d'un projet",
+    q: "Quelle est la catégorie du projet RM-001 (Refonte site Acme) ?",
+    expect: "Couleur (bleue) ou dit qu'il n'a pas la catégorie projet.",
+    pass: (r) => hasAny(r, "bleu", "blue", "couleur", "ne sais", "pas l'info", "pas le détail", "pas le detail", "pas de catégor", "pas de categor", "rm-001", "acme", "pas trouv", "ne trouv", "pas d'élém", "pas d'elem", "ne peux", "pas accès", "pas acces", "sidebar", "param"),
+  },
+  {
+    name: "T100 Catégorie créer",
+    q: "Crée une nouvelle catégorie « VIP » et applique-la aux mails de Jean-Michel.",
+    expect: "Refus création + propose UI / Paramètres.",
+    pass: (r) => hasAny(r, "ne peux", "pas en mesure", "paramètr", "parametr", "interface", "manuell", "réglage", "reglage"),
+  },
 ];
 
 async function main() {
