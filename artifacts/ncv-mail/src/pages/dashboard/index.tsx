@@ -3493,6 +3493,59 @@ export default function Dashboard() {
   });
   const snoozedCount = snoozedData?.total ?? snoozedData?.emails?.length ?? 0;
 
+  // Compteurs onglets Projets / Relances / Archives — badges dans la barre de
+  // Réception, même pattern que Tâches/Reportés (refetch 60s).
+  const { data: projectsData } = useQuery<any[]>({
+    queryKey: ["projects-count"],
+    refetchInterval: 60_000,
+    queryFn: async () => {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) return [];
+      const res = await fetch(`${import.meta.env.BASE_URL}api/projects`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+  const projectsCount = Array.isArray(projectsData) ? projectsData.length : 0;
+
+  const { data: followupsData } = useQuery<any[]>({
+    queryKey: ["followups-count"],
+    refetchInterval: 60_000,
+    queryFn: async () => {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) return [];
+      const res = await fetch(`${import.meta.env.BASE_URL}api/followups?status=en_attente`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return [];
+      return res.json();
+    },
+  });
+  const followupsCount = Array.isArray(followupsData) ? followupsData.length : 0;
+
+  const { data: archivesData } = useQuery<{ emails?: any[]; total?: number }>({
+    queryKey: ["archives-count"],
+    refetchInterval: 60_000,
+    queryFn: async () => {
+      const { supabase } = await import("@/lib/supabase");
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) return { emails: [], total: 0 };
+      const res = await fetch(`${import.meta.env.BASE_URL}api/emails?status=archived&limit=1`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) return { emails: [], total: 0 };
+      return res.json();
+    },
+  });
+  const archivesCount = archivesData?.total ?? archivesData?.emails?.length ?? 0;
+
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
   const [composePrefill, setComposePrefill] = useState<{ to: string; subject: string; body: string } | null>(null);
@@ -5406,6 +5459,9 @@ export default function Dashboard() {
               >
                 <FolderKanban className="w-3 h-3" />
                 {t("sidebar.projects")}
+                {projectsCount > 0 && (
+                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{projectsCount}</span>
+                )}
               </Link>
               {/* Onglet Relances — déplacé depuis la sidebar.
                   Page standalone /dashboard/relances, même pattern que
@@ -5420,6 +5476,9 @@ export default function Dashboard() {
               >
                 <MailCheck className="w-3 h-3" />
                 {t("sidebar.followups", "Relances")}
+                {followupsCount > 0 && (
+                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{followupsCount}</span>
+                )}
               </Link>
               {/* Task #294 Phase 2 — Onglet Archives.
                   Déplacé depuis la sidebar (où trône désormais « Mes
@@ -5435,6 +5494,9 @@ export default function Dashboard() {
               >
                 <Archive className="w-3 h-3" />
                 {t("sidebar.archives")}
+                {archivesCount > 0 && (
+                  <span className="text-[10px] bg-white/10 text-white px-1.5 py-0.5 rounded-full">{archivesCount}</span>
+                )}
               </Link>
             </div>
 
