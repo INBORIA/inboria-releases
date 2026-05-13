@@ -65,7 +65,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip, MailOpen, Mail, BellOff, Bell, Copy, Printer, Folder, FolderKanban, MailCheck, MoreHorizontal, Type as TypeIcon, Activity } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip, MailOpen, Mail, BellOff, Bell, Copy, Printer, Folder, FolderKanban, MailCheck, Type as TypeIcon, Activity } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -94,7 +94,113 @@ import { resolveMailboxBadge, recipientMatchesAddress, type MailboxBadge } from 
 import { EmailDetail } from "@/components/email-detail/EmailDetail";
 import { PriorityBadge, PRIORITY_BAR_COLORS } from "@/components/email-detail/helpers";
 
-function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, onReply, onForward, onToggleRead, onMore }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; onReply?: (id: number) => void; onForward?: (id: number) => void; onToggleRead?: (id: number) => void; onMore?: (e: React.MouseEvent, emailId: number) => void }) {
+// Bag de callbacks pour la barre d'actions au survol — toutes les actions
+// du menu contextuel clic droit, dans le même ordre, avec popovers ancrés
+// pour Reporter / Catégorie / Déplacer vers.
+type HoverActionsCb = {
+  onOpen: () => void;
+  onReply: () => void;
+  onForward: () => void;
+  onCreateTask: () => void;
+  onToggleRead: () => void;
+  onSnooze: (hours: number, label: string) => void;
+  onArchive: () => void;
+  onSetCategory: (categoryId: string, name: string) => void;
+  onMove: (folderId: string, name: string) => void;
+  onCopySender: () => void;
+  onCopySubject: () => void;
+  onDownloadEml: () => void;
+  onPrint: () => void;
+  onBlockSender: () => void;
+  onDelete: () => void;
+};
+
+function HoverActions({ isUnread, categoryCounts, userFolders, cb }: { isUnread: boolean; categoryCounts: any[] | undefined; userFolders: any[] | undefined; cb: HoverActionsCb }) {
+  const { t } = useTranslation();
+  const [openMenu, setOpenMenu] = useState<null | "snooze" | "category" | "move">(null);
+  const wrapRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    if (!openMenu) return;
+    const onDocClick = (e: MouseEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpenMenu(null);
+    };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setOpenMenu(null); };
+    document.addEventListener("mousedown", onDocClick);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onDocClick);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [openMenu]);
+
+  const btn = "p-1 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white";
+  const stop = (e: React.MouseEvent | React.SyntheticEvent) => { e.stopPropagation(); };
+  const stopMD = (e: React.MouseEvent) => { e.stopPropagation(); e.preventDefault(); };
+  const click = (h: () => void) => (e: React.MouseEvent) => { e.stopPropagation(); setOpenMenu(null); h(); };
+  const popoverItem = "w-full flex items-center gap-2.5 px-3 py-2 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left";
+  const popover = "absolute right-0 top-full mt-1 z-[100] min-w-[200px] rounded-lg border border-[#1f2937] bg-[#141c2b] shadow-2xl py-1";
+
+  return (
+    <div ref={wrapRef} className="hidden group-hover:flex items-center gap-0 shrink-0 relative" onMouseDown={stopMD} onClick={stop}>
+      <button className={btn} title={t("inbox.openEmail")} onMouseDown={stopMD} onClick={click(cb.onOpen)}><ChevronRight className="w-3.5 h-3.5" /></button>
+      <button className={btn} title={t("inbox.reply", "Répondre")} onMouseDown={stopMD} onClick={click(cb.onReply)}><Reply className="w-3.5 h-3.5" /></button>
+      <button className={btn} title={t("inbox.forward", "Transférer")} onMouseDown={stopMD} onClick={click(cb.onForward)}><Forward className="w-3.5 h-3.5" /></button>
+      <button className={btn} title={t("inbox.createTask", "Créer une tâche")} onMouseDown={stopMD} onClick={click(cb.onCreateTask)}><ListTodo className="w-3.5 h-3.5" /></button>
+      <button className={btn} title={isUnread ? t("inbox.markAsRead", "Marquer comme lu") : t("inbox.markAsUnread", "Marquer comme non lu")} onMouseDown={stopMD} onClick={click(cb.onToggleRead)}>
+        {isUnread ? <MailOpen className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
+      </button>
+      <div className="relative">
+        <button className={btn} title={t("inbox.snooze", "Reporter")} onMouseDown={stopMD} onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === "snooze" ? null : "snooze"); }}><Clock className="w-3.5 h-3.5" /></button>
+        {openMenu === "snooze" && (
+          <div className={popover} onMouseDown={stopMD}>
+            <button className={popoverItem} onMouseDown={stopMD} onClick={click(() => cb.onSnooze(1, t("wave1.snooze1h", "Dans 1 h")))}><Clock className="w-3.5 h-3.5" />{t("wave1.snooze1h", "Dans 1 h")}</button>
+            <button className={popoverItem} onMouseDown={stopMD} onClick={click(() => cb.onSnooze(24, t("wave1.snoozeTomorrow", "Demain matin")))}><Bell className="w-3.5 h-3.5" />{t("wave1.snoozeTomorrow", "Demain matin")}</button>
+            <button className={popoverItem} onMouseDown={stopMD} onClick={click(() => cb.onSnooze(168, t("wave1.snoozeNextWeek", "Semaine prochaine")))}><CalendarDays className="w-3.5 h-3.5" />{t("wave1.snoozeNextWeek", "Semaine prochaine")}</button>
+          </div>
+        )}
+      </div>
+      <button className={btn} title={t("inbox.archive")} onMouseDown={stopMD} onClick={click(cb.onArchive)}><Archive className="w-3.5 h-3.5" /></button>
+      {categoryCounts && categoryCounts.length > 0 && (
+        <div className="relative">
+          <button className={btn} title={t("inbox.category", "Catégorie")} onMouseDown={stopMD} onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === "category" ? null : "category"); }}><Folder className="w-3.5 h-3.5" /></button>
+          {openMenu === "category" && (
+            <div className={`${popover} max-h-[260px] overflow-y-auto`} onMouseDown={stopMD}>
+              {categoryCounts.map((c: any) => (
+                <button key={c.categoryId} className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left" onMouseDown={stopMD} onClick={click(() => cb.onSetCategory(c.categoryId, c.categoryName))}>
+                  {c.color && <span className="w-2 h-2 rounded-full shrink-0" style={{ background: c.color }} />}
+                  <span className="truncate">{c.categoryName}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      {userFolders && userFolders.length > 0 && (
+        <div className="relative">
+          <button className={btn} title={t("inbox.moveToFolder", { defaultValue: "Déplacer vers" })} onMouseDown={stopMD} onClick={(e) => { e.stopPropagation(); setOpenMenu(openMenu === "move" ? null : "move"); }}><FolderKanban className="w-3.5 h-3.5" /></button>
+          {openMenu === "move" && (
+            <div className={`${popover} max-h-[260px] overflow-y-auto`} onMouseDown={stopMD}>
+              {userFolders.map((f: any) => (
+                <button key={f.id} className="w-full flex items-center gap-2 px-3 py-1.5 text-[12px] text-[#b8c5d6] hover:bg-white/[0.06] hover:text-white transition-colors text-left" onMouseDown={stopMD} onClick={click(() => cb.onMove(f.id, f.name))}>
+                  <Folder className="w-3 h-3 shrink-0 text-primary/70" />
+                  <span className="truncate">{f.name}</span>
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+      <button className={btn} title={t("inbox.copySenderEmail", "Copier l'adresse de l'expéditeur")} onMouseDown={stopMD} onClick={click(cb.onCopySender)}><Copy className="w-3.5 h-3.5" /></button>
+      <button className={btn} title={t("inbox.copySubject", "Copier le sujet")} onMouseDown={stopMD} onClick={click(cb.onCopySubject)}><TypeIcon className="w-3.5 h-3.5" /></button>
+      <button className={btn} title={t("inbox.downloadEml", "Télécharger en .eml")} onMouseDown={stopMD} onClick={click(cb.onDownloadEml)}><Download className="w-3.5 h-3.5" /></button>
+      <button className={btn} title={t("inbox.print", "Imprimer")} onMouseDown={stopMD} onClick={click(cb.onPrint)}><Printer className="w-3.5 h-3.5" /></button>
+      <button className={btn} title={t("junk.blockSender")} onMouseDown={stopMD} onClick={click(cb.onBlockSender)}><ShieldAlert className="w-3.5 h-3.5" /></button>
+      <button className="p-1 rounded hover:bg-red-500/[0.08] text-[#8b95a7] hover:text-red-400" title={t("inbox.deleteEmail")} onMouseDown={stopMD} onClick={click(cb.onDelete)}><Trash2 className="w-3.5 h-3.5" /></button>
+    </div>
+  );
+}
+
+function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSelected, onToggleSelect, selectionMode, onContextMenu, onDragSelectStart, mailboxBadge, showMailboxBadge, isSlaBreach, hoverCb, hoverCategories, hoverFolders }: { email: any; onClick: () => void; onArchive: (id: number) => void; onDelete: (id: number) => void; onCategoryClick?: (name: string) => void; isSelected: boolean; onToggleSelect: (id: number) => void; selectionMode: boolean; onContextMenu?: (e: React.MouseEvent, emailId: number) => void; onDragSelectStart?: (id: number) => void; mailboxBadge?: MailboxBadge | null; showMailboxBadge?: boolean; isSlaBreach?: boolean; hoverCb?: HoverActionsCb; hoverCategories?: any[]; hoverFolders?: any[] }) {
   const { t, i18n } = useTranslation();
   const lang = i18n.resolvedLanguage ?? i18n.language.split("-")[0];
   const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
@@ -215,62 +321,38 @@ function EmailRow({ email, onClick, onArchive, onDelete, onCategoryClick, isSele
         </span>
       </div>
 
-      {/* Actions au survol — parité avec le clic droit. Les actions
-          principales sont en icônes ; le bouton « ⋯ » ouvre le menu
-          contextuel complet (Reporter, Catégorie, Déplacer vers, Copier,
-          Télécharger, Imprimer, Bloquer expéditeur). */}
-      <div className="hidden group-hover:flex items-center gap-0.5 shrink-0">
-        {onReply && (
+      {/* Actions au survol — parité 1:1 avec le clic droit. Toutes les
+          actions du menu contextuel sont exposées dans le même ordre, et
+          les sous-menus (Reporter / Catégorie / Déplacer vers) ouvrent
+          un popover ancré sous l'icône (clic, Esc/clic-extérieur pour
+          fermer). Fallback minimal (Archive + Delete) si hoverCb absent. */}
+      {hoverCb ? (
+        <HoverActions
+          isUnread={isUnread}
+          categoryCounts={hoverCategories}
+          userFolders={hoverFolders}
+          cb={hoverCb}
+        />
+      ) : (
+        <div className="hidden group-hover:flex items-center gap-0.5 shrink-0">
           <button
-            onClick={(e) => { e.stopPropagation(); onReply(email.id); }}
+            onClick={(e) => { e.stopPropagation(); onArchive(email.id); }}
+            onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
             className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
-            title={t("inbox.reply", "Répondre")}
+            title={t("inbox.archive")}
           >
-            <Reply className="w-3.5 h-3.5" />
+            <Archive className="w-3.5 h-3.5" />
           </button>
-        )}
-        {onForward && (
           <button
-            onClick={(e) => { e.stopPropagation(); onForward(email.id); }}
-            className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
-            title={t("inbox.forward", "Transférer")}
+            onClick={(e) => { e.stopPropagation(); onDelete(email.id); }}
+            onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
+            className="p-1.5 rounded hover:bg-red-500/[0.08] text-[#8b95a7] hover:text-red-400"
+            title={t("inbox.deleteEmail")}
           >
-            <Forward className="w-3.5 h-3.5" />
+            <Trash2 className="w-3.5 h-3.5" />
           </button>
-        )}
-        {onToggleRead && (
-          <button
-            onClick={(e) => { e.stopPropagation(); onToggleRead(email.id); }}
-            className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
-            title={isUnread ? t("inbox.markAsRead", "Marquer comme lu") : t("inbox.markAsUnread", "Marquer comme non lu")}
-          >
-            {isUnread ? <MailOpen className="w-3.5 h-3.5" /> : <Mail className="w-3.5 h-3.5" />}
-          </button>
-        )}
-        <button
-          onClick={(e) => { e.stopPropagation(); onArchive(email.id); }}
-          className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
-          title={t("inbox.archive")}
-        >
-          <Archive className="w-3.5 h-3.5" />
-        </button>
-        <button
-          onClick={(e) => { e.stopPropagation(); onDelete(email.id); }}
-          className="p-1.5 rounded hover:bg-red-500/[0.08] text-[#8b95a7] hover:text-red-400"
-          title={t("inbox.deleteEmail")}
-        >
-          <Trash2 className="w-3.5 h-3.5" />
-        </button>
-        {onMore && (
-          <button
-            onClick={(e) => { e.stopPropagation(); onMore(e, email.id); }}
-            className="p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
-            title={t("inbox.moreActions", { defaultValue: "Plus d'actions" })}
-          >
-            <MoreHorizontal className="w-3.5 h-3.5" />
-          </button>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -5799,10 +5881,25 @@ export default function Dashboard() {
                                 mailboxBadge={badge}
                                 showMailboxBadge={selectedAccountId === "all" && (composeConnections?.length || 0) >= 2}
                                 isSlaBreach={slaBreachIds.has(Number(email.id))}
-                                onReply={handleQuickReply}
-                                onForward={handleQuickForward}
-                                onToggleRead={handleToggleRead}
-                                onMore={handleContextMenu}
+                                hoverCategories={categoryCounts}
+                                hoverFolders={userFolders}
+                                hoverCb={{
+                                  onOpen: () => { setSelectedEmailId(email.id); setSelectedIds(new Set()); },
+                                  onReply: () => handleQuickReply(email.id),
+                                  onForward: () => handleQuickForward(email.id),
+                                  onCreateTask: () => handleQuickCreateTask(email.id),
+                                  onToggleRead: () => handleToggleRead(email.id),
+                                  onSnooze: (hours: number, label: string) => handleQuickSnooze(email.id, hours, label),
+                                  onArchive: () => handleArchive(email.id),
+                                  onSetCategory: (categoryId: string, name: string) => handleQuickSetCategory(email.id, categoryId, name),
+                                  onMove: (folderId: string, name: string) => handleMoveToFolder([email.id], folderId, name),
+                                  onCopySender: () => handleCopySender(email.id),
+                                  onCopySubject: () => handleCopySubject(email.id),
+                                  onDownloadEml: () => handleDownloadEml(email.id),
+                                  onPrint: () => handlePrintEmail(email.id),
+                                  onBlockSender: () => handleBlockSender(email.id),
+                                  onDelete: () => handleDelete(email.id),
+                                }}
                               />
                             );
                           };
