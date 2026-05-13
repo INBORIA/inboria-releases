@@ -59,7 +59,7 @@ interface ExpertSuggestionShape {
   } | null;
 }
 
-import { PRIORITY_BAR_COLORS, buildForwardCitation } from "./helpers";
+import { PRIORITY_BAR_COLORS, buildForwardCitation, buildForwardCitationHtml } from "./helpers";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -263,8 +263,8 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
       setForwardSubject(subj.toLowerCase().startsWith(prefix.trim().toLowerCase()) ? subj : `${prefix}${subj}`);
       const sig = signatureForConnection(defConn);
       const sigBlock = sig ? `\n\n-- \n${sig}` : "";
-      const citation = buildForwardCitation(email, t, dateFnsLocale);
-      setForwardText(plainTextToHtml(`${sigBlock}\n\n${citation}`));
+      const citationHtml = buildForwardCitationHtml(email, t, dateFnsLocale);
+      setForwardText(plainTextToHtml(sigBlock) + citationHtml);
       setForwardOpen(true);
     };
     window.addEventListener("inbox-reply-shortcut", onReply);
@@ -624,8 +624,8 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       setForwardSubject(subj.toLowerCase().startsWith(prefix.trim().toLowerCase()) ? subj : `${prefix}${subj}`);
                       const sig = signatureForConnection(defConn);
                       const sigBlock = sig ? `\n\n-- \n${sig}` : "";
-                      const citation = buildForwardCitation(email, t, dateFnsLocale);
-                      setForwardText(plainTextToHtml(`${sigBlock}\n\n${citation}`));
+                      const citationHtml = buildForwardCitationHtml(email, t, dateFnsLocale);
+                      setForwardText(plainTextToHtml(sigBlock) + citationHtml);
                       setForwardAttachments([]);
                     }
                     setForwardOpen(!forwardOpen);
@@ -690,8 +690,8 @@ export function EmailDetail({ email, onBack, onMarkRead, onArchive, onDelete, on
                       const intro = (json?.intro || "").trim();
                       const sig = signatureForConnection(defConn);
                       const sigBlock = sig && !intro.includes(sig) ? `\n\n-- \n${sig}` : "";
-                      const citation = buildForwardCitation(email, t, dateFnsLocale);
-                      setForwardText(plainTextToHtml(`${intro}${sigBlock}\n\n${citation}`));
+                      const citationHtml = buildForwardCitationHtml(email, t, dateFnsLocale);
+                      setForwardText(plainTextToHtml(`${intro}${sigBlock}`) + citationHtml);
                       if (resp.ok) {
                         queryClient.invalidateQueries({ queryKey: getGetProfileQueryKey() });
                       }

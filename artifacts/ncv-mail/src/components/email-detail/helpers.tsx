@@ -70,3 +70,45 @@ export function buildForwardCitation(email: any, t: (k: string) => string, dateL
   ];
   return lines.join("\n");
 }
+
+// Construit la citation de transfert au format HTML — préserve la mise en
+// forme et les images de l'email d'origine quand le body est HTML (sinon on
+// retombe sur la version texte). Style Gmail : un en-tête meta + un
+// blockquote contenant le body HTML brut.
+export function buildForwardCitationHtml(email: any, t: (k: string) => string, dateLocale: any): string {
+  const esc = (s: string) =>
+    String(s ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  const header = t("inbox.forwardCitationHeader");
+  const fromLabel = t("inbox.forwardFromLabel");
+  const dateLabel = t("inbox.forwardDateLabel");
+  const subjectLabel = t("inbox.forwardSubjectLabel");
+  const toLabel = t("inbox.forwardToLabel");
+  let dateStr = "";
+  try {
+    const rawDate = email?.createdAt || email?.created_at || email?.received_at;
+    if (rawDate) dateStr = format(new Date(rawDate), "Pp", { locale: dateLocale });
+  } catch { dateStr = ""; }
+  const rawBody = (email?.body || "").toString();
+  const looksLikeHtml = /<\/?[a-z][\s\S]*?>/i.test(rawBody);
+  const meta =
+    `<div>${esc(header)}</div>` +
+    `<div><b>${esc(fromLabel)} :</b> ${esc(email?.sender || "")}</div>` +
+    `<div><b>${esc(dateLabel)} :</b> ${esc(dateStr)}</div>` +
+    `<div><b>${esc(subjectLabel)} :</b> ${esc(email?.subject || "")}</div>` +
+    `<div><b>${esc(toLabel)} :</b> ${esc(email?.recipient || "")}</div>`;
+  const bodyHtml = looksLikeHtml
+    ? rawBody
+    : esc(rawBody).split("\n").join("<br>");
+  return (
+    `<br><br>` +
+    `<div class="ncv-forward-citation" style="border-left:2px solid #ccc;padding:0 0 0 12px;margin:8px 0;color:inherit;">` +
+    meta +
+    `<br>` +
+    bodyHtml +
+    `</div>`
+  );
+}
