@@ -62,7 +62,7 @@ import { format } from "date-fns";
 import { fr, enUS, nl, de, es, it, pt, pl, ro, sv, da, fi, hu, cs, tr, ja, ko, vi, th, id, ms, el } from "date-fns/locale";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useQueryClient, useQuery, useMutation } from "@tanstack/react-query";
-import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip, MailOpen, Mail, BellOff, Bell, Copy, Printer, Folder, FolderKanban, Type as TypeIcon, Activity } from "lucide-react";
+import { Clock, CheckCircle2, Sparkles, Inbox, ArrowLeft, Reply, Forward, Archive, X, ChevronRight, ChevronDown, Trash2, RefreshCw, Search, PenSquare, Send, Wand2, Loader2, Zap, CheckCircle, Tags, Check, CheckSquare, Square, UserPlus, UserCheck, UserX, Users, Hand, HandMetal, ListTodo, CalendarDays, Download, ShieldAlert, ArrowUpDown, ArrowDown, ArrowUp, Maximize2, Minimize2, AlertCircle, Building2, Briefcase, Cloud, Database, SlidersHorizontal, Paperclip, MailOpen, Mail, BellOff, Bell, Copy, Printer, Folder, FolderKanban, MailCheck, Type as TypeIcon, Activity } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { Link, useLocation } from "wouter";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -5194,6 +5194,20 @@ export default function Dashboard() {
               >
                 <FolderKanban className="w-3 h-3" />
                 {t("sidebar.projects")}
+              </Link>
+              {/* Onglet Relances — déplacé depuis la sidebar.
+                  Page standalone /dashboard/relances, même pattern que
+                  Tâches/Projets : navigation via Link. */}
+              <Link
+                href="/dashboard/relances"
+                className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                  routeLocation === "/dashboard/relances"
+                    ? "bg-primary/15 text-primary border border-primary/20"
+                    : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                }`}
+              >
+                <MailCheck className="w-3 h-3" />
+                {t("sidebar.followups", "Relances")}
               </Link>
             </div>
 

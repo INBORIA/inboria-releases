@@ -23,7 +23,6 @@ import {
   CalendarDays,
   BellOff,
   ShieldCheck,
-  MailCheck,
   FileText,
   Wand2,
   Users,
@@ -115,7 +114,8 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
     // Note (task #290) : « Tâches » a été déplacé dans la barre d'onglets
     // de la Réception, à côté d'Assignés. Retiré de la sidebar pour éviter
     // la redondance, comme « Activité équipe » avant lui (#286).
-    { name: t("sidebar.followups", "Relances"), href: "/dashboard/relances", icon: MailCheck },
+    // « Relances » déplacé dans la barre d'onglets de la Réception (à droite
+    // de Projets) — vit dans la Réception comme Tâches/Projets/Reportés.
     // « Projets » déplacé dans la barre d'onglets de la Réception (à droite
     // de Tâches) — projets = entité d'équipe, vit dans la Réception.
     { name: t("sidebar.contacts", "Contacts"), href: "/dashboard/contacts", icon: Users },
