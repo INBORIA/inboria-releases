@@ -4051,7 +4051,28 @@ export default function Dashboard() {
     blockSenderMut.mutate(
       { data: { email: addr, connectionId: firstConn.id, scope: "all_accounts" } },
       {
-        onSuccess: () => { toast({ title: t("junk.blocked"), description: addr }); invalidateAll(); },
+        onSuccess: () => {
+          // En plus de bloquer chez le fournisseur, on déplace immédiatement
+          // CE mail vers Courrier indésirable (status=spam) afin qu'il
+          // disparaisse de la Réception et apparaisse dans la liste filtrée
+          // par l'utilisateur. Sinon le mail reste en boîte de réception
+          // tant qu'aucun nouveau mail du même expéditeur n'arrive.
+          updateEmail.mutate(
+            { id, data: { status: "spam" } },
+            {
+              onSuccess: () => {
+                setSelectedEmailId(null);
+                invalidateAll();
+                queryClient.invalidateQueries({ queryKey: getListEmailsQueryKey({ status: "spam" } as any) });
+                toast({ title: t("junk.blocked"), description: addr });
+              },
+              onError: () => {
+                invalidateAll();
+                toast({ title: t("junk.blocked"), description: addr });
+              },
+            },
+          );
+        },
         onError: () => toast({ title: t("junk.blockFailed"), variant: "destructive" }),
       },
     );
