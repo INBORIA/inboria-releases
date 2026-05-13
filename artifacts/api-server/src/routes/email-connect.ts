@@ -290,6 +290,12 @@ document.getElementById('retry').onclick = async () => {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       token_expires_at: tokens.expiry_date ? new Date(tokens.expiry_date).toISOString() : null,
+      // Reset disconnection state on (re)connect — sinon le badge reste
+      // « Déconnectée » même après un OAuth réussi tant qu'aucune sync n'a abouti.
+      consecutive_failures: 0,
+      last_error_at: null,
+      last_error_message: null,
+      last_alert_sent_at: null,
     };
     let { data: connData, error: connErr } = await supabaseAdmin.from("email_connections").upsert(gmailRow, { onConflict: "user_id,email_address" }).select("id").single();
     if (connErr) {
@@ -397,6 +403,11 @@ router.get("/email/callback/outlook", async (req, res): Promise<void> => {
       access_token: tokens.access_token,
       refresh_token: tokens.refresh_token,
       token_expires_at: new Date(Date.now() + tokens.expires_in * 1000).toISOString(),
+      // Reset disconnection state on (re)connect — voir commentaire Gmail.
+      consecutive_failures: 0,
+      last_error_at: null,
+      last_error_message: null,
+      last_alert_sent_at: null,
     };
     let { data: outlookConn, error: outlookErr } = await supabaseAdmin.from("email_connections").upsert(outlookRow, { onConflict: "user_id,email_address" }).select("id").single();
     if (outlookErr) {
