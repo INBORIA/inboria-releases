@@ -4877,23 +4877,11 @@ export default function Dashboard() {
     </>
   ) : undefined;
 
-  // task #293 — Quand on est sur /dashboard/reportes, on rend le panneau
-  // Reportés en place dans la barre d'onglets de la Réception (état piloté
-  // par la route, pas une nouvelle route). Évite de quitter Dashboard.
-  if (routeLocation === "/dashboard/reportes") {
-    return (
-      <DashboardLayout>
-        <div className="flex flex-col h-[calc(100vh-4rem)]">
-          <div className="flex-1 overflow-auto">
-            <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-4">
-              <BackToInboxButton />
-              <SnoozedPanel />
-            </div>
-          </div>
-        </div>
-      </DashboardLayout>
-    );
-  }
+  // task #293 — Sur /dashboard/reportes, on rend le SnoozedPanel inline à
+  // la place de la liste emails, mais en gardant la barre d'onglets
+  // Réception au-dessus avec son onglet "Reportés" en état actif. Pas de
+  // navigation hors Dashboard, pas de nouvelle route.
+  const isSnoozedView = routeLocation === "/dashboard/reportes";
 
   return (
     <DashboardLayout rightSidebar={SUPERHUMAN_CLEAN || categoriesCollapsed ? undefined : categoriesPanel}>
@@ -5367,7 +5355,9 @@ export default function Dashboard() {
         <div className="flex-1 overflow-auto">
           <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 flex flex-col md:flex-row gap-5">
             <div className="flex-1 min-w-0">
-              {inboxMode === "shared" ? (
+              {isSnoozedView ? (
+                <SnoozedPanel />
+              ) : inboxMode === "shared" ? (
                 <>
                   {/* Vue Partagées « type Missive » — 2 sélecteurs serveur :
                       Pris en charge par + Statut. Filtres exhaustifs sur tout

@@ -9,6 +9,7 @@ import {
 import { useQueryClient } from "@tanstack/react-query";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/lib/supabase";
+import { useLocation } from "wouter";
 
 const baseUrl = () => import.meta.env.BASE_URL.replace(/\/$/, "");
 
@@ -24,6 +25,7 @@ export function SnoozedPanel() {
   const qc = useQueryClient();
   const { toast } = useToast();
   const unsnoozeMut = useUnsnoozeEmail();
+  const [, setLocation] = useLocation();
   const fmt = new Intl.DateTimeFormat(i18n.language, { dateStyle: "medium", timeStyle: "short" });
 
   const [snoozed, setSnoozed] = useState<SnoozedEmail[]>([]);
@@ -71,7 +73,8 @@ export function SnoozedPanel() {
           setSnoozed((prev) => prev.filter((e) => e.id !== id));
           qc.invalidateQueries({ queryKey: getListEmailsQueryKey() });
           qc.invalidateQueries({ queryKey: ["emails-snoozed-count"] });
-          toast({ title: t("wave1.snoozeWakeOk", "Email réveillé") });
+          toast({ title: t("wave1.unsnoozeSuccess") });
+          setLocation(`/dashboard?emailId=${id}`);
         },
         onError: (e: any) => {
           toast({ variant: "destructive", title: e?.message || "Wake failed" });
