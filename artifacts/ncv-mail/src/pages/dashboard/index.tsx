@@ -3415,22 +3415,23 @@ export default function Dashboard() {
 
   // Compteur emails reportés (snoozed) — alimente le badge de l'onglet
   // Reportés dans la barre de Réception (task #293).
-  const { data: snoozedData } = useQuery<any[]>({
+  // L'API renvoie { emails: [...], total?: number } — pas un tableau brut.
+  const { data: snoozedData } = useQuery<{ emails?: any[]; total?: number }>({
     queryKey: ["emails-snoozed-count"],
     refetchInterval: 60_000,
     queryFn: async () => {
       const { supabase } = await import("@/lib/supabase");
       const { data: sessionData } = await supabase.auth.getSession();
       const token = sessionData?.session?.access_token;
-      if (!token) return [];
+      if (!token) return { emails: [] };
       const res = await fetch(`${import.meta.env.BASE_URL}api/emails?snoozed=1&limit=200`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      if (!res.ok) return [];
+      if (!res.ok) return { emails: [] };
       return res.json();
     },
   });
-  const snoozedCount = Array.isArray(snoozedData) ? snoozedData.length : 0;
+  const snoozedCount = snoozedData?.total ?? snoozedData?.emails?.length ?? 0;
 
   const [isComposeOpen, setIsComposeOpen] = useState(false);
   const [isComposeFullscreen, setIsComposeFullscreen] = useState(false);
