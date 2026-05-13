@@ -16,7 +16,6 @@ import {
   Loader2,
   Menu,
   Archive,
-  FolderKanban,
   AlertTriangle,
   Activity,
   Send,
@@ -117,7 +116,8 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
     // de la Réception, à côté d'Assignés. Retiré de la sidebar pour éviter
     // la redondance, comme « Activité équipe » avant lui (#286).
     { name: t("sidebar.followups", "Relances"), href: "/dashboard/relances", icon: MailCheck },
-    { name: t("sidebar.projects"), href: "/dashboard/projets", icon: FolderKanban },
+    // « Projets » déplacé dans la barre d'onglets de la Réception (à droite
+    // de Tâches) — projets = entité d'équipe, vit dans la Réception.
     { name: t("sidebar.contacts", "Contacts"), href: "/dashboard/contacts", icon: Users },
     { name: t("sidebar.agenda"), href: "/dashboard/agenda", icon: CalendarDays },
     { name: t("sidebar.archives"), href: "/dashboard/archives", icon: Archive },
