@@ -311,15 +311,15 @@ export default function BilanQuotidien() {
             </div>
 
             {todayAppointments.length > 0 && (
-              <div className="bg-card rounded-lg border border-border border-l-2 border-l-amber-400 p-4">
+              <div className="bg-card rounded-lg border border-border border-l-2 border-l-white p-4">
                 <h2 className="text-[13px] font-semibold text-white mb-2 flex items-center gap-1.5">
-                  <CalendarDays className="w-3.5 h-3.5 text-amber-400" />
+                  <CalendarDays className="w-3.5 h-3.5 text-white" />
                   {t("agenda.todayAppointments")} ({todayAppointments.length})
                 </h2>
                 <div className="space-y-1.5">
                   {todayAppointments.map((apt) => (
                     <Link key={apt.id} href="/dashboard/agenda" className="flex items-center gap-3 text-[12px] p-2 rounded hover:bg-[#1a2235] transition-colors">
-                      <div className="flex items-center gap-1 text-amber-400 shrink-0 w-24">
+                      <div className="flex items-center gap-1 text-white shrink-0 w-24">
                         <Clock className="w-3 h-3" />
                         {apt.allDay ? t("agenda.allDay") : `${format(parseISO(apt.startAt), "HH:mm")} - ${format(parseISO(apt.endAt), "HH:mm")}`}
                       </div>
