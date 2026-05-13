@@ -144,33 +144,142 @@ function parseMultiMeetingBlock(inner: string): InboriaMultiMeeting | null {
   };
 }
 
+// Hold-meeting : bloque en agenda un RDV PROPOSE PAR un contact via un mail
+// recu (statut pending, sans envoyer de mail). emailId est requis pour relier
+// le RDV au Message-ID du mail source : la confirmation ulterieure du contact
+// basculera automatiquement le RDV en confirme.
+interface InboriaHoldMeeting {
+  emailId: string;
+  to: string;
+  contactName: string;
+  subject: string;
+  startAt: string;
+  endAt: string;
+  location: string;
+}
+interface InboriaHoldMultiMeeting {
+  emailId: string;
+  to: string;
+  contactName: string;
+  subject: string;
+  location: string;
+  slots: Array<{ startAt: string; endAt: string }>;
+}
+
+function parseHoldMeetingBlock(inner: string): InboriaHoldMeeting | null {
+  const fields: Partial<Record<keyof InboriaHoldMeeting, string>> = {};
+  for (const line of inner.replace(/\r/g, "").split("\n")) {
+    const fm = /^\s*(emailId|to|contactName|subject|startAt|endAt|location)\s*:\s*(.*)$/i.exec(line);
+    if (!fm) continue;
+    const k = fm[1].toLowerCase();
+    const v = fm[2].trim().replace(/^["'<\[]+|["'>\]]+$/g, "");
+    if (k === "emailid") fields.emailId = v;
+    else if (k === "to") fields.to = v;
+    else if (k === "contactname") fields.contactName = v;
+    else if (k === "subject") fields.subject = v;
+    else if (k === "startat") fields.startAt = v;
+    else if (k === "endat") fields.endAt = v;
+    else if (k === "location") fields.location = v;
+  }
+  const startMs = fields.startAt ? Date.parse(fields.startAt) : NaN;
+  const endMs = fields.endAt ? Date.parse(fields.endAt) : NaN;
+  if (!fields.emailId || !fields.to || !Number.isFinite(startMs) || !Number.isFinite(endMs)) return null;
+  return {
+    emailId: fields.emailId,
+    to: fields.to,
+    contactName: fields.contactName || "",
+    subject: fields.subject || "",
+    startAt: fields.startAt || "",
+    endAt: fields.endAt || "",
+    location: fields.location || "",
+  };
+}
+
+function parseHoldMultiMeetingBlock(inner: string): InboriaHoldMultiMeeting | null {
+  const lines = inner.replace(/\r/g, "").split("\n");
+  const fields: { emailId?: string; to?: string; contactName?: string; subject?: string; location?: string } = {};
+  const slots: Array<{ startAt: string; endAt: string }> = [];
+  let i = 0;
+  let inSlots = false;
+  let cur: { startAt?: string; endAt?: string } | null = null;
+  while (i < lines.length) {
+    const line = lines[i] ?? "";
+    if (!inSlots) {
+      if (/^\s*slots\s*:\s*$/i.test(line)) { inSlots = true; i++; continue; }
+      const fm = /^\s*(emailId|to|contactName|subject|location)\s*:\s*(.*)$/i.exec(line);
+      if (fm) {
+        const k = fm[1].toLowerCase();
+        const v = fm[2].trim().replace(/^["'<\[]+|["'>\]]+$/g, "");
+        if (k === "emailid") fields.emailId = v;
+        else if (k === "to") fields.to = v;
+        else if (k === "contactname") fields.contactName = v;
+        else if (k === "subject") fields.subject = v;
+        else if (k === "location") fields.location = v;
+      }
+      i++; continue;
+    }
+    if (/^\s*-\s*startAt\s*:/i.test(line) || /^\s*-\s*$/.test(line)) {
+      if (cur && cur.startAt && cur.endAt) slots.push({ startAt: cur.startAt, endAt: cur.endAt });
+      cur = {};
+      const sm = /startAt\s*:\s*(.*)$/i.exec(line);
+      if (sm) cur.startAt = sm[1].trim().replace(/^["'<\[]+|["'>\]]+$/g, "");
+      i++; continue;
+    }
+    const sm = /^\s*startAt\s*:\s*(.*)$/i.exec(line);
+    const em = /^\s*endAt\s*:\s*(.*)$/i.exec(line);
+    if (sm && cur) { cur.startAt = sm[1].trim().replace(/^["'<\[]+|["'>\]]+$/g, ""); i++; continue; }
+    if (em && cur) { cur.endAt = em[1].trim().replace(/^["'<\[]+|["'>\]]+$/g, ""); i++; continue; }
+    if (line.trim() === "") { i++; continue; }
+    break;
+  }
+  if (cur && cur.startAt && cur.endAt) slots.push({ startAt: cur.startAt, endAt: cur.endAt });
+  const validSlots = slots.filter(
+    (s) => Number.isFinite(Date.parse(s.startAt)) && Number.isFinite(Date.parse(s.endAt)),
+  );
+  if (!fields.emailId || !fields.to || validSlots.length < 2) return null;
+  return {
+    emailId: fields.emailId,
+    to: fields.to,
+    contactName: fields.contactName || "",
+    subject: fields.subject || "",
+    location: fields.location || "",
+    slots: validSlots,
+  };
+}
+
 type MeetingSegment =
   | { kind: "text"; text: string }
   | { kind: "meeting"; meeting: InboriaMeeting }
-  | { kind: "multi"; multi: InboriaMultiMeeting };
+  | { kind: "multi"; multi: InboriaMultiMeeting }
+  | { kind: "hold"; hold: InboriaHoldMeeting }
+  | { kind: "holdmulti"; holdMulti: InboriaHoldMultiMeeting };
 
 function extractMeetings(text: string): MeetingSegment[] {
-  const fenceRe = /```inboria-(multi-meeting|meeting)\s*\n([\s\S]*?)```/gi;
+  const fenceRe = /```inboria-(hold-multi-meeting|hold-meeting|multi-meeting|meeting)\s*\n([\s\S]*?)```/gi;
   const segments: MeetingSegment[] = [];
   let cursor = 0;
   let m: RegExpExecArray | null;
   while ((m = fenceRe.exec(text)) !== null) {
     const kind = m[1].toLowerCase();
-    if (kind === "multi-meeting") {
+    let seg: MeetingSegment | null = null;
+    if (kind === "hold-multi-meeting") {
+      const h = parseHoldMultiMeetingBlock(m[2]);
+      if (h) seg = { kind: "holdmulti", holdMulti: h };
+    } else if (kind === "hold-meeting") {
+      const h = parseHoldMeetingBlock(m[2]);
+      if (h) seg = { kind: "hold", hold: h };
+    } else if (kind === "multi-meeting") {
       const multi = parseMultiMeetingBlock(m[2]);
-      if (!multi) continue;
-      const before = text.slice(cursor, m.index).trim();
-      if (before) segments.push({ kind: "text", text: before });
-      segments.push({ kind: "multi", multi });
-      cursor = m.index + m[0].length;
+      if (multi) seg = { kind: "multi", multi };
     } else {
       const meeting = parseMeetingBlock(m[2]);
-      if (!meeting) continue;
-      const before = text.slice(cursor, m.index).trim();
-      if (before) segments.push({ kind: "text", text: before });
-      segments.push({ kind: "meeting", meeting });
-      cursor = m.index + m[0].length;
+      if (meeting) seg = { kind: "meeting", meeting };
     }
+    if (!seg) continue;
+    const before = text.slice(cursor, m.index).trim();
+    if (before) segments.push({ kind: "text", text: before });
+    segments.push(seg);
+    cursor = m.index + m[0].length;
   }
   if (segments.length === 0) return [];
   const tail = text.slice(cursor).trim();
@@ -967,6 +1076,292 @@ const MultiMeetingProposalCard = memo(function MultiMeetingProposalCard({
   );
 });
 
+interface HoldMeetingCardProps {
+  hold: InboriaHoldMeeting;
+  accessToken: string;
+  baseUrl: string;
+  onHeld: () => void;
+}
+
+const HoldMeetingCard = memo(function HoldMeetingCard({
+  hold,
+  accessToken,
+  baseUrl,
+  onHeld,
+}: HoldMeetingCardProps) {
+  const [stage, setStage] = useState<"idle" | "saving" | "held" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const toValid = EMAIL_RE.test(hold.to.trim());
+  const sd = new Date(hold.startAt);
+  const ed = new Date(hold.endAt);
+  const dateValid = !isNaN(sd.getTime()) && !isNaN(ed.getTime()) && ed > sd;
+  const slotLabel = dateValid
+    ? `${sd.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })} ${sd.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} – ${ed.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`
+    : "(créneau invalide)";
+
+  const doHold = async () => {
+    setStage("saving");
+    setErrorMsg("");
+    try {
+      const res = await fetch(`${baseUrl}/api/appointments/hold`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({
+          emailId: hold.emailId,
+          to: hold.to.trim(),
+          contactName: hold.contactName || undefined,
+          subject: hold.subject || "Rendez-vous",
+          location: hold.location || undefined,
+          startAt: hold.startAt,
+          endAt: hold.endAt,
+        }),
+      });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        const code = errBody?.error || "";
+        const friendly =
+          code === "email_not_found"
+            ? "Mail source introuvable — impossible de bloquer le créneau."
+            : code === "missing_source_message_id"
+              ? "Le mail source n'a pas de Message-ID — la confirmation auto ne pourra pas être détectée."
+              : code.startsWith("conflict")
+                ? "Ce créneau chevauche un RDV existant."
+                : code || "Échec de l'enregistrement";
+        throw new Error(friendly);
+      }
+      setStage("held");
+      onHeld();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Échec de l'enregistrement";
+      setErrorMsg(msg);
+      setStage("error");
+    }
+  };
+
+  if (stage === "held") {
+    return (
+      <div className="my-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-zinc-100 text-xs flex items-start gap-2">
+        <Check className="h-4 w-4 shrink-0 text-zinc-100 mt-0.5" />
+        <span>
+          Créneau bloqué en attente. Inboria basculera en confirmé dès que <strong>{hold.contactName || hold.to.trim()}</strong> enverra sa confirmation.
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="my-2 rounded-xl border border-amber-400/30 bg-zinc-900/80 overflow-hidden"
+      data-testid="inboria-hold-meeting-card"
+    >
+      <div className="px-3 py-2 border-b border-zinc-800 flex items-center gap-2">
+        <Calendar className="h-3.5 w-3.5 text-amber-300" />
+        <span className="text-[11px] uppercase tracking-wide text-amber-300 font-semibold">
+          Bloquer en agenda — en attente
+        </span>
+      </div>
+      <div className="px-3 py-2.5 space-y-1.5 text-xs">
+        <div className="flex gap-2">
+          <span className="text-zinc-500 w-16 shrink-0">Contact</span>
+          <span className={cn("break-all", toValid ? "text-zinc-100" : "text-zinc-300 underline decoration-dotted")}>
+            {hold.contactName ? `${hold.contactName} <${hold.to.trim()}>` : hold.to.trim() || "(vide)"}
+          </span>
+        </div>
+        <div className="flex gap-2">
+          <span className="text-zinc-500 w-16 shrink-0">Objet</span>
+          <span className="text-zinc-100 break-words">{hold.subject || "(sans objet)"}</span>
+        </div>
+        <div className="flex gap-2">
+          <span className="text-zinc-500 w-16 shrink-0">Créneau</span>
+          <span className={cn(dateValid ? "text-zinc-100" : "text-zinc-300 underline decoration-dotted")}>{slotLabel}</span>
+        </div>
+        {hold.location && (
+          <div className="flex gap-2">
+            <span className="text-zinc-500 w-16 shrink-0 flex items-center gap-1">
+              <MapPin className="h-3 w-3" />Lieu
+            </span>
+            <span className="text-zinc-100 break-words">{hold.location}</span>
+          </div>
+        )}
+      </div>
+      {stage === "error" && (
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-900 text-zinc-200 text-[11px] flex gap-2 items-start">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+      {(stage === "idle" || stage === "error") && (
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-950/60 flex gap-2">
+          <Button
+            size="sm"
+            className="h-7 text-xs bg-amber-600 hover:bg-amber-700 flex-1 disabled:opacity-50"
+            onClick={doHold}
+            disabled={!toValid || !dateValid}
+            data-testid="inboria-hold-meeting-confirm"
+          >
+            <Calendar className="h-3 w-3 mr-1" />
+            Bloquer en attente
+          </Button>
+        </div>
+      )}
+      {stage === "saving" && (
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-950/60 flex items-center justify-center text-xs text-zinc-300 gap-2">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          Enregistrement…
+        </div>
+      )}
+    </div>
+  );
+});
+
+interface HoldMultiMeetingCardProps {
+  holdMulti: InboriaHoldMultiMeeting;
+  accessToken: string;
+  baseUrl: string;
+  onHeld: () => void;
+}
+
+const HoldMultiMeetingCard = memo(function HoldMultiMeetingCard({
+  holdMulti,
+  accessToken,
+  baseUrl,
+  onHeld,
+}: HoldMultiMeetingCardProps) {
+  const [stage, setStage] = useState<"idle" | "saving" | "held" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
+
+  const toValid = EMAIL_RE.test(holdMulti.to.trim());
+  const slotsValid = holdMulti.slots.every((s) => {
+    const sd = new Date(s.startAt);
+    const ed = new Date(s.endAt);
+    return !isNaN(sd.getTime()) && !isNaN(ed.getTime()) && ed > sd;
+  });
+
+  const fmtSlot = (s: { startAt: string; endAt: string }) => {
+    const sd = new Date(s.startAt);
+    const ed = new Date(s.endAt);
+    return `${sd.toLocaleDateString("fr-FR", { weekday: "long", day: "numeric", month: "long" })} ${sd.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })} – ${ed.toLocaleTimeString("fr-FR", { hour: "2-digit", minute: "2-digit" })}`;
+  };
+
+  const doHold = async () => {
+    setStage("saving");
+    setErrorMsg("");
+    try {
+      const res = await fetch(`${baseUrl}/api/appointments/hold-multi`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json", Authorization: `Bearer ${accessToken}` },
+        body: JSON.stringify({
+          emailId: holdMulti.emailId,
+          to: holdMulti.to.trim(),
+          contactName: holdMulti.contactName || undefined,
+          subject: holdMulti.subject || "Rendez-vous",
+          location: holdMulti.location || undefined,
+          slots: holdMulti.slots,
+        }),
+      });
+      if (!res.ok) {
+        const errBody = await res.json().catch(() => ({}));
+        const code = errBody?.error || "";
+        const friendly =
+          code === "email_not_found"
+            ? "Mail source introuvable — impossible de bloquer les créneaux."
+            : code === "all_slots_conflict"
+              ? "Tous les créneaux chevauchent un RDV existant."
+              : code === "missing_source_message_id"
+                ? "Le mail source n'a pas de Message-ID — la confirmation auto ne pourra pas être détectée."
+                : code || "Échec de l'enregistrement";
+        throw new Error(friendly);
+      }
+      setStage("held");
+      onHeld();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Échec de l'enregistrement";
+      setErrorMsg(msg);
+      setStage("error");
+    }
+  };
+
+  if (stage === "held") {
+    return (
+      <div className="my-2 rounded-xl border border-zinc-700 bg-zinc-900 px-3 py-2.5 text-zinc-100 text-xs flex items-start gap-2">
+        <Check className="h-4 w-4 shrink-0 text-zinc-100 mt-0.5" />
+        <span>
+          {holdMulti.slots.length} créneaux bloqués en attente. Inboria gardera celui que <strong>{holdMulti.contactName || holdMulti.to.trim()}</strong> confirmera et nettoiera les autres.
+        </span>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="my-2 rounded-xl border border-amber-400/30 bg-zinc-900/80 overflow-hidden"
+      data-testid="inboria-hold-multi-meeting-card"
+    >
+      <div className="px-3 py-2 border-b border-zinc-800 flex items-center gap-2">
+        <Calendar className="h-3.5 w-3.5 text-amber-300" />
+        <span className="text-[11px] uppercase tracking-wide text-amber-300 font-semibold">
+          Bloquer {holdMulti.slots.length} créneaux — en attente
+        </span>
+      </div>
+      <div className="px-3 py-2.5 space-y-1.5 text-xs">
+        <div className="flex gap-2">
+          <span className="text-zinc-500 w-16 shrink-0">Contact</span>
+          <span className={cn("break-all", toValid ? "text-zinc-100" : "text-zinc-300 underline decoration-dotted")}>
+            {holdMulti.contactName ? `${holdMulti.contactName} <${holdMulti.to.trim()}>` : holdMulti.to.trim() || "(vide)"}
+          </span>
+        </div>
+        <div className="flex gap-2">
+          <span className="text-zinc-500 w-16 shrink-0">Objet</span>
+          <span className="text-zinc-100 break-words">{holdMulti.subject || "(sans objet)"}</span>
+        </div>
+        <div className="flex gap-2">
+          <span className="text-zinc-500 w-16 shrink-0">Créneaux</span>
+          <ul className="text-zinc-100 space-y-0.5 list-disc list-inside">
+            {holdMulti.slots.map((s, i) => (
+              <li key={i} className="break-words">{fmtSlot(s)}</li>
+            ))}
+          </ul>
+        </div>
+        {holdMulti.location && (
+          <div className="flex gap-2">
+            <span className="text-zinc-500 w-16 shrink-0 flex items-center gap-1">
+              <MapPin className="h-3 w-3" />Lieu
+            </span>
+            <span className="text-zinc-100 break-words">{holdMulti.location}</span>
+          </div>
+        )}
+      </div>
+      {stage === "error" && (
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-900 text-zinc-200 text-[11px] flex gap-2 items-start">
+          <AlertCircle className="h-3.5 w-3.5 shrink-0 mt-0.5" />
+          <span>{errorMsg}</span>
+        </div>
+      )}
+      {(stage === "idle" || stage === "error") && (
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-950/60 flex gap-2">
+          <Button
+            size="sm"
+            className="h-7 text-xs bg-amber-600 hover:bg-amber-700 flex-1 disabled:opacity-50"
+            onClick={doHold}
+            disabled={!toValid || !slotsValid}
+            data-testid="inboria-hold-multi-meeting-confirm"
+          >
+            <Calendar className="h-3 w-3 mr-1" />
+            Bloquer les {holdMulti.slots.length} créneaux
+          </Button>
+        </div>
+      )}
+      {stage === "saving" && (
+        <div className="px-3 py-2 border-t border-zinc-800 bg-zinc-950/60 flex items-center justify-center text-xs text-zinc-300 gap-2">
+          <Loader2 className="h-3.5 w-3.5 animate-spin" />
+          Enregistrement…
+        </div>
+      )}
+    </div>
+  );
+});
+
 export function InboriaChatButton() {
   const { t } = useTranslation();
   const { session } = useAuth();
@@ -1289,6 +1684,34 @@ export function InboriaChatButton() {
                             return <div key={`t-${i}`}>{renderAssistantContent(seg.text, openMail)}</div>;
                           }
                           if (!session?.access_token) return null;
+                          if (seg.kind === "hold") {
+                            return (
+                              <HoldMeetingCard
+                                key={`hm-${i}`}
+                                hold={seg.hold}
+                                accessToken={session.access_token}
+                                baseUrl={baseUrl}
+                                onHeld={() => {
+                                  toast({ title: "RDV bloqué en attente" });
+                                  queryClient.invalidateQueries({ queryKey: ["appointments"] });
+                                }}
+                              />
+                            );
+                          }
+                          if (seg.kind === "holdmulti") {
+                            return (
+                              <HoldMultiMeetingCard
+                                key={`hmm-${i}`}
+                                holdMulti={seg.holdMulti}
+                                accessToken={session.access_token}
+                                baseUrl={baseUrl}
+                                onHeld={() => {
+                                  toast({ title: "Créneaux bloqués en attente" });
+                                  queryClient.invalidateQueries({ queryKey: ["appointments"] });
+                                }}
+                              />
+                            );
+                          }
                           if (seg.kind === "multi") {
                             return (
                               <MultiMeetingProposalCard

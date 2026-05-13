@@ -1647,6 +1647,131 @@ export async function handleIncomingEmailForMeeting(
 }
 
 /**
+ * Bloque dans l'agenda un (ou plusieurs) créneau(x) PROPOSÉ(S) PAR un contact
+ * via un mail reçu. Aucun mail n'est envoyé : on crée juste une (ou plusieurs)
+ * ligne(s) appointments en `pending` liée(s) au Message-ID du mail source via
+ * `proposal_message_id`. Quand le contact répondra (ou que l'utilisateur lui-
+ * même répondra et que la réponse sera resync), `handleIncomingEmailForMeeting`
+ * matchera ce Message-ID parmi les candidats In-Reply-To/References et
+ * `classifyMeetingReply` basculera le RDV en `confirmed` automatiquement.
+ */
+export async function holdMeeting(args: {
+  userId: string;
+  emailId: number | string;
+  to: string;
+  contactName?: string;
+  subject: string;
+  startAt: string;
+  endAt: string;
+  location?: string | null;
+}): Promise<{ ok: boolean; appointmentId?: string; error?: string }> {
+  const { data: email } = await supabaseAdmin
+    .from("emails")
+    .select("id, user_id, external_id")
+    .eq("id", args.emailId)
+    .maybeSingle();
+  if (!email || (email as any).user_id !== args.userId) {
+    return { ok: false, error: "email_not_found" };
+  }
+  const sourceMessageId = ((email as any).external_id as string | null) || null;
+  if (!sourceMessageId) {
+    return { ok: false, error: "missing_source_message_id" };
+  }
+
+  const conflict = await checkSlotAvailability(args.userId, args.startAt, args.endAt);
+  if (conflict) {
+    logger.info({ userId: args.userId, conflict }, "[meeting-proposals] hold blocked by conflict");
+    return { ok: false, error: conflict };
+  }
+
+  const { data: appt, error } = await supabaseAdmin
+    .from("appointments")
+    .insert({
+      user_id: args.userId,
+      title: args.subject,
+      description: null,
+      location: args.location || null,
+      start_at: args.startAt,
+      end_at: args.endAt,
+      all_day: false,
+      reminder_minutes: 30,
+      participants: args.to,
+      status: "pending",
+      proposal_message_id: sourceMessageId,
+      proposal_recipient: args.to,
+      proposal_lang: "fr",
+      confirmed: false,
+      email_id: (email as any).id,
+    })
+    .select("id")
+    .single();
+  if (error || !appt) {
+    logger.error({ err: error?.message }, "[meeting-proposals] hold insert failed");
+    return { ok: false, error: error?.message || "insert_failed" };
+  }
+  return { ok: true, appointmentId: String((appt as any).id) };
+}
+
+export async function holdMeetingMulti(args: {
+  userId: string;
+  emailId: number | string;
+  to: string;
+  contactName?: string;
+  subject: string;
+  location?: string | null;
+  slots: Array<{ startAt: string; endAt: string }>;
+}): Promise<{ ok: boolean; appointmentIds?: string[]; error?: string }> {
+  if (!args.slots || args.slots.length < 2) return { ok: false, error: "need_at_least_2_slots" };
+  const { data: email } = await supabaseAdmin
+    .from("emails")
+    .select("id, user_id, external_id")
+    .eq("id", args.emailId)
+    .maybeSingle();
+  if (!email || (email as any).user_id !== args.userId) {
+    return { ok: false, error: "email_not_found" };
+  }
+  const sourceMessageId = ((email as any).external_id as string | null) || null;
+  if (!sourceMessageId) return { ok: false, error: "missing_source_message_id" };
+
+  // Conflict check par créneau — si TOUS chevauchent, refuser.
+  const okSlots: Array<{ startAt: string; endAt: string }> = [];
+  for (const s of args.slots) {
+    const c = await checkSlotAvailability(args.userId, s.startAt, s.endAt);
+    if (!c) okSlots.push(s);
+  }
+  if (okSlots.length === 0) return { ok: false, error: "all_slots_conflict" };
+
+  const groupId = randomUUID();
+  const rows = okSlots.map((s) => ({
+    user_id: args.userId,
+    title: args.subject,
+    description: null,
+    location: args.location || null,
+    start_at: s.startAt,
+    end_at: s.endAt,
+    all_day: false,
+    reminder_minutes: 30,
+    participants: args.to,
+    status: "pending",
+    proposal_message_id: sourceMessageId,
+    proposal_recipient: args.to,
+    proposal_lang: "fr",
+    proposal_group_id: groupId,
+    confirmed: false,
+    email_id: (email as any).id,
+  }));
+  const { data: inserted, error } = await supabaseAdmin
+    .from("appointments")
+    .insert(rows)
+    .select("id");
+  if (error || !inserted) {
+    logger.error({ err: error?.message }, "[meeting-proposals] hold-multi insert failed");
+    return { ok: false, error: error?.message || "insert_failed" };
+  }
+  return { ok: true, appointmentIds: inserted.map((r: any) => String(r.id)) };
+}
+
+/**
  * Worker 48h : pour chaque RDV pending dont awaiting_reminder_at est passé,
  * envoie une relance polie via le compte mail principal et marque
  * reminder_sent_at pour ne pas relancer deux fois.

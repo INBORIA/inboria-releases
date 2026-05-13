@@ -13,7 +13,7 @@ import {
   type AppointmentPushPayload,
   type VideoProvider,
 } from "../services/calendar-sync";
-import { proposeMeeting, proposeMeetingMulti, sendCounterAcceptedEmail, sendCounterDeclinedEmail } from "../services/meeting-proposals";
+import { proposeMeeting, proposeMeetingMulti, sendCounterAcceptedEmail, sendCounterDeclinedEmail, holdMeeting, holdMeetingMulti } from "../services/meeting-proposals";
 import {
   proposeMultiMeeting,
   findMultiCommonSlots,
@@ -737,6 +737,76 @@ router.post("/appointments/propose-multi", requireAuth, async (req, res): Promis
   } catch (err) {
     const msg = err instanceof Error ? err.message : "propose_multi_crashed";
     req.log?.error?.({ err: msg }, "[appointments] propose-multi crashed");
+    res.status(500).json({ error: msg });
+  }
+});
+
+// Bloque en agenda un créneau PROPOSÉ PAR un contact via un mail reçu (statut
+// pending, sans envoyer de mail). Le proposal_message_id pointe sur le
+// Message-ID du mail source : la confirmation ultérieure du contact basculera
+// automatiquement le RDV en `confirmed` via `handleIncomingEmailForMeeting`.
+const holdSchema = z.object({
+  emailId: z.union([z.string(), z.number()]),
+  to: z.string().trim().email(),
+  contactName: z.string().trim().min(1).max(200).optional(),
+  subject: z.string().trim().min(1).max(200),
+  location: z.string().max(500).optional().nullable(),
+  startAt: isoDateTime,
+  endAt: isoDateTime,
+}).refine((v) => Date.parse(v.endAt) > Date.parse(v.startAt), {
+  message: "endAt must be after startAt",
+  path: ["endAt"],
+});
+router.post("/appointments/hold", requireAuth, async (req, res): Promise<void> => {
+  const parsed = holdSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "invalid_payload", details: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const result = await holdMeeting({ userId: req.userId!, ...parsed.data });
+    if (!result.ok) {
+      res.status(result.error === "email_not_found" ? 404 : 502).json({ error: result.error || "hold_failed" });
+      return;
+    }
+    const { data } = await supabaseAdmin
+      .from("appointments")
+      .select("*, projects(id, name, reference, color)")
+      .eq("id", result.appointmentId!)
+      .eq("user_id", req.userId!)
+      .single();
+    res.status(201).json(mapAppointment(data));
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "hold_crashed";
+    req.log?.error?.({ err: msg }, "[appointments] hold crashed");
+    res.status(500).json({ error: msg });
+  }
+});
+
+const holdMultiSchema = z.object({
+  emailId: z.union([z.string(), z.number()]),
+  to: z.string().trim().email(),
+  contactName: z.string().trim().min(1).max(200).optional(),
+  subject: z.string().trim().min(1).max(200),
+  location: z.string().max(500).optional().nullable(),
+  slots: z.array(proposeMultiSlotSchema).min(2).max(8),
+});
+router.post("/appointments/hold-multi", requireAuth, async (req, res): Promise<void> => {
+  const parsed = holdMultiSchema.safeParse(req.body);
+  if (!parsed.success) {
+    res.status(400).json({ error: "invalid_payload", details: parsed.error.flatten() });
+    return;
+  }
+  try {
+    const result = await holdMeetingMulti({ userId: req.userId!, ...parsed.data });
+    if (!result.ok) {
+      res.status(result.error === "email_not_found" ? 404 : 502).json({ error: result.error || "hold_multi_failed" });
+      return;
+    }
+    res.status(201).json({ ok: true, appointmentIds: result.appointmentIds || [] });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "hold_multi_crashed";
+    req.log?.error?.({ err: msg }, "[appointments] hold-multi crashed");
     res.status(500).json({ error: msg });
   }
 });

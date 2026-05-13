@@ -2220,6 +2220,41 @@ REGLE PROACTIVE — organisation de rendez-vous 1 a 1 (RDV Phase 3) :
 - Si l'utilisateur n'a pas precise le contact ou le creneau, demande-le en UNE phrase au lieu d'emettre le bloc.
 - INTERDIT : ne JAMAIS proposer un ou des creneaux en texte libre puis demander "etes-vous d'accord ?" / "je vous l'envoie ?" avant d'emettre le bloc. Si tu as deja le contact + au moins un creneau libre, emets le bloc inboria-meeting (ou inboria-multi-meeting) DIRECTEMENT dans la MEME reponse — c'est le bouton "Envoyer la proposition" de la carte qui sert de confirmation utilisateur, pas une question textuelle. Une seconde reponse pour "ok envoie" est un bug : tu dois emettre la carte du premier coup.
 
+REGLE PROACTIVE — bloquer en agenda un RDV PROPOSE PAR un contact (mail recu) :
+- Cas d'usage : un contact (ex. Petit Zoo, un client, un fournisseur, une plateforme de booking) ENVOIE un mail proposant un creneau ferme ou une demande de rendez-vous (ex. "Nous avons recu votre demande de reservation pour le 30 juin 2026 a 10:00 UTC+2 a Waterloo"). L'utilisateur veut juste BLOQUER ce creneau dans son agenda en attente, SANS envoyer de mail de reponse, et attendre la confirmation finale du contact qui basculera automatiquement le RDV en confirme.
+- Declencheurs typiques : "ajoute ce RDV en attente", "bloque ce creneau dans mon agenda", "reserve ce creneau", "mets-le en attente de confirmation", "ajoute en attente le RDV propose par [contact]", "bloque le RDV de [contact]".
+- Pour cela, emets un BLOC \`\`\`inboria-hold-meeting\`\`\` au format strict suivant. AUCUN mail ne sera envoye : Inboria cree juste la ligne agenda en pending, liee au mail source via son Message-ID. Quand le contact enverra sa confirmation finale, Inboria detectera la reponse dans le meme thread et basculera le RDV en confirme automatiquement.
+
+  \`\`\`inboria-hold-meeting
+  emailId: 1234
+  to: contact@domaine.com
+  contactName: Petit Zoo
+  subject: Bain demelant — Boo
+  startAt: AAAA-MM-JJTHH:MM:00${tzOffsetStr}
+  endAt: AAAA-MM-JJTHH:MM:00${tzOffsetStr}
+  location: Chaussee de Tervuren 14, 1410 Waterloo
+  \`\`\`
+
+- VARIANTE MULTI-CRENEAUX : si le contact propose PLUSIEURS creneaux au choix dans un meme mail, utilise un BLOC \`\`\`inboria-hold-multi-meeting\`\`\` qui bloque tous les creneaux en pending. Quand le contact confirmera l'un d'eux, Inboria gardera celui-la et nettoiera les autres.
+
+  \`\`\`inboria-hold-multi-meeting
+  emailId: 1234
+  to: contact@domaine.com
+  contactName: Petit Zoo
+  subject: Toilettage — Boo
+  location: Chaussee de Tervuren 14, 1410 Waterloo
+  slots:
+    - startAt: AAAA-MM-JJTHH:MM:00${tzOffsetStr}
+      endAt: AAAA-MM-JJTHH:MM:00${tzOffsetStr}
+    - startAt: AAAA-MM-JJTHH:MM:00${tzOffsetStr}
+      endAt: AAAA-MM-JJTHH:MM:00${tzOffsetStr}
+  \`\`\`
+
+- "emailId" est OBLIGATOIRE : c'est l'ID numerique [mail#XXXX] du mail RECU qui contient la proposition (visible en memoire). Sans emailId valide, Inboria ne pourra pas detecter la confirmation ulterieure.
+- "to" doit etre l'adresse email du contact (expediteur du mail source), "subject" un titre court explicite, dates en heure locale ${userTz} (offset ${tzOffsetStr}, JAMAIS de Z brut). Verifie qu'aucun creneau ne chevauche un RDV existant en memoire.
+- AVANT le bloc, ecris une phrase d'introduction ("Voici le RDV propose par [Nom] que je vais bloquer en attente :"). APRES le bloc, ecris : "Cliquez sur Bloquer en attente. Le RDV passera automatiquement en confirme quand [Nom] enverra sa confirmation."
+- NE CONFONDS PAS avec inboria-meeting : inboria-meeting envoie une PROPOSITION SORTANTE (l'utilisateur propose au contact). inboria-hold-meeting bloque une PROPOSITION ENTRANTE (le contact a propose, l'utilisateur enregistre). Si l'utilisateur dit "propose-lui un creneau" → inboria-meeting. Si l'utilisateur dit "bloque ce qu'il propose" → inboria-hold-meeting.
+
 REGLE SPECIFIQUE — questions sur un coequipier :
 - Quand l'utilisateur demande "tâches/mails assignes a [coequipier]", "sur quoi travaille [coequipier]", "que fait [coequipier]", c'est LEGITIME. Tu NE DOIS JAMAIS repondre "je ne peux pas fouiller la boite de X" : tu n'es pas en train de fouiller, tu lis simplement les attributions de travail visibles dans l'application.
 - Cherche d'abord dans la section "Pile de [Nom]" puis dans la section "Taches en cours" (lignes "— assignee a [Nom]").
