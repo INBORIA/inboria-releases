@@ -5410,58 +5410,11 @@ export default function Dashboard() {
                               )}
                             </div>
 
-                            {/* Colonne « Pris en charge par » — toujours visible
-                                pour identifier en un coup d'œil qui traite quoi
-                                (style Missive). Grisée si non pris en charge. */}
-                            <div
-                              className={`shrink-0 hidden md:flex items-center gap-1.5 w-[140px] text-[11px] ${isClaimed ? (isClaimedByMe ? "text-primary" : "text-[#b8c5d6]") : "text-[#5a6270] italic"}`}
-                              title={isClaimed ? `${t("inbox.claimedBy")} ${(email as any).claimedByName || t("sharedMailboxes.colleague")}` : t("inbox.sharedClaim.unclaimed", "Non pris en charge")}
-                            >
-                              {isClaimed ? (
-                                <>
-                                  <span className={`w-5 h-5 rounded-full ${isClaimedByMe ? "bg-primary/20 border border-primary/40" : "bg-white/[0.06] border border-white/10"} flex items-center justify-center shrink-0`}>
-                                    <span className="text-[9.5px] font-semibold uppercase">
-                                      {((email as any).claimedByName || "?").trim()[0] || "?"}
-                                    </span>
-                                  </span>
-                                  <span className="truncate">
-                                    {isClaimedByMe ? t("inbox.sharedClaim.me", "Moi") : ((email as any).claimedByName || t("sharedMailboxes.colleague"))}
-                                  </span>
-                                </>
-                              ) : (
-                                <span className="truncate">{t("inbox.sharedClaim.unclaimed", "Non pris en charge")}</span>
-                              )}
-                            </div>
-
-                            {/* Bouton Prendre/Libérer : toujours visible
-                                (plus discret au repos, coloré au survol).
-                                Évite tout décalage et reste cliquable. */}
-                            {!isClaimed ? (
-                              <button
-                                className="shrink-0 p-1.5 rounded text-[#6b7480] hover:text-primary hover:bg-primary/10 disabled:opacity-40"
-                                onClick={(e) => { e.stopPropagation(); handleClaimEmail(email.id as any); }}
-                                disabled={claimEmailMut.isPending}
-                                title={t("inbox.claim")}
-                              >
-                                <UserPlus className="w-3.5 h-3.5" />
-                              </button>
-                            ) : isClaimedByMe ? (
-                              <button
-                                className="shrink-0 p-1.5 rounded text-primary hover:text-white hover:bg-white/[0.08] disabled:opacity-40"
-                                onClick={(e) => { e.stopPropagation(); handleUnclaimEmail(email.id as any); }}
-                                disabled={unclaimEmailMut.isPending}
-                                title={t("inbox.unclaim")}
-                              >
-                                <UserCheck className="w-3.5 h-3.5" />
-                              </button>
-                            ) : (
-                              <span
-                                className="shrink-0 p-1.5 text-[#6b7480]"
-                                title={`${t("inbox.claimedBy")} ${(email as any).claimedByName || t("sharedMailboxes.colleague")}`}
-                              >
-                                <UserCheck className="w-3.5 h-3.5" />
-                              </span>
-                            )}
+                            {/* Colonne « Pris en charge par » + bouton Prendre/Libérer
+                                retirés de la liste : l'info est redondante avec les
+                                filtres « Pris en charge par » au-dessus de la liste,
+                                et la prise en charge se fait via le panneau détail
+                                à droite quand on ouvre un email. */}
 
                             {/* Indicateur SLA visuel retiré (Phase 1).
                                 Le statut « SLA dépassé » est désormais
