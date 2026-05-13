@@ -1,6 +1,7 @@
 import { DashboardLayout } from "@/components/layout/dashboard-layout";
 import { useMarkInboxPage } from "@/lib/inbox-theme";
 import { BackToInboxButton } from "@/components/dashboard/back-to-inbox-button";
+import { SnoozedPanel } from "@/components/dashboard/snoozed-panel";
 import { extractEmailAddress } from "@/lib/utils";
 import { EmailBodyRenderer } from "@/components/EmailBodyRenderer";
 import { EmailComments } from "@/components/email-comments";
@@ -4875,6 +4876,24 @@ export default function Dashboard() {
       )}
     </>
   ) : undefined;
+
+  // task #293 — Quand on est sur /dashboard/reportes, on rend le panneau
+  // Reportés en place dans la barre d'onglets de la Réception (état piloté
+  // par la route, pas une nouvelle route). Évite de quitter Dashboard.
+  if (routeLocation === "/dashboard/reportes") {
+    return (
+      <DashboardLayout>
+        <div className="flex flex-col h-[calc(100vh-4rem)]">
+          <div className="flex-1 overflow-auto">
+            <div className="max-w-6xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-5 space-y-4">
+              <BackToInboxButton />
+              <SnoozedPanel />
+            </div>
+          </div>
+        </div>
+      </DashboardLayout>
+    );
+  }
 
   return (
     <DashboardLayout rightSidebar={SUPERHUMAN_CLEAN || categoriesCollapsed ? undefined : categoriesPanel}>

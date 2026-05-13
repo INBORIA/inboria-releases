@@ -246,7 +246,10 @@ function Router() {
       <Route path="/dashboard/envoyes" component={() => <ProtectedRoute component={Envoyes} />} />
       <Route path="/dashboard/suivi" component={() => <ProtectedRoute component={Suivi} />} />
       <Route path="/dashboard/programmes" component={() => <ProtectedRoute component={Programmes} />} />
-      <Route path="/dashboard/reportes" component={() => <ProtectedRoute component={Reportes} />} />
+      {/* task #293 — /dashboard/reportes monte désormais Dashboard pour
+          afficher le panneau Reportés inline dans la barre d'onglets de la
+          Réception. La page Reportes autonome reste exportée pour compat. */}
+      <Route path="/dashboard/reportes" component={() => <ProtectedRoute component={Dashboard} />} />
       <Route path="/dashboard/archives" component={() => <ProtectedRoute component={Archives} />} />
       <Route path="/dashboard/indesirables" component={() => <ProtectedRoute component={Indesirables} />} />
       <Route path="/dashboard/corbeille" component={() => <ProtectedRoute component={Corbeille} />} />
