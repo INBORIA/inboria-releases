@@ -3642,6 +3642,160 @@ paths:
                 properties:
                   ok: { type: boolean }
 
+  /folders:
+    get:
+      operationId: listFolders
+      tags: [folders]
+      summary: List user folders (private — never visible to colleagues)
+      responses:
+        "200":
+          description: List of folders
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/UserFolder"
+    post:
+      operationId: createFolder
+      tags: [folders]
+      summary: Create a personal folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateFolderBody"
+      responses:
+        "201":
+          description: Created folder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserFolder"
+
+  /folders/{id}:
+    patch:
+      operationId: updateFolder
+      tags: [folders]
+      summary: Update a folder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateFolderBody"
+      responses:
+        "200":
+          description: Updated folder
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UserFolder"
+    delete:
+      operationId: deleteFolder
+      tags: [folders]
+      summary: Delete a folder (does not delete emails)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "204": { description: Deleted }
+
+  /folders/{id}/emails:
+    get:
+      operationId: listFolderEmails
+      tags: [folders]
+      summary: List emails currently assigned to a folder
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+        - name: limit
+          in: query
+          schema: { type: integer, default: 50 }
+        - name: page
+          in: query
+          schema: { type: integer, default: 1 }
+      responses:
+        "200":
+          description: Folder emails
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FolderEmailsResponse"
+
+  /folders/generate-prompt:
+    post:
+      operationId: generateFolderPrompt
+      tags: [folders]
+      summary: Enrich keywords/short brief into a complete classification prompt via gpt-4o-mini
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/GenerateFolderPromptBody"
+      responses:
+        "200":
+          description: Generated prompt
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateFolderPromptResponse"
+
+  /folders/assign:
+    post:
+      operationId: assignEmailsToFolder
+      tags: [folders]
+      summary: Manually assign one or many emails to a folder (drag-and-drop / context menu)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssignFolderBody"
+      responses:
+        "200":
+          description: Assigned
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [assigned]
+                properties:
+                  assigned: { type: integer }
+
+  /folders/unassign:
+    post:
+      operationId: unassignEmailsFromFolder
+      tags: [folders]
+      summary: Remove emails from a folder
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AssignFolderBody"
+      responses:
+        "200":
+          description: Removed
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [removed]
+                properties:
+                  removed: { type: integer }
+
 components:
   schemas:
     HealthStatus:
@@ -6064,3 +6218,101 @@ components:
           type: ["string", "null"]
         notes:
           type: ["string", "null"]
+
+    UserFolder:
+      type: object
+      required: [id, name, keywords, enabled, position, emailCount, createdAt, updatedAt]
+      properties:
+        id: { type: string }
+        name: { type: string }
+        description:
+          type: ["string", "null"]
+        color:
+          type: ["string", "null"]
+        icon:
+          type: ["string", "null"]
+        keywords:
+          type: array
+          items: { type: string }
+        aiPrompt:
+          type: ["string", "null"]
+        enabled: { type: boolean }
+        position: { type: integer }
+        emailCount: { type: integer }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    CreateFolderBody:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 80 }
+        description:
+          type: ["string", "null"]
+        color:
+          type: ["string", "null"]
+        icon:
+          type: ["string", "null"]
+        keywords:
+          type: array
+          items: { type: string }
+        aiPrompt:
+          type: ["string", "null"]
+        enabled: { type: boolean }
+
+    UpdateFolderBody:
+      type: object
+      properties:
+        name: { type: string, minLength: 1, maxLength: 80 }
+        description:
+          type: ["string", "null"]
+        color:
+          type: ["string", "null"]
+        icon:
+          type: ["string", "null"]
+        keywords:
+          type: array
+          items: { type: string }
+        aiPrompt:
+          type: ["string", "null"]
+        enabled: { type: boolean }
+        position: { type: integer }
+
+    FolderEmailsResponse:
+      type: object
+      required: [emails, total, page, totalPages]
+      properties:
+        emails:
+          type: array
+          items:
+            $ref: "#/components/schemas/Email"
+        total: { type: integer }
+        page: { type: integer }
+        totalPages: { type: integer }
+
+    GenerateFolderPromptBody:
+      type: object
+      required: [folderName]
+      properties:
+        folderName: { type: string, minLength: 1, maxLength: 120 }
+        keywords:
+          type: array
+          items: { type: string }
+        shortBrief:
+          type: ["string", "null"]
+
+    GenerateFolderPromptResponse:
+      type: object
+      required: [prompt]
+      properties:
+        prompt: { type: string }
+
+    AssignFolderBody:
+      type: object
+      required: [folderId, emailIds]
+      properties:
+        folderId: { type: string }
+        emailIds:
+          type: array
+          items: { type: integer }
+          minItems: 1

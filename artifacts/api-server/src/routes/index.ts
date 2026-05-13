@@ -40,6 +40,7 @@ import publicApiRouter from "./public-api";
 import teamAccessLogRouter from "./team-access-log";
 import contactsRouter from "./contacts";
 import calendarRouter from "./calendar";
+import foldersRouter from "./folders";
 
 const router: IRouter = Router();
 
@@ -84,5 +85,6 @@ router.use(publicApiRouter);
 router.use(teamAccessLogRouter);
 router.use(contactsRouter);
 router.use(calendarRouter);
+router.use(foldersRouter);
 
 export default router;

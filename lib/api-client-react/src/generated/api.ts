@@ -34,6 +34,8 @@ import type {
   Appointment,
   AssignEmailBody,
   AssignEmailResult,
+  AssignEmailsToFolder200,
+  AssignFolderBody,
   AuthResponse,
   AutomationRule,
   AutopilotActivity,
@@ -56,6 +58,7 @@ import type {
   CreateAppointmentBody,
   CreateAutomationRuleBody,
   CreateCategoryBody,
+  CreateFolderBody,
   CreateFollowupBody,
   CreateOrganisationBody,
   CreateProjectBody,
@@ -87,9 +90,12 @@ import type {
   EmptySpam200,
   EmptyTrash200,
   ExportEmailsParams,
+  FolderEmailsResponse,
   Followup,
   ForceSharedMailboxSync200,
   GenerateDraftBody,
+  GenerateFolderPromptBody,
+  GenerateFolderPromptResponse,
   GenerateFollowUpDraft200,
   GenerateFollowUpDraftBody,
   GeneratePackBody,
@@ -120,6 +126,7 @@ import type {
   ListAppointmentsParams,
   ListBlockedSendersParams,
   ListEmailsParams,
+  ListFolderEmailsParams,
   ListFollowupsParams,
   ListScheduledEmails200,
   ListTasksParams,
@@ -180,6 +187,7 @@ import type {
   TeamDashboard,
   TeamRecentComment,
   UnassignEmail200,
+  UnassignEmailsFromFolder200,
   UnblockSender200,
   UnclaimSharedEmail200,
   UnmarkEmailHandled200,
@@ -191,6 +199,7 @@ import type {
   UpdateCategoryBody,
   UpdateEmailBody,
   UpdateEmailComment200,
+  UpdateFolderBody,
   UpdateFollowupBody,
   UpdateInboriaMailboxSettingBody,
   UpdateIntegrationBody,
@@ -203,6 +212,7 @@ import type {
   UpdateTemplateBody,
   UploadAttachments200,
   UploadAttachmentsBody,
+  UserFolder,
   UserProfile,
   WaitlistSignupBody,
 } from "./api.schemas";
@@ -13736,4 +13746,711 @@ export const useDeleteManualContact = <
   TContext
 > => {
   return useMutation(getDeleteManualContactMutationOptions(options));
+};
+
+/**
+ * @summary List user folders (private — never visible to colleagues)
+ */
+export const getListFoldersUrl = () => {
+  return `/api/folders`;
+};
+
+export const listFolders = async (
+  options?: RequestInit,
+): Promise<UserFolder[]> => {
+  return customFetch<UserFolder[]>(getListFoldersUrl(), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListFoldersQueryKey = () => {
+  return [`/api/folders`] as const;
+};
+
+export const getListFoldersQueryOptions = <
+  TData = Awaited<ReturnType<typeof listFolders>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listFolders>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey = queryOptions?.queryKey ?? getListFoldersQueryKey();
+
+  const queryFn: QueryFunction<Awaited<ReturnType<typeof listFolders>>> = ({
+    signal,
+  }) => listFolders({ signal, ...requestOptions });
+
+  return { queryKey, queryFn, ...queryOptions } as UseQueryOptions<
+    Awaited<ReturnType<typeof listFolders>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListFoldersQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listFolders>>
+>;
+export type ListFoldersQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List user folders (private — never visible to colleagues)
+ */
+
+export function useListFolders<
+  TData = Awaited<ReturnType<typeof listFolders>>,
+  TError = ErrorType<unknown>,
+>(options?: {
+  query?: UseQueryOptions<
+    Awaited<ReturnType<typeof listFolders>>,
+    TError,
+    TData
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListFoldersQueryOptions(options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Create a personal folder
+ */
+export const getCreateFolderUrl = () => {
+  return `/api/folders`;
+};
+
+export const createFolder = async (
+  createFolderBody: CreateFolderBody,
+  options?: RequestInit,
+): Promise<UserFolder> => {
+  return customFetch<UserFolder>(getCreateFolderUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(createFolderBody),
+  });
+};
+
+export const getCreateFolderMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createFolder>>,
+    TError,
+    { data: BodyType<CreateFolderBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof createFolder>>,
+  TError,
+  { data: BodyType<CreateFolderBody> },
+  TContext
+> => {
+  const mutationKey = ["createFolder"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof createFolder>>,
+    { data: BodyType<CreateFolderBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return createFolder(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type CreateFolderMutationResult = NonNullable<
+  Awaited<ReturnType<typeof createFolder>>
+>;
+export type CreateFolderMutationBody = BodyType<CreateFolderBody>;
+export type CreateFolderMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Create a personal folder
+ */
+export const useCreateFolder = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof createFolder>>,
+    TError,
+    { data: BodyType<CreateFolderBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof createFolder>>,
+  TError,
+  { data: BodyType<CreateFolderBody> },
+  TContext
+> => {
+  return useMutation(getCreateFolderMutationOptions(options));
+};
+
+/**
+ * @summary Update a folder
+ */
+export const getUpdateFolderUrl = (id: string) => {
+  return `/api/folders/${id}`;
+};
+
+export const updateFolder = async (
+  id: string,
+  updateFolderBody: UpdateFolderBody,
+  options?: RequestInit,
+): Promise<UserFolder> => {
+  return customFetch<UserFolder>(getUpdateFolderUrl(id), {
+    ...options,
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(updateFolderBody),
+  });
+};
+
+export const getUpdateFolderMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateFolder>>,
+    TError,
+    { id: string; data: BodyType<UpdateFolderBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof updateFolder>>,
+  TError,
+  { id: string; data: BodyType<UpdateFolderBody> },
+  TContext
+> => {
+  const mutationKey = ["updateFolder"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof updateFolder>>,
+    { id: string; data: BodyType<UpdateFolderBody> }
+  > = (props) => {
+    const { id, data } = props ?? {};
+
+    return updateFolder(id, data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UpdateFolderMutationResult = NonNullable<
+  Awaited<ReturnType<typeof updateFolder>>
+>;
+export type UpdateFolderMutationBody = BodyType<UpdateFolderBody>;
+export type UpdateFolderMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Update a folder
+ */
+export const useUpdateFolder = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof updateFolder>>,
+    TError,
+    { id: string; data: BodyType<UpdateFolderBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof updateFolder>>,
+  TError,
+  { id: string; data: BodyType<UpdateFolderBody> },
+  TContext
+> => {
+  return useMutation(getUpdateFolderMutationOptions(options));
+};
+
+/**
+ * @summary Delete a folder (does not delete emails)
+ */
+export const getDeleteFolderUrl = (id: string) => {
+  return `/api/folders/${id}`;
+};
+
+export const deleteFolder = async (
+  id: string,
+  options?: RequestInit,
+): Promise<void> => {
+  return customFetch<void>(getDeleteFolderUrl(id), {
+    ...options,
+    method: "DELETE",
+  });
+};
+
+export const getDeleteFolderMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteFolder>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof deleteFolder>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  const mutationKey = ["deleteFolder"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof deleteFolder>>,
+    { id: string }
+  > = (props) => {
+    const { id } = props ?? {};
+
+    return deleteFolder(id, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type DeleteFolderMutationResult = NonNullable<
+  Awaited<ReturnType<typeof deleteFolder>>
+>;
+
+export type DeleteFolderMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Delete a folder (does not delete emails)
+ */
+export const useDeleteFolder = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof deleteFolder>>,
+    TError,
+    { id: string },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof deleteFolder>>,
+  TError,
+  { id: string },
+  TContext
+> => {
+  return useMutation(getDeleteFolderMutationOptions(options));
+};
+
+/**
+ * @summary List emails currently assigned to a folder
+ */
+export const getListFolderEmailsUrl = (
+  id: string,
+  params?: ListFolderEmailsParams,
+) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? "null" : value.toString());
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0
+    ? `/api/folders/${id}/emails?${stringifiedParams}`
+    : `/api/folders/${id}/emails`;
+};
+
+export const listFolderEmails = async (
+  id: string,
+  params?: ListFolderEmailsParams,
+  options?: RequestInit,
+): Promise<FolderEmailsResponse> => {
+  return customFetch<FolderEmailsResponse>(getListFolderEmailsUrl(id, params), {
+    ...options,
+    method: "GET",
+  });
+};
+
+export const getListFolderEmailsQueryKey = (
+  id: string,
+  params?: ListFolderEmailsParams,
+) => {
+  return [`/api/folders/${id}/emails`, ...(params ? [params] : [])] as const;
+};
+
+export const getListFolderEmailsQueryOptions = <
+  TData = Awaited<ReturnType<typeof listFolderEmails>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  params?: ListFolderEmailsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listFolderEmails>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+) => {
+  const { query: queryOptions, request: requestOptions } = options ?? {};
+
+  const queryKey =
+    queryOptions?.queryKey ?? getListFolderEmailsQueryKey(id, params);
+
+  const queryFn: QueryFunction<
+    Awaited<ReturnType<typeof listFolderEmails>>
+  > = ({ signal }) =>
+    listFolderEmails(id, params, { signal, ...requestOptions });
+
+  return {
+    queryKey,
+    queryFn,
+    enabled: !!id,
+    ...queryOptions,
+  } as UseQueryOptions<
+    Awaited<ReturnType<typeof listFolderEmails>>,
+    TError,
+    TData
+  > & { queryKey: QueryKey };
+};
+
+export type ListFolderEmailsQueryResult = NonNullable<
+  Awaited<ReturnType<typeof listFolderEmails>>
+>;
+export type ListFolderEmailsQueryError = ErrorType<unknown>;
+
+/**
+ * @summary List emails currently assigned to a folder
+ */
+
+export function useListFolderEmails<
+  TData = Awaited<ReturnType<typeof listFolderEmails>>,
+  TError = ErrorType<unknown>,
+>(
+  id: string,
+  params?: ListFolderEmailsParams,
+  options?: {
+    query?: UseQueryOptions<
+      Awaited<ReturnType<typeof listFolderEmails>>,
+      TError,
+      TData
+    >;
+    request?: SecondParameter<typeof customFetch>;
+  },
+): UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+  const queryOptions = getListFolderEmailsQueryOptions(id, params, options);
+
+  const query = useQuery(queryOptions) as UseQueryResult<TData, TError> & {
+    queryKey: QueryKey;
+  };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+/**
+ * @summary Enrich keywords/short brief into a complete classification prompt via gpt-4o-mini
+ */
+export const getGenerateFolderPromptUrl = () => {
+  return `/api/folders/generate-prompt`;
+};
+
+export const generateFolderPrompt = async (
+  generateFolderPromptBody: GenerateFolderPromptBody,
+  options?: RequestInit,
+): Promise<GenerateFolderPromptResponse> => {
+  return customFetch<GenerateFolderPromptResponse>(
+    getGenerateFolderPromptUrl(),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(generateFolderPromptBody),
+    },
+  );
+};
+
+export const getGenerateFolderPromptMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generateFolderPrompt>>,
+    TError,
+    { data: BodyType<GenerateFolderPromptBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof generateFolderPrompt>>,
+  TError,
+  { data: BodyType<GenerateFolderPromptBody> },
+  TContext
+> => {
+  const mutationKey = ["generateFolderPrompt"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof generateFolderPrompt>>,
+    { data: BodyType<GenerateFolderPromptBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return generateFolderPrompt(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type GenerateFolderPromptMutationResult = NonNullable<
+  Awaited<ReturnType<typeof generateFolderPrompt>>
+>;
+export type GenerateFolderPromptMutationBody =
+  BodyType<GenerateFolderPromptBody>;
+export type GenerateFolderPromptMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Enrich keywords/short brief into a complete classification prompt via gpt-4o-mini
+ */
+export const useGenerateFolderPrompt = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof generateFolderPrompt>>,
+    TError,
+    { data: BodyType<GenerateFolderPromptBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof generateFolderPrompt>>,
+  TError,
+  { data: BodyType<GenerateFolderPromptBody> },
+  TContext
+> => {
+  return useMutation(getGenerateFolderPromptMutationOptions(options));
+};
+
+/**
+ * @summary Manually assign one or many emails to a folder (drag-and-drop / context menu)
+ */
+export const getAssignEmailsToFolderUrl = () => {
+  return `/api/folders/assign`;
+};
+
+export const assignEmailsToFolder = async (
+  assignFolderBody: AssignFolderBody,
+  options?: RequestInit,
+): Promise<AssignEmailsToFolder200> => {
+  return customFetch<AssignEmailsToFolder200>(getAssignEmailsToFolderUrl(), {
+    ...options,
+    method: "POST",
+    headers: { "Content-Type": "application/json", ...options?.headers },
+    body: JSON.stringify(assignFolderBody),
+  });
+};
+
+export const getAssignEmailsToFolderMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof assignEmailsToFolder>>,
+    TError,
+    { data: BodyType<AssignFolderBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof assignEmailsToFolder>>,
+  TError,
+  { data: BodyType<AssignFolderBody> },
+  TContext
+> => {
+  const mutationKey = ["assignEmailsToFolder"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof assignEmailsToFolder>>,
+    { data: BodyType<AssignFolderBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return assignEmailsToFolder(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type AssignEmailsToFolderMutationResult = NonNullable<
+  Awaited<ReturnType<typeof assignEmailsToFolder>>
+>;
+export type AssignEmailsToFolderMutationBody = BodyType<AssignFolderBody>;
+export type AssignEmailsToFolderMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Manually assign one or many emails to a folder (drag-and-drop / context menu)
+ */
+export const useAssignEmailsToFolder = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof assignEmailsToFolder>>,
+    TError,
+    { data: BodyType<AssignFolderBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof assignEmailsToFolder>>,
+  TError,
+  { data: BodyType<AssignFolderBody> },
+  TContext
+> => {
+  return useMutation(getAssignEmailsToFolderMutationOptions(options));
+};
+
+/**
+ * @summary Remove emails from a folder
+ */
+export const getUnassignEmailsFromFolderUrl = () => {
+  return `/api/folders/unassign`;
+};
+
+export const unassignEmailsFromFolder = async (
+  assignFolderBody: AssignFolderBody,
+  options?: RequestInit,
+): Promise<UnassignEmailsFromFolder200> => {
+  return customFetch<UnassignEmailsFromFolder200>(
+    getUnassignEmailsFromFolderUrl(),
+    {
+      ...options,
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...options?.headers },
+      body: JSON.stringify(assignFolderBody),
+    },
+  );
+};
+
+export const getUnassignEmailsFromFolderMutationOptions = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unassignEmailsFromFolder>>,
+    TError,
+    { data: BodyType<AssignFolderBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationOptions<
+  Awaited<ReturnType<typeof unassignEmailsFromFolder>>,
+  TError,
+  { data: BodyType<AssignFolderBody> },
+  TContext
+> => {
+  const mutationKey = ["unassignEmailsFromFolder"];
+  const { mutation: mutationOptions, request: requestOptions } = options
+    ? options.mutation &&
+      "mutationKey" in options.mutation &&
+      options.mutation.mutationKey
+      ? options
+      : { ...options, mutation: { ...options.mutation, mutationKey } }
+    : { mutation: { mutationKey }, request: undefined };
+
+  const mutationFn: MutationFunction<
+    Awaited<ReturnType<typeof unassignEmailsFromFolder>>,
+    { data: BodyType<AssignFolderBody> }
+  > = (props) => {
+    const { data } = props ?? {};
+
+    return unassignEmailsFromFolder(data, requestOptions);
+  };
+
+  return { mutationFn, ...mutationOptions };
+};
+
+export type UnassignEmailsFromFolderMutationResult = NonNullable<
+  Awaited<ReturnType<typeof unassignEmailsFromFolder>>
+>;
+export type UnassignEmailsFromFolderMutationBody = BodyType<AssignFolderBody>;
+export type UnassignEmailsFromFolderMutationError = ErrorType<unknown>;
+
+/**
+ * @summary Remove emails from a folder
+ */
+export const useUnassignEmailsFromFolder = <
+  TError = ErrorType<unknown>,
+  TContext = unknown,
+>(options?: {
+  mutation?: UseMutationOptions<
+    Awaited<ReturnType<typeof unassignEmailsFromFolder>>,
+    TError,
+    { data: BodyType<AssignFolderBody> },
+    TContext
+  >;
+  request?: SecondParameter<typeof customFetch>;
+}): UseMutationResult<
+  Awaited<ReturnType<typeof unassignEmailsFromFolder>>,
+  TError,
+  { data: BodyType<AssignFolderBody> },
+  TContext
+> => {
+  return useMutation(getUnassignEmailsFromFolderMutationOptions(options));
 };

@@ -21,6 +21,7 @@ import ResetPassword from "@/pages/reset-password";
 import AcceptInvite from "@/pages/accept-invite";
 import Dashboard from "@/pages/dashboard/index";
 import Archives from "@/pages/dashboard/archives";
+import MesDossiers from "@/pages/dashboard/dossiers";
 import Indesirables from "@/pages/dashboard/indesirables";
 import Corbeille from "@/pages/dashboard/corbeille";
 import Envoyes from "@/pages/dashboard/envoyes";
@@ -250,6 +251,7 @@ function Router() {
           Réception. La page Reportes autonome reste exportée pour compat. */}
       <Route path="/dashboard/reportes" component={() => <ProtectedRoute component={Dashboard} />} />
       <Route path="/dashboard/archives" component={() => <ProtectedRoute component={Archives} />} />
+      <Route path="/dashboard/dossiers" component={() => <ProtectedRoute component={MesDossiers} />} />
       <Route path="/dashboard/indesirables" component={() => <ProtectedRoute component={Indesirables} />} />
       <Route path="/dashboard/corbeille" component={() => <ProtectedRoute component={Corbeille} />} />
       <Route path="/dashboard/bilan" component={() => <ProtectedRoute component={BilanQuotidien} />} />

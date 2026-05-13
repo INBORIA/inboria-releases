@@ -1645,6 +1645,90 @@ export interface ManualContactInput {
   notes?: string | null;
 }
 
+export interface UserFolder {
+  id: string;
+  name: string;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  color?: string | null;
+  /** @nullable */
+  icon?: string | null;
+  keywords: string[];
+  /** @nullable */
+  aiPrompt?: string | null;
+  enabled: boolean;
+  position: number;
+  emailCount: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface CreateFolderBody {
+  /**
+   * @minLength 1
+   * @maxLength 80
+   */
+  name: string;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  color?: string | null;
+  /** @nullable */
+  icon?: string | null;
+  keywords?: string[];
+  /** @nullable */
+  aiPrompt?: string | null;
+  enabled?: boolean;
+}
+
+export interface UpdateFolderBody {
+  /**
+   * @minLength 1
+   * @maxLength 80
+   */
+  name?: string;
+  /** @nullable */
+  description?: string | null;
+  /** @nullable */
+  color?: string | null;
+  /** @nullable */
+  icon?: string | null;
+  keywords?: string[];
+  /** @nullable */
+  aiPrompt?: string | null;
+  enabled?: boolean;
+  position?: number;
+}
+
+export interface FolderEmailsResponse {
+  emails: Email[];
+  total: number;
+  page: number;
+  totalPages: number;
+}
+
+export interface GenerateFolderPromptBody {
+  /**
+   * @minLength 1
+   * @maxLength 120
+   */
+  folderName: string;
+  keywords?: string[];
+  /** @nullable */
+  shortBrief?: string | null;
+}
+
+export interface GenerateFolderPromptResponse {
+  prompt: string;
+}
+
+export interface AssignFolderBody {
+  folderId: string;
+  /** @minItems 1 */
+  emailIds: number[];
+}
+
 export type RegisterPushToken200 = {
   success?: boolean;
 };
@@ -2340,4 +2424,17 @@ export type SearchContactsParams = {
 
 export type DeleteManualContact200 = {
   ok: boolean;
+};
+
+export type ListFolderEmailsParams = {
+  limit?: number;
+  page?: number;
+};
+
+export type AssignEmailsToFolder200 = {
+  assigned: number;
+};
+
+export type UnassignEmailsFromFolder200 = {
+  removed: number;
 };

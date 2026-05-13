@@ -4536,3 +4536,215 @@ export const DeleteManualContactParams = zod.object({
 export const DeleteManualContactResponse = zod.object({
   ok: zod.boolean(),
 });
+
+/**
+ * @summary List user folders (private — never visible to colleagues)
+ */
+export const ListFoldersResponseItem = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  description: zod.string().nullish(),
+  color: zod.string().nullish(),
+  icon: zod.string().nullish(),
+  keywords: zod.array(zod.string()),
+  aiPrompt: zod.string().nullish(),
+  enabled: zod.boolean(),
+  position: zod.number(),
+  emailCount: zod.number(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+export const ListFoldersResponse = zod.array(ListFoldersResponseItem);
+
+/**
+ * @summary Create a personal folder
+ */
+export const createFolderBodyNameMax = 80;
+
+export const CreateFolderBody = zod.object({
+  name: zod.string().min(1).max(createFolderBodyNameMax),
+  description: zod.string().nullish(),
+  color: zod.string().nullish(),
+  icon: zod.string().nullish(),
+  keywords: zod.array(zod.string()).optional(),
+  aiPrompt: zod.string().nullish(),
+  enabled: zod.boolean().optional(),
+});
+
+/**
+ * @summary Update a folder
+ */
+export const UpdateFolderParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const updateFolderBodyNameMax = 80;
+
+export const UpdateFolderBody = zod.object({
+  name: zod.string().min(1).max(updateFolderBodyNameMax).optional(),
+  description: zod.string().nullish(),
+  color: zod.string().nullish(),
+  icon: zod.string().nullish(),
+  keywords: zod.array(zod.string()).optional(),
+  aiPrompt: zod.string().nullish(),
+  enabled: zod.boolean().optional(),
+  position: zod.number().optional(),
+});
+
+export const UpdateFolderResponse = zod.object({
+  id: zod.string(),
+  name: zod.string(),
+  description: zod.string().nullish(),
+  color: zod.string().nullish(),
+  icon: zod.string().nullish(),
+  keywords: zod.array(zod.string()),
+  aiPrompt: zod.string().nullish(),
+  enabled: zod.boolean(),
+  position: zod.number(),
+  emailCount: zod.number(),
+  createdAt: zod.coerce.date(),
+  updatedAt: zod.coerce.date(),
+});
+
+/**
+ * @summary Delete a folder (does not delete emails)
+ */
+export const DeleteFolderParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+/**
+ * @summary List emails currently assigned to a folder
+ */
+export const ListFolderEmailsParams = zod.object({
+  id: zod.coerce.string(),
+});
+
+export const listFolderEmailsQueryLimitDefault = 50;
+export const listFolderEmailsQueryPageDefault = 1;
+
+export const ListFolderEmailsQueryParams = zod.object({
+  limit: zod.coerce.number().default(listFolderEmailsQueryLimitDefault),
+  page: zod.coerce.number().default(listFolderEmailsQueryPageDefault),
+});
+
+export const listFolderEmailsResponseEmailsItemOpenedCountDefault = 0;
+
+export const ListFolderEmailsResponse = zod.object({
+  emails: zod.array(
+    zod.object({
+      id: zod.number(),
+      sender: zod.string(),
+      recipient: zod.string().nullish(),
+      subject: zod.string(),
+      body: zod.string().optional(),
+      status: zod.string(),
+      priority: zod.string(),
+      summary: zod.string().nullish(),
+      categoryId: zod.number().nullish(),
+      categoryName: zod.string().nullish(),
+      projectId: zod.string().nullish(),
+      projectName: zod.string().nullish(),
+      projectReference: zod.string().nullish(),
+      replyToEmailId: zod.number().nullish(),
+      assignedTo: zod.string().nullish(),
+      assignedToName: zod.string().nullish(),
+      assignedAt: zod.coerce.date().nullish(),
+      spamSource: zod
+        .string()
+        .nullish()
+        .describe(
+          "Origin of the spam classification: 'provider' (filtré côté fournisseur), 'ai' (Inboria IA), 'user' (manuel), null sinon.",
+        ),
+      snoozedUntil: zod.coerce
+        .date()
+        .nullish()
+        .describe(
+          "ISO timestamp until which this email is hidden from the inbox.",
+        ),
+      sentAt: zod.coerce
+        .date()
+        .nullish()
+        .describe(
+          "ISO timestamp when this email was actually sent (set for sent \/ scheduled-then-sent emails).",
+        ),
+      openedAt: zod.coerce
+        .date()
+        .nullish()
+        .describe(
+          "First time the recipient opened a sent email (tracking pixel hit).",
+        ),
+      openedCount: zod
+        .number()
+        .default(listFolderEmailsResponseEmailsItemOpenedCountDefault)
+        .describe("Number of recorded pixel opens for a sent email."),
+      attachmentCount: zod.number().optional(),
+      attachments: zod
+        .array(
+          zod.object({
+            id: zod.string(),
+            filename: zod.string(),
+            content_type: zod.string(),
+            size: zod.number(),
+            created_at: zod.coerce.date().optional(),
+          }),
+        )
+        .optional(),
+      inboriaScore: zod
+        .number()
+        .optional()
+        .describe(
+          "Inboria strategic score (sum of weighted signals). Higher = more strategic.",
+        ),
+      inboriaReasons: zod
+        .array(zod.string())
+        .optional()
+        .describe("Human-readable reasons explaining the Inboria score."),
+      createdAt: zod.coerce.date(),
+    }),
+  ),
+  total: zod.number(),
+  page: zod.number(),
+  totalPages: zod.number(),
+});
+
+/**
+ * @summary Enrich keywords/short brief into a complete classification prompt via gpt-4o-mini
+ */
+export const generateFolderPromptBodyFolderNameMax = 120;
+
+export const GenerateFolderPromptBody = zod.object({
+  folderName: zod.string().min(1).max(generateFolderPromptBodyFolderNameMax),
+  keywords: zod.array(zod.string()).optional(),
+  shortBrief: zod.string().nullish(),
+});
+
+export const GenerateFolderPromptResponse = zod.object({
+  prompt: zod.string(),
+});
+
+/**
+ * @summary Manually assign one or many emails to a folder (drag-and-drop / context menu)
+ */
+
+export const AssignEmailsToFolderBody = zod.object({
+  folderId: zod.string(),
+  emailIds: zod.array(zod.number()).min(1),
+});
+
+export const AssignEmailsToFolderResponse = zod.object({
+  assigned: zod.number(),
+});
+
+/**
+ * @summary Remove emails from a folder
+ */
+
+export const UnassignEmailsFromFolderBody = zod.object({
+  folderId: zod.string(),
+  emailIds: zod.array(zod.number()).min(1),
+});
+
+export const UnassignEmailsFromFolderResponse = zod.object({
+  removed: zod.number(),
+});

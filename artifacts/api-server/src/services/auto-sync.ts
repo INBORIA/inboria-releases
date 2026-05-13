@@ -755,6 +755,25 @@ export async function saveEmailWithTriage(
     return inserted.id;
   }
 
+  // Task #294 — auto-classement dans les « Mes dossiers » de l'utilisateur.
+  // Best-effort, jamais bloquant pour la sync. Skip pour les mails forceSpam
+  // (déjà retournés plus haut). Les dossiers sont strictement privés
+  // (RLS user_id), donc pas de fuite cross-utilisateurs même en boîte
+  // partagée.
+  try {
+    const { classifyEmailIntoUserFolders } = await import("../routes/folders");
+    classifyEmailIntoUserFolders({
+      userId,
+      emailId: inserted.id,
+      sender,
+      subject,
+      body,
+      summary: triage.summary,
+    }).catch(() => {});
+  } catch {
+    /* folders hook optional */
+  }
+
   // Run user automation rules (best-effort, never block the sync)
   try {
     const { runMatchingRules } = await import("../routes/automation-rules");

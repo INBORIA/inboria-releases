@@ -16,6 +16,7 @@ import {
   Loader2,
   Menu,
   Archive,
+  FolderOpen,
   AlertTriangle,
   Activity,
   Send,
@@ -120,7 +121,10 @@ export function DashboardLayout({ children, rightSidebar }: { children: React.Re
     // de Tâches) — projets = entité d'équipe, vit dans la Réception.
     { name: t("sidebar.contacts", "Contacts"), href: "/dashboard/contacts", icon: Users },
     { name: t("sidebar.agenda"), href: "/dashboard/agenda", icon: CalendarDays },
-    { name: t("sidebar.archives"), href: "/dashboard/archives", icon: Archive },
+    // Task #294 Phase 1 — « Archives » retiré de la sidebar et déplacé en
+    // onglet de la Réception (à droite de Relances). À la place : « Mes
+    // dossiers » personnels (privés, classement IA auto).
+    { name: t("folders.title", { defaultValue: "Mes dossiers" }), href: "/dashboard/dossiers", icon: FolderOpen },
     { name: t("sidebar.dailyBrief"), href: "/dashboard/bilan", icon: LayoutDashboard },
     { name: t("sidebar.classification"), href: "/dashboard/classement", icon: Tags },
     { name: t("templates.title"), href: "/dashboard/parametres/templates", icon: FileText },

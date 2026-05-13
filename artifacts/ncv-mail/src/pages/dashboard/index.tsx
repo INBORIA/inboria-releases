@@ -5209,6 +5209,21 @@ export default function Dashboard() {
                 <MailCheck className="w-3 h-3" />
                 {t("sidebar.followups", "Relances")}
               </Link>
+              {/* Task #294 Phase 2 — Onglet Archives.
+                  Déplacé depuis la sidebar (où trône désormais « Mes
+                  dossiers »). Page standalone /dashboard/archives, groupée
+                  par catégorie IA. Même pattern Link que les autres onglets. */}
+              <Link
+                href="/dashboard/archives"
+                className={`inline-flex items-center justify-center gap-1 w-[140px] h-7 text-[11px] rounded-md font-medium transition-colors ${
+                  routeLocation === "/dashboard/archives"
+                    ? "bg-primary/15 text-primary border border-primary/20"
+                    : "text-[#b8c5d6] border border-[#1f2937] hover:text-white hover:border-[#b8c5d6]/30"
+                }`}
+              >
+                <Archive className="w-3 h-3" />
+                {t("sidebar.archives")}
+              </Link>
             </div>
 
           {/* Étape 2 refonte Superhuman — menu Filtres unifié.
