@@ -26,7 +26,6 @@ import Corbeille from "@/pages/dashboard/corbeille";
 import Envoyes from "@/pages/dashboard/envoyes";
 import Suivi from "@/pages/dashboard/suivi";
 import Programmes from "@/pages/dashboard/programmes";
-import Reportes from "@/pages/dashboard/reportes";
 import BilanQuotidien from "@/pages/dashboard/bilan";
 import Taches from "@/pages/dashboard/taches";
 import Relances from "@/pages/dashboard/relances";
