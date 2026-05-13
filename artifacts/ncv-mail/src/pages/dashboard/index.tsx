@@ -5654,64 +5654,50 @@ export default function Dashboard() {
                       <p className="text-[12px] text-[#b8c5d6] mt-1">{t("inbox.noEmailsDesc")}</p>
                     </div>
                   ) : (
-                    /* Liste des boîtes partagées — refonte Superhuman :
-                       ligne compacte 52px, dot non-lu, avatar primary,
-                       sender, sujet—résumé, actions au survol uniquement.
-                       Le badge « Pris en charge par X » et le sélecteur
-                       d'assignation restent disponibles via le détail. */
+                    /* Liste des boîtes partagées — utilise EmailRow partagé
+                       pour parité 1:1 avec Réception/Envoyés/Programmés/Mes
+                       dossiers : clic droit (handleContextMenu) + survol
+                       (HoverActions : Reply / Forward / Snooze / Archive /
+                       Delete / Catégorie / Move to folder / Block sender). */
                     <div>
-                      {sharedEmailsList.map((email) => {
-                        const isClaimed = !!email.claimedBy;
-                        const isClaimedByMe = email.claimedBy === (profile as any)?.id;
-                        const isUnread = (email as any).status === "non_lu" || (email as any).isRead === false || (email as any).unread === true;
+                      {sharedEmailsList.map((email: any) => {
+                        const badge = resolveMailboxBadge(email, composeConnections, sharedMailboxes);
                         return (
-                          <div
+                          <EmailRow
                             key={email.id}
-                            data-email-row
-                            data-row-id={email.id}
-                            title={`${email.sender || ""}${(email as any).senderEmail ? ` <${(email as any).senderEmail}>` : ""}\n${email.subject || ""}${email.createdAt ? `\n${format(new Date(email.createdAt), "PPp", { locale: dateFnsLocale })}` : ""}${email.summary ? `\n\n${email.summary}` : ""}`}
-                            className={`group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-b border-border/40 border-l-transparent hover:bg-white/[0.03] transition-colors`}
-                            onClick={() => setSelectedEmailId(Number(email.id))}
-                          >
-                            <div className="w-4 flex items-center justify-center shrink-0">
-                              <span className={`w-1.5 h-1.5 rounded-full ${isUnread ? "bg-primary" : "bg-transparent"}`} />
-                            </div>
-
-                            <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-                              <span className="text-primary text-[11px] font-semibold">
-                                {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
-                              </span>
-                            </div>
-
-                            <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">
-                              <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
-                                {email.sender}
-                              </span>
-                            </div>
-
-                            <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
-                              <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
-                                {email.subject}
-                              </span>
-                              {email.summary && (
-                                <span className={`text-[13px] truncate ${isUnread ? "text-[#8b95a7]" : "text-[#5a6270]"}`}>— {email.summary}</span>
-                              )}
-                            </div>
-
-                            {/* Colonne « Pris en charge par » + bouton Prendre/Libérer
-                                retirés de la liste : l'info est redondante avec les
-                                filtres « Pris en charge par » au-dessus de la liste,
-                                et la prise en charge se fait via le panneau détail
-                                à droite quand on ouvre un email. */}
-
-                            {/* Indicateur SLA visuel retiré (Phase 1).
-                                Le statut « SLA dépassé » est désormais
-                                accessible uniquement via le sélecteur Statut
-                                au-dessus de la liste. */}
-                            <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline shrink-0">
-                              {email.createdAt ? format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale }) : ""}
-                            </span>
-                          </div>
+                            email={email}
+                            onClick={() => { if (didDragRef.current) return; if (selectionMode) { toggleSelect(email.id); } else { setSelectedEmailId(Number(email.id)); } }}
+                            onArchive={handleArchive}
+                            onDelete={handleDelete}
+                            onCategoryClick={(name: string) => setFilterCategory(name)}
+                            isSelected={selectedIds.has(email.id)}
+                            onToggleSelect={toggleSelect}
+                            selectionMode={selectionMode}
+                            onContextMenu={handleContextMenu}
+                            onDragSelectStart={handleDragSelectStart}
+                            mailboxBadge={badge}
+                            showMailboxBadge={false}
+                            isSlaBreach={slaBreachIds.has(Number(email.id))}
+                            hoverCategories={categoryCounts}
+                            hoverFolders={userFolders}
+                            hoverCb={{
+                              onOpen: () => { setSelectedEmailId(Number(email.id)); setSelectedIds(new Set()); },
+                              onReply: () => handleQuickReply(email.id),
+                              onForward: () => handleQuickForward(email.id),
+                              onCreateTask: () => handleQuickCreateTask(email.id),
+                              onToggleRead: () => handleToggleRead(email.id),
+                              onSnooze: (hours: number, label: string) => handleQuickSnooze(email.id, hours, label),
+                              onArchive: () => handleArchive(email.id),
+                              onSetCategory: (categoryId: string, name: string) => handleQuickSetCategory(email.id, categoryId, name),
+                              onMove: (folderId: string, name: string) => handleMoveToFolder([email.id], folderId, name),
+                              onCopySender: () => handleCopySender(email.id),
+                              onCopySubject: () => handleCopySubject(email.id),
+                              onDownloadEml: () => handleDownloadEml(email.id),
+                              onPrint: () => handlePrintEmail(email.id),
+                              onBlockSender: () => handleBlockSender(email.id),
+                              onDelete: () => handleDelete(email.id),
+                            }}
+                          />
                         );
                       })}
                       {sharedHasMore && (
