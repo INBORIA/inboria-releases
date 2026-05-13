@@ -45,11 +45,13 @@ import {
   Edit2,
   Trash2,
   ArrowLeft,
-  ChevronRight,
   Loader2,
   Wand2,
   X,
+  Paperclip,
 } from "lucide-react";
+import { format } from "date-fns";
+import { fr, enUS, nl, de, es, it, pt, pl } from "date-fns/locale";
 import { useToast } from "@/hooks/use-toast";
 
 type DraftFolder = {
@@ -78,7 +80,8 @@ function parseKeywords(raw: string): string[] {
 
 export default function MesDossiers() {
   useEnableLightTheme();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
+  const dateFnsLocale = ({fr,en:enUS,nl,de,es,it,pt,pl}[(i18n.resolvedLanguage || i18n.language || "fr").substring(0,2)] || fr);
   const { toast } = useToast();
   const qc = useQueryClient();
 
@@ -279,42 +282,73 @@ export default function MesDossiers() {
               </p>
             </div>
           ) : (
-            <div className="space-y-1">
-              {emails.map((email: Email) => (
-                <div
-                  key={email.id}
-                  className="group flex items-stretch rounded-lg border border-border bg-card hover:bg-[#1a2235] transition-colors cursor-pointer overflow-hidden"
-                  onClick={() => setSelectedEmailId(email.id)}
-                >
-                  <div className="flex items-start gap-3 flex-1 min-w-0 p-3">
-                    <div className="w-8 h-8 rounded-full bg-primary/20 flex items-center justify-center shrink-0">
-                      <span className="text-primary font-semibold text-[12px]">
-                        {(email.sender || "?")[0].toUpperCase()}
+            <div>
+              {emails.map((email: Email) => {
+                const isUnread = email.status === "non_lu";
+                const categoryLabel = email.categoryName;
+                return (
+                  <div
+                    key={email.id}
+                    data-email-row
+                    className="group relative flex items-center gap-3 h-[52px] pl-2 pr-3 cursor-pointer select-none border-l-2 border-l-transparent border-b border-border/40 transition-colors hover:bg-white/[0.03]"
+                    onClick={() => setSelectedEmailId(email.id)}
+                  >
+                    {/* Avatar — bleu, première lettre de l'expéditeur */}
+                    <div className="w-7 h-7 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0 ml-1">
+                      <span className="text-primary text-[11px] font-semibold">
+                        {(email.sender || "?").trim()[0]?.toUpperCase() || "?"}
                       </span>
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="font-semibold text-[12px] text-white truncate">{email.sender}</span>
-                      </div>
-                      <h3 className="text-[12px] text-white/80 truncate">{email.subject}</h3>
+
+                    {/* Expéditeur */}
+                    <div className="w-[140px] shrink-0 flex items-center gap-1.5 min-w-0">
+                      <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
+                        {email.sender}
+                      </span>
+                    </div>
+
+                    {/* Sujet — extrait — catégorie */}
+                    <div className="flex-1 min-w-0 flex items-baseline gap-2 overflow-hidden">
+                      <span className={`text-[13px] truncate ${isUnread ? "text-white font-semibold" : "text-[#7a8290] font-normal"}`}>
+                        {email.subject}
+                      </span>
                       {email.summary && (
-                        <p className="text-[11px] text-[#b8c5d6] truncate mt-0.5">{email.summary}</p>
+                        <span className={`text-[13px] truncate ${isUnread ? "text-[#8b95a7]" : "text-[#5a6270]"}`}>
+                          — {email.summary}
+                        </span>
+                      )}
+                      {categoryLabel && (
+                        <span className="text-[11px] lowercase shrink-0 text-[#6b7280]">
+                          {categoryLabel}
+                        </span>
                       )}
                     </div>
+
+                    {/* Indicateurs + date */}
+                    <div className="flex items-center gap-2 shrink-0 group-hover:hidden">
+                      {(email.attachmentCount ?? 0) > 0 && (
+                        <Paperclip className="w-3 h-3 text-[#8b95a7]" />
+                      )}
+                      <span className="text-[11px] tabular-nums text-[#8b95a7] w-12 text-right whitespace-nowrap hidden sm:inline">
+                        {format(new Date(email.createdAt), "d MMM", { locale: dateFnsLocale })}
+                      </span>
+                    </div>
+
+                    {/* Action « retirer du dossier » au survol */}
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
                         handleUnassign(email.id);
                       }}
-                      className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded-md hover:bg-white/[0.08] text-[#b8c5d6] hover:text-white"
+                      onMouseDown={(e) => { e.stopPropagation(); e.preventDefault(); }}
+                      className="hidden group-hover:flex items-center justify-center p-1.5 rounded hover:bg-white/[0.08] text-[#8b95a7] hover:text-white"
                       title={t("folders.removeFromFolder", { defaultValue: "Retirer du dossier" })}
                     >
                       <X className="w-3.5 h-3.5" />
                     </button>
-                    <ChevronRight className="w-3.5 h-3.5 text-[#b8c5d6]/40 group-hover:text-[#b8c5d6] transition-colors self-center" />
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>
