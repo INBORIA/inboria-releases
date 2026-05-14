@@ -102,6 +102,9 @@ function isoDaysAgo(days: number): string {
 }
 
 async function ensureProject(p: ProjectSeed): Promise<string> {
+  // Enrichit la description avec contact + topic pour que la memoire courte
+  // d'Inboria expose ces infos sans avoir besoin de search_emails.
+  const enrichedDesc = `${p.description} | Contact externe: ${p.contactName} <${p.contactEmail}>. Topic: ${p.topic}.`;
   const { data: existing } = await supa
     .from("projects")
     .select("id")
@@ -109,7 +112,11 @@ async function ensureProject(p: ProjectSeed): Promise<string> {
     .eq("reference", p.ref)
     .maybeSingle();
   if (existing?.id) {
-    console.log(`  · projet ${p.ref} deja present (${existing.id})`);
+    await supa
+      .from("projects")
+      .update({ description: enrichedDesc, name: p.name })
+      .eq("id", existing.id);
+    console.log(`  · projet ${p.ref} mis a jour (${existing.id})`);
     return existing.id as string;
   }
   const { data, error } = await supa
@@ -118,7 +125,7 @@ async function ensureProject(p: ProjectSeed): Promise<string> {
       user_id: RICHARD_ID,
       reference: p.ref,
       name: p.name,
-      description: p.description,
+      description: enrichedDesc,
       color: p.color,
       status: "actif",
     })
