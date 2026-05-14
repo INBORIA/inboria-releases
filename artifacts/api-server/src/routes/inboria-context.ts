@@ -2301,6 +2301,16 @@ REGLE ABSOLUE — RESUME GLOBAL D'UN COEQUIPIER (mode admin team). Quand l'utili
 
 REGLE ABSOLUE — RICHARD MARTIN = COEQUIPIER INTERNE. Richard Martin (richard.m@neybergh.com) est un COEQUIPIER de l'utilisateur (membre interne de l'organisation), JAMAIS un contact CLIENT externe. Si l'utilisateur demande "qui est le contact pour [salon/projet/dossier X]", tu DOIS chercher dans la memoire un contact EXTERNE (client, prospect, organisateur) — JAMAIS repondre "le contact est Richard Martin". Richard est le porteur interne du dossier, pas le contact externe. Pour un salon/evenement (InnoTech, etc.), cherche un contact organisateur externe ou dis "Je n'ai pas trouve de contact externe pour ce salon dans les mails".
 
+REGLE ABSOLUE — list_emails_from_contact attend l'adresse du CONTACT EXTERNE, JAMAIS celle d'un coequipier interne. Quand l'utilisateur dit "le devis envoye a Umbrella par Richard" ou "les mails de Camille avec Acme", le parametre 'contactEmail' est l'email du CLIENT (laure.f@umbrella.test, contact@acme.test, etc.), trouve dans la description du projet sous "Contact externe: <Nom> <email>" — JAMAIS richard.m@neybergh.com ni un autre @neybergh.com / @xchangesuite.com (interne). Si tu mets l'email d'un coequipier interne, le tool retournera "Aucun mail trouve" et tu produiras une fausse negation. Ce filtre s'applique aussi a search_emails quand il s'agit de retrouver une conversation avec un client donne.
+
+REGLE ABSOLUE — DEVIS / PRIX / MONTANT / FACTURE / LIVRABLE / CONTRAT pour un CLIENT NOMME. Quand l'utilisateur cite un nom de client (Umbrella, Acme, Globex, Northwind, Tyrell, Hooli, etc.) et demande un devis/prix/montant/facture/livrable/contrat — tu DOIS imperativement, AVANT de dire "je n'ai pas trouve" :
+   (1) scanner la liste "Projets actifs..." de ta memoire pour trouver le projet du client (cherche le nom du client dans les descriptions),
+   (2) extraire le "Contact externe: <Nom> <email>" de la description de ce projet,
+   (3) appeler list_emails_from_contact(contactEmail, daysBack: 365, limit: 30) AVEC l'email trouve,
+   (4) **OBLIGATOIRE** : read_email sur AU MOINS UN mail dont le subject contient le mot-cle demande ("Devis" / "Facture" / "Validation" / "Bon de commande" / "Re: Devis"). Tu n'as PAS le droit de t'arreter a list_emails_from_contact — un titre seul ne suffit JAMAIS pour donner un montant, il FAUT lire le corps du mail.
+   (5) repondre avec le montant / prix / contenu trouve + citation [mail#ID].
+INTERDIT absolu : (a) te limiter a search_emails("devis <client>") qui retourne souvent 0 car le nom du client n'est que dans l'email du contact externe, pas dans le corps ; (b) repondre "je n'ai pas trouve" apres list_emails_from_contact si le retour contient au moins un mail avec "Devis"/"Facture"/"Re: Devis" dans le subject — dans ce cas tu DOIS read_email avant de conclure. La cle, c'est le contact_email visible dans la memoire des projets + read_email systematique sur les subjects pertinents.
+
 REGLE ABSOLUE — SCAN LISTE PROJETS AVANT DE NIER. Quand l'utilisateur pose une question sur un type de dossier ("y a-t-il un appel d'offres / litige / migration / RDV / livraison / contrat / facture impayee... en cours ?"), tu DOIS d'abord scanner integralement la section "Projets actifs..." de ta memoire (TOUTES les lignes, pas seulement les premieres). Si une description contient le mot-cle ("appel d'offres", "litige", "migration", "facture", "deadline", "date limite", "AO", etc.), tu DOIS citer ce projet AVEC sa date/contact/details visibles, JAMAIS dire "il n'y a pas". Exemple : pour "appel d'offres deadline proche" → cherche "appel d'offres" / "AO" dans toutes les descriptions de projets et reponds avec nom + date + contact.
 
 REGLE ABSOLUE — STATUT / CONTACT / DEADLINE D'UN PROJET / DOSSIER (admin team & questions transverses). Quand l'utilisateur demande "ou en est le projet/dossier/migration/chantier [Nom]", "statut [Nom]", "qu'est-ce qui se passe sur [Nom]", "ou en est [client] chez [coequipier]", "qui est le contact pour [salon/projet/AO/dossier]", "deadline / date limite de [AO/appel d'offres/projet]", "quand est le [salon/RDV/livraison]" — tu DOIS, AVANT de dire "je n'ai pas trouve", appeler EN PARALLELE :
@@ -2587,7 +2597,7 @@ REGLE SPECIFIQUE — questions sur un coequipier :
             toolCtx,
           );
           req.log?.info?.(
-            { tool: tc.function?.name, ms: Date.now() - t0, userId },
+            { tool: tc.function?.name, ms: Date.now() - t0, userId, outLen: out.length, outPreview: out.slice(0, 600) },
             "[inboria-chat] tool call done",
           );
           return { tool_call_id: tc.id, content: out };

@@ -110,7 +110,7 @@ export const INBORIA_TOOLS: OpenAI.Chat.Completions.ChatCompletionTool[] = [
     function: {
       name: "list_emails_from_contact",
       description:
-        "Liste TOUS les mails recents d'un contact (par adresse email), avec un extrait de corps pour chacun. Indispensable quand l'utilisateur dit 'les RDV proposes par X', 'les factures de X', 'que m'a envoye X la semaine derniere'. Donne TOUJOURS l'adresse email exacte (visible dans la memoire courte sous la forme '[mail#ID] ... <email@domaine>').",
+        "Liste TOUS les mails recents echanges avec un CONTACT EXTERNE (client, fournisseur, prospect), avec un extrait de corps pour chacun. Indispensable quand l'utilisateur dit 'les RDV proposes par X', 'les factures de X', 'le devis de Acme', 'que m'a envoye X la semaine derniere'. ATTENTION : 'contactEmail' = adresse de l'INTERLOCUTEUR EXTERNE (ex: laure.f@umbrella.test, contact@globex.test), JAMAIS l'adresse d'un collaborateur interne dont on consulte la boite (mode admin team). Ex : si l'utilisateur dit 'le devis envoye a Umbrella par Richard', contactEmail = email du contact Umbrella (visible dans la memoire projet sous 'Contact externe: Nom <email>'), PAS l'email de Richard. Donne TOUJOURS l'adresse email exacte (visible dans la memoire courte sous la forme '[mail#ID] ... <email@domaine>' ou dans la description du projet).",
       parameters: {
         type: "object",
         properties: {

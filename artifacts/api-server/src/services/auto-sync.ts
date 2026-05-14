@@ -72,6 +72,8 @@ async function dedupeUserEmailsByNativeId(userId: string): Promise<number> {
     const bySuffix = new Map<string, Array<{ id: number }>>();
     for (const r of rows as any[]) {
       const ext = String(r.external_id || "");
+      // Exclure les seeds (suffixes courts non uniques entre projets, ex. mail-01)
+      if (ext.startsWith("seed:")) continue;
       const idx = ext.lastIndexOf(":");
       if (idx < 0 || idx === ext.length - 1) continue;
       const suffix = ext.slice(idx + 1);
@@ -90,6 +92,7 @@ async function dedupeUserEmailsByNativeId(userId: string): Promise<number> {
     const byContent = new Map<string, Array<{ id: number }>>();
     for (const r of rows as any[]) {
       if (idsToDelete.has(r.id)) continue;
+      if (String(r.external_id || "").startsWith("seed:")) continue;
       const sender = String(r.sender || "").trim().toLowerCase();
       const subject = String(r.subject || "").trim().toLowerCase();
       const ts = r.created_at ? new Date(r.created_at).getTime() : 0;
