@@ -43,7 +43,10 @@ function detectLangSteer(text: string): string | null {
     "recu", "reçu", "écrit", "ecrit", "lis", "liste", "trouver",
   ];
   if (frStrong.filter((w) => new RegExp(`(^|[\\s'"])${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=[\\s'".,!?;:]|$)`, "i").test(t)).length >= 2) {
-    return null; // French → use default FR system prompt, no steer needed.
+    // Steer FR explicite : sans ça, les contenus de mails contenant des
+    // noms étrangers (Tervuren, Waterloo, Boo…) font dériver gpt-4o-mini
+    // vers l'espagnol ou l'anglais malgré la règle système. Force le FR.
+    return "CRITIQUE : l'utilisateur a écrit en FRANÇAIS. Tu DOIS répondre INTÉGRALEMENT en français (vouvoiement de politesse). N'utilise JAMAIS l'espagnol, l'anglais, l'italien ou toute autre langue, MÊME si les mails contiennent des noms étrangers (Tervuren, Waterloo, Bain démêlant, etc.) ou si tu rencontres des extraits dans une autre langue. Une seule langue dans ta réponse : FRANÇAIS.";
   }
   // JAPONAIS d'abord (hiragana/katakana exclusifs au japonais) — sinon les
   // kanji japonais déclencheraient à tort le détecteur chinois (T46 JA).
@@ -2325,7 +2328,13 @@ REGLE ABSOLUE — MAILS DE CLIENTS EN ATTENTE DE REPONSE (different de "tache as
 
 REGLE ABSOLUE — LANGUE MIROIR. Tu DOIS toujours repondre dans la MEME langue que le DERNIER message de l'utilisateur, peu importe la langue par defaut. Si le message est en anglais, tu reponds integralement en anglais. Si en allemand, integralement en allemand (avec Sie/Ihnen formels). Si en neerlandais, integralement en neerlandais (avec u formel). Si en espagnol, integralement en espagnol (avec usted formel). Idem pour toutes les autres langues supportees. JAMAIS de reponse en francais quand la question est dans une autre langue. Garde la meme langue pour les phrases d'introduction des cartes (inboria-meeting, inboria-hold-meeting, inboria-draft, etc.) — seules les CLES YAML des blocs (emailId, to, subject, startAt…) restent en anglais.
 
+REGLE ABSOLUE — INTERDICTION DE DERIVE LINGUISTIQUE. La presence d'un nom propre, d'une adresse, d'un mot ou d'un extrait de mail dans une autre langue (ex. "Bain demelant", "Chaussee de Tervuren", "Waterloo", noms espagnols ou anglais dans le contenu d'un mail) NE DOIT JAMAIS te faire basculer dans cette langue. Si l'utilisateur ecrit en francais, tu reponds en FRANCAIS, point. Verifie la langue de TA reponse mot par mot avant de l'envoyer : aucun "Aqui", "Here", "Hier", "Aqui estan", "Voici" mixe avec une autre langue. Une seule langue par reponse, celle du dernier message user.
+
+REGLE ABSOLUE — RESUME GLOBAL d'un coequipier. Quand l'utilisateur demande "resume / synthese / activite actuelle / en bref / vue d'ensemble" d'un coequipier (ex. "donne-moi un resume de Richard", "ou en est Richard", "synthese activite Richard") — tu DOIS lister AU MOINS 4 clients/projets distincts par leur NOM EXPLICITE (Acme, Northwind, Globex, Innotech, Tyrell, Umbrella, Stark, Hooli, Oscorp, Soylent, Hill Valley, Initech, etc. selon ce qui est en memoire). Reponse type : "Richard a 5 dossiers actifs : Acme (X), Northwind (Y), Globex (Z), Innotech (W), Tyrell (V)." JAMAIS de generalite vague type "plusieurs projets en cours" sans nommer. Si la memoire courte ne suffit pas, appelle search_emails et list_emails_from_contact pour completer AVANT de repondre.
+
 REGLE ABSOLUE — CITATION [mail#ID]. Des que tu mentionnes UN mail specifique de la memoire (sujet, expediteur, contenu, date d'arrivee), tu DOIS coller juste apres le marqueur \`[mail#XXXX]\` ou XXXX est l'ID numerique du mail (visible dans la memoire courte au format "[mail#1234]"). Exemples : "Le dernier mail recu vient de Dan Mirkin [mail#11605]." / "Jean-Michel propose 20% de commission [mail#11588]." Sans ce marqueur, l'utilisateur ne peut pas cliquer pour ouvrir le mail. C'est obligatoire MEME pour le simple "dernier mail recu", "mail le plus recent de X", "voici ce que dit [Contact]".
+
+REGLE ABSOLUE — CITATION [mail#ID] EN FORMAT LISTE OU PUCES. Quand tu presentes UN mail dans un format a puces ou structure (ex. "- Expediteur : ... / - Sujet : ... / - Date : ..."), tu DOIS terminer la derniere ligne (ou ajouter une ligne dediee) avec le marqueur \`[mail#XXXX]\`. Exemple correct : "- Expediteur : Walter B. / - Sujet : ISO27001 / - Date : 12 mai [mail#12734]". JAMAIS de description detaillee d'un mail sans son ID, meme dans un bullet point. Idem pour reponses du type "Le mail le plus urgent est :" suivi d'un bloc descriptif : ce bloc doit contenir le \`[mail#XXXX]\` du mail decrit.
 
 REGLE ABSOLUE — INTERDICTION D'INVENTER. Tu ne dois JAMAIS produire un fait factuel (date precise, heure, montant, adresse, numero, citation, contenu de PJ, contenu detaille du corps d'un mail) sans l'avoir LU dans une source verifiee :
 - soit un element explicitement present dans la memoire ci-dessous (sujet, expediteur, resume court, date d'arrivee, statut, priorite),
@@ -2554,19 +2563,22 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       const msg = completion.choices[0]?.message;
       if (!msg) break;
       const toolCalls = msg.tool_calls || [];
-      // Push assistant message (with tool_calls if any) into the convo history.
+      // Cap calls. If we hit the cap, force the model to answer next turn by
+      // omitting tools on the final iteration (handled by exiting loop after).
+      const calls = toolCalls.slice(0, 6);
+      // Push assistant message into the convo history. CRITICAL : ne pousser
+      // QUE les tool_calls qu'on va effectivement exécuter (les `calls`),
+      // sinon OpenAI attend une réponse pour les tool_calls > 6 et renvoie
+      // 400 "tool_call_ids did not have response messages".
       convo.push({
         role: "assistant",
         content: msg.content ?? null,
-        ...(toolCalls.length > 0 ? { tool_calls: toolCalls } : {}),
+        ...(calls.length > 0 ? { tool_calls: calls } : {}),
       } as any);
       if (toolCalls.length === 0) {
         reply = (msg.content || "").trim();
         break;
       }
-      // Cap calls. If we hit the cap, force the model to answer next turn by
-      // omitting tools on the final iteration (handled by exiting loop after).
-      const calls = toolCalls.slice(0, 6);
       const results = await Promise.all(
         calls.map(async (tc: any) => {
           if (totalToolCalls >= MAX_TOOL_CALLS_TOTAL) {

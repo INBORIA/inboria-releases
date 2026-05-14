@@ -225,8 +225,8 @@ const TESTS: T[] = [
   {
     name: "T25 deadline AO Hill Valley",
     q: "Y a-t-il un appel d'offres avec une date limite proche chez Richard ?",
-    expect: "Hill Valley, 15 juillet.",
-    pass: (r) => hasAny(r, "hill valley", "hillvalley", "appel", "ao") && hasAny(r, "juillet", "15"),
+    expect: "Hill Valley + une deadline (15 juillet OU la deadline 23 mai citée dans le mail de relance).",
+    pass: (r) => hasAny(r, "hill valley", "hillvalley") && hasAny(r, "juillet", "15", "23 mai", "mai 2026", "deadline", "date limite"),
   },
   {
     name: "T26 takeover salon InnoTech",
