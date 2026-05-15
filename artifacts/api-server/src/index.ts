@@ -5,6 +5,7 @@ import { startInboriaExtractor } from "./services/inboria-extractor";
 import { startScheduledSendWorker } from "./services/scheduled-send-worker";
 import { startSnoozeWakeWorker } from "./services/snooze-wake-worker";
 import { startCrmSyncScheduler } from "./services/crm-sync-scheduler";
+import { startHarnessCron } from "./services/harness-cron";
 import { supabaseAdmin } from "./lib/supabase";
 import { getEmailOAuthRedirectUri } from "./lib/urls";
 import { startSlaWorker } from "./services/sla";
@@ -713,6 +714,7 @@ app.listen(port, (err) => {
   startWebhookDispatcher();
   startCrmSyncScheduler();
   startMeetingFollowupWorker();
+  startHarnessCron();
 });
 
 async function ensureManualContacts() {

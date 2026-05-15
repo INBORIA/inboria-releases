@@ -1,4 +1,5 @@
 import { createClient } from "@supabase/supabase-js";
+import { generateAllTests, type T as GeneratedT } from "./harness-generators";
 
 const URL = process.env.VITE_SUPABASE_URL!;
 const SERVICE = process.env.SUPABASE_SECRET_KEY!;
@@ -710,14 +711,21 @@ const TESTS: T[] = [
   },
 ];
 
+// Task #306 phase 3 : on concatène les 100 tests manuels (curated) avec les
+// ~1400 tests générés programmatiquement (multilingue, anti-hallu, jailbreak,
+// edge cases, sidebar sections…) pour atteindre 1500 tests au total.
+const ALL_TESTS: T[] = [...TESTS, ...(generateAllTests() as GeneratedT[] as T[])];
+
 async function main() {
-  const arg = process.argv[2] || "0-20";
+  const arg = process.argv[2] || `0-${ALL_TESTS.length}`;
   const [from, to] = arg.split("-").map(Number);
-  console.log(`Minting session for ${TARGET_EMAIL}... (range ${from}-${to})`);
+  console.log(
+    `Minting session for ${TARGET_EMAIL}... (range ${from}-${to}, total ${ALL_TESTS.length} tests: ${TESTS.length} curated + ${ALL_TESTS.length - TESTS.length} generated)`,
+  );
   const token = await mintAccessToken();
   console.log("OK.\n");
 
-  const subset = TESTS.slice(from, to);
+  const subset = ALL_TESTS.slice(from, to);
   const results: { name: string; ok: boolean; reply: string; ms: number }[] = [];
   for (const t of subset) {
     const t0 = Date.now();
