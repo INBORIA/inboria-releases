@@ -1079,20 +1079,14 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
     // Contexte UI : mail actuellement ouvert a l'ecran (passe par le front
     // via ?emailId=X). On le charge ici (scope strict tenant) et on l'injecte
     // TOUT EN HAUT pour que le LLM comprenne "ce mail / cet email / ca".
-    req.log?.info?.({ currentEmailIdInput, currentRouteInput }, "[inboria-chat] UI context received");
     if (currentEmailIdInput) {
       try {
-        const { data: openedRow, error: openedErr } = await supabaseAdmin
+        const { data: openedRow } = await supabaseAdmin
           .from("emails")
           .select("id, sender, subject, summary, created_at")
           .eq("id", currentEmailIdInput)
           .or(emailScopeFilter)
           .maybeSingle();
-        req.log?.info?.({
-          currentEmailIdInput,
-          found: !!openedRow,
-          error: openedErr?.message || null,
-        }, "[inboria-chat] currentEmail lookup result");
         if (openedRow) {
           const row = openedRow as {
             id: number;
