@@ -1101,7 +1101,9 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             summary: string | null;
             created_at: string | null;
           };
-          const when = row.created_at ? fmtDate(row.created_at) : "(date inconnue)";
+          const when = row.created_at
+            ? (() => { try { return new Date(row.created_at!).toISOString().slice(0, 16).replace("T", " "); } catch { return "(date inconnue)"; } })()
+            : "(date inconnue)";
           const sender = row.sender || "(expediteur inconnu)";
           const subj = row.subject || "(sans sujet)";
           const sum = row.summary ? ` — ${String(row.summary).slice(0, 200)}` : "";
