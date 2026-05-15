@@ -84,6 +84,78 @@ function detectLangSteer(text: string): string | null {
   return null;
 }
 
+// Task #306 phase 6 — détection de langue COMPACTE retournant juste un code
+// ISO ('fr', 'en', 'es', 'de', ...) pour pouvoir comparer langue question vs
+// langue réponse en post-validation. Mirroir des heuristiques de
+// detectLangSteer ci-dessus, mais sans construire la consigne.
+function detectLangCode(text: string): string | null {
+  if (!text || text.trim().length < 2) return null;
+  const t = text.toLowerCase();
+  const has = (...words: string[]) => words.some((w) => new RegExp(`\\b${w}\\b`, "i").test(t));
+  const script = (re: RegExp) => re.test(text);
+  // FR fort (élisions + mots-pivots) — priorité haute pour éviter faux positifs
+  const frStrong = [
+    "qu'", "n'", "c'", "j'", "d'", "l'", "m'", "t'", "s'",
+    "est-ce", "qu'est", "c'est", "n'est", "j'ai", "n'ai",
+    "quel", "quelle", "quels", "quelles", "comment", "pourquoi",
+    "voici", "voilà", "voila", "merci", "bonjour", "salut",
+    "êtes", "etes", "été", "ete", "très", "tres", "déjà", "deja",
+    "français", "francais", "où", "ça", "ca",
+    "le", "la", "les", "des", "une", "un", "ce", "cette", "ces",
+    "mes", "tes", "ses", "nos", "vos", "mon", "ton", "son",
+    "dans", "avec", "pour", "sans", "sous", "sur", "vers", "chez",
+    "mais", "donc", "ainsi", "alors", "puis", "depuis",
+    "tout", "tous", "toutes", "rien", "jamais", "toujours",
+    "boîte", "boite", "mail", "mails", "courriel", "envoyé", "envoye",
+    "recu", "reçu", "écrit", "ecrit", "lis", "liste", "trouver",
+  ];
+  if (frStrong.filter((w) => new RegExp(`(^|[\\s'"])${w.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}(?=[\\s'".,!?;:]|$)`, "i").test(t)).length >= 2) return "fr";
+  if (script(/[\u3040-\u309f\u30a0-\u30ff]/)) return "ja";
+  if (script(/[\u4e00-\u9fff]/)) return "zh";
+  if (script(/[\uac00-\ud7af]/)) return "ko";
+  if (script(/[\u0590-\u05ff]/)) return "he";
+  if (script(/[\u0600-\u06ff]/)) return "ar";
+  if (script(/[А-Яа-яЁё]/)) return "ru";
+  if (script(/[\u0e00-\u0e7f]/)) return "th";
+  if (script(/[\u0900-\u097f]/)) return "hi";
+  if (script(/[\u1780-\u17ff]/)) return "km";
+  if (has("was", "kannst", "du", "über", "ich", "bitte", "haben", "sind", "wer", "wie", "wo", "wann", "warum")) return "de";
+  if (has("wat", "kun", "je", "vertellen", "kunt", "alstublieft", "waarom", "wie", "waar", "wanneer")) return "nl";
+  if (has("que", "puedes", "decirme", "sobre", "por", "favor", "gracias", "donde", "cuando", "como", "esta", "está", "empresa", "involucrada", "proyecto")) return "es";
+  if (has("cosa", "puoi", "dirmi", "sopra", "grazie", "perche", "dove", "quando", "come")) return "it";
+  if (has("o", "que", "podes", "dizer", "obrigado", "obrigada", "onde", "quando", "como")) return "pt";
+  if (has("co", "mozesz", "powiedziec", "prosze", "dziekuje", "gdzie", "kiedy", "jak")) return "pl";
+  if (has("ce", "poti", "spune", "despre", "multumesc", "unde", "cand", "cum")) return "ro";
+  if (script(/[ğıİĞ]/) || has("hakkinda", "hakkında", "lütfen", "tesekkurler", "teşekkürler", "merhaba", "nedir", "nasıl", "nerede")) return "tr";
+  if (has("what", "can", "you", "tell", "about", "the", "is", "are", "please", "thanks", "where", "when", "how", "why", "who")) return "en";
+  return null;
+}
+
+// Consignes de RÉ-ÉCRITURE strictes (post-validation langue). Demandent au
+// modèle de re-traduire son propre output dans la langue cible attendue,
+// sans rien changer au contenu factuel ni à la structure (cartes YAML, etc.).
+const STRICT_LANG_RETRY_PROMPTS: Record<string, string> = {
+  fr: "CRITIQUE — DERIVE LINGUISTIQUE DETECTEE. Ta réponse précédente n'est PAS en français alors que l'utilisateur a écrit en français. Ré-écris-la INTÉGRALEMENT en FRANÇAIS (vouvoiement de politesse), sans aucun mot dans une autre langue. Garde le contenu factuel IDENTIQUE (mêmes faits, mêmes chiffres, mêmes [mail#ID], mêmes blocs YAML inboria-*). Ne change que la langue.",
+  en: "CRITICAL — LANGUAGE DRIFT DETECTED. Your previous answer is NOT in English while the user wrote in English. Re-write it ENTIRELY in ENGLISH (formal 'you'), no other language mixed in. Keep the factual content IDENTICAL (same facts, same numbers, same [mail#ID], same inboria-* YAML blocks). Only change the language.",
+  es: "CRÍTICO — DERIVA LINGÜÍSTICA DETECTADA. Tu respuesta anterior NO está en español mientras que el usuario escribió en español. Re-escríbela ÍNTEGRAMENTE en ESPAÑOL formal (usted), sin mezclar otro idioma. Mantén el contenido fáctico IDÉNTICO (mismos hechos, mismos números, mismos [mail#ID], mismos bloques YAML inboria-*). Solo cambia el idioma.",
+  de: "KRITISCH — SPRACHABWEICHUNG ERKANNT. Deine vorherige Antwort ist NICHT auf Deutsch, obwohl der Benutzer auf Deutsch geschrieben hat. Schreibe sie VOLLSTÄNDIG auf DEUTSCH (Sie/Ihnen formell) neu, ohne andere Sprachen. Behalte den faktischen Inhalt IDENTISCH (gleiche Fakten, Zahlen, [mail#ID], inboria-* YAML-Blöcke). Ändere nur die Sprache.",
+  nl: "KRITIEK — TAALAFWIJKING GEDETECTEERD. Uw vorige antwoord is NIET in het Nederlands terwijl de gebruiker in het Nederlands schreef. Herschrijf het VOLLEDIG in het NEDERLANDS (formeel u), zonder andere talen te mengen. Behoud de feitelijke inhoud IDENTIEK (zelfde feiten, getallen, [mail#ID], inboria-* YAML-blokken). Verander alleen de taal.",
+  it: "CRITICO — DERIVA LINGUISTICA RILEVATA. La tua risposta precedente NON è in italiano mentre l'utente ha scritto in italiano. Riscrivila INTERAMENTE in ITALIANO formale (Lei), senza mescolare altre lingue. Mantieni il contenuto fattuale IDENTICO (stessi fatti, numeri, [mail#ID], blocchi YAML inboria-*). Cambia solo la lingua.",
+  pt: "CRÍTICO — DESVIO LINGUÍSTICO DETECTADO. Sua resposta anterior NÃO está em português enquanto o utilizador escreveu em português. Reescreva-a INTEIRAMENTE em PORTUGUÊS formal, sem misturar outros idiomas. Mantenha o conteúdo factual IDÊNTICO (mesmos factos, números, [mail#ID], blocos YAML inboria-*). Só mude o idioma.",
+  pl: "KRYTYCZNE — WYKRYTO ODCHYLENIE JĘZYKOWE. Poprzednia odpowiedź NIE jest po polsku, podczas gdy użytkownik napisał po polsku. Przepisz ją CAŁKOWICIE po POLSKU (forma Pan/Pani), bez mieszania innych języków. Zachowaj treść faktyczną IDENTYCZNĄ (te same fakty, liczby, [mail#ID], bloki YAML inboria-*). Zmień tylko język.",
+  ro: "CRITIC — DEVIERE LINGVISTICĂ DETECTATĂ. Răspunsul tău anterior NU este în română în timp ce utilizatorul a scris în română. Rescrie-l COMPLET în ROMÂNĂ formal (dumneavoastră), fără a amesteca alte limbi. Păstrează conținutul factual IDENTIC (aceleași fapte, numere, [mail#ID], blocuri YAML inboria-*). Schimbă doar limba.",
+  tr: "KRİTİK — DİL SAPMASI TESPİT EDİLDİ. Önceki yanıtın Türkçe DEĞİL, oysa kullanıcı Türkçe yazdı. TAMAMEN TÜRKÇE (resmi siz) olarak yeniden yaz, başka dil karıştırma. Olgusal içeriği AYNI tut (aynı olgular, sayılar, [mail#ID], inboria-* YAML blokları). Sadece dili değiştir.",
+  ja: "重要 — 言語ドリフトを検出。前回の回答が日本語ではありませんが、ユーザーは日本語で書きました。完全に日本語の敬語（です/ます調）で書き直してください。他の言語を混ぜないでください。事実内容（事実、数字、[mail#ID]、inboria-* YAMLブロック）は完全に同じに保ってください。言語のみを変更。",
+  zh: "重要 — 检测到语言偏移。您之前的回复不是中文，而用户用中文写。请完全用正式中文（您 + 请）重写，不要混入其他语言。事实内容（事实、数字、[mail#ID]、inboria-* YAML 块）保持完全相同。只改变语言。",
+  ko: "중요 — 언어 이탈 감지됨. 이전 답변이 한국어가 아닙니다. 사용자는 한국어로 작성했습니다. 합쇼체(하십시오체)로 전체를 다시 작성하세요. 다른 언어를 섞지 마세요. 사실 내용(사실, 숫자, [mail#ID], inboria-* YAML 블록)은 동일하게 유지하세요. 언어만 변경하세요.",
+  he: "קריטי — זוהתה סטיית שפה. התשובה הקודמת שלך אינה בעברית בעוד שהמשתמש כתב בעברית. כתוב אותה מחדש כולה בעברית מודרנית, טון עסקי, ללא שילוב שפה אחרת. שמור על התוכן העובדתי זהה (אותן עובדות, מספרים, [mail#ID], בלוקי YAML של inboria-*). שנה רק את השפה.",
+  ar: "حرج — تم اكتشاف انحراف لغوي. ردك السابق ليس بالعربية بينما كتب المستخدم بالعربية. أعد كتابته بالكامل بالعربية الفصحى الرسمية، دون خلط لغة أخرى. حافظ على المحتوى الواقعي مطابقًا (نفس الحقائق، الأرقام، [mail#ID]، كتل YAML الخاصة بـ inboria-*). غير اللغة فقط.",
+  ru: "КРИТИЧНО — обнаружено языковое отклонение. Ваш предыдущий ответ НЕ на русском языке, а пользователь написал на русском. Перепишите его ПОЛНОСТЬЮ на РУССКОМ (формальное Вы/Вас/Ваш + пожалуйста), без смешивания с другими языками. Сохраните фактическое содержание ИДЕНТИЧНЫМ (те же факты, числа, [mail#ID], YAML-блоки inboria-*). Измените только язык.",
+  th: "วิกฤต — ตรวจพบการเบี่ยงเบนทางภาษา คำตอบก่อนหน้าของคุณไม่ใช่ภาษาไทย ในขณะที่ผู้ใช้เขียนเป็นภาษาไทย เขียนใหม่ทั้งหมดเป็นภาษาไทย (ใช้ ท่าน + โปรด/กรุณา) โดยไม่ผสมภาษาอื่น รักษาเนื้อหาข้อเท็จจริงให้เหมือนเดิม (ข้อเท็จจริง ตัวเลข [mail#ID] บล็อก YAML inboria-*) เปลี่ยนเฉพาะภาษาเท่านั้น",
+  hi: "गंभीर — भाषा विचलन पाया गया। आपका पिछला उत्तर हिंदी में नहीं है जबकि उपयोगकर्ता ने हिंदी में लिखा है। इसे पूरी तरह हिंदी (आप + कृपया) में फिर से लिखें, अन्य भाषा न मिलाएं। तथ्यात्मक सामग्री समान रखें (वही तथ्य, संख्याएँ, [mail#ID], inboria-* YAML ब्लॉक)। केवल भाषा बदलें।",
+  km: "សំខាន់៖ បានរកឃើញការប្រែប្រួលភាសា។ ចម្លើយមុនរបស់អ្នកមិនមែនជាភាសាខ្មែរទេ ខណៈដែលអ្នកប្រើបានសរសេរជាភាសាខ្មែរ។ សូមសរសេរវាឡើងវិញទាំងស្រុងជាភាសាខ្មែរ (លោក/លោកស្រី + សូម)។ រក្សាខ្លឹមសារពិតដដែល។",
+};
+
 function extractContactEmails(text: string, limit = 2): string[] {
   if (!text) return [];
   const matches = String(text).toLowerCase().match(EMAIL_IN_TEXT_REGEX) || [];
@@ -2887,6 +2959,67 @@ REGLE SPECIFIQUE — questions sur un coequipier :
     }
     void fallbackTriggered; // logged via structured logs above
 
+    // Task #306 phase 6 — POST-VALIDATION LANGUE.
+    // Malgré la triple injection de langSteer (system + system tardif + préfixe
+    // dans le dernier message user), gpt-4o-mini ET gpt-4o dérivent encore
+    // parfois (ex: "Que sais-tu de l'entreprise Acme ?" répondu en espagnol
+    // car le contexte Acme contient des termes hispaniques). Dernier rempart :
+    // on compare la langue de la réponse à celle de la question, et si
+    // mismatch, on demande UNE FOIS au modèle de ré-écrire la même chose dans
+    // la bonne langue. Coût marginal : 1 appel gpt-4o-mini sur ~2-5% des
+    // requêtes (uniquement quand drift détecté).
+    let languageDriftDetected = false;
+    if (reply) {
+      const expectedLang = detectLangCode(lastUserTextForLang);
+      const actualLang = detectLangCode(reply);
+      if (
+        expectedLang &&
+        actualLang &&
+        expectedLang !== actualLang &&
+        STRICT_LANG_RETRY_PROMPTS[expectedLang]
+      ) {
+        languageDriftDetected = true;
+        req.log?.warn?.(
+          { userId, expectedLang, actualLang, replyPreview: reply.slice(0, 120) },
+          "[inboria-chat] language drift detected, retrying with strict prompt",
+        );
+        try {
+          const retryCompletion = await openai.chat.completions.create({
+            model: "gpt-4o-mini",
+            max_completion_tokens: 1200,
+            temperature: 0,
+            messages: [
+              { role: "system", content: STRICT_LANG_RETRY_PROMPTS[expectedLang]! },
+              { role: "user", content: `Question originale : ${lastUserMsg}` },
+              { role: "assistant", content: reply },
+              { role: "user", content: STRICT_LANG_RETRY_PROMPTS[expectedLang]! },
+            ],
+          });
+          const retryReply = (retryCompletion.choices[0]?.message?.content || "").trim();
+          if (retryReply) {
+            const retryLang = detectLangCode(retryReply);
+            if (retryLang === expectedLang || retryLang === null) {
+              req.log?.info?.(
+                { userId, expectedLang, retryLang },
+                "[inboria-chat] language retry succeeded, replacing reply",
+              );
+              reply = retryReply;
+            } else {
+              req.log?.warn?.(
+                { userId, expectedLang, retryLang },
+                "[inboria-chat] language retry failed, keeping original reply",
+              );
+            }
+          }
+        } catch (langErr: any) {
+          req.log?.warn?.(
+            { err: langErr?.message, userId },
+            "[inboria-chat] language retry call failed (non-fatal)",
+          );
+        }
+      }
+    }
+
     if (adminTeamCtx) {
       // Build per-impacted-member breakdown from the result sets that
       // carry user_id (inbox + assigned-to-me, both selected with user_id
@@ -2971,6 +3104,7 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       fallbackWon: fallbackTriggered,
       latencyMs: Date.now() - startedAt,
       mode: adminTeamCtx ? "admin_team" : "personal",
+      languageDriftDetected,
     }).then((logId) => {
       if (!logId || !reply || !logQuestion) return;
       // Phase 5a — score qualité de la réponse via LLM-judge gpt-4o-mini.

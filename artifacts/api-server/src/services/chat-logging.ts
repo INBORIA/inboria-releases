@@ -44,6 +44,7 @@ export interface ChatLogEntry {
   fallbackWon: boolean;
   latencyMs: number;
   mode: "personal" | "shared" | "admin_team";
+  languageDriftDetected?: boolean;
 }
 
 const NOT_FOUND_MARKERS_RE = [
@@ -131,6 +132,7 @@ export async function logChatInteraction(entry: ChatLogEntry): Promise<string | 
         latency_ms: entry.latencyMs,
         mode: entry.mode,
         reformulation_within_ms: reformulationWithinMs,
+        language_drift_detected: entry.languageDriftDetected ?? false,
       })
       .select("id")
       .maybeSingle();
