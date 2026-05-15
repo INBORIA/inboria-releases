@@ -712,4 +712,182 @@ router.post(
   },
 );
 
+// =============================================================================
+// Task #306 phase 5 — Dashboard interne stats chat Inboria
+// =============================================================================
+// Agrège inboria_chat_logs sur une fenêtre paramétrable (default 7 jours).
+// Renvoie : volume, fallback rate, reformulation rate, latence p50/p95/avg,
+// score judge moyen par modèle, A/B mini vs gpt-4o, top raisons de fallback,
+// pires réponses récentes (à reviewer).
+//
+// Tous les calculs sont faits en JS sur 5000 lignes max (cap garde-fou).
+// Si la table inboria_chat_logs n'existe pas → renvoie un payload vide propre.
+router.get("/inboria-stats", requireAuth, requireAdmin, async (req, res) => {
+  try {
+    const days = Math.max(
+      1,
+      Math.min(90, Number(req.query["days"]) || 7),
+    );
+    const since = new Date(Date.now() - days * 24 * 3600 * 1000).toISOString();
+
+    const { data, error } = await supabaseAdmin
+      .from("inboria_chat_logs")
+      .select(
+        "id, created_at, question_text, model_used, fallback_triggered, fallback_reason, was_reformulated, latency_ms, judge_score, ab_variant, ab_shadow_score",
+      )
+      .gte("created_at", since)
+      .order("created_at", { ascending: false })
+      .limit(5000);
+
+    if (error) {
+      // Table absente ou autre erreur → payload vide propre
+      logger.warn(
+        { err: error.message },
+        "[admin/inboria-stats] query failed (returning empty payload)",
+      );
+      res.json({
+        windowDays: days,
+        totalLogs: 0,
+        byModel: {},
+        fallback: { triggered: 0, rate: 0 },
+        reformulation: { flagged: 0, rate: 0 },
+        latency: { p50: 0, p95: 0, avg: 0 },
+        judge: { scored: 0, avg: null, p50: null, byModel: {} },
+        ab: { shadowCount: 0, miniAvg: null, shadowAvg: null, delta: null },
+        topFallbackReasons: [],
+        recentLowScore: [],
+      });
+      return;
+    }
+
+    const rows = (data || []) as Array<{
+      id: string;
+      created_at: string;
+      question_text: string;
+      model_used: string | null;
+      fallback_triggered: boolean | null;
+      fallback_reason: string | null;
+      was_reformulated: boolean | null;
+      latency_ms: number | null;
+      judge_score: number | null;
+      ab_variant: string | null;
+      ab_shadow_score: number | null;
+    }>;
+
+    const total = rows.length;
+    const byModel: Record<string, number> = {};
+    const fallbackTriggered = rows.filter((r) => r.fallback_triggered).length;
+    const reformulated = rows.filter((r) => r.was_reformulated).length;
+    const latencies = rows
+      .map((r) => r.latency_ms || 0)
+      .filter((n) => n > 0)
+      .sort((a, b) => a - b);
+
+    for (const r of rows) {
+      const m = r.model_used || "unknown";
+      byModel[m] = (byModel[m] || 0) + 1;
+    }
+
+    const percentile = (arr: number[], p: number): number => {
+      if (arr.length === 0) return 0;
+      const idx = Math.min(arr.length - 1, Math.floor((p / 100) * arr.length));
+      return arr[idx] ?? 0;
+    };
+    const avg = (arr: number[]): number =>
+      arr.length === 0 ? 0 : arr.reduce((a, b) => a + b, 0) / arr.length;
+
+    // Judge stats
+    const scoredRows = rows.filter((r) => typeof r.judge_score === "number");
+    const judgeScores = scoredRows.map((r) => r.judge_score as number);
+    const judgeByModel: Record<string, { count: number; avg: number }> = {};
+    for (const r of scoredRows) {
+      const m = r.model_used || "unknown";
+      const cur = judgeByModel[m] || { count: 0, avg: 0 };
+      cur.count++;
+      cur.avg = cur.avg + ((r.judge_score as number) - cur.avg) / cur.count;
+      judgeByModel[m] = cur;
+    }
+
+    // A/B
+    const abRows = rows.filter(
+      (r) =>
+        r.ab_variant === "shadow" &&
+        typeof r.judge_score === "number" &&
+        typeof r.ab_shadow_score === "number",
+    );
+    const abMiniAvg =
+      abRows.length === 0
+        ? null
+        : avg(abRows.map((r) => r.judge_score as number));
+    const abShadowAvg =
+      abRows.length === 0
+        ? null
+        : avg(abRows.map((r) => r.ab_shadow_score as number));
+
+    // Top fallback reasons
+    const reasonCounts: Record<string, number> = {};
+    for (const r of rows) {
+      if (r.fallback_triggered && r.fallback_reason) {
+        reasonCounts[r.fallback_reason] =
+          (reasonCounts[r.fallback_reason] || 0) + 1;
+      }
+    }
+    const topFallbackReasons = Object.entries(reasonCounts)
+      .map(([reason, count]) => ({ reason, count }))
+      .sort((a, b) => b.count - a.count)
+      .slice(0, 8);
+
+    // Worst-scored recent rows (top 10 by lowest score)
+    const recentLowScore = [...scoredRows]
+      .sort((a, b) => (a.judge_score as number) - (b.judge_score as number))
+      .slice(0, 10)
+      .map((r) => ({
+        id: r.id,
+        question: (r.question_text || "").slice(0, 200),
+        score: r.judge_score as number,
+        model: r.model_used || "unknown",
+        createdAt: r.created_at,
+      }));
+
+    res.json({
+      windowDays: days,
+      totalLogs: total,
+      byModel,
+      fallback: {
+        triggered: fallbackTriggered,
+        rate: total > 0 ? fallbackTriggered / total : 0,
+      },
+      reformulation: {
+        flagged: reformulated,
+        rate: total > 0 ? reformulated / total : 0,
+      },
+      latency: {
+        p50: percentile(latencies, 50),
+        p95: percentile(latencies, 95),
+        avg: avg(latencies),
+      },
+      judge: {
+        scored: scoredRows.length,
+        avg: scoredRows.length > 0 ? avg(judgeScores) : null,
+        p50: scoredRows.length > 0 ? percentile([...judgeScores].sort((a, b) => a - b), 50) : null,
+        byModel: judgeByModel,
+      },
+      ab: {
+        shadowCount: abRows.length,
+        miniAvg: abMiniAvg,
+        shadowAvg: abShadowAvg,
+        delta:
+          abMiniAvg !== null && abShadowAvg !== null
+            ? abShadowAvg - abMiniAvg
+            : null,
+      },
+      topFallbackReasons,
+      recentLowScore,
+    });
+  } catch (err: any) {
+    logger.error({ err: err?.message }, "[admin/inboria-stats] crashed");
+    res.status(500).json({ error: "stats query failed" });
+  }
+});
+
 export default router;

@@ -74,10 +74,14 @@ const REFORMULATION_WINDOW_MS = 30_000;
  * `was_reformulated = true` (signal implicite d'insatisfaction).
  *
  * Fire-and-forget : ne lève jamais d'exception côté caller.
+ *
+ * Renvoie l'id de la ligne créée (string UUID) si insert OK, sinon null.
+ * L'id permet aux callers (LLM-judge, A/B shadow) de chaîner des updates
+ * asynchrones sur la même ligne de log.
  */
-export async function logChatInteraction(entry: ChatLogEntry): Promise<void> {
+export async function logChatInteraction(entry: ChatLogEntry): Promise<string | null> {
   try {
-    if (!(await hasChatLogsTable())) return;
+    if (!(await hasChatLogsTable())) return null;
 
     // 1) Détection reformulation : la précédente question est-elle récente ?
     const cutoff = new Date(
@@ -106,36 +110,43 @@ export async function logChatInteraction(entry: ChatLogEntry): Promise<void> {
         .eq("id", prevRow.id);
     }
 
-    // 2) Insert de la nouvelle entrée
-    const { error } = await supabaseAdmin.from("inboria_chat_logs").insert({
-      user_id: entry.userId,
-      organisation_id: entry.organisationId,
-      question_text: entry.questionText.slice(0, 2000),
-      question_lang: entry.questionLang,
-      question_length: entry.questionText.length,
-      model_used: entry.modelUsed,
-      iter_count: entry.iterCount,
-      tool_calls_count: entry.toolCallsCount,
-      response_length: entry.responseLength,
-      contains_mail_id: entry.containsMailId,
-      contains_not_found_marker: entry.containsNotFoundMarker,
-      fallback_triggered: entry.fallbackTriggered,
-      fallback_reason: entry.fallbackReason,
-      fallback_won: entry.fallbackWon,
-      latency_ms: entry.latencyMs,
-      mode: entry.mode,
-      reformulation_within_ms: reformulationWithinMs,
-    });
+    // 2) Insert de la nouvelle entrée + récupération de l'id
+    const { data: inserted, error } = await supabaseAdmin
+      .from("inboria_chat_logs")
+      .insert({
+        user_id: entry.userId,
+        organisation_id: entry.organisationId,
+        question_text: entry.questionText.slice(0, 2000),
+        question_lang: entry.questionLang,
+        question_length: entry.questionText.length,
+        model_used: entry.modelUsed,
+        iter_count: entry.iterCount,
+        tool_calls_count: entry.toolCallsCount,
+        response_length: entry.responseLength,
+        contains_mail_id: entry.containsMailId,
+        contains_not_found_marker: entry.containsNotFoundMarker,
+        fallback_triggered: entry.fallbackTriggered,
+        fallback_reason: entry.fallbackReason,
+        fallback_won: entry.fallbackWon,
+        latency_ms: entry.latencyMs,
+        mode: entry.mode,
+        reformulation_within_ms: reformulationWithinMs,
+      })
+      .select("id")
+      .maybeSingle();
     if (error) {
       logger.warn(
         { err: error.message },
         "[chat-logging] insert failed (non-fatal)",
       );
+      return null;
     }
+    return inserted ? String((inserted as any).id) : null;
   } catch (err: any) {
     logger.warn(
       { err: err?.message },
       "[chat-logging] unexpected logging error (non-fatal)",
     );
+    return null;
   }
 }

@@ -10,6 +10,7 @@ import {
   detectMailIdCitation,
   detectNotFoundMarker,
 } from "../services/chat-logging";
+import { judgeAndStore, storeShadowAndJudge } from "../services/llm-judge";
 import { fetchUserBusy } from "../services/freebusy";
 import { extractAttachmentText, shouldExtractAttachmentContent, type AttachmentRow } from "../lib/attachment-extract";
 import { INBORIA_TOOLS, runInboriaTool, type InboriaToolCtx } from "../services/inboria-tools";
@@ -2587,8 +2588,24 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       /\br[ée]sum[eé]\b\s+(?:[ldn]['e]\s+|le\s+|la\s+|les\s+)?[A-Za-zÀ-ÿ]/,
     ];
     const isHardQuestion = HARD_PATTERNS.some((re) => re.test(lcLastMsg));
-    const chatModel = isHardQuestion ? "gpt-4o" : "gpt-4o-mini";
-    if (isHardQuestion) {
+    // Task #306 phase 4 — gpt-4o silencieux pour Pro/Business.
+    // Plans Pro et Business : on bascule TOUJOURS sur gpt-4o (pas de toggle UI,
+    // pas de message au user — l'abonné paie pour le top niveau, il l'a). Le
+    // routing hard-pattern et le fallback mini→4o restent actifs uniquement pour
+    // Essai/Solo, qui tournent par défaut sur mini avec auto-promotion ciblée.
+    const planTier = String(organisation?.plan || "").toLowerCase();
+    const isPremiumPlan = planTier === "pro" || planTier === "business";
+    const chatModel = isPremiumPlan
+      ? "gpt-4o"
+      : isHardQuestion
+        ? "gpt-4o"
+        : "gpt-4o-mini";
+    if (isPremiumPlan) {
+      req.log?.info?.(
+        { userId, plan: planTier, model: chatModel },
+        "[inboria-chat] premium plan → routing to gpt-4o (silent)",
+      );
+    } else if (isHardQuestion) {
       req.log?.info?.({ userId, model: chatModel, msg: lcLastMsg.slice(0, 120) }, "[inboria-chat] routing to gpt-4o (hard question)");
     }
     for (let iter = 0; iter < MAX_ITERATIONS; iter++) {
@@ -2934,14 +2951,16 @@ REGLE SPECIFIQUE — questions sur un coequipier :
     }
 
     // Task #306 phase 1+2 : logging exhaustif + signaux implicites.
-    // Fire-and-forget — n'impacte jamais la réponse client. Ne logue que la
-    // question utilisateur (pas le contenu des mails) + indicateurs.
+    // Phase 5 : LLM-judge async + A/B shadow runs gated par INBORIA_AB_SHADOW_RATE.
+    // Fire-and-forget — n'impacte jamais la réponse client.
+    const finalModel = fallbackTriggered ? "gpt-4o" : chatModel;
+    const logQuestion = lastUserMsg || "";
     void logChatInteraction({
       userId,
       organisationId: adminTeamCtx?.orgId || null,
-      questionText: lastUserMsg || "",
+      questionText: logQuestion,
       questionLang: null,
-      modelUsed: fallbackTriggered ? "gpt-4o" : chatModel,
+      modelUsed: finalModel,
       iterCount: 0,
       toolCallsCount: totalToolCalls,
       responseLength: reply.length,
@@ -2952,6 +2971,57 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       fallbackWon: fallbackTriggered,
       latencyMs: Date.now() - startedAt,
       mode: adminTeamCtx ? "admin_team" : "personal",
+    }).then((logId) => {
+      if (!logId || !reply || !logQuestion) return;
+      // Phase 5a — score qualité de la réponse via LLM-judge gpt-4o-mini.
+      judgeAndStore(logId, {
+        question: logQuestion,
+        reply,
+        lang: null,
+        responseModel: finalModel,
+      });
+      // Phase 5b — A/B shadow run : sur un % paramétrable des requêtes mini
+      // (Essai/Solo, sans fallback), on lance gpt-4o en parallèle (silencieux,
+      // jamais renvoyé au client) pour comparer offline. Coût limité par le
+      // taux d'échantillonnage (env, défaut 0).
+      const shadowRate = Number(process.env["INBORIA_AB_SHADOW_RATE"] ?? "0");
+      const shadowEnabled =
+        Number.isFinite(shadowRate) &&
+        shadowRate > 0 &&
+        finalModel === "gpt-4o-mini" &&
+        !fallbackTriggered &&
+        Math.random() < shadowRate;
+      if (shadowEnabled) {
+        void (async () => {
+          try {
+            const t0 = Date.now();
+            const shadowCompletion = await openai.chat.completions.create({
+              model: "gpt-4o",
+              max_completion_tokens: 900,
+              temperature: 0,
+              messages: convo.filter(
+                (m: any) =>
+                  m.role !== "assistant" || (m.tool_calls && m.tool_calls.length > 0),
+              ),
+            });
+            const shadowReply = (shadowCompletion.choices[0]?.message?.content || "").trim();
+            const shadowLatency = Date.now() - t0;
+            if (shadowReply) {
+              storeShadowAndJudge(logId, shadowReply, "gpt-4o", shadowLatency, {
+                question: logQuestion,
+                reply: shadowReply,
+                lang: null,
+                responseModel: "gpt-4o",
+              });
+            }
+          } catch (err: any) {
+            req.log?.warn?.(
+              { err: err?.message },
+              "[inboria-chat] AB shadow run failed (non-fatal)",
+            );
+          }
+        })();
+      }
     });
 
     res.json({ reply });
