@@ -165,23 +165,35 @@ export default function Agenda() {
   // Auto-rejoue la détection des confirmations transactionnelles (cas
   // prestataire qui confirme via mail noreply@ hors-thread, ex: Le Petit Zoo).
   // Une seule fois par session pour éviter le spam — l'endpoint est idempotent
-  // côté serveur de toute façon.
+  // côté serveur de toute façon. Déclenché APRÈS le 1er chargement réussi des
+  // RDV (preuve que la session est prête, sinon 401 silencieux).
+  const replayTriggeredRef = useRef(false);
   useEffect(() => {
     if (typeof window === "undefined") return;
-    const KEY = "agenda.replayTransactional.done";
+    if (replayTriggeredRef.current) return;
+    if (isLoading) return; // attend le 1er chargement RDV (=> session OK)
+    // KEY versionnée v2 : invalide les anciens flags posés par le bug 401.
+    const KEY = "agenda.replayTransactional.v2.done";
     if (window.sessionStorage.getItem(KEY) === "1") return;
-    window.sessionStorage.setItem(KEY, "1");
+    replayTriggeredRef.current = true;
     fetch("/api/appointments/replay-transactional-confirms", {
       method: "POST",
       credentials: "include",
     })
-      .then((r) => (r.ok ? r.json() : null))
+      .then(async (r) => {
+        if (!r.ok) {
+          // N'écrit PAS le flag → on retentera au prochain mount.
+          replayTriggeredRef.current = false;
+          return null;
+        }
+        window.sessionStorage.setItem(KEY, "1");
+        return r.json();
+      })
       .then((data) => {
         if (!data) return;
         const before = Number(data.pendingBefore || 0);
         const after = Number(data.pendingAfter || 0);
         if (before > after) {
-          // Au moins 1 RDV vient d'être confirmé → rafraîchit l'agenda.
           queryClient.invalidateQueries({ queryKey: ["appointments"] });
           toast({
             title: t("agenda.autoConfirmed.title", "Confirmations détectées"),
@@ -194,10 +206,10 @@ export default function Agenda() {
         }
       })
       .catch(() => {
-        // Best-effort, on ne bloque jamais l'affichage de l'agenda.
+        replayTriggeredRef.current = false;
       });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [isLoading]);
 
   const rangeStart = useMemo(() => {
     if (viewMode === "month") return startOfWeek(startOfMonth(currentDate), { weekStartsOn: 1 });
