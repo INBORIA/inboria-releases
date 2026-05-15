@@ -722,7 +722,7 @@ router.post(
 //
 // Tous les calculs sont faits en JS sur 5000 lignes max (cap garde-fou).
 // Si la table inboria_chat_logs n'existe pas → renvoie un payload vide propre.
-router.get("/inboria-stats", requireAuth, requireAdmin, async (req, res) => {
+router.get("/admin/inboria-stats", requireAuth, requireAdmin, async (req, res) => {
   try {
     const days = Math.max(
       1,
