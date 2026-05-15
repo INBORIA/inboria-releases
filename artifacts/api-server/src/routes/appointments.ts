@@ -13,7 +13,7 @@ import {
   type AppointmentPushPayload,
   type VideoProvider,
 } from "../services/calendar-sync";
-import { proposeMeeting, proposeMeetingMulti, sendCounterAcceptedEmail, sendCounterDeclinedEmail, holdMeeting, holdMeetingMulti } from "../services/meeting-proposals";
+import { proposeMeeting, proposeMeetingMulti, sendCounterAcceptedEmail, sendCounterDeclinedEmail, holdMeeting, holdMeetingMulti, replayTransactionalConfirmsForUser } from "../services/meeting-proposals";
 import {
   proposeMultiMeeting,
   findMultiCommonSlots,
@@ -1209,5 +1209,20 @@ router.post(
     }
   },
 );
+
+// Rejoue le matching transactionnel sur tous les RDV pending du user courant.
+// Utile pour rattraper les confirmations arrivées AVANT le déploiement du fix
+// (ex: cas Petit Zoo). Idempotent — peut être déclenché plusieurs fois sans
+// risque.
+router.post("/appointments/replay-transactional-confirms", requireAuth, async (req, res): Promise<void> => {
+  try {
+    const result = await replayTransactionalConfirmsForUser(req.userId!);
+    res.json({ ok: true, ...result });
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : "replay_crashed";
+    req.log?.error?.({ err: msg }, "[appointments] replay transactional crashed");
+    res.status(500).json({ error: msg });
+  }
+});
 
 export default router;

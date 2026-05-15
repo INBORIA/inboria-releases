@@ -1881,6 +1881,65 @@ async function tryConfirmByTransactional(
 }
 
 /**
+ * Rejoue le matching transactionnel sur tous les RDV pending d'un user, en
+ * scannant les emails reçus depuis 30 jours qui correspondent au domaine de
+ * chaque RDV. Utilisé pour rattraper les confirmations arrivées AVANT le
+ * déploiement du fix transactionnel (cas Petit Zoo). Idempotent.
+ */
+export async function replayTransactionalConfirmsForUser(
+  userId: string,
+): Promise<{ pendingBefore: number; emailsScanned: number; pendingAfter: number }> {
+  const { data: pending } = await supabaseAdmin
+    .from("appointments")
+    .select("id, participants, proposal_recipient")
+    .eq("user_id", userId)
+    .in("status", ["pending", "counter_proposed"]);
+
+  const pendingBefore = pending?.length ?? 0;
+  if (!pending || pending.length === 0) {
+    return { pendingBefore: 0, emailsScanned: 0, pendingAfter: 0 };
+  }
+
+  // Domaines racine uniques extraits des recipients/participants.
+  const domains = new Set<string>();
+  for (const p of pending as any[]) {
+    const target = String(p.proposal_recipient || p.participants || "").toLowerCase();
+    const m = target.match(/@([^\s,>;]+)/);
+    if (m) domains.add(rootDomain(m[1]));
+  }
+  if (domains.size === 0) {
+    return { pendingBefore, emailsScanned: 0, pendingAfter: pendingBefore };
+  }
+
+  // Mails reçus des 30 derniers jours dont le sender contient un de ces
+  // domaines. Limite 200 pour éviter les workloads pathologiques.
+  const since = new Date(Date.now() - 30 * 24 * 3600 * 1000).toISOString();
+  const orFilter = [...domains].map((d) => `sender.ilike.%${d}%`).join(",");
+  const { data: emails } = await supabaseAdmin
+    .from("emails")
+    .select("id, sender, body")
+    .eq("user_id", userId)
+    .gte("created_at", since)
+    .or(orFilter)
+    .order("created_at", { ascending: true })
+    .limit(200);
+
+  let scanned = 0;
+  for (const e of (emails as any[]) || []) {
+    await tryConfirmByTransactional(userId, Number(e.id), e.sender, String(e.body || ""));
+    scanned++;
+  }
+
+  const { count: pendingAfter } = await supabaseAdmin
+    .from("appointments")
+    .select("id", { count: "exact", head: true })
+    .eq("user_id", userId)
+    .in("status", ["pending", "counter_proposed"]);
+
+  return { pendingBefore, emailsScanned: scanned, pendingAfter: pendingAfter ?? pendingBefore };
+}
+
+/**
  * Hook appelé après l'enregistrement d'un mail entrant : si son In-Reply-To
  * correspond à un proposal_message_id pending, on lance la classification.
  * Si AUCUN match (cas confirmation transactionnelle hors-thread, ex: prestataire
