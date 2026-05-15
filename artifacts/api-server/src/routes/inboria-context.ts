@@ -149,10 +149,44 @@ function detectLangCode(text: string): string | null {
   if (script(/[\u0900-\u097f]/)) return "hi";
   if (script(/[\u1780-\u17ff]/)) return "km";
 
+  // Signaux ES forts (ponctuation/morphologie uniques à l'espagnol) — détectent
+  // les RÉPONSES de prose (pas seulement les questions). Évite le faux négatif
+  // "Cindy es miembro de la organización..." qui ne matchait que "está" (1) avec
+  // l'ancienne liste orientée questions.
+  if (script(/[¿¡]/)) return "es";
+  // Suffixe -ción très fréquent en prose ES (organización, invitación, situación,
+  // información, comunicación, presentación, reunión via -ión...). N'existe pas
+  // en FR (-tion) ni IT (-zione) ni PT (-ção). 1 occurrence suffit.
+  if (/\b\w{3,}ción\b/i.test(text) || /\b\w{3,}ciones\b/i.test(text)) return "es";
+
   // Langues latines : ≥2 matches discriminants pour limiter faux positifs.
   if (countMatches(["was", "kannst", "über", "ich", "bitte", "haben", "sind", "warum", "möchten", "können", "deutsch", "freundlichen", "grüßen", "ist", "ein", "eine", "einen", "einer", "sie", "ihr", "ihre", "ihren", "auf", "schreibe", "schreiben", "erinnerung", "mitglied", "weitere", "informationen", "benötigen", "lassen", "wissen", "und", "der", "die", "das", "den", "dem", "mit", "von", "für", "nicht", "auch", "mehr"]) >= 2) return "de";
   if (countMatches(["wat", "kun", "vertellen", "kunt", "alstublieft", "waarom", "waar", "wanneer", "hartelijke", "groet", "een", "het", "ik", "jij", "uw", "vriendelijke", "groeten"]) >= 2) return "nl";
-  if (countMatches(["puedes", "decirme", "sobre", "favor", "gracias", "dónde", "cuándo", "cómo", "está", "están", "empresa", "involucrada", "proyecto", "actualmente", "necesita", "información", "específica", "hágamelo", "saber", "saludos"]) >= 2) return "es";
+  // ES — liste élargie pour attraper aussi la PROSE de réponse, pas seulement
+  // les questions. Mots ajoutés : verbes courants (está/están/tiene/tienen/es/
+  // son/ha/han/fue), adverbes/connecteurs uniques ES (además/después/siempre/
+  // ahora/ayer/hoy/mañana/recientemente/actualmente), substantifs prose
+  // (miembro/correo/tarea/evento/reunión/empresa/usuario), adjectifs/participes
+  // (interesada/interesado/relacionado/respondido/pendiente/enviado), pronoms
+  // formels (usted/ustedes), démonstratifs (este/esta/esto/esos/esas).
+  if (countMatches([
+    "puedes", "decirme", "sobre", "favor", "gracias", "dónde", "cuándo", "cómo",
+    "está", "están", "estoy", "estás", "estamos", "es", "son", "fue", "fueron",
+    "ha", "han", "tiene", "tienen", "tuvo", "haber", "hay",
+    "empresa", "involucrada", "proyecto", "actualmente", "necesita", "información",
+    "específica", "hágamelo", "saber", "saludos",
+    "miembro", "miembros", "correo", "correos", "tarea", "tareas", "evento",
+    "eventos", "usuario", "usuarios", "mensaje", "mensajes", "fecha", "presencia",
+    "interesada", "interesado", "relacionado", "relacionada", "respondido",
+    "respondida", "pendiente", "pendientes", "enviado", "enviada", "envió",
+    "recibido", "confirmar", "confirmado",
+    "además", "después", "siempre", "nunca", "ahora", "ayer", "mañana",
+    "recientemente", "también", "muy", "más", "menos", "pero",
+    "usted", "ustedes", "este", "esta", "esto", "esos", "esas", "ese", "esa",
+    "del", "para", "por", "con", "sin", "según", "junto",
+    "junio", "julio", "enero", "febrero", "marzo", "abril", "mayo", "agosto",
+    "septiembre", "octubre", "noviembre", "diciembre",
+  ]) >= 2) return "es";
   if (countMatches(["cosa", "puoi", "dirmi", "grazie", "perché", "perche", "dove", "quando", "come", "azienda", "informazioni", "cordiali", "saluti"]) >= 2) return "it";
   if (countMatches(["podes", "dizer", "obrigado", "obrigada", "onde", "quando", "como", "empresa", "informações", "cumprimentos"]) >= 2) return "pt";
   if (countMatches(["możesz", "powiedzieć", "proszę", "dziękuję", "gdzie", "kiedy", "jak", "firma", "pozdrowienia"]) >= 2) return "pl";
