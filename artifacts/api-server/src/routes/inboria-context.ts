@@ -5,6 +5,11 @@ import { requireAuth } from "../middlewares/auth";
 import { getMemberMailboxIds, buildInboxScopeOrFilter } from "../lib/inbox-scope";
 import { getOrgIdForOrgAdmin, listOrgMemberIds, logAdminTeamAccess } from "../lib/org-admin";
 import { AI_COST, checkEntitlement, consumeAiCredits } from "../services/credits";
+import {
+  logChatInteraction,
+  detectMailIdCitation,
+  detectNotFoundMarker,
+} from "../services/chat-logging";
 import { fetchUserBusy } from "../services/freebusy";
 import { extractAttachmentText, shouldExtractAttachmentContent, type AttachmentRow } from "../lib/attachment-extract";
 import { INBORIA_TOOLS, runInboriaTool, type InboriaToolCtx } from "../services/inboria-tools";
@@ -263,6 +268,7 @@ router.patch("/inboria/mailbox-settings", requireAuth, async (req, res): Promise
 });
 
 router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
+  const startedAt = Date.now();
   try {
     const userId = req.userId!;
 
@@ -2926,6 +2932,27 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       res.status(500).json({ error: "Echec de facturation, veuillez reessayer." });
       return;
     }
+
+    // Task #306 phase 1+2 : logging exhaustif + signaux implicites.
+    // Fire-and-forget — n'impacte jamais la réponse client. Ne logue que la
+    // question utilisateur (pas le contenu des mails) + indicateurs.
+    void logChatInteraction({
+      userId,
+      organisationId: adminTeamCtx?.orgId || null,
+      questionText: lastUserMsg || "",
+      questionLang: null,
+      modelUsed: fallbackTriggered ? "gpt-4o" : chatModel,
+      iterCount: 0,
+      toolCallsCount: totalToolCalls,
+      responseLength: reply.length,
+      containsMailId: detectMailIdCitation(reply),
+      containsNotFoundMarker: detectNotFoundMarker(reply),
+      fallbackTriggered,
+      fallbackReason,
+      fallbackWon: fallbackTriggered,
+      latencyMs: Date.now() - startedAt,
+      mode: adminTeamCtx ? "admin_team" : "personal",
+    });
 
     res.json({ reply });
   } catch (err: any) {
