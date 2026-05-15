@@ -162,6 +162,43 @@ export default function Agenda() {
     }
   }, []);
 
+  // Auto-rejoue la détection des confirmations transactionnelles (cas
+  // prestataire qui confirme via mail noreply@ hors-thread, ex: Le Petit Zoo).
+  // Une seule fois par session pour éviter le spam — l'endpoint est idempotent
+  // côté serveur de toute façon.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    const KEY = "agenda.replayTransactional.done";
+    if (window.sessionStorage.getItem(KEY) === "1") return;
+    window.sessionStorage.setItem(KEY, "1");
+    fetch("/api/appointments/replay-transactional-confirms", {
+      method: "POST",
+      credentials: "include",
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((data) => {
+        if (!data) return;
+        const before = Number(data.pendingBefore || 0);
+        const after = Number(data.pendingAfter || 0);
+        if (before > after) {
+          // Au moins 1 RDV vient d'être confirmé → rafraîchit l'agenda.
+          queryClient.invalidateQueries({ queryKey: ["appointments"] });
+          toast({
+            title: t("agenda.autoConfirmed.title", "Confirmations détectées"),
+            description: t(
+              "agenda.autoConfirmed.desc",
+              "{{count}} rendez-vous viennent d'être confirmés automatiquement à partir des mails reçus.",
+              { count: before - after },
+            ),
+          });
+        }
+      })
+      .catch(() => {
+        // Best-effort, on ne bloque jamais l'affichage de l'agenda.
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const rangeStart = useMemo(() => {
     if (viewMode === "month") return startOfWeek(startOfMonth(currentDate), { weekStartsOn: 1 });
     if (viewMode === "week") return startOfWeek(currentDate, { weekStartsOn: 1 });
