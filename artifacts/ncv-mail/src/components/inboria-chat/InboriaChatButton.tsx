@@ -1518,8 +1518,20 @@ export function InboriaChatButton() {
       };
       try {
         const url = new URL(window.location.href);
+        // 1) Preferer l'URL ?emailId= (cas /dashboard avec EmailDetail dans l'URL)
         const eid = url.searchParams.get("emailId");
-        const eidNum = eid ? Number(eid) : NaN;
+        let eidNum = eid ? Number(eid) : NaN;
+        // 2) Fallback : sessionStorage mis a jour par EmailDetailContainer
+        //    (cas panel ouvert sans modification d'URL, ex. /dashboard/agenda)
+        if (!Number.isFinite(eidNum) || eidNum <= 0) {
+          try {
+            const ss = window.sessionStorage.getItem("inboria.currentEmailId");
+            if (ss) {
+              const ssNum = Number(ss);
+              if (Number.isFinite(ssNum) && ssNum > 0) eidNum = ssNum;
+            }
+          } catch { /* no-op */ }
+        }
         if (Number.isFinite(eidNum) && eidNum > 0) {
           body.currentEmailId = eidNum;
         }
