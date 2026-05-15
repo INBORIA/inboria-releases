@@ -2572,6 +2572,13 @@ REGLE SPECIFIQUE — questions sur un coequipier :
       // souvent [mail#ID] quand il structure la réponse en bullets markdown.
       // gpt-4o respecte la règle de citation systématique.
       /\b(quel|quels|quelle|quelles)\s+(?:est|sont)\s+(?:le|la|les)\s+(dernier|derni[èe]re|premier|premi[èe]re|prochain|prochaine)\s+(mail|message|email|courriel)\b/,
+      // "Que peux-tu / sais-tu sur X" / "dis-moi sur X" / "raconte-moi sur X" :
+      // questions ouvertes type "synthèse d'un contact / sujet" où le mini
+      // saute parfois search_emails et répond "pas trouvé" (T2 flaky).
+      /\b(que\s+(?:peux-tu|sais-tu|as-tu|en\s+penses-tu)|dis[-\s]moi|raconte[-\s]moi|parle[-\s]moi)\b.{0,80}\b(sur|de|concernant|[àa]\s+propos)\b/,
+      // "Résume X" suivi d'un sujet (pas seulement résumé global déjà couvert
+      // plus haut). Ex : "résume Jean-Michel", "résume le dossier Acme".
+      /\br[ée]sum[eé]\b\s+(?:[ldn]['e]\s+|le\s+|la\s+|les\s+)?[A-Za-zÀ-ÿ]/,
     ];
     const isHardQuestion = HARD_PATTERNS.some((re) => re.test(lcLastMsg));
     const chatModel = isHardQuestion ? "gpt-4o" : "gpt-4o-mini";
