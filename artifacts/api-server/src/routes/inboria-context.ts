@@ -1084,7 +1084,7 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
       try {
         const { data: openedRow, error: openedErr } = await supabaseAdmin
           .from("emails")
-          .select("id, sender, subject, summary, received_at, opened_at, is_read")
+          .select("id, sender, subject, summary, created_at, opened_at, is_read")
           .eq("id", currentEmailIdInput)
           .or(emailScopeFilter)
           .maybeSingle();
@@ -1099,9 +1099,9 @@ router.post("/inboria/chat", requireAuth, async (req, res): Promise<void> => {
             sender: string | null;
             subject: string | null;
             summary: string | null;
-            received_at: string | null;
+            created_at: string | null;
           };
-          const when = row.received_at ? fmtDate(row.received_at) : "(date inconnue)";
+          const when = row.created_at ? fmtDate(row.created_at) : "(date inconnue)";
           const sender = row.sender || "(expediteur inconnu)";
           const subj = row.subject || "(sans sujet)";
           const sum = row.summary ? ` — ${String(row.summary).slice(0, 200)}` : "";
