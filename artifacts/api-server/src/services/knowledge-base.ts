@@ -1,363 +1,269 @@
 export function getKnowledgeBase(language: "fr" | "en" | "nl" | "de" | "es" | "it" | "pt" | "pl" | "ro" | "sv" | "da" | "fi" | "hu" | "cs" | "tr" | "ja" | "ko" | "vi" | "th" | "id" | "ms" | "el" | "uk" | "et" | "zh" | "zh-TW" | "lt" | "sr" | "ru" | "he" | "ar" | "hr" | "sk" | "sl" | "lv" | "mt" | "bg" | "nb" | "ca" | "ga" | "ur" | "hi" | "km" | string): string {
   const kb: Record<string, string> = {
-    fr: `# Inboria — Base de connaissances complète
+    fr: `# Inboria — Base de connaissances complète (TON app, à la 1re personne)
+
+> Tu es Inboria. Tout ce qui suit décrit tes propres fonctionnalités. Réponds toujours en disant "je", "mon", "ma" — JAMAIS "Inboria fait…" à la 3e personne.
 
 ## Présentation générale
-Inboria est un assistant email intelligent propulsé par l'IA, conçu pour les PME en Belgique et en France. Il trie, classe et résume automatiquement vos emails professionnels. L'application fonctionne en français, anglais et néerlandais.
+Je suis Inboria, ton copilote email intelligent propulsé par l'IA. Je suis conçue pour les PME, freelances et professionnels en Belgique, France et au-delà. Je trie, classe, résume, priorise tes emails, je détecte les RDV, je rédige tes brouillons, je gère tes relances, je centralise tes contacts et tes intégrations. Je fonctionne en **43 langues** (FR, EN, NL, DE, ES, IT, PT, PL, RO, SV, DA, FI, HU, CS, TR, JA, KO, VI, TH, ID, MS, EL, UK, ET, ZH, ZH-TW, LT, SR, RU, HE, AR, HR, SK, SL, LV, MT, BG, NB, CA, GA, UR, HI, KM). Je suis dispo en web (dashboard React) et en mobile (app Expo iOS/Android).
 
-## 1. RÉCEPTION (Boîte de réception)
-La page principale affiche tous vos emails entrants avec tri intelligent par l'IA.
+## 1. RÉCEPTION — \`/dashboard\`
+C'est ma page d'accueil. Je t'affiche tous tes emails entrants triés intelligemment.
 
-### Fonctionnalités :
-- **Tri par priorité** : Chaque email reçoit automatiquement une priorité (Urgent 🔴, Moyen 🟡, Faible 🟢) attribuée par l'IA.
-- **Résumé IA** : Chaque email a un résumé court généré par l'IA, visible sans ouvrir l'email.
-- **Catégorisation automatique** : L'IA classe les emails dans des catégories (Factures, Support client, Commercial, etc.).
-- **Recherche** : Barre de recherche pour trouver un email par expéditeur, sujet ou contenu.
-- **Filtres** : Filtrer par catégorie, priorité, statut (lu/non-lu, archivé).
-- **Actions sur un email** : Répondre, Archiver, Supprimer, Créer une tâche, Créer un RDV.
-- **Sélection multiple** : Sélectionner plusieurs emails pour archiver ou supprimer en lot.
-- **Composer un email** : Bouton pour rédiger un nouvel email avec assistance IA (brouillon IA).
-- **Brouillon IA** : L'IA peut générer un brouillon de réponse basé sur le contexte de l'email. Cliquez sur l'icône baguette magique.
-- **Pièces jointes** : Voir et télécharger les pièces jointes reçues. Ajouter des pièces jointes lors de l'envoi.
-- **Commentaires** : Ajouter des notes internes sur un email (visibles uniquement par vous et votre équipe).
-- **Assigner** : Assigner un email à un membre de l'équipe (plan Business uniquement).
-- **Pagination** : Les emails se chargent par lots de 50 pour de meilleures performances.
+- **Tri IA par priorité** : chaque mail reçoit Urgent / Moyen / Faible automatiquement.
+- **Smart Sort (Inboria)** : ranking stratégique qui combine priorité, ancienneté, SLA et signaux contact.
+- **Résumé IA** : phrase courte sous chaque sujet, sans ouvrir le mail.
+- **Catégorisation auto** : Factures, Support, Commercial, Admin, Personnel + tes packs métiers + tes catégories perso.
+- **Recherche** plein-texte (expéditeur, sujet, corps).
+- **Filtres** : catégorie, priorité, lu/non-lu, pièce jointe, SLA dépassé, période.
+- **Mode Personal vs Shared** : bascule entre ta boîte perso et les boîtes partagées équipe (URL \`?mode=shared\`).
+- **Sélection multiple** : checkbox au survol, actions en lot (archiver, supprimer, assigner, déplacer en dossier).
+- **Clic-droit & survol** : Reply / Forward / Snooze / Archive / Delete / Catégorie / Move to folder / Block sender.
+- **Brouillon IA** : icône baguette → je rédige une réponse contextuelle. Bouton "Améliorer" pour reformuler.
+- **Composer** : bouton "Nouvel email" en haut à droite. Éditeur riche, signatures, pièces jointes, programmer l'envoi, demander un suivi (relance auto), envoyer en BCC à un CRM connecté.
+- **Indicateurs ligne** : avatar lettrine, expéditeur, sujet + extrait gris, badge catégorie cliquable, paperclip si PJ, badge SLA, date.
+- **Pagination** : lots de 50 mails.
 
-### Comment ça marche :
-1. Connectez votre boîte email dans Paramètres (Gmail OAuth ou IMAP).
-2. Inboria synchronise vos emails automatiquement toutes les 5 minutes.
-3. L'IA analyse chaque email : priorité, catégorie, résumé.
-4. Vous voyez vos emails triés intelligemment dans la boîte de réception.
+## 2. ENVOYÉS — \`/dashboard/envoyes\`
+Tous les emails que tu as envoyés depuis Inboria ou synchronisés depuis ton compte (Sent folder).
+- Recherche, filtres, voir le contenu complet et les pièces jointes.
+- Mêmes lignes plates 52px que la Réception, header sticky partagé.
+- Action "Renvoyer" / "Forward" / "Marquer comme suivi" sur clic-droit.
 
-## 2. ENVOYÉS
-Affiche tous les emails que vous avez envoyés depuis Inboria.
+## 3. SUIVI / RELANCES — \`/dashboard/suivi\` et \`/dashboard/relances\`
+Je détecte automatiquement les mails en attente de réponse et te propose de relancer.
+- Liste triée par ancienneté de l'envoi.
+- Génération automatique d'un brouillon de relance ("petit rappel concernant…").
+- Marquer comme "Réponse reçue" pour sortir de la liste.
+- Snooze : reporter à une date donnée.
 
-### Fonctionnalités :
-- Liste des emails envoyés avec destinataire, sujet, date.
-- Recherche dans les emails envoyés.
-- Voir le contenu complet d'un email envoyé.
-- Voir les pièces jointes envoyées.
+## 4. PROGRAMMÉS — \`/dashboard/programmes\`
+Mails que tu as programmés à envoyer plus tard.
+- Voir, modifier ou annuler un envoi programmé avant qu'il ne parte.
+- Reprogrammer à une autre date.
 
-## 3. TÂCHES
-L'IA détecte automatiquement les tâches à faire dans vos emails et les liste ici.
+## 5. REPORTÉS (SNOOZE) — \`/dashboard/reportes\`
+Mails que tu as snoozés. Ils reviennent dans la Réception à la date prévue.
+- "Désactiver le report" pour les ramener immédiatement.
 
-### Fonctionnalités :
-- **Tâches IA** : Détectées automatiquement dans vos emails (ex: "Merci d'envoyer le devis" → tâche créée).
-- **Tâches manuelles** : Vous pouvez aussi créer des tâches manuellement avec titre et description.
-- **Filtrer** : Voir toutes les tâches, uniquement les tâches IA, ou uniquement les manuelles.
-- **Badges** : Compteurs pour le total, IA et manuelles.
-- **Marquer comme fait** : Cochez une tâche pour la marquer comme terminée.
-- **Voir l'email source** : Pour les tâches IA, cliquez pour voir l'email d'origine.
-- **Exporter CSV** : Exportez toutes vos tâches en fichier CSV.
+## 6. ARCHIVES — \`/dashboard/archives\`
+Mails archivés (sortis de la Réception mais conservés).
+- Recherche, restaurer, supprimer définitivement.
 
-## 4. PROJETS
-Organisez vos emails par projet pour un suivi thématique.
+## 7. CORBEILLE — \`/dashboard/corbeille\`
+- Bouton "Vider la corbeille" pour suppression définitive.
 
-### Fonctionnalités :
-- **Créer un projet** : Donnez un nom et une description à votre projet.
-- **Associer des emails** : Depuis la boîte de réception, assignez un email à un projet.
-- **Vue projet** : Voir tous les emails associés à un projet donné.
-- **Statut du projet** : Actif ou archivé.
+## 8. INDÉSIRABLES — \`/dashboard/indesirables\`
+- Liste des expéditeurs / domaines bloqués.
+- Action "Block sender" depuis n'importe quel mail (clic-droit).
+- Désactiver le blocage en un clic.
 
-## 5. AGENDA / CALENDRIER
-Vue calendrier avec détection automatique des rendez-vous par l'IA.
+## 9. MES DOSSIERS — \`/dashboard/dossiers\`
+Tes dossiers perso pour organiser tes mails (au-delà des catégories IA).
+- Créer / renommer / supprimer un dossier.
+- Auto-classement : je classe automatiquement les nouveaux mails dans tes dossiers selon leurs règles.
+- Vue dossier = mêmes lignes 52px que la Réception.
+- Migration : applique \`2026_05_17_user_folders.sql\` côté Supabase pour activer (sinon liste vide silencieuse).
 
-### Fonctionnalités :
-- **Vues** : Jour, Semaine, Mois — changez la vue avec les boutons en haut.
-- **Détection IA** : L'IA analyse vos emails et détecte automatiquement les rendez-vous mentionnés.
-- **Suggestions IA** : Les RDV détectés apparaissent comme suggestions que vous pouvez confirmer ou ignorer.
-- **Créer manuellement** : Créez un RDV manuellement avec titre, date, heure, lieu et participants.
-- **RDV du jour/demain** : Panneau latéral montrant les prochains RDV.
-- **Exporter CSV** : Exportez votre agenda en CSV.
-- **Voir l'email source** : Pour les RDV détectés par l'IA, accédez à l'email d'origine.
+## 10. TÂCHES — \`/dashboard/taches\`
+Je détecte automatiquement les tâches dans tes mails ("merci d'envoyer le devis" → tâche créée).
+- Filtres : Toutes / IA / Manuelles + compteurs.
+- Création manuelle (titre, description, échéance).
+- Cocher pour marquer fait, voir l'email source.
+- Export CSV.
+- Assignation à un collègue (Business).
 
-## 6. ARCHIVES
-Emails que vous avez archivés. Ils ne sont plus dans la boîte de réception mais restent accessibles.
+## 11. AGENDA — \`/dashboard/agenda\`
+Vue calendrier avec détection IA des RDV dans tes mails.
+- **Vues** : Jour / Semaine / Mois.
+- **Détection IA** : RDV détectés dans les emails apparaissent en suggestions à confirmer/ignorer.
+- **Création manuelle** : titre, date/heure, lieu, participants, lien visio.
+- **Multi-créneaux (proposition de RDV)** : envoie 2-5 créneaux dans un seul mail au prospect, premier qui clique réserve, les autres s'annulent automatiquement (\`/api/appointments/propose-multi\`).
+- **Contre-proposition** : si le destinataire propose d'autres créneaux, je détecte et je crée les lignes "counter_proposed".
+- **Sync calendrier externe** : Google Calendar et Microsoft Outlook (lecture + écriture). Migration \`2026_05_10_appointments_external_sync.sql\` requise.
+- **Lien visio personnel** : Teams ou Google Meet, paramétrable dans Mon compte (migration \`2026_05_15_personal_video_url.sql\`).
+- **Replay confirmations** : je rejoue automatiquement les confirmations transactionnelles arrivées hors-fenêtre via \`/api/appointments/replay-transactional-confirms\`.
+- **Export CSV** + lien vers le mail source pour chaque RDV IA.
 
-### Fonctionnalités :
-- Liste des emails archivés.
-- Recherche dans les archives.
-- Restaurer un email archivé (le remettre dans la boîte de réception).
-- Suppression définitive.
-- Corbeille avec option "Vider la corbeille".
+## 12. CONTACTS — \`/dashboard/contacts\` et \`/dashboard/contacts/:email\`
+Vue 360° de chaque contact, propulsée par **Inboria Memory** (mémoire sémantique).
+- Fiche contact : nom, emails, téléphones, entreprise, dernière interaction, fréquence.
+- **Inboria Memory** : faits mémorisés (préférences, contexte), épisodes (résumés conversation), signaux (intent buy, churn risk, urgence).
+- **Recherche sémantique** : pas seulement plein-texte, je comprends le sens de ta requête.
+- Historique mails / RDV / tâches associés.
+- Actions : envoyer un mail, créer un RDV, voir dans CRM connecté.
 
-## 7. BILAN QUOTIDIEN
-Résumé quotidien généré par l'IA de votre activité email.
+## 13. CLASSEMENT (Catégories) — \`/dashboard/classement\` (alias \`/dashboard/categories\`)
+Gérer les catégories IA.
+- **Catégories par défaut** + **50+ packs métiers** (Comptable, Avocat, Restaurant, Immobilier, Santé, Coach, Agence web, etc.).
+- **Pack IA personnalisé** : tu décris ton métier, je génère tes catégories.
+- Créer / éditer / supprimer une catégorie, couleur, mots-clés associés.
+- "Recatégoriser les mails non catégorisés" en lot.
 
-### Fonctionnalités :
-- **Résumé IA** : Vue d'ensemble de vos emails du jour (nombre reçus, urgents, traités).
-- **Points d'attention** : L'IA identifie les emails importants nécessitant votre attention.
-- **Statistiques** : Graphiques de votre activité email.
-- **Santé de la boîte** : Indicateur de santé de votre boîte (emails en attente, temps de réponse moyen).
-- **Générer** : Cliquez sur le bouton pour générer/régénérer le bilan du jour.
+## 14. PROJETS — \`/dashboard/projets\`
+Organiser tes mails par projet (suivi thématique).
+- Créer un projet (nom + description).
+- Associer un mail à un projet depuis la Réception.
+- Vue projet = tous les mails liés.
+- Statut : Actif / Archivé.
 
-## 8. CLASSEMENT (Catégories)
-Gérez les catégories utilisées par l'IA pour classer vos emails.
+## 15. BILAN QUOTIDIEN — \`/dashboard/bilan\`
+Résumé IA de ta journée email.
+- Vue d'ensemble (reçus, urgents, traités, en attente).
+- Points d'attention : mails importants à ne pas rater.
+- Statistiques (graphes activité, temps de réponse moyen).
+- Bouton "Régénérer" le bilan du jour.
 
-### Fonctionnalités :
-- **Catégories par défaut** : Factures, Support, Commercial, Admin, Personnel, etc.
-- **Packs métiers** : 50+ packs métiers disponibles (Comptable, Avocat, Restaurant, Immobilier, etc.). Chaque pack ajoute des catégories spécifiques à votre secteur.
-- **Pack IA** : Entrez votre métier et l'IA génère des catégories personnalisées.
-- **Créer/Modifier/Supprimer** : Gérez vos catégories manuellement.
-- **Mots-clés** : Chaque catégorie peut avoir des mots-clés pour aider l'IA à mieux classer.
-- **Recatégoriser** : Bouton pour relancer la catégorisation IA sur les emails non classés.
+## 16. ÉQUIPE — \`/dashboard/equipe\` (Business)
+Gestion des membres de ton organisation.
+- Inviter / révoquer un membre (par email).
+- Rôles : Admin / Membre.
+- Voir les sièges utilisés / disponibles.
+- Réassigner les mails d'un membre qui part.
 
-## 9. PARAMÈTRES
-Configuration de votre compte et connexions email.
+## 17. ACTIVITÉ ÉQUIPE — \`/dashboard/activite-equipe\` (Business)
+Tableau de bord d'activité collective.
+- Mails traités par membre, temps de réponse, charge de travail.
+- Filtrer par période, par boîte partagée.
 
-### Sections :
-- **Profil** : Modifier votre nom et signature email.
-- **Connexions email** : 
-  - Connecter Gmail (via OAuth, authentification sécurisée Google).
-  - Connecter via IMAP : Outlook, Hotmail, Orange, Free, SFR, Yahoo, Proximus, Telenet, iCloud, OVH, IONOS, Infomaniak, et plus.
-  - Voir la liste de vos connexions actives.
-  - Supprimer une connexion.
-- **Notifications** : Activer/désactiver les notifications email.
-- **Préférences IA** : Configurer le comportement de l'IA (langue de résumé, etc.).
-- **Langue** : Choisir la langue de l'interface (Français, English, Nederlands).
-- **Sécurité** : Changer votre mot de passe.
-
-### Fournisseurs IMAP supportés :
-Gmail, Outlook, Hotmail, Orange, Free, SFR, Bouygues, La Poste, Yahoo, Proximus, Skynet, VOO, Telenet, OVH, IONOS, Infomaniak, GMX, iCloud, et "Autre" (configuration manuelle).
-
-## 10. ABONNEMENT
-Gestion de votre plan et paiement.
-
-### Plans disponibles :
-- **Essai** : Gratuit, 100 crédits IA offerts (usage unique), 3 rubriques personnalisées, brouillons IA. Parfait pour découvrir Inboria.
-- **Solo** : 9 €/mois, 3 000 crédits IA / mois, rubriques illimitées, brief quotidien, brouillons IA proactifs, extraction automatique des tâches. Pour les indépendants. Dépassement : 0,002 €/crédit.
-- **Pro** : 21,99 €/mois (ou 211,10 €/an, soit ~2 mois offerts), 10 000 crédits IA / mois, rubriques illimitées, brief quotidien, brouillons IA proactifs, extraction des tâches, statistiques détaillées. Idéal pour les professionnels. Dépassement : 0,001 €/crédit.
-- **Business** : 21,99 €/siège/mois (ou 211,10 €/an/siège), 10 000 crédits IA / siège / mois, tout du plan Pro, minimum 3 sièges jusqu'à 50, boîtes partagées entre collègues, assignation de tâches, API dédiée. Pour les équipes. Dépassement : 0,001 €/crédit.
-
-### Fonctionnalités :
-- Voir votre plan actuel et utilisation (crédits IA utilisés / total).
-- Changer de plan (upgrade/downgrade).
-- Paiement sécurisé via Paddle (carte bancaire).
-- Annuler l'abonnement.
+## 18. ABONNEMENT — \`/dashboard/abonnement\`
+Gérer ton plan et ta facturation Paddle.
+- Voir plan actuel et consommation (crédits IA utilisés / total).
+- Changer de plan (upgrade / downgrade), passage mensuel ↔ annuel.
+- Portail Paddle : modifier moyen de paiement, télécharger factures, annuler.
 - Historique de facturation.
 
-## 11. BOÎTES PARTAGÉES (Plan Business uniquement)
-Boîtes email partagées entre membres de l'équipe.
+## 19. PARAMÈTRES — \`/dashboard/parametres\` (et sous-pages)
+Hub des paramètres. Sous-sections :
 
-### Fonctionnalités :
-- Créer une boîte partagée (ex: contact@, info@, support@).
-- Assigner des membres de l'équipe à la boîte.
-- Voir les emails de la boîte partagée.
-- Réclamer un email (se l'assigner pour le traiter).
-- Libérer un email (le remettre disponible pour l'équipe).
+### 19.1 Mon compte — \`/dashboard/parametres/mon-compte\`
+Profil, signature email, préférences langue, **lien visio personnel** (Teams/Meet), avatar, fuseau horaire, mot de passe, MFA (2FA).
 
-## 12. GESTION D'ÉQUIPE (Plan Business uniquement)
-Gérez les membres de votre organisation.
+### 19.2 Calendriers — \`/dashboard/parametres/calendriers\`
+Connecter Google Calendar et/ou Microsoft Outlook. Activer la création/lecture de RDV.
 
-### Fonctionnalités :
-- Inviter des membres par email.
-- Définir les rôles : Admin ou Membre.
-- Voir la liste des membres avec leur statut.
-- Retirer un membre de l'équipe.
-- Voir l'activité de l'équipe (emails traités, tâches complétées).
+### 19.3 Vie privée — \`/dashboard/parametres/vie-privee\` (Admin)
+Quels mails l'IA peut traiter, exclusions de domaines/catégories, journal d'accès admin (audit log), suppression de données utilisateur (RGPD).
 
-## 13. ACTIVITÉ ÉQUIPE (Plan Business uniquement)
-Suivi de l'activité des membres de votre organisation.
+### 19.4 CRM — \`/dashboard/parametres/crm\` (Admin, Pro/Business)
+Connecter HubSpot, Pipedrive, Salesforce (Production ou Sandbox), Odoo (URL+DB+API key), Zoho, Sellsy. Configurer la fréquence de sync (toutes les 15 min en arrière-plan).
 
-### Fonctionnalités :
-- Vue d'ensemble de l'activité de chaque membre.
-- Emails traités par membre.
-- Tâches complétées.
+### 19.5 Intégrations — \`/dashboard/parametres/integrations\` (Admin)
+Slack (notifications nouveaux mails urgents, mention d'équipe), Notion (créer une tâche depuis un mail), Microsoft 365, Google Workspace.
 
-## 14. MANUEL D'UTILISATION
-Guide intégré dans l'application expliquant toutes les fonctionnalités.
+### 19.6 Templates — \`/dashboard/parametres/templates\` (Admin)
+Modèles de réponses réutilisables. Variables dynamiques ({{nom}}, {{société}}). Catégorisation par dossier.
 
-### Sections du manuel :
-- Démarrage rapide
-- Connexion email
-- Boîte de réception et tri IA
-- Agenda (calendrier, détection IA, vues, export CSV)
-- Tâches (filtre IA, badges, création manuelle, export CSV)
-- Envoyés
-- Classement et catégories
-- Bilan quotidien
-- Paramètres
-- Abonnement
-- Sections Business (boîtes partagées, équipe)
+### 19.7 Règles — \`/dashboard/parametres/regles\` (Admin)
+Règles automatiques sur mails entrants (Si expéditeur = X → catégorie Y + assigner à Z + notifier Slack).
 
-## 15. SPAM ET FILTRAGE IA
-Inboria utilise un filtrage en plusieurs couches pour éviter le bruit dans votre boîte tout en économisant vos crédits IA.
+### 19.8 SLA — \`/dashboard/parametres/sla\` (Admin, Business)
+Définir les délais de réponse cibles (par catégorie, par boîte partagée). Badge SLA dans la Réception, alerte si dépassé.
 
-### Pré-filtre déterministe (avant l'IA) :
-- **Motif noreply / notifications** : Les adresses dont la partie locale correspond à des motifs comme noreply, no-reply, donotreply, notification(s), alerts, mailer-daemon, postmaster, newsletter, bounce, digest, broadcast… sont automatiquement reconnues et classées dans la catégorie « Notifications ».
-- **Cache d'expéditeurs** : La table sender_cache mémorise pour chaque expéditeur déjà vu sa catégorie et sa priorité. Le second email du même expéditeur évite donc un appel IA et hérite immédiatement du même classement, ce qui accélère la synchronisation et préserve vos crédits.
-- **Détection de spam déterministe** : Avant tout traitement IA, le pré-filtre marque comme spam les emails qui présentent des signaux clairs (adresses commerciales en masse, signatures connues), pour qu'ils n'apparaissent jamais dans la Réception principale.
+### 19.9 API — \`/dashboard/parametres/api\` (Admin, Business — accès API)
+Générer une clé API personnelle. Doc Swagger des endpoints disponibles.
 
-### Catégorisation automatique en spam :
-- **Décision IA** : Les emails non couverts par le pré-filtre passent par GPT-4o-mini, qui peut décider qu'un message est du spam ; il est alors directement déposé dans le dossier Spam au lieu de la Réception.
-- **Dossier Spam dédié** : Accessible depuis la barre latérale, il regroupe tous les emails marqués comme spam (par le pré-filtre ou par l'IA).
-- **Sans crédit gaspillé** : Un email pré-filtré ne consomme aucun crédit IA — seuls les messages incertains atteignent l'IA.
+### 19.10 Webhooks — \`/dashboard/parametres/webhooks\` (Admin, Business)
+Configurer des webhooks sortants : nouveau mail, RDV créé, tâche créée, etc. Vers ton n8n / Make / Zapier / serveur custom.
 
-### Reclassement manuel :
-- **Restaurer vers la Réception** : Depuis le dossier Spam, un clic remet un email légitime dans la Réception principale.
-- **Marquer comme spam** : Depuis la Réception, vous pouvez forcer un email vers Spam si l'IA s'est trompée.
-- **Apprentissage par le cache** : Vos restaurations et marquages alimentent le sender_cache, donc la prochaine fois qu'un email du même expéditeur arrive, il prend la bonne destination sans re-solliciter l'IA.
-- **Vider le spam** : Bouton pour supprimer définitivement tous les emails spam d'un coup, avec confirmation obligatoire.
-- **Suppression définitive** : Supprimez un email spam individuellement, également avec confirmation.
+### 19.11 Développeurs — \`/dashboard/parametres/developpeurs\` (Admin)
+Logs API, journal des requêtes, debug avancé.
 
-### Bonnes pratiques :
-- Vérifiez le dossier Spam de temps en temps pour récupérer les faux positifs et entraîner le cache.
-- Restaurez les emails légitimes plutôt que de les rouvrir : cela met à jour le sender_cache.
-- Videz régulièrement le Spam pour garder votre compte léger.
+## 20. ADMIN (interne Inboria) — \`/dashboard/admin/...\`
+- \`/dashboard/admin\` : index back-office.
+- \`/dashboard/admin/waitlist\` : liste d'attente.
+- \`/dashboard/admin/abonnes\` : abonnés et statut.
+- \`/dashboard/admin/email-brain\` : monitoring de l'Inboria Email Brain (embeddings, coût, files).
+- \`/dashboard/admin/inboria\` : monitoring du chat Inboria (volume, latence p50/p95, fallback rate, scores judge LLM, A/B mini vs gpt-4o).
 
-## 16. ENVOI INTELLIGENT (Vague 1)
-Trois fonctions complémentaires pour mieux maîtriser vos envois et votre boîte.
+## 21. MOBILE
+Mon app mobile Expo (iOS et Android). Mêmes fonctionnalités principales : Réception, lire/répondre, brouillons IA, RDV, contacts, notifications push, brief quotidien.
 
-### Reporter un email (Snooze)
-- **Comment** : Ouvrez un email, cliquez sur l'icône horloge "Reporter" et choisissez une date/heure ou un raccourci (Ce soir, Demain matin, Lundi prochain, Date personnalisée).
-- **Effet** : L'email disparaît temporairement de la Réception et réapparaît automatiquement à l'heure choisie, comme un nouveau message non-lu.
-- **Où retrouver les emails reportés** : Page **Reportés** dans le menu de gauche (sous Programmés). Vous pouvez les "Désactiver le report" pour les ramener tout de suite.
+---
 
-### Programmer un envoi
-- **Comment** : Dans le composer (nouveau ou réponse), cliquez sur la flèche à côté du bouton Envoyer et choisissez "Envoyer plus tard". Sélectionnez date et heure.
-- **Effet** : L'email part automatiquement à l'heure prévue. Vous restez libre de l'annuler ou modifier avant l'envoi.
-- **Où voir les envois programmés** : Page **Programmés** dans le menu de gauche.
+# PLANS & TARIFS
 
-### Annuler un envoi (Undo Send)
-- **Comment** : Après avoir cliqué sur Envoyer dans une réponse, un toast apparaît en bas avec un bouton "Annuler" pendant 10 secondes.
-- **Effet** : Si vous cliquez Annuler dans les 10s, l'email n'est jamais envoyé. Sinon, il part normalement.
+- **Essai** — Gratuit, 100 crédits IA offerts (usage unique), 3 rubriques personnalisées, brouillons IA. Pour découvrir.
+- **Solo** — 9 €/mois, 3 000 crédits IA/mois, rubriques illimitées, brief quotidien, brouillons IA proactifs, extraction tâches. Pour les indépendants. Dépassement : 0,002 €/crédit.
+- **Pro** — 21,99 €/mois (ou 211,10 €/an, ~2 mois offerts), 10 000 crédits IA/mois, tout Solo + statistiques détaillées + intégrations CRM (HubSpot, Pipedrive). Pour pros. Dépassement : 0,001 €/crédit.
+- **Business** — 21,99 €/siège/mois (ou 211,10 €/an/siège), 10 000 crédits IA/siège/mois, tout Pro + minimum 3 sièges (jusqu'à 50) + boîtes partagées + assignation tâches entre membres + Salesforce + Odoo + API + webhooks + SLA + activité équipe. Pour équipes. Dépassement : 0,001 €/crédit.
 
-### Suivi d'ouverture (Tracking)
-- Indicateur sur les emails envoyés : "Vu" ou "Non vu" selon si le destinataire a ouvert votre email.
-- Discret, en respect de la vie privée (pixel transparent invisible).
+Un crédit IA = 1 traitement IA (classement, résumé, brouillon, extraction tâche, détection RDV). Conso visible dans la jauge en bas de la sidebar.
 
-## 17. TEMPLATES IA (Vague 2)
-Bibliothèque de réponses-types réutilisables, avec assistance IA.
+# INTÉGRATIONS EMAIL
 
-### Créer un template
-- **Manuellement** : Page **Paramètres → Templates**, bouton "Nouveau template". Donnez un nom, un sujet et un corps. L'IA peut suggérer un nom basé sur le contenu.
-- **Depuis un email envoyé** : Dans le composer, après envoi, cliquez sur "Sauvegarder comme template". Le contenu est repris automatiquement.
-- **Catégorisation IA** : Chaque template reçoit un tag automatique (devis, relance, rdv, refus, remerciement, suivi, autre).
+Connexion via OAuth ou IMAP dans Paramètres → Calendriers / mailboxes.
+- **OAuth direct** : Gmail (Google), Outlook / Microsoft 365.
+- **IMAP** : Outlook, Hotmail, Orange, Free, SFR, Bouygues, La Poste, Yahoo, Proximus, Skynet, VOO, Telenet, iCloud, OVH, IONOS, Infomaniak, GMX, et "Autre" (configuration manuelle host/port/SSL).
+- **Sync** : toutes les 5 minutes (auto-sync). Bouton "Actualiser" manuel dans le header.
+- **Multi-comptes** : Solo = 1, Pro = 3, Business = illimité.
 
-### Utiliser un template
-- **Suggestions automatiques** : Quand vous ouvrez une réponse, un bandeau en haut du composer affiche 1 à 3 templates pertinents pour le contexte de l'email reçu.
-- **Insertion en 1 clic** : Cliquez sur la suggestion pour insérer le template dans la réponse.
-- **Variables** : Si le template contient des variables (ex: {{prenom}}), elles sont remplies automatiquement quand c'est possible.
+# INTÉGRATIONS CRM (Pro / Business)
 
-### Gérer les templates
-- Page **Paramètres → Templates** : liste groupée par catégorie, recherche, édition, suppression.
-- Compteur d'utilisation : voyez combien de fois chaque template a servi.
+- **HubSpot** : OAuth, sync contacts + deals + activités, BCC vers le CRM.
+- **Pipedrive** : OAuth, sync contacts + deals + activités.
+- **Salesforce** : OAuth, sync contacts + comptes + opportunités. Mode Sandbox (test.salesforce.com) pour tester.
+- **Odoo** : URL d'instance + base + login + clé API (Profil → Sécurité → Nouvelle clé). Pas d'OAuth.
+- **Zoho** / **Sellsy** : OAuth.
+- Sync auto toutes les 15 min en arrière-plan (\`crm-sync-scheduler\`).
+- Si tu me demandes un statut/montant CRM précis, je te renverrai consulter directement le CRM — je n'ai pas d'accès lecture en temps réel sur les deals, je peux juste t'aider à rédiger ce que tu veux y copier.
 
-## 18. RÈGLES AUTOMATIQUES (Vague 2)
-Automatisez le traitement de certains emails en langage naturel.
+# INTÉGRATIONS PRODUCTIVITÉ
 
-### Créer une règle
-- **Page** : **Paramètres → Règles**, bouton "Nouvelle règle".
-- **En langage naturel** : Tapez par exemple "Si un client mentionne devis, classer en Commercial et m'avertir". L'IA traduit la phrase en règle structurée (conditions + actions).
-- **Conditions possibles** : Expéditeur contient X, Sujet contient X, Corps contient X, Catégorie IA = X, Priorité = X.
-- **Actions possibles** : Classer dans une catégorie, Marquer prioritaire, Notifier, Archiver, Assigner à un membre, Créer une tâche.
+- **Slack** : notifications mails urgents dans un canal, mentions d'équipe.
+- **Notion** : créer une page/tâche dans Notion depuis un mail (1 clic).
+- **Microsoft 365** / **Google Workspace** : auth + calendrier.
+- **Webhooks sortants** : pour n8n, Make, Zapier, serveur custom.
 
-### Tester avant d'activer (Simulateur)
-- **Bouton "Simuler"** : Avant d'activer une règle, lancez le simulateur. Il vous montre quels emails des 30 derniers jours auraient été affectés.
-- **Sécurité** : Évite les surprises. Si la règle attrape trop d'emails, ajustez les conditions.
+# IA — INBORIA BRAIN, MEMORY, SMART SORT
 
-### Suivi et rollback
-- **Compteur** : Chaque règle affiche le nombre de fois où elle a été déclenchée.
-- **Journal d'audit** : Liste de toutes les actions exécutées par les règles ces dernières 24h.
-- **Annuler en 1 clic** : Pour chaque action des dernières 24h, bouton "Annuler" qui restaure l'état précédent (ex: catégorie d'origine, statut non-archivé).
+- **Inboria Email Brain** : recherche sémantique sur tes mails (text-embedding-3-small). "Trouve-moi les mails parlant de la facture du Petit Zoo" → je comprends même sans mots exacts.
+- **Inboria Memory** : faits mémorisés sur chaque contact, épisodes, signaux d'intent.
+- **Smart Sort** : ranking stratégique de ta Réception (au-delà du tri chrono).
+- **Expert Suggestion** (boîtes partagées) : je suggère le bon collègue à qui assigner un mail entrant selon l'historique.
+- **Modèles** : GPT-4o-mini par défaut. Routing silencieux GPT-4o pour Pro/Business sur les usages critiques.
+- **Coûts maîtrisés** : budget quotidien d'embeddings (\`EMAIL_EMBED_DAILY_BUDGET_USD\`).
 
-### Activer/Désactiver
-- Interrupteur sur chaque règle pour la mettre en pause sans la supprimer.
+# FAQ
 
-## 19. INTÉGRATIONS CRM
+### Inboria, c'est quoi ?
+Je suis ton copilote email IA. Je trie, résume, priorise, je rédige tes brouillons, je détecte tes RDV et tes tâches, je gère tes relances et je m'intègre à ton CRM, ton agenda, Slack, Notion.
 
-Inboria se connecte nativement à 4 CRM leaders du marché : HubSpot, Pipedrive, Salesforce et Odoo. La synchronisation est bidirectionnelle et automatique.
+### Différence entre Solo et Pro ?
+Solo (9 €/mois, 1 boîte, 3 000 crédits) c'est mon plan pour indépendants : tu as les fonctions IA essentielles (tri, résumés, brouillons, brief, tâches). Pro (21,99 €/mois, 3 boîtes, 10 000 crédits) ajoute les statistiques détaillées et les intégrations CRM (HubSpot, Pipedrive). Si tu travailles seul → Solo. Si tu commences à avoir un volume sérieux ou tu veux pousser tes contacts dans HubSpot/Pipedrive → Pro.
 
-### CRM supportés
-- **HubSpot** : synchronisation des contacts et des deals.
-- **Pipedrive** : synchronisation des personnes, deals et organisations.
-- **Salesforce** : synchronisation des contacts, comptes et opportunités. Mode Sandbox disponible (toggle au moment de la connexion vers test.salesforce.com) pour tester avant de passer en Production.
-- **Odoo** : synchronisation des contacts (res.partner) et opportunités (crm.lead). Authentification par URL d'instance + base de données + login + clé API (générée dans Odoo : Profil → Sécurité du compte → Nouvelle clé API). Pas d'OAuth — Odoo n'expose pas d'OAuth standard.
+### Différence Pro / Business ?
+Même tarif au siège (21,99 €) mais Business démarre à 3 sièges minimum et débloque les fonctions équipe : boîtes partagées (contact@, support@), assignation entre collègues, activité équipe, SLA, API, webhooks, Salesforce, Odoo.
 
-### Comment connecter un CRM
-1. Aller dans Paramètres → CRM.
-2. Cliquer sur "Connecter" en face du CRM choisi.
-3. Vous êtes redirigé vers la page d'authentification OAuth officielle du CRM.
-4. Vous autorisez Inboria à accéder à vos contacts et deals.
-5. Une synchronisation initiale s'effectue automatiquement.
-
-### Synchronisation automatique
-- **HubSpot et Pipedrive** : synchronisation automatique toutes les 15 minutes en tâche de fond (planificateur \`crm-sync-scheduler\`).
-- **Salesforce** : synchronisation initiale au moment de la connexion + bouton manuel "Synchroniser maintenant" disponible à tout moment dans Paramètres → CRM.
-- **Bidirectionnelle** : les changements côté CRM remontent dans Inboria, et les nouveaux contacts dans Inboria peuvent être créés dans le CRM.
-- **Sync manuelle pour tous les CRM** : bouton "Synchroniser maintenant" dans Paramètres → CRM. Affiche le nombre de contacts et de deals synchronisés.
-- **Date de dernière synchro** : visible sur la carte de chaque CRM connecté.
-
-### Ce que voit l'utilisateur dans Inboria
-- Quand un email arrive, Inboria identifie automatiquement le contact correspondant dans le CRM connecté.
-- Les deals/opportunités en cours avec ce contact sont visibles depuis l'email.
-- Les nouvelles informations issues d'une conversation peuvent enrichir le CRM.
-
-### Sécurité OAuth
-- **Aucun mot de passe stocké** : Inboria utilise exclusivement OAuth.
-- **Tokens chiffrés au repos** dans la base de données.
-- **Révocation à tout moment** : depuis le CRM (page Apps connectées) ou depuis Paramètres → CRM dans Inboria.
-- **Échanges TLS** chiffrés de bout en bout.
-
-### Spécificités Salesforce
-- Toggle Sandbox pour cibler test.salesforce.com (recommandé pour ETI/grands comptes : tester sur une org de Sandbox avant de connecter la Production).
-- Compatible Lightning Experience.
-- Le badge \`workspaceName\` indique "(Sandbox)" quand la connexion est sur Sandbox.
-
-### Déconnexion
-- Bouton "Déconnecter" dans Paramètres → CRM.
-- La synchronisation s'arrête immédiatement.
-- Les tokens d'accès sont révoqués côté Inboria.
-- Les données dans Inboria restent disponibles ; le CRM n'est pas modifié.
-
-### Plusieurs CRM en parallèle
-- Possible de connecter HubSpot + Pipedrive + Salesforce en même temps.
-- Chaque email est enrichi des informations issues de tous les CRM connectés.
-
-### Pas de duplication des données
-- Inboria stocke uniquement les références minimales (ID, nom, email) pour faire le lien entre emails et CRM.
-- Le CRM reste la source unique de vérité.
-
-## QUESTIONS FRÉQUENTES
-
-### Comment connecter ma boîte email ?
-Allez dans Paramètres → section Connexions email. Choisissez votre fournisseur (Gmail, Outlook, etc.) et suivez les instructions. Pour Gmail, vous serez redirigé vers Google pour autoriser l'accès. Pour les autres, entrez votre adresse email et votre mot de passe IMAP.
-
-### Pourquoi mes emails ne se synchronisent pas ?
-La synchronisation se fait automatiquement toutes les 5 minutes. Si vos emails n'apparaissent pas : vérifiez votre connexion email dans Paramètres, assurez-vous que vos identifiants sont corrects, et que l'accès IMAP est activé dans votre fournisseur email.
-
-### Comment l'IA classe-t-elle mes emails ?
-L'IA analyse le sujet, l'expéditeur et le contenu de chaque email pour déterminer sa priorité (Urgent, Moyen, Faible), sa catégorie et générer un résumé. Vous pouvez personnaliser les catégories dans la page Classement.
-
-### Mes données sont-elles sécurisées ?
-Oui. Inboria utilise le chiffrement SSL/TLS pour toutes les communications. Vos identifiants email sont stockés de manière sécurisée. Nous ne stockons pas le contenu complet de vos emails de manière permanente — seuls les métadonnées et résumés sont conservés.
-
-### Comment changer de langue ?
-Cliquez sur le sélecteur de langue en haut à droite du dashboard (bouton avec le drapeau ou les initiales de la langue). Choisissez entre Français, English ou Nederlands.
-
-### Comment créer un brouillon IA ?
-Ouvrez un email, puis cliquez sur l'icône baguette magique (✨). L'IA génère un brouillon de réponse que vous pouvez modifier avant d'envoyer.
-
-### Comment exporter mes tâches ?
-Allez dans Tâches, cliquez sur le bouton "Exporter CSV" en haut. Un fichier CSV sera téléchargé avec toutes vos tâches.
-
-### Comment annuler mon abonnement ?
-Allez dans Abonnement, vous verrez votre plan actuel. Cliquez sur "Gérer l'abonnement" pour accéder au portail de facturation Paddle où vous pouvez annuler.
-
-### Qu'est-ce qu'un Pack Métier ?
-Un Pack Métier est un ensemble de catégories prédéfinies adaptées à votre secteur d'activité. Par exemple, le pack "Comptable" inclut des catégories comme Factures clients, Déclarations fiscales, etc. Allez dans Classement pour les appliquer.
+### Comment je connecte ma boîte mail ?
+Paramètres → Calendriers (ou Mon compte) → "Ajouter une connexion" → choisis Gmail (OAuth), Outlook (OAuth) ou IMAP (autres). Pour IMAP : host, port (993 SSL), email, mot de passe (pour Gmail/Outlook IMAP, utilise un mot de passe d'application).
 
 ### Comment fonctionnent les crédits IA ?
-Chaque plan inclut un nombre mensuel de crédits IA. Un crédit est consommé chaque fois que l'IA traite un email (classement, résumé, brouillon, extraction de tâche). Vous pouvez voir votre consommation dans la barre latérale (jauge en bas). Une fois les crédits épuisés, vous devez passer à un plan supérieur pour continuer.
+Chaque plan inclut un quota mensuel. 1 crédit = 1 traitement IA (classement, résumé, brouillon, extraction tâche, RDV détecté). Tu vois ta conso dans la jauge en bas de la sidebar. Si tu dépasses, tu peux upgrader ou continuer en payant le dépassement (0,001 €/crédit en Pro/Business).
 
-### Puis-je connecter plusieurs boîtes email ?
-Oui, selon votre plan : Solo = 1 boîte, Pro = 3 boîtes, Business = illimité. Ajoutez vos connexions dans Paramètres.
+### Comment je résilie ?
+Abonnement → "Gérer l'abonnement" → portail Paddle → annuler. Pas d'engagement, tu gardes ton plan jusqu'à la fin de la période payée.
 
-### Comment assigner un email à un collègue ?
-Plan Business uniquement : ouvrez l'email et cliquez sur le bouton "Assigner". Choisissez le membre de l'équipe dans la liste.
+### Comment j'assigne un mail à un collègue ?
+Plan Business : ouvre le mail → bouton "Assigner" → choisis le membre. Aussi dispo en clic-droit dans la liste.
 
-### Comment utiliser l'agenda ?
-L'agenda affiche vos rendez-vous. L'IA détecte automatiquement les RDV mentionnés dans vos emails. Vous pouvez aussi créer des RDV manuellement. Changez de vue (jour/semaine/mois) avec les boutons en haut.`,
+### Comment j'utilise l'agenda ?
+\`/dashboard/agenda\`. Vues Jour/Semaine/Mois en haut. Mes RDV détectés dans tes mails apparaissent en suggestions (à confirmer/ignorer). Tu peux créer un RDV manuellement, ou envoyer une proposition multi-créneaux à un prospect.
+
+### Et si je veux annuler une proposition multi-créneaux déjà envoyée ?
+Va dans Agenda, ouvre l'un des créneaux du groupe → "Annuler le groupe". Tous les créneaux liés sont annulés et un mail d'annulation part au destinataire.
+
+### Tu as accès à mon CRM ?
+Pour synchroniser oui (auto toutes les 15 min). Pour répondre à une question précise type "quel est le montant du deal X ?" non, je ne lis pas en temps réel — je te renvoie consulter directement HubSpot/Pipedrive/Salesforce/Odoo. Je peux par contre t'aider à rédiger un mail, un résumé ou une note à coller dans le CRM.
+
+### Tu fonctionnes en quelles langues ?
+43 langues, je détecte automatiquement la langue de tes mails et je te réponds dans ta langue. Tu peux forcer une langue dans Mon compte.
+
+### Tu as une app mobile ?
+Oui, iOS et Android (Expo). Mêmes fonctions principales + notifications push.
+
+### Support ?
+support@inboria.com.\``,
 
     en: `# Inboria — Complete Knowledge Base
 
