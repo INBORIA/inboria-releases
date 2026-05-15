@@ -841,16 +841,20 @@ export async function saveEmailWithTriage(
   // Apple Mail) ne renvoient pas In-Reply-To sur une réponse-de-réponse.
   const candidateMessageIds = collectThreadMessageIds(headers);
   try {
-    if (candidateMessageIds.length > 0) {
-      const { handleIncomingEmailForMeeting } = await import("./meeting-proposals");
-      handleIncomingEmailForMeeting(
-        userId,
-        inserted.id,
-        candidateMessageIds,
-        providerMessageId,
-        body,
-      ).catch(() => {});
-    }
+    // On appelle TOUJOURS le hook, même sans In-Reply-To/References : la fonction
+    // tente d'abord le matching par proposal_message_id, puis retombe sur un
+    // fallback (sender domain + date détectée + mot-clé de confirmation) qui
+    // gère les confirmations transactionnelles hors-thread (ex: prestataire
+    // qui répond depuis noreply@ sans In-Reply-To).
+    const { handleIncomingEmailForMeeting } = await import("./meeting-proposals");
+    handleIncomingEmailForMeeting(
+      userId,
+      inserted.id,
+      candidateMessageIds,
+      providerMessageId,
+      body,
+      sender,
+    ).catch(() => {});
   } catch {
     /* meeting hook optional */
   }

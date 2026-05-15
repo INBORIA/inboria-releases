@@ -1567,9 +1567,324 @@ ${cleanBody}
   }
 }
 
+// ============================================================================
+// FALLBACK transactionnel : confirmer un RDV pending depuis un mail entrant
+// qui N'EST PAS une réponse au thread initial (cas typique : booking via site
+// web → le prestataire renvoie un mail transactionnel "Votre RDV du 21 mai
+// est confirmé" depuis noreply@…, sans In-Reply-To pointant vers le mail
+// d'origine). Le matching par proposal_message_id échoue forcément.
+// On retombe alors sur (sender domain) ∩ (date détectée dans le body) ∩
+// (mot-clé de confirmation). Garde-fou triple pour éviter les faux positifs.
+// ============================================================================
+
+const MONTHS_LOOKUP: Record<string, number> = {
+  // FR
+  janvier: 0, janv: 0, jan: 0,
+  "février": 1, fevrier: 1, "fév": 1, fev: 1, feb: 1,
+  mars: 2, mar: 2,
+  avril: 3, avr: 3,
+  mai: 4, may: 4,
+  juin: 5, jun: 5,
+  juillet: 6, juil: 6, jul: 6,
+  "août": 7, aout: 7, aug: 7,
+  septembre: 8, sept: 8, sep: 8,
+  octobre: 9, oct: 9,
+  novembre: 10, nov: 10,
+  "décembre": 11, decembre: 11, "déc": 11, dec: 11,
+  // EN long (les abbrev EN sont déjà couverts par FR)
+  january: 0, february: 1, march: 2, april: 3, june: 5,
+  july: 6, august: 7, september: 8, october: 9,
+  november: 10, december: 11,
+  // NL (mots manquants vs FR/EN)
+  januari: 0, februari: 1, maart: 2, mei: 4, juni: 5, juli: 6,
+  augustus: 7, oktober: 9,
+  // DE (mots manquants vs FR/EN/NL — januar/februar/märz/mai/juni/juli/oktober
+  // sont uniques ; april/juni/juli/oktober/dezember sont déjà mappés via les
+  // entrées EN/NL ci-dessus)
+  januar: 0, februar: 1, "märz": 2, marz: 2, dezember: 11,
+};
+
+const CONFIRMATION_KEYWORDS = /(confirm|valid[éeé]|accept|r[éee]serv|reservation|booking|booked|approuv|enregistr[éeé]|saisi|got it|registered|best[äa]tigt|bevestig|akkoord)/i;
+
+function extractSenderDomain(senderEmail: string): string | null {
+  const m = senderEmail.match(/<([^>]+)>$/) || senderEmail.match(/([^\s<>]+@[^\s<>]+)/);
+  const addr = m ? m[1] : senderEmail.trim();
+  const at = addr.lastIndexOf("@");
+  if (at < 0) return null;
+  const dom = addr.slice(at + 1).toLowerCase().replace(/[>\s]+$/, "");
+  return dom || null;
+}
+
+function rootDomain(d: string): string {
+  const parts = d.split(".");
+  if (parts.length <= 2) return d;
+  return parts.slice(-2).join(".");
+}
+
+type DateTriple = { y: number; m: number; d: number; h?: number; mi?: number };
+
+/**
+ * Extrait toutes les dates plausibles d'un body sous forme de triplets
+ * (year, month 0-11, day) + heure optionnelle. PAS de Date JS construit ici :
+ * la comparaison se fait directement triplet-vs-triplet (formaté en TZ profil
+ * côté caller), ce qui évite tout glissement DST/UTC. Patterns couverts :
+ *   - "21 mai", "21 mai 2026", "21-mai-2026"
+ *   - "21/05/2026", "21/05", "21-05-26", "21.05.2026"
+ *   - "May 21", "May 21 2026", "21 May"
+ * Si une heure "9h", "9h30", "9:00", "09:00" est présente dans les 120
+ * caractères qui suivent, elle est associée pour disambiguation multi-RDV.
+ */
+function extractDateTriples(body: string): DateTriple[] {
+  const text = (body || "").slice(0, 6000);
+  const out: DateTriple[] = [];
+  const monthAlt = Object.keys(MONTHS_LOOKUP)
+    .sort((a, b) => b.length - a.length)
+    .join("|");
+
+  const push = (y: number, mo: number, d: number, h?: number, mi?: number) => {
+    if (mo < 0 || mo > 11 || d < 1 || d > 31) return;
+    if (y < 100) y += 2000;
+    if (y < 2020 || y > 2100) return;
+    // Validation jour selon mois (évite "31 février")
+    const daysInMonth = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][mo];
+    if (d > daysInMonth) return;
+    out.push({ y, m: mo, d, h, mi });
+  };
+
+  const grabHourNear = (idx: number): { h?: number; mi?: number } => {
+    const window = text.slice(idx, idx + 120);
+    const hm = window.match(/\b(\d{1,2})\s*[h:]\s*(\d{2})?\b/);
+    if (!hm) return {};
+    const h = parseInt(hm[1], 10);
+    const mi = hm[2] ? parseInt(hm[2], 10) : 0;
+    if (h < 0 || h > 23 || mi < 0 || mi > 59) return {};
+    return { h, mi };
+  };
+
+  // Pattern 1 : "21 mai 2026" / "21 mai" / "21-mai" (FR/NL/DE/EN court)
+  const re1 = new RegExp(`\\b(\\d{1,2})[\\s\\-\\.]+(${monthAlt})\\.?(?:[\\s\\-,\\.]+(\\d{2,4}))?`, "gi");
+  let m: RegExpExecArray | null;
+  while ((m = re1.exec(text)) !== null) {
+    const day = parseInt(m[1], 10);
+    const month = MONTHS_LOOKUP[m[2].toLowerCase()];
+    const year = m[3] ? parseInt(m[3], 10) : new Date().getUTCFullYear();
+    if (month === undefined) continue;
+    const hm = grabHourNear(m.index + m[0].length);
+    push(year, month, day, hm.h, hm.mi);
+  }
+
+  // Pattern 2 : "May 21", "May 21 2026" (anglais ordre inversé)
+  const re2 = new RegExp(`\\b(${monthAlt})\\.?\\s+(\\d{1,2})(?:[\\s\\-,\\.]+(\\d{2,4}))?`, "gi");
+  while ((m = re2.exec(text)) !== null) {
+    const month = MONTHS_LOOKUP[m[1].toLowerCase()];
+    const day = parseInt(m[2], 10);
+    const year = m[3] ? parseInt(m[3], 10) : new Date().getUTCFullYear();
+    if (month === undefined) continue;
+    const hm = grabHourNear(m.index + m[0].length);
+    push(year, month, day, hm.h, hm.mi);
+  }
+
+  // Pattern 3 : "21/05/2026", "21-05-26", "21.05" (format européen jour/mois)
+  const re3 = /\b(\d{1,2})[\/\-\.](\d{1,2})(?:[\/\-\.](\d{2,4}))?\b/g;
+  while ((m = re3.exec(text)) !== null) {
+    const day = parseInt(m[1], 10);
+    const month = parseInt(m[2], 10) - 1;
+    const year = m[3] ? parseInt(m[3], 10) : new Date().getUTCFullYear();
+    if (day < 1 || day > 31 || month < 0 || month > 11) continue;
+    const hm = grabHourNear(m.index + m[0].length);
+    push(year, month, day, hm.h, hm.mi);
+  }
+
+  return out;
+}
+
+/**
+ * Convertit appointments.start_at (ISO UTC) en triplet local-TZ (year, month
+ * 0-11, day) + heure locale. Utilise Intl.DateTimeFormat pour respecter la
+ * timezone du profil — pas de glissement DST/UTC.
+ */
+function appointmentLocalParts(startAt: string, tz: string): { y: number; m: number; d: number; h: number } {
+  const dt = new Date(startAt);
+  try {
+    const fmt = new Intl.DateTimeFormat("en-CA", {
+      timeZone: tz,
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", hour12: false,
+    });
+    const parts: Record<string, string> = {};
+    for (const p of fmt.formatToParts(dt)) {
+      if (p.type !== "literal") parts[p.type] = p.value;
+    }
+    return {
+      y: parseInt(parts["year"] || "0", 10),
+      m: parseInt(parts["month"] || "1", 10) - 1,
+      d: parseInt(parts["day"] || "1", 10),
+      h: parseInt(parts["hour"] || "0", 10),
+    };
+  } catch {
+    return { y: dt.getUTCFullYear(), m: dt.getUTCMonth(), d: dt.getUTCDate(), h: dt.getUTCHours() };
+  }
+}
+
+/**
+ * Tente de confirmer des RDV pending via un mail TRANSACTIONNEL (pas une
+ * réponse au thread initial). Best-effort, jamais bloquant.
+ *
+ * Garde-fous (TOUS requis) :
+ *  1. mot-clé de confirmation présent dans le body
+ *  2. domaine racine de l'expéditeur correspond au domaine du contact RDV
+ *  3. date détectée dans le body matche le start_at d'un RDV pending (jour
+ *     calendaire en TZ profil)
+ *  4. si plusieurs RDV pending même domaine ET même jour, on EXIGE une heure
+ *     dans le body qui matche start_at (±90min) — sinon on skip + log
+ *     ambigu (jamais de confirmation aveugle).
+ */
+async function tryConfirmByTransactional(
+  userId: string,
+  emailId: number,
+  senderEmail: string | null | undefined,
+  body: string,
+): Promise<void> {
+  if (!senderEmail) return;
+  const senderDomain = extractSenderDomain(senderEmail);
+  if (!senderDomain) return;
+  const senderRoot = rootDomain(senderDomain);
+
+  // Garde-fou 1 : mot-clé de confirmation OBLIGATOIRE dans le body.
+  const lower = (body || "").toLowerCase();
+  if (!CONFIRMATION_KEYWORDS.test(lower)) return;
+
+  // Préfiltre SQL via ilike sur le domaine racine — évite de scanner tous les
+  // pending du user à chaque mail entrant. La fenêtre temporelle [now-1j, …]
+  // absorbe les confirmations tardives.
+  const since = new Date(Date.now() - 24 * 3600 * 1000).toISOString();
+  const likeDom = `%${senderRoot}%`;
+  const { data: pending } = await supabaseAdmin
+    .from("appointments")
+    .select("id, start_at, end_at, status, participants, proposal_recipient")
+    .eq("user_id", userId)
+    .in("status", ["pending", "counter_proposed"])
+    .gte("start_at", since)
+    .or(`proposal_recipient.ilike.${likeDom},participants.ilike.${likeDom}`)
+    .limit(50);
+  if (!pending || pending.length === 0) return;
+
+  const candidates = pending as Array<{
+    id: string;
+    start_at: string;
+    end_at: string;
+    status: string;
+  }>;
+
+  // Garde-fou 2 : au moins UNE date détectée.
+  const triples = extractDateTriples(body);
+  if (triples.length === 0) {
+    logger.info(
+      { userId, emailId, senderDomain, candidatesCount: candidates.length },
+      "[meeting-proposals] transactional fallback: keyword+domain match but no date parsed — skipping",
+    );
+    return;
+  }
+
+  // Récupère TZ profil pour comparaison local-jour exacte.
+  const { data: prof } = await supabaseAdmin
+    .from("profiles")
+    .select("timezone")
+    .eq("id", userId)
+    .maybeSingle();
+  const tz = (prof as { timezone?: string } | null)?.timezone || "Europe/Brussels";
+
+  // Pour chaque candidat : trouve les triples qui matchent son jour local.
+  // Si plusieurs candidats partagent le même jour (multi-RDV même domaine),
+  // on EXIGE une disambiguation par heure.
+  const candidatesWithLocal = candidates.map((c) => ({
+    cand: c,
+    local: appointmentLocalParts(c.start_at, tz),
+  }));
+
+  let matched = 0;
+  let ambiguous = 0;
+
+  for (const { cand, local } of candidatesWithLocal) {
+    // Triples qui matchent le jour local du candidat
+    const dayHits = triples.filter((t) => t.y === local.y && t.m === local.m && t.d === local.d);
+    if (dayHits.length === 0) continue;
+
+    // Combien d'autres candidats partagent le même jour local ?
+    const sameDayOthers = candidatesWithLocal.filter(
+      (x) => x.cand.id !== cand.id &&
+        x.local.y === local.y && x.local.m === local.m && x.local.d === local.d,
+    );
+
+    let confirmThis = false;
+    if (sameDayOthers.length === 0) {
+      // Cas simple : 1 seul RDV pending ce jour-là pour ce domaine → confirm.
+      confirmThis = true;
+    } else {
+      // Cas ambigu : plusieurs RDV même jour. Exige une heure dans le body
+      // qui matche start_at à ±90min.
+      const hourHit = dayHits.find((t) =>
+        t.h !== undefined && Math.abs(t.h - local.h) <= 1,
+      );
+      if (hourHit) {
+        confirmThis = true;
+      } else {
+        ambiguous++;
+        logger.info(
+          { userId, emailId, appointmentId: cand.id, senderDomain, sameDayCount: sameDayOthers.length + 1 },
+          "[meeting-proposals] transactional fallback: ambiguous (multiple pending same day, no hour disambiguation) — skipping",
+        );
+        continue;
+      }
+    }
+
+    if (!confirmThis) continue;
+
+    const { error: updErr } = await supabaseAdmin
+      .from("appointments")
+      .update({
+        status: "confirmed",
+        confirmed: true,
+        awaiting_reminder_at: null,
+        updated_at: new Date().toISOString(),
+      })
+      .eq("id", cand.id)
+      .eq("user_id", userId)
+      .in("status", ["pending", "counter_proposed"]);
+    if (updErr) {
+      logger.warn(
+        { err: updErr.message, appointmentId: cand.id },
+        "[meeting-proposals] transactional fallback update failed",
+      );
+      continue;
+    }
+    matched++;
+    logger.info(
+      {
+        userId,
+        emailId,
+        appointmentId: cand.id,
+        senderDomain,
+        startAt: cand.start_at,
+        matchedVia: "transactional_fallback",
+      },
+      "[meeting-proposals] RDV confirmed via transactional mail (sender+date+keyword)",
+    );
+  }
+
+  if (matched === 0 && ambiguous === 0) {
+    logger.info(
+      { userId, emailId, senderDomain, candidatesCount: candidates.length, datesParsed: triples.length },
+      "[meeting-proposals] transactional fallback: no date matched any pending appointment",
+    );
+  }
+}
+
 /**
  * Hook appelé après l'enregistrement d'un mail entrant : si son In-Reply-To
  * correspond à un proposal_message_id pending, on lance la classification.
+ * Si AUCUN match (cas confirmation transactionnelle hors-thread, ex: prestataire
+ * qui répond depuis noreply@), on tente un fallback (sender+date+keyword).
  * Best-effort — n'arrête JAMAIS la sync mail.
  */
 export async function handleIncomingEmailForMeeting(
@@ -1578,20 +1893,29 @@ export async function handleIncomingEmailForMeeting(
   threadMessageIds: string | string[] | null | undefined,
   responseMessageId: string | null,
   body: string,
+  senderEmail?: string | null,
 ): Promise<void> {
   const candidates = Array.isArray(threadMessageIds)
     ? threadMessageIds.filter((s) => typeof s === "string" && s.length > 0)
     : threadMessageIds
       ? [threadMessageIds]
       : [];
-  if (candidates.length === 0) return;
   try {
+    if (candidates.length === 0) {
+      // Pas de threading → tente directement le fallback transactionnel.
+      await tryConfirmByTransactional(userId, emailId, senderEmail, body);
+      return;
+    }
     const { data: rows } = await supabaseAdmin
       .from("appointments")
       .select("id, start_at, end_at, status, proposal_group_id, proposal_message_id")
       .eq("user_id", userId)
       .in("proposal_message_id", candidates);
-    if (!rows || rows.length === 0) return;
+    if (!rows || rows.length === 0) {
+      // Threading présent mais aucun RDV ne match ce Message-ID → fallback.
+      await tryConfirmByTransactional(userId, emailId, senderEmail, body);
+      return;
+    }
     const active = rows.filter(
       (r: any) => r.status === "pending" || r.status === "counter_proposed",
     );
